@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.152 2004/01/09 07:32:39 mdz Exp $
+// $Id: apt-get.cc,v 1.153 2004/01/26 18:10:57 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1532,9 +1532,9 @@ bool DoInstall(CommandLine &CmdL)
 	   continue;
 
 	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
-	   {
+         {
 	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
-	       {
+             {
 		 pkgCache::DepIterator Start;
 		 pkgCache::DepIterator End;
 		 D.GlobOr(Start,End);
@@ -1544,20 +1544,24 @@ bool DoInstall(CommandLine &CmdL)
 		  * packages that provide it and see if any of those are
 		  * installed
 		  */
-		 pkgCache::PrvIterator Prv = Start.TargetPkg().ProvidesList();
+		 
 		 bool providedBySomething = false;
-		 for (; Prv.end() != true; Prv++)
-		    if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false) {
+		 for (pkgCache::PrvIterator Prv = Start.TargetPkg().ProvidesList();
+                      Prv.end() != true;
+                      Prv++)
+		    if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
+                    {
 		       providedBySomething = true;
 		       break;
 		    }
 
 		 if (providedBySomething) continue;
             
-		 do
-		   {
+                 for(;;)
+                 {
                      /* Skip if package is  installed already, or is about to be */
                      string target = string(Start.TargetPkg().Name()) + " ";
+
                      if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
                          || Cache[Start.TargetPkg()].Install())
                        break;
@@ -1575,12 +1579,13 @@ bool DoInstall(CommandLine &CmdL)
 		       RecommendsList += target;
 		       RecommendsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
 		     }
-	      if (Start == End)
-		break;
-	      Start++;
-	    } while (1);
-	       }
-	   }
+
+                     if (Start >= End)
+                        break;
+                     Start++;
+                 }
+             }
+         }
       }
       ShowList(c1out,_("Suggested packages:"),SuggestsList,SuggestsVersions);
       ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
