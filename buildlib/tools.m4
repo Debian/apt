@@ -89,7 +89,7 @@ AC_DEFUN(ah_NUM_PROCS,
 	AC_SUBST(NUM_PROCS)
 ])
 
-AC_DEFUN(ah_GLIBC_VER,
+AC_DEFUN(rc_GLIBC_VER,
 	[AC_MSG_CHECKING([glibc version])
 	dummy=if$$
 	cat <<_GLIBC_>$dummy.c
@@ -110,7 +110,7 @@ _GLIBC_
 	AC_SUBST(GLIBC_VER)
 ])
 
-AC_DEFUN(ah_LIBSTDCPP_VER,
+AC_DEFUN(rc_LIBSTDCPP_VER,
 	[AC_MSG_CHECKING([libstdc++ version])
 	dummy=if$$
 	cat <<_LIBSTDCPP_>$dummy.cc
