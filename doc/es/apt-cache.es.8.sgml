@@ -10,8 +10,7 @@
 (c) 2003 Software in the Public Interest
 Esta traducción ha sido realizada por Rubén Porras Campo <nahoo@inicia.es>
 Está basada en la página de manual original:
-versión 1.5 del CVS de
-/cvs/debian-doc/manpages/english/apt/apt-cache.8.sgml
+versión 0.5.20 de apt
  -->
 
 <refentry lang=es>
@@ -51,6 +50,7 @@ versión 1.5 del CVS de
          <arg>pkgnames <arg choice="plain"><replaceable>prefijo</replaceable></arg></arg>
          <arg>dotty <arg choice="plain" rep="repeat"><replaceable>paquete</replaceable></arg></arg>
          <arg>policy <arg choice="plain" rep="repeat"><replaceable>paquetes</replaceable></arg></arg>
+         <arg>madison <arg choice="plain" rep="repeat"><replaceable>paquetes</replaceable></arg></arg>
       </group>   
    </cmdsynopsis>
  </refsynopsisdiv>
@@ -284,6 +284,18 @@ Reverse Provides:
        contrario muestra una información detallada acerca de la
        prioridad de selección de cada nombre de paquete.
      </VarListEntry>
+
+     <VarListEntry><Term>madison <replaceable/[ paquete(s) ]/</Term>
+     <ListItem><Para>
+       
+       La orden <literal/madison/ de <literal/apt-cache/  intenta imitar el formato
+       de salida y parte de la funcionalidad de la herramienta para el manejo del
+       archivo de Debian, <literal/madison/.  Muestra las versiones disponibles de 
+       un determinado paquete en un formato tabular. A diferencia del
+       <literal/madison/ original, sólo puede mostrar información para la
+       arquitectura para la que APT obtuvo las listas de paquetes
+       (<literal/APT::Architecture/).
+
    </VariableList>
  </RefSect1>
  
@@ -363,10 +375,17 @@ Reverse Provides:
 
      <VarListEntry><term><option/--recurse/</>
      <ListItem><Para>
-     Hace las <literal/dependencias/ recursivas de modo que todos los paquetes
-      mencionados son mostrados sólo una vez. Opción de configuración
+     Hace <literal/depends/ y <literal/rdepends/ recursivos de modo que todos
+      los paquetes mencionados se muestran sólo una vez. Opción de configuración
       <literal/APT::Cache::RecurseDepends/.
      </VarListEntry>
+
+     <VarListEntry><term><option/--installed/</>
+     <ListItem><Para>
+     Limita la salida de <literal/depends/ y <literal/rdepends/ a paquetes
+      instalados. Opción de configuración: <literal/APT::Cache::Installed/.
+     </VarListEntry>
+
 
      &apt-commonoptions;
      
