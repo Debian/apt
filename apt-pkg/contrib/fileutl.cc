@@ -306,7 +306,7 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
 /* This is used if you want to cleanse the environment for the forked 
    child, it fixes up the important signals and nukes all of the fds,
    otherwise acts like normal fork. */
-pid_t ExecFork()
+pid_t ExecFork(int dontCloseThisFd)
 {
    // Fork off the process
    pid_t Process = fork();
@@ -329,7 +329,8 @@ pid_t ExecFork()
       
       // Close all of our FDs - just in case
       for (int K = 3; K != 40; K++)
-	 fcntl(K,F_SETFD,FD_CLOEXEC);
+	 if(K != dontCloseThisFd)
+	    fcntl(K,F_SETFD,FD_CLOEXEC);
    }
    
    return Process;

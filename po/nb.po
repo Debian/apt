@@ -160,7 +160,7 @@ msgstr "  Versjonstabell:"
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
+#: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:353 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
 #: cmdline/apt-get.cc:2313 cmdline/apt-sortpkgs.cc:144
 #, c-format
@@ -1700,7 +1700,7 @@ msgstr "Tidsavbrudd på forbindelsen"
 msgid "Server closed the connection"
 msgstr "Tjeneren lukket forbindelsen"
 
-#: methods/ftp.cc:338 methods/rsh.cc:190 apt-pkg/contrib/fileutl.cc:452
+#: methods/ftp.cc:338 methods/rsh.cc:190 apt-pkg/contrib/fileutl.cc:453
 msgid "Read error"
 msgstr "Lesefeil"
 
@@ -2100,54 +2100,54 @@ msgstr "Bruker ikke låsing på den nfs-monterte låsefila %s"
 msgid "Could not get lock %s"
 msgstr "Får ikke låst %s"
 
-#: apt-pkg/contrib/fileutl.cc:358
+#: apt-pkg/contrib/fileutl.cc:359
 #, c-format
 msgid "Waited, for %s but it wasn't there"
 msgstr "Ventet på %s, men den ble ikke funnet"
 
-#: apt-pkg/contrib/fileutl.cc:368
+#: apt-pkg/contrib/fileutl.cc:369
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Underprosessen %s mottok et minnefeilsignal."
 
-#: apt-pkg/contrib/fileutl.cc:371
+#: apt-pkg/contrib/fileutl.cc:372
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Underprosessen %s ga en feilkode (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:373
+#: apt-pkg/contrib/fileutl.cc:374
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Underprosessen %s avsluttet uventet"
 
-#: apt-pkg/contrib/fileutl.cc:417
+#: apt-pkg/contrib/fileutl.cc:418
 #, c-format
 msgid "Could not open file %s"
 msgstr "Kunne ikke åpne fila %s"
 
-#: apt-pkg/contrib/fileutl.cc:473
+#: apt-pkg/contrib/fileutl.cc:474
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "lese, har fremdeles %lu igjen å lese, men ingen igjen"
 
-#: apt-pkg/contrib/fileutl.cc:491
+#: apt-pkg/contrib/fileutl.cc:492
 msgid "Write error"
 msgstr "Skrivefeil"
 
-#: apt-pkg/contrib/fileutl.cc:503
+#: apt-pkg/contrib/fileutl.cc:504
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "skrive, har fremdeles %lu igjen å skrive, men klarte ikke å"
 
-#: apt-pkg/contrib/fileutl.cc:578
+#: apt-pkg/contrib/fileutl.cc:579
 msgid "Problem closing the file"
 msgstr "Problem ved låsing av fila"
 
-#: apt-pkg/contrib/fileutl.cc:584
+#: apt-pkg/contrib/fileutl.cc:585
 msgid "Problem unlinking the file"
 msgstr "Problem ved oppheving av lenke til fila"
 
-#: apt-pkg/contrib/fileutl.cc:595
+#: apt-pkg/contrib/fileutl.cc:596
 msgid "Problem syncing the file"
 msgstr "Problem ved oppdatering av fila"
 
@@ -2508,6 +2508,99 @@ msgstr "Feil størrelse"
 #, fuzzy, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Utgivers blokk %s er ugyldig"
+
+#: apt-pkg/cdrom.cc:487
+#, c-format
+msgid ""
+"Using CD-ROM mount point %s\n"
+"Mounting CD-ROM\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
+msgid "Identifying.. "
+msgstr ""
+
+#: apt-pkg/cdrom.cc:521
+#, c-format
+msgid "Stored Label: %s \n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:541
+#, c-format
+msgid "Using CD-ROM mount point %s\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:559
+msgid "Unmounting CD-ROM\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:563
+#, fuzzy
+msgid "Waiting for disc...\n"
+msgstr "Venter på hoder"
+
+#. Mount the new CDROM
+#: apt-pkg/cdrom.cc:571
+msgid "Mounting CD-ROM...\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:589
+msgid "Scanning Disc for index files..\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:627
+#, c-format
+msgid "Found %i package indexes, %i source indexes and %i signatures\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:684
+msgid "That is not a valid name, try again.\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:700
+#, c-format
+msgid ""
+"This Disc is called: \n"
+"'%s'\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:704
+#, fuzzy
+msgid "Copying package lists..."
+msgstr "Leser pakkelister"
+
+#: apt-pkg/cdrom.cc:728
+#, fuzzy
+msgid "Writing new source list\n"
+msgstr "Linje %u i kildelista %s er for lang"
+
+#: apt-pkg/cdrom.cc:737
+msgid "Source List entries for this Disc are:\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:771
+msgid "Unmounting CD-ROM..."
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:261
+#, c-format
+msgid "Wrote %i records.\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:263
+#, c-format
+msgid "Wrote %i records with %i missing files.\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:266
+#, c-format
+msgid "Wrote %i records with %i mismachted files\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:269
+#, c-format
+msgid "Wrote %i records with %i missing files and %i mismachted files\n"
+msgstr ""
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr "Ukjent selger ID «%s» i linje %u i kildelista %s"

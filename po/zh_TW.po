@@ -147,7 +147,7 @@ msgstr "  版本表格:"
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
+#: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:353 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
 #: cmdline/apt-get.cc:2313 cmdline/apt-sortpkgs.cc:144
 #, c-format
@@ -1667,7 +1667,7 @@ msgstr "連線逾時"
 msgid "Server closed the connection"
 msgstr "伺服器關閉聯線。"
 
-#: methods/ftp.cc:338 methods/rsh.cc:190 apt-pkg/contrib/fileutl.cc:452
+#: methods/ftp.cc:338 methods/rsh.cc:190 apt-pkg/contrib/fileutl.cc:453
 msgid "Read error"
 msgstr "讀取失敗。"
 
@@ -2067,54 +2067,54 @@ msgstr "不使用檔案鎖定於 nfs 掛載點上得檔案 %s"
 msgid "Could not get lock %s"
 msgstr "無法取得『%s』鎖。"
 
-#: apt-pkg/contrib/fileutl.cc:358
+#: apt-pkg/contrib/fileutl.cc:359
 #, c-format
 msgid "Waited, for %s but it wasn't there"
 msgstr "等待 %s 但是它不存在"
 
-#: apt-pkg/contrib/fileutl.cc:368
+#: apt-pkg/contrib/fileutl.cc:369
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "子程序 %s 收到一個記憶體錯誤"
 
-#: apt-pkg/contrib/fileutl.cc:371
+#: apt-pkg/contrib/fileutl.cc:372
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "子程序 %s 回傳錯誤碼(%u)"
 
-#: apt-pkg/contrib/fileutl.cc:373
+#: apt-pkg/contrib/fileutl.cc:374
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子程序 %s 不預期的結束"
 
-#: apt-pkg/contrib/fileutl.cc:417
+#: apt-pkg/contrib/fileutl.cc:418
 #, c-format
 msgid "Could not open file %s"
 msgstr "無法開啟『%s』檔案。"
 
-#: apt-pkg/contrib/fileutl.cc:473
+#: apt-pkg/contrib/fileutl.cc:474
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "讀取，仍有 %lu 未讀"
 
-#: apt-pkg/contrib/fileutl.cc:491
+#: apt-pkg/contrib/fileutl.cc:492
 msgid "Write error"
 msgstr "寫入失敗。"
 
-#: apt-pkg/contrib/fileutl.cc:503
+#: apt-pkg/contrib/fileutl.cc:504
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "寫入，仍有 %lu 待寫入但無法寫入"
 
-#: apt-pkg/contrib/fileutl.cc:578
+#: apt-pkg/contrib/fileutl.cc:579
 msgid "Problem closing the file"
 msgstr "程式關閉檔案"
 
-#: apt-pkg/contrib/fileutl.cc:584
+#: apt-pkg/contrib/fileutl.cc:585
 msgid "Problem unlinking the file"
 msgstr "程式刪除檔案"
 
-#: apt-pkg/contrib/fileutl.cc:595
+#: apt-pkg/contrib/fileutl.cc:596
 msgid "Problem syncing the file"
 msgstr "程式同步檔案"
 
@@ -2466,6 +2466,99 @@ msgstr "檔案大小不符合。"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "『%s』商家區段有錯誤。"
 
+#: apt-pkg/cdrom.cc:487
+#, c-format
+msgid ""
+"Using CD-ROM mount point %s\n"
+"Mounting CD-ROM\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
+msgid "Identifying.. "
+msgstr ""
+
+#: apt-pkg/cdrom.cc:521
+#, c-format
+msgid "Stored Label: %s \n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:541
+#, c-format
+msgid "Using CD-ROM mount point %s\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:559
+msgid "Unmounting CD-ROM\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:563
+#, fuzzy
+msgid "Waiting for disc...\n"
+msgstr "等待標頭"
+
+#. Mount the new CDROM
+#: apt-pkg/cdrom.cc:571
+msgid "Mounting CD-ROM...\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:589
+msgid "Scanning Disc for index files..\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:627
+#, c-format
+msgid "Found %i package indexes, %i source indexes and %i signatures\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:684
+msgid "That is not a valid name, try again.\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:700
+#, fuzzy, c-format
+msgid ""
+"This Disc is called: \n"
+"'%s'\n"
+msgstr "這個碟片名為："
+
+#: apt-pkg/cdrom.cc:704
+#, fuzzy
+msgid "Copying package lists..."
+msgstr "讀取套件清單中"
+
+#: apt-pkg/cdrom.cc:728
+#, fuzzy
+msgid "Writing new source list\n"
+msgstr "來源檔『%2$s』第 %1$u 行太長。"
+
+#: apt-pkg/cdrom.cc:737
+msgid "Source List entries for this Disc are:\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:771
+msgid "Unmounting CD-ROM..."
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:261
+#, c-format
+msgid "Wrote %i records.\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:263
+#, c-format
+msgid "Wrote %i records with %i missing files.\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:266
+#, c-format
+msgid "Wrote %i records with %i mismachted files\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:269
+#, c-format
+msgid "Wrote %i records with %i missing files and %i mismachted files\n"
+msgstr ""
+
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr "來源檔『%3$s』第 %2$u 行的『%1$s』商家名稱有錯誤。"
 
@@ -2479,9 +2572,6 @@ msgstr "『%s』商家區段有錯誤。"
 
 #~ msgid "Please insert a Disc in the drive and press enter"
 #~ msgstr "請把碟片插入碟機，然後按 [Enter] 鍵。"
-
-#~ msgid "This Disc is called:"
-#~ msgstr "這個碟片名為："
 
 #~ msgid "Done. "
 #~ msgstr "完成。"
