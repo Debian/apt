@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.39 1999/10/18 03:44:39 jgg Exp $
+// $Id: apt-cache.cc,v 1.40 1999/10/18 04:15:25 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -613,6 +613,8 @@ bool ShowSrcPackage(CommandLine &CmdL)
 
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
+      SrcRecs.Restart();
+      
       pkgSrcRecords::Parser *Parse;
       while ((Parse = SrcRecs.Find(*I,false)) != 0)
 	 cout << Parse->AsStr();
