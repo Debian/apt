@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.20 2003/02/09 20:31:05 doogie Exp $
+// $Id: init.cc,v 1.21 2004/02/27 00:46:44 mdz Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -132,7 +132,7 @@ bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys)
       }
       
       if (Sys == 0)
-	 return _error->Error(_("Unable to determine a suitable system type"));
+	 return _error->Error(_("Unable to determine a suitable packaging system type"));
    }
    
    return Sys->Initialize(Cnf);
