@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.36 1999/08/28 03:22:34 jgg Exp $
+// $Id: acquire-item.cc,v 1.37 1999/09/01 07:01:14 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -565,7 +565,7 @@ void pkgAcqArchive::Finished()
 /* The file is added to the queue */
 pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
 		       unsigned long Size,string Dsc,string ShortDesc) :
-                       Item(Owner), MD5(MD5)
+                       Item(Owner), Md5Hash(MD5)
 {
    DestFile = flNotDir(URI);
    
@@ -597,6 +597,18 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
 /* */
 void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
 {
+   // Check the md5
+   if (Md5Hash.empty() == false && MD5.empty() == false)
+   {
+      if (Md5Hash != MD5)
+      {
+	 Status = StatError;
+	 ErrorText = "MD5Sum mismatch";
+	 Rename(DestFile,DestFile + ".FAILED");
+	 return;
+      }
+   }
+   
    Item::Done(Message,Size,MD5);
 
    string FileName = LookupTag(Message,"Filename");
