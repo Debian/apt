@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.14 1999/01/27 02:48:53 jgg Exp $
+// $Id: deblistparser.cc,v 1.15 1999/02/01 02:22:11 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -65,6 +65,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 {
    // Parse the section
    Ver->Section = UniqFindTagWrite("Section");
+   Ver->Arch = UniqFindTagWrite("Architecture");
    
    // Archive Size
    Ver->Size = (unsigned)Section.FindI("Size");

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.15 1998/12/14 08:07:29 jgg Exp $
+// $Id: pkgcache.h,v 1.16 1999/02/01 02:22:11 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -227,7 +227,8 @@ struct pkgCache::Version
 {
    __apt_ptrloc VerStr;            // Stringtable
    __apt_ptrloc Section;           // StringTable (StringItem)
-   
+   __apt_ptrloc Arch;              // StringTable
+      
    // Lists
    __apt_ptrloc FileList;          // VerFile
    __apt_ptrloc NextVer;           // Version

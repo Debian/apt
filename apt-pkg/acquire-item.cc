@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.21 1999/01/31 22:25:34 jgg Exp $
+// $Id: acquire-item.cc,v 1.22 1999/02/01 02:22:11 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -59,7 +59,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    {
       /* This indicates that the file is not available right now but might
          be sometime later. If we do a retry cycle then this should be
-	 retried */
+	 retried [CDROMs] */
       if (Cnf->LocalOnly == true &&
 	  StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
       {
@@ -75,7 +75,8 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Stash status and the file size. Note that setting Complete means 
+   sub-phases of the acquire process such as decompresion are operating */
 void pkgAcquire::Item::Start(string Message,unsigned long Size)
 {
    Status = StatFetching;
@@ -349,7 +350,8 @@ void pkgAcqIndexRel::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 
 // AcqArchive::AcqArchive - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This just sets up the initial fetch environment and queues the first
+   possibilitiy */
 pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 			     pkgRecords *Recs,pkgCache::VerIterator const &Version,
 			     string &StoreFilename) :
@@ -358,6 +360,11 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 {
    Retries = _config->FindI("Acquire::Retries",0);
       
+   // Generate the final file name as: package_version_arch.deb
+   StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
+                   QuoteString(Version.VerStr(),"_:") + '_' +
+                   QuoteString(Version.Arch(),"_:") + ".deb";
+   
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
       _error->Error("I wasn't able to locate file for the %s package. "
@@ -367,7 +374,9 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 									/*}}}*/
 // AcqArchive::QueueNext - Queue the next file source			/*{{{*/
 // ---------------------------------------------------------------------
-/* This queues the next available file version for download. */
+/* This queues the next available file version for download. It checks if
+   the archive is already available in the cache and stashs the MD5 for
+   checking later. */
 bool pkgAcqArchive::QueueNext()
 {
    for (; Vf.end() == false; Vf++)
@@ -398,7 +407,7 @@ bool pkgAcqArchive::QueueNext()
 			      "field for package %s."
 			      ,Version.ParentPkg().Name());
 
-      // See if we already have the file.
+      // See if we already have the file. (Legacy filenames)
       FileSize = Version->Size;
       string FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(PkgFile);
       struct stat Buf;
@@ -418,8 +427,27 @@ bool pkgAcqArchive::QueueNext()
 	    happen.. */
 	 unlink(FinalFile.c_str());
       }
-      
-      DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(PkgFile);
+
+      // Check it again using the new style output filenames
+      FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(StoreFilename);
+      if (stat(FinalFile.c_str(),&Buf) == 0)
+      {
+	 // Make sure the size matches
+	 if ((unsigned)Buf.st_size == Version->Size)
+	 {
+	    Complete = true;
+	    Local = true;
+	    Status = StatDone;
+	    StoreFilename = DestFile = FinalFile;
+	    return true;
+	 }
+	 
+	 /* Hmm, we have a file and its size does not match, this shouldnt
+	    happen.. */
+	 unlink(FinalFile.c_str());
+      }
+
+      DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
       
       // Create the item
       Desc.URI = Location->ArchiveURI(PkgFile);
@@ -479,7 +507,7 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
    
    // Done, move it into position
    string FinalFile = _config->FindDir("Dir::Cache::Archives");
-   FinalFile += flNotDir(DestFile);
+   FinalFile += flNotDir(StoreFilename);
    Rename(DestFile,FinalFile);
    
    StoreFilename = DestFile = FinalFile;

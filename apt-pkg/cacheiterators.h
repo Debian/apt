@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.11 1998/12/14 08:07:28 jgg Exp $
+// $Id: cacheiterators.h,v 1.12 1999/02/01 02:22:11 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -120,6 +120,7 @@ class pkgCache::VerIterator
    
    inline const char *VerStr() const {return Ver->VerStr == 0?0:Owner.StrP + Ver->VerStr;};
    inline const char *Section() const {return Ver->Section == 0?0:Owner.StrP + Ver->Section;};
+   inline const char *Arch() const {return Ver->Arch == 0?0:Owner.StrP + Ver->Arch;};
    inline PkgIterator ParentPkg() const {return PkgIterator(Owner,Owner.PkgP + Ver->ParentPkg);};
    inline DepIterator DependsList() const;
    inline PrvIterator ProvidesList() const;
