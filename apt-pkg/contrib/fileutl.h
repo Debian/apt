@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.3 1998/07/12 23:58:49 jgg Exp $
+// $Id: fileutl.h,v 1.4 1998/07/19 04:42:13 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -28,7 +28,7 @@
 
 #include <string>
 
-class File
+class FileFd
 {
    protected:
    int iFd;
@@ -38,7 +38,7 @@ class File
    string FileName;
    
    public:
-   enum OpenMode {ReadOnly,WriteEmpty,WriteExists};
+   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,LockEmpty};
    
    bool Read(void *To,unsigned long Size);
    bool Write(void *From,unsigned long Size);
@@ -53,13 +53,13 @@ class File
    inline void EraseOnFailure() {Flags |= DelOnFail;};
    inline void OpFail() {Flags |= Fail;};
       
-   File(string FileName,OpenMode Mode,unsigned long Perms = 0666);
-   File(int Fd) : iFd(Fd), Flags(AutoClose) {};
-   File(int Fd,bool) : iFd(Fd), Flags(0) {};
-   virtual ~File();
+   FileFd(string FileName,OpenMode Mode,unsigned long Perms = 0666);
+   FileFd(int Fd) : iFd(Fd), Flags(AutoClose) {};
+   FileFd(int Fd,bool) : iFd(Fd), Flags(0) {};
+   virtual ~FileFd();
 };
 
-bool CopyFile(string From,string To);
+bool CopyFile(FileFd From,FileFd To);
 int GetLock(string File,bool Errors = true);
 bool FileExists(string File);
 string SafeGetCWD();

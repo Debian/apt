@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.9 1998/07/19 04:22:06 jgg Exp $
+// $Id: tagfile.cc,v 1.10 1998/07/19 04:42:10 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -25,7 +25,7 @@
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgTagFile::pkgTagFile(File &Fd,unsigned long Size) : Fd(Fd), Size(Size)
+pkgTagFile::pkgTagFile(FileFd &Fd,unsigned long Size) : Fd(Fd), Size(Size)
 {
    Buffer = new char[Size];
    Start = End = Buffer;

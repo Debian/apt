@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.3 1998/07/19 04:22:10 jgg Exp $
+// $Id: apt-cache.cc,v 1.4 1998/07/19 04:42:18 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache file.
@@ -217,7 +217,7 @@ bool DumpAvail(pkgCache &Cache)
 	 return _error->Error("Package file %s is out of sync.",I.FileName());
       }
       
-      File PkgF(I.FileName(),File::ReadOnly);
+      FileFd PkgF(I.FileName(),FileFd::ReadOnly);
       if (_error->PendingError() == true)
       {
 	 delete [] Buffer;
@@ -260,7 +260,7 @@ bool DoAdd(int argc,char *argv[])
    string Ver;
    
    // Open the cache
-   File CacheF(CacheFile,File::WriteEmpty);
+   FileFd CacheF(CacheFile,FileFd::WriteEmpty);
    if (_error->PendingError() == true)
       return false;
    
@@ -279,7 +279,7 @@ bool DoAdd(int argc,char *argv[])
       cout << FileName << endl;
       
       // Do the merge
-      File TagF(FileName.c_str(),File::ReadOnly);
+      FileFd TagF(FileName.c_str(),FileFd::ReadOnly);
       debListParser Parser(TagF);
       if (_error->PendingError() == true)
 	 return _error->Error("Problem opening %s",FileName.c_str());
@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
       }
 
       // Open the cache file
-      File CacheF(CacheFile,File::ReadOnly);
+      FileFd CacheF(CacheFile,FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 break;
       

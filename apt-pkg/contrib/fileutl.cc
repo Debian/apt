@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.5 1998/07/15 05:56:43 jgg Exp $
+// $Id: fileutl.cc,v 1.6 1998/07/19 04:42:12 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -29,7 +29,7 @@
 // CopyFile - Buffered copy of a file					/*{{{*/
 // ---------------------------------------------------------------------
 /* The caller is expected to set things so that failure causes erasure */
-bool CopyFile(File From,File To)
+bool CopyFile(FileFd From,FileFd To)
 {
    if (From.IsOpen() == false || To.IsOpen() == false)
       return false;
@@ -108,10 +108,10 @@ string SafeGetCWD()
 }
 									/*}}}*/
 
-// File::File - Open a file						/*{{{*/
+// FileFd::FileFd - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */
-File::File(string FileName,OpenMode Mode, unsigned long Perms)
+FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
 {
    Flags = AutoClose;
    switch (Mode)
@@ -128,6 +128,11 @@ File::File(string FileName,OpenMode Mode, unsigned long Perms)
       case WriteExists:
       iFd = open(FileName.c_str(),O_RDWR);
       break;
+      
+      // Dont use this in public directories
+      case LockEmpty:
+      iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_TRUNC,Perms);
+      break;
    }  
 
    if (iFd < 0)
@@ -136,19 +141,19 @@ File::File(string FileName,OpenMode Mode, unsigned long Perms)
       this->FileName = FileName;
 }
 									/*}}}*/
-// File::~File - Closes the file					/*{{{*/
+// FileFd::~File - Closes the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* If the proper modes are selected then we close the Fd and possibly
    unlink the file on error. */
-File::~File()
+FileFd::~FileFd()
 {
    Close();
 }
 									/*}}}*/
-// File::Read - Read a bit of the file					/*{{{*/
+// FileFd::Read - Read a bit of the file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool File::Read(void *To,unsigned long Size)
+bool FileFd::Read(void *To,unsigned long Size)
 {
    if (read(iFd,To,Size) != (signed)Size)
    {
@@ -159,10 +164,10 @@ bool File::Read(void *To,unsigned long Size)
    return true;
 }
 									/*}}}*/
-// File::Write - Write to the file					/*{{{*/
+// FileFd::Write - Write to the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool File::Write(void *From,unsigned long Size)
+bool FileFd::Write(void *From,unsigned long Size)
 {
    if (write(iFd,From,Size) != (signed)Size)
    {
@@ -173,10 +178,10 @@ bool File::Write(void *From,unsigned long Size)
    return true;
 }
 									/*}}}*/
-// File::Seek - Seek in the file					/*{{{*/
+// FileFd::Seek - Seek in the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool File::Seek(unsigned long To)
+bool FileFd::Seek(unsigned long To)
 {
    if (lseek(iFd,To,SEEK_SET) != (signed)To)
    {
@@ -187,10 +192,10 @@ bool File::Seek(unsigned long To)
    return true;
 }
 									/*}}}*/
-// File::Size - Return the size of the file				/*{{{*/
+// FileFd::Size - Return the size of the file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned long File::Size()
+unsigned long FileFd::Size()
 {
    struct stat Buf;
    if (fstat(iFd,&Buf) != 0)
@@ -198,10 +203,10 @@ unsigned long File::Size()
    return Buf.st_size;
 }
 									/*}}}*/
-// File::Close - Close the file	if the close flag is set		/*{{{*/
+// FileFd::Close - Close the file if the close flag is set		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool File::Close()
+bool FileFd::Close()
 {
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)

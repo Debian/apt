@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.7 1998/07/16 06:08:42 jgg Exp $
+// $Id: deblistparser.cc,v 1.8 1998/07/19 04:42:16 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -21,7 +21,7 @@
 // ListParser::debListParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debListParser::debListParser(File &File) : Tags(File)
+debListParser::debListParser(FileFd &File) : Tags(File)
 {
 }
 									/*}}}*/
