@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.57 2004/01/07 20:39:38 mdz Exp $
+// $Id: http.cc,v 1.58 2004/02/27 00:52:41 mdz Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -637,7 +637,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       {
 	 if (Itm->IndexFile == true)
 	    sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
-		    _config->FindI("Acquire::http::Max-Age",60*60*24));
+		    _config->FindI("Acquire::http::Max-Age",0));
 	 else
 	 {
 	    if (_config->FindB("Acquire::http::No-Store",false) == true)
