@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.9 2003/12/26 20:50:01 mdz Exp $
+// $Id: writer.cc,v 1.10 2003/12/26 23:09:30 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -799,6 +799,13 @@ ReleaseWriter::ReleaseWriter(string DB)
 {
    AddPattern("Packages");
    AddPattern("Packages.gz");
+   AddPattern("Packages.bz2");
+   AddPattern("Sources");
+   AddPattern("Sources.gz");
+   AddPattern("Sources.bz2");
+   AddPattern("Release");
+   AddPattern("md5sum.txt");
+
    Output = stdout;
    time_t now = time(NULL);
    char datestr[128];
