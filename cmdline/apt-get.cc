@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.92 1999/12/09 05:22:33 jgg Exp $
+// $Id: apt-get.cc,v 1.93 1999/12/10 06:30:42 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -47,7 +47,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/vfs.h>
+#include <sys/statvfs.h>
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -629,9 +629,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       return false;
 
    // Check for enough free space
-   struct statfs Buf;
+   struct statvfs Buf;
    string OutputDir = _config->FindDir("Dir::Cache::Archives");
-   if (statfs(OutputDir.c_str(),&Buf) != 0)
+   if (statvfs(OutputDir.c_str(),&Buf) != 0)
       return _error->Errno("statfs","Couldn't determine free space in %s",
 			   OutputDir.c_str());
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)

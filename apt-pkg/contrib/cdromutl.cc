@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.9 1999/08/30 07:48:04 jgg Exp $
+// $Id: cdromutl.cc,v 1.10 1999/12/10 06:30:42 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -21,7 +21,7 @@
 
 #include <sys/wait.h>
 #include <sys/errno.h>
-#include <sys/vfs.h>
+#include <sys/statvfs.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -183,8 +183,8 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    // Some stats from the fsys
    if (_config->FindB("Debug::identcdrom",false) == false)
    {
-      struct statfs Buf;
-      if (statfs(CD.c_str(),&Buf) != 0)
+      struct statvfs Buf;
+      if (statvfs(CD.c_str(),&Buf) != 0)
 	 return _error->Errno("statfs","Failed to stat the cdrom");
       
       // We use a kilobyte block size to advoid overflow

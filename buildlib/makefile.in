@@ -31,13 +31,20 @@ maintainer-clean dist-clean pristine sanity distclean:
 .PHONY: dirs
 MISSING_DIRS:=	$(filter-out $(wildcard $(SUBDIRS)),$(SUBDIRS))
 dirs:
+	@rm -f include/sys
 ifneq ($(words $(MISSING_DIRS)),0)
 	@mkdir  $(MISSING_DIRS)
 else
 	@echo > /dev/null
 endif	
 ifeq ($(HAVE_C9X),yes)
-	-@rm include/inttypes.h > /dev/null 2>&1
+	@rm -f include/inttypes.h > /dev/null 2>&1
 else
 	@cp $(SRCDIR)/buildlib/inttypes.h.in include/inttypes.h
+endif
+ifeq ($(HAVE_STATVFS),yes)
+	@rm -f include/statvfs.h > /dev/null 2>&1
+else
+	@cp $(SRCDIR)/buildlib/statvfs.h.in include/statvfs.h
+	ln -sf . include/sys
 endif

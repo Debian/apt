@@ -94,6 +94,10 @@ AC_CACHE_CHECK([for C9x integer types],c9x_ints,[
                    [uint8_t Foo1;uint16_t Foo2;uint32_t Foo3;uint64_t Foo],
 		   c9x_ints=yes,c9x_ints=no)])
 
+dnl Single Unix Spec statvfs
+AC_CHECK_FUNC(statvfs)
+AC_SUBST(HAVE_STATVFS)
+
 dnl Check the sizes etc. of the architecture
 changequote(,)
 if archline="`grep \"^$archset\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`";then

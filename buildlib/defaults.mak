@@ -40,11 +40,23 @@ BUILD_POSSIBLE := $(BASE) $(BASE)/build-$(shell uname -m) $(BASE)/build
 endif
 
 BUILDX:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak*))
-BUILDX:= $(patsubst %/,%,$(firstword $(dir $(BUILDX))))
 
 ifeq ($(words $(BUILDX)),0)
-error-all:
+
+# Check for a busted wildcard function. We use this function in several 
+# places, it must work.
+ifeq ($(words $(wildcard *)),0)
+error-all/environment.mak:
+	echo You have a broken version of GNU Make - upgrade.
+else
+error-all/environment.mak:
 	echo Can't find the build directory in $(BUILD_POSSIBLE) -- use BUILD=
+endif
+
+# Force include below to come to the error target
+BUILDX := error-all
+else
+BUILDX:= $(patsubst %/,%,$(firstword $(dir $(BUILDX))))
 endif
 
 override BUILD := $(BUILDX)
