@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.2 1998/12/04 22:56:55 jgg Exp $
+// $Id: cdrom.cc,v 1.3 1998/12/05 01:45:21 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -34,7 +34,8 @@ class CDROMMethod : public pkgAcqMethod
 // CDROMMethod::CDROMethod - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly) 
+CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly | 
+					  SendConfig)
 {
    // Read the database
    string DFile = _config->FindFile("Dir::State::cdroms");
@@ -104,6 +105,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    }
    
    string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   if (CDROM[0] == '.')
+      CDROM= SafeGetCWD() + '/' + CDROM;
    string NewID;
    while (1)
    {
@@ -117,8 +120,9 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       UnmountCdrom(CDROM);
       if (MediaFail(Get.Host,CDROM) == false)
       {
-	 ID = "FAIL";
-	 break;
+	 CurrentID = "FAIL";
+	 Fail("Wrong CD",true);
+	 return true;
       }
       
       MountCdrom(CDROM);

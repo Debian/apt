@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.14 1998/12/04 21:16:47 jgg Exp $
+// $Id: acquire-worker.cc,v 1.15 1998/12/05 01:45:20 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -460,7 +460,8 @@ bool pkgAcquire::Worker::InFdReady()
    read returned -1. */
 bool pkgAcquire::Worker::MethodFailure()
 {
-   cerr << "Method " << Access << " has died unexpectedly!" << endl;
+   _error->Error("Method %s has died unexpectedly!",Access.c_str());
+   
    if (waitpid(Process,0,0) != Process)
       _error->Warning("I waited but nothing was there!");
    Process = -1;

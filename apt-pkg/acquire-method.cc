@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.12 1998/12/04 22:56:50 jgg Exp $
+// $Id: acquire-method.cc,v 1.13 1998/12/05 01:45:19 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -205,11 +205,11 @@ bool pkgAcqMethod::MediaFail(string Required,string Drive)
    while (1)
    {
       if (WaitFd(STDIN_FILENO) == false)
-	 exit(0);
+	 return false;
       
       if (ReadMessages(STDIN_FILENO,MyMessages) == false)
-	 exit(0);
-      
+	 return false;
+
       string Message = MyMessages.front();
       MyMessages.erase(MyMessages.begin());
       
@@ -225,13 +225,13 @@ bool pkgAcqMethod::MediaFail(string Required,string Drive)
       // Change ack
       if (Number == 603)
       {
-	 while (Message.empty() == false)
+	 while (MyMessages.empty() == false)
 	 {
 	    Messages.push_back(MyMessages.front());
 	    MyMessages.erase(MyMessages.begin());
 	 }
 
-	 return StringToBool(LookupTag(Message,"Fail"),false);
+	 return !StringToBool(LookupTag(Message,"Fail"),false);
       }
       
       Messages.push_back(Message);
