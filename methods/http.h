@@ -1,5 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: http.h,v 1.6 1998/12/10 05:39:56 jgg Exp $
+// Description								/*{{{*/// $Id: http.h,v 1.7 1999/12/09 03:45:56 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -87,6 +87,7 @@ struct ServerState
    bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;
    enum {Header, Data} State;
+   bool Pipeline;
    
    HttpMethod *Owner;
    
@@ -99,7 +100,8 @@ struct ServerState
    bool HeaderLine(string Line);
    bool Comp(URI Other) {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
-                 Encoding = Closes; time(&Date); ServerFd = -1;};
+                 Encoding = Closes; time(&Date); ServerFd = -1; 
+                 Pipeline = true;};
    int RunHeaders();
    bool RunData();
    

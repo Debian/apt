@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.40 1999/11/29 23:20:27 jgg Exp $
+// $Id: http.cc,v 1.41 1999/12/09 03:45:56 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -934,8 +934,13 @@ bool HttpMethod::Fetch(FetchItem *)
    // Queue the requests
    int Depth = -1;
    bool Tail = false;
-   for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; I = I->Next, Depth++)
+   for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; 
+	I = I->Next, Depth++)
    {
+      // If pipelining is disabled, we only queue 1 request
+      if (Server->Pipeline == false && Depth >= 0)
+	 break;
+      
       // Make sure we stick with the same server
       if (Server->Comp(I->Uri) == false)
 	 break;
@@ -946,7 +951,7 @@ bool HttpMethod::Fetch(FetchItem *)
 	 QueueBack = I->Next;
 	 SendReq(I,Server->Out);
 	 continue;
-      }	 
+      }
    }
    
    return true;
@@ -1041,7 +1046,8 @@ int HttpMethod::Loop()
 	    FailCounter++;
 	    _error->Discard();
 	    Server->Close();
-
+	    Server->Pipeline = false;
+	    
 	    if (FailCounter >= 2)
 	    {
 	       Fail("Connection failed",true);
