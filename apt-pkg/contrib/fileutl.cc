@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.11 1998/10/22 04:56:47 jgg Exp $
+// $Id: fileutl.cc,v 1.12 1998/10/24 22:15:41 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -195,8 +195,10 @@ FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
    if (iFd < 0)
       _error->Errno("open","Could not open file %s",FileName.c_str());
    else
+   {
       this->FileName = FileName;
-   SetCloseExec(iFd,true);
+      SetCloseExec(iFd,true);
+   }   
 }
 									/*}}}*/
 // FileFd::~File - Closes the file					/*{{{*/
