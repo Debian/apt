@@ -2,6 +2,7 @@
 set -e
 
 # Get the configuration from /etc/apt/apt.conf
+CLEAN="prompt"
 OPTS="-f"
 APTGET="/usr/bin/apt-get"
 APTCACHE="/usr/bin/apt-cache"
@@ -11,28 +12,34 @@ APT_OPT0="-oDir::State::status=$1/status"
 APT_OPT1="-oDPkg::Options::=$DPKG_OPTS"
 CACHEDIR="/var/cache/apt"
 PROMPT="false"
-RES=`apt-config shell OPTS DSelect::UpdateOptions \
-      DPKG Dir::Bin::dpkg/f APTGET Dir::Bin::apt-get/f \
-      APTCACHE Dir::Bin::apt-cache/f CACHEDIR Dir::Cache/d \
-      PROMPT DSelect::PromptAfterUpdate/b`
+RES=`apt-config shell CLEAN DSelect::Clean OPTS DSelect::UpdateOptions \
+		      DPKG Dir::Bin::dpkg/f APTGET Dir::Bin::apt-get/f \
+		      APTCACHE Dir::Bin::apt-cache/f CACHEDIR Dir::Cache/d \
+		      PROMPT DSelect::PromptAfterUpdate/b`
 eval $RES
 
 # It looks slightly ugly to have a double / in the dpkg output
 CACHEDIR=`echo $CACHEDIR | sed -e "s|/$||"`
 
-set +e
-FAILED=0
-$APTGET $OPTS "$APT_OPT0" "$APT_OPT1" update || FAILED=1
-set -e
+STATUS=1
+if $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" update
+then
+    echo "Merging Available information"
+    rm -f $CACHEDIR/available
+    $APTCACHE dumpavail > $CACHEDIR/available
+    $DPKG "$DPKG_OPTS" --update-avail $CACHEDIR/available
+    rm -f $CACHEDIR/available
 
-echo "Merging Available information"
-rm -f $CACHEDIR/available
-$APTCACHE dumpavail > $CACHEDIR/available
-$DPKG "$DPKG_OPTS" --update-avail $CACHEDIR/available
-rm -f $CACHEDIR/available
+    case "$CLEAN" in
+	Pre-Auto|PreAuto|pre-auto)
+	    $APTGET "$APT_OPT0" "$APT_OPT1" autoclean;;
+    esac
+
+    STATUS=0
+fi
 
 if [ x$PROMPT = "xtrue" ]; then
    echo "Press enter to continue." && read RES;
 fi
 
-exit $FAILED
+exit $STATUS
