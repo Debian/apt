@@ -1,15 +1,15 @@
 # Catalan translation of APT.
-# Copyright © 2002, 2003, 2004 Software in the Public Interest, Inc.
+# Copyright © 2002, 2003, 2004, 2005 Software in the Public Interest, Inc.
 # Antoni Bella Perez <bella5@teleline.es>, 2002, 2003.
 # Matt Bonner <mateubonet@yahoo.com>, 2003.
-# Jordi Mallach <jordi@debian.org>, 2004.
+# Jordi Mallach <jordi@debian.org>, 2004, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.27\n"
+"Project-Id-Version: apt 0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2004-08-09 18:45+0100\n"
+"PO-Revision-Date: 2005-02-15 18:53+0100\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -325,7 +325,6 @@ msgid "Error Processing Contents %s"
 msgstr "S'ha produït un error en processar el fitxer de continguts %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -367,11 +366,11 @@ msgid ""
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
 "Forma d'ús: apt-ftparchive [opcions] ordre\n"
-"Ordres:   packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          reease path\n"
-"          generate config [groups]\n"
+"Ordres:   packages camí_binaris [fitxer_substitucions prefix_camí]]\n"
+"          sources camí_fonts [fitxer_substitucions [prefix_camí]]\n"
+"          contents camí\n"
+"          release camí\n"
+"          generate config [grups]\n"
 "          clean config\n"
 "\n"
 "apt-ftparchive genera fitxers d'índex per als arxius de Debian.\n"
@@ -388,9 +387,9 @@ msgstr ""
 "fitxer de substitucions de src.\n"
 "\n"
 "L'ordre «packages» i «sources» hauria d'executar-se en l'arrel de\n"
-"l'arbre. BinaryPath hauria de ser el punt base de la recerca recursiva\n"
-"i el fitxer de substitucions hauria de contenir etiquetes de substitució.\n"
-"Pathprefix s'afegeix als camps del nom de fitxer si està present.\n"
+"l'arbre. CamíBinaris hauria de ser el punt base de la recerca recursiva\n"
+"i el fitxer de substitucions hauria de contenir senyaladors de substitució.\n"
+"Prefixcamí s'afegeix als camps del nom de fitxer si està present.\n"
 "Exemple d'ús a l'arxiu de Debian:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
@@ -402,7 +401,7 @@ msgstr ""
 "  -q    Silenciós\n"
 "  -d=?  Selecciona la base de dades de memòria cau opcional\n"
 "  --no-delink Habilita el mode de depuració delink\n"
-"  --contents  Controla la generació del fitxer de continguts\n"
+"  --contents  Genera el fitxer amb els continguts de control\n"
 "  -c=?  Llegeix aquest fitxer de configuració\n"
 "  -o=?  Estableix una opció de configuració arbitrària"
 
@@ -753,17 +752,16 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "Dependències sense satisfer. Proveu-ho usant -f."
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "S'actualitzaran els següents paquets:"
+msgstr "AVÍS: No es poden autenticar els següents paquets!"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "Voleu instal·lar aquestas paquets sense verificar-los? [y/N] "
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "No s'ha pogut autenticar alguns paquets"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
@@ -1583,9 +1581,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Aquest no és un arxiu DEB vàlid, falta el membre '%s'"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Aquest no és un arxiu DEB vàlid, falta el membre '%s'"
+msgstr "Aquest no és un arxiu DEB vàlid, falten els membres «%s» o «%s»"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -2512,9 +2510,9 @@ msgid "Size mismatch"
 msgstr "Mida diferent"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "El camp del proveïdor %s no és vàlid"
+msgstr "El camp del proveïdor %s no té una empremta digital"
 
 #: apt-pkg/cdrom.cc:487
 #, c-format
@@ -2522,47 +2520,48 @@ msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
 msgstr ""
+"S'està utilitzant el punt de muntatge de CD-ROM %s\n"
+"S'està muntant el CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
-msgstr ""
+msgstr "S'està identificant..."
 
 #: apt-pkg/cdrom.cc:521
 #, c-format
 msgid "Stored Label: %s \n"
-msgstr ""
+msgstr "S'ha emmagatzemat l'etiqueta: %s\n"
 
 #: apt-pkg/cdrom.cc:541
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr ""
+msgstr "S'està utilitzant el punt de muntatge de CD-ROM %s\n"
 
 #: apt-pkg/cdrom.cc:559
 msgid "Unmounting CD-ROM\n"
-msgstr ""
+msgstr "S'està desmuntant el CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "S'estan esperant les capçaleres"
+msgstr "S'està esperant al disc...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
 msgid "Mounting CD-ROM...\n"
-msgstr ""
+msgstr "S'està muntant el CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:589
 msgid "Scanning Disc for index files..\n"
-msgstr ""
+msgstr "S'està analitzant el disc per a fitxers d'índex...\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "S'han trobat %i índex de paquets, %i índex de fonts i %i signatures\n"
 
 #: apt-pkg/cdrom.cc:684
 msgid "That is not a valid name, try again.\n"
-msgstr ""
+msgstr "Aquest no és un nom vàlid, torneu-ho a provar.\n"
 
 #: apt-pkg/cdrom.cc:700
 #, c-format
@@ -2570,44 +2569,44 @@ msgid ""
 "This Disc is called: \n"
 "'%s'\n"
 msgstr ""
+"El disc es diu:\n"
+"«%s»\n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "S'està llegint la llista de paquets"
+msgstr "S'estan copiant les llistes de paquets..."
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "La línia %u és massa llarga en la llista de fonts %s."
+msgstr "S'està escrivint una nova llista de fonts\n"
 
 #: apt-pkg/cdrom.cc:737
 msgid "Source List entries for this Disc are:\n"
-msgstr ""
+msgstr "Les entrades de la llista de fonts per a aquest disc són:\n"
 
 #: apt-pkg/cdrom.cc:771
 msgid "Unmounting CD-ROM..."
-msgstr ""
+msgstr "S'esta desmuntant el CD-ROM..."
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "S'han escrit %i registres.\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "S'han escrit %i registres, on falten %i fitxers.\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "S'han escrit %i registres, on hi ha %i fitxers no coincidents\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
-msgstr ""
+msgstr "S'han escrit %i registres, on falten %i fitxers i hi ha %i fitxers no coincidents\n"
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr ""
