@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-01-27 07:50+0100\n"
 "Last-Translator: Bart Cornelis <cobaco@linux.be>\n"
 "Language-Team: debian-l10n-dutch <debian-l10n-dutch@lists.debian.org>\n"
@@ -420,26 +420,31 @@ msgstr "Er waren geen passende selecties"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Sommige bestanden zijn niet aanwezig in de pakketbestandsgroep '%s'"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "DB is beschadigd, bestand hernoemd naar %s.old"
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
 #, c-format
-msgid "Unable to open DB2 file %s"
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
+#, fuzzy, c-format
+msgid "Unable to open DB file %s"
 msgstr "DB2 bestand %s kan niet geopend worden"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, c-format
 msgid "File date has changed %s"
 msgstr "Bestandsdatum is veranderd %s"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
 msgstr "Archief heeft geen 'control'-record"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
 msgstr "Kan geen cursor verkrijgen"
 
@@ -1452,7 +1457,7 @@ msgstr "Pakket-overeenkomst wordt overschreven met 'no version' voor %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Het bestand %s/%s overschrijft het bestand van pakket %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1946,44 +1951,49 @@ msgstr "Onbekende typeafkorting '%c'"
 msgid "Opening configuration file %s"
 msgstr "Configuratiebestand %s wordt geopend"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Regel %u van de bronlijst %s is te lang."
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Syntaxfout %s:%u: Blok start zonder naam"
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "Syntaxfout %s:%u: Verkeerd gevormde markering"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Syntaxfout %s:%u: Extra rommel na waarde"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Syntaxfout %s:%u: Richtlijnen kunnen enkel op het hoogste niveau gegeven "
 "worden"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Syntaxfout %s:%u: Teveel geneste invoegingen"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Syntaxfout %s:%u: Van hier ingevoegd"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Syntaxfout %s:%u: Niet-ondersteunde richtlijn '%s'"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Syntaxfout %s:%u: Extra rommel aan het einde van het bestand"

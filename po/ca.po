@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-01-28 16:18+0100\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -414,26 +414,31 @@ msgstr "No s'ha trobat cap selecció"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "No es troben alguns fitxers dins del grup de fitxers del paquet `%s'"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "La base de dades està corrompuda, fitxer renomenat a %s.old"
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
 #, c-format
-msgid "Unable to open DB2 file %s"
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
+#, fuzzy, c-format
+msgid "Unable to open DB file %s"
 msgstr "No es pot obrir la base de dades (DB2) %s"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, c-format
 msgid "File date has changed %s"
 msgstr "La data del fitxer ha canviat %s"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
 msgstr "Arxiu sense registre de control"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
 msgstr "No es pot aconseguir un cursor"
 
@@ -1441,7 +1446,7 @@ msgstr "S'està sobreescrivint el corresponent paquet sense versió per a %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "El fitxer %s/%s sobreescriu al que està en el paquet %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1933,42 +1938,47 @@ msgstr "Abreujament de tipus no reconegut: '%c'"
 msgid "Opening configuration file %s"
 msgstr "S'està obrint el fitxer de configuració %s"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Línia %u massa llarga en la llista de fonts %s."
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Error sintàctic %s:%u: No comença el camp amb un nom."
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "Error sintàctic %s:%u: Etiqueta malformada"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Error sintàctic %s:%u Text extra després del valor"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr "Error sintàctic %s:%u: Es permeten directrius només al nivell més alt"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Error sintàctic %s:%u: Hi ha masses fitxers include aniuats"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Error sintàctic %s:%u: Inclusió des d'aqui"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Error sintàctic %s:%u: Directriu no suportada '%s'"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Error sintàctic %s:%u: Text extra al final del fitxer"

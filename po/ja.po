@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.24\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-04-17 14:34+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -414,26 +414,31 @@ msgstr "選択にマッチするものがありません"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "パッケージファイルグループ `%s' に見あたらないファイルがあります"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "DB が壊れていたため、ファイル名を %s.old に変更しました"
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
 #, c-format
-msgid "Unable to open DB2 file %s"
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
+#, fuzzy, c-format
+msgid "Unable to open DB file %s"
 msgstr "DB2 ファイル %s を開くことができません"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, c-format
 msgid "File date has changed %s"
 msgstr "ファイルの日付が %s に変更されています"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
 msgstr "アーカイブに制御レコードがありません"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
 msgstr "カーソルを取得できません"
 
@@ -881,7 +886,10 @@ msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
-msgstr "パッケージ %s はデータベースには存在しますが、利用できません。おそらく、そのパッケージが見つからないか、もう古くなっているか、あるいは別のソースからのみしか利用できないという状況が考えられます\n"
+msgstr ""
+"パッケージ %s はデータベースには存在しますが、利用できません。おそらく、その"
+"パッケージが見つからないか、もう古くなっているか、あるいは別のソースからのみ"
+"しか利用できないという状況が考えられます\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -1088,7 +1096,9 @@ msgstr "%s には build depends が指定されていません。\n"
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr "パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たすことができません"
+msgstr ""
+"パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たすこと"
+"ができません"
 
 #: cmdline/apt-get.cc:2155
 #, c-format
@@ -1102,7 +1112,9 @@ msgstr ""
 #: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s パッケージは新しすぎます"
+msgstr ""
+"%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s パッ"
+"ケージは新しすぎます"
 
 #: cmdline/apt-get.cc:2215
 #, c-format
@@ -1164,7 +1176,8 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 "使用法: apt-get [オプション] コマンド\n"
-"        apt-get [オプション] install|remove パッケージ名1 [パッケージ名2 ...]\n"
+"        apt-get [オプション] install|remove パッケージ名1 [パッケージ名"
+"2 ...]\n"
 "        apt-get [オプション] source パッケージ名1 [パッケージ名2 ...]\n"
 "\n"
 "apt-get は、パッケージをダウンロード/インストールするための簡単なコマ\n"
@@ -1429,7 +1442,7 @@ msgstr "%s に対するバージョンのないパッケージマッチを上書きします"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "ファイル %s/%s がパッケージ %s のものを上書きします"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1918,42 +1931,47 @@ msgstr "理解できない省略形式です: '%c'"
 msgid "Opening configuration file %s"
 msgstr "設定ファイル %s をオープンできませんでした"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "sources.list %2$s の %1$u 行目が長過ぎます。"
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "文法エラー %s:%u: ブロックが名前なしで始まっています"
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "文法エラー %s:%u: 不正なタグです"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "文法エラー %s:%u: 値の後に余分なゴミが入っています"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr "文法エラー %s:%u: 命令はトップレベルでのみ実行できます"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "文法エラー %s:%u: インクルードのネストが多過ぎます"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "文法エラー %s:%u: ここからインクルードされています"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "文法エラー %s:%u: 未対応の命令 '%s'"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "文法エラー %s:%u: ファイルの最後に余計なゴミがあります"

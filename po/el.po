@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-03-13 17:23EEST\n"
 "Last-Translator: Konstantinos Margaritis <markos@debian.org>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -358,27 +358,32 @@ msgstr ""
 msgid "Some files are missing in the package file group `%s'"
 msgstr ""
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr ""
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
 #, fuzzy, c-format
-msgid "Unable to open DB2 file %s"
+msgid "Unable to open DB file %s"
 msgstr "Αποτυχία στο κλείσιμο του αρχείου %s"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, fuzzy, c-format
 msgid "File date has changed %s"
 msgstr "Αδύνατη η αλλαγή σε %s"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 #, fuzzy
 msgid "Archive has no control record"
 msgstr "Η αρχειοθήκη είναι πολυ μικρή"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 #, fuzzy
 msgid "Unable to get a cursor"
 msgstr "Αδύνατη η ανάγνωση του %s"
@@ -1320,7 +1325,7 @@ msgstr "Αντικατάσταση πακέτου χωρίς καμία εκδό
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Το αρχείο %s/%s αντικαθιστά αυτό στο πακέτο %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1810,43 +1815,48 @@ msgstr "Μη αναγνωρισμένος τύπος σύντμησης: '%c'"
 msgid "Opening configuration file %s"
 msgstr "Άνοιγμα του αρχείου ρυθμίσεων %s"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Η γραμμή %u έχει υπερβολικό μήκος στη λίστα πηγών %s."
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Συντακτικό σφάλμα %s:%u: Το block αρχίζει χωρίς όνομα."
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "Συντακτικό σφάλμα %s:%u: Λάθος μορφή Ετικέτας (Tag)"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Συντακτικό σφάλμα %s:%u: Άχρηστοι χαρακτήρες μετά την τιμή"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Συντακτικό σφάλμα %s:%u: Οι οδηγίες βρίσκονται μόνο στο ανώτατο επίπεδο"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Συντακτικό σφάλμα %s:%u: Υπερβολικός αριθμός συνδυασμένων includes"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Συντακτικό σφάλμα %s:%u: Συμπεριλαμβάνεται από εδώ"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Συντακτικό σφάλμα %s:%u: Μη υποστηριζόμενη εντολή '%s'"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Συντακτικό σφάλμα %s:%u: Άχρηστοι χαρακτήρες στο τέλος του αρχείου"

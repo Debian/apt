@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 09:04+0100\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-03-14 12:40-0300\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
@@ -368,7 +368,7 @@ msgstr ""
 "Comandos: packages caminho_binário [arquivo_override [prefixo_caminho]]\n"
 "          sources caminho_fonte [arquivo_override [prefixo_caminho]]\n"
 "          contents caminho\n"
-"					 release caminho\n"
+"\t\t\t\t\t release caminho\n"
 "          generate config [grupos]\n"
 "          clean config\n"
 "\n"
@@ -413,26 +413,31 @@ msgstr "Nenhuma seleção correspondente"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Alguns arquivos estão faltando no arquivo de grupo de pacotes `%s'"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "A base de dados estava corrompida, arquivo renomeado para %s.old"
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
 #, c-format
-msgid "Unable to open DB2 file %s"
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
+#, fuzzy, c-format
+msgid "Unable to open DB file %s"
 msgstr "Impossível abrir arquivo DB2 %s"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, c-format
 msgid "File date has changed %s"
 msgstr "Data do arquivo mudou %s"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
 msgstr "Repositório não possui registro de controle"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
 msgstr "Impossível obter um cursor"
 
@@ -1088,8 +1093,8 @@ msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
-"a dependência de %s  por %s não pôde ser satisfeita porque o pacote %s "
-"não pôde ser encontrado"
+"a dependência de %s  por %s não pôde ser satisfeita porque o pacote %s não "
+"pôde ser encontrado"
 
 #: cmdline/apt-get.cc:2155
 #, c-format
@@ -1104,8 +1109,8 @@ msgstr ""
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
-"Falha ao satisfazer a dependência %s para %s: Pacote instalado %s é "
-"muito novo"
+"Falha ao satisfazer a dependência %s para %s: Pacote instalado %s é muito "
+"novo"
 
 #: cmdline/apt-get.cc:2215
 #, c-format
@@ -1434,8 +1439,8 @@ msgstr "Sobreescrita de pacote não casa com nenhuma versão para %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Arquivo %s/%s sobreescreve arquivo no pacote %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Impossível ler %s"
@@ -1923,43 +1928,48 @@ msgstr "Abreviação de tipo desconhecida: '%c'"
 msgid "Opening configuration file %s"
 msgstr "Abrindo arquivo de configuração %s"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Linha %u muito longa na sources.lits %s."
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Erro de sintaxe %s:%u: Bloco inicia sem nome."
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "Erro de sintaxe %s:%u: Tag Malformada"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Erro de sintaxe %s:%u: Lixo extra depois do valor"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Erro de sintaxe %s:%u: Diretivas podem ser feitas somente no nível mais alto"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Erro de sintaxe %s:%u: Muitos includes aninhados"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Erro de sintaxe %s:%u: Incluído a partir deste ponto"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Erro de sintaxe %s:%u: Diretiva '%s' não suportada"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Erro de sintaxe %s:%u: Lixo extra no final do arquivo"
@@ -2026,7 +2036,7 @@ msgstr "Operação %s inválida"
 msgid "Unable to stat the mount point %s"
 msgstr "Impossível checar o ponto de montagem %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Impossível mudar para %s"

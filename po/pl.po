@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-04-06 14:41+0200\n"
 "Last-Translator: Marcin Owsiany <porridge@debian.org>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -101,7 +101,9 @@ msgstr "Plików pakietów:"
 
 #: cmdline/apt-cache.cc:1469 cmdline/apt-cache.cc:1555
 msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Magazyn podrêczny jest przestarza³y, nie mo¿na odwo³aæ siê (x-ref) do pliku pakietu."
+msgstr ""
+"Magazyn podrêczny jest przestarza³y, nie mo¿na odwo³aæ siê (x-ref) do pliku "
+"pakietu."
 
 #: cmdline/apt-cache.cc:1470
 #, c-format
@@ -413,26 +415,31 @@ msgstr "Nie dopasowano ¿adnej nazwy"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Brakuje pewnych plików w grupie plików pakietów `%s'"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "Baza by³a uszkodzona, plik zosta³ przeniesiony do %s.old"
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
 #, c-format
-msgid "Unable to open DB2 file %s"
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
+#, fuzzy, c-format
+msgid "Unable to open DB file %s"
 msgstr "Nie uda³o siê otworzyæ pliku DB2 %s"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, c-format
 msgid "File date has changed %s"
 msgstr "Data pliku uleg³a zmianie %s"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
 msgstr "Archiwum nie posiada rekordu control"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
 msgstr "Nie uda³o siê pobraæ kursora"
 
@@ -824,8 +831,8 @@ msgstr "Ukoñczono pobieranie w trybie samego pobierania"
 
 #: cmdline/apt-get.cc:936
 msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with "
-"--fix-missing?"
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
 msgstr ""
 "Nie uda³o siê pobraæ niektórych archiwów, spróbuj uruchomiæ apt-get update "
 "lub u¿yæ opcji --fix-missing?"
@@ -1436,7 +1443,7 @@ msgstr "Dopasowanie dla %s nadpisuj±cego pakietu bez wersji"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Plik %s/%s nadpisuje plik w pakiecie %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1926,43 +1933,48 @@ msgstr "Nierozpoznany skrót typu: '%c'"
 msgid "Opening configuration file %s"
 msgstr "Otwieranie pliku konfiguracyjnego %s"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Linia %u w li¶cie ¼róde³ %s jest zbyt d³uga."
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "B³±d sk³adniowy %s:%u: Blok nie zaczyna siê nazw±."
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "B³±d sk³adniowy %s:%u: B³êdny znacznik"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "B³±d sk³adniowy %s:%u: Po warto¶ci wystêpuj± ¶mieci"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "B³±d sk³adniowy %s:%u: Dyrektywy mog± wystêpowaæ tylko na poziomie najwy¿szym"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "B³±d sk³adniowy %s:%u: Zbyt wiele zagnie¿d¿onych operacji include"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "B³±d sk³adniowy %s:%u: W³±czony tutaj"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "B³±d sk³adniowy %s:%u: Nieobs³ugiwana dyrektywa '%s'"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "B³±d sk³adniowy %s:%u: ¦mieci na koñcu pliku"
@@ -2268,8 +2280,8 @@ msgid ""
 msgstr ""
 "To uruchomienie programu bêdzie wymaga³o tymczasowego usuniêcia istotnego "
 "pakietu %s z powodu pêtli konfliktów/pre-zale¿no¶ci. Czêsto nie oznacza to "
-"nic dobrego, ale je¶li naprawdê chcesz to zrobiæ, w³±cz opcjê "
-"APT::Force-LoopBreak."
+"nic dobrego, ale je¶li naprawdê chcesz to zrobiæ, w³±cz opcjê APT::Force-"
+"LoopBreak."
 
 #: apt-pkg/pkgrecords.cc:37
 #, c-format

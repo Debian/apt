@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.24\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-03-17 20:55+0100\n"
 "Last-Translator: Rubén Porras Campo <nahoo@inicia.es>\n"
 "Language-Team: Spanish <debian-l10n-spanish@lists.debian.org>\n"
@@ -422,26 +422,31 @@ msgstr "Ninguna selección coincide"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Faltan algunos archivos en el grupo de archivo de paquetes `%s'"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "BD corrompida, archivo renombrado a %s.old"
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
 #, c-format
-msgid "Unable to open DB2 file %s"
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
+#, fuzzy, c-format
+msgid "Unable to open DB file %s"
 msgstr "No se pudo abrir el archivo DB2 %s"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, c-format
 msgid "File date has changed %s"
 msgstr "Cambió la fecha del archivo %s"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
 msgstr "No hay registro de control del archivo"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
 msgstr "No se pudo obtener un cursor"
 
@@ -1110,8 +1115,9 @@ msgstr ""
 #: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "No se pudo satisfacer la dependencia %s para %s: El paquete instalado %s "
-"es demasiado nuevo"
+msgstr ""
+"No se pudo satisfacer la dependencia %s para %s: El paquete instalado %s es "
+"demasiado nuevo"
 
 #: cmdline/apt-get.cc:2215
 #, c-format
@@ -1444,7 +1450,7 @@ msgstr "Sobreescribiendo concordancia del paquete sin versión para %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "El archivo %s/%s sobreescribe al que está en el paquete %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1934,44 +1940,49 @@ msgstr "Tipo de abreviación no reconocida: '%c'"
 msgid "Opening configuration file %s"
 msgstr "Abriendo fichero de configuración %s"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Línea %u demasiado larga en la lista de fuentes %s."
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Error de sintaxis %s:%u: No hay un nombre al comienzo del bloque."
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "Error de sintaxis %s:%u: Marca mal formada"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Error de sintaxis %s:%u: Basura extra después del valor"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Error de sintaxis %s:%u: Las directivas sólo se pueden poner\n"
 "en el primer nivel"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Error de sintaxis %s:%u: Demasiadas inclusiones anidadas"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Error de sintaxis %s:%u: Incluido desde aquí"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Error de sintaxis %s:%u: Directiva '%s' no soportada"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Error de sintaxis %s:%u: Basura extra al final del archivo"

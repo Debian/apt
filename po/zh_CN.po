@@ -6,13 +6,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
+"POT-Creation-Date: 2004-04-29 21:46-0700\n"
 "PO-Revision-Date: 2004-03-15 22:55+0800\n"
 "Last-Translator: Tchaikov <chaisave@263.net>\n"
 "Language-Team: Chinese (simplified) <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: cmdline/apt-cache.cc:135
 #, c-format
@@ -408,26 +408,31 @@ msgstr "没有任何选定项是匹配的"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "软件包文件组“%s”中缺少一些文件"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:45
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "缓存数据库被损坏了，该数据库文件的文件名已改成 %s.old"
 
-#: ftparchive/cachedb.cc:59
+#: ftparchive/cachedb.cc:63
 #, c-format
-msgid "Unable to open DB2 file %s"
+msgid "DB is old, attempting to upgrade %s"
+msgstr ""
+
+#: ftparchive/cachedb.cc:73
+#, fuzzy, c-format
+msgid "Unable to open DB file %s"
 msgstr "无法打开 DB2 文件 %s"
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:114
 #, c-format
 msgid "File date has changed %s"
 msgstr "文件 %s 的时间已被改动"
 
-#: ftparchive/cachedb.cc:140
+#: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
 msgstr "存档没有包含控制字段"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+#: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
 msgstr "无法获得游标(cursor)"
 
@@ -1410,7 +1415,7 @@ msgstr "用来覆盖的软件包不属于 %s 的任何版本"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "文件 %s/%s 会覆盖属于软件包 %s 中的同名文件"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1897,42 +1902,47 @@ msgstr "无法识别的类型缩写：“%c”"
 msgid "Opening configuration file %s"
 msgstr "正在打开配置文件 %s"
 
-#: apt-pkg/contrib/configuration.cc:563
+#: apt-pkg/contrib/configuration.cc:471
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "软件包来源档 %2$s 的第 %1$u 行超长了。"
+
+#: apt-pkg/contrib/configuration.cc:567
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "语法错误 %s:%u：配置小节没有以名字开头"
 
-#: apt-pkg/contrib/configuration.cc:582
+#: apt-pkg/contrib/configuration.cc:586
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "语法错误 %s:%u：标签格式有误"
 
-#: apt-pkg/contrib/configuration.cc:599
+#: apt-pkg/contrib/configuration.cc:603
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "语法错误 %s:%u: 配置值后有多余的无意义数据"
 
-#: apt-pkg/contrib/configuration.cc:639
+#: apt-pkg/contrib/configuration.cc:643
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr "语法错误 %s:%u: 只能在顶层配置文件中使用指示"
 
-#: apt-pkg/contrib/configuration.cc:646
+#: apt-pkg/contrib/configuration.cc:650
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "语法错误 %s:%u：太多的嵌套 include 命令"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "语法错误 %s:%u: Included from here"
 
-#: apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:663
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "语法错误 %s:%u: 不支持的指令“%s”"
 
-#: apt-pkg/contrib/configuration.cc:693
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "语法错误 %s:%u: 文件尾部有多余的无意义的数据"
@@ -2228,7 +2238,8 @@ msgstr "在安装源列表中 %2$s 中第 %1$u 行的格式有误 (vendor id)"
 #, c-format
 msgid "Unknown vendor ID '%s' in line %u of source list %s"
 msgstr ""
-"在安装源列表 %3$s 的第 %2$u 行发现了无法识别的软件提供商 ID (vendor ID) “%1$s”"
+"在安装源列表 %3$s 的第 %2$u 行发现了无法识别的软件提供商 ID (vendor ID) “%1"
+"$s”"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
