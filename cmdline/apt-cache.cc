@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.44 2001/02/20 07:03:17 jgg Exp $
+// $Id: apt-cache.cc,v 1.45 2001/02/22 06:26:27 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -935,13 +935,13 @@ bool Search(CommandLine &CmdL)
    // Map versions that we want to write out onto the VerList array.
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
+      VFList[P->ID].NameMatch = NumPatterns != 0;
       for (unsigned I = 0; I != NumPatterns; I++)
       {
 	 if (regexec(&Patterns[I],P.Name(),0,0,0) == 0)
-	 {
-	    VFList[P->ID].NameMatch = true;
-	    break;
-	 }
+	    VFList[P->ID].NameMatch &= true;
+	 else
+	    VFList[P->ID].NameMatch = false;
       }
       
       // Doing names only, drop any that dont match..
@@ -961,12 +961,20 @@ bool Search(CommandLine &CmdL)
    for (ExVerFile *J = VFList; J->Vf != 0; J++)
    {
       pkgRecords::Parser &P = Recs.Lookup(pkgCache::VerFileIterator(Cache,J->Vf));
-      
-      bool Match = J->NameMatch;
-      string LongDesc = P.LongDesc();
-      for (unsigned I = 0; I != NumPatterns && Match == false; I++)
-	 if (regexec(&Patterns[I],LongDesc.c_str(),0,0,0) == 0)
-	    Match = true;
+
+      bool Match = true;
+      if (J->NameMatch == false)
+      {
+	 string LongDesc = P.LongDesc();
+	 Match = NumPatterns != 0;
+	 for (unsigned I = 0; I != NumPatterns; I++)
+	 {
+	    if (regexec(&Patterns[I],LongDesc.c_str(),0,0,0) == 0)
+	       Match &= true;
+	    else
+	       Match = false;
+	 }
+      }
       
       if (Match == true)
       {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.18 2001/02/20 07:03:17 jgg Exp $
+// $Id: dpkgpm.cc,v 1.19 2001/02/22 06:26:27 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -250,8 +250,6 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       string::size_type Pos;
       if ((Pos = OptSec.find(' ')) == string::npos || Pos == 0)
 	 Pos = OptSec.length();
-      else
-	 Pos--;
       OptSec = "DPkg::Tools::Options::" + string(Opts->Value.c_str(),Pos);
       
       unsigned int Version = _config->FindI(OptSec+"::Version",1);
