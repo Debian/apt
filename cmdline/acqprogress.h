@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.h,v 1.4 1999/06/13 05:06:40 jgg Exp $
+// $Id: acqprogress.h,v 1.5 2003/02/02 22:24:11 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -15,7 +15,7 @@
 class AcqTextStatus : public pkgAcquireStatus
 {
    unsigned int &ScreenWidth;
-   char BlankLine[300];
+   char BlankLine[1024];
    unsigned long ID;
    unsigned long Quiet;
    
