@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.5.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-08-17 21:45-0400\n"
-"PO-Revision-Date: 2003-06-08 18:04-0300\n"
+"PO-Revision-Date: 2003-09-01 20:39-0300\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -92,9 +92,8 @@ msgid "You must give exactly one pattern"
 msgstr "Você deve passar exatamente um padrão"
 
 #: cmdline/apt-cache.cc:1383
-#, fuzzy
 msgid "No packages found"
-msgstr "  Pin do Pacote: "
+msgstr "Nenhum pacote encotrado"
 
 #: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
@@ -155,7 +154,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s para %s %s compilado em %s %s\n"
 
 #: cmdline/apt-cache.cc:1588
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -216,6 +214,7 @@ msgstr ""
 "   depends - Mostra informações cruas de dependências de um pacote\n"
 "   pkgnames - Lista o nome de todos os pacotes\n"
 "   dotty - Gera gráficos de pacotes para o GraphVis\n"
+"   xvcg - Gera gráficos de pacotes para o xvcg\n"
 "   policy - Mostra as configurações de políticas\n"
 "\n"
 "Opções:\n"
@@ -325,7 +324,6 @@ msgid "Error Processing Contents %s"
 msgstr "Erro processando Conteúdo %s"
 
 #: ftparchive/apt-ftparchive.cc:550
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -372,14 +370,14 @@ msgstr ""
 "          generate config [grupos]\n"
 "          clean config\n"
 "\n"
-"apt-ftparchive gera arquivos de índice para repositórios Debian. Ele \n"
+"O apt-ftparchive gera arquivos de índice para repositórios Debian. Ele \n"
 "suporta muitos estilos de geração, desde totalmente automatizadas até \n"
-"substitutos funcionais para o dokg-scanpackages e dpkg-scansources\n"
+"substitutos funcionais para o dpkg-scanpackages e dpkg-scansources\n"
 "\n"
-"apt-ftparchive gera arquivos Packages a partir de uma árvore de .debs.\n"
+"O apt-ftparchive gera arquivos Packages a partir de uma árvore de .debs.\n"
 " O arquivo Package contém o conteúdo de todos os campos control de \n"
 "cada pacote bem como o hash MD5 e tamanho de arquivo. Um arquivo \n"
-"override é suportado ára forçar o valor de Priority e Section.\n"
+"override é suportado para forçar o valor de Priority e Section.\n"
 "\n"
 "Similarmente, o apt-ftparchive gera arquivos Sources a partir de uma \n"
 "árvore de .dscs. A opção --source-override pode ser usada para \n"
@@ -388,7 +386,7 @@ msgstr ""
 "Os comandos 'packages' e 'sources' devem ser executados na raíz da \n"
 "árvore. CaminhoBinário deve apontar para a base de procura recursiva \n"
 "e o arquivo override deve conter as flags override. CaminhoPrefixo é \n"
-"incluído aos campos filenmae caso esteja presente. Exemplo de uso do \n"
+"incluído aos campos filename caso esteja presente. Exemplo de uso do \n"
 "repositório debian :\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
@@ -688,9 +686,9 @@ msgstr ""
 "Isso NÃO deve ser feito a menos que você saiba exatamente o que está fazendo!"
 
 #: cmdline/apt-get.cc:573
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu pacotes atualizados, %lu novos instalados, "
+msgstr "%lu pacotes atualizados, %lu pacotes novos instalados, "
 
 #: cmdline/apt-get.cc:577
 #, c-format
@@ -708,7 +706,7 @@ msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu a serem removidos e %lu não atualizados.\n"
 
 #: cmdline/apt-get.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu pacotes não totalmente instalados ou removidos.\n"
 
@@ -997,14 +995,12 @@ msgid "The following extra packages will be installed:"
 msgstr "Os pacotes extra a seguir serão instalados:"
 
 #: cmdline/apt-get.cc:1599
-#, fuzzy
 msgid "Suggested packages:"
-msgstr "Pacotes Pinados: "
+msgstr "Pacotes sugeridos :"
 
 #: cmdline/apt-get.cc:1600
-#, fuzzy
 msgid "Recommended packages:"
-msgstr "Pacotes quebrados"
+msgstr "Pacotes recomendados :"
 
 #: cmdline/apt-get.cc:1620
 msgid "Calculating Upgrade... "
@@ -1087,13 +1083,13 @@ msgid "%s has no build depends.\n"
 msgstr "%s não tem dependências de construção.\n"
 
 #: cmdline/apt-get.cc:2095
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
-"a dependência de %s por %s não pode ser satisfeita porque o pacote %s não "
-"pode ser encontrado"
+"a dependência de %s não pôde ser satisfeita porque o pacote %s não "
+"pôde ser encontrado"
 
 #: cmdline/apt-get.cc:2145
 #, c-format
@@ -1122,7 +1118,6 @@ msgid "Supported Modules:"
 msgstr "Módulos Suportados:"
 
 #: cmdline/apt-get.cc:2251
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1167,18 +1162,18 @@ msgstr ""
 "     apt-get [opções] install|remove pacote1 [pacote2 ...]\n"
 "     apt-get [opções] source pacote1 [pacote2 ...]\n"
 "\n"
-"O apt-get é uma interface simples de linha de comando para baixar\n"
-"e instalar pacotes. Os comandos usados mais frequentemente são \n"
-"update e install\n"
+"O apt-get é uma interface simples de linha de comando para fazer o\n"
+"download de pacotes e instalá-los. Os comandos usados mais frequentemente\n"
+"são update e install\n"
 "\n"
 "Comandos:\n"
 "   update - Adquire novas listas de pacotes\n"
 "   upgrade - Faz uma atualização\n"
 "   install - Instala novos pacotes (um pacote é libc6 e não libc6.deb)\n"
 "   remove - Remove um pacote\n"
-"   source - Baixa arquivos fonte\n"
-"   build-dep - Configura as build-dependencies de pacotes fonte\n"
-"   dist-upgrade - Atualiza a distribuição, veja apt-get(8)\n"
+"   source - Faz o download de arquivos fonte\n"
+"   build-dep - Configura as dependências de compilação de pacotes fonte\n"
+"   dist-upgrade - Atualiza a distribuição, consulte apt-get(8)\n"
 "   dselect-upgrade - Segue as seleções do dselect\n"
 "   clean - Apaga arquivos baixados para instalação\n"
 "   autoclean - Apaga arquivos antigos baixados para instalação\n"
@@ -1188,19 +1183,19 @@ msgstr ""
 "  -h  Esse texto de ajuda\n"
 "  -q  Saída logável, exceto para erros\n"
 "  -qq Sem saída, exceto para erros\n"
-"  -d  Baixar apenas - NÃO instalar ou desempacotar arquivos\n"
+"  -d  Fazer o download apenas - NÃO instalar ou desempacotar arquivos\n"
 "  -s  Não-agir. Executar simulação de ordenação\n"
 "  -y  Assumir Sim para todas as perguntas, não pedir confirmação\n"
 "  -f  Tenta continuar se a checagem de integridade falhar\n"
-"  -m  Tenta continuar se os arquivos estão ilocalizáveis\n"
+"  -m  Tenta continuar se os arquivos não podem ser localizados\n"
 "  -u  Mostra uma lista de pacotes atualizados também\n"
-"  -b  Construir o pacote fonte depois de baixá-lo\n"
+"  -b  Constrói o pacote fonte depois de baixá-lo\n"
 "  -c=? Ler esse arquivo de configuração\n"
 "  -o=? Definir uma opção de configuração arbitrária, \n"
 "       ex -o dir::cache=/tmp\n"
 "Veja as páginas de manual apt-get(8), sources.list(5) e apt.conf(5)\n"
 "para maiores informações e opções.\n"
-"                         Esse APT têm Poderes da Super Vaca\n"
+"                         Esse APT têm Poderes de Super Vaca.\n"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1228,14 +1223,15 @@ msgid " [Working]"
 msgstr " [Trabalhando]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press enter\n"
 msgstr ""
-"Troca de mídia: Por favor insira o disco nomeado '%s' no drive '%s' e "
-"pressione enter\n"
+"Troca de mídia: Por favor insira o disco nomeado\n"
+" '%s'\n"
+"no drive '%s' e pressione enter\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1254,7 +1250,7 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Uso: apt-sortkgs [opções] arquivo1 [arquivo2 ...]\n"
+"Uso: apt-sortpkgs [opções] arquivo1 [arquivo2 ...]\n"
 "\n"
 "O apt-sortpkgs é uma ferramenta simples para ordenar arquivos de pacote.\n"
 "A opção -s é usada para indicar que tipo de arquivo é.\n"
@@ -1317,9 +1313,9 @@ msgid "Tar Checksum failed, archive corrupted"
 msgstr "Checksum do arquivo tar falhou, arquivo corrompido"
 
 #: apt-inst/contrib/extracttar.cc:295
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown TAR header type %u, member %s"
-msgstr "Tipo de cabeçalho TAR desconhecido %u, mebro %s"
+msgstr "Tipo de cabeçalho TAR %u desconhecido, membro %s"
 
 #: apt-inst/contrib/arfile.cc:73
 msgid "Invalid archive signature"
@@ -1492,9 +1488,9 @@ msgstr ""
 "versão do pacote !"
 
 #: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
-#, fuzzy, c-format
+#, c-format
 msgid "Failed reading the list file %sinfo/%s"
-msgstr "Falha ao ler o arquivo de lista %sinfo/%s\n"
+msgstr "Falha ao ler o arquivo de lista %sinfo/%s"
 
 #: apt-inst/deb/dpkgdb.cc:266
 msgid "Internal Error getting a Node"
@@ -1822,9 +1818,8 @@ msgid "Read error from %s process"
 msgstr "Erro de leitura do processo %s"
 
 #: methods/http.cc:340
-#, fuzzy
 msgid "Waiting for headers"
-msgstr "Aguardando por arquivo"
+msgstr "Aguardando por cabeçalhos"
 
 #: methods/http.cc:486
 #, c-format
@@ -1912,7 +1907,7 @@ msgstr "Seleção %s não encontrada"
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "Abreviação de tipo desconhecida: '%c'"
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
@@ -1992,7 +1987,7 @@ msgid "Option %s requires an argument."
 msgstr "Opção %s requer um argumento."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr ""
 "Opção %s: Especificação de item de configuração deve possuir um =<val>."
@@ -2120,7 +2115,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Este APT não suporta o Sistema de Versões '%s'"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "O cache de pacotes foi gerado para uma arquitetura diferente"
 
@@ -2351,7 +2345,7 @@ msgstr "Naõ foi possível entender o tipo de pin %s"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "Nenhuma prioridade (ou zero) especificada para pinagem"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
