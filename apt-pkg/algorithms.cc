@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.12 1998/11/23 07:02:58 jgg Exp $
+// $Id: algorithms.cc,v 1.13 1998/12/06 03:41:25 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -453,8 +453,12 @@ void pkgProblemResolver::MakeScores()
    /* Protected things are pushed really high up. This number should put them
       ahead of everything */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+   {
       if ((Flags[I->ID] & Protected) != 0)
 	 Scores[I->ID] += 10000;
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+	 Scores[I->ID] += 5000;
+   }
    
    delete [] OldScores;
 }
@@ -694,7 +698,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    // Hm, the group is broken.. I have no idea how to handle this
 	    if (Start != End)
 	    {
-	       clog << "Note, a broken or group was found in " << I.Name() << "." << endl;
+	       if (Debug == true)
+		  clog << "Note, a broken or group was found in " << I.Name() << "." << endl;
 	       Cache.MarkDelete(I);
 	       break;
 	    }

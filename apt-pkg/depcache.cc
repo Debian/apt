@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.7 1998/11/23 07:02:59 jgg Exp $
+// $Id: depcache.cc,v 1.8 1998/12/06 03:41:26 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -305,6 +305,7 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
 	 State = ~State;
       
       // Add to the group if we are within an or..
+      State &= 0x7;
       Group |= State;
       State |= Group << 3;
       if ((D->CompareOp & Dep::Or) != Dep::Or)
