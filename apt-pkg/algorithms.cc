@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.29 1999/11/17 01:52:01 jgg Exp $
+// $Id: algorithms.cc,v 1.30 2000/05/10 05:56:23 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -284,7 +284,7 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    pkgProblemResolver Fix(Cache);
 
    // Hold back held packages.
-   if (_config->FindB("APT::Ingore-Hold",false) == false)
+   if (_config->FindB("APT::Ignore-Hold",false) == false)
    {
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.30 2000/01/27 04:15:09 jgg Exp $
+// $Id: acquire-worker.cc,v 1.31 2000/05/10 05:56:46 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -117,7 +117,7 @@ bool pkgAcquire::Worker::Start()
       return false;
    }
    for (int I = 0; I != 4; I++)
-      SetCloseExec(Pipes[0],true);
+      SetCloseExec(Pipes[I],true);
    
    // Fork off the process
    Process = ExecFork();
