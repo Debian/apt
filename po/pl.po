@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "POT-Creation-Date: 2003-04-27 01:12-0500\n"
-"PO-Revision-Date: 2003-05-13 18:00+0100\n"
+"PO-Revision-Date: 2003-05-14 21:40+0100\n"
 "Last-Translator: Marcin Owsiany <porridge@debian.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -88,7 +88,7 @@ msgstr "Plik pakietu %s jest przestarza³y."
 
 #: cmdline/apt-cache.cc:1229
 msgid "You must give exactly one pattern"
-msgstr "Musisz podaæ dok³adnie jeden wzór"
+msgstr "Nale¿y podaæ dok³adnie jeden wzór"
 
 #: cmdline/apt-cache.cc:1453
 msgid "Package Files:"
@@ -149,7 +149,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s dla %s %s skompilowany na %s %s\n"
 
 #: cmdline/apt-cache.cc:1578
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file1 ...]\n"
@@ -208,8 +207,10 @@ msgstr ""
 "   search - Przeszukaj listê pakietów wed³ug wyra¿enia regularnego\n"
 "   show - Poka¿ czytelny rekord dla danego pakietu\n"
 "   depends - Poka¿ surowe informacje o zale¿no¶ciach danego pakietu\n"
+"   rdepends - Poka¿ informacje o zale¿no¶ciach OD danego pakietu\n"
 "   pkgnames - Poka¿ listê nazw wszystkich pakietów\n"
-"   dotty - Wygeneruj grafy pakietów przy pomocy dla programu GraphVis\n"
+"   dotty - Wygeneruj grafy pakietów dla programu GraphVis\n"
+"   xvcg - Wygeneruj grafy pakietów dla programu xvcg\n"
 "   policy - Poka¿ ustawienia polityki\n"
 "\n"
 "Opcje:\n"
@@ -357,6 +358,44 @@ msgid ""
 "  -c=?  Read this configuration file\n"
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
+"U¿ycie: apt-ftparchive [opcje] komenda\n"
+"Komendy: packages ¶cie¿ka_do_binariów [plik_override [przedrostek]]\n"
+"         sources ¶cie¿ka_do_¼róde³ [plik_override [przedrostek]]\n"
+"         contents ¶cie¿ka\n"
+"         generate konfiguracja [grupy]\n"
+"         clean konfiguracja\n"
+"\n"
+"apt-ftparchive generuje pliki indeksów dla archiwów Debiana. Obs³uguje\n"
+"ró¿ne rodzaje generowania, od w pe³ni zautomatyzowanych po funkcjonalne\n"
+"zamienniki programów dpkg-scanpackages i dpkg-scansources.\n"
+"\n"
+"apt-ftparchive generuje pliki Package na postawie drzewa plików .deb.\n"
+"Wygenerowany plik zawiera pola kontrolne wszystkich pakietów oraz ich\n"
+"skróty MD5 i rozmiary. Obs³ugiwany jest plik override, pozwalaj±cy okre¶liæ\n"
+"priorytet i dzia³ pakietu.\n"
+"\n"
+"apt-ftparchive podobnie generuje pliki Sources na podstawie drzewa plików\n"
+".dsc. Przy pomocy opcji --source-override mo¿na podaæ plik override dla\n"
+"pakietów ¼ród³owych.\n"
+"\n"
+"Komendy 'packages' i 'sources' powinny byæ wykonywane w katalogu g³ównym\n"
+"drzewa. `¶cie¿ka_do_binariów' powinna wskazywaæ na katalog, od którego zacznie\n"
+"siê wyszukiwanie, a plik override powinien zawieraæ odpowiednie flagi.\n"
+"Przedrostek (o ile zosta³ podany) jest dodawany przed ¶cie¿k± do ka¿dego\n"
+"pliku. Przyk³adowe u¿ycie, z archiwum Debiana:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Opcje:\n"
+"  -h    Ten tekst pomocy\n"
+"  --md5 Generuj sumy kontrolne MD5\n"
+"  -s=?  Plik override dla ¼róde³\n"
+"  -q    `Ciche' dzia³anie\n"
+"  -d=?  Opcjonalna podrêczna baza danych\n"
+"  --no-delink W³±cz tryb diagnostyczny od³±czania\n"
+"  --contents  Generuj plik zawarto¶ci (Contents)\n"
+"  -c=?  Czytaj ten plik konfiguracyjny\n"
+"  -o=?  Ustaw dowoln± opcjê konfiguracji"
 
 #: ftparchive/apt-ftparchive.cc:731
 msgid "No selections matched"
@@ -365,12 +404,12 @@ msgstr ""
 #: ftparchive/apt-ftparchive.cc:804
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
-msgstr ""
+msgstr "Brakuje pewnych plików w grupie plików pakietów `%s'"
 
 #: ftparchive/cachedb.cc:43
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
-msgstr ""
+msgstr "Baza by³a uszkodzona, plik zosta³ przeniesiony do %s.old"
 
 #: ftparchive/cachedb.cc:59
 #, c-format
@@ -384,7 +423,7 @@ msgstr "Data pliku uleg³a zmianie %s"
 
 #: ftparchive/cachedb.cc:140
 msgid "Archive has no control record"
-msgstr ""
+msgstr "Archiwum nie posiada rekordu control"
 
 #: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
 msgid "Unable to get a cursor"
@@ -396,70 +435,70 @@ msgid "W: Unable to read directory %s\n"
 msgstr "W: Nie uda³o siê odczytaæ katalogu %s\n"
 
 #: ftparchive/writer.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to stat %s\n"
-msgstr "W: Nie mo¿na wykonaæ operacji stat na pliku %s\n"
+msgstr "W: Nie mo¿na wykonaæ operacji stat na %s\n"
 
 #: ftparchive/writer.cc:122
 msgid "E: "
-msgstr ""
+msgstr "E: "
 
 #: ftparchive/writer.cc:124
 msgid "W: "
-msgstr ""
+msgstr "W: "
 
 #: ftparchive/writer.cc:131
 msgid "E: Errors apply to file "
-msgstr ""
+msgstr "E: B³êdy odnosz± siê do pliku "
 
 #: ftparchive/writer.cc:148 ftparchive/writer.cc:178
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to resolve %s"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr "Nie uda³o siê przet³umaczyæ nazwy %s"
 
 #: ftparchive/writer.cc:160
 msgid "Tree walking failed"
-msgstr ""
+msgstr "Przej¶cie po drzewie nie powiod³o siê"
 
 #: ftparchive/writer.cc:185
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open %s"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr "Nie uda³o siê otworzyæ %s"
 
 #: ftparchive/writer.cc:242
 #, c-format
 msgid " DeLink %s [%s]\n"
-msgstr ""
+msgstr " Od³±czenie %s [%s]\n"
 
 #: ftparchive/writer.cc:250
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to readlink %s"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie uda³o siê odczytaæ dowi±zania %s"
 
 #: ftparchive/writer.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to unlink %s"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr "Nie uda³o siê usun±æ %s"
 
 #: ftparchive/writer.cc:261
-#, fuzzy, c-format
+#, c-format
 msgid "*** Failed to link %s to %s"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr "*** Nie uda³o siê dowi±zaæ %s do %s"
 
 #: ftparchive/writer.cc:271
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr ""
+msgstr " Osi±gniêto ograniczenie od³±czania %sB.\n"
 
 #: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
 #: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to stat %s"
-msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
+msgstr "Nie uda³o siê wykonaæ operacji stat na %s"
 
 #: ftparchive/writer.cc:358
 msgid "Archive had no package field"
-msgstr ""
+msgstr "Archiwum nie posiada³o pola pakietu"
 
 #: ftparchive/writer.cc:366 ftparchive/writer.cc:576
 #, fuzzy, c-format
@@ -469,16 +508,16 @@ msgstr "%s nie ma zale¿no¶ci na czas budowania.\n"
 #: ftparchive/writer.cc:409 ftparchive/writer.cc:658
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
-msgstr ""
+msgstr "  opiekunem %s jest %s, a nie %s\n"
 
 #: ftparchive/contents.cc:346 ftparchive/contents.cc:377
 msgid "realloc - Failed to allocate memory"
-msgstr ""
+msgstr "realloc - Nie uda³o siê zaalokowaæ pamiêci"
 
 #: ftparchive/override.cc:38 ftparchive/override.cc:146
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open %s"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie mo¿na otworzyæ %s"
 
 #: ftparchive/override.cc:64 ftparchive/override.cc:170
 #, c-format
@@ -498,76 +537,68 @@ msgstr ""
 #: ftparchive/override.cc:131 ftparchive/override.cc:205
 #, fuzzy, c-format
 msgid "Failed to read the override file %s"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr ""
 
 #: ftparchive/multicompress.cc:75
 #, c-format
 msgid "Unknown Compresison Algorithm '%s'"
-msgstr ""
+msgstr "Nieznany algorytm kompresji '%s'"
 
 #: ftparchive/multicompress.cc:105
 #, c-format
 msgid "Compressed output %s needs a compression set"
-msgstr ""
+msgstr "Skompresowany plik wynikowy %s wymaga podania kompresji"
 
 #: ftparchive/multicompress.cc:172 methods/rsh.cc:91
-#, fuzzy
 msgid "Failed to create IPC pipe to subprocess"
-msgstr "Nie uda³o siê pobraæ niektórych archiwów."
+msgstr "Nie uda³o siê utworzyæ potoku IPC do podprocesu"
 
 #: ftparchive/multicompress.cc:198
-#, fuzzy
 msgid "Failed to create FILE*"
-msgstr "Nie uda³o siê pobraæ niektórych archiwów."
+msgstr "Nie uda³o siê utworzyæ obiektu FILE*"
 
 #: ftparchive/multicompress.cc:201
-#, fuzzy
 msgid "Failed to fork"
-msgstr "Nie uda³o siê"
+msgstr "Nie uda³o siê utworzyæ procesu potomnego"
 
 #: ftparchive/multicompress.cc:215
 msgid "Compress Child"
-msgstr ""
+msgstr "Potomny proces kompresuj±cy"
 
 #: ftparchive/multicompress.cc:238
-#, fuzzy, c-format
+#, c-format
 msgid "Internal Error, Failed to create %s"
-msgstr "B³±d wewnêtrzny, AllUpgrade wszystko popsu³o"
+msgstr "B³±d wewnêtrzny, nie uda³o siê utworzyæ %s"
 
 #: ftparchive/multicompress.cc:289
-#, fuzzy
 msgid "Failed to create subprocess IPC"
-msgstr "Nie uda³o siê pobraæ niektórych archiwów."
+msgstr "Nie uda³o siê utworzyæ IPC z podprocesem"
 
 #: ftparchive/multicompress.cc:324
-#, fuzzy
 msgid "Failed to exec compressor "
-msgstr "Nie uda³o siê pobraæ niektórych archiwów."
+msgstr "Nie uda³o siê uruchomiæ kompresora "
 
 #: ftparchive/multicompress.cc:363
-#, fuzzy
 msgid "decompressor"
-msgstr "Nie uda³o siê pobraæ niektórych archiwów."
+msgstr "dekompresor"
 
 #: ftparchive/multicompress.cc:406
-#, fuzzy
 msgid "IO to subprocess/file failed"
-msgstr "Proces potomny zawiód³"
+msgstr "Zawiod³a operacja IO na pliku/podprocesie"
 
 #: ftparchive/multicompress.cc:458
-#, fuzzy
 msgid "Failed to read while computing MD5"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie uda³o siê czytanie w czasie liczenia skrótu MD5"
 
 #: ftparchive/multicompress.cc:475
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking %s"
-msgstr "Problem przy usuwaniu pliku"
+msgstr "Problem przy usuwaniu %s"
 
 #: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to rename %s to %s"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr "Nie uda³o siê zmieniæ nazwy %s na %s"
 
 #. This needs to be a capital
 #: cmdline/apt-get.cc:116
@@ -959,14 +990,12 @@ msgid "The following extra packages will be installed:"
 msgstr "Zostan± zainstalowane nastêpuj±ce dodatkowe pakiety:"
 
 #: cmdline/apt-get.cc:1568
-#, fuzzy
 msgid "Suggested packages:"
-msgstr "Przypiête pakiety:"
+msgstr "Sugerowane pakiety:"
 
 #: cmdline/apt-get.cc:1569
-#, fuzzy
 msgid "Recommended packages:"
-msgstr "Pakiety s± b³êdne"
+msgstr "Polecane pakiety:"
 
 #: cmdline/apt-get.cc:1589
 msgid "Calculating Upgrade... "
@@ -983,7 +1012,7 @@ msgstr "Gotowe"
 #: cmdline/apt-get.cc:1770
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
-"Musisz podaæ przynajmniej jeden pakiet, dla którego maj± zostaæ pobrane "
+"Nale¿y podaæ przynajmniej jeden pakiet, dla którego maj± zostaæ pobrane "
 "¼ród³a"
 
 #: cmdline/apt-get.cc:1797 cmdline/apt-get.cc:2004
@@ -1037,7 +1066,7 @@ msgstr "Proces potomny zawiód³"
 #: cmdline/apt-get.cc:1981
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
-"Musisz podaæ przynajmniej jeden pakiet, dla którego maj± zostaæ pakiety "
+"Nale¿y podaæ przynajmniej jeden pakiet, dla którego maj± zostaæ pakiety "
 "wymagane do budowania"
 
 #: cmdline/apt-get.cc:2009
@@ -1160,6 +1189,7 @@ msgstr ""
 "  -m   Próbuj dzia³aæ nawet je¶li nie mo¿na znale¼æ pewnych archiwów\n"
 "  -u   Poka¿ te¿ listê aktualizowanych pakietów\n"
 "  -b   Zbuduj pakiet po pobraniu archiwum ¼ród³owego\n"
+"  -V   Poka¿ pe³n± informacjê na temat wersji\n"
 "  -c=? Czytaj ten plik konfiguracyjny.\n"
 "  -o=? Ustaw dowoln± opcjê konfiguracji, np -o dir::cache=/tmp\n"
 "Wiêcej informacji i opcji mo¿na znale¼æ na stronach podrêcznika\n"
@@ -1192,14 +1222,15 @@ msgid " [Working]"
 msgstr " [Pracuje]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press enter\n"
 msgstr ""
-"Zmiana no¶nika: Proszê w³o¿yæ dysk oznaczony '%s' do napêdu '%s' i nacisn±æ "
-"enter\n"
+"Zmiana no¶nika: Proszê w³o¿yæ dysk oznaczony\n"
+" '%s'\n"
+"do napêdu '%s' i nacisn±æ enter\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1313,9 +1344,8 @@ msgid "Failed to locate the hash element!"
 msgstr "Nie uda³o siê odnale¼æ elementu hasha!"
 
 #: apt-inst/filelist.cc:463
-#, fuzzy
 msgid "Failed to allocate diversion"
-msgstr "Nie uda³o siê pobraæ niektórych archiwów."
+msgstr ""
 
 #: apt-inst/filelist.cc:468
 msgid "Internal Error in AddDiversion"
@@ -1367,9 +1397,8 @@ msgid "The package is trying to write to the diversion target %s/%s"
 msgstr ""
 
 #: apt-inst/extract.cc:157 apt-inst/extract.cc:300
-#, fuzzy
 msgid "The diversion path is too long"
-msgstr "Magazyn podrêczny pakietów jest uszkodzony"
+msgstr ""
 
 #: apt-inst/extract.cc:243
 #, c-format
@@ -1416,13 +1445,13 @@ msgid "Unable to create %s"
 msgstr "Nie mo¿na utworzyæ %s"
 
 #: apt-inst/deb/dpkgdb.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to stat %sinfo"
-msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
+msgstr "Nie uda³o siê wykonaæ operacji stat na %sinfo"
 
 #: apt-inst/deb/dpkgdb.cc:123
 msgid "The info and temp directories need to be on the same filesystem"
-msgstr ""
+msgstr "Pliki info i temp musz± byæ na tym samym systemie plików"
 
 #. Build the status cache
 #: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
@@ -1462,177 +1491,168 @@ msgid "Failed reading the list file %sinfo/%s"
 msgstr "Nie uda³o siê przeczytaæ pliku listy %sinfo/%s"
 
 #: apt-inst/deb/dpkgdb.cc:266
-#, fuzzy
 msgid "Internal Error getting a Node"
-msgstr "B³±d wewnêtrzny, AllUpgrade wszystko popsu³o"
+msgstr "B³±d wewnêtrzny przy pobieraniu wêz³a"
 
 #: apt-inst/deb/dpkgdb.cc:309
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open the diversions file %sdiversions"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr ""
 
 #: apt-inst/deb/dpkgdb.cc:324
-#, fuzzy
 msgid "The diversion file is corrupted"
-msgstr "Magazyn podrêczny pakietów jest uszkodzony"
+msgstr ""
 
 #: apt-inst/deb/dpkgdb.cc:331 apt-inst/deb/dpkgdb.cc:336
 #: apt-inst/deb/dpkgdb.cc:341
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid line in the diversion file: %s"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr ""
 
 #: apt-inst/deb/dpkgdb.cc:362
-#, fuzzy
 msgid "Internal Error adding a diversion"
-msgstr "B³±d wewnêtrzny, AllUpgrade wszystko popsu³o"
+msgstr ""
 
 #: apt-inst/deb/dpkgdb.cc:383
 msgid "The pkg cache must be initialize first"
-msgstr ""
+msgstr "Magazyn podrêczny pakietów musi wcze¶niej zostaæ zainicjalizowany"
 
 #: apt-inst/deb/dpkgdb.cc:386
-#, fuzzy
 msgid "Reading File List"
-msgstr "Czytanie list pakietów"
+msgstr "Czytanie listy plików"
 
 #: apt-inst/deb/dpkgdb.cc:443
 #, c-format
 msgid "Failed to find a Package: Header, offset %lu"
-msgstr ""
+msgstr "Nie uda³o siê znale¼æ nag³ówka Package:, offset %lu"
 
 #: apt-inst/deb/dpkgdb.cc:465
 #, c-format
 msgid "Bad ConfFile section in the status file. Offset %lu"
-msgstr ""
+msgstr "B³êdna sekcja ConfFile w pliku stanu. Offset %lu"
 
 #: apt-inst/deb/dpkgdb.cc:470
 #, c-format
 msgid "Error parsing MD5. Offset %lu"
-msgstr ""
+msgstr "B³±d przy czytaniu skrótu MD5. Offset %lu"
 
 #: apt-inst/deb/debfile.cc:55
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr ""
+msgstr "To nie jest poprawne archiwum DEB, brakuje sk³adnika '%s'"
 
 #: apt-inst/deb/debfile.cc:72
-#, fuzzy, c-format
+#, c-format
 msgid "Internal Error, could not locate member %s"
-msgstr "B³±d wewnêtrzny, AllUpgrade wszystko popsu³o"
+msgstr "B³±d wewnêtrzny, nie uda³o siê odnale¼æ sk³adnika %s"
 
 #: apt-inst/deb/debfile.cc:104
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't change to %s"
-msgstr "Nie uda³o siê uzyskaæ blokady %s"
+msgstr "Nie uda³o siê przej¶æ do %s"
 
 #: apt-inst/deb/debfile.cc:125
-#, fuzzy
 msgid "Internal Error, could not locate member"
-msgstr "B³±d wewnêtrzny, AllUpgrade wszystko popsu³o"
+msgstr "B³±d wewnêtrzny, nie uda³o siê odnale¼æ sk³adnika"
 
 #: apt-inst/deb/debfile.cc:158
-#, fuzzy
 msgid "Failed to locate a valid control file"
-msgstr "Nie uda³o siê pobraæ %s  %s\n"
+msgstr "Nie uda³o siê odnale¼æ poprawnego pliku control"
 
 #: apt-inst/deb/debfile.cc:243
-#, fuzzy
 msgid "Unparsible control file"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Plik kontrolny nie mo¿e zostaæ poprawnie zinterpretowany"
 
 #: methods/cdrom.cc:113
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read the cdrom database %s"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie mo¿na odczytaæ bazy danych CD-ROM-ów %s"
 
 #: methods/cdrom.cc:122
 msgid ""
 "Please use apt-cdrom to make this CD recognized by APT. apt-get update "
 "cannot be used to add new CDs"
 msgstr ""
+"Proszê u¿yæ programu apt-cdrom aby APT móg³ rozpoznaæ t± p³ytê CD. Nowych "
+"p³yt nie mo¿na dodawaæ przy pomocy komendy apt-get update"
 
 #: methods/cdrom.cc:130 methods/cdrom.cc:168
 msgid "Wrong CD"
-msgstr ""
+msgstr "Niew³a¶ciwa p³yta CD"
 
 #: methods/cdrom.cc:163
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr ""
+msgstr "Nie uda³o siê odmontowaæ CD-ROM-u w %s, byæ mo¿e wci±¿ jest u¿ywany."
 
 #: methods/cdrom.cc:177 methods/file.cc:77
-#, fuzzy
 msgid "File not found"
-msgstr "(nie znaleziony)"
+msgstr "Nie odnaleziono pliku"
 
 #: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
-#, fuzzy
 msgid "Failed to stat"
-msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
+msgstr "Nie uda³o siê wykonaæ operacji stat"
 
 #: methods/copy.cc:79 methods/gzip.cc:139
-#, fuzzy
 msgid "Failed to set modification time"
-msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
+msgstr "Nie uda³o siê ustawiæ czasu modyfikacji"
 
 #: methods/file.cc:42
 msgid "Invalid URI, local URIS must not start with //"
-msgstr ""
+msgstr "Nieprawid³owe URI, lokalne URI nie mog± zaczynaæ siê od //"
 
 #. Login must be before getpeername otherwise dante won't work.
 #: methods/ftp.cc:162
 msgid "Logging in"
-msgstr ""
+msgstr "Rejestrowanie siê"
 
 #: methods/ftp.cc:168
-#, fuzzy
 msgid "Unable to determine the peer name"
-msgstr "Nie uda³o siê okre¶liæ odpowiedniego typu systemu"
+msgstr "Nie mo¿na okre¶liæ nazwy zdalnego systemu"
 
 #: methods/ftp.cc:173
-#, fuzzy
 msgid "Unable to determine the local name"
-msgstr "Nie uda³o siê okre¶liæ odpowiedniego typu systemu"
+msgstr "Nie uda³o siê okre¶liæ nazwy lokalnego systemu"
 
 #: methods/ftp.cc:204 methods/ftp.cc:230
 #, c-format
 msgid "Server refused our connection and said: %s"
-msgstr ""
+msgstr "Serwer odrzuci³ nasze po³±czenie i powiedzia³: %s"
 
 #: methods/ftp.cc:210
-#, fuzzy, c-format
+#, c-format
 msgid "USER failed, server said: %s"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Komenda USER nie powiod³a siê, serwer powiedzia³: %s"
 
 #: methods/ftp.cc:216
-#, fuzzy, c-format
+#, c-format
 msgid "PASS failed, server said: %s"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Komenda PASS nie powiod³a siê, serwer powiedzia³: %s"
 
 #: methods/ftp.cc:235
 msgid ""
 "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
 "is empty."
 msgstr ""
+"Okre¶lono serwer po¶rednicz±cy, ale nie okre¶lono skryptu rejestrowania, Acquire::ftp::ProxyLogin jest puste."
 
 #: methods/ftp.cc:263
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
+msgstr "Komenda skryptu rejestrowania '%s' nie powiod³a siê, serwer powiedzia³: %s"
 
 #: methods/ftp.cc:289
-#, fuzzy, c-format
+#, c-format
 msgid "TYPE failed, server said: %s"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Komenda TYPE nie powiod³a siê, serwer powiedzia³: %s"
 
 #: methods/ftp.cc:327 methods/ftp.cc:438 methods/rsh.cc:183 methods/rsh.cc:226
 msgid "Connection timeout"
-msgstr ""
+msgstr "Przekroczenie czasu po³±czenia"
 
 #: methods/ftp.cc:333
 msgid "Server closed the connection"
-msgstr ""
+msgstr "Serwer zamkn±³ po³±czenie"
 
 #: methods/ftp.cc:336 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
 msgid "Read error"
@@ -1640,92 +1660,84 @@ msgstr "B³±d odczytu"
 
 #: methods/ftp.cc:343 methods/rsh.cc:197
 msgid "A response overflowed the buffer."
-msgstr ""
+msgstr "Odpowied¼ przepe³ni³a bufor."
 
 #: methods/ftp.cc:360 methods/ftp.cc:372
 msgid "Protocol corruption"
-msgstr ""
+msgstr "Naruszenie zasad protoko³u"
 
 #: methods/ftp.cc:444 methods/rsh.cc:232
-#, fuzzy
 msgid "Write Error"
 msgstr "B³±d zapisu"
 
 #: methods/ftp.cc:685 methods/ftp.cc:691 methods/ftp.cc:727
-#, fuzzy
 msgid "Could not create a socket"
-msgstr "Nie uda³o siê odnale¼æ pakietu %s"
+msgstr "Nie uda³o siê utworzyæ gniazda"
 
 #: methods/ftp.cc:696
 msgid "Could not connect data socket, connection timed out"
-msgstr ""
+msgstr "Nie uda³o siê po³±czyæ gniazda danych, przekroczenie czasu po³±czenia"
 
 #: methods/ftp.cc:702
-#, fuzzy
 msgid "Could not connect passive socket."
-msgstr "Nie uda³o siê odnale¼æ pakietu %s"
+msgstr "Nie uda³o siê po³±czyæ pasywnego gniazda."
 
 #: methods/ftp.cc:720
 msgid "getaddrinfo was unable to get a listening socket"
-msgstr ""
+msgstr "getaddrinfo nie by³o w stanie uzyskaæ s³uchaj±cego gniazda"
 
 #: methods/ftp.cc:734
 #, fuzzy
 msgid "Could not bind a socket"
-msgstr "Nie uda³o siê odnale¼æ pakietu %s"
+msgstr "Nie uda³o siê przy³±czyæ gniazda"
 
 #: methods/ftp.cc:738
-#, fuzzy
 msgid "Could not listen on the socket"
-msgstr "Nie uda³o siê odnale¼æ pakietu %s"
+msgstr "Nie uda³o siê s³uchaæ na gnie¼dzie"
 
 #: methods/ftp.cc:745
-#, fuzzy
 msgid "Could not determine the socket's name"
-msgstr "Nie uda³o siê okre¶liæ odpowiedniego typu systemu"
+msgstr "Nie uda³o siê okre¶liæ nazwy gniazda"
 
 #: methods/ftp.cc:777
-#, fuzzy
 msgid "Unable to send PORT command"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie mo¿na wys³aæ komendy PORT"
 
 #: methods/ftp.cc:787
 #, c-format
 msgid "Unknown address family %u (AF_*)"
-msgstr ""
+msgstr "Nieznana rodzina adresów %u (AF_*)"
 
 #: methods/ftp.cc:796
-#, fuzzy, c-format
+#, c-format
 msgid "EPRT failed, server said: %s"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Komenda EPRT nie powiod³a siê, serwer powiedzia³: %s"
 
 #: methods/ftp.cc:816
 msgid "Data socket connect timed out"
-msgstr ""
+msgstr "Przekroczony czas po³±czenia gniazda danych"
 
 #: methods/ftp.cc:823
-#, fuzzy
 msgid "Unable to accept connection"
-msgstr "Nie uda³o siê naprawiæ zale¿no¶ci"
+msgstr "Nie uda³o siê przyj±æ po³±czenia"
 
 #: methods/ftp.cc:862 methods/http.cc:912 methods/rsh.cc:303
-#, fuzzy
 msgid "Problem hashing file"
-msgstr "Problem przy zapisywaniu pliku na dysk"
+msgstr ""
 
 #: methods/ftp.cc:875
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to fetch file, server said '%s'"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie mo¿na pobraæ pliku, serwer powiedzia³ '%s'"
 
 #: methods/ftp.cc:890 methods/rsh.cc:322
 msgid "Data socket timed out"
-msgstr ""
+msgstr "Przekroczony czas oczekiwania na dane"
 
 #: methods/ftp.cc:920
-#, fuzzy, c-format
+#, c-format
 msgid "Data transfer failed, server said '%s'"
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie uda³o siê przes³aæ danych, serwer powiedzia³ '%s'"
 
 #. Get the files information
 #: methods/ftp.cc:995
@@ -1733,154 +1745,148 @@ msgid "Query"
 msgstr ""
 
 #: methods/ftp.cc:1102
-#, fuzzy
 msgid "Unable to invoke "
-msgstr "Nie mo¿na czytaæ %s"
+msgstr "Nie mo¿na wywo³aæ "
 
 #: methods/connect.cc:64
-#, fuzzy, c-format
+#, c-format
 msgid "Connecting to %s (%s)"
-msgstr "Nie uda³o siê przej¶æ do %s"
+msgstr "Pod³±czanie do %s (%s)"
 
 #: methods/connect.cc:71
 #, c-format
 msgid "[IP: %s %s]"
-msgstr ""
+msgstr "[IP: %s %s]"
 
 #: methods/connect.cc:80
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr ""
+msgstr "Nie uda³o siê utworzyæ gniazda dla %s (f=%u t=%u p=%u)"
 
 #: methods/connect.cc:86
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Nie uda³o siê przej¶æ do %s"
+msgstr "Nie uda³o siê zainicjalizowaæ po³±czenia z %s:%s (%s)."
 
 #: methods/connect.cc:92
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr ""
+msgstr "Nie uda³o siê po³±czyæ z %s:%s (%s), przekroczenie czasu po³±czenia"
 
 #: methods/connect.cc:104
-#, fuzzy, c-format
+#, c-format
 msgid "Could not connect to %s:%s (%s)."
-msgstr "Nie uda³o siê przej¶æ do %s"
+msgstr "Nie uda³o siê po³±czyæ z %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
 #: methods/connect.cc:132 methods/rsh.cc:425
 #, c-format
 msgid "Connecting to %s"
-msgstr ""
+msgstr "£±czenie z %s"
 
 #: methods/connect.cc:163
-#, fuzzy, c-format
+#, c-format
 msgid "Could not resolve '%s'"
-msgstr "Nie uda³o siê otworzyæ pliku %s"
+msgstr "Nie uda³o siê przet³umaczyæ nazwy '%s'"
 
 #: methods/connect.cc:167
 #, c-format
 msgid "Temporary failure resolving '%s'"
-msgstr ""
+msgstr "Tymczasowy b³±d przy t³umaczeniu '%s'"
 
 #: methods/connect.cc:169
 #, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i)"
-msgstr ""
+msgstr "Co¶ niegodziwego sta³o siê przy t³umaczeniu '%s:%s' (%i)"
 
 #: methods/connect.cc:216
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to %s %s:"
-msgstr "Nie uda³o siê przej¶æ do %s"
+msgstr "Nie uda³o siê po³±czyæ z %s %s:"
 
 #: methods/gzip.cc:57
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open pipe for %s"
-msgstr "Nie uda³o siê otworzyæ pliku %s"
+msgstr "Nie uda³o siê otworzyæ potoku dla %s"
 
 #: methods/gzip.cc:102
 #, c-format
 msgid "Read error from %s process"
-msgstr ""
+msgstr "B³±d odczytu z procesu %s"
 
 #: methods/http.cc:340
 msgid "Waiting for headers"
-msgstr ""
+msgstr "Oczekiwanie na nag³ówki"
 
 #: methods/http.cc:486
 #, c-format
 msgid "Got a single header line over %u chars"
-msgstr ""
+msgstr "Otrzymano pojedyncz± liniê nag³ówka o d³ugo¶ci ponad %u znaków"
 
 #: methods/http.cc:494
 msgid "Bad header line"
-msgstr ""
+msgstr "Nieprawid³owa linia nag³ówka"
 
 #: methods/http.cc:513 methods/http.cc:520
 msgid "The http server sent an invalid reply header"
-msgstr ""
+msgstr "Serwer HTTP przys³a³ nieprawid³owy nag³ówek odpowiedzi"
 
 #: methods/http.cc:549
 msgid "The http server sent an invalid Content-Length header"
-msgstr ""
+msgstr "Serwer HTTP przys³a³ nieprawid³owy nag³ówek Content-Length"
 
 #: methods/http.cc:564
 msgid "The http server sent an invalid Content-Range header"
-msgstr ""
+msgstr "Serwer HTTP przys³a³ nieprawid³owy nag³ówek Content-Range"
 
 #: methods/http.cc:566
 msgid "This http server has broken range support"
-msgstr ""
+msgstr "Ten serwer HTTP nieprawid³owo obs³uguje zakresy (ranges)"
 
 #: methods/http.cc:590
-#, fuzzy
 msgid "Unknown date format"
-msgstr "Nieznany rekord pakietu!"
+msgstr "Nieznany format daty"
 
 #: methods/http.cc:733
-#, fuzzy
 msgid "Select failed"
-msgstr " nie uda³o siê."
+msgstr "Operacja select nie powiod³a siê"
 
 #: methods/http.cc:738
 msgid "Connection timed out"
-msgstr ""
+msgstr "Przekroczenie czasu po³±czenia"
 
 #: methods/http.cc:761
 msgid "Error writing to output file"
-msgstr ""
+msgstr "B³±d przy pisaniu do pliku wyj¶ciowego"
 
 #: methods/http.cc:789
 msgid "Error writing to file"
-msgstr ""
+msgstr "B³±d przy pisaniu do pliku"
 
 #: methods/http.cc:814
-#, fuzzy
 msgid "Error writing to the file"
-msgstr "Problem przy usuwaniu pliku"
+msgstr "B³±d przy pisaniu do pliku"
 
 #: methods/http.cc:828
 msgid "Error reading from server Remote end closed connection"
-msgstr ""
+msgstr "B³±d czytania z serwera: Zdalna strona zamknê³a po³±czenie"
 
 #: methods/http.cc:830
 msgid "Error reading from server"
-msgstr ""
+msgstr "B³±d czytania z serwera"
 
 #: methods/http.cc:1061
 msgid "Bad header Data"
-msgstr ""
+msgstr "B³êdne dane nag³ówka"
 
 #: methods/http.cc:1078
-#, fuzzy
 msgid "Connection failed"
-msgstr " nie uda³o siê."
+msgstr "Po³±czenie nie uda³o siê"
 
 #: methods/http.cc:1169
-#, fuzzy
 msgid "Internal error"
-msgstr "B³±d odczytu"
+msgstr "B³±d wewnêtrzny"
 
 #: apt-pkg/contrib/mmap.cc:82
 msgid "Can't mmap an empty file"
@@ -1943,14 +1949,14 @@ msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "B³±d sk³adniowy %s:%u: ¦mieci na koñcu pliku"
 
 #: apt-pkg/contrib/progress.cc:154
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Error!"
-msgstr "%s... B³±d!"
+msgstr "%c%s... B³±d!"
 
 #: apt-pkg/contrib/progress.cc:156
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Done"
-msgstr "%s... Gotowe"
+msgstr "%c%s... Gotowe"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -1974,7 +1980,7 @@ msgid "Option %s requires an argument."
 msgstr "Opcja %s wymaga argumentu."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "Opcja %s: Specyfikacja elementu konfiguracji musi zawieraæ =<warto¶æ>."
 
@@ -2035,7 +2041,7 @@ msgstr "Nie uda³o siê uzyskaæ blokady %s"
 #: apt-pkg/contrib/fileutl.cc:358
 #, c-format
 msgid "Waited, for %s but it wasn't there"
-msgstr ""
+msgstr "Oczekiwano na proces %s, ale nie by³o go"
 
 #: apt-pkg/contrib/fileutl.cc:368
 #, c-format
@@ -2058,9 +2064,9 @@ msgid "Could not open file %s"
 msgstr "Nie uda³o siê otworzyæ pliku %s"
 
 #: apt-pkg/contrib/fileutl.cc:473
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %lu to read but none left"
-msgstr "nale¿y przeczytaæ jeszcze %lu, ale nic nie zosta³o"
+msgstr "nale¿a³o przeczytaæ jeszcze %lu, ale nic nie zosta³o"
 
 #: apt-pkg/contrib/fileutl.cc:491
 msgid "Write error"
@@ -2069,7 +2075,7 @@ msgstr "B³±d zapisu"
 #: apt-pkg/contrib/fileutl.cc:503
 #, c-format
 msgid "write, still have %lu to write but couldn't"
-msgstr ""
+msgstr "nale¿a³o zapisaæ jeszcze %lu, ale nie uda³o siê to"
 
 #: apt-pkg/contrib/fileutl.cc:578
 msgid "Problem closing the file"
@@ -2101,7 +2107,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Ta wersja APT nie obs³uguje systemu wersji '%s'"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Ten magazyn podrêczny pakietów zosta³ zbudowany dla innej architektury"
 
@@ -2119,7 +2124,7 @@ msgstr "Sugeruje"
 
 #: apt-pkg/pkgcache.cc:219
 msgid "Recommends"
-msgstr "Zaleca"
+msgstr "Poleca"
 
 #: apt-pkg/pkgcache.cc:219
 msgid "Conflicts"
@@ -2307,7 +2312,7 @@ msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
 
 #: apt-pkg/srcrecords.cc:49
 msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Musisz dopisaæ jakie¶ URI 'source' do pliku sources.list"
+msgstr "Nale¿y dopisaæ jakie¶ URI 'source' do pliku sources.list"
 
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
@@ -2450,8 +2455,8 @@ msgstr "B³êdna suma MD5"
 
 #: methods/rsh.cc:264
 msgid "File Not Found"
-msgstr ""
+msgstr "Nie odnaleziono pliku"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
-msgstr ""
+msgstr "Po³±czenie zosta³o zamkniête przedwcze¶nie"
