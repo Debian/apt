@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.12 1998/11/13 07:08:48 jgg Exp $
+// $Id: acquire-item.cc,v 1.13 1998/11/22 03:20:30 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -224,6 +224,14 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
    Mode = "gzip";
 }
 									/*}}}*/
+// AcqIndex::Describe - Describe the Item				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string pkgAcqIndex::Describe()
+{
+   return Location->PackagesURI();
+}
+									/*}}}*/
 
 // AcqIndexRel::pkgAcqIndexRel - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -302,13 +310,23 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
    Rename(DestFile,FinalFile);
 }
 									/*}}}*/
+// AcqIndexRel::Describe - Describe the Item				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string pkgAcqIndexRel::Describe()
+{
+   return Location->ReleaseURI();
+}
+									/*}}}*/
 
 // AcqArchive::AcqArchive - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
-			     pkgRecords *Recs,pkgCache::VerIterator const &Version) :
-               Item(Owner), Version(Version), Sources(Sources), Recs(Recs)
+			     pkgRecords *Recs,pkgCache::VerIterator const &Version,
+			     string &StoreFilename) :
+               Item(Owner), Version(Version), Sources(Sources), Recs(Recs), 
+               StoreFilename(StoreFilename)
 {
    // Select a source
    pkgCache::VerFileIterator Vf = Version.FileList();
@@ -355,7 +373,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 	    Complete = true;
 	    Local = true;
 	    Status = StatDone;
-	    DestFile = FinalFile;
+	    StoreFilename = DestFile = FinalFile;
 	    return;
 	 }
 	 
@@ -415,11 +433,11 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
    }
 
    Complete = true;
-   
-   // We have to copy it into place
+
+   // Reference filename
    if (FileName != DestFile)
    {
-      DestFile = FileName;
+      StoreFilename = DestFile = FileName;
       Local = true;
       return;
    }
@@ -429,7 +447,16 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
    FinalFile += flNotDir(DestFile);
    Rename(DestFile,FinalFile);
    
-   DestFile = FinalFile;
+   StoreFilename = DestFile = FinalFile;
    Complete = true;
 }
 									/*}}}*/
+// AcqArchive::Describe - Describe the Item				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string pkgAcqArchive::Describe()
+{
+   return Desc.URI;
+}
+									/*}}}*/
+

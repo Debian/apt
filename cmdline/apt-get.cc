@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.14 1998/11/14 08:11:55 jgg Exp $
+// $Id: apt-get.cc,v 1.15 1998/11/22 03:20:36 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -110,8 +110,7 @@ void ShowList(ostream &out,string Title,string List)
    description. */
 void ShowBroken(ostream &out,pkgDepCache &Cache)
 {
-   out << "Sorry, but the following packages are broken - this means they have unmet" << endl;
-   out << "dependencies:" << endl;
+   out << "Sorry, but the following packages have unmet dependencies:" << endl;
    pkgCache::PkgIterator I = Cache.PkgBegin();
    for (;I.end() != true; I++)
    {
@@ -128,10 +127,15 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 	 continue;
       }
       
-      for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; D++)
+      for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false;)
       {
-	 if (Cache.IsImportantDep(D) == false || (Cache[D] &
-						  pkgDepCache::DepInstall) != 0)
+	 // Compute a single dependency element (glob or)
+	 pkgCache::DepIterator Start;
+	 pkgCache::DepIterator End;
+	 D.GlobOr(Start,End);
+	 
+	 if (Cache.IsImportantDep(End) == false || 
+	     (Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
 	    continue;
 	 
 	 if (First == false)
@@ -139,17 +143,17 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 	       out << ' ';
 	 First = false;
 
-	 cout << ' ' << D.DepType() << ": ";
+	 cout << ' ' << End.DepType() << ": " << End.TargetPkg().Name();
 	 
 	 // Show a quick summary of the version requirements
-	 if (D.TargetVer() != 0)
-	    out << " (" << D.CompType() << " " << D.TargetVer() << 
+	 if (End.TargetVer() != 0)
+	    out << " (" << End.CompType() << " " << End.TargetVer() << 
 	    ")";
 	 
 	 /* Show a summary of the target package if possible. In the case
 	  of virtual packages we show nothing */
 	 
-	 pkgCache::PkgIterator Targ = D.TargetPkg();
+	 pkgCache::PkgIterator Targ = End.TargetPkg();
 	 if (Targ->ProvidesList == 0)
 	 {
 	    out << " but ";
@@ -494,7 +498,7 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
       return _error->Error("The list of sources could not be read.");
    
    // Create the package manager and prepare to download
-   pkgPackageManager PM(Cache);
+   pkgDPkgPM PM(Cache);
    if (PM.GetArchives(&Fetcher,&List,&Recs) == false)
       return false;
 
@@ -531,8 +535,31 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    // Run it
    if (Fetcher.Run() == false)
       return false;
+
+   // Print out errors
+   bool Failed = false;
+   for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   {
+      if ((*I)->Status == pkgAcquire::Item::StatDone &&
+	  (*I)->Complete == true)
+	 continue;
+      
+      cerr << "Failed to fetch " << (*I)->Describe() << endl;
+      cerr << "  " << (*I)->ErrorText << endl;
+      Failed = true;
+   }
    
-   return true;
+   if (Failed == true && _config->FindB("APT::Fix-Missing",false) == false)
+      return _error->Error("Unable to fetch some archives, maybe try with --fix-missing?");
+
+   // Try to deal with missing package files
+/*   if (PM.FixMissing() == false)
+   {
+      cerr << "Unable to correct missing packages." << endl;
+      return _error->Error("Aborting Install.");
+   }*/
+   
+   return PM.DoInstall();
 }
 									/*}}}*/
 
@@ -941,7 +968,8 @@ int main(int argc,const char *argv[])
       {'y',"assume-yes","APT::Get::Assume-Yes",0},      
       {'f',"fix-broken","APT::Get::Fix-Broken",0},
       {'u',"show-upgraded","APT::Get::Show-Upgraded",0},
-      {'m',"ignore-missing","APT::Get::Fix-Broken",0},
+      {'m',"ignore-missing","APT::Get::Fix-Missing",0},
+      {0,"fix-missing","APT::Get::Fix-Missing",0},
       {0,"ignore-hold","APT::Ingore-Hold",0},      
       {0,"no-upgrade","APT::Get::no-upgrade",0},      
       {'c',"config-file",0,CommandLine::ConfigFile},

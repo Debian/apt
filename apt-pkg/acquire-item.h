@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.9 1998/11/13 07:08:50 jgg Exp $
+// $Id: acquire-item.h,v 1.10 1998/11/22 03:20:31 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -46,7 +46,7 @@ class pkgAcquire::Item
    unsigned long ID;
    bool Complete;
    bool Local;
-   
+
    // Number of queues we are inserted into
    unsigned int QueueCounter;
    
@@ -56,7 +56,8 @@ class pkgAcquire::Item
    virtual void Failed(string Message);
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
    virtual void Start(string Message,unsigned long Size);
-
+   virtual string Describe() = 0;
+   
    virtual string Custom600Headers() {return string();};
       
    Item(pkgAcquire *Owner);
@@ -77,6 +78,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    
    virtual void Done(string Message,unsigned long Size,string Md5Hash);   
    virtual string Custom600Headers();
+   virtual string Describe();
 
    pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location);
 };
@@ -93,6 +95,7 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    
    virtual void Done(string Message,unsigned long Size,string Md5Hash);   
    virtual string Custom600Headers();
+   virtual string Describe();
    
    pkgAcqIndexRel(pkgAcquire *Owner,const pkgSourceList::Item *Location);
 };
@@ -107,13 +110,16 @@ class pkgAcqArchive : public pkgAcquire::Item
    pkgSourceList *Sources;
    pkgRecords *Recs;
    string MD5;
+   string &StoreFilename;
    
    public:
    
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
+   virtual string Describe();
    
    pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
-		 pkgRecords *Recs,pkgCache::VerIterator const &Version);
+		 pkgRecords *Recs,pkgCache::VerIterator const &Version,
+		 string &StoreFilename);
 };
 
 #endif

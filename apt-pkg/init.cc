@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.12 1998/11/06 02:52:21 jgg Exp $
+// $Id: init.cc,v 1.13 1998/11/22 03:20:32 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -45,6 +45,7 @@ bool pkgInitialize(Configuration &Cnf)
    Cnf.Set("Dir::Etc::sourcelist","sources.list");
    Cnf.Set("Dir::Etc::main","apt.conf");
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
+   Cnf.Set("Dir::Bin::dpkg","/usr/bin/dpkg");
    
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.5 1998/11/13 04:23:30 jgg Exp $
+// $Id: packagemanager.cc,v 1.6 1998/11/22 03:20:33 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -22,6 +22,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/algorithms.h>
+#include <apt-pkg/configuration.h>
 									/*}}}*/
 
 // PM::PackageManager - Constructor					/*{{{*/
@@ -31,6 +33,7 @@ pkgPackageManager::pkgPackageManager(pkgDepCache &Cache) : Cache(Cache)
 {
    FileNames = new string[Cache.Head().PackageCount];
    List = 0;
+   Debug = _config->FindB("Debug::pkgPackageManager",false);
 }
 									/*}}}*/
 // PM::PackageManager - Destructor					/*{{{*/
@@ -57,7 +60,8 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 	  Cache[I].Delete() == true)
 	 continue;
       
-      new pkgAcqArchive(Owner,Sources,Recs,Cache[I].InstVerIter(Cache));
+      new pkgAcqArchive(Owner,Sources,Recs,Cache[I].InstVerIter(Cache),
+			FileNames[I->ID]);
    }
    return true;
 }
@@ -68,16 +72,11 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
    be downloaded. */
 bool pkgPackageManager::FixMissing()
 {
-   unsigned char *Touch = new unsigned char[Cache.Head().PackageCount];
+   pkgProblemResolver Resolve(Cache);
+   
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
-      // Create the status list that ResolveConflicts needs
-      if ((Cache[I].DepState & pkgDepCache::DepNowMin) == pkgDepCache::DepNowMin)
-	 Touch[I->ID] = (1 << 0) | (1 << 1);
-      else
-	 Touch[I->ID] = 1 << 1;
-      
-      if (Cache[I].Keep() == true)
+     if (Cache[I].Keep() == true)
 	 continue;
       if (FileNames[I->ID].empty() == false || Cache[I].Delete() == true)
 	 continue;
@@ -85,10 +84,7 @@ bool pkgPackageManager::FixMissing()
    }
    
    // Now downgrade everything that is broken
-//   Cache.ResolveConflicts(Touch);
-   delete [] Touch;
-
-   return Cache.BrokenCount() == 0;
+   return Resolve.ResolveByKeep() == true && Cache.BrokenCount() == 0;   
 }
 									/*}}}*/
 
@@ -450,9 +446,15 @@ bool pkgPackageManager::OrderInstall()
       if ((I->Flags & pkgCache::Flag::ImmediateConf) == pkgCache::Flag::ImmediateConf)
 	 List->Flag(I,pkgOrderList::Immediate);
    }
+
+   if (Debug == true)
+      clog << "Begining to order" << endl;
    
    if (List->OrderUnpack() == false)
       return _error->Error("Internal ordering error");
+
+   if (Debug == true)
+      clog << "Done ordering" << endl;
 
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
    {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.1 1998/11/13 04:23:39 jgg Exp $
+// $Id: dpkgpm.cc,v 1.2 1998/11/22 03:20:35 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -83,45 +83,67 @@ bool pkgDPkgPM::Go()
    {
       vector<Item>::iterator J = I;
       for (; J != List.end() && J->Op == I->Op; J++);
-      
+
       // Generate the argument list
       const char *Args[400];
       if (J - I > 350)
 	 J = I + 350;
       
-      int n= 0;
-      Args[n++] = "dpkg";
+      unsigned int n = 0;
+      unsigned long Size = 0;
+      Args[n++] = _config->Find("Dir::Bin::dpkg","dpkg").c_str();
+      Size += strlen(Args[n-1]);
       
       switch (I->Op)
       {
 	 case Item::Remove:
 	 Args[n++] = "--force-depends";
+	 Size += strlen(Args[n-1]);
 	 Args[n++] = "--force-remove-essential";
+	 Size += strlen(Args[n-1]);
 	 Args[n++] = "--remove";
+	 Size += strlen(Args[n-1]);
 	 break;
 	 
 	 case Item::Configure:
 	 Args[n++] = "--configure";
+	 Size += strlen(Args[n-1]);
 	 break;
 	 
 	 case Item::Install:
 	 Args[n++] = "--unpack";
+	 Size += strlen(Args[n-1]);
 	 break;
       }
       
       // Write in the file or package names
       if (I->Op == Item::Install)
-	 for (;I != J; I++)
+      {
+	 for (;I != J && Size < 1024; I++)
+	 {
 	    Args[n++] = I->File.c_str();
+	    Size += strlen(Args[n-1]);
+	 }
+      }      
       else
-	 for (;I != J; I++)
+      {
+	 for (;I != J && Size < 1024; I++)
+	 {
 	    Args[n++] = I->Pkg.Name();
+	    Size += strlen(Args[n-1]);
+	 }	 
+      }      
       Args[n] = 0;
+      J = I;
       
-/*      for (int k = 0; k != n; k++)
-	 cout << Args[k] << ' ';
-      cout << endl;*/
-
+      if (_config->FindB("Debug::pkgDPkgPM",false) == true)
+      {
+	 for (unsigned int k = 0; k != n; k++)
+	    clog << Args[k] << ' ';
+	 clog << endl;
+	 continue;
+      }
+      
       cout << flush;
       clog << flush;
       cerr << flush;

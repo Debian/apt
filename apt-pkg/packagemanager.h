@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.5 1998/11/13 04:23:31 jgg Exp $
+// $Id: packagemanager.h,v 1.6 1998/11/22 03:20:34 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -42,6 +42,7 @@ class pkgPackageManager
    string *FileNames;
    pkgDepCache &Cache;
    pkgOrderList *List;
+   bool Debug;
    
    // Bring some usefull types into the local scope
    typedef pkgCache::PkgIterator PkgIterator;
