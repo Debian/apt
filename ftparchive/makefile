@@ -6,9 +6,9 @@ SUBDIR=ftparchive
 include ../buildlib/defaults.mak
 
 # The apt-ftparchive program
-ifdef DB2LIB
+ifdef BDBLIB
 PROGRAM=apt-ftparchive
-SLIBS = -lapt-pkg -lapt-inst $(DB2LIB)
+SLIBS = -lapt-pkg -lapt-inst $(BDBLIB)
 LIB_MAKES = apt-pkg/makefile apt-inst/makefile
 SOURCE = apt-ftparchive.cc cachedb.cc writer.cc contents.cc override.cc \
          multicompress.cc
@@ -17,4 +17,4 @@ else
 PROGRAM=apt-ftparchive
 MESSAGE="Must have db2 to build apt-ftparchive"
 include $(FAIL_H)
-endif # ifdef DB2LIB
+endif # ifdef BDBLIB

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachedb.h,v 1.3 2002/11/22 07:19:51 doogie Exp $
+// $Id: cachedb.h,v 1.4 2004/05/08 19:41:01 mdz Exp $
 /* ######################################################################
 
    CacheDB
@@ -16,7 +16,7 @@
 #pragma interface "cachedb.h"
 #endif 
 
-#include <db2/db.h>
+#include <db.h>
 #include <string>
 #include <apt-pkg/debfile.h>
 #include <inttypes.h>

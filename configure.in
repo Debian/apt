@@ -12,6 +12,7 @@ dnl not used but STL is.
 dnl 'make -f Makefile startup' will generate the configure file from 
 dnl configure.in correctly and can be run at any time
 
+AC_PREREQ(2.50)
 AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
@@ -52,11 +53,28 @@ dnl if test "$PTHREADLIB" != "-lpthread"; then
 dnl   AC_MSG_ERROR(failed: I need posix threads, pthread)
 dnl fi
 
-dnl Check for DB2
-AC_CHECK_HEADER(db2/db.h,
-     [AC_CHECK_LIB(db2,db_open,
-        [AC_DEFINE(HAVE_DB2) DB2LIB="-ldb2"])])
-AC_SUBST(DB2LIB)
+dnl Check for BDB
+saveLIBS="$LIBS"
+LIBS="$LIBS -ldb"
+
+AC_CHECK_HEADER(db.h,
+     [AC_MSG_CHECKING(if we can link against BerkeleyDB)
+      AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM(
+       [#include <db.h>],
+       [int r, s, t; db_version(&r, &s, &t);]
+      )],
+      [AC_DEFINE(HAVE_BDB)
+       BDBLIB="-ldb"
+       AC_MSG_RESULT(yes)],
+      [BDBLIB=""
+       AC_MSG_RESULT(no)]
+    )]
+)
+
+LIBS="$saveLIBS"
+
+AC_SUBST(BDBLIB)
 
 dnl Converts the ARCH to be something singular for this general CPU family
 dnl This is often the dpkg architecture string.

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachedb.cc,v 1.6 2003/02/10 07:34:41 doogie Exp $
+// $Id: cachedb.cc,v 1.7 2004/05/08 19:41:01 mdz Exp $
 /* ######################################################################
 
    CacheDB
@@ -30,6 +30,8 @@
 /* This opens the DB2 file for caching package information */
 bool CacheDB::ReadyDB(string DB)
 {
+   int err;
+
    ReadOnly = _config->FindB("APT::FTPArchive::ReadOnlyDB",false);
    
    // Close the old DB
@@ -50,13 +52,26 @@ bool CacheDB::ReadyDB(string DB)
    
    if (DB.empty())
       return true;
-   
-   if ((errno = db_open(DB.c_str(),DB_HASH,
+
+   db_create(&Dbp, NULL, 0);
+   if ((err = Dbp->open(Dbp, NULL, DB.c_str(), NULL, DB_HASH,
                         (ReadOnly?DB_RDONLY:DB_CREATE),
-                        0644,0,0,&Dbp)) != 0)
+                        0644)) != 0)
    {
-      Dbp = 0;
-      return _error->Errno("db_open",_("Unable to open DB2 file %s"),DB.c_str());
+      if (err == DB_OLD_VERSION)
+      {
+          _error->Warning(_("DB is old, attempting to upgrade %s"),DBFile.c_str());
+	  err = Dbp->upgrade(Dbp, DB.c_str(), 0);
+	  if (!err)
+	     err = Dbp->open(Dbp, NULL, DB.c_str(), NULL, DB_HASH,
+                            (ReadOnly?DB_RDONLY:DB_CREATE), 0644);
+
+      }
+      if (err)
+      {
+          Dbp = 0;
+          return _error->Error(_("Unable to open DB file %s: %s"),DB.c_str(), db_strerror(err));
+      }
    }
    
    DBFile = DB;
@@ -247,15 +262,9 @@ bool CacheDB::Clean()
 
    /* I'm not sure what VERSION_MINOR should be here.. 2.4.14 certainly
       needs the lower one and 2.7.7 needs the upper.. */
-#if DB_VERSION_MAJOR >= 2 && DB_VERSION_MINOR >= 7
    DBC *Cursor;
-   if ((errno = Dbp->cursor(Dbp,0,&Cursor,0)) != 0)
+   if ((errno = Dbp->cursor(Dbp, NULL, &Cursor, 0)) != 0)
       return _error->Error(_("Unable to get a cursor"));
-#else
-   DBC *Cursor;
-   if ((errno = Dbp->cursor(Dbp,0,&Cursor)) != 0)
-      return _error->Error(_("Unable to get a cursor"));
-#endif
    
    DBT Key;
    DBT Data;
