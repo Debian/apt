@@ -11,9 +11,9 @@ int main(int argc,char *argv[])
 {
    pkgInitialize(*_config);
 
-   cout << flNoLink(argv[1]) << endl;
+//   cout << flNoLink(argv[1]) << endl;
    
-   #if 0
+//   #if 0
 /*   DynamicMMap *FileMap = new DynamicMMap(MMap::Public);
    pkgFLCache *FList = new pkgFLCache(*FileMap);
    
@@ -97,6 +97,6 @@ int main(int argc,char *argv[])
       Deb.ExtractArchive(Extract);
    }
 //   #endif
-#endif      
+//#endif      
    _error->DumpErrors();
 }

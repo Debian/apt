@@ -1,9 +1,35 @@
 apt (0.3.18) frozen unstable; urgency=low
   
+  * Updates to apt-cdrom to support integrated non-us nicely, thanks to
+    Paul Wade.
+  * Fixed that apt-get/cdrom deadlock thing. Closes: #59853, #62945, #61976
+  * Fixed hardcoded path. Closes: #59743
+  * Fixed Jay's relative path bug
+  * Allowed source only CDs. Closes: #58952
+  * Space check is supressed if --print-uris is given. Closes: #58965
+  * Clarified the documenation examples for non-us. Closes: #58646
+  * Typo in the package description. Closes: #60230
+  * Man Page typo. Closes: #60347 
+  * Typo in Algorithms.cc. Closes: #63577
+  * Evil dotty function in apt-cache for generating dependency graphs
+    with the as-yet-unpackaged GraphVis.
+  * Appears to have been fixed in Janurary.. Closes: #57981
+  * New config.guess/sub for the new archs. Closes: #60874
+  * Fixed error reporting for certain kinds of resolution failures. 
+    Closes: #61327
+  * Made autoclean respect 'q' settings. Closes: #63023
+  * Fixed up the example sources.list. Closes: #63676
+  * Added DPkg::FlushSTDIN to control the flushing of stdin before
+    forking dpkg. Closes: #63991
+    
+ -- Ben Gertzfield <che@debian.org>  Sun, 13 Feb 2000 01:52:31 -0800
+
+apt (0.3.18) frozen unstable; urgency=low
+  
   * Changes in the postinst script. Closes: #56855, #57237
   * Fixed bashism. Closes: #57216, #57335
   * Doc updates. Closes: #57772, #57069, #57331, #57833, #57896
-  
+     
  -- Ben Gertzfield <che@debian.org>  Sun, 13 Feb 2000 01:52:31 -0800
 
 apt (0.3.17) unstable; urgency=low

@@ -43,3 +43,10 @@ SLIBS = -lapt-pkg
 LIB_MAKES = apt-pkg/makefile
 SOURCE = srcrfind.cc
 include $(PROGRAM_H)
+
+# Control Extracter tester
+PROGRAM=extractcontrol
+SLIBS = -lapt-pkg -lapt-inst -ldb2
+LIB_MAKES = apt-pkg/makefile
+SOURCE = extractcontrol.cc
+include $(PROGRAM_H)
