@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.141 2003/09/10 19:28:55 mdz Exp $
+// $Id: apt-get.cc,v 1.142 2003/09/19 03:10:01 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -357,7 +357,7 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 /* */
 void ShowNew(ostream &out,CacheFile &Cache)
 {
-   /* Print out a list of packages that are going to be removed extra
+   /* Print out a list of packages that are going to be installed extra
       to what the user asked */
    string List;
    string VersionsList;
