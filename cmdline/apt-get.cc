@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.153 2004/01/26 18:10:57 mdz Exp $
+// $Id: apt-get.cc,v 1.154 2004/01/26 18:14:36 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -270,7 +270,7 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	 // Compute a single dependency element (glob or)
 	 pkgCache::DepIterator Start;
 	 pkgCache::DepIterator End;
-	 D.GlobOr(Start,End);
+	 D.GlobOr(Start,End); // advances D
 
 	 if (Cache->IsImportantDep(End) == false)
 	    continue;
@@ -1533,11 +1533,11 @@ bool DoInstall(CommandLine &CmdL)
 
 	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
          {
-	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
+	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; )
              {
 		 pkgCache::DepIterator Start;
 		 pkgCache::DepIterator End;
-		 D.GlobOr(Start,End);
+		 D.GlobOr(Start,End); // advances D
 
 		 /* 
 		  * If this is a virtual package, we need to check the list of
