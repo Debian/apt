@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.4 1999/04/20 05:02:09 jgg Exp $
+// $Id: cdromutl.cc,v 1.5 1999/04/20 05:11:17 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -197,8 +197,8 @@ bool IdentCdrom(string CD,string &Res)
       return _error->Errno("statfs","Failed to stat the cdrom");
 
    // We use a kilobyte block size to advoid overflow
-   sprintf(S,"%u %u",Buf.f_blocks*(Buf.f_bsize/1024),
-	   Buf.f_bfree*(Buf.f_bsize/1024));
+   sprintf(S,"%lu %lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)),
+	   (long)(Buf.f_bfree*(Buf.f_bsize/1024)));
    Hash.Add(S);
    
    Res = Hash.Result().Value();

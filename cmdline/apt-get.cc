@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.55 1999/04/20 05:02:09 jgg Exp $
+// $Id: apt-get.cc,v 1.56 1999/04/20 05:14:55 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -51,6 +51,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <errno.h>
 #include <sys/wait.h>
 									/*}}}*/
 
