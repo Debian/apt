@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: da\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-08-17 21:45-0400\n"
-"PO-Revision-Date: 2003-05-14 12:19GMT\n"
+"PO-Revision-Date: 2003-08-27 13:52GMT\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.0.1\n"
+"X-Generator: KBabel 1.0.2\n"
 
 #: cmdline/apt-cache.cc:133
 #, c-format
@@ -94,9 +94,8 @@ msgid "You must give exactly one pattern"
 msgstr "Du skal angive nøjagtig ét mønster"
 
 #: cmdline/apt-cache.cc:1383
-#, fuzzy
 msgid "No packages found"
-msgstr " pakkeindekser og "
+msgstr "Fandt ingen pakker"
 
 # Overskriften til apt-cache policy,
 # forkorter "Package" væk. CH
@@ -158,7 +157,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s for %s %s oversat på %s %s\n"
 
 #: cmdline/apt-cache.cc:1588
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -210,7 +208,7 @@ msgstr ""
 "   showpkg - Vis generelle oplysninger om en enkelt pakke\n"
 "   showsrc - Vis kildetekstposter\n"
 "   stats - Vis nogle grundlæggende statistikker\n"
-"   dump - Vis en hel fil i kort form\n"
+"   dump - Vis hele filen i kort form\n"
 "   dumpavail - Udlæs en 'available'-fil til standard-ud\n"
 "   unmet - Vis uopfyldte afhængigheder\n"
 "   search - Gennemsøg pakkelisten med et regulært udtryk\n"
@@ -220,7 +218,7 @@ msgstr ""
 "   pkgnames - Vis navnene på alle pakker\n"
 "   dotty - Generér pakkegrafer til GraphVis\n"
 "   xvcg - Generér pakkegrafer til xvcg\n"
-"   policy - Vis indstillinger\n"
+"   policy - Vis policy-indstillinger\n"
 "\n"
 "Tilvalg:\n"
 "  -h   Denne hjælpetekst.\n"
@@ -327,7 +325,6 @@ msgid "Error Processing Contents %s"
 msgstr "Fejl under behandling af indhold %s"
 
 #: ftparchive/apt-ftparchive.cc:550
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -378,9 +375,9 @@ msgstr ""
 "erstatninger for dpkg-scanpackages og dpkg-scansources\n"
 "\n"
 "apt-ftparchive genererer Package-filer ud fra træer af .deb'er.\n"
-"Package-filen indeholder alle kontrolfelterne fra hver pakke såvel\n"
+"Package-filen indeholder alle styrefelterne fra hver pakke såvel\n"
 "som MD5-hash og filstørrelse. En tvangsfil understøttes til at\n"
-"gennemtvinge Prioritet og Afsnit.\n"
+"gennemtvinge indholdet af Prioritet og Afsnit.\n"
 "\n"
 "På samme måde genererer apt-ftparchive Sources-filer ud fra træer\n"
 "med .dsc'er. Tvangstilvalget --source-override kan bruges til at\n"
@@ -688,29 +685,29 @@ msgstr ""
 "Dette bør IKKE ske medmindre du er helt klar over, hvad du laver!"
 
 #: cmdline/apt-get.cc:573
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu pakker opgraderes, %lu installeres, "
+msgstr "%lu opgraderede, %lu netop installerede, "
 
 #: cmdline/apt-get.cc:577
 #, c-format
 msgid "%lu reinstalled, "
-msgstr "%lu geninstalleres, "
+msgstr "%lu geninstallerede, "
 
 #: cmdline/apt-get.cc:579
 #, c-format
 msgid "%lu downgraded, "
-msgstr "%lu nedgraderes, "
+msgstr "%lu nedgraderede, "
 
 #: cmdline/apt-get.cc:581
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu fjernes og %lu opgraderes ikke.\n"
+msgstr "%lu at fjerne og %lu ikke opgraderede.\n"
 
 #: cmdline/apt-get.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu pakker ikke fuldstændigt installeret eller fjernet.\n"
+msgstr "%lu ikke fuldstændigt installerede eller fjernede.\n"
 
 #: cmdline/apt-get.cc:645
 msgid "Correcting dependencies..."
@@ -1080,12 +1077,11 @@ msgid "%s has no build depends.\n"
 msgstr "%s har ingen opbygningsafhængigheder.\n"
 
 #: cmdline/apt-get.cc:2095
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr ""
-"%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
+msgstr "%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
 
 #: cmdline/apt-get.cc:2145
 #, c-format
@@ -1114,7 +1110,6 @@ msgid "Supported Modules:"
 msgstr "Understøttede moduler:"
 
 #: cmdline/apt-get.cc:2251
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1182,7 +1177,7 @@ msgstr ""
 "  -qq Ingen uddata, kun fejl\n"
 "  -d  Hent kun - installér eller udpak IKKE arkiverne\n"
 "  -s  Gør intet. Simulér handlingen\n"
-"  -y  Antag 'ja' til alle spørgsmål uden at spørge\n"
+"  -y  Antag 'ja'-svar til alle spørgsmål uden at spørge\n"
 "  -f  Forsøg at fortsætte selvom integritetstjek fejler\n"
 "  -m  Forsøg at fortsætte selvom arkiverne ikke kan findes\n"
 "  -u  Vis også en liste over opgraderede pakker\n"
@@ -1220,7 +1215,7 @@ msgid " [Working]"
 msgstr " [Arbejder]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
@@ -1280,14 +1275,11 @@ msgstr "pakker, der blev installeret. Det kan give gentagne fejl"
 
 #: dselect/install:102
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
+msgstr "eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
 
 #: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
+msgid "above this message are important. Please fix them and run [I]nstall again"
+msgstr "fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
 
 #: dselect/update:30
 msgid "Merging Available information"
@@ -1310,7 +1302,7 @@ msgid "Tar Checksum failed, archive corrupted"
 msgstr "Tar-tjeksum fejlede, arkivet er ødelagt"
 
 #: apt-inst/contrib/extracttar.cc:295
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Ukendt TAR-hovedtype %u, element %s"
 
@@ -1841,8 +1833,7 @@ msgstr "http-serveren sendte et ugyldigt Content-Range-hovede"
 
 #: methods/http.cc:566
 msgid "This http server has broken range support"
-msgstr ""
-"Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
+msgstr "Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
 
 #: methods/http.cc:590
 msgid "Unknown date format"
@@ -1905,7 +1896,7 @@ msgstr "Det valgte %s blev ikke fundet"
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "Ukendt type-forkortelse: '%c'"
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
@@ -1984,7 +1975,7 @@ msgid "Option %s requires an argument."
 msgstr "Tilvalget %s kræver et parameter"
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "Tilvalg %s: Opsætningspostens specifikation skal have en =<værdi>."
 
@@ -2111,7 +2102,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Denne APT understøtter ikke versionssystemet '%s'"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Pakke-mellemlageret er lavet til en anden arkitektur"
 
@@ -2263,10 +2253,8 @@ msgstr "Indeksfiler af typen '%s' understøttes ikke"
 
 #: apt-pkg/algorithms.cc:238
 #, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr ""
-"Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
+msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr "Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
 
 #: apt-pkg/algorithms.cc:1056
 msgid ""
@@ -2278,8 +2266,7 @@ msgstr ""
 
 #: apt-pkg/algorithms.cc:1058
 msgid "Unable to correct problems, you have held broken packages."
-msgstr ""
-"Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
+msgstr "Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
 
 #: apt-pkg/acquire.cc:61
 #, c-format
@@ -2338,7 +2325,7 @@ msgstr "Kunne ikke forstå pin-type %s"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "Ingen prioritet (eller prioritet nul) angivet ved pin"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
@@ -2381,8 +2368,7 @@ msgstr "Der skete en fejl under behandlingen af %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
@@ -2390,8 +2376,7 @@ msgstr "Hold da op! Du nåede over det antal versioner, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2446,8 +2431,7 @@ msgstr ""
 
 #: apt-pkg/acquire-item.cc:419
 #, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
+msgid "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Pakkeindeksfilerne er i stykker. Intet 'Filename:'-felt for pakken %s."
 
 #: apt-pkg/acquire-item.cc:501
@@ -2755,3 +2739,4 @@ msgstr "Forbindelsen lukkedes for hurtigt"
 
 #~ msgid "Errors apply to file '%s'"
 #~ msgstr "Fejlene vedrører filen '%s'"
+

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-08-17 21:45-0400\n"
-"PO-Revision-Date: 2003-05-15 11:19+0200\n"
+"PO-Revision-Date: 2003-08-27 14:08+0200\n"
 "Last-Translator: Rubén Porras Campo <nahoo@inicia.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -95,9 +95,8 @@ msgid "You must give exactly one pattern"
 msgstr "Debe dar exactamente un patrón"
 
 #: cmdline/apt-cache.cc:1383
-#, fuzzy
 msgid "No packages found"
-msgstr " índice de paquetes y "
+msgstr "No se encontró ningún paquete"
 
 #: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
@@ -158,7 +157,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s para %s %s compilado en %s %s\n"
 
 #: cmdline/apt-cache.cc:1588
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -197,7 +195,7 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "Uso: apt-cache [opciones] orden\n"
-"     apt-cache [opciones] add archivo1 [archivo1 ...]\n"
+"     apt-cache [opciones] add archivo1 [archivo2 ...]\n"
 "     apt-cache [opciones] showpkg paq1 [paq2 ...]\n"
 "\n"
 "apt-cache es una herramienta de bajo nivel que se utiliza para manipular\n"
@@ -212,11 +210,9 @@ msgstr ""
 "   dump - Muestra el archivo entero en un formato terso\n"
 "   dumpavail - Imprime un archivo disponible a la salida estándar\n"
 "   unmet - Muestra dependencias incumplidas\n"
-"   search - Busca en la lista de paquetes por un patrón de expresión "
-"regular\n"
+"   search - Busca en la lista de paquetes por un patrón de expresión regular\n"
 "   show - Muestra un registro legible para el paquete\n"
-"   depends - Muestra la información de dependencias en bruto para el "
-"paquete\n"
+"   depends - Muestra la información de dependencias en bruto para el paquete\n"
 "   rdepends - Muestra la información de dependencias inversas del paquete\n"
 "   pkgnames - Lista los nombres de todos los paquetes\n"
 "   dotty - Genera gráficas del paquete para GraphVis\n"
@@ -331,7 +327,6 @@ msgid "Error Processing Contents %s"
 msgstr "Error procesando contenidos %s"
 
 #: ftparchive/apt-ftparchive.cc:550
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -372,7 +367,7 @@ msgid ""
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
 "Uso: apt-ftparchive [opciones] orden\n"
-"Comandos: packges trayectoria-binaria [archivo-sobrepaso\n"
+"Comandos: packages trayectoria-binaria [archivo-sobrepaso\n"
 "                                      [prefijo-trayectoria]]\n"
 "          sources trayectoria-fuente [archivo-sobrepaso \n"
 "                                     [prefijo-trayectoria]]\n"
@@ -698,9 +693,9 @@ msgstr ""
 "¡Esto NO debe hacerse a menos que sepa exactamente lo que está haciendo!"
 
 #: cmdline/apt-get.cc:573
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu paquetes actualizados, %lu se instalarán, "
+msgstr "%lu actualizados, %lu se instalarán, "
 
 #: cmdline/apt-get.cc:577
 #, c-format
@@ -718,9 +713,9 @@ msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu para eliminar y %lu no actualizados.\n"
 
 #: cmdline/apt-get.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu paquetes no instalados del todo o eliminados.\n"
+msgstr "%lu no instalados del todo o eliminados.\n"
 
 #: cmdline/apt-get.cc:645
 msgid "Correcting dependencies..."
@@ -1128,7 +1123,6 @@ msgid "Supported Modules:"
 msgstr "Módulos soportados:"
 
 #: cmdline/apt-get.cc:2251
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1182,19 +1176,18 @@ msgstr ""
 "   install - Instala nuevos paquetes (paquete es libc6 y no libc6.deb)\n"
 "   remove - Elimina paquetes\n"
 "   source - Descarga archivos fuente\n"
-"   build-dep - Configura las dependencias de construcción para paquetes "
-"fuente\n"
+"   build-dep - Configura las dependencias de construcción para paquetes fuente\n"
 "   dist-upgrade - Actualiza la distribución, vea apt-get(8)\n"
 "   dselect-upgrade - Sigue las selecciones de dselect\n"
 "   clean - Elimina los archivos descargados\n"
-"   autoclean - Elimina los archivos antiguos descargados\n"
+"   autoclean - Elimina los archivos descargados antiguos\n"
 "   check - Verifica que no haya dependencias incumplidas\n"
 "\n"
 "Opciones:\n"
 "  -h  Este texto de ayuda.\n"
 "  -q  Salida registrable - sin indicador de progreso\n"
 "  -qq Sin salida, excepto si hay errores\n"
-"  -d  Solo descarga - NO instala o desempaqueta los archivos\n"
+"  -d  Sólo descarga - NO instala o desempaqueta los archivos\n"
 "  -s  No actúa. Realiza una simulación\n"
 "  -y  Asume Sí para todas las consultas\n"
 "  -f  Intenta continuar si la comprobación de integridad falla\n"
@@ -1205,7 +1198,7 @@ msgstr ""
 "  -c=? Lee este archivo de configuración\n"
 "  -o=? Establece una opción de configuración arbitraria, p. ej. \n"
 "       -o dir::cache=/tmp\n"
-"Consulte los manuales de apt-get(8), sources.list(5) y apt.conf(5)\n"
+"Consulte las páginas del manual de apt-get(8), sources.list(5) y apt.conf(5)\n"
 "para más información y opciones.\n"
 "                       Este APT tiene poderes de Super Vaca.\n"
 
@@ -1235,14 +1228,15 @@ msgid " [Working]"
 msgstr " [Trabajando]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press enter\n"
 msgstr ""
-"Cambio de medio: Por favor inserte el disco etiquetado '%s' en la unidad '%"
-"s' y presione Intro\n"
+"Cambio de medio: Por favor inserte el disco etiquetado\n"
+" '%s'\n"
+"en la unidad '%s' y presione Intro\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1326,9 +1320,9 @@ msgid "Tar Checksum failed, archive corrupted"
 msgstr "No se aprobó la suma de control del tar, archive corrompido"
 
 #: apt-inst/contrib/extracttar.cc:295
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown TAR header type %u, member %s"
-msgstr "Cabecera del TAR tipo %u, miembro %s desconocido"
+msgstr "Cabecera del TAR tipo %u desconocida, miembro %s"
 
 #: apt-inst/contrib/arfile.cc:73
 msgid "Invalid archive signature"
@@ -1921,7 +1915,7 @@ msgstr "Selección %s no encontrada"
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "Tipo de abreviación no reconocida: '%c'"
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
@@ -2002,11 +1996,9 @@ msgid "Option %s requires an argument."
 msgstr "La opción %s necesita un argumento."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr ""
-"Opción %s: La especificación del elemento de configuración debe tener un "
-"=<val>."
+msgstr "Opción %s: La especificación del elemento de configuración debe tener un =<val>."
 
 #: apt-pkg/contrib/cmndline.cc:237
 #, c-format
@@ -2365,7 +2357,7 @@ msgstr "No se entiende el pin tipo %s"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "No hay prioridad especificada para pin (o es cero)"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
