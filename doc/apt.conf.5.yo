@@ -132,6 +132,9 @@ set for archive files. This may be usefull to prevent polluting a proxy cache
 with very large .deb files. Note: Squid 2.0.2 does not support any of
 these options. 
 
+The option bf(timeout) sets the timeout timer used by the method, this
+applies to all things including connection timeout and data timeout.
+
 One setting is provided to control the pipeline depth in cases where the
 remote server is not RFC conforming or buggy (such as Squid 2.0.2)
 Acquire::http::Pipeline-Depth can be a value from 0 to 5 indicating how many
@@ -148,11 +151,15 @@ to do this. The subsitution variables available are $(PROXY_USER),
 $(PROXY_PASS), $(SITE_USER), $(SITE_PASS), $(SITE), and $(SITE_PORT). 
 Each is taken from it's respective URI component.
 
+The option bf(timeout) sets the timeout timer used by the method, this
+applies to all things including connection timeout and data timeout.
+
 Several settings are provided to control passive mode. Generally it is safe
 to leave passive mode on, it works in nearly every environment. However some
 situations require that passive mode be disabled and port mode ftp used
 instead. This can be done globally, for connections that go through a proxy
 or for a specific host (See the sample config file for examples)
+
 
 It is possible to proxy FTP over HTTP by setting the em(ftp_proxy)
 environment variable to a http url - see the discussion of the http method
@@ -230,7 +237,7 @@ This is a list of shell commands to run before/after invoking dpkg. Like
 bf(Options) this must be specified in list notation. The commands
 are invoked in order using /bin/sh, should any fail APT will abort.
 
-dit(bf(BPre-Install-Pkgs))
+dit(bf(Pre-Install-Pkgs))
 This is a list of shell commands to run before invoking dpkg. Like
 bf(Options) this must be specified in list notation. The commands
 are invoked in order using /bin/sh, should any fail APT will abort.

@@ -124,14 +124,15 @@ well as the one in the previous example in bf(sources.list),
 a single FTP session will be used for both resource lines.
 quote("deb ftp://ftp.debian.org/debian unstable contrib")
 
-Uses FTP to access the archive at nonus.debian.org, under the debian-non-US
-directory, and uses only files found under unstable/binary-i386.
-quote("deb ftp://nonus.debian.org/debian-non-US unstable/binary-i386/")
+Uses HTTP to access the archive at nonus.debian.org, under the debian-non-US
+directory.
+quote("deb http://nonus.debian.org/debian-non-US stable/non-US main contrib non-free")
 
 Uses HTTP to access the archive at nonus.debian.org, under the
 debian-non-US directory, and uses only files found under
 unstable/binary-i386 on i386 machines, unstable/binary-m68k on m68k, and so
-forth for other supported architectures.
+forth for other supported architectures. [Note this example only illistrates
+how to use the substitation variable non-us is no longer structured like this]
 quote("deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/")
 
 manpageseealso()
