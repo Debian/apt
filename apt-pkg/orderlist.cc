@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.6 1999/07/12 03:40:37 jgg Exp $
+// $Id: orderlist.cc,v 1.7 1999/07/19 01:49:44 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -439,7 +439,7 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 	 continue;
       
       // Skip over missing files
-      if (IsMissing(D.ParentPkg()) == true)
+      if (Critical == false && IsMissing(D.ParentPkg()) == true)
 	 continue;
 	 
       if (VisitNode(Pkg) == false)
