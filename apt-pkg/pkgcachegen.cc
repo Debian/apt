@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.51 2002/04/26 05:35:57 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.52 2002/07/08 03:13:30 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -42,7 +42,8 @@ typedef vector<pkgIndexFile *>::iterator FileIterator;
 // ---------------------------------------------------------------------
 /* We set the diry flag and make sure that is written to the disk */
 pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
-                    Map(*pMap), Cache(pMap,false), Progress(Prog)
+		    Map(*pMap), Cache(pMap,false), Progress(Prog),
+		    FoundFileDeps(0)
 {
    CurrentFile = 0;
    memset(UniqHash,0,sizeof(UniqHash));
@@ -157,6 +158,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	 if (OutVer != 0)
 	 {
 	    *OutVer = Ver;
+	    FoundFileDeps |= List.HasFileDeps();
 	    return true;
 	 }
 	 
@@ -194,9 +196,12 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (OutVer != 0)
       {
 	 *OutVer = Ver;
+	 FoundFileDeps |= List.HasFileDeps();
 	 return true;
       }      
    }
+
+   FoundFileDeps |= List.HasFileDeps();
 
    if (Cache.HeaderP->PackageCount >= (1ULL<<sizeof(Cache.PkgP->ID)*8)-1)
       return _error->Error(_("Wow, you exceeded the number of package "
@@ -207,6 +212,54 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
    if (Cache.HeaderP->DependsCount >= (1ULL<<(sizeof(Cache.DepP->ID)*8))-1ULL)
       return _error->Error(_("Wow, you exceeded the number of dependencies "
 			     "this APT is capable of."));
+   return true;
+}
+									/*}}}*/
+// CacheGenerator::MergeFileProvides - Merge file provides   		/*{{{*/
+// ---------------------------------------------------------------------
+/* If we found any file depends while parsing the main list we need to 
+   resolve them. Since it is undesired to load the entire list of files
+   into the cache as virtual packages we do a two stage effort. MergeList
+   identifies the file depends and this creates Provdies for them by
+   re-parsing all the indexs. */
+bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
+{
+   List.Owner = this;
+   
+   unsigned int Counter = 0;
+   while (List.Step() == true)
+   {
+      string PackageName = List.Package();
+      if (PackageName.empty() == true)
+	 return false;
+      string Version = List.Version();
+      if (Version.empty() == true)
+	 continue;
+      
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(PackageName);
+      if (Pkg.end() == true)
+	 return _error->Error(_("Error occured while processing %s (FindPkg)"),
+				PackageName.c_str());
+      Counter++;
+      if (Counter % 100 == 0 && Progress != 0)
+	 Progress->Progress(List.Offset());
+
+      unsigned long Hash = List.VersionHash();
+      pkgCache::VerIterator Ver = Pkg.VersionList();
+      for (; Ver.end() == false; Ver++)
+      {
+	 if (Ver->Hash == Hash && Version.c_str() == Ver.VerStr())
+	 {
+	    if (List.CollectFileProvides(Cache,Ver) == false)
+	       return _error->Error(_("Error occured while processing %s (CollectFileProvides)"),PackageName.c_str());
+	    break;
+	 }
+      }
+      
+      if (Ver.end() == true)
+	 _error->Warning(_("Package %s %s was not found while processing file dependencies"),PackageName.c_str(),Version.c_str());
+   }
+
    return true;
 }
 									/*}}}*/
@@ -350,6 +403,10 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 	 OldDepLast = &D->NextDepends;
       OldDepVer = Ver;
    }
+
+   // Is it a file dependency?
+   if (PackageName[0] == '/')
+      FoundFileDeps = true;
    
    Dep->NextDepends = *OldDepLast;
    *OldDepLast = Dep.Index();
@@ -566,28 +623,44 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 		       unsigned long &CurrentSize,unsigned long TotalSize,
 		       FileIterator Start, FileIterator End)
 {
-   for (; Start != End; Start++)
+   FileIterator I;
+   for (I = Start; I != End; I++)
    {
-      if ((*Start)->HasPackages() == false)
+      if ((*I)->HasPackages() == false)
 	 continue;
       
-      if ((*Start)->Exists() == false)
+      if ((*I)->Exists() == false)
 	 continue;
 
-      if ((*Start)->FindInCache(Gen.GetCache()).end() == false)
+      if ((*I)->FindInCache(Gen.GetCache()).end() == false)
       {
 	 _error->Warning("Duplicate sources.list entry %s",
-			 (*Start)->Describe().c_str());
+			 (*I)->Describe().c_str());
 	 continue;
       }
       
-      unsigned long Size = (*Start)->Size();
+      unsigned long Size = (*I)->Size();
       Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Reading Package Lists"));
       CurrentSize += Size;
       
-      if ((*Start)->Merge(Gen,Progress) == false)
+      if ((*I)->Merge(Gen,Progress) == false)
 	 return false;
    }   
+
+   if (Gen.HasFileDeps() == true)
+   {
+      Progress.Done();
+      TotalSize = ComputeSize(Start, End);
+      CurrentSize = 0;
+      for (I = Start; I != End; I++)
+      {
+	 unsigned long Size = (*I)->Size();
+	 Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Collecting File Provides"));
+	 CurrentSize += Size;
+	 if ((*I)->MergeFileProvides(Gen,Progress) == false)
+	    return false;
+      }
+   }
    
    return true;
 }

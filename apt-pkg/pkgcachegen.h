@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.18 2001/02/20 07:03:17 jgg Exp $
+// $Id: pkgcachegen.h,v 1.19 2002/07/08 03:13:30 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -49,6 +49,9 @@ class pkgCacheGenerator
    
    string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
+
+   // Flag file dependencies
+   bool FoundFileDeps;
    
    bool NewPackage(pkgCache::PkgIterator &Pkg,string Pkg);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
@@ -66,6 +69,9 @@ class pkgCacheGenerator
    inline pkgCache &GetCache() {return Cache;};
    inline pkgCache::PkgFileIterator GetCurFile() 
          {return pkgCache::PkgFileIterator(Cache,CurrentFile);};
+
+   bool HasFileDeps() {return FoundFileDeps;};
+   bool MergeFileProvides(ListParser &List);
       
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
@@ -80,6 +86,9 @@ class pkgCacheGenerator::ListParser
    // Some cache items
    pkgCache::VerIterator OldDepVer;
    map_ptrloc *OldDepLast;
+
+   // Flag file dependencies
+   bool FoundFileDeps;
       
    protected:
 
@@ -106,6 +115,11 @@ class pkgCacheGenerator::ListParser
    
    virtual bool Step() = 0;
    
+   inline bool HasFileDeps() {return FoundFileDeps;};
+   virtual bool CollectFileProvides(pkgCache &Cache,
+				    pkgCache::VerIterator Ver) {return true;};
+
+   ListParser() : FoundFileDeps(false) {};
    virtual ~ListParser() {};
 };
 
