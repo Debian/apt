@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.38 2002/03/26 07:38:58 jgg Exp $
+// $Id: algorithms.cc,v 1.39 2002/04/02 05:55:24 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -1099,18 +1099,10 @@ bool pkgProblemResolver::ResolveByKeep()
       // Isolate the problem dependencies
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false;)
       {
-	 // Compute a single dependency element (glob or)
-	 pkgCache::DepIterator Start = D;
-	 pkgCache::DepIterator End = D;
-	 unsigned char State = 0;
-	 for (bool LastOR = true; D.end() == false && LastOR == true; D++)
-	 {
-	    State |= Cache[D];
-	    LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
-	    if (LastOR == true)
-	       End = D;
-	 }
-	 
+	 DepIterator Start;
+	 DepIterator End;
+	 D.GlobOr(Start,End);
+
 	 // We only worry about critical deps.
 	 if (End.IsCritical() != true)
 	    continue;
@@ -1118,42 +1110,47 @@ bool pkgProblemResolver::ResolveByKeep()
 	 // Dep is ok
 	 if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
 	    continue;
-	 
-	 // Hm, the group is broken.. I have no idea how to handle this
-	 if (Start != End)
+
+	 /* Hm, the group is broken.. I suppose the best thing to do is to
+	    is to try every combination of keep/not-keep for the set, but thats
+	    slow, and this never happens, just be conservative and assume the
+	    list of ors is in preference and keep till it starts to work. */
+	 while (true)
 	 {
-	    clog << "Note, a broken or group was found in " << I.Name() << "." << endl;
-	    if ((Flags[I->ID] & Protected) == 0)
-	       Cache.MarkKeep(I);
-	    break;
-	 }
-	 
-	 if (Debug == true)
-	    clog << "Package " << I.Name() << " has broken dep on " << End.TargetPkg().Name() << endl;
-	 
-	 // Look at all the possible provides on this package
-	 SPtrArray<pkgCache::Version *> VList = End.AllTargets();
-	 for (pkgCache::Version **V = VList; *V != 0; V++)
-	 {
-	    pkgCache::VerIterator Ver(Cache,*V);
-	    pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+	    if (Debug == true)
+	       clog << "Package " << I.Name() << " has broken dep on " << Start.TargetPkg().Name() << endl;
 	    
-	    // It is not keepable
-	    if (Cache[Pkg].InstallVer == 0 || 
-		Pkg->CurrentVer == 0)
-	       continue;
-	    
-	    if ((Flags[I->ID] & Protected) == 0)
+	    // Look at all the possible provides on this package
+	    SPtrArray<pkgCache::Version *> VList = Start.AllTargets();
+	    for (pkgCache::Version **V = VList; *V != 0; V++)
 	    {
-	       if (Debug == true)
-		  clog << "  Keeping Package " << Pkg.Name() << " due to dep" << endl;
-	       Cache.MarkKeep(Pkg);
+	       pkgCache::VerIterator Ver(Cache,*V);
+	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+	       
+	       // It is not keepable
+	       if (Cache[Pkg].InstallVer == 0 ||
+		   Pkg->CurrentVer == 0)
+		  continue;
+	       
+	       if ((Flags[I->ID] & Protected) == 0)
+	       {
+		  if (Debug == true)
+		     clog << "  Keeping Package " << Pkg.Name() << " due to dep" << endl;
+		  Cache.MarkKeep(Pkg);
+	       }
+	       
+	       if (Cache[I].InstBroken() == false)
+		  break;
 	    }
 	    
 	    if (Cache[I].InstBroken() == false)
 	       break;
-	 }
 
+	    if (Start == End)
+	       break;
+	    Start++;
+	 }
+	      
 	 if (Cache[I].InstBroken() == false)
 	    break;
       }
