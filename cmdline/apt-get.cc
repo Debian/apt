@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.135 2003/08/08 23:45:00 mdz Exp $
+// $Id: apt-get.cc,v 1.136 2003/08/08 23:48:48 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1527,6 +1527,22 @@ bool DoInstall(CommandLine &CmdL)
 		 pkgCache::DepIterator Start;
 		 pkgCache::DepIterator End;
 		 D.GlobOr(Start,End);
+
+		 /* 
+		  * If this is a virtual package, we need to check the list of
+		  * packages that provide it and see if any of those are
+		  * installed
+		  */
+		 pkgCache::PrvIterator Prv = Start.TargetPkg().ProvidesList();
+		 bool providedBySomething = false;
+		 for (; Prv.end() != true; Prv++)
+		    if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false) {
+		       providedBySomething = true;
+		       break;
+		    }
+
+		 if (providedBySomething) continue;
+            
 		 do
 		   {
 		     if (Start->Type == pkgCache::Dep::Suggests) {
