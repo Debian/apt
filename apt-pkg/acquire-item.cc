@@ -350,6 +350,13 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
 /* The only header we use is the last-modified header. */
 string pkgAcqMetaSig::Custom600Headers()
 {
+   // mvo: we don't really need the last-modified header here
+   //      1) it points to "Final" and that was renamed to "DestFile" 
+   //         so it's never send anyway
+   //      2) because DestFIle is in partial/ we will send a partial request
+   //         with if-range in the http method (or the equivalent for ftp). 
+   //         that should give the same result
+
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
    
