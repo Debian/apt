@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.4 2001/02/27 04:26:03 jgg Exp $
+// $Id: apt-extracttemplates.cc,v 1.5 2001/03/03 22:45:59 tausq Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -27,6 +27,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 	
 #include <stdio.h>
 #include <string.h>
@@ -39,7 +40,7 @@
 #include "apt-extracttemplates.h"
 									/*}}}*/
 
-#define TMPDIR		"/var/lib/debconf/"
+#define TMPDIR		"/tmp"
 
 pkgCache *DebFile::Cache = 0;
 
@@ -246,16 +247,18 @@ string WriteFile(const char *prefix, const char *data)
 	char fn[512];
 	static int i;
 	snprintf(fn, sizeof(fn), "%s%s.%u%d", _config->Find("APT::ExtractTemplates::TempDir", TMPDIR).c_str(), prefix, getpid(), i++);
+	FileFd f;
+	if (data == NULL)
+		data = "";
 
-	ofstream ofs(fn);
-	if (!ofs)
+	if (!f.Open(fn, FileFd::WriteTemp, 0600))
 	{
 		_error->Errno("ofstream::ofstream",_("Unable to write to %s"),fn);
 		return string();
 	}
 
-	ofs << (data ? data : "");
-	ofs.close();
+	f.Write(data, strlen(data));
+	f.Close();
 	return fn;
 }
 									/*}}}*/
