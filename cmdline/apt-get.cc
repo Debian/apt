@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.138 2003/08/09 03:07:03 mdz Exp $
+// $Id: apt-get.cc,v 1.139 2003/08/22 01:51:01 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -570,7 +570,7 @@ void Stats(ostream &out,pkgDepCache &Dep)
 	 ReInstall++;
    }   
 
-   ioprintf(out,_("%lu packages upgraded, %lu newly installed, "),
+   ioprintf(out,_("%lu upgraded, %lu newly installed, "),
 	    Upgrade,Install);
    
    if (ReInstall != 0)
@@ -582,7 +582,7 @@ void Stats(ostream &out,pkgDepCache &Dep)
 	    Dep.DelCount(),Dep.KeepCount());
    
    if (Dep.BadCount() != 0)
-      ioprintf(out,_("%lu packages not fully installed or removed.\n"),
+      ioprintf(out,_("%lu not fully installed or removed.\n"),
 	       Dep.BadCount());
 }
 									/*}}}*/
