@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rsh.cc,v 1.4 2001/03/13 06:51:46 jgg Exp $
+// $Id: rsh.cc,v 1.5 2002/11/09 23:33:26 doogie Exp $
 /* ######################################################################
 
    RSH method - Transfer files via rsh compatible program
@@ -10,7 +10,7 @@
 
    ##################################################################### */
 									/*}}}*/
-// Iclude Files								/*{{{*/
+// Include Files							/*{{{*/
 #include "rsh.h"
 #include <apt-pkg/error.h>
 
@@ -26,6 +26,7 @@
 
 const char *Prog;
 unsigned long TimeOut = 120;
+Configuration::Item const *RshOptions = 0;
 time_t RSHMethod::FailTime = 0;
 string RSHMethod::FailFile;
 int RSHMethod::FailFd = -1;
@@ -99,14 +100,27 @@ bool RSHConn::Connect(string Host, string User)
    // The child
    if (Process == 0)
    {
-      const char *Args[6];
-      int i = 0;
+      const char *Args[400];
+      unsigned int i = 0;
 
       dup2(Pipes[1],STDOUT_FILENO);
       dup2(Pipes[2],STDIN_FILENO);
 
       // Probably should do
       // dup2(open("/dev/null",O_RDONLY),STDERR_FILENO);
+
+      // Insert user-supplied command line options
+      Configuration::Item const *Opts = RshOptions;
+      if (Opts != 0)
+      {
+         Opts = Opts->Child;
+	 for (; Opts != 0; Opts = Opts->Next)
+         {
+            if (Opts->Value.empty() == true)
+               continue;
+            Args[i++] = Opts->Value.c_str();
+         }
+      }
 
       Args[i++] = Prog;
       if (User.empty() == false) {
@@ -338,13 +352,30 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
 // RSHMethod::RSHMethod - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-RSHMethod::RSHMethod() : pkgAcqMethod("1.0")
+RSHMethod::RSHMethod() : pkgAcqMethod("1.0",SendConfig)
 {
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
    Server = 0;
    FailFd = -1;
 };
+									/*}}}*/
+// RSHMethod::Configuration - Handle a configuration message		/*{{{*/
+// ---------------------------------------------------------------------
+bool RSHMethod::Configuration(string Message)
+{
+   char ProgStr[100];
+  
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   snprintf(ProgStr, sizeof ProgStr, "Acquire::%s::Timeout", Prog);
+   TimeOut = _config->FindI(ProgStr,TimeOut);
+   snprintf(ProgStr, sizeof ProgStr, "Acquire::%s::Options", Prog);
+   RshOptions = _config->Tree(ProgStr);
+
+   return true;
+}
 									/*}}}*/
 // RSHMethod::SigTerm - Clean up and timestamp the files on exit	/*{{{*/
 // ---------------------------------------------------------------------
