@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.40 2001/08/18 22:23:38 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.41 2002/01/09 04:59:44 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -776,7 +776,11 @@ int main(int argc,const char *argv[])
       {"add",&DoAdd},
       {"ident",&DoIdent},
       {0,0}};
-	 
+
+   // Set up gettext support
+   setlocale(LC_ALL,"");
+   textdomain(PACKAGE);
+
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
    if (pkgInitConfig(*_config) == false ||

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.7 2001/04/29 05:40:36 jgg Exp $
+// $Id: apt-extracttemplates.cc,v 1.8 2002/01/09 04:59:44 jgg Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -342,7 +342,11 @@ int main(int argc, const char **argv)
 		{'c',"config-file",0,CommandLine::ConfigFile},
 		{'o',"option",0,CommandLine::ArbItem},
 		{0,0,0,0}};
-	
+
+	// Set up gettext support
+	setlocale(LC_ALL,"");
+	textdomain(PACKAGE);
+
 	// Parse the command line and initialize the package library
 	CommandLine CmdL(Args,_config);
 	if (pkgInitConfig(*_config) == false ||

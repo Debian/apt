@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.54 2001/12/26 06:47:58 jgg Exp $
+// $Id: apt-cache.cc,v 1.55 2002/01/09 04:59:44 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1337,7 +1337,11 @@ int main(int argc,const char *argv[])
                                     {0,0}};
 
    CacheInitialize();
-   
+
+   // Set up gettext support
+   setlocale(LC_ALL,"");
+   textdomain(PACKAGE);
+
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
    if (pkgInitConfig(*_config) == false ||

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.112 2001/12/05 07:22:40 tausq Exp $
+// $Id: apt-get.cc,v 1.113 2002/01/09 04:59:44 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2149,11 +2149,15 @@ int main(int argc,const char *argv[])
                                    {"clean",&DoClean},
                                    {"autoclean",&DoAutoClean},
                                    {"check",&DoCheck},
-      				   {"source",&DoSource},
+				   {"source",&DoSource},
 				   {"moo",&DoMoo},
-      				   {"help",&ShowHelp},
+				   {"help",&ShowHelp},
                                    {0,0}};
-   
+
+   // Set up gettext support
+   setlocale(LC_ALL,"");
+   textdomain(PACKAGE);
+
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
    if (pkgInitConfig(*_config) == false ||

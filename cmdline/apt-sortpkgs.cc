@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-sortpkgs.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: apt-sortpkgs.cc,v 1.3 2002/01/09 04:59:44 jgg Exp $
 /* ######################################################################
    
    APT Sort Packages - Program to sort Package and Source files
@@ -168,7 +168,11 @@ int main(unsigned int argc,const char *argv[])
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
-   
+
+   // Set up gettext support
+   setlocale(LC_ALL,"");
+   textdomain(PACKAGE);
+
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
    if (pkgInitConfig(*_config) == false ||

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.7 2001/02/20 07:03:17 jgg Exp $
+// $Id: apt-config.cc,v 1.8 2002/01/09 04:59:44 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -98,7 +98,11 @@ int main(int argc,const char *argv[])
    CommandLine::Dispatch Cmds[] = {{"shell",&DoShell},
                                    {"dump",&DoDump},
                                    {0,0}};
-   
+
+   // Set up gettext support
+   setlocale(LC_ALL,"");
+   textdomain(PACKAGE);
+
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
    if (pkgInitConfig(*_config) == false ||
