@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.8 1999/11/16 01:41:49 jgg Exp $
+// $Id: md5.cc,v 1.9 1999/11/16 01:51:03 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
@@ -341,7 +341,7 @@ MD5SumValue MD5Summation::Result()
       }
       
       memset(p, 0, count);
-      byteSwap((unit8_t *)in, 14);
+      byteSwap((uint8_t *)in, 14);
       
       // Append length in bits and transform
       in[14] = bytes[0] << 3;
