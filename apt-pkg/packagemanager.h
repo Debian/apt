@@ -68,7 +68,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
-   virtual bool Go() {return true;};
+   virtual bool Go(int statusFd=-1) {return true;};
    virtual void Reset() {};
    
    public:

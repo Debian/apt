@@ -326,7 +326,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg */
-bool pkgDPkgPM::Go()
+bool pkgDPkgPM::Go(int status_fd)
 {
    unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);   
    unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
@@ -367,6 +367,17 @@ bool pkgDPkgPM::Go()
 	 }	 
       }
       
+      // if we got a status_fd argument, we pass it to apt
+      char status_fd_buf[20];
+      if(status_fd > 0) 
+      {
+	 Args[n++] = "--status-fd";
+	 Size += strlen(Args[n-1]);
+	 snprintf(status_fd_buf,20,"%i",status_fd);
+	 Args[n++] = status_fd_buf;
+	 Size += strlen(Args[n-1]);
+      } 
+
       switch (I->Op)
       {
 	 case Item::Remove:
@@ -440,7 +451,11 @@ bool pkgDPkgPM::Go()
       sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
 		     
       // Fork dpkg
-      pid_t Child = ExecFork();
+      pid_t Child;
+      if(status_fd > 0)
+	 Child = ExecFork(status_fd);
+      else
+	 Child = ExecFork();
             
       // This is the child
       if (Child == 0)
