@@ -8,3 +8,4 @@
 all headers library clean veryclean binary program doc:
 	$(MAKE) -C deity $@
 	$(MAKE) -C apt-pkg $@
+	$(MAKE) -C doc $@

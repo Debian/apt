@@ -18,7 +18,7 @@ doc: $($(LOCAL)-LIST)
 veryclean: veryclean/$(LOCAL)
 
 $($(LOCAL)-LIST) : $(DOC)/% : %
-	echo Installing man page %< to $(@D)
+	echo Installing man page $< to $(@D)
 	cp $< $(@D)
 
 # Clean rule
