@@ -27,7 +27,7 @@ AC_DEFUN(ah_NUM_CPUS,
 		elif test ! "$withval" = "no";then
 			NUM_CPUS=$withval
 		fi],
-		[if test "$GETCONF";then
+		[if test ! -z "$GETCONF";then
 			NUM_CPUS=`$GETCONF _NPROCESSORS_ONLN 2>/dev/null`
 		else
 			NUM_CPUS=1
