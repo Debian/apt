@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.70 1999/07/10 05:32:26 jgg Exp $
+// $Id: apt-get.cc,v 1.71 1999/07/12 04:39:37 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -60,6 +60,31 @@ ostream c1out;
 ostream c2out;
 ofstream devnull("/dev/null");
 unsigned int ScreenWidth = 80;
+
+// class CacheFile - Cover class for some dependency cache functions	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+class CacheFile : public pkgCacheFile
+{
+   static pkgCache *SortCache;
+   static int NameComp(const void *a,const void *b);
+   
+   public:
+   pkgCache::Package **List;
+   
+   void Sort();
+   bool CheckDeps(bool AllowBroken = false);
+   bool Open(bool WithLock = true) 
+   {
+      OpTextProgress Prog(*_config);
+      if (pkgCacheFile::Open(Prog,WithLock) == false)
+	 return false;
+      Sort();
+      return true;
+   };
+   CacheFile() : List(0) {};
+};
+									/*}}}*/
 
 // YnPrompt - Yes No Prompt.						/*{{{*/
 // ---------------------------------------------------------------------
@@ -129,12 +154,13 @@ bool ShowList(ostream &out,string Title,string List)
 /* This prints out the names of all the packages that are broken along
    with the name of each each broken dependency and a quite version 
    description. */
-void ShowBroken(ostream &out,pkgDepCache &Cache)
+void ShowBroken(ostream &out,CacheFile &Cache)
 {
    out << "Sorry, but the following packages have unmet dependencies:" << endl;
-   pkgCache::PkgIterator I = Cache.PkgBegin();
-   for (;I.end() != true; I++)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
+      pkgCache::PkgIterator I(Cache,Cache.List[J]);
+      
       if (Cache[I].InstBroken() == false)
 	  continue;
 	  
@@ -155,7 +181,7 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 	 pkgCache::DepIterator End;
 	 D.GlobOr(Start,End);
 
-	 if (Cache.IsImportantDep(End) == false || 
+	 if (Cache->IsImportantDep(End) == false || 
 	     (Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
 	    continue;
 	 
@@ -203,32 +229,35 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 // ShowNew - Show packages to newly install				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ShowNew(ostream &out,pkgDepCache &Dep)
+void ShowNew(ostream &out,CacheFile &Cache)
 {
    /* Print out a list of packages that are going to be removed extra
       to what the user asked */
-   pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
-   for (;I.end() != true; I++)
-      if (Dep[I].NewInstall() == true)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
+   {
+      pkgCache::PkgIterator I(Cache,Cache.List[J]);
+      if (Cache[I].NewInstall() == true)
 	 List += string(I.Name()) + " ";
+   }
+   
    ShowList(out,"The following NEW packages will be installed:",List);
 }
 									/*}}}*/
 // ShowDel - Show packages to delete					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ShowDel(ostream &out,pkgDepCache &Dep)
+void ShowDel(ostream &out,CacheFile &Cache)
 {
    /* Print out a list of packages that are going to be removed extra
       to what the user asked */
-   pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
-   for (;I.end() != true; I++)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
-      if (Dep[I].Delete() == true)
+      pkgCache::PkgIterator I(Cache,Cache.List[J]);
+      if (Cache[I].Delete() == true)
       {
-	 if ((Dep[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
+	 if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
 	    List += string(I.Name()) + "* ";
 	 else
 	    List += string(I.Name()) + " ";
@@ -260,14 +289,15 @@ void ShowKept(ostream &out,pkgDepCache &Dep)
 // ShowUpgraded - Show upgraded packages				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ShowUpgraded(ostream &out,pkgDepCache &Dep)
+void ShowUpgraded(ostream &out,CacheFile &Cache)
 {
-   pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
-   for (;I.end() != true; I++)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
+      pkgCache::PkgIterator I(Cache,Cache.List[J]);
+      
       // Not interesting
-      if (Dep[I].Upgrade() == false || Dep[I].NewInstall() == true)
+      if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
       
       List += string(I.Name()) + " ";
@@ -278,13 +308,13 @@ void ShowUpgraded(ostream &out,pkgDepCache &Dep)
 // ShowHold - Show held but changed packages				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHold(ostream &out,pkgDepCache &Dep)
+bool ShowHold(ostream &out,CacheFile &Cache)
 {
-   pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
-   for (;I.end() != true; I++)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
-      if (Dep[I].InstallVer != (pkgCache::Version *)I.CurrentVer() &&
+      pkgCache::PkgIterator I(Cache,Cache.List[J]);
+      if (Cache[I].InstallVer != (pkgCache::Version *)I.CurrentVer() &&
 	  I->SelectedState == pkgCache::State::Hold)
 	 List += string(I.Name()) + " ";
    }
@@ -297,21 +327,21 @@ bool ShowHold(ostream &out,pkgDepCache &Dep)
 /* This prints out a warning message that is not to be ignored. It shows
    all essential packages and their dependents that are to be removed. 
    It is insanely risky to remove the dependents of an essential package! */
-bool ShowEssential(ostream &out,pkgDepCache &Dep)
+bool ShowEssential(ostream &out,CacheFile &Cache)
 {
-   pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
-   bool *Added = new bool[Dep.HeaderP->PackageCount];
-   for (unsigned int I = 0; I != Dep.HeaderP->PackageCount; I++)
+   bool *Added = new bool[Cache->HeaderP->PackageCount];
+   for (unsigned int I = 0; I != Cache->HeaderP->PackageCount; I++)
       Added[I] = false;
    
-   for (;I.end() != true; I++)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
+      pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if ((I->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential)
 	 continue;
       
       // The essential package is being removed
-      if (Dep[I].Delete() == true)
+      if (Cache[I].Delete() == true)
       {
 	 if (Added[I->ID] == false)
 	 {
@@ -332,7 +362,7 @@ bool ShowEssential(ostream &out,pkgDepCache &Dep)
 	    continue;
 	 
 	 pkgCache::PkgIterator P = D.SmartTargetPkg();
-	 if (Dep[P].Delete() == true)
+	 if (Cache[P].Delete() == true)
 	 {
 	    if (Added[P->ID] == true)
 	       continue;
@@ -377,20 +407,40 @@ void Stats(ostream &out,pkgDepCache &Dep)
 }
 									/*}}}*/
 
-// class CacheFile - Cover class for some dependency cache functions	/*{{{*/
+// CacheFile::NameComp - QSort compare by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-class CacheFile : public pkgCacheFile
+pkgCache *CacheFile::SortCache = 0;
+int CacheFile::NameComp(const void *a,const void *b)
 {
-   public:
+   if (a == 0 && b == 0)
+      return 0;
+   if (a == 0)
+      return -1;
+   if (b == 0)
+      return 1;
    
-   bool CheckDeps(bool AllowBroken = false);
-   bool Open(bool WithLock = true) 
-   {
-      OpTextProgress Prog(*_config); 
-      return pkgCacheFile::Open(Prog,WithLock);
-   };
-};
+   const pkgCache::Package &A = **(pkgCache::Package **)a;
+   const pkgCache::Package &B = **(pkgCache::Package **)b;
+
+   return strcmp(SortCache->StrP + A.Name,SortCache->StrP + B.Name);
+}
+									/*}}}*/
+// CacheFile::Sort - Sort by name					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void CacheFile::Sort()
+{
+   delete [] List;
+   List = new pkgCache::Package *[Cache->Head().PackageCount];
+   memset(List,0,sizeof(*List)*Cache->Head().PackageCount);
+   pkgCache::PkgIterator I = Cache->PkgBegin();
+   for (;I.end() != true; I++)
+      List[I->ID] = I;
+
+   SortCache = *this;
+   qsort(List,Cache->Head().PackageCount,sizeof(*List),NameComp);
+}
 									/*}}}*/
 // CacheFile::Open - Open the cache file				/*{{{*/
 // ---------------------------------------------------------------------
@@ -940,9 +990,9 @@ bool DoInstall(CommandLine &CmdL)
    if (Cache->InstCount() != ExpectedInst)
    {
       string List;
-      pkgCache::PkgIterator I = Cache->PkgBegin();
-      for (;I.end() != true; I++)
+      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
       {
+	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
 	 if ((*Cache)[I].Install() == false)
 	    continue;
 
