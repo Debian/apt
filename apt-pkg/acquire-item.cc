@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.17 1998/12/11 06:32:33 jgg Exp $
+// $Id: acquire-item.cc,v 1.18 1999/01/24 21:16:04 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -419,7 +419,7 @@ bool pkgAcqArchive::QueueNext()
 /* */
 void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
 {
-   Item::Done(Message,Size,MD5);
+   Item::Done(Message,Size,Md5Hash);
    
    // Check the size
    if (Size != Version->Size)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.14 1998/12/05 04:19:01 jgg Exp $
+// $Id: acquire-method.cc,v 1.15 1999/01/24 21:16:04 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -148,7 +148,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 		      TimeRFC1123(Res.LastModified).c_str());
 
    if (Res.MD5Sum.empty() == false)
-      End += snprintf(End,sizeof(S) - (End - S),"MD5Sum: %s\n",Res.MD5Sum.c_str());
+      End += snprintf(End,sizeof(S) - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
 
    if (Res.ResumePoint != 0)
       End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %u\n",
@@ -171,7 +171,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 			 TimeRFC1123(Alt->LastModified).c_str());
       
       if (Alt->MD5Sum.empty() == false)
-	 End += snprintf(End,sizeof(S) - (End - S),"Alt-MD5Sum: %s\n",
+	 End += snprintf(End,sizeof(S) - (End - S),"Alt-MD5-Hash: %s\n",
 			 Alt->MD5Sum.c_str());
       
       if (Alt->IMSHit == true)
