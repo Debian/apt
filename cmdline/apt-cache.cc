@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.17 1998/12/10 04:22:48 jgg Exp $
+// $Id: apt-cache.cc,v 1.18 1998/12/10 05:39:53 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -451,7 +451,8 @@ int ShowHelp()
    cout << "  -h   This help text." << endl;
    cout << "  -p=? The package cache. [" << _config->FindFile("Dir::Cache::pkgcache") << ']' << endl;
    cout << "  -s=? The source cache. [" << _config->FindFile("Dir::Cache::srcpkgcache") << ']' << endl;
-   cout << "  -q   Disable progress indicator. " << endl;
+   cout << "  -q   Disable progress indicator." << endl;
+   cout << "  -i   Show only important deps for the unmet command." << endl;
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
    cout << "See the apt-cache(8) and apt.conf(8) manual pages for more information." << endl;

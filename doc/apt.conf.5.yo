@@ -87,7 +87,12 @@ updates its index files daily so the default is 1 day. bd(No-Store)
 specifies that the cache should never store this request, it is only
 set for archive files. This may be usefull to prevent polluting a proxy cache
 with very large .deb files. Note: Squid 2.0.2 does not support any of
-these options.
+these options. 
+
+One setting is provided to control the pipeline depth in cases where the
+remote server is not RFC conforming or buggy (such as Squid 2.0.2)
+Acquire::http::Pipeline-Depth can be a value from 0 to 5 indicating how many
+outstanding requests APT should send.
 
 dit(bf(cdrom))
 CDROM URIs; the only setting for CDROM URIs is the mount point, cdrom::Mount

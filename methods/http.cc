@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.12 1998/12/10 04:22:53 jgg Exp $
+// $Id: http.cc,v 1.13 1998/12/10 05:39:55 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -936,6 +936,18 @@ bool HttpMethod::Fetch(FetchItem *)
    
    return true;
 };
+									/*}}}*/
+// HttpMethod::Configuration - Handle a configuration message		/*{{{*/
+// ---------------------------------------------------------------------
+/* We stash the desired pipeline depth */
+bool HttpMethod::Configuration(string Message)
+{
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+   
+   PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",5);
+   return true;
+}
 									/*}}}*/
 // HttpMethod::Loop - Main loop						/*{{{*/
 // ---------------------------------------------------------------------
