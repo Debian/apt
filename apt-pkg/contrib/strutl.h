@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.12 1999/02/01 08:11:57 jgg Exp $
+// $Id: strutl.h,v 1.13 1999/05/27 05:54:41 jgg Exp $
 /* ######################################################################
 
    String Util - These are some usefull string functions
@@ -63,7 +63,7 @@ class URI
    unsigned int Port;
    
    operator string();
-   inline operator =(string From) {CopyFrom(From);};
+   inline void operator =(string From) {CopyFrom(From);};
    inline bool empty() {return Access.empty();};
    
    URI(string Path) {CopyFrom(Path);};
