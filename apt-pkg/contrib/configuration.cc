@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.15 2001/02/20 07:03:17 jgg Exp $
+// $Id: configuration.cc,v 1.16 2001/03/03 23:29:55 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -697,8 +697,7 @@ bool ReadConfigDir(Configuration &Conf,string Dir,bool AsSectional,
    
    for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
    {
-      if (strcmp(Ent->d_name,".") == 0 ||
-	  strcmp(Ent->d_name,"..") == 0)
+      if (Ent->d_name[0] == '.')
 	 continue;
       
       // Skip bad extensions
