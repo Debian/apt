@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.33 2001/03/23 01:47:14 jgg Exp $
+// $Id: acquire-worker.cc,v 1.34 2001/05/22 04:42:54 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -23,6 +23,9 @@
 #include <apt-pkg/strutl.h>
 
 #include <apti18n.h>
+
+#include <iostream>
+#include <fstream>
     
 #include <sys/stat.h>
 #include <unistd.h>
@@ -31,6 +34,8 @@
 #include <stdio.h>
 #include <errno.h>
 									/*}}}*/
+
+using namespace std;
 
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
 // ---------------------------------------------------------------------
@@ -128,7 +133,6 @@ bool pkgAcquire::Worker::Start()
       // Setup the FDs
       dup2(Pipes[1],STDOUT_FILENO);
       dup2(Pipes[2],STDIN_FILENO);
-      dup2(((filebuf *)clog.rdbuf())->fd(),STDERR_FILENO);
       SetCloseExec(STDOUT_FILENO,false);
       SetCloseExec(STDIN_FILENO,false);      
       SetCloseExec(STDERR_FILENO,false);
@@ -462,7 +466,7 @@ bool pkgAcquire::Worker::OutFdReady()
    int Res;
    do
    {
-      Res = write(OutFd,OutQueue.begin(),OutQueue.length());
+      Res = write(OutFd,OutQueue.c_str(),OutQueue.length());
    }
    while (Res < 0 && errno == EINTR);
    
