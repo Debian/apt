@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.45 2001/02/22 06:26:27 jgg Exp $
+// $Id: apt-cache.cc,v 1.46 2001/03/07 04:25:35 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1133,7 +1133,6 @@ bool ShowHelp(CommandLine &Cmd)
       "   dump - Show the entire file in a terse form\n"
       "   dumpavail - Print an available file to stdout\n"
       "   unmet - Show unmet dependencies\n"
-      "   check - Check the cache a bit\n"
       "   search - Search the package list for a regex pattern\n"
       "   show - Show a readable record for the package\n"
       "   depends - Show raw dependency information for a package\n"
