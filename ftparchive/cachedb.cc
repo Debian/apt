@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachedb.cc,v 1.4 2002/11/22 07:19:51 doogie Exp $
+// $Id: cachedb.cc,v 1.5 2002/11/22 18:02:08 doogie Exp $
 /* ######################################################################
 
    CacheDB
@@ -225,7 +225,7 @@ bool CacheDB::Finish()
 {
    // Optimize away some writes.
    if (CurStat.Flags == OldStat.Flags &&
-       CurStat.mtime == OldStat.st_mtime)
+       CurStat.mtime == OldStat.mtime)
       return true;
    
    // Write the stat information
