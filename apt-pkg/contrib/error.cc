@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.7 1999/08/05 05:55:45 jgg Exp $
+// $Id: error.cc,v 1.8 1999/08/08 07:24:54 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -36,7 +36,6 @@
    manages errno */
 #if _POSIX_THREADS == 1 && defined(HAVE_PTHREAD)
  #include <pthread.h>
- #error PTHREAD
 
  static pthread_key_t ErrorKey;
  static void ErrorDestroy(void *Obj) {delete (GlobalError *)Obj;};
