@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.11 1998/10/08 05:05:05 jgg Exp $
+// $Id: pkgcache.cc,v 1.12 1998/10/20 04:33:14 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -346,7 +346,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 const char *pkgCache::DepIterator::CompType()
 {
    const char *Ops[] = {"","<=",">=","<",">","=","!="};
-   if ((Dep->CompareOp & 0xF) < sizeof(Ops))
+   if ((unsigned)(Dep->CompareOp & 0xF) < sizeof(Ops))
       return Ops[Dep->CompareOp & 0xF];
    return "";	 
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.7 1998/10/20 02:39:24 jgg Exp $
+// $Id: sourcelist.cc,v 1.8 1998/10/20 04:33:15 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -114,7 +114,7 @@ bool pkgSourceList::Read(string File)
    debugging. */
 ostream &operator <<(ostream &O,pkgSourceList::Item &Itm)
 {
-   O << Itm.Type << ' ' << Itm.URI << ' ' << Itm.Dist << ' ' << Itm.Section;
+   O << (int)Itm.Type << ' ' << Itm.URI << ' ' << Itm.Dist << ' ' << Itm.Section;
    return O;
 }
 									/*}}}*/

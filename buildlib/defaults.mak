@@ -30,18 +30,20 @@
 
 # Search for the build directory
 ifdef BUILD
-BUILD_POSSIBLE = $(BUILD)
+BUILD_POSSIBLE := $(BUILD) $(BASE)/$(BUILD)
 else
-BUILD_POSSIBLE = $(BASE) $(BASE)/build
+BUILD_POSSIBLE := $(BASE) $(BASE)/build
 endif
 
-BUILD:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak))
-BUILD:= $(patsubst %/,%,$(firstword $(dir $(BUILD))))
+BUILDX:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak*))
+BUILDX:= $(patsubst %/,%,$(firstword $(dir $(BUILDX))))
 
-ifeq ($(words $(BUILD)),0)
+ifeq ($(words $(BUILDX)),0)
 error-all:
 	echo Can't find the build directory in $(BUILD_POSSIBLE) -- use BUILD=
 endif
+
+override BUILD := $(BUILDX)
 
 # Base definitions
 INCLUDE := $(BUILD)/include
@@ -77,6 +79,7 @@ LDFLAGS+= -L$(LIB)
 # Phony rules. Other things hook these by appending to the dependency
 # list
 .PHONY: headers library clean veryclean all binary program doc
+.PHONY: maintainer-clean dist-clean distclean pristine sanity
 all: binary doc
 binary: library program
 maintainer-clean dist-clean distclean pristine sanity: veryclean

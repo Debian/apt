@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.2 1998/10/20 02:39:13 jgg Exp $
+// $Id: acquire-worker.cc,v 1.3 1998/10/20 04:33:12 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -23,6 +23,7 @@
 
 #include <unistd.h>
 #include <signal.h>
+#include <wait.h>
 									/*}}}*/
 
 // Worker::Worker - Constructor for Queue startup			/*{{{*/

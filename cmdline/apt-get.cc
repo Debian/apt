@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.3 1998/10/19 23:45:36 jgg Exp $
+// $Id: apt-get.cc,v 1.4 1998/10/20 04:33:18 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -242,7 +242,7 @@ void ShowEssential(ostream &out,pkgDepCache &Dep)
    pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
    bool *Added = new bool[Dep.HeaderP->PackageCount];
-   for (int I = 0; I != Dep.HeaderP->PackageCount; I++)
+   for (unsigned int I = 0; I != Dep.HeaderP->PackageCount; I++)
       Added[I] = false;
    
    for (;I.end() != true; I++)
@@ -460,7 +460,6 @@ bool DoUpgrade(CommandLine &CmdL)
       return false;
 
    // Do the upgrade
-   pkgProblemResolver Resolve(Cache);
    if (pkgAllUpgrade(Cache) == false)
    {
       ShowBroken(c1out,Cache);

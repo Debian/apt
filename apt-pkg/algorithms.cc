@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.6 1998/10/20 02:39:17 jgg Exp $
+// $Id: algorithms.cc,v 1.7 1998/10/20 04:33:13 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -904,7 +904,6 @@ bool pkgProblemResolver::ResolveByKeep()
 	 
 	 // Look at all the possible provides on this package
 	 pkgCache::Version **VList = End.AllTargets();
-	 bool Done = false;
 	 for (pkgCache::Version **V = VList; *V != 0; V++)
 	 {
 	    pkgCache::VerIterator Ver(Cache,*V);

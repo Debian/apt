@@ -12,3 +12,6 @@ all headers library clean veryclean binary program doc:
 	$(MAKE) -C deity $@
 	$(MAKE) -C gui $@
 	$(MAKE) -C doc $@
+
+.PHONY: maintainer-clean dist-clean distclean pristine sanity 
+maintainer-clean dist-clean distclean pristine sanity: veryclean
