@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.39 2001/05/07 05:30:31 jgg Exp $
+// $Id: fileutl.cc,v 1.40 2002/04/18 05:08:49 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -337,7 +337,7 @@ int ExecFork()
 									/*}}}*/
 // ExecWait - Fancy waitpid						/*{{{*/
 // ---------------------------------------------------------------------
-/* Waits for the given sub process. If Reap is set the no errors are 
+/* Waits for the given sub process. If Reap is set then no errors are 
    generated. Otherwise a failed subprocess will generate a proper descriptive
    message */
 bool ExecWait(int Pid,const char *Name,bool Reap)
