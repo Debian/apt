@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.132 2003/07/22 03:00:19 mdz Exp $
+// $Id: apt-get.cc,v 1.133 2003/07/25 22:03:49 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2093,7 +2093,9 @@ bool DoBuildDep(CommandLine &CmdL)
 	     * installed
 	     */
             pkgCache::PrvIterator Prv = Pkg.ProvidesList();
-            for (; Prv.end() != true; Prv++) {
+	    bool providedBySomething = !Prv.end();
+            for (; Prv.end() != true; Prv++)
+	    {
 	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
 	          break;
             }
@@ -2101,7 +2103,7 @@ bool DoBuildDep(CommandLine &CmdL)
             // Get installed version and version we are going to install
 	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
 
-            if (Prv.end() == true || (*D).Version != "") {
+            if (!providedBySomething || (*D).Version[0] != '\0') {
                  /* We either have a versioned dependency (so a provides won't do)
                     or nothing is providing this package */
 
