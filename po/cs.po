@@ -5,14 +5,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
-"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-01-02 14:00-0800\n"
-"PO-Revision-Date: 2004-02-09 14:09+0100\n"
+"PO-Revision-Date: 2004-03-01 10:09+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <provoz@debian.cz>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
 
 #: cmdline/apt-cache.cc:133
 #, c-format
@@ -146,8 +146,8 @@ msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1581 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
-#: cmdline/apt-get.cc:2299 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-extracttemplates.cc:225 cmdline/apt-get.cc:2299
+#: cmdline/apt-sortpkgs.cc:144 ftparchive/apt-ftparchive.cc:545
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s pro %s %s zkompilován na %s %s\n"
@@ -286,7 +286,7 @@ msgstr ""
 "  -c=? Naète tento konfiguraèní soubor\n"
 "  -o=? Nastaví libovolnou volbu, napø. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:710
+#: apt-pkg/pkgcachegen.cc:710 cmdline/apt-extracttemplates.cc:267
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Nemohu zapsat do %s"
@@ -470,7 +470,7 @@ msgstr "Nelze otevøít %s"
 #: ftparchive/writer.cc:246
 #, c-format
 msgid " DeLink %s [%s]\n"
-msgstr "Odlinkování %s [%s]\n"
+msgstr " Odlinkování %s [%s]\n"
 
 #: ftparchive/writer.cc:254
 #, c-format
@@ -492,8 +492,8 @@ msgstr "*** Nezdaøilo se slinkovat %s s %s"
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Odlinkovací limit %sB dosa¾en.\n"
 
-#: ftparchive/writer.cc:352 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#: apt-inst/deb/dpkgdb.cc:121 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 ftparchive/writer.cc:352
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Nemohu vyhodnotit %s"
@@ -597,7 +597,7 @@ msgstr "Chyba ètení pøi výpoètu MD5"
 msgid "Problem unlinking %s"
 msgstr "Problém s odlinkováním %s"
 
-#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
+#: apt-inst/extract.cc:188 ftparchive/multicompress.cc:490
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "Selhalo pøejmenování %s na %s"
@@ -751,8 +751,8 @@ msgstr "Balík je potøeba odstranit ale funkce Odstranit je vypnuta."
 msgid "Unable to lock the download directory"
 msgstr "Nemohu zamknout adresáø pro stahování"
 
-#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1836 cmdline/apt-get.cc:2047
-#: apt-pkg/cachefile.cc:67
+#: apt-pkg/cachefile.cc:67 cmdline/apt-get.cc:791 cmdline/apt-get.cc:1836
+#: cmdline/apt-get.cc:2047
 msgid "The list of sources could not be read."
 msgstr "Nelze pøeèíst seznam zdrojù."
 
@@ -802,7 +802,7 @@ msgid ""
 msgstr ""
 "Chystáte se vykonat nìco potenciálnì ¹kodlivého\n"
 "Pro pokraèování opi¹te frázi '%s'\n"
-" ?]"
+" ?] "
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:883
 msgid "Abort."
@@ -830,8 +830,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"Nemohu stáhnout nìkteré archívy. Mo¾ná spus»te apt-get update nebo zkuste "
-"--fix-missing?"
+"Nemohu stáhnout nìkteré archívy. Mo¾ná spus»te apt-get update nebo zkuste --"
+"fix-missing?"
 
 #: cmdline/apt-get.cc:983
 msgid "--fix-missing and media swapping is not currently supported"
@@ -867,7 +867,7 @@ msgstr "Balík %s je virtuální balík poskytovaný:\n"
 
 #: cmdline/apt-get.cc:1073
 msgid " [Installed]"
-msgstr "[Instalovaný]"
+msgstr " [Instalovaný]"
 
 #: cmdline/apt-get.cc:1078
 msgid "You should explicitly select one to install."
@@ -1005,9 +1005,9 @@ msgstr "Doporuèované balíky:"
 
 #: cmdline/apt-get.cc:1650
 msgid "Calculating Upgrade... "
-msgstr "Propoèítávám aktualizaci..."
+msgstr "Propoèítávám aktualizaci... "
 
-#: cmdline/apt-get.cc:1653 methods/ftp.cc:702 methods/connect.cc:99
+#: cmdline/apt-get.cc:1653 methods/connect.cc:99 methods/ftp.cc:702
 msgid "Failed"
 msgstr "Selhalo"
 
@@ -1088,8 +1088,7 @@ msgstr "%s nemá ¾ádné závislosti pro sestavení.\n"
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr ""
-"%s závislost pro %s nemù¾e být splnìna, proto¾e balík %s nebyl nalezen"
+msgstr "%s závislost pro %s nemù¾e být splnìna, proto¾e balík %s nebyl nalezen"
 
 #: cmdline/apt-get.cc:2194
 #, c-format
@@ -1097,8 +1096,8 @@ msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
-"%s závislost pro %s nemù¾e být splnìna proto¾e není k dispozici verze "
-"balíku %s, která odpovídá po¾adavku na verzi"
+"%s závislost pro %s nemù¾e být splnìna proto¾e není k dispozici verze balíku "
+"%s, která odpovídá po¾adavku na verzi"
 
 #: cmdline/apt-get.cc:2229
 #, c-format
@@ -1213,11 +1212,11 @@ msgstr "Mám:"
 
 #: cmdline/acqprogress.cc:110
 msgid "Ign "
-msgstr "Ign"
+msgstr "Ign "
 
 #: cmdline/acqprogress.cc:114
 msgid "Err "
-msgstr "Err"
+msgstr "Err "
 
 #: cmdline/acqprogress.cc:135
 #, c-format
@@ -1226,7 +1225,7 @@ msgstr "Sta¾eno %sB za %s (%sB/s)\n"
 
 #: cmdline/acqprogress.cc:225
 msgid " [Working]"
-msgstr "[Pracuji]"
+msgstr " [Pracuji]"
 
 #: cmdline/acqprogress.cc:271
 #, c-format
@@ -1426,8 +1425,8 @@ msgstr "Pøepsat vyhovující balík bez udání verze pro %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Soubor %s/%s pøepisuje ten z balíku %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
+#: apt-inst/extract.cc:467 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/contrib/configuration.cc:705
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nemohu èíst %s"
@@ -1484,9 +1483,9 @@ msgid ""
 "then make it empty and immediately re-install the same version of the "
 "package!"
 msgstr ""
-"Selhalo otevøení souboru seznamù '%sinfo/%s'. Pokud nemù¾ete tento "
-"soubor obnovit, vytvoøte jej nový prázdný a ihned znovu nainstalujte tu "
-"samou verzi balíku!"
+"Selhalo otevøení souboru seznamù '%sinfo/%s'. Pokud nemù¾ete tento soubor "
+"obnovit, vytvoøte jej nový prázdný a ihned znovu nainstalujte tu samou verzi "
+"balíku!"
 
 #: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
 #, c-format
@@ -1658,7 +1657,7 @@ msgstr "Èas spojení vypr¹el"
 msgid "Server closed the connection"
 msgstr "Server uzavøel spojení"
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
+#: apt-pkg/contrib/fileutl.cc:452 methods/ftp.cc:338 methods/rsh.cc:190
 msgid "Read error"
 msgstr "Chyba ètení"
 
@@ -2017,7 +2016,7 @@ msgstr "Neplatná operace %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Nelze vyhodnotit pøípojný bod %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
+#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44 apt-pkg/contrib/cdromutl.cc:149
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nemohu pøejít do %s"
@@ -2240,9 +2239,9 @@ msgid ""
 "package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
 "you really want to do it, activate the APT::Force-LoopBreak option."
 msgstr ""
-"Tento bìh instalace si vy¾ádá doèasné odstranìní klíèového balíku %s "
-"kvùli smyèce v Conflicts/Pre-Depends. To je èasto ¹patné, ale pokud to "
-"skuteènì chcete udìlat, aktivujte mo¾nost APT::Force-LoopBreak."
+"Tento bìh instalace si vy¾ádá doèasné odstranìní klíèového balíku %s kvùli "
+"smyèce v Conflicts/Pre-Depends. To je èasto ¹patné, ale pokud to skuteènì "
+"chcete udìlat, aktivujte mo¾nost APT::Force-LoopBreak."
 
 #: apt-pkg/pkgrecords.cc:37
 #, c-format
