@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.28 2001/03/13 06:51:46 jgg Exp $
+// $Id: tagfile.cc,v 1.29 2001/04/22 05:42:52 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -34,15 +34,14 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) : Fd(*pFd), Size(Size)
    {
       Buffer = 0;
       Start = End = Buffer = 0;
-      Left = 0;
+      Done = true;
       iOffset = 0;
       return;
    }
    
    Buffer = new char[Size];
    Start = End = Buffer;
-   Left = Fd.Size();
-   TotalSize = Fd.Size();
+   Done = false;
    iOffset = 0;
    Fill();
 }
@@ -88,7 +87,7 @@ bool pkgTagFile::Fill()
    Start = Buffer;
    End = Buffer + EndSize;
    
-   if (Left == 0)
+   if (Done == true)
    {
       if (EndSize <= 3)
 	 return false;
@@ -107,6 +106,13 @@ bool pkgTagFile::Fill()
    }
    
    // See if only a bit of the file is left
+   unsigned long Actual;
+   if (Fd.Read(End,Size - (End - Buffer),&Actual) == false)
+      return false;
+   if (Actual != Size - (End - Buffer))
+      Done = true;
+   End += Actual;
+/*   
    if (Left < Size - (End - Buffer))
    {
       if (Fd.Read(End,Left) == false)
@@ -122,7 +128,8 @@ bool pkgTagFile::Fill()
       
       Left -= Size - (End - Buffer);
       End = Buffer + Size;
-   }   
+   }*/
+   
    return true;
 }
 									/*}}}*/
@@ -143,7 +150,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
 
    // Reposition and reload..
    iOffset = Offset;
-   Left = TotalSize - Offset;
+   Done = false;
    if (Fd.Seek(Offset) == false)
       return false;
    End = Start = Buffer;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.37 2001/03/03 22:45:59 tausq Exp $
+// $Id: fileutl.cc,v 1.38 2001/04/22 05:42:52 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -431,10 +431,13 @@ FileFd::~FileFd()
 // ---------------------------------------------------------------------
 /* We are carefull to handle interruption by a signal while reading 
    gracefully. */
-bool FileFd::Read(void *To,unsigned long Size,bool AllowEof)
+bool FileFd::Read(void *To,unsigned long Size,unsigned long *Actual)
 {
    int Res;
    errno = 0;
+   if (Actual != 0)
+      *Actual = 0;
+   
    do
    {
       Res = read(iFd,To,Size);
@@ -448,6 +451,8 @@ bool FileFd::Read(void *To,unsigned long Size,bool AllowEof)
       
       To = (char *)To + Res;
       Size -= Res;
+      if (Actual != 0)
+	 *Actual += Res;
    }
    while (Res > 0 && Size > 0);
    
@@ -455,7 +460,7 @@ bool FileFd::Read(void *To,unsigned long Size,bool AllowEof)
       return true;
    
    // Eof handling
-   if (AllowEof == true)
+   if (Actual != 0)
    {
       Flags |= HitEof;
       return true;
