@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.18 1999/08/28 01:49:07 jgg Exp $
+// $Id: mmap.cc,v 1.19 1999/08/30 04:20:26 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -34,8 +34,6 @@
 #include <unistd.h>
 #include <fcntl.h>
    									/*}}}*/
-
-#undef _POSIX_SYNCHRONIZED_IO   
 
 // MMap::MMap - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
