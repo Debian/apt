@@ -3,13 +3,13 @@
 # Rafael Sepúlveda <drs@gnulinux.org.mx>, 2002.
 # Asier Llano Palacios <asierllano@infonegocio.com>
 # Javier Fernández-Sanguino Peña <jfs@debian.org> 2003
-# Rubén Porras Campo <nahoo@inicia.es> 2003
+# Rubén Porras Campo <nahoo@inicia.es> 2004
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.23\n"
+"Project-Id-Version: apt 0.5.24\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-03-14 13:46-0800\n"
-"PO-Revision-Date: 2004-03-13 21:48+0100\n"
+"PO-Revision-Date: 2004-03-17 20:55+0100\n"
 "Last-Translator: Rubén Porras Campo <nahoo@inicia.es>\n"
 "Language-Team: Spanish <debian-l10n-spanish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -329,7 +329,6 @@ msgid "Error Processing Contents %s"
 msgstr "Error procesando contenidos %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -376,6 +375,7 @@ msgstr ""
 "          sources trayectoria-fuente [archivo-sobrepaso \n"
 "                                     [prefijo-trayectoria]]\n"
 "          contents trayectoria\n"
+"          release trayectoria\n"
 "          generate config [grupos]\n"
 "          clean config\n"
 "\n"
@@ -668,19 +668,16 @@ msgid "The following packages will be REMOVED:"
 msgstr "Los siguientes paquetes se ELIMINARÁN:"
 
 #: cmdline/apt-get.cc:421
-#, fuzzy
 msgid "The following packages have been kept back:"
-msgstr "Los siguientes paquetes se han retenido"
+msgstr "Los siguientes paquetes se han retenido:"
 
 #: cmdline/apt-get.cc:442
-#, fuzzy
 msgid "The following packages will be upgraded:"
-msgstr "Se actualizarán los siguientes paquetes"
+msgstr "Se actualizarán los siguientes paquetes:"
 
 #: cmdline/apt-get.cc:463
-#, fuzzy
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Se DESACTUALIZARÁN los siguientes paquetes"
+msgstr "Se DESACTUALIZARÁN los siguientes paquetes:"
 
 #: cmdline/apt-get.cc:483
 msgid "The following held packages will be changed:"
@@ -884,16 +881,15 @@ msgid "You should explicitly select one to install."
 msgstr "Necesita seleccionar explícitamente uno para instalar."
 
 #: cmdline/apt-get.cc:1040
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"No hay ninguna versión disponible para el paquete %s, pero existe en \n"
-"la base de datos. Esto habitualmente significa que se mencionó el paquete \n"
-"en una dependencia y nunca fue subido, está obsoleto o no se encuentra \n"
-"disponible entre en los contenidos de sources.list\n"
+"El paquete %s no está disponible, pero algún otro paquete hace referencia\n"
+"a él. Esto puede significar que el paquete falta, está obsoleto o sólo se\n"
+"encuentra disponible desde alguna otra fuente\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -1114,17 +1110,18 @@ msgstr ""
 #: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
+msgstr "No se pudo satisfacer la dependencia %s para %s: El paquete instalado %s "
+"es demasiado nuevo"
 
 #: cmdline/apt-get.cc:2215
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "No se pudieron procesar las dependencias de construcción"
+msgstr "No se pudo satisfacer la dependencia %s para %s: %s"
 
 #: cmdline/apt-get.cc:2229
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
+msgstr "No se pudieron satisfacer las dependencias de construcción de %s."
 
 #: cmdline/apt-get.cc:2233
 msgid "Failed to process build dependencies"
