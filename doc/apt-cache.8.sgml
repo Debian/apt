@@ -342,9 +342,16 @@ Reverse Provides:
 
      <VarListEntry><term><option/--recurse/</>
      <ListItem><Para>
-     Make <literal/depends/ recursive so that all packages mentioned are 
-     printed once.
+     Make <literal/depends/ and <literal/rdepends/ recursive so that
+     all packages mentioned are printed once.
      Configuration Item: <literal/APT::Cache::RecurseDepends/.
+     </VarListEntry>
+
+     <VarListEntry><term><option/--installed/</>
+     <ListItem><Para>
+     Limit the output of <literal/depends/ and <literal/rdepends/ to
+     packages which are currently installed.
+     Configuration Item: <literal/APT::Cache::Installed/.
      </VarListEntry>
 
      &apt-commonoptions;
