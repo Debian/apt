@@ -7,7 +7,7 @@ APTGET="/usr/bin/apt-get"
 DPKG="/usr/bin/dpkg"
 set -e
 RES=`apt-config shell CLEAN DSelect::Clean OPTS DSelect::Options \
-                      DPKG Dir::Bin::dpkg/ APTGET Dir::Bin::apt-get/ \
+                      DPKG Dir::Bin::dpkg APTGET Dir::Bin::apt-get \
 		      ARCHIVES Dir::Cache::Archives/`
 eval $RES
 set +e

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: clean.cc,v 1.1 1999/02/01 08:11:57 jgg Exp $
+// $Id: clean.cc,v 1.2 1999/06/24 04:06:30 jgg Exp $
 /* ######################################################################
 
    Clean - Clean out downloaded directories
@@ -101,7 +101,6 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
       }
             
       Erase(Dir->d_name,Pkg,Ver,St);
-      unlink(Dir->d_name);
    };
    
    chdir(StartDir.c_str());

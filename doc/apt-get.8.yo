@@ -87,7 +87,7 @@ dit(bf(source))
 bf(source) causes apt-get to fetch source packages. APT will examine the
 available packages to decide which source package to fetch. It will then
 find and download into the current directory the newest available version of
-that source package. Source packages are tracked seperately from binary
+that source package. Source packages are tracked separately from binary
 packages via df(deb-src) type lines in the bf(/etc/apt/sources.list) file.
 This probably will mean that you will not get the same source as the package
 you have installed or as you could install. If the --compile options is
@@ -97,7 +97,7 @@ will not be unpacked.
 
 dit(bf(check))
 bf(check) is a diagnostic tool; it updates the package cache and checks for 
-brokenpackages.
+broken packages.
 
 dit(bf(clean))
 bf(clean) clears out the local repository of retrieved package files. It 
@@ -142,7 +142,7 @@ dit(bf(-h, --help))
 Help; display a helpful usage message and exits.
 
 dit(bf(-v, --version))
-Show the program verison.
+Show the program version.
 
 dit(bf(-m, --ignore-missing, --fix-missing))
 Ignore missing packages; If packages cannot be retrieved or fail the    
@@ -156,7 +156,7 @@ force APT to use only the .debs it has already downloaded.
 
 dit(bf(-q, --quiet))
 Quiet; produces output suitable for logging, omitting progress indicators.
-More qs will produce more quiet up to a maximum of 2. You can also use
+More q's will produce more quiet up to a maximum of 2. You can also use
 bf(-q=#) to set the quiet level, overriding the configuration file. Note that
 quiet level 2 implies -y, you should never use -qq without a no-action
 modifier such as -d, --print-uris or -s as APT may decided to do something
@@ -173,8 +173,8 @@ and empty set of square brackets meaning breaks that are of no consequence
 
 dit(bf(-y, --yes, --assume-yes))
 Automatic yes to prompts; assume "yes" as answer to all prompts and run
-non-interactively. If an undesireable situation, such as changing a held
-package or removing an essential package occures then bf(apt-get) will
+non-interactively. If an undesirable situation, such as changing a held
+package or removing an essential package occurs then bf(apt-get) will
 abort. See bf(APT::Get::Assume-Yes).
 
 dit(bf(-u, --show-upgraded))
@@ -186,8 +186,8 @@ Compile source packages after downloading them.
 
 dit(bf(--ignore-hold))
 Ignore package Holds; This causes bf(apt-get) to ignore a hold placed on 
-a package. This may be usefull in conjunction with bf(dist-upgrade) to
-override a large number of undesired holds. See bf(APT::Ingore-Hold).
+a package. This may be useful in conjunction with bf(dist-upgrade) to
+override a large number of undesired holds. See bf(APT::Ignore-Hold).
 
 dit(bf(--no-upgrade))
 Do not upgrade packages; When used in conjunction with bf(install)
@@ -196,7 +196,7 @@ are already installed. See bf(APT::Get::no-upgrade).
 
 dit(bf(--force-yes))
 Force yes; This is a dangerous option that will cause apt to continue without
-prompting if it is doing something potentially harmfull. It should not be used
+prompting if it is doing something potentially harmful. It should not be used
 except in very special situations. Using bf(force-yes) can potentially destroy
 your system! See bf(APT::Get::force-yes).
 
@@ -213,7 +213,7 @@ read the default configuration file and then this configuration file. See
 bf(apt.conf(5)) for syntax information.
 
 dit(bf(-o, --option))
-Set a Configuration Option; This will set an arbitary configuration option.
+Set a Configuration Option; This will set an arbitrary configuration option.
 The syntax is 
 verb(-o Foo::Bar=bar)
 enddit()

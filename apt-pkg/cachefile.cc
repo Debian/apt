@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.cc,v 1.3 1999/05/04 20:09:48 jgg Exp $
+// $Id: cachefile.cc,v 1.4 1999/06/24 04:06:30 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -65,7 +65,7 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
       if (_error->PendingError() == true)
 	 return _error->Error("The package lists or status file could not be parsed or opened.");
       if (_error->empty() == false)
-	 _error->Warning("You may want to run apt-get update to correct theses missing files");
+	 _error->Warning("You may want to run apt-get update to correct these missing files");
       
       // Open the cache file
       FileFd File(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);

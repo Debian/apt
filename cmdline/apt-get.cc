@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.65 1999/06/13 05:06:40 jgg Exp $
+// $Id: apt-get.cc,v 1.66 1999/06/24 04:06:31 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1025,6 +1025,9 @@ class LogCleaner : public pkgArchiveCleaner
    virtual void Erase(const char *File,string Pkg,string Ver,struct stat &St) 
    {
       cout << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "B]" << endl;
+      
+      if (_config->FindB("APT::Get::Simulate") == false)
+	 unlink(File);      
    };
 };
 
