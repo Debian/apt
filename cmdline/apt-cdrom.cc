@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.9 1998/12/09 00:11:50 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.10 1998/12/09 00:31:16 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -38,7 +38,9 @@
    search that short circuits when it his a package file in the dir.
    This speeds it up greatly as the majority of the size is in the
    binary-* sub dirs. */
-bool FindPackages(string CD,vector<string> &List, int Depth = 0)
+ino_t Inodes[9];
+
+bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
 {
    if (Depth >= 7)
       return true;
@@ -63,7 +65,6 @@ bool FindPackages(string CD,vector<string> &List, int Depth = 0)
 	 return true;
    }
 
-   bool Thorough = _config->FindB("APT::CDROM::Thorough",false);
    DIR *D = opendir(".");
    if (D == 0)
       return _error->Errno("opendir","Unable to read %s",CD.c_str());
@@ -87,9 +88,16 @@ bool FindPackages(string CD,vector<string> &List, int Depth = 0)
       if (S_ISDIR(Buf.st_mode) == 0)
 	 continue;
       
-      if (Thorough == false && S_ISLNK(Buf.st_mode) != 0)
+      unsigned int I;
+      for (I = 0; I != Depth; I++)
+	 if (Inodes[I] == Buf.st_ino)
+	    break;
+      if (Inodes[I] == Buf.st_ino)
 	 continue;
-      
+	     
+      // Store the inodes weve seen
+      Inodes[Depth] = Buf.st_ino;
+
       // Descend
       if (FindPackages(CD + Dir->d_name,List,Depth+1) == false)
 	 break;
