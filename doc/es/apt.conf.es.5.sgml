@@ -11,7 +11,7 @@
 Esta traducción ha sido realizada por Carlos Mestre <faraox@gulic.org> y
 Rubén Porras Campo <nahoo@inicia.es>.
 Está basada en la página de manual original:
-versión 1.5 del CVS de
+versión 1.6 del CVS de
 /cvs/debian-doc/manpages/english/apt/apt.conf.5.sgml
 -->
 
@@ -31,7 +31,7 @@ versión 1.5 del CVS de
  
  <RefSect1><Title>Descripción</>
    <para>
-   <filename/apt.conf/es el fichero principal de configuración del conjunto de
+   <filename/apt.conf/ es el fichero principal de configuración del conjunto de
    herramientas APT, todas las herramientas hacen uso del fichero de
    configuración y un analizador común de sintaxis de la línea de órdenes
    para proporcionar un entorno uniforme. Cuando se inicia una utilidad APT,
@@ -46,13 +46,14 @@ versión 1.5 del CVS de
    opciones organizadas en grupos funcionales. Las opciones especificadas son
    dadas con dobles dos puntos, por ejemplo <literal/APT::Get::Assume-Yes/ es
    un opción de la función GET del conjunto de herramientas APT.
-   Las opciones no son heredadas de sus grupos de padres.
+   Las opciones no son heredadas de sus grupos padres.
    <para>
    Sintácticamente, el lenguaje de configuración es modelado como en utilidades
-   ISC, como bind y dhcp. Cada línea es de la forma
-   <literallayout>APT::Get::Assume-Yes "true";</literallayout>. Los 
-   espacios entre los dos puntos son requeridos, y las comillas son
-   opcionales. Un nuevo ámbito puede ser abierto con las llaves, como:
+   ISC, como bind y dhcp. Las líneas que comienzan con <literal>//</literal> se
+   tratan como comentarios (se ignoran). Cada línea es de la forma
+   <literallayout>APT::Get::Assume-Yes "true";</literallayout> Los 
+   espacios entre los dos puntos son obligatorios, y las comillas son
+   opcionales. Un nuevo ámbito puede abrirse con llaves, por ejemplo:
 <informalexample><programlisting>   
 APT {
   Get {
@@ -69,7 +70,7 @@ APT {
 DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 </programlisting></informalexample>
    <para>
-   En general, un ejemplo del fichero de configuración
+   En general, el fichero de configuración de ejemplo
    <filename>&docdir;examples/apt.conf</> &configureindex; es una buena guía
    para entender su aspecto.
    <para>
@@ -109,14 +110,14 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      Activo por defecto. Cuando se activa la función de auto-limpieza, ésta
      eliminará cualquier paquete de la caché que ya no pueda descargarse. Si se
      desactiva, entonces los paquetes que están localmente instalados son
-     excluido de la limpieza - nótese que APT no provee ningún medio directo
+     excluidos de la limpieza - nótese que APT no provee ningún medio directo
      para reinstalarlos.
      </VarListEntry>
 
      <VarListEntry><Term>Immediate-Configure</Term>
      <ListItem><Para>
      Deshabilita la configuración inmediata: Esta peligrosa opción
-     deshabilita algunas de las clasificaciones de código para inducir a éste
+     deshabilita algunas partes del código de ordenación de APT para inducir a éste
      a hacer pocas llamadas a dpkg. Hacer esto podría ser necesario en algún
      sistema de usuario extremadamente lento, pero sería muy peligroso y
      podría causar que los scripts de instalación del paquete fallaran o algo
@@ -136,8 +137,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
      <VarListEntry><Term>Cache-Limit</Term>
      <ListItem><Para>
-     APT usa un fichero de caché de memoria mapeada de tamaño fijo almacenar la
-     información disponible. Esto fija el tamaño de esa caché.
+     APT usa un fichero de caché de memoria mapeada de tamaño fijo para
+     almacenar la información disponible. Esto fija el tamaño de esa caché.
      </VarListEntry>
 
      <VarListEntry><Term>Build-Essential</Term>
@@ -168,7 +169,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
  <RefSect1><Title>El grupo Acquire</>
    <para>   
-   El grupo de opciones <literal/Acquire/ controla la descarga de paquete y los
+   El grupo de opciones <literal/Acquire/ controla la descarga de paquetes y los
    manejadores de URI.
    <VariableList>
      <VarListEntry><Term>Queue-Mode</Term>
@@ -189,7 +190,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <VarListEntry><Term>Source-Symlinks</Term>
      <ListItem><Para>
      Usar enlaces simbólicos para los archivos fuente. Si es true los archivos
-     fuente se enlazarán a ser posible en vez de copiarse. Por omisión es true.
+     fuente se enlazarán a ser posible, en vez de copiarse. Por omisión es true.
      </VarListEntry>
 
      <VarListEntry><Term>http</Term>
@@ -220,10 +221,10 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      casos en que el servidor no cumpla con RFC o tenga fallos (como pasa con
      Squid 2.0.2).
      <literal/Acquire::http::Pipeline-Depth/ puede ser un valor entre 0 y 5 
-     indicando cuantas peticiones sin resolver puede envíar APT. Debe
-     especificarse un valor de cero DEBE especificarse si el puesto remoto no
-     demora apropiadamente las conexiones TCP - de otro modo los datos se
-     corromperán. Los puesto que necesiten esto violan RFC 2068.     
+     indicando cuantas peticiones sin resolver puede envíar APT. DEBE
+     especificarse si el puesto remoto no demora apropiadamente las conexiones
+     TCP - de otro modo los datos se corromperán. Los puesto que necesiten esto
+     violan el RFC 2068.
      </VarListEntry>
 
      <VarListEntry><Term>ftp</Term>
@@ -368,15 +369,15 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <VarListEntry><Term>Pre-Invoke</Term><Term>Post-Invoke</Term>
      <ListItem><Para>
      Es una lista de órdenes de shell que se ejecutarán antes de llamar a
-     &dpkg;. Como <literal/Options/ debe de especificarse con notación de
+     &dpkg;. Como <literal/Options/, debe de especificarse con notación de
      lista. Las órdenes se ejecutan en orden usando <filename>/bin/sh</>, si
      alguna falla APT abortará.
      </VarListEntry>
 
      <VarListEntry><Term>Pre-Install-Pkgs</Term>
      <ListItem><Para>
-     Lista de ordenes de shell que se ejecutarán antes de llamar a
-     &dpkg;. Como <literal/Options/ debe de especificarse con notación de
+     Lista de órdenes de shell que se ejecutarán antes de llamar a
+     &dpkg;. Como <literal/Options/, debe de especificarse con notación de
      lista. Las órdenes se ejecutan en orden usando <filename>/bin/sh</>, si
      alguna falla APT abortará. APT pasará a los programas los nombres de
      fichero de todos los .deb que va ha instalar por la entrada estándar, uno
