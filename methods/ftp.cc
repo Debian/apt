@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.7 1999/04/17 23:18:11 jgg Exp $
+// $Id: ftp.cc,v 1.8 1999/05/23 06:33:13 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -910,8 +910,28 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main()
+int main(int argc,const char *argv[])
 { 
+   /* See if we should be come the http client - we do this for http
+      proxy urls */
+   if (getenv("ftp_proxy") != 0)
+   {
+      URI Proxy = string(getenv("ftp_proxy"));
+      if (Proxy.Access == "http")
+      {
+	 // Copy over the environment setting
+	 char S[300];
+	 snprintf(S,sizeof(S),"http_proxy=%s",getenv("ftp_proxy"));
+	 putenv(S);
+	 
+	 // Run the http method
+	 string Path = flNotFile(argv[0]) + "/http";
+	 execl(Path.c_str(),Path.c_str());
+	 cerr << "Unable to invoke " << Path << endl;
+	 exit(100);
+      }      
+   }
+   
    FtpMethod Mth;
    
    return Mth.Run();

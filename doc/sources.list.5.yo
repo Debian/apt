@@ -86,7 +86,11 @@ Note that this is an insecure method of authentication.
 dit(bf(ftp))
 The ftp scheme specifies an FTP server for the archive. APT's FTP behavior
 is highly configurable; for more information see the
-bf(apt.conf(5)) manual page.
+bf(apt.conf(5)) manual page. Please note that a ftp proxy can be specified
+by using the ftp_proxy environment variable. It is possible to specify a http
+proxy (http proxy servers often understand ftp urls) using this method and 
+ONLY this method. ftp proxies using http specified in the configuration 
+file will be ignored.
 
 dit(bf(copy))
 The copy scheme is identical to the file scheme except that packages are
