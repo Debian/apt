@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.22 1998/12/11 06:32:35 jgg Exp $
+// $Id: acquire.cc,v 1.23 1998/12/11 07:20:32 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -589,9 +589,12 @@ bool pkgAcquire::Queue::Cycle()
    if (Items == 0 || Workers == 0)
       return true;
 
+   if (PipeDepth < 0)
+      return _error->Error("Pipedepth failure");
+			   
    // Look for a queable item
    QItem *I = Items;
-   while (PipeDepth < MaxPipeDepth)
+   while (PipeDepth < (signed)MaxPipeDepth)
    {
       for (; I != 0; I = I->Next)
 	 if (I->Owner->Status == pkgAcquire::Item::StatIdle)
@@ -603,6 +606,7 @@ bool pkgAcquire::Queue::Cycle()
       
       I->Worker = Workers;
       I->Owner->Status = pkgAcquire::Item::StatFetching;
+      PipeDepth++;
       if (Workers->QueueItem(I) == false)
 	 return false;
    }
