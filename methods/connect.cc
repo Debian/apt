@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.1 1999/05/29 03:25:03 jgg Exp $
+// $Id: connect.cc,v 1.2 1999/07/10 05:39:29 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -72,7 +72,7 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    return true;
 }
 									/*}}}*/
-// Connect - Connect to a server						/*{{{*/
+// Connect - Connect to a server					/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a connection to the server */
 bool Connect(string Host,int Port,const char *Service,int &Fd,
@@ -108,10 +108,20 @@ bool Connect(string Host,int Port,const char *Service,int &Fd,
       Hints.ai_socktype = SOCK_STREAM;
       
       // Resolve both the host and service simultaneously
-      if (getaddrinfo(Host.c_str(),S,&Hints,&LastHostAddr) != 0 ||
+      int Res;
+      if ((Res = getaddrinfo(Host.c_str(),S,&Hints,&LastHostAddr)) != 0 ||
 	  LastHostAddr == 0)
-	 return _error->Error("Could not resolve '%s'",Host.c_str());
-
+      {
+	 if (Res == EAI_SERVICE)
+	    return _error->Error("Could not resolve service '%s'",S);
+	 
+	 if (Res == EAI_NONAME)
+	    return _error->Error("Could not resolve '%s'",Host.c_str());
+	 
+	 return _error->Error("Something wicked happend resolving '%s/%s'",
+			      Host.c_str(),S);
+      }
+      
       LastHost = Host;
       LastPort = Port;
       LastUsed = 0;
