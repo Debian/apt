@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.84 1999/10/24 06:03:48 jgg Exp $
+// $Id: apt-get.cc,v 1.85 1999/10/27 04:38:28 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -829,7 +829,8 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       _error->Error("Package %s has no installation candidate",Pkg.Name());
       return false;
    }
-   
+
+   Fix.Clear(Pkg);
    Fix.Protect(Pkg);
    if (Remove == true)
    {

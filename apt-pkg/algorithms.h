@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.7 1999/07/09 04:11:34 jgg Exp $
+// $Id: algorithms.h,v 1.8 1999/10/27 04:38:27 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -91,7 +91,8 @@ class pkgProblemResolver
    
    inline void Protect(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= Protected;};
    inline void Remove(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= ToRemove;};
-
+   inline void Clear(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] &= ~(Protected | ToRemove);};
+   
    // Try to intelligently resolve problems by installing and removing packages   
    bool Resolve(bool BrokenFix = false);
    
