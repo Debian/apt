@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.21 1999/04/20 05:02:09 jgg Exp $
+// $Id: acquire-worker.cc,v 1.22 1999/05/23 06:47:43 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -225,8 +225,9 @@ bool pkgAcquire::Worker::RunMessages()
 	    CurrentItem = Itm;
 	    CurrentSize = 0;
 	    TotalSize = atoi(LookupTag(Message,"Size","0").c_str());
+	    ResumePoint = atoi(LookupTag(Message,"Resume-Point","0").c_str());
 	    Itm->Owner->Start(Message,atoi(LookupTag(Message,"Size","0").c_str()));
-	    
+
 	    if (Log != 0)
 	       Log->Fetch(*Itm);
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.32 1999/04/07 06:02:56 jgg Exp $
+// $Id: acquire.cc,v 1.33 1999/05/23 06:47:43 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -703,7 +703,7 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
 	I = Owner->WorkerStep(I))
       if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
-	 CurrentBytes += I->CurrentSize;
+	 CurrentBytes += I->CurrentSize - I->ResumePoint;
       
    // Normalize the figures and account for unknown size downloads
    if (TotalBytes <= 0)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.9 1999/01/20 05:11:25 jgg Exp $
+// $Id: acquire-worker.h,v 1.10 1999/05/23 06:47:43 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
@@ -73,7 +73,8 @@ class pkgAcquire::Worker
    string Status;
    unsigned long CurrentSize;
    unsigned long TotalSize;
-      
+   unsigned long ResumePoint;
+   
    // Load the method and do the startup 
    bool QueueItem(pkgAcquire::Queue::QItem *Item);
    bool Start();
