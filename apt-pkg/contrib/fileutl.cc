@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.13 1998/10/26 07:11:49 jgg Exp $
+// $Id: fileutl.cc,v 1.14 1998/11/23 07:03:06 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -119,6 +119,18 @@ string flNotDir(string File)
    return string(File,Res,Res - File.length());
 }
 									/*}}}*/
+// flNotFile - Strip the file from the directory name			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string flNotFile(string File)
+{
+   string::size_type Res = File.rfind('/');
+   if (Res == string::npos)
+      return File;
+   Res++;
+   return string(File,0,Res);
+}
+									/*}}}*/
 // SetCloseExec - Set the close on exec flag				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -184,12 +196,7 @@ FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
 
       case WriteAny:
       iFd = open(FileName.c_str(),O_RDWR | O_CREAT,Perms);
-      break;
-      
-      // Dont use this in public directories
-      case LockEmpty:
-      iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_TRUNC,Perms);
-      break;
+      break;      
    }  
 
    if (iFd < 0)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.8 1998/10/26 07:11:50 jgg Exp $
+// $Id: fileutl.h,v 1.9 1998/11/23 07:03:07 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -38,7 +38,7 @@ class FileFd
    string FileName;
    
    public:
-   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,LockEmpty};
+   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny};
    
    bool Read(void *To,unsigned long Size);
    bool Write(void *From,unsigned long Size);
@@ -69,5 +69,6 @@ bool WaitFd(int Fd);
 
 // File string manipulators
 string flNotDir(string File);
+string flNotFile(string File);
 
 #endif

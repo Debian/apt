@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.7 1998/11/22 23:37:05 jgg Exp $
+// $Id: packagemanager.cc,v 1.8 1998/11/23 07:03:01 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -64,6 +64,10 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
       // Skip packages to erase
       if (Cache[Pkg].Delete() == true)
 	 continue;
+
+      // Skip Packages that need configure only.
+      if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure)
+	 continue;
       
       new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
 			FileNames[Pkg->ID]);
@@ -106,15 +110,19 @@ bool pkgPackageManager::CreateOrderList()
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
-      // Consider all depends
+      // Mark the package for immediate configuration
       if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       {
 	 List->Flag(I,pkgOrderList::Immediate);
+	 
+	 // Look for other packages to make immediate configurea
 	 if (Cache[I].InstallVer != 0)
 	    for (DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); 
 		 D.end() == false; D++)
 	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
 		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
+	 
+	 // And again with the current version.
 	 if (I->CurrentVer != 0)
 	    for (DepIterator D = I.CurrentVer().DependsList(); 
 		 D.end() == false; D++)

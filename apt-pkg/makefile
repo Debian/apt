@@ -27,7 +27,7 @@ SOURCE+= pkgcache.cc version.cc fileutl.cc pkgcachegen.cc depcache.cc \
 	 acquire-worker.cc acquire-method.cc init.cc templates.cc
 
 # Source code for the debian specific components	 
-SOURCE+= deb/deblistparser.cc deb/debrecords.cc deb/dpkgpm.cc
+SOURCE+= deb/deblistparser.cc deb/debrecords.cc deb/dpkgpm.cc deb/dpkginit.cc
 
 # Public apt-pkg header files
 HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
@@ -35,7 +35,7 @@ HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
           packagemanager.h tagfile.h deblistparser.h init.h pkgcache.h \
           version.h progress.h pkgrecords.h debrecords.h cmndline.h \
 	  acquire.h acquire-worker.h acquire-item.h acquire-method.h md5.h \
-	  dpkgpm.h
+	  dpkgpm.h dpkginit.h
 
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 

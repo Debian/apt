@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.11 1998/11/14 07:20:06 jgg Exp $
+// $Id: algorithms.cc,v 1.12 1998/11/23 07:02:58 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -165,6 +165,14 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 {
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
+      // Only choice for a ReInstReq package is to reinstall
+      if (I->InstState == pkgCache::State::ReInstReq ||
+	  I->InstState == pkgCache::State::HoldReInstReq)
+      {
+	 Cache.MarkKeep(I);
+	 continue;
+      }
+      
       switch (I->CurrentState)
       {
 	 // This means installation failed somehow

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.6 1998/11/23 01:45:58 jgg Exp $
+// $Id: depcache.cc,v 1.7 1998/11/23 07:02:59 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -213,6 +213,7 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,long Mult)
    {
       iUsrSize += Mult*P.InstVerIter(*this)->InstalledSize;
       iDownloadSize += Mult*P.InstVerIter(*this)->Size;
+      return;
    }
    
    // Upgrading
@@ -222,11 +223,22 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,long Mult)
       iUsrSize += Mult*((signed)P.InstVerIter(*this)->InstalledSize - 
 			(signed)Pkg.CurrentVer()->InstalledSize);
       iDownloadSize += Mult*P.InstVerIter(*this)->Size;
+      return;
+   }
+   
+   // Reinstall
+   if (Pkg.State() == pkgCache::PkgIterator::NeedsUnpack)
+   {
+      iDownloadSize += Mult*P.InstVerIter(*this)->Size;
+      return;
    }
    
    // Removing
    if (Pkg->CurrentVer != 0 && P.InstallVer == 0)
+   {
       iUsrSize -= Mult*Pkg.CurrentVer()->InstalledSize;
+      return;
+   }   
 }
 									/*}}}*/
 // DepCache::AddStates - Add the package to the state counter		/*{{{*/

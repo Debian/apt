@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.17 1998/11/23 01:45:59 jgg Exp $
+// $Id: apt-get.cc,v 1.18 1998/11/23 07:03:13 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -34,6 +34,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/dpkgpm.h>
+#include <apt-pkg/dpkginit.h>
 #include <strutl.h>
 
 #include <config.h>
@@ -359,6 +360,7 @@ class CacheFile
    FileFd *File;
    MMap *Map;
    pkgDepCache *Cache;
+   pkgDpkgLock Lock;
    
    inline operator pkgDepCache &() {return *Cache;};
    inline pkgDepCache *operator ->() {return Cache;};
@@ -380,6 +382,9 @@ class CacheFile
    and verifies that the system is OK. */
 bool CacheFile::Open()
 {
+   if (_error->PendingError() == true)
+      return false;
+   
    // Create a progress class
    OpTextProgress Progress(*_config);
       
@@ -454,7 +459,7 @@ bool CacheFile::Open()
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
    happen and then calls the download routines */
-bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
+bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
 {
    // Show all the various warning indicators
    ShowDel(c1out,Cache);
@@ -468,14 +473,14 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    Stats(c1out,Cache);
    
    // Sanity check
-   if (Cache.BrokenCount() != 0)
+   if (Cache->BrokenCount() != 0)
    {
       ShowBroken(c1out,Cache);
       return _error->Error("Internal Error, InstallPackages was called with broken packages!");
    }
 
-   if (Cache.DelCount() == 0 && Cache.InstCount() == 0 && 
-       Cache.BadCount() == 0)
+   if (Cache->DelCount() == 0 && Cache->InstCount() == 0 && 
+       Cache->BadCount() == 0)
       return true;   
 
    // Run the simulator ..
@@ -487,6 +492,14 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    
    // Create the text record parser
    pkgRecords Recs(Cache);
+
+   // Lock the archive directory
+   if (_config->FindB("Debug::NoLocking",false) == false)
+   {
+      FileFd Lock(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
+      if (_error->PendingError() == true)
+	 return _error->Error("Unable to lock the download directory");
+   }
    
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
@@ -505,9 +518,12 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    // Display statistics
    unsigned long FetchBytes = Fetcher.FetchNeeded();
    unsigned long DebBytes = Fetcher.TotalNeeded();
-   if (DebBytes != Cache.DebSize())
+   if (DebBytes != Cache->DebSize())
+   {
+      c0out << DebBytes << ',' << Cache->DebSize() << endl;
       c0out << "How odd.. The sizes didn't match, email apt@packages.debian.org" << endl;
-   
+   }
+      
    // Number of bytes
    c1out << "Need to get ";
    if (DebBytes != FetchBytes)
@@ -518,10 +534,10 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    c1out << " of archives. After unpacking ";
    
    // Size delta
-   if (Cache.UsrSize() >= 0)
-      c1out << SizeToStr(Cache.UsrSize()) << " will be used." << endl;
+   if (Cache->UsrSize() >= 0)
+      c1out << SizeToStr(Cache->UsrSize()) << " will be used." << endl;
    else
-      c1out << SizeToStr(-1*Cache.UsrSize()) << " will be freed." << endl;
+      c1out << SizeToStr(-1*Cache->UsrSize()) << " will be freed." << endl;
 
    if (_error->PendingError() == true)
       return false;
@@ -557,12 +573,13 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
       return _error->Error("Unable to fetch some archives, maybe try with --fix-missing?");
 
    // Try to deal with missing package files
-/*   if (PM.FixMissing() == false)
+   if (PM.FixMissing() == false)
    {
       cerr << "Unable to correct missing packages." << endl;
       return _error->Error("Aborting Install.");
-   }*/
+   }
    
+   Cache.Lock.Close();
    return PM.DoInstall();
 }
 									/*}}}*/
@@ -577,6 +594,14 @@ bool DoUpdate(CommandLine &)
    if (List.ReadMainList() == false)
       return false;
 
+   // Lock the list directory
+   if (_config->FindB("Debug::NoLocking",false) == false)
+   {
+      FileFd Lock(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
+      if (_error->PendingError() == true)
+	 return _error->Error("Unable to lock the list directory");
+   }
+   
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);

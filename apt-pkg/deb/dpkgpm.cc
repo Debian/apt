@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.2 1998/11/22 03:20:35 jgg Exp $
+// $Id: dpkgpm.cc,v 1.3 1998/11/23 07:03:11 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -163,6 +163,7 @@ bool pkgDPkgPM::Go()
       // This is the child
       if (Child == 0)
       {
+	 signal(SIGPIPE,SIG_DFL);
 	 signal(SIGQUIT,SIG_DFL);
 	 signal(SIGINT,SIG_DFL);
 	 signal(SIGWINCH,SIG_DFL);

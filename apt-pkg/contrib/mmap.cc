@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.9 1998/11/12 03:14:39 jgg Exp $
+// $Id: mmap.cc,v 1.10 1998/11/23 07:03:08 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -130,6 +130,9 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) : 
              MMap(F,Flags | NoImmMap), WorkSpace(WorkSpace)
 {
+   if (_error->PendingError() == true)
+      return;
+   
    unsigned long EndOfFile = Fd.Size();
    Fd.Seek(WorkSpace);
    char C = 0;

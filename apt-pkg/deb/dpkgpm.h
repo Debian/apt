@@ -1,13 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.h,v 1.1 1998/11/13 04:23:39 jgg Exp $
+// $Id: dpkgpm.h,v 1.2 1998/11/23 07:03:12 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_DPKGPM_H
 #define PKGLIB_DPKGPM_H
 
