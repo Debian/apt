@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.72 1999/08/04 05:37:18 jgg Exp $
+// $Id: apt-get.cc,v 1.73 1999/09/05 20:27:37 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -270,15 +270,16 @@ void ShowDel(ostream &out,CacheFile &Cache)
 // ShowKept - Show kept packages					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ShowKept(ostream &out,pkgDepCache &Dep)
+void ShowKept(ostream &out,CacheFile &Cache)
 {
-   pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
-   for (;I.end() != true; I++)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {	 
+      pkgCache::PkgIterator I(Cache,Cache.List[J]);
+      
       // Not interesting
-      if (Dep[I].Upgrade() == true || Dep[I].Upgradable() == false ||
-	  I->CurrentVer == 0 || Dep[I].Delete() == true)
+      if (Cache[I].Upgrade() == true || Cache[I].Upgradable() == false ||
+	  I->CurrentVer == 0 || Cache[I].Delete() == true)
 	 continue;
       
       List += string(I.Name()) + " ";
