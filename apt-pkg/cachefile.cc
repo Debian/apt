@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.cc,v 1.5 2001/02/20 07:03:17 jgg Exp $
+// $Id: cachefile.cc,v 1.6 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -71,7 +71,7 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
 
    /* This sux, remove it someday */
    if (_error->empty() == false)
-      _error->Warning(_("You may want to run apt-get update to correct these missing files"));
+      _error->Warning(_("You may want to run apt-get update to correct these problems"));
 
    Cache = new pkgCache(Map);
    if (_error->PendingError() == true)

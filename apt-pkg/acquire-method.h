@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.14 2001/02/20 07:03:17 jgg Exp $
+// $Id: acquire-method.h,v 1.15 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -20,6 +20,7 @@
 #pragma interface "apt-pkg/acquire-method.h"
 #endif 
 
+class Hashes;
 class pkgAcqMethod
 {
    protected:
@@ -37,11 +38,14 @@ class pkgAcqMethod
    struct FetchResult
    {
       string MD5Sum;
+      string SHA1Sum;
       time_t LastModified;
       bool IMSHit;
       string Filename;
       unsigned long Size;
-      unsigned long ResumePoint;      
+      unsigned long ResumePoint;
+      
+      void TakeHashes(Hashes &Hash);
       FetchResult();
    };
 

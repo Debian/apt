@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rsh.cc,v 1.3 2001/03/06 07:15:29 jgg Exp $
+// $Id: rsh.cc,v 1.4 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    RSH method - Transfer files via rsh compatible program
@@ -462,7 +462,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    }
 
    Res.LastModified = FailTime;
-   Res.MD5Sum = Hash.MD5.Result();
+   Res.TakeHashes(Hash);
 
    // Timestamp
    struct utimbuf UBuf;

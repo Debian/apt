@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.9 2001/02/20 07:03:17 jgg Exp $
+// $Id: sourcelist.h,v 1.10 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -14,9 +14,13 @@
    files.sgml.
 
    The types are mapped through a list of type definitions which handle
-   the actual construction of the type. After loading a source list all
-   you have is a list of package index files that have the ability
+   the actual construction of the back end type. After loading a source 
+   list all you have is a list of package index files that have the ability
    to be Acquired.
+   
+   The vendor machanism is similar, except the vendor types are hard 
+   wired. Before loading the source list the vendor list is loaded.
+   This doesn't load key data, just the checks to preform.
    
    ##################################################################### */
 									/*}}}*/
@@ -37,6 +41,18 @@ class pkgSourceList
 {
    public:
    
+   // An available vendor
+   struct Vendor
+   {
+      string VendorID;
+      string FingerPrint;
+      string Description;
+
+      /* Lets revisit these..
+      bool MatchFingerPrint(string FingerPrint);
+      string FingerPrintDescr();*/
+   };
+   
    // List of supported source list types
    class Type
    {
@@ -52,11 +68,13 @@ class pkgSourceList
 
       bool FixupURI(string &URI) const;
       virtual bool ParseLine(vector<pkgIndexFile *> &List,
+			     Vendor const *Vendor,
 			     const char *Buffer,
 			     unsigned long CurLine,string File) const;
       virtual bool CreateItem(vector<pkgIndexFile *> &List,string URI,
-			      string Dist,string Section) const = 0;
-			      
+			      string Dist,string Section,
+			      Vendor const *Vendor) const = 0;
+
       Type();
       virtual ~Type() {};
    };
@@ -64,19 +82,21 @@ class pkgSourceList
    typedef vector<pkgIndexFile *>::const_iterator const_iterator;
    
    protected:
-   
-   vector<pkgIndexFile *> List;
+
+   vector<pkgIndexFile *> SrcList;
+   vector<Vendor const *> VendorList;
    
    public:
 
    bool ReadMainList();
    bool Read(string File);
+   bool ReadVendors();
    
    // List accessors
-   inline const_iterator begin() const {return List.begin();};
-   inline const_iterator end() const {return List.end();};
-   inline unsigned int size() const {return List.size();};
-   inline bool empty() const {return List.empty();};
+   inline const_iterator begin() const {return SrcList.begin();};
+   inline const_iterator end() const {return SrcList.end();};
+   inline unsigned int size() const {return SrcList.size();};
+   inline bool empty() const {return SrcList.empty();};
 
    bool FindIndex(pkgCache::PkgFileIterator File,
 		  pkgIndexFile *&Found) const;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.24 2001/03/06 07:15:29 jgg Exp $
+// $Id: ftp.cc,v 1.25 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -1056,7 +1056,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    }
    
    Res.LastModified = FailTime;
-   Res.MD5Sum = Hash.MD5.Result();
+   Res.TakeHashes(Hash);
    
    // Timestamp
    struct utimbuf UBuf;

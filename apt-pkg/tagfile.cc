@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.27 2001/02/23 06:41:55 jgg Exp $
+// $Id: tagfile.cc,v 1.28 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -396,6 +396,7 @@ static const char *iTFRewritePackageOrder[] = {
                           "Filename",
                           "Size",
                           "MD5Sum",
+                          "SHA1Sum",
                            "MSDOS-Filename",   // Obsolete
                           "Description",
                           0};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.25 2001/02/20 07:03:17 jgg Exp $
+// $Id: acquire-method.cc,v 1.26 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -23,7 +23,8 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
-
+#include <apt-pkg/hashes.h>
+    
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -175,6 +176,8 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 
    if (Res.MD5Sum.empty() == false)
       End += snprintf(End,sizeof(S)-50 - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
+   if (Res.SHA1Sum.empty() == false)
+      End += snprintf(End,sizeof(S)-50 - (End - S),"SHA1-Hash: %s\n",Res.SHA1Sum.c_str());
 
    if (Res.ResumePoint != 0)
       End += snprintf(End,sizeof(S)-50 - (End - S),"Resume-Point: %lu\n",
@@ -199,6 +202,9 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       if (Alt->MD5Sum.empty() == false)
 	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-MD5-Hash: %s\n",
 			 Alt->MD5Sum.c_str());
+      if (Alt->SHA1Sum.empty() == false)
+	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-SHA1-Hash: %s\n",
+			 Alt->SHA1Sum.c_str());
       
       if (Alt->IMSHit == true)
 	 strcat(End,"Alt-IMS-Hit: true\n");
@@ -432,5 +438,15 @@ void pkgAcqMethod::Status(const char *Format,...)
 pkgAcqMethod::FetchResult::FetchResult() : LastModified(0),
                                    IMSHit(false), Size(0), ResumePoint(0)
 {
+}
+									/*}}}*/
+// AcqMethod::FetchResult::TakeHashes - Load hashes			/*{{{*/
+// ---------------------------------------------------------------------
+/* This hides the number of hashes we are supporting from the caller. 
+   It just deals with the hash class. */
+void pkgAcqMethod::FetchResult::TakeHashes(Hashes &Hash)
+{
+   MD5Sum = Hash.MD5.Result();
+   SHA1Sum = Hash.SHA1.Result();
 }
 									/*}}}*/

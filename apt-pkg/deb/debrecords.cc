@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.9 2001/02/20 07:03:17 jgg Exp $
+// $Id: debrecords.cc,v 1.10 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -53,7 +53,15 @@ string debRecordParser::Name()
 /* */
 string debRecordParser::MD5Hash()
 {
-   return Section.FindS("MD5sum");
+   return Section.FindS("MD5Sum");
+}
+									/*}}}*/
+// RecordParser::SHA1Hash - Return the archive hash			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::SHA1Hash()
+{
+   return Section.FindS("SHA1Sum");
 }
 									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/

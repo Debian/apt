@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.cc,v 1.3 2001/02/23 06:41:55 jgg Exp $
+// $Id: debindexfile.cc,v 1.4 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    Debian Specific sources.list types and the three sorts of Debian
@@ -417,7 +417,8 @@ class debSLTypeDeb : public pkgSourceList::Type
    public:
 
    bool CreateItem(vector<pkgIndexFile *> &List,string URI,
-		   string Dist,string Section) const 
+		   string Dist,string Section,
+		   pkgSourceList::Vendor const *Vendor) const
    {
       List.push_back(new debPackagesIndex(URI,Dist,Section));
       return true;
@@ -435,8 +436,9 @@ class debSLTypeDebSrc : public pkgSourceList::Type
    public:
 
    bool CreateItem(vector<pkgIndexFile *> &List,string URI,
-		   string Dist,string Section) const 
-   {
+		   string Dist,string Section,
+		   pkgSourceList::Vendor const *Vendor) const 
+   {      
       List.push_back(new debSourcesIndex(URI,Dist,Section));
       return true;
    };  

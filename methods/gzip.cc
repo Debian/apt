@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.14 2001/03/11 22:37:35 jgg Exp $
+// $Id: gzip.cc,v 1.15 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -142,7 +142,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    // Return a Done response
    Res.LastModified = Buf.st_mtime;
    Res.Size = Buf.st_size;
-   Res.MD5Sum = Hash.MD5.Result();
+   Res.TakeHashes(Hash);
 
    URIDone(Res);
    

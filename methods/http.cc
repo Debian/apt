@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.50 2001/03/06 07:15:29 jgg Exp $
+// $Id: http.cc,v 1.51 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -1109,7 +1109,7 @@ int HttpMethod::Loop()
 	    // Send status to APT
 	    if (Result == true)
 	    {
-	       Res.MD5Sum = Server->In.Hash->MD5.Result();	       
+	       Res.TakeHashes(*Server->In.Hash);
 	       URIDone(Res);
 	    }
 	    else
