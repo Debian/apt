@@ -46,7 +46,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    int status;
    struct stat buff;
    string gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-   string pubringpath = _config->Find("Apt::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
+   string pubringpath = _config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
       std::cerr << "gpgv path: " << gpgvpath << std::endl;
@@ -101,7 +101,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       {
          std::cerr << "Preparing to exec: " << gpgvpath;
 	 for(unsigned int j=0;Args[j] != NULL; j++)
-	    std::cerr << Args[j] << " ";
+	    std::cerr << " " << Args[j];
 	 std::cerr << std::endl;
       }
       int nullfd = open("/dev/null", O_RDONLY);
