@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.8 1998/07/26 04:49:34 jgg Exp $
+// $Id: mmap.cc,v 1.9 1998/11/12 03:14:39 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -163,7 +163,7 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
    iSize = Result + Size;
    
    // Just in case error check
-   if (Result > WorkSpace)
+   if (Result + Size > WorkSpace)
    {
       _error->Error("Dynamic MMap ran out of room");
       return 0;

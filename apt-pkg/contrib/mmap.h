@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.h,v 1.6 1998/07/19 04:42:15 jgg Exp $
+// $Id: mmap.h,v 1.7 1998/11/12 03:14:40 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -89,7 +89,7 @@ class DynamicMMap : public MMap
    inline unsigned long WriteString(string S) {return WriteString(S.begin(),S.size());};
    void UsePools(Pool &P,unsigned int Count) {Pools = &P; PoolCount = Count;}; 
    
-   DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace = 1024*1024);
+   DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace = 2*1024*1024);
    virtual ~DynamicMMap();
 };
 
