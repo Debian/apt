@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.7 1998/09/07 05:28:38 jgg Exp $
+// $Id: progress.cc,v 1.8 1998/10/02 04:39:53 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -13,6 +13,7 @@
 #endif 
 #include <apt-pkg/progress.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
 #include <stdio.h>
 									/*}}}*/
 
@@ -108,6 +109,18 @@ bool OpProgress::CheckChange(float Interval)
    return true;
 }
 									/*}}}*/
+// OpTextProgress::OpTextProgress - Constructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+OpTextProgress::OpTextProgress(Configuration &Config) : 
+                               NoUpdate(false), NoDisplay(false), LastLen(0) 
+{
+   if (Config.FindI("quiet",0) >= 1)
+      NoUpdate = true;
+   if (Config.FindI("quiet",0) >= 2)
+      NoDisplay = true;
+};
+									/*}}}*/
 // OpTextProgress::Done - Clean up the display				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -123,7 +136,13 @@ void OpTextProgress::Done()
       Write(S);
       cout << endl;
       OldOp = string();
-   }      
+   }
+   
+   if (NoUpdate == true && NoDisplay == false && OldOp.empty() == false)
+   {
+      OldOp = string();
+      cout << endl;   
+   }   
 }
 									/*}}}*/
 // OpTextProgress::Update - Simple text spinner				/*{{{*/
@@ -139,7 +158,14 @@ void OpTextProgress::Update()
    {
       if (MajorChange == false)
 	 return;
-      cout << Op << endl;
+      if (NoDisplay == false)
+      {
+	 if (OldOp.empty() == false)
+	    cout << endl;
+	 OldOp = "a";
+	 cout << Op << "..." << flush;
+      }
+      
       return;
    }
 

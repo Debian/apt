@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.h,v 1.3 1998/08/26 04:52:29 jgg Exp $
+// $Id: progress.h,v 1.4 1998/10/02 04:39:54 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -29,6 +29,7 @@
 #include <string>
 #include <sys/time.h>
 
+class Configuration;
 class OpProgress
 {
    unsigned long Current;
@@ -72,6 +73,7 @@ class OpTextProgress : public OpProgress
    
    string OldOp;
    bool NoUpdate;
+   bool NoDisplay;
    unsigned long LastLen;
    virtual void Update();
    void Write(const char *S);
@@ -80,7 +82,9 @@ class OpTextProgress : public OpProgress
 
    virtual void Done();
    
-   OpTextProgress(bool NoUpdate = false) : NoUpdate(NoUpdate), LastLen(0) {};
+   OpTextProgress(bool NoUpdate = false) : NoUpdate(NoUpdate), 
+                NoDisplay(false), LastLen(0) {};
+   OpTextProgress(Configuration &Config);
    virtual ~OpTextProgress() {Done();};
 };
 

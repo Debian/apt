@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.8 1998/07/19 04:22:00 jgg Exp $
+// $Id: pkgcache.cc,v 1.9 1998/10/02 04:39:46 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -334,6 +334,18 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
    }
    
    return Res;
+}
+									/*}}}*/
+// DepIterator::CompType - Return a string describing the compare type	/*{{{*/
+// ---------------------------------------------------------------------
+/* This returns a string representation of the dependency compare 
+   type */
+const char *pkgCache::DepIterator::CompType()
+{
+   const char *Ops[] = {"","<=",">=","<",">","=","!="};
+   if ((Dep->CompareOp & 0xF) < sizeof(Ops))
+      return Ops[Dep->CompareOp & 0xF];
+   return "";	 
 }
 									/*}}}*/
 // VerIterator::CompareVer - Fast version compare for same pkgs		/*{{{*/

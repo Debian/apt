@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.17 1998/09/26 05:34:23 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.18 1998/10/02 04:39:47 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -413,7 +413,7 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
    }
    
    MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true)
+   if (_error->PendingError() == true || Map.Size() == 0)
    {
       _error->Discard();
       return false;
@@ -474,7 +474,7 @@ bool pkgPkgCacheCheck(string CacheFile)
    }
    
    MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true)
+   if (_error->PendingError() == true || Map.Size() == 0)
    {
       _error->Discard();
       return false;
@@ -565,7 +565,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    
    string CacheFile = _config->FindDir("Dir::Cache::pkgcache");
    bool SrcOk = pkgSrcCacheCheck(List);
-   bool PkgOk = pkgPkgCacheCheck(CacheFile);
+   bool PkgOk = SrcOk && pkgPkgCacheCheck(CacheFile);
    
    // Rebuild the source and package caches   
    if (SrcOk == false)

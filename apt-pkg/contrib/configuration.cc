@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.5 1998/09/26 05:34:26 jgg Exp $
+// $Id: configuration.cc,v 1.6 1998/10/02 04:39:49 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -105,6 +105,7 @@ string Configuration::Find(const char *Name,const char *Default)
 // Configuration::FindDir - Find a directory				/*{{{*/
 // ---------------------------------------------------------------------
 /* Directories are stored as the base dir in the Parent node and the
+   sub directory in sub nodes
  */
 string Configuration::FindDir(const char *Name,const char *Default = 0)
 {
@@ -117,8 +118,16 @@ string Configuration::FindDir(const char *Name,const char *Default = 0)
 	 return Default;
    }
    
+   // Absolute path
    if (Itm->Value[0] == '/' || Itm->Parent == 0)
       return Itm->Value;
+   
+   // ./ is also considered absolute as is anything with ~ in it
+   if (Itm->Value[0] != 0 && 
+       ((Itm->Value[0] == '.' && Itm->Value[1] == '/') ||
+	(Itm->Value[0] == '~' && Itm->Value[1] == '/')))
+      return Itm->Value;
+   
    if (Itm->Parent->Value.end()[-1] == '/')
       return Itm->Parent->Value + Itm->Value;
    else
@@ -167,7 +176,7 @@ bool Configuration::FindB(const char *Name,bool Default)
 	  strcasecmp(Itm->Value.c_str(),"true") == 0 ||
 	  strcasecmp(Itm->Value.c_str(),"with") == 0 ||
 	  strcasecmp(Itm->Value.c_str(),"enable") == 0)
-	 return false;
+	 return true;
       
       return Default;
    }

@@ -4,7 +4,7 @@
 <title>APT Files</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: files.sgml,v 1.2 1998/07/12 02:11:09 jgg Exp $</version>
+<version>$Id: files.sgml,v 1.3 1998/10/02 04:39:57 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the 
@@ -161,16 +161,6 @@ URIs in the source list support a large number of access schemes.
    file:/var/debian
    </example>
    
-<tag>mirror<item>
-   The mirror scheme is special in that it does not specify the location of a
-   debian archive but specifies the location of a list of mirrors to use
-   to access the archive. Some technique will be used to determine the
-   best choice for a mirror. The mirror file is specified in the Mirror File
-   section. If/when URIs take off they should obsolete this field.
-   <example>
-   mirror:http://www.debian.org/archivemirrors
-   </example>
-   
 <tag>smb<item>
    A possible future expansion may be to have direct support for smb (Samba 
    servers).
@@ -203,10 +193,9 @@ The other alternative that was considered was to use a deep directory
 structure but this poses two problems, it makes it very difficult to prune
 directories back when sources are no longer used and complicates the handling
 of the partial directory. This gives a very simple way to deal with all
-of the situations that can arise. The equals sign was choosen on the 
-suggestion of Manoj because it is very infrequently used in filenames.
-Also note that the same rules described in the <em>Archive Directory</>
-section regarding the partial sub dir apply here as well.
+of the situations that can arise. Also note that the same rules described in 
+the <em>Archive Directory</> section regarding the partial sub dir apply 
+here as well.
 </sect1>
 
 </sect>
@@ -216,8 +205,8 @@ section regarding the partial sub dir apply here as well.
 <sect>Extra Status File (xstatus)
 
 <p>
-The extra status file serves the same purpose as the normal dpkg status file 
-(/var/lib/dpkg/status) except that it stores information unique to diety.
+The extra status file serves the same purpose as the normal dpkg status file
+(/var/lib/dpkg/status) except that it stores information unique to apt.
 This includes the autoflag, target distribution and version and any other
 uniqe features that come up over time. It duplicates nothing from the normal
 dpkg status file.  Please see other APT documentation for a discussion
@@ -280,92 +269,8 @@ name + version match..
 <sect> The Methods Directory (/usr/lib/apt/methods)
 
 <p>
-Like dselect, APT will support plugable acquisition methods to complement
-its internaly supported methods. The files in
-this directory are execultables named after the URI type. APT will
-sort the required URIs and spawn these programs giving a full sorted, quoted 
-list of URIs.
-
-<p>
-The interface is simple, the program will be given a list
-of URIs on the command line. The URIs will be a pairs of strings, the first 
-being the actual URI and the second being the filename to write the data to. 
-The current directory will be set properly by APT and it is 
-expected the method will put files relative to the current directory. 
-The output of these programs is strictly speficied. The programs must accept
-nothing from stdin (stdin will be an invalid fd) and they must output 
-status information to stdout according to the format below.
-Stderr will be redirected to the logging facility.
-
-<p>
-Each line sent to stdout must be a line that has a single letter and a
-space. Strings after the first letter do not need quoting, they are taken
-as is till the end of the line. The tag letters, listed in expected order, 
-is as follows:
-
-<taglist>
-
-<tag>F - Change URI<item>
-This specifies a change in URI. All information after this will be applied
-to the new URI. When the URI is changed it is assumed that the old URI has
-completed unless an error is set. The format is <var>F URI</>
-
-<tag>S - Object Size<item>
-This specifies the expected size of the object. APT will use this to 
-compute percent done figures. If it is not sent then a kilobyte meter
-will be used instead of a percent display. The foramat is <var>S INTEGER</>
-
-<tag>E - Error Information<item>
-Exactly one line of error information can be set for each URI. The
-information will be summarized for the user. If an E tag is send before
-any F tags then the error is assumed to be a fatal method error and all URI
-fetches for that method are aborted with that error string. The format 
-is <var>E String</>
-
-<tag>I - Informative progress information<item>
-The I tag allows the method to specify the status of the connection. 
-Typically the GUI will show the last recieved I line. The format is
-<var>I String</> As a general rule an I tag should be ommitted before a
-lengthy operation only. Things that always take a short period are not
-suited for I tags. I tags should change wnenever the methods state changes.
-Some standard forms, in order of occurance, are <var>Connecting to SITE</>,
-<var>Connecting to SITE (1.1.1.1)</>, <var>Waiting for file</>, 
-<var>Authenticating</>, <var>Downloading</>, <var>Resuming (size)</>, 
-<var>Computing MD5</> <var>I</> lines should never print out information that 
-APT is already aware of, such as file names.
-
-<tag>R - Set final path<item>
-The R tag allows the method to tell APT that the file is present in the
-local file system. APT might copy it into a the download directory. The format
-is <var>R String</>
-
-<tag>M - MD5Sum of the file<item>
-The method is expected to compute the md5 hash on the fly as the download
-progresses. The final md5 of the file is to be output when the file is 
-completed. If the md5 is not output it will not be checked! Some methods
-such as the file method will not check md5's because they are most
-commonly used on mirrors or local CD-ROM's, a paranoid option may be
-provided in future to force checking. The format is <var>M MD5-String</>
-
-<tag>L - Log output<item>
-This tag indicates a string that should be dumped to some log file. The
-string is for debugging and is not ment to be seen by the user. The format
-is <var>L String</> Log things should only be used in a completed method
-if they have special relavence to what is happening.
-</taglist>
-
-<p>
-APT monitors the progress of the transfer by watching the file size. This
-means the method must not create any temp files and must use a fairly small
-buffer. The method is also responsible for If-Modified-Since (IMS) queries
-for the object. It should check ../outputname to get the time stamp but not
-size. The size may be different because the file was uncompressed after
-it was transfed. A method must <em>never</> change the file in .., it may
-only change the output file in the current directory.
-
-<p>
-The APT 'http' program is the reference implementation of this specification, 
-it implements all of the features a method is expected to do.
+The Methods directory is more fully described in the APT Methods interface
+document.
 </sect>
                                                                   <!-- }}} -->
 <!-- The Mirror List						       {{{ -->
@@ -374,17 +279,58 @@ it implements all of the features a method is expected to do.
 
 <p>
 The mirror list is stored on the primary debian web server (www.debian.org)
-and contains a machine readable list of all known debian mirrors. The mirror
-URI type will cause this list to be downloaded and considered. It has the
-same form as the source list. When the source list specifies mirror
-as the target the mirror list is scanned to find the nescessary parts for 
-the requested distributions and components. This means the user could 
-have a line like:
+and contains a machine readable list of all known debian mirrors. It's 
+format and style mirror the Package file.
 
-<var>deb mirror:http://www.debian.org/mirrorlist stable main non-us</var>
+<taglist>
+<tag>Site<item>
+This is the proper host name of the site. It should not be a host within
+debian.org and generally cnames should be advoided here.
 
-which would likely cause APT to choose two separate sites to download from,
-one for main and another for non-us.
+<tag>Aliases<item>
+These list any commonly used aliases for the site. This field is used to make
+sure that a site is not added twice.
+
+<tag>Type<item>
+This field can either be <em>Push-Primary</> or <em>leaf</>. 
+<em>Push-Primary</> are authorized top level mirrors of the archive, all 
+other mirrors are leaf. 
+
+<tag>Archive-[access]<item>
+The Archive field gives the path(s) to the debian archive. [access] 
+specifies the access method and may be one of ftp, http, rsync, nfs, or
+smb. For many of the types it is possible to prefix the path with :###
+indicating that an alternate port should be used. Generaly paths
+start with a / and end with a /, rsync is an exception in that the
+first directory component is not a path but a label.
+
+<tag>WWW-[access]<item>
+The WWW field gives the path(s) to the debian web site.
+
+<tag>CDImage-[access]<item>
+The WWW field gives the path(s) to the debian CD-ROM images
+
+<tag>Incoming-[access]<item>
+The Incoming field gives the path(s) to a mirror of the debian incoming
+directory.
+
+<tag>nonUS-[access]<item>
+The nonUS field gives the path(s) to a mirror of the non-US distribution.
+
+<tag>Maintainer<item>
+This is the email address of the maintainer of the mirror.
+
+<tag>Location<item>
+Location gives the general geographical region the mirror is in.
+
+<tag>Sponsor<item>
+The Sponsor field indicates who owns the mirror and a URL to a web page
+describing the organization.
+
+<tag>Comment<item>
+General free-form text.
+
+</taglist>
 
 <p>
 Some form of network measurement will have to be used to gauge performance

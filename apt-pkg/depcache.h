@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.4 1998/09/07 05:28:35 jgg Exp $
+// $Id: depcache.h,v 1.5 1998/10/02 04:39:45 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -94,7 +94,7 @@ class pkgDepCache : public pkgCache
       inline bool Delete() const {return Mode == ModeDelete;};
       inline bool Keep() const {return Mode == ModeKeep;};
       inline bool Upgrade() const {return Status > 0 && Mode == ModeInstall;};
-      inline bool Upgradable() const {return Status == 1;};
+      inline bool Upgradable() const {return Status >= 1;};
       inline bool Downgrade() const {return Status < 0;};
       inline bool Held() const {return Status != 0 && Keep();};
       inline bool NowBroken() const {return (DepState & DepNowMin) != DepNowMin;};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.7 1998/08/26 04:52:26 jgg Exp $
+// $Id: fileutl.cc,v 1.8 1998/10/02 04:39:50 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -139,6 +139,10 @@ FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
       
       case WriteExists:
       iFd = open(FileName.c_str(),O_RDWR);
+      break;
+
+      case WriteAny:
+      iFd = open(FileName.c_str(),O_RDWR | O_CREAT,Perms);
       break;
       
       // Dont use this in public directories

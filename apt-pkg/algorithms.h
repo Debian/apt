@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.3 1998/07/19 21:24:11 jgg Exp $
+// $Id: algorithms.h,v 1.4 1998/10/02 04:39:43 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -16,7 +16,15 @@
    field in the status file. It is important to get proper crash recovery.
 
    pkgFixBroken corrects a broken system so that it is in a sane state.
+ 
+   pkgAllUpgrade attempts to upgade as many packages as possible but 
+   without installing new packages.
    
+   The problem resolver class contains a number of complex algorithms
+   to try to best-guess an upgrade state. It solves the problem of 
+   maximizing the number of install state packages while having no broken
+   packages. 
+
    ##################################################################### */
 									/*}}}*/
 // Header section: pkglib
@@ -60,7 +68,7 @@ class pkgProblemResolver
    typedef pkgCache::Package Package;
    
    enum Flags {Protected = (1 << 0), PreInstalled = (1 << 1),
-               Upgradable = (1 << 2)};
+               Upgradable = (1 << 2), ReInstateTried = (1 << 3)};
    signed short *Scores;
    unsigned char *Flags;
    bool Debug;
@@ -81,13 +89,19 @@ class pkgProblemResolver
    public:
    
    inline void Protect(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= Protected;};
+
+   // Try to intelligently resolve problems by installing and removing packages   
    bool Resolve(bool BrokenFix = false);
-   
+
+   // Try to resolve problems only by using keep
+   bool ResolveByKeep();
+      
    pkgProblemResolver(pkgDepCache &Cache);
 };
 
 bool pkgDistUpgrade(pkgDepCache &Cache);
 bool pkgApplyStatus(pkgDepCache &Cache);
 bool pkgFixBroken(pkgDepCache &Cache);
+bool pkgAllUpgrade(pkgDepCache &Cache);
 
 #endif

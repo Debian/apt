@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.8 1998/09/26 05:34:29 jgg Exp $
+// $Id: apt-cache.cc,v 1.9 1998/10/02 04:39:55 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -222,7 +222,7 @@ bool DoAdd(CommandLine &CmdL)
       return _error->Error("You must give at least one file name");
    
    // Open the cache
-   FileFd CacheF(_config->FindDir("Dir::Cache::srcpkgcache"),FileFd::ReadOnly);
+   FileFd CacheF(_config->FindDir("Dir::Cache::srcpkgcache"),FileFd::WriteAny);
    if (_error->PendingError() == true)
       return false;
    
@@ -230,7 +230,7 @@ bool DoAdd(CommandLine &CmdL)
    if (_error->PendingError() == true)
       return false;
 
-   OpTextProgress Progress;
+   OpTextProgress Progress(*_config);
    pkgCacheGenerator Gen(Map,Progress);
    if (_error->PendingError() == true)
       return false;
@@ -264,10 +264,11 @@ bool DoAdd(CommandLine &CmdL)
 /* */
 bool GenCaches()
 {
-   OpTextProgress Progress;
+   OpTextProgress Progress(*_config);
+   
    pkgSourceList List;
    List.ReadMainList();
-   return pkgMakeStatusCache(List,Progress);  
+   return pkgMakeStatusCache(List,Progress);
 }
 									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
@@ -280,7 +281,7 @@ int ShowHelp()
    
    cout << "Usage: apt-cache [options] command" << endl;
    cout << "       apt-cache [options] add file1 [file1 ...]" << endl;
-   cout << "       apt-cache [options] showpkg pkg2 [pkg2 ...]" << endl;
+   cout << "       apt-cache [options] showpkg pkg1 [pkg2 ...]" << endl;
    cout << endl;
    cout << "apt-cache is a low-level tool used to manipulate APT's binary" << endl;
    cout << "cache files stored in " << _config->FindDir("Dir::Cache") << endl;
@@ -305,6 +306,15 @@ int ShowHelp()
    return 100;
 }
 									/*}}}*/
+// CacheInitialize - Initialize things for apt-cache			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void CacheInitialize()
+{
+   _config->Set("quiet",0);
+   _config->Set("help",false);
+}
+									/*}}}*/
 
 int main(int argc,const char *argv[])
 {
@@ -316,6 +326,8 @@ int main(int argc,const char *argv[])
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
+
+   CacheInitialize();
    
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
@@ -389,8 +401,9 @@ int main(int argc,const char *argv[])
    // Print any errors or warnings found during parsing
    if (_error->empty() == false)
    {
+      bool Errors = _error->PendingError();
       _error->DumpErrors();
-      return 100;
+      return Errors == true?100:0;
    }
           
    return 0;

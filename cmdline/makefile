@@ -12,7 +12,7 @@ SOURCE = apt-cache.cc
 include $(PROGRAM_H)
 
 # The apt-config program
-PROGRAM=apt-config
+PROGRAM=apt-get
 SLIBS = -lapt-pkg 
-SOURCE = apt-config.cc
+SOURCE = apt-get.cc
 include $(PROGRAM_H)

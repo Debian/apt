@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.10 1998/07/19 04:42:10 jgg Exp $
+// $Id: tagfile.cc,v 1.11 1998/10/02 04:39:48 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -45,7 +45,10 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 	 return false;
       
       if (Tag.Scan(Start,End - Start) == false)
+      {
+	 cout << string(Start,End-Start) << endl;
 	 return _error->Error("Unable to parse package file");
+      }      
    }   
    Start += Tag.size();
    iOffset += Tag.size();
@@ -125,13 +128,16 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
    {
       if (Stop[-1] != '\n')
 	 continue;
+
+      // Skip line feeds
+      for (; Stop[0] == '\r' && Stop < End; Stop++);
+      
       if (Stop[0] == '\n')
       {
 	 // Extra one at the end to simplify find
 	 Indexes[TagCount] = Stop - Section;
-	 for (; Stop[0] == '\n' && Stop < End; Stop++);
+	 for (; (Stop[0] == '\n' || Stop[0] == '\r') && Stop < End; Stop++);
 	 return true;
-	 break;
       }
       
       if (isspace(Stop[0]) == 0)
@@ -167,6 +173,7 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
       End = Section + Indexes[I+1];
       for (; (isspace(*Start) != 0 || *Start == ':') && Start < End; Start++);
       for (; isspace(End[-1]) != 0 && End > Start; End--);
+      
       return true;
    }
    Start = End = 0;
