@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.149 2003/12/20 23:58:55 mdz Exp $
+// $Id: apt-get.cc,v 1.150 2003/12/24 22:53:10 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2222,8 +2222,7 @@ bool DoBuildDep(CommandLine &CmdL)
       
       // Now we check the state of the packages,
       if (Cache->BrokenCount() != 0)
-	 return _error->Error(_("Some broken packages were found while trying to process build-dependencies for %s.\n"
-				"You might want to run `apt-get -f install' to correct these."),*I);
+         return _error->Error(_("Build-dependencies for %s could not be satisfied."),*I);
    }
   
    if (InstallPackages(Cache, false, true) == false)
