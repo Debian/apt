@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.13 1999/03/18 04:10:21 doogie Exp $
+// $Id: mmap.cc,v 1.14 1999/03/18 04:32:46 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -31,7 +31,6 @@
 
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include <sys/user.h>
 #include <unistd.h>
 #include <fcntl.h>
    									/*}}}*/
@@ -119,10 +118,10 @@ bool MMap::Sync()
 /* */
 bool MMap::Sync(unsigned long Start,unsigned long Stop)
 {
-
-#ifdef _POSIX_SYNCHRONIZED_IO   
+#ifdef _POSIX_SYNCHRONIZED_IO
+   unsigned long PSize = sysconf(_SC_PAGESIZE);
    if ((Flags & ReadOnly) != ReadOnly)
-      if (msync((char *)Base+(int)(Start/PAGE_SIZE)*PAGE_SIZE,Stop - Start,MS_SYNC) != 0)
+      if (msync((char *)Base+(int)(Start/PSize)*PSize,Stop - Start,MS_SYNC) != 0)
 	 return _error->Error("msync","Unable to write mmap");
 #endif   
    return true;

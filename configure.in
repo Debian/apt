@@ -106,20 +106,6 @@ AC_CHECK_PROG(DEBIANDOC_HTML,debiandoc2html,"yes","")
 AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
 
 dnl Check for YODL
-AC_ARG_WITH(YODL,
-        [  --with-YODL   Use YODL macro processor],
-        [private_YODL=yes],
-        [private_YODL=no])
-if test $private_YODL = yes ;then
-	if test $withval = yes;then
-		AC_MSG_RESULT([checking for yodl2man.. (cmdline) yes])
-		AC_DEFINE_UNQUOTED(YODL_MAN,"yes")
-	else
-		AC_MSG_RESULT([checking for yodl2man.. (cmdline) no])
-#[29~		AC_DEFINE_UNQUOTED(YODL_MAN,"")
-	fi
-else
-	AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
-fi
+AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
 
 AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make dirs)
