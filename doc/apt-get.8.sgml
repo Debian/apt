@@ -47,7 +47,7 @@
    <command/apt-get/ is the command-line tool for handling packages, and may be 
    considered the user's "back-end" to other tools using the APT library.
    <para>
-   Unless the <option/-h/, or <option/--help/ option is given one of the
+   Unless the <option/-h/, or <option/--help/ option is given, one of the
    commands below must be present.
    
    <VariableList>
@@ -80,7 +80,8 @@
 
      <VarListEntry><Term>dselect-upgrade</Term>
      <ListItem><Para>   
-     is used in conjunction with the traditional Debian GNU/Linux packaging
+     <literal/dselect-upgrade/
+     is used in conjunction with the traditional Debian packaging
      front-end, &dselect;. <literal/dselect-upgrade/
      follows the changes made by &dselect; to the <literal/Status/
      field of available packages, and performs the actions necessary to realize
@@ -94,9 +95,11 @@
      <literal/upgrade/, also intelligently handles changing dependencies 
      with new versions of packages; <command/apt-get/ has a "smart" conflict 
      resolution system, and it will attempt to upgrade the most important 
-     packages at the expense of less  important ones if necessary. 
+     packages at the expense of less important ones if necessary. 
      The <filename>/etc/apt/sources.list</> file contains a list of locations 
      from which to retrieve desired package files.
+     See also &apt-preferences; for a mechanism for
+     overriding the general settings for individual packages.
      </VarListEntry>
 
      <VarListEntry><Term>install</Term>
@@ -104,14 +107,14 @@
      <literal/install/ is followed by one or more packages desired for 
      installation. Each package is a package name, not a fully qualified 
      filename (for instance, in a Debian GNU/Linux system, libc6 would be the 
-     argument provided, not em(libc6_1.9.6-2.deb)). All packages required 
+     argument provided, not <literal/libc6_1.9.6-2.deb/). All packages required 
      by the package(s) specified for installation will also be retrieved and 
      installed. The <filename>/etc/apt/sources.list</> file is used to locate 
      the desired packages. If a hyphen is appended to the package name (with 
      no intervening space), the identified package will be removed if it is 
      installed. Similarly a plus sign can be used to designate a package to 
      install. These latter features may be used to override decisions made by 
-     apt-get's conflict resolution  system.
+     apt-get's conflict resolution system.
      <para>
      A specific version of a package can be selected for installation by 
      following the package name with an equals and the version of the package 
@@ -123,11 +126,17 @@
      Both of the version selection mechanisms can downgrade packages and must
      be used with care.
      <para>
+     Finally, the &apt-preferences; mechanism allows you to
+     create an alternative installation policy for
+     individual packages.
+     <para>
      If no package matches the given expression and the expression contains one
-     of '.', '?' or '*' then it is assumed to be a POSIX regex and it is applied
+     of '.', '?' or '*' then it is assumed to be a POSIX regular expression,
+     and it is applied
      to all package names in the database. Any matches are then installed (or
      removed). Note that matching is done by substring so 'lo.*' matches 'how-lo'
-     and 'lowest'. If this is undesired prefix with a '^' character.
+     and 'lowest'. If this is undesired, anchor the regular expression
+     with a '^' or '$' character, or create a more specific regular expression.
      </VarListEntry>
 
      <VarListEntry><Term>remove</Term>
@@ -135,7 +144,7 @@
      <literal/remove/ is identical to <literal/install/ except that packages are 
      removed instead of installed. If a plus sign is appended to the package 
      name (with no intervening space), the identified package will be 
-     installed.
+     installed instead of removed.
      </VarListEntry>
 
      <VarListEntry><Term>source</Term>
@@ -166,7 +175,7 @@
      <VarListEntry><Term>build-dep</Term>
      <ListItem><Para>   
      <literal/build-dep/ causes apt-get to install/remove packages in an 
-     attempt to satisfy the build dependencies for a source packages.
+     attempt to satisfy the build dependencies for a source package.
      </VarListEntry>
 
      <VarListEntry><Term>check</Term>
@@ -194,7 +203,7 @@
      useless. This allows a cache to be maintained over a long period without 
      it growing out of control. The configuration option 
      <literal/APT::Clean-Installed/ will prevent installed packages from being
-     erased if it is set off.
+     erased if it is set to off.
      </VarListEntry>
    </VariableList>
  </RefSect1>
@@ -367,7 +376,8 @@
      lets you have simple control over which distribution packages will be
      retrieved from. Some common examples might be 
      <option>-t '2.1*'</> or <option>-t unstable</>.
-     Configuration Item: <literal/APT::Default-Release/
+     Configuration Item: <literal/APT::Default-Release/;
+     see also the &apt-preferences; manual page.
      </VarListEntry>
 
      <VarListEntry><term><option/--trivial-only/</>
@@ -414,7 +424,7 @@
    <variablelist>
      <VarListEntry><term><filename>/etc/apt/sources.list</></term>
      <ListItem><Para>
-     locations to fetch packages from.
+     Locations to fetch packages from.
      Configuration Item: <literal/Dir::Etc::SourceList/.
      </VarListEntry>
      
@@ -432,32 +442,36 @@
      
      <VarListEntry><term><filename>/etc/apt/preferences</></term>
      <ListItem><Para>
-     version preferences file
+     Version preferences file.
+     This is where you would specify "pinning",
+     i.e. a preference to get certain packages
+     from a separate source
+     or from a different version of a distribution.
      Configuration Item: <literal/Dir::Etc::Preferences/.
      </VarListEntry>
      
      <VarListEntry><term><filename>&cachedir;/archives/</></term>
      <ListItem><Para>
-     storage area for retrieved package files.
+     Storage area for retrieved package files.
      Configuration Item: <literal/Dir::Cache::Archives/.
      </VarListEntry>
      
      <VarListEntry><term><filename>&cachedir;/archives/partial/</></term>
      <ListItem><Para>
-     storage area for package files in transit.
+     Storage area for package files in transit.
      Configuration Item: <literal/Dir::Cache::Archives/ (implicit partial). 
      </VarListEntry>
      
      <VarListEntry><term><filename>&statedir;/lists/</></term>
      <ListItem><Para>
-     storage area for state information for each package resource specified in
+     Storage area for state information for each package resource specified in
      &sources-list;
      Configuration Item: <literal/Dir::State::Lists/.
      </VarListEntry>
   
      <VarListEntry><term><filename>&statedir;/lists/partial/</></term>
      <ListItem><Para>
-     storage area for state information in transit.
+     Storage area for state information in transit.
      Configuration Item: <literal/Dir::State::Lists/ (implicit partial).
      </VarListEntry>     
    </variablelist>
@@ -466,7 +480,7 @@
  <RefSect1><Title>See Also</>
    <para>
    &apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, 
-   The APT User's guide in &docdir;, &apt-preferences;.
+   The APT User's guide in &docdir;, &apt-preferences;, the APT Howto.
  </RefSect1>
 
  <RefSect1><Title>Diagnostics</>
