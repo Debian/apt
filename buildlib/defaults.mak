@@ -94,6 +94,11 @@ binary: library program
 maintainer-clean dist-clean distclean pristine sanity: veryclean
 headers library clean veryclean program:
 
+veryclean:
+	echo Very Clean done for $(SUBDIR)
+clean:
+	echo Clean done for $(SUBDIR)
+	
 # Header file control. We want all published interface headers to go
 # into the build directory from thier source dirs. We setup some
 # search paths here

@@ -7,16 +7,24 @@ ifndef NOISY
 endif
 
 SRCDIR=@top_srcdir@
-SUBDIRS:=./docs ./docs/examples ./bin ./bin/methods ./obj ./include/apt-pkg \
+DIRS:=./docs ./bin ./obj ./include ./scripts
+SUBDIRS:= $(DIRS) ./docs/examples ./bin/methods ./include/apt-pkg \
          ./include/deity ./obj/apt-pkg ./obj/deity ./obj/gui ./obj/cmdline \
-         ./obj/test ./obj/methods ./obj/methods/ftp ./dselect
+         ./obj/test ./obj/methods ./obj/methods/ftp ./scripts/dselect
 BUILD:=$(shell pwd)
 export BUILD
 
 # Chain to the parent make to do the actual building
-.PHONY: headers library clean veryclean all binary program doc
+.PHONY: headers library clean veryclean all binary program doc \
+        veryclean/local
 all headers library clean veryclean binary program doc:
 	$(MAKE) -C $(SRCDIR) -f Makefile $@
+
+# Purge everything.
+.PHONY: maintainer-clean dist-clean pristine sanity distclean
+maintainer-clean dist-clean pristine sanity distclean:
+	-rm -rf $(DIRS)
+	-rm -f config.cache config.log config.status environment.mak makefile
 	
 # This makes any missing directories
 .PHONY: dirs
