@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.11 1999/01/31 04:25:35 jgg Exp $
+// $Id: packagemanager.cc,v 1.12 1999/01/31 06:24:46 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -107,7 +107,7 @@ bool pkgPackageManager::CreateOrderList()
    delete List;
    List = new pkgOrderList(Cache);
    
-   bool NoImmConfigure = _config->FindB("APT::Immedate-Configure",false);
+   bool NoImmConfigure = _config->FindB("APT::Immediate-Configure",false);
    
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
