@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.23 2001/02/20 07:03:17 jgg Exp $
+// $Id: depcache.cc,v 1.24 2001/04/25 06:17:00 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -669,7 +669,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
          succeed. We have already cached this.. */
       for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; Ors--)
 	 Start++;
-      
+
       /* This bit is for processing the possibilty of an install/upgrade
          fixing the problem */
       SPtrArray<Version *> List = Start.AllTargets();
@@ -691,7 +691,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 }
 
 	 // Select the highest priority providing package
-	 if (InstPkg.end() == false)
+	 if (InstPkg.end() == true)
 	 {
 	    pkgPrioSortList(*Cache,Cur);
 	    for (; *Cur != 0; Cur++)
