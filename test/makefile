@@ -56,3 +56,9 @@ SLIBS = -lapt-pkg -lapt-inst
 SOURCE = extract-control.cc
 include $(PROGRAM_H)
 
+# Program for testing hashes
+PROGRAM=hash
+SLIBS = -lapt-pkg 
+SOURCE = hash.cc
+include $(PROGRAM_H)
+
