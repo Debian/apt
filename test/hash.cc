@@ -1,6 +1,9 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/strutl.h>
+#include <iostream>
+
+using namespace std;
 
 template <class T> void Test(const char *In,const char *Out)
 {
