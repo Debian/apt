@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.64 2003/05/15 09:39:38 piefel Exp $
+// $Id: apt-cache.cc,v 1.65 2003/07/22 03:10:01 mdz Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1344,6 +1344,8 @@ bool ShowPackage(CommandLine &CmdL)
 {   
    pkgCache &Cache = *GCache;
    pkgDepCache::Policy Plcy;
+
+   unsigned found = 0;
    
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
@@ -1353,6 +1355,8 @@ bool ShowPackage(CommandLine &CmdL)
 	 _error->Warning(_("Unable to locate package %s"),*I);
 	 continue;
       }
+
+      ++found;
 
       // Find the proper version to use.
       if (_config->FindB("APT::Cache::AllVersions","true") == true)
@@ -1373,7 +1377,10 @@ bool ShowPackage(CommandLine &CmdL)
 	    return false;
       }      
    }
-   return true;
+
+   if (found > 0)
+        return true;
+   return _error->Error(_("No packages found"));
 }
 									/*}}}*/
 // ShowPkgNames - Show package names					/*{{{*/
