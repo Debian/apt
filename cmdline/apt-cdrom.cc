@@ -53,7 +53,7 @@ public:
    virtual void Update(string text, int current);
    virtual bool ChangeCdrom();
    virtual OpProgress* GetOpProgress();
-}
+};
 
 void pkgCdromTextStatus::Prompt(const char *Text) 
 {
@@ -88,13 +88,13 @@ void pkgCdromTextStatus::Update(string text, int current)
       cout << text << flush;
 }
 
-virtual bool pkgCdromTextStatus::ChangeCdrom() 
+bool pkgCdromTextStatus::ChangeCdrom() 
 {
    Prompt("Please insert a Disc in the drive and press enter");
    return true;
 }
 
-virtual OpProgress* pkgCdromTextStatus::GetOpProgress() 
+OpProgress* pkgCdromTextStatus::GetOpProgress() 
 { 
    return &Progress; 
 };
