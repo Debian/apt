@@ -59,6 +59,9 @@ $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	mkdir -p $(LOCALE)/$(notdir $*)/LC_MESSAGES/
 	cp $@ $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo
 
+stats:
+	for i in *.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
+
 binary: $(POTFILES) $(PO)/$(PACKAGE)-all.pot $(MOFILES)
 
 clean: clean/local
