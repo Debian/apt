@@ -18,7 +18,7 @@ int main()
    Test("file:/usr/bin/foo");
    Test("cdrom:Moo Cow Rom:/debian");
    Test("gzip:./bar/cow");
-   
+	   
    // RFC 2732 stuff
    Test("http://[1080::8:800:200C:417A]/foo");
    Test("http://[::FFFF:129.144.52.38]:80/index.html");
@@ -29,4 +29,6 @@ int main()
       the whole family! */
    Test("cdrom:[The Debian 1.2 disk, 1/2 R1:6]/debian/");
    Test("cdrom:Foo Bar Cow/debian/");
+      
+   Test("ftp:ftp.fr.debian.org/debian/pool/main/x/xtel/xtel_3.2.1-15_i386.deb");
 }
