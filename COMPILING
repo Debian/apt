@@ -28,10 +28,11 @@ required shims are OK.
 
 Current shims:
   * C9x integer types 'inttypes.h' 
-  * sys/statvfs.h to convert from BSD statfs to SUS statvfs  
+  * sys/statvfs.h to convert from BSD/Linux statfs to SUS statvfs
   * rfc2553 hostname resolution (methods/rfc*), shims to normal gethostbyname.
   
-The only completely non-shimed OS is Linux with glibc2.1
+The only completely non-shimed OS is Linux with glibc2.1, glibc2.0 requires
+all three shims.
 
 Platform Notes
 ~~~~~~~~~~~~~~
@@ -47,7 +48,13 @@ Sun Solaris
   SunOS cab101 5.7 Generic_106541-04 sun4u sparc
   - Works fine
   - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
-   
+
+OpenBSD
+  OpenBSD gsb086 2.5 CMPUT#0 i386 unknown
+  - Works fine
+  - OS needs 'ranlib' to generate the symbol table after 'ar'..
+  - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
+  
 HP-UX
   HP-UX nyquist B.10.20 C 9000/780 2016574337 32-user license
   - Evil OS, does not conform very well to SUS
