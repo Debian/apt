@@ -585,7 +585,7 @@ bool ShowHelp(CommandLine &CmdL)
       "  --no-delink Enable delinking debug mode\n"
       "  --contents  Control contents file generation\n"
       "  -c=?  Read this configuration file\n"
-      "  -o=?  Set an arbitary configuration option") << endl;
+      "  -o=?  Set an arbitrary configuration option") << endl;
    
    return true;
 }
