@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.3 1998/12/05 01:45:21 jgg Exp $
+// $Id: cdrom.cc,v 1.4 1998/12/22 07:36:49 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -21,6 +21,7 @@
 class CDROMMethod : public pkgAcqMethod
 {
    Configuration Database;
+   bool DatabaseLoaded;
    string CurrentID;
    
    virtual bool Fetch(FetchItem *Itm);
@@ -35,19 +36,8 @@ class CDROMMethod : public pkgAcqMethod
 // ---------------------------------------------------------------------
 /* */
 CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly | 
-					  SendConfig)
+					  SendConfig), DatabaseLoaded(false)
 {
-   // Read the database
-   string DFile = _config->FindFile("Dir::State::cdroms");
-   if (FileExists(DFile) == true)
-   {
-      if (ReadConfigFile(Database,DFile) == false)
-      {
-	 _error->Error("Unable to read the cdrom database %s",
-		       DFile.c_str());
-	 Fail();
-      }   
-   }      
 };
 									/*}}}*/
 // CDROMMethod::GetID - Get the ID hash for 									/*{{{*/
@@ -56,7 +46,23 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
    tag associated with it. */
 string CDROMMethod::GetID(string Name)
 {
-   const Configuration::Item *Top = Database.Tree(0);
+   if (DatabaseLoaded == false)
+   {
+      // Read the database
+      string DFile = _config->FindFile("Dir::State::cdroms");
+      if (FileExists(DFile) == true)
+      {
+	 if (ReadConfigFile(Database,DFile) == false)
+	 {
+	    _error->Error("Unable to read the cdrom database %s",
+			  DFile.c_str());
+	    Fail();
+	 }   
+      }
+      DatabaseLoaded = true;
+   }
+   
+   const Configuration::Item *Top = Database.Tree("CD");
    for (; Top != 0;)
    {
       if (Top->Value == Name)
@@ -90,7 +96,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    string ID = GetID(Get.Host);
    
    // All non IMS queries for package files fail.
-   if (Itm->IndexFile == true || ID.empty() == false)
+   if (Itm->IndexFile == true || ID.empty() == true)
    {
       Fail("Please use apt-cdrom to make this CD recognized by APT."
 	   " apt-get update cannot be used to add new CDs");
