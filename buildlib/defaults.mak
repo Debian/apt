@@ -79,7 +79,7 @@ LDFLAGS+= -L$(LIB)
 .PHONY: headers library clean veryclean all binary program doc
 all: binary doc
 binary: library program
-maintainer-clean dist-clean: veryclean
+maintainer-clean dist-clean distclean pristine sanity: veryclean
 headers library clean veryclean program:
 
 # Header file control. We want all published interface headers to go
