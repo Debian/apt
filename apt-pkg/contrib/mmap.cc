@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.5 1998/07/12 23:58:50 jgg Exp $
+// $Id: mmap.cc,v 1.6 1998/07/15 05:56:44 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -80,12 +80,13 @@ bool MMap::Map()
 // MMap::Close - Close the map						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool MMap::Close(bool DoClose)
+bool MMap::Close(bool DoClose, bool DoSync)
 {
    if (Fd.IsOpen() == false)
       return true;
 
-   Sync();
+   if (DoSync == true)
+      Sync();
    
    if (munmap((char *)Base,iSize) != 0)
       _error->Warning("Unable to munmap");
@@ -102,7 +103,7 @@ bool MMap::Close(bool DoClose)
    not return till all IO is complete */
 bool MMap::Sync()
 {   
-   if ((Flags & ReadOnly) == ReadOnly)
+   if ((Flags & ReadOnly) != ReadOnly)
       if (msync((char *)Base,iSize,MS_SYNC) != 0)
 	 return _error->Error("msync","Unable to write mmap");
    return true;
@@ -113,7 +114,7 @@ bool MMap::Sync()
 /* */
 bool MMap::Sync(unsigned long Start,unsigned long Stop)
 {
-   if ((Flags & ReadOnly) == ReadOnly)
+   if ((Flags & ReadOnly) != ReadOnly)
       if (msync((char *)Base+(int)(Start/PAGE_SIZE)*PAGE_SIZE,Stop - Start,MS_SYNC) != 0)
 	 return _error->Error("msync","Unable to write mmap");
    return true;
@@ -140,7 +141,9 @@ DynamicMMap::DynamicMMap(File &F,unsigned long Flags,unsigned long WorkSpace) :
 DynamicMMap::~DynamicMMap()
 {
    unsigned long EndOfFile = iSize;
-   Close(false);
+   Sync();
+   iSize = WorkSpace;
+   Close(false,false);
    ftruncate(Fd.Fd(),EndOfFile);
    Fd.Close();
 }  

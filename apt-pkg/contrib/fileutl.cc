@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.4 1998/07/12 23:58:48 jgg Exp $
+// $Id: fileutl.cc,v 1.5 1998/07/15 05:56:43 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -113,7 +113,7 @@ string SafeGetCWD()
 /* The most commonly used open mode combinations are given with Mode */
 File::File(string FileName,OpenMode Mode, unsigned long Perms)
 {
-   Flags = 0;
+   Flags = AutoClose;
    switch (Mode)
    {
       case ReadOnly:
@@ -205,9 +205,10 @@ bool File::Close()
 {
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
-      if (close(iFd) != 0)
+      if (iFd >= 0 && close(iFd) != 0)
 	 Res &= _error->Errno("close","Problem closing the file");
-      
+   iFd = -1;
+   
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)
       if (unlink(FileName.c_str()) != 0)

@@ -55,6 +55,7 @@ DOC := $(BUILD)/doc
 LIBRARY_H = $(BASE)/buildlib/library.mak
 DEBIANDOC_H = $(BASE)/buildlib/debiandoc.mak
 MANPAGE_H = $(BASE)/buildlib/manpage.mak
+PROGRAM_H = $(BASE)/buildlib/program.mak
 
 # Source location control
 # SUBDIRS specifies sub components of the module that
@@ -70,7 +71,8 @@ HEADER_TARGETDIRS+=
 
 # Options
 include $(BUILD)/environment.mak
-CPPFLAGS+= -I$(BUILD)/include
+CPPFLAGS+= -I$(INCLUDE)
+LDFLAGS+= -L$(LIB)
 
 # Phony rules. Other things hook these by appending to the dependency
 # list

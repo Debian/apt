@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.h,v 1.4 1998/07/12 23:58:51 jgg Exp $
+// $Id: mmap.h,v 1.5 1998/07/15 05:56:45 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -43,7 +43,7 @@ class MMap
    void *Base;
 
    bool Map();
-   bool Close(bool DoClose = true);
+   bool Close(bool DoClose = true,bool DoSync = true);
    
    public:
 
