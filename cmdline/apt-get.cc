@@ -1,30 +1,3 @@
-// -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/
-// $Id: apt-get.cc,v 1.77 1999/09/30 06:30:34 jgg Exp $
-/* ######################################################################
-   
-   apt-get - Cover for dpkg
-   
-   This is an allout cover for dpkg implementing a safer front end. It is
-   based largely on libapt-pkg.
-
-   The syntax is different, 
-      apt-get [opt] command [things]
-   Where command is:
-      update - Resyncronize the package files from their sources
-      upgrade - Smart-Download the newest versions of all packages
-      dselect-upgrade - Follows dselect's changes to the Status: field
-                       and installes new and removes old packages
-      dist-upgrade - Powerfull upgrader designed to handle the issues with
-                    a new distribution.
-      install - Download and install a given package (by name, not by .deb)
-      check - Update the package cache and check for broken packages
-      clean - Erase the .debs downloaded to /var/cache/apt/archives and
-              the partial dir too
-
-   ##################################################################### */
-									/*}}}*/
-// Include Files							/*{{{*/
 #include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
@@ -579,16 +552,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       c0out << DebBytes << ',' << Cache->DebSize() << endl;
       c0out << "How odd.. The sizes didn't match, email apt@packages.debian.org" << endl;
    }
-
-   // Check for enough free space
-   struct statfs Buf;
-   string OutputDir = _config->FindDir("Dir::Cache::Archives");
-   if (statfs(OutputDir.c_str(),&Buf) != 0)
-      return _error->Errno("statfs","Couldn't determine free space in %s",
-			   OutputDir.c_str());
-   if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-      return _error->Error("Sorry, you don't have enough free space in %s",
-			   OutputDir.c_str());
    
    // Number of bytes
    c1out << "Need to get ";
@@ -598,6 +561,16 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       c1out << SizeToStr(DebBytes) << 'B';
       
    c1out << " of archives. After unpacking ";
+
+   // Check for enough free space
+   struct statfs Buf;
+   string OutputDir = _config->FindDir("Dir::Cache::Archives");
+   if (statfs(OutputDir.c_str(),&Buf) != 0)
+      return _error->Errno("statfs","Couldn't determine free space in %s",
+			   OutputDir.c_str());
+   if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
+      return _error->Error("Sorry, you don't have enough free space in %s to hold all the .debs.",
+			   OutputDir.c_str());
    
    // Size delta
    if (Cache->UsrSize() >= 0)

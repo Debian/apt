@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.38 1999/07/30 05:36:52 jgg Exp $
+// $Id: acquire.cc,v 1.39 1999/10/16 19:53:18 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -793,24 +793,16 @@ void pkgAcquireStatus::Stop()
    struct timeval NewTime;
    gettimeofday(&NewTime,0);
    
-   // Compute the delta time with full accuracy
-   long usdiff = NewTime.tv_usec - StartTime.tv_usec;
-   long sdiff = NewTime.tv_sec - StartTime.tv_sec;
+   double Delta = NewTime.tv_sec - StartTime.tv_sec + 
+                  (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
    
-   // Borrow
-   if (usdiff < 0)
-   {	 
-      usdiff += 1000000;
-      sdiff--;
-   }
-
    // Compute the CPS value
-   if (sdiff == 0 && usdiff == 0)
+   if (Delta < 0.01)
       CurrentCPS = 0;
    else
-      CurrentCPS = FetchedBytes/(sdiff + usdiff/1000000.0);
+      CurrentCPS = FetchedBytes/Delta;
    LastBytes = CurrentBytes;
-   ElapsedTime = sdiff;
+   ElapsedTime = (unsigned int)Delta;
 }
 									/*}}}*/
 // AcquireStatus::Fetched - Called when a byte set has been fetched	/*{{{*/
