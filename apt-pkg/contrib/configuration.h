@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.6 1998/10/22 04:56:46 jgg Exp $
+// $Id: configuration.h,v 1.7 1998/10/30 07:53:44 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -65,6 +65,8 @@ class Configuration
    bool Exists(const char *Name);
       
    inline const Item *Tree(const char *Name) {return Lookup(Name,false);};
+
+   void Dump();
    
    Configuration();
 };

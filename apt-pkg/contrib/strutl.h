@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.7 1998/10/23 00:50:00 jgg Exp $
+// $Id: strutl.h,v 1.8 1998/10/30 07:53:46 jgg Exp $
 /* ######################################################################
 
    String Util - These are some usefull string functions
@@ -32,7 +32,6 @@ string TimeToStr(unsigned long Sec);
 string SubstVar(string Str,string Subst,string Contents);
 string Base64Encode(string Str);
 string URItoFileName(string URI);
-string URIAccess(string URI);
 string TimeRFC1123(time_t Date);
 bool StrToTime(string Val,time_t &Result);
 string LookupTag(string Message,const char *Tag,const char *Default = 0);
@@ -43,5 +42,21 @@ int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcasecmp(const char *A,const char *AEnd,const char *B) {return stringcasecmp(A,AEnd,B,B+strlen(B));};
+
+class URI
+{
+   public:
+   
+   string Access;
+   string User;
+   string Password;
+   string Host;
+   string Path;
+   unsigned int Port;
+   
+   operator string();
+   
+   URI(string Path);
+};
 
 #endif

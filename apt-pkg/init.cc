@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.8 1998/10/20 02:39:19 jgg Exp $
+// $Id: init.cc,v 1.9 1998/10/30 07:53:39 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -9,6 +9,7 @@
 									/*}}}*/
 // Include files							/*{{{*/
 #include <apt-pkg/init.h>
+#include <config.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -22,7 +23,7 @@
 bool pkgInitialize(Configuration &Cnf)
 {
    // General APT things
-   Cnf.Set("APT::Architecture","i386");
+   Cnf.Set("APT::Architecture",ARCHITECTURE);
 
    // State
    Cnf.Set("Dir::State","/var/state/apt/");
@@ -45,12 +46,23 @@ bool pkgInitialize(Configuration &Cnf)
    Cnf.Set("Dir::Etc","/etc/apt/");
    Cnf.Set("Dir::Etc::sourcelist","sources.list");
    Cnf.Set("Dir::Etc::main","apt.conf");
-
+   Cnf.Set("Dir::Bin::methods","/usr/lib/apt/metods");
+   
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");
    struct stat Buf;   
    if (stat(FName.c_str(),&Buf) != 0)
       return true;
-   return ReadConfigFile(Cnf,FName);
+   
+   // Read an alternate config file
+   const char *Cfg = getenv("APT_CONFIG");
+   
+   if (ReadConfigFile(Cnf,FName) != true || ReadConfigFile(Cnf,Cfg) != true)
+      return false;
+   
+   if (Cnf.FindB("Debug::pkgInitialize",false) == true)
+      Cnf.Dump();
+      
+   return true;
 }
 									/*}}}*/

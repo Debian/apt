@@ -58,9 +58,15 @@ the source directory but is logically divided in the following manner
 Only .o and .d files are placed in the obj/ subdirectory. The final compiled
 binaries are placed in bin, published headers for inter-component linking
 are placed in include/ and documentation is generated into doc/. This means
-all runnable programs are within the bin/ directory a huge benifit for
+all runnable programs are within the bin/ directory, a huge benifit for
 debugging inter-program relationships. The .so files are also placed in
 bin/ for simplicity.
+
+By default make is put into silent mode. During operation there should be
+no shell or compiler messages only status messages from the makefiles, 
+if any pop up that indicates there may be a problem with your environment.
+For debugging you can disable this by setting NOISY=1, ala
+   make NOISY=1
 
 Using the makefiles
 ~~~~~ ~~~ ~~~~~~~~~
@@ -76,4 +82,32 @@ directories and other interesting features. They are more completely
 described in the fragment code in buildlib. Some tips on writing fragments
 are included in buildlib/defaults.mak
 
-Jason
+The fragments are NEVER processed by configure, so if you make changes to 
+them they will have an immediate effect.
+
+Autoconf
+~~~~~~~~
+Straight out of CVS you have to initialize autoconf. This requires 
+automake (I really don't know why) and autoconf and requires doing 
+  aclocal -I buidlib
+  autoconf
+
+Autoconf is configured to do some basic system probes for optional and 
+required functionality and generate an environment.mak and include/config.h 
+from it's findings. It will then write a 'makefile' and run make dirs to 
+create the output directory tree.
+
+It is not my belief that autoconf should be used to generate substantial 
+source code markup to escape OS problems. If an OS problem does crop up 
+it can likely be corrected by installing the correct files into the 
+build include/ dir and perhaps writing some replacement code and 
+linking it in. To the fullest extent possible the source code should conform
+to standards and not cater to broken systems.
+
+Autoconf will also wite a makefile into the top level of the build dir, 
+this simply acts as a wrapper to the main top level make in the source tree.
+There is one big warning, you can't use both this make file and the
+ones in the top level tree. Make is not able to resolve rules that 
+go to the same file through different paths and this will confuse the
+depends mechanism. I recommend always using the makefiles in the
+source directory and exporting BUILD

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.5 1998/10/26 07:11:43 jgg Exp $
+// $Id: acquire-item.cc,v 1.6 1998/10/30 07:53:34 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -46,13 +46,17 @@ pkgAcquire::Item::~Item()
 									/*}}}*/
 // Acquire::Item::Failed - Item failed to download			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* We return to an idle state if there are still other queues that could
+   fetch this object */
 void pkgAcquire::Item::Failed(string Message)
 {
-   Status = StatError;
-   ErrorText = LookupTag(Message,"Message");
+   Status = StatIdle;
    if (QueueCounter <= 1)
+   {
+      ErrorText = LookupTag(Message,"Message");
+      Status = StatError;
       Owner->Dequeue(this);
+   }   
 }
 									/*}}}*/
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/

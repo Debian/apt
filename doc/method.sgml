@@ -4,7 +4,7 @@
 <title>APT Method Interface </title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: method.sgml,v 1.3 1998/10/08 04:55:06 jgg Exp $</version>
+<version>$Id: method.sgml,v 1.4 1998/10/30 07:53:49 jgg Exp $</version>
 
 <abstract>
 This document describes the interface that APT uses to the archive
@@ -129,15 +129,6 @@ emergency error reporting. The FD's corrispond to the well known unix FD's,
 stdin, stdout and stderr.
 
 <p>
-The basic startup sequence depends on how the method is invoked. If any
-command line arguments are passed then the method should start in 
-automatic mode. This facility is provided soley to make the methods
-easier to test and perhaps use outside of APT. Upon startup the method
-will print out a header describing its capabilities and requirements.
-After that it either begins processing the command line arugments and
-exits when done or waits for commands to be fed to it.
-
-<p>
 Throught operation of the method communication is done via http 
 style plain text. Specifically RFC-822 (like the Package file) fields
 are used to describe items and a numeric-like header is used to indicate
@@ -175,7 +166,6 @@ status code is an informational string provided for visual debugging.
 <item>601 Configuration - Sends the configuration space
 <item>602 Authorization Credentials - Response to the 402 message
 <item>603 Media Changed - Response to the 403 message
-<item>605 Shutdown - Exit
 </list>
 
 Only the 6xx series of status codes is sent TO the method. Furthermore
@@ -208,6 +198,7 @@ The following is a short index of the header fields that are supported
 <tag>URI<item>URI being described by the message
 <tag>Filename<item>Location in the filesystem
 <tag>Last-Modified<item>A time stamp in RFC1123 notation for use by IMS checks
+<tag>IMS-Hit<item>The already existing item is valid
 <tag>Size<item>Size of the file in bytes
 <tag>Resume-Point<item>Location that transfer was started
 <tag>MD5-Hash<item>Computed MD5 hash for the file
@@ -225,6 +216,8 @@ the ones it wants.
                           This is a yes/no value.
 <tag>Pre-Scan<item>Method can detect if archives are already available.
                    This is a yes/no value.
+<tag>Pipeline<item>The method is capable of pipelining.
+<tag>Send-Config<item>Send configuration to the method.
 <tag>Version<item>Version string for the method
 </taglist>
 
@@ -232,8 +225,10 @@ This is a list of which headers each status code can use
 
 <taglist>
 <tag>100 Capabilities<item>
-Displays the capabilities of the method. 
-Fields: Version, Single-Instance, Pre-Scan
+Displays the capabilities of the method. Methods should set the
+pipeline bit if their underlying protocol supports pipeling. The
+only known method that does support pipelining is http.
+Fields: Version, Single-Instance, Pre-Scan, Pipeline, Send-Config
 
 <tag>101 Log<item>
 A log message may be printed to the screen if debugging is enabled. This
@@ -256,7 +251,9 @@ to specify a <em>201 URI Done</> without a <em>URI Start</> which would
 mean no data was transfered but the file is now available. A Filename
 field is specified when the URI is directly available in the local 
 pathname space. APT will either directly use that file or copy it into 
-another location.
+another location. It is possible to return Alt-* feilds to indicate that
+another possibility for the URI has been found in the local pathname space.
+This is done if a decompressed version of a .gz file is found.
 Fields: URI, Size, Last-Modified, Filename, MD5-Hash
 
 <tag>400 URI Failure<item>
@@ -305,11 +302,6 @@ Fields: Site, User, Password
 This is sent in response to a <em>403 Media Failure</> message. It
 indicates that the user has changed media and it is safe to proceed.
 Fields: Media
-
-<tag>605 Shutdown<item>
-APT sends this to signal the shutdown of the method. The method should
-terminate immidiately.
-Fields: None
 </taglist>
 
 </sect>

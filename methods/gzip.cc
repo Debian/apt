@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.2 1998/10/26 07:11:53 jgg Exp $
+// $Id: gzip.cc,v 1.3 1998/10/30 07:53:53 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -11,8 +11,7 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/acquire-worker.h>
+#include <apt-pkg/acquire-method.h>
 #include <strutl.h>
 
 #include <sys/stat.h>
@@ -22,166 +21,90 @@
 #include <stdio.h>
 									/*}}}*/
 
-// Fail - Generate a failure message					/*{{{*/
+class GzipMethod : public pkgAcqMethod
+{
+   virtual bool Fetch(string Message,URI Get);
+   
+   public:
+   
+   GzipMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
+};
+
+// GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Fail(string URI)
+bool GzipMethod::Fetch(string Message,URI Get)
 {
-   string Err = "Undetermined Error";
-   if (_error->empty() == false)
-      _error->PopMessage(Err);
+   // Open the source and destintation files
+   FileFd From(Get.Path,FileFd::ReadOnly);
+   FileFd To(DestFile,FileFd::WriteEmpty);   
+   To.EraseOnFailure();
+   if (_error->PendingError() == true)
+      return false;
    
-   printf("400 URI Failure\n"
-	  "URI: %s\n"
-	  "Message: %s\n\n",URI.c_str(),Err.c_str());
-   _error->Discard();
+   // Fork gzip
+   int Process = fork();
+   if (Process < 0)
+      return _error->Errno("fork","Couldn't fork gzip");
+   
+   // The child
+   if (Process == 0)
+   {
+      dup2(From.Fd(),STDIN_FILENO);
+      dup2(To.Fd(),STDOUT_FILENO);
+      From.Close();
+      To.Close();
+      SetCloseExec(STDIN_FILENO,false);
+      SetCloseExec(STDOUT_FILENO,false);
+      
+      const char *Args[3];
+      Args[0] = _config->Find("Dir::bin::gzip","gzip").c_str();
+      Args[1] = "-d";
+      Args[2] = 0;
+      execvp(Args[0],(char **)Args);
+      exit(100);
+   }
+   From.Close();
+   
+   // Wait for gzip to finish
+   int Status;
+   if (waitpid(Process,&Status,0) != Process)
+   {
+      To.OpFail();
+      return _error->Errno("wait","Waiting for gzip failed");
+   }	 
+   
+   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
+   {
+      To.OpFail();
+      return _error->Error("gzip failed, perhaps the disk is full or the directory permissions are wrong.");
+   }	 
+   
+   To.Close();
+   
+   // Transfer the modification times
+   struct stat Buf;
+   if (stat(Get.Path.c_str(),&Buf) != 0)
+      return _error->Errno("stat","Failed to stat");
+
+   struct utimbuf TimeBuf;
+   TimeBuf.actime = Buf.st_atime;
+   TimeBuf.modtime = Buf.st_mtime;
+   if (utime(DestFile.c_str(),&TimeBuf) != 0)
+      return _error->Errno("utime","Failed to set modification time");
+
+   // Return a Done response
+   FetchResult Res;
+   Res.LastModified = Buf.st_mtime;
+   Res.Filename = DestFile;
+   URIDone(Res);
+   
+   return true;
 }
 									/*}}}*/
 
 int main()
 {
-   setlinebuf(stdout);
-   SetNonBlock(STDIN_FILENO,true);
-   
-   printf("100 Capabilities\n"
-	  "Version: 1.0\n"
-	  "Pipeline: true\n"
-	  "Send-Config: true\n\n");
-
-   vector<string> Messages;   
-   while (1)
-   {
-      if (WaitFd(STDIN_FILENO) == false ||
-	  ReadMessages(STDIN_FILENO,Messages) == false)
-	 return 0;
-
-      while (Messages.empty() == false)
-      {
-	 string Message = Messages.front();
-	 Messages.erase(Messages.begin());
-	 
-	 // Fetch the message number
-	 char *End;
-	 int Number = strtol(Message.c_str(),&End,10);
-	 if (End == Message.c_str())
-	 {
-	    cerr << "Malformed message!" << endl;
-	    return 100;
-	 }
-	 
-	 // 601 configuration message
-	 if (Number == 601)
-	 {
-	    pkgInjectConfiguration(Message,*_config);
-	    continue;
-	 }	 
-
-	 // 600 URI Fetch message
-	 if (Number != 600)
-	    continue;
-	 
-	 // Grab the URI bit 
-	 string URI = LookupTag(Message,"URI");
-	 string Target = LookupTag(Message,"Filename");
-	 
-	 // Grab the filename
-	 string::size_type Pos = URI.find(':');
-	 if (Pos == string::npos)
-	 {
-	    _error->Error("Invalid message");
-	    Fail(URI);
-	    continue;
-	 }
-	 string File = string(URI,Pos+1);
-	 
-	 // Start the reply message
-	 string Result = "201 URI Done";
-	 Result += "\nURI: " + URI;
-	 Result += "\nFileName: " + Target;
-	 
-	 // See if the file exists
-	 FileFd From(File,FileFd::ReadOnly);
-	 FileFd To(Target,FileFd::WriteEmpty);
-	 To.EraseOnFailure();
-	 if (_error->PendingError() == true)
-	 {
-	    Fail(URI);
-	    continue;
-	 }	 
-	 
-	 // Fork gzip
-	 int Process = fork();
-	 if (Process < 0)
-	 {
-	    _error->Errno("fork","Couldn't fork gzip");
-	    Fail(URI);
-	    continue;
-	 }
-	 
-	 // The child
-	 if (Process == 0)
-	 {
-	    dup2(From.Fd(),STDIN_FILENO);
-	    dup2(To.Fd(),STDOUT_FILENO);
-	    From.Close();
-	    To.Close();
-	    SetCloseExec(STDIN_FILENO,false);
-	    SetCloseExec(STDOUT_FILENO,false);
-	    
-	    const char *Args[3];
-	    Args[0] = _config->Find("Dir::bin::gzip","gzip").c_str();
-	    Args[1] = "-d";
-	    Args[2] = 0;
-	    execvp(Args[0],(char **)Args);
-	    exit(100);
-	 }
-	 From.Close();
-	 
-	 // Wait for gzip to finish
-	 int Status;
-	 if (waitpid(Process,&Status,0) != Process)
-	 {
-	    To.OpFail();
-	    _error->Errno("wait","Waiting for gzip failed");
-	    Fail(URI);
-	    continue;
-	 }	 
-
-	 if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
-	 {
-	    To.OpFail();
-	    _error->Error("gzip failed, perhaps the disk is full or the directory permissions are wrong.");
-	    Fail(URI);
-	    continue;
-	 }	 
-	 
-	 To.Close();
-	 
-	 // Transfer the modification times
-	 struct stat Buf;
-	 if (stat(File.c_str(),&Buf) != 0)
-	 {
-	    _error->Errno("stat","Failed to stat");
-	    Fail(URI);
-	    continue;
-	 }
-	 struct utimbuf TimeBuf;
-	 TimeBuf.actime = Buf.st_atime;
-	 TimeBuf.modtime = Buf.st_mtime;
-	 if (utime(Target.c_str(),&TimeBuf) != 0)
-	 {
-	    _error->Errno("utime","Failed to set modification time");
-	    Fail(URI);
-	    continue;
-	 }
-	 
-	 // Send the message
-	 Result += "\n\n";
-	 if (write(STDOUT_FILENO,Result.begin(),Result.length()) != 
-	     (signed)Result.length())
-	    return 100;
-      }      
-   }
-   
-   return 0;
+   GzipMethod Mth;
+   return Mth.Run();
 }

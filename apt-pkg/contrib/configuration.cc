@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.8 1998/10/22 04:56:45 jgg Exp $
+// $Id: configuration.cc,v 1.9 1998/10/30 07:53:42 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -210,6 +210,31 @@ bool Configuration::Exists(const char *Name)
    if (Itm == 0)
       return false;
    return true;
+}
+									/*}}}*/
+// Configuration::Dump - Dump the config				/*{{{*/
+// ---------------------------------------------------------------------
+/* Dump the entire configuration space */
+void Configuration::Dump()
+{
+   /* Write out all of the configuration directives by walking the 
+      configuration tree */
+   const Configuration::Item *Top = _config->Tree(0);
+   for (; Top != 0;)
+   {
+      clog << Top->FullTag() << " \"" << Top->Value << "\";" << endl;
+      
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+      
+      while (Top != 0 && Top->Next == 0)
+	 Top = Top->Parent;
+      if (Top != 0)
+	 Top = Top->Next;
+   }   
 }
 									/*}}}*/
 

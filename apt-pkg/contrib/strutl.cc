@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.8 1998/10/24 04:58:07 jgg Exp $
+// $Id: strutl.cc,v 1.9 1998/10/30 07:53:45 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -308,17 +308,6 @@ string URItoFileName(string URI)
    return URI;
 }
 									/*}}}*/
-// URIAccess - Return the access method for the URI			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string URIAccess(string URI)
-{
-   string::size_type Pos = URI.find(':');
-   if (Pos == string::npos)
-      return URI;
-   return string(URI,0,Pos);
-}
-									/*}}}*/
 // Base64Encode - Base64 Encoding routine for short strings		/*{{{*/
 // ---------------------------------------------------------------------
 /* This routine performs a base64 transformation on a string. It was ripped
@@ -617,5 +606,106 @@ bool StrToTime(string Val,time_t &Result)
    // Convert to local time and then to GMT
    Result = timegm(&Tm);
    return true;
+}
+									/*}}}*/
+
+// URI::URI - Constructor						/*{{{*/
+// ---------------------------------------------------------------------
+/* This parses the URI into all of its components */
+URI::URI(string U)
+{
+   string::const_iterator I = U.begin();
+
+   // Locate the first colon, this seperates the scheme
+   for (; I < U.end() && *I != ':' ; I++);
+   string::const_iterator FirstColon = I;
+
+   // Determine if this is a host type URI with a leading double //
+   string::const_iterator SingleSlash = I;
+   if (I + 3 < U.end() && I[1] == '/' && I[2] == '/')
+   {
+      // Locate the single / that starts the path
+      for (; I < U.end(); I++)
+      {
+	 if (*I == '/' && I[1] == '/')
+	    I += 2;
+	 else 
+	    if (*I == '/')
+	       break;
+      }
+      if (I > U.end())
+	 I = U.end();
+      SingleSlash = I;      
+   }
+
+   // We can now write the access and path specifiers
+   Access = string(U,0,FirstColon - U.begin());
+   if (SingleSlash != U.end())
+      Path = string(U,SingleSlash - U.begin() + 1);
+   
+   // Now we attempt to locate a user:pass@host fragment
+   FirstColon += 3;
+   if (FirstColon >= U.end())
+      return;
+   
+   if (FirstColon > SingleSlash)
+      FirstColon = SingleSlash;
+   
+   // Search for the @
+   I = FirstColon;
+   for (; I < SingleSlash && *I != '@'; I++);
+   string::const_iterator At = I;
+   
+   // Colon in the @ section
+   I = FirstColon + 1;
+   for (; I < At && *I != ':'; I++);
+   string::const_iterator SecondColon = I;
+      
+   // Now write the host and user/pass
+   if (At == SingleSlash)
+   {
+      if (FirstColon < SingleSlash)
+	 Host = string(U,FirstColon - U.begin(),SingleSlash - FirstColon);
+   }
+   else
+   {
+      Host = string(U,At - U.begin() + 1,SingleSlash - At - 1);
+      User = string(U,FirstColon - U.begin(),SecondColon - FirstColon);
+      if (SecondColon < At)
+	 Password = string(U,SecondColon - U.begin() + 1,At - SecondColon - 1);
+   }   
+   
+   // Now we parse off a pot number from the hostname
+   Port = 0;
+   string::size_type Pos = Host.rfind(':');
+   if (Pos == string::npos)
+      return;
+   
+   Port = atoi(string(Host,Pos+1).c_str());
+   Host = string(Host,0,Pos);
+}
+									/*}}}*/
+// URI::operator string - Convert the URI to a string			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+URI::operator string()
+{
+   string Res = Access + ':';
+   if (Host.empty() == false)
+   {
+      if (User.empty() == false)
+      {
+	 Res += "//" + User;
+	 if (Password.empty() == false)
+	    Res += ":" + Password;
+	 Res += "@";
+      }
+      Res += Host;
+   }
+   
+   if (Path.empty() == false)
+      Res += "/" + Path;
+   
+   return Res;
 }
 									/*}}}*/

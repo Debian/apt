@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.12 1998/10/24 04:58:06 jgg Exp $
+// $Id: tagfile.cc,v 1.13 1998/10/30 07:53:41 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -45,10 +45,7 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 	 return false;
       
       if (Tag.Scan(Start,End - Start) == false)
-      {
-	 cout << string(Start,End-Start) << endl;
 	 return _error->Error("Unable to parse package file");
-      }      
    }   
    Start += Tag.size();
    iOffset += Tag.size();
@@ -87,10 +84,7 @@ bool pkgTagFile::Fill()
    else
    {
       if (Fd.Read(End,Size - (End - Buffer)) == false)
-      {
-	 cout << "boink" << endl;
 	 return false;
-      }
       
       Left -= Size - (End - Buffer);
       End = Buffer + Size;

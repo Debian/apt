@@ -2,10 +2,21 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/error.h>
 #include <signal.h>
+#include <strutl.h>
 
-int main()
+int main(int argc,char *argv[])
 {
    signal(SIGPIPE,SIG_IGN);
+
+/*   URI Foo(argv[1]);
+   cout << Foo.Access << '\'' << endl;
+   cout << Foo.Host << '\'' << endl;
+   cout << Foo.Path << '\'' << endl;
+   cout << Foo.User << '\'' << endl;
+   cout << Foo.Password << '\'' << endl;
+   cout << Foo.Port << endl;
+   
+   return 0;*/
    
    pkgInitialize(*_config);
    

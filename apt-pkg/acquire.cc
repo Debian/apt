@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.5 1998/10/26 07:11:47 jgg Exp $
+// $Id: acquire.cc,v 1.6 1998/10/30 07:53:37 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -26,7 +26,7 @@
 
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* We grab some runtime state from the configuration space */
 pkgAcquire::pkgAcquire()
 {
    Queues = 0;
@@ -46,7 +46,7 @@ pkgAcquire::pkgAcquire()
 									/*}}}*/
 // Acquire::~pkgAcquire	- Destructor					/*{{{*/
 // ---------------------------------------------------------------------
-/* Free our memory */
+/* Free our memory, clean up the queues (destroy the workers) */
 pkgAcquire::~pkgAcquire()
 {
    while (Items.size() != 0)
@@ -69,7 +69,8 @@ pkgAcquire::~pkgAcquire()
 									/*}}}*/
 // Acquire::Add - Add a new item					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This puts an item on the acquire list. This list is mainly for tracking
+   item status */
 void pkgAcquire::Add(Item *Itm)
 {
    Items.push_back(Itm);
@@ -77,7 +78,7 @@ void pkgAcquire::Add(Item *Itm)
 									/*}}}*/
 // Acquire::Remove - Remove a item					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Remove an item from the acquire list. This is usually not used.. */
 void pkgAcquire::Remove(Item *Itm)
 {
    for (vector<Item *>::iterator I = Items.begin(); I < Items.end(); I++)
@@ -89,7 +90,8 @@ void pkgAcquire::Remove(Item *Itm)
 									/*}}}*/
 // Acquire::Add - Add a worker						/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* A list of workers is kept so that the select loop can direct their FD
+   usage. */
 void pkgAcquire::Add(Worker *Work)
 {
    Work->NextAcquire = Workers;
@@ -98,9 +100,14 @@ void pkgAcquire::Add(Worker *Work)
 									/*}}}*/
 // Acquire::Remove - Remove a worker					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* A worker has died. This can not be done while the select loop is running
+   as it would require that RunFds could handling a changing list state and
+   it cant.. */
 void pkgAcquire::Remove(Worker *Work)
 {
+   if (Running == true)
+      abort();
+   
    Worker **I = &Workers;
    for (; *I != 0;)
    {
@@ -113,7 +120,10 @@ void pkgAcquire::Remove(Worker *Work)
 									/*}}}*/
 // Acquire::Enqueue - Queue an URI for fetching				/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This is the entry point for an item. An item calls this function when
+   it is construction which creates a queue (based on the current queue
+   mode) and puts the item in that queue. If the system is running then
+   the queue might be started. */
 void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
 {
    // Determine which queue to put the item in
@@ -129,15 +139,15 @@ void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
       I = new Queue(Name,this);
       I->Next = Queues;
       Queues = I;
+      
+      if (Running == true)
+	 I->Startup();
    }
    
    // Queue it into the named queue
    I->Enqueue(Itm,URI,Description);
    ToFetch++;
-   
-   if (Running == true)
-      I->Startup();
-      
+         
    // Some trace stuff
    if (Debug == true)
    {
@@ -149,12 +159,16 @@ void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
 									/*}}}*/
 // Acquire::Dequeue - Remove an item from all queues			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This is called when an item is finished being fetched. It removes it
+   from all the queues */
 void pkgAcquire::Dequeue(Item *Itm)
 {
    Queue *I = Queues;
    for (; I != 0; I = I->Next)
       I->Dequeue(Itm);
+   
+   if (Debug == true)
+      clog << "Dequeuing " << Itm->DestFile << endl;
    ToFetch--;
 }
 									/*}}}*/
@@ -163,24 +177,20 @@ void pkgAcquire::Dequeue(Item *Itm)
 /* The string returned depends on the configuration settings and the
    method parameters. Given something like http://foo.org/bar it can
    return http://foo.org or http */
-string pkgAcquire::QueueName(string URI)
+string pkgAcquire::QueueName(string Uri)
 {
-   const MethodConfig *Config = GetConfig(URIAccess(URI));
+   URI U(Uri);
+   
+   const MethodConfig *Config = GetConfig(U.Access);
    if (Config == 0)
       return string();
    
    /* Single-Instance methods get exactly one queue per URI. This is
       also used for the Access queue method  */
    if (Config->SingleInstance == true || QueueMode == QueueAccess)
-      return URIAccess(URI);
-      
-   // Host based queue 
-   string::iterator I = URI.begin();
-   for (; I < URI.end() && *I != ':'; I++);
-   for (; I < URI.end() && (*I == '/' || *I == ':'); I++);
-   for (; I < URI.end() && *I != '/'; I++);
-	
-   return string(URI,0,I - URI.begin());
+      return U.Access;
+
+   return U.Access + ':' + U.Host;
 }
 									/*}}}*/
 // Acquire::GetConfig - Fetch the configuration information		/*{{{*/
@@ -234,7 +244,9 @@ void pkgAcquire::SetFds(int &Fd,fd_set *RSet,fd_set *WSet)
 									/*}}}*/
 // Acquire::RunFds - Deal with active FDs				/*{{{*/
 // ---------------------------------------------------------------------
-/* Dispatch active FDs over to the proper workers */
+/* Dispatch active FDs over to the proper workers. It is very important
+   that a worker never be erased while this is running! The queue class
+   should never erase a worker except during shutdown processing. */
 void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 {
    for (Worker *I = Workers; I != 0; I = I->NextAcquire)
@@ -273,15 +285,26 @@ bool pkgAcquire::Run()
 	 Running = false;
 	 return _error->Errno("select","Select has failed");
       }
-      
+	     
       RunFds(&RFds,&WFds);
+      if (_error->PendingError() == true)
+	 break;
    }   
    
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Shutdown();
 
    Running = false;
-   return true;
+   return _error->PendingError();
+}
+									/*}}}*/
+// pkgAcquire::Bump - Called when an item is dequeued			/*{{{*/
+// ---------------------------------------------------------------------
+/* This routine bumps idle queues in hopes that they will be able to fetch
+   the dequeued item */
+void pkgAcquire::Bump()
+{
+   
 }
 									/*}}}*/
 
@@ -339,6 +362,9 @@ void pkgAcquire::Queue::Enqueue(Item *Owner,string URI,string Description)
    Items->URI = URI;
    Items->Description = Description;
    Owner->QueueCounter++;
+   
+   if (Items->Next == 0)
+      Cycle();
 }
 									/*}}}*/
 // Queue::Dequeue - Remove an item from the queue			/*{{{*/
@@ -368,7 +394,8 @@ bool pkgAcquire::Queue::Startup()
 {
    Shutdown();
    
-   pkgAcquire::MethodConfig *Cnf = Owner->GetConfig(URIAccess(Name));
+   URI U(Name);
+   pkgAcquire::MethodConfig *Cnf = Owner->GetConfig(U.Access);
    if (Cnf == 0)
       return false;
    
@@ -376,11 +403,8 @@ bool pkgAcquire::Queue::Startup()
    Owner->Add(Workers);
    if (Workers->Start() == false)
       return false;
-      
-   Items->Worker = Workers;
-   Workers->QueueItem(Items);
    
-   return true;
+   return Cycle();
 }
 									/*}}}*/
 // Queue::Shutdown - Shutdown the worker processes			/*{{{*/
@@ -414,16 +438,41 @@ pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Wor
 // Queue::ItemDone - Item has been completed				/*{{{*/
 // ---------------------------------------------------------------------
 /* The worker signals this which causes the item to be removed from the
-   queue. */
+   queue. If this is the last queue instance then it is removed from the
+   main queue too.*/
 bool pkgAcquire::Queue::ItemDone(QItem *Itm)
 {
-   Dequeue(Itm->Owner);
+   if (Itm->Owner->QueueCounter <= 1)
+      Owner->Dequeue(Itm->Owner);
+   else
+   {
+      Dequeue(Itm->Owner);
+      Owner->Bump();
+   }
    
-   if (Items == 0)
+   return Cycle();
+}
+									/*}}}*/
+// Queue::Cycle - Queue new items into the method			/*{{{*/
+// ---------------------------------------------------------------------
+/* This locates a new idle item and sends it to the worker */
+bool pkgAcquire::Queue::Cycle()
+{
+   if (Items == 0 || Workers == 0)
       return true;
 
-   Items->Worker = Workers;
-   Items->Owner->Status = pkgAcquire::Item::StatFetching;
-   return Workers->QueueItem(Items);
+   // Look for a queable item
+   QItem *I = Items;
+   for (; I != 0; I = I->Next)
+      if (I->Owner->Status == pkgAcquire::Item::StatIdle)
+	 break;
+
+   // Nothing to do, queue is idle.
+   if (I == 0)
+      return true;
+   
+   I->Worker = Workers;
+   I->Owner->Status = pkgAcquire::Item::StatFetching;
+   return Workers->QueueItem(I);
 }
 									/*}}}*/

@@ -26,7 +26,9 @@
 # but by explicly setting the BUILD variable. Make is invoked from
 # within the source itself which is much more compatible with compilation
 # environments.
+ifndef NOISY
 .SILENT:
+endif
 
 # Search for the build directory
 ifdef BUILD
@@ -51,7 +53,7 @@ BIN := $(BUILD)/bin
 LIB := $(BIN)
 OBJ := $(BUILD)/obj/$(SUBDIR)
 DEP := $(OBJ)
-DOC := $(BUILD)/doc
+DOC := $(BUILD)/docs
 
 # Module types
 LIBRARY_H = $(BASE)/buildlib/library.mak

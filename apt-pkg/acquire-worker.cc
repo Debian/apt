@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.7 1998/10/26 07:11:45 jgg Exp $
+// $Id: acquire-worker.cc,v 1.8 1998/10/30 07:53:35 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -218,7 +218,7 @@ bool pkgAcquire::Worker::RunMessages()
 	 {
 	    if (Itm == 0)
 	    {
-	       _error->Warning("Method gave invalid 200 URI Start message");
+	       _error->Error("Method gave invalid 200 URI Start message");
 	       break;
 	    }
 	    CurrentItem = Itm;
@@ -233,7 +233,7 @@ bool pkgAcquire::Worker::RunMessages()
 	 {
 	    if (Itm == 0)
 	    {
-	       _error->Warning("Method gave invalid 400 URI Failure message");
+	       _error->Error("Method gave invalid 201 URI Done message");
 	       break;
 	    }
 
@@ -248,7 +248,7 @@ bool pkgAcquire::Worker::RunMessages()
 	 {
 	    if (Itm == 0)
 	    {
-	       _error->Warning("Method gave invalid 400 URI Failure message");
+	       _error->Error("Method gave invalid 400 URI Failure message");
 	       break;
 	    }
 
@@ -415,37 +415,5 @@ bool pkgAcquire::Worker::MethodFailure()
    MessageQueue.erase(MessageQueue.begin(),MessageQueue.end());
    
    return false;
-}
-									/*}}}*/
-
-// InjectConfiguration - Configuration aid for methods			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool pkgInjectConfiguration(string &Message,Configuration &Cnf)
-{
-   const char *I = Message.begin();
-   
-   unsigned int Length = strlen("Config-Item");
-   for (; I + Length < Message.end(); I++)
-   {
-      // Not a config item
-      if (I[Length] != ':' || stringcasecmp(I,I+Length,"Config-Item") != 0)
-	 continue;
-      
-      I += Length + 1;
-      
-      for (; I < Message.end() && *I == ' '; I++);
-      const char *Equals = I;
-      for (; Equals < Message.end() && *Equals != '='; Equals++);
-      const char *End = Equals;
-      for (; End < Message.end() && *End != '\n'; End++);
-      if (End == Equals)
-	 return false;
-      
-      Cnf.Set(string(I,Equals-I),string(Equals+1,End-Equals-1));
-      I = End;
-   }
-   
-   return true;
 }
 									/*}}}*/
