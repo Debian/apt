@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.6 1999/06/05 03:54:29 jgg Exp $
+// $Id: cdromutl.cc,v 1.7 1999/07/02 22:21:01 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -203,16 +203,21 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    closedir(D);
    
    // Some stats from the fsys
-   struct statfs Buf;
-   if (statfs(CD.c_str(),&Buf) != 0)
-      return _error->Errno("statfs","Failed to stat the cdrom");
-
-   // We use a kilobyte block size to advoid overflow
-   sprintf(S,"%lu %lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)),
-	   (long)(Buf.f_bfree*(Buf.f_bsize/1024)));
-   Hash.Add(S);
+   if (_config->FindB("Debug::identcdrom",false) == false)
+   {
+      struct statfs Buf;
+      if (statfs(CD.c_str(),&Buf) != 0)
+	 return _error->Errno("statfs","Failed to stat the cdrom");
+      
+      // We use a kilobyte block size to advoid overflow
+      sprintf(S,"%lu %lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)),
+	      (long)(Buf.f_bfree*(Buf.f_bsize/1024)));
+      Hash.Add(S);
+      sprintf(S,"-%u",Version);
+   }
+   else
+      sprintf(S,"-%u.debug",Version);
    
-   sprintf(S,"-%u",Version);
    Res = Hash.Result().Value() + S;
    return true;   
 }
