@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2005-02-05 07:42+0100\n"
+"PO-Revision-Date: 2005-02-06 09:36+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -301,8 +301,7 @@ msgstr "Impossible d'écrire sur %s"
 
 #: cmdline/apt-extracttemplates.cc:310
 msgid "Cannot get debconf version. Is debconf installed?"
-msgstr ""
-"Impossible d'obtenir la version de debconf. Est-ce que debconf est installé ?"
+msgstr "Impossible d'obtenir la version de debconf. Est-ce que debconf est installé ?"
 
 #: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:337
 msgid "Package extension list is too long"
@@ -329,7 +328,6 @@ msgid "Error Processing Contents %s"
 msgstr "Erreur du traitement du contenu %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -371,33 +369,32 @@ msgid ""
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
 "Usage : apt-ftparchive [options] commande\n"
-"Commandes :  paquets binarypath [fichier d'« override » [chemin du "
-"préfixe]]\n"
-"             sources srcpath [fichier d'« override » [chemin du préfixe]]\n"
-"             contents path\n"
-"             release path\n"
+"Commandes :  packages chemin_binaires [fichier_d'«_override_» [chemin_du_préfixe]]\n"
+"             sources chemin_sources [fichier_d'«_override_» [chemin_du_préfixe]]\n"
+"             contents chemin\n"
+"             release chemin\n"
 "             generate config [groupes]\n"
 "             clean config\n"
 "\n"
 "apt-ftparchive génère des fichiers d'index pour les archives Debian. Il\n"
-"supporte de nombreux types de génération, d'une automatisation complète à\n"
+"gère de nombreux types de génération, d'une automatisation complète à\n"
 "des remplacements fonctionnels pour dpkg-scanpackages et dpkg-scansources\n"
 "\n"
-"apt-ftparchive génère les fichiers de paquets à partir d'un arbre de .debs.\n"
-"Le fichier des paquets contient les contenus de tous les champs de contrôle\n"
-"de chaque paquet aussi bien que les hachés MD5 et la taille du fichier. Un\n"
-"fichier d'« override » est accepté pour forcer la valeur des priorités et\n"
-"des sections\n"
+"apt-ftparchive génère les fichiers « Package » à partir d'un arbre de .debs.\n"
+"Le fichier « Package » contient les contenus de tous les champs de contrôle\n"
+"de chaque paquet ainsi que les hachages MD5 et la taille du fichier. Un\n"
+"fichier d'« override » est géré pour forcer la valeur des priorités et\n"
+"des sections.\n"
 "\n"
-"De façon similaire, apt-ftparchive génère des fichiers de source à partir\n"
-"d'un arbre de .dscs. L'option --source-override peut être employée pour\n"
-"spécifier un fichier src d'« override »\n"
+"De façon similaire, apt-ftparchive génère des fichiers « Sources » à partir\n"
+"d'un arbre de .dscs. L'option --source-override peut être utilisée pour\n"
+"indiquer un fichier src d'« override »\n"
 "\n"
-"Les commandes « packages » et « sources » devraient être démarrées à la\n"
+"Les commandes « packages » et « sources » devraient être utilisées depuis la\n"
 "racine de l'arbre. « BinaryPath » devrait pointer sur la base d'une\n"
 "recherche récursive et le fichier d'« override » devrait contenir les\n"
-"drapeaux d'annulation. « Pathprefix » est ajouté au champ du non de\n"
-"fichier s'il est présent. Exemple d'utilisation d'archive Debian :\n"
+"drapeaux d'annulation (override). « Pathprefix » est ajouté au champ du nom de\n"
+"fichier s'il est présent. Exemple d'utilisation sur une archive Debian :\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
@@ -419,8 +416,7 @@ msgstr "Aucune sélection ne correspond"
 #: ftparchive/apt-ftparchive.cc:830
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
-msgstr ""
-"Quelques fichiers sont manquants dans le groupe de fichiers de paquets « %s »"
+msgstr "Quelques fichiers sont manquants dans le groupe de fichiers de paquets « %s »"
 
 #: ftparchive/cachedb.cc:45
 #, c-format
@@ -778,8 +774,7 @@ msgstr "Il y a des problèmes et -y a été employé sans --force-yes"
 
 #: cmdline/apt-get.cc:762
 msgid "Packages need to be removed but Remove is disabled."
-msgstr ""
-"Les paquets doivent être enlevés mais la désinstallation est désactivée."
+msgstr "Les paquets doivent être enlevés mais la désinstallation est désactivée."
 
 #: cmdline/apt-get.cc:788 cmdline/apt-get.cc:1769 cmdline/apt-get.cc:1802
 msgid "Unable to lock the download directory"
@@ -803,8 +798,7 @@ msgstr "Il est nécessaire de prendre %so dans les archives.\n"
 #: cmdline/apt-get.cc:826
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
-msgstr ""
-"Après dépaquetage, %so d'espace disque supplémentaires seront utilisés.\n"
+msgstr "Après dépaquetage, %so d'espace disque supplémentaires seront utilisés.\n"
 
 #: cmdline/apt-get.cc:829
 #, c-format
@@ -870,8 +864,7 @@ msgstr ""
 
 #: cmdline/apt-get.cc:987
 msgid "--fix-missing and media swapping is not currently supported"
-msgstr ""
-"l'option --fix-missing et l'échange de support ne sont pas encore reconnus."
+msgstr "l'option --fix-missing et l'échange de support ne sont pas encore reconnus."
 
 #: cmdline/apt-get.cc:992
 msgid "Unable to correct missing packages."
@@ -933,8 +926,7 @@ msgstr "Aucun paquet ne correspond au paquet %s"
 #: cmdline/apt-get.cc:1129
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr ""
-"La réinstallation de %s est impossible, il ne peut pas être téléchargé.\n"
+msgstr "La réinstallation de %s est impossible, il ne peut pas être téléchargé.\n"
 
 #: cmdline/apt-get.cc:1137
 #, c-format
@@ -988,8 +980,7 @@ msgstr "Note, sélectionne %s pour l'expression rationnelle « %s »\n"
 
 #: cmdline/apt-get.cc:1515
 msgid "You might want to run `apt-get -f install' to correct these:"
-msgstr ""
-"Vous pouvez lancer « apt-get -f install » pour corriger ces problèmes :"
+msgstr "Vous pouvez lancer « apt-get -f install » pour corriger ces problèmes :"
 
 #: cmdline/apt-get.cc:1518
 msgid ""
@@ -1153,8 +1144,7 @@ msgstr "Impossible de satisfaire les dépendances %s pour %s : %s"
 #: cmdline/apt-get.cc:2282
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
-"Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
+msgstr "Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
 
 #: cmdline/apt-get.cc:2286
 msgid "Failed to process build dependencies"
@@ -1337,8 +1327,7 @@ msgstr ""
 "seules les erreurs"
 
 #: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
+msgid "above this message are important. Please fix them and run [I]nstall again"
 msgstr ""
 "précédant ce message sont importantes. Veuillez les corriger et\n"
 "démarrez l'[I]nstallation une nouvelle fois."
@@ -2282,14 +2271,12 @@ msgstr "Ligne %lu mal formée dans la liste des sources %s (analyse de l'URI)"
 #: apt-pkg/sourcelist.cc:98
 #, c-format
 msgid "Malformed line %lu in source list %s (Absolute dist)"
-msgstr ""
-"Ligne %lu mal formée dans la liste des sources %s (distribution absolue)"
+msgstr "Ligne %lu mal formée dans la liste des sources %s (distribution absolue)"
 
 #: apt-pkg/sourcelist.cc:105
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr ""
-"Ligne %lu mal formée dans la liste des sources %s (analyse de distribution)"
+msgstr "Ligne %lu mal formée dans la liste des sources %s (analyse de distribution)"
 
 #: apt-pkg/sourcelist.cc:156
 #, c-format
@@ -2309,14 +2296,12 @@ msgstr "Ligne %u mal formée dans la liste des sources %s (type)"
 #: apt-pkg/sourcelist.cc:191
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
-msgstr ""
-"Le type « %s » est inconnu sur la ligne %u dans la liste des sources %s"
+msgstr "Le type « %s » est inconnu sur la ligne %u dans la liste des sources %s"
 
 #: apt-pkg/sourcelist.cc:199 apt-pkg/sourcelist.cc:202
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
-msgstr ""
-"Ligne %u mal formée dans la liste des sources %s (identifiant du fournisseur)"
+msgstr "Ligne %u mal formée dans la liste des sources %s (identifiant du fournisseur)"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
@@ -2337,8 +2322,7 @@ msgstr "Le type de fichier d'index « %s » n'est pas accepté"
 
 #: apt-pkg/algorithms.cc:241
 #, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
+msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "Le paquet %s doit être réinstallé, mais je ne parviens pas à trouver son "
 "archive."
@@ -2393,8 +2377,7 @@ msgstr "Impossible de localiser %s."
 
 #: apt-pkg/srcrecords.cc:48
 msgid "You must put some 'source' URIs in your sources.list"
-msgstr ""
-"Vous devez insérer quelques adresses « sources » dans votre sources.list"
+msgstr "Vous devez insérer quelques adresses « sources » dans votre sources.list"
 
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
@@ -2506,8 +2489,7 @@ msgstr "Assemblage des fichiers listés dans les champs Provides"
 
 #: apt-pkg/pkgcachegen.cc:785 apt-pkg/pkgcachegen.cc:792
 msgid "IO Error saving source cache"
-msgstr ""
-"Erreur d'entrée/sortie lors de la sauvegarde du fichier de cache des sources"
+msgstr "Erreur d'entrée/sortie lors de la sauvegarde du fichier de cache des sources"
 
 #: apt-pkg/acquire-item.cc:126
 #, c-format
@@ -2539,8 +2521,7 @@ msgstr ""
 
 #: apt-pkg/acquire-item.cc:807
 #, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
+msgid "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 "Les fichiers d'index des paquets sont corrompus. Aucun champ « Filename: » "
 "pour le paquet %s."
@@ -2654,3 +2635,4 @@ msgstr ""
 #~ msgstr ""
 #~ "Identifiant « %s » du fournisseur inconnu dans la ligne %u de la liste "
 #~ "des sources %s"
+
