@@ -12,6 +12,7 @@ Priority: standard
 Replaces: libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
 Provides: ${libapt-pkg:provides}
 Suggests: dpkg-dev
+Section: base
 Description: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
  It provides the apt-get utility and APT dselect method that provides a 
@@ -25,6 +26,7 @@ Package: libapt-pkg-dev
 Architecture: any
 Priority: optional
 Depends: ${libapt-pkg:provides}
+Section: devel
 Description: Development files for APT's libapt-pkg
  This package contains the header files and static libraries for
  developing with APT's libapt-pkg Debian package manipulation
@@ -33,6 +35,7 @@ Description: Development files for APT's libapt-pkg
 Package: libapt-pkg-doc
 Architecture: all
 Priority: optional
+Section: doc
 Description: Documentation for APT development
  This package contains documentation for development of the APT
  Debian package manipulation program and its libraries.
@@ -42,6 +45,7 @@ Architecture: any
 Depends: ${shlibs:Depends}
 Priority: optional
 Provides: ${libapt-inst:provides}
+Section: admin
 Description: APT utility programs
  This package contains some infrequently used APT utility programs such
  as apt-ftparchive and apt-sortpkgs.
