@@ -53,7 +53,7 @@ APT {
 </programlisting></informalexample>
    with newlines placed to make it more readable. Lists can be created by 
    opening a scope and including a single word enclosed in quotes followed by a 
-   semicolon. Multiple entries can be included, each seperated by a semicolon.
+   semicolon. Multiple entries can be included, each separated by a semicolon.
 <informalexample><programlisting>   
 DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 </programlisting></informalexample>
@@ -67,7 +67,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    ends in a slash, then the whole directory is included.  
    <literal/#clear/ is used to erase a list of names.
    <para>
-   All of the APT tools take a -o option which allows an arbitary configuration 
+   All of the APT tools take a -o option which allows an arbitrary configuration 
    directive to be specified on the command line. The syntax is a full option
    name (<literal/APT::Get::Assume-Yes/ for instance) followed by an equals
    sign then the new value of the option. Lists can be appended too by adding 
@@ -95,7 +95,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
      <VarListEntry><Term>Clean-Installed</Term>
      <ListItem><Para>
-     Defaults to on. When turned on the autoclean feature will remove any pacakges
+     Defaults to on. When turned on the autoclean feature will remove any packages
      which can no longer be downloaded from the cache. If turned off then
      packages that are locally installed are also excluded from cleaning - but
      note that APT provides no direct means to reinstall them.
@@ -103,7 +103,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
      <VarListEntry><Term>Immediate-Configure</Term>
      <ListItem><Para>
-     Disable Immedate Configuration; This dangerous option disables some
+     Disable Immediate Configuration; This dangerous option disables some
      of APT's ordering code to cause it to make fewer dpkg calls. Doing
      so may be necessary on some extremely slow single user systems but 
      is very dangerous and may cause package install scripts to fail or worse.
@@ -187,7 +187,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      meaning to use no proxies. The <envar/http_proxy/ environment variable
      will override all settings.
      <para>
-     Three settings are provided for cache control with HTTP/1.1 complient 
+     Three settings are provided for cache control with HTTP/1.1 compliant 
      proxy caches. <literal/No-Cache/ tells the proxy to not use its cached 
      response under any circumstances, <literal/Max-Age/ is sent only for 
      index files and tells the cache to refresh its object if it is older than 
@@ -213,7 +213,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <ListItem><Para>
      FTP URIs; ftp::Proxy is the default proxy server to use. It is in the 
      standard form of <literal>ftp://[[user][:pass]@]host[:port]/</> and is 
-     overriden by the <envar/ftp_proxy/ environment variable. To use a ftp 
+     overridden by the <envar/ftp_proxy/ environment variable. To use a ftp 
      proxy you will have to set the <literal/ftp::ProxyLogin/ script in the 
      configuration file. This entry specifies the commands to send to tell 
      the proxy server what to connect to. Please see 
