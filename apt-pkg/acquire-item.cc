@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.35 1999/08/03 05:19:41 jgg Exp $
+// $Id: acquire-item.cc,v 1.36 1999/08/28 03:22:34 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -617,9 +617,19 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
    if (FileName != DestFile)
    {
       Local = true;
-      Desc.URI = "copy:" + FileName;
-      QueueURI(Desc);
-      return;
+      if (_config->FindB("Acquire::Source-Symlinks",true) == false)
+      {
+	 Desc.URI = "copy:" + FileName;
+	 QueueURI(Desc);
+	 return;
+      }
+      
+      if (symlink(FileName.c_str(),DestFile.c_str()) != 0)
+      {
+	 ErrorText = "Link to " + DestFile + "failure ";
+	 Status = StatError;
+	 Complete = false;
+      }      
    }
 }
 									/*}}}*/
