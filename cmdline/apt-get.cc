@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.10 1998/11/13 07:09:02 jgg Exp $
+// $Id: apt-get.cc,v 1.11 1998/11/14 01:39:48 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -514,8 +514,7 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
       return false;
 
    if (Ask == true)
-   {
-      
+   {      
       if (_config->FindI("quiet",0) < 2 || 
 	  _config->FindB("APT::Get::Assume-Yes",false) == false)
       c2out << "Do you want to continue? [Y/n] " << flush;

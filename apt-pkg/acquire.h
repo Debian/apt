@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.12 1998/11/13 07:08:55 jgg Exp $
+// $Id: acquire.h,v 1.13 1998/11/14 01:39:46 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -79,7 +79,7 @@ class pkgAcquire
    
    void Enqueue(ItemDesc &Item);
    void Dequeue(Item *Item);
-   string QueueName(string URI);
+   string QueueName(string URI,MethodConfig const *&Config);
 
    // FDSET managers for derived classes
    void SetFds(int &Fd,fd_set *RSet,fd_set *WSet);
@@ -182,7 +182,8 @@ struct pkgAcquire::MethodConfig
    bool PreScan;
    bool Pipeline;
    bool SendConfig;
-   
+   bool LocalOnly;
+      
    MethodConfig();
 };
 

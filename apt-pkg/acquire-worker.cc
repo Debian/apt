@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.11 1998/11/09 01:09:23 jgg Exp $
+// $Id: acquire-worker.cc,v 1.12 1998/11/14 01:39:44 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -307,6 +307,7 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->PreScan = StringToBool(LookupTag(Message,"Pre-Scan"),false);
    Config->Pipeline = StringToBool(LookupTag(Message,"Pipeline"),false);
    Config->SendConfig = StringToBool(LookupTag(Message,"Send-Config"),false);
+   Config->LocalOnly = StringToBool(LookupTag(Message,"Local-Only"),false);
 
    // Some debug text
    if (Debug == true)

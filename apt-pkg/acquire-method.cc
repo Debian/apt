@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.7 1998/11/11 07:30:54 jgg Exp $
+// $Id: acquire-method.cc,v 1.8 1998/11/14 01:39:41 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -41,6 +41,9 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
    
    if ((Flags & SendConfig) == SendConfig)
       strcat(End,"Send-Config: true\n");
+
+   if ((Flags & LocalOnly) == LocalOnly)
+      strcat(End,"Local-Only: true\n");
    strcat(End,"\n");
 
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))

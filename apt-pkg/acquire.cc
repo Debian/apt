@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.15 1998/11/13 07:08:54 jgg Exp $
+// $Id: acquire.cc,v 1.16 1998/11/14 01:39:45 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -130,7 +130,8 @@ void pkgAcquire::Remove(Worker *Work)
 void pkgAcquire::Enqueue(ItemDesc &Item)
 {
    // Determine which queue to put the item in
-   string Name = QueueName(Item.URI);
+   const MethodConfig *Config;
+   string Name = QueueName(Item.URI,Config);
    if (Name.empty() == true)
       return;
 
@@ -147,6 +148,9 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
 	 I->Startup();
    }
 
+   // See if this is a local only URI
+   if (Config->LocalOnly == true && Item.Owner->Complete == false)
+      Item.Owner->Local = true;
    Item.Owner->Status = Item::StatIdle;
    
    // Queue it into the named queue
@@ -158,7 +162,7 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
    {
       clog << "Fetching " << Item.URI << endl;
       clog << " to " << Item.Owner->DestFile << endl;
-      clog << " Queue is: " << QueueName(Item.URI) << endl;
+      clog << " Queue is: " << Name << endl;
    }
 }
 									/*}}}*/
@@ -184,11 +188,11 @@ void pkgAcquire::Dequeue(Item *Itm)
 /* The string returned depends on the configuration settings and the
    method parameters. Given something like http://foo.org/bar it can
    return http://foo.org or http */
-string pkgAcquire::QueueName(string Uri)
+string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
 {
    URI U(Uri);
    
-   const MethodConfig *Config = GetConfig(U.Access);
+   Config = GetConfig(U.Access);
    if (Config == 0)
       return string();
    
@@ -386,18 +390,6 @@ bool pkgAcquire::Clean(string Dir)
    return true;   
 }
 									/*}}}*/
-// Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgAcquire::MethodConfig::MethodConfig()
-{
-   SingleInstance = false;
-   PreScan = false;
-   Pipeline = false;
-   SendConfig = false;
-   Next = 0;
-}
-									/*}}}*/
 // Acquire::TotalNeeded - Number of bytes to fetch			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the total number of bytes needed */
@@ -419,6 +411,20 @@ unsigned long pkgAcquire::FetchNeeded()
       if ((*I)->Local == false)
 	 Total += (*I)->FileSize;
    return Total;
+}
+									/*}}}*/
+
+// Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgAcquire::MethodConfig::MethodConfig()
+{
+   SingleInstance = false;
+   PreScan = false;
+   Pipeline = false;
+   SendConfig = false;
+   LocalOnly = false;
+   Next = 0;
 }
 									/*}}}*/
 
@@ -653,7 +659,10 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       }
             
       // Compute the CPS value
-      CurrentCPS = (CurrentBytes - LastBytes)/(sdiff + usdiff/1000000.0);
+      if (sdiff == 0 && usdiff == 0)
+	 CurrentCPS = 0;
+      else
+	 CurrentCPS = (CurrentBytes - LastBytes)/(sdiff + usdiff/1000000.0);
       LastBytes = CurrentBytes;
       ElapsedTime = NewTime.tv_sec - StartTime.tv_sec;
       Time = NewTime;
@@ -694,9 +703,12 @@ void pkgAcquireStatus::Stop()
       usdiff += 1000000;
       sdiff--;
    }
-   
+
    // Compute the CPS value
-   CurrentCPS = FetchedBytes/(sdiff + usdiff/1000000.0);
+   if (sdiff == 0 && usdiff == 0)
+      CurrentCPS = 0;
+   else
+      CurrentCPS = FetchedBytes/(sdiff + usdiff/1000000.0);
    LastBytes = CurrentBytes;
    ElapsedTime = sdiff;
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: file.cc,v 1.5 1998/11/01 05:27:41 jgg Exp $
+// $Id: file.cc,v 1.6 1998/11/14 01:39:49 jgg Exp $
 /* ######################################################################
 
    File URI method for APT
@@ -26,7 +26,7 @@ class FileMethod : public pkgAcqMethod
    
    public:
    
-   FileMethod() : pkgAcqMethod("1.0",SingleInstance) {};
+   FileMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly) {};
 };
 
 // FileMethod::Fetch - Fetch a file					/*{{{*/

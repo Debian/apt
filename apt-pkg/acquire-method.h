@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.2 1998/11/01 05:27:32 jgg Exp $
+// $Id: acquire-method.h,v 1.3 1998/11/14 01:39:43 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -33,7 +33,6 @@ class pkgAcqMethod
       time_t LastModified;
    };
    
-   
    struct FetchResult
    {
       string MD5Sum;
@@ -62,7 +61,8 @@ class pkgAcqMethod
    public:
    
    enum CnfFlags {SingleInstance = (1<<0), PreScan = (1<<1), 
-                  Pipeline = (1<<2), SendConfig = (1<<3)};
+                  Pipeline = (1<<2), SendConfig = (1<<3), 
+                  LocalOnly = (1<<4)};
 
    void Log(const char *Format,...);
    void Status(const char *Format,...);
