@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.21 1999/02/16 04:18:35 jgg Exp $
+// $Id: fileutl.cc,v 1.22 1999/03/15 08:10:39 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -164,15 +164,16 @@ void SetNonBlock(int Fd,bool Block)
 // WaitFd - Wait for a FD to become readable				/*{{{*/
 // ---------------------------------------------------------------------
 /* This waits for a FD to become readable using select. It is usefull for
-   applications making use of non-blocking sockets. */
+   applications making use of non-blocking sockets. The timeout is 
+   in seconds. */
 bool WaitFd(int Fd,bool write,unsigned long timeout)
 {
    fd_set Set;
    struct timeval tv;
    FD_ZERO(&Set);
    FD_SET(Fd,&Set);
-   tv.tv_sec = timeout / 1000000;
-   tv.tv_usec = timeout % 1000000;
+   tv.tv_sec = timeout;
+   tv.tv_usec = 0;
    if (write == true) 
    {
       if (select(Fd+1,0,&Set,0,(timeout != 0?&tv:0)) <= 0)
@@ -273,6 +274,20 @@ bool FileFd::Seek(unsigned long To)
    {
       Flags |= Fail;
       return _error->Error("Unable to seek to %u",To);
+   }
+   
+   return true;
+}
+									/*}}}*/
+// FileFd::Truncate - Truncate the file 				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FileFd::Truncate(unsigned long To)
+{
+   if (ftruncate(iFd,To) != 0)
+   {
+      Flags |= Fail;
+      return _error->Error("Unable to truncate to %u",To);
    }
    
    return true;

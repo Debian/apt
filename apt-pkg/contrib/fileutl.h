@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.14 1999/02/16 04:18:35 jgg Exp $
+// $Id: fileutl.h,v 1.15 1999/03/15 08:10:39 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -42,6 +42,7 @@ class FileFd
    bool Read(void *To,unsigned long Size);
    bool Write(const void *From,unsigned long Size);
    bool Seek(unsigned long To);
+   bool Truncate(unsigned long To);
    unsigned long Tell();
    unsigned long Size();
    bool Close();

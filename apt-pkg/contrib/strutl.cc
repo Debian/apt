@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.20 1999/02/27 22:29:11 jgg Exp $
+// $Id: strutl.cc,v 1.21 1999/03/15 08:10:39 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -20,7 +20,7 @@
 #endif
 
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
+#include <apt-pkg//fileutl.h>
 
 #include <ctype.h>
 #include <string.h>
@@ -178,30 +178,6 @@ bool ParseCWord(const char *String,string &Res)
    return true;
 }
 									/*}}}*/
-// DeQuoteString - Convert a string from quoted from			/*{{{*/
-// ---------------------------------------------------------------------
-/* This undoes QuoteString */
-string DeQuoteString(string Str)
-{
-   string Res;
-   for (string::iterator I = Str.begin(); I != Str.end(); I++)
-   {
-      if (*I == '%' && I + 2 < Str.end())
-      {
-	 char Tmp[3];
-	 Tmp[0] = I[1];
-	 Tmp[1] = I[2];
-	 Tmp[2] = 0;
-	 Res += (char)strtol(Tmp,0,16);
-	 I += 2;
-	 continue;
-      }
-      else
-	 Res += *I;
-   }
-   return Res;
-}
-									/*}}}*/
 // QuoteString - Convert a string into quoted from			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -223,6 +199,31 @@ string QuoteString(string Str,const char *Bad)
    return Res;
 }
 									/*}}}*/
+// DeQuoteString - Convert a string from quoted from                    /*{{{*/
+// ---------------------------------------------------------------------
+/* This undoes QuoteString */
+string DeQuoteString(string Str)
+{
+   string Res;
+   for (string::iterator I = Str.begin(); I != Str.end(); I++)
+   {
+      if (*I == '%' && I + 2 < Str.end())
+      {
+	 char Tmp[3];
+	 Tmp[0] = I[1];
+	 Tmp[1] = I[2];
+	 Tmp[2] = 0;
+	 Res += (char)strtol(Tmp,0,16);
+	 I += 2;
+	 continue;
+      }
+      else
+	 Res += *I;
+   }
+   return Res;   
+}
+
+                                                                        /*}}}*/
 // SizeToStr - Convert a long into a human readable size		/*{{{*/
 // ---------------------------------------------------------------------
 /* A max of 4 digits are shown before conversion to the next highest unit. 
@@ -596,6 +597,30 @@ static int MonthConv(char *Month)
       return 0;
    }   
 }
+									/*}}}*/
+// timegm - Internal timegm function if gnu is not available		/*{{{*/
+// ---------------------------------------------------------------------
+/* Ripped this evil little function from wget - I prefer the use of 
+   GNU timegm if possible as this technique will have interesting problems
+   with leap seconds, timezones and other.
+   
+   Converts struct tm to time_t, assuming the data in tm is UTC rather
+   than local timezone (mktime assumes the latter).
+   
+   Contributed by Roger Beeman <beeman@cisco.com>, with the help of
+   Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO. */
+#ifndef __USE_MISC        // glib sets this
+static time_t timegm(struct tm *t)
+{
+   time_t tl, tb;
+   
+   tl = mktime (t);
+   if (tl == -1)
+      return -1;
+   tb = mktime (gmtime (&tl));
+   return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
+}
+#endif
 									/*}}}*/
 // StrToTime - Converts a string into a time_t				/*{{{*/
 // ---------------------------------------------------------------------

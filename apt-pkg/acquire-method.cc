@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.17 1999/02/08 07:30:49 jgg Exp $
+// $Id: acquire-method.cc,v 1.18 1999/03/15 08:10:39 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -69,7 +69,16 @@ void pkgAcqMethod::Fail(bool Transient)
 // ---------------------------------------------------------------------
 /* */
 void pkgAcqMethod::Fail(string Err,bool Transient)
-{   
+{
+   // Strip out junk from the error messages
+   for (char *I = Err.begin(); I != Err.end(); I++)
+   {
+      if (*I == '\r') 
+	 *I = ' ';
+      if (*I == '\n') 
+	 *I = ' ';
+   }
+   
    char S[1024];
    if (Queue != 0)
    {
@@ -271,7 +280,8 @@ bool pkgAcqMethod::Configuration(string Message)
       if (End == Equals)
 	 return false;
       
-      Cnf.Set(string(I,Equals-I),string(Equals+1,End-Equals-1));
+      Cnf.Set(DeQuoteString(string(I,Equals-I)),
+	      DeQuoteString(string(Equals+1,End-Equals-1)));
       I = End;
    }
    

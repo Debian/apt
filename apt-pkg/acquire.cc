@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.27 1999/03/13 23:30:04 jgg Exp $
+// $Id: acquire.cc,v 1.28 1999/03/15 08:10:39 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -709,7 +709,7 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       else
 	 CurrentCPS = (CurrentBytes - LastBytes)/Delta;
       LastBytes = CurrentBytes;
-      ElapsedTime = Delta;
+      ElapsedTime = (unsigned long)Delta;
       Time = NewTime;
    }
 }
