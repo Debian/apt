@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.104 2001/03/13 05:23:42 jgg Exp $
+// $Id: apt-get.cc,v 1.105 2001/04/10 04:49:52 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -232,6 +232,9 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	    {
 	       out << ' ';
 	       pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
+	       if (Now == true)
+		  Ver = Targ.CurrentVer();
+		  
 	       if (Ver.end() == false)
 	       {
 		  if (Now == true)
