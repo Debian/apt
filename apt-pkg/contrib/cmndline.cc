@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.1 1998/09/22 05:30:26 jgg Exp $
+// $Id: cmndline.cc,v 1.2 1998/09/26 05:34:24 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -24,11 +24,20 @@ CommandLine::CommandLine(Args *AList,Configuration *Conf) : ArgList(AList),
 {
 }
 									/*}}}*/
+// CommandLine::~CommandLine - Destructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+CommandLine::~CommandLine()
+{
+   delete [] FileList;
+}
+									/*}}}*/
 // CommandLine::Parse - Main action member				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool CommandLine::Parse(int argc,const char **argv)
 {
+   delete [] FileList;
    FileList = new const char *[argc];
    const char **Files = FileList;
    int I;
@@ -99,6 +108,10 @@ bool CommandLine::Parse(int argc,const char **argv)
 	 
 	 if (A->end() == true)
 	    return _error->Error("Command line option %s is not understood",argv[I]);
+	 
+	 // The option is not boolean
+	 if (A->IsBoolean() == false)
+	    return _error->Error("Command line option %s is not boolean",argv[I]);
       }
       
       // Deal with it.
@@ -164,6 +177,19 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       // Parse a configuration file
       if ((A->Flags & ConfigFile) == ConfigFile)
 	 return ReadConfigFile(*Conf,Argument);
+
+      // Arbitary item specification
+      if ((A->Flags & ArbItem) == ArbItem)
+      {
+	 const char *J;
+	 for (J = Argument; *J != 0 && *J != '='; J++);
+	 if (*J == 0)
+	    return _error->Error("Option %s: Configuration item sepecification must have an =.",argv[I]);
+
+	 Conf->Set(string(Argument,J-Argument),string(J+1));
+	 
+	 return true;
+      }
       
       Conf->Set(A->ConfName,Argument);
       return true;
@@ -276,5 +302,16 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
    
    Conf->Set(A->ConfName,Sense);
    return true;
+}
+									/*}}}*/
+// CommandLine::FileSize - Count the number of filenames									/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+unsigned int CommandLine::FileSize() const
+{
+   unsigned int Count = 0;
+   for (const char **I = FileList; I != 0 && *I != 0; I++)
+      Count++;
+   return Count;
 }
 									/*}}}*/

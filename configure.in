@@ -12,6 +12,10 @@ AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in)
 
+dnl -- SET THIS TO THE RELEASE VERSION --
+AC_DEFINE_UNQUOTED(VERSION,"0.3.0")
+AC_DEFINE_UNQUOTED(PACKAGE,"apt")
+
 dnl Tom's host stuff
 tl_CHECK_TOOL_PREFIX	dnl Initial guess
 
@@ -54,6 +58,13 @@ if test "$with_gpm" != "no"; then
   AC_SUBST(GPMLIB)
 fi
 
+dnl Checks for pthread
+AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
+AC_SUBST(PTHREADLIB)
+if test "$XPMLIB" != "-lXpm"; then
+  AC_MSG_ERROR(failed: I need posix threads, pthread)
+fi
+
 dnl Converts the ARCH to be the same as dpkg
 AC_MSG_CHECKING(system architecture)
 archset="`awk '$1 == "'$host_cpu'" { print $2 }' $srcdir/buildlib/archtable`"
@@ -61,7 +72,7 @@ if test "x$archset" = "x"; then
   AC_MSG_ERROR(failed: use --host=)
 fi
 AC_MSG_RESULT($archset)
-AC_DEFINE_UNQUOTED(PKG_DEB_ARCH,"$archset")
+AC_DEFINE_UNQUOTED(ARCHITECTURE,"$archset")
 
 dnl Check the sizes etc. of the architecture
 changequote(,)

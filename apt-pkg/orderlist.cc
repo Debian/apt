@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.2 1998/07/12 23:58:28 jgg Exp $
+// $Id: orderlist.cc,v 1.3 1998/09/26 05:34:21 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -402,6 +402,7 @@ bool pkgOrderList::VisitProvides(DepIterator D)
 bool pkgOrderList::VisitNode(PkgIterator Pkg)
 {
    // Looping or irrelevent.
+   // This should probably trancend not installed packages
    if (Pkg.end() == true || IsFlag(Pkg,Added) == true || 
        IsFlag(Pkg,AddPending) == true || IsFlag(Pkg,InList) == false)
       return true;

@@ -1,23 +1,14 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.7 1998/09/22 05:30:30 jgg Exp $
+// $Id: apt-cache.cc,v 1.8 1998/09/26 05:34:29 jgg Exp $
 /* ######################################################################
    
-   apt-cache - Manages the cache file.
+   apt-cache - Manages the cache files
    
-   This program should eventually handle both low and high level
-   manipulation of the cache file. Depending how far things go it 
-   might get quite a sophisticated UI.
-   
-   Currently the command line is as follows:
-      apt-cache add cache file1:dist:ver file2:dist:ver ...
-    ie:
-      apt-cache add ./cache Pacakges:hamm:1.0
-
-   A usefull feature is 'upgradable' ie
-      apt-cache upgradable ./cache
-   will list .debs that should be installed to make all packages the latest
-   version.
+   apt-cache provides some functions fo manipulating the cache files.
+   It uses the command line interface common to all the APT tools. The
+   only really usefull function right now is dumpavail which is used
+   by the dselect method. Everything else is ment as a debug aide.
    
    Returns 100 on failure, 0 on success.
    
@@ -33,52 +24,20 @@
 #include <apt-pkg/cmndline.h>
 
 #include <iostream.h>
-#include <fstream.h>
-
+#include <config.h>
 									/*}}}*/
 
-string CacheFile;
-
-// SplitArg - Split the triple						/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool SplitArg(const char *Arg,string &File,string &Dist,string Ver)
-{
-   const char *Start = Arg;
-   const char *I = Arg;
-   for (;*I != 0 && *I != ':'; I++);
-   if (*I != ':')
-      return _error->Error("Malformed argument %s, must be in file:dist:rev form",Arg);
-   File = string(Start,I - Start);
-
-   I++;
-   Start = I;
-   for (;*I != 0 && *I != ':'; I++);
-   if (*I != ':')
-      return _error->Error("Malformed argument %s, must be in file:dist:rev form",Arg);
-   Dist = string(Start,I - Start);
-   
-   I++;
-   Start = I;
-   for (;*I != 0 && *I != ':'; I++);
-   if (I == Start)
-      return _error->Error("Malformed argument %s, must be in file:dist:rev form",Arg);
-   Ver = string(Start,I - Start);
-
-   return true;
-}
-									/*}}}*/
 // DumpPackage - Show a dump of a package record			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DumpPackage(pkgCache &Cache,int argc,const char *argv[])
+bool DumpPackage(pkgCache &Cache,CommandLine &CmdL)
 {   
-   for (int I = 0; I != argc; I++)
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(argv[I]);
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
       if (Pkg.end() == true)
       {
-	 _error->Warning("Unable to locate package %s",argv[0]);
+	 _error->Warning("Unable to locate package %s",*I);
 	 continue;
       }
 
@@ -256,14 +215,14 @@ bool DumpAvail(pkgCache &Cache)
 // DoAdd - Perform an adding operation					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoAdd(int argc,const char *argv[])
+bool DoAdd(CommandLine &CmdL)
 {
-   string FileName;
-   string Dist;
-   string Ver;
+   // Make sure there is at least one argument
+   if (CmdL.FileSize() <= 1)
+      return _error->Error("You must give at least one file name");
    
    // Open the cache
-   FileFd CacheF(CacheFile,FileFd::WriteEmpty);
+   FileFd CacheF(_config->FindDir("Dir::Cache::srcpkgcache"),FileFd::ReadOnly);
    if (_error->PendingError() == true)
       return false;
    
@@ -276,19 +235,18 @@ bool DoAdd(int argc,const char *argv[])
    if (_error->PendingError() == true)
       return false;
 
-   for (int I = 0; I != argc; I++)
+   unsigned long Length = CmdL.FileSize() - 1;
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
-      Progress.OverallProgress(I,argc,1,"Generating cache");
-      if (SplitArg(argv[I],FileName,Dist,Ver) == false)
-	 return false;
+      Progress.OverallProgress(I - CmdL.FileList,Length,1,"Generating cache");
       
       // Do the merge
-      FileFd TagF(FileName.c_str(),FileFd::ReadOnly);
+      FileFd TagF(*I,FileFd::ReadOnly);
       debListParser Parser(TagF);
       if (_error->PendingError() == true)
-	 return _error->Error("Problem opening %s",FileName.c_str());
+	 return _error->Error("Problem opening %s",*I);
       
-      if (Gen.SelectFile(FileName) == false)
+      if (Gen.SelectFile(*I) == false)
 	 return _error->Error("Problem with SelectFile");
 	 
       if (Gen.MergeList(Parser) == false)
@@ -312,46 +270,83 @@ bool GenCaches()
    return pkgMakeStatusCache(List,Progress);  
 }
 									/*}}}*/
+// ShowHelp - Show a help screen					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+int ShowHelp()
+{
+   cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
+       " compiled on " << __DATE__ << "  " << __TIME__ << endl;
+   
+   cout << "Usage: apt-cache [options] command" << endl;
+   cout << "       apt-cache [options] add file1 [file1 ...]" << endl;
+   cout << "       apt-cache [options] showpkg pkg2 [pkg2 ...]" << endl;
+   cout << endl;
+   cout << "apt-cache is a low-level tool used to manipulate APT's binary" << endl;
+   cout << "cache files stored in " << _config->FindDir("Dir::Cache") << endl;
+   cout << "It is not ment for ordinary use only as a debug aide." << endl;
+   cout << endl;
+   cout << "Commands:" << endl;
+   cout << "   add - Add an package file to the source cache" << endl;
+   cout << "   gencaches - Build both the package and source cache" << endl;
+   cout << "   showpkg - Show some general information for a single package" << endl;
+   cout << "   stats - Show some basic statistics" << endl;
+   cout << "   dump - Show the entire file in a terse form" << endl;
+   cout << "   dumpavail - Print an available file to stdout" << endl;
+   cout << endl;
+   cout << "Options:" << endl;
+   cout << "  -h   This help text." << endl;
+   cout << "  -p=? The package cache. [" << _config->FindDir("Dir::Cache::pkgcache") << ']' << endl;
+   cout << "  -s=? The source cache. [" << _config->FindDir("Dir::Cache::srcpkgcache") << ']' << endl;
+   cout << "  -q   Disable progress indicator. " << endl;
+   cout << "  -c=? Read this configuration file" << endl;
+   cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
+   cout << "See the apt-cache(8) and apt.conf(8) manual pages for more information." << endl;
+   return 100;
+}
+									/*}}}*/
 
 int main(int argc,const char *argv[])
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
+      {'p',"pkg-cache","Dir::Cache::pkgcache",CommandLine::HasArg},
+      {'s',"src-cache","Dir::Cache::srcpkgcache",CommandLine::HasArg},
+      {'q',"quiet","quiet",CommandLine::IntLevel},
+      {'c',"config-file",0,CommandLine::ConfigFile},
+      {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
-	 
-   CommandLine Cmds(Args,_config);
+   
+   // Parse the command line and initialize the package library
+   CommandLine CmdL(Args,_config);
    if (pkgInitialize(*_config) == false ||
-       Cmds.Parse(argc,argv) == false)
+       CmdL.Parse(argc,argv) == false)
    {
       _error->DumpErrors();
       return 100;
-   }   
-   cout << _config->Find("help") << endl;
-   
-   // Check arguments.
-   if (argc < 3)
-   {
-      cerr << "Usage is apt-cache add cache file1:dist:ver file2:dist:ver ..." << endl;
-      return 100;
    }
 
+   // See if the help should be shown
+   if (_config->FindB("help") == true ||
+       CmdL.FileSize() == 0)
+      return ShowHelp();
+   
    while (1)
    {
-      CacheFile = argv[2];
-      if (strcmp(argv[1],"add") == 0)
+      if (strcmp(CmdL.FileList[0],"add") == 0)
       {
-	 DoAdd(argc - 3,argv + 3);
+	 DoAdd(CmdL);
 	 break;
       }
 
-      if (strcmp(argv[1],"gencaches") == 0)
+      if (strcmp(CmdL.FileList[0],"gencaches") == 0)
       {
 	 GenCaches();
 	 break;
       }
 
       // Open the cache file
-      FileFd CacheF(CacheFile,FileFd::ReadOnly);
+      FileFd CacheF(_config->FindDir("Dir::Cache::pkgcache"),FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 break;
       
@@ -363,32 +358,31 @@ int main(int argc,const char *argv[])
       if (_error->PendingError() == true)
 	 break;
     
-      if (strcmp(argv[1],"showpkg") == 0)
+      if (strcmp(CmdL.FileList[0],"showpkg") == 0)
       {
-	 CacheFile = argv[2];
-	 DumpPackage(Cache,argc - 3,argv + 3);
+	 DumpPackage(Cache,CmdL);
 	 break;
       }
 
-      if (strcmp(argv[1],"stats") == 0)
+      if (strcmp(CmdL.FileList[0],"stats") == 0)
       {
 	 Stats(Cache);
 	 break;
       }
       
-      if (strcmp(argv[1],"dump") == 0)
+      if (strcmp(CmdL.FileList[0],"dump") == 0)
       {
 	 Dump(Cache);
 	 break;
       }
       
-      if (strcmp(argv[1],"dumpavail") == 0)
+      if (strcmp(CmdL.FileList[0],"dumpavail") == 0)
       {
 	 DumpAvail(Cache);
 	 break;
       }
             
-      _error->Error("Invalid operation %s", argv[1]);
+      _error->Error("Invalid operation %s", CmdL.FileList[0]);
       break;
    }
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.16 1998/09/18 02:42:38 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.17 1998/09/26 05:34:23 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -323,6 +323,7 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
    CurrentFile->mtime = Buf.st_mtime;
    CurrentFile->NextFile = Cache.HeaderP->FileList;
    CurrentFile->Flags = Flags;
+   CurrentFile->ID = Cache.HeaderP->PackageFileCount;
    PkgFileName = File;
    Cache.HeaderP->FileList = CurrentFile - Cache.PkgFileP;
    Cache.HeaderP->PackageFileCount++;
@@ -382,10 +383,25 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
 {
    if (_error->PendingError() == true)
       return false;
-   
-   // Open the source package cache
+
    string CacheFile = _config->FindDir("Dir::Cache::srcpkgcache");
    string ListDir = _config->FindDir("Dir::State::lists");
+
+   // Count the number of missing files
+   int Missing = 0;
+   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
+   {
+      string File = ListDir + URItoFileName(I->PackagesURI());
+      struct stat Buf;
+      if (stat(File.c_str(),&Buf) != 0)
+      {
+	 _error->WarningE("stat","Couldn't stat source package list '%s' (%s)",
+			  I->PackagesInfo().c_str(),File.c_str());	 
+	 Missing++;
+      }      
+   }
+      
+   // Open the source package cache
    if (FileExists(CacheFile) == false)
       return false;
    
@@ -410,20 +426,6 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
       return false;
    }
 
-   // Count the number of missing files
-   int Missing = 0;
-   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
-   {
-      string File = ListDir + URItoFileName(I->PackagesURI());
-      struct stat Buf;
-      if (stat(File.c_str(),&Buf) != 0)
-      {
-	 _error->WarningE("stat","Couldn't stat source package list '%s' (%s)",
-			  I->PackagesInfo().c_str(),File.c_str());	 
-	 Missing++;
-      }      
-   }
-   
    // They are certianly out of sync
    if (Cache.Head().PackageFileCount != List.size() - Missing)
       return false;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.5 1998/09/22 05:30:24 jgg Exp $
+// $Id: init.cc,v 1.6 1998/09/26 05:34:19 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -38,8 +38,8 @@ bool pkgInitialize(Configuration &Cnf)
    // Cache
    Cnf.Set("Dir::Cache","/tmp/");
    Cnf.Set("Dir::Cache::archives","archives/");
-   Cnf.Set("Dir::Cache::srcpkgcache","srcpkgcache");
-   Cnf.Set("Dir::Cache::pkgcache","pkgcache");
+   Cnf.Set("Dir::Cache::srcpkgcache","srcpkgcache.bin");
+   Cnf.Set("Dir::Cache::pkgcache","pkgcache.bin");
    
    // Configuration
    Cnf.Set("Dir::Etc","/etc/apt/");

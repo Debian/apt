@@ -11,8 +11,8 @@ include ../buildlib/defaults.mak
 
 # The library name
 LIBRARY=apt-pkg
-MAJOR=2
-MINOR=0.0
+MAJOR=2.0
+MINOR=0
 SLIBS=$(PTHREADLIB)
 
 # Source code for the contributed non-core things

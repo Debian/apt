@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.h,v 1.1 1998/09/22 05:30:26 jgg Exp $
+// $Id: cmndline.h,v 1.2 1998/09/26 05:34:25 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -67,15 +67,18 @@ class CommandLine
       IntLevel = (1 << 1),
       Boolean = (1 << 2),
       InvBoolean = (1 << 3),
-      ConfigFile = (1 << 4) | HasArg
+      ConfigFile = (1 << 4) | HasArg,
+      ArbItem = (1 << 5) | HasArg
    };
 
    const char **FileList;
    
    bool Parse(int argc,const char **argv);
    void ShowHelp();
+   unsigned int FileSize() const;
       
    CommandLine(Args *AList,Configuration *Conf);
+   ~CommandLine();
 };
 
 struct CommandLine::Args
@@ -86,6 +89,7 @@ struct CommandLine::Args
    unsigned long Flags;
    
    inline bool end() {return ShortOpt == 0 && LongOpt == 0;};
+   inline bool IsBoolean() {return Flags == 0 || (Flags & (Boolean|InvBoolean)) != 0;};
 };
          
 #endif

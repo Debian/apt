@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.4 1998/09/22 05:30:26 jgg Exp $
+// $Id: configuration.cc,v 1.5 1998/09/26 05:34:26 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -156,17 +156,17 @@ bool Configuration::FindB(const char *Name,bool Default)
    if (End == Itm->Value.c_str() || Res < 0 || Res > 1)
    {
       // Check for positives
-      if (strcasecmp(Itm->Value,"no") == 0 ||
-	  strcasecmp(Itm->Value,"false") == 0 ||
-	  strcasecmp(Itm->Value,"without") == 0 ||
-	  strcasecmp(Itm->Value,"disable") == 0)
+      if (strcasecmp(Itm->Value.c_str(),"no") == 0 ||
+	  strcasecmp(Itm->Value.c_str(),"false") == 0 ||
+	  strcasecmp(Itm->Value.c_str(),"without") == 0 ||
+	  strcasecmp(Itm->Value.c_str(),"disable") == 0)
 	 return false;
       
       // Check for negatives
-      if (strcasecmp(Itm->Value,"no") == 0 ||
-	  strcasecmp(Itm->Value,"false") == 0 ||
-	  strcasecmp(Itm->Value,"without") == 0 ||
-	  strcasecmp(Itm->Value,"disable") == 0)
+      if (strcasecmp(Itm->Value.c_str(),"yes") == 0 ||
+	  strcasecmp(Itm->Value.c_str(),"true") == 0 ||
+	  strcasecmp(Itm->Value.c_str(),"with") == 0 ||
+	  strcasecmp(Itm->Value.c_str(),"enable") == 0)
 	 return false;
       
       return Default;
