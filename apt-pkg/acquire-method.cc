@@ -1,10 +1,17 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.19 1999/04/15 02:43:47 jgg Exp $
+// $Id: acquire-method.cc,v 1.20 1999/08/04 02:39:13 jgg Exp $
 /* ######################################################################
 
    Acquire Method
 
+   This is a skeleton class that implements most of the functionality
+   of a method and some usefull functions to make method implementation
+   simpler. The methods all derive this and specialize it. The most
+   complex implementation is the http method which needs to provide
+   pipelining, it runs the message engine at the same time it is 
+   downloading files..
+   
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -290,7 +297,9 @@ bool pkgAcqMethod::Configuration(string Message)
 									/*}}}*/
 // AcqMethod::Run - Run the message engine				/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Fetch any messages and execute them. In single mode it returns 1 if
+   there are no more available messages - any other result is a 
+   fatal failure code! */
 int pkgAcqMethod::Run(bool Single)
 {
    while (1)
@@ -308,7 +317,7 @@ int pkgAcqMethod::Run(bool Single)
             
       // Single mode exits if the message queue is empty
       if (Single == true && Messages.empty() == true)
-	 return 0;
+	 return -1;
       
       string Message = Messages.front();
       Messages.erase(Messages.begin());
