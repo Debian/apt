@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.150 2003/12/24 22:53:10 mdz Exp $
+// $Id: apt-get.cc,v 1.151 2004/01/09 07:14:28 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -418,7 +418,7 @@ void ShowKept(ostream &out,CacheFile &Cache)
       List += string(I.Name()) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
-   ShowList(out,_("The following packages have been kept back"),List,VersionsList);
+   ShowList(out,_("The following packages have been kept back:"),List,VersionsList);
 }
 									/*}}}*/
 // ShowUpgraded - Show upgraded packages				/*{{{*/
@@ -439,7 +439,7 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
       List += string(I.Name()) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
-   ShowList(out,_("The following packages will be upgraded"),List,VersionsList);
+   ShowList(out,_("The following packages will be upgraded:"),List,VersionsList);
 }
 									/*}}}*/
 // ShowDowngraded - Show downgraded packages				/*{{{*/
@@ -460,7 +460,7 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
       List += string(I.Name()) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
-   return ShowList(out,_("The following packages will be DOWNGRADED"),List,VersionsList);
+   return ShowList(out,_("The following packages will be DOWNGRADED:"),List,VersionsList);
 }
 									/*}}}*/
 // ShowHold - Show held but changed packages				/*{{{*/
