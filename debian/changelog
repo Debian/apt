@@ -5,11 +5,16 @@ apt (0.5.23) unstable; urgency=low
     symlinks are created correctly
   * Updated Simplified Chinese translation of message catalog from Tchaikov
     <chaisave@263.net> (Closes: #234186)
+  * Set Cache-Control: max-age=0 for index files to prevent them being out
+    of sync with each other (important with Release.gpg)
+  * Add an assert() to make sure that we don't overflow a fixed-size
+    buffer in the very unlikely event that someone adds 10 packaging
+    systems to apt (Closes: #233678)
   * Fix whitespace in French translation of "Yes, do as I say!", which
     made it tricky to type, again.  Thanks to Sylvain Pasche
     <sylvain.pasche@switzerland.org> (Closes: #234494)
 
-  --
+ --
 
 apt (0.5.22) unstable; urgency=low
 
