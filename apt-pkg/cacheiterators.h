@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.7 1998/10/02 04:39:44 jgg Exp $
+// $Id: cacheiterators.h,v 1.8 1998/11/14 07:20:08 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -171,9 +171,11 @@ class pkgCache::DepIterator
    inline bool Reverse() {return Type == DepRev;};
    inline unsigned long Index() const {return Dep - Owner->DepP;};
    bool IsCritical();
+   void GlobOr(DepIterator &Start,DepIterator &End);
    Version **AllTargets();   
    bool SmartTargetPkg(PkgIterator &Result);
    const char *CompType();
+   const char *DepType();
    
    inline DepIterator(pkgCache &Owner,Dependency *Trg,Version * = 0) :
           Dep(Trg), Type(DepVer), Owner(&Owner) 

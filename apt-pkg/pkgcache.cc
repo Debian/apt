@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.15 1998/11/13 04:23:32 jgg Exp $
+// $Id: pkgcache.cc,v 1.16 1998/11/14 07:20:09 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -351,9 +351,40 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 const char *pkgCache::DepIterator::CompType()
 {
    const char *Ops[] = {"","<=",">=","<",">","=","!="};
-   if ((unsigned)(Dep->CompareOp & 0xF) < sizeof(Ops))
+   if ((unsigned)(Dep->CompareOp & 0xF) < 7)
       return Ops[Dep->CompareOp & 0xF];
    return "";	 
+}
+									/*}}}*/
+// DepIterator::DepType - Return a string describing the dep type	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+const char *pkgCache::DepIterator::DepType()
+{
+   const char *Types[] = {"","Depends","PreDepends","Suggests",
+                          "Recommends","Conflicts","Replaces"};
+   if (Dep->Type < 7)
+      return Types[Dep->Type];
+   return "";
+}
+									/*}}}*/
+// DepIterator::GlobOr - Compute an OR group				/*{{{*/
+// ---------------------------------------------------------------------
+/* This Takes an iterator, iterates past the current dependency grouping
+   and returns Start and End so that so End is the final element
+   in the group, if End == Start then D is End++ and End is the
+   dependency D was pointing to. Use in loops to iterate sensibly. */
+void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
+{
+   // Compute a single dependency element (glob or)
+   Start = *this;
+   End = *this;
+   for (bool LastOR = true; end() == false && LastOR == true; (*this)++)
+   {
+      LastOR = (Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+      if (LastOR == true)
+	 End = (*this);
+   }
 }
 									/*}}}*/
 // VerIterator::CompareVer - Fast version compare for same pkgs		/*{{{*/

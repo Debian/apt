@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.10 1998/11/14 03:32:36 jgg Exp $
+// $Id: algorithms.cc,v 1.11 1998/11/14 07:20:06 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -671,16 +671,9 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false;)
 	 {
 	    // Compute a single dependency element (glob or)
-	    pkgCache::DepIterator Start = D;
-	    pkgCache::DepIterator End = D;
-	    unsigned char State = 0;
-	    for (bool LastOR = true; D.end() == false && LastOR == true; D++)
-	    {
-	       State |= Cache[D];
-	       LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
-	       if (LastOR == true)
-		  End = D;
-	    }
+	    pkgCache::DepIterator Start;
+	    pkgCache::DepIterator End;
+	    D.GlobOr(Start,End);
 	    
 	    // We only worry about critical deps.
 	    if (End.IsCritical() != true)
