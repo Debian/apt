@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.13 1999/07/30 06:15:14 jgg Exp $
+// $Id: dpkgpm.cc,v 1.14 1999/09/10 02:40:31 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -175,13 +175,12 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 SetCloseExec(STDOUT_FILENO,false);
 	 SetCloseExec(STDIN_FILENO,false);      
 	 SetCloseExec(STDERR_FILENO,false);
-	 
-	 const char *Args[5];
+
+	 const char *Args[4];
 	 Args[0] = "/bin/sh";
-	 Args[1] = "/bin/sh";
-	 Args[2] = "-c";
-	 Args[3] = Opts->Value.c_str();
-	 Args[4] = 0;
+	 Args[1] = "-c";
+	 Args[2] = Opts->Value.c_str();
+	 Args[3] = 0;
 	 execv(Args[0],(char **)Args);
 	 _exit(100);
       }
@@ -189,7 +188,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       FileFd Fd(Pipes[1]);
 
       // Feed it the filenames.
-      for (vector<Item>::iterator I = List.begin(); I != List.end();)
+      for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
       {
 	 // Only deal with packages to be installed from .deb
 	 if (I->Op != Item::Install)
@@ -207,14 +206,14 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	    kill(Process,SIGINT);	    
 	    Fd.Close();   
 	    ExecWait(Process,Opts->Value.c_str(),true);
-	    return false;
-	 }	    
+	    return _error->Error("Failure running script %s",Opts->Value.c_str());
+	 }
       }
       Fd.Close();
       
       // Clean up the sub process
       if (ExecWait(Process,Opts->Value.c_str()) == false)
-	 return false;
+	 return _error->Error("Failure running script %s",Opts->Value.c_str());
    }
 
    return true;
