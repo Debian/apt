@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.11 1998/12/07 07:26:20 jgg Exp $
+// $Id: pkgcache.h,v 1.12 1998/12/08 01:34:13 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -109,6 +109,7 @@ class pkgCache
 
    virtual bool ReMap();
    inline bool Sync() {return Map.Sync();};
+   inline MMap &GetMap() {return Map;};
    
    // String hashing function (512 range)
    inline unsigned long Hash(string S) const {return sHash(S);};

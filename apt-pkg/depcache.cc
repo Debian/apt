@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.9 1998/12/07 23:54:42 jgg Exp $
+// $Id: depcache.cc,v 1.10 1998/12/08 01:34:07 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -25,6 +25,12 @@ pkgDepCache::pkgDepCache(MMap &Map,OpProgress &Prog) :
 {
    if (_error->PendingError() == false)
       Init(&Prog);
+}
+pkgDepCache::pkgDepCache(MMap &Map) :
+             pkgCache(Map), PkgState(0), DepState(0)
+{
+   if (_error->PendingError() == false)
+      Init(0);
 }
 									/*}}}*/
 // DepCache::~pkgDepCache - Destructor					/*{{{*/

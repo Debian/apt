@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.13 1998/12/06 03:41:25 jgg Exp $
+// $Id: algorithms.cc,v 1.14 1998/12/08 01:34:05 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -29,7 +29,7 @@ pkgProblemResolver *pkgProblemResolver::This = 0;
 // ---------------------------------------------------------------------
 /* */
 pkgSimulate::pkgSimulate(pkgDepCache &Cache) : pkgPackageManager(Cache), 
-                            Sim(Cache)
+                            Sim(Cache.GetMap())
 {
    Flags = new unsigned char[Cache.HeaderP->PackageCount];
    memset(Flags,0,sizeof(*Flags)*Cache.HeaderP->PackageCount);

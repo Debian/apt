@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.7 1998/11/14 01:39:47 jgg Exp $
+// $Id: depcache.h,v 1.8 1998/12/08 01:34:10 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -167,7 +167,6 @@ class pkgDepCache : public pkgCache
    
    // This is for debuging
    void Update(OpProgress *Prog = 0);
-
    
    // Size queries
    inline signed long UsrSize() {return iUsrSize;};
@@ -179,6 +178,7 @@ class pkgDepCache : public pkgCache
    inline unsigned long BadCount() {return iBadCount;};
    
    pkgDepCache(MMap &Map,OpProgress &Prog);
+   pkgDepCache(MMap &Map);
    virtual ~pkgDepCache();
 };
 
