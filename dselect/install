@@ -57,7 +57,7 @@ if [ $RES -eq 0 ]; then
        ;;
      prompt)
        exec 3>&1
-       if [ `yesno "Do you want to erase the downloaded files " y` = y ]; then
+       if [ `yesno "Do you want to erase the downloaded .deb files " y` = y ]; then
           $APTGET clean && echo "Press enter to continue." && read RES && exit 0;
        fi
        ;;
