@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versionmatch.cc,v 1.4 2001/05/22 06:20:06 jgg Exp $
+// $Id: versionmatch.cc,v 1.5 2001/05/29 03:07:12 jgg Exp $
 /* ######################################################################
 
    Version Matching 
@@ -48,7 +48,12 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
    {
       // All empty = match all
       if (Data == "*")
+      {
+	 MatchAll = true;
 	 return;
+      }
+      
+      MatchAll = false;
       
       // Are we a simple specification?
       string::const_iterator I = Data.begin();
@@ -163,6 +168,9 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
 {
    if (Type == Release)
    {
+      if (MatchAll == true)
+	 return true;
+      
 /*      cout << RelVerStr << ',' << RelOrigin << ',' << RelArchive << ',' << RelLabel << endl;
       cout << File.Version() << ',' << File.Origin() << ',' << File.Archive() << ',' << File.Label() << endl;*/
       

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versionmatch.h,v 1.3 2001/05/07 04:24:08 jgg Exp $
+// $Id: versionmatch.h,v 1.4 2001/05/29 03:07:12 jgg Exp $
 /* ######################################################################
 
    Version Matching 
@@ -53,7 +53,8 @@ class pkgVersionMatch
    string RelArchive;
    string RelLabel;
    string RelComponent;
-
+   bool MatchAll;
+   
    // Origin Matching
    string OrSite;
    
