@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.19 1999/11/16 03:16:34 jgg Exp $
+// $Id: acqprogress.cc,v 1.20 2000/05/12 04:03:27 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -93,6 +93,7 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    if (Quiet > 1)
       return;
 
+   // Ignore certain kinds of transient failures (bad code)
    if (Itm.Owner->Status == pkgAcquire::Item::StatIdle)
       return;
       
