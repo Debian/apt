@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.20 2001/05/15 05:46:11 jgg Exp $
+// $Id: sourcelist.cc,v 1.21 2002/03/20 05:51:20 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -171,6 +171,31 @@ bool pkgSourceList::ReadVendors()
       VendorList.push_back(Vendor);
    }
 
+   /* XXX Process 'group-key' type sections
+      This is currently faked out so that the vendors file format is
+      parsed but nothing is done with it except check for validity */
+   Top = Cnf.Tree("group-key");
+   for (Top = (Top == 0?0:Top->Child); Top != 0; Top = Top->Next)
+   {
+      Configuration Block(Top);
+      Vendor *Vendor;
+      
+      Vendor = new pkgSourceList::Vendor;
+      
+      Vendor->VendorID = Top->Tag;
+      Vendor->Description = Block.Find("Name");
+
+      if (Vendor->Description.empty() == true)
+      {
+         _error->Error(_("Vendor block %s is invalid"), 
+		       Vendor->VendorID.c_str());
+	 delete Vendor;
+	 continue;
+      }
+      
+      VendorList.push_back(Vendor);
+   }
+   
    return !_error->PendingError();
 }
 									/*}}}*/
