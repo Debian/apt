@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.10 2003/12/26 23:09:30 mdz Exp $
+// $Id: writer.cc,v 1.11 2004/01/02 21:48:13 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -849,9 +849,14 @@ bool ReleaseWriter::DoPackage(string FileName)
        FileName.length() > DirStrip.length() &&
        stringcmp(FileName.begin(),FileName.begin() + DirStrip.length(),
 		 DirStrip.begin(),DirStrip.end()) == 0)
+   {
       NewFileName = string(FileName.begin() + DirStrip.length(),FileName.end());
+      while (NewFileName[0] == '/')
+           NewFileName = string(FileName.begin() + 1,FileName.end());
+   }
    else 
       NewFileName = FileName;
+
    if (PathPrefix.empty() == false)
       NewFileName = flCombine(PathPrefix,NewFileName);
 
@@ -862,16 +867,16 @@ bool ReleaseWriter::DoPackage(string FileName)
       return false;
    }
 
-   CheckSums[FileName].size = fd.Size();
+   CheckSums[NewFileName].size = fd.Size();
 
    MD5Summation MD5;
    MD5.AddFD(fd.Fd(), fd.Size());
-   CheckSums[FileName].MD5 = MD5.Result();
+   CheckSums[NewFileName].MD5 = MD5.Result();
 
    fd.Seek(0);
    SHA1Summation SHA1;
    SHA1.AddFD(fd.Fd(), fd.Size());
-   CheckSums[FileName].SHA1 = SHA1.Result();
+   CheckSums[NewFileName].SHA1 = SHA1.Result();
 
    fd.Close();
    
