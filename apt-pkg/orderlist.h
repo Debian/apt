@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.h,v 1.4 1999/07/04 23:22:53 jgg Exp $
+// $Id: orderlist.h,v 1.5 1999/07/12 03:40:38 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -59,7 +59,7 @@ class pkgOrderList
    bool VisitDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRProvides(DepFunc F,VerIterator Ver);
-   bool VisitProvides(DepIterator Pkg);
+   bool VisitProvides(DepIterator Pkg,bool Critical);
    
    // Dependency checking functions.
    bool DepUnPackCrit(DepIterator D);

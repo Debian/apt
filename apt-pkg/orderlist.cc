@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.5 1999/07/04 23:22:53 jgg Exp $
+// $Id: orderlist.cc,v 1.6 1999/07/12 03:40:37 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -421,7 +421,7 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
 // OrderList::VisitProvides - Visit all of the providing packages	/*{{{*/
 // ---------------------------------------------------------------------
 /* This routine calls visit on all providing packages. */
-bool pkgOrderList::VisitProvides(DepIterator D)
+bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 {
    Version **List = D.AllTargets();
    for (Version **I = List; *I != 0; I++)
@@ -438,6 +438,10 @@ bool pkgOrderList::VisitProvides(DepIterator D)
       if (D->Type == pkgCache::Dep::Conflicts && (Version *)Pkg.CurrentVer() != *I)
 	 continue;
       
+      // Skip over missing files
+      if (IsMissing(D.ParentPkg()) == true)
+	 continue;
+	 
       if (VisitNode(Pkg) == false)
       {
 	 delete [] List;
@@ -586,7 +590,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
 	 bool Res = false;
 	 if (D->Type == pkgCache::Dep::PreDepends)
 	    Primary = &DepUnPackPreD;
-	 Res = VisitProvides(D);
+	 Res = VisitProvides(D,true);
 	 Primary = Old;
 	 if (Res == false)
 	    return false;
@@ -632,7 +636,7 @@ bool pkgOrderList::DepUnPackPreD(DepIterator D)
 	 continue;
       }
       
-      if (VisitProvides(D) == false)
+      if (VisitProvides(D,true) == false)
 	 return false;
    }   
    return true;
@@ -685,7 +689,7 @@ bool pkgOrderList::DepUnPackPre(DepIterator D)
 	 continue;
       }
       
-      if (VisitProvides(D) == false)
+      if (VisitProvides(D,true) == false)
 	 return false;
    }   
    return true;
@@ -721,12 +725,16 @@ bool pkgOrderList::DepUnPackDep(DepIterator D)
 	    if (CheckDep(D) == true)
 	       continue;
 	    
+	    // Skip over missing files
+	    if (IsMissing(D.ParentPkg()) == true)
+	       continue;
+	    
 	    if (VisitNode(D.ParentPkg()) == false)
 	       return false;
 	 }
 	 else
 	    if (D->Type == pkgCache::Dep::Depends)
-	       if (VisitProvides(D) == false)
+	       if (VisitProvides(D,false) == false)
 		  return false;
       }
    return true;
@@ -747,7 +755,7 @@ bool pkgOrderList::DepConfigure(DepIterator D)
    
    for (; D.end() == false; D++)
       if (D->Type == pkgCache::Dep::Depends)
-	 if (VisitProvides(D) == false)
+	 if (VisitProvides(D,false) == false)
 	    return false;
    return true;
 }
@@ -792,6 +800,10 @@ bool pkgOrderList::DepRemove(DepIterator D)
 	    continue;
 	 }
 
+	 // Skip over missing files
+	 if (IsMissing(D.ParentPkg()) == true)
+	    continue;
+	 
 	 if (VisitNode(D.ParentPkg()) == false)
 	    return false;
       }
