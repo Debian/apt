@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.13 1998/11/14 07:20:30 jgg Exp $
+// $Id: apt-get.cc,v 1.14 1998/11/14 08:11:55 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -624,15 +624,19 @@ bool DoInstall(CommandLine &CmdL)
       
       // See if we are removing the package
       bool Remove = DefRemove;
-      if (S[Length - 1] == '-')
+      if (Cache->FindPkg(S).end() == true)
       {
-	 Remove = true;
-	 S[--Length] = 0;
-      }
-      if (S[Length - 1] == '+')
-      {
-	 Remove = false;
-	 S[--Length] = 0;
+	 // Handle an optional end tag indicating what to do
+	 if (S[Length - 1] == '-')
+	 {
+	    Remove = true;
+	    S[--Length] = 0;
+	 }
+	 if (S[Length - 1] == '+')
+	 {
+	    Remove = false;
+	    S[--Length] = 0;
+	 }
       }
       
       // Locate the package
@@ -640,6 +644,14 @@ bool DoInstall(CommandLine &CmdL)
       Packages++;
       if (Pkg.end() == true)
 	 return _error->Error("Couldn't find package %s",S);
+      
+      // Handle the no-upgrade case
+      if (_config->FindB("APT::Get::no-upgrade",false) == true &&
+	  Pkg->CurrentVer != 0)
+      {
+	 c1out << "Skipping " << Pkg.Name() << ", it is already installed and no-upgrade is set." << endl;
+	 continue;
+      }
       
       // Check if there is something new to install
       pkgDepCache::StateCache &State = (*Cache)[Pkg];
@@ -743,8 +755,12 @@ bool DoInstall(CommandLine &CmdL)
    }
 
    // See if we need to prompt
-   if (Cache->InstCount() != ExpectedInst || Cache->DelCount() != 0)
-      return InstallPackages(Cache,false,true);
+   if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
+   {
+      cout << "Boink" << endl;
+      return InstallPackages(Cache,false,false);
+   }
+   
    return InstallPackages(Cache,false);   
 }
 									/*}}}*/
@@ -925,8 +941,9 @@ int main(int argc,const char *argv[])
       {'y',"assume-yes","APT::Get::Assume-Yes",0},      
       {'f',"fix-broken","APT::Get::Fix-Broken",0},
       {'u',"show-upgraded","APT::Get::Show-Upgraded",0},
-      {'m',"ignore-missing","APT::Get::Fix-Broken",0},      
+      {'m',"ignore-missing","APT::Get::Fix-Broken",0},
       {0,"ignore-hold","APT::Ingore-Hold",0},      
+      {0,"no-upgrade","APT::Get::no-upgrade",0},      
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
