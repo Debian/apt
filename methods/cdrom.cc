@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.14 1999/08/08 03:34:08 jgg Exp $
+// $Id: cdrom.cc,v 1.15 1999/10/02 04:14:54 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -77,6 +77,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    {
       Res.LastModified = Itm->LastModified;
       Res.IMSHit = true;
+      Res.Filename = File;
       URIDone(Res);
       return true;
    }

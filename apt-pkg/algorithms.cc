@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.24 1999/09/30 06:30:34 jgg Exp $
+// $Id: algorithms.cc,v 1.25 1999/10/02 04:14:53 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -524,10 +524,11 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
       pkgCache::DepIterator Start = D;
       pkgCache::DepIterator End = D;
       unsigned char State = 0;
-      for (bool LastOR = true; D.end() == false && LastOR == true; D++)
+      for (bool LastOR = true; D.end() == false && LastOR == true;)
       {
 	 State |= Cache[D];
 	 LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+	 D++;
 	 if (LastOR == true)
 	    End = D;
       }
@@ -535,52 +536,54 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
       // We only worry about critical deps.
       if (End.IsCritical() != true)
 	 continue;
-      
-      // Dep is ok
-      if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
-	 continue;
-      
-      // Hm, the group is broken.. I have no idea how to handle this
-      if (Start != End)
+            
+      // Iterate over all the members in the or group
+      while (1)
       {
-	 clog << "Note, a broken or group was found in " << Pkg.Name() << "." << endl;
-	 Fail = true;
-	 break;
-      }
-
-      // Do not change protected packages
-      PkgIterator P = Start.SmartTargetPkg();
-      if ((Flags[P->ID] & Protected) == Protected)
-      {
-	 if (Debug == true)
-	    clog << "    Reinet Failed because of protected " << P.Name() << endl;
-	 Fail = true;
-	 break;
-      }      
-      
-      // Upgrade the package if the candidate version will fix the problem.
-      if ((Cache[Start] & pkgDepCache::DepCVer) == pkgDepCache::DepCVer)
-      {
-	 if (DoUpgrade(P) == false)
+	 // Dep is ok now
+	 if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
+	    break;
+	 
+	 // Do not change protected packages
+	 PkgIterator P = Start.SmartTargetPkg();
+	 if ((Flags[P->ID] & Protected) == Protected)
 	 {
 	    if (Debug == true)
-	       clog << "    Reinst Failed because of " << P.Name() << endl;
+	       clog << "    Reinet Failed because of protected " << P.Name() << endl;
 	    Fail = true;
 	    break;
-	 }	 
-      }
-      else
-      {
-	 /* We let the algorithm deal with conflicts on its next iteration,
-	    it is much smarter than us */
-	 if (End->Type == pkgCache::Dep::Conflicts)
-	    continue;
+	 }      
+      
+	 // Upgrade the package if the candidate version will fix the problem.
+	 if ((Cache[Start] & pkgDepCache::DepCVer) == pkgDepCache::DepCVer)
+	 {
+	    if (DoUpgrade(P) == false)
+	    {
+	       if (Debug == true)
+		  clog << "    Reinst Failed because of " << P.Name() << endl;
+	       Fail = true;
+	       break;
+	    }	 
+	 }
+	 else
+	 {
+	    /* We let the algorithm deal with conflicts on its next iteration,
+	       it is much smarter than us */
+	    if (Start->Type == pkgCache::Dep::Conflicts)
+	       continue;
+	    
+	    if (Debug == true)
+	       clog << "    Reinst Failed early because of " << Start.TargetPkg().Name() << endl;
+	    Fail = true;
+	    break;
+	 }     
 	 
-	 if (Debug == true)
-	    clog << "    Reinst Failed early because of " << Start.TargetPkg().Name() << endl;
-	 Fail = true;
+	 if (Start == End)
+	    break;
+	 Start++;
+      }
+      if (Fail == true)
 	 break;
-      }      
    }
    
    // Undo our operations - it might be smart to undo everything this did..
@@ -737,16 +740,6 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    
 	    InOr = Start != End;
 	    
-	    // Hm, the group is broken.. I have no idea how to handle this
-/*	    if (Start != End)
-	    {
-	       if (Debug == true)
-		  clog << "Note, a broken or group was found in " << I.Name() << "." << endl;
-	       if ((Flags[I->ID] & Protected) != Protected)
-		  Cache.MarkDelete(I);
-	       break;
-	    }*/
-	    	    
 	    if (Debug == true)
 	       clog << "Package " << I.Name() << " has broken dep on " << Start.TargetPkg().Name() << endl;
 

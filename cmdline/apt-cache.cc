@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.37 1999/07/15 03:15:49 jgg Exp $
+// $Id: apt-cache.cc,v 1.38 1999/10/02 04:14:54 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -379,7 +379,7 @@ bool DumpAvail(CommandLine &Cmd)
    return true;
 }
 									/*}}}*/
-// Depends - Print out a dependency tree					/*{{{*/
+// Depends - Print out a dependency tree				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool Depends(CommandLine &CmdL)
@@ -672,6 +672,7 @@ int main(int argc,const char *argv[])
       {'q',"quiet","quiet",CommandLine::IntLevel},
       {'i',"important","APT::Cache::Important",0},
       {'f',"full","APT::Cache::ShowFull",0},
+      {'g',"no-generate","APT::Cache::NoGenerate",0},
       {0,"names-only","APT::Cache::NamesOnly",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
@@ -712,14 +713,24 @@ int main(int argc,const char *argv[])
       _config->Set("quiet","1");
 
    if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
-   {      
-      // Open the cache file
-      pkgSourceList List;
-      List.ReadMainList();
-
-      // Generate it and map it
-      OpProgress Prog;
-      MMap *Map = pkgMakeStatusCacheMem(List,Prog);
+   { 
+      MMap *Map;
+      if (_config->FindB("APT::Cache::NoGenerate",false) == true)
+      {
+	 Map = new MMap(*new FileFd(_config->FindFile("Dir::Cache::pkgcache"),
+				    FileFd::ReadOnly),MMap::Public|MMap::ReadOnly);
+      }
+      else
+      {
+	 // Open the cache file
+	 pkgSourceList List;
+	 List.ReadMainList();
+	 
+	 // Generate it and map it
+	 OpProgress Prog;
+	 Map = pkgMakeStatusCacheMem(List,Prog);
+      }
+      
       if (_error->PendingError() == false)
       {
 	 pkgCache Cache(*Map);   
