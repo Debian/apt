@@ -1,0 +1,230 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!-- translation of version 1.3 -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry lang=ja>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-cdrom</>
+   <manvolnum>8</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-cdrom</>
+<!--
+    <refpurpose>APT CDROM managment utility</>
+-->
+    <refpurpose>APT CDROM 管理ユーティリティ</>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-cdrom</>
+      <arg><option>-hvrmfan</></arg>
+      <arg><option>-d=<replaceable/cdrom mount point/</></arg>
+      <arg><option>-o=<replaceable/config string/</></arg>
+      <arg><option>-c=<replaceable/file/</></arg>
+      <group choice=req>
+         <arg>add</>
+         <arg>ident</>
+      </group>   
+   </cmdsynopsis>
+ </refsynopsisdiv>
+
+<!--
+ <RefSect1><Title>Description</>
+-->
+ <RefSect1><Title>説明</>
+   <para>
+<!--
+   <command/apt-cdrom/ is used to add a new CDROM to APTs list of available 
+   sources. <command/apt-cdrom/ takes care of determining the structure of 
+   the disc as well as correcting for several possible mis-burns and 
+   verifying the index files.   
+-->
+   <command/apt-cdrom/ は利用可能な取得元として、APT のリストに新しい CDROM を
+   追加するのに便利です。<command/apt-cdrom/ は焼き損じを可能な限り補正し、
+   ディスク構造の確認を助けます。また、インデックスファイルの確認を行います。
+   <para>
+<!--
+   It is necessary to use <command/apt-cdrom/ to add CDs to the APT system, 
+   it cannot be done by hand. Furthermore each disk in a multi-cd set must be
+   inserted and scanned separately to account for possible mis-burns.
+-->
+   APT システムで CD を追加するのは手作業では難しいため、<command/apt-cdrom/
+   が必要です。その上、CD セットのディスクを 1 枚づつ、焼き損じを補正できるか
+   評価しなければなりません。
+   <para>
+<!--
+   Unless the <option/-h/, or <option/- -help/ option is given one of the
+   commands below must be present.
+-->
+   <option/-h/ や <option/--help/ を除き、以下に挙げるコマンドが必要です。
+   <VariableList>
+     <VarListEntry><Term>add</Term>
+     <ListItem><Para>
+<!--
+     <literal/add/ is used to add a new disc to the source list. It will unmount the
+     CDROM device, prompt for a disk to be inserted and then procceed to 
+     scan it and copy the index files. If the disc does not have a proper
+     <filename>.disk/</> directory you will be prompted for a descriptive 
+     title.
+-->
+     <literal/add/ は、新しいディスクを取得元リストに追加します。
+     CDROM デバイスのアンマウント、ディスク挿入のプロンプトの表示の後に、
+     ディスクのスキャンとインデックスファイルのコピーを行います。
+     ディスクに正しい <filename>.disk/</> ディレクトリが存在しない場合、
+     タイトルを入力するよう促します。
+     <para>
+<!--
+     APT uses a CDROM ID to track which disc is currently in the drive and
+     maintains a database of these IDs in 
+     <filename>&statedir;/cdroms.list</>
+-->
+     APT は、現在ドライブにあるディスクのトラックから取得した、CDROM ID を
+     使用します。またその ID を、<filename>&statedir;/cdroms.list</> 内の
+     データベースで管理します。
+     </VarListEntry>
+     
+     <VarListEntry><Term>ident</Term>
+     <ListItem><Para>
+<!--
+     A debugging tool to report the identity of the current disc as well
+     as the stored file name
+-->
+     格納されているファイル名と、現在のディスクが同一かどうかをレポートする、
+     デバッグツールです。
+     </VarListEntry>
+   </VariableList>
+ </RefSect1>
+
+<!--
+ <RefSect1><Title>Options</>
+-->
+ <RefSect1><Title>オプション</>
+
+   &apt-cmdblurb;
+   
+   <VariableList>
+     <VarListEntry><term><option/-d/</><term><option/--cdrom/</>
+     <ListItem><Para>
+<!--
+     Mount point; specify the location to mount the cdrom. This mount 
+     point must be listed in <filename>/etc/fstab</> and propely configured.
+     Configuration Item: <literal/Acquire::cdrom::mount/.
+-->
+     マウントポイント - cdrom をマウントする場所を指定します。
+     このマウントポイントは、<filename>/etc/fstab</> に正しく設定されている
+     必要があります。
+     設定項目 - <literal/Acquire::cdrom::mount/
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-r/</><term><option/--rename/</>
+     <ListItem><Para>
+<!--
+     Rename a disc; change the label of a disk or override the disks 
+     given label. This option will cause <command/apt-cdrom/ to prompt for 
+     a new label.
+     Configuration Item: <literal/APT::CDROM::Rename/.
+-->
+     ディスクの名前変更 - 指定した名前でディスクのラベルを変更・更新します。
+     このオプションにより、<command/apt-cdrom/ が新しいラベルを入力するよう
+     促します。
+     設定項目 - <literal/APT::CDROM::Rename/
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-m/</><term><option/--no-mount/</>
+     <ListItem><Para>
+<!--
+     No mounting; prevent <command/apt-cdrom/ from mounting and unmounting 
+     the mount point.
+     Configuration Item: <literal/APT::CDROM::NoMount/.
+-->
+     マウントなし - <command/apt-cdrom/ が、マウントポイントに
+     マウント・アンマウントするのを防ぎます。
+     設定項目 - <literal/APT::CDROM::NoMount/
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-f/</><term><option/--fast/</>
+     <ListItem><Para>
+<!--
+     Fast Copy; Assume the package files are valid and do not check 
+     every package. This option should be used only if
+     <command/apt-cdrom/ has been run on this disc before and did not detect 
+     any errors.
+     Configuration Item: <literal/APT::CDROM::Fast/.
+-->
+     高速コピー - パッケージファイルが妥当であると仮定し、
+     チェックを全く行いません。。
+     このオプションは、このディスクで以前 <command/apt-cdrom/ を行っており、
+     エラーを検出しなかった場合のみ使用すべきです。
+     設定項目 - <literal/APT::CDROM::Fast/
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-a/</><term><option/--thorough/</>
+     <ListItem><Para>
+<!--
+     Thorough Package Scan; This option may be needed with some old 
+     Debian 1.1/1.2 discs that have Package files in strange places. It 
+     takes much longer to scan the CD but will pick them all up.
+-->
+     完全パッケージスキャン -  古い Debian 1.1/1.2 のディスクは、
+     パッケージファイルが違う場所にあるため、このオプションを使う必要が
+     あるかもしれません。
+     CD をスキャンするのに非常に時間がかかりますが、全パッケージファイルを
+     抽出することができます。
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-n/</>
+                   <term><option/--just-print/</>
+                   <term><option/--recon/</>
+                   <term><option/--no-act/</>
+     <ListItem><Para>
+<!--
+     No Changes; Do not change the &sources-list; file and do not 
+     write index files. Everything is still checked however.
+     Configuration Item: <literal/APT::CDROM::NoAct/.
+-->
+     変更なし - &sources-list; ファイルの変更や、インデックスファイルの
+     書き込みを行いません。とはいえ、すべてのチェックは行われます。
+     設定項目 - <literal/APT::CDROM::NoAct/
+     </VarListEntry> 
+ 
+     &apt-commonoptions;
+     
+   </VariableList>
+ </RefSect1>
+
+<!--
+ <RefSect1><Title>See Also</>
+-->
+ <RefSect1><Title>関連項目</>
+   <para>
+   &apt-conf;, &apt-get;, &sources-list;
+ </RefSect1>
+
+<!--
+ <RefSect1><Title>Diagnostics</>
+-->
+ <RefSect1><Title>診断メッセージ</>
+   <para>
+<!--
+   <command/apt-cdrom/ returns zero on normal operation, decimal 100 on error.
+-->
+   <command/apt-get/ は正常終了時に 0 を返します。
+   エラー時には十進の 100 を返します。
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+ &translator; 
+</refentry>
+

@@ -1,7 +1,7 @@
 # -*- make -*-
 BASE=..
 SUBDIR=doc
-SUBDIRS= fr pt_BR es
+SUBDIRS= fr ja pt_BR es
 
 # Bring in the default rules
 include ../buildlib/defaults.mak

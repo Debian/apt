@@ -34,42 +34,46 @@ the &sources-list; file contains references to more than one distribution
 (for example, <literal>stable</literal> and <literal>testing</literal>).
 APT assigns a priority to each version that is available.
 Subject to dependency constraints, <command>apt-get</command> selects the
-version with the highest priority for installation.
+version with the highest priority for installation.  If multiple
+versions are available with equal priorities, the higher version will
+be selected.
 The APT preferences file overrides the priorities that APT assigns to
 package versions by default, thus giving the user control over which
 one is selected for installation.
 </para>
+
 <para>
-Several instances of the same version of a package may be available when
-the &sources-list; file contains references to more than one source.
-In this case <command>apt-get</command> downloads the instance listed
+If the selected version of a package is available from more than one
+source, for example if more than one mirror of the same packages is
+listed in <filename>sources.list</>, apt will select the source listed
 earliest in the &sources-list; file.
-The APT preferences file does not affect the choice of instance, only
-the choice of version.
+
+The APT preferences file does not affect which download source is
+used, only which versions of packages are selected for installation.
 </para>
 
 <RefSect2><Title>APT's Default Priority Assignments</>
 
 <para>
-If there is no preferences file or if there is no entry in the file
-that applies to a particular version then the priority assigned to that
-version is the priority of the distribution to which that version
-belongs.  It is possible to single out a distribution, "the target release",
-which receives a higher priority than other distributions do by default.
-The target release can be set on the <command>apt-get</command> command
-line or in the APT configuration file <filename>/etc/apt/apt.conf</filename>.
-For example,
-<programlisting>
-<command>apt-get install -t testing <replaceable>some-package</replaceable></command>
-</programlisting>
-<programlisting>
-APT::Default-Release "stable";
-</programlisting>
+If there is no preferences file, or if there is no entry in the file
+that applies to a particular version, then certain defaults are
+supplied.
 </para>
 
+<variablelist>
+<varlistentry>
+<term>Installed packages</term>
+<listitem><simpara>The currently installed version of a package, if any, is
+assigned priority 100.</simpara></listitem>
+</varlistentry>
+
+<varlistentry>
+<term></term>
+<listitem><simpara>The currently installed version of a package, if any, is
+assigned priority 100.</simpara></listitem>
+</varlistentry>
+
 <para>
-If the target release has been specified then APT uses the following
-algorithm to set the priorities of the versions of a package.  Assign:
 <variablelist>
 <varlistentry>
 <term>priority 100</term>
@@ -85,6 +89,16 @@ algorithm to set the priorities of the versions of a package.  Assign:
 </varlistentry>
 </variablelist>
 </para>
+
+For example,
+<programlisting>
+<command>apt-get install -t testing <replaceable>some-package</replaceable></command>
+</programlisting>
+<programlisting>
+APT::Default-Release "stable";
+</programlisting>
+</para>
+
 
 <para>
 If the target release has not been specified then APT simply assigns

@@ -1,0 +1,179 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+
+<!-- Some common paths.. -->
+<!ENTITY docdir "/usr/share/doc/apt/">
+<!ENTITY configureindex "<filename>&docdir;examples/configure-index.gz</>">
+<!ENTITY aptconfdir "<filename>/etc/apt.conf</>">
+<!ENTITY statedir "/var/lib/apt">
+<!ENTITY cachedir "/var/cache/apt">
+
+<!-- Cross references to other man pages -->
+<!ENTITY apt-conf "<CiteRefEntry>
+    <RefEntryTitle><filename/apt.conf/</RefEntryTitle>
+    <ManVolNum/5/
+  </CiteRefEntry>">
+
+<!ENTITY apt-get "<CiteRefEntry>
+    <RefEntryTitle><command/apt-get/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+
+<!ENTITY apt-config "<CiteRefEntry>
+    <RefEntryTitle><command/apt-config/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+
+<!ENTITY apt-cdrom "<CiteRefEntry>
+    <RefEntryTitle><command/apt-cdrom/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+
+<!ENTITY apt-cache "<CiteRefEntry>
+    <RefEntryTitle><command/apt-cache/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+
+<!ENTITY apt-preferences "<CiteRefEntry>
+    <RefEntryTitle><command/apt_preferences/</RefEntryTitle>
+    <ManVolNum/5/
+  </CiteRefEntry>">
+
+<!ENTITY sources-list "<CiteRefEntry>
+    <RefEntryTitle><filename/sources.list/</RefEntryTitle>
+    <ManVolNum/5/
+  </CiteRefEntry>">
+
+<!ENTITY reportbug "<CiteRefEntry>
+    <RefEntryTitle><command/reportbug/</RefEntryTitle>
+    <ManVolNum/1/
+  </CiteRefEntry>">
+
+<!ENTITY dpkg "<CiteRefEntry>
+    <RefEntryTitle><command/dpkg/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+
+<!ENTITY dpkg-buildpackage "<CiteRefEntry>
+    <RefEntryTitle><command/dpkg-buildpackage/</RefEntryTitle>
+    <ManVolNum/1/
+  </CiteRefEntry>">
+
+<!ENTITY gzip "<CiteRefEntry>
+    <RefEntryTitle><command/gzip/</RefEntryTitle>
+    <ManVolNum/1/
+  </CiteRefEntry>">
+
+<!ENTITY dpkg-scanpackages "<CiteRefEntry>
+    <RefEntryTitle><command/dpkg-scanpackages/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+
+<!ENTITY dpkg-scansources "<CiteRefEntry>
+    <RefEntryTitle><command/dpkg-scansources/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+
+<!ENTITY dselect "<CiteRefEntry>
+    <RefEntryTitle><command/dselect/</RefEntryTitle>
+    <ManVolNum/8/
+  </CiteRefEntry>">
+    
+<!-- Boiler plate docinfo section -->
+<!ENTITY apt-docinfo "
+ <docinfo>
+   <address><email>apt@packages.debian.org</></address>
+   <author><firstname>Jason</> <surname>Gunthorpe</></>
+   <copyright><year>1998-2001</> <holder>Jason Gunthorpe</></>
+   <date>12 March 2001</>
+ </docinfo>
+"> 
+
+<!-- Boiler plate Bug reporting section -->
+<!ENTITY manbugs "
+ <RefSect1><Title>バグ</>
+   <para>
+   <ulink url='http://bugs.debian.org/apt'>APT バグページ</>を
+   参照してください。
+   APT のバグを報告する場合は、
+   <filename>/usr/share/doc/debian/bug-reporting.txt</> や 
+   &reportbug; コマンドを参照してください。
+   </para>
+ </RefSect1>
+">
+
+<!-- Boiler plate Author section -->
+<!ENTITY manauthor "
+ <RefSect1><Title>著者</>
+   <para>
+   APT は the APT team <email>apt@packages.debian.org</> によって書かれました。
+   </para>
+ </RefSect1>
+">
+
+<!-- Translator section (Kurasawa Add)-->
+<!ENTITY translator "
+ <RefSect1><Title>翻訳者</>
+    <para>
+    倉澤 望 <email>nabetaro@slug.jp</> (2003)
+    </para>
+    <para>
+    Debian JP Documentation ML <email>debian-doc@debian.or.jp</>
+    </para>
+ </RefSect1>
+">
+
+<!-- Should be used within the option section of the text to
+     put in the blurb about -h, -v, -c and -o -->
+<!ENTITY apt-commonoptions "
+     <VarListEntry><term><option/-h/</><term><option/--help/</>
+     <ListItem><Para>
+     使い方の短い要約を表示します。
+     </Para></ListItem>
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-v/</><term><option/--version/</>
+     <ListItem><Para>
+     プログラムのバージョンを表示します。
+     </Para></ListItem>
+     </VarListEntry>
+
+     <VarListEntry><term><option/-c/</><term><option/--config-file/</>
+     <ListItem><Para>
+<!--
+     Configuration File; Specify a configuration file to use. 
+     The program will read the default configuration file and then this 
+     configuration file. See &apt-conf; for syntax information.     
+-->
+     設定ファイル。 使用する設定ファイルを指定します。
+     この設定ファイルが読めない場合はデフォルトの設定ファイルを読み込みます。
+     文法の情報は &apt-conf; を参照してください。
+     </Para></ListItem>
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-o/</><term><option/--option/</>
+     <ListItem><Para>
+<!--
+     Set a Configuration Option; This will set an arbitary configuration 
+     option. The syntax is <option>-o Foo::Bar=bar</>.
+-->
+     設定オプションのセット -  任意の設定オプションをセットします。
+     文法は <option>-o Foo::Bar=bar</> となります。
+     </Para></ListItem>
+     </VarListEntry>
+">
+
+<!-- Should be used within the option section of the text to
+     put in the blurb about -h, -v, -c and -o -->
+<!ENTITY apt-cmdblurb "
+   <para>
+<!--
+   All command line options may be set using the configuration file, the
+   descriptions indicate the configuration option to set. For boolean
+   options you can override the config file by using something like 
+   <option/-f-/,<option/- -no-f/, <option/-f=no/ or several other variations.
+-->
+   この説明で示したオプションは、すべて設定ファイルを使用して設定できます。
+   設定ファイルに書いた真偽値をとるオプションは <option/-f-/,<option/--no-f/, 
+   <option/-f=no/ などのようにして上書きすることができます。
+   </para>
+">
