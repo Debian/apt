@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.46 2002/11/22 07:15:23 doogie Exp $
+// $Id: strutl.cc,v 1.47 2003/02/02 22:20:27 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -946,8 +946,8 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
 									/*}}}*/
 // ioprintf - C format string outputter to C++ iostreams		/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used to make the internationalization strinc easier to translate
- and to allow reordering of parameters */
+/* This is used to make the internationalization strings easier to translate
+   and to allow reordering of parameters */
 void ioprintf(ostream &out,const char *format,...) 
 {
    va_list args;
@@ -957,6 +957,28 @@ void ioprintf(ostream &out,const char *format,...)
    char S[400];
    vsnprintf(S,sizeof(S),format,args);
    out << S;
+}
+									/*}}}*/
+// safe_snprintf - Safer snprintf					/*{{{*/
+// ---------------------------------------------------------------------
+/* This is a snprintf that will never (ever) go past 'End' and returns a
+   pointer to the end of the new string. The returned string is always null
+   terminated unless Buffer == end. This is a better alterantive to using
+   consecutive snprintfs. */
+char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
+{
+   va_list args;
+   unsigned long Did;
+
+   va_start(args,Format);
+
+   if (End <= Buffer)
+      return End;
+
+   Did = vsnprintf(Buffer,End - Buffer,Format,args);
+   if (Did < 0 || Buffer + Did > End)
+      return End;
+   return Buffer + Did;
 }
 									/*}}}*/
 

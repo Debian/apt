@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.21 2001/05/29 05:09:44 jgg Exp $
+// $Id: strutl.h,v 1.22 2003/02/02 22:20:27 jgg Exp $
 /* ######################################################################
 
    String Util - These are some useful string functions
@@ -33,8 +33,10 @@ using std::ostream;
 #ifdef __GNUG__
 // Methods have a hidden this parameter that is visible to this attribute
 #define APT_FORMAT2 __attribute__ ((format (printf, 2, 3)))
+#define APT_FORMAT3 __attribute__ ((format (printf, 3, 4)))
 #else
 #define APT_FORMAT2
+#define APT_FORMAT3
 #endif    
     
 char *_strstrip(char *String);
@@ -57,6 +59,7 @@ bool Hex2Num(string Str,unsigned char *Num,unsigned int Length);
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 void ioprintf(ostream &out,const char *format,...) APT_FORMAT2;
+char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_FORMAT3;
 bool CheckDomainList(string Host,string List);
 
 #define APT_MKSTRCMP(name,func) \
