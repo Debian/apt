@@ -1,0 +1,50 @@
+#! /bin/sh
+
+# apt postinst, based liberally on James Troup's gpm postinst
+# Copyright (C) 1998, Ben Gertzfield <che@debian.org>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+set -e
+
+create_apt_conf ()
+{
+ echo "/etc/apt/sources.list does not exist; creating a default setup."
+
+ cat > /etc/apt/sources.list <<EOF
+# Use for a local mirror - remove the ftp1 http lines for the bits
+# your mirror contains.
+# deb file:/your/mirror/here/debian stable main contrib non-free
+# See sources.list(5) for more information, especial
+# Remember that you can only use http, ftp or file URIs
+deb http://http.us.debian.org/debian stable main contrib non-free
+deb http://non-us.debian.org/debian-non-US stable non-US
+
+EOF
+}
+ 
+check_apt_conf ()
+{
+ true
+ # this is for future expansion
+}
+
+case "$1" in
+       configure)
+	       #
+               # If there is no /etc/apt/sources.list then create a default
+	       #
+	       if [ ! -f /etc/apt/sources.list ]; then
+	         create_apt_conf
+		 echo
+		 echo "If you wish to change the default sites from which APT fetches Debian"
+		 echo "packages, please edit the file /etc/apt/sources.list."
+	       else
+	         check_apt_conf
+	       fi
+
+esac
+

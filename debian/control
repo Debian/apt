@@ -1,0 +1,33 @@
+Source: apt
+Section: admin
+Priority: optional
+Maintainer: APT Development Team <deity@lists.debian.org>
+Standards-Version: 2.4.1
+
+Package: apt
+Architecture: any
+Depends: ${shlibs:Depends}
+Conflicts: deity
+Replaces: deity
+Description: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a 
+ simpler, safer way to install and upgrade packages.
+ .
+ APT features complete installation ordering, multiple source capability
+ and several other unique features, see the Users Guide in 
+ /usr/doc/apt/guide.text.gz
+
+Package: libapt-pkg-dev
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Development files for APT's libapt-pkg
+ This package contains the header files and static libraries for
+ developing with APT's libapt-pkg Debian package manipulation
+ library.
+
+Package: libapt-pkg-doc
+Architecture: all
+Description: Documentation for APT development
+ This package contains documentation for development of the APT
+ Debian package manipulation program and its libraries.
