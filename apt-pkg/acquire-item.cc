@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.42 2001/02/20 07:03:17 jgg Exp $
+// $Id: acquire-item.cc,v 1.43 2001/02/27 04:24:41 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -345,7 +345,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 
    if (Version.Arch() == 0)
    {
-      _error->Error(_("I wasn't able to locate file for the %s package. "
+      _error->Error(_("I wasn't able to locate a file for the %s package. "
 		    "This might mean you need to manually fix this package. (due to missing arch)"),
 		    Version.ParentPkg().Name());
       return;
