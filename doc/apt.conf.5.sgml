@@ -297,12 +297,14 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <VariableList>
      <VarListEntry><Term>Clean</Term>
      <ListItem><Para>
-     Cache Clean mode; this value may be one of always, auto, prompt and never.
-     always will remove all archives after they have been downloaded while auto
-     will only remove things that are no longer downloadable (replaced with a 
-     new version for instance)
+     Cache Clean mode; this value may be one of always, prompt, auto,
+     pre-auto and never.  always and prompt will remove all packages from
+     the cache after upgrading, prompt (the default) does so conditionally. 
+     auto removes only those packages which are no longer downloadable
+     (replaced with a new version for instance).  pre-auto performs this
+     action before downloading new packages.
      </VarListEntry>
-     
+
      <VarListEntry><Term>Options</Term>
      <ListItem><Para>
      The contents of this variable is passed to &apt-get; as command line
