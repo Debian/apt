@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.21 1999/10/18 00:37:35 jgg Exp $
+// $Id: acquire-method.cc,v 1.22 1999/11/16 03:16:34 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -92,7 +92,7 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    char S[1024];
    if (Queue != 0)
    {
-      snprintf(S,sizeof(S),"400 URI Failure\nURI: %s\n"
+      snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: %s\n"
 	       "Message: %s\n",Queue->Uri.c_str(),Err.c_str());
 
       // Dequeue
@@ -103,7 +103,7 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
 	 QueueBack = Queue;
    }
    else
-      snprintf(S,sizeof(S),"400 URI Failure\nURI: <UNKNOWN>\n"
+      snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: <UNKNOWN>\n"
 	       "Message: %s\n",Err.c_str());
       
    // Set the transient flag 
@@ -129,14 +129,14 @@ void pkgAcqMethod::URIStart(FetchResult &Res)
    
    End += snprintf(S,sizeof(S),"200 URI Start\nURI: %s\n",Queue->Uri.c_str());
    if (Res.Size != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Size: %lu\n",Res.Size);
+      End += snprintf(End,sizeof(S)-4 - (End - S),"Size: %lu\n",Res.Size);
    
    if (Res.LastModified != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Last-Modified: %s\n",
+      End += snprintf(End,sizeof(S)-4 - (End - S),"Last-Modified: %s\n",
 		      TimeRFC1123(Res.LastModified).c_str());
    
    if (Res.ResumePoint != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %lu\n",
+      End += snprintf(End,sizeof(S)-4 - (End - S),"Resume-Point: %lu\n",
 		      Res.ResumePoint);
       
    strcat(End,"\n");
@@ -158,20 +158,20 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    End += snprintf(S,sizeof(S),"201 URI Done\nURI: %s\n",Queue->Uri.c_str());
 
    if (Res.Filename.empty() == false)
-      End += snprintf(End,sizeof(S) - (End - S),"Filename: %s\n",Res.Filename.c_str());
+      End += snprintf(End,sizeof(S)-50 - (End - S),"Filename: %s\n",Res.Filename.c_str());
    
    if (Res.Size != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Size: %lu\n",Res.Size);
+      End += snprintf(End,sizeof(S)-50 - (End - S),"Size: %lu\n",Res.Size);
    
    if (Res.LastModified != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Last-Modified: %s\n",
+      End += snprintf(End,sizeof(S)-50 - (End - S),"Last-Modified: %s\n",
 		      TimeRFC1123(Res.LastModified).c_str());
 
    if (Res.MD5Sum.empty() == false)
-      End += snprintf(End,sizeof(S) - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
+      End += snprintf(End,sizeof(S)-50 - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
 
    if (Res.ResumePoint != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %lu\n",
+      End += snprintf(End,sizeof(S)-50 - (End - S),"Resume-Point: %lu\n",
 		      Res.ResumePoint);
 
    if (Res.IMSHit == true)
@@ -181,17 +181,17 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    if (Alt != 0)
    {
       if (Alt->Filename.empty() == false)
-	 End += snprintf(End,sizeof(S) - (End - S),"Alt-Filename: %s\n",Alt->Filename.c_str());
+	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-Filename: %s\n",Alt->Filename.c_str());
       
       if (Alt->Size != 0)
-	 End += snprintf(End,sizeof(S) - (End - S),"Alt-Size: %lu\n",Alt->Size);
+	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-Size: %lu\n",Alt->Size);
       
       if (Alt->LastModified != 0)
-	 End += snprintf(End,sizeof(S) - (End - S),"Alt-Last-Modified: %s\n",
+	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-Last-Modified: %s\n",
 			 TimeRFC1123(Alt->LastModified).c_str());
       
       if (Alt->MD5Sum.empty() == false)
-	 End += snprintf(End,sizeof(S) - (End - S),"Alt-MD5-Hash: %s\n",
+	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-MD5-Hash: %s\n",
 			 Alt->MD5Sum.c_str());
       
       if (Alt->IMSHit == true)
@@ -385,10 +385,10 @@ void pkgAcqMethod::Log(const char *Format,...)
 
    // sprintf the description
    char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S),"101 Log\nURI: %s\n"
+   unsigned int Len = snprintf(S,sizeof(S)-4,"101 Log\nURI: %s\n"
 			       "Message: ",CurrentURI.c_str());
 
-   vsnprintf(S+Len,sizeof(S)-Len,Format,args);
+   vsnprintf(S+Len,sizeof(S)-4-Len,Format,args);
    strcat(S,"\n\n");
    
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
@@ -409,10 +409,10 @@ void pkgAcqMethod::Status(const char *Format,...)
 
    // sprintf the description
    char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S),"102 Status\nURI: %s\n"
+   unsigned int Len = snprintf(S,sizeof(S)-4,"102 Status\nURI: %s\n"
 			       "Message: ",CurrentURI.c_str());
 
-   vsnprintf(S+Len,sizeof(S)-Len,Format,args);
+   vsnprintf(S+Len,sizeof(S)-4-Len,Format,args);
    strcat(S,"\n\n");
    
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
@@ -428,4 +428,3 @@ pkgAcqMethod::FetchResult::FetchResult() : LastModified(0),
 {
 }
 									/*}}}*/
-

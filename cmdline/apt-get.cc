@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.87 1999/10/28 05:54:45 jgg Exp $
+// $Id: apt-get.cc,v 1.88 1999/11/16 03:16:34 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1228,6 +1228,13 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 /* */
 bool DoClean(CommandLine &CmdL)
 {
+   if (_config->FindB("APT::Get::Simulate") == true)
+   {
+      cout << "Del " << _config->FindDir("Dir::Cache::archives") << "* " <<
+	 _config->FindDir("Dir::Cache::archives") << "partial/*" << endl;
+      return true;
+   }
+   
    // Lock the archive directory
    FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)

@@ -8,7 +8,8 @@ DPKG="/usr/bin/dpkg"
 set -e
 RES=`apt-config shell CLEAN DSelect::Clean OPTS DSelect::Options \
                       DPKG Dir::Bin::dpkg APTGET Dir::Bin::apt-get \
-		      ARCHIVES Dir::Cache::Archives/`
+		      ARCHIVES Dir::Cache::Archives/ \
+		      WAIT DSelect::WaitAfterDownload`
 eval $RES
 set +e
 
@@ -38,8 +39,15 @@ yesno() {
 	echo $ans | tr YN yn
 }
 
-$APTGET $OPTS dselect-upgrade
-RES=$?
+if [ x$WAIT = "xyes" ]; then
+   $APTGET $OPTS -d dselect-upgrade
+   echo "Press enter to continue." && read RES
+   $APTGET $OPTS dselect-upgrade
+   RES=$?
+else
+   $APTGET $OPTS dselect-upgrade
+   RES=$?
+fi
 
 # 1 means the user choose no at the prompt
 if [ $RES -eq 1 ]; then

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.18 1999/10/18 03:18:40 jgg Exp $
+// $Id: acqprogress.cc,v 1.19 1999/11/16 03:16:34 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -145,10 +145,12 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
    
    enum {Long = 0,Medium,Short} Mode = Long;
    
-   char Buffer[300];
+   char Buffer[1024];
    char *End = Buffer + sizeof(Buffer);
    char *S = Buffer;
-   
+   if (ScreenWidth >= sizeof(Buffer))
+      ScreenWidth = sizeof(Buffer)-1;
+
    // Put in the percent done
    sprintf(S,"%ld%%",long(double((CurrentBytes + CurrentItems)*100.0)/double(TotalBytes+TotalItems)));
 
