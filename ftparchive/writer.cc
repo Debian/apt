@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.7 2003/02/10 07:34:41 doogie Exp $
+// $Id: writer.cc,v 1.8 2003/12/26 20:08:56 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -26,7 +26,9 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <ctime>
 #include <ftw.h>
+#include <fnmatch.h>
 #include <iostream>
     
 #include "cachedb.h"
@@ -58,8 +60,6 @@ FTWScanner::FTWScanner()
 {
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
-   TmpExt = 0;
-   Ext[0] = 0;
    RealPath = 0;
    long PMax = pathconf(".",_PC_PATH_MAX);
    if (PMax > 0)
@@ -85,16 +85,19 @@ int FTWScanner::Scanner(const char *File,const struct stat *sb,int Flag)
    if (Flag != FTW_F)
       return 0;
 
-   // See if it is a .deb
-   if (strlen(File) < 4)
-      return 0;
-   
-   unsigned CurExt = 0;
-   for (; Owner->Ext[CurExt] != 0; CurExt++)
-      if (strcmp(File+strlen(File)-strlen(Owner->Ext[CurExt]),
-		 Owner->Ext[CurExt]) == 0)
-	 break;
-   if (Owner->Ext[CurExt] == 0)
+   const char *LastComponent = strrchr(File, '/');
+   if (LastComponent == NULL)
+      LastComponent = File;
+   else
+      LastComponent++;
+
+   vector<string>::iterator I;
+   for(I = Owner->Patterns.begin(); I != Owner->Patterns.end(); ++I)
+   {
+      if (fnmatch((*I).c_str(), LastComponent, 0) == 0)
+         break;
+   }
+   if (I == Owner->Patterns.end())
       return 0;
 
    /* Process it. If the file is a link then resolve it into an absolute
@@ -277,17 +280,6 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
    return true;
 }
 									/*}}}*/
-// FTWScanner::SetExts - Set extensions to support			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool FTWScanner::SetExts(string Vals)
-{
-   delete [] TmpExt;
-   TmpExt = new char[Vals.length()+1];
-   strcpy(TmpExt,Vals.c_str());
-   return TokSplitString(' ',TmpExt,(char **)Ext,sizeof(Ext)/sizeof(Ext[0]));
-}
-									/*}}}*/
 
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -296,8 +288,7 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides) :
 		    Db(DB),Stats(Db.Stats)
 {
    Output = stdout;
-   Ext[0] = ".deb";
-   Ext[1] = 0;
+   AddPattern("*.deb");
    DeLinkLimit = 0;
    
    // Process the command line options
@@ -319,6 +310,28 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides) :
 
    _error->DumpErrors();
 }
+                                                                        /*}}}*/
+// FTWScanner::SetExts - Set extensions to support                      /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FTWScanner::SetExts(string Vals)
+{
+   ClearPatterns();
+   string::size_type Start = 0;
+   for(string::size_type space = Vals.find(' ');
+       space != string::npos;
+       space = Vals.find(' ', space))
+   {
+      if (space > 0)
+      {
+         AddPattern(string("*") + string(Start, space-1));
+         Start = space + 1;
+      }
+   }
+
+   return true;
+}
+
 									/*}}}*/
 // PackagesWriter::DoPackage - Process a single package			/*{{{*/
 // ---------------------------------------------------------------------
@@ -449,8 +462,7 @@ SourcesWriter::SourcesWriter(string BOverrides,string SOverrides,
 			     string ExtOverrides)
 {
    Output = stdout;
-   Ext[0] = ".dsc";
-   Ext[1] = 0;
+   AddPattern("*.dsc");
    DeLinkLimit = 0;
    Buffer = 0;
    BufSize = 0;
@@ -686,8 +698,7 @@ ContentsWriter::ContentsWriter(string DB) :
 		    Db(DB), Stats(Db.Stats)
 
 {
-   Ext[0] = ".deb";
-   Ext[1] = 0;
+   AddPattern("*.deb");
    Output = stdout;
 }
 									/*}}}*/
@@ -777,4 +788,82 @@ bool ContentsWriter::ReadFromPkgs(string PkgFile,string PkgCompress)
    
    return true;
 }
+
 									/*}}}*/
+
+// ReleaseWriter::ReleaseWriter - Constructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+ReleaseWriter::ReleaseWriter(string DB)
+{
+   AddPattern("Packages");
+   AddPattern("Packages.gz");
+   Output = stdout;
+   time_t now = time(NULL);
+   char datestr[128];
+   if (strftime(datestr, sizeof(datestr), "%a, %d %b %Y %H:%M:%S UTC",
+                gmtime(&now)) == 0)
+   {
+      datestr[0] = '\0';
+   }
+
+   map<string,string> Fields;
+   Fields["Origin"] = "";
+   Fields["Label"] = "";
+   Fields["Suite"] = "";
+   Fields["Version"] = "";
+   Fields["Codename"] = "";
+   Fields["Date"] = datestr;
+   Fields["Architectures"] = "";
+   Fields["Components"] = "";
+   Fields["Description"] = "";
+
+   for(map<string,string>::const_iterator I = Fields.begin();
+       I != Fields.end();
+       ++I)
+   {
+      string Config = string("APT::FTPArchive::Release::") + (*I).first;
+      string Value = _config->Find(Config, (*I).second.c_str());
+      if (Value == "")
+         continue;
+
+      fprintf(Output, "%s: %s\n", (*I).first.c_str(), Value.c_str());
+   }
+
+   fprintf(Output, "MD5Sum:\n");
+}
+									/*}}}*/
+// ReleaseWriter::DoPackage - Process a single package			/*{{{*/
+// ---------------------------------------------------------------------
+bool ReleaseWriter::DoPackage(string FileName)
+{
+   // Strip the DirStrip prefix from the FileName and add the PathPrefix
+   string NewFileName;
+   if (DirStrip.empty() == false &&
+       FileName.length() > DirStrip.length() &&
+       stringcmp(FileName.begin(),FileName.begin() + DirStrip.length(),
+		 DirStrip.begin(),DirStrip.end()) == 0)
+      NewFileName = string(FileName.begin() + DirStrip.length(),FileName.end());
+   else 
+      NewFileName = FileName;
+   if (PathPrefix.empty() == false)
+      NewFileName = flCombine(PathPrefix,NewFileName);
+
+   FileFd fd(FileName, FileFd::ReadOnly);
+
+   if (!fd.IsOpen())
+   {
+      return false;
+   }
+
+   MD5Summation MD5;
+   MD5.AddFD(fd.Fd(), fd.Size());
+
+   string MD5Sum = MD5.Result();
+   fprintf(Output, " %s %16d %s\n",
+           MD5Sum.c_str(), fd.Size(), FileName.c_str());
+
+   fd.Close();
+   
+   return true;
+}

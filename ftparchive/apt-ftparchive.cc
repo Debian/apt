@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.8 2003/07/18 15:28:58 mdz Exp $
+// $Id: apt-ftparchive.cc,v 1.9 2003/12/26 20:08:56 mdz Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -223,6 +223,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    
    return !_error->PendingError();
 }
+
 									/*}}}*/
 // PackageMap::GenSources - Actually generate a Source file		/*{{{*/
 // ---------------------------------------------------------------------
@@ -672,6 +673,21 @@ bool SimpleGenSources(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// SimpleGenRelease - Generate a Release file for a directory tree	/*{{{*/
+// ---------------------------------------------------------------------
+bool SimpleGenRelease(CommandLine &CmdL)
+{
+   ReleaseWriter Release("");
+   if (_error->PendingError() == true)
+      return false;
+
+   if (Release.RecursiveScan(CmdL.FileList[1]) == false)
+      return false;
+
+   return true;
+}
+
+									/*}}}*/
 // Generate - Full generate, using a config file			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -887,6 +903,7 @@ int main(int argc, const char *argv[])
    CommandLine::Dispatch Cmds[] = {{"packages",&SimpleGenPackages},
                                    {"contents",&SimpleGenContents},
                                    {"sources",&SimpleGenSources},
+                                   {"release",&SimpleGenRelease},
                                    {"generate",&Generate},
                                    {"clean",&Clean},
       				   {"help",&ShowHelp},

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.h,v 1.4 2001/06/26 02:50:27 jgg Exp $
+// $Id: writer.h,v 1.5 2003/12/26 20:08:56 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -29,13 +29,12 @@
 using std::string;
 using std::cout;
 using std::endl;
+using std::vector;
     
 class FTWScanner
 {
    protected:
-
-   char *TmpExt;
-   const char *Ext[10];
+   vector<string> Patterns;
    const char *OriginalPath;
    char *RealPath;
    bool ErrorPrinted;
@@ -66,10 +65,12 @@ class FTWScanner
    virtual bool DoPackage(string FileName) = 0;
    bool RecursiveScan(string Dir);
    bool LoadFileList(string BaseDir,string File);
+   bool ClearPatterns() { Patterns.clear(); };
+   bool AddPattern(string Pattern) { Patterns.push_back(Pattern); };
    bool SetExts(string Vals);
       
    FTWScanner();
-   virtual ~FTWScanner() {delete [] RealPath; delete [] TmpExt;};
+   virtual ~FTWScanner() {delete [] RealPath;};
 };
 
 class PackagesWriter : public FTWScanner
@@ -148,5 +149,16 @@ class SourcesWriter : public FTWScanner
    virtual ~SourcesWriter() {free(Buffer);};
 };
 
+class ReleaseWriter : public FTWScanner
+{
+public:
+   ReleaseWriter(string DB);
+   virtual bool DoPackage(string FileName);
+protected:
+   // General options
+   string PathPrefix;
+   string DirStrip;
+   FILE *Output;
+};
 
 #endif
