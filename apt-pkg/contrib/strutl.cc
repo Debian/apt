@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.36 2001/02/23 05:45:27 jgg Exp $
+// $Id: strutl.cc,v 1.37 2001/02/23 06:08:57 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -893,7 +893,7 @@ bool CheckDomainList(string Host,string List)
 	 continue;
       
       // Match the end of the string..
-      if ((Host.size() >= (Cur - List.begin())) &&
+      if ((Host.size() >= (unsigned)(Cur - List.begin())) &&
 	  Cur - Start != 0 &&
 	  stringcasecmp(Host.end() - (Cur - Start),Host.end(),Start,Cur) == 0)
 	 return true;
