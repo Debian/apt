@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.28 1999/03/15 06:01:00 jgg Exp $
+// $Id: http.cc,v 1.29 1999/03/15 07:20:41 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -916,7 +916,6 @@ void HttpMethod::SigTerm(int)
    
    // Timestamp
    struct utimbuf UBuf;
-   time(&UBuf.actime);
    UBuf.actime = FailTime;
    UBuf.modtime = FailTime;
    utime(FailFile.c_str(),&UBuf);

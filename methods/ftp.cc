@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.1 1999/03/15 06:00:59 jgg Exp $
+// $Id: ftp.cc,v 1.2 1999/03/15 07:20:41 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -17,7 +17,6 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
-#include "ftp.h"
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -34,11 +33,16 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#include "ftp.h"
+
+
 									/*}}}*/
 
 unsigned long TimeOut = 120;
 URI Proxy;
-bool Debug;
+string FtpMethod::FailFile;
+int FtpMethod::FailFd = -1;
+time_t FtpMethod::FailTime = 0;
 
 // FTPConn::FTPConn - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -46,7 +50,7 @@ bool Debug;
 FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1), 
                             DataListenFd(-1), ServerName(Srv)
 {
-   Debug = true;
+   Debug = _config->FindB("Debug::Acquire::Ftp",false);
    memset(&PasvAddr,0,sizeof(PasvAddr));
 }
 									/*}}}*/
@@ -78,7 +82,7 @@ void FTPConn::Close()
    login. */
 string LastHost;
 in_addr LastHostA;
-bool FTPConn::Open()
+bool FTPConn::Open(pkgAcqMethod *Owner)
 {
    // Use the already open connection if possible.
    if (ServerFd != -1)
@@ -111,8 +115,6 @@ bool FTPConn::Open()
    {
       if (ServerName.Port != 0)
 	 Port = ServerName.Port;
-      else
-	 ServerName.Port = Port;
       Host = ServerName.Host;
    }
    else
@@ -127,7 +129,7 @@ bool FTPConn::Open()
       sensible */
    if (LastHost != Host)
    {
-//      Owner->Status("Connecting to %s",Host.c_str());
+      Owner->Status("Connecting to %s",Host.c_str());
 
       // Lookup the host
       hostent *Addr = gethostbyname(Host.c_str());
@@ -137,7 +139,7 @@ bool FTPConn::Open()
       LastHostA = *(in_addr *)(Addr->h_addr_list[0]);
    }
    
-//   Owner->Status("Connecting to %s (%s)",Host.c_str(),inet_ntoa(LastHostA));
+   Owner->Status("Connecting to %s (%s)",Host.c_str(),inet_ntoa(LastHostA));
    
    // Get a socket
    if ((ServerFd = socket(AF_INET,SOCK_STREAM,0)) < 0)
@@ -165,6 +167,7 @@ bool FTPConn::Open()
    if (Err != 0)
       return _error->Error("Could not connect.");
 
+   Owner->Status("Logging in");
    return Login();
 }
 									/*}}}*/
@@ -244,7 +247,10 @@ bool FTPConn::Login()
 	 
 	 // Substitute the variables into the command
 	 char SitePort[20];
-	 sprintf(SitePort,"%u",ServerName.Port);
+	 if (ServerName.Port != 0)
+	    sprintf(SitePort,"%u",ServerName.Port);
+	 else
+	    strcat("21",SitePort);
 	 string Tmp = Opts->Value;
 	 Tmp = SubstVar(Tmp,"$(PROXY_USER)",Proxy.User);
 	 Tmp = SubstVar(Tmp,"$(PROXY_PASS)",Proxy.Password);
@@ -315,12 +321,18 @@ bool FTPConn::ReadLine(string &Text)
 
       // Wait for some data..
       if (WaitFd(ServerFd,false,TimeOut) == false)
+      {
+	 Close();
 	 return _error->Error("Connection timeout");
+      }
       
       // Suck it back
       int Res = read(ServerFd,Buffer,sizeof(Buffer) - Len);
       if (Res <= 0)
+      {
+	 Close();
 	 return _error->Errno("read","Read error");
+      }      
       Len += Res;
    }
 
@@ -348,7 +360,7 @@ bool FTPConn::ReadResp(unsigned int &Ret,string &Text)
    if (*End == ' ')
    {
       if (Debug == true)
-	 cout << "<- '" << QuoteString(Text,"") << "'" << endl;
+	 cerr << "<- '" << QuoteString(Text,"") << "'" << endl;
       return true;
    }
    
@@ -390,7 +402,7 @@ bool FTPConn::ReadResp(unsigned int &Ret,string &Text)
    }	   
 
    if (Debug == true && _error->PendingError() == false)
-      cout << "<- '" << QuoteString(Text,"") << "'" << endl;
+      cerr << "<- '" << QuoteString(Text,"") << "'" << endl;
       
    return !_error->PendingError();
 }
@@ -409,7 +421,7 @@ bool FTPConn::WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...)
    strcat(S,"\r\n");
  
    if (Debug == true)
-      cout << "-> '" << QuoteString(S,"") << "'" << endl;
+      cerr << "-> '" << QuoteString(S,"") << "'" << endl;
 
    // Send it off
    unsigned long Len = strlen(S);
@@ -417,11 +429,18 @@ bool FTPConn::WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...)
    while (Len != 0)
    {
       if (WaitFd(ServerFd,true,TimeOut) == false)
+      {
+	 Close();
 	 return _error->Error("Connection timeout");
+      }
       
       int Res = write(ServerFd,S + Start,Len);
       if (Res <= 0)
+      {
+	 Close();
 	 return _error->Errno("write","Write Error");
+      }
+      
       Len -= Res;
       Start += Res;
    }
@@ -488,19 +507,20 @@ bool FTPConn::GoPasv()
 // FTPConn::Size - Return the size of a file				/*{{{*/
 // ---------------------------------------------------------------------
 /* Grab the file size from the server, 0 means no size or empty file */
-unsigned long FTPConn::Size(const char *Path)
+bool FTPConn::Size(const char *Path,unsigned long &Size)
 {
    // Query the size
    unsigned int Tag;
    string Msg;
+   Size = 0;
    if (WriteMsg(Tag,Msg,"SIZE %s",Path) == false)
       return false;
    
    char *End;
-   unsigned long Size = strtol(Msg.c_str(),&End,10);
+   Size = strtol(Msg.c_str(),&End,10);
    if (Tag >= 400 || End == Msg.c_str())
-      return 0;
-   return Size;
+      Size = 0;
+   return true;
 }
 									/*}}}*/
 // FTPConn::ModTime - Return the modification time of the file		/*{{{*/
@@ -659,13 +679,15 @@ bool FTPConn::Finalize()
 // ---------------------------------------------------------------------
 /* This opens a data connection, sends REST and RETR and then
    transfers the file over. */
-bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume)
+bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
+		  MD5Summation &MD5,bool &Missing)
 {
+   Missing = false;
    if (CreateDataFd() == false)
       return false;
 
    unsigned int Tag;
-   string Msg;
+   string Msg;   
    if (Resume != 0)
    {      
       if (WriteMsg(Tag,Msg,"REST %u",Resume) == false)
@@ -682,7 +704,11 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume)
       return false;
    
    if (Tag >= 400)
+   {
+      if (Tag == 550)
+	 Missing = true;
       return _error->Error("Unable to fetch file, server said '%s'",Msg.c_str());
+   }
    
    // Finish off the data connection
    if (Finalize() == false)
@@ -724,37 +750,156 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume)
 }
 									/*}}}*/
 
-int main()
+// FtpMethod::FtpMethod - Constructor					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+FtpMethod::FtpMethod() : pkgAcqMethod("1.0",SendConfig)
 {
-   FTPConn Con(URI("ftp://va.debian.org/debian/README"));
-   string Msg;
-   _config->Set("Acquire::FTP::Passive","false");
+   signal(SIGTERM,SigTerm);
+   signal(SIGINT,SigTerm);
    
-   while (1)
+   Server = 0;
+   FailFd = -1;
+}
+									/*}}}*/
+// FtpMethod::SigTerm - Handle a fatal signal				/*{{{*/
+// ---------------------------------------------------------------------
+/* This closes and timestamps the open file. This is neccessary to get 
+   resume behavoir on user abort */
+void FtpMethod::SigTerm(int)
+{
+   if (FailFd == -1)
+      exit(100);
+   close(FailFd);
+   
+   // Timestamp
+   struct utimbuf UBuf;
+   UBuf.actime = FailTime;
+   UBuf.modtime = FailTime;
+   utime(FailFile.c_str(),&UBuf);
+   
+   exit(100);
+}
+									/*}}}*/
+// FtpMethod::Configuration - Handle a configuration message		/*{{{*/
+// ---------------------------------------------------------------------
+/* We stash the desired pipeline depth */
+bool FtpMethod::Configuration(string Message)
+{
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+   
+   TimeOut = _config->FindI("Acquire::Ftp::Timeout",TimeOut);
+   return true;
+}
+									/*}}}*/
+// FtpMethod::Fetch - Fetch a file					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FtpMethod::Fetch(FetchItem *Itm)
+{
+   URI Get = Itm->Uri;
+   const char *File = Get.Path.c_str();
+   FetchResult Res;
+   Res.Filename = Itm->DestFile;
+   Res.IMSHit = false;
+   
+   // Connect to the server
+   if (Server == 0 || Server->Comp(Get) == false)
    {
-      if (Con.Open() == false)
-	 break;
-      cout << "Size: " << Con.Size("/debian/README") << endl;
-      
-      time_t Time;
-      Con.ModTime("/debian/README",Time);      
-      cout << "Time: " << TimeRFC1123(Time) << endl;
-   
-      {
-	 
-      FileFd F("t",FileFd::WriteEmpty);
-      Con.Get("/debian/README",F);
-      }
-      
-      {
-	 
-      FileFd F("t3",FileFd::WriteEmpty);
-      Con.Get("/debian/README.pgp",F);
-      }
-      
-      break;
+      delete Server;
+      Server = new FTPConn(Get);
+   }
+  
+   // Could not connect is a transient error..
+   if (Server->Open(this) == false)
+   {
+      Fail(true);
+      return true;
    }
    
-   _error->DumpErrors();
-   return 0;
+   // Get the files information
+   unsigned long Size;
+   if (Server->Size(File,Size) == false ||
+       Server->ModTime(File,FailTime) == false)
+   {
+      Fail(true);
+      return true;
+   }
+   Res.Size = Size;
+
+   // See if it is an IMS hit
+   if (Itm->LastModified == FailTime)
+   {
+      Res.Size = 0;
+      Res.IMSHit = true;
+      URIDone(Res);
+      return true;
+   }
+   
+   // See if the file exists
+   struct stat Buf;
+   if (stat(Itm->DestFile.c_str(),&Buf) == 0)
+   {
+      if (Size == (unsigned)Buf.st_size && FailTime == Buf.st_mtime)
+      {
+	 Res.Size = Buf.st_size;
+	 Res.LastModified = Buf.st_mtime;
+	 URIDone(Res);
+	 return true;
+      }
+      
+      // Resume?
+      if (FailTime == Buf.st_mtime && Size < (unsigned)Buf.st_size)
+	 Res.ResumePoint = Buf.st_size;
+   }
+   
+   // Open the file
+   MD5Summation MD5;
+   {
+      FileFd Fd(Itm->DestFile,FileFd::WriteAny);
+      if (_error->PendingError() == true)
+	 return false;
+      
+      URIStart(Res);
+      
+      FailFile = Itm->DestFile;
+      FailFile.c_str();   // Make sure we dont do a malloc in the signal handler
+      FailFd = Fd.Fd();
+      
+      bool Missing;
+      if (Server->Get(File,Fd,Res.ResumePoint,MD5,Missing) == false)
+      {
+	 // If the file is missing we hard fail otherwise transient fail
+	 if (Missing == true)
+	    return false;
+	 Fail(true);
+	 return true;
+      }
+
+      Res.Size = Fd.Size();
+   }
+   
+   Res.LastModified = FailTime;
+   Res.MD5Sum = MD5.Result();
+   
+   // Timestamp
+   struct utimbuf UBuf;
+   time(&UBuf.actime);
+   UBuf.actime = FailTime;
+   UBuf.modtime = FailTime;
+   utime(Queue->DestFile.c_str(),&UBuf);
+   FailFd = -1;
+
+   URIDone(Res);
+   
+   return true;
+}
+									/*}}}*/
+
+int main()
+{ 
+   FtpMethod Mth;
+   
+   return Mth.Run();
 }
