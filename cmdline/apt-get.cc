@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.98 2000/05/14 06:01:04 jgg Exp $
+// $Id: apt-get.cc,v 1.99 2000/06/05 04:47:30 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1691,6 +1691,7 @@ int main(int argc,const char *argv[])
       {'s',"simulate","APT::Get::Simulate",0},
       {'s',"just-print","APT::Get::Simulate",0},
       {'s',"recon","APT::Get::Simulate",0},
+      {'s',"dry-run","APT::Get::Simulate",0},
       {'s',"no-act","APT::Get::Simulate",0},
       {'y',"yes","APT::Get::Assume-Yes",0},
       {'y',"assume-yes","APT::Get::Assume-Yes",0},      
