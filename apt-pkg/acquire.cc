@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.19 1998/11/29 01:24:19 jgg Exp $
+// $Id: acquire.cc,v 1.20 1998/12/05 04:19:03 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -513,6 +513,17 @@ bool pkgAcquire::Queue::Startup()
    Owner->Add(Workers);
    if (Workers->Start() == false)
       return false;
+   
+   /* When pipelining we commit 10 items. This needs to change when we
+      added other source retry to have cycle maintain a pipeline depth
+      on its own. */
+   if (Cnf->Pipeline == true)
+   {
+      bool Res = true;
+      for (int I = 0; I != 10 && Res == true; I++)
+	 Res &= Cycle();
+      return Res;
+   }
    
    return Cycle();
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.13 1998/12/05 01:45:19 jgg Exp $
+// $Id: acquire-method.cc,v 1.14 1998/12/05 04:19:01 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -47,8 +47,9 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
       exit(100);
 
    SetNonBlock(STDIN_FILENO,true);
-   
+
    Queue = 0;
+   QueueBack = 0;
 }
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
@@ -78,6 +79,8 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
       FetchItem *Tmp = Queue;
       Queue = Queue->Next;
       delete Tmp;
+      if (Tmp == QueueBack)
+	 QueueBack = Queue;
    }
    else
       snprintf(S,sizeof(S),"400 URI Failure\nURI: <UNKNOWN>\n"
@@ -183,6 +186,8 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    FetchItem *Tmp = Queue;
    Queue = Queue->Next;
    delete Tmp;
+   if (Tmp == QueueBack)
+      QueueBack = Queue;
 }
 									/*}}}*/
 // AcqMethod::MediaFail - Syncronous request for new media		/*{{{*/
@@ -328,7 +333,9 @@ int pkgAcqMethod::Run(bool Single)
 	    FetchItem **I = &Queue;
 	    for (; *I != 0; I = &(*I)->Next);
 	    *I = Tmp;
-
+	    if (QueueBack == 0)
+	       QueueBack = Tmp;
+	    
 	    // Notify that this item is to be fetched.
 	    if (Fetch(Tmp) == false)
 	       Fail();

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/
-// $Id: http.h,v 1.4 1998/11/11 06:54:22 jgg Exp $
+// Description								/*{{{*/// $Id: http.h,v 1.5 1998/12/05 04:19:06 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -118,6 +117,8 @@ class HttpMethod : public pkgAcqMethod
    bool Flush(ServerState *Srv);
    bool ServerDie(ServerState *Srv);
    int DealWithHeaders(FetchResult &Res,ServerState *Srv);
+
+   bool Fetch(FetchItem *);
    
    // In the event of a fatal signal this file will be closed and timestamped.
    static string FailFile;
@@ -128,16 +129,15 @@ class HttpMethod : public pkgAcqMethod
    public:
    friend ServerState;
 
-   int Depth;
    FileFd *File;
+   ServerState *Server;
    
    int Loop();
    
    HttpMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig) 
    {
-      Depth = 0;
       File = 0;
-      Depth = 0;
+      Server = 0;
    };
 };
 

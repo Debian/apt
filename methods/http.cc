@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.8 1998/11/28 20:50:10 jgg Exp $
+// $Id: http.cc,v 1.9 1998/12/05 04:19:05 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -880,6 +880,38 @@ void HttpMethod::SigTerm(int)
    exit(100);
 }
 									/*}}}*/
+// HttpMethod::Fetch - Fetch an item					/*{{{*/
+// ---------------------------------------------------------------------
+/* This adds an item to the pipeline. We keep the pipeline at a fixed
+   depth. */
+bool HttpMethod::Fetch(FetchItem *)
+{
+   if (Server == 0)
+      return true;
+   
+   // Queue the requests
+   int Depth = -1;
+   bool Tail = false;
+   for (FetchItem *I = Queue; I != 0 && Depth < 5; I = I->Next, Depth++)
+   {
+      // Make sure we stick with the same server
+      if (Server->Comp(I->Uri) == false)
+	 break;
+      
+      if (QueueBack == I)
+	 Tail = true;
+      if (Tail == true)
+      {
+	 Depth++;
+	 QueueBack = I->Next;
+	 SendReq(I,Server->Out);
+	 continue;
+      }	 
+   }
+   
+   return true;
+};
+									/*}}}*/
 // HttpMethod::Loop - Main loop						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -888,7 +920,7 @@ int HttpMethod::Loop()
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
    
-   ServerState *Server = 0;
+   Server = 0;
    
    int FailCounter = 0;
    while (1)
@@ -926,10 +958,10 @@ int HttpMethod::Loop()
 	 Fail();
 	 continue;
       }
-      
-      // Queue the request
-      SendReq(Queue,Server->Out);
 
+      // Fill the pipeline.
+      Fetch(0);
+      
       // Fetch the next URL header data from the server.
       switch (Server->RunHeaders())
       {
@@ -954,7 +986,7 @@ int HttpMethod::Loop()
 	    continue;
 	 }
       };
-      
+
       // Decide what to do.
       FetchResult Res;
       Res.Filename = Queue->DestFile;

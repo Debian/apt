@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.6 1998/12/04 22:56:51 jgg Exp $
+// $Id: acquire-method.h,v 1.7 1998/12/05 04:19:02 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -48,6 +48,7 @@ class pkgAcqMethod
    // State
    vector<string> Messages;
    FetchItem *Queue;
+   FetchItem *QueueBack;
       
    // Handlers for messages
    virtual bool Configuration(string Message);
