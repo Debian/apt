@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.20 1999/09/09 06:08:45 jgg Exp $
+// $Id: depcache.cc,v 1.21 1999/10/22 05:58:54 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -216,8 +216,9 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,long Mult)
    }
    
    // Upgrading
-   if (Pkg->CurrentVer != 0 && P.InstallVer != (Version *)Pkg.CurrentVer() &&
-       P.InstallVer != 0)
+   if (Pkg->CurrentVer != 0 && 
+       (P.InstallVer != (Version *)Pkg.CurrentVer() || 
+	(P.iFlags & ReInstall) == ReInstall) && P.InstallVer != 0)
    {
       iUsrSize += Mult*((signed)P.InstVerIter(*this)->InstalledSize - 
 			(signed)Pkg.CurrentVer()->InstalledSize);
@@ -275,9 +276,13 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
    
    // Installed, no upgrade
    if (State.Upgradable() == false)
-   {
+   {	 
       if (State.Mode == ModeDelete)
 	 iDelCount += Add;
+      else
+	 if ((State.iFlags & ReInstall) == ReInstall)
+	    iInstCount += Add;
+      
       return;
    }
    
@@ -703,7 +708,24 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst)
    }
 }
 									/*}}}*/
-
+// DepCache::SetReInstall - Set the reinstallation flag			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
+{
+   RemoveSizes(Pkg);
+   RemoveStates(Pkg);
+   
+   StateCache &P = PkgState[Pkg->ID];
+   if (To == true)
+      P.iFlags |= ReInstall;
+   else
+      P.iFlags &= ~ReInstall;
+   
+   AddStates(Pkg);
+   AddSizes(Pkg);
+}
+									/*}}}*/
 // StateCache::Update - Compute the various static display things	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is called whenever the Candidate version changes. */

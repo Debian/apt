@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.11 1999/07/10 04:58:42 jgg Exp $
+// $Id: depcache.h,v 1.12 1999/10/22 05:58:54 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -60,7 +60,7 @@ class pkgDepCache : public pkgCache
                        DepCandPolicy = (1 << 4), DepCandMin = (1 << 5)};
    
    // These flags are used in StateCache::iFlags
-   enum InternalFlags {AutoKept = (1 << 0), Purge = (1 << 1)};
+   enum InternalFlags {AutoKept = (1 << 0), Purge = (1 << 1), ReInstall = (1 << 2)};
       
    enum VersionTypes {NowVersion, InstallVersion, CandidateVersion};
    enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2};
@@ -164,6 +164,7 @@ class pkgDepCache : public pkgCache
    void MarkKeep(PkgIterator const &Pkg,bool Soft = false);
    void MarkDelete(PkgIterator const &Pkg,bool Purge = false);
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true);
+   void SetReInstall(PkgIterator const &Pkg,bool To);
    
    // This is for debuging
    void Update(OpProgress *Prog = 0);

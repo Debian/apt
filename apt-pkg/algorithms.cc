@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.26 1999/10/22 04:05:47 jgg Exp $
+// $Id: algorithms.cc,v 1.27 1999/10/22 05:58:54 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -574,7 +574,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 	       /* We let the algorithm deal with conflicts on its next iteration,
 		it is much smarter than us */
 	       if (Start->Type == pkgCache::Dep::Conflicts)
-		  continue;
+		  break;
 	       
 	       if (Debug == true)
 		  clog << "    Reinst Failed early because of " << Start.TargetPkg().Name() << endl;

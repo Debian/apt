@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.21 1999/09/30 06:30:34 jgg Exp $
+// $Id: packagemanager.cc,v 1.22 1999/10/22 05:58:54 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -157,6 +157,7 @@ bool pkgPackageManager::CreateOrderList()
       if ((Cache[I].Keep() == true || 
 	  Cache[I].InstVerIter(Cache) == I.CurrentVer()) && 
 	  I.State() == pkgCache::PkgIterator::NeedsNothing &&
+	  (Cache[I].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall &&
 	  (I.Purge() != false || Cache[I].Mode != pkgDepCache::ModeDelete ||
 	   (Cache[I].iFlags & pkgDepCache::Purge) != pkgDepCache::Purge))
 	 continue;
@@ -556,7 +557,9 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       }
       
       // Sanity check
-      if (Cache[Pkg].Keep() == true && Pkg.State() == pkgCache::PkgIterator::NeedsNothing)
+      if (Cache[Pkg].Keep() == true && 
+	  Pkg.State() == pkgCache::PkgIterator::NeedsNothing &&
+	  (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
       {
 	 _error->Error("Internal Error, trying to manipulate a kept package");
 	 return Failed;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.82 1999/10/22 04:05:47 jgg Exp $
+// $Id: apt-get.cc,v 1.83 1999/10/22 05:58:54 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -408,6 +408,7 @@ void Stats(ostream &out,pkgDepCache &Dep)
 {
    unsigned long Upgrade = 0;
    unsigned long Install = 0;
+   unsigned long ReInstall = 0;
    for (pkgCache::PkgIterator I = Dep.PkgBegin(); I.end() == false; I++)
    {
       if (Dep[I].NewInstall() == true)
@@ -415,11 +416,15 @@ void Stats(ostream &out,pkgDepCache &Dep)
       else
 	 if (Dep[I].Upgrade() == true)
 	    Upgrade++;
+      if (Dep[I].Delete() == false && (Dep[I].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall)
+	 ReInstall++;
    }   
 
    out << Upgrade << " packages upgraded, " << 
-      Install << " newly installed, " <<
-      Dep.DelCount() << " to remove and " << 
+      Install << " newly installed, ";
+   if (ReInstall != 0)
+      out << ReInstall << " reinstalled, ";
+   out << Dep.DelCount() << " to remove and " << 
       Dep.KeepCount() << " not upgraded." << endl;
 
    if (Dep.BadCount() != 0)
@@ -545,7 +550,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       return _error->Error("Internal Error, InstallPackages was called with broken packages!");
    }
 
-   if (Cache->DelCount() == 0 && Cache->InstCount() == 0 && 
+   if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
        Cache->BadCount() == 0)
       return true;
 
@@ -837,8 +842,18 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    Cache.MarkInstall(Pkg,false);
    if (State.Install() == false)
    {
-      if (AllowFail == true)
-	 c1out << "Sorry, " << Pkg.Name() << " is already the newest version"  << endl;
+      if (_config->FindB("APT::Get::ReInstall",false) == true)
+      {
+	 if (Pkg->CurrentVer == 0 || Pkg.CurrentVer().Downloadable() == false)
+	    c1out << "Sorry, re-installation of " << Pkg.Name() << " is not possible, it cannot be downloaded" << endl;
+	 else
+	    Cache.SetReInstall(Pkg,true);
+      }      
+      else
+      {
+	 if (AllowFail == true)
+	    c1out << "Sorry, " << Pkg.Name() << " is already the newest version"  << endl;
+      }      
    }   
    else
       ExpectedInst++;
@@ -1621,6 +1636,7 @@ int main(int argc,const char *argv[])
       {0,"tar-only","APT::Get::tar-Only",0},
       {0,"purge","APT::Get::Purge",0},
       {0,"list-cleanup","APT::Get::List-Cleanup",0},
+      {0,"reinstall","APT::Get::ReInstall",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
