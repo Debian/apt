@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.102 2001/02/27 02:51:03 tausq Exp $
+// $Id: apt-get.cc,v 1.103 2001/03/03 23:12:07 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -930,8 +930,8 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 	   "of sources.list\n"),Pkg.Name());
 	 
 	 string List;
-	 SPtrArray<bool> Seen = new bool[Cache.Head().PackageFileCount];
-	 memset(Seen,0,Cache.Head().PackageFileCount*sizeof(*Seen));
+	 SPtrArray<bool> Seen = new bool[Cache.Head().PackageCount];
+	 memset(Seen,0,Cache.Head().PackageCount*sizeof(*Seen));
 	 pkgCache::DepIterator Dep = Pkg.RevDependsList();
 	 for (; Dep.end() == false; Dep++)
 	 {
