@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.26 1998/12/06 06:22:59 jgg Exp $
+// $Id: apt-get.cc,v 1.27 1998/12/07 00:34:24 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -397,6 +397,8 @@ bool CacheFile::Open()
    pkgMakeStatusCache(List,Progress);
    if (_error->PendingError() == true)
       return _error->Error("The package lists or status file could not be parsed or opened.");
+   if (_error->empty() == false)
+      _error->Warning("You may want to run apt-get update to correct theses missing files");
    
    Progress.Done();
    

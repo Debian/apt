@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.15 1998/12/06 06:22:58 jgg Exp $
+// $Id: apt-cache.cc,v 1.16 1998/12/07 00:34:22 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -22,6 +22,7 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
+#include <strutl.h>
 
 #include <iostream.h>
 #include <config.h>
@@ -180,7 +181,8 @@ bool DumpPackage(pkgCache &Cache,CommandLine &CmdL)
 /* */
 bool Stats(pkgCache &Cache)
 {
-   cout << "Total Package Names : " << Cache.Head().PackageCount << endl;
+   cout << "Total Package Names : " << Cache.Head().PackageCount << " (" <<
+      SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
    pkgCache::PkgIterator I = Cache.PkgBegin();
    
    int Normal = 0;
@@ -225,8 +227,36 @@ bool Stats(pkgCache &Cache)
    cout << "  Mixed Virtual Packages: " << NVirt << endl;
    cout << "  Missing: " << Missing << endl;
    
-   cout << "Total Distinct Versions: " << Cache.Head().VersionCount << endl;
-   cout << "Total Dependencies: " << Cache.Head().DependsCount << endl;
+   cout << "Total Distinct Versions: " << Cache.Head().VersionCount << " (" <<
+      SizeToStr(Cache.Head().VersionCount*Cache.Head().VersionSz) << ')' << endl;
+   cout << "Total Dependencies: " << Cache.Head().DependsCount << " (" << 
+      SizeToStr(Cache.Head().DependsCount*Cache.Head().DependencySz) << ')' << endl;
+   
+   cout << "Total Ver/File relations: " << Cache.Head().PackageCount << " (" <<
+      SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
+   
+   // String list stats
+   unsigned long Size = 0;
+   unsigned long Count = 0;
+   for (pkgCache::StringItem *I = Cache.StringItemP + Cache.Head().StringList;
+        I!= Cache.StringItemP; I = Cache.StringItemP + I->NextItem)
+   {
+      Count++;
+      Size += strlen(Cache.StrP + I->String);
+   }
+   cout << "Total Globbed Strings: " << Count << " (" << SizeToStr(Size) << ')' << endl;
+      
+   unsigned long Slack = 0;
+   for (int I = 0; I != 7; I++)
+      Slack += Cache.Head().Pools[I].ItemSize*Cache.Head().Pools[I].Count;
+   cout << "Total Slack space: " << SizeToStr(Slack) << endl;
+   
+   unsigned long Total = 0;
+   Total = Slack + Size + Cache.Head().DependsCount*Cache.Head().DependencySz + 
+           Cache.Head().VersionCount*Cache.Head().VersionSz +
+           Cache.Head().PackageCount*Cache.Head().PackageSz;
+   cout << "Total Space Accounted for: " << SizeToStr(Total) << endl;
+   
    return true;
 }
 									/*}}}*/
