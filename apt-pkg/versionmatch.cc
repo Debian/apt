@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versionmatch.cc,v 1.3 2001/04/29 05:13:51 jgg Exp $
+// $Id: versionmatch.cc,v 1.4 2001/05/22 06:20:06 jgg Exp $
 /* ######################################################################
 
    Version Matching 
@@ -20,6 +20,7 @@
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
+#include <ctype.h>
 									/*}}}*/
 
 // VersionMatch::pkgVersionMatch - Constructor				/*{{{*/
@@ -36,7 +37,7 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
       if (Data.end()[-1] == '*')
       {
 	 VerPrefixMatch = true;
-	 VerStr = string(Data.begin(),Data.end()-1);
+	 VerStr = string(Data,0,Data.length()-1);
       }
       else
 	 VerStr = Data;
@@ -50,8 +51,8 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 	 return;
       
       // Are we a simple specification?
-      const char *I = Data.begin();
-      for (; I < Data.end() && *I != '='; I++);	 
+      string::const_iterator I = Data.begin();
+      for (; I != Data.end() && *I != '='; I++);
       if (I == Data.end())
       {
 	 // Temporary
@@ -124,8 +125,7 @@ bool pkgVersionMatch::MatchVer(const char *A,string B,bool Prefix)
       return false;
    
    // Match (leading?)
-   if (stringcasecmp(B.begin(),B.end(),
-		     Ab,Ab + B.length()) == 0)
+   if (stringcasecmp(B,Ab,Ab + B.length()) == 0)
       return true;
    
    return false;
