@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.31 2001/10/04 05:13:23 jgg Exp $
+// $Id: tagfile.cc,v 1.32 2002/03/26 07:22:31 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -68,13 +68,13 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 	 return false;
       
       if (Tag.Scan(Start,End - Start) == false)
-	 return _error->Error(_("Unable to parse package file %s (1)"),Fd.Name().c_str());
+	 return _error->Error(_("Unable to parse package file %s (1)"),
+			      Fd.Name().c_str());
    }   
    Start += Tag.size();
    iOffset += Tag.size();
 
    Tag.Trim();
-   
    return true;
 }
 									/*}}}*/
@@ -89,6 +89,17 @@ bool pkgTagFile::Fill()
    memmove(Buffer,Start,EndSize);
    Start = Buffer;
    End = Buffer + EndSize;
+   
+   if (Done == false)
+   {
+      // See if only a bit of the file is left
+      unsigned long Actual;
+      if (Fd.Read(End,Size - (End - Buffer),&Actual) == false)
+	 return false;
+      if (Actual != Size - (End - Buffer))
+	 Done = true;
+      End += Actual;
+   }
    
    if (Done == true)
    {
@@ -107,31 +118,6 @@ bool pkgTagFile::Fill()
       
       return true;
    }
-   
-   // See if only a bit of the file is left
-   unsigned long Actual;
-   if (Fd.Read(End,Size - (End - Buffer),&Actual) == false)
-      return false;
-   if (Actual != Size - (End - Buffer))
-      Done = true;
-   End += Actual;
-/*   
-   if (Left < Size - (End - Buffer))
-   {
-      if (Fd.Read(End,Left) == false)
-	 return false;
-      
-      End += Left;
-      Left = 0;
-   }
-   else
-   {
-      if (Fd.Read(End,Size - (End - Buffer)) == false)
-	 return false;
-      
-      Left -= Size - (End - Buffer);
-      End = Buffer + Size;
-   }*/
    
    return true;
 }
