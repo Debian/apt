@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.30 1999/05/24 03:39:36 jgg Exp $
+// $Id: acquire-item.cc,v 1.31 1999/06/05 04:33:29 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -484,7 +484,7 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
       if (Md5Hash != MD5)
       {
 	 _error->Error("MD5Sum mismatch for package %s",Version.ParentPkg().Name());
-	 Rename(DestFile + ".FAILED",DestFile);
+	 Rename(DestFile,DestFile + ".FAILED");
 	 return;
       }
    }
