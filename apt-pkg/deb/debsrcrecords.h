@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.h,v 1.2 1999/04/04 08:07:39 jgg Exp $
+// $Id: debsrcrecords.h,v 1.3 1999/04/07 05:51:01 jgg Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -40,7 +40,8 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual unsigned long Offset() {return iOffset;};
    virtual bool Files(vector<pkgSrcRecords::File> &F);
    
-   debSrcRecordParser(FileFd *File) : Parser(File), 
+   debSrcRecordParser(FileFd *File,pkgSourceList::const_iterator SrcItem) : 
+                   Parser(File,SrcItem),
                    Tags(*File,sizeof(Buffer)) {};
 };
 
