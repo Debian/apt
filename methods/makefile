@@ -60,7 +60,7 @@ SOURCE = rsh.cc
 include $(PROGRAM_H)
 
 # SSH and vzip2 method symlink
-all: $(BIN)/ssh $(BIN)/bzip2
+binary: $(BIN)/ssh $(BIN)/bzip2
 veryclean: clean-$(BIN)/ssh clean-$(BIN)/bzip2
 $(BIN)/ssh:
 	echo "Installing ssh method link"
