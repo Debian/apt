@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.4 1999/07/20 05:53:33 jgg Exp $
+// $Id: srcrecords.h,v 1.5 1999/10/18 03:44:39 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -46,6 +46,7 @@ class pkgSrcRecords
       virtual bool Step() = 0;
       virtual bool Jump(unsigned long Off) = 0;
       virtual unsigned long Offset() = 0;
+      virtual string AsStr() = 0;
       
       virtual string Package() = 0;
       virtual string Version() = 0;

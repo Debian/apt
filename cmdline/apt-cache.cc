@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.38 1999/10/02 04:14:54 jgg Exp $
+// $Id: apt-cache.cc,v 1.39 1999/10/18 03:44:39 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -24,6 +24,7 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/srcrecords.h>
 #include <config.h>
 
 #include <iostream.h>
@@ -597,6 +598,28 @@ bool ShowPackage(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// ShowSrcPackage - Show source package records				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool ShowSrcPackage(CommandLine &CmdL)
+{
+   pkgSourceList List;
+   List.ReadMainList();
+   
+   // Create the text record parsers
+   pkgSrcRecords SrcRecs(List);
+   if (_error->PendingError() == true)
+      return false;
+
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      pkgSrcRecords::Parser *Parse;
+      while ((Parse = SrcRecs.Find(*I,false)) != 0)
+	 cout << Parse->AsStr();
+   }      
+   return true;
+}
+									/*}}}*/
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -680,6 +703,7 @@ int main(int argc,const char *argv[])
    CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
                                     {"add",&DoAdd},
                                     {"gencaches",&GenCaches},
+                                    {"showsrc",&ShowSrcPackage},
                                     {0,0}};
    CommandLine::Dispatch CmdsB[] = {{"showpkg",&DumpPackage},
                                     {"stats",&Stats},
@@ -725,7 +749,7 @@ int main(int argc,const char *argv[])
 	 // Open the cache file
 	 pkgSourceList List;
 	 List.ReadMainList();
-	 
+
 	 // Generate it and map it
 	 OpProgress Prog;
 	 Map = pkgMakeStatusCacheMem(List,Prog);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.h,v 1.3 1999/04/07 05:51:01 jgg Exp $
+// $Id: debsrcrecords.h,v 1.4 1999/10/18 03:44:39 jgg Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -38,6 +38,13 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual string Section() {return Sect.FindS("Section");};
    virtual const char **Binaries();
    virtual unsigned long Offset() {return iOffset;};
+   virtual unsigned long Length() {return Sec.size();};
+   virtual string AsStr() 
+   {
+      const char *Start,Stop;
+      Sect.GetSection(Start,Stop);
+      return string(Start,Stop);
+   };
    virtual bool Files(vector<pkgSrcRecords::File> &F);
    
    debSrcRecordParser(FileFd *File,pkgSourceList::const_iterator SrcItem) : 
