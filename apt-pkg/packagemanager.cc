@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.24 1999/12/24 21:10:56 jgg Exp $
+// $Id: packagemanager.cc,v 1.25 2000/05/12 04:26:42 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -426,7 +426,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
       if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)
-	    return _error->Error("Internal Error, Could not perform immediate configuraton");
+	    return _error->Error("Internal Error, Could not perform immediate configuration");
       return true;
    }
 
@@ -525,7 +525,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    // Perform immedate configuration of the package.
    if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
       if (SmartConfigure(Pkg) == false)
-	 return _error->Error("Internal Error, Could not perform immediate configuraton");
+	 return _error->Error("Internal Error, Could not perform immediate configuration");
    
    return true;
 }
