@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.24 2002/04/02 06:42:39 jgg Exp $
+// $Id: dpkgpm.cc,v 1.25 2002/04/24 05:40:47 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -144,7 +144,6 @@ bool pkgDPkgPM::RunScripts(const char *Cnf)
    
    return true;
 }
-
                                                                         /*}}}*/
 // DPkgPM::SendV2Pkgs - Send version 2 package info			/*{{{*/
 // ---------------------------------------------------------------------
@@ -323,13 +322,15 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 
    return true;
 }
-
 									/*}}}*/
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg */
 bool pkgDPkgPM::Go()
 {
+   unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",350);   
+   unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",1024);
+
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
 
@@ -342,9 +343,9 @@ bool pkgDPkgPM::Go()
       for (; J != List.end() && J->Op == I->Op; J++);
 
       // Generate the argument list
-      const char *Args[400];
-      if (J - I > 350)
-	 J = I + 350;
+      const char *Args[MaxArgs + 50];
+      if (J - I > (signed)MaxArgs)
+	 J = I + MaxArgs;
       
       unsigned int n = 0;
       unsigned long Size = 0;
@@ -400,7 +401,7 @@ bool pkgDPkgPM::Go()
       // Write in the file or package names
       if (I->Op == Item::Install)
       {
-	 for (;I != J && Size < 1024; I++)
+	 for (;I != J && Size < MaxArgBytes; I++)
 	 {
 	    if (I->File[0] != '/')
 	       return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
@@ -410,7 +411,7 @@ bool pkgDPkgPM::Go()
       }      
       else
       {
-	 for (;I != J && Size < 1024; I++)
+	 for (;I != J && Size < MaxArgBytes; I++)
 	 {
 	    Args[n++] = I->Pkg.Name();
 	    Size += strlen(Args[n-1]);
