@@ -33,8 +33,8 @@ fi
 #       1 (false)   System is not on mains power
 #       255 (false) Power status could not be determined
 # Desktop systems always return 255 it seems
-if [ -x /usr/bin/on_ac_power ]; then
-    /usr/bin/on_ac_power 
+if which on_ac_power >/dev/null; then
+    on_ac_power 
     if [ $? -eq 1 ]; then
 	exit 0
     fi
