@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.32 2002/03/26 07:22:31 jgg Exp $
+// $Id: tagfile.cc,v 1.33 2002/05/30 04:19:48 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -85,6 +85,7 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 bool pkgTagFile::Fill()
 {
    unsigned long EndSize = End - Start;
+   unsigned long Actual;
    
    memmove(Buffer,Start,EndSize);
    Start = Buffer;
@@ -93,7 +94,6 @@ bool pkgTagFile::Fill()
    if (Done == false)
    {
       // See if only a bit of the file is left
-      unsigned long Actual;
       if (Fd.Read(End,Size - (End - Buffer),&Actual) == false)
 	 return false;
       if (Actual != Size - (End - Buffer))
@@ -103,7 +103,7 @@ bool pkgTagFile::Fill()
    
    if (Done == true)
    {
-      if (EndSize <= 3)
+      if (EndSize <= 3 && Actual == 0)
 	 return false;
       if (Size - (End - Buffer) < 4)
 	 return true;
