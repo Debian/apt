@@ -31,7 +31,7 @@ veryclean/$(LOCAL): clean/$(LOCAL)
 # The binary build rule
 $($(LOCAL)-BIN): $($(LOCAL)-OBJS)
 	echo Building program $@
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LFLAGS) -o $@ $(filter %.o,$^) $($(LOCAL)-SLIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LFLAGS) -o $@ $(filter %.o,$^) $($(@F)-SLIBS) $(LEFLAGS)
 
 # Compilation rules
 vpath %.cc $(SUBDIRS)
