@@ -1,14 +1,17 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.cc,v 1.2 1999/05/26 04:08:39 jgg Exp $
+// $Id: rfc2553emu.cc,v 1.3 1999/05/27 05:51:18 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
                         freeaddrinfo and getnameinfo
+
+   This is really C code, it just has a .cc extensions to play nicer with
+   the rest of APT.
    
    Originally written by Jason Gunthorpe <jgg@debian.org> and placed into
    the Public Domain, do with it what you will.
-   
+
    ##################################################################### */
 									/*}}}*/
 #include "rfc2553emu.h"
@@ -156,7 +159,7 @@ int getnameinfo(const struct sockaddr *sa, socklen_t salen,
 {
    struct sockaddr_in *sin = (struct sockaddr_in *)sa;
    
-   // This routine only support internet addresses
+   // This routine only supports internet addresses
    if (sa->sa_family != AF_INET)
       return EAI_ADDRFAMILY;
    

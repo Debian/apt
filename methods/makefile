@@ -45,5 +45,5 @@ include $(PROGRAM_H)
 PROGRAM=ftp
 SLIBS = -lapt-pkg 
 LIB_MAKES = apt-pkg/makefile
-SOURCE = ftp.cc
+SOURCE = ftp.cc rfc2553emu.cc
 include $(PROGRAM_H)
