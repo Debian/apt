@@ -2,7 +2,15 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.11 1999/03/21 12:43:43 doogie Exp $
+# $Id: rules,v 1.12 1999/03/21 13:24:35 doogie Exp $
+
+
+# For the deb builder, you can run 'debian/rules cvs-build', which does all
+# steps nescessary to produce a proper source tarball with the CVS/ removed.
+# It builds in debian/cvs-build/apt-<VER>/, and places files in
+# debian/cvs-build/.  Optionally, you can run 'debian/rules cvs-mkul' to
+# create ../upload-<VER>, with all the files needed to be uploaded placed
+# in it.
 
 DEB_BUILD_PROG:=debuild
 APT_DEBVER=$(shell dpkg-parsechangelog |sed -n -e '/^Version:/s/^Version: //p')
@@ -21,9 +29,10 @@ endif
 
 # Find the libapt-pkg major version for use in other control files
 export LIBAPT_MAJOR:=$(shell egrep '^MAJOR=' apt-pkg/makefile |cut -d '=' -f 2)
-debian/shlibs.local:
-	rm $@
-	echo "libapt-pkg $(LIBAPT_MAJOR) libapt-pkg$(LIBAPT_MAJOR)" >> $@
+#debian/shlibs.local:
+#	rm -f $@
+#	echo "libapt-pkg $(LIBAPT_MAJOR) libapt-pkg$(LIBAPT_MAJOR)" >> $@
+#	echo "libapt-pkg $(LIBAPT_MAJOR) apt $(APT_DEBVER)" >> $@
 
 build: build-stamp
 build-stamp: configure
@@ -207,4 +216,8 @@ cvs-build:
 		(mkdir -p debian/cvs-build/apt-$(APT_DEBVER);cd debian/cvs-build/apt-$(APT_DEBVER);tar x)
 # The next line isn't needed, as debuild will make the .tar.gz for us.
 #	(cd debian/cvs-build;tar zcf apt_$(APT_DEBVER).tar.gz apt-$(APT_DEBVER))
-	(cd debian/cvs-build/apt-$(APT_DEBVER);$(DEB_BUILD_PROG) -us -uc)
+	(cd debian/cvs-build/apt-$(APT_DEBVER);$(DEB_BUILD_PROG))
+
+cvs-mkul:
+	-mkdir -p ../upload-$(APT_DEBVER)
+	cp `find debian/cvs-build -maxdepth 1 -type f` ../upload-$(APT_DEBVER)
