@@ -227,6 +227,7 @@ class debSLTypeDebian : public pkgSourceList::Type
       debReleaseIndex *Deb = new debReleaseIndex(URI,Dist);
       Deb->PushSectionEntry (new debReleaseIndex::debSectionEntry(Section, IsSrc));
       List.push_back(Deb);
+      List.push_back(new debTranslationsIndex(URI,Dist,Section));
       return true;
    }
 };

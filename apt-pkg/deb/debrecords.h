@@ -19,6 +19,7 @@
 #endif 
 
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
 
 class debRecordParser : public pkgRecords::Parser
@@ -30,6 +31,7 @@ class debRecordParser : public pkgRecords::Parser
    protected:
    
    virtual bool Jump(pkgCache::VerFileIterator const &Ver);
+   virtual bool Jump(pkgCache::DescFileIterator const &Desc);
    
    public:
 

@@ -74,6 +74,35 @@ class debPackagesIndex : public pkgIndexFile
    debPackagesIndex(string URI,string Dist,string Section,bool Trusted);
 };
 
+class debTranslationsIndex : public pkgIndexFile
+{
+   string URI;
+   string Dist;
+   string Section;
+   
+   string Info(const char *Type) const;
+   string IndexFile(const char *Type) const;
+   string IndexURI(const char *Type) const;
+
+   inline string TranslationFile() const {return "Translation-" + LanguageCode();};
+
+   public:
+   
+   virtual const Type *GetType() const;
+
+   // Interface for acquire
+   virtual string Describe(bool Short) const;   
+   virtual bool GetIndexes(pkgAcquire *Owner) const;
+   
+   // Interface for the Cache Generator
+   virtual bool Exists() const;
+   virtual bool HasPackages() const {return true;};
+   virtual unsigned long Size() const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
+
+   debTranslationsIndex(string URI,string Dist,string Section);
+};
+
 class debSourcesIndex : public pkgIndexFile
 {
    string URI;

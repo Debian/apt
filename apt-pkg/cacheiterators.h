@@ -128,6 +128,7 @@ class pkgCache::VerIterator
    inline const char *Section() const {return Ver->Section == 0?0:Owner->StrP + Ver->Section;};
    inline const char *Arch() const {return Ver->Arch == 0?0:Owner->StrP + Ver->Arch;};
    inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Ver->ParentPkg);};
+   inline DescIterator DescriptionList() const;
    inline DepIterator DependsList() const;
    inline PrvIterator ProvidesList() const;
    inline VerFileIterator FileList() const;
@@ -145,6 +146,50 @@ class pkgCache::VerIterator
    { 
       if (Ver == 0)
 	 Ver = Owner.VerP;
+   };
+};
+
+// Description Iterator
+class pkgCache::DescIterator
+{
+   Description *Desc;
+   pkgCache *Owner;
+   
+   void _dummy();
+   
+   public:
+
+   // Iteration
+   void operator ++(int) {if (Desc != Owner->DescP) Desc = Owner->DescP + Desc->NextDesc;};
+   inline void operator ++() {operator ++(0);};
+   inline bool end() const {return Desc == Owner->DescP?true:false;};
+   inline void operator =(const DescIterator &B) {Desc = B.Desc; Owner = B.Owner;};
+   
+   // Comparison
+   inline bool operator ==(const DescIterator &B) const {return Desc == B.Desc;};
+   inline bool operator !=(const DescIterator &B) const {return Desc != B.Desc;};
+   int CompareDesc(const DescIterator &B) const;
+   
+   // Accessors
+   inline Description *operator ->() {return Desc;};
+   inline Description const *operator ->() const {return Desc;};
+   inline Description &operator *() {return *Desc;};
+   inline Description const &operator *() const {return *Desc;};
+   inline operator Description *() {return Desc == Owner->DescP?0:Desc;};
+   inline operator Description const *() const {return Desc == Owner->DescP?0:Desc;};
+   inline pkgCache *Cache() {return Owner;};
+      
+   inline const char *LanguageCode() const {return Owner->StrP + Desc->language_code;};
+   inline const char *md5() const {return Owner->StrP + Desc->md5sum;};
+   inline DescFileIterator FileList() const;
+   inline unsigned long Index() const {return Desc - Owner->DescP;};
+
+   inline DescIterator() : Desc(0), Owner(0) {};   
+   inline DescIterator(pkgCache &Owner,Description *Trg = 0) : Desc(Trg), 
+              Owner(&Owner) 
+   { 
+      if (Desc == 0)
+	 Desc = Owner.DescP;
    };
 };
 
@@ -336,6 +381,38 @@ class pkgCache::VerFileIterator
    inline VerFileIterator(pkgCache &Owner,VerFile *Trg) : Owner(&Owner), FileP(Trg) {};
 };
 
+// Description File 
+class pkgCache::DescFileIterator
+{
+   pkgCache *Owner;
+   DescFile *FileP;
+
+   public:
+
+   // Iteration
+   void operator ++(int) {if (FileP != Owner->DescFileP) FileP = Owner->DescFileP + FileP->NextFile;};
+   inline void operator ++() {operator ++(0);};
+   inline bool end() const {return FileP == Owner->DescFileP?true:false;};
+
+   // Comparison
+   inline bool operator ==(const DescFileIterator &B) const {return FileP == B.FileP;};
+   inline bool operator !=(const DescFileIterator &B) const {return FileP != B.FileP;};
+			   
+   // Accessors
+   inline DescFile *operator ->() {return FileP;};
+   inline DescFile const *operator ->() const {return FileP;};
+   inline DescFile const &operator *() const {return *FileP;};
+   inline operator DescFile *() {return FileP == Owner->DescFileP?0:FileP;};
+   inline operator DescFile const *() const {return FileP == Owner->DescFileP?0:FileP;};
+   inline pkgCache *Cache() {return Owner;};
+  
+   inline PkgFileIterator File() const {return PkgFileIterator(*Owner,FileP->File + Owner->PkgFileP);};
+   inline unsigned long Index() const {return FileP - Owner->DescFileP;};
+      
+   inline DescFileIterator() : Owner(0), FileP(0) {};
+   inline DescFileIterator(pkgCache &Owner,DescFile *Trg) : Owner(&Owner), FileP(Trg) {};
+};
+
 // Inlined Begin functions cant be in the class because of order problems
 inline pkgCache::VerIterator pkgCache::PkgIterator::VersionList() const
        {return VerIterator(*Owner,Owner->VerP + Pkg->VersionList);};
@@ -345,11 +422,15 @@ inline pkgCache::DepIterator pkgCache::PkgIterator::RevDependsList() const
        {return DepIterator(*Owner,Owner->DepP + Pkg->RevDepends,Pkg);};
 inline pkgCache::PrvIterator pkgCache::PkgIterator::ProvidesList() const
        {return PrvIterator(*Owner,Owner->ProvideP + Pkg->ProvidesList,Pkg);};
+inline pkgCache::DescIterator pkgCache::VerIterator::DescriptionList() const
+       {return DescIterator(*Owner,Owner->DescP + Ver->DescriptionList);};
 inline pkgCache::PrvIterator pkgCache::VerIterator::ProvidesList() const
        {return PrvIterator(*Owner,Owner->ProvideP + Ver->ProvidesList,Ver);};
 inline pkgCache::DepIterator pkgCache::VerIterator::DependsList() const
        {return DepIterator(*Owner,Owner->DepP + Ver->DependsList,Ver);};
 inline pkgCache::VerFileIterator pkgCache::VerIterator::FileList() const
        {return VerFileIterator(*Owner,Owner->VerFileP + Ver->FileList);};
+inline pkgCache::DescFileIterator pkgCache::DescIterator::FileList() const
+       {return DescFileIterator(*Owner,Owner->DescFileP + Desc->FileList);};
 
 #endif

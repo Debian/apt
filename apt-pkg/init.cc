@@ -33,6 +33,9 @@ const char *pkgOS = COMMON_OS;
    is prepended, this allows a fair degree of flexability. */
 bool pkgInitConfig(Configuration &Cnf)
 {
+   // Translation
+   Cnf.Set("APT::Acquire::Translation", "environment");
+
    // General APT things
    if (strcmp(COMMON_OS,"linux") == 0 ||
        strcmp(COMMON_OS,"unknown") == 0)

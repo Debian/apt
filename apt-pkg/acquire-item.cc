@@ -307,6 +307,35 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    Mode = decompProg;
 }
 
+// AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* The Translation file is added to the queue */
+pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
+			    string URI,string URIDesc,string ShortDesc) :
+                      pkgAcqIndex(Owner, URI, URIDesc, ShortDesc)
+{
+}
+
+									/*}}}*/
+// AcqIndexTrans::Failed - Silence failure messages for missing files	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   if (Cnf->LocalOnly == true || 
+       StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
+   {      
+      // Ignore this
+      Status = StatDone;
+      Complete = false;
+      Dequeue();
+      return;
+   }
+   
+   Item::Failed(Message,Cnf);
+}
+									/*}}}*/
+
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
 			     string URI,string URIDesc,string ShortDesc,
 			     string MetaIndexURI, string MetaIndexURIDesc,

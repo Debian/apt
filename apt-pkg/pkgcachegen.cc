@@ -125,6 +125,28 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       string Version = List.Version();
       if (Version.empty() == true)
       {
+ 	 // Find the right version to write the description
+ 	 MD5SumValue CurMd5 = List.Description_md5();
+ 	 pkgCache::VerIterator Ver = Pkg.VersionList();
+ 	 map_ptrloc *LastVer = &Pkg->VersionList;
+ 	 
+  	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++) 
+ 	 {
+ 	    pkgCache::DescIterator Desc = Ver.DescriptionList();
+ 	    map_ptrloc *LastDesc = &Ver->DescriptionList;
+       
+ 	    for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++)
+ 	       if (MD5SumValue(Desc.md5()) == CurMd5) {
+ 		  // Add new description
+ 		  *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
+ 		  Desc->ParentPkg = Pkg.Index();
+ 
+ 		  if (NewFileDesc(Desc,List) == false)
+ 		     return _error->Error(_("Error occured while processing %s (NewFileDesc1)"),PackageName.c_str());
+ 		  break;
+ 	       }
+ 	 }
+ 
 	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
 	    return _error->Error(_("Error occured while processing %s (UsePackage1)"),
 				 PackageName.c_str());
@@ -132,9 +154,9 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       }
 
       pkgCache::VerIterator Ver = Pkg.VersionList();
-      map_ptrloc *Last = &Pkg->VersionList;
+      map_ptrloc *LastVer = &Pkg->VersionList;
       int Res = 1;
-      for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
+      for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
       {
 	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	 if (Res >= 0)
@@ -168,7 +190,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       // Skip to the end of the same version set.
       if (Res == 0)
       {
-	 for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
+	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
 	 {
 	    Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	    if (Res != 0)
@@ -177,9 +199,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       }
 
       // Add a new version
-      *Last = NewVersion(Ver,Version,*Last);
+      *LastVer = NewVersion(Ver,Version,*LastVer);
       Ver->ParentPkg = Pkg.Index();
       Ver->Hash = Hash;
+
       if (List.NewVersion(Ver) == false)
 	 return _error->Error(_("Error occured while processing %s (NewVersion1)"),
 			      PackageName.c_str());
@@ -199,6 +222,21 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	 FoundFileDeps |= List.HasFileDeps();
 	 return true;
       }      
+
+      /* Record the Description data. Description data always exist in
+	 Packages and Translation-* files. */
+      pkgCache::DescIterator Desc = Ver.DescriptionList();
+      map_ptrloc *LastDesc = &Ver->DescriptionList;
+      
+      // Skip to the end of description set
+      for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++);
+
+      // Add new description
+      *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
+      Desc->ParentPkg = Pkg.Index();
+
+      if (NewFileDesc(Desc,List) == false)
+	 return _error->Error(_("Error occured while processing %s (NewFileDesc2)"),PackageName.c_str());
    }
 
    FoundFileDeps |= List.HasFileDeps();
@@ -208,6 +246,9 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 			     "names this APT is capable of."));
    if (Cache.HeaderP->VersionCount >= (1ULL<<(sizeof(Cache.VerP->ID)*8))-1)
       return _error->Error(_("Wow, you exceeded the number of versions "
+			     "this APT is capable of."));
+   if (Cache.HeaderP->DescriptionCount >= (1ULL<<(sizeof(Cache.DescP->ID)*8))-1)
+      return _error->Error(_("Wow, you exceeded the number of descriptions "
 			     "this APT is capable of."));
    if (Cache.HeaderP->DependsCount >= (1ULL<<(sizeof(Cache.DepP->ID)*8))-1ULL)
       return _error->Error(_("Wow, you exceeded the number of dependencies "
@@ -271,7 +312,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,string Name)
    Pkg = Cache.FindPkg(Name);
    if (Pkg.end() == false)
       return true;
-       
+
    // Get a structure
    unsigned long Package = Map.Allocate(sizeof(pkgCache::Package));
    if (Package == 0)
@@ -347,6 +388,61 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
       return 0;
    
    return Version;
+}
+									/*}}}*/
+// CacheGenerator::NewFileDesc - Create a new File<->Desc association	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
+				   ListParser &List)
+{
+   if (CurrentFile == 0)
+      return true;
+   
+   // Get a structure
+   unsigned long DescFile = Map.Allocate(sizeof(pkgCache::DescFile));
+   if (DescFile == 0)
+      return 0;
+   
+   pkgCache::DescFileIterator DF(Cache,Cache.DescFileP + DescFile);
+   DF->File = CurrentFile - Cache.PkgFileP;
+   
+   // Link it to the end of the list
+   map_ptrloc *Last = &Desc->FileList;
+   for (pkgCache::DescFileIterator D = Desc.FileList(); D.end() == false; D++)
+      Last = &D->NextFile;
+   DF->NextFile = *Last;
+   *Last = DF.Index();
+   
+   DF->Offset = List.Offset();
+   DF->Size = List.Size();
+   if (Cache.HeaderP->MaxDescFileSize < DF->Size)
+      Cache.HeaderP->MaxDescFileSize = DF->Size;
+   Cache.HeaderP->DescFileCount++;
+   
+   return true;
+}
+									/*}}}*/
+// CacheGenerator::NewDescription - Create a new Description		/*{{{*/
+// ---------------------------------------------------------------------
+/* This puts a description structure in the linked list */
+map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
+					    const string &Lang, const MD5SumValue &md5sum,
+					    map_ptrloc Next)
+{
+   // Get a structure
+   map_ptrloc Description = Map.Allocate(sizeof(pkgCache::Description));
+   if (Description == 0)
+      return 0;
+
+   // Fill it in
+   Desc = pkgCache::DescIterator(Cache,Cache.DescP + Description);
+   Desc->NextDesc = Next;
+   Desc->ID = Cache.HeaderP->DescriptionCount++;
+   Desc->language_code = Map.WriteString(Lang);
+   Desc->md5sum = Map.WriteString(md5sum.Value());
+
+   return Description;
 }
 									/*}}}*/
 // ListParser::NewDepends - Create a dependency element			/*{{{*/
@@ -580,7 +676,7 @@ static bool CheckValidity(string CacheFile, FileIterator Start,
       pkgCache::PkgFileIterator File = (*Start)->FindInCache(Cache);
       if (File.end() == true)
 	 return false;
-      
+
       Visited[File->ID] = true;
    }
    

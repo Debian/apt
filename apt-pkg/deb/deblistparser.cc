@@ -15,6 +15,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/crc-16.h>
+#include <apt-pkg/md5.h>
 
 #include <ctype.h>
 
@@ -117,6 +118,46 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    return true;
 }
 									/*}}}*/
+// ListParser::Description - Return the description string		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is to return the string describing the package in debian
+   form. If this returns the blank string then the entry is assumed to
+   only describe package properties */
+string debListParser::Description()
+{
+   if (DescriptionLanguage().empty())
+      return Section.FindS("Description");
+   else
+      return Section.FindS(("Description-" + pkgIndexFile::LanguageCode()).c_str());
+}
+                                                                        /*}}}*/
+// ListParser::DescriptionLanguage - Return the description lang string	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is to return the string describing the language of
+   description. If this returns the blank string then the entry is
+   assumed to describe original description. */
+string debListParser::DescriptionLanguage()
+{
+   return Section.FindS("Description").empty() ? pkgIndexFile::LanguageCode() : "";
+}
+                                                                        /*}}}*/
+// ListParser::Description - Return the description_md5 MD5SumValue	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is to return the md5 string to allow the check if is the right
+   description. If thisreturns a blank string then calculate the md5
+   value. */
+MD5SumValue debListParser::Description_md5()
+{
+   string value = Section.FindS("Description-md5");
+
+   if (value.empty()) {
+      MD5Summation md5;
+      md5.Add((Description() + "\n").c_str());
+      return md5.Result();
+   } else
+      return MD5SumValue(value);
+}
+                                                                        /*}}}*/
 // ListParser::UsePackage - Update a package structure			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is called to update the package with any new information 

@@ -320,6 +320,140 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 }
 									/*}}}*/
 
+// TranslationsIndex::debTranslationsIndex - Contructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section) : 
+                  URI(URI), Dist(Dist), Section(Section)
+{
+}
+									/*}}}*/
+// TranslationIndex::Trans* - Return the URI to the translation files	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+inline string debTranslationsIndex::IndexFile(const char *Type) const
+{
+   return _config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+}
+string debTranslationsIndex::IndexURI(const char *Type) const
+{
+   string Res;
+   if (Dist[Dist.size() - 1] == '/')
+   {
+      if (Dist != "/")
+	 Res = URI + Dist;
+      else 
+	 Res = URI;
+   }
+   else
+      Res = URI + "dists/" + Dist + '/' + Section +
+      "/i18n/Translation-";
+   
+   Res += Type;
+   return Res;
+}
+									/*}}}*/
+// TranslationsIndex::GetIndexes - Fetch the index files		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool debTranslationsIndex::GetIndexes(pkgAcquire *Owner) const
+{
+   if (UseTranslation()) {
+     string TranslationFile = "Translation-" + LanguageCode();
+     new pkgAcqIndexTrans(Owner, IndexURI(LanguageCode().c_str()),
+			  Info(TranslationFile.c_str()),
+			  TranslationFile);
+   }
+
+   return true;
+}
+									/*}}}*/
+// TranslationsIndex::Describe - Give a descriptive path to the index	/*{{{*/
+// ---------------------------------------------------------------------
+/* This should help the user find the index in the sources.list and
+   in the filesystem for problem solving */
+string debTranslationsIndex::Describe(bool Short) const
+{   
+   char S[300];
+   if (Short == true)
+      snprintf(S,sizeof(S),"%s",Info(TranslationFile().c_str()).c_str());
+   else
+      snprintf(S,sizeof(S),"%s (%s)",Info(TranslationFile().c_str()).c_str(),
+	       IndexFile(LanguageCode().c_str()).c_str());
+   return S;
+}
+									/*}}}*/
+// TranslationsIndex::Info - One liner describing the index URI		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debTranslationsIndex::Info(const char *Type) const 
+{
+   string Info = ::URI::SiteOnly(URI) + ' ';
+   if (Dist[Dist.size() - 1] == '/')
+   {
+      if (Dist != "/")
+	 Info += Dist;
+   }
+   else
+      Info += Dist + '/' + Section;   
+   Info += " ";
+   Info += Type;
+   return Info;
+}
+									/*}}}*/
+// TranslationsIndex::Exists - Check if the index is available		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool debTranslationsIndex::Exists() const
+{
+   return true;
+}
+									/*}}}*/
+// TranslationsIndex::Size - Return the size of the index		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is really only used for progress reporting. */
+unsigned long debTranslationsIndex::Size() const
+{
+   struct stat S;
+   if (stat(IndexFile(LanguageCode().c_str()).c_str(),&S) != 0)
+      return 0;
+   return S.st_size;
+}
+									/*}}}*/
+// TranslationsIndex::Merge - Load the index file into a cache		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+{
+   // Check the translation file, if in use
+   string TranslationFile = IndexFile(LanguageCode().c_str());
+   if (UseTranslation() && FileExists(TranslationFile))
+   {
+     FileFd Trans(TranslationFile,FileFd::ReadOnly);
+     debListParser TransParser(&Trans);
+     if (_error->PendingError() == true)
+       return false;
+     
+     Prog.SubProgress(0, Info(TranslationFile.c_str()));
+     if (Gen.SelectFile(TranslationFile,string(),*this) == false)
+       return _error->Error("Problem with SelectFile %s",TranslationFile.c_str());
+
+     // Store the IMS information
+     pkgCache::PkgFileIterator TransFile = Gen.GetCurFile();
+     struct stat TransSt;
+     if (fstat(Trans.Fd(),&TransSt) != 0)
+       return _error->Errno("fstat","Failed to stat");
+     TransFile->Size = TransSt.st_size;
+     TransFile->mtime = TransSt.st_mtime;
+   
+     if (Gen.MergeList(TransParser) == false)
+       return _error->Error("Problem with MergeList %s",TranslationFile.c_str());
+   }
+
+   return true;
+}
+									/*}}}*/
+
 // StatusIndex::debStatusIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -435,6 +569,10 @@ const pkgIndexFile::Type *debSourcesIndex::GetType() const
    return &_apt_Src;
 }
 const pkgIndexFile::Type *debPackagesIndex::GetType() const
+{
+   return &_apt_Pkg;
+}
+const pkgIndexFile::Type *debTranslationsIndex::GetType() const
 {
    return &_apt_Pkg;
 }
