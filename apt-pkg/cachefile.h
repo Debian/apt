@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.h,v 1.2 1999/06/12 03:43:48 jgg Exp $
+// $Id: cachefile.h,v 1.3 1999/06/27 03:18:28 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -33,11 +33,12 @@ class pkgCacheFile
       
    // We look pretty much exactly like a pointer to a dep cache
    inline operator pkgDepCache &() {return *Cache;};
+   inline operator pkgDepCache *() {return Cache;};
    inline pkgDepCache *operator ->() {return Cache;};
    inline pkgDepCache &operator *() {return *Cache;};
    inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) {return (*Cache)[I];};
    inline unsigned char &operator [](pkgCache::DepIterator const &I) {return (*Cache)[I];};
-   
+
    // Release the dpkg status lock
    inline void ReleaseLock() {Lock->Close();};
    
