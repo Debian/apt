@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.24 2001/02/20 07:03:17 jgg Exp $
+// $Id: deblistparser.cc,v 1.25 2001/05/27 05:36:04 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -15,6 +15,8 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/crc-16.h>
+
+#include <ctype.h>
 
 #include <system.h>
 									/*}}}*/
@@ -409,7 +411,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	    if (End == Stop) 
 	       return 0;
 	    
-	    if (stringcmp(I,End,arch.begin(),arch.end()) == 0)
+	    if (stringcmp(arch.c_str(),arch.c_str()+arch.length(),I,End) == 0)
 	       Found = true;
 	    
 	    if (*End++ == ']') {
@@ -536,7 +538,7 @@ bool debListParser::Step()
       if (Section.Find("Architecture",Start,Stop) == false)
 	 return true;
 
-      if (stringcmp(Start,Stop,Arch.begin(),Arch.end()) == 0)
+      if (stringcmp(Arch.c_str(),Arch.c_str()+Arch.length(),Start,Stop) == 0)
 	 return true;
 
       if (stringcmp(Start,Stop,"all") == 0)

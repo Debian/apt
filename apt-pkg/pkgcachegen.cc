@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.47 2001/03/04 00:12:41 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.48 2001/05/27 05:36:04 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -27,13 +27,16 @@
 #include <apt-pkg/pkgsystem.h>
 
 #include <apti18n.h>
-    
+
+#include <vector>
+
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
 #include <system.h>
 									/*}}}*/
+typedef vector<pkgIndexFile *>::iterator FileIterator;
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
@@ -131,7 +134,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       int Res = 1;
       for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
       {
-	 Res = Cache.VS->DoCmpVersion(Version.begin(),Version.end(),Ver.VerStr(),
+	 Res = Cache.VS->DoCmpVersion(Version.c_str(),Version.c_str()+Version.length(),Ver.VerStr(),
 				 Ver.VerStr() + strlen(Ver.VerStr()));
 	 if (Res >= 0)
 	    break;
@@ -163,7 +166,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       {
 	 for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
 	 {
-	    Res = Cache.VS->DoCmpVersion(Version.begin(),Version.end(),Ver.VerStr(),
+	    Res = Cache.VS->DoCmpVersion(Version.c_str(),Version.c_str()+Version.length(),Ver.VerStr(),
 				    Ver.VerStr() + strlen(Ver.VerStr()));
 	    if (Res != 0)
 	       break;
@@ -470,8 +473,8 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
 /* This just verifies that each file in the list of index files exists,
    has matching attributes with the cache and the cache does not have
    any extra files. */
-static bool CheckValidity(string CacheFile,pkgIndexFile **Start,
-			  pkgIndexFile **End,MMap **OutMap = 0)
+static bool CheckValidity(string CacheFile, FileIterator Start, 
+                          FileIterator End,MMap **OutMap = 0)
 {
    // No file, certainly invalid
    if (CacheFile.empty() == true || FileExists(CacheFile) == false)
@@ -530,7 +533,7 @@ static bool CheckValidity(string CacheFile,pkgIndexFile **Start,
 // ---------------------------------------------------------------------
 /* Size is kind of an abstract notion that is only used for the progress
    meter */
-static unsigned long ComputeSize(pkgIndexFile **Start,pkgIndexFile **End)
+static unsigned long ComputeSize(FileIterator Start,FileIterator End)
 {
    unsigned long TotalSize = 0;
    for (; Start != End; Start++)
@@ -548,7 +551,7 @@ static unsigned long ComputeSize(pkgIndexFile **Start,pkgIndexFile **End)
 static bool BuildCache(pkgCacheGenerator &Gen,
 		       OpProgress &Progress,
 		       unsigned long &CurrentSize,unsigned long TotalSize,
-		       pkgIndexFile **Start,pkgIndexFile **End)
+		       FileIterator Start, FileIterator End)
 {
    for (; Start != End; Start++)
    {

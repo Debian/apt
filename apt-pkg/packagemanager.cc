@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.27 2001/05/07 05:49:43 jgg Exp $
+// $Id: packagemanager.cc,v 1.28 2001/05/27 05:36:04 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -138,6 +138,10 @@ bool pkgPackageManager::CreateOrderList()
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
+      // Ignore no-version packages
+      if (I->VersionList == 0)
+	 continue;
+      
       // Mark the package and its dependends for immediate configuration
       if (((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
 	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&

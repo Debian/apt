@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.6 2001/04/29 05:13:51 jgg Exp $
+// $Id: policy.cc,v 1.7 2001/05/27 05:36:04 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -34,7 +34,11 @@
 #include <apt-pkg/sptr.h>
     
 #include <apti18n.h>
+
+#include <iostream>
 									/*}}}*/
+
+using namespace std;
 
 // Policy::Init - Startup and bind to a cache				/*{{{*/
 // ---------------------------------------------------------------------
@@ -117,7 +121,7 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
    // Look for a package pin and evaluate it.
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
-      
+
    /* Falling through to the default version.. Setting Max to zero
       effectively excludes everything <= 0 which are the non-automatic
       priorities.. The status file is given a prio of 100 which will exclude
@@ -164,7 +168,9 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 	    break;
       }            
    }
-   
+
+   if (Pref.end() == true)
+      return Pkg.VersionList();
    return Pref;
 }
 									/*}}}*/
@@ -181,7 +187,10 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
    Pin *P = 0;
    
    if (Name.empty() == true)
-      P = Defaults.insert(Defaults.end());
+      // tausq:g++v3 begin
+	;
+      // P = Defaults.insert(Defaults.end());
+      // tausq:g++v3 end
    else
    {
       // Get a spot to put the pin
@@ -191,10 +200,16 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 	 for (vector<PkgPin>::iterator I = Unmatched.begin(); 
 	      I != Unmatched.end() && P == 0; I++)
 	    if (I->Pkg == Name)
-	       P = I;
+               // tausq:g++-v3 begin
+	       P = &(*I);
+	       // P = I;
+               // tausq:g++-v3 end
 	 
 	 if (P == 0)
-	    P = Unmatched.insert(Unmatched.end());      
+            // tausq:g++v3 begin
+            ;
+	    // P = Unmatched.insert(Unmatched.end());      
+            // tausq:g++v3 end
       }
       else
       {
@@ -217,7 +232,7 @@ pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator Pkg)
    if (PPkg.Type != pkgVersionMatch::None)
    {
       pkgVersionMatch Match(PPkg.Data,PPkg.Type);
-	 return Match.Find(Pkg);
+      return Match.Find(Pkg);
    }
    return pkgCache::VerIterator(*Pkg.Cache());
 }

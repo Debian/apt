@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.24 2001/04/25 06:17:00 jgg Exp $
+// $Id: depcache.cc,v 1.25 2001/05/27 05:36:04 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -181,6 +181,9 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
 void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
 {
    StateCache &P = PkgState[Pkg->ID];
+   
+   if (Pkg->VersionList == 0)
+      return;
    
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
        P.Keep() == true)

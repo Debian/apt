@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.39 2001/05/27 05:19:30 jgg Exp $
+// $Id: strutl.cc,v 1.40 2001/05/27 05:36:04 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -877,7 +877,7 @@ void ioprintf(ostream &out,const char *format,...)
    // sprintf the description
    char S[400];
    vsnprintf(S,sizeof(S),format,args);
-   // std::ostream::operator <<(out, (const char *)S);
+   out << S;
 }
 									/*}}}*/
 
