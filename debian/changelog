@@ -1,3 +1,23 @@
+apt (0.5.14) unstable; urgency=low
+
+  * apt-get build-dep, when trying to skip over the remaining elements of
+    an or-expression, would accidentally inherit the version requirements of a
+    later item in the or-expression.  Fixed it.
+  * Let apt-get build-dep try alternatives if the first dependency in an
+    or-expression is not available
+  * Add a Debug::BuildDeps to generate some trace output
+  * Help apt-get build-dep produce more useful error messages
+  * Process build-dependencies in forward rather than reverse order
+  * Error out if an installed package is too new for a << or <=
+    build-dependency
+  * apt-get build-dep should now be able to handle almost any package with
+    correct build-depends.  The primary exception is build-dependencies on
+    virtual packages with more than one provider, and these are
+    discouraged for automated processing (but still common,
+    unfortunately).
+
+ -- Matt Zimmerman <mdz@debian.org>  Tue, 23 Sep 2003 22:57:31 -0400
+
 apt (0.5.13) unstable; urgency=medium
 
   * Document configuration file comment syntax in apt.conf(5)

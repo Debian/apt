@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.142 2003/09/19 03:10:01 mdz Exp $
+// $Id: apt-get.cc,v 1.143 2003/09/24 04:00:25 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2053,7 +2053,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	 rec.Package = Opts->Value;
 	 rec.Type = pkgSrcRecords::Parser::BuildDependIndep;
 	 rec.Op = 0;
-	 BuildDeps.insert(BuildDeps.begin(), rec);
+	 BuildDeps.push_back(rec);
       }
 
       if (BuildDeps.size() == 0)
@@ -2066,8 +2066,18 @@ bool DoBuildDep(CommandLine &CmdL)
       unsigned int ExpectedInst = 0;
       vector <pkgSrcRecords::Parser::BuildDepRec>::iterator D;
       pkgProblemResolver Fix(Cache);
+      bool skipAlternatives = false; // skip remaining alternatives in an or group
       for (D = BuildDeps.begin(); D != BuildDeps.end(); D++)
       {
+         bool hasAlternatives = (((*D).Op & pkgCache::Dep::Or) == pkgCache::Dep::Or);
+
+         if (skipAlternatives == true)
+         {
+            if (!hasAlternatives)
+               skipAlternatives = false; // end of or group
+            continue;
+         }
+
          if ((*D).Type == pkgSrcRecords::Parser::BuildConflict ||
 	     (*D).Type == pkgSrcRecords::Parser::BuildConflictIndep)
          {
@@ -2089,16 +2099,21 @@ bool DoBuildDep(CommandLine &CmdL)
 	 else // BuildDep || BuildDepIndep
          {
 	    pkgCache::PkgIterator Pkg = Cache->FindPkg((*D).Package);
+            if (_config->FindB("Debug::BuildDeps",false) == true)
+                 cout << "Looking for " << (*D).Package << "...\n";
+
 	    if (Pkg.end() == true)
             {
-               // Check if there are any alternatives
-               if (((*D).Op & pkgCache::Dep::Or) != pkgCache::Dep::Or)
-	          return _error->Error(_("%s dependency for %s cannot be satisfied "
-                                         "because the package %s cannot be found"),
-				         Last->BuildDepType((*D).Type),Src.c_str(),
-                                         (*D).Package.c_str());
-               // Try the next alternative
-               continue;
+               if (_config->FindB("Debug::BuildDeps",false) == true)
+                    cout << " (not found)" << (*D).Package << endl;
+
+               if (hasAlternatives)
+                  continue;
+
+               return _error->Error(_("%s dependency for %s cannot be satisfied "
+                                      "because the package %s cannot be found"),
+                                    Last->BuildDepType((*D).Type),Src.c_str(),
+                                    (*D).Package.c_str());
             }
 
             /*
@@ -2111,9 +2126,6 @@ bool DoBuildDep(CommandLine &CmdL)
              * this would require we do a Resolve cycle for each package we 
              * add to the install list. Ugh
              */
-            while (D != BuildDeps.end() && 
-                   (((*D).Op & pkgCache::Dep::Or) == pkgCache::Dep::Or))
-               D++;
                        
 	    /* 
 	     * If this is a virtual package, we need to check the list of
@@ -2121,9 +2133,11 @@ bool DoBuildDep(CommandLine &CmdL)
 	     * installed
 	     */
             pkgCache::PrvIterator Prv = Pkg.ProvidesList();
-	    bool providedBySomething = !Prv.end();
             for (; Prv.end() != true; Prv++)
 	    {
+               if (_config->FindB("Debug::BuildDeps",false) == true)
+                    cout << "  Checking provider " << Prv.OwnerPkg().Name() << endl;
+
 	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
 	          break;
             }
@@ -2131,9 +2145,8 @@ bool DoBuildDep(CommandLine &CmdL)
             // Get installed version and version we are going to install
 	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
 
-            if (!providedBySomething || (*D).Version[0] != '\0') {
-                 /* We either have a versioned dependency (so a provides won't do)
-                    or nothing is providing this package */
+            if ((*D).Version[0] != '\0') {
+                 // Versioned dependency
 
                  pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
 
@@ -2149,19 +2162,64 @@ bool DoBuildDep(CommandLine &CmdL)
                                            Last->BuildDepType((*D).Type),Src.c_str(),
                                            (*D).Package.c_str());
             }
+            else
+            {
+               // Only consider virtual packages if there is no versioned dependency
+               if (Prv.end() == false)
+               {
+                  if (_config->FindB("Debug::BuildDeps",false) == true)
+                     cout << "  Is provided by installed package " << Prv.OwnerPkg().Name() << endl;
+                  skipAlternatives = hasAlternatives;
+                  continue;
+               }
+            }
 
-            /*
-	     * TODO: if we depend on a version lower than what we already have 
-	     * installed it is not clear what should be done; in practice
-	     * this case should be rare, and right now nothing is 
-             * done about it :-( 
-	     */
-	    if (Prv.end() == true && // Nothing provides it; and
-                (IV.end() == true || //  It is not installed, or
-	         Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == false))
-                                     //  the version installed doesn't 
-                                     //  satisfy constraints 
-	       TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst);
+            if (IV.end() == false)
+            {
+               if (_config->FindB("Debug::BuildDeps",false) == true)
+                  cout << "  Is installed\n";
+
+               if (Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+               {
+                  skipAlternatives = hasAlternatives;
+                  continue;
+               }
+
+               if (_config->FindB("Debug::BuildDeps",false) == true)
+                  cout << "    ...but the installed version doesn't meet the version requirement\n";
+
+               if (((*D).Op & pkgCache::Dep::LessEq) == pkgCache::Dep::LessEq)
+               {
+                  return _error->Error(_("Failed to satisfy %s dependency for %s: Installed package %s is too new"),
+                                       Last->BuildDepType((*D).Type),
+                                       Src.c_str(),
+                                       Pkg.Name());
+               }
+            }
+
+
+            if (_config->FindB("Debug::BuildDeps",false) == true)
+               cout << "  Trying to install " << (*D).Package << endl;
+
+            if (TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst) == true)
+            {
+               // We successfully installed something; skip remaining alternatives
+               skipAlternatives = hasAlternatives;
+               continue;
+            }
+            else if (hasAlternatives)
+            {
+               if (_config->FindB("Debug::BuildDeps",false) == true)
+                  cout << "  Unsatisfiable, trying alternatives\n";
+               continue;
+            }
+            else
+            {
+               return _error->Error(_("Failed to satisfy %s dependency for %s: %s"),
+                                    Last->BuildDepType((*D).Type),
+                                    Src.c_str(),
+                                    (*D).Package.c_str());
+            }
 	 }	       
       }
       
@@ -2171,8 +2229,8 @@ bool DoBuildDep(CommandLine &CmdL)
       
       // Now we check the state of the packages,
       if (Cache->BrokenCount() != 0)
-	 return _error->Error(_("Some broken packages were found while trying to process build-dependencies.\n"
-				"You might want to run `apt-get -f install' to correct these."));
+	 return _error->Error(_("Some broken packages were found while trying to process build-dependencies for %s.\n"
+				"You might want to run `apt-get -f install' to correct these."),*I);
    }
   
    if (InstallPackages(Cache, false, true) == false)
