@@ -1,0 +1,2466 @@
+# translation of apt_ro.po to Romanian
+# This file is put in the public domain.
+# Sorin Batariuc <sorin@bonbon.net>, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apt_ro\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-07-29 09:38-0700\n"
+"PO-Revision-Date: 2004-11-16 01:22+0200\n"
+"Last-Translator: Sorin Batariuc <sorin@bonbon.net>\n"
+"Language-Team: Romanian <romanian>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.3.1\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: cmdline/apt-cache.cc:135
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Pachetul %s versiunea %s are o dependenţă neîndeplinită:\n"
+
+#: cmdline/apt-cache.cc:175 cmdline/apt-cache.cc:527 cmdline/apt-cache.cc:615
+#: cmdline/apt-cache.cc:771 cmdline/apt-cache.cc:989 cmdline/apt-cache.cc:1357
+#: cmdline/apt-cache.cc:1508
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Nu pot localiza pachetul %s"
+
+#: cmdline/apt-cache.cc:232
+msgid "Total Package Names : "
+msgstr "Total nume pachete : "
+
+#: cmdline/apt-cache.cc:272
+msgid "  Normal Packages: "
+msgstr "  Pachete normale: "
+
+#: cmdline/apt-cache.cc:273
+msgid "  Pure Virtual Packages: "
+msgstr "  Pachete pur virtuale: "
+
+#: cmdline/apt-cache.cc:274
+msgid "  Single Virtual Packages: "
+msgstr "  Pachete singur virtuale: "
+
+#: cmdline/apt-cache.cc:275
+msgid "  Mixed Virtual Packages: "
+msgstr "  Pachete mixt virtuale: "
+
+#: cmdline/apt-cache.cc:276
+msgid "  Missing: "
+msgstr "  Lipsă: "
+
+#: cmdline/apt-cache.cc:278
+msgid "Total Distinct Versions: "
+msgstr "Total versiuni distincte: "
+
+#: cmdline/apt-cache.cc:280
+msgid "Total Dependencies: "
+msgstr "Total dependenţe: "
+
+#: cmdline/apt-cache.cc:283
+msgid "Total Ver/File relations: "
+msgstr "Total relaţii versiune/fişier: "
+
+#: cmdline/apt-cache.cc:285
+msgid "Total Provides Mappings: "
+msgstr "Total furnizări mappings: "
+
+#: cmdline/apt-cache.cc:297
+msgid "Total Globbed Strings: "
+msgstr "Total şiruri globbed: "
+
+#: cmdline/apt-cache.cc:311
+msgid "Total Dependency Version space: "
+msgstr "Total spaţiu versiuni dependenţe: "
+
+#: cmdline/apt-cache.cc:316
+msgid "Total Slack space: "
+msgstr "Total spaţiu liber: "
+
+#: cmdline/apt-cache.cc:324
+msgid "Total Space Accounted for: "
+msgstr "Total spaţiu contorizat pentru: "
+
+#: cmdline/apt-cache.cc:446 cmdline/apt-cache.cc:1189
+#, c-format
+msgid "Package file %s is out of sync."
+msgstr "Fişierul pachetului %s este desincronizat."
+
+#: cmdline/apt-cache.cc:1231
+msgid "You must give exactly one pattern"
+msgstr "Trebuie să daţi exact un model"
+
+#: cmdline/apt-cache.cc:1385
+msgid "No packages found"
+msgstr "Nu s-au găsit pachete"
+
+#: cmdline/apt-cache.cc:1462
+msgid "Package Files:"
+msgstr "Fişierele pachetelor: "
+
+#: cmdline/apt-cache.cc:1469 cmdline/apt-cache.cc:1555
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Cache este desincronizat, nu pot x-ref un fişier pachet"
+
+#: cmdline/apt-cache.cc:1470
+#, c-format
+msgid "%4i %s\n"
+msgstr "%4i %s\n"
+
+#. Show any packages have explicit pins
+#: cmdline/apt-cache.cc:1482
+msgid "Pinned Packages:"
+msgstr "Pachete fixate:"
+
+#: cmdline/apt-cache.cc:1494 cmdline/apt-cache.cc:1535
+msgid "(not found)"
+msgstr "(negăsit)"
+
+#. Installed version
+#: cmdline/apt-cache.cc:1515
+msgid "  Installed: "
+msgstr "  Instalate: "
+
+#: cmdline/apt-cache.cc:1517 cmdline/apt-cache.cc:1525
+msgid "(none)"
+msgstr "(niciunul)"
+
+#. Candidate Version
+#: cmdline/apt-cache.cc:1522
+msgid "  Candidate: "
+msgstr "  Candidat: "
+
+#: cmdline/apt-cache.cc:1532
+msgid "  Package Pin: "
+msgstr "  Pachet fixat: "
+
+#. Show the priority tables
+#: cmdline/apt-cache.cc:1541
+msgid "  Version Table:"
+msgstr "  Versiunea tabelei:"
+
+#: cmdline/apt-cache.cc:1556
+#, c-format
+msgid "       %4i %s\n"
+msgstr "        %4i %s\n"
+
+#: cmdline/apt-cache.cc:1646 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
+#: cmdline/apt-get.cc:2260 cmdline/apt-sortpkgs.cc:144
+#, c-format
+msgid "%s %s for %s %s compiled on %s %s\n"
+msgstr "%s %s pentru %s %s compilat pe %s %s\n"
+
+#: cmdline/apt-cache.cc:1653
+msgid ""
+"Usage: apt-cache [options] command\n"
+"       apt-cache [options] add file1 [file2 ...]\n"
+"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
+"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"\n"
+"apt-cache is a low-level tool used to manipulate APT's binary\n"
+"cache files, and query information from them\n"
+"\n"
+"Commands:\n"
+"   add - Add a package file to the source cache\n"
+"   gencaches - Build both the package and source cache\n"
+"   showpkg - Show some general information for a single package\n"
+"   showsrc - Show source records\n"
+"   stats - Show some basic statistics\n"
+"   dump - Show the entire file in a terse form\n"
+"   dumpavail - Print an available file to stdout\n"
+"   unmet - Show unmet dependencies\n"
+"   search - Search the package list for a regex pattern\n"
+"   show - Show a readable record for the package\n"
+"   depends - Show raw dependency information for a package\n"
+"   rdepends - Show reverse dependency information for a package\n"
+"   pkgnames - List the names of all packages\n"
+"   dotty - Generate package graphs for GraphVis\n"
+"   xvcg - Generate package graphs for xvcg\n"
+"   policy - Show policy settings\n"
+"\n"
+"Options:\n"
+"  -h   This help text.\n"
+"  -p=? The package cache.\n"
+"  -s=? The source cache.\n"
+"  -q   Disable progress indicator.\n"
+"  -i   Show only important deps for the unmet command.\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+msgstr ""
+"Utilizare: apt-cache [opţiuni] comanda\n"
+"       apt-cache [opţiuni] add fişier1 [fişier2 ...]\n"
+"       apt-cache [opţiuni] showpkg pachet1 [pachet2 ...]\n"
+"       apt-cache [opţiuni] showsrc pachet1 [pachet2 ...]\n"
+"\n"
+"apt-cache este o unealtă de nivel scăzut pentru manipularea cache-lui\n"
+"fişierelor binare APT, şi de interogare informaţii din ele\n"
+"\n"
+"Comenzi:\n"
+"   add - Adaugă un fişier pachet la sursa cache\n"
+"   gencaches - Construieşte şi pachetul şi sursa cache\n"
+"   showpkg - Arată unele informaţii generale pentru un singur pachet\n"
+"   showsrc - Arată înregistrările sursei\n"
+"   stats - Arată unele statistici de bază\n"
+"   dump - Arată întregul fişier într-o formă concisă\n"
+"   dumpavail - Afişează un fişier disponibil către stdout\n"
+"   unmet - Arată dependenţele neîndeplinite\n"
+"   search - Caută în lista de pachete pentru un model regex\n"
+"   show - Arată o înregistrare lizibilă pentru un pachet\n"
+"   depends - Arată informaţii brute de dependenţă pentru un pachet\n"
+"   rdepends - Arată dependenţele inversate pentru un pachet\n"
+"   pkgnames - Afişează numele tuturor pachetelor\n"
+"   dotty - Generează grafice de pachete pentru GraphVis\n"
+"   xvcg - Generează grafice de pachete pentru xvcg\n"
+"   policy - Arată ajustările de politică\n"
+"\n"
+"Opţiuni:\n"
+"  -h   Acest text de ajutor.\n"
+"  -p=? Pachetul cache.\n"
+"  -s=? Sursa cache.\n"
+"  -q   Dezactivează indicatorul de progres.\n"
+"  -i   Arată doar dependenţele importante pentru comanda neîndeplinită.\n"
+"  -c=? Citeşte acest fişier de configurare\n"
+"  -o=? Ajustează o opţiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
+"Vedeţi manualele apt-cache(8) şi apt.conf(5) pentru mai multe informaţii.\n"
+
+#: cmdline/apt-config.cc:41
+msgid "Arguments not in pairs"
+msgstr "Argumentele nu sunt perechi"
+
+#: cmdline/apt-config.cc:76
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is a simple tool to read the APT config file\n"
+"\n"
+"Commands:\n"
+"   shell - Shell mode\n"
+"   dump - Show the configuration\n"
+"\n"
+"Options:\n"
+"  -h   This help text.\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"Utilizare: apt-config [opţiuni] comanda\n"
+"\n"
+"apt-config este o unealtă simplă pentru citirea fişierului de configurare APT\n"
+"\n"
+"Comenzi:\n"
+"   shell - Modul shell\n"
+"   dump - Arată configurarea\n"
+"\n"
+"Opţiuni:\n"
+"  -h   Acest text de ajutor.\n"
+"  -c=? Citeşte acest fişier de configurare\n"
+"  -o=? Ajustează o opţiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc:98
+#, c-format
+msgid "%s not a valid DEB package."
+msgstr "%s nu este un pachet DEB valabil."
+
+#: cmdline/apt-extracttemplates.cc:232
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is a tool to extract config and template info\n"
+"from debian packages\n"
+"\n"
+"Options:\n"
+"  -h   This help text\n"
+"  -t   Set the temp dir\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"Utilizare: apt-extracttemplates fişier1 [fişier2 ...]\n"
+"\n"
+"apt-extracttemplates este o unealtă pentru extragerea informaţiilor \n"
+"de configurare şi şabloane dintr-un pachet Debian\n"
+"\n"
+"Opţiuni\n"
+"  -h   Acest text de ajutor.\n"
+"  -t   Impune directorul temp\n"
+"  -c=? Citeşte acest fişier de configurare\n"
+"  -o=? Ajustează o opţiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Nu pot scrie în %s"
+
+#: cmdline/apt-extracttemplates.cc:310
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "Nu pot citi versiunea debconf. Este instalat debconf?"
+
+#: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:337
+msgid "Package extension list is too long"
+msgstr "Lista extensiei pachetului este prea lungă"
+
+#: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
+#: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:252
+#: ftparchive/apt-ftparchive.cc:266 ftparchive/apt-ftparchive.cc:288
+#, c-format
+msgid "Error Processing directory %s"
+msgstr "Eroare la prelucrarea directorului %s"
+
+#: ftparchive/apt-ftparchive.cc:250
+msgid "Source extension list is too long"
+msgstr "Lista extensiei sursei este prea lungă"
+
+#: ftparchive/apt-ftparchive.cc:367
+msgid "Error writing header to contents file"
+msgstr "Eroare la scrierea antetului în conţinutul fişierului"
+
+#: ftparchive/apt-ftparchive.cc:397
+#, c-format
+msgid "Error Processing Contents %s"
+msgstr "Eroare la prelucrarea conţinutului %s"
+
+#: ftparchive/apt-ftparchive.cc:551
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitary configuration option"
+msgstr ""
+"Utilizare: apt-ftparchive [opţiuni] comanda\n"
+"Comenzi: packages binarypath [fişier_înlocuire [prefix_cale]]\n"
+"          sources srcpath [fişier_înlocuire [prefix_cale]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generează fişiere de indexare pentru arhivele Debian. Suportă\n"
+"multe stiluri de generare de la complet automat la înlocuiri funcţionale\n"
+"pentru dpkg-scanpackage şi dpkg-scansources\n"
+"\n"
+"apt-ftparchive generează fişierele pachetelor dintr-un arbore de .deb-uri.\n"
+"Fişierul pachet înglobează conţinutul tuturor câmpurilor de control din fiecare\n"
+"pachet ca şi MD5 hash şi dimensiunea fişierului. Un fişier de înlocuire este\n"
+"furnizat pentru a forţa valoarea priorităţii şi secţiunii.\n"
+"\n"
+"În mod asemănator apt-ftparchive generează fişierele surse dintr-un arbore de .dsc-uri.\n"
+"Opţiunea --source-override poate fi folosită pentru a specifica fişierul de înlocuire\n"
+"\n"
+"Comenzile 'packages' şi 'sources' ar trebui executate în rădăcina arborelui.\n"
+"Binaryparh ar trebui să indice baza căutării recursive şi fişierul de înlocuire ar\n"
+"trebui să conţină semnalizatorul de înlocuire. Prefixul căii este adăugat câmpului\n"
+"de nume fişier dacă acesta este prezent. Exemplu de utilizare din arhiva\n"
+"Debian:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Opţiuni:\n"
+"  -h   Acest text de ajutor.\n"
+"  --md5 Generarea controlului MD5\n"
+"  -s=?  Sursa fişierului de înlocuire\n"
+"  -q    În linişte\n"
+"  -d=?  Selectează caching-ul opţional al bazei de date\n"
+"  --no-delink Activează modul de depanare dezlegare\n"
+"  --contents  Generarea controlului conţinutului fişierului\n"
+"  -c=? Citeşte acest fişier de configurare\n"
+"  -o=? Ajustează o opţiune de configurare arbitrară"
+
+#: ftparchive/apt-ftparchive.cc:757
+msgid "No selections matched"
+msgstr "Nu s-a potrivit nici o selecţie"
+
+#: ftparchive/apt-ftparchive.cc:830
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "Unele fişiere lipsesc din grupul fişierului pachet '%s'"
+
+#: ftparchive/cachedb.cc:45
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "DB a fost deteriorat, fişierul a fost redenumit %s.old"
+
+#: ftparchive/cachedb.cc:63
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr "DB este vechi, se aşteaptă înnoirea %s"
+
+#: ftparchive/cachedb.cc:73
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "Nu pot deschide fişierul DB %s: %s"
+
+#: ftparchive/cachedb.cc:114
+#, c-format
+msgid "File date has changed %s"
+msgstr "Data fişierului a fost modificată %s"
+
+#: ftparchive/cachedb.cc:155
+msgid "Archive has no control record"
+msgstr "Arhiva nu are înregistrare de control"
+
+#: ftparchive/cachedb.cc:267
+msgid "Unable to get a cursor"
+msgstr "Nu pot obţine un cursor"
+
+#: ftparchive/writer.cc:79
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "A: Nu pot citi directorul %s\n"
+
+#: ftparchive/writer.cc:84
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "A: Nu pot determina starea %s\n"
+
+#: ftparchive/writer.cc:126
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc:128
+msgid "W: "
+msgstr "A: "
+
+#: ftparchive/writer.cc:135
+msgid "E: Errors apply to file "
+msgstr "E: Erori la fişierul "
+
+#: ftparchive/writer.cc:152 ftparchive/writer.cc:182
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Eşuare în a rezolva %s"
+
+#: ftparchive/writer.cc:164
+msgid "Tree walking failed"
+msgstr "Eşuare în parcurgerea arborelui"
+
+#: ftparchive/writer.cc:189
+#, c-format
+msgid "Failed to open %s"
+msgstr "Eşuare la deschiderea %s"
+
+#: ftparchive/writer.cc:246
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " Dezlegare %s [%s]\n"
+
+#: ftparchive/writer.cc:254
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Eşuare la citirea legăturii %s"
+
+#: ftparchive/writer.cc:258
+#, c-format
+msgid "Failed to unlink %s"
+msgstr "Eşuare în desfacerea legăturii %s"
+
+#: ftparchive/writer.cc:265
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Eşuare în legarea %s de %s"
+
+#: ftparchive/writer.cc:275
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " Atinsă limita de %sB a dezlegării.\n"
+
+#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Eşuare în determinarea stării %s"
+
+#: ftparchive/writer.cc:378
+msgid "Archive had no package field"
+msgstr "Arhiva nu are câmp de pachet"
+
+#: ftparchive/writer.cc:386 ftparchive/writer.cc:595
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  %s nu are intrare de înlocuire\n"
+
+#: ftparchive/writer.cc:429 ftparchive/writer.cc:677
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  %s responsabil este %s nu %s\n"
+
+#: ftparchive/contents.cc:346 ftparchive/contents.cc:377
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - Eşuare în alocarea memoriei"
+
+#: ftparchive/override.cc:38 ftparchive/override.cc:146
+#, c-format
+msgid "Unable to open %s"
+msgstr "Nu pot deschide %s"
+
+#: ftparchive/override.cc:64 ftparchive/override.cc:170
+#, c-format
+msgid "Malformed override %s line %lu #1"
+msgstr "Înlocuire greşită %s linia %lu #1"
+
+#: ftparchive/override.cc:78 ftparchive/override.cc:182
+#, c-format
+msgid "Malformed override %s line %lu #2"
+msgstr "Înlocuire greşită %s linia %lu #2"
+
+#: ftparchive/override.cc:92 ftparchive/override.cc:195
+#, c-format
+msgid "Malformed override %s line %lu #3"
+msgstr "Înlocuire greşită %s linia %lu #3"
+
+#: ftparchive/override.cc:131 ftparchive/override.cc:205
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Eşuare la citirea fişierului de înlocuire %s"
+
+#: ftparchive/multicompress.cc:75
+#, c-format
+msgid "Unknown Compresison Algorithm '%s'"
+msgstr "Algoritm de compresie necunoscut '%s'"
+
+#: ftparchive/multicompress.cc:105
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "Rezultatul comprimat %s are nevoie de o ajustare a compresiei"
+
+#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Eşuare în crearea conexiunii IPC către subproces"
+
+#: ftparchive/multicompress.cc:198
+msgid "Failed to create FILE*"
+msgstr "Eşuare în crearea FIŞIERULUI*"
+
+#: ftparchive/multicompress.cc:201
+msgid "Failed to fork"
+msgstr "Eşuare în bifurcare"
+
+#: ftparchive/multicompress.cc:215
+msgid "Compress Child"
+msgstr "Comprimare copil"
+
+#: ftparchive/multicompress.cc:238
+#, c-format
+msgid "Internal Error, Failed to create %s"
+msgstr "Eroare internă, eşuare în a crea %s"
+
+#: ftparchive/multicompress.cc:289
+msgid "Failed to create subprocess IPC"
+msgstr "Eşuare în a crea subprocesul IPC"
+
+#: ftparchive/multicompress.cc:324
+msgid "Failed to exec compressor "
+msgstr "Eşuare în executarea compresorului"
+
+#: ftparchive/multicompress.cc:363
+msgid "decompressor"
+msgstr "decompresor"
+
+#: ftparchive/multicompress.cc:406
+msgid "IO to subprocess/file failed"
+msgstr "IO către subproces/fişier eşuat"
+
+#: ftparchive/multicompress.cc:458
+msgid "Failed to read while computing MD5"
+msgstr "Eşuare la citire în timpul calculării MD5"
+
+#: ftparchive/multicompress.cc:475
+#, c-format
+msgid "Problem unlinking %s"
+msgstr "Problemă la desfacerea %s"
+
+#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Eşuare în a redenumi %s în %s"
+
+#: cmdline/apt-get.cc:118
+msgid "Y"
+msgstr "Y"
+
+#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1422
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Eroare de compilare regex - %s"
+
+#: cmdline/apt-get.cc:235
+msgid "The following packages have unmet dependencies:"
+msgstr "Următoarele pachete au dependenţe neîndeplinite:"
+
+#: cmdline/apt-get.cc:325
+#, c-format
+msgid "but %s is installed"
+msgstr "dar %s este instalat"
+
+#: cmdline/apt-get.cc:327
+#, c-format
+msgid "but %s is to be installed"
+msgstr "dar %s este pe cale de a fi instalat"
+
+#: cmdline/apt-get.cc:334
+msgid "but it is not installable"
+msgstr "dar nu este instalabil"
+
+#: cmdline/apt-get.cc:336
+msgid "but it is a virtual package"
+msgstr "dar este un pachet virtual"
+
+#: cmdline/apt-get.cc:339
+msgid "but it is not installed"
+msgstr "dar nu este instalat"
+
+#: cmdline/apt-get.cc:339
+msgid "but it is not going to be installed"
+msgstr "dar nu este pe cale să fie instalat"
+
+#: cmdline/apt-get.cc:344
+msgid " or"
+msgstr " sau"
+
+#: cmdline/apt-get.cc:373
+msgid "The following NEW packages will be installed:"
+msgstr "Următoarele pachete NOI vor fi instalate:"
+
+#: cmdline/apt-get.cc:399
+msgid "The following packages will be REMOVED:"
+msgstr "Următoarele pachete vor fi ŞTERSE:"
+
+#: cmdline/apt-get.cc:421
+msgid "The following packages have been kept back:"
+msgstr "Următoarele pachete au fost reţinute:"
+
+#: cmdline/apt-get.cc:442
+msgid "The following packages will be upgraded:"
+msgstr "Următoarele pachete vor fi ÎNNOITE:"
+
+#: cmdline/apt-get.cc:463
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Următoarele pachete vor fi DE-GRADATE:"
+
+#: cmdline/apt-get.cc:483
+msgid "The following held packages will be changed:"
+msgstr "Următoarele pachete ţinute vor fi schimbate:"
+
+#: cmdline/apt-get.cc:536
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (datorită %s) "
+
+#: cmdline/apt-get.cc:544
+msgid ""
+"WARNING: The following essential packages will be removed\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"AVERTISMENT: Următoarele pachete esenţiale vor fi şterse\n"
+"Aceasta NU ar trebui făcută decât dacă ştiţi exact ce vreţi!"
+
+#: cmdline/apt-get.cc:574
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu înnoite, %lu nou instalate, "
+
+#: cmdline/apt-get.cc:578
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu reinstalate, "
+
+#: cmdline/apt-get.cc:580
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu de-gradate, "
+
+#: cmdline/apt-get.cc:582
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu de şters şi %lu neînnoite.\n"
+
+#: cmdline/apt-get.cc:586
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu instalate sau şterse incomplet.\n"
+
+#: cmdline/apt-get.cc:646
+msgid "Correcting dependencies..."
+msgstr "Corectez dependenţele..."
+
+#: cmdline/apt-get.cc:649
+msgid " failed."
+msgstr " eşuare."
+
+#: cmdline/apt-get.cc:652
+msgid "Unable to correct dependencies"
+msgstr "Nu pot corecta dependenţele"
+
+#: cmdline/apt-get.cc:655
+msgid "Unable to minimize the upgrade set"
+msgstr "Nu pot micşora setul de înnoire"
+
+#: cmdline/apt-get.cc:657
+msgid " Done"
+msgstr " Gata"
+
+#: cmdline/apt-get.cc:661
+msgid "You might want to run `apt-get -f install' to correct these."
+msgstr "Aţi putea să porniţi 'apt-get -f install' pentru a corecta acestea."
+
+#: cmdline/apt-get.cc:664
+msgid "Unmet dependencies. Try using -f."
+msgstr "Dependenţe neîndeplinite. Încercaţi folosirea -f."
+
+#: cmdline/apt-get.cc:718
+msgid "Packages need to be removed but Remove is disabled."
+msgstr "Pachete trebuiesc şterse dar ştergerea este dezactivată."
+
+#: cmdline/apt-get.cc:744 cmdline/apt-get.cc:1716 cmdline/apt-get.cc:1749
+msgid "Unable to lock the download directory"
+msgstr "Nu pot încuia directorul de descărcare"
+
+#: cmdline/apt-get.cc:754 cmdline/apt-get.cc:1797 cmdline/apt-get.cc:2008
+#: apt-pkg/cachefile.cc:67
+msgid "The list of sources could not be read."
+msgstr "Lista surselor nu poate fi citită."
+
+#: cmdline/apt-get.cc:774
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "Este nevoie de %sB/%sB de arhive.\n"
+
+#: cmdline/apt-get.cc:777
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "Este nevoie de %sB de arhive.\n"
+
+#: cmdline/apt-get.cc:782
+#, c-format
+msgid "After unpacking %sB of additional disk space will be used.\n"
+msgstr "După despachetare va fi folosit %sB de spaţiu suplimentar pe disc.\n"
+
+#: cmdline/apt-get.cc:785
+#, c-format
+msgid "After unpacking %sB disk space will be freed.\n"
+msgstr "După despachetare va fi eliberat %sB din spaţiul de pe disc.\n"
+
+#: cmdline/apt-get.cc:802
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "Nu aveţi suficient spaţiu în %s."
+
+#: cmdline/apt-get.cc:811
+msgid "There are problems and -y was used without --force-yes"
+msgstr "Sunt unele probleme şi -y a fost folosit fără --force-yes"
+
+#: cmdline/apt-get.cc:817 cmdline/apt-get.cc:837
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "A fost specificat 'doar neimportant' dar nu este o operaţiune neimportantă."
+
+#: cmdline/apt-get.cc:819
+msgid "Yes, do as I say!"
+msgstr "Da, fă cum îţi spun!"
+
+#: cmdline/apt-get.cc:821
+#, c-format
+msgid ""
+"You are about to do something potentially harmful\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"Sunteţi pe cale de a face ceva cu potenţial distructiv\n"
+"Pentru a continua tastaţi fraza '%s'\n"
+" ?] "
+
+#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:846
+msgid "Abort."
+msgstr "Renunţare."
+
+#: cmdline/apt-get.cc:842
+msgid "Do you want to continue? [Y/n] "
+msgstr "Vreţi să continuaţi? [Y/n] "
+
+#: cmdline/apt-get.cc:911 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1906
+#, c-format
+msgid "Failed to fetch %s  %s\n"
+msgstr "Eşuare în aducerea %s  %s\n"
+
+#: cmdline/apt-get.cc:929
+msgid "Some files failed to download"
+msgstr "Eşuare în descărcarea unor fişiere"
+
+#: cmdline/apt-get.cc:930 cmdline/apt-get.cc:1915
+msgid "Download complete and in download only mode"
+msgstr "Descărcare completă şi în modul doar descărcare"
+
+#: cmdline/apt-get.cc:936
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Nu pot aduce unele arhive, poate porniţi 'apt-get update' sau încercaţi cu "
+"--fix-missing?"
+
+#: cmdline/apt-get.cc:940
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "--fix-missing şi schimbul de mediu nu este deocamdată suportat"
+
+#: cmdline/apt-get.cc:945
+msgid "Unable to correct missing packages."
+msgstr "Nu pot corecta pachetele lipsă."
+
+#: cmdline/apt-get.cc:946
+msgid "Aborting Install."
+msgstr "Abandonez instalarea."
+
+#: cmdline/apt-get.cc:979
+#, c-format
+msgid "Note, selecting %s instead of %s\n"
+msgstr "Notă, selectarea %s în locul lui %s\n"
+
+#: cmdline/apt-get.cc:989
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "Sar peste %s, este deja instalat şi înnoirea nu este activată.\n"
+
+#: cmdline/apt-get.cc:1007
+#, c-format
+msgid "Package %s is not installed, so not removed\n"
+msgstr "Pachetul %s nu este instalat, aşa încât nu este şters\n"
+
+#: cmdline/apt-get.cc:1018
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "Pachetul %s este un pachet virtual furnizat de către:\n"
+
+#: cmdline/apt-get.cc:1030
+msgid " [Installed]"
+msgstr " [Instalat]"
+
+#: cmdline/apt-get.cc:1035
+msgid "You should explicitly select one to install."
+msgstr "Ar trebui să alegeţi în mod explicit unul pentru instalare."
+
+#: cmdline/apt-get.cc:1040
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"Pachetul %s nu este disponibil, dar este menţionat de către alt pachet.\n"
+"Aceasta ar putea însemna că pachetul lipseşte, s-a învechit, sau\n"
+"este disponibil numai din altă sursă\n"
+
+#: cmdline/apt-get.cc:1059
+msgid "However the following packages replace it:"
+msgstr "Oricum următoarele pachete îl înlocuiesc:"
+
+#: cmdline/apt-get.cc:1062
+#, c-format
+msgid "Package %s has no installation candidate"
+msgstr "Pachetul %s nu are nici un candidat de instalare"
+
+#: cmdline/apt-get.cc:1082
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "Reinstalarea lui %s nu este posibilă, nu poate fi descărcat.\n"
+
+#: cmdline/apt-get.cc:1090
+#, c-format
+msgid "%s is already the newest version.\n"
+msgstr "%s are deja cea mai nouă versiune.\n"
+
+#: cmdline/apt-get.cc:1117
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Producţia '%s' pentru '%s' n-a fost găsită"
+
+#: cmdline/apt-get.cc:1119
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Versiunea '%s' pentru '%s' n-a fost găsită"
+
+#: cmdline/apt-get.cc:1125
+#, c-format
+msgid "Selected version %s (%s) for %s\n"
+msgstr "Versiune selectată %s (%s) pentru %s\n"
+
+#: cmdline/apt-get.cc:1235
+msgid "The update command takes no arguments"
+msgstr "Comanda de actualizare nu are argumente"
+
+#: cmdline/apt-get.cc:1248
+msgid "Unable to lock the list directory"
+msgstr "Nu pot încuia directorul cu lista"
+
+#: cmdline/apt-get.cc:1300
+msgid ""
+"Some index files failed to download, they have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Unele fişiere index au eşuat la descărcare, fie au fost ignorate, fie au fost "
+"folosite în loc unele vechi."
+
+#: cmdline/apt-get.cc:1319
+msgid "Internal Error, AllUpgrade broke stuff"
+msgstr "Eroare internă, înnoire totală a defectat diverse chestiuni"
+
+#: cmdline/apt-get.cc:1409 cmdline/apt-get.cc:1445
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "Nu pot găsi pachetul %s"
+
+#: cmdline/apt-get.cc:1432
+#, c-format
+msgid "Note, selecting %s for regex '%s'\n"
+msgstr "Notă, selectare %s pentru regex '%s'\n"
+
+#: cmdline/apt-get.cc:1462
+msgid "You might want to run `apt-get -f install' to correct these:"
+msgstr "Aţi putea porni 'apt-get -f install' pentru a corecta acestea:"
+
+#: cmdline/apt-get.cc:1465
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"Dependenţe neîndeplinite. Încercaţi 'apt-get -f install' fără nici un pachet (sau "
+"oferiţi o altă soluţie)."
+
+#: cmdline/apt-get.cc:1477
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Unele pachete n-au putut fi instalate. Aceasta ar putea însemna că aţi cerut\n"
+"o situaţie imposibilă sau că folosiţi distribuţia instabilă în care unele pachete\n"
+"cerute n-au fost create încă sau au fost mutate din Incoming."
+
+#: cmdline/apt-get.cc:1485
+msgid ""
+"Since you only requested a single operation it is extremely likely that\n"
+"the package is simply not installable and a bug report against\n"
+"that package should be filed."
+msgstr ""
+"Din moment ce doar aţi cerut o singură operaţiune este extrem de probabil\n"
+" că pachetul pur şi simplu nu este instalabil şi un raport de eroare pentru\n"
+"acest pachet ar trebui completat."
+
+#: cmdline/apt-get.cc:1490
+msgid "The following information may help to resolve the situation:"
+msgstr "Următoarele informaţii ar putea să vă ajute la rezolvarea situaţiei:"
+
+#: cmdline/apt-get.cc:1493
+msgid "Broken packages"
+msgstr "Pachete deteriorate"
+
+#: cmdline/apt-get.cc:1519
+msgid "The following extra packages will be installed:"
+msgstr "Următoarele extra pachete vor fi instalate:"
+
+#: cmdline/apt-get.cc:1590
+msgid "Suggested packages:"
+msgstr "Pachete sugerate:"
+
+#: cmdline/apt-get.cc:1591
+msgid "Recommended packages:"
+msgstr "Pachete recomandate:"
+
+#: cmdline/apt-get.cc:1611
+msgid "Calculating Upgrade... "
+msgstr "Calculez înnoirea... "
+
+#: cmdline/apt-get.cc:1614 methods/ftp.cc:702 methods/connect.cc:99
+msgid "Failed"
+msgstr "Eşuare"
+
+#: cmdline/apt-get.cc:1619
+msgid "Done"
+msgstr "Gata"
+
+#: cmdline/apt-get.cc:1792
+msgid "Must specify at least one package to fetch source for"
+msgstr "Trebuie specificat cel puţin un pachet pentru a-i aduce sursa"
+
+#: cmdline/apt-get.cc:1819 cmdline/apt-get.cc:2026
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Nu pot găsi o sursă pachet pentru %s"
+
+#: cmdline/apt-get.cc:1866
+#, c-format
+msgid "You don't have enough free space in %s"
+msgstr "Nu aveţi suficient spaţiu în %s"
+
+#: cmdline/apt-get.cc:1871
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Este nevoie de %sB/%sB din arhivele surselor.\n"
+
+#: cmdline/apt-get.cc:1874
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Este nevoie de %sB din arhivele surselor.\n"
+
+#: cmdline/apt-get.cc:1880
+#, c-format
+msgid "Fetch Source %s\n"
+msgstr "Aducere sursa %s\n"
+
+#: cmdline/apt-get.cc:1911
+msgid "Failed to fetch some archives."
+msgstr "Eşuare în a aduce unele arhive."
+
+#: cmdline/apt-get.cc:1939
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Sar peste despachetarea sursei deja despachetate în %s\n"
+
+#: cmdline/apt-get.cc:1951
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Comanda de despachetare '%s' eşuată.\n"
+
+#: cmdline/apt-get.cc:1968
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Comanda de construire '%s' eşuată.\n"
+
+#: cmdline/apt-get.cc:1987
+msgid "Child process failed"
+msgstr "Eşuare proces copil"
+
+#: cmdline/apt-get.cc:2003
+msgid "Must specify at least one package to check builddeps for"
+msgstr "Trebuie specificat cel puţin un pachet pentru a-i verifica dependenţele înglobate"
+
+#: cmdline/apt-get.cc:2031
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Nu pot prelua informaţiile despre dependenţele înglobate ale lui %s"
+
+#: cmdline/apt-get.cc:2051
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s nu are dependenţe înglobate.\n"
+
+#: cmdline/apt-get.cc:2103
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"Dependenţa lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
+"poate fi găsit"
+
+#: cmdline/apt-get.cc:2155
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because no available versions of "
+"package %s can satisfy version requirements"
+msgstr ""
+"Dependenţa lui %s de %s nu poate fi satisfăcută deoarece nici o versiune "
+"disponibilă a pachetului %s nu poate satisface cererile de versiuni"
+
+#: cmdline/apt-get.cc:2190
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr "Eşuare în a satisface dependenţa lui %s de %s: Pachetul instalat %s este prea nou"
+
+#: cmdline/apt-get.cc:2215
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Eşuare în a satisface dependenţa lui %s de %s: %s"
+
+#: cmdline/apt-get.cc:2229
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Dependenţele înglobate pentru %s nu pot fi satisfăcute."
+
+#: cmdline/apt-get.cc:2233
+msgid "Failed to process build dependencies"
+msgstr "Eşuare în a prelucra dependenţele înglobate"
+
+#: cmdline/apt-get.cc:2265
+msgid "Supported Modules:"
+msgstr "Module suportate:"
+
+#: cmdline/apt-get.cc:2306
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a simple command line interface for downloading and\n"
+"installing packages. The most frequently used commands are update\n"
+"and install.\n"
+"\n"
+"Commands:\n"
+"   update - Retrieve new lists of packages\n"
+"   upgrade - Perform an upgrade\n"
+"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
+"   remove - Remove packages\n"
+"   source - Download source archives\n"
+"   build-dep - Configure build-dependencies for source packages\n"
+"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
+"   dselect-upgrade - Follow dselect selections\n"
+"   clean - Erase downloaded archive files\n"
+"   autoclean - Erase old downloaded archive files\n"
+"   check - Verify that there are no broken dependencies\n"
+"\n"
+"Options:\n"
+"  -h  This help text.\n"
+"  -q  Loggable output - no progress indicator\n"
+"  -qq No output except for errors\n"
+"  -d  Download only - do NOT install or unpack archives\n"
+"  -s  No-act. Perform ordering simulation\n"
+"  -y  Assume Yes to all queries and do not prompt\n"
+"  -f  Attempt to continue if the integrity check fails\n"
+"  -m  Attempt to continue if archives are unlocatable\n"
+"  -u  Show a list of upgraded packages as well\n"
+"  -b  Build the source package after fetching it\n"
+"  -V  Show verbose version numbers\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
+"pages for more information and options.\n"
+"                       This APT has Super Cow Powers.\n"
+msgstr ""
+"Utilizare: apt-get [opţiuni] comanda\n"
+"         apt-get [opţiuni] install|remove pachet1 [pachet2 ...]\n"
+"         apt-get [opţiuni] source pachet1 [pachet2 ...]\n"
+"\n"
+"apt-get este o simplă interfaţă în linie de comandă pentru descărcarea şi\n"
+"instalarea pachetelor. Cele mai frecvent folosite comenzi sunt update\n"
+"şi install.\n"
+"\n"
+"Comenzi:\n"
+"   update - Aduce noile liste de pachete\n"
+"   upgrade - Realizează o înnoire\n"
+"   install - Instalează pachete noi (pachet este libc6, nu libc6.deb)\n"
+"   remove - Şterge pachete\n"
+"   source - Descarcă arhivele sursă\n"
+"   build-dep - Configurează dependenţele înglobate pentru sursele pachetelor\n"
+"   dist-upgrade - Înnoirea distribuţiei, vedeţi apt-get(8)\n"
+"   dselect-upgrade - Urmează selecţiile dselect\n"
+"   clean - Şterge fişierele arhivă descărcate\n"
+"   autoclean - Şterge vechile fişiere arhivă descărcate\n"
+"   check - Verifică dacă există dependenţe neîndeplinite\n"
+"\n"
+"Opţiuni:\n"
+"  -h  Acest text de ajutor.\n"
+"  -q  Afişare jurnalizabilă - fără indicator de progres\n"
+"  -qq Fără afişare, cu excepţia erorilor\n"
+"  -d  Doar descărcare - NU instala sau despacheta arhive\n"
+"  -s  Fără acţiune. Realizează o simulare\n"
+"  -y  Presupune DA la toate întrebările şi nu solicita răspuns\n"
+"  -f  Încercare de continuare dacă verificarea integrităţii eşuează\n"
+"  -m  Încercare de continuare dacă arhivele sunt de negăsit\n"
+"  -u  Arată o listă de pachete ce pot fi înnoite\n"
+"  -b  Construieşte sursa pachetului după aducere\n"
+"  -V  Arată numerele versiunilor în mod logoreic\n"
+"  -c=? Citeşte acest fişier de configurare\n"
+"  -o=? Ajustează o opţiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
+"Vedeţi manualul apt-get(8), sources.list(5) şi apt.conf(5)\n"
+"pentru mai multe informaţii şi opţiuni.\n"
+"                       Acest APT are puterile unei Super Vaci.\n"
+
+#: cmdline/acqprogress.cc:55
+msgid "Hit "
+msgstr "Atins "
+
+#: cmdline/acqprogress.cc:79
+msgid "Get:"
+msgstr "Luat:"
+
+#: cmdline/acqprogress.cc:110
+msgid "Ign "
+msgstr "Ignorat "
+
+#: cmdline/acqprogress.cc:114
+msgid "Err "
+msgstr "Eroare"
+
+#: cmdline/acqprogress.cc:135
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Adus %sB în %s (%sB/s)\n"
+
+#: cmdline/acqprogress.cc:225
+#, c-format
+msgid " [Working]"
+msgstr " [În lucru]"
+
+#: cmdline/acqprogress.cc:271
+#, c-format
+msgid ""
+"Media Change: Please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
+msgstr ""
+"Schimbare de mediu: Vă rog introduceţi discul numit\n"
+" '%s'\n"
+"în unitatea '%s' şi apăsaţi Enter\n"
+
+#: cmdline/apt-sortpkgs.cc:86
+msgid "Unknown package record!"
+msgstr "Înregistrare de pachet necunoscut!"
+
+#: cmdline/apt-sortpkgs.cc:150
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
+"to indicate what kind of file it is.\n"
+"\n"
+"Options:\n"
+"  -h   This help text\n"
+"  -s   Use source file sorting\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"Utilizare: apt-sortpkgs [opţiuni] fişier1 [fişier2 ...]\n"
+"\n"
+"apt-sortpkgs este o unealtă simplă pentru sortarea fişierelor pachete. Opţiunea\n"
+"-s este folosită pentru a indica ce fel de fişier este.\n"
+"\n"
+"Opţiuni:\n"
+"  -h   Acest text de ajutor\n"
+"  -s   Foloseşte sortarea de fişiere sursă\n"
+"  -c=? Citeşte acest fişier de configurare\n"
+"  -o=? Ajustează o opţiune de configurare arbitrară, ex.: -o dir::cache=/tmp\n"
+
+#: dselect/install:32
+msgid "Bad default setting!"
+msgstr "Ajustări implicite necorespunzătoare!"
+
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
+#: dselect/install:104 dselect/update:45
+msgid "Press enter to continue."
+msgstr "Apăsaţi Enter pentru a continua."
+
+#: dselect/install:100
+msgid "Some errors occurred while unpacking. I'm going to configure the"
+msgstr "S-au produs unele erori în timpul despachetării. Voi configura"
+
+#: dselect/install:101
+msgid "packages that were installed. This may result in duplicate errors"
+msgstr "pachetele care au fost instalate. Aceasta ar putea rezulta erori dublate"
+
+#: dselect/install:102
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr "sau erori cauzate de dependenţe lipsă. Aceasta este normal, doar erorile"
+
+#: dselect/install:103
+msgid "above this message are important. Please fix them and run [I]nstall again"
+msgstr "de deasupra acestui mesaj sunt importante. Vă rog corectaţi-le şi porniţi din nou [I]nstalarea"
+
+#: dselect/update:30
+msgid "Merging Available information"
+msgstr "Unirea informaţiilor disponibile"
+
+#: apt-inst/contrib/extracttar.cc:116
+msgid "Failed to create pipes"
+msgstr "Eşuare în crearea conexiunilor"
+
+#: apt-inst/contrib/extracttar.cc:141
+msgid "Failed to exec gzip "
+msgstr "Eşuare în executarea gzip"
+
+#: apt-inst/contrib/extracttar.cc:178 apt-inst/contrib/extracttar.cc:204
+msgid "Corrupted archive"
+msgstr "Arhivă deteriorată"
+
+#: apt-inst/contrib/extracttar.cc:193
+msgid "Tar Checksum failed, archive corrupted"
+msgstr "Eşuare checksum tar, arhivă deteriorată"
+
+#: apt-inst/contrib/extracttar.cc:296
+#, c-format
+msgid "Unknown TAR header type %u, member %s"
+msgstr "Tip antet TAR %u necunoscut, membru %s"
+
+#: apt-inst/contrib/arfile.cc:73
+msgid "Invalid archive signature"
+msgstr "Semnătură de arhivă necorespunzătoare"
+
+#: apt-inst/contrib/arfile.cc:81
+msgid "Error reading archive member header"
+msgstr "Eroare la citirea antetului membru al arhivei"
+
+#: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
+msgid "Invalid archive member header"
+msgstr "Antet membru de arhivă necorespunzător"
+
+#: apt-inst/contrib/arfile.cc:131
+msgid "Archive is too short"
+msgstr "Arhiva este prea scurtă"
+
+#: apt-inst/contrib/arfile.cc:135
+msgid "Failed to read the archive headers"
+msgstr "Eşuare la citirea antetelor de arhivă"
+
+#: apt-inst/filelist.cc:384
+msgid "DropNode called on still linked node"
+msgstr "Chemat DropNode pe un nod încă legat"
+
+#: apt-inst/filelist.cc:416
+msgid "Failed to locate the hash element!"
+msgstr "Eşuare în localizarea elementului hash!"
+
+#: apt-inst/filelist.cc:463
+msgid "Failed to allocate diversion"
+msgstr "Eşuare în alocarea diversiunii"
+
+#: apt-inst/filelist.cc:468
+msgid "Internal Error in AddDiversion"
+msgstr "Eroare internă în adăugare diversiune"
+
+#: apt-inst/filelist.cc:481
+#, c-format
+msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
+msgstr "Încercare de suprascriere diversiune, %s -> %s şi %s/%s"
+
+#: apt-inst/filelist.cc:510
+#, c-format
+msgid "Double add of diversion %s -> %s"
+msgstr "Adăugare dublă de diversiune %s -> %s"
+
+#: apt-inst/filelist.cc:553
+#, c-format
+msgid "Duplicate conf file %s/%s"
+msgstr "Fişier de configurare duplicat %s/%s"
+
+#: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
+#, c-format
+msgid "Failed write file %s"
+msgstr "Eşuare în a scrie fişierul %s"
+
+#: apt-inst/dirstream.cc:80 apt-inst/dirstream.cc:88
+#, c-format
+msgid "Failed to close file %s"
+msgstr "Eşuare în a închide fişierul %s"
+
+#: apt-inst/extract.cc:96 apt-inst/extract.cc:167
+#, c-format
+msgid "The path %s is too long"
+msgstr "Calea %s este prea lungă"
+
+#: apt-inst/extract.cc:127
+#, c-format
+msgid "Unpacking %s more than once"
+msgstr "Despachetarea %s de mai multe ori"
+
+#: apt-inst/extract.cc:137
+#, c-format
+msgid "The directory %s is diverted"
+msgstr "Directorul %s este distras"
+
+#: apt-inst/extract.cc:147
+#, c-format
+msgid "The package is trying to write to the diversion target %s/%s"
+msgstr "Pachetul încearcă să scrie în ţinta de diversiune %s/%s"
+
+#: apt-inst/extract.cc:157 apt-inst/extract.cc:300
+msgid "The diversion path is too long"
+msgstr "Calea de diversiune este prea lungă"
+
+#: apt-inst/extract.cc:243
+#, c-format
+msgid "The directory %s is being replaced by a non-directory"
+msgstr "Directorul %s este înlocuit de un non-director"
+
+#: apt-inst/extract.cc:283
+msgid "Failed to locate node in its hash bucket"
+msgstr "Eşuare în localizarea nodului din găleata hash"
+
+#: apt-inst/extract.cc:287
+msgid "The path is too long"
+msgstr "Calea este prea lungă"
+
+#: apt-inst/extract.cc:417
+#, c-format
+msgid "Overwrite package match with no version for %s"
+msgstr "Pachetul suprascris nu se potriveşte cu nici o versiune pentru %s"
+
+#: apt-inst/extract.cc:434
+#, c-format
+msgid "File %s/%s overwrites the one in the package %s"
+msgstr "Fişierul %s/%s suprascrie pe cel din pachetul %s"
+
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
+#, c-format
+msgid "Unable to read %s"
+msgstr "Nu pot citi %s"
+
+#: apt-inst/extract.cc:494
+#, c-format
+msgid "Unable to stat %s"
+msgstr "Nu pot determina starea %s"
+
+#: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
+#, c-format
+msgid "Failed to remove %s"
+msgstr "Eşuare în ştergerea %s"
+
+#: apt-inst/deb/dpkgdb.cc:110 apt-inst/deb/dpkgdb.cc:112
+#, c-format
+msgid "Unable to create %s"
+msgstr "Nu pot crea %s"
+
+#: apt-inst/deb/dpkgdb.cc:118
+#, c-format
+msgid "Failed to stat %sinfo"
+msgstr "Eşuare în a determina starea %sinfo"
+
+#: apt-inst/deb/dpkgdb.cc:123
+msgid "The info and temp directories need to be on the same filesystem"
+msgstr "Directoarele de informaţii şi temporare trebuie să fie în acelaşi sistem de fişiere"
+
+#. Build the status cache
+#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
+#: apt-pkg/pkgcachegen.cc:701 apt-pkg/pkgcachegen.cc:706
+#: apt-pkg/pkgcachegen.cc:829
+msgid "Reading Package Lists"
+msgstr "Citire liste de pachete"
+
+#: apt-inst/deb/dpkgdb.cc:180
+#, c-format
+msgid "Failed to change to the admin dir %sinfo"
+msgstr "Eşuare în a schimba către directorul %sinfo"
+
+#: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:355
+#: apt-inst/deb/dpkgdb.cc:448
+msgid "Internal Error getting a Package Name"
+msgstr "Eroare internă la preluarea numelui de pachet"
+
+#: apt-inst/deb/dpkgdb.cc:205
+msgid "Reading File Listing"
+msgstr "Citire derulare fişier"
+
+#: apt-inst/deb/dpkgdb.cc:216
+#, c-format
+msgid ""
+"Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
+"then make it empty and immediately re-install the same version of the "
+"package!"
+msgstr ""
+"Eşuare în deschiderea fişierului listă '%sinfo/%s'. Dacă nu puteţi restaura "
+"acest fişier atunci goliţi-l şi imediat reinstalaţi aceeaşi versiune a "
+"pachetului!"
+
+#: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
+#, c-format
+msgid "Failed reading the list file %sinfo/%s"
+msgstr "Eşuare la citirea fişierului listă %sinfo/%s"
+
+#: apt-inst/deb/dpkgdb.cc:266
+msgid "Internal Error getting a Node"
+msgstr "Eroare internă la preluarea unui nod"
+
+#: apt-inst/deb/dpkgdb.cc:309
+#, c-format
+msgid "Failed to open the diversions file %sdiversions"
+msgstr "Eşuare la deschiderea fişierului de diversiuni %sdiversions"
+
+#: apt-inst/deb/dpkgdb.cc:324
+msgid "The diversion file is corrupted"
+msgstr "Fişierul diversiune este deteriorat"
+
+#: apt-inst/deb/dpkgdb.cc:331 apt-inst/deb/dpkgdb.cc:336
+#: apt-inst/deb/dpkgdb.cc:341
+#, c-format
+msgid "Invalid line in the diversion file: %s"
+msgstr "Linie necorespunzătoare în fişierul diversiune: %s"
+
+#: apt-inst/deb/dpkgdb.cc:362
+msgid "Internal Error adding a diversion"
+msgstr "Eroare internă în timpul adăugării unei diversiuni"
+
+#: apt-inst/deb/dpkgdb.cc:383
+msgid "The pkg cache must be initialize first"
+msgstr "Cache-ul pachetului trebuie întâi iniţializat"
+
+#: apt-inst/deb/dpkgdb.cc:386
+msgid "Reading File List"
+msgstr "Citirea listei de fişiere"
+
+#: apt-inst/deb/dpkgdb.cc:443
+#, c-format
+msgid "Failed to find a Package: Header, offset %lu"
+msgstr "Eşuare în a găsi un pachet: antet, ofset %lu"
+
+#: apt-inst/deb/dpkgdb.cc:465
+#, c-format
+msgid "Bad ConfFile section in the status file. Offset %lu"
+msgstr "Secţiune necorespunzătoare ConfFile în fişierul de stare. Offset %lu"
+
+#: apt-inst/deb/dpkgdb.cc:470
+#, c-format
+msgid "Error parsing MD5. Offset %lu"
+msgstr "Eroare la analiza MD5. Offset %lu"
+
+#: apt-inst/deb/debfile.cc:55
+#, c-format
+msgid "This is not a valid DEB archive, missing '%s' member"
+msgstr "Aceasta nu este o arhivă DEB validă, lipseşte membrul '%s'"
+
+#: apt-inst/deb/debfile.cc:72
+#, c-format
+msgid "Internal Error, could not locate member %s"
+msgstr "Eroare internă, nu pot localiza membrul %s"
+
+#: apt-inst/deb/debfile.cc:104
+#, c-format
+msgid "Couldn't change to %s"
+msgstr "Nu pot schimba la %s"
+
+#: apt-inst/deb/debfile.cc:125
+msgid "Internal Error, could not locate member"
+msgstr "Eroare internă, nu pot localiza membrul"
+
+#: apt-inst/deb/debfile.cc:158
+msgid "Failed to locate a valid control file"
+msgstr "Eşuare de localizare a unui fişier de control valid"
+
+#: apt-inst/deb/debfile.cc:243
+msgid "Unparsible control file"
+msgstr "Fişier de control neanalizabil"
+
+#: methods/cdrom.cc:113
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "Nu pot citi baza de date a cdrom-ului %s"
+
+#: methods/cdrom.cc:122
+msgid ""
+"Please use apt-cdrom to make this CD recognized by APT. apt-get update "
+"cannot be used to add new CDs"
+msgstr ""
+"Vă rog folosiţi apt-cdrom pentru a face recunoscut acest CD de către APT. "
+"'apt-get update' nu poate fi folosit pentru adăugarea de noi CD-uri"
+
+#: methods/cdrom.cc:130 methods/cdrom.cc:168
+msgid "Wrong CD"
+msgstr "CD necorespunzător"
+
+#: methods/cdrom.cc:163
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "Nu pot demonta CDROM-ul în %s, poate este încă utilizat."
+
+#: methods/cdrom.cc:177 methods/file.cc:77
+msgid "File not found"
+msgstr "Fişier negăsit"
+
+#: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
+msgid "Failed to stat"
+msgstr "Eşuare de determinare a stării"
+
+#: methods/copy.cc:79 methods/gzip.cc:139
+msgid "Failed to set modification time"
+msgstr "Eşuare la ajustarea timpului"
+
+#: methods/file.cc:42
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "URI invalid, URIS local trebuie sa nu înceapă cu //"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc:162
+msgid "Logging in"
+msgstr "Se autentifică"
+
+#: methods/ftp.cc:168
+msgid "Unable to determine the peer name"
+msgstr "Nu pot determina numele pereche"
+
+#: methods/ftp.cc:173
+msgid "Unable to determine the local name"
+msgstr "Nu pot determina numele local"
+
+#: methods/ftp.cc:204 methods/ftp.cc:232
+#, c-format
+msgid "Server refused our connection and said: %s"
+msgstr "Serverul ne-a refuzat conectarea şi a spus: %s"
+
+#: methods/ftp.cc:210
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "Eşuare UTILIZATOR, serverul a spus: %s"
+
+#: methods/ftp.cc:217
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "Eşuare PAROLĂ, serverul a spus: %s"
+
+#: methods/ftp.cc:237
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"Un server proxy a fost specificat dar nu exista nici un script de conectare, "
+"Acquire::ftp::ProxyLogin este gol."
+
+#: methods/ftp.cc:265
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "Script comandă de conectare '%s' eşuat, serverul a spus: %s"
+
+#: methods/ftp.cc:291
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "Eşuare TIP, serverul a spus: %s"
+
+#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
+msgid "Connection timeout"
+msgstr "Timpul de conectare a expirat"
+
+#: methods/ftp.cc:335
+msgid "Server closed the connection"
+msgstr "Serverul a terminat conexiunea"
+
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
+msgid "Read error"
+msgstr "Eroare de citire"
+
+#: methods/ftp.cc:345 methods/rsh.cc:197
+msgid "A response overflowed the buffer."
+msgstr "Un răspuns a inundat zona tampon."
+
+#: methods/ftp.cc:362 methods/ftp.cc:374
+msgid "Protocol corruption"
+msgstr "Degradare protocol"
+
+#: methods/ftp.cc:446 methods/rsh.cc:232
+msgid "Write Error"
+msgstr "Eroare de scriere"
+
+#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
+msgid "Could not create a socket"
+msgstr "Nu pot crea un socket"
+
+#: methods/ftp.cc:698
+msgid "Could not connect data socket, connection timed out"
+msgstr "Nu pot conecta data socket, timpul de conectare a expirat"
+
+#: methods/ftp.cc:704
+msgid "Could not connect passive socket."
+msgstr "Nu pot conecta socket pasiv"
+
+#: methods/ftp.cc:722
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "getaddrinfo n-a reuşit să obţină un socket de ascultare"
+
+#: methods/ftp.cc:736
+msgid "Could not bind a socket"
+msgstr "Nu pot lega un socket"
+
+#: methods/ftp.cc:740
+msgid "Could not listen on the socket"
+msgstr "Nu pot asculta pe un socket"
+
+#: methods/ftp.cc:747
+msgid "Could not determine the socket's name"
+msgstr "Nu pot determina numele socket-ului"
+
+#: methods/ftp.cc:779
+msgid "Unable to send PORT command"
+msgstr "Nu pot trimite comanda PORT"
+
+#: methods/ftp.cc:789
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Familie de adrese necunoscută %u (AF_*)"
+
+#: methods/ftp.cc:798
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "Eşuare EPRT, serverul a spus: %s"
+
+#: methods/ftp.cc:818
+msgid "Data socket connect timed out"
+msgstr "Timp de conectare data socket expirat"
+
+#: methods/ftp.cc:825
+msgid "Unable to accept connection"
+msgstr "Nu pot accepta conexiune"
+
+#: methods/ftp.cc:864 methods/http.cc:916 methods/rsh.cc:303
+msgid "Problem hashing file"
+msgstr "Problemă la criptarea fişierului"
+
+#: methods/ftp.cc:877
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Nu pot aduce fişierul, serverul a spus '%s"
+
+#: methods/ftp.cc:892 methods/rsh.cc:322
+msgid "Data socket timed out"
+msgstr "Timp expirat pentru data socket"
+
+#: methods/ftp.cc:922
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Eşuare transfer de date, serverul a spus: '%s'"
+
+#. Get the files information
+#: methods/ftp.cc:997
+msgid "Query"
+msgstr "Interogare"
+
+#: methods/ftp.cc:1104
+msgid "Unable to invoke "
+msgstr "Nu pot invoca"
+
+#: methods/connect.cc:64
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Conectare la %s (%s)"
+
+#: methods/connect.cc:71
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc:80
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Nu pot crea un socket pentru %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc:86
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Nu pot iniţia conectarea la %s:%s (%s)."
+
+#: methods/connect.cc:92
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "N-am putut conecta la %s:%s (%s), timp de conectare expirat"
+
+#: methods/connect.cc:104
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "N-am putut conecta la %s:%s (%s)."
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc:132 methods/rsh.cc:425
+#, c-format
+msgid "Connecting to %s"
+msgstr "Conectare la %s"
+
+#: methods/connect.cc:163
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "Nu pot rezolva '%s'"
+
+#: methods/connect.cc:167
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "Eşuare temporară în rezolvarea '%s'"
+
+#: methods/connect.cc:169
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i)"
+msgstr "S-a întâmplat ceva rău la rezolvarea '%s:%s' (%i)"
+
+#: methods/connect.cc:216
+#, c-format
+msgid "Unable to connect to %s %s:"
+msgstr "Nu pot conecta la %s %s"
+
+#: methods/gzip.cc:57
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Nu pot deschide conexiunea pentru %s"
+
+#: methods/gzip.cc:102
+#, c-format
+msgid "Read error from %s process"
+msgstr "Eroare de citire din procesul %s"
+
+#: methods/http.cc:344
+msgid "Waiting for headers"
+msgstr "În aşteptarea antetelor"
+
+#: methods/http.cc:490
+#, c-format
+msgid "Got a single header line over %u chars"
+msgstr "Primit o singură linie de antet peste %u caractere"
+
+#: methods/http.cc:498
+msgid "Bad header line"
+msgstr "Linie de antet necorespunzătoare"
+
+#: methods/http.cc:517 methods/http.cc:524
+msgid "The http server sent an invalid reply header"
+msgstr "Serverul http a trimis un antet de răspuns necorespunzător"
+
+#: methods/http.cc:553
+msgid "The http server sent an invalid Content-Length header"
+msgstr "Serverul http a trimis un antet lungime-conţinut necorespunzător"
+
+#: methods/http.cc:568
+msgid "The http server sent an invalid Content-Range header"
+msgstr "Serverul http a trimis un antet zonă de conţinut necorespunzător"
+
+#: methods/http.cc:570
+msgid "This http server has broken range support"
+msgstr "Acest server http are zonă de suport necorespunzătoare"
+
+#: methods/http.cc:594
+msgid "Unknown date format"
+msgstr "Format de date necunoscut"
+
+#: methods/http.cc:737
+msgid "Select failed"
+msgstr "Eşuarea selecţiei"
+
+#: methods/http.cc:742
+msgid "Connection timed out"
+msgstr "Timp de conectare expirat"
+
+#: methods/http.cc:765
+msgid "Error writing to output file"
+msgstr "Eroare la scrierea fişierului de rezultat"
+
+#: methods/http.cc:793
+msgid "Error writing to file"
+msgstr "Eroare la scrierea în fişier"
+
+#: methods/http.cc:818
+msgid "Error writing to the file"
+msgstr "Eroare la scrierea în fişierul"
+
+#: methods/http.cc:832
+msgid "Error reading from server Remote end closed connection"
+msgstr "Eroare la citirea de pe server, conexiunea a fost închisă de la distanţă"
+
+#: methods/http.cc:834
+msgid "Error reading from server"
+msgstr "Eroare la citirea de pe server"
+
+#: methods/http.cc:1065
+msgid "Bad header Data"
+msgstr "Antet de date necorespunzător"
+
+#: methods/http.cc:1082
+msgid "Connection failed"
+msgstr "Conectare eşuată"
+
+#: methods/http.cc:1173
+msgid "Internal error"
+msgstr "Eroare internă"
+
+#: apt-pkg/contrib/mmap.cc:82
+msgid "Can't mmap an empty file"
+msgstr "Nu pot mmap un fişier gol"
+
+#: apt-pkg/contrib/mmap.cc:87
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "Nu pot face mmap la %lu bytes"
+
+#: apt-pkg/contrib/strutl.cc:941
+#, c-format
+msgid "Selection %s not found"
+msgstr "Selecţia %s nu s-a găsit"
+
+#: apt-pkg/contrib/configuration.cc:395
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "Tip de prescurtare nerecunoscut: '%c'"
+
+#: apt-pkg/contrib/configuration.cc:453
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "Deschidere fişier de configurare %s"
+
+#: apt-pkg/contrib/configuration.cc:471
+#, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Linie %d prea lungă (max %d)"
+
+#: apt-pkg/contrib/configuration.cc:567
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "Eroare de sintaxă %s:%u: Blocul începe fără nume"
+
+#: apt-pkg/contrib/configuration.cc:586
+#, c-format
+msgid "Syntax error %s:%u: Malformed Tag"
+msgstr "Eroare de sintaxă %s:%u: etichetă greşită"
+
+#: apt-pkg/contrib/configuration.cc:603
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "Eroare de sintaxă %s:%u: mizerii suplimentare după valoare"
+
+#: apt-pkg/contrib/configuration.cc:643
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr "Eroare de sintaxă %s:%u: directivele pot fi date doar la nivelul superior"
+
+#: apt-pkg/contrib/configuration.cc:650
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "Eroare de sintaxă %s:%u: prea multe imbricări incluse"
+
+#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "Eroare de sintaxă %s:%u: incluse de aici"
+
+#: apt-pkg/contrib/configuration.cc:663
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "Eroare de sintaxă %s:%u: directivă nesuportată '%s'"
+
+#: apt-pkg/contrib/configuration.cc:697
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "Eroare de sintaxă %s:%u: mizerii suplimentare la sfârşitul fişierului"
+
+#: apt-pkg/contrib/progress.cc:154
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s... Eroare!"
+
+#: apt-pkg/contrib/progress.cc:156
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s... Gata"
+
+#: apt-pkg/contrib/cmndline.cc:80
+#, c-format
+msgid "Command line option '%c' [from %s] is not known."
+msgstr "Opţiunea linie de comandă '%c' [din %s] este necunoscută."
+
+#: apt-pkg/contrib/cmndline.cc:106 apt-pkg/contrib/cmndline.cc:114
+#: apt-pkg/contrib/cmndline.cc:122
+#, c-format
+msgid "Command line option %s is not understood"
+msgstr "Opţiunea linie de comandă %s nu este înţeleasă"
+
+#: apt-pkg/contrib/cmndline.cc:127
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "Opţiunea linie de comandă %s nu este booleană"
+
+#: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "Opţiunea %s necesită un argument"
+
+#: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr "Opţiunea %s: Specificaţia configurării articolului trebuie să aibă o =<val>."
+
+#: apt-pkg/contrib/cmndline.cc:237
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "Opţiunea %s necesită un argument integru, nu '%s'"
+
+#: apt-pkg/contrib/cmndline.cc:268
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "Opţiunea '%s' este prea lungă"
+
+#: apt-pkg/contrib/cmndline.cc:301
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "Sensul %s nu este înţeles, încercaţi adevărat sau fals."
+
+#: apt-pkg/contrib/cmndline.cc:351
+#, c-format
+msgid "Invalid operation %s"
+msgstr "Operaţiune invalidă %s"
+
+#: apt-pkg/contrib/cdromutl.cc:55
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "Nu pot determina starea punctului de montare %s"
+
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Nu pot schimba la %s"
+
+#: apt-pkg/contrib/cdromutl.cc:190
+msgid "Failed to stat the cdrom"
+msgstr "Eşuare la determinarea stării cdrom-ului"
+
+#: apt-pkg/contrib/fileutl.cc:80
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr "Nu s-a folosit închiderea pentru fişierul disponibil doar-citire %s"
+
+#: apt-pkg/contrib/fileutl.cc:85
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "Nu pot deschide fişierul blocat %s"
+
+#: apt-pkg/contrib/fileutl.cc:103
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr "Nu este folosit blocajul pentru fişierul montat nfs %s"
+
+#: apt-pkg/contrib/fileutl.cc:107
+#, c-format
+msgid "Could not get lock %s"
+msgstr "Nu pot determina blocajul %s"
+
+#: apt-pkg/contrib/fileutl.cc:358
+#, c-format
+msgid "Waited, for %s but it wasn't there"
+msgstr "Aşteptat %s, dar n-a fost acolo"
+
+#: apt-pkg/contrib/fileutl.cc:368
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr "Subprocesul %s a primit o eroare de segmentare."
+
+#: apt-pkg/contrib/fileutl.cc:371
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "Subprocesul %s a întors un cod de eroare (%u)"
+
+#: apt-pkg/contrib/fileutl.cc:373
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "Subprocesul %s s-a terminat brusc"
+
+#: apt-pkg/contrib/fileutl.cc:417
+#, c-format
+msgid "Could not open file %s"
+msgstr "Nu pot deschide fişierul %s"
+
+#: apt-pkg/contrib/fileutl.cc:473
+#, c-format
+msgid "read, still have %lu to read but none left"
+msgstr "citire, încă mai am %lu de citit dar n-a mai rămas nimic"
+
+#: apt-pkg/contrib/fileutl.cc:491
+msgid "Write error"
+msgstr "Eroare de scriere"
+
+#: apt-pkg/contrib/fileutl.cc:503
+#, c-format
+msgid "write, still have %lu to write but couldn't"
+msgstr "scriere, încă mai am %lu de scris dar nu pot"
+
+#: apt-pkg/contrib/fileutl.cc:578
+msgid "Problem closing the file"
+msgstr "Problemă la închiderea fişierului"
+
+#: apt-pkg/contrib/fileutl.cc:584
+msgid "Problem unlinking the file"
+msgstr "Problemă la dezlegarea fişierului"
+
+#: apt-pkg/contrib/fileutl.cc:595
+msgid "Problem syncing the file"
+msgstr "Problemă în timpul sincronizării fişierului"
+
+#: apt-pkg/pkgcache.cc:126
+msgid "Empty package cache"
+msgstr "Cache gol de pachet"
+
+#: apt-pkg/pkgcache.cc:132
+msgid "The package cache file is corrupted"
+msgstr "Cache-ul fişierului pachet este deteriorat"
+
+#: apt-pkg/pkgcache.cc:137
+msgid "The package cache file is an incompatible version"
+msgstr "Fişierul cache al pachetului este o versiune incompatibilă"
+
+#: apt-pkg/pkgcache.cc:142
+#, c-format
+msgid "This APT does not support the Versioning System '%s'"
+msgstr "Acest APT nu suportă Versioning System '%s'"
+
+#: apt-pkg/pkgcache.cc:147
+msgid "The package cache was built for a different architecture"
+msgstr "Cache-ul pachetului a fost construit pentru o arhitectură diferită"
+
+#: apt-pkg/pkgcache.cc:218
+msgid "Depends"
+msgstr "Depinde"
+
+#: apt-pkg/pkgcache.cc:218
+msgid "PreDepends"
+msgstr "Pre-depinde"
+
+#: apt-pkg/pkgcache.cc:218
+msgid "Suggests"
+msgstr "Sugerează"
+
+#: apt-pkg/pkgcache.cc:219
+msgid "Recommends"
+msgstr "Recomandă"
+
+#: apt-pkg/pkgcache.cc:219
+msgid "Conflicts"
+msgstr "Este în conflict"
+
+#: apt-pkg/pkgcache.cc:219
+msgid "Replaces"
+msgstr "Înlocuieşte"
+
+#: apt-pkg/pkgcache.cc:220
+msgid "Obsoletes"
+msgstr "Învechit"
+
+#: apt-pkg/pkgcache.cc:231
+msgid "important"
+msgstr "important"
+
+#: apt-pkg/pkgcache.cc:231
+msgid "required"
+msgstr "cerut"
+
+#: apt-pkg/pkgcache.cc:231
+msgid "standard"
+msgstr "standard"
+
+#: apt-pkg/pkgcache.cc:232
+msgid "optional"
+msgstr "opţional"
+
+#: apt-pkg/pkgcache.cc:232
+msgid "extra"
+msgstr "extra"
+
+#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
+msgid "Building Dependency Tree"
+msgstr "Se construieşte arborele de dependenţă"
+
+#: apt-pkg/depcache.cc:61
+msgid "Candidate Versions"
+msgstr "Versiuni candidat"
+
+#: apt-pkg/depcache.cc:90
+msgid "Dependency Generation"
+msgstr "Generare dependenţe"
+
+#: apt-pkg/tagfile.cc:71
+#, c-format
+msgid "Unable to parse package file %s (1)"
+msgstr "Nu pot analiza fişierul pachet %s (1)"
+
+#: apt-pkg/tagfile.cc:158
+#, c-format
+msgid "Unable to parse package file %s (2)"
+msgstr "Nu pot analiza fişierul pachet %s (2)"
+
+#: apt-pkg/sourcelist.cc:88
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Linie greşită %lu în lista sursă %s (URI)"
+
+#: apt-pkg/sourcelist.cc:90
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Linie greşită %lu în lista sursă %s (dist)"
+
+#: apt-pkg/sourcelist.cc:93
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Linie greşită %lu în lista sursă %s (analiza URI)"
+
+#: apt-pkg/sourcelist.cc:99
+#, c-format
+msgid "Malformed line %lu in source list %s (Absolute dist)"
+msgstr "Linie greşită %lu în lista sursă %s (dist. absolută)"
+
+#: apt-pkg/sourcelist.cc:106
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Linie greşită %lu în lista sursă %s (analiza dist.)"
+
+#: apt-pkg/sourcelist.cc:183 apt-pkg/sourcelist.cc:207
+#, c-format
+msgid "Vendor block %s is invalid"
+msgstr "Blocul vânzător %s este invalid"
+
+#: apt-pkg/sourcelist.cc:235
+#, c-format
+msgid "Opening %s"
+msgstr "Deschidere %s"
+
+#: apt-pkg/sourcelist.cc:249
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Linia %u prea lungă în lista sursă %s."
+
+#: apt-pkg/sourcelist.cc:266
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Linie greşită %u în lista sursă %s (tip)"
+
+#: apt-pkg/sourcelist.cc:270
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Tipul '%s' nu este cunoscut în linia %u din lista sursă %s"
+
+#: apt-pkg/sourcelist.cc:279 apt-pkg/sourcelist.cc:282
+#, c-format
+msgid "Malformed line %u in source list %s (vendor id)"
+msgstr "Linie greşită %u în lista sursă %s (identificator vânzător)"
+
+#: apt-pkg/sourcelist.cc:296
+#, c-format
+msgid "Unknown vendor ID '%s' in line %u of source list %s"
+msgstr "Identificator vânzător '%s' necunoscut în linia %u din lista sursă %s"
+
+#: apt-pkg/packagemanager.cc:402
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"Aceasta instalare va avea nevoie de ştergerea temporară a pachetului esenţial "
+"%s din cauza unui cerc conflict/pre-dependenţă. Asta de multe ori nu-i de bine, "
+"dar dacă vreţi întradevăr s-o faceţi, activaţi opţiunea APT::Force-LoopBreak."
+
+#: apt-pkg/pkgrecords.cc:37
+#, c-format
+msgid "Index file type '%s' is not supported"
+msgstr "Tipul de fişier index '%s' nu este suportat"
+
+#: apt-pkg/algorithms.cc:238
+#, c-format
+msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr "Pachetul %s are nevoie să fie reinstalat, dar nu pot găsi o arhivă pentru el."
+
+#: apt-pkg/algorithms.cc:1056
+msgid ""
+"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
+"held packages."
+msgstr ""
+"Eroare, pkgProblemResolver::Resolve a generat întreruperi, aceasta poate fi cauzată "
+"de pachete ţinute."
+
+#: apt-pkg/algorithms.cc:1058
+msgid "Unable to correct problems, you have held broken packages."
+msgstr "Nu pot corecta problema, aţi ţinut pachete deteriorate."
+
+#: apt-pkg/acquire.cc:61
+#, c-format
+msgid "Lists directory %spartial is missing."
+msgstr "Directorul de liste %spartial lipseşte."
+
+#: apt-pkg/acquire.cc:65
+#, c-format
+msgid "Archive directory %spartial is missing."
+msgstr "Directorul de arhive %spartial lipseşte."
+
+#: apt-pkg/acquire-worker.cc:112
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "Metoda driver %s nu poate fi găsită."
+
+#: apt-pkg/acquire-worker.cc:161
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "Metoda %s nu s-a lansat corect"
+
+#: apt-pkg/init.cc:119
+#, c-format
+msgid "Packaging system '%s' is not supported"
+msgstr "Sistemul de pachete '%s' nu este suportat"
+
+#: apt-pkg/init.cc:135
+msgid "Unable to determine a suitable packaging system type"
+msgstr "Nu pot determina un tip de sistem de pachete potrivit"
+
+#: apt-pkg/clean.cc:61
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Nu pot determina starea %s."
+
+#: apt-pkg/srcrecords.cc:49
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "Trebuie să puneţi nişte 'surse' de URI în sources.list"
+
+#: apt-pkg/cachefile.cc:73
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "Listele de pachete sau fişierul de stare n-au putut fi analizate sau deschise."
+
+#: apt-pkg/cachefile.cc:77
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "Aţi putea vrea să porniţi 'apt-get update' pentru a corecta aceste probleme."
+
+#: apt-pkg/policy.cc:269
+msgid "Invalid record in the preferences file, no Package header"
+msgstr "Înregistrare invalidă în fişierul de preferinţe, fără antet de pachet"
+
+#: apt-pkg/policy.cc:291
+#, c-format
+msgid "Did not understand pin type %s"
+msgstr "Nu s-a înţeles tipul de pin %s"
+
+#: apt-pkg/policy.cc:299
+msgid "No priority (or zero) specified for pin"
+msgstr "Fără prioritate (sau zero) specificată pentru pin"
+
+#: apt-pkg/pkgcachegen.cc:74
+msgid "Cache has an incompatible versioning system"
+msgstr "Cache are un versioning system incompatibil"
+
+#: apt-pkg/pkgcachegen.cc:117
+#, c-format
+msgid "Error occured while processing %s (NewPackage)"
+msgstr "Eroare în timpul procesării %s (pachet nou)"
+
+#: apt-pkg/pkgcachegen.cc:129
+#, c-format
+msgid "Error occured while processing %s (UsePackage1)"
+msgstr "Eroare în timpul procesării %s (folosit pachet 1)"
+
+#: apt-pkg/pkgcachegen.cc:150
+#, c-format
+msgid "Error occured while processing %s (UsePackage2)"
+msgstr "Eroare în timpul procesării %s (folosit pachet 2)"
+
+#: apt-pkg/pkgcachegen.cc:154
+#, c-format
+msgid "Error occured while processing %s (NewFileVer1)"
+msgstr "Eroare în timpul procesării %s (fişier nou versiunea 1)"
+
+#: apt-pkg/pkgcachegen.cc:184
+#, c-format
+msgid "Error occured while processing %s (NewVersion1)"
+msgstr "Eroare în timpul procesării %s (versiune nouă 1)"
+
+#: apt-pkg/pkgcachegen.cc:188
+#, c-format
+msgid "Error occured while processing %s (UsePackage3)"
+msgstr "Eroare în timpul procesării %s (folosire pachet 3)"
+
+#: apt-pkg/pkgcachegen.cc:192
+#, c-format
+msgid "Error occured while processing %s (NewVersion2)"
+msgstr "Eroare în timpul procesării %s (versiune nouă 2)"
+
+#: apt-pkg/pkgcachegen.cc:207
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr "Mamăăă, aţi depăşit numărul de nume de pachete de care este capabil acest APT."
+
+#: apt-pkg/pkgcachegen.cc:210
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr "Mamăăă, aţi depăşit numărul de versiuni de care este capabil acest APT."
+
+#: apt-pkg/pkgcachegen.cc:213
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr "Mamăăă, aţi depăşit numărul de dependenţe de care este capabil acest APT."
+
+#: apt-pkg/pkgcachegen.cc:241
+#, c-format
+msgid "Error occured while processing %s (FindPkg)"
+msgstr "Eroare în timpul procesării %s (găsire pachet)"
+
+#: apt-pkg/pkgcachegen.cc:254
+#, c-format
+msgid "Error occured while processing %s (CollectFileProvides)"
+msgstr "Eroare în timpul procesării %s (colectare furnizor fişiere)"
+
+#: apt-pkg/pkgcachegen.cc:260
+#, c-format
+msgid "Package %s %s was not found while processing file dependencies"
+msgstr "Nu s-a găsit pachetul %s %s în timpul procesării dependenţelor de fişiere"
+
+#: apt-pkg/pkgcachegen.cc:574
+#, c-format
+msgid "Couldn't stat source package list %s"
+msgstr "Nu pot determina starea listei surse de pachete %s"
+
+#: apt-pkg/pkgcachegen.cc:658
+msgid "Collecting File Provides"
+msgstr "Colectare furnizori fişiere"
+
+#: apt-pkg/pkgcachegen.cc:774 apt-pkg/pkgcachegen.cc:781
+msgid "IO Error saving source cache"
+msgstr "Eroare IO în timpul salvării sursei cache"
+
+#: apt-pkg/acquire-item.cc:124
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "redenumire eşuată, %s (%s -> %s)."
+
+#: apt-pkg/acquire-item.cc:353
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+"N-am putut localiza un fişier pentru pachetul %s. Aceasta ar putea însemna că "
+"aveţi nevoie să depanaţi manual acest pachet (din pricina unui arch lipsă)"
+
+#: apt-pkg/acquire-item.cc:388
+#, c-format
+msgid ""
+"I wasn't able to locate file for the %s package. This might mean you need to "
+"manually fix this package."
+msgstr ""
+"N-am putut localiza un fişier pentru pachetul %s. Aceasta ar putea însemna că "
+"aveţi nevoie să depanaţi manual acest pachet."
+
+#: apt-pkg/acquire-item.cc:419
+#, c-format
+msgid "The package index files are corrupted. No Filename: field for package %s."
+msgstr "Fişierele index de pachete sunt deteriorate. Fără câmpul 'nume fişier:' la pachetul %s."
+
+#: apt-pkg/acquire-item.cc:501
+msgid "Size mismatch"
+msgstr "Nepotrivire dimensiune"
+
+#: apt-pkg/acquire-item.cc:511
+msgid "MD5Sum mismatch"
+msgstr "Nepotrivire MD5Sum"
+
+#: methods/rsh.cc:264
+msgid "File Not Found"
+msgstr "Fişier negăsit"
+
+#: methods/rsh.cc:330
+msgid "Connection closed prematurely"
+msgstr "Conexiune închisă prematur"
+
