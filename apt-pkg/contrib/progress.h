@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.h,v 1.2 1998/08/23 03:52:23 jgg Exp $
+// $Id: progress.h,v 1.3 1998/08/26 04:52:29 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -56,6 +56,7 @@ class OpProgress
    public:
    
    void Progress(unsigned long Current);
+   void SubProgress(unsigned long SubTotal);
    void SubProgress(unsigned long SubTotal,string Op);
    void OverallProgress(unsigned long Current,unsigned long Total,
 			unsigned long Size,string Op);

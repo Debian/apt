@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.8 1998/07/19 21:24:17 jgg Exp $
+// $Id: tagfile.h,v 1.9 1998/08/26 04:52:24 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -65,7 +65,7 @@ class pkgTagFile
    bool Step(pkgTagSection &Section);
    inline unsigned long Offset() {return iOffset;};
    bool Jump(pkgTagSection &Tag,unsigned long Offset);
-      
+   
    pkgTagFile(FileFd &F,unsigned long Size = 32*1024);
 };
 

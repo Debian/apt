@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.13 1998/07/26 04:49:31 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.14 1998/08/26 04:52:23 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -78,7 +78,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       if (NewPackage(Pkg,PackageName) == false)
 	 return _error->Error("Error occured while processing %s (NewPackage)",PackageName.c_str());
       Progress.Progress(List.Offset());
-      
+
       /* Get a pointer to the version structure. We know the list is sorted
          so we use that fact in the search. Insertion of new versions is
 	 done with correct sorting */
@@ -327,7 +327,7 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
    if (CurrentFile->FileName == 0)
       return false;
    
-   Progress.SubProgress(Buf.st_size,File);
+   Progress.SubProgress(Buf.st_size);
    return true;
 }
 									/*}}}*/
@@ -519,16 +519,18 @@ static bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
 	 
       FileFd Pkg(File,FileFd::ReadOnly);
       debListParser Parser(Pkg);
-      Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),"Generating cache");
+      Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),"Reading Package Lists");
       if (_error->PendingError() == true)
 	 return _error->Error("Problem opening %s",File.c_str());
       CurrentSize += Pkg.Size();
-      
+
+      Progress.SubProgress(0,"Local Package State - " + flNotDir(File));
       if (Gen.SelectFile(File,pkgCache::Flag::NotSource) == false)
 	 return _error->Error("Problem with SelectFile %s",File.c_str());
       
       if (Gen.MergeList(Parser) == false)
 	 return _error->Error("Problem with MergeList %s",File.c_str());
+      Progress.Progress(Pkg.Size());
    }
    
    return true;
@@ -540,6 +542,8 @@ static bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
    xstatus files into it. */
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
 {
+   Progress.OverallProgress(0,1,1,"Reading Package Lists");
+   
    string CacheFile = _config->FindDir("Dir::Cache::pkgcache");
    bool SrcOk = pkgSrcCacheCheck(List);
    bool PkgOk = pkgPkgCacheCheck(CacheFile);
@@ -579,11 +583,12 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
 	 string File = ListDir + URItoFileName(I->PackagesURI());
 	 FileFd Pkg(File,FileFd::ReadOnly);
 	 debListParser Parser(Pkg);
-	 Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),"Generating cache");
+	 Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),"Reading Package Lists");
 	 if (_error->PendingError() == true)
 	    return _error->Error("Problem opening %s",File.c_str());
 	 CurrentSize += Pkg.Size();
 
+	 Progress.SubProgress(0,I->PackagesInfo());
 	 if (Gen.SelectFile(File) == false)
 	    return _error->Error("Problem with SelectFile %s",File.c_str());
 	 
@@ -602,7 +607,10 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    }
 
    if (PkgOk == true)
+   {
+      Progress.OverallProgress(1,1,1,"Reading Package Lists");      
       return true;
+   }
    
    // We use the source cache to generate the package cache
    string SCacheFile = _config->FindDir("Dir::Cache::srcpkgcache");
@@ -629,4 +637,3 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    return pkgMergeStatus(Progress,Gen,CurrentSize,TotalSize);
 }
 									/*}}}*/
-

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.6 1998/07/19 04:42:12 jgg Exp $
+// $Id: fileutl.cc,v 1.7 1998/08/26 04:52:26 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -105,6 +105,18 @@ string SafeGetCWD()
    if (getcwd(S,sizeof(S)) == 0)
       return "/";
    return S;
+}
+									/*}}}*/
+// flNotDir - Strip the directory from the filename			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string flNotDir(string File)
+{
+   string::size_type Res = File.rfind('/');
+   if (Res == string::npos)
+      return File;
+   Res++;
+   return string(File,Res,Res - File.length());
 }
 									/*}}}*/
 

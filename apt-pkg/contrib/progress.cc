@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.5 1998/08/23 03:52:22 jgg Exp $
+// $Id: progress.cc,v 1.6 1998/08/26 04:52:28 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -56,6 +56,16 @@ void OpProgress::SubProgress(unsigned long SubTotal,string Op)
 {
    this->SubTotal = SubTotal;
    SubOp = Op;
+   Percent = Current*100.0/Total;
+   Update();
+}
+									/*}}}*/
+// OpProgress::SubProgress - Set the sub progress state			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void OpProgress::SubProgress(unsigned long SubTotal)
+{
+   this->SubTotal = SubTotal;
    Percent = Current*100.0/Total;
    Update();
 }
