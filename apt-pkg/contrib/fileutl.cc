@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.41 2002/04/24 05:02:40 jgg Exp $
+// $Id: fileutl.cc,v 1.42 2002/09/14 05:29:22 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -9,7 +9,7 @@
    GetLock - dpkg compatible lock file manipulation (fcntl)
    
    This source is placed in the Public Domain, do with it what you will
-   It was originally written by Jason Gunthorpe.
+   It was originally written by Jason Gunthorpe <jgg@debian.org>.
    
    ##################################################################### */
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.22 2001/05/14 05:47:30 jgg Exp $
+// $Id: configuration.cc,v 1.23 2002/09/14 05:29:22 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -8,6 +8,9 @@
    This class provides a configuration file and command line parser
    for a tree-oriented configuration environment. All runtime configuration
    is stored in here.
+
+   This source is placed in the Public Domain, do with it what you will
+   It was originally written by Jason Gunthorpe <jgg@debian.org>.
    
    ##################################################################### */
 									/*}}}*/

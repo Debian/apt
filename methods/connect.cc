@@ -1,10 +1,13 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.8 2002/02/28 03:51:55 jgg Exp $
+// $Id: connect.cc,v 1.9 2002/09/14 05:28:38 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
-   
+
+   This was originally authored by Jason Gunthorpe <jgg@debian.org>
+   and is placed in the Public Domain, do with it what you will.
+      
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/

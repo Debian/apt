@@ -1,9 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.12 2001/06/09 22:39:48 jgg Exp $
+// $Id: cmndline.cc,v 1.13 2002/09/14 05:29:22 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
+   
+   This source is placed in the Public Domain, do with it what you will
+   It was originally written by Jason Gunthorpe <jgg@debian.org>.
    
    ##################################################################### */
 									/*}}}*/
