@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.39 2002/11/09 06:34:13 doogie Exp $
+# $Id: rules,v 1.40 2002/11/09 20:13:27 doogie Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -15,6 +15,16 @@
 # in it.
 
 export DH_COMPAT=2
+
+export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+# FOR AUTOCONF 2.52 AND NEWER ONLY
+ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
+  confflags += --build $(DEB_HOST_GNU_TYPE)
+else
+  confflags += --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE)
+endif
 
 # See below
 -include build/environment.mak
@@ -90,7 +100,7 @@ build/configure-stamp: configure
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
-	(cd build; ../configure)
+	(cd build; ../configure $(confflags))
 	touch $@
 
 build/build-stamp: build/configure-stamp
