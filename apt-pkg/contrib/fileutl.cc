@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.25 1999/03/20 03:49:31 jgg Exp $
+// $Id: fileutl.cc,v 1.26 1999/03/21 07:24:14 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -85,7 +85,7 @@ int GetLock(string File,bool Errors)
    {
       if (errno == ENOLCK)
       {
-	 _error->Warning("Not using locking for nfs mounted lock file %s",File.c_sr());
+	 _error->Warning("Not using locking for nfs mounted lock file %s",File.c_str());
 	 return true;
       }      
       if (Errors == true)
