@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.3 1998/07/26 04:49:35 jgg Exp $
+// $Id: progress.cc,v 1.4 1998/07/26 04:51:45 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -12,6 +12,7 @@
 #pragma implementation "apt-pkg/progress.h"
 #endif 
 #include <apt-pkg/progress.h>
+#include <apt-pkg/error.h>
 #include <stdio.h>
 									/*}}}*/
 
@@ -97,7 +98,7 @@ void OpTextProgress::Done()
    if (NoUpdate == false && OldOp.empty() == false)
    {
       char S[300];
-      if (_errors->PendingError() == true)
+      if (_error->PendingError() == true)
 	 snprintf(S,sizeof(S),"\r%s... Error!",OldOp.c_str());
       else
 	 snprintf(S,sizeof(S),"\r%s... Done",OldOp.c_str());
