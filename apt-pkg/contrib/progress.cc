@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.11 2001/05/07 05:25:13 jgg Exp $
+// $Id: progress.cc,v 1.12 2003/01/11 07:17:04 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -151,9 +151,9 @@ void OpTextProgress::Done()
    {
       char S[300];
       if (_error->PendingError() == true)
-	 snprintf(S,sizeof(S),_("\r%s... Error!"),OldOp.c_str());
+	 snprintf(S,sizeof(S),_("%c%s... Error!"),'\r',OldOp.c_str());
       else
-	 snprintf(S,sizeof(S),_("\r%s... Done"),OldOp.c_str());
+	 snprintf(S,sizeof(S),_("%c%s... Done"),'\r',OldOp.c_str());
       Write(S);
       cout << endl;
       OldOp = string();
