@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.29 1999/03/16 00:43:55 jgg Exp $
+// $Id: acquire.cc,v 1.30 1999/03/16 07:28:45 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -25,6 +25,7 @@
 
 #include <dirent.h>
 #include <sys/time.h>
+#include <errno.h>
 									/*}}}*/
 
 // Acquire::pkgAcquire - Constructor					/*{{{*/
