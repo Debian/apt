@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.95 2000/01/14 06:26:37 jgg Exp $
+// $Id: apt-get.cc,v 1.96 2000/05/10 06:03:01 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -628,16 +628,20 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (_error->PendingError() == true)
       return false;
 
-   // Check for enough free space
-   struct statvfs Buf;
-   string OutputDir = _config->FindDir("Dir::Cache::Archives");
-   if (statvfs(OutputDir.c_str(),&Buf) != 0)
-      return _error->Errno("statvfs","Couldn't determine free space in %s",
-			   OutputDir.c_str());
-   if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-      return _error->Error("Sorry, you don't have enough free space in %s to hold all the .debs.",
-			   OutputDir.c_str());
-
+   /* Check for enough free space, but only if we are actually going to
+      download */
+   if (_config->FindB("APT::Get::Print-URIs") == false)
+   {
+      struct statvfs Buf;
+      string OutputDir = _config->FindDir("Dir::Cache::Archives");
+      if (statvfs(OutputDir.c_str(),&Buf) != 0)
+	 return _error->Errno("statvfs","Couldn't determine free space in %s",
+			      OutputDir.c_str());
+      if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
+	 return _error->Error("Sorry, you don't have enough free space in %s to hold all the .debs.",
+			      OutputDir.c_str());
+   }
+   
    // Fail safe check
    if (_config->FindI("quiet",0) >= 2 ||
        _config->FindB("APT::Get::Assume-Yes",false) == true)
@@ -1739,7 +1743,7 @@ int main(int argc,const char *argv[])
    // Deal with stdout not being a tty
    if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
       _config->Set("quiet","1");
-   
+
    // Setup the output streams
    c0out.rdbuf(cout.rdbuf());
    c1out.rdbuf(cout.rdbuf());
