@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.11 1998/12/14 02:23:47 jgg Exp $
+// $Id: pkgcachegen.h,v 1.12 1999/02/23 06:46:24 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -31,6 +31,10 @@ class OpProgress;
 
 class pkgCacheGenerator
 {
+   private:
+   
+   pkgCache::StringItem *UniqHash[26];
+   
    public:
    
    class ListParser;
@@ -74,6 +78,10 @@ class pkgCacheGenerator::ListParser
    pkgCacheGenerator *Owner;
    friend pkgCacheGenerator;
    
+   // Some cache items
+   pkgCache::VerIterator OldDepVer;
+   __apt_ptrloc *OldDepLast;
+      
    protected:
    
    inline unsigned long WriteUniqString(string S) {return Owner->WriteUniqString(S);};

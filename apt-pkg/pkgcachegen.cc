@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.28 1999/02/08 07:30:49 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.29 1999/02/23 06:46:24 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -22,6 +22,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/strutl.h>
+#include <system.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -44,6 +45,7 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap &Map,OpProgress &Prog) :
    Cache.HeaderP->Dirty = true;
    Map.Sync(0,sizeof(pkgCache::Header));
    Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
+   memset(UniqHash,0,sizeof(UniqHash));
 }
 									/*}}}*/
 // CacheGenerator::~pkgCacheGenerator - Destructor 			/*{{{*/
@@ -69,11 +71,12 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
 {
    List.Owner = this;
 
-   int Counter = 0;
+   unsigned int Counter = 0;
    while (List.Step() == true)
    {
       // Get a pointer to the package structure
       string PackageName = List.Package();
+      Pkgs++;
       if (PackageName.empty() == true)
 	 return false;
       
@@ -100,6 +103,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       int Res = 1;
       for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
       {
+	 Cmps++;
 	 Res = pkgVersionCompare(Version.begin(),Version.end(),Ver.VerStr(),
 				 Ver.VerStr() + strlen(Ver.VerStr()));
 	 if (Res >= 0)
@@ -120,6 +124,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       }      
 
       // Add a new version
+      Vers++;
       *Last = NewVersion(Ver,Version,*Last);
       Ver->ParentPkg = Pkg.Index();
       if (List.NewVersion(Ver) == false)
@@ -250,9 +255,9 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    // Probe the reverse dependency list for a version string that matches
    if (Version.empty() == false)
    {
-      for (pkgCache::DepIterator I = Pkg.RevDependsList(); I.end() == false; I++)
+/*      for (pkgCache::DepIterator I = Pkg.RevDependsList(); I.end() == false; I++, Hit++)
 	 if (I->Version != 0 && I.TargetVer() == Version)
-	    Dep->Version = I->Version;
+	    Dep->Version = I->Version;*/
       if (Dep->Version == 0)
 	 if ((Dep->Version = WriteString(Version)) == 0)
 	    return false;
@@ -265,19 +270,17 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    
    /* Link it to the version (at the end of the list)
       Caching the old end point speeds up generation substantially */
-   static pkgCache::VerIterator OldVer(Cache);
-   static __apt_ptrloc *OldLast;
-   if (OldVer != Ver)
+   if (OldDepVer != Ver)
    {
-      OldLast = &Ver->DependsList;
+      OldDepLast = &Ver->DependsList;
       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
-	 OldLast = &D->NextDepends;
-      OldVer = Ver;
+	 OldDepLast = &D->NextDepends;
+      OldDepVer = Ver;
    }
    
-   Dep->NextDepends = *OldLast;
-   *OldLast = Dep.Index();
-   OldLast = &Dep->NextDepends;
+   Dep->NextDepends = *OldDepLast;
+   *OldDepLast = Dep.Index();
+   OldDepLast = &Dep->NextDepends;
 
    return true;
 }
@@ -362,6 +365,13 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
 unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
 						 unsigned int Size)
 {
+   /* We use a very small transient hash table here, this speeds up generation
+      by a fair amount on slower machines */
+   pkgCache::StringItem *&Bucket = UniqHash[(S[0]*5 + S[1]) % _count(UniqHash)];
+   if (Bucket != 0 && 
+       stringcmp(S,S+Size,Cache.StrP + Bucket->String) == 0)
+      return Bucket->String;
+   
    // Search for an insertion point
    pkgCache::StringItem *I = Cache.StringItemP + Cache.HeaderP->StringList;
    int Res = 1;
@@ -376,7 +386,10 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    
    // Match
    if (Res == 0)
+   {
+      Bucket = I;
       return I->String;
+   }
    
    // Get a structure
    unsigned long Item = Map.Allocate(sizeof(pkgCache::StringItem));
@@ -391,6 +404,7 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    if (ItemP->String == 0)
       return 0;
    
+   Bucket = ItemP;
    return ItemP->String;
 }
 									/*}}}*/

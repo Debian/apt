@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.17 1999/02/21 08:38:53 jgg Exp $
+// $Id: pkgcache.h,v 1.18 1999/02/23 06:46:24 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -90,8 +90,8 @@ class pkgCache
    string CacheFile;
    MMap &Map;
 
-   static unsigned long sHash(string S);
-   static unsigned long sHash(const char *S);
+   unsigned long sHash(string S) const;
+   unsigned long sHash(const char *S) const;
    
    public:
    
@@ -165,7 +165,7 @@ struct pkgCache::Header
    DynamicMMap::Pool Pools[7];
    
    // Rapid package name lookup
-   __apt_ptrloc HashTable[2048];
+   __apt_ptrloc HashTable[2*1048];
 
    bool CheckSizes(Header &Against) const;
    Header();

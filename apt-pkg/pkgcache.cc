@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.22 1998/12/14 08:07:29 jgg Exp $
+// $Id: pkgcache.cc,v 1.23 1999/02/23 06:46:24 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -44,7 +44,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    MajorVersion = 2;
-   MinorVersion = 2;
+   MinorVersion = 3;
    Dirty = true;
    
    HeaderSz = sizeof(pkgCache::Header);
@@ -132,23 +132,20 @@ bool pkgCache::ReMap()
 /* This is used to generate the hash entries for the HashTable. With my
    package list from bo this function gets 94% table usage on a 512 item
    table (480 used items) */
-unsigned long pkgCache::sHash(string Str)
+unsigned long pkgCache::sHash(string Str) const
 {
    unsigned long Hash = 0;
    for (const char *I = Str.begin(); I != Str.end(); I++)
-      Hash += *I * ((Str.end() - I + 1));
-   Header H;
-   return Hash % _count(H.HashTable);
+      Hash = 5*Hash + *I;
+   return Hash % _count(HeaderP->HashTable);
 }
 
-unsigned long pkgCache::sHash(const char *Str)
+unsigned long pkgCache::sHash(const char *Str) const
 {
    unsigned long Hash = 0;
-   const char *End = Str + strlen(Str);
-   for (const char *I = Str; I != End; I++)
-      Hash += *I * ((End - I + 1));
-   Header H;
-   return Hash % _count(H.HashTable);
+   for (const char *I = Str; *I != 0; I++)
+      Hash = 5*Hash + *I;
+   return Hash % _count(HeaderP->HashTable);
 }
 
 									/*}}}*/
@@ -164,6 +161,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(string Name)
       if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
 	  StrP + Pkg->Name == Name)
 	 return PkgIterator(*this,Pkg);
+//      cout << "b" << flush;
    }
    return PkgIterator(*this,0);
 }

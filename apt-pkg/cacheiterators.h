@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.12 1999/02/01 02:22:11 jgg Exp $
+// $Id: cacheiterators.h,v 1.13 1999/02/23 06:46:24 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -93,17 +93,17 @@ class pkgCache::PkgIterator
 class pkgCache::VerIterator
 {
    Version *Ver;
-   pkgCache &Owner;
+   pkgCache *Owner;
    
    void _dummy();
    
    public:
 
    // Iteration
-   void operator ++(int) {if (Ver != Owner.VerP) Ver = Owner.VerP + Ver->NextVer;};
+   void operator ++(int) {if (Ver != Owner->VerP) Ver = Owner->VerP + Ver->NextVer;};
    inline void operator ++() {operator ++(0);};
-   inline bool end() const {return Ver == Owner.VerP?true:false;};
-   inline void operator =(const VerIterator &B) {Ver = B.Ver;};
+   inline bool end() const {return Ver == Owner->VerP?true:false;};
+   inline void operator =(const VerIterator &B) {Ver = B.Ver; Owner = B.Owner;};
    
    // Comparison
    inline bool operator ==(const VerIterator &B) const {return Ver == B.Ver;};
@@ -115,24 +115,26 @@ class pkgCache::VerIterator
    inline Version const *operator ->() const {return Ver;};
    inline Version &operator *() {return *Ver;};
    inline Version const &operator *() const {return *Ver;};
-   inline operator Version *() {return Ver == Owner.VerP?0:Ver;};
-   inline operator Version const *() const {return Ver == Owner.VerP?0:Ver;};
+   inline operator Version *() {return Ver == Owner->VerP?0:Ver;};
+   inline operator Version const *() const {return Ver == Owner->VerP?0:Ver;};
    
-   inline const char *VerStr() const {return Ver->VerStr == 0?0:Owner.StrP + Ver->VerStr;};
-   inline const char *Section() const {return Ver->Section == 0?0:Owner.StrP + Ver->Section;};
-   inline const char *Arch() const {return Ver->Arch == 0?0:Owner.StrP + Ver->Arch;};
-   inline PkgIterator ParentPkg() const {return PkgIterator(Owner,Owner.PkgP + Ver->ParentPkg);};
+   inline const char *VerStr() const {return Ver->VerStr == 0?0:Owner->StrP + Ver->VerStr;};
+   inline const char *Section() const {return Ver->Section == 0?0:Owner->StrP + Ver->Section;};
+   inline const char *Arch() const {return Ver->Arch == 0?0:Owner->StrP + Ver->Arch;};
+   inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Ver->ParentPkg);};
    inline DepIterator DependsList() const;
    inline PrvIterator ProvidesList() const;
    inline VerFileIterator FileList() const;
-   inline unsigned long Index() const {return Ver - Owner.VerP;};
+   inline unsigned long Index() const {return Ver - Owner->VerP;};
    bool Downloadable() const;
    const char *PriorityType();
 
    bool Automatic() const;
    VerFileIterator NewestFile() const;
-      
-   inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Ver(Trg), Owner(Owner) 
+
+   inline VerIterator() : Ver(0), Owner(0) {};   
+   inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Ver(Trg), 
+              Owner(&Owner) 
    { 
       if (Ver == 0)
 	 Ver = Owner.VerP;
@@ -330,10 +332,10 @@ inline pkgCache::DepIterator pkgCache::PkgIterator::RevDependsList() const
 inline pkgCache::PrvIterator pkgCache::PkgIterator::ProvidesList() const
        {return PrvIterator(*Owner,Owner->ProvideP + Pkg->ProvidesList,Pkg);};
 inline pkgCache::PrvIterator pkgCache::VerIterator::ProvidesList() const
-       {return PrvIterator(Owner,Owner.ProvideP + Ver->ProvidesList,Ver);};
+       {return PrvIterator(*Owner,Owner->ProvideP + Ver->ProvidesList,Ver);};
 inline pkgCache::DepIterator pkgCache::VerIterator::DependsList() const
-       {return DepIterator(Owner,Owner.DepP + Ver->DependsList,Ver);};
+       {return DepIterator(*Owner,Owner->DepP + Ver->DependsList,Ver);};
 inline pkgCache::VerFileIterator pkgCache::VerIterator::FileList() const
-       {return VerFileIterator(Owner,Owner.VerFileP + Ver->FileList);};
+       {return VerFileIterator(*Owner,Owner->VerFileP + Ver->FileList);};
 
 #endif

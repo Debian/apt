@@ -11,7 +11,7 @@ include ../buildlib/defaults.mak
 
 # The library name
 LIBRARY=apt-pkg
-MAJOR=2.1
+MAJOR=2.2
 MINOR=0
 SLIBS=$(PTHREADLIB)
 
