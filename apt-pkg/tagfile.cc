@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.16 1998/11/28 03:54:29 jgg Exp $
+// $Id: tagfile.cc,v 1.17 1998/12/07 07:26:22 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -115,38 +115,42 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
 // ---------------------------------------------------------------------
 /* This looks for the first double new line in the data stream. It also
-   indexes the tags in the section. */
+   indexes the tags in the section. This very simple hash function for the
+   first 3 letters gives very good performance on the debian package files */
 bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
 {
    const char *End = Start + MaxLength;
    Stop = Section = Start;
+   memset(AlphaIndexes,0,sizeof(AlphaIndexes));
    
    TagCount = 0;
-   Indexes[TagCount++] = Stop - Section;
-   Stop++;
-   for (; Stop < End; Stop++)
+   while (TagCount < sizeof(Indexes)/sizeof(Indexes[0]))
    {
-      if (Stop[-1] != '\n')
-	 continue;
-
-      // Skip line feeds
-      for (; Stop[0] == '\r' && Stop < End; Stop++);
-      
-      if (Stop[0] == '\n')
+      if (isspace(Stop[0]) == 0)
       {
-	 // Extra one at the end to simplify find
+	 Indexes[TagCount++] = Stop - Section;
+	 unsigned char A = tolower(Stop[0]) - 'a';
+	 unsigned char B = tolower(Stop[1]) - 'a';
+	 unsigned char C = tolower(Stop[3]) - 'a';
+	 AlphaIndexes[((A + C/3)%26) + 26*((B + C/2)%26)] = TagCount;
+      }
+
+      Stop = (const char *)memchr(Stop,'\n',End - Stop);
+      
+      if (Stop == 0)
+	 return false;
+      for (; Stop[1] == '\r' && Stop < End; Stop++);
+
+      if (Stop[1] == '\n')
+      {
 	 Indexes[TagCount] = Stop - Section;
 	 for (; (Stop[0] == '\n' || Stop[0] == '\r') && Stop < End; Stop++);
 	 return true;
       }
       
-      if (isspace(Stop[0]) == 0)
-	 Indexes[TagCount++] = Stop - Section;
-      
-      // Just in case.
-      if (TagCount > sizeof(Indexes)/sizeof(Indexes[0]))
-	 TagCount = sizeof(Indexes)/sizeof(Indexes[0]);
-   }   
+      Stop++;
+   }
+   
    return false;
 }
 									/*}}}*/
@@ -157,13 +161,24 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
 		         const char *&End)
 {
    unsigned int Length = strlen(Tag);
-   for (unsigned int I = 0; I != TagCount; I++)
+   unsigned char A = tolower(Tag[0]) - 'a';
+   unsigned char B = tolower(Tag[1]) - 'a';
+   unsigned char C = tolower(Tag[3]) - 'a';
+   unsigned int I = AlphaIndexes[((A + C/3)%26) + 26*((B + C/2)%26)];
+   if (I == 0)
+      return false;
+   I--;
+   
+   for (unsigned int Counter = 0; Counter != TagCount; Counter++, 
+	I = (I+1)%TagCount)
    {
-      if (strncasecmp(Tag,Section + Indexes[I],Length) != 0)
+      const char *St;
+      St = Section + Indexes[I];
+      if (strncasecmp(Tag,St,Length) != 0)
 	 continue;
 
       // Make sure the colon is in the right place
-      const char *C = Section + Length + Indexes[I];
+      const char *C = St + Length;
       for (; isspace(*C) != 0; C++);
       if (*C != ':')
 	 continue;
@@ -173,9 +188,10 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
       End = Section + Indexes[I+1];
       for (; (isspace(*Start) != 0 || *Start == ':') && Start < End; Start++);
       for (; isspace(End[-1]) != 0 && End > Start; End--);
-      
+
       return true;
    }
+   
    Start = End = 0;
    return false;
 }

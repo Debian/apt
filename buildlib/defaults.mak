@@ -69,6 +69,10 @@ ifdef STATICLIBS
 LIBRARY_H += $(BASE)/buildlib/staticlibrary.mak
 endif
 
+ifdef ONLYSTATICLIBS
+LIBRARY_H = $(BASE)/buildlib/staticlibrary.mak
+endif
+
 # Source location control
 # SUBDIRS specifies sub components of the module that
 # may be located in subdrictories of the source dir. 

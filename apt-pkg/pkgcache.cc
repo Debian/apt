@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.19 1998/12/04 22:56:52 jgg Exp $
+// $Id: pkgcache.cc,v 1.20 1998/12/07 07:26:19 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -159,7 +159,8 @@ pkgCache::PkgIterator pkgCache::FindPkg(string Name)
    Package *Pkg = PkgP + HeaderP->HashTable[Hash(Name)];
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
    {
-      if (Pkg->Name != 0 && StrP + Pkg->Name == Name)
+      if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
+	  StrP + Pkg->Name == Name)
 	 return PkgIterator(*this,Pkg);
    }
    return PkgIterator(*this,0);

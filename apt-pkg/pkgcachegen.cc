@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.23 1998/11/13 04:23:33 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.24 1998/12/07 07:26:21 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -253,19 +253,28 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 	 if ((Dep->Version = WriteString(Version)) == 0)
 	    return false;
    }
-   
+      
    // Link it to the package
    Dep->Package = Pkg.Index();
    Dep->NextRevDepends = Pkg->RevDepends;
    Pkg->RevDepends = Dep.Index();
    
-   // Link it to the version (at the end of the list)
-   __apt_ptrloc *Last = &Ver->DependsList;
-   for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
-      Last = &D->NextDepends;
-   Dep->NextDepends = *Last;
-   *Last = Dep.Index();
+   /* Link it to the version (at the end of the list)
+      Caching the old end point speeds up generation substantially */
+   static pkgCache::VerIterator OldVer(Cache);
+   static __apt_ptrloc *OldLast;
+   if (OldVer != Ver)
+   {
+      OldLast = &Ver->DependsList;
+      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+	 OldLast = &D->NextDepends;
+      OldVer = Ver;
+   }
    
+   Dep->NextDepends = *OldLast;
+   *OldLast = Dep.Index();
+   OldLast = &Dep->NextDepends;
+
    return true;
 }
 									/*}}}*/

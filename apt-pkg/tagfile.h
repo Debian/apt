@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.11 1998/11/28 03:54:31 jgg Exp $
+// $Id: tagfile.h,v 1.12 1998/12/07 07:26:23 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -34,6 +34,8 @@ class pkgTagSection
    
    // We have a limit of 256 tags per section.
    unsigned short Indexes[256];
+   unsigned short AlphaIndexes[26 + 26*26];
+   
    unsigned int TagCount;
      
    public:

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.10 1998/11/12 03:28:29 jgg Exp $
+// $Id: pkgcache.h,v 1.11 1998/12/07 07:26:20 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -163,7 +163,7 @@ struct pkgCache::Header
    DynamicMMap::Pool Pools[7];
    
    // Rapid package name lookup
-   __apt_ptrloc HashTable[512];
+   __apt_ptrloc HashTable[2048];
 
    bool CheckSizes(Header &Against) const;
    Header();

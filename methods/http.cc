@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.9 1998/12/05 04:19:05 jgg Exp $
+// $Id: http.cc,v 1.10 1998/12/07 07:26:27 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -51,6 +51,7 @@
 string HttpMethod::FailFile;
 int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
+unsigned long PipelineDepth = 5;
 
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
@@ -572,9 +573,9 @@ bool ServerState::HeaderLine(string Line)
 void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
 {
    URI Uri = Itm->Uri;
-   
+
    // The HTTP server expects a hostname with a trailing :port
-   char Buf[300];
+   char Buf[1000];
    string ProperHost = Uri.Host;
    if (Uri.Port != 0)
    {
@@ -582,6 +583,10 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       ProperHost += Buf;
    }   
       
+   // Just in case.
+   if (Itm->Uri.length() >= sizeof(Buf))
+       abort();
+       
    /* Build the request. We include a keep-alive header only for non-proxy
       requests. This is to tweak old http/1.0 servers that do support keep-alive
       but not HTTP/1.1 automatic keep-alive. Doing this with a proxy server 
@@ -592,8 +597,27 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\nConnection: keep-alive\r\n",
 	      Uri.Path.c_str(),ProperHost.c_str());
    else
+   {
+      /* Generate a cache control header if necessary. We place a max
+       	 cache age on index files, optionally set a no-cache directive
+       	 and a no-store directive for archives. */
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
 	      Itm->Uri.c_str(),ProperHost.c_str());
+      if (_config->FindB("Acquire::http::No-Cache",false) == true)
+	 strcat(Buf,"Cache-Control: no-cache\r\n");
+      else
+      {
+	 if (Itm->IndexFile == true)
+	    sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
+		    _config->FindI("Acquire::http::Max-Age",60*60*24));
+	 else
+	 {
+	    if (_config->FindB("Acquire::http::No-Store",false) == true)
+	       strcat(Buf,"Cache-Control: no-store\r\n");
+	 }	 
+      }
+   }
+   
    string Req = Buf;
 
    // Check for a partial file
@@ -619,7 +643,8 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
 
    Req += "User-Agent: Debian APT-HTTP/1.2\r\n\r\n";
 //   cerr << Req << endl;
-   
+
+   cerr << Req << endl;
    Out.Read(Req);
 }
 									/*}}}*/
@@ -892,7 +917,7 @@ bool HttpMethod::Fetch(FetchItem *)
    // Queue the requests
    int Depth = -1;
    bool Tail = false;
-   for (FetchItem *I = Queue; I != 0 && Depth < 5; I = I->Next, Depth++)
+   for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; I = I->Next, Depth++)
    {
       // Make sure we stick with the same server
       if (Server->Comp(I->Uri) == false)
