@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.17 1999/08/04 05:37:18 jgg Exp $
+// $Id: acqprogress.cc,v 1.18 1999/10/18 03:18:40 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -123,7 +123,7 @@ void AcqTextStatus::Stop()
       return;
 
    if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
+      cout << '\r' << BlankLine << '\r' << flush;
    
    if (FetchedBytes != 0 && _error->PendingError() == false)
       cout << "Fetched " << SizeToStr(FetchedBytes) << "B in " <<
