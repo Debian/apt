@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.2 1999/03/15 07:20:41 jgg Exp $
+// $Id: ftp.cc,v 1.3 1999/03/15 08:10:26 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -212,17 +212,10 @@ bool FTPConn::Login()
 	 return _error->Error("PASS failed, server said: %s",Msg.c_str());
       
       // Enter passive mode
-      TryPassive = false;
-      if (_config->Exists("Acquire::FTP::Passive::" + ServerName.Host) == true &&
-	  _config->FindB("Acquire::FTP::Passive::" + ServerName.Host,true) == true)
-      {
-	 TryPassive = true;
-      }      
+      if (_config->Exists("Acquire::FTP::Passive::" + ServerName.Host) == true)
+	 TryPassive = _config->FindB("Acquire::FTP::Passive::" + ServerName.Host,true);
       else
-      {
-	 if (_config->FindB("Acquire::FTP::Passive",true) == true)
-	    TryPassive = true;
-      }      
+	 TryPassive = _config->FindB("Acquire::FTP::Passive",true);
    }
    else
    {      
@@ -250,7 +243,7 @@ bool FTPConn::Login()
 	 if (ServerName.Port != 0)
 	    sprintf(SitePort,"%u",ServerName.Port);
 	 else
-	    strcat("21",SitePort);
+	    strcpy(SitePort,"21");
 	 string Tmp = Opts->Value;
 	 Tmp = SubstVar(Tmp,"$(PROXY_USER)",Proxy.User);
 	 Tmp = SubstVar(Tmp,"$(PROXY_PASS)",Proxy.Password);
@@ -268,19 +261,14 @@ bool FTPConn::Login()
       
       // Enter passive mode
       TryPassive = false;
-      if (_config->Exists("Acquire::FTP::Passive::" + ServerName.Host) == true &&
-	  _config->FindB("Acquire::FTP::Passive::" + ServerName.Host,true) == true)
-      {
-	 TryPassive = true;
-      }      
+      if (_config->Exists("Acquire::FTP::Passive::" + ServerName.Host) == true)
+	 TryPassive = _config->FindB("Acquire::FTP::Passive::" + ServerName.Host,true);
       else
       {
-	 if (_config->Exists("Acquire::FTP::Proxy::Passive") == true &&
-	     _config->FindB("Acquire::FTP::Proxy::Passive",true) == true)
-	    TryPassive = true;
+	 if (_config->Exists("Acquire::FTP::Proxy::Passive") == true)
+	    TryPassive = _config->FindB("Acquire::FTP::Proxy::Passive",true);
 	 else
-	    if (_config->FindB("Acquire::FTP::Passive",true) == true)
-	       TryPassive = true;	       
+	    TryPassive = _config->FindB("Acquire::FTP::Passive",true);
       }            
    }
 
@@ -698,6 +686,18 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    
    if (To.Truncate(Resume) == false)
       return false;
+
+   if (To.Seek(0) == false)
+      return false;
+   
+   if (Resume != 0)
+   {
+      if (MD5.AddFD(To.Fd(),Resume) == false)
+      {
+	 _error->Errno("read","Problem hashing file");
+	 return false;
+      }
+   }
    
    // Send the get command
    if (WriteMsg(Tag,Msg,"RETR %s",Path) == false)
@@ -732,7 +732,8 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
 	    continue;
 	 break;
       }
-      
+   
+      MD5.Add(Buffer,Res);
       if (To.Write(Buffer,Res) == false)
 	 return false;
    }
@@ -795,7 +796,7 @@ bool FtpMethod::Configuration(string Message)
 									/*}}}*/
 // FtpMethod::Fetch - Fetch a file					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Fetch a single file, called by the base class..  */
 bool FtpMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
@@ -850,7 +851,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       }
       
       // Resume?
-      if (FailTime == Buf.st_mtime && Size < (unsigned)Buf.st_size)
+      if (FailTime == Buf.st_mtime && Size > (unsigned)Buf.st_size)
 	 Res.ResumePoint = Buf.st_size;
    }
    
