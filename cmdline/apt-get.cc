@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.33 1999/01/27 02:48:53 jgg Exp $
+// $Id: apt-get.cc,v 1.34 1999/01/27 03:42:59 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -909,7 +909,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
       /* Install the package only if it is a new install, the autoupgrader
          will deal with the rest */
       if (I->SelectedState == pkgCache::State::Install)
-	 Cache->MarkInstall(I);
+	 Cache->MarkInstall(I,true);
    }
    
    // Apply erasures now, they override everything else.
@@ -921,12 +921,37 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 	 Cache->MarkDelete(I);
    }
 
-   /* Use updates smart upgrade to do the rest, it will automatically
-      ignore held items */
+   /* Resolve any problems that dselect created, allupgrade cannot handle
+      such things. We do so quite agressively too.. */
+   if (Cache->BrokenCount() != 0)
+   {      
+      pkgProblemResolver Fix(Cache);
+
+      // Hold back held packages.
+      if (_config->FindB("APT::Ingore-Hold",false) == false)
+      {
+	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() == false; I++)
+	 {
+	    if (I->SelectedState == pkgCache::State::Hold)
+	    {
+	       Fix.Protect(I);
+	       Cache->MarkKeep(I);
+	    }
+	 }
+      }
+   
+      if (Fix.Resolve() == false)
+      {
+	 ShowBroken(c1out,Cache);
+	 return _error->Error("Internal Error, problem resolver broke stuff");
+      }
+   }
+
+   // Now upgrade everything
    if (pkgAllUpgrade(Cache) == false)
    {
       ShowBroken(c1out,Cache);
-      return _error->Error("Internal Error, AllUpgrade broke stuff");
+      return _error->Error("Internal Error, problem resolver broke stuff");
    }
    
    return InstallPackages(Cache,false);
