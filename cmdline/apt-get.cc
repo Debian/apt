@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.97 2000/05/12 05:11:54 jgg Exp $
+// $Id: apt-get.cc,v 1.98 2000/05/14 06:01:04 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1611,7 +1611,8 @@ bool ShowHelp(CommandLine &CmdL)
       return 100;
        
    cout << "Usage: apt-get [options] command" << endl;
-   cout << "       apt-get [options] install pkg1 [pkg2 ...]" << endl;
+   cout << "       apt-get [options] install|remove pkg1 [pkg2 ...]" << endl;
+   cout << "       apt-get [options] source pkg1 [pkg2 ...]" << endl;
    cout << endl;
    cout << "apt-get is a simple command line interface for downloading and" << endl;
    cout << "installing packages. The most frequently used commands are update" << endl;
