@@ -2,11 +2,14 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.6 1999/02/15 08:23:10 jgg Exp $
+# $Id: rules,v 1.7 1999/03/12 22:34:34 mblevin Exp $
 
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
+
+# Find the libapt-pkg major version for use in other control files
+export LIBAPT_MAJOR=`egrep '^MAJOR=' apt-pkg/makefile |cut -d '=' -f 2`
 
 build: build-stamp
 build-stamp: configure
@@ -87,8 +90,9 @@ apt: build
 	dh_suidregister -papt
 	dh_installdeb -papt
 	LD_LIBRARY_PATH=debian/tmp/usr/lib dh_shlibdeps -papt
+	echo libapt-pkg:major=${LIBAPT_MAJOR} >> debian/substvars
 	dh_gencontrol -papt
-	dh_makeshlibs -papt
+	dh_makeshlibs -m${LIBAPT_MAJOR} -Vlibapt-pkg${LIBAPT_MAJOR} -papt
 	dh_md5sums -papt
 	dh_builddeb -papt
 
@@ -98,7 +102,7 @@ libapt-pkg-dev: build
 	dh_clean -plibapt-pkg-dev -k
 	dh_installdirs -plibapt-pkg-dev usr/lib usr/include/apt-pkg
 	
-	ln -s libapt-pkg.so.2.0 debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
+	ln -s libapt-pkg.so.${LIBAPT_MAJOR} debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
 
 	cp build/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
 
