@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.6 2003/02/10 07:34:41 doogie Exp $
+// $Id: apt-ftparchive.cc,v 1.7 2003/07/18 14:12:07 mdz Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -548,7 +548,7 @@ bool ShowHelp(CommandLine &CmdL)
 
    cout << 
     _("Usage: apt-ftparchive [options] command\n"
-      "Commands: packges binarypath [overridefile [pathprefix]]\n"
+      "Commands: packages binarypath [overridefile [pathprefix]]\n"
       "          sources srcpath [overridefile [pathprefix]]\n"
       "          contents path\n"
       "          generate config [groups]\n"
