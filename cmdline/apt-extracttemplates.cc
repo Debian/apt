@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.6 2001/03/03 23:02:39 tausq Exp $
+// $Id: apt-extracttemplates.cc,v 1.7 2001/04/29 05:40:36 jgg Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -309,13 +309,16 @@ bool Go(CommandLine &CmdL)
 		{
 			// Check to make sure debconf dependencies are
 			// satisfied
+			cout << "Check " << file.DepVer << ',' << debconfver << endl;
 			if (file.DepVer != "" &&
-			    DebFile::Cache->VS->CheckDep(file.DepVer.c_str(),
-			                file.DepOp, debconfver.c_str()) == false)
+			    DebFile::Cache->VS->CheckDep(debconfver.c_str(),
+					file.DepOp,file.DepVer.c_str()
+							 ) == false)
 				continue;
 			if (file.PreDepVer != "" &&
-			    DebFile::Cache->VS->CheckDep(file.PreDepVer.c_str(), 
-			                file.PreDepOp, debconfver.c_str()) == false) 
+			    DebFile::Cache->VS->CheckDep(debconfver.c_str(),
+			                file.PreDepOp,file.PreDepVer.c_str()
+							 ) == false) 
 				continue;
 
 			WriteConfig(file);
