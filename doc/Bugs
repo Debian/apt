@@ -6,9 +6,6 @@
  Summary: Some terminal environments cause APT to crash
           Win95 telnet and emacs term-in-a-buffer are two at least
  Status: I have no idea why.
-#23984: apt: support for "no_proxy" would be nice
- Status: Planed to be integrated into the new methods via the configuration
-         file
 #24685: HTTP Proxy cache refresh
  Summary: Some caches hold onto the package index file for too long
  Status: It may be possible to insert the proper header to disable
@@ -22,9 +19,6 @@
          though it failed. I'm paying very close attention to this in
 	 0.3.x. Not to mention that the clean behavior will be 
 	 configurable..
-#25021: apt: Need some control over multiple connections
- Status: Probable that 0.3.x will have support for configuing some
-         parameters
 #22892: Apt improvements
 #28184: apt could be smarted regarding mirrors
  Summary: Make use of redundant sources
@@ -74,7 +68,26 @@
 	 status file
 #27841: apt: apt depends on a missing library
  Status: New versions of APT in slink have been compiled with libstdc++2.9
- 
+#23984: apt: support for "no_proxy" would be nice
+ Status: Planed to be integrated into the new methods via the configuration
+         file
+	 Done - Use Acquire::http::proxy::host.com="DIRECT"
+#25021: apt: Need some control over multiple connections
+ Status: Probable that 0.3.x will have support for configuing some
+         parameters
+	 Done - Use Acquire::Queue-Mode="access"
+#25019: apt: Confusing progress report
+ Summary: Gripes about the progress meter
+ Status: I do not intend to implement very many of these ideas in apt-get. 
+         The GUI will naturally be better
+	 I think the new progress meter address basically everyone's 
+	 concerns.
+#25022: apt: Lack of feedback on date checking
+ Summary: Wants to know what package files were not updated
+ Status: There is no place for this in the current apt-get design,
+         probably won't make the GUI either.
+	 Wee, the new acquire code allows this, it now prints out 'Hit'
+	 
 -- Silly things
 #26592: apt: Problems with ftpd in SunOS 5.6
  Summary: SunOS ftpd does not support the SIZE command
@@ -101,14 +114,6 @@
 #22551: apt: wish: use dist X iff pkg does not exist in dist Y
 #27100: apt: Better support for project/experimental
  Status: GUI Feature - Version selection and pinning
-#25019: apt: Confusing progress report
- Summary: Gripes about the progress meter
- Status: I do not intend to implement very many of these ideas in apt-get. 
-         The GUI will naturally be better
-#25022: apt: Lack of feedback on date checking
- Summary: Wants to know what package files were not updated
- Status: There is no place for this in the current apt-get design,
-         probably won't make the GUI either.
 #28172: HTTP Proxy cache refresh should be forced for corrupted packages
  Summary: Some problem resulted in a corrupted package
  Status: I belive this reflects a deeper problem and the suggested solution
