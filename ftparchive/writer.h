@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.h,v 1.6 2003/12/26 20:50:01 mdz Exp $
+// $Id: writer.h,v 1.7 2003/12/26 22:55:13 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -67,8 +67,8 @@ class FTWScanner
    virtual bool DoPackage(string FileName) = 0;
    bool RecursiveScan(string Dir);
    bool LoadFileList(string BaseDir,string File);
-   bool ClearPatterns() { Patterns.clear(); };
-   bool AddPattern(string Pattern) { Patterns.push_back(Pattern); };
+   void ClearPatterns() { Patterns.clear(); };
+   void AddPattern(string Pattern) { Patterns.push_back(Pattern); };
    bool SetExts(string Vals);
       
    FTWScanner();
