@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.67 2003/08/02 19:53:23 mdz Exp $
+// $Id: apt-cache.cc,v 1.68 2003/11/19 23:50:51 mdz Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1697,7 +1697,7 @@ int main(int argc,const char *argv[])
    }
    
    // Deal with stdout not being a tty
-   if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
+   if (isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
       _config->Set("quiet","1");
 
    if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)

@@ -17,6 +17,9 @@ apt (0.5.15) unstable; urgency=low
   * Let apt-get build-dep try alternatives if the installed package
     doesn't meet version requirements (Closes: #214736)
   * Fix version display for recommends (Closes: #219900)
+  * Use isatty rather than ttyname for checking if stdin is a terminal.
+    isatty has the advantage of not requiring /proc under Linux, and thus
+    Closes: #221728
 
  --
 

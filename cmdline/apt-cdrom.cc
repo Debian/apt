@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.44 2003/09/12 01:48:33 mdz Exp $
+// $Id: apt-cdrom.cc,v 1.45 2003/11/19 23:50:51 mdz Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -799,7 +799,7 @@ int main(int argc,const char *argv[])
       return ShowHelp();
 
    // Deal with stdout not being a tty
-   if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
+   if (isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
       _config->Set("quiet","1");
    
    // Match the operation
