@@ -123,7 +123,7 @@ _LIBSTDCPP_
 
 	if test "$?" = 0; then
 		soname=`objdump -p ./$dummy |grep NEEDED|grep libstd`
-		LIBSTDCPP_VER=`echo $soname | sed -e 's/.*NEEDED.*libstdc++-libc.*-\(.*\).so.\(.*\)/\2-\1/'`
+                LIBSTDCPP_VER=`echo $soname | sed -e 's/.*NEEDED.*libstdc++\(-libc.*\(-.*\)\)\?.so.\(.*\)/\3\2/'`
 	fi
 	rm -f $dummy $dummy.cc
 
