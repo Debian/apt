@@ -6,7 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
-"POT-Creation-Date: 2003-04-27 01:12-0500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-02-26 16:47-0800\n"
 "PO-Revision-Date: 2004-01-27 07:50+0100\n"
 "Last-Translator: Bart Cornelis <cobaco@linux.be>\n"
 "Language-Team: debian-l10n-dutch <debian-l10n-dutch@lists.debian.org>\n"
@@ -147,9 +148,7 @@ msgstr "  Versietabel:"
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1646 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
-#: cmdline/apt-get.cc:2255 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-cache.cc:1646
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s voor %s %s gecompileerd op %s %s\n"
@@ -228,1099 +227,6 @@ msgstr ""
 "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 "\n"
 "Zie de apt-cache(8) en apt.conf(5) handleidingen voor meer informatie.\n"
-
-#: cmdline/apt-config.cc:41
-msgid "Arguments not in pairs"
-msgstr "Argumenten niet in paren"
-
-#: cmdline/apt-config.cc:76
-msgid ""
-"Usage: apt-config [options] command\n"
-"\n"
-"apt-config is a simple tool to read the APT config file\n"
-"\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Gebruik: apt-config [opties] opdracht\n"
-"\n"
-"apt-config is een simpel programma om het APT-configuratiebestand te lezen\n"
-"\n"
-"Opdrachten:\n"
-"   shell   - Shell modus\n"
-"   dump - Toon de configuratie\n"
-"\n"
-"Opties:\n"
-"  -h     Deze hulptekst.\n"
-"  -c=? Lees dit configuratiebestand.\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-extracttemplates.cc:98
-#, c-format
-msgid "%s not a valid DEB package."
-msgstr "%s is geen geldig DEB-pakket."
-
-#: cmdline/apt-extracttemplates.cc:232
-msgid ""
-"Usage: apt-extracttemplates file1 [file2 ...]\n"
-"\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Gebruik: apt-extracttemplates bestand1 [bestand2 ...]\n"
-"\n"
-"apt-extracttemplates is een programma om configuratie- en "
-"sjablooninformatie\n"
-"uit Debian pakketten te halen.\n"
-"\n"
-"Opties:\n"
-"  -h     Deze hulptekst.\n"
-"  -t      Stel de tijdelijke map in.\n"
-"  -c=? Lees dit configuratiebestand.\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Kan niet naar %s schrijven"
-
-#: cmdline/apt-extracttemplates.cc:310
-msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Kan versie van debconf niet bepalen. Is debconf geïnstalleerd?"
-
-#: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:337
-msgid "Package extension list is too long"
-msgstr "Pakket-extensielijst is te lang"
-
-#: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
-#: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:252
-#: ftparchive/apt-ftparchive.cc:266 ftparchive/apt-ftparchive.cc:288
-#, c-format
-msgid "Error Processing directory %s"
-msgstr "Fout bij het verwerken van map %s"
-
-#: ftparchive/apt-ftparchive.cc:250
-msgid "Source extension list is too long"
-msgstr "Bron-extensielijst is te lang"
-
-#: ftparchive/apt-ftparchive.cc:367
-msgid "Error writing header to contents file"
-msgstr "Fout bij wegschrijven van de koptekst naar het inhoudsbestand"
-
-#: ftparchive/apt-ftparchive.cc:397
-#, c-format
-msgid "Error Processing Contents %s"
-msgstr "Fout bij het verwerken van de inhoud van %s"
-
-#: ftparchive/apt-ftparchive.cc:551
-msgid ""
-"Usage: apt-ftparchive [options] command\n"
-"Commands: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive generates index files for Debian archives. It supports\n"
-"many styles of generation from fully automated to functional replacements\n"
-"for dpkg-scanpackages and dpkg-scansources\n"
-"\n"
-"apt-ftparchive generates Package files from a tree of .debs. The\n"
-"Package file contains the contents of all the control fields from\n"
-"each package as well as the MD5 hash and filesize. An override file\n"
-"is supported to force the value of Priority and Section.\n"
-"\n"
-"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-"The --source-override option can be used to specify a src override file\n"
-"\n"
-"The 'packages' and 'sources' command should be run in the root of the\n"
-"tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contain the override flags. Pathprefix is\n"
-"appended to the filename fields if present. Example usage from the \n"
-"Debian archive:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Options:\n"
-"  -h    This help text\n"
-"  --md5 Control MD5 generation\n"
-"  -s=?  Source override file\n"
-"  -q    Quiet\n"
-"  -d=?  Select the optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Control contents file generation\n"
-"  -c=?  Read this configuration file\n"
-"  -o=?  Set an arbitary configuration option"
-msgstr ""
-"Gebruik: apt-ftparchive [opties] opdracht\n"
-"\n"
-"Opdrachten: packages binariespad [voorrangsbestand [padprefix]]\n"
-"            sources bronpad [voorrangsbestand [padprefix]]\n"
-"            contents pad\n"
-"            release pad\n"
-"            generate config [groepen]\n"
-"            clean config\n"
-"\n"
-"Met apt-ftparchive genereert u index bestanden voor Debian archieven.\n"
-"Het ondersteunt verschillende aanmaakstijlen gaande van volledig "
-"automatisch\n"
-"tot een functionele vervangingen van dpkg-scanpackages en dpkg-scansources\n"
-"\n"
-"apt-ftparchive genereert pakketbestanden van een boom met .debs.\n"
-"Het pakketbestand bevat de inhoud van alle beheervelden van elk pakket\n"
-"alsook de MD5 hash en de bestandsgrootte. Via een voorrangsbestand\n"
-"kunnen de waardes van de 'Priority'- en 'Section'-velden afgedwongen\n"
-"worden.\n"
-"\n"
-"Op gelijkaardige wijze genereert apt-ftparchive de bronbestanden van\n"
-"een boom met .dscs. De '--source-override'-optie kan gebruikt worden om\n"
-"een bronvoorrangsbestand te specificeren.\n"
-"\n"
-"De 'packages' en 'sources' opdrachten dienen uitgevoerd te worden \n"
-"bij de wortel van de boom. Binariespad dient te verwijzen naar het "
-"startpunt\n"
-"van de recursieve zoekopdracht en een voorrangsbestand dient de \n"
-"voorrangsvlaggen te bevatten. Padprefix wordt toegevoegd aan het "
-"'filename'-\n"
-"veld indien dit aanwezig is. Enkele voorbeelden uit het debian archief:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Opties:\n"
-"  -h             Deze hulptekst\n"
-"  --md5        Beheer de MD5 generatie\n"
-"  -s=?          Bronvoorrangsbestand\n"
-"  -q             Stille uitvoer\n"
-"  -d=?         Selecteerd de optionele caching database\n"
-"  --no-delink Schakelt de ontlinking debug modus in\n"
-"  --contents  Beheer de generatie van het inhoudsbestand\n"
-"  -c=?          Lees dit configuratiebestand in\n"
-"  -o=?          Stel een willekeurige configuratie optie in"
-
-#: ftparchive/apt-ftparchive.cc:757
-msgid "No selections matched"
-msgstr "Er waren geen passende selecties"
-
-#: ftparchive/apt-ftparchive.cc:830
-#, c-format
-msgid "Some files are missing in the package file group `%s'"
-msgstr "Sommige bestanden zijn niet aanwezig in de pakketbestandsgroep '%s'"
-
-#: ftparchive/cachedb.cc:43
-#, c-format
-msgid "DB was corrupted, file renamed to %s.old"
-msgstr "DB is beschadigd, bestand hernoemd naar %s.old"
-
-#: ftparchive/cachedb.cc:59
-#, c-format
-msgid "Unable to open DB2 file %s"
-msgstr "DB2 bestand %s kan niet geopend worden"
-
-#: ftparchive/cachedb.cc:99
-#, c-format
-msgid "File date has changed %s"
-msgstr "Bestandsdatum is veranderd %s"
-
-#: ftparchive/cachedb.cc:140
-msgid "Archive has no control record"
-msgstr "Archief heeft geen 'control'-record"
-
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
-msgid "Unable to get a cursor"
-msgstr "Kan geen cursor verkrijgen"
-
-#: ftparchive/writer.cc:79
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "W: Kon map %s niet lezen\n"
-
-#: ftparchive/writer.cc:84
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "W: Kon de status van %s niet opvragen\n"
-
-#: ftparchive/writer.cc:126
-msgid "E: "
-msgstr "F: "
-
-#: ftparchive/writer.cc:128
-msgid "W: "
-msgstr "W: "
-
-#: ftparchive/writer.cc:135
-msgid "E: Errors apply to file "
-msgstr "F: Er zijn fouten van toepassing op het bestand"
-
-#: ftparchive/writer.cc:152 ftparchive/writer.cc:182
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Oplossen van %s is mislukt"
-
-#: ftparchive/writer.cc:164
-msgid "Tree walking failed"
-msgstr "Doorlopen boomstructuur is mislukt"
-
-#: ftparchive/writer.cc:189
-#, c-format
-msgid "Failed to open %s"
-msgstr "Openen van %s is mislukt"
-
-#: ftparchive/writer.cc:246
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr " OntLink %s [%s]\n"
-
-#: ftparchive/writer.cc:254
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "Waarde van link %s weergeven is mislukt"
-
-#: ftparchive/writer.cc:258
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "Ontlinken van %s is mislukt"
-
-#: ftparchive/writer.cc:265
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** Linken van %s aan %s is mislukt"
-
-#: ftparchive/writer.cc:275
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " Ontlinklimiet van %sB is bereikt.\n"
-
-#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Status opvragen van %s is mislukt"
-
-#: ftparchive/writer.cc:378
-msgid "Archive had no package field"
-msgstr "Archief heeft geen 'package'-veld"
-
-#: ftparchive/writer.cc:386 ftparchive/writer.cc:595
-#, c-format
-msgid "  %s has no override entry\n"
-msgstr " %s heeft geen voorrangsingang\n"
-
-#: ftparchive/writer.cc:429 ftparchive/writer.cc:677
-#, c-format
-msgid "  %s maintainer is %s not %s\n"
-msgstr "  %s beheerder is %s, niet %s\n"
-
-#: ftparchive/contents.cc:346 ftparchive/contents.cc:377
-msgid "realloc - Failed to allocate memory"
-msgstr "realloc - Geheugentoewijzing is mislukt"
-
-#: ftparchive/override.cc:38 ftparchive/override.cc:146
-#, c-format
-msgid "Unable to open %s"
-msgstr "Kan %s niet openen"
-
-#: ftparchive/override.cc:64 ftparchive/override.cc:170
-#, c-format
-msgid "Malformed override %s line %lu #1"
-msgstr "Misvormde voorrangsingang %s op regel %lu #1"
-
-#: ftparchive/override.cc:78 ftparchive/override.cc:182
-#, c-format
-msgid "Malformed override %s line %lu #2"
-msgstr "Misvormde voorrangsingang %s op regel %lu #2"
-
-#: ftparchive/override.cc:92 ftparchive/override.cc:195
-#, c-format
-msgid "Malformed override %s line %lu #3"
-msgstr "Misvormde voorrangingang %s op regel %lu #3"
-
-#: ftparchive/override.cc:131 ftparchive/override.cc:205
-#, c-format
-msgid "Failed to read the override file %s"
-msgstr "Voorrangsbestand %s kon niet gelezen worden"
-
-#: ftparchive/multicompress.cc:75
-#, c-format
-msgid "Unknown Compresison Algorithm '%s'"
-msgstr "Onbekend compressie-algoritme '%s'"
-
-#: ftparchive/multicompress.cc:105
-#, c-format
-msgid "Compressed output %s needs a compression set"
-msgstr "Gecomprimeerde uitvoer %s vereist een compressieset"
-
-#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "Aanmaken van IPC-pijp naar subproces is mislukt"
-
-#: ftparchive/multicompress.cc:198
-msgid "Failed to create FILE*"
-msgstr "Aanmaken FILE* is mislukt"
-
-#: ftparchive/multicompress.cc:201
-msgid "Failed to fork"
-msgstr "Vorken van proces is mislukt"
-
-#: ftparchive/multicompress.cc:215
-msgid "Compress Child"
-msgstr "Comprimeer kind"
-
-#: ftparchive/multicompress.cc:238
-#, c-format
-msgid "Internal Error, Failed to create %s"
-msgstr "Interne fout, aanmaken van %s is mislukt"
-
-#: ftparchive/multicompress.cc:289
-msgid "Failed to create subprocess IPC"
-msgstr "Aanmaken subproces-IPC is mislukt"
-
-#: ftparchive/multicompress.cc:324
-msgid "Failed to exec compressor "
-msgstr "Uitvoeren van de compressor is mislukt"
-
-#: ftparchive/multicompress.cc:363
-msgid "decompressor"
-msgstr "decompressor"
-
-#: ftparchive/multicompress.cc:406
-msgid "IO to subprocess/file failed"
-msgstr "IO naar subproces is mislukt"
-
-#: ftparchive/multicompress.cc:458
-msgid "Failed to read while computing MD5"
-msgstr "Lezen tijdens het berekenen van de MD5 is mislukt"
-
-#: ftparchive/multicompress.cc:475
-#, c-format
-msgid "Problem unlinking %s"
-msgstr "Probleem bij het ontlinken van %s"
-
-#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Hernoemen van %s naar %s is mislukt"
-
-#: cmdline/apt-get.cc:118
-msgid "Y"
-msgstr "J"
-
-#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1422
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Regex-compilatiefout - %s"
-
-#: cmdline/apt-get.cc:235
-msgid "The following packages have unmet dependencies:"
-msgstr "De volgende pakketten hebben niet-voldane vereisten:"
-
-#: cmdline/apt-get.cc:325
-#, c-format
-msgid "but %s is installed"
-msgstr "maar %s is geïnstalleerd"
-
-#: cmdline/apt-get.cc:327
-#, c-format
-msgid "but %s is to be installed"
-msgstr "maar %s zal geïnstalleerd worden"
-
-#: cmdline/apt-get.cc:334
-msgid "but it is not installable"
-msgstr "maar het is niet installeerbaar"
-
-#: cmdline/apt-get.cc:336
-msgid "but it is a virtual package"
-msgstr "maar het is een virtueel pakket"
-
-#: cmdline/apt-get.cc:339
-msgid "but it is not installed"
-msgstr "maar het is niet geïnstalleerd"
-
-#: cmdline/apt-get.cc:339
-msgid "but it is not going to be installed"
-msgstr "maar het zal niet geïnstalleerd worden"
-
-#: cmdline/apt-get.cc:344
-msgid " or"
-msgstr " of"
-
-#: cmdline/apt-get.cc:373
-msgid "The following NEW packages will be installed:"
-msgstr "De volgende NIEUWE pakketten zullen geïnstalleerd worden:"
-
-#: cmdline/apt-get.cc:399
-msgid "The following packages will be REMOVED:"
-msgstr "De volgende pakketten zullen VERWIJDERD worden:"
-
-#: cmdline/apt-get.cc:421
-msgid "The following packages have been kept back:"
-msgstr "De volgende pakketen zijn achtergehouden:"
-
-#: cmdline/apt-get.cc:442
-msgid "The following packages will be upgraded:"
-msgstr "De volgende pakketten zullen opgewaardeerd worden:"
-
-#: cmdline/apt-get.cc:463
-msgid "The following packages will be DOWNGRADED:"
-msgstr "De volgende pakketten zullen GEDEGRADEERD worden:"
-
-#: cmdline/apt-get.cc:483
-msgid "The following held packages will be changed:"
-msgstr "De volgende vastgehouden pakketten zullen gewijzigd worden:"
-
-#: cmdline/apt-get.cc:536
-#, c-format
-msgid "%s (due to %s) "
-msgstr "%s (wegens %s) "
-
-#: cmdline/apt-get.cc:544
-msgid ""
-"WARNING: The following essential packages will be removed\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"WAARSCHUWING: De volgende essentiële pakketten zullen verwijderd worden\n"
-"Dit dient NIET gedaan te worden tenzij u echt weet wat u doet!"
-
-#: cmdline/apt-get.cc:574
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu pakketten opgewaardeerd, %lu nieuwe paketten geïnstalleerd, "
-
-#: cmdline/apt-get.cc:578
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu opnieuw geïnstalleerd, "
-
-#: cmdline/apt-get.cc:580
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu gedegradeerd, "
-
-#: cmdline/apt-get.cc:582
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu verwijderen en %lu niet opgewaardeerd.\n"
-
-#: cmdline/apt-get.cc:586
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu pakketten niet volledig geïnstalleerd of verwijderd.\n"
-
-#: cmdline/apt-get.cc:646
-msgid "Correcting dependencies..."
-msgstr "Vereisten worden verbeterd..."
-
-#: cmdline/apt-get.cc:649
-msgid " failed."
-msgstr " mislukt."
-
-#: cmdline/apt-get.cc:652
-msgid "Unable to correct dependencies"
-msgstr "Kan vereisten niet verbeteren"
-
-#: cmdline/apt-get.cc:655
-msgid "Unable to minimize the upgrade set"
-msgstr "Kon de verzameling van op te waarderen pakketten niet minimaliseren"
-
-#: cmdline/apt-get.cc:657
-msgid " Done"
-msgstr " Klaar"
-
-#: cmdline/apt-get.cc:661
-msgid "You might want to run `apt-get -f install' to correct these."
-msgstr "U kunt 'apt-get -f install' uitvoeren om dit te op te lossen."
-
-#: cmdline/apt-get.cc:664
-msgid "Unmet dependencies. Try using -f."
-msgstr "Er zijn vereisten waaraan niet voldaan is. Probeer -f te gebruiken."
-
-#: cmdline/apt-get.cc:718
-msgid "Packages need to be removed but Remove is disabled."
-msgstr "Pakketten moeten verwijderd worden maar verwijderen is uitgeschakeld."
-
-#: cmdline/apt-get.cc:744 cmdline/apt-get.cc:1711 cmdline/apt-get.cc:1744
-msgid "Unable to lock the download directory"
-msgstr "Kon de ophaalmap niet vergrendelen"
-
-#: cmdline/apt-get.cc:754 cmdline/apt-get.cc:1792 cmdline/apt-get.cc:2003
-#: apt-pkg/cachefile.cc:67
-msgid "The list of sources could not be read."
-msgstr "De lijst van bronnen kon niet gelezen worden."
-
-#: cmdline/apt-get.cc:774
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Er moeten %sB/%sB aan archieven opgehaald worden.\n"
-
-#: cmdline/apt-get.cc:777
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "Er moeten %sB aan archieven opgehaald worden.\n"
-
-#: cmdline/apt-get.cc:782
-#, c-format
-msgid "After unpacking %sB of additional disk space will be used.\n"
-msgstr "Na het uitpakken zal er %sB extra schijfruimte gebruikt worden.\n"
-
-#: cmdline/apt-get.cc:785
-#, c-format
-msgid "After unpacking %sB disk space will be freed.\n"
-msgstr "Na het uitpakken zal er %sB schijfruimte vrijkomen.\n"
-
-#: cmdline/apt-get.cc:802
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "U heeft niet voldoende vrije schijfruimte op %s"
-
-#: cmdline/apt-get.cc:811
-msgid "There are problems and -y was used without --force-yes"
-msgstr "Er zijn problemen en -y was gebruikt zonder --force-yes"
-
-#: cmdline/apt-get.cc:817 cmdline/apt-get.cc:837
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "'Trivial Only' is opgegeven, dit is echter geen triviale bewerking."
-
-#: cmdline/apt-get.cc:819
-msgid "Yes, do as I say!"
-msgstr "Ja, doe wat ik zeg!"
-
-#: cmdline/apt-get.cc:821
-#, c-format
-msgid ""
-"You are about to do something potentially harmful\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"U staat op het punt om iets te doen wat mogelijk schadelijk is.\n"
-"Als u wilt doorgaan dient u de zin '%s' in (helemaal) in te tikken.\n"
-" ?] "
-
-#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:846
-msgid "Abort."
-msgstr "Afbreken."
-
-#: cmdline/apt-get.cc:842
-msgid "Do you want to continue? [Y/n] "
-msgstr "Wilt u doorgaan? [J/n] "
-
-#: cmdline/apt-get.cc:911 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1901
-#, c-format
-msgid "Failed to fetch %s  %s\n"
-msgstr "Ophalen van %s %s is mislukt\n"
-
-#: cmdline/apt-get.cc:929
-msgid "Some files failed to download"
-msgstr "Ophalen van sommige bestanden is mislukt"
-
-#: cmdline/apt-get.cc:930 cmdline/apt-get.cc:1910
-msgid "Download complete and in download only mode"
-msgstr "Ophalen klaar en alleen-ophalen-modus staat aan"
-
-#: cmdline/apt-get.cc:936
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"Kon sommige archieven niet ophalen, misschien kunt u 'apt-get update' of\n"
-"--fix-missing proberen?"
-
-#: cmdline/apt-get.cc:940
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "--fix-missing en medium wisselen wordt op dit moment niet ondersteund"
-
-#: cmdline/apt-get.cc:945
-msgid "Unable to correct missing packages."
-msgstr "Geen oplossing voor de missende pakketten gevonden."
-
-#: cmdline/apt-get.cc:946
-msgid "Aborting Install."
-msgstr "Installatie wordt afgebroken."
-
-#: cmdline/apt-get.cc:979
-#, c-format
-msgid "Note, selecting %s instead of %s\n"
-msgstr "Let op, %s wordt geselecteerd in plaats van %s\n"
-
-#: cmdline/apt-get.cc:989
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr ""
-"%s wordt overgeslagen, het is al geïnstalleerd en opwaardering is niet "
-"gevraagd.\n"
-
-#: cmdline/apt-get.cc:1007
-#, c-format
-msgid "Package %s is not installed, so not removed\n"
-msgstr "Pakket %s is niet geïnstalleerd, en wordt dus niet verwijderd\n"
-
-#: cmdline/apt-get.cc:1018
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "Pakket %s is een virtueel pakket voorzien door:\n"
-
-#: cmdline/apt-get.cc:1030
-msgid " [Installed]"
-msgstr " [Geïnstalleerd]"
-
-#: cmdline/apt-get.cc:1035
-msgid "You should explicitly select one to install."
-msgstr "U dient er één expliciet voor installatie uit te kiezen."
-
-#: cmdline/apt-get.cc:1040
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"Pakket %s is niet beschikbaar, hoewel er naar verwezen wordt door\n"
-"een ander pakket. Mogelijk betekent dit dat het pakket ontbreekt,\n"
-"verouderd is, of enkel beschikbaar van een andere bron\n"
-
-#: cmdline/apt-get.cc:1059
-msgid "However the following packages replace it:"
-msgstr "Echter, de volgende pakketten vervangen dit:"
-
-#: cmdline/apt-get.cc:1062
-#, c-format
-msgid "Package %s has no installation candidate"
-msgstr "Pakket %s heeft geen installeerbare kandidaat"
-
-#: cmdline/apt-get.cc:1082
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr ""
-"Herinstallatie van %s is niet mogelijk daar het niet opgehaald kan worden.\n"
-
-#: cmdline/apt-get.cc:1090
-#, c-format
-msgid "%s is already the newest version.\n"
-msgstr "%s is reeds de nieuwste versie.\n"
-
-#: cmdline/apt-get.cc:1117
-#, c-format
-msgid "Release '%s' for '%s' was not found"
-msgstr "Release '%s' voor '%s' is niet gevonden"
-
-#: cmdline/apt-get.cc:1119
-#, c-format
-msgid "Version '%s' for '%s' was not found"
-msgstr "Versie '%s' voor '%s' is niet gevonden"
-
-#: cmdline/apt-get.cc:1125
-#, c-format
-msgid "Selected version %s (%s) for %s\n"
-msgstr "Versie %s (%s) geselecteerd voor %s\n"
-
-#: cmdline/apt-get.cc:1235
-msgid "The update command takes no arguments"
-msgstr "De 'update'-opdracht aanvaard geen argumenten"
-
-#: cmdline/apt-get.cc:1248
-msgid "Unable to lock the list directory"
-msgstr "Kon de lijstmap niet vergrendelen"
-
-#: cmdline/apt-get.cc:1300
-msgid ""
-"Some index files failed to download, they have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Ophalen van sommige indexbestanden is mislukt, deze zijn of genegeerd, of er "
-"zijn oudere versies van gebruikt"
-
-#: cmdline/apt-get.cc:1319
-msgid "Internal Error, AllUpgrade broke stuff"
-msgstr "Interne fout, AllUpgrade heeft dingen stukgemaakt"
-
-#: cmdline/apt-get.cc:1409 cmdline/apt-get.cc:1445
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "Kon pakket %s niet vinden"
-
-#: cmdline/apt-get.cc:1432
-#, c-format
-msgid "Note, selecting %s for regex '%s'\n"
-msgstr "Let op, %s wordt geselecteerd omwille van de regex '%s'\n"
-
-#: cmdline/apt-get.cc:1462
-msgid "You might want to run `apt-get -f install' to correct these:"
-msgstr ""
-"U wilt waarschijnlijk 'apt-get -f install' uitvoeren om volgende op te "
-"lossen:"
-
-#: cmdline/apt-get.cc:1465
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Vereisten waaraan niet voldaan is. We raden u aan om 'apt-get -f install' te "
-"proberen\n"
-" zonder pakketten, (of u kunt zelf een oplossing specificeren)."
-
-#: cmdline/apt-get.cc:1477
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Sommige pakketten konden niet geïnstalleerd worden. Dit kan betekenen dat u\n"
-"een onmogelijke situatie gevraagd hebt of dat u de 'unstable'-distributie \n"
-"gebruikt en sommige benodigde pakketten nog vastzitten in 'incoming'."
-
-#: cmdline/apt-get.cc:1485
-msgid ""
-"Since you only requested a single operation it is extremely likely that\n"
-"the package is simply not installable and a bug report against\n"
-"that package should be filed."
-msgstr ""
-"Aangezien u slechts een enkele opdracht gegegeven hebt is het zeer \n"
-"waarschijnlijk dat het pakket doodgewoon niet installeerbaar is. U kunt dan\n"
-"best een foutrapport indienen voor dit pakket."
-
-#: cmdline/apt-get.cc:1490
-msgid "The following information may help to resolve the situation:"
-msgstr "De volgende informatie helpt u mogelijk verder:"
-
-#: cmdline/apt-get.cc:1493
-msgid "Broken packages"
-msgstr "Niet-werkende pakketten:"
-
-#: cmdline/apt-get.cc:1519
-msgid "The following extra packages will be installed:"
-msgstr "De volgende extra pakketten zullen geïnstalleerd worden:"
-
-#: cmdline/apt-get.cc:1585
-msgid "Suggested packages:"
-msgstr "Voorgestelde pakketten:"
-
-#: cmdline/apt-get.cc:1586
-msgid "Recommended packages:"
-msgstr "Aanbevolen pakketten:"
-
-#: cmdline/apt-get.cc:1606
-msgid "Calculating Upgrade... "
-msgstr "Opwaardering wordt berekend... "
-
-#: cmdline/apt-get.cc:1609 methods/ftp.cc:702 methods/connect.cc:99
-msgid "Failed"
-msgstr "Mislukt"
-
-#: cmdline/apt-get.cc:1614
-msgid "Done"
-msgstr "Klaar"
-
-#: cmdline/apt-get.cc:1787
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"U dient minstens 1 pakket op te geven waarvan de broncode moet opgehaald "
-"worden"
-
-#: cmdline/apt-get.cc:1814 cmdline/apt-get.cc:2021
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Kan geen bronpakket vinden voor %s"
-
-#: cmdline/apt-get.cc:1861
-#, c-format
-msgid "You don't have enough free space in %s"
-msgstr "U heeft niet voldoende vrije schijfruimte op %s"
-
-#: cmdline/apt-get.cc:1866
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Moet %sB/%sB aan bronarchieven ophalen.\n"
-
-#: cmdline/apt-get.cc:1869
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Moet %sB aan bronarchieven ophalen.\n"
-
-#: cmdline/apt-get.cc:1875
-#, c-format
-msgid "Fetch Source %s\n"
-msgstr "Ophalen bron %s\n"
-
-#: cmdline/apt-get.cc:1906
-msgid "Failed to fetch some archives."
-msgstr "Ophalen van sommige archieven is mislukt."
-
-#: cmdline/apt-get.cc:1934
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Het uitpakken van de reeds uitgepakte bron in %s wordt overgeslagen\n"
-
-#: cmdline/apt-get.cc:1946
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Uitpakopdracht '%s' is mislukt.\n"
-
-#: cmdline/apt-get.cc:1963
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Bouwopdracht '%s' is mislukt.\n"
-
-#: cmdline/apt-get.cc:1982
-msgid "Child process failed"
-msgstr "Dochterproces is mislukt"
-
-#: cmdline/apt-get.cc:1998
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"U dient minstens één pakket op te geven om de bouwvereisten van te "
-"controleren"
-
-#: cmdline/apt-get.cc:2026
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Kan de informatie over de bouwvereisten voor %s niet ophalen"
-
-#: cmdline/apt-get.cc:2046
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s heeft geen bouwvereisten.\n"
-
-#: cmdline/apt-get.cc:2098
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"De vereiste %s van pakket %s kan niet voldaan worden omdat pakket %s "
-"onvindbaar is"
-
-#: cmdline/apt-get.cc:2150
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because no available versions of "
-"package %s can satisfy version requirements"
-msgstr ""
-"De vereiste %s van pakket %s kan niet voldaan worden omdat er geen "
-"beschikbare versies zijn van pakket %s die aan de versievereisten voldoen"
-
-#: cmdline/apt-get.cc:2185
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Vereiste %s van pakket %s voldoen is mislukt: geïnstalleerde versie %s is te "
-"nieuw."
-
-#: cmdline/apt-get.cc:2210
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Voldoen van de vereiste %s voor %s is mislukt: %s"
-
-#: cmdline/apt-get.cc:2224
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Bouwvereisten voor %s konden niet voldaan worden."
-
-#: cmdline/apt-get.cc:2228
-msgid "Failed to process build dependencies"
-msgstr "Verwerken van de bouwvereisten is mislukt"
-
-#: cmdline/apt-get.cc:2260
-msgid "Supported Modules:"
-msgstr "Ondersteunde modules:"
-
-#: cmdline/apt-get.cc:2301
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
-"\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to continue if the integrity check fails\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Gebruik: apt-get [opties] opdracht\n"
-"              apt-get [opties] install|remove pakket1 [pakket2 ...]\n"
-"              apt-get [opties] source pakket1 [pakket2 ...]\n"
-"\n"
-"apt-get is een eenvoudige commandolijn-interface voor het ophalen en \n"
-"installeren van pakketten. De meest gebruikte opdrachten zijn 'update' en\n"
-"'install'.\n"
-"\n"
-"Opdrachten:\n"
-"   update - Haal de laatste versie van de pakketlijst op\n"
-"   upgrade - Opwaardeer alle geïnstalleerde pakketten\n"
-"   install - Installeer nieuwe pakketten (pakket is b.v. libc6, niet libc6."
-"deb)\n"
-"   remove - Verwijder pakketten\n"
-"   source - Haal bronarchieven op\n"
-"   build-dep - Installeer de pakketten vereist voor het bouwen van de "
-"bronpakketten op\n"
-"   dist-upgrade - Opwaardeer de distributie, zie apt-get(8)\n"
-"   dselect-upgrade - Opwaardeer volgens dselect-selecties\n"
-"   clean - Wis opgehaalde archief bestanden\n"
-"   autoclean - Wis oude opgehaalde archief bestanden\n"
-"   check - Controleer onvoldane vereisten\n"
-"\n"
-"Opties:\n"
-"  -h    Deze hulptekst\n"
-"  -q     Logbare uitvoer - geen voortgangsindicator\n"
-"  -qq   Uitvoer bestaat louter uit foutmeldingen\n"
-"  -d     Alleen ophalen - archieven NIET installeren of uitpakken\n"
-"  -s     Doe-niets. Doe alleen sorteersimulatie\n"
-"  -y     Antwoord ja op alle vragen zonder ze te stellen\n"
-"  -f     Probeer door te gaan als de integriteitstest faalt\n"
-"  -m   Probeer door te gaan als sommige archieven niet gevonden kunnen "
-"worden\n"
-"  -u    Toon ook een lijst van bijgewerkte pakketten\n"
-"  -b     Bouw het bronpakket na het ophalen\n"
-"  -V    Toon uitgebreide versie nummers\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-"\n"
-"Zie de apt-get(8), sources.list(5) en apt.conf(5) handleidingen\n"
-"voor meer informatie en opties.\n"
-"                       Deze APT heeft Super Koekrachten.\n"
-
-#: cmdline/acqprogress.cc:55
-msgid "Hit "
-msgstr "Getroffen "
-
-#: cmdline/acqprogress.cc:79
-msgid "Get:"
-msgstr "Ophalen: "
-
-#: cmdline/acqprogress.cc:110
-msgid "Ign "
-msgstr "Genegeerd "
-
-#: cmdline/acqprogress.cc:114
-msgid "Err "
-msgstr "Foutief "
-
-#: cmdline/acqprogress.cc:135
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "%sB opgehaald in %s (%sB/s)\n"
-
-#: cmdline/acqprogress.cc:225
-#, c-format
-msgid " [Working]"
-msgstr " [Bezig]"
-
-#: cmdline/acqprogress.cc:271
-#, c-format
-msgid ""
-"Media Change: Please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press enter\n"
-msgstr ""
-"Medium wisselen: Gelieve de schijf met label\n"
-" '%s'\n"
-"in het station '%s' te plaatsen en op 'enter' te drukken\n"
-
-#: cmdline/apt-sortpkgs.cc:86
-msgid "Unknown package record!"
-msgstr "Onbekend pakketrecord!"
-
-#: cmdline/apt-sortpkgs.cc:150
-msgid ""
-"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Gebruik: apt-sortpkgs [opties] bestand1 [bestand2 ...]\n"
-"\n"
-"apt-sortpkgs is een simpel programma om pakketbestanden te sorteren.\n"
-"De -s optie wordt gebruikt om aan te geven om welk soort bestand het gaat.\n"
-"\n"
-"Opties:\n"
-"  -h    Deze helptekst\n"
-"  -s    Sorteer bronbestanden\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-
-#: dselect/install:32
-msgid "Bad default setting!"
-msgstr "Foute standaardinstelling!"
-
-#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
-#: dselect/install:104 dselect/update:45
-msgid "Press enter to continue."
-msgstr "Druk 'enter' om door te gaan."
-
-# Note to translators: The following four messages belong together. It doesn't
-# matter where sentences start, but it has to fit in just these four lines, and
-# at only 80 characters per line, if possible.
-#: dselect/install:100
-msgid "Some errors occurred while unpacking. I'm going to configure the"
-msgstr "Er zijn fouten opgetreden tijdens het uitpakken. De geïnstalleerde"
-
-#: dselect/install:101
-msgid "packages that were installed. This may result in duplicate errors"
-msgstr ""
-"pakketten worden geconfigureerd. Hierbij kunnen fouten meerdere malen "
-"optreden"
-
-#: dselect/install:102
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"of veroorzaakt worden door niet-voldane vereisten. Dit is Ok, enkel de fouten"
-
-#: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"boven dit bericht zijn belangrijk. U dient ze op te lossen en de installatie "
-"opnieuw uit te voeren"
-
-#: dselect/update:30
-msgid "Merging Available information"
-msgstr "De beschikbare informatie wordt samengevoegd"
 
 #: apt-inst/contrib/extracttar.cc:116
 msgid "Failed to create pipes"
@@ -1428,6 +334,17 @@ msgstr "Het pakket probeert om het omleidingsdoel %s/%s weg te schrijven"
 msgid "The diversion path is too long"
 msgstr "Het omleidingspad is te lang"
 
+#: apt-inst/extract.cc:181 apt-inst/extract.cc:193 apt-inst/extract.cc:210
+#: apt-inst/deb/dpkgdb.cc:121
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Status opvragen van %s is mislukt"
+
+#: apt-inst/extract.cc:188
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Hernoemen van %s naar %s is mislukt"
+
 #: apt-inst/extract.cc:243
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -1452,7 +369,7 @@ msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Het bestand %s/%s overschrijft het bestand van pakket %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kan %s niet lezen"
@@ -1708,6 +625,10 @@ msgstr "Kon geen socket aanmaken"
 #: methods/ftp.cc:698
 msgid "Could not connect data socket, connection timed out"
 msgstr "Kon de datasocket niet verbinden, de verbinding verliep"
+
+#: methods/ftp.cc:702 methods/connect.cc:99
+msgid "Failed"
+msgstr "Mislukt"
 
 #: methods/ftp.cc:704
 msgid "Could not connect passive socket."
@@ -2050,7 +971,7 @@ msgstr "Ongeldige operatie %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Kan de status van het aanhechtpunt %s niet opvragen"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Kan %s niet veranderen"
@@ -2347,7 +1268,8 @@ msgid "Packaging system '%s' is not supported"
 msgstr "Pakketbeheersysteem '%s' wordt niet ondersteund"
 
 #: apt-pkg/init.cc:135
-msgid "Unable to determine a suitable system type"
+#, fuzzy
+msgid "Unable to determine a suitable packaging system type"
 msgstr "Kan geen geschikt systeemtype bepalen"
 
 #: apt-pkg/clean.cc:61
@@ -2359,6 +1281,10 @@ msgstr "Kan de status van %s niet opvragen."
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr ""
 "Uw bronnenlijst (/etc/apt/sources.list) dient minstens 1 bron-URI te bevatten"
+
+#: apt-pkg/cachefile.cc:67
+msgid "The list of sources could not be read."
+msgstr "De lijst van bronnen kon niet gelezen worden."
 
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
@@ -2461,6 +1387,11 @@ msgstr "Kon de status van de bronpakketlijst %s niet opvragen"
 msgid "Collecting File Provides"
 msgstr "Voorziene bestanden worden verzameld"
 
+#: apt-pkg/pkgcachegen.cc:699
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Kan niet naar %s schrijven"
+
 #: apt-pkg/pkgcachegen.cc:774 apt-pkg/pkgcachegen.cc:781
 msgid "IO Error saving source cache"
 msgstr "Invoer/Uitvoer-fout tijdens wegschrijven bronpakketcache"
@@ -2504,6 +1435,10 @@ msgstr "Grootte komt niet overeen"
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum komt niet overeen"
 
+#: methods/rsh.cc:91
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Aanmaken van IPC-pijp naar subproces is mislukt"
+
 #: methods/rsh.cc:264
 msgid "File Not Found"
 msgstr "Bestand niet gevonden"
@@ -2511,3 +1446,835 @@ msgstr "Bestand niet gevonden"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Verbinding werd voortijdig afgebroken"
+
+#~ msgid "Arguments not in pairs"
+#~ msgstr "Argumenten niet in paren"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ "\n"
+#~ "Commands:\n"
+#~ "   shell - Shell mode\n"
+#~ "   dump - Show the configuration\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Gebruik: apt-config [opties] opdracht\n"
+#~ "\n"
+#~ "apt-config is een simpel programma om het APT-configuratiebestand te "
+#~ "lezen\n"
+#~ "\n"
+#~ "Opdrachten:\n"
+#~ "   shell   - Shell modus\n"
+#~ "   dump - Toon de configuratie\n"
+#~ "\n"
+#~ "Opties:\n"
+#~ "  -h     Deze hulptekst.\n"
+#~ "  -c=? Lees dit configuratiebestand.\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+
+#~ msgid "%s not a valid DEB package."
+#~ msgstr "%s is geen geldig DEB-pakket."
+
+#~ msgid ""
+#~ "Usage: apt-extracttemplates file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-extracttemplates is a tool to extract config and template info\n"
+#~ "from debian packages\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -t   Set the temp dir\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Gebruik: apt-extracttemplates bestand1 [bestand2 ...]\n"
+#~ "\n"
+#~ "apt-extracttemplates is een programma om configuratie- en "
+#~ "sjablooninformatie\n"
+#~ "uit Debian pakketten te halen.\n"
+#~ "\n"
+#~ "Opties:\n"
+#~ "  -h     Deze hulptekst.\n"
+#~ "  -t      Stel de tijdelijke map in.\n"
+#~ "  -c=? Lees dit configuratiebestand.\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+
+#~ msgid "Cannot get debconf version. Is debconf installed?"
+#~ msgstr "Kan versie van debconf niet bepalen. Is debconf geïnstalleerd?"
+
+#~ msgid "Package extension list is too long"
+#~ msgstr "Pakket-extensielijst is te lang"
+
+#~ msgid "Error Processing directory %s"
+#~ msgstr "Fout bij het verwerken van map %s"
+
+#~ msgid "Source extension list is too long"
+#~ msgstr "Bron-extensielijst is te lang"
+
+#~ msgid "Error writing header to contents file"
+#~ msgstr "Fout bij wegschrijven van de koptekst naar het inhoudsbestand"
+
+#~ msgid "Error Processing Contents %s"
+#~ msgstr "Fout bij het verwerken van de inhoud van %s"
+
+#~ msgid ""
+#~ "Usage: apt-ftparchive [options] command\n"
+#~ "Commands: packages binarypath [overridefile [pathprefix]]\n"
+#~ "          sources srcpath [overridefile [pathprefix]]\n"
+#~ "          contents path\n"
+#~ "          release path\n"
+#~ "          generate config [groups]\n"
+#~ "          clean config\n"
+#~ "\n"
+#~ "apt-ftparchive generates index files for Debian archives. It supports\n"
+#~ "many styles of generation from fully automated to functional "
+#~ "replacements\n"
+#~ "for dpkg-scanpackages and dpkg-scansources\n"
+#~ "\n"
+#~ "apt-ftparchive generates Package files from a tree of .debs. The\n"
+#~ "Package file contains the contents of all the control fields from\n"
+#~ "each package as well as the MD5 hash and filesize. An override file\n"
+#~ "is supported to force the value of Priority and Section.\n"
+#~ "\n"
+#~ "Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+#~ "The --source-override option can be used to specify a src override file\n"
+#~ "\n"
+#~ "The 'packages' and 'sources' command should be run in the root of the\n"
+#~ "tree. BinaryPath should point to the base of the recursive search and \n"
+#~ "override file should contain the override flags. Pathprefix is\n"
+#~ "appended to the filename fields if present. Example usage from the \n"
+#~ "Debian archive:\n"
+#~ "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+#~ "               dists/potato/main/binary-i386/Packages\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h    This help text\n"
+#~ "  --md5 Control MD5 generation\n"
+#~ "  -s=?  Source override file\n"
+#~ "  -q    Quiet\n"
+#~ "  -d=?  Select the optional caching database\n"
+#~ "  --no-delink Enable delinking debug mode\n"
+#~ "  --contents  Control contents file generation\n"
+#~ "  -c=?  Read this configuration file\n"
+#~ "  -o=?  Set an arbitary configuration option"
+#~ msgstr ""
+#~ "Gebruik: apt-ftparchive [opties] opdracht\n"
+#~ "\n"
+#~ "Opdrachten: packages binariespad [voorrangsbestand [padprefix]]\n"
+#~ "            sources bronpad [voorrangsbestand [padprefix]]\n"
+#~ "            contents pad\n"
+#~ "            release pad\n"
+#~ "            generate config [groepen]\n"
+#~ "            clean config\n"
+#~ "\n"
+#~ "Met apt-ftparchive genereert u index bestanden voor Debian archieven.\n"
+#~ "Het ondersteunt verschillende aanmaakstijlen gaande van volledig "
+#~ "automatisch\n"
+#~ "tot een functionele vervangingen van dpkg-scanpackages en dpkg-"
+#~ "scansources\n"
+#~ "\n"
+#~ "apt-ftparchive genereert pakketbestanden van een boom met .debs.\n"
+#~ "Het pakketbestand bevat de inhoud van alle beheervelden van elk pakket\n"
+#~ "alsook de MD5 hash en de bestandsgrootte. Via een voorrangsbestand\n"
+#~ "kunnen de waardes van de 'Priority'- en 'Section'-velden afgedwongen\n"
+#~ "worden.\n"
+#~ "\n"
+#~ "Op gelijkaardige wijze genereert apt-ftparchive de bronbestanden van\n"
+#~ "een boom met .dscs. De '--source-override'-optie kan gebruikt worden om\n"
+#~ "een bronvoorrangsbestand te specificeren.\n"
+#~ "\n"
+#~ "De 'packages' en 'sources' opdrachten dienen uitgevoerd te worden \n"
+#~ "bij de wortel van de boom. Binariespad dient te verwijzen naar het "
+#~ "startpunt\n"
+#~ "van de recursieve zoekopdracht en een voorrangsbestand dient de \n"
+#~ "voorrangsvlaggen te bevatten. Padprefix wordt toegevoegd aan het "
+#~ "'filename'-\n"
+#~ "veld indien dit aanwezig is. Enkele voorbeelden uit het debian archief:\n"
+#~ "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+#~ "               dists/potato/main/binary-i386/Packages\n"
+#~ "\n"
+#~ "Opties:\n"
+#~ "  -h             Deze hulptekst\n"
+#~ "  --md5        Beheer de MD5 generatie\n"
+#~ "  -s=?          Bronvoorrangsbestand\n"
+#~ "  -q             Stille uitvoer\n"
+#~ "  -d=?         Selecteerd de optionele caching database\n"
+#~ "  --no-delink Schakelt de ontlinking debug modus in\n"
+#~ "  --contents  Beheer de generatie van het inhoudsbestand\n"
+#~ "  -c=?          Lees dit configuratiebestand in\n"
+#~ "  -o=?          Stel een willekeurige configuratie optie in"
+
+#~ msgid "No selections matched"
+#~ msgstr "Er waren geen passende selecties"
+
+#~ msgid "Some files are missing in the package file group `%s'"
+#~ msgstr "Sommige bestanden zijn niet aanwezig in de pakketbestandsgroep '%s'"
+
+#~ msgid "DB was corrupted, file renamed to %s.old"
+#~ msgstr "DB is beschadigd, bestand hernoemd naar %s.old"
+
+#~ msgid "Unable to open DB2 file %s"
+#~ msgstr "DB2 bestand %s kan niet geopend worden"
+
+#~ msgid "File date has changed %s"
+#~ msgstr "Bestandsdatum is veranderd %s"
+
+#~ msgid "Archive has no control record"
+#~ msgstr "Archief heeft geen 'control'-record"
+
+#~ msgid "Unable to get a cursor"
+#~ msgstr "Kan geen cursor verkrijgen"
+
+#~ msgid "W: Unable to read directory %s\n"
+#~ msgstr "W: Kon map %s niet lezen\n"
+
+#~ msgid "W: Unable to stat %s\n"
+#~ msgstr "W: Kon de status van %s niet opvragen\n"
+
+#~ msgid "E: "
+#~ msgstr "F: "
+
+#~ msgid "W: "
+#~ msgstr "W: "
+
+#~ msgid "E: Errors apply to file "
+#~ msgstr "F: Er zijn fouten van toepassing op het bestand"
+
+#~ msgid "Failed to resolve %s"
+#~ msgstr "Oplossen van %s is mislukt"
+
+#~ msgid "Tree walking failed"
+#~ msgstr "Doorlopen boomstructuur is mislukt"
+
+#~ msgid "Failed to open %s"
+#~ msgstr "Openen van %s is mislukt"
+
+#~ msgid " DeLink %s [%s]\n"
+#~ msgstr " OntLink %s [%s]\n"
+
+#~ msgid "Failed to readlink %s"
+#~ msgstr "Waarde van link %s weergeven is mislukt"
+
+#~ msgid "Failed to unlink %s"
+#~ msgstr "Ontlinken van %s is mislukt"
+
+#~ msgid "*** Failed to link %s to %s"
+#~ msgstr "*** Linken van %s aan %s is mislukt"
+
+#~ msgid " DeLink limit of %sB hit.\n"
+#~ msgstr " Ontlinklimiet van %sB is bereikt.\n"
+
+#~ msgid "Archive had no package field"
+#~ msgstr "Archief heeft geen 'package'-veld"
+
+#~ msgid "  %s has no override entry\n"
+#~ msgstr " %s heeft geen voorrangsingang\n"
+
+#~ msgid "  %s maintainer is %s not %s\n"
+#~ msgstr "  %s beheerder is %s, niet %s\n"
+
+#~ msgid "realloc - Failed to allocate memory"
+#~ msgstr "realloc - Geheugentoewijzing is mislukt"
+
+#~ msgid "Unable to open %s"
+#~ msgstr "Kan %s niet openen"
+
+#~ msgid "Malformed override %s line %lu #1"
+#~ msgstr "Misvormde voorrangsingang %s op regel %lu #1"
+
+#~ msgid "Malformed override %s line %lu #2"
+#~ msgstr "Misvormde voorrangsingang %s op regel %lu #2"
+
+#~ msgid "Malformed override %s line %lu #3"
+#~ msgstr "Misvormde voorrangingang %s op regel %lu #3"
+
+#~ msgid "Failed to read the override file %s"
+#~ msgstr "Voorrangsbestand %s kon niet gelezen worden"
+
+#~ msgid "Unknown Compresison Algorithm '%s'"
+#~ msgstr "Onbekend compressie-algoritme '%s'"
+
+#~ msgid "Compressed output %s needs a compression set"
+#~ msgstr "Gecomprimeerde uitvoer %s vereist een compressieset"
+
+#~ msgid "Failed to create FILE*"
+#~ msgstr "Aanmaken FILE* is mislukt"
+
+#~ msgid "Failed to fork"
+#~ msgstr "Vorken van proces is mislukt"
+
+#~ msgid "Compress Child"
+#~ msgstr "Comprimeer kind"
+
+#~ msgid "Internal Error, Failed to create %s"
+#~ msgstr "Interne fout, aanmaken van %s is mislukt"
+
+#~ msgid "Failed to create subprocess IPC"
+#~ msgstr "Aanmaken subproces-IPC is mislukt"
+
+#~ msgid "Failed to exec compressor "
+#~ msgstr "Uitvoeren van de compressor is mislukt"
+
+#~ msgid "decompressor"
+#~ msgstr "decompressor"
+
+#~ msgid "IO to subprocess/file failed"
+#~ msgstr "IO naar subproces is mislukt"
+
+#~ msgid "Failed to read while computing MD5"
+#~ msgstr "Lezen tijdens het berekenen van de MD5 is mislukt"
+
+#~ msgid "Problem unlinking %s"
+#~ msgstr "Probleem bij het ontlinken van %s"
+
+#~ msgid "Y"
+#~ msgstr "J"
+
+#~ msgid "Regex compilation error - %s"
+#~ msgstr "Regex-compilatiefout - %s"
+
+#~ msgid "The following packages have unmet dependencies:"
+#~ msgstr "De volgende pakketten hebben niet-voldane vereisten:"
+
+#~ msgid "but %s is installed"
+#~ msgstr "maar %s is geïnstalleerd"
+
+#~ msgid "but %s is to be installed"
+#~ msgstr "maar %s zal geïnstalleerd worden"
+
+#~ msgid "but it is not installable"
+#~ msgstr "maar het is niet installeerbaar"
+
+#~ msgid "but it is a virtual package"
+#~ msgstr "maar het is een virtueel pakket"
+
+#~ msgid "but it is not installed"
+#~ msgstr "maar het is niet geïnstalleerd"
+
+#~ msgid "but it is not going to be installed"
+#~ msgstr "maar het zal niet geïnstalleerd worden"
+
+#~ msgid " or"
+#~ msgstr " of"
+
+#~ msgid "The following NEW packages will be installed:"
+#~ msgstr "De volgende NIEUWE pakketten zullen geïnstalleerd worden:"
+
+#~ msgid "The following packages will be REMOVED:"
+#~ msgstr "De volgende pakketten zullen VERWIJDERD worden:"
+
+#~ msgid "The following packages have been kept back:"
+#~ msgstr "De volgende pakketen zijn achtergehouden:"
+
+#~ msgid "The following packages will be upgraded:"
+#~ msgstr "De volgende pakketten zullen opgewaardeerd worden:"
+
+#~ msgid "The following packages will be DOWNGRADED:"
+#~ msgstr "De volgende pakketten zullen GEDEGRADEERD worden:"
+
+#~ msgid "The following held packages will be changed:"
+#~ msgstr "De volgende vastgehouden pakketten zullen gewijzigd worden:"
+
+#~ msgid "%s (due to %s) "
+#~ msgstr "%s (wegens %s) "
+
+#~ msgid ""
+#~ "WARNING: The following essential packages will be removed\n"
+#~ "This should NOT be done unless you know exactly what you are doing!"
+#~ msgstr ""
+#~ "WAARSCHUWING: De volgende essentiële pakketten zullen verwijderd worden\n"
+#~ "Dit dient NIET gedaan te worden tenzij u echt weet wat u doet!"
+
+#~ msgid "%lu upgraded, %lu newly installed, "
+#~ msgstr "%lu pakketten opgewaardeerd, %lu nieuwe paketten geïnstalleerd, "
+
+#~ msgid "%lu reinstalled, "
+#~ msgstr "%lu opnieuw geïnstalleerd, "
+
+#~ msgid "%lu downgraded, "
+#~ msgstr "%lu gedegradeerd, "
+
+#~ msgid "%lu to remove and %lu not upgraded.\n"
+#~ msgstr "%lu verwijderen en %lu niet opgewaardeerd.\n"
+
+#~ msgid "%lu not fully installed or removed.\n"
+#~ msgstr "%lu pakketten niet volledig geïnstalleerd of verwijderd.\n"
+
+#~ msgid "Correcting dependencies..."
+#~ msgstr "Vereisten worden verbeterd..."
+
+#~ msgid " failed."
+#~ msgstr " mislukt."
+
+#~ msgid "Unable to correct dependencies"
+#~ msgstr "Kan vereisten niet verbeteren"
+
+#~ msgid "Unable to minimize the upgrade set"
+#~ msgstr "Kon de verzameling van op te waarderen pakketten niet minimaliseren"
+
+#~ msgid " Done"
+#~ msgstr " Klaar"
+
+#~ msgid "You might want to run `apt-get -f install' to correct these."
+#~ msgstr "U kunt 'apt-get -f install' uitvoeren om dit te op te lossen."
+
+#~ msgid "Unmet dependencies. Try using -f."
+#~ msgstr "Er zijn vereisten waaraan niet voldaan is. Probeer -f te gebruiken."
+
+#~ msgid "Packages need to be removed but Remove is disabled."
+#~ msgstr ""
+#~ "Pakketten moeten verwijderd worden maar verwijderen is uitgeschakeld."
+
+#~ msgid "Unable to lock the download directory"
+#~ msgstr "Kon de ophaalmap niet vergrendelen"
+
+#~ msgid "Need to get %sB/%sB of archives.\n"
+#~ msgstr "Er moeten %sB/%sB aan archieven opgehaald worden.\n"
+
+#~ msgid "Need to get %sB of archives.\n"
+#~ msgstr "Er moeten %sB aan archieven opgehaald worden.\n"
+
+#~ msgid "After unpacking %sB of additional disk space will be used.\n"
+#~ msgstr "Na het uitpakken zal er %sB extra schijfruimte gebruikt worden.\n"
+
+#~ msgid "After unpacking %sB disk space will be freed.\n"
+#~ msgstr "Na het uitpakken zal er %sB schijfruimte vrijkomen.\n"
+
+#~ msgid "You don't have enough free space in %s."
+#~ msgstr "U heeft niet voldoende vrije schijfruimte op %s"
+
+#~ msgid "There are problems and -y was used without --force-yes"
+#~ msgstr "Er zijn problemen en -y was gebruikt zonder --force-yes"
+
+#~ msgid "Trivial Only specified but this is not a trivial operation."
+#~ msgstr "'Trivial Only' is opgegeven, dit is echter geen triviale bewerking."
+
+#~ msgid "Yes, do as I say!"
+#~ msgstr "Ja, doe wat ik zeg!"
+
+#~ msgid ""
+#~ "You are about to do something potentially harmful\n"
+#~ "To continue type in the phrase '%s'\n"
+#~ " ?] "
+#~ msgstr ""
+#~ "U staat op het punt om iets te doen wat mogelijk schadelijk is.\n"
+#~ "Als u wilt doorgaan dient u de zin '%s' in (helemaal) in te tikken.\n"
+#~ " ?] "
+
+#~ msgid "Abort."
+#~ msgstr "Afbreken."
+
+#~ msgid "Do you want to continue? [Y/n] "
+#~ msgstr "Wilt u doorgaan? [J/n] "
+
+#~ msgid "Failed to fetch %s  %s\n"
+#~ msgstr "Ophalen van %s %s is mislukt\n"
+
+#~ msgid "Some files failed to download"
+#~ msgstr "Ophalen van sommige bestanden is mislukt"
+
+#~ msgid "Download complete and in download only mode"
+#~ msgstr "Ophalen klaar en alleen-ophalen-modus staat aan"
+
+#~ msgid ""
+#~ "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+#~ "missing?"
+#~ msgstr ""
+#~ "Kon sommige archieven niet ophalen, misschien kunt u 'apt-get update' of\n"
+#~ "--fix-missing proberen?"
+
+#~ msgid "--fix-missing and media swapping is not currently supported"
+#~ msgstr ""
+#~ "--fix-missing en medium wisselen wordt op dit moment niet ondersteund"
+
+#~ msgid "Unable to correct missing packages."
+#~ msgstr "Geen oplossing voor de missende pakketten gevonden."
+
+#~ msgid "Aborting Install."
+#~ msgstr "Installatie wordt afgebroken."
+
+#~ msgid "Note, selecting %s instead of %s\n"
+#~ msgstr "Let op, %s wordt geselecteerd in plaats van %s\n"
+
+#~ msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+#~ msgstr ""
+#~ "%s wordt overgeslagen, het is al geïnstalleerd en opwaardering is niet "
+#~ "gevraagd.\n"
+
+#~ msgid "Package %s is not installed, so not removed\n"
+#~ msgstr "Pakket %s is niet geïnstalleerd, en wordt dus niet verwijderd\n"
+
+#~ msgid "Package %s is a virtual package provided by:\n"
+#~ msgstr "Pakket %s is een virtueel pakket voorzien door:\n"
+
+#~ msgid " [Installed]"
+#~ msgstr " [Geïnstalleerd]"
+
+#~ msgid "You should explicitly select one to install."
+#~ msgstr "U dient er één expliciet voor installatie uit te kiezen."
+
+#~ msgid ""
+#~ "Package %s is not available, but is referred to by another package.\n"
+#~ "This may mean that the package is missing, has been obsoleted, or\n"
+#~ "is only available from another source\n"
+#~ msgstr ""
+#~ "Pakket %s is niet beschikbaar, hoewel er naar verwezen wordt door\n"
+#~ "een ander pakket. Mogelijk betekent dit dat het pakket ontbreekt,\n"
+#~ "verouderd is, of enkel beschikbaar van een andere bron\n"
+
+#~ msgid "However the following packages replace it:"
+#~ msgstr "Echter, de volgende pakketten vervangen dit:"
+
+#~ msgid "Package %s has no installation candidate"
+#~ msgstr "Pakket %s heeft geen installeerbare kandidaat"
+
+#~ msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+#~ msgstr ""
+#~ "Herinstallatie van %s is niet mogelijk daar het niet opgehaald kan "
+#~ "worden.\n"
+
+#~ msgid "%s is already the newest version.\n"
+#~ msgstr "%s is reeds de nieuwste versie.\n"
+
+#~ msgid "Release '%s' for '%s' was not found"
+#~ msgstr "Release '%s' voor '%s' is niet gevonden"
+
+#~ msgid "Version '%s' for '%s' was not found"
+#~ msgstr "Versie '%s' voor '%s' is niet gevonden"
+
+#~ msgid "Selected version %s (%s) for %s\n"
+#~ msgstr "Versie %s (%s) geselecteerd voor %s\n"
+
+#~ msgid "The update command takes no arguments"
+#~ msgstr "De 'update'-opdracht aanvaard geen argumenten"
+
+#~ msgid "Unable to lock the list directory"
+#~ msgstr "Kon de lijstmap niet vergrendelen"
+
+#~ msgid ""
+#~ "Some index files failed to download, they have been ignored, or old ones "
+#~ "used instead."
+#~ msgstr ""
+#~ "Ophalen van sommige indexbestanden is mislukt, deze zijn of genegeerd, of "
+#~ "er zijn oudere versies van gebruikt"
+
+#~ msgid "Internal Error, AllUpgrade broke stuff"
+#~ msgstr "Interne fout, AllUpgrade heeft dingen stukgemaakt"
+
+#~ msgid "Couldn't find package %s"
+#~ msgstr "Kon pakket %s niet vinden"
+
+#~ msgid "Note, selecting %s for regex '%s'\n"
+#~ msgstr "Let op, %s wordt geselecteerd omwille van de regex '%s'\n"
+
+#~ msgid "You might want to run `apt-get -f install' to correct these:"
+#~ msgstr ""
+#~ "U wilt waarschijnlijk 'apt-get -f install' uitvoeren om volgende op te "
+#~ "lossen:"
+
+#~ msgid ""
+#~ "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify "
+#~ "a solution)."
+#~ msgstr ""
+#~ "Vereisten waaraan niet voldaan is. We raden u aan om 'apt-get -f install' "
+#~ "te proberen\n"
+#~ " zonder pakketten, (of u kunt zelf een oplossing specificeren)."
+
+#~ msgid ""
+#~ "Some packages could not be installed. This may mean that you have\n"
+#~ "requested an impossible situation or if you are using the unstable\n"
+#~ "distribution that some required packages have not yet been created\n"
+#~ "or been moved out of Incoming."
+#~ msgstr ""
+#~ "Sommige pakketten konden niet geïnstalleerd worden. Dit kan betekenen dat "
+#~ "u\n"
+#~ "een onmogelijke situatie gevraagd hebt of dat u de 'unstable'-"
+#~ "distributie \n"
+#~ "gebruikt en sommige benodigde pakketten nog vastzitten in 'incoming'."
+
+#~ msgid ""
+#~ "Since you only requested a single operation it is extremely likely that\n"
+#~ "the package is simply not installable and a bug report against\n"
+#~ "that package should be filed."
+#~ msgstr ""
+#~ "Aangezien u slechts een enkele opdracht gegegeven hebt is het zeer \n"
+#~ "waarschijnlijk dat het pakket doodgewoon niet installeerbaar is. U kunt "
+#~ "dan\n"
+#~ "best een foutrapport indienen voor dit pakket."
+
+#~ msgid "The following information may help to resolve the situation:"
+#~ msgstr "De volgende informatie helpt u mogelijk verder:"
+
+#~ msgid "Broken packages"
+#~ msgstr "Niet-werkende pakketten:"
+
+#~ msgid "The following extra packages will be installed:"
+#~ msgstr "De volgende extra pakketten zullen geïnstalleerd worden:"
+
+#~ msgid "Suggested packages:"
+#~ msgstr "Voorgestelde pakketten:"
+
+#~ msgid "Recommended packages:"
+#~ msgstr "Aanbevolen pakketten:"
+
+#~ msgid "Calculating Upgrade... "
+#~ msgstr "Opwaardering wordt berekend... "
+
+#~ msgid "Done"
+#~ msgstr "Klaar"
+
+#~ msgid "Must specify at least one package to fetch source for"
+#~ msgstr ""
+#~ "U dient minstens 1 pakket op te geven waarvan de broncode moet opgehaald "
+#~ "worden"
+
+#~ msgid "Unable to find a source package for %s"
+#~ msgstr "Kan geen bronpakket vinden voor %s"
+
+#~ msgid "You don't have enough free space in %s"
+#~ msgstr "U heeft niet voldoende vrije schijfruimte op %s"
+
+#~ msgid "Need to get %sB/%sB of source archives.\n"
+#~ msgstr "Moet %sB/%sB aan bronarchieven ophalen.\n"
+
+#~ msgid "Need to get %sB of source archives.\n"
+#~ msgstr "Moet %sB aan bronarchieven ophalen.\n"
+
+#~ msgid "Fetch Source %s\n"
+#~ msgstr "Ophalen bron %s\n"
+
+#~ msgid "Failed to fetch some archives."
+#~ msgstr "Ophalen van sommige archieven is mislukt."
+
+#~ msgid "Skipping unpack of already unpacked source in %s\n"
+#~ msgstr ""
+#~ "Het uitpakken van de reeds uitgepakte bron in %s wordt overgeslagen\n"
+
+#~ msgid "Unpack command '%s' failed.\n"
+#~ msgstr "Uitpakopdracht '%s' is mislukt.\n"
+
+#~ msgid "Build command '%s' failed.\n"
+#~ msgstr "Bouwopdracht '%s' is mislukt.\n"
+
+#~ msgid "Child process failed"
+#~ msgstr "Dochterproces is mislukt"
+
+#~ msgid "Must specify at least one package to check builddeps for"
+#~ msgstr ""
+#~ "U dient minstens één pakket op te geven om de bouwvereisten van te "
+#~ "controleren"
+
+#~ msgid "Unable to get build-dependency information for %s"
+#~ msgstr "Kan de informatie over de bouwvereisten voor %s niet ophalen"
+
+#~ msgid "%s has no build depends.\n"
+#~ msgstr "%s heeft geen bouwvereisten.\n"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "De vereiste %s van pakket %s kan niet voldaan worden omdat pakket %s "
+#~ "onvindbaar is"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because no available versions of "
+#~ "package %s can satisfy version requirements"
+#~ msgstr ""
+#~ "De vereiste %s van pakket %s kan niet voldaan worden omdat er geen "
+#~ "beschikbare versies zijn van pakket %s die aan de versievereisten voldoen"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Vereiste %s van pakket %s voldoen is mislukt: geïnstalleerde versie %s is "
+#~ "te nieuw."
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Voldoen van de vereiste %s voor %s is mislukt: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Bouwvereisten voor %s konden niet voldaan worden."
+
+#~ msgid "Failed to process build dependencies"
+#~ msgstr "Verwerken van de bouwvereisten is mislukt"
+
+#~ msgid "Supported Modules:"
+#~ msgstr "Ondersteunde modules:"
+
+#~ msgid ""
+#~ "Usage: apt-get [options] command\n"
+#~ "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+#~ "       apt-get [options] source pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-get is a simple command line interface for downloading and\n"
+#~ "installing packages. The most frequently used commands are update\n"
+#~ "and install.\n"
+#~ "\n"
+#~ "Commands:\n"
+#~ "   update - Retrieve new lists of packages\n"
+#~ "   upgrade - Perform an upgrade\n"
+#~ "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
+#~ "   remove - Remove packages\n"
+#~ "   source - Download source archives\n"
+#~ "   build-dep - Configure build-dependencies for source packages\n"
+#~ "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
+#~ "   dselect-upgrade - Follow dselect selections\n"
+#~ "   clean - Erase downloaded archive files\n"
+#~ "   autoclean - Erase old downloaded archive files\n"
+#~ "   check - Verify that there are no broken dependencies\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -d  Download only - do NOT install or unpack archives\n"
+#~ "  -s  No-act. Perform ordering simulation\n"
+#~ "  -y  Assume Yes to all queries and do not prompt\n"
+#~ "  -f  Attempt to continue if the integrity check fails\n"
+#~ "  -m  Attempt to continue if archives are unlocatable\n"
+#~ "  -u  Show a list of upgraded packages as well\n"
+#~ "  -b  Build the source package after fetching it\n"
+#~ "  -V  Show verbose version numbers\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
+#~ "pages for more information and options.\n"
+#~ "                       This APT has Super Cow Powers.\n"
+#~ msgstr ""
+#~ "Gebruik: apt-get [opties] opdracht\n"
+#~ "              apt-get [opties] install|remove pakket1 [pakket2 ...]\n"
+#~ "              apt-get [opties] source pakket1 [pakket2 ...]\n"
+#~ "\n"
+#~ "apt-get is een eenvoudige commandolijn-interface voor het ophalen en \n"
+#~ "installeren van pakketten. De meest gebruikte opdrachten zijn 'update' "
+#~ "en\n"
+#~ "'install'.\n"
+#~ "\n"
+#~ "Opdrachten:\n"
+#~ "   update - Haal de laatste versie van de pakketlijst op\n"
+#~ "   upgrade - Opwaardeer alle geïnstalleerde pakketten\n"
+#~ "   install - Installeer nieuwe pakketten (pakket is b.v. libc6, niet "
+#~ "libc6.deb)\n"
+#~ "   remove - Verwijder pakketten\n"
+#~ "   source - Haal bronarchieven op\n"
+#~ "   build-dep - Installeer de pakketten vereist voor het bouwen van de "
+#~ "bronpakketten op\n"
+#~ "   dist-upgrade - Opwaardeer de distributie, zie apt-get(8)\n"
+#~ "   dselect-upgrade - Opwaardeer volgens dselect-selecties\n"
+#~ "   clean - Wis opgehaalde archief bestanden\n"
+#~ "   autoclean - Wis oude opgehaalde archief bestanden\n"
+#~ "   check - Controleer onvoldane vereisten\n"
+#~ "\n"
+#~ "Opties:\n"
+#~ "  -h    Deze hulptekst\n"
+#~ "  -q     Logbare uitvoer - geen voortgangsindicator\n"
+#~ "  -qq   Uitvoer bestaat louter uit foutmeldingen\n"
+#~ "  -d     Alleen ophalen - archieven NIET installeren of uitpakken\n"
+#~ "  -s     Doe-niets. Doe alleen sorteersimulatie\n"
+#~ "  -y     Antwoord ja op alle vragen zonder ze te stellen\n"
+#~ "  -f     Probeer door te gaan als de integriteitstest faalt\n"
+#~ "  -m   Probeer door te gaan als sommige archieven niet gevonden kunnen "
+#~ "worden\n"
+#~ "  -u    Toon ook een lijst van bijgewerkte pakketten\n"
+#~ "  -b     Bouw het bronpakket na het ophalen\n"
+#~ "  -V    Toon uitgebreide versie nummers\n"
+#~ "  -c=? Lees dit configuratiebestand\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+#~ "\n"
+#~ "Zie de apt-get(8), sources.list(5) en apt.conf(5) handleidingen\n"
+#~ "voor meer informatie en opties.\n"
+#~ "                       Deze APT heeft Super Koekrachten.\n"
+
+#~ msgid "Hit "
+#~ msgstr "Getroffen "
+
+#~ msgid "Get:"
+#~ msgstr "Ophalen: "
+
+#~ msgid "Ign "
+#~ msgstr "Genegeerd "
+
+#~ msgid "Err "
+#~ msgstr "Foutief "
+
+#~ msgid "Fetched %sB in %s (%sB/s)\n"
+#~ msgstr "%sB opgehaald in %s (%sB/s)\n"
+
+#~ msgid " [Working]"
+#~ msgstr " [Bezig]"
+
+#~ msgid ""
+#~ "Media Change: Please insert the disc labeled\n"
+#~ " '%s'\n"
+#~ "in the drive '%s' and press enter\n"
+#~ msgstr ""
+#~ "Medium wisselen: Gelieve de schijf met label\n"
+#~ " '%s'\n"
+#~ "in het station '%s' te plaatsen en op 'enter' te drukken\n"
+
+#~ msgid "Unknown package record!"
+#~ msgstr "Onbekend pakketrecord!"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Gebruik: apt-sortpkgs [opties] bestand1 [bestand2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is een simpel programma om pakketbestanden te sorteren.\n"
+#~ "De -s optie wordt gebruikt om aan te geven om welk soort bestand het "
+#~ "gaat.\n"
+#~ "\n"
+#~ "Opties:\n"
+#~ "  -h    Deze helptekst\n"
+#~ "  -s    Sorteer bronbestanden\n"
+#~ "  -c=? Lees dit configuratiebestand\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+
+#~ msgid "Bad default setting!"
+#~ msgstr "Foute standaardinstelling!"
+
+#~ msgid "Press enter to continue."
+#~ msgstr "Druk 'enter' om door te gaan."
+
+# Note to translators: The following four messages belong together. It doesn't
+# matter where sentences start, but it has to fit in just these four lines, and
+# at only 80 characters per line, if possible.
+#~ msgid "Some errors occurred while unpacking. I'm going to configure the"
+#~ msgstr "Er zijn fouten opgetreden tijdens het uitpakken. De geïnstalleerde"
+
+#~ msgid "packages that were installed. This may result in duplicate errors"
+#~ msgstr ""
+#~ "pakketten worden geconfigureerd. Hierbij kunnen fouten meerdere malen "
+#~ "optreden"
+
+#~ msgid ""
+#~ "or errors caused by missing dependencies. This is OK, only the errors"
+#~ msgstr ""
+#~ "of veroorzaakt worden door niet-voldane vereisten. Dit is Ok, enkel de "
+#~ "fouten"
+
+#~ msgid ""
+#~ "above this message are important. Please fix them and run [I]nstall again"
+#~ msgstr ""
+#~ "boven dit bericht zijn belangrijk. U dient ze op te lossen en de "
+#~ "installatie opnieuw uit te voeren"
+
+#~ msgid "Merging Available information"
+#~ msgstr "De beschikbare informatie wordt samengevoegd"
