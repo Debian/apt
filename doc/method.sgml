@@ -4,7 +4,7 @@
 <title>APT Method Interface </title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: method.sgml,v 1.6 1998/12/14 04:00:34 jgg Exp $</version>
+<version>$Id: method.sgml,v 1.7 1999/10/18 00:37:36 jgg Exp $</version>
 
 <abstract>
 This document describes the interface that APT uses to the archive
@@ -219,6 +219,9 @@ the ones it wants.
 <tag>Pipeline<item>The method is capable of pipelining.
 <tag>Local<item>The method only returns Filename: feilds.
 <tag>Send-Config<item>Send configuration to the method.
+<tag>Needs-Cleanup<item>The process is kept around while the files it returned
+are being used. This is primarily intended for CDROM and File URIs that need
+to unmount filesystems.
 <tag>Version<item>Version string for the method
 </taglist>
 
@@ -229,7 +232,8 @@ This is a list of which headers each status code can use
 Displays the capabilities of the method. Methods should set the
 pipeline bit if their underlying protocol supports pipeling. The
 only known method that does support pipelining is http.
-Fields: Version, Single-Instance, Pre-Scan, Pipeline, Send-Config
+Fields: Version, Single-Instance, Pre-Scan, Pipeline, Send-Config, 
+Needs-Cleanup
 
 <tag>101 Log<item>
 A log message may be printed to the screen if debugging is enabled. This

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.11 1999/07/20 05:53:33 jgg Exp $
+// $Id: acquire-method.h,v 1.12 1999/10/18 00:37:35 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -61,12 +61,13 @@ class pkgAcqMethod
    void URIStart(FetchResult &Res);
    void URIDone(FetchResult &Res,FetchResult *Alt = 0);
    bool MediaFail(string Required,string Drive);
-   
+   void Exit() {};
+
    public:
 
    enum CnfFlags {SingleInstance = (1<<0),
                   Pipeline = (1<<1), SendConfig = (1<<2),
-                  LocalOnly = (1<<3)};
+                  LocalOnly = (1<<3), NeedsCleanup = (1<<4)};
 
    void Log(const char *Format,...);
    void Status(const char *Format,...);

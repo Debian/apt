@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.79 1999/10/17 07:49:41 jgg Exp $
+// $Id: apt-get.cc,v 1.80 1999/10/18 00:37:35 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -660,7 +660,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    while (1)
    {
       if (_config->FindB("APT::Get::No-Download",false) == false)
-	 if( Fetcher.Run() == pkgAcquire::Failed)
+	 if (Fetcher.Run() == pkgAcquire::Failed)
 	    return false;
       
       // Print out errors
@@ -671,8 +671,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
 	 if ((*I)->Status == pkgAcquire::Item::StatDone &&
 	     (*I)->Complete == true)
 	    continue;
-	 
-	 (*I)->Finished();
 	 
 	 if ((*I)->Status == pkgAcquire::Item::StatIdle)
 	 {

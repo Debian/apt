@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.39 1999/10/16 19:53:18 jgg Exp $
+// $Id: acquire.cc,v 1.40 1999/10/18 00:37:35 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -63,7 +63,7 @@ pkgAcquire::~pkgAcquire()
    Shutdown();
 }
 									/*}}}*/
-// pkgAcquire::Shutdown - Clean out the acquire object			/*{{{*/
+// Acquire::Shutdown - Clean out the acquire object			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcquire::Shutdown()
@@ -345,11 +345,11 @@ pkgAcquire::RunResult pkgAcquire::Run()
    // Shut down the acquire bits
    Running = false;
    for (Queue *I = Queues; I != 0; I = I->Next)
-      I->Shutdown();
+      I->Shutdown(false);
 
    // Shut down the items
    for (Item **I = Items.begin(); I != Items.end(); I++)
-      (*I)->Finished();
+      (*I)->Finished(); 
    
    if (_error->PendingError())
       return Failed;
@@ -453,7 +453,7 @@ unsigned long pkgAcquire::PartialPresent()
    return Total;
 }
 									/*}}}*/
-// pkgAcquire::UriBegin - Start iterator for the uri list		/*{{{*/
+// Acquire::UriBegin - Start iterator for the uri list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::UriIterator pkgAcquire::UriBegin()
@@ -461,7 +461,7 @@ pkgAcquire::UriIterator pkgAcquire::UriBegin()
    return UriIterator(Queues);
 }
 									/*}}}*/
-// pkgAcquire::UriEnd - End iterator for the uri list			/*{{{*/
+// Acquire::UriEnd - End iterator for the uri list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::UriIterator pkgAcquire::UriEnd()
@@ -501,7 +501,7 @@ pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : Name(Name),
 /* */
 pkgAcquire::Queue::~Queue()
 {
-   Shutdown();
+   Shutdown(true);
    
    while (Items != 0)
    {
@@ -560,44 +560,53 @@ bool pkgAcquire::Queue::Dequeue(Item *Owner)
 									/*}}}*/
 // Queue::Startup - Start the worker processes				/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* It is possible for this to be called with a pre-existing set of
+   workers. */
 bool pkgAcquire::Queue::Startup()
 {
-   Shutdown();
-   
-   URI U(Name);
-   pkgAcquire::MethodConfig *Cnf = Owner->GetConfig(U.Access);
-   if (Cnf == 0)
-      return false;
-   
-   Workers = new Worker(this,Cnf,Owner->Log);
-   Owner->Add(Workers);
-   if (Workers->Start() == false)
-      return false;
-   
-   /* When pipelining we commit 10 items. This needs to change when we
-      added other source retry to have cycle maintain a pipeline depth
-      on its own. */
-   if (Cnf->Pipeline == true)
-      MaxPipeDepth = 10;
-   else
-      MaxPipeDepth = 1;
+   if (Workers == 0)
+   {
+      URI U(Name);
+      pkgAcquire::MethodConfig *Cnf = Owner->GetConfig(U.Access);
+      if (Cnf == 0)
+	 return false;
+      
+      Workers = new Worker(this,Cnf,Owner->Log);
+      Owner->Add(Workers);
+      if (Workers->Start() == false)
+	 return false;
+      
+      /* When pipelining we commit 10 items. This needs to change when we
+         added other source retry to have cycle maintain a pipeline depth
+         on its own. */
+      if (Cnf->Pipeline == true)
+	 MaxPipeDepth = 10;
+      else
+	 MaxPipeDepth = 1;
+   }
    
    return Cycle();
 }
 									/*}}}*/
 // Queue::Shutdown - Shutdown the worker processes			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-bool pkgAcquire::Queue::Shutdown()
+/* If final is true then all workers are eliminated, otherwise only workers
+   that do not need cleanup are removed */
+bool pkgAcquire::Queue::Shutdown(bool Final)
 {
    // Delete all of the workers
-   while (Workers != 0)
+   pkgAcquire::Worker **Cur = &Workers;
+   while (*Cur != 0)
    {
-      pkgAcquire::Worker *Jnk = Workers;
-      Workers = Workers->NextQueue;
-      Owner->Remove(Jnk);
-      delete Jnk;
+      pkgAcquire::Worker *Jnk = *Cur;
+      if (Final == true || Jnk->GetConf()->NeedsCleanup == false)
+      {
+	 *Cur = Jnk->NextQueue;
+	 Owner->Remove(Jnk);
+	 delete Jnk;
+      }
+      else
+	 Cur = &(*Cur)->NextQueue;      
    }
    
    return true;

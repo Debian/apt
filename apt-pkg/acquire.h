@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.24 1999/07/20 05:53:33 jgg Exp $
+// $Id: acquire.h,v 1.25 1999/10/18 00:37:35 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -175,7 +175,7 @@ class pkgAcquire::Queue
    bool ItemDone(QItem *Itm);
    
    bool Startup();
-   bool Shutdown();
+   bool Shutdown(bool Final);
    bool Cycle();
    void Bump();
    
@@ -229,7 +229,8 @@ struct pkgAcquire::MethodConfig
    bool Pipeline;
    bool SendConfig;
    bool LocalOnly;
-      
+   bool NeedsCleanup;
+   
    MethodConfig();
 };
 

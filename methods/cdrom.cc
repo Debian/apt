@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.15 1999/10/02 04:14:54 jgg Exp $
+// $Id: cdrom.cc,v 1.16 1999/10/18 00:37:36 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -23,9 +23,12 @@ class CDROMMethod : public pkgAcqMethod
    bool DatabaseLoaded;
    ::Configuration Database;
    string CurrentID;
+   string CDROM;
+   bool Mounted;
    
    virtual bool Fetch(FetchItem *Itm);
    string GetID(string Name);
+   virtual void Exit();
    
    public:
    
@@ -36,9 +39,20 @@ class CDROMMethod : public pkgAcqMethod
 // ---------------------------------------------------------------------
 /* */
 CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly | 
-					  SendConfig), DatabaseLoaded(false)
+					  SendConfig | NeedsCleanup), 
+                                          DatabaseLoaded(false), 
+                                          Mounted(false)
 {
 };
+									/*}}}*/
+// CDROMMethod::Exit - Unmount the disc if necessary			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void CDROMMethod::Exit()
+{
+   if (Mounted == true)
+      UnmountCdrom(CDROM);
+}
 									/*}}}*/
 // CDROMMethod::GetID - Search the database for a matching string	/*{{{*/
 // ---------------------------------------------------------------------
@@ -111,7 +125,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       return true;
    }
    
-   string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
    string NewID;
@@ -149,6 +163,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       }
       
       MountCdrom(CDROM);
+      Mounted = true;
    }
    
    // Found a CD

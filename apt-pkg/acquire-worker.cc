@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.27 1999/08/28 01:49:56 jgg Exp $
+// $Id: acquire-worker.cc,v 1.28 1999/10/18 00:37:35 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -86,7 +86,10 @@ pkgAcquire::Worker::~Worker()
    
    if (Process > 0)
    {
-      kill(Process,SIGINT);
+      /* Closing of stdin is the signal to exit and die when the process
+         indicates it needs cleanup */
+      if (Config->NeedsCleanup == false)
+	 kill(Process,SIGINT);
       ExecWait(Process,Access.c_str(),true);
    }   
 }
@@ -323,6 +326,7 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->Pipeline = StringToBool(LookupTag(Message,"Pipeline"),false);
    Config->SendConfig = StringToBool(LookupTag(Message,"Send-Config"),false);
    Config->LocalOnly = StringToBool(LookupTag(Message,"Local-Only"),false);
+   Config->NeedsCleanup = StringToBool(LookupTag(Message,"Needs-Cleanup"),false);
 
    // Some debug text
    if (Debug == true)

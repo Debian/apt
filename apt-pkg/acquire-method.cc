@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.20 1999/08/04 02:39:13 jgg Exp $
+// $Id: acquire-method.cc,v 1.21 1999/10/18 00:37:35 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -49,6 +49,9 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
 
    if ((Flags & LocalOnly) == LocalOnly)
       strcat(End,"Local-Only: true\n");
+
+   if ((Flags & NeedsCleanup) == NeedsCleanup)
+      strcat(End,"Needs-Cleanup: true\n");
    strcat(End,"\n");
 
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
@@ -309,10 +312,9 @@ int pkgAcqMethod::Run(bool Single)
       {
 	 if (Single == false)
 	    if (WaitFd(STDIN_FILENO) == false)
-	       return 0;
-      
+	       break;
 	 if (ReadMessages(STDIN_FILENO,Messages) == false)
-	    return 0;
+	    break;
       }
             
       // Single mode exits if the message queue is empty
@@ -332,7 +334,7 @@ int pkgAcqMethod::Run(bool Single)
       }
 
       switch (Number)
-      {
+      {	 
 	 case 601:
 	 if (Configuration(Message) == false)
 	    return 100;
@@ -365,6 +367,7 @@ int pkgAcqMethod::Run(bool Single)
       }      
    }
 
+   Exit();
    return 0;
 }
 									/*}}}*/

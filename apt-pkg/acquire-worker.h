@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.10 1999/05/23 06:47:43 jgg Exp $
+// $Id: acquire-worker.h,v 1.11 1999/10/18 00:37:35 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
@@ -79,6 +79,7 @@ class pkgAcquire::Worker
    bool QueueItem(pkgAcquire::Queue::QItem *Item);
    bool Start();
    void Pulse();
+   inline const MethodConfig *GetConf() const {return Config;};
    
    Worker(Queue *OwnerQ,MethodConfig *Config,pkgAcquireStatus *Log);
    Worker(MethodConfig *Config);
