@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.35 1999/05/11 05:45:10 jgg Exp $
+// $Id: apt-cache.cc,v 1.36 1999/05/14 02:51:36 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -8,7 +8,7 @@
    apt-cache provides some functions fo manipulating the cache files.
    It uses the command line interface common to all the APT tools. The
    only really usefull function right now is dumpavail which is used
-   by the dselect method. Everything else is ment as a debug aide.
+   by the dselect method. Everything else is meant as a debug aide.
    
    Returns 100 on failure, 0 on success.
    
@@ -569,7 +569,7 @@ bool ShowHelp(CommandLine &Cmd)
    cout << endl;
    cout << "apt-cache is a low-level tool used to manipulate APT's binary" << endl;
    cout << "cache files stored in " << _config->FindFile("Dir::Cache") << endl;
-   cout << "It is not ment for ordinary use only as a debug aide." << endl;
+   cout << "It is not meant for ordinary use only as a debug aide." << endl;
    cout << endl;
    cout << "Commands:" << endl;
    cout << "   add - Add an package file to the source cache" << endl;

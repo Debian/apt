@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.16 1999/04/18 06:51:35 jgg Exp $
+# $Id: rules,v 1.17 1999/05/14 02:51:37 jgg Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -87,7 +87,7 @@ libapt-pkg-doc: build debian/shlibs.local
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
 #	dh_installcron -p$@
-	dh_installmanpages -p$@
+#	dh_installmanpages -p$@
 
 #	dh_undocumented -p$@
 	dh_installchangelogs -p$@
@@ -172,7 +172,7 @@ libapt-pkg-dev: build debian/shlibs.local
 #	dh_installmenu -papt
 #	dh_installinit -papt
 #	dh_installcron -papt
-	dh_installmanpages -p$@
+#	dh_installmanpages -p$@
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@
