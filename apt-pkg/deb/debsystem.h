@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsystem.h,v 1.3 2001/04/29 05:13:51 jgg Exp $
+// $Id: debsystem.h,v 1.4 2003/01/11 07:16:33 jgg Exp $
 /* ######################################################################
 
    System - Debian version of the  System Class
@@ -15,7 +15,7 @@
 #endif
 
 #include <apt-pkg/pkgsystem.h>
-    
+
 class debStatusIndex;
 class debSystem : public pkgSystem
 {
@@ -34,7 +34,7 @@ class debSystem : public pkgSystem
    virtual bool Initialize(Configuration &Cnf);
    virtual bool ArchiveSupported(const char *Type);
    virtual signed Score(Configuration const &Cnf);
-   virtual bool AddStatusFiles(vector<pkgIndexFile *> &List);
+   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List);
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const;
 
