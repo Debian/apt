@@ -4,47 +4,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.4\n"
-"POT-Creation-Date: 2002-06-16 00:11+0200\n"
-"PO-Revision-Date: 2002-01-2017 19:15+0100\n"
+"POT-Creation-Date: 2002-11-10 19:37+0100\n"
+"PO-Revision-Date: 2002-11-22 01:02+0100\n"
 "Last-Translator: Marcin Owsiany <porridge@debian.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: cmdline/acqprogress.cc:55
-msgid "Hit "
-msgstr "Traf "
-
-#: cmdline/acqprogress.cc:79
-msgid "Get:"
-msgstr "Pob: "
-
-#: cmdline/acqprogress.cc:110
-msgid "Ign "
-msgstr "Ign "
-
-#: cmdline/acqprogress.cc:114
-msgid "Err "
-msgstr "B³±d "
-
-#: cmdline/acqprogress.cc:135
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Pobrano %sB w %s (%sB/s)\n"
-
-#: cmdline/acqprogress.cc:225
-msgid " [Working]"
-msgstr " [Pracuje]"
-
-#: cmdline/acqprogress.cc:271
-#, c-format
-msgid ""
-"Media Change: Please insert the disc labeled '%s' in the drive '%s' and "
-"press enter\n"
-msgstr ""
-"Zmiana no¶nika: Proszê w³o¿yæ dysk oznaczony '%s' do napêdu '%s' i nacisn±æ "
-"enter\n"
 
 #: cmdline/apt-cache.cc:131
 #, c-format
@@ -99,7 +65,7 @@ msgstr "W sumie mapowañ zapewnieñ: "
 
 #: cmdline/apt-cache.cc:293
 msgid "Total Globbed Strings: "
-msgstr ""
+msgstr "W sumie dopasowanych napisów: "
 
 #: cmdline/apt-cache.cc:307
 msgid "Total Dependency Version space: "
@@ -154,7 +120,7 @@ msgstr "  Zainstalowana: "
 msgid "(none)"
 msgstr "(brak)"
 
-#. Candidate Version 
+#. Candidate Version
 #: cmdline/apt-cache.cc:1195
 msgid "  Candidate: "
 msgstr "  Kandyduj±ca: "
@@ -174,14 +140,13 @@ msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1256 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:69
-#: cmdline/apt-extracttemplates.cc:223 cmdline/apt-get.cc:2011
-#: cmdline/apt-sortpkgs.cc:142 ftparchive/apt-ftparchive.cc:544
+#: cmdline/apt-extracttemplates.cc:223 ftparchive/apt-ftparchive.cc:544
+#: cmdline/apt-get.cc:2015 cmdline/apt-sortpkgs.cc:142
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s dla %s %s skompilowany na %s %s\n"
 
 #: cmdline/apt-cache.cc:1260
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file1 ...]\n"
@@ -218,17 +183,19 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "U¿ycie: apt-cache [opcje] komenda\n"
-"       apt-cache [opcje] add plik1 [plik2 ...]\n"
-"       apt-cache [opcje] showpkg pakiet1 [pakiet2 ...]\n"
+"        apt-cache [opcje] add plik1 [plik2 ...]\n"
+"        apt-cache [opcje] showpkg pakiet1 [pakiet2 ...]\n"
+"        apt-cache [opcje] showsrc pakiet1 [pakiet2 ...]\n"
 "\n"
 "apt-cache to niskopoziomowe narzêdzie s³u¿±ce do manipulowania\n"
-"binarnymi plikami magazynów podrêcznych, oraz do pobierania z nich\n"
-"informacji.\n"
+"binarnymi plikami magazynów podrêcznych APT-a, oraz do pobierania\n"
+"z nich informacji.\n"
 "\n"
 "Komendy:\n"
-"   add - Dodaj plik z pakietem do magazynu\n"
+"   add - Dodaj plik pakietów do magazynu podrêcznego\n"
 "   gencaches - Zbuduj magazyn podrêczny pakietów i ¼róde³\n"
-"   showpkg - Poka¿ dodatkowe informacje na temat pojedynczego pakietu\n"
+"   showpkg - Poka¿ ogólne informacje na temat pojedynczego pakietu\n"
+"   showsrc - Poka¿ informacje na temat ¼róde³\n"
 "   stats - Poka¿ podstawowe statystyki\n"
 "   dump - Poka¿ ca³y plik w skrótowej formie\n"
 "   dumpavail - Wypisz plik dostêpnych pakietów na standardowe wyj¶cie\n"
@@ -248,8 +215,8 @@ msgstr ""
 "  -i   Poka¿ tylko wa¿ne zale¿no¶ci przy komendzie unmet.\n"
 "  -c=? Czytaj ten plik konfiguracyjny.\n"
 "  -o=? Ustaw dowoln± opcjê konfiguracji, np -o dir::cache=/tmp\n"
-"Wiêcej informacji mo¿na znale¼æ na stronach podêcznika apt-cache(8) i apt."
-"conf(5).\n"
+"Wiêcej informacji mo¿na znale¼æ na stronach podêcznika apt-cache(8)\n"
+"oraz apt.conf(5).\n"
 
 #: cmdline/apt-config.cc:40
 msgid "Arguments not in pairs"
@@ -312,12 +279,12 @@ msgstr ""
 "  -c=? Czytaj ten plik konfiguracyjny.\n"
 "  -o=? Ustaw dowoln± opcjê konfiguracji, np -o dir::cache=/tmp\n"
 
-#: apt-pkg/pkgcachegen.cc:626 cmdline/apt-extracttemplates.cc:257
+#: cmdline/apt-extracttemplates.cc:257 apt-pkg/pkgcachegen.cc:699
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Nie uda³o siê pisaæ do %s"
 
-#: cmdline/apt-extracttemplates.cc:298
+#: cmdline/apt-extracttemplates.cc:300
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nie uda³o siê pobraæ wersji debconf. Czy debconf jest zainstalowany?"
 
@@ -327,8 +294,8 @@ msgid "Y"
 msgstr "T"
 
 #: cmdline/apt-get.cc:193
-msgid "Sorry, but the following packages have unmet dependencies:"
-msgstr "Niestety nastêpuj±ce pakiety maj± niespe³nione zale¿no¶ci:"
+msgid "The following packages have unmet dependencies:"
+msgstr "Nastêpuj±ce pakiety maj± niespe³nione zale¿no¶ci:"
 
 #: cmdline/apt-get.cc:283
 #, c-format
@@ -454,41 +421,39 @@ msgstr "Niespe³nione zale¿no¶ci. Spróbuj u¿yæ -f."
 msgid "Packages need to be removed but Remove is disabled."
 msgstr "Pakiety powinny zostaæ usuniête, ale Remove jest wy³±czone."
 
-#: cmdline/apt-get.cc:683 cmdline/apt-get.cc:1574 cmdline/apt-get.cc:1607
+#: cmdline/apt-get.cc:683 cmdline/apt-get.cc:1578 cmdline/apt-get.cc:1611
 msgid "Unable to lock the download directory"
 msgstr "Nie uda³o siê zablokowaæ katalogu pobierania"
 
-#: apt-pkg/cachefile.cc:67 cmdline/apt-get.cc:693 cmdline/apt-get.cc:1655
-#: cmdline/apt-get.cc:1866
+#: cmdline/apt-get.cc:693 cmdline/apt-get.cc:1659 cmdline/apt-get.cc:1870
+#: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Nie uda³o siê odczytaæ list ¼róde³."
 
 #: cmdline/apt-get.cc:713
 #, c-format
-msgid "Need to get %sB/%sB of archives. "
-msgstr "Konieczne pobranie %sB/%sB archiwów. "
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "Konieczne pobranie %sB/%sB archiwów.\n"
 
 #: cmdline/apt-get.cc:716
 #, c-format
-msgid "Need to get %sB of archives. "
-msgstr "Konieczne pobranie %sB archiwów. "
+msgid "Need to get %sB of archives.\n"
+msgstr "Konieczne pobranie %sB archiwów.\n"
 
 #: cmdline/apt-get.cc:721
 #, c-format
-msgid "After unpacking %sB will be used.\n"
-msgstr "Po rozpakowaniu zostanie u¿ytych %sB.\n"
+msgid "After unpacking %sB of additional disk space will be used.\n"
+msgstr "Po rozpakowaniu zostanie dodatkowo u¿ytych %sB miejca na dysku.\n"
 
 #: cmdline/apt-get.cc:724
 #, c-format
-msgid "After unpacking %sB will be freed.\n"
-msgstr "Po rozpakowaniu zostanie zwolnione %sB.\n"
+msgid "After unpacking %sB disk space will be freed.\n"
+msgstr "Po rozpakowaniu zostanie zwolnione %sB miejsca na dysku.\n"
 
 #: cmdline/apt-get.cc:741
 #, c-format
-msgid "Sorry, you don't have enough free space in %s to hold all the .debs."
-msgstr ""
-"Niestety w %s jest zbyt ma³o wolnego miejsca aby pomie¶ciæ wszystkie pliki ."
-"deb."
+msgid "You don't have enough free space in %s."
+msgstr "Niestety w %s nie ma wystarczaj±cej ilo¶ci wolnego miejsca."
 
 #: cmdline/apt-get.cc:750
 msgid "There are problems and -y was used without --force-yes"
@@ -521,7 +486,7 @@ msgstr "Przerwane."
 msgid "Do you want to continue? [Y/n] "
 msgstr "Czy chcesz kontynuowaæ? [T/n] "
 
-#: cmdline/apt-get.cc:850 cmdline/apt-get.cc:1219 cmdline/apt-get.cc:1764
+#: cmdline/apt-get.cc:850 cmdline/apt-get.cc:1219 cmdline/apt-get.cc:1768
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Nie uda³o siê pobraæ %s  %s\n"
@@ -530,7 +495,7 @@ msgstr "Nie uda³o siê pobraæ %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Nie uda³o siê pobraæ niektórych plików"
 
-#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:1773
+#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:1777
 msgid "Download complete and in download only mode"
 msgstr "Ukoñczono pobieranie w trybie samego pobierania"
 
@@ -607,16 +572,14 @@ msgstr "Pakiet %s nie ma kandydata do instalacji"
 
 #: cmdline/apt-get.cc:1020
 #, c-format
-msgid ""
-"Sorry, re-installation of %s is not possible, it cannot be downloaded.\n"
-msgstr ""
-"Niestety przeinstalowanie pakietu %s nie jest mo¿liwe, nie mo¿e on zostaæ "
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "Przeinstalowanie pakietu %s nie jest mo¿liwe, nie mo¿e on zostaæ "
 "pobrany.\n"
 
 #: cmdline/apt-get.cc:1028
 #, c-format
-msgid "Sorry, %s is already the newest version.\n"
-msgstr "Niestety, %s jest ju¿ w najnowszej wersji.\n"
+msgid "%s is already the newest version.\n"
+msgstr "%s jest ju¿ w najnowszej wersji.\n"
 
 #: cmdline/apt-get.cc:1055
 #, c-format
@@ -653,21 +616,26 @@ msgstr ""
 msgid "Internal Error, AllUpgrade broke stuff"
 msgstr "B³±d wewnêtrzny, AllUpgrade wszystko popsu³o"
 
-#: cmdline/apt-get.cc:1346 cmdline/apt-get.cc:1379
+#: cmdline/apt-get.cc:1347 cmdline/apt-get.cc:1383
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Nie uda³o siê odnale¼æ pakietu %s"
 
-#: cmdline/apt-get.cc:1359
+#: cmdline/apt-get.cc:1360
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "B³±d kompilacji wyra¿enia regularnego - %s"
 
-#: cmdline/apt-get.cc:1396
+#: cmdline/apt-get.cc:1370
+#, c-format
+msgid "Note, selecting %s for regex '%s'\n"
+msgstr "Uwaga, wybieranie %s za wyra¿enie '%s'\n"
+
+#: cmdline/apt-get.cc:1400
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Powiniene¶/na¶ uruchomiæ `apt-get -f install' aby je naprawiæ:"
 
-#: cmdline/apt-get.cc:1399
+#: cmdline/apt-get.cc:1403
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -675,7 +643,7 @@ msgstr ""
 "Niespe³nione zale¿no¶ci. Spróbuj 'apt-get -f install' bez pakietów (lub "
 "podaj rozwi±zanie)."
 
-#: cmdline/apt-get.cc:1411
+#: cmdline/apt-get.cc:1415
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -687,7 +655,7 @@ msgstr ""
 "niestabilnej, w której niektóre pakiety nie zosta³y jeszcze utworzone\n"
 "lub przeniesione z katalogu Incoming (\"Przychodz±ce\")."
 
-#: cmdline/apt-get.cc:1419
+#: cmdline/apt-get.cc:1423
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -697,102 +665,102 @@ msgstr ""
 "danego pakietu po prostu nie da siê zainstalowaæ i nale¿y zg³osiæ w nim\n"
 "b³±d."
 
-#: cmdline/apt-get.cc:1424
+#: cmdline/apt-get.cc:1428
 msgid "The following information may help to resolve the situation:"
 msgstr "Nastêpuj±ce informacje mog± pomóc rozpoznaæ sytuacjê:"
 
-#: cmdline/apt-get.cc:1427
-msgid "Sorry, broken packages"
-msgstr "Przykro nam, jakie¶ pakiety s± b³êdne"
+#: cmdline/apt-get.cc:1431
+msgid "Broken packages"
+msgstr "Pakiety s± b³êdne"
 
-#: cmdline/apt-get.cc:1450
+#: cmdline/apt-get.cc:1454
 msgid "The following extra packages will be installed:"
 msgstr "Zostan± zainstalowane nastêpuj±ce dodatkowe pakiety:"
 
-#: cmdline/apt-get.cc:1469
+#: cmdline/apt-get.cc:1473
 msgid "Calculating Upgrade... "
 msgstr "Obliczanie aktualizacji..."
 
-#: cmdline/apt-get.cc:1472
+#: cmdline/apt-get.cc:1476
 msgid "Failed"
 msgstr "Nie uda³o siê"
 
-#: cmdline/apt-get.cc:1477
+#: cmdline/apt-get.cc:1481
 msgid "Done"
 msgstr "Gotowe"
 
-#: cmdline/apt-get.cc:1650
+#: cmdline/apt-get.cc:1654
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Musisz podaæ przynajmniej jeden pakiet, dla którego maj± zostaæ pobrane "
 "¼ród³a"
 
-#: cmdline/apt-get.cc:1677 cmdline/apt-get.cc:1884
+#: cmdline/apt-get.cc:1681 cmdline/apt-get.cc:1888
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Nie uda³o siê odnale¼æ ¼ród³a dla pakietu %s"
 
-#: cmdline/apt-get.cc:1724
+#: cmdline/apt-get.cc:1728
 #, c-format
-msgid "Sorry, you don't have enough free space in %s"
-msgstr "Niestety w %s nie ma wystarczaj±cej ilo¶ci miejsca"
+msgid "You don't have enough free space in %s"
+msgstr "W %s nie ma wystarczaj±cej ilo¶ci wolnego miejsca"
 
-#: cmdline/apt-get.cc:1729
+#: cmdline/apt-get.cc:1733
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Konieczne pobranie %sB/%sB archiwów ¼róde³.\n"
 
-#: cmdline/apt-get.cc:1732
+#: cmdline/apt-get.cc:1736
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Konieczne pobranie %sB archiwów ¼róde³.\n"
 
-#: cmdline/apt-get.cc:1738
+#: cmdline/apt-get.cc:1742
 #, c-format
 msgid "Fetch Source %s\n"
 msgstr "Pobierz ¼ród³o %s\n"
 
-#: cmdline/apt-get.cc:1769
+#: cmdline/apt-get.cc:1773
 msgid "Failed to fetch some archives."
 msgstr "Nie uda³o siê pobraæ niektórych archiwów."
 
-#: cmdline/apt-get.cc:1797
+#: cmdline/apt-get.cc:1801
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Pomijanie rozpakowania ju¿ rozpakowanego ¼ród³a w %s\n"
 
-#: cmdline/apt-get.cc:1809
+#: cmdline/apt-get.cc:1813
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Komenda rozpakowania '%s' zawiod³a.\n"
 
-#: cmdline/apt-get.cc:1826
+#: cmdline/apt-get.cc:1830
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Komenda budowania '%s' zawiod³a.\n"
 
-#: cmdline/apt-get.cc:1845
+#: cmdline/apt-get.cc:1849
 msgid "Child process failed"
 msgstr "Proces potomny zawiód³"
 
-#: cmdline/apt-get.cc:1861
+#: cmdline/apt-get.cc:1865
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Musisz podaæ przynajmniej jeden pakiet, dla którego maj± zostaæ pakiety "
 "wymagane do budowania"
 
-#: cmdline/apt-get.cc:1889
+#: cmdline/apt-get.cc:1893
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 "Nie uda³o siê pobraæ informacji o zale¿no¶ciach na czas budowania dla %s"
 
-#: cmdline/apt-get.cc:1909
+#: cmdline/apt-get.cc:1913
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s nie ma zale¿no¶ci na czas budowania.\n"
 
-#: cmdline/apt-get.cc:1927
+#: cmdline/apt-get.cc:1931
 #, c-format
 msgid ""
 "%s dependency on %s cannot be satisfied because the package %s cannot be "
@@ -801,7 +769,7 @@ msgstr ""
 "Zale¿no¶æ %s od %s nie mo¿e zostaæ spe³niona, poniewa¿ nie znaleziono "
 "pakietu %s"
 
-#: cmdline/apt-get.cc:1979
+#: cmdline/apt-get.cc:1983
 msgid ""
 "Some broken packages were found while trying to process build-dependencies.\n"
 "You might want to run `apt-get -f install' to correct these."
@@ -809,15 +777,15 @@ msgstr ""
 "W czasie przetwarzania zale¿no¶ci na czas budowania znaleziono uszkodzone\n"
 "pakiety. Powiniene¶/na¶ uruchomiæ `apt-get -f install' aby je naprawiæ."
 
-#: cmdline/apt-get.cc:1984
+#: cmdline/apt-get.cc:1988
 msgid "Failed to process build dependencies"
 msgstr "Nie uda³o siê przetworzyæ zale¿no¶ci na czas budowania"
 
-#: cmdline/apt-get.cc:2016
+#: cmdline/apt-get.cc:2020
 msgid "Supported Modules:"
 msgstr "Obs³ugiwane modu³y:"
 
-#: cmdline/apt-get.cc:2057
+#: cmdline/apt-get.cc:2061
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -896,6 +864,40 @@ msgstr ""
 "apt-get(8), sources.list(5) i apt.conf(5).\n"
 "                         Ten APT ma moce Super Krowy.\n"
 
+#: cmdline/acqprogress.cc:55
+msgid "Hit "
+msgstr "Traf "
+
+#: cmdline/acqprogress.cc:79
+msgid "Get:"
+msgstr "Pob: "
+
+#: cmdline/acqprogress.cc:110
+msgid "Ign "
+msgstr "Ign "
+
+#: cmdline/acqprogress.cc:114
+msgid "Err "
+msgstr "B³±d "
+
+#: cmdline/acqprogress.cc:135
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Pobrano %sB w %s (%sB/s)\n"
+
+#: cmdline/acqprogress.cc:225
+msgid " [Working]"
+msgstr " [Pracuje]"
+
+#: cmdline/acqprogress.cc:271
+#, c-format
+msgid ""
+"Media Change: Please insert the disc labeled '%s' in the drive '%s' and "
+"press enter\n"
+msgstr ""
+"Zmiana no¶nika: Proszê w³o¿yæ dysk oznaczony '%s' do napêdu '%s' i nacisn±æ "
+"enter\n"
+
 #: cmdline/apt-sortpkgs.cc:84
 msgid "Unknown package record!"
 msgstr "Nieznany rekord pakietu!"
@@ -924,138 +926,249 @@ msgstr ""
 "  -c=? Czytaj ten plik konfiguracyjny.\n"
 "  -o=? Ustaw dowoln± opcjê konfiguracji, np -o dir::cache=/tmp\n"
 
-#: apt-pkg/acquire.cc:61
-#, c-format
-msgid "Lists directory %spartial is missing."
-msgstr "Brakuje katalogu list %spartial."
+#: dselect/install:32
+msgid "Bad default setting!"
+msgstr "Nieprawid³owe ustawienie domy¶lne!"
 
-#: apt-pkg/acquire.cc:65
-#, c-format
-msgid "Archive directory %spartial is missing."
-msgstr "Brakuje katalogu archiwów %spartial."
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
+#: dselect/install:104 dselect/update:45
+msgid "Press enter to continue."
+msgstr "Naci¶nij enter aby kontynuowaæ."
 
+# Note to translators: The following four messages belong together. It doesn't
+# matter where sentences start, but it has to fit in just these four lines, and
+# at only 80 characters per line, if possible.
+#: dselect/install:100
+msgid "Some errors occurred while unpacking. I'm going to configure the"
+msgstr "Wyst±pi³y problemy przy rozpakowywaniu. Zainstalowane pakiety zostan±"
+
+#: dselect/install:101
+msgid "packages that were installed. This may result in duplicate errors"
+msgstr "skonnfigurowane. Mo¿e to spowodowaæ podwójne b³êdy, lub b³êdy"
+
+#: dselect/install:102
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr ""
+"spowodowane brakuj±cymi zale¿no¶ciami. To jest normalne. Tylko powy¿sze"
+
+#: dselect/install:103
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr "b³êdy s± istotne. Proszê je poprawiæ i ponownie wybraæ [I]nstalacjê."
+
+#: dselect/update:30
+msgid "Merging Available information"
+msgstr "£±czenie informacji o dostêpnych pakietach"
+
+#: apt-pkg/contrib/mmap.cc:82
+msgid "Can't mmap an empty file"
+msgstr "Nie mo¿na wykonaæ mmap na pustym pliku"
+
+#: apt-pkg/contrib/mmap.cc:87
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "Nie uda³o siê wykonaæ mmap %lu bajtów"
+
+#: apt-pkg/contrib/strutl.cc:935
+#, c-format
+msgid "Selection %s not found"
+msgstr "Nie odnaleziono wyboru %s"
+
+#: apt-pkg/contrib/configuration.cc:449
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "Otwieranie pliku konfiguracyjnego %s"
+
+#: apt-pkg/contrib/configuration.cc:559
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "B³±d sk³adniowy %s:%u: Blok nie zaczyna siê nazw±."
+
+#: apt-pkg/contrib/configuration.cc:578
+#, c-format
+msgid "Syntax error %s:%u: Malformed Tag"
+msgstr "B³±d sk³adniowy %s:%u: B³êdny znacznik"
+
+#: apt-pkg/contrib/configuration.cc:595
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "B³±d sk³adniowy %s:%u: Po warto¶ci wystêpuj± ¶mieci"
+
+#: apt-pkg/contrib/configuration.cc:635
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr "B³±d sk³adniowy %s:%u: Dyrektywy mog± wystêpowaæ tylko na poziomie najwy¿szym"
+
+#: apt-pkg/contrib/configuration.cc:642
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "B³±d sk³adniowy %s:%u: Zbyt wiele zagnie¿d¿onych operacji include"
+
+#: apt-pkg/contrib/configuration.cc:646 apt-pkg/contrib/configuration.cc:651
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "B³±d sk³adniowy %s:%u: W³±czony tutaj"
+
+#: apt-pkg/contrib/configuration.cc:655
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "B³±d sk³adniowy %s:%u: Nieobs³ugiwana dyrektywa '%s'"
+
+#: apt-pkg/contrib/configuration.cc:689
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "B³±d sk³adniowy %s:%u: ¦mieci na koñcu pliku"
+
+#: apt-pkg/contrib/configuration.cc:701 apt-pkg/contrib/cdromutl.cc:153
 #: apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nie mo¿na czytaæ %s"
 
-#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/progress.cc:154
+#, c-format
+msgid "\r%s... Error!"
+msgstr "\r%s... B³±d!"
+
+#: apt-pkg/contrib/progress.cc:156
+#, c-format
+msgid "\r%s... Done"
+msgstr "\r%s... Gotowe"
+
+#: apt-pkg/contrib/cmndline.cc:79
+#, c-format
+msgid "Command line option '%c' [from %s] is not known."
+msgstr "Opcja linii komend '%c' [z %s] jest nieznana."
+
+#: apt-pkg/contrib/cmndline.cc:105 apt-pkg/contrib/cmndline.cc:113
+#: apt-pkg/contrib/cmndline.cc:121
+#, c-format
+msgid "Command line option %s is not understood"
+msgstr "Niezrozumia³a opcja linii komend %s"
+
+#: apt-pkg/contrib/cmndline.cc:126
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "Opcja linii komend %s nie jest typu boolean"
+
+#: apt-pkg/contrib/cmndline.cc:165 apt-pkg/contrib/cmndline.cc:186
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "Opcja %s wymaga argumentu."
+
+#: apt-pkg/contrib/cmndline.cc:200 apt-pkg/contrib/cmndline.cc:206
+#, c-format
+msgid "Option %s: Configuration item sepecification must have an =<val>."
+msgstr "Opcja %s: Specyfikacja elementu konfiguracji musi zawieraæ =<warto¶æ>."
+
+#: apt-pkg/contrib/cmndline.cc:236
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "Opcja %s wymaga argumentu typu ca³kowitego, nie '%s'"
+
+#: apt-pkg/contrib/cmndline.cc:267
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "Opcja '%s' jest zbyt d³uga"
+
+#: apt-pkg/contrib/cmndline.cc:300
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "Znaczenie %s jest nieznane, spróbuj true albo false."
+
+#: apt-pkg/contrib/cmndline.cc:350
+#, c-format
+msgid "Invalid operation %s"
+msgstr "Nieprawid³owa operacja %s"
+
+#: apt-pkg/contrib/cdromutl.cc:55
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "Nie uda³o siê wykonaæ operacji stat na punkcie montowania %s"
+
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nie uda³o siê przej¶æ do %s"
 
-#: apt-pkg/acquire-item.cc:124
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "nie uda³o siê zmieniæ nazwy, %s (%s -> %s)"
+#: apt-pkg/contrib/cdromutl.cc:190
+msgid "Failed to stat the cdrom"
+msgstr "Nie uda³o siê wykonaæ operacji stat na CDROM-ie"
 
-#: apt-pkg/acquire-item.cc:353
+#: apt-pkg/contrib/fileutl.cc:80
 #, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
+msgid "Not using locking for read only lock file %s"
+msgstr "Dla pliku blokady %s tylko do odczytu nie zostanie u¿yta blokada"
+
+#: apt-pkg/contrib/fileutl.cc:85
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "Nie uda³o siê otworzyæ pliku blokady %s"
+
+#: apt-pkg/contrib/fileutl.cc:103
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr "Dla pliku blokady %s montowanego przez NFS nie zostanie u¿yta blokada"
+
+#: apt-pkg/contrib/fileutl.cc:107
+#, c-format
+msgid "Could not get lock %s"
+msgstr "Nie uda³o siê uzyskaæ blokady %s"
+
+#: apt-pkg/contrib/fileutl.cc:358
+#, c-format
+msgid "Waited, for %s but it wasn't there"
 msgstr ""
-"Nie uda³o siê odnale¼æ pliku dla pakietu %s. Mo¿e to oznaczaæ, ¿e trzeba "
-"bêdzie rêcznie naprawiæ ten pakiet (z powodu brakuj±cej architektury)."
 
-#: apt-pkg/acquire-item.cc:388
+#: apt-pkg/contrib/fileutl.cc:368
 #, c-format
-msgid ""
-"I wasn't able to locate file for the %s package. This might mean you need to "
-"manually fix this package."
+msgid "Sub-process %s received a segmentation fault."
+msgstr "Podproces %s spowodowa³ naruszenie segmentacji."
+
+#: apt-pkg/contrib/fileutl.cc:371
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "Podproces %s zwróci³ kod b³êdu (%u)"
+
+#: apt-pkg/contrib/fileutl.cc:373
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "Podproces %s zakoñczy³ siê niespodziewanie"
+
+#: apt-pkg/contrib/fileutl.cc:417
+#, c-format
+msgid "Could not open file %s"
+msgstr "Nie uda³o siê otworzyæ pliku %s"
+
+#: apt-pkg/contrib/fileutl.cc:452
+msgid "Read error"
+msgstr "B³±d odczytu"
+
+#: apt-pkg/contrib/fileutl.cc:473
+#, fuzzy, c-format
+msgid "read, still have %lu to read but none left"
+msgstr "nale¿y przeczytaæ jeszcze %lu, ale nic nie zosta³o"
+
+#: apt-pkg/contrib/fileutl.cc:491
+msgid "Write error"
+msgstr "B³±d zapisu"
+
+#: apt-pkg/contrib/fileutl.cc:503
+#, c-format
+msgid "write, still have %lu to write but couldn't"
 msgstr ""
-"Nie uda³o siê odnale¼æ pliku dla pakietu %s. Mo¿e to oznaczaæ, ¿e trzeba "
-"bêdzie rêcznie naprawiæ ten pakiet."
 
-#: apt-pkg/acquire-item.cc:419
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Pliki indeksu pakietów s± uszkodzone. Brak pola Filename: dla pakietu %s."
+#: apt-pkg/contrib/fileutl.cc:578
+msgid "Problem closing the file"
+msgstr "Problem przy zamykaniu pliku"
 
-#: apt-pkg/acquire-item.cc:501
-msgid "Size mismatch"
-msgstr "B³êdny rozmiar"
+#: apt-pkg/contrib/fileutl.cc:584
+msgid "Problem unlinking the file"
+msgstr "Problem przy usuwaniu pliku"
 
-#: apt-pkg/acquire-item.cc:511
-msgid "MD5Sum mismatch"
-msgstr "B³êdna suma MD5"
-
-#: apt-pkg/acquire-worker.cc:112
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "Nie uda³o siê odnale¼æ sterownika metody %s."
-
-#: apt-pkg/acquire-worker.cc:161
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "Metoda %s nie uruchomi³a siê poprawnie."
-
-#: apt-pkg/algorithms.cc:232
-#, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr ""
-"Pakiet %s ma zostaæ przeinstalowany, ale nie mo¿na znale¼æ jego archiwum."
-
-#: apt-pkg/algorithms.cc:1050
-msgid ""
-"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
-"held packages."
-msgstr ""
-"B³±d, pkgProblemResolver::Resolve zwróci³ b³±d, mo¿e to byæ spowodowane "
-"\"zatrzymanymi\" pakietami."
-
-#: apt-pkg/algorithms.cc:1052
-msgid "Unable to correct problems, you have held broken packages."
-msgstr "Nie uda³o siê naprawiæ problemów, zatrzyma³e¶/³a¶ uszkodzone pakiety."
-
-#: apt-pkg/cachefile.cc:73
-msgid "The package lists or status file could not be parsed or opened."
-msgstr "Nie uda³o siê otworzyæ lub zanalizowaæ zawarto¶ci list pakietów."
-
-#: apt-pkg/cachefile.cc:77
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "Powiniene¶/na¶ uruchomiæ apt-get update aby naprawiæ te problemy."
-
-#: apt-pkg/clean.cc:61
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
-
-#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
-msgid "Building Dependency Tree"
-msgstr "Budowanie drzewa zale¿no¶ci"
-
-#: apt-pkg/depcache.cc:61
-msgid "Candidate Versions"
-msgstr "Kandyduj±ce wersje"
-
-#: apt-pkg/depcache.cc:90
-msgid "Dependency Generation"
-msgstr "Generowanie zale¿no¶ci"
-
-#: apt-pkg/init.cc:111
-#, c-format
-msgid "Packaging system '%s' is not supported"
-msgstr "System pakietów '%s' nie jest obs³ugiwany"
-
-#: apt-pkg/init.cc:127
-msgid "Unable to determine a suitable system type"
-msgstr "Nie uda³o siê okre¶liæ odpowiedniego typu systemu"
-
-#: apt-pkg/packagemanager.cc:402
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"To uruchomienie programu bêdzie wymaga³o tymczasowego usuniêcia istotnego "
-"pakietu %s z powodu pêtli konfliktów/pre-zale¿no¶ci. Czêsto nie oznacza to "
-"nic dobrego, ale je¶li naprawdê chcesz to zrobiæ, w³±cz opcjê APT::Force-"
-"LoopBreak."
+#: apt-pkg/contrib/fileutl.cc:595
+msgid "Problem syncing the file"
+msgstr "Problem przy zapisywaniu pliku na dysk"
 
 #: apt-pkg/pkgcache.cc:126
 msgid "Empty package cache"
@@ -1126,89 +1239,27 @@ msgstr "opcjonalny"
 msgid "extra"
 msgstr "dodatkowy"
 
-#: apt-pkg/pkgcachegen.cc:73
-msgid "Cache has an incompatible versioning system"
-msgstr "Magazyn podrêczny ma niezgodny system wersji"
+#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
+msgid "Building Dependency Tree"
+msgstr "Budowanie drzewa zale¿no¶ci"
 
-#: apt-pkg/pkgcachegen.cc:116
+#: apt-pkg/depcache.cc:61
+msgid "Candidate Versions"
+msgstr "Kandyduj±ce wersje"
+
+#: apt-pkg/depcache.cc:90
+msgid "Dependency Generation"
+msgstr "Generowanie zale¿no¶ci"
+
+#: apt-pkg/tagfile.cc:71
 #, c-format
-msgid "Error occured while processing %s (NewPackage)"
-msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewPackage)"
+msgid "Unable to parse package file %s (1)"
+msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (1)"
 
-#: apt-pkg/pkgcachegen.cc:128
+#: apt-pkg/tagfile.cc:158
 #, c-format
-msgid "Error occured while processing %s (UsePackage1)"
-msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (UsePackage1)"
-
-#: apt-pkg/pkgcachegen.cc:149
-#, c-format
-msgid "Error occured while processing %s (UsePackage2)"
-msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (UsePackage2)"
-
-#: apt-pkg/pkgcachegen.cc:153
-#, c-format
-msgid "Error occured while processing %s (NewFileVer1)"
-msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewFileVer1)"
-
-#: apt-pkg/pkgcachegen.cc:182
-#, c-format
-msgid "Error occured while processing %s (NewVersion1)"
-msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewVersion1)"
-
-#: apt-pkg/pkgcachegen.cc:186
-#, c-format
-msgid "Error occured while processing %s (UsePackage3)"
-msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (UsePackage3)"
-
-#: apt-pkg/pkgcachegen.cc:190
-#, c-format
-msgid "Error occured while processing %s (NewVersion2)"
-msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewVersion2)"
-
-#: apt-pkg/pkgcachegen.cc:202
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"Och, przekroczy³e¶/³a¶ liczbê pakietów, któr± ten APT jest w stanie obs³u¿yæ."
-
-#: apt-pkg/pkgcachegen.cc:205
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr ""
-"Och, przekroczy³e¶/³a¶ liczbê wersji, któr± ten APT jest w stanie obs³u¿yæ."
-
-#: apt-pkg/pkgcachegen.cc:208
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"Och, przekroczy³e¶/³a¶ liczbê zale¿no¶ci, któr± ten APT jest w stanie "
-"obs³u¿yæ."
-
-#: apt-pkg/pkgcachegen.cc:517
-#, c-format
-msgid "Couldn't stat source package list %s"
-msgstr "Nie uda³o siê wykonaæ operacji stat na li¶cie pakietów ¼ród³owych %s"
-
-#. Build the status cache
-#: apt-pkg/pkgcachegen.cc:585 apt-pkg/pkgcachegen.cc:628
-#: apt-pkg/pkgcachegen.cc:633 apt-pkg/pkgcachegen.cc:756
-msgid "Reading Package Lists"
-msgstr "Czytanie list pakietów"
-
-#: apt-pkg/pkgcachegen.cc:701 apt-pkg/pkgcachegen.cc:708
-msgid "IO Error saving source cache"
-msgstr "B³±d wej¶cia/wyj¶cia przy zapisywaniu podrêcznego magazynu ¼róde³"
-
-#: apt-pkg/pkgrecords.cc:37
-#, c-format
-msgid "Index file type '%s' is not supported"
-msgstr "Plik indeksu typu '%s' nie jest obs³ugiwany"
-
-#: apt-pkg/policy.cc:269
-msgid "Invalid record in the preferences file, no Package header"
-msgstr "Nieprawid³owy rekord w pliku ustawieñ, brak nag³ówka Package"
-
-#: apt-pkg/policy.cc:291
-#, c-format
-msgid "Did not understand pin type %s"
-msgstr "Nierozpoznany typ przypinania %s"
+msgid "Unable to parse package file %s (2)"
+msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (2)"
 
 #: apt-pkg/sourcelist.cc:88
 #, c-format
@@ -1235,65 +1286,271 @@ msgstr "Nieprawid³owa linia %lu w li¶cie ¼róde³ %s (bezwzglêdna dystrybucja)"
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Nieprawid³owa linia %lu w li¶cie ¼róde³ %s (analiza dystrybucji)"
 
-#: apt-pkg/sourcelist.cc:166 apt-pkg/sourcelist.cc:190
+#: apt-pkg/sourcelist.cc:183 apt-pkg/sourcelist.cc:207
 #, c-format
 msgid "Vendor block %s is invalid"
 msgstr "Blok producenta %s jest nieprawid³owy"
 
-#: apt-pkg/sourcelist.cc:218
+#: apt-pkg/sourcelist.cc:235
 #, c-format
 msgid "Opening %s"
 msgstr "Otwieranie %s"
 
-#: apt-pkg/sourcelist.cc:244
+#: apt-pkg/sourcelist.cc:249
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Linia %u w li¶cie ¼róde³ %s jest zbyt d³uga."
+
+#: apt-pkg/sourcelist.cc:266
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Nieprawid³owa linia %u w li¶cie ¼róde³ %s (typ)"
 
-#: apt-pkg/sourcelist.cc:248
+#: apt-pkg/sourcelist.cc:270
 #, c-format
 msgid "Type '%s' is not known in on line %u in source list %s"
 msgstr "Typ '%s' jest nieznany - linia %u listy ¼róde³ %s"
 
-#: apt-pkg/sourcelist.cc:257 apt-pkg/sourcelist.cc:260
+#: apt-pkg/sourcelist.cc:279 apt-pkg/sourcelist.cc:282
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "Nieprawid³owa linia %u w li¶cie ¼róde³ %s (identyfikator producenta)"
 
-#: apt-pkg/sourcelist.cc:274
+#: apt-pkg/sourcelist.cc:296
 #, c-format
 msgid "Unknown vendor ID '%s' in line %u of source list %s"
 msgstr "Nieznany identyfikator producenta '%s' w linii %u listy ¼róde³ %s"
 
+#: apt-pkg/packagemanager.cc:402
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"To uruchomienie programu bêdzie wymaga³o tymczasowego usuniêcia istotnego "
+"pakietu %s z powodu pêtli konfliktów/pre-zale¿no¶ci. Czêsto nie oznacza to "
+"nic dobrego, ale je¶li naprawdê chcesz to zrobiæ, w³±cz opcjê APT::Force-"
+"LoopBreak."
+
+#: apt-pkg/pkgrecords.cc:37
+#, c-format
+msgid "Index file type '%s' is not supported"
+msgstr "Plik indeksu typu '%s' nie jest obs³ugiwany"
+
+#: apt-pkg/algorithms.cc:237
+#, c-format
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr ""
+"Pakiet %s ma zostaæ przeinstalowany, ale nie mo¿na znale¼æ jego archiwum."
+
+#: apt-pkg/algorithms.cc:1055
+msgid ""
+"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
+"held packages."
+msgstr ""
+"B³±d, pkgProblemResolver::Resolve zwróci³ b³±d, mo¿e to byæ spowodowane "
+"\"zatrzymanymi\" pakietami."
+
+#: apt-pkg/algorithms.cc:1057
+msgid "Unable to correct problems, you have held broken packages."
+msgstr "Nie uda³o siê naprawiæ problemów, zatrzyma³e¶/³a¶ uszkodzone pakiety."
+
+#: apt-pkg/acquire.cc:61
+#, c-format
+msgid "Lists directory %spartial is missing."
+msgstr "Brakuje katalogu list %spartial."
+
+#: apt-pkg/acquire.cc:65
+#, c-format
+msgid "Archive directory %spartial is missing."
+msgstr "Brakuje katalogu archiwów %spartial."
+
+#: apt-pkg/acquire-worker.cc:112
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "Nie uda³o siê odnale¼æ sterownika metody %s."
+
+#: apt-pkg/acquire-worker.cc:161
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "Metoda %s nie uruchomi³a siê poprawnie."
+
+#: apt-pkg/init.cc:117
+#, c-format
+msgid "Packaging system '%s' is not supported"
+msgstr "System pakietów '%s' nie jest obs³ugiwany"
+
+#: apt-pkg/init.cc:133
+msgid "Unable to determine a suitable system type"
+msgstr "Nie uda³o siê okre¶liæ odpowiedniego typu systemu"
+
+#: apt-pkg/clean.cc:61
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
+
 #: apt-pkg/srcrecords.cc:49
-msgid "Sorry, you must put some 'source' URIs in your sources.list"
-msgstr "Niestety, musisz dopisaæ jakie¶ adresy 'source' do pliku sources.list"
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "Musisz dopisaæ jakie¶ URI 'source' do pliku sources.list"
 
-#: apt-pkg/tagfile.cc:71
-#, c-format
-msgid "Unable to parse package file %s (1)"
-msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (1)"
+#: apt-pkg/cachefile.cc:73
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "Nie uda³o siê otworzyæ lub zanalizowaæ zawarto¶ci list pakietów."
 
-#: apt-pkg/tagfile.cc:158
+#: apt-pkg/cachefile.cc:77
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "Powiniene¶/na¶ uruchomiæ apt-get update aby naprawiæ te problemy."
+
+#: apt-pkg/policy.cc:269
+msgid "Invalid record in the preferences file, no Package header"
+msgstr "Nieprawid³owy rekord w pliku ustawieñ, brak nag³ówka Package"
+
+#: apt-pkg/policy.cc:291
 #, c-format
-msgid "Unable to parse package file %s (2)"
-msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (2)"
+msgid "Did not understand pin type %s"
+msgstr "Nierozpoznany typ przypinania %s"
+
+#: apt-pkg/pkgcachegen.cc:74
+msgid "Cache has an incompatible versioning system"
+msgstr "Magazyn podrêczny ma niezgodny system wersji"
+
+#: apt-pkg/pkgcachegen.cc:117
+#, c-format
+msgid "Error occured while processing %s (NewPackage)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewPackage)"
+
+#: apt-pkg/pkgcachegen.cc:129
+#, c-format
+msgid "Error occured while processing %s (UsePackage1)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (UsePackage1)"
+
+#: apt-pkg/pkgcachegen.cc:150
+#, c-format
+msgid "Error occured while processing %s (UsePackage2)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (UsePackage2)"
+
+#: apt-pkg/pkgcachegen.cc:154
+#, c-format
+msgid "Error occured while processing %s (NewFileVer1)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewFileVer1)"
+
+#: apt-pkg/pkgcachegen.cc:184
+#, c-format
+msgid "Error occured while processing %s (NewVersion1)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewVersion1)"
+
+#: apt-pkg/pkgcachegen.cc:188
+#, c-format
+msgid "Error occured while processing %s (UsePackage3)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (UsePackage3)"
+
+#: apt-pkg/pkgcachegen.cc:192
+#, c-format
+msgid "Error occured while processing %s (NewVersion2)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (NewVersion2)"
+
+#: apt-pkg/pkgcachegen.cc:207
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr ""
+"Och, przekroczy³e¶/³a¶ liczbê pakietów, któr± ten APT jest w stanie obs³u¿yæ."
+
+#: apt-pkg/pkgcachegen.cc:210
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr ""
+"Och, przekroczy³e¶/³a¶ liczbê wersji, któr± ten APT jest w stanie obs³u¿yæ."
+
+#: apt-pkg/pkgcachegen.cc:213
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr ""
+"Och, przekroczy³e¶/³a¶ liczbê zale¿no¶ci, któr± ten APT jest w stanie "
+"obs³u¿yæ."
+
+#: apt-pkg/pkgcachegen.cc:241
+#, c-format
+msgid "Error occured while processing %s (FindPkg)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (FindPkg)"
+
+#: apt-pkg/pkgcachegen.cc:254
+#, c-format
+msgid "Error occured while processing %s (CollectFileProvides)"
+msgstr "Wyst±pi³ b³±d przy przetwarzaniu %s (CollectFileProvides)"
+
+#: apt-pkg/pkgcachegen.cc:260
+#, c-format
+msgid "Package %s %s was not found while processing file dependencies"
+msgstr "Pakiet %s %s nie zosta³ odnaleziony przy przetwarzaniu zale¿no¶ci plików"
+
+#: apt-pkg/pkgcachegen.cc:574
+#, c-format
+msgid "Couldn't stat source package list %s"
+msgstr "Nie uda³o siê wykonaæ operacji stat na li¶cie pakietów ¼ród³owych %s"
+
+#. Build the status cache
+#: apt-pkg/pkgcachegen.cc:643 apt-pkg/pkgcachegen.cc:701
+#: apt-pkg/pkgcachegen.cc:706 apt-pkg/pkgcachegen.cc:829
+msgid "Reading Package Lists"
+msgstr "Czytanie list pakietów"
+
+#: apt-pkg/pkgcachegen.cc:658
+msgid "Collecting File Provides"
+msgstr ""
+
+#: apt-pkg/pkgcachegen.cc:774 apt-pkg/pkgcachegen.cc:781
+msgid "IO Error saving source cache"
+msgstr "B³±d wej¶cia/wyj¶cia przy zapisywaniu podrêcznego magazynu ¼róde³"
+
+#: apt-pkg/acquire-item.cc:124
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "nie uda³o siê zmieniæ nazwy, %s (%s -> %s)"
+
+#: apt-pkg/acquire-item.cc:353
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+"Nie uda³o siê odnale¼æ pliku dla pakietu %s. Mo¿e to oznaczaæ, ¿e trzeba "
+"bêdzie rêcznie naprawiæ ten pakiet (z powodu brakuj±cej architektury)."
+
+#: apt-pkg/acquire-item.cc:388
+#, c-format
+msgid ""
+"I wasn't able to locate file for the %s package. This might mean you need to "
+"manually fix this package."
+msgstr ""
+"Nie uda³o siê odnale¼æ pliku dla pakietu %s. Mo¿e to oznaczaæ, ¿e trzeba "
+"bêdzie rêcznie naprawiæ ten pakiet."
+
+#: apt-pkg/acquire-item.cc:419
+#, c-format
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"Pliki indeksu pakietów s± uszkodzone. Brak pola Filename: dla pakietu %s."
+
+#: apt-pkg/acquire-item.cc:501
+msgid "Size mismatch"
+msgstr "B³êdny rozmiar"
+
+#: apt-pkg/acquire-item.cc:511
+msgid "MD5Sum mismatch"
+msgstr "B³êdna suma MD5"
+
+#~ msgid "Sorry, you don't have enough free space in %s to hold all the .debs."
+#~ msgstr ""
+#~ "Niestety w %s jest zbyt ma³o wolnego miejsca aby pomie¶ciæ wszystkie "
+#~ "pliki .deb."
 
 #, fuzzy
 #~ msgid "Unable to read the cdrom database %s"
 #~ msgstr "Nie mo¿na czytaæ %s"
 
 #, fuzzy
-#~ msgid "File not found"
-#~ msgstr "(nie znaleziony)"
-
-#, fuzzy
 #~ msgid "Unable to connect to %s %s:"
 #~ msgstr "Nie uda³o siê przej¶æ do %s"
-
-#, fuzzy
-#~ msgid "Failed to stat"
-#~ msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
 
 #, fuzzy
 #~ msgid "Unable to determine the peer name"
@@ -1318,10 +1575,6 @@ msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (2)"
 #, fuzzy
 #~ msgid "Unable to invoke "
 #~ msgstr "Nie mo¿na czytaæ %s"
-
-#, fuzzy
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Nie uda³o siê odnale¼æ pakietu %s"
 
 #, fuzzy
 #~ msgid "Unknown date format"
@@ -1360,10 +1613,6 @@ msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (2)"
 #~ msgstr "Zastêpuje"
 
 #, fuzzy
-#~ msgid "Unable to stat %s"
-#~ msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
-
-#, fuzzy
 #~ msgid "Failed to read the archive headers"
 #~ msgstr "Nie uda³o siê pobraæ niektórych archiwów."
 
@@ -1382,10 +1631,6 @@ msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (2)"
 #, fuzzy
 #~ msgid "Internal Error, could not locate member %s"
 #~ msgstr "B³±d wewnêtrzny, AllUpgrade wszystko popsu³o"
-
-#, fuzzy
-#~ msgid "Couldn't change to %s"
-#~ msgstr "Nie uda³o siê odnale¼æ pakietu %s"
 
 #, fuzzy
 #~ msgid "Failed to remove %s"
@@ -1422,10 +1667,6 @@ msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (2)"
 #, fuzzy
 #~ msgid "You must give at least one file name"
 #~ msgstr "Musisz podaæ dok³adnie jeden wzór"
-
-#, fuzzy
-#~ msgid "Problem opening %s"
-#~ msgstr "Otwieranie %s"
 
 #, fuzzy
 #~ msgid "Regex compilation error"
@@ -1557,32 +1798,3 @@ msgstr "Nie uda³o siê zanalizowaæ pliku pakietu %s (2)"
 #, fuzzy
 #~ msgid "Failed too stat %s"
 #~ msgstr "Nie uda³o siê wykonaæ operacji stat na pliku %s."
-
-#~ msgid "Merging Available information"
-#~ msgstr "£±czenie informacji o dostêpnych pakietach"
-
-#~ msgid "Press enter to continue."
-#~ msgstr "Naci¶nij enter aby kontynuowaæ."
-
-#~ msgid "Bad default setting!"
-#~ msgstr "Nieprawid³owe ustawienie domy¶lne!"
-
-# Note to translators: The following four messages belong together. It doesn't
-# matter where sentences start, but it has to fit in just these four lines, and
-# at only 80 characters per line, if possible.
-#~ msgid "Some errors occurred while unpacking. I'm going to configure the"
-#~ msgstr ""
-#~ "Wyst±pi³y problemy przy rozpakowywaniu. Zainstalowane pakiety zostan±"
-
-#~ msgid "packages that were installed. This may result in duplicate errors"
-#~ msgstr "skonnfigurowane. Mo¿e to spowodowaæ podwójne b³êdy, lub b³êdy"
-
-#~ msgid ""
-#~ "or errors caused by missing dependencies. This is OK, only the errors"
-#~ msgstr ""
-#~ "spowodowane brakuj±cymi zale¿no¶ciami. To jest normalne. Tylko powy¿sze"
-
-#~ msgid ""
-#~ "above this message are important. Please fix them and run [I]nstall again"
-#~ msgstr ""
-#~ "b³êdy s± istotne. Proszê je poprawiæ i ponownie wybraæ [I]nstalacjê."
