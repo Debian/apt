@@ -68,11 +68,42 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    else if (pid == 0)
    {
+      const char *Args[400];
+      unsigned int i = 0;
+
+      Args[i++] = gpgvpath.c_str();
+      Args[i++] = "--status-fd";
+      Args[i++] = "3";
+      Args[i++] = "--keyring";
+      Args[i++] = pubringpath.c_str();
+
+      Configuration::Item const *Opts;
+      Opts = _config->Tree("Acquire::gpgv::Options");
+      if (Opts != 0)
+      {
+         Opts = Opts->Child;
+	 for (; Opts != 0; Opts = Opts->Next)
+         {
+            if (Opts->Value.empty() == true)
+               continue;
+            Args[i++] = Opts->Value.c_str();
+	    if(i >= 395) { 
+	       std::cerr << "E: Argument list from Acquire::gpgv::Options too long. Exiting." << std::endl;
+	       exit(111);
+	    }
+         }
+      }
+      Args[i++] = file;
+      Args[i++] = outfile;
+      Args[i++] = NULL;
+
       if (_config->FindB("Debug::Acquire::gpgv", false))
       {
-         std::cerr << "Preparing to exec: " << gpgvpath
-		   << " --status-fd 3 --keyring " << pubringpath
-		   << " " << file << " " << outfile << std::endl;
+         std::cerr << "Preparing to exec: " << gpgvpath;
+	 int j;
+	 for(j=0;Args[j] != NULL; j++)
+	    std::cerr << Args[j] << " ";
+	 std::cerr << std::endl;
       }
       int nullfd = open("/dev/null", O_RDONLY);
       close(fd[0]);
@@ -85,8 +116,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       putenv("LANG=");
       putenv("LC_ALL=");
       putenv("LC_MESSAGES=");
-      execlp(gpgvpath.c_str(), gpgvpath.c_str(), "--status-fd", "3", "--keyring", 
-	     pubringpath.c_str(), file, outfile, NULL);
+      execvp(gpgvpath.c_str(), (char **)Args);
              
       exit(111);
    }
