@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.48 2001/05/22 04:17:18 jgg Exp $
+// $Id: acquire.cc,v 1.49 2001/05/27 04:28:37 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -113,13 +113,15 @@ void pkgAcquire::Remove(Item *Itm)
 {
    Dequeue(Itm);
    
-   for (ItemIterator I = Items.begin(); I != Items.end(); I++)
+   for (ItemIterator I = Items.begin(); I != Items.end();)
    {
       if (*I == Itm)
       {
 	 Items.erase(I);
 	 I = Items.begin();
       }      
+      else 
+	 I++;
    }
 }
 									/*}}}*/
