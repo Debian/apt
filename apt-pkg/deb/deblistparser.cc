@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.26 2001/05/27 05:42:36 jgg Exp $
+// $Id: deblistparser.cc,v 1.27 2001/07/26 06:15:59 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -152,7 +152,7 @@ unsigned short debListParser::VersionHash()
                             "Conflicts",
                             "Replaces",0};
    unsigned long Result = INIT_FCS;
-   char S[300];
+   char S[1024];
    for (const char **I = Sections; *I != 0; I++)
    {
       const char *Start;
@@ -173,7 +173,7 @@ unsigned short debListParser::VersionHash()
 	 if (*Start == '>' && Start[1] != '>' && Start[1] != '=')
 	    *I++ = '=';
       }
-      
+
       Result = AddCRC16(Result,S,I - S);
    }
    
