@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.27 1999/02/27 22:29:11 jgg Exp $
+// $Id: http.cc,v 1.28 1999/03/15 06:01:00 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -336,18 +336,10 @@ bool ServerState::Open()
 
    /* This implements a timeout for connect by opening the connection
       nonblocking */
-   fd_set wfds;
-   FD_ZERO(&wfds);
-   FD_SET(ServerFd,&wfds);
-   struct timeval tv;
-   tv.tv_sec = TimeOut;
-   tv.tv_usec = 0;
-   int Res = 0;
-   if ((Res = select(ServerFd+1,0,&wfds,0,&tv)) < 0)
-      return _error->Errno("select","Select failed");
-   if (Res == 0)
+   if (WaitFd(ServerFd,true,TimeOut) == false)
       return _error->Error("Could not connect, connection timed out");
-   unsigned int Err,Len=sizeof(Err);
+   unsigned int Err;
+   unsigned int Len = sizeof(Err);
    if (getsockopt(ServerFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
       return _error->Errno("getsockopt","Failed");
    if (Err != 0)
@@ -879,7 +871,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       return 5;
 
    FailFile = Queue->DestFile;
-   FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
+   FailFile.c_str();   // Make sure we dont do a malloc in the signal handler
    FailFd = File->Fd();
    FailTime = Srv->Date;
       

@@ -35,3 +35,9 @@ PROGRAM=http
 SLIBS = -lapt-pkg 
 SOURCE = http.cc
 include $(PROGRAM_H)
+
+# The ftp method
+PROGRAM=ftp
+SLIBS = -lapt-pkg 
+SOURCE = ftp.cc
+include $(PROGRAM_H)
