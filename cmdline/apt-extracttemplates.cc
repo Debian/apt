@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.11 2002/09/21 21:29:13 jgg Exp $
+// $Id: apt-extracttemplates.cc,v 1.12 2002/11/09 22:41:55 doogie Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -243,11 +243,11 @@ int ShowHelp(void)
 // WriteFile - write the contents of the passed string to a file	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string WriteFile(const char *prefix, const char *data)
+string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
-	snprintf(fn, sizeof(fn), "%s/%s.%u%d", _config->Find("APT::ExtractTemplates::TempDir", TMPDIR).c_str(), prefix, getpid(), i++);
+	snprintf(fn, sizeof(fn), "%s/%s.%s.%u%d", _config->Find("APT::ExtractTemplates::TempDir", TMPDIR).c_str(), package, prefix, getpid(), i++);
 	FileFd f;
 	if (data == NULL)
 		data = "";
@@ -268,8 +268,8 @@ string WriteFile(const char *prefix, const char *data)
 /* */
 void WriteConfig(const DebFile &file)
 {
-	string templatefile = WriteFile("template", file.Template);
-	string configscript = WriteFile("config", file.Config);
+	string templatefile = WriteFile(file.package, "template", file.Template);
+	string configscript = WriteFile(file.package, "config", file.Config);
 
 	if (templatefile.empty() == true || configscript.empty() == true)
 		return;
