@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.26 2001/03/24 22:34:55 jgg Exp $
+// $Id: ftp.cc,v 1.27 2001/04/10 04:51:50 jgg Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -153,6 +153,10 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
    RotateDNS();
    if (Connect(Host,Port,"ftp",21,ServerFd,TimeOut,Owner) == false)
       return false;
+
+   // Login must be before getpeername otherwise dante won't work.
+   Owner->Status("Logging in");
+   bool Res = Login();
    
    // Get the remote server's address
    PeerAddrLen = sizeof(PeerAddr);
@@ -164,8 +168,7 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
    if (getsockname(ServerFd,(sockaddr *)&ServerAddr,&ServerAddrLen) != 0)
       return _error->Errno("getsockname","Unable to determine the local name");
    
-   Owner->Status("Logging in");
-   return Login();
+   return Res;
 }
 									/*}}}*/
 // FTPConn::Login - Login to the remote server				/*{{{*/
