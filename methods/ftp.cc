@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.14 1999/07/18 23:06:56 jgg Exp $
+// $Id: ftp.cc,v 1.15 1999/09/05 05:41:41 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -848,6 +848,15 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       bool Missing;
       if (Server->Get(File,Fd,Res.ResumePoint,MD5,Missing) == false)
       {
+	 Fd.Close();
+	 
+	 // Timestamp
+	 struct utimbuf UBuf;
+	 time(&UBuf.actime);
+	 UBuf.actime = FailTime;
+	 UBuf.modtime = FailTime;
+	 utime(FailFile.c_str(),&UBuf);
+	 
 	 // If the file is missing we hard fail otherwise transient fail
 	 if (Missing == true)
 	    return false;
