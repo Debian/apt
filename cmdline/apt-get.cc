@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.126 2003/02/12 16:14:08 doogie Exp $
+// $Id: apt-get.cc,v 1.127 2003/04/27 01:36:14 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -150,7 +150,7 @@ bool AnalPrompt(const char *Text)
 // ---------------------------------------------------------------------
 /* This prints out a string of space separated words with a title and 
    a two space indent line wraped to the current screen width. */
-bool ShowList(ostream &out,string Title,string List)
+bool ShowList(ostream &out,string Title,string List,string VersionsList)
 {
    if (List.empty() == true)
       return true;
@@ -168,19 +168,38 @@ bool ShowList(ostream &out,string Title,string List)
       
    out << Title << endl;
    string::size_type Start = 0;
+   string::size_type VersionsStart = 0;
    while (Start < List.size())
    {
-      string::size_type End;
-      if (Start + ScreenWidth >= List.size())
-	 End = List.size();
-      else
-	 End = List.rfind(' ',Start+ScreenWidth);
+      if(_config->FindB("APT::Get::Show-Versions",false) == true &&
+         VersionsList.size() > 0) {
+         string::size_type End;
+         string::size_type VersionsEnd;
+         
+         End = List.find(' ',Start);
+         VersionsEnd = VersionsList.find('\n', VersionsStart);
 
-      if (End == string::npos || End < Start)
-	 End = Start + ScreenWidth;
-      out << "  " << string(List,Start,End - Start) << endl;
-      Start = End + 1;
+         out << "   " << string(List,Start,End - Start) << " (" << 
+            string(VersionsList,VersionsStart,VersionsEnd - VersionsStart) << 
+            ")" << endl;
+         
+         Start = End + 1;
+         VersionsStart = VersionsEnd + 1;
+      } else {
+         string::size_type End;
+
+         if (Start + ScreenWidth >= List.size())
+            End = List.size();
+         else
+            End = List.rfind(' ',Start+ScreenWidth);
+
+         if (End == string::npos || End < Start)
+            End = Start + ScreenWidth;
+         out << "  " << string(List,Start,End - Start) << endl;
+         Start = End + 1;
+      }
    }   
+
    return false;
 }
 									/*}}}*/
@@ -326,14 +345,17 @@ void ShowNew(ostream &out,CacheFile &Cache)
    /* Print out a list of packages that are going to be removed extra
       to what the user asked */
    string List;
+   string VersionsList;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      if (Cache[I].NewInstall() == true)
-	 List += string(I.Name()) + " ";
+      if (Cache[I].NewInstall() == true) {
+         List += string(I.Name()) + " ";
+         VersionsList += string(Cache[I].CandVersion) + "\n";
+      }
    }
    
-   ShowList(out,_("The following NEW packages will be installed:"),List);
+   ShowList(out,_("The following NEW packages will be installed:"),List,VersionsList);
 }
 									/*}}}*/
 // ShowDel - Show packages to delete					/*{{{*/
@@ -344,6 +366,7 @@ void ShowDel(ostream &out,CacheFile &Cache)
    /* Print out a list of packages that are going to be removed extra
       to what the user asked */
    string List;
+   string VersionsList;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
@@ -353,10 +376,12 @@ void ShowDel(ostream &out,CacheFile &Cache)
 	    List += string(I.Name()) + "* ";
 	 else
 	    List += string(I.Name()) + " ";
+     
+     VersionsList += string(Cache[I].CandVersion)+ "\n";
       }
    }
    
-   ShowList(out,_("The following packages will be REMOVED:"),List);
+   ShowList(out,_("The following packages will be REMOVED:"),List,VersionsList);
 }
 									/*}}}*/
 // ShowKept - Show kept packages					/*{{{*/
@@ -365,6 +390,7 @@ void ShowDel(ostream &out,CacheFile &Cache)
 void ShowKept(ostream &out,CacheFile &Cache)
 {
    string List;
+   string VersionsList;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {	 
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
@@ -375,8 +401,9 @@ void ShowKept(ostream &out,CacheFile &Cache)
 	 continue;
       
       List += string(I.Name()) + " ";
+      VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
-   ShowList(out,_("The following packages have been kept back"),List);
+   ShowList(out,_("The following packages have been kept back"),List,VersionsList);
 }
 									/*}}}*/
 // ShowUpgraded - Show upgraded packages				/*{{{*/
@@ -385,6 +412,7 @@ void ShowKept(ostream &out,CacheFile &Cache)
 void ShowUpgraded(ostream &out,CacheFile &Cache)
 {
    string List;
+   string VersionsList;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
@@ -394,8 +422,9 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
 	 continue;
       
       List += string(I.Name()) + " ";
+      VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
-   ShowList(out,_("The following packages will be upgraded"),List);
+   ShowList(out,_("The following packages will be upgraded"),List,VersionsList);
 }
 									/*}}}*/
 // ShowDowngraded - Show downgraded packages				/*{{{*/
@@ -404,6 +433,7 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
 bool ShowDowngraded(ostream &out,CacheFile &Cache)
 {
    string List;
+   string VersionsList;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
@@ -413,8 +443,9 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
 	 continue;
       
       List += string(I.Name()) + " ";
+      VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
-   return ShowList(out,_("The following packages will be DOWNGRADED"),List);
+   return ShowList(out,_("The following packages will be DOWNGRADED"),List,VersionsList);
 }
 									/*}}}*/
 // ShowHold - Show held but changed packages				/*{{{*/
@@ -423,15 +454,18 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
 bool ShowHold(ostream &out,CacheFile &Cache)
 {
    string List;
+   string VersionsList;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].InstallVer != (pkgCache::Version *)I.CurrentVer() &&
-	  I->SelectedState == pkgCache::State::Hold)
-	 List += string(I.Name()) + " ";
+          I->SelectedState == pkgCache::State::Hold) {
+         List += string(I.Name()) + " ";
+		 VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
+      }
    }
 
-   return ShowList(out,_("The following held packages will be changed:"),List);
+   return ShowList(out,_("The following held packages will be changed:"),List,VersionsList);
 }
 									/*}}}*/
 // ShowEssential - Show an essential package warning			/*{{{*/
@@ -442,6 +476,7 @@ bool ShowHold(ostream &out,CacheFile &Cache)
 bool ShowEssential(ostream &out,CacheFile &Cache)
 {
    string List;
+   string VersionsList;
    bool *Added = new bool[Cache->Head().PackageCount];
    for (unsigned int I = 0; I != Cache->Head().PackageCount; I++)
       Added[I] = false;
@@ -460,6 +495,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	 {
 	    Added[I->ID] = true;
 	    List += string(I.Name()) + " ";
+        //VersionsList += string(Cache[I].CurVersion) + "\n"; ???
 	 }
       }
       
@@ -484,13 +520,14 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	    char S[300];
 	    snprintf(S,sizeof(S),_("%s (due to %s) "),P.Name(),I.Name());
 	    List += S;
+        //VersionsList += "\n"; ???
 	 }	 
       }      
    }
    
    delete [] Added;
    return ShowList(out,_("WARNING: The following essential packages will be removed\n"
-			 "This should NOT be done unless you know exactly what you are doing!"),List);
+			 "This should NOT be done unless you know exactly what you are doing!"),List,VersionsList);
 }
 									/*}}}*/
 // Stats - Show some statistics						/*{{{*/
@@ -990,6 +1027,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 	   "of sources.list\n"),Pkg.Name());
 	 
 	 string List;
+	 string VersionsList;
 	 SPtrArray<bool> Seen = new bool[Cache.Head().PackageCount];
 	 memset(Seen,0,Cache.Head().PackageCount*sizeof(*Seen));
 	 pkgCache::DepIterator Dep = Pkg.RevDependsList();
@@ -1001,8 +1039,9 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 	       continue;
 	    Seen[Dep.ParentPkg()->ID] = true;
 	    List += string(Dep.ParentPkg().Name()) + " ";
+        //VersionsList += string(Dep.ParentPkg().CurVersion) + "\n"; ???
 	 }	    
-	 ShowList(c1out,_("However the following packages replace it:"),List);
+	 ShowList(c1out,_("However the following packages replace it:"),List,VersionsList);
       }
       
       _error->Error(_("Package %s has no installation candidate"),Pkg.Name());
@@ -1444,6 +1483,7 @@ bool DoInstall(CommandLine &CmdL)
    if (Cache->InstCount() != ExpectedInst)
    {
       string List;
+      string VersionsList;
       for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
       {
 	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
@@ -1455,11 +1495,13 @@ bool DoInstall(CommandLine &CmdL)
 	    if (strcmp(*J,I.Name()) == 0)
 		break;
 	 
-	 if (*J == 0)
+	 if (*J == 0) {
 	    List += string(I.Name()) + " ";
+        VersionsList += string(Cache[I].CandVersion) + "\n";
+     }
       }
       
-      ShowList(c1out,_("The following extra packages will be installed:"),List);
+      ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
    }
 
    // See if we need to prompt
@@ -2132,6 +2174,7 @@ bool ShowHelp(CommandLine &CmdL)
       "  -m  Attempt to continue if archives are unlocatable\n"
       "  -u  Show a list of upgraded packages as well\n"
       "  -b  Build the source package after fetching it\n"
+      "  -V  Show verbose version numbers\n"
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
       "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
@@ -2175,6 +2218,7 @@ int main(int argc,const char *argv[])
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
       {'v',"version","version",0},
+      {'V',"verbose-versions","APT::Get::Show-Versions",0},
       {'q',"quiet","quiet",CommandLine::IntLevel},
       {'q',"silent","quiet",CommandLine::IntLevel},
       {'d',"download-only","APT::Get::Download-Only",0},
