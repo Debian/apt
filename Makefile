@@ -16,27 +16,13 @@ all headers library clean veryclean binary program doc:
 	$(MAKE) -C gui $@
 	$(MAKE) -C doc $@
 
+# Some very common aliases
 .PHONY: maintainer-clean dist-clean distclean pristine sanity 
 maintainer-clean dist-clean distclean pristine sanity: veryclean
 
-
 # The startup target builds the necessary configure scripts. It should
 # be used after a CVS checkout.
-.PHONY: startup
-BUILD=build
-CONVERTED=$(BUILD)/environment.mak $(BUILD)/include/config.h $(BUILD)/makefile
-startup: configure $(CONVERTED)
-
-configure: aclocal.m4 configure.in
-	autoconf	
-
-aclocal.m4:
-	aclocal -I buildlib
-
-$(BUILD)/config.status: configure
-	test -e $(BUILD) || mkdir $(BUILD)	
-	(HERE=`pwd`; cd $(BUILD) && $$HERE/configure)
+CONVERTED=environment.mak include/config.h makefile
 $(BUILD)/include/config.h: buildlib/config.h.in
 $(BUILD)/environment.mak: buildlib/environment.mak.in
-$(CONVERTED): $(BUILD)/config.status
-	(cd $(BUILD) && ./config.status)
+include buildlib/configure.mak

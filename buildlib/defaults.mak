@@ -18,7 +18,9 @@
 # and then within the rule $(@F) gets back $(LOCAL)! Other rules will
 # have to use some other mechanism (filter perhaps?) The reason such
 # lengths are used is so that each directory can contain several 'instances'
-# of any given module
+# of any given module. I notice that the very latest gmake has the concept
+# of local variables for rules. It is possible this feature in conjunction
+# with the generated names will provide a very powerfull solution indeed!
 
 # A build directory is used by default, all generated items get put into
 # there. However unlike automake this is not done with a VPATH build
