@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extracttar.cc,v 1.3 2001/05/27 23:47:09 jgg Exp $
+// $Id: extracttar.cc,v 1.4 2001/09/30 04:06:59 jgg Exp $
 /* ######################################################################
 
    Extract a Tar - Tar Extractor
@@ -32,7 +32,7 @@
 #include <fcntl.h>
 #include <iostream.h>
 									/*}}}*/
-
+    
 // The on disk header for a tar file.
 struct ExtractTar::TarHeader
 {
@@ -69,7 +69,8 @@ ExtractTar::ExtractTar(FileFd &Fd,unsigned long Max) : File(Fd),
 /* */
 ExtractTar::~ExtractTar()
 {
-   Done(false);
+   // Error close
+   Done(true);
 }
 									/*}}}*/
 // ExtractTar::Done - Reap the gzip sub process				/*{{{*/
@@ -190,11 +191,9 @@ bool ExtractTar::Go(pkgDirStream &Stream)
    
       // Decode all of the fields
       pkgDirStream::Item Itm;
-      unsigned long UID;
-      unsigned long GID;
       if (StrToNum(Tar->Mode,Itm.Mode,sizeof(Tar->Mode),8) == false ||
-	  StrToNum(Tar->UserID,UID,sizeof(Tar->UserID),8) == false ||
-	  StrToNum(Tar->GroupID,GID,sizeof(Tar->GroupID),8) == false ||
+	  StrToNum(Tar->UserID,Itm.UID,sizeof(Tar->UserID),8) == false ||
+	  StrToNum(Tar->GroupID,Itm.GID,sizeof(Tar->GroupID),8) == false ||
 	  StrToNum(Tar->Size,Itm.Size,sizeof(Tar->Size),8) == false ||
 	  StrToNum(Tar->MTime,Itm.MTime,sizeof(Tar->MTime),8) == false ||
 	  StrToNum(Tar->Major,Itm.Major,sizeof(Tar->Major),8) == false ||
