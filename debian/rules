@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.15 1999/04/10 06:37:34 doogie Exp $
+# $Id: rules,v 1.16 1999/04/18 06:51:35 jgg Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -15,6 +15,17 @@
 DEB_BUILD_PROG:=debuild -us -uc
 APT_DEBVER=$(shell dpkg-parsechangelog |sed -n -e '/^Version:/s/^Version: //p')
 APT_CONFVER=$(shell sed -n -e 's/^AC_DEFINE_UNQUOTED(VERSION,"\(.*\)")/\1/p' configure.in)
+
+# Determine the build directory to use
+BASE=.
+ifdef BUILD
+BUILD_POSSIBLE := $(BUILD) $(BASE)/$(BUILD)
+else
+BUILD_POSSIBLE := $(BASE) $(BASE)/build-$(shell uname -m) $(BASE)/build
+endif
+BUILDX:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak*))
+BUILDX:= $(patsubst %/,%,$(firstword $(dir $(BUILDX))))
+override BLD := $(BUILDX)
 
 ifneq ($(APT_DEBVER),$(APT_CONFVER))
 .PHONY: configure.in
@@ -68,8 +79,8 @@ libapt-pkg-doc: build debian/shlibs.local
 #
 # libapt-pkg-doc install
 #
-	-cp -a build/docs/cache* build/docs/design* build/docs/dpkg-tech* \
-	  build/docs/files* build/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
+	-cp -a $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
+	  $(BLD)/docs/files* $(BLD)/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
 	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
 	dh_installdocs -p$@
 	dh_installexamples -p$@
@@ -101,24 +112,24 @@ apt: build debian/shlibs.local
 #
 # apt install
 #
-	cp build/bin/apt-* debian/tmp/usr/bin/
+	cp $(BLD)/bin/apt-* debian/tmp/usr/bin/
 	
 	# install the shared libs
-	find build/bin/ -type f -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
-	find build/bin/ -type l -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
+	find $(BLD)/bin/ -type f -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
+	find $(BLD)/bin/ -type l -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
 
-	cp build/bin/methods/* debian/tmp/usr/lib/apt/methods/
+	cp $(BLD)/bin/methods/* debian/tmp/usr/lib/apt/methods/
 
-	cp build/scripts/dselect/* debian/tmp/usr/lib/dpkg/methods/apt/
+	cp $(BLD)/scripts/dselect/* debian/tmp/usr/lib/dpkg/methods/apt/
 #	cp debian/sources.list debian/tmp/etc/apt/
 
 	# Copy the users guide	
-	-cp build/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
-	-cp -a build/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
+	-cp $(BLD)/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
+	-cp -a $(BLD)/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
 	
 	# Copy the offline guide	
-	-cp build/docs/offline.text debian/tmp/usr/doc/apt/offline.txt
-	-cp -a build/docs/offline.html/* debian/tmp/usr/doc/apt/offline.html/
+	-cp $(BLD)/docs/offline.text debian/tmp/usr/doc/apt/offline.txt
+	-cp -a $(BLD)/docs/offline.html/* debian/tmp/usr/doc/apt/offline.html/
 	
 	cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
 	
@@ -127,7 +138,7 @@ apt: build debian/shlibs.local
 
 
 	dh_installdocs -p$@
-	dh_installexamples -papt build/docs/examples/*
+	dh_installexamples -papt $(BLD)/docs/examples/*
 #	dh_installmenu -papt
 #	dh_installinit -papt
 #	dh_installcron -papt
@@ -155,7 +166,7 @@ libapt-pkg-dev: build debian/shlibs.local
 # libapt-pkg-dev install
 #
 	ln -s libapt-pkg.so.${LIBAPT_MAJOR} debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
-	cp build/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
+	cp $(BLD)/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
 
 	dh_installdocs -p$@
 #	dh_installmenu -papt
