@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-08-17 21:45-0400\n"
-"PO-Revision-Date: 2003-05-15 10:25+0100\n"
+"PO-Revision-Date: 2003-08-27 13:07+0100\n"
 "Last-Translator: Pierre Machard <pmachard@tuxfamily.org>\n"
 "Language-Team: Debian-l10n-french <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -92,9 +92,8 @@ msgid "You must give exactly one pattern"
 msgstr "Vous devez fournir exactement un motif"
 
 #: cmdline/apt-cache.cc:1383
-#, fuzzy
 msgid "No packages found"
-msgstr " index des paquets et "
+msgstr "Aucun paquet n'a été trouvé"
 
 #: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
@@ -154,7 +153,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s pour %s %s est compilé le %s %s\n"
 
 #: cmdline/apt-cache.cc:1588
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -193,12 +191,12 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "Usage : apt-cache [options] commande\n"
-"        apt-cache [options] add fichier1 [fichier1 ...]\n"
+"        apt-cache [options] add fichier1 [fichier2 ...]\n"
 "        apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
 "        apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache est un outil de bas niveau pour manipuler les fichiers de cache\n"
-"pour les binaires, et pour obtenir des informations sur eux\n"
+"pour les binaires, et pour en obtenir des informations.\n"
 "\n"
 "Commandes :\n"
 "   add - Ajoute un paquet au cache source\n"
@@ -327,7 +325,6 @@ msgid "Error Processing Contents %s"
 msgstr "Erreur du traitement du contenu %s"
 
 #: ftparchive/apt-ftparchive.cc:550
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -368,10 +365,11 @@ msgid ""
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
 "Usage : apt-ftparchive [options] commande\n"
-"        sources srcpath [fichier d'« override » [chemin du préfixe]]\n"
-"        contents path\n"
-"        generate config [groupes]\n"
-"        clean config\n"
+"Commandes :  paquets binarypath [fichier d'« override » [chemin du préfixe]]\n"
+"             sources srcpath [fichier d'« override » [chemin du préfixe]]\n"
+"             contents path\n"
+"             generate config [groupes]\n"
+"             clean config\n"
 "\n"
 "apt-ftparchive génère des fichiers d'index pour les archives Debian. Il\n"
 "supporte de nombreux types de génération, d'une automatisation complète à\n"
@@ -380,12 +378,12 @@ msgstr ""
 "apt-ftparchive génère les fichiers de paquets à partir d'un arbre de .debs.\n"
 "Le fichier des paquets contient les contenus de tous les champs de contrôle\n"
 "de chaque paquet aussi bien que les hachés MD5 et la taille du fichier. Un\n"
-"fichier d'« override » est supporté pour forcer la valeur des priorités et\n"
+"fichier d'« override » est accepté pour forcer la valeur des priorités et\n"
 "des sections\n"
 "\n"
 "De façon similaire, apt-ftparchive génère des fichiers de source à partir\n"
 "d'un arbre de .dscs. L'option --source-override peut être employée pour\n"
-"spécifier un fichier src d'« override »\n"
+"spécifier un fichier src d'« override »\n"
 "\n"
 "Les commandes « packages » et « sources » devraient être démarrées à la\n"
 "racine de l'arbre. « BinaryPath » devrait pointer sur la base d'une\n"
@@ -398,11 +396,11 @@ msgstr ""
 "Options :\n"
 "  -h     Ce texte d'aide\n"
 "  --md5  Contrôle la génération des MD5\n"
-"  -s=?  Fichier d'« override » pour les sources\n"
-"  -q    Silencieux\n"
-"  -d=?  Sélectionne la base de données optionnelle de cache\n"
+"  -s=?   Fichier d'« override » pour les sources\n"
+"  -q     Silencieux\n"
+"  -d=?   Sélectionne la base de données optionnelle de cache\n"
 "  --no-delink Permet le mode de débogage délié\n"
-"  --contents Contrôle la génération de fichier\n"
+"  --contents  Contrôle la génération de fichier\n"
 "  -c=? Lit ce fichier de configuration\n"
 "  -o=? Place une option de configuration arbitraire"
 
@@ -414,7 +412,7 @@ msgstr "Aucune sélection ne correspond"
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
 msgstr ""
-"Quelques fichiers sont manquants dans le groupe de fichiers de paquets « %s »"
+"Quelques fichiers sont manquants dans le groupe de fichiers de paquets « %s »"
 
 #: ftparchive/cachedb.cc:43
 #, c-format
@@ -692,9 +690,9 @@ msgstr ""
 "en train de faire !"
 
 #: cmdline/apt-get.cc:573
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu paquets mis à jour, %lu nouvellement installés, "
+msgstr "%lu mis à jour, %lu nouvellement installés, "
 
 #: cmdline/apt-get.cc:577
 #, c-format
@@ -712,9 +710,9 @@ msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu à enlever et %lu non mis à jour.\n"
 
 #: cmdline/apt-get.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu paquets partiellement installés ou enlevés.\n"
+msgstr "%lu partiellement installés ou enlevés.\n"
 
 #: cmdline/apt-get.cc:645
 msgid "Correcting dependencies..."
@@ -1093,14 +1091,13 @@ msgid "%s has no build depends.\n"
 msgstr "%s n'a pas de dépendances de construction.\n"
 
 #: cmdline/apt-get.cc:2095
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s "
-"ne\n"
-"peut être trouvé"
+"ne peut être trouvé"
 
 #: cmdline/apt-get.cc:2145
 #, c-format
@@ -1129,7 +1126,6 @@ msgid "Supported Modules:"
 msgstr "Modules reconnus :"
 
 #: cmdline/apt-get.cc:2251
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1205,13 +1201,14 @@ msgstr ""
 "  -b Construit la source du paquet après l'avoir récupérée\n"
 "  -V Affiche les numéros des versions de façon détaillée\n"
 "  -c=? Lit ce fichier de configuration\n"
+"  -o=? Place une option de configuration arbitraire, ex. -o dir::cache=/tmp\n"
 "Reportez-vous aux pages de manuels d'apt-get(8), sources.list(5) et\n"
 "apt.conf(5) pour plus d'information et d'option.\n"
 "                      Cet APT a les « Super Cow Powers »\n"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
-msgstr "Succès "
+msgstr "Atteint "
 
 #: cmdline/acqprogress.cc:79
 msgid "Get:"
@@ -1235,7 +1232,7 @@ msgid " [Working]"
 msgstr " [En cours]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
@@ -1327,7 +1324,7 @@ msgid "Tar Checksum failed, archive corrupted"
 msgstr "Échec dans la somme de contrôle de tar, l'archive est corrompue"
 
 #: apt-inst/contrib/extracttar.cc:295
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Type d'en-tête %u inconnu pour TAR, partie %s"
 
@@ -1931,7 +1928,7 @@ msgstr "La sélection %s n'a pu être trouvée"
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "Type d'abréviation non reconnue : « %c »"
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
@@ -2012,9 +2009,9 @@ msgid "Option %s requires an argument."
 msgstr "L'option %s nécessite un argument."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "Option %s : l'item configuration doit être spécifiée avec =<val>."
+msgstr "Option %s : l'item configuration doit être spécifiée avec un =<val>."
 
 #: apt-pkg/contrib/cmndline.cc:237
 #, c-format
@@ -2139,7 +2136,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Cet APT ne supporte pas le système de version « %s »"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Le cache des paquets a été construit pour une architecture différente"
 
@@ -2380,7 +2376,7 @@ msgstr "Étiquette %s inconnue"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "Aucune priorité (ou zéro) a été spécifiée pour l'étiquette"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"

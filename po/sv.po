@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-08-17 21:45-0400\n"
-"PO-Revision-Date: 2003-05-22 17:05+0100\n"
+"PO-Revision-Date: 2003-08-31 11:03+0100\n"
 "Last-Translator: Peter Karlsson <peterk@debian.org>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -94,9 +94,8 @@ msgid "You must give exactly one pattern"
 msgstr "Du måste ange exakt ett mönster"
 
 #: cmdline/apt-cache.cc:1383
-#, fuzzy
 msgid "No packages found"
-msgstr "  Fastnålning: "
+msgstr "Inga paket funna"
 
 #: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
@@ -137,7 +136,7 @@ msgstr "  Kandidat: "
 
 #: cmdline/apt-cache.cc:1530
 msgid "  Package Pin: "
-msgstr "  Fastnålning: "
+msgstr "  Paketnålning: "
 
 #. Show the priority tables
 #: cmdline/apt-cache.cc:1539
@@ -157,7 +156,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s för %s %s kompilerad den %s %s\n"
 
 #: cmdline/apt-cache.cc:1588
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -326,7 +324,6 @@ msgid "Error Processing Contents %s"
 msgstr "Fel vid behaldning av innehållet %s"
 
 #: ftparchive/apt-ftparchive.cc:550
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -695,9 +692,9 @@ msgstr ""
 "Detta bör INTE göras såvida du inte vet precis vad du gör!"
 
 #: cmdline/apt-get.cc:573
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu paket uppgraderade, %lu nyligen installerade, "
+msgstr "%lu uppgraderade, %lu nyligen installerade, "
 
 #: cmdline/apt-get.cc:577
 #, c-format
@@ -715,9 +712,9 @@ msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu att ta bort och %lu ej uppgraderade.\n"
 
 #: cmdline/apt-get.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu paket ej helt installerade eller borttagna.\n"
+msgstr "%lu ej helt installerade eller borttagna.\n"
 
 #: cmdline/apt-get.cc:645
 msgid "Correcting dependencies..."
@@ -1089,7 +1086,7 @@ msgid "%s has no build depends.\n"
 msgstr "%s har inga byggberoenden.\n"
 
 #: cmdline/apt-get.cc:2095
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
@@ -1122,7 +1119,6 @@ msgid "Supported Modules:"
 msgstr "Moduler som stöds:"
 
 #: cmdline/apt-get.cc:2251
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1232,14 +1228,15 @@ msgid " [Working]"
 msgstr " [Arbetar]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press enter\n"
 msgstr ""
 "Mediabyte: Sätt i disken med etiketten\n"
-" \"%s\"i enhet \"%s\" och tryck Enter\n"
+" \"%s\"\n"
+"i enhet \"%s\" och tryck Enter\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1319,7 +1316,7 @@ msgid "Tar Checksum failed, archive corrupted"
 msgstr "Tar-kontrollsumma misslyckades, arkiv trasigt"
 
 #: apt-inst/contrib/extracttar.cc:295
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Okänd TAR-huvudtyp %u, del %s"
 
@@ -1921,7 +1918,7 @@ msgstr "Valet %s ej funnet"
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "Okänd typförkortning: \"%c\""
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
@@ -2000,7 +1997,7 @@ msgid "Option %s requires an argument."
 msgstr "Flaggan %s kräver ett värde."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "Flagga %s: Den angivna konfigurationsposten måste innehålla =<värde>."
 
@@ -2129,7 +2126,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Denna APT stöder inte versionssystemet \"%s\""
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Paketcachen byggdes för en annan arkitektur"
 
@@ -2355,11 +2351,11 @@ msgstr "Ogiltig post i inställningsfilen, \"Package\"-huvud saknas"
 #: apt-pkg/policy.cc:291
 #, c-format
 msgid "Did not understand pin type %s"
-msgstr "Förstod inte \"pin\"-typen %s"
+msgstr "Förstod inte nåltypen %s"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "Prioritet ej angiven (eller noll) för nål"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
@@ -2491,71 +2487,3 @@ msgstr "Förbindelsen stängdes i förtid"
 #~ msgstr ""
 #~ "Beklagar, men du har inte tillräckligt ledigt utrymme på %s för att lagra "
 #~ "alla .deb-filerna."
-
-#, fuzzy
-#~ msgid "Extract "
-#~ msgstr "extra"
-
-#, fuzzy
-#~ msgid "De-replaced "
-#~ msgstr "Ersätter"
-
-#, fuzzy
-#~ msgid "Replaced file "
-#~ msgstr "Ersätter"
-
-#, fuzzy
-#~ msgid "You must give at least one file name"
-#~ msgstr "Du måste ange exakt ett mönster"
-
-#, fuzzy
-#~ msgid "Regex compilation error"
-#~ msgstr "Fel vid tolkning av reguljärt uttryck - %s"
-
-#, fuzzy
-#~ msgid "Failed to stat %s%s"
-#~ msgstr "Misslyckades att hämta %s  %s\n"
-
-#, fuzzy
-#~ msgid "Failed to open %s.new"
-#~ msgstr "Misslyckades att hämta %s  %s\n"
-
-#, fuzzy
-#~ msgid "Failed to rename %s.new to %s"
-#~ msgstr "Misslyckades att hämta %s  %s\n"
-
-#, fuzzy
-#~ msgid "Please insert a Disc in the drive and press enter"
-#~ msgstr "Mediabyte: Sätt i disk \"%s\" i enhet \"%s\" och tryck Enter\n"
-
-#, fuzzy
-#~ msgid "This Disc is called:"
-#~ msgstr "men %s är installerat"
-
-#, fuzzy
-#~ msgid "Couldn't determine free space in %s"
-#~ msgstr "Beklagar, du har inte tillräckligt ledigt utrymme i %s"
-
-#, fuzzy
-#~ msgid "Internal Error, problem resolver broke stuff"
-#~ msgstr "Internt fel, AllUpgrade förstörde något"
-
-#, fuzzy
-#~ msgid "Couldn't wait for subprocess"
-#~ msgstr "Kunde inte ta status på källkodspaketlistan %s"
-
-#, fuzzy
-#~ msgid " files "
-#~ msgstr " misslyckades."
-
-#, fuzzy
-#~ msgid "Done. "
-#~ msgstr "Färdig"
-
-#, fuzzy
-#~ msgid "Could not find a record in the DSC '%s'"
-#~ msgstr "Kunde inte hitta paketet %s"
-
-#, fuzzy
-#~ msgid "Failed too stat %s"
-#~ msgstr "Kunde inte ta status på %s."
