@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.134 2003/08/07 20:51:50 mdz Exp $
+// $Id: apt-get.cc,v 1.135 2003/08/08 23:45:00 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1535,7 +1535,7 @@ bool DoInstall(CommandLine &CmdL)
 			  installed already */
 
 		       string target = string(Start.TargetPkg().Name()) + " ";
-		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install)
+		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
 			 break;
 		       /* Does another package suggest it as well?  If so,
 			  don't print it twice */
@@ -1551,7 +1551,7 @@ bool DoInstall(CommandLine &CmdL)
 			  installed already */
 
 		       string target = string(Start.TargetPkg().Name()) + " ";
-		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install)
+		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
 			 break;
 		       
 		       /* Does another package recommend it as well?  If so,
