@@ -1,3 +1,30 @@
+// -*- mode: cpp; mode: fold -*-
+// Description								/*{{{*/
+// $Id: apt-get.cc,v 1.79 1999/10/17 07:49:41 jgg Exp $
+/* ######################################################################
+   
+   apt-get - Cover for dpkg
+   
+   This is an allout cover for dpkg implementing a safer front end. It is
+   based largely on libapt-pkg.
+
+   The syntax is different, 
+      apt-get [opt] command [things]
+   Where command is:
+      update - Resyncronize the package files from their sources
+      upgrade - Smart-Download the newest versions of all packages
+      dselect-upgrade - Follows dselect's changes to the Status: field
+                       and installes new and removes old packages
+      dist-upgrade - Powerfull upgrader designed to handle the issues with
+                    a new distribution.
+      install - Download and install a given package (by name, not by .deb)
+      check - Update the package cache and check for broken packages
+      clean - Erase the .debs downloaded to /var/cache/apt/archives and
+              the partial dir too
+
+   ##################################################################### */
+									/*}}}*/
+// Include Files							/*{{{*/
 #include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
@@ -658,6 +685,16 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
 	 cerr << "  " << (*I)->ErrorText << endl;
 	 Failed = true;
       }
+
+      /* If we are in no download mode and missing files then there were
+         'failures' then the user must specify -m. Furthermore, there 
+         is no such thing as a transient error in no-download mode! */
+      if (Transient == true && 
+	  _config->FindB("APT::Get::No-Download",false) == true)
+      {
+	 Transient = false;
+	 Failed = true;
+      }
       
       if (_config->FindB("APT::Get::Download-Only",false) == true)
       {
@@ -668,12 +705,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       
       if (Failed == true && _config->FindB("APT::Get::Fix-Missing",false) == false)
       {
-	 /*if (Transient == true)
-	 {
-	    c2out << "Upgrading with disk swapping is not supported in this version." << endl;
-	    c2out << "Try running multiple times with --fix-missing" << endl;
-	 }*/
-	 
 	 return _error->Error("Unable to fetch some archives, maybe try with --fix-missing?");
       }
       
