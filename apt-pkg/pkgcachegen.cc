@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.30 1999/02/23 06:50:36 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.31 1999/03/02 18:35:24 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -422,6 +422,10 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
    int Missing = 0;
    for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
    {
+      // Only cache deb source types.
+      if (I->Type != pkgSourceList::Item::Deb)
+	 continue;
+      
       string File = ListDir + URItoFileName(I->PackagesURI());
       struct stat Buf;
       if (stat(File.c_str(),&Buf) != 0)

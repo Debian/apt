@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.6 1998/10/15 07:00:02 jgg Exp $
+// $Id: sourcelist.h,v 1.7 1999/03/02 18:35:24 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -37,7 +37,7 @@ class pkgSourceList
       item */
    struct Item
    {
-      enum {Deb} Type;
+      enum {Deb, DebSrc} Type;
 
       string URI;
       string Dist;

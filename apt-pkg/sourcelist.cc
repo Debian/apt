@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.10 1999/01/27 02:48:52 jgg Exp $
+// $Id: sourcelist.cc,v 1.11 1999/03/02 18:35:24 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -129,6 +129,12 @@ bool pkgSourceList::Item::SetType(string S)
       return true;
    }
 
+   if (S == "deb-src")
+   {
+      Type = DebSrc;
+      return true;
+   }
+
    return true;
 }
 									/*}}}*/
@@ -170,6 +176,16 @@ string pkgSourceList::Item::PackagesURI() const
       
       Res += "Packages";
       break;
+      
+      case DebSrc:
+      if (Dist[Dist.size() - 1] == '/')
+	 Res = URI + Dist;
+      else
+	 Res = URI + "dists/" + Dist + '/' + Section +
+	 "/source/";
+      
+      Res += "Sources";
+      break;
    };
    return Res;
 }
@@ -190,6 +206,16 @@ string pkgSourceList::Item::PackagesInfo() const
 	 Res += Dist + '/' + Section;
       
       Res += " Packages";
+      break;
+     
+      case DebSrc:
+      Res += SiteOnly(URI) + ' ';
+      if (Dist[Dist.size() - 1] == '/')
+	 Res += Dist;
+      else
+	 Res += Dist + '/' + Section;
+      
+      Res += " Sources";
       break;
    };
    return Res;
@@ -212,6 +238,16 @@ string pkgSourceList::Item::ReleaseURI() const
       
       Res += "Release";
       break;
+      
+      case DebSrc:
+      if (Dist[Dist.size() - 1] == '/')
+	 Res = URI + Dist;
+      else
+	 Res = URI + "dists/" + Dist + '/' + Section +
+	 "/source/";
+      
+      Res += "Release";
+      break;
    };
    return Res;
 }
@@ -225,6 +261,7 @@ string pkgSourceList::Item::ReleaseInfo() const
    switch (Type)
    {
       case Deb:
+      case DebSrc:
       Res += SiteOnly(URI) + ' ';
       if (Dist[Dist.size() - 1] == '/')
 	 Res += Dist;
@@ -245,6 +282,7 @@ string pkgSourceList::Item::ArchiveInfo(pkgCache::VerIterator Ver) const
    string Res;
    switch (Type)
    {
+      case DebSrc:
       case Deb:
       Res += SiteOnly(URI) + ' ';
       if (Dist[Dist.size() - 1] == '/')
@@ -271,6 +309,7 @@ string pkgSourceList::Item::ArchiveURI(string File) const
    switch (Type)
    {
       case Deb:
+      case DebSrc:
       Res = URI + File;
       break;
    };

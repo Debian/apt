@@ -19,9 +19,11 @@ manpagesection(The deb type)
 The bf(deb) type describes a typical two-level Debian archive,
 em(distribution/component). Typically, em(distribution) is one of
 em(stable), em(unstable), or em(frozen), while component is one of
-em(main), em(contrib), em(non-free), or em(non-us).
-The format for a bf(sources.list) entry using the em(deb)
-type is:
+em(main), em(contrib), em(non-free), or em(non-us). The bf(deb-src) type
+describes a debian distribution's source code in the same form as the bf(deb)
+type. A bf(deb-src) line is required to fetch source indexes.
+The format for a bf(sources.list) entry using the em(deb) and em(deb-src)
+types are:
 verb(deb uri distribution [component1] [componenent2] [...])
 The URI for the em(deb) type must specify the base of the Debian distribution, 
 from which bf(APT) will find the information it needs. em(distribution)
