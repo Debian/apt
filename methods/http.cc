@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.6 1998/11/21 06:09:09 jgg Exp $
+// $Id: http.cc,v 1.7 1998/11/23 21:28:43 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -267,18 +267,23 @@ bool ServerState::Open()
    Out.Reset();
 
    // Determine the proxy setting
-   string DefProxy = _config->Find("Acquire::http::Proxy",getenv("http_proxy"));
-   string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
-   if (SpecificProxy.empty() == false)
+   if (getenv("http_proxy") != 0)
    {
-      if (SpecificProxy == "DIRECT")
-	 Proxy = "";
+      string DefProxy = _config->Find("Acquire::http::Proxy");
+      string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
+      if (SpecificProxy.empty() == false)
+      {
+	 if (SpecificProxy == "DIRECT")
+	    Proxy = "";
+	 else
+	    Proxy = SpecificProxy;
+      }   
       else
-	 Proxy = SpecificProxy;
-   }   
+	 Proxy = DefProxy;
+   }
    else
-      Proxy = DefProxy;
-
+      Proxy = getenv("http_proxy");
+   
    // Determine what host and port to use based on the proxy settings
    int Port = 80;
    string Host;   
