@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.21 1998/12/11 06:01:26 jgg Exp $
+// $Id: acquire.cc,v 1.22 1998/12/11 06:32:35 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -566,6 +566,9 @@ pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Wor
 bool pkgAcquire::Queue::ItemDone(QItem *Itm)
 {
    PipeDepth--;
+   if (Itm->Owner->Status == pkgAcquire::Item::StatFetching)
+      Itm->Owner->Status = pkgAcquire::Item::StatDone;
+   
    if (Itm->Owner->QueueCounter <= 1)
       Owner->Dequeue(Itm->Owner);
    else

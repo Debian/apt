@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.11 1998/12/11 06:01:25 jgg Exp $
+// $Id: acquire-item.h,v 1.12 1998/12/11 06:32:34 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -120,6 +120,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    
    public:
    
+   virtual void Failed(string Message);
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
    virtual string Describe();
    

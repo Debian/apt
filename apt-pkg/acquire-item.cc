@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.16 1998/12/11 06:01:23 jgg Exp $
+// $Id: acquire-item.cc,v 1.17 1998/12/11 06:32:33 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -54,6 +54,7 @@ pkgAcquire::Item::~Item()
 void pkgAcquire::Item::Failed(string Message)
 {
    Status = StatIdle;
+   ErrorText = LookupTag(Message,"Message");
    if (QueueCounter <= 1)
    {
       /* This indicates that the file is not available right now but might
@@ -66,7 +67,6 @@ void pkgAcquire::Item::Failed(string Message)
 	 return;
       }
       
-      ErrorText = LookupTag(Message,"Message");
       Status = StatError;
       Owner->Dequeue(this);
    }   
@@ -472,5 +472,15 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
 string pkgAcqArchive::Describe()
 {
    return Desc.URI;
+}
+									/*}}}*/
+// AcqArchive::Failed - Failure handler					/*{{{*/
+// ---------------------------------------------------------------------
+/* Here we try other sources */
+void pkgAcqArchive::Failed(string Message)
+{
+   ErrorText = LookupTag(Message,"Message");
+   if (QueueNext() == false)
+      Item::Failed(Message);
 }
 									/*}}}*/
