@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.8 1998/10/02 04:39:53 jgg Exp $
+// $Id: progress.cc,v 1.9 2000/06/05 04:22:25 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -33,7 +33,10 @@ OpProgress::OpProgress() : Current(0), Total(0), Size(0), SubTotal(1),
    percent of Total SubTotal is. */
 void OpProgress::Progress(unsigned long Cur)
 {
-   Percent = (Current + Cur/((float)SubTotal)*Size)*100.0/Total;
+   if (Total == 0 || Size == 0 || SubTotal == 0)
+      Percent = 0;
+   else
+      Percent = (Current + Cur/((float)SubTotal)*Size)*100.0/Total;
    Update();
 }
 									/*}}}*/
@@ -48,7 +51,10 @@ void OpProgress::OverallProgress(unsigned long Current, unsigned long Total,
    this->Size = Size;
    this->Op = Op;
    SubOp = string();
-   Percent = Current*100.0/Total;
+   if (Total == 0)
+      Percent = 0;
+   else
+      Percent = Current*100.0/Total;
    Update();
 }
 									/*}}}*/
@@ -59,7 +65,10 @@ void OpProgress::SubProgress(unsigned long SubTotal,string Op)
 {
    this->SubTotal = SubTotal;
    SubOp = Op;
-   Percent = Current*100.0/Total;
+   if (Total == 0)
+      Percent = 0;
+   else
+      Percent = Current*100.0/Total;
    Update();
 }
 									/*}}}*/
@@ -69,7 +78,10 @@ void OpProgress::SubProgress(unsigned long SubTotal,string Op)
 void OpProgress::SubProgress(unsigned long SubTotal)
 {
    this->SubTotal = SubTotal;
-   Percent = Current*100.0/Total;
+   if (Total == 0)
+      Percent = 0;
+   else
+      Percent = Current*100.0/Total;
    Update();
 }
 									/*}}}*/
