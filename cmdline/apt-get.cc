@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.85 1999/10/27 04:38:28 jgg Exp $
+// $Id: apt-get.cc,v 1.86 1999/10/27 05:00:25 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -813,7 +813,8 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       {
 	 c1out << "Package " << Pkg.Name() << " has no available version, but exists in the database." << endl;
 	 c1out << "This typically means that the package was mentioned in a dependency and " << endl;
-	 c1out << "never uploaded, or that it is an obsolete package." << endl;
+	 c1out << "never uploaded, has been obsoleted or is not available with the contents " << endl;
+	 c1out << "of sources.list" << endl;
 	 
 	 string List;
 	 pkgCache::DepIterator Dep = Pkg.RevDependsList();

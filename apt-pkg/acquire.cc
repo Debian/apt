@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.41 1999/10/18 02:53:05 jgg Exp $
+// $Id: acquire.cc,v 1.42 1999/10/27 05:00:25 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -52,11 +52,11 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
    struct stat St;
    if (stat((_config->FindDir("Dir::State::lists") + "partial/").c_str(),&St) != 0 ||
        S_ISDIR(St.st_mode) == 0)
-      _error->Error("Lists directory %s/partial is missing",
+      _error->Error("Lists directory %s/partial is missing.",
 		    _config->FindDir("Dir::State::lists").c_str());
    if (stat((_config->FindDir("Dir::Cache::Archives") + "partial/").c_str(),&St) != 0 ||
        S_ISDIR(St.st_mode) == 0)
-      _error->Error("Archive directory %s/partial is missing",
+      _error->Error("Archive directory %s/partial is missing.",
 		    _config->FindDir("Dir::Cache::Archives").c_str());
 }
 									/*}}}*/
