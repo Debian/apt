@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sha1.h,v 1.1 2001/03/06 05:03:49 jgg Exp $
+// $Id: sha1.h,v 1.2 2001/04/25 07:30:13 tausq Exp $
 /* ######################################################################
 
    SHA1SumValue - Storage for a SHA-1 hash.
@@ -45,9 +45,10 @@ class SHA1SumValue
 
 class SHA1Summation
 {
-   unsigned char Buffer[64];
-   unsigned char State[5*4];
-   unsigned char Count[2*4];
+   /* assumes 64-bit alignment just in case */
+   unsigned char Buffer[64] __attribute__((aligned(8)));
+   unsigned char State[5*4] __attribute__((aligned(8)));
+   unsigned char Count[2*4] __attribute__((aligned(8)));
    bool Done;
    
    public:
