@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.12 1999/04/15 02:43:48 jgg Exp $
+// $Id: acqprogress.cc,v 1.13 1999/04/20 05:59:29 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -70,7 +70,7 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
    
-   cout << "Get:" << hex << Itm.Owner->ID << dec << ' ' << Itm.Description;
+   cout << "Get:" << Itm.Owner->ID << ' ' << Itm.Description;
    if (Itm.Owner->FileSize != 0)
       cout << " [" << SizeToStr(Itm.Owner->FileSize) << "b]";
    cout << endl;
@@ -170,7 +170,7 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
       
       // Add in the short description
       if (I->CurrentItem->Owner->ID != 0)
-	 snprintf(S,End-S," [%lx %s",I->CurrentItem->Owner->ID,
+	 snprintf(S,End-S," [%lu %s",I->CurrentItem->Owner->ID,
 		  I->CurrentItem->ShortDesc.c_str());
       else
 	 snprintf(S,End-S," [%s",I->CurrentItem->ShortDesc.c_str());

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.56 1999/04/20 05:14:55 jgg Exp $
+// $Id: apt-get.cc,v 1.57 1999/04/20 05:59:29 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1321,6 +1321,7 @@ bool ShowHelp(CommandLine &CmdL)
    cout << "  -f  Attempt to continue if the integrity check fails" << endl;
    cout << "  -m  Attempt to continue if archives are unlocatable" << endl;
    cout << "  -u  Show a list of upgraded packages as well" << endl;
+   cout << "  -b  Bulid the source package after fetching itl" << endl;
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
    cout << "See the apt-get(8), sources.list(5) and apt.conf(5) manual" << endl;
