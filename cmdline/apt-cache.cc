@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.56 2002/02/15 03:40:00 jgg Exp $
+// $Id: apt-cache.cc,v 1.57 2002/03/20 05:51:52 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1260,6 +1260,7 @@ bool ShowHelp(CommandLine &Cmd)
     _("Usage: apt-cache [options] command\n"
       "       apt-cache [options] add file1 [file1 ...]\n"
       "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
+      "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
       "\n"
       "apt-cache is a low-level tool used to manipulate APT's binary\n"
       "cache files, and query information from them\n"
@@ -1268,6 +1269,7 @@ bool ShowHelp(CommandLine &Cmd)
       "   add - Add an package file to the source cache\n"
       "   gencaches - Build both the package and source cache\n"
       "   showpkg - Show some general information for a single package\n"
+      "   showsrc - Show source records\n"
       "   stats - Show some basic statistics\n"
       "   dump - Show the entire file in a terse form\n"
       "   dumpavail - Print an available file to stdout\n"

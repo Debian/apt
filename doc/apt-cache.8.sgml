@@ -31,6 +31,7 @@
          <arg>add <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg></arg>
          <arg>gencaches</>
          <arg>showpkg <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>showsrc <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>stats</>
          <arg>dump</>
          <arg>dumpavail</>
@@ -60,7 +61,8 @@
    <VariableList>
      <VarListEntry><Term>add</Term>
      <ListItem><Para>
-     <literal/add/ adds the names package index files to the package cache.
+     <literal/add/ adds the named package index files to the package cache.
+     This is for debugging only.
      </VarListEntry>
      
      <VarListEntry><Term>gencaches</Term>
@@ -168,6 +170,14 @@ Reverse Provides:
        claimed by all of the packages in the cache.
        </listitem>
      </itemizedlist>
+     </VarListEntry>
+     
+     <VarListEntry><Term>showsrc</Term>
+     <ListItem><Para>
+     <literal/showsrc/ displays all the source package records that match
+     the given package names. All versions are shown, as well as all 
+     records that declare the name to be a Binary.
+     named packages.
      </VarListEntry>
      
      <VarListEntry><Term>dump</Term>

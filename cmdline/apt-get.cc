@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.114 2002/02/15 03:40:00 jgg Exp $
+// $Id: apt-get.cc,v 1.115 2002/03/20 05:51:52 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -512,7 +512,7 @@ void Stats(ostream &out,pkgDepCache &Dep)
    if (Downgrade != 0)
       ioprintf(out,_("%lu downgraded, "),Downgrade);
 
-   ioprintf(out,_("%lu to remove and %lu  not upgraded.\n"),
+   ioprintf(out,_("%lu to remove and %lu not upgraded.\n"),
 	    Dep.DelCount(),Dep.KeepCount());
    
    if (Dep.BadCount() != 0)
