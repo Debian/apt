@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.41 2002/01/09 04:59:44 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.42 2002/02/15 03:40:00 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -23,6 +23,7 @@
     
 #include "indexcopy.h"
 
+#include <locale.h>
 #include <iostream>
 #include <fstream>
 #include <vector>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.8 2002/01/09 04:59:44 jgg Exp $
+// $Id: apt-config.cc,v 1.9 2002/02/15 03:40:00 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -23,7 +23,8 @@
 
 #include <config.h>
 #include <apti18n.h>
-    
+
+#include <locale.h>
 #include <iostream>
 #include <string>
 									/*}}}*/

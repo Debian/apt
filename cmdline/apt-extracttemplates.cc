@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.8 2002/01/09 04:59:44 jgg Exp $
+// $Id: apt-extracttemplates.cc,v 1.9 2002/02/15 03:40:00 jgg Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <fstream>
 
+#include <locale.h>
 #include <config.h>
 #include <apti18n.h>
 #include "apt-extracttemplates.h"

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-sortpkgs.cc,v 1.3 2002/01/09 04:59:44 jgg Exp $
+// $Id: apt-sortpkgs.cc,v 1.4 2002/02/15 03:40:00 jgg Exp $
 /* ######################################################################
    
    APT Sort Packages - Program to sort Package and Source files
@@ -25,6 +25,7 @@
 #include <vector>
 #include <algorithm>
 
+#include <locale.h>
 #include <unistd.h>
 									/*}}}*/
 
