@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.16 1999/12/12 03:48:36 jgg Exp $
+// $Id: dpkgpm.cc,v 1.17 2000/05/13 01:52:38 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -341,19 +341,22 @@ bool pkgDPkgPM::Go()
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
 	 
-	 int Flags,dummy;
-	 if ((Flags = fcntl(STDIN_FILENO,F_GETFL,dummy)) < 0)
-	    _exit(100);
+	 if (_config->FindB("DPkg::FlushSTDIN",true) == true)
+	 {
+	    int Flags,dummy;
+	    if ((Flags = fcntl(STDIN_FILENO,F_GETFL,dummy)) < 0)
+	       _exit(100);
+	    
+	    // Discard everything in stdin before forking dpkg
+	    if (fcntl(STDIN_FILENO,F_SETFL,Flags | O_NONBLOCK) < 0)
+	       _exit(100);
+	    
+	    while (read(STDIN_FILENO,&dummy,1) == 1);
+	    
+	    if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
+	       _exit(100);
+	 }
 	 
-	 // Discard everything in stdin before forking dpkg
-	 if (fcntl(STDIN_FILENO,F_SETFL,Flags | O_NONBLOCK) < 0)
-	    _exit(100);
-	 
-	 while (read(STDIN_FILENO,&dummy,1) == 1);
-	 
-	 if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
-	    _exit(100);
-
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 putenv("DPKG_NO_TSTP=yes");
