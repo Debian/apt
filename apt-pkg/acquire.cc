@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.42 1999/10/27 05:00:25 jgg Exp $
+// $Id: acquire.cc,v 1.43 1999/10/27 22:34:29 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -48,15 +48,15 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
 
    Debug = _config->FindB("Debug::pkgAcquire",false);
    
-   // This is really a stupid place for this, but people whine so much..
+   // This is really a stupid place for this
    struct stat St;
    if (stat((_config->FindDir("Dir::State::lists") + "partial/").c_str(),&St) != 0 ||
        S_ISDIR(St.st_mode) == 0)
-      _error->Error("Lists directory %s/partial is missing.",
+      _error->Error("Lists directory %spartial is missing.",
 		    _config->FindDir("Dir::State::lists").c_str());
    if (stat((_config->FindDir("Dir::Cache::Archives") + "partial/").c_str(),&St) != 0 ||
        S_ISDIR(St.st_mode) == 0)
-      _error->Error("Archive directory %s/partial is missing.",
+      _error->Error("Archive directory %spartial is missing.",
 		    _config->FindDir("Dir::Cache::Archives").c_str());
 }
 									/*}}}*/
