@@ -1,7 +1,7 @@
 # -*- make -*-
 BASE=..
 SUBDIR=doc
-SUBDIRS= fr pt_BR
+SUBDIRS= fr pt_BR es
 
 # Bring in the default rules
 include ../buildlib/defaults.mak
@@ -25,10 +25,13 @@ TARGET = binary
 include $(COPY_H)
 
 #.PHONY: headers library clean veryclean all binary program doc doc.pt_BR doc.fr
-doc: doc.fr doc.pt_BR
+doc: doc.fr doc.pt_BR doc.es
 
 doc.fr: %.fr:
 	$(MAKE) -C fr $*
 
 doc.pt_BR: %.pt_BR:
 	$(MAKE) -C pt_BR $*
+
+doc.es: %.es:
+	$(MAKE) -C es $*

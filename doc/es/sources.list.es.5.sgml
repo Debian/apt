@@ -1,0 +1,225 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.es">
+%aptent;
+
+]>
+<!-- 
+(c) 2003 Software in the Public Interest
+Esta traducción ha sido realizada por Rubén Porras Campo <nahoo@inicia.es>
+Está basada en la página de manual original:
+versión 1.3 del CVS de
+/cvs/debian-doc/manpages/english/apt/sources.list.5.sgml
+ -->
+
+<refentry lang=es>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>sources.list</>
+   <manvolnum>5</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>sources.list</>
+    <refpurpose>lista de recursos de paquetes para APT</>
+ </refnamediv>
+ 
+ <RefSect1><Title>Descripción</>
+ 
+   <para>   
+   La lista de recursos de paquetes se usa para localizar ficheros del sistema
+   de distribución de paquetes usado en el sistema.
+   A día de hoy, esta página del manual documenta sólamente el sistema de
+   paquetes usado por Debian GNU/Linux. Este fichero de control está situado en
+   <filename>/etc/apt/sources.list</>
+   <para>
+   La lista de procedencias está diseñada para soportar cualquier número y
+   distintos tipos de procedencias. El fichero lista una procedencia por línea,
+   con la procedencia de mayor prioridad en la primera línea.
+   El formato de cada línea es:
+   <literal/tipo uri argumentos/. El primer elemento, <literal/tipo/,
+   determina el formato de <literal/argumentos/.
+   <literal/uri/ es Universal Resource Identifier (Identificador Universal de
+   Recursos), un caso general de la más especifica y bien conocida
+   Universal Resource Locator, o URL.
+   El resto de la línea puede marcarse como comentario usando #.
+ </RefSect1>
+ 
+ <RefSect1><Title>Los tipos deb y deb-src</>
+   <para>   
+   El tipo <literal/deb/ hace referencia a un típico archivo de Debian de dos
+   niveles, <filename>distribución/componente</>. Normalmente
+   <literal/distribución/ es <literal/stable/, <literal/testing/, o
+   <literal/unstable/, mientras que componente es <literal/main/,
+   <literal/contrib/, <literal/non-free/, o <literal/non-us/. El tipo
+   <literal/deb-src/ hace referencia al código fuente de la distribución con la
+   misma sintaxis que el tipo <literal/deb/. Es necesaria una línea
+   <literal/deb-src/ para descargar un índice de los paquetes que tienen
+   código fuente disponible.
+   <para>
+   El formato para una entrada en el fichero <filename/sources.list/ usando
+   los tipos <literal/deb/ y <literal/deb-src/ es:
+   <literallayout>deb uri distribución [componente1] [componente2] [...]</literallayout>
+   <para>
+   La URI para el tipo <literal/deb/ debe de especificar la base de 
+   la distribución de Debian, donde APT encontrará la información que
+   necesita.
+   <literal/distribución/ puede especificar un ruta exacta, en cuyo caso se
+   deben omitir los componentes y <literal/distribución/ debe finalizar
+   con una barra (/). Esto es útil cuando únicamente queremos una sub-sección 
+   del archivo denotado por la URI. Si <literal/distribución/ no especifica 
+   la ruta exacta, al menos uno de los <literal/componentes/ debe de estar
+   presente.
+   <para>
+   <literal/distribución/ puede contener una variable, <literal/$(ARCH)/,
+   que se expandirá en la arquitectura de Debian usada en el sistema (i386,
+   m68k, powerpc, ...). Esto permite que <filename/sources.list/ sea 
+   independiente de la arquitectura. En general esta característica sólo es
+   de interés cuando se especifica una ruta completa, de lo contrario
+   <literal/APT/ generará automáticamente la URI con la arquitectura actual
+   del sistema.
+   <para>
+   Debido a que sólo se puede especificar una distribución por línea es posible
+   que sea necesario tener múltiples líneas para la misma URI si deseamos
+   tener accesibles más de una distribución o componente de ese sitio.
+   APT ordenará internamente la lista de URI's después de haber generado
+   una copia interna, y juntará varias referencias al mismo servidor de Internet
+   en una sola conexión, para así no establecer una conexión FTP de forma
+   ineficiente, cerrarla, hacer algo más, y entonces restablecer la conexión
+   al mismo servidor. Esta característica es útil para acceder a FPT's concurridos
+   que limitan el número de accesos simultáneos de usuarios anónimos. APT
+   también paralelará conexiones a diferentes servidores para aprovechar mejor
+   el ancho de banda.
+   <para>
+   Es importante listar las fuente por orden de preferencia, con la fuente de más
+   preferencia al principio. Lo normal es ordenar las fuentes por velocidad,
+   de la más rápida a la más lenta (CD-ROM seguido de servidores en la red
+   local, seguidos por servidores de Internet distantes, por ejemplo).
+   <para>
+   Algunos ejemplos:
+   <literallayout>
+deb http://http.us.debian.org/debian stable main contrib non-free
+deb http://http.us.debian.org/debian dists/stable-updates/
+   </literallayout>
+ </RefSect1>
+
+ <RefSect1><title>especificación de la URI</title>
+   <para>
+   Se reconocen los siguientes tipos de URI: cdrom, file, http, y ftp.
+   <VariableList>
+    <VarListEntry><term>file</term>
+    <ListItem><Para>
+    file permite considerar como archivo a cualquier
+    fichero en el sistema de ficheros. Esto es útil para particiones
+    montadas mediante NFS y réplicas locales.
+    </VarListEntry>
+    
+    <VarListEntry><term>cdrom</term>
+    <ListItem><Para>
+    El cdrom permite a APT usar la unidad de CDROM local. Use el
+    programa &apt-cdrom; para añadir entradas de un cdrom a sources.list.
+    </VarListEntry>
+
+    <VarListEntry><term>http</term>
+    <ListItem><Para>
+    Http especifica un servidor HTTP como archivo. Si la variable de entorno
+    <EnVar/http_proxy/ está establecida con el formato http://server:port/,
+    se usará el servidor proxy especificado en <EnVar/http_proxy/. Usuarios de
+    servidor proxy de autenticación HTTP/1.1 deberán usar la cadena de 
+    caracteres http://user:pass@server:port/
+    Dese cuenta que este método de autenticación es inseguro.
+    </VarListEntry>
+
+    <VarListEntry><term>ftp</term>
+    <ListItem><Para>
+    Ftp especifica un servidor FTP como archivo. El comportamiento de APT 
+    con FTP es altamente configurable, para más información consulte la página
+    del manual de &apt-conf;. Dese cuenta que un proxy ftp puede ser
+    especificado usando la variable de entorno <EnVar/ftp_proxy/. Es posible
+    especificar un servidor proxy http (servidores proxy http normalmente
+    comprenden las url's tipo ftp) usando este método y SÓLO este método.
+    Se ignorarán los proxies ftp especificados en el fichero de configuración que usen 
+    http.
+    </VarListEntry>
+
+    <VarListEntry><term>copy</term>
+    <ListItem><Para>
+    Copy es idéntico a file excepto en que los paquetes son copiados al
+    directorio que contiene la caché en vez de usar directamente su
+    lugar original. Esto es útil para gente que use discos zip con APT.
+    </VarListEntry>
+    
+    <VarListEntry><term>rsh</term><term>ssh</term>
+    <ListItem><Para>
+    El método rsh/ssh usa rsh/ssh para conectar a los servidores remotos como
+    un usuario dado y acceder a los ficheros. No es posible realizar ninguna
+    autenticación por contraseña, debe hacerse previamente una configuración
+    de claves RSA o rhosts.
+    El acceso a los ficheros del sistema remoto usa las órdenes estándar
+    <command/find/ y <command/dd/ para realizar las transferencias.
+    </VarListEntry>
+  </VariableList>
+ </RefSect1>
+ 
+ <RefSect1><title>Ejemplos</title>
+   <para>
+   Usa el archivo local (o montado mediante NFS) en /home/jason/debian
+   para stable/main, stable/contrib, y stable/non-free.
+   <literallayout>deb file:/home/jason/debian stable main contrib non-free</literallayout>
+   <para>
+   Como arriba, excepto que usa la distribución inestable.
+   <literallayout>deb file:/home/jason/debian unstable main contrib non-free</literallayout>
+   <para>
+   Línea para el código fuente de lo mismo que arriba
+   <literallayout>deb-src file:/home/jason/debian unstable main contrib non-free</literallayout>
+   <para>
+   Usa HTTP para acceder al archivo en archive.debian.org, y usa sólo la parte
+   de hamm/main.
+   <literallayout>deb http://archive.debian.org/debian-archive hamm main</literallayout>
+   <para>
+   Usa FTP para acceder al archivo en ftp.debian.org, debajo del directorio
+   debian, y usa sólo la parte de stable/contrib.
+   <literallayout>deb ftp://ftp.debian.org/debian stable contrib</literallayout>
+   <para>
+   Usa FTP para acceder al archivo en ftp.debian.org, debajo del directorio
+   debian, y usa sólo la parte de unstable/contrib. Si tanto esta línea como 
+   la del ejemplo anterior aparecen en <filename/sources.list/, se usará sólo
+   una sesión FTP para ambas.
+   <literallayout>deb ftp://ftp.debian.org/debian unstable contrib</literallayout>
+   <para>
+   Usa HTTP para acceder al archivo en nonus.debian.org, bajo el directorio
+   debian-non-US.
+   <literallayout>deb http://nonus.debian.org/debian-non-US stable/non-US main
+   contrib non-free</literallayout>
+   <para>
+   Usa HTTP para acceder al archivo en nonus.debian.org, bajo el directorio
+   debian-non-US, y usa sólo ficheros que se encuentren debajo de
+   <filename>unstable/binary-i386</> en máquinas i386, 
+   <filename>unstable/binary-m68k</> en máquinas m68k, y así para todas las
+   arquitecturas soportadas. (Dese cuenta que este ejemplo sólo sirve para
+   ilustrar como se usa la variable de substitución, non-us ya no está
+   estructurado de este modo)
+   <literallayout>deb http://ftp.de.debian.org/debian-non-US
+   unstable/binary-$(ARCH)/</literallayout> 
+ </RefSect1>
+ 
+ <RefSect1><Title>Véase también</>
+   <para>
+   &apt-cache; &apt-conf;
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+
+  <refsect1>
+    <title>TRADUCTOR</title>
+    <para>
+      Traducción de Rubén Porras Campo
+      &lt;debian-l10n-spanish@lists.debian.org&gt;
+    </para>
+  </refsect1>
+
+</refentry>

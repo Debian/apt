@@ -1,0 +1,120 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.es">
+%aptent;
+
+]>
+
+<!-- 
+(c) 2003 Software in the Public Interest
+Esta traducción ha sido realizada por Rubén Porras Campo <nahoo@inicia.es>
+Está basada en la página de manual original:
+versión 1.2 del CVS de
+/cvs/debian-doc/manpages/english/apt/vendors.list.5.sgml
+ -->
+
+<refentry lang=es>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>vendors.list</>
+   <manvolnum>5</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>vendors.list</>
+    <refpurpose>Configuración de claves de seguridad de APT</>
+ </refnamediv>
+ 
+ <RefSect1><Title>Descripción</>
+   <para>   
+   La lista de proveedores de paquetes contiene una lista de todos los
+   proveedores cuyos paquetes descargados desee autenticar.
+   Debe de tener la huella digital PGP correspondiente a cada
+   proveedor, de este modo APT puede verificar la firma del fichero
+   <literal>Release</literal> y después la suma de control de cada
+   paquete descargado. Para habilitar la autenticación debe añadir
+   entre llaves el identificador del proveedor (vea más abajo) a cada
+   línea del fichero &sources-list; que replique el repositorio
+   proporcionado por ese proveedor.
+   <para>
+   El formato del fichero es parecido al que usa
+   <command>apt.conf</command>. Consiste de un número arbitrario de
+   bloques, donde cada bloque comienza con una cadena de caracteres
+   que indican el <replaceable/tipo_clave/ y el <replaceable/id_de_proveedor/.
+   <para>
+   Algunos proveedores pueden tener varios bloques definiendo
+   diferentes normas de seguridad para sus distribuciones. Debian, por
+   ejemplo, usa diferentes métodos para firmar las distintas distribuciones.
+   <para>
+   <replaceable/tipo_clave/ es el tipo de comprobación exigido.
+   Actualmente, sólo está disponible el tipo <literal/simple-key/.
+   <para>
+   <replaceable/id_de_proveedor/ es la cadena de carácteres que
+   identifica al proveedor. Es una cadena arbitraria y obligatoria que
+   debe proporcionar para identificar inequívocamente al proveedor
+   listado en este fichero.
+   
+   Ejemplo:
+<informalexample><programlisting>   
+simple-key "juan"
+{
+   Fingerprint "0987AB4378FSD872343298787ACC";
+   Name "Juan Gándara &lt;juan@gandara.com&gt;";
+}						    
+</programlisting></informalexample>
+   
+ </RefSect1>
+
+ <RefSect1><Title>El tipo simple-key</>
+   <para>   
+   Este tipo de verificación se usa cuando el proveedor tiene una sola
+   clave asegurada que se debe usar para firmar el fichero <literal>
+   Release</literal>. Los siguiente elementos deben de estar presentes:
+   
+   <VariableList>
+     <VarListEntry><Term>Fingerprint</Term>
+     <ListItem><Para>
+     La huella digital PGP para la clave. La huella digital debe
+     expresarse con la notación estándar, con o sin espacios.
+     La opción <option/--fingerprint/ de la orden <CiteRefEntry><RefEntryTitle>
+     <command/gpg/</RefEntryTitle><ManVolNum/1/</CiteRefEntry>
+     mostrará la huella digital de la clave o claves seleccionadas.
+     </VarListEntry>
+     
+     <VarListEntry><Term>Name</Term>
+     <ListItem><Para>
+     Cadena de caracteres que contiene una descripción del propietario
+     de la clave o del proveedor. Puede poner el nombre del proveedor
+     y su <foreignphrase>email</foreignphrase>. La cadena debe de ir
+     entre comillas dobles.
+     </VarListEntry>
+     
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Ficheros</>
+   <para>
+   <filename>/etc/apt/vendors.list</>
+ </RefSect1>
+ 
+ <RefSect1><Title>Véase también</>
+   <para>
+   &sources-list;
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+
+  <refsect1>
+    <title>TRADUCTOR</title>
+    <para>
+      Traducción de Rubén Porras Campo
+      &lt;debian-l10n-spanish@lists.debian.org&gt;
+    </para>
+  </refsect1>
+
+</refentry>
+   

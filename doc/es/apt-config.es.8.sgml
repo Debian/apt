@@ -1,0 +1,123 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.es">
+%aptent;
+
+]>
+
+<!-- 
+(c) 2003 Software in the Public Interest
+Esta traducción ha sido realizada por Carlos Mestre
+Está basada en la página de manual original:
+versión 1.2 del CVS de
+/cvs/debian-doc/manpages/english/apt/apt-config.8.sgml
+ -->
+
+<refentry lang=es>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-config</>
+   <manvolnum>8</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-config</>
+    <refpurpose>Programa para la consulta de configuración de APT</>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-config</>
+      <arg><option>-hv</></arg>
+      <arg><option>-o=<replaceable/cadena de configuración/</></arg>
+      <arg><option>-c=<replaceable/fichero/</></arg>
+      <group choice=req>
+         <arg>shell</>
+         <arg>dump</>
+      </group>   
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+ <RefSect1><Title>Descripción</>
+   <para>
+   <command/apt-config/ es un programa interno usado por varios programas del
+   conjunto de herramientas APT para proporcionar una configurabilidad
+   coherente.Este accede al archivo principal de configuración
+   <filename>/etc/apt/apt.conf</> de forma que sea fácil de usar por scripts.
+   <para>
+   A menos que se incluya la opción <option/-h/ o <option/--help/, una de de
+   los siguientes órdenes debe estar presente.
+   </para>
+   
+   <VariableList>
+     <VarListEntry><Term>shell</Term>
+     <ListItem><Para>
+     shell se usa para acceder a la información de configuración de un fichero
+     de órdenes (shell script). Este proporciona 2 argumentos, el primero es
+     una variable del intérprete de órdenes, y el segundo el valor de
+     configuración para la petición. Como salida muestra una serie de listas
+     de órdenes asignados al intérprete de órdenes por cada valor presente. En
+     un fichero de órdenes, este debería usarse como:
+     </para>
+     
+<informalexample><programlisting>
+OPTS="-f"
+RES=`apt-config shell OPTS MyApp::Options`
+eval $RES
+</programlisting></informalexample>
+
+     <para>
+     Esto debería fijar la variable de entorno del intérprete de órdenes $OPTS
+     al valor deMyApp::Opciones, con un valor por omisión de <option/-f/.
+     
+     <para>
+     El elemento de configuración podría ser corregido después con /[fdbi]. f
+     devuelve nombres de ficheros, d devuelve los directorios, b devuelve
+     verdadero o falso e i devuelve un número entero. Cada uno de los valores
+     devueltos es normalizado y verificado internamente.
+     </VarListEntry>
+
+     <VarListEntry><Term>dump</Term>
+     <ListItem><Para>
+     Sólo muestra el contenido del espacio de configuración.
+     </VarListEntry>
+
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Opciones</>
+   &apt-cmdblurb;
+   
+   <VariableList>
+   
+     &apt-commonoptions;
+     
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Vea además</>
+   <para>
+   &apt-conf;
+ </RefSect1>
+
+ <RefSect1><Title>Diagnósticos</>
+   <para>
+   <command/apt-config/ devuelve el valor cero en una operación normal, 100 si ocurre un error.
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+
+  <refsect1>
+    <title>TRADUCTOR</title>
+    <para>
+      Traducción de Carlos Mestre
+      &lt;debian-l10n-spanish@lists.debian.org&gt;
+    </para>
+  </refsect1>
+ 
+</refentry>

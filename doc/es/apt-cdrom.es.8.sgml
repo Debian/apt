@@ -1,0 +1,167 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.es">
+%aptent;
+
+]>
+
+<!--
+(c) 2003 Software in the Public Interest
+Esta traducción ha sido realizada por Rubén Porras Campo <nahoo@inicia.es>
+Está basada en la página de manual original:
+versión 1.2 del CVS de
+/cvs/debian-doc/manpages/english/apt/apt-cdrom.8.sgml
+-->
+
+<refentry lang=es>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-cdrom</>
+   <manvolnum>8</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-cdrom</>
+    <refpurpose>utilidad APT para administración del CDROM</>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-cdrom</>
+      <arg><option>-hvrmfan</></arg>
+      <arg><option>-d=<replaceable/cdrom punto_de_montaje/</></arg>
+      <arg><option>-o=<replaceable/cadena de configuración/</></arg>
+      <arg><option>-c=<replaceable/fichero/</></arg>
+      <group choice=req>
+         <arg>add</>
+         <arg>ident</>
+      </group>   
+   </cmdsynopsis>
+  </refsynopsisdiv>
+
+<RefSect1><Title>Descripción</>
+   <para>
+   <command/apt-cdrom/ se usa para añadir un CDROM nuevo a la lista de recursos
+   disponibles de APT. <command/apt-cdrom/ determina la estructura del disco,
+   corrige varios errores de grabación posibles y verifica los ficheros con
+   los índices.   
+   <para>
+   Es necesario usar <command/apt-cdrom/ para añadir CDs al sistema APT, 
+   no puede hacerse manualmente. Además cada unidad de un conjunto de discos
+   debe de ser analizada por separado para detectar los posibles errores de
+   grabación.
+
+   <para>
+   A menos que se de una de las opciones <option/-h/, o <option/--help/
+   una de las siguientes órdenes deben de estar presentes.
+   
+   <VariableList>
+     <VarListEntry><Term>add</Term>
+     <ListItem><Para>
+     <literal/add/ para añadir un disco nuevo a la lista de recursos. 
+     Desmontará el dispositivo de CDROM, pedirá que se inserte un disco y
+     procederá a analizar y copiar los ficheros de índices. Si el disco
+     no contiene el directorio apropiado <filename>.disk/</> se mostrará un
+     mensaje descriptivo.
+
+     <para>
+     APT usa un identificador de CDROM para reconocer que disco está actualmente
+     en la unidad lectora y mantiene una lista de estos identificadores en 
+     <filename>&statedir;/cdroms.list</>
+     </VarListEntry>
+     
+     <VarListEntry><Term>ident</Term>
+     <ListItem><Para>
+     Una herramienta de depuración para informar de identidad del disco actual
+     así como del nombre guardado.
+     </VarListEntry>
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Opciones</>
+   &apt-cmdblurb;
+   
+   <VariableList>
+     <VarListEntry><term><option/-d/</><term><option/--cdrom/</>
+     <ListItem><Para>
+     Punto de montaje. Especifica el lugar donde se debe montar el cdrom.
+     Este punto de montaje debe estar listado en <filename>/etc/fstab</> y
+     configurado correctamente.
+     Opción de Configuración: <literal/Acquire::cdrom::mount/.
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-r/</><term><option/--rename/</>
+     <ListItem><Para>
+     Renombrar un disco. Cambia la etiqueta de un disco. Esta opción hará que
+     <command/apt-cdrom/ pregunte una nueva etiqueta.
+     Opción de Configuración: <literal/APT::CDROM::Rename/.
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-m/</><term><option/--no-mount/</>
+     <ListItem><Para>
+     No montar. Evita que <command/apt-cdrom/ monte y desmonte el punto de
+     montaje.
+     Opción de Configuración: <literal/APT::CDROM::NoMount/.
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-f/</><term><option/--fast/</>
+     <ListItem><Para>
+     Rápido. Asumir que los ficheros con los paquetes son válidos y no
+     comprobar todos los paquetes. Esta opción sólo se debe de usar si
+     <command/apt-cdrom/ comprobó el disco con anterioridad y no detectó
+     ningún error.
+     Opción de Configuración: <literal/APT::CDROM::Fast/.
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-a/</><term><option/--thorough/</>
+     <ListItem><Para>
+     Comprobación meticulosa de los paquetes. Esta opción puede ser necesaria
+     con algunos discos viejos de Debian 1.1/1.2 que tienen los ficheros de
+     los paquetes en lugares extraños. Tardará mucho más en analizar el CD, 
+     pero encontrará todos los paquetes.
+     </VarListEntry>
+     
+     <VarListEntry><term><option/-n/</>
+                   <term><option/--just-print/</>
+                   <term><option/--recon/</>
+                   <term><option/--no-act/</>
+     <ListItem><Para>
+     No cambiar nada. No cambiar el fichero &sources-list; y no escribir
+     los ficheros de índices. Sin embargo sigue haciendo todas las
+     comprobaciones.
+     Opción de Configuración: <literal/APT::CDROM::NoAct/.
+     </VarListEntry> 
+ 
+     &apt-commonoptions;
+     
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Véase también</>
+   <para>
+   &apt-conf;, &apt-get;, &sources-list;
+ </RefSect1>
+
+ <RefSect1><Title>Diagnósticos</>
+   <para>
+   <command/apt-cdrom/ devuelve cero en una operaciones satisfactorias,
+   el decimal 100 en caso de error.
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+
+  <refsect1>
+    <title>TRADUCTOR</title>
+    <para>
+      Traducción de Rubén Porras Campo
+      &lt;debian-l10n-spanish@lists.debian.org&gt;
+    </para>
+  </refsect1>
+
+</refentry>
+
