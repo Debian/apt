@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2005-01-15 00:39+0800\n"
+"PO-Revision-Date: 2005-02-09 17:34+0800\n"
 "Last-Translator: Tchaikov <chaisave@263.net>\n"
 "Language-Team: Chinese (simplified) <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
@@ -322,7 +322,6 @@ msgid "Error Processing Contents %s"
 msgstr "处理 Contents %s 时出错"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -384,7 +383,6 @@ msgstr ""
 "可以通过使用 --source-override 选项来指定一个 override 文件\n"
 "\n"
 "使用“packages”和“source”命令时，必须在文件树的根部执行本程序。\n"
-"\n"
 "二进制包的搜索路径一定要是递归搜索的底层，而且 override 文件里\n"
 "应该注明 override 的标志。若指定了路径前缀，那么它会被加到文件名前面。\n"
 "下面有个来自 Debian 文档的例子：\n"
@@ -396,6 +394,7 @@ msgstr ""
 "  --md5 使之生成 MD5 校验和\n"
 "  -s=?  源代码包 override 文件\n"
 "  -q    输出精简信息  -d=?  指定可选的缓存数据库\n"
+"  -d=?  使用另一个可选的缓存数据库\n"
 "  --no-delink 开启delink的调试模式\n"
 "  --contents  使之生成控制内容文件\n"
 "  -c=?  读取指定配置文件\n"
@@ -691,7 +690,7 @@ msgid ""
 "WARNING: The following essential packages will be removed\n"
 "This should NOT be done unless you know exactly what you are doing!"
 msgstr ""
-"注意：下列的重要软件包将被卸载 \n"
+"【警告】：下列的重要软件包将被卸载 \n"
 "请勿尝试，除非您确实清楚您正在执行的操作！"
 
 #: cmdline/apt-get.cc:575
@@ -748,21 +747,20 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "不能满足依赖关系。不妨试一下 -f 选项。"
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "下列的软件包将被升级："
+msgstr "【警告】：下列的软件包不能通过认证！"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "不经验证就安装这些软件包么？[y/N] "
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "有些软件包不能通过验证"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
-msgstr "碰到了一些问题，您使用了 -y 选项但是没有用 --force-yes。"
+msgstr "碰到了一些问题，您使用了 -y 选项，但是没有用 --force-yes。"
 
 #: cmdline/apt-get.cc:762
 msgid "Packages need to be removed but Remove is disabled."
@@ -1553,9 +1551,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”"
+msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”或者“%s”"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -2468,9 +2466,9 @@ msgid "Size mismatch"
 msgstr "大小不符"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "Vendor 块 %s 是无效的"
+msgstr "软件提供者数据块内 %s 没有包含指纹信息"
 
 #: apt-pkg/cdrom.cc:487
 #, c-format
@@ -2478,47 +2476,48 @@ msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
 msgstr ""
+"现把 %s 作为了 CD-ROM 的挂载点\n"
+"正在挂载 CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
-msgstr ""
+msgstr "正在鉴别.. "
 
 #: apt-pkg/cdrom.cc:521
 #, c-format
 msgid "Stored Label: %s \n"
-msgstr ""
+msgstr "存档标签：%s \n"
 
 #: apt-pkg/cdrom.cc:541
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr ""
+msgstr "现把 %s 作为了 CD-ROM 的挂载点\n"
 
 #: apt-pkg/cdrom.cc:559
 msgid "Unmounting CD-ROM\n"
-msgstr ""
+msgstr "正在卸载 CD-ROM 文件系统\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "正在等待报头"
+msgstr "等待插入盘片……\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
 msgid "Mounting CD-ROM...\n"
-msgstr ""
+msgstr "正在挂载 CD-ROM 文件系统……\n"
 
 #: apt-pkg/cdrom.cc:589
 msgid "Scanning Disc for index files..\n"
-msgstr ""
+msgstr "正在光盘中查找索引文件..\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "找到了 %i 个软件包索引、%i 个源代码包索引，和 %i 个数字签名\n"
 
 #: apt-pkg/cdrom.cc:684
 msgid "That is not a valid name, try again.\n"
-msgstr ""
+msgstr "这不是一个有效的名字，请再次命名。\n"
 
 #: apt-pkg/cdrom.cc:700
 #, c-format
@@ -2526,44 +2525,44 @@ msgid ""
 "This Disc is called: \n"
 "'%s'\n"
 msgstr ""
+"这张光盘现在的名字是：\n"
+"“%s”\n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "正在读取软件包列表"
+msgstr "正在复制软件包列表……"
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "软件包来源档 %2$s 的第 %1$u 行超长了。"
+msgstr "正在写入新的软件包源列表\n"
 
 #: apt-pkg/cdrom.cc:737
 msgid "Source List entries for this Disc are:\n"
-msgstr ""
+msgstr "对应于该光盘的软件包源设置项是：\n"
 
 #: apt-pkg/cdrom.cc:771
 msgid "Unmounting CD-ROM..."
-msgstr ""
+msgstr "正在卸载 CD-ROM 文件系统……"
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "已写入 %i 条记录。\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "已写入 %i 条记录，并有 %i 个文件缺失。\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "已写入 %i 条记录，并有 %i 个文件不吻合\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
-msgstr ""
+msgstr "已写入 %i 条记录，并有 %i 个缺失，以及 %i 个文件不吻合\n"
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr ""
