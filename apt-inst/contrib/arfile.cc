@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: arfile.cc,v 1.2 2001/02/20 07:03:16 jgg Exp $
+// $Id: arfile.cc,v 1.3 2002/09/20 04:42:25 tausq Exp $
 /* ######################################################################
 
    AR File - Handle an 'AR' archive
@@ -113,7 +113,7 @@ bool ARArchive::LoadHeaders()
       else
       {
 	 unsigned int I = sizeof(Head.Name) - 1;
-	 for (; Head.Name[I] == ' '; I--);
+	 for (; Head.Name[I] == ' ' || Head.Name[I] == '/'; I--);
 	 Memb->Name = string(Head.Name,0,I+1);
       }
 
