@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.2 1999/03/28 01:37:26 jgg Exp $
+// $Id: cdromutl.cc,v 1.3 1999/04/03 01:05:24 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -17,6 +17,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/wait.h>
 #include <sys/errno.h>
@@ -28,11 +29,13 @@
 #include <stdio.h>
 									/*}}}*/
 
-// UnmountCdrom - Unmount a cdrom					/*{{{*/
+// IsMounted - Returns true if the mount point is mounted		/*{{{*/
 // ---------------------------------------------------------------------
-/* Forking umount works much better than the umount syscall which can 
-   leave /etc/mtab inconsitant. We drop all messages this produces. */
-bool UnmountCdrom(string Path)
+/* This is a simple algorithm that should always work, we stat the mount point
+   and the '..' file in the mount point and see if they are on the same device.
+   By definition if they are the same then it is not mounted. This should 
+   account for symlinked mount points as well. */
+bool IsMounted(string &Path)
 {
    if (Path.empty() == true)
       return false;
@@ -50,6 +53,17 @@ bool UnmountCdrom(string Path)
       return _error->Errno("stat","Unable to stat the mount point %s",Path.c_str());
 
    if (Buf.st_dev == Buf2.st_dev)
+      return false;
+   return true;
+}
+									/*}}}*/
+// UnmountCdrom - Unmount a cdrom					/*{{{*/
+// ---------------------------------------------------------------------
+/* Forking umount works much better than the umount syscall which can 
+   leave /etc/mtab inconsitant. We drop all messages this produces. */
+bool UnmountCdrom(string Path)
+{
+   if (IsMounted(Path) == false)
       return true;
    
    int Child = fork();
@@ -65,12 +79,21 @@ bool UnmountCdrom(string Path)
       for (int I = 0; I != 3; I++)
 	 dup2(open("/dev/null",O_RDWR),I);
 
-      const char *Args[10];
-      Args[0] = "umount";
-      Args[1] = Path.c_str();
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);      
-      exit(100);
+      if (_config->Exists("Acquire::cdrom::"+Path+"::UMount") == true)
+      {
+	 if (system(_config->Find("Acquire::cdrom::"+Path+"::UMount").c_str()) != 0)
+	    _exit(100);
+	 _exit(0);	 	 
+      }
+      else
+      {
+	 const char *Args[10];
+	 Args[0] = "umount";
+	 Args[1] = Path.c_str();
+	 Args[2] = 0;
+	 execvp(Args[0],(char **)Args);      
+	 _exit(100);
+      }      
    }
 
    // Wait for mount
@@ -93,6 +116,9 @@ bool UnmountCdrom(string Path)
 /* We fork mount and drop all messages */
 bool MountCdrom(string Path)
 {
+   if (IsMounted(Path) == true)
+      return true;
+   
    int Child = fork();
    if (Child < -1)
       return _error->Errno("fork","Failed to fork");
@@ -106,12 +132,21 @@ bool MountCdrom(string Path)
       for (int I = 0; I != 3; I++)
 	 dup2(open("/dev/null",O_RDWR),I);
       
-      const char *Args[10];
-      Args[0] = "mount";
-      Args[1] = Path.c_str();
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);      
-      exit(100);
+      if (_config->Exists("Acquire::cdrom::"+Path+"::Mount") == true)
+      {
+	 if (system(_config->Find("Acquire::cdrom::"+Path+"::Mount").c_str()) != 0)
+	    _exit(100);
+	 _exit(0);	 
+      }
+      else
+      {
+	 const char *Args[10];
+	 Args[0] = "mount";
+	 Args[1] = Path.c_str();
+	 Args[2] = 0;
+	 execvp(Args[0],(char **)Args);      
+	 _exit(100);
+      }      
    }
 
    // Wait for mount

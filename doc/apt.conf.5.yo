@@ -125,6 +125,10 @@ or for a specific host (See the sample config file for examples)
 dit(bf(cdrom))
 CDROM URIs; the only setting for CDROM URIs is the mount point, cdrom::Mount
 which must be the mount point for the CDROM drive as specified in /etc/fstab.
+It is possible to provide alternate mount and unmount commands if your
+mount point cannot be listed in the fstab (such as an SMB mount). The syntax
+is to put "/cdrom/"::Mount "foo"; within the cdrom block. It is important to
+have the trailing slash. Unmount commands can be specified using UMount.
 
 enddit()
 
@@ -204,7 +208,7 @@ manpagesection(EXAMPLES)
 bf(/usr/doc/apt/examples/apt.conf) contains a sample configuration file
 showing the default values for all possible options.
 
-mapagesection(FILES)
+manpagesection(FILES)
 /etc/apt/apt.conf
 
 manpageseealso()

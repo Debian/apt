@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.19 1999/03/29 19:28:52 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.20 1999/04/03 01:05:25 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -831,13 +831,10 @@ bool DoAdd(CommandLine &)
       UnmountCdrom(CDROM);
 
       // Mount the new CDROM
-      Prompt("Please insert a Disc in the drive and press any key");
+      Prompt("Please insert a Disc in the drive and press enter");
       cout << "Mounting CD-ROM" << endl;
       if (MountCdrom(CDROM) == false)
-      {
-	 cout << "Failed to mount the cdrom." << endl;
-	 return false;
-      }
+	 return _error->Error("Failed to mount the cdrom.");
    }
    
    // Hash the CD to get an ID
