@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.3 1998/11/28 00:00:36 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.4 1998/11/28 03:54:34 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -403,6 +403,85 @@ bool GrabFirst(string Path,string &To,unsigned int Depth)
    return true;
 }
 									/*}}}*/
+// ChopDirs - Chop off the leading directory components			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string ChopDirs(string Path,unsigned int Depth)
+{
+   string::size_type I = 0;
+   do
+   {
+      I = Path.find('/',I+1);
+      Depth--;
+   }
+   while (I != string::npos && Depth != 0);
+   
+   if (I == string::npos)
+      return string();
+   
+   return string(Path,I+1);
+}
+									/*}}}*/
+// ReconstructPrefix - Fix strange prefixing				/*{{{*/
+// ---------------------------------------------------------------------
+/* This prepends dir components from the path to the package files to
+   the path to the deb until it is found */
+bool ReconstructPrefix(string &Prefix,string OrigPath,string CD,
+		       string File)
+{
+   bool Debug = _config->FindB("Debug::aptcdrom",false);
+   unsigned int Depth = 1;
+   string MyPrefix = Prefix;
+   while (1)
+   {
+      struct stat Buf;
+      if (stat(string(CD + MyPrefix + File).c_str(),&Buf) != 0)
+      {
+	 if (Debug == true)
+	    cout << "Failed, " << CD + MyPrefix + File << endl;
+	 if (GrabFirst(OrigPath,MyPrefix,Depth++) == true)
+	    continue;
+	 
+	 return false;
+      }
+      else
+      {
+	 Prefix = MyPrefix;
+	 return true;
+      }      
+   }
+   return false;
+}
+									/*}}}*/
+// ReconstructChop - Fixes bad source paths				/*{{{*/
+// ---------------------------------------------------------------------
+/* This removes path components from the filename and prepends the location
+   of the package files until a file is found */
+bool ReconstructChop(unsigned long &Chop,string Dir,string File)
+{
+   // Attempt to reconstruct the filename
+   unsigned long Depth = 0;
+   while (1)
+   {
+      struct stat Buf;
+      if (stat(string(Dir + File).c_str(),&Buf) != 0)
+      {
+	 File = ChopDirs(File,1);
+	 Depth++;
+	 if (File.empty() == false)
+	    continue;
+	 return false;
+      }
+      else
+      {
+	 Chop = Depth;
+	 return true;
+      }
+   }
+   return false;
+}
+									/*}}}*/
+
 // CopyPackages - Copy the package files from the CD			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -411,6 +490,7 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
    OpTextProgress Progress;
    
    bool NoStat = _config->FindB("APT::CDROM::Fast",false);
+   bool Debug = _config->FindB("Debug::aptcdrom",false);
    
    // Prepare the progress indicator
    unsigned long TotalSize = 0;
@@ -457,6 +537,7 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
       pkgTagSection Section;
       string Prefix;
       unsigned long Hits = 0;
+      unsigned long Chop = 0;
       while (Parser.Step(Section) == true)
       {
 	 Progress.Progress(Parser.Offset());
@@ -466,38 +547,33 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 	 if (File.empty() || Size == 0)
 	    return _error->Error("Cannot find filename or size tag");
 	 
+	 if (Chop != 0)
+	    File = OrigPath + ChopDirs(File,Chop);
+	 
 	 // See if the file exists
 	 if (NoStat == false || Hits < 10)
 	 {
-	    struct stat Buf;
-	    unsigned int Depth = 1;
-	    string MyPrefix = Prefix;
-	    while (1)
+	    // Attempt to fix broken structure
+	    if (Hits == 0)
 	    {
-	       if (stat(string(CDROM + MyPrefix + File).c_str(),&Buf) != 0)
+	       if (ReconstructPrefix(Prefix,OrigPath,CDROM,File) == false &&
+		   ReconstructChop(Chop,*I,File) == false)
 	       {
-		  if (Prefix.empty() == true)
-		  {
-		     if (GrabFirst(OrigPath,MyPrefix,Depth++) == true)
-			continue;
-		  }
-		  
 		  NotFound++;
-		  Depth = 0;
-		  break;
+		  continue;
 	       }
-	       else 
-		  break;
+	       if (Chop != 0)
+		  File = OrigPath + ChopDirs(File,Chop);
 	    }
 	    
-	    // Failed
-	    if (Depth == 0)
+	    // Get the size
+	    struct stat Buf;
+	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0)
+	    {
+	       NotFound++;
 	       continue;
-	    
-	    // Store the new prefix
-	    if (Depth != 1)
-	       Prefix = MyPrefix;
-	    
+	    }	    
+	    			    	    
 	    // Size match
 	    if ((unsigned)Buf.st_size != Size)
 	    {
@@ -512,11 +588,43 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 	 // Copy it to the target package file
 	 const char *Start;
 	 const char *Stop;
-	 Section.GetSection(Start,Stop);
-	 if (Target.Write(Start,Stop-Start) == false)
-	    return false;
+	 if (Chop != 0)
+	 {
+	    // Mangle the output filename
+	    const char *Filename;
+	    Section.Find("Filename",Filename,Stop);
+	    
+	    /* We need to rewrite the filename field so we emit
+	       all fields except the filename file and rewrite that one */
+	    for (unsigned int I = 0; I != Section.Count(); I++)
+	    {
+	       Section.Get(Start,Stop,I);
+	       if (Start <= Filename && Stop > Filename)
+	       {
+		  char S[500];
+		  sprintf(S,"Filename: %s\n",File.c_str());
+		  if (I + 1 == Section.Count())
+		     strcat(S,"\n");
+		  if (Target.Write(S,strlen(S)) == false)
+		     return false;
+	       }
+	       else
+		  if (Target.Write(Start,Stop-Start) == false)
+		     return false;		  
+	    }
+	    
+	 }
+	 else
+	 {
+	    Section.GetSection(Start,Stop);
+	    if (Target.Write(Start,Stop-Start) == false)
+	       return false;
+	 }	 
       }
 
+      if (Debug == true)
+	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << Chop << endl;
+	 
       if (_config->FindB("APT::CDROM::NoAct",false) == false)
       {
 	 // Move out of the partial directory
@@ -889,7 +997,7 @@ bool DoAdd(CommandLine &)
       }
       
       if (_config->FindB("APT::CDROM::Rename",false) == true ||
-	  Name.empty() == false)
+	  Name.empty() == true)
       {
 	 cout << "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'";
 	 while (1)
