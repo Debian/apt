@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.16 2001/03/03 23:29:55 jgg Exp $
+// $Id: configuration.cc,v 1.17 2001/03/04 00:44:35 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -573,6 +573,7 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 
 	    // Parse off the word
 	    string Word;
+	    bool NoWord = false;
 	    if (ParseCWord(Pos,Word) == false &&
 		ParseQuoteWord(Pos,Word) == false)
 	    {
@@ -580,7 +581,8 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 	       {
 		  Word = Tag;
 		  Tag = "";
-	       }	       
+	       }
+	       NoWord = true;
 	    }
 	    if (strlen(Pos) != 0)
 	       return _error->Error(_("Syntax error %s:%u: Extra junk after value"),FName.c_str(),CurLine);
@@ -648,7 +650,8 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 	    else
 	    {
 	       // Set the item in the configuration class
-	       Conf.Set(Item,Word);
+	       if (NoWord == false)
+		  Conf.Set(Item,Word);
 	    }
 	    
 	    // Empty the buffer
