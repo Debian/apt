@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.89 1999/11/17 01:52:01 jgg Exp $
+// $Id: apt-get.cc,v 1.90 1999/11/26 00:05:55 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -794,7 +794,10 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    
    // Check if there is something at all to install
    pkgDepCache::StateCache &State = Cache[Pkg];
-   if (State.CandidateVer == 0)
+   if (Remove == true && Pkg->CurrentVer == 0)
+      return _error->Error("Package %s is not installed",Pkg.Name());
+   
+   if (State.CandidateVer == 0 && Remove == false)
    {
       if (AllowFail == false)
 	 return false;
