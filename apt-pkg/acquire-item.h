@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.2 1998/10/22 04:56:39 jgg Exp $
+// $Id: acquire-item.h,v 1.3 1998/10/24 04:57:57 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -35,13 +35,19 @@ class pkgAcquire::Item
    
    public:
 
+   // State of the item
+   enum {StatIdle, StatFetching, StatDone, StatError} Status;
+   string ErrorText;
+   
    // Number of queues we are inserted into
    unsigned int QueueCounter;
    
    // File to write the fetch into
    string DestFile;
    
-   virtual void Failed() {};
+   virtual void Failed(string Message);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash);
+
    virtual string Custom600Headers() {return string();};
       
    Item(pkgAcquire *Owner);
@@ -70,6 +76,8 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    const pkgSourceList::Item *Location;
    
    public:
+   
+   virtual void Done(string Message,unsigned long Size,string Md5Hash);
    
    virtual string Custom600Headers();
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.5 1998/10/23 00:49:58 jgg Exp $
+// $Id: acquire-worker.cc,v 1.6 1998/10/24 04:57:58 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -187,6 +187,11 @@ bool pkgAcquire::Worker::RunMessages()
       if (End == Message.c_str())
 	 return _error->Error("Invalid message from method %s: %s",Access.c_str(),Message.c_str());
 
+      string URI = LookupTag(Message,"URI");
+      pkgAcquire::Queue::QItem *Itm = 0;
+      if (URI.empty() == false)
+	 Itm = OwnerQ->FindItem(URI,this);
+	 
       // Determine the message number and dispatch
       switch (Number)
       {
@@ -209,15 +214,47 @@ bool pkgAcquire::Worker::RunMessages()
 	    
 	 // 200 URI Start
 	 case 200:
-	 break;
+	 {
+	    if (Itm == 0)
+	    {
+	       _error->Warning("Method gave invalid 200 URI Start message");
+	       break;
+	    }
+	    CurrentItem = Itm;
+	    CurrentSize = 0;
+	    TotalSize = atoi(LookupTag(Message,"Size","0").c_str());
+	    
+	    break;
+	 }
 	 
 	 // 201 URI Done
 	 case 201:
-	 break;
+	 {
+	    if (Itm == 0)
+	    {
+	       _error->Warning("Method gave invalid 400 URI Failure message");
+	       break;
+	    }
+
+	    Itm->Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
+					  LookupTag(Message,"MD5-Hash"));
+	    OwnerQ->ItemDone(Itm);
+	    break;
+	 }	 
 	 
 	 // 400 URI Failure
 	 case 400:
-	 break;
+	 {
+	    if (Itm == 0)
+	    {
+	       _error->Warning("Method gave invalid 400 URI Failure message");
+	       break;
+	    }
+
+	    Itm->Owner->Failed(Message);
+	    OwnerQ->ItemDone(Itm);
+	    break;
+	 }	 
 	 
 	 // 401 General Failure
 	 case 401:

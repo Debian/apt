@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.7 1998/10/23 00:49:59 jgg Exp $
+// $Id: strutl.cc,v 1.8 1998/10/24 04:58:07 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -521,7 +521,7 @@ bool ReadMessages(int Fd, vector<string> &List)
       End += Res;
       
       // Look for the end of the message
-      for (char *I = Buffer; I < End; I++)
+      for (char *I = Buffer; I + 1 < End; I++)
       {
 	 if (I[0] != '\n' || I[1] != '\n')
 	    continue;

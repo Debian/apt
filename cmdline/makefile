@@ -7,12 +7,12 @@ include ../buildlib/defaults.mak
 
 # The apt-cache program
 PROGRAM=apt-cache
-SLIBS = -lapt-pkg 
+SLIBS = -lapt-pkg
 SOURCE = apt-cache.cc
 include $(PROGRAM_H)
 
 # The apt-config program
 PROGRAM=apt-get
-SLIBS = -lapt-pkg 
+SLIBS = -lapt-pkg
 SOURCE = apt-get.cc
 include $(PROGRAM_H)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.7 1998/10/20 04:33:13 jgg Exp $
+// $Id: algorithms.cc,v 1.8 1998/10/24 04:58:04 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -245,14 +245,17 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
 	 Cache.MarkInstall(I,false);
 
    pkgProblemResolver Fix(Cache);
-   
+
    // Hold back held packages.
-   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+   if (_config->FindB("APT::Ingore-Hold",false) == false)
    {
-      if (I->SelectedState == pkgCache::State::Hold)
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
-	 Fix.Protect(I);
-	 Cache.MarkKeep(I);
+	 if (I->SelectedState == pkgCache::State::Hold)
+	 {
+	    Fix.Protect(I);
+	    Cache.MarkKeep(I);
+	 }
       }
    }
    
@@ -277,8 +280,9 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
       if (Cache[I].Install() == true)
 	 Fix.Protect(I);
 	  
-      if (I->SelectedState == pkgCache::State::Hold)
-	 continue;
+      if (_config->FindB("APT::Ingore-Hold",false) == false)
+	 if (I->SelectedState == pkgCache::State::Hold)
+	    continue;
       
       if (I->CurrentVer != 0 && Cache[I].InstallVer != 0)
 	 Cache.MarkInstall(I,false);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.3 1998/10/22 04:56:44 jgg Exp $
+// $Id: acquire.h,v 1.4 1998/10/24 04:58:02 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -105,6 +105,7 @@ class pkgAcquire::Queue
       string URI;
       string Description;
       Item *Owner;
+      pkgAcquire::Worker *Worker;
    };   
    
    // Name of the queue
@@ -121,6 +122,10 @@ class pkgAcquire::Queue
    void Enqueue(Item *Owner,string URI,string Description);
    void Dequeue(Item *Owner);
 
+   // Find a Queued item
+   QItem *FindItem(string URI,pkgAcquire::Worker *Owner);
+   bool ItemDone(QItem *Itm);
+   
    bool Startup();
    bool Shutdown();
    

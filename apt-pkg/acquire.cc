@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.3 1998/10/22 04:56:43 jgg Exp $
+// $Id: acquire.cc,v 1.4 1998/10/24 04:58:01 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -331,7 +331,7 @@ void pkgAcquire::Queue::Enqueue(Item *Owner,string URI,string Description)
    Owner->QueueCounter++;
 }
 									/*}}}*/
-// Queue::Dequeue - Remove and item from the queue			/*{{{*/
+// Queue::Dequeue - Remove an item from the queue			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcquire::Queue::Dequeue(Item *Owner)
@@ -367,6 +367,7 @@ bool pkgAcquire::Queue::Startup()
    if (Workers->Start() == false)
       return false;
       
+   Items->Worker = Workers;
    Workers->QueueItem(Items);
    
    return true;
@@ -387,5 +388,32 @@ bool pkgAcquire::Queue::Shutdown()
    }
    
    return true;
+}
+									/*}}}*/
+// Queue::Finditem - Find a URI in the item list			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Worker *Owner)
+{
+   for (QItem *I = Items; I != 0; I = I->Next)
+      if (I->URI == URI && I->Worker == Owner)
+	 return I;
+   return 0;
+}
+									/*}}}*/
+// Queue::ItemDone - Item has been completed				/*{{{*/
+// ---------------------------------------------------------------------
+/* The worker signals this which causes the item to be removed from the
+   queue. */
+bool pkgAcquire::Queue::ItemDone(QItem *Itm)
+{
+   Dequeue(Itm->Owner);
+   
+   if (Items == 0)
+      return true;
+
+   Items->Worker = Workers;
+   Items->Owner->Status = pkgAcquire::Item::StatFetching;
+   return Workers->QueueItem(Items);
 }
 									/*}}}*/

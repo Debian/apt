@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.4 1998/10/20 04:33:18 jgg Exp $
+// $Id: apt-get.cc,v 1.5 1998/10/24 04:58:08 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -782,6 +782,7 @@ int main(int argc,const char *argv[])
       {'f',"fix-broken","APT::Get::Fix-Broken",0},
       {'u',"show-upgraded","APT::Get::Show-Upgraded",0},
       {'m',"ignore-missing","APT::Get::Fix-Broken",0},      
+      {0,"ignore-hold","APT::Ingore-Hold",0},      
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

@@ -39,7 +39,7 @@ X11LIB=
 if test "$no_x" != "yes"; then
   X11LIB="-lX11"
   AC_DEFINE(HAVE_X11)
-  dnl Checks for Slang
+  dnl Checks for ZPM
   AC_CHECK_LIB(Xpm, XpmLibraryVersion,[AC_DEFINE(HAVE_LIBXPM) XPMLIB="-lXpm"],,$X_LIBS $X_PRE_LIBS $X11LIB $X_EXTRA_LIBS)
   AC_SUBST(XPMLIB)
   if test "$XPMLIB" != "-lXpm"; then
@@ -48,7 +48,7 @@ if test "$no_x" != "yes"; then
 fi
 
 dnl Checks for Slang
-AC_CHECK_LIB(slang, init_SLang,[AC_DEFINE(HAVE_LIBSLANG) SLANGLIB="-lslang"])
+AC_CHECK_LIB(slang, SLang_Version,[AC_DEFINE(HAVE_LIBSLANG) SLANGLIB="-lslang"])
 AC_SUBST(SLANGLIB)
 
 dnl Checks for GPM
