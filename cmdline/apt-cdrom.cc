@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.12 1998/12/09 01:03:00 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.13 1998/12/09 05:57:17 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -91,9 +91,12 @@ bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
       for (I = 0; I != Depth; I++)
 	 if (Inodes[I] == Buf.st_ino)
 	    break;
-      if (Inodes[I] == Buf.st_ino)
+      if (I != Depth)
+      {
+	 cout << "Inode throw away " <<  Dir->d_name << endl;
 	 continue;
-	     
+      }
+      
       // Store the inodes weve seen
       Inodes[Depth] = Buf.st_ino;
 
@@ -155,6 +158,8 @@ int Score(string Path)
 {
    int Res = 0;
    if (Path.find("stable/") != string::npos)
+      Res += 2;
+   if (Path.find("/binary-") != string::npos)
       Res += 2;
    if (Path.find("frozen/") != string::npos)
       Res += 2;
