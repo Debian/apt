@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.cc,v 1.6 2001/02/20 07:03:17 jgg Exp $
+// $Id: pkgrecords.cc,v 1.7 2003/09/02 04:46:18 mdz Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records
@@ -42,6 +42,10 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
       if (Files[I->ID] == 0)
 	 return;
    }   
+   
+   // We store this to make sure that the destructor won't segfault,
+   // even if the Cache object was destructed before this instance.
+   PackageFileCount = Cache.HeaderP->PackageFileCount;
 }
 									/*}}}*/
 // Records::~pkgRecords - Destructor					/*{{{*/
@@ -49,7 +53,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 /* */
 pkgRecords::~pkgRecords()
 {
-   for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
+   for (unsigned I = 0; I != PackageFileCount; I++)
       delete Files[I];
    delete [] Files;
 }
