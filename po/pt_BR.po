@@ -4,10 +4,10 @@
 # André Luís Lopes <andrelop@ig.com.br>, 2002-2003.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.5.1\n"
+"Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
-"PO-Revision-Date: 2003-09-01 20:39-0300\n"
+"POT-Creation-Date: 2004-03-14 09:04+0100\n"
+"PO-Revision-Date: 2004-03-14 12:40-0300\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -324,7 +324,6 @@ msgid "Error Processing Contents %s"
 msgstr "Erro processando Conteúdo %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -369,6 +368,7 @@ msgstr ""
 "Comandos: packages caminho_binário [arquivo_override [prefixo_caminho]]\n"
 "          sources caminho_fonte [arquivo_override [prefixo_caminho]]\n"
 "          contents caminho\n"
+"					 release caminho\n"
 "          generate config [grupos]\n"
 "          clean config\n"
 "\n"
@@ -383,13 +383,13 @@ msgstr ""
 "\n"
 "Similarmente, o apt-ftparchive gera arquivos Sources a partir de uma \n"
 "árvore de .dscs. A opção --source-override pode ser usada para \n"
-"especificar um arquivo override src\n"
+"especificar um arquivo override de fontes\n"
 "\n"
 "Os comandos 'packages' e 'sources' devem ser executados na raíz da \n"
 "árvore. CaminhoBinário deve apontar para a base de procura recursiva \n"
 "e o arquivo override deve conter as flags override. CaminhoPrefixo é \n"
 "incluído aos campos filename caso esteja presente. Exemplo de uso do \n"
-"repositório debian :\n"
+"repositório Debian :\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
@@ -659,23 +659,20 @@ msgid "The following packages will be REMOVED:"
 msgstr "Os pacotes a seguir serão REMOVIDOS:"
 
 #: cmdline/apt-get.cc:421
-#, fuzzy
 msgid "The following packages have been kept back:"
-msgstr "Os pacotes a seguir serão segurados:"
+msgstr "Os pacotes a seguir serão mantidos em suas versões atuais :"
 
 #: cmdline/apt-get.cc:442
-#, fuzzy
 msgid "The following packages will be upgraded:"
-msgstr "Os pacotes a seguir serão atualizados"
+msgstr "Os pacotes a seguir serão atualizados :"
 
 #: cmdline/apt-get.cc:463
-#, fuzzy
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Os pacotes a seguir serão DESATUALIZADOS"
+msgstr "Os pacotes a seguir serão REBAIXADOS de versão :"
 
 #: cmdline/apt-get.cc:483
 msgid "The following held packages will be changed:"
-msgstr "Os pacotes segurados a seguir serão mudados:"
+msgstr "Os pacotes segurados a seguir serão mudados :"
 
 #: cmdline/apt-get.cc:536
 #, c-format
@@ -875,16 +872,15 @@ msgid "You should explicitly select one to install."
 msgstr "Você deve selecionar um explicitamente para instalar."
 
 #: cmdline/apt-get.cc:1040
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"O pacote %s não tem versão disponível mas existe no banco de dados.\n"
-"Isso tipicamente significa que o pacote foi mencionado numa dependência\n"
-"e nunca foi enviado ao Debian, se tornou obsoleto ou não está disponível\n"
-"a partir das fontes do sources.list\n"
+"O pacote %s não está disponível, mas é referenciado por outro pacote.\n"
+"Isso pode significar que o pacote está faltando, ficou obsoleto ou\n"
+"está disponível somente a partir de outra fonte\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -1087,7 +1083,7 @@ msgid "%s has no build depends.\n"
 msgstr "%s não tem dependências de construção.\n"
 
 #: cmdline/apt-get.cc:2103
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
@@ -1108,16 +1104,18 @@ msgstr ""
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
+"Falha ao satisfazer a dependência %s para %s: Pacote instalado %s é "
+"muito novo"
 
 #: cmdline/apt-get.cc:2215
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Falha ao processar as dependências de construção"
+msgstr "Falha ao satisfazer dependência %s para %s: %s"
 
 #: cmdline/apt-get.cc:2229
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
+msgstr "Não foi possível satisfazer as dependências de compilação para %s."
 
 #: cmdline/apt-get.cc:2233
 msgid "Failed to process build dependencies"
@@ -1437,7 +1435,7 @@ msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Arquivo %s/%s sobreescreve arquivo no pacote %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Impossível ler %s"
@@ -2028,7 +2026,7 @@ msgstr "Operação %s inválida"
 msgid "Unable to stat the mount point %s"
 msgstr "Impossível checar o ponto de montagem %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Impossível mudar para %s"
@@ -2322,9 +2320,9 @@ msgid "Packaging system '%s' is not supported"
 msgstr "Sistema de empacotamento '%s' não é suportado"
 
 #: apt-pkg/init.cc:135
-#, fuzzy
 msgid "Unable to determine a suitable packaging system type"
-msgstr "Impossível determinar um tipo de sistema aplicável"
+msgstr ""
+"Não foi possível determinar um tipo de sistema de empacotamento aplicável."
 
 #: apt-pkg/clean.cc:61
 #, c-format
