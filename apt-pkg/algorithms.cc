@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.32 2001/02/20 07:03:17 jgg Exp $
+// $Id: algorithms.cc,v 1.33 2001/03/23 07:53:19 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -856,10 +856,13 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    {
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-	    
+
 	       if (Debug == true)
 		  clog << "  Considering " << Pkg.Name() << ' ' << (int)Scores[Pkg->ID] <<
 		  " as a solution to " << I.Name() << ' ' << (int)Scores[I->ID] << endl;
+
+	       /* Try to fix the package under consideration rather than
+	          fiddle with the VList package */
 	       if (Scores[I->ID] <= Scores[Pkg->ID] ||
 		   ((Cache[Start] & pkgDepCache::DepNow) == 0 &&
 		    End->Type != pkgCache::Dep::Conflicts &&
@@ -920,11 +923,21 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       }
 	       else
 	       {
-		  if (Debug == true)
-		     clog << "  Added " << Pkg.Name() << " to the remove list" << endl;
+		  /* This is a conflicts, and the version we are looking
+		     at is not the currently selected version of the 
+		     package, which means it is not necessary to 
+		     remove/keep */
+		  if (Cache[Pkg].InstallVer != Ver &&
+		      (Start->Type == pkgCache::Dep::Conflicts ||
+		       Start->Type == pkgCache::Dep::Obsoletes))
+		     continue;
+		  
 		  // Skip adding to the kill list if it is protected
 		  if ((Flags[Pkg->ID] & Protected) != 0)
 		     continue;
+		
+		  if (Debug == true)
+		     clog << "  Added " << Pkg.Name() << " to the remove list" << endl;
 		  
 		  LEnd->Pkg = Pkg;
 		  LEnd->Dep = End;
