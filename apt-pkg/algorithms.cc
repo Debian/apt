@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.43 2002/11/11 06:55:50 doogie Exp $
+// $Id: algorithms.cc,v 1.44 2002/11/28 18:49:16 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -1210,14 +1210,14 @@ static int PrioComp(const void *A,const void *B)
    pkgCache::VerIterator R(*PrioCache,*(pkgCache::Version **)B);
    
    if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential &&
-       (L.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential)
-   return 1;
+       (R.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential)
+     return 1;
    if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential &&
-       (L.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-   return -1;
+       (R.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+     return -1;
    
    if (L->Priority != R->Priority)
-      return L->Priority - R->Priority;
+      return R->Priority - L->Priority;
    return strcmp(L.ParentPkg().Name(),R.ParentPkg().Name());
 }
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
