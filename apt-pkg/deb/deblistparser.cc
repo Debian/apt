@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.12 1998/12/14 06:54:43 jgg Exp $
+// $Id: deblistparser.cc,v 1.13 1998/12/14 08:07:29 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -469,10 +469,9 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
    if (Section.Find("Architecture",Start,Stop) == true)
       FileI->Architecture = WriteUniqString(Start,Stop - Start);
    
-   unsigned long Fl = 0;
-   if (Section.FindFlag("NotAutomatic",Fl,1) == false)
+   if (Section.FindFlag("NotAutomatic",FileI->Flags,
+			pkgCache::Flag::NotAutomatic) == false)
       _error->Warning("Bad NotAutomatic flag");
-   FileI->NotAutomatic = Fl;
    
    return !_error->PendingError();
 }

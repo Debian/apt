@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.14 1998/12/14 03:39:15 jgg Exp $
+// $Id: pkgcache.h,v 1.15 1998/12/14 08:07:29 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -82,7 +82,7 @@ class pkgCache
    {
       enum PkgFlags {Auto=(1<<0),New=(1<<1),Obsolete=(1<<2),Essential=(1<<3),
 	 ImmediateConf=(1<<4)};
-      enum PkgFFlags {NotSource=(1<<0)};
+      enum PkgFFlags {NotSource=(1<<0),NotAutomatic=(1<<1)};
    };
    
    protected:
@@ -207,13 +207,11 @@ struct pkgCache::PackageFile
    __apt_ptrloc Label;           // Stringtable
    __apt_ptrloc Architecture;    // Stringtable
    unsigned long Size;            
-   unsigned char NotAutomatic;   // Bool
-
+   unsigned long Flags;
    
    // Linked list
    __apt_ptrloc NextFile;        // PackageFile
    unsigned short ID;
-   unsigned long Flags;
    time_t mtime;                  // Modification time for the file
 };
 

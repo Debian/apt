@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.21 1998/12/14 03:39:15 jgg Exp $
+// $Id: pkgcache.cc,v 1.22 1998/12/14 08:07:29 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -436,6 +436,36 @@ const char *pkgCache::VerIterator::PriorityType()
    if (Ver->Priority < 6)
       return Types[Ver->Priority];
    return "";
+}
+									/*}}}*/
+// VerIterator::Automatic - Check if this version is 'automatic'	/*{{{*/
+// ---------------------------------------------------------------------
+/* This checks to see if any of the versions files are not NotAutomatic. 
+   True if this version is selectable for automatic installation. */
+bool pkgCache::VerIterator::Automatic() const
+{
+   VerFileIterator Files = FileList();
+   for (; Files.end() == false; Files++)
+      if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
+	 return true;
+   return false;
+}
+									/*}}}*/
+// VerIterator::NewestFile - Return the newest file version relation	/*{{{*/
+// ---------------------------------------------------------------------
+/* This looks at the version numbers associated with all of the sources
+   this version is in and returns the highest.*/
+pkgCache::VerFileIterator pkgCache::VerIterator::NewestFile() const
+{
+   VerFileIterator Files = FileList();
+   VerFileIterator Highest = Files;
+   for (; Files.end() == false; Files++)
+   {
+      if (pkgVersionCompare(Files.File().Version(),Highest.File().Version()) > 0)
+	 Highest = Files;
+   }
+   
+   return Highest;
 }
 									/*}}}*/
 // PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/

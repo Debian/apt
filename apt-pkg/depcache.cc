@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.11 1998/12/10 04:22:45 jgg Exp $
+// $Id: depcache.cc,v 1.12 1998/12/14 08:07:29 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -104,14 +104,15 @@ pkgDepCache::VerIterator pkgDepCache::GetCandidateVer(PkgIterator Pkg)
    // Try to use an explicit target
    if (Pkg->TargetVer == 0)
    {
-      /* Not source versions cannot be a candidate version unless they
-         are already installed */
+      /* Not source/not automatic versions cannot be a candidate version 
+         unless they are already installed */
       for (VerIterator I = Pkg.VersionList(); I.end() == false; I++)
       {
 	 if (Pkg.CurrentVer() == I)
 	    return I;
 	 for (VerFileIterator J = I.FileList(); J.end() == false; J++)
-	    if ((J.File()->Flags & Flag::NotSource) == 0)
+	    if ((J.File()->Flags & Flag::NotSource) == 0 &&
+		(J.File()->Flags & Flag::NotAutomatic) == 0)
 		return I;
       }
 	 
