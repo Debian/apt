@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.15 1998/11/22 03:20:36 jgg Exp $
+// $Id: apt-get.cc,v 1.16 1998/11/22 23:37:07 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -502,11 +502,13 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    if (PM.GetArchives(&Fetcher,&List,&Recs) == false)
       return false;
 
+   // Display statistics
    unsigned long FetchBytes = Fetcher.FetchNeeded();
    unsigned long DebBytes = Fetcher.TotalNeeded();
    if (DebBytes != Cache.DebSize())
       c0out << "How odd.. The sizes didn't match, email apt@packages.debian.org" << endl;
    
+   // Number of bytes
    c1out << "Need to get ";
    if (DebBytes != FetchBytes)
       c1out << SizeToStr(FetchBytes) << '/' << SizeToStr(DebBytes);
@@ -515,6 +517,7 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
       
    c1out << " of archives. After unpacking ";
    
+   // Size delta
    if (Cache.UsrSize() >= 0)
       c1out << SizeToStr(Cache.UsrSize()) << " will be used." << endl;
    else
@@ -523,6 +526,7 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    if (_error->PendingError() == true)
       return false;
 
+   // Prompt to continue
    if (Ask == true)
    {      
       if (_config->FindI("quiet",0) < 2 || 
@@ -783,10 +787,7 @@ bool DoInstall(CommandLine &CmdL)
 
    // See if we need to prompt
    if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
-   {
-      cout << "Boink" << endl;
       return InstallPackages(Cache,false,false);
-   }
    
    return InstallPackages(Cache,false);   
 }
@@ -867,6 +868,9 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 /* */
 bool DoClean(CommandLine &CmdL)
 {
+   pkgAcquire Fetcher;
+   Fetcher.Clean(_config->FindDir("Dir::Cache::archives"));
+   Fetcher.Clean(_config->FindDir("Dir::Cache::archives") + "partial/");
    return true;
 }
 									/*}}}*/

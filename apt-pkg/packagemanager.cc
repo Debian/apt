@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.6 1998/11/22 03:20:33 jgg Exp $
+// $Id: packagemanager.cc,v 1.7 1998/11/22 23:37:05 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -51,18 +51,24 @@ pkgPackageManager::~pkgPackageManager()
 bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 				    pkgRecords *Recs)
 {
-   pkgCache::PkgIterator I = Cache.PkgBegin();
-   for (;I.end() != true; I++)
-   {      
-      // Not interesting
-      if ((Cache[I].InstallVer == (pkgCache::Version *)I.CurrentVer() &&
-	   I.State() != pkgCache::PkgIterator::NeedsUnpack) ||
-	  Cache[I].Delete() == true)
+   if (CreateOrderList() == false)
+      return false;
+   
+   if (List->OrderUnpack() == false)
+      return _error->Error("Internal ordering error");
+
+   for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
+   {
+      PkgIterator Pkg(Cache,*I);
+
+      // Skip packages to erase
+      if (Cache[Pkg].Delete() == true)
 	 continue;
       
-      new pkgAcqArchive(Owner,Sources,Recs,Cache[I].InstVerIter(Cache),
-			FileNames[I->ID]);
+      new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
+			FileNames[Pkg->ID]);
    }
+
    return true;
 }
 									/*}}}*/
@@ -88,6 +94,50 @@ bool pkgPackageManager::FixMissing()
 }
 									/*}}}*/
 
+// PM::CreateOrderList - Create the ordering class			/*{{{*/
+// ---------------------------------------------------------------------
+/* This populates the ordering list with all the packages that are
+   going to change. */
+bool pkgPackageManager::CreateOrderList()
+{
+   delete List;
+   List = new pkgOrderList(Cache);
+   
+   // Generate the list of affected packages and sort it
+   for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+   {
+      // Consider all depends
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      {
+	 List->Flag(I,pkgOrderList::Immediate);
+	 if (Cache[I].InstallVer != 0)
+	    for (DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); 
+		 D.end() == false; D++)
+	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
+		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
+	 if (I->CurrentVer != 0)
+	    for (DepIterator D = I.CurrentVer().DependsList(); 
+		 D.end() == false; D++)
+	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
+		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
+      }
+      
+      // Not interesting
+      if ((Cache[I].Keep() == true || 
+	  Cache[I].InstVerIter(Cache) == I.CurrentVer()) && 
+	  I.State() == pkgCache::PkgIterator::NeedsNothing)
+	 continue;
+      
+      // Append it to the list
+      List->push_back(I);
+      
+      if ((I->Flags & pkgCache::Flag::ImmediateConf) == pkgCache::Flag::ImmediateConf)
+	 List->Flag(I,pkgOrderList::Immediate);
+   }
+   
+   return true;
+}
+									/*}}}*/
 // PM::DepAlwaysTrue - Returns true if this dep is irrelevent		/*{{{*/
 // ---------------------------------------------------------------------
 /* The restriction on provides is to eliminate the case when provides
@@ -412,41 +462,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 /* */
 bool pkgPackageManager::OrderInstall()
 {
-   delete List;
-   List = new pkgOrderList(Cache);
+   if (CreateOrderList() == false)
+      return false;
    
-   // Generate the list of affected packages and sort it
-   for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
-   {
-      // Consider all depends
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-      {
-	 List->Flag(I,pkgOrderList::Immediate);
-	 if (Cache[I].InstallVer != 0)
-	    for (DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); 
-		 D.end() == false; D++)
-	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
-	 if (I->CurrentVer != 0)
-	    for (DepIterator D = I.CurrentVer().DependsList(); 
-		 D.end() == false; D++)
-	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
-      }
-      
-      // Not interesting
-      if ((Cache[I].Keep() == true || 
-	  Cache[I].InstVerIter(Cache) == I.CurrentVer()) && 
-	  I.State() == pkgCache::PkgIterator::NeedsNothing)
-	 continue;
-      
-      // Append it to the list
-      List->push_back(I);
-      
-      if ((I->Flags & pkgCache::Flag::ImmediateConf) == pkgCache::Flag::ImmediateConf)
-	 List->Flag(I,pkgOrderList::Immediate);
-   }
-
    if (Debug == true)
       clog << "Begining to order" << endl;
    

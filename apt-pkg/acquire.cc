@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.16 1998/11/14 01:39:45 jgg Exp $
+// $Id: acquire.cc,v 1.17 1998/11/22 23:37:03 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -459,11 +459,14 @@ pkgAcquire::Queue::~Queue()
 /* */
 void pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 {
+   QItem **I = &Items;
+   for (; *I != 0; I = &(*I)->Next);
+   
    // Create a new item
-   QItem *I = new QItem;
-   I->Next = Items;
-   Items = I;
-   *I = Item;
+   QItem *Itm = new QItem;
+   *Itm = Item;
+   Itm->Next = 0;
+   *I = Itm;
    
    Item.Owner->QueueCounter++;   
    if (Items->Next == 0)

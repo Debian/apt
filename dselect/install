@@ -1,0 +1,74 @@
+#!/bin/sh
+
+# Get the configuration from /etc/apt/apt.conf
+CLEAN="auto"
+OPTS="-f"
+APTGET="/usr/bin/apt-get"
+DPKG="/usr/bin/dpkg"
+sh -e
+RES=`apt-config shell CLEAN DSelect::Clean OPTS DSelect::Options \
+                      DPKG Dir::Bin::dpkg APTGET Dir::Bin::apt-get`
+eval $RES
+sh +e
+
+# Yes/No Prompter
+function yesno() {
+# $1 = prompt
+# $2 = default(y)
+	local ans def defp
+	if [ "$2" ];then
+		case $2 in
+			Y|y)	defp="(Y/n)" def=y;;
+			N|n)	defp="(y/N)" def=n;;
+			*)	echo "Bad default setting!" 1>&2; exit 1;;
+		esac
+	else
+		defp="(y/N)" def=n
+	fi
+	while :;do
+		echo -n "$1$defp" 1>&3
+		read ans
+		case $ans in
+			Y|y|N|n)	break;;
+			"")		ans=$def;break;;
+		esac
+		echo
+	done
+	echo $ans | tr YN yn
+}
+
+#$APTGET $OPTS dselect-upgrade
+RES=$?
+
+# 1 means the user choose no at the prompt
+if [ $RES -eq 1 ]; then
+  exit 0
+fi
+
+# Finished OK
+if [ $RES -eq 0 ]; then
+   # Check the cleaning mode
+   case `echo $CLEAN | tr '[:upper:]' '[:lower:]'` in
+     always|auto) 
+       $APTGET clean && echo "Press enter to continue." && read RES && exit 0;
+       ;;
+     prompt)
+       exec 3>&1
+       if [ `yesno "Do you want to erase the downloaded files " y` = y ]; then
+          $APTGET clean && echo "Press enter to continue." && read RES && exit 0;
+       fi
+       ;;
+     *) 
+       ;;
+   esac   
+else
+   echo "Some errors occurred while unpacking. I'm going to configure the"
+   echo "packages that were installed. This may result in duplicate errors"
+   echo "or errors caused by missing dependencies. This is OK, only the errors"
+   echo "above this message are important. Please fix them and run [I]nstall again"
+   echo "Press enter to continue."
+   read RES && $DPKG --configure -a
+   exit 100
+fi
+
+exit $?

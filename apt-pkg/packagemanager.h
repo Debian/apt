@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.6 1998/11/22 03:20:34 jgg Exp $
+// $Id: packagemanager.h,v 1.7 1998/11/22 23:37:06 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -55,6 +55,7 @@ class pkgPackageManager
    bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
    bool OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
+   bool CreateOrderList();
    
    // Analysis helpers
    bool DepAlwaysTrue(DepIterator D);

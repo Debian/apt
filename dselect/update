@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+# Get the configuration from /etc/apt/apt.conf
+OPTS="-f"
+APTGET="/usr/bin/apt-get"
+APTCACHE="/usr/bin/apt-cache"
+DPKG="/usr/bin/dpkg"
+CACHEDIR="/var/cache/apt"
+RES=`apt-config shell OPTS DSelect::UpdateOptions \
+      DPKG Dir::Bin::dpkg APTGET Dir::Bin::apt-get \
+      APTCACHE Dir::Bin::apt-cache CACHEDIR Dir::Cache`
+eval $RES
+
+$APTGET $OPTS update
+
+echo "Merging Available information"
+rm -f /var/cache/apt/available
+$APTCACHE dumpavail > $CACHEDIR/available
+$DPKG --update-avail $CACHEDIR/available
+rm -f $CACHEDIR/available
+exit 0
