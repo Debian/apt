@@ -11,6 +11,7 @@ include ../buildlib/defaults.mak
 
 # The library name
 LIBRARY=apt-inst
+LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=1.0
 MINOR=0
 SLIBS=$(PTHREADLIB)

@@ -10,7 +10,7 @@ Architecture: any
 Depends: ${shlibs:Depends}
 Priority: standard
 Replaces: libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
-Provides: libapt-pkg${libapt-pkg:major}
+Provides: ${libapt-pkg:provides}
 Suggests: dpkg-dev
 Description: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
@@ -24,7 +24,7 @@ Description: Advanced front-end for dpkg
 Package: libapt-pkg-dev
 Architecture: any
 Priority: optional
-Depends: libapt-pkg${libapt-pkg:major}
+Depends: ${libapt-pkg:provides}
 Description: Development files for APT's libapt-pkg
  This package contains the header files and static libraries for
  developing with APT's libapt-pkg Debian package manipulation
@@ -41,7 +41,7 @@ Package: apt-utils
 Architecture: any
 Depends: ${shlibs:Depends}
 Priority: optional
-Provides: libapt-inst${libapt-inst:major}
+Provides: ${libapt-inst:provides}
 Description: APT utility programs
  This package contains some infrequently used APT utility programs such
  as apt-ftparchive and apt-sortpkgs.

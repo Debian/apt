@@ -11,6 +11,7 @@ include ../buildlib/defaults.mak
 
 # The library name, don't forget to update init.h
 LIBRARY=apt-pkg
+LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=3.1
 MINOR=1
 SLIBS=$(PTHREADLIB)

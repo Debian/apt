@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.26 2001/02/23 04:29:59 tausq Exp $
+# $Id: rules,v 1.27 2001/02/27 04:16:05 tausq Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/tmp/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/tmp/usr/lib/libapt-pkg.so.2.9 not found.
@@ -57,18 +57,23 @@ APT_UTILS=ftparchive sortpkgs extracttemplates
 # Find the libapt-pkg major version for use in other control files
 export LIBAPTPKG_MAJOR:=$(shell egrep '^MAJOR=' apt-pkg/makefile |cut -d '=' -f 2)
 export LIBAPTINST_MAJOR:=$(shell egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)
+
+# Determine which package we should provide in the control files
+LIBAPTPKG_PROVIDE=libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER)-$(LIBAPTPKG_MAJOR)
+LIBAPTINST_PROVIDE=libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER)-$(LIBAPTINST_MAJOR)
+
 debian/shlibs.local: apt-pkg/makefile
-        # We have 3 shlibs.local files.. One for 'apt', one for 'apt-utils' and
+	# We have 3 shlibs.local files.. One for 'apt', one for 'apt-utils' and
 	# one for the rest of the packages. This ensures that each package gets
 	# the right overrides.. 
 	rm -rf $@ $@.apt $@.apt-utils
-	echo "libapt-pkg $(LIBAPTPKG_MAJOR)" > $@.apt
+	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR)" > $@.apt
 
-	echo "libapt-pkg $(LIBAPTPKG_MAJOR) libapt-pkg$(LIBAPTPKG_MAJOR)" > $@.apt-utils
-	echo "libapt-inst $(LIBAPTINST_MAJOR)" >> $@.apt-utils
+	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@.apt-utils
+	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR)" >> $@.apt-utils
 
-	echo "libapt-pkg $(LIBAPTPKG_MAJOR) libapt-pkg$(LIBAPTPKG_MAJOR)" > $@
-	echo "libapt-inst $(LIBAPTINST_MAJOR) libapt-inst$(LIBAPTINST_MAJOR)" >> $@
+	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@
+	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
 	
 build: build/build-stamp	
 
@@ -132,7 +137,7 @@ libapt-pkg-doc: build debian/shlibs.local
 	dh_fixperms -p$@
 #	dh_suidregister -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -u -Vlibapt-pkg:major=$(LIBAPTPKG_MAJOR)
+	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -154,8 +159,8 @@ apt: build debian/shlibs.local
 	rm $(addprefix debian/tmp/usr/bin/apt-,$(APT_UTILS))
 	
 	# install the shared libs
-	find $(BLD)/bin/ -type f -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
-	find $(BLD)/bin/ -type l -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
+	find $(BLD)/bin/ -type f -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
+	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
 
 	cp $(BLD)/bin/methods/* debian/tmp/usr/lib/apt/methods/
 
@@ -181,8 +186,8 @@ apt: build debian/shlibs.local
 	dh_installdeb -p$@
 	dh_shlibdeps -papt -l`pwd`/debian/tmp/usr/lib -- -Ldebian/shlibs.local.apt
 #	LD_LIBRARY_PATH=`pwd`/debian/tmp/usr/lib dh_shlibdeps -papt
-	dh_gencontrol -p$@ -u -Vlibapt-pkg:major=$(LIBAPTPKG_MAJOR)
-	dh_makeshlibs -m$(LIBAPTPKG_MAJOR) -V 'libapt-pkg$(LIBAPTPKG_MAJOR)' -papt
+	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_makeshlibs -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)' -papt
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -194,8 +199,8 @@ libapt-pkg-dev: build debian/shlibs.local
 #
 # libapt-pkg-dev install
 #
-	cp -a $(BLD)/bin/libapt-pkg.so debian/libapt-pkg-dev/usr/lib/
-	cp -a $(BLD)/bin/libapt-inst.so debian/libapt-pkg-dev/usr/lib/
+	cp -a $(BLD)/bin/libapt-pkg*.so debian/libapt-pkg-dev/usr/lib/
+	cp -a $(BLD)/bin/libapt-inst*.so debian/libapt-pkg-dev/usr/lib/
 	#ln -s libapt-pkg.so.$(LIBAPTPKG_MAJOR) debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
 	cp $(BLD)/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
 
@@ -211,7 +216,7 @@ libapt-pkg-dev: build debian/shlibs.local
 	dh_fixperms -p$@
 #	dh_suidregister -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -u -Vlibapt-pkg:major=$(LIBAPTPKG_MAJOR)
+	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -222,15 +227,15 @@ apt-utils: build debian/shlibs.local
 	dh_installdirs -p$@
 
 	# install the shared libs
-	find $(BLD)/bin/ -type f -name "libapt-inst.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
-	find $(BLD)/bin/ -type l -name "libapt-inst.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
+	find $(BLD)/bin/ -type f -name "libapt-inst*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
+	find $(BLD)/bin/ -type l -name "libapt-inst*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
 	dh_installdocs -p$@
 	
 	# Install the man pages..
 	mkdir -p debian/$@/usr/share/man/man1
-	cp doc/apt-sortpkgs.1 doc/apt-ftparchive.1 debian/$@/usr/share/man/man1/
+	-cp doc/apt-sortpkgs.1 doc/apt-ftparchive.1 debian/$@/usr/share/man/man1/
 	
 	dh_installchangelogs -p$@
 	dh_strip -p$@
@@ -239,7 +244,7 @@ apt-utils: build debian/shlibs.local
 	dh_installdeb -p$@
 	LD_LIBRARY_PATH=`pwd`/debian/tmp/usr/lib:`pwd`/debian/$@/usr/lib dh_shlibdeps -p$@ -- -Ldebian/shlibs.local.apt-utils
 	dh_gencontrol -p$@ -u -Vlibapt-inst:major=$(LIBAPTINST_MAJOR)
-	dh_makeshlibs -m$(LIBAPTINST_MAJOR) -V 'libapt-inst$(LIBAPTINST_MAJOR)' -p$@
+	dh_makeshlibs -m$(LIBAPTINST_MAJOR) -V '$(LIBAPTINST_PROVIDE)' -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
