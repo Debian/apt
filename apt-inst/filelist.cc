@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: filelist.cc,v 1.2 2001/02/20 07:03:16 jgg Exp $
+// $Id: filelist.cc,v 1.3 2001/05/27 23:45:39 jgg Exp $
 /* ######################################################################
 
    File Listing - Manages a Cache of File -> Package names.
@@ -46,6 +46,8 @@
 #include <string.h>
 #include <iostream>
 									/*}}}*/
+
+using namespace std;
 
 // FlCache::Header::Header - Constructor				/*{{{*/
 // ---------------------------------------------------------------------

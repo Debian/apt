@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extracttar.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: extracttar.cc,v 1.3 2001/05/27 23:47:09 jgg Exp $
 /* ######################################################################
 
    Extract a Tar - Tar Extractor
@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <iostream.h>
 									/*}}}*/
 
 // The on disk header for a tar file.

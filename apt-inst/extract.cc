@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extract.cc,v 1.2 2001/02/20 07:03:16 jgg Exp $
+// $Id: extract.cc,v 1.3 2001/05/27 23:47:14 jgg Exp $
 /* ######################################################################
 
    Archive Extraction Directory Stream
@@ -56,6 +56,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <dirent.h>
+#include <iostream.h>
 									/*}}}*/
 
 static const char *TempExt = "dpkg-tmp";
@@ -473,8 +474,8 @@ bool pkgExtract::CheckDirReplace(string Dir,unsigned int Depth)
       
       // Look up the node
       File = Dir + Dent->d_name;
-      pkgFLCache::NodeIterator Nde = FLCache.GetNode(File.begin(),
-						     File.end(),0,false,false);
+      pkgFLCache::NodeIterator Nde = FLCache.GetNode(File.c_str(),
+						     File.c_str() + File.length(),0,false,false);
 
       // The file is not owned by this package
       if (Nde.end() != false || Nde.RealPackage() != FLPkg)

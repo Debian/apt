@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgdb.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: dpkgdb.cc,v 1.3 2001/05/27 23:46:28 jgg Exp $
 /* ######################################################################
 
    DPKGv1 Database Implemenation
@@ -30,6 +30,8 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <ctype.h>
+#include <iostream.h>
 									/*}}}*/
 
 // EraseDir - Erase A Directory						/*{{{*/
