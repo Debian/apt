@@ -21,7 +21,7 @@ include $(SGML_MANPAGE_H)
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index 
 TO = $(DOC)
-TARGET = doc
+TARGET = binary
 include $(COPY_H)
 
 #.PHONY: headers library clean veryclean all binary program doc doc.pt_BR doc.fr
