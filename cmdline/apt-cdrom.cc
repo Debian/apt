@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.8 1998/12/08 23:52:23 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.9 1998/12/09 00:11:50 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -63,6 +63,7 @@ bool FindPackages(string CD,vector<string> &List, int Depth = 0)
 	 return true;
    }
 
+   bool Thorough = _config->FindB("APT::CDROM::Thorough",false);
    DIR *D = opendir(".");
    if (D == 0)
       return _error->Errno("opendir","Unable to read %s",CD.c_str());
@@ -84,6 +85,9 @@ bool FindPackages(string CD,vector<string> &List, int Depth = 0)
 	 continue;      
       
       if (S_ISDIR(Buf.st_mode) == 0)
+	 continue;
+      
+      if (Thorough == false && S_ISLNK(Buf.st_mode) != 0)
 	 continue;
       
       // Descend
@@ -960,6 +964,7 @@ int ShowHelp()
    cout << "  -r   Rename a recognized CD-ROM" << endl;
    cout << "  -m   No mounting" << endl;
    cout << "  -f   Fast mode, don't check package files" << endl;
+   cout << "  -a   Thorough scan mode" << endl;
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
    cout << "See fstab(5)" << endl;
