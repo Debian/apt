@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.14 1999/02/21 08:38:53 jgg Exp $
+// $Id: packagemanager.cc,v 1.15 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -60,7 +60,8 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
-
+      FileNames[Pkg->ID] = string();
+      
       // Skip packages to erase
       if (Cache[Pkg].Delete() == true)
 	 continue;
@@ -69,7 +70,11 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
       if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
 	  Cache[Pkg].Keep() == true)
 	 continue;
-      
+
+      // Skip already processed packages
+      if (List->IsNow(Pkg) == false)
+	 continue;
+	 
       new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
 			FileNames[Pkg->ID]);
    }
@@ -122,6 +127,9 @@ bool pkgPackageManager::FixMissing()
    going to change. */
 bool pkgPackageManager::CreateOrderList()
 {
+   if (List != 0)
+      return true;
+   
    delete List;
    List = new pkgOrderList(Cache);
    
@@ -487,58 +495,96 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 // PM::OrderInstall - Installation ordering routine			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgPackageManager::OrderInstall()
+pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 {
    if (CreateOrderList() == false)
-      return false;
+      return Failed;
+
+   Reset();
    
    if (Debug == true)
       clog << "Begining to order" << endl;
-   
-   if (List->OrderUnpack() == false)
-      return _error->Error("Internal ordering error");
 
+   if (List->OrderUnpack(FileNames) == false)
+   {
+      _error->Error("Internal ordering error");
+      return Failed;
+   }
+   
    if (Debug == true)
       clog << "Done ordering" << endl;
 
+   bool DoneSomething = false;
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
+
+      if (List->IsNow(Pkg) == false)
+      {
+	 if (Debug == true)
+	    clog << "Skipping already done " << Pkg.Name() << endl;
+	 continue;
+      }
+      
+      if (Cache[Pkg].Delete() == false && FileNames[Pkg->ID].empty() == true)
+      {
+	 if (Debug == true)
+	    clog << "Sequence completed at" << Pkg.Name() << endl;
+	 if (DoneSomething == false)
+	 {
+	    _error->Error("Internal Error, ordering was unable to handle the media swap");
+	    return Failed;
+	 }	 
+	 return Incomplete;
+      }
       
       // Sanity check
       if (Cache[Pkg].Keep() == true && Pkg.State() == pkgCache::PkgIterator::NeedsNothing)
-	 return _error->Error("Internal Error, trying to manipulate a kept package");
+      {
+	 _error->Error("Internal Error, trying to manipulate a kept package");
+	 return Failed;
+      }
       
       // Perform a delete or an install
       if (Cache[Pkg].Delete() == true)
       {
 	 if (SmartRemove(Pkg) == false)
-	    return false;	 
+	    return Failed;
       }
       else
 	 if (SmartUnPack(Pkg) == false)
-	    return false;
+	    return Failed;
+      DoneSomething = true;
    }
    
    // Final run through the configure phase
    if (ConfigureAll() == false)
-      return false;
+      return Failed;
 
    // Sanity check
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
+   {
       if (List->IsFlag(*I,pkgOrderList::Configured) == false)
-	 return _error->Error("Internal error, packages left unconfigured. %s",
-			      PkgIterator(Cache,*I).Name());
-
-   return true;
+      {
+	 _error->Error("Internal error, packages left unconfigured. %s",
+		       PkgIterator(Cache,*I).Name());
+	 return Failed;
+      }
+   }   
+	 
+   return Completed;
 }
 									/*}}}*/
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
-bool pkgPackageManager::DoInstall()
+pkgPackageManager::OrderResult pkgPackageManager::DoInstall()
 {
-   return OrderInstall() && Go();
+   OrderResult Res = OrderInstall();
+   if (Res != Failed)
+      if (Go() == false)
+	 return Failed;
+   return Res;
 }
 									/*}}}*/

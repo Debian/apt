@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.11 1999/06/09 23:06:39 jgg Exp $
+// $Id: cdrom.cc,v 1.12 1999/07/03 03:10:36 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -114,7 +114,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
    string NewID;
-   while (1)
+   while (CurrentID.empty() == true)
    {
       bool Hit = false;
       for (unsigned int Version = 2; Version != 0; Version--)
@@ -142,6 +142,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 			      CDROM.c_str());
       if (MediaFail(Get.Host,CDROM) == false)
       {
+	 clog << "M-Fail" << endl;
 	 CurrentID = "FAIL";
 	 Fail("Wrong CD",true);
 	 return true;
@@ -156,7 +157,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    if (stat(Res.Filename.c_str(),&Buf) != 0)
       return _error->Error("File not found");
    
-   CurrentID = NewID;
+   if (NewID.empty() == false)
+      CurrentID = NewID;
    Res.LastModified = Buf.st_mtime;
    Res.IMSHit = true;
    Res.Size = Buf.st_size;

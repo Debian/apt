@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.25 1999/05/29 21:49:58 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.26 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -988,7 +988,8 @@ bool DoAdd(CommandLine &)
       cout << "deb \"cdrom:" << Name << "/" << string(*I,0,Space) << 
 	 "\" " << string(*I,Space+1) << endl;
    }
-      
+
+   cout << "Repeat this process for the rest of the CDs in your set." << endl;
    return true;
 }
 									/*}}}*/

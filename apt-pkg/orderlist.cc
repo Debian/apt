@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.3 1998/09/26 05:34:21 jgg Exp $
+// $Id: orderlist.cc,v 1.4 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -42,7 +42,7 @@
    arbitary priority to give quite abit of control over the final unpacking
    order.
 
-   The rules listed above my never be violated and are called Critical.
+   The rules listed above may never be violated and are called Critical.
    When a critical rule is violated then a loop condition is recorded
    and will have to be delt with in the caller.
    
@@ -65,6 +65,7 @@ pkgOrderList *pkgOrderList::Me = 0;
 /* */
 pkgOrderList::pkgOrderList(pkgDepCache &Cache) : Cache(Cache)
 {
+   FileList = 0;
    Primary = 0;
    Secondary = 0;
    RevDepends = 0;
@@ -93,7 +94,7 @@ pkgOrderList::~pkgOrderList()
 // ---------------------------------------------------------------------
 /* The caller is expeted to have setup the desired probe state */
 bool pkgOrderList::DoRun()
-{
+{   
    // Temp list
    unsigned long Size = Cache.HeaderP->PackageCount;
    Package **NList = new Package *[Size];
@@ -128,6 +129,8 @@ bool pkgOrderList::DoRun()
    fatal and indicate that the packages cannot be installed. */
 bool pkgOrderList::OrderCritical()
 {
+   FileList = 0;
+   
    Primary = &DepUnPackPre;
    Secondary = 0;
    RevDepends = 0;
@@ -150,8 +153,10 @@ bool pkgOrderList::OrderCritical()
 // ---------------------------------------------------------------------
 /* This performs complete unpacking ordering and creates an order that is
    suitable for unpacking */
-bool pkgOrderList::OrderUnpack()
+bool pkgOrderList::OrderUnpack(string *FileList)
 {
+   this->FileList = FileList;
+
    Primary = &DepUnPackCrit;
    Secondary = &DepConfigure;
    RevDepends = &DepUnPackDep;
@@ -161,7 +166,7 @@ bool pkgOrderList::OrderUnpack()
    // Sort
    Me = this;
    qsort(List,End - List,sizeof(*List),&OrderCompareA);
-   
+
    if (DoRun() == false)
       return false;
    
@@ -197,6 +202,7 @@ bool pkgOrderList::OrderUnpack()
    for configuration */
 bool pkgOrderList::OrderConfigure()
 {
+   FileList = 0;
    Primary = &DepConfigure;
    Secondary = 0;
    RevDepends = 0;
@@ -214,7 +220,11 @@ int pkgOrderList::Score(PkgIterator Pkg)
    // Removal is always done first
    if (Cache[Pkg].Delete() == true)
       return 200;
-
+   
+   // This should never happen..
+   if (Cache[Pkg].InstVerIter(Cache).end() == true)
+      return -1;
+   
    int Score = 0;
    if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       Score += 100;
@@ -248,7 +258,7 @@ int pkgOrderList::FileCmp(PkgIterator A,PkgIterator B)
    
    if (Cache[A].InstVerIter(Cache).FileList().end() == true)
       return -1;
-   if (Cache[A].InstVerIter(Cache).FileList().end() == true)
+   if (Cache[B].InstVerIter(Cache).FileList().end() == true)
       return 1;
    
    pkgCache::PackageFile *FA = Cache[A].InstVerIter(Cache).FileList().File();
@@ -260,6 +270,18 @@ int pkgOrderList::FileCmp(PkgIterator A,PkgIterator B)
    return 0;
 }
 									/*}}}*/
+// BoolCompare - Comparison function for two booleans			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+static int BoolCompare(bool A,bool B)
+{
+   if (A == B)
+      return 0;
+   if (A == false)
+      return -1;
+   return 1;
+}
+									/*}}}*/
 // OrderList::OrderCompareA - Order the installation by op		/*{{{*/
 // ---------------------------------------------------------------------
 /* This provides a first-pass sort of the list and gives a decent starting
@@ -269,6 +291,19 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
    PkgIterator A(Me->Cache,*(Package **)a);
    PkgIterator B(Me->Cache,*(Package **)b);
 
+   // We order packages with a set state toward the front
+   int Res;
+   if ((Res = BoolCompare(Me->IsNow(A),Me->IsNow(B))) == 0)
+      return -1*Res;
+   
+   // We order missing files to toward the end
+   if (Me->FileList != 0)
+   {
+      if ((Res = BoolCompare(Me->FileList[A->ID].empty() && !Me->Cache[A].Delete(),
+			     Me->FileList[B->ID].empty() && !Me->Cache[B].Delete())) == 0)
+	 return -1*Res;
+   }
+   
    if (A.State() != pkgCache::PkgIterator::NeedsNothing && 
        B.State() == pkgCache::PkgIterator::NeedsNothing)
       return -1;
@@ -419,34 +454,37 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    // Perform immedate configuration of the package if so flagged.
    if (IsFlag(Pkg,Immediate) == true && Primary != &DepUnPackPre)
       Primary = &DepUnPackPreD;
-      
-   bool Res = true;
-   if (Cache[Pkg].Delete() == false)
-   {
-      // Primary
-      Res &= Res && VisitDeps(Primary,Pkg);
-      Res &= Res && VisitRDeps(Primary,Pkg);
-      Res &= Res && VisitRProvides(Primary,Pkg.CurrentVer());
-      Res &= Res && VisitRProvides(Primary,Cache[Pkg].InstVerIter(Cache));
-      
-      // RevDep
-      Res &= Res && VisitRDeps(RevDepends,Pkg);
-      Res &= Res && VisitRProvides(RevDepends,Pkg.CurrentVer());
-      Res &= Res && VisitRProvides(RevDepends,Cache[Pkg].InstVerIter(Cache));
-	
-      // Secondary
-      Res &= Res && VisitDeps(Secondary,Pkg);
-      Res &= Res && VisitRDeps(Secondary,Pkg);
-      Res &= Res && VisitRProvides(Secondary,Pkg.CurrentVer());
-      Res &= Res && VisitRProvides(Secondary,Cache[Pkg].InstVerIter(Cache));
-   }
-   else
-   { 
-      // RevDep
-      Res &= Res && VisitRDeps(Remove,Pkg);
-      Res &= Res && VisitRProvides(Remove,Pkg.CurrentVer());
-   }
 
+   if (IsNow(Pkg) == true)
+   {
+      bool Res = true;
+      if (Cache[Pkg].Delete() == false)
+      {
+	 // Primary
+	 Res &= Res && VisitDeps(Primary,Pkg);
+	 Res &= Res && VisitRDeps(Primary,Pkg);
+	 Res &= Res && VisitRProvides(Primary,Pkg.CurrentVer());
+	 Res &= Res && VisitRProvides(Primary,Cache[Pkg].InstVerIter(Cache));
+	 
+	 // RevDep
+	 Res &= Res && VisitRDeps(RevDepends,Pkg);
+	 Res &= Res && VisitRProvides(RevDepends,Pkg.CurrentVer());
+	 Res &= Res && VisitRProvides(RevDepends,Cache[Pkg].InstVerIter(Cache));
+	 
+	 // Secondary
+	 Res &= Res && VisitDeps(Secondary,Pkg);
+	 Res &= Res && VisitRDeps(Secondary,Pkg);
+	 Res &= Res && VisitRProvides(Secondary,Pkg.CurrentVer());
+	 Res &= Res && VisitRProvides(Secondary,Cache[Pkg].InstVerIter(Cache));
+      }
+      else
+      { 
+	 // RevDep
+	 Res &= Res && VisitRDeps(Remove,Pkg);
+	 Res &= Res && VisitRProvides(Remove,Pkg.CurrentVer());
+      }
+   }
+   
    if (IsFlag(Pkg,Added) == false)
    {
       Flag(Pkg,Added,Added | AddPending);

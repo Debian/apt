@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.19 1999/06/28 03:11:24 jgg Exp $
+// $Id: algorithms.cc,v 1.20 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -33,6 +33,11 @@ pkgSimulate::pkgSimulate(pkgDepCache &Cache) : pkgPackageManager(Cache),
 {
    Flags = new unsigned char[Cache.HeaderP->PackageCount];
    memset(Flags,0,sizeof(*Flags)*Cache.HeaderP->PackageCount);
+
+   // Fake a filename so as not to activate the media swapping
+   string Jnk = "SIMULATE";
+   for (int I = 0; I != Cache.Head().PackageCount; I++)
+      FileNames[I] = Jnk;
 }
 									/*}}}*/
 // Simulate::Install - Simulate unpacking of a package			/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.9 1999/04/20 05:02:09 jgg Exp $
+// $Id: dpkgpm.cc,v 1.10 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -297,5 +297,13 @@ bool pkgDPkgPM::Go()
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
    return true;
+}
+									/*}}}*/
+// pkgDpkgPM::Reset - Dump the contents of the command list		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgDPkgPM::Reset() 
+{
+   List.erase(List.begin(),List.end());
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.7 1998/11/22 23:37:06 jgg Exp $
+// $Id: packagemanager.h,v 1.8 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -38,6 +38,10 @@ class pkgOrderList;
 class pkgRecords;
 class pkgPackageManager
 {
+   public:
+   
+   enum OrderResult {Completed,Failed,Incomplete};
+   
    protected:
    string *FileNames;
    pkgDepCache &Cache;
@@ -53,7 +57,7 @@ class pkgPackageManager
    typedef pkgCache::Package Package;
       
    bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
-   bool OrderInstall();
+   OrderResult OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
    bool CreateOrderList();
    
@@ -72,13 +76,14 @@ class pkgPackageManager
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/) {return false;};
    virtual bool Go() {return true;};
+   virtual void Reset() {};
    
    public:
-
+      
    // Main action members
    bool GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 		    pkgRecords *Recs);
-   bool DoInstall();
+   OrderResult DoInstall();
    bool FixMissing();
    
    pkgPackageManager(pkgDepCache &Cache);

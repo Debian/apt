@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.66 1999/06/24 04:06:31 jgg Exp $
+// $Id: apt-get.cc,v 1.67 1999/07/03 03:10:36 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -470,7 +470,12 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    if (_config->FindB("APT::Get::Simulate") == true)
    {
       pkgSimulate PM(Cache);
-      return PM.DoInstall();
+      pkgPackageManager::OrderResult Res = PM.DoInstall();
+      if (Res == pkgPackageManager::Failed)
+	 return false;
+      if (Res != pkgPackageManager::Completed)
+	 return _error->Error("Internal Error, Ordering didn't finish");
+      return true;
    }
    
    // Create the text record parser
@@ -589,60 +594,75 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    }
    
    // Run it
-   if (_config->FindB("APT::Get::No-Download",false) == false)
-      if( Fetcher.Run() == pkgAcquire::Failed)
-	 return false;
-
-   // Print out errors
-   bool Failed = false;
-   bool Transient = false;
-   for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   while (1)
    {
-      if ((*I)->Status == pkgAcquire::Item::StatDone &&
-	  (*I)->Complete == true)
-	 continue;
+      if (_config->FindB("APT::Get::No-Download",false) == false)
+	 if( Fetcher.Run() == pkgAcquire::Failed)
+	    return false;
       
-      (*I)->Finished();
-      
-      if ((*I)->Status == pkgAcquire::Item::StatIdle)
+      // Print out errors
+      bool Failed = false;
+      bool Transient = false;
+      for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
       {
-	 Transient = true;
+	 if ((*I)->Status == pkgAcquire::Item::StatDone &&
+	     (*I)->Complete == true)
+	    continue;
+	 
+	 (*I)->Finished();
+	 
+	 if ((*I)->Status == pkgAcquire::Item::StatIdle)
+	 {
+	    Transient = true;
+	    // Failed = true;
+	    continue;
+	 }
+	 
+	 cerr << "Failed to fetch " << (*I)->DescURI() << endl;
+	 cerr << "  " << (*I)->ErrorText << endl;
 	 Failed = true;
-	 continue;
       }
       
-      cerr << "Failed to fetch " << (*I)->DescURI() << endl;
-      cerr << "  " << (*I)->ErrorText << endl;
-      Failed = true;
-   }
-
-   if (_config->FindB("APT::Get::Download-Only",false) == true)
-   {
-      if (Failed == true && _config->FindB("APT::Get::Fix-Missing",false) == false)
-	 return _error->Error("Some files failed to download");
-      return true;
-   }
-   
-   if (Failed == true && _config->FindB("APT::Get::Fix-Missing",false) == false)
-   {
-      if (Transient == true)
+      if (_config->FindB("APT::Get::Download-Only",false) == true)
       {
-	 c2out << "Upgrading with disk swapping is not supported in this version." << endl;
-	 c2out << "Try running multiple times with --fix-missing" << endl;
+	 if (Failed == true && _config->FindB("APT::Get::Fix-Missing",false) == false)
+	    return _error->Error("Some files failed to download");
+	 return true;
       }
       
-      return _error->Error("Unable to fetch some archives, maybe try with --fix-missing?");
-   }
-   
-   // Try to deal with missing package files
-   if (PM.FixMissing() == false)
-   {
-      cerr << "Unable to correct missing packages." << endl;
-      return _error->Error("Aborting Install.");
-   }
-   
-   Cache.ReleaseLock();
-   return PM.DoInstall();
+      if (Failed == true && _config->FindB("APT::Get::Fix-Missing",false) == false)
+      {
+	 /*if (Transient == true)
+	 {
+	    c2out << "Upgrading with disk swapping is not supported in this version." << endl;
+	    c2out << "Try running multiple times with --fix-missing" << endl;
+	 }*/
+	 
+	 return _error->Error("Unable to fetch some archives, maybe try with --fix-missing?");
+      }
+      
+      if (Transient == true && Failed == true)
+	 return _error->Error("--fix-missing and media swapping is not currently supported");
+      
+      // Try to deal with missing package files
+      if (Failed == true && PM.FixMissing() == false)
+      {
+	 cerr << "Unable to correct missing packages." << endl;
+	 return _error->Error("Aborting Install.");
+      }
+      
+      Cache.ReleaseLock();
+      pkgPackageManager::OrderResult Res = PM.DoInstall();
+      if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
+	 return false;
+      if (Res == pkgPackageManager::Completed)
+	 return true;
+      
+      // Reload the fetcher object and loop again for media swapping
+      Fetcher.Shutdown();
+      if (PM.GetArchives(&Fetcher,&List,&Recs) == false)
+	 return false;
+   }   
 }
 									/*}}}*/
 

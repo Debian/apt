@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.21 1999/06/13 05:06:40 jgg Exp $
+// $Id: acquire.h,v 1.22 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -82,8 +82,8 @@ class pkgAcquire
    string QueueName(string URI,MethodConfig const *&Config);
 
    // FDSET managers for derived classes
-   void SetFds(int &Fd,fd_set *RSet,fd_set *WSet);
-   void RunFds(fd_set *RSet,fd_set *WSet);   
+   virtual void SetFds(int &Fd,fd_set *RSet,fd_set *WSet);
+   virtual void RunFds(fd_set *RSet,fd_set *WSet);   
 
    // A queue calls this when it dequeues an item
    void Bump();
@@ -95,7 +95,8 @@ class pkgAcquire
    enum RunResult {Continue,Failed,Cancelled};
 
    RunResult Run();
-
+   void Shutdown();
+   
    // Simple iteration mechanism
    inline Worker *WorkersBegin() {return Workers;};
    Worker *WorkerStep(Worker *I);

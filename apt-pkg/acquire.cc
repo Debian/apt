@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.36 1999/06/13 05:06:40 jgg Exp $
+// $Id: acquire.cc,v 1.37 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -53,15 +53,23 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
 /* Free our memory, clean up the queues (destroy the workers) */
 pkgAcquire::~pkgAcquire()
 {
-   while (Items.size() != 0)
-      delete Items[0];
-
    while (Configs != 0)
    {
       MethodConfig *Jnk = Configs;
       Configs = Configs->Next;
       delete Jnk;
    }   
+   
+   Shutdown();
+}
+									/*}}}*/
+// pkgAcquire::Shutdown - Clean out the acquire object			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcquire::Shutdown()
+{
+   while (Items.size() != 0)
+      delete Items[0];
 
    while (Queues != 0)
    {
@@ -125,7 +133,7 @@ void pkgAcquire::Remove(Worker *Work)
 // Acquire::Enqueue - Queue an URI for fetching				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the entry point for an item. An item calls this function when
-   it is construction which creates a queue (based on the current queue
+   it is constructed which creates a queue (based on the current queue
    mode) and puts the item in that queue. If the system is running then
    the queue might be started. */
 void pkgAcquire::Enqueue(ItemDesc &Item)

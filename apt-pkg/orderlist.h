@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.h,v 1.2 1998/07/12 23:58:29 jgg Exp $
+// $Id: orderlist.h,v 1.3 1999/07/03 03:10:35 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -48,6 +48,7 @@ class pkgOrderList
    // State
    Package **End;
    Package **List;
+   string *FileList;
    DepIterator Loops[20];
    int LoopCount;
    int Depth;
@@ -111,7 +112,7 @@ class pkgOrderList
    
    // Ordering modes
    bool OrderCritical();
-   bool OrderUnpack();
+   bool OrderUnpack(string *FileList = 0);
    bool OrderConfigure();
 
    int Score(PkgIterator Pkg);
