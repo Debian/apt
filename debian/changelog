@@ -120,6 +120,9 @@ apt (0.5.4.9) unstable; urgency=low
     instead of only 1024.
   * APT::Immediate-Configure had inverted semantics(false meant it was
     enabled).  Closes: #173619.
+  * Fix status file parser so that if a record is larger than 32k, the
+    buffer size will be doubled, and the read attempted again.  Closes:
+    #174945.
 
  -- Adam Heath <doogie@debian.org>  Sun, 02 Feb 2003 02:54:45 -0600
 

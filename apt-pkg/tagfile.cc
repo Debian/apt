@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.35 2002/11/06 06:43:14 jgg Exp $
+// $Id: tagfile.cc,v 1.36 2003/04/27 05:59:14 doogie Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -42,6 +42,7 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) : Fd(*pFd), Size(Size)
       return;
    }
    
+   CurSize = Size;
    Buffer = new char[Size];
    Start = End = Buffer;
    Done = false;
@@ -62,15 +63,23 @@ pkgTagFile::~pkgTagFile()
 /* If the Section Scanner fails we refill the buffer and try again. */
 bool pkgTagFile::Step(pkgTagSection &Tag)
 {
-   if (Tag.Scan(Start,End - Start) == false)
-   {
+   pkgTagSection::ScanFlags ret = Tag.Scan(Start,End - Start);
+   if (ret == pkgTagSection::ScanEOF) {
+      CurSize <<= 1;
       if (Fill() == false)
 	 return false;
-      
-      if (Tag.Scan(Start,End - Start) == false)
-	 return _error->Error(_("Unable to parse package file %s (1)"),
-			      Fd.Name().c_str());
+      do {
+	   ret = Tag.Scan(Start,End - Start);
+	   if (ret == pkgTagSection::ScanEOF) {
+	      CurSize <<= 1;
+	      if (Fill() == false)
+		 break;
+	   }
+      } while (ret == pkgTagSection::ScanEOF);
    }
+   if (ret != pkgTagSection::ScanSuccess)
+      return _error->Error(_("Unable to parse package file %s (1)"),
+			   Fd.Name().c_str());
    Start += Tag.size();
    iOffset += Tag.size();
 
@@ -147,14 +156,21 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
    if (Fill() == false)
       return false;
 
-   if (Tag.Scan(Start,End - Start) == true)
-      return true;
-   
-   // This appends a double new line (for the real eof handling)
-   if (Fill() == false)
-      return false;
-   
-   if (Tag.Scan(Start,End - Start) == false)
+   pkgTagSection::ScanFlags ret = Tag.Scan(Start,End - Start);
+   if (ret == pkgTagSection::ScanEOF) {
+      CurSize <<= 1;
+      if (Fill() == false)
+	 return false;
+      do {
+	   ret = Tag.Scan(Start,End - Start);
+	   if (ret == pkgTagSection::ScanEOF) {
+	      CurSize <<= 1;
+	      if (Fill() == false)
+		 break;
+	   }
+      } while (ret == pkgTagSection::ScanEOF);
+   }
+   if (ret != pkgTagSection::ScanSuccess)
       return _error->Error(_("Unable to parse package file %s (2)"),Fd.Name().c_str());
    
    return true;
@@ -173,14 +189,14 @@ inline static unsigned long AlphaHash(const char *Text, const char *End = 0)
    return Res & 0xFF;
 }
 
-bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
+enum pkgTagSection::ScanFlags pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
 {
    const char *End = Start + MaxLength;
    Stop = Section = Start;
    memset(AlphaIndexes,0,sizeof(AlphaIndexes));
 
    if (Stop == 0)
-      return false;
+      return ScanError;
    
    TagCount = 0;
    while (TagCount+1 < sizeof(Indexes)/sizeof(Indexes[0]) && Stop < End)
@@ -195,7 +211,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       Stop = (const char *)memchr(Stop,'\n',End - Stop);
       
       if (Stop == 0)
-	 return false;
+	 return ScanEOF;
       
       for (; Stop+1 < End && Stop[1] == '\r'; Stop++);
 
@@ -204,13 +220,13 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       {
 	 Indexes[TagCount] = Stop - Section;
 	 for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r'); Stop++);
-	 return true;
+	 return ScanSuccess;
       }
       
       Stop++;
    }
 
-   return false;
+   return ScanEOF;
 }
 									/*}}}*/
 // TagSection::Trim - Trim off any trailing garbage			/*{{{*/
