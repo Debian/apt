@@ -1,4 +1,4 @@
-// $Id: configure-index,v 1.6 2002/03/26 07:38:22 jgg Exp $
+// $Id: configure-index,v 1.7 2002/04/24 05:48:46 jgg Exp $
 /* This file is an index of all APT configuration directives. It should
    NOT actually be used as a real config file, though it is a completely
    valid file. Most of the options have sane default values, unless
@@ -197,6 +197,10 @@ DPkg
 
    // Flush the contents of stdin before forking dpkg.
    FlushSTDIN "true";
+
+   // Control the size of the command line passed to dpkg.
+   MaxBytes 1024;
+   MaxArgs 350;
 }
 
 /* Options you can set to see some debugging text They correspond to names

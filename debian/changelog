@@ -18,14 +18,21 @@ apt (0.5.5) unstable; urgency=low
     is to work. Closes: #133943
   * Typos, Doc Stuff. Closes: #132772, #129970, #123642, #114892, #113786,
          #109591, #105920, #103678, #139752, #138186, #138054, #138050,
-	 #139994
+	 #139994, #142955
   * Fix possibility for tag file parsing to fail in some unlikely situations.
     Closes: #139328
   * Use std C++ names for some header files. Closes: #128741
   * Do not check for free space if --no-download. Closes: #117856
   * Actually implement or group handling for 'upgrade'. Closes: #133950
-  
- -- Randolph Chung <tausq@debian.org>  Tue,  4 Dec 2001 23:26:42 -0800
+  * "Internal Error, Couldn't configure pre-depend" is not actually an
+    internal error, it is a packaging error and now it says so, and 
+    pinpoints the problem dependency.
+  * Allows failure to write to a pipe for post-invoke stuff. Closes: #89830
+  * Use usr/share/doc for dhelp. Closes: #115701
+  * --print-uris works with 'update'. Closes: #57070
+  * Options MaxArgs,MaxBytes to allow a much longer dpkg command line.
+
+ --
 
 apt (0.5.4) unstable; urgency=low
 
@@ -718,7 +725,3 @@ apt (0.0.1) unstable; urgency=low
 
  -- Scott K. Ellis <scott@debian.org>  Tue, 31 Mar 1998 12:49:28 -0500
 
-Local variables:
-mode: debian-changelog
-add-log-mailing-address: "che@debian.org"
-End:
