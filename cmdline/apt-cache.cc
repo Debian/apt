@@ -1230,7 +1230,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
    *DescP='\0';
 
    // Write all the rest
-   if (fwrite(Buffer,1,V.FileList()->Size+1,stdout) < V.FileList()->Size+1))
+   if (fwrite(Buffer,1,V.FileList()->Size+1,stdout) < (size_t)(V.FileList()->Size+1))
    {
       delete [] Buffer;
       return false;
