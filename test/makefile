@@ -24,29 +24,9 @@ LIB_MAKES = apt-pkg/makefile apt-inst/makefile
 SOURCE = scratch.cc
 include $(PROGRAM_H)
 
-PROGRAM=testextract
-SLIBS = -lapt-inst -lapt-pkg
-LIB_MAKES = apt-pkg/makefile apt-inst/makefile
-SOURCE = testextract.cc
-include $(PROGRAM_H)
-
 # Version compare tester
 PROGRAM=versiontest
 SLIBS = -lapt-pkg 
 LIB_MAKES = apt-pkg/makefile
 SOURCE = versiontest.cc
-include $(PROGRAM_H)
-
-# Version compare tester
-PROGRAM=srcrfind
-SLIBS = -lapt-pkg 
-LIB_MAKES = apt-pkg/makefile
-SOURCE = srcrfind.cc
-include $(PROGRAM_H)
-
-# Control Extracter tester
-PROGRAM=extractcontrol
-SLIBS = -lapt-pkg -lapt-inst -ldb2
-LIB_MAKES = apt-pkg/makefile
-SOURCE = extractcontrol.cc
 include $(PROGRAM_H)
