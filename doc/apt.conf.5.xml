@@ -251,6 +251,13 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      the cdrom block. It is important to have the trailing slash. Unmount 
      commands can be specified using UMount.</para></listitem>
      </varlistentry>
+
+     <varlistentry><term>gpgv</term>
+     <listitem><para>GPGV URIs; the only option for GPGV URIs is the option to pass additional parameters to gpgv.
+     <literal>gpgv::Options</literal> Additional options passed to gpgv.
+     </para></listitem>
+     </varlistentry>
+
    </variablelist>
   </para>
  </refsect1>
@@ -373,7 +380,9 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <literal>Debug::NoLocking</literal> disables file locking so APT can do some 
    operations as non-root and <literal>Debug::pkgDPkgPM</literal> will print out the 
    command line for each dpkg invokation. <literal>Debug::IdentCdrom</literal> will 
-   disable the inclusion of statfs data in CDROM IDs.</para>
+   disable the inclusion of statfs data in CDROM IDs.
+   <literal>Debug::Acquire::gpgv</literal> Debugging of the gpgv method.
+   </para>
  </refsect1>
  
  <refsect1><title>Examples</title>
