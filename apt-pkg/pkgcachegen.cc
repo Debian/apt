@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.48 2001/05/27 05:36:04 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.49 2001/05/27 05:55:27 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -134,8 +134,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       int Res = 1;
       for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
       {
-	 Res = Cache.VS->DoCmpVersion(Version.c_str(),Version.c_str()+Version.length(),Ver.VerStr(),
-				 Ver.VerStr() + strlen(Ver.VerStr()));
+	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	 if (Res >= 0)
 	    break;
       }
@@ -166,8 +165,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       {
 	 for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
 	 {
-	    Res = Cache.VS->DoCmpVersion(Version.c_str(),Version.c_str()+Version.length(),Ver.VerStr(),
-				    Ver.VerStr() + strlen(Ver.VerStr()));
+	    Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	    if (Res != 0)
 	       break;
 	 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.18 2001/05/27 05:19:30 jgg Exp $
+// $Id: strutl.h,v 1.19 2001/05/27 05:55:27 jgg Exp $
 /* ######################################################################
 
    String Util - These are some useful string functions
@@ -59,15 +59,17 @@ bool TokSplitString(char Tok,char *Input,char **List,
 void ioprintf(ostream &out,const char *format,...) APT_FORMAT2;
 bool CheckDomainList(string Host,string List);
 
-int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
-inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};
-inline int stringcmp(string A,const char *B) {return stringcmp(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));};
+#define APT_MKSTRCMP(name,func) \
+inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
+inline int name(string A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));}; \
+inline int name(string A,string B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());}; \
+inline int name(string A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);}; 
 
+int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
-inline int stringcasecmp(const char *A,const char *AEnd,const char *B) {return stringcasecmp(A,AEnd,B,B+strlen(B));};
-inline int stringcasecmp(string A,const char *B) {return stringcasecmp(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));};
-inline int stringcasecmp(string A,string B) {return stringcasecmp(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());};
-inline int stringcasecmp(string A,const char *B,const char *BEnd) {return stringcasecmp(A.c_str(),A.c_str()+A.length(),B,BEnd);};
+
+APT_MKSTRCMP(stringcmp,stringcmp);
+APT_MKSTRCMP(stringcasecmp,stringcasecmp);
 
 inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);};
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.h,v 1.7 2001/05/14 05:58:33 jgg Exp $
+// $Id: version.h,v 1.8 2001/05/27 05:55:27 jgg Exp $
 /* ######################################################################
 
    Version - Versioning system..
@@ -24,6 +24,7 @@
 #pragma interface "apt-pkg/version.h"
 #endif 
 
+#include <apt-pkg/strutl.h>    
 #include <string>
 
 using std::string;
@@ -52,22 +53,8 @@ class pkgVersioningSystem
                 {return this == &Against;};
 
    // Shortcuts
-   inline int CmpVersion(const char *A, const char *B)
-   {
-      return DoCmpVersion(A,A+strlen(A),B,B+strlen(B));
-   };
-   inline int CmpVersion(string A,string B)
-   {
-      return DoCmpVersion(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());
-   };  
-   inline int CmpReleaseVer(const char *A, const char *B)
-   {
-      return DoCmpReleaseVer(A,A+strlen(A),B,B+strlen(B));
-   };
-   inline int CmpReleaseVer(string A,string B)
-   {
-      return DoCmpReleaseVer(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());
-   };  
+   APT_MKSTRCMP(CmpVersion,DoCmpVersion);
+   APT_MKSTRCMP(CmpReleaseVer,DoCmpReleaseVer);
    
    pkgVersioningSystem();
    virtual ~pkgVersioningSystem() {};
