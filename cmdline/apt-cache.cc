@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.71 2004/01/04 19:00:10 mdz Exp $
+// $Id: apt-cache.cc,v 1.72 2004/04/30 04:34:03 mdz Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1197,7 +1197,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
    Buffer[V.FileList()->Size] = '\n';
    if (PkgF.Seek(V.FileList()->Offset) == false ||
        PkgF.Read(Buffer,V.FileList()->Size) == false ||
-       fwrite(Buffer,1,V.FileList()->Size+1,stdout) < V.FileList()->Size+1)
+       fwrite(Buffer,1,V.FileList()->Size+1,stdout) < (size_t)(V.FileList()->Size+1))
    {
       delete [] Buffer;
       return false;
