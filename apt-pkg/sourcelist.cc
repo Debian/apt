@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.11 1999/03/02 18:35:24 jgg Exp $
+// $Id: sourcelist.cc,v 1.12 1999/03/05 19:36:49 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -135,7 +135,7 @@ bool pkgSourceList::Item::SetType(string S)
       return true;
    }
 
-   return true;
+   return false;
 }
 									/*}}}*/
 // SourceList::Item::SetURI - Set the URI				/*{{{*/

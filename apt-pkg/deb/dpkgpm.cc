@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.7 1999/01/31 08:55:53 jgg Exp $
+// $Id: dpkgpm.cc,v 1.8 1999/03/05 19:36:49 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -310,7 +310,13 @@ bool pkgDPkgPM::Go()
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
       {
 	 RunScripts("DPkg::Post-Invoke");
-	 return _error->Error("Sub-process returned an error code");
+	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
+	    return _error->Error("Sub-process recieved a segmentation fault.");
+	    
+	 if (WIFEXITED(Status) != 0)
+	    return _error->Error("Sub-process returned an error code (%u)",WEXITSTATUS(Status));
+	 
+	 return _error->Error("Sub-process exited unexpectedly");
       }      
    }
 
