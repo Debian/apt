@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.29 1999/03/17 03:25:25 jgg Exp $
+// $Id: apt-cache.cc,v 1.30 1999/03/18 04:52:51 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -333,15 +333,19 @@ bool Dump(CommandLine &Cmd)
 									/*}}}*/
 // GetCandidateVer - Returns the Candidate install version		/*{{{*/
 // ---------------------------------------------------------------------
-/* This should really use the DepCache or something.. Copied from there. */
-static pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator Pkg)
+/* This should really use the DepCache or something.. Copied from there. 
+   Allow current is required to filter out the status file when emitting
+   an available file. */
+static pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator Pkg,
+					     bool AllowCurrent = true)
 {
    /* Not source/not automatic versions cannot be a candidate version 
     unless they are already installed */
    for (pkgCache::VerIterator I = Pkg.VersionList(); I.end() == false; I++)
    {
-      if (Pkg.CurrentVer() == I)
+      if (Pkg.CurrentVer() == I && AllowCurrent == true)
 	 return I;
+      
       for (pkgCache::VerFileIterator J = I.FileList(); J.end() == false; J++)
 	 if ((J.File()->Flags & pkgCache::Flag::NotSource) == 0 &&
 	     (J.File()->Flags & pkgCache::Flag::NotAutomatic) == 0)
@@ -361,6 +365,9 @@ bool DumpAvail(CommandLine &Cmd)
 
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); I.end() == false; I++)
    {
+      if ((I->Flags & pkgCache::Flag::NotSource) != 0)
+	 continue;
+      
       if (I.IsOk() == false)
       {
 	 delete [] Buffer;
@@ -379,7 +386,7 @@ bool DumpAvail(CommandLine &Cmd)
       for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
       {
 	 // Find the proper version to use. We should probably use the DepCache.
-	 pkgCache::VerIterator V = GetCandidateVer(P);
+	 pkgCache::VerIterator V = GetCandidateVer(P,false);
 
 	 if (V.end() == true || V.FileList().File() != I)
 	    continue;
