@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.20 2001/04/27 05:49:34 jgg Exp $
+// $Id: configuration.cc,v 1.21 2001/04/29 05:24:42 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -433,7 +433,7 @@ string Configuration::Item::FullTag(const Item *Stop) const
    Sectional config files are like bind's named.conf where there are 
    sections like 'zone "foo.org" { .. };' This causes each section to be
    added in with a tag like "zone::foo.org" instead of being split 
-   tag/value. */
+   tag/value. AsSectional enables Sectional parsing.*/
 bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 		    unsigned Depth)
 {   
