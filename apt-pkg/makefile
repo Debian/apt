@@ -9,12 +9,14 @@ HEADER_TARGETDIRS = apt-pkg
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-# The library name, don't forget to update init.h
+# The library name, don't forget to update init.h and the copy in 
+# methods/makefile - FIXME
 LIBRARY=apt-pkg
 LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=3.3
 MINOR=0
 SLIBS=$(PTHREADLIB)
+DOMAIN:=libapt-pkg$(MAJOR)
 
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
