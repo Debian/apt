@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.20 1999/01/30 08:08:54 jgg Exp $
+// $Id: acquire-item.cc,v 1.21 1999/01/31 22:25:34 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -64,12 +64,12 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	  StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
       {
 	 Status = StatIdle;
-	 Owner->Dequeue(this);
+	 Dequeue();
 	 return;
       }
       
       Status = StatError;
-      Owner->Dequeue(this);
+      Dequeue();
    }   
 }
 									/*}}}*/
@@ -327,6 +327,23 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
 string pkgAcqIndexRel::Describe()
 {
    return Location->ReleaseURI();
+}
+									/*}}}*/
+// AcqIndexRel::Failed - Silence failure messages for missing rel files	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqIndexRel::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   // This is the retry counter
+   if (Cnf->LocalOnly == true || 
+       StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
+   {      
+      Status = StatIdle;
+      Dequeue();
+      return;
+   }
+   
+   Item::Failed(Message,Cnf);
 }
 									/*}}}*/
 

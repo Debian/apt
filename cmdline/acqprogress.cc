@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.7 1999/01/27 02:48:53 jgg Exp $
+// $Id: acqprogress.cc,v 1.8 1999/01/31 22:25:34 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -93,8 +93,16 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
    
-   cout << "Err " << Itm.Description << endl;
-   cout << "  " << Itm.Owner->ErrorText << endl;
+   if (Itm.Owner->Status == pkgAcquire::Item::StatIdle)
+   {
+      cout << "Ign " << Itm.Description << endl;
+   }
+   else
+   {
+      cout << "Err " << Itm.Description << endl;
+      cout << "  " << Itm.Owner->ErrorText << endl;
+   }
+   
    Update = true;
 };
 									/*}}}*/
