@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.4 1998/10/02 04:39:43 jgg Exp $
+// $Id: algorithms.h,v 1.5 1998/10/08 04:54:59 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -103,5 +103,6 @@ bool pkgDistUpgrade(pkgDepCache &Cache);
 bool pkgApplyStatus(pkgDepCache &Cache);
 bool pkgFixBroken(pkgDepCache &Cache);
 bool pkgAllUpgrade(pkgDepCache &Cache);
+bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 
 #endif

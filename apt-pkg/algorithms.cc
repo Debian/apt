@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.4 1998/10/02 04:39:42 jgg Exp $
+// $Id: algorithms.cc,v 1.5 1998/10/08 04:54:58 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -197,7 +197,7 @@ bool pkgFixBroken(pkgDepCache &Cache)
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if (Cache[I].NowBroken() == true)
 	 Cache.MarkInstall(I,true);
-
+   
    /* Fix packages that are in a NeedArchive state but don't have a
       downloadable install version */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
@@ -209,7 +209,7 @@ bool pkgFixBroken(pkgDepCache &Cache)
       if (Cache[I].InstVerIter(Cache).Downloadable() == false)
 	 continue;
 
-      Cache.MarkInstall(I,true);
+      Cache.MarkInstall(I,true);      
    }
    
    pkgProblemResolver Fix(Cache);
@@ -285,6 +285,43 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
    }
       
    return Fix.ResolveByKeep();
+}
+									/*}}}*/
+// MinimizeUpgrade - Minimizes the set of packages to be upgraded	/*{{{*/
+// ---------------------------------------------------------------------
+/* This simply goes over the entire set of packages and tries to keep 
+   each package marked for upgrade. If a conflict is generated then 
+   the package is restored. */
+bool pkgMinimizeUpgrade(pkgDepCache &Cache)
+{   
+   if (Cache.BrokenCount() != 0)
+      return false;
+   
+   // We loop indefinately to get the minimal set size.
+   bool Change = false;
+   do
+   {
+      Change = false;
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+      {
+	 // Not interesting
+	 if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
+	    continue;
+	 
+	 // Keep it and see if that is OK
+	 Cache.MarkKeep(I);
+	 if (Cache.BrokenCount() != 0)
+	    Cache.MarkInstall(I,false);
+	 else
+	    Change = true;
+      }      
+   }
+   while (Change == true);
+
+   if (Cache.BrokenCount() != 0)
+      return _error->Error("Internal Error in pkgMinimizeUpgrade");
+   
+   return true;
 }
 									/*}}}*/
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.2 1998/09/26 05:34:24 jgg Exp $
+// $Id: cmndline.cc,v 1.3 1998/10/08 04:55:01 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -184,9 +184,17 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	 const char *J;
 	 for (J = Argument; *J != 0 && *J != '='; J++);
 	 if (*J == 0)
-	    return _error->Error("Option %s: Configuration item sepecification must have an =.",argv[I]);
+	    return _error->Error("Option %s: Configuration item sepecification must have an =<val>.",argv[I]);
 
-	 Conf->Set(string(Argument,J-Argument),string(J+1));
+	 // = is trailing
+	 if (J[1] == 0)
+	 {
+	    if (I+1 >= argc)
+	       return _error->Error("Option %s: Configuration item sepecification must have an =<val>.",argv[I]);
+	    Conf->Set(string(Argument,J-Argument),string(argv[I++ +1]));
+	 }
+	 else
+	    Conf->Set(string(Argument,J-Argument),string(J+1));
 	 
 	 return true;
       }

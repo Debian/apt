@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.h,v 1.1 1998/08/09 00:51:35 jgg Exp $
+// $Id: pkgrecords.h,v 1.2 1998/10/08 04:55:00 jgg Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records
@@ -49,7 +49,7 @@ class pkgRecords
 
    // Lookup function
    Parser &Lookup(pkgCache::VerFileIterator &Ver);
-      
+   
    // Construct destruct
    pkgRecords(pkgCache &Cache);
    ~pkgRecords();
@@ -57,10 +57,22 @@ class pkgRecords
 
 class pkgRecords::Parser
 {
-   public:
+   protected:
    
    virtual bool Jump(pkgCache::VerFileIterator &Ver) = 0;
    
+   public:
+   friend pkgRecords;
+   
+   // These refer to the archive file for the Version
+   virtual string FileName() {return string();};
+   virtual string MD5Hash() {return string();};
+   
+   // These are some general stats about the package
+   virtual string Maintainer() {return string();};
+   virtual string ShortDesc() {return string();};
+   virtual string LongDesc() {return string();};
+      
    virtual ~Parser() {};
 };
 

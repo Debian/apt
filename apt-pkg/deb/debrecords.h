@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.h,v 1.1 1998/08/09 00:51:36 jgg Exp $
+// $Id: debrecords.h,v 1.2 1998/10/08 04:55:04 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -26,10 +26,23 @@ class debRecordParser : public pkgRecords::Parser
 {
    pkgTagFile Tags;
    pkgTagSection Section;
-   
-   public:
+
+   string FindTag(const char *Tag);
+
+   protected:
    
    virtual bool Jump(pkgCache::VerFileIterator &Ver);
+   
+   public:
+
+   // These refer to the archive file for the Version
+   virtual string FileName();
+   virtual string MD5Hash();
+   
+   // These are some general stats about the package
+   virtual string Maintainer();
+   virtual string ShortDesc();
+   virtual string LongDesc();
    
    debRecordParser(FileFd &File);
 };

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.1 1998/08/09 00:51:36 jgg Exp $
+// $Id: debrecords.cc,v 1.2 1998/10/08 04:55:02 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -28,5 +28,61 @@ debRecordParser::debRecordParser(FileFd &File) : Tags(File,4*1024)
 bool debRecordParser::Jump(pkgCache::VerFileIterator &Ver)
 {
    return Tags.Jump(Section,Ver->Offset);
+}
+									/*}}}*/
+// RecordParser::FindTag - Locate a tag and return a string		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::FindTag(const char *Tag)
+{
+   const char *Start;
+   const char *Stop;
+   if (Section.Find(Tag,Start,Stop) == false)
+      return string();
+   return string(Start,Stop - Start);
+}
+									/*}}}*/
+// RecordParser::FileName - Return the archive filename on the site	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::FileName()
+{
+   return FindTag("Filename");
+}
+									/*}}}*/
+// RecordParser::MD5Hash - Return the archive hash			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::MD5Hash()
+{
+   return FindTag("MD5sum");
+}
+									/*}}}*/
+// RecordParser::Maintainer - Return the maintainer email		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::Maintainer()
+{
+   return FindTag("Maintainer");
+}
+									/*}}}*/
+// RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::ShortDesc()
+{
+   string Res = FindTag("Description");
+   string::size_type Pos = Res.find('\n');
+   if (Pos == string::npos)
+      return Res;
+   return string(Res,0,Pos);
+}
+									/*}}}*/
+// RecordParser::LongDesc - Return a longer description			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::LongDesc()
+{
+   return string();
 }
 									/*}}}*/

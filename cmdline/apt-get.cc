@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.1 1998/10/02 04:39:56 jgg Exp $
+// $Id: apt-get.cc,v 1.2 1998/10/08 04:55:05 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -110,9 +110,22 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 	    // Show a quick summary of the version requirements
 	    if (D.TargetVer() != 0)
 	       out << " (" << D.CompType() << " " << D.TargetVer() << 
-	           ")" << endl;
-	    else
-	       out << endl;
+	           ")";
+	    
+	    /* Show a summary of the target package if possible. In the case
+	       of virtual packages we show nothing */
+	    pkgCache::PkgIterator Targ = D.TargetPkg();
+	    if (Targ->ProvidesList == 0)
+	    {
+	       out << " but ";
+	       pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
+	       if (Ver.end() == false)
+		  out << Ver.VerStr() << "is installed";
+	       else
+		  out << "it is not installed";
+	    }
+	    
+	    out << endl;
 	 }	    
       }   
    }   
@@ -364,6 +377,8 @@ bool CacheFile::Open()
 
 	 return _error->Error("Unable to correct dependencies");
       }
+      if (pkgMinimizeUpgrade(*Cache) == false)
+	 return _error->Error("Unable to minimize the upgrade set");
       
       c1out << " Done" << endl;
    }
