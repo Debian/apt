@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.136 2003/08/08 23:48:48 mdz Exp $
+// $Id: apt-get.cc,v 1.137 2003/08/09 00:26:30 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -121,15 +121,15 @@ bool YnPrompt()
       return true;
    }
    
-   char C = 0;
-   char Jnk = 0;
+   unsigned char C = 0;
+   unsigned char Jnk = 0;
    if (read(STDIN_FILENO,&C,1) != 1)
       return false;
    while (C != '\n' && Jnk != '\n') 
       if (read(STDIN_FILENO,&Jnk,1) != 1)
 	 return false;
    
-   if (!(toupper(C) == *Yes || C == '\n' || C == '\r'))
+   if (!(toupper(C) == toupper((unsigned char)(*Yes)) || C == '\n' || C == '\r'))
       return false;
    return true;
 }
