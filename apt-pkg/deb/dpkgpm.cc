@@ -328,8 +328,8 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 /* This globs the operations and calls dpkg */
 bool pkgDPkgPM::Go()
 {
-   unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",350);   
-   unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",8192);
+   unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);   
+   unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
