@@ -95,6 +95,7 @@ AC_DEFUN(ah_GLIBC_VER,
 	cat <<_GLIBC_>$dummy.c
 #include <features.h>
 #include <stdio.h>
+#include <stdlib.h>
 int main(int argc, char **argv) { printf("libc6.%d",__GLIBC_MINOR__); exit(0); }
 _GLIBC_
 	${CC-cc} $dummy.c -o $dummy
@@ -115,6 +116,7 @@ AC_DEFUN(ah_LIBSTDCPP_VER,
 	cat <<_LIBSTDCPP_>$dummy.cc
 #include <features.h>
 #include <stdio.h>
+#include <stdlib.h>
 int main(int argc, char **argv) { exit(0); }
 _LIBSTDCPP_
 	${CXX-c++} $dummy.cc -o $dummy
