@@ -229,7 +229,7 @@ bool FTPConn::Login()
       if (ReadResp(Tag,Msg) == false)
 	 return false;
       if (Tag >= 400)
-	 return _error->Error(_("Server refused our connection and said: %s"),Msg.c_str());
+	 return _error->Error(_("The server refused the connection and said: %s"),Msg.c_str());
       
       // Perform proxy script execution
       Configuration::Item const *Opts = _config->Tree("Acquire::ftp::ProxyLogin");
