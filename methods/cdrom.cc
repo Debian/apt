@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.7 1998/12/22 08:20:55 jgg Exp $
+// $Id: cdrom.cc,v 1.8 1999/03/28 01:37:26 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -127,8 +127,11 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       // A hit
       if (NewID == ID)
 	 break;
-      
-      UnmountCdrom(CDROM);
+
+      // I suppose this should prompt somehow?
+      if (UnmountCdrom(CDROM) == false)
+	 return _error->Error("Unable to unmount the CD-ROM in %s, it may still be in use.",
+			      CDROM.c_str());
       if (MediaFail(Get.Host,CDROM) == false)
       {
 	 CurrentID = "FAIL";

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.1 1998/11/29 01:19:27 jgg Exp $
+// $Id: cdromutl.cc,v 1.2 1999/03/28 01:37:26 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -23,6 +23,7 @@
 #include <sys/vfs.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
 									/*}}}*/
@@ -33,6 +34,24 @@
    leave /etc/mtab inconsitant. We drop all messages this produces. */
 bool UnmountCdrom(string Path)
 {
+   if (Path.empty() == true)
+      return false;
+   
+   // Need that trailing slash for directories
+   if (Path[Path.length() - 1] != '/')
+      Path += '/';
+   
+   /* First we check if the path is actualy mounted, we do this by
+      stating the path and the previous directory (carefull of links!)
+      and comparing their device fields. */
+   struct stat Buf,Buf2;
+   if (stat(Path.c_str(),&Buf) != 0 || 
+       stat((Path + "../").c_str(),&Buf2) != 0)
+      return _error->Errno("stat","Unable to stat the mount point %s",Path.c_str());
+
+   if (Buf.st_dev == Buf2.st_dev)
+      return true;
+   
    int Child = fork();
    if (Child < -1)
       return _error->Errno("fork","Failed to fork");
@@ -126,7 +145,9 @@ bool IdentCdrom(string CD,string &Res)
    if (D == 0)
       return _error->Errno("opendir","Unable to read %s",CD.c_str());
       
-   // Run over the directory
+   /* Run over the directory, we assume that the reader order will never
+      change as the media is read-only. In theory if the kernel did
+      some sort of wacked caching this might not be true.. */
    char S[300];
    for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
    {
@@ -147,8 +168,10 @@ bool IdentCdrom(string CD,string &Res)
    struct statfs Buf;
    if (statfs(CD.c_str(),&Buf) != 0)
       return _error->Errno("statfs","Failed to stat the cdrom");
-   
-   sprintf(S,"%u %u",Buf.f_blocks,Buf.f_bfree);
+
+   // We use a kilobyte block size to advoid overflow
+   sprintf(S,"%u %u",Buf.f_blocks*(Buf.f_bsize/1024),
+	   Buf.f_bfree*(Buf.f_bsize/1024));
    Hash.Add(S);
    
    Res = Hash.Result().Value();
