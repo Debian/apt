@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.41 2001/05/27 23:30:45 jgg Exp $
+// $Id: strutl.cc,v 1.42 2001/05/29 04:40:34 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -440,11 +440,79 @@ int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
       return -1;
    return 1;
 }
+int stringcmp(string::const_iterator A,string::const_iterator AEnd,
+	      const char *B,const char *BEnd)
+{
+   for (; A != AEnd && B != BEnd; A++, B++)
+      if (*A != *B)
+	 break;
+   
+   if (A == AEnd && B == BEnd)
+      return 0;
+   if (A == AEnd)
+      return 1;
+   if (B == BEnd)
+      return -1;
+   if (*A < *B)
+      return -1;
+   return 1;
+}
+int stringcmp(string::const_iterator A,string::const_iterator AEnd,
+	      string::const_iterator B,string::const_iterator BEnd)
+{
+   for (; A != AEnd && B != BEnd; A++, B++)
+      if (*A != *B)
+	 break;
+   
+   if (A == AEnd && B == BEnd)
+      return 0;
+   if (A == AEnd)
+      return 1;
+   if (B == BEnd)
+      return -1;
+   if (*A < *B)
+      return -1;
+   return 1;
+}
 									/*}}}*/
 // stringcasecmp - Arbitary case insensitive string compare		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
+{
+   for (; A != AEnd && B != BEnd; A++, B++)
+      if (toupper(*A) != toupper(*B))
+	 break;
+
+   if (A == AEnd && B == BEnd)
+      return 0;
+   if (A == AEnd)
+      return 1;
+   if (B == BEnd)
+      return -1;
+   if (toupper(*A) < toupper(*B))
+      return -1;
+   return 1;
+}
+int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
+		  const char *B,const char *BEnd)
+{
+   for (; A != AEnd && B != BEnd; A++, B++)
+      if (toupper(*A) != toupper(*B))
+	 break;
+
+   if (A == AEnd && B == BEnd)
+      return 0;
+   if (A == AEnd)
+      return 1;
+   if (B == BEnd)
+      return -1;
+   if (toupper(*A) < toupper(*B))
+      return -1;
+   return 1;
+}
+int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
+		  string::const_iterator B,string::const_iterator BEnd)
 {
    for (; A != AEnd && B != BEnd; A++, B++)
       if (toupper(*A) != toupper(*B))
@@ -469,22 +537,22 @@ string LookupTag(string Message,const char *Tag,const char *Default)
 {
    // Look for a matching tag.
    int Length = strlen(Tag);
-   for (const char *I = Message.c_str(); I + Length < Message.c_str() + Message.length(); I++)
+   for (string::iterator I = Message.begin(); I + Length < Message.end(); I++)
    {
       // Found the tag
       if (I[Length] == ':' && stringcasecmp(I,I+Length,Tag) == 0)
       {
 	 // Find the end of line and strip the leading/trailing spaces
-	 const char *J;
+	 string::iterator J;
 	 I += Length + 1;
-	 for (; isspace(*I) != 0 && *I != 0; I++);
-	 for (J = I; *J != '\n' && *J != 0; J++);
+	 for (; isspace(*I) != 0 && I < Message.end(); I++);
+	 for (J = I; *J != '\n' && J < Message.end(); J++);
 	 for (; J > I && isspace(J[-1]) != 0; J--);
 	 
 	 return string(I,J);
       }
       
-      for (; *I != '\n' && *I != 0; I++);
+      for (; *I != '\n' && I < Message.end(); I++);
    }   
    
    // Failed to find a match
@@ -887,16 +955,16 @@ void ioprintf(ostream &out,const char *format,...)
    matched against the argument */
 bool CheckDomainList(string Host,string List)
 {
-   const char *Start = List.c_str();
-   for (const char *Cur = List.c_str(); *Cur != 0; Cur++)
+   string::const_iterator Start = List.begin();
+   for (string::const_iterator Cur = List.begin(); Cur <= List.end(); Cur++)
    {
-      if (*Cur != ',')
+      if (Cur < List.end() && *Cur != ',')
 	 continue;
       
       // Match the end of the string..
-      if ((Host.size() >= (unsigned)(Cur - List.c_str())) &&
+      if ((Host.size() >= (unsigned)(Cur - List.begin())) &&
 	  Cur - Start != 0 &&
-	  stringcasecmp(Host.c_str() + Host.length() - (Cur - Start),Host.c_str()+Host.length(),Start,Cur) == 0)
+	  stringcasecmp(Host.end() - (Cur - Start),Host.end(),Start,Cur) == 0)
 	 return true;
       
       Start = Cur + 1;

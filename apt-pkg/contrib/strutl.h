@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.19 2001/05/27 05:55:27 jgg Exp $
+// $Id: strutl.h,v 1.20 2001/05/29 04:40:34 jgg Exp $
 /* ######################################################################
 
    String Util - These are some useful string functions
@@ -65,11 +65,26 @@ inline int name(string A,const char *B) {return func(A.c_str(),A.c_str()+A.lengt
 inline int name(string A,string B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());}; \
 inline int name(string A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);}; 
 
-int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
-int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+#define APT_MKSTRCMP2(name,func) \
+inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
+inline int name(string A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));}; \
+inline int name(string A,string B) {return func(A.begin(),A.end(),B.begin(),B.end());}; \
+inline int name(string A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}; \
+inline int name(string::const_iterator A,string::const_iterator Aend,const char *B) {return func(A,Aend,B,B+strlen(B));}; 
 
-APT_MKSTRCMP(stringcmp,stringcmp);
-APT_MKSTRCMP(stringcasecmp,stringcasecmp);
+int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+int stringcmp(string::const_iterator A,string::const_iterator AEnd,
+	      const char *B,const char *BEnd);
+int stringcmp(string::const_iterator A,string::const_iterator AEnd,
+	      string::const_iterator B,string::const_iterator BEnd);
+int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
+		  const char *B,const char *BEnd);
+int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
+                  string::const_iterator B,string::const_iterator BEnd);
+
+APT_MKSTRCMP2(stringcmp,stringcmp);
+APT_MKSTRCMP2(stringcasecmp,stringcasecmp);
 
 inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);};
 
