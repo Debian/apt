@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.61 2003/12/21 00:37:58 mdz Exp $
+# $Id: rules,v 1.62 2003/12/24 22:55:30 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -53,7 +53,7 @@ endif
 ifneq ($(APT_DEBVER),$(APT_CONFVER))
 .PHONY: configure.in
 configure.in:
-	sed -e 's/$(APT_CONFVER)/$(APT_DEBVER)/' $@ > $@.$$$$;mv $@.$$$$ $@
+	sed -e 's/$(APT_CONFVER)/$(APT_DEBVER)/' $@ > $@.$$$$ && mv $@.$$$$ $@
 else
 configure.in:
 endif
