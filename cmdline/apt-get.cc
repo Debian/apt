@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.58 1999/05/13 03:09:33 jgg Exp $
+// $Id: apt-get.cc,v 1.59 1999/05/20 05:53:38 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1112,6 +1112,7 @@ bool DoSource(CommandLine &CmdL)
       pkgSrcRecords::Parser *Last = 0;
       unsigned long Offset = 0;
       string Version;
+      bool IsMatch = false;
 	 
       // Iterate over all of the hits
       pkgSrcRecords::Parser *Parse;
@@ -1119,8 +1120,16 @@ bool DoSource(CommandLine &CmdL)
       while ((Parse = SrcRecs.Find(Src.c_str(),false)) != 0)
       {
 	 string Ver = Parse->Version();
-	 if (Last == 0 || pkgVersionCompare(Version,Ver) < 0)
+	 
+	 // Skip name mismatches
+	 if (IsMatch == true && Parse->Package() != Src)
+	    continue;
+
+	 // Newer version or an exact match
+	 if (Last == 0 || pkgVersionCompare(Version,Ver) < 0 || 
+	     (Parse->Package() == Src && IsMatch == false))
 	 {
+	    IsMatch = Parse->Package() == Src;
 	    Last = Parse;
 	    Offset = Parse->Offset();
 	    Version = Ver;
