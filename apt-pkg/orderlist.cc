@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.8 1999/07/20 05:53:33 jgg Exp $
+// $Id: orderlist.cc,v 1.9 1999/11/04 06:05:02 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -422,14 +422,14 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
 // ---------------------------------------------------------------------
 /* This routine calls visit on all providing packages. */
 bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
-{
+{   
    Version **List = D.AllTargets();
    for (Version **I = List; *I != 0; I++)
    {
       VerIterator Ver(Cache,*I);
       PkgIterator Pkg = Ver.ParentPkg();
-      
-      if (Cache[Pkg].Keep() == true)
+
+      if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
 	 continue;
       
       if (D->Type != pkgCache::Dep::Conflicts && Cache[Pkg].InstallVer != *I)
@@ -441,7 +441,7 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
       // Skip over missing files
       if (Critical == false && IsMissing(D.ParentPkg()) == true)
 	 continue;
-	 
+
       if (VisitNode(Pkg) == false)
       {
 	 delete [] List;
