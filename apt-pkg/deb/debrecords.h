@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.h,v 1.3 1998/11/13 04:23:38 jgg Exp $
+// $Id: debrecords.h,v 1.4 1999/02/22 03:30:06 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -44,7 +44,7 @@ class debRecordParser : public pkgRecords::Parser
    virtual string ShortDesc();
    virtual string LongDesc();
    
-   debRecordParser(FileFd &File);
+   debRecordParser(FileFd &File,pkgCache &Cache);
 };
 
 

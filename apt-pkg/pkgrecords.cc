@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.cc,v 1.4 1998/11/13 04:23:34 jgg Exp $
+// $Id: pkgrecords.cc,v 1.5 1999/02/22 03:30:06 jgg Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records
@@ -40,7 +40,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 	 return;
       
       // Create the parser
-      Files[I->ID].Parse = new debRecordParser(*Files[I->ID].File);
+      Files[I->ID].Parse = new debRecordParser(*Files[I->ID].File,Cache);
       if (_error->PendingError() == true)
 	 return;
    }   

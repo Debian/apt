@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.4 1999/01/27 02:48:53 jgg Exp $
+// $Id: debrecords.cc,v 1.5 1999/02/22 03:30:06 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -18,7 +18,8 @@
 // RecordParser::debRecordParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debRecordParser::debRecordParser(FileFd &File) : Tags(File,4*1024)
+debRecordParser::debRecordParser(FileFd &File,pkgCache &Cache) : 
+                   Tags(File,Cache.Head().MaxVerFileSize + 20)
 {
 }
 									/*}}}*/
