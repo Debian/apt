@@ -156,7 +156,7 @@ int ShowHelp()
       "  -h   This help text\n"
       "  -s   Use source file sorting\n"
       "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n");
+      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
 
    return 0;
 }

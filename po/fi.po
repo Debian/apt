@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-05-31 19:57-0700\n"
-"PO-Revision-Date: 2004-07-12 18:29+0300\n"
+"POT-Creation-Date: 2005-03-05 12:06+0100\n"
+"PO-Revision-Date: 2005-02-15 14:09+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=2; plural=(n != 1);"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: cmdline/apt-cache.cc:135
 #, c-format
@@ -148,14 +148,14 @@ msgstr "  Versiotaulukko:"
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1646 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
+#: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
-#: cmdline/apt-get.cc:2260 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2313 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s laitealustalle %s %s käännöksen päiväys %s %s\n"
 
-#: cmdline/apt-cache.cc:1653
+#: cmdline/apt-cache.cc:1658
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -190,7 +190,7 @@ msgid ""
 "  -q   Disable progress indicator.\n"
 "  -i   Show only important deps for the unmet command.\n"
 "  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "Käyttö : apt-cache [valitsimet] komento\n"
@@ -200,7 +200,6 @@ msgstr ""
 "\n"
 "apt-cache on alemman tason työkalu APT:n konekielisten\n"
 "välimuistitiedostojen käsittelyyn ja tutkimiseen\n"
-""
 "Komennot:\n"
 "   add - Lisää paketti lähdevälimuistiin\n"
 "   gencaches - Tee sekä pakettivarasto että lähdevälimuisti\n"
@@ -246,7 +245,7 @@ msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
 "Käyttö: apt-config [valitsimet] komento\n"
 "\n"
@@ -277,7 +276,7 @@ msgid ""
 "  -h   This help text\n"
 "  -t   Set the temp dir\n"
 "  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
 "Käyttö: apt-extracttemplates tdsto1 [tdsto2 ...]\n"
 "\n"
@@ -290,7 +289,7 @@ msgstr ""
 "  -c=? Lue tämä asetustiedosto\n"
 "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:710
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Tiedostoon %s kirjoittaminen ei onnistu"
@@ -316,7 +315,8 @@ msgstr "Lähteiden laajennuslista on liian pitkä"
 
 #: ftparchive/apt-ftparchive.cc:367
 msgid "Error writing header to contents file"
-msgstr "Tapahtui virhe kirjoitettaessa otsikkotietoa sisällysluettelotiedostoon"
+msgstr ""
+"Tapahtui virhe kirjoitettaessa otsikkotietoa sisällysluettelotiedostoon"
 
 #: ftparchive/apt-ftparchive.cc:397
 #, c-format
@@ -372,7 +372,8 @@ msgstr ""
 "          generate asetukset [ryhmät]\n"
 "          clean asetukset\n"
 "\n"
-"apt-ftparchive tuottaa hakemiston Debianin arkistoista. Monta tuottamistapaa\n"
+"apt-ftparchive tuottaa hakemiston Debianin arkistoista. Monta "
+"tuottamistapaa\n"
 "on tuettu alkaen täysin automaattisista toiminnallisesti samoihin kuin\n"
 "dpkg-scanpackages ja dpkg-scansources.\n"
 "\n"
@@ -522,7 +523,12 @@ msgstr "  %s: ei poikkeustietuetta\n"
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s ylläpitäjä on %s eikä %s\n"
 
-#: ftparchive/contents.cc:346 ftparchive/contents.cc:377
+#: ftparchive/contents.cc:317
+#, c-format
+msgid "Internal Error, could not locate member %s"
+msgstr "Tapahtui sisäinen virhe, tiedostoa %s ei löydy"
+
+#: ftparchive/contents.cc:353 ftparchive/contents.cc:384
 msgid "realloc - Failed to allocate memory"
 msgstr "realloc - Muistin varaaminen ei onnistunut"
 
@@ -616,7 +622,7 @@ msgstr "Nimen muuttaminen %s -> %s ei onnistunut"
 msgid "Y"
 msgstr "K"
 
-#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1422
+#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1475
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Käännösvirhe lausekkeessa - %s"
@@ -692,110 +698,123 @@ msgstr ""
 "VAROITUS: Seuraavat välttämättömät paketit on merkitty poistettaviksi\n"
 "Näin EI PITÄISI tehdä jos ei aivan tarkkaan tiedä mitä tekee!"
 
-#: cmdline/apt-get.cc:574
+#: cmdline/apt-get.cc:575
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu päivitetty, %lu uutta asennusta, "
 
-#: cmdline/apt-get.cc:578
+#: cmdline/apt-get.cc:579
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu uudelleen asennettua, "
 
-#: cmdline/apt-get.cc:580
+#: cmdline/apt-get.cc:581
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu varhennettua, "
 
-#: cmdline/apt-get.cc:582
+#: cmdline/apt-get.cc:583
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu poistettavaa ja %lu päivittämätöntä.\n"
 
-#: cmdline/apt-get.cc:586
+#: cmdline/apt-get.cc:587
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu ei asennettu kokonaan tai poistettiin.\n"
 
-#: cmdline/apt-get.cc:646
+#: cmdline/apt-get.cc:647
 msgid "Correcting dependencies..."
 msgstr "Korjataan riippuvuuksia..."
 
-#: cmdline/apt-get.cc:649
+#: cmdline/apt-get.cc:650
 msgid " failed."
 msgstr " ei onnistunut."
 
-#: cmdline/apt-get.cc:652
+#: cmdline/apt-get.cc:653
 msgid "Unable to correct dependencies"
 msgstr "Riippuvuuksien korjaus ei onnistu"
 
-#: cmdline/apt-get.cc:655
+#: cmdline/apt-get.cc:656
 msgid "Unable to minimize the upgrade set"
 msgstr "Päivitysjoukon minimointi ei onnistu"
 
-#: cmdline/apt-get.cc:657
+#: cmdline/apt-get.cc:658
 msgid " Done"
 msgstr " Valmis"
 
-#: cmdline/apt-get.cc:661
+#: cmdline/apt-get.cc:662
 msgid "You might want to run `apt-get -f install' to correct these."
 msgstr "Halunnet suorittaa \"apt-get -f install\" korjaamaan nämä."
 
-#: cmdline/apt-get.cc:664
+#: cmdline/apt-get.cc:665
 msgid "Unmet dependencies. Try using -f."
 msgstr "Tyydyttämättömiä riippuvuuksia. Koita käyttää -f."
 
-#: cmdline/apt-get.cc:718
+#: cmdline/apt-get.cc:687
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "VAROITUS: Seuraavian pakettien alkuperää ei voi varmistaa!"
+
+#: cmdline/apt-get.cc:698
+msgid "Install these packages without verification? [y/N] "
+msgstr "Asennetaanko nämä paketit ilman todennusta? [y/N] "
+
+#: cmdline/apt-get.cc:700
+msgid "Some packages could not be authenticated"
+msgstr "Joidenkin pakettien alkuperästä ei voitu varmistua"
+
+#: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
+msgid "There are problems and -y was used without --force-yes"
+msgstr "Oli pulmia ja -y käytettiin ilman valitsinta --force-yes"
+
+#: cmdline/apt-get.cc:762
 msgid "Packages need to be removed but Remove is disabled."
 msgstr "Paketteja pitäisi poistaa mutta Remove ei ole käytössä."
 
-#: cmdline/apt-get.cc:744 cmdline/apt-get.cc:1716 cmdline/apt-get.cc:1749
+#: cmdline/apt-get.cc:788 cmdline/apt-get.cc:1769 cmdline/apt-get.cc:1802
 msgid "Unable to lock the download directory"
 msgstr "Noutokansiota ei saatu lukittua"
 
-#: cmdline/apt-get.cc:754 cmdline/apt-get.cc:1797 cmdline/apt-get.cc:2008
+#: cmdline/apt-get.cc:798 cmdline/apt-get.cc:1850 cmdline/apt-get.cc:2061
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Lähteiden luetteloa ei pystynyt lukemaan."
 
-#: cmdline/apt-get.cc:774
+#: cmdline/apt-get.cc:818
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Noudettavaa arkistoa %st/%st.\n"
 
-#: cmdline/apt-get.cc:777
+#: cmdline/apt-get.cc:821
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Noudettavaa arkistoa %st.\n"
 
-#: cmdline/apt-get.cc:782
+#: cmdline/apt-get.cc:826
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr "Purkamisen jälkeen käytetään %st lisää levytilaa.\n"
 
-#: cmdline/apt-get.cc:785
+#: cmdline/apt-get.cc:829
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Purkamisen jälkeen vapautuu %st levytilaa.\n"
 
-#: cmdline/apt-get.cc:802
+#: cmdline/apt-get.cc:846
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Kansiossa %s ei ole riittävästi vapaata tilaa."
 
-#: cmdline/apt-get.cc:811
-msgid "There are problems and -y was used without --force-yes"
-msgstr "Oli pulmia ja -y käytettiin ilman valitsinta --force-yes"
-
-#: cmdline/apt-get.cc:817 cmdline/apt-get.cc:837
+#: cmdline/apt-get.cc:861 cmdline/apt-get.cc:881
 msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "On määritetty Trivial Only mutta tämä ei ole itsestäänselvä toimenpide."
+msgstr ""
+"On määritetty Trivial Only mutta tämä ei ole itsestäänselvä toimenpide."
 
-#: cmdline/apt-get.cc:819
+#: cmdline/apt-get.cc:863
 msgid "Yes, do as I say!"
 msgstr "Kyllä, tee kuten käsketään!"
 
-#: cmdline/apt-get.cc:821
+#: cmdline/apt-get.cc:865
 #, c-format
 msgid ""
 "You are about to do something potentially harmful\n"
@@ -806,76 +825,76 @@ msgstr ""
 "Jatka kirjoittamalla \"%s\"\n"
 " ?] "
 
-#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:846
+#: cmdline/apt-get.cc:871 cmdline/apt-get.cc:890
 msgid "Abort."
 msgstr "Keskeytä."
 
-#: cmdline/apt-get.cc:842
+#: cmdline/apt-get.cc:886
 msgid "Do you want to continue? [Y/n] "
 msgstr "Haluatko jatkaa? [K/e] "
 
-#: cmdline/apt-get.cc:911 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1906
+#: cmdline/apt-get.cc:958 cmdline/apt-get.cc:1334 cmdline/apt-get.cc:1959
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Tiedoston %s nouto ei onnistunut  %s\n"
 
-#: cmdline/apt-get.cc:929
+#: cmdline/apt-get.cc:976
 msgid "Some files failed to download"
 msgstr "Joidenkin tiedostojen nouto ei onnistunut"
 
-#: cmdline/apt-get.cc:930 cmdline/apt-get.cc:1915
+#: cmdline/apt-get.cc:977 cmdline/apt-get.cc:1968
 msgid "Download complete and in download only mode"
 msgstr "Nouto on valmis ja määrätty vain nouto"
 
-#: cmdline/apt-get.cc:936
+#: cmdline/apt-get.cc:983
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"Joidenkin arkistojen nouto ei onnistunut, ehkä \"apt-get update\""
-"auttaa tai kokeile --fix-missing?"
+"Joidenkin arkistojen nouto ei onnistunut, ehkä \"apt-get update\"auttaa tai "
+"kokeile --fix-missing?"
 
-#: cmdline/apt-get.cc:940
+#: cmdline/apt-get.cc:987
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing ja taltion vaihto ei ole nyt tuettu"
 
-#: cmdline/apt-get.cc:945
+#: cmdline/apt-get.cc:992
 msgid "Unable to correct missing packages."
 msgstr "Puuttuvia paketteja ei voi korjata."
 
-#: cmdline/apt-get.cc:946
+#: cmdline/apt-get.cc:993
 msgid "Aborting Install."
 msgstr "Asennus keskeytetään."
 
-#: cmdline/apt-get.cc:979
+#: cmdline/apt-get.cc:1026
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Huomautus, valitaan %s eikä %s\n"
 
-#: cmdline/apt-get.cc:989
+#: cmdline/apt-get.cc:1036
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Ohitetaan %s, se on jo asennettu eikä ole komennettu päivitystä.\n"
 
-#: cmdline/apt-get.cc:1007
+#: cmdline/apt-get.cc:1054
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Pakettia %s ei ole asennettu, niinpä sitä ei poisteta\n"
 
-#: cmdline/apt-get.cc:1018
+#: cmdline/apt-get.cc:1065
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Paketti %s on näennäispaketti, jonka kattaa:\n"
 
-#: cmdline/apt-get.cc:1030
+#: cmdline/apt-get.cc:1077
 msgid " [Installed]"
 msgstr " [Asennettu]"
 
-#: cmdline/apt-get.cc:1035
+#: cmdline/apt-get.cc:1082
 msgid "You should explicitly select one to install."
 msgstr "Yksi pitää valita asennettavaksi."
 
-#: cmdline/apt-get.cc:1040
+#: cmdline/apt-get.cc:1087
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -886,49 +905,49 @@ msgstr ""
 "Tämä voi tarkoittaa paketin puuttuvan, olevan vanhentunut tai\n"
 "saatavilla vain jostain muusta lähteestä\n"
 
-#: cmdline/apt-get.cc:1059
+#: cmdline/apt-get.cc:1106
 msgid "However the following packages replace it:"
 msgstr "Seuraavat paketit kuitenkin korvaavat sen:"
 
-#: cmdline/apt-get.cc:1062
+#: cmdline/apt-get.cc:1109
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Paketilla %s ei ole asennettavaa valintaa"
 
-#: cmdline/apt-get.cc:1082
+#: cmdline/apt-get.cc:1129
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Paketin %s uudelleenasennus ei ole mahdollista, sitä ei voi noutaa.\n"
 
-#: cmdline/apt-get.cc:1090
+#: cmdline/apt-get.cc:1137
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s on jo uusin versio.\n"
 
-#: cmdline/apt-get.cc:1117
+#: cmdline/apt-get.cc:1164
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Julkaisua \"%s\" paketille \"%s\" ei löytynyt"
 
-#: cmdline/apt-get.cc:1119
+#: cmdline/apt-get.cc:1166
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Versiota \"%s\" paketille \"%s\" ei löytynyt"
 
-#: cmdline/apt-get.cc:1125
+#: cmdline/apt-get.cc:1172
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Valittiin versio %s (%s) paketille %s\n"
 
-#: cmdline/apt-get.cc:1235
+#: cmdline/apt-get.cc:1282
 msgid "The update command takes no arguments"
 msgstr "Komento update ei käytä parametreja"
 
-#: cmdline/apt-get.cc:1248
+#: cmdline/apt-get.cc:1295
 msgid "Unable to lock the list directory"
 msgstr "Luettelokansiota ei voitu lukita"
 
-#: cmdline/apt-get.cc:1300
+#: cmdline/apt-get.cc:1353
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -936,33 +955,33 @@ msgstr ""
 "Joidenkin hakemistotiedostojen nouto ei onnistunut, ne on ohitettu tai "
 "käytetty vanhoja. "
 
-#: cmdline/apt-get.cc:1319
+#: cmdline/apt-get.cc:1372
 msgid "Internal Error, AllUpgrade broke stuff"
 msgstr "Sisäinen virhe, AllUpgrade rikkoi jotain"
 
-#: cmdline/apt-get.cc:1409 cmdline/apt-get.cc:1445
+#: cmdline/apt-get.cc:1462 cmdline/apt-get.cc:1498
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Pakettia %s ei löytynyt"
 
-#: cmdline/apt-get.cc:1432
+#: cmdline/apt-get.cc:1485
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Huomautus, valitaan %s lausekkeella \"%s\"\n"
 
-#: cmdline/apt-get.cc:1462
+#: cmdline/apt-get.cc:1515
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Saatat haluta suorittaa \"apt-get -f install\" korjaamaan nämä:"
 
-#: cmdline/apt-get.cc:1465
+#: cmdline/apt-get.cc:1518
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Kaikkia riippuvuuksia ei ole tyydytetty. Kokeile \"apt-get -f install\" ilman"
-"paketteja (tai ratkaise itse)."
+"Kaikkia riippuvuuksia ei ole tyydytetty. Kokeile \"apt-get -f install\" "
+"ilmanpaketteja (tai ratkaise itse)."
 
-#: cmdline/apt-get.cc:1477
+#: cmdline/apt-get.cc:1530
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -973,7 +992,7 @@ msgstr ""
 "jos käytetään epävakaata jakelua, joitain vaadittuja paketteja ei ole\n"
 "vielä luotu tai siirretty Incoming-kansiosta."
 
-#: cmdline/apt-get.cc:1485
+#: cmdline/apt-get.cc:1538
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -983,105 +1002,106 @@ msgstr ""
 "paketti ei lainkaan ole asennettavissa ja olisi tehtävä vikailmoitus\n"
 "tuosta paketista."
 
-#: cmdline/apt-get.cc:1490
+#: cmdline/apt-get.cc:1543
 msgid "The following information may help to resolve the situation:"
 msgstr "Seuraavista tiedoista voi olla hyötyä selvitettäessä tilannetta:"
 
-#: cmdline/apt-get.cc:1493
+#: cmdline/apt-get.cc:1546
 msgid "Broken packages"
 msgstr "Rikkinäiset paketit"
 
-#: cmdline/apt-get.cc:1519
+#: cmdline/apt-get.cc:1572
 msgid "The following extra packages will be installed:"
 msgstr "Seuraavat ylimääräiset paketit on merkitty asennettaviksi:"
 
-#: cmdline/apt-get.cc:1590
+#: cmdline/apt-get.cc:1643
 msgid "Suggested packages:"
 msgstr "Ehdotetut paketit:"
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1644
 msgid "Recommended packages:"
 msgstr "Suositellut paketit:"
 
-#: cmdline/apt-get.cc:1611
+#: cmdline/apt-get.cc:1664
 msgid "Calculating Upgrade... "
 msgstr "Käsitellään päivitystä ... "
 
-#: cmdline/apt-get.cc:1614 methods/ftp.cc:702 methods/connect.cc:99
+#: cmdline/apt-get.cc:1667 methods/ftp.cc:702 methods/connect.cc:99
 msgid "Failed"
 msgstr "Ei onnistunut"
 
-#: cmdline/apt-get.cc:1619
+#: cmdline/apt-get.cc:1672
 msgid "Done"
 msgstr "Valmis"
 
-#: cmdline/apt-get.cc:1792
+#: cmdline/apt-get.cc:1845
 msgid "Must specify at least one package to fetch source for"
 msgstr "On annettava ainakin yksi paketti jonka lähdekoodi noudetaan"
 
-#: cmdline/apt-get.cc:1819 cmdline/apt-get.cc:2026
+#: cmdline/apt-get.cc:1872 cmdline/apt-get.cc:2079
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Paketin %s lähdekoodipakettia ei löytynyt"
 
-#: cmdline/apt-get.cc:1866
+#: cmdline/apt-get.cc:1919
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Kansiossa %s ei ole riittävästi vapaata tilaa"
 
-#: cmdline/apt-get.cc:1871
+#: cmdline/apt-get.cc:1924
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "On noudettava %st/%st lähdekoodiarkistoja.\n"
 
-#: cmdline/apt-get.cc:1874
+#: cmdline/apt-get.cc:1927
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "On noudettava %st lähdekoodiarkistoja.\n"
 
-#: cmdline/apt-get.cc:1880
+#: cmdline/apt-get.cc:1933
 #, c-format
 msgid "Fetch Source %s\n"
 msgstr "Nouda lähdekoodi %s\n"
 
-#: cmdline/apt-get.cc:1911
+#: cmdline/apt-get.cc:1964
 msgid "Failed to fetch some archives."
 msgstr "Joidenkin arkistojen noutaminen ei onnistunut."
 
-#: cmdline/apt-get.cc:1939
+#: cmdline/apt-get.cc:1992
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Ohitetaan purku jo puretun lähdekoodin %s kohdalla\n"
 
-#: cmdline/apt-get.cc:1951
+#: cmdline/apt-get.cc:2004
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Purkukomento \"%s\" ei onnistunut.\n"
 
-#: cmdline/apt-get.cc:1968
+#: cmdline/apt-get.cc:2021
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Paketointikomento \"%s\" ei onnistunut.\n"
 
-#: cmdline/apt-get.cc:1987
+#: cmdline/apt-get.cc:2040
 msgid "Child process failed"
 msgstr "Lapsiprosessi kaatui"
 
-#: cmdline/apt-get.cc:2003
+#: cmdline/apt-get.cc:2056
 msgid "Must specify at least one package to check builddeps for"
-msgstr "On annettava ainakin yksi paketti jonka paketointiriippuvuudet tarkistetaan"
+msgstr ""
+"On annettava ainakin yksi paketti jonka paketointiriippuvuudet tarkistetaan"
 
-#: cmdline/apt-get.cc:2031
+#: cmdline/apt-get.cc:2084
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Paketille %s ei ole saatavilla riippuvuustietoja"
 
-#: cmdline/apt-get.cc:2051
+#: cmdline/apt-get.cc:2104
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "Paketille %s ei ole määritetty paketointiriippuvuuksia.\n"
 
-#: cmdline/apt-get.cc:2103
+#: cmdline/apt-get.cc:2156
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1089,39 +1109,41 @@ msgid ""
 msgstr ""
 "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
 
-#: cmdline/apt-get.cc:2155
+#: cmdline/apt-get.cc:2208
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
-"%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s "
-"versio ei vastaa versioriippuvuuksia"
+"%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s versio "
+"ei vastaa versioriippuvuuksia"
 
-#: cmdline/apt-get.cc:2190
+#: cmdline/apt-get.cc:2243
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on liian uusi"
+msgstr ""
+"Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on liian "
+"uusi"
 
-#: cmdline/apt-get.cc:2215
+#: cmdline/apt-get.cc:2268
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Riippuvuutta %s paketille %s ei voi tyydyttää: %s"
 
-#: cmdline/apt-get.cc:2229
+#: cmdline/apt-get.cc:2282
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Paketointiriippuvuuksia paketille %s ei voi tyydyttää."
 
-#: cmdline/apt-get.cc:2233
+#: cmdline/apt-get.cc:2286
 msgid "Failed to process build dependencies"
 msgstr "Paketointiriippuvuuksien käsittely ei onnistunut"
 
-#: cmdline/apt-get.cc:2265
+#: cmdline/apt-get.cc:2318
 msgid "Supported Modules:"
 msgstr "Tuetut moduulit:"
 
-#: cmdline/apt-get.cc:2306
+#: cmdline/apt-get.cc:2359
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1157,7 +1179,7 @@ msgid ""
 "  -b  Build the source package after fetching it\n"
 "  -V  Show verbose version numbers\n"
 "  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
@@ -1168,8 +1190,7 @@ msgstr ""
 "\n"
 "apt-get on yksinkertainen komentorivityökalu pakettien noutamiseen\n"
 "ja asentamiseen. Useimmiten käytetyt komennot ovat update ja \n"
-"install."
-"\n"
+"install.\n"
 "Komennot:\n"
 "   update - Nouda uusi pakettiluettelo\n"
 "   upgrade - Tee päivitys\n"
@@ -1253,7 +1274,7 @@ msgid ""
 "  -h   This help text\n"
 "  -s   Use source file sorting\n"
 "  -c=? Read this configuration file\n"
-"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
 "Käyttö: apt-sortpkgs [valitsimet] tdsto1 [tdsto2 ...]\n"
 "\n"
@@ -1285,33 +1306,37 @@ msgstr "pakettien asetukset. Samat virheet voivat tulla toiseen kertaan"
 
 #: dselect/install:102
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "tai tyydyttämättömät riippuvuudet aiheuttavat virheitä. Tämä ei haittaa"
+msgstr ""
+"tai tyydyttämättömät riippuvuudet aiheuttavat virheitä. Tämä ei haittaa"
 
 #: dselect/install:103
-msgid "above this message are important. Please fix them and run [I]nstall again"
-msgstr "vain tätä viestiä ennen tulleilla virheillä on merkitystä. Korjaa ne ja aja [I]nstall uudestaan"
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+"vain tätä viestiä ennen tulleilla virheillä on merkitystä. Korjaa ne ja aja "
+"[I]nstall uudestaan"
 
 #: dselect/update:30
 msgid "Merging Available information"
 msgstr "Yhdistetään saatavuustiedot"
 
-#: apt-inst/contrib/extracttar.cc:116
+#: apt-inst/contrib/extracttar.cc:117
 msgid "Failed to create pipes"
 msgstr "Putkien luonti ei onnistunut"
 
-#: apt-inst/contrib/extracttar.cc:141
+#: apt-inst/contrib/extracttar.cc:143
 msgid "Failed to exec gzip "
 msgstr "exec gzip ei onnistunut"
 
-#: apt-inst/contrib/extracttar.cc:178 apt-inst/contrib/extracttar.cc:204
+#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
 msgid "Corrupted archive"
 msgstr "Arkisto on turmeltunut"
 
-#: apt-inst/contrib/extracttar.cc:193
+#: apt-inst/contrib/extracttar.cc:195
 msgid "Tar Checksum failed, archive corrupted"
 msgstr "Tar-ohjelman laskema tarkistussumma ei täsmää, arkisto on turmeltunut"
 
-#: apt-inst/contrib/extracttar.cc:296
+#: apt-inst/contrib/extracttar.cc:298
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Tuntematon TAR-otsikon tyyppi %u, tiedosto %s"
@@ -1456,8 +1481,8 @@ msgstr "Kansioiden info ja temp pitää olla samassa tiedostojärjestelmässä"
 
 #. Build the status cache
 #: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
-#: apt-pkg/pkgcachegen.cc:701 apt-pkg/pkgcachegen.cc:706
-#: apt-pkg/pkgcachegen.cc:829
+#: apt-pkg/pkgcachegen.cc:712 apt-pkg/pkgcachegen.cc:717
+#: apt-pkg/pkgcachegen.cc:840
 msgid "Reading Package Lists"
 msgstr "Luetaan pakettiluetteloita"
 
@@ -1482,9 +1507,9 @@ msgid ""
 "then make it empty and immediately re-install the same version of the "
 "package!"
 msgstr ""
-"Luettelotiedoston \"%sinfo/%s\" avaaminen ei onnistunut. Jos tätä "
-"tiedostoa ei voi palauttaa, tyhjennä tiedosto ja asenna välittömästi "
-"paketin sama versio uudelleen!"
+"Luettelotiedoston \"%sinfo/%s\" avaaminen ei onnistunut. Jos tätä tiedostoa "
+"ei voi palauttaa, tyhjennä tiedosto ja asenna välittömästi paketin sama "
+"versio uudelleen!"
 
 #: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
 #, c-format
@@ -1537,30 +1562,30 @@ msgstr "Virheellinen ConfFile-lohko tilatiedostossa. Kohta %lu"
 msgid "Error parsing MD5. Offset %lu"
 msgstr "Tapahtui virhe jäsennettäessä MD5:ttä. Kohta %lu"
 
-#: apt-inst/deb/debfile.cc:55
+#: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Tämä ei ole kelvollinen DEB-arkisto, puuttuu tiedosto \"%s\""
 
-#: apt-inst/deb/debfile.cc:72
+#: apt-inst/deb/debfile.cc:52
 #, c-format
-msgid "Internal Error, could not locate member %s"
-msgstr "Tapahtui sisäinen virhe, tiedostoa %s ei löydy"
+msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
+msgstr "Tämä ei ole kelvollinen DEB-arkisto, puuttuu osat \"%s\" ja \"%s\"."
 
-#: apt-inst/deb/debfile.cc:104
+#: apt-inst/deb/debfile.cc:112
 #, c-format
 msgid "Couldn't change to %s"
 msgstr "Kansioon %s vaihto ei onnistunut"
 
-#: apt-inst/deb/debfile.cc:125
+#: apt-inst/deb/debfile.cc:138
 msgid "Internal Error, could not locate member"
 msgstr "Tapahtui sisäinen virhe, tiedostoa ei löydy"
 
-#: apt-inst/deb/debfile.cc:158
+#: apt-inst/deb/debfile.cc:171
 msgid "Failed to locate a valid control file"
 msgstr "Kelvollista ohjaustiedostoa ei löydy"
 
-#: apt-inst/deb/debfile.cc:243
+#: apt-inst/deb/debfile.cc:256
 msgid "Unparsible control file"
 msgstr "Ohjaustiedosto ei jäsenny"
 
@@ -1574,8 +1599,8 @@ msgid ""
 "Please use apt-cdrom to make this CD recognized by APT. apt-get update "
 "cannot be used to add new CDs"
 msgstr ""
-"Käytä komentoa apt-cdrom jotta APT tunnistaa tämän rompun, "
-"apt-get update ei osaa lisätä uusia romppuja"
+"Käytä komentoa apt-cdrom jotta APT tunnistaa tämän rompun, apt-get update ei "
+"osaa lisätä uusia romppuja"
 
 #: methods/cdrom.cc:130 methods/cdrom.cc:168
 msgid "Wrong CD"
@@ -1635,8 +1660,8 @@ msgid ""
 "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
 "is empty."
 msgstr ""
-"Määritettiin välipalvelin mutta ei komentotiedostoa kirjautumiseen, "
-"Acquire::ftp::ProxyLogin on tyhjä."
+"Määritettiin välipalvelin mutta ei komentotiedostoa kirjautumiseen, Acquire::"
+"ftp::ProxyLogin on tyhjä."
 
 #: methods/ftp.cc:265
 #, c-format
@@ -1656,7 +1681,7 @@ msgstr "Yhteys aikakatkaistiin"
 msgid "Server closed the connection"
 msgstr "Palvelin sulki yhteyden"
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
+#: methods/ftp.cc:338 methods/rsh.cc:190 apt-pkg/contrib/fileutl.cc:453
 msgid "Read error"
 msgstr "Lukuvirhe"
 
@@ -1745,7 +1770,7 @@ msgstr "Tiedonsiirto ei onnistunut, palvelin ilmoitti \"%s\""
 msgid "Query"
 msgstr "Kysely"
 
-#: methods/ftp.cc:1104
+#: methods/ftp.cc:1106
 msgid "Unable to invoke "
 msgstr "Käynnistys ei onnistu"
 
@@ -1888,6 +1913,14 @@ msgstr "Yhteys ei toiminut"
 #: methods/http.cc:1173
 msgid "Internal error"
 msgstr "Sisäinen virhe"
+
+#: methods/rsh.cc:264
+msgid "File Not Found"
+msgstr "Tiedostoa ei löydy"
+
+#: methods/rsh.cc:330
+msgid "Connection closed prematurely"
+msgstr "Yhteys katkesi ennenaikaisesti"
 
 #: apt-pkg/contrib/mmap.cc:82
 msgid "Can't mmap an empty file"
@@ -2048,54 +2081,54 @@ msgstr "Lukitusta ei käytetä NFS-liitetylle tiedostolle %s"
 msgid "Could not get lock %s"
 msgstr "Lukkoa %s ei saada"
 
-#: apt-pkg/contrib/fileutl.cc:358
+#: apt-pkg/contrib/fileutl.cc:359
 #, c-format
 msgid "Waited, for %s but it wasn't there"
 msgstr "Odotettiin %s, mutta sitä ei ollut"
 
-#: apt-pkg/contrib/fileutl.cc:368
+#: apt-pkg/contrib/fileutl.cc:369
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Aliprosessi %s aiheutti suojausvirheen."
 
-#: apt-pkg/contrib/fileutl.cc:371
+#: apt-pkg/contrib/fileutl.cc:372
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Aliprosessi %s palautti virhekoodin (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:373
+#: apt-pkg/contrib/fileutl.cc:374
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Aliprosessi %s lopetti odottamatta"
 
-#: apt-pkg/contrib/fileutl.cc:417
+#: apt-pkg/contrib/fileutl.cc:418
 #, c-format
 msgid "Could not open file %s"
 msgstr "Tiedostoa %s ei voitu avata"
 
-#: apt-pkg/contrib/fileutl.cc:473
+#: apt-pkg/contrib/fileutl.cc:474
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "read, vielä %lu lukematta mutta tiedosto loppui"
 
-#: apt-pkg/contrib/fileutl.cc:491
+#: apt-pkg/contrib/fileutl.cc:492
 msgid "Write error"
 msgstr "Virhe kirjoitettaessa"
 
-#: apt-pkg/contrib/fileutl.cc:503
+#: apt-pkg/contrib/fileutl.cc:504
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "write, vielä %lu kirjoittamatta mutta epäonnistui"
 
-#: apt-pkg/contrib/fileutl.cc:578
+#: apt-pkg/contrib/fileutl.cc:579
 msgid "Problem closing the file"
 msgstr "Pulmia tiedoston sulkemisessa"
 
-#: apt-pkg/contrib/fileutl.cc:584
+#: apt-pkg/contrib/fileutl.cc:585
 msgid "Problem unlinking the file"
 msgstr "Pulmia tehtäessä tiedostolle unlink"
 
-#: apt-pkg/contrib/fileutl.cc:595
+#: apt-pkg/contrib/fileutl.cc:596
 msgid "Problem syncing the file"
 msgstr "Pulmia tehtäessä tiedostolle sync"
 
@@ -2180,75 +2213,65 @@ msgstr "Mahdolliset versiot"
 msgid "Dependency Generation"
 msgstr "Luodaan riippuvuudet"
 
-#: apt-pkg/tagfile.cc:71
+#: apt-pkg/tagfile.cc:73
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Pakettitiedostoa %s (1) ei voi jäsentää"
 
-#: apt-pkg/tagfile.cc:158
+#: apt-pkg/tagfile.cc:160
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Pakettitiedostoa %s (2) ei voi jäsentää"
 
-#: apt-pkg/sourcelist.cc:88
+#: apt-pkg/sourcelist.cc:87
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (URI)"
 
-#: apt-pkg/sourcelist.cc:90
+#: apt-pkg/sourcelist.cc:89
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (dist)"
 
-#: apt-pkg/sourcelist.cc:93
+#: apt-pkg/sourcelist.cc:92
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (URI-jäsennys)"
 
-#: apt-pkg/sourcelist.cc:99
+#: apt-pkg/sourcelist.cc:98
 #, c-format
 msgid "Malformed line %lu in source list %s (Absolute dist)"
 msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (Absoluuttinen dist)"
 
-#: apt-pkg/sourcelist.cc:106
+#: apt-pkg/sourcelist.cc:105
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (dist-jäsennys)"
 
-#: apt-pkg/sourcelist.cc:183 apt-pkg/sourcelist.cc:207
-#, c-format
-msgid "Vendor block %s is invalid"
-msgstr "Toimittajan lohko %s on virheellinen"
-
-#: apt-pkg/sourcelist.cc:235
+#: apt-pkg/sourcelist.cc:156
 #, c-format
 msgid "Opening %s"
 msgstr "Avataan %s"
 
-#: apt-pkg/sourcelist.cc:249
+#: apt-pkg/sourcelist.cc:170
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Rivi %u on liian pitkä lähdeluettelossa %s."
 
-#: apt-pkg/sourcelist.cc:266
+#: apt-pkg/sourcelist.cc:187
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Rivi %u on väärän muotoinen lähdeluettelossa %s (tyyppi)"
 
-#: apt-pkg/sourcelist.cc:270
+#: apt-pkg/sourcelist.cc:191
 #, c-format
-msgid "Type '%s' is not known in on line %u in source list %s"
+msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Tyyppi \"%s\" on tuntematon rivillä %u lähdeluettelossa %s"
 
-#: apt-pkg/sourcelist.cc:279 apt-pkg/sourcelist.cc:282
+#: apt-pkg/sourcelist.cc:199 apt-pkg/sourcelist.cc:202
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "Rivi %u on väärän muotoinen lähdeluettelossa%s (toimittajan tunniste)"
-
-#: apt-pkg/sourcelist.cc:296
-#, c-format
-msgid "Unknown vendor ID '%s' in line %u of source list %s"
-msgstr "Tuntematon toimittajan tunniste \"%s\" rivillä %u lähdeluettelossa %s"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
@@ -2257,29 +2280,30 @@ msgid ""
 "package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
 "you really want to do it, activate the APT::Force-LoopBreak option."
 msgstr ""
-"Tämän asennusajo vaatii tilapäisesti poistettavaksi välttämättömän paketin "
-"%s Conflicts/Pre-Depends -kehämäärittelyn takia. Tämä on usein "
-"pahasta, mutta jos varmasti haluat tehdä niin, käytä APT::Force-LoopBreak "
-"-valitsinta."
+"Tämän asennusajo vaatii tilapäisesti poistettavaksi välttämättömän paketin %"
+"s Conflicts/Pre-Depends -kehämäärittelyn takia. Tämä on usein pahasta, mutta "
+"jos varmasti haluat tehdä niin, käytä APT::Force-LoopBreak -valitsinta."
 
 #: apt-pkg/pkgrecords.cc:37
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Hakemistotiedoston tyyppi \"%s\" ei ole tuettu"
 
-#: apt-pkg/algorithms.cc:238
+#: apt-pkg/algorithms.cc:241
 #, c-format
-msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "Paketti %s olisi asennettava uudelleen, mutta sen arkistoa ei löydy."
 
-#: apt-pkg/algorithms.cc:1056
+#: apt-pkg/algorithms.cc:1059
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
 msgstr ""
-"Virhe, pkgProblemResolver::Resolve tuotti katkoja, syynä voi olla pysytetyt paketit."
+"Virhe, pkgProblemResolver::Resolve tuotti katkoja, syynä voi olla pysytetyt "
+"paketit."
 
-#: apt-pkg/algorithms.cc:1058
+#: apt-pkg/algorithms.cc:1061
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Pulmia ei voi korjata, rikkinäisiä paketteja on pysytetty."
 
@@ -2317,13 +2341,14 @@ msgstr "Sopivaa paketointijärjestelmän tyyppiä ei saa selvitettyä"
 msgid "Unable to stat %s."
 msgstr "stat %s ei onnistu."
 
-#: apt-pkg/srcrecords.cc:49
+#: apt-pkg/srcrecords.cc:48
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr "Tiedostossa sources.list on oltava rivejä joissa \"lähde\"-URI"
 
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
-msgstr "Pakettiluettelonn tai tilatiedoston avaaminen tai jäsennys epäonnistui."
+msgstr ""
+"Pakettiluettelonn tai tilatiedoston avaaminen tai jäsennys epäonnistui."
 
 #: apt-pkg/cachefile.cc:77
 msgid "You may want to run apt-get update to correct these problems"
@@ -2383,7 +2408,8 @@ msgstr "Tapahtui virhe käsiteltäessä %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "Jummijammi, annoit enemmän pakettien nimiä kuin tämä APT osaa käsitellä."
+msgstr ""
+"Jummijammi, annoit enemmän pakettien nimiä kuin tämä APT osaa käsitellä."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
@@ -2417,25 +2443,29 @@ msgstr "stat ei toiminut lähdepakettiluettelolle %s"
 msgid "Collecting File Provides"
 msgstr "Kootaan tiedostojen tarjoamistietoja"
 
-#: apt-pkg/pkgcachegen.cc:774 apt-pkg/pkgcachegen.cc:781
+#: apt-pkg/pkgcachegen.cc:785 apt-pkg/pkgcachegen.cc:792
 msgid "IO Error saving source cache"
 msgstr "Syöttö/Tulostus -virhe tallennettaessa pakettivarastoa"
 
-#: apt-pkg/acquire-item.cc:124
+#: apt-pkg/acquire-item.cc:126
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "nimen vaihto ei onnistunut, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:353
+#: apt-pkg/acquire-item.cc:235 apt-pkg/acquire-item.cc:894
+msgid "MD5Sum mismatch"
+msgstr "MD5Sum ei täsmää"
+
+#: apt-pkg/acquire-item.cc:708
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
-"En löytänyt pakettia %s vastaavaa tiedostoa. Voit ehkä joutua korjaamaan tämän "
-"paketin itse (puuttuvan arkkitehtuurin vuoksi)"
+"En löytänyt pakettia %s vastaavaa tiedostoa. Voit ehkä joutua korjaamaan "
+"tämän paketin itse (puuttuvan arkkitehtuurin vuoksi)"
 
-#: apt-pkg/acquire-item.cc:388
+#: apt-pkg/acquire-item.cc:761
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2444,24 +2474,121 @@ msgstr ""
 "Pakettia %s vastaavaa tiedostoa ei löytynyt. Voit ehkä joutua korjaamaan "
 "tämän paketin itse."
 
-#: apt-pkg/acquire-item.cc:419
+#: apt-pkg/acquire-item.cc:797
 #, c-format
-msgid "The package index files are corrupted. No Filename: field for package %s."
-msgstr "Pakettihakemistotiedostot ovat turmeltuneet. Paketille %s ei ole Filename-kenttää."
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"Pakettihakemistotiedostot ovat turmeltuneet. Paketille %s ei ole Filename-"
+"kenttää."
 
-#: apt-pkg/acquire-item.cc:501
+#: apt-pkg/acquire-item.cc:884
 msgid "Size mismatch"
 msgstr "Koko ei täsmää"
 
-#: apt-pkg/acquire-item.cc:511
-msgid "MD5Sum mismatch"
-msgstr "MD5Sum ei täsmää"
+#: apt-pkg/vendorlist.cc:66
+#, c-format
+msgid "Vendor block %s contains no fingerprint"
+msgstr "Toimittajan lohkosta %s puuttuu sormenjälki"
 
-#: methods/rsh.cc:264
-msgid "File Not Found"
-msgstr "Tiedostoa ei löydy"
+#: apt-pkg/cdrom.cc:504
+#, c-format
+msgid ""
+"Using CD-ROM mount point %s\n"
+"Mounting CD-ROM\n"
+msgstr ""
+"Käytetään rompun liitoskohtaa %s\n"
+"Liitetään romppu\n"
 
-#: methods/rsh.cc:330
-msgid "Connection closed prematurely"
-msgstr "Yhteys katkesi ennenaikaisesti"
+#: apt-pkg/cdrom.cc:513 apt-pkg/cdrom.cc:595
+msgid "Identifying.. "
+msgstr "Tunnistetaan... "
 
+#: apt-pkg/cdrom.cc:538
+#, c-format
+msgid "Stored Label: %s \n"
+msgstr "Tallennettu nimio: %s \n"
+
+#: apt-pkg/cdrom.cc:558
+#, c-format
+msgid "Using CD-ROM mount point %s\n"
+msgstr "Käytetään rompun liitoskohtaa %s\n"
+
+#: apt-pkg/cdrom.cc:576
+msgid "Unmounting CD-ROM\n"
+msgstr "Irrotetaan romppu\n"
+
+#: apt-pkg/cdrom.cc:580
+msgid "Waiting for disc...\n"
+msgstr "Odotetaan levyä...\n"
+
+#. Mount the new CDROM
+#: apt-pkg/cdrom.cc:588
+msgid "Mounting CD-ROM...\n"
+msgstr "Liitetään romppu...\n"
+
+#: apt-pkg/cdrom.cc:606
+msgid "Scanning Disc for index files..\n"
+msgstr "Etsitään levyltä hakemistotiedostoja...\n"
+
+#: apt-pkg/cdrom.cc:644
+#, c-format
+msgid "Found %i package indexes, %i source indexes and %i signatures\n"
+msgstr ""
+"Asennuspakettien hakemistoja löytyi %i, lähdekoodipakettien hakemistoja %i "
+"ja allekirjoituksia %i\n"
+
+#: apt-pkg/cdrom.cc:701
+msgid "That is not a valid name, try again.\n"
+msgstr "Tuo ei kelpaa nimeksi, yritä uudelleen.\n"
+
+#: apt-pkg/cdrom.cc:717
+#, c-format
+msgid ""
+"This Disc is called: \n"
+"'%s'\n"
+msgstr ""
+"Tämä levy on: \n"
+"\"%s\"\n"
+
+#: apt-pkg/cdrom.cc:721
+msgid "Copying package lists..."
+msgstr "Kopioidaan pakettiluetteloita..."
+
+#: apt-pkg/cdrom.cc:745
+msgid "Writing new source list\n"
+msgstr "Kirjoitetaan uusi lähdeluettelo\n"
+
+#: apt-pkg/cdrom.cc:754
+msgid "Source List entries for this Disc are:\n"
+msgstr "Tämän levyn lähdekoodipakettien luettelon tietueita ovat:\n"
+
+#: apt-pkg/cdrom.cc:788
+msgid "Unmounting CD-ROM..."
+msgstr "Irrotetaan romppu..."
+
+#: apt-pkg/indexcopy.cc:261
+#, c-format
+msgid "Wrote %i records.\n"
+msgstr "Kirjoitettiin %i tietuetta.\n"
+
+#: apt-pkg/indexcopy.cc:263
+#, c-format
+msgid "Wrote %i records with %i missing files.\n"
+msgstr "Kirjoitettiin %i tietuetta joissa oli %i puuttuvaa tiedostoa.\n"
+
+#: apt-pkg/indexcopy.cc:266
+#, c-format
+msgid "Wrote %i records with %i mismachted files\n"
+msgstr "Kirjoitettiin %i tietuetta joissa oli %i paritonta tiedostoa\n"
+
+#: apt-pkg/indexcopy.cc:269
+#, c-format
+msgid "Wrote %i records with %i missing files and %i mismachted files\n"
+msgstr ""
+"Kirjoitettiin %i tietuetta joissa oli %i puuttuvaa ja %i paritonta "
+"tiedostoa\n"
+
+#~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
+#~ msgstr ""
+#~ "Tuntematon toimittajan tunniste \"%s\" rivillä %u lähdeluettelossa %s"

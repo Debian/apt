@@ -102,7 +102,7 @@ Reverse Provides:
 </programlisting></informalexample>
 			    
      <para>
-On peut voir que libreadline2, version 2.1-8, dépend de libc5, ncurses3.0, et 
+On peut voir que libreadline2, version 2.1-12, dépend de libc5, ncurses3.0, et 
 ldso&nbsp;; ces paquets doivent être installés au préalable pour que 
 libreadline2 fonctionne. À leur tour, libreadlineg2 et libreadline2-altdev 
 dépendent de libreadline2. Si libreadline2 est installé, libc5 et ncurses3.0 (et 
@@ -177,7 +177,7 @@ déclarées par tous les paquets présents dans le cache.
 
      <VarListEntry><Term>showsrc <replaceable/paquet(s)/</Term>
      <ListItem><Para>
-     <literal/showsrc/ affiche toutes les entrées de paquet-source qui
+     <literal/showsrc/ affiche toutes les entrées de paquet source qui
 correspondent aux noms donnés. Toutes les versions sont affichées et toutes
 les entrées qui déclarent que ces noms correspondent à des paquets binaires.
      </VarListEntry>
@@ -247,13 +247,13 @@ l'option <option/--generate/.
      <VarListEntry><Term>dotty <replaceable/paquet(s)/</Term>
      <ListItem><Para>
 La commande <literal/dotty/ prend une liste de paquets sur la ligne de commande
-et affiche une sortie appropriée à une utilisation par dotty avec le paquet
-<ulink url="http://www.research.att.com/sw/tools/graphviz/">GraphViz</>.
+et affiche une sortie appropriée à une utilisation par la commande dotty du 
+paquet <ulink url="http://www.research.att.com/sw/tools/graphviz/">GraphViz</>.
 Il en résulte un ensemble de noeuds et d'arcs représentant les relations 
 entre les paquets. Par défaut les paquets donnés en argument suivent toutes
 leurs dépendances, ce qui peut produire un graphe très volumineux. 
-Pour limiter la sortie aux paquets listés sur la ligne de commande, positionnez
-l'option <literal>APT::Cache::GivenOnly</>.
+Pour limiter la sortie aux seuls paquets listés sur la ligne de commande, 
+positionnez l'option <literal>APT::Cache::GivenOnly</>.
 	      </para>
 <para>
 Les noeuds résultants ont plusieurs formes&nbsp;; les paquets normaux sont 
@@ -264,8 +264,7 @@ sont des hexagones. Les boîtes oranges expriment un arrêt de la récursivité
 lignes vertes représentent des conflits.
 	    </para>
      <para>
-Attention, dotty ne peut pas représenter des ensembles de paquets
-plus volumineux.
+Attention, dotty ne peut pas représenter des ensembles très grands de paquets.
      </VarListEntry>
 
      <VarListEntry><Term>policy <replaceable/[ paquet(s) ]/</Term>

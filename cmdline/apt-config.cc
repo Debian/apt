@@ -84,7 +84,7 @@ int ShowHelp()
       "Options:\n"
       "  -h   This help text.\n" 
       "  -c=? Read this configuration file\n" 
-      "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n");
+      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
    return 0;
 }
 									/*}}}*/
