@@ -15,7 +15,7 @@ LIBRARY=apt-pkg
 LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=3.3
 MINOR=0
-SLIBS=$(PTHREADLIB)
+SLIBS=$(PTHREADLIB) $(INTLLIBS)
 APT_DOMAIN:=libapt-pkg$(MAJOR)
 
 # Source code for the contributed non-core things
