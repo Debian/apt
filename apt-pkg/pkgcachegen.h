@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.7 1998/07/19 21:24:14 jgg Exp $
+// $Id: pkgcachegen.h,v 1.8 1998/07/21 05:33:20 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -25,6 +25,7 @@
 #endif 
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/progress.h>
 
 class pkgCacheGenerator
 {
@@ -36,7 +37,8 @@ class pkgCacheGenerator
    
    DynamicMMap &Map;
    pkgCache Cache;
-
+   OpProgress &Progress;
+   
    string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
    
@@ -87,7 +89,7 @@ class pkgCacheGenerator
    bool MergeList(ListParser &List);
    inline pkgCache &GetCache() {return Cache;};
       
-   pkgCacheGenerator(DynamicMMap &Map);
+   pkgCacheGenerator(DynamicMMap &Map,OpProgress &Progress);
    ~pkgCacheGenerator();
 };
 

@@ -15,8 +15,8 @@ MINOR=0.0
 
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
-         contrib/configuration.cc
-	 
+         contrib/configuration.cc contrib/progress.cc
+
 # Source code for the main library
 SOURCE+= pkgcache.cc version.cc fileutl.cc pkgcachegen.cc depcache.cc \
          orderlist.cc tagfile.cc sourcelist.cc packagemanager.cc \
@@ -29,7 +29,7 @@ SOURCE+= deb/deblistparser.cc
 HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
           error.h orderlist.h sourcelist.h configuration.h fileutl.h \
           packagemanager.h tagfile.h deblistparser.h init.h pkgcache.h \
-          version.h
+          version.h progress.h
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 
 # Private header files

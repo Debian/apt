@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.4 1998/07/19 04:42:18 jgg Exp $
+// $Id: apt-cache.cc,v 1.5 1998/07/21 05:33:21 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache file.
@@ -28,6 +28,7 @@
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/init.h>
+#include <apt-pkg/progress.h>
 
 #include <iostream.h>
 #include <fstream.h>
@@ -267,16 +268,17 @@ bool DoAdd(int argc,char *argv[])
    DynamicMMap Map(CacheF,MMap::Public);
    if (_error->PendingError() == true)
       return false;
-   
-   pkgCacheGenerator Gen(Map);
+
+   OpTextProgress Progress;
+   pkgCacheGenerator Gen(Map,Progress);
    if (_error->PendingError() == true)
       return false;
 
    for (int I = 0; I != argc; I++)
    {
+      Progress.OverallProgress(I,argc,1,"Generating cache");
       if (SplitArg(argv[I],FileName,Dist,Ver) == false)
 	 return false;
-      cout << FileName << endl;
       
       // Do the merge
       FileFd TagF(FileName.c_str(),FileFd::ReadOnly);
@@ -290,7 +292,8 @@ bool DoAdd(int argc,char *argv[])
       if (Gen.MergeList(Parser) == false)
 	 return _error->Error("Problem with MergeList");
    }
-   
+
+   Progress.Done();
    Stats(Gen.GetCache());
    
    return true;

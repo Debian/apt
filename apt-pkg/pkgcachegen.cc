@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.11 1998/07/19 04:22:02 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.12 1998/07/21 05:33:19 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -26,7 +26,8 @@
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* We set the diry flag and make sure that is written to the disk */
-pkgCacheGenerator::pkgCacheGenerator(DynamicMMap &Map) : Map(Map), Cache(Map)
+pkgCacheGenerator::pkgCacheGenerator(DynamicMMap &Map,OpProgress &Prog) :
+                    Map(Map), Cache(Map), Progress(Prog)
 {
    if (_error->PendingError() == true)
       return;
@@ -71,6 +72,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       pkgCache::PkgIterator Pkg;
       if (NewPackage(Pkg,PackageName) == false)
 	 return false;
+      Progress.Progress(List.Offset());
       
       /* Get a pointer to the version structure. We know the list is sorted
          so we use that fact in the search. Insertion of new versions is
@@ -318,6 +320,8 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
    
    if (CurrentFile->FileName == 0)
       return false;
+   
+   Progress.SubProgress(Buf.st_size,File);
    return true;
 }
 									/*}}}*/
