@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.17 1999/02/21 08:38:53 jgg Exp $
+// $Id: deblistparser.cc,v 1.18 1999/04/12 19:16:11 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -318,7 +318,11 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       if (I == Stop || Start == I)
 	 return 0;     
       
-      Ver = string(Start,I-Start);
+      // Skip trailing whitespace
+      const char *End = I;
+      for (; End > Start && isspace(End[-1]); End--);
+      
+      Ver = string(Start,End-Start);
       I++;
    }
    else
