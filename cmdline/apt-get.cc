@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.71 1999/07/12 04:39:37 jgg Exp $
+// $Id: apt-get.cc,v 1.72 1999/08/04 05:37:18 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -413,12 +413,8 @@ void Stats(ostream &out,pkgDepCache &Dep)
 pkgCache *CacheFile::SortCache = 0;
 int CacheFile::NameComp(const void *a,const void *b)
 {
-   if (a == 0 && b == 0)
-      return 0;
-   if (a == 0)
-      return -1;
-   if (b == 0)
-      return 1;
+   if (*(pkgCache::Package **)a == 0 || *(pkgCache::Package **)b == 0)
+      return *(pkgCache::Package **)a - *(pkgCache::Package **)b;
    
    const pkgCache::Package &A = **(pkgCache::Package **)a;
    const pkgCache::Package &B = **(pkgCache::Package **)b;

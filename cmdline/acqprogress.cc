@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.16 1999/07/03 03:10:35 jgg Exp $
+// $Id: acqprogress.cc,v 1.17 1999/08/04 05:37:18 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -12,6 +12,7 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/error.h>
 
 #include <stdio.h>
 #include <signal.h>
@@ -124,7 +125,7 @@ void AcqTextStatus::Stop()
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
    
-   if (FetchedBytes != 0)
+   if (FetchedBytes != 0 && _error->PendingError() == false)
       cout << "Fetched " << SizeToStr(FetchedBytes) << "B in " <<
          TimeToStr(ElapsedTime) << " (" << SizeToStr(CurrentCPS) << 
          "B/s)" << endl;
