@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.42 2002/11/10 00:11:32 doogie Exp $
+# $Id: rules,v 1.43 2002/11/10 23:58:33 doogie Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -119,14 +119,13 @@ build/build-stamp: build/configure-stamp
 clean:
 	dh_testdir
 #	dh_testroot
-	rm -f build-stamp debian/shlibs.local
-	rm -rf build
-	rm -f debian/shlibs.local.apt debian/shlibs.local.apt-utils
-
-	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
 	-$(MAKE) distclean
-	dh_clean debian/copyright
+
+	rm -rf build
+
+	# Add here commands to clean up after the build process.
+	dh_clean debian/copyright debian/shlibs.local debian/shlibs.local.apt debian/shlibs.local.apt-utils
 
 binary-indep: libapt-pkg-doc
 # Build architecture-independent files here.
