@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.81 1999/10/21 06:35:00 jgg Exp $
+// $Id: apt-get.cc,v 1.82 1999/10/22 04:05:47 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -167,7 +167,7 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	  
       // Print out each package and the failed dependencies
       out <<"  " <<  I.Name() << ":";
-      int Indent = strlen(I.Name()) + 3;
+      unsigned Indent = strlen(I.Name()) + 3;
       bool First = true;
       if (Cache[I].InstVerIter(Cache).end() == true)
       {
@@ -185,43 +185,62 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	 if (Cache->IsImportantDep(End) == false || 
 	     (Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
 	    continue;
-	 
-	 if (First == false)
-	    for (int J = 0; J != Indent; J++)
-	       out << ' ';
-	 First = false;
 
-	 out << ' ' << End.DepType() << ": " << End.TargetPkg().Name();
-	 
-	 // Show a quick summary of the version requirements
-	 if (End.TargetVer() != 0)
-	    out << " (" << End.CompType() << " " << End.TargetVer() << 
-	    ")";
-	 
-	 /* Show a summary of the target package if possible. In the case
-	    of virtual packages we show nothing */	 
-	 pkgCache::PkgIterator Targ = End.TargetPkg();
-	 if (Targ->ProvidesList == 0)
+	 bool FirstOr = true;
+	 while (1)
 	 {
-	    out << " but ";
-	    pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
-	    if (Ver.end() == false)
-	       out << Ver.VerStr() << (Now?" is installed":" is to be installed");
-	    else
+	    if (First == false)
+	       for (unsigned J = 0; J != Indent; J++)
+		  out << ' ';
+	    First = false;
+
+	    if (FirstOr == false)
 	    {
-	       if (Cache[Targ].CandidateVerIter(Cache).end() == true)
-	       {
-		  if (Targ->ProvidesList == 0)
-		     out << "it is not installable";
-		  else
-		     out << "it is a virtual package";
-	       }		  
-	       else
-		  out << (Now?"it is not installed":"it is not going to be installed");
-	    }	       
-	 }
+	       for (unsigned J = 0; J != strlen(End.DepType()) + 3; J++)
+		  out << ' ';
+	    }
+	    else
+	       out << ' ' << End.DepType() << ": ";
+	    FirstOr = false;
+	    
+	    out << Start.TargetPkg().Name();
 	 
-	 out << endl;
+	    // Show a quick summary of the version requirements
+	    if (Start.TargetVer() != 0)
+	       out << " (" << Start.CompType() << " " << Start.TargetVer() << 
+	       ")";
+	    
+	    /* Show a summary of the target package if possible. In the case
+	       of virtual packages we show nothing */	 
+	    pkgCache::PkgIterator Targ = Start.TargetPkg();
+	    if (Targ->ProvidesList == 0)
+	    {
+	       out << " but ";
+	       pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
+	       if (Ver.end() == false)
+		  out << Ver.VerStr() << (Now?" is installed":" is to be installed");
+	       else
+	       {
+		  if (Cache[Targ].CandidateVerIter(Cache).end() == true)
+		  {
+		     if (Targ->ProvidesList == 0)
+			out << "it is not installable";
+		     else
+			out << "it is a virtual package";
+		  }		  
+		  else
+		     out << (Now?"it is not installed":"it is not going to be installed");
+	       }	       
+	    }
+	    
+	    if (Start != End)
+	       cout << " or";
+	    out << endl;
+	    
+	    if (Start == End)
+	       break;
+	    Start++;
+	 }	 
       }	    
    }   
 }

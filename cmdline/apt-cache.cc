@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.40 1999/10/18 04:15:25 jgg Exp $
+// $Id: apt-cache.cc,v 1.41 1999/10/22 04:05:47 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -589,11 +589,23 @@ bool ShowPackage(CommandLine &CmdL)
       }
       
       // Find the proper version to use. We should probably use the DepCache.
-      pkgCache::VerIterator V = Cache.GetCandidateVer(Pkg);
-      if (V.end() == true || V.FileList().end() == true)
-	 continue;
-      if (DisplayRecord(V) == false)
-	 return false;
+      if (_config->FindB("APT::Cache::AllVersions","true") == true)
+      {
+	 pkgCache::VerIterator V;
+	 for (V = Pkg.VersionList(); V.end() == false; V++)
+	 {
+	    if (DisplayRecord(V) == false)
+	       return false;
+	 }
+      }
+      else
+      {
+	 pkgCache::VerIterator V = Cache.GetCandidateVer(Pkg);
+	 if (V.end() == true || V.FileList().end() == true)
+	    continue;
+	 if (DisplayRecord(V) == false)
+	    return false;
+      }      
    }
    return true;
 }
@@ -698,6 +710,7 @@ int main(int argc,const char *argv[])
       {'i',"important","APT::Cache::Important",0},
       {'f',"full","APT::Cache::ShowFull",0},
       {'g',"no-generate","APT::Cache::NoGenerate",0},
+      {'a',"all-versions","APT::Cache::AllVersions",0},
       {0,"names-only","APT::Cache::NamesOnly",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},

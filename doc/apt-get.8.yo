@@ -81,7 +81,8 @@ may be used to override decisions made by apt-get's conflict resolution system.
 If no package matches the given expression and the expression contains one
 of '.', '?' or '*' then it is assumed to be a POSIX regex and it is applied
 to all package names in the database. Any matches are then installed (or
-removed).
+removed). Note that matching is done by substring so 'lo*' matches 'how-lo'
+and 'lowest'. If this is undesired prefix with a '^' character.
 
 dit(bf(remove))
 bf(remove) is identical to bf(install) except that packages are removed

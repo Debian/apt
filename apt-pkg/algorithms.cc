@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.25 1999/10/02 04:14:53 jgg Exp $
+// $Id: algorithms.cc,v 1.26 1999/10/22 04:05:47 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -549,34 +549,38 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 	 if ((Flags[P->ID] & Protected) == Protected)
 	 {
 	    if (Debug == true)
-	       clog << "    Reinet Failed because of protected " << P.Name() << endl;
+	       clog << "    Reinst Failed because of protected " << P.Name() << endl;
 	    Fail = true;
-	    break;
 	 }      
-      
-	 // Upgrade the package if the candidate version will fix the problem.
-	 if ((Cache[Start] & pkgDepCache::DepCVer) == pkgDepCache::DepCVer)
-	 {
-	    if (DoUpgrade(P) == false)
-	    {
-	       if (Debug == true)
-		  clog << "    Reinst Failed because of " << P.Name() << endl;
-	       Fail = true;
-	       break;
-	    }	 
-	 }
 	 else
 	 {
-	    /* We let the algorithm deal with conflicts on its next iteration,
-	       it is much smarter than us */
-	    if (Start->Type == pkgCache::Dep::Conflicts)
-	       continue;
-	    
-	    if (Debug == true)
-	       clog << "    Reinst Failed early because of " << Start.TargetPkg().Name() << endl;
-	    Fail = true;
-	    break;
-	 }     
+	    // Upgrade the package if the candidate version will fix the problem.
+	    if ((Cache[Start] & pkgDepCache::DepCVer) == pkgDepCache::DepCVer)
+	    {
+	       if (DoUpgrade(P) == false)
+	       {
+		  if (Debug == true)
+		     clog << "    Reinst Failed because of " << P.Name() << endl;
+		  Fail = true;
+	       }
+	       else
+	       {
+		  Fail = false;
+		  break;
+	       }	    
+	    }
+	    else
+	    {
+	       /* We let the algorithm deal with conflicts on its next iteration,
+		it is much smarter than us */
+	       if (Start->Type == pkgCache::Dep::Conflicts)
+		  continue;
+	       
+	       if (Debug == true)
+		  clog << "    Reinst Failed early because of " << Start.TargetPkg().Name() << endl;
+	       Fail = true;
+	    }     
+	 }
 	 
 	 if (Start == End)
 	    break;
@@ -721,12 +725,29 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 bool InOr = false;
 	 pkgCache::DepIterator Start;
 	 pkgCache::DepIterator End;
+	 PackageKill *OldEnd;
+	 
+	 enum {OrRemove,OrKeep} OrOp = OrRemove;
 	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList();
 	      D.end() == false || InOr == true;)
 	 {
 	    // Compute a single dependency element (glob or)
-	    if (InOr == false)
+	    if (Start == End)
+	    {
+	       // Decide what to do
+	       if (InOr == true)
+	       {
+		  if (OldEnd == LEnd && OrOp == OrRemove)
+		     Cache.MarkDelete(I);
+		  if (OldEnd == LEnd && OrOp == OrKeep)
+		     Cache.MarkKeep(I);
+	       }
+	       
+	       OrOp = OrRemove;
 	       D.GlobOr(Start,End);
+	       InOr = Start != End;
+	       OldEnd = LEnd;
+	    }	    
 	    else
 	       Start++;
 
@@ -737,9 +758,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    // Dep is ok
 	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
 	       continue;
-	    
-	    InOr = Start != End;
-	    
+	    	    
 	    if (Debug == true)
 	       clog << "Package " << I.Name() << " has broken dep on " << Start.TargetPkg().Name() << endl;
 
@@ -748,11 +767,18 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       if a package has a dep on another package that cant be found */
 	    pkgCache::Version **VList = Start.AllTargets();
 	    if (*VList == 0 && (Flags[I->ID] & Protected) != Protected &&
-		Start->Type != pkgCache::Dep::Conflicts && 
+		Start->Type != pkgCache::Dep::Conflicts &&
 		Cache[I].NowBroken() == false)
-	    {
+	    {	       
+	       if (InOr == true)
+	       {
+		  /* No keep choice because the keep being OK could be the
+		     result of another element in the OR group! */
+		  continue;
+	       }
+	       
 	       Change = true;
-	       Cache.MarkKeep(I);
+	       Cache.MarkKeep(I);		  
 	       break;
 	    }
 	    
@@ -778,10 +804,19 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  }
 		  
 		  /* See if a keep will do, unless the package is protected,
-		     then installing it will be necessary */	
+		     then installing it will be necessary */
+		  bool Installed = Cache[I].Install();
 		  Cache.MarkKeep(I);
 		  if (Cache[I].InstBroken() == false)
 		  {
+		     // Unwind operation will be keep now
+		     if (OrOp == OrRemove)
+			OrOp = OrKeep;
+		     
+		     // Restore
+		     if (InOr == true && Installed == true)
+			Cache.MarkInstall(I,false);
+		     
 		     if (Debug == true)
 			clog << "  Holding Back " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
 		  }		  
@@ -807,7 +842,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       }
 	       else
 	       {
-		  // Skip this if it is protected
+		  // Skip adding to the kill list if it is protected
 		  if ((Flags[Pkg->ID] & Protected) != 0)
 		     continue;
 		  
@@ -822,11 +857,20 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 
 	    // Hm, nothing can possibly satisify this dep. Nuke it.
 	    if (VList[0] == 0 && Start->Type != pkgCache::Dep::Conflicts &&
-		(Flags[I->ID] & Protected) != Protected && InOr == false)
+		(Flags[I->ID] & Protected) != Protected)
 	    {
+	       bool Installed = Cache[I].Install();
 	       Cache.MarkKeep(I);
 	       if (Cache[I].InstBroken() == false)
 	       {
+		  // Unwind operation will be keep now
+		  if (OrOp == OrRemove)
+		     OrOp = OrKeep;
+		  
+		  // Restore
+		  if (InOr == true && Installed == true)
+		     Cache.MarkInstall(I,false);
+		  
 		  if (Debug == true)
 		     clog << "  Holding Back " << I.Name() << " because I can't find " << Start.TargetPkg().Name() << endl;
 	       }	       
@@ -834,47 +878,51 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       {
 		  if (Debug == true)
 		     clog << "  Removing " << I.Name() << " because I can't find " << Start.TargetPkg().Name() << endl;
-		  Cache.MarkDelete(I);
+		  if (InOr == false)
+		     Cache.MarkDelete(I);
 	       }
 
 	       Change = true;
 	       Done = true;
 	    }
 	    
+	    delete [] VList;
+	    
 	    // Try some more
 	    if (InOr == true)
 	       continue;
 	    
-	    delete [] VList;
 	    if (Done == true)
 	       break;
 	 }
 	 
 	 // Apply the kill list now
 	 if (Cache[I].InstallVer != 0)
+	 {
 	    for (PackageKill *J = KillList; J != LEnd; J++)
-         {
-	    Change = true;
-	    if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
 	    {
-	       if (J->Dep->Type == pkgCache::Dep::Conflicts)
+	       Change = true;
+	       if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
+	       {
+		  if (J->Dep->Type == pkgCache::Dep::Conflicts)
+		  {
+		     if (Debug == true)
+			clog << "  Fixing " << I.Name() << " via remove of " << J->Pkg.Name() << endl;
+		     Cache.MarkDelete(J->Pkg);
+		  }
+	       }
+	       else
 	       {
 		  if (Debug == true)
-		     clog << "  Fixing " << I.Name() << " via remove of " << J->Pkg.Name() << endl;
-		  Cache.MarkDelete(J->Pkg);
+		     clog << "  Fixing " << I.Name() << " via keep of " << J->Pkg.Name() << endl;
+		  Cache.MarkKeep(J->Pkg);
 	       }
-	    }
-	    else
-	    {
-	       if (Debug == true)
-		  clog << "  Fixing " << I.Name() << " via keep of " << J->Pkg.Name() << endl;
-	       Cache.MarkKeep(J->Pkg);
-	    }
-	    
-	    if (Counter > 1)
-	       Scores[J->Pkg->ID] = Scores[I->ID];
-	 }      
-      }
+	       
+	       if (Counter > 1)
+		  Scores[J->Pkg->ID] = Scores[I->ID];
+	    }      
+	 }
+      }      
    }
 
    if (Debug == true)
