@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.50 2003/07/21 06:09:12 mdz Exp $
+# $Id: rules,v 1.51 2003/08/02 19:51:02 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -150,7 +150,7 @@ libapt-pkg-doc: build-doc debian/shlibs.local
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
 #	dh_installcron -p$@
-#	dh_installmanpages -p$@
+#	dh_installman -p$@
 
 #	dh_undocumented -p$@
 	dh_installchangelogs -p$@
@@ -213,7 +213,7 @@ apt: build debian/shlibs.local
 #	head -n 500 ChangeLog > debian/ChangeLog
 
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
-	dh_installmanpages -p$@ apt-ftparchive.1 apt-sortpkgs.1 apt-extracttemplates.1
+	dh_installman -p$@ 
 
 	dh_installdocs -p$@
 	dh_installchangelogs -p$@
@@ -244,7 +244,7 @@ libapt-pkg-dev: build debian/shlibs.local
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
 #	dh_installcron -p$@
-#	dh_installmanpages -p$@
+#	dh_installman -p$@
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@
@@ -270,8 +270,7 @@ apt-utils: build debian/shlibs.local
 	dh_installdocs -p$@
 
 	# Install the man pages..
-	mkdir -p debian/$@/usr/share/man/man1
-	-cp doc/apt-sortpkgs.1 doc/apt-ftparchive.1 doc/apt-extracttemplates.1 debian/$@/usr/share/man/man1/
+	dh_installman -p$@
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@
