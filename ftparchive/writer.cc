@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.13 2004/01/04 00:20:59 mdz Exp $
+// $Id: writer.cc,v 1.14 2004/03/24 01:40:43 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -555,10 +555,10 @@ bool SourcesWriter::DoPackage(string FileName)
       
    // Lookup the overide information, finding first the best priority.
    string BestPrio;
-   char Buffer[1000];
    string Bins = Tags.FindS("Binary");
+   char Buffer[Bins.length() + 1];
    Override::Item *OverItem = 0;
-   if (Bins.empty() == false && Bins.length() < sizeof(Buffer))
+   if (Bins.empty() == false)
    {
       strcpy(Buffer,Bins.c_str());
       
