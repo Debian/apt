@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.46 2001/02/20 07:03:17 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.47 2001/03/04 00:12:41 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -492,10 +492,10 @@ static bool CheckValidity(string CacheFile,pkgIndexFile **Start,
    SPtrArray<bool> Visited = new bool[Cache.HeaderP->PackageFileCount];
    memset(Visited,0,sizeof(*Visited)*Cache.HeaderP->PackageFileCount);
    for (; Start != End; Start++)
-   {
+   {      
       if ((*Start)->HasPackages() == false)
 	 continue;
-      
+    
       if ((*Start)->Exists() == false)
       {
 	 _error->WarningE("stat",_("Couldn't stat source package list %s"),
@@ -558,6 +558,13 @@ static bool BuildCache(pkgCacheGenerator &Gen,
       if ((*Start)->Exists() == false)
 	 continue;
 
+      if ((*Start)->FindInCache(Gen.GetCache()).end() == false)
+      {
+	 _error->Warning("Duplicate sources.list entry %s",
+			 (*Start)->Describe().c_str());
+	 continue;
+      }
+      
       unsigned long Size = (*Start)->Size();
       Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Reading Package Lists"));
       CurrentSize += Size;
@@ -580,7 +587,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap,bool AllowMem)
 {
-   unsigned long MapSize = _config->FindI("APT::Cache-Limit",4*1024*1024);
+   unsigned long MapSize = _config->FindI("APT::Cache-Limit",6*1024*1024);
    
    vector<pkgIndexFile *> Files(List.begin(),List.end());
    unsigned long EndOfSource = Files.size();
