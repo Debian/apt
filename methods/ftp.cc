@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.13 1999/05/29 03:25:03 jgg Exp $
+// $Id: ftp.cc,v 1.14 1999/07/18 23:06:56 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -125,7 +125,7 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
    }
 
    // Connect to the remote server
-   if (Connect(Host,Port,"ftp",ServerFd,TimeOut,Owner) == false)
+   if (Connect(Host,Port,"ftp",21,ServerFd,TimeOut,Owner) == false)
       return false;
    socklen_t Len = sizeof(Peer);
    if (getpeername(ServerFd,(sockaddr *)&Peer,&Len) != 0)

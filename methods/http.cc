@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.35 1999/06/05 07:30:18 jgg Exp $
+// $Id: http.cc,v 1.36 1999/07/18 23:06:56 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -305,7 +305,7 @@ bool ServerState::Open()
    }
    
    // Connect to the remote server
-   if (Connect(Host,Port,"http",ServerFd,TimeOut,Owner) == false)
+   if (Connect(Host,Port,"http",80,ServerFd,TimeOut,Owner) == false)
       return false;
    
    return true;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.h,v 1.1 1999/05/29 03:25:03 jgg Exp $
+// $Id: connect.h,v 1.2 1999/07/18 23:06:56 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -13,7 +13,7 @@
 #include <string>
 #include <apt-pkg/acquire-method.h>
 
-bool Connect(string To,int Port,const char *Service,int &Fd,
-	     unsigned long TimeOut,pkgAcqMethod *Owner);
+bool Connect(string To,int Port,const char *Service,int DefPort,
+	     int &Fd,unsigned long TimeOut,pkgAcqMethod *Owner);
 
 #endif

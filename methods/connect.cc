@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.2 1999/07/10 05:39:29 jgg Exp $
+// $Id: connect.cc,v 1.3 1999/07/18 23:06:56 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -75,7 +75,7 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
 // Connect - Connect to a server					/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a connection to the server */
-bool Connect(string Host,int Port,const char *Service,int &Fd,
+bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	     unsigned long TimeOut,pkgAcqMethod *Owner)
 {
    if (_error->PendingError() == true)
@@ -106,21 +106,37 @@ bool Connect(string Host,int Port,const char *Service,int &Fd,
       struct addrinfo Hints;
       memset(&Hints,0,sizeof(Hints));
       Hints.ai_socktype = SOCK_STREAM;
+      Hints.ai_protocol = IPPROTO_TCP;       // Right?
       
       // Resolve both the host and service simultaneously
-      int Res;
-      if ((Res = getaddrinfo(Host.c_str(),S,&Hints,&LastHostAddr)) != 0 ||
-	  LastHostAddr == 0)
+      while (1)
       {
-	 if (Res == EAI_SERVICE)
-	    return _error->Error("Could not resolve service '%s'",S);
-	 
-	 if (Res == EAI_NONAME)
-	    return _error->Error("Could not resolve '%s'",Host.c_str());
-	 
-	 return _error->Error("Something wicked happend resolving '%s/%s'",
-			      Host.c_str(),S);
+	 int Res;
+	 if ((Res = getaddrinfo(Host.c_str(),S,&Hints,&LastHostAddr)) != 0 ||
+	     LastHostAddr == 0)
+	 {
+	    if (Res == EAI_SERVICE)
+	       return _error->Error("Could not resolve service '%s'",S);
+	    
+	    if (Res == EAI_NONAME)
+	    {
+	       if (DefPort != 0)
+	       {
+		  snprintf(S,sizeof(S),"%u",DefPort);
+		  DefPort = 0;
+		  continue;
+	       }
+	       return _error->Error("Could not resolve '%s'",Host.c_str());
+	    }
+	    
+	    return _error->Error("Something wicked happend resolving '%s/%s'",
+				 Host.c_str(),S);
+	 }
+	 break;
       }
+      
+      if (LastHostAddr->ai_family == AF_UNIX)
+	 return _error->Error("getaddrinfo returned a unix domain socket\n");
       
       LastHost = Host;
       LastPort = Port;
