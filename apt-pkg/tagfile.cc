@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.3 1998/07/04 22:32:14 jgg Exp $
+// $Id: tagfile.cc,v 1.4 1998/07/05 05:33:58 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -26,6 +26,7 @@ pkgTagFile::pkgTagFile(File &Fd) : Fd(Fd)
    Buffer = new char[64*1024];
    Start = End = Buffer + 64*1024;
    Left = Fd.Size();
+   iOffset = 0;
    Fill();
 }
 									/*}}}*/
@@ -42,7 +43,9 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
       if (Tag.Scan(Start,End - Start) == false)
 	 return _error->Error("Unable to parse package file");
    }   
-   Start += Tag.Length();
+   Start += Tag.size();
+   iOffset += Tag.size();
+   
    return true;
 }
 									/*}}}*/
@@ -152,16 +155,20 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
 int main(int argc,char *argv[])
 {
    {
-      File F(argv[1],File::ReadOnly);
       File CacheF("./cache",File::WriteEmpty);
       DynamicMMap Map(CacheF,MMap::Public);
       pkgCacheGenerator Gen(Map);
-      Gen.SelectFile(argv[1]);
-      
-      debListParser Parser(F);
-      Gen.MergeList(Parser);
-   }
 
+      for (int I = 1; I != argc; I++)
+      {
+	 cout << "Merging in " << argv[I] << endl;
+	 File F(argv[I],File::ReadOnly);
+	 Gen.SelectFile(argv[I]);
+	 debListParser Parser(F);
+	 Gen.MergeList(Parser);
+      }      
+   }
+/*
    {
       File CacheF("./cache",File::WriteExists);
       MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
@@ -176,11 +183,20 @@ int main(int argc,char *argv[])
 	    cout << "Installed-Size: " << V->InstalledSize << endl;
 	    cout << "Section: " << V.Section() << endl;
 	    cout << "Priority: " << Cache.Priority(V->Priority) << endl;
-	 }	 
+	    
+	    pkgCache::PrvIterator P = V.ProvidesList();
+	    if (P.end() == false)
+	    {
+	       cout << "Provides: ";
+	       for (; P.end() == false; P++)
+		  cout << P.Name() << ", ";
+	       cout << endl;
+	    }	    
+	 }
 	 cout << endl;
       }
    }
-   
+*/   
 #if 0 
    pkgTagSection I;
    while (Test.Step(I) == true)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.3 1998/07/04 22:32:13 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.4 1998/07/05 05:33:56 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -67,9 +67,6 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       if (Pkg.end() == true)
       {
 	 if (NewPackage(Pkg,Package) == false)
-	    return false;
-
-	 if (List.NewPackage(Pkg) == false)
 	    return false;
       }
       
@@ -156,6 +153,18 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,string Name)
 bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 				   ListParser &List)
 {
+   // Get a structure
+   unsigned long VerFile = Map.Allocate(sizeof(pkgCache::VerFile));
+   if (VerFile == 0)
+      return 0;
+   
+   pkgCache::VerFileIterator VF(Cache,Cache.VerFileP + VerFile);
+   VF->File = CurrentFile - Cache.PkgFileP;
+   VF->NextFile = Ver->FileList;
+   Ver->FileList = VF.Index();
+   VF->Offset = List.Offset();
+   VF->Size = List.Size();
+      
    return true;
 }
 									/*}}}*/
@@ -173,7 +182,6 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
-   Ver->File = CurrentFile - Cache.PkgFileP;
    Ver->NextVer = Next;
    Ver->ID = Cache.HeaderP->VersionCount++;
    Ver->VerStr = Map.WriteString(VerStr);
@@ -181,6 +189,96 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
       return 0;
    
    return Version;
+}
+									/*}}}*/
+// ListParser::NewDepends - Create a dependency element			/*{{{*/
+// ---------------------------------------------------------------------
+/* This creates a dependency element in the tree. It is linked to the
+   version and to the package that it is pointing to. */
+bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
+					       string Package,string Version,
+					       unsigned int Op,
+					       unsigned int Type)
+{
+   pkgCache &Cache = Owner->Cache;
+   
+   // Get a structure
+   unsigned long Dependency = Owner->Map.Allocate(sizeof(pkgCache::Dependency));
+   if (Dependency == 0)
+      return false;
+   
+   // Fill it in
+   pkgCache::DepIterator Dep(Cache,Cache.DepP + Dependency);
+   Dep->ParentVer = Ver.Index();
+   Dep->Type = Type;
+   Dep->CompareOp = Op;
+   Dep->ID = Cache.HeaderP->DependsCount++;
+   
+   // Locate the target package
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(Package);
+   if (Pkg.end() == true)
+      if (Owner->NewPackage(Pkg,Package) == false)
+	 return false;
+   
+   // Probe the reverse dependency list for a version string that matches
+   if (Version.empty() == false)
+   {
+      for (pkgCache::DepIterator I = Pkg.RevDependsList(); I.end() == false; I++)
+	 if (I->Version != 0 && I.TargetVer() == Version)
+	    Dep->Version = I->Version;
+      if (Dep->Version == 0)
+	 if ((Dep->Version = WriteString(Version)) == 0)
+	    return false;
+   }
+   
+   // Link it to the package
+   Dep->Package = Pkg.Index();
+   Dep->NextRevDepends = Pkg->RevDepends;
+   Pkg->RevDepends = Dep.Index();
+   
+   // Link it to the version (at the end of the list)
+   unsigned long *Last = &Ver->DependsList;
+   for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+      Last = &D->NextDepends;
+   Dep->NextDepends = *Last;
+   *Last = Dep.Index();
+   
+   return true;
+}
+									/*}}}*/
+// ListParser::NewProvides - Create a Provides element			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
+					       string Package,string Version)
+{
+   pkgCache &Cache = Owner->Cache;
+   
+   // Get a structure
+   unsigned long Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
+   if (Provides == 0)
+      return false;
+   
+   // Fill it in
+   pkgCache::PrvIterator Prv(Cache,Cache.ProvideP + Provides,Cache.PkgP);
+   Prv->Version = Ver.Index();
+   Prv->NextPkgProv = Ver->ProvidesList;
+   Ver->ProvidesList = Prv.Index();
+   if (Version.empty() == false && (Prv->Version = WriteString(Version)) == 0)
+      return false;
+   
+   // Locate the target package
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(Package);
+   if (Pkg.end() == true)
+      if (Owner->NewPackage(Pkg,Package) == false)
+	 return false;
+   
+   // Link it to the package
+   Prv->ParentPkg = Pkg.Index();
+   Prv->NextProvides = Pkg->ProvidesList;
+   Pkg->ProvidesList = Prv.Index();
+   
+   return true;
 }
 									/*}}}*/
 // CacheGenerator::SelectFile - Select the current file being parsed	/*{{{*/

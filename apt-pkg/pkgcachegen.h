@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.2 1998/07/04 05:57:38 jgg Exp $
+// $Id: pkgcachegen.h,v 1.3 1998/07/05 05:33:57 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -50,6 +50,10 @@ class pkgCacheGenerator
       inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
       inline unsigned long WriteString(string S) {return Owner->Map.WriteString(S);};
       inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->Map.WriteString(S,Size);};
+      bool NewDepends(pkgCache::VerIterator Ver,string Package,
+			 string Version,unsigned int Op,
+			 unsigned int Type);
+      bool NewProvides(pkgCache::VerIterator Ver,string Package,string Version);
       
       public:
       
@@ -57,11 +61,13 @@ class pkgCacheGenerator
       virtual string Package() = 0;
       virtual string Version() = 0;
       virtual bool NewVersion(pkgCache::VerIterator Ver) = 0;
-      virtual bool NewPackage(pkgCache::PkgIterator Pkg) = 0;
       virtual bool UsePackage(pkgCache::PkgIterator Pkg,
 			      pkgCache::VerIterator Ver) = 0;
-				   
+      virtual unsigned long Offset() = 0;
+      virtual unsigned long Size() = 0;
+
       virtual bool Step() = 0;
+      
       virtual ~ListParser() {};
    };
    friend ListParser;

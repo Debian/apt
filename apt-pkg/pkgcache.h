@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.3 1998/07/04 22:32:12 jgg Exp $
+// $Id: pkgcache.h,v 1.4 1998/07/05 05:33:55 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -35,6 +35,7 @@ class pkgCache
    struct Provides;
    struct Dependency;
    struct StringItem;
+   struct VerFile;
    
    // Iterators
    class PkgIterator;
@@ -42,12 +43,14 @@ class pkgCache
    class DepIterator;
    class PrvIterator;
    class PkgFileIterator;
+   class VerFileIterator;
    friend PkgIterator;
    friend VerIterator;
    friend DepIterator;
    friend PrvIterator;
    friend PkgFileIterator;
-
+   friend VerFileIterator;
+   
    // These are all the constants used in the cache structures
    enum DepType {Depends=1,PreDepends=2,Suggests=3,Recommends=4,
                  Conflicts=5,Replaces=6};
@@ -60,7 +63,7 @@ class pkgCache
                          UnInstalled=3,HalfInstalled=4,ConfigFiles=5,
                          Installed=6};
    enum PkgFFlags {NotSource=(1<<0)};
-   enum DepCompareOp {Or=0x10,LessEq=0x1,GreaterEq=0x2,Less=0x3,
+   enum DepCompareOp {Or=0x10,NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
                       Greater=0x4,Equals=0x5,NotEquals=0x6};
    
    protected:
@@ -80,13 +83,14 @@ class pkgCache
    // Pointers to the arrays of items
    Header *HeaderP;
    Package *PkgP;
+   VerFile *VerFileP;
    PackageFile *PkgFileP;
    Version *VerP;
    Provides *ProvideP;
    Dependency *DepP;
    StringItem *StringItemP;
    char *StrP;
-   
+
    virtual bool ReMap();
    inline bool Sync() {return Map.Sync();};
    
@@ -123,7 +127,8 @@ struct pkgCache::Header
    unsigned short VersionSz;
    unsigned short DependencySz;
    unsigned short ProvidesSz;
-
+   unsigned short VerFileSz;
+   
    // Structure counts
    unsigned long PackageCount;
    unsigned long VersionCount;
@@ -136,7 +141,7 @@ struct pkgCache::Header
 
    /* Allocation pools, there should be one of these for each structure
       excluding the header */
-   DynamicMMap::Pool Pools[6];
+   DynamicMMap::Pool Pools[7];
    
    // Rapid package name lookup
    unsigned long HashTable[512];
@@ -184,19 +189,26 @@ struct pkgCache::PackageFile
    time_t mtime;                  // Modification time for the file
 };
 
+struct pkgCache::VerFile
+{
+   unsigned long File;           // PackageFile
+   unsigned long NextFile;       // PkgVerFile
+   unsigned long Offset;
+   unsigned short Size;
+};
+
 struct pkgCache::Version
 {
    unsigned long VerStr;            // Stringtable
-   unsigned long File;              // PackageFile
    unsigned long Section;           // StringTable (StringItem)
    
    // Lists
+   unsigned long FileList;          // VerFile
    unsigned long NextVer;           // Version
    unsigned long DependsList;       // Dependency
    unsigned long ParentPkg;         // Package
    unsigned long ProvidesList;      // Provides
    
-   unsigned long Offset;
    unsigned long Size;
    unsigned long InstalledSize;
    unsigned short ID;

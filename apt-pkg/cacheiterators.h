@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.2 1998/07/04 05:57:34 jgg Exp $
+// $Id: cacheiterators.h,v 1.3 1998/07/05 05:33:52 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -113,11 +113,11 @@ class pkgCache::VerIterator
    inline operator Version const *() const {return Ver == Owner.VerP?0:Ver;};
    inline const char *VerStr() const {return Ver->VerStr == 0?0:Owner.StrP + Ver->VerStr;};
    inline const char *Section() const {return Ver->Section == 0?0:Owner.StrP + Ver->Section;};
-   inline PkgFileIterator File() const;
    inline PkgIterator ParentPkg() const {return PkgIterator(Owner,Owner.PkgP + Ver->ParentPkg);};
    inline DepIterator DependsList() const;
    inline PrvIterator ProvidesList() const;
    inline unsigned long Index() const {return Ver - Owner.VerP;};
+   inline VerFileIterator FileList() const;
 
    inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Ver(Trg), Owner(Owner) 
    { 
@@ -265,6 +265,36 @@ class pkgCache::PkgFileIterator
    inline PkgFileIterator(pkgCache &Owner,PackageFile *Trg) : Owner(&Owner), File(Trg) {};
 };
 
+// Version File 
+class pkgCache::VerFileIterator
+{
+   pkgCache *Owner;
+   VerFile *FileP;
+
+   public:
+
+   // Iteration
+   void operator ++(int) {if (FileP != Owner->VerFileP) FileP = Owner->VerFileP + FileP->NextFile;};
+   inline void operator ++() {operator ++(0);};
+   inline bool end() const {return FileP == Owner->VerFileP?true:false;};
+
+   // Comparison
+   inline bool operator ==(const VerFileIterator &B) const {return FileP == B.FileP;};
+   inline bool operator !=(const VerFileIterator &B) const {return FileP != B.FileP;};
+			   
+   // Accessors
+   inline VerFile *operator ->() {return FileP;};
+   inline VerFile const *operator ->() const {return FileP;};
+   inline VerFile const &operator *() const {return *FileP;};
+   inline operator VerFile *() {return FileP == Owner->VerFileP?0:FileP;};
+   inline operator VerFile const *() const {return FileP == Owner->VerFileP?0:FileP;};
+  
+   inline PkgFileIterator File() const {return PkgFileIterator(*Owner,FileP->File + Owner->PkgFileP);};
+   inline unsigned long Index() const {return FileP - Owner->VerFileP;};
+
+   inline VerFileIterator(pkgCache &Owner,VerFile *Trg) : Owner(&Owner), FileP(Trg) {};
+};
+
 // Inlined Begin functions cant be in the class because of order problems
 inline pkgCache::VerIterator pkgCache::PkgIterator::VersionList() const
        {return VerIterator(*Owner,Owner->VerP + Pkg->VersionList);};
@@ -280,7 +310,7 @@ inline pkgCache::PrvIterator pkgCache::VerIterator::ProvidesList() const
        {return PrvIterator(Owner,Owner.ProvideP + Ver->ProvidesList,Ver);};
 inline pkgCache::DepIterator pkgCache::VerIterator::DependsList() const
        {return DepIterator(Owner,Owner.DepP + Ver->DependsList,Ver);};
-inline pkgCache::PkgFileIterator pkgCache::VerIterator::File() const
-       {return PkgFileIterator(Owner,Owner.PkgFileP + Ver->File);};
+inline pkgCache::VerFileIterator pkgCache::VerIterator::FileList() const
+       {return VerFileIterator(Owner,Owner.VerFileP + Ver->FileList);};
 
 #endif

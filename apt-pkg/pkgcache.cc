@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.3 1998/07/04 22:32:11 jgg Exp $
+// $Id: pkgcache.cc,v 1.4 1998/07/05 05:33:53 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -49,7 +49,8 @@ pkgCache::Header::Header()
    VersionSz = sizeof(pkgCache::Version);
    DependencySz = sizeof(pkgCache::Dependency);
    ProvidesSz = sizeof(pkgCache::Provides);
-
+   VerFileSz = sizeof(pkgCache::VerFile);
+   
    PackageCount = 0;
    VersionCount = 0;
    DependsCount = 0;
@@ -70,7 +71,8 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
        PackageSz == Against.PackageSz &&
        PackageFileSz == Against.PackageFileSz &&
        VersionSz == Against.VersionSz &&
-       DependencySz == Against.DependencySz && 
+       DependencySz == Against.DependencySz &&
+       VerFileSz == Against.VerFileSz &&
        ProvidesSz == Against.ProvidesSz)
       return true;
    return false;
@@ -93,6 +95,7 @@ bool pkgCache::ReMap()
    // Apply the typecasts.
    HeaderP = (Header *)Map.Data();
    PkgP = (Package *)Map.Data();
+   VerFileP = (VerFile *)Map.Data();
    PkgFileP = (PackageFile *)Map.Data();
    VerP = (Version *)Map.Data();
    ProvideP = (Provides *)Map.Data();
@@ -100,7 +103,6 @@ bool pkgCache::ReMap()
    StringItemP = (StringItem *)Map.Data();
    StrP = (char *)Map.Data();
 
-   cout << "Size is " << Map.Size() << endl;
    if (Map.Size() == 0)
       return false;
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.2 1998/07/04 22:32:17 jgg Exp $
+// $Id: deblistparser.cc,v 1.3 1998/07/05 05:34:00 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -124,16 +124,6 @@ string debListParser::Version()
    return FindTag("Version");
 }
 									/*}}}*/
-// ListParser::NewPackage - Fill in the package structure		/*{{{*/
-// ---------------------------------------------------------------------
-/* This is called when a new package structure is created. It must fill
-   in the static package information. */
-bool debListParser::NewPackage(pkgCache::PkgIterator Pkg)
-{
-   // Debian doesnt have anything, everything is condionally megered
-   return true;
-}
-									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -166,6 +156,22 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 		   _count(PrioList),Ver->Priority) == false)
 	 return _error->Error("Malformed Priority line");
    }
+
+   if (ParseDepends(Ver,"Depends",pkgCache::Depends) == false)
+      return false;
+   if (ParseDepends(Ver,"PreDepends",pkgCache::PreDepends) == false)
+      return false;
+   if (ParseDepends(Ver,"Suggests",pkgCache::Suggests) == false)
+      return false;
+   if (ParseDepends(Ver,"Recommends",pkgCache::Recommends) == false)
+      return false;
+   if (ParseDepends(Ver,"Conflicts",pkgCache::Conflicts) == false)
+      return false;
+   if (ParseDepends(Ver,"Replaces",pkgCache::Depends) == false)
+      return false;
+
+   if (ParseProvides(Ver) == false)
+      return false;
    
    return true;
 }
@@ -189,7 +195,7 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
    return true;
 }
 									/*}}}*/
-// ListParser::ParseStatus - Parse the status feild			/*{{{*/
+// ListParser::ParseStatus - Parse the status field			/*{{{*/
 // ---------------------------------------------------------------------
 /* Status lines are of the form,
      Status: want flag status
@@ -279,6 +285,187 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
    return true;
 }
 									/*}}}*/
+// ListParser::ParseDepends - Parse a dependency element		/*{{{*/
+// ---------------------------------------------------------------------
+/* This parses the dependency elements out of a standard string in place,
+   bit by bit. */
+const char *debListParser::ParseDepends(const char *Start,const char *Stop,
+					string &Package,string &Ver,
+					unsigned int &Op)
+{
+   // Strip off leading space
+   for (;Start != Stop && isspace(*Start) != 0; Start++);
+   
+   // Parse off the package name
+   const char *I = Start;
+   for (;I != Stop && isspace(*I) == 0 && *I != '(' && *I != ')' &&
+	*I != ',' && *I != '|'; I++);
+   
+   // Malformed, no '('
+   if (I != Stop && *I == ')')
+      return 0;
+
+   if (I == Start)
+      return 0;
+   
+   // Stash the package name
+   Package.assign(Start,I - Start);
+   
+   // Skip white space to the '('
+   for (;I != Stop && isspace(*I) != 0 ; I++);
+   
+   // Parse a version
+   if (I != Stop && *I == '(')
+   {
+      // Skip the '('
+      for (I++; I != Stop && isspace(*I) != 0 ; I++);
+      if (I + 3 >= Stop)
+	 return 0;
+      
+      // Determine the operator
+      switch (*I)
+      {
+	 case '<':
+	 I++;
+	 if (*I == '=')
+	 {
+	    I++;
+	    Op = pkgCache::LessEq;
+	    break;
+	 }
+	 
+	 if (*I == '<')
+	 {
+	    I++;
+	    Op = pkgCache::Less;
+	    break;
+	 }
+	 
+	 // < is the same as <= and << is really Cs < for some reason
+	 Op = pkgCache::LessEq;
+	 break;
+	 
+	 case '>':
+	 I++;
+	 if (*I == '=')
+	 {
+	    I++;
+	    Op = pkgCache::GreaterEq;
+	    break;
+	 }
+	 
+	 if (*I == '>')
+	 {
+	    I++;
+	    Op = pkgCache::Greater;
+	    break;
+	 }
+	 
+	 // > is the same as >= and >> is really Cs > for some reason
+	 Op = pkgCache::GreaterEq;
+	 break;
+	 
+	 case '=':
+	 Op = pkgCache::Equals;
+	 I++;
+	 break;
+	 
+	 // HACK around bad package definitions
+	 default:
+	 Op = pkgCache::Equals;
+	 break;
+      }
+      
+      // Skip whitespace
+      for (;I != Stop && isspace(*I) != 0; I++);
+      Start = I;
+      for (;I != Stop && *I != ')'; I++);
+      if (I == Stop || Start == I)
+	 return 0;     
+      
+      Ver = string(Start,I-Start);
+      I++;
+   }
+   else
+   {
+      Ver = string();
+      Op = pkgCache::NoOp;
+   }
+   
+   // Skip whitespace
+   for (;I != Stop && isspace(*I) != 0; I++);
+   if (I != Stop && *I == '|')
+      Op |= pkgCache::Or;
+   
+   if (I == Stop || *I == ',' || *I == '|')
+   {
+      if (I != Stop)
+	 for (I++; I != Stop && isspace(*I) != 0; I++);
+      return I;
+   }
+   
+   return 0;
+}
+									/*}}}*/
+// ListParser::ParseDepends - Parse a dependency list			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is the higher level depends parser. It takes a tag and generates
+   a complete depends tree for the given version. */
+bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
+				 const char *Tag,unsigned int Type)
+{
+   const char *Start;
+   const char *Stop;
+   if (Section.Find(Tag,Start,Stop) == false)
+      return true;
+   
+   string Package;
+   string Version;
+   unsigned int Op;
+
+   while ((Start = ParseDepends(Start,Stop,Package,Version,Op)) != Stop)
+   {
+      if (Start == 0)
+	 return _error->Error("Problem parsing dependency %s",Tag);
+
+      if (NewDepends(Ver,Package,Version,Op,Type) == false)
+	 return false;
+   }
+   return true;
+}
+									/*}}}*/
+// ListParser::ParseProvides - Parse the provides list			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
+{
+   const char *Start;
+   const char *Stop;
+   if (Section.Find("Provides",Start,Stop) == false)
+      return true;
+   
+   string Package;
+   string Version;
+   unsigned int Op;
+
+   while (1)
+   {
+      Start = ParseDepends(Start,Stop,Package,Version,Op);
+      if (Start == 0)
+	 return _error->Error("Problem parsing Provides line");
+      if (Op != pkgCache::NoOp)
+	 return _error->Error("Malformed provides line");
+
+      if (NewProvides(Ver,Package,Version) == false)
+	 return false;
+
+      if (Start == Stop)
+	 break;
+   }
+   
+   return true;
+}
+									/*}}}*/
 // ListParser::GrabWord - Matches a word and returns			/*{{{*/
 // ---------------------------------------------------------------------
 /* Looks for a word in a list of words - for ParseStatus */
@@ -301,6 +488,7 @@ bool debListParser::GrabWord(string Word,WordList *List,int Count,
 /* This has to be carefull to only process the correct architecture */
 bool debListParser::Step()
 {
+   iOffset = Tags.Offset();
    while (Tags.Step(Section) == true)
    {
       /* See if this is the correct Architecture, if it isnt then we
@@ -317,6 +505,8 @@ bool debListParser::Step()
       if (strncmp(Start,"all",Stop - Start) == 0 &&
 	  3 == (unsigned)(Stop - Start))
 	 return true;
+
+      iOffset = Tags.Offset();
    }   
    return false;
 }

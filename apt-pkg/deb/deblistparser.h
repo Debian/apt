@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.h,v 1.2 1998/07/04 22:32:18 jgg Exp $
+// $Id: deblistparser.h,v 1.3 1998/07/05 05:34:01 jgg Exp $
 /* ######################################################################
    
    Debian Package List Parser - This implements the abstract parser 
@@ -19,6 +19,7 @@ class debListParser : public pkgCacheGenerator::ListParser
 {
    pkgTagFile Tags;
    pkgTagSection Section;
+   unsigned long iOffset;
    
    // Parser Helper
    struct WordList
@@ -32,6 +33,11 @@ class debListParser : public pkgCacheGenerator::ListParser
    unsigned long UniqFindTagWrite(const char *Tag);
    bool HandleFlag(const char *Tag,unsigned long &Flags,unsigned long Flag);
    bool ParseStatus(pkgCache::PkgIterator Pkg,pkgCache::VerIterator Ver);
+   const char *ParseDepends(const char *Start,const char *Stop,
+			    string &Package,string &Ver,unsigned int &Op);
+   bool ParseDepends(pkgCache::VerIterator Ver,const char *Tag,
+		     unsigned int Type);
+   bool ParseProvides(pkgCache::VerIterator Ver);
    bool GrabWord(string Word,WordList *List,int Count,unsigned char &Out);
    
    public:
@@ -40,9 +46,10 @@ class debListParser : public pkgCacheGenerator::ListParser
    virtual string Package();
    virtual string Version();
    virtual bool NewVersion(pkgCache::VerIterator Ver);
-   virtual bool NewPackage(pkgCache::PkgIterator Pkg);
    virtual bool UsePackage(pkgCache::PkgIterator Pkg,
 			   pkgCache::VerIterator Ver);
+   virtual unsigned long Offset() {return iOffset;};
+   virtual unsigned long Size() {return Section.size();};
 
    virtual bool Step();
    
