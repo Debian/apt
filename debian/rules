@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.1 1998/12/22 05:06:44 che Exp $
+# $Id: rules,v 1.2 1999/01/27 05:30:16 jgg Exp $
 
 
 # Uncomment this to turn on verbose mode.
@@ -48,8 +48,11 @@ apt: build
 	dh_installdirs -papt usr/bin usr/lib/apt/methods usr/lib/dpkg/methods/apt etc/apt usr/doc/apt var/cache/apt/archives/partial var/state/apt/lists/partial
 
 	cp build/bin/apt-* debian/tmp/usr/bin/
-	cp build/bin/libapt-pkg.so.2.0 debian/tmp/usr/lib/
-	ln -s libapt-pkg.so.2.0 debian/tmp/usr/lib/libapt-pkg-so.2
+	
+	# install the shared libs
+	find build/bin/ -type f -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
+	find build/bin/ -type l -name "libapt-pkg.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
+
 	cp build/bin/methods/* debian/tmp/usr/lib/apt/methods/
 
 	cp build/scripts/dselect/* debian/tmp/usr/lib/dpkg/methods/apt/
