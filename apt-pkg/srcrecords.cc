@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.cc,v 1.7 2002/11/09 20:38:02 doogie Exp $
+// $Id: srcrecords.cc,v 1.7.2.2 2003/12/26 16:27:34 mdz Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -28,23 +28,22 @@
 /* Open all the source index files */
 pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 {
-   Files = new Parser *[List.end() - List.begin() + 1];
-   memset(Files,0,sizeof(*Files)*(List.end() - List.begin() + 1));
-   
-   unsigned int Count = 0;
-   pkgSourceList::const_iterator I = List.begin();
-   for (; I != List.end(); I++)
+   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
    {
-      Files[Count] = (*I)->CreateSrcParser();
-      if (_error->PendingError() == true)
-	 return;
-      if (Files[Count] != 0)
-	 Count++;
+      vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
+      for (vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
+	   J != Indexes->end(); J++)
+      {
+         Parser* P = (*J)->CreateSrcParser();
+	 if (_error->PendingError() == true)
+            return;
+         if (P != 0)
+            Files.push_back(P);
+      }
    }
-   Files[Count] = 0;
    
    // Doesn't work without any source index files
-   if (Count == 0)
+   if (Files.size() == 0)
    {
       _error->Error(_("You must put some 'source' URIs"
 		    " in your sources.list"));
@@ -59,13 +58,9 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 /* */
 pkgSrcRecords::~pkgSrcRecords()
 {
-   if (Files == 0)
-      return;
-
    // Blow away all the parser objects
-   for (unsigned int Count = 0; Files[Count] != 0; Count++)
-      delete Files[Count];
-   delete [] Files;
+   for(vector<Parser*>::iterator I = Files.begin(); I != Files.end(); ++I)
+      delete *I;
 }
 									/*}}}*/
 // SrcRecords::Restart - Restart the search				/*{{{*/
@@ -73,8 +68,9 @@ pkgSrcRecords::~pkgSrcRecords()
 /* Return all of the parsers to their starting position */
 bool pkgSrcRecords::Restart()
 {
-   Current = Files;
-   for (Parser **I = Files; *I != 0; I++)
+   Current = Files.begin();
+   for (vector<Parser*>::iterator I = Files.begin();
+        I != Files.end(); I++)
       (*I)->Restart();
    
    return true;
@@ -87,7 +83,7 @@ bool pkgSrcRecords::Restart()
    function to be called multiple times to get successive entries */
 pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool SrcOnly)
 {
-   if (*Current == 0)
+   if (Current == Files.end())
       return 0;
    
    while (true)
@@ -98,7 +94,7 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool SrcOnly)
 	 if (_error->PendingError() == true)
 	    return 0;
 	 Current++;
-	 if (*Current == 0)
+	 if (Current == Files.end())
 	    return 0;
       }
       

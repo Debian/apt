@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dirstream.cc,v 1.4 2004/01/07 20:39:37 mdz Exp $
+// $Id: dirstream.cc,v 1.3.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    Directory Stream 

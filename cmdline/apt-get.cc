@@ -111,7 +111,7 @@ class CacheFile : public pkgCacheFile
 // YnPrompt - Yes No Prompt.						/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns true on a Yes.*/
-bool YnPrompt()
+bool YnPrompt(bool Default=true)
 {
    if (_config->FindB("APT::Get::Assume-Yes",false) == true)
    {
@@ -126,7 +126,7 @@ bool YnPrompt()
       return false;
 
    if (strlen(response) == 0)
-      return true;
+      return Default;
 
    regex_t Pattern;
    int Res;
@@ -544,6 +544,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
    return ShowList(out,_("WARNING: The following essential packages will be removed\n"
 			 "This should NOT be done unless you know exactly what you are doing!"),List,VersionsList);
 }
+
 									/*}}}*/
 // Stats - Show some statistics						/*{{{*/
 // ---------------------------------------------------------------------
@@ -666,6 +667,49 @@ bool CacheFile::CheckDeps(bool AllowBroken)
       
    return true;
 }
+
+static bool CheckAuth(pkgAcquire& Fetcher)
+{
+   string UntrustedList;
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd(); ++I)
+   {
+      if (!(*I)->IsTrusted())
+      {
+         UntrustedList += string((*I)->ShortDesc()) + " ";
+      }
+   }
+
+   if (UntrustedList == "")
+   {
+      return true;
+   }
+        
+   ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"),UntrustedList,"");
+
+   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+   {
+      c2out << "Authentication warning overridden.\n";
+      return true;
+   }
+
+   if (_config->FindI("quiet",0) < 2
+       && _config->FindB("APT::Get::Assume-Yes",false) == false)
+   {
+      c2out << _("Install these packages without verification? [y/N] ") << flush;
+      if (!YnPrompt(false))
+         return _error->Error(_("Some packages could not be authenticated"));
+
+      return true;
+   }
+   else if (_config->FindB("APT::Get::Force-Yes",false) == true)
+   {
+      return true;
+   }
+
+   return _error->Error(_("There are problems and -y was used without --force-yes"));
+}
+
+
 									/*}}}*/
 
 // InstallPackages - Actually download and install the packages		/*{{{*/
@@ -701,7 +745,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
         Essential = !ShowEssential(c1out,Cache);
    Fail |= Essential;
    Stats(c1out,Cache);
-   
+
    // Sanity check
    if (Cache->BrokenCount() != 0)
    {
@@ -859,6 +903,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
       return true;
    }
+
+   if (!CheckAuth(Fetcher))
+      return false;
 
    /* Unlock the dpkg lock if we are not going to be doing an install
       after. */
@@ -1252,19 +1299,25 @@ bool DoUpdate(CommandLine &CmdL)
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
 
-   // Populate it with the source selection
-   if (List.GetIndexes(&Fetcher) == false)
-	 return false;
    
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
+      // Populate it with the source selection and get all Indexes 
+      // (GetAll=true)
+      if (List.GetIndexes(&Fetcher,true) == false)
+	 return false;
+
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
       return true;
    }
+
+   // Populate it with the source selection
+   if (List.GetIndexes(&Fetcher) == false)
+	 return false;
    
    // Run it
    if (Fetcher.Run() == pkgAcquire::Failed)
@@ -2412,6 +2465,7 @@ int main(int argc,const char *argv[])
       {0,"remove","APT::Get::Remove",0},
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
+      {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

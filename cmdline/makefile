@@ -46,3 +46,9 @@ SLIBS = -lapt-pkg -lapt-inst
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-extracttemplates.cc 
 include $(PROGRAM_H)
+
+# The apt-key program
+SOURCE=apt-key
+TO=$(BIN)
+TARGET=program
+include $(COPY_H)

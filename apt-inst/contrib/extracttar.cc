@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extracttar.cc,v 1.9 2004/01/07 20:39:37 mdz Exp $
+// $Id: extracttar.cc,v 1.8.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    Extract a Tar - Tar Extractor

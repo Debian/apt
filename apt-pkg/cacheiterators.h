@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.18 2003/10/09 23:15:25 mdz Exp $
+// $Id: cacheiterators.h,v 1.18.2.1 2004/05/08 22:44:27 mdz Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -78,7 +78,6 @@ class pkgCache::PkgIterator
    inline bool Purge() const {return Pkg->CurrentState == pkgCache::State::Purge ||
 	 (Pkg->CurrentVer == 0 && Pkg->CurrentState == pkgCache::State::NotInstalled);};
    inline VerIterator VersionList() const;
-   inline VerIterator TargetVer() const;
    inline VerIterator CurrentVer() const;
    inline DepIterator RevDependsList() const;
    inline PrvIterator ProvidesList() const;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.46 2003/02/02 22:19:17 jgg Exp $
+// $Id: acquire-item.cc,v 1.46.2.9 2004/01/16 18:51:11 mdz Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -19,9 +19,11 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/vendorlist.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/md5.h>
 
 #include <apti18n.h>
     
@@ -32,7 +34,7 @@
 #include <stdio.h>
 									/*}}}*/
 
-using std::string;
+using namespace std;
 
 // Acquire::Item::Item - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -134,8 +136,9 @@ void pkgAcquire::Item::Rename(string From,string To)
 /* The package file is added to the queue and a second class is 
    instantiated to fetch the revision file */   
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
-			 string URI,string URIDesc,string ShortDesc) :
-                      Item(Owner), RealURI(URI)
+			 string URI,string URIDesc,string ShortDesc,
+			 string ExpectedMD5) :
+   Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5)
 {
    Decompression = false;
    Erase = false;
@@ -199,6 +202,28 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
 
    if (Decompression == true)
    {
+      if (_config->FindB("Debug::pkgAcquire::Auth", false))
+      {
+         std::cerr << std::endl << RealURI << ": Computed MD5: " << MD5;
+         std::cerr << "  Expected MD5: " << ExpectedMD5 << std::endl;
+      }
+
+      if (MD5.empty())
+      {
+         MD5Summation sum;
+         FileFd Fd(DestFile, FileFd::ReadOnly);
+         sum.AddFD(Fd.Fd(), Fd.Size());
+         Fd.Close();
+         MD5 = (string)sum.Result();
+      }
+
+      if (!ExpectedMD5.empty() && MD5 != ExpectedMD5)
+      {
+         Status = StatAuthError;
+         ErrorText = _("MD5Sum mismatch");
+         Rename(DestFile,DestFile + ".FAILED");
+         return;
+      }
       // Done, move it into position
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
@@ -226,7 +251,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
       // The files timestamp matches
       if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
 	 return;
-      
+
       Decompression = true;
       Local = true;
       DestFile += ".decomp";
@@ -269,31 +294,45 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    QueueURI(Desc);
    Mode = decompProg;
 }
-									/*}}}*/
 
-// AcqIndexRel::pkgAcqIndexRel - Constructor				/*{{{*/
-// ---------------------------------------------------------------------
-/* The Release file is added to the queue */
-pkgAcqIndexRel::pkgAcqIndexRel(pkgAcquire *Owner,
-			    string URI,string URIDesc,string ShortDesc) :
-                      Item(Owner), RealURI(URI)
+pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
+			     string URI,string URIDesc,string ShortDesc,
+			     string MetaIndexURI, string MetaIndexURIDesc,
+			     string MetaIndexShortDesc,
+			     const vector<IndexTarget*>* IndexTargets,
+			     indexRecords* MetaIndexParser) :
+   Item(Owner), RealURI(URI), MetaIndexURI(MetaIndexURI),
+   MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc)
 {
+   this->MetaIndexParser = MetaIndexParser;
+   this->IndexTargets = IndexTargets;
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
-   
+
    // Create the item
-   Desc.URI = URI;
    Desc.Description = URIDesc;
-   Desc.ShortDesc = ShortDesc;
    Desc.Owner = this;
+   Desc.ShortDesc = ShortDesc;
+   Desc.URI = URI;
+   
+      
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(RealURI);
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) == 0)
+   {
+      // File was already in place.  It needs to be re-verified
+      // because Release might have changed, so Move it into partial
+      Rename(Final,DestFile);
+   }
 
    QueueURI(Desc);
 }
 									/*}}}*/
-// AcqIndexRel::Custom600Headers - Insert custom request headers	/*{{{*/
+// pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
-string pkgAcqIndexRel::Custom600Headers()
+string pkgAcqMetaSig::Custom600Headers()
 {
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
@@ -304,14 +343,9 @@ string pkgAcqIndexRel::Custom600Headers()
    
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
-									/*}}}*/
-// AcqIndexRel::Done - Item downloaded OK				/*{{{*/
-// ---------------------------------------------------------------------
-/* The release file was not placed into the download directory then
-   a copy URI is generated and it is copied there otherwise the file
-   in the partial directory is moved into .. and the URI is finished. */
-void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5,
-			  pkgAcquire::MethodConfig *Cfg)
+
+void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
+			 pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,MD5,Cfg);
 
@@ -323,34 +357,34 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5,
       return;
    }
 
-   Complete = true;
-   
-   // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-      return;
-   
-   // We have to copy it into place
    if (FileName != DestFile)
    {
+      // We have to copy it into place
       Local = true;
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
       return;
    }
-   
-   // Done, move it into position
-   string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(RealURI);
-   Rename(DestFile,FinalFile);
-   
-   chmod(FinalFile.c_str(),0644);
+
+   Complete = true;
+
+   // queue a pkgAcqMetaIndex to be verified against the sig we just retrieved
+   new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
+		       DestFile, IndexTargets, MetaIndexParser);
+
 }
 									/*}}}*/
-// AcqIndexRel::Failed - Silence failure messages for missing rel files	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void pkgAcqIndexRel::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+   // Delete any existing sigfile, so that this source isn't
+   // mistakenly trusted
+   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   unlink(Final.c_str());
+
+   // queue a pkgAcqMetaIndex with no sigfile
+   new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
+		       "", IndexTargets, MetaIndexParser);
+
    if (Cnf->LocalOnly == true || 
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
    {      
@@ -363,6 +397,284 @@ void pkgAcqIndexRel::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    
    Item::Failed(Message,Cnf);
 }
+
+pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
+				 string URI,string URIDesc,string ShortDesc,
+				 string SigFile,
+				 const vector<struct IndexTarget*>* IndexTargets,
+				 indexRecords* MetaIndexParser) :
+  Item(Owner), RealURI(URI), SigFile(SigFile)
+{
+   this->AuthPass = false;
+   this->MetaIndexParser = MetaIndexParser;
+   this->IndexTargets = IndexTargets;
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(URI);
+
+   // Create the item
+   Desc.Description = URIDesc;
+   Desc.Owner = this;
+   Desc.ShortDesc = ShortDesc;
+   Desc.URI = URI;
+
+   QueueURI(Desc);
+}
+
+									/*}}}*/
+// pkgAcqMetaIndex::Custom600Headers - Insert custom request headers	/*{{{*/
+// ---------------------------------------------------------------------
+/* The only header we use is the last-modified header. */
+string pkgAcqMetaIndex::Custom600Headers()
+{
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(RealURI);
+   
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) != 0)
+      return "\nIndex-File: true";
+   
+   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+}
+
+void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string MD5,
+			   pkgAcquire::MethodConfig *Cfg)
+{
+   Item::Done(Message,Size,MD5,Cfg);
+
+   // MetaIndexes are done in two passes: one to download the
+   // metaindex with an appropriate method, and a second to verify it
+   // with the gpgv method
+
+   if (AuthPass == true)
+   {
+      AuthDone(Message);
+   }
+   else
+   {
+      RetrievalDone(Message);
+      if (!Complete)
+         // Still more retrieving to do
+         return;
+
+      if (SigFile == "")
+      {
+         // There was no signature file, so we are finished.  Download
+         // the indexes without verification.
+         QueueIndexes(false);
+      }
+      else
+      {
+         // There was a signature file, so pass it to gpgv for
+         // verification
+
+         if (_config->FindB("Debug::pkgAcquire::Auth", false))
+            std::cerr << "Metaindex acquired, queueing gpg verification ("
+                      << SigFile << "," << DestFile << ")\n";
+         AuthPass = true;
+         Desc.URI = "gpgv:" + SigFile;
+         QueueURI(Desc);
+         Mode = "gpgv";
+      }
+   }
+}
+
+void pkgAcqMetaIndex::RetrievalDone(string Message)
+{
+   // We have just finished downloading a Release file (it is not
+   // verified yet)
+
+   string FileName = LookupTag(Message,"Filename");
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "Method gave a blank filename";
+      return;
+   }
+
+   if (FileName != DestFile)
+   {
+      Local = true;
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
+      return;
+   }
+
+   Complete = true;
+
+   string FinalFile = _config->FindDir("Dir::State::lists");
+   FinalFile += URItoFileName(RealURI);
+
+   // The files timestamp matches
+   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == false)
+   {
+      // Move it into position
+      Rename(DestFile,FinalFile);
+   }
+   DestFile = FinalFile;
+}
+
+void pkgAcqMetaIndex::AuthDone(string Message)
+{
+   // At this point, the gpgv method has succeeded, so there is a
+   // valid signature from a key in the trusted keyring.  We
+   // perform additional verification of its contents, and use them
+   // to verify the indexes we are about to download
+
+   if (!MetaIndexParser->Load(DestFile))
+   {
+      Status = StatAuthError;
+      ErrorText = MetaIndexParser->ErrorText;
+      return;
+   }
+
+   if (!VerifyVendor())
+   {
+      return;
+   }
+
+   if (_config->FindB("Debug::pkgAcquire::Auth", false))
+      std::cerr << "Signature verification succeeded: "
+                << DestFile << std::endl;
+
+   // Download further indexes with verification
+   QueueIndexes(true);
+
+   // Done, move signature file into position
+
+   string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
+      URItoFileName(RealURI) + ".gpg";
+   Rename(SigFile,VerifiedSigFile);
+   chmod(VerifiedSigFile.c_str(),0644);
+}
+
+void pkgAcqMetaIndex::QueueIndexes(bool verify)
+{
+   for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
+        Target != IndexTargets->end();
+        Target++)
+   {
+      string ExpectedIndexMD5;
+      if (verify)
+      {
+         const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+         if (!Record)
+         {
+            Status = StatAuthError;
+            ErrorText = "Unable to find expected entry  "
+               + (*Target)->MetaKey + " in Meta-index file (malformed Release file?)";
+            return;
+         }
+         ExpectedIndexMD5 = Record->MD5Hash;
+         if (_config->FindB("Debug::pkgAcquire::Auth", false))
+         {
+            std::cerr << "Queueing: " << (*Target)->URI << std::endl;
+            std::cerr << "Expected MD5: " << ExpectedIndexMD5 << std::endl;
+         }
+         if (ExpectedIndexMD5.empty())
+         {
+            Status = StatAuthError;
+            ErrorText = "Unable to find MD5 sum for "
+               + (*Target)->MetaKey + " in Meta-index file";
+            return;
+         }
+      }
+      
+      // Queue Packages file
+      new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
+                      (*Target)->ShortDesc, ExpectedIndexMD5);
+   }
+}
+
+bool pkgAcqMetaIndex::VerifyVendor()
+{
+//    // Maybe this should be made available from above so we don't have
+//    // to read and parse it every time?
+//    pkgVendorList List;
+//    List.ReadMainList();
+
+//    const Vendor* Vndr = NULL;
+//    for (std::vector<string>::const_iterator I = GPGVOutput.begin(); I != GPGVOutput.end(); I++)
+//    {
+//       string::size_type pos = (*I).find("VALIDSIG ");
+//       if (_config->FindB("Debug::Vendor", false))
+//          std::cerr << "Looking for VALIDSIG in \"" << (*I) << "\": pos " << pos 
+//                    << std::endl;
+//       if (pos != std::string::npos)
+//       {
+//          string Fingerprint = (*I).substr(pos+sizeof("VALIDSIG"));
+//          if (_config->FindB("Debug::Vendor", false))
+//             std::cerr << "Looking for \"" << Fingerprint << "\" in vendor..." <<
+//                std::endl;
+//          Vndr = List.FindVendor(Fingerprint) != "";
+//          if (Vndr != NULL);
+//          break;
+//       }
+//    }
+
+   string Transformed = MetaIndexParser->GetExpectedDist();
+
+   if (Transformed == "../project/experimental")
+   {
+      Transformed = "experimental";
+   }
+
+   string::size_type pos = Transformed.rfind('/');
+   if (pos != string::npos)
+   {
+      Transformed = Transformed.substr(0, pos);
+   }
+
+   if (Transformed == ".")
+   {
+      Transformed = "";
+   }
+
+   if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
+   {
+      std::cerr << "Got Codename: " << MetaIndexParser->GetDist() << std::endl;
+      std::cerr << "Expecting Dist: " << MetaIndexParser->GetExpectedDist() << std::endl;
+      std::cerr << "Transformed Dist: " << Transformed << std::endl;
+   }
+
+   if (MetaIndexParser->CheckDist(Transformed) == false)
+   {
+      // This might become fatal one day
+//       Status = StatAuthError;
+//       ErrorText = "Conflicting distribution; expected "
+//          + MetaIndexParser->GetExpectedDist() + " but got "
+//          + MetaIndexParser->GetDist();
+//       return false;
+      if (!Transformed.empty())
+      {
+         _error->Warning("Conflicting distribution: %s (expected %s but got %s)",
+                         Desc.Description.c_str(),
+                         Transformed.c_str(),
+                         MetaIndexParser->GetDist().c_str());
+      }
+   }
+
+   return true;
+}
+       								/*}}}*/
+// pkgAcqMetaIndex::Failed - no Release file present or no signature
+//      file present	                                        /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   if (AuthPass == true)
+   {
+      // gpgv method failed
+      _error->Warning("GPG error: %s: %s",
+                      Desc.Description.c_str(),
+                      LookupTag(Message,"Message").c_str());
+   }
+
+   // No Release file was present, or verification failed, so fall
+   // back to queueing Packages files without verification
+   QueueIndexes(false);
+}
+
 									/*}}}*/
 
 // AcqArchive::AcqArchive - Constructor					/*{{{*/
@@ -373,7 +685,8 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 			     pkgRecords *Recs,pkgCache::VerIterator const &Version,
 			     string &StoreFilename) :
                Item(Owner), Version(Version), Sources(Sources), Recs(Recs), 
-               StoreFilename(StoreFilename), Vf(Version.FileList())
+               StoreFilename(StoreFilename), Vf(Version.FileList()), 
+	       Trusted(false)
 {
    Retries = _config->FindI("Acquire::Retries",0);
 
@@ -411,7 +724,25 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
      	              QuoteString(Version.Arch(),"_:.") + 
 	              "." + flExtension(Parse.FileName());
    }
-      
+
+   // check if we have one trusted source for the package. if so, switch
+   // to "TrustedOnly" mode
+   for (pkgCache::VerFileIterator i = Version.FileList(); i.end() == false; i++)
+   {
+      pkgIndexFile *Index;
+      if (Sources->FindIndex(i.File(),Index) == false)
+         continue;
+      if (_config->FindB("Debug::pkgAcquire::Auth", false))
+      {
+         std::cerr << "Checking index: " << Index->Describe()
+                   << "(Trusted=" << Index->IsTrusted() << ")\n";
+      }
+      if (Index->IsTrusted()) {
+         Trusted = true;
+	 break;
+      }
+   }
+
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
       _error->Error(_("I wasn't able to locate file for the %s package. "
@@ -437,6 +768,11 @@ bool pkgAcqArchive::QueueNext()
       if (Sources->FindIndex(Vf.File(),Index) == false)
 	    continue;
       
+      // only try to get a trusted package from another source if that source
+      // is also trusted
+      if(Trusted && !Index->IsTrusted()) 
+	 continue;
+
       // Grab the text package record
       pkgRecords::Parser &Parse = Recs->Lookup(Vf);
       if (_error->PendingError() == true)
@@ -448,6 +784,11 @@ bool pkgAcqArchive::QueueNext()
 	 return _error->Error(_("The package index files are corrupted. No Filename: "
 			      "field for package %s."),
 			      Version.ParentPkg().Name());
+
+      Desc.URI = Index->ArchiveURI(PkgFile);
+      Desc.Description = Index->ArchiveInfo(Version);
+      Desc.Owner = this;
+      Desc.ShortDesc = Version.ParentPkg().Name();
 
       // See if we already have the file. (Legacy filenames)
       FileSize = Version->Size;
@@ -609,6 +950,14 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }
 }
 									/*}}}*/
+// AcqArchive::IsTrusted - Determine whether this archive comes from a
+// trusted source							/*{{{*/
+// ---------------------------------------------------------------------
+bool pkgAcqArchive::IsTrusted()
+{
+   return Trusted;
+}
+
 // AcqArchive::Finished - Fetching has finished, tidy up		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

@@ -108,7 +108,7 @@ build/configure-stamp: configure
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
-	cd build && ../configure $(confflags)
+	cd build && CXXFLAGS="$(confcxxflags)" ../configure $(confflags)
 	touch $@
 
 build/build-stamp: build/configure-stamp
@@ -189,25 +189,27 @@ apt: build debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_clean -p$@ -k
-	dh_installdirs -p$@
+	dh_installdirs -p$@ /usr/share/bug/$@ /usr/share/$@
 #
 # apt install
 #
-	cp $(BLD)/bin/apt-* debian/apt/usr/bin/
+	cp $(BLD)/bin/apt-* debian/$@/usr/bin/
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/apt/usr/bin/apt-,$(APT_UTILS))
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS))
 
 	# install the shared libs
-	find $(BLD)/bin/ -type f -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/apt/usr/lib/ \;
-	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/apt/usr/lib/ \;
+	find $(BLD)/bin/ -type f -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
+	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
 
-	cp $(BLD)/bin/methods/* debian/apt/usr/lib/apt/methods/
+	cp $(BLD)/bin/methods/* debian/$@/usr/lib/apt/methods/
 
-	cp $(BLD)/scripts/dselect/* debian/apt/usr/lib/dpkg/methods/apt/
-	cp -r $(BLD)/locale debian/apt/usr/share/
+	cp $(BLD)/scripts/dselect/* debian/$@/usr/lib/dpkg/methods/apt/
+	cp -r $(BLD)/locale debian/$@/usr/share/
 
-	cp debian/bugscript debian/apt/usr/share/bug/apt/script
+	cp debian/bugscript debian/$@/usr/share/bug/apt/script
+
+	cp share/ubuntu-archive.gpg debian/$@/usr/share/$@
 
 #	head -n 500 ChangeLog > debian/ChangeLog
 
@@ -221,7 +223,7 @@ apt: build debian/shlibs.local
 	dh_fixperms -p$@
 	dh_makeshlibs -p$@ -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)'
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib -- -Ldebian/shlibs.local.apt
+	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt-utils
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@

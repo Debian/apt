@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.29 2003/09/22 04:16:26 mdz Exp $
+// $Id: deblistparser.cc,v 1.29.2.5 2004/01/06 01:43:44 mdz Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -566,14 +566,14 @@ bool debListParser::Step()
 bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
 				    FileFd &File)
 {
-   pkgTagFile Tags(&File);
+   pkgTagFile Tags(&File, File.Size() + 256); // XXX
    pkgTagSection Section;
    if (Tags.Step(Section) == false)
       return false;
 
    const char *Start;
    const char *Stop;
-   if (Section.Find("Archive",Start,Stop) == true)
+   if (Section.Find("Suite",Start,Stop) == true)
       FileI->Archive = WriteUniqString(Start,Stop - Start);
    if (Section.Find("Component",Start,Stop) == true)
       FileI->Component = WriteUniqString(Start,Stop - Start);

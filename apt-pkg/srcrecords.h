@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.8 2001/11/04 17:09:18 tausq Exp $
+// $Id: srcrecords.h,v 1.8.2.1 2003/12/26 16:27:34 mdz Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -84,8 +84,8 @@ class pkgSrcRecords
    private:
    
    // The list of files and the current parser pointer
-   Parser **Files;
-   Parser **Current;
+   vector<Parser*> Files;
+   vector<Parser *>::iterator Current;
    
    public:
 

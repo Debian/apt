@@ -481,7 +481,7 @@ double pkgAcquire::PartialPresent()
 	 Total += (*I)->PartialSize;
    return Total;
 }
-									/*}}}*/
+
 // Acquire::UriBegin - Start iterator for the uri list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

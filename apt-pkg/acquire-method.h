@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.15 2001/03/13 06:51:46 jgg Exp $
+// $Id: acquire-method.h,v 1.15.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -39,6 +39,7 @@ class pkgAcqMethod
    {
       string MD5Sum;
       string SHA1Sum;
+      vector<string> GPGVOutput;
       time_t LastModified;
       bool IMSHit;
       string Filename;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.12 2002/07/01 21:41:11 jgg Exp $
+// $Id: sourcelist.h,v 1.12.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -20,7 +20,7 @@
    
    The vendor machanism is similar, except the vendor types are hard 
    wired. Before loading the source list the vendor list is loaded.
-   This doesn't load key data, just the checks to preform.
+   This doesn't load key data, just the checks to perform.
    
    ##################################################################### */
 									/*}}}*/
@@ -30,7 +30,7 @@
 #include <string>
 #include <vector>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/indexfile.h>
+#include <apt-pkg/metaindex.h>
 
 using std::string;
 using std::vector;
@@ -43,18 +43,6 @@ class pkgAquire;
 class pkgSourceList
 {
    public:
-   
-   // An available vendor
-   struct Vendor
-   {
-      string VendorID;
-      string FingerPrint;
-      string Description;
-
-      /* Lets revisit these..
-      bool MatchFingerPrint(string FingerPrint);
-      string FingerPrintDescr();*/
-   };
    
    // List of supported source list types
    class Type
@@ -70,30 +58,25 @@ class pkgSourceList
       const char *Label;
 
       bool FixupURI(string &URI) const;
-      virtual bool ParseLine(vector<pkgIndexFile *> &List,
-			     Vendor const *Vendor,
+      virtual bool ParseLine(vector<metaIndex *> &List,
 			     const char *Buffer,
 			     unsigned long CurLine,string File) const;
-      virtual bool CreateItem(vector<pkgIndexFile *> &List,string URI,
-			      string Dist,string Section,
-			      Vendor const *Vendor) const = 0;
-
+      virtual bool CreateItem(vector<metaIndex *> &List,string URI,
+			      string Dist,string Section) const = 0;
       Type();
       virtual ~Type() {};
    };
    
-   typedef vector<pkgIndexFile *>::const_iterator const_iterator;
+   typedef vector<metaIndex *>::const_iterator const_iterator;
    
    protected:
 
-   vector<pkgIndexFile *> SrcList;
-   vector<Vendor const *> VendorList;
+   vector<metaIndex *> SrcList;
    
    public:
 
    bool ReadMainList();
    bool Read(string File);
-   bool ReadVendors();
    
    // List accessors
    inline const_iterator begin() const {return SrcList.begin();};
@@ -103,7 +86,7 @@ class pkgSourceList
 
    bool FindIndex(pkgCache::PkgFileIterator File,
 		  pkgIndexFile *&Found) const;
-   bool GetIndexes(pkgAcquire *Owner) const;
+   bool GetIndexes(pkgAcquire *Owner, bool GetAll=false) const;
    
    pkgSourceList();
    pkgSourceList(string File);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgdb.cc,v 1.8 2004/01/07 20:39:37 mdz Exp $
+// $Id: dpkgdb.cc,v 1.7.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    DPKGv1 Database Implemenation

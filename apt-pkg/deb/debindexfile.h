@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.h,v 1.3 2001/04/29 05:13:51 jgg Exp $
+// $Id: debindexfile.h,v 1.3.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Debian Index Files
@@ -48,10 +48,10 @@ class debPackagesIndex : public pkgIndexFile
    string URI;
    string Dist;
    string Section;
-   
+
    string Info(const char *Type) const;
    string IndexFile(const char *Type) const;
-   string IndexURI(const char *Type) const;   
+   string IndexURI(const char *Type) const;
    
    public:
    
@@ -63,7 +63,6 @@ class debPackagesIndex : public pkgIndexFile
    
    // Interface for acquire
    virtual string Describe(bool Short) const;   
-   virtual bool GetIndexes(pkgAcquire *Owner) const;
    
    // Interface for the Cache Generator
    virtual bool Exists() const;
@@ -71,8 +70,8 @@ class debPackagesIndex : public pkgIndexFile
    virtual unsigned long Size() const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
-   
-   debPackagesIndex(string URI,string Dist,string Section);
+
+   debPackagesIndex(string URI,string Dist,string Section,bool Trusted);
 };
 
 class debSourcesIndex : public pkgIndexFile
@@ -83,7 +82,7 @@ class debSourcesIndex : public pkgIndexFile
 
    string Info(const char *Type) const;
    string IndexFile(const char *Type) const;
-   string IndexURI(const char *Type) const;   
+   string IndexURI(const char *Type) const;
    
    public:
 
@@ -96,7 +95,6 @@ class debSourcesIndex : public pkgIndexFile
    
    // Interface for acquire
    virtual string Describe(bool Short) const;   
-   virtual bool GetIndexes(pkgAcquire *Owner) const;
 
    // Interface for the record parsers
    virtual pkgSrcRecords::Parser *CreateSrcParser() const;
@@ -106,7 +104,7 @@ class debSourcesIndex : public pkgIndexFile
    virtual bool HasPackages() const {return false;};
    virtual unsigned long Size() const;
    
-   debSourcesIndex(string URI,string Dist,string Section);
+   debSourcesIndex(string URI,string Dist,string Section,bool Trusted);
 };
 
 #endif

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-key</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-key</refname>
+    <refpurpose>APT key management utility</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-key</command>
+      <arg><replaceable>command</replaceable>/</arg>
+      <arg rep="repeat"><option><replaceable>arguments</replaceable></option></arg>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+
+ <refsect1><title>Description</title>
+   <para>
+   <command>apt-key</command> is used to manage the list of keys used
+   by apt to authenticate packages.  Packages which have been
+   authenticated using these keys will be considered trusted.
+   </para>
+</refsect1>
+
+<refsect1><title>Commands</title>
+   <variablelist>
+     <varlistentry><term>add <replaceable>filename</replaceable></term>
+     <listitem>
+     <para>
+
+       Add a new key to the list of trusted keys.  The key is read
+       from <replaceable>filename</replaceable>, or standard input if
+       <replaceable>filename</replaceable> is <literal>-</literal>.
+     </para>
+
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>del <replaceable>keyid</replaceable></term>
+     <listitem>
+     <para>
+
+       Remove a key from the list of trusted keys.
+
+     </para>
+
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>list</term>
+     <listitem>
+     <para>
+
+       List trusted keys.
+     </para>
+
+     </listitem>
+     </varlistentry>
+   </variablelist>
+</refsect1>
+
+<!--  <refsect1><title>See Also</title> -->
+<!--    <para> -->
+<!--    &apt-conf;, &apt-get;, &sources-list; -->
+<!--  </refsect1> -->
+
+ &manbugs;
+ &manauthor;
+
+</refentry>
+
