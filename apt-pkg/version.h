@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.h,v 1.4 1998/07/19 21:24:19 jgg Exp $
+// $Id: version.h,v 1.5 1999/04/19 06:03:09 jgg Exp $
 /* ######################################################################
 
    Version - Version comparison routines
@@ -25,5 +25,6 @@ int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
 		   const char *BEnd);
 int pkgVersionCompare(string A,string B);
 bool pkgCheckDep(const char *DepVer,const char *PkgVer,int Op);
+string pkgBaseVersion(const char *Ver);
 
 #endif

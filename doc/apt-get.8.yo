@@ -89,7 +89,10 @@ find and download into the current directory the newest available version of
 that source package. Source packages are tracked seperately from binary
 packages via df(deb-src) type lines in the bf(/etc/apt/sources.list) file.
 This probably will mean that you will not get the same source as the package
-you have installed or as you could install.
+you have installed or as you could install. If the --compile options is
+specified then the package will be compiled to a binary .deb using
+dpkg-buildpackage, if --download-only is specified then the source package
+will not be unpacked.
 
 dit(bf(check))
 bf(check) is a diagnostic tool; it updates the package cache and checks for 
@@ -172,6 +175,9 @@ abort. See bf(APT::Get::Assume-Yes).
 dit(bf(-u, --show-upgraded))
 Show upgraded packages; Print out a list of all packages that are to be
 upgraded. See bf(APT::Get::Show-Upgraded).
+
+dit(bf(-b, --compile, --build))
+Compile source packages after downloading them.
 
 dit(bf(--ignore-hold))
 Ignore package Holds; This causes bf(apt-get) to ignore a hold placed on 

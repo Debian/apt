@@ -150,7 +150,8 @@ gives the location of the sourcelist and bf(main) is the default configuration
 file (setting has no effect)
 
 Binary programs are pointed to by bf(Dir::Bin). bf(methods) specifies the
-location of the method handlers and bf(gzip), bf(dpkg), bf(apt-get), and
+location of the method handlers and bf(gzip), bf(dpkg), bf(apt-get), 
+bf(dpkg-source), bf(dpkg-buildpackage) and
 bf(apt-cache) specify the location of the respective programs.
 
 manpagesection(APT in DSelect)
@@ -193,6 +194,10 @@ are invoked in order using /bin/sh, should any fail APT will abort.
 
 dit(bf(Run-Directory))
 APT chdirs to this directory before invoking dpkg, the default is /.
+
+dit(bf(Build-Options))
+These options are passed to dpkg-buildpackage when compiling packages,
+the default is to disable signing and produce all binaries.
 
 enddit()
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.53 1999/04/18 06:51:09 jgg Exp $
+// $Id: apt-get.cc,v 1.54 1999/04/19 06:03:09 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1047,6 +1047,13 @@ bool DoCheck(CommandLine &CmdL)
 // DoSource - Fetch a source archive					/*{{{*/
 // ---------------------------------------------------------------------
 /* Fetch souce packages */
+struct DscFile
+{
+   string Package;
+   string Version;
+   string Dsc;
+};
+
 bool DoSource(CommandLine &CmdL)
 {
    CacheFile Cache;
@@ -1070,9 +1077,12 @@ bool DoSource(CommandLine &CmdL)
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
    pkgAcquire Fetcher(&Stat);
+
+   DscFile *Dsc = new DscFile[CmdL.FileSize()];
    
    // Load the requestd sources into the fetcher
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   unsigned J = 0;
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
       
@@ -1130,7 +1140,13 @@ bool DoSource(CommandLine &CmdL)
 	 // Try to guess what sort of file it is we are getting.
 	 string Comp;
 	 if (I->Path.find(".dsc") != string::npos)
+	 {
 	    Comp = "dsc";
+	    Dsc[J].Package = Last->Package();
+	    Dsc[J].Version = Last->Version();
+	    Dsc[J].Dsc = flNotDir(I->Path);
+	 }
+	 
 	 if (I->Path.find(".tar.gz") != string::npos)
 	    Comp = "tar";
 	 if (I->Path.find(".diff.gz") != string::npos)
@@ -1180,6 +1196,7 @@ bool DoSource(CommandLine &CmdL)
       return false;
 
    // Print error messages
+   bool Failed = false;
    for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
    {
       if ((*I)->Status == pkgAcquire::Item::StatDone &&
@@ -1188,8 +1205,51 @@ bool DoSource(CommandLine &CmdL)
       
       cerr << "Failed to fetch " << (*I)->DescURI() << endl;
       cerr << "  " << (*I)->ErrorText << endl;
+      Failed = true;
    }
+   if (Failed == true)
+      return _error->Error("Failed to fetch some archives.");
    
+   if (_config->FindB("APT::Get::Download-only",false) == true)
+      return true;
+   
+   // Unpack the sources
+   for (unsigned I = 0; I != J; I++)
+   {
+      string Dir = Dsc[I].Package + '-' + pkgBaseVersion(Dsc[I].Version.c_str());
+    
+      // See if the package is already unpacked
+      struct stat Stat;
+      if (stat(Dir.c_str(),&Stat) == 0 &&
+	  S_ISDIR(Stat.st_mode) != 0)
+      {
+	 c0out << "Skipping unpack of already unpacked source in " << Dir << endl;
+      }
+      else
+      {
+	 // Call dpkg-source
+	 char S[500];
+	 snprintf(S,sizeof(S),"%s -x %s",
+		  _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
+		  Dsc[I].Dsc.c_str());
+	 if (system(S) != 0)
+	    return _error->Error("Unpack command '%s' failed.",S);
+      }
+  
+      // Try to compile it with dpkg-buildpackage
+      if (_config->FindB("APT::Get::Compile",false) == true)
+      {
+	 // Call dpkg-buildpackage
+	 char S[500];
+	 snprintf(S,sizeof(S),"cd %s && %s %s",
+		  Dir.c_str(),
+		  _config->Find("Dir::Bin::dpkg-buildpackage","dpkg-buildpackage").c_str(),
+		  _config->Find("DPkg::Build-Options","-b -uc").c_str());
+	 
+	 if (system(S) != 0)
+	    return _error->Error("Build command '%s' failed.",S);
+      }      
+   }   
    return true;
 }
 									/*}}}*/
@@ -1277,6 +1337,8 @@ int main(int argc,const char *argv[])
       {'q',"quiet","quiet",CommandLine::IntLevel},
       {'q',"silent","quiet",CommandLine::IntLevel},
       {'d',"download-only","APT::Get::Download-Only",0},
+      {'b',"compile","APT::Get::Compile",0},
+      {'b',"build","APT::Get::Compile",0},
       {'s',"simulate","APT::Get::Simulate",0},      
       {'s',"just-print","APT::Get::Simulate",0},      
       {'s',"recon","APT::Get::Simulate",0},      

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.cc,v 1.8 1998/12/05 01:44:57 jgg Exp $
+// $Id: version.cc,v 1.9 1999/04/19 06:03:09 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -246,5 +246,26 @@ bool pkgCheckDep(const char *DepVer,const char *PkgVer,int Op)
    }
 
    return false;
+}
+									/*}}}*/
+// BaseVersion - Return the upstream version string			/*{{{*/
+// ---------------------------------------------------------------------
+/* This strips all the debian specific information from the version number */
+string pkgBaseVersion(const char *Ver)
+{
+   // Strip off the bit before the first colon
+   const char *I = Ver;
+   for (; *I != 0 && *I != ':'; I++);
+   if (*I == ':')
+      Ver = I + 1;
+   
+   // Chop off the trailing -
+   I = Ver;
+   unsigned Last = strlen(Ver);
+   for (; *I != 0; I++)
+      if (*I == '-')
+	 Last = I - Ver;
+   
+   return string(Ver,Last);
 }
 									/*}}}*/
