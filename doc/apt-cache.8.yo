@@ -20,6 +20,8 @@ itemize(
   it() dumpavail
   it() unmet
   it() check
+  it() search
+  it() show
 )
 
 Unless the -h, or --help option is given one of the above commands
@@ -135,6 +137,18 @@ dit(bf(check))
 bf(check) is a random function for testing certain aspects of the cache.
 Do not use it.
 
+dit(bf(show))
+bf(show) performs the same function as dpkg --print-avail, it displays
+the package records for the named packages.
+
+dit(bf(search))
+bf(search) performs a full text search on all available package files for
+the pattern given. It searchs the package names and the descriptions for
+an occurance of the string and prints out the package name and the short
+description. If --full is given then output identical to bf(show) is produced
+for each matched package and if --names-only is given then the long
+description is not searched, only the package name is.
+
 enddit()
 
 manpageoptions()
@@ -172,6 +186,13 @@ dit(bf(-i --important))
 Print only important deps; for use with unmet causes only em(Depends) and 
 em(Pre-Depends) relations to be printed.
 See bf(APT::Cache::Important).
+
+dit(bf(-f --full))
+Print full package records when searching. See bf(APT::Cache::ShowFull).
+
+dit(bf(--names-only))
+Only search on the package names, not the long description. See
+bf(APT::Cache::Names-Only).
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.27 1999/02/19 07:56:07 jgg Exp $
+// $Id: apt-cache.cc,v 1.28 1999/02/19 08:57:41 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -450,12 +450,52 @@ bool DoAdd(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DisplayRecord - Displays the complete record for the package		/*{{{*/
+// ---------------------------------------------------------------------
+/* This displays the package record from the proper package index file. 
+   It is not used by DumpAvail for performance reasons. */
+bool DisplayRecord(pkgCache::VerIterator V)
+{
+   // Find an appropriate file
+   pkgCache::VerFileIterator Vf = V.FileList();
+   for (; Vf.end() == false; Vf++)
+      if ((Vf.File()->Flags & pkgCache::Flag::NotSource) == 0)
+	 break;
+   if (Vf.end() == true)
+      Vf = V.FileList();
+      
+   // Check and load the package list file
+   pkgCache::PkgFileIterator I = Vf.File();
+   if (I.IsOk() == false)
+      return _error->Error("Package file %s is out of sync.",I.FileName());
+   
+   FileFd PkgF(I.FileName(),FileFd::ReadOnly);
+   if (_error->PendingError() == true)
+      return false;
+   
+   // Read the record and then write it out again.
+   unsigned char *Buffer = new unsigned char[GCache->HeaderP->MaxVerFileSize];
+   if (PkgF.Seek(V.FileList()->Offset) == false ||
+       PkgF.Read(Buffer,V.FileList()->Size) == false ||
+       write(STDOUT_FILENO,Buffer,V.FileList()->Size) != V.FileList()->Size)
+   {
+      delete [] Buffer;
+      return false;
+   }
+   
+   delete [] Buffer;
+
+   return true;
+}
+									/*}}}*/
 // Search - Perform a search						/*{{{*/
 // ---------------------------------------------------------------------
 /* This searches the package names and pacakge descriptions for a pattern */
 bool Search(CommandLine &CmdL)
 {
    pkgCache &Cache = *GCache;
+   bool ShowFull = _config->FindB("APT::Cache::ShowFull",false);
+   bool NamesOnly = _config->FindB("APT::Cache::NamesOnly",false);
    
    // Make sure there is at least one argument
    if (CmdL.FileSize() != 2)
@@ -476,20 +516,50 @@ bool Search(CommandLine &CmdL)
    pkgCache::PkgIterator I = Cache.PkgBegin();
    for (;I.end() != true; I++)
    {
-      if (regexec(&Pattern,I.Name(),0,0,0) == 0)
+      // We search against the install version as that makes the most sense..
+      pkgCache::VerIterator V = GetCandidateVer(I);
+      if (V.end() == true)
+	 continue;
+
+      pkgRecords::Parser &P = Recs.Lookup(V.FileList());
+      
+      if (regexec(&Pattern,I.Name(),0,0,0) == 0 ||
+	  (NamesOnly == false && 
+	   regexec(&Pattern,P.LongDesc().c_str(),0,0,0) == 0))
       {
-	 cout << I.Name();
-	 if (I->VersionList != 0)
-	 {
-	    pkgRecords::Parser &P = Recs.Lookup(I.VersionList().FileList());
-	    cout << " - " << P.ShortDesc() << endl;
-	 }
-	 else 
-	    cout << " [virtual package]" << endl;
+	 if (ShowFull == true)
+	    DisplayRecord(V);
+	 else
+	    cout << I.Name() << " - " << P.ShortDesc() << endl;
       }      
    }
    
    regfree(&Pattern);
+   return true;
+}
+									/*}}}*/
+// ShowPackage - Dump the package record to the screen			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool ShowPackage(CommandLine &CmdL)
+{   
+   pkgCache &Cache = *GCache;
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+      if (Pkg.end() == true)
+      {
+	 _error->Warning("Unable to locate package %s",*I);
+	 continue;
+      }
+      
+      // Find the proper version to use. We should probably use the DepCache.
+      pkgCache::VerIterator V = GetCandidateVer(Pkg);
+      if (V.end() == true || V.FileList().end() == true)
+	 continue;
+      if (DisplayRecord(V) == false)
+	 return false;
+   }
    return true;
 }
 									/*}}}*/
@@ -533,6 +603,7 @@ bool ShowHelp(CommandLine &Cmd)
    cout << "   unmet - Show unmet dependencies" << endl;
    cout << "   check - Check the cache a bit" << endl;
    cout << "   search - Search the package list for a regex pattern" << endl;
+   cout << "   show - Show a readable record for the package" << endl;
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
@@ -565,6 +636,8 @@ int main(int argc,const char *argv[])
       {'s',"src-cache","Dir::Cache::srcpkgcache",CommandLine::HasArg},
       {'q',"quiet","quiet",CommandLine::IntLevel},
       {'i',"important","APT::Cache::Important",0},
+      {'f',"full","APT::Cache::ShowFull",0},
+      {0,"names-only","APT::Cache::NamesOnly",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
@@ -579,6 +652,7 @@ int main(int argc,const char *argv[])
                                     {"unmet",&UnMet},
                                     {"check",&Check},
                                     {"search",&Search},
+                                    {"show",&ShowPackage},
                                     {0,0}};
 
    CacheInitialize();
