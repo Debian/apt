@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: policy.cc,v 1.3 2001/03/03 23:27:24 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -145,9 +145,23 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
       pin that stays at that setting.
     */
    for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; Ver++)
-   {      
+   {     
+      /* This is a side effect of the condition below, and is added for
+         completeness, though it should not be necessary */
+      if (Ver->Arch == 0)
+	 continue;
+      
       for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; VF++)
       {
+	 /* If this is the status file, and the current version is not the
+	    version in the status file (ie it is not installed, or somesuch)
+	    then it is not a candidate for installation, ever. This weeds
+	    out bogus entries that may be due to config-file states, or
+	    other. */
+	 if ((VF.File()->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource &&
+	     Pkg.CurrentVer() != Ver)
+	    continue;
+	 	 	 
 	 signed Prio = PFPriority[VF.File()->ID];
 	 if (Prio > Max)
 	 {
