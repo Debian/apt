@@ -23,7 +23,7 @@ $APTGET $OPTS update || FAILED=1
 set -e
 
 echo "Merging Available information"
-rm -f /var/cache/apt/available
+rm -f $CACHEDIR/available
 $APTCACHE dumpavail > $CACHEDIR/available
 $DPKG --update-avail $CACHEDIR/available
 rm -f $CACHEDIR/available
