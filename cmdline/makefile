@@ -30,7 +30,7 @@ include $(PROGRAM_H)
 PROGRAM=apt-cdrom
 SLIBS = -lapt-pkg
 LIB_MAKES = apt-pkg/makefile
-SOURCE = apt-cdrom.cc indexcopy.cc
+SOURCE = apt-cdrom.cc 
 include $(PROGRAM_H)
 
 # The apt-sortpkgs program

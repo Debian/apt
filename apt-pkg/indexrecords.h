@@ -12,6 +12,7 @@
 #include <apt-pkg/fileutl.h>
 
 #include <map>
+#include <vector>
 
 class indexRecords
 {
@@ -34,7 +35,8 @@ class indexRecords
 
    // Lookup function
    virtual const checkSum *Lookup(const string MetaKey);
-   
+   std::vector<std::string> MetaKeys();
+
    virtual bool Load(string Filename);
    string GetDist() const;
    virtual bool CheckDist(const string MaybeDist) const;

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-12-20 10:20+0100\n"
+"POT-Creation-Date: 2005-01-26 18:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,7 +146,7 @@ msgstr ""
 msgid "       %4i %s\n"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
+#: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:353 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
 #: cmdline/apt-get.cc:2313 cmdline/apt-sortpkgs.cc:144
 #, c-format
@@ -1561,7 +1561,7 @@ msgstr ""
 msgid "Unable to accept connection"
 msgstr ""
 
-#: methods/ftp.cc:864 methods/http.cc:951 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:916 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr ""
 
@@ -1584,7 +1584,7 @@ msgstr ""
 msgid "Query"
 msgstr ""
 
-#: methods/ftp.cc:1107
+#: methods/ftp.cc:1106
 msgid "Unable to invoke "
 msgstr ""
 
@@ -1655,76 +1655,76 @@ msgstr ""
 msgid "Read error from %s process"
 msgstr ""
 
-#: methods/http.cc:379
+#: methods/http.cc:344
 msgid "Waiting for headers"
 msgstr ""
 
-#: methods/http.cc:525
+#: methods/http.cc:490
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr ""
 
-#: methods/http.cc:533
+#: methods/http.cc:498
 msgid "Bad header line"
 msgstr ""
 
-#: methods/http.cc:552 methods/http.cc:559
+#: methods/http.cc:517 methods/http.cc:524
 msgid "The http server sent an invalid reply header"
 msgstr ""
 
-#: methods/http.cc:588
+#: methods/http.cc:553
 msgid "The http server sent an invalid Content-Length header"
 msgstr ""
 
-#: methods/http.cc:603
+#: methods/http.cc:568
 msgid "The http server sent an invalid Content-Range header"
 msgstr ""
 
-#: methods/http.cc:605
+#: methods/http.cc:570
 msgid "This http server has broken range support"
 msgstr ""
 
-#: methods/http.cc:629
+#: methods/http.cc:594
 msgid "Unknown date format"
 msgstr ""
 
-#: methods/http.cc:772
+#: methods/http.cc:737
 msgid "Select failed"
 msgstr ""
 
-#: methods/http.cc:777
+#: methods/http.cc:742
 msgid "Connection timed out"
 msgstr ""
 
-#: methods/http.cc:800
+#: methods/http.cc:765
 msgid "Error writing to output file"
 msgstr ""
 
-#: methods/http.cc:828
+#: methods/http.cc:793
 msgid "Error writing to file"
 msgstr ""
 
-#: methods/http.cc:853
+#: methods/http.cc:818
 msgid "Error writing to the file"
 msgstr ""
 
-#: methods/http.cc:867
+#: methods/http.cc:832
 msgid "Error reading from server Remote end closed connection"
 msgstr ""
 
-#: methods/http.cc:869
+#: methods/http.cc:834
 msgid "Error reading from server"
 msgstr ""
 
-#: methods/http.cc:1100
+#: methods/http.cc:1065
 msgid "Bad header Data"
 msgstr ""
 
-#: methods/http.cc:1117
+#: methods/http.cc:1082
 msgid "Connection failed"
 msgstr ""
 
-#: methods/http.cc:1208
+#: methods/http.cc:1173
 msgid "Internal error"
 msgstr ""
 
@@ -2290,4 +2290,94 @@ msgstr ""
 #: apt-pkg/vendorlist.cc:66
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:487
+#, c-format
+msgid ""
+"Using CD-ROM mount point %s\n"
+"Mounting CD-ROM\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
+msgid "Identifying.. "
+msgstr ""
+
+#: apt-pkg/cdrom.cc:521
+#, c-format
+msgid "Stored Label: %s \n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:541
+#, c-format
+msgid "Using CD-ROM mount point %s\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:559
+msgid "Unmounting CD-ROM\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:563
+msgid "Waiting for disc...\n"
+msgstr ""
+
+#. Mount the new CDROM
+#: apt-pkg/cdrom.cc:571
+msgid "Mounting CD-ROM...\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:589
+msgid "Scanning Disc for index files..\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:627
+#, c-format
+msgid "Found %i package indexes, %i source indexes and %i signatures\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:684
+msgid "That is not a valid name, try again.\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:700
+#, c-format
+msgid ""
+"This Disc is called: \n"
+"'%s'\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:704
+msgid "Copying package lists..."
+msgstr ""
+
+#: apt-pkg/cdrom.cc:728
+msgid "Writing new source list\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:737
+msgid "Source List entries for this Disc are:\n"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:771
+msgid "Unmounting CD-ROM..."
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:261
+#, c-format
+msgid "Wrote %i records.\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:263
+#, c-format
+msgid "Wrote %i records with %i missing files.\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:266
+#, c-format
+msgid "Wrote %i records with %i mismachted files\n"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:269
+#, c-format
+msgid "Wrote %i records with %i missing files and %i mismachted files\n"
 msgstr ""

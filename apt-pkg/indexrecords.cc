@@ -83,6 +83,17 @@ bool indexRecords::Load(const string Filename)
    return true;
 }
 
+vector<string> indexRecords::MetaKeys()
+{
+   std::vector<std::string> keys;
+   std::map<string,checkSum *>::iterator I = Entries.begin();
+   while(I != Entries.end()) {
+      keys.push_back((*I).first);
+      ++I;
+   }
+   return keys;
+}
+
 bool indexRecords::parseSumData(const char *&Start, const char *End,
 				   string &Name, string &Hash, size_t &Size)
 {

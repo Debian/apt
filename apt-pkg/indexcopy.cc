@@ -18,8 +18,13 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/cdrom.h>
+#include <apti18n.h>
 
 #include <iostream>
+#include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -30,12 +35,15 @@ using namespace std;
 // IndexCopy::CopyPackages - Copy the package files from the CD		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
+bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
+			     pkgCdromStatus *log)
 {
+   OpProgress *Progress = NULL;
    if (List.size() == 0)
       return true;
    
-   OpTextProgress Progress;
+   if(log) 
+      Progress = log->GetOpProgress();
    
    bool NoStat = _config->FindB("APT::CDROM::Fast",false);
    bool Debug = _config->FindB("Debug::aptcdrom",false);
@@ -130,11 +138,13 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
 	 return _error->Errno("fdopen","Failed to reopen fd");
       
       // Setup the progress meter
-      Progress.OverallProgress(CurrentSize,TotalSize,FileSize,
-			       string("Reading ") + Type() + " Indexes");
+      if(Progress)
+	 Progress->OverallProgress(CurrentSize,TotalSize,FileSize,
+				   string("Reading ") + Type() + " Indexes");
 
       // Parse
-      Progress.SubProgress(Pkg.Size());
+      if(Progress)
+	 Progress->SubProgress(Pkg.Size());
       pkgTagSection Section;
       this->Section = &Section;
       string Prefix;
@@ -142,7 +152,8 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
       unsigned long Chop = 0;
       while (Parser.Step(Section) == true)
       {
-	 Progress.Progress(Parser.Offset());
+	 if(Progress)
+	    Progress->Progress(Parser.Offset());
 	 string File;
 	 unsigned long Size;
 	 if (GetFile(File,Size) == false)
@@ -230,35 +241,8 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
 	 FinalF += URItoFileName(S);
 	 if (rename(TargetF.c_str(),FinalF.c_str()) != 0)
 	    return _error->Errno("rename","Failed to rename");
-
-	 // Copy the release file
-	 snprintf(S,sizeof(S),"cdrom:[%s]/%sRelease",Name.c_str(),
-		  (*I).c_str() + CDROM.length());
-	 string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
-	 TargetF += URItoFileName(S);
-	 if (FileExists(*I + "Release") == true)
-	 {
-	    FileFd Target(TargetF,FileFd::WriteEmpty);
-	    FileFd Rel(*I + "Release",FileFd::ReadOnly);
-	    if (_error->PendingError() == true)
-	       return false;
-	    
-	    if (CopyFile(Rel,Target) == false)
-	       return false;
-	 }
-	 else
-	 {
-	    // Empty release file
-	    FileFd Target(TargetF,FileFd::WriteEmpty);	    
-	 }	 
-
-	 // Rename the release file
-	 FinalF = _config->FindDir("Dir::State::lists");
-	 FinalF += URItoFileName(S);
-	 if (rename(TargetF.c_str(),FinalF.c_str()) != 0)
-	    return _error->Errno("rename","Failed to rename");
       }
-      
+	 
       /* Mangle the source to be in the proper notation with
        	 prefix dist [component] */ 
       *I = string(*I,Prefix.length());
@@ -267,23 +251,30 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
       
       CurrentSize += FileSize;
    }   
-   Progress.Done();
+   if(Progress)
+      Progress->Done();
    
    // Some stats
-   cout << "Wrote " << Packages << " records" ;
-   if (NotFound != 0)
-      cout << " with " << NotFound << " missing files";
-   if (NotFound != 0 && WrongSize != 0)
-      cout << " and"; 
-   if (WrongSize != 0)
-      cout << " with " << WrongSize << " mismatched files";
-   cout << '.' << endl;
+   if(log) {
+      stringstream msg;
+      if(NotFound == 0 && WrongSize == 0)
+	 ioprintf(msg, _("Wrote %i records.\n"), Packages);
+      else if (NotFound != 0 && WrongSize == 0)
+	 ioprintf(msg, _("Wrote %i records with %i missing files.\n"), 
+		  Packages, NotFound);
+      else if (NotFound == 0 && WrongSize != 0)
+	 ioprintf(msg, _("Wrote %i records with %i mismachted files\n"), 
+		  Packages, WrongSize);
+      if (NotFound != 0 && WrongSize != 0)
+	 ioprintf(msg, _("Wrote %i records with %i missing files and %i mismachted files\n"), Packages, NotFound, WrongSize);
+   }
    
    if (Packages == 0)
       _error->Warning("No valid records were found.");
 
    if (NotFound + WrongSize > 10)
-      cout << "Alot of entries were discarded, something may be wrong." << endl;
+      _error->Warning("Alot of entries were discarded, something may be wrong.\n");
+   
 
    return true;
 }
@@ -521,4 +512,133 @@ bool SourceCopy::RewriteEntry(FILE *Target,string File)
    fputc('\n',Target);
    return true;
 }
+
+
 									/*}}}*/
+
+bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
+{
+   const indexRecords::checkSum *Record = MetaIndex->Lookup(file);
+
+   if (!Record) 
+   {
+      _error->Warning("Can't find authentication record for: %s",file.c_str());
+      return false;
+   }
+
+   MD5Summation sum;
+   FileFd Fd(prefix+file, FileFd::ReadOnly);
+   sum.AddFD(Fd.Fd(), Fd.Size());
+   Fd.Close();
+   string MD5 = (string)sum.Result();
+   
+   if (Record->MD5Hash != MD5)
+   {
+      _error->Warning("MD5 mismatch for: %s",file.c_str());
+      return false;
+   }
+
+   if(_config->FindB("Debug::aptcdrom",false)) 
+   {
+      cout << "File: " << prefix+file << endl;
+      cout << "Expected MD5sum: " << Record->MD5Hash << endl;
+      cout << "got: " << MD5 << endl << endl;
+   }
+
+   return true;
+}
+
+bool SigVerify::CopyMetaIndex(string CDROM, string CDName, 
+			      string prefix, string file)
+{
+      char S[400];
+      snprintf(S,sizeof(S),"cdrom:[%s]/%s%s",CDName.c_str(),
+	       (prefix).c_str() + CDROM.length(),file.c_str());
+      string TargetF = _config->FindDir("Dir::State::lists");
+      TargetF += URItoFileName(S);
+
+      FileFd Target;
+      FileFd Rel;
+      Target.Open(TargetF,FileFd::WriteEmpty);
+      Rel.Open(prefix + file,FileFd::ReadOnly);
+      if (_error->PendingError() == true)
+	 return false;
+      if (CopyFile(Rel,Target) == false)
+	 return false;
+   
+      return true;
+}
+
+bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
+			      vector<string> PkgList,vector<string> SrcList)
+{
+   if (SigList.size() == 0)
+      return true;
+
+   bool Debug = _config->FindB("Debug::aptcdrom",false);
+
+   // Read all Release files
+   for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); I++)
+   { 
+      if(Debug)
+	 cout << "Signature verify for: " << *I << endl;
+
+      indexRecords *MetaIndex = new indexRecords;
+      string prefix = *I; 
+
+      // a Release.gpg without a Release should never happen
+      if(!FileExists(*I+"Release"))
+	 continue;
+
+
+      // verify the gpg signature of "Release"
+      // gpg --verify "*I+Release.gpg", "*I+Release"
+      string gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
+      string pubringpath = _config->Find("Apt::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
+      pid_t pid = ExecFork();
+      if(pid < 0) {
+	 _error->Error("Fork failed");
+	 return false;
+      }
+      if(pid == 0) {
+	 execlp(gpgvpath.c_str(), gpgvpath.c_str(), "--keyring", 
+		pubringpath.c_str(), string(*I+"Release.gpg").c_str(), 
+		string(*I+"Release").c_str(), NULL);
+      }
+      if(!ExecWait(pid, "gpgv")) {
+	 _error->Warning("Signature verification failed for: %s",
+			 string(*I+"Release.gpg").c_str());
+	 // something went wrong, don't copy the Release.gpg
+	 // FIXME: delete any existing gpg file?
+	 continue;
+      }
+
+      // Open the Release file and add it to the MetaIndex
+      if(!MetaIndex->Load(*I+"Release"))
+      {
+	 _error->Error(MetaIndex->ErrorText.c_str());
+	 return false;
+      }
+      
+      // go over the Indexfiles and see if they verify
+      // if so, remove them from our copy of the lists
+      vector<string> keys = MetaIndex->MetaKeys();
+      for (vector<string>::iterator I = keys.begin(); I != keys.end(); I++)
+      { 
+	 if(!Verify(prefix,*I, MetaIndex)) {
+	    // something went wrong, don't copy the Release.gpg
+	    // FIXME: delete any existing gpg file?
+	    continue;	 
+	 }
+      }
+
+      // we need a fresh one for the Release.gpg
+      delete MetaIndex;
+   
+      // everything was fine, copy the Release and Release.gpg file
+      CopyMetaIndex(CDROM, Name, prefix, "Release");
+      CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
+   }   
+
+   return true;
+}

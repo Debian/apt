@@ -1,3 +1,18 @@
+apt (0.6.31) hoary; urgency=low
+
+  * Matt Zimmerman
+    - Remove debugging output from apt.cron.daily (no one noticed?)
+    - Apply patch from Anthony Towns to allow SHA1Summation to process a file
+      descriptor until EOF, rather than requiring that the length of input be
+      specified (Closes: #291338)
+    - Fix build/install of Polish offline documentation, based on patch from
+      Christian Perrier (Closes: #270404)
+  * Michael Vogt
+    - apt-cdrom.cc seperated into frontend (cmdline/apt-cdrom.cc and library
+      apt-pkg/cdrom.{cc,h}) (Ubuntu #5668)
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Fri,  4 Feb 2005 10:23:01 -0800
+
 apt (0.6.30) unstable; urgency=low
 
   * Add ppc64 to buildlib/archtable

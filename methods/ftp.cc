@@ -1098,9 +1098,6 @@ int main(int argc,const char *argv[])
 	 char S[300];
 	 snprintf(S,sizeof(S),"http_proxy=%s",getenv("ftp_proxy"));
 	 putenv(S);
-	 // mvo: because we switch from ftp to http we have to unset
-	 //      "no_proxy". otherwise the http method would try to 
-	 //      get a ftp url using http (see #283718)
 	 putenv("no_proxy=");
 	 
 	 // Run the http method
