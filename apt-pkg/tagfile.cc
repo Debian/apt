@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.17 1998/12/07 07:26:22 jgg Exp $
+// $Id: tagfile.cc,v 1.18 1998/12/08 05:24:41 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -45,7 +45,7 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 	 return false;
       
       if (Tag.Scan(Start,End - Start) == false)
-	 return _error->Error("Unable to parse package file");
+	 return _error->Error("Unable to parse package file %s",Fd.Name().c_str());
    }   
    Start += Tag.size();
    iOffset += Tag.size();
@@ -61,16 +61,27 @@ bool pkgTagFile::Fill()
 {
    unsigned long EndSize = End - Start;
    
-   if (Left == 0)
-   {
-      if (EndSize <= 1)
-	 return false;
-      return true;
-   }
-   
    memmove(Buffer,Start,EndSize);
    Start = Buffer;
    End = Buffer + EndSize;
+   
+   if (Left == 0)
+   {
+      if (EndSize <= 3)
+	 return false;
+      if (Size - (End - Buffer) < 4)
+	 return true;
+      
+      // Append a double new line if one does not exist
+      unsigned int LineCount = 0;
+      for (const char *E = End - 1; E - End < 6 && (*E == '\n' || *E == '\r'); E--)
+	 if (*E == '\n')
+	    LineCount++;
+      for (; LineCount < 2; LineCount++)
+	 *End++ = '\n';
+      
+      return true;
+   }
    
    // See if only a bit of the file is left
    if (Left < Size - (End - Buffer))
@@ -122,6 +133,9 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
    const char *End = Start + MaxLength;
    Stop = Section = Start;
    memset(AlphaIndexes,0,sizeof(AlphaIndexes));
+
+   if (Stop == 0)
+      return false;
    
    TagCount = 0;
    while (TagCount < sizeof(Indexes)/sizeof(Indexes[0]))

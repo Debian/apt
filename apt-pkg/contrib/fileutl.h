@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.10 1998/11/27 01:14:09 jgg Exp $
+// $Id: fileutl.h,v 1.11 1998/12/08 05:24:43 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -52,7 +52,8 @@ class FileFd
    inline bool Failed() {return (Flags & Fail) == Fail;};
    inline void EraseOnFailure() {Flags |= DelOnFail;};
    inline void OpFail() {Flags |= Fail;};
-      
+   inline string &Name() {return FileName;};
+   
    FileFd(string FileName,OpenMode Mode,unsigned long Perms = 0666);
    FileFd(int Fd) : iFd(Fd), Flags(AutoClose) {};
    FileFd(int Fd,bool) : iFd(Fd), Flags(0) {};
