@@ -1,10 +1,3 @@
-apt (0.5.26) unstable; urgency=low
-
-  * Updated French translation from Christian Perrier <bubulle@debian.org>
-    (Closes: #246925)
-
- -- 
-
 apt (0.5.25) unstable; urgency=low
 
   * Fix typo in apt-cache(8) (Closes: #238578)
@@ -39,8 +32,16 @@ apt (0.5.25) unstable; urgency=low
     detect if a line is longer than that and error out
     (Closes: #244835)
   * Suppress a signed/unsigned warning in apt-cache.cc:DisplayRecord
+  * Build apt-ftparchive with libdb4.2 rather than libdb2
+    - Patch from Clint Adams to do most of the work
+    - Build-Depends: s/libdb2-dev/libdb4.2-dev/
+    - Add AC_PREREQ(2.50) to configure.in
+    - Use db_strerror(err) rather than GlobalError::Errno (which uses errno)
+  * Run make -C po update-po to update .po files
+  * Updated French translation from Christian Perrier <bubulle@debian.org>
+    (Closes: #246925)
 
- -- Matt Zimmerman <mdz@debian.org>  Thu, 29 Apr 2004 21:33:48 -0700
+ --
 
 apt (0.5.24) unstable; urgency=low
 
