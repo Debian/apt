@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.58 2004/02/27 00:52:41 mdz Exp $
+// $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -203,13 +203,17 @@ bool CircleBuf::WriteTillEl(string &Data,bool Single)
    {      
       if (Buf[I%Size] != '\n')
 	 continue;
-      for (I++; I < InP && Buf[I%Size] == '\r'; I++);
+      ++I;
+      if (I < InP  && Buf[I%Size] == '\r')
+         ++I;
       
       if (Single == false)
       {
 	 if (Buf[I%Size] != '\n')
 	    continue;
-	 for (I++; I < InP && Buf[I%Size] == '\r'; I++);
+         ++I;
+         if (I < InP  && Buf[I%Size] == '\r')
+            ++I;
       }
       
       if (I > InP)
