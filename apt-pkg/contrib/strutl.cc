@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.35 2001/02/20 07:03:17 jgg Exp $
+// $Id: strutl.cc,v 1.36 2001/02/23 05:45:27 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -877,6 +877,30 @@ void ioprintf(ostream &out,const char *format,...)
    char S[400];
    vsnprintf(S,sizeof(S),format,args);
    out << S;
+}
+									/*}}}*/
+
+// CheckDomainList - See if Host is in a , seperate list		/*{{{*/
+// ---------------------------------------------------------------------
+/* The domain list is a comma seperate list of domains that are suffix
+   matched against the argument */
+bool CheckDomainList(string Host,string List)
+{
+   const char *Start = List.begin();
+   for (const char *Cur = List.begin(); Cur <= List.end() ; Cur++)
+   {
+      if (Cur < List.end() && *Cur != ',')
+	 continue;
+      
+      // Match the end of the string..
+      if ((Host.size() >= (Cur - List.begin())) &&
+	  Cur - Start != 0 &&
+	  stringcasecmp(Host.end() - (Cur - Start),Host.end(),Start,Cur) == 0)
+	 return true;
+      
+      Start = Cur + 1;
+   }
+   return false;
 }
 									/*}}}*/
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.16 2001/02/20 07:03:17 jgg Exp $
+// $Id: strutl.h,v 1.17 2001/02/23 05:45:27 jgg Exp $
 /* ######################################################################
 
    String Util - These are some useful string functions
@@ -53,6 +53,7 @@ bool Hex2Num(const char *Start,const char *End,unsigned char *Num,
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 void ioprintf(ostream &out,const char *format,...) APT_FORMAT2;
+bool CheckDomainList(string Host,string List);
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};

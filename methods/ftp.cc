@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.21 2001/02/20 07:03:18 jgg Exp $
+// $Id: ftp.cc,v 1.22 2001/02/23 05:45:27 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -124,6 +124,13 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
    }
    else
       Proxy = getenv("ftp_proxy");
+   
+   // Parse no_proxy, a , separated list of domains
+   if (getenv("no_proxy") != 0)
+   {
+      if (CheckDomainList(ServerName.Host,getenv("no_proxy")) == true)
+	 Proxy = "";
+   }
    
    // Determine what host and port to use based on the proxy settings
    int Port = 0;
@@ -1071,6 +1078,15 @@ int main(int argc,const char *argv[])
    if (getenv("ftp_proxy") != 0)
    {
       URI Proxy = string(getenv("ftp_proxy"));
+      
+      // Parse no_proxy, a , separated list of domains
+      if (getenv("no_proxy") != 0)
+      {
+	 if (CheckDomainList(Proxy.Host,getenv("no_proxy")) == true)
+	    Proxy.Access = "";
+      }
+      
+      // Run the HTTP method
       if (Proxy.Access == "http")
       {
 	 // Copy over the environment setting
