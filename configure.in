@@ -20,10 +20,8 @@ dnl -- SET THIS TO THE RELEASE VERSION --
 AC_DEFINE_UNQUOTED(VERSION,"0.3.15")
 AC_DEFINE_UNQUOTED(PACKAGE,"apt")
 
-dnl Tom's host stuff
-AC_CHECK_TOOL_PREFIX	dnl Initial guess
-
 dnl Check our C compiler
+AC_CHECK_TOOL_PREFIX
 AC_PROG_CC
 AC_ISC_POSIX
 
@@ -33,32 +31,45 @@ AC_CHECK_TOOL_PREFIX	dnl recheck, in case the initial guess was wrong
 
 dnl Check for other programs
 AC_PROG_CXX
-AC_LANG_CPLUSPLUS
-dnl Checks for X11
-AC_PATH_X
-AC_PATH_XTRA
-AC_SUBST(X11LIB)
-X11LIB=
-if test "$no_x" != "yes"; then
-  X11LIB="-lX11"
-  AC_DEFINE(HAVE_X11)
-  dnl Checks for ZPM
-  AC_CHECK_LIB(Xpm, XpmLibraryVersion,[AC_DEFINE(HAVE_LIBXPM) XPMLIB="-lXpm"],,$X_LIBS $X_PRE_LIBS $X11LIB $X_EXTRA_LIBS)
-  AC_SUBST(XPMLIB)
-  if test "$XPMLIB" != "-lXpm"; then
-     AC_MSG_ERROR(failed: I need xpm if you are building for X)
-  fi
-fi
+#AC_LANG_CPLUSPLUS
 
-dnl Checks for Slang
-AC_CHECK_LIB(slang, SLang_Version,[AC_DEFINE(HAVE_LIBSLANG) SLANGLIB="-lslang"])
-AC_SUBST(SLANGLIB)
+dnl Checks for sockets
+SAVE_LIBS="$LIBS"
+LIBS=""
+AC_SEARCH_LIBS(gethostbyname,nsl)
+AC_SEARCH_LIBS(connect,socket)
+SOCKETLIBS="$LIBS"
+AC_SUBST(SOCKETLIBS)
+LIBS="$SAVE_LIBS"
 
-dnl Checks for GPM
-AC_ARG_WITH(gpm,[  --without-gpm		  do not use GPM mouse support])
-if test "$with_gpm" != "no"; then
-  AC_CHECK_LIB(gpm, Gpm_Open,[AC_DEFINE(HAVE_LIBGPM) GPMLIB="-lgpm"])
-  AC_SUBST(GPMLIB)
+dnl Section Disabled pending removal of deity widget library  -- jgg
+if test "yes" != "yes"; then
+ dnl Checks for X11
+ AC_PATH_X
+ AC_PATH_XTRA
+ AC_SUBST(X11LIB)
+ X11LIB=
+ if test "$no_x" != "yes"; then
+   X11LIB="-lX11"
+   AC_DEFINE(HAVE_X11)
+   dnl Checks for ZPM
+   AC_CHECK_LIB(Xpm, XpmLibraryVersion,[AC_DEFINE(HAVE_LIBXPM) XPMLIB="-lXpm"],,$X_LIBS $X_PRE_LIBS $X11LIB $X_EXTRA_LIBS)
+   AC_SUBST(XPMLIB)
+   if test "$XPMLIB" != "-lXpm"; then
+      AC_MSG_ERROR(failed: I need xpm if you are building for X)
+   fi
+ fi
+ 
+ dnl Checks for Slang
+ AC_CHECK_LIB(slang, SLang_Version,[AC_DEFINE(HAVE_LIBSLANG) SLANGLIB="-lslang"])
+ AC_SUBST(SLANGLIB)
+ 
+ dnl Checks for GPM
+ AC_ARG_WITH(gpm,[  --without-gpm		  do not use GPM mouse support])
+ if test "$with_gpm" != "no"; then
+   AC_CHECK_LIB(gpm, Gpm_Open,[AC_DEFINE(HAVE_LIBGPM) GPMLIB="-lgpm"])
+   AC_SUBST(GPMLIB)
+ fi
 fi
 
 dnl Checks for pthread
