@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.cc,v 1.2 1999/04/19 02:35:38 jgg Exp $
+// $Id: cachefile.cc,v 1.3 1999/05/04 20:09:48 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -26,7 +26,7 @@
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgCacheFile::pkgCacheFile() : Map(0), Cache(0), Lock() 
+pkgCacheFile::pkgCacheFile() : Map(0), Cache(0), Lock(0) 
 {
 }
 									/*}}}*/
