@@ -5,6 +5,8 @@
 # Input
 # $(SOURCE) - The documents to use
 # $(TO)     - The directory to put them in
+# $(TARGET) - The global target to add the local target as a dependency
+#             to.
 # All output is writtin to files in the build/$(TO) directory
 
 # See defaults.mak for information about LOCAL
@@ -14,7 +16,7 @@ LOCAL := copy-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(addprefix $(TO)/,$(SOURCE))
 
 # Install generation hooks
-doc: $($(LOCAL)-LIST)
+$(TARGET): $($(LOCAL)-LIST)
 veryclean: veryclean/$(LOCAL)
 
 MKDIRS += $(dir $($(LOCAL)-LIST))

@@ -20,4 +20,5 @@ include $(SGML_MANPAGE_H)
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index 
 TO = $(DOC)
+TARGET = doc
 include $(COPY_H)
