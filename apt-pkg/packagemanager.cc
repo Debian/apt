@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.28 2001/05/27 05:36:04 jgg Exp $
+// $Id: packagemanager.cc,v 1.29 2002/04/02 06:01:49 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -483,13 +483,16 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 
 	    Bad = !SmartConfigure(Pkg);
 	 }
-	 
+
 	 /* If this or element did not match then continue on to the
-	    next or element until a matching element is found*/
+	    next or element until a matching element is found */
 	 if (Bad == true)
-	 {	    
+	 {
+	    // This triggers if someone make a pre-depends/depend loop.
 	    if (Start == End)
-	       return _error->Error("Internal Error, Couldn't configure a pre-depend");
+	       return _error->Error("Couldn't configure pre-depend %s for %s, "
+				    "probably a dependency cycle.",
+				    End.TargetPkg().Name(),Pkg.Name());
 	    Start++;
 	 }
 	 else
