@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.10 2000/03/18 07:39:33 jgg Exp $
+// $Id: gzip.cc,v 1.11 2001/03/06 03:11:22 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -26,7 +26,7 @@ class GzipMethod : public pkgAcqMethod
    
    public:
    
-   GzipMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
+   GzipMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
 };
 
 // GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
@@ -36,6 +36,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
    string Path = Get.Host + Get.Path; // To account for relative paths
+   string GzipPath = _config->Find("Dir::bin::gzip","gzip");
    
    FetchResult Res;
    Res.Filename = Itm->DestFile;
@@ -51,7 +52,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    // Fork gzip
    int Process = fork();
    if (Process < 0)
-      return _error->Errno("fork","Couldn't fork gzip");
+      return _error->Errno("fork",string("Couldn't fork "+GzipPath).c_str());
    
    // The child
    if (Process == 0)
@@ -64,7 +65,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       SetCloseExec(STDOUT_FILENO,false);
       
       const char *Args[3];
-      Args[0] = _config->Find("Dir::bin::gzip","gzip").c_str();
+      Args[0] = GzipPath.c_str();
       Args[1] = "-d";
       Args[2] = 0;
       execvp(Args[0],(char **)Args);
@@ -73,7 +74,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    From.Close();
    
    // Wait for gzip to finish
-   if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
+   if (ExecWait(Process,GzipPath.c_str(),false) == false)
    {
       To.OpFail();
       return false;
