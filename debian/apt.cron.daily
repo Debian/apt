@@ -35,6 +35,51 @@ update_stamp()
     touch $stamp
 }
 
+
+
+# we check here if autoclean was enough sizewise
+check_size_constraints()
+{
+    # min-age in days
+    MaxAge=0
+    MaxSize=0
+    CacheDir="var/cache/apt"
+    CacheArchive="archives/"
+    eval $(apt-config shell MaxAge APT::Archives::MaxAge)
+    eval $(apt-config shell MaxSize APT::Archives::MaxSize)
+    eval $(apt-config shell CacheDir Dir::Cache)
+    eval $(apt-config shell CacheArchive Dir::Cache::archives)
+
+    # sanity check
+    if [ -z "$CacheDir" -o -z "$CacheArchive" ]; then
+	echo "empty Dir::Cache or Dir::Cache::archives, exiting"
+	exit
+    fi
+    Cache="/"$CacheDir$CacheArchive
+
+    # check age
+    if [ ! $MaxAge -eq 0 ]; then
+	find $Cache -name "*.deb"  -mtime +$MaxAge -print0 | xargs -r -0 rm -f
+    fi
+    
+    # check size
+    if [ ! $MaxSize -eq 0 ]; then
+	# reverse-sort by mtime
+	for file in $(ls -rt $Cache/*.deb); do 
+	    du=$(du -s $Cache)
+	    size=${du%%/*}
+	    # check if the cache is small enough
+	    if [ $size -lt $MaxSize ]; then
+		break
+	    fi
+	    # delete oldest file
+	    rm -f $file
+	done
+    fi
+}
+
+check_size_constraints
+
 UpdateInterval=0
 DownloadUpgradeableInterval=0
 eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
@@ -72,5 +117,6 @@ fi
 AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
 if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
     apt-get -qq autoclean
+    check_size_contrains
     update_stamp $AUTOCLEAN_STAMP
 fi
