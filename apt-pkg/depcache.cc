@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.16 1999/04/12 04:21:20 jgg Exp $
+// $Id: depcache.cc,v 1.17 1999/04/16 21:46:13 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -205,10 +205,7 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,long Mult)
    
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
        P.Keep() == true)
-   {
-      iUsrSize += Mult*P.InstVerIter(*this)->InstalledSize;
       return;
-   }
    
    // Compute the size data
    if (P.NewInstall() == true)

@@ -24,7 +24,7 @@ SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
 SOURCE+= pkgcache.cc version.cc fileutl.cc pkgcachegen.cc depcache.cc \
          orderlist.cc tagfile.cc sourcelist.cc packagemanager.cc \
 	 pkgrecords.cc algorithms.cc acquire.cc acquire-item.cc \
-	 acquire-worker.cc acquire-method.cc init.cc clean.cc templates.cc \
+	 acquire-worker.cc acquire-method.cc init.cc clean.cc \
 	 srcrecords.cc
 
 # Source code for the debian specific components
