@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.1 1998/07/07 04:17:06 jgg Exp $
+// $Id: sourcelist.h,v 1.2 1998/07/09 05:12:31 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -68,10 +68,6 @@ class pkgSourceList
    pkgSourceList();
    pkgSourceList(string File);   
 };
-
-bool pkgUpdateMeta(pkgSourceList &List,pkgAquire &Engine);
-bool pkgMakeSrcCache(pkgSourceList &List);
-bool pkgMakeStatusCache();
 
 ostream &operator <<(ostream &O,pkgSourceList::Item &Itm);
 

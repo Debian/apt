@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.7 1998/07/07 04:17:04 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.8 1998/07/09 05:12:27 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -17,6 +17,7 @@
 #include <pkglib/pkgcachegen.h>
 #include <pkglib/error.h>
 #include <pkglib/version.h>
+#include <strutl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -329,9 +330,7 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    for (; I != Cache.StringItemP; Last = &I->NextItem, 
         I = Cache.StringItemP + I->NextItem)
    {
-      Res = strncmp(Cache.StrP + I->String,S,Size);
-      if (Res == 0 && *(Cache.StrP + I->String + Size) != 0)
-	 Res = 1;
+      Res = stringcmp(S,S+Size,Cache.StrP + I->String);
       if (Res >= 0)
 	 break;
    }

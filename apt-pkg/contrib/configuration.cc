@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.1 1998/07/07 04:17:10 jgg Exp $
+// $Id: configuration.cc,v 1.2 1998/07/09 05:12:33 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -20,7 +20,8 @@
 
 #include <stdio.h>
 									/*}}}*/
-Configuration *_config;
+
+Configuration *_config = new Configuration;
 
 // Configuration::Configuration - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -41,17 +42,18 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
    Item *I = Head->Child;
    Item **Last = &Head->Child;
    for (; I != 0; Last = &I->Next, I = I->Next)
-      if ((Res = stringcasecmp(I->Value.begin(),I->Value.end(),S,S + Len)) == 0)
+      if ((Res = stringcasecmp(I->Tag.begin(),I->Tag.end(),S,S + Len)) == 0)
 	 break;
-
+   
    if (Res == 0)
       return I;
    if (Create == false)
       return 0;
    
    I = new Item;
-   I->Value = string(S,Len);
+   I->Tag = string(S,Len);
    I->Next = *Last;
+   I->Parent = Head;
    *Last = I;
    return I;
 }
@@ -78,8 +80,6 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool Create)
    }   
 
    Itm = Lookup(Itm,Start,End - Start,Create);
-   if (Itm == 0)
-      return 0;
    return Itm;
 }
 									/*}}}*/
@@ -90,8 +90,37 @@ string Configuration::Find(const char *Name,const char *Default)
 {
    Item *Itm = Lookup(Name,false);
    if (Itm == 0 || Itm->Value.empty() == true)
-      return Default;
+   {
+      if (Default == 0)
+	 return string();
+      else
+	 return Default;
+   }
+   
    return Itm->Value;
+}
+									/*}}}*/
+// Configuration::FindDir - Find a directory				/*{{{*/
+// ---------------------------------------------------------------------
+/* Directories are stored as the base dir in the Parent node and the
+ */
+string Configuration::FindDir(const char *Name,const char *Default = 0)
+{
+   Item *Itm = Lookup(Name,false);
+   if (Itm == 0 || Itm->Value.empty() == true)
+   {
+      if (Default == 0)
+	 return string();
+      else
+	 return Default;
+   }
+   
+   if (Itm->Value[0] == '/' || Itm->Parent == 0)
+      return Itm->Value;
+   if (Itm->Parent->Value.end()[-1] == '/')
+      return Itm->Parent->Value + Itm->Value;
+   else
+      return Itm->Parent->Value + '/' + Itm->Value;
 }
 									/*}}}*/
 // Configuration::FindI - Find an integer value				/*{{{*/

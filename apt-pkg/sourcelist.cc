@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.1 1998/07/07 04:17:06 jgg Exp $
+// $Id: sourcelist.cc,v 1.2 1998/07/09 05:12:28 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -15,8 +15,8 @@
 #include <pkglib/sourcelist.h>
 #include <pkglib/error.h>
 #include <pkglib/fileutl.h>
+#include <pkglib/configuration.h>
 #include <strutl.h>
-#include <options.h>
 
 #include <fstream.h>
 #include <stdio.h>
@@ -41,7 +41,7 @@ pkgSourceList::pkgSourceList(string File)
 /* */
 bool pkgSourceList::ReadMainList()
 {
-   return Read(PKG_DEB_CF_SOURCELIST);
+   return Read(_config->Find("APT::Etc:sourcelist"));
 }
 									/*}}}*/
 // SourceList::Read - Parse the sourcelist file				/*{{{*/
@@ -90,7 +90,7 @@ bool pkgSourceList::Read(string File)
       {
 	 if (ParseQuoteWord(C,Itm.Section) == true)
 	    return _error->Error("Malformed line %u in source list %s (Absolute dist)",CurLine,File.c_str());
-	 Itm.Dist = SubstVar(Itm.Dist,"$(ARCH)",PKG_DEB_ARCH);
+	 Itm.Dist = SubstVar(Itm.Dist,"$(ARCH)",_config->Find("APT::Architecture"));
 	 List.push_back(Itm);
 	 continue;
       }
@@ -132,15 +132,15 @@ string pkgSourceList::SanitizeURI(string URI)
    file */
 pkgSourceList::const_iterator pkgSourceList::MatchPkgFile(pkgCache::VerIterator Ver)
 {
-   string Base = PKG_DEB_ST_LIST;
+   string Base = _config->Find("APT::Architecture");
    for (const_iterator I = List.begin(); I != List.end(); I++)
    {
       string URI = I->PackagesURI();
       switch (I->Type)
       {
 	 case Item::Deb:
-	 if (Base + SanitizeURI(URI) == Ver.File().FileName())
-	    return I;
+/*	 if (Base + SanitizeURI(URI) == Ver.File().FileName())
+	    return I;*/
 	 break;
       };      
    }
@@ -182,7 +182,7 @@ bool pkgSourceList::Item::SetURI(string S)
    if (S.find(':') == string::npos)
       return false;
 
-   S = SubstVar(S,"$(ARCH)",PKG_DEB_ARCH);
+   S = SubstVar(S,"$(ARCH)",_config->Find("APT::Architecture"));
    
    // Make sure that the URN is / postfixed
    URI = S;
@@ -204,8 +204,8 @@ string pkgSourceList::Item::PackagesURI() const
       if (Dist[Dist.size() - 1] == '/')
 	 Res = URI + Dist;
       else
-	 Res = URI + "dists/" + Dist + '/' + Section + 
-	 "/binary-" + PKG_DEB_ARCH + '/';
+	 Res = URI + "dists/" + Dist + '/' + Section +
+	 "/binary-" + _config->Find("APT::Architecture") + '/';
       
       Res += "Packages";
       break;
@@ -286,180 +286,5 @@ string pkgSourceList::Item::SiteOnly(string URI) const
    if (Pos == string::npos)
       return URI;
    return string(URI,0,Pos);
-}
-									/*}}}*/
-
-// UpdateMeta - Update the meta information				/*{{{*/
-// ---------------------------------------------------------------------
-/* The meta information is package files, revision information and mirror
-   lists. */
-bool pkgUpdateMeta(pkgSourceList &List,pkgAquire &Engine)
-{
-   if (Engine.OutputDir(PKG_DEB_ST_LIST) == false)
-      return false;
-   
-   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
-   {
-      string URI = I->PackagesURI();
-      string GetInfo = I->PackagesInfo();
-      switch (I->Type)
-      {
-	 case pkgSourceList::Item::Deb:
-	    if (Engine.Get(URI + ".gz",List.SanitizeURI(URI),GetInfo) == false)
-	       return false;
-	 break;
-      };      
-   }
-   
-   return true;
-}
-									/*}}}*/
-// MakeSrcCache - Generate a cache file of all the package files	/*{{{*/
-// ---------------------------------------------------------------------
-/* This goes over the source list and builds a cache of all the package
-   files. */
-bool pkgMakeSrcCache(pkgSourceList &List)
-{
-   // First we date check the cache
-   bool Bad = false;
-   while (Bad == false)
-   {
-      if (FileExists(PKG_DEB_CA_SRCCACHE) == false)
-	  break;
-	  
-      pkgCache Cache(PKG_DEB_CA_SRCCACHE,true,true);
-      if (_error->PendingError() == true)
-      {
-	 _error->Discard();
-	 break;
-      }
-      
-      // They are certianly out of sync
-      if (Cache.Head().PackageFileCount != List.size())
-	  break;
-      
-      for (pkgCache::PkgFileIterator F(Cache); F.end() == false; F++)
-      {
-	 // Search for a match in the source list
-	 Bad = true;
-	 for (pkgSourceList::const_iterator I = List.begin(); 
-	      I != List.end(); I++)
-	 {
-	    string File = string(PKG_DEB_ST_LIST) + 
-	       List.SanitizeURI(I->PackagesURI());
-	    if (F.FileName() == File)
-	    {
-	       Bad = false;
-	       break;
-	    }
-	 }
-	 
-	 // Check if the file matches what was cached
-	 Bad |= !F.IsOk();
-	 if (Bad == true)
-	    break;
-      }      
-
-      if (Bad == false)
-	 return true;
-   }
-   
-   unlink(PKG_DEB_CA_SRCCACHE);
-   pkgCache::MergeState Merge(PKG_DEB_CA_SRCCACHE);
-   if (_error->PendingError() == true)
-            return false;
-   
-   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
-   {
-      string File = string(PKG_DEB_ST_LIST) + List.SanitizeURI(I->PackagesURI());
-      if (Merge.MergePackageFile(File,"??","??") == false)
-	 return false;
-   }
-          
-   return true;
-}
-									/*}}}*/
-// MakeStatusCache - Generates a cache that includes the status files	/*{{{*/
-// ---------------------------------------------------------------------
-/* This copies the package source cache and then merges the status and 
-   xstatus files into it. */
-bool pkgMakeStatusCache()
-{
-   // Quickly check if the existing package cache is ok
-   bool Bad = false;
-   while (Bad == false)
-   {
-      if (FileExists(PKG_DEB_CA_PKGCACHE) == false)
-	  break;
-      
-      /* We check the dates of the two caches. This takes care of most things
-         quickly and easially */
-      struct stat Src;
-      struct stat Pkg;
-      if (stat(PKG_DEB_CA_PKGCACHE,&Pkg) != 0 || 
-	  stat(PKG_DEB_CA_SRCCACHE,&Src) != 0)
-	 break;
-      if (difftime(Src.st_mtime,Pkg.st_mtime) > 0)
-	 break;
-
-      pkgCache Cache(PKG_DEB_CA_PKGCACHE,true,true);
-      if (_error->PendingError() == true)
-      {
-	 _error->Discard();
-	 break;
-      }
-      
-      for (pkgCache::PkgFileIterator F(Cache); F.end() == false; F++)
-      {
-	 if (F.IsOk() == false)
-	 {
-	    Bad = true;
-	    break;
-	 }
-      }
-      
-      if (Bad == false)
-	 return true;
-   }   
-
-   // Check the integrity of the source cache.
-   {
-      pkgCache Cache(PKG_DEB_CA_SRCCACHE,true,true);
-      if (_error->PendingError() == true)
-	 return false;
-   }
-   
-   // Sub scope so that merge destructs before we rename the file...
-   string Cache = PKG_DEB_CA_PKGCACHE ".new";
-   {
-      if (CopyFile(PKG_DEB_CA_SRCCACHE,Cache) == false)
-	 return false;
-
-      pkgCache::MergeState Merge(Cache);
-      if (_error->PendingError() == true)
-	 return false;
-      
-      // Merge in the user status file
-      if (FileExists(PKG_DEB_ST_USERSTATUS) == true)
-	 if (Merge.MergePackageFile(PKG_DEB_ST_USERSTATUS,"status","0",
-				    pkgFLAG_NotSource) == false)
-	    return false;
-      
-      // Merge in the extra status file
-      if (FileExists(PKG_DEB_ST_XSTATUS) == true)
-	 if (Merge.MergePackageFile(PKG_DEB_ST_XSTATUS,"status","0",
-				    pkgFLAG_NotSource) == false)
-	    return false;
-      
-      // Merge in the status file
-      if (Merge.MergePackageFile("/var/lib/dpkg/status","status","0",
-				 pkgFLAG_NotSource) == false)
-	 return false;
-   }
-   
-   if (rename(Cache.c_str(),PKG_DEB_CA_PKGCACHE) != 0)
-      return false;
-   
-   return true;
 }
 									/*}}}*/

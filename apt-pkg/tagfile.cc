@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.5 1998/07/07 04:17:06 jgg Exp $
+// $Id: tagfile.cc,v 1.6 1998/07/09 05:12:32 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -17,6 +17,7 @@
 
 #include <pkglib/tagfile.h>
 #include <pkglib/error.h>
+#include <pkglib/init.h>
 
 #include <string>
 #include <stdio.h>
@@ -158,6 +159,10 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
 
 int main(int argc,char *argv[])
 {
+   pkglibInitialize(*_config);
+   cout << _config->Find("APT::arch") << endl;
+   cout << _config->FindDir("DIR::Etc::sourcelist") << endl;
+   
    {
       File CacheF("./cache",File::WriteEmpty);
       DynamicMMap Map(CacheF,MMap::Public);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.4 1998/07/07 04:17:16 jgg Exp $
+// $Id: deblistparser.cc,v 1.5 1998/07/09 05:12:37 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -12,6 +12,9 @@
 // Include Files							/*{{{*/
 #include <pkglib/deblistparser.h>
 #include <pkglib/error.h>
+#include <pkglib/configuration.h>
+#include <strutl.h>
+
 #include <system.h>
 									/*}}}*/
 
@@ -82,13 +85,13 @@ bool debListParser::HandleFlag(const char *Tag,unsigned long &Flags,
       return true;
    
    int Set = 2;
-   if (strncasecmp(Start,"yes",Stop - Start) == 0)
+   if (stringcasecmp(Start,Stop,"yes") == 0)
       Set = 1;
-   if (strncasecmp(Start,"true",Stop - Start) == 0)
+   if (stringcasecmp(Start,Stop,"true") == 0)
       Set = 1;
-   if (strncasecmp(Start,"no",Stop - Start) == 0)
+   if (stringcasecmp(Start,Stop,"no") == 0)
       Set = 0;
-   if (strncasecmp(Start,"false",Stop - Start) == 0)
+   if (stringcasecmp(Start,Stop,"false") == 0)
       Set = 0;
    if (Set == 2)
    {
@@ -489,6 +492,7 @@ bool debListParser::GrabWord(string Word,WordList *List,int Count,
 bool debListParser::Step()
 {
    iOffset = Tags.Offset();
+   string Arch = _config->Find("APT::architecture");
    while (Tags.Step(Section) == true)
    {
       /* See if this is the correct Architecture, if it isnt then we
@@ -497,13 +501,11 @@ bool debListParser::Step()
       const char *Stop;
       if (Section.Find("Architecture",Start,Stop) == false)
 	 return true;
-            
-      if (strncmp(Start,"i386",Stop - Start) == 0 &&
-	  strlen("i386") == (unsigned)(Stop - Start))
+
+      if (stringcmp(Start,Stop,Arch.begin(),Arch.end()) == 0)
 	 return true;
 
-      if (strncmp(Start,"all",Stop - Start) == 0 &&
-	  3 == (unsigned)(Stop - Start))
+      if (stringcmp(Start,Stop,"all") == 0)
 	 return true;
 
       iOffset = Tags.Offset();

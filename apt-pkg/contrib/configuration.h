@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.1 1998/07/07 04:17:10 jgg Exp $
+// $Id: configuration.h,v 1.2 1998/07/09 05:12:34 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -21,8 +21,8 @@
    ##################################################################### */
 									/*}}}*/
 // Header section: pkglib
-#ifndef PKGLIB_TAGFILE_H
-#define PKGLIB_TAGFILE_H
+#ifndef PKGLIB_CONFIGURATION_H
+#define PKGLIB_CONFIGURATION_H
 
 #ifdef __GNUG__
 #pragma interface "pkglib/configuration.h"
@@ -36,6 +36,7 @@ class Configuration
    {
       string Value;
       string Tag;
+      Item *Parent;
       Item *Child;
       Item *Next;
       Item() : Child(0), Next(0) {};
@@ -48,11 +49,12 @@ class Configuration
    public:
 
    string Find(const char *Name,const char *Default = 0);
+   string FindDir(const char *Name,const char *Default = 0);
    int FindI(const char *Name,int Default = 0);
    
    void Set(const char *Name,string Value);
    void Set(const char *Name,int Value);
-
+   
    Configuration();
 };
 
