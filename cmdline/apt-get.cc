@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.130 2003/05/19 17:30:12 doogie Exp $
+// $Id: apt-get.cc,v 1.131 2003/07/22 01:49:26 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -685,7 +685,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (_config->FindB("APT::Get::Show-Upgraded",false) == true)
       ShowUpgraded(c1out,Cache);
    Fail |= !ShowDowngraded(c1out,Cache);
-   Essential = !ShowEssential(c1out,Cache);
+   if (_config->FindB("APT::Get::Download-Only",false) == false)
+        Essential = !ShowEssential(c1out,Cache);
    Fail |= Essential;
    Stats(c1out,Cache);
    
