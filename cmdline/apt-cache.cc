@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.47 2001/04/29 05:13:51 jgg Exp $
+// $Id: apt-cache.cc,v 1.48 2001/05/11 05:07:06 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1258,6 +1258,7 @@ bool ShowHelp(CommandLine &Cmd)
       "   depends - Show raw dependency information for a package\n"
       "   pkgnames - List the names of all packages\n"
       "   dotty - Generate package graphs for GraphVis\n"
+      "   policy - Show policy settings\n"
       "\n"
       "Options:\n"
       "  -h   This help text.\n"
