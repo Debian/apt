@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.10 1998/11/05 07:21:42 jgg Exp $
+// $Id: init.cc,v 1.11 1998/11/05 07:42:03 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -9,10 +9,8 @@
 									/*}}}*/
 // Include files							/*{{{*/
 #include <apt-pkg/init.h>
+#include <apt-pkg/fileutl.h>
 #include <config.h>
-
-#include <sys/stat.h>
-#include <unistd.h>
 									/*}}}*/
 
 // pkgInitialize - Initialize the configuration class			/*{{{*/
@@ -50,16 +48,16 @@ bool pkgInitialize(Configuration &Cnf)
    
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");
-   struct stat Buf;   
-   if (stat(FName.c_str(),&Buf) != 0)
-      return true;
+   bool Res = true;
+   if (FileExists(FName) == true)
+      Res &= ReadConfigFile(Cnf,FName);
    
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
+   if (Cfg != 0 && FileExists(FName) == true)
+      Res &= ReadConfigFile(Cnf,Cfg);
    
-   // Read both config files, either existing will be OK
-   if ((ReadConfigFile(Cnf,FName) != true) |
-       (ReadConfigFile(Cnf,Cfg) != true))
+   if (Res == false)
       return false;
    
    if (Cnf.FindB("Debug::pkgInitialize",false) == true)
