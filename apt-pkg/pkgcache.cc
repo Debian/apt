@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.7 1998/07/12 23:58:32 jgg Exp $
+// $Id: pkgcache.cc,v 1.8 1998/07/19 04:22:00 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -59,6 +59,7 @@ pkgCache::Header::Header()
    VersionCount = 0;
    DependsCount = 0;
    PackageFileCount = 0;
+   MaxVerFileSize = 0;
    
    FileList = 0;
    StringList = 0;

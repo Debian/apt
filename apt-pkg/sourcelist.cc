@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.3 1998/07/12 23:58:36 jgg Exp $
+// $Id: sourcelist.cc,v 1.4 1998/07/19 04:22:04 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -106,45 +106,6 @@ bool pkgSourceList::Read(string File)
       while (ParseQuoteWord(C,Itm.Section) == true);
    }
    return true;
-}
-									/*}}}*/
-// SourceList::SanitizeURI - Hash the uri				/*{{{*/
-// ---------------------------------------------------------------------
-/* This converts a URI into a safe filename. It quotes all unsafe characters
-   and converts / to _ and removes the scheme identifier. */
-string pkgSourceList::SanitizeURI(string URI)
-{
-   string::const_iterator I = URI.begin() + URI.find(':') + 1;
-   for (; I < URI.end() && *I == '/'; I++);
-
-   // "\x00-\x20{}|\\\\^\\[\\]<>\"\x7F-\xFF";
-   URI = QuoteString(string(I,URI.end() - I),"\\|{}[]<>\"^~_=!@#$%^&*");
-   string::iterator J = URI.begin();
-   for (; J != URI.end(); J++)
-      if (*J == '/') 
-	 *J = '_';
-   return URI;
-}
-									/*}}}*/
-// SourceList::MatchPkgFile - Find the package file that has the ver	/*{{{*/
-// ---------------------------------------------------------------------
-/* This will return List.end() if it could not find the matching 
-   file */
-pkgSourceList::const_iterator pkgSourceList::MatchPkgFile(pkgCache::VerIterator Ver)
-{
-   string Base = _config->Find("APT::Architecture");
-   for (const_iterator I = List.begin(); I != List.end(); I++)
-   {
-      string URI = I->PackagesURI();
-      switch (I->Type)
-      {
-	 case Item::Deb:
-/*	 if (Base + SanitizeURI(URI) == Ver.File().FileName())
-	    return I;*/
-	 break;
-      };      
-   }
-   return List.end();
 }
 									/*}}}*/
 // SourceList::Item << - Writes the item to a stream			/*{{{*/

@@ -1,11 +1,11 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.8 1998/07/16 06:08:39 jgg Exp $
+// $Id: tagfile.cc,v 1.9 1998/07/19 04:22:06 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
    
-   This uses a rotating 64K buffer to load the package information into.
+   This uses a rotating buffer to load the package information into.
    The scanner runs over it and isolates and indexes a single section.
    
    ##################################################################### */
@@ -25,10 +25,10 @@
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgTagFile::pkgTagFile(File &Fd) : Fd(Fd)
+pkgTagFile::pkgTagFile(File &Fd,unsigned long Size) : Fd(Fd), Size(Size)
 {
-   Buffer = new char[64*1024];
-   Start = End = Buffer + 64*1024;
+   Buffer = new char[Size];
+   Start = End = Buffer;
    Left = Fd.Size();
    iOffset = 0;
    Fill();
@@ -59,32 +59,53 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
    then fills the rest from the file */
 bool pkgTagFile::Fill()
 {
-   unsigned long Size = End - Start;
+   unsigned long EndSize = End - Start;
    
    if (Left == 0)
    {
-      if (Size <= 1)
+      if (EndSize <= 1)
 	 return false;
       return true;
    }
    
-   memmove(Buffer,Start,Size);
+   memmove(Buffer,Start,EndSize);
    Start = Buffer;
+   End = Buffer + EndSize;
    
-   // See if only a bit of the file is left or if 
-   if (Left < End - Buffer - Size)
+   // See if only a bit of the file is left 
+   if (Left < Size)
    {
-      if (Fd.Read(Buffer + Size,Left) == false)
+      if (Fd.Read(End,Left) == false)
 	 return false;
-      End = Buffer + Size + Left;
+      End += Left;
       Left = 0;
    }
    else
    {
-      if (Fd.Read(Buffer + Size, End - Buffer - Size) == false)
+      if (Fd.Read(End,Size - (End - Buffer)) == false)
 	 return false;
-      Left -= End - Buffer - Size;
+      Left -= Size - (End - Buffer);
+      End = Buffer + Size;
    }   
+   return true;
+}
+									/*}}}*/
+// TagFile::Jump - Jump to a pre-recorded location in the file		/*{{{*/
+// ---------------------------------------------------------------------
+/* This jumps to a pre-recorded file location and */
+bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
+{
+   iOffset = Offset;
+   Left = Fd.Size() - Offset;
+   if (Fd.Seek(Offset) == false)
+      return false;
+   End = Start = Buffer;
+   
+   if (Fill() == false)
+      return false;
+   
+   if (Tag.Scan(Start,End - Start) == false)
+      return _error->Error("Unable to parse package file");
    return true;
 }
 									/*}}}*/

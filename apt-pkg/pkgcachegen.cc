@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.10 1998/07/16 06:08:38 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.11 1998/07/19 04:22:02 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -170,7 +170,8 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    Ver->FileList = VF.Index();
    VF->Offset = List.Offset();
    VF->Size = List.Size();
-      
+   if (Cache.HeaderP->MaxVerFileSize < VF->Size)
+      Cache.HeaderP->MaxVerFileSize = VF->Size;
    return true;
 }
 									/*}}}*/
@@ -313,7 +314,8 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
    CurrentFile->NextFile = Cache.HeaderP->FileList;
    CurrentFile->Flags = Flags;
    PkgFileName = File;
-
+   Cache.HeaderP->FileList = CurrentFile - Cache.PkgFileP;
+   
    if (CurrentFile->FileName == 0)
       return false;
    return true;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.2 1998/07/09 05:12:35 jgg Exp $
+// $Id: strutl.h,v 1.3 1998/07/19 04:22:09 jgg Exp $
 /* ######################################################################
 
    String Util - These are some usefull string functions
@@ -29,6 +29,7 @@ string SizeToStr(double Bytes);
 string TimeToStr(unsigned long Sec);
 string SubstVar(string Str,string Subst,string Contents);
 string Base64Encode(string Str);
+string URItoFileName(string URI);
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};

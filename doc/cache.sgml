@@ -4,7 +4,7 @@
 <title>APT Cache File Format</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: cache.sgml,v 1.2 1998/07/05 05:43:09 jgg Exp $</version>
+<version>$Id: cache.sgml,v 1.3 1998/07/19 04:22:11 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the APT
@@ -140,6 +140,7 @@ This is the first item in the file.
       unsigned long VersionCount;
       unsigned long DependsCount;
       unsigned long PackageFileCount;
+      unsigned long MaxVerFileSize;
       
       // Offsets
       unsigned long FileList;              // PackageFile
@@ -192,6 +193,10 @@ the client should refuse the load the file.
 These indicate the number of each structure contianed in the cache. 
 PackageCount is especially usefull for generating user state structures. 
 See Package::Id for more info.
+
+<tag>MaxVerFileSize<item>
+The maximum size of a raw entry from the original Package file 
+(ie VerFile::Size) is stored here.
 
 <tag>FileList<item>
 This contains the index of the first PackageFile structure. The PackageFile

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.2 1998/07/16 06:08:43 jgg Exp $
+// $Id: apt-cache.cc,v 1.3 1998/07/19 04:22:10 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache file.
@@ -65,66 +65,11 @@ bool SplitArg(const char *Arg,string &File,string &Dist,string Ver)
    return true;
 }
 									/*}}}*/
-// DoAdd - Perform an adding operation					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool DoAdd(int argc,char *argv[])
-{
-   string FileName;
-   string Dist;
-   string Ver;
-   
-   File CacheF(CacheFile,File::WriteEmpty);
-   if (_error->PendingError() == true)
-      return false;
-   
-   DynamicMMap Map(CacheF,MMap::Public);
-   if (_error->PendingError() == true)
-      return false;
-   
-   pkgCacheGenerator Gen(Map);
-   if (_error->PendingError() == true)
-      return false;
-
-   for (int I = 0; I != argc; I++)
-   {
-      if (SplitArg(argv[I],FileName,Dist,Ver) == false)
-	 return false;
-      cout << FileName << endl;
-      
-      // Do the merge
-      File TagF(FileName.c_str(),File::ReadOnly);
-      debListParser Parser(TagF);
-      if (_error->PendingError() == true)
-	 return _error->Error("Problem opening %s",FileName.c_str());
-      
-      if (Gen.SelectFile(FileName) == false)
-	 return _error->Error("Problem with SelectFile");
-	 
-      if (Gen.MergeList(Parser) == false)
-	 return _error->Error("Problem with MergeList");
-   }
-   
-   return true;
-}
-									/*}}}*/
 // DumpPackage - Show a dump of a package record			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DumpPackage(int argc,char *argv[])
-{
-   File CacheF(CacheFile,File::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   pkgCache Cache(Map);   
-   if (_error->PendingError() == true)
-      return false;
-   
+bool DumpPackage(pkgCache &Cache,int argc,char *argv[])
+{   
    for (int I = 0; I != argc; I++)
    {
       pkgCache::PkgIterator Pkg = Cache.FindPkg(argv[I]);
@@ -173,20 +118,8 @@ bool DumpPackage(int argc,char *argv[])
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Stats(const char *FileName)
+bool Stats(pkgCache &Cache)
 {
-   File CacheF(FileName,File::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   pkgCache Cache(Map);   
-   if (_error->PendingError() == true)
-      return false;
-       
    cout << "Total Package Names : " << Cache.Head().PackageCount << endl;
    pkgCache::PkgIterator I = Cache.PkgBegin();
    
@@ -240,20 +173,8 @@ bool Stats(const char *FileName)
 // Dump - show everything						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Dump()
+bool Dump(pkgCache &Cache)
 {
-   File CacheF(CacheFile,File::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   pkgCache Cache(Map);   
-   if (_error->PendingError() == true)
-      return false;
-
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
       cout << "Package: " << P.Name() << endl;
@@ -281,53 +202,97 @@ bool Dump()
 // DumpAvail - Print out the available list				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is needed to make dpkg --merge happy */
-bool DumpAvail()
+bool DumpAvail(pkgCache &Cache)
 {
-#if 0
-   pkgCache Cache(CacheFile,true,true);
-   if (_error->PendingError() == true)
-      return false;
+   unsigned char *Buffer = new unsigned char[Cache.HeaderP->MaxVerFileSize];
 
-   pkgControlCache CCache(Cache);
-   if (_error->PendingError() == true)
-      return false;
-
-   vector<string> Lines;
-   Lines.reserve(30);
-   
-   pkgCache::PkgIterator I = Cache.PkgBegin();
-   for (;I.end() != true; I++)
+   for (pkgCache::PkgFileIterator I = Cache.FileBegin(); I.end() == false; I++)
    {
-      if (I->VersionList == 0)
+      if ((I->Flags & pkgCache::Flag::NotSource) != 0)
 	 continue;
       
-      pkgSPkgCtrlInfo Inf = CCache[I.VersionList()];
-      if (Inf.isNull() == true)
-	 return _error->Error("Couldn't locate info record");
-      
-      // Iterate over each element
-      pkgPkgCtrlInfo::const_iterator Elm = Inf->begin();
-      for (; Elm != Inf->end(); Elm++)
+      if (I.IsOk() == false)
       {
-	 // Write the tag: value
-	 cout << (*Elm)->Tag() << ": " << (*Elm)->Value() << endl;
-	 
-	 // Write the multiline
-	 (*Elm)->GetLines(Lines);
-	 for (vector<string>::iterator j = Lines.begin(); j != Lines.end(); j++)
-	 {
-	    if ((*j).length() == 0)
-	       cout << " ." << endl;
-	    else
-	       cout << " " << *j << endl;
-	 }
-	 
-	 Lines.erase(Lines.begin(),Lines.end());
+	 delete [] Buffer;
+	 return _error->Error("Package file %s is out of sync.",I.FileName());
       }
       
-      cout << endl;
+      File PkgF(I.FileName(),File::ReadOnly);
+      if (_error->PendingError() == true)
+      {
+	 delete [] Buffer;
+	 return false;
+      }
+
+      /* Write all of the records from this package file, we search the entire
+         structure to find them */
+      for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+      {
+	 for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
+	 {
+	    if (V->FileList == 0)
+	       continue;
+	    if (V.FileList().File() != I)
+	       continue;
+	    
+	    // Read the record and then write it out again.
+	    if (PkgF.Seek(V.FileList()->Offset) == false ||
+		PkgF.Read(Buffer,V.FileList()->Size) == false ||
+		write(STDOUT_FILENO,Buffer,V.FileList()->Size) != V.FileList()->Size)
+	    {
+	       delete [] Buffer;
+	       return false;
+	    }	    
+	 }
+      }
    }
-#endif
+   
+   return true;
+}
+									/*}}}*/
+// DoAdd - Perform an adding operation					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool DoAdd(int argc,char *argv[])
+{
+   string FileName;
+   string Dist;
+   string Ver;
+   
+   // Open the cache
+   File CacheF(CacheFile,File::WriteEmpty);
+   if (_error->PendingError() == true)
+      return false;
+   
+   DynamicMMap Map(CacheF,MMap::Public);
+   if (_error->PendingError() == true)
+      return false;
+   
+   pkgCacheGenerator Gen(Map);
+   if (_error->PendingError() == true)
+      return false;
+
+   for (int I = 0; I != argc; I++)
+   {
+      if (SplitArg(argv[I],FileName,Dist,Ver) == false)
+	 return false;
+      cout << FileName << endl;
+      
+      // Do the merge
+      File TagF(FileName.c_str(),File::ReadOnly);
+      debListParser Parser(TagF);
+      if (_error->PendingError() == true)
+	 return _error->Error("Problem opening %s",FileName.c_str());
+      
+      if (Gen.SelectFile(FileName) == false)
+	 return _error->Error("Problem with SelectFile");
+	 
+      if (Gen.MergeList(Parser) == false)
+	 return _error->Error("Problem with MergeList");
+   }
+   
+   Stats(Gen.GetCache());
+   
    return true;
 }
 									/*}}}*/
@@ -344,38 +309,48 @@ int main(int argc, char *argv[])
    pkgInitialize(*_config);
    while (1)
    {
+      CacheFile = argv[2];
       if (strcmp(argv[1],"add") == 0)
       {
-	 CacheFile = argv[2];
-	 if (DoAdd(argc - 3,argv + 3) == true) 
-	    Stats(argv[2]);
+	 DoAdd(argc - 3,argv + 3);
 	 break;
       }
+
+      // Open the cache file
+      File CacheF(CacheFile,File::ReadOnly);
+      if (_error->PendingError() == true)
+	 break;
+      
+      MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
+      if (_error->PendingError() == true)
+	 break;
+      
+      pkgCache Cache(Map);   
+      if (_error->PendingError() == true)
+	 break;
     
       if (strcmp(argv[1],"showpkg") == 0)
       {
 	 CacheFile = argv[2];
-	 DumpPackage(argc - 3,argv + 3);
+	 DumpPackage(Cache,argc - 3,argv + 3);
 	 break;
       }
 
       if (strcmp(argv[1],"stats") == 0)
       {
-	 Stats(argv[2]);
+	 Stats(Cache);
 	 break;
       }
       
       if (strcmp(argv[1],"dump") == 0)
       {
-	 CacheFile = argv[2];
-	 Dump();
+	 Dump(Cache);
 	 break;
       }
       
       if (strcmp(argv[1],"dumpavail") == 0)
       {
-	 CacheFile = argv[2];
-	 DumpAvail();
+	 DumpAvail(Cache);
 	 break;
       }
       

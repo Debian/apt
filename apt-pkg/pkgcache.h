@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.6 1998/07/12 23:58:33 jgg Exp $
+// $Id: pkgcache.h,v 1.7 1998/07/19 04:22:01 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -120,7 +120,9 @@ class pkgCache
    Header &Head() {return *HeaderP;};
    inline PkgIterator PkgBegin();
    inline PkgIterator PkgEnd();
-
+   inline PkgFileIterator FileBegin();
+   inline PkgFileIterator FileEnd();
+   
    pkgCache(MMap &Map);
    virtual ~pkgCache() {};
 };
@@ -152,6 +154,7 @@ struct pkgCache::Header
    // Offsets
    unsigned long FileList;              // struct PackageFile
    unsigned long StringList;            // struct StringItem
+   unsigned long MaxVerFileSize;
 
    /* Allocation pools, there should be one of these for each structure
       excluding the header */
@@ -264,5 +267,9 @@ inline pkgCache::PkgIterator pkgCache::PkgBegin()
        {return PkgIterator(*this);};
 inline pkgCache::PkgIterator pkgCache::PkgEnd() 
        {return PkgIterator(*this,PkgP);};
+inline pkgCache::PkgFileIterator pkgCache::FileBegin()
+       {return PkgFileIterator(*this);};
+inline pkgCache::PkgFileIterator pkgCache::FileEnd()
+       {return PkgFileIterator(*this,PkgFileP);};
 
 #endif

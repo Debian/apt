@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.5 1998/07/12 23:58:35 jgg Exp $
+// $Id: pkgcachegen.h,v 1.6 1998/07/19 04:22:03 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -69,7 +69,7 @@ class pkgCacheGenerator
 			      pkgCache::VerIterator Ver) = 0;
       virtual unsigned long Offset() = 0;
       virtual unsigned long Size() = 0;
-
+      
       virtual bool Step() = 0;
       
       virtual ~ListParser() {};
@@ -78,7 +78,8 @@ class pkgCacheGenerator
 
    bool SelectFile(string File,unsigned long Flags = 0);
    bool MergeList(ListParser &List);
-   
+   inline pkgCache &GetCache() {return Cache;};
+      
    pkgCacheGenerator(DynamicMMap &Map);
    ~pkgCacheGenerator();
 };

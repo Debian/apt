@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.2 1998/07/16 06:08:41 jgg Exp $
+// $Id: strutl.cc,v 1.3 1998/07/19 04:22:08 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -241,6 +241,25 @@ string SubstVar(string Str,string Subst,string Contents)
       return Str;
    
    return Temp + string(Str,OldPos);
+}
+									/*}}}*/
+// URItoFileName - Convert the uri into a unique file name		/*{{{*/
+// ---------------------------------------------------------------------
+/* This converts a URI into a safe filename. It quotes all unsafe characters
+   and converts / to _ and removes the scheme identifier. The resulting
+   file name should be unique and never occur again for a different file */
+string URItoFileName(string URI)
+{
+   string::const_iterator I = URI.begin() + URI.find(':') + 1;
+   for (; I < URI.end() && *I == '/'; I++);
+
+   // "\x00-\x20{}|\\\\^\\[\\]<>\"\x7F-\xFF";
+   URI = QuoteString(string(I,URI.end() - I),"\\|{}[]<>\"^~_=!@#$%^&*");
+   string::iterator J = URI.begin();
+   for (; J != URI.end(); J++)
+      if (*J == '/') 
+	 *J = '_';
+   return URI;
 }
 									/*}}}*/
 // Base64Encode - Base64 Encoding routine for short strings		/*{{{*/
