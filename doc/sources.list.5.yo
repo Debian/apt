@@ -15,7 +15,7 @@ em(args). em(uri) is a Universal Resource Identifier (URI), which is a
 superset of the more specific and well-known Universal Resource Locator, or 
 URL.
 
-manpagesection(The deb type)
+manpagesection(The deb and deb-src types)
 The bf(deb) type describes a typical two-level Debian archive,
 em(distribution/component). Typically, em(distribution) is one of
 em(stable), em(unstable), or em(frozen), while component is one of
@@ -107,9 +107,12 @@ quote("deb file:/home/jason/debian stable main contrib non-free")
 As above, except this uses the unstable (development) distribution.
 quote("deb file:/home/jason/debian unstable main contrib non-free")
 
-Uses HTTP to access the archive at www.debian.org, and uses only the
-stable/main area.
-quote("deb http://www.debian.org/archive stable main")
+Source line for the above
+quote("deb-src file:/home/jason/debian unstable main contrib non-free")
+
+Uses HTTP to access the archive at archive.debian.org, and uses only the
+hamm/main area.
+quote("deb http://archive.debian.org/debian-archive hamm main")
 
 Uses FTP to access the archive at ftp.debian.org, under the debian
 directory, and uses only the stable/contrib area.
