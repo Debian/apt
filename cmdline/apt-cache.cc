@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.32 1999/03/29 19:28:52 jgg Exp $
+// $Id: apt-cache.cc,v 1.33 1999/04/12 04:21:20 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -331,30 +331,6 @@ bool Dump(CommandLine &Cmd)
    return true;
 }
 									/*}}}*/
-// GetCandidateVer - Returns the Candidate install version		/*{{{*/
-// ---------------------------------------------------------------------
-/* This should really use the DepCache or something.. Copied from there. 
-   Allow current is required to filter out the status file when emitting
-   an available file. */
-static pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator Pkg,
-					     bool AllowCurrent = true)
-{
-   /* Not source/not automatic versions cannot be a candidate version 
-    unless they are already installed */
-   for (pkgCache::VerIterator I = Pkg.VersionList(); I.end() == false; I++)
-   {
-      if (Pkg.CurrentVer() == I && AllowCurrent == true)
-	 return I;
-      
-      for (pkgCache::VerFileIterator J = I.FileList(); J.end() == false; J++)
-	 if ((J.File()->Flags & pkgCache::Flag::NotSource) == 0 &&
-	     (J.File()->Flags & pkgCache::Flag::NotAutomatic) == 0)
-	    return I;
-   }
-   
-   return pkgCache::VerIterator(*GCache,0);
-}
-									/*}}}*/
 // DumpAvail - Print out the available list				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is needed to make dpkg --merge happy */
@@ -386,7 +362,7 @@ bool DumpAvail(CommandLine &Cmd)
       for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
       {
 	 // Find the proper version to use. We should probably use the DepCache.
-	 pkgCache::VerIterator V = GetCandidateVer(P,false);
+	 pkgCache::VerIterator V = Cache.GetCandidateVer(P,false);
 
 	 if (V.end() == true || V.FileList().File() != I)
 	    continue;
@@ -521,7 +497,7 @@ bool Search(CommandLine &CmdL)
    for (;I.end() != true; I++)
    {
       // We search against the install version as that makes the most sense..
-      pkgCache::VerIterator V = GetCandidateVer(I);
+      pkgCache::VerIterator V = Cache.GetCandidateVer(I);
       if (V.end() == true)
 	 continue;
 
@@ -558,7 +534,7 @@ bool ShowPackage(CommandLine &CmdL)
       }
       
       // Find the proper version to use. We should probably use the DepCache.
-      pkgCache::VerIterator V = GetCandidateVer(Pkg);
+      pkgCache::VerIterator V = Cache.GetCandidateVer(Pkg);
       if (V.end() == true || V.FileList().end() == true)
 	 continue;
       if (DisplayRecord(V) == false)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.8 1998/12/08 01:34:10 jgg Exp $
+// $Id: depcache.h,v 1.9 1999/04/12 04:21:20 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -153,7 +153,7 @@ class pkgDepCache : public pkgCache
    public:
 
    // Policy implementation
-   virtual VerIterator GetCandidateVer(PkgIterator Pkg);
+   virtual VerIterator GetCandidateVer(PkgIterator Pkg,bool AllowCurrent = true);
    virtual bool IsImportantDep(DepIterator Dep);
          
    // Accessors

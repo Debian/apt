@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.15 1999/03/26 07:38:43 jgg Exp $
+// $Id: depcache.cc,v 1.16 1999/04/12 04:21:20 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -99,25 +99,13 @@ bool pkgDepCache::Init(OpProgress *Prog)
 // ---------------------------------------------------------------------
 /* The default just returns the target version if it exists or the
    highest version. */
-pkgDepCache::VerIterator pkgDepCache::GetCandidateVer(PkgIterator Pkg)
+pkgDepCache::VerIterator pkgDepCache::GetCandidateVer(PkgIterator Pkg,
+						      bool AllowCurrent)
 {
    // Try to use an explicit target
-   if (Pkg->TargetVer == 0)
-   {
-      /* Not source/not automatic versions cannot be a candidate version 
-         unless they are already installed */
-      for (VerIterator I = Pkg.VersionList(); I.end() == false; I++)
-      {
-	 if (Pkg.CurrentVer() == I)
-	    return I;
-	 for (VerFileIterator J = I.FileList(); J.end() == false; J++)
-	    if ((J.File()->Flags & Flag::NotSource) == 0 &&
-		(J.File()->Flags & Flag::NotAutomatic) == 0)
-		return I;
-      }
-	 
-      return VerIterator(*this,0);
-   }
+   if (Pkg->TargetVer == 0 || 
+       (AllowCurrent == false && Pkg.TargetVer() == Pkg.CurrentVer()))
+      return pkgCache::GetCandidateVer(Pkg,AllowCurrent);
    else
       return Pkg.TargetVer(); 
 }

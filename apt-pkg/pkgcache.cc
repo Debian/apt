@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.23 1999/02/23 06:46:24 jgg Exp $
+// $Id: pkgcache.cc,v 1.24 1999/04/12 04:21:20 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -175,6 +175,43 @@ const char *pkgCache::Priority(unsigned char Prio)
    if (Prio < _count(Mapping))
       return Mapping[Prio];
    return 0;
+}
+									/*}}}*/
+// Cache::GetCandidateVer - Returns the Candidate install version	/*{{{*/
+// ---------------------------------------------------------------------
+/* The default just returns the highest available version that is not
+   a source and automatic */
+pkgCache::VerIterator pkgCache::GetCandidateVer(PkgIterator Pkg,
+						bool AllowCurrent)
+{
+   /* Not source/not automatic versions cannot be a candidate version 
+      unless they are already installed */
+   VerIterator Last(*this,0);
+   
+   for (VerIterator I = Pkg.VersionList(); I.end() == false; I++)
+   {
+      if (Pkg.CurrentVer() == I && AllowCurrent == true)
+	 return I;
+      
+      for (VerFileIterator J = I.FileList(); J.end() == false; J++)
+      {
+	 if ((J.File()->Flags & Flag::NotSource) != 0)
+	    continue;
+
+	 /* Stash the highest version of a not-automatic source, we use it
+	    if there is nothing better */
+	 if ((J.File()->Flags & Flag::NotAutomatic) != 0)
+	 {
+	    if (Last.end() == true)
+	       Last = I;
+	    continue;
+	 }
+	 
+	 return I;
+      }   
+   }
+   
+   return Last;
 }
 									/*}}}*/
 

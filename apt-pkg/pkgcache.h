@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.18 1999/02/23 06:46:24 jgg Exp $
+// $Id: pkgcache.h,v 1.19 1999/04/12 04:21:20 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -124,6 +124,7 @@ class pkgCache
    inline PkgIterator PkgEnd();
    inline PkgFileIterator FileBegin();
    inline PkgFileIterator FileEnd();
+   VerIterator GetCandidateVer(PkgIterator Pkg,bool AllowCurrent = true);
    
    pkgCache(MMap &Map);
    virtual ~pkgCache() {};
