@@ -51,8 +51,10 @@ apt (0.5.9) unstable; urgency=low
   * Build-depend on debhelper >= 4.1.62, because we need the fix for
     #204731 in order for dh_installman to work correctly
     with our SGML man pages
+  * Move dh_makeshlibs ahead of dh_installdeb so that its postinst
+    fragments are properly substituted
 
- -- Matt Zimmerman <mdz@debian.org>  Sun, 10 Aug 2003 01:26:59 -0400
+ -- Matt Zimmerman <mdz@debian.org>  Sun, 10 Aug 2003 19:54:39 -0400
 
 apt (0.5.8) unstable; urgency=medium
 

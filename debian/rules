@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.53 2003/08/09 19:21:33 mdz Exp $
+# $Id: rules,v 1.54 2003/08/10 23:54:57 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -218,10 +218,10 @@ apt: build debian/shlibs.local
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
+	dh_makeshlibs -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)' -papt
 	dh_installdeb -p$@
 	dh_shlibdeps -papt -l`pwd`/debian/apt/usr/lib -- -Ldebian/shlibs.local.apt
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
-	dh_makeshlibs -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)' -papt
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -274,10 +274,10 @@ apt-utils: build debian/shlibs.local
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
+	dh_makeshlibs -m$(LIBAPTINST_MAJOR) -V '$(LIBAPTINST_PROVIDE)' -p$@
 	dh_installdeb -p$@
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib dh_shlibdeps -p$@ -- -Ldebian/shlibs.local.apt-utils
 	dh_gencontrol -p$@ -u -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
-	dh_makeshlibs -m$(LIBAPTINST_MAJOR) -V '$(LIBAPTINST_PROVIDE)' -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
