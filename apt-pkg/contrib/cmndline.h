@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.h,v 1.4 1998/11/25 23:54:31 jgg Exp $
+// $Id: cmndline.h,v 1.5 1998/12/14 02:23:47 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -78,7 +78,7 @@ class CommandLine
    bool Parse(int argc,const char **argv);
    void ShowHelp();
    unsigned int FileSize() const;
-   bool DispatchArg(Dispatch *List);
+   bool DispatchArg(Dispatch *List,bool NoMatch = true);
       
    CommandLine(Args *AList,Configuration *Conf);
    ~CommandLine();

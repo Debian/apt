@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.18 1998/12/10 05:39:53 jgg Exp $
+// $Id: apt-cache.cc,v 1.19 1998/12/14 02:23:47 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -28,11 +28,14 @@
 #include <config.h>
 									/*}}}*/
 
+pkgCache *GCache = 0;
+
 // UnMet - Show unmet dependencies					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool UnMet(pkgCache &Cache)
+bool UnMet(CommandLine &CmdL)
 {
+   pkgCache &Cache = *GCache;
    bool Important = _config->FindB("APT::Cache::Important",false);
    
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
@@ -122,8 +125,9 @@ bool UnMet(pkgCache &Cache)
 // DumpPackage - Show a dump of a package record			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DumpPackage(pkgCache &Cache,CommandLine &CmdL)
+bool DumpPackage(CommandLine &CmdL)
 {   
+   pkgCache &Cache = *GCache;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
@@ -179,8 +183,9 @@ bool DumpPackage(pkgCache &Cache,CommandLine &CmdL)
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Stats(pkgCache &Cache)
+bool Stats(CommandLine &Cmd)
 {
+   pkgCache &Cache = *GCache;
    cout << "Total Package Names : " << Cache.Head().PackageCount << " (" <<
       SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
    pkgCache::PkgIterator I = Cache.PkgBegin();
@@ -263,8 +268,9 @@ bool Stats(pkgCache &Cache)
 // Check - Check some things about the cache				/*{{{*/
 // ---------------------------------------------------------------------
 /* Debug aide mostly */
-bool Check(pkgCache &Cache)
+bool Check(CommandLine &Cmd)
 {
+   pkgCache &Cache = *GCache;
    pkgCache::PkgIterator Pkg = Cache.PkgBegin();
    for (;Pkg.end() != true; Pkg++)
    {
@@ -284,8 +290,9 @@ bool Check(pkgCache &Cache)
 // Dump - show everything						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Dump(pkgCache &Cache)
+bool Dump(CommandLine &Cmd)
 {
+   pkgCache &Cache = *GCache;
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
       cout << "Package: " << P.Name() << endl;
@@ -304,7 +311,13 @@ bool Dump(pkgCache &Cache)
       cout << " Size: " << F->Size << endl;
       cout << " ID: " << F->ID << endl;
       cout << " Flags: " << F->Flags << endl;
-      cout << " Time: " << ctime(&F->mtime) << endl;
+      cout << " Time: " << TimeRFC1123(F->mtime) << endl;
+      cout << " Archive: " << F.Archive() << endl;
+      cout << " Component: " << F.Component() << endl;
+      cout << " Version: " << F.Version() << endl;
+      cout << " Origin: " << F.Origin() << endl;
+      cout << " Label: " << F.Label() << endl;
+      cout << " Architecture: " << F.Architecture() << endl;
    }
 
    return true;
@@ -313,8 +326,9 @@ bool Dump(pkgCache &Cache)
 // DumpAvail - Print out the available list				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is needed to make dpkg --merge happy */
-bool DumpAvail(pkgCache &Cache)
+bool DumpAvail(CommandLine &Cmd)
 {
+   pkgCache &Cache = *GCache;
    unsigned char *Buffer = new unsigned char[Cache.HeaderP->MaxVerFileSize];
 
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); I.end() == false; I++)
@@ -404,7 +418,8 @@ bool DoAdd(CommandLine &CmdL)
    }
 
    Progress.Done();
-   Stats(Gen.GetCache());
+   GCache = &Gen.GetCache();
+   Stats(CmdL);
    
    return true;
 }
@@ -412,7 +427,7 @@ bool DoAdd(CommandLine &CmdL)
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool GenCaches()
+bool GenCaches(CommandLine &Cmd)
 {
    OpTextProgress Progress(*_config);
    
@@ -424,7 +439,7 @@ bool GenCaches()
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp()
+bool ShowHelp(CommandLine &Cmd)
 {
    cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
        " compiled on " << __DATE__ << "  " << __TIME__ << endl;
@@ -480,6 +495,17 @@ int main(int argc,const char *argv[])
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
+   CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
+                                    {"add",&DoAdd},
+                                    {"gencaches",&GenCaches},
+                                    {0,0}};
+   CommandLine::Dispatch CmdsB[] = {{"showpkg",&DumpPackage},
+                                    {"stats",&Stats},
+                                    {"dump",&Dump},
+                                    {"dumpavail",&DumpAvail},
+                                    {"unmet",&UnMet},
+                                    {"check",&Check},
+                                    {0,0}};
 
    CacheInitialize();
    
@@ -495,79 +521,20 @@ int main(int argc,const char *argv[])
    // See if the help should be shown
    if (_config->FindB("help") == true ||
        CmdL.FileSize() == 0)
-      return ShowHelp();
-   
-   while (1)
-   {
-      if (strcmp(CmdL.FileList[0],"add") == 0)
-      {
-	 ShowHelp();
-	 break;
-      }
-      
-      if (strcmp(CmdL.FileList[0],"add") == 0)
-      {
-	 DoAdd(CmdL);
-	 break;
-      }
+      return ShowHelp(CmdL);
 
-      if (strcmp(CmdL.FileList[0],"gencaches") == 0)
-      {
-	 GenCaches();
-	 break;
-      }
-
+   if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
+   {      
       // Open the cache file
       FileFd CacheF(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-	 break;
-      
       MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-      if (_error->PendingError() == true)
-	 break;
-      
-      pkgCache Cache(Map);   
-      if (_error->PendingError() == true)
-	 break;
-    
-      if (strcmp(CmdL.FileList[0],"showpkg") == 0)
+      if (_error->PendingError() == false)
       {
-	 DumpPackage(Cache,CmdL);
-	 break;
-      }
-
-      if (strcmp(CmdL.FileList[0],"stats") == 0)
-      {
-	 Stats(Cache);
-	 break;
-      }
-      
-      if (strcmp(CmdL.FileList[0],"dump") == 0)
-      {
-	 Dump(Cache);
-	 break;
-      }
-      
-      if (strcmp(CmdL.FileList[0],"dumpavail") == 0)
-      {
-	 DumpAvail(Cache);
-	 break;
-      }
-      
-      if (strcmp(CmdL.FileList[0],"unmet") == 0)
-      {
-	 UnMet(Cache);
-	 break;
-      }
-
-      if (strcmp(CmdL.FileList[0],"check") == 0)
-      {
-	 Check(Cache);
-	 break;
-      }
-            
-      _error->Error("Invalid operation %s", CmdL.FileList[0]);
-      break;
+	 pkgCache Cache(Map);   
+	 GCache = &Cache;
+	 if (_error->PendingError() == false)
+	    CmdL.DispatchArg(CmdsB);
+      }      
    }
    
    // Print any errors or warnings found during parsing

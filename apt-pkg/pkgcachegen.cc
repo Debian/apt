@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.24 1998/12/07 07:26:21 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.25 1998/12/14 02:23:47 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -635,8 +635,8 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
       for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
       {
 	 string File = ListDir + URItoFileName(I->PackagesURI());
-
-	 if (stat(File.c_str(),&Buf) != 0)
+	 
+	 if (FileExists(File) == false)
 	    continue;
 	 
 	 FileFd Pkg(File,FileFd::ReadOnly);
@@ -652,6 +652,16 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
 	 
 	 if (Gen.MergeList(Parser) == false)
 	    return _error->Error("Problem with MergeList %s",File.c_str());
+
+	 // Check the release file
+	 string RFile = ListDir + URItoFileName(I->ReleaseURI());
+	 if (FileExists(RFile) == true)
+	 {
+	    FileFd Rel(RFile,FileFd::ReadOnly);
+	    if (_error->PendingError() == true)
+	       return false;
+	    Parser.LoadReleaseInfo(Gen.GetCurFile(),Rel);
+	 }
       }	       
       
       // Write the src cache

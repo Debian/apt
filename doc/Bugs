@@ -4,9 +4,6 @@
  Status: Require Status file. 
 #24717: apt dies early if one postinst/preinst dies
  Status: Requires dpkg modifications
-#28184: apt could be smarter regarding mirrors
- Summary: Make use of redundant sources
- Status: 0.3.0 will likely do this, already the information for it is stored.
 #25104: APT should retry failed downloads
  Summary: FTP method has problems with busy servers
  Status: The 0.3.0 ftp method should probably use the configuration mechanism
@@ -137,7 +134,20 @@
 #22892: Apt improvements
  Summary: Bails if an index file can't be found
  Status: Fixed in v3
- 
+#28184: apt could be smarter regarding mirrors
+ Summary: Make use of redundant sources
+ Status: 0.3.0 will likely do this, already the information for it is stored.
+#27646: Apt: dpkg --merge-avail
+ Summary: Suggestion to call merge avail after each update operation
+ Status: Unlikely. The dpkg --print-avail functions should be obsoleted
+         by the apt-query program which should be written.
+         Use the dselect script, alias or something.
+#26663: rsync file access
+ Status: Unlikely, rsync does not provide the necessary support to be
+         a terribly good method. I do not intend any 'split mode' 
+	 support (ie a way to get Package files via rsync and .debs
+	 via http) 
+	 
 -- Silly things
 #26592: apt: Problems with ftpd in SunOS 5.6
 #29903: apt-get insists onto sending a SIZE command
@@ -151,18 +161,9 @@
 #23934: apt-get source <package>
 #27190: apt: installing source packages (wishlist)
  Status: Impossible to do without an index file for all source archives.
-#26663: rsync file access
- Status: Unlikely, rsync does not provide the necessary support to be
-         a terribly good method. I do not intend any 'split mode' 
-	 support (ie a way to get Package files via rsync and .debs
-	 via http) 
 #22551: apt: wish: use dist X iff pkg does not exist in dist Y
 #27100: apt: Better support for project/experimental
  Status: GUI Feature - Version selection and pinning
-#27646: Apt: dpkg --merge-avail
- Summary: Suggestion to call merge avail after each update operation
- Status: Unlikely. The dpkg --print-avail functions should be obsoleted
-         by the apt-query program which should be written.
 #30237: apt: 0.1.9 checks dependencies against packages.gz
  Summary: For packages with identical version numbers APT prefers
           to use the archive index files

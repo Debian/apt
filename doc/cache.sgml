@@ -4,7 +4,7 @@
 <title>APT Cache File Format</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: cache.sgml,v 1.3 1998/07/19 04:22:11 jgg Exp $</version>
+<version>$Id: cache.sgml,v 1.4 1998/12/14 02:23:47 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the APT
@@ -351,10 +351,15 @@ Header.FileList
    {
       // Names
       unsigned long FileName;        // Stringtable
+      unsigned long Archive;         // Stringtable
+      unsigned long Component;       // Stringtable
       unsigned long Version;         // Stringtable
-      unsigned long Distribution;    // Stringtable
+      unsigned long Origin;          // Stringtable
+      unsigned long Label;           // Stringtable
+      unsigned long Architecture;    // Stringtable
       unsigned long Size;            
-      
+      unsigned char NotAutomatic;    // Bool
+
       // Linked list
       unsigned long NextFile;        // PackageFile
       unsigned short ID;
@@ -367,11 +372,15 @@ Header.FileList
 <tag>FileName<item>
 Refers the the physical disk file that this PacakgeFile represents.
 
-<tag>Version<item>
-Version is the given version, ie 1.3.1, 2.4_revision_1 etc.
-
-<tag>Distribution<item>
-Distribution is the symbolic name for this PackageFile, hamm,bo,rexx etc
+<tag>Archive
+<tag>Component
+<tag>Version
+<tag>Origin
+<tag>Label
+<tag>Architecture
+<tag>NotAutomatic<item>
+This is the release information. Please see the files document for a 
+description of what the release information means.
 
 <tag>Size<item>
 Size is provided as a simple check to ensure that the package file has not

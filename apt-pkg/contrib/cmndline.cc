@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.6 1998/11/25 23:54:22 jgg Exp $
+// $Id: cmndline.cc,v 1.7 1998/12/14 02:23:47 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -316,7 +316,7 @@ unsigned int CommandLine::FileSize() const
 // CommandLine::DispatchArg - Do something with the first arg		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool CommandLine::DispatchArg(Dispatch *Map)
+bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
 {
    int I;
    for (I = 0; Map[I].Match != 0; I++)
@@ -332,7 +332,11 @@ bool CommandLine::DispatchArg(Dispatch *Map)
    
    // No matching name
    if (Map[I].Match == 0)
-      _error->Error("Invalid operation %s",FileList[0]);
+   {
+      if (NoMatch == true)
+	 _error->Error("Invalid operation %s",FileList[0]);
+   }
+   
    return false;
 }
 									/*}}}*/

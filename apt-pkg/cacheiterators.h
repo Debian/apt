@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.9 1998/11/27 00:07:23 jgg Exp $
+// $Id: cacheiterators.h,v 1.10 1998/12/14 02:23:46 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -268,8 +268,13 @@ class pkgCache::PkgFileIterator
    inline operator PackageFile const *() const {return File == Owner->PkgFileP?0:File;};
 
    inline const char *FileName() const {return File->FileName == 0?0:Owner->StrP + File->FileName;};
+   inline const char *Archive() const {return File->Archive == 0?0:Owner->StrP + File->Archive;};
+   inline const char *Component() const {return File->Component == 0?0:Owner->StrP + File->Component;};
    inline const char *Version() const {return File->Version == 0?0:Owner->StrP + File->Version;};
-   inline const char *Distribution() const {return File->Distribution == 0?0:Owner->StrP + File->Distribution;};
+   inline const char *Origin() const {return File->Origin == 0?0:Owner->StrP + File->Origin;};
+   inline const char *Label() const {return File->Origin == 0?0:Owner->StrP + File->Label;};
+   inline const char *Architecture() const {return File->Origin == 0?0:Owner->StrP + File->Architecture;};
+
    inline unsigned long Index() const {return File - Owner->PkgFileP;};
 
    bool IsOk();

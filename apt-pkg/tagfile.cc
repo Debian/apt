@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.18 1998/12/08 05:24:41 jgg Exp $
+// $Id: tagfile.cc,v 1.19 1998/12/14 02:23:47 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -17,6 +17,7 @@
 
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
+#include <strutl.h>
 
 #include <string>
 #include <stdio.h>
@@ -225,14 +226,54 @@ string pkgTagSection::FindS(const char *Tag)
 // TagSection::FindI - Find an integer					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned int pkgTagSection::FindI(const char *Tag)
+signed int pkgTagSection::FindI(const char *Tag,signed long Default)
 {
    const char *Start;
-   const char *End;
-   if (Find(Tag,Start,End) == false)
-      return 0;
+   const char *Stop;
+   if (Find(Tag,Start,Stop) == false)
+      return Default;
+
+   // Copy it into a temp buffer so we can use strtol
+   char S[300];
+   if ((unsigned)(Stop - Start) >= sizeof(S))
+      return Default;
+   strncpy(S,Start,Stop-Start);
+   S[Stop - Start] = 0;
    
-   return atoi(string(Start,End).c_str());
+   char *End;
+   signed long Result = strtol(S,&End,10);
+   if (S == End)
+      return Default;
+   return Result;
 }
 									/*}}}*/
-				  
+// TagSection::FindFlag - Locate a yes/no type flag			/*{{{*/
+// ---------------------------------------------------------------------
+/* The bits marked in Flag are masked on/off in Flags */
+bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
+			     unsigned long Flag)
+{
+   const char *Start;
+   const char *Stop;
+   if (Find(Tag,Start,Stop) == false)
+      return true;
+   
+   switch (StringToBool(string(Start,Stop)))
+   {     
+      case 0:
+      Flags &= ~Flag;
+      return true;
+
+      case 1:
+      Flags |= Flag;
+      return true;
+
+      default:
+      _error->Warning("Unknown flag value");
+      return true;
+   }
+   return true;
+}
+									/*}}}*/
+
+			 

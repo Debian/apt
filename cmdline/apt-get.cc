@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.30 1998/12/10 04:26:09 jgg Exp $
+// $Id: apt-get.cc,v 1.31 1998/12/14 02:23:47 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1097,8 +1097,6 @@ int main(int argc,const char *argv[])
    {
       bool Errors = _error->PendingError();
       _error->DumpErrors();
-      if (Errors == true)
-	 cout << "Returning 100." << endl;
       return Errors == true?100:0;
    }
    

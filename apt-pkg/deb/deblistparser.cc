@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.10 1998/08/09 00:51:35 jgg Exp $
+// $Id: deblistparser.cc,v 1.11 1998/12/14 02:23:47 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -25,42 +25,6 @@ debListParser::debListParser(FileFd &File) : Tags(File)
 {
 }
 									/*}}}*/
-// ListParser::FindTag - Find the tag and return a string		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debListParser::FindTag(const char *Tag)
-{
-   const char *Start;
-   const char *Stop;
-   if (Section.Find(Tag,Start,Stop) == false)
-      return string();
-   return string(Start,Stop - Start);
-}
-									/*}}}*/
-// ListParser::FindTagI - Find the tag and return an int		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-signed long debListParser::FindTagI(const char *Tag,signed long Default)
-{
-   const char *Start;
-   const char *Stop;
-   if (Section.Find(Tag,Start,Stop) == false)
-      return Default;
-   
-   // Copy it into a temp buffer so we can use strtol
-   char S[300];
-   if ((unsigned)(Stop - Start) >= sizeof(S))
-      return Default;
-   strncpy(S,Start,Stop-Start);
-   S[Stop - Start] = 0;
-   
-   char *End;
-   signed long Result = strtol(S,&End,10);
-   if (S == End)
-      return Default;
-   return Result;
-}
-									/*}}}*/
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -73,45 +37,12 @@ unsigned long debListParser::UniqFindTagWrite(const char *Tag)
    return WriteUniqString(Start,Stop - Start);
 }
 									/*}}}*/
-// ListParser::HandleFlag - Sets a flag variable based on a tag		/*{{{*/
-// ---------------------------------------------------------------------
-/* This checks the tag for true/false yes/no etc */
-bool debListParser::HandleFlag(const char *Tag,unsigned long &Flags,
-			       unsigned long Flag)
-{
-   const char *Start;
-   const char *Stop;
-   if (Section.Find(Tag,Start,Stop) == false)
-      return true;
-   
-   int Set = 2;
-   if (stringcasecmp(Start,Stop,"yes") == 0)
-      Set = 1;
-   if (stringcasecmp(Start,Stop,"true") == 0)
-      Set = 1;
-   if (stringcasecmp(Start,Stop,"no") == 0)
-      Set = 0;
-   if (stringcasecmp(Start,Stop,"false") == 0)
-      Set = 0;
-   if (Set == 2)
-   {
-      _error->Warning("Unknown flag value");
-      return true;
-   }
-   
-   if (Set == 0)
-      Flags &= ~Flag;
-   if (Set == 1)
-      Flags |= Flag;
-   return true;
-}
-									/*}}}*/
 // ListParser::Package - Return the package name			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is to return the name of the package this section describes */
 string debListParser::Package()
 {
-   string Result = FindTag("Package");
+   string Result = Section.FindS("Package");
    if (Result.empty() == true)
       _error->Error("Encoutered a section with no Package: header");
    return Result;
@@ -124,7 +55,7 @@ string debListParser::Package()
    entry is assumed to only describe package properties */
 string debListParser::Version()
 {
-   return FindTag("Version");
+   return Section.FindS("Version");
 }
 									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
@@ -136,10 +67,10 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    Ver->Section = UniqFindTagWrite("Section");
    
    // Archive Size
-   Ver->Size = (unsigned)FindTagI("Size");
+   Ver->Size = (unsigned)Section.FindI("Size");
    
    // Unpacked Size (in K)
-   Ver->InstalledSize = (unsigned)FindTagI("Installed-Size");
+   Ver->InstalledSize = (unsigned)Section.FindI("Installed-Size");
    Ver->InstalledSize *= 1024;
 
    // Priority
@@ -185,9 +116,9 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
 {
    if (Pkg->Section == 0)
       Pkg->Section = UniqFindTagWrite("Section");
-   if (HandleFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
+   if (Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
       return false;
-   if (HandleFlag("Immediate-Configure",Pkg->Flags,pkgCache::Flag::ImmediateConf) == false)
+   if (Section.FindFlag("Immediate-Configure",Pkg->Flags,pkgCache::Flag::ImmediateConf) == false)
       return false;
    if (ParseStatus(Pkg,Ver) == false)
       return false;
@@ -510,5 +441,34 @@ bool debListParser::Step()
       iOffset = Tags.Offset();
    }   
    return false;
+}
+									/*}}}*/
+// ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
+				    FileFd &File)
+{
+   pkgTagFile Tags(File);
+   pkgTagSection Section;
+   if (Tags.Step(Section) == false)
+      return false;
+
+   const char *Start;
+   const char *Stop;
+   if (Section.Find("Archive",Start,Stop) == true)
+      FileI->Archive = WriteUniqString(Start,Stop - Start);
+   if (Section.Find("Component",Start,Stop) == true)
+      FileI->Component = WriteUniqString(Start,Stop - Start);
+   if (Section.Find("Version",Start,Stop) == true)
+      FileI->Version = WriteUniqString(Start,Stop - Start);
+   if (Section.Find("Origin",Start,Stop) == true)
+      FileI->Origin = WriteUniqString(Start,Stop - Start);
+   if (Section.Find("Label",Start,Stop) == true)
+      FileI->Label = WriteUniqString(Start,Stop - Start);
+   if (Section.Find("Architecture",Start,Stop) == true)
+      FileI->Architecture = WriteUniqString(Start,Stop - Start);
+
+   return !_error->PendingError();
 }
 									/*}}}*/

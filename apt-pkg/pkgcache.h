@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.12 1998/12/08 01:34:13 jgg Exp $
+// $Id: pkgcache.h,v 1.13 1998/12/14 02:23:46 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -198,9 +198,15 @@ struct pkgCache::PackageFile
 {
    // Names
    __apt_ptrloc FileName;        // Stringtable
+   __apt_ptrloc Archive;         // Stringtable
+   __apt_ptrloc Component;       // Stringtable
    __apt_ptrloc Version;         // Stringtable
-   __apt_ptrloc Distribution;    // Stringtable
-   __apt_ptrloc Size;
+   __apt_ptrloc Origin;          // Stringtable
+   __apt_ptrloc Label;           // Stringtable
+   __apt_ptrloc Architecture;    // Stringtable
+   unsigned long Size;            
+   unsigned char NotAutomatic;   // Bool
+
    
    // Linked list
    __apt_ptrloc NextFile;        // PackageFile
