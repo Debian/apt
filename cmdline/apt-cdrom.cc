@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.23 1999/05/29 03:32:30 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.24 1999/05/29 04:59:52 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -448,6 +448,7 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 	    File = OrigPath + ChopDirs(File,Chop);
 	 
 	 // See if the file exists
+	 bool Mangled = false;
 	 if (NoStat == false || Hits < 10)
 	 {
 	    // Attempt to fix broken structure
@@ -456,6 +457,8 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 	       if (ReconstructPrefix(Prefix,OrigPath,CDROM,File) == false &&
 		   ReconstructChop(Chop,*I,File) == false)
 	       {
+		  if (Debug == true)
+		     clog << "Missed: " << File << endl;
 		  NotFound++;
 		  continue;
 	       }
@@ -467,13 +470,31 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 	    struct stat Buf;
 	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0)
 	    {
-	       NotFound++;
-	       continue;
+	       // Attempt to fix busted symlink support for one instance
+	       string OrigFile = File;
+	       string::size_type Start = File.find("binary-");
+	       string::size_type End = File.find("/",Start+3);
+	       if (Start != string::npos && End != string::npos)
+	       {
+		  File.replace(Start,End-Start,"binary-all");
+		  Mangled = true;
+	       }
+	       
+	       if (Mangled == false ||
+		   stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0)
+	       {
+		  if (Debug == true)
+		     clog << "Missed(2): " << OrigFile << endl;
+		  NotFound++;
+		  continue;
+	       }	       
 	    }	    
 	    			    	    
 	    // Size match
 	    if ((unsigned)Buf.st_size != Size)
 	    {
+	       if (Debug == true)
+		  clog << "Wrong Size: " << File << endl;
 	       WrongSize++;
 	       continue;
 	    }
@@ -485,7 +506,7 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 	 // Copy it to the target package file
 	 const char *Start;
 	 const char *Stop;
-	 if (Chop != 0)
+	 if (Chop != 0 || Mangled == true)
 	 {
 	    // Mangle the output filename
 	    const char *Filename;
@@ -588,7 +609,7 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
       return _error->Error("No valid package records were found.");
    
    if (NotFound + WrongSize > 10)
-      cout << "Alot of package entires were discarded, perhaps this CD is funny?" << endl;
+      cout << "Alot of package entries were discarded, perhaps this CD is funny?" << endl;
 
    return true;
 }
