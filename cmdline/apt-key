@@ -2,6 +2,36 @@
 
 set -e
 
+# We don't use a secret keyring, of course, but gpg panics and
+# implodes if there isn't one available
+
+GPG_CMD="gpg --no-options --no-default-keyring --secret-keyring /etc/apt/secring.gpg --trustdb-name /etc/apt/trustdb.gpg"
+GPG="$GPG_CMD --keyring /etc/apt/trusted.gpg"
+
+
+ARCHIVE_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
+REMOVED_KEYS=/usr/share/keyrings/ubuntu-archive-removed-keys.gpg
+
+
+update() {
+    if [ ! -f $ARCHIVE_KEYRING ]; then
+	echo >&2 "ERROR: Can't find the archive-keyring"
+	echo >&2 "Is the ubuntu-keyring package installed?"
+	exit 1
+    fi
+
+    # add new keys
+    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
+
+    # remove no-longer used keys
+    keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys|awk '/^pub/{FS=":";print $5}'`
+    for key in $keys; do
+	if $GPG --list-keys --with-colons | awk '/^pub/{FS=":";print $5}'|grep -q $key; then
+	    $GPG --quiet --batch --delete-key --yes ${key}
+	fi
+    done
+}
+
 usage() {
     echo "Usage: apt-key [command] [arguments]"
     echo
@@ -9,6 +39,7 @@ usage() {
     echo
     echo "  apt-key add <file>          - add the key contained in <file> ('-' for stdin)"
     echo "  apt-key del <keyid>         - remove the key <keyid>"
+    echo "  apt-key update              - update keys using the keyring package"
     echo "  apt-key list                - list keys"
     echo
 }
@@ -26,11 +57,6 @@ if [ "$command" != "help" ] && ! which gpg >/dev/null 2>&1; then
     echo >&2
 fi
 
-# We don't use a secret keyring, of course, but gpg panics and
-# implodes if there isn't one available
-
-GPG="gpg --no-options --no-default-keyring --keyring /etc/apt/trusted.gpg --secret-keyring /etc/apt/secring.gpg --trustdb-name /etc/apt/trustdb.gpg"
-
 case "$command" in
     add)
         $GPG --quiet --batch --import "$1"
@@ -40,6 +66,9 @@ case "$command" in
         $GPG --quiet --batch --delete-key --yes "$1"
         echo "OK"
         ;;
+    update)
+	update
+	;;
     list)
         $GPG --batch --list-keys
         ;;
