@@ -1,0 +1,79 @@
+mailto(apt@packages.debian.org)
+manpage(apt-config)(8)(14 Feb 1999)(apt)()
+manpagename(apt-config)(APT Configuration Query program)
+
+manpagesynopsis()
+apt-config command
+
+manpagedescription()
+bf(apt-config) is an internal program used by various portions of the APT
+suite to provide consistent configuability. It accesses the main configuarion
+file /etc/apt/apt.conf in a manner that is easy to use by scripted
+applications.
+
+em(command) is one of:
+itemize(
+  it() shell
+)
+
+Unless the -h, or --help option is given one of the above commands
+must be present.
+
+startdit()
+dit(bf(shell))
+bf(shell) is used to access the configuration information from a shell script.
+It is given pairs of arguments, the first being a shell variable and the
+second the configuration value to query. As output it lists a series of shell
+assignments commands for each present value. In a shell script it should be
+used like:
+
+verb(
+OPTS="-f"
+
+RES=`apt-config shell OPTS MyApp::Options`
+
+eval $RES
+)
+
+This will set the shell environment variable $OPTS to the value of
+MyApp::Options with a default of -f.
+
+enddit()
+
+manpageoptions()
+All command line options may be set using the configuration file, the
+descriptions indicate the configuration option to set. For boolean
+options you can override the config file by using something like bf(-f-),
+bf(--no-f), bf(-f=no) or several other variations.
+
+startdit()
+dit(bf(-h, --help))
+Show a short usage summary.
+
+dit(bf(-v, --version))
+Show the program verison.
+
+dit(bf(-c, --config-file))
+Configuration File; Specify a configuration file to use. bf(apt-get) will
+read the default configuration file and then this configuration file. See
+bf(apt.conf(5)) for syntax information.
+
+dit(bf(-o, --option))
+Set a Configuration Option; This will set an arbitary configuration option.
+The syntax is 
+verb(-o Foo::Bar=bar)
+enddit()
+
+manpageseealso()
+apt.conf(5)
+
+manpagediagnostics()
+apt-config returns zero on normal operation, decimal 100 on error.
+
+manpagebugs()
+See http://bugs.debian.org/apt.  If you wish to report a
+bug in bf(apt-config), please see bf(/usr/doc/debian/bug-reporting.txt)
+or the bf(bug(1)) command.
+
+manpageauthor()
+apt-get was written by the APT team <apt@packages.debian.org>.
