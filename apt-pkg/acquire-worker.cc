@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.13 1998/11/29 01:24:18 jgg Exp $
+// $Id: acquire-worker.cc,v 1.14 1998/12/04 21:16:47 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <wait.h>
+#include <stdio.h>
 									/*}}}*/
 
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
@@ -288,6 +289,11 @@ bool pkgAcquire::Worker::RunMessages()
 	 case 401:
 	 _error->Error("Method %s General failure: %s",LookupTag(Message,"Message").c_str());
 	 break;
+	 
+	 // 403 Media Change
+	 case 403:
+	 MediaChange(Message); 
+	 break;
       }      
    }
    return true;
@@ -318,6 +324,32 @@ bool pkgAcquire::Worker::Capabilities(string Message)
 	 Config->SendConfig << endl;
    }
    
+   return true;
+}
+									/*}}}*/
+// Worker::MediaChange - Request a media change				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgAcquire::Worker::MediaChange(string Message)
+{
+   if (Log == 0 || Log->MediaChange(LookupTag(Message,"Media"),
+				    LookupTag(Message,"Drive")) == false)
+   {
+      char S[300];
+      sprintf(S,"603 Media Changed\nFailed: true\n\n");
+      if (Debug == true)
+	 clog << " -> " << Access << ':' << QuoteString(S,"\n") << endl;
+      OutQueue += S;
+      OutReady = true;
+      return true;
+   }
+
+   char S[300];
+   sprintf(S,"603 Media Changed\n\n");
+   if (Debug == true)
+      clog << " -> " << Access << ':' << QuoteString(S,"\n") << endl;
+   OutQueue += S;
+   OutReady = true;
    return true;
 }
 									/*}}}*/
@@ -451,8 +483,7 @@ void pkgAcquire::Worker::Pulse()
 {
    if (CurrentItem == 0)
       return;
-
-   
+ 
    struct stat Buf;
    if (stat(CurrentItem->Owner->DestFile.c_str(),&Buf) != 0)
       return;

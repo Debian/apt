@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.7 1998/11/09 01:09:24 jgg Exp $
+// $Id: acquire-worker.h,v 1.8 1998/12/04 21:16:48 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
@@ -61,7 +61,8 @@ class pkgAcquire::Worker
    // The message handlers
    bool Capabilities(string Message);
    bool SendConfiguration();
-
+   bool MediaChange(string Message);
+   
    bool MethodFailure();
    void ItemDone();
    

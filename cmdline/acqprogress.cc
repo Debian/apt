@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.4 1998/11/28 20:56:08 jgg Exp $
+// $Id: acqprogress.cc,v 1.5 1998/12/04 21:16:52 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -226,5 +226,22 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
    BlankLine[strlen(Buffer)] = 0;
    
    Update = false;
+}
+									/*}}}*/
+// AcqTextStatus::MediaChange - Media need to be swapped		/*{{{*/
+// ---------------------------------------------------------------------
+/* Prompt for a media swap */
+bool AcqTextStatus::MediaChange(string Media,string Drive)
+{
+   if (Quiet <= 0)
+      cout << '\r' << BlankLine << '\r';   
+   cout << "Media Change: Please insert the Disc labeled '" << Media << "' in "\
+           " the drive '" << Drive << "' and press a key" << endl;
+
+   char C;
+   read(STDIN_FILENO,&C,1);
+   
+   Update = true;
+   return true;
 }
 									/*}}}*/

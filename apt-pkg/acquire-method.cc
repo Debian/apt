@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.10 1998/12/03 07:29:16 jgg Exp $
+// $Id: acquire-method.cc,v 1.11 1998/12/04 21:16:46 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -230,8 +230,8 @@ void pkgAcqMethod::MediaFail(string Required,string Drive)
 	    Messages.push_back(MyMessages.front());
 	    MyMessages.erase(MyMessages.begin());
 	 }
-	 
-	 return;
+
+	 return StringToBool(LookupTag(Message,"Fail"),false);
       }
       
       Messages.push_back(Message);

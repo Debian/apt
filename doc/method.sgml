@@ -4,7 +4,7 @@
 <title>APT Method Interface </title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: method.sgml,v 1.4 1998/10/30 07:53:49 jgg Exp $</version>
+<version>$Id: method.sgml,v 1.5 1998/12/04 21:16:54 jgg Exp $</version>
 
 <abstract>
 This document describes the interface that APT uses to the archive
@@ -207,6 +207,8 @@ The following is a short index of the header fields that are supported
 <tag>Site<item>String indicating the site authorization is required for
 <tag>User<item>Username for authorization
 <tag>Password<item>Password for authorization
+<tag>Fail<item>Operation failed
+<tag>Drive<item>Drive the media should be placed in
 <tag>Config-Item<item>
 A string of the form <var>item</>=<var>value</> derived from the APT 
 configuration space. These may include method specific values and general
@@ -214,9 +216,8 @@ values not related to the method. It is up to the method to filter out
 the ones it wants.
 <tag>Single-Instance<item>Requires that only one instance of the method be run
                           This is a yes/no value.
-<tag>Pre-Scan<item>Method can detect if archives are already available.
-                   This is a yes/no value.
 <tag>Pipeline<item>The method is capable of pipelining.
+<tag>Local<item>The method only returns Filename: feilds.
 <tag>Send-Config<item>Send configuration to the method.
 <tag>Version<item>Version string for the method
 </taglist>
@@ -279,7 +280,7 @@ Fields: Site
 <tag>403 Media Failure<item>
 A method that deals with multiple media requires that a new media be inserted.
 The Media field contains the name of the media to be inserted.
-Fields: Media
+Fields: Media, Drive
 
 <tag>600 URI Acquire<item>
 APT is requesting that a new URI be added to the acquire list. Last-Modified
@@ -301,7 +302,7 @@ Fields: Site, User, Password
 <tag>603 Media Changed<item>
 This is sent in response to a <em>403 Media Failure</> message. It
 indicates that the user has changed media and it is safe to proceed.
-Fields: Media
+Fields: Media, Fail
 </taglist>
 
 </sect>

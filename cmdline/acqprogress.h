@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.h,v 1.2 1998/11/12 05:30:09 jgg Exp $
+// $Id: acqprogress.h,v 1.3 1998/12/04 21:16:53 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -21,6 +21,7 @@ class AcqTextStatus : public pkgAcquireStatus
    
    public:
    
+   virtual bool MediaChange(string Media,string Drive);
    virtual void IMSHit(pkgAcquire::ItemDesc &Itm);
    virtual void Fetch(pkgAcquire::ItemDesc &Itm);
    virtual void Done(pkgAcquire::ItemDesc &Itm);
