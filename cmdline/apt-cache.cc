@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.33 1999/04/12 04:21:20 jgg Exp $
+// $Id: apt-cache.cc,v 1.34 1999/04/19 02:35:38 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -658,15 +658,20 @@ int main(int argc,const char *argv[])
    if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
    {      
       // Open the cache file
-      FileFd CacheF(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
-      MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
+      pkgSourceList List;
+      List.ReadMainList();
+
+      // Generate it and map it
+      OpProgress Prog;
+      MMap *Map = pkgMakeStatusCacheMem(List,Prog);
       if (_error->PendingError() == false)
       {
-	 pkgCache Cache(Map);   
+	 pkgCache Cache(*Map);   
 	 GCache = &Cache;
 	 if (_error->PendingError() == false)
 	    CmdL.DispatchArg(CmdsB);
-      }      
+      }
+      delete Map;
    }
    
    // Print any errors or warnings found during parsing

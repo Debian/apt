@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.cc,v 1.1 1999/04/18 06:36:36 jgg Exp $
+// $Id: cachefile.cc,v 1.2 1999/04/19 02:35:38 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -86,10 +86,9 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
    
    // Create the dependency cache
    Cache = new pkgDepCache(*Map,Progress);
+   Progress.Done();
    if (_error->PendingError() == true)
       return false;
-
-   Progress.Done();
    
    return true;
 }

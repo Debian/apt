@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.36 1999/04/18 07:25:32 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.37 1999/04/19 02:35:38 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -26,6 +26,7 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
 									/*}}}*/
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
@@ -761,7 +762,9 @@ MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
    /* If the cache file is writeable this is just a wrapper for
       MakeStatusCache */
    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
-   bool Writeable = access(CacheFile.c_str(),W_OK) == 0;
+   bool Writeable = (access(CacheFile.c_str(),W_OK) == 0) ||
+                    (errno == ENOENT);
+
    if (Writeable == true)
    {
       if (pkgMakeStatusCache(List,Progress) == false)
