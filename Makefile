@@ -33,11 +33,10 @@ configure: aclocal.m4 configure.in
 aclocal.m4:
 	aclocal -I buildlib
 
-build:
-	mkdir $(BUILD)
 $(BUILD)/config.status: configure
+	test -e $(BUILD) || mkdir $(BUILD)	
 	(HERE=`pwd`; cd $(BUILD) && $$HERE/configure)
 $(BUILD)/include/config.h: buildlib/config.h.in
 $(BUILD)/environment.mak: buildlib/environment.mak.in
-$(CONVERTED):
+$(CONVERTED): $(BUILD)/config.status
 	(cd $(BUILD) && ./config.status)
