@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.12 1999/07/03 03:10:36 jgg Exp $
+// $Id: cdrom.cc,v 1.13 1999/07/12 03:00:53 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -142,7 +142,6 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 			      CDROM.c_str());
       if (MediaFail(Get.Host,CDROM) == false)
       {
-	 clog << "M-Fail" << endl;
 	 CurrentID = "FAIL";
 	 Fail("Wrong CD",true);
 	 return true;
