@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.10 1998/12/09 00:31:16 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.11 1998/12/09 00:55:23 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -38,10 +38,9 @@
    search that short circuits when it his a package file in the dir.
    This speeds it up greatly as the majority of the size is in the
    binary-* sub dirs. */
-ino_t Inodes[9];
-
 bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
 {
+   static ino_t Inodes[9];
    if (Depth >= 7)
       return true;
 
@@ -182,7 +181,7 @@ bool DropRepeats(vector<string> &List)
    for (unsigned int I = 0; I != List.size(); I++)
    {
       struct stat Buf;
-      if (stat(List[I].c_str(),&Buf) != 0)
+      if (stat((List[I] + "Packages").c_str(),&Buf) != 0)
 	 _error->Errno("stat","Failed to stat %s",List[I].c_str());
       Inodes[I] = Buf.st_ino;
    }
