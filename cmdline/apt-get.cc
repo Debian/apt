@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.109 2001/07/01 22:59:04 jgg Exp $
+// $Id: apt-get.cc,v 1.110 2001/10/02 03:16:28 tausq Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1877,8 +1877,15 @@ bool DoBuildDep(CommandLine &CmdL)
       {
 	 pkgCache::PkgIterator Pkg = Cache->FindPkg((*D).Package);
 	 if (Pkg.end() == true)
+         {
+	    /* for a build-conflict; ignore unknown packages */
+	    if ((*D).Type == pkgSrcRecords::Parser::BuildConflict || 
+	        (*D).Type == pkgSrcRecords::Parser::BuildConflictIndep)
+		continue;
+
 	    return _error->Error(_("%s dependency on %s cannot be satisfied because the package %s cannot be found"),
 				 Last->BuildDepType((*D).Type),Src.c_str(),(*D).Package.c_str());
+         }
 	 pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
 	 
 	 if ((*D).Type == pkgSrcRecords::Parser::BuildConflict || 
