@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.9 1998/11/29 01:24:15 jgg Exp $
+// $Id: acquire-method.cc,v 1.10 1998/12/03 07:29:16 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -183,6 +183,59 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    FetchItem *Tmp = Queue;
    Queue = Queue->Next;
    delete Tmp;
+}
+									/*}}}*/
+// AcqMethod::MediaFail - Syncronous request for new media		/*{{{*/
+// ---------------------------------------------------------------------
+/* This sends a 403 Media Failure message to the APT and waits for it
+   to be ackd */
+void pkgAcqMethod::MediaFail(string Required,string Drive)
+{
+   char S[1024];
+   snprintf(S,sizeof(S),"403 Media Failure\nMedia: %s\nDrive: %s\n\n",
+	    Required.c_str(),Drive.c_str());
+
+   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
+      exit(100);
+   
+   vector<string> MyMessages;
+   
+   /* Here we read messages until we find a 603, each non 603 message is
+      appended to the main message list for later processing */
+   while (1)
+   {
+      if (WaitFd(STDIN_FILENO) == false)
+	 exit(0);
+      
+      if (ReadMessages(STDIN_FILENO,MyMessages) == false)
+	 exit(0);
+      
+      string Message = MyMessages.front();
+      MyMessages.erase(MyMessages.begin());
+      
+      // Fetch the message number
+      char *End;
+      int Number = strtol(Message.c_str(),&End,10);
+      if (End == Message.c_str())
+      {	 
+	 cerr << "Malformed message!" << endl;
+	 exit(100);
+      }
+
+      // Change ack
+      if (Number == 603)
+      {
+	 while (Message.empty() == false)
+	 {
+	    Messages.push_back(MyMessages.front());
+	    MyMessages.erase(MyMessages.begin());
+	 }
+	 
+	 return;
+      }
+      
+      Messages.push_back(Message);
+   }   
 }
 									/*}}}*/
 // AcqMethod::Configuration - Handle the configuration message		/*{{{*/

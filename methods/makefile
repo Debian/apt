@@ -24,6 +24,12 @@ SLIBS = -lapt-pkg
 SOURCE = gzip.cc
 include $(PROGRAM_H)
 
+# The cdrom method
+PROGRAM=cdrom
+SLIBS = -lapt-pkg 
+SOURCE = cdrom.cc
+include $(PROGRAM_H)
+
 # The http method
 PROGRAM=http
 SLIBS = -lapt-pkg 
