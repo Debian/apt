@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.20 1998/10/20 02:39:21 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.21 1998/11/11 23:45:28 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -385,7 +385,7 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
       return false;
 
    string CacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-   string ListDir = _config->FindFile("Dir::State::lists");
+   string ListDir = _config->FindDir("Dir::State::lists");
 
    // Count the number of missing files
    int Missing = 0;
@@ -592,8 +592,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    if (SrcOk == false)
    {      
       string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-      string ListDir = _config->FindFile("Dir::State::lists");
-      
+      string ListDir = _config->FindDir("Dir::State::lists");
       FileFd SCacheF(SCacheFile,FileFd::WriteEmpty);
       FileFd CacheF(CacheFile,FileFd::WriteEmpty);
       DynamicMMap Map(CacheF,MMap::Public);

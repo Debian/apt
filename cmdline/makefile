@@ -14,5 +14,5 @@ include $(PROGRAM_H)
 # The apt-config program
 PROGRAM=apt-get
 SLIBS = -lapt-pkg
-SOURCE = apt-get.cc
+SOURCE = apt-get.cc acqprogress.cc
 include $(PROGRAM_H)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.12 1998/11/11 07:30:55 jgg Exp $
+// $Id: acquire.cc,v 1.13 1998/11/11 23:45:08 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -322,7 +322,7 @@ bool pkgAcquire::Run()
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Shutdown();
 
-   return _error->PendingError();
+   return !_error->PendingError();
 }
 									/*}}}*/
 // Acquire::Bump - Called when an item is dequeued			/*{{{*/

@@ -39,6 +39,7 @@
  Status: The 0.3.0 ftp method should probably use the configuration mechanism
          to control this desired behavoir.
 #28373: apt package is missing information on ftp.conf
+#29293: apt: Docs reference apt(8) but apt(8) not provided.
  Summary: The man pages have references to several non-existent items,
           ftp.conf is only one of them.
  Status: Fix the man pages. This certainly will be done in 0.3.0
@@ -87,7 +88,14 @@
  Status: There is no place for this in the current apt-get design,
          probably won't make the GUI either.
 	 Wee, the new acquire code allows this, it now prints out 'Hit'
-	 
+#26019: apt may report wrong line speed
+#26433: apt: claims to fetch things it doesn't actually fetch (wishlist)
+#28778: apt: apt's fetched message is wrong for update of packages files
+ Summary: APT includes the fetch time from the local cache in its
+          calculations
+ Status: Probably will be fixed with new acquire code
+         And it actually was fixed with the new acquire code
+
 -- Silly things
 #26592: apt: Problems with ftpd in SunOS 5.6
  Summary: SunOS ftpd does not support the SIZE command
@@ -100,12 +108,6 @@
 #23934: apt-get source <package>
 #27190: apt: installing source packages (wishlist)
  Status: Impossible to do without an index file for all source archives.
-#26019: apt may report wrong line speed
-#26433: apt: claims to fetch things it doesn't actually fetch (wishlist)
-#28778: apt: apt's fetched message is wrong for update of packages files
- Summary: APT includes the fetch time from the local cache in its
-          calculations
- Status: Probably will be fixed with new acquire code
 #26663: rsync file access
  Status: Unlikely, rsync does not provide the necessary support to be
          a terribly good method. I do not intend any 'split mode' 

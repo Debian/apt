@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.5 1998/10/24 04:58:08 jgg Exp $
+// $Id: apt-get.cc,v 1.6 1998/11/11 23:45:56 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -32,8 +32,11 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/algorithms.h>
+#include <apt-pkg/acquire-item.h>
 
 #include <config.h>
+
+#include "acqprogress.h"
 
 #include <fstream.h>
 									/*}}}*/
@@ -445,8 +448,36 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept)
 // DoUpdate - Update the package lists					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoUpdate(CommandLine &CmdL)
+bool DoUpdate(CommandLine &)
 {
+   // Get the source list
+   pkgSourceList List;
+   if (List.ReadMainList() == false)
+      return false;
+
+   // Create the download object
+   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
+   pkgAcquire Fetcher(&Stat);
+   
+   // Populate it with the source selection
+   pkgSourceList::const_iterator I;
+   for (I = List.begin(); I != List.end(); I++)
+   {
+      new pkgAcqIndex(&Fetcher,I);
+      if (_error->PendingError() == true)
+	 return false;
+   }
+   
+   // Run it
+   if (Fetcher.Run() == false)
+      return false;
+
+   // Prepare the cache.   
+   CacheFile Cache;
+   if (Cache.Open() == false)
+      return false;
+   
+   return true;
 }
 									/*}}}*/
 // DoUpgrade - Upgrade all packages					/*{{{*/
@@ -829,7 +860,8 @@ int main(int argc,const char *argv[])
    {
       if (strcmp(CmdL.FileList[0],Map[I].Match) == 0)
       {
-	 Map[I].Handler(CmdL);
+	 if (Map[I].Handler(CmdL) == false && _error->PendingError() == false)
+	    _error->Error("Handler silently failed");
 	 break;
       }
    }
