@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debfile.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: debfile.cc,v 1.3 2003/02/10 00:36:12 doogie Exp $
 /* ######################################################################
 
    Debian Archive File (.deb)
@@ -20,6 +20,7 @@
 #pragma implementation "apt-pkg/debfile.h"
 #endif
 
+#include <apti18n.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
@@ -51,7 +52,7 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
 bool debDebFile::CheckMember(const char *Name)
 {
    if (AR.FindMember(Name) == 0)
-      return _error->Error("This is not a valid DEB archive, missing '%s' member",Name);
+      return _error->Error(_("This is not a valid DEB archive, missing '%s' member"),Name);
    return true;
 }
 									/*}}}*/
@@ -68,7 +69,7 @@ const ARArchive::Member *debDebFile::GotoMember(const char *Name)
    const ARArchive::Member *Member = AR.FindMember(Name);
    if (Member == 0)
    {
-      _error->Error("Internal Error, could not locate member %s",Name);
+      _error->Error(_("Internal Error, could not locate member %s"),Name);
       return 0;
    }
    if (File.Seek(Member->Start) == false)
@@ -100,7 +101,7 @@ bool debDebFile::ExtractControl(pkgDataBase &DB)
    if (DB.GetMetaTmp(Tmp) == false)
       return false;
    if (chdir(Tmp.c_str()) != 0)
-      return _error->Errno("chdir","Couldn't change to %s",Tmp.c_str());
+      return _error->Errno("chdir",_("Couldn't change to %s"),Tmp.c_str());
    
    // Do extraction
    if (Tar.Go(Extract) == false)
@@ -121,7 +122,7 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
    // Get the archive member and positition the file 
    const ARArchive::Member *Member = AR.FindMember("data.tar.gz");
    if (Member == 0)
-      return _error->Error("Internal Error, could not locate member");   
+      return _error->Error(_("Internal Error, could not locate member"));   
    if (File.Seek(Member->Start) == false)
       return false;
       
@@ -154,7 +155,7 @@ pkgCache::VerIterator debDebFile::MergeControl(pkgDataBase &DB)
       return pkgCache::VerIterator(DB.GetCache());
    
    if (Ver.end() == true)
-      _error->Error("Failed to locate a valid control file");
+      _error->Error(_("Failed to locate a valid control file"));
    return Ver;
 }
 									/*}}}*/
@@ -239,7 +240,7 @@ bool debDebFile::MemControlExtract::Read(debDebFile &Deb)
    Control[Length] = '\n';
    Control[Length+1] = '\n';
    if (Section.Scan(Control,Length+2) == false)
-      return _error->Error("Unparsible control file");
+      return _error->Error(_("Unparsible control file"));
    return true;
 }
 									/*}}}*/

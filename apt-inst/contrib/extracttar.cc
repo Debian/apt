@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extracttar.cc,v 1.6 2002/11/11 06:55:50 doogie Exp $
+// $Id: extracttar.cc,v 1.7 2003/02/10 00:36:12 doogie Exp $
 /* ######################################################################
 
    Extract a Tar - Tar Extractor
@@ -19,6 +19,7 @@
 #ifdef __GNUG__
 #pragma implementation "apt-pkg/extracttar.h"
 #endif
+#include <apti18n.h>
 #include <apt-pkg/extracttar.h>
 
 #include <apt-pkg/error.h>
@@ -111,7 +112,7 @@ bool ExtractTar::StartGzip()
 {
    int Pipes[2];
    if (pipe(Pipes) != 0)
-      return _error->Errno("pipe","Failed to create pipes");
+      return _error->Errno("pipe",_("Failed to create pipes"));
    
    // Fork off the process
    GZPid = ExecFork();
@@ -136,7 +137,7 @@ bool ExtractTar::StartGzip()
       Args[1] = "-d";
       Args[2] = 0;
       execv(Args[0],(char **)Args);
-      cerr << "Failed to exec gzip " << Args[0] << endl;
+      cerr << _("Failed to exec gzip ") << Args[0] << endl;
       _exit(100);
    }
 
@@ -173,7 +174,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       TarHeader *Tar = (TarHeader *)Block;
       unsigned long CheckSum;
       if (StrToNum(Tar->Checksum,CheckSum,sizeof(Tar->Checksum),8) == false)
-	 return _error->Error("Corrupted archive");
+	 return _error->Error(_("Corrupted archive"));
       
       /* Compute the checksum field. The actual checksum is blanked out
          with spaces so it is not included in the computation */
@@ -188,7 +189,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 return Done(true);
       
       if (NewSum != CheckSum)
-	 return _error->Error("Tar Checksum failed, archive corrupted");
+	 return _error->Error(_("Tar Checksum failed, archive corrupted"));
    
       // Decode all of the fields
       pkgDirStream::Item Itm;
@@ -199,7 +200,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	  StrToNum(Tar->MTime,Itm.MTime,sizeof(Tar->MTime),8) == false ||
 	  StrToNum(Tar->Major,Itm.Major,sizeof(Tar->Major),8) == false ||
 	  StrToNum(Tar->Minor,Itm.Minor,sizeof(Tar->Minor),8) == false)
-	 return _error->Error("Corrupted archive");
+	 return _error->Error(_("Corrupted archive"));
       
       // Grab the filename
       if (LastLongName.empty() == false)
@@ -291,7 +292,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 
 	 default:
 	 BadRecord = true;
-	 _error->Warning("Unkown TAR header type %u, member %s",(unsigned)Tar->LinkFlag,Tar->Name);
+	 _error->Warning(_("Unkown TAR header type %u, member %s"),(unsigned)Tar->LinkFlag,Tar->Name);
 	 break;
       }
       

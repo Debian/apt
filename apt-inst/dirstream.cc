@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dirstream.cc,v 1.2 2001/02/20 07:03:16 jgg Exp $
+// $Id: dirstream.cc,v 1.3 2003/02/10 00:36:12 doogie Exp $
 /* ######################################################################
 
    Directory Stream 
@@ -15,6 +15,7 @@
 #pragma implementation "apt-pkg/dirstream.h"
 #endif
 
+#include <apti18n.h>
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
 
@@ -41,15 +42,15 @@ bool pkgDirStream::DoItem(Item &Itm,int &Fd)
 	 int iFd = open(Itm.Name,O_NDELAY|O_WRONLY|O_CREAT|O_TRUNC|O_APPEND,
 		       Itm.Mode);
 	 if (iFd < 0)
-	    return _error->Errno("open","Failed write file %s",
+	    return _error->Errno("open",_("Failed write file %s"),
 				 Itm.Name);
 	 
 	 // fchmod deals with umask and fchown sets the ownership
 	 if (fchmod(iFd,Itm.Mode) != 0)
-	    return _error->Errno("fchmod","Failed write file %s",
+	    return _error->Errno("fchmod",_("Failed write file %s"),
 				 Itm.Name);
 	 if (fchown(iFd,Itm.UID,Itm.GID) != 0 && errno != EPERM)
-	    return _error->Errno("fchown","Failed write file %s",
+	    return _error->Errno("fchown",_("Failed write file %s"),
 				 Itm.Name);
 	 Fd = iFd;
 	 return true;
@@ -76,7 +77,7 @@ bool pkgDirStream::FinishedFile(Item &Itm,int Fd)
       return true;
    
    if (close(Fd) != 0)
-      return _error->Errno("close","Failed to close file %s",Itm.Name);
+      return _error->Errno("close",_("Failed to close file %s"),Itm.Name);
 
    /* Set the modification times. The only way it can fail is if someone
       has futzed with our file, which is intolerable :> */
@@ -84,7 +85,7 @@ bool pkgDirStream::FinishedFile(Item &Itm,int Fd)
    Time.actime = Itm.MTime;
    Time.modtime = Itm.MTime;
    if (utime(Itm.Name,&Time) != 0)
-      _error->Errno("utime","Failed to close file %s",Itm.Name);
+      _error->Errno("utime",_("Failed to close file %s"),Itm.Name);
    
    return true;   
 }

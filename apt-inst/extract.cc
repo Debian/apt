@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extract.cc,v 1.5 2002/11/11 06:55:50 doogie Exp $
+// $Id: extract.cc,v 1.6 2003/02/10 00:36:12 doogie Exp $
 /* ######################################################################
 
    Archive Extraction Directory Stream
@@ -47,6 +47,7 @@
 #ifdef __GNUG__
 #pragma implementation "apt-pkg/extract.h"
 #endif
+#include <apti18n.h>
 #include <apt-pkg/extract.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/debversion.h>
@@ -92,7 +93,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
    for (; *I != 0 && End < FileName + sizeof(FileName); I++, End++)
       *End = *I;
    if (End + 20 >= FileName + sizeof(FileName))
-      return _error->Error("The path %s is too long",Itm.Name);   
+      return _error->Error(_("The path %s is too long"),Itm.Name);   
    for (; End > FileName && End[-1] == '/'; End--);
    *End = 0;
    Itm.Name = FileName;
@@ -123,7 +124,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
       which case this needs to be modified anyhow.. */
    if ((RealNde->Flags & pkgFLCache::Node::Unpacked) ==
        pkgFLCache::Node::Unpacked)
-      return _error->Error("Unpacking %s more than once",Itm.Name);
+      return _error->Error(_("Unpacking %s more than once"),Itm.Name);
    
    if (Nde.end() == true)
       Nde = RealNde;
@@ -133,7 +134,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
    if ((Nde->Flags & pkgFLCache::Node::Diversion) != 0)
    {
       if (Itm.Type == Item::Directory)
-	 return _error->Error("The directory %s is diverted",Itm.Name);
+	 return _error->Error(_("The directory %s is diverted"),Itm.Name);
 
       /* A package overwriting a diversion target is just the same as 
          overwriting a normally owned file and is checked for below in
@@ -143,8 +144,8 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
          that is never, ever permitted */
       pkgFLCache::DiverIterator Div = Nde.Diversion();
       if (Div.DivertTo() == Nde)
-	 return _error->Error("The package is trying to write to the "
-			      "diversion target %s/%s",Nde.DirN(),Nde.File());
+	 return _error->Error(_("The package is trying to write to the "
+			      "diversion target %s/%s"),Nde.DirN(),Nde.File());
       
       // See if it is us and we are following it in the right direction
       if (Div->OwnerPkg != FLPkg.Offset() && Div.DivertFrom() == Nde)
@@ -153,7 +154,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
 	 End = FileName + snprintf(FileName,sizeof(FileName)-20,"%s/%s",
 				   Nde.DirN(),Nde.File());
 	 if (End <= FileName)
-	    return _error->Error("The diversion path is too long");
+	    return _error->Error(_("The diversion path is too long"));
       }      
    }
    
@@ -163,7 +164,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
    {
       string Res = flNoLink(Itm.Name);
       if (Res.length() > sizeof(FileName))
-	 return _error->Error("The path %s is too long",Res.c_str());
+	 return _error->Error(_("The path %s is too long"),Res.c_str());
       if (Debug == true)
 	 clog << "Followed conf file from " << FileName << " to " << Res << endl;
       Itm.Name = strcpy(FileName,Res.c_str());      
@@ -177,19 +178,19 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
    {
       // This is bad news.
       if (errno != ENOENT)
-	 return _error->Errno("stat","Failed to stat %s",Itm.Name);
+	 return _error->Errno("stat",_("Failed to stat %s"),Itm.Name);
       
       // See if we can recover the backup file
       if (Nde.end() == false)
       {
 	 snprintf(Temp,sizeof(Temp),"%s.%s",Itm.Name,TempExt);
 	 if (rename(Temp,Itm.Name) != 0 && errno != ENOENT)
-	    return _error->Errno("rename","Failed to rename %s to %s",
+	    return _error->Errno("rename",_("Failed to rename %s to %s"),
 				 Temp,Itm.Name);
 	 if (stat(Itm.Name,&LExisting) != 0)
 	 {
 	    if (errno != ENOENT)
-	       return _error->Errno("stat","Failed to stat %s",Itm.Name);
+	       return _error->Errno("stat",_("Failed to stat %s"),Itm.Name);
 	 }	 
 	 else
 	    EValid = true;
@@ -206,7 +207,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
       if (stat(Itm.Name,&Existing) != 0)
       {
 	 if (errno != ENOENT)
-	    return _error->Errno("stat","Failed to stat %s",Itm.Name);
+	    return _error->Errno("stat",_("Failed to stat %s"),Itm.Name);
 	 Existing = LExisting;
       }      
    }
@@ -239,13 +240,13 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
    if (S_ISDIR(Existing.st_mode) != 0)
    {
       if (CheckDirReplace(Itm.Name) == false)
-	 return _error->Error("The directory %s is being replaced by a non-directory",Itm.Name);
+	 return _error->Error(_("The directory %s is being replaced by a non-directory"),Itm.Name);
    }
    
    if (Debug == true)
       clog << "Extract " << string(Itm.Name,End) << endl;
 /*   if (Count != 0)
-      return _error->Error("Done");*/
+      return _error->Error(_("Done"));*/
    
    return true;
 }
@@ -279,11 +280,11 @@ bool pkgExtract::Aborted()
       pkgFLCache::NodeIterator Nde(FLCache,FLCache.HashNode(Files));
       for (; Nde.end() == false && Files->File != Nde->File; Nde++);
       if (Nde.end() == true)
-	 return _error->Error("Failed to locate node in its hash bucket");
+	 return _error->Error(_("Failed to locate node in its hash bucket"));
       
       if (snprintf(FileName,sizeof(FileName)-20,"%s/%s",
 		   Nde.DirN(),Nde.File()) <= 0)
-	 return _error->Error("The path is too long");
+	 return _error->Error(_("The path is too long"));
       
       // Deal with diversions
       if ((Nde->Flags & pkgFLCache::Node::Diversion) != 0)
@@ -296,7 +297,7 @@ bool pkgExtract::Aborted()
 	    Nde = Div.DivertTo();
 	    if (snprintf(FileName,sizeof(FileName)-20,"%s/%s",
 			 Nde.DirN(),Nde.File()) <= 0)
-	       return _error->Error("The diversion path is too long");
+	       return _error->Error(_("The diversion path is too long"));
 	 }
       }      
       
@@ -413,7 +414,7 @@ bool pkgExtract::HandleOverwrites(pkgFLCache::NodeIterator Nde,
 	 pkgCache::PkgIterator Pkg = Dep.TargetPkg();
 	 if (Pkg->CurrentVer == 0)
 	 {
-	    _error->Warning("Overwrite package match with no version for %s",Pkg.Name());
+	    _error->Warning(_("Overwrite package match with no version for %s"),Pkg.Name());
 	    continue;
 	 }
 
@@ -430,7 +431,7 @@ bool pkgExtract::HandleOverwrites(pkgFLCache::NodeIterator Nde,
       
       // Negative Hit
       if (Ok == false)
-	 return _error->Error("File %s/%s overwrites the one in the package %s",
+	 return _error->Error(_("File %s/%s overwrites the one in the package %s"),
 			      Nde.DirN(),Nde.File(),FPkg.Name());
    }
    
@@ -463,7 +464,7 @@ bool pkgExtract::CheckDirReplace(string Dir,unsigned int Depth)
    
    DIR *D = opendir(Dir.c_str());
    if (D == 0)
-      return _error->Errno("opendir","Unable to read %s",Dir.c_str());
+      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
 
    string File;
    for (struct dirent *Dent = readdir(D); Dent != 0; Dent = readdir(D))
@@ -490,7 +491,7 @@ bool pkgExtract::CheckDirReplace(string Dir,unsigned int Depth)
       if (lstat(File.c_str(),&St) != 0)
       {
 	 closedir(D);
-	 return _error->Errno("lstat","Unable to stat %s",File.c_str());
+	 return _error->Errno("lstat",_("Unable to stat %s"),File.c_str());
       }
       
       // Recurse down directories

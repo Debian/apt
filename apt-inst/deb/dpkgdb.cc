@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgdb.cc,v 1.6 2002/11/11 06:55:50 doogie Exp $
+// $Id: dpkgdb.cc,v 1.7 2003/02/10 00:36:12 doogie Exp $
 /* ######################################################################
 
    DPKGv1 Database Implemenation
@@ -17,6 +17,7 @@
 #pragma implementation "apt-pkg/dpkgdb.h"
 #endif
 
+#include <apti18n.h>
 #include <apt-pkg/dpkgdb.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -51,13 +52,13 @@ static bool EraseDir(const char *Dir)
    if (errno == ENOTDIR)
    {
       if (unlink(Dir) != 0)
-	 return _error->Errno("unlink","Failed to remove %s",Dir);
+	 return _error->Errno("unlink",_("Failed to remove %s"),Dir);
       return true;
    }
    
    // Should not happen
    if (errno != ENOTEMPTY)
-      return _error->Errno("rmdir","Failed to remove %s",Dir);
+      return _error->Errno("rmdir",_("Failed to remove %s"),Dir);
    
    // Purge it using rm
    int Pid = ExecFork();
@@ -106,20 +107,20 @@ bool debDpkgDB::InitMetaTmp(string &Dir)
 {
    string Tmp = AdminDir + "tmp.ci/";
    if (EraseDir(Tmp.c_str()) == false)
-      return _error->Error("Unable to create %s",Tmp.c_str());
+      return _error->Error(_("Unable to create %s"),Tmp.c_str());
    if (mkdir(Tmp.c_str(),0755) != 0)
-      return _error->Errno("mkdir","Unable to create %s",Tmp.c_str());
+      return _error->Errno("mkdir",_("Unable to create %s"),Tmp.c_str());
    
    // Verify it is on the same filesystem as the main info directory
    dev_t Dev;
    struct stat St;
    if (stat((AdminDir + "info").c_str(),&St) != 0)
-      return _error->Errno("stat","Failed to stat %sinfo",AdminDir.c_str());
+      return _error->Errno("stat",_("Failed to stat %sinfo"),AdminDir.c_str());
    Dev = St.st_dev;
    if (stat(Tmp.c_str(),&St) != 0)
-      return _error->Errno("stat","Failed to stat %s",Tmp.c_str());
+      return _error->Errno("stat",_("Failed to stat %s"),Tmp.c_str());
    if (Dev != St.st_dev)
-      return _error->Error("The info and temp directories need to be on the same filesystem");
+      return _error->Error(_("The info and temp directories need to be on the same filesystem"));
    
    // Done
    Dir = Tmp;
@@ -135,7 +136,7 @@ bool debDpkgDB::ReadyPkgCache(OpProgress &Progress)
 {
    if (Cache != 0)
    {  
-      Progress.OverallProgress(1,1,1,"Reading Package Lists");      
+      Progress.OverallProgress(1,1,1,_("Reading Package Lists"));      
       return true;
    }
    
@@ -176,7 +177,7 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
       path components */
    string Cwd = SafeGetCWD();
    if (chdir((AdminDir + "info/").c_str()) != 0)
-      return _error->Errno("chdir","Failed to change to the admin dir %sinfo",AdminDir.c_str());
+      return _error->Errno("chdir",_("Failed to change to the admin dir %sinfo"),AdminDir.c_str());
    
    // Allocate a buffer. Anything larger than this buffer will be mmaped
    unsigned long BufSize = 32*1024;
@@ -197,11 +198,11 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
       pkgFLCache::PkgIterator FlPkg = FList->GetPkg(I.Name(),0,true);
       if (FlPkg.end() == true)
       {
-	 _error->Error("Internal Error getting a Package Name");
+	 _error->Error(_("Internal Error getting a Package Name"));
 	 break;
       }
       
-      Progress.OverallProgress(Count,Total,1,"Reading File Listing");
+      Progress.OverallProgress(Count,Total,1,_("Reading File Listing"));
      
       // Open the list file
       snprintf(Name,sizeof(Name),"%s.list",I.Name());
@@ -212,9 +213,9 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
       struct stat Stat;
       if (Fd == -1 || fstat(Fd,&Stat) != 0)
       {
-	 _error->Errno("open","Failed to open the list file '%sinfo/%s'. If you "
+	 _error->Errno("open",_("Failed to open the list file '%sinfo/%s'. If you "
 		       "cannot restore this file then make it empty "
-		       "and immediately re-install the same version of the package!",
+		       "and immediately re-install the same version of the package!"),
 		       AdminDir.c_str(),Name);
 	 break;
       }
@@ -225,7 +226,7 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
       {
 	 if (read(Fd,Buffer,Stat.st_size) != Stat.st_size)
 	 {
-	    _error->Errno("read","Failed reading the list file %sinfo/%s",
+	    _error->Errno("read",_("Failed reading the list file %sinfo/%s"),
 			  AdminDir.c_str(),Name);
 	    close(Fd);
 	    break;
@@ -238,7 +239,7 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
 	 File = (char *)mmap(0,Stat.st_size,PROT_READ,MAP_PRIVATE,Fd,0);
 	 if (File == (char *)(-1))
 	 {
-	    _error->Errno("mmap","Failed reading the list file %sinfo/%s",
+	    _error->Errno("mmap",_("Failed reading the list file %sinfo/%s"),
 			  AdminDir.c_str(),Name);
 	    close(Fd);
 	    break;
@@ -262,7 +263,7 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
  					      FlPkg.Offset(),true,false);
 	    if (Node.end() == true)
 	    {
-	       _error->Error("Internal Error getting a Node");
+	       _error->Error(_("Internal Error getting a Node"));
 	       break;
 	    }
 	 }
@@ -305,7 +306,7 @@ bool debDpkgDB::ReadDiversions()
    
    FILE *Fd = fopen((AdminDir + "diversions").c_str(),"r");
    if (Fd == 0)
-      return _error->Errno("fopen","Failed to open the diversions file %sdiversions",AdminDir.c_str());
+      return _error->Errno("fopen",_("Failed to open the diversions file %sdiversions"),AdminDir.c_str());
 	
    FList->BeginDiverLoad();
    while (1)
@@ -320,24 +321,24 @@ bool debDpkgDB::ReadDiversions()
       if (fgets(To,sizeof(To),Fd) == 0 ||
 	  fgets(Package,sizeof(Package),Fd) == 0)
       {
-	 _error->Error("The diversion file is corrupted");
+	 _error->Error(_("The diversion file is corrupted"));
 	 break;
       }
       
       // Strip the \ns
       unsigned long Len = strlen(From);
       if (Len < 2 || From[Len-1] != '\n')
-	 _error->Error("Invalid line in the diversion file: %s",From);
+	 _error->Error(_("Invalid line in the diversion file: %s"),From);
       else
 	 From[Len-1] = 0;
       Len = strlen(To);
       if (Len < 2 || To[Len-1] != '\n')
-	 _error->Error("Invalid line in the diversion file: %s",To);
+	 _error->Error(_("Invalid line in the diversion file: %s"),To);
       else
 	 To[Len-1] = 0;     
       Len = strlen(Package);
       if (Len < 2 || Package[Len-1] != '\n')
-	 _error->Error("Invalid line in the diversion file: %s",Package);
+	 _error->Error(_("Invalid line in the diversion file: %s"),Package);
       else
 	 Package[Len-1] = 0;
       
@@ -351,14 +352,14 @@ bool debDpkgDB::ReadDiversions()
       pkgFLCache::PkgIterator FlPkg = FList->GetPkg(Package,0,true);
       if (FlPkg.end() == true)
       {
-	 _error->Error("Internal Error getting a Package Name");
+	 _error->Error(_("Internal Error getting a Package Name"));
 	 break;
       }
       
       // Install the diversion
       if (FList->AddDiversion(FlPkg,From,To) == false)
       {
-	 _error->Error("Internal Error adding a diversion");
+	 _error->Error(_("Internal Error adding a diversion"));
 	 break;
       }
    }
@@ -379,10 +380,10 @@ bool debDpkgDB::ReadDiversions()
 bool debDpkgDB::ReadyFileList(OpProgress &Progress)
 {
    if (Cache == 0)
-      return _error->Error("The pkg cache must be initialize first");
+      return _error->Error(_("The pkg cache must be initialize first"));
    if (FList != 0)
    {
-      Progress.OverallProgress(1,1,1,"Reading File List");
+      Progress.OverallProgress(1,1,1,_("Reading File List"));
       return true;
    }
    
@@ -439,12 +440,12 @@ bool debDpkgDB::ReadConfFiles()
       const char *PkgStart;
       const char *PkgEnd;
       if (Section.Find("Package",PkgStart,PkgEnd) == false)
-	 return _error->Error("Failed to find a Package: Header, offset %lu",Offset);
+	 return _error->Error(_("Failed to find a Package: Header, offset %lu"),Offset);
 
       // Snag a package record for it
       pkgFLCache::PkgIterator FlPkg = FList->GetPkg(PkgStart,PkgEnd,true);
       if (FlPkg.end() == true)
-	 return _error->Error("Internal Error getting a Package Name");
+	 return _error->Error(_("Internal Error getting a Package Name"));
 
       // Parse the conf file lines
       while (1)
@@ -461,12 +462,12 @@ bool debDpkgDB::ReadConfFiles()
 	 const char *EndMd5 = StartMd5;
 	 for (; isspace(*EndMd5) == 0 && EndMd5 < Stop; EndMd5++);
 	 if (StartMd5 == EndMd5 || Start == End)
-	    return _error->Error("Bad ConfFile section in the status file. Offset %lu",Offset);
+	    return _error->Error(_("Bad ConfFile section in the status file. Offset %lu"),Offset);
 	 	 
 	 // Insert a new entry
 	 unsigned char MD5[16];
 	 if (Hex2Num(string(StartMd5,EndMd5-StartMd5),MD5,16) == false)
-	    return _error->Error("Error parsing MD5. Offset %lu",Offset);
+	    return _error->Error(_("Error parsing MD5. Offset %lu"),Offset);
 
 	 if (FList->AddConfFile(Start,End,FlPkg,MD5) == false)
 	    return false;

@@ -15,6 +15,7 @@ LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=1.0
 MINOR=0
 SLIBS=$(PTHREADLIB) -lapt-pkg
+APT_DOMAIN:=libapt-inst$(MAJOR)
 
 # Source code for the contributed non-core things
 SOURCE = contrib/extracttar.cc contrib/arfile.cc

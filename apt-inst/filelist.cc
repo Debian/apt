@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: filelist.cc,v 1.3 2001/05/27 23:45:39 jgg Exp $
+// $Id: filelist.cc,v 1.4 2003/02/10 00:36:12 doogie Exp $
 /* ######################################################################
 
    File Listing - Manages a Cache of File -> Package names.
@@ -36,6 +36,7 @@
 #pragma implementation "apt-pkg/filelist.h"
 #endif
 
+#include <apti18n.h>
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
@@ -380,7 +381,7 @@ void pkgFLCache::DropNode(map_ptrloc N)
    NodeIterator Nde(*this,NodeP + N);
    
    if (Nde->NextPkg != 0)
-      _error->Warning("DropNode called on still linked node");
+      _error->Warning(_("DropNode called on still linked node"));
    
    // Locate it in the hash table
    Node *Last = 0;
@@ -412,7 +413,7 @@ void pkgFLCache::DropNode(map_ptrloc N)
 	 break;
    }   
  
-   _error->Error("Failed to locate the hash element!");
+   _error->Error(_("Failed to locate the hash element!"));
 }
 									/*}}}*/
 // FLCache::BeginDiverLoad - Start reading new diversions		/*{{{*/
@@ -459,12 +460,12 @@ bool pkgFLCache::AddDiversion(PkgIterator const &Owner,
    NodeIterator FromN = GetNode(From,From+strlen(From),0,true,true);
    NodeIterator ToN = GetNode(To,To+strlen(To),0,true,true);
    if (FromN.end() == true || ToN.end() == true)
-      return _error->Error("Failed to allocate diversion");
+      return _error->Error(_("Failed to allocate diversion"));
 
    // Should never happen
    if ((FromN->Flags & Node::Diversion) != Node::Diversion ||
        (ToN->Flags & Node::Diversion) != Node::Diversion)
-      return _error->Error("Internal Error in AddDiversion");
+      return _error->Error(_("Internal Error in AddDiversion"));
 
    // Now, try to reclaim an existing diversion..
    map_ptrloc Diver = 0;
@@ -477,7 +478,7 @@ bool pkgFLCache::AddDiversion(PkgIterator const &Owner,
    {
       // It could be that the other diversion is no longer in use
       if ((DiverP[ToN->Pointer].Flags & Diversion::Touched) == Diversion::Touched)	 
-	 return _error->Error("Trying to overwrite a diversion, %s -> %s and %s/%s",
+	 return _error->Error(_("Trying to overwrite a diversion, %s -> %s and %s/%s"),
 			      From,To,ToN.File(),ToN.Dir().Name());
       
       // We can erase it.
@@ -506,7 +507,7 @@ bool pkgFLCache::AddDiversion(PkgIterator const &Owner,
    // Can only have one diversion of the same files
    Diversion *Div = DiverP + Diver;
    if ((Div->Flags & Diversion::Touched) == Diversion::Touched)
-      return _error->Error("Double add of diversion %s -> %s",From,To);
+      return _error->Error(_("Double add of diversion %s -> %s"),From,To);
    
    // Setup the From/To links
    if (Div->DivertFrom != FromN.Offset() && Div->DivertFrom != ToN.Offset())
@@ -549,7 +550,7 @@ bool pkgFLCache::AddConfFile(const char *Name,const char *NameEnd,
 	 continue;
 
       if ((Nde->Flags & Node::ConfFile) == Node::ConfFile)
-	 return _error->Error("Duplicate conf file %s/%s",Nde.DirN(),Nde.File());
+	 return _error->Error(_("Duplicate conf file %s/%s"),Nde.DirN(),Nde.File());
 			      
       // Allocate a new conf file structure
       map_ptrloc Conf = Map.Allocate(sizeof(ConfFile));

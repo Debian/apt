@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: arfile.cc,v 1.4 2002/09/20 05:30:33 tausq Exp $
+// $Id: arfile.cc,v 1.5 2003/02/10 00:36:12 doogie Exp $
 /* ######################################################################
 
    AR File - Handle an 'AR' archive
@@ -17,6 +17,7 @@
 #ifdef __GNUG__
 #pragma implementation "apt-pkg/arfile.h"
 #endif
+#include <apti18n.h>
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
@@ -69,7 +70,7 @@ bool ARArchive::LoadHeaders()
    if (File.Read(Magic,sizeof(Magic)) == false)
       return false;
    if (memcmp(Magic,"!<arch>\012",sizeof(Magic)) != 0)
-      return _error->Error("Invalid archive signature");
+      return _error->Error(_("Invalid archive signature"));
    Left -= sizeof(Magic);
    
    // Read the member list
@@ -77,7 +78,7 @@ bool ARArchive::LoadHeaders()
    {
       MemberHeader Head;
       if (File.Read(&Head,sizeof(Head)) == false)
-	 return _error->Error("Error reading archive member header");
+	 return _error->Error(_("Error reading archive member header"));
       Left -= sizeof(Head);
 
       // Convert all of the integer members
@@ -89,7 +90,7 @@ bool ARArchive::LoadHeaders()
 	  StrToNum(Head.Size,Memb->Size,sizeof(Head.Size)) == false)
       {
 	 delete Memb;
-	 return _error->Error("Invalid archive member header");
+	 return _error->Error(_("Invalid archive member header"));
       }
 	 
       // Check for an extra long name string
@@ -101,7 +102,7 @@ bool ARArchive::LoadHeaders()
 	     Len >= strlen(S))
 	 {
 	    delete Memb;
-	    return _error->Error("Invalid archive member header");
+	    return _error->Error(_("Invalid archive member header"));
 	 }
 	 if (File.Read(S,Len) == false)
 	    return false;
@@ -127,11 +128,11 @@ bool ARArchive::LoadHeaders()
       if (File.Skip(Memb->Size + Skip) == false)
 	 return false;
       if (Left < (signed)(Memb->Size + Skip))
-	 return _error->Error("Archive is too short");
+	 return _error->Error(_("Archive is too short"));
       Left -= Memb->Size + Skip;
    }   
    if (Left != 0)
-      return _error->Error("Failed to read the archive headers");
+      return _error->Error(_("Failed to read the archive headers"));
    
    return true;
 }
