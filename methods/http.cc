@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.37 1999/08/03 06:08:23 jgg Exp $
+// $Id: http.cc,v 1.38 1999/10/03 21:09:27 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -54,6 +54,7 @@ int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
 unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
+bool Debug = false;
 
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
@@ -631,7 +632,9 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
           Base64Encode(Proxy.User + ":" + Proxy.Password) + "\r\n";
 
    Req += "User-Agent: Debian APT-HTTP/1.2\r\n\r\n";
-//   cerr << Req << endl;
+   
+   if (Debug == true)
+      cerr << Req << endl;
 
    Out.Read(Req);
 }
@@ -939,6 +942,7 @@ bool HttpMethod::Configuration(string Message)
    TimeOut = _config->FindI("Acquire::http::Timeout",TimeOut);
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
 				  PipelineDepth);
+   Debug = _config->FindB("Debug::Acquire::http",false);
    
    return true;
 }

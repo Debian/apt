@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: clean.cc,v 1.2 1999/06/24 04:06:30 jgg Exp $
+// $Id: clean.cc,v 1.3 1999/10/03 21:09:27 jgg Exp $
 /* ######################################################################
 
    Clean - Clean out downloaded directories
@@ -15,6 +15,7 @@
 #include <apt-pkg/clean.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -27,6 +28,8 @@
    against our database to see if it is interesting */
 bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
 {
+   bool CleanInstalled = _config->FindB("APT::Clean-Installed",true);
+   
    DIR *D = opendir(Dir.c_str());   
    if (D == 0)
       return _error->Errno("opendir","Unable to read %s",Dir.c_str());
@@ -84,7 +87,8 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
 	    for (pkgCache::VerFileIterator J = V.FileList(); 
 		 J.end() == false; J++)
 	    {
-	       if ((J.File()->Flags & pkgCache::Flag::NotSource) != 0)
+	       if (CleanInstalled == true &&
+		   (J.File()->Flags & pkgCache::Flag::NotSource) != 0)
 		  continue;
 	       IsFetchable = true;
 	       break;
