@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.116 2002/03/26 07:38:58 jgg Exp $
+// $Id: apt-get.cc,v 1.117 2002/03/27 05:26:24 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -722,7 +722,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 
    /* Check for enough free space, but only if we are actually going to
       download */
-   if (_config->FindB("APT::Get::Print-URIs") == false)
+   if (_config->FindB("APT::Get::Print-URIs") == false &&
+       _config->FindB("APT::Get::Download",true) == true)
    {
       struct statvfs Buf;
       string OutputDir = _config->FindDir("Dir::Cache::Archives");
