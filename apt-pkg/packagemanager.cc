@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.26 2001/02/20 07:03:17 jgg Exp $
+// $Id: packagemanager.cc,v 1.27 2001/05/07 05:49:43 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -28,7 +28,10 @@
 #include <apt-pkg/sptr.h>
     
 #include <apti18n.h>    
+#include <iostream>
 									/*}}}*/
+
+using namespace std;
 
 // PM::PackageManager - Constructor					/*{{{*/
 // ---------------------------------------------------------------------

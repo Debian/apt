@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.43 2001/02/27 04:24:41 jgg Exp $
+// $Id: acquire-item.cc,v 1.44 2001/05/07 05:49:43 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -28,9 +28,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
-#include <string.h>
+#include <string>
 #include <stdio.h>
 									/*}}}*/
+
+using std::string;
 
 // Acquire::Item::Item - Constructor					/*{{{*/
 // ---------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.13 2001/04/27 04:47:58 jgg Exp $
+// $Id: orderlist.cc,v 1.14 2001/05/07 05:49:43 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -72,7 +72,11 @@
 #include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/configuration.h>
+
+#include <iostream>
 									/*}}}*/
+
+using namespace std;
 
 pkgOrderList *pkgOrderList::Me = 0;
 
