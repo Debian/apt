@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.45 2002/04/26 05:35:57 jgg Exp $
+// $Id: acquire-item.cc,v 1.46 2003/02/02 22:19:17 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -121,7 +121,7 @@ void pkgAcquire::Item::Rename(string From,string To)
    if (rename(From.c_str(),To.c_str()) != 0)
    {
       char S[300];
-      sprintf(S,_("rename failed, %s (%s -> %s)."),strerror(errno),
+      snprintf(S,sizeof(S),_("rename failed, %s (%s -> %s)."),strerror(errno),
 	      From.c_str(),To.c_str());
       Status = StatError;
       ErrorText = S;
