@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.39 2001/08/18 22:20:40 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.40 2001/08/18 22:23:38 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -64,7 +64,7 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
    }
 
    // Don't look into directories that have been marked to ingore.
-   if (stat(".aptignr",&Bur) == 0)
+   if (stat(".aptignr",&Buf) == 0)
       return true;
    
    /* Aha! We found some package files. We assume that everything under 
