@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.40 1999/10/18 00:37:35 jgg Exp $
+// $Id: acquire.cc,v 1.41 1999/10/18 02:53:05 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -26,6 +26,7 @@
 #include <dirent.h>
 #include <sys/time.h>
 #include <errno.h>
+#include <sys/stat.h>
 									/*}}}*/
 
 // Acquire::pkgAcquire - Constructor					/*{{{*/
@@ -46,6 +47,17 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
       QueueMode = QueueAccess;   
 
    Debug = _config->FindB("Debug::pkgAcquire",false);
+   
+   // This is really a stupid place for this, but people whine so much..
+   struct stat St;
+   if (stat((_config->FindDir("Dir::State::lists") + "partial/").c_str(),&St) != 0 ||
+       S_ISDIR(St.st_mode) == 0)
+      _error->Error("Lists directory %s/partial is missing",
+		    _config->FindDir("Dir::State::lists").c_str());
+   if (stat((_config->FindDir("Dir::Cache::Archives") + "partial/").c_str(),&St) != 0 ||
+       S_ISDIR(St.st_mode) == 0)
+      _error->Error("Archive directory %s/partial is missing",
+		    _config->FindDir("Dir::Cache::Archives").c_str());
 }
 									/*}}}*/
 // Acquire::~pkgAcquire	- Destructor					/*{{{*/
