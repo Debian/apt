@@ -12,8 +12,6 @@ set -e
 
 create_apt_conf ()
 {
- echo "/etc/apt/sources.list does not exist; creating a default setup."
-
  cp /usr/share/doc/apt/examples/sources.list /etc/apt/sources.list
 }
  
@@ -33,9 +31,6 @@ case "$1" in
 	       #
 	       if [ ! -f /etc/apt/sources.list ]; then
 	         create_apt_conf
-		 echo
-		 echo "If you wish to change the default sites from which APT fetches Debian"
-		 echo "packages, please edit the file /etc/apt/sources.list."
 	       else
 	         check_apt_conf
 	       fi
