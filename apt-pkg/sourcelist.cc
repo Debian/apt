@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.23 2002/07/01 21:41:11 jgg Exp $
+// $Id: sourcelist.cc,v 1.24 2002/07/08 04:18:07 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -245,7 +245,10 @@ bool pkgSourceList::Read(string File)
       F.getline(Buffer,sizeof(Buffer));
       CurLine++;
       _strtabexpand(Buffer,sizeof(Buffer));
-      
+      if (F.fail() && !F.eof())
+	 return _error->Error(_("Line %u too long in source list %s."),
+			      CurLine,File.c_str());
+
       
       char *I;
       for (I = Buffer; *I != 0 && *I != '#'; I++);
