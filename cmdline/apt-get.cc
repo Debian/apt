@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.107 2001/05/27 04:45:49 jgg Exp $
+// $Id: apt-get.cc,v 1.108 2001/07/01 20:49:08 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -88,6 +88,13 @@ class CacheFile : public pkgCacheFile
       
       return true;
    };
+   bool OpenForInstall()
+   {
+      if (_config->FindB("APT::Get::Print-URIs") == true)
+	 Open(false);
+      else
+	 Open(true);
+   }
    CacheFile() : List(0) {};
 };
 									/*}}}*/
@@ -635,7 +642,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    
    // Lock the archive directory
    FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false)
+   if (_config->FindB("Debug::NoLocking",false) == false &&
+       _config->FindB("APT::Get::Print-URIs") == false)
    {
       Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
       if (_error->PendingError() == true)
@@ -1189,7 +1197,7 @@ bool DoUpdate(CommandLine &CmdL)
 bool DoUpgrade(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false || Cache.CheckDeps() == false)
+   if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
 
    // Do the upgrade
@@ -1208,7 +1216,8 @@ bool DoUpgrade(CommandLine &CmdL)
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false || Cache.CheckDeps(CmdL.FileSize() != 1) == false)
+   if (Cache.OpenForInstall() == false || 
+       Cache.CheckDeps(CmdL.FileSize() != 1) == false)
       return false;
    
    // Enter the special broken fixing mode if the user specified arguments
@@ -1404,7 +1413,7 @@ bool DoInstall(CommandLine &CmdL)
 bool DoDistUpgrade(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false || Cache.CheckDeps() == false)
+   if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
 
    c0out << _("Calculating Upgrade... ") << flush;
@@ -1426,7 +1435,7 @@ bool DoDistUpgrade(CommandLine &CmdL)
 bool DoDSelectUpgrade(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false || Cache.CheckDeps() == false)
+   if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
    
    // Install everything with the install flag set

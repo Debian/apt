@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.52 2001/05/27 23:53:55 jgg Exp $
+// $Id: http.cc,v 1.53 2001/07/01 20:49:09 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -726,7 +726,11 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    tv.tv_usec = 0;
    int Res = 0;
    if ((Res = select(MaxFd+1,&rfds,&wfds,0,&tv)) < 0)
+   {
+      if (errno == EINTR)
+	 return true;
       return _error->Errno("select","Select failed");
+   }
    
    if (Res == 0)
    {

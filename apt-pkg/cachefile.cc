@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.cc,v 1.6 2001/03/13 06:51:46 jgg Exp $
+// $Id: cachefile.cc,v 1.7 2001/07/01 20:49:08 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -55,6 +55,9 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
       if (_system->Lock() == false)
 	 return false;
    
+   if (_config->FindB("Debug::NoLocking",false) == true)
+      WithLock = false;
+      
    if (_error->PendingError() == true)
       return false;
    
