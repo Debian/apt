@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.14 1998/12/04 22:56:53 jgg Exp $
+// $Id: apt-cache.cc,v 1.15 1998/12/06 06:22:58 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -32,7 +32,7 @@
 /* */
 bool UnMet(pkgCache &Cache)
 {
-   bool Important = _config->FindB("Important",false);
+   bool Important = _config->FindB("APT::Cache::Important",false);
    
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
@@ -445,7 +445,7 @@ int main(int argc,const char *argv[])
       {'p',"pkg-cache","Dir::Cache::pkgcache",CommandLine::HasArg},
       {'s',"src-cache","Dir::Cache::srcpkgcache",CommandLine::HasArg},
       {'q',"quiet","quiet",CommandLine::IntLevel},
-      {'i',"important","Important",0},
+      {'i',"important","APT::Cache::Important",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.25 1998/12/06 06:22:01 jgg Exp $
+// $Id: apt-get.cc,v 1.26 1998/12/06 06:22:59 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -135,7 +135,7 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 	 pkgCache::DepIterator Start;
 	 pkgCache::DepIterator End;
 	 D.GlobOr(Start,End);
-	 
+
 	 if (Cache.IsImportantDep(End) == false || 
 	     (Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
 	    continue;
