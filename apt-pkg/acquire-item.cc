@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.15 1998/12/11 04:47:50 jgg Exp $
+// $Id: acquire-item.cc,v 1.16 1998/12/11 06:01:23 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -9,7 +9,7 @@
    cannot create an item that fetches two uri's to two files at the same 
    time. The pkgAcqIndex class creates a second class upon instantiation
    to fetch the other index files because of this.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -336,10 +336,20 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 			     pkgRecords *Recs,pkgCache::VerIterator const &Version,
 			     string &StoreFilename) :
                Item(Owner), Version(Version), Sources(Sources), Recs(Recs), 
-               StoreFilename(StoreFilename)
+               StoreFilename(StoreFilename), Vf(Version.FileList())
 {
    // Select a source
-   pkgCache::VerFileIterator Vf = Version.FileList();
+   if (QueueNext() == false && _error->PendingError() == false)
+      _error->Error("I wasn't able to locate file for the %s package. "
+		    "This might mean you need to manually fix this package.",
+		    Version.ParentPkg().Name());
+}
+									/*}}}*/
+// AcqArchive::QueueNext - Queue the next file source			/*{{{*/
+// ---------------------------------------------------------------------
+/* This queues the next available file version for download. */
+bool pkgAcqArchive::QueueNext()
+{
    for (; Vf.end() == false; Vf++)
    {
       // Ignore not source sources
@@ -359,17 +369,14 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       // Grab the text package record
       pkgRecords::Parser &Parse = Recs->Lookup(Vf);
       if (_error->PendingError() == true)
-	 return;
+	 return false;
       
       PkgFile = Parse.FileName();
       MD5 = Parse.MD5Hash();
       if (PkgFile.empty() == true)
-      {
-	 _error->Error("I need to reinstall package %s to fix it but I "
-		       "can't find a file for it! You must deal with "
-		       "this by hand.",Version.ParentPkg().Name());
-	 return;
-      }
+	 return _error->Error("The package index files are corrupted. No Filename: "
+			      "field for package %s."
+			      ,Version.ParentPkg().Name());
 
       // See if we already have the file.
       FileSize = Version->Size;
@@ -384,7 +391,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 	    Local = true;
 	    Status = StatDone;
 	    StoreFilename = DestFile = FinalFile;
-	    return;
+	    return true;
 	 }
 	 
 	 /* Hmm, we have a file and its size does not match, this shouldnt
@@ -400,14 +407,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       Desc.Owner = this;
       Desc.ShortDesc = Version.ParentPkg().Name();
       QueueURI(Desc);
-      
-      return;
+
+      Vf++;
+      return true;
    }
-   
-  _error->Error("I wasn't able to locate file for the %s package. "
-		"This probably means you need to rerun update.",
-		Version.ParentPkg().Name());
-}
+   return false;
+}   
 									/*}}}*/
 // AcqArchive::Done - Finished fetching					/*{{{*/
 // ---------------------------------------------------------------------
@@ -469,4 +474,3 @@ string pkgAcqArchive::Describe()
    return Desc.URI;
 }
 									/*}}}*/
-

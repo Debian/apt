@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.10 1998/11/22 03:20:31 jgg Exp $
+// $Id: acquire-item.h,v 1.11 1998/12/11 06:01:25 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -11,6 +11,9 @@
    
    Two item classes are provided to provide functionality for downloading
    of Index files and downloading of Packages.
+   
+   A Archive class is provided for downloading .deb files. It does Md5
+   checking and source location.
    
    ##################################################################### */
 									/*}}}*/
@@ -111,6 +114,9 @@ class pkgAcqArchive : public pkgAcquire::Item
    pkgRecords *Recs;
    string MD5;
    string &StoreFilename;
+   pkgCache::VerFileIterator Vf;
+   
+   bool QueueNext();
    
    public:
    

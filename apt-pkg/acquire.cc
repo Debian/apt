@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.20 1998/12/05 04:19:03 jgg Exp $
+// $Id: acquire.cc,v 1.21 1998/12/11 06:01:26 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -436,6 +436,8 @@ pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : Name(Name),
    Items = 0;
    Next = 0;
    Workers = 0;
+   MaxPipeDepth = 1;
+   PipeDepth = 0;
 }
 									/*}}}*/
 // Queue::~Queue - Destructor						/*{{{*/
@@ -474,9 +476,12 @@ void pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 									/*}}}*/
 // Queue::Dequeue - Remove an item from the queue			/*{{{*/
 // ---------------------------------------------------------------------
-/* We return true if we hit something*/
+/* We return true if we hit something */
 bool pkgAcquire::Queue::Dequeue(Item *Owner)
 {
+   if (Owner->Status == pkgAcquire::Item::StatFetching)
+      return _error->Error("Tried to dequeue a fetching object");
+       
    bool Res = false;
    
    QItem **I = &Items;
@@ -518,12 +523,9 @@ bool pkgAcquire::Queue::Startup()
       added other source retry to have cycle maintain a pipeline depth
       on its own. */
    if (Cnf->Pipeline == true)
-   {
-      bool Res = true;
-      for (int I = 0; I != 10 && Res == true; I++)
-	 Res &= Cycle();
-      return Res;
-   }
+      MaxPipeDepth = 10;
+   else
+      MaxPipeDepth = 1;
    
    return Cycle();
 }
@@ -563,6 +565,7 @@ pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Wor
    main queue too.*/
 bool pkgAcquire::Queue::ItemDone(QItem *Itm)
 {
+   PipeDepth--;
    if (Itm->Owner->QueueCounter <= 1)
       Owner->Dequeue(Itm->Owner);
    else
@@ -576,7 +579,8 @@ bool pkgAcquire::Queue::ItemDone(QItem *Itm)
 									/*}}}*/
 // Queue::Cycle - Queue new items into the method			/*{{{*/
 // ---------------------------------------------------------------------
-/* This locates a new idle item and sends it to the worker */
+/* This locates a new idle item and sends it to the worker. If pipelining
+   is enabled then it keeps the pipe full. */
 bool pkgAcquire::Queue::Cycle()
 {
    if (Items == 0 || Workers == 0)
@@ -584,24 +588,31 @@ bool pkgAcquire::Queue::Cycle()
 
    // Look for a queable item
    QItem *I = Items;
-   for (; I != 0; I = I->Next)
-      if (I->Owner->Status == pkgAcquire::Item::StatIdle)
-	 break;
-
-   // Nothing to do, queue is idle.
-   if (I == 0)
-      return true;
+   while (PipeDepth < MaxPipeDepth)
+   {
+      for (; I != 0; I = I->Next)
+	 if (I->Owner->Status == pkgAcquire::Item::StatIdle)
+	    break;
+      
+      // Nothing to do, queue is idle.
+      if (I == 0)
+	 return true;
+      
+      I->Worker = Workers;
+      I->Owner->Status = pkgAcquire::Item::StatFetching;
+      if (Workers->QueueItem(I) == false)
+	 return false;
+   }
    
-   I->Worker = Workers;
-   I->Owner->Status = pkgAcquire::Item::StatFetching;
-   return Workers->QueueItem(I);
+   return true;
 }
 									/*}}}*/
 // Queue::Bump - Fetch any pending objects if we are idle		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This is called when an item in multiple queues is dequeued */
 void pkgAcquire::Queue::Bump()
 {
+   Cycle();
 }
 									/*}}}*/
 

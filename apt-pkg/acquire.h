@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.16 1998/12/04 21:16:49 jgg Exp $
+// $Id: acquire.h,v 1.17 1998/12/11 06:01:27 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -149,6 +149,8 @@ class pkgAcquire::Queue
    QItem *Items;
    pkgAcquire::Worker *Workers;
    pkgAcquire *Owner;
+   unsigned long PipeDepth;
+   unsigned long MaxPipeDepth;
    
    public:
    
