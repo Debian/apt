@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.28 2001/10/02 03:03:47 tausq Exp $
+// $Id: deblistparser.cc,v 1.29 2003/09/22 04:16:26 mdz Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -268,11 +268,7 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
    
    return true;
 }
-									/*}}}*/
-// ListParser::ParseDepends - Parse a dependency element		/*{{{*/
-// ---------------------------------------------------------------------
-/* This parses the dependency elements out of a standard string in place,
-   bit by bit. */
+
 const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
 {
    // Determine the operator
@@ -331,6 +327,11 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
    return I;
 }
 
+									/*}}}*/
+// ListParser::ParseDepends - Parse a dependency element		/*{{{*/
+// ---------------------------------------------------------------------
+/* This parses the dependency elements out of a standard string in place,
+   bit by bit. */
 const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					string &Package,string &Ver,
 					unsigned int &Op, bool ParseArchFlags)
