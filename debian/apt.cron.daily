@@ -81,9 +81,6 @@ check_size_constraints()
 }
 
 
-# check cache size first
-check_size_constraints
-
 UpdateInterval=0
 DownloadUpgradeableInterval=0
 eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
@@ -123,3 +120,6 @@ if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
     apt-get -qq autoclean
     update_stamp $AUTOCLEAN_STAMP
 fi
+
+# check cache size 
+check_size_constraints
