@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.5 1999/03/15 19:51:27 jgg Exp $
+// $Id: ftp.cc,v 1.6 1999/04/11 21:23:10 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -286,6 +286,9 @@ bool FTPConn::Login()
 /* This performs a very simple buffered read. */
 bool FTPConn::ReadLine(string &Text)
 {
+   if (ServerFd == -1)
+      return false;
+   
    // Suck in a line
    while (Len < sizeof(Buffer))
    {
@@ -315,7 +318,7 @@ bool FTPConn::ReadLine(string &Text)
       }
       
       // Suck it back
-      int Res = read(ServerFd,Buffer,sizeof(Buffer) - Len);
+      int Res = read(ServerFd,Buffer + Len,sizeof(Buffer) - Len);
       if (Res <= 0)
       {
 	 Close();
