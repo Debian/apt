@@ -19,6 +19,8 @@ using std::vector;
 
 class pkgTagSection;
 class FileFd;
+class indexRecords;
+class pkgCdromStatus;
 
 class IndexCopy
 {
@@ -39,7 +41,8 @@ class IndexCopy
    
    public:
 
-   bool CopyPackages(string CDROM,string Name,vector<string> &List);
+   bool CopyPackages(string CDROM,string Name,vector<string> &List,
+		     pkgCdromStatus *log);
 };
 
 class PackageCopy : public IndexCopy
@@ -64,6 +67,17 @@ class SourceCopy : public IndexCopy
    virtual const char *Type() {return "Source";};
    
    public:
+};
+
+class SigVerify 
+{
+   bool Verify(string prefix,string file, indexRecords *records);
+   bool CopyMetaIndex(string CDROM, string CDName, 
+		      string prefix, string file);
+
+ public:
+   bool CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
+		      vector<string> PkgList,vector<string> SrcList);
 };
 
 #endif
