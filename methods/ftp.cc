@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.3 1999/03/15 08:10:26 jgg Exp $
+// $Id: ftp.cc,v 1.4 1999/03/15 08:22:13 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -591,24 +591,23 @@ bool FTPConn::CreateDataFd()
    }
    
    // Port mode :<
-   if (DataListenFd == -1)
-   {
-      // Get a socket
-      if ((DataListenFd = socket(AF_INET,SOCK_STREAM,0)) < 0)
-	 return _error->Errno("socket","Could not create a socket");
-      
-      // Bind and listen
-      sockaddr_in Addr;
-      memset(&Addr,0,sizeof(Addr));
-      if (bind(DataListenFd,(sockaddr *)&Addr,sizeof(Addr)) < 0)
-	 return _error->Errno("bind","Could not bind a socket");
-      if (listen(DataListenFd,1) < 0)
-	 return _error->Errno("listen","Could not listen on the socket");
-      SetNonBlock(DataListenFd,true);
-   }
+   close(DataListenFd);
+   DataListenFd = -1;
+
+   // Get a socket
+   if ((DataListenFd = socket(AF_INET,SOCK_STREAM,0)) < 0)
+      return _error->Errno("socket","Could not create a socket");
+   
+   // Bind and listen
+   sockaddr_in Addr;
+   memset(&Addr,0,sizeof(Addr));
+   if (bind(DataListenFd,(sockaddr *)&Addr,sizeof(Addr)) < 0)
+      return _error->Errno("bind","Could not bind a socket");
+   if (listen(DataListenFd,1) < 0)
+      return _error->Errno("listen","Could not listen on the socket");
+   SetNonBlock(DataListenFd,true);
    
    // Determine the name to send to the remote
-   sockaddr_in Addr;
    sockaddr_in Addr2;
    socklen_t Jnk = sizeof(Addr);
    if (getsockname(DataListenFd,(sockaddr *)&Addr,&Jnk) < 0)
@@ -660,6 +659,9 @@ bool FTPConn::Finalize()
    if (DataFd < 0)
       return _error->Errno("accept","Unable to accept connection");
 
+   close(DataListenFd);
+   DataListenFd = -1;
+   
    return true;
 }
 									/*}}}*/
