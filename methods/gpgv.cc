@@ -101,7 +101,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       {
          std::cerr << "Preparing to exec: " << gpgvpath;
 	 for(unsigned int j=0;Args[j] != NULL; j++)
-	    std::cerr << Args[j] << " ";
+	    std::cerr << " " << Args[j];
 	 std::cerr << std::endl;
       }
       int nullfd = open("/dev/null", O_RDONLY);
