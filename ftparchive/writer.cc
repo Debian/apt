@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.12 2004/01/02 21:55:09 mdz Exp $
+// $Id: writer.cc,v 1.13 2004/01/04 00:20:59 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -289,6 +289,7 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides) :
 		    Db(DB),Stats(Db.Stats)
 {
    Output = stdout;
+   SetExts(".deb .udeb .foo .bar .baz");
    AddPattern("*.deb");
    DeLinkLimit = 0;
    
@@ -319,15 +320,20 @@ bool FTWScanner::SetExts(string Vals)
 {
    ClearPatterns();
    string::size_type Start = 0;
-   for(string::size_type space = Vals.find(' ');
-       space != string::npos;
-       space = Vals.find(' ', space))
+   while (Start <= Vals.length()-1)
    {
-      if (space > 0)
+      string::size_type Space = Vals.find(' ',Start);
+      string::size_type Length;
+      if (Space == string::npos)
       {
-         AddPattern(string("*") + string(Start, space-1));
-         Start = space + 1;
+         Length = Vals.length()-Start;
       }
+      else
+      {
+         Length = Space-Start;
+      }
+      AddPattern(string("*") + Vals.substr(Start, Length));
+      Start += Length + 1;
    }
 
    return true;
