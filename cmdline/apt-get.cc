@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.57 1999/04/20 05:59:29 jgg Exp $
+// $Id: apt-get.cc,v 1.58 1999/05/13 03:09:33 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1183,6 +1183,13 @@ bool DoSource(CommandLine &CmdL)
       c1out << SizeToStr(DebBytes) << 'b';
    c1out << " of source archives." << endl;
 
+   if (_config->FindB("APT::Get::Simulate",false) == true)
+   {
+      for (unsigned I = 0; I != J; I++)
+	 cout << "Fetch Source " << Dsc[I].Package << endl;
+      return true;
+   }
+   
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
