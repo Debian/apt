@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachedb.cc,v 1.3 2001/05/29 03:50:33 jgg Exp $
+// $Id: cachedb.cc,v 1.4 2002/11/22 07:19:51 doogie Exp $
 /* ######################################################################
 
    CacheDB
@@ -91,16 +91,16 @@ bool CacheDB::SetFile(string FileName,struct stat St,FileFd *Fd)
    // Lookup the stat info and confirm the file is unchanged
    if (Get() == true)
    {
-      if (CurStat.st_mtime != htonl(St.st_mtime))
+      if (CurStat.mtime != htonl(St.st_mtime))
       {
-	 CurStat.st_mtime = htonl(St.st_mtime);
+	 CurStat.mtime = htonl(St.st_mtime);
 	 CurStat.Flags = 0;
 	 _error->Warning("File date has changed %s",FileName.c_str());
       }      
    }      
    else
    {
-      CurStat.st_mtime = htonl(St.st_mtime);
+      CurStat.mtime = htonl(St.st_mtime);
       CurStat.Flags = 0;
    }   
    CurStat.Flags = ntohl(CurStat.Flags);
@@ -225,7 +225,7 @@ bool CacheDB::Finish()
 {
    // Optimize away some writes.
    if (CurStat.Flags == OldStat.Flags &&
-       CurStat.st_mtime == OldStat.st_mtime)
+       CurStat.mtime == OldStat.st_mtime)
       return true;
    
    // Write the stat information

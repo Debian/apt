@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachedb.h,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: cachedb.h,v 1.3 2002/11/22 07:19:51 doogie Exp $
 /* ######################################################################
 
    CacheDB
@@ -69,7 +69,7 @@ class CacheDB
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2)};
    struct StatStore
    {
-      uint32_t st_mtime;          
+      uint32_t mtime;          
       uint32_t Flags;
    } CurStat;
    struct StatStore OldStat;
