@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: multicompress.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: multicompress.cc,v 1.3 2001/05/29 03:48:27 jgg Exp $
 /* ######################################################################
 
    MultiCompressor
@@ -28,7 +28,10 @@
 #include <sys/stat.h>
 #include <utime.h>
 #include <unistd.h>
+#include <iostream>    
 									/*}}}*/
+
+using namespace std;
 
 const MultiCompress::CompType MultiCompress::Compressors[] =
       {{".","",0,0,0,1},

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: override.h,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: override.h,v 1.3 2001/05/29 03:49:53 jgg Exp $
 /* ######################################################################
 
    Override
@@ -18,6 +18,9 @@
 
 #include <map>
 #include <string>
+
+using std::string;
+using std::map;
     
 class Override
 {

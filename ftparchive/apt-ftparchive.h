@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.h,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: apt-ftparchive.h,v 1.3 2001/05/29 03:51:37 jgg Exp $
 /* ######################################################################
 
    Writer 
@@ -18,6 +18,9 @@
 #endif
 
 #include <fstream>
+
+using std::ostream;
+using std::ofstream;
 
 extern ostream c0out;
 extern ostream c1out;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachedb.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: cachedb.cc,v 1.3 2001/05/29 03:50:33 jgg Exp $
 /* ######################################################################
 
    CacheDB
@@ -213,7 +213,7 @@ bool CacheDB::GetMD5(string &MD5Res,bool GenOnly)
    
    MD5Res = MD5.Result();
    InitQuery("m5");
-   if (Put(MD5Res.begin(),MD5Res.length()) == true)
+   if (Put(MD5Res.c_str(),MD5Res.length()) == true)
       CurStat.Flags |= FlMD5;
    return true;
 }
