@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.33 2001/03/23 07:53:19 jgg Exp $
+// $Id: algorithms.cc,v 1.34 2001/04/06 05:40:03 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -378,7 +378,7 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
    if (Cache.BrokenCount() != 0)
       return false;
    
-   // We loop indefinately to get the minimal set size.
+   // We loop for 10 tries to get the minimal set size.
    bool Change = false;
    unsigned int Count = 0;
    do
