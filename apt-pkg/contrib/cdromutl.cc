@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.8 1999/07/26 17:46:08 jgg Exp $
+// $Id: cdromutl.cc,v 1.9 1999/08/30 07:48:04 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -163,7 +163,7 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 
       if (Version <= 1)
       {
-	 sprintf(S,"%lu",Dir->d_ino);
+	 sprintf(S,"%lu",(unsigned long)Dir->d_ino);
       }
       else
       {
