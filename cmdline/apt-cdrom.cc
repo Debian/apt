@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.34 2000/01/17 07:11:49 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.35 2000/05/10 06:03:52 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -172,25 +172,27 @@ int Score(string Path)
 {
    int Res = 0;
    if (Path.find("stable/") != string::npos)
-      Res += 2;
+      Res += 29;
    if (Path.find("/binary-") != string::npos)
-      Res += 2;
+      Res += 20;
    if (Path.find("frozen/") != string::npos)
-      Res += 2;
+      Res += 28;
+   if (Path.find("unstable/") != string::npos)
+      Res += 27;
    if (Path.find("/dists/") != string::npos)
-      Res += 4;
+      Res += 40;
    if (Path.find("/main/") != string::npos)
-      Res += 2;
+      Res += 20;
    if (Path.find("/contrib/") != string::npos)
-      Res += 2;
+      Res += 20;
    if (Path.find("/non-free/") != string::npos)
-      Res += 2;
+      Res += 20;
    if (Path.find("/non-US/") != string::npos)
-      Res += 2;
+      Res += 20;
    if (Path.find("/source/") != string::npos)
-      Res += 1;
+      Res += 10;
    if (Path.find("/debian/") != string::npos)
-      Res -= 1;
+      Res -= 10;
    return Res;
 }
 									/*}}}*/
@@ -557,7 +559,7 @@ bool DoAdd(CommandLine &)
    cout << "Found " << List.size() << " package indexes and " << sList.size() << 
       " source indexes." << endl;
 
-   if (List.size() == 0)
+   if (List.size() == 0 && sList.size() == 0)
       return _error->Error("Unable to locate any package files, perhaps this is not a Debian Disc");
    
    // Check if the CD is in the database
@@ -598,7 +600,8 @@ bool DoAdd(CommandLine &)
    }
    else
       Name = Database.Find("CD::" + ID);
-   
+
+   // Escape special characters
    string::iterator J = Name.begin();
    for (; J != Name.end(); J++)
       if (*J == '"' || *J == ']' || *J == '[')
@@ -724,7 +727,7 @@ int main(int argc,const char *argv[])
    }
 
    // See if the help should be shown
-   if (_config->FindB("help") == true ||
+   if (_config->FindB("help") == true || _config->FindB("version") == true ||
        CmdL.FileSize() == 0)
       return ShowHelp();
 
