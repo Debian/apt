@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.17 1998/11/22 23:37:03 jgg Exp $
+// $Id: acquire.cc,v 1.18 1998/11/23 07:32:19 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -612,6 +612,8 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 {
    TotalBytes = 0;
    CurrentBytes = 0;
+   TotalItems = 0;
+   CurrentItems = 0;
    
    // Compute the total number of bytes to fetch
    unsigned int Unknown = 0;
@@ -619,6 +621,10 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    for (pkgAcquire::Item **I = Owner->ItemsBegin(); I != Owner->ItemsEnd(); 
 	I++, Count++)
    {
+      TotalItems++;
+      if ((*I)->Status == pkgAcquire::Item::StatDone)
+	 CurrentItems++;
+      
       // Totally ignore local items
       if ((*I)->Local == true)
 	 continue;
@@ -685,6 +691,8 @@ void pkgAcquireStatus::Start()
    TotalBytes = 0;
    FetchedBytes = 0;
    ElapsedTime = 0;
+   TotalItems = 0;
+   CurrentItems = 0;
 }
 									/*}}}*/
 // AcquireStatus::Stop - Finished downloading				/*{{{*/

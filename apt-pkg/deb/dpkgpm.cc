@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.3 1998/11/23 07:03:11 jgg Exp $
+// $Id: dpkgpm.cc,v 1.4 1998/11/23 07:32:21 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -193,7 +193,7 @@ bool pkgDPkgPM::Go()
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 setenv("DPKG_NO_TSTP","yes",1);
-	 execvp("dpkg",(char **)Args);
+	 execvp(Args[0],(char **)Args);
 	 cerr << "Could not exec dpkg!" << endl;
 	 exit(100);
       }      

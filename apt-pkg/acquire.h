@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.13 1998/11/14 01:39:46 jgg Exp $
+// $Id: acquire.h,v 1.14 1998/11/23 07:32:20 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -199,6 +199,8 @@ class pkgAcquireStatus
    unsigned long TotalBytes;
    unsigned long FetchedBytes;
    unsigned long ElapsedTime;
+   unsigned long TotalItems;
+   unsigned long CurrentItems;
    
    public:
 

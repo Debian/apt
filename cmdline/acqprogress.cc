@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.2 1998/11/12 05:30:07 jgg Exp $
+// $Id: acqprogress.cc,v 1.3 1998/11/23 07:32:24 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -136,8 +136,9 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
    char *S = Buffer;
    
    // Put in the percent done
-   sprintf(S,"%ld%%",long(double(CurrentBytes*100.0)/double(TotalBytes)));   
-   
+   sprintf(S,"%ld%%",long(double((CurrentBytes + CurrentItems)*100.0)/double(TotalBytes+TotalItems)));
+
+   bool Shown = false;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
 	I = Owner->WorkerStep(I))
    {
@@ -151,6 +152,8 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
 	 continue;
       }
 
+      Shown = true;
+      
       // Add in the short description
       if (I->CurrentItem->Owner->ID != 0)
 	 snprintf(S,End-S," [%x %s",I->CurrentItem->Owner->ID,
@@ -190,6 +193,10 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
       snprintf(S,End-S,"]");
    }
 
+   // Show something..
+   if (Shown == false)
+      snprintf(S,End-S," [Working]");
+      
    // Put in the ETA and cps meter
    if (CurrentCPS != 0)
    {      
