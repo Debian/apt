@@ -17,7 +17,10 @@ eval $RES
 # It looks slightly ugly to have a double / in the dpkg output
 CACHEDIR=`echo $CACHEDIR | sed -e "s|/$||"`
 
-$APTGET $OPTS update
+set +e
+FAILED=0
+$APTGET $OPTS update || FAILED=1
+set -e
 
 echo "Merging Available information"
 rm -f /var/cache/apt/available
@@ -29,4 +32,4 @@ if [ $PROMPT = "yes" ]; then
    echo "Press enter to continue." && read RES;
 fi
 
-exit 0
+exit $FAILED

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.38 1999/10/17 07:30:23 jgg Exp $
+// $Id: acquire-item.cc,v 1.39 1999/10/17 20:58:36 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -567,6 +567,8 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
 		       unsigned long Size,string Dsc,string ShortDesc) :
                        Item(Owner), Md5Hash(MD5)
 {
+   Retries = _config->FindI("Acquire::Retries",0);
+   
    DestFile = flNotDir(URI);
    
    // Create the item
@@ -643,5 +645,25 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
 	 Complete = false;
       }      
    }
+}
+									/*}}}*/
+// AcqFile::Failed - Failure handler					/*{{{*/
+// ---------------------------------------------------------------------
+/* Here we try other sources */
+void pkgAcqFile::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   ErrorText = LookupTag(Message,"Message");
+   
+   // This is the retry counter
+   if (Retries != 0 &&
+       Cnf->LocalOnly == false &&
+       StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
+   {
+      Retries--;
+      QueueURI(Desc);
+      return;
+   }
+   
+   Item::Failed(Message,Cnf);
 }
 									/*}}}*/
