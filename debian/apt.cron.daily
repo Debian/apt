@@ -1,32 +1,41 @@
 #!/bin/sh
 #
-# cron job for apt-get update
-#
-# Update-Package-Intervall is in days
-#
-STAMP=/var/lib/apt/update-stamp
 
 #set -e
 
-do_update()
+check_stamp()
 {
-    touch $STAMP.new
-    if apt-get update -qq; then
-	if [ -x /usr/bin/dbus-send ]; then
-	    dbus-send --system / app.apt.dbus.updated boolean:true
-	fi
-        mv $STAMP.new $STAMP
+    stamp="$1"
+    interval="$2"
+
+    if [ ! -f $stamp ]; then
+        return 0
     fi
-    rm -f $STAMP.new
+
+    # compare midnight today to midnight the day the stamp was updated
+    stamp=$(date --date=$(date -r $stamp --iso-8601) +%s)
+    now=$(date --date=$(date --iso-8601) +%s)
+    delta=$(($now-$stamp))
+    echo "stamp=$stamp, now=$now, delta=$delta"
+
+    if [ $delta -ge $interval ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+update_stamp()
+{
+    stamp="$1"
+
+    touch $stamp
 }
 
 UpdateInterval=0
-RES=`apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists`
+DownloadUpgradeableInterval=0
+RES=`apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages`
 eval $RES
-
-if [ $UpdateInterval -eq 0 ]; then
-    exit 0
-fi
 
 # laptop check, on_ac_power returns:
 #       0 (true)    System is on mains power
@@ -34,21 +43,24 @@ fi
 #       255 (false) Power status could not be determined
 # Desktop systems always return 255 it seems
 if which on_ac_power >/dev/null; then
-    on_ac_power 
+    on_ac_power
     if [ $? -eq 1 ]; then
 	exit 0
     fi
 fi
 
-if [ ! -f $STAMP ]; then
-    do_update
-    exit 0
+UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
+if check_stamp $UPDATE_STAMP $UpdateInterval; then
+    if apt-get -qq update 2>/dev/null; then
+	if which dbus-send >/dev/null; then
+	    dbus-send --system / app.apt.dbus.updated boolean:true
+	fi
+        update_stamp $UPDATE_STAMP
+    fi
 fi
 
-LastUpdate=`stat -c "%Y" $STAMP 2>/dev/null` 
-Now=`date +%s`
-
-NeedUpdate=$(($LastUpdate+$UpdateInterval*3600*24))
-if [ $NeedUpdate -le $Now ]; then
-    do_update
+DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
+if check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
+    apt-get -qq -d dist-upgrade 2>/dev/null
+    update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
 fi
