@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.h,v 1.6 2001/02/20 07:03:17 jgg Exp $
+// $Id: version.h,v 1.7 2001/05/14 05:58:33 jgg Exp $
 /* ######################################################################
 
    Version - Versioning system..
@@ -26,6 +26,8 @@
 
 #include <string>
 
+using std::string;
+
 class pkgVersioningSystem
 {
    public:
@@ -39,6 +41,7 @@ class pkgVersioningSystem
    // Compare versions..
    virtual int DoCmpVersion(const char *A,const char *Aend,
 			  const char *B,const char *Bend) = 0;   
+
    virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) = 0;
    virtual int DoCmpReleaseVer(const char *A,const char *Aend,
 			       const char *B,const char *Bend) = 0;
@@ -55,7 +58,7 @@ class pkgVersioningSystem
    };
    inline int CmpVersion(string A,string B)
    {
-      return DoCmpVersion(A.begin(),A.end(),B.begin(),B.end());
+      return DoCmpVersion(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());
    };  
    inline int CmpReleaseVer(const char *A, const char *B)
    {
@@ -63,7 +66,7 @@ class pkgVersioningSystem
    };
    inline int CmpReleaseVer(string A,string B)
    {
-      return DoCmpReleaseVer(A.begin(),A.end(),B.begin(),B.end());
+      return DoCmpReleaseVer(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());
    };  
    
    pkgVersioningSystem();

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.34 2001/04/29 05:13:51 jgg Exp $
+// $Id: pkgcache.cc,v 1.35 2001/05/14 05:54:10 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -37,9 +37,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <ctype.h>
 #include <system.h>
-
 									/*}}}*/
+
+using std::string;
 
 // Cache::Header::Header - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -154,7 +156,7 @@ bool pkgCache::ReMap()
 unsigned long pkgCache::sHash(string Str) const
 {
    unsigned long Hash = 0;
-   for (const char *I = Str.begin(); I != Str.end(); I++)
+   for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
       Hash = 5*Hash + tolower(*I);
    return Hash % _count(HeaderP->HashTable);
 }
@@ -178,7 +180,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(string Name)
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
    {
       if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
-	  stringcasecmp(Name.begin(),Name.end(),StrP + Pkg->Name) == 0)
+	  stringcasecmp(Name,StrP + Pkg->Name) == 0)
 	 return PkgIterator(*this,Pkg);
    }
    return PkgIterator(*this,0);

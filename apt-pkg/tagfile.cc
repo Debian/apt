@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.29 2001/04/22 05:42:52 jgg Exp $
+// $Id: tagfile.cc,v 1.30 2001/05/14 05:56:26 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -23,7 +23,10 @@
     
 #include <string>
 #include <stdio.h>
+#include <ctype.h>
 									/*}}}*/
+
+using std::string;
 
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.21 2001/04/29 05:24:42 jgg Exp $
+// $Id: configuration.cc,v 1.22 2001/05/14 05:47:30 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -24,11 +24,14 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <iostream>
     
 #include <stdio.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+using namespace std;
 									/*}}}*/
 
 Configuration *_config = new Configuration;
@@ -92,7 +95,7 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
    if (Len != 0)
    {
       for (; I != 0; Last = &I->Next, I = I->Next)
-	 if ((Res = stringcasecmp(I->Tag.begin(),I->Tag.end(),S,S + Len)) == 0)
+	 if ((Res = stringcasecmp(I->Tag,S,S + Len)) == 0)
 	    break;
    }
    else
@@ -438,7 +441,7 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 		    unsigned Depth)
 {   
    // Open the stream for reading
-   ifstream F(FName.c_str(),ios::in | ios::nocreate);
+   ifstream F(FName.c_str(),ios::in); 
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
    
