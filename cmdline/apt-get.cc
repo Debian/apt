@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.20 1998/11/27 01:52:58 jgg Exp $
+// $Id: apt-get.cc,v 1.21 1998/12/05 02:56:45 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -570,20 +570,36 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
 
    // Print out errors
    bool Failed = false;
+   bool Transient = false;
    for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
    {
       if ((*I)->Status == pkgAcquire::Item::StatDone &&
 	  (*I)->Complete == true)
 	 continue;
       
+      if ((*I)->Status == pkgAcquire::Item::StatIdle)
+      {
+	 Transient = true;
+	 Failed = true;
+	 continue;
+      }
+      
       cerr << "Failed to fetch " << (*I)->Describe() << endl;
       cerr << "  " << (*I)->ErrorText << endl;
       Failed = true;
    }
-   
+      
    if (Failed == true && _config->FindB("APT::Fix-Missing",false) == false)
+   {
+      if (Transient == true)
+      {
+	 c2out << "Upgrading with disk swapping is not supported in this version." << endl;
+	 c2out << "Try running multiple times with --fix-missing" << endl;
+      }
+      
       return _error->Error("Unable to fetch some archives, maybe try with --fix-missing?");
-
+   }
+   
    // Try to deal with missing package files
    if (PM.FixMissing() == false)
    {
