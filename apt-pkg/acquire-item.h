@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.13 1999/01/30 06:07:24 jgg Exp $
+// $Id: acquire-item.h,v 1.14 1999/01/30 08:08:54 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -55,8 +55,8 @@ class pkgAcquire::Item
    
    // File to write the fetch into
    string DestFile;
-   
-   virtual void Failed(string Message);
+
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
    virtual void Start(string Message,unsigned long Size);
    virtual string MD5Sum() {return string();};
@@ -116,12 +116,13 @@ class pkgAcqArchive : public pkgAcquire::Item
    string MD5;
    string &StoreFilename;
    pkgCache::VerFileIterator Vf;
+   unsigned int Retries;
    
    bool QueueNext();
    
    public:
    
-   virtual void Failed(string Message);
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
    virtual string MD5Sum() {return MD5;};
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
    virtual string Describe();

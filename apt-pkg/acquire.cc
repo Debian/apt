@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.25 1999/01/30 06:07:24 jgg Exp $
+// $Id: acquire.cc,v 1.26 1999/01/30 08:08:54 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -563,7 +563,7 @@ bool pkgAcquire::Queue::Shutdown()
    return true;
 }
 									/*}}}*/
-// Queue::Finditem - Find a URI in the item list			/*{{{*/
+// Queue::FindItem - Find a URI in the item list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Worker *Owner)

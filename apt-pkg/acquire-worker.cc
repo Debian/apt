@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.18 1999/01/27 02:48:52 jgg Exp $
+// $Id: acquire-worker.cc,v 1.19 1999/01/30 08:08:54 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -281,12 +281,12 @@ bool pkgAcquire::Worker::RunMessages()
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
 	    OwnerQ->ItemDone(Itm);
-	    Owner->Failed(Message);
+	    Owner->Failed(Message,Config);
 	    ItemDone();
-	    
+
 	    if (Log != 0)
 	       Log->Fail(Desc);
-	    
+
 	    break;
 	 }	 
 	 

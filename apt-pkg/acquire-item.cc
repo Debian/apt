@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.19 1999/01/27 02:48:52 jgg Exp $
+// $Id: acquire-item.cc,v 1.20 1999/01/30 08:08:54 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -51,16 +51,17 @@ pkgAcquire::Item::~Item()
 // ---------------------------------------------------------------------
 /* We return to an idle state if there are still other queues that could
    fetch this object */
-void pkgAcquire::Item::Failed(string Message)
+void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    Status = StatIdle;
    ErrorText = LookupTag(Message,"Message");
    if (QueueCounter <= 1)
    {
       /* This indicates that the file is not available right now but might
-         be sometime later. If we do a retry cycle then this should be 
+         be sometime later. If we do a retry cycle then this should be
 	 retried */
-      if (StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
+      if (Cnf->LocalOnly == true &&
+	  StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
       {
 	 Status = StatIdle;
 	 Owner->Dequeue(this);
@@ -338,6 +339,8 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
                Item(Owner), Version(Version), Sources(Sources), Recs(Recs), 
                StoreFilename(StoreFilename), Vf(Version.FileList())
 {
+   Retries = _config->FindI("Acquire::Retries",0);
+      
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
       _error->Error("I wasn't able to locate file for the %s package. "
@@ -477,10 +480,23 @@ string pkgAcqArchive::Describe()
 // AcqArchive::Failed - Failure handler					/*{{{*/
 // ---------------------------------------------------------------------
 /* Here we try other sources */
-void pkgAcqArchive::Failed(string Message)
+void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    ErrorText = LookupTag(Message,"Message");
    if (QueueNext() == false)
-      Item::Failed(Message);
+   {
+      // This is the retry counter
+      if (Retries != 0 &&
+	  Cnf->LocalOnly == false &&
+	  StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
+      {
+	 Retries--;
+	 Vf = Version.FileList();
+	 if (QueueNext() == true)
+	    return;
+      }
+      
+      Item::Failed(Message,Cnf);
+   }
 }
 									/*}}}*/
