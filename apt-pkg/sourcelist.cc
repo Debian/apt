@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.5 1998/07/26 04:49:33 jgg Exp $
+// $Id: sourcelist.cc,v 1.6 1998/10/15 07:00:01 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -190,6 +190,48 @@ string pkgSourceList::Item::PackagesInfo() const
 	 Res += Dist + '/' + Section;
       
       Res += " Packages";
+      break;
+   };
+   return Res;
+}
+									/*}}}*/
+// SourceList::Item::ReleaseURI - Returns a URI to the release file	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string pkgSourceList::Item::ReleaseURI() const
+{
+   string Res;
+   switch (Type)
+   {
+      case Deb:
+      if (Dist[Dist.size() - 1] == '/')
+	 Res = URI + Dist;
+      else
+	 Res = URI + "dists/" + Dist + '/' + Section +
+	 "/binary-" + _config->Find("APT::Architecture") + '/';
+      
+      Res += "Release";
+      break;
+   };
+   return Res;
+}
+									/*}}}*/
+// SourceList::Item::ReleaseInfo - Shorter version of the URI		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is a shorter version that is designed to be < 60 chars or so */
+string pkgSourceList::Item::ReleaseInfo() const
+{
+   string Res;
+   switch (Type)
+   {
+      case Deb:
+      Res += SiteOnly(URI) + ' ';
+      if (Dist[Dist.size() - 1] == '/')
+	 Res += Dist;
+      else
+	 Res += Dist + '/' + Section;
+      
+      Res += " Release";
       break;
    };
    return Res;

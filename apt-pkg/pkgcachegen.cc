@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.18 1998/10/02 04:39:47 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.19 1998/10/15 07:00:00 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -487,10 +487,31 @@ bool pkgPkgCacheCheck(string CacheFile)
       return false;
    }
 
+   // Status files that must be in the cache
+   string Status[3];
+   Status[0] = _config->FindDir("Dir::State::xstatus");
+   Status[1]= _config->FindDir("Dir::State::userstatus");
+   Status[2] = _config->FindDir("Dir::State::status");
+   
    // Cheack each file
    for (pkgCache::PkgFileIterator F(Cache); F.end() == false; F++)
+   {
       if (F.IsOk() == false)
 	 return false;
+      
+      // See if this is one of the status files
+      for (int I = 0; I != 3; I++)
+	 if (F.FileName() == Status[I])
+	    Status[I] = string();
+   }
+   
+   // Make sure all the status files are loaded.
+   for (int I = 0; I != 3; I++)
+   {
+      if (Status[I].empty() == false && FileExists(Status[I]) == true)
+	 return false;
+   }   
+   
    return true;
 }
 									/*}}}*/
