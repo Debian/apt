@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.9 1999/01/27 02:48:52 jgg Exp $
+// $Id: cmndline.cc,v 1.10 1999/05/14 02:57:48 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -228,7 +228,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	    return _error->Error("Option %s requires an integer argument, not '%s'",argv[I],Argument);
 
 	 // Conversion was ok, set the value and return
-	 if (EndPtr != Argument)
+	 if (EndPtr != 0 && EndPtr != Argument && *EndPtr == 0)
 	 {
 	    Conf->Set(A->ConfName,Value);
 	    Opt += strlen(Opt);
