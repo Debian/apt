@@ -6,10 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.4\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-08-17 21:45-0400\n"
-"PO-Revision-Date: 2002-01-28 15:35+0100\n"
-"Last-Translator: Wannes Soenen <wannes@wannes.cjb.net>\n"
+"POT-Creation-Date: 2003-04-27 01:12-0500\n"
+"PO-Revision-Date: 2003-08-28 17:25+0100\n"
+"Last-Translator: Bart Cornelis <cobaco@linux.be>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -20,8 +19,12 @@ msgstr ""
 msgid "Package %s version %s has an unmet dep:\n"
 msgstr "Pakket %s versie %s voldoet niet aan afhankelijkheid:\n"
 
-#: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:613
-#: cmdline/apt-cache.cc:769 cmdline/apt-cache.cc:987 cmdline/apt-cache.cc:1355
+#: cmdline/apt-cache.cc:173
+#: cmdline/apt-cache.cc:525
+#: cmdline/apt-cache.cc:613
+#: cmdline/apt-cache.cc:769
+#: cmdline/apt-cache.cc:987
+#: cmdline/apt-cache.cc:1355
 #: cmdline/apt-cache.cc:1506
 #, c-format
 msgid "Unable to locate package %s"
@@ -83,7 +86,8 @@ msgstr "Totale hoeveelheid onbenutte ruimte: "
 msgid "Total Space Accounted for: "
 msgstr "Totale hoeveelheid verantwoorde ruimte: "
 
-#: cmdline/apt-cache.cc:444 cmdline/apt-cache.cc:1187
+#: cmdline/apt-cache.cc:444
+#: cmdline/apt-cache.cc:1187
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "Pakketbestand %s is niet meer bij de tijd."
@@ -93,15 +97,15 @@ msgid "You must give exactly one pattern"
 msgstr "U moet precies één patroon opgeven"
 
 #: cmdline/apt-cache.cc:1383
-#, fuzzy
 msgid "No packages found"
-msgstr "  Pakketpin: "
+msgstr "Geen pakketten gevonden"
 
 #: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
 msgstr "Pakketbestanden:"
 
-#: cmdline/apt-cache.cc:1467 cmdline/apt-cache.cc:1553
+#: cmdline/apt-cache.cc:1467
+#: cmdline/apt-cache.cc:1553
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr "Cache is niet meer bij de tijd, kan een pakketbestand niet refereren"
 
@@ -115,7 +119,8 @@ msgstr "%4i %s\n"
 msgid "Pinned Packages:"
 msgstr "Gepinde pakketten:"
 
-#: cmdline/apt-cache.cc:1492 cmdline/apt-cache.cc:1533
+#: cmdline/apt-cache.cc:1492
+#: cmdline/apt-cache.cc:1533
 msgid "(not found)"
 msgstr "(niet gevonden)"
 
@@ -124,7 +129,8 @@ msgstr "(niet gevonden)"
 msgid "  Installed: "
 msgstr "  Geïnstalleerd: "
 
-#: cmdline/apt-cache.cc:1515 cmdline/apt-cache.cc:1523
+#: cmdline/apt-cache.cc:1515
+#: cmdline/apt-cache.cc:1523
 msgid "(none)"
 msgstr "(geen)"
 
@@ -147,15 +153,18 @@ msgstr "  Versietabel:"
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1581 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:544
-#: cmdline/apt-get.cc:2205 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-cache.cc:1581
+#: cmdline/apt-cdrom.cc:730
+#: cmdline/apt-config.cc:70
+#: cmdline/apt-extracttemplates.cc:225
+#: ftparchive/apt-ftparchive.cc:544
+#: cmdline/apt-get.cc:2205
+#: cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s voor %s %s gecompileerd op %s %s\n"
 
 #: cmdline/apt-cache.cc:1588
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -196,23 +205,27 @@ msgstr ""
 "Gebruik: apt-cache [opties] opdracht\n"
 "         apt-cache [opties] add bestand1 [bestand2 ...]\n"
 "         apt-cache [opties] showpkg pakket1 [pakket2 ...]\n"
+"         apt-cache [opties] showsrc pakket1 [pakket2 ...]\n"
 "\n"
-"apt-cache is een laag-niveau programma om APT's binaire\n"
-"cachebestanden te manipuleren en informatie erover op te vragen.\n"
+"apt-cache is een laag-niveau hulpmiddel waarmee u de binaire cache-\n"
+"bestanden van apt kunt manipuleren en bevragen\n"
 "\n"
 "Opdrachten:\n"
 "   add - Voeg een pakketbestand toe aan de broncache\n"
 "   gencaches - Bouw zowel het pakket- als de broncache\n"
 "   showpkg - Toon algemene informatie over een enkel pakket\n"
-"   stats - Toon algemene statistieken\n"
-"   dump - Toon het gehele bestand in een korte vorm\n"
-"   dumpavail - Print een beschikbaar bestand naar standaard uivoer\n"
-"   unmet - Toon afhankelijkheden waaraan niet voldaan wordt\n"
+"   showsrc - Toon brondossiers\n"
+"   stats - Toon enkele algemene statistieken\n"
+"   dump - Toon het gehele bestand in een compacte vorm\n"
+"   dumpavail - Print een beschikbaarheidsbestand op stdout\n"
+"   unmet - Toon niet-voldane afhankelijkheden\n"
 "   search - Toon de pakketlijst voor een regex patroon\n"
-"   show - Toon leesbare informatie voor een pakket   depends - Toon ruwe "
-"afhankelijkheidsinformatie voor een pakket\n"
+"   show - Toon een leesbaar dossier voor het pakket\n"
+"   depends - Toon de ruwe afhankelijkheidsinformatie voor een pakket\n"
+"   rdepends - Toon de omgekeerde-afhankelijkheidsinformatie voor een pakket\n"
 "   pkgnames - Toon de namen van alle pakketten\n"
 "   dotty - Genereer pakketgrafen voor GraphVis\n"
+"   xvcg - Genereer pakketgrafen voor xvcg\n"
 "   policy - Toon beleidsinstellingen\n"
 "\n"
 "Opties:\n"
@@ -277,8 +290,7 @@ msgid ""
 msgstr ""
 "Gebruik: apt-extracttemplates bestand1 [bestand2 ...]\n"
 "\n"
-"apt-extracttemplates is een programma om configuratie- en "
-"sjablooninformatie\n"
+"apt-extracttemplates is een programma om configuratie- en sjablooninformatie\n"
 "uit Debian pakketten te halen.\n"
 "\n"
 "Opties:\n"
@@ -287,7 +299,8 @@ msgstr ""
 "  -c=? Lees dit configuratiebestand.\n"
 "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
+#: cmdline/apt-extracttemplates.cc:267
+#: apt-pkg/pkgcachegen.cc:699
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Kon niet naar %s schrijven"
@@ -296,32 +309,33 @@ msgstr "Kon niet naar %s schrijven"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Kan versie van debconf niet achterhalen. Is debconf geïnstalleerd?"
 
-#: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:336
-#, fuzzy
+#: ftparchive/apt-ftparchive.cc:163
+#: ftparchive/apt-ftparchive.cc:336
 msgid "Package extension list is too long"
-msgstr "Het pakketcachebestand is corrupt"
+msgstr "Pakket extensielijst is te lang"
 
-#: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
-#: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:251
-#: ftparchive/apt-ftparchive.cc:265 ftparchive/apt-ftparchive.cc:287
+#: ftparchive/apt-ftparchive.cc:165
+#: ftparchive/apt-ftparchive.cc:179
+#: ftparchive/apt-ftparchive.cc:202
+#: ftparchive/apt-ftparchive.cc:251
+#: ftparchive/apt-ftparchive.cc:265
+#: ftparchive/apt-ftparchive.cc:287
 #, c-format
 msgid "Error Processing directory %s"
-msgstr ""
+msgstr "Fout bij het verwerken van de map %s"
 
 #: ftparchive/apt-ftparchive.cc:249
-#, fuzzy
 msgid "Source extension list is too long"
-msgstr "Het pakketcachebestand is corrupt"
+msgstr "Bron extensielijst is te lang"
 
 #: ftparchive/apt-ftparchive.cc:366
-#, fuzzy
 msgid "Error writing header to contents file"
-msgstr "Fout bij het scrijvan naar het bestand"
+msgstr "Fout bij wegschrijven van de koptekst naar het inhoudsbestand"
 
 #: ftparchive/apt-ftparchive.cc:396
 #, c-format
 msgid "Error Processing Contents %s"
-msgstr ""
+msgstr "Fout bij het verwerken van de inhout %s"
 
 #: ftparchive/apt-ftparchive.cc:550
 msgid ""
@@ -363,181 +377,226 @@ msgid ""
 "  -c=?  Read this configuration file\n"
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
+"Gebruik: apt-ftparchive [opties] opdracht\n"
+"Opdrachten: packages binariespad [overstijginsbestand [padprefix]]\n"
+"          sources bronpad [overstijgingsbestand [padprefix]]\n"
+"          contents pad\n"
+"          generate config [groepen]\n"
+"          clean config\n"
+"\n"
+"Met apt-ftparchive genereert u index bestanden voor Debian archieven.\n"
+"Het ondersteund verschillende generatiestijlen gaande van volledig automatisch\n"
+"tot een functionele vervangingen van dpkg-scanpackages en dpkg-scansources\n"
+"\n"
+"apt-ftparchive genereert een pakketbestanden van een boom met .debs.\n"
+"Het pakketbestand bevat de inhoud van alle beheervelden van elk pakket\n"
+"alsook de MD5 hash en de bestandsgrootte. Er wordt een overstijgingsbestand\n"
+"ondersteund om de waarde van de Priority en Section velden af te dwingen.\n"
+"\n"
+"Op gelijkaardige wijze genereert apt-ftparchive een bronbestanden van\n"
+"een boom met .dscs. De --source-override optie kan gebruikt worden om\n"
+"een bronoverstijgingsbestand te specificeren.\n"
+"\n"
+"De 'packages' en 'sources' opdrachten dienen uitgevoerd te worden op\n"
+"bij de wortel van de boom. Binariespad dient te verwijzen naar het startpunt\n"
+"van de recursieve zoekopdracht en een overstijgingsbestand dient de \n"
+"overstijgingvlaggen te bevatten. Padprefix wordt toegevoegd aan het filename\n"
+"veld indien dit aanwezig is. Enkele voorbeelden uit het debian archief:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Opties:\n"
+"  -h    Deze hulptekst\n"
+"  --md5 Beheer de MD5 generatie\n"
+"  -s=?  Bronoverstijgingsbestand\n"
+"  -q    Stille uitvoer\n"
+"  -d=?  Selecteerd de optionele caching database\n"
+"  --no-delink Schakeld de delinking debug modus in\n"
+"  --contents  Beheer de generatie van het inhoudsbestand\n"
+"  -c=?  Lees dit configuratiebestand in\n"
+"  -o=?  Stel een willekeurige configuratie optie in"
 
 #: ftparchive/apt-ftparchive.cc:731
 msgid "No selections matched"
-msgstr ""
+msgstr "Er kwamen geen selecties overeen"
 
 #: ftparchive/apt-ftparchive.cc:804
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
-msgstr ""
+msgstr "Sommige bestanden zijn niet aanwezig in de pakketbestand groep '%s'"
 
 #: ftparchive/cachedb.cc:43
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
-msgstr ""
+msgstr "DB is corrupt, bestand hernoemt naar %s.old"
 
 #: ftparchive/cachedb.cc:59
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open DB2 file %s"
-msgstr "Kon pakketbestand %s niet lezen (2)"
+msgstr "DB2 bestand %s kon niet geopend worden"
 
 #: ftparchive/cachedb.cc:99
-#, fuzzy, c-format
+#, c-format
 msgid "File date has changed %s"
-msgstr "Kon %s niet veranderen"
+msgstr "Bestandsdatum is veranderd %s"
 
 #: ftparchive/cachedb.cc:140
 msgid "Archive has no control record"
-msgstr ""
+msgstr "Archief heeft geen beheerdossier"
 
-#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
-#, fuzzy
+#: ftparchive/cachedb.cc:253
+#: ftparchive/cachedb.cc:257
 msgid "Unable to get a cursor"
-msgstr "Kon %s niet lezen"
+msgstr "Kon geen cursor verkrijgen"
 
 #: ftparchive/writer.cc:78
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to read directory %s\n"
-msgstr "Kon de ophaalmap niet vergrendelen"
+msgstr "W: Kon map %s niet lezen\n"
 
 #: ftparchive/writer.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to stat %s\n"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "W: Kon de status van %s niet opvragen\n"
 
 #: ftparchive/writer.cc:122
 msgid "E: "
-msgstr ""
+msgstr "F: "
 
 #: ftparchive/writer.cc:124
 msgid "W: "
-msgstr ""
+msgstr "W: "
 
 #: ftparchive/writer.cc:131
-#, fuzzy
 msgid "E: Errors apply to file "
-msgstr "Fout bij het scrijven naar bestand"
+msgstr "F: Fouten van toepassing op het bestand"
 
-#: ftparchive/writer.cc:148 ftparchive/writer.cc:178
-#, fuzzy, c-format
+#: ftparchive/writer.cc:148
+#: ftparchive/writer.cc:178
+#, c-format
 msgid "Failed to resolve %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Opzoeking %s is mislukt"
 
 #: ftparchive/writer.cc:160
-#, fuzzy
 msgid "Tree walking failed"
-msgstr "Openen %s"
+msgstr "Doorlopen boomstructuur is mislukt"
 
 #: ftparchive/writer.cc:185
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Openen van %s is mislukt"
 
 #: ftparchive/writer.cc:242
 #, c-format
 msgid " DeLink %s [%s]\n"
-msgstr ""
+msgstr " DeLink %s [%s]\n"
 
 #: ftparchive/writer.cc:250
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to readlink %s"
-msgstr "Kon %s niet lezen"
+msgstr "Lezen van link %s is mislukt"
 
 #: ftparchive/writer.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to unlink %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Delinken van %s is mislukt"
 
 #: ftparchive/writer.cc:261
-#, fuzzy, c-format
+#, c-format
 msgid "*** Failed to link %s to %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "*** Linken van %s met %s is mislukt"
 
 #: ftparchive/writer.cc:271
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr ""
+msgstr " DeLink limiet van %sB is bereikt.\n"
 
-#: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
-#, fuzzy, c-format
+#: ftparchive/writer.cc:338
+#: apt-inst/extract.cc:181
+#: apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210
+#: apt-inst/deb/dpkgdb.cc:121
+#, c-format
 msgid "Failed to stat %s"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "Opvragen van de status van %s is mislukt"
 
 #: ftparchive/writer.cc:358
 msgid "Archive had no package field"
-msgstr ""
+msgstr "Archief heeft geen package veld"
 
-#: ftparchive/writer.cc:366 ftparchive/writer.cc:576
-#, fuzzy, c-format
+#: ftparchive/writer.cc:366
+#: ftparchive/writer.cc:576
+#, c-format
 msgid "  %s has no override entry\n"
-msgstr "%s heeft geen bouwafhankelijkheden.\n"
+msgstr " %s heeft geen overstijgings ingang\n"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:658
+#: ftparchive/writer.cc:409
+#: ftparchive/writer.cc:658
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
-msgstr ""
+msgstr "  %s beheerder is %s niet %s\n"
 
-#: ftparchive/contents.cc:346 ftparchive/contents.cc:377
-#, fuzzy
+#: ftparchive/contents.cc:346
+#: ftparchive/contents.cc:377
 msgid "realloc - Failed to allocate memory"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "realloc - Geheugentoewijzing is mislukt"
 
-#: ftparchive/override.cc:38 ftparchive/override.cc:146
+#: ftparchive/override.cc:38
+#: ftparchive/override.cc:146
 #, c-format
 msgid "Unable to open %s"
 msgstr "Kon %s niet lezen"
 
-#: ftparchive/override.cc:64 ftparchive/override.cc:170
+#: ftparchive/override.cc:64
+#: ftparchive/override.cc:170
 #, c-format
 msgid "Malformed override %s line %lu #1"
-msgstr ""
+msgstr "Verkeerd gevormde overstijgins %s op regel %lu #1"
 
-#: ftparchive/override.cc:78 ftparchive/override.cc:182
+#: ftparchive/override.cc:78
+#: ftparchive/override.cc:182
 #, c-format
 msgid "Malformed override %s line %lu #2"
-msgstr ""
+msgstr "Verkeerd gevormde overstijgins %s op regel %lu #2"
 
-#: ftparchive/override.cc:92 ftparchive/override.cc:195
+#: ftparchive/override.cc:92
+#: ftparchive/override.cc:195
 #, c-format
 msgid "Malformed override %s line %lu #3"
-msgstr ""
+msgstr "Verkeerd gevormde overstijgins %s op regel %lu #3"
 
-#: ftparchive/override.cc:131 ftparchive/override.cc:205
-#, fuzzy, c-format
+#: ftparchive/override.cc:131
+#: ftparchive/override.cc:205
+#, c-format
 msgid "Failed to read the override file %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Overstijgingsbestand %s kon niet gelezen worden"
 
 #: ftparchive/multicompress.cc:75
 #, c-format
 msgid "Unknown Compresison Algorithm '%s'"
-msgstr ""
+msgstr "Onbekend compressie algoritme '%s'"
 
 #: ftparchive/multicompress.cc:105
 #, c-format
 msgid "Compressed output %s needs a compression set"
-msgstr ""
+msgstr "Gecomprimeerde uitvoer %s vereist een compressie set"
 
-#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
-#, fuzzy
+#: ftparchive/multicompress.cc:172
+#: methods/rsh.cc:91
 msgid "Failed to create IPC pipe to subprocess"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "IPC pijp naar subproces kon niet aangemaakt worden"
 
 #: ftparchive/multicompress.cc:198
-#, fuzzy
 msgid "Failed to create FILE*"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "Aanmaken FILE* is mislukt"
 
 #: ftparchive/multicompress.cc:201
-#, fuzzy
 msgid "Failed to fork"
-msgstr "Faalde"
+msgstr "Aanmaken nieuw proces is mislukt"
 
 #: ftparchive/multicompress.cc:215
 msgid "Compress Child"
-msgstr ""
+msgstr "Comprimeer kind"
 
 #: ftparchive/multicompress.cc:238
 #, c-format
@@ -545,53 +604,49 @@ msgid "Internal Error, Failed to create %s"
 msgstr "Interne fout, kon %s niet aanmaken"
 
 #: ftparchive/multicompress.cc:289
-#, fuzzy
 msgid "Failed to create subprocess IPC"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "Aanmaken subproces IPC is mislukt"
 
 #: ftparchive/multicompress.cc:324
-#, fuzzy
 msgid "Failed to exec compressor "
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "Uitvoeren van de compressor is mislukt"
 
 #: ftparchive/multicompress.cc:363
-#, fuzzy
 msgid "decompressor"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "decompressor"
 
 #: ftparchive/multicompress.cc:406
 msgid "IO to subprocess/file failed"
 msgstr "Dochterproces faalde"
 
 #: ftparchive/multicompress.cc:458
-#, fuzzy
 msgid "Failed to read while computing MD5"
-msgstr "Kon %s niet lezen"
+msgstr "Tijdens het berekenen van de MD5 is het lezen mislukt"
 
 #: ftparchive/multicompress.cc:475
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking %s"
-msgstr "Openen %s"
+msgstr "Probleem bij het delinken van %s"
 
-#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
-#, fuzzy, c-format
+#: ftparchive/multicompress.cc:490
+#: apt-inst/extract.cc:188
+#, c-format
 msgid "Failed to rename %s to %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Hernoemen van %s naar %s is mislukt"
 
 #: cmdline/apt-get.cc:117
 msgid "Y"
 msgstr "J"
 
-#: cmdline/apt-get.cc:139 cmdline/apt-get.cc:1422
+#: cmdline/apt-get.cc:139
+#: cmdline/apt-get.cc:1422
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Regex compilatiefout - %s"
 
 #: cmdline/apt-get.cc:234
-#, fuzzy
 msgid "The following packages have unmet dependencies:"
-msgstr ""
-"Sorry, maar de volgende pakketten voldoen niet aan hun afhankelijkheden:"
+msgstr "De volgende pakketten hebben niet-voldane afhankelijkheden:"
 
 #: cmdline/apt-get.cc:324
 #, c-format
@@ -661,9 +716,9 @@ msgstr ""
 "Dit moet u NIET doen tenzij u echt weet wat u doet!"
 
 #: cmdline/apt-get.cc:573
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu pakketten bijwerken, %lu nieuwe installeren, "
+msgstr "%lu pakketten geactualizeerd, %lu nieuwe paketten geïnstalleerd, "
 
 #: cmdline/apt-get.cc:577
 #, c-format
@@ -681,7 +736,7 @@ msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu verwijderen en %lu niet bijwerken.\n"
 
 #: cmdline/apt-get.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu pakketten niet volledig geïnstalleerd of verwijderd.\n"
 
@@ -707,57 +762,60 @@ msgstr " Klaar"
 
 #: cmdline/apt-get.cc:660
 msgid "You might want to run `apt-get -f install' to correct these."
-msgstr ""
-"U zou misschien `apt-get -f install' willen draaien om deze te corrigeren."
+msgstr "U zou misschien `apt-get -f install' willen draaien om deze te corrigeren."
 
 #: cmdline/apt-get.cc:663
 msgid "Unmet dependencies. Try using -f."
-msgstr ""
-"Er zijn afhankelijkheden waaraan niet voldaan kan worden. Probeer met -f."
+msgstr "Er zijn afhankelijkheden waaraan niet voldaan kan worden. Probeer met -f."
 
 #: cmdline/apt-get.cc:717
 msgid "Packages need to be removed but Remove is disabled."
 msgstr "Pakketten moeten verwijderd worden maar Remove is uitgeschakeld."
 
-#: cmdline/apt-get.cc:743 cmdline/apt-get.cc:1725 cmdline/apt-get.cc:1758
+#: cmdline/apt-get.cc:743
+#: cmdline/apt-get.cc:1725
+#: cmdline/apt-get.cc:1758
 msgid "Unable to lock the download directory"
 msgstr "Kon de ophaalmap niet vergrendelen"
 
-#: cmdline/apt-get.cc:753 cmdline/apt-get.cc:1806 cmdline/apt-get.cc:2017
+#: cmdline/apt-get.cc:753
+#: cmdline/apt-get.cc:1806
+#: cmdline/apt-get.cc:2017
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "De lijst van bronpakketten kon niet gelezen worden."
 
 #: cmdline/apt-get.cc:773
-#, fuzzy, c-format
+#, c-format
 msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Moet %sB/%sB aan archieven ophalen. "
+msgstr "Dien %sB/%sB aan archieven op te halen.\n"
 
 #: cmdline/apt-get.cc:776
-#, fuzzy, c-format
+#, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Moet %sB aan archieven ophalen. "
+msgstr "Dien %sB aan archieven op te halen.\n"
 
 #: cmdline/apt-get.cc:781
-#, fuzzy, c-format
+#, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
-msgstr "Na uitpakken zal %sB gebruikt worden.\n"
+msgstr "Na het uitpakken zal er een aanvullende  %sB aan schijfruimte gebruikt worden.\n"
 
 #: cmdline/apt-get.cc:784
-#, fuzzy, c-format
+#, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
-msgstr "Na uitpakken zal %sB vrij gemaakt worden.\n"
+msgstr "Na het uitpakken zal er %sB schijfruimte vrijkomen.\n"
 
 #: cmdline/apt-get.cc:801
-#, fuzzy, c-format
+#, c-format
 msgid "You don't have enough free space in %s."
-msgstr "Sorry, u heeft niet genoeg vrije ruimte in %s"
+msgstr "U heeft niet voldoende vrije schijfruimte op %s"
 
 #: cmdline/apt-get.cc:810
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Er zijn problemen en -y was gebruikt zonder --force-yes"
 
-#: cmdline/apt-get.cc:816 cmdline/apt-get.cc:836
+#: cmdline/apt-get.cc:816
+#: cmdline/apt-get.cc:836
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Trivial Only gespecifieerd maar dit is geen triviale bewerking."
 
@@ -776,7 +834,8 @@ msgstr ""
 "Om door te gaan moet u de zin '%s' in zijn geheel overtikken.\n"
 " ?] "
 
-#: cmdline/apt-get.cc:826 cmdline/apt-get.cc:845
+#: cmdline/apt-get.cc:826
+#: cmdline/apt-get.cc:845
 msgid "Abort."
 msgstr "Afgebroken."
 
@@ -784,7 +843,9 @@ msgstr "Afgebroken."
 msgid "Do you want to continue? [Y/n] "
 msgstr "Wilt u doorgaan? [J/n] "
 
-#: cmdline/apt-get.cc:910 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1915
+#: cmdline/apt-get.cc:910
+#: cmdline/apt-get.cc:1281
+#: cmdline/apt-get.cc:1915
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Kon %s %s niet ophalen\n"
@@ -793,14 +854,13 @@ msgstr "Kon %s %s niet ophalen\n"
 msgid "Some files failed to download"
 msgstr "Kon sommige bestanden niet ophalen"
 
-#: cmdline/apt-get.cc:929 cmdline/apt-get.cc:1924
+#: cmdline/apt-get.cc:929
+#: cmdline/apt-get.cc:1924
 msgid "Download complete and in download only mode"
 msgstr "Ophalen klaar en in alleen-ophalen modus"
 
 #: cmdline/apt-get.cc:935
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
+msgid "Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?"
 msgstr ""
 "Kon sommige archieven niet ophalen, misschien kunt u `apt-get update` of\n"
 "--fix-missing proberen?"
@@ -825,9 +885,7 @@ msgstr "Let op, %s wordt geselecteerd in plaats van %s\n"
 #: cmdline/apt-get.cc:988
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr ""
-"%s wordt overgeslagen, het is al geïnstalleerd en upgrade is niet "
-"ingesteld.\n"
+msgstr "%s wordt overgeslagen, het is al geïnstalleerd en upgrade is niet ingesteld.\n"
 
 #: cmdline/apt-get.cc:1006
 #, c-format
@@ -856,8 +914,7 @@ msgid ""
 "of sources.list\n"
 msgstr ""
 "Pakket %s heeft geen beschikbare versie, maar bestaat wel in de database.\n"
-"Dit betekent in het algemeen dat het pakket voorkwam in een afhankelijkheid "
-"en\n"
+"Dit betekent in het algemeen dat het pakket voorkwam in een afhankelijkheid en\n"
 "nooit beschikbaar gemaakt is, vervangen is door een ander pakket of niet\n"
 "becshikbaar is met de inhoud van sources.list\n"
 
@@ -871,16 +928,14 @@ msgid "Package %s has no installation candidate"
 msgstr "Pakket %s heeft geen installatiekandidaat"
 
 #: cmdline/apt-get.cc:1082
-#, fuzzy, c-format
+#, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr ""
-"Sorry, herinstallatie van %s is niet mogelijk, het kan niet opgehaald "
-"worden.\n"
+msgstr "Herinstallatie van %s is niet mogelijk omdat het niet opgehaald kan worden.\n"
 
 #: cmdline/apt-get.cc:1090
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version.\n"
-msgstr "Sorry, %s is reeds de nieuwste versie.\n"
+msgstr "%s is reeds de nieuwste versie.\n"
 
 #: cmdline/apt-get.cc:1117
 #, c-format
@@ -906,9 +961,7 @@ msgid "Unable to lock the list directory"
 msgstr "Kon de lijstmap niet vergrendelen"
 
 #: cmdline/apt-get.cc:1300
-msgid ""
-"Some index files failed to download, they have been ignored, or old ones "
-"used instead."
+msgid "Some index files failed to download, they have been ignored, or old ones used instead."
 msgstr ""
 "Sommige indexbestanden konden niet opgehaald worden, ze zijn genegeerd, of\n"
 "oudere zijn in plaats daarvan gebruikt."
@@ -917,25 +970,23 @@ msgstr ""
 msgid "Internal Error, AllUpgrade broke stuff"
 msgstr "Interne fout, AllUpgrade heeft dingen stukgemaakt"
 
-#: cmdline/apt-get.cc:1409 cmdline/apt-get.cc:1445
+#: cmdline/apt-get.cc:1409
+#: cmdline/apt-get.cc:1445
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Kon pakket %s niet vinden"
 
 #: cmdline/apt-get.cc:1432
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting %s for regex '%s'\n"
-msgstr "Let op, %s wordt geselecteerd in plaats van %s\n"
+msgstr "Let op, de regex '%s' resulteerd in het selecteren van %s\n"
 
 #: cmdline/apt-get.cc:1462
 msgid "You might want to run `apt-get -f install' to correct these:"
-msgstr ""
-"U zou misschien `apt-get -f install' willen draaien om deze te corrigeren:"
+msgstr "U zou misschien `apt-get -f install' willen draaien om deze te corrigeren:"
 
 #: cmdline/apt-get.cc:1465
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
+msgid "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."
 msgstr ""
 "Er zijn afhankelijkheden waaraan niet voldaan kan worden. Probeer\n"
 "'apt-get -f install' zonder pakketten (of specifieer een oplossing)."
@@ -948,8 +999,7 @@ msgid ""
 "or been moved out of Incoming."
 msgstr ""
 "Sommige pakketten konden niet geïnstalleerd worden. Dit kan betekenen dat u\n"
-"een onmogelijke situatie verlangde of dat u de unstable distributie "
-"gebruikt\n"
+"een onmogelijke situatie verlangde of dat u de unstable distributie gebruikt\n"
 "en sommige benodigde pakketten nog niet beschikbaar gemaakt zijn."
 
 #: cmdline/apt-get.cc:1485
@@ -967,29 +1017,28 @@ msgid "The following information may help to resolve the situation:"
 msgstr "De volgende informatie kan u helpen de situatie op te lossen:"
 
 #: cmdline/apt-get.cc:1493
-#, fuzzy
 msgid "Broken packages"
-msgstr "Sorry, kapotte pakketten"
+msgstr "Kapotte pakketten:"
 
 #: cmdline/apt-get.cc:1519
 msgid "The following extra packages will be installed:"
 msgstr "De volgende extra pakketten zullen geïnstalleerd worden:"
 
 #: cmdline/apt-get.cc:1599
-#, fuzzy
 msgid "Suggested packages:"
-msgstr "Gepinde pakketten:"
+msgstr "Voorgestelde pakketten:"
 
 #: cmdline/apt-get.cc:1600
-#, fuzzy
 msgid "Recommended packages:"
-msgstr "Sorry, kapotte pakketten"
+msgstr "Aanbevolen pakketten"
 
 #: cmdline/apt-get.cc:1620
 msgid "Calculating Upgrade... "
 msgstr "Bereken bijwerking... "
 
-#: cmdline/apt-get.cc:1623 methods/ftp.cc:702 methods/connect.cc:99
+#: cmdline/apt-get.cc:1623
+#: methods/ftp.cc:702
+#: methods/connect.cc:99
 msgid "Failed"
 msgstr "Faalde"
 
@@ -999,19 +1048,18 @@ msgstr "Klaar"
 
 #: cmdline/apt-get.cc:1801
 msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"U moet ten minste één pakket specifieren waarvan de bron opgehaald moet "
-"worden"
+msgstr "U moet ten minste één pakket specifieren waarvan de bron opgehaald moet worden"
 
-#: cmdline/apt-get.cc:1828 cmdline/apt-get.cc:2035
+#: cmdline/apt-get.cc:1828
+#: cmdline/apt-get.cc:2035
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Kon geen bronpakket vinden voor %s"
 
 #: cmdline/apt-get.cc:1875
-#, fuzzy, c-format
+#, c-format
 msgid "You don't have enough free space in %s"
-msgstr "Sorry, u heeft niet genoeg vrije ruimte in %s"
+msgstr "U heeft niet voldoende vrije schijfruimte op %s"
 
 #: cmdline/apt-get.cc:1880
 #, c-format
@@ -1053,9 +1101,7 @@ msgstr "Dochterproces faalde"
 
 #: cmdline/apt-get.cc:2012
 msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"U moet tenminste één pakket opgeven om de bouwafhankelijkheden voor te "
-"controleren"
+msgstr "U moet tenminste één pakket opgeven om de bouwafhankelijkheden voor te controleren"
 
 #: cmdline/apt-get.cc:2040
 #, c-format
@@ -1068,22 +1114,14 @@ msgid "%s has no build depends.\n"
 msgstr "%s heeft geen bouwafhankelijkheden.\n"
 
 #: cmdline/apt-get.cc:2095
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%s afhankelijkheid van %s kon niet voldaan worden omdat pakket %s niet kon\n"
-"worden gevonden"
+#, c-format
+msgid "%s dependency for %s cannot be satisfied because the package %s cannot be found"
+msgstr "Kon niet aan de afhankelijkheid %s van pakket %s voldoen omdat pakket %s onvindbaar is"
 
 #: cmdline/apt-get.cc:2145
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because no available versions of "
-"package %s can satisfy version requirements"
-msgstr ""
-"%s afhankelijkheid van %s kon niet voldaan worden omdat pakket %s niet kon\n"
-"worden gevonden"
+#, c-format
+msgid "%s dependency for %s cannot be satisfied because no available versions of package %s can satisfy version requirements"
+msgstr "Kon niet aan de afhankelijkheid %s van pakket %s voldoen omdat kon niet voldaan worden omdat de beschikbare versies van pakket %s niet voldoen aan de versie vereisten"
 
 #: cmdline/apt-get.cc:2173
 msgid ""
@@ -1103,7 +1141,6 @@ msgid "Supported Modules:"
 msgstr "Ondersteunde modules:"
 
 #: cmdline/apt-get.cc:2251
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1148,41 +1185,40 @@ msgstr ""
 "         apt-get [opties] install|remove pakket1 [pakket2 ...]\n"
 "         apt-get [opties] source pakket1 [pakket2 ...]\n"
 "\n"
-"apt-get is een simpele command line interface voor het ophalen en het\n"
-"installeren van pakketten. De meest gebruikte opgrachten zijn upgrade en\n"
+"apt-get is een simpele command line interface voor het ophalen en \n"
+"installeren van pakketten. De meest gebruikte opgrachten zijn update en\n"
 "install.\n"
 "\n"
 "Opdrachten:\n"
-"   update - Haal een nieuwe pakketlijst op\n"
-"   upgrade - Werk alle pakketten bij\n"
-"   install - Installeer nieuwe pakketten (pakket is b.v. libc6, niet libc6."
-"deb)\n"
+"   update - Haal de laatste nieuwe versie van de pakketlijst op\n"
+"   upgrade - Werk alle geinstalleerde pakketten bij\n"
+"   install - Installeer nieuwe pakketten (pakket is b.v. libc6, niet libc6.deb)\n"
 "   remove - Verwijder pakketten\n"
 "   source - Haal bronarchieven op\n"
-"   build-dep - Haal bouwafhankelijkheden voor bronpakketten op\n"
+"   build-dep - Installeer de pakketten vereist voor het bouwen van de bronpakketten op\n"
 "   dist-upgrade - Werk de distributie bij, zie apt-get(8)\n"
 "   dselect-upgrade - Gebruik dselect selecties\n"
-"   clean - Wis opgehaalde archieven\n"
-"   autoclean - Wis oude opgehaalde archieven\n"
-"   check - Controleer op fouten in afhankelijkheden\n"
+"   clean - Wis opgehaalde archief bestanden\n"
+"   autoclean - Wis oude opgehaalde archief bestanden\n"
+"   check - Controleer onvoldane afhankelijkheden\n"
 "\n"
 "Opties:\n"
 "  -h  Deze hulptekst\n"
-"  -q  Geen voortgangsindicator\n"
-"  -qq Geen uitvoer op foutmeldingen na\n"
-"  -d  Alleen ophalen - GEEN archieven installeren of uitpakken\n"
+"  -q  Logbare uitvoer - geen voortgangsindicator\n"
+"  -qq Uitvoer bestaat louter uit foutmeldingen\n"
+"  -d  Alleen ophalen - archieven NIET installeren of uitpakken\n"
 "  -s  Doe-niets. Doe alleen orderingssimulatie\n"
 "  -y  Antwoord ja op alle vragen zonder ze te stellen\n"
 "  -f  Probeer door te gaan als de integriteitstest faalt\n"
-"  -m  Probeer door te gaan als sommige archieven niet gevonden kunnen "
-"worden\n"
+"  -m  Probeer door te gaan als sommige archieven niet gevonden kunnen worden\n"
 "  -u  Toon ook een lijst van bijgewerkte pakketten\n"
 "  -b  Bouw het bronpakket na het ophalen\n"
+"  -V  Toon uitgebreide versie nummers\n"
 "  -c=? Lees dit configuratiebestand\n"
 "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 "Zie de apt-get(8), sources.list(5) en apt.conf(5) handleidingen\n"
 "voor meer informatie en opties.\n"
-"                       Deze APT heeft Super Koeienkrachten.\n"
+"                       Deze APT heeft Super Koekrachten.\n"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1210,14 +1246,15 @@ msgid " [Working]"
 msgstr " [Bezig]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press enter\n"
 msgstr ""
-"Medium wisselen: Plaats de disk gelabeld '%s' in station '%s' en druk op "
-"enter\n"
+"Medium wisselen: Plaats de disk gelabeld\n"
+" '%s'\n"
+"in station '%s' en druk op enter\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1238,8 +1275,7 @@ msgid ""
 msgstr ""
 "Gebruik: apt-sortpkgs [opties] bestand1 [bestand2 ...]\n"
 "\n"
-"apt-sortpkgs is een simpel programma om pakketbestanden te sorteren.De -s "
-"optie wordt gebruikt om aan te geven om welk soort bestand het gaat.\n"
+"apt-sortpkgs is een simpel programma om pakketbestanden te sorteren.De -s optie wordt gebruikt om aan te geven om welk soort bestand het gaat.\n"
 "\n"
 "Opties:\n"
 "  -h  Deze helptekst\n"
@@ -1251,8 +1287,12 @@ msgstr ""
 msgid "Bad default setting!"
 msgstr "Verkeerde standaard optie!"
 
-#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
-#: dselect/install:104 dselect/update:45
+#: dselect/install:51
+#: dselect/install:83
+#: dselect/install:87
+#: dselect/install:93
+#: dselect/install:104
+#: dselect/update:45
 msgid "Press enter to continue."
 msgstr "Toets Enter om door te gaan"
 
@@ -1265,16 +1305,14 @@ msgstr "Er zijn fouten opgetreden tijdens het uitpakken. Ik ga de paketten"
 
 #: dselect/install:101
 msgid "packages that were installed. This may result in duplicate errors"
-msgstr ""
-"configuren die zijn geinstalleerd. Dit kan resulteren in duplicaat fouten"
+msgstr "configuren die zijn geinstalleerd. Dit kan resulteren in duplicaat fouten"
 
 #: dselect/install:102
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
 msgstr "of fouten door missende afhankelijkheden. Alleen de fouten boven dit"
 
 #: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
+msgid "above this message are important. Please fix them and run [I]nstall again"
 msgstr "bericht zijn belangrijk. Gaarne herstellen en opnieuw [I]nstalleren"
 
 #: dselect/update:30
@@ -1282,18 +1320,17 @@ msgid "Merging Available information"
 msgstr "Samenvoegen Beschikbare Informatie"
 
 #: apt-inst/contrib/extracttar.cc:115
-#, fuzzy
 msgid "Failed to create pipes"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "Aanmaken pijpen is mislukt"
 
 #: apt-inst/contrib/extracttar.cc:140
-#, fuzzy
 msgid "Failed to exec gzip "
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Uitvoeren van gzip is mislukt"
 
-#: apt-inst/contrib/extracttar.cc:177 apt-inst/contrib/extracttar.cc:203
+#: apt-inst/contrib/extracttar.cc:177
+#: apt-inst/contrib/extracttar.cc:203
 msgid "Corrupted archive"
-msgstr ""
+msgstr "Corrupt archief"
 
 #: apt-inst/contrib/extracttar.cc:192
 msgid "Tar Checksum failed, archive corrupted"
@@ -1302,169 +1339,176 @@ msgstr "Het pakket is corrupt"
 #: apt-inst/contrib/extracttar.cc:295
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
-msgstr ""
+msgstr "Onbekend TAR koptekst type %u, onderdeel %s"
 
 #: apt-inst/contrib/arfile.cc:73
 msgid "Invalid archive signature"
-msgstr ""
+msgstr "Ongeldige archief ondertekening"
 
 #: apt-inst/contrib/arfile.cc:81
-#, fuzzy
 msgid "Error reading archive member header"
-msgstr "Fout bij het lezen van de server"
+msgstr "Fout bij het lezen van een archief onderdeel koptekst"
 
-#: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
+#: apt-inst/contrib/arfile.cc:93
+#: apt-inst/contrib/arfile.cc:105
 msgid "Invalid archive member header"
-msgstr ""
+msgstr "Koptekst archief onderdeel is ongeldig"
 
 #: apt-inst/contrib/arfile.cc:131
 msgid "Archive is too short"
-msgstr ""
+msgstr "Archief is te kort"
 
 #: apt-inst/contrib/arfile.cc:135
-#, fuzzy
 msgid "Failed to read the archive headers"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "Sommige kopteksten van het archief konden niet gelezen worden"
 
 #: apt-inst/filelist.cc:384
 msgid "DropNode called on still linked node"
-msgstr ""
+msgstr "DropNode werd aangeroepen op een nog gelinkte node"
 
 #: apt-inst/filelist.cc:416
-#, fuzzy
 msgid "Failed to locate the hash element!"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "Het hash element kon niet gevonden worden!"
 
 #: apt-inst/filelist.cc:463
-#, fuzzy
 msgid "Failed to allocate diversion"
-msgstr "Kon sommige archieven niet ophalen."
+msgstr "Toewijzen van de omleiding is mislukt"
 
 #: apt-inst/filelist.cc:468
-#, fuzzy
 msgid "Internal Error in AddDiversion"
-msgstr "Interne fout"
+msgstr "Interne fout in AddDiversion"
 
 #: apt-inst/filelist.cc:481
 #, c-format
 msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
-msgstr ""
+msgstr "Ben aan het proberen om de omleiding %s->%s en %s/%s te overschrijven"
 
 #: apt-inst/filelist.cc:510
 #, c-format
 msgid "Double add of diversion %s -> %s"
-msgstr ""
+msgstr "Dubbele toevoeging van de omleiding %s->%s"
 
 #: apt-inst/filelist.cc:553
 #, c-format
 msgid "Duplicate conf file %s/%s"
-msgstr ""
+msgstr "Duplikaat configuratie file %s/%s"
 
-#: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#: apt-inst/dirstream.cc:45
+#: apt-inst/dirstream.cc:50
+#: apt-inst/dirstream.cc:53
+#, c-format
 msgid "Failed write file %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Wegschrijven van bestand %s is mislukt"
 
-#: apt-inst/dirstream.cc:80 apt-inst/dirstream.cc:88
-#, fuzzy, c-format
+#: apt-inst/dirstream.cc:80
+#: apt-inst/dirstream.cc:88
+#, c-format
 msgid "Failed to close file %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Sluiten van bestand %s is mislukt"
 
-#: apt-inst/extract.cc:96 apt-inst/extract.cc:167
+#: apt-inst/extract.cc:96
+#: apt-inst/extract.cc:167
 #, c-format
 msgid "The path %s is too long"
-msgstr ""
+msgstr "Het pad %s is te lang"
 
 #: apt-inst/extract.cc:127
 #, c-format
 msgid "Unpacking %s more than once"
-msgstr ""
+msgstr "%s wordt meer dan eens uitgepakt"
 
 #: apt-inst/extract.cc:137
 #, c-format
 msgid "The directory %s is diverted"
-msgstr ""
+msgstr "De map %s is al omgeleid"
 
 #: apt-inst/extract.cc:147
 #, c-format
 msgid "The package is trying to write to the diversion target %s/%s"
-msgstr ""
+msgstr "Het pakket probeert om het omleidingsdoel %s/%s weg te schrijven"
 
-#: apt-inst/extract.cc:157 apt-inst/extract.cc:300
-#, fuzzy
+#: apt-inst/extract.cc:157
+#: apt-inst/extract.cc:300
 msgid "The diversion path is too long"
-msgstr "Het pakketcachebestand is corrupt"
+msgstr "Het omleidingspad is te lang"
 
 #: apt-inst/extract.cc:243
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
-msgstr ""
+msgstr "De map %s wordt vervangen met een niet-map"
 
 #: apt-inst/extract.cc:283
 msgid "Failed to locate node in its hash bucket"
-msgstr ""
+msgstr "Vinden van de node in de hash emmer is mislukt"
 
 #: apt-inst/extract.cc:287
 msgid "The path is too long"
-msgstr ""
+msgstr "Het pad is te lang"
 
 #: apt-inst/extract.cc:417
 #, c-format
 msgid "Overwrite package match with no version for %s"
-msgstr ""
+msgstr "Overschrijf pakket overeenkomst met 'no version' voor %s"
 
 #: apt-inst/extract.cc:434
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
-msgstr ""
+msgstr "Het bestand %s/%s overschrijft de versie van pakket %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
+#: apt-inst/extract.cc:467
+#: apt-pkg/contrib/configuration.cc:705
+#: apt-pkg/contrib/cdromutl.cc:153
+#: apt-pkg/acquire.cc:412
+#: apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kon %s niet lezen"
 
 #: apt-inst/extract.cc:494
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to stat %s"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "Kon de status van %s niet opvragen"
 
-#: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
+#: apt-inst/deb/dpkgdb.cc:55
+#: apt-inst/deb/dpkgdb.cc:61
 #, c-format
 msgid "Failed to remove %s"
 msgstr "Kon %s niet verwijderen"
 
-#: apt-inst/deb/dpkgdb.cc:110 apt-inst/deb/dpkgdb.cc:112
+#: apt-inst/deb/dpkgdb.cc:110
+#: apt-inst/deb/dpkgdb.cc:112
 #, c-format
 msgid "Unable to create %s"
 msgstr "Kon %s niet aanmaken"
 
 #: apt-inst/deb/dpkgdb.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to stat %sinfo"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "Kon de status van %sinfo niet opvragen"
 
 #: apt-inst/deb/dpkgdb.cc:123
 msgid "The info and temp directories need to be on the same filesystem"
-msgstr ""
+msgstr "De info en temp mappen dienen op hetzelfde bestandsysteem te staan"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
-#: apt-pkg/pkgcachegen.cc:701 apt-pkg/pkgcachegen.cc:706
+#: apt-inst/deb/dpkgdb.cc:139
+#: apt-pkg/pkgcachegen.cc:643
+#: apt-pkg/pkgcachegen.cc:701
+#: apt-pkg/pkgcachegen.cc:706
 #: apt-pkg/pkgcachegen.cc:829
 msgid "Reading Package Lists"
 msgstr "Inlezen pakketlijsten"
 
 #: apt-inst/deb/dpkgdb.cc:180
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change to the admin dir %sinfo"
-msgstr "Kon %s niet veranderen"
+msgstr "Verspringen naar de beheer map %sinfo is mislukt"
 
-#: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:355
+#: apt-inst/deb/dpkgdb.cc:201
+#: apt-inst/deb/dpkgdb.cc:355
 #: apt-inst/deb/dpkgdb.cc:448
-#, fuzzy
 msgid "Internal Error getting a Package Name"
-msgstr "Kon pakketbestand %s niet lezen (1)"
+msgstr "Interne fout bij het ophalen van de pakket naam"
 
 #: apt-inst/deb/dpkgdb.cc:205
 msgid "Reading File Listing"
@@ -1472,45 +1516,42 @@ msgstr "Inlezen pakketlijsten"
 
 #: apt-inst/deb/dpkgdb.cc:216
 #, c-format
-msgid ""
-"Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
-"then make it empty and immediately re-install the same version of the "
-"package!"
-msgstr ""
+msgid "Failed to open the list file '%sinfo/%s'. If you cannot restore this file then make it empty and immediately re-install the same version of the package!"
+msgstr "Openen van het lijstbestand '%sinfo/%s' is mislukt. Als u dit bestand niet kunt herstellen maak het dan leeg en herinstalleer dezelfde versie van het pakket!"
 
-#: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
-#, fuzzy, c-format
+#: apt-inst/deb/dpkgdb.cc:229
+#: apt-inst/deb/dpkgdb.cc:242
+#, c-format
 msgid "Failed reading the list file %sinfo/%s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Lezen van lijstbestand %sinfo/%s is mislukt"
 
 #: apt-inst/deb/dpkgdb.cc:266
-#, fuzzy
 msgid "Internal Error getting a Node"
-msgstr "Interne fout, sorteren is niet geëindigd"
+msgstr "Interne fout bij het verkrijgen van een node"
 
 #: apt-inst/deb/dpkgdb.cc:309
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open the diversions file %sdiversions"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Kon het omleidingsbestand %s niet openen"
 
 #: apt-inst/deb/dpkgdb.cc:324
 msgid "The diversion file is corrupted"
 msgstr "Het pakketcachebestand is corrupt"
 
-#: apt-inst/deb/dpkgdb.cc:331 apt-inst/deb/dpkgdb.cc:336
+#: apt-inst/deb/dpkgdb.cc:331
+#: apt-inst/deb/dpkgdb.cc:336
 #: apt-inst/deb/dpkgdb.cc:341
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid line in the diversion file: %s"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Ongeldige regel in het omleidingsbestand %s"
 
 #: apt-inst/deb/dpkgdb.cc:362
-#, fuzzy
 msgid "Internal Error adding a diversion"
-msgstr "Interne fout, sorteren is niet geëindigd"
+msgstr "Interne fout bij het toevoegen van een omleiding"
 
 #: apt-inst/deb/dpkgdb.cc:383
 msgid "The pkg cache must be initialize first"
-msgstr ""
+msgstr "De pakketcache dient eerst geinitalizeerd te zijn"
 
 #: apt-inst/deb/dpkgdb.cc:386
 msgid "Reading File List"
@@ -1519,27 +1560,27 @@ msgstr "Inlezen pakketlijsten"
 #: apt-inst/deb/dpkgdb.cc:443
 #, c-format
 msgid "Failed to find a Package: Header, offset %lu"
-msgstr ""
+msgstr "Er is geen 'Package:' koptekst, regel %lu"
 
 #: apt-inst/deb/dpkgdb.cc:465
 #, c-format
 msgid "Bad ConfFile section in the status file. Offset %lu"
-msgstr ""
+msgstr "Foute ConfFile sectie in het status bestand. Regel %lu"
 
 #: apt-inst/deb/dpkgdb.cc:470
 #, c-format
 msgid "Error parsing MD5. Offset %lu"
-msgstr ""
+msgstr "Fout bij het parsen van d MD5. regel %lu"
 
 #: apt-inst/deb/debfile.cc:55
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr ""
+msgstr "Dit is geen geldig DEB archief, het '%s' onderdeel mankeert"
 
 #: apt-inst/deb/debfile.cc:72
-#, fuzzy, c-format
+#, c-format
 msgid "Internal Error, could not locate member %s"
-msgstr "Interne fout, AllUpgrade heeft dingen stukgemaakt"
+msgstr "Interne fout, kon lokaal onderdeel %s niet vinden"
 
 #: apt-inst/deb/debfile.cc:104
 #, c-format
@@ -1547,19 +1588,16 @@ msgid "Couldn't change to %s"
 msgstr "Kon %s niet wijzigen"
 
 #: apt-inst/deb/debfile.cc:125
-#, fuzzy
 msgid "Internal Error, could not locate member"
-msgstr "Interne fout, AllUpgrade heeft dingen stukgemaakt"
+msgstr "Interne fout, kon lokaal onderdeel niet vinden"
 
 #: apt-inst/deb/debfile.cc:158
-#, fuzzy
 msgid "Failed to locate a valid control file"
-msgstr "Kon %s %s niet ophalen\n"
+msgstr "Er kon geen geldig beheersbestand gevonden worden"
 
 #: apt-inst/deb/debfile.cc:243
-#, fuzzy
 msgid "Unparsible control file"
-msgstr "Kon %s niet lezen"
+msgstr "Beheersbestand kan niet geparst worden"
 
 #: methods/cdrom.cc:113
 #, c-format
@@ -1567,35 +1605,34 @@ msgid "Unable to read the cdrom database %s"
 msgstr "Kon de cdr-rom databank %s niet lezen"
 
 #: methods/cdrom.cc:122
-msgid ""
-"Please use apt-cdrom to make this CD recognized by APT. apt-get update "
-"cannot be used to add new CDs"
-msgstr ""
-"Gebruik aub apt-cdrom om deze CD herkenbaar  emaken voor APT apt-get update "
-"kan niet gebruikt worden om nieuwe CDs toe te voegen"
+msgid "Please use apt-cdrom to make this CD recognized by APT. apt-get update cannot be used to add new CDs"
+msgstr "Gebruik aub apt-cdrom om deze CD herkenbaar  emaken voor APT apt-get update kan niet gebruikt worden om nieuwe CDs toe te voegen"
 
-#: methods/cdrom.cc:130 methods/cdrom.cc:168
+#: methods/cdrom.cc:130
+#: methods/cdrom.cc:168
 msgid "Wrong CD"
 msgstr "Foute CD"
 
 #: methods/cdrom.cc:163
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr ""
+msgstr "Kan de CD-ROM in %s niet loskoppelen, mogelijks wordt die nog steeds gebruikt"
 
-#: methods/cdrom.cc:177 methods/file.cc:77
+#: methods/cdrom.cc:177
+#: methods/file.cc:77
 msgid "File not found"
 msgstr "Bestand niet gevonden"
 
-#: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
-#, fuzzy
+#: methods/copy.cc:42
+#: methods/gzip.cc:133
+#: methods/gzip.cc:142
 msgid "Failed to stat"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "Status opvragen is mislukt"
 
-#: methods/copy.cc:79 methods/gzip.cc:139
-#, fuzzy
+#: methods/copy.cc:79
+#: methods/gzip.cc:139
 msgid "Failed to set modification time"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "Instellen van de modificatie tijd is mislukt"
 
 #: methods/file.cc:42
 msgid "Invalid URI, local URIS must not start with //"
@@ -1607,16 +1644,15 @@ msgid "Logging in"
 msgstr "Bezig met inloggen"
 
 #: methods/ftp.cc:168
-#, fuzzy
 msgid "Unable to determine the peer name"
-msgstr "Kon geen geschikt systeemtype vaststellen"
+msgstr "De peer naam kan niet bepaald worden"
 
 #: methods/ftp.cc:173
-#, fuzzy
 msgid "Unable to determine the local name"
-msgstr "Kon geen geschikt systeemtype vaststellen"
+msgstr "De lokale naam kan niet vastgesteld worden"
 
-#: methods/ftp.cc:204 methods/ftp.cc:232
+#: methods/ftp.cc:204
+#: methods/ftp.cc:232
 #, c-format
 msgid "Server refused our connection and said: %s"
 msgstr "De server weigerde onze verbinding en zei: %s"
@@ -1632,134 +1668,132 @@ msgid "PASS failed, server said: %s"
 msgstr "PASS mislukte, serer zei: %s"
 
 #: methods/ftp.cc:237
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
+msgid "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin is empty."
+msgstr "Een proxy server was gespecificeerd zonder login script, Acquire::ftp::ProxyLogin is leeg."
 
 #: methods/ftp.cc:265
-#, fuzzy, c-format
+#, c-format
 msgid "Login script command '%s' failed, server said: %s"
-msgstr "TYPE mislukt, server zei: %s"
+msgstr "Login script opdracht '%s' is mislukt, server zei: %s"
 
 #: methods/ftp.cc:291
 #, c-format
 msgid "TYPE failed, server said: %s"
 msgstr "TYPE mislukt, server zei: %s"
 
-#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
-#, fuzzy
+#: methods/ftp.cc:329
+#: methods/ftp.cc:440
+#: methods/rsh.cc:183
+#: methods/rsh.cc:226
 msgid "Connection timeout"
-msgstr "Verbinding mislukt"
+msgstr "Verbinding is verlopen"
 
 #: methods/ftp.cc:335
 msgid "Server closed the connection"
 msgstr "Server verbrak de verbinding"
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
+#: methods/ftp.cc:338
+#: apt-pkg/contrib/fileutl.cc:452
+#: methods/rsh.cc:190
 msgid "Read error"
 msgstr "Lees fout"
 
-#: methods/ftp.cc:345 methods/rsh.cc:197
+#: methods/ftp.cc:345
+#: methods/rsh.cc:197
 msgid "A response overflowed the buffer."
-msgstr ""
+msgstr "Een antwoord deed de buffer overlopen"
 
-#: methods/ftp.cc:362 methods/ftp.cc:374
+#: methods/ftp.cc:362
+#: methods/ftp.cc:374
 msgid "Protocol corruption"
-msgstr ""
+msgstr "Protocol corruptie"
 
-#: methods/ftp.cc:446 methods/rsh.cc:232
+#: methods/ftp.cc:446
+#: methods/rsh.cc:232
 msgid "Write Error"
 msgstr "Schrijf fout"
 
-#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
-#, fuzzy
+#: methods/ftp.cc:687
+#: methods/ftp.cc:693
+#: methods/ftp.cc:729
 msgid "Could not create a socket"
-msgstr "Kon pakket %s niet vinden"
+msgstr "Kon geen socket aanmaken"
 
 #: methods/ftp.cc:698
-#, fuzzy
 msgid "Could not connect data socket, connection timed out"
-msgstr "Kon niet verbinden met %s:%s (%s)."
+msgstr "Kon de data socket niet verbinden, de verbinding verliep"
 
 #: methods/ftp.cc:704
-#, fuzzy
 msgid "Could not connect passive socket."
-msgstr "Kon pakket %s niet vinden"
+msgstr "Kon de passieve socket niet verbinden"
 
 #: methods/ftp.cc:722
 msgid "getaddrinfo was unable to get a listening socket"
-msgstr ""
+msgstr "getaddrinfo was niet in staat om een luister socket te verkrijgen"
 
 #: methods/ftp.cc:736
-#, fuzzy
 msgid "Could not bind a socket"
-msgstr "Kon pakket %s niet vinden"
+msgstr "Kon geen socket binden"
 
 #: methods/ftp.cc:740
-#, fuzzy
 msgid "Could not listen on the socket"
-msgstr "Kon pakket %s niet vinden"
+msgstr "Kon niet op de socket niet luisteren"
 
 #: methods/ftp.cc:747
-#, fuzzy
 msgid "Could not determine the socket's name"
-msgstr "Kon geen geschikt systeemtype vaststellen"
+msgstr "Kon de socketnaam niet bepalen"
 
 #: methods/ftp.cc:779
-#, fuzzy
 msgid "Unable to send PORT command"
-msgstr "Kon %s niet lezen"
+msgstr "Kan PORT commando niet verzenden"
 
 #: methods/ftp.cc:789
 #, c-format
 msgid "Unknown address family %u (AF_*)"
-msgstr ""
+msgstr "Onbekende adress familie %u (AF-*)"
 
 #: methods/ftp.cc:798
-#, fuzzy, c-format
+#, c-format
 msgid "EPRT failed, server said: %s"
-msgstr "USER mislukte, server zei: %s"
+msgstr "EPRT is mislukt, server zei: %s"
 
 #: methods/ftp.cc:818
-#, fuzzy
 msgid "Data socket connect timed out"
-msgstr "Verbinding mislukt"
+msgstr "Data Socket verbinding is verliep"
 
 #: methods/ftp.cc:825
-#, fuzzy
 msgid "Unable to accept connection"
-msgstr "Kon afhankelijkheden niet corrigeren"
+msgstr "Kan de verbinding niet aanvaarden"
 
-#: methods/ftp.cc:864 methods/http.cc:912 methods/rsh.cc:303
-#, fuzzy
+#: methods/ftp.cc:864
+#: methods/http.cc:912
+#: methods/rsh.cc:303
 msgid "Problem hashing file"
-msgstr "Openen %s"
+msgstr "Probleem bij het hashen van het bestand"
 
 #: methods/ftp.cc:877
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to fetch file, server said '%s'"
-msgstr "Kon %s niet lezen"
+msgstr "Kon bestand niet ophalen, server zei: %s"
 
-#: methods/ftp.cc:892 methods/rsh.cc:322
-#, fuzzy
+#: methods/ftp.cc:892
+#: methods/rsh.cc:322
 msgid "Data socket timed out"
-msgstr "Verbinding mislukt"
+msgstr "Data socket verliep"
 
 #: methods/ftp.cc:922
-#, fuzzy, c-format
+#, c-format
 msgid "Data transfer failed, server said '%s'"
-msgstr "Kon %s niet lezen"
+msgstr "Data transfer is mislukt, server zei: %s"
 
 #. Get the files information
 #: methods/ftp.cc:997
 msgid "Query"
-msgstr ""
+msgstr "Zoekopdracht"
 
 #: methods/ftp.cc:1104
-#, fuzzy
 msgid "Unable to invoke "
-msgstr "Kon %s niet lezen"
+msgstr "Kan niet aanroepen"
 
 #: methods/connect.cc:64
 #, c-format
@@ -1769,12 +1803,12 @@ msgstr "Bezig met verbinden met %s (%s)"
 #: methods/connect.cc:71
 #, c-format
 msgid "[IP: %s %s]"
-msgstr ""
+msgstr "[IP: %s %s]"
 
 #: methods/connect.cc:80
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Kon pakket %s niet vinden"
+msgstr "Kon de socket voor %s (f=%u t=%u p=%u) niet aanmaken"
 
 #: methods/connect.cc:86
 #, c-format
@@ -1782,9 +1816,9 @@ msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Kan de verbinding met %s:%s (%s) niet aangaan."
 
 #: methods/connect.cc:92
-#, fuzzy, c-format
+#, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Kon niet verbinden met %s:%s (%s)."
+msgstr "Kon niet verbinden met %s:%s (%s). De verbinding verliep"
 
 #: methods/connect.cc:104
 #, c-format
@@ -1793,7 +1827,8 @@ msgstr "Kon niet verbinden met %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:132 methods/rsh.cc:425
+#: methods/connect.cc:132
+#: methods/rsh.cc:425
 #, c-format
 msgid "Connecting to %s"
 msgstr "Bezig met verbinden met %s"
@@ -1806,7 +1841,7 @@ msgstr "Kon '%s' niet vinden"
 #: methods/connect.cc:167
 #, c-format
 msgid "Temporary failure resolving '%s'"
-msgstr ""
+msgstr "Tijdelijke fout bij de opzoeking van '%s'"
 
 #: methods/connect.cc:169
 #, c-format
@@ -1819,64 +1854,60 @@ msgid "Unable to connect to %s %s:"
 msgstr "Kon niet verbinden met %s %s:"
 
 #: methods/gzip.cc:57
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open pipe for %s"
-msgstr "Kon pakket %s niet vinden"
+msgstr "Kon geen pijp openen voor %s"
 
 #: methods/gzip.cc:102
 #, c-format
 msgid "Read error from %s process"
-msgstr ""
+msgstr "Leesfout door proces %s"
 
 #: methods/http.cc:340
-#, fuzzy
 msgid "Waiting for headers"
-msgstr "Wachet op bestand"
+msgstr "Wachtend op de kopteksten"
 
 #: methods/http.cc:486
 #, c-format
 msgid "Got a single header line over %u chars"
-msgstr ""
+msgstr "Er is een enkele koptekst regel met meer dan %u karakters"
 
 #: methods/http.cc:494
 msgid "Bad header line"
-msgstr ""
+msgstr "Foute koptekst regel"
 
-#: methods/http.cc:513 methods/http.cc:520
+#: methods/http.cc:513
+#: methods/http.cc:520
 msgid "The http server sent an invalid reply header"
-msgstr ""
+msgstr "Er is door de http server een ongeldige reply koptekst verstuurd"
 
 #: methods/http.cc:549
 msgid "The http server sent an invalid Content-Length header"
-msgstr ""
+msgstr "Er is door de http serve een ongeldige Content-Length koptekst verstuurd"
 
 #: methods/http.cc:564
 msgid "The http server sent an invalid Content-Range header"
-msgstr ""
+msgstr "Er is door de http server een ongeldige Content-Range koptekst verstuurd"
 
 #: methods/http.cc:566
 msgid "This http server has broken range support"
-msgstr ""
+msgstr "De http server's bereik ondersteuning is stuk"
 
 #: methods/http.cc:590
-#, fuzzy
 msgid "Unknown date format"
-msgstr "Onbekend pakketgegevens!"
+msgstr "Onbekend datumformaat"
 
 #: methods/http.cc:733
-#, fuzzy
 msgid "Select failed"
-msgstr " faalde."
+msgstr " Selectie is mislukt"
 
 #: methods/http.cc:738
-#, fuzzy
 msgid "Connection timed out"
-msgstr "Verbinding mislukt"
+msgstr "Verbinding verliep"
 
 #: methods/http.cc:761
-#, fuzzy
 msgid "Error writing to output file"
-msgstr "Fout bij het scrijvan naar het bestand"
+msgstr "Fout bij het wegschrijven van de uitvoer"
 
 #: methods/http.cc:789
 msgid "Error writing to file"
@@ -1887,9 +1918,8 @@ msgid "Error writing to the file"
 msgstr "Fout bij het scrijvan naar het bestand"
 
 #: methods/http.cc:828
-#, fuzzy
 msgid "Error reading from server Remote end closed connection"
-msgstr "Fout bij het lezen van de server"
+msgstr "Fout bij het lezen van de server, andere kant heeft de verbinding gesloten"
 
 #: methods/http.cc:830
 msgid "Error reading from server"
@@ -1897,7 +1927,7 @@ msgstr "Fout bij het lezen van de server"
 
 #: methods/http.cc:1061
 msgid "Bad header Data"
-msgstr ""
+msgstr "Foute koptekst data"
 
 #: methods/http.cc:1078
 msgid "Connection failed"
@@ -1909,213 +1939,214 @@ msgstr "Interne fout"
 
 #: apt-pkg/contrib/mmap.cc:82
 msgid "Can't mmap an empty file"
-msgstr ""
+msgstr "Kan een leeg bestand niet mmappen"
 
 #: apt-pkg/contrib/mmap.cc:87
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %lu bytes"
-msgstr "Kon %s niet wijzigen"
+msgstr "Kon van %lu bytes geen mmap maken"
 
 #: apt-pkg/contrib/strutl.cc:941
-#, fuzzy, c-format
+#, c-format
 msgid "Selection %s not found"
-msgstr "Bestand niet gevonden"
+msgstr "Selectie %s werd niet gevonden"
 
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "Type afkorting '%c' is onbekend"
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
 msgid "Opening configuration file %s"
-msgstr ""
+msgstr "Bezig met openen van configuratie bestand %s"
 
 #: apt-pkg/contrib/configuration.cc:563
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
-msgstr ""
+msgstr "Syntax fout %s:%u: Blok start zonder naam"
 
 #: apt-pkg/contrib/configuration.cc:582
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
-msgstr ""
+msgstr "Syntax fout %s:%u: Verkeerd gevormde markering"
 
 #: apt-pkg/contrib/configuration.cc:599
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
-msgstr ""
+msgstr "Syntax fout %s:%u: Extra rommel na waarde"
 
 #: apt-pkg/contrib/configuration.cc:639
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr ""
+msgstr "Syntax fout %s:%u: Richtlijnen kunnen enkel op het hoogste niveau"
 
 #: apt-pkg/contrib/configuration.cc:646
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
-msgstr ""
+msgstr "Syntax fout %s:%u: Teveel geneste invoegingen"
 
-#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:650
+#: apt-pkg/contrib/configuration.cc:655
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
-msgstr ""
+msgstr "Syntax fout %s:%u: Van hier ingevoegd"
 
 #: apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr ""
+msgstr "Syntax fout %s:%u: Niet-ondersteunde richtlijn '%s'"
 
 #: apt-pkg/contrib/configuration.cc:693
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr ""
+msgstr "Syntax fout %s:%u: Extra rommel op het einde van het bestand"
 
 #: apt-pkg/contrib/progress.cc:154
 #, c-format
 msgid "%c%s... Error!"
-msgstr ""
+msgstr "%c%s... Fout!"
 
 #: apt-pkg/contrib/progress.cc:156
 #, c-format
 msgid "%c%s... Done"
-msgstr ""
+msgstr "%c%s... Klaar"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
 msgid "Command line option '%c' [from %s] is not known."
-msgstr ""
+msgstr "Commandoregel optie '%c' [van %s] is onbekend"
 
-#: apt-pkg/contrib/cmndline.cc:106 apt-pkg/contrib/cmndline.cc:114
+#: apt-pkg/contrib/cmndline.cc:106
+#: apt-pkg/contrib/cmndline.cc:114
 #: apt-pkg/contrib/cmndline.cc:122
 #, c-format
 msgid "Command line option %s is not understood"
-msgstr ""
+msgstr "Commandoregel optie %s wordt niet begrepen"
 
 #: apt-pkg/contrib/cmndline.cc:127
 #, c-format
 msgid "Command line option %s is not boolean"
-msgstr ""
+msgstr "Commandoregel optie %s is niet boolean"
 
-#: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
+#: apt-pkg/contrib/cmndline.cc:166
+#: apt-pkg/contrib/cmndline.cc:187
 #, c-format
 msgid "Option %s requires an argument."
-msgstr ""
+msgstr "Optie %s vereist een argument."
 
-#: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
+#: apt-pkg/contrib/cmndline.cc:201
+#: apt-pkg/contrib/cmndline.cc:207
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr ""
+msgstr "Optie %s: Configuratie item specificatie dient een =<waarde> te bevatten."
 
 #: apt-pkg/contrib/cmndline.cc:237
 #, c-format
 msgid "Option %s requires an integer argument, not '%s'"
-msgstr ""
+msgstr "Optie %s vereist een integer argument, niet '%s'"
 
 #: apt-pkg/contrib/cmndline.cc:268
 #, c-format
 msgid "Option '%s' is too long"
-msgstr ""
+msgstr "Optie '%s' is te lang"
 
 #: apt-pkg/contrib/cmndline.cc:301
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr ""
+msgstr "Waarde %s wordt niet begrepen, probeer true of false"
 
 #: apt-pkg/contrib/cmndline.cc:351
 #, c-format
 msgid "Invalid operation %s"
-msgstr ""
+msgstr "Ongeldige operatie %s"
 
 #: apt-pkg/contrib/cdromutl.cc:55
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to stat the mount point %s"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "Kon de status van het aankoppelpunt %s niet opvragen"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149
+#: apt-pkg/acquire.cc:418
+#: apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Kon %s niet veranderen"
 
 #: apt-pkg/contrib/cdromutl.cc:190
-#, fuzzy
 msgid "Failed to stat the cdrom"
-msgstr "Kon de status van %s niet opvragen."
+msgstr "Kon de status van de cdrom niet opvragen."
 
 #: apt-pkg/contrib/fileutl.cc:80
 #, c-format
 msgid "Not using locking for read only lock file %s"
-msgstr ""
+msgstr "Alleen-lezen vergrendelingsbestand %s wordt niet vergrendeld"
 
 #: apt-pkg/contrib/fileutl.cc:85
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open lock file %s"
-msgstr "Kon '%s' niet vinden"
+msgstr "Kon het vergrendelingsbestand '%s' niet openen"
 
 #: apt-pkg/contrib/fileutl.cc:103
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
-msgstr ""
+msgstr "Het aangekoppelde nfs vergrendelingsbestand %s wordt niet vergrendeld"
 
 #: apt-pkg/contrib/fileutl.cc:107
-#, fuzzy, c-format
+#, c-format
 msgid "Could not get lock %s"
-msgstr "Kon %s niet wijzigen"
+msgstr "Kon de vergrendeling %s niet verkrijgen"
 
 #: apt-pkg/contrib/fileutl.cc:358
 #, c-format
 msgid "Waited, for %s but it wasn't there"
-msgstr ""
+msgstr "Er is gewacht op %s, maar die kwam niet"
 
 #: apt-pkg/contrib/fileutl.cc:368
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
-msgstr ""
+msgstr "Subproces %s ontving een segmentatie fout."
 
 #: apt-pkg/contrib/fileutl.cc:371
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
-msgstr ""
+msgstr "Subproces %s gaf de foutcode %u terug"
 
 #: apt-pkg/contrib/fileutl.cc:373
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
-msgstr ""
+msgstr "Subproces %s sloot onverwacht af"
 
 #: apt-pkg/contrib/fileutl.cc:417
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file %s"
-msgstr "Kon pakket %s niet vinden"
+msgstr "Kon het bestand %s niet openen"
 
 #: apt-pkg/contrib/fileutl.cc:473
 #, c-format
 msgid "read, still have %lu to read but none left"
-msgstr ""
+msgstr "lees, de laaste %lu zijn er niet beschikbaar"
 
 #: apt-pkg/contrib/fileutl.cc:491
-#, fuzzy
 msgid "Write error"
-msgstr "Schrijf fout"
+msgstr "Schrijffout"
 
 #: apt-pkg/contrib/fileutl.cc:503
 #, c-format
 msgid "write, still have %lu to write but couldn't"
-msgstr ""
+msgstr "write, kan de laatste %lu niet wegschrijven"
 
 #: apt-pkg/contrib/fileutl.cc:578
-#, fuzzy
 msgid "Problem closing the file"
-msgstr "Openen %s"
+msgstr "Probleem bij het afsluiten van het bestand"
 
 #: apt-pkg/contrib/fileutl.cc:584
-#, fuzzy
 msgid "Problem unlinking the file"
-msgstr "Fout bij het scrijvan naar het bestand"
+msgstr "Probleem bij het delinken van het bestand"
 
 #: apt-pkg/contrib/fileutl.cc:595
-#, fuzzy
 msgid "Problem syncing the file"
-msgstr "Openen %s"
+msgstr "Probleem bij het synchronizeren van het bestand"
 
 #: apt-pkg/pkgcache.cc:126
 msgid "Empty package cache"
@@ -2135,9 +2166,8 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Deze APT ondersteunt het versienummeringssysteem '%s' niet"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
-msgstr "De pakketcache was gebouwd voor een andere architectuur"
+msgstr "De pakketcache was aangemaakt voor een andere architectuur"
 
 #: apt-pkg/pkgcache.cc:218
 msgid "Depends"
@@ -2187,7 +2217,8 @@ msgstr "optional"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
+#: apt-pkg/depcache.cc:60
+#: apt-pkg/depcache.cc:89
 msgid "Building Dependency Tree"
 msgstr "Bouwen afhankelijkheidsboom"
 
@@ -2234,7 +2265,8 @@ msgstr "Misvormde regel %lu in bronlijst %s (absolute dist)"
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Misvormde regel %lu in bronlijst %s (ontleden dist)"
 
-#: apt-pkg/sourcelist.cc:183 apt-pkg/sourcelist.cc:207
+#: apt-pkg/sourcelist.cc:183
+#: apt-pkg/sourcelist.cc:207
 #, c-format
 msgid "Vendor block %s is invalid"
 msgstr "Verkopersblok %s is ongeldig"
@@ -2245,9 +2277,9 @@ msgid "Opening %s"
 msgstr "Openen %s"
 
 #: apt-pkg/sourcelist.cc:249
-#, fuzzy, c-format
+#, c-format
 msgid "Line %u too long in source list %s."
-msgstr "Onbekend type '%s' op regel %u in bronlijst %s"
+msgstr "Regel %u van de bronlijst %s is te lang."
 
 #: apt-pkg/sourcelist.cc:266
 #, c-format
@@ -2259,7 +2291,8 @@ msgstr "Misvorde regel %u in bronlijst %s (type)"
 msgid "Type '%s' is not known in on line %u in source list %s"
 msgstr "Onbekend type '%s' op regel %u in bronlijst %s"
 
-#: apt-pkg/sourcelist.cc:279 apt-pkg/sourcelist.cc:282
+#: apt-pkg/sourcelist.cc:279
+#: apt-pkg/sourcelist.cc:282
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "Misvormde regel %u in bronlijst %s (verkopers id)"
@@ -2271,14 +2304,8 @@ msgstr "Onbekende verkopers ID '%s' op regel %u van bronlijst %s"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"Voor deze installatieslag is het tijdelijk verwijderen van het essentiële "
-"pakket %s nodig wegens een Conflicts/Pre-Depends lus. Dit is vaak slecht, "
-"maar als u het echt wilt doen, activeer dan de APT::Force-LoopBreak optie."
+msgid "This installation run will require temporarily removing the essential package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr "Voor deze installatieslag is het tijdelijk verwijderen van het essentiële pakket %s nodig wegens een Conflicts/Pre-Depends lus. Dit is vaak slecht, maar als u het echt wilt doen, activeer dan de APT::Force-LoopBreak optie."
 
 #: apt-pkg/pkgrecords.cc:37
 #, c-format
@@ -2287,19 +2314,14 @@ msgstr "Indexbestandtype '%s' wordt niet ondersteund"
 
 #: apt-pkg/algorithms.cc:238
 #, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
+msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "Pakket %s moet opnieuw geïnstalleerd worden,\n"
 "maar ik kan er geen archief voor vinden."
 
 #: apt-pkg/algorithms.cc:1056
-msgid ""
-"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
-"held packages."
-msgstr ""
-"Fout, pkgProblemResolver::Resolve brak af, dit kan veroorzaakt worden door "
-"vastgehouden pakketten."
+msgid "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages."
+msgstr "Fout, pkgProblemResolver::Resolve brak af, dit kan veroorzaakt worden door vastgehouden pakketten."
 
 #: apt-pkg/algorithms.cc:1058
 msgid "Unable to correct problems, you have held broken packages."
@@ -2340,20 +2362,16 @@ msgid "Unable to stat %s."
 msgstr "Kon de status van %s niet opvragen."
 
 #: apt-pkg/srcrecords.cc:49
-#, fuzzy
 msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Sorry, u moet wel 'source' URI's in uw sources.list zetten"
+msgstr "Enige bron URIs in uw bronnenlijst zijn vereist"
 
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
-msgstr ""
-"De pakketlijsten of het statusbestand kon niet gelezen of geopend worden."
+msgstr "De pakketlijsten of het statusbestand kon niet gelezen of geopend worden."
 
 #: apt-pkg/cachefile.cc:77
 msgid "You may want to run apt-get update to correct these problems"
-msgstr ""
-"U zou misschien `apt-get update' willen draaien om deze problemen te "
-"verhelpen."
+msgstr "U zou misschien `apt-get update' willen draaien om deze problemen te verhelpen."
 
 #: apt-pkg/policy.cc:269
 msgid "Invalid record in the preferences file, no Package header"
@@ -2366,7 +2384,7 @@ msgstr "Kon pintype %s niet begrijpen"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "U heeft geen prioriteit (of nul) opgegeven voor deze pin"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
@@ -2417,23 +2435,22 @@ msgstr "Wauw, u heeft het aantal versies dat deze APT aan kan overschreden."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"Wauw, u heeft het aantal afhankelijkheden dat deze APT aan kan overschreden."
+msgstr "Wauw, u heeft het aantal afhankelijkheden dat deze APT aan kan overschreden."
 
 #: apt-pkg/pkgcachegen.cc:241
-#, fuzzy, c-format
+#, c-format
 msgid "Error occured while processing %s (FindPkg)"
-msgstr "Fout tijdens verwerken %s (NewPackage)"
+msgstr "Fout tijdens verwerken van %s (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Error occured while processing %s (CollectFileProvides)"
-msgstr "Fout tijdens verwerken %s (NewFileVer1)"
+msgstr "Fout tijdens verwerken van %s (CollectFileProvides)"
 
 #: apt-pkg/pkgcachegen.cc:260
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
-msgstr ""
+msgstr "Pakket %s %s werd niet gevonden bij het verwerken van de bestandsafhankelijkheden"
 
 #: apt-pkg/pkgcachegen.cc:574
 #, c-format
@@ -2442,9 +2459,10 @@ msgstr "Kon de status van bronpakketlijst %s niet opvragen"
 
 #: apt-pkg/pkgcachegen.cc:658
 msgid "Collecting File Provides"
-msgstr ""
+msgstr "Ben voorziene bestanden aan het verzamelen"
 
-#: apt-pkg/pkgcachegen.cc:774 apt-pkg/pkgcachegen.cc:781
+#: apt-pkg/pkgcachegen.cc:774
+#: apt-pkg/pkgcachegen.cc:781
 msgid "IO Error saving source cache"
 msgstr "IO fout tijdens wegschrijven bronpakketcache"
 
@@ -2455,28 +2473,18 @@ msgstr "hernoeming faalde, %s (%s -> %s)."
 
 #: apt-pkg/acquire-item.cc:353
 #, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
-msgstr ""
-"Ik was niet in staat een bestand te vinden voor pakket %s. Dit kan betekenen "
-"dat u dit pakket handmatig moet repareren (wegens missende architectuur)."
+msgid "I wasn't able to locate a file for the %s package. This might mean you need to manually fix this package. (due to missing arch)"
+msgstr "Ik was niet in staat een bestand te vinden voor pakket %s. Dit kan betekenen dat u dit pakket handmatig moet repareren (wegens missende architectuur)."
 
 #: apt-pkg/acquire-item.cc:388
 #, c-format
-msgid ""
-"I wasn't able to locate file for the %s package. This might mean you need to "
-"manually fix this package."
-msgstr ""
-"Ik was niet in staat een bestand te vinden voor pakket %s. Dit kan betekenen "
-"dat u dit pakket handmatig moet repareren."
+msgid "I wasn't able to locate file for the %s package. This might mean you need to manually fix this package."
+msgstr "Ik was niet in staat een bestand te vinden voor pakket %s. Dit kan betekenen dat u dit pakket handmatig moet repareren."
 
 #: apt-pkg/acquire-item.cc:419
 #, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"De pakket indexbestanden zijn corrupt. Geen Filename: veld voor pakket %s."
+msgid "The package index files are corrupted. No Filename: field for package %s."
+msgstr "De pakket indexbestanden zijn corrupt. Geen Filename: veld voor pakket %s."
 
 #: apt-pkg/acquire-item.cc:501
 msgid "Size mismatch"
@@ -2494,140 +2502,3 @@ msgstr "Bestand niet gevonden"
 msgid "Connection closed prematurely"
 msgstr "Verbinding werd voorttijdig afgebroken"
 
-#~ msgid "Sorry, you don't have enough free space in %s to hold all the .debs."
-#~ msgstr ""
-#~ "Sorry, u heeft niet genoeg vrije ruimte in %s om alle .debs op te slaan."
-
-#~ msgid "Extract "
-#~ msgstr "Uitapakken"
-
-#, fuzzy
-#~ msgid "De-replaced "
-#~ msgstr "Replaces"
-
-#, fuzzy
-#~ msgid "Replaced file "
-#~ msgstr "Replaces"
-
-#~ msgid "You must give at least one file name"
-#~ msgstr "U moet minstens één bestandsnaam opgeven"
-
-#~ msgid "Regex compilation error"
-#~ msgstr "Regex compilatiefout"
-
-#, fuzzy
-#~ msgid "Failed to stat %s%s"
-#~ msgstr "Kon %s %s niet ophalen\n"
-
-#, fuzzy
-#~ msgid "Failed to open %s.new"
-#~ msgstr "Kon %s %s niet ophalen\n"
-
-#, fuzzy
-#~ msgid "Failed to rename %s.new to %s"
-#~ msgstr "Kon %s %s niet ophalen\n"
-
-#~ msgid "Please insert a Disc in the drive and press enter"
-#~ msgstr "Plaats een disk in het station en druk op enter"
-
-#~ msgid "Identifying.. "
-#~ msgstr "Bezig met identificeren..."
-
-#~ msgid "Scanning Disc for index files..  "
-#~ msgstr "Bezig met zoeken naar index bestanden"
-
-#~ msgid "I found (binary):"
-#~ msgstr "I"
-
-#~ msgid ""
-#~ "Unable to locate any package files, perhaps this is not a Debian Disc"
-#~ msgstr ""
-#~ "Kon geen package bestanden vinden, misschien is dit geen Debianschijf"
-
-#~ msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
-#~ msgstr "Geef aub een naam voor deze schijf, zoals 'Debian 3.0r1 Disk 1'"
-
-#~ msgid "That is not a valid name, try again "
-#~ msgstr "Dat is geen geldige bestandsnaam, probeer opnieuw"
-
-#~ msgid "This Disc is called:"
-#~ msgstr "Deze schijf heet:"
-
-#~ msgid "Writing new source list"
-#~ msgstr "Bezig met nieuwe bronnenlijst te schrijven"
-
-#~ msgid "Repeat this process for the rest of the CDs in your set."
-#~ msgstr "Herhaal dit voor al de CD's in je setje"
-
-#~ msgid ""
-#~ "Usage: apt-cdrom [options] command\n"
-#~ "\n"
-#~ "apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-#~ "CDROM mount point and device information is taken from apt.conf\n"
-#~ "and /etc/fstab.\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   add - Add a CDROM\n"
-#~ "   ident - Report the identity of a CDROM\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -d   CD-ROM mount point\n"
-#~ "  -r   Rename a recognized CD-ROM\n"
-#~ "  -m   No mounting\n"
-#~ "  -f   Fast mode, don't check package files\n"
-#~ "  -a   Thorough scan mode\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See fstab(5)\n"
-#~ msgstr ""
-#~ "Gebruik:  apt-cdrom [opties] commando\n"
-#~ "\n"
-#~ "apt-cdrom is een instrument om CDROM's aan APT's bronnenlijst\n"
-#~ "toe te voegen. Het CDROM mount point en de toestel-informatie wordt\n"
-#~ "genomen ut apt.conf en /etc/fstab.\n"
-#~ "\n"
-#~ "Commando's:\n"
-#~ "   add - Voeg een CDROM bij\n"
-#~ "   ident - Geef de naam ven een CDROM\n"
-#~ "\n"
-#~ "Opties:\n"
-#~ "  -h  Toon deze helptekst\n"
-#~ "  -d  CDROM mountpunt installen\n"
-#~ "  -r   hernoem een reeds herkende CDROM\n"
-#~ "  -m   Niet mounten\n"
-#~ "  -f   Snelle modus, controleer pakketbestanden niet\n"
-#~ "  -a   Grondige bestandscontrole\n"
-#~ "  -c=?   Lees dit configuratiebestand\n"
-#~ "  -o=?  Stel een configuratieoptie in, bv. -o dir::cache=/tmp\n"
-#~ "Kijk ook in fstab(5)\n"
-
-#~ msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
-#~ msgstr ""
-#~ "Vreemd... de groottes kwamen niet overeen, email naar apt@packages.debian."
-#~ "org"
-
-#~ msgid "Couldn't determine free space in %s"
-#~ msgstr "Sorry, u heeft niet genoeg vrije ruimte in %s"
-
-#, fuzzy
-#~ msgid "Internal Error, problem resolver broke stuff"
-#~ msgstr "Interne fout, AllUpgrade heeft dingen stukgemaakt"
-
-#, fuzzy
-#~ msgid "Couldn't wait for subprocess"
-#~ msgstr "Kon de status van bronpakketlijst %s niet opvragen"
-
-#~ msgid " files "
-#~ msgstr " bestanden"
-
-#~ msgid "Done. "
-#~ msgstr "Klaar."
-
-#, fuzzy
-#~ msgid "Could not find a record in the DSC '%s'"
-#~ msgstr "Kon pakket %s niet vinden"
-
-#, fuzzy
-#~ msgid "Failed too stat %s"
-#~ msgstr "Kon de status van %s niet opvragen."
