@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.3 1998/11/23 07:32:24 jgg Exp $
+// $Id: acqprogress.cc,v 1.4 1998/11/28 20:56:08 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -148,7 +148,11 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
       if (I->CurrentItem == 0)
       {
 	 if (I->Status.empty() == false)
+	 {
 	    snprintf(S,End-S," [%s]",I->Status.c_str());
+	    Shown = true;
+	 }
+	 
 	 continue;
       }
 
