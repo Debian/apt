@@ -95,7 +95,7 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
    if (Dist.empty() == false && Dist[Dist.size() - 1] == '/')
    {
       if (ParseQuoteWord(Buffer,Section) == true)
-	 return _error->Error(_("Malformed line %lu in source list %s (Absolute dist)"),CurLine,File.c_str());
+	 return _error->Error(_("Malformed line %lu in source list %s (absolute dist)"),CurLine,File.c_str());
       Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
       return CreateItem(List,URI,Dist,Section);
    }

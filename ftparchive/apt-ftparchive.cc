@@ -162,7 +162,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    if (PkgExt.empty() == false && Packages.SetExts(PkgExt) == false)
       return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
-      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
+      return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
    
    Packages.PathPrefix = PathPrefix;
    Packages.DirStrip = ArchiveDir;
@@ -176,7 +176,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
 		      PkgCompress,Permissions);
    Packages.Output = Comp.Input;
    if (_error->PendingError() == true)
-      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
+      return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
    
    c0out << ' ' << BaseDir << ":" << flush;
    
@@ -199,7 +199,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    if (Comp.Finalize(Size) == false)
    {
       c0out << endl;
-      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
+      return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
    }
    
    if (Size != 0)
@@ -249,7 +249,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    if (SrcExt.empty() == false && Sources.SetExts(SrcExt) == false)
       return _error->Error(_("Source extension list is too long"));
    if (_error->PendingError() == true)
-      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
+      return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
    
    Sources.PathPrefix = PathPrefix;
    Sources.DirStrip = ArchiveDir;
@@ -263,7 +263,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
 		      SrcCompress,Permissions);
    Sources.Output = Comp.Input;
    if (_error->PendingError() == true)
-      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
+      return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
 
    c0out << ' ' << BaseDir << ":" << flush;
    
@@ -285,7 +285,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    if (Comp.Finalize(Size) == false)
    {
       c0out << endl;
-      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
+      return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
    }
       
    if (Size != 0)
@@ -394,7 +394,7 @@ bool PackageMap::GenContents(Configuration &Setup,
    if (Comp.Finalize(Size) == false || _error->PendingError() == true)
    {
       c0out << endl;
-      return _error->Error(_("Error Processing Contents %s"),
+      return _error->Error(_("Error processing contents %s"),
 			   this->Contents.c_str());
    }
    
@@ -585,7 +585,7 @@ bool ShowHelp(CommandLine &CmdL)
       "  --no-delink Enable delinking debug mode\n"
       "  --contents  Control contents file generation\n"
       "  -c=?  Read this configuration file\n"
-      "  -o=?  Set an arbitary configuration option") << endl;
+      "  -o=?  Set an arbitrary configuration option") << endl;
    
    return true;
 }

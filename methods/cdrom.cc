@@ -119,15 +119,15 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    // All non IMS queries for package files fail.
    if (Itm->IndexFile == true || GetID(Get.Host).empty() == true)
    {
-      Fail(_("Please use apt-cdrom to make this CD recognized by APT."
-	   " apt-get update cannot be used to add new CDs"));
+      Fail(_("Please use apt-cdrom to make this CD-ROM recognized by APT."
+	   " apt-get update cannot be used to add new CD-ROMs"));
       return true;
    }
 
    // We already have a CD inserted, but it is the wrong one
    if (CurrentID.empty() == false && Database.Find("CD::" + CurrentID) != Get.Host)
    {
-      Fail(_("Wrong CD"),true);
+      Fail(_("Wrong CD-ROM"),true);
       return true;
    }
    
@@ -165,7 +165,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       if (MediaFail(Get.Host,CDROM) == false)
       {
 	 CurrentID = "FAIL";
-	 Fail(_("Wrong CD"),true);
+	 Fail(_("Wrong CD-ROM"),true);
 	 return true;
       }
    }
