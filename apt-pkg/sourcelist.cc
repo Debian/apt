@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.19 2001/03/13 06:51:46 jgg Exp $
+// $Id: sourcelist.cc,v 1.20 2001/05/15 05:46:11 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -23,7 +23,9 @@
 #include <fstream.h>
 									/*}}}*/
 
-// Global list of Item supported
+using namespace std;
+
+// Global list of Items supported
 static  pkgSourceList::Type *ItmList[10];
 pkgSourceList::Type **pkgSourceList::Type::GlobalList = ItmList;
 unsigned long pkgSourceList::Type::GlobalListLen = 0;
@@ -186,7 +188,7 @@ bool pkgSourceList::ReadMainList()
 bool pkgSourceList::Read(string File)
 {
    // Open the stream for reading
-   ifstream F(File.c_str(),ios::in | ios::nocreate);
+   ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
    
