@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.8 1998/11/14 01:39:41 jgg Exp $
+// $Id: acquire-method.cc,v 1.9 1998/11/29 01:24:15 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -33,9 +33,6 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
    if ((Flags & SingleInstance) == SingleInstance)
       strcat(End,"Single-Instance: true\n");
    
-   if ((Flags & PreScan) == PreScan)
-      strcat(End,"Pre-Scan: true\n");
-   
    if ((Flags & Pipeline) == Pipeline)
       strcat(End,"Pipeline: true\n");
    
@@ -57,26 +54,26 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqMethod::Fail()
+void pkgAcqMethod::Fail(bool Transient)
 {
    string Err = "Undetermined Error";
    if (_error->empty() == false)
       _error->PopMessage(Err);   
    _error->Discard();
-   Fail(Err);
+   Fail(Err,Transient);
 }
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqMethod::Fail(string Err)
+void pkgAcqMethod::Fail(string Err,bool Transient)
 {   
    char S[1024];
    if (Queue != 0)
    {
       snprintf(S,sizeof(S),"400 URI Failure\nURI: %s\n"
-	       "Message: %s\n\n",Queue->Uri.c_str(),Err.c_str());
-      
+	       "Message: %s\n",Queue->Uri.c_str(),Err.c_str());
+
       // Dequeue
       FetchItem *Tmp = Queue;
       Queue = Queue->Next;
@@ -84,8 +81,14 @@ void pkgAcqMethod::Fail(string Err)
    }
    else
       snprintf(S,sizeof(S),"400 URI Failure\nURI: <UNKNOWN>\n"
-	       "Message: %s\n\n",Err.c_str());
+	       "Message: %s\n",Err.c_str());
       
+   // Set the transient flag 
+   if (Transient == true)
+      strcat(S,"Transient-Failure: true\n\n");
+   else
+      strcat(S,"\n");
+   
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
       exit(100);
 }
@@ -265,7 +268,7 @@ int pkgAcqMethod::Run(bool Single)
 	    Tmp->DestFile = LookupTag(Message,"FileName");
 	    if (StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified) == false)
 	       Tmp->LastModified = 0;
-	    
+	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list

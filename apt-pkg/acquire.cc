@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.18 1998/11/23 07:32:19 jgg Exp $
+// $Id: acquire.cc,v 1.19 1998/11/29 01:24:19 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -420,7 +420,6 @@ unsigned long pkgAcquire::FetchNeeded()
 pkgAcquire::MethodConfig::MethodConfig()
 {
    SingleInstance = false;
-   PreScan = false;
    Pipeline = false;
    SendConfig = false;
    LocalOnly = false;

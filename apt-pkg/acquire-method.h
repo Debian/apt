@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.3 1998/11/14 01:39:43 jgg Exp $
+// $Id: acquire-method.h,v 1.4 1998/11/29 01:24:16 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -31,6 +31,7 @@ class pkgAcqMethod
       string Uri;
       string DestFile;
       time_t LastModified;
+      bool IndexFile;
    };
    
    struct FetchResult
@@ -53,16 +54,16 @@ class pkgAcqMethod
    virtual bool Fetch(FetchItem *Item) {return true;};
    
    // Outgoing messages
-   void Fail();
-   void Fail(string Why);
+   void Fail(bool Transient = false);
+   void Fail(string Why, bool Transient = false);
    void URIStart(FetchResult &Res);
    void URIDone(FetchResult &Res,FetchResult *Alt = 0);
 		 
    public:
-   
-   enum CnfFlags {SingleInstance = (1<<0), PreScan = (1<<1), 
-                  Pipeline = (1<<2), SendConfig = (1<<3), 
-                  LocalOnly = (1<<4)};
+
+   enum CnfFlags {SingleInstance = (1<<0),
+                  Pipeline = (1<<1), SendConfig = (1<<2),
+                  LocalOnly = (1<<3)};
 
    void Log(const char *Format,...);
    void Status(const char *Format,...);

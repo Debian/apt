@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.13 1998/11/22 03:20:30 jgg Exp $
+// $Id: acquire-item.cc,v 1.14 1998/11/29 01:24:14 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -56,6 +56,16 @@ void pkgAcquire::Item::Failed(string Message)
    Status = StatIdle;
    if (QueueCounter <= 1)
    {
+      /* This indicates that the file is not available right now but might
+         be sometime later. If we do a retry cycle then this should be 
+	 retried */
+      if (StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
+      {
+	 Status = StatIdle;
+	 Owner->Dequeue(this);
+	 return;
+      }
+      
       ErrorText = LookupTag(Message,"Message");
       Status = StatError;
       Owner->Dequeue(this);
@@ -147,9 +157,9 @@ string pkgAcqIndex::Custom600Headers()
    
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
-      return string();
+      return "\nIndex-File: true";
    
-   return "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
 // AcqIndex::Done - Finished a fetch					/*{{{*/
@@ -267,9 +277,9 @@ string pkgAcqIndexRel::Custom600Headers()
    
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
-      return string();
+      return "\nIndex-File: true";
    
-   return "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
 // AcqIndexRel::Done - Item downloaded OK				/*{{{*/

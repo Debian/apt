@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.12 1998/11/14 01:39:44 jgg Exp $
+// $Id: acquire-worker.cc,v 1.13 1998/11/29 01:24:18 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -304,7 +304,6 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    
    Config->Version = LookupTag(Message,"Version");
    Config->SingleInstance = StringToBool(LookupTag(Message,"Single-Instance"),false);
-   Config->PreScan = StringToBool(LookupTag(Message,"Pre-Scan"),false);
    Config->Pipeline = StringToBool(LookupTag(Message,"Pipeline"),false);
    Config->SendConfig = StringToBool(LookupTag(Message,"Send-Config"),false);
    Config->LocalOnly = StringToBool(LookupTag(Message,"Local-Only"),false);
@@ -314,7 +313,7 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    {
       clog << "Configured access method " << Config->Access << endl;
       clog << "Version:" << Config->Version << " SingleInstance:" <<
-	 Config->SingleInstance << " PreScan: " << Config->PreScan <<
+	 Config->SingleInstance << 
 	 " Pipeline:" << Config->Pipeline << " SendConfig:" << 
 	 Config->SendConfig << endl;
    }
