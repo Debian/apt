@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.121 2002/07/08 04:09:52 jgg Exp $
+// $Id: apt-get.cc,v 1.122 2002/11/09 20:38:02 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -183,14 +183,14 @@ bool ShowList(ostream &out,string Title,string List)
    description.
    
    The output looks like:
- Sorry, but the following packages have unmet dependencies:
+ The following packages have unmet dependencies:
      exim: Depends: libc6 (>= 2.1.94) but 2.1.3-10 is to be installed
            Depends: libldap2 (>= 2.0.2-2) but it is not going to be installed
            Depends: libsasl7 but it is not going to be installed   
  */
 void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 {
-   out << _("Sorry, but the following packages have unmet dependencies:") << endl;
+   out << _("The following packages have unmet dependencies:") << endl;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
@@ -738,7 +738,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 return _error->Errno("statvfs","Couldn't determine free space in %s",
 			      OutputDir.c_str());
       if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-	 return _error->Error(_("Sorry, you don't have enough free space in %s to hold all the .debs."),
+	 return _error->Error(_("You don't have enough free space in %s."),
 			      OutputDir.c_str());
    }
    
@@ -1017,7 +1017,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       if (_config->FindB("APT::Get::ReInstall",false) == true)
       {
 	 if (Pkg->CurrentVer == 0 || Pkg.CurrentVer().Downloadable() == false)
-	    ioprintf(c1out,_("Sorry, re-installation of %s is not possible, it cannot be downloaded.\n"),
+	    ioprintf(c1out,_("Reinstallation of %s is not possible, it cannot be downloaded.\n"),
 		     Pkg.Name());
 	 else
 	    Cache.SetReInstall(Pkg,true);
@@ -1025,7 +1025,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       else
       {
 	 if (AllowFail == true)
-	    ioprintf(c1out,_("Sorry, %s is already the newest version.\n"),
+	    ioprintf(c1out,_("%s is already the newest version.\n"),
 		     Pkg.Name());
       }      
    }   
@@ -1428,7 +1428,7 @@ bool DoInstall(CommandLine &CmdL)
       c1out << _("The following information may help to resolve the situation:") << endl;
       c1out << endl;
       ShowBroken(c1out,Cache,false);
-      return _error->Error(_("Sorry, broken packages"));
+      return _error->Error(_("Broken packages"));
    }   
    
    /* Print out a list of packages that are going to be installed extra
@@ -1725,7 +1725,7 @@ bool DoSource(CommandLine &CmdL)
       return _error->Errno("statvfs","Couldn't determine free space in %s",
 			   OutputDir.c_str());
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-      return _error->Error(_("Sorry, you don't have enough free space in %s"),
+      return _error->Error(_("You don't have enough free space in %s"),
 			   OutputDir.c_str());
    
    // Number of bytes

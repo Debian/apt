@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.cc,v 1.6 2001/06/10 02:12:09 jgg Exp $
+// $Id: srcrecords.cc,v 1.7 2002/11/09 20:38:02 doogie Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -46,7 +46,7 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
    // Doesn't work without any source index files
    if (Count == 0)
    {
-      _error->Error(_("Sorry, you must put some 'source' URIs"
+      _error->Error(_("You must put some 'source' URIs"
 		    " in your sources.list"));
       return;
    }   
