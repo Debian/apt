@@ -2,8 +2,19 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.9 1999/03/16 19:30:31 che Exp $
+# $Id: rules,v 1.10 1999/03/18 03:30:31 doogie Exp $
 
+DEB_BUILD_PROG:=debuild
+APT_DEBVER=$(shell dpkg-parsechangelog |sed -n -e '/^Version:/s/^Version: //p')
+APT_CONFVER=$(shell sed -n -e 's/^AC_DEFINE_UNQUOTED(VERSION,"\(.*\)")/\1/p' configure.in)
+
+ifneq ($(APT_DEBVER),$(APT_CONFVER))
+.PHONY: configure.in
+configure.in:
+	sed -e 's/$(APT_CONFVER)/$(APT_DEBVER)/' $@ > $@.$$$$;mv $@.$$$$ $@
+else
+configure.in:
+endif
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -15,8 +26,7 @@ build: build-stamp
 build-stamp: configure
 	dh_testdir
 	-mkdir build
-	cd build; ../configure
-	cd ..
+	(cd build; ../configure)
 #	cd build && CXXFLAGS="-g -Wall -D_POSIX_C_SOURCE=199309" ../configure --disable-nls --disable-static --prefix=/usr
 #	cd build && make all-hdr
 #	cd build && make -s
@@ -37,19 +47,47 @@ clean:
 	dh_clean
 
 # Build architecture-independent files here.
-binary-indep: build libapt-pkg-doc
-# We have nothing to do by default.
+binary-indep: build
+	dh_testdir -i
+	dh_testroot -i
+	dh_clean -i -k
+	dh_installdirs -i
+#
+# libapt-pkg-doc install
+#
+
+	cp -a build/docs/cache* build/docs/design* build/docs/dpkg-tech* \
+	  build/docs/files* build/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
+	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
+	dh_installdocs -i
+	dh_installexamples -i
+#	dh_installmenu -i
+#	dh_installinit -i
+#	dh_installcron -i
+	dh_installmanpages -i
+
+#	dh_undocumented -i
+	dh_installchangelogs -i
+	dh_strip -i
+	dh_compress -i
+	dh_fixperms -i
+#	dh_suidregister -i
+	dh_installdeb -i
+	dh_gencontrol -i -u -Vlibapt-pkg:major=${LIBAPT_MAJOR}
+	dh_md5sums -i
+	dh_builddeb -i
+
 
 # Build architecture-dependent files here.
-binary-arch: build apt libapt-pkg-dev
+binary-arch: build
+	dh_testdir -a
+	dh_testroot -a
+	dh_clean -a -k
+	dh_installdirs -a
 
-apt: build
-#	dh_testversion -papt
-	dh_testdir -papt
-	dh_testroot -papt
-	dh_clean -papt -k
-	dh_installdirs -papt usr/bin usr/lib/apt/methods usr/lib/dpkg/methods/apt etc/apt usr/doc/apt var/cache/apt/archives/partial var/state/apt/lists/partial
-
+#
+# apt install
+#
 	cp build/bin/apt-* debian/tmp/usr/bin/
 	
 	# install the shared libs
@@ -63,81 +101,42 @@ apt: build
 
 	# Copy the users guide	
 	cp build/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
-	mkdir debian/tmp/usr/doc/apt/users-guide.html/
 	cp -a build/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
 	
 	# Copy the offline guide	
 	cp build/docs/offline.text debian/tmp/usr/doc/apt/offline.txt
-	mkdir debian/tmp/usr/doc/apt/offline.html/
 	cp -a build/docs/offline.html/* debian/tmp/usr/doc/apt/offline.html/
 	
 	cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
 	
 #	head -n 500 ChangeLog > debian/ChangeLog
 
-	dh_installdocs -papt 
+#
+# libapt-pkg-dev install
+#
+	ln -s libapt-pkg.so.${LIBAPT_MAJOR} debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
+	cp build/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
+
+
+	dh_installdocs -a
 	dh_installexamples -papt build/docs/examples/*
 #	dh_installmenu -papt
 #	dh_installinit -papt
 #	dh_installcron -papt
-	dh_installmanpages -papt
+	dh_installmanpages -a
 
 #	dh_undocumented -papt
-	dh_installchangelogs -papt
-	dh_strip -papt
-	dh_compress -papt
-	dh_fixperms -papt
-	dh_suidregister -papt
-	dh_installdeb -papt
-	LD_LIBRARY_PATH=debian/tmp/usr/lib dh_shlibdeps -papt
-	echo libapt-pkg:major=${LIBAPT_MAJOR} >> debian/substvars
-	dh_gencontrol -papt
+	dh_installchangelogs -a
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+#	dh_suidregister -a
+	dh_installdeb -a
+	LD_LIBRARY_PATH=`pwd`/debian/tmp/usr/lib dh_shlibdeps -papt
+	dh_gencontrol -a -u-Vlibapt-pkg:major=${LIBAPT_MAJOR}
 	dh_makeshlibs -m${LIBAPT_MAJOR} -Vlibapt-pkg${LIBAPT_MAJOR} -papt
-	dh_md5sums -papt
-	dh_builddeb -papt
-
-libapt-pkg-dev: build
-	dh_testdir -plibapt-pkg-dev
-	dh_testroot -plibapt-pkg-dev
-	dh_clean -plibapt-pkg-dev -k
-	dh_installdirs -plibapt-pkg-dev usr/lib usr/include/apt-pkg
-	
-	ln -s libapt-pkg.so.${LIBAPT_MAJOR} debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
-
-	cp build/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
-
-	dh_installdocs -plibapt-pkg-dev
-	dh_installchangelogs -plibapt-pkg-dev
-	dh_strip -plibapt-pkg-dev
-	dh_compress -plibapt-pkg-dev
-	dh_fixperms -plibapt-pkg-dev
-	dh_installdeb -plibapt-pkg-dev
-	dh_shlibdeps -plibapt-pkg-dev
-	echo libapt-pkg:major=${LIBAPT_MAJOR} >> debian/libapt-pkg-dev.substvars
-	dh_gencontrol -plibapt-pkg-dev
-	dh_md5sums -plibapt-pkg-dev
-	dh_builddeb -plibapt-pkg-dev
-
-libapt-pkg-doc: build
-	dh_testdir -plibapt-pkg-doc
-	dh_testroot -plibapt-pkg-doc
-	dh_clean -plibapt-pkg-doc -k
-	dh_installdirs -plibapt-pkg-doc usr/doc/apt usr/doc/libapt-pkg-doc
-
-	cp -a build/docs/cache* build/docs/design* build/docs/dpkg-tech* \
-	  build/docs/files* build/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
-	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
-
-	dh_installdocs -plibapt-pkg-doc
-	dh_installchangelogs -plibapt-pkg-doc
-	dh_strip -plibapt-pkg-doc
-	dh_compress -plibapt-pkg-doc
-	dh_fixperms -plibapt-pkg-doc
-	dh_installdeb -plibapt-pkg-doc
-	dh_shlibdeps -plibapt-pkg-doc
-	dh_gencontrol -plibapt-pkg-doc
-	dh_md5sums -plibapt-pkg-doc
-	dh_builddeb -plibapt-pkg-doc
+	dh_md5sums -a
+	dh_builddeb -a
 
 source diff:                                                                  
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
@@ -151,7 +150,7 @@ l33ch: really-clean
 super-l33ch: l33ch Makefile.in
 
 configure:
-	make startup
+	make configure
 
 l33ch-stamp: super-l33ch
 	touch l33ch-stamp
@@ -163,3 +162,22 @@ really-clean: clean
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary
+
+
+# Done by the uploader.
+#cvs update.. 
+#edit debian/changelog
+# configure.in has the version automatically updated now.
+# edit configure.in
+# debian/rules cvs-build
+
+cvs-build:
+	rm -rf debian/cvs-build
+	cvs update
+	buildlib/mkChangeLog
+	make doc
+	tar c --exclude CVS --exclude debian/cvs-build . |\
+		(mkdir -p debian/cvs-build/apt-$(APT_DEBVER);cd debian/cvs-build/apt-$(APT_DEBVER);tar x)
+# The next line isn't needed, as debuild will make the .tar.gz for us.
+#	(cd debian/cvs-build;tar zcf apt_$(APT_DEBVER).tar.gz apt-$(APT_DEBVER))
+	(cd debian/cvs-build/apt-$(APT_DEBVER);$(DEB_BUILD_PROG) -us -uc)
