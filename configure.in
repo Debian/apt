@@ -62,7 +62,7 @@ if test "$with_gpm" != "no"; then
 fi
 
 dnl Checks for pthread
-AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
+#AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
 AC_SUBST(PTHREADLIB)
 #if test "$PTHREADLIB" != "-lpthread"; then
 #  AC_MSG_ERROR(failed: I need posix threads, pthread)
