@@ -392,6 +392,9 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    // mistakenly trusted
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    unlink(Final.c_str());
+   Final = _config->FindDir("Dir::State::lists") + "partial/"+ URItoFileName(RealURI);
+   unlink(Final.c_str());
+
 
    // queue a pkgAcqMetaIndex with no sigfile
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
