@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.18 1998/12/30 02:28:29 jgg Exp $
+// $Id: http.cc,v 1.19 1998/12/31 05:45:26 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -616,7 +616,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       and we expect the proxy to do this */
    if (Proxy.empty() == true)
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\nConnection: keep-alive\r\n",
-	      Uri.Path.c_str(),ProperHost.c_str());
+	      QuoteString(Uri.Path,"~").c_str(),ProperHost.c_str());
    else
    {
       /* Generate a cache control header if necessary. We place a max
@@ -664,7 +664,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
           Base64Encode(Proxy.User + ":" + Proxy.Password) + "\r\n";
 
    Req += "User-Agent: Debian APT-HTTP/1.2\r\n\r\n";
-//   cerr << Req << endl;
+   cerr << Req << endl;
 
    Out.Read(Req);
 }

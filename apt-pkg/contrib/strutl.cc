@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.15 1998/12/04 21:16:50 jgg Exp $
+// $Id: strutl.cc,v 1.16 1998/12/31 05:45:26 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -189,7 +189,7 @@ string QuoteString(string Str,const char *Bad)
 	  *I <= 0x20 || *I >= 0x7F)
       {
 	 char Buf[10];
-	 sprintf(Buf,"%%%02x",(int)*I);
+	 sprintf(Buf,"%%%02x",(unsigned int)((unsigned char)*I));
 	 Res += Buf;
       }
       else
