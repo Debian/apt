@@ -38,8 +38,12 @@ apt (0.5.9) unstable; urgency=low
     (Closes: #194282)
   * Run ispell -h over the man page sources and fix a bunch of typos
   * Use debian/compat rather than DH_COMPAT
+  * Update to debhelper compatibility level 3
+    - remove ldconfig calls from debian/{postinst,postrm} as dh_makeshlibs
+      will add them
+    - echo 3 > debian/compat
 
- -- Matt Zimmerman <mdz@debian.org>  Sat,  9 Aug 2003 14:43:01 -0400
+ -- Matt Zimmerman <mdz@debian.org>  Sat,  9 Aug 2003 15:14:56 -0400
 
 apt (0.5.8) unstable; urgency=medium
 
