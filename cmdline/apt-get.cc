@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.108 2001/07/01 20:49:08 jgg Exp $
+// $Id: apt-get.cc,v 1.109 2001/07/01 22:59:04 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -91,9 +91,9 @@ class CacheFile : public pkgCacheFile
    bool OpenForInstall()
    {
       if (_config->FindB("APT::Get::Print-URIs") == true)
-	 Open(false);
+	 return Open(false);
       else
-	 Open(true);
+	 return Open(true);
    }
    CacheFile() : List(0) {};
 };
@@ -187,30 +187,55 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       
-      if (Cache[I].InstBroken() == false)
-	  continue;
-	  
+      if (Now == true)
+      {
+	 if (Cache[I].NowBroken() == false)
+	    continue;
+      }
+      else
+      {
+	 if (Cache[I].InstBroken() == false)
+	    continue;
+      }
+      
       // Print out each package and the failed dependencies
       out <<"  " <<  I.Name() << ":";
       unsigned Indent = strlen(I.Name()) + 3;
       bool First = true;
-      if (Cache[I].InstVerIter(Cache).end() == true)
+      pkgCache::VerIterator Ver;
+      
+      if (Now == true)
+	 Ver = I.CurrentVer();
+      else
+	 Ver = Cache[I].InstVerIter(Cache);
+      
+      if (Ver.end() == true)
       {
-	 cout << endl;
+	 out << endl;
 	 continue;
       }
       
-      for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false;)
+      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
       {
 	 // Compute a single dependency element (glob or)
 	 pkgCache::DepIterator Start;
 	 pkgCache::DepIterator End;
 	 D.GlobOr(Start,End);
 
-	 if (Cache->IsImportantDep(End) == false || 
-	     (Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
+	 if (Cache->IsImportantDep(End) == false)
 	    continue;
-
+	 
+	 if (Now == true)
+	 {
+	    if ((Cache[End] & pkgDepCache::DepGNow) == pkgDepCache::DepGNow)
+	       continue;
+	 }
+	 else
+	 {
+	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
+	       continue;
+	 }
+	 
 	 bool FirstOr = true;
 	 while (1)
 	 {
@@ -243,7 +268,7 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	       pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
 	       if (Now == true)
 		  Ver = Targ.CurrentVer();
-		  
+	       	    
 	       if (Ver.end() == false)
 	       {
 		  if (Now == true)
