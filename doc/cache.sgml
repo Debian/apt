@@ -4,7 +4,7 @@
 <title>APT Cache File Format</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: cache.sgml,v 1.4 1998/12/14 02:23:47 jgg Exp $</version>
+<version>$Id: cache.sgml,v 1.5 1998/12/14 08:23:10 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the APT
@@ -358,7 +358,6 @@ Header.FileList
       unsigned long Label;           // Stringtable
       unsigned long Architecture;    // Stringtable
       unsigned long Size;            
-      unsigned char NotAutomatic;    // Bool
 
       // Linked list
       unsigned long NextFile;        // PackageFile
@@ -735,6 +734,7 @@ Zero is used for unparsable or absent Priority fields.
 <p>
 <example>
 #define pkgFLAG_NotSource (1 << 0)
+#define pkgFLAG_NotAutomatic (1 << 1)
 </example>
 </sect1>
 

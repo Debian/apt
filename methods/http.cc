@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.16 1998/12/11 07:23:17 jgg Exp $
+// $Id: http.cc,v 1.17 1998/12/14 08:23:10 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -625,7 +625,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
 	      Itm->Uri.c_str(),ProperHost.c_str());
       if (_config->FindB("Acquire::http::No-Cache",false) == true)
-	 strcat(Buf,"Cache-Control: no-cache\r\n");
+	 strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
       else
       {
 	 if (Itm->IndexFile == true)
