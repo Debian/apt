@@ -22,3 +22,9 @@ PROGRAM=apt-config
 SLIBS = -lapt-pkg
 SOURCE = apt-config.cc
 include $(PROGRAM_H)
+
+# The apt-cdrom program
+PROGRAM=apt-cdrom
+SLIBS = -lapt-pkg
+SOURCE = apt-cdrom.cc
+include $(PROGRAM_H)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.12 1998/11/14 07:20:29 jgg Exp $
+// $Id: apt-cache.cc,v 1.13 1998/11/27 01:52:53 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -219,6 +219,27 @@ bool Stats(pkgCache &Cache)
    return true;
 }
 									/*}}}*/
+// Check - Check some things about the cache				/*{{{*/
+// ---------------------------------------------------------------------
+/* Debug aide mostly */
+bool Check(pkgCache &Cache)
+{
+   pkgCache::PkgIterator Pkg = Cache.PkgBegin();
+   for (;Pkg.end() != true; Pkg++)
+   {
+      if (Pkg.Section() == 0 && Pkg->VersionList != 0)
+	 cout << "Bad section " << Pkg.Name() << endl;
+      
+      for (pkgCache::VerIterator Cur = Pkg.VersionList(); 
+	   Cur.end() != true; Cur++)
+      {
+	 if (Cur->Priority < 1 || Cur->Priority > 5)
+	    cout << "Bad prio " << Pkg.Name() << ',' << Cur.VerStr() << " == " << (int)Cur->Priority << endl;
+      }
+   }
+   return true;
+}
+									/*}}}*/
 // Dump - show everything						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -382,6 +403,7 @@ int ShowHelp()
    cout << "   dump - Show the entire file in a terse form" << endl;
    cout << "   dumpavail - Print an available file to stdout" << endl;
    cout << "   unmet - Show unmet dependencies" << endl;
+   cout << "   check - Check the cache a bit" << endl;
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
@@ -485,6 +507,12 @@ int main(int argc,const char *argv[])
       if (strcmp(CmdL.FileList[0],"unmet") == 0)
       {
 	 UnMet(Cache);
+	 break;
+      }
+
+      if (strcmp(CmdL.FileList[0],"check") == 0)
+      {
+	 Check(Cache);
 	 break;
       }
             

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.19 1998/11/24 02:35:32 jgg Exp $
+// $Id: apt-get.cc,v 1.20 1998/11/27 01:52:58 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -79,10 +79,10 @@ bool YnPrompt()
 // ---------------------------------------------------------------------
 /* This prints out a string of space seperated words with a title and 
    a two space indent line wraped to the current screen width. */
-void ShowList(ostream &out,string Title,string List)
+bool ShowList(ostream &out,string Title,string List)
 {
    if (List.empty() == true)
-      return;
+      return true;
 
    // Acount for the leading space
    int ScreenWidth = ::ScreenWidth - 3;
@@ -102,6 +102,7 @@ void ShowList(ostream &out,string Title,string List)
       out << "  " << string(List,Start,End - Start) << endl;
       Start = End + 1;
    }   
+   return false;
 }
 									/*}}}*/
 // ShowBroken - Debugging aide						/*{{{*/
@@ -250,7 +251,7 @@ void ShowUpgraded(ostream &out,pkgDepCache &Dep)
 // ShowHold - Show held but changed packages				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ShowHold(ostream &out,pkgDepCache &Dep)
+bool ShowHold(ostream &out,pkgDepCache &Dep)
 {
    pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
@@ -261,7 +262,7 @@ void ShowHold(ostream &out,pkgDepCache &Dep)
 	 List += string(I.Name()) + " ";
    }
 
-   ShowList(out,"The following held packages will be changed:",List);
+   return ShowList(out,"The following held packages will be changed:",List);
 }
 									/*}}}*/
 // ShowEssential - Show an essential package warning			/*{{{*/
@@ -269,7 +270,7 @@ void ShowHold(ostream &out,pkgDepCache &Dep)
 /* This prints out a warning message that is not to be ignored. It shows
    all essential packages and their dependents that are to be removed. 
    It is insanely risky to remove the dependents of an essential package! */
-void ShowEssential(ostream &out,pkgDepCache &Dep)
+bool ShowEssential(ostream &out,pkgDepCache &Dep)
 {
    pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
@@ -317,11 +318,10 @@ void ShowEssential(ostream &out,pkgDepCache &Dep)
       }      
    }
    
+   delete [] Added;
    if (List.empty() == false)
       out << "WARNING: The following essential packages will be removed" << endl;
-   ShowList(out,"This should NOT be done unless you know exactly what you are doing!",List);
-
-   delete [] Added;
+   return ShowList(out,"This should NOT be done unless you know exactly what you are doing!",List);
 }
 									/*}}}*/
 // Stats - Show some statistics						/*{{{*/
@@ -461,15 +461,17 @@ bool CacheFile::Open()
    happen and then calls the download routines */
 bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
 {
+   bool Fail = false;
+   
    // Show all the various warning indicators
    ShowDel(c1out,Cache);
    ShowNew(c1out,Cache);
    if (ShwKept == true)
       ShowKept(c1out,Cache);
-   ShowHold(c1out,Cache);
+   Fail |= ShowHold(c1out,Cache);
    if (_config->FindB("APT::Get::Show-Upgraded",false) == true)
       ShowUpgraded(c1out,Cache);
-   ShowEssential(c1out,Cache);
+   Fail |= ShowEssential(c1out,Cache);
    Stats(c1out,Cache);
    
    // Sanity check
@@ -492,7 +494,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    
    // Create the text record parser
    pkgRecords Recs(Cache);
-
+   if (_error->PendingError() == true)
+      return false;
+   
    // Lock the archive directory
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
@@ -542,16 +546,24 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    if (_error->PendingError() == true)
       return false;
 
+   // Fail safe check
+   if (_config->FindB("APT::Get::Assume-Yes",false) == true)
+   {
+      if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false)
+	 return _error->Error("There are problems and -y was used without --force-yes");
+   }         
+   
    // Prompt to continue
    if (Ask == true)
-   {      
-      if (_config->FindI("quiet",0) < 2 || 
+   {            
+      if (_config->FindI("quiet",0) < 2 ||
 	  _config->FindB("APT::Get::Assume-Yes",false) == false)
-      c2out << "Do you want to continue? [Y/n] " << flush;
+	 c2out << "Do you want to continue? [Y/n] " << flush;
+
       if (YnPrompt() == false)
 	 exit(1);
    }      
-
+   
    // Run it
    if (Fetcher.Run() == false)
       return false;
@@ -975,6 +987,7 @@ void GetInitialize()
    _config->Set("APT::Get::Simulate",false);
    _config->Set("APT::Get::Assume-Yes",false);
    _config->Set("APT::Get::Fix-Broken",false);
+   _config->Set("APT::Get::Force-Yes",false);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
@@ -1010,10 +1023,20 @@ int main(int argc,const char *argv[])
       {'m',"ignore-missing","APT::Get::Fix-Missing",0},
       {0,"fix-missing","APT::Get::Fix-Missing",0},
       {0,"ignore-hold","APT::Ingore-Hold",0},      
-      {0,"no-upgrade","APT::Get::no-upgrade",0},      
+      {0,"no-upgrade","APT::Get::no-upgrade",0},
+      {0,"force-yes","APT::Get::force-yes",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
+   CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
+                                   {"upgrade",&DoUpgrade},
+                                   {"install",&DoInstall},
+                                   {"remove",&DoInstall},
+                                   {"dist-upgrade",&DoDistUpgrade},
+                                   {"dselect-upgrade",&DoDSelectUpgrade},
+                                   {"clean",&DoClean},
+                                   {"check",&DoCheck},
+                                   {0,0}};
    
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
@@ -1044,33 +1067,7 @@ int main(int argc,const char *argv[])
    SigWinch(0);
    
    // Match the operation
-   struct 
-   {
-      const char *Match;
-      bool (*Handler)(CommandLine &);
-   } Map[] = {{"update",&DoUpdate},
-              {"upgrade",&DoUpgrade},
-              {"install",&DoInstall},
-              {"remove",&DoInstall},
-              {"dist-upgrade",&DoDistUpgrade},
-              {"dselect-upgrade",&DoDSelectUpgrade},
-              {"clean",&DoClean},
-              {"check",&DoCheck},
-              {0,0}};
-   int I;
-   for (I = 0; Map[I].Match != 0; I++)
-   {
-      if (strcmp(CmdL.FileList[0],Map[I].Match) == 0)
-      {
-	 if (Map[I].Handler(CmdL) == false && _error->PendingError() == false)
-	    _error->Error("Handler silently failed");
-	 break;
-      }
-   }
-      
-   // No matching name
-   if (Map[I].Match == 0)
-      _error->Error("Invalid operation %s", CmdL.FileList[0]);
+   CmdL.DispatchArg(Cmds);
 
    // Print any errors or warnings found during parsing
    if (_error->empty() == false)

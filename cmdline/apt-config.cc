@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.1 1998/11/22 23:37:07 jgg Exp $
+// $Id: apt-config.cc,v 1.2 1998/11/27 01:52:57 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -70,6 +70,8 @@ int main(int argc,const char *argv[])
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
+   CommandLine::Dispatch Cmds[] = {{"shell",&DoShell},
+                                   {0,0}};
    
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
@@ -84,29 +86,10 @@ int main(int argc,const char *argv[])
    if (_config->FindB("help") == true ||
        CmdL.FileSize() == 0)
       return ShowHelp();
-   
-   // Match the operation
-   struct 
-   {
-      const char *Match;
-      bool (*Handler)(CommandLine &);
-   } Map[] = {{"shell",&DoShell},
-              {0,0}};
-   int I;
-   for (I = 0; Map[I].Match != 0; I++)
-   {
-      if (strcmp(CmdL.FileList[0],Map[I].Match) == 0)
-      {
-	 if (Map[I].Handler(CmdL) == false && _error->PendingError() == false)
-	    _error->Error("Handler silently failed");
-	 break;
-      }
-   }
-      
-   // No matching name
-   if (Map[I].Match == 0)
-      _error->Error("Invalid operation %s", CmdL.FileList[0]);
 
+   // Match the operation
+   CmdL.DispatchArg(Cmds);
+   
    // Print any errors or warnings found during parsing
    if (_error->empty() == false)
    {
