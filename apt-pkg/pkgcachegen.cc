@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.43 1999/12/10 23:40:29 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.44 2000/01/10 03:44:54 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
-
+#include <stdio.h>
 #include <system.h>
 									/*}}}*/
 
@@ -470,6 +470,15 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
       struct stat Buf;
       if (stat(File.c_str(),&Buf) != 0)
       {
+	 // Old format file name.. rename it
+	 if (File[0] == '_' && stat(File.c_str()+1,&Buf) == 0)
+	 {
+	    if (rename(File.c_str()+1,File.c_str()) != 0)
+	       return _error->Errno("rename","Failed to rename %s to %s",
+				    File.c_str()+1,File.c_str());
+	    continue;
+	 }	 
+	 
 	 _error->WarningE("stat","Couldn't stat source package list '%s' (%s)",
 			  I->PackagesInfo().c_str(),File.c_str());	 
 	 Missing++;

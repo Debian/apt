@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.31 1999/12/10 07:21:52 jgg Exp $
+// $Id: strutl.cc,v 1.32 2000/01/10 03:44:54 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -660,7 +660,7 @@ bool StrToTime(string Val,time_t &Result)
 		    &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec,&Tm.tm_year) != 6)
 	 {
 	    // 'ftp' time
-	    if (sscanf(I,"%4d%2d%2d%2d%2d%2d",&Tm.tm_year,&Tm.tm_mon,
+	    if (sscanf(Val.c_str(),"%4d%2d%2d%2d%2d%2d",&Tm.tm_year,&Tm.tm_mon,
 		       &Tm.tm_mday,&Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
 	       return false;
 	    Tm.tm_mon--;

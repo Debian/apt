@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.18 1999/12/10 07:21:52 jgg Exp $
+// $Id: ftp.cc,v 1.19 2000/01/10 03:44:54 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -814,6 +814,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       {
 	 Res.Size = Buf.st_size;
 	 Res.LastModified = Buf.st_mtime;
+	 Res.ResumePoint = Buf.st_size;
 	 URIDone(Res);
 	 return true;
       }
@@ -843,7 +844,6 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 	 
 	 // Timestamp
 	 struct utimbuf UBuf;
-	 time(&UBuf.actime);
 	 UBuf.actime = FailTime;
 	 UBuf.modtime = FailTime;
 	 utime(FailFile.c_str(),&UBuf);
@@ -863,7 +863,6 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    
    // Timestamp
    struct utimbuf UBuf;
-   time(&UBuf.actime);
    UBuf.actime = FailTime;
    UBuf.modtime = FailTime;
    utime(Queue->DestFile.c_str(),&UBuf);
