@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.13 1999/05/27 05:54:41 jgg Exp $
+// $Id: strutl.h,v 1.14 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
 
    String Util - These are some usefull string functions
@@ -41,6 +41,7 @@ bool StrToTime(string Val,time_t &Result);
 string LookupTag(string Message,const char *Tag,const char *Default = 0);
 int StringToBool(string Text,int Default = -1);
 bool ReadMessages(int Fd, vector<string> &List);
+bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0);
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};

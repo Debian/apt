@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.29 1999/07/20 05:53:33 jgg Exp $
+// $Id: fileutl.cc,v 1.30 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <signal.h>
+#include <wait.h>
 #include <errno.h>
 									/*}}}*/
 
@@ -249,6 +250,47 @@ int ExecFork()
    return Process;
 }
 									/*}}}*/
+// ExecWait - Fancy waitpid						/*{{{*/
+// ---------------------------------------------------------------------
+/* Waits for the given sub process. If Reap is set the no errors are 
+   generated. Otherwise a failed subprocess will generate a proper descriptive
+   message */
+bool ExecWait(int Pid,const char *Name,bool Reap)
+{
+   if (Pid <= 1)
+      return true;
+   
+   // Wait and collect the error code
+   int Status;
+   while (waitpid(Pid,&Status,0) != Pid)
+   {
+      if (errno == EINTR)
+	 continue;
+
+      if (Reap == true)
+	 return false;
+      
+      return _error->Error("Waited, for %s but it wasn't there",Name);
+   }
+
+   
+   // Check for an error code.
+   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
+   {
+      if (Reap == true)
+	 return false;
+      if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
+	 return _error->Error("Sub-process %s recieved a segmentation fault.",Name);
+
+      if (WIFEXITED(Status) != 0)
+	 return _error->Error("Sub-process %s returned an error code (%u)",Name,WEXITSTATUS(Status));
+      
+      return _error->Error("Sub-process %s exited unexpectedly",Name);
+   }      
+   
+   return true;
+}
+									/*}}}*/
 
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
@@ -302,7 +344,7 @@ FileFd::~FileFd()
 // ---------------------------------------------------------------------
 /* We are carefull to handle interruption by a signal while reading 
    gracefully. */
-bool FileFd::Read(void *To,unsigned long Size)
+bool FileFd::Read(void *To,unsigned long Size,bool AllowEof)
 {
    int Res;
    errno = 0;
@@ -324,6 +366,13 @@ bool FileFd::Read(void *To,unsigned long Size)
    
    if (Size == 0)
       return true;
+   
+   // Eof handling
+   if (AllowEof == true)
+   {
+      Flags |= HitEof;
+      return true;
+   }
    
    Flags |= Fail;
    return _error->Error("read, still have %u to read but none left",Size);

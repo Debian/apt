@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.11 1999/07/09 04:11:34 jgg Exp $
+// $Id: dpkgpm.cc,v 1.12 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -121,7 +121,7 @@ bool pkgDPkgPM::RunScripts(const char *Cnf)
    // Restore sig int/quit
    signal(SIGQUIT,SIG_DFL);
    signal(SIGINT,SIG_DFL);   
-       
+
    // Check for an error code.
    if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
    {

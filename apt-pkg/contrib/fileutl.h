@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.20 1999/07/20 05:53:33 jgg Exp $
+// $Id: fileutl.h,v 1.21 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -32,14 +32,15 @@ class FileFd
    protected:
    int iFd;
  
-   enum LocalFlags {AutoClose = (1<<0),Fail = (1<<1),DelOnFail = (1<<2)};
+   enum LocalFlags {AutoClose = (1<<0),Fail = (1<<1),DelOnFail = (1<<2),
+                    HitEof = (1<<3)};
    unsigned long Flags;
    string FileName;
    
    public:
    enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny};
    
-   bool Read(void *To,unsigned long Size);
+   bool Read(void *To,unsigned long Size,bool AllowEof = false);
    bool Write(const void *From,unsigned long Size);
    bool Seek(unsigned long To);
    bool Skip(unsigned long To);
@@ -56,6 +57,7 @@ class FileFd
    inline bool Failed() {return (Flags & Fail) == Fail;};
    inline void EraseOnFailure() {Flags |= DelOnFail;};
    inline void OpFail() {Flags |= Fail;};
+   inline bool Eof() {return (Flags & HitEof) == HitEof;};
    inline string &Name() {return FileName;};
    
    FileFd(string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), 
@@ -76,6 +78,7 @@ void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);
 bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
 int ExecFork();
+bool ExecWait(int Pid,const char *Name,bool Reap = false);
 
 // File string manipulators
 string flNotDir(string File);

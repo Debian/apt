@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.40 1999/07/15 03:15:48 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.41 1999/07/26 17:46:07 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -33,8 +33,10 @@
 // ---------------------------------------------------------------------
 /* We set the diry flag and make sure that is written to the disk */
 pkgCacheGenerator::pkgCacheGenerator(DynamicMMap &Map,OpProgress &Prog) :
-                    Map(Map), Cache(Map), Progress(Prog)
+                    Map(Map), Cache(Map), Progress(&Prog)
 {
+   CurrentFile = 0;
+   
    if (_error->PendingError() == true)
       return;
    
@@ -68,7 +70,8 @@ pkgCacheGenerator::~pkgCacheGenerator()
 // ---------------------------------------------------------------------
 /* This provides the generation of the entries in the cache. Each loop
    goes through a single package record from the underlying parse engine. */
-bool pkgCacheGenerator::MergeList(ListParser &List)
+bool pkgCacheGenerator::MergeList(ListParser &List,
+				  pkgCache::VerIterator *OutVer)
 {
    List.Owner = this;
 
@@ -84,8 +87,8 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       if (NewPackage(Pkg,PackageName) == false)
 	 return _error->Error("Error occured while processing %s (NewPackage)",PackageName.c_str());
       Counter++;
-      if (Counter % 100 == 0)
-	 Progress.Progress(List.Offset());
+      if (Counter % 100 == 0 && Progress != 0)
+	 Progress->Progress(List.Offset());
 
       /* Get a pointer to the version structure. We know the list is sorted
          so we use that fact in the search. Insertion of new versions is
@@ -120,6 +123,13 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
 	 if (NewFileVer(Ver,List) == false)
 	    return _error->Error("Error occured while processing %s (NewFileVer1)",PackageName.c_str());
 	 
+	 // Read only a single record and return
+	 if (OutVer != 0)
+	 {
+	    *OutVer = Ver;
+	    return true;
+	 }
+	 
 	 continue;
       }      
 
@@ -147,6 +157,13 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       
       if (NewFileVer(Ver,List) == false)
 	 return _error->Error("Error occured while processing %s (NewVersion2)",PackageName.c_str());
+
+      // Read only a single record and return
+      if (OutVer != 0)
+      {
+	 *OutVer = Ver;
+	 return true;
+      }      
    }
 
    return true;
@@ -188,6 +205,9 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,string Name)
 bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 				   ListParser &List)
 {
+   if (CurrentFile == 0)
+      return true;
+   
    // Get a structure
    unsigned long VerFile = Map.Allocate(sizeof(pkgCache::VerFile));
    if (VerFile == 0)
@@ -366,7 +386,8 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
    if (CurrentFile->FileName == 0)
       return false;
    
-   Progress.SubProgress(Buf.st_size);
+   if (Progress != 0)
+      Progress->SubProgress(Buf.st_size);
    return true;
 }
 									/*}}}*/
@@ -572,10 +593,10 @@ bool pkgPkgCacheCheck(string CacheFile)
    return true;
 }
 									/*}}}*/
-// AddSourcesSize - Add the size of the status files			/*{{{*/
+// AddStatusSize - Add the size of the status files			/*{{{*/
 // ---------------------------------------------------------------------
 /* This adds the size of all the status files to the size counter */
-static bool pkgAddSourcesSize(unsigned long &TotalSize)
+bool pkgAddStatusSize(unsigned long &TotalSize)
 {
    // Grab the file names
    string xstatus = _config->FindFile("Dir::State::xstatus");
@@ -598,8 +619,8 @@ static bool pkgAddSourcesSize(unsigned long &TotalSize)
 // MergeStatus - Add the status files to the cache			/*{{{*/
 // ---------------------------------------------------------------------
 /* This adds the status files to the map */
-static bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
-			   unsigned long &CurrentSize,unsigned long TotalSize)
+bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
+		    unsigned long &CurrentSize,unsigned long TotalSize)
 {
    // Grab the file names   
    string Status[3];
@@ -653,7 +674,7 @@ bool pkgGenerateSrcCache(pkgSourceList &List,OpProgress &Progress,
       TotalSize += Buf.st_size;
    }
    
-   if (pkgAddSourcesSize(TotalSize) == false)
+   if (pkgAddStatusSize(TotalSize) == false)
       return false;
    
    // Generate the pkg source cache
@@ -759,7 +780,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    
    // Compute the progress
    unsigned long TotalSize = 0;
-   if (pkgAddSourcesSize(TotalSize) == false)
+   if (pkgAddStatusSize(TotalSize) == false)
       return false;
 
    unsigned long CurrentSize = 0;
@@ -873,7 +894,7 @@ MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
    
    // Compute the progress
    unsigned long TotalSize = 0;
-   if (pkgAddSourcesSize(TotalSize) == false)
+   if (pkgAddStatusSize(TotalSize) == false)
    {
       delete Map;
       return 0;

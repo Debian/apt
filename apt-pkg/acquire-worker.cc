@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.22 1999/05/23 06:47:43 jgg Exp $
+// $Id: acquire-worker.cc,v 1.23 1999/07/26 17:46:07 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -26,7 +26,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <wait.h>
 #include <stdio.h>
 #include <errno.h>
 									/*}}}*/
@@ -84,8 +83,7 @@ pkgAcquire::Worker::~Worker()
    if (Process > 0)
    {
       kill(Process,SIGINT);
-      if (waitpid(Process,0,0) != Process)
-	 _error->Warning("I waited but nothing was there!");
+      ExecWait(Process,Access.c_str(),true);
    }   
 }
 									/*}}}*/
@@ -471,8 +469,7 @@ bool pkgAcquire::Worker::MethodFailure()
 {
    _error->Error("Method %s has died unexpectedly!",Access.c_str());
    
-   if (waitpid(Process,0,0) != Process)
-      _error->Warning("I waited but nothing was there!");
+   ExecWait(Process,Access.c_str(),true);
    Process = -1;
    close(InFd);
    close(OutFd);

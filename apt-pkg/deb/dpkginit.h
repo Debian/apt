@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkginit.h,v 1.1 1998/11/23 07:03:11 jgg Exp $
+// $Id: dpkginit.h,v 1.2 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
 
    DPKG init - Initialize the dpkg stuff
@@ -23,10 +23,11 @@ class pkgDpkgLock
       
    public:
    
-   bool GetLock();
+   bool CheckUpdates();
+   bool GetLock(bool WithUpdates);
    void Close();
-   
-   pkgDpkgLock();
+
+   pkgDpkgLock(bool WithUpdates = true);
    ~pkgDpkgLock();
 };
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.26 1999/06/27 04:55:54 jgg Exp $
+// $Id: strutl.cc,v 1.27 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -663,6 +663,33 @@ bool StrToTime(string Val,time_t &Result)
    
    // Convert to local time and then to GMT
    Result = timegm(&Tm);
+   return true;
+}
+									/*}}}*/
+// StrToNum - Convert a fixed length string to a number			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used in decoding the crazy fixed length string headers in 
+   tar and ar files. */
+bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base)
+{
+   char S[30];
+   if (Len >= sizeof(S))
+      return false;
+   memcpy(S,Str,Len);
+   S[Len] = 0;
+   
+   // All spaces is a zero
+   Res = 0;
+   unsigned I;
+   for (I = 0; S[I] == ' '; I++);
+   if (S[I] == 0)
+      return true;
+   
+   char *End;
+   Res = strtoul(S,&End,Base);
+   if (End == S)
+      return false;
+   
    return true;
 }
 									/*}}}*/

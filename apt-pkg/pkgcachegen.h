@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.16 1999/07/15 03:15:48 jgg Exp $
+// $Id: pkgcachegen.h,v 1.17 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -45,7 +45,7 @@ class pkgCacheGenerator
    
    DynamicMMap &Map;
    pkgCache Cache;
-   OpProgress &Progress;
+   OpProgress *Progress;
    
    string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
@@ -59,8 +59,9 @@ class pkgCacheGenerator
 
    public:   
 
+   void DropProgress() {Progress = 0;};
    bool SelectFile(string File,unsigned long Flags = 0);
-   bool MergeList(ListParser &List);
+   bool MergeList(ListParser &List,pkgCache::VerIterator *Ver = 0);
    inline pkgCache &GetCache() {return Cache;};
    inline pkgCache::PkgFileIterator GetCurFile() 
          {return pkgCache::PkgFileIterator(Cache,CurrentFile);};
@@ -111,5 +112,9 @@ class pkgCacheGenerator::ListParser
    
    virtual ~ListParser() {};
 };
+
+bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
+		    unsigned long &CurrentSize,unsigned long TotalSize);
+bool pkgAddStatusSize(unsigned long &TotalSize);
 
 #endif

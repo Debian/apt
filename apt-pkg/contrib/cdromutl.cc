@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.7 1999/07/02 22:21:01 jgg Exp $
+// $Id: cdromutl.cc,v 1.8 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -93,18 +93,7 @@ bool UnmountCdrom(string Path)
    }
 
    // Wait for mount
-   int Status = 0;
-   while (waitpid(Child,&Status,0) != Child)
-   {
-      if (errno == EINTR)
-	 continue;
-      return _error->Errno("waitpid","Couldn't wait for subprocess");
-   }
-   
-   // Check for an error code.
-   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
-      return false;
-   return true;
+   return ExecWait(Child,"mount",true);
 }
 									/*}}}*/
 // MountCdrom - Mount a cdrom						/*{{{*/
@@ -142,18 +131,7 @@ bool MountCdrom(string Path)
    }
 
    // Wait for mount
-   int Status = 0;
-   while (waitpid(Child,&Status,0) != Child)
-   {
-      if (errno == EINTR)
-	 continue;
-      return _error->Errno("waitpid","Couldn't wait for subprocess");
-   }
-   
-   // Check for an error code.
-   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
-      return false;
-   return true;
+   return ExecWait(Child,"mount",true);
 }
 									/*}}}*/
 // IdentCdrom - Generate a unique string for this CD			/*{{{*/

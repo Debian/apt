@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.20 1999/06/04 05:54:20 jgg Exp $
+// $Id: deblistparser.cc,v 1.21 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -24,6 +24,7 @@
 /* */
 debListParser::debListParser(FileFd &File) : Tags(File)
 {
+   Arch = _config->Find("APT::architecture");
 }
 									/*}}}*/
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
@@ -157,7 +158,7 @@ unsigned short debListParser::VersionHash()
       char *I = S;
       for (; Start != End; Start++)
 	 if (isspace(*Start) == 0)
-	    *I++ = *Start;
+	    *I++ = tolower(*Start);
       
       Result = AddCRC16(Result,S,I - S);
    }
@@ -466,11 +467,11 @@ bool debListParser::GrabWord(string Word,WordList *List,int Count,
 bool debListParser::Step()
 {
    iOffset = Tags.Offset();
-   string Arch = _config->Find("APT::architecture");
    while (Tags.Step(Section) == true)
-   {
-      /* See if this is the correct Architecture, if it isnt then we
-         drop the whole section */
+   {      
+      /* See if this is the correct Architecture, if it isn't then we
+         drop the whole section. A missing arch tag only happens (in theory)
+         inside the Status file, so that is a positive return */
       const char *Start;
       const char *Stop;
       if (Section.Find("Architecture",Start,Stop) == false)

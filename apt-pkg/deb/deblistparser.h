@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.h,v 1.7 1999/05/23 22:55:55 jgg Exp $
+// $Id: deblistparser.h,v 1.8 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
    
    Debian Package List Parser - This implements the abstract parser 
@@ -20,6 +20,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    pkgTagFile Tags;
    pkgTagSection Section;
    unsigned long iOffset;
+   string Arch;
    
    // Parser Helper
    struct WordList

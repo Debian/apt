@@ -1,10 +1,14 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkginit.cc,v 1.2 1999/04/18 06:36:36 jgg Exp $
+// $Id: dpkginit.cc,v 1.3 1999/07/26 17:46:08 jgg Exp $
 /* ######################################################################
 
    DPKG init - Initialize the dpkg stuff
 
+   This class provides the locking mechanism used by dpkg for its 
+   database area. It does the proper consistency checks and acquires the
+   correct kind of lock.
+   
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
@@ -24,10 +28,10 @@
 // DpkgLock::pkgDpkgLock - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDpkgLock::pkgDpkgLock()
+pkgDpkgLock::pkgDpkgLock(bool WithUpdates)
 {
    LockFD = -1;
-   GetLock();
+   GetLock(WithUpdates);
 }
 									/*}}}*/
 // DpkgLock::~pkgDpkgLock - Destructor					/*{{{*/
@@ -42,7 +46,7 @@ pkgDpkgLock::~pkgDpkgLock()
 // ---------------------------------------------------------------------
 /* This mirrors the operations dpkg does when it starts up. Note the
    checking of the updates directory. */
-bool pkgDpkgLock::GetLock()
+bool pkgDpkgLock::GetLock(bool WithUpdates)
 {
    // Disable file locking
    if (_config->FindB("Debug::NoLocking",false) == true)
@@ -56,41 +60,15 @@ bool pkgDpkgLock::GetLock()
    if (LockFD == -1)
       return _error->Error("Unable to lock the administration directory, "
 			   "are you root?");
-   
-   // Check for updates.. (dirty)
-   string File = AdminDir + "updates/";
-   DIR *DirP = opendir(File.c_str());
-   if (DirP != 0)
+
+   // See if we need to abort with a dirty journal
+   if (WithUpdates == true && CheckUpdates() == false)
    {
-      /* We ignore any files that are not all digits, this skips .,.. and 
-         some tmp files dpkg will leave behind.. */
-      bool Damaged = false;
-      for (struct dirent *Ent = readdir(DirP); Ent != 0; Ent = readdir(DirP))
-      {
-	 Damaged = true;
-	 for (unsigned int I = 0; Ent->d_name[I] != 0; I++)
-	 {
-	    // Check if its not a digit..
-	    if (isdigit(Ent->d_name[I]) == 0)
-	    {
-	       Damaged = false;
-	       break;
-	    }
-	 }
-	 if (Damaged == true)
-	    break;
-      }
-      closedir(DirP);
-       	 
-      // Woops, we have to run dpkg to rewrite the status file
-      if (Damaged == true)
-      {
-	 Close();
-	 return _error->Error("dpkg was interrupted, you must manually "
-			      "run 'dpkg --configure -a' to correct the problem. ");
-      }
+      Close();
+      return _error->Error("dpkg was interrupted, you must manually "
+			   "run 'dpkg --configure -a' to correct the problem. ");
    }
-   
+      
    return true;
 }
 									/*}}}*/
@@ -103,3 +81,39 @@ void pkgDpkgLock::Close()
    LockFD = -1;
 }
 									/*}}}*/
+// DpkgLock::CheckUpdates - Check if the updates dir is dirty		/*{{{*/
+// ---------------------------------------------------------------------
+/* This does a check of the updates directory to see if it has any entries
+   in it. */
+bool pkgDpkgLock::CheckUpdates()
+{
+   // Check for updates.. (dirty)
+   string File = flNotFile(_config->Find("Dir::State::status")) + "updates/";
+   DIR *DirP = opendir(File.c_str());
+   if (DirP == 0)
+      return true;
+   
+   /* We ignore any files that are not all digits, this skips .,.. and 
+      some tmp files dpkg will leave behind.. */
+   bool Damaged = false;
+   for (struct dirent *Ent = readdir(DirP); Ent != 0; Ent = readdir(DirP))
+   {
+      Damaged = true;
+      for (unsigned int I = 0; Ent->d_name[I] != 0; I++)
+      {
+	 // Check if its not a digit..
+	 if (isdigit(Ent->d_name[I]) == 0)
+	 {
+	    Damaged = false;
+	    break;
+	 }
+      }
+      if (Damaged == true)
+	 break;
+   }
+   closedir(DirP);
+
+   return Damaged;
+}
+									/*}}}*/
+   
