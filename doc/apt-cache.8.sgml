@@ -55,11 +55,11 @@
    from the package metadata.
 
    <para>
-   Unless the <option/-h/, or <option/--help/ option is given one of the
+   Unless the <option/-h/, or <option/--help/ option is given, one of the
    commands below must be present.
 
    <VariableList>
-     <VarListEntry><Term>add</Term>
+     <VarListEntry><Term>add <replaceable/file(s)/</Term>
      <ListItem><Para>
      <literal/add/ adds the named package index files to the package cache.
      This is for debugging only.
@@ -72,7 +72,7 @@
      the sources in &sources-list; and from <filename>/var/lib/dpkg/status</>.
      </VarListEntry>
 
-     <VarListEntry><Term>showpkg</Term>
+     <VarListEntry><Term>showpkg <replaceable/pkg(s)/</Term>
      <ListItem><Para>
      <literal/showpkg/ displays information about the packages listed on the 
      command line. Remaining arguments are package names. The available 
@@ -102,7 +102,7 @@ Reverse Provides:
      Thus it may be seen that libreadline2, version 2.1-12, depends on libc5 and
      ncurses3.0 which must be installed for libreadline2 to work. 
      In turn, libreadlineg2 and libreadline2-altdev depend on libreadline2. If
-     libreadline2 is installed, libc5, ncurses3.0, and ldso must also be
+     libreadline2 is installed, libc5 and ncurses3.0 (and ldso) must also be
      installed; libreadlineg2 and libreadline2-altdev do not have to be
      installed. For the specific meaning of the remainder of the output it
      is best to consult the apt source code.
@@ -145,14 +145,14 @@ Reverse Provides:
        <literal/Mixed virtual packages/ is the number of packages that either 
        provide a particular virtual package or have the virtual package name 
        as the package name. For instance, in the Debian GNU/Linux system, 
-       debconf is both an actual package, and provided by the debconf-tiny
+       "debconf" is both an actual package, and provided by the debconf-tiny
        package.
        </listitem>
    
        <listitem><para>
        <literal/Missing/ is the number of package names that were referenced in
        a dependency but were not provided by any package. Missing packages may 
-       be in evidence if a full distribution is not accesssed, or if a package
+       be in evidence if a full distribution is not accessed, or if a package
        (real or virtual) has been dropped from the distribution. Usually they
        are referenced from Conflicts statements.
        </listitem>
@@ -172,12 +172,11 @@ Reverse Provides:
      </itemizedlist>
      </VarListEntry>
      
-     <VarListEntry><Term>showsrc</Term>
+     <VarListEntry><Term>showsrc <replaceable/pkg(s)/</Term>
      <ListItem><Para>
      <literal/showsrc/ displays all the source package records that match
      the given package names. All versions are shown, as well as all 
      records that declare the name to be a Binary.
-     named packages.
      </VarListEntry>
      
      <VarListEntry><Term>dump</Term>
@@ -198,63 +197,63 @@ Reverse Provides:
      package cache.
      </VarListEntry>
 
-     <VarListEntry><Term>show</Term>
+     <VarListEntry><Term>show <replaceable/pkg(s)/</Term>
      <ListItem><Para>
      <literal/show/ performs a function similar to 
-     <command>dpkg --print-avail</>, it displays the package records for the 
+     <command>dpkg --print-avail</>i; it displays the package records for the 
      named packages.
      </VarListEntry>
 
-     <VarListEntry><Term>search</Term>
+     <VarListEntry><Term>search <replaceable/regex [ regex ... ]/</Term>
      <ListItem><Para>
      <literal/search/ performs a full text search on all available package 
-     files for the regex pattern given. It searchs the package names and the 
-     descriptions for an occurance of the string and prints out the package 
+     files for the regex pattern given. It searches the package names and the 
+     descriptions for an occurrence of the string and prints out the package 
      name and the short description. If <option/--full/ is given then output 
-     identical to <literal/show/ is produced for each matched package and 
+     identical to <literal/show/ is produced for each matched package, and 
      if <option/--names-only/ is given then the long description is not 
      searched, only the package name is.
      <para>
-     Seperate arguments can be used to specified multiple search patterns that 
-     are and'd together.
+     Seperate arguments can be used to specify multiple search patterns that 
+     are and'ed together.
      </VarListEntry>
 
-     <VarListEntry><Term>depends</Term>
+     <VarListEntry><Term>depends <replaceable/pkg(s)/</Term>
      <ListItem><Para>
      <literal/depends/ shows a listing of each dependency a package has 
-     and all the possible other packages that can fullfill that dependency.
+     and all the possible other packages that can fulfill that dependency.
      </VarListEntry>
 
-     <VarListEntry><Term>pkgnames</Term>
+     <VarListEntry><Term>pkgnames <replaceable/[ prefix ]/</Term>
      <ListItem><Para>
      This command prints the name of each package in the system. The optional
      argument is a prefix match to filter the name list. The output is suitable
      for use in a shell tab complete function and the output is generated 
-     extremly quickly. This command is best used with the 
+     extremely quickly. This command is best used with the 
      <option/--generate/ option.
      </VarListEntry>
      
-     <VarListEntry><Term>dotty</Term>
+     <VarListEntry><Term>dotty <replaceable/pkg(s)/</Term>
      <ListItem><Para>
      <literal/dotty/ takes a list of packages on the command line and 
-     gernerates output suitable for use by dotty from the 
+     generates output suitable for use by dotty from the 
      <ulink url="http://www.research.att.com/sw/tools/graphviz/">GraphViz</>
      package. The result will be a set of nodes and edges representing the 
      relationships between the packages. By default the given packages will 
-     trace out all dependent packages which can produce a very large graph. 
-     This can be turned off by setting the 
-     <literal>APT::Cache::GivenOnly</> option.
+     trace out all dependent packages; this can produce a very large graph. 
+     To limit the output to only the packages listed on the command line,
+     set the <literal>APT::Cache::GivenOnly</> option.
 
      <para>
-     The resulting nodes will have several shapse, normal packages are boxes,
+     The resulting nodes will have several shapes; normal packages are boxes,
      pure provides are triangles, mixed provides are diamonds, 
-     hexagons are missing packages. Orange boxes mean recursion was stopped 
-     [leaf packages], blue lines are prre-depends, green lines are conflicts.
+     missing packages are hexagons. Orange boxes mean recursion was stopped 
+     [leaf packages], blue lines are pre-depends, green lines are conflicts.
 
      <para>
      Caution, dotty cannot graph larger sets of packages.
      
-     <VarListEntry><Term>policy</Term>
+     <VarListEntry><Term>policy <replaceable/[ pkg(s) ]</Term>
      <ListItem><Para>
      <literal/policy/ is ment to help debug issues relating to the 
      preferences file. With no arguments it will print out the 
@@ -287,14 +286,14 @@ Reverse Provides:
      <VarListEntry><term><option/-q/</><term><option/--quiet/</>
      <ListItem><Para>
      Quiet; produces output suitable for logging, omitting progress indicators.
-     More qs will produce more quite up to a maximum of 2. You can also use
-     <option/-q=#/ to set the quiet level, overriding the configuration file.
+     More qs will produce more quietness up to a maximum of 2. You can also use
+     <option/-q=#/ to set the quietness level, overriding the configuration file.
      Configuration Item: <literal/quiet/.
      </VarListEntry>
 
      <VarListEntry><term><option/-i/</><term><option/--important/</>
      <ListItem><Para>
-     Print only important deps; for use with unmet causes only Depends and 
+     Print only important deps; for use with unmet. Causes only Depends and 
      Pre-Depends relations to be printed.
      Configuration Item: <literal/APT::Cache::Important/.
      </VarListEntry>
@@ -307,21 +306,21 @@ Reverse Provides:
 
      <VarListEntry><term><option/-a/</><term><option/--all-versions/</>
      <ListItem><Para>
-     Print full records for all available versions, this is only applicable to 
-     the show command. 
+     Print full records for all available versions. This is only applicable to 
+     the <literal/show/ command. 
      Configuration Item: <literal/APT::Cache::AllVersions/.
      </VarListEntry>
 
      <VarListEntry><term><option/-g/</><term><option/--generate/</>
      <ListItem><Para>
      Perform automatic package cache regeneration, rather than use the cache 
-     as it is. This is the default, to turn it off use <option/--no-generate/.
+     as it is. This is the default; to turn it off, use <option/--no-generate/.
      Configuration Item: <literal/APT::Cache::Generate/.
      </VarListEntry>
 
      <VarListEntry><term><option/--names-only/</><term><options/-n/</>
      <ListItem><Para>
-     Only search on the package names, not the long description. 
+     Only search on the package names, not the long descriptions. 
      Configuration Item: <literal/APT::Cache::NamesOnly/.
      </VarListEntry>
 
@@ -348,20 +347,20 @@ Reverse Provides:
    <variablelist>
      <VarListEntry><term><filename>/etc/apt/sources.list</></term>
      <ListItem><Para>
-     locations to fetch packages from.
+     Locations to fetch packages from.
      Configuration Item: <literal/Dir::Etc::SourceList/.
      </VarListEntry>
      
      <VarListEntry><term><filename>&statedir;/lists/</></term>
      <ListItem><Para>
-     storage area for state information for each package resource specified in
+     Storage area for state information for each package resource specified in
      &sources-list;
      Configuration Item: <literal/Dir::State::Lists/.
      </VarListEntry>
   
      <VarListEntry><term><filename>&statedir;/lists/partial/</></term>
      <ListItem><Para>
-     storage area for state information in transit.
+     Storage area for state information in transit.
      Configuration Item: <literal/Dir::State::Lists/ (implicit partial).
      </VarListEntry>     
    </variablelist>
