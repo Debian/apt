@@ -8,6 +8,10 @@ check_stamp()
     stamp="$1"
     interval="$2"
 
+    if [ $interval -eq 0 ]; then
+        return 1
+    fi
+
     if [ ! -f $stamp ]; then
         return 0
     fi
