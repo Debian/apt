@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.13 1999/03/23 20:26:39 che Exp $
+# $Id: rules,v 1.14 1999/04/07 06:34:57 jgg Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -68,7 +68,7 @@ libapt-pkg-doc: build debian/shlibs.local
 #
 # libapt-pkg-doc install
 #
-	cp -a build/docs/cache* build/docs/design* build/docs/dpkg-tech* \
+	-cp -a build/docs/cache* build/docs/design* build/docs/dpkg-tech* \
 	  build/docs/files* build/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
 	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
 	dh_installdocs -p$@
@@ -113,12 +113,12 @@ apt: build debian/shlibs.local
 #	cp debian/sources.list debian/tmp/etc/apt/
 
 	# Copy the users guide	
-	cp build/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
-	cp -a build/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
+	-cp build/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
+	-cp -a build/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
 	
 	# Copy the offline guide	
-	cp build/docs/offline.text debian/tmp/usr/doc/apt/offline.txt
-	cp -a build/docs/offline.html/* debian/tmp/usr/doc/apt/offline.html/
+	-cp build/docs/offline.text debian/tmp/usr/doc/apt/offline.txt
+	-cp -a build/docs/offline.html/* debian/tmp/usr/doc/apt/offline.html/
 	
 	cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
 	
