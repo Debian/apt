@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.h,v 1.5 2001/02/23 06:47:05 jgg Exp $
+// $Id: init.h,v 1.6 2001/03/03 23:02:39 tausq Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -19,7 +19,7 @@
 // See the makefile
 #define APT_PKG_MAJOR 3
 #define APT_PKG_MINOR 1
-#define APT_PKG_RELEASE 1
+#define APT_PKG_RELEASE 2
 
 extern const char *pkgVersion;
 extern const char *pkgLibVersion;

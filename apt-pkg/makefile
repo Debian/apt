@@ -13,7 +13,7 @@ include ../buildlib/defaults.mak
 LIBRARY=apt-pkg
 LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=3.1
-MINOR=1
+MINOR=2
 SLIBS=$(PTHREADLIB)
 
 # Source code for the contributed non-core things
