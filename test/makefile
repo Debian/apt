@@ -16,3 +16,9 @@ PROGRAM=scratch-test
 SLIBS = -lapt-pkg 
 SOURCE = scratch.cc
 include $(PROGRAM_H)
+
+# Version compare tester
+PROGRAM=versiontest
+SLIBS = -lapt-pkg 
+SOURCE = versiontest.cc
+include $(PROGRAM_H)
