@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.26 1999/01/30 08:08:54 jgg Exp $
+// $Id: acquire.cc,v 1.27 1999/03/13 23:30:04 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -700,24 +700,16 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    if (NewTime.tv_sec - Time.tv_sec == 6 && NewTime.tv_usec > Time.tv_usec ||
        NewTime.tv_sec - Time.tv_sec > 6)
    {    
-      // Compute the delta time with full accuracy
-      long usdiff = NewTime.tv_usec - Time.tv_usec;
-      long sdiff = NewTime.tv_sec - Time.tv_sec;
+      double Delta = NewTime.tv_sec - Time.tv_sec + 
+	             (NewTime.tv_usec - Time.tv_usec)/1000000.0;
       
-      // Borrow
-      if (usdiff < 0)
-      {	 
-	 usdiff += 1000000;
-	 sdiff--;
-      }
-            
       // Compute the CPS value
-      if (sdiff == 0 && usdiff == 0)
+      if (Delta < 0.01)
 	 CurrentCPS = 0;
       else
-	 CurrentCPS = (CurrentBytes - LastBytes)/(sdiff + usdiff/1000000.0);
+	 CurrentCPS = (CurrentBytes - LastBytes)/Delta;
       LastBytes = CurrentBytes;
-      ElapsedTime = NewTime.tv_sec - StartTime.tv_sec;
+      ElapsedTime = Delta;
       Time = NewTime;
    }
 }
