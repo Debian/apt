@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.21 2001/05/07 05:35:46 jgg Exp $
+// $Id: dpkgpm.cc,v 1.22 2001/05/27 04:40:57 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -354,7 +354,8 @@ bool pkgDPkgPM::Go()
       
       unsigned int n = 0;
       unsigned long Size = 0;
-      Args[n++] = _config->Find("Dir::Bin::dpkg","dpkg").c_str();
+      string Tmp = _config->Find("Dir::Bin::dpkg","dpkg").c_str();
+      Args[n++] = Tmp.c_str();
       Size += strlen(Args[n-1]);
       
       // Stick in any custom dpkg options
