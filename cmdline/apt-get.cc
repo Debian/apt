@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.83 1999/10/22 05:58:54 jgg Exp $
+// $Id: apt-get.cc,v 1.84 1999/10/24 06:03:48 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1216,6 +1216,15 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 /* */
 bool DoClean(CommandLine &CmdL)
 {
+   // Lock the archive directory
+   FileFd Lock;
+   if (_config->FindB("Debug::NoLocking",false) == false)
+   {
+      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
+      if (_error->PendingError() == true)
+	 return _error->Error("Unable to lock the download directory");
+   }
+   
    pkgAcquire Fetcher;
    Fetcher.Clean(_config->FindDir("Dir::Cache::archives"));
    Fetcher.Clean(_config->FindDir("Dir::Cache::archives") + "partial/");
@@ -1240,6 +1249,15 @@ class LogCleaner : public pkgArchiveCleaner
 
 bool DoAutoClean(CommandLine &CmdL)
 {
+   // Lock the archive directory
+   FileFd Lock;
+   if (_config->FindB("Debug::NoLocking",false) == false)
+   {
+      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
+      if (_error->PendingError() == true)
+	 return _error->Error("Unable to lock the download directory");
+   }
+   
    CacheFile Cache;
    if (Cache.Open() == false)
       return false;
