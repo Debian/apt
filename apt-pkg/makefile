@@ -12,7 +12,7 @@ include ../buildlib/defaults.mak
 # The library name, don't forget to update init.h
 LIBRARY=apt-pkg
 MAJOR=3.1
-MINOR=0
+MINOR=1
 SLIBS=$(PTHREADLIB)
 
 # Source code for the contributed non-core things
