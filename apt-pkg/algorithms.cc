@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.2 1998/07/12 01:25:59 jgg Exp $
+// $Id: algorithms.cc,v 1.3 1998/07/12 23:58:20 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -9,10 +9,10 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/algorithms.h"
+#pragma implementation "apt-pkg/algorithms.h"
 #endif 
-#include <pkglib/algorithms.h>
-#include <pkglib/error.h>
+#include <apt-pkg/algorithms.h>
+#include <apt-pkg/error.h>
 #include <iostream.h>
 									/*}}}*/
 

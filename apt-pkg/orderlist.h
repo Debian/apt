@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.h,v 1.1 1998/07/07 04:17:01 jgg Exp $
+// $Id: orderlist.h,v 1.2 1998/07/12 23:58:29 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -18,10 +18,10 @@
 #define PKGLIB_ORDERLIST_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/orderlist.h"
+#pragma interface "apt-pkg/orderlist.h"
 #endif 
 
-#include <pkglib/pkgcache.h>
+#include <apt-pkg/pkgcache.h>
 
 class pkgDepCache;
 class pkgOrderList

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.2 1998/07/09 05:12:33 jgg Exp $
+// $Id: configuration.cc,v 1.3 1998/07/12 23:58:44 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -13,9 +13,9 @@
 									/*}}}*/
 // Include files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/configuration.h"
+#pragma implementation "apt-pkg/configuration.h"
 #endif
-#include <pkglib/configuration.h>
+#include <apt-pkg/configuration.h>
 #include <strutl.h>
 
 #include <stdio.h>

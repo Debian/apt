@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.h,v 1.1 1998/07/09 05:12:27 jgg Exp $
+// $Id: init.h,v 1.2 1998/07/12 23:58:27 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -14,7 +14,7 @@
 #ifndef PKGLIB_INIT_H
 #define PKGLIB_INIT_H
 
-#include <pkglib/configuration.h>
+#include <apt-pkg/configuration.h>
 
 bool pkglibInitialize(Configuration &Cnf);
 

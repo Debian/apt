@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.1 1998/07/09 05:12:27 jgg Exp $
+// $Id: init.cc,v 1.2 1998/07/12 23:58:26 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -8,7 +8,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
-#include <pkglib/init.h>
+#include <apt-pkg/init.h>
 									/*}}}*/
 
 // pkglibInitialize - Initialize the configuration class		/*{{{*/

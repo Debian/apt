@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.h,v 1.2 1998/07/07 04:17:09 jgg Exp $
+// $Id: version.h,v 1.3 1998/07/12 23:58:43 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -16,7 +16,7 @@
 #define PKGLIB_VERSION_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/version.h"
+#pragma interface "apt-pkg/version.h"
 #endif 
 
 #include <string>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.3 1998/07/12 01:26:02 jgg Exp $
+// $Id: packagemanager.cc,v 1.4 1998/07/12 23:58:30 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -14,13 +14,13 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/packagemanager.h"
+#pragma implementation "apt-pkg/packagemanager.h"
 #endif
-#include <pkglib/packagemanager.h>
-#include <pkglib/orderlist.h>
-#include <pkglib/depcache.h>
-#include <pkglib/error.h>
-#include <pkglib/version.h>
+#include <apt-pkg/packagemanager.h>
+#include <apt-pkg/orderlist.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/version.h>
 									/*}}}*/
 
 // PM::PackageManager - Constructor					/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.2 1998/07/12 01:26:01 jgg Exp $
+// $Id: depcache.h,v 1.3 1998/07/12 23:58:25 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -40,10 +40,10 @@
 #define PKGLIB_DEPCACHE_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/depcache.h"
+#pragma interface "apt-pkg/depcache.h"
 #endif
 
-#include <pkglib/pkgcache.h>
+#include <apt-pkg/pkgcache.h>
 
 class pkgDepCache : public pkgCache
 {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.h,v 1.3 1998/07/05 05:34:01 jgg Exp $
+// $Id: deblistparser.h,v 1.4 1998/07/12 23:58:54 jgg Exp $
 /* ######################################################################
    
    Debian Package List Parser - This implements the abstract parser 
@@ -12,8 +12,8 @@
 #ifndef PKGLIB_DEBLISTPARSER_H
 #define PKGLIB_DEBLISTPARSER_H
 
-#include <pkglib/pkgcachegen.h>
-#include <pkglib/tagfile.h>
+#include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/tagfile.h>
 
 class debListParser : public pkgCacheGenerator::ListParser
 {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.5 1998/07/12 01:26:00 jgg Exp $
+// $Id: cacheiterators.h,v 1.6 1998/07/12 23:58:23 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -24,7 +24,7 @@
    that has the depends pointer as a member. The provide iterator has the
    same system.
    
-   This header is not user includable, please use pkglib/pkgcache.h
+   This header is not user includable, please use apt-pkg/pkgcache.h
    
    ##################################################################### */
 									/*}}}*/
@@ -33,7 +33,7 @@
 #define PKGLIB_CACHEITERATORS_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/cacheiterators.h"
+#pragma interface "apt-pkg/cacheiterators.h"
 #endif 
 
 // Package Iterator

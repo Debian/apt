@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.8 1998/07/09 05:12:27 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.9 1998/07/12 23:58:34 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -11,12 +11,12 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/pkgcachegen.h"
+#pragma implementation "apt-pkg/pkgcachegen.h"
 #endif
 
-#include <pkglib/pkgcachegen.h>
-#include <pkglib/error.h>
-#include <pkglib/version.h>
+#include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/version.h>
 #include <strutl.h>
 
 #include <sys/stat.h>

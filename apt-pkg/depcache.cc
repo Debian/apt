@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.1 1998/07/07 04:17:01 jgg Exp $
+// $Id: depcache.cc,v 1.2 1998/07/12 23:58:24 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -9,12 +9,12 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/depcache.h"
+#pragma implementation "apt-pkg/depcache.h"
 #endif
-#include <pkglib/depcache.h>
+#include <apt-pkg/depcache.h>
 
-#include <pkglib/version.h>
-#include <pkglib/error.h>
+#include <apt-pkg/version.h>
+#include <apt-pkg/error.h>
 									/*}}}*/
 
 // DepCache::pkgDepCache - Constructors					/*{{{*/

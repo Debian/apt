@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.2 1998/07/09 05:12:28 jgg Exp $
+// $Id: sourcelist.cc,v 1.3 1998/07/12 23:58:36 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -9,13 +9,13 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/sourcelist.h"
+#pragma implementation "apt-pkg/sourcelist.h"
 #endif
 
-#include <pkglib/sourcelist.h>
-#include <pkglib/error.h>
-#include <pkglib/fileutl.h>
-#include <pkglib/configuration.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/configuration.h>
 #include <strutl.h>
 
 #include <fstream.h>

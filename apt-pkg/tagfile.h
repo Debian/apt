@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.3 1998/07/07 04:17:07 jgg Exp $
+// $Id: tagfile.h,v 1.4 1998/07/12 23:58:40 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -22,10 +22,10 @@
 #define PKGLIB_TAGFILE_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/tagfile.h"
+#pragma interface "apt-pkg/tagfile.h"
 #endif 
 
-#include <pkglib/fileutl.h>
+#include <apt-pkg/fileutl.h>
 
 class pkgTagSection
 {

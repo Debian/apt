@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.4 1998/07/07 04:17:14 jgg Exp $
+// $Id: mmap.cc,v 1.5 1998/07/12 23:58:50 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -22,12 +22,12 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/mmap.h"
+#pragma implementation "apt-pkg/mmap.h"
 #endif 
 
 #define _BSD_SOURCE
-#include <pkglib/mmap.h>
-#include <pkglib/error.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/error.h>
 
 #include <sys/mman.h>
 #include <sys/stat.h>

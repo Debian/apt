@@ -1,0 +1,38 @@
+# -*- make -*-
+BASE=..
+
+# Header location
+SUBDIRS = deb contrib
+HEADER_TARGETDIRS = apt-pkg
+
+# Bring in the default rules
+include ../buildlib/defaults.mak
+
+# The library name
+LIBRARY=apt-pkg
+MAJOR=2
+MINOR=0.0
+
+# Source code for the contributed non-core things
+SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
+         contrib/configuration.cc
+	 
+# Source code for the main library
+SOURCE+= pkgcache.cc version.cc fileutl.cc pkgcachegen.cc depcache.cc \
+         orderlist.cc tagfile.cc sourcelist.cc packagemanager.cc \
+	 algorithms.cc init.cc templates.cc
+	 
+# Source code for the debian specific components	 
+SOURCE+= deb/deblistparser.cc
+
+# Public apt-pkg header files
+HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
+          error.h orderlist.h sourcelist.h configuration.h fileutl.h \
+          packagemanager.h tagfile.h deblistparser.h init.h pkgcache.h \
+          version.h
+HEADERS := $(addprefix apt-pkg/,$(HEADERS))
+
+# Private header files
+HEADERS+= strutl.h system.h
+
+include $(LIBRARY_H)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.4 1998/07/07 04:17:05 jgg Exp $
+// $Id: pkgcachegen.h,v 1.5 1998/07/12 23:58:35 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -14,10 +14,10 @@
 #define PKGLIB_PKGCACHEGEN_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/pkgcachegen.h"
+#pragma interface "apt-pkg/pkgcachegen.h"
 #endif 
 
-#include <pkglib/pkgcache.h>
+#include <apt-pkg/pkgcache.h>
 
 class pkgCacheGenerator
 {

@@ -1,11 +1,11 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.5 1998/07/07 04:17:03 jgg Exp $
+// $Id: pkgcache.h,v 1.6 1998/07/12 23:58:33 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
    
-   Please see doc/pkglib/cache.sgml for a more detailed description of 
+   Please see doc/apt-pkg/cache.sgml for a more detailed description of 
    this format. Also be sure to keep that file up-to-date!!
    
    Clients should always use the CacheIterators classes for access to the
@@ -21,12 +21,12 @@
 #define PKGLIB_PKGCACHE_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/pkgcache.h"
+#pragma interface "apt-pkg/pkgcache.h"
 #endif 
 
 #include <string>
 #include <time.h>
-#include <pkglib/mmap.h>
+#include <apt-pkg/mmap.h>
 
 class pkgCache
 {
@@ -258,7 +258,7 @@ struct pkgCache::StringItem
    unsigned long NextItem;      // StringItem
 };
 
-#include <pkglib/cacheiterators.h>
+#include <apt-pkg/cacheiterators.h>
 
 inline pkgCache::PkgIterator pkgCache::PkgBegin() 
        {return PkgIterator(*this);};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.cc,v 1.3 1998/07/07 04:17:08 jgg Exp $
+// $Id: version.cc,v 1.4 1998/07/12 23:58:42 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -18,11 +18,11 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/version.h"
+#pragma implementation "apt-pkg/version.h"
 #endif 
 
-#include <pkglib/version.h>
-#include <pkglib/pkgcache.h>
+#include <apt-pkg/version.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <stdlib.h>
 									/*}}}*/

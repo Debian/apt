@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.h,v 1.2 1998/07/07 04:17:11 jgg Exp $
+// $Id: error.h,v 1.3 1998/07/12 23:58:47 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -42,7 +42,7 @@
 #define PKGLIB_ERROR_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/error.h"
+#pragma interface "apt-pkg/error.h"
 #endif 
 
 #include <string>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.2 1998/07/09 05:12:34 jgg Exp $
+// $Id: configuration.h,v 1.3 1998/07/12 23:58:45 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -25,7 +25,7 @@
 #define PKGLIB_CONFIGURATION_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/configuration.h"
+#pragma interface "apt-pkg/configuration.h"
 #endif 
 
 #include <string>

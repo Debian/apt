@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.1 1998/07/07 04:17:00 jgg Exp $
+// $Id: algorithms.h,v 1.2 1998/07/12 23:58:22 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -22,11 +22,11 @@
 #define PKGLIB_ALGORITHMS_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/algorithms.h"
+#pragma interface "apt-pkg/algorithms.h"
 #endif 
 
-#include <pkglib/packagemanager.h>
-#include <pkglib/depcache.h>
+#include <apt-pkg/packagemanager.h>
+#include <apt-pkg/depcache.h>
 
 class pkgSimulate : public pkgPackageManager
 {

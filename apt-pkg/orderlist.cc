@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.1 1998/07/07 04:17:01 jgg Exp $
+// $Id: orderlist.cc,v 1.2 1998/07/12 23:58:28 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -50,12 +50,12 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/orderlist.h"
+#pragma implementation "apt-pkg/orderlist.h"
 #endif 
-#include <pkglib/orderlist.h>
-#include <pkglib/depcache.h>
-#include <pkglib/error.h>
-#include <pkglib/version.h>
+#include <apt-pkg/orderlist.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/version.h>
 									/*}}}*/
 
 pkgOrderList *pkgOrderList::Me = 0;

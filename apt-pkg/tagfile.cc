@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.6 1998/07/09 05:12:32 jgg Exp $
+// $Id: tagfile.cc,v 1.7 1998/07/12 23:58:39 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -12,12 +12,12 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/tagfile.h"
+#pragma implementation "apt-pkg/tagfile.h"
 #endif
 
-#include <pkglib/tagfile.h>
-#include <pkglib/error.h>
-#include <pkglib/init.h>
+#include <apt-pkg/tagfile.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/init.h>
 
 #include <string>
 #include <stdio.h>
@@ -153,90 +153,3 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
    return false;
 }
 									/*}}}*/
-
-#include <pkglib/pkgcachegen.h>
-#include <pkglib/deblistparser.h>
-
-int main(int argc,char *argv[])
-{
-   pkglibInitialize(*_config);
-   cout << _config->Find("APT::arch") << endl;
-   cout << _config->FindDir("DIR::Etc::sourcelist") << endl;
-   
-   {
-      File CacheF("./cache",File::WriteEmpty);
-      DynamicMMap Map(CacheF,MMap::Public);
-      pkgCacheGenerator Gen(Map);
-
-      for (int I = 1; I != argc; I++)
-      {
-	 cout << "Merging in " << argv[I] << endl;
-	 File F(argv[I],File::ReadOnly);
-	 Gen.SelectFile(argv[I]);
-	 debListParser Parser(F);
-	 Gen.MergeList(Parser);
-      }      
-   }
-/*
-   {
-      File CacheF("./cache",File::WriteExists);
-      MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-      pkgCache Cache(Map);
-      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
-      {
-	 cout << "Package: " << I.Name() << endl;
-	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
-	 {
-	    cout << "Version: " << V.VerStr() << endl;
-	    cout << "Size: " << V->Size << endl;
-	    cout << "Installed-Size: " << V->InstalledSize << endl;
-	    cout << "Section: " << V.Section() << endl;
-	    cout << "Priority: " << Cache.Priority(V->Priority) << endl;
-	    
-	    pkgCache::PrvIterator P = V.ProvidesList();
-	    if (P.end() == false)
-	    {
-	       cout << "Provides: ";
-	       for (; P.end() == false; P++)
-		  cout << P.Name() << ", ";
-	       cout << endl;
-	    }	    
-	 }
-	 cout << endl;
-      }
-   }
-*/   
-#if 0 
-   pkgTagSection I;
-   while (Test.Step(I) == true)
-   {
-      const char *Start;
-      const char *End;
-      if (I.Find("Package",Start,End) == false)
-      {
-	 cout << "Failed" << endl;
-	 continue;
-      }
-      
-      cout << "Package: " << string(Start,End - Start) << endl;
-      
-/*      for (const char *I = Start; I < End; I++)
-      {
-	 const char *Begin = I;
-	 bool Number = true;
-	 while (isspace(*I) == 0 && ispunct(*I) == 0 && I < End)
-	 {
-	    if (isalpha(*I) != 0)
-	       Number = false;
-	    I++;
-	 }
-	 if (Number == false)
-	    cout << string(Begin,I-Begin) << endl;	 
-	 while ((isspace(*I) != 0 || ispunct(*I) != 0) && I < End)
-	    I++;
-	 I--;
-      }      */
-   }
-#endif   
-   _error->DumpErrors();
-}

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.2 1998/07/07 04:17:10 jgg Exp $
+// $Id: error.cc,v 1.3 1998/07/12 23:58:46 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -15,7 +15,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/error.h"
+#pragma implementation "apt-pkg/error.h"
 #endif 
 
 #include <errno.h>
@@ -23,7 +23,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include <pkglib/error.h>
+#include <apt-pkg/error.h>
    									/*}}}*/
 
 GlobalError *_error = new GlobalError;

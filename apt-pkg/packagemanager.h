@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.2 1998/07/09 05:41:13 jgg Exp $
+// $Id: packagemanager.h,v 1.3 1998/07/12 23:58:31 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -25,11 +25,11 @@
 #define PKGLIB_PACKAGEMANAGER_H
 
 #ifdef __GNUG__
-#pragma interface "pkglib/packagemanager.h"
+#pragma interface "apt-pkg/packagemanager.h"
 #endif
 
 #include <string>
-#include <pkglib/pkgcache.h>
+#include <apt-pkg/pkgcache.h>
 
 class pkgAquire;
 class pkgDepCache;

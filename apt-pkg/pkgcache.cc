@@ -1,11 +1,11 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.6 1998/07/12 01:26:04 jgg Exp $
+// $Id: pkgcache.cc,v 1.7 1998/07/12 23:58:32 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
    
-   Please see doc/pkglib/cache.sgml for a more detailed description of 
+   Please see doc/apt-pkg/cache.sgml for a more detailed description of 
    this format. Also be sure to keep that file up-to-date!!
    
    This is the general utility functions for cache managment. They provide
@@ -21,12 +21,12 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "pkglib/pkgcache.h"
-#pragma implementation "pkglib/cacheiterators.h"
+#pragma implementation "apt-pkg/pkgcache.h"
+#pragma implementation "apt-pkg/cacheiterators.h"
 #endif 
-#include <pkglib/pkgcache.h>
-#include <pkglib/version.h>
-#include <pkglib/error.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/version.h>
+#include <apt-pkg/error.h>
 #include <system.h>
 
 #include <string>
