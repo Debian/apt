@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.14 1999/06/06 05:52:37 jgg Exp $
+// $Id: acqprogress.cc,v 1.15 1999/06/13 05:06:40 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -132,10 +132,10 @@ void AcqTextStatus::Stop()
 /* This draws the current progress. Each line has an overall percent
    meter and a per active item status meter along with an overall 
    bandwidth and ETA indicator. */
-void AcqTextStatus::Pulse(pkgAcquire *Owner)
+bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 {
    if (Quiet > 0)
-      return;
+      return true;
    
    pkgAcquireStatus::Pulse(Owner);
    
@@ -244,6 +244,8 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
    BlankLine[strlen(Buffer)] = 0;
    
    Update = false;
+
+   return true;
 }
 									/*}}}*/
 // AcqTextStatus::MediaChange - Media need to be swapped		/*{{{*/

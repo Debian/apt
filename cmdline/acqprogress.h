@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.h,v 1.3 1998/12/04 21:16:53 jgg Exp $
+// $Id: acqprogress.h,v 1.4 1999/06/13 05:06:40 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -29,7 +29,7 @@ class AcqTextStatus : public pkgAcquireStatus
    virtual void Start();
    virtual void Stop();
    
-   void Pulse(pkgAcquire *Owner);
+   bool Pulse(pkgAcquire *Owner);
 
    AcqTextStatus(unsigned int &ScreenWidth,unsigned int Quiet);
 };

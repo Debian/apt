@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.20 1999/03/27 03:02:39 jgg Exp $
+// $Id: acquire.h,v 1.21 1999/06/13 05:06:40 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -91,7 +91,10 @@ class pkgAcquire
    public:
 
    MethodConfig *GetConfig(string Access);
-   bool Run();
+
+   enum RunResult {Continue,Failed,Cancelled};
+
+   RunResult Run();
 
    // Simple iteration mechanism
    inline Worker *WorkersBegin() {return Workers;};
@@ -259,7 +262,7 @@ class pkgAcquireStatus
    virtual void Fetch(pkgAcquire::ItemDesc &Itm) {};
    virtual void Done(pkgAcquire::ItemDesc &Itm) {};
    virtual void Fail(pkgAcquire::ItemDesc &Itm) {};
-   virtual void Pulse(pkgAcquire *Owner);
+   virtual bool Pulse(pkgAcquire *Owner); // returns false on user cancel
    virtual void Start();
    virtual void Stop();
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.35 1999/06/06 06:58:36 jgg Exp $
+// $Id: acquire.cc,v 1.36 1999/06/13 05:06:40 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -275,7 +275,7 @@ void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 /* This runs the queues. It manages a select loop for all of the
    Worker tasks. The workers interact with the queues and items to
    manage the actual fetch. */
-bool pkgAcquire::Run()
+pkgAcquire::RunResult pkgAcquire::Run()
 {
    Running = true;
    
@@ -285,6 +285,8 @@ bool pkgAcquire::Run()
    if (Log != 0)
       Log->Start();
    
+   bool WasCancelled = false;
+
    // Run till all things have been acquired
    struct timeval tv;
    tv.tv_sec = 0;
@@ -321,8 +323,11 @@ bool pkgAcquire::Run()
 	 tv.tv_usec = 500000;
 	 for (Worker *I = Workers; I != 0; I = I->NextAcquire)
 	    I->Pulse();
-	 if (Log != 0)
-	    Log->Pulse(this);
+	 if (Log != 0 && Log->Pulse(this) == false)
+	 {
+	    WasCancelled = true;
+	    break;
+	 }
       }      
    }   
 
@@ -338,7 +343,11 @@ bool pkgAcquire::Run()
    for (Item **I = Items.begin(); I != Items.end(); I++)
       (*I)->Finished();
    
-   return !_error->PendingError();
+   if (_error->PendingError())
+      return Failed;
+   if (WasCancelled)
+      return Cancelled;
+   return Continue;
 }
 									/*}}}*/
 // Acquire::Bump - Called when an item is dequeued			/*{{{*/
@@ -675,7 +684,7 @@ pkgAcquireStatus::pkgAcquireStatus()
 /* This computes some internal state variables for the derived classes to
    use. It generates the current downloaded bytes and total bytes to download
    as well as the current CPS estimate. */
-void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
+bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 {
    TotalBytes = 0;
    CurrentBytes = 0;
@@ -742,6 +751,8 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       ElapsedTime = (unsigned long)Delta;
       Time = NewTime;
    }
+
+   return true;
 }
 									/*}}}*/
 // AcquireStatus::Start - Called when the download is started		/*{{{*/

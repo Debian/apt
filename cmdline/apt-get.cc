@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.64 1999/06/06 05:52:37 jgg Exp $
+// $Id: apt-get.cc,v 1.65 1999/06/13 05:06:40 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -590,7 +590,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    
    // Run it
    if (_config->FindB("APT::Get::No-Download",false) == false)
-      if( Fetcher.Run() == false)
+      if( Fetcher.Run() == pkgAcquire::Failed)
 	 return false;
 
    // Print out errors
@@ -679,7 +679,7 @@ bool DoUpdate(CommandLine &)
    }
    
    // Run it
-   if (Fetcher.Run() == false)
+   if (Fetcher.Run() == pkgAcquire::Failed)
       return false;
 
    // Clean out any old list files
@@ -1217,7 +1217,7 @@ bool DoSource(CommandLine &CmdL)
    }
    
    // Run it
-   if (Fetcher.Run() == false)
+   if (Fetcher.Run() == pkgAcquire::Failed)
       return false;
 
    // Print error messages
