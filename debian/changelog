@@ -1,3 +1,24 @@
+apt (0.5.32) unstable; urgency=low
+
+  * Call setlocale and bindtextdomain in the http method, so that the
+    messages are properly localised (Closes: #282700)
+
+ --
+
+apt (0.5.31) unstable; urgency=low
+
+  * New Romanian translation from Sorin Batariuc <sorin@bonbon.net>
+    (Closes: #281458)
+  * Merge changes from Hoary (0.5.30,0.5.30ubuntu2]
+  * Fix the example in apt_preferences(5) to match the text
+    (Closes: #222267)
+  * Add APT::Periodic::Autoclean setting, to allow "apt-get autoclean" to
+    be run periodically.  This is useful with
+    APT::Periodic::Download-Upgradeable-Packages, and defaults to the same
+    value, so that the cache size is bounded
+
+ -- Matt Zimmerman <mdz@debian.org>  Tue, 23 Nov 2004 12:53:04 -0800
+
 apt (0.5.30ubuntu2) hoary; urgency=low
 
   * bzip2 is now "Suggested" and it will detect if bzip2 is installed 

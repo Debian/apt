@@ -1183,6 +1183,9 @@ int HttpMethod::Loop()
 
 int main()
 {
+   setlocale(LC_ALL, "");
+   bindtextdomain(APT_DOMAIN, _config->FindDir("Dir::Locale").c_str());
+
    HttpMethod Mth;
    
    return Mth.Loop();
