@@ -14,21 +14,7 @@ create_apt_conf ()
 {
  echo "/etc/apt/sources.list does not exist; creating a default setup."
 
- cat > /etc/apt/sources.list <<EOF
-# See sources.list(5) for more information, especialy
-# Remember that you can only use http, ftp or file URIs
-# CDROMs are managed throught the apt-cdrom tool.
-# Proxy configuration is covered through environment variables or
-# 
-deb http://http.us.debian.org/debian stable main contrib non-free
-deb http://non-us.debian.org/debian-non-US stable non-US
-deb http://security.debian.org stable updates
-
-# Uncomment if you want the apt-get source function to work
-#deb-src http://http.us.debian.org/debian stable main contrib non-free
-#deb-src http://non-us.debian.org/debian-non-US stable non-US
-
-EOF
+ cp /usr/doc/apt/examples/sources.list /etc/apt/sources.list
 }
  
 check_apt_conf ()
