@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.110 2001/10/02 03:16:28 tausq Exp $
+// $Id: apt-get.cc,v 1.111 2001/11/04 17:09:18 tausq Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1860,7 +1860,7 @@ bool DoBuildDep(CommandLine &CmdL)
             
       // Process the build-dependencies
       vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      if (Last->BuildDepends(BuildDeps) == false)
+      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only",false)) == false)
       	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
       if (BuildDeps.size() == 0)
@@ -2119,6 +2119,7 @@ int main(int argc,const char *argv[])
       {0,"trivial-only","APT::Get::Trivial-Only",0},
       {0,"remove","APT::Get::Remove",0},
       {0,"only-source","APT::Get::Only-Source",0},
+      {0,"arch-only","APT::Get::Arch-Only",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

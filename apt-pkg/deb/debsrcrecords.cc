@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.cc,v 1.4 2001/02/20 07:03:17 jgg Exp $
+// $Id: debsrcrecords.cc,v 1.5 2001/11/04 17:09:18 tausq Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -47,7 +47,7 @@ const char **debSrcRecordParser::Binaries()
    package/version records representing the build dependency. The returned 
    array need not be freed and will be reused by the next call to this 
    function */
-bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps)
+bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps, bool ArchOnly)
 {
    unsigned int I;
    const char *Start, *Stop;
@@ -61,6 +61,9 @@ bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec>
 
    for (I = 0; I < 4; I++) 
    {
+      if (ArchOnly && (I == 1 || I == 3))
+         continue;
+
       if (Sect.Find(fields[I], Start, Stop) == false)
          continue;
       

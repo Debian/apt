@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.h,v 1.6 2001/02/20 07:03:17 jgg Exp $
+// $Id: debsrcrecords.h,v 1.7 2001/11/04 17:09:18 tausq Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -39,7 +39,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual string Maintainer() const {return Sect.FindS("Maintainer");};
    virtual string Section() const {return Sect.FindS("Section");};
    virtual const char **Binaries();
-   virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps);
+   virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool ArchOnly);
    virtual unsigned long Offset() {return iOffset;};
    virtual string AsStr() 
    {

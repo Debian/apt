@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.7 2001/05/07 04:24:08 jgg Exp $
+// $Id: srcrecords.h,v 1.8 2001/11/04 17:09:18 tausq Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -72,7 +72,7 @@ class pkgSrcRecords
       virtual string Section() const = 0;
       virtual const char **Binaries() = 0;   // Ownership does not transfer
 
-      virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps) = 0;
+      virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool ArchOnly) = 0;
       static const char *BuildDepType(unsigned char Type);
 
       virtual bool Files(vector<pkgSrcRecords::File> &F) = 0;
