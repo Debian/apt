@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.21 2001/02/20 07:03:17 jgg Exp $
+// $Id: acqprogress.cc,v 1.22 2001/05/27 04:46:43 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -18,7 +18,10 @@
     
 #include <stdio.h>
 #include <signal.h>
+#include <iostream>
 									/*}}}*/
+
+using namespace std;
 
 // AcqTextStatus::AcqTextStatus - Constructor				/*{{{*/
 // ---------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.37 2001/03/13 05:23:42 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.38 2001/05/27 04:46:43 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -33,6 +33,8 @@
 #include <unistd.h>
 #include <stdio.h>
 									/*}}}*/
+
+using namespace std;
 
 // FindPackages - Find the package files on the CDROM			/*{{{*/
 // ---------------------------------------------------------------------
@@ -364,7 +366,7 @@ bool WriteSourceList(string Name,vector<string> &List,bool Source)
 
    // Open the stream for reading
    ifstream F((FileExists(File)?File.c_str():"/dev/null"),
-	      ios::in | ios::nocreate);
+	      ios::in );
    if (!F != 0)
       return _error->Errno("ifstream::ifstream","Opening %s",File.c_str());
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.cc,v 1.7 2001/03/13 05:23:42 jgg Exp $
+// $Id: indexcopy.cc,v 1.8 2001/05/27 04:47:21 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -24,6 +24,8 @@
 #include <sys/stat.h>
 #include <stdio.h>
 									/*}}}*/
+
+using namespace std;
 
 // IndexCopy::CopyPackages - Copy the package files from the CD		/*{{{*/
 // ---------------------------------------------------------------------
@@ -94,7 +96,8 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
 	    SetCloseExec(STDOUT_FILENO,false);
 	    
 	    const char *Args[3];
-	    Args[0] = _config->Find("Dir::bin::gzip","gzip").c_str();
+	    string Tmp =  _config->Find("Dir::bin::gzip","gzip");
+	    Args[0] = Tmp.c_str();
 	    Args[1] = "-d";
 	    Args[2] = 0;
 	    execvp(Args[0],(char **)Args);
@@ -394,7 +397,7 @@ void IndexCopy::ConvertToSourceList(string CD,string &Path)
       return;
    
    // Not a dists type.
-   if (stringcmp(Path.begin(),Path.begin()+strlen("dists/"),"dists/") != 0)
+   if (stringcmp(Path.c_str(),Path.c_str()+strlen("dists/"),"dists/") != 0)
       return;
       
    // Isolate the dist

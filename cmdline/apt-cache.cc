@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.48 2001/05/11 05:07:06 jgg Exp $
+// $Id: apt-cache.cc,v 1.49 2001/05/27 04:46:43 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -337,7 +337,8 @@ bool Dump(CommandLine &Cmd)
 	 cout << " Version: " << V.VerStr() << endl;
 	 cout << "     File: " << V.FileList().File().FileName() << endl;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
-	    cout << "  Depends: " << D.TargetPkg().Name() << ' ' << D.TargetVer() << endl;
+	    cout << "  Depends: " << D.TargetPkg().Name() << ' ' << 
+	                     DeNull(D.TargetVer()) << endl;
       }      
    }
 
@@ -349,13 +350,13 @@ bool Dump(CommandLine &Cmd)
       cout << " ID: " << F->ID << endl;
       cout << " Flags: " << F->Flags << endl;
       cout << " Time: " << TimeRFC1123(F->mtime) << endl;
-      cout << " Archive: " << F.Archive() << endl;
-      cout << " Component: " << F.Component() << endl;
-      cout << " Version: " << F.Version() << endl;
-      cout << " Origin: " << F.Origin() << endl;
-      cout << " Site: " << F.Site() << endl;
-      cout << " Label: " << F.Label() << endl;
-      cout << " Architecture: " << F.Architecture() << endl;
+      cout << " Archive: " << DeNull(F.Archive()) << endl;
+      cout << " Component: " << DeNull(F.Component()) << endl;
+      cout << " Version: " << DeNull(F.Version()) << endl;
+      cout << " Origin: " << DeNull(F.Origin()) << endl;
+      cout << " Site: " << DeNull(F.Site()) << endl;
+      cout << " Label: " << DeNull(F.Label()) << endl;
+      cout << " Architecture: " << DeNull(F.Architecture()) << endl;
    }
 
    return true;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: indexcopy.h,v 1.3 2001/05/27 04:46:54 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -13,6 +13,9 @@
 #include <vector>
 #include <string>
 #include <stdio.h>
+
+using std::string;
+using std::vector;
 
 class pkgTagSection;
 class FileFd;

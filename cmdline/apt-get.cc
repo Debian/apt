@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.106 2001/04/28 01:18:37 doogie Exp $
+// $Id: apt-get.cc,v 1.107 2001/05/27 04:45:49 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -58,9 +58,11 @@
 #include <sys/wait.h>
 									/*}}}*/
 
-ostream c0out;
-ostream c1out;
-ostream c2out;
+using namespace std;
+
+ostream c0out(0);
+ostream c1out(0);
+ostream c2out(0);
 ofstream devnull("/dev/null");
 unsigned int ScreenWidth = 80;
 
@@ -766,7 +768,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       bool Transient = false;
       if (_config->FindB("APT::Get::Download",true) == false)
       {
-	 for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd();)
+	 for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd();)
 	 {
 	    if ((*I)->Local == true)
 	    {
@@ -790,7 +792,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       
       // Print out errors
       bool Failed = false;
-      for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+      for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
       {
 	 if ((*I)->Status == pkgAcquire::Item::StatDone &&
 	     (*I)->Complete == true)
@@ -1149,7 +1151,7 @@ bool DoUpdate(CommandLine &CmdL)
       return false;
 
    bool Failed = false;
-   for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
    {
       if ((*I)->Status == pkgAcquire::Item::StatDone)
 	 continue;
@@ -1694,7 +1696,7 @@ bool DoSource(CommandLine &CmdL)
 
    // Print error messages
    bool Failed = false;
-   for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
    {
       if ((*I)->Status == pkgAcquire::Item::StatDone &&
 	  (*I)->Complete == true)
