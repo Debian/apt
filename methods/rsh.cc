@@ -229,7 +229,7 @@ bool RSHConn::WriteMsg(string &Text,bool Sync,const char *Fmt,...)
       int Res = write(WriteFd,S + Start,Len);
       if (Res <= 0)
       {
-         _error->Errno("write",_("Write Error"));
+         _error->Errno("write",_("Write error"));
          Close();
          return false;
       }
@@ -261,7 +261,7 @@ bool RSHConn::Size(const char *Path,unsigned long &Size)
    char *End;
    Size = strtoul(Msg.c_str(),&End,10);
    if (End == Msg.c_str())
-      return _error->Error(_("File Not Found"));
+      return _error->Error(_("File not found"));
    return true;
 }
 									/*}}}*/
@@ -430,7 +430,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
        Server->ModTime(File,FailTime) == false)
    {
       //Fail(true);
-      //_error->Error(_("File Not Found")); // Will be handled by Size
+      //_error->Error(_("File not found")); // Will be handled by Size
       return false;
    }
    Res.Size = Size;

@@ -263,10 +263,10 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	 ioprintf(msg, _("Wrote %i records with %i missing files.\n"), 
 		  Packages, NotFound);
       else if (NotFound == 0 && WrongSize != 0)
-	 ioprintf(msg, _("Wrote %i records with %i mismachted files\n"), 
+	 ioprintf(msg, _("Wrote %i records with %i mismatched files\n"), 
 		  Packages, WrongSize);
       if (NotFound != 0 && WrongSize != 0)
-	 ioprintf(msg, _("Wrote %i records with %i missing files and %i mismachted files\n"), Packages, NotFound, WrongSize);
+	 ioprintf(msg, _("Wrote %i records with %i missing files and %i mismatched files\n"), Packages, NotFound, WrongSize);
    }
    
    if (Packages == 0)

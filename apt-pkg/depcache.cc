@@ -57,8 +57,8 @@ bool pkgDepCache::Init(OpProgress *Prog)
    if (Prog != 0)
    {
       Prog->OverallProgress(0,2*Head().PackageCount,Head().PackageCount,
-			    _("Building Dependency Tree"));
-      Prog->SubProgress(Head().PackageCount,_("Candidate Versions"));
+			    _("Building dependency tree"));
+      Prog->SubProgress(Head().PackageCount,_("Candidate versions"));
    }
    
    /* Set the current state of everything. In this state all of the
@@ -86,8 +86,8 @@ bool pkgDepCache::Init(OpProgress *Prog)
       
       Prog->OverallProgress(Head().PackageCount,2*Head().PackageCount,
 			    Head().PackageCount,
-			    _("Building Dependency Tree"));
-      Prog->SubProgress(Head().PackageCount,_("Dependency Generation"));
+			    _("Building dependency tree"));
+      Prog->SubProgress(Head().PackageCount,_("Dependency generation"));
    }
    
    Update(Prog);

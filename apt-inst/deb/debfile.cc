@@ -135,7 +135,7 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
       Compressor = "bzip2";
    }
    if (Member == 0)
-      return _error->Error(_("Internal Error, could not locate member"));   
+      return _error->Error(_("Internal error, could not locate member"));   
    if (File.Seek(Member->Start) == false)
       return false;
       
@@ -253,7 +253,7 @@ bool debDebFile::MemControlExtract::Read(debDebFile &Deb)
    Control[Length] = '\n';
    Control[Length+1] = '\n';
    if (Section.Scan(Control,Length+2) == false)
-      return _error->Error(_("Unparsible control file"));
+      return _error->Error(_("Unparsable control file"));
    return true;
 }
 									/*}}}*/

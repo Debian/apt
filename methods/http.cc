@@ -514,14 +514,14 @@ bool ServerState::HeaderLine(string Line)
       {
 	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u %[^\n]",&Major,&Minor,
 		    &Result,Code) != 4)
-	    return _error->Error(_("The http server sent an invalid reply header"));
+	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
       else
       {
 	 Major = 0;
 	 Minor = 9;
 	 if (sscanf(Line.c_str(),"HTTP %u %[^\n]",&Result,Code) != 2)
-	    return _error->Error(_("The http server sent an invalid reply header"));
+	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
 
       /* Check the HTTP response header to get the default persistance
@@ -550,7 +550,7 @@ bool ServerState::HeaderLine(string Line)
 	 return true;
       
       if (sscanf(Val.c_str(),"%lu",&Size) != 1)
-	 return _error->Error(_("The http server sent an invalid Content-Length header"));
+	 return _error->Error(_("The HTTP server sent an invalid Content-Length header"));
       return true;
    }
 
@@ -565,9 +565,9 @@ bool ServerState::HeaderLine(string Line)
       HaveContent = true;
       
       if (sscanf(Val.c_str(),"bytes %lu-%*u/%lu",&StartPos,&Size) != 2)
-	 return _error->Error(_("The http server sent an invalid Content-Range header"));
+	 return _error->Error(_("The HTTP server sent an invalid Content-Range header"));
       if ((unsigned)StartPos > Size)
-	 return _error->Error(_("This http server has broken range support"));
+	 return _error->Error(_("This HTTP server has broken range support"));
       return true;
    }
    
@@ -829,7 +829,7 @@ bool HttpMethod::ServerDie(ServerState *Srv)
    {
       Srv->Close();
       if (LErrno == 0)
-	 return _error->Error(_("Error reading from server Remote end closed connection"));
+	 return _error->Error(_("Error reading from server. Remote end closed connection"));
       errno = LErrno;
       return _error->Errno("read",_("Error reading from server"));
    }
@@ -1062,7 +1062,7 @@ int HttpMethod::Loop()
 	 // The header data is bad
 	 case 2:
 	 {
-	    _error->Error(_("Bad header Data"));
+	    _error->Error(_("Bad header data"));
 	    Fail(true);
 	    RotateDNS();
 	    continue;
