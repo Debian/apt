@@ -64,11 +64,11 @@ AC_DEFUN(ah_NUM_PROCS,
 	AC_ARG_WITH(procs,
 		[  --with-procs            The number of processes to run in parallel during make(num_cpus * multiplier).],
 		[if test "$withval" = "yes"; then
-			let "NUM_PROCS=$NUM_CPUS*$PROC_MULTIPLY"
+			NUM_PROCS=`expr $NUM_CPUS \* $PROC_MULTIPLY`
 		elif test ! "$withval" = "no";then
 			NUM_PROCS=$withval
 		fi],
-		[let "NUM_PROCS=$NUM_CPUS*$PROC_MULTIPLY"]
+		[NUM_PROCS=`expr $NUM_CPUS \* $PROC_MULTIPLY`]
 	)
 	AC_MSG_RESULT([$NUM_PROCS])
 	AC_SUBST(NUM_PROCS)
