@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.h,v 1.7 1999/08/12 05:59:54 jgg Exp $
+// $Id: orderlist.h,v 1.8 2000/01/16 08:45:47 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -48,11 +48,13 @@ class pkgOrderList
    // State
    Package **End;
    Package **List;
+   Package **AfterList;
+   Package **AfterEnd;
    string *FileList;
    DepIterator Loops[20];
    int LoopCount;
    int Depth;
-   unsigned char *Flags;
+   unsigned short *Flags;
    
    // Main visit function
    bool VisitNode(PkgIterator Pkg);
@@ -90,6 +92,7 @@ class pkgOrderList
                UnPacked = (1 << 4), Configured = (1 << 5),
                Removed = (1 << 6),        // Early Remove
                InList = (1 << 7),
+               After = (1 << 8),
                States = (UnPacked | Configured | Removed)};
 
    // Flag manipulators

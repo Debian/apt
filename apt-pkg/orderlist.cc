@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.10 2000/01/16 05:36:17 jgg Exp $
+// $Id: orderlist.cc,v 1.11 2000/01/16 08:45:47 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -45,6 +45,14 @@
    The rules listed above may never be violated and are called Critical.
    When a critical rule is violated then a loop condition is recorded
    and will have to be delt with in the caller.
+
+   The ordering keeps two lists, the main list and the 'After List'. The
+   purpose of the after list is to allow packages to be delayed. This is done
+   by setting the after flag on the package. Any package which requires this
+   package to be ordered before will inherit the after flag and so on. This
+   is used for CD swap ordering where all packages on a second CD have the 
+   after flag set. This forces them and all their dependents to be ordered
+   toward the end.
    
    ##################################################################### */
 									/*}}}*/
@@ -75,7 +83,7 @@ pkgOrderList::pkgOrderList(pkgDepCache &Cache) : Cache(Cache)
    /* Construct the arrays, egcs 1.0.1 bug requires the package count
       hack */
    unsigned long Size = Cache.HeaderP->PackageCount;
-   Flags = new unsigned char[Size];
+   Flags = new unsigned short[Size];
    End = List = new Package *[Size];
    memset(Flags,0,sizeof(*Flags)*Size);
 }
@@ -117,13 +125,15 @@ bool pkgOrderList::DoRun()
    // Temp list
    unsigned long Size = Cache.HeaderP->PackageCount;
    Package **NList = new Package *[Size];
-
+   AfterList = new Package *[Size];
+   AfterEnd = AfterList;
+   
    Depth = 0;
    WipeFlags(Added | AddPending | Loop | InList);
 
    for (iterator I = List; I != End; I++)
       Flag(*I,InList);
-   
+
    // Rebuild the main list into the temp list.
    iterator OldEnd = End;
    End = NList;
@@ -132,11 +142,17 @@ bool pkgOrderList::DoRun()
       {
 	 End = OldEnd;
 	 delete [] NList;
+	 delete [] AfterList;
 	 return false;
       }
    
+   // Copy the after list to the end of the main list
+   for (Package **I = AfterList; I != AfterEnd; I++)
+      *End++ = *I;
+   
    // Swap the main list to the new list
    delete [] List;
+   delete [] AfterList;
    List = NList;
    return true;
 }
@@ -176,6 +192,20 @@ bool pkgOrderList::OrderUnpack(string *FileList)
 {
    this->FileList = FileList;
 
+   // Setup the after flags
+   if (FileList != 0)
+   {
+      WipeFlags(After);
+      
+      // Set the inlist flag
+      for (iterator I = List; I != End; I++)
+      {
+	 PkgIterator P(Cache,*I);
+	 if (IsMissing(P) == true && IsNow(P) == true)
+	     Flag(*I,After);
+      }
+   }
+   
    Primary = &pkgOrderList::DepUnPackCrit;
    Secondary = &pkgOrderList::DepConfigure;
    RevDepends = &pkgOrderList::DepUnPackDep;
@@ -209,7 +239,8 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    for (iterator I = List; I != End; I++)
    {
       PkgIterator P(Cache,*I);
-      cout << P.Name() << ' ' << IsMissing(P) << endl;
+      if (IsNow(P) == true)
+	 cout << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
    }*/
 
    return true;
@@ -316,12 +347,12 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
       return -1*Res;
    
    // We order missing files to toward the end
-   if (Me->FileList != 0)
+/*   if (Me->FileList != 0)
    {
       if ((Res = BoolCompare(Me->IsMissing(A),
 			     Me->IsMissing(B))) != 0)
 	 return Res;
-   }
+   }*/
    
    if (A.State() != pkgCache::PkgIterator::NeedsNothing && 
        B.State() == pkgCache::PkgIterator::NeedsNothing)
@@ -511,8 +542,10 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    if (IsFlag(Pkg,Added) == false)
    {
       Flag(Pkg,Added,Added | AddPending);
-      *End = Pkg;
-      End++;
+      if (IsFlag(Pkg,After) == true)
+	 *AfterEnd++ = Pkg;
+      else
+	 *End++ = Pkg;
    }
    
    Primary = Old;
@@ -857,6 +890,7 @@ void pkgOrderList::WipeFlags(unsigned long F)
 bool pkgOrderList::CheckDep(DepIterator D)
 {
    Version **List = D.AllTargets();
+   bool Hit = false;
    for (Version **I = List; *I != 0; I++)
    {
       VerIterator Ver(Cache,*I);
@@ -867,8 +901,8 @@ bool pkgOrderList::CheckDep(DepIterator D)
        	 way ordering works Added means the package will be unpacked
        	 before this one and AddPending means after. It is therefore
        	 correct to ignore AddPending in all cases, but that exposes
-       	 reverse-ordering loops which should be ignore. */
-      if (IsFlag(Pkg,Added) == true || 
+       	 reverse-ordering loops which should be ignored. */
+      if (IsFlag(Pkg,Added) == true ||
 	  (IsFlag(Pkg,AddPending) == true && D.Reverse() == true))
       {
 	 if (Cache[Pkg].InstallVer != *I)
@@ -878,18 +912,40 @@ bool pkgOrderList::CheckDep(DepIterator D)
 	 if ((Version *)Pkg.CurrentVer() != *I || 
 	     Pkg.State() != PkgIterator::NeedsNothing)
 	    continue;
-      
-      delete [] List;
-      
+            
       /* Conflicts requires that all versions are not present, depends
          just needs one */
       if (D->Type != pkgCache::Dep::Conflicts)
+      {
+	 /* Try to find something that does not have the after flag set
+	    if at all possible */
+	 if (IsFlag(Pkg,After) == true)
+	 {
+	    Hit = true;
+	    continue;
+	 }
+      
+	 delete [] List;
 	 return true;
+      }
       else
+      {
+	 if (IsFlag(Pkg,After) == true)
+	    Flag(D.ParentPkg(),After);
+	 
+	 delete [] List;
 	 return false;
+      }      
    }
    delete [] List;
- 
+
+   // We found a hit, but it had the after flag set
+   if (Hit == true && D->Type == pkgCache::Dep::PreDepends)
+   {
+      Flag(D.ParentPkg(),After);
+      return true;
+   }
+   
    /* Conflicts requires that all versions are not present, depends
       just needs one */
    if (D->Type == pkgCache::Dep::Conflicts)
