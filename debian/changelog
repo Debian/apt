@@ -2,7 +2,10 @@ apt (0.5.21) unstable; urgency=low
 
   * Patch from Eric Wong <normalperson@yhbt.net> to include apt18n.h after
     other headers to avoid breaking locale.h when setlocale() is defined
-    as an empty macro (Closes: #226509)
+    as an empty macro.  This was not a problem on Debian, but broke
+    compilation on Solaris. (Closes: #226509)
+  * Updated French translation from Pierre Machard <pmachard@debian.org>
+    (Closes: #226886)
 
  --
 
