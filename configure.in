@@ -33,8 +33,14 @@ AC_PATH_XTRA
 AC_SUBST(X11LIB)
 X11LIB=
 if test "$no_x" != "yes"; then
-  X11LIB="-lx11"
+  X11LIB="-lX11"
   AC_DEFINE(HAVE_X11)
+  dnl Checks for Slang
+  AC_CHECK_LIB(Xpm, XpmLibraryVersion,[AC_DEFINE(HAVE_LIBXPM) XPMLIB="-lXpm"],,$X_LIBS $X_PRE_LIBS $X11LIB $X_EXTRA_LIBS)
+  AC_SUBST(XPMLIB)
+  if test "$XPMLIB" != "-lXpm"; then
+     AC_MSG_ERROR(failed: I need xpm if you are building for X)
+  fi
 fi
 
 dnl Checks for Slang

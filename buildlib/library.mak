@@ -20,6 +20,7 @@ $(LOCAL)-OBJS := $(addprefix $(OBJ)/,$(addsuffix .opic,$(notdir $(basename $(SOU
 $(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .d,$(notdir $(basename $(SOURCE)))))
 $(LOCAL)-HEADERS := $(addprefix $(INCLUDE)/,$(HEADERS))
 $(LOCAL)-SONAME := lib$(LIBRARY).so.$(MAJOR)
+$(LOCAL)-SLIBS := $(SLIBS)
 
 # Install the command hooks
 headers: $($(LOCAL)-HEADERS)
@@ -45,7 +46,8 @@ $(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
 	echo Building shared library $@
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) -o $@ \
-	   -Wl,-soname -Wl,$($(@F)-SONAME) -shared $(filter %.opic,$^)
+	   -Wl,-soname -Wl,$($(@F)-SONAME) -shared $(filter %.opic,$^) \
+	   $($(@F)-SLIBS)
 
 # Compilation rules
 vpath %.cc $(SUBDIRS)

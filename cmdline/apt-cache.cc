@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.5 1998/07/21 05:33:21 jgg Exp $
+// $Id: apt-cache.cc,v 1.6 1998/07/26 23:11:56 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache file.
@@ -29,6 +29,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/sourcelist.h>
 
 #include <iostream.h>
 #include <fstream.h>
@@ -299,6 +300,17 @@ bool DoAdd(int argc,char *argv[])
    return true;
 }
 									/*}}}*/
+// GenCaches - Call the main cache generator				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool GenCaches()
+{
+   OpTextProgress Progress;
+   pkgSourceList List;
+   List.ReadMainList();
+   return pkgMakeStatusCache(List,Progress);  
+}
+									/*}}}*/
 
 int main(int argc, char *argv[])
 {
@@ -316,6 +328,12 @@ int main(int argc, char *argv[])
       if (strcmp(argv[1],"add") == 0)
       {
 	 DoAdd(argc - 3,argv + 3);
+	 break;
+      }
+
+      if (strcmp(argv[1],"gencaches") == 0)
+      {
+	 GenCaches();
 	 break;
       }
 
@@ -356,7 +374,7 @@ int main(int argc, char *argv[])
 	 DumpAvail(Cache);
 	 break;
       }
-      
+            
       _error->Error("Invalid operation %s", argv[1]);
       break;
    }

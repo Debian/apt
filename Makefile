@@ -6,7 +6,8 @@
 
 .PHONY: headers library clean veryclean all binary program doc
 all headers library clean veryclean binary program doc:
-	$(MAKE) -C deity $@
 	$(MAKE) -C apt-pkg $@
 	$(MAKE) -C cmdline $@
+	$(MAKE) -C deity $@
+	$(MAKE) -C gui $@
 	$(MAKE) -C doc $@
