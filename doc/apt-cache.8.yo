@@ -23,6 +23,8 @@ itemize(
   it() search
   it() show
   it() showpkg
+  it() depends
+  it() pkgnames  
 )
 
 Unless the -h, or --help option is given one of the above commands
@@ -158,6 +160,12 @@ dit(bf(depends))
 bf(depends) shows a listing of each dependency a package has and all
 the possible other packages that can fullfill that dependency.
 
+dit(bf(pkgnames))
+This command prints the name of each package in the system. The optional
+argument is a prefix match to filter the name list. The output is suitable
+for use in a shell tab complete function and the output is generated extremly
+quickly. This command is best used with the bf(--no-generate) option.
+
 enddit()
 
 manpageoptions()
@@ -209,7 +217,11 @@ Configuration Item: bf(APT::Cache::NoGenerate).
 
 dit(bf(--names-only))
 Only search on the package names, not the long description. 
-Configuration Item: bf(APT::Cache::Names-Only).
+Configuration Item: bf(APT::Cache::NamesOnly).
+
+dit(bf(--all-names))
+Make bf(pkgnames) print all names, including virtual packages and missing
+dependencies. Configuration Item: bf(APT::Cache::AllNames).
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.41 1999/10/22 04:05:47 jgg Exp $
+// $Id: apt-cache.cc,v 1.42 1999/12/09 07:32:45 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -610,6 +610,40 @@ bool ShowPackage(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// ShowPkgNames - Show package names					/*{{{*/
+// ---------------------------------------------------------------------
+/* This does a prefix match on the first argument */
+bool ShowPkgNames(CommandLine &CmdL)
+{
+   pkgCache &Cache = *GCache;
+   pkgCache::PkgIterator I = Cache.PkgBegin();
+   bool All = _config->FindB("APT::Cache::AllNames","false");
+   
+   if (CmdL.FileList[1] != 0)
+   {
+      for (;I.end() != true; I++)
+      {
+	 if (All == false && I->VersionList == 0)
+	    continue;
+	 
+	 if (strncmp(I.Name(),CmdL.FileList[1],strlen(CmdL.FileList[1])) == 0)
+	    cout << I.Name() << endl;
+      }
+
+      return true;
+   }
+   
+   // Show all pkgs
+   for (;I.end() != true; I++)
+   {
+      if (All == false && I->VersionList == 0)
+	 continue;
+      cout << I.Name() << endl;
+   }
+   
+   return true;
+}
+									/*}}}*/
 // ShowSrcPackage - Show source package records				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -676,6 +710,7 @@ bool ShowHelp(CommandLine &Cmd)
    cout << "   search - Search the package list for a regex pattern" << endl;
    cout << "   show - Show a readable record for the package" << endl;
    cout << "   depends - Show raw dependency information for a package" << endl;
+   cout << "   pkgnames - List the names of all packages" << endl;
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
@@ -712,6 +747,7 @@ int main(int argc,const char *argv[])
       {'g',"no-generate","APT::Cache::NoGenerate",0},
       {'a',"all-versions","APT::Cache::AllVersions",0},
       {0,"names-only","APT::Cache::NamesOnly",0},
+      {0,"all-names","APT::Cache::AllNames",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
@@ -729,6 +765,7 @@ int main(int argc,const char *argv[])
                                     {"search",&Search},
                                     {"depends",&Depends},
                                     {"show",&ShowPackage},
+                                    {"pkgnames",&ShowPkgNames},
                                     {0,0}};
 
    CacheInitialize();
