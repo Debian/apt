@@ -144,7 +144,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    DestFile += URItoFileName(URI);
 
    // Create the item
-   Desc.URI = URI + ".gz";
+   Desc.URI = URI + ".bz2"; 
    Desc.Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
@@ -167,6 +167,21 @@ string pkgAcqIndex::Custom600Headers()
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
+
+void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   // no .bz2 found, retry with .gz
+   if(Desc.URI.substr(Desc.URI.size()-3,Desc.URI.size()-1) == "bz2") {
+      Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz"; 
+      QueueURI(Desc);
+      return;
+   }
+
+   
+   Item::Failed(Message,Cnf);
+}
+
+
 // AcqIndex::Done - Finished a fetch					/*{{{*/
 // ---------------------------------------------------------------------
 /* This goes through a number of states.. On the initial fetch the
@@ -234,11 +249,22 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    else
       Local = true;
    
+   string compExt = Desc.URI.substr(Desc.URI.size()-3,Desc.URI.size()-1);
+   char *decompProg;
+   if(compExt == "bz2") 
+      decompProg = "bzip2";
+   else if(compExt == ".gz") 
+      decompProg = "gzip";
+   else {
+      _error->Error("Unsupported extension: %s", compExt.c_str());
+      return;
+   }
+
    Decompression = true;
    DestFile += ".decomp";
-   Desc.URI = "gzip:" + FileName;
+   Desc.URI = string(decompProg) + ":" + FileName;
    QueueURI(Desc);
-   Mode = "gzip";
+   Mode = decompProg;
 }
 									/*}}}*/
 

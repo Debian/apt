@@ -90,6 +90,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    public:
    
    // Specialized action members
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
