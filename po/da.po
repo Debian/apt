@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_da\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
-"PO-Revision-Date: 2004-03-13 14:03+0100\n"
+"POT-Creation-Date: 2004-03-14 09:04+0100\n"
+"PO-Revision-Date: 2004-03-14 16:13+0100\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -326,7 +326,6 @@ msgid "Error Processing Contents %s"
 msgstr "Fejl under behandling af indhold %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -373,14 +372,15 @@ msgstr ""
 "            contents sti\n"
 "            generate config [grupper]\n"
 "            clean config\n"
-"apt-ftparchive laver indeksfiler til Debianarkiver. Det understøtter mange\n"
-"former for generering, lige fra fuldautomatiske til funktionelle\n"
+"\n"
+"apt-ftparchive laver indeksfiler til Debianarkiver. Det understøtter \n"
+"mange former for generering, lige fra fuldautomatiske til funktionelle\n"
 "erstatninger for dpkg-scanpackages og dpkg-scansources\n"
 "\n"
 "apt-ftparchive genererer Package-filer ud fra træer af .deb'er.\n"
 "Package-filen indeholder alle styrefelterne fra hver pakke såvel\n"
-"som MD5-hash og filstørrelse. En tvangsfil understøttes til at\n"
-"gennemtvinge indholdet af Prioritet og Afsnit.\n"
+"som MD5-mønstre og filstørrelser. En tvangsfil understøttes til at\n"
+"gennemtvinge indholdet af Priority og Section.\n"
 "\n"
 "På samme måde genererer apt-ftparchive Sources-filer ud fra træer\n"
 "med .dsc'er. Tvangstilvalget --source-override kan bruges til at\n"
@@ -659,19 +659,16 @@ msgid "The following packages will be REMOVED:"
 msgstr "Følgende pakker vil blive FJERNET:"
 
 #: cmdline/apt-get.cc:421
-#, fuzzy
 msgid "The following packages have been kept back:"
-msgstr "Følgende pakker er tilbageholdt"
+msgstr "Følgende pakker er blevet holdt tilbage:"
 
 #: cmdline/apt-get.cc:442
-#, fuzzy
 msgid "The following packages will be upgraded:"
-msgstr "Følgende pakke vil blive opgraderet"
+msgstr "Følgende pakker vil blive opgraderet:"
 
 #: cmdline/apt-get.cc:463
-#, fuzzy
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Følgende pakke vil blive NEDGRADERET"
+msgstr "Følgende pakker vil blive NEDGRADERET:"
 
 #: cmdline/apt-get.cc:483
 msgid "The following held packages will be changed:"
@@ -876,16 +873,15 @@ msgid "You should explicitly select one to install."
 msgstr "Du bør eksplicit vælge en at installere."
 
 #: cmdline/apt-get.cc:1040
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"Pakken %s har ingen tilgængelig version, men findes alligevel i databasen.\n"
-"Det betyder normalt, at denne pakke er nævnt i en afhængighed, men aldrig\n"
-"lavet, er blevet overflødiggjort eller ikke tilgængelig ud fra indholdet i\n"
-"sources.list\n"
+"Pakken %s har ingen tilgængelig version, men der refereres til den i en \n"
+"anden pakke. Det kan betyde at denne pakke blevet overflødiggjort eller \n"
+"kun kan hentes fra andre kilder\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -1086,8 +1082,7 @@ msgstr "%s har ingen opbygningsafhængigheder.\n"
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr ""
-"%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
+msgstr "%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
 
 #: cmdline/apt-get.cc:2155
 #, c-format
@@ -1101,17 +1096,17 @@ msgstr ""
 #: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
+msgstr "Kunne ikke opfylde %s-afhængigheden for %s: Den installerede pakke %s er for ny"
 
 #: cmdline/apt-get.cc:2215
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Kunne ikke behandler opbygningsafhængighederne"
+msgstr "Kunne ikke opfylde %s-afhængigheden for %s: %s"
 
 #: cmdline/apt-get.cc:2229
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
+msgstr "Opbygningsafhængigheden for %s kunne ikke opfyldes."
 
 #: cmdline/apt-get.cc:2233
 msgid "Failed to process build dependencies"
@@ -1288,14 +1283,11 @@ msgstr "pakker, der blev installeret. Det kan give gentagne fejl"
 
 #: dselect/install:102
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
+msgstr "eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
 
 #: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
+msgid "above this message are important. Please fix them and run [I]nstall again"
+msgstr "fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
 
 #: dselect/update:30
 msgid "Merging Available information"
@@ -1431,7 +1423,7 @@ msgid "File %s/%s overwrites the one in the package %s"
 msgstr "File %s/%s overskriver filen i pakken %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kunne ikke læse %s"
@@ -1849,8 +1841,7 @@ msgstr "http-serveren sendte et ugyldigt Content-Range-hovede"
 
 #: methods/http.cc:566
 msgid "This http server has broken range support"
-msgstr ""
-"Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
+msgstr "Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
 
 #: methods/http.cc:590
 msgid "Unknown date format"
@@ -2021,7 +2012,7 @@ msgstr "Ugyldig handling %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Kunne ikke finde monteringspunktet %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Kunne ikke skifte til %s"
@@ -2270,10 +2261,8 @@ msgstr "Indeksfiler af typen '%s' understøttes ikke"
 
 #: apt-pkg/algorithms.cc:238
 #, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr ""
-"Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
+msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr "Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
 
 #: apt-pkg/algorithms.cc:1056
 msgid ""
@@ -2285,8 +2274,7 @@ msgstr ""
 
 #: apt-pkg/algorithms.cc:1058
 msgid "Unable to correct problems, you have held broken packages."
-msgstr ""
-"Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
+msgstr "Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
 
 #: apt-pkg/acquire.cc:61
 #, c-format
@@ -2388,8 +2376,7 @@ msgstr "Der skete en fejl under behandlingen af %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
@@ -2397,8 +2384,7 @@ msgstr "Hold da op! Du nåede over det antal versioner, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2453,8 +2439,7 @@ msgstr ""
 
 #: apt-pkg/acquire-item.cc:419
 #, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
+msgid "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Pakkeindeksfilerne er i stykker. Intet 'Filename:'-felt for pakken %s."
 
 #: apt-pkg/acquire-item.cc:501
@@ -2771,3 +2756,4 @@ msgstr "Forbindelsen lukkedes for hurtigt"
 
 #~ msgid "Errors apply to file '%s'"
 #~ msgstr "Fejlene vedrører filen '%s'"
+
