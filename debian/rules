@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.3 1999/01/28 06:42:27 jgg Exp $
+# $Id: rules,v 1.4 1999/02/02 02:19:46 jgg Exp $
 
 
 # Uncomment this to turn on verbose mode.
@@ -61,7 +61,8 @@ apt: build
 	cp build/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
 	mkdir debian/tmp/usr/doc/apt/users-guide.html/
 	cp -a build/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
-
+	cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
+	
 #	head -n 500 ChangeLog > debian/ChangeLog
 
 	dh_installdocs -papt 
@@ -109,10 +110,11 @@ libapt-pkg-doc: build
 	dh_testdir -plibapt-pkg-doc
 	dh_testroot -plibapt-pkg-doc
 	dh_clean -plibapt-pkg-doc -k
-	dh_installdirs -plibapt-pkg-doc usr/doc/apt
+	dh_installdirs -plibapt-pkg-doc usr/doc/apt usr/doc/libapt-pkg-doc
 
 	cp -a build/docs/cache* build/docs/design* build/docs/dpkg-tech* \
 	  build/docs/files* build/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
+# sigh	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
 
 	dh_installdocs -plibapt-pkg-doc
 	dh_installchangelogs -plibapt-pkg-doc
