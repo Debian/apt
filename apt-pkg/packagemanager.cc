@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.18 1999/07/10 04:58:42 jgg Exp $
+// $Id: packagemanager.cc,v 1.19 1999/08/03 05:19:41 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -87,7 +87,7 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 /* This is called to correct the installation when packages could not
    be downloaded. */
 bool pkgPackageManager::FixMissing()
-{
+{   
    pkgProblemResolver Resolve(Cache);
    List->SetFileList(FileNames);
    
@@ -101,6 +101,10 @@ bool pkgPackageManager::FixMissing()
       Bad = true;
       Cache.MarkKeep(I);
    }
+ 
+   // We have to empty the list otherwise it will not have the new changes
+   delete List;
+   List = 0;
    
    if (Bad == false)
       return true;

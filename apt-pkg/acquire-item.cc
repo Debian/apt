@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.34 1999/07/20 05:53:32 jgg Exp $
+// $Id: acquire-item.cc,v 1.35 1999/08/03 05:19:41 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -350,15 +350,18 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
    Retries = _config->FindI("Acquire::Retries",0);
 
    if (Version.Arch() == 0)
+   {
       _error->Error("I wasn't able to locate file for the %s package. "
 		    "This might mean you need to manually fix this package. (due to missing arch)",
 		    Version.ParentPkg().Name());
+      return;
+   }
    
    // Generate the final file name as: package_version_arch.deb
    StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
                    QuoteString(Version.VerStr(),"_:") + '_' +
                    QuoteString(Version.Arch(),"_:.") + ".deb";
-   
+
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
       _error->Error("I wasn't able to locate file for the %s package. "
@@ -476,7 +479,8 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
    // Check the size
    if (Size != Version->Size)
    {
-      _error->Error("Size mismatch for package %s",Version.ParentPkg().Name());
+      Status = StatError;
+      ErrorText = "Size mismatch";
       return;
    }
    
@@ -485,7 +489,8 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
    {
       if (Md5Hash != MD5)
       {
-	 _error->Error("MD5Sum mismatch for package %s",Version.ParentPkg().Name());
+	 Status = StatError;
+	 ErrorText = "MD5Sum mismatch";
 	 Rename(DestFile,DestFile + ".FAILED");
 	 return;
       }
