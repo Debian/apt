@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.22 1999/01/20 04:36:43 jgg Exp $
+// $Id: http.cc,v 1.23 1999/01/28 06:32:31 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -1021,6 +1021,8 @@ int HttpMethod::Loop()
       if (Server->Open() == false)
       {
 	 Fail();
+	 delete Server;
+	 Server = 0;
 	 continue;
       }
 
