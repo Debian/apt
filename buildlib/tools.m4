@@ -98,7 +98,7 @@ AC_DEFUN(ah_GLIBC_VER,
 #include <stdlib.h>
 int main(int argc, char **argv) { printf("libc6.%d",__GLIBC_MINOR__); exit(0); }
 _GLIBC_
-	${CC-cc} $dummy.c -o $dummy
+	${CC-cc} $dummy.c -o $dummy > /dev/null 2>&1
 	if test "$?" = 0; then
 		GLIBC_VER=`./$dummy`
 		AC_MSG_RESULT([$GLIBC_VER])
@@ -119,7 +119,7 @@ AC_DEFUN(ah_LIBSTDCPP_VER,
 #include <stdlib.h>
 int main(int argc, char **argv) { exit(0); }
 _LIBSTDCPP_
-	${CXX-c++} $dummy.cc -o $dummy
+	${CXX-c++} $dummy.cc -o $dummy > /dev/null 2>&1
 
 	if test "$?" = 0; then
 		soname=`objdump -p ./$dummy |grep NEEDED|grep libstd`
