@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.32 2001/02/20 07:03:17 jgg Exp $
+// $Id: acquire-worker.cc,v 1.33 2001/03/23 01:47:14 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -123,8 +123,6 @@ bool pkgAcquire::Worker::Start()
    
    // Fork off the process
    Process = ExecFork();
-
-   // Spawn the subprocess
    if (Process == 0)
    {
       // Setup the FDs
@@ -369,7 +367,7 @@ bool pkgAcquire::Worker::MediaChange(string Message)
 				    LookupTag(Message,"Drive")) == false)
    {
       char S[300];
-      sprintf(S,"603 Media Changed\nFailed: true\n\n");
+      snprintf(S,sizeof(S),"603 Media Changed\nFailed: true\n\n");
       if (Debug == true)
 	 clog << " -> " << Access << ':' << QuoteString(S,"\n") << endl;
       OutQueue += S;
@@ -378,7 +376,7 @@ bool pkgAcquire::Worker::MediaChange(string Message)
    }
 
    char S[300];
-   sprintf(S,"603 Media Changed\n\n");
+   snprintf(S,sizeof(S),"603 Media Changed\n\n");
    if (Debug == true)
       clog << " -> " << Access << ':' << QuoteString(S,"\n") << endl;
    OutQueue += S;
