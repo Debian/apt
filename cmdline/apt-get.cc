@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.29 1998/12/10 04:22:51 jgg Exp $
+// $Id: apt-get.cc,v 1.30 1998/12/10 04:26:09 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -959,7 +959,7 @@ bool DoCheck(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp(CommandLine &CmdL)
+bool ShowHelp(CommandLine &CmdL)
 {
    cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
        " compiled on " << __DATE__ << "  " << __TIME__ << endl;
