@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.13 1999/04/07 05:30:17 jgg Exp $
+// $Id: sourcelist.cc,v 1.14 1999/07/20 05:53:33 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -73,7 +73,7 @@ bool pkgSourceList::Read(string File)
       string Type;
       string URI;
       Item Itm;
-      char *C = Buffer;
+      const char *C = Buffer;
       if (ParseQuoteWord(C,Type) == false)
 	 return _error->Error("Malformed line %u in source list %s (type)",CurLine,File.c_str());
       if (ParseQuoteWord(C,URI) == false)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.28 1999/07/11 22:42:32 jgg Exp $
+// $Id: fileutl.cc,v 1.29 1999/07/20 05:53:33 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -368,6 +368,20 @@ bool FileFd::Seek(unsigned long To)
    {
       Flags |= Fail;
       return _error->Error("Unable to seek to %u",To);
+   }
+   
+   return true;
+}
+									/*}}}*/
+// FileFd::Skip - Seek in the file					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FileFd::Skip(unsigned long Over)
+{
+   if (lseek(iFd,Over,SEEK_CUR) < 0)
+   {
+      Flags |= Fail;
+      return _error->Error("Unable to seek ahead %u",Over);
    }
    
    return true;

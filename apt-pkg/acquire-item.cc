@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.33 1999/07/10 05:32:25 jgg Exp $
+// $Id: acquire-item.cc,v 1.34 1999/07/20 05:53:32 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -78,7 +78,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 // ---------------------------------------------------------------------
 /* Stash status and the file size. Note that setting Complete means 
    sub-phases of the acquire process such as decompresion are operating */
-void pkgAcquire::Item::Start(string Message,unsigned long Size)
+void pkgAcquire::Item::Start(string /*Message*/,unsigned long Size)
 {
    Status = StatFetching;
    if (FileSize == 0 && Complete == false)

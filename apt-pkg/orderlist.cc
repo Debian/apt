@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.7 1999/07/19 01:49:44 jgg Exp $
+// $Id: orderlist.cc,v 1.8 1999/07/20 05:53:33 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -150,7 +150,7 @@ bool pkgOrderList::OrderCritical()
 {
    FileList = 0;
    
-   Primary = &DepUnPackPre;
+   Primary = &pkgOrderList::DepUnPackPre;
    Secondary = 0;
    RevDepends = 0;
    Remove = 0;
@@ -176,10 +176,10 @@ bool pkgOrderList::OrderUnpack(string *FileList)
 {
    this->FileList = FileList;
 
-   Primary = &DepUnPackCrit;
-   Secondary = &DepConfigure;
-   RevDepends = &DepUnPackDep;
-   Remove = &DepRemove;
+   Primary = &pkgOrderList::DepUnPackCrit;
+   Secondary = &pkgOrderList::DepConfigure;
+   RevDepends = &pkgOrderList::DepUnPackDep;
+   Remove = &pkgOrderList::DepRemove;
    LoopCount = -1;
 
    // Sort
@@ -200,7 +200,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
       return false;
 
    LoopCount = 0;
-   Primary = &DepUnPackPre;
+   Primary = &pkgOrderList::DepUnPackPre;
    if (DoRun() == false)
       return false;
 
@@ -222,7 +222,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
 bool pkgOrderList::OrderConfigure()
 {
    FileList = 0;
-   Primary = &DepConfigure;
+   Primary = &pkgOrderList::DepConfigure;
    Secondary = 0;
    RevDepends = 0;
    Remove = 0;
@@ -475,8 +475,8 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    DepFunc Old = Primary;
    
    // Perform immedate configuration of the package if so flagged.
-   if (IsFlag(Pkg,Immediate) == true && Primary != &DepUnPackPre)
-      Primary = &DepUnPackPreD;
+   if (IsFlag(Pkg,Immediate) == true && Primary != &pkgOrderList::DepUnPackPre)
+      Primary = &pkgOrderList::DepUnPackPreD;
 
    if (IsNow(Pkg) == true)
    {
@@ -589,7 +589,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
 	 DepFunc Old = Primary;
 	 bool Res = false;
 	 if (D->Type == pkgCache::Dep::PreDepends)
-	    Primary = &DepUnPackPreD;
+	    Primary = &pkgOrderList::DepUnPackPreD;
 	 Res = VisitProvides(D,true);
 	 Primary = Old;
 	 if (Res == false)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.23 1999/07/09 04:38:00 jgg Exp $
+// $Id: acquire.h,v 1.24 1999/07/20 05:53:33 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -259,10 +259,10 @@ class pkgAcquireStatus
    virtual bool MediaChange(string Media,string Drive) = 0;
    
    // Each of these is called by the workers when an event occures
-   virtual void IMSHit(pkgAcquire::ItemDesc &Itm) {};
-   virtual void Fetch(pkgAcquire::ItemDesc &Itm) {};
-   virtual void Done(pkgAcquire::ItemDesc &Itm) {};
-   virtual void Fail(pkgAcquire::ItemDesc &Itm) {};
+   virtual void IMSHit(pkgAcquire::ItemDesc &/*Itm*/) {};
+   virtual void Fetch(pkgAcquire::ItemDesc &/*Itm*/) {};
+   virtual void Done(pkgAcquire::ItemDesc &/*Itm*/) {};
+   virtual void Fail(pkgAcquire::ItemDesc &/*Itm*/) {};
    virtual bool Pulse(pkgAcquire *Owner); // returns false on user cancel
    virtual void Start();
    virtual void Stop();

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.10 1999/01/27 02:48:52 jgg Exp $
+// $Id: acquire-method.h,v 1.11 1999/07/20 05:53:33 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -52,7 +52,7 @@ class pkgAcqMethod
       
    // Handlers for messages
    virtual bool Configuration(string Message);
-   virtual bool Fetch(FetchItem *Item) {return true;};
+   virtual bool Fetch(FetchItem * /*Item*/) {return true;};
    
    // Outgoing messages
    void Fail(bool Transient = false);
