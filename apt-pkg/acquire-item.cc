@@ -312,7 +312,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
 /* The Translation file is added to the queue */
 pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 			    string URI,string URIDesc,string ShortDesc) :
-                      pkgAcqIndex(Owner, URI, URIDesc, ShortDesc)
+                      pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, "", "")
 {
 }
 

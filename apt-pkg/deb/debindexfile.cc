@@ -324,7 +324,7 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 // ---------------------------------------------------------------------
 /* */
 debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section) : 
-                  URI(URI), Dist(Dist), Section(Section)
+                  pkgIndexFile(true), URI(URI), Dist(Dist), Section(Section)
 {
 }
 									/*}}}*/

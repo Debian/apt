@@ -177,11 +177,14 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
 
    Indexes = new vector <pkgIndexFile*>;
    for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin(); 
-	I != SectionEntries.end(); I++)
+	I != SectionEntries.end(); I++) {
       if ((*I)->IsSrc)
          Indexes->push_back(new debSourcesIndex (URI, Dist, (*I)->Section, IsTrusted()));
       else 
          Indexes->push_back(new debPackagesIndex (URI, Dist, (*I)->Section, IsTrusted()));
+      Indexes->push_back(new debTranslationsIndex(URI,Dist,(*I)->Section));
+   }
+
    return Indexes;
 }
 
@@ -227,7 +230,6 @@ class debSLTypeDebian : public pkgSourceList::Type
       debReleaseIndex *Deb = new debReleaseIndex(URI,Dist);
       Deb->PushSectionEntry (new debReleaseIndex::debSectionEntry(Section, IsSrc));
       List.push_back(Deb);
-      List.push_back(new debTranslationsIndex(URI,Dist,Section));
       return true;
    }
 };
