@@ -18,7 +18,7 @@ SLIBS=$(PTHREADLIB)
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
          contrib/configuration.cc contrib/progress.cc contrib/cmndline.cc \
-	 contrib/md5.cc
+	 contrib/md5.cc contrib/cdromutl.h
 
 # Source code for the main library
 SOURCE+= pkgcache.cc version.cc fileutl.cc pkgcachegen.cc depcache.cc \
@@ -35,7 +35,7 @@ HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
           packagemanager.h tagfile.h deblistparser.h init.h pkgcache.h \
           version.h progress.h pkgrecords.h debrecords.h cmndline.h \
 	  acquire.h acquire-worker.h acquire-item.h acquire-method.h md5.h \
-	  dpkgpm.h dpkginit.h
+	  dpkgpm.h dpkginit.h cdromutl.h
 
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 
