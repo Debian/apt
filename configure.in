@@ -14,8 +14,7 @@ dnl configure.in correctly and can be run at any time
 
 AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(buildlib)
-AC_CONFIG_HEADER(include/config.h:buildlib/core/config.h.in include/apti18n.h:buildlib/core/apti18n.h.in)
-CONFIG_STATUS=config.status.apt
+AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
 AC_DEFINE_UNQUOTED(VERSION,"0.5.1")
@@ -129,7 +128,6 @@ if test x"$c9x_ints" = x"no"; then
   
    HAVE_C9X=
    AC_SUBST(HAVE_C9X)
-   AC_OUTPUT_COMMANDS([echo Have c9x $HAVE_C9X],[HAVE_C9X=$HAVE_C9X])
 fi
 
 dnl HP-UX sux..
@@ -164,4 +162,4 @@ ah_NUM_PROCS
 ah_GLIBC_VER
 ah_LIBSTDCPP_VER
 
-AC_OUTPUT(environment.mak:buildlib/core/environment.mak.in makefile:buildlib/makefile.in,make -s dirs)
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make -s dirs)
