@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.h,v 1.3 2001/05/29 04:08:09 jgg Exp $
+// $Id: writer.h,v 1.4 2001/06/26 02:50:27 jgg Exp $
 /* ######################################################################
 
    Writer 
@@ -20,6 +20,7 @@
 #include <string>
 #include <stdio.h>
 #include <iostream>
+#include <vector>
 
 #include "cachedb.h"
 #include "override.h"
@@ -90,9 +91,11 @@ class PackagesWriter : public FTWScanner
    struct CacheDB::Stats &Stats;
    
    inline bool ReadOverride(string File) {return Over.ReadOverride(File);};
+   inline bool ReadExtraOverride(string File) 
+      {return Over.ReadExtraOverride(File);};
    virtual bool DoPackage(string FileName);
 
-   PackagesWriter(string DB,string Overrides);
+   PackagesWriter(string DB,string Overrides,string ExtOverrides=string());
    virtual ~PackagesWriter() {};
 };
 
@@ -138,11 +141,10 @@ class SourcesWriter : public FTWScanner
    FILE *Output;
    struct CacheDB::Stats Stats;
 
-/*   inline bool ReadBinOverride(string File) {return BOver.ReadOverride(File);};
-   bool ReadSrcOverride(string File); // {return BOver.ReadOverride(File);};*/
    virtual bool DoPackage(string FileName);
 
-   SourcesWriter(string BOverrides,string SOverrides);
+   SourcesWriter(string BOverrides,string SOverrides,
+		 string ExtOverrides=string());
    virtual ~SourcesWriter() {free(Buffer);};
 };
 

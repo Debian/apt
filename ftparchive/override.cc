@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: override.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: override.cc,v 1.3 2001/06/26 02:50:27 jgg Exp $
 /* ######################################################################
 
    Override
@@ -93,7 +93,7 @@ bool Override::ReadOverride(string File,bool Source)
 	 continue;
       }      
       *End = 0;
-      Itm.Section = Start;
+      Itm.FieldOverride["Section"] = Start;
 
       // Source override files only have the two columns
       if (Source == true)
@@ -124,6 +124,80 @@ bool Override::ReadOverride(string File,bool Source)
       }
 
       Mapping[Pkg] = Itm;
+   }
+
+   if (ferror(F))
+      _error->Errno("fgets","Failed to read the override file %s",File.c_str());
+   fclose(F);
+   return true;
+}
+									/*}}}*/
+// Override::ReadExtraOverride - Read the extra override file		/*{{{*/
+// ---------------------------------------------------------------------
+/* This parses the extra override file and reads it into the map */
+bool Override::ReadExtraOverride(string File,bool Source)
+{
+   if (File.empty() == true)
+      return true;
+   
+   FILE *F = fopen(File.c_str(),"r");
+   if (F == 0)
+      return _error->Errno("fopen","Unable to open %s",File.c_str());
+  
+   char Line[500];
+   unsigned long Counter = 0;
+   while (fgets(Line,sizeof(Line),F) != 0)
+   {
+      Counter++;
+
+      // Silence 
+      for (char *I = Line; *I != 0; I++)
+	 if (*I == '#')
+	    *I = 0;
+
+      // Strip space leading up to the package name, skip blank lines
+      char *Pkg = Line;
+      for (; isspace(*Pkg) && *Pkg != 0;Pkg++);
+      if (Pkg == 0)
+	 continue;
+
+      // Find the package and zero..
+      char *End = Pkg;
+      for (; isspace(*End) == 0 && *End != 0; End++);
+      if (*End == 0)
+      {
+	 _error->Warning("Malformed override %s line %lu #1",File.c_str(),
+			 Counter);
+	 continue;
+      }      
+      *End = 0;
+
+      // Find the field
+      for (End++; isspace(*End) != 0 && *End != 0; End++);
+      char *Field = End;
+      for (; isspace(*End) == 0 && *End != 0; End++);
+      if (*End == 0)
+      {
+	 _error->Warning("Malformed override %s line %lu #2",File.c_str(),
+			 Counter);
+	 continue;
+      }
+      *End = 0;
+      
+      // Find the field value 
+      for (End++; isspace(*End) != 0 && *End != 0; End++);
+      char *Value = End;
+      for (; *End != 0; End++);
+      for (; isspace(*(End-1)) && End > Value; End--);
+      if (End == Value)
+      {
+	 _error->Warning("Malformed override %s line %lu #3",File.c_str(),
+			 Counter);
+	 continue;
+      }      
+      *End = 0;
+
+      Mapping[Pkg].FieldOverride[Field] = Value;
    }
 
    if (ferror(F))

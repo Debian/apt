@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.3 2001/05/29 04:08:09 jgg Exp $
+// $Id: writer.cc,v 1.4 2001/06/26 02:50:27 jgg Exp $
 /* ######################################################################
 
    Writer 
@@ -35,6 +35,20 @@
 
 using namespace std;
 FTWScanner *FTWScanner::Owner;
+
+// SetTFRewriteData - Helper for setting rewrite lists			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+inline void SetTFRewriteData(struct TFRewriteData &tfrd,
+			     const char *tag,
+			     const char *rewrite,
+			     const char *newtag = 0)
+{
+    tfrd.Tag = tag;
+    tfrd.Rewrite = rewrite;
+    tfrd.NewTag = newtag;
+}
+									/*}}}*/
 
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -276,7 +290,7 @@ bool FTWScanner::SetExts(string Vals)
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-PackagesWriter::PackagesWriter(string DB,string Overrides) :
+PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides) :
 		    Db(DB),Stats(Db.Stats)
 {
    Output = stdout;
@@ -291,12 +305,16 @@ PackagesWriter::PackagesWriter(string DB,string Overrides) :
 
    if (Db.Loaded() == false)
       DoContents = false;
-       
+      
    // Read the override file
    if (Overrides.empty() == false && Over.ReadOverride(Overrides) == false)
       return;
    else
       NoOverride = true;
+
+   if (ExtOverrides.empty() == false)
+      Over.ReadExtraOverride(ExtOverrides);
+
    _error->DumpErrors();
 }
 									/*}}}*/
@@ -347,7 +365,7 @@ bool PackagesWriter::DoPackage(string FileName)
       }
       
       OverItem = &Tmp;
-      Tmp.Section = Tags.FindS("Section");
+      Tmp.FieldOverride["Section"] = Tags.FindS("Section");
       Tmp.Priority = Tags.FindS("Priority");
    }
 
@@ -367,19 +385,17 @@ bool PackagesWriter::DoPackage(string FileName)
       NewFileName = flCombine(PathPrefix,NewFileName);
           
    // This lists all the changes to the fields we are going to make.
-   TFRewriteData Changes[] = {{"Size",Size},
-                              {"MD5sum",MD5Res.c_str()},
-                              {"Filename",NewFileName.c_str()},
-                              {"Section",OverItem->Section.c_str()},
-                              {"Priority",OverItem->Priority.c_str()},
-                              {"Status",0},
-                              {"Optional",0},
-                              {},  // For maintainer
-                              {},  // For Suggests
-	                      {}};
+   // (7 hardcoded + maintainer + suggests + end marker)
+   TFRewriteData Changes[6+2+OverItem->FieldOverride.size()+1];
+
    unsigned int End = 0;
-   for (End = 0; Changes[End].Tag != 0; End++);
-   
+   SetTFRewriteData(Changes[End++], "Size", Size);
+   SetTFRewriteData(Changes[End++], "MD5sum", MD5Res.c_str());
+   SetTFRewriteData(Changes[End++], "Filename", NewFileName.c_str());
+   SetTFRewriteData(Changes[End++], "Priority", OverItem->Priority.c_str());
+   SetTFRewriteData(Changes[End++], "Status", 0);
+   SetTFRewriteData(Changes[End++], "Optional", 0);
+
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
    string NewMaint = OverItem->SwapMaint(Tags.FindS("Maintainer"),MaintFailed);
@@ -395,10 +411,7 @@ bool PackagesWriter::DoPackage(string FileName)
    }
    
    if (NewMaint.empty() == false)
-   {
-      Changes[End].Rewrite = NewMaint.c_str();
-      Changes[End++].Tag = "Maintainer";
-   }
+      SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
    
    /* Get rid of the Optional tag. This is an ugly, ugly, ugly hack that
       dpkg-scanpackages does.. Well sort of. dpkg-scanpackages just does renaming
@@ -410,10 +423,15 @@ bool PackagesWriter::DoPackage(string FileName)
    {
       if (Tags.FindS("Suggests").empty() == false)
 	 OptionalStr = Tags.FindS("Suggests") + ", " + OptionalStr;
-      Changes[End].Rewrite = OptionalStr.c_str();
-      Changes[End++].Tag = "Suggests";
+      SetTFRewriteData(Changes[End++], "Suggests", OptionalStr.c_str());
    }
-   
+
+   for (map<string,string>::iterator I = OverItem->FieldOverride.begin(); 
+        I != OverItem->FieldOverride.end(); I++) 
+      SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
+
+   SetTFRewriteData(Changes[End++], 0, 0);
+
    // Rewrite and store the fields.
    if (TFRewrite(Output,Tags,TFRewritePackageOrder,Changes) == false)
       return false;
@@ -426,7 +444,8 @@ bool PackagesWriter::DoPackage(string FileName)
 // SourcesWriter::SourcesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-SourcesWriter::SourcesWriter(string BOverrides,string SOverrides)
+SourcesWriter::SourcesWriter(string BOverrides,string SOverrides,
+			     string ExtOverrides)
 {
    Output = stdout;
    Ext[0] = ".dsc";
@@ -443,11 +462,12 @@ SourcesWriter::SourcesWriter(string BOverrides,string SOverrides)
       return;
    else
       NoOverride = true;
+
+   if (ExtOverrides.empty() == false)
+      SOver.ReadExtraOverride(ExtOverrides);
    
-   if (SOverrides.empty() == false && FileExists(SOverrides) == true &&
-       SOver.ReadOverride(SOverrides,true) == false)
-      return;
-//   _error->DumpErrors();
+   if (SOverrides.empty() == false && FileExists(SOverrides) == true)
+      SOver.ReadOverride(SOverrides,true);
 }
 									/*}}}*/
 // SourcesWriter::DoPackage - Process a single package			/*{{{*/
@@ -615,16 +635,15 @@ bool SourcesWriter::DoPackage(string FileName)
       Directory.erase(Directory.end()-1);
       
    // This lists all the changes to the fields we are going to make.
-   TFRewriteData Changes[] = {{"Source",Package.c_str(),"Package"},
-                              {"Files",Files},
-                              {"Directory",Directory.c_str()},
-                              {"Section",SOverItem->Section.c_str()},
-                              {"Priority",BestPrio.c_str()},
-                              {"Status",0},
-                              {},  // For maintainer
-	                      {}};
+   // (5 hardcoded + maintainer + end marker)
+   TFRewriteData Changes[5+1+SOverItem->FieldOverride.size()+1];
+
    unsigned int End = 0;
-   for (End = 0; Changes[End].Tag != 0; End++);
+   SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
+   SetTFRewriteData(Changes[End++],"Files",Files);
+   SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
+   SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
+   SetTFRewriteData(Changes[End++],"Status",0);
 
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
@@ -640,10 +659,13 @@ bool SourcesWriter::DoPackage(string FileName)
       }      
    }
    if (NewMaint.empty() == false)
-   {
-      Changes[End].Rewrite = NewMaint.c_str();
-      Changes[End++].Tag = "Maintainer";
-   }
+      SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
+   
+   for (map<string,string>::iterator I = SOverItem->FieldOverride.begin(); 
+        I != SOverItem->FieldOverride.end(); I++) 
+      SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
+
+   SetTFRewriteData(Changes[End++], 0, 0);
       
    // Rewrite and store the fields.
    if (TFRewrite(Output,Tags,TFRewriteSourceOrder,Changes) == false)

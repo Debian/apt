@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.3 2001/05/29 04:39:31 jgg Exp $
+// $Id: apt-ftparchive.cc,v 1.4 2001/06/26 02:50:27 jgg Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -55,10 +55,12 @@ struct PackageMap
    string PkgFile;
    string BinCacheDB;
    string BinOverride;
+   string ExtraOverride;
    
    // Stuff for the Source File
    string SrcFile;
    string SrcOverride;
+   string SrcExtraOverride;
 
    // Contents 
    string Contents;
@@ -155,7 +157,8 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    
    // Create a package writer object.
    PackagesWriter Packages(flCombine(CacheDir,BinCacheDB),
-			   flCombine(OverrideDir,BinOverride));
+			   flCombine(OverrideDir,BinOverride),
+			   flCombine(OverrideDir,ExtraOverride));
    if (PkgExt.empty() == false && Packages.SetExts(PkgExt) == false)
       return _error->Error("Package extension list is too long");
    if (_error->PendingError() == true)
@@ -167,7 +170,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
 
    Packages.Stats.DeLinkBytes = Stats.DeLinkBytes;
    Packages.DeLinkLimit = DeLinkLimit;
-      
+
    // Create a compressor object
    MultiCompress Comp(flCombine(ArchiveDir,PkgFile),
 		      PkgCompress,Permissions);
@@ -221,7 +224,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    return !_error->PendingError();
 }
 									/*}}}*/
-// PackageMap::GenSources - Actually generate a Package file		/*{{{*/
+// PackageMap::GenSources - Actually generate a Source file		/*{{{*/
 // ---------------------------------------------------------------------
 /* This generates the Sources File described by this object. */
 bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
@@ -240,7 +243,8 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    
    // Create a package writer object.
    SourcesWriter Sources(flCombine(OverrideDir,BinOverride),
-			  flCombine(OverrideDir,SrcOverride));
+			 flCombine(OverrideDir,SrcOverride),
+			 flCombine(OverrideDir,SrcExtraOverride));
    if (SrcExt.empty() == false && Sources.SetExts(SrcExt) == false)
       return _error->Error("Source extension list is too long");
    if (_error->PendingError() == true)
@@ -476,6 +480,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.SrcFile = SubstVar(Block.Find("Sources",DSources.c_str()),Vars);
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/source",Vars);
 	       Itm.FLFile = SubstVar(Block.Find("SourceFileList",DSFLFile.c_str()),Vars);
+	       Itm.SrcExtraOverride = SubstVar(Block.Find("SrcExtraOverride"),Vars);
 	    }
 	    else
 	    {
@@ -486,6 +491,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.Contents = SubstVar(Block.Find("Contents",DContents.c_str()),Vars);
 	       Itm.ContentsHead = SubstVar(Block.Find("Contents::Header",DContentsH.c_str()),Vars);
 	       Itm.FLFile = SubstVar(Block.Find("FileList",DFLFile.c_str()),Vars);
+	       Itm.ExtraOverride = SubstVar(Block.Find("ExtraOverride"),Vars);
 	    }
 
  	    Itm.GetGeneral(Setup,Block);
@@ -513,6 +519,8 @@ void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
       Itm.SrcFile = Block.Find("Sources");
       Itm.BinCacheDB = Block.Find("BinCacheDB");
       Itm.BinOverride = Block.Find("BinOverride");
+      Itm.ExtraOverride = Block.Find("ExtraOverride");
+      Itm.SrcExtraOverride = Block.Find("SrcExtraOverride");
       Itm.SrcOverride = Block.Find("SrcOverride");
       Itm.BaseDir = Top->Tag;
       Itm.FLFile = Block.Find("FileList");
@@ -594,7 +602,7 @@ bool SimpleGenPackages(CommandLine &CmdL)
    
    // Create a package writer object.
    PackagesWriter Packages(_config->Find("APT::FTPArchive::DB"),
-			   Override);   
+			   Override, "");   
    if (_error->PendingError() == true)
       return false;
    

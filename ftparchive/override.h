@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: override.h,v 1.3 2001/05/29 03:49:53 jgg Exp $
+// $Id: override.h,v 1.4 2001/06/26 02:50:27 jgg Exp $
 /* ######################################################################
 
    Override
@@ -29,10 +29,10 @@ class Override
    struct Item
    {
       string Priority;
-      string Section;
       string OldMaint;
       string NewMaint;
-      
+
+      map<string,string> FieldOverride;
       string SwapMaint(string Orig,bool &Failed);
    };
    
@@ -47,7 +47,8 @@ class Override
    };
    
    bool ReadOverride(string File,bool Source = false);
+   bool ReadExtraOverride(string File,bool Source = false);
 };
-    
+
 #endif
     

@@ -345,11 +345,21 @@ for i in Sections do
       Sets the binary override file. The override file 
       contains section, priority and maintainer address information.
       </VarListEntry>
-      
+
       <VarListEntry><term>SrcOverride</term>
       <ListItem><Para>
       Sets the source override file. The override file 
       contains section information.
+      </VarListEntry>
+      
+      <VarListEntry><term>ExtraOverride</term>
+      <ListItem><Para>
+      Sets the binary extra override file. 
+      </VarListEntry>
+      
+      <VarListEntry><term>SrcExtraOverride</term>
+      <ListItem><Para>
+      Sets the source extra override file. 
       </VarListEntry>
      </VariableList>
    </refsect2>
@@ -378,7 +388,7 @@ for i in Sections do
       Sets the Contents file output. (Optional)
       </VarListEntry>
       
-      <VarListEntry><term>Binoverride</term>
+      <VarListEntry><term>BinOverride</term>
       <ListItem><Para>
       Sets the binary override file.
       </VarListEntry>
@@ -386,6 +396,16 @@ for i in Sections do
       <VarListEntry><term>SrcOverride</term>
       <ListItem><Para>
       Sets the source override file.
+      </VarListEntry>
+      
+      <VarListEntry><term>ExtraOverride</term>
+      <ListItem><Para>
+      Sets the binary extra override file.
+      </VarListEntry>
+      
+      <VarListEntry><term>SrcExtraOverride</term>
+      <ListItem><Para>
+      Sets the source extra override file.
       </VarListEntry>
       
       <VarListEntry><term>BinCacheDB</term>
@@ -429,6 +449,13 @@ for i in Sections do
    The source override file is fully compatible with &dpkg-scansources;. It
    contains 2 fields separated by spaces. The first fields is the source 
    package name, the second is the section to assign it.
+ </RefSect1>   
+
+ <RefSect1><title>The Extra Override File</>
+   <para>
+   The extra override file allows any arbitary tag to be added or replaced
+   in the output. It has 3 columns, the first is the package, the second is
+   the tag and the remainder of the line is the new value.
  </RefSect1>   
 
  <RefSect1><Title>Options</>
