@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: writer.cc,v 1.3 2001/05/29 04:08:09 jgg Exp $
 /* ######################################################################
 
    Writer 
@@ -26,12 +26,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <ftw.h>
+#include <iostream>
     
 #include "cachedb.h"
 #include "apt-ftparchive.h"
 #include "multicompress.h"
 									/*}}}*/
 
+using namespace std;
 FTWScanner *FTWScanner::Owner;
 
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
@@ -575,8 +577,7 @@ bool SourcesWriter::DoPackage(string FileName)
    string NewFileName;
    if (DirStrip.empty() == false &&
        FileName.length() > DirStrip.length() &&
-       stringcmp(OriginalPath,OriginalPath + DirStrip.length(),
-		 DirStrip.begin(),DirStrip.end()) == 0)
+       stringcmp(DirStrip,OriginalPath,OriginalPath + DirStrip.length()) == 0)
       NewFileName = string(OriginalPath + DirStrip.length());
    else 
       NewFileName = OriginalPath;

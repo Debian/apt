@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.h,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: writer.h,v 1.3 2001/05/29 04:08:09 jgg Exp $
 /* ######################################################################
 
    Writer 
@@ -19,10 +19,15 @@
 
 #include <string>
 #include <stdio.h>
+#include <iostream>
 
 #include "cachedb.h"
 #include "override.h"
 #include "apt-ftparchive.h"
+
+using std::string;
+using std::cout;
+using std::endl;
     
 class FTWScanner
 {
