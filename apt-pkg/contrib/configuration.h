@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.14 2001/05/07 05:06:52 jgg Exp $
+// $Id: configuration.h,v 1.15 2002/11/09 17:11:25 doogie Exp $
 /* ######################################################################
 
    Configuration Class
@@ -33,6 +33,7 @@
 #endif 
 
 #include <string>
+#include <iostream>
 
 using std::string;
 
@@ -90,7 +91,8 @@ class Configuration
    
    inline const Item *Tree(const char *Name) const {return Lookup(Name);};
 
-   void Dump();
+   inline void Dump() { Dump(clog); };
+   void Dump(ostream& str);
 
    Configuration(const Item *Root);
    Configuration();

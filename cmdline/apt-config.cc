@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.9 2002/02/15 03:40:00 jgg Exp $
+// $Id: apt-config.cc,v 1.10 2002/11/09 17:11:25 doogie Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -57,7 +57,7 @@ bool DoShell(CommandLine &CmdL)
 /* */
 bool DoDump(CommandLine &CmdL)
 {
-   _config->Dump();
+   _config->Dump(cout);
    return true;
 }
 									/*}}}*/
