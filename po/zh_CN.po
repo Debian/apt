@@ -1,22 +1,18 @@
 # Chinese/Simplified translation of apt.
 # This file is put in the public domain.
-#
-# Initially converted from zh_TW.po
-#
-# Tchaikov <chaisave@263.net>, 2004
-# Carlos Z.F. Liu <carlos_liu@yahoo.com>, 2004
+# Tchaikov <chaisave@263.net>, 2004.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.22\n"
+"Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-03-14 13:46-0800\n"
-"PO-Revision-Date: 2004-02-26 17:05-0800\n"
+"PO-Revision-Date: 2004-03-15 22:55+0800\n"
 "Last-Translator: Tchaikov <chaisave@263.net>\n"
 "Language-Team: Chinese (simplified) <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: cmdline/apt-cache.cc:135
 #, c-format
@@ -200,7 +196,7 @@ msgstr ""
 "       apt-cache [选项] showsrc 软件包甲 [软件包乙 ...]\n"
 "\n"
 "apt-cache 是一个底层的工具，我们用它来操纵 APT 的二进制\n"
-"缓存文件，也用来从那些文件查询相关信息\n"
+"缓存文件，也用来在那些文件中查询相关信息\n"
 "\n"
 "命令：\n"
 "   add - 往源缓存加入一个软件包文件\n"
@@ -214,11 +210,12 @@ msgstr ""
 "   search - 根据正则表达式搜索软件包列表\n"
 "   show - 显示关于该软件包的便于阅读的一个报告\n"
 "   depends - 原原本本的显示该软件包的依赖关系的信息\n"
-"   rdepends - 显示所有依赖于该软件包的软件包名字   pkgnames - 列出所有软件包"
-"的名字\n"
+"   rdepends - 显示所有依赖于该软件包的软件包名字\n"
+"   pkgnames - 列出所有软件包的名字\n"
 "   dotty - 生成可用 GraphVis 处理的软件包关系图\n"
 "   xvcg - 生成可用 xvcg 处理的软件包的关系图\n"
 "   policy - 显示软件包的安装设置状态\n"
+"\n"
 "选项：\n"
 "  -h   本帮助文档。\n"
 "  -p=? 软件包的缓存。\n"
@@ -378,15 +375,15 @@ msgstr ""
 "\n"
 "apt-ftparchive 能依据一个由 .deb 文件构成的文件树生成 Package 文件。\n"
 "Package 文件里不仅注有每个软件包的 MD5 校验码和文件大小，\n"
-"还有软件包的所有控制字段的内容。该软件同时支持覆盖(override)文件，\n"
+"还有软件包的所有控制字段的内容。该软件同时支持 override 文件，\n"
 "通过它可以强制指定软件包的优先级及其所属的软件类别。\n"
 "\n"
 "与上面类似，apt-ftparchive 也能由 .dsc 的文件树生成 Source 文件。\n"
-"可以通过使用 --source-override 选项来指定一个覆盖(override)文件\n"
+"可以通过使用 --source-override 选项来指定一个 override 文件\n"
 "\n"
 "使用“packages”和“source”命令时，必须在文件树的根部执行本程序。\n"
 "\n"
-"二进制包的搜索路径一定要是递归搜索的底层，而且覆盖(override)文件里\n"
+"二进制包的搜索路径一定要是递归搜索的底层，而且 override 文件里\n"
 "应该注明 override 的标志。若指定了路径前缀，那么它会被加到文件名前面。\n"
 "下面有个来自 Debian 文档的例子：\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386 > \\\n"
@@ -395,7 +392,7 @@ msgstr ""
 "选项:\n"
 "  -h    本帮助文档\n"
 "  --md5 使之生成 MD5 校验和\n"
-"  -s=?  源代码包覆盖(override)文件\n"
+"  -s=?  源代码包 override 文件\n"
 "  -q    输出精简信息  -d=?  指定可选的缓存数据库\n"
 "  --no-delink 开启delink的调试模式\n"
 "  --contents  使之生成控制内容文件\n"
@@ -508,7 +505,7 @@ msgstr "存档没有包含软件包(package)字段"
 #: ftparchive/writer.cc:386 ftparchive/writer.cc:595
 #, c-format
 msgid "  %s has no override entry\n"
-msgstr "  %s 中没有覆盖(override)项\n"
+msgstr "  %s 中没有 override 项\n"
 
 #: ftparchive/writer.cc:429 ftparchive/writer.cc:677
 #, c-format
@@ -527,22 +524,22 @@ msgstr "无法打开 %s"
 #: ftparchive/override.cc:64 ftparchive/override.cc:170
 #, c-format
 msgid "Malformed override %s line %lu #1"
-msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #1"
+msgstr "override 文件 %s 第 %lu 行的格式有误 #1"
 
 #: ftparchive/override.cc:78 ftparchive/override.cc:182
 #, c-format
 msgid "Malformed override %s line %lu #2"
-msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #2"
+msgstr "override 文件 %s 第 %lu 行的格式有误 #2"
 
 #: ftparchive/override.cc:92 ftparchive/override.cc:195
 #, c-format
 msgid "Malformed override %s line %lu #3"
-msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #3"
+msgstr "override 文件 %s 第 %lu 行的格式有误 #3"
 
 #: ftparchive/override.cc:131 ftparchive/override.cc:205
 #, c-format
 msgid "Failed to read the override file %s"
-msgstr "无法读取覆盖(override)文件 %s"
+msgstr "无法读取 override 文件 %s"
 
 #: ftparchive/multicompress.cc:75
 #, c-format
@@ -1538,7 +1535,7 @@ msgstr "内部错误，无法定位包内文件 %s"
 #: apt-inst/deb/debfile.cc:104
 #, c-format
 msgid "Couldn't change to %s"
-msgstr "无法切换工作到 %s"
+msgstr "无法切换工作目录到 %s"
 
 #: apt-inst/deb/debfile.cc:125
 msgid "Internal Error, could not locate member"
@@ -1550,7 +1547,7 @@ msgstr "无法在打包文件中找到有效的主控文件"
 
 #: apt-inst/deb/debfile.cc:243
 msgid "Unparsible control file"
-msgstr "不能解析的 control 文件"
+msgstr "不能解析的主控文件"
 
 #: methods/cdrom.cc:113
 #, c-format
@@ -1597,7 +1594,7 @@ msgstr "正在登录"
 
 #: methods/ftp.cc:168
 msgid "Unable to determine the peer name"
-msgstr "无法获知无端主机名"
+msgstr "无法获知对方主机名"
 
 #: methods/ftp.cc:173
 msgid "Unable to determine the local name"
@@ -1606,17 +1603,17 @@ msgstr "无法获知本地主机名"
 #: methods/ftp.cc:204 methods/ftp.cc:232
 #, c-format
 msgid "Server refused our connection and said: %s"
-msgstr "服务器拒绝让我们的连接，它的回应是：%s"
+msgstr "服务器拒绝了我们的连接，它响应道：%s"
 
 #: methods/ftp.cc:210
 #, c-format
 msgid "USER failed, server said: %s"
-msgstr "USER 指令出错，服务器回应：%s"
+msgstr "USER 指令出错，服务器响应道：%s"
 
 #: methods/ftp.cc:217
 #, c-format
 msgid "PASS failed, server said: %s"
-msgstr "PASS 指令出错，服务器回应：%s"
+msgstr "PASS 指令出错，服务器响应道：%s"
 
 #: methods/ftp.cc:237
 msgid ""
@@ -1628,7 +1625,7 @@ msgstr ""
 #: methods/ftp.cc:265
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
-msgstr "登录脚本命令“%s”出错，服务器回应：%s"
+msgstr "登录脚本命令“%s”出错，服务器响应道：%s"
 
 #: methods/ftp.cc:291
 #, c-format
@@ -1641,7 +1638,7 @@ msgstr "连接超时"
 
 #: methods/ftp.cc:335
 msgid "Server closed the connection"
-msgstr "服务器切断了连接"
+msgstr "服务器关闭了连接"
 
 #: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
 msgid "Read error"
@@ -1716,7 +1713,7 @@ msgstr "把文件加入散列表时出错"
 #: methods/ftp.cc:877
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
-msgstr "无法获取文件，服务器回应“%s”"
+msgstr "无法获取文件，服务器响应道“%s”"
 
 #: methods/ftp.cc:892 methods/rsh.cc:322
 msgid "Data socket timed out"
@@ -1725,7 +1722,7 @@ msgstr "数据套接字超时"
 #: methods/ftp.cc:922
 #, c-format
 msgid "Data transfer failed, server said '%s'"
-msgstr "数据传送出错，服务器的响应为“%s”"
+msgstr "数据传送出错，服务器响应道“%s”"
 
 #. Get the files information
 #: methods/ftp.cc:997
@@ -1938,7 +1935,7 @@ msgstr "语法错误 %s:%u: 不支持的指令“%s”"
 #: apt-pkg/contrib/configuration.cc:693
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "语法错误 %s:%u: 文件尾部有无意义的数据"
+msgstr "语法错误 %s:%u: 文件尾部有多余的无意义的数据"
 
 #: apt-pkg/contrib/progress.cc:154
 #, c-format
@@ -2004,7 +2001,7 @@ msgstr "无法读取文件系统挂载点 %s 的状态"
 #: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
-msgstr "无法改变工作目录至 %s"
+msgstr "无法切换工作目录到 %s"
 
 #: apt-pkg/contrib/cdromutl.cc:190
 msgid "Failed to stat the cdrom"
@@ -2048,7 +2045,7 @@ msgstr "子进程 %s 返回了一个错误号 (%u)"
 #: apt-pkg/contrib/fileutl.cc:373
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
-msgstr "子进程 %s 异常结束了"
+msgstr "子进程 %s 异常退出了"
 
 #: apt-pkg/contrib/fileutl.cc:417
 #, c-format
@@ -2230,7 +2227,8 @@ msgstr "在安装源列表中 %2$s 中第 %1$u 行的格式有误 (vendor id)"
 #: apt-pkg/sourcelist.cc:296
 #, c-format
 msgid "Unknown vendor ID '%s' in line %u of source list %s"
-msgstr "在安装源列表 %3$s 的第 %2$u 行发现了无法识别的提供 vendnor ID “%1$s”"
+msgstr ""
+"在安装源列表 %3$s 的第 %2$u 行发现了无法识别的软件提供商 ID (vendor ID) “%1$s”"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
@@ -2294,7 +2292,6 @@ msgid "Packaging system '%s' is not supported"
 msgstr "不支持“%s”打包系统"
 
 #: apt-pkg/init.cc:135
-#, fuzzy
 msgid "Unable to determine a suitable packaging system type"
 msgstr "无法确定适合的打包系统类型"
 
