@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.122 2002/11/09 20:38:02 doogie Exp $
+// $Id: apt-get.cc,v 1.123 2002/11/09 20:50:30 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -710,18 +710,18 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    
    // Number of bytes
    if (DebBytes != FetchBytes)
-      ioprintf(c1out,_("Need to get %sB/%sB of archives. "),
+      ioprintf(c1out,_("Need to get %sB/%sB of archives.\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
    else
-      ioprintf(c1out,_("Need to get %sB of archives. "),
+      ioprintf(c1out,_("Need to get %sB of archives.\n"),
 	       SizeToStr(DebBytes).c_str());
 
    // Size delta
    if (Cache->UsrSize() >= 0)
-      ioprintf(c1out,_("After unpacking %sB will be used.\n"),
+      ioprintf(c1out,_("After unpacking %sB of additional disk space will be used.\n"),
 	       SizeToStr(Cache->UsrSize()).c_str());
    else
-      ioprintf(c1out,_("After unpacking %sB will be freed.\n"),
+      ioprintf(c1out,_("After unpacking %sB disk space will be freed.\n"),
 	       SizeToStr(-1*Cache->UsrSize()).c_str());
 
    if (_error->PendingError() == true)
