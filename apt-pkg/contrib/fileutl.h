@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.12 1999/01/18 06:20:08 jgg Exp $
+// $Id: fileutl.h,v 1.13 1999/02/12 20:47:41 doogie Exp $
 /* ######################################################################
    
    File Utilities
@@ -66,7 +66,7 @@ bool FileExists(string File);
 string SafeGetCWD();
 void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);
-bool WaitFd(int Fd);
+bool WaitFd(int Fd, bool write = false, long timeout = 0);
 
 // File string manipulators
 string flNotDir(string File);

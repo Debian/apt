@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.19 1999/02/08 07:30:50 jgg Exp $
+// $Id: fileutl.cc,v 1.20 1999/02/12 20:47:41 doogie Exp $
 /* ######################################################################
    
    File Utilities
@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <errno.h>
 									/*}}}*/
 
@@ -164,15 +165,21 @@ void SetNonBlock(int Fd,bool Block)
 // ---------------------------------------------------------------------
 /* This waits for a FD to become readable using select. It is usefull for
    applications making use of non-blocking sockets. */
-bool WaitFd(int Fd)
+bool WaitFd(int Fd, bool write = false, long timeout = 0)
 {
    fd_set Set;
+   struct timeval tv;
    FD_ZERO(&Set);
    FD_SET(Fd,&Set);
-
-   if (select(Fd+1,&Set,0,0,0) <= 0)
-      return false;
-
+   tv.tv_sec = timeout / 1000000;
+   tv.tv_usec = timeout % 1000000;
+   if(write) {
+      if (select(Fd+1,&Set,0,0,&tv) <= 0)
+         return false;
+   } else {
+      if (select(Fd+1,0,&Set,0,&tv) <= 0)
+         return false;
+   }
    return true;
 }
 									/*}}}*/
