@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.25 2001/02/20 07:03:17 jgg Exp $
+// $Id: acquire-item.h,v 1.26 2003/02/02 03:13:13 doogie Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -93,7 +93,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
-   virtual string DescURI() {return RealURI;};
+   virtual string DescURI() {return RealURI + ".gz";};
 
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
 	       string ShortDesct);
