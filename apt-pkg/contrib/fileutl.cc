@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.20 1999/02/12 20:47:41 doogie Exp $
+// $Id: fileutl.cc,v 1.21 1999/02/16 04:18:35 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -165,7 +165,7 @@ void SetNonBlock(int Fd,bool Block)
 // ---------------------------------------------------------------------
 /* This waits for a FD to become readable using select. It is usefull for
    applications making use of non-blocking sockets. */
-bool WaitFd(int Fd, bool write = false, long timeout = 0)
+bool WaitFd(int Fd,bool write,unsigned long timeout)
 {
    fd_set Set;
    struct timeval tv;
@@ -173,13 +173,17 @@ bool WaitFd(int Fd, bool write = false, long timeout = 0)
    FD_SET(Fd,&Set);
    tv.tv_sec = timeout / 1000000;
    tv.tv_usec = timeout % 1000000;
-   if(write) {
-      if (select(Fd+1,&Set,0,0,&tv) <= 0)
+   if (write == true) 
+   {
+      if (select(Fd+1,0,&Set,0,(timeout != 0?&tv:0)) <= 0)
          return false;
-   } else {
-      if (select(Fd+1,0,&Set,0,&tv) <= 0)
+   } 
+   else 
+   {
+      if (select(Fd+1,&Set,0,0,(timeout != 0?&tv:0)) <= 0)
          return false;
    }
+   
    return true;
 }
 									/*}}}*/
