@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.30 2001/05/14 05:56:26 jgg Exp $
+// $Id: tagfile.cc,v 1.31 2001/10/04 05:13:23 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -197,7 +197,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       return false;
    
    TagCount = 0;
-   while (TagCount < sizeof(Indexes)/sizeof(Indexes[0]) && Stop < End)
+   while (TagCount+1 < sizeof(Indexes)/sizeof(Indexes[0]) && Stop < End)
    {
       // Start a new index and add it to the hash
       if (isspace(Stop[0]) == 0)
@@ -211,13 +211,13 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       if (Stop == 0)
 	 return false;
       
-      for (; Stop[1] == '\r' && Stop+1 < End; Stop++);
+      for (;  Stop+1 < End && Stop[1] == '\r'; Stop++);
 
       // Double newline marks the end of the record
       if (Stop+1 < End && Stop[1] == '\n')
       {
 	 Indexes[TagCount] = Stop - Section;
-	 for (; (Stop[0] == '\n' || Stop[0] == '\r') && Stop < End; Stop++);
+	 for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r'); Stop++);
 	 return true;
       }
       
