@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.cc,v 1.6 1998/11/26 23:29:42 jgg Exp $
+// $Id: version.cc,v 1.7 1998/11/28 20:50:24 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -59,6 +59,7 @@ int pkgVersionCompare(string A,string B)
 static int iVersionCompare(const char *A, const char *AEnd, const char *B,
 			   const char *BEnd)
 {
+   // cout << string(A,AEnd) << ',' << string(B,BEnd) << endl;
    if (A >= AEnd && B >= BEnd)
       return 0;
    if (A >= AEnd)
@@ -180,6 +181,11 @@ int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
    const char *drhs = BEnd-1;
    for (;dlhs > lhs && *dlhs != '-'; dlhs--);
    for (;drhs > rhs && *drhs != '-'; drhs--);
+
+   if (dlhs == A)
+      dlhs = AEnd;
+   if (drhs == B)
+      drhs = BEnd;
    
    // Compare the main version
    Res = iVersionCompare(lhs,dlhs,rhs,drhs);
@@ -243,4 +249,3 @@ bool pkgCheckDep(const char *DepVer,const char *PkgVer,int Op)
    return false;
 }
 									/*}}}*/
-
