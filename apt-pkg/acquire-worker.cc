@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.8 1998/10/30 07:53:35 jgg Exp $
+// $Id: acquire-worker.cc,v 1.9 1998/11/01 05:27:33 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -237,9 +237,9 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
+	    OwnerQ->ItemDone(Itm);
 	    Itm->Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
 					  LookupTag(Message,"MD5-Hash"));
-	    OwnerQ->ItemDone(Itm);
 	    break;
 	 }	 
 	 
@@ -252,8 +252,8 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
-	    Itm->Owner->Failed(Message);
 	    OwnerQ->ItemDone(Itm);
+	    Itm->Owner->Failed(Message);
 	    break;
 	 }	 
 	 

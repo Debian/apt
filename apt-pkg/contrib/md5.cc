@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.1 1998/10/31 05:19:59 jgg Exp $
+// $Id: md5.cc,v 1.2 1998/11/01 05:27:36 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
@@ -40,7 +40,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #ifdef __GNUG__
-#pragma interface "apt-pkg/md5.h"
+#pragma implementation "apt-pkg/md5.h"
 #endif
 
 #include <apt-pkg/md5.h>

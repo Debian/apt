@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: file.cc,v 1.4 1998/10/30 07:53:52 jgg Exp $
+// $Id: file.cc,v 1.5 1998/11/01 05:27:41 jgg Exp $
 /* ######################################################################
 
    File URI method for APT
@@ -22,7 +22,7 @@
 
 class FileMethod : public pkgAcqMethod
 {
-   virtual bool Fetch(string Message,URI Get);
+   virtual bool Fetch(FetchItem *Itm);
    
    public:
    
@@ -32,8 +32,9 @@ class FileMethod : public pkgAcqMethod
 // FileMethod::Fetch - Fetch a file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileMethod::Fetch(string Message,URI Get)
+bool FileMethod::Fetch(FetchItem *Itm)
 {
+   URI Get = Itm->Uri;
    string File = Get.Path;
    FetchResult Res;
    
@@ -45,7 +46,7 @@ bool FileMethod::Fetch(string Message,URI Get)
       Res.Filename = File;
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
-      if (LastModified == Buf.st_mtime)
+      if (Itm->LastModified == Buf.st_mtime)
 	 Res.IMSHit = true;
    }
    
@@ -61,7 +62,7 @@ bool FileMethod::Fetch(string Message,URI Get)
 	 AltRes.Filename = File;
 	 AltRes.LastModified = Buf.st_mtime;
 	 AltRes.IMSHit = false;
-	 if (LastModified == Buf.st_mtime)
+	 if (Itm->LastModified == Buf.st_mtime)
 	    AltRes.IMSHit = true;
 	 
 	 URIDone(Res,&AltRes);

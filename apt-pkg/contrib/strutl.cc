@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.9 1998/10/30 07:53:45 jgg Exp $
+// $Id: strutl.cc,v 1.10 1998/11/01 05:27:37 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -609,10 +609,10 @@ bool StrToTime(string Val,time_t &Result)
 }
 									/*}}}*/
 
-// URI::URI - Constructor						/*{{{*/
+// URI::CopyFrom - Copy from an object					/*{{{*/
 // ---------------------------------------------------------------------
 /* This parses the URI into all of its components */
-URI::URI(string U)
+void URI::CopyFrom(string U)
 {
    string::const_iterator I = U.begin();
 

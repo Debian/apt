@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.6 1998/10/30 07:53:38 jgg Exp $
+// $Id: acquire.h,v 1.7 1998/11/01 05:27:35 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -133,6 +133,7 @@ class pkgAcquire::Queue
    bool Startup();
    bool Shutdown();
    bool Cycle();
+   void Bump();
    
    Queue(string Name,pkgAcquire *Owner);
    ~Queue();

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.6 1998/10/30 07:53:37 jgg Exp $
+// $Id: acquire.cc,v 1.7 1998/11/01 05:27:34 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -290,21 +290,23 @@ bool pkgAcquire::Run()
       if (_error->PendingError() == true)
 	 break;
    }   
-   
+
+   // Shut down the acquire bits
+   Running = false;
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Shutdown();
 
-   Running = false;
    return _error->PendingError();
 }
 									/*}}}*/
-// pkgAcquire::Bump - Called when an item is dequeued			/*{{{*/
+// Acquire::Bump - Called when an item is dequeued			/*{{{*/
 // ---------------------------------------------------------------------
 /* This routine bumps idle queues in hopes that they will be able to fetch
    the dequeued item */
 void pkgAcquire::Bump()
 {
-   
+   for (Queue *I = Queues; I != 0; I = I->Next)
+      I->Bump();
 }
 									/*}}}*/
 
@@ -474,5 +476,12 @@ bool pkgAcquire::Queue::Cycle()
    I->Worker = Workers;
    I->Owner->Status = pkgAcquire::Item::StatFetching;
    return Workers->QueueItem(I);
+}
+									/*}}}*/
+// Queue::Bump - Fetch any pending objects if we are idle		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcquire::Queue::Bump()
+{
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.3 1998/10/30 07:53:53 jgg Exp $
+// $Id: gzip.cc,v 1.4 1998/11/01 05:27:43 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -23,7 +23,7 @@
 
 class GzipMethod : public pkgAcqMethod
 {
-   virtual bool Fetch(string Message,URI Get);
+   virtual bool Fetch(FetchItem *Itm);
    
    public:
    
@@ -33,11 +33,13 @@ class GzipMethod : public pkgAcqMethod
 // GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool GzipMethod::Fetch(string Message,URI Get)
+bool GzipMethod::Fetch(FetchItem *Itm)
 {
+   URI Get = Itm->Uri;
+   
    // Open the source and destintation files
    FileFd From(Get.Path,FileFd::ReadOnly);
-   FileFd To(DestFile,FileFd::WriteEmpty);   
+   FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
       return false;
@@ -90,13 +92,13 @@ bool GzipMethod::Fetch(string Message,URI Get)
    struct utimbuf TimeBuf;
    TimeBuf.actime = Buf.st_atime;
    TimeBuf.modtime = Buf.st_mtime;
-   if (utime(DestFile.c_str(),&TimeBuf) != 0)
+   if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
       return _error->Errno("utime","Failed to set modification time");
 
    // Return a Done response
    FetchResult Res;
    Res.LastModified = Buf.st_mtime;
-   Res.Filename = DestFile;
+   Res.Filename = Itm->DestFile;
    URIDone(Res);
    
    return true;

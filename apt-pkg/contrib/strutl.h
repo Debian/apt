@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.8 1998/10/30 07:53:46 jgg Exp $
+// $Id: strutl.h,v 1.9 1998/11/01 05:27:38 jgg Exp $
 /* ######################################################################
 
    String Util - These are some usefull string functions
@@ -13,8 +13,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// This is a private header
-// Header section: /
 #ifndef STRUTL_H
 #define STRUTL_H
 
@@ -40,11 +38,15 @@ bool ReadMessages(int Fd, vector<string> &List);
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};
+inline int stringcmp(string A,const char *B) {return stringcmp(A.begin(),A.end(),B,B+strlen(B));};
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcasecmp(const char *A,const char *AEnd,const char *B) {return stringcasecmp(A,AEnd,B,B+strlen(B));};
+inline int stringcasecmp(string A,const char *B) {return stringcasecmp(A.begin(),A.end(),B,B+strlen(B));};
 
 class URI
 {
+   void CopyFrom(string From);
+		 
    public:
    
    string Access;
@@ -54,9 +56,12 @@ class URI
    string Path;
    unsigned int Port;
    
-   operator string();
+   inline operator string();
+   inline operator =(string From) {CopyFrom(From);};
+   inline bool empty() {return Access.empty();};
    
-   URI(string Path);
+   URI(string Path) {CopyFrom(Path);};
+   URI() : Port(0) {};
 };
 
 #endif

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.1 1998/10/30 07:53:35 jgg Exp $
+// $Id: acquire-method.h,v 1.2 1998/11/01 05:27:32 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -23,12 +23,16 @@
 class pkgAcqMethod
 {
    protected:
-   
-   string CurrentURI;
-   string DestFile;
-   time_t LastModified;
 
-   vector<string> Messages;
+   struct FetchItem
+   {
+      FetchItem *Next;
+
+      string Uri;
+      string DestFile;
+      time_t LastModified;
+   };
+   
    
    struct FetchResult
    {
@@ -37,18 +41,22 @@ class pkgAcqMethod
       bool IMSHit;
       string Filename;
       unsigned long Size;
+      unsigned long ResumePoint;      
       FetchResult();
    };
-   
+
+   // State
+   vector<string> Messages;
+   FetchItem *Queue;
+      
    // Handlers for messages
    virtual bool Configuration(string Message);
-   virtual bool Fetch(string Message,URI Get) {return true;};
+   virtual bool Fetch(FetchItem *Item) {return true;};
    
    // Outgoing messages
    void Fail();
    void Fail(string Why);
-//   void Log(const char *Format,...);
-   void URIStart(FetchResult &Res,unsigned long Resume = 0);
+   void URIStart(FetchResult &Res);
    void URIDone(FetchResult &Res,FetchResult *Alt = 0);
 		 
    public:
@@ -56,7 +64,10 @@ class pkgAcqMethod
    enum CnfFlags {SingleInstance = (1<<0), PreScan = (1<<1), 
                   Pipeline = (1<<2), SendConfig = (1<<3)};
 
-   int Run();
+   void Log(const char *Format,...);
+   void Status(const char *Format,...);
+   
+   int Run(bool Single = false);
    
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~pkgAcqMethod() {};

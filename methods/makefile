@@ -23,3 +23,9 @@ PROGRAM=gzip
 SLIBS = -lapt-pkg 
 SOURCE = gzip.cc
 include $(PROGRAM_H)
+
+# The http method
+PROGRAM=http
+SLIBS = -lapt-pkg 
+SOURCE = http.cc
+include $(PROGRAM_H)

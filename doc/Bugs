@@ -2,9 +2,6 @@
 #24000: Bug in apt Version: 0.0.17-1bo0
  Summary: Couldn't locate an archive source for a package
  Status: Require Status file. 
-#27601: srange errors from dselect
- Summary: Couldn't locate an archive source
- Status: Require status file
 #26670: apt: apt-get dumps core after checking integrity
  Summary: Some terminal environments cause APT to crash
           Win95 telnet and emacs term-in-a-buffer are two at least
@@ -29,12 +26,15 @@
  Status: Probable that 0.3.x will have support for configuing some
          parameters
 #22892: Apt improvements
+#28184: apt could be smarted regarding mirrors
  Summary: Make use of redundant sources
  Status: 0.3.0 will likely do this, already the information for it is stored.
 #24799: Some suggestions for the apt method in dselect
  Summary: Wants to be able to specifiy -d from dselect
  Status: Likely a APT_OPTIONS enviornment variable will be created, -d can
          be put there.
+	 There is already an APT_CONFIG in 0.3, APT_OPTIONS may also 
+	 appear..
 #25104: APT should retry failed downloads
  Summary: FTP method has problems with busy servers
  Status: The 0.3.0 ftp method should probably use the configuration mechanism
@@ -44,6 +44,14 @@
  Summary: FTP method has no controls for firewalls
  Status: The 0.3.0 ftp method should probably use the configuration mechanism
          to control this desired behavoir.
+#28373: apt package is missing information on ftp.conf
+ Summary: The man pages have references to several non-existent items,
+          ftp.conf is only one of them.
+ Status: Fix the man pages. This certainly will be done in 0.3.0
+#28391: apt-get install without upgrading
+ Summary: Make install leave the package in the keep state if it is already
+          installed
+ Status: Will be implemented in 0.3.0
 
 -- Fixed but unclosed things
 #25026: apt: Why do you list the packages you're _not_ doing anything to instead of the ones you are?
@@ -59,7 +67,14 @@
  Status: 0.3.0 has substantially better support for this to the point
          that it is doable by using a seperate configuration file and
 	 the -c option
-
+#27601: srange errors from dselect
+ Summary: Couldn't locate an archive source
+ Status: Require status file
+         Believed to be fixed in 0.1.9, was not reproducable w/ given 
+	 status file
+#27841: apt: apt depends on a missing library
+ Status: New versions of APT in slink have been compiled with libstdc++2.9
+ 
 -- Silly things
 #26592: apt: Problems with ftpd in SunOS 5.6
  Summary: SunOS ftpd does not support the SIZE command
@@ -74,6 +89,7 @@
  Status: Impossible to do without an index file for all source archives.
 #26019: apt may report wrong line speed
 #26433: apt: claims to fetch things it doesn't actually fetch (wishlist)
+#28778: apt: apt's fetched message is wrong for update of packages files
  Summary: APT includes the fetch time from the local cache in its
           calculations
  Status: Probably will be fixed with new acquire code
@@ -93,3 +109,12 @@
  Summary: Wants to know what package files were not updated
  Status: There is no place for this in the current apt-get design,
          probably won't make the GUI either.
+#28172: HTTP Proxy cache refresh should be forced for corrupted packages
+ Summary: Some problem resulted in a corrupted package
+ Status: I belive this reflects a deeper problem and the suggested solution
+         is only a band-aide patch. I intend to close this bug when #24685
+	 is fixed with a configuration directive.
+#27646: Apt: dpkg --merge-avail
+ Summary: Suggestion to call merge avail after each update operation
+ Status: Unlikely. The dpkg --print-avail functions should be obsoleted
+         by the apt-query program which should be written.

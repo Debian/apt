@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.1 1998/10/30 07:53:35 jgg Exp $
+// $Id: acquire-method.cc,v 1.2 1998/11/01 05:27:30 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -45,6 +45,8 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
 
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
       exit(100);
+
+   SetNonBlock(STDIN_FILENO,true);
 }
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
@@ -65,9 +67,20 @@ void pkgAcqMethod::Fail()
 void pkgAcqMethod::Fail(string Err)
 {   
    char S[1024];
-   snprintf(S,sizeof(S),"400 URI Failure\nURI: %s\n"
-	    "Message %s\n\n",CurrentURI.c_str(),Err.c_str());
-
+   if (Queue != 0)
+   {
+      snprintf(S,sizeof(S),"400 URI Failure\nURI: %s\n"
+	       "Message: %s\n\n",Queue->Uri.c_str(),Err.c_str());
+      
+      // Dequeue
+      FetchItem *Tmp = Queue;
+      Queue = Queue->Next;
+      delete Tmp;
+   }
+   else
+      snprintf(S,sizeof(S),"400 URI Failure\nURI: <UNKNOWN>\n"
+	       "Message: %s\n\n",Err.c_str());
+      
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
       exit(100);
 }
@@ -75,12 +88,15 @@ void pkgAcqMethod::Fail(string Err)
 // AcqMethod::URIStart - Indicate a download is starting		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqMethod::URIStart(FetchResult &Res,unsigned long Resume = 0)
+void pkgAcqMethod::URIStart(FetchResult &Res)
 {
+   if (Queue == 0)
+      abort();
+   
    char S[1024] = "";
    char *End = S;
    
-   End += snprintf(S,sizeof(S),"200 URI Start\nURI: %s\n",CurrentURI.c_str());
+   End += snprintf(S,sizeof(S),"200 URI Start\nURI: %s\n",Queue->Uri.c_str());
    if (Res.Size != 0)
       End += snprintf(End,sizeof(S) - (End - S),"Size: %u\n",Res.Size);
    
@@ -88,9 +104,9 @@ void pkgAcqMethod::URIStart(FetchResult &Res,unsigned long Resume = 0)
       End += snprintf(End,sizeof(S) - (End - S),"Last-Modified: %s\n",
 		      TimeRFC1123(Res.LastModified).c_str());
    
-   if (Resume != 0)
+   if (Res.ResumePoint != 0)
       End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %u\n",
-		      Resume);
+		      Res.ResumePoint);
       
    strcat(End,"\n");
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
@@ -102,10 +118,13 @@ void pkgAcqMethod::URIStart(FetchResult &Res,unsigned long Resume = 0)
 /* */
 void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 {
+   if (Queue == 0)
+      abort();
+   
    char S[1024] = "";
    char *End = S;
    
-   End += snprintf(S,sizeof(S),"201 URI Done\nURI: %s\n",CurrentURI.c_str());
+   End += snprintf(S,sizeof(S),"201 URI Done\nURI: %s\n",Queue->Uri.c_str());
 
    if (Res.Filename.empty() == false)
       End += snprintf(End,sizeof(S) - (End - S),"Filename: %s\n",Res.Filename.c_str());
@@ -147,6 +166,11 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    strcat(End,"\n");
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
       exit(100);
+
+   // Dequeue
+   FetchItem *Tmp = Queue;
+   Queue = Queue->Next;
+   delete Tmp;
 }
 									/*}}}*/
 // AcqMethod::Configuration - Handle the configuration message		/*{{{*/
@@ -186,19 +210,25 @@ bool pkgAcqMethod::Configuration(string Message)
 // AcqMethod::Run - Run the message engine				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int pkgAcqMethod::Run()
+int pkgAcqMethod::Run(bool Single)
 {
-   SetNonBlock(STDIN_FILENO,true);
-
    while (1)
    {
+      // Block if the message queue is empty
       if (Messages.empty() == true)
-	 if (WaitFd(STDIN_FILENO) == false)
-	    return 0;
+      {
+	 if (Single == false)
+	    if (WaitFd(STDIN_FILENO) == false)
+	       return 0;
+      }
       
       if (ReadMessages(STDIN_FILENO,Messages) == false)
 	 return 0;
-	 
+      
+      // Single mode exits if the message queue is empty
+      if (Single == true && Messages.empty() == true)
+	 return 0;
+      
       string Message = Messages.front();
       Messages.erase(Messages.begin());
       
@@ -219,12 +249,20 @@ int pkgAcqMethod::Run()
 	 break;
 	 
 	 case 600:
-	 {	    
-	    CurrentURI = LookupTag(Message,"URI");
-	    DestFile = LookupTag(Message,"FileName");
-	    StrToTime(LookupTag(Message,"Last-Modified"),LastModified);
-		      
-	    if (Fetch(Message,CurrentURI) == false)
+	 {
+	    FetchItem *Tmp = new FetchItem;
+	    
+	    Tmp->Uri = LookupTag(Message,"URI");
+	    Tmp->DestFile = LookupTag(Message,"FileName");
+	    StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified);
+	    Tmp->Next = 0;
+	    
+	    // Append it to the list
+	    FetchItem **I = &Queue;
+	    for (; *I != 0 && (*I)->Next != 0; I = &(*I)->Next);
+	    *I = Tmp;
+	    
+	    if (Fetch(Tmp) == false)
 	       Fail();
 	    break;					     
 	 }   
@@ -234,6 +272,55 @@ int pkgAcqMethod::Run()
    return 0;
 }
 									/*}}}*/
+// AcqMethod::Log - Send a log message					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqMethod::Log(const char *Format,...)
+{
+   string CurrentURI = "<UNKNOWN>";
+   if (Queue != 0)
+      CurrentURI = Queue->Uri;
+   
+   va_list args;
+   va_start(args,Format);
+
+   // sprintf the description
+   char S[1024];
+   unsigned int Len = snprintf(S,sizeof(S),"101 Log\nURI: %s\n"
+			       "Message: ",CurrentURI.c_str());
+
+   vsnprintf(S+Len,sizeof(S)-Len,Format,args);
+   strcat(S,"\n\n");
+   
+   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
+      exit(100);
+}
+									/*}}}*/
+// AcqMethod::Status - Send a status message				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqMethod::Status(const char *Format,...)
+{
+   string CurrentURI = "<UNKNOWN>";
+   if (Queue != 0)
+      CurrentURI = Queue->Uri;
+   
+   va_list args;
+   va_start(args,Format);
+
+   // sprintf the description
+   char S[1024];
+   unsigned int Len = snprintf(S,sizeof(S),"101 Log\nURI: %s\n"
+			       "Message: ",CurrentURI.c_str());
+
+   vsnprintf(S+Len,sizeof(S)-Len,Format,args);
+   strcat(S,"\n\n");
+   
+   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
+      exit(100);
+}
+									/*}}}*/
+
 // AcqMethod::FetchResult::FetchResult - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
