@@ -5,11 +5,11 @@ CLEAN="auto"
 OPTS="-f"
 APTGET="/usr/bin/apt-get"
 DPKG="/usr/bin/dpkg"
-sh -e
+set -e
 RES=`apt-config shell CLEAN DSelect::Clean OPTS DSelect::Options \
                       DPKG Dir::Bin::dpkg APTGET Dir::Bin::apt-get`
 eval $RES
-sh +e
+set +e
 
 # Yes/No Prompter
 function yesno() {
@@ -37,7 +37,7 @@ function yesno() {
 	echo $ans | tr YN yn
 }
 
-#$APTGET $OPTS dselect-upgrade
+$APTGET $OPTS dselect-upgrade
 RES=$?
 
 # 1 means the user choose no at the prompt
