@@ -2,6 +2,33 @@
 #
 
 #set -e
+#
+# This file understands the following apt configuration variables:
+#
+#  "APT::Periodic::Update-Package-Lists=1"
+#  - Do "apt-get update" automatically every n-days (0=disable)
+#    
+#  "APT::Periodic::Download-Upgradeable-Packages=0",
+#  - Do "apt-get upgrade --download-only" every n-days (0=disable)
+# 
+#  "APT::Periodic::AutocleanInterval"
+#  - Do "apt-get autoclean" every n-days (0=disable)
+#
+#  "APT::Archives::MaxAge",
+#  - Set maximum allowed age of a cache package file. If a cache 
+#    package file is older it is deleted (0=disable)
+#
+#  "APT::Archives::MaxSize",
+#  - Set maximum size of the cache in MB (0=disable). If the cache
+#    is bigger, cached package files are deleted until the size
+#    requirement is met (the biggest packages will be deleted 
+#    first).
+#
+#  "APT::Archives::MinAge"
+#  - Set minimum age of a package file. If a file is younger it
+#    will not be deleted (0=disable). Usefull to prevent races 
+#    and to keep backups of the packages for emergency.
+# 
 
 check_stamp()
 {
@@ -20,6 +47,11 @@ check_stamp()
     stamp=$(date --date=$(date -r $stamp --iso-8601) +%s)
     now=$(date --date=$(date --iso-8601) +%s)
     delta=$(($now-$stamp))
+
+    # intervall is in days,
+    interval=$(($interval*60*60*24))
+    #echo "stampfile: $1"
+    #echo "interval=$interval, now=$now, stamp=$stamp, delta=$delta"
 
     if [ $delta -ge $interval ]; then
         return 0
@@ -42,10 +74,12 @@ check_size_constraints()
 {
     # min-age in days
     MaxAge=0
+    MinAge=1
     MaxSize=0
     CacheDir="var/cache/apt"
     CacheArchive="archives/"
     eval $(apt-config shell MaxAge APT::Archives::MaxAge)
+    eval $(apt-config shell MinAge APT::Archives::MinAge)
     eval $(apt-config shell MaxSize APT::Archives::MaxSize)
     eval $(apt-config shell Dir Dir)
     eval $(apt-config shell CacheDir Dir::Cache)
@@ -60,12 +94,21 @@ check_size_constraints()
     Cache="${Dir%/}/${CacheDir%/}/${CacheArchive%/}/"
 
     # check age
-    if [ ! $MaxAge -eq 0 ]; then
+    if [ ! $MaxAge -eq 0 ] && [ ! $MinAge -eq 0 ]; then
+	find $Cache -name "*.deb"  -mtime +$MaxAge -and -not -mtime -$MinAge -print0 | xargs -r -0 rm -f
+    elif [ ! $MaxAge -eq 0 ]; then
 	find $Cache -name "*.deb"  -mtime +$MaxAge -print0 | xargs -r -0 rm -f
     fi
     
     # check size
     if [ ! $MaxSize -eq 0 ]; then
+	# maxSize is in MB
+	MaxSize=$(($MaxSize*1024))
+
+	#get current time
+	now=$(date --date=$(date --iso-8601) +%s)
+	MinAge=$(($MinAge*24*60*60))
+
 	# reverse-sort by mtime
 	for file in $(ls -rt $Cache/*.deb); do 
 	    du=$(du -s $Cache)
@@ -74,6 +117,18 @@ check_size_constraints()
 	    if [ $size -lt $MaxSize ]; then
 		break
 	    fi
+
+	    # check for MinAge of the file
+	    if [ ! $MinAge -eq 0 ]; then 
+		mtime=$(date --date=$(date -r $file --iso-8601) +%s)
+		delta=$(($now-$mtime))
+		#echo "$file ($delta), $MinAge"
+		if [ $delta -le $MinAge ]; then
+		    #echo "Skiping $file (delta=$delta)"
+		    continue
+		fi
+	    fi
+
 	    # delete oldest file
 	    rm -f $file
 	done
