@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.15 1999/01/30 02:12:53 jgg Exp $
+// $Id: algorithms.cc,v 1.16 1999/02/05 02:26:00 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -700,7 +700,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    {
 	       if (Debug == true)
 		  clog << "Note, a broken or group was found in " << I.Name() << "." << endl;
-	       Cache.MarkDelete(I);
+	       if ((Flags[I->ID] & Protected) != Protected)
+		  Cache.MarkDelete(I);
 	       break;
 	    }
 	    	    
