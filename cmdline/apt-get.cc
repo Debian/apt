@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.125 2003/02/02 03:30:53 tausq Exp $
+// $Id: apt-get.cc,v 1.126 2003/02/12 16:14:08 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -154,6 +154,14 @@ bool ShowList(ostream &out,string Title,string List)
 {
    if (List.empty() == true)
       return true;
+   // trim trailing space
+   int NonSpace = List.find_last_not_of(' ');
+   if (NonSpace != -1)
+   {
+      List = List.erase(NonSpace + 1);
+      if (List.empty() == true)
+	 return true;
+   }
 
    // Acount for the leading space
    int ScreenWidth = ::ScreenWidth - 3;
