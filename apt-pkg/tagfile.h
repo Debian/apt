@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.15 2001/02/20 07:03:17 jgg Exp $
+// $Id: tagfile.h,v 1.16 2001/03/11 07:22:19 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -47,8 +47,8 @@ class pkgTagSection
    bool Find(const char *Tag,unsigned &Pos) const;
    string FindS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const ;
-   bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
-				unsigned long Flag) const;
+   bool FindFlag(const char *Tag,unsigned long &Flags,
+		 unsigned long Flag) const;
    bool Scan(const char *Start,unsigned long MaxLength);
    inline unsigned long size() const {return Stop - Section;};
    void Trim();

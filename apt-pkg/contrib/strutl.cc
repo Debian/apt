@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.37 2001/02/23 06:08:57 jgg Exp $
+// $Id: strutl.cc,v 1.38 2001/03/11 07:22:19 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -495,7 +495,7 @@ string LookupTag(string Message,const char *Tag,const char *Default)
 // ---------------------------------------------------------------------
 /* This inspects the string to see if it is true or if it is false and
    then returns the result. Several varients on true/false are checked. */
-int StringToBool(string Text,int Default = -1)
+int StringToBool(string Text,int Default)
 {
    char *End;
    int Res = strtol(Text.c_str(),&End,0);   
