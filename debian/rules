@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.41 2002/11/09 20:21:54 doogie Exp $
+# $Id: rules,v 1.42 2002/11/10 00:11:32 doogie Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -108,7 +108,7 @@ ifneq ($(wildcard /usr/share/misc/config.guess),)
 	cp -a /usr/share/misc/config.guess buildlib/config.guess
 	echo Updating buildlib/config.guess
 endif
-	(cd build; ../configure $(confflags))
+	cd build && ../configure $(confflags)
 	touch $@
 
 build/build-stamp: build/configure-stamp
