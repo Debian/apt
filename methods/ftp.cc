@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.28 2001/05/22 04:02:00 jgg Exp $
+// $Id: ftp.cc,v 1.29 2002/04/24 05:35:13 jgg Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -1095,7 +1095,7 @@ int main(int argc,const char *argv[])
 	 putenv("no_proxy=");
 	 
 	 // Run the http method
-	 string Path = flNotFile(argv[0]) + "/http";
+	 string Path = flNotFile(argv[0]) + "http";
 	 execl(Path.c_str(),Path.c_str(),0);
 	 cerr << "Unable to invoke " << Path << endl;
 	 exit(100);
