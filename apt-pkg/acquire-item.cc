@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.25 1999/02/27 22:29:11 jgg Exp $
+// $Id: acquire-item.cc,v 1.26 1999/03/27 03:02:38 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -32,8 +32,8 @@
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::Item::Item(pkgAcquire *Owner) : Owner(Owner), FileSize(0),
-                       Mode(0), ID(0), Complete(false), Local(false), 
-                       QueueCounter(0)
+                       PartialSize(0), Mode(0), ID(0), Complete(false), 
+                       Local(false), QueueCounter(0)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -425,8 +425,8 @@ bool pkgAcqArchive::QueueNext()
 	    return true;
 	 }
 	 
-	 /* Hmm, we have a file and its size does not match, this shouldnt
-	    happen.. */
+	 /* Hmm, we have a file and its size does not match, this means it is
+	    an old style mismatched arch */
 	 unlink(FinalFile.c_str());
       }
 
@@ -450,7 +450,17 @@ bool pkgAcqArchive::QueueNext()
       }
 
       DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
-
+      
+      // Check the destination file
+      if (stat(DestFile.c_str(),&Buf) == 0)
+      {
+	 // Hmm, the partial file is too big, erase it
+	 if ((unsigned)Buf.st_size > Version->Size)
+	    unlink(DestFile.c_str());
+	 else
+	    PartialSize = Buf.st_size;
+      }
+      
       // Create the item
       Desc.URI = Location->ArchiveURI(PkgFile);
       Desc.Description = Location->ArchiveInfo(Version);

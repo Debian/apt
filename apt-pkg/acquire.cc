@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.30 1999/03/16 07:28:45 jgg Exp $
+// $Id: acquire.cc,v 1.31 1999/03/27 03:02:38 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -417,6 +417,18 @@ unsigned long pkgAcquire::FetchNeeded()
    for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
       if ((*I)->Local == false)
 	 Total += (*I)->FileSize;
+   return Total;
+}
+									/*}}}*/
+// Acquire::PartialPresent - Number of partial bytes we already have	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is the number of bytes that is not local */
+unsigned long pkgAcquire::PartialPresent()
+{
+   unsigned long Total = 0;
+   for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
+      if ((*I)->Local == false)
+	 Total += (*I)->PartialSize;
    return Total;
 }
 									/*}}}*/

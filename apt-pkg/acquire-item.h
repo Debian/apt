@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.16 1999/02/01 02:22:11 jgg Exp $
+// $Id: acquire-item.h,v 1.17 1999/03/27 03:02:38 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -48,6 +48,7 @@ class pkgAcquire::Item
    enum {StatIdle, StatFetching, StatDone, StatError} Status;
    string ErrorText;
    unsigned long FileSize;
+   unsigned long PartialSize;   
    char *Mode;
    unsigned long ID;
    bool Complete;

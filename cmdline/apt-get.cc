@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.46 1999/03/27 01:30:38 jgg Exp $
+// $Id: apt-get.cc,v 1.47 1999/03/27 03:02:39 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -543,6 +543,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
 
    // Display statistics
    unsigned long FetchBytes = Fetcher.FetchNeeded();
+   unsigned long FetchPBytes = Fetcher.PartialPresent();
    unsigned long DebBytes = Fetcher.TotalNeeded();
    if (DebBytes != Cache->DebSize())
    {
@@ -556,7 +557,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    if (statfs(OutputDir.c_str(),&Buf) != 0)
       return _error->Errno("statfs","Couldn't determine free space in %s",
 			   OutputDir.c_str());
-   if (unsigned(Buf.f_bfree) < FetchBytes/Buf.f_bsize)
+   if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
       return _error->Error("Sorry, you don't have enough free space in %s",
 			   OutputDir.c_str());
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.19 1999/01/30 06:07:24 jgg Exp $
+// $Id: acquire.h,v 1.20 1999/03/27 03:02:39 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -110,6 +110,7 @@ class pkgAcquire
    // Returns the size of the total download set
    unsigned long TotalNeeded();
    unsigned long FetchNeeded();
+   unsigned long PartialPresent();
    
    pkgAcquire(pkgAcquireStatus *Log = 0);
    ~pkgAcquire();
