@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.4 1999/02/02 02:19:46 jgg Exp $
+# $Id: rules,v 1.5 1999/02/03 21:05:48 jgg Exp $
 
 
 # Uncomment this to turn on verbose mode.
@@ -114,7 +114,7 @@ libapt-pkg-doc: build
 
 	cp -a build/docs/cache* build/docs/design* build/docs/dpkg-tech* \
 	  build/docs/files* build/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
-# sigh	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
+	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
 
 	dh_installdocs -plibapt-pkg-doc
 	dh_installchangelogs -plibapt-pkg-doc
