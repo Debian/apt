@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.18 2001/05/22 04:01:41 jgg Exp $
+// $Id: cdrom.cc,v 1.19 2002/11/22 07:26:10 doogie Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -137,6 +137,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    while (CurrentID.empty() == true)
    {
       bool Hit = false;
+      Mounted = MountCdrom(CDROM);
       for (unsigned int Version = 2; Version != 0; Version--)
       {
 	 if (IdentCdrom(CDROM,NewID,Version) == false)
@@ -166,9 +167,6 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 	 Fail("Wrong CD",true);
 	 return true;
       }
-      
-      MountCdrom(CDROM);
-      Mounted = true;
    }
    
    // Found a CD
