@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: arfile.cc,v 1.7 2004/01/07 20:39:37 mdz Exp $
+// $Id: arfile.cc,v 1.6.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    AR File - Handle an 'AR' archive

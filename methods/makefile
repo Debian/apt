@@ -7,7 +7,7 @@ include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
 # FIXME..
-LIB_APT_PKG_MAJOR = 3.3
+LIB_APT_PKG_MAJOR = 3.5
 APT_DOMAIN := libapt-pkg$(LIB_APT_PKG_MAJOR)
 
 # The file method
@@ -29,6 +29,13 @@ PROGRAM=gzip
 SLIBS = -lapt-pkg 
 LIB_MAKES = apt-pkg/makefile
 SOURCE = gzip.cc
+include $(PROGRAM_H)
+
+# The gpgv method
+PROGRAM=gpgv
+SLIBS = -lapt-pkg
+LIB_MAKES = apt-pkg/makefile
+SOURCE = gpgv.cc
 include $(PROGRAM_H)
 
 # The cdrom method

@@ -279,8 +279,8 @@
                    <term><option>--assume-yes</option></term>
      <listitem><para>Automatic yes to prompts; assume "yes" as answer to all prompts and run
      non-interactively. If an undesirable situation, such as changing a held
-     package or removing an essential package occurs then <literal>apt-get</literal> 
-     will abort. 
+     package, trying to install a unauthenticated package or removing an essential package 
+     occurs then <literal>apt-get</literal> will abort. 
      Configuration Item: <literal>APT::Get::Assume-Yes</literal>.</para></listitem>
      </varlistentry>
 
@@ -403,7 +403,14 @@
      <listitem><para>Only process architecture-dependent build-dependencies.
      Configuration Item: <literal>APT::Get::Arch-Only</literal>.</para></listitem>
      </varlistentry>
+
+     <varlistentry><term><option>--allow-unauthenticated</option></term>
+     <listitem><para>Ignore if packages can't be authenticated and don't prompt about it.
+     This is usefull for tools like pbuilder.
+     Configuration Item: <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
+     </varlistentry>
      
+
      &apt-commonoptions;
      
    </variablelist>

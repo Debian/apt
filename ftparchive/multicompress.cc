@@ -271,7 +271,7 @@ bool MultiCompress::Finalize(unsigned long &OutSize)
 /* This opens the compressor, either in compress mode or decompress 
    mode. FileFd is always the compressor input/output file, 
    OutFd is the created pipe, Input for Compress, Output for Decompress. */
-bool MultiCompress::OpenCompress(const CompType *Prog,int &Pid,int FileFd,
+bool MultiCompress::OpenCompress(const CompType *Prog,pid_t &Pid,int FileFd,
 				 int &OutFd,bool Comp)
 {
    Pid = -1;
@@ -334,7 +334,7 @@ bool MultiCompress::OpenCompress(const CompType *Prog,int &Pid,int FileFd,
 // MultiCompress::OpenOld - Open an old file				/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens one of the original output files, possibly decompressing it. */
-bool MultiCompress::OpenOld(int &Fd,int &Proc)
+bool MultiCompress::OpenOld(int &Fd,pid_t &Proc)
 {
    Files *Best = Outputs;
    for (Files *I = Outputs; I != 0; I = I->Next)
@@ -356,7 +356,7 @@ bool MultiCompress::OpenOld(int &Fd,int &Proc)
 // MultiCompress::CloseOld - Close the old file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool MultiCompress::CloseOld(int Fd,int Proc)
+bool MultiCompress::CloseOld(int Fd,pid_t Proc)
 {
    close(Fd);
    if (Proc != -1)
@@ -439,7 +439,7 @@ bool MultiCompress::Child(int FD)
    while (Missing == false)
    {
       int CompFd = -1;
-      int Proc = -1;
+      pid_t Proc = -1;
       if (OpenOld(CompFd,Proc) == false)
       {
 	 _error->Discard();

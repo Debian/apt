@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.53 2003/02/02 02:44:20 doogie Exp $
+// $Id: pkgcachegen.cc,v 1.53.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -678,7 +678,18 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 {
    unsigned long MapSize = _config->FindI("APT::Cache-Limit",12*1024*1024);
    
-   vector<pkgIndexFile *> Files(List.begin(),List.end());
+   vector<pkgIndexFile *> Files;
+   for (vector<metaIndex *>::const_iterator i = List.begin();
+        i != List.end();
+        i++)
+   {
+      vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
+      for (vector<pkgIndexFile *>::const_iterator j = Indexes->begin();
+	   j != Indexes->end();
+	   j++)
+         Files.push_back (*j);
+   }
+   
    unsigned long EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;

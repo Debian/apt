@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debfile.cc,v 1.4 2004/01/07 20:39:37 mdz Exp $
+// $Id: debfile.cc,v 1.3.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    Debian Archive File (.deb)
@@ -37,12 +37,21 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
 {
    if (_error->PendingError() == true)
       return;
-   
-   // Check the members for validity
-   if (CheckMember("debian-binary") == false ||
-       CheckMember("control.tar.gz") == false ||
-       CheckMember("data.tar.gz") == false)
+
+   if (!CheckMember("debian-binary")) {
+      _error->Error(_("This is not a valid DEB archive, missing '%s' member"), "debian-binary");
       return;
+   }
+
+   if (!CheckMember("control.tar.gz")) {
+      _error->Error(_("This is not a valid DEB archive, missing '%s' member"), "control.tar.gz");
+      return;
+   }
+
+   if (!CheckMember("data.tar.gz") && !CheckMember("data.tar.bz2")) {
+      _error->Error(_("This is not a valid DEB archive, it has no '%s' or '%s' member"), "data.tar.gz", "data.tar.bz2");
+      return;
+   }
 }
 									/*}}}*/
 // DebFile::CheckMember - Check if a named member is in the archive	/*{{{*/
@@ -52,7 +61,7 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
 bool debDebFile::CheckMember(const char *Name)
 {
    if (AR.FindMember(Name) == 0)
-      return _error->Error(_("This is not a valid DEB archive, missing '%s' member"),Name);
+      return false;
    return true;
 }
 									/*}}}*/
@@ -69,7 +78,6 @@ const ARArchive::Member *debDebFile::GotoMember(const char *Name)
    const ARArchive::Member *Member = AR.FindMember(Name);
    if (Member == 0)
    {
-      _error->Error(_("Internal Error, could not locate member %s"),Name);
       return 0;
    }
    if (File.Seek(Member->Start) == false)
@@ -91,7 +99,7 @@ bool debDebFile::ExtractControl(pkgDataBase &DB)
       
    // Prepare Tar
    ControlExtract Extract;
-   ExtractTar Tar(File,Member->Size);
+   ExtractTar Tar(File,Member->Size,"gzip");
    if (_error->PendingError() == true)
       return false;
    
@@ -121,13 +129,18 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
 {
    // Get the archive member and positition the file 
    const ARArchive::Member *Member = AR.FindMember("data.tar.gz");
+   const char *Compressor = "gzip";
+   if (Member == 0) {
+      Member = AR.FindMember("data.tar.bz2");
+      Compressor = "bzip2";
+   }
    if (Member == 0)
       return _error->Error(_("Internal Error, could not locate member"));   
    if (File.Seek(Member->Start) == false)
       return false;
       
    // Prepare Tar
-   ExtractTar Tar(File,Member->Size);
+   ExtractTar Tar(File,Member->Size,Compressor);
    if (_error->PendingError() == true)
       return false;
    return Tar.Go(Stream);
@@ -230,7 +243,7 @@ bool debDebFile::MemControlExtract::Read(debDebFile &Deb)
       return false;
 
    // Extract it.
-   ExtractTar Tar(Deb.GetFile(),Member->Size);
+   ExtractTar Tar(Deb.GetFile(),Member->Size,"gzip");
    if (Tar.Go(*this) == false)
       return false;
 

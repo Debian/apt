@@ -306,7 +306,7 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
 /* This is used if you want to cleanse the environment for the forked 
    child, it fixes up the important signals and nukes all of the fds,
    otherwise acts like normal fork. */
-int ExecFork()
+pid_t ExecFork()
 {
    // Fork off the process
    pid_t Process = fork();
@@ -340,7 +340,7 @@ int ExecFork()
 /* Waits for the given sub process. If Reap is set then no errors are 
    generated. Otherwise a failed subprocess will generate a proper descriptive
    message */
-bool ExecWait(int Pid,const char *Name,bool Reap)
+bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 {
    if (Pid <= 1)
       return true;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.18 2004/01/07 20:39:38 mdz Exp $
+// $Id: gzip.cc,v 1.17.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -57,7 +57,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       return _error->Errno("pipe",_("Couldn't open pipe for %s"),Prog);
 
    // Fork gzip
-   int Process = ExecFork();
+   pid_t Process = ExecFork();
    if (Process == 0)
    {
       close(GzOut[0]);

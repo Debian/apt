@@ -754,7 +754,7 @@ bool ContentsWriter::ReadFromPkgs(string PkgFile,string PkgCompress)
    
    // Open the package file
    int CompFd = -1;
-   int Proc = -1;
+   pid_t Proc = -1;
    if (Pkgs.OpenOld(CompFd,Proc) == false)
       return false;
    

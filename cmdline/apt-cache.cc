@@ -1599,11 +1599,16 @@ bool Madison(CommandLine &CmdL)
                // Locate the associated index files so we can derive a description
                for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); S++)
                {
-                  if ((*S)->FindInCache(*(VF.File().Cache())) == VF.File())
-                  {
-                     cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
-                          << (*S)->Describe(true) << endl;
-                  }
+                    vector<pkgIndexFile *> *Indexes = (*S)->GetIndexFiles();
+                    for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
+                         IF != Indexes->end(); IF++)
+                    {
+                         if ((*IF)->FindInCache(*(VF.File().Cache())) == VF.File())
+                         {
+                                   cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
+                                        << (*IF)->Describe(true) << endl;
+                         }
+                    }
                }
             }
          }

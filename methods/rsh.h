@@ -29,7 +29,7 @@ class RSHConn
 
    public:
 
-   int Process;
+   pid_t Process;
 
    // Raw connection IO
    bool WriteMsg(string &Text,bool Sync,const char *Fmt,...);

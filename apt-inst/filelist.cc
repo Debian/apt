@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: filelist.cc,v 1.5 2004/01/07 20:39:37 mdz Exp $
+// $Id: filelist.cc,v 1.4.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    File Listing - Manages a Cache of File -> Package names.

@@ -15,8 +15,8 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
 
 #include <apti18n.h>
 
@@ -74,8 +74,7 @@ bool pkgSourceList::Type::FixupURI(string &URI) const
 // ---------------------------------------------------------------------
 /* This is a generic one that is the 'usual' format for sources.list
    Weird types may override this. */
-bool pkgSourceList::Type::ParseLine(vector<pkgIndexFile *> &List,
-				    Vendor const *Vendor,
+bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 				    const char *Buffer,
 				    unsigned long CurLine,
 				    string File) const
@@ -98,7 +97,7 @@ bool pkgSourceList::Type::ParseLine(vector<pkgIndexFile *> &List,
       if (ParseQuoteWord(Buffer,Section) == true)
 	 return _error->Error(_("Malformed line %lu in source list %s (Absolute dist)"),CurLine,File.c_str());
       Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
-      return CreateItem(List,URI,Dist,Section,Vendor);
+      return CreateItem(List,URI,Dist,Section);
    }
    
    // Grab the rest of the dists
@@ -107,7 +106,7 @@ bool pkgSourceList::Type::ParseLine(vector<pkgIndexFile *> &List,
    
    do
    {
-      if (CreateItem(List,URI,Dist,Section,Vendor) == false)
+      if (CreateItem(List,URI,Dist,Section) == false)
 	 return false;
    }
    while (ParseQuoteWord(Buffer,Section) == true);
@@ -135,93 +134,15 @@ pkgSourceList::~pkgSourceList()
 {
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
       delete *I;
-   for (vector<Vendor const *>::const_iterator I = VendorList.begin(); 
-	I != VendorList.end(); I++)
-      delete *I;
 }
 									/*}}}*/
-// SourceList::ReadVendors - Read list of known package vendors		/*{{{*/
-// ---------------------------------------------------------------------
-/* This also scans a directory of vendor files similar to apt.conf.d 
-   which can contain the usual suspects of distribution provided data.
-   The APT config mechanism allows the user to override these in their
-   configuration file. */
-bool pkgSourceList::ReadVendors()
-{
-   Configuration Cnf;
-
-   string CnfFile = _config->FindDir("Dir::Etc::vendorparts");
-   if (FileExists(CnfFile) == true)
-      if (ReadConfigDir(Cnf,CnfFile,true) == false)
-	 return false;
-   CnfFile = _config->FindFile("Dir::Etc::vendorlist");
-   if (FileExists(CnfFile) == true)
-      if (ReadConfigFile(Cnf,CnfFile,true) == false)
-	 return false;
-
-   for (vector<Vendor const *>::const_iterator I = VendorList.begin(); 
-	I != VendorList.end(); I++)
-      delete *I;
-   VendorList.erase(VendorList.begin(),VendorList.end());
-   
-   // Process 'simple-key' type sections
-   const Configuration::Item *Top = Cnf.Tree("simple-key");
-   for (Top = (Top == 0?0:Top->Child); Top != 0; Top = Top->Next)
-   {
-      Configuration Block(Top);
-      Vendor *Vendor;
-      
-      Vendor = new pkgSourceList::Vendor;
-      
-      Vendor->VendorID = Top->Tag;
-      Vendor->FingerPrint = Block.Find("Fingerprint");
-      Vendor->Description = Block.Find("Name");
-      
-      if (Vendor->FingerPrint.empty() == true || 
-	  Vendor->Description.empty() == true)
-      {
-         _error->Error(_("Vendor block %s is invalid"), Vendor->VendorID.c_str());
-	 delete Vendor;
-	 continue;
-      }
-      
-      VendorList.push_back(Vendor);
-   }
-
-   /* XXX Process 'group-key' type sections
-      This is currently faked out so that the vendors file format is
-      parsed but nothing is done with it except check for validity */
-   Top = Cnf.Tree("group-key");
-   for (Top = (Top == 0?0:Top->Child); Top != 0; Top = Top->Next)
-   {
-      Configuration Block(Top);
-      Vendor *Vendor;
-      
-      Vendor = new pkgSourceList::Vendor;
-      
-      Vendor->VendorID = Top->Tag;
-      Vendor->Description = Block.Find("Name");
-
-      if (Vendor->Description.empty() == true)
-      {
-         _error->Error(_("Vendor block %s is invalid"), 
-		       Vendor->VendorID.c_str());
-	 delete Vendor;
-	 continue;
-      }
-      
-      VendorList.push_back(Vendor);
-   }
-   
-   return !_error->PendingError();
-}
 									/*}}}*/
 // SourceList::ReadMainList - Read the main source list from etc	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgSourceList::ReadMainList()
 {
-   return ReadVendors() && Read(_config->FindFile("Dir::Etc::sourcelist"));
+   return Read(_config->FindFile("Dir::Etc::sourcelist"));
 }
 									/*}}}*/
 // SourceList::Read - Parse the sourcelist file				/*{{{*/
@@ -269,8 +190,7 @@ bool pkgSourceList::Read(string File)
       if (Parse == 0)
 	 return _error->Error(_("Type '%s' is not known on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
       
-      // Authenticated repository
-      Vendor const *Vndr = 0;
+      // Vendor name specified
       if (C[0] == '[')
       {
 	 string VendorID;
@@ -282,22 +202,24 @@ bool pkgSourceList::Read(string File)
 	     return _error->Error(_("Malformed line %u in source list %s (vendor id)"),CurLine,File.c_str());
 	 VendorID = string(VendorID,1,VendorID.size()-2);
 	 
-	 for (vector<Vendor const *>::const_iterator iter = VendorList.begin();
-	      iter != VendorList.end(); iter++) 
-	 {
-	    if ((*iter)->VendorID == VendorID)
-	    {
-	       Vndr = *iter;
-	       break;
-	    }
-	 }
+// 	 for (vector<const Vendor *>::const_iterator iter = VendorList.begin();
+// 	      iter != VendorList.end(); iter++) 
+// 	 {
+// 	    if ((*iter)->GetVendorID() == VendorID)
+// 	    {
+// 	      if (_config->FindB("Debug::sourceList", false)) 
+// 		std::cerr << "Comparing VendorID \"" << VendorID << "\" with \"" << (*iter)->GetVendorID() << '"' << std::endl;
+// 	       Verifier = *iter;
+// 	       break;
+// 	    }
+// 	 }
 
-	 if (Vndr == 0)
-	    return _error->Error(_("Unknown vendor ID '%s' in line %u of source list %s"),
-				 VendorID.c_str(),CurLine,File.c_str());
+// 	 if (Verifier == 0)
+// 	    return _error->Error(_("Unknown vendor ID '%s' in line %u of source list %s"),
+// 				 VendorID.c_str(),CurLine,File.c_str());
       }
-      
-      if (Parse->ParseLine(SrcList,Vndr,C,CurLine,File) == false)
+
+      if (Parse->ParseLine(SrcList,C,CurLine,File) == false)
 	 return false;
    }
    return true;
@@ -311,23 +233,28 @@ bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
 {
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
    {
-      if ((*I)->FindInCache(*File.Cache()) == File)
+      vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
+      for (vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
+	   J != Indexes->end(); J++)
       {
-	 Found = *I;
-	 return true;
+         if ((*J)->FindInCache(*File.Cache()) == File)
+         {
+            Found = (*J);
+            return true;
+         }
       }
    }
-   
+
    return false;
 }
 									/*}}}*/
 // SourceList::GetIndexes - Load the index files into the downloader	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSourceList::GetIndexes(pkgAcquire *Owner) const
+bool pkgSourceList::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 {
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
-      if ((*I)->GetIndexes(Owner) == false)
+      if ((*I)->GetIndexes(Owner,GetAll) == false)
 	 return false;
    return true;
 }

@@ -67,8 +67,10 @@ class pkgSimulate : public pkgPackageManager
    virtual bool Install(PkgIterator Pkg,string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge);
+
+private:
    void ShortBreaks();
-   void Describe(PkgIterator iPkg,ostream &out,bool Now);
+   void Describe(PkgIterator iPkg,ostream &out,bool Current,bool Candidate);
    
    public:
 

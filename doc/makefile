@@ -13,8 +13,8 @@ include $(DEBIANDOC_H)
 
 # XML man pages
 SOURCE = apt-cache.8 apt-get.8 apt-cdrom.8 apt.conf.5 sources.list.5 \
-         apt-config.8 apt_preferences.5 vendors.list.5 \
-         apt-sortpkgs.1 apt-ftparchive.1 apt-extracttemplates.1
+         apt-config.8 apt_preferences.5  \
+         apt-sortpkgs.1 apt-ftparchive.1 apt-extracttemplates.1 apt-key.8
 INCLUDES = apt.ent	 
 include $(XML_MANPAGE_H)
 

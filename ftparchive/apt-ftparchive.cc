@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.12 2004/01/02 21:48:13 mdz Exp $
+// $Id: apt-ftparchive.cc,v 1.8.2.3 2004/01/02 22:01:48 mdz Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages

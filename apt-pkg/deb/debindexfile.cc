@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.cc,v 1.6 2004/01/04 07:41:30 mdz Exp $
+// $Id: debindexfile.cc,v 1.5.2.3 2004/01/04 19:11:00 mdz Exp $
 /* ######################################################################
 
    Debian Specific sources.list types and the three sorts of Debian
@@ -23,6 +23,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/debmetaindex.h>
     
 #include <sys/stat.h>
 									/*}}}*/
@@ -30,8 +31,8 @@
 // SourcesIndex::debSourcesIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debSourcesIndex::debSourcesIndex(string URI,string Dist,string Section) :
-                                     URI(URI), Dist(Dist), Section(Section)
+debSourcesIndex::debSourcesIndex(string URI,string Dist,string Section,bool Trusted) :
+     pkgIndexFile(Trusted), URI(URI), Dist(Dist), Section(Section)
 {
 }
 									/*}}}*/
@@ -129,16 +130,6 @@ string debSourcesIndex::IndexURI(const char *Type) const
    return Res;
 }
 									/*}}}*/
-// SourcesIndex::GetIndexes - Fetch the index files			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool debSourcesIndex::GetIndexes(pkgAcquire *Owner) const
-{
-   new pkgAcqIndex(Owner,IndexURI("Sources"),Info("Sources"),"Sources");
-   new pkgAcqIndexRel(Owner,IndexURI("Release"),Info("Release"),"Release");
-   return true;
-}
-									/*}}}*/
 // SourcesIndex::Exists - Check if the index is available		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -162,8 +153,8 @@ unsigned long debSourcesIndex::Size() const
 // PackagesIndex::debPackagesIndex - Contructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debPackagesIndex::debPackagesIndex(string URI,string Dist,string Section) : 
-                  URI(URI), Dist(Dist), Section(Section)
+debPackagesIndex::debPackagesIndex(string URI,string Dist,string Section,bool Trusted) : 
+                  pkgIndexFile(Trusted), URI(URI), Dist(Dist), Section(Section)
 {
 }
 									/*}}}*/
@@ -246,16 +237,6 @@ string debPackagesIndex::IndexURI(const char *Type) const
    return Res;
 }
 									/*}}}*/
-// PackagesIndex::GetIndexes - Fetch the index files			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool debPackagesIndex::GetIndexes(pkgAcquire *Owner) const
-{
-   new pkgAcqIndex(Owner,IndexURI("Packages"),Info("Packages"),"Packages");
-   new pkgAcqIndexRel(Owner,IndexURI("Release"),Info("Release"),"Release");
-   return true;
-}
-									/*}}}*/
 // PackagesIndex::Exists - Check if the index is available		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -303,7 +284,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
       return _error->Error("Problem with MergeList %s",PackageFile.c_str());
 
    // Check the release file
-   string ReleaseFile = IndexFile("Release");
+   string ReleaseFile = debReleaseIndex(URI,Dist).MetaIndexFile("Release");
    if (FileExists(ReleaseFile) == true)
    {
       FileFd Rel(ReleaseFile,FileFd::ReadOnly);
@@ -342,7 +323,7 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 // StatusIndex::debStatusIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debStatusIndex::debStatusIndex(string File) : File(File)
+debStatusIndex::debStatusIndex(string File) : pkgIndexFile(true), File(File)
 {
 }
 									/*}}}*/
@@ -418,48 +399,6 @@ bool debStatusIndex::Exists() const
 }
 									/*}}}*/
 
-// Source List types for Debian						/*{{{*/
-class debSLTypeDeb : public pkgSourceList::Type
-{
-   public:
-
-   bool CreateItem(vector<pkgIndexFile *> &List,string URI,
-		   string Dist,string Section,
-		   pkgSourceList::Vendor const *Vendor) const
-   {
-      List.push_back(new debPackagesIndex(URI,Dist,Section));
-      return true;
-   };
-
-   debSLTypeDeb()
-   {
-      Name = "deb";
-      Label = "Standard Debian binary tree";
-   }   
-};
-
-class debSLTypeDebSrc : public pkgSourceList::Type
-{
-   public:
-
-   bool CreateItem(vector<pkgIndexFile *> &List,string URI,
-		   string Dist,string Section,
-		   pkgSourceList::Vendor const *Vendor) const 
-   {      
-      List.push_back(new debSourcesIndex(URI,Dist,Section));
-      return true;
-   };  
-   
-   debSLTypeDebSrc()
-   {
-      Name = "deb-src";
-      Label = "Standard Debian source tree";
-   }   
-};
-
-debSLTypeDeb _apt_DebType;
-debSLTypeDebSrc _apt_DebSrcType;
-									/*}}}*/
 // Index File types for Debian						/*{{{*/
 class debIFTypeSrc : public pkgIndexFile::Type
 {

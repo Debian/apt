@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.27 2001/05/22 04:27:11 jgg Exp $
+// $Id: acquire-method.cc,v 1.27.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Acquire Method
@@ -29,6 +29,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/signal.h>
 									/*}}}*/
 
 using namespace std;
@@ -181,6 +182,11 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       End += snprintf(End,sizeof(S)-50 - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
    if (Res.SHA1Sum.empty() == false)
       End += snprintf(End,sizeof(S)-50 - (End - S),"SHA1-Hash: %s\n",Res.SHA1Sum.c_str());
+   if (Res.GPGVOutput.size() > 0)
+      End += snprintf(End,sizeof(S)-50 - (End - S),"GPGVOutput:\n");     
+   for (vector<string>::iterator I = Res.GPGVOutput.begin();
+      I != Res.GPGVOutput.end(); I++)
+      End += snprintf(End,sizeof(S)-50 - (End - S), " %s\n", (*I).c_str());
 
    if (Res.ResumePoint != 0)
       End += snprintf(End,sizeof(S)-50 - (End - S),"Resume-Point: %lu\n",

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.29 2001/05/22 04:17:18 jgg Exp $
+// $Id: acquire.h,v 1.29.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -121,7 +121,7 @@ class pkgAcquire
    double TotalNeeded();
    double FetchNeeded();
    double PartialPresent();
-   
+
    pkgAcquire(pkgAcquireStatus *Log = 0);
    virtual ~pkgAcquire();
 };

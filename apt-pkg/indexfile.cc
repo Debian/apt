@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexfile.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: indexfile.cc,v 1.2.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Index File - Abstraction for an index of archive/souce file.
@@ -42,14 +42,6 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
 }
 									/*}}}*/
     
-// IndexFile::GetIndexes - Stub						/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool pkgIndexFile::GetIndexes(pkgAcquire *Owner) const
-{
-   return _error->Error("Internal Error, this index file is not downloadable");
-}
-									/*}}}*/
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.32 2004/01/07 20:39:38 mdz Exp $
+// $Id: ftp.cc,v 1.31.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
