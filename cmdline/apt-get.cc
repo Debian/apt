@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.148 2003/12/20 23:55:05 mdz Exp $
+// $Id: apt-get.cc,v 1.149 2003/12/20 23:58:55 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1564,7 +1564,7 @@ bool DoInstall(CommandLine &CmdL)
                        break;
 
                      /* Skip if we already saw it */
-                     if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target) != -1)
+                     if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target)) != -1)
                        break; 
 
 		     if (Start->Type == pkgCache::Dep::Suggests) {
