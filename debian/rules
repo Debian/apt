@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.47 2003/02/12 14:28:03 doogie Exp $
+# $Id: rules,v 1.48 2003/02/12 14:31:41 doogie Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -146,10 +146,6 @@ libapt-pkg-doc: build-doc debian/shlibs.local
 	dh_installdocs -p$@ $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
                             $(BLD)/docs/files* $(BLD)/docs/method* \
 			    doc/libapt-pkg2_to_3.txt doc/style.txt
-
-	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
-	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/share/doc/libapt-pkg-doc/.dhelp
-
 	dh_installexamples -p$@
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
@@ -177,11 +173,6 @@ apt-doc: build-doc
 	# Copy the guides
 	dh_installdocs -p$@ $(BLD)/docs/guide*.text $(BLD)/docs/guide*.html \
 	               $(BLD)/docs/offline.text $(BLD)/docs/offline.html
-
-	# One or the other..
-	-cp -a debian/apt-doc.dhelp debian/apt/usr/doc/apt-doc/.dhelp
-	-cp -a debian/apt-doc.dhelp debian/apt/usr/share/doc/apt-doc/.dhelp
-
 	dh_installchangelogs -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
