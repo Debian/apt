@@ -1,0 +1,67 @@
+General Information
+~~~~~~~~~~~~~~~~~~~
+To compile this you need a couple things
+  - A working POSIX system with working POSIX gcc, g++, make (GNU),
+    ar, sh, awk and sed in the path
+  - GNU Make 3.74 or so, -- normal UNIX make will NOT work
+    * Note 3.77 is broken.    
+  - A working ANSI C++ compiler, this is not g++ 2.7.* 
+    g++ 2.8 works OK and newer egcs work well also. Nobody has tried it
+    on other compilers :< You will need a properly working STL as well.
+  - A C library with the usual POSIX functions and a BSD socket layer. 
+    If you OS conforms to the Single User Spec then you are fine:
+      http://www.opengroup.org/onlinepubs/7908799/index.html      
+
+Guidelines
+~~~~~~~~~~
+I am not interested in making 'ultra portable code'. I will accept patches
+to make the code that already exists conform more to SUS or POSIX, but
+I don't really care if your not-SUS OS doesn't work. It is simply too
+much work to maintain patches for dysfunctional OSs. I highly suggest you
+contact your vendor and express intrest in a conforming C library.
+
+That said, there are lots of finniky problems that must be delt with even
+between the supported OS's. Primarily the path I choose to take is to put
+a shim header file in build/include that transparently adds the required 
+functionality. Patches to make autoconf detect these cases and generate the 
+required shims are OK.
+
+Current shims:
+  * C9x integer types 'inttypes.h' 
+  * sys/statvfs.h to convert from BSD statfs to SUS statvfs  
+  * rfc2553 hostname resolution (methods/rfc*), shims to normal gethostbyname.
+  
+The only completely non-shimed OS is Linux with glibc2.1
+
+Platform Notes
+~~~~~~~~~~~~~~
+Debian GNU Linux 2.1 'slink'
+Debian GNU Linux 'potato'
+  * All Archs
+  - Works flawlessly
+  - You will want to have debiandoc-sgml and yodl installed to get
+    best results.
+  - No IPv6 Support in glibc's < 2.1
+
+Sun Solaris
+  SunOS cab101 5.7 Generic_106541-04 sun4u sparc
+  - Works fine
+  - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
+   
+HP-UX
+  HP-UX nyquist B.10.20 C 9000/780 2016574337 32-user license
+  - Evil OS, does not conform very well to SUS
+     1) snprintf exists but is not prototyped, ignore spurios warnings
+     2) No socklen_t
+     3) Requires -D_XOPEN_SOURCE_EXTENDED for h_errno
+    Items 2 and 3 have to be fixed by hand. Insert this into
+    build/include/netdb.h:
+    
+    #define _XOPEN_SOURCE_EXTENDED
+    #define socklen_t size_t
+    #include_next <netdb.h>
+    
+    A similar techinque can be used for snprintf/vsprintf if you dislike 
+    the warnings
+  - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
+    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.10 1999/12/10 06:30:42 jgg Exp $
+// $Id: cdromutl.cc,v 1.11 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -170,7 +170,7 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 	 struct stat Buf;
 	 if (stat(Dir->d_name,&Buf) != 0)
 	    continue;
-	 sprintf(S,"%lu",Buf.st_mtime);
+	 sprintf(S,"%lu",(unsigned long)Buf.st_mtime);
       }
       
       Hash.Add(S);

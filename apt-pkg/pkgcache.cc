@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.30 1999/12/05 05:37:45 jgg Exp $
+// $Id: pkgcache.cc,v 1.31 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -28,11 +28,13 @@
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
-#include <system.h>
 
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <system.h>
+
 									/*}}}*/
 
 // Cache::Header::Header - Constructor					/*{{{*/

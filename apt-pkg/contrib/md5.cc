@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.10 1999/11/16 03:10:56 jgg Exp $
+// $Id: md5.cc,v 1.11 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
@@ -43,11 +43,11 @@
 #include <apt-pkg/strutl.h>
 
 #include <string.h>
-#include <system.h>
 #include <unistd.h>
 #include <netinet/in.h>                          // For htonl
 #include <inttypes.h>
 #include <config.h>
+#include <system.h>
 									/*}}}*/
 
 // byteSwap - Swap bytes in a buffer					/*{{{*/

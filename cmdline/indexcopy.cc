@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.cc,v 1.2 1999/09/03 05:46:48 jgg Exp $
+// $Id: indexcopy.cc,v 1.3 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -23,7 +23,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#include <wait.h>
 									/*}}}*/
 
 // IndexCopy::CopyPackages - Copy the package files from the CD		/*{{{*/
@@ -103,11 +102,9 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
 	 }
 	 
 	 // Wait for gzip to finish
-	 int Status;
-	 if (waitpid(Process,&Status,0) != Process)
-	    return _error->Errno("wait","Waiting for gzip failed");
-	 if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
+	 if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
 	    return _error->Error("gzip failed, perhaps the disk is full.");
+	 
 	 Pkg.Seek(0);
       }
       pkgTagFile Parser(Pkg);

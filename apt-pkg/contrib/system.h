@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: system.h,v 1.2 1999/01/18 06:20:08 jgg Exp $
+// $Id: system.h,v 1.3 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
    
    System Header - Usefull private definitions
@@ -19,6 +19,7 @@
 #define	MAX_VAL(t)	(((t)(-1) > 0) ? (t)(-1) : (t)(((1L<<(sizeof(t)*8-1))-1)))
 
 // Min/Max functions
+#if !defined(MIN)
 #if defined(__HIGHC__)
 #define MIN(x,y) _min(x,y)
 #define MAX(x,y) _max(x,y)
@@ -35,6 +36,7 @@
 #if !defined(MIN)
 #define MIN(A,B) ((A) < (B)?(A):(B))
 #define MAX(A,B) ((A) > (B)?(A):(B))
+#endif
 #endif
 
 /* Bound functions, bound will return the value b within the limits a-c

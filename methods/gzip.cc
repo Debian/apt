@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.8 1999/07/30 05:37:00 jgg Exp $
+// $Id: gzip.cc,v 1.9 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -17,7 +17,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <utime.h>
-#include <wait.h>
 #include <stdio.h>
 									/*}}}*/
 
@@ -73,19 +72,12 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    From.Close();
    
    // Wait for gzip to finish
-   int Status;
-   if (waitpid(Process,&Status,0) != Process)
+   if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
    {
       To.OpFail();
-      return _error->Errno("wait","Waiting for gzip failed");
-   }	 
-   
-   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
-   {
-      To.OpFail();
-      return _error->Error("gzip failed, perhaps the disk is full or the directory permissions are wrong.");
-   }	 
-   
+      return false;
+   }  
+       
    To.Close();
    
    // Transfer the modification times
