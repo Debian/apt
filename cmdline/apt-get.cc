@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.144 2003/10/29 17:56:31 mdz Exp $
+// $Id: apt-get.cc,v 1.145 2003/11/10 07:09:53 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1588,7 +1588,7 @@ bool DoInstall(CommandLine &CmdL)
 		       if (int(RecommendsList.find(target)) > -1)
 			 break;
 		       RecommendsList += target;
-		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
+		       RecommendsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
 		     }
 	      if (Start == End)
 		break;
