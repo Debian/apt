@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.21 1998/11/11 23:45:28 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.22 1998/11/12 03:28:31 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -94,7 +94,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       }
 
       pkgCache::VerIterator Ver = Pkg.VersionList();
-      unsigned long *Last = &Pkg->VersionList;
+      __apt_ptrloc *Last = &Pkg->VersionList;
       int Res = 1;
       for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
       {
@@ -254,7 +254,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    Pkg->RevDepends = Dep.Index();
    
    // Link it to the version (at the end of the list)
-   unsigned long *Last = &Ver->DependsList;
+   __apt_ptrloc *Last = &Ver->DependsList;
    for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
       Last = &D->NextDepends;
    Dep->NextDepends = *Last;
@@ -345,7 +345,7 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    // Search for an insertion point
    pkgCache::StringItem *I = Cache.StringItemP + Cache.HeaderP->StringList;
    int Res = 1;
-   unsigned long *Last = &Cache.HeaderP->StringList;
+   __apt_ptrloc *Last = &Cache.HeaderP->StringList;
    for (; I != Cache.StringItemP; Last = &I->NextItem, 
         I = Cache.StringItemP + I->NextItem)
    {

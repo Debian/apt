@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.9 1998/11/08 23:29:18 jgg Exp $
+// $Id: pkgcache.h,v 1.10 1998/11/12 03:28:29 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -27,6 +27,11 @@
 #include <string>
 #include <time.h>
 #include <apt-pkg/mmap.h>
+
+/* This should be a 32 bit type, larger tyes use too much ram and smaller
+   types are too small. Where ever possible 'unsigned long' should be used
+   instead of this internal type */
+typedef unsigned int __apt_ptrloc;
 
 class pkgCache
 {
@@ -149,8 +154,8 @@ struct pkgCache::Header
    unsigned long PackageFileCount;
    
    // Offsets
-   unsigned long FileList;              // struct PackageFile
-   unsigned long StringList;            // struct StringItem
+   __apt_ptrloc FileList;              // struct PackageFile
+   __apt_ptrloc StringList;            // struct StringItem
    unsigned long MaxVerFileSize;
 
    /* Allocation pools, there should be one of these for each structure
@@ -158,7 +163,7 @@ struct pkgCache::Header
    DynamicMMap::Pool Pools[7];
    
    // Rapid package name lookup
-   unsigned long HashTable[512];
+   __apt_ptrloc HashTable[512];
 
    bool CheckSizes(Header &Against) const;
    Header();
@@ -167,17 +172,17 @@ struct pkgCache::Header
 struct pkgCache::Package
 {
    // Pointers
-   unsigned long Name;              // Stringtable
-   unsigned long VersionList;       // Version
-   unsigned long TargetVer;         // Version
-   unsigned long CurrentVer;        // Version
-   unsigned long TargetDist;        // StringTable (StringItem)
-   unsigned long Section;           // StringTable (StringItem)
+   __apt_ptrloc Name;              // Stringtable
+   __apt_ptrloc VersionList;       // Version
+   __apt_ptrloc TargetVer;         // Version
+   __apt_ptrloc CurrentVer;        // Version
+   __apt_ptrloc TargetDist;        // StringTable (StringItem)
+   __apt_ptrloc Section;           // StringTable (StringItem)
       
    // Linked list 
-   unsigned long NextPackage;       // Package
-   unsigned long RevDepends;        // Dependency
-   unsigned long ProvidesList;      // Provides
+   __apt_ptrloc NextPackage;       // Package
+   __apt_ptrloc RevDepends;        // Dependency
+   __apt_ptrloc ProvidesList;      // Provides
    
    // Install/Remove/Purge etc
    unsigned char SelectedState;     // What
@@ -191,13 +196,13 @@ struct pkgCache::Package
 struct pkgCache::PackageFile
 {
    // Names
-   unsigned long FileName;        // Stringtable
-   unsigned long Version;         // Stringtable
-   unsigned long Distribution;    // Stringtable
-   unsigned long Size;
+   __apt_ptrloc FileName;        // Stringtable
+   __apt_ptrloc Version;         // Stringtable
+   __apt_ptrloc Distribution;    // Stringtable
+   __apt_ptrloc Size;
    
    // Linked list
-   unsigned long NextFile;        // PackageFile
+   __apt_ptrloc NextFile;        // PackageFile
    unsigned short ID;
    unsigned long Flags;
    time_t mtime;                  // Modification time for the file
@@ -205,37 +210,37 @@ struct pkgCache::PackageFile
 
 struct pkgCache::VerFile
 {
-   unsigned long File;           // PackageFile
-   unsigned long NextFile;       // PkgVerFile
-   unsigned long Offset;
+   __apt_ptrloc File;           // PackageFile
+   __apt_ptrloc NextFile;       // PkgVerFile
+   __apt_ptrloc Offset;         // File offset
    unsigned short Size;
 };
 
 struct pkgCache::Version
 {
-   unsigned long VerStr;            // Stringtable
-   unsigned long Section;           // StringTable (StringItem)
+   __apt_ptrloc VerStr;            // Stringtable
+   __apt_ptrloc Section;           // StringTable (StringItem)
    
    // Lists
-   unsigned long FileList;          // VerFile
-   unsigned long NextVer;           // Version
-   unsigned long DependsList;       // Dependency
-   unsigned long ParentPkg;         // Package
-   unsigned long ProvidesList;      // Provides
+   __apt_ptrloc FileList;          // VerFile
+   __apt_ptrloc NextVer;           // Version
+   __apt_ptrloc DependsList;       // Dependency
+   __apt_ptrloc ParentPkg;         // Package
+   __apt_ptrloc ProvidesList;      // Provides
    
-   unsigned long Size;
-   unsigned long InstalledSize;
+   __apt_ptrloc Size;              // These are the .deb size
+   __apt_ptrloc InstalledSize;
    unsigned short ID;
    unsigned char Priority;
 };
 
 struct pkgCache::Dependency
 {
-   unsigned long Version;         // Stringtable
-   unsigned long Package;         // Package
-   unsigned long NextDepends;     // Dependency
-   unsigned long NextRevDepends;  // Dependency
-   unsigned long ParentVer;       // Version
+   __apt_ptrloc Version;         // Stringtable
+   __apt_ptrloc Package;         // Package
+   __apt_ptrloc NextDepends;     // Dependency
+   __apt_ptrloc NextRevDepends;  // Dependency
+   __apt_ptrloc ParentVer;       // Version
    
    // Specific types of depends
    unsigned char Type;
@@ -245,17 +250,17 @@ struct pkgCache::Dependency
 
 struct pkgCache::Provides
 {
-   unsigned long ParentPkg;        // Pacakge
-   unsigned long Version;          // Version
-   unsigned long ProvideVersion;   // Stringtable
-   unsigned long NextProvides;     // Provides
-   unsigned long NextPkgProv;      // Provides
+   __apt_ptrloc ParentPkg;        // Pacakge
+   __apt_ptrloc Version;          // Version
+   __apt_ptrloc ProvideVersion;   // Stringtable
+   __apt_ptrloc NextProvides;     // Provides
+   __apt_ptrloc NextPkgProv;      // Provides
 };
 
 struct pkgCache::StringItem
 {
-   unsigned long String;        // Stringtable
-   unsigned long NextItem;      // StringItem
+   __apt_ptrloc String;        // Stringtable
+   __apt_ptrloc NextItem;      // StringItem
 };
 
 #include <apt-pkg/cacheiterators.h>
