@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.43 2003/04/26 23:26:13 doogie Exp $
+// $Id: apt-cdrom.cc,v 1.44 2003/09/12 01:48:33 mdz Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -101,7 +101,8 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
 	  //strcmp(Dir->d_name,"source") == 0 ||
 	  strcmp(Dir->d_name,".disk") == 0 ||
 	  strcmp(Dir->d_name,"experimental") == 0 ||
-	  strcmp(Dir->d_name,"binary-all") == 0)
+	  strcmp(Dir->d_name,"binary-all") == 0 ||
+          strcmp(Dir->d_name,"debian-installer") == 0)
 	 continue;
 
       // See if the name is a sub directory
