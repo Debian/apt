@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.32 1999/05/26 04:08:39 jgg Exp $
+// $Id: http.cc,v 1.33 1999/05/28 07:04:45 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -353,18 +353,20 @@ bool ServerState::Open()
    SetNonBlock(ServerFd,true);
    if (connect(ServerFd,LastHostAddr->ai_addr,LastHostAddr->ai_addrlen) < 0 &&
        errno != EINPROGRESS)
-      return _error->Errno("connect","Connect initiate the connection");
+      return _error->Errno("connect","Cannot initiate the connection "
+			   "to %s (%s).",Host.c_str(),Name);
 
    /* This implements a timeout for connect by opening the connection
       nonblocking */
    if (WaitFd(ServerFd,true,TimeOut) == false)
-      return _error->Error("Could not connect, connection timed out");
+      return _error->Error("Could not connect to %s (%s), "
+			   "connection timed out",Host.c_str(),Name);
    unsigned int Err;
    unsigned int Len = sizeof(Err);
    if (getsockopt(ServerFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
       return _error->Errno("getsockopt","Failed");
    if (Err != 0)
-      return _error->Error("Could not connect.");
+      return _error->Error("Could not connect to %s (%s).",Host.c_str(),Name);
    
    return true;
 }
