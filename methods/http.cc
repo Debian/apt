@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.29 1999/03/15 07:20:41 jgg Exp $
+// $Id: http.cc,v 1.30 1999/04/04 02:02:04 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -504,11 +504,22 @@ bool ServerState::HeaderLine(string Line)
 
    string::size_type Pos = Line.find(' ');
    if (Pos == string::npos || Pos+1 > Line.length())
-      return _error->Error("Bad header line");
-   
-   string Tag = string(Line,0,Pos);
-   string Val = string(Line,Pos+1);
+   {
+      // Blah, some servers use "connection:closes", evil.
+      Pos = Line.find(':');
+      if (Pos == string::npos || Pos + 2 > Line.length())
+	 return _error->Error("Bad header line");
+      Pos++;
+   }
 
+   // Parse off any trailing spaces between the : and the next word.
+   string::size_type Pos2 = Pos;
+   while (Pos2 < Line.length() && isspace(Line[Pos2]) != 0)
+      Pos2++;
+      
+   string Tag = string(Line,0,Pos);
+   string Val = string(Line,Pos2);
+   
    if (stringcasecmp(Tag.begin(),Tag.begin()+4,"HTTP") == 0)
    {
       // Evil servers return no version
