@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.25 2002/04/24 05:40:47 jgg Exp $
+// $Id: dpkgpm.cc,v 1.26 2003/04/27 03:02:40 doogie Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -329,7 +329,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 bool pkgDPkgPM::Go()
 {
    unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",350);   
-   unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",1024);
+   unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",8192);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
