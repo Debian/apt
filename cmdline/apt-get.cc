@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.44 1999/03/06 02:13:48 jgg Exp $
+// $Id: apt-get.cc,v 1.45 1999/03/17 19:45:05 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -579,7 +579,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       return false;
 
    // Fail safe check
-   if (_config->FindB("APT::Get::Assume-Yes",false) == true)
+   if (_config->FindI("quiet",0) >= 2 ||
+       _config->FindB("APT::Get::Assume-Yes",false) == true)
    {
       if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false)
 	 return _error->Error("There are problems and -y was used without --force-yes");
@@ -601,15 +602,17 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       // Prompt to continue
       if (Ask == true)
       {            
-	 if (_config->FindI("quiet",0) < 2 ||
+	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
+	 {
 	    c2out << "Do you want to continue? [Y/n] " << flush;
 	 
-	 if (YnPrompt() == false)
-	 {
-	    c2out << "Abort." << endl;
-	    exit(1);
-	 }     
+	    if (YnPrompt() == false)
+	    {
+	       c2out << "Abort." << endl;
+	       exit(1);
+	    }     
+	 }	 
       }      
    }
    

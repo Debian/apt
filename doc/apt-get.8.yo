@@ -136,8 +136,11 @@ those packages and handle the result. Use of this option together with
 
 dit(bf(-q, --quiet))
 Quiet; produces output suitable for logging, omitting progress indicators.
-More qs will produce more quite up to a maximum of 2. You can also use
-bf(-q=#) to set the quiet level, overriding the configuration file.
+More qs will produce more quiet up to a maximum of 2. You can also use
+bf(-q=#) to set the quiet level, overriding the configuration file. Note that
+quiet level 2 implies -y, you should never use -qq without a no-action
+modifier such as -d, --print-uris or -s as APT may decided to do something
+you did not expect.
 See bf(quiet)
 
 dit(bf(-s, --simulate, --just-print, --dry-run, --recon, --no-act))
