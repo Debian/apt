@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: debversion.h,v 1.3 2001/05/03 05:25:04 jgg Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian
@@ -19,11 +19,11 @@
 #include <apt-pkg/version.h>
     
 class debVersioningSystem : public pkgVersioningSystem
-{  
+{     
+   public:
+   
    static int CmpFragment(const char *A, const char *AEnd, const char *B,
 			  const char *BEnd);
-   
-   public:
    
    // Compare versions..
    virtual int DoCmpVersion(const char *A,const char *Aend,

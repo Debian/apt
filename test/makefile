@@ -62,3 +62,8 @@ SLIBS = -lapt-pkg
 SOURCE = hash.cc
 include $(PROGRAM_H)
 
+# Program for checking rpm versions
+PROGRAM=rpmver
+SLIBS = -lapt-pkg -lrpm
+SOURCE = rpmver.cc
+include $(PROGRAM_H)
