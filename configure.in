@@ -1,3 +1,4 @@
+ad
 dnl Process this file with autoconf to produce a configure script.
 dnl The ONLY thing this is used for is to configure for different
 dnl linux architectures and configurations, it is not used to make the
@@ -61,7 +62,7 @@ fi
 dnl Checks for pthread
 AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
 AC_SUBST(PTHREADLIB)
-if test "$XPMLIB" != "-lXpm"; then
+if test "$PTHREADLIB" != "-lpthread"; then
   AC_MSG_ERROR(failed: I need posix threads, pthread)
 fi
 
