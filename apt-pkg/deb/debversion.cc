@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.cc,v 1.4 2002/11/22 06:59:35 doogie Exp $
+// $Id: debversion.cc,v 1.5 2002/11/23 07:54:36 jgg Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian
@@ -32,30 +32,17 @@ debVersioningSystem::debVersioningSystem()
    Label = "Standard .deb";
 }
 									/*}}}*/
-// StrToLong - Convert the string between two iterators to a long	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static unsigned long StrToLong(const char *begin,const char *end)
-{
-   char S[40];
-   char *I = S;
-   for (; begin != end && I < S + 40;)
-      *I++ = *begin++;
-   *I = 0;
-   return strtoul(S,0,10);
-}
-									/*}}}*/
-#define order(x) ((x) == '~' ? -1 \
-		: isdigit((x)) ? 0 \
-		: !(x) ? 0 \
-		: isalpha((x)) ? (x) \
-		: (x) + 256)
 
 // debVS::CmpFragment - Compare versions			        /*{{{*/
 // ---------------------------------------------------------------------
-/* This compares a fragment of the version. Dpkg has a really short 
-   version of this, but it is uh.. interesting to grok. */
-int debVersioningSystem::CmpFragment(const char *A,const char *AEnd, 
+/* This compares a fragment of the version. This is a slightly adapted 
+   version of what dpkg uses. */
+#define order(x) ((x) == '~' ? -1    \
+		: isdigit((x)) ? 0   \
+		: !(x) ? 0           \
+		: isalpha((x)) ? (x) \
+		: (x) + 256)
+int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
 				     const char *B,const char *BEnd)
 {
    if (A >= AEnd && B >= BEnd)
@@ -64,9 +51,9 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
       return -1;
    if (B >= BEnd)
       return 1;
-   
+
    /* Iterate over the whole string
-      What this does is to spilt the whole string into groups of 
+      What this does is to spilt the whole string into groups of
       numeric and non numeric portions. For instance:
          a67bhgs89
       Has 4 portions 'a', '67', 'bhgs', '89'. A more normal:
@@ -80,22 +67,35 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
       const char *Slhs = lhs;
       const char *Srhs = rhs;
       int first_diff = 0;
-      
-      while ( (lhs != AEnd && !isdigit(*lhs)) || (rhs != BEnd && !isdigit(*rhs)) ) {
-	 int vc= order(*lhs), rc= order(*rhs);
-	 if (vc != rc) return vc - rc;
+
+      while ((lhs != AEnd && !isdigit(*lhs)) ||
+	     (rhs != BEnd && !isdigit(*rhs)) )
+      {
+	 int vc = order(*lhs);
+	 int rc = order(*rhs);
+	 if (vc != rc)
+	    return vc - rc;
 	 lhs++; rhs++;
       }
 
-      while ( *lhs == '0' ) lhs++;
-      while ( *rhs == '0' ) rhs++;
-      while (isdigit(*lhs) && isdigit(*rhs)) {
-	 if (!first_diff) first_diff= *lhs - *rhs;
-	 lhs++; rhs++;
+      while (*lhs == '0')
+	 lhs++;
+      while (*rhs == '0')
+	 rhs++;
+      while (isdigit(*lhs) && isdigit(*rhs))
+      {
+	 if (!first_diff)
+	    first_diff = *lhs - *rhs;
+	 lhs++;
+	 rhs++;
       }
-      if (isdigit(*lhs)) return 1;
-      if (isdigit(*rhs)) return -1;
-      if (first_diff) return first_diff;
+
+      if (isdigit(*lhs))
+	 return 1;
+      if (isdigit(*rhs))
+	 return -1;
+      if (first_diff)
+	 return first_diff;
    }
 
    // The strings must be equal
@@ -109,7 +109,7 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
    // rhs is shorter
    if (rhs == BEnd)
       return 1;
-       
+
    // Shouldnt happen
    return 1;
 }
