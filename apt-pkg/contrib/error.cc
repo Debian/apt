@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.4 1998/09/12 02:46:26 jgg Exp $
+// $Id: error.cc,v 1.5 1998/09/18 02:42:40 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -91,6 +91,32 @@ bool GlobalError::Errno(const char *Function,const char *Description,...)
    
    PendingFlag = true;
 
+   return false;   
+}
+									/*}}}*/
+// GlobalError::WarningE - Get part of the warn string from errno	/*{{{*/
+// ---------------------------------------------------------------------
+/* Function indicates the stdlib function that failed and Description is
+   a user string that leads the text. Form is:
+     Description - Function (errno: strerror)
+   Carefull of the buffer overrun, sprintf.
+ */
+bool GlobalError::WarningE(const char *Function,const char *Description,...)
+{
+   va_list args;
+   va_start(args,Description);
+
+   // sprintf the description
+   char S[400];
+   vsprintf(S,Description,args);
+   sprintf(S + strlen(S)," - %s (%i %s)",Function,errno,strerror(errno));
+
+   // Put it on the list
+   Item *Itm = new Item;
+   Itm->Text = S;
+   Itm->Error = false;
+   Insert(Itm);
+   
    return false;   
 }
 									/*}}}*/

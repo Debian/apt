@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.h,v 1.4 1998/09/12 02:46:27 jgg Exp $
+// $Id: error.h,v 1.5 1998/09/18 02:42:41 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -64,6 +64,7 @@ class GlobalError
 
    // Call to generate an error from a library call.
    bool Errno(const char *Function,const char *Description,...);
+   bool WarningE(const char *Function,const char *Description,...);
 
    /* A warning should be considered less severe than an error, and may be
       ignored by the client. */

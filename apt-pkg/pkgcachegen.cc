@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.15 1998/09/07 05:28:37 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.16 1998/09/18 02:42:38 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -409,9 +409,23 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
       _error->Discard();
       return false;
    }
-      
+
+   // Count the number of missing files
+   int Missing = 0;
+   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
+   {
+      string File = ListDir + URItoFileName(I->PackagesURI());
+      struct stat Buf;
+      if (stat(File.c_str(),&Buf) != 0)
+      {
+	 _error->WarningE("stat","Couldn't stat source package list '%s' (%s)",
+			  I->PackagesInfo().c_str(),File.c_str());	 
+	 Missing++;
+      }      
+   }
+   
    // They are certianly out of sync
-   if (Cache.Head().PackageFileCount != List.size())
+   if (Cache.Head().PackageFileCount != List.size() - Missing)
       return false;
    
    for (pkgCache::PkgFileIterator F(Cache); F.end() == false; F++)
@@ -572,7 +586,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
       {
 	 string File = ListDir + URItoFileName(I->PackagesURI());
 	 if (stat(File.c_str(),&Buf) != 0)
-	    return _error->Errno("stat","Couldn't stat source package list %s",File.c_str());
+	    continue;
 	 TotalSize += Buf.st_size;
       }
       
@@ -584,6 +598,10 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
       for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
       {
 	 string File = ListDir + URItoFileName(I->PackagesURI());
+
+	 if (stat(File.c_str(),&Buf) != 0)
+	    continue;
+	 
 	 FileFd Pkg(File,FileFd::ReadOnly);
 	 debListParser Parser(Pkg);
 	 Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),"Reading Package Lists");
