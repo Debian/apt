@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.22 1999/01/31 21:52:27 jgg Exp $
+// $Id: tagfile.cc,v 1.23 1999/02/21 08:38:53 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -46,7 +46,7 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 	 return false;
       
       if (Tag.Scan(Start,End - Start) == false)
-	 return _error->Error("Unable to parse package file %s",Fd.Name().c_str());
+	 return _error->Error("Unable to parse package file %s (1)",Fd.Name().c_str());
    }   
    Start += Tag.size();
    iOffset += Tag.size();
@@ -118,9 +118,17 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
    
    if (Fill() == false)
       return false;
+
+   if (Tag.Scan(Start,End - Start) == true)
+      return true;
+   
+   // This appends a double new line (for the real eof handling)
+   if (Fill() == false)
+      return false;
    
    if (Tag.Scan(Start,End - Start) == false)
-      return _error->Error("Unable to parse package file");
+      return _error->Error("Unable to parse package file %s (2)",Fd.Name().c_str());
+  
    return true;
 }
 									/*}}}*/
@@ -155,6 +163,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       
       if (Stop == 0)
 	 return false;
+      
       for (; Stop[1] == '\r' && Stop+1 < End; Stop++);
 
       // Double newline marks the end of the record
@@ -167,7 +176,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       
       Stop++;
    }
-   
+
    return false;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.42 1999/02/15 08:23:10 jgg Exp $
+// $Id: apt-get.cc,v 1.43 1999/02/21 08:38:53 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -46,6 +46,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/vfs.h>
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -534,7 +535,17 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
       c0out << DebBytes << ',' << Cache->DebSize() << endl;
       c0out << "How odd.. The sizes didn't match, email apt@packages.debian.org" << endl;
    }
-      
+
+   // Check for enough free space
+   struct statfs Buf;
+   string OutputDir = _config->FindDir("Dir::Cache::Archives");
+   if (statfs(OutputDir.c_str(),&Buf) != 0)
+      return _error->Errno("statfs","Couldn't determine free space in %s",
+			   OutputDir.c_str());
+   if (unsigned(Buf.f_bfree) < FetchBytes/Buf.f_bsize)
+      return _error->Error("Sorry, you don't have enough free space in %s",
+			   OutputDir.c_str());
+   
    // Number of bytes
    c1out << "Need to get ";
    if (DebBytes != FetchBytes)

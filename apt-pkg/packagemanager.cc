@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.13 1999/02/19 07:56:07 jgg Exp $
+// $Id: packagemanager.cc,v 1.14 1999/02/21 08:38:53 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -130,8 +130,9 @@ bool pkgPackageManager::CreateOrderList()
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
-      // Mark the package for immediate configuration
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential &&
+      // Mark the package and its dependends for immediate configuration
+      if (((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
+	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&
 	  NoImmConfigure == false)
       {
 	 List->Flag(I,pkgOrderList::Immediate);
@@ -158,10 +159,7 @@ bool pkgPackageManager::CreateOrderList()
 	 continue;
       
       // Append it to the list
-      List->push_back(I);
-      
-      if ((I->Flags & pkgCache::Flag::ImmediateConf) == pkgCache::Flag::ImmediateConf)
-	 List->Flag(I,pkgOrderList::Immediate);
+      List->push_back(I);      
    }
    
    return true;

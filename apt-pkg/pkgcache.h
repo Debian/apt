@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.16 1999/02/01 02:22:11 jgg Exp $
+// $Id: pkgcache.h,v 1.17 1999/02/21 08:38:53 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -80,8 +80,7 @@ class pkgCache
    
    struct Flag
    {
-      enum PkgFlags {Auto=(1<<0),New=(1<<1),Obsolete=(1<<2),Essential=(1<<3),
-	 ImmediateConf=(1<<4)};
+      enum PkgFlags {Auto=(1<<0),Essential=(1<<3),Important=(1<<4)};
       enum PkgFFlags {NotSource=(1<<0),NotAutomatic=(1<<1)};
    };
    

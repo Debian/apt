@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.16 1999/02/08 07:30:50 jgg Exp $
+// $Id: deblistparser.cc,v 1.17 1999/02/21 08:38:53 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -119,8 +119,12 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
       Pkg->Section = UniqFindTagWrite("Section");
    if (Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
       return false;
-   if (Section.FindFlag("Immediate-Configure",Pkg->Flags,pkgCache::Flag::ImmediateConf) == false)
+   if (Section.FindFlag("Important",Pkg->Flags,pkgCache::Flag::Important) == false)
       return false;
+
+   if (strcmp(Pkg.Name(),"apt") == 0)
+      Pkg->Flags |= pkgCache::Flag::Important;
+   
    if (ParseStatus(Pkg,Ver) == false)
       return false;
    return true;
