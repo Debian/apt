@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.14 1998/08/26 04:52:23 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.15 1998/09/07 05:28:37 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -70,6 +70,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
 {
    List.Owner = this;
 
+   int Counter = 0;
    while (List.Step() == true)
    {
       // Get a pointer to the package structure
@@ -77,7 +78,9 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       pkgCache::PkgIterator Pkg;
       if (NewPackage(Pkg,PackageName) == false)
 	 return _error->Error("Error occured while processing %s (NewPackage)",PackageName.c_str());
-      Progress.Progress(List.Offset());
+      Counter++;
+      if (Counter % 100 == 0)
+	 Progress.Progress(List.Offset());
 
       /* Get a pointer to the version structure. We know the list is sorted
          so we use that fact in the search. Insertion of new versions is

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.6 1998/08/26 04:52:28 jgg Exp $
+// $Id: progress.cc,v 1.7 1998/09/07 05:28:38 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -27,7 +27,9 @@ OpProgress::OpProgress() : Current(0), Total(0), Size(0), SubTotal(1),
 									/*}}}*/
 // OpProgress::Progress - Sub progress with no state change		/*{{{*/
 // ---------------------------------------------------------------------
-/* This assumes that Size is the same as the current sub size */
+/* Current is the Base Overall progress in units of Total. Cur is the sub
+   progress in units of SubTotal. Size is a scaling factor that says what
+   percent of Total SubTotal is. */
 void OpProgress::Progress(unsigned long Cur)
 {
    Percent = (Current + Cur/((float)SubTotal)*Size)*100.0/Total;

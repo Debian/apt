@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.2 1998/07/12 23:58:24 jgg Exp $
+// $Id: depcache.cc,v 1.3 1998/09/07 05:28:32 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -20,11 +20,11 @@
 // DepCache::pkgDepCache - Constructors					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDepCache::pkgDepCache(MMap &Map) :
-             pkgCache(Map), PkgState(0), DepState(0) 
+pkgDepCache::pkgDepCache(MMap &Map,OpProgress &Prog) :
+             pkgCache(Map), PkgState(0), DepState(0)
 {
    if (_error->PendingError() == false)
-      Init();
+      Init(&Prog);
 }
 									/*}}}*/
 // DepCache::~pkgDepCache - Destructor					/*{{{*/
@@ -36,23 +36,10 @@ pkgDepCache::~pkgDepCache()
    delete [] DepState;
 }
 									/*}}}*/
-// DepCache::ReMap - Regenerate the extra data for the new cache	/*{{{*/
-// ---------------------------------------------------------------------
-/* pkgCache's constructors call this function, but because the object is not
-   fully constructed at that point it will not result in this function being
-   called but pkgCache::ReMap will be instead.*/
-bool pkgDepCache::ReMap()
-{
-   if (pkgCache::ReMap() == false)
-      return false;
-   
-   return Init();
-}
-									/*}}}*/
 // DepCache::Init - Generate the initial extra structures.		/*{{{*/
 // ---------------------------------------------------------------------
 /* This allocats the extension buffers and initializes them. */
-bool pkgDepCache::Init()
+bool pkgDepCache::Init(OpProgress *Prog)
 {
    delete [] PkgState;
    delete [] DepState;
@@ -61,10 +48,21 @@ bool pkgDepCache::Init()
    memset(PkgState,0,sizeof(*PkgState)*Head().PackageCount);
    memset(DepState,0,sizeof(*DepState)*Head().DependsCount); 
    
+   if (Prog != 0)
+   {
+      Prog->OverallProgress(0,2*Head().PackageCount,Head().PackageCount,
+			    "Building Dependancy Tree");
+      Prog->SubProgress(Head().PackageCount,"Candidate Versions");
+   }
+   
    /* Set the current state of everything. In this state all of the
       packages are kept exactly as is. See AllUpgrade */
-   for (PkgIterator I = PkgBegin(); I.end() != true; I++)
+   int Done = 0;
+   for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
    {
+      if (Prog != 0)
+	 Prog->Progress(Done);
+      
       // Find the proper cache slot
       StateCache &State = PkgState[I->ID];
       State.iFlags = 0;
@@ -77,7 +75,16 @@ bool pkgDepCache::Init()
       State.Update(I,*this);
    }   
    
-   Update();
+   if (Prog != 0)
+   {
+      
+      Prog->OverallProgress(Head().PackageCount,2*Head().PackageCount,
+			    Head().PackageCount,
+			    "Building Dependancy Tree");
+      Prog->SubProgress(Head().PackageCount,"Dependency Generation");
+   }
+   
+   Update(Prog);
    
    return true;
 } 
@@ -392,7 +399,7 @@ void pkgDepCache::UpdateVerState(PkgIterator Pkg)
 // ---------------------------------------------------------------------
 /* This will figure out the state of all the packages and all the 
    dependencies based on the current policy. */
-void pkgDepCache::Update()
+void pkgDepCache::Update(OpProgress *Prog)
 {   
    iUsrSize = 0;
    iDownloadSize = 0;
@@ -403,8 +410,11 @@ void pkgDepCache::Update()
    iBadCount = 0;
    
    // Perform the depends pass
-   for (PkgIterator I = PkgBegin(); I.end() != true; I++)
+   int Done = 0;
+   for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
    {
+      if (Prog != 0 && Done%20 == 0)
+	 Prog->Progress(Done);
       for (VerIterator V = I.VersionList(); V.end() != true; V++)
       {
 	 unsigned char Group = 0;
@@ -432,6 +442,9 @@ void pkgDepCache::Update()
       UpdateVerState(I);
       AddStates(I);
    }
+
+   if (Prog != 0)      
+      Prog->Progress(Done);
 }
 									/*}}}*/
 // DepCache::Update - Update the deps list of a package	   		/*{{{*/

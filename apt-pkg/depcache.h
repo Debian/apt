@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.3 1998/07/12 23:58:25 jgg Exp $
+// $Id: depcache.h,v 1.4 1998/09/07 05:28:35 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -44,6 +44,7 @@
 #endif
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/progress.h>
 
 class pkgDepCache : public pkgCache
 {
@@ -109,7 +110,7 @@ class pkgDepCache : public pkgCache
    void BuildGroupOrs(VerIterator const &V);
    void UpdateVerState(PkgIterator Pkg);
 
-   bool Init();
+   bool Init(OpProgress *Prog);
 
    protected:
 
@@ -165,11 +166,8 @@ class pkgDepCache : public pkgCache
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true);
    
    // This is for debuging
-   void Update();
+   void Update(OpProgress *Prog = 0);
 
-   // Hook to keep the extra data in sync
-   virtual bool ReMap();
-   
    // Size queries
    inline long UsrSize() {return iUsrSize;};
    inline long DebSize() {return iDownloadSize;};
@@ -179,7 +177,7 @@ class pkgDepCache : public pkgCache
    inline long BrokenCount() {return iBrokenCount;};
    inline long BadCount() {return iBadCount;};
    
-   pkgDepCache(MMap &Map);
+   pkgDepCache(MMap &Map,OpProgress &Prog);
    virtual ~pkgDepCache();
 };
 
