@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.7 2003/07/18 14:12:07 mdz Exp $
+// $Id: apt-ftparchive.cc,v 1.8 2003/07/18 15:28:58 mdz Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -568,9 +568,9 @@ bool ShowHelp(CommandLine &CmdL)
       "\n"
       "The 'packages' and 'sources' command should be run in the root of the\n"
       "tree. BinaryPath should point to the base of the recursive search and \n"
-      "override file should contian the override flags. Pathprefix is\n"
+      "override file should contain the override flags. Pathprefix is\n"
       "appended to the filename fields if present. Example usage from the \n"
-      "debian archive:\n"
+      "Debian archive:\n"
       "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
       "               dists/potato/main/binary-i386/Packages\n"
       "\n"
