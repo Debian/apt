@@ -102,7 +102,7 @@ if test -z "$CC"; then
 fi
 if test -n "$ac_tool_prefix" -a "`echo $CC | grep '$ac_tool_prefix'`" = "" \
 	-a "`echo $CC | grep -- '-b'`" = ""; then
-  if test -z "$ac_cv_prog_CC_dir" && $CC -v 2>&1 | grep -q gcc; then
+  if test -z "$ac_cv_prog_CC_dir" && $CC -v 2>&1 | grep gcc >/dev/null 2>&1 ; then
     AC_CACHE_CHECK([if $CC -b${ac_tool_dir} works], tl_cv_prog_cc_bhost,[
     old_cc="${CC}"
     CC="${CC} -b${ac_tool_dir}"
@@ -153,7 +153,7 @@ tl_CHECK_TOOLS(CXX, $CCC c++ g++ gcc CC cxx cc++, gcc)
 if test -n "$CXX"; then
   if test -n "$ac_tool_prefix" -a "`echo $CXX | grep '$ac_tool_prefix'`" = "" \
 	-a "`echo $CXX | grep -- '-b'`" = ""; then
-    if test -z "$ac_cv_prog_CXX_dir" && $CXX -v 2>&1 | grep -q gcc; then
+    if test -z "$ac_cv_prog_CXX_dir" && $CXX -v 2>&1 | grep gcc >/dev/null 2>&1; then
       AC_CACHE_CHECK([if $CXX -b${ac_tool_dir} works], tl_cv_prog_cxx_bhost,[
       old_cxx="${CXX}"
       CXX="${CXX} -b${ac_tool_dir}"

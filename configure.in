@@ -70,7 +70,7 @@ AC_SUBST(PTHREADLIB)
 
 dnl Converts the ARCH to be the same as dpkg
 AC_MSG_CHECKING(system architecture)
-archset="`awk '$1 == "'$host_cpu'" { print $2 }' $srcdir/buildlib/archtable`"
+archset="`awk '$1 == \"$host_cpu\" { print $2 }' $srcdir/buildlib/archtable`"
 if test "x$archset" = "x"; then
   AC_MSG_ERROR(failed: use --host=)
 fi
@@ -85,7 +85,7 @@ AC_CACHE_CHECK([for C9x integer types],c9x_ints,[
 
 dnl Check the sizes etc. of the architecture
 changequote(,)
-if archline="`sed -ne 's/^'$archset':[ 	]\+\(.*\)/\1/gp' $srcdir/buildlib/sizetable`"; then
+if archline="`grep '^$archset' | cut -f 2- -d ' '`";then
    changequote([,])
    set $archline
    if test "$1" = "little"; then

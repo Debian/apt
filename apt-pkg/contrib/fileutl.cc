@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.31 1999/09/30 06:30:34 jgg Exp $
+// $Id: fileutl.cc,v 1.32 1999/12/09 21:18:01 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -21,8 +21,8 @@
 #include <apt-pkg/error.h>
 
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/fcntl.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <signal.h>

@@ -21,7 +21,7 @@ configure: aclocal.m4 configure.in
 aclocal.m4:
 	aclocal -I buildlib
 $(BUILDDIR)/config.status: configure
-	test -e $(BUILDDIR) || mkdir $(BUILDDIR)	
+	/usr/bin/test -e $(BUILDDIR) || mkdir $(BUILDDIR)	
 	(HERE=`pwd`; cd $(BUILDDIR) && $$HERE/configure)
 $(addprefix $(BUILDDIR)/,$(CONVERTED)):
 	(cd $(BUILDDIR) && ./config.status)
