@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.45 2003/02/02 22:00:24 doogie Exp $
+# $Id: rules,v 1.46 2003/02/12 07:39:45 doogie Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -88,6 +88,7 @@ debian/shlibs.local: apt-pkg/makefile
 	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
 
 build: build/build-stamp	
+build-doc: build/build-doc-stamp	
 
 # Note that this is unconditionally done first as part of loading environment.mak
 # The true is needed to force make to reload environment.mak after running
@@ -113,7 +114,12 @@ endif
 
 build/build-stamp: build/configure-stamp
 	# Add here commands to compile the package.
-	$(MAKE) -s
+	$(MAKE) binary
+	touch $@
+
+build/build-doc-stamp: build/configure-stamp
+	# Add here commands to compile the package.
+	$(MAKE) doc
 	touch $@
 
 clean:
@@ -127,9 +133,9 @@ clean:
 	# Add here commands to clean up after the build process.
 	dh_clean debian/copyright debian/shlibs.local debian/shlibs.local.apt debian/shlibs.local.apt-utils
 
-binary-indep: libapt-pkg-doc
+binary-indep: apt-doc libapt-pkg-doc
 # Build architecture-independent files here.
-libapt-pkg-doc: build debian/shlibs.local
+libapt-pkg-doc: build-doc debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_clean -p$@ -k
@@ -160,6 +166,30 @@ libapt-pkg-doc: build debian/shlibs.local
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
+
+apt-doc: build-doc
+	dh_testdir -p$@
+	dh_testroot -p$@
+	dh_clean -p$@ -k
+#
+# apt-doc install
+#
+	# Copy the guides
+	dh_installdocs -p$@ $(BLD)/docs/guide*.text $(BLD)/docs/guide*.html \
+	               $(BLD)/docs/offline.text $(BLD)/docs/offline.html
+
+	# One or the other..
+	-cp -a debian/apt-doc.dhelp debian/apt/usr/doc/apt-doc/.dhelp
+	-cp -a debian/apt-doc.dhelp debian/apt/usr/share/doc/apt-doc/.dhelp
+
+	dh_installchangelogs -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_installdeb -p$@
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
 
 
 # Build architecture-dependent files here.

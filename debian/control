@@ -4,7 +4,8 @@ Priority: important
 Maintainer: APT Development Team <deity@lists.debian.org>
 Uploaders: Jason Gunthorpe <jgg@debian.org>, Adam Heath <doogie@debian.org>
 Standards-Version: 3.5.8.0
-Build-Depends: debhelper (>= 2), debiandoc-sgml, docbook-utils (>= 0.6.12-1), libdb2-dev, gettext (>= 0.11.5)
+Build-Depends: debhelper (>= 2), libdb2-dev, gettext (>= 0.11.5)
+Build-Depends-Indep: debiandoc-sgml, docbook-utils (>= 0.6.12-1)
 
 Package: apt
 Architecture: any
@@ -12,7 +13,7 @@ Depends: ${shlibs:Depends}
 Priority: standard
 Replaces: libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
 Provides: ${libapt-pkg:provides}
-Suggests: dpkg-dev
+Suggests: dpkg-dev, apt-doc
 Section: base
 Description: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
@@ -20,8 +21,16 @@ Description: Advanced front-end for dpkg
  simpler, safer way to install and upgrade packages.
  .
  APT features complete installation ordering, multiple source capability
- and several other unique features, see the Users Guide in
- /usr/share/doc/apt/guide.text.gz
+ and several other unique features, see the Users Guide in apt-doc.
+
+Package: apt-doc
+Architecture: all
+Priority: optional
+Replaces: apt (<< 0.5.4.9)
+Section: doc
+Description: Documentation for APT
+ This package contains the user guide and offline guide, for APT, an
+ Advanced Package Tool.
 
 Package: libapt-pkg-dev
 Architecture: any
