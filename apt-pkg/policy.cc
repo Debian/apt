@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.4 2001/03/05 02:43:28 jgg Exp $
+// $Id: policy.cc,v 1.5 2001/03/13 05:23:42 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -73,7 +73,7 @@ bool pkgPolicy::InitDefaults()
    }
 
    // Apply the defaults..
-   SPtr<bool> Fixed = new bool[Cache->HeaderP->PackageFileCount];
+   SPtrArray<bool> Fixed = new bool[Cache->HeaderP->PackageFileCount];
    memset(Fixed,0,sizeof(*Fixed)*Cache->HeaderP->PackageFileCount);
    signed Cur = 989;
    StatusOverride = false;

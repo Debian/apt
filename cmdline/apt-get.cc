@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.103 2001/03/03 23:12:07 jgg Exp $
+// $Id: apt-get.cc,v 1.104 2001/03/13 05:23:42 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -429,7 +429,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	    Added[P->ID] = true;
 	    
 	    char S[300];
-	    sprintf(S,_("%s (due to %s) "),P.Name(),I.Name());
+	    snprintf(S,sizeof(S),_("%s (due to %s) "),P.Name(),I.Name());
 	    List += S;
 	 }	 
       }      

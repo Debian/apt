@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.36 2001/02/20 07:03:17 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.37 2001/03/13 05:23:42 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -134,7 +134,8 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
 bool DropBinaryArch(vector<string> &List)
 {
    char S[300];
-   sprintf(S,"/binary-%s/",_config->Find("Apt::Architecture").c_str());
+   snprintf(S,sizeof(S),"/binary-%s/",
+	    _config->Find("Apt::Architecture").c_str());
    
    for (unsigned int I = 0; I < List.size(); I++)
    {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.cc,v 1.6 2001/02/20 07:03:17 jgg Exp $
+// $Id: indexcopy.cc,v 1.7 2001/03/13 05:23:42 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -113,8 +113,8 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
       
       // Open the output file
       char S[400];
-      sprintf(S,"cdrom:[%s]/%s%s",Name.c_str(),(*I).c_str() + CDROM.length(),
-	      GetFileName());
+      snprintf(S,sizeof(S),"cdrom:[%s]/%s%s",Name.c_str(),
+	       (*I).c_str() + CDROM.length(),GetFileName());
       string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
       TargetF += URItoFileName(S);
       if (_config->FindB("APT::CDROM::NoAct",false) == true)
@@ -229,7 +229,8 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
 	    return _error->Errno("rename","Failed to rename");
 
 	 // Copy the release file
-	 sprintf(S,"cdrom:[%s]/%sRelease",Name.c_str(),(*I).c_str() + CDROM.length());
+	 snprintf(S,sizeof(S),"cdrom:[%s]/%sRelease",Name.c_str(),
+		  (*I).c_str() + CDROM.length());
 	 string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
 	 TargetF += URItoFileName(S);
 	 if (FileExists(*I + "Release") == true)
@@ -381,7 +382,7 @@ bool IndexCopy::ReconstructChop(unsigned long &Chop,string Dir,string File)
 void IndexCopy::ConvertToSourceList(string CD,string &Path)
 {
    char S[300];
-   sprintf(S,"binary-%s",_config->Find("Apt::Architecture").c_str());
+   snprintf(S,sizeof(S),"binary-%s",_config->Find("Apt::Architecture").c_str());
    
    // Strip the cdrom base path
    Path = string(Path,CD.length());
