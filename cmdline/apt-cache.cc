@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.36 1999/05/14 02:51:36 jgg Exp $
+// $Id: apt-cache.cc,v 1.37 1999/07/15 03:15:49 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -379,6 +379,62 @@ bool DumpAvail(CommandLine &Cmd)
    return true;
 }
 									/*}}}*/
+// Depends - Print out a dependency tree					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Depends(CommandLine &CmdL)
+{
+   pkgCache &Cache = *GCache;
+   
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+      if (Pkg.end() == true)
+      {
+	 _error->Warning("Unable to locate package %s",*I);
+	 continue;
+      }
+      
+      pkgCache::VerIterator Ver = Pkg.VersionList();
+      if (Ver.end() == true)
+      {
+	 cout << '<' << Pkg.Name() << '>' << endl;
+	 continue;
+      }
+
+      cout << Pkg.Name() << endl;
+      
+      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+      {
+	 if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+	    cout << " |";
+	 else
+	    cout << "  ";
+	 
+	 // Show the package
+	 pkgCache::PkgIterator Trg = D.TargetPkg();
+	 if (Trg->VersionList == 0)
+	    cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
+	 else
+	    cout << D.DepType() << ": " << Trg.Name() << endl;
+	    
+	 // Display all solutions
+	 pkgCache::Version **List = D.AllTargets();
+	 for (pkgCache::Version **I = List; *I != 0; I++)
+	 {
+	    pkgCache::VerIterator V(Cache,*I);
+	    if (V != Cache.VerP + V.ParentPkg()->VersionList || 
+		V->ParentPkg == D->Package)
+	       continue;
+	    cout << "    " << V.ParentPkg().Name() << endl;
+	 }
+	 delete [] List;
+      }
+   }   
+   
+   return true;
+}
+									/*}}}*/
 // DoAdd - Perform an adding operation					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -582,6 +638,7 @@ bool ShowHelp(CommandLine &Cmd)
    cout << "   check - Check the cache a bit" << endl;
    cout << "   search - Search the package list for a regex pattern" << endl;
    cout << "   show - Show a readable record for the package" << endl;
+   cout << "   depends - Show raw dependency information for a package" << endl;
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
@@ -630,6 +687,7 @@ int main(int argc,const char *argv[])
                                     {"unmet",&UnMet},
                                     {"check",&Check},
                                     {"search",&Search},
+                                    {"depends",&Depends},
                                     {"show",&ShowPackage},
                                     {0,0}};
 

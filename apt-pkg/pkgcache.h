@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.20 1999/05/23 22:55:54 jgg Exp $
+// $Id: pkgcache.h,v 1.21 1999/07/15 03:15:48 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -27,11 +27,6 @@
 #include <string>
 #include <time.h>
 #include <apt-pkg/mmap.h>
-
-/* This should be a 32 bit type, larger tyes use too much ram and smaller
-   types are too small. Where ever possible 'unsigned long' should be used
-   instead of this internal type */
-typedef unsigned int __apt_ptrloc;
 
 class pkgCache
 {
@@ -157,8 +152,8 @@ struct pkgCache::Header
    unsigned long ProvidesCount;
    
    // Offsets
-   __apt_ptrloc FileList;              // struct PackageFile
-   __apt_ptrloc StringList;            // struct StringItem
+   map_ptrloc FileList;              // struct PackageFile
+   map_ptrloc StringList;            // struct StringItem
    unsigned long MaxVerFileSize;
 
    /* Allocation pools, there should be one of these for each structure
@@ -166,7 +161,7 @@ struct pkgCache::Header
    DynamicMMap::Pool Pools[7];
    
    // Rapid package name lookup
-   __apt_ptrloc HashTable[2*1048];
+   map_ptrloc HashTable[2*1048];
 
    bool CheckSizes(Header &Against) const;
    Header();
@@ -175,17 +170,17 @@ struct pkgCache::Header
 struct pkgCache::Package
 {
    // Pointers
-   __apt_ptrloc Name;              // Stringtable
-   __apt_ptrloc VersionList;       // Version
-   __apt_ptrloc TargetVer;         // Version
-   __apt_ptrloc CurrentVer;        // Version
-   __apt_ptrloc TargetDist;        // StringTable (StringItem)
-   __apt_ptrloc Section;           // StringTable (StringItem)
+   map_ptrloc Name;              // Stringtable
+   map_ptrloc VersionList;       // Version
+   map_ptrloc TargetVer;         // Version
+   map_ptrloc CurrentVer;        // Version
+   map_ptrloc TargetDist;        // StringTable (StringItem)
+   map_ptrloc Section;           // StringTable (StringItem)
       
    // Linked list 
-   __apt_ptrloc NextPackage;       // Package
-   __apt_ptrloc RevDepends;        // Dependency
-   __apt_ptrloc ProvidesList;      // Provides
+   map_ptrloc NextPackage;       // Package
+   map_ptrloc RevDepends;        // Dependency
+   map_ptrloc ProvidesList;      // Provides
    
    // Install/Remove/Purge etc
    unsigned char SelectedState;     // What
@@ -199,45 +194,45 @@ struct pkgCache::Package
 struct pkgCache::PackageFile
 {
    // Names
-   __apt_ptrloc FileName;        // Stringtable
-   __apt_ptrloc Archive;         // Stringtable
-   __apt_ptrloc Component;       // Stringtable
-   __apt_ptrloc Version;         // Stringtable
-   __apt_ptrloc Origin;          // Stringtable
-   __apt_ptrloc Label;           // Stringtable
-   __apt_ptrloc Architecture;    // Stringtable
+   map_ptrloc FileName;        // Stringtable
+   map_ptrloc Archive;         // Stringtable
+   map_ptrloc Component;       // Stringtable
+   map_ptrloc Version;         // Stringtable
+   map_ptrloc Origin;          // Stringtable
+   map_ptrloc Label;           // Stringtable
+   map_ptrloc Architecture;    // Stringtable
    unsigned long Size;            
    unsigned long Flags;
    
    // Linked list
-   __apt_ptrloc NextFile;        // PackageFile
+   map_ptrloc NextFile;        // PackageFile
    unsigned short ID;
    time_t mtime;                  // Modification time for the file
 };
 
 struct pkgCache::VerFile
 {
-   __apt_ptrloc File;           // PackageFile
-   __apt_ptrloc NextFile;       // PkgVerFile
-   __apt_ptrloc Offset;         // File offset
+   map_ptrloc File;           // PackageFile
+   map_ptrloc NextFile;       // PkgVerFile
+   map_ptrloc Offset;         // File offset
    unsigned short Size;
 };
 
 struct pkgCache::Version
 {
-   __apt_ptrloc VerStr;            // Stringtable
-   __apt_ptrloc Section;           // StringTable (StringItem)
-   __apt_ptrloc Arch;              // StringTable
+   map_ptrloc VerStr;            // Stringtable
+   map_ptrloc Section;           // StringTable (StringItem)
+   map_ptrloc Arch;              // StringTable
       
    // Lists
-   __apt_ptrloc FileList;          // VerFile
-   __apt_ptrloc NextVer;           // Version
-   __apt_ptrloc DependsList;       // Dependency
-   __apt_ptrloc ParentPkg;         // Package
-   __apt_ptrloc ProvidesList;      // Provides
+   map_ptrloc FileList;          // VerFile
+   map_ptrloc NextVer;           // Version
+   map_ptrloc DependsList;       // Dependency
+   map_ptrloc ParentPkg;         // Package
+   map_ptrloc ProvidesList;      // Provides
    
-   __apt_ptrloc Size;              // These are the .deb size
-   __apt_ptrloc InstalledSize;
+   map_ptrloc Size;              // These are the .deb size
+   map_ptrloc InstalledSize;
    unsigned short Hash;
    unsigned short ID;
    unsigned char Priority;
@@ -245,11 +240,11 @@ struct pkgCache::Version
 
 struct pkgCache::Dependency
 {
-   __apt_ptrloc Version;         // Stringtable
-   __apt_ptrloc Package;         // Package
-   __apt_ptrloc NextDepends;     // Dependency
-   __apt_ptrloc NextRevDepends;  // Dependency
-   __apt_ptrloc ParentVer;       // Version
+   map_ptrloc Version;         // Stringtable
+   map_ptrloc Package;         // Package
+   map_ptrloc NextDepends;     // Dependency
+   map_ptrloc NextRevDepends;  // Dependency
+   map_ptrloc ParentVer;       // Version
    
    // Specific types of depends
    unsigned char Type;
@@ -259,17 +254,17 @@ struct pkgCache::Dependency
 
 struct pkgCache::Provides
 {
-   __apt_ptrloc ParentPkg;        // Pacakge
-   __apt_ptrloc Version;          // Version
-   __apt_ptrloc ProvideVersion;   // Stringtable
-   __apt_ptrloc NextProvides;     // Provides
-   __apt_ptrloc NextPkgProv;      // Provides
+   map_ptrloc ParentPkg;        // Pacakge
+   map_ptrloc Version;          // Version
+   map_ptrloc ProvideVersion;   // Stringtable
+   map_ptrloc NextProvides;     // Provides
+   map_ptrloc NextPkgProv;      // Provides
 };
 
 struct pkgCache::StringItem
 {
-   __apt_ptrloc String;        // Stringtable
-   __apt_ptrloc NextItem;      // StringItem
+   map_ptrloc String;        // Stringtable
+   map_ptrloc NextItem;      // StringItem
 };
 
 #include <apt-pkg/cacheiterators.h>

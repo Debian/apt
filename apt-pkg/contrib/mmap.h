@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.h,v 1.9 1999/04/18 06:36:36 jgg Exp $
+// $Id: mmap.h,v 1.10 1999/07/15 03:15:49 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -31,6 +31,11 @@
 
 #include <string>
 #include <apt-pkg/fileutl.h>
+
+/* This should be a 32 bit type, larger tyes use too much ram and smaller
+   types are too small. Where ever possible 'unsigned long' should be used
+   instead of this internal type */
+typedef unsigned int map_ptrloc;
 
 class MMap
 {

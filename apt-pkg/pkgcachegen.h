@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.15 1999/05/23 22:55:54 jgg Exp $
+// $Id: pkgcachegen.h,v 1.16 1999/07/15 03:15:48 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -82,7 +82,7 @@ class pkgCacheGenerator::ListParser
    
    // Some cache items
    pkgCache::VerIterator OldDepVer;
-   __apt_ptrloc *OldDepLast;
+   map_ptrloc *OldDepLast;
       
    protected:
 
