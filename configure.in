@@ -92,6 +92,10 @@ if test x"$HAVE_STATVFS" != x"yes"; then
    ])
 fi
 
+dnl We should use the real timegm function if we have it.
+AC_CHECK_FUNC(timegm,AC_DEFINE(HAVE_TIMEGM))
+AC_SUBST(HAVE_TIMEGM)
+
 dnl Check the sizes etc. of the architecture
 dnl This is stupid, it should just use the AC macros like it does below
 dnl Cross compilers can either get a real C library or preload the cache

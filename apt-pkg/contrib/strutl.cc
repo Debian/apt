@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.45 2002/04/26 05:52:27 jgg Exp $
+// $Id: strutl.cc,v 1.46 2002/11/22 07:15:23 doogie Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -32,6 +32,8 @@
 #include <regex.h>
 #include <errno.h>
 #include <stdarg.h>
+
+#include "config.h"
 
 using namespace std;
 									/*}}}*/
@@ -712,7 +714,11 @@ static int MonthConv(char *Month)
    
    Contributed by Roger Beeman <beeman@cisco.com>, with the help of
    Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO. */
-#ifndef __USE_MISC        // glib sets this
+
+/* Turned it into an autoconf check, because GNU is not the only thing which
+   can provide timegm. -- 2002-09-22, Joel Baker */
+
+#ifndef HAVE_TIMEGM // Now with autoconf!
 static time_t timegm(struct tm *t)
 {
    time_t tl, tb;
