@@ -1,6 +1,6 @@
 # Advanced Package Tool - APT message translation catalog
 # Swedish messages
-# Peter Karlsson <peterk@debian.org>, 2002-2003.
+# Peter Karlsson <peterk@debian.org>, 2002-2004.
 # Based on Danish messages
 # Claus Hindsgaul <claus_h@image.dk>, 2002.
 #
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-14 13:46-0800\n"
-"PO-Revision-Date: 2003-08-31 11:03+0100\n"
+"POT-Creation-Date: 2004-03-14 09:04+0100\n"
+"PO-Revision-Date: 2004-03-19 20:18+0100\n"
 "Last-Translator: Peter Karlsson <peterk@debian.org>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:135
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Paket %s version %s har ett otillfredsställbart beroende:\n"
+msgstr "Paket %s version %s har ett beroende som inte kan tillfredsställas:\n"
 
 #: cmdline/apt-cache.cc:175 cmdline/apt-cache.cc:527 cmdline/apt-cache.cc:615
 #: cmdline/apt-cache.cc:771 cmdline/apt-cache.cc:989 cmdline/apt-cache.cc:1357
@@ -324,7 +324,6 @@ msgid "Error Processing Contents %s"
 msgstr "Fel vid behaldning av innehållet %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -366,9 +365,10 @@ msgid ""
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
 "Användning: apt-ftparchive [flaggor] kommando\n"
-"Kommandon: packges binärsökväg [override-fil [sökvägsprefix]]\n"
-"           sources källsökväg [override-fil [sökvägsprefix]]\n"
+"Kommandon: packages binärsökväg [åsidosättningsfill [sökvägsprefix]]\n"
+"           sources källsökväg [åsidosättningsfil [sökvägsprefix]]\n"
 "           contents sökväg\n"
+"           release sökväg\n"
 "           generate konfiguration [grupper]\n"
 "           clean konfiguration\n"
 "\n"
@@ -398,7 +398,7 @@ msgstr ""
 "  --md5 Styr generering av MD5\n"
 "  -s=?  Källkods-override-fil\n"
 "  -q    Tyst\n"
-"  -d=?  Väljer den valfri cachedatabasen\n"
+"  -d=?  Väljer den valfria cachedatabasen\n"
 "  --no-delink Aktivera \"delinkning\"-felspårningsläget\n"
 "  --contents  Styr skapande av contents-fil\n"
 "  -c=?  Läs denna konfigurationsfil\n"
@@ -665,19 +665,16 @@ msgid "The following packages will be REMOVED:"
 msgstr "Följande paket kommer att TAS BORT:"
 
 #: cmdline/apt-get.cc:421
-#, fuzzy
 msgid "The following packages have been kept back:"
-msgstr "Följande paket har hållts tillbaka"
+msgstr "Följande paket har hållits tillbaka:"
 
 #: cmdline/apt-get.cc:442
-#, fuzzy
 msgid "The following packages will be upgraded:"
-msgstr "Följande paket kommer att uppgraderas"
+msgstr "Följande paket kommer att uppgraderas:"
 
 #: cmdline/apt-get.cc:463
-#, fuzzy
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Följande paket kommer att NEDGRADERAS"
+msgstr "Följande paket kommer att NEDGRADERAS:"
 
 #: cmdline/apt-get.cc:483
 msgid "The following held packages will be changed:"
@@ -699,7 +696,7 @@ msgstr ""
 #: cmdline/apt-get.cc:574
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu uppgraderade, %lu nyligen installerade, "
+msgstr "%lu uppgraderade, %lu nyinstallerade, "
 
 #: cmdline/apt-get.cc:578
 #, c-format
@@ -882,16 +879,15 @@ msgid "You should explicitly select one to install."
 msgstr "Du bör explicit ange ett att installera."
 
 #: cmdline/apt-get.cc:1040
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"Paketet %s har ingen tillgänglig version, men finns i databasen.\n"
-"Detta betyder vanligen att detta paket nämnts i ett beroende men aldrig\n"
-"har sänts in, har blivit föråldrat eller inte är tillgänglig från\n"
-"innehållet i sources.list\n"
+"Paketet %s är inte tillgängligt, men ett annat paket hänvisar till det.\n"
+"Detta betyder vanligen att paketet saknas, har blivit föråldrat eller\n"
+"bara är tillgängligt från andra källor\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -1110,16 +1106,18 @@ msgstr ""
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
+"Misslyckades att uppfylla %s-beroendet för %s: Det installerade paketet "
+"%s är för nytt"
 
 #: cmdline/apt-get.cc:2215
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Kunde inte hantera byggberoenden"
+msgstr "Misslyckades att uppfylla %s-beroendet för %s: %s"
 
 #: cmdline/apt-get.cc:2229
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
+msgstr "Byggberoenden för %s kunde inte uppfyllas."
 
 #: cmdline/apt-get.cc:2233
 msgid "Failed to process build dependencies"
@@ -1212,12 +1210,12 @@ msgstr ""
 # "Hit" = aktuell version är fortfarande giltig
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
-msgstr "Trf "
+msgstr "Bra "
 
 # "Get:" = hämtar ny version
 #: cmdline/acqprogress.cc:79
 msgid "Get:"
-msgstr "Hmt:"
+msgstr "Läs:"
 
 # "Ign" = hoppar över
 #: cmdline/acqprogress.cc:110
@@ -1443,7 +1441,7 @@ msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Filen %s/%s skriver över den i paketet %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kunde inte läsa %s"
@@ -2039,7 +2037,7 @@ msgid "Unable to stat the mount point %s"
 msgstr "Kunde inte ta status på monteringspunkt %s."
 
 # Felmeddelande för misslyckad chdir
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Kunde inte gå till %s"
@@ -2335,9 +2333,9 @@ msgid "Packaging system '%s' is not supported"
 msgstr "Paketsystemet \"%s\" stöds inte"
 
 #: apt-pkg/init.cc:135
-#, fuzzy
+#
 msgid "Unable to determine a suitable packaging system type"
-msgstr "Kunde inte avgöra lämplig systemtyp"
+msgstr "Kunde inte avgöra en lämpligt paketsystemstyp"
 
 #: apt-pkg/clean.cc:61
 #, c-format
