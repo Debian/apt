@@ -38,8 +38,9 @@ update_stamp()
 
 UpdateInterval=0
 DownloadUpgradeableInterval=0
-RES=`apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages`
-eval $RES
+eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
+AutocleanInterval=$DownloadUpgradeableInterval
+eval $(apt-config shell AutocleanInterval APT::Periodic::Autoclean)
 
 # laptop check, on_ac_power returns:
 #       0 (true)    System is on mains power
@@ -67,4 +68,10 @@ DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
 if check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
     apt-get -qq -d dist-upgrade 2>/dev/null
     update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
+fi
+
+AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
+if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
+    apt-get -qq autoclean
+    update_stamp $AUTOCLEAN_STAMP
 fi

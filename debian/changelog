@@ -5,6 +5,10 @@ apt (0.5.31) unstable; urgency=low
   * Merge changes from Hoary (0.5.30,0.5.30ubuntu2]
   * Fix the example in apt_preferences(5) to match the text
     (Closes: #222267)
+  * Add APT::Periodic::Autoclean setting, to allow "apt-get autoclean" to
+    be run periodically.  This is useful with
+    APT::Periodic::Download-Upgradeable-Packages, and defaults to the same
+    value, so that the cache size is bounded
 
  --
 
