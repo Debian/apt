@@ -46,7 +46,7 @@ $(PO)/$(PACKAGE)-all.pot: $(POTFILES)
 # only the subtext needed for this domain
 # We cannot express the dependencies required for this directly with a pattern
 # rule, so we use the .d hack.
-$(LANG_POFILES) : %.po :
+$(LANG_POFILES) : %.po : $(PO)/$(PACKAGE)-all.pot
 	echo Generating $@
 	echo $@ : $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot > $(PO)/$(call GETDOMAIN,$*)_$(notdir $@).d
 	$(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
