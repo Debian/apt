@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-extracttemplates</refentrytitle>
+   <manvolnum>1</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-extracttemplates</refname>
+    <refpurpose>Utility to extract DebConf config and templates from Debian packages</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-extracttemplates</command>
+      <arg><option>-hv</option></arg>
+      <arg><option>-t=<replaceable>temporary directory</replaceable></option></arg>
+      <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+ <refsect1><title>Description</title>
+   <para><command>apt-extracttemplates</command> will take one or more Debian package files
+   as input and write out (to a temporary directory) all associated config
+   scripts and template files. For each passed in package that contains 
+   config scripts and templates, one line of output will be generated
+   in the format:</para>
+   <para>package version template-file config-script</para>
+   <para>template-file and config-script are written to the temporary directory
+   specified by the -t or --tempdir (<literal>APT::ExtractTemplates::TempDir</literal>) 
+   directory, with filenames of the form <filename>package.template.XXXX</filename> and 
+   <filename>package.config.XXXX</filename></para>
+ </refsect1>
+ 
+ <refsect1><title>options</title>
+   &apt-cmdblurb;
+
+   <variablelist>
+     <varlistentry><term><option>-t</option></term><term><option>--tempdir</option></term>
+     <listitem><para>
+     Temporary directory in which to write extracted debconf template files
+     and config scripts
+     Configuration Item: <literal>APT::ExtractTemplates::TempDir</literal></para></listitem>
+     </varlistentry>
+
+     &apt-commonoptions;
+     
+   </variablelist>
+     
+   
+ </refsect1>
+
+ <refsect1><title>See Also</title>
+   <para>&apt-conf;</para>
+ </refsect1>
+
+ <refsect1><title>Diagnostics</title>
+   <para>
+   <command>apt-extracttemplates</command> returns zero on normal operation, decimal 100 on error.</para>
+ </refsect1>
+
+ &manbugs;
+ &manauthor;
+ 
+</refentry>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>sources.list</refentrytitle>
+   <manvolnum>5</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>sources.list</refname>
+    <refpurpose>Package resource list for APT</refpurpose>
+ </refnamediv>
+ 
+ <refsect1><title>Description</title>
+   <para>The package resource list is used to locate archives of the package
+   distribution system in use on the system. At this time, this manual page
+   documents only the packaging system used by the Debian GNU/Linux system.
+   This control file is located in <filename>/etc/apt/sources.list</filename></para>
+
+   <para>The source list is designed to support any number of active sources and a
+   variety of source media. The file lists one source per line, with the
+   most preferred source listed first. The format of each line is:
+   <literal>type uri args</literal> The first item, <literal>type</literal>
+   determines the format for <literal>args</literal> <literal>uri</literal> is
+   a Universal Resource Identifier 
+   (URI), which is a superset of the more specific and well-known Universal
+   Resource Locator, or URL. The rest of the line can be marked as a comment 
+   by using a #.</para>
+ </refsect1>
+ 
+ <refsect1><title>The deb and deb-src types</title>
+   <para>The <literal>deb</literal> type describes a typical two-level Debian
+   archive, <filename>distribution/component</filename>. Typically,
+   <literal>distribution</literal> is generally one of
+   <literal>stable</literal> <literal>unstable</literal> or 
+   <literal>testing</literal> while component is one of <literal>main</literal> 
+   <literal>contrib</literal> <literal>non-free</literal> or
+   <literal>non-us</literal> The 
+   <literal>deb-src</literal> type describes a debian distribution's source
+   code in the same form as the <literal>deb</literal> type.
+   A <literal>deb-src</literal> line is required to fetch source indexes.</para>
+
+
+   <para>The format for a <filename>sources.list</filename> entry using the
+   <literal>deb</literal> and <literal>deb-src</literal> types are:</para>
+
+   <literallayout>deb uri distribution [component1] [component2] [...]</literallayout>
+
+   <para>The URI for the <literal>deb</literal> type must specify the base of the
+   Debian distribution, from which APT will find the information it needs. 
+   <literal>distribution</literal> can specify an exact path, in which case the 
+   components must be omitted and <literal>distribution</literal> must end with
+   a slash (/). This is useful for when only a particular sub-section of the 
+   archive denoted by the URI is of interest.
+   If <literal>distribution</literal> does not specify an exact path, at least
+   one <literal>component</literal> must be present.</para>
+
+   <para><literal>distribution</literal> may also contain a variable, 
+   <literal>$(ARCH)</literal>
+   which expands to the Debian architecture (i386, m68k, powerpc, ...)
+   used on the system. This permits architecture-independent
+   <filename>sources.list</filename> files to be used. In general this is only
+   of interest when specifying an exact path, <literal>APT</literal> will
+   automatically generate a URI with the current architecture otherwise.</para>
+
+   <para>Since only one distribution can be specified per line it may be necessary
+   to have multiple lines for the same URI, if a subset of all available
+   distributions or components at that location is desired.
+   APT will sort the URI list after it has generated a complete set 
+   internally, and will collapse multiple references to the same Internet 
+   host, for instance, into a single connection, so that it does not 
+   inefficiently establish an FTP connection, close it, do something else, 
+   and then re-establish a connection to that same host. This feature is 
+   useful for accessing busy FTP sites with limits on the number of 
+   simultaneous anonymous users. APT also parallelizes connections to 
+   different hosts to more effectively deal with sites with low bandwidth.</para>
+
+   <para>It is important to list sources in order of preference, with the most
+   preferred source listed first. Typically this will result in sorting
+   by speed from fastest to slowest (CD-ROM followed by hosts on a local
+   network, followed by distant Internet hosts, for example).</para>
+
+   <para>Some examples:</para>
+   <literallayout>
+deb http://http.us.debian.org/debian stable main contrib non-free
+deb http://http.us.debian.org/debian dists/stable-updates/
+   </literallayout>
+
+ </refsect1>
+
+ <refsect1><title>URI specification</title>
+
+   <para>The currently recognized URI types are cdrom, file, http, and ftp.
+   <variablelist>
+    <varlistentry><term>file</term>
+    <listitem><para>
+    The file scheme allows an arbitrary directory in the file system to be
+    considered an archive. This is useful for NFS mounts and local mirrors or
+    archives.</para></listitem>
+    </varlistentry>
+    
+    <varlistentry><term>cdrom</term>
+    <listitem><para>
+    The cdrom scheme allows APT to use a local CDROM drive with media
+    swapping. Use the &apt-cdrom; program to create cdrom entries in the
+    source list.</para></listitem>
+    </varlistentry>
+
+    <varlistentry><term>http</term>
+    <listitem><para>
+    The http scheme specifies an HTTP server for the archive. If an environment
+    variable <envar>http_proxy</envar> is set with the format 
+    http://server:port/, the proxy server specified in
+    <envar>http_proxy</envar> will be used. Users of authenticated
+    HTTP/1.1 proxies may use a string of the format
+    http://user:pass@server:port/
+    Note that this is an insecure method of authentication.</para></listitem>
+    </varlistentry>
+
+    <varlistentry><term>ftp</term>
+    <listitem><para>
+    The ftp scheme specifies an FTP server for the archive. APT's FTP behavior
+    is highly configurable; for more information see the
+    &apt-conf; manual page. Please note that a ftp proxy can be specified
+    by using the <envar>ftp_proxy</envar> environment variable. It is possible
+    to specify a http proxy (http proxy servers often understand ftp urls)
+    using this method and ONLY this method. ftp proxies using http specified in
+    the configuration file will be ignored.</para></listitem>
+    </varlistentry>
+
+    <varlistentry><term>copy</term>
+    <listitem><para>
+    The copy scheme is identical to the file scheme except that packages are
+    copied into the cache directory instead of used directly at their location.
+    This is useful for people using a zip disk to copy files around with APT.</para></listitem>
+    </varlistentry>
+    
+    <varlistentry><term>rsh</term><term>ssh</term>
+    <listitem><para>
+    The rsh/ssh method invokes rsh/ssh to connect to a remote host
+    as a given user and access the files. No password authentication is 
+    possible, prior arrangements with RSA keys or rhosts must have been made.
+    Access to files on the remote uses standard <command>find</command> and
+    <command>dd</command> 
+    commands to perform the file transfers from the remote.</para></listitem>
+    </varlistentry>
+  </variablelist>
+ </para>
+ </refsect1>
+ 
+ <refsect1><title>Examples</title>
+   <para>Uses the archive stored locally (or NFS mounted) at /home/jason/debian
+   for stable/main, stable/contrib, and stable/non-free.</para>
+   <literallayout>deb file:/home/jason/debian stable main contrib non-free</literallayout>
+
+   <para>As above, except this uses the unstable (development) distribution.</para>
+   <literallayout>deb file:/home/jason/debian unstable main contrib non-free</literallayout>
+
+   <para>Source line for the above</para>
+   <literallayout>deb-src file:/home/jason/debian unstable main contrib non-free</literallayout>
+
+   <para>Uses HTTP to access the archive at archive.debian.org, and uses only
+   the hamm/main area.</para>
+   <literallayout>deb http://archive.debian.org/debian-archive hamm main</literallayout>
+
+   <para>Uses FTP to access the archive at ftp.debian.org, under the debian
+   directory, and uses only the stable/contrib area.</para>
+   <literallayout>deb ftp://ftp.debian.org/debian stable contrib</literallayout>
+
+   <para>Uses FTP to access the archive at ftp.debian.org, under the debian
+   directory, and uses only the unstable/contrib area. If this line appears as
+   well as the one in the previous example in <filename>sources.list</filename>.
+   a single FTP session will be used for both resource lines.</para>
+   <literallayout>deb ftp://ftp.debian.org/debian unstable contrib</literallayout>
+
+   <para>Uses HTTP to access the archive at nonus.debian.org, under the
+    debian-non-US directory.</para>
+   <literallayout>deb http://nonus.debian.org/debian-non-US stable/non-US main contrib non-free</literallayout>
+
+   <para>Uses HTTP to access the archive at nonus.debian.org, under the
+   debian-non-US directory, and uses only files found under
+   <filename>unstable/binary-i3866</filename> on i386 machines, 
+   <filename>unstable/binary-m68k</filename> on m68k, and so
+   forth for other supported architectures. [Note this example only 
+   illustrates how to use the substitution variable; non-us is no longer 
+   structured like this] 
+   <literallayout>deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/</literallayout>
+   </para>
+ </refsect1>
+ 
+ <refsect1><title>See Also</title>
+   <para>
+   &apt-cache; &apt-conf;
+   </para>
+ </refsect1>
+
+ &manbugs;
+ &manauthor;
+ 
+</refentry>
+

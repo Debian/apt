@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-config</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-config</refname>
+    <refpurpose>APT Configuration Query program</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-config</command>
+      <arg><option>-hv</option></arg>
+      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
+      <arg><option>-c=<replaceable>file</replaceable></option></arg>
+      <group choice="req">
+         <arg>shell</arg>
+         <arg>dump</arg>
+      </group>   
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+ <refsect1><title>Description</title>
+   <para><command>apt-config</command> is an internal program used by various
+   portions of the APT suite to provide consistent configurability. It accesses
+   the main configuration file <filename>/etc/apt/apt.conf</filename> in a
+   manner that is easy to use by scripted applications.</para>
+
+   <para>Unless the <option>-h</option>, or <option>--help</option> option is
+   given one of the commands below must be present.
+   </para>
+   
+   <variablelist>
+     <varlistentry><term>shell</term>
+     <listitem><para>
+     shell is used to access the configuration information from a shell 
+     script. It is given pairs of arguments, the first being a shell 
+     variable and the second the configuration value to query. As output 
+     it lists a series of shell assignments commands for each present value. 
+     In a shell script it should be used like:
+     </para>
+     
+<informalexample><programlisting>
+OPTS="-f"
+RES=`apt-config shell OPTS MyApp::options`
+eval $RES
+</programlisting></informalexample>
+
+     <para>This will set the shell environment variable $OPTS to the value of
+     MyApp::options with a default of <option>-f</option>.</para>
+
+     
+     <para>The configuration item may be postfixed with a /[fdbi]. f returns
+     file names, d returns directories, b returns true or false and i returns
+     an integer. Each of the returns is normalized and verified
+     internally.</para>
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>dump</term>
+     <listitem><para>
+     Just show the contents of the configuration space.</para>
+     </listitem>
+     </varlistentry>
+
+   </variablelist>
+ </refsect1>
+
+ <refsect1><title>options</title>
+   &apt-cmdblurb;
+   
+   <variablelist>
+   
+     &apt-commonoptions;
+     
+   </variablelist>
+ </refsect1>
+
+ <refsect1><title>See Also</title>
+   <para>
+   &apt-conf;
+   </para>
+ </refsect1>
+
+ <refsect1><title>Diagnostics</title>
+   <para><command>apt-config</command> returns zero on normal operation, decimal 100 on error.
+   </para>
+ </refsect1>
+
+ &manbugs;
+ &manauthor;
+ 
+</refentry>
+
