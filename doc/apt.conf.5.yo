@@ -30,8 +30,16 @@ verb(APT {
 };
 )
 with newlines placed to make
-it more readable. In general the sample configuration file in
+it more readable. Lists can be created by opening a scope an including a 
+single word enclosed in quotes followed by a semicolon. 
+In general the sample configuration file in
 em(/usr/doc/apt/examples/apt.conf) is a good guide for how it should look.
+
+All of the APT tools take a -o option which allows an arbitary configuration 
+directive to be specified on the command line. The syntax is a full option
+name (APT::Get::Assume-Yes for instance) followed by an equals sign then the
+new value of the option. Lists can be appended too by adding a trailing ::
+to the list name.
 
 manpagesection(The APT Group)
 This group of options controls general APT behavoir as well as holding the

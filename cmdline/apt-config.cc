@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.5 1999/05/23 05:45:12 jgg Exp $
+// $Id: apt-config.cc,v 1.6 1999/06/06 05:52:37 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -51,6 +51,15 @@ bool DoShell(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DoDump - Dump the configuration space				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool DoDump(CommandLine &CmdL)
+{
+   _config->Dump();
+   return true;
+}
+									/*}}}*/
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -67,6 +76,7 @@ int ShowHelp()
    cout << endl;
    cout << "Commands:" << endl;
    cout << "   shell - Shell mode" << endl;
+   cout << "   dump - Show the configuration" << endl;
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
@@ -85,6 +95,7 @@ int main(int argc,const char *argv[])
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
    CommandLine::Dispatch Cmds[] = {{"shell",&DoShell},
+                                   {"dump",&DoDump},
                                    {0,0}};
    
    // Parse the command line and initialize the package library

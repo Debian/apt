@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.13 1999/04/20 05:59:29 jgg Exp $
+// $Id: acqprogress.cc,v 1.14 1999/06/06 05:52:37 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -48,7 +48,7 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
    
    cout << "Hit " << Itm.Description;
    if (Itm.Owner->FileSize != 0)
-      cout << " [" << SizeToStr(Itm.Owner->FileSize) << "b]";
+      cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    cout << endl;
    Update = true;
 };
@@ -72,7 +72,7 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
    
    cout << "Get:" << Itm.Owner->ID << ' ' << Itm.Description;
    if (Itm.Owner->FileSize != 0)
-      cout << " [" << SizeToStr(Itm.Owner->FileSize) << "b]";
+      cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    cout << endl;
 };
 									/*}}}*/
@@ -122,9 +122,9 @@ void AcqTextStatus::Stop()
       cout << '\r' << BlankLine << '\r';
    
    if (FetchedBytes != 0)
-      cout << "Fetched " << SizeToStr(FetchedBytes) << "b in " <<
+      cout << "Fetched " << SizeToStr(FetchedBytes) << "B in " <<
          TimeToStr(ElapsedTime) << " (" << SizeToStr(CurrentCPS) << 
-         "b/s)" << endl;
+         "B/s)" << endl;
 }
 									/*}}}*/
 // AcqTextStatus::Pulse - Regular event pulse				/*{{{*/
@@ -189,7 +189,7 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
       else
       {
 	 if (Mode == Medium || I->TotalSize == 0)
-	    snprintf(S,End-S," %sb",SizeToStr(I->CurrentSize).c_str());
+	    snprintf(S,End-S," %sB",SizeToStr(I->CurrentSize).c_str());
       }
       S += strlen(S);
       
@@ -200,7 +200,7 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
 	    snprintf(S,End-S," %lu%%",
 		     long(double(I->CurrentSize*100.0)/double(I->TotalSize)));
 	 else
-	    snprintf(S,End-S,"/%sb %lu%%",SizeToStr(I->TotalSize).c_str(),
+	    snprintf(S,End-S,"/%sB %lu%%",SizeToStr(I->TotalSize).c_str(),
 		     long(double(I->CurrentSize*100.0)/double(I->TotalSize)));
       }      
       S += strlen(S);
@@ -222,7 +222,7 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
    {      
       char Tmp[300];
       unsigned long ETA = (unsigned long)((TotalBytes - CurrentBytes)/CurrentCPS);
-      sprintf(Tmp," %sb/s %s",SizeToStr(CurrentCPS).c_str(),TimeToStr(ETA).c_str());
+      sprintf(Tmp," %sB/s %s",SizeToStr(CurrentCPS).c_str(),TimeToStr(ETA).c_str());
       unsigned int Len = strlen(Buffer);
       unsigned int LenT = strlen(Tmp);
       if (Len + LenT < ScreenWidth)

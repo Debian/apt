@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.63 1999/06/05 07:30:18 jgg Exp $
+// $Id: apt-get.cc,v 1.64 1999/06/06 05:52:37 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -525,17 +525,17 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    // Number of bytes
    c1out << "Need to get ";
    if (DebBytes != FetchBytes)
-      c1out << SizeToStr(FetchBytes) << "b/" << SizeToStr(DebBytes) << 'b';
+      c1out << SizeToStr(FetchBytes) << "B/" << SizeToStr(DebBytes) << 'B';
    else
-      c1out << SizeToStr(DebBytes) << 'b';
+      c1out << SizeToStr(DebBytes) << 'B';
       
    c1out << " of archives. After unpacking ";
    
    // Size delta
    if (Cache->UsrSize() >= 0)
-      c1out << SizeToStr(Cache->UsrSize()) << "b will be used." << endl;
+      c1out << SizeToStr(Cache->UsrSize()) << "B will be used." << endl;
    else
-      c1out << SizeToStr(-1*Cache->UsrSize()) << "b will be freed." << endl;
+      c1out << SizeToStr(-1*Cache->UsrSize()) << "B will be freed." << endl;
 
    if (_error->PendingError() == true)
       return false;
@@ -1024,7 +1024,7 @@ class LogCleaner : public pkgArchiveCleaner
    protected:
    virtual void Erase(const char *File,string Pkg,string Ver,struct stat &St) 
    {
-      cout << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "b]" << endl;
+      cout << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "B]" << endl;
    };
 };
 
@@ -1194,9 +1194,9 @@ bool DoSource(CommandLine &CmdL)
    // Number of bytes
    c1out << "Need to get ";
    if (DebBytes != FetchBytes)
-      c1out << SizeToStr(FetchBytes) << "b/" << SizeToStr(DebBytes) << 'b';
+      c1out << SizeToStr(FetchBytes) << "B/" << SizeToStr(DebBytes) << 'B';
    else
-      c1out << SizeToStr(DebBytes) << 'b';
+      c1out << SizeToStr(DebBytes) << 'B';
    c1out << " of source archives." << endl;
 
    if (_config->FindB("APT::Get::Simulate",false) == true)
