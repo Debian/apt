@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.cc,v 1.5 2001/11/04 17:09:18 tausq Exp $
+// $Id: debsrcrecords.cc,v 1.6 2004/03/17 05:58:54 mdz Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -31,13 +31,34 @@ const char **debSrcRecordParser::Binaries()
 {
    // This should use Start/Stop too, it is supposed to be efficient after all.
    string Bins = Sect.FindS("Binary");
-   if (Bins.empty() == true || Bins.length() >= sizeof(Buffer))
+   if (Bins.empty() == true || Bins.length() >= 102400)
       return 0;
    
-   strcpy(Buffer,Bins.c_str());
-   if (TokSplitString(',',Buffer,StaticBinList,
+   // Workaround for #236688.  Only allocate a new buffer if the field
+   // is large, to avoid a performance penalty
+   char *BigBuf = NULL;
+   char *Buf;
+   if (Bins.length() > sizeof(Buffer))
+   {
+      BigBuf = new char[Bins.length()];
+      Buf = BigBuf;
+   }
+   else
+   {
+      Buf = Buffer;
+   }
+
+   strcpy(Buf,Bins.c_str());
+   if (TokSplitString(',',Buf,StaticBinList,
 		      sizeof(StaticBinList)/sizeof(StaticBinList[0])) == false)
+   {
+      if (BigBuf != NULL)
+         delete BigBuf;
       return 0;
+   }
+
+   if (BigBuf != NULL)
+      delete BigBuf;
    return (const char **)StaticBinList;
 }
 									/*}}}*/

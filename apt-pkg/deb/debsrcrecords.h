@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.h,v 1.7 2001/11/04 17:09:18 tausq Exp $
+// $Id: debsrcrecords.h,v 1.8 2004/03/17 05:58:54 mdz Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -52,7 +52,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    debSrcRecordParser(string File,pkgIndexFile const *Index) :
                    Parser(Index),      
                    Fd(File,FileFd::ReadOnly),
-                   Tags(&Fd,sizeof(Buffer)) {};
+                   Tags(&Fd,102400) {};
 };
 
 #endif
