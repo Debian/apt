@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.cc,v 1.5 1999/12/10 08:53:43 jgg Exp $
+// $Id: rfc2553emu.cc,v 1.6 1999/12/11 02:11:10 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -17,6 +17,7 @@
 #include "rfc2553emu.h"
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <string.h>
 #include <stdio.h>
 

@@ -39,6 +39,9 @@ $($(LOCAL)-LIB): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
 	echo Building library $@
 	-rm $@ > /dev/null 2>&1
 	$(AR) cq $@ $(filter %.o,$^)
+ifneq ($(words $(RANLIB)),0)
+	$(RANLIB) $@
+endif
 
 # Compilation rules
 vpath %.cc $(SUBDIRS)

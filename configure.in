@@ -31,7 +31,9 @@ AC_CHECK_TOOL_PREFIX	dnl recheck, in case the initial guess was wrong
 
 dnl Check for other programs
 AC_PROG_CXX
-#AC_LANG_CPLUSPLUS
+AC_PROG_CPP
+AC_PROG_RANLIB
+AC_CHECK_TOOL(AR,ar,"ar")
 
 dnl Checks for sockets
 SAVE_LIBS="$LIBS"
@@ -97,6 +99,13 @@ AC_CACHE_CHECK([for C9x integer types],c9x_ints,[
 dnl Single Unix Spec statvfs
 AC_CHECK_FUNC(statvfs,[HAVE_STATVFS=yes])
 AC_SUBST(HAVE_STATVFS)
+
+dnl Arg, linux and bsd put their statfs function in different places
+if test x"$HAVE_STATVFS" != x"yes"; then
+   AC_EGREP_HEADER(statfs,sys/vfs.h,[AC_DEFINE(HAVE_VFS_H)],[
+   AC_EGREP_HEADER(statfs,sys/mount.h,[AC_DEFINE(HAVE_MOUNT_H)],[AC_MSG_ERROR(failed: Need statvfs)])
+   ])
+fi
 
 dnl Check the sizes etc. of the architecture
 changequote(,)
