@@ -11,6 +11,9 @@
 #DEBHELPER#
 
 case "$1" in
+       remove)
+		ldconfig
+		;;
        purge)
 		echo -n "Removing APT cache and state files... "
 		echo -n "/var/cache/apt"
