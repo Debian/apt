@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2005-01-23 21:28+0800\n"
-"Last-Translator: Kanru Chen <kanru.96@stu.csie.ncnu.edu.tw>\n"
+"PO-Revision-Date: 2005-02-19 22:24+0800\n"
+"Last-Translator: Asho Yeh <asho@debian.org.tw>\n"
 "Language-Team: Chinese/Traditional <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -323,7 +323,6 @@ msgid "Error Processing Contents %s"
 msgstr "處理目錄 %s 時出錯"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -396,8 +395,9 @@ msgstr ""
 "  -h    本幫助說明\n"
 "  --md5 產生 MD5 校驗控制碼\n"
 "  -s=?  源碼的 override 檔案\n"
-"  -q    輸出精簡信息  -d=?  指定選擇的快取資料庫\n"
-"  --no-delink 開啟delink的真錯模式\n"
+"  -q    輸出精簡信息\n"
+"  -d=?  指定選擇的快取資料庫\n"
+"  --no-delink 開啟delink的偵錯模式\n"
 "  --contents  產生控制內容檔案\n"
 "  -c=?  讀取指定的設定檔\n"
 "  -o=?  設定任意指定的設定選項"
@@ -749,17 +749,16 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "無法滿足相依關係。試試看 -f 選項。"
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "下列的套件都將更新:"
+msgstr "警告：下列的套件驗證失敗！"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "不驗證這些套件就直接安裝？[y/N]"
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "部份套件無法驗證"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
@@ -1556,9 +1555,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "無效的 DEB 檔案，遺失 %s 成員"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "無效的 DEB 檔案，遺失 %s 成員"
+msgstr "無效的 DEB 檔案，遺失 '%s' 或 '%s' 成員"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -2462,9 +2461,9 @@ msgid "Size mismatch"
 msgstr "檔案大小不符合。"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "『%s』商家區段有錯誤。"
+msgstr "廠商區段%s有錯誤。"
 
 #: apt-pkg/cdrom.cc:487
 #, c-format
@@ -2472,138 +2471,90 @@ msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
 msgstr ""
+"使用光碟機掛載點 %s\n"
+"掛載光碟機中\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
-msgstr ""
+msgstr "標識中.."
 
 #: apt-pkg/cdrom.cc:521
 #, c-format
 msgid "Stored Label: %s \n"
-msgstr ""
+msgstr "保存標誌：%s \n"
 
 #: apt-pkg/cdrom.cc:541
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr ""
+msgstr "使用光碟機掛載點 %s\n"
 
 #: apt-pkg/cdrom.cc:559
 msgid "Unmounting CD-ROM\n"
-msgstr ""
+msgstr "卸載光碟機中\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "等待標頭"
+msgstr "等待磁碟中...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
 msgid "Mounting CD-ROM...\n"
-msgstr ""
+msgstr "掛載光碟機中... \n"
 
 #: apt-pkg/cdrom.cc:589
 msgid "Scanning Disc for index files..\n"
-msgstr ""
+msgstr "掃描碟片中的索引檔案..\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "找到 %i 個套件索引，%i 源碼索引和 %i 簽名\n"
 
 #: apt-pkg/cdrom.cc:684
 msgid "That is not a valid name, try again.\n"
-msgstr ""
+msgstr "這不是合法名稱，重試一下。\n"
 
 #: apt-pkg/cdrom.cc:700
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This Disc is called: \n"
 "'%s'\n"
-msgstr "這個碟片名為："
+msgstr ""
+"這個碟片名為：\n"
+"'%s'\n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "讀取套件清單中"
+msgstr "複製套件清單中"
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "來源檔『%2$s』第 %1$u 行太長。"
+msgstr "寫入新的來源列表中\n"
 
 #: apt-pkg/cdrom.cc:737
 msgid "Source List entries for this Disc are:\n"
-msgstr ""
+msgstr "該碟片的來源列表項目為：\n"
 
 #: apt-pkg/cdrom.cc:771
 msgid "Unmounting CD-ROM..."
-msgstr ""
+msgstr "卸載光碟機中..."
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "寫入 %i 筆紀錄。\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "寫入 %i 筆遺失 %i 個檔案的紀錄。\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "寫入 %i 筆 %i 個不匹配檔案的紀錄。\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
-msgstr ""
-
-#~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
-#~ msgstr "來源檔『%3$s』第 %2$u 行的『%1$s』商家名稱有錯誤。"
-
-#~ msgid ""
-#~ "Some broken packages were found while trying to process build-"
-#~ "dependencies.\n"
-#~ "You might want to run `apt-get -f install' to correct these."
-#~ msgstr ""
-#~ "處理依存關係時發現了一些損毀的套件。\n"
-#~ "用『apt-get -f install』指令或許能修正這些問題。"
-
-#~ msgid "Please insert a Disc in the drive and press enter"
-#~ msgstr "請把碟片插入碟機，然後按 [Enter] 鍵。"
-
-#~ msgid "Done. "
-#~ msgstr "完成。"
-
-#~ msgid "<- '"
-#~ msgstr "←『"
-
-#~ msgid "'"
-#~ msgstr "』"
-
-#~ msgid "-> '"
-#~ msgstr "→『"
-
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h    This help text\n"
-#~ "  --md5 Control MD5 generation\n"
-#~ "  -s=?  Source override file\n"
-#~ "  -q    Quiet\n"
-#~ "  -d=?  Select the optional caching database\n"
-#~ "  --no-delink Enable delinking debug mode\n"
-#~ "  --contents  Control contents file generation\n"
-#~ "  -c=?  Read this configuration file\n"
-#~ "  -o=?  Set an arbitary configuration option\n"
-#~ msgstr ""
-#~ "選項：\n"
-#~ "  -h          本頁\n"
-#~ "  --md5       控制 MD5 檢查碼的產生\n"
-#~ "  -s=?        來源抑制檔案\n"
-#~ "  -q          安靜\n"
-#~ "  -d=?        選擇暫存的檔案庫\n"
-#~ "  --no-delink [FIXME]\n"
-#~ "  --contents  控制目錄檔的產生\n"
-#~ "  -c=?        讀指定的配置檔\n"
-#~ "  -o=?        設定某個配置選項\n"
+msgstr "寫入 %i 筆遺失 %i 個檔案和 %i 個不匹配檔案的紀錄。\n"
