@@ -72,7 +72,7 @@ MultiCompress::MultiCompress(string Output,string Compress,
       // Hmm.. unknown.
       if (Comp->Name == 0)
       {
-	 _error->Warning(_("Unknown Compresison Algorithm '%s'"),string(Start,I).c_str());
+	 _error->Warning(_("Unknown compression algorithm '%s'"),string(Start,I).c_str());
 	 continue;
       }
       
@@ -212,7 +212,7 @@ bool MultiCompress::Die()
    
    fclose(Input);
    Input = 0;
-   bool Res = ExecWait(Outputter,_("Compress Child"),false);
+   bool Res = ExecWait(Outputter,_("Compress child"),false);
    Outputter = -1;
    return Res;
 }
@@ -235,7 +235,7 @@ bool MultiCompress::Finalize(unsigned long &OutSize)
    {
       struct stat St;
       if (stat(I->Output.c_str(),&St) != 0)
-	 return  _error->Error(_("Internal Error, Failed to create %s"),
+	 return  _error->Error(_("Internal error, failed to create %s"),
 			       I->Output.c_str());
       
       if (I->OldMTime != St.st_mtime)

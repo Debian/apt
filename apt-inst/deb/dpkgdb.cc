@@ -136,7 +136,7 @@ bool debDpkgDB::ReadyPkgCache(OpProgress &Progress)
 {
    if (Cache != 0)
    {  
-      Progress.OverallProgress(1,1,1,_("Reading Package Lists"));      
+      Progress.OverallProgress(1,1,1,_("Reading package lists"));      
       return true;
    }
    
@@ -198,11 +198,11 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
       pkgFLCache::PkgIterator FlPkg = FList->GetPkg(I.Name(),0,true);
       if (FlPkg.end() == true)
       {
-	 _error->Error(_("Internal Error getting a Package Name"));
+	 _error->Error(_("Internal error getting a package name"));
 	 break;
       }
       
-      Progress.OverallProgress(Count,Total,1,_("Reading File Listing"));
+      Progress.OverallProgress(Count,Total,1,_("Reading file listing"));
      
       // Open the list file
       snprintf(Name,sizeof(Name),"%s.list",I.Name());
@@ -263,7 +263,7 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
  					      FlPkg.Offset(),true,false);
 	    if (Node.end() == true)
 	    {
-	       _error->Error(_("Internal Error getting a Node"));
+	       _error->Error(_("Internal error getting a node"));
 	       break;
 	    }
 	 }
@@ -352,14 +352,14 @@ bool debDpkgDB::ReadDiversions()
       pkgFLCache::PkgIterator FlPkg = FList->GetPkg(Package,0,true);
       if (FlPkg.end() == true)
       {
-	 _error->Error(_("Internal Error getting a Package Name"));
+	 _error->Error(_("Internal error getting a package name"));
 	 break;
       }
       
       // Install the diversion
       if (FList->AddDiversion(FlPkg,From,To) == false)
       {
-	 _error->Error(_("Internal Error adding a diversion"));
+	 _error->Error(_("Internal error adding a diversion"));
 	 break;
       }
    }
@@ -383,7 +383,7 @@ bool debDpkgDB::ReadyFileList(OpProgress &Progress)
       return _error->Error(_("The pkg cache must be initialize first"));
    if (FList != 0)
    {
-      Progress.OverallProgress(1,1,1,_("Reading File List"));
+      Progress.OverallProgress(1,1,1,_("Reading file list"));
       return true;
    }
    
@@ -440,12 +440,12 @@ bool debDpkgDB::ReadConfFiles()
       const char *PkgStart;
       const char *PkgEnd;
       if (Section.Find("Package",PkgStart,PkgEnd) == false)
-	 return _error->Error(_("Failed to find a Package: Header, offset %lu"),Offset);
+	 return _error->Error(_("Failed to find a Package: header, offset %lu"),Offset);
 
       // Snag a package record for it
       pkgFLCache::PkgIterator FlPkg = FList->GetPkg(PkgStart,PkgEnd,true);
       if (FlPkg.end() == true)
-	 return _error->Error(_("Internal Error getting a Package Name"));
+	 return _error->Error(_("Internal error getting a package name"));
 
       // Parse the conf file lines
       while (1)

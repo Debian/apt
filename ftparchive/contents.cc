@@ -314,7 +314,7 @@ bool ContentsExtract::Read(debDebFile &Deb)
       Compressor = "bzip2";
    }
    if (Member == 0) {
-      _error->Error(_("Internal Error, could not locate member %s"),"data.tar.gz");
+      _error->Error(_("Internal error, could not locate member %s"),"data.tar.gz");
       return false;
    }
       

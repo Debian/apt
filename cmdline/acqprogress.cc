@@ -268,7 +268,7 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
 {
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
-   ioprintf(cout,_("Media Change: Please insert the disc labeled\n"
+   ioprintf(cout,_("Media change: please insert the disc labeled\n"
 		   " '%s'\n"
 		   "in the drive '%s' and press enter\n"),
 	    Media.c_str(),Drive.c_str());

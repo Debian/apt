@@ -201,7 +201,7 @@ bool FTPConn::Login()
       if (ReadResp(Tag,Msg) == false)
 	 return false;
       if (Tag >= 400)
-	 return _error->Error(_("Server refused our connection and said: %s"),Msg.c_str());
+	 return _error->Error(_("The server refused the connection and said: %s"),Msg.c_str());
       
       // Send the user
       if (WriteMsg(Tag,Msg,"USER %s",User.c_str()) == false)
@@ -443,7 +443,7 @@ bool FTPConn::WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...)
       int Res = write(ServerFd,S + Start,Len);
       if (Res <= 0)
       {
-	 _error->Errno("write",_("Write Error"));
+	 _error->Errno("write",_("Write error"));
 	 Close();
 	 return false;
       }

@@ -465,7 +465,7 @@ bool pkgFLCache::AddDiversion(PkgIterator const &Owner,
    // Should never happen
    if ((FromN->Flags & Node::Diversion) != Node::Diversion ||
        (ToN->Flags & Node::Diversion) != Node::Diversion)
-      return _error->Error(_("Internal Error in AddDiversion"));
+      return _error->Error(_("Internal error in AddDiversion"));
 
    // Now, try to reclaim an existing diversion..
    map_ptrloc Diver = 0;

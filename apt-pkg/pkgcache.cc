@@ -139,7 +139,7 @@ bool pkgCache::ReMap()
    // Locate our VS..
    if (HeaderP->VerSysName == 0 ||
        (VS = pkgVersioningSystem::GetVS(StrP + HeaderP->VerSysName)) == 0)
-      return _error->Error(_("This APT does not support the Versioning System '%s'"),StrP + HeaderP->VerSysName);
+      return _error->Error(_("This APT does not support the versioning system '%s'"),StrP + HeaderP->VerSysName);
 
    // Chcek the arhcitecture
    if (HeaderP->Architecture == 0 ||

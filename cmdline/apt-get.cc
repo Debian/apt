@@ -631,7 +631,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
 
    // Check that the system is OK
    if (DCache->DelCount() != 0 || DCache->InstCount() != 0)
-      return _error->Error("Internal Error, non-zero counts");
+      return _error->Error("Internal error, non-zero counts");
    
    // Apply corrections for half-installed packages
    if (pkgApplyStatus(*DCache) == false)
@@ -695,7 +695,7 @@ static bool CheckAuth(pkgAcquire& Fetcher)
    if (_config->FindI("quiet",0) < 2
        && _config->FindB("APT::Get::Assume-Yes",false) == false)
    {
-      c2out << _("Install these packages without verification? [y/N] ") << flush;
+      c2out << _("Install these packages without verification [y/N]? ") << flush;
       if (!YnPrompt(false))
          return _error->Error(_("Some packages could not be authenticated"));
 
@@ -750,7 +750,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (Cache->BrokenCount() != 0)
    {
       ShowBroken(c1out,Cache,false);
-      return _error->Error("Internal Error, InstallPackages was called with broken packages!");
+      return _error->Error("Internal error, InstallPackages was called with broken packages!");
    }
 
    if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
@@ -759,7 +759,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 
    // No remove flag
    if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
-      return _error->Error(_("Packages need to be removed but Remove is disabled."));
+      return _error->Error(_("Packages need to be removed but remove is disabled."));
        
    // Run the simulator ..
    if (_config->FindB("APT::Get::Simulate") == true)
@@ -769,7 +769,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       if (Res == pkgPackageManager::Failed)
 	 return false;
       if (Res != pkgPackageManager::Completed)
-	 return _error->Error("Internal Error, Ordering didn't finish");
+	 return _error->Error("Internal error, Ordering didn't finish");
       return true;
    }
    
@@ -883,7 +883,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
 	 {
-	    c2out << _("Do you want to continue? [Y/n] ") << flush;
+	    c2out << _("Do you want to continue [Y/n]? ") << flush;
 	 
 	    if (YnPrompt() == false)
 	    {
@@ -990,7 +990,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       if (Failed == true && PM->FixMissing() == false)
       {
 	 cerr << _("Unable to correct missing packages.") << endl;
-	 return _error->Error(_("Aborting Install."));
+	 return _error->Error(_("Aborting install."));
       }
        	 
       _system->UnLock();
@@ -1369,7 +1369,7 @@ bool DoUpgrade(CommandLine &CmdL)
    if (pkgAllUpgrade(Cache) == false)
    {
       ShowBroken(c1out,Cache,false);
-      return _error->Error(_("Internal Error, AllUpgrade broke stuff"));
+      return _error->Error(_("Internal error, AllUpgrade broke stuff"));
    }
    
    return InstallPackages(Cache,true);
@@ -1661,7 +1661,7 @@ bool DoDistUpgrade(CommandLine &CmdL)
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
 
-   c0out << _("Calculating Upgrade... ") << flush;
+   c0out << _("Calculating upgrade... ") << flush;
    if (pkgDistUpgrade(*Cache) == false)
    {
       c0out << _("Failed") << endl;
@@ -1734,7 +1734,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
       if (Fix.Resolve() == false)
       {
 	 ShowBroken(c1out,Cache,false);
-	 return _error->Error("Internal Error, problem resolver broke stuff");
+	 return _error->Error("Internal error, problem resolver broke stuff");
       }
    }
 
@@ -1742,7 +1742,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    if (pkgAllUpgrade(Cache) == false)
    {
       ShowBroken(c1out,Cache,false);
-      return _error->Error("Internal Error, problem resolver broke stuff");
+      return _error->Error("Internal error, problem resolver broke stuff");
    }
    
    return InstallPackages(Cache,false);
@@ -1930,7 +1930,7 @@ bool DoSource(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Simulate",false) == true)
    {
       for (unsigned I = 0; I != J; I++)
-	 ioprintf(cout,_("Fetch Source %s\n"),Dsc[I].Package.c_str());
+	 ioprintf(cout,_("Fetch source %s\n"),Dsc[I].Package.c_str());
       return true;
    }
    
@@ -2315,7 +2315,7 @@ bool ShowHelp(CommandLine &CmdL)
 	    
    if (_config->FindB("version") == true)
    {
-      cout << _("Supported Modules:") << endl;
+      cout << _("Supported modules:") << endl;
       
       for (unsigned I = 0; I != pkgVersioningSystem::GlobalListLen; I++)
       {
