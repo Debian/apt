@@ -8,6 +8,9 @@ apt (0.5.11) unstable; urgency=low
   * Clean up reportbug script a bit, and extend it to distinguish between a
     configuration file not existing and the user declining to submit it with
     the report
+  * Add #include <langinfo.h> to cmdline/apt-get.cc.  This apparently gets
+    pulled in by something else with recent g++ and/or glibc, but is
+    required when building on, e.g., stable
 
  --
 
