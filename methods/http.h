@@ -1,5 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: http.h,v 1.7 1999/12/09 03:45:56 jgg Exp $
+// Description								/*{{{*/// $Id: http.h,v 1.8 2000/05/28 04:33:59 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -87,6 +87,9 @@ struct ServerState
    bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;
    enum {Header, Data} State;
+   bool Persistent;
+   
+   // This is a Persistent attribute of the server itself.
    bool Pipeline;
    
    HttpMethod *Owner;

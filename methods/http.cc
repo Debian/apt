@@ -1,20 +1,18 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.45 2000/05/12 05:04:57 jgg Exp $
+// $Id: http.cc,v 1.46 2000/05/28 04:33:59 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
    
    It uses HTTP/1.1 and many of the fancy options there-in, such as
-   pipelining, range, if-range and so on. It accepts on the command line
-   a list of url destination pairs and writes to stdout the status of the
-   operation as defined in the APT method spec.
-   
-   It is based on a doubly buffered select loop. All the requests are 
+   pipelining, range, if-range and so on. 
+
+   It is based on a doubly buffered select loop. A groupe of requests are 
    fed into a single output buffer that is constantly fed out the 
    socket. This provides ideal pipelining as in many cases all of the
    requests will fit into a single packet. The input socket is buffered 
-   the same way and fed into the fd for the file.
+   the same way and fed into the fd for the file (may be a pipe in future).
    
    This double buffering provides fairly substantial transfer rates,
    compared to wget the http method is about 4% faster. Most importantly,
@@ -258,9 +256,6 @@ ServerState::ServerState(URI Srv,HttpMethod *Owner) : Owner(Owner),
 // ServerState::Open - Open a connection to the server			/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens a connection to the server. */
-string LastHost;
-int LastPort = 0;
-struct addrinfo *LastHostAddr = 0;
 bool ServerState::Open()
 {
    // Use the already open connection if possible.
@@ -270,7 +265,8 @@ bool ServerState::Open()
    Close();
    In.Reset();
    Out.Reset();
-
+   Persistent = true;
+   
    // Determine the proxy setting
    if (getenv("http_proxy") == 0)
    {
@@ -379,10 +375,15 @@ int ServerState::RunHeaders()
 	    return 2;
 	 I = J;
       }
+
+      // Tidy up the connection persistance state.
+      if (Encoding == Closes && HaveContent == true)
+	 Persistent = false;
+      
       return 0;
    }
    while (Owner->Go(false,this) == true);
-
+   
    return 1;
 }
 									/*}}}*/
@@ -524,6 +525,18 @@ bool ServerState::HeaderLine(string Line)
 	 if (sscanf(Line.c_str(),"HTTP %u %[^\n]",&Result,Code) != 2)
 	    return _error->Error("The http server sent an invalid reply header");
       }
+
+      /* Check the HTTP response header to get the default persistance
+         state. */
+      if (Major < 1)
+	 Persistent = false;
+      else
+      {
+	 if (Major == 1 && Minor <= 0)
+	    Persistent = false;
+	 else
+	    Persistent = true;
+      }
       
       return true;
    }      
@@ -564,11 +577,19 @@ bool ServerState::HeaderLine(string Line)
    {
       HaveContent = true;
       if (stringcasecmp(Val,"chunked") == 0)
-	 Encoding = Chunked;
-      
+	 Encoding = Chunked;      
       return true;
    }
 
+   if (stringcasecmp(Tag,"Connection:") == 0)
+   {
+      if (stringcasecmp(Val,"close") == 0)
+	 Persistent = false;
+      if (stringcasecmp(Val,"keep-alive") == 0)
+	 Persistent = true;
+      return true;
+   }
+   
    if (stringcasecmp(Tag,"Last-Modified:") == 0)
    {
       if (StrToTime(Val,Date) == false)
@@ -678,10 +699,12 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
    
-   // Add the server
-   if (Srv->Out.WriteSpace() == true && Srv->ServerFd != -1) 
+   /* Add the server. We only send more requests if the connection will 
+      be persisting */
+   if (Srv->Out.WriteSpace() == true && Srv->ServerFd != -1 
+       && Srv->Persistent == true)
       FD_SET(Srv->ServerFd,&wfds);
-   if (Srv->In.ReadSpace() == true && Srv->ServerFd != -1) 
+   if (Srv->In.ReadSpace() == true && Srv->ServerFd != -1)
       FD_SET(Srv->ServerFd,&rfds);
    
    // Add the file
@@ -999,7 +1022,15 @@ int HttpMethod::Loop()
 	 delete Server;
 	 Server = new ServerState(Queue->Uri,this);
       }
-            
+      
+      /* If the server has explicitly said this is the last connection
+         then we pre-emptively shut down the pipeline and tear down 
+	 the connection. This will speed up HTTP/1.0 servers a tad
+	 since we don't have to wait for the close sequence to
+         complete */
+      if (Server->Persistent == false)
+	 Server->Close();
+      
       // Reset the pipeline
       if (Server->ServerFd == -1)
 	 QueueBack = Queue;	 
@@ -1082,7 +1113,7 @@ int HttpMethod::Loop()
 	    }
 	    else
 	       Fail(true);
-
+	    
 	    break;
 	 }
 	 
