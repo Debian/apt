@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.62 2003/04/27 01:32:48 doogie Exp $
+// $Id: apt-cache.cc,v 1.63 2003/04/27 02:47:44 doogie Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -529,6 +529,7 @@ bool Depends(CommandLine &CmdL)
    }
    
    bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
+   bool Installed = _config->FindB("APT::Cache::Installed",false);
    bool DidSomething;
    do
    {
@@ -551,20 +552,27 @@ bool Depends(CommandLine &CmdL)
 	 
 	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
 	 {
-	    if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-	       cout << " |";
-	    else
-	       cout << "  ";
-	    
-	    // Show the package
+
 	    pkgCache::PkgIterator Trg = D.TargetPkg();
-	    if (Trg->VersionList == 0)
-	       cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
-	    else
-	       cout << D.DepType() << ": " << Trg.Name() << endl;
+
+	    if((Installed && Trg->CurrentVer != 0) || !Installed)
+	      {
+
+		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+		  cout << " |";
+		else
+		  cout << "  ";
 	    
-	    if (Recurse == true)
-	       Colours[D.TargetPkg()->ID]++;
+		// Show the package
+		if (Trg->VersionList == 0)
+		  cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
+		else
+		  cout << D.DepType() << ": " << Trg.Name() << endl;
+	    
+		if (Recurse == true)
+		  Colours[D.TargetPkg()->ID]++;
+
+	      }
 	    
 	    // Display all solutions
 	    SPtrArray<pkgCache::Version *> List = D.AllTargets();
@@ -587,6 +595,95 @@ bool Depends(CommandLine &CmdL)
    
    return true;
 }
+
+// RDepends - Print out a reverse dependency tree - mbc			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool RDepends(CommandLine &CmdL)
+{
+   pkgCache &Cache = *GCache;
+   SPtrArray<unsigned> Colours = new unsigned[Cache.Head().PackageCount];
+   memset(Colours,0,sizeof(*Colours)*Cache.Head().PackageCount);
+   
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+      if (Pkg.end() == true)
+      {
+	 _error->Warning(_("Unable to locate package %s"),*I);
+	 continue;
+      }
+      Colours[Pkg->ID] = 1;
+   }
+   
+   bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
+   bool Installed = _config->FindB("APT::Cache::Installed",false);
+   bool DidSomething;
+   do
+   {
+      DidSomething = false;
+      for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+      {
+	 if (Colours[Pkg->ID] != 1)
+	    continue;
+	 Colours[Pkg->ID] = 2;
+	 DidSomething = true;
+	 
+	 pkgCache::VerIterator Ver = Pkg.VersionList();
+	 if (Ver.end() == true)
+	 {
+	    cout << '<' << Pkg.Name() << '>' << endl;
+	    continue;
+	 }
+	 
+	 cout << Pkg.Name() << endl;
+	 
+	 cout << "Reverse Depends:" << endl;
+	 for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() == false; D++)
+	 {	    
+	    // Show the package
+	    pkgCache::PkgIterator Trg = D.ParentPkg();
+
+	    if((Installed && Trg->CurrentVer != 0) || !Installed)
+	      {
+
+		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+		  cout << " |";
+		else
+		  cout << "  ";
+
+		if (Trg->VersionList == 0)
+		  cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
+		else
+		  cout << Trg.Name() << endl;
+
+		if (Recurse == true)
+		  Colours[D.ParentPkg()->ID]++;
+
+	      }
+	    
+	    // Display all solutions
+	    SPtrArray<pkgCache::Version *> List = D.AllTargets();
+	    pkgPrioSortList(Cache,List);
+	    for (pkgCache::Version **I = List; *I != 0; I++)
+	    {
+	       pkgCache::VerIterator V(Cache,*I);
+	       if (V != Cache.VerP + V.ParentPkg()->VersionList ||
+		   V->ParentPkg == D->Package)
+		  continue;
+	       cout << "    " << V.ParentPkg().Name() << endl;
+	       
+	       if (Recurse == true)
+		  Colours[D.ParentPkg()->ID]++;
+	    }
+	 }
+      }      
+   }   
+   while (DidSomething == true);
+   
+   return true;
+}
+
 									/*}}}*/
 
 
@@ -1498,6 +1595,7 @@ bool ShowHelp(CommandLine &Cmd)
       "   search - Search the package list for a regex pattern\n"
       "   show - Show a readable record for the package\n"
       "   depends - Show raw dependency information for a package\n"
+      "   rdepends - Show reverse dependency information for a package\n"
       "   pkgnames - List the names of all packages\n"
       "   dotty - Generate package graphs for GraphVis\n"
       "   xvcg - Generate package graphs for xvcg\n"
@@ -1542,6 +1640,7 @@ int main(int argc,const char *argv[])
       {0,"recurse","APT::Cache::RecurseDepends",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
+      {'n',"installed","APT::Cache::Installed",0},
       {0,0,0,0}};
    CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
                                     {"add",&DoAdd},
@@ -1555,6 +1654,7 @@ int main(int argc,const char *argv[])
                                     {"unmet",&UnMet},
                                     {"search",&Search},
                                     {"depends",&Depends},
+                                    {"rdepends",&RDepends},
                                     {"dotty",&Dotty},
                                     {"xvcg",&XVcg},
                                     {"show",&ShowPackage},
