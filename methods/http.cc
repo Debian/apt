@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.44 2000/01/30 08:16:43 jgg Exp $
+// $Id: http.cc,v 1.45 2000/05/12 05:04:57 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -309,11 +309,11 @@ bool ServerState::Open()
 	    break;
       }	 
    }      
-   
+
    // Determine what host and port to use based on the proxy settings
    int Port = 0;
    string Host;   
-   if (Proxy.empty() == true)
+   if (Proxy.empty() == true || Proxy.Host.empty() == true)
    {
       if (ServerName.Port != 0)
 	 Port = ServerName.Port;

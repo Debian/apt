@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.4 1999/11/19 05:01:54 jgg Exp $
+// $Id: connect.cc,v 1.5 2000/05/12 05:04:57 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -161,6 +161,8 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	 _error->Discard();
    }
    
-   return false;
+   if (_error->PendingError() == true)
+      return false;
+   return _error->Error("Unable to connect to '%s'",Host.c_str());
 }
 									/*}}}*/
