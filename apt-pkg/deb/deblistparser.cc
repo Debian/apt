@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.9 1998/07/26 04:49:37 jgg Exp $
+// $Id: deblistparser.cc,v 1.10 1998/08/09 00:51:35 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -167,7 +167,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
       return false;
    if (ParseDepends(Ver,"Conflicts",pkgCache::Dep::Conflicts) == false)
       return false;
-   if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Depends) == false)
+   if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Replaces) == false)
       return false;
 
    if (ParseProvides(Ver) == false)

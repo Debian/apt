@@ -20,16 +20,16 @@ SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
 # Source code for the main library
 SOURCE+= pkgcache.cc version.cc fileutl.cc pkgcachegen.cc depcache.cc \
          orderlist.cc tagfile.cc sourcelist.cc packagemanager.cc \
-	 algorithms.cc init.cc templates.cc
+	 pkgrecords.cc algorithms.cc init.cc templates.cc
 	 
 # Source code for the debian specific components	 
-SOURCE+= deb/deblistparser.cc
+SOURCE+= deb/deblistparser.cc deb/debrecords.cc
 
 # Public apt-pkg header files
 HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
           error.h orderlist.h sourcelist.h configuration.h fileutl.h \
           packagemanager.h tagfile.h deblistparser.h init.h pkgcache.h \
-          version.h progress.h
+          version.h progress.h pkgrecords.h debrecords.h
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 
 # Private header files
