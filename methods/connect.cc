@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.3 1999/07/18 23:06:56 jgg Exp $
+// $Id: connect.cc,v 1.4 1999/11/19 05:01:54 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -115,10 +115,7 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	 if ((Res = getaddrinfo(Host.c_str(),S,&Hints,&LastHostAddr)) != 0 ||
 	     LastHostAddr == 0)
 	 {
-	    if (Res == EAI_SERVICE)
-	       return _error->Error("Could not resolve service '%s'",S);
-	    
-	    if (Res == EAI_NONAME)
+	    if (Res == EAI_NONAME || Res == EAI_SERVICE)
 	    {
 	       if (DefPort != 0)
 	       {
