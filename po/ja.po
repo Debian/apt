@@ -6,10 +6,10 @@
 # Debian Project, Kenshi Muto <kmuto@debian.org>, 2004
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.24\n"
+"Project-Id-Version: apt 0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2004-08-11 23:13+0900\n"
+"PO-Revision-Date: 2005-02-09 12:54+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -324,7 +324,6 @@ msgid "Error Processing Contents %s"
 msgstr "Contents %s の処理中にエラーが発生しました"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -387,11 +386,10 @@ msgstr ""
 "指定できます。\n"
 "\n"
 "'packages' および 'sources' コマンドはツリーのルートで実行する必要があ\n"
-"ります。binarypath には再帰検索のベースディレクトリを指定し、override \n"
+"ります。BinaryPath には再帰検索のベースディレクトリを指定し、override \n"
 "ファイルは override フラグを含んでいる必要があります。もし pathprefix \n"
 "が存在すればファイル名フィールドに付加されます。debian アーカイブでの\n"
 "使用方法の例:\n"
-"\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
@@ -755,17 +753,16 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "未解決の依存関係があります。-f オプションを試してください。"
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "以下のパッケージはアップグレードされます:"
+msgstr "警告: 以下のパッケージは認証されていません!"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "検証なしにこれらのパッケージをインストールしますか? [y/N] "
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "いくつかのパッケージが認証されませんでした"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
@@ -1580,9 +1577,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "'%s' メンバがないため、正しい DEB アーカイブではありません"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "'%s' メンバがないため、正しい DEB アーカイブではありません"
+msgstr "'%s' または '%s' メンバがないため、これは正しい DEB アーカイブではありません"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -2505,9 +2502,9 @@ msgid "Size mismatch"
 msgstr "サイズが適合しません"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "ベンダブロック %s が不正です"
+msgstr "ベンダブロック %s はフィンガープリントを含んでいません"
 
 #: apt-pkg/cdrom.cc:487
 #, c-format
@@ -2515,47 +2512,48 @@ msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
 msgstr ""
+"CD-ROM マウントポイント %s を使用します\n"
+"CD-ROM をマウントしています\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
-msgstr ""
+msgstr "確認しています.. "
 
 #: apt-pkg/cdrom.cc:521
 #, c-format
 msgid "Stored Label: %s \n"
-msgstr ""
+msgstr "格納されたラベル: %s \n"
 
 #: apt-pkg/cdrom.cc:541
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr ""
+msgstr "CD-ROM マウントポイント %s を使用します\n"
 
 #: apt-pkg/cdrom.cc:559
 msgid "Unmounting CD-ROM\n"
-msgstr ""
+msgstr "CD-ROM をアンマウントしています\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "ヘッダの待機中です"
+msgstr "ディスクを待っています...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
 msgid "Mounting CD-ROM...\n"
-msgstr ""
+msgstr "CD-ROM をマウントしています...\n"
 
 #: apt-pkg/cdrom.cc:589
 msgid "Scanning Disc for index files..\n"
-msgstr ""
+msgstr "ディスクのインデックスファイルを走査しています..\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "%i のパッケージインデックス、%i のソースインデックス、%i の署名を見つけました\n"
 
 #: apt-pkg/cdrom.cc:684
 msgid "That is not a valid name, try again.\n"
-msgstr ""
+msgstr "これは有効な名前ではありません。再試行してください。\n"
 
 #: apt-pkg/cdrom.cc:700
 #, c-format
@@ -2563,44 +2561,44 @@ msgid ""
 "This Disc is called: \n"
 "'%s'\n"
 msgstr ""
+"このディスクは以下のように呼ばれます: \n"
+"'%s'\n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "パッケージリストを読みこんでいます"
+msgstr "パッケージリストをコピーしています..."
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "ソースリスト %2$s の %1$u 行目が長過ぎます。"
+msgstr "新しいソースリストを書き込んでいます\n"
 
 #: apt-pkg/cdrom.cc:737
 msgid "Source List entries for this Disc are:\n"
-msgstr ""
+msgstr "このディスクのソースリストのエントリ:\n"
 
 #: apt-pkg/cdrom.cc:771
 msgid "Unmounting CD-ROM..."
-msgstr ""
+msgstr "CD-ROM をアンマウントしています..."
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "%i レコードを書き込みました。\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "%i レコードを書き込みました。%i 個のファイルが存在しません。\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "%i レコードを書き込みました。%i 個の適合しないファイルがあります。\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
-msgstr ""
+msgstr "%i レコードを書き込みました。%i 個のファイルが見つからず、%i 個の適合しないファイルがあります。\n"
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr "ソースリスト %3$s の %2$u 行に不明なベンダ ID '%1$s' があります"
