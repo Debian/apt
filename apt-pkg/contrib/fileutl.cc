@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.17 1999/01/18 06:20:08 jgg Exp $
+// $Id: fileutl.cc,v 1.18 1999/02/03 23:13:37 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -68,10 +68,10 @@ int GetLock(string File,bool Errors)
    
    // Aquire a write lock
    struct flock fl;
-   fl.l_type= F_WRLCK;
-   fl.l_whence= SEEK_SET;
-   fl.l_start= 0;
-   fl.l_len= 1;
+   fl.l_type = F_WRLCK;
+   fl.l_whence = SEEK_SET;
+   fl.l_start = 0;
+   fl.l_len = 0;
    if (fcntl(FD,F_SETLK,&fl) == -1)
    {
       if (Errors == true)
