@@ -45,7 +45,7 @@ $(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 	
 # The binary build rule
 $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
-	-rm -f lib$($(@F)-LIBRARY).so* 2> /dev/null
+	-rm -f $(LIB)/lib$($(@F)-LIBRARY).so* 2> /dev/null
 	echo Building shared library $@
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) -o $@ \
 	   -Wl,-soname -Wl,$($(@F)-SONAME) -shared $(filter %.opic,$^) \
