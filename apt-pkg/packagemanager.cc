@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.1 1998/07/07 04:17:01 jgg Exp $
+// $Id: packagemanager.cc,v 1.2 1998/07/09 05:41:12 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -19,11 +19,8 @@
 #include <pkglib/packagemanager.h>
 #include <pkglib/orderlist.h>
 #include <pkglib/depcache.h>
-#include <pkglib/sourcelist.h>
-#include <pkglib/aquire.h>
-#include <pkglib/controlcache.h>
 #include <pkglib/error.h>
-#include <options.h>
+#include <pkglib/version.h>
 									/*}}}*/
 
 // PM::PackageManager - Constructor					/*{{{*/
@@ -42,75 +39,6 @@ pkgPackageManager::~pkgPackageManager()
 {
    delete List;
    delete [] FileNames;
-}
-									/*}}}*/
-// PM::GetArchives - Puts the install archives in the aquire list	/*{{{*/
-// ---------------------------------------------------------------------
-/* The Source list is used to convert the packages to install into
-   URNs which are then passed to Aquire to convert to FileNames. */
-bool pkgPackageManager::GetArchives(pkgSourceList &List,pkgAquire &Engine)
-{
-   pkgControlCache CCache(Cache);
-   if (_error->PendingError() == true)
-      return false;
-
-   Engine.OutputDir(PKG_DEB_CA_ARCHIVES);
-   pkgCache::PkgIterator I = Cache.PkgBegin();
-   for (;I.end() != true; I++)
-   {
-      // Not interesting
-      if ((Cache[I].InstallVer == (pkgCache::Version *)I.CurrentVer() &&
-	  I.State() != pkgCache::PkgIterator::NeedsUnpack) ||
-	   Cache[I].Delete() == true)
-	 continue;
-      
-      // Cross match with the source list.
-      pkgSourceList::const_iterator Dist = List.MatchPkgFile(Cache[I].InstVerIter(Cache));
-      if (Dist == List.end())
-      {
-	 _error->Warning("Couldn't locate an archive source for package %s",I.Name());
-	 continue;
-      }
-
-      // Read in the info record
-      pkgSPkgCtrlInfo Inf = CCache[Cache[I].InstVerIter(Cache)];
-      if (Inf.isNull() == true)
-      {
-	 _error->Warning("Couldn't locate info for package %s",I.Name());
-	 continue;
-      }    
-
-      // Isolate the filename
-      string File = Inf->Find("Filename")->Value();
-      if (File.empty() == true)
-      {
-	 _error->Warning("Couldn't locate an archive for package %s",I.Name());
-	 continue;
-      }    
-
-      // Generate the get request.
-      string URI = Dist->ArchiveURI(File);
-      
-      // Output file
-      unsigned int Pos = File.rfind('/');
-      if (Pos == File.length())
-	 return _error->Error("Malformed file line in package %s",I.Name());
-      
-      // Null pos isnt used in present package files
-      if (Pos == string::npos)
-	 Pos = 0;
-      else
-	 Pos++;
-      
-      if (Engine.Get(URI,string(File,Pos),
-		     Dist->ArchiveInfo(Cache[I].InstVerIter(Cache)),
-		     Cache[I].InstVerIter(Cache)->Size,
-		     Inf->Find("MD5sum")->Value(),
-		     &FileNames[I->ID]) == false)
-	    return false;
-   }
-
-   return true;
 }
 									/*}}}*/
 // PM::FixMissing - Keep all missing packages				/*{{{*/
@@ -167,7 +95,7 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 {
    for (;D.end() == false; D++)
    {
-      if (D->Type != pkgDEP_Conflicts)
+      if (D->Type != pkgCache::Dep::Conflicts)
 	 continue;
       
       if (D.ParentPkg() == Pkg)
@@ -270,7 +198,7 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
    bool Bad = false;
    for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); D.end() == false;)
    {
-      if (D->Type != pkgDEP_Depends && D->Type != pkgDEP_PreDepends)
+      if (D->Type != pkgCache::Dep::Depends && D->Type != pkgCache::Dep::PreDepends)
       {
 	 D++;
 	 continue;
@@ -280,7 +208,7 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
       Bad = true;
       for (bool LastOR = true; D.end() == false && LastOR == true; D++)
       {
-	 LastOR = (D->CompareOp & pkgOP_OR) == pkgOP_OR;
+	 LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
 	 
 	 if (Bad == false)
 	    continue;
@@ -380,7 +308,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); 
 	D.end() == false; D++)
    {
-      if (D->Type == pkgDEP_PreDepends)
+      if (D->Type == pkgCache::Dep::PreDepends)
       {
 	 // Look for possible ok targets.
 	 Version **VList = D.AllTargets();
@@ -421,7 +349,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 	 continue;
       }
       
-      if (D->Type == pkgDEP_Conflicts)
+      if (D->Type == pkgCache::Dep::Conflicts)
       {
 	 /* Look for conflicts. Two packages that are both in the install
 	    state cannot conflict so we don't check.. */
@@ -474,18 +402,18 @@ bool pkgPackageManager::OrderInstall()
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
       // Consider all depends
-      if ((I->Flags & pkgFLAG_Essential) == pkgFLAG_Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       {
 	 List->Flag(I,pkgOrderList::Immediate);
 	 if (Cache[I].InstallVer != 0)
 	    for (DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); 
 		 D.end() == false; D++)
-	       if (D->Type == pkgDEP_Depends || D->Type == pkgDEP_PreDepends)
+	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
 		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
 	 if (I->CurrentVer != 0)
 	    for (DepIterator D = I.CurrentVer().DependsList(); 
 		 D.end() == false; D++)
-	       if (D->Type == pkgDEP_Depends || D->Type == pkgDEP_PreDepends)
+	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
 		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
       }
       
@@ -498,7 +426,7 @@ bool pkgPackageManager::OrderInstall()
       // Append it to the list
       List->push_back(I);
       
-      if ((I->Flags & pkgFLAG_ImmediateConf) == pkgFLAG_ImmediateConf)
+      if ((I->Flags & pkgCache::Flag::ImmediateConf) == pkgCache::Flag::ImmediateConf)
 	 List->Flag(I,pkgOrderList::Immediate);
    }
    

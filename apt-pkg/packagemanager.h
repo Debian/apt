@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.1 1998/07/07 04:17:01 jgg Exp $
+// $Id: packagemanager.h,v 1.2 1998/07/09 05:41:13 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -72,8 +72,7 @@ class pkgPackageManager
    
    public:
 
-   // The three stages
-   bool GetArchives(pkgSourceList &List,pkgAquire &Engine);
+   // Main action members
    bool DoInstall();
    bool FixMissing();
    
