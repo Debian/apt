@@ -1,0 +1,193 @@
+mailto(apt@packages.debian.org)
+manpage(apt-get)(8)(4 Dec 1998)(apt)()
+manpagename(apt-get)(APT package handling utility -- command-line interface)
+
+manpagesynopsis()
+  apt-get [options] [command] [package ...]
+
+manpagedescription()
+
+apt-get is the command-line tool for handling packages, and may be considered 
+the user's "back-end" to apt(8).
+
+em(command) is one of:
+itemize(
+  it() update
+  it() upgrade
+  it() dselect-upgrade
+  it() dist-upgrade
+  it() install
+  it() remove
+  it() check
+  it() clean
+)
+
+Unless the -h, or --help option is given one of the above commands
+must be present. Only the install command requires any further arguments.
+
+startdit()
+dit(bf(update))
+bf(update) is used to resynchronize the package overview files from their
+sources. The overviews of available packages are fetched from the
+location(s) specified in bf(/etc/apt/sources.list).
+For example, when using a Debian archive, this command retrieves and
+scans the bf(Packages.gz) files, so that information about new and updated 
+packages is available. An bf(update) should always be performed before an
+bf(upgrade) bf(dist-upgrade).
+
+dit(bf(upgrade))
+bf(upgrade) is used to install the newest versions of all packages currently 
+installed on the system from the sources enumerated in
+bf(/etc/apt/sources.list). Packages currently installed with new versions 
+available are retrieved and upgraded; under no circumstances are currently 
+installed packages removed, or packages not already installed retrieved and 
+installed. New versions of currently installed packages that cannot be 
+upgraded without changing the install status of another package will be left 
+at their current version. An bf(update) must be performed first so that
+bf(apt-get) knows that new versions of packages are available.
+
+dit(bf(dselect-upgrade))
+bf(dselect-upgrade)
+is used in conjunction with the traditional Debian GNU/Linux packaging
+front-end, bf(dselect (8)). bf(dselect-upgrade)
+follows the changes made by bf(dselect) to the em(Status)
+field of available packages, and performs the actions necessary to realize
+that state (for instance, the removal of old and the installation of new
+
+dit(bf(dist-upgrade))
+bf(dist-upgrade),in addition to performing the function of bf(upgrade),
+also intelligently handles changing dependencies with new versions of
+packages; bf(apt-get) has a "smart" conflict resolution system, and it will 
+attempt to upgrade the most important packages at the expense of less 
+important ones if necessary. The bf(/etc/apt/sources.list) file contains a 
+list of locations from which to retrieve desired package files.
+
+dit(bf(install))
+bf(install) is followed by one or more em(packages) desired for installation. 
+Each em(package) is a package name, not a fully qualified filename 
+(for instance, in a Debian GNU/Linux system, em(lsdo) would be the argument 
+provided, not em(ldso_1.9.6-2.deb)). All packages required by the package(s) 
+specified for installation will also be retrieved and installed. The
+bf(/etc/apt/sources.list) file is used to locate the desired packages. If a
+hyphen is appended to the package name (with no intervening space), the 
+identified package will be removed if it is installed. This latter feature 
+may be used to override decisions made by apt-get's conflict resolution system.
+
+dit(bf(check))
+bf(check) is a diagnostic tool; it updates the package cache and checks for 
+brokenpackages.
+
+dit(bf(clean))
+df(clean) clears out the local repository of retrieved package files. It 
+removes everything but the lock file from bf(/var/cache/apt/archives/)
+and bf(/var/cache/apt/archives/partial/).
+When APT is used as a bf(dselect(8)) method, bf(clean) is run automatically.
+Those who do not use dselect will likely want to run code(apt-get clean)
+from time to time to free up disk space.
+enddit()
+
+manpageoptions()
+
+startdit()
+dit(bf(-d, --download-only))
+Download only; package files are only retrieved, not unpacked or installed.
+
+dit(bf(-f, --fix-broken))
+Fix; attempt to correct a system with broken dependencies in            
+place. This option may be used alone or in conjunction with any of the  
+command actions, and is sometimes necessary when running APT for the    
+first time; APT itself does not allow broken package dependencies to    
+exist on a system. It is possible that a system's dependency structure  
+can be so corrupt as to require manual intervention (which usually
+means using dselect or dpkg --remove to eliminate some of the offending 
+packages). Use of this option together with -m may produce an error in
+some situations.
+
+dit(bf(-h, --help))
+Help; display a helpful usage message and exits.
+
+dit(bf(-m, --ignore-missing))
+Ignore missing packages; If packages cannot be retrieved or fail the    
+integrity check after retrieval (corrupted package files), hold back    
+those packages and handle the result. Use of this option together with  
+-f is discouraged.
+
+dit(bf(-q, --silent))
+Quiet; produces output suitable for logging, omitting progress indicators.
+More qs will produce more quite up to a maximum of 2. You can also use
+bf(-q=#) to set the quiet level, overriding the configuration file.
+
+dit(bf(-s, --simulate, --just-print, --dry-run, --recon, --no-act))
+No action; perform a simulation of events that would occur but do not
+actually change the system.
+
+dit(bf(-y, --yes, --assume-yes))
+Automatic yes to prompts; assume "yes" as answer to all prompts and run
+non-interactively. If an undesireable situation, such as changing a held
+package or removing an essential package occures then bf(apt-get) will
+abort.
+
+dit(bf(-u, --show-upgraded))
+Show upgraded packages; Print out a list of all packages that are to be
+upgraded.
+
+dit(bf(--ignore-hold))
+Ignore package Holds; This causes bf(apt-get) to ignore a hold placed on 
+a package. This may be usefull in conjunction with bf(dist-upgrade) to
+override a large number of undesired holds.
+
+dit(bf(--no-upgrade))
+Do not upgrade packages; When used in conjunction with bf(install)
+bf(no-upgrade) will prevent packages listed from being upgraded if they
+are already installed.
+
+dit(bf(--force-yes))
+Force yes; This is a dangerous option that will cause apt to continue without
+prompting if it is doing something potentially harmfull. It should not be used
+except in very special situations. Using bf(force-yes) can potentially destroy
+your system!
+
+dit(bf(-c, --config-file))
+Configuration File; Specify a configuration file to use. bf(apt-get) will
+read the default configuration file and then this configuration file. See
+bf(apt.conf(5)) for syntax information.
+
+dit(bf(-o, --option))
+Set a Configuration Option; This will set an arbitary configuration option.
+The syntax is 
+verb(-o Foo::Bar=bar)
+
+manpagefiles()
+itemize(
+  it() /etc/apt/sources.list 
+  locations to fetch packages from
+  
+  it() /var/cache/apt/archives/
+  storage area for retrieved package files
+  
+  it() /var/cache/apt/archives/partial/
+  storage area for package files in transit
+  
+  it() /var/state/apt/lists/
+  storage area for state information for each package resource specified in
+  
+  it() /var/state/apt/lists/partial/
+  storage area for state information in transit
+)
+
+manpageseealso()
+apt-cache (8),
+dpkg (8),
+dselect (8),
+sources.list (5)
+
+manpagediagnostics()
+apt-get returns zero on normal operation, decimal 100 on error.
+
+manpagebugs()
+See http://www.debian.org/Bugs/db/pa/lapt.html.  If you wish to report a
+bug in bf(apt-get), please see bf(/usr/doc/debian/bug-reporting.txt)
+or the bf(bug(1)) command.
+
+manpageauthor()
+apt-get was written by the APT team <apt@packages.debian.org>.
