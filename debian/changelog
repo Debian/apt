@@ -6,6 +6,8 @@ apt (0.5.22) unstable; urgency=low
   * Fix apt-get's suggests/recommends printing, which was skipping every
     other dependency due to both using GlobOr and incrementing the DepIterator
     (Closes: #229722)
+  * Restore SIGINT/SIGQUIT handlers to their old values (rather than
+    SIG_DFL) after invoking dpkg (Closes: #229854)
 
  --
 

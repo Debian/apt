@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.27 2003/07/26 00:25:44 mdz Exp $
+// $Id: dpkgpm.cc,v 1.28 2004/01/27 02:25:01 mdz Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -436,8 +436,8 @@ bool pkgDPkgPM::Go()
          it forks scripts. What happens is that when you hit ctrl-c it sends
 	 it to all processes in the group. Since dpkg ignores the signal 
 	 it doesn't die but we do! So we must also ignore it */
-      signal(SIGQUIT,SIG_IGN);
-      signal(SIGINT,SIG_IGN);
+      sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
+      sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
 		     
       // Fork dpkg
       pid_t Child = ExecFork();
@@ -479,12 +479,16 @@ bool pkgDPkgPM::Go()
 	 if (errno == EINTR)
 	    continue;
 	 RunScripts("DPkg::Post-Invoke");
+
+         // Restore sig int/quit
+         signal(SIGQUIT,old_SIGQUIT);
+         signal(SIGINT,old_SIGINT);
 	 return _error->Errno("waitpid","Couldn't wait for subprocess");
       }
 
       // Restore sig int/quit
-      signal(SIGQUIT,SIG_DFL);
-      signal(SIGINT,SIG_DFL);
+      signal(SIGQUIT,old_SIGQUIT);
+      signal(SIGINT,old_SIGINT);
        
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
