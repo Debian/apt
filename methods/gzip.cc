@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.9 1999/12/10 23:40:29 jgg Exp $
+// $Id: gzip.cc,v 1.10 2000/03/18 07:39:33 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -35,13 +35,14 @@ class GzipMethod : public pkgAcqMethod
 bool GzipMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
-
+   string Path = Get.Host + Get.Path; // To account for relative paths
+   
    FetchResult Res;
    Res.Filename = Itm->DestFile;
    URIStart(Res);
    
    // Open the source and destintation files
-   FileFd From(Get.Path,FileFd::ReadOnly);
+   FileFd From(Path,FileFd::ReadOnly);
    FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
@@ -82,7 +83,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    
    // Transfer the modification times
    struct stat Buf;
-   if (stat(Get.Path.c_str(),&Buf) != 0)
+   if (stat(Path.c_str(),&Buf) != 0)
       return _error->Errno("stat","Failed to stat");
 
    struct utimbuf TimeBuf;
