@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.17 2001/04/29 05:13:51 jgg Exp $
+// $Id: cacheiterators.h,v 1.18 2003/10/09 23:15:25 mdz Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -289,7 +289,7 @@ class pkgCache::PkgFileIterator
    inline const char *Component() const {return File->Component == 0?0:Owner->StrP + File->Component;};
    inline const char *Version() const {return File->Version == 0?0:Owner->StrP + File->Version;};
    inline const char *Origin() const {return File->Origin == 0?0:Owner->StrP + File->Origin;};
-   inline const char *Label() const {return File->Origin == 0?0:Owner->StrP + File->Label;};
+   inline const char *Label() const {return File->Label == 0?0:Owner->StrP + File->Label;};
    inline const char *Site() const {return File->Site == 0?0:Owner->StrP + File->Site;};
    inline const char *Architecture() const {return File->Architecture == 0?0:Owner->StrP + File->Architecture;};
    inline const char *IndexType() const {return File->IndexType == 0?0:Owner->StrP + File->IndexType;};
