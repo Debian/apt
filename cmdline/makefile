@@ -30,5 +30,5 @@ include $(PROGRAM_H)
 PROGRAM=apt-cdrom
 SLIBS = -lapt-pkg
 LIB_MAKES = apt-pkg/makefile
-SOURCE = apt-cdrom.cc
+SOURCE = apt-cdrom.cc indexcopy.cc
 include $(PROGRAM_H)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.27 1999/07/11 22:42:32 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.28 1999/07/12 02:59:36 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -16,10 +16,11 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/progress.h>
-#include <apt-pkg/tagfile.h>
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/strutl.h>
 #include <config.h>
+
+#include "indexcopy.h"
 
 #include <iostream>
 #include <fstream>
@@ -47,7 +48,7 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
 
    if (CD[CD.length()-1] != '/')
       CD += '/';   
-   
+
    if (chdir(CD.c_str()) != 0)
       return _error->Errno("chdir","Unable to change to %s",CD.c_str());
 
@@ -70,7 +71,7 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
       if (_config->FindB("APT::CDROM::Thorough",false) == false)
 	 return true;
    }
-   if (stat("Sources",&Buf) == 0) 
+   if (stat("Sources.gz",&Buf) == 0 || stat("Sources",&Buf) == 0)
    {
       SList.push_back(CD);
       
@@ -185,6 +186,8 @@ int Score(string Path)
       Res += 2;
    if (Path.find("/non-US/") != string::npos)
       Res += 2;
+   if (Path.find("/source/") != string::npos)
+      Res += 1;
    return Res;
 }
 									/*}}}*/
@@ -198,7 +201,8 @@ bool DropRepeats(vector<string> &List,const char *Name)
    for (unsigned int I = 0; I != List.size(); I++)
    {
       struct stat Buf;
-      if (stat((List[I] + Name).c_str(),&Buf) != 0)
+      if (stat((List[I] + Name).c_str(),&Buf) != 0 &&
+	  stat((List[I] + Name + ".gz").c_str(),&Buf) != 0)
 	 _error->Errno("stat","Failed to stat %s%s",List[I].c_str(),
 		       Name);
       Inodes[I] = Buf.st_ino;
@@ -238,389 +242,6 @@ bool DropRepeats(vector<string> &List,const char *Name)
 	 List.erase(List.begin()+I);
    }
    
-   return true;
-}
-									/*}}}*/
-// ConvertToSourceList - Convert a Path to a sourcelist entry		/*{{{*/
-// ---------------------------------------------------------------------
-/* We look for things in dists/ notation and convert them to 
-   <dist> <component> form otherwise it is left alone. This also strips
-   the CD path. */
-void ConvertToSourceList(string CD,string &Path)
-{
-   char S[300];
-   sprintf(S,"binary-%s",_config->Find("Apt::Architecture").c_str());
-   
-   // Strip the cdrom base path
-   Path = string(Path,CD.length());
-   if (Path.empty() == true)
-      Path = "/";
-   
-   // Too short to be a dists/ type
-   if (Path.length() < strlen("dists/"))
-      return;
-   
-   // Not a dists type.
-   if (stringcmp(Path.begin(),Path.begin()+strlen("dists/"),"dists/") != 0)
-      return;
-
-   // Isolate the dist
-   string::size_type Slash = strlen("dists/");
-   string::size_type Slash2 = Path.find('/',Slash + 1);
-   if (Slash2 == string::npos || Slash2 + 2 >= Path.length())
-      return;
-   string Dist = string(Path,Slash,Slash2 - Slash);
-   
-   // Isolate the component
-   Slash = Path.find('/',Slash2+1);
-   if (Slash == string::npos || Slash + 2 >= Path.length())
-      return;
-   string Comp = string(Path,Slash2+1,Slash - Slash2-1);
-   
-   // Verify the trailing binar - bit
-   Slash2 = Path.find('/',Slash + 1);
-   if (Slash == string::npos)
-      return;
-   string Binary = string(Path,Slash+1,Slash2 - Slash-1);
-   
-   if (Binary != S)
-      return;
-   
-   Path = Dist + ' ' + Comp;
-}
-									/*}}}*/
-// GrabFirst - Return the first Depth path components			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool GrabFirst(string Path,string &To,unsigned int Depth)
-{
-   string::size_type I = 0;
-   do
-   {
-      I = Path.find('/',I+1);
-      Depth--;
-   }
-   while (I != string::npos && Depth != 0);
-   
-   if (I == string::npos)
-      return false;
-
-   To = string(Path,0,I+1);
-   return true;
-}
-									/*}}}*/
-// ChopDirs - Chop off the leading directory components			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string ChopDirs(string Path,unsigned int Depth)
-{
-   string::size_type I = 0;
-   do
-   {
-      I = Path.find('/',I+1);
-      Depth--;
-   }
-   while (I != string::npos && Depth != 0);
-   
-   if (I == string::npos)
-      return string();
-   
-   return string(Path,I+1);
-}
-									/*}}}*/
-// ReconstructPrefix - Fix strange prefixing				/*{{{*/
-// ---------------------------------------------------------------------
-/* This prepends dir components from the path to the package files to
-   the path to the deb until it is found */
-bool ReconstructPrefix(string &Prefix,string OrigPath,string CD,
-		       string File)
-{
-   bool Debug = _config->FindB("Debug::aptcdrom",false);
-   unsigned int Depth = 1;
-   string MyPrefix = Prefix;
-   while (1)
-   {
-      struct stat Buf;
-      if (stat(string(CD + MyPrefix + File).c_str(),&Buf) != 0)
-      {
-	 if (Debug == true)
-	    cout << "Failed, " << CD + MyPrefix + File << endl;
-	 if (GrabFirst(OrigPath,MyPrefix,Depth++) == true)
-	    continue;
-	 
-	 return false;
-      }
-      else
-      {
-	 Prefix = MyPrefix;
-	 return true;
-      }      
-   }
-   return false;
-}
-									/*}}}*/
-// ReconstructChop - Fixes bad source paths				/*{{{*/
-// ---------------------------------------------------------------------
-/* This removes path components from the filename and prepends the location
-   of the package files until a file is found */
-bool ReconstructChop(unsigned long &Chop,string Dir,string File)
-{
-   // Attempt to reconstruct the filename
-   unsigned long Depth = 0;
-   while (1)
-   {
-      struct stat Buf;
-      if (stat(string(Dir + File).c_str(),&Buf) != 0)
-      {
-	 File = ChopDirs(File,1);
-	 Depth++;
-	 if (File.empty() == false)
-	    continue;
-	 return false;
-      }
-      else
-      {
-	 Chop = Depth;
-	 return true;
-      }
-   }
-   return false;
-}
-									/*}}}*/
-
-// CopyPackages - Copy the package files from the CD			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool CopyPackages(string CDROM,string Name,vector<string> &List)
-{
-   OpTextProgress Progress;
-   
-   bool NoStat = _config->FindB("APT::CDROM::Fast",false);
-   bool Debug = _config->FindB("Debug::aptcdrom",false);
-   
-   // Prepare the progress indicator
-   unsigned long TotalSize = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
-   {
-      struct stat Buf;
-      if (stat(string(*I + "Packages").c_str(),&Buf) != 0)
-	 return _error->Errno("stat","Stat failed for %s",
-			      string(*I + "Packages").c_str());
-      TotalSize += Buf.st_size;
-   }	
-
-   unsigned long CurrentSize = 0;
-   unsigned int NotFound = 0;
-   unsigned int WrongSize = 0;
-   unsigned int Packages = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
-   {      
-      string OrigPath = string(*I,CDROM.length());
-      
-      // Open the package file
-      FileFd Pkg(*I + "Packages",FileFd::ReadOnly);
-      pkgTagFile Parser(Pkg);
-      if (_error->PendingError() == true)
-	 return false;
-      
-      // Open the output file
-      char S[400];
-      sprintf(S,"cdrom:%s/%sPackages",Name.c_str(),(*I).c_str() + CDROM.length());
-      string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
-      TargetF += URItoFileName(S);
-      if (_config->FindB("APT::CDROM::NoAct",false) == true)
-	 TargetF = "/dev/null";
-      FileFd Target(TargetF,FileFd::WriteEmpty);      
-      if (_error->PendingError() == true)
-	 return false;
-      
-      // Setup the progress meter
-      Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),
-			       "Reading Package Lists");
-
-      // Parse
-      Progress.SubProgress(Pkg.Size());
-      pkgTagSection Section;
-      string Prefix;
-      unsigned long Hits = 0;
-      unsigned long Chop = 0;
-      while (Parser.Step(Section) == true)
-      {
-	 Progress.Progress(Parser.Offset());
-	 
-	 string File = Section.FindS("Filename");
-	 unsigned long Size = Section.FindI("Size");
-	 if (File.empty() || Size == 0)
-	    return _error->Error("Cannot find filename or size tag");
-	 
-	 if (Chop != 0)
-	    File = OrigPath + ChopDirs(File,Chop);
-	 
-	 // See if the file exists
-	 bool Mangled = false;
-	 if (NoStat == false || Hits < 10)
-	 {
-	    // Attempt to fix broken structure
-	    if (Hits == 0)
-	    {
-	       if (ReconstructPrefix(Prefix,OrigPath,CDROM,File) == false &&
-		   ReconstructChop(Chop,*I,File) == false)
-	       {
-		  if (Debug == true)
-		     clog << "Missed: " << File << endl;
-		  NotFound++;
-		  continue;
-	       }
-	       if (Chop != 0)
-		  File = OrigPath + ChopDirs(File,Chop);
-	    }
-	    
-	    // Get the size
-	    struct stat Buf;
-	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0 || 
-		Buf.st_size == 0)
-	    {
-	       // Attempt to fix busted symlink support for one instance
-	       string OrigFile = File;
-	       string::size_type Start = File.find("binary-");
-	       string::size_type End = File.find("/",Start+3);
-	       if (Start != string::npos && End != string::npos)
-	       {
-		  File.replace(Start,End-Start,"binary-all");
-		  Mangled = true;
-	       }
-	       
-	       if (Mangled == false ||
-		   stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0)
-	       {
-		  if (Debug == true)
-		     clog << "Missed(2): " << OrigFile << endl;
-		  NotFound++;
-		  continue;
-	       }	       
-	    }	    
-	    			    	    
-	    // Size match
-	    if ((unsigned)Buf.st_size != Size)
-	    {
-	       if (Debug == true)
-		  clog << "Wrong Size: " << File << endl;
-	       WrongSize++;
-	       continue;
-	    }
-	 }
-	 
-	 Packages++;
-	 Hits++;
-	 
-	 // Copy it to the target package file
-	 const char *Start;
-	 const char *Stop;
-	 if (Chop != 0 || Mangled == true)
-	 {
-	    // Mangle the output filename
-	    const char *Filename;
-	    Section.Find("Filename",Filename,Stop);
-	    
-	    /* We need to rewrite the filename field so we emit
-	       all fields except the filename file and rewrite that one */
-	    for (unsigned int I = 0; I != Section.Count(); I++)
-	    {
-	       Section.Get(Start,Stop,I);
-	       if (Start <= Filename && Stop > Filename)
-	       {
-		  char S[500];
-		  sprintf(S,"Filename: %s\n",File.c_str());
-		  if (I + 1 == Section.Count())
-		     strcat(S,"\n");
-		  if (Target.Write(S,strlen(S)) == false)
-		     return false;
-	       }
-	       else
-	       {
-		  if (Target.Write(Start,Stop-Start) == false)
-		     return false;
-		  if (Stop[-1] != '\n')
-		     if (Target.Write("\n",1) == false)
-			return false;
-	       }	       
-	    }
-	    if (Target.Write("\n",1) == false)
-	       return false;
-	 }
-	 else
-	 {
-	    Section.GetSection(Start,Stop);
-	    if (Target.Write(Start,Stop-Start) == false)
-	       return false;
-	 }	 
-      }
-
-      if (Debug == true)
-	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << Chop << endl;
-	 
-      if (_config->FindB("APT::CDROM::NoAct",false) == false)
-      {
-	 // Move out of the partial directory
-	 Target.Close();
-	 string FinalF = _config->FindDir("Dir::State::lists");
-	 FinalF += URItoFileName(S);
-	 if (rename(TargetF.c_str(),FinalF.c_str()) != 0)
-	    return _error->Errno("rename","Failed to rename");
-
-	 // Copy the release file
-	 sprintf(S,"cdrom:%s/%sRelease",Name.c_str(),(*I).c_str() + CDROM.length());
-	 string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
-	 TargetF += URItoFileName(S);
-	 if (FileExists(*I + "Release") == true)
-	 {
-	    FileFd Target(TargetF,FileFd::WriteEmpty);
-	    FileFd Rel(*I + "Release",FileFd::ReadOnly);
-	    if (_error->PendingError() == true)
-	       return false;
-	    
-	    if (CopyFile(Rel,Target) == false)
-	       return false;
-	 }
-	 else
-	 {
-	    // Empty release file
-	    FileFd Target(TargetF,FileFd::WriteEmpty);	    
-	 }	 
-
-	 // Rename the release file
-	 FinalF = _config->FindDir("Dir::State::lists");
-	 FinalF += URItoFileName(S);
-	 if (rename(TargetF.c_str(),FinalF.c_str()) != 0)
-	    return _error->Errno("rename","Failed to rename");
-      }
-      
-      /* Mangle the source to be in the proper notation with
-       	 prefix dist [component] */ 
-      *I = string(*I,Prefix.length());
-      ConvertToSourceList(CDROM,*I);
-      *I = Prefix + ' ' + *I;
-      
-      CurrentSize += Pkg.Size();
-   }   
-   Progress.Done();
-   
-   // Some stats
-   cout << "Wrote " << Packages << " package records" ;
-   if (NotFound != 0)
-      cout << " with " << NotFound << " missing files";
-   if (NotFound != 0 && WrongSize != 0)
-      cout << " and"; 
-   if (WrongSize != 0)
-      cout << " with " << WrongSize << " mismatched files";
-   cout << '.' << endl;
-   
-   if (Packages == 0)
-      return _error->Error("No valid package records were found.");
-   
-   if (NotFound + WrongSize > 10)
-      cout << "Alot of package entries were discarded, perhaps this CD is funny?" << endl;
-
    return true;
 }
 									/*}}}*/
@@ -724,8 +345,11 @@ bool WriteDatabase(Configuration &Cnf)
    appends the new CDROM entires just after the first block of comments.
    This places them first in the file. It also removes any old entries
    that were the same. */
-bool WriteSourceList(string Name,vector<string> &List)
+bool WriteSourceList(string Name,vector<string> &List,bool Source)
 {
+   if (List.size() == 0)
+      return true;
+
    string File = _config->FindFile("Dir::Etc::sourcelist");
 
    // Open the stream for reading
@@ -742,6 +366,12 @@ bool WriteSourceList(string Name,vector<string> &List)
 
    // Create a short uri without the path
    string ShortURI = "cdrom:" + Name + "/";   
+
+   const char *Type;
+   if (Source == true)
+      Type = "deb-src";
+   else
+      Type = "deb";
    
    char Buffer[300];
    int CurLine = 0;
@@ -767,18 +397,17 @@ bool WriteSourceList(string Name,vector<string> &List)
 	    string::size_type Space = (*I).find(' ');
 	    if (Space == string::npos)
 	       return _error->Error("Internal error");
-	    
-	    Out << "deb \"cdrom:" << Name << "/" << string(*I,0,Space) << 
+	    Out << Type << " \"cdrom:" << Name << "/" << string(*I,0,Space) << 
 	       "\" " << string(*I,Space+1) << endl;
 	 }
       }
       First = false;
       
       // Grok it
-      string Type;
+      string cType;
       string URI;
       char *C = Buffer;
-      if (ParseQuoteWord(C,Type) == false ||
+      if (ParseQuoteWord(C,cType) == false ||
 	  ParseQuoteWord(C,URI) == false)
       {
 	 Out << Buffer << endl;
@@ -786,7 +415,7 @@ bool WriteSourceList(string Name,vector<string> &List)
       }
 
       // Emit lines like this one
-      if (Type != "deb" || string(URI,0,ShortURI.length()) != ShortURI)
+      if (cType != Type || string(URI,0,ShortURI.length()) != ShortURI)
       {
 	 Out << Buffer << endl;
 	 continue;
@@ -973,7 +602,10 @@ bool DoAdd(CommandLine &)
    cout << "This Disc is called '" << Name << "'" << endl;
    
    // Copy the package files to the state directory
-   if (CopyPackages(CDROM,Name,List) == false)
+   PackageCopy Copy;
+   SourceCopy SrcCopy;
+   if (Copy.CopyPackages(CDROM,Name,List) == false ||
+       SrcCopy.CopyPackages(CDROM,Name,sList) == false)
       return false;
    
    ReduceSourcelist(CDROM,List);
@@ -986,7 +618,8 @@ bool DoAdd(CommandLine &)
 	 return false;
       
       cout << "Writing new source list" << endl;
-      if (WriteSourceList(Name,List) == false)
+      if (WriteSourceList(Name,List,false) == false ||
+	  WriteSourceList(Name,sList,true) == false)
 	 return false;
    }
 
