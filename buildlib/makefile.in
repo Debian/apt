@@ -2,7 +2,9 @@
 
 # This is the build directory make file, it sets the build directory
 # and runs the src makefile.
+ifndef NOISY
 .SILENT:
+endif
 
 SRCDIR=@top_srcdir@
 SUBDIRS:=./docs ./bin ./bin/methods ./obj ./include/apt-pkg ./include/deity

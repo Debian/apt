@@ -23,6 +23,6 @@ maintainer-clean dist-clean distclean pristine sanity: veryclean
 # The startup target builds the necessary configure scripts. It should
 # be used after a CVS checkout.
 CONVERTED=environment.mak include/config.h makefile
-$(BUILD)/include/config.h: buildlib/config.h.in
-$(BUILD)/environment.mak: buildlib/environment.mak.in
+$(BUILDDIR)/include/config.h: buildlib/config.h.in
+$(BUILDDIR)/environment.mak: buildlib/environment.mak.in
 include buildlib/configure.mak
