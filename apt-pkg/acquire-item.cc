@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.37 1999/09/01 07:01:14 jgg Exp $
+// $Id: acquire-item.cc,v 1.38 1999/10/17 07:30:23 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -136,7 +136,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(Location->PackagesURI());
 
-   // Create the item 
+   // Create the item
    Desc.URI = Location->PackagesURI() + ".gz";
    Desc.Description = Location->PackagesInfo();
    Desc.Owner = this;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.16 1999/09/30 06:30:34 jgg Exp $
+// $Id: sourcelist.cc,v 1.17 1999/10/17 07:30:23 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -370,15 +370,11 @@ string pkgSourceList::Item::SourceInfo(string Pkg,string Ver,string Comp) const
 /* */
 string pkgSourceList::Item::SiteOnly(string URI) const
 {
-   unsigned int Pos = URI.find(':');
-   if (Pos == string::npos || Pos + 3 > URI.length())
-      return URI;
-   if (URI[Pos + 1] != '/' || URI[Pos + 2] != '/')
-      return URI;
-
-   Pos = URI.find('/',Pos + 3);
-   if (Pos == string::npos)
-      return URI;
-   return string(URI,0,Pos);
+   ::URI U(URI);
+   U.User = string();
+   U.Password = string();
+   U.Path = string();
+   U.Port = 0;
+   return U;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.29 1999/08/28 01:49:08 jgg Exp $
+// $Id: strutl.cc,v 1.30 1999/10/17 07:30:23 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -326,11 +326,14 @@ string SubstVar(string Str,string Subst,string Contents)
    file name should be unique and never occur again for a different file */
 string URItoFileName(string URI)
 {
-   string::const_iterator I = URI.begin() + URI.find(':') + 1;
-   for (; I < URI.end() && *I == '/'; I++);
-
+   // Nuke 'sensitive' items
+   ::URI U(URI);
+   U.User = string();
+   U.Password = string();
+   U.Access = "";
+   
    // "\x00-\x20{}|\\\\^\\[\\]<>\"\x7F-\xFF";
-   URI = QuoteString(string(I,URI.end() - I),"\\|{}[]<>\"^~_=!@#$%^&*");
+   URI = QuoteString(U,"\\|{}[]<>\"^~_=!@#$%^&*");
    string::iterator J = URI.begin();
    for (; J != URI.end(); J++)
       if (*J == '/') 
@@ -809,17 +812,24 @@ void URI::CopyFrom(string U)
 /* */
 URI::operator string()
 {
-   string Res = Access + ':';
+   string Res;
+   
+   if (Access.empty() == false)
+      Res = Access + ':';
+   
    if (Host.empty() == false)
    {
-      Res += "//";
+      if (Access.empty() == false)
+	 Res += "//";
+      
       if (User.empty() == false)
       {
-	 Res += "//" + User;
+	 Res +=  User;
 	 if (Password.empty() == false)
 	    Res += ":" + Password;
 	 Res += "@";
       }
+      
       Res += Host;
       if (Port != 0)
       {
