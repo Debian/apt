@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.27 2001/07/26 06:15:59 jgg Exp $
+// $Id: deblistparser.cc,v 1.28 2001/10/02 03:03:47 tausq Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -391,7 +391,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    if (ParseArchFlags == true)
    {
       string arch = _config->Find("APT::Architecture");
-      
+
       // Parse an architecture
       if (I != Stop && *I == '[')
       {
@@ -402,6 +402,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	 
          const char *End = I;
          bool Found = false;
+      	 bool NegArch = false;
          while (I != Stop) 
 	 {
             // look for whitespace or ending ']'
@@ -410,7 +411,13 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	 
 	    if (End == Stop) 
 	       return 0;
-	    
+
+	    if (*I == '!')
+            {
+	       NegArch = true;
+	       I++;
+            }
+
 	    if (stringcmp(arch,I,End) == 0)
 	       Found = true;
 	    
@@ -422,8 +429,11 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	    I = End;
 	    for (;I != Stop && isspace(*I) != 0; I++);
          }
+
+	 if (NegArch)
+	    Found = !Found;
 	 
-         if (Found == false) 
+         if (Found == false)
 	    Package = ""; /* not for this arch */
       }
       
