@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.80 1999/10/18 00:37:35 jgg Exp $
+// $Id: apt-get.cc,v 1.81 1999/10/21 06:35:00 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -52,6 +52,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
+#include <regex.h>
 #include <sys/wait.h>
 									/*}}}*/
 
@@ -730,6 +731,105 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    }   
 }
 									/*}}}*/
+// TryToInstall - Try to install a single package			/*{{{*/
+// ---------------------------------------------------------------------
+/* This used to be inlined in DoInstall, but with the advent of regex package
+   name matching it was split out.. */
+bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
+		  unsigned int &ExpectedInst,bool AllowFail = true)
+{
+   /* This is a pure virtual package and there is a single available 
+      provides */
+   if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0 &&
+       Pkg.ProvidesList()->NextProvides == 0)
+   {
+      pkgCache::PkgIterator Tmp = Pkg.ProvidesList().OwnerPkg();
+      c1out << "Note, installing " << Tmp.Name() << " instead of " << Pkg.Name() << endl;
+      Pkg = Tmp;
+   }
+   
+   // Handle the no-upgrade case
+   if (_config->FindB("APT::Get::no-upgrade",false) == true &&
+       Pkg->CurrentVer != 0)
+   {
+      if (AllowFail == true)
+	 c1out << "Skipping " << Pkg.Name() << ", it is already installed and no-upgrade is set." << endl;
+      return true;
+   }
+   
+   // Check if there is something at all to install
+   pkgDepCache::StateCache &State = Cache[Pkg];
+   if (State.CandidateVer == 0)
+   {
+      if (AllowFail == false)
+	 return false;
+      
+      if (Pkg->ProvidesList != 0)
+      {
+	 c1out << "Package " << Pkg.Name() << " is a virtual package provided by:" << endl;
+	 
+	 pkgCache::PrvIterator I = Pkg.ProvidesList();
+	 for (; I.end() == false; I++)
+	 {
+	    pkgCache::PkgIterator Pkg = I.OwnerPkg();
+	    
+	    if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer())
+	    {
+	       if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
+		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() <<
+		  " [Installed]"<< endl;
+	       else
+		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() << endl;
+	    }      
+	 }
+	 c1out << "You should explicitly select one to install." << endl;
+      }
+      else
+      {
+	 c1out << "Package " << Pkg.Name() << " has no available version, but exists in the database." << endl;
+	 c1out << "This typically means that the package was mentioned in a dependency and " << endl;
+	 c1out << "never uploaded, or that it is an obsolete package." << endl;
+	 
+	 string List;
+	 pkgCache::DepIterator Dep = Pkg.RevDependsList();
+	 for (; Dep.end() == false; Dep++)
+	 {
+	    if (Dep->Type != pkgCache::Dep::Replaces)
+	       continue;
+	    List += string(Dep.ParentPkg().Name()) + " ";
+	 }	    
+	 ShowList(c1out,"However the following packages replace it:",List);
+      }
+      
+      _error->Error("Package %s has no installation candidate",Pkg.Name());
+      return false;
+   }
+   
+   Fix.Protect(Pkg);
+   if (Remove == true)
+   {
+      Fix.Remove(Pkg);
+      Cache.MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
+      return true;
+   }
+   
+   // Install it
+   Cache.MarkInstall(Pkg,false);
+   if (State.Install() == false)
+   {
+      if (AllowFail == true)
+	 c1out << "Sorry, " << Pkg.Name() << " is already the newest version"  << endl;
+   }   
+   else
+      ExpectedInst++;
+   
+   // Install it with autoinstalling enabled.
+   if (State.InstBroken() == true && BrokenFix == false)
+      Cache.MarkInstall(Pkg,true);
+   return true;
+}
+									/*}}}*/
 
 // DoUpdate - Update the package lists					/*{{{*/
 // ---------------------------------------------------------------------
@@ -874,78 +974,44 @@ bool DoInstall(CommandLine &CmdL)
       pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
       Packages++;
       if (Pkg.end() == true)
-	 return _error->Error("Couldn't find package %s",S);
-      
-      // Handle the no-upgrade case
-      if (_config->FindB("APT::Get::no-upgrade",false) == true &&
-	  Pkg->CurrentVer != 0)
       {
-	 c1out << "Skipping " << Pkg.Name() << ", it is already installed and no-upgrade is set." << endl;
-	 continue;
-      }
-      
-      // Check if there is something new to install
-      pkgDepCache::StateCache &State = (*Cache)[Pkg];
-      if (State.CandidateVer == 0)
-      {
-	 if (Pkg->ProvidesList != 0)
-	 {
-	    c1out << "Package " << S << " is a virtual package provided by:" << endl;
+	 // Check if the name is a regex
+	 const char *I;
+	 for (I = S; *I != 0; I++)
+	    if (*I == '.' || *I == '?' || *I == '*')
+	       break;
+	 if (*I == 0)
+	    return _error->Error("Couldn't find package %s",S);
 
-	    pkgCache::PrvIterator I = Pkg.ProvidesList();
-	    for (; I.end() == false; I++)
-	    {
-	       pkgCache::PkgIterator Pkg = I.OwnerPkg();
-	       
-	       if ((*Cache)[Pkg].CandidateVerIter(*Cache) == I.OwnerVer())
-	       {
-		  if ((*Cache)[Pkg].Install() == true && (*Cache)[Pkg].NewInstall() == false)
-		     c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() <<
-		     " [Installed]"<< endl;
-		  else
-		     c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() << endl;
-	       }      
-	    }
-	    c1out << "You should explicly select one to install." << endl;
-	 }
-	 else
-	 {
-	    c1out << "Package " << S << " has no available version, but exists in the database." << endl;
-	    c1out << "This typically means that the package was mentioned in a dependency and " << endl;
-	    c1out << "never uploaded, or that it is an obsolete package." << endl;
-	    
-	    string List;
-	    pkgCache::DepIterator Dep = Pkg.RevDependsList();
-	    for (; Dep.end() == false; Dep++)
-	    {
-	       if (Dep->Type != pkgCache::Dep::Replaces)
-		  continue;
-	       List += string(Dep.ParentPkg().Name()) + " ";
-	    }	    
-	    ShowList(c1out,"However the following packages replace it:",List);
-	 }
+	 // Regexs must always be confirmed
+	 ExpectedInst += 1000;
 	 
-	 return _error->Error("Package %s has no installation candidate",S);
+	 // Compile the regex pattern
+	 regex_t Pattern;
+	 if (regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE | 
+		     REG_NOSUB) != 0)
+	    return _error->Error("Regex compilation error");
+	 
+	 // Run over the matches
+	 bool Hit = false;
+	 for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+	 {
+	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+	       continue;
+	    
+	    Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
+				ExpectedInst,false);
+	 }
+	 regfree(&Pattern);
+	 
+	 if (Hit == false)
+	    return _error->Error("Couldn't find package %s",S);
       }
-      
-      Fix.Protect(Pkg);
-      if (Remove == true)
-      {
-	 Fix.Remove(Pkg);
-	 Cache->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
-	 continue;
-      }
-      
-      // Install it
-      Cache->MarkInstall(Pkg,false);
-      if (State.Install() == false)
-	 c1out << "Sorry, " << S << " is already the newest version"  << endl;
       else
-	 ExpectedInst++;
-
-      // Install it with autoinstalling enabled.
-      if (State.InstBroken() == true && BrokenFix == false)
-	 Cache->MarkInstall(Pkg,true);
+      {
+	 if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
+	    return false;
+      }      
    }
 
    /* If we are in the Broken fixing mode we do not attempt to fix the
