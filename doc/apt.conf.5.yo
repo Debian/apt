@@ -79,6 +79,16 @@ be specified by using the form http::Proxy::<host> with the special keyword
 em(DIRECT) meaning to use no proxies. The em($http_proxy) environment variable
 will override all settings.
 
+Three settings are provided for cache control with HTTP/1.1 complient proxy
+caches. bf(No-Cache) tells the proxy to not used its cached response under
+any circumstances, bf(Max-Age) is sent only for index files and tells the
+cache to refresh its object if it is older than the given value. Debian
+updates its index files daily so the default is 1 day. bd(No-Store) 
+specifies that the cache should never store this request, it is only
+set for archive files. This may be usefull to prevent polluting a proxy cache
+with very large .deb files. Note: Squid 2.0.2 does not support any of
+these options.
+
 dit(bf(cdrom))
 CDROM URIs; the only setting for CDROM URIs is the mount point, cdrom::Mount
 which must be the mount point for the CDROM drive as specified in /etc/fstab.

@@ -2,15 +2,8 @@
 #24000: Bug in apt Version: 0.0.17-1bo0
  Summary: Couldn't locate an archive source for a package
  Status: Require Status file. 
-#24685: HTTP Proxy cache refresh
- Summary: Some caches hold onto the package index file for too long
- Status: It may be possible to insert the proper header to disable
-         caching but I can't think how to do this while allowing
-	 the cache to return cached objects - in effect it would
-	 completely disable the cache which may not be desired.
 #24717: apt dies early if one postinst/preinst dies
  Status: Requires dpkg modifications
-#22892: Apt improvements
 #28184: apt could be smarter regarding mirrors
  Summary: Make use of redundant sources
  Status: 0.3.0 will likely do this, already the information for it is stored.
@@ -113,6 +106,37 @@
 #29441: documenting the codes for -s
  Summary: Apparently the simulation output is not immediately obvois
  Status: Someone should update the man page.
+#24685: HTTP Proxy cache refresh
+ Summary: Some caches hold onto the package index file for too long
+ Status: It may be possible to insert the proper header to disable
+         caching but I can't think how to do this while allowing
+	 the cache to return cached objects - in effect it would
+	 completely disable the cache which may not be desired.
+         APT now sends a max age header. See the apt.conf(5)
+#28172: HTTP Proxy cache refresh should be forced for corrupted packages
+ Summary: Some problem resulted in a corrupted package
+ Status: I belive this reflects a deeper problem and the suggested solution
+         is only a band-aide patch. I intend to close this bug when #24685
+	 is fixed with a configuration directive.
+	 Use -o acquire::http::no-cache=true
+#29351: poor error message after conffile update
+ Summary: APT errors when the package file is not found
+ Status: The new APT warns better and the error is not fatal
+#30112: apt: internal error in apt
+ Summary: APT gives an unclear error when it cannot correct dependencies
+ Status: Error is clearer
+#30324: apt-get lying about file dates in /var/state/apt/lists
+ Summary: Doesn't copy the file dates right with file URIs
+ Status: Fixed in v3
+#30383: apt: dist-upgrade msg "E: Internal error, ScoredFix generated breaks."
+ Summary: libc6 maddness causes bizzar problems
+ Status: Fixed in v3 
+#29983: apt: Wrong diagnostic, could be better
+ Summary: It doesn't explicy say you should be root
+ Status: Fixed in v3
+#22892: Apt improvements
+ Summary: Bails if an index file can't be found
+ Status: Fixed in v3
  
 -- Silly things
 #26592: apt: Problems with ftpd in SunOS 5.6
@@ -135,12 +159,11 @@
 #22551: apt: wish: use dist X iff pkg does not exist in dist Y
 #27100: apt: Better support for project/experimental
  Status: GUI Feature - Version selection and pinning
-#28172: HTTP Proxy cache refresh should be forced for corrupted packages
- Summary: Some problem resulted in a corrupted package
- Status: I belive this reflects a deeper problem and the suggested solution
-         is only a band-aide patch. I intend to close this bug when #24685
-	 is fixed with a configuration directive.
 #27646: Apt: dpkg --merge-avail
  Summary: Suggestion to call merge avail after each update operation
  Status: Unlikely. The dpkg --print-avail functions should be obsoleted
          by the apt-query program which should be written.
+#30237: apt: 0.1.9 checks dependencies against packages.gz
+ Summary: For packages with identical version numbers APT prefers
+          to use the archive index files
+ Status: Yes it is sorta bad, but there is no reasonable solution.

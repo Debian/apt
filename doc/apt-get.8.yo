@@ -130,7 +130,11 @@ See bf(quiet)
 
 dit(bf(-s, --simulate, --just-print, --dry-run, --recon, --no-act))
 No action; perform a simulation of events that would occur but do not
-actually change the system. See bf(APT::Get::Simulate).
+actually change the system. See bf(APT::Get::Simulate). Simulate prints out
+a series of lines each one representing a dpkg operation, Configure (Conf),
+Remove (Remv), Unpack (Inst). Square brackets indicate broken packages with
+and empty set of square brackets meaning breaks that are of no consequence
+(rare).
 
 dit(bf(-y, --yes, --assume-yes))
 Automatic yes to prompts; assume "yes" as answer to all prompts and run
