@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.10 2003/12/26 20:50:01 mdz Exp $
+// $Id: apt-ftparchive.cc,v 1.11 2003/12/26 22:50:52 mdz Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -552,6 +552,7 @@ bool ShowHelp(CommandLine &CmdL)
       "Commands: packages binarypath [overridefile [pathprefix]]\n"
       "          sources srcpath [overridefile [pathprefix]]\n"
       "          contents path\n"
+      "          release path\n"
       "          generate config [groups]\n"
       "          clean config\n"
       "\n"
@@ -677,6 +678,9 @@ bool SimpleGenSources(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 bool SimpleGenRelease(CommandLine &CmdL)
 {
+   if (CmdL.FileSize() < 2)
+      return ShowHelp(CmdL);
+
    ReleaseWriter Release("");
    if (_error->PendingError() == true)
       return false;
