@@ -176,40 +176,40 @@ Show the program verison.
 dit(bf(-p --pkg-cache))
 Select the file to store the package cache. The package cache is the primary
 cache used by all operations.
-See bf(Dir::Cache::pkgcache).
+Configuration Item: bf(Dir::Cache::pkgcache).
 
 dit(bf(-s --src-cache))
 Select the file to store the source cache. The source is used only by
 bf(gencaches) and it stores a parsed version of the package information from
 remote sources. When building the package cache the source cache is used
 to advoid reparsing all of the package files.
-See bf(Dir::Cache::srcpkgcache).
+Configuration Item: bf(Dir::Cache::srcpkgcache).
 
 dit(bf(-q, --quiet))
 Quiet; produces output suitable for logging, omitting progress indicators.
 More qs will produce more quite up to a maximum of 2. You can also use
 bf(-q=#) to set the quiet level, overriding the configuration file.
-See bf(quiet).
+Configuration Item: bf(quiet).
 
 dit(bf(-i --important))
 Print only important deps; for use with unmet causes only em(Depends) and 
 em(Pre-Depends) relations to be printed.
-See bf(APT::Cache::Important).
+Configuration Item: bf(APT::Cache::Important).
 
 dit(bf(-f --full))
-Print full package records when searching. See bf(APT::Cache::ShowFull).
+Print full package records when searching. Configuration Item: bf(APT::Cache::ShowFull).
 
 dit(bf(-a --all-versions))
 Print full records for all available versions, this is only applicable to the
-show command. See bf(APT::Cache::AllVersions)
+show command. Configuration Item: bf(APT::Cache::AllVersions)
 
 dit(bf(-g --no-generate))
 Do not perform automatic package cache regeneration, use the cache as it is.
-See bf(APT::Cache::NoGenerate).
+Configuration Item: bf(APT::Cache::NoGenerate).
 
 dit(bf(--names-only))
-Only search on the package names, not the long description. See
-bf(APT::Cache::Names-Only).
+Only search on the package names, not the long description. 
+Configuration Item: bf(APT::Cache::Names-Only).
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.h,v 1.6 1999/01/18 06:20:07 jgg Exp $
+// $Id: cmndline.h,v 1.7 1999/10/31 06:32:28 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -17,7 +17,7 @@
    
  CommandLine::Args Args[] = 
  {{'q',"quiet","apt::get::quiet",CommandLine::IntLevel},
-  {0,0,0,0,0}};
+  {0,0,0,0}};
    
    The flags mean,
      HasArg - Means the argument has a value
@@ -34,6 +34,9 @@
      ConfigFile - Means this flag should be interprited as the name of 
                   a config file to read in at this point in option processing.
                   Implies HasArg.
+     ArbItem    - Means the item is an arbitary configuration string of
+                  the form item=value, where item is passed directly
+                  to the configuration class.
    The default, if the flags are 0 is to use Boolean
    
    ##################################################################### */

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.39 1999/10/17 20:58:36 jgg Exp $
+// $Id: acquire-item.cc,v 1.40 1999/10/31 06:32:27 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -638,9 +638,18 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
 	 return;
       }
       
+      // Erase the file if it is a symlink so we can overwrite it
+      struct stat St;
+      if (lstat(DestFile.c_str(),&St) == 0)
+      {
+	 if (S_ISLNK(St.st_mode) != 0)
+	    unlink(DestFile.c_str());
+      }
+      
+      // Symlink the file
       if (symlink(FileName.c_str(),DestFile.c_str()) != 0)
       {
-	 ErrorText = "Link to " + DestFile + "failure ";
+	 ErrorText = "Link to " + DestFile + " failure ";
 	 Status = StatError;
 	 Complete = false;
       }      

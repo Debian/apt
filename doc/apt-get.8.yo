@@ -131,7 +131,7 @@ bf(--no-f), bf(-f=no) or several other variations.
 startdit()
 dit(bf(-d, --download-only))
 Download only; package files are only retrieved, not unpacked or installed.
-See bf(APT::Get::Download-Only).
+Configuration Item: bf(APT::Get::Download-Only).
 
 dit(bf(-f, --fix-broken))
 Fix; attempt to correct a system with broken dependencies in            
@@ -142,7 +142,7 @@ exist on a system. It is possible that a system's dependency structure
 can be so corrupt as to require manual intervention (which usually
 means using dselect or dpkg --remove to eliminate some of the offending 
 packages). Use of this option together with -m may produce an error in
-some situations. See bf(APT::Get::Fix-Broken).
+some situations. Configuration Item: bf(APT::Get::Fix-Broken).
 
 dit(bf(-h, --help))
 Help; display a helpful usage message and exits.
@@ -154,7 +154,7 @@ dit(bf(-m, --ignore-missing, --fix-missing))
 Ignore missing packages; If packages cannot be retrieved or fail the    
 integrity check after retrieval (corrupted package files), hold back    
 those packages and handle the result. Use of this option together with  
--f may produce an error in some situations. See bf(ignore-missing).
+-f may produce an error in some situations. Configuration Item: bf(ignore-missing).
 
 dit(bf(--no-download))
 Disables downloading of packages. This is best used with --ignore-missing to
@@ -167,11 +167,13 @@ bf(-q=#) to set the quiet level, overriding the configuration file. Note that
 quiet level 2 implies -y, you should never use -qq without a no-action
 modifier such as -d, --print-uris or -s as APT may decided to do something
 you did not expect.
-See bf(quiet)
+Configuration Item: bf(quiet)
 
 dit(bf(-s, --simulate, --just-print, --dry-run, --recon, --no-act))
 No action; perform a simulation of events that would occur but do not
-actually change the system. See bf(APT::Get::Simulate). Simulate prints out
+actually change the system. Configuration Item: bf(APT::Get::Simulate). 
+
+Simulate prints out
 a series of lines each one representing a dpkg operation, Configure (Conf),
 Remove (Remv), Unpack (Inst). Square brackets indicate broken packages with
 and empty set of square brackets meaning breaks that are of no consequence
@@ -181,11 +183,11 @@ dit(bf(-y, --yes, --assume-yes))
 Automatic yes to prompts; assume "yes" as answer to all prompts and run
 non-interactively. If an undesirable situation, such as changing a held
 package or removing an essential package occurs then bf(apt-get) will
-abort. See bf(APT::Get::Assume-Yes).
+abort. Configuration Item: bf(APT::Get::Assume-Yes).
 
 dit(bf(-u, --show-upgraded))
 Show upgraded packages; Print out a list of all packages that are to be
-upgraded. See bf(APT::Get::Show-Upgraded).
+upgraded. Configuration Item: bf(APT::Get::Show-Upgraded).
 
 dit(bf(-b, --compile, --build))
 Compile source packages after downloading them.
@@ -193,25 +195,25 @@ Compile source packages after downloading them.
 dit(bf(--ignore-hold))
 Ignore package Holds; This causes bf(apt-get) to ignore a hold placed on 
 a package. This may be useful in conjunction with bf(dist-upgrade) to
-override a large number of undesired holds. See bf(APT::Ignore-Hold).
+override a large number of undesired holds. Configuration Item: bf(APT::Ignore-Hold).
 
 dit(bf(--no-upgrade))
 Do not upgrade packages; When used in conjunction with bf(install)
 bf(no-upgrade) will prevent packages listed from being upgraded if they
-are already installed. See bf(APT::Get::no-upgrade).
+are already installed. Configuration Item: bf(APT::Get::no-upgrade).
 
 dit(bf(--force-yes))
 Force yes; This is a dangerous option that will cause apt to continue without
 prompting if it is doing something potentially harmful. It should not be used
 except in very special situations. Using bf(force-yes) can potentially destroy
-your system! See bf(APT::Get::force-yes).
+your system! Configuration Item: bf(APT::Get::force-yes).
 
 dit(bf(--print-uris))
 Instead of fetching the files to install their URIs are printed. Each
 URI will have the path, the destination file name, the size and the expected
 md5 hash. Note that the file name to write to will not always match
 the file name on the remote site! This also works with the bf(source)
-command See bf(APT::Get::Print-URIs).
+command. Configuration Item: bf(APT::Get::Print-URIs).
 
 dit(bf(--purge))
 Use purge instead of remove for anything that would be removed.
@@ -223,20 +225,21 @@ dit(bf(--list-cleanup))
 This option defaults to on, use bf(--no-list-cleanup) to turn it off.
 When on apt-get will automatically manage the contents of 
 /var/state/apt/lists to ensure that obsolete files are erased. The only 
-reason to turn it off is if you frequently change your source list. See
-bf(APT::Get::List-Cleanup)
+reason to turn it off is if you frequently change your source list. 
+Configuration Item: bf(APT::Get::List-Cleanup)
 
 dit(bf(--trivial-only))
 Only perform operations are 'trivial'. Logically this can be considered
 related to --assume-yes, where --assume-yes will answer yes to any prompt,
---trivial-only will answer no. See bf(APT::Get::Trivial-Only)
+--trivial-only will answer no. Configuration Item: bf(APT::Get::Trivial-Only)
 
 dit(bf(--no-remove))
 If any packages are to be removed apt-get immediately aborts without
-prompting. See bf(APT::Get::No-Remove)
+prompting. Configuration Item: bf(APT::Get::No-Remove)
 
 dit(bf(--diff-only), bd(--tar-only))
-Download only the diff or tar file of a source archive.
+Download only the diff or tar file of a source archive. 
+Configuration Item: bf(APT::Get::Diff-Only)
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will

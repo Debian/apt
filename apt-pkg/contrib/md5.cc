@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.5 1999/10/25 04:10:02 jgg Exp $
+// $Id: md5.cc,v 1.6 1999/10/31 06:32:28 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
@@ -52,14 +52,21 @@
 // byteSwap - Swap bytes in a buffer					/*{{{*/
 // ---------------------------------------------------------------------
 /* Swap n 32 bit longs in given buffer */
-inline static void byteSwap(uint32_t *buf, unsigned words)
+#ifdef WORDS_BIGENDIAN
+static void byteSwap(uint8_t *buf, unsigned words)
 {
-   do
+   uint8_t *p = (uint8_t *)buf;
+   
+   do 
    {
-      *buf++ = htonl(*buf);
-   }
-   while (--words);   
+      *buf++ = (UINT32)((unsigned)p[3] << 8 | p[2]) << 16 |
+	 ((unsigned)p[1] << 8 | p[0]);
+      p += 4;
+   } while (--words);
 }
+#else
+#define byteSwap(buf,words)
+#endif
 									/*}}}*/
 // MD5Transform - Alters an existing MD5 hash				/*{{{*/
 // ---------------------------------------------------------------------
