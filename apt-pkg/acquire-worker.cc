@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.29 2000/01/17 07:11:49 jgg Exp $
+// $Id: acquire-worker.cc,v 1.30 2000/01/27 04:15:09 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -233,6 +233,10 @@ bool pkgAcquire::Worker::RunMessages()
 	    ResumePoint = atoi(LookupTag(Message,"Resume-Point","0").c_str());
 	    Itm->Owner->Start(Message,atoi(LookupTag(Message,"Size","0").c_str()));
 
+	    // Display update before completion
+	    if (Log != 0 && Log->MorePulses == true)
+	       Log->Pulse(Itm->Owner->GetOwner());
+	    
 	    if (Log != 0)
 	       Log->Fetch(*Itm);
 
@@ -247,9 +251,14 @@ bool pkgAcquire::Worker::RunMessages()
 	       _error->Error("Method gave invalid 201 URI Done message");
 	       break;
 	    }
-
+	    
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
+	    
+	    // Display update before completion
+	    if (Log != 0 && Log->MorePulses == true)
+	       Log->Pulse(Owner->GetOwner());
+	    
 	    OwnerQ->ItemDone(Itm);
 	    if (TotalSize != 0 && 
 		(unsigned)atoi(LookupTag(Message,"Size","0").c_str()) != TotalSize)
@@ -286,6 +295,10 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
+	    // Display update before completion
+	    if (Log != 0 && Log->MorePulses == true)
+	       Log->Pulse(Itm->Owner->GetOwner());
+	    
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
 	    OwnerQ->ItemDone(Itm);

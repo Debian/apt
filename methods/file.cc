@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: file.cc,v 1.7 1999/01/18 06:20:08 jgg Exp $
+// $Id: file.cc,v 1.8 2000/01/27 04:15:10 jgg Exp $
 /* ######################################################################
 
    File URI method for APT
@@ -48,7 +48,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
       Res.Filename = File;
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
-      if (Itm->LastModified == Buf.st_mtime)
+      if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
 	 Res.IMSHit = true;
    }
    
@@ -64,7 +64,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
 	 AltRes.Filename = File;
 	 AltRes.LastModified = Buf.st_mtime;
 	 AltRes.IMSHit = false;
-	 if (Itm->LastModified == Buf.st_mtime)
+	 if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
 	    AltRes.IMSHit = true;
 	 
 	 URIDone(Res,&AltRes);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.26 2000/01/17 07:11:49 jgg Exp $
+// $Id: acquire.h,v 1.27 2000/01/27 04:15:09 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -253,7 +253,8 @@ class pkgAcquireStatus
    public:
 
    bool Update;
-   
+   bool MorePulses;
+      
    // Called by items when they have finished a real download
    virtual void Fetched(unsigned long Size,unsigned long ResumePoint);
    

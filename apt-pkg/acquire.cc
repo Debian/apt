@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.45 2000/01/17 07:11:49 jgg Exp $
+// $Id: acquire.cc,v 1.46 2000/01/27 04:15:09 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -706,7 +706,7 @@ void pkgAcquire::Queue::Bump()
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquireStatus::pkgAcquireStatus()
+pkgAcquireStatus::pkgAcquireStatus() : Update(true), MorePulses(false)
 {
    Start();
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.23 2000/01/17 07:11:49 jgg Exp $
+// $Id: acquire-item.h,v 1.24 2000/01/27 04:15:09 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -71,7 +71,8 @@ class pkgAcquire::Item
    
    // Inquire functions
    virtual string MD5Sum() {return string();};
-         
+   pkgAcquire *GetOwner() {return Owner;};
+   
    Item(pkgAcquire *Owner);
    virtual ~Item();
 };

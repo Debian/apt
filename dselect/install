@@ -39,6 +39,7 @@ yesno() {
 	echo $ans | tr YN yn
 }
 
+OLDLS=`ls -ld $ARCHIVES`
 if [ x$WAIT = "xyes" ]; then
    $APTGET $OPTS -d dselect-upgrade
    echo "Press enter to continue." && read RES
@@ -59,6 +60,11 @@ if [ $RES -eq 0 ]; then
 
    if [ `ls $ARCHIVES $ARCHIVES/partial | egrep -v "^lock$|^partial$" | wc -l` \
         -eq 0 ]; then
+      exit 0
+   fi
+
+   NEWLS=`ls -ld $ARCHIVES`
+   if [ "x$OLDLS" == "x$NEWLS" ]; then
       exit 0
    fi
    
