@@ -70,6 +70,9 @@ LIB := $(BIN)
 OBJ := $(BUILD)/obj/$(SUBDIR)
 DEP := $(OBJ)
 DOC := $(BUILD)/docs
+PO := $(BUILD)/po
+LOCALE := $(BUILD)/locale
+PO_DOMAINS := $(BUILD)/po/domains
 
 # Module types
 LIBRARY_H = $(BASE)/buildlib/library.mak
@@ -81,6 +84,7 @@ COPY_H = $(BASE)/buildlib/copy.mak
 YODL_MANPAGE_H = $(BASE)/buildlib/yodl_manpage.mak
 SGML_MANPAGE_H = $(BASE)/buildlib/sgml_manpage.mak
 FAIL_H = $(BASE)/buildlib/fail.mak
+PODOMAIN_H = $(BASE)/buildlib/podomain.mak
 
 include $(BUILD)/environment.mak
 
@@ -109,7 +113,7 @@ CPPFLAGS+= -I$(INCLUDE)
 LDFLAGS+= -L$(LIB)
 
 # Directors to create
-MKDIRS := $(BIN)
+MKDIRS := $(BIN) 
 
 # Phony rules. Other things hook these by appending to the dependency
 # list

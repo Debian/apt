@@ -17,8 +17,10 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.5.4")
-AC_DEFINE_UNQUOTED(PACKAGE,"apt")
+AC_DEFINE_UNQUOTED(VERSION,"")
+PACKAGE="apt"
+AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
+AC_SUBST(PACKAGE)
 
 dnl Check the archs, we want the target type.
 AC_CANONICAL_SYSTEM
@@ -162,5 +164,14 @@ ah_NUM_PROCS
 rc_GLIBC_VER
 rc_LIBSTDCPP_VER
 ah_GCC3DEP
+
+dnl FIXME: There is no reason for this bit to do all the configure tests it
+dnl ends up doing. Maybe replace it with a simple AC_CHECK_HEADER and 
+dnl AC_PATH_PROG.
+ALL_LINGUAS="da de en_GB es fr hu it nl no_NO pl pt_BR ru sv zh_TW"
+AM_GNU_GETTEXT
+AC_DEFINE_UNQUOTED(USE_NLS, $USE_NLS)
+AC_DEFINE_UNQUOTED(USE_INCLUDED_LIBINTL, $USE_INCLUDED_LIBINTL)
+AC_PATH_PROG(BASH, bash)
 
 AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make -s dirs)

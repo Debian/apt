@@ -1,6 +1,8 @@
 # This file contains everything that autoconf guessed for your system.
 # if you want you can edit it, just don't re-run configure.
 
+PACKAGE = @PACKAGE@
+
 # C++ compiler options
 CC = @CC@
 CPPFLAGS+= @CPPFLAGS@ @DEFS@ -D_REENTRANT
@@ -30,6 +32,16 @@ DEBIANDOC_TEXT = @DEBIANDOC_TEXT@
 NSGMLS = @NSGMLS@
 SGMLSPL = @SGMLSPL@
 DOCBOOK2MAN := $(wildcard /usr/lib/perl5/sgmlspl-specs/docbook2man-spec.pl)
+
+# Gettext settings
+GMSGFMT = @GMSGFMT@
+XGETTEXT = @XGETTEXT@
+MSGCOMM:=$(dir $(XGETTEXT))/msgcomm
+MSGMERGE:=$(dir $(XGETTEXT))/msgmerge
+CATALOGS = @CATALOGS@
+USE_NLS = @USE_NLS@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+BASH = @BASH@
 
 # Various library checks
 PTHREADLIB = @PTHREADLIB@

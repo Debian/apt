@@ -6,6 +6,10 @@ SUBDIR=methods
 include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
+# FIXME..
+LIB_APT_PKG_MAJOR = 3.3
+DOMAIN := libapt-pkg$(LIB_APT_PKG_MAJOR)
+
 # The file method
 PROGRAM=file
 SLIBS = -lapt-pkg 

@@ -24,6 +24,9 @@ program: $(BIN)/$(PROGRAM)
 clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
+TYPE = src
+include $(PODOMAIN_H)
+
 # Make Directories
 MKDIRS += $(OBJ) $(DEP) $(BIN)
 

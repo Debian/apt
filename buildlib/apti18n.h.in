@@ -1,5 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
-// $Id: apti18n.h.in,v 1.3 2002/01/09 04:16:33 jgg Exp $
+// $Id: apti18n.h.in,v 1.4 2002/10/16 05:24:02 jgg Exp $
 /* Internationalization macros for apt. This header should be included last
    in each C file. */
 
@@ -10,10 +10,13 @@
 #if USE_NLS==yes && USE_INCLUDED_LIBINTL==no
 // apt will use the gettext implementation of the C library
 # include <libintl.h>
-# define _(x) gettext(x)
+# ifdef DOMAIN
+#   define _(x) dgettext(DOMAIN,x)
+# else
+#   define _(x) gettext(x)
+# endif
 #else
 // apt will not use any gettext
 # define setlocale(a, b)
-# define textdomain(a)
 # define _(x) x
 #endif

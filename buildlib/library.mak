@@ -8,6 +8,7 @@
 # $(LIBRARY) - The name of the library without lib or .so 
 # $(MAJOR) - The major version number of this library
 # $(MINOR) - The minor version number of this library
+# $(DOMAIN) - The text domain for this library
 
 # All output is writtin to .opic files in the build directory to
 # signify the PIC output.
@@ -22,6 +23,9 @@ $(LOCAL)-HEADERS := $(addprefix $(INCLUDE)/,$(HEADERS))
 $(LOCAL)-SONAME := lib$(LIBRARY)$(LIBEXT).so.$(MAJOR)
 $(LOCAL)-SLIBS := $(SLIBS)
 $(LOCAL)-LIBRARY := $(LIBRARY)
+
+TYPE = src
+include $(PODOMAIN_H)
 
 # Install the command hooks
 headers: $($(LOCAL)-HEADERS)
@@ -45,7 +49,7 @@ $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR): $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MA
 	ln -sf $(<F) $@
 $(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR).$(MINOR)
 	ln -sf $(<F) $@
-	
+
 # The binary build rule
 $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
 	-rm -f $(LIB)/lib$($(@F)-LIBRARY)*.so* 2> /dev/null
@@ -66,4 +70,4 @@ $(OBJ)/%.opic: %.cc
 The_DFiles = $(wildcard $($(LOCAL)-DEP))
 ifneq ($(words $(The_DFiles)),0)
 include $(The_DFiles)
-endif 
+endif
