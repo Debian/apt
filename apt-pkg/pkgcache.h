@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.8 1998/10/20 02:39:20 jgg Exp $
+// $Id: pkgcache.h,v 1.9 1998/11/08 23:29:18 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -66,7 +66,7 @@ class pkgCache
    
    struct State
    {
-      enum VerPriority {Important=1,Required=2,Standard=3,Optional=5,Extra=5};
+      enum VerPriority {Important=1,Required=2,Standard=3,Optional=4,Extra=5};
       enum PkgSelectedState {Unknown=0,Install=1,Hold=2,DeInstall=3,Purge=4};
       enum PkgInstState {Ok=0,ReInstReq=1,HoldInst=2,HoldReInstReq=3};
       enum PkgCurrentState {NotInstalled=0,UnPacked=1,HalfConfigured=2,

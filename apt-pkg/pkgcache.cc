@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.13 1998/11/06 02:52:22 jgg Exp $
+// $Id: pkgcache.cc,v 1.14 1998/11/08 23:29:19 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -44,7 +44,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    MajorVersion = 2;
-   MinorVersion = 0;
+   MinorVersion = 1;
    Dirty = true;
    
    HeaderSz = sizeof(pkgCache::Header);
@@ -287,7 +287,8 @@ bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result)
 // ---------------------------------------------------------------------
 /* This is a more usefull version of TargetPkg() that follows versioned
    provides. It includes every possible package-version that could satisfy
-   the dependency. The last item in the list has a 0. */
+   the dependency. The last item in the list has a 0. The resulting pointer
+   must be delete [] 'd */
 pkgCache::Version **pkgCache::DepIterator::AllTargets()
 {
    Version **Res = 0;
