@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.cc,v 1.5 1998/07/19 21:24:18 jgg Exp $
+// $Id: version.cc,v 1.6 1998/11/26 23:29:42 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -53,36 +53,18 @@ int pkgVersionCompare(string A,string B)
 }
 
 									/*}}}*/
-// VersionCompare - Greater than comparison for versions		/*{{{*/
+// iVersionCompare - Compare versions					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
-		       const char *BEnd)
+/* This compares a fragment of the version. */
+static int iVersionCompare(const char *A, const char *AEnd, const char *B,
+			   const char *BEnd)
 {
-   // lhs = left hand side, rhs = right hand side
-   const char *lhs = A;
-   const char *rhs = B;
-
-   /* Consider epochs. They need special handling because an epoch 
-      must not be compared against the first element of the real version.
-      This works okay when both sides have an epoch but when only one
-      does it must compare the missing epoch to 0 */
-   for (;lhs != AEnd && *lhs != ':'; lhs++);
-   for (;rhs != BEnd && *rhs != ':'; rhs++);
-
-   // Parse the epoch out
-   unsigned long lhsEpoch = 0;
-   unsigned long rhsEpoch = 0;
-   if (lhs != AEnd && *lhs == ':')
-      lhsEpoch = StrToLong(A,lhs);
-   if (rhs != BEnd && *rhs == ':')
-      rhsEpoch = StrToLong(B,rhs);
-   if (lhsEpoch != rhsEpoch)
-   {
-      if (lhsEpoch > rhsEpoch)
-	 return 1;
+   if (A >= AEnd && B >= BEnd)
+      return 0;
+   if (A >= AEnd)
       return -1;
-   }
+   if (B >= BEnd)
+      return 1;
    
    /* Iterate over the whole string
       What this does is to spilt the whole string into groups of 
@@ -91,8 +73,8 @@ int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
       Has 4 portions 'a', '67', 'bhgs', '89'. A more normal:
          2.7.2-linux-1
       Has '2', '.', '7', '.' ,'-linux-','1' */
-   lhs = A;
-   rhs = B;
+   const char *lhs = A;
+   const char *rhs = B;
    while (lhs != AEnd && rhs != BEnd)
    {
       // Starting points
@@ -106,10 +88,10 @@ int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
       
       if (Digit == true)
       {
-	 // If the lhs has a digit and the rhs does not then true
+	 // If the lhs has a digit and the rhs does not then <
 	 if (rhs - Srhs == 0)
 	    return -1;
-
+	 
 	 // Generate integers from the strings.
 	 unsigned long Ilhs = StrToLong(Slhs,lhs);
 	 unsigned long Irhs = StrToLong(Srhs,rhs);
@@ -128,20 +110,17 @@ int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
 	    if (*Slhs != *Srhs)
 	    {
 	       /* We need to compare non alpha chars as higher than alpha
-	          chars (a < !) This is so things like  7.6p2-4 and 7.6-0 
-		  compare higher as well as . and -. I am not sure how
-		  the dpkg code manages to achive the != '-' test, but it
-		  is necessary. */
+	          chars (a < !) */
 	       int lc = *Slhs;
 	       int rc = *Srhs;
-	       if (isalpha(lc) == 0 && lc != '-') lc += 256;
-	       if (isalpha(rc) == 0 && rc != '-') rc += 256;
+	       if (isalpha(lc) == 0) lc += 256;
+	       if (isalpha(rc) == 0) rc += 256;
 	       if (lc > rc)
 		  return 1;
 	       return -1;
 	    }
 	 }
-	 
+
 	 // If the lhs is shorter than the right it is 'less'
 	 if (lhs - Slhs < rhs - Srhs)
 	    return -1;
@@ -166,6 +145,53 @@ int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
        
    // Shouldnt happen
    return 1;
+}
+									/*}}}*/
+// VersionCompare - Comparison for versions				/*{{{*/
+// ---------------------------------------------------------------------
+/* This fragments the version into E:V-R triples and compares each 
+   portion seperately. */
+int pkgVersionCompare(const char *A, const char *AEnd, const char *B,
+		      const char *BEnd)
+{
+   // Strip off the epoch and compare it 
+   const char *lhs = A;
+   const char *rhs = B;
+   for (;lhs != AEnd && *lhs != ':'; lhs++);
+   for (;rhs != BEnd && *rhs != ':'; rhs++);
+   if (lhs == AEnd)
+      lhs = A;
+   if (rhs == BEnd)
+      rhs = B;
+   
+   // Compare the epoch
+   int Res = iVersionCompare(A,lhs,B,rhs);
+   if (Res != 0)
+      return Res;
+
+   // Skip the :
+   if (lhs != A)
+      lhs++;
+   if (rhs != B)
+      rhs++;
+   
+   // Find the last - 
+   const char *dlhs = AEnd-1;
+   const char *drhs = BEnd-1;
+   for (;dlhs > lhs && *dlhs != '-'; dlhs--);
+   for (;drhs > rhs && *drhs != '-'; drhs--);
+   
+   // Compare the main version
+   Res = iVersionCompare(lhs,dlhs,rhs,drhs);
+   if (Res != 0)
+      return Res;
+   
+   // Skip the -
+   if (dlhs != lhs)
+      dlhs++;
+   if (drhs != rhs)
+      drhs++;
+   return iVersionCompare(dlhs,AEnd,drhs,BEnd);
 }
 									/*}}}*/
 // CheckDep - Check a single dependency					/*{{{*/
