@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.49 2001/05/27 04:28:37 jgg Exp $
+// $Id: acquire.cc,v 1.50 2004/03/17 05:17:11 mdz Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -87,7 +87,11 @@ pkgAcquire::~pkgAcquire()
 void pkgAcquire::Shutdown()
 {
    while (Items.size() != 0)
+   {
+      if (Items[0]->Status == Item::StatFetching)
+         Items[0]->Status = Item::StatError;
       delete Items[0];
+   }
 
    while (Queues != 0)
    {
