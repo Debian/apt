@@ -1098,7 +1098,8 @@ int main(int argc,const char *argv[])
 	 char S[300];
 	 snprintf(S,sizeof(S),"http_proxy=%s",getenv("ftp_proxy"));
 	 putenv(S);
-	 putenv("no_proxy=");
+	 //mvo: why should we unset no_proxy here?
+	 //putenv("no_proxy=");
 	 
 	 // Run the http method
 	 string Path = flNotFile(argv[0]) + "http";
