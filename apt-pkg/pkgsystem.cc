@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgsystem.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: pkgsystem.cc,v 1.3 2004/02/27 00:43:16 mdz Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -16,6 +16,7 @@
 
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/policy.h>
+#include <cassert>
 									/*}}}*/
 
 pkgSystem *_system = 0;
@@ -28,6 +29,7 @@ unsigned long pkgSystem::GlobalListLen = 0;
 /* Add it to the global list.. */
 pkgSystem::pkgSystem()
 {
+   assert(GlobalListLen < sizeof(SysList)/sizeof(*SysList));
    SysList[GlobalListLen] = this;
    GlobalListLen++;
 }
