@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.4 1999/03/15 08:22:13 jgg Exp $
+// $Id: ftp.cc,v 1.5 1999/03/15 19:51:27 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -822,6 +822,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    }
    
    // Get the files information
+   Status("Query");
    unsigned long Size;
    if (Server->Size(File,Size) == false ||
        Server->ModTime(File,FailTime) == false)
