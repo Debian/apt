@@ -16,23 +16,23 @@ AC_DEFUN(ah_HAVE_GETCONF,
 AC_DEFUN(ah_NUM_CPUS,
 	[AC_REQUIRE([ah_HAVE_GETCONF])
 	AC_MSG_CHECKING([number of cpus])
+	NUM_CPUS=
 	AC_ARG_WITH(cpus,
 		[  --with-cpus             The number of cpus to be used for building(see --with-procs, default 1)],
 		[if test "$withval" = "yes"; then
 			if test ! -z "$GETCONF";then
 				NUM_CPUS=`$GETCONF _NPROCESSORS_ONLN 2>/dev/null`
-			else
-				NUM_CPUS=1
 			fi
 		elif test ! "$withval" = "no";then
 			NUM_CPUS=$withval
 		fi],
 		[if test ! -z "$GETCONF";then
 			NUM_CPUS=`$GETCONF _NPROCESSORS_ONLN 2>/dev/null`
-		else
-			NUM_CPUS=1
-		fi]
+		]
 	)
+	if test -z "$NUM_CPUS"; then
+		NUM_CPUS=1
+	fi
 	if test $NUM_CPUS = 1 ;then
 		default_PROC_MULTIPLY=1
 	else
