@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.h,v 1.3 1998/10/24 20:14:35 jgg Exp $
+// $Id: cmndline.h,v 1.4 1998/11/25 23:54:31 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -52,6 +52,7 @@ class CommandLine
 {
    public:
    struct Args;
+   struct Dispatch;
    
    protected:
    
@@ -77,6 +78,7 @@ class CommandLine
    bool Parse(int argc,const char **argv);
    void ShowHelp();
    unsigned int FileSize() const;
+   bool DispatchArg(Dispatch *List);
       
    CommandLine(Args *AList,Configuration *Conf);
    ~CommandLine();
@@ -92,5 +94,11 @@ struct CommandLine::Args
    inline bool end() {return ShortOpt == 0 && LongOpt == 0;};
    inline bool IsBoolean() {return Flags == 0 || (Flags & (Boolean|InvBoolean)) != 0;};
 };
-         
+
+struct CommandLine::Dispatch
+{
+   const char *Match;
+   bool (*Handler)(CommandLine &);
+};
+
 #endif

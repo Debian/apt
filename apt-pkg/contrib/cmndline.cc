@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.5 1998/10/24 20:14:34 jgg Exp $
+// $Id: cmndline.cc,v 1.6 1998/11/25 23:54:22 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -302,7 +302,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
    return true;
 }
 									/*}}}*/
-// CommandLine::FileSize - Count the number of filenames									/*{{{*/
+// CommandLine::FileSize - Count the number of filenames		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 unsigned int CommandLine::FileSize() const
@@ -311,5 +311,28 @@ unsigned int CommandLine::FileSize() const
    for (const char **I = FileList; I != 0 && *I != 0; I++)
       Count++;
    return Count;
+}
+									/*}}}*/
+// CommandLine::DispatchArg - Do something with the first arg		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool CommandLine::DispatchArg(Dispatch *Map)
+{
+   int I;
+   for (I = 0; Map[I].Match != 0; I++)
+   {
+      if (strcmp(FileList[0],Map[I].Match) == 0)
+      {
+	 bool Res = Map[I].Handler(*this);
+	 if (Res == false && _error->PendingError() == false)
+	    _error->Error("Handler silently failed");
+	 return Res;
+      }
+   }
+   
+   // No matching name
+   if (Map[I].Match == 0)
+      _error->Error("Invalid operation %s",FileList[0]);
+   return false;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.h,v 1.1 1998/10/31 05:19:59 jgg Exp $
+// $Id: md5.h,v 1.2 1998/11/25 23:54:45 jgg Exp $
 /* ######################################################################
    
    MD5SumValue - Storage for a MD5Sum
@@ -56,6 +56,7 @@ class MD5Summation
    public:
 
    bool Add(const unsigned char *Data,unsigned long Size);
+   inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
    bool AddFD(int Fd,unsigned long Size);
    inline bool Add(const unsigned char *Beg,const unsigned char *End) 
                   {return Add(Beg,End-Beg);};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.13 1998/11/22 03:20:32 jgg Exp $
+// $Id: init.cc,v 1.14 1998/11/25 23:54:06 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -33,6 +33,7 @@ bool pkgInitialize(Configuration &Cnf)
    Cnf.Set("Dir::State::xstatus","xstatus");
    Cnf.Set("Dir::State::userstatus","status.user");   
    Cnf.Set("Dir::State::status","/var/lib/dpkg/status");
+   Cnf.Set("Dir::State::cdroms","cdroms.list");
    
    // Cache
    Cnf.Set("Dir::Cache","/var/cache/apt/");
