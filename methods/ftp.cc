@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.22 2001/02/23 05:45:27 jgg Exp $
+// $Id: ftp.cc,v 1.23 2001/02/23 07:19:49 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -179,7 +179,7 @@ bool FTPConn::Login()
    
    // Setup the variables needed for authentication
    string User = "anonymous";
-   string Pass = "apt_get_ftp_2.0@debian.linux.user";
+   string Pass = "apt_get_ftp_2.1@debian.linux.user";
 
    // Fill in the user/pass
    if (ServerName.User.empty() == false)
