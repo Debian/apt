@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.151 2004/01/09 07:14:28 mdz Exp $
+// $Id: apt-get.cc,v 1.152 2004/01/09 07:32:39 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1037,10 +1037,9 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       else
       {
 	 ioprintf(c1out,
-	 _("Package %s has no available version, but exists in the database.\n"
-	   "This typically means that the package was mentioned in a dependency and\n"
-	   "never uploaded, has been obsoleted or is not available with the contents\n"
-	   "of sources.list\n"),Pkg.Name());
+	 _("Package %s is not available, but is referred to by another package.\n"
+	   "This may mean that the package is missing, has been obsoleted, or\n"
+           "is only available from another source\n"),Pkg.Name());
 	 
 	 string List;
 	 string VersionsList;
