@@ -1,3 +1,13 @@
+apt (0.6.35ubuntu1) hoary; urgency=low
+
+  * apt-pkg/acquire-item.cc:
+    added "Acquire::BrokenProxy" that will force apt to always 
+    re-get the Release.gpg file (for broken proxies)
+  * debian/apt.cron.daily:
+    MinAge is defaulting to 2 days now to prevent over-aggresive removal 
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 31 Mar 2005 20:37:11 +0200
+
 apt (0.6.35) hoary; urgency=low
 
   * Merge apt--mvo--0 (incorporates 0.6.34ubuntu1):
