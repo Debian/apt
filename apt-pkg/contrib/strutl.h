@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.9 1998/11/01 05:27:38 jgg Exp $
+// $Id: strutl.h,v 1.10 1998/11/04 07:11:14 jgg Exp $
 /* ######################################################################
 
    String Util - These are some usefull string functions
@@ -16,9 +16,14 @@
 #ifndef STRUTL_H
 #define STRUTL_H
 
+#ifdef __GNUG__
+#pragma interface "strutl.h"
+#endif 
+
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <time.h>
 
 char *_strstrip(char *String);
 char *_strtabexpand(char *String,size_t Len);
@@ -56,7 +61,7 @@ class URI
    string Path;
    unsigned int Port;
    
-   inline operator string();
+   operator string();
    inline operator =(string From) {CopyFrom(From);};
    inline bool empty() {return Access.empty();};
    

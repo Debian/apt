@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.11 1998/11/01 08:07:12 jgg Exp $
+// $Id: strutl.cc,v 1.12 1998/11/04 07:11:13 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -15,13 +15,16 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#ifdef __GNUG__
+#pragma implementation "strutl.h"
+#endif
+
 #include <strutl.h>
 #include <apt-pkg/fileutl.h>
 
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
-#include <time.h>
 									/*}}}*/
 
 // strstrip - Remove white space from the front and back of a string	/*{{{*/
@@ -695,6 +698,7 @@ URI::operator string()
    string Res = Access + ':';
    if (Host.empty() == false)
    {
+      Res += "//";
       if (User.empty() == false)
       {
 	 Res += "//" + User;
@@ -703,10 +707,21 @@ URI::operator string()
 	 Res += "@";
       }
       Res += Host;
+      if (Port != 0)
+      {
+	 char S[30];
+	 sprintf(S,":%u",Port);
+	 Res += S;
+      }	 
    }
    
    if (Path.empty() == false)
-      Res += "/" + Path;
+   {
+      if (Path[0] != '/')
+	 Res += "/" + Path;
+      else
+	 Res += Path;
+   }
    
    return Res;
 }

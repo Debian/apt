@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.2 1998/11/01 08:07:13 jgg Exp $
+// $Id: http.cc,v 1.3 1998/11/04 07:10:49 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -36,6 +36,7 @@
 #include <sys/time.h>
 #include <utime.h>
 #include <unistd.h>
+#include <signal.h>
 #include <stdio.h>
 
 // Internet stuff
@@ -46,6 +47,10 @@
 
 #include "http.h"
 									/*}}}*/
+
+string HttpMethod::FailFile;
+int HttpMethod::FailFd = -1;
+time_t HttpMethod::FailTime = 0;
 
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
@@ -258,10 +263,25 @@ bool ServerState::Open()
       return true;
    
    Close();
-   
+   In.Reset();
+   Out.Reset();
+
+   // Determine the proxy setting
+   string DefProxy = _config->Find("Acquire::http::Proxy",getenv("http_proxy"));
+   string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
+   if (SpecificProxy.empty() == false)
+   {
+      if (SpecificProxy == "DIRECT")
+	 Proxy = "";
+      else
+	 Proxy = SpecificProxy;
+   }   
+   else
+      Proxy = DefProxy;
+
+   // Determine what host and port to use based on the proxy settings
    int Port = 80;
-   string Host;
-   
+   string Host;   
    if (Proxy.empty() == true)
    {
       if (ServerName.Port != 0)
@@ -275,6 +295,9 @@ bool ServerState::Open()
       Host = Proxy.Host;
    }
    
+   /* We used a cached address record.. Yes this is against the spec but
+      the way we have setup our rotating dns suggests that this is more
+      sensible */
    if (LastHost != Host)
    {
       Owner->Status("Connecting to %s",Host.c_str());
@@ -312,8 +335,6 @@ bool ServerState::Close()
 {
    close(ServerFd);
    ServerFd = -1;
-   In.Reset();
-   Out.Reset();
    return true;
 }
 									/*}}}*/
@@ -556,7 +577,12 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       ProperHost += Buf;
    }   
       
-   // Build the request
+   /* Build the request. We include a keep-alive header only for non-proxy
+      requests. This is to tweak old http/1.0 servers that do support keep-alive
+      but not HTTP/1.1 automatic keep-alive. Doing this with a proxy server 
+      will glitch HTTP/1.0 proxies because they do not filter it out and 
+      pass it on, HTTP/1.1 says the connection should default to keep alive
+      and we expect the proxy to do this */
    if (Proxy.empty() == true)
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\nConnection: keep-alive\r\n",
 	      Uri.Path.c_str(),ProperHost.c_str());
@@ -564,7 +590,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
 	      Itm->Uri.c_str(),ProperHost.c_str());
    string Req = Buf;
-   
+
    // Check for a partial file
    struct stat SBuf;
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
@@ -794,7 +820,11 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    File = new FileFd(Queue->DestFile,FileFd::WriteAny);
    if (_error->PendingError() == true)
       return 3;
-   
+
+   FailFile = Queue->DestFile;
+   FailFd = File->Fd();
+   FailTime = Srv->Date;
+      
    // Set the expected size
    if (Srv->StartPos >= 0)
    {
@@ -824,11 +854,34 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    return 0;
 }
 									/*}}}*/
-// HttpMethod::Loop							/*{{{*/
+// HttpMethod::SigTerm - Handle a fatal signal				/*{{{*/
+// ---------------------------------------------------------------------
+/* This closes and timestamps the open file. This is neccessary to get 
+   resume behavoir on user abort */
+void HttpMethod::SigTerm(int)
+{
+   if (FailFd == -1)
+      exit(100);
+   close(FailFd);
+   
+   // Timestamp
+   struct utimbuf UBuf;
+   time(&UBuf.actime);
+   UBuf.actime = FailTime;
+   UBuf.modtime = FailTime;
+   utime(FailFile.c_str(),&UBuf);
+   
+   exit(100);
+}
+									/*}}}*/
+// HttpMethod::Loop - Main loop						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 int HttpMethod::Loop()
 {
+   signal(SIGTERM,SigTerm);
+   signal(SIGINT,SigTerm);
+   
    ServerState *Server = 0;
    
    int FailCounter = 0;
@@ -906,16 +959,29 @@ int HttpMethod::Loop()
 	    URIStart(Res);
 
 	    // Run the data
-	    if (Server->RunData() == false)
-	       Fail();
-	    else
+	    bool Result =  Server->RunData();
+
+	    // Close the file, destroy the FD object and timestamp it
+	    FailFd = -1;
+	    delete File;
+	    File = 0;
+	    
+	    // Timestamp
+	    struct utimbuf UBuf;
+	    time(&UBuf.actime);
+	    UBuf.actime = Server->Date;
+	    UBuf.modtime = Server->Date;
+	    utime(Queue->DestFile.c_str(),&UBuf);
+
+	    // Send status to APT
+	    if (Result == true)
 	    {
 	       Res.MD5Sum = Server->In.MD5->Result();
 	       URIDone(Res);
 	    }
-	    
-	    delete File;
-	    File = 0;
+	    else
+	       Fail();
+
 	    break;
 	 }
 	 

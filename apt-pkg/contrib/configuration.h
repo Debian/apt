@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.7 1998/10/30 07:53:44 jgg Exp $
+// $Id: configuration.h,v 1.8 1998/11/04 07:11:12 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -52,6 +52,7 @@ class Configuration
    public:
 
    string Find(const char *Name,const char *Default = 0);
+   string Find(string Name,const char *Default = 0) {return Find(Name.c_str(),Default);};
    string FindFile(const char *Name,const char *Default = 0);
    string FindDir(const char *Name,const char *Default = 0);
    int FindI(const char *Name,int Default = 0);
