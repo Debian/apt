@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.5 1998/12/22 07:41:25 jgg Exp $
+// $Id: cdrom.cc,v 1.6 1998/12/22 07:52:05 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -56,7 +56,6 @@ string CDROMMethod::GetID(string Name)
 	 {
 	    _error->Error("Unable to read the cdrom database %s",
 			  DFile.c_str());
-	    Fail();
 	    return string();
 	 }   
       }
@@ -95,20 +94,22 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    }
    
    string ID = GetID(Get.Host);
+   if (_error->PendingError() == true)
+      return false;
    
    // All non IMS queries for package files fail.
    if (Itm->IndexFile == true || ID.empty() == true)
    {
       Fail("Please use apt-cdrom to make this CD recognized by APT."
 	   " apt-get update cannot be used to add new CDs");
-      return false;
+      return true;
    }
 
    // We already have a CD inserted, but it is the wrong one
    if (CurrentID.empty() == false && ID != CurrentID)
    {
       Fail("Wrong CD",true);
-      return false;
+      return true;
    }
    
    string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
@@ -129,7 +130,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       {
 	 CurrentID = "FAIL";
 	 Fail("Wrong CD",true);
-	 return false;
+	 return true;
       }
       
       MountCdrom(CDROM);
