@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.55 2003/02/10 07:34:41 doogie Exp $
+// $Id: http.cc,v 1.56 2003/02/12 15:33:36 doogie Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -337,7 +337,7 @@ int ServerState::RunHeaders()
 {
    State = Header;
    
-   Owner->Status(_("Waiting for file"));
+   Owner->Status(_("Waiting for headers"));
 
    Major = 0; 
    Minor = 0; 
