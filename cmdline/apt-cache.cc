@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.49 2001/05/27 04:46:43 jgg Exp $
+// $Id: apt-cache.cc,v 1.50 2001/06/08 05:15:42 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -188,7 +188,7 @@ bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << "  " << D.ParentPkg().Name() << ',' << D.TargetPkg().Name();
 	 if (D->Version != 0)
-	    cout << ' ' << D.TargetVer() << endl;
+	    cout << ' ' << DeNull(D.TargetVer()) << endl;
 	 else
 	    cout << endl;
       }
@@ -198,7 +198,7 @@ bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr() << " - ";
 	 for (pkgCache::DepIterator Dep = Cur.DependsList(); Dep.end() != true; Dep++)
-	    cout << Dep.TargetPkg().Name() << " (" << (int)Dep->CompareOp << " " << Dep.TargetVer() << ") ";
+	    cout << Dep.TargetPkg().Name() << " (" << (int)Dep->CompareOp << " " << DeNull(Dep.TargetVer()) << ") ";
 	 cout << endl;
       }      
 
