@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: contents.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: contents.cc,v 1.3 2001/02/27 04:24:09 jgg Exp $
 /* ######################################################################
    
    contents - Archive contents generator
@@ -257,6 +257,7 @@ void GenContents::WriteSpace(FILE *Out,unsigned int Current,unsigned int Target)
 void GenContents::Print(FILE *Out)
 {
    char Buffer[1024];
+   Buffer[0] = 0;
    DoPrint(Out,&Root,Buffer);
 }
 void GenContents::DoPrint(FILE *Out,GenContents::Node *Top, char *Buf)
