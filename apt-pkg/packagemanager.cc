@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.23 1999/12/09 05:22:33 jgg Exp $
+// $Id: packagemanager.cc,v 1.24 1999/12/24 21:10:56 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -195,19 +195,22 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
    {
       if (D->Type != pkgCache::Dep::Conflicts)
 	 continue;
+
+      // The package hasnt been changed
+      if (List->IsNow(Pkg) == false)
+	 continue;
       
-      if (D.ParentPkg() == Pkg)
+      // Ignore self conflicts, ignore conflicts from irrelevent versions
+      if (D.ParentPkg() == Pkg || D.ParentVer() != D.ParentPkg().CurrentVer())
 	 continue;
       
       if (pkgCheckDep(D.TargetVer(),Ver,D->CompareOp) == false)
 	 continue;
-
-      if (List->IsNow(Pkg) == false)
-	 continue;
       
       if (EarlyRemove(D.ParentPkg()) == false)
-	 return false;
-   }  
+	 return _error->Error("Reverse conflicts early remove for package '%s' failed",
+			      Pkg.Name());
+   }
    return true;
 }
 									/*}}}*/
@@ -367,7 +370,22 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
       return false;
 
    // Essential packages get special treatment
+   bool IsEssential = false;
    if ((Pkg->Flags & pkgCache::Flag::Essential) != 0)
+      IsEssential = true;
+
+   /* Check for packages that are the dependents of essential packages and 
+      promote them too */
+   if (Pkg->CurrentVer != 0)
+   {
+      for (DepIterator D = Pkg.RevDependsList(); D.end() == false &&
+	   IsEssential == false; D++)
+	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
+	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0)
+	       IsEssential = true;
+   }
+
+   if (IsEssential == true)
    {
       if (_config->FindB("APT::Force-LoopBreak",false) == false)
 	 return _error->Error("This installation run will require temporarily "
@@ -491,8 +509,10 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    }
 
    // Check for reverse conflicts.
-   CheckRConflicts(Pkg,Pkg.RevDependsList(),
-		   Cache[Pkg].InstVerIter(Cache).VerStr());
+   if (CheckRConflicts(Pkg,Pkg.RevDependsList(),
+		   Cache[Pkg].InstVerIter(Cache).VerStr()) == false)
+      return false;
+   
    for (PrvIterator P = Cache[Pkg].InstVerIter(Cache).ProvidesList(); 
 	P.end() == false; P++)
       CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
