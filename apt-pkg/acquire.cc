@@ -312,7 +312,7 @@ void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 /* This runs the queues. It manages a select loop for all of the
    Worker tasks. The workers interact with the queues and items to
    manage the actual fetch. */
-pkgAcquire::RunResult pkgAcquire::Run()
+pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 {
    Running = true;
    
@@ -327,7 +327,7 @@ pkgAcquire::RunResult pkgAcquire::Run()
    // Run till all things have been acquired
    struct timeval tv;
    tv.tv_sec = 0;
-   tv.tv_usec = 500000; 
+   tv.tv_usec = PulseIntervall; 
    while (ToFetch > 0)
    {
       fd_set RFds;
@@ -357,7 +357,7 @@ pkgAcquire::RunResult pkgAcquire::Run()
       // Timeout, notify the log class
       if (Res == 0 || (Log != 0 && Log->Update == true))
       {
-	 tv.tv_usec = 500000;
+	 tv.tv_usec = PulseIntervall;
 	 for (Worker *I = Workers; I != 0; I = I->NextAcquire)
 	    I->Pulse();
 	 if (Log != 0 && Log->Pulse(this) == false)

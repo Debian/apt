@@ -169,6 +169,23 @@ int pkgCdrom::Score(string Path)
       Res += 10;
    if (Path.find("/debian/") != string::npos)
       Res -= 10;
+
+   // check for symlinks in the patch leading to the actual file
+   // a symlink gets a big penalty
+   struct stat Buf;
+   string statPath = flNotFile(Path);
+   string cdromPath = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   while(statPath != cdromPath && statPath != "./") {
+      statPath.resize(statPath.size()-1);  // remove the trailing '/'
+      if (lstat(statPath.c_str(),&Buf) == 0) {
+        if(S_ISLNK(Buf.st_mode)) {
+           Res -= 60;
+           break;
+        }
+      }
+      statPath = flNotFile(statPath); // descent
+   }
+
    return Res;
 }
 

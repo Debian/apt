@@ -72,6 +72,11 @@ APT
      NoAct "false";
   };
 
+  GPGV
+  {
+     TrustedKeyring "/etc/apt/trusted.gpg";
+  };
+
   // Some general options
   Ignore-Hold "false";
   Clean-Installed "true";
@@ -137,6 +142,11 @@ Acquire
        UMount "sleep 500";
     }
   };
+
+  gpgv
+  {
+   Options {"--ignore-time-conflict";}	// not very usefull on a normal system
+  };
 };
 
 // Directory layout
@@ -171,9 +181,10 @@ Dir "/"
   Bin {
      methods "/usr/lib/apt/methods/";
      gzip "/bin/gzip";
+     gpg  "/usr/bin/gpgv";
      dpkg "/usr/bin/dpkg";
      dpkg-source "/usr/bin/dpkg-source";
-     dpkg-buildpackage "/usr/bin/dpkg-buildpackage"
+     dpkg-buildpackage "/usr/bin/dpkg-buildpackage";
      apt-get "/usr/bin/apt-get";
      apt-cache "/usr/bin/apt-cache";
   };
@@ -229,8 +240,10 @@ Debug
   NoLocking "false";
   Acquire::Ftp "false";    // Show ftp command traffic
   Acquire::Http "false";   // Show http command traffic
+  Acquire::gpgv "false";   // Show the gpgv traffic
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";
+  
 }
 
 /* Whatever you do, do not use this configuration file!! Take out ONLY
