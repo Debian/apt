@@ -91,6 +91,7 @@ AC_DEFUN(ah_NUM_PROCS,
 
 AC_DEFUN(rc_GLIBC_VER,
 	[AC_MSG_CHECKING([glibc version])
+	AC_CACHE_VAL(ac_cv_glibc_ver,
 	dummy=if$$
 	cat <<_GLIBC_>$dummy.c
 #include <features.h>
@@ -102,11 +103,13 @@ _GLIBC_
 	if test "$?" = 0; then
 		GLIBC_VER=`./$dummy`
 		AC_MSG_RESULT([$GLIBC_VER])
-		GLIBC_VER="-$GLIBC_VER"
+		ac_cv_glibc_ver=$GLIBC_VER
 	else
 		AC_MSG_WARN([cannot determine GNU C library minor version number])
 	fi
 	rm -f $dummy $dummy.c
+	)
+	GLIBC_VER="-$ac_cv_glibc_ver"
 	AC_SUBST(GLIBC_VER)
 ])
 
