@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.3 1999/04/03 01:05:24 jgg Exp $
+// $Id: cdromutl.cc,v 1.4 1999/04/20 05:02:09 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -66,16 +66,12 @@ bool UnmountCdrom(string Path)
    if (IsMounted(Path) == false)
       return true;
    
-   int Child = fork();
-   if (Child < -1)
-      return _error->Errno("fork","Failed to fork");
+   int Child = ExecFork();
 
    // The child
    if (Child == 0)
    {
       // Make all the fds /dev/null
-      for (int I = 0; I != 10; I++)
-	 close(I);
       for (int I = 0; I != 3; I++)
 	 dup2(open("/dev/null",O_RDWR),I);
 
@@ -119,16 +115,12 @@ bool MountCdrom(string Path)
    if (IsMounted(Path) == true)
       return true;
    
-   int Child = fork();
-   if (Child < -1)
-      return _error->Errno("fork","Failed to fork");
+   int Child = ExecFork();
 
    // The child
    if (Child == 0)
    {
       // Make all the fds /dev/null
-      for (int I = 0; I != 10; I++)
-	 close(I);      
       for (int I = 0; I != 3; I++)
 	 dup2(open("/dev/null",O_RDWR),I);
       

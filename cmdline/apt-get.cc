@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.54 1999/04/19 06:03:09 jgg Exp $
+// $Id: apt-get.cc,v 1.55 1999/04/20 05:02:09 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -51,6 +51,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/wait.h>
 									/*}}}*/
 
 ostream c0out;
@@ -1214,42 +1215,68 @@ bool DoSource(CommandLine &CmdL)
       return true;
    
    // Unpack the sources
-   for (unsigned I = 0; I != J; I++)
+   pid_t Process = ExecFork();
+   
+   if (Process == 0)
    {
-      string Dir = Dsc[I].Package + '-' + pkgBaseVersion(Dsc[I].Version.c_str());
-    
-      // See if the package is already unpacked
-      struct stat Stat;
-      if (stat(Dir.c_str(),&Stat) == 0 &&
-	  S_ISDIR(Stat.st_mode) != 0)
+      for (unsigned I = 0; I != J; I++)
       {
-	 c0out << "Skipping unpack of already unpacked source in " << Dir << endl;
-      }
-      else
-      {
-	 // Call dpkg-source
-	 char S[500];
-	 snprintf(S,sizeof(S),"%s -x %s",
-		  _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
-		  Dsc[I].Dsc.c_str());
-	 if (system(S) != 0)
-	    return _error->Error("Unpack command '%s' failed.",S);
-      }
-  
-      // Try to compile it with dpkg-buildpackage
-      if (_config->FindB("APT::Get::Compile",false) == true)
-      {
-	 // Call dpkg-buildpackage
-	 char S[500];
-	 snprintf(S,sizeof(S),"cd %s && %s %s",
-		  Dir.c_str(),
-		  _config->Find("Dir::Bin::dpkg-buildpackage","dpkg-buildpackage").c_str(),
-		  _config->Find("DPkg::Build-Options","-b -uc").c_str());
+	 string Dir = Dsc[I].Package + '-' + pkgBaseVersion(Dsc[I].Version.c_str());
 	 
-	 if (system(S) != 0)
-	    return _error->Error("Build command '%s' failed.",S);
-      }      
-   }   
+	 // See if the package is already unpacked
+	 struct stat Stat;
+	 if (stat(Dir.c_str(),&Stat) == 0 &&
+	     S_ISDIR(Stat.st_mode) != 0)
+	 {
+	    c0out << "Skipping unpack of already unpacked source in " << Dir << endl;
+	 }
+	 else
+	 {
+	    // Call dpkg-source
+	    char S[500];
+	    snprintf(S,sizeof(S),"%s -x %s",
+		     _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
+		     Dsc[I].Dsc.c_str());
+	    if (system(S) != 0)
+	    {
+	       cerr << "Unpack command '" << S << "' failed." << endl;
+	       _exit(1);
+	    }	    
+	 }
+	 
+	 // Try to compile it with dpkg-buildpackage
+	 if (_config->FindB("APT::Get::Compile",false) == true)
+	 {
+	    // Call dpkg-buildpackage
+	    char S[500];
+	    snprintf(S,sizeof(S),"cd %s && %s %s",
+		     Dir.c_str(),
+		     _config->Find("Dir::Bin::dpkg-buildpackage","dpkg-buildpackage").c_str(),
+		     _config->Find("DPkg::Build-Options","-b -uc").c_str());
+	    
+	    if (system(S) != 0)
+	    {
+	       cerr << "Build command '" << S << "' failed." << endl;
+	       _exit(1);
+	    }	    
+	 }      
+      }
+      
+      _exit(0);
+   }
+   
+   // Wait for the subprocess
+   int Status = 0;
+   while (waitpid(Process,&Status,0) != Process)
+   {
+      if (errno == EINTR)
+	 continue;
+      return _error->Errno("waitpid","Couldn't wait for subprocess");
+   }
+
+   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
+      return _error->Error("Child process failed");
+   
    return true;
 }
 									/*}}}*/

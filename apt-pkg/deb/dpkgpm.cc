@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.8 1999/03/05 19:36:49 jgg Exp $
+// $Id: dpkgpm.cc,v 1.9 1999/04/20 05:02:09 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -86,27 +86,14 @@ bool pkgDPkgPM::RunScripts(const char *Cnf)
    Opts = Opts->Child;
 
    // Fork for running the system calls
-   pid_t Child = fork();
-   if (Child < 0)
-      return _error->Errno("fork","Could't fork");
+   pid_t Child = ExecFork();
    
    // This is the child
    if (Child == 0)
    {
-      signal(SIGPIPE,SIG_DFL);
-      signal(SIGQUIT,SIG_DFL);
-      signal(SIGINT,SIG_DFL);
-      signal(SIGWINCH,SIG_DFL);
-      signal(SIGCONT,SIG_DFL);
-      signal(SIGTSTP,SIG_DFL);
-      
       if (chdir("/tmp/") != 0)
 	 _exit(100);
 	 
-      // Close all of our FDs - just in case
-      for (int K = 3; K != 40; K++)
-	 fcntl(K,F_SETFD,FD_CLOEXEC);
-
       unsigned int Count = 1;
       for (; Opts != 0; Opts = Opts->Next, Count++)
       {
@@ -250,27 +237,14 @@ bool pkgDPkgPM::Go()
       signal(SIGINT,SIG_IGN);
 		     
       // Fork dpkg
-      pid_t Child = fork();
-      if (Child < 0)
-	 return _error->Errno("fork","Could't fork");
+      pid_t Child = ExecFork();
             
       // This is the child
       if (Child == 0)
       {
-	 signal(SIGPIPE,SIG_DFL);
-	 signal(SIGQUIT,SIG_DFL);
-	 signal(SIGINT,SIG_DFL);
-	 signal(SIGWINCH,SIG_DFL);
-	 signal(SIGCONT,SIG_DFL);
-	 signal(SIGTSTP,SIG_DFL);
-	 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
 	 
-	 // Close all of our FDs - just in case
-	 for (int K = 3; K != 40; K++)
-	    fcntl(K,F_SETFD,FD_CLOEXEC);
-
 	 int Flags,dummy;
 	 if ((Flags = fcntl(STDIN_FILENO,F_GETFL,dummy)) < 0)
 	    _exit(100);

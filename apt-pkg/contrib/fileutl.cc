@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.26 1999/03/21 07:24:14 jgg Exp $
+// $Id: fileutl.cc,v 1.27 1999/04/20 05:02:09 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -25,6 +25,7 @@
 #include <sys/fcntl.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <signal.h>
 #include <errno.h>
 									/*}}}*/
 
@@ -212,6 +213,40 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
    }
    
    return true;
+}
+									/*}}}*/
+// ExecFork - Magical fork that sanitizes the context before execing	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used if you want to cleanse the environment for the forked 
+   child, it fixes up the important signals and nukes all of the fds,
+   otherwise acts like normal fork. */
+int ExecFork()
+{
+   // Fork off the process
+   pid_t Process = fork();
+   if (Process < 0)
+   {
+      cerr << "FATAL -> Failed to fork." << endl;
+      exit(100);
+   }
+
+   // Spawn the subprocess
+   if (Process == 0)
+   {
+      // Setup the signals
+      signal(SIGPIPE,SIG_DFL);
+      signal(SIGQUIT,SIG_DFL);
+      signal(SIGINT,SIG_DFL);
+      signal(SIGWINCH,SIG_DFL);
+      signal(SIGCONT,SIG_DFL);
+      signal(SIGTSTP,SIG_DFL);
+      
+      // Close all of our FDs - just in case
+      for (int K = 3; K != 40; K++)
+	 fcntl(K,F_SETFD,FD_CLOEXEC);
+   }
+   
+   return Process;
 }
 									/*}}}*/
 

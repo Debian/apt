@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.20 1999/03/16 00:43:55 jgg Exp $
+// $Id: acquire-worker.cc,v 1.21 1999/04/20 05:02:09 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -115,12 +115,7 @@ bool pkgAcquire::Worker::Start()
       SetCloseExec(Pipes[0],true);
    
    // Fork off the process
-   Process = fork();
-   if (Process < 0)
-   {
-      cerr << "FATAL -> Failed to fork." << endl;
-      exit(100);
-   }
+   Process = ExecFork();
 
    // Spawn the subprocess
    if (Process == 0)
@@ -132,17 +127,6 @@ bool pkgAcquire::Worker::Start()
       SetCloseExec(STDOUT_FILENO,false);
       SetCloseExec(STDIN_FILENO,false);      
       SetCloseExec(STDERR_FILENO,false);
-
-      signal(SIGPIPE,SIG_DFL);
-      signal(SIGQUIT,SIG_DFL);
-      signal(SIGINT,SIG_DFL);
-      signal(SIGWINCH,SIG_DFL);
-      signal(SIGCONT,SIG_DFL);
-      signal(SIGTSTP,SIG_DFL);
-      
-      // Close all of our FDs - just in case
-      for (int K = 3; K != 40; K++)
-	 fcntl(K,F_SETFD,FD_CLOEXEC);
       
       const char *Args[2];
       Args[0] = Method.c_str();
