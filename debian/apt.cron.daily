@@ -38,7 +38,7 @@ update_stamp()
 
 
 # we check here if autoclean was enough sizewise
-check_size_constrains()
+check_size_constraints()
 {
     # min-age in days
     MaxAge=0
@@ -47,6 +47,7 @@ check_size_constrains()
     CacheArchive="archives/"
     eval $(apt-config shell MaxAge APT::Archives::MaxAge)
     eval $(apt-config shell MaxSize APT::Archives::MaxSize)
+    eval $(apt-config shell Dir Dir)
     eval $(apt-config shell CacheDir Dir::Cache)
     eval $(apt-config shell CacheArchive Dir::Cache::archives)
 
@@ -55,11 +56,12 @@ check_size_constrains()
 	echo "empty Dir::Cache or Dir::Cache::archives, exiting"
 	exit
     fi
-    Cache="/"$CacheDir$CacheArchive
+    
+    Cache="${Dir%/}/${CacheDir%/}/${CacheArchive%/}/"
 
     # check age
     if [ ! $MaxAge -eq 0 ]; then
-	find $Cache -name "*.deb"  -mtime +$MaxAge -exec rm -f {} \;
+	find $Cache -name "*.deb"  -mtime +$MaxAge -print0 | xargs -r -0 rm -f
     fi
     
     # check size
@@ -77,8 +79,6 @@ check_size_constrains()
 	done
     fi
 }
-
-check_size_constrains
 
 UpdateInterval=0
 DownloadUpgradeableInterval=0
@@ -117,6 +117,6 @@ fi
 AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
 if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
     apt-get -qq autoclean
-    check_size_contrains
+    check_size_constraints
     update_stamp $AUTOCLEAN_STAMP
 fi
