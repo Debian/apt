@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.53 2001/07/01 20:49:09 jgg Exp $
+// $Id: http.cc,v 1.54 2002/04/18 05:09:38 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -1142,6 +1142,9 @@ int HttpMethod::Loop()
 	 // Hard internal error, kill the connection and fail
 	 case 5:
 	 {
+	    delete File;
+	    File = 0;
+
 	    Fail();
 	    RotateDNS();
 	    Server->Close();
@@ -1179,3 +1182,5 @@ int main()
    
    return Mth.Loop();
 }
+
+

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: http.h,v 1.11 2001/05/27 23:53:56 jgg Exp $
-// $Id: http.h,v 1.11 2001/05/27 23:53:56 jgg Exp $
+// Description								/*{{{*/// $Id: http.h,v 1.12 2002/04/18 05:09:38 jgg Exp $
+// $Id: http.h,v 1.12 2002/04/18 05:09:38 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -75,7 +75,7 @@ class CircleBuf
    void Stats();
 
    CircleBuf(unsigned long Size);
-   ~CircleBuf() {delete [] Buf;};
+   ~CircleBuf() {delete [] Buf; delete Hash;};
 };
 
 struct ServerState
