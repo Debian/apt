@@ -12,8 +12,10 @@ all headers library clean veryclean binary program doc:
 	$(MAKE) -C methods $@
 #	$(MAKE) -C methods/ftp $@
 	$(MAKE) -C cmdline $@
+ifdef GUI	
 	$(MAKE) -C deity $@
 	$(MAKE) -C gui $@
+endif
 	$(MAKE) -C doc $@
 
 # Some very common aliases
