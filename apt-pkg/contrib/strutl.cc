@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.24 1999/04/04 08:07:39 jgg Exp $
+// $Id: strutl.cc,v 1.25 1999/06/24 04:34:25 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -705,16 +705,15 @@ void URI::CopyFrom(string U)
    if (FirstColon > SingleSlash)
       FirstColon = SingleSlash;
    
-   // Search for the @
-   I = FirstColon;
+   // Find the colon...
+   I = FirstColon + 1;
+   for (; I < SingleSlash && *I != ':'; I++);
+   string::const_iterator SecondColon = I;
+   
+   // Search for the @ after the colon
    for (; I < SingleSlash && *I != '@'; I++);
    string::const_iterator At = I;
    
-   // Colon in the @ section
-   I = FirstColon + 1;
-   for (; I < At && *I != ':'; I++);
-   string::const_iterator SecondColon = I;
-      
    // Now write the host and user/pass
    if (At == SingleSlash)
    {
