@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.117 2002/03/27 05:26:24 jgg Exp $
+// $Id: apt-get.cc,v 1.118 2002/04/02 07:16:24 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1176,10 +1176,20 @@ bool DoUpdate(CommandLine &CmdL)
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
-   
+
    // Populate it with the source selection
    if (List.GetIndexes(&Fetcher) == false)
 	 return false;
+   
+   // Just print out the uris an exit if the --print-uris flag was used
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+   {
+      pkgAcquire::UriIterator I = Fetcher.UriBegin();
+      for (; I != Fetcher.UriEnd(); I++)
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+      return true;
+   }
    
    // Run it
    if (Fetcher.Run() == pkgAcquire::Failed)
