@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.4 1998/10/20 02:39:25 jgg Exp $
+// $Id: cmndline.cc,v 1.5 1998/10/24 20:14:34 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -88,6 +88,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 	   stringcasecmp(Opt,OptEnd,A->LongOpt) != 0; A++);
       
       // Failed, look for a word after the first - (no-foo)
+      bool PreceedMatch = false;
       if (A->end() == true)
       {
 	 for (; Opt != OptEnd && *Opt != '-'; Opt++);
@@ -95,6 +96,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 	 if (Opt == OptEnd)
 	    return _error->Error("Command line option %s is not understood",argv[I]);
 	 Opt++;
+	 cout << Opt << endl;
 	 
 	 for (A = ArgList; A->end() == false &&
 	      stringcasecmp(Opt,OptEnd,A->LongOpt) != 0; A++);
@@ -102,21 +104,25 @@ bool CommandLine::Parse(int argc,const char **argv)
 	 // Failed again..
 	 if (A->end() == true && OptEnd - Opt != 1)
 	    return _error->Error("Command line option %s is not understood",argv[I]);
-	 
+
 	 // The option could be a single letter option prefixed by a no-..
-	 for (A = ArgList; A->end() == false && A->ShortOpt != *Opt; A++);
-	 
 	 if (A->end() == true)
-	    return _error->Error("Command line option %s is not understood",argv[I]);
+	 {
+	    for (A = ArgList; A->end() == false && A->ShortOpt != *Opt; A++);
+	    
+	    if (A->end() == true)
+	       return _error->Error("Command line option %s is not understood",argv[I]);
+	 }
 	 
 	 // The option is not boolean
 	 if (A->IsBoolean() == false)
 	    return _error->Error("Command line option %s is not boolean",argv[I]);
+	 PreceedMatch = true;
       }
       
       // Deal with it.
       OptEnd--;
-      if (HandleOpt(I,argc,argv,OptEnd,A) == false)
+      if (HandleOpt(I,argc,argv,OptEnd,A,PreceedMatch) == false)
 	 return false;
    }
    
@@ -134,7 +140,7 @@ bool CommandLine::Parse(int argc,const char **argv)
    and looks for specific patterns in the string, it gets tokanized
    -ruffly- like -*[yes|true|enable]-(o|longopt)[=][ ][argument] */
 bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
-			    const char *&Opt,Args *A)
+			    const char *&Opt,Args *A,bool PreceedMatch)
 {
    const char *Argument = 0;
    bool CertainArg = false;
@@ -165,7 +171,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       else
 	 Argument = Opt + 1;
    }
-
+   
    // Option is an argument set
    if ((A->Flags & HasArg) == HasArg)
    {
@@ -241,11 +247,16 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       char Buffer[300];
       if (Argument == 0)
       {
+	 if (PreceedMatch == false)
+	    break;
+	 
 	 if (strlen(argv[I]) >= sizeof(Buffer))
 	    return _error->Error("Option '%s' is too long",argv[I]);
-	 
+
+	 // Skip the leading dash
 	 const char *J = argv[I];
 	 for (; *J != 0 && *J == '-'; J++);
+	 
 	 const char *JEnd = J;
 	 for (; *JEnd != 0 && *JEnd != '-'; JEnd++);
 	 if (*JEnd != 0)

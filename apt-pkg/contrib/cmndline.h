@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.h,v 1.2 1998/09/26 05:34:25 jgg Exp $
+// $Id: cmndline.h,v 1.3 1998/10/24 20:14:35 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -57,8 +57,9 @@ class CommandLine
    
    Args *ArgList;
    Configuration *Conf;
-   bool HandleOpt(int &I,int argc,const char *argv[],const char *&Opt,Args *A);
-   
+   bool HandleOpt(int &I,int argc,const char *argv[],
+		  const char *&Opt,Args *A,bool PreceedeMatch = false);
+
    public:
    
    enum AFlags 
