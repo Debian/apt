@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.34 1999/04/19 02:35:38 jgg Exp $
+// $Id: apt-cache.cc,v 1.35 1999/05/11 05:45:10 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -176,9 +176,7 @@ bool DumpPackage(CommandLine &CmdL)
       }
       cout << "Reverse Provides: " << endl;
       for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; Prv++)
-	 cout << Prv.OwnerPkg().Name() << " " << Prv.OwnerVer().VerStr();
-      cout << endl;
-            
+	 cout << Prv.OwnerPkg().Name() << " " << Prv.OwnerVer().VerStr() << endl;            
    }
 
    return true;

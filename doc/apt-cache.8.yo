@@ -15,13 +15,14 @@ itemize(
   it() add file1 [file2] [...]
   it() gencaches
   it() showpkg package1 [package2] [...]
-  it() stats 
+  it() stats
   it() dump
   it() dumpavail
   it() unmet
   it() check
   it() search
   it() show
+  it() showpkg
 )
 
 Unless the -h, or --help option is given one of the above commands
@@ -136,6 +137,10 @@ bf(unmet) displays a summary of all unmet dependencies in the package cache.
 dit(bf(check))
 bf(check) is a random function for testing certain aspects of the cache.
 Do not use it.
+
+dit(bf(showpkg))
+bf(showpkg) displays a listing of the given package cache structure and some
+related information about it. The list is ment primarily for debugging.
 
 dit(bf(show))
 bf(show) performs the same function as dpkg --print-avail, it displays
