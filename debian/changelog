@@ -1,7 +1,7 @@
 apt (0.6.27ubuntu4) hoary; urgency=low
 
-  * if a sign-file download fails, delete the the partial downloaded 
-    file in "partial/"
+  * remove old sig-file in partial/ before starting to fetch a new sig-file
+    (see ubuntu #4769 for the rational)
   * added apt-key update method (uses ubuntu-keyring)
   * documented the "--allow-unauthenticated" switch
   * added DEB_BUILD_PROG_OPTS to debian/rules (additonal options can be 

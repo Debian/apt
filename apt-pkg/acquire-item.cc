@@ -321,6 +321,10 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
+   // remove any partial downloaded sig-file. it may confuse proxies
+   // and is too small to warrant a partial download anyway
+   unlink(DestFile.c_str());
+
    // Create the item
    Desc.Description = URIDesc;
    Desc.Owner = this;
@@ -392,15 +396,6 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    // mistakenly trusted
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    unlink(Final.c_str());
-
-   // if we debug leave the sig-file in partial/ to see what went wrong
-   // else delete it
-   if (!_config->FindB("Debug::pkgAcquire::Auth", false)) {
-      
-      Final = _config->FindDir("Dir::State::lists") + "partial/"+ URItoFileName(RealURI);
-      unlink(Final.c_str());
-   }
-
 
    // queue a pkgAcqMetaIndex with no sigfile
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
