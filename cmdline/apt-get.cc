@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.38 1999/02/01 08:11:57 jgg Exp $
+// $Id: apt-get.cc,v 1.39 1999/02/07 08:40:34 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -773,11 +773,13 @@ bool DoInstall(CommandLine &CmdL)
 	       pkgCache::PkgIterator Pkg = I.OwnerPkg();
 	       
 	       if ((*Cache)[Pkg].CandidateVerIter(*Cache) == I.OwnerVer())
-		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() << endl;
-
-	       if ((*Cache)[Pkg].InstVerIter(*Cache) == I.OwnerVer())
-		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() <<
-		    " [Installed]"<< endl;
+	       {
+		  if ((*Cache)[Pkg].Install() == true && (*Cache)[Pkg].NewInstall() == false)
+		     c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() <<
+		     " [Installed]"<< endl;
+		  else
+		     c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() << endl;
+	       }      
 	    }
 	    c1out << "You should explicly select one to install." << endl;
 	 }
