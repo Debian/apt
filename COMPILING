@@ -30,9 +30,13 @@ Current shims:
   * C9x integer types 'inttypes.h' 
   * sys/statvfs.h to convert from BSD/Linux statfs to SUS statvfs
   * rfc2553 hostname resolution (methods/rfc*), shims to normal gethostbyname.
+    The more adventerous could steal the KAME IPv6 enabled resolvers for those
+    OS's with IPv6 support but no rfc2553 (why?)
+  * define _XOPEN_EXTENDES_SOURCE to bring in h_errno on HP-UX
+  * socklen_t shim in netdb.h if the OS does not have socklen_t
   
 The only completely non-shimed OS is Linux with glibc2.1, glibc2.0 requires
-all three shims.
+the first three shims.
 
 Platform Notes
 ~~~~~~~~~~~~~~
@@ -42,7 +46,7 @@ Debian GNU Linux 'potato'
   - Works flawlessly
   - You will want to have debiandoc-sgml and yodl installed to get
     best results.
-  - No IPv6 Support in glibc's < 2.1
+  - No IPv6 Support in glibc's < 2.1.
 
 Sun Solaris
   SunOS cab101 5.7 Generic_106541-04 sun4u sparc
@@ -52,7 +56,8 @@ Sun Solaris
 OpenBSD
   OpenBSD gsb086 2.5 CMPUT#0 i386 unknown
   - Works fine
-  - OS needs 'ranlib' to generate the symbol table after 'ar'..
+  - OS needs 'ranlib' to generate the symbol table after 'ar'.. (not using
+    GNU ar with the gnu tool chain :<)
   - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
   
 HP-UX
@@ -61,15 +66,6 @@ HP-UX
      1) snprintf exists but is not prototyped, ignore spurios warnings
      2) No socklen_t
      3) Requires -D_XOPEN_SOURCE_EXTENDED for h_errno
-    configure attempts to detect items 2 and 3, and tries to fix them.  If
-    not, you can add the following into(patches welcome to configure.in)
-    build/include/netdb.h:
-    
-    #define _XOPEN_SOURCE_EXTENDED
-    #define socklen_t size_t
-    #include_next <netdb.h>
-    
-    A similar techinque can be used for snprintf/vsprintf if you dislike 
-    the warnings
+    configure should fix the last two (see above)
   - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
     

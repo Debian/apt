@@ -14,7 +14,7 @@ dnl configure.in correctly and can be run at any time
 
 AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(buildlib)
-AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/netdb.h:buildlib/netdb.h.in)
+AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
 AC_DEFINE_UNQUOTED(VERSION,"0.3.15.1")
@@ -108,8 +108,12 @@ if test x"$HAVE_STATVFS" != x"yes"; then
 fi
 
 dnl Check the sizes etc. of the architecture
+dnl This is stupid, it should just use the AC macros like it does below
+dnl Cross compilers can either get a real C library or preload the cache
+dnl with their size values.
 changequote(,)
-if archline="`grep \"^$archset\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`";then
+archline="`grep \"^$archset\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`"
+if test "x$archline" != "x"; then
    changequote([,])
    set $archline
    if test "$1" = "little"; then
@@ -123,12 +127,13 @@ if archline="`grep \"^$archset\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`"
    size_long=$5
 fi
 
-if test "$cross_compiling" = "yes" -a "$archline" = ""; then
+dnl I wonder what AC_C_BIGENDIAN does if you cross compile...
+if test "$cross_compiling" = "yes" -a "x$archline" = "x"; then
   AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
 fi
 AC_C_BIGENDIAN
    
-dnl We do not need this if we have inttypes..
+dnl We do not need this if we have inttypes!
 HAVE_C9X=yes
 if test x"$c9x_ints" = x"no"; then
    AC_CHECK_SIZEOF(char,$size_char)
@@ -140,29 +145,22 @@ if test x"$c9x_ints" = x"no"; then
    AC_SUBST(HAVE_C9X)
 fi
 
-AC_MSG_CHECKING(for socklen_t)
-AC_EGREP_HEADER(socklen_t, sys/socket.h, [
-	AC_DEFINE(HAVE_SYS_SOCKET_H)
-	AC_MSG_RESULT(sys/socket.h)
-], [
+dnl HP-UX sux..
+AC_MSG_CHECKING(for missing socklen_t)
+AC_EGREP_HEADER(socklen_t, sys/socket.h,[AC_MSG_RESULT(no)],[
 	AC_DEFINE(NEED_SOCKLEN_T_DEFINE)
-	AC_MSG_RESULT([socklen_t size_t])
-])
+	NEED_SOCKLEN_T_DEFINE=yes
+        AC_MSG_RESULT(missing.)])
+AC_SUBST(NEED_SOCKLEN_T_DEFINE)
 
+dnl HP-UX needs -d_XOPEN_SOURCE_EXTENDED for h_errno
 AC_MSG_CHECKING(for h_errno)
-AC_EGREP_HEADER(h_errno, netdb.h, [AC_DEFINE(HAVE_NETDB_H)
-	AC_MSG_RESULT(found)
-], [AC_TRY_COMPILE(netdb.h, h_errno foo, [AC_MSG_RESULT(found)
-		AC_MSG_RESULT(found)
-	], [ah_CFLAGS="$CFLAGS"
-		CFLAGS="$CFLAGS -D_XOPEN_SOURCE_EXTENDED"
-		AC_TRY_COMPILE([netdb.h], [h_errno foo], [AC_DEFINE(NEED_XOPEN_NETDB_H)
-			AC_MSG_RESULT([found, needed -D_XOPEN_SOURCE_EXTENDED])
-		], [CFLAGS="$ah_CFLAGS"
-			AC_MSG_ERROR(["not found."])
-		])
-	])
-])
+AC_EGREP_HEADER(h_errno, netdb.h, [AC_MSG_RESULT(normal)],
+   [CPPFLAGS="$CPPFLAGS -D_XOPEN_SOURCE_EXTENDED"
+    AC_EGREP_HEADER(h_errno, netdb.h, 
+       [AC_MSG_RESULT(needs _XOPEN_SOURCE_EXTENDED)],
+       [AC_MSG_ERROR("not found.")])
+   ])
 
 dnl Check for debiandoc
 AC_CHECK_PROG(DEBIANDOC_HTML,debiandoc2html,"yes","")

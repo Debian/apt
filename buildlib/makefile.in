@@ -34,8 +34,6 @@ dirs:
 	@rm -f include/sys
 ifneq ($(words $(MISSING_DIRS)),0)
 	@mkdir  $(MISSING_DIRS)
-else
-	@echo > /dev/null
 endif	
 ifeq ($(HAVE_C9X),yes)
 	@rm -f include/inttypes.h > /dev/null 2>&1
@@ -47,4 +45,9 @@ ifeq ($(HAVE_STATVFS),yes)
 else
 	@cp -p $(SRCDIR)/buildlib/statvfs.h.in include/statvfs.h
 	ln -sf . include/sys
+endif
+ifeq ($(NEED_SOCKLEN_T_DEFINE),yes)
+	@cp -p $(SRCDIR)/buildlib/netdb.h.in include/netdb.h
+else
+	@rm -f include/netdb.h > /dev/null 2>&1
 endif

@@ -2,6 +2,8 @@
    byte first (like Motorola and SPARC, unlike Intel and VAX).  */
 #undef WORDS_BIGENDIAN
 
+/* The following 4 are only used by inttypes.h shim if the system lacks
+   inttypes.h */
 /* The number of bytes in a usigned char.  */
 #undef SIZEOF_CHAR
 
@@ -23,6 +25,7 @@
 /* Define if we have the X11 windowing system. */
 #undef HAVE_X11
 
+/* These two are used by the statvfs shim for glibc2.0 and bsd */
 /* Define if we have sys/vfs.h */
 #undef HAVE_VFS_H
 
@@ -32,19 +35,8 @@
 /* Define if we have enabled pthread support */
 #undef HAVE_PTHREAD
 
-/* Define if h_errno is in netdb.h */
-#undef HAVE_NETDB_H
-
-/* Define if socklen_t is in sys/socket.h  This does not mean we
-   shouldn't include sys/socket.h tho!  */
-#undef HAVE_SYS_SOCKET_H
-
-/* If there is no socklen_t, define this(might want to update
-   configure.in.  */
+/* If there is no socklen_t, define this for the netdb shim */
 #undef NEED_SOCKLEN_T_DEFINE
-
-/* Define on HP-UX */
-#undef NEED_XOPEN_NETDB_H
 
 /* Define the architecture name string */
 #undef ARCHITECTURE
