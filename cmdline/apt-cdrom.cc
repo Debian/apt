@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.29 1999/08/08 03:34:13 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.30 1999/08/12 07:00:55 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -63,7 +63,7 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
    /* Aha! We found some package files. We assume that everything under 
       this dir is controlled by those package files so we don't look down
       anymore */
-   if (stat("Packages",&Buf) == 0) 
+   if (stat("Packages",&Buf) == 0 || stat("Packages.gz",&Buf))
    {
       List.push_back(CD);
       
