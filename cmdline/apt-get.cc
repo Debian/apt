@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.18 1998/11/23 07:03:13 jgg Exp $
+// $Id: apt-get.cc,v 1.19 1998/11/24 02:35:32 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -736,6 +736,16 @@ bool DoInstall(CommandLine &CmdL)
 	    c1out << "Package " << S << " has no available version, but exists in the database." << endl;
 	    c1out << "This typically means that the package was mentioned in a dependency and " << endl;
 	    c1out << "never uploaded, or that it is an obsolete package." << endl;
+	    
+	    string List;
+	    pkgCache::DepIterator Dep = Pkg.RevDependsList();
+	    for (; Dep.end() == false; Dep++)
+	    {
+	       if (Dep->Type != pkgCache::Dep::Replaces)
+		  continue;
+	       List += string(Dep.ParentPkg().Name()) + " ";
+	    }	    
+	    ShowList(c1out,"However the following packages replace it:",List);
 	 }
 	 
 	 return _error->Error("Package %s has no installation candidate",S);
