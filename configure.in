@@ -85,7 +85,7 @@ AC_CACHE_CHECK([for C9x integer types],c9x_ints,[
 
 dnl Check the sizes etc. of the architecture
 changequote(,)
-if archline="`grep '^$archset' | cut -f 2- -d ' '`";then
+if archline="`grep \"^$archset\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`";then
    changequote([,])
    set $archline
    if test "$1" = "little"; then
