@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.6 1999/01/31 08:49:39 jgg Exp $
+// $Id: dpkgpm.cc,v 1.7 1999/01/31 08:55:53 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -140,7 +140,7 @@ bool pkgDPkgPM::RunScripts(const char *Cnf)
       {
 	 Count -= 100;
 	 for (; Opts != 0 && Count != 1; Opts = Opts->Next, Count--);
-	 _error->Error("Probablem executing scripts %s '%s'",Cnf,Opts->Value.c_str());
+	 _error->Error("Problem executing scripts %s '%s'",Cnf,Opts->Value.c_str());
       }
       
       return _error->Error("Sub-process returned an error code");
@@ -213,6 +213,8 @@ bool pkgDPkgPM::Go()
       {
 	 for (;I != J && Size < 1024; I++)
 	 {
+	    if (I->File[0] != '/')
+	       return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
 	    Args[n++] = I->File.c_str();
 	    Size += strlen(Args[n-1]);
 	 }
@@ -262,7 +264,7 @@ bool pkgDPkgPM::Go()
 	 signal(SIGCONT,SIG_DFL);
 	 signal(SIGTSTP,SIG_DFL);
 	 
-	 if (chdir(_config->FindDir("Dir::Cache::Archives").c_str()) != 0)
+	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
 	 
 	 // Close all of our FDs - just in case
