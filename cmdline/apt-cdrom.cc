@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.7 1998/12/04 23:33:18 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.8 1998/12/08 23:52:23 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -57,7 +57,10 @@ bool FindPackages(string CD,vector<string> &List, int Depth = 0)
        stat("Packages.gz",&Buf) == 0)
    {
       List.push_back(CD);
-      return true;
+      
+      // Continue down if thorough is given
+      if (_config->FindB("APT::CDROM::Thorough",false) == false)
+	 return true;
    }
 
    DIR *D = opendir(".");
@@ -972,9 +975,10 @@ int main(int argc,const char *argv[])
       {'r',"rename","APT::CDROM::Rename",0},
       {'m',"no-mount","APT::CDROM::NoMount",0},
       {'f',"fast","APT::CDROM::Fast",0},
-      {'n',"just-print","APT::CDROM::NoAct",0},      
+      {'n',"just-print","APT::CDROM::NoAct",0},
       {'n',"recon","APT::CDROM::NoAct",0},      
-      {'n',"no-act","APT::CDROM::NoAct",0},      
+      {'n',"no-act","APT::CDROM::NoAct",0},
+      {'a',"thorough","APT::CDROM::Thorough",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

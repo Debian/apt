@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.27 1998/12/07 00:34:24 jgg Exp $
+// $Id: apt-get.cc,v 1.28 1998/12/08 23:52:24 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -485,7 +485,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
 
    if (Cache->DelCount() == 0 && Cache->InstCount() == 0 && 
        Cache->BadCount() == 0)
-      return true;   
+      return true;
 
    // Run the simulator ..
    if (_config->FindB("APT::Get::Simulate") == true)
