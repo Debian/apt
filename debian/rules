@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.38 2002/10/16 05:58:16 jgg Exp $
+# $Id: rules,v 1.39 2002/11/09 06:34:13 doogie Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -17,7 +17,7 @@
 export DH_COMPAT=2
 
 # See below
-include build/environment.mak
+-include build/environment.mak
 
 # Default rule
 build:
@@ -108,7 +108,7 @@ clean:
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
 	-$(MAKE) distclean
-	dh_clean
+	dh_clean debian/copyright
 
 binary-indep: libapt-pkg-doc
 # Build architecture-independent files here.
