@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.7 1998/11/11 06:54:14 jgg Exp $
+// $Id: acquire-item.h,v 1.8 1998/11/13 04:23:28 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -19,6 +19,7 @@
 
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/pkgrecords.h>
 
 #ifdef __GNUG__
 #pragma interface "apt-pkg/acquire-item.h"
@@ -93,6 +94,25 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    virtual string Custom600Headers();
    
    pkgAcqIndexRel(pkgAcquire *Owner,const pkgSourceList::Item *Location);
+};
+
+// Item class for archive files
+class pkgAcqArchive : public pkgAcquire::Item
+{
+   protected:
+   
+   pkgCache::VerIterator Version;
+   pkgAcquire::ItemDesc Desc;
+   pkgSourceList *Sources;
+   pkgRecords *Recs;
+   string MD5;
+   
+   public:
+   
+   virtual void Done(string Message,unsigned long Size,string Md5Hash);
+   
+   pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
+		 pkgRecords *Recs,pkgCache::VerIterator const &Version);
 };
 
 #endif

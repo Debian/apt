@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.8 1998/11/12 05:30:10 jgg Exp $
+// $Id: apt-get.cc,v 1.9 1998/11/13 04:24:03 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -33,6 +33,7 @@
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/dpkgpm.h>
 
 #include <config.h>
 
@@ -421,7 +422,7 @@ bool CacheFile::Open()
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
    happen and then calls the download routines */
-bool InstallPackages(pkgDepCache &Cache,bool ShwKept)
+bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
 {
    ShowDel(c1out,Cache);
    ShowNew(c1out,Cache);
@@ -443,7 +444,35 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept)
    if (Cache.DelCount() == 0 && Cache.InstCount() == 0 && 
        Cache.BadCount() == 0)
       return true;   
-      
+
+   // Run the simulator ..
+   if (_config->FindB("APT::Get::Simulate") == true)
+   {
+      pkgSimulate PM(Cache);
+      return PM.DoInstall();
+   }
+   
+   // Create the text record parser
+   pkgRecords Recs(Cache);
+   
+   // Create the download object
+   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
+   pkgAcquire Fetcher(&Stat);
+
+   // Read the source list
+   pkgSourceList List;
+   if (List.ReadMainList() == false)
+      return _error->Error("The list of sources could not be read.");
+   
+   // Create the package manager and prepare to download
+   pkgPackageManager PM(Cache);
+   if (PM.GetArchives(&Fetcher,&List,&Recs) == false)
+      return false;
+
+   // Run it
+   if (Fetcher.Run() == false)
+      return false;
+   
    return true;
 }
 									/*}}}*/
@@ -654,7 +683,10 @@ bool DoInstall(CommandLine &CmdL)
       ShowList(c1out,"The following extra packages will be installed:",List);
    }
 
-   return InstallPackages(Cache,false);
+   // See if we need to prompt
+   if (Cache->InstCount() != ExpectedInst || Cache->DelCount() != 0)
+      return InstallPackages(Cache,false,true);
+   return InstallPackages(Cache,false);   
 }
 									/*}}}*/
 // DoDistUpgrade - Automatic smart upgrader				/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.4 1998/07/19 21:24:13 jgg Exp $
+// $Id: packagemanager.h,v 1.5 1998/11/13 04:23:31 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -31,10 +31,11 @@
 #include <string>
 #include <apt-pkg/pkgcache.h>
 
-class pkgAquire;
+class pkgAcquire;
 class pkgDepCache;
 class pkgSourceList;
 class pkgOrderList;
+class pkgRecords;
 class pkgPackageManager
 {
    protected:
@@ -68,11 +69,13 @@ class pkgPackageManager
    virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/) {return false;};
-   virtual bool Go() {return false;};
+   virtual bool Go() {return true;};
    
    public:
 
    // Main action members
+   bool GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
+		    pkgRecords *Recs);
    bool DoInstall();
    bool FixMissing();
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.4 1998/07/12 23:58:30 jgg Exp $
+// $Id: packagemanager.cc,v 1.5 1998/11/13 04:23:30 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -21,6 +21,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/version.h>
+#include <apt-pkg/acquire-item.h>
 									/*}}}*/
 
 // PM::PackageManager - Constructor					/*{{{*/
@@ -39,6 +40,26 @@ pkgPackageManager::~pkgPackageManager()
 {
    delete List;
    delete [] FileNames;
+}
+									/*}}}*/
+// PM::GetArchives - Queue the archives for download			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
+				    pkgRecords *Recs)
+{
+   pkgCache::PkgIterator I = Cache.PkgBegin();
+   for (;I.end() != true; I++)
+   {      
+      // Not interesting
+      if ((Cache[I].InstallVer == (pkgCache::Version *)I.CurrentVer() &&
+	   I.State() != pkgCache::PkgIterator::NeedsUnpack) ||
+	  Cache[I].Delete() == true)
+	 continue;
+      
+      new pkgAcqArchive(Owner,Sources,Recs,Cache[I].InstVerIter(Cache));
+   }
+   return true;
 }
 									/*}}}*/
 // PM::FixMissing - Keep all missing packages				/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.10 1998/11/12 04:10:52 jgg Exp $
+// $Id: acquire-item.cc,v 1.11 1998/11/13 04:23:26 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -18,6 +18,7 @@
 #endif
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <strutl.h>
 
 #include <sys/stat.h>
@@ -298,5 +299,99 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(Location->ReleaseURI());
    Rename(DestFile,FinalFile);
+}
+									/*}}}*/
+
+// AcqArchive::AcqArchive - Constructor					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
+			     pkgRecords *Recs,pkgCache::VerIterator const &Version) :
+               Item(Owner), Version(Version), Sources(Sources), Recs(Recs)
+{
+   // Select a source
+   pkgCache::VerFileIterator Vf = Version.FileList();
+   for (; Vf.end() == false; Vf++)
+   {
+      // Ignore not source sources
+      if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
+	 continue;
+
+      // Try to cross match against the source list
+      string PkgFile = flNotDir(Vf.File().FileName());
+      pkgSourceList::const_iterator Location;
+      for (Location = Sources->begin(); Location != Sources->end(); Location++)
+	 if (PkgFile == URItoFileName(Location->PackagesURI()))
+	    break;
+
+      if (Location == Sources->end())
+	 continue;
+      
+      // Grab the text package record
+      pkgRecords::Parser &Parse = Recs->Lookup(Vf);
+      if (_error->PendingError() == true)
+	 return;
+      
+      PkgFile = Parse.FileName();
+      MD5 = Parse.MD5Hash();
+      if (PkgFile.empty() == true)
+      {
+	 _error->Error("Unable to locate a file name for package %s, "
+		       "perhaps the package files are corrupted.",
+		       Version.ParentPkg().Name());
+	 return;
+      }
+      
+      // Create the item
+      Desc.URI = Location->ArchiveURI(PkgFile);
+      Desc.Description = Location->ArchiveInfo(Version);
+      Desc.Owner = this;
+      Desc.ShortDesc = Version.ParentPkg().Name();
+      QueueURI(Desc);
+      
+      DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(PkgFile);
+      return;
+   }
+   
+  _error->Error("I wasn't able to locate file for the %s package. "
+		"This probably means you need to rerun update.",
+		Version.ParentPkg().Name());
+}
+									/*}}}*/
+// AcqArchive::Done - Finished fetching					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
+{
+   Item::Done(Message,Size,MD5);
+   
+   // Check the size
+   if (Size != Version->Size)
+   {
+      _error->Error("Size mismatch for package %s",Version.ParentPkg().Name());
+      return;
+   }
+   
+   // Check the md5
+   if (Md5Hash.empty() == false && MD5.empty() == false)
+   {
+      if (Md5Hash != MD5)
+      {
+	 _error->Error("MD5Sum mismatch for package %s",Version.ParentPkg().Name());
+	 return;
+      }
+   }
+   
+   // Store the destination filename
+   string FileName = LookupTag(Message,"Filename");
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "Method gave a blank filename";
+      return;
+   }
+   
+   DestFile = FileName;
+   Complete = true;
 }
 									/*}}}*/

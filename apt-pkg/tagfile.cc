@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.13 1998/10/30 07:53:41 jgg Exp $
+// $Id: tagfile.cc,v 1.14 1998/11/13 04:23:36 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -94,7 +94,8 @@ bool pkgTagFile::Fill()
 									/*}}}*/
 // TagFile::Jump - Jump to a pre-recorded location in the file		/*{{{*/
 // ---------------------------------------------------------------------
-/* This jumps to a pre-recorded file location and */
+/* This jumps to a pre-recorded file location and reads the record
+   that is there */
 bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
 {
    iOffset = Offset;

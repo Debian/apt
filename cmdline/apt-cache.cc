@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.10 1998/10/19 23:45:35 jgg Exp $
+// $Id: apt-cache.cc,v 1.11 1998/11/13 04:24:01 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -44,7 +44,13 @@ bool DumpPackage(pkgCache &Cache,CommandLine &CmdL)
       cout << "Package: " << Pkg.Name() << endl;
       cout << "Versions: ";
       for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; Cur++)
-	 cout << Cur.VerStr() << ',';
+      {
+	 cout << Cur.VerStr();
+	 for (pkgCache::VerFileIterator Vf = Cur.FileList(); Vf.end() == false; Vf++)
+	    cout << "(" << Vf.File().FileName() << ")";
+	 cout << ',';
+      }
+      
       cout << endl;
       
       cout << "Reverse Depends: " << endl;
@@ -72,6 +78,7 @@ bool DumpPackage(pkgCache &Cache,CommandLine &CmdL)
       for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; Prv++)
 	 cout << Prv.OwnerPkg().Name() << " " << Prv.OwnerVer().VerStr();
       cout << endl;
+            
    }
 
    return true;

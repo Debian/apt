@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.2 1998/10/08 04:55:02 jgg Exp $
+// $Id: debrecords.cc,v 1.3 1998/11/13 04:23:37 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -25,7 +25,7 @@ debRecordParser::debRecordParser(FileFd &File) : Tags(File,4*1024)
 // RecordParser::Jump - Jump to a specific record			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debRecordParser::Jump(pkgCache::VerFileIterator &Ver)
+bool debRecordParser::Jump(pkgCache::VerFileIterator const &Ver)
 {
    return Tags.Jump(Section,Ver->Offset);
 }

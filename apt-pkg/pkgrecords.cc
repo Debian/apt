@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.cc,v 1.3 1998/10/20 02:39:23 jgg Exp $
+// $Id: pkgrecords.cc,v 1.4 1998/11/13 04:23:34 jgg Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records
@@ -23,9 +23,7 @@
 /* This will create the necessary structures to access the status files */
 pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 {
-   string ListDir = _config->FindFile("Dir::State::lists");
-   
-   Files = new PkgFile[Cache.HeaderP->PackageFileCount];   
+   Files = new PkgFile[Cache.HeaderP->PackageFileCount];
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); 
 	I.end() == false; I++)
    {
@@ -37,7 +35,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
       }
    
       // Create the file
-      Files[I->ID].File = new FileFd(ListDir + I.FileName(),FileFd::ReadOnly);
+      Files[I->ID].File = new FileFd(I.FileName(),FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 return;
       
@@ -59,8 +57,8 @@ pkgRecords::~pkgRecords()
 // Records::Lookup - Get a parser for the package version file		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgRecords::Parser &pkgRecords::Lookup(pkgCache::VerFileIterator &Ver)
-{   
+pkgRecords::Parser &pkgRecords::Lookup(pkgCache::VerFileIterator const &Ver)
+{
    PkgFile &File = Files[Ver.File()->ID];
    File.Parse->Jump(Ver);
 
