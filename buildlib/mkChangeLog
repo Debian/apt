@@ -1,7 +1,8 @@
 #!/bin/sh
 
-NAMES="`sed -ne 's/^.*CVS:\([^ ]\+\) \([^<]\+\) <\([^>]*\)>/\
-	-u '\''\1:\2:\3'\''/gp' AUTHORS`"
+NAMES="`sed -ne 's/'\''/'\''\\\\'\'''\''/g;
+	         s/^.*CVS:\([^ ]\+\) \([^<]\+\) <\([^>]*\)>/\
+		    -u '\''\1:\2:\3'\''/gp' AUTHORS`"
 OPTIONS="-l 78"
 
 # Generate the standard ChangeLog
