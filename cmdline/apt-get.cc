@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.133 2003/07/25 22:03:49 mdz Exp $
+// $Id: apt-get.cc,v 1.134 2003/08/07 20:51:50 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1350,14 +1350,14 @@ bool DoInstall(CommandLine &CmdL)
       while (Cache->FindPkg(S).end() == true)
       {
 	 // Handle an optional end tag indicating what to do
-	 if (S[Length - 1] == '-')
+	 if (Length >= 1 && S[Length - 1] == '-')
 	 {
 	    Remove = true;
 	    S[--Length] = 0;
 	    continue;
 	 }
 	 
-	 if (S[Length - 1] == '+')
+	 if (Length >= 1 && S[Length - 1] == '+')
 	 {
 	    Remove = false;
 	    S[--Length] = 0;
