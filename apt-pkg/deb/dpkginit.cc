@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkginit.cc,v 1.4 1999/07/30 05:36:52 jgg Exp $
+// $Id: dpkginit.cc,v 1.5 1999/08/03 05:21:19 jgg Exp $
 /* ######################################################################
 
    DPKG init - Initialize the dpkg stuff
@@ -91,7 +91,7 @@ bool pkgDpkgLock::CheckUpdates()
    string File = flNotFile(_config->Find("Dir::State::status")) + "updates/";
    DIR *DirP = opendir(File.c_str());
    if (DirP == 0)
-      return true;
+      return false;
    
    /* We ignore any files that are not all digits, this skips .,.. and 
       some tmp files dpkg will leave behind.. */
