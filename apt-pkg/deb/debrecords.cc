@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.7 1999/04/07 05:30:18 jgg Exp $
+// $Id: debrecords.cc,v 1.8 1999/05/18 05:28:03 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -75,11 +75,15 @@ string debRecordParser::LongDesc()
    return Section.FindS("Description");
 }
 									/*}}}*/
-// debRecordParser::SourcePkg - Return the source package name if any	/*{{{*/
+// RecordParser::SourcePkg - Return the source package name if any	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 string debRecordParser::SourcePkg()
 {
-   return Section.FindS("Source");
+   string Res = Section.FindS("Source");
+   string::size_type Pos = Res.find(' ');
+   if (Pos == string::npos)
+      return Res;
+   return string(Res,0,Pos);
 }
 									/*}}}*/
