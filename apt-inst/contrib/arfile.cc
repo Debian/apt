@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: arfile.cc,v 1.6 2003/07/18 14:15:11 mdz Exp $
+// $Id: arfile.cc,v 1.7 2004/01/07 20:39:37 mdz Exp $
 /* ######################################################################
 
    AR File - Handle an 'AR' archive
@@ -17,13 +17,13 @@
 #ifdef __GNUG__
 #pragma implementation "apt-pkg/arfile.h"
 #endif
-#include <apti18n.h>
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
 #include <stdlib.h>
 									/*}}}*/
+#include <apti18n.h>
 
 struct ARArchive::MemberHeader
 {

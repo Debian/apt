@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.56 2003/02/12 15:33:36 doogie Exp $
+// $Id: http.cc,v 1.57 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -25,7 +25,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -40,6 +39,7 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
+#include <apti18n.h>
 
 // Internet stuff
 #include <netdb.h>

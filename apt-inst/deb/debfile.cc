@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debfile.cc,v 1.3 2003/02/10 00:36:12 doogie Exp $
+// $Id: debfile.cc,v 1.4 2004/01/07 20:39:37 mdz Exp $
 /* ######################################################################
 
    Debian Archive File (.deb)
@@ -20,7 +20,6 @@
 #pragma implementation "apt-pkg/debfile.h"
 #endif
 
-#include <apti18n.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
@@ -28,6 +27,7 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
+#include <apti18n.h>
 									/*}}}*/
 
 // DebFile::debDebFile - Constructor					/*{{{*/

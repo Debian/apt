@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extracttar.cc,v 1.8 2003/07/18 15:35:23 mdz Exp $
+// $Id: extracttar.cc,v 1.9 2004/01/07 20:39:37 mdz Exp $
 /* ######################################################################
 
    Extract a Tar - Tar Extractor
@@ -19,7 +19,6 @@
 #ifdef __GNUG__
 #pragma implementation "apt-pkg/extracttar.h"
 #endif
-#include <apti18n.h>
 #include <apt-pkg/extracttar.h>
 
 #include <apt-pkg/error.h>
@@ -32,7 +31,9 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <iostream>
+#include <apti18n.h>
 									/*}}}*/
+
 using namespace std;
     
 // The on disk header for a tar file.

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: file.cc,v 1.9 2003/02/10 07:34:41 doogie Exp $
+// $Id: file.cc,v 1.10 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    File URI method for APT
@@ -13,12 +13,12 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
+#include <apti18n.h>
 									/*}}}*/
 
 class FileMethod : public pkgAcqMethod

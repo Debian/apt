@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dirstream.cc,v 1.3 2003/02/10 00:36:12 doogie Exp $
+// $Id: dirstream.cc,v 1.4 2004/01/07 20:39:37 mdz Exp $
 /* ######################################################################
 
    Directory Stream 
@@ -15,7 +15,6 @@
 #pragma implementation "apt-pkg/dirstream.h"
 #endif
 
-#include <apti18n.h>
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
 
@@ -25,6 +24,7 @@
 #include <errno.h>
 #include <utime.h>
 #include <unistd.h>
+#include <apti18n.h>
 									/*}}}*/
 
 // DirStream::DoItem - Process an item					/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.10 2003/02/10 07:34:41 doogie Exp $
+// $Id: connect.cc,v 1.11 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -11,7 +11,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include "connect.h"
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
@@ -27,6 +26,7 @@
 #include <netdb.h>
 
 #include "rfc2553emu.h"
+#include <apti18n.h>
 									/*}}}*/
 
 static string LastHost;

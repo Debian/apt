@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgdb.cc,v 1.7 2003/02/10 00:36:12 doogie Exp $
+// $Id: dpkgdb.cc,v 1.8 2004/01/07 20:39:37 mdz Exp $
 /* ######################################################################
 
    DPKGv1 Database Implemenation
@@ -17,7 +17,6 @@
 #pragma implementation "apt-pkg/dpkgdb.h"
 #endif
 
-#include <apti18n.h>
 #include <apt-pkg/dpkgdb.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -33,6 +32,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <iostream>
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 

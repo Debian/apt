@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: copy.cc,v 1.7 2003/02/10 07:34:41 doogie Exp $
+// $Id: copy.cc,v 1.8 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    Copy URI - This method takes a uri like a file: uri and copies it
@@ -9,7 +9,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -17,6 +16,7 @@
 #include <sys/stat.h>
 #include <utime.h>
 #include <unistd.h>
+#include <apti18n.h>
 									/*}}}*/
 
 class CopyMethod : public pkgAcqMethod

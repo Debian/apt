@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: filelist.cc,v 1.4 2003/02/10 00:36:12 doogie Exp $
+// $Id: filelist.cc,v 1.5 2004/01/07 20:39:37 mdz Exp $
 /* ######################################################################
 
    File Listing - Manages a Cache of File -> Package names.
@@ -36,7 +36,6 @@
 #pragma implementation "apt-pkg/filelist.h"
 #endif
 
-#include <apti18n.h>
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
@@ -46,6 +45,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

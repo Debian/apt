@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rsh.cc,v 1.6 2003/02/10 07:34:41 doogie Exp $
+// $Id: rsh.cc,v 1.7 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    RSH method - Transfer files via rsh compatible program
@@ -11,7 +11,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include "rsh.h"
 #include <apt-pkg/error.h>
 
@@ -23,6 +22,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <apti18n.h>
 									/*}}}*/
 
 const char *Prog;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.20 2003/02/10 07:34:41 doogie Exp $
+// $Id: cdrom.cc,v 1.21 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -8,7 +8,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/error.h>
@@ -19,6 +18,7 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

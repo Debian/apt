@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.31 2003/08/10 02:24:39 mdz Exp $
+// $Id: ftp.cc,v 1.32 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -15,7 +15,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -30,6 +29,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <iostream>
+#include <apti18n.h>
 
 // Internet stuff
 #include <netinet/in.h>

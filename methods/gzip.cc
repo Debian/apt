@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.17 2003/02/10 07:34:41 doogie Exp $
+// $Id: gzip.cc,v 1.18 2004/01/07 20:39:38 mdz Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -9,7 +9,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
@@ -21,6 +20,7 @@
 #include <utime.h>
 #include <stdio.h>
 #include <errno.h>
+#include <apti18n.h>
 									/*}}}*/
 
 const char *Prog;
