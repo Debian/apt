@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.40 2002/04/18 05:08:49 jgg Exp $
+// $Id: fileutl.cc,v 1.41 2002/04/24 05:02:40 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -156,12 +156,12 @@ string flNotDir(string File)
 									/*}}}*/
 // flNotFile - Strip the file from the directory name			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Result ends in a / */
 string flNotFile(string File)
 {
    string::size_type Res = File.rfind('/');
    if (Res == string::npos)
-      return File;
+      return "./";
    Res++;
    return string(File,0,Res);
 }

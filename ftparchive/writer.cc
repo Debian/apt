@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.4 2001/06/26 02:50:27 jgg Exp $
+// $Id: writer.cc,v 1.5 2002/04/24 05:02:40 jgg Exp $
 /* ######################################################################
 
    Writer 
@@ -603,10 +603,10 @@ bool SourcesWriter::DoPackage(string FileName)
       NewFileName = OriginalPath;
    if (PathPrefix.empty() == false)
       NewFileName = flCombine(PathPrefix,NewFileName);
-    
+
    string Directory = flNotFile(OriginalPath);
    string Package = Tags.FindS("Source");
-   
+
    // Perform the delinking operation over all of the files
    string ParseJnk;
    const char *C = Files;
@@ -633,7 +633,7 @@ bool SourcesWriter::DoPackage(string FileName)
    Directory = flNotFile(NewFileName);
    if (Directory.length() > 2)
       Directory.erase(Directory.end()-1);
-      
+
    // This lists all the changes to the fields we are going to make.
    // (5 hardcoded + maintainer + end marker)
    TFRewriteData Changes[5+1+SOverItem->FieldOverride.size()+1];
@@ -641,7 +641,8 @@ bool SourcesWriter::DoPackage(string FileName)
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
    SetTFRewriteData(Changes[End++],"Files",Files);
-   SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
+   if (Directory != "./")
+      SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
    SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
    SetTFRewriteData(Changes[End++],"Status",0);
 
