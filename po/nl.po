@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.4\n"
-"POT-Creation-Date: 2003-02-09 21:51-0600\n"
+"POT-Creation-Date: 2003-04-27 01:12-0500\n"
 "PO-Revision-Date: 2002-01-28 15:35+0100\n"
 "Last-Translator: Wannes Soenen <wannes@wannes.cjb.net>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -19,8 +19,9 @@ msgstr ""
 msgid "Package %s version %s has an unmet dep:\n"
 msgstr "Pakket %s versie %s voldoet niet aan afhankelijkheid:\n"
 
-#: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:671
-#: cmdline/apt-cache.cc:1037 cmdline/apt-cache.cc:1183
+#: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:613
+#: cmdline/apt-cache.cc:769 cmdline/apt-cache.cc:987 cmdline/apt-cache.cc:1353
+#: cmdline/apt-cache.cc:1499
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Kon pakket %s niet vinden"
@@ -81,73 +82,73 @@ msgstr "Totale hoeveelheid onbenutte ruimte: "
 msgid "Total Space Accounted for: "
 msgstr "Totale hoeveelheid verantwoorde ruimte: "
 
-#: cmdline/apt-cache.cc:444 cmdline/apt-cache.cc:871
+#: cmdline/apt-cache.cc:444 cmdline/apt-cache.cc:1187
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "Pakketbestand %s is niet meer bij de tijd."
 
-#: cmdline/apt-cache.cc:913
+#: cmdline/apt-cache.cc:1229
 msgid "You must give exactly one pattern"
 msgstr "U moet precies één patroon opgeven"
 
-#: cmdline/apt-cache.cc:1137
+#: cmdline/apt-cache.cc:1453
 msgid "Package Files:"
 msgstr "Pakketbestanden:"
 
-#: cmdline/apt-cache.cc:1144 cmdline/apt-cache.cc:1230
+#: cmdline/apt-cache.cc:1460 cmdline/apt-cache.cc:1546
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr "Cache is niet meer bij de tijd, kan een pakketbestand niet refereren"
 
-#: cmdline/apt-cache.cc:1145
+#: cmdline/apt-cache.cc:1461
 #, c-format
 msgid "%4i %s\n"
 msgstr "%4i %s\n"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1157
+#: cmdline/apt-cache.cc:1473
 msgid "Pinned Packages:"
 msgstr "Gepinde pakketten:"
 
-#: cmdline/apt-cache.cc:1169 cmdline/apt-cache.cc:1210
+#: cmdline/apt-cache.cc:1485 cmdline/apt-cache.cc:1526
 msgid "(not found)"
 msgstr "(niet gevonden)"
 
 #. Installed version
-#: cmdline/apt-cache.cc:1190
+#: cmdline/apt-cache.cc:1506
 msgid "  Installed: "
 msgstr "  Geïnstalleerd: "
 
-#: cmdline/apt-cache.cc:1192 cmdline/apt-cache.cc:1200
+#: cmdline/apt-cache.cc:1508 cmdline/apt-cache.cc:1516
 msgid "(none)"
 msgstr "(geen)"
 
 #. Candidate Version
-#: cmdline/apt-cache.cc:1197
+#: cmdline/apt-cache.cc:1513
 msgid "  Candidate: "
 msgstr "  Kandidaat: "
 
-#: cmdline/apt-cache.cc:1207
+#: cmdline/apt-cache.cc:1523
 msgid "  Package Pin: "
 msgstr "  Pakketpin: "
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1216
+#: cmdline/apt-cache.cc:1532
 msgid "  Version Table:"
 msgstr "  Versietabel:"
 
-#: cmdline/apt-cache.cc:1231
+#: cmdline/apt-cache.cc:1547
 #, c-format
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1258 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
+#: cmdline/apt-cache.cc:1574 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:544
-#: cmdline/apt-get.cc:2049 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2165 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s voor %s %s gecompileerd op %s %s\n"
 
-#: cmdline/apt-cache.cc:1262
+#: cmdline/apt-cache.cc:1578
 #, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
@@ -170,8 +171,10 @@ msgid ""
 "   search - Search the package list for a regex pattern\n"
 "   show - Show a readable record for the package\n"
 "   depends - Show raw dependency information for a package\n"
+"   rdepends - Show reverse dependency information for a package\n"
 "   pkgnames - List the names of all packages\n"
 "   dotty - Generate package graphs for GraphVis\n"
+"   xvcg - Generate package graphs for xvcg\n"
 "   policy - Show policy settings\n"
 "\n"
 "Options:\n"
@@ -570,72 +573,72 @@ msgstr "Kon %s %s niet ophalen\n"
 msgid "Y"
 msgstr "J"
 
-#: cmdline/apt-get.cc:193
+#: cmdline/apt-get.cc:220
 #, fuzzy
 msgid "The following packages have unmet dependencies:"
 msgstr ""
 "Sorry, maar de volgende pakketten voldoen niet aan hun afhankelijkheden:"
 
-#: cmdline/apt-get.cc:283
+#: cmdline/apt-get.cc:310
 #, c-format
 msgid "but %s is installed"
 msgstr "maar %s is geïnstalleerd"
 
-#: cmdline/apt-get.cc:285
+#: cmdline/apt-get.cc:312
 #, c-format
 msgid "but %s is to be installed"
 msgstr "maar %s gaat geïnstalleerd worden"
 
-#: cmdline/apt-get.cc:292
+#: cmdline/apt-get.cc:319
 msgid "but it is not installable"
 msgstr "maar het is niet installeerbaar"
 
-#: cmdline/apt-get.cc:294
+#: cmdline/apt-get.cc:321
 msgid "but it is a virtual package"
 msgstr "maar het is een virtueel pakket"
 
-#: cmdline/apt-get.cc:297
+#: cmdline/apt-get.cc:324
 msgid "but it is not installed"
 msgstr "maar het is niet geïnstalleerd"
 
-#: cmdline/apt-get.cc:297
+#: cmdline/apt-get.cc:324
 msgid "but it is not going to be installed"
 msgstr "maar het zal niet geïnstalleerd worden"
 
-#: cmdline/apt-get.cc:302
+#: cmdline/apt-get.cc:329
 msgid " or"
 msgstr " of"
 
-#: cmdline/apt-get.cc:328
+#: cmdline/apt-get.cc:358
 msgid "The following NEW packages will be installed:"
 msgstr "De volgende NIEUWE pakketten zullen geïnstalleerd worden:"
 
-#: cmdline/apt-get.cc:351
+#: cmdline/apt-get.cc:384
 msgid "The following packages will be REMOVED:"
 msgstr "De volgende pakketten zullen VERWIJDERD worden:"
 
-#: cmdline/apt-get.cc:371
+#: cmdline/apt-get.cc:406
 msgid "The following packages have been kept back"
 msgstr "De volgende pakketen worden achtergehouden:"
 
-#: cmdline/apt-get.cc:390
+#: cmdline/apt-get.cc:427
 msgid "The following packages will be upgraded"
 msgstr "De volgende pakketten zullen bijgewerkt worden:"
 
-#: cmdline/apt-get.cc:409
+#: cmdline/apt-get.cc:448
 msgid "The following packages will be DOWNGRADED"
 msgstr "De volgende pakketten zullen GEDEGRADEERD worden:"
 
-#: cmdline/apt-get.cc:426
+#: cmdline/apt-get.cc:468
 msgid "The following held packages will be changed:"
 msgstr "De volgende vastgehouden pakketten zullen veranderd worden:"
 
-#: cmdline/apt-get.cc:477
+#: cmdline/apt-get.cc:521
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (wegens %s) "
 
-#: cmdline/apt-get.cc:484
+#: cmdline/apt-get.cc:529
 msgid ""
 "WARNING: The following essential packages will be removed\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -643,112 +646,112 @@ msgstr ""
 "WAARSCHUWING: De volgende essentiële pakketten zullen verwijderd worden\n"
 "Dit moet u NIET doen tenzij u echt weet wat u doet!"
 
-#: cmdline/apt-get.cc:514
+#: cmdline/apt-get.cc:559
 #, c-format
 msgid "%lu packages upgraded, %lu newly installed, "
 msgstr "%lu pakketten bijwerken, %lu nieuwe installeren, "
 
-#: cmdline/apt-get.cc:518
+#: cmdline/apt-get.cc:563
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu opnieuw installeren, "
 
-#: cmdline/apt-get.cc:520
+#: cmdline/apt-get.cc:565
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu degraderen, "
 
-#: cmdline/apt-get.cc:522
+#: cmdline/apt-get.cc:567
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu verwijderen en %lu niet bijwerken.\n"
 
-#: cmdline/apt-get.cc:526
+#: cmdline/apt-get.cc:571
 #, c-format
 msgid "%lu packages not fully installed or removed.\n"
 msgstr "%lu pakketten niet volledig geïnstalleerd of verwijderd.\n"
 
-#: cmdline/apt-get.cc:586
+#: cmdline/apt-get.cc:631
 msgid "Correcting dependencies..."
 msgstr "Corrigeren afhankelijkheden..."
 
-#: cmdline/apt-get.cc:589
+#: cmdline/apt-get.cc:634
 msgid " failed."
 msgstr " faalde."
 
-#: cmdline/apt-get.cc:592
+#: cmdline/apt-get.cc:637
 msgid "Unable to correct dependencies"
 msgstr "Kon afhankelijkheden niet corrigeren"
 
-#: cmdline/apt-get.cc:595
+#: cmdline/apt-get.cc:640
 msgid "Unable to minimize the upgrade set"
 msgstr "Kon bijwerkingsset niet minimaliseren"
 
-#: cmdline/apt-get.cc:597
+#: cmdline/apt-get.cc:642
 msgid " Done"
 msgstr " Klaar"
 
-#: cmdline/apt-get.cc:601
+#: cmdline/apt-get.cc:646
 msgid "You might want to run `apt-get -f install' to correct these."
 msgstr ""
 "U zou misschien `apt-get -f install' willen draaien om deze te corrigeren."
 
-#: cmdline/apt-get.cc:604
+#: cmdline/apt-get.cc:649
 msgid "Unmet dependencies. Try using -f."
 msgstr ""
 "Er zijn afhankelijkheden waaraan niet voldaan kan worden. Probeer met -f."
 
-#: cmdline/apt-get.cc:657
+#: cmdline/apt-get.cc:702
 msgid "Packages need to be removed but Remove is disabled."
 msgstr "Pakketten moeten verwijderd worden maar Remove is uitgeschakeld."
 
-#: cmdline/apt-get.cc:683 cmdline/apt-get.cc:1578 cmdline/apt-get.cc:1611
+#: cmdline/apt-get.cc:728 cmdline/apt-get.cc:1694 cmdline/apt-get.cc:1727
 msgid "Unable to lock the download directory"
 msgstr "Kon de ophaalmap niet vergrendelen"
 
-#: cmdline/apt-get.cc:693 cmdline/apt-get.cc:1659 cmdline/apt-get.cc:1870
+#: cmdline/apt-get.cc:738 cmdline/apt-get.cc:1775 cmdline/apt-get.cc:1986
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "De lijst van bronpakketten kon niet gelezen worden."
 
-#: cmdline/apt-get.cc:713
+#: cmdline/apt-get.cc:758
 #, fuzzy, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Moet %sB/%sB aan archieven ophalen. "
 
-#: cmdline/apt-get.cc:716
+#: cmdline/apt-get.cc:761
 #, fuzzy, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Moet %sB aan archieven ophalen. "
 
-#: cmdline/apt-get.cc:721
+#: cmdline/apt-get.cc:766
 #, fuzzy, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr "Na uitpakken zal %sB gebruikt worden.\n"
 
-#: cmdline/apt-get.cc:724
+#: cmdline/apt-get.cc:769
 #, fuzzy, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Na uitpakken zal %sB vrij gemaakt worden.\n"
 
-#: cmdline/apt-get.cc:741
+#: cmdline/apt-get.cc:786
 #, fuzzy, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Sorry, u heeft niet genoeg vrije ruimte in %s"
 
-#: cmdline/apt-get.cc:750
+#: cmdline/apt-get.cc:795
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Er zijn problemen en -y was gebruikt zonder --force-yes"
 
-#: cmdline/apt-get.cc:756 cmdline/apt-get.cc:776
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:821
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Trivial Only gespecifieerd maar dit is geen triviale bewerking."
 
-#: cmdline/apt-get.cc:758
+#: cmdline/apt-get.cc:803
 msgid "Yes, do as I say!"
 msgstr "Ja, doe wat ik zeg!"
 
-#: cmdline/apt-get.cc:760
+#: cmdline/apt-get.cc:805
 #, c-format
 msgid ""
 "You are about to do something potentially harmful\n"
@@ -759,28 +762,28 @@ msgstr ""
 "Om door te gaan moet u de zin '%s' in zijn geheel overtikken.\n"
 " ?] "
 
-#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:785
+#: cmdline/apt-get.cc:811 cmdline/apt-get.cc:830
 msgid "Abort."
 msgstr "Afgebroken."
 
-#: cmdline/apt-get.cc:781
+#: cmdline/apt-get.cc:826
 msgid "Do you want to continue? [Y/n] "
 msgstr "Wilt u doorgaan? [J/n] "
 
-#: cmdline/apt-get.cc:850 cmdline/apt-get.cc:1219 cmdline/apt-get.cc:1768
+#: cmdline/apt-get.cc:895 cmdline/apt-get.cc:1266 cmdline/apt-get.cc:1884
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Kon %s %s niet ophalen\n"
 
-#: cmdline/apt-get.cc:868
+#: cmdline/apt-get.cc:913
 msgid "Some files failed to download"
 msgstr "Kon sommige bestanden niet ophalen"
 
-#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:1777
+#: cmdline/apt-get.cc:914 cmdline/apt-get.cc:1893
 msgid "Download complete and in download only mode"
 msgstr "Ophalen klaar en in alleen-ophalen modus"
 
-#: cmdline/apt-get.cc:875
+#: cmdline/apt-get.cc:920
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -788,49 +791,49 @@ msgstr ""
 "Kon sommige archieven niet ophalen, misschien kunt u `apt-get update` of\n"
 "--fix-missing proberen?"
 
-#: cmdline/apt-get.cc:879
+#: cmdline/apt-get.cc:924
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing en medium wisselen wordt op dit moment niet ondersteund"
 
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:929
 msgid "Unable to correct missing packages."
 msgstr "Kon niet corrigeren voor missende pakketten."
 
-#: cmdline/apt-get.cc:885
+#: cmdline/apt-get.cc:930
 msgid "Aborting Install."
 msgstr "Afbreken installatie."
 
-#: cmdline/apt-get.cc:918
+#: cmdline/apt-get.cc:963
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Let op, %s wordt geselecteerd in plaats van %s\n"
 
-#: cmdline/apt-get.cc:928
+#: cmdline/apt-get.cc:973
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "%s wordt overgeslagen, het is al geïnstalleerd en upgrade is niet "
 "ingesteld.\n"
 
-#: cmdline/apt-get.cc:946
+#: cmdline/apt-get.cc:991
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Pakket %s is niet geïnstalleerd, dus niet verwijderd\n"
 
-#: cmdline/apt-get.cc:957
+#: cmdline/apt-get.cc:1002
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Pakket %s is een virtueel pakket verzorgd door:\n"
 
-#: cmdline/apt-get.cc:969
+#: cmdline/apt-get.cc:1014
 msgid " [Installed]"
 msgstr " [Geïnstalleerd]"
 
-#: cmdline/apt-get.cc:974
+#: cmdline/apt-get.cc:1019
 msgid "You should explicitly select one to install."
 msgstr "U zou expliciet één moeten kiezen om te installeren."
 
-#: cmdline/apt-get.cc:979
+#: cmdline/apt-get.cc:1024
 #, c-format
 msgid ""
 "Package %s has no available version, but exists in the database.\n"
@@ -844,51 +847,51 @@ msgstr ""
 "nooit beschikbaar gemaakt is, vervangen is door een ander pakket of niet\n"
 "becshikbaar is met de inhoud van sources.list\n"
 
-#: cmdline/apt-get.cc:997
+#: cmdline/apt-get.cc:1044
 msgid "However the following packages replace it:"
 msgstr "Echter, de volgende pakketten zorgen voor vervanging:"
 
-#: cmdline/apt-get.cc:1000
+#: cmdline/apt-get.cc:1047
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Pakket %s heeft geen installatiekandidaat"
 
-#: cmdline/apt-get.cc:1020
+#: cmdline/apt-get.cc:1067
 #, fuzzy, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr ""
 "Sorry, herinstallatie van %s is niet mogelijk, het kan niet opgehaald "
 "worden.\n"
 
-#: cmdline/apt-get.cc:1028
+#: cmdline/apt-get.cc:1075
 #, fuzzy, c-format
 msgid "%s is already the newest version.\n"
 msgstr "Sorry, %s is reeds de nieuwste versie.\n"
 
-#: cmdline/apt-get.cc:1055
+#: cmdline/apt-get.cc:1102
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Release '%s' voor '%s' was niet gevonden"
 
-#: cmdline/apt-get.cc:1057
+#: cmdline/apt-get.cc:1104
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Versie '%s' voor '%s' was neit gevonden"
 
-#: cmdline/apt-get.cc:1063
+#: cmdline/apt-get.cc:1110
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Versie %s (%s) geselecteerd voor %s\n"
 
-#: cmdline/apt-get.cc:1173
+#: cmdline/apt-get.cc:1220
 msgid "The update command takes no arguments"
 msgstr "De update opdracht verwacht geen argumenten"
 
-#: cmdline/apt-get.cc:1186
+#: cmdline/apt-get.cc:1233
 msgid "Unable to lock the list directory"
 msgstr "Kon de lijstmap niet vergrendelen"
 
-#: cmdline/apt-get.cc:1238
+#: cmdline/apt-get.cc:1285
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -896,31 +899,31 @@ msgstr ""
 "Sommige indexbestanden konden niet opgehaald worden, ze zijn genegeerd, of\n"
 "oudere zijn in plaats daarvan gebruikt."
 
-#: cmdline/apt-get.cc:1257
+#: cmdline/apt-get.cc:1304
 msgid "Internal Error, AllUpgrade broke stuff"
 msgstr "Interne fout, AllUpgrade heeft dingen stukgemaakt"
 
-#: cmdline/apt-get.cc:1347 cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1394 cmdline/apt-get.cc:1430
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Kon pakket %s niet vinden"
 
-#: cmdline/apt-get.cc:1360
+#: cmdline/apt-get.cc:1407
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Regex compilatiefout - %s"
 
-#: cmdline/apt-get.cc:1370
+#: cmdline/apt-get.cc:1417
 #, fuzzy, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Let op, %s wordt geselecteerd in plaats van %s\n"
 
-#: cmdline/apt-get.cc:1400
+#: cmdline/apt-get.cc:1447
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr ""
 "U zou misschien `apt-get -f install' willen draaien om deze te corrigeren:"
 
-#: cmdline/apt-get.cc:1403
+#: cmdline/apt-get.cc:1450
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -928,7 +931,7 @@ msgstr ""
 "Er zijn afhankelijkheden waaraan niet voldaan kan worden. Probeer\n"
 "'apt-get -f install' zonder pakketten (of specifieer een oplossing)."
 
-#: cmdline/apt-get.cc:1415
+#: cmdline/apt-get.cc:1462
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -940,7 +943,7 @@ msgstr ""
 "gebruikt\n"
 "en sommige benodigde pakketten nog niet beschikbaar gemaakt zijn."
 
-#: cmdline/apt-get.cc:1423
+#: cmdline/apt-get.cc:1470
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -950,102 +953,112 @@ msgstr ""
 "het pakket gewoonweg niet installeerbaar is en een raportage van een fout\n"
 "ingediend moet worden voor dit pakket."
 
-#: cmdline/apt-get.cc:1428
+#: cmdline/apt-get.cc:1475
 msgid "The following information may help to resolve the situation:"
 msgstr "De volgende informatie kan u helpen de situatie op te lossen:"
 
-#: cmdline/apt-get.cc:1431
+#: cmdline/apt-get.cc:1478
 #, fuzzy
 msgid "Broken packages"
 msgstr "Sorry, kapotte pakketten"
 
-#: cmdline/apt-get.cc:1454
+#: cmdline/apt-get.cc:1504
 msgid "The following extra packages will be installed:"
 msgstr "De volgende extra pakketten zullen geïnstalleerd worden:"
 
-#: cmdline/apt-get.cc:1473
+#: cmdline/apt-get.cc:1568
+#, fuzzy
+msgid "Suggested packages:"
+msgstr "Gepinde pakketten:"
+
+#: cmdline/apt-get.cc:1569
+#, fuzzy
+msgid "Recommended packages:"
+msgstr "Sorry, kapotte pakketten"
+
+#: cmdline/apt-get.cc:1589
 msgid "Calculating Upgrade... "
 msgstr "Bereken bijwerking... "
 
-#: cmdline/apt-get.cc:1476 methods/ftp.cc:700 methods/connect.cc:99
+#: cmdline/apt-get.cc:1592 methods/ftp.cc:700 methods/connect.cc:99
 msgid "Failed"
 msgstr "Faalde"
 
-#: cmdline/apt-get.cc:1481
+#: cmdline/apt-get.cc:1597
 msgid "Done"
 msgstr "Klaar"
 
-#: cmdline/apt-get.cc:1654
+#: cmdline/apt-get.cc:1770
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "U moet ten minste één pakket specifieren waarvan de bron opgehaald moet "
 "worden"
 
-#: cmdline/apt-get.cc:1681 cmdline/apt-get.cc:1888
+#: cmdline/apt-get.cc:1797 cmdline/apt-get.cc:2004
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Kon geen bronpakket vinden voor %s"
 
-#: cmdline/apt-get.cc:1728
+#: cmdline/apt-get.cc:1844
 #, fuzzy, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Sorry, u heeft niet genoeg vrije ruimte in %s"
 
-#: cmdline/apt-get.cc:1733
+#: cmdline/apt-get.cc:1849
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Moet %sB/%sB aan bronarchieven ophalen.\n"
 
-#: cmdline/apt-get.cc:1736
+#: cmdline/apt-get.cc:1852
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Moet %sB aan bronarchieven ophalen.\n"
 
-#: cmdline/apt-get.cc:1742
+#: cmdline/apt-get.cc:1858
 #, c-format
 msgid "Fetch Source %s\n"
 msgstr "Ophalen bron %s\n"
 
-#: cmdline/apt-get.cc:1773
+#: cmdline/apt-get.cc:1889
 msgid "Failed to fetch some archives."
 msgstr "Kon sommige archieven niet ophalen."
 
-#: cmdline/apt-get.cc:1801
+#: cmdline/apt-get.cc:1917
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Het uitpakken van de reeds uitgepakte bron in %s wordt overgeslagen\n"
 
-#: cmdline/apt-get.cc:1813
+#: cmdline/apt-get.cc:1929
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Uitpakopdracht '%s' faalde.\n"
 
-#: cmdline/apt-get.cc:1830
+#: cmdline/apt-get.cc:1946
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Bouwopdracht '%s' faalde.\n"
 
-#: cmdline/apt-get.cc:1849
+#: cmdline/apt-get.cc:1965
 msgid "Child process failed"
 msgstr "Dochterproces faalde"
 
-#: cmdline/apt-get.cc:1865
+#: cmdline/apt-get.cc:1981
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "U moet tenminste één pakket opgeven om de bouwafhankelijkheden voor te "
 "controleren"
 
-#: cmdline/apt-get.cc:1893
+#: cmdline/apt-get.cc:2009
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Kon de bouwafhankelijkheidsinformatie voor %s niet ophalen"
 
-#: cmdline/apt-get.cc:1913
+#: cmdline/apt-get.cc:2029
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s heeft geen bouwafhankelijkheden.\n"
 
-#: cmdline/apt-get.cc:1948
+#: cmdline/apt-get.cc:2064
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1054,7 +1067,7 @@ msgstr ""
 "%s afhankelijkheid van %s kon niet voldaan worden omdat pakket %s niet kon\n"
 "worden gevonden"
 
-#: cmdline/apt-get.cc:1990
+#: cmdline/apt-get.cc:2106
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1063,7 +1076,7 @@ msgstr ""
 "%s afhankelijkheid van %s kon niet voldaan worden omdat pakket %s niet kon\n"
 "worden gevonden"
 
-#: cmdline/apt-get.cc:2017
+#: cmdline/apt-get.cc:2133
 msgid ""
 "Some broken packages were found while trying to process build-dependencies.\n"
 "You might want to run `apt-get -f install' to correct these."
@@ -1072,15 +1085,16 @@ msgstr ""
 "bouwafhankelijkheden. U zou misscien `apt-get -f install' willen draaien om\n"
 "deze te corrigeren."
 
-#: cmdline/apt-get.cc:2022
+#: cmdline/apt-get.cc:2138
 msgid "Failed to process build dependencies"
 msgstr "Kon bouwafhankelijkheden niet verwerken"
 
-#: cmdline/apt-get.cc:2054
+#: cmdline/apt-get.cc:2170
 msgid "Supported Modules:"
 msgstr "Ondersteunde modules:"
 
-#: cmdline/apt-get.cc:2095
+#: cmdline/apt-get.cc:2211
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1114,6 +1128,7 @@ msgid ""
 "  -m  Attempt to continue if archives are unlocatable\n"
 "  -u  Show a list of upgraded packages as well\n"
 "  -b  Build the source package after fetching it\n"
+"  -V  Show verbose version numbers\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
@@ -1186,10 +1201,11 @@ msgid " [Working]"
 msgstr " [Bezig]"
 
 #: cmdline/acqprogress.cc:271
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Media Change: Please insert the disc labeled '%s' in the drive '%s' and "
-"press enter\n"
+"Media Change: Please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
 msgstr ""
 "Medium wisselen: Plaats de disk gelabeld '%s' in station '%s' en druk op "
 "enter\n"
@@ -1221,6 +1237,40 @@ msgstr ""
 "  -s   Sorteer bronbestanden\n"
 "  -c=? Lees dit configuratiebestand\n"
 "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+
+#: dselect/install:32
+msgid "Bad default setting!"
+msgstr "Verkeerde standaard optie!"
+
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
+#: dselect/install:104 dselect/update:45
+msgid "Press enter to continue."
+msgstr "Toets Enter om door te gaan"
+
+# Note to translators: The following four messages belong together. It doesn't
+# matter where sentences start, but it has to fit in just these four lines, and
+# at only 80 characters per line, if possible.
+#: dselect/install:100
+msgid "Some errors occurred while unpacking. I'm going to configure the"
+msgstr "Er zijn fouten opgetreden tijdens het uitpakken. Ik ga de paketten"
+
+#: dselect/install:101
+msgid "packages that were installed. This may result in duplicate errors"
+msgstr ""
+"configuren die zijn geinstalleerd. Dit kan resulteren in duplicaat fouten"
+
+#: dselect/install:102
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr "of fouten door missende afhankelijkheden. Alleen de fouten boven dit"
+
+#: dselect/install:103
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr "bericht zijn belangrijk. Gaarne herstellen en opnieuw [I]nstalleren"
+
+#: dselect/update:30
+msgid "Merging Available information"
+msgstr "Samenvoegen Beschikbare Informatie"
 
 #: apt-inst/contrib/extracttar.cc:115
 #, fuzzy
@@ -1502,40 +1552,6 @@ msgstr "Kon %s %s niet ophalen\n"
 msgid "Unparsible control file"
 msgstr "Kon %s niet lezen"
 
-#: dselect/install:32
-msgid "Bad default setting!"
-msgstr "Verkeerde standaard optie!"
-
-#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
-#: dselect/install:104 dselect/update:45
-msgid "Press enter to continue."
-msgstr "Toets Enter om door te gaan"
-
-# Note to translators: The following four messages belong together. It doesn't
-# matter where sentences start, but it has to fit in just these four lines, and
-# at only 80 characters per line, if possible.
-#: dselect/install:100
-msgid "Some errors occurred while unpacking. I'm going to configure the"
-msgstr "Er zijn fouten opgetreden tijdens het uitpakken. Ik ga de paketten"
-
-#: dselect/install:101
-msgid "packages that were installed. This may result in duplicate errors"
-msgstr ""
-"configuren die zijn geinstalleerd. Dit kan resulteren in duplicaat fouten"
-
-#: dselect/install:102
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "of fouten door missende afhankelijkheden. Alleen de fouten boven dit"
-
-#: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr "bericht zijn belangrijk. Gaarne herstellen en opnieuw [I]nstalleren"
-
-#: dselect/update:30
-msgid "Merging Available information"
-msgstr "Samenvoegen Beschikbare Informatie"
-
 #: methods/cdrom.cc:113
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1801,7 +1817,8 @@ msgid "Read error from %s process"
 msgstr ""
 
 #: methods/http.cc:340
-msgid "Waiting for file"
+#, fuzzy
+msgid "Waiting for headers"
 msgstr "Wachet op bestand"
 
 #: methods/http.cc:486
@@ -2165,12 +2182,12 @@ msgstr "Kandidaat versies"
 msgid "Dependency Generation"
 msgstr "Afhankelijkheidsgeneratie"
 
-#: apt-pkg/tagfile.cc:71
+#: apt-pkg/tagfile.cc:81
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Kon pakketbestand %s niet lezen (1)"
 
-#: apt-pkg/tagfile.cc:158
+#: apt-pkg/tagfile.cc:174
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Kon pakketbestand %s niet lezen (2)"
