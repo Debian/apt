@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.15 1999/09/09 06:15:51 jgg Exp $
+// $Id: sourcelist.cc,v 1.16 1999/09/30 06:30:34 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -172,6 +172,8 @@ string pkgSourceList::Item::PackagesURI() const
       {
 	 if (Dist != "/")
 	    Res = URI + Dist;
+	 else 
+	    Res = URI;
       }      
       else
 	 Res = URI + "dists/" + Dist + '/' + Section +
@@ -240,6 +242,8 @@ string pkgSourceList::Item::ReleaseURI() const
       {
 	 if (Dist != "/")
 	    Res = URI + Dist;
+	 else
+	    Res = URI;
       }      
       else
 	 Res = URI + "dists/" + Dist + '/' + Section +

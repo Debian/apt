@@ -1,83 +1,102 @@
-#include <string>
-/*void basic_string<char,string_char_traits<char>,alloc>::Rep::release()
-{
-   cout << "Release " << (void *)this << ' ' << ref << endl;
-   if (--ref == 0) delete this;
-}
-
-basic_string<char,string_char_traits<char>,alloc>::~basic_string()
-{
-   cout << "Destroy " << (void *)this << ',' << rep()->ref << endl;
-   rep ()->release ();
-}*/
-
-
-
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/strutl.h>
-
-#include <apt-pkg/cachefile.h>
-#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/dpkgdb.h>
+#include <apt-pkg/debfile.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/extract.h>
 #include <apt-pkg/init.h>
-
-#include <signal.h>
-#include <stdio.h>
-#include <malloc.h>
-
-struct Rep
-{
-   size_t len, res, ref;
-   bool selfish;
-};
+#include <apt-pkg/fileutl.h>
 
 int main(int argc,char *argv[])
 {
-   pkgCacheFile Cache;
-   OpProgress Prog;
    pkgInitialize(*_config);
-   if (Cache.Open(Prog,false) == false)
+
+   cout << flNoLink(argv[1]) << endl;
+   
+   #if 0
+/*   DynamicMMap *FileMap = new DynamicMMap(MMap::Public);
+   pkgFLCache *FList = new pkgFLCache(*FileMap);
+   
+   char *Name = "/tmp/test";
+   pkgFLCache::PkgIterator Pkg(*FList,0);
+   pkgFLCache::NodeIterator Node = FList->GetNode(Name,Name+strlen(Name),Pkg.Offset(),true,false);
+   cout << (pkgFLCache::Node *)Node << endl;
+   Node = FList->GetNode(Name,Name+strlen(Name),Pkg.Offset(),true,false);
+   cout << (pkgFLCache::Node *)Node << endl;
+*/
+//   #if 0
+   _config->Set("Dir::State::status","/tmp/testing/status");
+
+   debDpkgDB Db;
+   
+   {
+      OpTextProgress Prog;
+      
+      if (Db.ReadyPkgCache(Prog) == false)
+	 cerr << "Error!" << endl;
+      Prog.Done();
+      
+      if (Db.ReadyFileList(Prog) == false)
+	 cerr << "Error!" << endl;
+   }
+   
+   if (_error->PendingError() == true)
    {
       _error->DumpErrors();
       return 0;
    }
    
-   pkgRecords rec(*Cache);
-   while (1)
+/*   Db.GetFLCache().BeginDiverLoad();
+   pkgFLCache::PkgIterator Pkg(Db.GetFLCache(),0);
+   if (Db.GetFLCache().AddDiversion(Pkg,"/usr/include/linux/kerneld.h","/usr/bin/nslookup") == false)
+      cerr << "Error!" << endl;
+
+   const char *Tmp = "/usr/include/linux/kerneld.h";
+   pkgFLCache::NodeIterator Nde = Db.GetFLCache().GetNode(Tmp,Tmp+strlen(Tmp),0,false,false);
+   map_ptrloc Loc = Nde->File;
+      
+   for (; Nde.end() == false && Nde->File == Loc; Nde++)
+      cout << Nde->Flags << ',' << Nde->Pointer << ',' << Nde.File() << endl;
+   Db.GetFLCache().FinishDiverLoad();*/
+
+/*   unsigned int I = 0;
+   pkgFLCache &Fl = Db.GetFLCache();
+   while (I < Fl.HeaderP->HashSize)
    {
-      pkgCache::VerIterator V = (*Cache)[Cache->PkgBegin()].CandidateVerIter(*Cache);
-      pkgRecords::Parser &Parse = rec.Lookup(V.FileList());
-      string Foo = Parse.ShortDesc();
+      cout << I << endl;
+      pkgFLCache::NodeIterator Node(Fl,Fl.NodeP + Fl.HeaderP->FileHash + I++);
+      if (Node->Pointer == 0)
+	 continue;
+      for (; Node.end() == false; Node++)
+      {
+	 cout << Node.DirN() << '/' << Node.File();
+	 if (Node->Flags == pkgFLCache::Node::Diversion)
+	    cout << " (div)";
+	 if (Node->Flags == pkgFLCache::Node::ConfFile)
+	    cout << " (conf)";
+	 cout << endl;
+      }
+   }*/
+
+   for (int I = 1; I < argc; I++)
+   {
+      FileFd F(argv[I],FileFd::ReadOnly);
+      debDebFile Deb(F);
       
-      cout << (reinterpret_cast<Rep *>(Foo.begin()) - 1)[0].ref << endl;
+      if (Deb.ExtractControl(Db) == false)
+	 cerr << "Error!" << endl;
+      cout << argv[I] << endl;
       
-//      cout << Foo << endl;
+      pkgCache::VerIterator Ver = Deb.MergeControl(Db);
+      if (Ver.end() == true)
+	 cerr << "Failed" << endl;
+      else
+	 cout << Ver.ParentPkg().Name() << ' ' << Ver.VerStr() << endl;
       
-//      cout << rec.Lookup(V.FileList()).ShortDesc() << endl;
-      malloc_stats();
+      pkgExtract Extract(Db.GetFLCache(),Ver);
+      Deb.ExtractArchive(Extract);
    }
-   
-#if 0   
-   URI U(argv[1]);
-   cout << U.Access << endl;
-   cout << U.User << endl;
-   cout << U.Password << endl;
-   cout << U.Host << endl;
-   cout << U.Path << endl;
-   cout << U.Port << endl;
-      
-/*   
-   FileFd F(argv[1],FileFd::ReadOnly);
-   pkgTagFile Reader(F);
-   
-   pkgTagSection Sect;
-   while (Reader.Step(Sect) == true)
-   {
-      Sect.FindS("Package");
-      Sect.FindS("Section");
-      Sect.FindS("Version");
-      Sect.FindI("Size");
-   };*/
-#endif   
-   return 0;
+//   #endif
+#endif      
+   _error->DumpErrors();
 }

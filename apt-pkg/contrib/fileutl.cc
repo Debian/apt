@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.30 1999/07/26 17:46:08 jgg Exp $
+// $Id: fileutl.cc,v 1.31 1999/09/30 06:30:34 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -148,6 +148,45 @@ string flNotFile(string File)
       return File;
    Res++;
    return string(File,0,Res);
+}
+									/*}}}*/
+// flNoLink - If file is a symlink then deref it			/*{{{*/
+// ---------------------------------------------------------------------
+/* If the name is not a link then the returned path is the input. */
+string flNoLink(string File)
+{
+   struct stat St;
+   if (lstat(File.c_str(),&St) != 0 || S_ISLNK(St.st_mode) == 0)
+      return File;
+   if (stat(File.c_str(),&St) != 0)
+      return File;
+   
+   /* Loop resolving the link. There is no need to limit the number of 
+      loops because the stat call above ensures that the symlink is not 
+      circular */
+   char Buffer[1024];
+   string NFile = File;
+   while (1)
+   {
+      // Read the link
+      int Res;
+      if ((Res = readlink(NFile.c_str(),Buffer,sizeof(Buffer))) <= 0 || 
+	  (unsigned)Res >= sizeof(Buffer))
+	  return File;
+      
+      // Append or replace the previous path
+      Buffer[Res] = 0;
+      if (Buffer[0] == '/')
+	 NFile = Buffer;
+      else
+	 NFile = flNotFile(NFile) + Buffer;
+      
+      // See if we are done
+      if (lstat(NFile.c_str(),&St) != 0)
+	 return File;
+      if (S_ISLNK(St.st_mode) == 0)
+	 return NFile;      
+   }   
 }
 									/*}}}*/
 // SetCloseExec - Set the close on exec flag				/*{{{*/

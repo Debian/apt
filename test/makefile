@@ -13,9 +13,15 @@ include $(PROGRAM_H)
 
 # Scratch program to test incomplete code fragments in
 PROGRAM=scratch-test
-SLIBS = -lapt-pkg 
-LIB_MAKES = apt-pkg/makefile
+SLIBS = -lapt-inst -lapt-pkg
+LIB_MAKES = apt-pkg/makefile apt-inst/makefile
 SOURCE = scratch.cc
+include $(PROGRAM_H)
+
+PROGRAM=testextract
+SLIBS = -lapt-inst -lapt-pkg
+LIB_MAKES = apt-pkg/makefile apt-inst/makefile
+SOURCE = testextract.cc
 include $(PROGRAM_H)
 
 # Version compare tester

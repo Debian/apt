@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.76 1999/09/16 02:08:09 jgg Exp $
+// $Id: apt-get.cc,v 1.77 1999/09/30 06:30:34 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -154,7 +154,7 @@ bool ShowList(ostream &out,string Title,string List)
 /* This prints out the names of all the packages that are broken along
    with the name of each each broken dependency and a quite version 
    description. */
-void ShowBroken(ostream &out,CacheFile &Cache)
+void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 {
    out << "Sorry, but the following packages have unmet dependencies:" << endl;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
@@ -198,15 +198,14 @@ void ShowBroken(ostream &out,CacheFile &Cache)
 	    ")";
 	 
 	 /* Show a summary of the target package if possible. In the case
-	  of virtual packages we show nothing */
-	 
+	    of virtual packages we show nothing */	 
 	 pkgCache::PkgIterator Targ = End.TargetPkg();
 	 if (Targ->ProvidesList == 0)
 	 {
 	    out << " but ";
 	    pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
 	    if (Ver.end() == false)
-	       out << Ver.VerStr() << " is installed";
+	       out << Ver.VerStr() << (Now?" is installed":" is to be installed");
 	    else
 	    {
 	       if (Cache[Targ].CandidateVerIter(Cache).end() == true)
@@ -217,7 +216,7 @@ void ShowBroken(ostream &out,CacheFile &Cache)
 		     out << "it is a virtual package";
 	       }		  
 	       else
-		  out << "it is not installed";
+		  out << (Now?"it is not installed":"it is not going to be installed");
 	    }	       
 	 }
 	 
@@ -467,7 +466,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
       if (pkgFixBroken(*Cache) == false || Cache->BrokenCount() != 0)
       {
 	 c1out << " failed." << endl;
-	 ShowBroken(c1out,*this);
+	 ShowBroken(c1out,*this,true);
 
 	 return _error->Error("Unable to correct dependencies");
       }
@@ -479,7 +478,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    else
    {
       c1out << "You might want to run `apt-get -f install' to correct these." << endl;
-      ShowBroken(c1out,*this);
+      ShowBroken(c1out,*this,true);
 
       return _error->Error("Unmet dependencies. Try using -f.");
    }
@@ -522,7 +521,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    // Sanity check
    if (Cache->BrokenCount() != 0)
    {
-      ShowBroken(c1out,Cache);
+      ShowBroken(c1out,Cache,false);
       return _error->Error("Internal Error, InstallPackages was called with broken packages!");
    }
 
@@ -810,7 +809,7 @@ bool DoUpgrade(CommandLine &CmdL)
    // Do the upgrade
    if (pkgAllUpgrade(Cache) == false)
    {
-      ShowBroken(c1out,Cache);
+      ShowBroken(c1out,Cache,false);
       return _error->Error("Internal Error, AllUpgrade broke stuff");
    }
    
@@ -953,7 +952,7 @@ bool DoInstall(CommandLine &CmdL)
    if (BrokenFix == true && Cache->BrokenCount() != 0)
    {
       c1out << "You might want to run `apt-get -f install' to correct these:" << endl;
-      ShowBroken(c1out,Cache);
+      ShowBroken(c1out,Cache,false);
 
       return _error->Error("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).");
    }
@@ -980,7 +979,7 @@ bool DoInstall(CommandLine &CmdL)
 
       c1out << "The following information may help to resolve the situation:" << endl;
       c1out << endl;
-      ShowBroken(c1out,Cache);
+      ShowBroken(c1out,Cache,false);
       return _error->Error("Sorry, broken packages");
    }   
    
@@ -1027,7 +1026,7 @@ bool DoDistUpgrade(CommandLine &CmdL)
    if (pkgDistUpgrade(*Cache) == false)
    {
       c0out << "Failed" << endl;
-      ShowBroken(c1out,Cache);
+      ShowBroken(c1out,Cache,false);
       return false;
    }
    
@@ -1095,7 +1094,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    
       if (Fix.Resolve() == false)
       {
-	 ShowBroken(c1out,Cache);
+	 ShowBroken(c1out,Cache,false);
 	 return _error->Error("Internal Error, problem resolver broke stuff");
       }
    }
@@ -1103,7 +1102,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    // Now upgrade everything
    if (pkgAllUpgrade(Cache) == false)
    {
-      ShowBroken(c1out,Cache);
+      ShowBroken(c1out,Cache,false);
       return _error->Error("Internal Error, problem resolver broke stuff");
    }
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.21 1999/07/26 17:46:08 jgg Exp $
+// $Id: fileutl.h,v 1.22 1999/09/30 06:30:34 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -83,5 +83,6 @@ bool ExecWait(int Pid,const char *Name,bool Reap = false);
 // File string manipulators
 string flNotDir(string File);
 string flNotFile(string File);
+string flNoLink(string File);
 
 #endif

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.20 1999/08/12 05:59:54 jgg Exp $
+// $Id: packagemanager.cc,v 1.21 1999/09/30 06:30:34 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -414,12 +414,17 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    /* See if this packages install version has any predependencies
       that are not met by 'now' packages. */
    for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); 
-	D.end() == false; D++)
+	D.end() == false; )
    {
-      if (D->Type == pkgCache::Dep::PreDepends)
+      // Compute a single dependency element (glob or)
+      pkgCache::DepIterator Start;
+      pkgCache::DepIterator End;
+      D.GlobOr(Start,End);
+      
+      while (End->Type == pkgCache::Dep::PreDepends)
       {
 	 // Look for possible ok targets.
-	 Version **VList = D.AllTargets();
+	 Version **VList = Start.AllTargets();
 	 bool Bad = true;
 	 for (Version **I = VList; *I != 0 && Bad == true; I++)
 	 {
@@ -450,18 +455,24 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 	 }
 	 
 	 delete [] VList;
-	 
-	 if (Bad == true)
-	    return _error->Error("Internal Error, Couldn't configure a pre-depend");
 
-	 continue;
+	 /* If this or element did not match then continue on to the
+	    next or element until a matching element is found*/
+	 if (Bad == true)
+	 {	    
+	    if (Start == End)
+	       return _error->Error("Internal Error, Couldn't configure a pre-depend");
+	    Start++;
+	 }
+	 else
+	    break;
       }
       
-      if (D->Type == pkgCache::Dep::Conflicts)
+      if (End->Type == pkgCache::Dep::Conflicts)
       {
 	 /* Look for conflicts. Two packages that are both in the install
 	    state cannot conflict so we don't check.. */
-	 Version **VList = D.AllTargets();
+	 Version **VList = End.AllTargets();
 	 for (Version **I = VList; *I != 0; I++)
 	 {
 	    VerIterator Ver(Cache,*I);

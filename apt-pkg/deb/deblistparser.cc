@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.22 1999/07/30 02:54:25 jgg Exp $
+// $Id: deblistparser.cc,v 1.23 1999/09/30 06:30:34 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -88,7 +88,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 	                     {"extra",pkgCache::State::Extra}};
       if (GrabWord(string(Start,Stop-Start),PrioList,
 		   _count(PrioList),Ver->Priority) == false)
-	 return _error->Error("Malformed Priority line");
+	 Ver->Priority = pkgCache::State::Extra;
    }
 
    if (ParseDepends(Ver,"Depends",pkgCache::Dep::Depends) == false)
@@ -154,11 +154,18 @@ unsigned short debListParser::VersionHash()
 	 continue;
       
       /* Strip out any spaces from the text, this undoes dpkgs reformatting
-         of certain fields */
+         of certain fields. dpkg also has the rather interesting notion of
+         reformatting depends operators < -> <= */
       char *I = S;
       for (; Start != End; Start++)
+      {
 	 if (isspace(*Start) == 0)
 	    *I++ = tolower(*Start);
+	 if (*Start == '<' && Start[1] != '<' && Start[1] != '=')
+	    *I++ = '=';
+	 if (*Start == '>' && Start[1] != '>' && Start[1] != '=')
+	    *I++ = '=';
+      }
       
       Result = AddCRC16(Result,S,I - S);
    }

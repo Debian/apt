@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.23 1999/07/30 02:54:25 jgg Exp $
+// $Id: algorithms.cc,v 1.24 1999/09/30 06:30:34 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -715,13 +715,18 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 // Isolate the problem dependency
 	 PackageKill KillList[100];
 	 PackageKill *LEnd = KillList;
-	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false;)
+	 bool InOr = false;
+	 pkgCache::DepIterator Start;
+	 pkgCache::DepIterator End;
+	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList();
+	      D.end() == false || InOr == true;)
 	 {
 	    // Compute a single dependency element (glob or)
-	    pkgCache::DepIterator Start;
-	    pkgCache::DepIterator End;
-	    D.GlobOr(Start,End);
-	    
+	    if (InOr == false)
+	       D.GlobOr(Start,End);
+	    else
+	       Start++;
+
 	    // We only worry about critical deps.
 	    if (End.IsCritical() != true)
 	       continue;
@@ -730,25 +735,27 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
 	       continue;
 	    
+	    InOr = Start != End;
+	    
 	    // Hm, the group is broken.. I have no idea how to handle this
-	    if (Start != End)
+/*	    if (Start != End)
 	    {
 	       if (Debug == true)
 		  clog << "Note, a broken or group was found in " << I.Name() << "." << endl;
 	       if ((Flags[I->ID] & Protected) != Protected)
 		  Cache.MarkDelete(I);
 	       break;
-	    }
+	    }*/
 	    	    
 	    if (Debug == true)
-	       clog << "Package " << I.Name() << " has broken dep on " << End.TargetPkg().Name() << endl;
+	       clog << "Package " << I.Name() << " has broken dep on " << Start.TargetPkg().Name() << endl;
 
 	    /* Look across the version list. If there are no possible
 	       targets then we keep the package and bail. This is necessary
 	       if a package has a dep on another package that cant be found */
-	    pkgCache::Version **VList = End.AllTargets();
+	    pkgCache::Version **VList = Start.AllTargets();
 	    if (*VList == 0 && (Flags[I->ID] & Protected) != Protected &&
-		End->Type != pkgCache::Dep::Conflicts && 
+		Start->Type != pkgCache::Dep::Conflicts && 
 		Cache[I].NowBroken() == false)
 	    {
 	       Change = true;
@@ -763,10 +770,10 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 	    
 	       if (Debug == true)
-		  clog << "  Considering " << Pkg.Name() << ' ' << (int)Scores[Pkg->ID] << 
+		  clog << "  Considering " << Pkg.Name() << ' ' << (int)Scores[Pkg->ID] <<
 		  " as a solution to " << I.Name() << ' ' << (int)Scores[I->ID] << endl;
 	       if (Scores[I->ID] <= Scores[Pkg->ID] ||
-		   ((Cache[End] & pkgDepCache::DepGNow) == 0 &&
+		   ((Cache[Start] & pkgDepCache::DepNow) == 0 &&
 		    End->Type != pkgCache::Dep::Conflicts))
 	       {
 		  // Try a little harder to fix protected packages..
@@ -783,17 +790,21 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  if (Cache[I].InstBroken() == false)
 		  {
 		     if (Debug == true)
-			clog << "  Holding Back " << I.Name() << " rather than change " << End.TargetPkg().Name() << endl;
+			clog << "  Holding Back " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
 		  }		  
 		  else
-		  {
+		  {		     
 		     if (BrokenFix == false || DoUpgrade(I) == false)
 		     {
-			if (Debug == true)
-			   clog << "  Removing " << I.Name() << " rather than change " << End.TargetPkg().Name() << endl;
-			Cache.MarkDelete(I);
-			if (Counter > 1)
-			   Scores[I->ID] = Scores[Pkg->ID];
+			// Consider other options
+			if (InOr == false)
+			{
+			   if (Debug == true)
+			      clog << "  Removing " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
+			   Cache.MarkDelete(I);
+			   if (Counter > 1)
+			      Scores[I->ID] = Scores[Pkg->ID];
+			}			
 		     }
 		  }
 		  		  
@@ -811,31 +822,35 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  LEnd->Dep = End;
 		  LEnd++;
 		  
-		  if (End->Type != pkgCache::Dep::Conflicts)
+		  if (Start->Type != pkgCache::Dep::Conflicts)
 		     break;
 	       }
 	    }
 
 	    // Hm, nothing can possibly satisify this dep. Nuke it.
-	    if (VList[0] == 0 && End->Type != pkgCache::Dep::Conflicts &&
-		(Flags[I->ID] & Protected) != Protected)
+	    if (VList[0] == 0 && Start->Type != pkgCache::Dep::Conflicts &&
+		(Flags[I->ID] & Protected) != Protected && InOr == false)
 	    {
 	       Cache.MarkKeep(I);
 	       if (Cache[I].InstBroken() == false)
 	       {
 		  if (Debug == true)
-		     clog << "  Holding Back " << I.Name() << " because I can't find " << End.TargetPkg().Name() << endl;
+		     clog << "  Holding Back " << I.Name() << " because I can't find " << Start.TargetPkg().Name() << endl;
 	       }	       
 	       else
 	       {
 		  if (Debug == true)
-		     clog << "  Removing " << I.Name() << " because I can't find " << End.TargetPkg().Name() << endl;
+		     clog << "  Removing " << I.Name() << " because I can't find " << Start.TargetPkg().Name() << endl;
 		  Cache.MarkDelete(I);
 	       }
 
 	       Change = true;
 	       Done = true;
 	    }
+	    
+	    // Try some more
+	    if (InOr == true)
+	       continue;
 	    
 	    delete [] VList;
 	    if (Done == true)
