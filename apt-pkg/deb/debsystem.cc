@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsystem.cc,v 1.3 2001/04/29 05:13:51 jgg Exp $
+// $Id: debsystem.cc,v 1.4 2004/01/26 17:01:53 mdz Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -37,6 +37,7 @@ debSystem::debSystem()
 {
    LockFD = -1;
    LockCount = 0;
+   StatusFile = 0;
    
    Label = "Debian dpkg interface";
    VS = &debVS;
