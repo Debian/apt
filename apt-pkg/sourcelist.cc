@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.24 2002/07/08 04:18:07 jgg Exp $
+// $Id: sourcelist.cc,v 1.25 2004/06/07 23:08:00 mdz Exp $
 /* ######################################################################
 
    List of Sources
@@ -267,7 +267,7 @@ bool pkgSourceList::Read(string File)
 
       Type *Parse = Type::GetType(LineType.c_str());
       if (Parse == 0)
-	 return _error->Error(_("Type '%s' is not known in on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
+	 return _error->Error(_("Type '%s' is not known on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
       
       // Authenticated repository
       Vendor const *Vndr = 0;
