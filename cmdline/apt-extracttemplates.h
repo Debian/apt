@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.h,v 1.1 2001/02/25 04:53:59 tausq Exp $
+// $Id: apt-extracttemplates.h,v 1.2 2001/02/27 04:26:03 jgg Exp $
 /* ######################################################################
 
    apt-extracttemplate - tool to extract template and config data
@@ -31,7 +31,7 @@ public:
 	bool Go();
 	bool ParseInfo();
 
-	static char *GetInstalledVer(const string &package);
+	static string GetInstalledVer(const string &package);
 
 	string Package;
 	string Version;

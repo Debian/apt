@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.3 2001/02/25 05:25:29 tausq Exp $
+// $Id: apt-extracttemplates.cc,v 1.4 2001/02/27 04:26:03 jgg Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -15,7 +15,6 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/init.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/debversion.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/progress.h>
@@ -33,12 +32,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <wait.h>
-#include <fstream.h>
+#include <fstream>
 
 #include <config.h>
 #include <apti18n.h>
 #include "apt-extracttemplates.h"
+									/*}}}*/
 
 #define TMPDIR		"/var/lib/debconf/"
 
@@ -48,8 +47,8 @@ pkgCache *DebFile::Cache = 0;
 // ---------------------------------------------------------------------
 /* */
 DebFile::DebFile(const char *debfile)
-	: File(debfile, FileFd::ReadOnly), Control(0), DepOp(0), PreDepOp(0), 
-	  Config(0), Template(0), Which(None)
+	: File(debfile, FileFd::ReadOnly), Control(0), DepOp(0), 
+          PreDepOp(0), Config(0), Template(0), Which(None)
 {
 }
 									/*}}}*/
@@ -66,21 +65,19 @@ DebFile::~DebFile()
 // DebFile::GetInstalledVer - Find out the installed version of a pkg	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-char *DebFile::GetInstalledVer(const string &package)
+string DebFile::GetInstalledVer(const string &package)
 {
-	char *ver = 0;
-
 	pkgCache::PkgIterator Pkg = Cache->FindPkg(package);
 	if (Pkg.end() == false) 
 	{
 		pkgCache::VerIterator V = Pkg.CurrentVer();
-		if (V.end() == false) 
+		if (V.end() == false)
 		{
-			ver = strdup(V.VerStr());
+			return V.VerStr();
 		}
 	}
 
-	return ver;
+	return string();
 }
 									/*}}}*/
 // DebFile::Go - Start extracting a debian package			/*{{{*/
@@ -89,18 +86,15 @@ char *DebFile::GetInstalledVer(const string &package)
 bool DebFile::Go()
 {
 	ARArchive AR(File);
+	if (_error->PendingError() == true)
+		return false;
+		
 	const ARArchive::Member *Member = AR.FindMember("control.tar.gz");
 	if (Member == 0)
-	{
-		fprintf(stderr, _("This is not a valid DEB package.\n"));
-		return false;
-	}
+		return _error->Error(_("%s not a valid DEB package."),File.Name().c_str());
 	
 	if (File.Seek(Member->Start) == false)
-	{
 		return false;
-	}
-
 	ExtractTar Tar(File, Member->Size);
 	return Tar.Go(*this);
 }
@@ -138,6 +132,7 @@ bool DebFile::DoItem(Item &I, int &Fd)
 	} 
 	else 
 	{
+		// Ignore it
 		Fd = -1;
 	}
 	return true;
@@ -171,6 +166,7 @@ bool DebFile::Process(Item &I, const unsigned char *data,
 bool DebFile::ParseInfo()
 {
 	if (Control == NULL) return false;
+	
 	pkgTagSection Section;
 	Section.Scan(Control, ControlLen);
 
@@ -220,35 +216,47 @@ bool DebFile::ParseInfo()
 // ShowHelp - show a short help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ShowHelp(void)
+int ShowHelp(void)
 {
    	ioprintf(cout,_("%s %s for %s %s compiled on %s %s\n"),PACKAGE,VERSION,
 	    COMMON_OS,COMMON_CPU,__DATE__,__TIME__);
 
-	if (_config->FindB("version") == true) return;
+	if (_config->FindB("version") == true) 
+		return 0;
 
-	fprintf(stderr, 
+	cout << 
 		_("Usage: apt-extracttemplates file1 [file2 ...]\n"
 		"\n"
 		"apt-extracttemplates is a tool to extract config and template info\n"
-		"from debian packages\n"));
-	exit(0);
+		"from debian packages\n"
+		"\n"
+		"Options:\n"
+	        "  -h   This help text\n"
+		"  -t   Set the temp dir\n"
+		"  -c=? Read this configuration file\n"
+		"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n");
+	return 0;
 }
 									/*}}}*/
 // WriteFile - write the contents of the passed string to a file	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-char *WriteFile(const char *prefix, const char *data)
+string WriteFile(const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
 	snprintf(fn, sizeof(fn), "%s%s.%u%d", _config->Find("APT::ExtractTemplates::TempDir", TMPDIR).c_str(), prefix, getpid(), i++);
 
 	ofstream ofs(fn);
-	if (!ofs) return NULL;
+	if (!ofs)
+	{
+		_error->Errno("ofstream::ofstream",_("Unable to write to %s"),fn);
+		return string();
+	}
+
 	ofs << (data ? data : "");
 	ofs.close();
-	return strdup(fn);
+	return fn;
 }
 									/*}}}*/
 // WriteConfig - write out the config data from a debian package file	/*{{{*/
@@ -256,104 +264,55 @@ char *WriteFile(const char *prefix, const char *data)
 /* */
 void WriteConfig(const DebFile &file)
 {
-	char *templatefile = WriteFile("template", file.Template);
-	char *configscript = WriteFile("config", file.Config);
+	string templatefile = WriteFile("template", file.Template);
+	string configscript = WriteFile("config", file.Config);
 
-	if (templatefile == 0 || configscript == 0)
-	{
-		fprintf(stderr, _("Cannot write config script or templates\n"));
+	if (templatefile.empty() == true || configscript.empty() == true)
 		return;
-	}
 	cout << file.Package << " " << file.Version << " " 
 	     << templatefile << " " << configscript << endl;
-
-	free(templatefile);
-	free(configscript);
 }
 									/*}}}*/
 // InitCache - initialize the package cache				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int InitCache(MMap *&Map, pkgCache *&Cache)
-{
+bool Go(CommandLine &CmdL)
+{	
 	// Initialize the apt cache
-	if (pkgInitConfig(*_config) == false || pkgInitSystem(*_config, _system) == false)
-	{
-      		_error->DumpErrors();
-		return -1;
-	}
+	MMap *Map = 0;
 	pkgSourceList List;
 	List.ReadMainList();
 	OpProgress Prog;
 	pkgMakeStatusCache(List,Prog,&Map,true);
-	Cache = new pkgCache(Map);
-	return 0;
-}
-									/*}}}*/
-
-int main(int argc, const char **argv)
-{
-	MMap *Map = 0;
-	const char *debconfver = NULL;
-
-	CommandLine::Args Args[] = {
-		{'h',"help","help",0},
-		{'v',"version","version",0},
-		{'t',"tempdir","APT::ExtractTemplates::TempDir",CommandLine::HasArg},
-		{'c',"config-file",0,CommandLine::ConfigFile},
-		{'o',"option",0,CommandLine::ArbItem},
-		{0,0,0,0}};
-	
-	// Initialize the package cache
-	if (InitCache(Map, DebFile::Cache) < 0 || Map == 0 || DebFile::Cache == 0)
-	{
-		fprintf(stderr, _("Cannot initialize APT cache\n"));
-		return 100;
-	}
-
-	// Parse the command line
-	CommandLine CmdL(Args,_config);
-	if (CmdL.Parse(argc,argv) == false)
-	{
-		fprintf(stderr, _("Cannot parse commandline options\n"));
-		return 100;
-	}
-
-	// See if the help should be shown
-	if (_config->FindB("help") == true || CmdL.FileSize() == 0)
-	{
-		ShowHelp();
-		return 0;
-	}
+	DebFile::Cache = new pkgCache(Map);
+	if (_error->PendingError() == true)
+		return false;
 
 	// Find out what version of debconf is currently installed
-	if ((debconfver = DebFile::GetInstalledVer("debconf")) == NULL)
-	{
-		fprintf(stderr, _("Cannot get debconf version. Is debconf installed?\n"));
-		return 1;
-	}
+	string debconfver = DebFile::GetInstalledVer("debconf");
+	if (debconfver.empty() == true)
+		return _error->Error( _("Cannot get debconf version. Is debconf installed?"));
 
 	// Process each package passsed in
 	for (unsigned int I = 0; I != CmdL.FileSize(); I++)
 	{
+		// Will pick up the errors later..
 		DebFile file(CmdL.FileList[I]);
-		if (file.Go() == false) 
-		{
-			fprintf(stderr, _("Cannot read %s\n"), CmdL.FileList[I]);
-			continue;
-		}
+		if (file.Go() == false)
+			continue; 
+		
 		// Does the package have templates?
 		if (file.Template != 0 && file.ParseInfo() == true)
 		{
 			// Check to make sure debconf dependencies are
 			// satisfied
 			if (file.DepVer != "" &&
-			    DebFile::Cache->VS->CheckDep(file.DepVer.c_str(), 
-			                file.DepOp, debconfver) == false) 
+			    DebFile::Cache->VS->CheckDep(file.DepVer.c_str(),
+			                file.DepOp, debconfver.c_str()) == false)
 				continue;
 			if (file.PreDepVer != "" &&
 			    DebFile::Cache->VS->CheckDep(file.PreDepVer.c_str(), 
-			                file.PreDepOp, debconfver) == false) 
+			                file.PreDepOp, debconfver.c_str()) == false) 
 				continue;
 
 			WriteConfig(file);
@@ -363,6 +322,46 @@ int main(int argc, const char **argv)
 
 	delete Map;
 	delete DebFile::Cache;
+	
+	return !_error->PendingError();
+}
+									/*}}}*/
 
+int main(int argc, const char **argv)
+{
+	CommandLine::Args Args[] = {
+		{'h',"help","help",0},
+		{'v',"version","version",0},
+		{'t',"tempdir","APT::ExtractTemplates::TempDir",CommandLine::HasArg},
+		{'c',"config-file",0,CommandLine::ConfigFile},
+		{'o',"option",0,CommandLine::ArbItem},
+		{0,0,0,0}};
+	
+	// Parse the command line and initialize the package library
+	CommandLine CmdL(Args,_config);
+	if (pkgInitConfig(*_config) == false ||
+	    CmdL.Parse(argc,argv) == false ||
+	    pkgInitSystem(*_config,_system) == false)
+	{
+		_error->DumpErrors();
+		return 100;
+	}
+	
+	// See if the help should be shown
+	if (_config->FindB("help") == true ||
+	    CmdL.FileSize() == 0)
+		return ShowHelp();
+	
+	Go(CmdL);
+
+	// Print any errors or warnings found during operation
+	if (_error->empty() == false)
+	{
+		// This goes to stderr..
+		bool Errors = _error->PendingError();
+		_error->DumpErrors();
+		return Errors == true?100:0;
+	}
+	
 	return 0;
 }
