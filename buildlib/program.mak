@@ -12,7 +12,7 @@
 # Some local definitions
 LOCAL := $(PROGRAM)
 $(LOCAL)-OBJS := $(addprefix $(OBJ)/,$(addsuffix .o,$(notdir $(basename $(SOURCE)))))
-$(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .d,$(notdir $(basename $(SOURCE)))))
+$(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .o.d,$(notdir $(basename $(SOURCE)))))
 $(LOCAL)-BIN := $(BIN)/$(PROGRAM)
 $(LOCAL)-SLIBS := $(SLIBS)
 
