@@ -4,7 +4,7 @@
 <title>APT Files</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: files.sgml,v 1.5 1998/12/31 05:45:26 jgg Exp $</version>
+<version>$Id: files.sgml,v 1.6 1999/02/15 05:29:10 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the 
@@ -260,7 +260,11 @@ No dirctory structure is transfered from the receiving site and all .deb
 file names conform to debian conventions. No short (msdos) filename should
 be placed in archives. If the need arises .debs should be unpacked, scanned
 and renamed to their correct internal names. This is mostly to prevent
-file name conflicts but other programs may depend on this if convenient.
+file name conflicts but other programs may depend on this if convenient. 
+A conforming .deb is one of the form, name_version_arch.deb. Our archive
+scripts do not handle epochs, but they are necessary and should be re-inserted.
+If necessary _'s and :'s in the fields should be quoted using the % convention.
+It must be possible to extract all 3 fields by examining the file name.
 Downloaded .debs must be found in one of the package lists with an exact
 name + version match..
 </sect>
