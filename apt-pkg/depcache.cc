@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.19 1999/07/10 04:58:42 jgg Exp $
+// $Id: depcache.cc,v 1.20 1999/09/09 06:08:45 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -508,9 +508,10 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
 	 Update(P.ParentPkg().RevDependsList());
 
    // Update the provides map for the candidate ver
-   for (PrvIterator P = PkgState[Pkg->ID].CandidateVerIter(*this).ProvidesList();
-	P.end() != true; P++)
-      Update(P.ParentPkg().RevDependsList());
+   if (PkgState[Pkg->ID].CandidateVer != 0)
+      for (PrvIterator P = PkgState[Pkg->ID].CandidateVerIter(*this).ProvidesList();
+	   P.end() != true; P++)
+	 Update(P.ParentPkg().RevDependsList());
 }
 
 									/*}}}*/
