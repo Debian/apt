@@ -11,3 +11,9 @@ PROGRAM=file
 SLIBS = -lapt-pkg 
 SOURCE = file.cc
 include $(PROGRAM_H)
+
+# The copy method
+PROGRAM=copy
+SLIBS = -lapt-pkg 
+SOURCE = copy.cc
+include $(PROGRAM_H)
