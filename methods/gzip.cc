@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.15 2001/03/13 06:51:46 jgg Exp $
+// $Id: gzip.cc,v 1.16 2001/05/27 04:29:30 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -68,7 +68,8 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       SetCloseExec(STDOUT_FILENO,false);
       
       const char *Args[3];
-      Args[0] = _config->Find(GzPathOption,Prog).c_str();
+      string Tmp = _config->Find(GzPathOption,Prog);
+      Args[0] = Tmp.c_str();
       Args[1] = "-d";
       Args[2] = 0;
       execvp(Args[0],(char **)Args);
