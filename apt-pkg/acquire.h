@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.8 1998/11/05 07:21:41 jgg Exp $
+// $Id: acquire.h,v 1.9 1998/11/09 01:09:26 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -41,6 +41,7 @@
 
 #include <unistd.h>
 
+class pkgAcquireStatus;
 class pkgAcquire
 {   
    public:
@@ -49,6 +50,7 @@ class pkgAcquire
    class Queue;
    class Worker;
    struct MethodConfig;
+   struct ItemDesc;
    friend Item;
    friend Queue;
    
@@ -61,8 +63,9 @@ class pkgAcquire
    Queue *Queues;
    Worker *Workers;
    MethodConfig *Configs;
+   pkgAcquireStatus *Log;
    unsigned long ToFetch;
-   
+
    // Configurable parameters for the schedular
    enum {QueueHost,QueueAccess} QueueMode;
    bool Debug;
@@ -73,7 +76,7 @@ class pkgAcquire
    void Add(Worker *Work);
    void Remove(Worker *Work);
    
-   void Enqueue(Item *Item,string URI,string Description);
+   void Enqueue(ItemDesc &Item);
    void Dequeue(Item *Item);
    string QueueName(string URI);
 
@@ -88,9 +91,24 @@ class pkgAcquire
 
    MethodConfig *GetConfig(string Access);
    bool Run();
+
+   // Simple iteration mechanism
+   inline Worker *WorkersBegin() {return Workers;};
+   Worker *WorkerStep(Worker *I);
+   inline Item **ItemsBegin() {return Items.begin();};
+   inline Item **ItemsEnd() {return Items.end();};
    
-   pkgAcquire();
+   pkgAcquire(pkgAcquireStatus *Log = 0);
    ~pkgAcquire();
+};
+
+// Description of an Item+URI
+struct pkgAcquire::ItemDesc
+{
+   string URI;
+   string Description;
+   string ShortDesc;
+   Item *Owner;
 };
 
 // List of possible items queued for download.
@@ -102,15 +120,19 @@ class pkgAcquire::Queue
    protected:
 
    // Queued item
-   struct QItem 
+   struct QItem : pkgAcquire::ItemDesc
    {
-      QItem *Next;
-      
-      string URI;
-      string Description;
-      Item *Owner;
+      QItem *Next;      
       pkgAcquire::Worker *Worker;
-   };   
+      
+      void operator =(pkgAcquire::ItemDesc const &I)
+      {
+	 URI = I.URI;
+	 Description = I.Description;
+	 ShortDesc = I.ShortDesc;
+	 Owner = I.Owner;
+      };
+   };
    
    // Name of the queue
    string Name;
@@ -123,11 +145,12 @@ class pkgAcquire::Queue
    public:
    
    // Put an item into this queue
-   void Enqueue(Item *Owner,string URI,string Description);
+   void Enqueue(ItemDesc &Item);
    bool Dequeue(Item *Owner);
 
    // Find a Queued item
    QItem *FindItem(string URI,pkgAcquire::Worker *Owner);
+   bool ItemStart(QItem *Itm,unsigned long Size);
    bool ItemDone(QItem *Itm);
    
    bool Startup();
@@ -153,6 +176,23 @@ struct pkgAcquire::MethodConfig
    bool SendConfig;
    
    MethodConfig();
+};
+
+class pkgAcquireStatus
+{
+   public:
+
+   bool Update;
+   
+   // Each of these is called by the workers when an event occures
+   virtual void IMSHit(pkgAcquire::ItemDesc &Itm) {};
+   virtual void Fetch(pkgAcquire::ItemDesc &Itm) {};
+   virtual void Done(pkgAcquire::ItemDesc &Itm) {};
+   virtual void Fail(pkgAcquire::ItemDesc &Itm) {};   
+   virtual void Pulse(pkgAcquire *Owner) {};
+   
+   pkgAcquireStatus() : Update(false) {};
+   virtual ~pkgAcquireStatus() {};
 };
 
 #endif

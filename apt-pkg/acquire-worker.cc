@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.10 1998/11/05 07:21:39 jgg Exp $
+// $Id: acquire-worker.cc,v 1.11 1998/11/09 01:09:23 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -22,6 +22,7 @@
 #include <apt-pkg/fileutl.h>
 #include <strutl.h>
 
+#include <sys/stat.h>
 #include <unistd.h>
 #include <signal.h>
 #include <wait.h>
@@ -30,7 +31,8 @@
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf)
+pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf,
+			   pkgAcquireStatus *Log) : Log(Log)
 {
    OwnerQ = Q;
    Config = Cnf;
@@ -221,10 +223,15 @@ bool pkgAcquire::Worker::RunMessages()
 	       _error->Error("Method gave invalid 200 URI Start message");
 	       break;
 	    }
+	    
 	    CurrentItem = Itm;
 	    CurrentSize = 0;
 	    TotalSize = atoi(LookupTag(Message,"Size","0").c_str());
+	    Itm->Owner->Start(Message,atoi(LookupTag(Message,"Size","0").c_str()));
 	    
+	    if (Log != 0)
+	       Log->Fetch(*Itm);
+
 	    break;
 	 }
 	 
@@ -238,9 +245,21 @@ bool pkgAcquire::Worker::RunMessages()
 	    }
 
 	    pkgAcquire::Item *Owner = Itm->Owner;
+	    pkgAcquire::ItemDesc Desc = *Itm;
 	    OwnerQ->ItemDone(Itm);
 	    Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
 					  LookupTag(Message,"MD5-Hash"));
+	    ItemDone();
+	    
+	    // Log that we are done
+	    if (Log != 0)
+	    {
+	       if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true ||
+		   StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
+		  Log->IMSHit(Desc);
+	       else
+		  Log->Done(Desc);
+	    }	    
 	    break;
 	 }	 
 	 
@@ -254,8 +273,14 @@ bool pkgAcquire::Worker::RunMessages()
 	    }
 
 	    pkgAcquire::Item *Owner = Itm->Owner;
+	    pkgAcquire::ItemDesc Desc = *Itm;
 	    OwnerQ->ItemDone(Itm);
 	    Owner->Failed(Message);
+	    ItemDone();
+	    
+	    if (Log != 0)
+	       Log->Fail(Desc);
+	    
 	    break;
 	 }	 
 	 
@@ -417,5 +442,31 @@ bool pkgAcquire::Worker::MethodFailure()
    MessageQueue.erase(MessageQueue.begin(),MessageQueue.end());
    
    return false;
+}
+									/*}}}*/
+// Worker::Pulse - Called periodically 					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcquire::Worker::Pulse()
+{
+   if (CurrentItem == 0)
+      return;
+
+   
+   struct stat Buf;
+   if (stat(CurrentItem->Owner->DestFile.c_str(),&Buf) != 0)
+      return;
+   CurrentSize = Buf.st_size;
+}
+									/*}}}*/
+// Worker::ItemDone - Called when the current item is finished		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcquire::Worker::ItemDone()
+{
+   CurrentItem = 0;
+   CurrentSize = 0;
+   TotalSize = 0;
+   Status = string();
 }
 									/*}}}*/

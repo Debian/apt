@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.5 1998/11/05 07:21:36 jgg Exp $
+// $Id: acquire-item.h,v 1.6 1998/11/09 01:09:21 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -30,8 +30,8 @@ class pkgAcquire::Item
    protected:
    
    pkgAcquire *Owner;
-   inline void QueueURI(string URI,string Description) 
-                 {Owner->Enqueue(this,URI,Description);};
+   inline void QueueURI(ItemDesc &Item)
+                 {Owner->Enqueue(Item);};
    
    void Rename(string From,string To);
    
@@ -40,6 +40,8 @@ class pkgAcquire::Item
    // State of the item
    enum {StatIdle, StatFetching, StatDone, StatError} Status;
    string ErrorText;
+   unsigned long FileSize;
+   bool Complete;
    
    // Number of queues we are inserted into
    unsigned int QueueCounter;
@@ -49,6 +51,7 @@ class pkgAcquire::Item
    
    virtual void Failed(string Message);
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
+   virtual void Start(string Message,unsigned long Size);
 
    virtual string Custom600Headers() {return string();};
       
@@ -64,6 +67,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    const pkgSourceList::Item *Location;
    bool Decompression;
    bool Erase;
+   pkgAcquire::ItemDesc Desc;
    
    public:
    
@@ -79,6 +83,7 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    protected:
    
    const pkgSourceList::Item *Location;
+   pkgAcquire::ItemDesc Desc;
    
    public:
    

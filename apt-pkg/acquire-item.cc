@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.7 1998/11/05 07:21:35 jgg Exp $
+// $Id: acquire-item.cc,v 1.8 1998/11/09 01:09:19 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -30,7 +30,8 @@
 // Acquire::Item::Item - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Item::Item(pkgAcquire *Owner) : Owner(Owner), QueueCounter(0)
+pkgAcquire::Item::Item(pkgAcquire *Owner) : Owner(Owner), FileSize(0),
+                       Complete(false), QueueCounter(0)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -57,6 +58,16 @@ void pkgAcquire::Item::Failed(string Message)
       Status = StatError;
       Owner->Dequeue(this);
    }   
+}
+									/*}}}*/
+// Acquire::Item::Start - Item has begun to download			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcquire::Item::Start(string Message,unsigned long Size)
+{
+   Status = StatFetching;
+   if (FileSize == 0 && Complete == false)
+      FileSize = Size;
 }
 									/*}}}*/
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
@@ -98,8 +109,19 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) 
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(Location->PackagesURI());
-   
-   QueueURI(Location->PackagesURI() + ".gz",Location->PackagesInfo());
+
+   // Create the item 
+   Desc.URI = Location->PackagesURI() + ".gz";
+   Desc.Description = Location->PackagesInfo();
+   Desc.Owner = this;
+
+   // Set the short description to the archive component
+   if (Location->Dist[Location->Dist.size() - 1] == '/')
+      Desc.ShortDesc = Location->Dist;
+   else
+      Desc.ShortDesc = Location->Dist + '/' + Location->Section;  
+      
+   QueueURI(Desc);
    
    // Create the Release fetch class
    new pkgAcqIndexRel(Owner,Location);
@@ -149,6 +171,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
    }
 
    Erase = false;
+   Complete = true;
    
    // Handle the unzipd case
    string FileName = LookupTag(Message,"Alt-Filename");
@@ -159,8 +182,10 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
 	 return;
       
       Decompression = true;
+      FileSize = 0;
       DestFile += ".decomp";
-      QueueURI("copy:" + FileName,string());
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
       return;
    }
 
@@ -177,10 +202,13 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
 
    if (FileName == DestFile)
       Erase = true;
+   else
+      FileSize = 0;
    
    Decompression = true;
    DestFile += ".decomp";
-   QueueURI("gzip:" + FileName,string());
+   Desc.URI = "gzip:" + FileName,Location->PackagesInfo();
+   QueueURI(Desc);
 }
 									/*}}}*/
 
@@ -194,7 +222,18 @@ pkgAcqIndexRel::pkgAcqIndexRel(pkgAcquire *Owner,
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(Location->ReleaseURI());
    
-   QueueURI(Location->ReleaseURI(),Location->ReleaseInfo());
+   // Create the item
+   Desc.URI = Location->ReleaseURI();
+   Desc.Description = Location->ReleaseInfo();
+   Desc.Owner = this;
+
+   // Set the short description to the archive component
+   if (Location->Dist[Location->Dist.size() - 1] == '/')
+      Desc.ShortDesc = Location->Dist;
+   else
+      Desc.ShortDesc = Location->Dist + '/' + Location->Section;  
+      
+   QueueURI(Desc);
 }
 									/*}}}*/
 // AcqIndexRel::Custom600Headers - Insert custom request headers	/*{{{*/
@@ -229,6 +268,8 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
       return;
    }
 
+   Complete = true;
+   
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
       return;
@@ -236,7 +277,9 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
    // We have to copy it into place
    if (FileName != DestFile)
    {
-      QueueURI("copy:" + FileName,string());
+      FileSize = 0;
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
       return;
    }
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.6 1998/10/30 07:53:36 jgg Exp $
+// $Id: acquire-worker.h,v 1.7 1998/11/09 01:09:24 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
@@ -33,6 +33,7 @@ class pkgAcquire::Worker
    
    // The access association
    Queue *OwnerQ;
+   pkgAcquireStatus *Log;
    MethodConfig *Config;
    string Access;
       
@@ -62,6 +63,7 @@ class pkgAcquire::Worker
    bool SendConfiguration();
 
    bool MethodFailure();
+   void ItemDone();
    
    public:
    
@@ -70,12 +72,13 @@ class pkgAcquire::Worker
    string Status;
    unsigned long CurrentSize;
    unsigned long TotalSize;
-
+      
    // Load the method and do the startup 
    bool QueueItem(pkgAcquire::Queue::QItem *Item);
-   bool Start();   
+   bool Start();
+   void Pulse();
    
-   Worker(Queue *OwnerQ,MethodConfig *Config);
+   Worker(Queue *OwnerQ,MethodConfig *Config,pkgAcquireStatus *Log);
    Worker(MethodConfig *Config);
    ~Worker();
 };

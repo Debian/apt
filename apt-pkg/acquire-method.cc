@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.4 1998/11/05 07:21:38 jgg Exp $
+// $Id: acquire-method.cc,v 1.5 1998/11/09 01:09:22 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -314,7 +314,7 @@ void pkgAcqMethod::Status(const char *Format,...)
 
    // sprintf the description
    char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S),"101 Status\nURI: %s\n"
+   unsigned int Len = snprintf(S,sizeof(S),"102 Status\nURI: %s\n"
 			       "Message: ",CurrentURI.c_str());
 
    vsnprintf(S+Len,sizeof(S)-Len,Format,args);

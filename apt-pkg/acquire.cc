@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.9 1998/11/06 02:52:20 jgg Exp $
+// $Id: acquire.cc,v 1.10 1998/11/09 01:09:25 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -22,12 +22,14 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <strutl.h>
+
+#include <sys/time.h>
 									/*}}}*/
 
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* We grab some runtime state from the configuration space */
-pkgAcquire::pkgAcquire()
+pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
 {
    Queues = 0;
    Configs = 0;
@@ -85,7 +87,7 @@ void pkgAcquire::Remove(Item *Itm)
    {
       if (*I == Itm)
 	 Items.erase(I);
-   }   
+   }
 }
 									/*}}}*/
 // Acquire::Add - Add a worker						/*{{{*/
@@ -124,10 +126,10 @@ void pkgAcquire::Remove(Worker *Work)
    it is construction which creates a queue (based on the current queue
    mode) and puts the item in that queue. If the system is running then
    the queue might be started. */
-void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
+void pkgAcquire::Enqueue(ItemDesc &Item)
 {
    // Determine which queue to put the item in
-   string Name = QueueName(URI);
+   string Name = QueueName(Item.URI);
    if (Name.empty() == true)
       return;
 
@@ -144,18 +146,18 @@ void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
 	 I->Startup();
    }
 
-   Itm->Status = Item::StatIdle;
+   Item.Owner->Status = Item::StatIdle;
    
    // Queue it into the named queue
-   I->Enqueue(Itm,URI,Description);
+   I->Enqueue(Item);
    ToFetch++;
          
    // Some trace stuff
    if (Debug == true)
    {
-      clog << "Fetching " << URI << endl;
-      clog << " to " << Itm->DestFile << endl;
-      clog << " Queue is: " << QueueName(URI) << endl;
+      clog << "Fetching " << Item.URI << endl;
+      clog << " to " << Item.Owner->DestFile << endl;
+      clog << " Queue is: " << QueueName(Item.URI) << endl;
    }
 }
 									/*}}}*/
@@ -275,6 +277,9 @@ bool pkgAcquire::Run()
       I->Startup();
    
    // Run till all things have been acquired
+   struct timeval tv;
+   tv.tv_sec = 0;
+   tv.tv_usec = 500000; 
    while (ToFetch > 0)
    {
       fd_set RFds;
@@ -284,15 +289,26 @@ bool pkgAcquire::Run()
       FD_ZERO(&WFds);
       SetFds(Highest,&RFds,&WFds);
       
-      if (select(Highest+1,&RFds,&WFds,0,0) <= 0)
+      int Res = select(Highest+1,&RFds,&WFds,0,&tv);
+      if (Res < 0)
       {
-	 Running = false;
-	 return _error->Errno("select","Select has failed");
+	 _error->Errno("select","Select has failed");
+	 break;
       }
 	     
       RunFds(&RFds,&WFds);
       if (_error->PendingError() == true)
 	 break;
+      
+      // Timeout, notify the log class
+      if (Res == 0 || (Log != 0 && Log->Update == true))
+      {
+	 tv.tv_usec = 500000;
+	 for (Worker *I = Workers; I != 0; I = I->NextAcquire)
+	    I->Pulse();
+	 if (Log != 0)
+	    Log->Pulse(this);
+      }      
    }   
 
    // Shut down the acquire bits
@@ -312,6 +328,14 @@ void pkgAcquire::Bump()
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Bump();
 }
+									/*}}}*/
+// Acquire::WorkerStep - Step to the next worker			/*{{{*/
+// ---------------------------------------------------------------------
+/* Not inlined to advoid including acquire-worker.h */
+pkgAcquire::Worker *pkgAcquire::WorkerStep(Worker *I)
+{
+   return I->NextAcquire;
+};
 									/*}}}*/
 
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
@@ -356,19 +380,15 @@ pkgAcquire::Queue::~Queue()
 // Queue::Enqueue - Queue an item to the queue				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Queue::Enqueue(Item *Owner,string URI,string Description)
+void pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 {
    // Create a new item
-   QItem *I = new QItem;   
+   QItem *I = new QItem;
    I->Next = Items;
    Items = I;
+   *I = Item;
    
-   // Fill it in
-   Items->Owner = Owner;
-   Items->URI = URI;
-   Items->Description = Description;
-   Owner->QueueCounter++;
-   
+   Item.Owner->QueueCounter++;   
    if (Items->Next == 0)
       Cycle();
 }
@@ -410,7 +430,7 @@ bool pkgAcquire::Queue::Startup()
    if (Cnf == 0)
       return false;
    
-   Workers = new Worker(this,Cnf);
+   Workers = new Worker(this,Cnf,Owner->Log);
    Owner->Add(Workers);
    if (Workers->Start() == false)
       return false;
