@@ -35,6 +35,7 @@
          <arg>packages<arg choice="plain" rep="repeat"><replaceable>path</replaceable></arg><arg><replaceable>override</replaceable><arg><replaceable>pathprefix</replaceable></arg></arg></arg>
          <arg>sources<arg choice="plain" rep="repeat"><replaceable>path</replaceable></arg><arg><replaceable>override</replaceable><arg><replaceable>pathprefix</replaceable></arg></arg></arg>
          <arg>contents <arg choice="plain"><replaceable>path</replaceable></arg></arg>
+         <arg>release <arg choice="plain"><replaceable>path</replaceable></arg></arg>
          <arg>generate <arg choice="plain"><replaceable>config-file</replaceable></arg> <arg choice="plain" rep="repeat"><replaceable>section</replaceable></arg></arg>
          <arg>clean <arg choice="plain"><replaceable>config-file</replaceable></arg></arg>
       </group>
@@ -97,6 +98,25 @@
      separated by a comma in the output.
      <para>
      The option <option/--db/ can be used to specify a binary caching DB.
+     </VarListEntry>
+
+     <VarListEntry><term>release</term>
+     <ListItem><Para>
+     The <literal/release/ command generates a Release file from a
+     directory tree. It recursively searches the given directory for
+     Packages, Packages.gz, Packages.bz2, Sources, Sources.gz,
+     Sources.bz2, Release and md5sum.txt files.  It then writes to
+     stdout a Release file containing an MD5 digest and SHA1 digest
+     for each file.
+     <para>
+     Values for the additional metadata fields in the Release file are
+     taken from the corresponding variables under
+     <literal/APT::FTPArchive::Release/,
+     e.g. <literal/APT::FTPArchive::Release::Origin/.  The supported fields
+     are: <literal/Origin/, <literal/Label/, <literal/Suite/,
+     <literal/Version/, <literal/Codename/, <literal/Date/,
+     <literal/Architectures/, <literal/Components/, <literal/Description/.
+
      </VarListEntry>
 
      <VarListEntry><term>generate</term>
