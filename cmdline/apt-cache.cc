@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.68 2003/11/19 23:50:51 mdz Exp $
+// $Id: apt-cache.cc,v 1.69 2003/12/20 22:56:14 mdz Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1645,12 +1645,12 @@ int main(int argc,const char *argv[])
       {'f',"full","APT::Cache::ShowFull",0},
       {'g',"generate","APT::Cache::Generate",0},
       {'a',"all-versions","APT::Cache::AllVersions",0},
-      {0,"names-only","APT::Cache::NamesOnly",0},
-      {'n',"all-names","APT::Cache::AllNames",0},
+      {'n',"names-only","APT::Cache::NamesOnly",0},
+      {0,"all-names","APT::Cache::AllNames",0},
       {0,"recurse","APT::Cache::RecurseDepends",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
-      {'n',"installed","APT::Cache::Installed",0},
+      {0,"installed","APT::Cache::Installed",0},
       {0,0,0,0}};
    CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
                                     {"add",&DoAdd},
