@@ -169,13 +169,15 @@ rc_GLIBC_VER
 rc_LIBSTDCPP_VER
 ah_GCC3DEP
 
-dnl FIXME: There is no reason for this bit to do all the configure tests it
-dnl ends up doing. Maybe replace it with a simple AC_CHECK_HEADER and 
-dnl AC_PATH_PROG.
+dnl It used to be that the user could select translations and that could get
+dnl passed to the makefiles, but now that can only work if you use special
+dnl gettext approved makefiles, so this feature is unsupported by this.
 ALL_LINGUAS="da de en_GB es fr hu it nl no_NO pl pt_BR ru sv zh_TW"
-AM_GNU_GETTEXT
-AC_DEFINE_UNQUOTED(USE_NLS, $USE_NLS)
-AC_DEFINE_UNQUOTED(USE_INCLUDED_LIBINTL, $USE_INCLUDED_LIBINTL)
+AM_GNU_GETTEXT(external)
+if test x"$USE_NLS" = "xyes"; then
+   AC_DEFINE(USE_NLS)
+fi
+AC_SUBST(USE_NLS)
 AC_PATH_PROG(BASH, bash)
 
 AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make -s dirs)

@@ -14,6 +14,7 @@ SUBDIR=po
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
+CATALOGS := $(addsuffix .gmo,$(shell cat LINGUAS))
 DOMAINS = $(notdir $(wildcard $(PO_DOMAINS)/*))
 POTFILES := $(addsuffix .pot,$(addprefix $(PO)/,$(DOMAINS)))
 
