@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.12 1999/10/22 05:58:54 jgg Exp $
+// $Id: depcache.h,v 1.13 2000/05/31 02:49:37 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -95,7 +95,7 @@ class pkgDepCache : public pkgCache
       inline bool Keep() const {return Mode == ModeKeep;};
       inline bool Upgrade() const {return Status > 0 && Mode == ModeInstall;};
       inline bool Upgradable() const {return Status >= 1;};
-      inline bool Downgrade() const {return Status < 0;};
+      inline bool Downgrade() const {return Status < 0 && Mode == ModeInstall;};
       inline bool Held() const {return Status != 0 && Keep();};
       inline bool NowBroken() const {return (DepState & DepNowMin) != DepNowMin;};
       inline bool InstBroken() const {return (DepState & DepInstMin) != DepInstMin;};
@@ -165,6 +165,7 @@ class pkgDepCache : public pkgCache
    void MarkDelete(PkgIterator const &Pkg,bool Purge = false);
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true);
    void SetReInstall(PkgIterator const &Pkg,bool To);
+   void SetCandidateVersion(VerIterator TargetVer);
    
    // This is for debuging
    void Update(OpProgress *Prog = 0);

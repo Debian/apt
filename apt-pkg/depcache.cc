@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.21 1999/10/22 05:58:54 jgg Exp $
+// $Id: depcache.cc,v 1.22 2000/05/31 02:49:37 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -275,7 +275,7 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
    }
    
    // Installed, no upgrade
-   if (State.Upgradable() == false)
+   if (State.Status == 0)
    {	 
       if (State.Mode == ModeDelete)
 	 iDelCount += Add;
@@ -768,5 +768,23 @@ const char *pkgDepCache::StateCache::StripEpoch(const char *Ver)
       if (*I == ':')
 	 return I + 1;
    return Ver;
+}
+									/*}}}*/
+// StateCache::SetCandidateVersion - Change the candidate version	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgDepCache::SetCandidateVersion(VerIterator TargetVer)
+{
+   pkgCache::PkgIterator I = TargetVer.ParentPkg();
+   
+   RemoveSizes(I);
+   RemoveStates(I);
+   
+   PkgState[I->ID].CandidateVer = (Version *) TargetVer;
+   PkgState[I->ID].Update(I, *this);
+   
+   AddStates(I);
+   Update(I);
+   AddSizes(I);
 }
 									/*}}}*/
