@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.41 1999/12/09 03:45:56 jgg Exp $
+// $Id: http.cc,v 1.42 1999/12/10 08:53:43 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -671,10 +671,9 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
 			       ToFile == false))
       return false;
    
-   fd_set rfds,wfds,efds;
+   fd_set rfds,wfds;
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
-   FD_ZERO(&efds);
    
    // Add the server
    if (Srv->Out.WriteSpace() == true && Srv->ServerFd != -1) 
@@ -693,12 +692,6 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    // Add stdin
    FD_SET(STDIN_FILENO,&rfds);
 	  
-   // Error Set
-   if (FileFD != -1)
-      FD_SET(FileFD,&efds);
-   if (Srv->ServerFd != -1)
-      FD_SET(Srv->ServerFd,&efds);
-
    // Figure out the max fd
    int MaxFd = FileFD;
    if (MaxFd < Srv->ServerFd)
@@ -709,7 +702,7 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    tv.tv_sec = TimeOut;
    tv.tv_usec = 0;
    int Res = 0;
-   if ((Res = select(MaxFd+1,&rfds,&wfds,&efds,&tv)) < 0)
+   if ((Res = select(MaxFd+1,&rfds,&wfds,0,&tv)) < 0)
       return _error->Errno("select","Select failed");
    
    if (Res == 0)
@@ -718,11 +711,6 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
       return ServerDie(Srv);
    }
    
-   // Some kind of exception (error) on the sockets, die
-   if ((FileFD != -1 && FD_ISSET(FileFD,&efds)) || 
-       (Srv->ServerFd != -1 && FD_ISSET(Srv->ServerFd,&efds)))
-      return _error->Error("Socket Exception");
-
    // Handle server IO
    if (Srv->ServerFd != -1 && FD_ISSET(Srv->ServerFd,&rfds))
    {

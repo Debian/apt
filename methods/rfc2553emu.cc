@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.cc,v 1.4 1999/12/09 03:45:56 jgg Exp $
+// $Id: rfc2553emu.cc,v 1.5 1999/12/10 08:53:43 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -28,7 +28,7 @@ int getaddrinfo(const char *nodename, const char *servname,
 		const struct addrinfo *hints,
 		struct addrinfo **res)
 {
-   struct addrinfo **Result;
+   struct addrinfo **Result = res;
    hostent *Addr;
    unsigned int Port;
    int Proto;
