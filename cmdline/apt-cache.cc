@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.51 2001/06/10 02:03:33 jgg Exp $
+// $Id: apt-cache.cc,v 1.52 2001/07/02 00:10:32 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -945,18 +945,34 @@ bool Search(CommandLine &CmdL)
 	 else
 	    VFList[P->ID].NameMatch = false;
       }
-      
+        
       // Doing names only, drop any that dont match..
       if (NamesOnly == true && VFList[P->ID].NameMatch == false)
 	 continue;
 	 
       // Find the proper version to use. 
       pkgCache::VerIterator V = Plcy.GetCandidateVer(P);
-      if (V.end() == true)
-	 continue;
-      VFList[P->ID].Vf = V.FileList();
+      if (V.end() == false)
+	 VFList[P->ID].Vf = V.FileList();
    }
-   
+      
+   // Include all the packages that provide matching names too
+   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+   {
+      if (VFList[P->ID].NameMatch == false)
+	 continue;
+
+      for (pkgCache::PrvIterator Prv = P.ProvidesList() ; Prv.end() == false; Prv++)
+      {
+	 pkgCache::VerIterator V = Plcy.GetCandidateVer(Prv.OwnerPkg());
+	 if (V.end() == false)
+	 {
+	    VFList[Prv.OwnerPkg()->ID].Vf = V.FileList();
+	    VFList[Prv.OwnerPkg()->ID].NameMatch = true;
+	 }
+      }
+   }
+
    LocalitySort(&VFList->Vf,Cache.HeaderP->PackageCount,sizeof(*VFList));
 
    // Iterate over all the version records and check them
