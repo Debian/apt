@@ -598,6 +598,9 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 
       string gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
       string pubringpath = _config->Find("Apt::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
+      string releasegpg = *I+"Release.gpg";
+      string release = *I+"Release";
+
       Args[i++] = gpgvpath.c_str();
       Args[i++] = "--keyring";
       Args[i++] = pubringpath.c_str();
@@ -617,8 +620,9 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 	    }
          }
       }
-      Args[i++] = string(*I+"Release.gpg").c_str();
-      Args[i++] = string(*I+"Release").c_str();
+      
+      Args[i++] = releasegpg.c_str();
+      Args[i++] = release.c_str();
       Args[i++] = NULL;
       
       pid_t pid = ExecFork();
