@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.105 2001/04/10 04:49:52 jgg Exp $
+// $Id: apt-get.cc,v 1.106 2001/04/28 01:18:37 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -968,7 +968,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       if (_config->FindB("APT::Get::ReInstall",false) == true)
       {
 	 if (Pkg->CurrentVer == 0 || Pkg.CurrentVer().Downloadable() == false)
-	    ioprintf(c1out,_("Sorry, re-installation of %s is not possible, it cannot be downloaded."),
+	    ioprintf(c1out,_("Sorry, re-installation of %s is not possible, it cannot be downloaded.\n"),
 		     Pkg.Name());
 	 else
 	    Cache.SetReInstall(Pkg,true);
