@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.34 2001/04/06 05:40:03 jgg Exp $
+// $Id: algorithms.cc,v 1.35 2001/05/07 02:15:33 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -217,7 +217,7 @@ bool pkgApplyStatus(pkgDepCache &Cache)
       if (I->InstState == pkgCache::State::ReInstReq ||
 	  I->InstState == pkgCache::State::HoldReInstReq)
       {
-	 if (I.CurrentVer().Downloadable() == true)
+	 if (I->CurrentVer != 0 && I.CurrentVer().Downloadable() == true)
 	    Cache.MarkKeep(I);
 	 else
 	 {
@@ -238,7 +238,7 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	    re-unpacked (probably) */
 	 case pkgCache::State::UnPacked:
 	 case pkgCache::State::HalfConfigured:
-	 if (I.CurrentVer().Downloadable() == true || 
+	 if ((I->CurrentVer != 0 && I.CurrentVer().Downloadable() == true) ||
 	     I.State() != pkgCache::PkgIterator::NeedsUnpack)
 	    Cache.MarkKeep(I);
 	 else
