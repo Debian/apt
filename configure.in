@@ -17,7 +17,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.3.2")
+AC_DEFINE_UNQUOTED(VERSION,"0.3.2.1")
 AC_DEFINE_UNQUOTED(PACKAGE,"apt")
 
 dnl Tom's host stuff
@@ -34,7 +34,6 @@ tl_CHECK_TOOL_PREFIX	dnl recheck, in case the initial guess was wrong
 dnl Check for other programs
 tl_PROG_CXX
 AC_LANG_CPLUSPLUS
-
 dnl Checks for X11
 AC_PATH_X
 AC_PATH_XTRA
@@ -107,6 +106,20 @@ AC_CHECK_PROG(DEBIANDOC_HTML,debiandoc2html,"yes","")
 AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
 
 dnl Check for YODL
-AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
+AC_ARG_WITH(YODL,
+        [  --with-YODL   Use YODL macro processor],
+        [private_YODL=yes],
+        [private_YODL=no])
+if test $private_YODL = yes ;then
+	if test $withval = yes;then
+		AC_MSG_RESULT([checking for yodl2man.. (cmdline) yes])
+		AC_DEFINE_UNQUOTED(YODL_MAN,"yes")
+	else
+		AC_MSG_RESULT([checking for yodl2man.. (cmdline) no])
+#[29~		AC_DEFINE_UNQUOTED(YODL_MAN,"")
+	fi
+else
+	AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
+fi
 
 AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make dirs)
