@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extracttar.cc,v 1.7 2003/02/10 00:36:12 doogie Exp $
+// $Id: extracttar.cc,v 1.8 2003/07/18 15:35:23 mdz Exp $
 /* ######################################################################
 
    Extract a Tar - Tar Extractor
@@ -292,7 +292,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 
 	 default:
 	 BadRecord = true;
-	 _error->Warning(_("Unkown TAR header type %u, member %s"),(unsigned)Tar->LinkFlag,Tar->Name);
+	 _error->Warning(_("Unknown TAR header type %u, member %s"),(unsigned)Tar->LinkFlag,Tar->Name);
 	 break;
       }
       
