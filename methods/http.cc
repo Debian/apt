@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.10 1998/12/07 07:26:27 jgg Exp $
+// $Id: http.cc,v 1.11 1998/12/07 07:32:03 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -644,7 +644,6 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
    Req += "User-Agent: Debian APT-HTTP/1.2\r\n\r\n";
 //   cerr << Req << endl;
 
-   cerr << Req << endl;
    Out.Read(Req);
 }
 									/*}}}*/
