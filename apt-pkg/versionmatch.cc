@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versionmatch.cc,v 1.6 2001/06/10 01:57:45 jgg Exp $
+// $Id: versionmatch.cc,v 1.7 2002/11/06 06:43:14 jgg Exp $
 /* ######################################################################
 
    Version Matching 
@@ -68,7 +68,7 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 	 else
 	    RelArchive = Data;
 	 
-	 if (RelVerStr.end()[-1] == '*')
+	 if (RelVerStr.length() > 0 && RelVerStr.end()[-1] == '*')
 	 {
 	    RelVerPrefixMatch = true;
 	    RelVerStr = string(RelVerStr.begin(),RelVerStr.end()-1);

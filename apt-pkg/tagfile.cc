@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.34 2002/07/08 03:39:06 jgg Exp $
+// $Id: tagfile.cc,v 1.35 2002/11/06 06:43:14 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -197,7 +197,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       if (Stop == 0)
 	 return false;
       
-      for (;  Stop+1 < End && Stop[1] == '\r'; Stop++);
+      for (; Stop+1 < End && Stop[1] == '\r'; Stop++);
 
       // Double newline marks the end of the record
       if (Stop+1 < End && Stop[1] == '\n')

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.8 2001/05/27 23:40:56 jgg Exp $
+// $Id: policy.cc,v 1.9 2002/11/06 06:43:14 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -183,7 +183,7 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
    Pin *P = 0;
    
    if (Name.empty() == true)
-      P = &*Defaults.insert(Defaults.end());
+      P = &*Defaults.insert(Defaults.end(),PkgPin());
    else
    {
       // Get a spot to put the pin
@@ -197,7 +197,7 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 	       P = &*I;
 	 
 	 if (P == 0)
-	    P = &*Unmatched.insert(Unmatched.end());      
+	    P = &*Unmatched.insert(Unmatched.end(),PkgPin());      
       }
       else
       {
