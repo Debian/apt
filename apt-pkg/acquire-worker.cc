@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.4 1998/10/22 04:56:40 jgg Exp $
+// $Id: acquire-worker.cc,v 1.5 1998/10/23 00:49:58 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -167,7 +167,6 @@ bool pkgAcquire::Worker::ReadMessages()
    return true;
 }
 									/*}}}*/
-
 // Worker::RunMessage - Empty the message queue				/*{{{*/
 // ---------------------------------------------------------------------
 /* This takes the messages from the message queue and runs them through

@@ -1,14 +1,16 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.6 1998/10/22 04:56:48 jgg Exp $
+// $Id: strutl.cc,v 1.7 1998/10/23 00:49:59 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
 
-   strstrip - Remove whitespace from the front and end of a line.
+   These have been collected from here and there to do all sorts of usefull
+   things to strings. They are usefull in file parsers, URI handlers and
+   especially in APT methods.   
    
    This source is placed in the Public Domain, do with it what you will
-   It was originally written by Jason Gunthorpe <jgg@gpu.srv.ualberta.ca>   
+   It was originally written by Jason Gunthorpe <jgg@gpu.srv.ualberta.ca>
    
    ##################################################################### */
 									/*}}}*/
@@ -195,8 +197,8 @@ string QuoteString(string Str,const char *Bad)
 									/*}}}*/
 // SizeToStr - Convert a long into a human readable size		/*{{{*/
 // ---------------------------------------------------------------------
-/* A max of 4 digits are shown before conversion to the next highest unit. The
-   max length of the string will be 5 chars unless the size is > 10 
+/* A max of 4 digits are shown before conversion to the next highest unit. 
+   The max length of the string will be 5 chars unless the size is > 10
    YottaBytes (E24) */
 string SizeToStr(double Size)
 {
@@ -541,5 +543,79 @@ bool ReadMessages(int Fd, vector<string> &List)
       if (WaitFd(Fd) == false)
 	 return false;
    }   
+}
+									/*}}}*/
+// MonthConv - Converts a month string into a number			/*{{{*/
+// ---------------------------------------------------------------------
+/* This was lifted from the boa webserver which lifted it from 'wn-v1.07'
+   Made it a bit more robust with a few touppers though. */
+static int MonthConv(char *Month)
+{
+   switch (toupper(*Month)) 
+   {
+      case 'A':
+      return toupper(Month[1]) == 'P'?3:7;
+      case 'D':
+      return 11;
+      case 'F':
+      return 1;
+      case 'J':
+      if (toupper(Month[1]) == 'A')
+	 return 0;
+      return toupper(Month[2]) == 'N'?5:6;
+      case 'M':
+      return toupper(Month[2]) == 'R'?2:4;
+      case 'N':
+      return 10;
+      case 'O':
+      return 9;
+      case 'S':
+      return 8;
+
+      // Pretend it is January..
+      default:
+      return 0;
+   }   
+}
+									/*}}}*/
+// StrToTime - Converts a string into a time_t				/*{{{*/
+// ---------------------------------------------------------------------
+/* This handles all 3 populare time formats including RFC 1123, RFC 1036
+   and the C library asctime format. It requires the GNU library function
+   'timegm' to convert a struct tm in UTC to a time_t. For some bizzar
+   reason the C library does not provide any such function :<*/
+bool StrToTime(string Val,time_t &Result)
+{
+   struct tm Tm;
+   char Month[10];
+   const char *I = Val.c_str();
+   
+   // Skip the day of the week
+   for (;*I != 0  && *I != ' '; I++);
+   
+   // Handle RFC 1123 time
+   if (sscanf(I," %d %3s %d %d:%d:%d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
+	      &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
+   {
+      // Handle RFC 1036 time
+      if (sscanf(I," %d-%3s-%d %d:%d:%d GMT",&Tm.tm_mday,Month,
+		 &Tm.tm_year,&Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) == 6)
+	 Tm.tm_year += 1900;
+      else
+      {
+	 // asctime format
+	 if (sscanf(I," %3s %d %d:%d:%d %d",Month,&Tm.tm_mday,
+		    &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec,&Tm.tm_year) != 6)
+	    return false;
+      }
+   }
+   
+   Tm.tm_isdst = 0;
+   Tm.tm_mon = MonthConv(Month);
+   Tm.tm_year -= 1900;
+   
+   // Convert to local time and then to GMT
+   Result = timegm(&Tm);
+   return true;
 }
 									/*}}}*/
