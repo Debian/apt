@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versionmatch.cc,v 1.5 2001/05/29 03:07:12 jgg Exp $
+// $Id: versionmatch.cc,v 1.6 2001/06/10 01:57:45 jgg Exp $
 /* ######################################################################
 
    Version Matching 
@@ -28,6 +28,10 @@
 /* Break up the data string according to the selected type */
 pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 {
+   MatchAll = false;
+   VerPrefixMatch = false;
+   RelVerPrefixMatch = false;
+   
    if (Type == None || Data.length() < 1)
       return;
    
@@ -52,8 +56,6 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 	 MatchAll = true;
 	 return;
       }
-      
-      MatchAll = false;
       
       // Are we a simple specification?
       string::const_iterator I = Data.begin();
