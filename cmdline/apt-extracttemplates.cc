@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.14 2003/01/11 07:18:44 jgg Exp $
+// $Id: apt-extracttemplates.cc,v 1.15 2003/07/26 00:00:11 mdz Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -249,7 +249,15 @@ string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
-	snprintf(fn, sizeof(fn), "%s/%s.%s.%u%d", _config->Find("APT::ExtractTemplates::TempDir", TMPDIR).c_str(), package, prefix, getpid(), i++);
+        char *tempdir = NULL;
+
+        tempdir = getenv("TMPDIR");
+        if (tempdir == NULL)
+             tempdir = TMPDIR;
+
+	snprintf(fn, sizeof(fn), "%s/%s.%s.%u%d",
+                 _config->Find("APT::ExtractTemplates::TempDir", tempdir).c_str(),
+                 package, prefix, getpid(), i++);
 	FileFd f;
 	if (data == NULL)
 		data = "";
