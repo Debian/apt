@@ -110,7 +110,7 @@
      the desired packages. If a hyphen is appended to the package name (with 
      no intervening space), the identified package will be removed if it is 
      installed. Similarly a plus sign can be used to designate a package to 
-     isntall. These latter feature may be used to override decisions made by 
+     install. These latter features may be used to override decisions made by 
      apt-get's conflict resolution  system.
      <para>
      A specific version of a package can be selected for installation by 
@@ -120,7 +120,7 @@
      following the package name with a slash and the version of the 
      distribution or the Archive name (stable, frozen, unstable).
      <para>
-     Both of the version selection mechansims can downgrade packages and must
+     Both of the version selection mechanisms can downgrade packages and must
      be used with care.
      <para>
      If no package matches the given expression and the expression contains one
@@ -132,7 +132,7 @@
 
      <VarListEntry><Term>remove</Term>
      <ListItem><Para>   
-     <literal/remove/ is identical to bf(install) except that packages are 
+     <literal/remove/ is identical to <literal/install/ except that packages are 
      removed instead of installed. If a plus sign is appended to the package 
      name (with no intervening space), the identified package will be 
      installed.
@@ -363,14 +363,14 @@
      a default pin at priority 990 using the specified release string. The
      preferences file may further override this setting. In short, this option
      lets you have simple control over which distribution packages will be
-     retrieved from. Some common examples might me 
+     retrieved from. Some common examples might be 
      <option>-t '2.1*'</> or <option>-t unstable</>.
      Configuration Item: <literal/APT::Default-Release/
      </VarListEntry>
 
      <VarListEntry><term><option/--trivial-only/</>
      <ListItem><Para>
-     Only perform operations are 'trivial'. Logically this can be considered
+     Only perform operations that are 'trivial'. Logically this can be considered
      related to <option/--assume-yes/, where <option/--assume-yes/ will answer 
      yes to any prompt, <option/--trivial-only/ will answer no. 
      Configuration Item: <literal/APT::Get::Trivial-Only/.
@@ -412,13 +412,13 @@
      
      <VarListEntry><term><filename>&cachedir;/archives/</></term>
      <ListItem><Para>
-     storage area for retrieved package files
+     storage area for retrieved package files.
      Configuration Item: <literal/Dir::Cache::Archives/.
      </VarListEntry>
      
      <VarListEntry><term><filename>&cachedir;/archives/partial/</></term>
      <ListItem><Para>
-     storage area for package files in transit
+     storage area for package files in transit.
      Configuration Item: <literal/Dir::Cache::Archives/ (implicit partial). 
      </VarListEntry>
      

@@ -99,13 +99,13 @@ a=stable
    The final selection method is by origin. This is simply the site name
    of the originating package files. The empty string is used for file URIs.
    <para>
-   Version selection, particularly the latter two methods, are used in may
-   different part of APT, not just the preferences file.
+   Version selection, particularly the latter two methods, are used in many
+   different parts of APT, not just the preferences file.
  </RefSect1>
  
  <RefSect1><Title>Candidate Version Policy</>
    <para>
-   Interaly APT maintains a list of all available versions for all packages.
+   Internally APT maintains a list of all available versions for all packages.
    If you place multiple releases or vendors in your &sources-list; file then
    these features are available. By default APT selects the highest version
    from all automatic sources. Some sources, such as 
@@ -160,7 +160,7 @@ a=stable
    Giving a pin a priority greater than 1000 will allow APT to downgrade
    in order to get to that version.   
    <para>
-   Each package may be pinned to a specific version and each Package file
+   Each package may be pinned to a specific version and each Packages file
    has a priority for every package inside. The highest priority assigned
    to a package is the one that is used.
    <para>
@@ -173,26 +173,26 @@ Pin-Priority: 1001
    The first line specifies the package, the second gives the Pin specification
    and the last gives the priority of this pin. The first word of the pin
    specification may be version, release or origin, the remainder of the field
-   is described in the Versioning sectin above.
+   is described in the Versioning section above.
    <para>
    A default pin is how the priorities of package files are set. Any number
    of default pins may be specified, the first matching default will select
    the priority of the package file. Only release or origin may be used in 
-   the Pin specification since they match Package files.
+   the Pin specification since they match Packages files.
 <informalexample><programlisting>
 Package: *
 Pin: release v=2.1*
 Pin-Priority: 998
 </programlisting></informalexample>
    <para>
-   If the Pin-Priorty field is omitted then the priority defaults to 989 for
+   If the Pin-Priority field is omitted then the priority defaults to 989 for
    both cases.
    
    <RefSect2><title>Interesting Effects</>
    <para>
    Due to the downgrade prevention barrier at priority 1000 it is possible
    that a lower priority version  will be selected if the higher priority 
-   would casue a downgrade. For instance, if package foo has versions
+   would cause a downgrade. For instance, if package foo has versions
    <literal/1.2/, <literal/1.1/ and <literal/1.0/ installed, with 
    <literal/1.1/ being the currently installed version and the priorities of 
    each version being 900, 100 and 950 repectively the winning version will be 
