@@ -50,39 +50,6 @@ dnl if test "$PTHREADLIB" != "-lpthread"; then
 dnl   AC_MSG_ERROR(failed: I need posix threads, pthread)
 dnl fi
 
-dnl Find the version of python we are using and ensure the library and header
-dnl are available.. Also get all the paths and options from the python setup
-dnl makefile.
-AC_CACHE_CHECK("python version", ac_cv_ver_python, [ac_cv_ver_python=`python -c 'import sys;print sys.version[[:3]]' 2> /dev/null`])
-AC_CACHE_CHECK("python prefix", ac_cv_prefix_python, [ac_cv_prefix_python=`python -c 'import sys;print sys.prefix' 2> /dev/null`])
-AC_CACHE_CHECK("python exec prefix", ac_cv_execprefix_python, [ac_cv_execprefix_python=`python -c 'import sys;print sys.exec_prefix' 2> /dev/null`])
-if test "x$ac_cv_ver_python" != "x"; then
-
-   cat > pytest << EOF
-include $ac_cv_execprefix_python/lib/python$ac_cv_ver_python/config/Makefile
-.PHONY: libs include
-libs:
-	@echo \$(MODLIBS) \$(LIBS) \$(SYSLIBS)
-include:
-	@echo \$(INCLUDEPY)
-EOF
-   AC_CACHE_CHECK("python libs", ac_cv_libs_python, [ac_cv_libs_python=`make -s -f pytest libs 2> /dev/null`])
-   AC_CACHE_CHECK("python include", ac_cv_include_python, [ac_cv_include_python=`make -s -f pytest include 2> /dev/null`])
-   AC_CHECK_HEADER(python$ac_cv_ver_python/Python.h,
-     [AC_CHECK_LIB(python$ac_cv_ver_python,PyArg_ParseTuple,
-        [AC_DEFINE(HAVE_PYTHONLIB) PYTHONLIB="-lpython$ac_cv_ver_python $ac_cv_libs_python"],[],$ac_cv_libs_python)])
-   AC_SUBST(PYTHONLIB)
-   
-   PYTHONVER=$ac_cv_ver_python
-   PYTHONPREFIX=$ac_cv_prefix_python
-   PYTHONEXECPREFIX=$ac_cv_execprefix_python
-   PYTHONINCLUDE=$ac_cv_include_python
-   AC_SUBST(PYTHONVER)
-   AC_SUBST(PYTHONPREFIX)
-   AC_SUBST(PYTHONEXECPREFIX)
-   AC_SUBST(PYTHONINCLUDE)
-fi
-
 dnl Check for DB2
 AC_CHECK_HEADER(db2/db.h,
      [AC_CHECK_LIB(db2,db_open,
