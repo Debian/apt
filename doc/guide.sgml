@@ -4,7 +4,7 @@
 <title>APT User's Guide</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: guide.sgml,v 1.1 1998/07/02 02:58:12 jgg Exp $</version>
+<version>$Id: guide.sgml,v 1.2 1998/11/23 01:15:59 jgg Exp $</version>
 
 <abstract>
 This document provides an overview of how to use the the APT package manager.
@@ -111,9 +111,8 @@ available. This is done with <tt>apt-get update</>. For instance,
 # apt-get update
 Get http://ftp.de.debian.org/debian-non-US/ stable/binary-i386/ Packages
 Get http://llug.sep.bnl.gov/debian/ frozen/contrib Packages
-Updating package file cache...done
-Updating package status cache...done
-Checking system integrity...ok
+Reading Package Lists... Done
+Building Dependency Tree... Done
 </example>
 
 <p>
@@ -219,10 +218,6 @@ developmental version. <em>non-US</> is only available on some mirrors and
 refers to packages that contain encryption technology or other things that
 cannot be exported from the United States. Importing these packages into the
 US is legal however. 
-<footnote>As of this writing the non-US distribution has 
-not been created, the only way to access it is by specifying 
-stable/binary-i386/ at this prompt and by specifying a URL ending in 
-debian-non-US </footnote>
 
 <p>
 <example>
@@ -255,6 +250,11 @@ perform the installation using [I]nstall. When using the APT method
 the [C]onfig and [R]emove commands have no meaning, the [I]nstall command
 performs both of them together. 
 
+<p>
+By default APT will automatically remove the packages once they have been
+sucessfully installed. To change this behavor place <tt>Dselect::clean 
+"prompt";</> in /etc/apt/apt.conf.
+
 </chapt>
                                                                   <!-- }}} -->
 <!-- The Interfaces						       {{{ -->
@@ -275,61 +275,56 @@ informative status messages so that you can estimate how far along it is and
 how much is left to do.
 
 <!-- ===================================================================== -->
-<sect>The Pre-Checks
+<sect>Startup
 
 <p>
-Before all operations, except update, APT performs a number of checks on the
-systems. These are designed to safe guard the operations it is about to 
-undertake. At any time the full set of checks may be run by performing
-<tt>apt-get check</>. 
+Before all operations, except update, APT performs a number of actions to
+prepare its internal state. It also does some checks of the systems state.
+At any time these operations can be performed by running <tt>apt-get chec</>
 <p>
 <example>
 # apt-get check
-Updating package file cache...done
-Updating package status cache...done
-Checking system integrity...ok
+Reading Package Lists... Done
+Building Dependancy Tree... Done
 </example>
 
 <p>
-The first check is to ensure that the archive package lists are matched to 
-the pre-generated data cache, if they are not then the cache is automatically
-refreshed. This may fail if <tt>apt-get update</> has not been run to 
-synchronize with the <em>Sources</>. The next check verifies that the state of 
-the system matches the cached state and automatically rebuilds the cached
-state if they are not synchronized. This check should never fail and it 
-indicates a serious error if it ever does.
+The first thing it does is read all the package files into memory. APT
+uses a caching scheme so this operation will be faster the second time it
+is run. If some of the package files are not found then they will be ignored
+and a warning will be printed when apt-get exits. 
 
 <p>
-The final check performs a detailed analysis of the system integrity. It
-checks every dependency of every installed or unpacked package and considers
+The final operation performs a detailed analysis of the systems dependencies. 
+It checks every dependency of every installed or unpacked package and considers
 if it is ok. Should this find a problem then a report will be printed out and
 <prgn>apt-get</> will refuse to run.
 
 <p>
 <example>
 # apt-get check
-Updating package file cache...done
-Updating package status cache...done
-Checking system integrity...dependency error
+Reading Package Lists... Done
+Building Dependancy Tree... Done
 You might want to run apt-get -f install' to correct these.
-Sorry, but the following packages are broken - this means they have unmet
-dependencies:
-  libdbd-mysql-perl: Depends:perl
-  xzx: Depends:xlib6
-  libdbd-msql-perl: Depends:perl
-  mailpgp: Depends:pgp-i Depends:pgp-us
-  xdpkg: Depends:python
-  squake: Depends:quake-lib Depends:quake-lib-stub
-  debmake: Depends:fileutils
-  libreadlineg2: Conflicts:libreadline2
-  ssh: Depends:gmp2 Depends:xlib6g Depends:zlib1g 
+Sorry, but the following packages have unmet dependencies:
+  9fonts: Depends: xlib6g but it is not installed
+  uucp: Depends: mailx but it is not installed
+  blast: Depends: xlib6g (>= 3.3-5) but it is not installed
+  adduser: Depends: perl-base but it is not installed
+  aumix: Depends: libgpmg1 but it is not installed
+  debiandoc-sgml: Depends: sgml-base but it is not installed
+  bash-builtins: Depends: bash (>= 2.01) but 2.0-3 is installed
+  cthugha: Depends: svgalibg1 but it is not installed
+           Depends: xlib6g (>= 3.3-5) but it is not installed
+  libreadlineg2: Conflicts:libreadline2 (<< 2.1-2.1)
 </example>
 
 <p>
 In this example the system has many problems, including a serious problem
 with libreadlineg2. For each package that has unmet dependencies a line
 is printed out indicating the package with the problem and the dependencies
-that are unmet. For brevity the version inter-relationships are omitted.
+that are unmet. A short explanation of why the package has a dependency
+problem is also included.
 
 <p>
 There are two ways a system can get into a broken state like this. The
@@ -472,6 +467,9 @@ installed packages. It is roughly equivalent to the space required in
 removed then the value may indicate the amount of space that will be
 freed.
 
+<p>
+Some other reports can be generated by using the -u option to show packages
+to upgrade, they are similar to the previous examples.
 </sect>
 
 <!-- ===================================================================== -->
@@ -483,12 +481,12 @@ status messages,
 <p>
 <example>
 # apt-get update
-Get http://ftp.de.debian.org/debian-non-US/ stable/binary-i386/ Packages
-Get http://llug.sep.bnl.gov/debian/ frozen/contrib Packages
-Get http://llug.sep.bnl.gov/debian/ frozen/main Packages
-Get http://ftp.de.debian.org/debian-non-US/ unstable/binary-i386/ Packages
-Get http://llug.sep.bnl.gov/debian/ frozen/non-free Packages
-11% [Packages `Waiting for file' 0/32.1k 0%] 2203b/s 1m52s
+Get:1 http://ftp.de.debian.org/debian-non-US/ stable/non-US/ Packages
+Get:2 http://llug.sep.bnl.gov/debian/ frozen/contrib Packages
+Hit http://llug.sep.bnl.gov/debian/ frozen/main Packages
+Get:4 http://ftp.de.debian.org/debian-non-US/ unstable/binary-i386/ Packages
+Get:5 http://llug.sep.bnl.gov/debian/ frozen/non-free Packages
+11% [5 frozen/non-free `Waiting for file' 0/32.1k 0%] 2203b/s 1m52s
 </example>
 
 <p>
@@ -503,7 +501,8 @@ inaccuracies.
 The next section of the status line is repeated once for each dowload thread
 and indicates the operation being performed and some usefull information
 about what is happening. Sometimes this section will simply read <em>Forking</>
-which means the OS is loading the download module. The first word after the [ 
+which means the OS is loading the download module. The first word after the [
+is the fetch number as shown on the history lines. The next word
 is the short form name of the object being downloaded. For archives it will
 contain the name of the package that is being fetched.
 

@@ -11,5 +11,5 @@ SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml cache.sgml \
 include $(DEBIANDOC_H)
 
 # Man pages
-SOURCE = apt-cache.8 apt-get.8 apt.8 ftp.conf.5 sources.list.5
+SOURCE = apt-cache.8 apt-get.8 apt.8 sources.list.5
 include $(MANPAGE_H)
