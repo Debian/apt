@@ -535,7 +535,7 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
    }
    if(log) {
       msg.str("");
-      ioprintf(msg, _("Stored Label: %s \n"),
+      ioprintf(msg, _("Stored label: %s \n"),
 	       Database.Find("CD::"+ident).c_str());
       log->Update(msg.str());
    }
@@ -603,7 +603,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
       log->Update("["+ID+"]\n");
 
    if(log) 
-      log->Update(_("Scanning Disc for index files..\n"),STEP_SCAN);
+      log->Update(_("Scanning disc for index files..\n"),STEP_SCAN);
    
    // Get the CD structure
    vector<string> List;
@@ -714,7 +714,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    Database.Set("CD::" + ID,Name);
    if(log) {
       msg.str("");
-      ioprintf(msg, _("This Disc is called: \n'%s'\n"), Name.c_str());
+      ioprintf(msg, _("This disc is called: \n'%s'\n"), Name.c_str());
       log->Update(msg.str());
    }
 
@@ -751,7 +751,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
 
    // Print the sourcelist entries
    if(log) 
-      log->Update(_("Source List entries for this Disc are:\n"));
+      log->Update(_("Source list entries for this disc are:\n"));
 
    for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
    {

@@ -356,7 +356,7 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
       if (Reap == true)
 	 return false;
       
-      return _error->Error(_("Waited, for %s but it wasn't there"),Name);
+      return _error->Error(_("Waited for %s but it wasn't there"),Name);
    }
 
    

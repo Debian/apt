@@ -192,7 +192,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 return Done(true);
       
       if (NewSum != CheckSum)
-	 return _error->Error(_("Tar Checksum failed, archive corrupted"));
+	 return _error->Error(_("Tar checksum failed, archive corrupted"));
    
       // Decode all of the fields
       pkgDirStream::Item Itm;

@@ -242,7 +242,7 @@ bool DumpPackage(CommandLine &CmdL)
 bool Stats(CommandLine &Cmd)
 {
    pkgCache &Cache = *GCache;
-   cout << _("Total Package Names : ") << Cache.Head().PackageCount << " (" <<
+   cout << _("Total package names : ") << Cache.Head().PackageCount << " (" <<
       SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
 
    int Normal = 0;
@@ -282,24 +282,24 @@ bool Stats(CommandLine &Cmd)
 	 continue;
       }
    }
-   cout << _("  Normal Packages: ") << Normal << endl;
-   cout << _("  Pure Virtual Packages: ") << Virtual << endl;
-   cout << _("  Single Virtual Packages: ") << DVirt << endl;
-   cout << _("  Mixed Virtual Packages: ") << NVirt << endl;
+   cout << _("  Normal packages: ") << Normal << endl;
+   cout << _("  Pure virtual packages: ") << Virtual << endl;
+   cout << _("  Single virtual packages: ") << DVirt << endl;
+   cout << _("  Mixed virtual packages: ") << NVirt << endl;
    cout << _("  Missing: ") << Missing << endl;
    
-   cout << _("Total Distinct Versions: ") << Cache.Head().VersionCount << " (" <<
+   cout << _("Total distinct versions: ") << Cache.Head().VersionCount << " (" <<
       SizeToStr(Cache.Head().VersionCount*Cache.Head().VersionSz) << ')' << endl;
    cout << _("Total Distinct Descriptions: ") << Cache.Head().DescriptionCount << " (" <<
       SizeToStr(Cache.Head().DescriptionCount*Cache.Head().DescriptionSz) << ')' << endl;
-   cout << _("Total Dependencies: ") << Cache.Head().DependsCount << " (" << 
+   cout << _("Total dependencies: ") << Cache.Head().DependsCount << " (" << 
       SizeToStr(Cache.Head().DependsCount*Cache.Head().DependencySz) << ')' << endl;
    
-   cout << _("Total Ver/File relations: ") << Cache.Head().VerFileCount << " (" <<
+   cout << _("Total ver/file relations: ") << Cache.Head().VerFileCount << " (" <<
       SizeToStr(Cache.Head().VerFileCount*Cache.Head().VerFileSz) << ')' << endl;
    cout << _("Total Desc/File relations: ") << Cache.Head().DescFileCount << " (" <<
       SizeToStr(Cache.Head().DescFileCount*Cache.Head().DescFileSz) << ')' << endl;
-   cout << _("Total Provides Mappings: ") << Cache.Head().ProvidesCount << " (" <<
+   cout << _("Total Provides mappings: ") << Cache.Head().ProvidesCount << " (" <<
       SizeToStr(Cache.Head().ProvidesCount*Cache.Head().ProvidesSz) << ')' << endl;
    
    // String list stats
@@ -311,7 +311,7 @@ bool Stats(CommandLine &Cmd)
       Count++;
       Size += strlen(Cache.StrP + I->String) + 1;
    }
-   cout << _("Total Globbed Strings: ") << Count << " (" << SizeToStr(Size) << ')' << endl;
+   cout << _("Total globbed strings: ") << Count << " (" << SizeToStr(Size) << ')' << endl;
 
    unsigned long DepVerSize = 0;
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
@@ -325,12 +325,12 @@ bool Stats(CommandLine &Cmd)
 	 }
       }
    }
-   cout << _("Total Dependency Version space: ") << SizeToStr(DepVerSize) << endl;
+   cout << _("Total dependency version space: ") << SizeToStr(DepVerSize) << endl;
    
    unsigned long Slack = 0;
    for (int I = 0; I != 7; I++)
       Slack += Cache.Head().Pools[I].ItemSize*Cache.Head().Pools[I].Count;
-   cout << _("Total Slack space: ") << SizeToStr(Slack) << endl;
+   cout << _("Total slack space: ") << SizeToStr(Slack) << endl;
    
    unsigned long Total = 0;
    Total = Slack + Size + Cache.Head().DependsCount*Cache.Head().DependencySz + 
@@ -338,7 +338,7 @@ bool Stats(CommandLine &Cmd)
            Cache.Head().PackageCount*Cache.Head().PackageSz + 
            Cache.Head().VerFileCount*Cache.Head().VerFileSz +
            Cache.Head().ProvidesCount*Cache.Head().ProvidesSz;
-   cout << _("Total Space Accounted for: ") << SizeToStr(Total) << endl;
+   cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
    
    return true;
 }
@@ -1518,7 +1518,7 @@ bool Policy(CommandLine &CmdL)
    // Print out all of the package files
    if (CmdL.FileList[1] == 0)
    {
-      cout << _("Package Files:") << endl;   
+      cout << _("Package files:") << endl;   
       for (pkgCache::PkgFileIterator F = Cache.FileBegin(); F.end() == false; F++)
       {
 	 // Locate the associated index files so we can derive a description
@@ -1538,7 +1538,7 @@ bool Policy(CommandLine &CmdL)
       }
       
       // Show any packages have explicit pins
-      cout << _("Pinned Packages:") << endl;
+      cout << _("Pinned packages:") << endl;
       pkgCache::PkgIterator I = Cache.PkgBegin();
       for (;I.end() != true; I++)
       {
@@ -1588,7 +1588,7 @@ bool Policy(CommandLine &CmdL)
       // Pinned version
       if (Plcy.GetPriority(Pkg) != 0)
       {
-	 cout << _("  Package Pin: ");
+	 cout << _("  Package pin: ");
 	 V = Plcy.GetMatch(Pkg);
 	 if (V.end() == true)
 	    cout << _("(not found)") << endl;
@@ -1597,7 +1597,7 @@ bool Policy(CommandLine &CmdL)
       }
       
       // Show the priority tables
-      cout << _("  Version Table:") << endl;
+      cout << _("  Version table:") << endl;
       for (V = Pkg.VersionList(); V.end() == false; V++)
       {
 	 if (Pkg.CurrentVer() == V)

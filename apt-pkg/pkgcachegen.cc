@@ -736,7 +736,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
       }
       
       unsigned long Size = (*I)->Size();
-      Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Reading Package Lists"));
+      Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Reading package lists"));
       CurrentSize += Size;
       
       if ((*I)->Merge(Gen,Progress) == false)
@@ -805,12 +805,12 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    if (Writeable == false && AllowMem == false && CacheFile.empty() == false)
       return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
    
-   Progress.OverallProgress(0,1,1,_("Reading Package Lists"));
+   Progress.OverallProgress(0,1,1,_("Reading package lists"));
    
    // Cache is OK, Fin.
    if (CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
    {
-      Progress.OverallProgress(1,1,1,_("Reading Package Lists"));
+      Progress.OverallProgress(1,1,1,_("Reading package lists"));
       return true;
    }
    
@@ -933,7 +933,7 @@ bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
    TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
    
    // Build the status cache
-   Progress.OverallProgress(0,1,1,_("Reading Package Lists"));
+   Progress.OverallProgress(0,1,1,_("Reading package lists"));
    pkgCacheGenerator Gen(Map.Get(),&Progress);
    if (_error->PendingError() == true)
       return false;

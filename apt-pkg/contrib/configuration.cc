@@ -583,7 +583,7 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 	    string Tag;
 	    const char *Pos = LineBuffer.c_str();
 	    if (ParseQuoteWord(Pos,Tag) == false)
-	       return _error->Error(_("Syntax error %s:%u: Malformed Tag"),FName.c_str(),CurLine);
+	       return _error->Error(_("Syntax error %s:%u: Malformed tag"),FName.c_str(),CurLine);
 
 	    // Parse off the word
 	    string Word;
