@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.68 1999/07/09 04:11:34 jgg Exp $
+// $Id: apt-get.cc,v 1.69 1999/07/10 04:58:42 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -451,7 +451,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    {
       pkgCache::PkgIterator I = Cache->PkgBegin();
       for (; I.end() == false; I++)
-	 Cache[I].iFlags |= pkgDepCache::Purge;
+      {
+	 if (I.Purge() == false && Cache[I].Mode == pkgDepCache::ModeDelete)
+	    Cache->MarkDelete(I,true);
+      }
    }
    
    bool Fail = false;
@@ -863,7 +866,7 @@ bool DoInstall(CommandLine &CmdL)
       if (Remove == true)
       {
 	 Fix.Remove(Pkg);
-	 Cache->MarkDelete(Pkg);
+	 Cache->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
 	 continue;
       }
       
@@ -1003,9 +1006,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
       // Remove packages 
       if (I->SelectedState == pkgCache::State::DeInstall ||
 	  I->SelectedState == pkgCache::State::Purge)
-	 Cache->MarkDelete(I);
-      if (I->SelectedState == pkgCache::State::Purge)
-	 Cache[I].iFlags |= pkgDepCache::Purge;
+	 Cache->MarkDelete(I,I->SelectedState == pkgCache::State::Purge);
    }
 
    /* Resolve any problems that dselect created, allupgrade cannot handle

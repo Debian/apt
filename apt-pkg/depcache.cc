@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.18 1999/04/28 22:48:45 jgg Exp $
+// $Id: depcache.cc,v 1.19 1999/07/10 04:58:42 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -264,6 +264,10 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
    // Not installed
    if (Pkg->CurrentVer == 0)
    {
+      if (State.Mode == ModeDelete && 
+	  (State.iFlags | Purge) == Purge && Pkg.Purge() == false)
+	 iDelCount += Add;
+      
       if (State.Mode == ModeInstall)
 	 iInstCount += Add;
       return;
@@ -562,7 +566,7 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg,bool Soft)
 // DepCache::MarkDelete - Put the package in the delete state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::MarkDelete(PkgIterator const &Pkg)
+void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge)
 {
    // Simplifies other routines.
    if (Pkg.end() == true)
@@ -570,10 +574,14 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg)
 
    // Check that it is not already marked for delete
    StateCache &P = PkgState[Pkg->ID];
-   P.iFlags &= ~AutoKept;
-   if (P.Mode == ModeDelete || P.InstallVer == 0)
+   P.iFlags &= ~(AutoKept | Purge);
+   if (rPurge == true)
+      P.iFlags |= Purge;
+   
+   if ((P.Mode == ModeDelete || P.InstallVer == 0) && 
+       (Pkg.Purge() == true || rPurge == false))
       return;
-
+   
    // We dont even try to delete virtual packages..
    if (Pkg->VersionList == 0)
       return;
@@ -581,7 +589,7 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg)
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
    
-   if (Pkg->CurrentVer == 0)
+   if (Pkg->CurrentVer == 0 && (Pkg.Purge() == true || rPurge == false))
       P.Mode = ModeKeep;
    else
       P.Mode = ModeDelete;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.10 1999/07/09 04:11:34 jgg Exp $
+// $Id: depcache.h,v 1.11 1999/07/10 04:58:42 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -162,7 +162,7 @@ class pkgDepCache : public pkgCache
 
    // Manipulators
    void MarkKeep(PkgIterator const &Pkg,bool Soft = false);
-   void MarkDelete(PkgIterator const &Pkg);
+   void MarkDelete(PkgIterator const &Pkg,bool Purge = false);
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true);
    
    // This is for debuging

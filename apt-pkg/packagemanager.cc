@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.17 1999/07/09 04:11:34 jgg Exp $
+// $Id: packagemanager.cc,v 1.18 1999/07/10 04:58:42 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -152,7 +152,9 @@ bool pkgPackageManager::CreateOrderList()
       // Not interesting
       if ((Cache[I].Keep() == true || 
 	  Cache[I].InstVerIter(Cache) == I.CurrentVer()) && 
-	  I.State() == pkgCache::PkgIterator::NeedsNothing)
+	  I.State() == pkgCache::PkgIterator::NeedsNothing &&
+	  (I.Purge() != false || Cache[I].Mode != pkgDepCache::ModeDelete ||
+	   (Cache[I].iFlags & pkgDepCache::Purge) != pkgDepCache::Purge))
 	 continue;
       
       // Append it to the list
