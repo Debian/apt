@@ -2,20 +2,20 @@
 # translation of da.po to Danish
 # Advanced Package Transfer - APT message translation catalog
 # Danish messages
-# Claus Hindsgaul <claus_h@image.dk>, 2002,2003, 2004.
+# Claus Hindsgaul <claus_h@image.dk>, 2002,2003, 2004, 2005.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt-da\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2004-09-01 13:42+0200\n"
+"PO-Revision-Date: 2005-02-10 20:50+0100\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.3.1\n"
+"X-Generator: KBabel 1.9.1\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: cmdline/apt-cache.cc:135
@@ -267,7 +267,7 @@ msgstr ""
 #: cmdline/apt-extracttemplates.cc:98
 #, c-format
 msgid "%s not a valid DEB package."
-msgstr "%s er ikke en gyldig DEB-pakke.."
+msgstr "%s er ikke en gyldig DEB-pakke."
 
 #: cmdline/apt-extracttemplates.cc:232
 msgid ""
@@ -327,7 +327,6 @@ msgid "Error Processing Contents %s"
 msgstr "Fejl under behandling af indhold %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -372,6 +371,7 @@ msgstr ""
 "Kommandoer: packges binærsti [tvangsfil [sti]]\n"
 "            sources kildesti [tvangsfil [sti]]\n"
 "            contents sti\n"
+"            release sti\n"
 "            generate config [grupper]\n"
 "            clean config\n"
 "\n"
@@ -753,17 +753,16 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "Uopfyldte afhængigheder. Prøv med -f."
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "Følgende pakker vil blive opgraderet:"
+msgstr "ADVARSEL: Følgende pakkers autensitet kunne ikke verificeres!"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "Installér disse pakker uden verifikation? (y/N) "
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "Nogle pakker kunne ikke autentificeres"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
@@ -1107,8 +1106,7 @@ msgstr "%s har ingen opbygningsafhængigheder.\n"
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr ""
-"%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
+msgstr "%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
 
 #: cmdline/apt-get.cc:2208
 #, c-format
@@ -1311,14 +1309,11 @@ msgstr "pakker, der blev installeret. Det kan give gentagne fejl"
 
 #: dselect/install:102
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
+msgstr "eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
 
 #: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
+msgid "above this message are important. Please fix them and run [I]nstall again"
+msgstr "fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
 
 #: dselect/update:30
 msgid "Merging Available information"
@@ -1572,9 +1567,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Dette er ikke et gyldigt DEB-arkiv, mangler '%s'-elementet"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Dette er ikke et gyldigt DEB-arkiv, mangler '%s'-elementet"
+msgstr "Dette er ikke et gyldigt DEB-arkiv, det har intet'%s- eller %s-elementet"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -1806,7 +1801,7 @@ msgstr "Kunne ikke forbinde til %s:%s (%s) grundet tidsudløb"
 #: methods/connect.cc:104
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
-msgstr "Kunne ikke forbinde til %s:%s (%s) "
+msgstr "Kunne ikke forbinde til %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -1872,8 +1867,7 @@ msgstr "http-serveren sendte et ugyldigt Content-Range-hovede"
 
 #: methods/http.cc:570
 msgid "This http server has broken range support"
-msgstr ""
-"Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
+msgstr "Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
 
 #: methods/http.cc:594
 msgid "Unknown date format"
@@ -2025,7 +2019,7 @@ msgstr "Kommandolinjetilvalget %s er ikke boolsk"
 #: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
 #, c-format
 msgid "Option %s requires an argument."
-msgstr "Tilvalget %s kræver et parameter"
+msgstr "Tilvalget %s kræver et parameter."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
 #, c-format
@@ -2261,7 +2255,7 @@ msgstr "Åbner %s"
 #: apt-pkg/sourcelist.cc:170
 #, c-format
 msgid "Line %u too long in source list %s."
-msgstr "Linjen %u er for lang i kildelisten %s"
+msgstr "Linjen %u er for lang i kildelisten %s."
 
 #: apt-pkg/sourcelist.cc:187
 #, c-format
@@ -2296,10 +2290,8 @@ msgstr "Indeksfiler af typen '%s' understøttes ikke"
 
 #: apt-pkg/algorithms.cc:241
 #, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr ""
-"Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
+msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr "Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
 
 #: apt-pkg/algorithms.cc:1059
 msgid ""
@@ -2311,8 +2303,7 @@ msgstr ""
 
 #: apt-pkg/algorithms.cc:1061
 msgid "Unable to correct problems, you have held broken packages."
-msgstr ""
-"Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
+msgstr "Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
 
 #: apt-pkg/acquire.cc:61
 #, c-format
@@ -2332,7 +2323,7 @@ msgstr "Metodedriveren %s blev ikke fundet."
 #: apt-pkg/acquire-worker.cc:161
 #, c-format
 msgid "Method %s did not start correctly"
-msgstr "Metoden %s startede ikke korrekt."
+msgstr "Metoden %s startede ikke korrekt"
 
 #: apt-pkg/init.cc:119
 #, c-format
@@ -2414,8 +2405,7 @@ msgstr "Der skete en fejl under behandlingen af %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
@@ -2423,8 +2413,7 @@ msgstr "Hold da op! Du nåede over det antal versioner, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2483,8 +2472,7 @@ msgstr ""
 
 #: apt-pkg/acquire-item.cc:807
 #, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
+msgid "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Pakkeindeksfilerne er i stykker. Intet 'Filename:'-felt for pakken %s."
 
 #: apt-pkg/acquire-item.cc:894
@@ -2492,108 +2480,103 @@ msgid "Size mismatch"
 msgstr "Størrelsen stemmer ikke"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "Leverandørblok %s er ugyldig"
+msgstr "Leverandørblok %s inderholder intet fingeraftryk"
 
 #: apt-pkg/cdrom.cc:487
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
-msgstr "Bruger cdrom-monteringspunkt "
+msgstr ""
+"Bruger cdrom-monteringspunktet %s\n"
+"Monterer cdrom\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
 msgstr "Identificerer.. "
 
 #: apt-pkg/cdrom.cc:521
-#, fuzzy, c-format
+#, c-format
 msgid "Stored Label: %s \n"
-msgstr "Gemt mærkat: '"
+msgstr "Gemt mærkat: %s \n"
 
 #: apt-pkg/cdrom.cc:541
-#, fuzzy, c-format
+#, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr "Bruger cdrom-monteringspunkt "
+msgstr "Bruger cdrom-monteringspunktet %s\n"
 
 #: apt-pkg/cdrom.cc:559
-#, fuzzy
 msgid "Unmounting CD-ROM\n"
-msgstr "Afmonterer cdrom"
+msgstr "Afmonterer cdrom\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "Afventer hoveder"
+msgstr "Venter på disken...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
-#, fuzzy
 msgid "Mounting CD-ROM...\n"
-msgstr "Monterer cdrom"
+msgstr "Monterer cdrom...\n"
 
 #: apt-pkg/cdrom.cc:589
-#, fuzzy
 msgid "Scanning Disc for index files..\n"
-msgstr "Skanner disken for indeksfiler..  "
+msgstr "Skanner disken for indeksfiler..\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "Fandt %i pakkeindekser, %i kildeindekser og %i signaturer\n"
 
 #: apt-pkg/cdrom.cc:684
-#, fuzzy
 msgid "That is not a valid name, try again.\n"
-msgstr "Det er ikke et gyldigt navn, prøv igen "
+msgstr "Det er ikke et gyldigt navn, prøv igen.\n"
 
 #: apt-pkg/cdrom.cc:700
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This Disc is called: \n"
 "'%s'\n"
-msgstr "Denne disk hedder:"
+msgstr ""
+"Denne disk hedder: \n"
+" %s \n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "Indlæser pakkelisterne"
+msgstr "Kopierer pakkelisterne..."
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "Skriver ny kildeliste"
+msgstr "Skriver ny kildeliste\n"
 
 #: apt-pkg/cdrom.cc:737
-#, fuzzy
 msgid "Source List entries for this Disc are:\n"
-msgstr "Kildeliste-indgangene er for denne disk:"
+msgstr "Denne disk har følgende kildeliste-indgange:\n"
 
 #: apt-pkg/cdrom.cc:771
-#, fuzzy
 msgid "Unmounting CD-ROM..."
-msgstr "Afmonterer cdrom"
+msgstr "Afmonterer cdrom..."
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "Skrev %i poster.\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "Skrev %i poster med %i manglende filer.\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "Skrev %i poster med %i ikke-trufne filer\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
-msgstr ""
+msgstr "Skrev %i poster med %i manglende filer og %i ikke-trufne filer\n"
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr "Ukendt leverandør-ID '%s' på linje %u i kildelisten %s"
@@ -2866,3 +2849,4 @@ msgstr ""
 
 #~ msgid "Errors apply to file '%s'"
 #~ msgstr "Fejlene vedrører filen '%s'"
+
