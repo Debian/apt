@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.129 2003/04/27 05:59:33 doogie Exp $
+// $Id: apt-get.cc,v 1.130 2003/05/19 17:30:12 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -182,7 +182,10 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
          out << "   " << string(List,Start,End - Start) << " (" << 
             string(VersionsList,VersionsStart,VersionsEnd - VersionsStart) << 
             ")" << endl;
-         
+
+	 if (End == string::npos || End < Start)
+	    End = Start + ScreenWidth;
+
          Start = End + 1;
          VersionsStart = VersionsEnd + 1;
       } else {
