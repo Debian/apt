@@ -2,10 +2,10 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.29 2001/03/04 22:26:21 tausq Exp $
+# $Id: rules,v 1.30 2001/03/04 22:33:02 tausq Exp $
 
-# LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
-# dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
+# LD_LIBRARY_PATH=pwd/debian/tmp/usr/lib dh_shlibdeps -papt
+# dpkg: /home/jgg/work/apt2/debian/tmp/usr/lib/libapt-pkg.so.2.9 not found.
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
 # steps nescessary to produce a proper source tarball with the CVS/ removed.
@@ -155,26 +155,26 @@ apt: build debian/shlibs.local
 #
 # apt install
 #
-	cp $(BLD)/bin/apt-* debian/apt/usr/bin/
+	cp $(BLD)/bin/apt-* debian/tmp/usr/bin/
 	
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/apt/usr/bin/apt-,$(APT_UTILS))
+	rm $(addprefix debian/tmp/usr/bin/apt-,$(APT_UTILS))
 	
 	# install the shared libs
-	find $(BLD)/bin/ -type f -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/apt/usr/lib/ \;
-	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/apt/usr/lib/ \;
+	find $(BLD)/bin/ -type f -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
+	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/tmp/usr/lib/ \;
 
-	cp $(BLD)/bin/methods/* debian/apt/usr/lib/apt/methods/
+	cp $(BLD)/bin/methods/* debian/tmp/usr/lib/apt/methods/
 
-	cp $(BLD)/scripts/dselect/* debian/apt/usr/lib/dpkg/methods/apt/
+	cp $(BLD)/scripts/dselect/* debian/tmp/usr/lib/dpkg/methods/apt/
 
 	# Copy the guides
 	dh_installdocs -p$@ $(BLD)/docs/guide*.text $(BLD)/docs/guide*.html \
 	               $(BLD)/docs/offline.text $(BLD)/docs/offline.html
 	
 	# One or the other..
-	-cp -a debian/dhelp debian/apt/usr/doc/apt/.dhelp
-	-cp -a debian/dhelp debian/apt/usr/share/doc/apt/.dhelp
+	-cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
+	-cp -a debian/dhelp debian/tmp/usr/share/doc/apt/.dhelp
 	
 #	head -n 500 ChangeLog > debian/ChangeLog
 
@@ -186,8 +186,8 @@ apt: build debian/shlibs.local
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -papt -l`pwd`/debian/apt/usr/lib -- -Ldebian/shlibs.local.apt
-#	LD_LIBRARY_PATH=`pwd`/debian/apt/usr/lib dh_shlibdeps -papt
+	dh_shlibdeps -papt -l`pwd`/debian/tmp/usr/lib -- -Ldebian/shlibs.local.apt
+#	LD_LIBRARY_PATH=`pwd`/debian/tmp/usr/lib dh_shlibdeps -papt
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_makeshlibs -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)' -papt
 	dh_md5sums -p$@
@@ -244,7 +244,7 @@ apt-utils: build debian/shlibs.local
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	LD_LIBRARY_PATH=`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib dh_shlibdeps -p$@ -- -Ldebian/shlibs.local.apt-utils
+	LD_LIBRARY_PATH=`pwd`/debian/tmp/usr/lib:`pwd`/debian/$@/usr/lib dh_shlibdeps -p$@ -- -Ldebian/shlibs.local.apt-utils
 	dh_gencontrol -p$@ -u -Vlibapt-inst:major=$(LIBAPTINST_MAJOR)
 	dh_makeshlibs -m$(LIBAPTINST_MAJOR) -V '$(LIBAPTINST_PROVIDE)' -p$@
 	dh_md5sums -p$@
