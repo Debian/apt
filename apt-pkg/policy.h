@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: policy.h,v 1.3 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -67,9 +67,15 @@ class pkgPolicy : public pkgDepCache::Policy
    
    public:
 
+   // Things for manipulating pins
    void CreatePin(pkgVersionMatch::MatchType Type,string Pkg,
 		  string Data,signed short Priority);
-   
+   inline signed short GetPriority(pkgCache::PkgFileIterator const &File) 
+       {return PFPriority[File->ID];};
+   signed short GetPriority(pkgCache::PkgIterator const &Pkg);
+   pkgCache::VerIterator GetMatch(pkgCache::PkgIterator Pkg);
+
+   // Things for the cache interface.
    virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator Pkg);
    virtual bool IsImportantDep(pkgCache::DepIterator Dep) {return pkgDepCache::Policy::IsImportantDep(Dep);};
    bool InitDefaults();

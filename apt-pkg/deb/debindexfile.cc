@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.cc,v 1.4 2001/03/13 06:51:46 jgg Exp $
+// $Id: debindexfile.cc,v 1.5 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
 
    Debian Specific sources.list types and the three sorts of Debian
@@ -74,11 +74,15 @@ pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 // SourcesIndex::Describe - Give a descriptive path to the index	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string debSourcesIndex::Describe() const
+string debSourcesIndex::Describe(bool Short) const
 {
    char S[300];
-   snprintf(S,sizeof(S),"%s (%s)",Info("Packages").c_str(),
-	    IndexFile("Sources").c_str());
+   if (Short == true)
+      snprintf(S,sizeof(S),"%s",Info("Packages").c_str());
+   else
+      snprintf(S,sizeof(S),"%s (%s)",Info("Packages").c_str(),
+	       IndexFile("Sources").c_str());
+   
    return S;
 }
 									/*}}}*/
@@ -188,11 +192,14 @@ string debPackagesIndex::ArchiveInfo(pkgCache::VerIterator Ver) const
 // ---------------------------------------------------------------------
 /* This should help the user find the index in the sources.list and
    in the filesystem for problem solving */
-string debPackagesIndex::Describe() const
+string debPackagesIndex::Describe(bool Short) const
 {   
    char S[300];
-   snprintf(S,sizeof(S),"%s (%s)",Info("Packages").c_str(),
-	    IndexFile("Packages").c_str());
+   if (Short == true)
+      snprintf(S,sizeof(S),"%s",Info("Packages").c_str());
+   else
+      snprintf(S,sizeof(S),"%s (%s)",Info("Packages").c_str(),
+	       IndexFile("Packages").c_str());
    return S;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: debindexfile.h,v 1.3 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
 
    Debian Index Files
@@ -31,7 +31,7 @@ class debStatusIndex : public pkgIndexFile
    virtual const Type *GetType() const;
    
    // Interface for acquire
-   virtual string Describe() const {return File;};
+   virtual string Describe(bool Short) const {return File;};
    
    // Interface for the Cache Generator
    virtual bool Exists() const;
@@ -62,7 +62,7 @@ class debPackagesIndex : public pkgIndexFile
    virtual string ArchiveURI(string File) const {return URI + File;};
    
    // Interface for acquire
-   virtual string Describe() const;   
+   virtual string Describe(bool Short) const;   
    virtual bool GetIndexes(pkgAcquire *Owner) const;
    
    // Interface for the Cache Generator
@@ -95,7 +95,7 @@ class debSourcesIndex : public pkgIndexFile
    virtual string ArchiveURI(string File) const {return URI + File;};
    
    // Interface for acquire
-   virtual string Describe() const;   
+   virtual string Describe(bool Short) const;   
    virtual bool GetIndexes(pkgAcquire *Owner) const;
 
    // Interface for the record parsers

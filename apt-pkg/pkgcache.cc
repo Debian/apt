@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.33 2001/03/05 02:43:28 jgg Exp $
+// $Id: pkgcache.cc,v 1.34 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -576,5 +576,24 @@ bool pkgCache::PkgFileIterator::IsOk()
       return false;
 
    return true;
+}
+									/*}}}*/
+// PkgFileIterator::RelStr - Return the release string			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string pkgCache::PkgFileIterator::RelStr()
+{
+   string Res;
+   if (Version() != 0)
+      Res = Res + (Res.empty() == true?"v=":",v=") + Version();
+   if (Origin() != 0)
+      Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
+   if (Archive() != 0)
+      Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
+   if (Label() != 0)
+      Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
+   if (Component() != 0)
+      Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   return Res;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versionmatch.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: versionmatch.cc,v 1.3 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
 
    Version Matching 
@@ -164,8 +164,8 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
    if (Type == Release)
    {
 /*      cout << RelVerStr << ',' << RelOrigin << ',' << RelArchive << ',' << RelLabel << endl;
-      cout << File.Version() << ',' << File.Origin() << ',' << File.Archive() << ',' << File.Label() << endl;
-*/
+      cout << File.Version() << ',' << File.Origin() << ',' << File.Archive() << ',' << File.Label() << endl;*/
+      
       if (RelVerStr.empty() == true && RelOrigin.empty() == true &&
 	  RelArchive.empty() == true && RelLabel.empty() == true &&
 	  RelComponent.empty() == true)
@@ -191,7 +191,7 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
 	    return false;
       if (RelComponent.empty() == false)
 	 if (File->Component == 0 ||
-	     stringcasecmp(RelLabel,File.Component()) != 0)
+	     stringcasecmp(RelComponent,File.Component()) != 0)
 	    return false;
       return true;
    }

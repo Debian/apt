@@ -41,6 +41,7 @@
          <arg>depends <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>pkgnames <arg choice="plain"><replaceable>prefix</replaceable></arg></arg>
          <arg>dotty <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>policy <arg choice="plain" rep="repeat"><replaceable>pkgs</replaceable></arg></arg>
       </group>   
    </cmdsynopsis>
  </refsynopsisdiv>
@@ -242,6 +243,13 @@ Reverse Provides:
 
      <para>
      Caution, dotty cannot graph larger sets of packages.
+     
+     <VarListEntry><Term>policy</Term>
+     <ListItem><Para>
+     <literal/policy/ is ment to help debug issues relating to the 
+     preferences file. With no arguments it will print out the 
+     priorities of each source. Otherwise it prints out detailed information
+     about the priority selection of the named package.
      </VarListEntry>
    </VariableList>
  </RefSect1>

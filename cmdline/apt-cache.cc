@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.46 2001/03/07 04:25:35 jgg Exp $
+// $Id: apt-cache.cc,v 1.47 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -39,6 +39,7 @@
 									/*}}}*/
 
 pkgCache *GCache = 0;
+pkgSourceList *SrcList = 0;
 
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
 // ---------------------------------------------------------------------
@@ -1096,6 +1097,125 @@ bool ShowSrcPackage(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// Policy - Show the results of the preferences file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Policy(CommandLine &CmdL)
+{
+   if (SrcList == 0)
+      return _error->Error("Generate must be enabled for this function");
+   
+   pkgCache &Cache = *GCache;
+   pkgPolicy Plcy(&Cache);
+   if (ReadPinFile(Plcy) == false)
+      return false;
+   
+   // Print out all of the package files
+   if (CmdL.FileList[1] == 0)
+   {
+      cout << _("Package Files:") << endl;   
+      for (pkgCache::PkgFileIterator F = Cache.FileBegin(); F.end() == false; F++)
+      {
+	 // Locate the associated index files so we can derive a description
+	 pkgIndexFile *Indx;
+	 if (SrcList->FindIndex(F,Indx) == false &&
+	     _system->FindIndex(F,Indx) == false)
+	    return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
+	 printf(_("%4i %s\n"),
+		Plcy.GetPriority(F),Indx->Describe(true).c_str());
+	 
+	 // Print the reference information for the package
+	 string Str = F.RelStr();
+	 if (Str.empty() == false)
+	    printf("     release %s\n",F.RelStr().c_str());
+	 if (F.Site() != 0 && F.Site()[0] != 0)
+	    printf("     origin %s\n",F.Site());
+      }
+      
+      // Show any packages have explicit pins
+      cout << _("Pinned Packages:") << endl;
+      pkgCache::PkgIterator I = Cache.PkgBegin();
+      for (;I.end() != true; I++)
+      {
+	 if (Plcy.GetPriority(I) == 0)
+	    continue;
+
+	 // Print the package name and the version we are forcing to
+	 cout << "     " << I.Name() << " -> ";
+	 
+	 pkgCache::VerIterator V = Plcy.GetMatch(I);
+	 if (V.end() == true)
+	    cout << _("(not found)") << endl;
+	 else
+	    cout << V.VerStr() << endl;
+      }     
+      
+      return true;
+   }
+   
+   // Print out detailed information for each package
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+      if (Pkg.end() == true)
+      {
+	 _error->Warning(_("Unable to locate package %s"),*I);
+	 continue;
+      }
+      
+      cout << Pkg.Name() << ":" << endl;
+      
+      // Installed version
+      cout << _("  Installed: ");
+      if (Pkg->CurrentVer == 0)
+	 cout << _("(none)") << endl;
+      else
+	 cout << Pkg.CurrentVer().VerStr() << endl;
+      
+      // Candidate Version 
+      cout << _("  Candidate: ");
+      pkgCache::VerIterator V = Plcy.GetCandidateVer(Pkg);
+      if (V.end() == true)
+	 cout << _("(none)") << endl;
+      else
+	 cout << V.VerStr() << endl;
+
+      // Pinned version
+      if (Plcy.GetPriority(Pkg) != 0)
+      {
+	 cout << _("  Package Pin: ");
+	 V = Plcy.GetMatch(Pkg);
+	 if (V.end() == true)
+	    cout << _("(not found)") << endl;
+	 else
+	    cout << V.VerStr() << endl;
+      }
+      
+      // Show the priority tables
+      cout << _("  Version Table:") << endl;
+      for (V = Pkg.VersionList(); V.end() == false; V++)
+      {
+	 if (Pkg.CurrentVer() == V)
+	    cout << " *** " << V.VerStr();
+	 else
+	    cout << "     " << V.VerStr();
+	 cout << " " << Plcy.GetPriority(Pkg) << endl;
+	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; VF++)
+	 {
+	    // Locate the associated index files so we can derive a description
+	    pkgIndexFile *Indx;
+	    if (SrcList->FindIndex(VF.File(),Indx) == false &&
+		_system->FindIndex(VF.File(),Indx) == false)
+	       return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
+	    printf(_("       %4i %s\n"),Plcy.GetPriority(VF.File()),
+		   Indx->Describe(true).c_str());
+	 }	 
+      }      
+   }
+   
+   return true;
+}
+									/*}}}*/
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1194,6 +1314,7 @@ int main(int argc,const char *argv[])
                                     {"dotty",&Dotty},
                                     {"show",&ShowPackage},
                                     {"pkgnames",&ShowPkgNames},
+                                    {"policy",&Policy},
                                     {0,0}};
 
    CacheInitialize();
@@ -1231,12 +1352,12 @@ int main(int argc,const char *argv[])
       else
       {
 	 // Open the cache file
-	 pkgSourceList List;
-	 List.ReadMainList();
+	 SrcList = new pkgSourceList;
+	 SrcList->ReadMainList();
 
 	 // Generate it and map it
 	 OpProgress Prog;
-	 pkgMakeStatusCache(List,Prog,&Map,true);
+	 pkgMakeStatusCache(*SrcList,Prog,&Map,true);
       }
       
       if (_error->PendingError() == false)

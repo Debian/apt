@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexfile.h,v 1.3 2001/03/11 07:35:49 jgg Exp $
+// $Id: indexfile.h,v 1.4 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
 
    Index File - Abstraction for an index of archive/source file.
@@ -58,7 +58,7 @@ class pkgIndexFile
    virtual string ArchiveInfo(pkgCache::VerIterator Ver) const;
    virtual string SourceInfo(pkgSrcRecords::Parser const &Record,
 			     pkgSrcRecords::File const &File) const;
-   virtual string Describe() const = 0;   
+   virtual string Describe(bool Short = false) const = 0;   
 
    // Interface for acquire
    virtual string ArchiveURI(string /*File*/) const {return string();};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.16 2001/02/20 07:03:17 jgg Exp $
+// $Id: cacheiterators.h,v 1.17 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -297,7 +297,8 @@ class pkgCache::PkgFileIterator
    inline unsigned long Index() const {return File - Owner->PkgFileP;};
 
    bool IsOk();
-
+   string RelStr();
+   
    // Constructors
    inline PkgFileIterator() : Owner(0), File(0) {};
    inline PkgFileIterator(pkgCache &Owner) : Owner(&Owner), File(Owner.PkgFileP) {};

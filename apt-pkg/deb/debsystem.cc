@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsystem.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: debsystem.cc,v 1.3 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -40,6 +40,14 @@ debSystem::debSystem()
    
    Label = "Debian dpkg interface";
    VS = &debVS;
+}
+									/*}}}*/
+// System::~debSystem - Destructor					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+debSystem::~debSystem()
+{
+   delete StatusFile;
 }
 									/*}}}*/
 // System::Lock - Get the lock						/*{{{*/
@@ -191,7 +199,26 @@ signed debSystem::Score(Configuration const &Cnf)
 /* */
 bool debSystem::AddStatusFiles(vector<pkgIndexFile *> &List)
 {
-   List.push_back(new debStatusIndex(_config->FindFile("Dir::State::status")));
+   if (StatusFile == 0)
+      StatusFile = new debStatusIndex(_config->FindFile("Dir::State::status"));
+   List.push_back(StatusFile);
    return true;
+}
+									/*}}}*/
+// System::FindIndex - Get an index file for status files		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool debSystem::FindIndex(pkgCache::PkgFileIterator File,
+			  pkgIndexFile *&Found) const
+{
+   if (StatusFile == 0)
+      return false;
+   if (StatusFile->FindInCache(*File.Cache()) == File)
+   {
+      Found = StatusFile;
+      return true;
+   }
+   
+   return false;
 }
 									/*}}}*/

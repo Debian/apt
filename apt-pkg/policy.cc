@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.5 2001/03/13 05:23:42 jgg Exp $
+// $Id: policy.cc,v 1.6 2001/04/29 05:13:51 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -83,10 +83,6 @@ bool pkgPolicy::InitDefaults()
       pkgVersionMatch Match(I->Data,I->Type);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); F++)
       {
-/* hmm?
- if ((F->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
-	    continue;*/
-
 	 if (Match.FileMatch(F) == true && Fixed[F->ID] == false)
 	 {
 	    if (I->Priority != 0 && I->Priority > 0)
@@ -118,19 +114,9 @@ bool pkgPolicy::InitDefaults()
    best package is. */
 pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 {
-   const Pin &PPkg = Pins[Pkg->ID];
-   
    // Look for a package pin and evaluate it.
-   signed Max = 0;
-   pkgCache::VerIterator Pref(*Cache);
-   if (PPkg.Type != pkgVersionMatch::None)
-   {
-      pkgVersionMatch Match(PPkg.Data,PPkg.Type);
-      Pref = Match.Find(Pkg);
-      Max = PPkg.Priority;
-      if (PPkg.Priority == 0)
-	 Max = 989;
-   }
+   signed Max = GetPriority(Pkg);
+   pkgCache::VerIterator Pref = GetMatch(Pkg);
       
    /* Falling through to the default version.. Setting Max to zero
       effectively excludes everything <= 0 which are the non-automatic
@@ -220,6 +206,36 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
    P->Type = Type;
    P->Priority = Priority;
    P->Data = Data;
+}
+									/*}}}*/
+// Policy::GetMatch - Get the matching version for a package pin	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator Pkg)
+{
+   const Pin &PPkg = Pins[Pkg->ID];
+   if (PPkg.Type != pkgVersionMatch::None)
+   {
+      pkgVersionMatch Match(PPkg.Data,PPkg.Type);
+	 return Match.Find(Pkg);
+   }
+   return pkgCache::VerIterator(*Pkg.Cache());
+}
+									/*}}}*/
+// Policy::GetPriority - Get the priority of the package pin		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
+{
+   if (Pins[Pkg->ID].Type != pkgVersionMatch::None)
+   {
+      // In this case 0 means default priority
+      if (Pins[Pkg->ID].Priority == 0)
+	 return 989;
+      return Pins[Pkg->ID].Priority;
+   }
+   
+   return 0;
 }
 									/*}}}*/
 
