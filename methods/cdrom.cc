@@ -97,7 +97,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    {
       Res.LastModified = Itm->LastModified;
       Res.IMSHit = true;
-      Res.Filename = File;
+      Res.Filename = Itm->DestFile;
       URIDone(Res);
       return true;
    }
