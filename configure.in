@@ -21,18 +21,18 @@ AC_DEFINE_UNQUOTED(VERSION,"0.3.15")
 AC_DEFINE_UNQUOTED(PACKAGE,"apt")
 
 dnl Tom's host stuff
-tl_CHECK_TOOL_PREFIX	dnl Initial guess
+AC_CHECK_TOOL_PREFIX	dnl Initial guess
 
 dnl Check our C compiler
-tl_PROG_CC
+AC_PROG_CC
 AC_ISC_POSIX
 
 dnl Check the host arch (build+target not needed... yet)
-tl_CANONICAL_HOST
-tl_CHECK_TOOL_PREFIX	dnl recheck, in case the initial guess was wrong
+AC_CANONICAL_HOST
+AC_CHECK_TOOL_PREFIX	dnl recheck, in case the initial guess was wrong
 
 dnl Check for other programs
-tl_PROG_CXX
+AC_PROG_CXX
 AC_LANG_CPLUSPLUS
 dnl Checks for X11
 AC_PATH_X
@@ -122,5 +122,7 @@ AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
 
 dnl Check for YODL
 AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
+
+ah_NUM_PROCS
 
 AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make dirs)

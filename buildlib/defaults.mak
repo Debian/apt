@@ -134,3 +134,16 @@ else
   endef
  endif
 endif	
+
+ifeq ($(NUM_PROCS),1)
+  PARALLEL_RUN=no
+endif
+
+ifndef PARALLEL_RUN
+ PARALLEL_RUN=yes
+ .EXPORT: PARALLEL_RUN
+ ifneq ($(NUM_PROCS),)
+# handle recursion
+  MAKEFLAGS += -j $(NUM_PROCS)
+ endif
+endif
