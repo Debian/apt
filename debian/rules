@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.20 2000/05/10 05:59:12 jgg Exp $
+# $Id: rules,v 1.21 2000/06/04 05:34:58 doogie Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -44,10 +44,10 @@ endif
 
 # Find the libapt-pkg major version for use in other control files
 export LIBAPT_MAJOR:=$(shell egrep '^MAJOR=' apt-pkg/makefile |cut -d '=' -f 2)
-#debian/shlibs.local:
-#	rm -f $@
-#	echo "libapt-pkg $(LIBAPT_MAJOR) libapt-pkg$(LIBAPT_MAJOR)" >> $@
-#	echo "libapt-pkg $(LIBAPT_MAJOR) apt $(APT_DEBVER)" >> $@
+debian/shlibs.local: apt-pkg/makefile
+	rm -f $@
+	echo "libapt-pkg $(LIBAPT_MAJOR) libapt-pkg$(LIBAPT_MAJOR)" >> $@
+	echo "libapt-pkg $(LIBAPT_MAJOR) apt $(APT_DEBVER)" >> $@
 
 build: build-stamp
 build-stamp: configure
@@ -65,7 +65,7 @@ build-stamp: configure
 clean:
 	dh_testdir
 #	dh_testroot
-	rm -f build-stamp
+	rm -f build-stamp debian/shlibs.local
 	rm -rf build
 
 	# Add here commands to clean up after the build process.
@@ -138,7 +138,7 @@ apt: build debian/shlibs.local
 	
 #	head -n 500 ChangeLog > debian/ChangeLog
 
-	dh_installexamples -papt $(BLD)/docs/examples/*
+	dh_installexamples -p$@ $(BLD)/docs/examples/*
 	dh_installmanpages -p$@
 
 	dh_installchangelogs -p$@
@@ -165,9 +165,9 @@ libapt-pkg-dev: build debian/shlibs.local
 	cp $(BLD)/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
 
 	dh_installdocs -p$@
-#	dh_installmenu -papt
-#	dh_installinit -papt
-#	dh_installcron -papt
+#	dh_installmenu -p$@
+#	dh_installinit -p$@
+#	dh_installcron -p$@
 #	dh_installmanpages -p$@
 
 	dh_installchangelogs -p$@
