@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.19 1998/12/14 02:23:47 jgg Exp $
+// $Id: tagfile.cc,v 1.20 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -17,7 +17,7 @@
 
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <string>
 #include <stdio.h>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.9 1998/12/10 04:22:47 jgg Exp $
+// $Id: sourcelist.cc,v 1.10 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -16,7 +16,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <fstream.h>
 #include <stdio.h>

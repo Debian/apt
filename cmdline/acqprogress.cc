@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.6 1998/12/04 23:33:17 jgg Exp $
+// $Id: acqprogress.cc,v 1.7 1999/01/27 02:48:53 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -11,8 +11,8 @@
 #include "acqprogress.h"
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
+#include <apt-pkg/strutl.h>
 #include <stdio.h>
-#include <strutl.h>
 									/*}}}*/
 
 // AcqTextStatus::AcqTextStatus - Constructor				/*{{{*/

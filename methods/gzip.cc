@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.6 1998/11/11 06:54:19 jgg Exp $
+// $Id: gzip.cc,v 1.7 1999/01/27 02:48:53 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -12,7 +12,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.8 1999/01/18 06:20:07 jgg Exp $
+// $Id: cmndline.cc,v 1.9 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -13,7 +13,7 @@
 #endif
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 									/*}}}*/
 
 // CommandLine::CommandLine - Constructor				/*{{{*/

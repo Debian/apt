@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.9 1998/12/22 08:10:34 jgg Exp $
+// $Id: acquire-method.h,v 1.10 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -14,7 +14,7 @@
 #define PKGLIB_ACQUIRE_METHOD_H
 
 #include <apt-pkg/configuration.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #ifdef __GNUG__
 #pragma interface "apt-pkg/acquire-method.h"

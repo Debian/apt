@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.26 1998/12/14 03:39:15 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.27 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -21,8 +21,7 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/deblistparser.h>
-
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

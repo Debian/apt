@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.15 1998/12/30 06:26:00 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.16 1999/01/27 02:48:53 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -18,7 +18,7 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/cdromutl.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 #include <config.h>
 
 #include <iostream>

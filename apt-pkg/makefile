@@ -35,11 +35,11 @@ HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
           packagemanager.h tagfile.h deblistparser.h init.h pkgcache.h \
           version.h progress.h pkgrecords.h debrecords.h cmndline.h \
 	  acquire.h acquire-worker.h acquire-item.h acquire-method.h md5.h \
-	  dpkgpm.h dpkginit.h cdromutl.h
+	  dpkgpm.h dpkginit.h cdromutl.h strutl.h
 
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 
 # Private header files
-HEADERS+= strutl.h system.h
+HEADERS+= system.h
 
 include $(LIBRARY_H)

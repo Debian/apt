@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.23 1998/12/11 07:20:32 jgg Exp $
+// $Id: acquire.cc,v 1.24 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -21,7 +21,7 @@
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <dirent.h>
 #include <sys/time.h>

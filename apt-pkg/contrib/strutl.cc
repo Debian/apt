@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.17 1999/01/18 06:20:08 jgg Exp $
+// $Id: strutl.cc,v 1.18 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -16,10 +16,10 @@
 									/*}}}*/
 // Includes								/*{{{*/
 #ifdef __GNUG__
-#pragma implementation "strutl.h"
+#pragma implementation "apt-pkg/strutl.h"
 #endif
 
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 
 #include <ctype.h>

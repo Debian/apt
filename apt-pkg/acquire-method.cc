@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.15 1999/01/24 21:16:04 jgg Exp $
+// $Id: acquire-method.cc,v 1.16 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -14,7 +14,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 
 #include <stdio.h>

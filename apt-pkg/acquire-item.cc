@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.18 1999/01/24 21:16:04 jgg Exp $
+// $Id: acquire-item.cc,v 1.19 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -19,7 +19,7 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

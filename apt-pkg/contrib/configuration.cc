@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.11 1999/01/18 06:20:07 jgg Exp $
+// $Id: configuration.cc,v 1.12 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -17,7 +17,7 @@
 #endif
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <stdio.h>
 #include <fstream.h>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.3 1998/11/13 04:23:37 jgg Exp $
+// $Id: debrecords.cc,v 1.4 1999/01/27 02:48:53 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -83,6 +83,6 @@ string debRecordParser::ShortDesc()
 /* */
 string debRecordParser::LongDesc()
 {
-   return string();
+   return FindTag("Description");
 }
 									/*}}}*/

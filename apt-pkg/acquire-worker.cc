@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.17 1999/01/20 05:11:25 jgg Exp $
+// $Id: acquire-worker.cc,v 1.18 1999/01/27 02:48:52 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -20,7 +20,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.13 1998/12/14 08:07:29 jgg Exp $
+// $Id: deblistparser.cc,v 1.14 1999/01/27 02:48:53 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -13,7 +13,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-#include <strutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <system.h>
 									/*}}}*/
