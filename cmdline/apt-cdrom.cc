@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.16 1999/01/27 02:48:53 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.17 1999/01/30 02:12:53 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -966,6 +966,8 @@ int ShowHelp()
 {
    cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
        " compiled on " << __DATE__ << "  " << __TIME__ << endl;
+   if (_config->FindB("version") == true)
+      return 100;
    
    cout << "Usage: apt-cdrom [options] command" << endl;
    cout << endl;
@@ -994,6 +996,7 @@ int main(int argc,const char *argv[])
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
+      {'v',"version","version",0},
       {'d',"cdrom","Acquire::cdrom::mount",CommandLine::HasArg},
       {'r',"rename","APT::CDROM::Rename",0},
       {'m',"no-mount","APT::CDROM::NoMount",0},

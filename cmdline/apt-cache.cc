@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.22 1999/01/27 02:48:53 jgg Exp $
+// $Id: apt-cache.cc,v 1.23 1999/01/30 02:12:53 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -447,6 +447,8 @@ bool ShowHelp(CommandLine &Cmd)
 {
    cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
        " compiled on " << __DATE__ << "  " << __TIME__ << endl;
+   if (_config->FindB("version") == true)
+      return 100;
    
    cout << "Usage: apt-cache [options] command" << endl;
    cout << "       apt-cache [options] add file1 [file1 ...]" << endl;
@@ -492,6 +494,7 @@ int main(int argc,const char *argv[])
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
+      {'v',"version","version",0},
       {'p',"pkg-cache","Dir::Cache::pkgcache",CommandLine::HasArg},
       {'s',"src-cache","Dir::Cache::srcpkgcache",CommandLine::HasArg},
       {'q',"quiet","quiet",CommandLine::IntLevel},

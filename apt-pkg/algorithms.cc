@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.14 1998/12/08 01:34:05 jgg Exp $
+// $Id: algorithms.cc,v 1.15 1999/01/30 02:12:53 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -44,7 +44,7 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
    PkgIterator Pkg = Sim.FindPkg(iPkg.Name());
    Flags[Pkg->ID] = 1;
    
-   clog << "Inst " << Pkg.Name();
+   cout << "Inst " << Pkg.Name();
    Sim.MarkInstall(Pkg,false);
    
    // Look for broken conflicts+predepends.
@@ -58,7 +58,7 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
          {
 	    if ((Sim[D] & pkgDepCache::DepInstall) == 0)
 	    {
-	       clog << " [" << I.Name() << " on " << D.TargetPkg().Name() << ']';
+	       cout << " [" << I.Name() << " on " << D.TargetPkg().Name() << ']';
 	       if (D->Type == pkgCache::Dep::Conflicts)
 		  _error->Error("Fatal, conflicts violated %s",I.Name());
 	    }	    
@@ -68,7 +68,7 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
    if (Sim.BrokenCount() != 0)
       ShortBreaks();
    else
-      clog << endl;
+      cout << endl;
    return true;
 }
 									/*}}}*/
@@ -86,7 +86,7 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
 //   Sim.MarkInstall(Pkg,false);
    if (Sim[Pkg].InstBroken() == true)
    {
-      clog << "Conf " << Pkg.Name() << " broken" << endl;
+      cout << "Conf " << Pkg.Name() << " broken" << endl;
 
       Sim.Update();
       
@@ -98,21 +98,21 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
 	    continue;
 	 
 	 if (D->Type == pkgCache::Dep::Conflicts)
-	    clog << " Conflicts:" << D.TargetPkg().Name();
+	    cout << " Conflicts:" << D.TargetPkg().Name();
 	 else
-	    clog << " Depends:" << D.TargetPkg().Name();
+	    cout << " Depends:" << D.TargetPkg().Name();
       }	    
-      clog << endl;
+      cout << endl;
 
       _error->Error("Conf Broken %s",Pkg.Name());
    }   
    else
-      clog << "Conf " <<  Pkg.Name();
+      cout << "Conf " <<  Pkg.Name();
 
    if (Sim.BrokenCount() != 0)
       ShortBreaks();
    else
-      clog << endl;
+      cout << endl;
    
    return true;
 }
@@ -127,12 +127,12 @@ bool pkgSimulate::Remove(PkgIterator iPkg)
 
    Flags[Pkg->ID] = 3;
    Sim.MarkDelete(Pkg);
-   clog << "Remv " << Pkg.Name();
+   cout << "Remv " << Pkg.Name();
 
    if (Sim.BrokenCount() != 0)
       ShortBreaks();
    else
-      clog << endl;
+      cout << endl;
 
    return true;
 }
@@ -142,18 +142,18 @@ bool pkgSimulate::Remove(PkgIterator iPkg)
 /* */
 void pkgSimulate::ShortBreaks()
 {
-   clog << " [";
+   cout << " [";
    for (PkgIterator I = Sim.PkgBegin(); I.end() == false; I++)
    {
       if (Sim[I].InstBroken() == true)
       {
 	 if (Flags[I->ID] == 0)
-	    clog << I.Name() << ' ';
+	    cout << I.Name() << ' ';
 /*	 else
-	    clog << I.Name() << "! ";*/
+	    cout << I.Name() << "! ";*/
       }      
    }
-   clog << ']' << endl;
+   cout << ']' << endl;
 }
 									/*}}}*/
 // ApplyStatus - Adjust for non-ok packages				/*{{{*/

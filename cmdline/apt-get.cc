@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.34 1999/01/27 03:42:59 jgg Exp $
+// $Id: apt-get.cc,v 1.35 1999/01/30 02:12:53 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -988,7 +988,9 @@ bool ShowHelp(CommandLine &CmdL)
 {
    cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
        " compiled on " << __DATE__ << "  " << __TIME__ << endl;
-   
+   if (_config->FindB("version") == true)
+      return 100;
+       
    cout << "Usage: apt-get [options] command" << endl;
    cout << "       apt-get [options] install pkg1 [pkg2 ...]" << endl;
    cout << endl;
@@ -1056,6 +1058,7 @@ int main(int argc,const char *argv[])
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
+      {'v',"version","version",0},
       {'q',"quiet","quiet",CommandLine::IntLevel},
       {'q',"silent","quiet",CommandLine::IntLevel},
       {'d',"download-only","APT::Get::Download-Only",0},
@@ -1097,6 +1100,7 @@ int main(int argc,const char *argv[])
 
    // See if the help should be shown
    if (_config->FindB("help") == true ||
+       _config->FindB("version") == true ||
        CmdL.FileSize() == 0)
       return ShowHelp(CmdL);
 

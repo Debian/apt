@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.2 1998/11/27 01:52:57 jgg Exp $
+// $Id: apt-config.cc,v 1.3 1999/01/30 02:12:53 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -47,6 +47,8 @@ int ShowHelp()
 {
    cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
        " compiled on " << __DATE__ << "  " << __TIME__ << endl;
+   if (_config->FindB("version") == true)
+      return 100;
    
    cout << "Usage: apt-config [options] command" << endl;
    cout << endl;
@@ -67,6 +69,7 @@ int main(int argc,const char *argv[])
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
+      {'v',"version","version",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
