@@ -62,6 +62,14 @@ so may be necessary on some extremely slow single user systems but
 is very dangerous and may cause package install scripts to fail or worse.
 Use at your own risk.
 
+dit(bf(Force-LoopBreak))
+Never Enable this option unless you -really- know what you are doing. It
+permits APT to temporarily remove an essential package to break a
+Conflicts/Conflicts or Conflicts/Pre-Depend loop between two essential
+packages. SUCH A LOOP SHOULD NEVER EXIST AND IS A GRAVE BUG. This option will
+work if the essential packages are not tar, gzip, libc, bash or anything that 
+those packages depend on.
+
 dit(bf(Get))
 The Get subsection controls the bf(apt-get(8)) tool, please see its
 documentation for more information about the options here.

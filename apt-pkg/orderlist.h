@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.h,v 1.6 1999/08/03 05:19:41 jgg Exp $
+// $Id: orderlist.h,v 1.7 1999/08/12 05:59:54 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -88,7 +88,7 @@ class pkgOrderList
    enum Flags {Added = (1 << 0), AddPending = (1 << 1),
                Immediate = (1 << 2), Loop = (1 << 3),
                UnPacked = (1 << 4), Configured = (1 << 5),
-               Removed = (1 << 6),
+               Removed = (1 << 6),        // Early Remove
                InList = (1 << 7),
                States = (UnPacked | Configured | Removed)};
 
@@ -98,7 +98,7 @@ class pkgOrderList
    void Flag(PkgIterator Pkg,unsigned long State, unsigned long F) {Flags[Pkg->ID] = (Flags[Pkg->ID] & (~F)) | State;};
    inline void Flag(PkgIterator Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
    inline void Flag(Package *Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
-   inline bool IsNow(PkgIterator Pkg) {return (Flags[Pkg->ID] & States) == 0;};
+   inline bool IsNow(PkgIterator Pkg) {return (Flags[Pkg->ID] & (States & (~Removed))) == 0;};
    bool IsMissing(PkgIterator Pkg);
    void WipeFlags(unsigned long F);
    void SetFileList(string *FileList) {this->FileList = FileList;};

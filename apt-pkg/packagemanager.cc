@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.19 1999/08/03 05:19:41 jgg Exp $
+// $Id: packagemanager.cc,v 1.20 1999/08/12 05:59:54 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -364,6 +364,17 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
    // Woops, it will not be re-installed!
    if (List->IsFlag(Pkg,pkgOrderList::InList) == false)
       return false;
+
+   // Essential packages get special treatment
+   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0)
+   {
+      if (_config->FindB("APT::Force-LoopBreak",false) == false)
+	 return _error->Error("This installation run will require temporarily "
+			      "removing the essential package %s due to a "
+			      "Conflicts/Pre-Depends loop. This is often bad, "
+			      "but if you really want to do it, activate the "
+			      "APT::Force-LoopBreak option.",Pkg.Name());
+   }
    
    bool Res = SmartRemove(Pkg);
    if (Cache[Pkg].Delete() == false)
