@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.4 1999/03/29 19:28:52 jgg Exp $
+// $Id: apt-config.cc,v 1.5 1999/05/23 05:45:12 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -31,8 +31,19 @@ bool DoShell(CommandLine &CmdL)
 {
    for (const char **I = CmdL.FileList + 1; *I != 0; I += 2)
    {
-      if (I[1] == 0)
+      if (I[1] == 0 || strlen(I[1]) == 0)
 	 return _error->Error("Arguments not in pairs");
+
+      // Check if the caller has requested a directory path
+      if (I[1][strlen(I[1])-1] == '/')
+      {
+	 char S[300];
+	 strcpy(S,I[1]);
+	 S[strlen(S)-1] = 0;
+	 if (_config->Exists(S) == true)
+	    cout << *I << "=\"" << _config->FindDir(S) << '"' << endl;
+      }
+      
       if (_config->Exists(I[1]) == true)
 	 cout << *I << "=\"" << _config->Find(I[1]) << '"' << endl;
    }

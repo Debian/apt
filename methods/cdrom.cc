@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.8 1999/03/28 01:37:26 jgg Exp $
+// $Id: cdrom.cc,v 1.9 1999/05/23 05:45:13 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -40,40 +40,23 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
 {
 };
 									/*}}}*/
-// CDROMMethod::GetID - Get the ID hash for 									/*{{{*/
+// CDROMMethod::GetID - Search the database for a matching string	/*{{{*/
 // ---------------------------------------------------------------------
-/* We search the configuration space for the name and then return the ID
-   tag associated with it. */
+/* */
 string CDROMMethod::GetID(string Name)
 {
-   if (DatabaseLoaded == false)
-   {
-      // Read the database
-      string DFile = _config->FindFile("Dir::State::cdroms");
-      if (FileExists(DFile) == true)
-      {
-	 if (ReadConfigFile(Database,DFile) == false)
-	 {
-	    _error->Error("Unable to read the cdrom database %s",
-			  DFile.c_str());
-	    return string();
-	 }   
-      }
-      DatabaseLoaded = true;
-   }
-   
+   // Search for an ID
    const Configuration::Item *Top = Database.Tree("CD");
    if (Top != 0)
       Top = Top->Child;
-
+   
    for (; Top != 0;)
-   {
+   {      
       if (Top->Value == Name)
 	 return Top->Tag;
-
+      
       Top = Top->Next;
-   }   
-   
+   }
    return string();
 }
 									/*}}}*/
@@ -95,13 +78,23 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       URIDone(Res);
       return true;
    }
-   
-   string ID = GetID(Get.Host);
-   if (_error->PendingError() == true)
-      return false;
-   
+
+   // Load the database
+   if (DatabaseLoaded == false)
+   {
+      // Read the database
+      string DFile = _config->FindFile("Dir::State::cdroms");
+      if (FileExists(DFile) == true)
+      {
+	 if (ReadConfigFile(Database,DFile) == false)
+	    return _error->Error("Unable to read the cdrom database %s",
+			  DFile.c_str());
+      }
+      DatabaseLoaded = true;
+   }
+       
    // All non IMS queries for package files fail.
-   if (Itm->IndexFile == true || ID.empty() == true)
+   if (Itm->IndexFile == true || GetID(Get.Host).empty() == true)
    {
       Fail("Please use apt-cdrom to make this CD recognized by APT."
 	   " apt-get update cannot be used to add new CDs");
@@ -109,7 +102,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    }
 
    // We already have a CD inserted, but it is the wrong one
-   if (CurrentID.empty() == false && ID != CurrentID)
+   if (CurrentID.empty() == false && Database.Find("CD::" + CurrentID) != Get.Host)
    {
       Fail("Wrong CD",true);
       return true;
@@ -125,7 +118,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 	 return false;
    
       // A hit
-      if (NewID == ID)
+      if (Database.Find("CD::" + NewID) == Get.Host)
 	 break;
 
       // I suppose this should prompt somehow?
@@ -142,23 +135,18 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       MountCdrom(CDROM);
    }
    
-   // ID matches
-   if (NewID == ID)
-   {
-      Res.Filename = CDROM + File;
-      struct stat Buf;
-      if (stat(Res.Filename.c_str(),&Buf) != 0)
-	 return _error->Error("File not found");
-    
-      CurrentID = ID;
-      Res.LastModified = Buf.st_mtime;
-      Res.IMSHit = true;
-      Res.Size = Buf.st_size;
-      URIDone(Res);
-      return true;
-   }
+   // Found a CD
+   Res.Filename = CDROM + File;
+   struct stat Buf;
+   if (stat(Res.Filename.c_str(),&Buf) != 0)
+      return _error->Error("File not found");
    
-   return _error->Error("CDROM not found");
+   CurrentID = NewID;
+   Res.LastModified = Buf.st_mtime;
+   Res.IMSHit = true;
+   Res.Size = Buf.st_size;
+   URIDone(Res);
+   return true;
 }
 									/*}}}*/
 
