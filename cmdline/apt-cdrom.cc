@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.22 1999/04/07 06:00:20 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.23 1999/05/29 03:32:30 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -51,10 +51,17 @@ bool FindPackages(string CD,vector<string> &List,string &InfoDir,
    if (chdir(CD.c_str()) != 0)
       return _error->Errno("chdir","Unable to change to %s",CD.c_str());
 
+   // Look for a .disk subdirectory
+   struct stat Buf;
+   if (stat(".disk",&Buf) == 0)
+   {
+      if (InfoDir.empty() == true)
+	 InfoDir = CD + ".disk/";
+   }
+
    /* Aha! We found some package files. We assume that everything under 
       this dir is controlled by those package files so we don't look down
       anymore */
-   struct stat Buf;
    if (stat("Packages",&Buf) == 0) 
    {
       List.push_back(CD);
@@ -62,13 +69,6 @@ bool FindPackages(string CD,vector<string> &List,string &InfoDir,
       // Continue down if thorough is given
       if (_config->FindB("APT::CDROM::Thorough",false) == false)
 	 return true;
-   }
-
-   // Look for a .disk subdirectory
-   if (stat(".disk",&Buf) == 0)
-   {
-      if (InfoDir.empty() == true)
-	 InfoDir = CD + ".disk/";
    }
    
    DIR *D = opendir(".");
@@ -506,8 +506,13 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 		     return false;
 	       }
 	       else
+	       {
 		  if (Target.Write(Start,Stop-Start) == false)
-		     return false;		  
+		     return false;
+		  if (Stop[-1] != '\n')
+		     if (Target.Write("\n",1) == false)
+			return false;
+	       }	       
 	    }
 	    if (Target.Write("\n",1) == false)
 	       return false;
