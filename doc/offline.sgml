@@ -4,11 +4,11 @@
 <title>Using APT Offline</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: offline.sgml,v 1.1 1999/02/15 06:38:03 jgg Exp $</version>
+<version>$Id: offline.sgml,v 1.2 2000/02/13 07:20:47 jgg Exp $</version>
 
 <abstract>
 This document describes how to use APT in a non-networked environment, 
-specificaly a 'sneaker-net' approach for performing upgrades.
+specifically a 'sneaker-net' approach for performing upgrades.
 </abstract>
 
 <copyright>
@@ -40,14 +40,14 @@ connection but they are physically distant.
 <p>
 The solution to this is to use large removable media such as a Zip disc or a 
 SuperDisk disc. These discs are not large enough to store the entire Debian
-archive but can easially fit a subset large enough for most users. The idea
+archive but can easily fit a subset large enough for most users. The idea
 is to use APT to generate a list of packages that are required and then fetch
 them onto the disc using another machine with good connectivity. It is 
 even Possible to use another Debian machine with APT or to use a completely 
 different OS and a download tool like wget.
 
 <p>
-This is achived by creatively manipulating the APT configuration file. The
+This is achieved by creatively manipulating the APT configuration file. The
 essential premis to tell APT to look on a disc for it's archive files. Note
 that the disc should be formated with a filesystem that can handle long file
 names such as ext2, fat32 or vfat.
@@ -112,7 +112,7 @@ disc:
    State "/disc/";
    State::status "status";
 
-   // Binary caches will be stored localy
+   // Binary caches will be stored locally
    Cache::archives "/disc/archives/";
  
    // Location of the source list.
@@ -183,8 +183,8 @@ and then preparing a wget script to actually fetch the packages.
 <sect>Operation
 
 <p>
-Unlike the previous techinque no special configuration files are required. We
-mearly use the standard APT commands to generate the file list.
+Unlike the previous technique no special configuration files are required. We
+merely use the standard APT commands to generate the file list.
 
 <example>
  # apt-get dist-upgrade 
