@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.51 2003/08/02 19:51:02 mdz Exp $
+# $Id: rules,v 1.52 2003/08/09 19:14:49 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -13,8 +13,6 @@
 # debian/cvs-build/.  Optionally, you can run 'debian/rules cvs-mkul' to
 # create ../upload-<VER>, with all the files needed to be uploaded placed
 # in it.
-
-export DH_COMPAT=2
 
 export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
