@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.45 1999/03/17 19:45:05 jgg Exp $
+// $Id: apt-get.cc,v 1.46 1999/03/27 01:30:38 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1208,6 +1208,10 @@ int main(int argc,const char *argv[])
        CmdL.FileSize() == 0)
       return ShowHelp(CmdL);
 
+   // Deal with stdout not being a tty
+   if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
+      _config->Set("quiet","1");
+   
    // Setup the output streams
    c0out.rdbuf(cout.rdbuf());
    c1out.rdbuf(cout.rdbuf());
