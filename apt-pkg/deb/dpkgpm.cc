@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.12 1999/07/26 17:46:08 jgg Exp $
+// $Id: dpkgpm.cc,v 1.13 1999/07/30 06:15:14 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -22,6 +22,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
+#include <stdio.h>
 									/*}}}*/
 
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
@@ -138,6 +139,87 @@ bool pkgDPkgPM::RunScripts(const char *Cnf)
    
    return true;
 }
+
+                                                                        /*}}}*/
+// DPkgPM::RunScriptsWithPkgs - Run scripts with package names on stdin /*{{{*/
+// ---------------------------------------------------------------------
+/* This looks for a list of scripts to run from the configuration file
+   each one is run and is fed on standard input a list of all .deb files
+   that are due to be installed. */
+bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
+{
+   Configuration::Item const *Opts = _config->Tree(Cnf);
+   if (Opts == 0 || Opts->Child == 0)
+      return true;
+   Opts = Opts->Child;
+   
+   unsigned int Count = 1;
+   for (; Opts != 0; Opts = Opts->Next, Count++)
+   {
+      if (Opts->Value.empty() == true)
+         continue;
+		
+      // Create the pipes
+      int Pipes[2];
+      if (pipe(Pipes) != 0)
+	 return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
+      SetCloseExec(Pipes[0],true);
+      SetCloseExec(Pipes[1],true);
+      
+      // Purified Fork for running the script
+      pid_t Process = ExecFork();      
+      if (Process == 0)
+      {
+	 // Setup the FDs
+	 dup2(Pipes[0],STDIN_FILENO);
+	 SetCloseExec(STDOUT_FILENO,false);
+	 SetCloseExec(STDIN_FILENO,false);      
+	 SetCloseExec(STDERR_FILENO,false);
+	 
+	 const char *Args[5];
+	 Args[0] = "/bin/sh";
+	 Args[1] = "/bin/sh";
+	 Args[2] = "-c";
+	 Args[3] = Opts->Value.c_str();
+	 Args[4] = 0;
+	 execv(Args[0],(char **)Args);
+	 _exit(100);
+      }
+      close(Pipes[0]);
+      FileFd Fd(Pipes[1]);
+
+      // Feed it the filenames.
+      for (vector<Item>::iterator I = List.begin(); I != List.end();)
+      {
+	 // Only deal with packages to be installed from .deb
+	 if (I->Op != Item::Install)
+	    continue;
+
+	 // No errors here..
+	 if (I->File[0] != '/')
+	    continue;
+	 
+	 /* Feed the filename of each package that is pending install
+	    into the pipe. */
+	 if (Fd.Write(I->File.begin(),I->File.length()) == false || 
+	     Fd.Write("\n",1) == false)
+	 {
+	    kill(Process,SIGINT);	    
+	    Fd.Close();   
+	    ExecWait(Process,Opts->Value.c_str(),true);
+	    return false;
+	 }	    
+      }
+      Fd.Close();
+      
+      // Clean up the sub process
+      if (ExecWait(Process,Opts->Value.c_str()) == false)
+	 return false;
+   }
+
+   return true;
+}
+
 									/*}}}*/
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
@@ -146,7 +228,10 @@ bool pkgDPkgPM::Go()
 {
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
-   
+
+   if (RunScriptsWithPkgs("DPkg::Pre-Install-Pkgs") == false)
+      return false;
+
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
    {
       vector<Item>::iterator J = I;
