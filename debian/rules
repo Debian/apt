@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.19 1999/12/07 07:38:19 jgg Exp $
+# $Id: rules,v 1.20 2000/05/10 05:59:12 jgg Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -26,6 +26,10 @@ endif
 BUILDX:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak*))
 BUILDX:= $(patsubst %/,%,$(firstword $(dir $(BUILDX))))
 override BLD := $(BUILDX)
+
+ifeq ($(words $(BLD)),0)
+override BLD := ./build
+endif
 
 ifneq ($(APT_DEBVER),$(APT_CONFVER))
 .PHONY: configure.in
