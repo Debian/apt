@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.29 2002/04/24 05:35:13 jgg Exp $
+// $Id: ftp.cc,v 1.30 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -15,6 +15,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -158,18 +159,18 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
       return false;
 
    // Login must be before getpeername otherwise dante won't work.
-   Owner->Status("Logging in");
+   Owner->Status(_("Logging in"));
    bool Res = Login();
    
    // Get the remote server's address
    PeerAddrLen = sizeof(PeerAddr);
    if (getpeername(ServerFd,(sockaddr *)&PeerAddr,&PeerAddrLen) != 0)
-      return _error->Errno("getpeername","Unable to determine the peer name");
+      return _error->Errno("getpeername",_("Unable to determine the peer name"));
    
    // Get the local machine's address
    ServerAddrLen = sizeof(ServerAddr);
    if (getsockname(ServerFd,(sockaddr *)&ServerAddr,&ServerAddrLen) != 0)
-      return _error->Errno("getsockname","Unable to determine the local name");
+      return _error->Errno("getsockname",_("Unable to determine the local name"));
    
    return Res;
 }
@@ -200,19 +201,19 @@ bool FTPConn::Login()
       if (ReadResp(Tag,Msg) == false)
 	 return false;
       if (Tag >= 400)
-	 return _error->Error("Server refused our connection and said: %s",Msg.c_str());
+	 return _error->Error(_("Server refused our connection and said: %s"),Msg.c_str());
       
       // Send the user
       if (WriteMsg(Tag,Msg,"USER %s",User.c_str()) == false)
 	 return false;
       if (Tag >= 400)
-	 return _error->Error("USER failed, server said: %s",Msg.c_str());
+	 return _error->Error(_("USER failed, server said: %s"),Msg.c_str());
       
       // Send the Password
       if (WriteMsg(Tag,Msg,"PASS %s",Pass.c_str()) == false)
 	 return false;
       if (Tag >= 400)
-	 return _error->Error("PASS failed, server said: %s",Msg.c_str());
+	 return _error->Error(_("PASS failed, server said: %s"),Msg.c_str());
       
       // Enter passive mode
       if (_config->Exists("Acquire::FTP::Passive::" + ServerName.Host) == true)
@@ -226,13 +227,13 @@ bool FTPConn::Login()
       if (ReadResp(Tag,Msg) == false)
 	 return false;
       if (Tag >= 400)
-	 return _error->Error("Server refused our connection and said: %s",Msg.c_str());
+	 return _error->Error(_("Server refused our connection and said: %s"),Msg.c_str());
       
       // Perform proxy script execution
       Configuration::Item const *Opts = _config->Tree("Acquire::ftp::ProxyLogin");
       if (Opts == 0 || Opts->Child == 0)
-	 return _error->Error("A proxy server was specified but no login "
-			      "script, Acquire::ftp::ProxyLogin is empty.");
+	 return _error->Error(_("A proxy server was specified but no login "
+			      "script, Acquire::ftp::ProxyLogin is empty."));
       Opts = Opts->Child;
 
       // Iterate over the entire login script
@@ -259,7 +260,7 @@ bool FTPConn::Login()
 	 if (WriteMsg(Tag,Msg,"%s",Tmp.c_str()) == false)
 	    return false;
 	 if (Tag >= 400)
-	    return _error->Error("Login script command '%s' failed, server said: %s",Tmp.c_str(),Msg.c_str());	 
+	    return _error->Error(_("Login script command '%s' failed, server said: %s"),Tmp.c_str(),Msg.c_str());	 
       }
       
       // Enter passive mode
@@ -285,7 +286,7 @@ bool FTPConn::Login()
    if (WriteMsg(Tag,Msg,"TYPE I") == false)
       return false;
    if (Tag >= 400)
-      return _error->Error("TYPE failed, server said: %s",Msg.c_str());
+      return _error->Error(_("TYPE failed, server said: %s"),Msg.c_str());
    
    return true;
 }
@@ -323,23 +324,23 @@ bool FTPConn::ReadLine(string &Text)
       if (WaitFd(ServerFd,false,TimeOut) == false)
       {
 	 Close();
-	 return _error->Error("Connection timeout");
+	 return _error->Error(_("Connection timeout"));
       }
       
       // Suck it back
       int Res = read(ServerFd,Buffer + Len,sizeof(Buffer) - Len);
       if (Res == 0)
-	 _error->Error("Server closed the connection");
+	 _error->Error(_("Server closed the connection"));
       if (Res <= 0)
       {
-	 _error->Errno("read","Read error");
+	 _error->Errno("read",_("Read error"));
 	 Close();
 	 return false;
       }      
       Len += Res;
    }
 
-   return _error->Error("A response overflowed the buffer.");
+   return _error->Error(_("A response overflowed the buffer."));
 }
 									/*}}}*/
 // FTPConn::ReadResp - Read a full response from the server		/*{{{*/
@@ -356,7 +357,7 @@ bool FTPConn::ReadResp(unsigned int &Ret,string &Text)
    char *End;   
    Ret = strtol(Msg.c_str(),&End,10);
    if (End - Msg.c_str() != 3)
-      return _error->Error("Protocol corruption");
+      return _error->Error(_("Protocol corruption"));
 
    // All done ?
    Text = Msg.c_str()+4;
@@ -368,7 +369,7 @@ bool FTPConn::ReadResp(unsigned int &Ret,string &Text)
    }
    
    if (*End != '-')
-      return _error->Error("Protocol corruption");
+      return _error->Error(_("Protocol corruption"));
    
    /* Okay, here we do the continued message trick. This is foolish, but
       proftpd follows the protocol as specified and wu-ftpd doesn't, so 
@@ -434,13 +435,13 @@ bool FTPConn::WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...)
       if (WaitFd(ServerFd,true,TimeOut) == false)
       {
 	 Close();
-	 return _error->Error("Connection timeout");
+	 return _error->Error(_("Connection timeout"));
       }
       
       int Res = write(ServerFd,S + Start,Len);
       if (Res <= 0)
       {
-	 _error->Errno("write","Write Error");
+	 _error->Errno("write",_("Write Error"));
 	 Close();
 	 return false;
       }
@@ -681,24 +682,24 @@ bool FTPConn::CreateDataFd()
       // Get a socket
       if ((DataFd = socket(PasvAddr->ai_family,PasvAddr->ai_socktype,
 			   PasvAddr->ai_protocol)) < 0)
-	 return _error->Errno("socket","Could not create a socket");
+	 return _error->Errno("socket",_("Could not create a socket"));
       
       // Connect to the server
       SetNonBlock(DataFd,true);
       if (connect(DataFd,PasvAddr->ai_addr,PasvAddr->ai_addrlen) < 0 &&
 	  errno != EINPROGRESS)
-	 return _error->Errno("socket","Could not create a socket");
+	 return _error->Errno("socket",_("Could not create a socket"));
    
       /* This implements a timeout for connect by opening the connection
          nonblocking */
       if (WaitFd(DataFd,true,TimeOut) == false)
-	 return _error->Error("Could not connect data socket, connection timed out");
+	 return _error->Error(_("Could not connect data socket, connection timed out"));
       unsigned int Err;
       unsigned int Len = sizeof(Err);
       if (getsockopt(DataFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
-	 return _error->Errno("getsockopt","Failed");
+	 return _error->Errno("getsockopt",_("Failed"));
       if (Err != 0)
-	 return _error->Error("Could not connect passive socket.");
+	 return _error->Error(_("Could not connect passive socket."));
 
       return true;
    }
@@ -716,32 +717,33 @@ bool FTPConn::CreateDataFd()
    Hints.ai_family = ((struct sockaddr *)&ServerAddr)->sa_family;
    int Res;
    if ((Res = getaddrinfo(0,"0",&Hints,&BindAddr)) != 0)
-      return _error->Error("getaddrinfo was unable to get a listening socket");
+      return _error->Error(_("getaddrinfo was unable to get a listening socket"));
    
    // Construct the socket
    if ((DataListenFd = socket(BindAddr->ai_family,BindAddr->ai_socktype,
 			      BindAddr->ai_protocol)) < 0)
    {
       freeaddrinfo(BindAddr);
-      return _error->Errno("socket","Could not create a socket");
+      return _error->Errno("socket",_("Could not create a socket"));
    }
    
    // Bind and listen
    if (bind(DataListenFd,BindAddr->ai_addr,BindAddr->ai_addrlen) < 0)
    {
       freeaddrinfo(BindAddr);
-      return _error->Errno("bind","Could not bind a socket");
+      return _error->Errno("bind",_("Could not bind a socket"));
    }
    freeaddrinfo(BindAddr);   
    if (listen(DataListenFd,1) < 0)
-      return _error->Errno("listen","Could not listen on the socket");
+      return _error->Errno("listen",_("Could not listen on the socket"));
    SetNonBlock(DataListenFd,true);
    
    // Determine the name to send to the remote
    struct sockaddr_storage Addr;
    socklen_t AddrLen = sizeof(Addr);
    if (getsockname(DataListenFd,(sockaddr *)&Addr,&AddrLen) < 0)
-      return _error->Errno("getsockname","Could not determine the socket's name");
+      return _error->Errno("getsockname",_("Could not determine the socket's name"));
+
 
    // Reverse the address. We need the server address and the data port.
    char Name[NI_MAXHOST];
@@ -772,7 +774,7 @@ bool FTPConn::CreateDataFd()
 		   (int)(Port >> 8) & 0xff, (int)(Port & 0xff)) == false)
 	 return false;
       if (Tag >= 400)
-	 return _error->Error("Unable to send PORT command");
+	 return _error->Error(_("Unable to send PORT command"));
       return true;
    }
 
@@ -782,7 +784,7 @@ bool FTPConn::CreateDataFd()
       if (AFMap[J].Family == ((struct sockaddr *)&Addr)->sa_family)
 	 Proto = AFMap[J].IETFFamily;
    if (Proto == 0)
-      return _error->Error("Unkonwn address family %u (AF_*)",
+      return _error->Error(_("Unknown address family %u (AF_*)"),
 			   ((struct sockaddr *)&Addr)->sa_family);
    
    // Send the EPRT command
@@ -791,7 +793,7 @@ bool FTPConn::CreateDataFd()
    if (WriteMsg(Tag,Msg,"EPRT |%u|%s|%s|",Proto,Name,Service) == false)
       return false;
    if (Tag >= 400)
-      return _error->Error("EPRT failed, server said: %s",Msg.c_str());
+      return _error->Error(_("EPRT failed, server said: %s"),Msg.c_str());
    return true;
 }
 									/*}}}*/
@@ -811,14 +813,14 @@ bool FTPConn::Finalize()
    
    // Wait for someone to connect..
    if (WaitFd(DataListenFd,false,TimeOut) == false)
-      return _error->Error("Data socket connect timed out");
+      return _error->Error(_("Data socket connect timed out"));
       
    // Accept the connection
    struct sockaddr_in Addr;
    socklen_t Len = sizeof(Addr);
    DataFd = accept(DataListenFd,(struct sockaddr *)&Addr,&Len);
    if (DataFd < 0)
-      return _error->Errno("accept","Unable to accept connection");
+      return _error->Errno("accept",_("Unable to accept connection"));
 
    close(DataListenFd);
    DataListenFd = -1;
@@ -857,7 +859,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    {
       if (Hash.AddFD(To.Fd(),Resume) == false)
       {
-	 _error->Errno("read","Problem hashing file");
+	 _error->Errno("read",_("Problem hashing file"));
 	 return false;
       }
    }
@@ -870,7 +872,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    {
       if (Tag == 550)
 	 Missing = true;
-      return _error->Error("Unable to fetch file, server said '%s'",Msg.c_str());
+      return _error->Error(_("Unable to fetch file, server said '%s'"),Msg.c_str());
    }
    
    // Finish off the data connection
@@ -885,7 +887,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
       if (WaitFd(DataFd,false,TimeOut) == false)
       {
 	 Close();
-	 return _error->Error("Data socket timed out");
+	 return _error->Error(_("Data socket timed out"));
       }
       
       // Read the data..
@@ -915,7 +917,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    if (ReadResp(Tag,Msg) == false)
       return false;
    if (Tag >= 400)
-      return _error->Error("Data transfer failed, server said '%s'",Msg.c_str());
+      return _error->Error(_("Data transfer failed, server said '%s'"),Msg.c_str());
    return true;
 }
 									/*}}}*/
@@ -990,7 +992,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    }
    
    // Get the files information
-   Status("Query");
+   Status(_("Query"));
    unsigned long Size;
    if (Server->Size(File,Size) == false ||
        Server->ModTime(File,FailTime) == false)
@@ -1097,7 +1099,7 @@ int main(int argc,const char *argv[])
 	 // Run the http method
 	 string Path = flNotFile(argv[0]) + "http";
 	 execl(Path.c_str(),Path.c_str(),0);
-	 cerr << "Unable to invoke " << Path << endl;
+	 cerr << _("Unable to invoke ") << Path << endl;
 	 exit(100);
       }      
    }

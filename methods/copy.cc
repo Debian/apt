@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: copy.cc,v 1.6 1999/01/20 04:36:43 jgg Exp $
+// $Id: copy.cc,v 1.7 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    Copy URI - This method takes a uri like a file: uri and copies it
@@ -9,6 +9,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -38,7 +39,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    // Stat the file and send a start message
    struct stat Buf;
    if (stat(File.c_str(),&Buf) != 0)
-      return _error->Errno("stat","Failed to stat");
+      return _error->Errno("stat",_("Failed to stat"));
 
    // Forumulate a result and send a start message
    FetchResult Res;
@@ -75,7 +76,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
    {
       To.OpFail();
-      return _error->Errno("utime","Failed to set modification time");
+      return _error->Errno("utime",_("Failed to set modification time"));
    }
    
    URIDone(Res);

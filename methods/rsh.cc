@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rsh.cc,v 1.5 2002/11/09 23:33:26 doogie Exp $
+// $Id: rsh.cc,v 1.6 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    RSH method - Transfer files via rsh compatible program
@@ -11,6 +11,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apti18n.h>
 #include "rsh.h"
 #include <apt-pkg/error.h>
 
@@ -87,7 +88,7 @@ bool RSHConn::Connect(string Host, string User)
    int Pipes[4] = {-1,-1,-1,-1};
    if (pipe(Pipes) != 0 || pipe(Pipes+2) != 0)
    {
-      _error->Errno("pipe","Failed to create IPC pipe to subprocess");
+      _error->Errno("pipe",_("Failed to create IPC pipe to subprocess"));
       for (int I = 0; I != 4; I++)
 	 close(Pipes[I]);
       return false;
@@ -179,21 +180,21 @@ bool RSHConn::ReadLine(string &Text)
       if (WaitFd(ReadFd,false,TimeOut) == false)
       {
          Close();
-         return _error->Error("Connection timeout");
+         return _error->Error(_("Connection timeout"));
       }
 
       // Suck it back
       int Res = read(ReadFd,Buffer + Len,sizeof(Buffer) - Len);
       if (Res <= 0)
       {
-         _error->Errno("read","Read error");
+         _error->Errno("read",_("Read error"));
          Close();
          return false;
       }
       Len += Res;
    }
 
-   return _error->Error("A response overflowed the buffer.");
+   return _error->Error(_("A response overflowed the buffer."));
 }
 									/*}}}*/
 // RSHConn::WriteMsg - Send a message with optional remote sync.	/*{{{*/
@@ -222,13 +223,13 @@ bool RSHConn::WriteMsg(string &Text,bool Sync,const char *Fmt,...)
       {
 	 
 	 Close();
-	 return _error->Error("Connection timeout");
+	 return _error->Error(_("Connection timeout"));
       }      
       
       int Res = write(WriteFd,S + Start,Len);
       if (Res <= 0)
       {
-         _error->Errno("write","Write Error");
+         _error->Errno("write",_("Write Error"));
          Close();
          return false;
       }
@@ -260,7 +261,7 @@ bool RSHConn::Size(const char *Path,unsigned long &Size)
    char *End;
    Size = strtoul(Msg.c_str(),&End,10);
    if (End == Msg.c_str())
-      return _error->Error("File Not Found");
+      return _error->Error(_("File Not Found"));
    return true;
 }
 									/*}}}*/
@@ -299,7 +300,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
 
    if (Resume != 0) {
       if (Hash.AddFD(To.Fd(),Resume) == false) {
-	 _error->Errno("read","Problem hashing file");
+	 _error->Errno("read",_("Problem hashing file"));
 	 return false;
       }
    }
@@ -318,7 +319,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
       if (WaitFd(ReadFd,false,TimeOut) == false)
       {
          Close();
-         return _error->Error("Data socket timed out");
+         return _error->Error(_("Data socket timed out"));
       }
 
       // Read the data..
@@ -326,7 +327,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
       if (Res == 0)
       {
 	 Close();
-	 return _error->Error("Connection closed prematurely");
+	 return _error->Error(_("Connection closed prematurely"));
       }
       
       if (Res < 0)
@@ -421,7 +422,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 
    // We say this mainly because the pause here is for the
    // ssh connection that is still going
-   Status("Connecting to %s", Get.Host.c_str());
+   Status(_("Connecting to %s"), Get.Host.c_str());
 
    // Get the files information
    unsigned long Size;
@@ -429,7 +430,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
        Server->ModTime(File,FailTime) == false)
    {
       //Fail(true);
-      //_error->Error("File Not Found"); // Will be handled by Size
+      //_error->Error(_("File Not Found")); // Will be handled by Size
       return false;
    }
    Res.Size = Size;

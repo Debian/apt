@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.9 2002/09/14 05:28:38 jgg Exp $
+// $Id: connect.cc,v 1.10 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -11,6 +11,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apti18n.h>
 #include "connect.h"
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
@@ -60,14 +61,14 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    getnameinfo(Addr->ai_addr,Addr->ai_addrlen,
 	       Name,sizeof(Name),Service,sizeof(Service),
 	       NI_NUMERICHOST|NI_NUMERICSERV);
-   Owner->Status("Connecting to %s (%s)",Host.c_str(),Name);
+   Owner->Status(_("Connecting to %s (%s)"),Host.c_str(),Name);
 
    /* If this is an IP rotation store the IP we are using.. If something goes
       wrong this will get tacked onto the end of the error message */
    if (LastHostAddr->ai_next != 0)
    {
       char Name2[NI_MAXHOST + NI_MAXSERV + 10];
-      snprintf(Name2,sizeof(Name2),"[IP: %s %s]",Name,Service);
+      snprintf(Name2,sizeof(Name2),_("[IP: %s %s]"),Name,Service);
       Owner->SetFailExtraMsg(string(Name2));
    }   
    else
@@ -76,31 +77,31 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    // Get a socket
    if ((Fd = socket(Addr->ai_family,Addr->ai_socktype,
 		    Addr->ai_protocol)) < 0)
-      return _error->Errno("socket","Could not create a socket for %s (f=%u t=%u p=%u)",
+      return _error->Errno("socket",_("Could not create a socket for %s (f=%u t=%u p=%u)"),
 			   Name,Addr->ai_family,Addr->ai_socktype,Addr->ai_protocol);
    
    SetNonBlock(Fd,true);
    if (connect(Fd,Addr->ai_addr,Addr->ai_addrlen) < 0 &&
        errno != EINPROGRESS)
-      return _error->Errno("connect","Cannot initiate the connection "
-			   "to %s:%s (%s).",Host.c_str(),Service,Name);
+      return _error->Errno("connect",_("Cannot initiate the connection "
+			   "to %s:%s (%s)."),Host.c_str(),Service,Name);
    
    /* This implements a timeout for connect by opening the connection
       nonblocking */
    if (WaitFd(Fd,true,TimeOut) == false)
-      return _error->Error("Could not connect to %s:%s (%s), "
-			   "connection timed out",Host.c_str(),Service,Name);
+      return _error->Error(_("Could not connect to %s:%s (%s), "
+			   "connection timed out"),Host.c_str(),Service,Name);
 
    // Check the socket for an error condition
    unsigned int Err;
    unsigned int Len = sizeof(Err);
    if (getsockopt(Fd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
-      return _error->Errno("getsockopt","Failed");
+      return _error->Errno("getsockopt",_("Failed"));
    
    if (Err != 0)
    {
       errno = Err;
-      return _error->Errno("connect","Could not connect to %s:%s (%s).",Host.c_str(),
+      return _error->Errno("connect",_("Could not connect to %s:%s (%s)."),Host.c_str(),
 			   Service,Name);
    }
    
@@ -128,7 +129,7 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
       sensible */
    if (LastHost != Host || LastPort != Port)
    {
-      Owner->Status("Connecting to %s",Host.c_str());
+      Owner->Status(_("Connecting to %s"),Host.c_str());
 
       // Free the old address structure
       if (LastHostAddr != 0)
@@ -159,13 +160,13 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 		  DefPort = 0;
 		  continue;
 	       }
-	       return _error->Error("Could not resolve '%s'",Host.c_str());
+	       return _error->Error(_("Could not resolve '%s'"),Host.c_str());
 	    }
 	    
 	    if (Res == EAI_AGAIN)
-	       return _error->Error("Temporary failure resolving '%s'",
+	       return _error->Error(_("Temporary failure resolving '%s'"),
 				    Host.c_str());
-	    return _error->Error("Something wicked happened resolving '%s:%s' (%i)",
+	    return _error->Error(_("Something wicked happened resolving '%s:%s' (%i)"),
 				 Host.c_str(),ServStr,Res);
 	 }
 	 break;
@@ -212,6 +213,6 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 
    if (_error->PendingError() == true)
       return false;   
-   return _error->Error("Unable to connect to %s %s:",Host.c_str(),ServStr);
+   return _error->Error(_("Unable to connect to %s %s:"),Host.c_str(),ServStr);
 }
 									/*}}}*/

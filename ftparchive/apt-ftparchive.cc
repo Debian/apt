@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.5 2002/11/11 04:27:51 doogie Exp $
+// $Id: apt-ftparchive.cc,v 1.6 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -160,9 +160,9 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
 			   flCombine(OverrideDir,BinOverride),
 			   flCombine(OverrideDir,ExtraOverride));
    if (PkgExt.empty() == false && Packages.SetExts(PkgExt) == false)
-      return _error->Error("Package extension list is too long");
+      return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
-      return _error->Error("Error Processing directory %s",BaseDir.c_str());
+      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
    
    Packages.PathPrefix = PathPrefix;
    Packages.DirStrip = ArchiveDir;
@@ -176,7 +176,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
 		      PkgCompress,Permissions);
    Packages.Output = Comp.Input;
    if (_error->PendingError() == true)
-      return _error->Error("Error Processing directory %s",BaseDir.c_str());
+      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
    
    c0out << ' ' << BaseDir << ":" << flush;
    
@@ -199,7 +199,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    if (Comp.Finalize(Size) == false)
    {
       c0out << endl;
-      return _error->Error("Error Processing directory %s",BaseDir.c_str());
+      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
    }
    
    if (Size != 0)
@@ -246,9 +246,9 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
 			 flCombine(OverrideDir,SrcOverride),
 			 flCombine(OverrideDir,SrcExtraOverride));
    if (SrcExt.empty() == false && Sources.SetExts(SrcExt) == false)
-      return _error->Error("Source extension list is too long");
+      return _error->Error(_("Source extension list is too long"));
    if (_error->PendingError() == true)
-      return _error->Error("Error Processing directory %s",BaseDir.c_str());
+      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
    
    Sources.PathPrefix = PathPrefix;
    Sources.DirStrip = ArchiveDir;
@@ -262,7 +262,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
 		      SrcCompress,Permissions);
    Sources.Output = Comp.Input;
    if (_error->PendingError() == true)
-      return _error->Error("Error Processing directory %s",BaseDir.c_str());
+      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
 
    c0out << ' ' << BaseDir << ":" << flush;
    
@@ -284,7 +284,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    if (Comp.Finalize(Size) == false)
    {
       c0out << endl;
-      return _error->Error("Error Processing directory %s",BaseDir.c_str());
+      return _error->Error(_("Error Processing directory %s"),BaseDir.c_str());
    }
       
    if (Size != 0)
@@ -333,7 +333,7 @@ bool PackageMap::GenContents(Configuration &Setup,
    // Create a package writer object.
    ContentsWriter Contents("");
    if (PkgExt.empty() == false && Contents.SetExts(PkgExt) == false)
-      return _error->Error("Package extension list is too long");
+      return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
       return false;
 
@@ -363,7 +363,7 @@ bool PackageMap::GenContents(Configuration &Setup,
 	    return false;
 	 
 	 if (fwrite(Buf,1,ToRead,Comp.Input) != ToRead)
-	    return _error->Errno("fwrite","Error writing header to contents file");
+	    return _error->Errno("fwrite",_("Error writing header to contents file"));
 	 
 	 Size -= ToRead;
       }            
@@ -393,7 +393,7 @@ bool PackageMap::GenContents(Configuration &Setup,
    if (Comp.Finalize(Size) == false || _error->PendingError() == true)
    {
       c0out << endl;
-      return _error->Error("Error Processing Contents %s",
+      return _error->Error(_("Error Processing Contents %s"),
 			   this->Contents.c_str());
    }
    
@@ -547,7 +547,7 @@ bool ShowHelp(CommandLine &CmdL)
       return true;
 
    cout << 
-      "Usage: apt-ftparchive [options] command\n"
+    _("Usage: apt-ftparchive [options] command\n"
       "Commands: packges binarypath [overridefile [pathprefix]]\n"
       "          sources srcpath [overridefile [pathprefix]]\n"
       "          contents path\n"
@@ -583,7 +583,7 @@ bool ShowHelp(CommandLine &CmdL)
       "  --no-delink Enable delinking debug mode\n"
       "  --contents  Control contents file generation\n"
       "  -c=?  Read this configuration file\n"
-      "  -o=?  Set an arbitary configuration option" << endl;
+      "  -o=?  Set an arbitary configuration option") << endl;
    
    return true;
 }
@@ -728,7 +728,7 @@ bool Generate(CommandLine &CmdL)
       if (RegexChoice(List,CmdL.FileList + 2,CmdL.FileList + CmdL.FileSize()) == 0)
       {
 	 delete [] List;
-	 return _error->Error("No selections matched");
+	 return _error->Error(_("No selections matched"));
       }
       _error->DumpErrors();
       
@@ -801,7 +801,7 @@ bool Generate(CommandLine &CmdL)
       {
 	 if (MultiCompress::GetStat(flCombine(ArchiveDir,I->PkgFile),I->PkgCompress,B) == false)
 	 {
-	    _error->Warning("Some files are missing in the package file group `%s'",I->PkgFile.c_str());
+	    _error->Warning(_("Some files are missing in the package file group `%s'"),I->PkgFile.c_str());
 	    continue;
 	 }
 	 

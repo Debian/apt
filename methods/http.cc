@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.54 2002/04/18 05:09:38 jgg Exp $
+// $Id: http.cc,v 1.55 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -25,6 +25,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -336,7 +337,7 @@ int ServerState::RunHeaders()
 {
    State = Header;
    
-   Owner->Status("Waiting for file");
+   Owner->Status(_("Waiting for file"));
 
    Major = 0; 
    Minor = 0; 
@@ -482,7 +483,7 @@ bool ServerState::HeaderLine(string Line)
 
    // The http server might be trying to do something evil.
    if (Line.length() >= MAXLEN)
-      return _error->Error("Got a single header line over %u chars",MAXLEN);
+      return _error->Error(_("Got a single header line over %u chars"),MAXLEN);
 
    string::size_type Pos = Line.find(' ');
    if (Pos == string::npos || Pos+1 > Line.length())
@@ -490,7 +491,7 @@ bool ServerState::HeaderLine(string Line)
       // Blah, some servers use "connection:closes", evil.
       Pos = Line.find(':');
       if (Pos == string::npos || Pos + 2 > Line.length())
-	 return _error->Error("Bad header line");
+	 return _error->Error(_("Bad header line"));
       Pos++;
    }
 
@@ -509,14 +510,14 @@ bool ServerState::HeaderLine(string Line)
       {
 	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u %[^\n]",&Major,&Minor,
 		    &Result,Code) != 4)
-	    return _error->Error("The http server sent an invalid reply header");
+	    return _error->Error(_("The http server sent an invalid reply header"));
       }
       else
       {
 	 Major = 0;
 	 Minor = 9;
 	 if (sscanf(Line.c_str(),"HTTP %u %[^\n]",&Result,Code) != 2)
-	    return _error->Error("The http server sent an invalid reply header");
+	    return _error->Error(_("The http server sent an invalid reply header"));
       }
 
       /* Check the HTTP response header to get the default persistance
@@ -545,7 +546,7 @@ bool ServerState::HeaderLine(string Line)
 	 return true;
       
       if (sscanf(Val.c_str(),"%lu",&Size) != 1)
-	 return _error->Error("The http server sent an invalid Content-Length header");
+	 return _error->Error(_("The http server sent an invalid Content-Length header"));
       return true;
    }
 
@@ -560,9 +561,9 @@ bool ServerState::HeaderLine(string Line)
       HaveContent = true;
       
       if (sscanf(Val.c_str(),"bytes %lu-%*u/%lu",&StartPos,&Size) != 2)
-	 return _error->Error("The http server sent an invalid Content-Range header");
+	 return _error->Error(_("The http server sent an invalid Content-Range header"));
       if ((unsigned)StartPos > Size)
-	 return _error->Error("This http server has broken range support");
+	 return _error->Error(_("This http server has broken range support"));
       return true;
    }
    
@@ -586,7 +587,7 @@ bool ServerState::HeaderLine(string Line)
    if (stringcasecmp(Tag,"Last-Modified:") == 0)
    {
       if (StrToTime(Val,Date) == false)
-	 return _error->Error("Unknown date format");
+	 return _error->Error(_("Unknown date format"));
       return true;
    }
 
@@ -729,12 +730,12 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    {
       if (errno == EINTR)
 	 return true;
-      return _error->Errno("select","Select failed");
+      return _error->Errno("select",_("Select failed"));
    }
    
    if (Res == 0)
    {
-      _error->Error("Connection timed out");
+      _error->Error(_("Connection timed out"));
       return ServerDie(Srv);
    }
    
@@ -757,7 +758,7 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    if (FileFD != -1 && FD_ISSET(FileFD,&wfds))
    {
       if (Srv->In.Write(FileFD) == false)
-	 return _error->Errno("write","Error writing to output file");
+	 return _error->Errno("write",_("Error writing to output file"));
    }
 
    // Handle commands from APT
@@ -785,7 +786,7 @@ bool HttpMethod::Flush(ServerState *Srv)
       while (Srv->In.WriteSpace() == true)
       {
 	 if (Srv->In.Write(File->Fd()) == false)
-	    return _error->Errno("write","Error writing to file");
+	    return _error->Errno("write",_("Error writing to file"));
 	 if (Srv->In.IsLimit() == true)
 	    return true;
       }
@@ -810,7 +811,7 @@ bool HttpMethod::ServerDie(ServerState *Srv)
       while (Srv->In.WriteSpace() == true)
       {
 	 if (Srv->In.Write(File->Fd()) == false)
-	    return _error->Errno("write","Error writing to the file");
+	    return _error->Errno("write",_("Error writing to the file"));
 
 	 // Done
 	 if (Srv->In.IsLimit() == true)
@@ -824,9 +825,9 @@ bool HttpMethod::ServerDie(ServerState *Srv)
    {
       Srv->Close();
       if (LErrno == 0)
-	 return _error->Error("Error reading from server Remote end closed connection");
+	 return _error->Error(_("Error reading from server Remote end closed connection"));
       errno = LErrno;
-      return _error->Errno("read","Error reading from server");
+      return _error->Errno("read",_("Error reading from server"));
    }
    else
    {
@@ -908,7 +909,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       lseek(File->Fd(),0,SEEK_SET);
       if (Srv->In.Hash->AddFD(File->Fd(),Srv->StartPos) == false)
       {
-	 _error->Errno("read","Problem hashing file");
+	 _error->Errno("read",_("Problem hashing file"));
 	 return 5;
       }
       lseek(File->Fd(),0,SEEK_END);
@@ -1057,7 +1058,7 @@ int HttpMethod::Loop()
 	 // The header data is bad
 	 case 2:
 	 {
-	    _error->Error("Bad header Data");
+	    _error->Error(_("Bad header Data"));
 	    Fail(true);
 	    RotateDNS();
 	    continue;
@@ -1074,7 +1075,7 @@ int HttpMethod::Loop()
 	    
 	    if (FailCounter >= 2)
 	    {
-	       Fail("Connection failed",true);
+	       Fail(_("Connection failed"),true);
 	       FailCounter = 0;
 	    }
 	    
@@ -1165,7 +1166,7 @@ int HttpMethod::Loop()
 	 }
 	 
 	 default:
-	 Fail("Internal error");
+	 Fail(_("Internal error"));
 	 break;
       }
       

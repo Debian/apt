@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachedb.cc,v 1.5 2002/11/22 18:02:08 doogie Exp $
+// $Id: cachedb.cc,v 1.6 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    CacheDB
@@ -16,6 +16,7 @@
 
 #include "cachedb.h"
 
+#include <apti18n.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/strutl.h>
@@ -39,7 +40,7 @@ bool CacheDB::ReadyDB(string DB)
       corrupted DB */
    if (DBFailed() == true)
    {
-      _error->Warning("DB was corrupted, file renamed to %s.old",DBFile.c_str());
+      _error->Warning(_("DB was corrupted, file renamed to %s.old"),DBFile.c_str());
       rename(DBFile.c_str(),(DBFile+".old").c_str());
    }
    
@@ -55,7 +56,7 @@ bool CacheDB::ReadyDB(string DB)
                         0644,0,0,&Dbp)) != 0)
    {
       Dbp = 0;
-      return _error->Errno("db_open","Unable to open DB2 file %s",DB.c_str());
+      return _error->Errno("db_open",_("Unable to open DB2 file %s"),DB.c_str());
    }
    
    DBFile = DB;
@@ -95,7 +96,7 @@ bool CacheDB::SetFile(string FileName,struct stat St,FileFd *Fd)
       {
 	 CurStat.mtime = htonl(St.st_mtime);
 	 CurStat.Flags = 0;
-	 _error->Warning("File date has changed %s",FileName.c_str());
+	 _error->Warning(_("File date has changed %s"),FileName.c_str());
       }      
    }      
    else
@@ -136,7 +137,7 @@ bool CacheDB::LoadControl()
       return false;
 
    if (Control.Control == 0)
-      return _error->Error("Archive has no control record");
+      return _error->Error(_("Archive has no control record"));
    
    // Write back the control information
    InitQuery("cl");
@@ -249,11 +250,11 @@ bool CacheDB::Clean()
 #if DB_VERSION_MAJOR >= 2 && DB_VERSION_MINOR >= 7
    DBC *Cursor;
    if ((errno = Dbp->cursor(Dbp,0,&Cursor,0)) != 0)
-      return _error->Error("Unable to get a cursor");
+      return _error->Error(_("Unable to get a cursor"));
 #else
    DBC *Cursor;
    if ((errno = Dbp->cursor(Dbp,0,&Cursor)) != 0)
-      return _error->Error("Unable to get a cursor");
+      return _error->Error(_("Unable to get a cursor"));
 #endif
    
    DBT Key;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: contents.cc,v 1.3 2001/02/27 04:24:09 jgg Exp $
+// $Id: contents.cc,v 1.4 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
    
    contents - Archive contents generator
@@ -35,6 +35,7 @@
 // Include Files							/*{{{*/
 #include "contents.h"
 
+#include <apti18n.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
 #include <stdio.h>
@@ -342,7 +343,7 @@ bool ContentsExtract::DoItem(Item &Itm,int &Fd)
 	 MaxSize = 512*1024/2;
       char *NewData = (char *)realloc(Data,MaxSize*2);
       if (NewData == 0)
-	 return _error->Error("realloc - Failed to allocate memory");
+	 return _error->Error(_("realloc - Failed to allocate memory"));
       Data = NewData;
       MaxSize *= 2;
    }
@@ -373,7 +374,7 @@ bool ContentsExtract::TakeContents(const void *NewData,unsigned long Length)
       
       char *NewData = (char *)realloc(Data,MaxSize*2);
       if (NewData == 0)
-	 return _error->Error("realloc - Failed to allocate memory");
+	 return _error->Error(_("realloc - Failed to allocate memory"));
       Data = NewData;
       MaxSize *= 2;
    }

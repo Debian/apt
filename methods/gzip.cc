@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.16 2001/05/27 04:29:30 jgg Exp $
+// $Id: gzip.cc,v 1.17 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -9,6 +9,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
@@ -53,7 +54,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
 
    int GzOut[2];   
    if (pipe(GzOut) < 0)
-      return _error->Errno("pipe","Couldn't open pipe for %s",Prog);
+      return _error->Errno("pipe",_("Couldn't open pipe for %s"),Prog);
 
    // Fork gzip
    int Process = ExecFork();
@@ -98,7 +99,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       
       if (Count < 0)
       {
-	 _error->Errno("read", "Read error from %s process",Prog);
+	 _error->Errno("read", _("Read error from %s process"),Prog);
 	 Failed = true;
 	 break;
       }
@@ -129,16 +130,16 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    // Transfer the modification times
    struct stat Buf;
    if (stat(Path.c_str(),&Buf) != 0)
-      return _error->Errno("stat","Failed to stat");
+      return _error->Errno("stat",_("Failed to stat"));
 
    struct utimbuf TimeBuf;
    TimeBuf.actime = Buf.st_atime;
    TimeBuf.modtime = Buf.st_mtime;
    if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
-      return _error->Errno("utime","Failed to set modification time");
+      return _error->Errno("utime",_("Failed to set modification time"));
 
    if (stat(Itm->DestFile.c_str(),&Buf) != 0)
-      return _error->Errno("stat","Failed to stat");
+      return _error->Errno("stat",_("Failed to stat"));
    
    // Return a Done response
    Res.LastModified = Buf.st_mtime;

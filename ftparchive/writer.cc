@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.6 2002/11/11 04:27:51 doogie Exp $
+// $Id: writer.cc,v 1.7 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    Writer 
@@ -17,6 +17,7 @@
 
 #include "writer.h"
     
+#include <apti18n.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -74,12 +75,12 @@ int FTWScanner::Scanner(const char *File,const struct stat *sb,int Flag)
    if (Flag == FTW_DNR)
    {
       Owner->NewLine(1);
-      c1out << "W: Unable to read directory " << File << endl;
+      ioprintf(c1out, _("W: Unable to read directory %s\n"), File);
    }   
    if (Flag == FTW_NS)
    {
       Owner->NewLine(1);
-      c1out << "W: Unable to stat " << File << endl;
+      ioprintf(c1out, _("W: Unable to stat %s\n"), File);
    }   
    if (Flag != FTW_F)
       return 0;
@@ -118,16 +119,16 @@ int FTWScanner::Scanner(const char *File,const struct stat *sb,int Flag)
 	 
 	 bool Type = _error->PopMessage(Err);
 	 if (Type == true)
-	    cerr << "E: " << Err << endl;
+	    cerr << _("E: ") << Err << endl;
 	 else
-	    cerr << "W: " << Err << endl;
+	    cerr << _("W: ") << Err << endl;
 	 
 	 if (Err.find(File) != string::npos)
 	    SeenPath = true;
       }      
       
       if (SeenPath == false)
-	 cerr << "E: Errors apply to file '" << File << "'" << endl;
+	 cerr << _("E: Errors apply to file ") << "'" << File << "'" << endl;
       return 0;
    }
    
@@ -144,7 +145,7 @@ bool FTWScanner::RecursiveScan(string Dir)
    if (InternalPrefix.empty() == true)
    {
       if (realpath(Dir.c_str(),RealPath) == 0)
-	 return _error->Errno("realpath","Failed to resolve %s",Dir.c_str());
+	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
       InternalPrefix = RealPath;      
    }
    
@@ -156,7 +157,7 @@ bool FTWScanner::RecursiveScan(string Dir)
    if (Res != 0)
    {
       if (_error->PendingError() == false)
-	 _error->Errno("ftw","Tree walking failed");
+	 _error->Errno("ftw",_("Tree walking failed"));
       return false;
    }
    
@@ -174,14 +175,14 @@ bool FTWScanner::LoadFileList(string Dir,string File)
    if (InternalPrefix.empty() == true)
    {
       if (realpath(Dir.c_str(),RealPath) == 0)
-	 return _error->Errno("realpath","Failed to resolve %s",Dir.c_str());
+	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
       InternalPrefix = RealPath;      
    }
    
    Owner = this;
    FILE *List = fopen(File.c_str(),"r");
    if (List == 0)
-      return _error->Errno("fopen","Failed to open %s",File.c_str());
+      return _error->Errno("fopen",_("Failed to open %s"),File.c_str());
    
    /* We are a tad tricky here.. We prefix the buffer with the directory
       name, that way if we need a full path with just use line.. Sneaky and
@@ -238,25 +239,26 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 	    cout << endl;
 	 
 	 NewLine(1);
-	 c1out << " DeLink " << (OriginalPath + InternalPrefix.length())
-	    << " [" << SizeToStr(St.st_size) << "B]" << endl << flush;
+	 ioprintf(c1out, _(" DeLink %s [%s]\n"), (OriginalPath + InternalPrefix.length()),
+		    SizeToStr(St.st_size).c_str());
+	 c1out << flush;
 	 
 	 if (NoLinkAct == false)
 	 {
 	    char OldLink[400];
 	    if (readlink(OriginalPath,OldLink,sizeof(OldLink)) == -1)
-	       _error->Errno("readlink","Failed to readlink %s",OriginalPath);
+	       _error->Errno("readlink",_("Failed to readlink %s"),OriginalPath);
 	    else
 	    {
 	       if (unlink(OriginalPath) != 0)
-		  _error->Errno("unlink","Failed to unlink %s",OriginalPath);
+		  _error->Errno("unlink",_("Failed to unlink %s"),OriginalPath);
 	       else
 	       {
 		  if (link(FileName.c_str(),OriginalPath) != 0)
 		  {
 		     // Panic! Restore the symlink
 		     symlink(OldLink,OriginalPath);
-		     return _error->Errno("link","*** Failed to link %s to %s",
+		     return _error->Errno("link",_("*** Failed to link %s to %s"),
 					  FileName.c_str(),
 					  OriginalPath);
 		  }	       
@@ -266,7 +268,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 	 
 	 DeLinkBytes += St.st_size;
 	 if (DeLinkBytes/1024 >= DeLinkLimit)
-	    c1out << " DeLink limit of " << SizeToStr(DeLinkBytes) << "B hit." << endl;      
+	    ioprintf(c1out, _(" DeLink limit of %sB hit.\n"), SizeToStr(DeLinkBytes).c_str());      
       }
       
       FileName = OriginalPath;
@@ -333,7 +335,7 @@ bool PackagesWriter::DoPackage(string FileName)
    // Stat the file for later
    struct stat St;
    if (fstat(F.Fd(),&St) != 0)
-      return _error->Errno("fstat","Failed to stat %s",FileName.c_str());
+      return _error->Errno("fstat",_("Failed to stat %s"),FileName.c_str());
 
    // Pull all the data we need form the DB
    string MD5Res;
@@ -353,7 +355,7 @@ bool PackagesWriter::DoPackage(string FileName)
    Override::Item *OverItem = Over.GetItem(Package);
    
    if (Package.empty() == true)
-      return _error->Error("Archive had no package field");
+      return _error->Error(_("Archive had no package field"));
    
    // If we need to do any rewriting of the header do it now..
    if (OverItem == 0)
@@ -361,7 +363,7 @@ bool PackagesWriter::DoPackage(string FileName)
       if (NoOverride == false)
       {
 	 NewLine(1);
-	 c1out << "  " << Package << " has no override entry" << endl;
+	 ioprintf(c1out, _("  %s has no override entry\n"), Package.c_str());
       }
       
       OverItem = &Tmp;
@@ -404,9 +406,8 @@ bool PackagesWriter::DoPackage(string FileName)
       if (NoOverride == false)
       {
 	 NewLine(1);
-	 c1out << "  " << Package << " maintainer is " <<
-	       Tags.FindS("Maintainer") << " not " <<
-  	       OverItem->OldMaint << endl;
+	 ioprintf(c1out, _("  %s maintainer is %s not %s\n"),
+	       Package.c_str(), Tags.FindS("Maintainer").c_str(), OverItem->OldMaint.c_str());
       }      
    }
    
@@ -572,7 +573,7 @@ bool SourcesWriter::DoPackage(string FileName)
       if (NoOverride == false)
       {
 	 NewLine(1);	 
-	 c1out << "  " << Tags.FindS("Source") << " has no override entry" << endl;
+	 ioprintf(c1out, _("  %s has no override entry\n"), Tags.FindS("Source").c_str());
       }
       
       OverItem = &Tmp;
@@ -654,9 +655,8 @@ bool SourcesWriter::DoPackage(string FileName)
       if (NoOverride == false)
       {
 	 NewLine(1);	 
-	 c1out << "  " << Package << " maintainer is " <<
-	       Tags.FindS("Maintainer") << " not " <<
-  	       OverItem->OldMaint << endl;
+	 ioprintf(c1out, _("  %s maintainer is %s not %s\n"), Package.c_str(),
+	       Tags.FindS("Maintainer").c_str(), OverItem->OldMaint.c_str());
       }      
    }
    if (NewMaint.empty() == false)

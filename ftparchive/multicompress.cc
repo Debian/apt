@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: multicompress.cc,v 1.3 2001/05/29 03:48:27 jgg Exp $
+// $Id: multicompress.cc,v 1.4 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    MultiCompressor
@@ -20,6 +20,7 @@
 
 #include "multicompress.h"
     
+#include <apti18n.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
@@ -71,7 +72,7 @@ MultiCompress::MultiCompress(string Output,string Compress,
       // Hmm.. unknown.
       if (Comp->Name == 0)
       {
-	 _error->Warning("Unknown Compresison Algorithm '%s'",string(Start,I).c_str());
+	 _error->Warning(_("Unknown Compresison Algorithm '%s'"),string(Start,I).c_str());
 	 continue;
       }
       
@@ -101,7 +102,7 @@ MultiCompress::MultiCompress(string Output,string Compress,
 
    if (Outputs == 0)
    {
-      _error->Error("Compressed output %s needs a compression set",Output.c_str());
+      _error->Error(_("Compressed output %s needs a compression set"),Output.c_str());
       return;
    }
 
@@ -168,7 +169,7 @@ bool MultiCompress::Start()
    // Create a data pipe
    int Pipe[2] = {-1,-1};
    if (pipe(Pipe) != 0)
-      return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
+      return _error->Errno("pipe",_("Failed to create IPC pipe to subprocess"));
    for (int I = 0; I != 2; I++)
       SetCloseExec(Pipe[I],true);
    
@@ -194,10 +195,10 @@ bool MultiCompress::Start()
    close(Pipe[0]);
    Input = fdopen(Pipe[1],"w");
    if (Input == 0)
-      return _error->Errno("fdopen","Failed to create FILE*");
+      return _error->Errno("fdopen",_("Failed to create FILE*"));
    
    if (Outputter == -1)
-      return _error->Errno("fork","Failed to fork");   
+      return _error->Errno("fork",_("Failed to fork"));   
    return true;
 }
 									/*}}}*/
@@ -211,7 +212,7 @@ bool MultiCompress::Die()
    
    fclose(Input);
    Input = 0;
-   bool Res = ExecWait(Outputter,"Compress Child",false);
+   bool Res = ExecWait(Outputter,_("Compress Child"),false);
    Outputter = -1;
    return Res;
 }
@@ -234,7 +235,7 @@ bool MultiCompress::Finalize(unsigned long &OutSize)
    {
       struct stat St;
       if (stat(I->Output.c_str(),&St) != 0)
-	 return  _error->Error("Internal Error, Failed to create %s",
+	 return  _error->Error(_("Internal Error, Failed to create %s"),
 			       I->Output.c_str());
       
       if (I->OldMTime != St.st_mtime)
@@ -285,7 +286,7 @@ bool MultiCompress::OpenCompress(const CompType *Prog,int &Pid,int FileFd,
    // Create a data pipe
    int Pipe[2] = {-1,-1};
    if (pipe(Pipe) != 0)
-      return _error->Errno("pipe","Failed to create subprocess IPC");
+      return _error->Errno("pipe",_("Failed to create subprocess IPC"));
    for (int J = 0; J != 2; J++)
       SetCloseExec(Pipe[J],true);
 
@@ -320,7 +321,7 @@ bool MultiCompress::OpenCompress(const CompType *Prog,int &Pid,int FileFd,
 	 Args[1] = Prog->UnCompArgs;
       Args[2] = 0;
       execvp(Args[0],(char **)Args);
-      cerr << "Failed to exec compressor " << Args[0] << endl;
+      cerr << _("Failed to exec compressor ") << Args[0] << endl;
       _exit(100);
    };      
    if (Comp == true)
@@ -359,7 +360,7 @@ bool MultiCompress::CloseOld(int Fd,int Proc)
 {
    close(Fd);
    if (Proc != -1)
-      if (ExecWait(Proc,"decompressor",false) == false)
+      if (ExecWait(Proc,_("decompressor"),false) == false)
 	 return false;
    return true;
 }   
@@ -402,7 +403,7 @@ bool MultiCompress::Child(int FD)
       {
 	 if (write(I->Fd,Buffer,Res) != Res)
 	 {
-	    _error->Errno("write","IO to subprocess/file failed");
+	    _error->Errno("write",_("IO to subprocess/file failed"));
 	    break;
 	 }
       }      
@@ -454,7 +455,7 @@ bool MultiCompress::Child(int FD)
 	 if (Res == 0)
 	    break;
 	 if (Res < 0)
-	    return _error->Errno("read","Failed to read while computing MD5");
+	    return _error->Errno("read",_("Failed to read while computing MD5"));
 	 NewFileSize += Res;
 	 OldMD5.Add(Buffer,Res);
       }
@@ -471,7 +472,7 @@ bool MultiCompress::Child(int FD)
 	 {
 	    I->TmpFile.Close();
 	    if (unlink(I->TmpFile.Name().c_str()) != 0)
-	       _error->Errno("unlink","Problem unlinking %s",
+	       _error->Errno("unlink",_("Problem unlinking %s"),
 			     I->TmpFile.Name().c_str());
 	 }
 	 return !_error->PendingError();
@@ -486,7 +487,7 @@ bool MultiCompress::Child(int FD)
       fchmod(I->TmpFile.Fd(),Permissions);
       
       if (rename(I->TmpFile.Name().c_str(),I->Output.c_str()) != 0)
-	 _error->Errno("rename","Failed to rename %s to %s",
+	 _error->Errno("rename",_("Failed to rename %s to %s"),
 		       I->TmpFile.Name().c_str(),I->Output.c_str());
       I->TmpFile.Close();
    }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: file.cc,v 1.8 2000/01/27 04:15:10 jgg Exp $
+// $Id: file.cc,v 1.9 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    File URI method for APT
@@ -13,6 +13,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apti18n.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 
@@ -38,7 +39,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
    string File = Get.Path;
    FetchResult Res;
    if (Get.Host.empty() == false)
-      return _error->Error("Invalid URI, local URIS must not start with //");
+      return _error->Error(_("Invalid URI, local URIS must not start with //"));
 
    // See if the file exists
    struct stat Buf;
@@ -73,7 +74,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
    }
    
    if (Res.Filename.empty() == true)
-      return _error->Error("File not found");
+      return _error->Error(_("File not found"));
    
    URIDone(Res);
    return true;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: override.cc,v 1.3 2001/06/26 02:50:27 jgg Exp $
+// $Id: override.cc,v 1.4 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    Override
@@ -16,6 +16,7 @@
 
 #include "override.h"
     
+#include <apti18n.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
@@ -34,7 +35,7 @@ bool Override::ReadOverride(string File,bool Source)
    
    FILE *F = fopen(File.c_str(),"r");
    if (F == 0)
-      return _error->Errno("fopen","Unable to open %s",File.c_str());
+      return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
    
    char Line[500];
    unsigned long Counter = 0;
@@ -60,7 +61,7 @@ bool Override::ReadOverride(string File,bool Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning("Malformed override %s line %lu #1",File.c_str(),
+	 _error->Warning(_("Malformed override %s line %lu #1"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -74,7 +75,7 @@ bool Override::ReadOverride(string File,bool Source)
 	 for (; isspace(*End) == 0 && *End != 0; End++);
 	 if (*End == 0)
 	 {
-	    _error->Warning("Malformed override %s line %lu #2",File.c_str(),
+	    _error->Warning(_("Malformed override %s line %lu #2"),File.c_str(),
 			    Counter);
 	    continue;
 	 }
@@ -88,7 +89,7 @@ bool Override::ReadOverride(string File,bool Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning("Malformed override %s line %lu #3",File.c_str(),
+	 _error->Warning(_("Malformed override %s line %lu #3"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -127,7 +128,7 @@ bool Override::ReadOverride(string File,bool Source)
    }
 
    if (ferror(F))
-      _error->Errno("fgets","Failed to read the override file %s",File.c_str());
+      _error->Errno("fgets",_("Failed to read the override file %s"),File.c_str());
    fclose(F);
    return true;
 }
@@ -142,7 +143,7 @@ bool Override::ReadExtraOverride(string File,bool Source)
    
    FILE *F = fopen(File.c_str(),"r");
    if (F == 0)
-      return _error->Errno("fopen","Unable to open %s",File.c_str());
+      return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
   
    char Line[500];
    unsigned long Counter = 0;
@@ -166,7 +167,7 @@ bool Override::ReadExtraOverride(string File,bool Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning("Malformed override %s line %lu #1",File.c_str(),
+	 _error->Warning(_("Malformed override %s line %lu #1"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -178,7 +179,7 @@ bool Override::ReadExtraOverride(string File,bool Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning("Malformed override %s line %lu #2",File.c_str(),
+	 _error->Warning(_("Malformed override %s line %lu #2"),File.c_str(),
 			 Counter);
 	 continue;
       }
@@ -191,7 +192,7 @@ bool Override::ReadExtraOverride(string File,bool Source)
       for (; isspace(*(End-1)) && End > Value; End--);
       if (End == Value)
       {
-	 _error->Warning("Malformed override %s line %lu #3",File.c_str(),
+	 _error->Warning(_("Malformed override %s line %lu #3"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -201,7 +202,7 @@ bool Override::ReadExtraOverride(string File,bool Source)
    }
 
    if (ferror(F))
-      _error->Errno("fgets","Failed to read the override file %s",File.c_str());
+      _error->Errno("fgets",_("Failed to read the override file %s"),File.c_str());
    fclose(F);
    return true;
 }
