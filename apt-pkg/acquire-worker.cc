@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.19 1999/01/30 08:08:54 jgg Exp $
+// $Id: acquire-worker.cc,v 1.20 1999/03/16 00:43:55 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -24,9 +24,11 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <wait.h>
 #include <stdio.h>
+#include <errno.h>
 									/*}}}*/
 
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
@@ -130,6 +132,17 @@ bool pkgAcquire::Worker::Start()
       SetCloseExec(STDOUT_FILENO,false);
       SetCloseExec(STDIN_FILENO,false);      
       SetCloseExec(STDERR_FILENO,false);
+
+      signal(SIGPIPE,SIG_DFL);
+      signal(SIGQUIT,SIG_DFL);
+      signal(SIGINT,SIG_DFL);
+      signal(SIGWINCH,SIG_DFL);
+      signal(SIGCONT,SIG_DFL);
+      signal(SIGTSTP,SIG_DFL);
+      
+      // Close all of our FDs - just in case
+      for (int K = 3; K != 40; K++)
+	 fcntl(K,F_SETFD,FD_CLOEXEC);
       
       const char *Args[2];
       Args[0] = Method.c_str();
@@ -433,7 +446,13 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 /* */
 bool pkgAcquire::Worker::OutFdReady()
 {
-   int Res = write(OutFd,OutQueue.begin(),OutQueue.length());
+   int Res;
+   do
+   {
+      Res = write(OutFd,OutQueue.begin(),OutQueue.length());
+   }
+   while (Res < 0 && errno == EINTR);
+   
    if (Res <= 0)
       return MethodFailure();
 

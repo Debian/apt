@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.28 1999/03/15 08:10:39 jgg Exp $
+// $Id: acquire.cc,v 1.29 1999/03/16 00:43:55 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -297,7 +297,13 @@ bool pkgAcquire::Run()
       FD_ZERO(&WFds);
       SetFds(Highest,&RFds,&WFds);
       
-      int Res = select(Highest+1,&RFds,&WFds,0,&tv);
+      int Res;
+      do
+      {
+	 Res = select(Highest+1,&RFds,&WFds,0,&tv);
+      }
+      while (Res < 0 && errno == EINTR);
+      
       if (Res < 0)
       {
 	 _error->Errno("select","Select has failed");

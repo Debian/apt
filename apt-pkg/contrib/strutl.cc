@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.21 1999/03/15 08:10:39 jgg Exp $
+// $Id: strutl.cc,v 1.22 1999/03/16 00:43:55 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 									/*}}}*/
 
 // strstrip - Remove white space from the front and back of a string	/*{{{*/
@@ -529,6 +530,8 @@ bool ReadMessages(int Fd, vector<string> &List)
    while (1)
    {
       int Res = read(Fd,End,sizeof(Buffer) - (End-Buffer));
+      if (Res < 0 && errno == EINTR)
+	 continue;
       
       // Process is dead, this is kind of bad..
       if (Res == 0)

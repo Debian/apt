@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.10 1999/02/27 22:29:11 jgg Exp $
+// $Id: acqprogress.cc,v 1.11 1999/03/16 00:43:55 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -12,7 +12,9 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/strutl.h>
+
 #include <stdio.h>
+#include <signal.h>
 									/*}}}*/
 
 // AcqTextStatus::AcqTextStatus - Constructor				/*{{{*/
@@ -209,7 +211,13 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
    if (Shown == false)
       snprintf(S,End-S," [Working]");
       
-   // Put in the ETA and cps meter
+   /* Put in the ETA and cps meter, block off signals to prevent strangeness
+      during resizing */
+   sigset_t Sigs,OldSigs;
+   sigemptyset(&Sigs);
+   sigaddset(&Sigs,SIGWINCH);
+   sigprocmask(SIG_BLOCK,&Sigs,&OldSigs);
+   
    if (CurrentCPS != 0)
    {      
       char Tmp[300];
@@ -224,7 +232,9 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
       }      
    }
    Buffer[ScreenWidth] = 0;
-   
+   BlankLine[ScreenWidth] = 0;
+   sigprocmask(SIG_UNBLOCK,&OldSigs,0);
+
    // Draw the current status
    if (strlen(Buffer) == strlen(BlankLine))
       cout << '\r' << Buffer << flush;

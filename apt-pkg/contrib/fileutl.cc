@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.22 1999/03/15 08:10:39 jgg Exp $
+// $Id: fileutl.cc,v 1.23 1999/03/16 00:43:55 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -38,14 +38,21 @@ bool CopyFile(FileFd &From,FileFd &To)
    
    // Buffered copy between fds
    unsigned char *Buf = new unsigned char[64000];
-   long Size;
-   while ((Size = read(From.Fd(),Buf,64000)) > 0)
+   unsigned long Size = From.Size();
+   while (Size != 0)
    {
-      if (To.Write(Buf,Size) == false)
+      unsigned long ToRead = Size;
+      if (Size > 64000)
+	 ToRead = 64000;
+      
+      if (To.Read(Buf,ToRead) == false || 
+	  To.Write(Buf,ToRead) == false)
       {
 	 delete [] Buf;
 	 return false;
       }
+      
+      Size -= ToRead;
    }
 
    delete [] Buf;
@@ -175,14 +182,28 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
    tv.tv_sec = timeout;
    tv.tv_usec = 0;
    if (write == true) 
-   {
-      if (select(Fd+1,0,&Set,0,(timeout != 0?&tv:0)) <= 0)
-         return false;
+   {      
+      int Res;
+      do
+      {
+	 Res = select(Fd+1,0,&Set,0,(timeout != 0?&tv:0));
+      }
+      while (Res < 0 && errno == EINTR);
+      
+      if (Res <= 0)
+	 return false;
    } 
    else 
    {
-      if (select(Fd+1,&Set,0,0,(timeout != 0?&tv:0)) <= 0)
-         return false;
+      int Res;
+      do
+      {
+	 Res = select(Fd+1,&Set,0,0,(timeout != 0?&tv:0));
+      }
+      while (Res < 0 && errno == EINTR);
+      
+      if (Res <= 0)
+	 return false;
    }
    
    return true;
@@ -239,16 +260,33 @@ FileFd::~FileFd()
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* We are carefull to handle interruption by a signal while reading 
+   gracefully. */
 bool FileFd::Read(void *To,unsigned long Size)
 {
-   if (read(iFd,To,Size) != (signed)Size)
+   int Res;
+   errno = 0;
+   do
    {
-      Flags |= Fail;
-      return _error->Errno("read","Read error");
-   }   
+      Res = read(iFd,To,Size);
+      if (Res < 0 && errno == EINTR)
+	 continue;
+      if (Res < 0)
+      {
+	 Flags |= Fail;
+	 return _error->Errno("read","Read error");
+      }
       
-   return true;
+      To = (char *)To + Res;
+      Size -= Res;
+   }
+   while (Res > 0 && Size > 0);
+   
+   if (Size == 0)
+      return true;
+   
+   Flags |= Fail;
+   return _error->Error("read, still have %u to read but none left",Size);
 }
 									/*}}}*/
 // FileFd::Write - Write to the file					/*{{{*/
@@ -256,13 +294,29 @@ bool FileFd::Read(void *To,unsigned long Size)
 /* */
 bool FileFd::Write(const void *From,unsigned long Size)
 {
-   if (write(iFd,From,Size) != (signed)Size)
+   int Res;
+   errno = 0;
+   do
    {
-      Flags |= Fail;
-      return _error->Errno("write","Write error");
+      Res = write(iFd,From,Size);
+      if (Res < 0 && errno == EINTR)
+	 continue;
+      if (Res < 0)
+      {
+	 Flags |= Fail;
+	 return _error->Errno("write","Write error");
+      }
+      
+      From = (char *)From + Res;
+      Size -= Res;
    }
+   while (Res > 0 && Size > 0);
    
-   return true;
+   if (Size == 0)
+      return true;
+   
+   Flags |= Fail;
+   return _error->Error("write, still have %u to write but couldn't",Size);
 }
 									/*}}}*/
 // FileFd::Seek - Seek in the file					/*{{{*/
