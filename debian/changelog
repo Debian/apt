@@ -7,11 +7,6 @@ apt (0.5.9) unstable; urgency=low
   * Patch from Otavio Salvador <otavio@debian.org> to switch from
     dh_installmanpages to dh_installman.  Fixes the problem where the
     pt_BR man page was installed in the wrong location (Closes: #194558)
-  
-    ************************************************************  
-    ***** DO NOT UPLOAD THIS -- #204731 MUST BE FIXED FIRST ****
-    ************************************************************
-
   * Move the French apt-ftparchive man page into apt-utils where it
     belongs.  apt-utils Replaces: apt (<< 0.5.9)
   * Write records from "apt-cache show" using fwrite(3) rather than
@@ -51,8 +46,11 @@ apt (0.5.9) unstable; urgency=low
   * Exclude '.#*' from cvs-build
   * Let the ftp method work with ftp servers which do not require a
     password (Closes: #199425)
+  * Build-depend on debhelper >= 4.1.62, because we need the fix for
+    #204731 in order for dh_installman to work correctly
+    with our SGML man pages
 
- --
+ -- Matt Zimmerman <mdz@debian.org>  Sun, 10 Aug 2003 01:26:59 -0400
 
 apt (0.5.8) unstable; urgency=medium
 
