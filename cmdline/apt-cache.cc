@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.16 1998/12/07 00:34:22 jgg Exp $
+// $Id: apt-cache.cc,v 1.17 1998/12/10 04:22:48 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -498,6 +498,12 @@ int main(int argc,const char *argv[])
    
    while (1)
    {
+      if (strcmp(CmdL.FileList[0],"add") == 0)
+      {
+	 ShowHelp();
+	 break;
+      }
+      
       if (strcmp(CmdL.FileList[0],"add") == 0)
       {
 	 DoAdd(CmdL);

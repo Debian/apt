@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.8 1998/10/20 04:33:15 jgg Exp $
+// $Id: sourcelist.cc,v 1.9 1998/12/10 04:22:47 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -254,6 +254,9 @@ string pkgSourceList::Item::ArchiveInfo(pkgCache::VerIterator Ver) const
       
       Res += " ";
       Res += Ver.ParentPkg().Name();
+      Res += " ";
+      Res += Ver.VerStr();
+      
       break;
    };
    return Res;

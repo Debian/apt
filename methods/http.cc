@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.11 1998/12/07 07:32:03 jgg Exp $
+// $Id: http.cc,v 1.12 1998/12/10 04:22:53 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -791,6 +791,7 @@ bool HttpMethod::ServerDie(ServerState *Srv)
    if (Srv->In.IsLimit() == false && Srv->State != ServerState::Header && 
        Srv->Encoding != ServerState::Closes)
    {
+      Srv->Close();
       if (errno == 0)
 	 return _error->Error("Error reading from server Remote end closed connection");
       return _error->Errno("read","Error reading from server");
@@ -1005,7 +1006,7 @@ int HttpMethod::Loop()
 	 case 1:
 	 {
 	    FailCounter++;
-	    _error->DumpErrors();
+	    _error->Discard();
 	    Server->Close();
 	    continue;
 	 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.9 1998/12/08 01:34:12 jgg Exp $
+// $Id: packagemanager.cc,v 1.10 1998/12/10 04:22:46 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -371,7 +371,6 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
        Cache[Pkg].Keep() == true)
    {
-      cout << "Bailing" << endl;
       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
       if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)

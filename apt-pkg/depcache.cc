@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.10 1998/12/08 01:34:07 jgg Exp $
+// $Id: depcache.cc,v 1.11 1998/12/10 04:22:45 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -588,7 +588,10 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg)
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
    
-   P.Mode = ModeDelete;
+   if (Pkg->CurrentVer == 0)
+      P.Mode = ModeKeep;
+   else
+      P.Mode = ModeDelete;
    P.InstallVer = 0;
    P.Flags &= Flag::Auto;
 

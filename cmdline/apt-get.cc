@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.28 1998/12/08 23:52:24 jgg Exp $
+// $Id: apt-get.cc,v 1.29 1998/12/10 04:22:51 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -208,6 +208,7 @@ void ShowDel(ostream &out,pkgDepCache &Dep)
    for (;I.end() != true; I++)
       if (Dep[I].Delete() == true)
 	 List += string(I.Name()) + " ";
+   
    ShowList(out,"The following packages will be REMOVED:",List);
 }
 									/*}}}*/
@@ -958,7 +959,7 @@ bool DoCheck(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp()
+int ShowHelp(CommandLine &CmdL)
 {
    cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
        " compiled on " << __DATE__ << "  " << __TIME__ << endl;
@@ -1057,6 +1058,7 @@ int main(int argc,const char *argv[])
                                    {"dselect-upgrade",&DoDSelectUpgrade},
                                    {"clean",&DoClean},
                                    {"check",&DoCheck},
+      				   {"help",&ShowHelp},
                                    {0,0}};
    
    // Parse the command line and initialize the package library
@@ -1071,7 +1073,7 @@ int main(int argc,const char *argv[])
    // See if the help should be shown
    if (_config->FindB("help") == true ||
        CmdL.FileSize() == 0)
-      return ShowHelp();
+      return ShowHelp(CmdL);
 
    // Setup the output streams
    c0out.rdbuf(cout.rdbuf());
