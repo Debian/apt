@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.6 2001/02/20 07:03:17 jgg Exp $
+// $Id: srcrecords.h,v 1.7 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -19,6 +19,9 @@
 
 #include <string>
 #include <vector>    
+
+using std::string;
+using std::vector;
 
 class pkgSourceList;
 class pkgIndexFile;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.13 2001/04/06 05:31:01 jgg Exp $
+// $Id: packagemanager.h,v 1.14 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -29,6 +29,8 @@
 
 #include <string>
 #include <apt-pkg/pkgcache.h>
+
+using std::string;
 
 class pkgAcquire;
 class pkgDepCache;

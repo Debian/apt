@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexfile.h,v 1.4 2001/04/29 05:13:51 jgg Exp $
+// $Id: indexfile.h,v 1.5 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    Index File - Abstraction for an index of archive/source file.
@@ -30,6 +30,8 @@
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/pkgrecords.h>
     
+using std::string;
+
 class pkgAcquire;
 class pkgCacheGenerator;
 class OpProgress;

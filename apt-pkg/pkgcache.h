@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.23 2001/02/20 07:03:17 jgg Exp $
+// $Id: pkgcache.h,v 1.24 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -26,6 +26,8 @@
 #include <string>
 #include <time.h>
 #include <apt-pkg/mmap.h>
+
+using std::string;
     
 class pkgVersioningSystem;
 class pkgCache

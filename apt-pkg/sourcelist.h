@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.10 2001/03/13 06:51:46 jgg Exp $
+// $Id: sourcelist.h,v 1.11 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -31,6 +31,9 @@
 #include <vector>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/indexfile.h>
+
+using std::string;
+using std::vector;
     
 #ifdef __GNUG__
 #pragma interface "apt-pkg/sourcelist.h"

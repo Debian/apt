@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.h,v 1.3 2001/04/29 05:13:51 jgg Exp $
+// $Id: policy.h,v 1.4 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -40,6 +40,8 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/versionmatch.h>
 #include <vector>
+
+using std::vector;
 
 class pkgPolicy : public pkgDepCache::Policy
 {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versionmatch.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: versionmatch.h,v 1.3 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    Version Matching 
@@ -38,8 +38,10 @@
 #include <string>
 #include <apt-pkg/pkgcache.h>
 
+using std::string;
+
 class pkgVersionMatch
-{
+{   
    // Version Matching
    string VerStr;
    bool VerPrefixMatch;
