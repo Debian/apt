@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.17 2001/02/23 05:45:27 jgg Exp $
+// $Id: strutl.h,v 1.18 2001/05/27 05:19:30 jgg Exp $
 /* ######################################################################
 
    String Util - These are some useful string functions
@@ -23,7 +23,12 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <time.h>
+
+using std::string;
+using std::vector;
+using std::ostream;
 
 #ifdef __GNUG__
 // Methods have a hidden this parameter that is visible to this attribute
@@ -48,8 +53,7 @@ string LookupTag(string Message,const char *Tag,const char *Default = 0);
 int StringToBool(string Text,int Default = -1);
 bool ReadMessages(int Fd, vector<string> &List);
 bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0);
-bool Hex2Num(const char *Start,const char *End,unsigned char *Num,
-	     unsigned int Length);
+bool Hex2Num(string Str,unsigned char *Num,unsigned int Length);
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 void ioprintf(ostream &out,const char *format,...) APT_FORMAT2;
@@ -57,11 +61,15 @@ bool CheckDomainList(string Host,string List);
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};
-inline int stringcmp(string A,const char *B) {return stringcmp(A.begin(),A.end(),B,B+strlen(B));};
+inline int stringcmp(string A,const char *B) {return stringcmp(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));};
+
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcasecmp(const char *A,const char *AEnd,const char *B) {return stringcasecmp(A,AEnd,B,B+strlen(B));};
-inline int stringcasecmp(string A,const char *B) {return stringcasecmp(A.begin(),A.end(),B,B+strlen(B));};
-inline int stringcasecmp(string A,string B) {return stringcasecmp(A.begin(),A.end(),B.begin(),B.end());};
+inline int stringcasecmp(string A,const char *B) {return stringcasecmp(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));};
+inline int stringcasecmp(string A,string B) {return stringcasecmp(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());};
+inline int stringcasecmp(string A,const char *B,const char *BEnd) {return stringcasecmp(A.c_str(),A.c_str()+A.length(),B,BEnd);};
+
+inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);};
 
 class URI
 {

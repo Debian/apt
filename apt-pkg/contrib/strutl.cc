@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.38 2001/03/11 07:22:19 jgg Exp $
+// $Id: strutl.cc,v 1.39 2001/05/27 05:19:30 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -32,6 +32,8 @@
 #include <regex.h>
 #include <errno.h>
 #include <stdarg.h>
+
+using namespace std;
 									/*}}}*/
 
 // strstrip - Remove white space from the front and back of a string	/*{{{*/
@@ -198,7 +200,7 @@ bool ParseCWord(const char *&String,string &Res)
 string QuoteString(string Str,const char *Bad)
 {
    string Res;
-   for (string::iterator I = Str.begin(); I != Str.end(); I++)
+   for (const char *I = Str.c_str(); *I != 0; I++)
    {
       if (strchr(Bad,*I) != 0 || isprint(*I) == 0 || 
 	  *I <= 0x20 || *I >= 0x7F)
@@ -219,9 +221,9 @@ string QuoteString(string Str,const char *Bad)
 string DeQuoteString(string Str)
 {
    string Res;
-   for (string::iterator I = Str.begin(); I != Str.end(); I++)
+   for (const char *I = Str.c_str(); *I != 0; I++)
    {
-      if (*I == '%' && I + 2 < Str.end())
+      if (*I == '%' && I + 2 < Str.c_str() + Str.length())
       {
 	 char Tmp[3];
 	 Tmp[0] = I[1];
@@ -354,8 +356,8 @@ string URItoFileName(string URI)
    
    // "\x00-\x20{}|\\\\^\\[\\]<>\"\x7F-\xFF";
    URI = QuoteString(U,"\\|{}[]<>\"^~_=!@#$%^&*");
-   string::iterator J = URI.begin();
-   for (; J != URI.end(); J++)
+   char *J = const_cast<char *>(URI.c_str());
+   for (; *J != 0; J++)
       if (*J == '/') 
 	 *J = '_';
    return URI;
@@ -385,24 +387,24 @@ string Base64Encode(string S)
 
    /* Transform the 3x8 bits to 4x6 bits, as required by
       base64.  */
-   for (string::const_iterator I = S.begin(); I < S.end(); I += 3)
+   for (const char *I = S.c_str(); I < (S.c_str() + S.length()); I += 3)
    {
       char Bits[3] = {0,0,0};
       Bits[0] = I[0];
-      if (I + 1 < S.end())
+      if (I + 1 < S.c_str() + S.length())
 	 Bits[1] = I[1];
-      if (I + 2 < S.end())
+      if (I + 2 < S.c_str() + S.length())
 	 Bits[2] = I[2];
 
       Final += tbl[Bits[0] >> 2];
       Final += tbl[((Bits[0] & 3) << 4) + (Bits[1] >> 4)];
       
-      if (I + 1 >= S.end())
+      if (I + 1 >= S.c_str() + S.length())
 	 break;
       
       Final += tbl[((Bits[1] & 0xf) << 2) + (Bits[2] >> 6)];
       
-      if (I + 2 >= S.end())
+      if (I + 2 >= S.c_str() + S.length())
 	 break;
       
       Final += tbl[Bits[2] & 0x3f];
@@ -467,22 +469,22 @@ string LookupTag(string Message,const char *Tag,const char *Default)
 {
    // Look for a matching tag.
    int Length = strlen(Tag);
-   for (string::iterator I = Message.begin(); I + Length < Message.end(); I++)
+   for (const char *I = Message.c_str(); I + Length < Message.c_str() + Message.length(); I++)
    {
       // Found the tag
       if (I[Length] == ':' && stringcasecmp(I,I+Length,Tag) == 0)
       {
 	 // Find the end of line and strip the leading/trailing spaces
-	 string::iterator J;
+	 const char *J;
 	 I += Length + 1;
-	 for (; isspace(*I) != 0 && I < Message.end(); I++);
-	 for (J = I; *J != '\n' && J < Message.end(); J++);
+	 for (; isspace(*I) != 0 && *I != 0; I++);
+	 for (J = I; *J != '\n' && *J != 0; J++);
 	 for (; J > I && isspace(J[-1]) != 0; J--);
 	 
-	 return string(I,J-I);
+	 return string(I,J);
       }
       
-      for (; *I != '\n' && I < Message.end(); I++);
+      for (; *I != '\n' && *I != 0; I++);
    }   
    
    // Failed to find a match
@@ -744,15 +746,14 @@ static int HexDigit(int c)
 // Hex2Num - Convert a long hex number into a buffer			/*{{{*/
 // ---------------------------------------------------------------------
 /* The length of the buffer must be exactly 1/2 the length of the string. */
-bool Hex2Num(const char *Start,const char *End,unsigned char *Num,
-	     unsigned int Length)
+bool Hex2Num(string Str,unsigned char *Num,unsigned int Length)
 {
-   if (End - Start != (signed)(Length*2))
+   if (Str.length() != Length*2)
       return false;
    
    // Convert each digit. We store it in the same order as the string
    int J = 0;
-   for (const char *I = Start; I < End;J++, I += 2)
+   for (string::const_iterator I = Str.begin(); I != Str.end();J++, I += 2)
    {
       if (isxdigit(*I) == 0 || isxdigit(I[1]) == 0)
 	 return false;
@@ -876,7 +877,7 @@ void ioprintf(ostream &out,const char *format,...)
    // sprintf the description
    char S[400];
    vsnprintf(S,sizeof(S),format,args);
-   out << S;
+   // std::ostream::operator <<(out, (const char *)S);
 }
 									/*}}}*/
 
@@ -886,16 +887,16 @@ void ioprintf(ostream &out,const char *format,...)
    matched against the argument */
 bool CheckDomainList(string Host,string List)
 {
-   const char *Start = List.begin();
-   for (const char *Cur = List.begin(); Cur <= List.end() ; Cur++)
+   const char *Start = List.c_str();
+   for (const char *Cur = List.c_str(); *Cur != 0; Cur++)
    {
-      if (Cur < List.end() && *Cur != ',')
+      if (*Cur != ',')
 	 continue;
       
       // Match the end of the string..
-      if ((Host.size() >= (unsigned)(Cur - List.begin())) &&
+      if ((Host.size() >= (unsigned)(Cur - List.c_str())) &&
 	  Cur - Start != 0 &&
-	  stringcasecmp(Host.end() - (Cur - Start),Host.end(),Start,Cur) == 0)
+	  stringcasecmp(Host.c_str() + Host.length() - (Cur - Start),Host.c_str()+Host.length(),Start,Cur) == 0)
 	 return true;
       
       Start = Cur + 1;
@@ -909,22 +910,22 @@ bool CheckDomainList(string Host,string List)
 /* This parses the URI into all of its components */
 void URI::CopyFrom(string U)
 {
-   string::const_iterator I = U.begin();
+   const char *I = U.c_str();
 
    // Locate the first colon, this separates the scheme
-   for (; I < U.end() && *I != ':' ; I++);
-   string::const_iterator FirstColon = I;
+   for (; *I != 0  && *I != ':' ; I++);
+   const char *FirstColon = I;
 
    /* Determine if this is a host type URI with a leading double //
       and then search for the first single / */
-   string::const_iterator SingleSlash = I;
-   if (I + 3 < U.end() && I[1] == '/' && I[2] == '/')
+   const char *SingleSlash = I;
+   if (I + 3 < U.c_str() + U.length() && I[1] == '/' && I[2] == '/')
       SingleSlash += 3;
    
    /* Find the / indicating the end of the hostname, ignoring /'s in the
       square brackets */
    bool InBracket = false;
-   for (; SingleSlash < U.end() && (*SingleSlash != '/' || InBracket == true); SingleSlash++)
+   for (; SingleSlash < U.c_str() + U.length() && (*SingleSlash != '/' || InBracket == true); SingleSlash++)
    {
       if (*SingleSlash == '[')
 	 InBracket = true;
@@ -932,13 +933,13 @@ void URI::CopyFrom(string U)
 	 InBracket = false;
    }
    
-   if (SingleSlash > U.end())
-      SingleSlash = U.end();
+   if (SingleSlash > U.c_str() + U.length())
+      SingleSlash = U.c_str() + U.length();
 
    // We can now write the access and path specifiers
-   Access = string(U,0,FirstColon - U.begin());
-   if (SingleSlash != U.end())
-      Path = string(U,SingleSlash - U.begin());
+   Access = string(U,0,FirstColon - U.c_str());
+   if (*SingleSlash != 0)
+      Path = string(U,SingleSlash - U.c_str());
    if (Path.empty() == true)
       Path = "/";
 
@@ -947,7 +948,7 @@ void URI::CopyFrom(string U)
       FirstColon += 3;
    else
       FirstColon += 1;
-   if (FirstColon >= U.end())
+   if (FirstColon >= U.c_str() + U.length())
       return;
    
    if (FirstColon > SingleSlash)
@@ -958,24 +959,24 @@ void URI::CopyFrom(string U)
    if (I > SingleSlash)
       I = SingleSlash;
    for (; I < SingleSlash && *I != ':'; I++);
-   string::const_iterator SecondColon = I;
+   const char *SecondColon = I;
    
    // Search for the @ after the colon
    for (; I < SingleSlash && *I != '@'; I++);
-   string::const_iterator At = I;
+   const char *At = I;
    
    // Now write the host and user/pass
    if (At == SingleSlash)
    {
       if (FirstColon < SingleSlash)
-	 Host = string(U,FirstColon - U.begin(),SingleSlash - FirstColon);
+	 Host = string(U,FirstColon - U.c_str(),SingleSlash - FirstColon);
    }
    else
    {
-      Host = string(U,At - U.begin() + 1,SingleSlash - At - 1);
-      User = string(U,FirstColon - U.begin(),SecondColon - FirstColon);
+      Host = string(U,At - U.c_str() + 1,SingleSlash - At - 1);
+      User = string(U,FirstColon - U.c_str(),SecondColon - FirstColon);
       if (SecondColon < At)
-	 Password = string(U,SecondColon - U.begin() + 1,At - SecondColon - 1);
+	 Password = string(U,SecondColon - U.c_str() + 1,At - SecondColon - 1);
    }   
    
    // Now we parse the RFC 2732 [] hostnames.
