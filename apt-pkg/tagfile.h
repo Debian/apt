@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.7 1998/07/19 04:42:11 jgg Exp $
+// $Id: tagfile.h,v 1.8 1998/07/19 21:24:17 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -8,7 +8,7 @@
    This parser handles Debian package files (and others). Their form is
    RFC-822 type header fields in groups seperated by a blank line.
    
-   The parser reads the and provides methods to step linearly
+   The parser reads the file and provides methods to step linearly
    over it or to jump to a pre-recorded start point and read that record.
    
    A second class is used to perform pre-parsing of the record. It works

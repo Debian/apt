@@ -1,13 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.h,v 1.3 1998/07/12 23:58:43 jgg Exp $
+// $Id: version.h,v 1.4 1998/07/19 21:24:19 jgg Exp $
 /* ######################################################################
 
-   Version - Version string 
+   Version - Version comparison routines
    
-   This class implements storage and operators for version strings.
-
-   The client is responsible for stripping epochs should it be desired.
+   These routines provide some means to compare versions and check
+   dependencies.
    
    ##################################################################### */
 									/*}}}*/
@@ -20,25 +19,6 @@
 #endif 
 
 #include <string>
-
-class pkgVersion
-{
-   string Value;
-   
-   public:
-
-   inline operator string () const {return Value;};
-
-   // Assignmnet
-   void operator =(string rhs) {Value = rhs;};
-   
-   // Comparitors. STL will provide the rest
-   bool operator ==(const pkgVersion &rhs) const;
-   bool operator <(const pkgVersion &rhs) const;
-   
-   pkgVersion();
-   pkgVersion(string Version) : Value(Version) {};
-};
 
 int pkgVersionCompare(const char *A, const char *B);
 int pkgVersionCompare(const char *A, const char *AEnd, const char *B, 

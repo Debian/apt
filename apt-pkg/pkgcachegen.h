@@ -1,11 +1,18 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.6 1998/07/19 04:22:03 jgg Exp $
+// $Id: pkgcachegen.h,v 1.7 1998/07/19 21:24:14 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
    
    This builds the cache structure from the abstract package list parser. 
+   Each archive source has it's own list parser that is instantiated by
+   the caller to provide data for the generator. 
+   
+   Parts of the cache are created by this generator class while other
+   parts are created by the list parser. The list parser is responsible
+   for creating version, depends and provides structures, and some of
+   their contents
    
    ##################################################################### */
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.3 1998/07/12 23:58:31 jgg Exp $
+// $Id: packagemanager.h,v 1.4 1998/07/19 21:24:13 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -8,7 +8,7 @@
    Three steps are 
      - Aquiration of archives (stores the list of final file names)
      - Sorting of operations
-     - Inokation of package manager
+     - Invokation of package manager
    
    This is the final stage when the package cache entities get converted
    into file names and the state stored in a DepCache is transformed

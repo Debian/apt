@@ -1,12 +1,17 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.4 1998/07/19 04:22:05 jgg Exp $
+// $Id: sourcelist.h,v 1.5 1998/07/19 21:24:15 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
    
    The Source List class provides access to a list of sources. It 
-   can read them from a file and generate a list of all the permutations.
+   can read them from a file and generate a list of all the distinct
+   sources.
+   
+   All sources have a type associated with them that defines the layout
+   of the archive. The exact format of the file is documented in
+   files.sgml.
    
    ##################################################################### */
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.2 1998/07/12 23:58:22 jgg Exp $
+// $Id: algorithms.h,v 1.3 1998/07/19 21:24:11 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -14,6 +14,8 @@
    
    pkgApplyStatus sets the target state based on the content of the status
    field in the status file. It is important to get proper crash recovery.
+
+   pkgFixBroken corrects a broken system so that it is in a sane state.
    
    ##################################################################### */
 									/*}}}*/

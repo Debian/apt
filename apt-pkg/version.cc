@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.cc,v 1.4 1998/07/12 23:58:42 jgg Exp $
+// $Id: version.cc,v 1.5 1998/07/19 21:24:18 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -27,39 +27,6 @@
 #include <stdlib.h>
 									/*}}}*/
 
-// Version::pkgVersion - Default Constructor				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgVersion::pkgVersion()
-{
-}
-									/*}}}*/
-// Version::operator == - Checks if two versions are equal		/*{{{*/
-// ---------------------------------------------------------------------
-/* We can't simply perform a string compare because of epochs. */
-bool pkgVersion::operator ==(const pkgVersion &Vrhs) const
-{
-   if (pkgVersionCompare(Value.begin(),Value.end(),
-		     Vrhs.Value.begin(),Vrhs.Value.end()) == 0)
-      return true;
-   return false;
-}
-									/*}}}*/
-// Version::operator < - Checks if this is less than another version	/*{{{*/
-// ---------------------------------------------------------------------
-/* All other forms of comparision can be built up from this single function.
-    a > b -> b < a
-    a <= b -> !(a > b) -> !(b < a)
-    a >= b -> !(a < b) 
- */
-bool pkgVersion::operator <(const pkgVersion &Vrhs) const
-{
-   if (pkgVersionCompare(Value.begin(),Value.end(),
-		     Vrhs.Value.begin(),Vrhs.Value.end()) == -1)
-      return true;
-   return false;
-}
-									/*}}}*/
 // StrToLong - Convert the string between two iterators to a long	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
