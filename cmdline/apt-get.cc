@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.86 1999/10/27 05:00:25 jgg Exp $
+// $Id: apt-get.cc,v 1.87 1999/10/28 05:54:45 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -554,6 +554,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
        Cache->BadCount() == 0)
       return true;
 
+   // No remove flag
+   if (Cache->DelCount() != 0 && _config->FindB("APT::Get::No-Remove",false) == true)
+      return _error->Error("Packages need to be removed but No Remove was specified.");
+       
    // Run the simulator ..
    if (_config->FindB("APT::Get::Simulate") == true)
    {
@@ -643,6 +647,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
 
    if (Essential == true && Saftey == true)
    {
+      if (_config->FindB("APT::Get::Trivial-Only",false) == true)
+	 return _error->Error("Trivial Only specified but this is not a trivial operation.");
+      
       c2out << "You are about to do something potentially harmful" << endl;
       c2out << "To continue type in the phrase 'Yes, I understand this may be bad'" << endl;
       c2out << " ?] " << flush;
@@ -653,10 +660,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       }     
    }
    else
-   {
+   {      
       // Prompt to continue
       if (Ask == true || Fail == true)
       {            
+	 if (_config->FindB("APT::Get::Trivial-Only",false) == true)
+	    return _error->Error("Trivial Only specified but this is not a trivial operation.");
+	 
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
 	 {
@@ -1637,11 +1647,11 @@ int main(int argc,const char *argv[])
       {'d',"download-only","APT::Get::Download-Only",0},
       {'b',"compile","APT::Get::Compile",0},
       {'b',"build","APT::Get::Compile",0},
-      {'s',"simulate","APT::Get::Simulate",0},      
-      {'s',"just-print","APT::Get::Simulate",0},      
-      {'s',"recon","APT::Get::Simulate",0},      
-      {'s',"no-act","APT::Get::Simulate",0},      
-      {'y',"yes","APT::Get::Assume-Yes",0},      
+      {'s',"simulate","APT::Get::Simulate",0},
+      {'s',"just-print","APT::Get::Simulate",0},
+      {'s',"recon","APT::Get::Simulate",0},
+      {'s',"no-act","APT::Get::Simulate",0},
+      {'y',"yes","APT::Get::Assume-Yes",0},
       {'y',"assume-yes","APT::Get::Assume-Yes",0},      
       {'f',"fix-broken","APT::Get::Fix-Broken",0},
       {'u',"show-upgraded","APT::Get::Show-Upgraded",0},
@@ -1657,6 +1667,8 @@ int main(int argc,const char *argv[])
       {0,"purge","APT::Get::Purge",0},
       {0,"list-cleanup","APT::Get::List-Cleanup",0},
       {0,"reinstall","APT::Get::ReInstall",0},
+      {0,"trivial-only","APT::Get::Trivial-Only",0},
+      {0,"no-remove","APT::Get::No-Remove",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
