@@ -37,9 +37,12 @@ BIN := $(BUILD)/bin
 LIB := $(BIN)
 OBJ := $(BUILD)/obj
 DEP := $(OBJ)
+DOC := $(BUILD)/doc
 
 # Module types
-LIBRARY_H=$(BASE)/buildlib/library.mak
+LIBRARY_H = $(BASE)/buildlib/library.mak
+DEBIANDOC_H = $(BASE)/buildlib/debiandoc.mak
+MANPAGE_H = $(BASE)/buildlib/manpage.mak
 
 # Source location control
 # SUBDIRS specifies sub components of the module that
@@ -61,12 +64,15 @@ CXXFLAGS+= -Wall -g -fno-implicit-templates  -fno-exceptions
 PICFLAGS+= -fPIC -DPIC
 LFLAGS+= 
 INLINEDEPFLAG = -MD
+DEBIANDOC_HTML = yes
+DEBIANDOC_TEXT = yes
 
 # Phony rules. Other things hook these by appending to the dependency
 # list
-.PHONY: headers library clean veryclean all binary program
-all: binary
+.PHONY: headers library clean veryclean all binary program doc
+all: binary doc
 binary: library program
+maintainer-clean dist-clean: veryclean
 headers library clean veryclean program:
 
 # Header file control. We want all published interface headers to go
