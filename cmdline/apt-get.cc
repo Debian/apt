@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.127 2003/04/27 01:36:14 doogie Exp $
+// $Id: apt-get.cc,v 1.128 2003/04/27 01:47:10 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1502,6 +1502,69 @@ bool DoInstall(CommandLine &CmdL)
       }
       
       ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
+   }
+
+   /* Print out a list of suggested and recommended packages */
+   {
+      string SuggestsList, RecommendsList, List;
+      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
+      {
+	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
+
+	 /* Just look at the ones we want to install */
+	 if ((*Cache)[I].Install() == false)
+	   continue;
+
+	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
+	   {
+	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
+	       {
+		 pkgCache::DepIterator Start;
+		 pkgCache::DepIterator End;
+		 D.GlobOr(Start,End);
+		 do
+		   {
+		     if (Start->Type == pkgCache::Dep::Suggests) {
+
+		       /* A suggests relations, let's see if we have it 
+			  installed already */
+
+		       string target = string(Start.TargetPkg().Name()) + " ";
+		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install)
+			 break;
+		       /* Does another package suggest it as well?  If so,
+			  don't print it twice */
+		       if (int(SuggestsList.find(target)) > -1)
+			 break; 
+		       SuggestsList += target;
+		     }
+		     
+		     if (Start->Type == pkgCache::Dep::Recommends) {
+
+		       /* A recommends relation, let's see if we have it
+			  installed already */
+
+		       string target = string(Start.TargetPkg().Name()) + " ";
+		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install)
+			 break;
+		       
+		       /* Does another package recommend it as well?  If so,
+			  don't print it twice */
+
+		       if (int(RecommendsList.find(target)) > -1)
+			 break;
+		       RecommendsList += target;
+		     }
+	      if (Start == End)
+		break;
+	      Start++;
+	    } while (1);
+	       }
+	   }
+      }
+      ShowList(c1out,_("Suggested packages:"),SuggestsList);
+      ShowList(c1out,_("Recommended packages:"),RecommendsList);
+
    }
 
    // See if we need to prompt
