@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.6 1998/12/22 07:52:05 jgg Exp $
+// $Id: cdrom.cc,v 1.7 1998/12/22 08:20:55 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -63,6 +63,9 @@ string CDROMMethod::GetID(string Name)
    }
    
    const Configuration::Item *Top = Database.Tree("CD");
+   if (Top != 0)
+      Top = Top->Child;
+
    for (; Top != 0;)
    {
       if (Top->Value == Name)
@@ -140,12 +143,14 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    if (NewID == ID)
    {
       Res.Filename = CDROM + File;
-      if (FileExists(Res.Filename) == false)
+      struct stat Buf;
+      if (stat(Res.Filename.c_str(),&Buf) != 0)
 	 return _error->Error("File not found");
     
       CurrentID = ID;
-      Res.LastModified = Itm->LastModified;
+      Res.LastModified = Buf.st_mtime;
       Res.IMSHit = true;
+      Res.Size = Buf.st_size;
       URIDone(Res);
       return true;
    }
