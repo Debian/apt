@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.13 1999/07/12 03:00:53 jgg Exp $
+// $Id: cdrom.cc,v 1.14 1999/08/08 03:34:08 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -20,8 +20,8 @@
 
 class CDROMMethod : public pkgAcqMethod
 {
-   Configuration Database;
    bool DatabaseLoaded;
+   ::Configuration Database;
    string CurrentID;
    
    virtual bool Fetch(FetchItem *Itm);

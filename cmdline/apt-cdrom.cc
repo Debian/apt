@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.28 1999/07/12 02:59:36 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.29 1999/08/08 03:34:13 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -406,7 +406,7 @@ bool WriteSourceList(string Name,vector<string> &List,bool Source)
       // Grok it
       string cType;
       string URI;
-      char *C = Buffer;
+      const char *C = Buffer;
       if (ParseQuoteWord(C,cType) == false ||
 	  ParseQuoteWord(C,URI) == false)
       {
