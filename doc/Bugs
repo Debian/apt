@@ -1,0 +1,107 @@
+-- Real Problems
+#24000: Bug in apt Version: 0.0.17-1bo0
+ Summary: Couldn't locate an archive source for a package
+ Status: Require Status file. 
+#27601: srange errors from dselect
+ Summary: Couldn't locate an archive source
+ Status: Require status file
+#26670: apt: apt-get dumps core after checking integrity
+ Summary: Some terminal environments cause APT to crash
+          Win95 telnet and emacs term-in-a-buffer are two at least
+ Status: I have no idea why.
+#23984: apt: support for "no_proxy" would be nice
+ Status: Planed to be integrated into the new methods via the configuration
+         file
+#24685: HTTP Proxy cache refresh
+ Summary: Some caches hold onto the package index file for too long
+ Status: It may be possible to insert the proper header to disable
+         caching but I can't think how to do this while allowing
+	 the cache to return cached objects - in effect it would
+	 completely disable the cache which may not be desired.
+#24717: apt dies early if one postinst/preinst dies
+ Status: Requires dpkg modifications
+#25001: apt: cleaned out archive even though not all files were installed
+ Status: Apparently in some cases APT can return a success code even 
+         though it failed. I'm paying very close attention to this in
+	 0.3.x. Not to mention that the clean behavior will be 
+	 configurable..
+#25021: apt: Need some control over multiple connections
+ Status: Probable that 0.3.x will have support for configuing some
+         parameters
+#22892: Apt improvements
+ Summary: Make use of redundant sources
+ Status: 0.3.0 will likely do this, already the information for it is stored.
+#24799: Some suggestions for the apt method in dselect
+ Summary: Wants to be able to specifiy -d from dselect
+ Status: Likely a APT_OPTIONS enviornment variable will be created, -d can
+         be put there.
+#25104: APT should retry failed downloads
+ Summary: FTP method has problems with busy servers
+ Status: The 0.3.0 ftp method should probably use the configuration mechanism
+         to control this desired behavoir.
+#25176: Problem with FTP/firewall
+#25458: Problem with FTP/firewall
+ Summary: FTP method has no controls for firewalls
+ Status: The 0.3.0 ftp method should probably use the configuration mechanism
+         to control this desired behavoir.
+
+-- Fixed but unclosed things
+#25026: apt: Why do you list the packages you're _not_ doing anything to instead of the ones you are?
+#22507: apt: apt-get - listing packages to be upgraded (wishlist)
+ Summary: Feature request 
+ Status: Fixed in 0.3.0 via the -u option
+#25704: apt: apt will not install dotfile
+ Summary: APT has problems handling virtual packages
+ Status: I think it's fixed in 0.1.17
+#26426: apt: "b" is not "y"
+ Status: This is fixed.
+#26535: apt: doesnt want to install apache-ssl
+ Status: I think this is fixed
+#26723: apt: apt 0.1.6 installs not correctly
+ Summary: A package did not correctly install 
+ Status: It's not possible this is an APT bug. It is either wmaker or dpkg.
+#21113: [Apt] In dselect, update dies and exits if the packages file is not found.
+ Status: Fixed in 0.3.0
+#22675: APT does not honor the --admin-dir option
+#22836: Disk/Zip-Method for apt?
+ Summary: APT does not provide a way to download packages onto a 
+          removable media for another computer
+ Status: 0.3.0 has substantially better support for this to the point
+         that it is doable by using a seperate configuration file and
+	 the -c option
+#24363: removing apt dependancies on dynamic libraries
+ Status: this is just a silly bug, why is it still open!?
+	 
+-- Silly things
+#26592: apt: Problems with ftpd in SunOS 5.6
+ Summary: SunOS ftpd does not support the SIZE command
+ Status: Probably not worth fixing
+#20723: Apt suggestion
+ Summary: Package Grouping Mechanism
+ Status: Who knows
+#22550: apt-get upgrade could configure packages earlier
+ Status: Who knows
+#23934: apt-get source <package>
+#27190: apt: installing source packages (wishlist)
+ Status: Impossible to do without an index file for all source archives.
+#26019: apt may report wrong line speed
+#26433: apt: claims to fetch things it doesn't actually fetch (wishlist)
+ Summary: APT includes the fetch time from the local cache in its
+          calculations
+ Status: Probably will be fixed with new acquire code
+#26663: rsync file access
+ Status: Unlikely, rsync does not provide the necessary support to be
+         a terribly good method. I do not intend any 'split mode' 
+	 support (ie a way to get Package files via rsync and .debs
+	 via http) 
+#22551: apt: wish: use dist X iff pkg does not exist in dist Y
+#27100: apt: Better support for project/experimental
+ Status: GUI Feature - Version selection and pinning
+#25019: apt: Confusing progress report
+ Summary: Gripes about the progress meter
+ Status: I do not intend to implement very many of these ideas in apt-get. 
+         The GUI will naturally be better
+#25022: apt: Lack of feedback on date checking
+ Summary: Wants to know what package files were not updated
+ Status: There is no place for this in the current apt-get design,
+         probably won't make the GUI either.
