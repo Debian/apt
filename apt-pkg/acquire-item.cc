@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.11 1998/11/13 04:23:26 jgg Exp $
+// $Id: acquire-item.cc,v 1.12 1998/11/13 07:08:48 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -32,7 +32,8 @@
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::Item::Item(pkgAcquire *Owner) : Owner(Owner), FileSize(0),
-                       Mode(0), ID(0), Complete(false), QueueCounter(0)
+                       Mode(0), ID(0), Complete(false), Local(false), 
+                       QueueCounter(0)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -192,7 +193,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
 	 return;
       
       Decompression = true;
-      FileSize = 0;
+      Local = true;
       DestFile += ".decomp";
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
@@ -214,7 +215,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
    if (FileName == DestFile)
       Erase = true;
    else
-      FileSize = 0;
+      Local = true;
    
    Decompression = true;
    DestFile += ".decomp";
@@ -289,7 +290,7 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
    // We have to copy it into place
    if (FileName != DestFile)
    {
-      FileSize = 0;
+      Local = true;
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
       return;
@@ -341,6 +342,29 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 		       Version.ParentPkg().Name());
 	 return;
       }
+
+      // See if we already have the file.
+      FileSize = Version->Size;
+      string FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(PkgFile);
+      struct stat Buf;
+      if (stat(FinalFile.c_str(),&Buf) == 0)
+      {
+	 // Make sure the size matches
+	 if ((unsigned)Buf.st_size == Version->Size)
+	 {
+	    Complete = true;
+	    Local = true;
+	    Status = StatDone;
+	    DestFile = FinalFile;
+	    return;
+	 }
+	 
+	 /* Hmm, we have a file and its size does not match, this shouldnt
+	    happen.. */
+	 unlink(FinalFile.c_str());
+      }
+      
+      DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(PkgFile);
       
       // Create the item
       Desc.URI = Location->ArchiveURI(PkgFile);
@@ -349,7 +373,6 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       Desc.ShortDesc = Version.ParentPkg().Name();
       QueueURI(Desc);
       
-      DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(PkgFile);
       return;
    }
    
@@ -381,8 +404,8 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
 	 return;
       }
    }
-   
-   // Store the destination filename
+
+   // Grab the output filename
    string FileName = LookupTag(Message,"Filename");
    if (FileName.empty() == true)
    {
@@ -390,8 +413,23 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
       ErrorText = "Method gave a blank filename";
       return;
    }
+
+   Complete = true;
    
-   DestFile = FileName;
+   // We have to copy it into place
+   if (FileName != DestFile)
+   {
+      DestFile = FileName;
+      Local = true;
+      return;
+   }
+   
+   // Done, move it into position
+   string FinalFile = _config->FindDir("Dir::Cache::Archives");
+   FinalFile += flNotDir(DestFile);
+   Rename(DestFile,FinalFile);
+   
+   DestFile = FinalFile;
    Complete = true;
 }
 									/*}}}*/

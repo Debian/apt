@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.11 1998/11/12 04:10:55 jgg Exp $
+// $Id: acquire.h,v 1.12 1998/11/13 07:08:55 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -101,6 +101,10 @@ class pkgAcquire
 
    // Cleans out the download dir
    bool Clean(string Dir);
+
+   // Returns the size of the total download set
+   unsigned long TotalNeeded();
+   unsigned long FetchNeeded();
    
    pkgAcquire(pkgAcquireStatus *Log = 0);
    ~pkgAcquire();
@@ -210,7 +214,7 @@ class pkgAcquireStatus
    virtual void Pulse(pkgAcquire *Owner);
    virtual void Start();
    virtual void Stop();
-
+   
    pkgAcquireStatus();
    virtual ~pkgAcquireStatus() {};
 };

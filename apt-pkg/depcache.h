@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.5 1998/10/02 04:39:45 jgg Exp $
+// $Id: depcache.h,v 1.6 1998/11/13 07:08:58 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -118,13 +118,13 @@ class pkgDepCache : public pkgCache
    StateCache *PkgState;
    unsigned char *DepState;
    
-   long iUsrSize;
-   long iDownloadSize;
-   long iInstCount;
-   long iDelCount;
-   long iKeepCount;
-   long iBrokenCount;
-   long iBadCount;
+   signed long iUsrSize;
+   unsigned long iDownloadSize;
+   unsigned long iInstCount;
+   unsigned long iDelCount;
+   unsigned long iKeepCount;
+   unsigned long iBrokenCount;
+   unsigned long iBadCount;
       
    // Check for a matching provides
    bool CheckDep(DepIterator Dep,int Type,PkgIterator &Res);
@@ -169,13 +169,13 @@ class pkgDepCache : public pkgCache
    void Update(OpProgress *Prog = 0);
 
    // Size queries
-   inline long UsrSize() {return iUsrSize;};
-   inline long DebSize() {return iDownloadSize;};
-   inline long DelCount() {return iDelCount;};
-   inline long KeepCount() {return iKeepCount;};
-   inline long InstCount() {return iInstCount;};
-   inline long BrokenCount() {return iBrokenCount;};
-   inline long BadCount() {return iBadCount;};
+   inline signed long UsrSize() {return iUsrSize;};
+   inline unsigned long DebSize() {return iDownloadSize;};
+   inline unsigned long DelCount() {return iDelCount;};
+   inline unsigned long KeepCount() {return iKeepCount;};
+   inline unsigned long InstCount() {return iInstCount;};
+   inline unsigned long BrokenCount() {return iBrokenCount;};
+   inline unsigned long BadCount() {return iBadCount;};
    
    pkgDepCache(MMap &Map,OpProgress &Prog);
    virtual ~pkgDepCache();

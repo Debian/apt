@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.9 1998/11/13 04:24:03 jgg Exp $
+// $Id: apt-get.cc,v 1.10 1998/11/13 07:09:02 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -34,6 +34,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/dpkgpm.h>
+#include <strutl.h>
 
 #include <config.h>
 
@@ -51,6 +52,27 @@ ostream c2out;
 ofstream devnull("/dev/null");
 unsigned int ScreenWidth = 80;
 
+// YnPrompt - Yes No Prompt.						/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns true on a Yes.*/
+bool YnPrompt()
+{
+   if (_config->FindB("APT::Get::Assume-Yes",false) == true)
+   {
+      c2out << 'Y' << endl;
+      return true;
+   }
+   
+   char C = 0;
+   char Jnk = 0;
+   read(STDIN_FILENO,&C,1);
+   while (C != '\n' && Jnk != '\n') read(STDIN_FILENO,&Jnk,1);
+   
+   if (!(C == 'Y' || C == 'y' || C == '\n' || C == '\r'))
+      return false;
+   return true;
+}
+									/*}}}*/
 // ShowList - Show a list						/*{{{*/
 // ---------------------------------------------------------------------
 /* This prints out a string of space seperated words with a title and 
@@ -424,6 +446,7 @@ bool CacheFile::Open()
    happen and then calls the download routines */
 bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
 {
+   // Show all the various warning indicators
    ShowDel(c1out,Cache);
    ShowNew(c1out,Cache);
    if (ShwKept == true)
@@ -468,6 +491,37 @@ bool InstallPackages(pkgDepCache &Cache,bool ShwKept,bool Ask = true)
    pkgPackageManager PM(Cache);
    if (PM.GetArchives(&Fetcher,&List,&Recs) == false)
       return false;
+
+   unsigned long FetchBytes = Fetcher.FetchNeeded();
+   unsigned long DebBytes = Fetcher.TotalNeeded();
+   if (DebBytes != Cache.DebSize())
+      c0out << "How odd.. The sizes didn't match, email apt@packages.debian.org" << endl;
+   
+   c1out << "Need to get ";
+   if (DebBytes != FetchBytes)
+      c1out << SizeToStr(FetchBytes) << '/' << SizeToStr(DebBytes);
+   else
+      c1out << SizeToStr(DebBytes);
+      
+   c1out << " of archives. After unpacking ";
+   
+   if (Cache.UsrSize() >= 0)
+      c1out << SizeToStr(Cache.UsrSize()) << " will be used." << endl;
+   else
+      c1out << SizeToStr(-1*Cache.UsrSize()) << " will be freed." << endl;
+
+   if (_error->PendingError() == true)
+      return false;
+
+   if (Ask == true)
+   {
+      
+      if (_config->FindI("quiet",0) < 2 || 
+	  _config->FindB("APT::Get::Assume-Yes",false) == false)
+      c2out << "Do you want to continue? [Y/n] " << flush;
+      if (YnPrompt() == false)
+	 exit(1);
+   }      
 
    // Run it
    if (Fetcher.Run() == false)
@@ -546,8 +600,8 @@ bool DoInstall(CommandLine &CmdL)
    if (Cache.Open() == false)
       return false;
    
-   int ExpectedInst = 0;
-   int Packages = 0;
+   unsigned int ExpectedInst = 0;
+   unsigned int Packages = 0;
    pkgProblemResolver Fix(Cache);
    
    bool DefRemove = false;

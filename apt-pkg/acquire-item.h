@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.8 1998/11/13 04:23:28 jgg Exp $
+// $Id: acquire-item.h,v 1.9 1998/11/13 07:08:50 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -45,6 +45,7 @@ class pkgAcquire::Item
    char *Mode;
    unsigned long ID;
    bool Complete;
+   bool Local;
    
    // Number of queues we are inserted into
    unsigned int QueueCounter;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.14 1998/11/12 04:10:54 jgg Exp $
+// $Id: acquire.cc,v 1.15 1998/11/13 07:08:54 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -344,7 +344,7 @@ pkgAcquire::Worker *pkgAcquire::WorkerStep(Worker *I)
    return I->NextAcquire;
 };
 									/*}}}*/
-// pkgAcquire::Clean - Cleans a directory				/*{{{*/
+// Acquire::Clean - Cleans a directory					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a bit simplistic, it looks at every file in the dir and sees
    if it is part of the download set. */
@@ -396,6 +396,29 @@ pkgAcquire::MethodConfig::MethodConfig()
    Pipeline = false;
    SendConfig = false;
    Next = 0;
+}
+									/*}}}*/
+// Acquire::TotalNeeded - Number of bytes to fetch			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is the total number of bytes needed */
+unsigned long pkgAcquire::TotalNeeded()
+{
+   unsigned long Total = 0;
+   for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
+      Total += (*I)->FileSize;
+   return Total;
+}
+									/*}}}*/
+// Acquire::FetchNeeded - Number of bytes needed to get			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is the number of bytes that is not local */
+unsigned long pkgAcquire::FetchNeeded()
+{
+   unsigned long Total = 0;
+   for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
+      if ((*I)->Local == false)
+	 Total += (*I)->FileSize;
+   return Total;
 }
 									/*}}}*/
 
@@ -587,6 +610,10 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    for (pkgAcquire::Item **I = Owner->ItemsBegin(); I != Owner->ItemsEnd(); 
 	I++, Count++)
    {
+      // Totally ignore local items
+      if ((*I)->Local == true)
+	 continue;
+      
       TotalBytes += (*I)->FileSize;
       if ((*I)->Complete == true)
 	 CurrentBytes += (*I)->FileSize;
@@ -648,7 +675,7 @@ void pkgAcquireStatus::Start()
    ElapsedTime = 0;
 }
 									/*}}}*/
-// pkgAcquireStatus::Stop - Finished downloading			/*{{{*/
+// AcquireStatus::Stop - Finished downloading				/*{{{*/
 // ---------------------------------------------------------------------
 /* This accurately computes the elapsed time and the total overall CPS. */
 void pkgAcquireStatus::Stop()

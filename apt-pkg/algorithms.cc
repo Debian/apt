@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.8 1998/10/24 04:58:04 jgg Exp $
+// $Id: algorithms.cc,v 1.9 1998/11/13 07:08:57 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -644,7 +644,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 {
 	    if (Debug == true)
 	       clog << " Try to Re-Instate " << I.Name() << endl;
-	    int OldBreaks = Cache.BrokenCount();
+	    unsigned long OldBreaks = Cache.BrokenCount();
 	    pkgCache::Version *OldVer = Cache[I].InstallVer;
 	    Flags[I->ID] &= ReInstateTried;
 	    
