@@ -62,11 +62,11 @@ if test "$with_gpm" != "no"; then
 fi
 
 dnl Checks for pthread
-dnl AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
-dnl AC_SUBST(PTHREADLIB)
-dnl if test "$PTHREADLIB" != "-lpthread"; then
-dnl  AC_MSG_ERROR(failed: I need posix threads, pthread)
-dnl fi
+AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
+AC_SUBST(PTHREADLIB)
+#if test "$PTHREADLIB" != "-lpthread"; then
+#  AC_MSG_ERROR(failed: I need posix threads, pthread)
+#fi
 
 dnl Converts the ARCH to be the same as dpkg
 AC_MSG_CHECKING(system architecture)
