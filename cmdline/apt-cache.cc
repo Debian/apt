@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.63 2003/04/27 02:47:44 doogie Exp $
+// $Id: apt-cache.cc,v 1.64 2003/05/15 09:39:38 piefel Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1576,7 +1576,7 @@ bool ShowHelp(CommandLine &Cmd)
    
    cout << 
     _("Usage: apt-cache [options] command\n"
-      "       apt-cache [options] add file1 [file1 ...]\n"
+      "       apt-cache [options] add file1 [file2 ...]\n"
       "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
       "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
       "\n"
