@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.7 1998/10/20 02:39:26 jgg Exp $
+// $Id: configuration.cc,v 1.8 1998/10/22 04:56:45 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -33,7 +33,7 @@ Configuration::Configuration()
    Root = new Item;
 }
 									/*}}}*/
-// Configuration::Lookup - Lookup a single item									/*{{{*/
+// Configuration::Lookup - Lookup a single item				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will lookup a single item by name below another item. It is a 
    helper function for the main lookup function */
@@ -66,6 +66,9 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
    new items */
 Configuration::Item *Configuration::Lookup(const char *Name,bool Create)
 {
+   if (Name == 0)
+      return Root->Child;
+   
    const char *Start = Name;
    const char *End = Start + strlen(Name);
    const char *TagEnd = Name;
@@ -207,6 +210,17 @@ bool Configuration::Exists(const char *Name)
    if (Itm == 0)
       return false;
    return true;
+}
+									/*}}}*/
+
+// Configuration::Item::FullTag - Return the fully scoped tag		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string Configuration::Item::FullTag() const
+{
+   if (Parent == 0 || Parent->Parent == 0)
+      return Tag;
+   return Parent->FullTag() + "::" + Tag;
 }
 									/*}}}*/
 

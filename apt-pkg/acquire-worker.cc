@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.3 1998/10/20 04:33:12 jgg Exp $
+// $Id: acquire-worker.cc,v 1.4 1998/10/22 04:56:40 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -16,6 +16,7 @@
 #pragma implementation "apt-pkg/acquire-worker.h"
 #endif
 #include <apt-pkg/acquire-worker.h>
+#include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
@@ -29,11 +30,12 @@
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Worker::Worker(Queue *Q,string Acc)
+pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf)
 {
    OwnerQ = Q;
-   Config = 0;
-   Access = Acc;
+   Config = Cnf;
+   Access = Cnf->Access;
+   CurrentItem = 0;
 
    Construct();   
 }
@@ -46,7 +48,8 @@ pkgAcquire::Worker::Worker(MethodConfig *Cnf)
    OwnerQ = 0;
    Config = Cnf;
    Access = Cnf->Access;
-
+   CurrentItem = 0;
+   
    Construct();   
 }
 									/*}}}*/
@@ -55,10 +58,13 @@ pkgAcquire::Worker::Worker(MethodConfig *Cnf)
 /* */
 void pkgAcquire::Worker::Construct()
 {
-   Next = 0;
+   NextQueue = 0;
+   NextAcquire = 0;
    Process = -1;
    InFd = -1;
    OutFd = -1;
+   OutReady = false;
+   InReady = false;
    Debug = _config->FindB("Debug::pkgAcquire::Worker",false);
 }
 									/*}}}*/
@@ -71,7 +77,11 @@ pkgAcquire::Worker::~Worker()
    close(OutFd);
    
    if (Process > 0)
+   {
       kill(Process,SIGINT);
+      if (waitpid(Process,0,0) != Process)
+	 _error->Warning("I waited but nothing was there!");
+   }   
 }
 									/*}}}*/
 // Worker::Start - Start the worker process				/*{{{*/
@@ -133,6 +143,8 @@ bool pkgAcquire::Worker::Start()
    SetNonBlock(Pipes[3],true);
    close(Pipes[1]);
    close(Pipes[2]);
+   OutReady = false;
+   InReady = true;
    
    // Read the configuration data
    if (WaitFd(InFd) == false ||
@@ -140,70 +152,18 @@ bool pkgAcquire::Worker::Start()
       return _error->Error("Method %s did not start correctly",Method.c_str());
 
    RunMessages();
+   SendConfiguration();
    
    return true;
 }
 									/*}}}*/
 // Worker::ReadMessages - Read all pending messages into the list	/*{{{*/
 // ---------------------------------------------------------------------
-/* This pulls full messages from the input FD into the message buffer. 
-   It assumes that messages will not pause during transit so no
-   fancy buffering is used. */
+/* */
 bool pkgAcquire::Worker::ReadMessages()
 {
-   char Buffer[4000];
-   char *End = Buffer;
-   
-   while (1)
-   {
-      int Res = read(InFd,End,sizeof(Buffer) - (End-Buffer));
-      
-      // Process is dead, this is kind of bad..
-      if (Res == 0)
-      {
-	 if (waitpid(Process,0,0) != Process)
-	    _error->Warning("I waited but nothing was there!");
-	 Process = -1;
-	 close(InFd);
-	 close(OutFd);
-	 InFd = -1;
-	 OutFd = -1;
-	 return false;
-      }
-      
-      // No data
-      if (Res == -1)
-	 return true;
-      
-      End += Res;
-      
-      // Look for the end of the message
-      for (char *I = Buffer; I < End; I++)
-      {
-	 if (I[0] != '\n' || I[1] != '\n')
-	    continue;
-	 
-	 // Pull the message out
-	 string Message(Buffer,0,I-Buffer);
-
-	 // Fix up the buffer
-	 for (; I < End && *I == '\n'; I++);
-	 End -= I-Buffer;	 
-	 memmove(Buffer,I,End-Buffer);
-	 I = Buffer;
-
-	 if (Debug == true)
-	    clog << "Message " << Access << ':' << QuoteString(Message,"\n") << endl;
-	 
-	 MessageQueue.push_back(Message);
-      }
-      if (End == Buffer)
-	 return true;
-
-      if (WaitFd(InFd) == false)
-	 return false;
-   }
-   
+   if (::ReadMessages(InFd,MessageQueue) == false)
+      return MethodFailure();
    return true;
 }
 									/*}}}*/
@@ -218,6 +178,9 @@ bool pkgAcquire::Worker::RunMessages()
    {
       string Message = MessageQueue.front();
       MessageQueue.erase(MessageQueue.begin());
+
+      if (Debug == true)
+	 clog << " <- " << Access << ':' << QuoteString(Message,"\n") << endl;
       
       // Fetch the message number
       char *End;
@@ -228,9 +191,38 @@ bool pkgAcquire::Worker::RunMessages()
       // Determine the message number and dispatch
       switch (Number)
       {
+	 // 100 Capabilities
 	 case 100:
 	 if (Capabilities(Message) == false)
 	    return _error->Error("Unable to process Capabilities message from %s",Access.c_str());
+	 break;
+	 
+	 // 101 Log
+	 case 101:
+	 if (Debug == true)
+	    clog << " <- (log) " << LookupTag(Message,"Message") << endl;
+	 break;
+	 
+	 // 102 Status
+	 case 102:
+	 Status = LookupTag(Message,"Message");
+	 break;
+	    
+	 // 200 URI Start
+	 case 200:
+	 break;
+	 
+	 // 201 URI Done
+	 case 201:
+	 break;
+	 
+	 // 400 URI Failure
+	 case 400:
+	 break;
+	 
+	 // 401 General Failure
+	 case 401:
+	 _error->Error("Method %s General failure: %s",LookupTag(Message,"Message").c_str());
 	 break;
       }      
    }
@@ -249,15 +241,142 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->Version = LookupTag(Message,"Version");
    Config->SingleInstance = StringToBool(LookupTag(Message,"Single-Instance"),false);
    Config->PreScan = StringToBool(LookupTag(Message,"Pre-Scan"),false);
+   Config->Pipeline = StringToBool(LookupTag(Message,"Pipeline"),false);
+   Config->SendConfig = StringToBool(LookupTag(Message,"Send-Config"),false);
 
    // Some debug text
    if (Debug == true)
    {
       clog << "Configured access method " << Config->Access << endl;
-      clog << "Version: " << Config->Version << " SingleInstance: " << 
-	 Config->SingleInstance << " PreScan: " << Config->PreScan << endl;
+      clog << "Version:" << Config->Version << " SingleInstance:" <<
+	 Config->SingleInstance << " PreScan: " << Config->PreScan <<
+	 " Pipeline:" << Config->Pipeline << " SendConfig:" << 
+	 Config->SendConfig << endl;
    }
    
    return true;
+}
+									/*}}}*/
+// Worker::SendConfiguration - Send the config to the method		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgAcquire::Worker::SendConfiguration()
+{
+   if (Config->SendConfig == false)
+      return true;
+
+   if (OutFd == -1)
+      return false;
+   
+   string Message = "601 Configuration\n";
+   Message.reserve(2000);
+
+   /* Write out all of the configuration directives by walking the 
+      configuration tree */
+   const Configuration::Item *Top = _config->Tree(0);
+   for (; Top != 0;)
+   {
+      if (Top->Value.empty() == false)
+      {
+	 string Line = "Config-Item: " + Top->FullTag() + "=";
+	 Line += QuoteString(Top->Value,"\n") + '\n';
+	 Message += Line;
+      }
+      
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+      
+      while (Top != 0 && Top->Next == 0)
+	 Top = Top->Parent;
+      if (Top != 0)
+	 Top = Top->Next;
+   }   
+   Message += '\n';
+
+   if (Debug == true)
+      clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
+   OutQueue += Message;
+   OutReady = true; 
+   
+   return true;
+}
+									/*}}}*/
+// Worker::QueueItem - Add an item to the outbound queue		/*{{{*/
+// ---------------------------------------------------------------------
+/* Send a URI Acquire message to the method */
+bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
+{
+   if (OutFd == -1)
+      return false;
+   
+   string Message = "600 URI Acquire\n";
+   Message.reserve(300);
+   Message += "URI: " + Item->URI;
+   Message += "\nFilename: " + Item->Owner->DestFile;
+   Message += Item->Owner->Custom600Headers();
+   Message += "\n\n";
+   
+   if (Debug == true)
+      clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
+   OutQueue += Message;
+   OutReady = true;
+   
+   return true;
+}
+									/*}}}*/
+// Worker::OutFdRead - Out bound FD is ready				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgAcquire::Worker::OutFdReady()
+{
+   int Res = write(OutFd,OutQueue.begin(),OutQueue.length());
+   if (Res <= 0)
+      return MethodFailure();
+
+   // Hmm.. this should never happen.
+   if (Res < 0)
+      return true;
+   
+   OutQueue.erase(0,Res);
+   if (OutQueue.empty() == true)
+      OutReady = false;
+   
+   return true;
+}
+									/*}}}*/
+// Worker::InFdRead - In bound FD is ready				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgAcquire::Worker::InFdReady()
+{
+   if (ReadMessages() == false)
+      return false;
+   RunMessages();
+   return true;
+}
+									/*}}}*/
+// Worker::MethodFailure - Called when the method fails			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is called when the method is belived to have failed, probably because
+   read returned -1. */
+bool pkgAcquire::Worker::MethodFailure()
+{
+   cerr << "Method " << Access << " has died unexpectedly!" << endl;
+   if (waitpid(Process,0,0) != Process)
+      _error->Warning("I waited but nothing was there!");
+   Process = -1;
+   close(InFd);
+   close(OutFd);
+   InFd = -1;
+   OutFd = -1;
+   OutReady = false;
+   InReady = false;
+   OutQueue = string();
+   MessageQueue.erase(MessageQueue.begin(),MessageQueue.end());
+   
+   return false;
 }
 									/*}}}*/

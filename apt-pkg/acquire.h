@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.2 1998/10/20 02:39:16 jgg Exp $
+// $Id: acquire.h,v 1.3 1998/10/22 04:56:44 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -39,6 +39,8 @@
 #pragma interface "apt-pkg/acquire.h"
 #endif 
 
+#include <unistd.h>
+
 class pkgAcquire
 {   
    public:
@@ -48,21 +50,40 @@ class pkgAcquire
    class Worker;
    struct MethodConfig;
    friend Item;
+   friend Queue;
    
    protected:
    
+   // List of items to fetch
    vector<Item *> Items;
+   
+   // List of active queues and fetched method configuration parameters
    Queue *Queues;
+   Worker *Workers;
    MethodConfig *Configs;
+   unsigned long ToFetch;
+   
+   // Configurable parameters for the schedular
+   enum {QueueHost,QueueAccess} QueueMode;
+   bool Debug;
    
    void Add(Item *Item);
    void Remove(Item *Item);
-   void Enqueue(Item *Item,string URI);
+   void Add(Worker *Work);
+   void Remove(Worker *Work);
+   
+   void Enqueue(Item *Item,string URI,string Description);
+   void Dequeue(Item *Item);
+   string QueueName(string URI);
+
+   // FDSET managers for derived classes
+   void SetFds(int &Fd,fd_set *RSet,fd_set *WSet);
+   void RunFds(fd_set *RSet,fd_set *WSet);   
    
    public:
 
-   const MethodConfig *GetConfig(string Access);
-   string QueueName(string URI);
+   MethodConfig *GetConfig(string Access);
+   bool Run();
    
    pkgAcquire();
    ~pkgAcquire();
@@ -75,12 +96,36 @@ class pkgAcquire::Queue
    Queue *Next;
    
    protected:
-   
-   string URIMatch;
 
-   vector<Item *> Items;
+   // Queued item
+   struct QItem 
+   {
+      QItem *Next;
+      
+      string URI;
+      string Description;
+      Item *Owner;
+   };   
+   
+   // Name of the queue
+   string Name;
+
+   // Items queued into this queue
+   QItem *Items;
+   pkgAcquire::Worker *Workers;
+   pkgAcquire *Owner;
    
    public:
+   
+   // Put an item into this queue
+   void Enqueue(Item *Owner,string URI,string Description);
+   void Dequeue(Item *Owner);
+
+   bool Startup();
+   bool Shutdown();
+   
+   Queue(string Name,pkgAcquire *Owner);
+   ~Queue();
 };
 
 // Configuration information from each method
@@ -93,6 +138,8 @@ struct pkgAcquire::MethodConfig
    string Version;
    bool SingleInstance;
    bool PreScan;
+   bool Pipeline;
+   bool SendConfig;
    
    MethodConfig();
 };

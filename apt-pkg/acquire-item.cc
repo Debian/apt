@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.2 1998/10/20 02:39:12 jgg Exp $
+// $Id: acquire-item.cc,v 1.3 1998/10/22 04:56:38 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -19,6 +19,9 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <strutl.h>
+
+#include <sys/stat.h>
+#include <unistd.h>
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
@@ -45,23 +48,30 @@ pkgAcquire::Item::~Item()
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) :
              Item(Owner), Location(Location)
 {
-   QueueURI(Location->PackagesURI() + ".gz");
-   Description = Location->PackagesInfo();
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(Location->PackagesURI());
    
+   QueueURI(Location->PackagesURI() + ".gz",Location->PackagesInfo());
+   
+   // Create the Release fetch class
    new pkgAcqIndexRel(Owner,Location);
 }
 									/*}}}*/
-// pkgAcqIndex::ToFile - File to write the download to			/*{{{*/
+// AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-string pkgAcqIndex::ToFile()
+/* The only header we use is the last-modified header. */
+string pkgAcqIndex::Custom600Headers()
 {
-   string PartialDir = _config->FindFile("Dir::State::lists") + "/partial/";
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(Location->PackagesURI());
    
-   return PartialDir + URItoFileName(Location->PackagesURI());
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) != 0)
+      return string();
+   
+   return "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-
 // AcqIndexRel::pkgAcqIndexRel - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* The Release file is added to the queue */
@@ -69,17 +79,24 @@ pkgAcqIndexRel::pkgAcqIndexRel(pkgAcquire *Owner,
 			       const pkgSourceList::Item *Location) :
                 Item(Owner), Location(Location)
 {
-   QueueURI(Location->ReleaseURI());
-   Description = Location->ReleaseInfo();
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(Location->ReleaseURI());
+   
+   QueueURI(Location->ReleaseURI(),Location->ReleaseInfo());
 }
 									/*}}}*/
-// AcqIndexRel::ToFile - File to write the download to			/*{{{*/
+// AcqIndexRel::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-string pkgAcqIndexRel::ToFile()
+/* The only header we use is the last-modified header. */
+string pkgAcqIndexRel::Custom600Headers()
 {
-   string PartialDir = _config->FindFile("Dir::State::lists") + "/partial/";
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(Location->ReleaseURI());
    
-   return PartialDir + URItoFileName(Location->ReleaseURI());
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) != 0)
+      return string();
+   
+   return "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/

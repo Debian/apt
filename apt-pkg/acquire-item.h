@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.1 1998/10/15 06:59:59 jgg Exp $
+// $Id: acquire-item.h,v 1.2 1998/10/22 04:56:39 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -30,16 +30,20 @@ class pkgAcquire::Item
    protected:
    
    pkgAcquire *Owner;
-   inline void QueueURI(string URI) {Owner->Enqueue(this,URI);};
+   inline void QueueURI(string URI,string Description) 
+                 {Owner->Enqueue(this,URI,Description);};
    
    public:
 
+   // Number of queues we are inserted into
    unsigned int QueueCounter;
-   string Description;
    
-   virtual string ToFile() = 0;
+   // File to write the fetch into
+   string DestFile;
+   
    virtual void Failed() {};
-   
+   virtual string Custom600Headers() {return string();};
+      
    Item(pkgAcquire *Owner);
    virtual ~Item();
 };
@@ -53,7 +57,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    
    public:
    
-   virtual string ToFile();
+   virtual string Custom600Headers();
 
    pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location);
 };
@@ -67,10 +71,9 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    
    public:
    
-   virtual string ToFile();
-
+   virtual string Custom600Headers();
+   
    pkgAcqIndexRel(pkgAcquire *Owner,const pkgSourceList::Item *Location);
 };
-
 
 #endif

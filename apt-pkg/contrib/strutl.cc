@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.5 1998/10/20 02:39:30 jgg Exp $
+// $Id: strutl.cc,v 1.6 1998/10/22 04:56:48 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -14,9 +14,12 @@
 									/*}}}*/
 // Includes								/*{{{*/
 #include <strutl.h>
+#include <apt-pkg/fileutl.h>
+
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 									/*}}}*/
 
 // strstrip - Remove white space from the front and back of a string	/*{{{*/
@@ -310,7 +313,7 @@ string URIAccess(string URI)
 {
    string::size_type Pos = URI.find(':');
    if (Pos == string::npos)
-      return string();
+      return URI;
    return string(URI,0,Pos);
 }
 									/*}}}*/
@@ -470,5 +473,73 @@ int StringToBool(string Text,int Default = -1)
       return 1;
    
    return Default;
+}
+									/*}}}*/
+// TimeRFC1123 - Convert a time_t into RFC1123 format			/*{{{*/
+// ---------------------------------------------------------------------
+/* This converts a time_t into a string time representation that is
+   year 2000 complient and timezone neutral */
+string TimeRFC1123(time_t Date)
+{
+   struct tm Conv = *gmtime(&Date);
+   char Buf[300];
+
+   const char *Day[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+   const char *Month[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul",
+                          "Aug","Sep","Oct","Nov","Dec"};
+
+   sprintf(Buf,"%s, %02i %s %i %02i:%02i:%02i GMT",Day[Conv.tm_wday],
+	   Conv.tm_mday,Month[Conv.tm_mon],Conv.tm_year+1900,Conv.tm_hour,
+	   Conv.tm_min,Conv.tm_sec);
+   return Buf;
+}
+									/*}}}*/
+// ReadMessages - Read messages from the FD				/*{{{*/
+// ---------------------------------------------------------------------
+/* This pulls full messages from the input FD into the message buffer. 
+   It assumes that messages will not pause during transit so no
+   fancy buffering is used. */
+bool ReadMessages(int Fd, vector<string> &List)
+{
+   char Buffer[4000];
+   char *End = Buffer;
+   
+   while (1)
+   {
+      int Res = read(Fd,End,sizeof(Buffer) - (End-Buffer));
+      
+      // Process is dead, this is kind of bad..
+      if (Res == 0)
+	 return false;
+      
+      // No data
+      if (Res <= 0)
+	 return true;
+
+      End += Res;
+      
+      // Look for the end of the message
+      for (char *I = Buffer; I < End; I++)
+      {
+	 if (I[0] != '\n' || I[1] != '\n')
+	    continue;
+	 
+	 // Pull the message out
+	 string Message(Buffer,0,I-Buffer);
+
+	 // Fix up the buffer
+	 for (; I < End && *I == '\n'; I++);
+	 End -= I-Buffer;	 
+	 memmove(Buffer,I,End-Buffer);
+	 I = Buffer;
+	 
+	 List.push_back(Message);
+      }
+      if (End == Buffer)
+	 return true;
+
+      if (WaitFd(Fd) == false)
+	 return false;
+   }   
 }
 									/*}}}*/

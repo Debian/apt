@@ -1,9 +1,12 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/error.h>
+#include <signal.h>
 
 int main()
 {
+   signal(SIGPIPE,SIG_IGN);
+   
    pkgInitialize(*_config);
    
    pkgSourceList List;
@@ -17,6 +20,8 @@ int main()
       if (_error->PendingError() == true)
 	 break;
    }
+
+   Fetcher.Run();
    
    _error->DumpErrors();
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.10 1998/10/20 04:33:16 jgg Exp $
+// $Id: fileutl.cc,v 1.11 1998/10/22 04:56:47 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -136,8 +136,8 @@ void SetCloseExec(int Fd,bool Close)
 /* */
 void SetNonBlock(int Fd,bool Block)
 {   
-   int Flags = fcntl(Fd,F_GETFL);
-   if (fcntl(Fd,F_SETFL,(Flags  & ~O_NONBLOCK) | (Block == false)?0:O_NONBLOCK) != 0)
+   int Flags = fcntl(Fd,F_GETFL) & (~O_NONBLOCK);
+   if (fcntl(Fd,F_SETFL,Flags | ((Block == false)?0:O_NONBLOCK)) != 0)
    {
       cerr << "FATAL -> Could not set non-blocking flag " << strerror(errno) << endl;
       exit(100);
@@ -153,8 +153,10 @@ bool WaitFd(int Fd)
    fd_set Set;
    FD_ZERO(&Set);
    FD_SET(Fd,&Set);
+
    if (select(Fd+1,&Set,0,0,0) <= 0)
       return false;
+
    return true;
 }
 									/*}}}*/
