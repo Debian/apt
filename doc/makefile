@@ -1,6 +1,7 @@
 # -*- make -*-
 BASE=..
 SUBDIR=doc
+SUBDIRS= fr pt_BR
 
 # Bring in the default rules
 include ../buildlib/defaults.mak
@@ -22,3 +23,12 @@ SOURCE = examples/apt.conf examples/sources.list examples/configure-index
 TO = $(DOC)
 TARGET = doc
 include $(COPY_H)
+
+#.PHONY: headers library clean veryclean all binary program doc doc.pt_BR doc.fr
+doc: doc.fr doc.pt_BR
+
+doc.fr: %.fr:
+	$(MAKE) -C fr $*
+
+doc.pt_BR: %.pt_BR:
+	$(MAKE) -C pt_BR $*
