@@ -2,7 +2,7 @@
 # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003, 2004.
 # Rüdiger Kuhlmann <Uebersetzung@ruediger-kuhlmann.de>, 2002.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
@@ -327,7 +327,6 @@ msgid "Error Processing Contents %s"
 msgstr "Fehler beim Verarbeiten der Inhaltsdatei %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -369,11 +368,11 @@ msgid ""
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
 "Aufruf: apt-ftparchive [optionen] befehl\n"
-"Befehle: packages binarypath [overridefile [pathprefix]]\n"
-"         sources srcpath [overridefile [pathprefix]]\n"
+"Befehle: packages binarypath [overridedatei [pfadpräfix]]\n"
+"         sources srcpath [overridedatei [pfadpräfix]]\n"
 "         contents path\n"
 "         release path\n"
-"         generate config [groups]\n"
+"         generate config [gruppen]\n"
 "         clean config\n"
 "\n"
 "apt-ftparchive generiert Indexdateien für Debian-Archive. Es unterstützt "
@@ -398,7 +397,7 @@ msgstr ""
 "Die Befehle »packages« und »source« sollten in der Wurzel des Baumes "
 "aufgerufen\n"
 "werden.  BinaryPath sollte auf die Basis der rekursiven Suche zeigen und\n"
-"overridefile sollte die Override-Flags enthalten. Pathprefix wird wird, so\n"
+"overridefile sollte die Override-Flags enthalten. Pfadpräfix wird wird, so\n"
 "vorhanden, jedem Dateinamen vorangestellt. Beispielaufruf im Debian-Archiv:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
@@ -705,7 +704,7 @@ msgid ""
 "This should NOT be done unless you know exactly what you are doing!"
 msgstr ""
 "WARNUNG: Die folgenden essentiellen Pakete werden entfernt.\n"
-"Die sollte NICHT geschehen, wenn Sie nicht genau wissen, was Sie tun!"
+"Dies sollte NICHT geschehen, wenn Sie nicht genau wissen, was Sie tun!"
 
 #: cmdline/apt-get.cc:575
 #, c-format
@@ -763,17 +762,16 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "Nichterfüllte Abhängigkeiten. Versuchen Sie, -f zu benutzen."
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "Die folgenden Pakete werden aktualisiert:"
+msgstr "WARNUNG: Die folgenden Pakete können nicht authentifiziert werden!"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "Diese Pakete ohne Überprüfung installieren? [y/N]"
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "Einige Pakete konnten nicht authentifiziert werden"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
@@ -810,7 +808,7 @@ msgstr "Nach dem Auspacken werden %sB Plattenplatz zusätzlich benutzt.\n"
 #: cmdline/apt-get.cc:829
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
-msgstr "Nach dem Auspacken werden %sB Plattenplatz freigegeben sein.\n"
+msgstr "Nach dem Auspacken werden %sB Plattenplatz freigegeben worden sein.\n"
 
 #: cmdline/apt-get.cc:846
 #, c-format
@@ -1527,7 +1525,7 @@ msgstr "Kann nicht ins Administrationsverzeichnis %sinfo wechseln"
 msgid "Internal Error getting a Package Name"
 msgstr "Interner Fehler beim Holen des Paket-Namens"
 
-#
+# 
 #: apt-inst/deb/dpkgdb.cc:205
 msgid "Reading File Listing"
 msgstr "Paketlisten werden gelesen"
@@ -1600,9 +1598,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Dies ist kein gültiges DEB-Archiv, da es »%s« nicht enthält"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Dies ist kein gültiges DEB-Archiv, da es »%s« nicht enthält"
+msgstr "Dies ist kein gültiges DEB-Archiv, da es weder »%s« noch »%s« enthält"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -2538,108 +2536,105 @@ msgid "Size mismatch"
 msgstr "Größe stimmt nicht"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "Herstellerblock %s ist ungültig"
+msgstr "Herstellerblock %s enthält keinen Fingerabdruck"
 
 #: apt-pkg/cdrom.cc:487
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
-msgstr "Benutze CD-ROM-Einhängpunkt"
+msgstr ""
+"Benutze CD-ROM-Einhängpunkt %s\n"
+"Hänge CD ein\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
 msgstr "Identifiziere... "
 
 #: apt-pkg/cdrom.cc:521
-#, fuzzy, c-format
+#, c-format
 msgid "Stored Label: %s \n"
-msgstr "Speicherte Kennzeichnung: »"
+msgstr "Gespeicherte Kennzeichnung: %s \n"
 
 #: apt-pkg/cdrom.cc:541
-#, fuzzy, c-format
+#, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr "Benutze CD-ROM-Einhängpunkt"
+msgstr "Benutze CD-ROM-Einhängpunkt %s\n"
 
 #: apt-pkg/cdrom.cc:559
-#, fuzzy
 msgid "Unmounting CD-ROM\n"
-msgstr "Löse Laufwerkseinbindung des CD-ROMs"
+msgstr "Hänge CD-ROM aus\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "Warte auf Kopfzeilen (header)"
+msgstr "Warte auf CD...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
-#, fuzzy
 msgid "Mounting CD-ROM...\n"
-msgstr "Binde CD-ROM ein"
+msgstr "Hänge CD-ROM ein...\n"
 
 #: apt-pkg/cdrom.cc:589
-#, fuzzy
 msgid "Scanning Disc for index files..\n"
-msgstr "Suche auf CD nach Index-Dateien...  "
+msgstr "Suche auf CD nach Index-Dateien...\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "Fand %i Paketindexe, %i Quellenindexe und %i Signaturen\n"
 
 #: apt-pkg/cdrom.cc:684
-#, fuzzy
 msgid "That is not a valid name, try again.\n"
-msgstr "Dies ist kein gültiger Name, versuchen Sie es erneut"
+msgstr "Dies ist kein gültiger Name, versuchen Sie es erneut.\n"
 
 #: apt-pkg/cdrom.cc:700
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This Disc is called: \n"
 "'%s'\n"
-msgstr "Diese CD heißt jetzt:"
+msgstr ""
+"Diese CD heißt jetzt: \n"
+"»%s«\n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "Paketlisten werden gelesen"
+msgstr "Kopiere Paketlisten..."
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "Schreibe neue Quelliste"
+msgstr "Schreibe neue Quellliste\n"
 
 #: apt-pkg/cdrom.cc:737
-#, fuzzy
 msgid "Source List entries for this Disc are:\n"
-msgstr "Quelllisteneinträge für diese CD sind:"
+msgstr "Quelllisteneinträge für diese CD sind:\n"
 
 #: apt-pkg/cdrom.cc:771
-#, fuzzy
 msgid "Unmounting CD-ROM..."
-msgstr "Löse Laufwerkseinbindung des CD-ROMs"
+msgstr "Hänge CD-ROM aus..."
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "Es wurden %i Datensätze geschrieben.\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "Es wurden %i Datensätze mit %i fehlenden Dateien geschrieben.\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "Es wurden %i Datensätze mit %i nicht passenden Dateien geschrieben.\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
 msgstr ""
+"Es wurden %i Datensätze mit %i fehlenden und %i nicht passenden Dateien "
+"geschrieben.\n"
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr "Unbekannte Herstellerkennung »%s« in Zeile %u der Quelliste %s"
@@ -2675,7 +2670,7 @@ msgstr ""
 #~ msgid " to "
 #~ msgstr " nach "
 
-#
+# 
 #~ msgid "Extract "
 #~ msgstr "Extrahiert "
 
