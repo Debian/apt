@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.1 1998/07/07 04:17:16 jgg Exp $
+// $Id: strutl.cc,v 1.2 1998/07/16 06:08:41 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -226,7 +226,7 @@ string TimeToStr(unsigned long Sec)
 /* This replaces all occurances of Subst with Contents in Str. */
 string SubstVar(string Str,string Subst,string Contents)
 {
-   string::size_type Pos;
+   string::size_type Pos = 0;
    string::size_type OldPos = 0;
    string Temp;
    

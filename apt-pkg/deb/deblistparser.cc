@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.6 1998/07/12 23:58:52 jgg Exp $
+// $Id: deblistparser.cc,v 1.7 1998/07/16 06:08:42 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -162,7 +162,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 
    if (ParseDepends(Ver,"Depends",pkgCache::Dep::Depends) == false)
       return false;
-   if (ParseDepends(Ver,"PreDepends",pkgCache::Dep::PreDepends) == false)
+   if (ParseDepends(Ver,"Pre-Depends",pkgCache::Dep::PreDepends) == false)
       return false;
    if (ParseDepends(Ver,"Suggests",pkgCache::Dep::Suggests) == false)
       return false;
@@ -426,13 +426,16 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
    string Version;
    unsigned int Op;
 
-   while ((Start = ParseDepends(Start,Stop,Package,Version,Op)) != Stop)
+   while (1)
    {
+      Start = ParseDepends(Start,Stop,Package,Version,Op);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
-
+      
       if (NewDepends(Ver,Package,Version,Op,Type) == false)
 	 return false;
+      if (Start == Stop)
+	 break;
    }
    return true;
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.9 1998/07/12 23:58:34 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.10 1998/07/16 06:08:38 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -69,12 +69,8 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       // Get a pointer to the package structure
       string PackageName = List.Package();
       pkgCache::PkgIterator Pkg;
-      Cache.FindPkg(PackageName);
-      if (Pkg.end() == true)
-      {
-	 if (NewPackage(Pkg,PackageName) == false)
-	    return false;
-      }
+      if (NewPackage(Pkg,PackageName) == false)
+	 return false;
       
       /* Get a pointer to the version structure. We know the list is sorted
          so we use that fact in the search. Insertion of new versions is
@@ -132,6 +128,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
 /* This creates a new package structure and adds it to the hash table */
 bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,string Name)
 {
+   Pkg = Cache.FindPkg(Name);
+   if (Pkg.end() == false)
+      return true;
+       
    // Get a structure
    unsigned long Package = Map.Allocate(sizeof(pkgCache::Package));
    if (Package == 0)
@@ -222,10 +222,9 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    Dep->ID = Cache.HeaderP->DependsCount++;
    
    // Locate the target package
-   pkgCache::PkgIterator Pkg = Cache.FindPkg(PackageName);
-   if (Pkg.end() == true)
-      if (Owner->NewPackage(Pkg,PackageName) == false)
-	 return false;
+   pkgCache::PkgIterator Pkg;
+   if (Owner->NewPackage(Pkg,PackageName) == false)
+      return false;
    
    // Probe the reverse dependency list for a version string that matches
    if (Version.empty() == false)
@@ -257,10 +256,14 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 // ---------------------------------------------------------------------
 /* */
 bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
-					       string PackageName,
+					        string PackageName,
 						string Version)
 {
    pkgCache &Cache = Owner->Cache;
+
+   // We do not add self referencing provides
+   if (Ver.ParentPkg().Name() == PackageName)
+      return true;
    
    // Get a structure
    unsigned long Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
@@ -276,10 +279,9 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
       return false;
    
    // Locate the target package
-   pkgCache::PkgIterator Pkg = Cache.FindPkg(PackageName);
-   if (Pkg.end() == true)
-      if (Owner->NewPackage(Pkg,PackageName) == false)
-	 return false;
+   pkgCache::PkgIterator Pkg;
+   if (Owner->NewPackage(Pkg,PackageName) == false)
+      return false;
    
    // Link it to the package
    Prv->ParentPkg = Pkg.Index();
@@ -314,6 +316,7 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
 
    if (CurrentFile->FileName == 0)
       return false;
+   return true;
 }
 									/*}}}*/
 // CacheGenerator::WriteUniqueString - Insert a unique string		/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.2 1998/07/12 23:58:26 jgg Exp $
+// $Id: init.cc,v 1.3 1998/07/16 06:08:36 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -11,12 +11,12 @@
 #include <apt-pkg/init.h>
 									/*}}}*/
 
-// pkglibInitialize - Initialize the configuration class		/*{{{*/
+// pkgInitialize - Initialize the configuration class			/*{{{*/
 // ---------------------------------------------------------------------
 /* Directories are specified in such a way that the FindDir function will
    understand them. That is, if they don't start with a / then their parent
    is prepended, this allows a fair degree of flexability. */
-bool pkglibInitialize(Configuration &Cnf)
+bool pkgInitialize(Configuration &Cnf)
 {
    // General APT things
    Cnf.Set("APT::Architecture","i386");

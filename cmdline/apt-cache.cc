@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.1 1998/07/15 05:56:47 jgg Exp $
+// $Id: apt-cache.cc,v 1.2 1998/07/16 06:08:43 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache file.
@@ -27,6 +27,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/deblistparser.h>
+#include <apt-pkg/init.h>
 
 #include <iostream.h>
 #include <fstream.h>
@@ -89,17 +90,19 @@ bool DoAdd(int argc,char *argv[])
    {
       if (SplitArg(argv[I],FileName,Dist,Ver) == false)
 	 return false;
+      cout << FileName << endl;
       
       // Do the merge
       File TagF(FileName.c_str(),File::ReadOnly);
       debListParser Parser(TagF);
       if (_error->PendingError() == true)
-	 return false;
+	 return _error->Error("Problem opening %s",FileName.c_str());
+      
       if (Gen.SelectFile(FileName) == false)
-	 return false;
+	 return _error->Error("Problem with SelectFile");
 	 
       if (Gen.MergeList(Parser) == false)
-	 return false;
+	 return _error->Error("Problem with MergeList");
    }
    
    return true;
@@ -157,7 +160,11 @@ bool DumpPackage(int argc,char *argv[])
 	 for (pkgCache::PrvIterator Prv = Cur.ProvidesList(); Prv.end() != true; Prv++)
 	    cout << Prv.ParentPkg().Name() << " ";
 	 cout << endl;
-      }      
+      }
+      cout << "Reverse Provides: " << endl;
+      for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; Prv++)
+	 cout << Prv.OwnerPkg().Name() << " " << Prv.OwnerVer().VerStr();
+      cout << endl;
    }
 
    return true;
@@ -333,7 +340,8 @@ int main(int argc, char *argv[])
       cerr << "Usage is apt-cache add cache file1:dist:ver file2:dist:ver ..." << endl;
       return 100;
    }
-   
+
+   pkgInitialize(*_config);
    while (1)
    {
       if (strcmp(argv[1],"add") == 0)
