@@ -1,5 +1,6 @@
+// -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.23 2001/05/27 04:42:19 jgg Exp $
+// $Id: dpkgpm.cc,v 1.24 2002/04/02 06:42:39 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -314,12 +315,6 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 Die = !SendV2Pkgs(F);
 
       fclose(F);
-      if (Die == true)
-      {
-	 kill(Process,SIGINT);
-	 ExecWait(Process,Opts->Value.c_str(),true);
-	 return _error->Error("Failure running script %s",Opts->Value.c_str());
-      }
       
       // Clean up the sub process
       if (ExecWait(Process,Opts->Value.c_str()) == false)
