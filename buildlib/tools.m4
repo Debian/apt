@@ -13,24 +13,39 @@ AC_DEFUN(ah_HAVE_GETCONF,
 	AC_SUBST(GETCONF)
 ])
 
-AC_DEFUN(ah_NUM_CPUS,
+dnl ah_GET_CONF(variable, value ..., [default])
+AC_DEFUN(ah_GET_GETCONF,
 	[AC_REQUIRE([ah_HAVE_GETCONF])
-	AC_MSG_CHECKING([number of cpus])
-	NUM_CPUS=
+	if test ! -z "$GETCONF";then
+		old_args="[$]@"
+		set -- $2
+		while eval test -z \"\$$1\" -a ! -z \"[$]1\";do
+			eval $1=`$GETCONF "[$]1" 2>/dev/null`
+			shift
+		done
+	fi
+	if eval test -z \"\$$1\" -o \"\$$1\" = "-1";then
+		eval $1="$3"
+	fi
+])
+AC_DEFUN(ah_NUM_CPUS,
+	[AC_MSG_CHECKING([number of cpus])
 	AC_ARG_WITH(cpus,
 		[  --with-cpus             The number of cpus to be used for building(see --with-procs, default 1)],
-		[if test "$withval" = "yes"; then
-			if test ! -z "$GETCONF";then
-				NUM_CPUS=`$GETCONF _NPROCESSORS_ONLN 2>/dev/null`
-			fi
+		[
+		if test "$withval" = "yes"; then
+			ah_GET_GETCONF(NUM_CPUS, SC_NPROCESSORS_ONLN _NPROCESSORS_ONLN, 1)
 		elif test ! "$withval" = "no";then
 			NUM_CPUS=$withval
+		elif test "$withval" = "no";then
+			NUM_CPUS=1
 		fi],
-		[if test ! -z "$GETCONF";then
-			NUM_CPUS=`$GETCONF _NPROCESSORS_ONLN 2>/dev/null`
-		fi]
+		[ah_GET_GETCONF(NUM_CPUS, SC_NPROCESSORS_ONLN _NPROCESSORS_ONLN, 1)]
 	)
-	if test -z "$NUM_CPUS"; then
+	ah_NUM_CPUS_msg="$NUM_CPUS"
+	if test "$NUM_CPUS" = "0"; then
+		# broken getconf, time to bitch.
+		ah_NUM_CPUS_msg="found 0 cpus.  Has someone done a lobotomy?"
 		NUM_CPUS=1
 	fi
 	if test $NUM_CPUS = 1 ;then
@@ -38,7 +53,7 @@ AC_DEFUN(ah_NUM_CPUS,
 	else
 		default_PROC_MULTIPLY=2
 	fi
-	AC_MSG_RESULT([$NUM_CPUS])
+	AC_MSG_RESULT([$ah_NUM_CPUS_msg])
 	AC_SUBST(NUM_CPUS)
 ])
 AC_DEFUN(ah_PROC_MULTIPLY,
