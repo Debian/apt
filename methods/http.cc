@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.14 1998/12/11 01:07:31 jgg Exp $
+// $Id: http.cc,v 1.15 1998/12/11 01:45:36 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -1010,6 +1010,10 @@ int HttpMethod::Loop()
 	 Server = new ServerState(Queue->Uri,this);
       }
             
+      // Reset the pipeline
+      if (Server->ServerFd == -1)
+	 QueueBack = Queue;	 
+	 
       // Connnect to the host
       if (Server->Open() == false)
       {
