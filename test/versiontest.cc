@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versiontest.cc,v 1.4 2003/08/18 15:32:38 mdz Exp $
+// $Id: versiontest.cc,v 1.5 2003/08/18 15:55:19 mdz Exp $
 /* ######################################################################
 
    Version Test - Simple program to run through a file and comare versions.
@@ -200,7 +200,7 @@ bool RunTest(const char *File)
            Res = 1;
 
       if (Res != Expected)
-	 _error->Error("Comparison failed on line %u. '%s' ? '%s' %i != %i",CurLine,A.c_str(),B.c_str(),Res,Expected);
+	 _error->Error("Comparison failed on line %u. '%s' ? '%s' %i != %i",CurLine,B.c_str(),A.c_str(),Res,Expected);
    }
 }
 
