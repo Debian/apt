@@ -6,6 +6,8 @@
 # $(SOURCE) - The source code to use
 # $(PROGRAM) - The name of the program
 # $(SLIBS) - Shared libs to link against
+# $(LIB_MAKES) - Shared libary make files to depend on - to ensure we get
+# remade when the shared library version increases.
 
 # See defaults.mak for information about LOCAL
 
@@ -15,6 +17,7 @@ $(LOCAL)-OBJS := $(addprefix $(OBJ)/,$(addsuffix .o,$(notdir $(basename $(SOURCE
 $(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .o.d,$(notdir $(basename $(SOURCE)))))
 $(LOCAL)-BIN := $(BIN)/$(PROGRAM)
 $(LOCAL)-SLIBS := $(SLIBS)
+$(LOCAL)-MKS := $(addprefix $(BASE)/,$(LIB_MAKES))
 
 # Install the command hooks
 program: $(BIN)/$(PROGRAM)
@@ -29,7 +32,7 @@ veryclean/$(LOCAL): clean/$(LOCAL)
 	-rm -f $($(@F)-BIN)
 
 # The binary build rule
-$($(LOCAL)-BIN): $($(LOCAL)-OBJS)
+$($(LOCAL)-BIN): $($(LOCAL)-OBJS) $($(LOCAL)-MKS)
 	echo Building program $@
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LFLAGS) -o $@ $(filter %.o,$^) $($(@F)-SLIBS) $(LEFLAGS)
 
