@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.cc,v 1.7 2003/07/18 14:13:59 mdz Exp $
+// $Id: debversion.cc,v 1.8 2003/09/10 23:39:49 mdz Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian
@@ -48,9 +48,15 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
    if (A >= AEnd && B >= BEnd)
       return 0;
    if (A >= AEnd)
+   {
+      if (*B == '~') return 1;
       return -1;
+   }
    if (B >= BEnd)
+   {
+      if (*A == '~') return -1;
       return 1;
+   }
 
    /* Iterate over the whole string
       What this does is to spilt the whole string into groups of
@@ -101,11 +107,17 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
 
    // lhs is shorter
    if (lhs == AEnd)
+   {
+      if (*rhs == '~') return 1;
       return -1;
+   }
 
    // rhs is shorter
    if (rhs == BEnd)
+   {
+      if (*lhs == '~') return -1;
       return 1;
+   }
 
    // Shouldnt happen
    return 1;
