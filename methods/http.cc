@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.23 1999/01/28 06:32:31 jgg Exp $
+// $Id: http.cc,v 1.24 1999/01/30 08:23:49 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -988,7 +988,7 @@ int HttpMethod::Loop()
    {
       if (FailCounter >= 2)
       {
-	 Fail("Massive Server Brain Damage");
+	 Fail("Massive Server Brain Damage",true);
 	 FailCounter = 0;
       }
       
@@ -1020,7 +1020,7 @@ int HttpMethod::Loop()
       // Connnect to the host
       if (Server->Open() == false)
       {
-	 Fail();
+	 Fail(true);
 	 delete Server;
 	 Server = 0;
 	 continue;
@@ -1039,7 +1039,7 @@ int HttpMethod::Loop()
 	 case 2:
 	 {
 	    _error->Error("Bad header Data");
-	    Fail();
+	    Fail(true);
 	    continue;
 	 }
 	 
