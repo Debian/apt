@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.28 2001/02/20 07:03:17 jgg Exp $
+// $Id: acquire.h,v 1.29 2001/05/22 04:17:18 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -35,6 +35,9 @@
 #include <vector>
 #include <string>
 
+using std::vector;
+using std::string;
+
 #ifdef __GNUG__
 #pragma interface "apt-pkg/acquire.h"
 #endif 
@@ -54,6 +57,9 @@ class pkgAcquire
    struct ItemDesc;
    friend class Item;
    friend class Queue;
+
+   typedef vector<Item *>::iterator ItemIterator;
+   typedef vector<Item *>::const_iterator ItemCIterator;
    
    protected:
    
@@ -100,8 +106,8 @@ class pkgAcquire
    // Simple iteration mechanism
    inline Worker *WorkersBegin() {return Workers;};
    Worker *WorkerStep(Worker *I);
-   inline Item **ItemsBegin() {return Items.begin();};
-   inline Item **ItemsEnd() {return Items.end();};
+   inline ItemIterator ItemsBegin() {return Items.begin();};
+   inline ItemIterator ItemsEnd() {return Items.end();};
    
    // Iterate over queued Item URIs
    class UriIterator;

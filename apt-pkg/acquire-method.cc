@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.26 2001/03/13 06:51:46 jgg Exp $
+// $Id: acquire-method.cc,v 1.27 2001/05/22 04:27:11 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -24,11 +24,14 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
-    
+
+#include <iostream>
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
 									/*}}}*/
+
+using namespace std;
 
 // AcqMethod::pkgAcqMethod - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -86,7 +89,7 @@ void pkgAcqMethod::Fail(bool Transient)
 void pkgAcqMethod::Fail(string Err,bool Transient)
 {
    // Strip out junk from the error messages
-   for (char *I = Err.begin(); I != Err.end(); I++)
+   for (string::iterator I = Err.begin(); I != Err.end(); I++)
    {
       if (*I == '\r') 
 	 *I = ' ';
@@ -283,10 +286,11 @@ bool pkgAcqMethod::Configuration(string Message)
 {
    ::Configuration &Cnf = *_config;
    
-   const char *I = Message.begin();
+   const char *I = Message.c_str();
+   const char *MsgEnd = I + Message.length();
    
    unsigned int Length = strlen("Config-Item");
-   for (; I + Length < Message.end(); I++)
+   for (; I + Length < MsgEnd; I++)
    {
       // Not a config item
       if (I[Length] != ':' || stringcasecmp(I,I+Length,"Config-Item") != 0)
@@ -294,11 +298,11 @@ bool pkgAcqMethod::Configuration(string Message)
       
       I += Length + 1;
       
-      for (; I < Message.end() && *I == ' '; I++);
+      for (; I < MsgEnd && *I == ' '; I++);
       const char *Equals = I;
-      for (; Equals < Message.end() && *Equals != '='; Equals++);
+      for (; Equals < MsgEnd && *Equals != '='; Equals++);
       const char *End = Equals;
-      for (; End < Message.end() && *End != '\n'; End++);
+      for (; End < MsgEnd && *End != '\n'; End++);
       if (End == Equals)
 	 return false;
       

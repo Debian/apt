@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.9 2001/02/20 07:03:17 jgg Exp $
+// $Id: algorithms.h,v 1.10 2001/05/22 04:17:41 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -36,6 +36,10 @@
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
+
+#include <iostream>
+
+using std::ostream;
 
 class pkgSimulate : public pkgPackageManager
 {

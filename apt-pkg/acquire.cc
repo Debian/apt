@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.47 2001/02/20 07:03:17 jgg Exp $
+// $Id: acquire.cc,v 1.48 2001/05/22 04:17:18 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -24,12 +24,16 @@
 #include <apt-pkg/strutl.h>
 
 #include <apti18n.h>
+
+#include <iostream>
     
 #include <dirent.h>
 #include <sys/time.h>
 #include <errno.h>
 #include <sys/stat.h>
 									/*}}}*/
+
+using namespace std;
 
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -109,10 +113,13 @@ void pkgAcquire::Remove(Item *Itm)
 {
    Dequeue(Itm);
    
-   for (vector<Item *>::iterator I = Items.begin(); I < Items.end(); I++)
+   for (ItemIterator I = Items.begin(); I != Items.end(); I++)
    {
       if (*I == Itm)
+      {
 	 Items.erase(I);
+	 I = Items.begin();
+      }      
    }
 }
 									/*}}}*/
@@ -364,7 +371,7 @@ pkgAcquire::RunResult pkgAcquire::Run()
       I->Shutdown(false);
 
    // Shut down the items
-   for (Item **I = Items.begin(); I != Items.end(); I++)
+   for (ItemIterator I = Items.begin(); I != Items.end(); I++)
       (*I)->Finished(); 
    
    if (_error->PendingError())
@@ -419,7 +426,7 @@ bool pkgAcquire::Clean(string Dir)
 	 continue;
       
       // Look in the get list
-      vector<Item *>::iterator I = Items.begin();
+      ItemCIterator I = Items.begin();
       for (; I != Items.end(); I++)
 	 if (flNotDir((*I)->DestFile) == Dir->d_name)
 	    break;
@@ -440,7 +447,7 @@ bool pkgAcquire::Clean(string Dir)
 double pkgAcquire::TotalNeeded()
 {
    double Total = 0;
-   for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
+   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); I++)
       Total += (*I)->FileSize;
    return Total;
 }
@@ -451,7 +458,7 @@ double pkgAcquire::TotalNeeded()
 double pkgAcquire::FetchNeeded()
 {
    double Total = 0;
-   for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
+   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); I++)
       if ((*I)->Local == false)
 	 Total += (*I)->FileSize;
    return Total;
@@ -463,7 +470,7 @@ double pkgAcquire::FetchNeeded()
 double pkgAcquire::PartialPresent()
 {
   double Total = 0;
-   for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
+   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); I++)
       if ((*I)->Local == false)
 	 Total += (*I)->PartialSize;
    return Total;
@@ -728,7 +735,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    // Compute the total number of bytes to fetch
    unsigned int Unknown = 0;
    unsigned int Count = 0;
-   for (pkgAcquire::Item **I = Owner->ItemsBegin(); I != Owner->ItemsEnd(); 
+   for (pkgAcquire::ItemCIterator I = Owner->ItemsBegin(); I != Owner->ItemsEnd();
 	I++, Count++)
    {
       TotalItems++;
