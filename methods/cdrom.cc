@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.9 1999/05/23 05:45:13 jgg Exp $
+// $Id: cdrom.cc,v 1.10 1999/06/05 03:54:29 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -68,7 +68,9 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    URI Get = Itm->Uri;
    string File = Get.Path;
    FetchResult Res;
-   
+
+   bool Debug = _config->FindB("Debug::Acquire::cdrom",false);
+
    /* All IMS queries are returned as a hit, CDROMs are readonly so 
       time stamps never change */
    if (Itm->LastModified != 0)
@@ -114,13 +116,23 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    string NewID;
    while (1)
    {
-      if (IdentCdrom(CDROM,NewID) == false)
-	 return false;
-   
-      // A hit
-      if (Database.Find("CD::" + NewID) == Get.Host)
-	 break;
-
+      bool Hit = false;
+      for (unsigned int Version = 2; Version != 0; Version--)
+      {
+	 if (IdentCdrom(CDROM,NewID,Version) == false)
+	    return false;
+	 
+	 if (Debug == true)
+	    clog << "ID " << Version << " " << NewID << endl;
+      
+	 // A hit
+	 if (Database.Find("CD::" + NewID) == Get.Host)
+	 {
+	    Hit = true;
+	    break;
+	 }	 
+      }
+      
       // I suppose this should prompt somehow?
       if (UnmountCdrom(CDROM) == false)
 	 return _error->Error("Unable to unmount the CD-ROM in %s, it may still be in use.",

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.5 1999/04/20 05:11:17 jgg Exp $
+// $Id: cdromutl.cc,v 1.6 1999/06/05 03:54:29 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -160,7 +160,7 @@ bool MountCdrom(string Path)
 // ---------------------------------------------------------------------
 /* We convert everything we hash into a string, this prevents byte size/order
    from effecting the outcome. */
-bool IdentCdrom(string CD,string &Res)
+bool IdentCdrom(string CD,string &Res,unsigned int Version)
 {
    MD5Summation Hash;
 
@@ -182,8 +182,19 @@ bool IdentCdrom(string CD,string &Res)
       if (strcmp(Dir->d_name,".") == 0 ||
 	  strcmp(Dir->d_name,"..") == 0)
 	 continue;
-   
-      sprintf(S,"%lu",Dir->d_ino);
+
+      if (Version <= 1)
+      {
+	 sprintf(S,"%lu",Dir->d_ino);
+      }
+      else
+      {
+	 struct stat Buf;
+	 if (stat(Dir->d_name,&Buf) != 0)
+	    continue;
+	 sprintf(S,"%lu",Buf.st_mtime);
+      }
+      
       Hash.Add(S);
       Hash.Add(Dir->d_name);
    };
@@ -201,7 +212,8 @@ bool IdentCdrom(string CD,string &Res)
 	   (long)(Buf.f_bfree*(Buf.f_bsize/1024)));
    Hash.Add(S);
    
-   Res = Hash.Result().Value();
+   sprintf(S,"-%u",Version);
+   Res = Hash.Result().Value() + S;
    return true;   
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.h,v 1.1 1998/11/29 01:19:27 jgg Exp $
+// $Id: cdromutl.h,v 1.2 1999/06/05 03:54:29 jgg Exp $
 /* ######################################################################
 
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -18,6 +18,6 @@
 
 bool MountCdrom(string Path);
 bool UnmountCdrom(string Path);
-bool IdentCdrom(string CD,string &Res);
+bool IdentCdrom(string CD,string &Res,unsigned int Version = 2);
 
 #endif
