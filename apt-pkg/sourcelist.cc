@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.14 1999/07/20 05:53:33 jgg Exp $
+// $Id: sourcelist.cc,v 1.15 1999/09/09 06:15:51 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -169,7 +169,10 @@ string pkgSourceList::Item::PackagesURI() const
    {
       case Deb:
       if (Dist[Dist.size() - 1] == '/')
-	 Res = URI + Dist;
+      {
+	 if (Dist != "/")
+	    Res = URI + Dist;
+      }      
       else
 	 Res = URI + "dists/" + Dist + '/' + Section +
 	 "/binary-" + _config->Find("APT::Architecture") + '/';
@@ -201,7 +204,10 @@ string pkgSourceList::Item::PackagesInfo() const
       case Deb:
       Res += SiteOnly(URI) + ' ';
       if (Dist[Dist.size() - 1] == '/')
-	 Res += Dist;
+      {
+	 if (Dist != "/")
+	    Res += Dist;
+      }      
       else
 	 Res += Dist + '/' + Section;
       
@@ -231,7 +237,10 @@ string pkgSourceList::Item::ReleaseURI() const
    {
       case Deb:
       if (Dist[Dist.size() - 1] == '/')
-	 Res = URI + Dist;
+      {
+	 if (Dist != "/")
+	    Res = URI + Dist;
+      }      
       else
 	 Res = URI + "dists/" + Dist + '/' + Section +
 	 "/binary-" + _config->Find("APT::Architecture") + '/';
@@ -264,7 +273,10 @@ string pkgSourceList::Item::ReleaseInfo() const
       case DebSrc:
       Res += SiteOnly(URI) + ' ';
       if (Dist[Dist.size() - 1] == '/')
-	 Res += Dist;
+      {
+	 if (Dist != "/")
+	    Res += Dist;
+      }      
       else
 	 Res += Dist + '/' + Section;
       
@@ -286,7 +298,10 @@ string pkgSourceList::Item::ArchiveInfo(pkgCache::VerIterator Ver) const
       case Deb:
       Res += SiteOnly(URI) + ' ';
       if (Dist[Dist.size() - 1] == '/')
-	 Res += Dist;
+      {
+	 if (Dist != "/")
+	    Res += Dist;
+      }      
       else
 	 Res += Dist + '/' + Section;
       
@@ -328,7 +343,10 @@ string pkgSourceList::Item::SourceInfo(string Pkg,string Ver,string Comp) const
       case Deb:
       Res += SiteOnly(URI) + ' ';
       if (Dist[Dist.size() - 1] == '/')
-	 Res += Dist;
+      {
+	 if (Dist != "/")
+	    Res += Dist;
+      }      
       else
 	 Res += Dist + '/' + Section;
       
