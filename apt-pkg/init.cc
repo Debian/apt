@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.11 1998/11/05 07:42:03 jgg Exp $
+// $Id: init.cc,v 1.12 1998/11/06 02:52:21 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -54,7 +54,7 @@ bool pkgInitialize(Configuration &Cnf)
    
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
-   if (Cfg != 0 && FileExists(FName) == true)
+   if (Cfg != 0 && FileExists(Cfg) == true)
       Res &= ReadConfigFile(Cnf,Cfg);
    
    if (Res == false)

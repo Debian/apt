@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.8 1998/11/05 07:21:40 jgg Exp $
+// $Id: acquire.cc,v 1.9 1998/11/06 02:52:20 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -472,8 +472,6 @@ bool pkgAcquire::Queue::Cycle()
    if (Items == 0 || Workers == 0)
       return true;
 
-   cout << "Cylce for " << Name << endl;
-
    // Look for a queable item
    QItem *I = Items;
    for (; I != 0; I = I->Next)
@@ -486,7 +484,6 @@ bool pkgAcquire::Queue::Cycle()
    
    I->Worker = Workers;
    I->Owner->Status = pkgAcquire::Item::StatFetching;
-   cout << "Item has been queued!" << endl;
    return Workers->QueueItem(I);
 }
 									/*}}}*/
