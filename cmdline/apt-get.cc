@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.74 1999/09/09 06:23:52 jgg Exp $
+// $Id: apt-get.cc,v 1.75 1999/09/09 06:27:42 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1529,6 +1529,8 @@ int main(int argc,const char *argv[])
       {0,"no-upgrade","APT::Get::no-upgrade",0},
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
+      {0,"diff-only","APT::Get::Diff-Only",0},
+      {0,"tar-only","APT::Get::tar-Only",0},
       {0,"purge","APT::Get::Purge",0},
       {0,"list-cleanup","APT::Get::List-Cleanup",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
