@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.147 2003/12/20 23:39:54 mdz Exp $
+// $Id: apt-get.cc,v 1.148 2003/12/20 23:55:05 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1557,36 +1557,22 @@ bool DoInstall(CommandLine &CmdL)
             
 		 do
 		   {
+                     /* Skip if package is  installed already, or is about to be */
+                     string target = string(Start.TargetPkg().Name()) + " ";
+                     if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
+                         || Cache[Start.TargetPkg()].Install())
+                       break;
+
+                     /* Skip if we already saw it */
+                     if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target) != -1)
+                       break; 
+
 		     if (Start->Type == pkgCache::Dep::Suggests) {
-
-		       /* A suggests relations, let's see if we have it 
-			  installed already */
-
-		       string target = string(Start.TargetPkg().Name()) + " ";
-		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
-			 break;
-		       /* Does another package suggest it as well?  If so,
-			  don't print it twice */
-		       if (int(SuggestsList.find(target)) > -1)
-			 break; 
 		       SuggestsList += target;
 		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
 		     }
 		     
 		     if (Start->Type == pkgCache::Dep::Recommends) {
-
-		       /* A recommends relation, let's see if we have it
-			  installed already */
-
-		       string target = string(Start.TargetPkg().Name()) + " ";
-		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
-			 break;
-		       
-		       /* Does another package recommend it as well?  If so,
-			  don't print it twice */
-
-		       if (int(RecommendsList.find(target)) > -1)
-			 break;
 		       RecommendsList += target;
 		       RecommendsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
 		     }
