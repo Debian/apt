@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.15 1998/12/11 01:45:36 jgg Exp $
+// $Id: http.cc,v 1.16 1998/12/11 07:23:17 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -504,7 +504,7 @@ bool ServerState::HeaderLine(string Line)
 {
    if (Line.empty() == true)
       return true;
-   
+
    // The http server might be trying to do something evil.
    if (Line.length() >= MAXLEN)
       return _error->Error("Got a single header line over %u chars",MAXLEN);
@@ -964,8 +964,9 @@ bool HttpMethod::Configuration(string Message)
    if (pkgAcqMethod::Configuration(Message) == false)
       return false;
    
-   TimeOut = _config->FindI("Acquire::http::Timeout",120);
-   PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",5);
+   TimeOut = _config->FindI("Acquire::http::Timeout",TimeOut);
+   PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
+				  PipelineDepth);
    
    return true;
 }
