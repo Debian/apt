@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: ftp.h,v 1.3 2001/02/20 07:03:18 jgg Exp $
-// $Id: ftp.h,v 1.3 2001/02/20 07:03:18 jgg Exp $
+// Description								/*{{{*/// $Id: ftp.h,v 1.4 2001/03/06 07:15:29 jgg Exp $
+// $Id: ftp.h,v 1.4 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -56,7 +56,7 @@ class FTPConn
    bool Size(const char *Path,unsigned long &Size);
    bool ModTime(const char *Path, time_t &Time);
    bool Get(const char *Path,FileFd &To,unsigned long Resume,
-	    MD5Summation &MD5,bool &Missing);
+	    Hashes &MD5,bool &Missing);
    
    FTPConn(URI Srv);
    ~FTPConn();

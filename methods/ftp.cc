@@ -1,9 +1,9 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.23 2001/02/23 07:19:49 jgg Exp $
+// $Id: ftp.cc,v 1.24 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
-   HTTP Aquire Method - This is the FTP aquire method for APT.
+   FTP Aquire Method - This is the FTP aquire method for APT.
 
    This is a very simple implementation that does not try to optimize
    at all. Commands are sent syncronously with the FTP server (as the
@@ -18,7 +18,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/md5.h>
+#include <apt-pkg/hashes.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -825,7 +825,7 @@ bool FTPConn::Finalize()
 /* This opens a data connection, sends REST and RETR and then
    transfers the file over. */
 bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
-		  MD5Summation &MD5,bool &Missing)
+		  Hashes &Hash,bool &Missing)
 {
    Missing = false;
    if (CreateDataFd() == false)
@@ -849,7 +849,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    
    if (Resume != 0)
    {
-      if (MD5.AddFD(To.Fd(),Resume) == false)
+      if (Hash.AddFD(To.Fd(),Resume) == false)
       {
 	 _error->Errno("read","Problem hashing file");
 	 return false;
@@ -893,7 +893,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
 	 break;
       }
    
-      MD5.Add(Buffer,Res);
+      Hash.Add(Buffer,Res);
       if (To.Write(Buffer,Res) == false)
       {
 	 Close();
@@ -1022,7 +1022,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    }
    
    // Open the file
-   MD5Summation MD5;
+   Hashes Hash;
    {
       FileFd Fd(Itm->DestFile,FileFd::WriteAny);
       if (_error->PendingError() == true)
@@ -1035,7 +1035,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       FailFd = Fd.Fd();
       
       bool Missing;
-      if (Server->Get(File,Fd,Res.ResumePoint,MD5,Missing) == false)
+      if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing) == false)
       {
 	 Fd.Close();
 	 
@@ -1056,7 +1056,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    }
    
    Res.LastModified = FailTime;
-   Res.MD5Sum = MD5.Result();
+   Res.MD5Sum = Hash.MD5.Result();
    
    // Timestamp
    struct utimbuf UBuf;

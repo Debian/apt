@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: http.h,v 1.9 2001/02/20 07:03:18 jgg Exp $
-// $Id: http.h,v 1.9 2001/02/20 07:03:18 jgg Exp $
+// Description								/*{{{*/// $Id: http.h,v 1.10 2001/03/06 07:15:29 jgg Exp $
+// $Id: http.h,v 1.10 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -46,7 +46,7 @@ class CircleBuf
    
    public:
    
-   MD5Summation *MD5;
+   Hashes *Hash;
    
    // Read data in
    bool Read(int Fd);

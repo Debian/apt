@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: rsh.h,v 1.2 2001/02/20 07:03:18 jgg Exp $
-// $Id: rsh.h,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// Description								/*{{{*/// $Id: rsh.h,v 1.3 2001/03/06 07:15:29 jgg Exp $
+// $Id: rsh.h,v 1.3 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
    RSH method - Transfer files via rsh compatible program
@@ -12,7 +12,7 @@
 
 #include <string>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/md5.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/fileutl.h>
 
@@ -44,7 +44,7 @@ class RSHConn
    bool Size(const char *Path,unsigned long &Size);
    bool ModTime(const char *Path, time_t &Time);
    bool Get(const char *Path,FileFd &To,unsigned long Resume,
-            MD5Summation &MD5,bool &Missing, unsigned long Size);
+            Hashes &Hash,bool &Missing, unsigned long Size);
 
    RSHConn(URI Srv);
    ~RSHConn();

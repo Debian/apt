@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rsh.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: rsh.cc,v 1.3 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
    RSH method - Transfer files via rsh compatible program
@@ -271,7 +271,7 @@ bool RSHConn::ModTime(const char *Path, time_t &Time)
 // ---------------------------------------------------------------------
 /* */
 bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
-                  MD5Summation &MD5,bool &Missing, unsigned long Size)
+                  Hashes &Hash,bool &Missing, unsigned long Size)
 {
    Missing = false;
 
@@ -284,7 +284,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
       return false;
 
    if (Resume != 0) {
-      if (MD5.AddFD(To.Fd(),Resume) == false) {
+      if (Hash.AddFD(To.Fd(),Resume) == false) {
 	 _error->Errno("read","Problem hashing file");
 	 return false;
       }
@@ -323,7 +323,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
       }
       MyLen += Res;
 
-      MD5.Add(Buffer,Res);
+      Hash.Add(Buffer,Res);
       if (To.Write(Buffer,Res) == false)
       {
          Close();
@@ -428,7 +428,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    }
 
    // Open the file
-   MD5Summation MD5;
+   Hashes Hash;
    {
       FileFd Fd(Itm->DestFile,FileFd::WriteAny);
       if (_error->PendingError() == true)
@@ -441,7 +441,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
       FailFd = Fd.Fd();
 
       bool Missing;
-      if (Server->Get(File,Fd,Res.ResumePoint,MD5,Missing,Res.Size) == false)
+      if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing,Res.Size) == false)
       {
 	 Fd.Close();
 
@@ -462,7 +462,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    }
 
    Res.LastModified = FailTime;
-   Res.MD5Sum = MD5.Result();
+   Res.MD5Sum = Hash.MD5.Result();
 
    // Timestamp
    struct utimbuf UBuf;

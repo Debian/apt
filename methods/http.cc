@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.49 2001/02/23 07:19:49 jgg Exp $
+// $Id: http.cc,v 1.50 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -28,7 +28,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/md5.h>
+#include <apt-pkg/hashes.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -57,7 +57,7 @@ bool Debug = false;
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CircleBuf::CircleBuf(unsigned long Size) : Size(Size), MD5(0)
+CircleBuf::CircleBuf(unsigned long Size) : Size(Size), Hash(0)
 {
    Buf = new unsigned char[Size];
    Reset();
@@ -73,10 +73,10 @@ void CircleBuf::Reset()
    StrPos = 0;
    MaxGet = (unsigned int)-1;
    OutQueue = string();
-   if (MD5 != 0)
+   if (Hash != 0)
    {
-      delete MD5;
-      MD5 = new MD5Summation;
+      delete Hash;
+      Hash = new Hashes;
    }   
 };
 									/*}}}*/
@@ -182,8 +182,8 @@ bool CircleBuf::Write(int Fd)
 	 return false;
       }
       
-      if (MD5 != 0)
-	 MD5->Add(Buf + (OutP%Size),Res);
+      if (Hash != 0)
+	 Hash->Add(Buf + (OutP%Size),Res);
       
       OutP += Res;
    }
@@ -892,14 +892,14 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    // Set the start point
    lseek(File->Fd(),0,SEEK_END);
 
-   delete Srv->In.MD5;
-   Srv->In.MD5 = new MD5Summation;
+   delete Srv->In.Hash;
+   Srv->In.Hash = new Hashes;
    
-   // Fill the MD5 Hash if the file is non-empty (resume)
+   // Fill the Hash if the file is non-empty (resume)
    if (Srv->StartPos > 0)
    {
       lseek(File->Fd(),0,SEEK_SET);
-      if (Srv->In.MD5->AddFD(File->Fd(),Srv->StartPos) == false)
+      if (Srv->In.Hash->AddFD(File->Fd(),Srv->StartPos) == false)
       {
 	 _error->Errno("read","Problem hashing file");
 	 return 5;
@@ -1109,7 +1109,7 @@ int HttpMethod::Loop()
 	    // Send status to APT
 	    if (Result == true)
 	    {
-	       Res.MD5Sum = Server->In.MD5->Result();	       
+	       Res.MD5Sum = Server->In.Hash->MD5.Result();	       
 	       URIDone(Res);
 	    }
 	    else
