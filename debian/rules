@@ -223,7 +223,7 @@ apt: build debian/shlibs.local
 	dh_fixperms -p$@
 	dh_makeshlibs -p$@ -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)'
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt-utils
+	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@

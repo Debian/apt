@@ -137,7 +137,7 @@ void pkgAcquire::Item::Rename(string From,string To)
    instantiated to fetch the revision file */   
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
-			 string ExpectedMD5) :
+			 string ExpectedMD5, string comprExt) :
    Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5)
 {
    Decompression = false;
@@ -146,11 +146,17 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
-   // Create the item
-   if(FileExists("/usr/bin/bzip2"))
-      Desc.URI = URI + ".bz2"; 
-   else
-      Desc.URI = URI + ".gz"; 
+   if(comprExt.empty()) 
+   {
+      // autoselect 
+      if(FileExists("/usr/bin/bzip2"))
+	 Desc.URI = URI + ".bz2"; 
+      else
+	 Desc.URI = URI + ".gz"; 
+   } else {
+      Desc.URI = URI + comprExt; 
+   }
+
    Desc.Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
@@ -179,7 +185,13 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    // no .bz2 found, retry with .gz
    if(Desc.URI.substr(Desc.URI.size()-3,Desc.URI.size()-1) == "bz2") {
       Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz"; 
-      QueueURI(Desc);
+
+      // retry with a gzip one 
+      new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc, 
+		      ExpectedMD5, string(".gz"));
+      Status = StatDone;
+      Complete = false;
+      Dequeue();
       return;
    }
 

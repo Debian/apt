@@ -103,7 +103,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    virtual string DescURI() {return RealURI + ".gz";};
 
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
-	       string ShortDesct, string ExpectedMD5);
+	       string ShortDesct, string ExpectedMD5, string compressExt="");
 };
 
 struct IndexTarget
