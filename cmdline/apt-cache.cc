@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.69 2003/12/20 22:56:14 mdz Exp $
+// $Id: apt-cache.cc,v 1.70 2004/01/04 07:41:52 mdz Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -37,6 +37,8 @@
 #include <errno.h>
 #include <regex.h>
 #include <stdio.h>
+
+#include <iomanip>
 									/*}}}*/
 
 using namespace std;
@@ -1560,6 +1562,70 @@ bool Policy(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// Madison - Look a bit like katie's madison				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Madison(CommandLine &CmdL)
+{
+   if (SrcList == 0)
+      return _error->Error("Generate must be enabled for this function");
+
+   SrcList->ReadMainList();
+
+   pkgCache &Cache = *GCache;
+
+   // Create the text record parsers
+   pkgSrcRecords SrcRecs(*SrcList);
+   if (_error->PendingError() == true)
+      return false;
+
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+
+      if (Pkg.end() == false)
+      {
+         for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; V++)
+         {
+            for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; VF++)
+            {
+               if (VF.File().Archive() != 0)
+               {
+                  cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
+                       << VF.File().Archive() << endl;
+               }
+               else
+               {
+                  // Locate the associated index files so we can derive a description
+                  for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); S++)
+                  {
+                     if ((*S)->FindInCache(*(VF.File().Cache())) == VF.File())
+                     {
+                        cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
+                             << (*S)->Describe(true) << endl;
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      
+      SrcRecs.Restart();
+      pkgSrcRecords::Parser *SrcParser;
+      while ((SrcParser = SrcRecs.Find(*I,false)) != 0)
+      {
+         // Maybe support Release info here too eventually
+         cout << setw(10) << SrcParser->Package() << " | "
+              << setw(10) << SrcParser->Version() << " | "
+              << SrcParser->Index().Describe(true) << endl;
+      }
+   }
+
+   return true;
+}
+
+									/*}}}*/
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1670,6 +1736,7 @@ int main(int argc,const char *argv[])
                                     {"show",&ShowPackage},
                                     {"pkgnames",&ShowPkgNames},
                                     {"policy",&Policy},
+                                    {"madison",&Madison},
                                     {0,0}};
 
    CacheInitialize();
