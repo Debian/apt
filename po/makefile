@@ -27,7 +27,7 @@ GETDOMAIN = $(filter $(DOMAINS),$(subst /, ,$(1)))
 # Generate the list of files from the bits the other make files dropped 
 # and produce the .pot file.
 $(POTFILES) : $(PO)/%.pot : 
-	echo Generating POT file $@
+	printf "%s " "Generating POT file $@"
 	echo $@ : $(wildcard $(PO)/domains/$*/*.*list) $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/$*/*.srclist))) > $@.d
 # From sh source
 	cat $(PO)/domains/$*/*.shlist 2> /dev/null | (cd $(BASE) && xargs -n1 bash --dump-po-strings) > $(PO)/domains/$*/sh.pot
@@ -47,12 +47,12 @@ $(PO)/$(PACKAGE)-all.pot: $(POTFILES)
 # We cannot express the dependencies required for this directly with a pattern
 # rule, so we use the .d hack.
 $(LANG_POFILES) : %.po : $(PO)/$(PACKAGE)-all.pot
-	echo Generating $@
+	printf "%s " "Generating $@"
 	echo $@ : $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot > $(PO)/$(call GETDOMAIN,$*)_$(notdir $@).d
 	$(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
 
 $(MOFILES) : %.mo : %.po
-	echo Generating $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo
+	printf "%s: " "Generating $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo"
 	$(GMSGFMT) --statistics -o $@ $<
 	mkdir -p $(LOCALE)/$(notdir $*)/LC_MESSAGES/
 	cp $@ $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo
@@ -68,3 +68,5 @@ The_DFiles = $(wildcard $(PO)/*.d)
 ifneq ($(words $(The_DFiles)),0)
 include $(The_DFiles)
 endif
+
+.NOTPARALLEL:
