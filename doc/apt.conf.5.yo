@@ -137,7 +137,7 @@ outstanding requests APT should send.
 
 dit(bf(ftp))
 FTP URis; ftp::Proxy is the default proxy server to use. It is in the 
-standard form of em(http://[[user][:pass]@]host[:port]/) and is overriden
+standard form of em(ftp://[[user][:pass]@]host[:port]/) and is overriden
 by the ftp_proxy environment variable. To use a ftp proxy you will have to
 set the ftp::ProxyLogin script in the configuration file. This entry 
 specifies the commands to send to tell the proxy server what to connect
@@ -151,6 +151,11 @@ to leave passive mode on, it works in nearly every environment. However some
 situations require that passive mode be disabled and port mode ftp used
 instead. This can be done globally, for connections that go through a proxy
 or for a specific host (See the sample config file for examples)
+
+It is possible to proxy FTP over HTTP by setting the em(ftp_proxy)
+environment variable to a http url - see the discussion of the http method
+above for syntax. You cannot set this in the configuration file and it is
+not recommended to use FTP over HTTP due to its low efficiency.
 
 dit(bf(cdrom))
 CDROM URIs; the only setting for CDROM URIs is the mount point, cdrom::Mount

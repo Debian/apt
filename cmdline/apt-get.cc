@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.90 1999/11/26 00:05:55 jgg Exp $
+// $Id: apt-get.cc,v 1.91 1999/11/28 01:03:28 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -617,6 +617,15 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       c1out << SizeToStr(DebBytes) << 'B';
       
    c1out << " of archives. After unpacking ";
+   
+   // Size delta
+   if (Cache->UsrSize() >= 0)
+      c1out << SizeToStr(Cache->UsrSize()) << "B will be used." << endl;
+   else
+      c1out << SizeToStr(-1*Cache->UsrSize()) << "B will be freed." << endl;
+
+   if (_error->PendingError() == true)
+      return false;
 
    // Check for enough free space
    struct statfs Buf;
@@ -627,15 +636,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
       return _error->Error("Sorry, you don't have enough free space in %s to hold all the .debs.",
 			   OutputDir.c_str());
-   
-   // Size delta
-   if (Cache->UsrSize() >= 0)
-      c1out << SizeToStr(Cache->UsrSize()) << "B will be used." << endl;
-   else
-      c1out << SizeToStr(-1*Cache->UsrSize()) << "B will be freed." << endl;
-
-   if (_error->PendingError() == true)
-      return false;
 
    // Fail safe check
    if (_config->FindI("quiet",0) >= 2 ||
@@ -779,7 +779,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
        Pkg.ProvidesList()->NextProvides == 0)
    {
       pkgCache::PkgIterator Tmp = Pkg.ProvidesList().OwnerPkg();
-      c1out << "Note, installing " << Tmp.Name() << " instead of " << Pkg.Name() << endl;
+      c1out << "Note, selecting " << Tmp.Name() << " instead of " << Pkg.Name() << endl;
       Pkg = Tmp;
    }
    
@@ -795,7 +795,11 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    // Check if there is something at all to install
    pkgDepCache::StateCache &State = Cache[Pkg];
    if (Remove == true && Pkg->CurrentVer == 0)
+   {
+      if (AllowFail == false)
+	 return false;
       return _error->Error("Package %s is not installed",Pkg.Name());
+   }
    
    if (State.CandidateVer == 0 && Remove == false)
    {
