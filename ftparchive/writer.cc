@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.5 2002/04/24 05:02:40 jgg Exp $
+// $Id: writer.cc,v 1.6 2002/11/11 04:27:51 doogie Exp $
 /* ######################################################################
 
    Writer 
@@ -118,9 +118,9 @@ int FTWScanner::Scanner(const char *File,const struct stat *sb,int Flag)
 	 
 	 bool Type = _error->PopMessage(Err);
 	 if (Type == true)
-	    c1out << "E: " << Err << endl;
+	    cerr << "E: " << Err << endl;
 	 else
-	    c1out << "W: " << Err << endl;
+	    cerr << "W: " << Err << endl;
 	 
 	 if (Err.find(File) != string::npos)
 	    SeenPath = true;

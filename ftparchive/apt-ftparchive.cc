@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.4 2001/06/26 02:50:27 jgg Exp $
+// $Id: apt-ftparchive.cc,v 1.5 2002/11/11 04:27:51 doogie Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -910,9 +910,9 @@ int main(int argc, const char *argv[])
    }
    
    // Setup the output streams
-   c0out.rdbuf(cout.rdbuf());
-   c1out.rdbuf(cout.rdbuf());
-   c2out.rdbuf(cout.rdbuf());
+   c0out.rdbuf(clog.rdbuf());
+   c1out.rdbuf(clog.rdbuf());
+   c2out.rdbuf(clog.rdbuf());
    Quiet = _config->FindI("quiet",0);
    if (Quiet > 0)
       c0out.rdbuf(devnull.rdbuf());
