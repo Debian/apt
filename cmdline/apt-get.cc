@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.52 1999/04/18 06:36:36 jgg Exp $
+// $Id: apt-get.cc,v 1.53 1999/04/18 06:51:09 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -162,7 +162,7 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 	       out << ' ';
 	 First = false;
 
-	 cout << ' ' << End.DepType() << ": " << End.TargetPkg().Name();
+	 out << ' ' << End.DepType() << ": " << End.TargetPkg().Name();
 	 
 	 // Show a quick summary of the version requirements
 	 if (End.TargetVer() != 0)
@@ -680,7 +680,7 @@ bool DoUpdate(CommandLine &)
    
    // Prepare the cache.   
    CacheFile Cache;
-   if (Cache.Open() == false || Cache.CheckDeps() == false)
+   if (Cache.Open() == false)
       return false;
    
    return true;
