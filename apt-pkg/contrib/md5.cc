@@ -1,25 +1,23 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.2 1998/11/01 05:27:36 jgg Exp $
+// $Id: md5.cc,v 1.3 1999/08/02 03:07:47 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
 
-   This code implements the MD5 message-digest algorithm.
-   The algorithm is due to Ron Rivest.  This code was
-   written by Colin Plumb in 1993, no copyright is claimed.
-   This code is in the public domain; do with it what you wish.
+   This code implements the MD5 message-digest algorithm. The algorithm is 
+   due to Ron Rivest.  This code was written by Colin Plumb in 1993, no 
+   copyright is claimed. This code is in the public domain; do with it what 
+   you wish.
  
-   Equivalent code is available from RSA Data Security, Inc.
-   This code has been tested against that, and is equivalent,
-   except that you don't need to include two pages of legalese
-   with every copy.
- 
-   To compute the message digest of a chunk of bytes, declare an
-   MD5Context structure, pass it to MD5Init, call MD5Update as
-   needed on buffers full of bytes, and then call MD5Final, which
-   will fill a supplied 16-byte array with the digest.
- 
+   Equivalent code is available from RSA Data Security, Inc. This code has 
+   been tested against that, and is equivalent, except that you don't need to 
+   include two pages of legalese with every copy.
+
+   To compute the message digest of a chunk of bytes, instantiate the class,
+   and repeatedly call one of the Add() members. When finished the Result 
+   method will return the Hash and finalize the value.
+   
    Changed so as no longer to depend on Colin Plumb's `usual.h' header
    definitions; now uses stuff from dpkg's config.h.
     - Ian Jackson <ijackson@nyx.cs.du.edu>.
@@ -33,9 +31,6 @@
    arrays to UINT32's and go from there. This allows us to advoid using
    config.h in a public header or internally newing memory. 
    
-   Some of the terms may be quite bogus, I don't really know the details of
-   MD5, just converted the code ;> - JGG
-   
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -44,6 +39,8 @@
 #endif
 
 #include <apt-pkg/md5.h>
+#include <apt-pkg/strutl.h>
+
 #include <string.h>
 #include <system.h>
 #include <unistd.h>
@@ -72,7 +69,7 @@ static void byteSwap(UINT32 *buf, unsigned words)
 // MD5Transform - Alters an existing MD5 hash				/*{{{*/
 // ---------------------------------------------------------------------
 /* The core of the MD5 algorithm, this alters an existing MD5 hash to
-   reflect the addition of 16 longwords of new data.  MD5Update blocks
+   reflect the addition of 16 longwords of new data. Add blocks
    the data and converts bytes into longwords for this routine. */
 
 // The four core functions - F1 is optimized somewhat
@@ -169,22 +166,6 @@ static void MD5Transform(UINT32 buf[4], UINT32 const in[16])
    buf[3] += d;
 }
 									/*}}}*/
-// hex_digit - Convert a hex character into an integer			/*{{{*/
-// ---------------------------------------------------------------------
-/* The original version of this could only handle lower case. These routines
-   do output to lowercase hex but can handle upper okay as well.*/
-static int hex_digit(int c)
-{
-   
-   if (c >= '0' && c <= '9')
-      return c - '0';
-   if (c >= 'a' && c <= 'f')
-      return c - 'a' + 10;
-   if (c >= 'A' && c <= 'F')
-      return c - 'A' + 10;
-   return 0;
-}
-									/*}}}*/
 // MD5SumValue::MD5SumValue - Constructs the summation from a string	/*{{{*/
 // ---------------------------------------------------------------------
 /* The string form of a MD5 is a 32 character hex number */
@@ -206,26 +187,8 @@ MD5SumValue::MD5SumValue()
 // ---------------------------------------------------------------------
 /* Converts the hex string into a set of chars */
 bool MD5SumValue::Set(string Str)
-{   
-   // Check for correct length
-   if (Str.length() != 32)
-      return false;
-   
-   // Check for only hex digits
-   const char *I = Str.begin();
-   for (;I != Str.end(); I++)
-      if (isxdigit(*I) == 0)
-	 return false;
-
-   // Convert each digit. We store it in the same order as the string
-   int J = 0;
-   for (I = Str.begin(); I != Str.end();J++, I += 2)
-   {
-      Sum[J] = hex_digit(I[0]) << 4;
-      Sum[J] += hex_digit(I[1]);
-   }   
-
-   return true;
+{
+   return Hex2Num(Str.begin(),Str.end(),Sum,sizeof(Sum));
 }
 									/*}}}*/
 // MD5SumValue::Value - Convert the number into a string		/*{{{*/
@@ -252,7 +215,7 @@ string MD5SumValue::Value() const
 									/*}}}*/
 // MD5SumValue::operator == - Comparitor				/*{{{*/
 // ---------------------------------------------------------------------
-/* Call memcmp  on the buffer */
+/* Call memcmp on the buffer */
 bool MD5SumValue::operator ==(const MD5SumValue &rhs) const
 {
    return memcmp(Sum,rhs.Sum,sizeof(Sum)) == 0;
@@ -276,7 +239,7 @@ MD5Summation::MD5Summation()
    Done = false;
 }
 									/*}}}*/
-// MD5Summation::Add - 'Add' a data set to the sum			/*{{{*/
+// MD5Summation::Add - 'Add' a data set to the hash			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool MD5Summation::Add(const unsigned char *data,unsigned long len)
@@ -293,7 +256,7 @@ bool MD5Summation::Add(const unsigned char *data,unsigned long len)
    if ((bytes[0] = t + len) < t)
       bytes[1]++;	
 
-   // Space available in ctx->in (at least 1)
+   // Space available (at least 1)
    t = 64 - (t & 0x3f);	
    if (t > len) 
    {

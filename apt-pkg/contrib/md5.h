@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.h,v 1.3 1999/01/18 06:20:08 jgg Exp $
+// $Id: md5.h,v 1.4 1999/08/02 03:07:47 jgg Exp $
 /* ######################################################################
    
    MD5SumValue - Storage for a MD5Sum
@@ -11,6 +11,8 @@
    
    A MD5Sum is used to generate a (hopefully) unique 16 byte number for a
    block of data. This can be used to gaurd against corruption of a file.
+   MD5 should not be used for tamper protection, use SHA or something more
+   secure.
    
    There are two classes because computing a MD5 is not a continual 
    operation unless 64 byte blocks are used. Also the summation requires an

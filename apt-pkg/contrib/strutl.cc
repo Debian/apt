@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.27 1999/07/26 17:46:08 jgg Exp $
+// $Id: strutl.cc,v 1.28 1999/08/02 03:07:48 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -689,6 +689,43 @@ bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base)
    Res = strtoul(S,&End,Base);
    if (End == S)
       return false;
+   
+   return true;
+}
+									/*}}}*/
+// HexDigit - Convert a hex character into an integer			/*{{{*/
+// ---------------------------------------------------------------------
+/* Helper for Hex2Num */
+static int HexDigit(int c)
+{   
+   if (c >= '0' && c <= '9')
+      return c - '0';
+   if (c >= 'a' && c <= 'f')
+      return c - 'a' + 10;
+   if (c >= 'A' && c <= 'F')
+      return c - 'A' + 10;
+   return 0;
+}
+									/*}}}*/
+// Hex2Num - Convert a long hex number into a buffer			/*{{{*/
+// ---------------------------------------------------------------------
+/* The length of the buffer must be exactly 1/2 the length of the string. */
+bool Hex2Num(const char *Start,const char *End,unsigned char *Num,
+	     unsigned int Length)
+{
+   if (End - Start != Length*2)
+      return false;
+   
+   // Convert each digit. We store it in the same order as the string
+   int J = 0;
+   for (const char *I = Start; I < End;J++, I += 2)
+   {
+      if (isxdigit(*I) == 0 || isxdigit(I[1]) == 0)
+	 return false;
+      
+      Num[J] = HexDigit(I[0]) << 4;
+      Num[J] += HexDigit(I[1]);
+   }
    
    return true;
 }

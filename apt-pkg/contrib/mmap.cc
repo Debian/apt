@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.16 1999/07/18 05:58:40 jgg Exp $
+// $Id: mmap.cc,v 1.17 1999/08/02 03:07:47 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -269,7 +269,7 @@ unsigned long DynamicMMap::WriteString(const char *String,
       return 0;
    }   
    
-   if (Len == 0)
+   if (Len == (unsigned long)-1)
       Len = strlen(String);
    iSize += Len + 1;
    memcpy((char *)Base + Result,String,Len);
