@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.9 1998/11/11 06:54:13 jgg Exp $
+// $Id: acquire-item.cc,v 1.10 1998/11/12 04:10:52 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -168,13 +168,14 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
       FinalFile += URItoFileName(Location->PackagesURI());
       Rename(DestFile,FinalFile);
       
+      /* We restore the original name to DestFile so that the clean operation
+         will work OK */
+      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+      DestFile += URItoFileName(Location->PackagesURI());
+      
       // Remove the compressed version.
       if (Erase == true)
-      {
-	 DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-	 DestFile += URItoFileName(Location->PackagesURI());
 	 unlink(DestFile.c_str());
-      }      
       return;
    }
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.13 1998/11/11 23:45:08 jgg Exp $
+// $Id: acquire.cc,v 1.14 1998/11/12 04:10:54 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -23,6 +23,7 @@
 #include <apt-pkg/error.h>
 #include <strutl.h>
 
+#include <dirent.h>
 #include <sys/time.h>
 									/*}}}*/
 
@@ -343,7 +344,48 @@ pkgAcquire::Worker *pkgAcquire::WorkerStep(Worker *I)
    return I->NextAcquire;
 };
 									/*}}}*/
-
+// pkgAcquire::Clean - Cleans a directory				/*{{{*/
+// ---------------------------------------------------------------------
+/* This is a bit simplistic, it looks at every file in the dir and sees
+   if it is part of the download set. */
+bool pkgAcquire::Clean(string Dir)
+{
+   DIR *D = opendir(Dir.c_str());   
+   if (D == 0)
+      return _error->Errno("opendir","Unable to read %s",Dir.c_str());
+   
+   string StartDir = SafeGetCWD();
+   if (chdir(Dir.c_str()) != 0)
+   {
+      closedir(D);
+      return _error->Errno("chdir","Unable to change to ",Dir.c_str());
+   }
+   
+   for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
+   {
+      // Skip some files..
+      if (strcmp(Dir->d_name,"lock") == 0 ||
+	  strcmp(Dir->d_name,"partial") == 0 ||
+	  strcmp(Dir->d_name,".") == 0 ||
+	  strcmp(Dir->d_name,"..") == 0)
+	 continue;
+      
+      // Look in the get list
+      vector<Item *>::iterator I = Items.begin();
+      for (; I != Items.end(); I++)
+	 if (flNotDir((*I)->DestFile) == Dir->d_name)
+	    break;
+      
+      // Nothing found, nuke it
+      if (I == Items.end())
+	 unlink(Dir->d_name);
+   };
+   
+   chdir(StartDir.c_str());
+   closedir(D);
+   return true;   
+}
+									/*}}}*/
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

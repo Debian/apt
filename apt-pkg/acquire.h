@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.10 1998/11/11 06:54:17 jgg Exp $
+// $Id: acquire.h,v 1.11 1998/11/12 04:10:55 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -98,6 +98,9 @@ class pkgAcquire
    Worker *WorkerStep(Worker *I);
    inline Item **ItemsBegin() {return Items.begin();};
    inline Item **ItemsEnd() {return Items.end();};
+
+   // Cleans out the download dir
+   bool Clean(string Dir);
    
    pkgAcquire(pkgAcquireStatus *Log = 0);
    ~pkgAcquire();

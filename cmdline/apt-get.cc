@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.6 1998/11/11 23:45:56 jgg Exp $
+// $Id: apt-get.cc,v 1.7 1998/11/12 04:10:56 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -472,6 +472,11 @@ bool DoUpdate(CommandLine &)
    if (Fetcher.Run() == false)
       return false;
 
+   // Clean out any old list files
+   if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
+       Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
+      return false;
+   
    // Prepare the cache.   
    CacheFile Cache;
    if (Cache.Open() == false)
