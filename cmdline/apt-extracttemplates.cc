@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.10 2002/02/25 03:52:58 tausq Exp $
+// $Id: apt-extracttemplates.cc,v 1.11 2002/09/21 21:29:13 jgg Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -288,6 +288,8 @@ bool Go(CommandLine &CmdL)
 	List.ReadMainList();
 	OpProgress Prog;
 	pkgMakeStatusCache(List,Prog,&Map,true);
+	if (Map == 0)
+	   return false;
 	DebFile::Cache = new pkgCache(Map);
 	if (_error->PendingError() == true)
 		return false;
@@ -303,8 +305,11 @@ bool Go(CommandLine &CmdL)
 		// Will pick up the errors later..
 		DebFile file(CmdL.FileList[I]);
 		if (file.Go() == false)
-			continue; 
-		
+		{
+		        _error->Error("Prior errors apply to %s",CmdL.FileList[I]);
+			continue;
+		}
+
 		// Does the package have templates?
 		if (file.Template != 0 && file.ParseInfo() == true)
 		{
