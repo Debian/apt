@@ -2390,7 +2390,7 @@ bool ShowHelp(CommandLine &CmdL)
       "  -b  Build the source package after fetching it\n"
       "  -V  Show verbose version numbers\n"
       "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
       "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
       "pages for more information and options.\n"
       "                       This APT has Super Cow Powers.\n");

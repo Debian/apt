@@ -238,7 +238,7 @@ int ShowHelp(void)
 	        "  -h   This help text\n"
 		"  -t   Set the temp dir\n"
 		"  -c=? Read this configuration file\n"
-		"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n");
+		"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
 	return 0;
 }
 									/*}}}*/
