@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.2 2001/02/25 04:53:59 tausq Exp $
+// $Id: apt-extracttemplates.cc,v 1.3 2001/02/25 05:25:29 tausq Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -14,10 +14,8 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/init.h>
-#if APT_PKG_MAJOR >= 3
-#define APT_COMPATIBILITY 986
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/debversion.h>
-#endif
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/progress.h>
@@ -35,8 +33,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#define _GNU_SOURCE
-#include <getopt.h>
 #include <wait.h>
 #include <fstream.h>
 
@@ -229,6 +225,8 @@ void ShowHelp(void)
    	ioprintf(cout,_("%s %s for %s %s compiled on %s %s\n"),PACKAGE,VERSION,
 	    COMMON_OS,COMMON_CPU,__DATE__,__TIME__);
 
+	if (_config->FindB("version") == true) return;
+
 	fprintf(stderr, 
 		_("Usage: apt-extracttemplates file1 [file2 ...]\n"
 		"\n"
@@ -244,7 +242,7 @@ char *WriteFile(const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
-	snprintf(fn, sizeof(fn), "%s%s.%u%d", TMPDIR, prefix, getpid(), i++);
+	snprintf(fn, sizeof(fn), "%s%s.%u%d", _config->Find("APT::ExtractTemplates::TempDir", TMPDIR).c_str(), prefix, getpid(), i++);
 
 	ofstream ofs(fn);
 	if (!ofs) return NULL;
@@ -293,19 +291,39 @@ int InitCache(MMap *&Map, pkgCache *&Cache)
 }
 									/*}}}*/
 
-int main(int argc, char **argv, char **env)
+int main(int argc, const char **argv)
 {
-	int idx = 0;
-	char **debs = 0;
-	int numdebs = 0;
 	MMap *Map = 0;
 	const char *debconfver = NULL;
 
+	CommandLine::Args Args[] = {
+		{'h',"help","help",0},
+		{'v',"version","version",0},
+		{'t',"tempdir","APT::ExtractTemplates::TempDir",CommandLine::HasArg},
+		{'c',"config-file",0,CommandLine::ConfigFile},
+		{'o',"option",0,CommandLine::ArbItem},
+		{0,0,0,0}};
+	
 	// Initialize the package cache
 	if (InitCache(Map, DebFile::Cache) < 0 || Map == 0 || DebFile::Cache == 0)
 	{
 		fprintf(stderr, _("Cannot initialize APT cache\n"));
 		return 100;
+	}
+
+	// Parse the command line
+	CommandLine CmdL(Args,_config);
+	if (CmdL.Parse(argc,argv) == false)
+	{
+		fprintf(stderr, _("Cannot parse commandline options\n"));
+		return 100;
+	}
+
+	// See if the help should be shown
+	if (_config->FindB("help") == true || CmdL.FileSize() == 0)
+	{
+		ShowHelp();
+		return 0;
 	}
 
 	// Find out what version of debconf is currently installed
@@ -316,18 +334,12 @@ int main(int argc, char **argv, char **env)
 	}
 
 	// Process each package passsed in
-	numdebs = argc - 1;
-	debs = new char *[numdebs];
-	memcpy(debs, &argv[1], sizeof(char *) * numdebs);
-
-	if (numdebs < 1) ShowHelp();
-
-	for (idx = 0; idx < numdebs; idx++)
+	for (unsigned int I = 0; I != CmdL.FileSize(); I++)
 	{
-		DebFile file(debs[idx]);
+		DebFile file(CmdL.FileList[I]);
 		if (file.Go() == false) 
 		{
-			fprintf(stderr, _("Cannot read %s\n"), debs[idx]);
+			fprintf(stderr, _("Cannot read %s\n"), CmdL.FileList[I]);
 			continue;
 		}
 		// Does the package have templates?
@@ -336,12 +348,12 @@ int main(int argc, char **argv, char **env)
 			// Check to make sure debconf dependencies are
 			// satisfied
 			if (file.DepVer != "" &&
-			    pkgCheckDep(file.DepVer.c_str(), 
-			                debconfver, file.DepOp) == false) 
+			    DebFile::Cache->VS->CheckDep(file.DepVer.c_str(), 
+			                file.DepOp, debconfver) == false) 
 				continue;
 			if (file.PreDepVer != "" &&
-			    pkgCheckDep(file.PreDepVer.c_str(), 
-			                debconfver, file.PreDepOp) == false) 
+			    DebFile::Cache->VS->CheckDep(file.PreDepVer.c_str(), 
+			                file.PreDepOp, debconfver) == false) 
 				continue;
 
 			WriteConfig(file);

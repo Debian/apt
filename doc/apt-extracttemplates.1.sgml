@@ -24,6 +24,8 @@
  <refsynopsisdiv>
    <cmdsynopsis>
       <command>apt-extracttemplate</>
+      <arg><option>-hv</></arg>
+      <arg><option>-t=<replaceable/temporary directory/</></arg>
       <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
    </cmdsynopsis>
  </refsynopsisdiv>
@@ -37,10 +39,28 @@
    in the format:
    <para>
    package version template-file config-script
+   <para>
+   template-file and config-script are written to the temporary directory
+   specified by the -t or --tempdir (<literal/ExtractTemplates::TempDir/>) 
+   directory, with filenames of the form <filename>template.XXXX</> and 
+   <filename>config.XXXX</>
  </RefSect1>
  
  <RefSect1><Title>Options</>
    &apt-cmdblurb;
+
+   <VariableList>
+     <VarListEntry><term><option/-t/</><term><option/--tempdir/</>
+     <ListItem><Para>
+     Temporary directory in which to write extracted debconf template files
+     and config scripts
+     Configuration Item: <literal/ExtractTemplates::TempDir/.
+     </VarListEntry>
+
+     &apt-commonoptions;
+     
+   </VariableList>
+     
    
  </RefSect1>
 
