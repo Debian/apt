@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.11 1999/03/16 00:43:55 jgg Exp $
+// $Id: acqprogress.cc,v 1.12 1999/04/15 02:43:48 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -170,7 +170,7 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
       
       // Add in the short description
       if (I->CurrentItem->Owner->ID != 0)
-	 snprintf(S,End-S," [%x %s",I->CurrentItem->Owner->ID,
+	 snprintf(S,End-S," [%lx %s",I->CurrentItem->Owner->ID,
 		  I->CurrentItem->ShortDesc.c_str());
       else
 	 snprintf(S,End-S," [%s",I->CurrentItem->ShortDesc.c_str());
@@ -185,7 +185,7 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
             
       // Add the current progress
       if (Mode == Long)
-	 snprintf(S,End-S," %u",I->CurrentSize);
+	 snprintf(S,End-S," %lu",I->CurrentSize);
       else
       {
 	 if (Mode == Medium || I->TotalSize == 0)
@@ -197,10 +197,10 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
       if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
       {
 	 if (Mode == Short)
-	    snprintf(S,End-S," %u%%",
+	    snprintf(S,End-S," %lu%%",
 		     long(double(I->CurrentSize*100.0)/double(I->TotalSize)));
 	 else
-	    snprintf(S,End-S,"/%sb %u%%",SizeToStr(I->TotalSize).c_str(),
+	    snprintf(S,End-S,"/%sb %lu%%",SizeToStr(I->TotalSize).c_str(),
 		     long(double(I->CurrentSize*100.0)/double(I->TotalSize)));
       }      
       S += strlen(S);

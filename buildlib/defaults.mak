@@ -36,7 +36,7 @@ endif
 ifdef BUILD
 BUILD_POSSIBLE := $(BUILD) $(BASE)/$(BUILD)
 else
-BUILD_POSSIBLE := $(BASE) $(BASE)/build
+BUILD_POSSIBLE := $(BASE) $(BASE)/build-$(shell uname -m) $(BASE)/build
 endif
 
 BUILDX:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak*))

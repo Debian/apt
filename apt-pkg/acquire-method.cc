@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.18 1999/03/15 08:10:39 jgg Exp $
+// $Id: acquire-method.cc,v 1.19 1999/04/15 02:43:47 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -119,14 +119,14 @@ void pkgAcqMethod::URIStart(FetchResult &Res)
    
    End += snprintf(S,sizeof(S),"200 URI Start\nURI: %s\n",Queue->Uri.c_str());
    if (Res.Size != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Size: %u\n",Res.Size);
+      End += snprintf(End,sizeof(S) - (End - S),"Size: %lu\n",Res.Size);
    
    if (Res.LastModified != 0)
       End += snprintf(End,sizeof(S) - (End - S),"Last-Modified: %s\n",
 		      TimeRFC1123(Res.LastModified).c_str());
    
    if (Res.ResumePoint != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %u\n",
+      End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %lu\n",
 		      Res.ResumePoint);
       
    strcat(End,"\n");
@@ -151,7 +151,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       End += snprintf(End,sizeof(S) - (End - S),"Filename: %s\n",Res.Filename.c_str());
    
    if (Res.Size != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Size: %u\n",Res.Size);
+      End += snprintf(End,sizeof(S) - (End - S),"Size: %lu\n",Res.Size);
    
    if (Res.LastModified != 0)
       End += snprintf(End,sizeof(S) - (End - S),"Last-Modified: %s\n",
@@ -161,7 +161,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       End += snprintf(End,sizeof(S) - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
 
    if (Res.ResumePoint != 0)
-      End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %u\n",
+      End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %lu\n",
 		      Res.ResumePoint);
 
    if (Res.IMSHit == true)
@@ -174,7 +174,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 	 End += snprintf(End,sizeof(S) - (End - S),"Alt-Filename: %s\n",Alt->Filename.c_str());
       
       if (Alt->Size != 0)
-	 End += snprintf(End,sizeof(S) - (End - S),"Alt-Size: %u\n",Alt->Size);
+	 End += snprintf(End,sizeof(S) - (End - S),"Alt-Size: %lu\n",Alt->Size);
       
       if (Alt->LastModified != 0)
 	 End += snprintf(End,sizeof(S) - (End - S),"Alt-Last-Modified: %s\n",
