@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.24 1998/12/05 04:50:27 jgg Exp $
+// $Id: apt-get.cc,v 1.25 1998/12/06 06:22:01 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -592,7 +592,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    if (_config->FindB("APT::Get::Download-Only",false) == true)
       return true;
    
-   if (Failed == true && _config->FindB("APT::Fix-Missing",false) == false)
+   if (Failed == true && _config->FindB("APT::Get::Fix-Missing",false) == false)
    {
       if (Transient == true)
       {
