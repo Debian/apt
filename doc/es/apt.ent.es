@@ -101,7 +101,7 @@ versión 1.3 del CVS de
  <RefSect1><Title>Fallos</>
    <para>
    Vea la <ulink url='http://bugs.debian.org/src:apt'>página de fallos de APT</>.
-   Si desea avisar de un fallos en APT, vea 
+   Si desea avisar de un fallo en APT, vea 
    <filename>/usr/share/doc/debian/bug-reporting.txt</> o la orden  &reportbug;.
  </RefSect1>
 ">
