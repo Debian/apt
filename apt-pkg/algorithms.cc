@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.41 2002/04/26 05:36:20 jgg Exp $
+// $Id: algorithms.cc,v 1.42 2002/11/09 23:10:32 doogie Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -49,17 +49,22 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
 									/*}}}*/
 // Simulate::Describe - Describe a package				/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Parameter Now == true gives both current and available varsion,
+   Parameter Now == false gives only the available package version */
 void pkgSimulate::Describe(PkgIterator Pkg,ostream &out,bool Now)
 {
    VerIterator Ver(Sim);
-   if (Now == true)
-      Ver = Pkg.CurrentVer();
-   else
-      Ver = Sim[Pkg].CandidateVerIter(Sim);
-
+ 
    out << Pkg.Name();
-   
+
+   if (Now == true)
+   {
+      Ver = Pkg.CurrentVer();
+      if (Ver.end() == false)
+         out << " [" << Ver.VerStr() << ']';
+   }
+
+   Ver = Sim[Pkg].CandidateVerIter(Sim);
    if (Ver.end() == true)
       return;
    
@@ -76,7 +81,7 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
    Flags[Pkg->ID] = 1;
    
    cout << "Inst ";
-   Describe(Pkg,cout,false);
+   Describe(Pkg,cout,true);
    Sim.MarkInstall(Pkg,false);
    
    // Look for broken conflicts+predepends.
