@@ -144,7 +144,10 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    DestFile += URItoFileName(URI);
 
    // Create the item
-   Desc.URI = URI + ".bz2"; 
+   if(FileExists("/usr/bin/bzip2"))
+      Desc.URI = URI + ".bz2"; 
+   else
+      Desc.URI = URI + ".gz"; 
    Desc.Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
