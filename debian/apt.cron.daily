@@ -80,6 +80,10 @@ check_size_constraints()
     fi
 }
 
+
+# check cache size first
+check_size_constraints
+
 UpdateInterval=0
 DownloadUpgradeableInterval=0
 eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
@@ -117,6 +121,5 @@ fi
 AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
 if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
     apt-get -qq autoclean
-    check_size_constraints
     update_stamp $AUTOCLEAN_STAMP
 fi
