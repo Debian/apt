@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.15 2002/11/09 17:11:25 doogie Exp $
+// $Id: configuration.h,v 1.16 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    Configuration Class
@@ -91,8 +91,8 @@ class Configuration
    
    inline const Item *Tree(const char *Name) const {return Lookup(Name);};
 
-   inline void Dump() { Dump(clog); };
-   void Dump(ostream& str);
+   inline void Dump() { Dump(std::clog); };
+   void Dump(std::ostream& str);
 
    Configuration(const Item *Root);
    Configuration();

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.13 2002/09/14 05:29:22 jgg Exp $
+// $Id: cmndline.cc,v 1.14 2002/11/11 06:58:55 doogie Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -20,6 +20,7 @@
 
 #include <apti18n.h>    
 									/*}}}*/
+using namespace std;
 
 // CommandLine::CommandLine - Constructor				/*{{{*/
 // ---------------------------------------------------------------------

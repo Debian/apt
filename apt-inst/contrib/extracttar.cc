@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extracttar.cc,v 1.5 2002/03/26 07:38:58 jgg Exp $
+// $Id: extracttar.cc,v 1.6 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    Extract a Tar - Tar Extractor
@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <iostream>
 									/*}}}*/
+using namespace std;
     
 // The on disk header for a tar file.
 struct ExtractTar::TarHeader

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgsystem.h,v 1.5 2002/03/26 07:38:58 jgg Exp $
+// $Id: pkgsystem.h,v 1.6 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -79,7 +79,7 @@ class pkgSystem
    virtual bool ArchiveSupported(const char *Type) = 0;
 
    // Return a list of system index files..
-   virtual bool AddStatusFiles(vector<pkgIndexFile *> &List) = 0;   
+   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) = 0;   
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const = 0;
    

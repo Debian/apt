@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.42 2002/11/09 23:10:32 doogie Exp $
+// $Id: algorithms.cc,v 1.43 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -26,6 +26,7 @@
     
 #include <iostream>
 									/*}}}*/
+using namespace std;
 
 pkgProblemResolver *pkgProblemResolver::This = 0;
 

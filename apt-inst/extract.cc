@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extract.cc,v 1.4 2002/03/26 07:38:57 jgg Exp $
+// $Id: extract.cc,v 1.5 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    Archive Extraction Directory Stream
@@ -58,6 +58,7 @@
 #include <dirent.h>
 #include <iostream>
 									/*}}}*/
+using namespace std;
 
 static const char *TempExt = "dpkg-tmp";
 //static const char *NewExt = "dpkg-new";
