@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.25 1999/02/11 00:03:07 jgg Exp $
+// $Id: apt-cache.cc,v 1.26 1999/02/15 04:48:09 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -329,6 +329,26 @@ bool Dump(CommandLine &Cmd)
    return true;
 }
 									/*}}}*/
+// GetCandidateVer - Returns the Candidate install version		/*{{{*/
+// ---------------------------------------------------------------------
+/* This should really use the DepCache or something.. Copied from there. */
+static pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator Pkg)
+{
+   /* Not source/not automatic versions cannot be a candidate version 
+    unless they are already installed */
+   for (pkgCache::VerIterator I = Pkg.VersionList(); I.end() == false; I++)
+   {
+      if (Pkg.CurrentVer() == I)
+	 return I;
+      for (pkgCache::VerFileIterator J = I.FileList(); J.end() == false; J++)
+	 if ((J.File()->Flags & pkgCache::Flag::NotSource) == 0 &&
+	     (J.File()->Flags & pkgCache::Flag::NotAutomatic) == 0)
+	    return I;
+   }
+   
+   return pkgCache::VerIterator(*GCache,0);
+}
+									/*}}}*/
 // DumpAvail - Print out the available list				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is needed to make dpkg --merge happy */
@@ -359,22 +379,20 @@ bool DumpAvail(CommandLine &Cmd)
          structure to find them */
       for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
       {
-	 for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
+	 // Find the proper version to use. We should probably use the DepCache.
+	 pkgCache::VerIterator V = GetCandidateVer(P);
+
+	 if (V.end() == true || V.FileList().File() != I)
+	    continue;
+	 
+	 // Read the record and then write it out again.
+	 if (PkgF.Seek(V.FileList()->Offset) == false ||
+	     PkgF.Read(Buffer,V.FileList()->Size) == false ||
+	     write(STDOUT_FILENO,Buffer,V.FileList()->Size) != V.FileList()->Size)
 	 {
-	    if (V->FileList == 0)
-	       continue;
-	    if (V.FileList().File() != I)
-	       continue;
-	    
-	    // Read the record and then write it out again.
-	    if (PkgF.Seek(V.FileList()->Offset) == false ||
-		PkgF.Read(Buffer,V.FileList()->Size) == false ||
-		write(STDOUT_FILENO,Buffer,V.FileList()->Size) != V.FileList()->Size)
-	    {
-	       delete [] Buffer;
-	       return false;
-	    }	    
-	 }
+	    delete [] Buffer;
+	    return false;
+	 }	 
       }
    }
    
