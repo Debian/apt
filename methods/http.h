@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.h,v 1.1 1998/11/01 05:30:47 jgg Exp $
+// $Id: http.h,v 1.2 1998/11/01 08:07:14 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -81,10 +81,11 @@ struct ServerState
    unsigned int Result;
    char Code[MAXLEN];
    
-   // These are some statistics from the last parsed get line
+   // These are some statistics from the last parsed header lines
    unsigned long Size;
    signed long StartPos;
    time_t Date;
+   bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;
    enum {Header, Data} State;
    
@@ -100,7 +101,7 @@ struct ServerState
    bool Comp(URI Other) {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
                  Encoding = Closes; time(&Date); ServerFd = -1;};
-   bool RunHeaders();
+   int RunHeaders();
    bool RunData();
    
    bool Open();
@@ -121,7 +122,6 @@ class HttpMethod : public pkgAcqMethod
    public:
    friend ServerState;
 
-   ServerState *Srv;
    int Depth;
    FileFd *File;
    
@@ -130,7 +130,6 @@ class HttpMethod : public pkgAcqMethod
    HttpMethod() : pkgAcqMethod("1.2",SingleInstance | Pipeline | SendConfig) 
    {
       Depth = 0;
-      Srv = 0;
       File = 0;
       Depth = 0;
    };

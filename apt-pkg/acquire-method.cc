@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.2 1998/11/01 05:27:30 jgg Exp $
+// $Id: acquire-method.cc,v 1.3 1998/11/01 08:07:11 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -47,6 +47,8 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
       exit(100);
 
    SetNonBlock(STDIN_FILENO,true);
+   
+   Queue = 0;
 }
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
@@ -220,11 +222,11 @@ int pkgAcqMethod::Run(bool Single)
 	 if (Single == false)
 	    if (WaitFd(STDIN_FILENO) == false)
 	       return 0;
+      
+	 if (ReadMessages(STDIN_FILENO,Messages) == false)
+	    return 0;
       }
-      
-      if (ReadMessages(STDIN_FILENO,Messages) == false)
-	 return 0;
-      
+            
       // Single mode exits if the message queue is empty
       if (Single == true && Messages.empty() == true)
 	 return 0;
@@ -259,8 +261,9 @@ int pkgAcqMethod::Run(bool Single)
 	    
 	    // Append it to the list
 	    FetchItem **I = &Queue;
-	    for (; *I != 0 && (*I)->Next != 0; I = &(*I)->Next);
+	    for (; *I != 0; I = &(*I)->Next);
 	    *I = Tmp;
+	    cout << "GOT " << Tmp->Uri << endl;
 	    
 	    if (Fetch(Tmp) == false)
 	       Fail();
@@ -310,7 +313,7 @@ void pkgAcqMethod::Status(const char *Format,...)
 
    // sprintf the description
    char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S),"101 Log\nURI: %s\n"
+   unsigned int Len = snprintf(S,sizeof(S),"101 Status\nURI: %s\n"
 			       "Message: ",CurrentURI.c_str());
 
    vsnprintf(S+Len,sizeof(S)-Len,Format,args);

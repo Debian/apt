@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.10 1998/11/01 05:27:37 jgg Exp $
+// $Id: strutl.cc,v 1.11 1998/11/01 08:07:12 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -627,7 +627,7 @@ void URI::CopyFrom(string U)
       // Locate the single / that starts the path
       for (; I < U.end(); I++)
       {
-	 if (*I == '/' && I[1] == '/')
+	 if (*I == '/' && I+1 < U.end() && I[1] == '/')
 	    I += 2;
 	 else 
 	    if (*I == '/')
@@ -641,8 +641,10 @@ void URI::CopyFrom(string U)
    // We can now write the access and path specifiers
    Access = string(U,0,FirstColon - U.begin());
    if (SingleSlash != U.end())
-      Path = string(U,SingleSlash - U.begin() + 1);
-   
+      Path = string(U,SingleSlash - U.begin());
+   if (Path.empty() == true)
+      Path = "/";
+
    // Now we attempt to locate a user:pass@host fragment
    FirstColon += 3;
    if (FirstColon >= U.end())

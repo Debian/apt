@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.1 1998/11/01 05:30:47 jgg Exp $
+// $Id: http.cc,v 1.2 1998/11/01 08:07:13 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -253,19 +253,25 @@ string LastHost;
 in_addr LastHostA;
 bool ServerState::Open()
 {
+   // Use the already open connection if possible.
+   if (ServerFd != -1)
+      return true;
+   
    Close();
    
-   int Port;
+   int Port = 80;
    string Host;
    
-   if (Proxy.empty() == false)
+   if (Proxy.empty() == true)
    {
-      Port = ServerName.Port;
+      if (ServerName.Port != 0)
+	 Port = ServerName.Port;
       Host = ServerName.Host;
    }
    else
    {
-      Port = Proxy.Port;
+      if (Proxy.Port != 0)
+	 Port = Proxy.Port;
       Host = Proxy.Host;
    }
    
@@ -276,7 +282,7 @@ bool ServerState::Open()
       // Lookup the host
       hostent *Addr = gethostbyname(Host.c_str());
       if (Addr == 0)
-	 return _error->Errno("gethostbyname","Could not lookup host %s",Host.c_str());
+	 return _error->Error("Could not resolve '%s'",Host.c_str());
       LastHost = Host;
       LastHostA = *(in_addr *)(Addr->h_addr_list[0]);
    }
@@ -313,8 +319,9 @@ bool ServerState::Close()
 									/*}}}*/
 // ServerState::RunHeaders - Get the headers before the data		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-bool ServerState::RunHeaders()
+/* Returns 0 if things are OK, 1 if an IO error occursed and 2 if a header
+   parse error occured */
+int ServerState::RunHeaders()
 {
    State = Header;
    
@@ -325,7 +332,8 @@ bool ServerState::RunHeaders()
    Result = 0; 
    Size = 0; 
    StartPos = 0;
-   Encoding = Closes; 
+   Encoding = Closes;
+   HaveContent = false;
    time(&Date);
 
    do
@@ -339,14 +347,14 @@ bool ServerState::RunHeaders()
 	 string::const_iterator J = I;
 	 for (; J != Data.end() && *J != '\n' && *J != '\r';J++);
 	 if (HeaderLine(string(I,J-I)) == false)
-	    return false;
+	    return 2;
 	 I = J;
       }
-      return true;
+      return 0;
    }
    while (Owner->Go(false,this) == true);
-   
-   return false;
+
+   return 1;
 }
 									/*}}}*/
 // ServerState::RunData - Transfer the data from the socket		/*{{{*/
@@ -415,7 +423,7 @@ bool ServerState::RunData()
 	 while ((Last = Owner->Go(false,this)) == true);
 	 if (Last == false)
 	    return false;
-      }      
+      }
    }
    else
    {
@@ -460,7 +468,7 @@ bool ServerState::HeaderLine(string Line)
    string Tag = string(Line,0,Pos);
    string Val = string(Line,Pos+1);
 
-   if (stringcasecmp(Tag,"HTTP") == 0)
+   if (stringcasecmp(Tag.begin(),Tag.begin()+4,"HTTP") == 0)
    {
       // Evil servers return no version
       if (Line[4] == '/')
@@ -480,10 +488,11 @@ bool ServerState::HeaderLine(string Line)
       return true;
    }      
       
-   if (stringcasecmp(Tag,"Content-Length:"))
+   if (stringcasecmp(Tag,"Content-Length:") == 0)
    {
       if (Encoding == Closes)
 	 Encoding = Stream;
+      HaveContent = true;
       
       // The length is already set from the Content-Range header
       if (StartPos != 0)
@@ -494,8 +503,16 @@ bool ServerState::HeaderLine(string Line)
       return true;
    }
 
-   if (stringcasecmp(Tag,"Content-Range:"))
+   if (stringcasecmp(Tag,"Content-Type:") == 0)
    {
+      HaveContent = true;
+      return true;
+   }
+   
+   if (stringcasecmp(Tag,"Content-Range:") == 0)
+   {
+      HaveContent = true;
+      
       if (sscanf(Val.c_str(),"bytes %lu-%*u/%lu",&StartPos,&Size) != 2)
 	 return _error->Error("The http server sent an invalid Content-Range header");
       if ((unsigned)StartPos > Size)
@@ -503,14 +520,16 @@ bool ServerState::HeaderLine(string Line)
       return true;
    }
    
-   if (stringcasecmp(Tag,"Transfer-Encoding:"))
+   if (stringcasecmp(Tag,"Transfer-Encoding:") == 0)
    {
-      if (stringcasecmp(Val,"chunked"))
+      HaveContent = true;
+      if (stringcasecmp(Val,"chunked") == 0)
 	 Encoding = Chunked;
+      
       return true;
    }
 
-   if (stringcasecmp(Tag,"Last-Modified:"))
+   if (stringcasecmp(Tag,"Last-Modified:") == 0)
    {
       if (StrToTime(Val,Date) == false)
 	 return _error->Error("Unknown date format");
@@ -568,6 +587,8 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       Req += string("Proxy-Authorization: Basic ") + Base64Encode(ProxyAuth) + "\r\n";*/
 
    Req += "User-Agent: Debian APT-HTTP/1.2\r\n\r\n";
+//   cout << Req << endl;
+   
    Out.Read(Req);
 }
 									/*}}}*/
@@ -681,6 +702,8 @@ bool HttpMethod::Flush(ServerState *Srv)
       {
 	 if (Srv->In.Write(File->Fd()) == false)
 	    return _error->Errno("write","Error writing to file");
+	 if (Srv->In.IsLimit() == true)
+	    return true;
       }
 
       if (Srv->In.IsLimit() == true || Srv->Encoding == ServerState::Closes)
@@ -702,6 +725,10 @@ bool HttpMethod::ServerDie(ServerState *Srv)
       {
 	 if (Srv->In.Write(File->Fd()) == false)
 	    return _error->Errno("write","Error writing to the file");
+
+	 // Done
+	 if (Srv->In.IsLimit() == true)
+	    return true;
       }
    }
    
@@ -735,7 +762,8 @@ bool HttpMethod::ServerDie(ServerState *Srv)
    to do. Returns 
      0 - File is open,
      1 - IMS hit
-     3 - Unrecoverable error */
+     3 - Unrecoverable error 
+     4 - Error with error content page */
 int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
 {
    // Not Modified
@@ -752,6 +780,8 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    if (Srv->Result < 200 || Srv->Result >= 300)
    {
       _error->Error("%u %s",Srv->Result,Srv->Code);
+      if (Srv->HaveContent == true)
+	 return 4;
       return 3;
    }
 
@@ -801,8 +831,15 @@ int HttpMethod::Loop()
 {
    ServerState *Server = 0;
    
+   int FailCounter = 0;
    while (1)
    {
+      if (FailCounter >= 2)
+      {
+	 Fail("Massive Server Brain Damage");
+	 FailCounter = 0;
+      }
+      
       // We have no commands, wait for some to arrive
       if (Queue == 0)
       {
@@ -832,14 +869,32 @@ int HttpMethod::Loop()
       }
       
       // Queue the request
-      SendReq(Queue,Server->In);
+      SendReq(Queue,Server->Out);
 
-      // Handle the header data
-      if (Server->RunHeaders() == false)
+      // Fetch the next URL header data from the server.
+      switch (Server->RunHeaders())
       {
-	 Fail();
-	 continue;
-      }
+	 case 0:
+	 break;
+	 
+	 // The header data is bad
+	 case 2:
+	 {
+	    _error->Error("Bad header Data");
+	    Fail();
+	    continue;
+	 }
+	 
+	 // The server closed a connection during the header get..
+	 default:
+	 case 1:
+	 {
+	    FailCounter++;
+	    _error->DumpErrors();
+	    Server->Close();
+	    continue;
+	 }
+      };
       
       // Decide what to do.
       FetchResult Res;
@@ -853,8 +908,12 @@ int HttpMethod::Loop()
 	    // Run the data
 	    if (Server->RunData() == false)
 	       Fail();
-	 
-	    Res.MD5Sum = Srv->In.MD5->Result();
+	    else
+	    {
+	       Res.MD5Sum = Server->In.MD5->Result();
+	       URIDone(Res);
+	    }
+	    
 	    delete File;
 	    File = 0;
 	    break;
@@ -873,11 +932,26 @@ int HttpMethod::Loop()
 	    Fail();
 	    break;
 	 }
+
+	 // We need to flush the data, the header is like a 404 w/ error text
+	 case 4:
+	 {
+	    Fail();
+	    
+	    // Send to content to dev/null
+	    File = new FileFd("/dev/null",FileFd::WriteExists);
+	    Server->RunData();
+	    delete File;
+	    File = 0;
+	    break;
+	 }
 	 
 	 default:
 	 Fail("Internal error");
 	 break;
-      }      
+      }
+      
+      FailCounter = 0;
    }
    
    return 0;
