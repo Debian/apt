@@ -39,3 +39,10 @@ SLIBS = -lapt-pkg
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-sortpkgs.cc
 include $(PROGRAM_H)
+
+# The apt-extracttemplates program
+PROGRAM=apt-extracttemplates
+SLIBS = -lapt-pkg -lapt-inst
+LIB_MAKES = apt-pkg/makefile
+SOURCE = apt-extracttemplates.cc debfile.cc
+include $(PROGRAM_H)
