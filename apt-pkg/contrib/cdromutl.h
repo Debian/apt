@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.h,v 1.2 1999/06/05 03:54:29 jgg Exp $
+// $Id: cdromutl.h,v 1.3 2001/05/07 05:06:52 jgg Exp $
 /* ######################################################################
 
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -11,6 +11,8 @@
 #define PKGLIB_ACQUIRE_METHOD_H
 
 #include <string>
+
+using std::string;
 
 #ifdef __GNUG__
 #pragma interface "apt-pkg/cdromutl.h"

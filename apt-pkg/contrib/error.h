@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.h,v 1.7 2001/02/20 07:03:17 jgg Exp $
+// $Id: error.h,v 1.8 2001/05/07 05:06:52 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -54,6 +54,8 @@
 #endif    
     
 #include <string>
+
+using std::string;
 
 class GlobalError
 {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.25 2001/04/22 05:42:53 jgg Exp $
+// $Id: fileutl.h,v 1.26 2001/05/07 05:06:52 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -26,6 +26,8 @@
 #endif 
 
 #include <string>
+
+using std::string;
 
 class FileFd
 {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.13 2001/03/11 07:22:19 jgg Exp $
+// $Id: configuration.h,v 1.14 2001/05/07 05:06:52 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -33,6 +33,8 @@
 #endif 
 
 #include <string>
+
+using std::string;
 
 class Configuration
 {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.h,v 1.7 2001/02/20 07:03:17 jgg Exp $
+// $Id: dpkgpm.h,v 1.8 2001/05/07 05:05:13 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -17,6 +17,8 @@
 #include <apt-pkg/packagemanager.h>
 #include <vector>
 #include <stdio.h>
+
+using std::vector;
 
 class pkgDPkgPM : public pkgPackageManager
 {

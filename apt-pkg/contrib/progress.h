@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.h,v 1.5 1999/01/18 06:20:08 jgg Exp $
+// $Id: progress.h,v 1.6 2001/05/07 05:06:52 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -27,6 +27,8 @@
 
 #include <string>
 #include <sys/time.h>
+
+using std::string;
 
 class Configuration;
 class OpProgress

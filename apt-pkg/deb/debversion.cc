@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: debversion.cc,v 1.3 2001/05/07 05:14:53 jgg Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian
@@ -19,6 +19,7 @@
 #include <apt-pkg/pkgcache.h>
 
 #include <stdlib.h>
+#include <ctype.h>
 									/*}}}*/
 
 debVersioningSystem debVS;
