@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5\n"
+"Project-Id-Version: apt 0.5.27\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-29 21:46-0700\n"
-"PO-Revision-Date: 2004-01-28 16:18+0100\n"
+"POT-Creation-Date: 2004-07-29 09:38-0700\n"
+"PO-Revision-Date: 2004-08-09 18:45+0100\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:135
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "El paquet %s versió %s té dependències sense satisfer:\n"
+msgstr "El paquet %s versió %s té una dependència sense satisfer:\n"
 
 #: cmdline/apt-cache.cc:175 cmdline/apt-cache.cc:527 cmdline/apt-cache.cc:615
 #: cmdline/apt-cache.cc:771 cmdline/apt-cache.cc:989 cmdline/apt-cache.cc:1357
@@ -223,7 +223,7 @@ msgstr ""
 "  -h   Aquest text d'ajuda.\n"
 "  -p=? La memòria cau de paquets.\n"
 "  -s=? La memòria cau de la font.\n"
-"  -q   Deshabilita l'indicatiu de progres.\n"
+"  -q   Inhabilita l'indicatiu de progres.\n"
 "  -i   Sols mostra dependències importants d'una ordre inadequada.\n"
 "  -c=? Llegeix aquest fitxer de configuració\n"
 "  -o=? Estableix una opció de conf arbitrària, p.ex. -o dir::cache=/tmp\n"
@@ -325,7 +325,6 @@ msgid "Error Processing Contents %s"
 msgstr "S'ha produït un error en processar el fitxer de continguts %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -366,42 +365,43 @@ msgid ""
 "  -c=?  Read this configuration file\n"
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
-"Ús: apt-ftparchive [opcions] ordre\n"
-"Ordres:   packges binarypath [overridefile [pathprefix]]\n"
+"Forma d'ús: apt-ftparchive [opcions] ordre\n"
+"Ordres:   packages binarypath [overridefile [pathprefix]]\n"
 "          sources srcpath [overridefile [pathprefix]]\n"
 "          contents path\n"
-"          generate config [grups]\n"
+"          reease path\n"
+"          generate config [groups]\n"
 "          clean config\n"
 "\n"
-"apt-ftparchive genera fitxers d'índex per als arxius de Debian,\n"
-"Suporta molts estils per a generar-los, des del completament automàtic\n"
+"apt-ftparchive genera fitxers d'índex per als arxius de Debian.\n"
+"Gestiona molts estils per a generar-los, des dels completament automàtics\n"
 "als substituts funcionals per dpkg-scanpackages i dpkg-scansources.\n"
 "\n"
-"apt-ftparchive genera fitxers Package des d'un arbre .deb . El fitxer\n"
-"Package conté tots els camps de control de cada paquet així com la\n"
-"suma de MD5 i la mida del fitxer. Es suporta la substitució de fitxers\n"
+"apt-ftparchive genera fitxers Package des d'un arbre de .debs. El\n"
+"fitxer Package conté tots els camps de control de cada paquet així com\n"
+"la suma MD5 i la mida del fitxer. Es suporten els fitxers de substitució\n"
 "per a forçar el valor de Prioritat i Secció.\n"
 "\n"
 "D'un mode semblant apt-ftparchive genera fitxers Sources des d'un arbre\n"
-".dsc . Es pot utilitzar l'opció --source-override per a especificar la\n"
-"substitució d'un fitxer src.\n"
+"de .dscs. Es pot utilitzar l'opció --source-override per a especificar un\n"
+"fitxer de substitucions de src.\n"
 "\n"
-"L'ordre 'packages' i 'sources' hauria d'executar-se en l'arrel de\n"
-"l'arbre. La BinaryPath hauria de ser el punt base de la recerca recursiva\n"
-"i el fitxer substituït hauria de contindre etiquetes de substitució.\n"
+"L'ordre «packages» i «sources» hauria d'executar-se en l'arrel de\n"
+"l'arbre. BinaryPath hauria de ser el punt base de la recerca recursiva\n"
+"i el fitxer de substitucions hauria de contenir etiquetes de substitució.\n"
 "Pathprefix s'afegeix als camps del nom de fitxer si està present.\n"
-"Exemple usat amb l'arxiu de debian:\n"
+"Exemple d'ús a l'arxiu de Debian:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
 "Opcions:\n"
 "  -h    Aquest text d'ajuda\n"
 "  --md5 Generació del control MD5\n"
-"  -s=?  Substitueix el fitxer font\n"
-"  -q    Quiet\n"
+"  -s=?  Fitxer de substitucions per a fonts\n"
+"  -q    Silenciós\n"
 "  -d=?  Selecciona la base de dades de memòria cau opcional\n"
 "  --no-delink Habilita el mode de depuració delink\n"
-"  --contents  Genera el fitxer de control contents\n"
+"  --contents  Controla la generació del fitxer de continguts\n"
 "  -c=?  Llegeix aquest fitxer de configuració\n"
 "  -o=?  Estableix una opció de configuració arbitrària"
 
@@ -422,12 +422,12 @@ msgstr "La base de dades està corrompuda, fitxer renomenat a %s.old"
 #: ftparchive/cachedb.cc:63
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
-msgstr ""
+msgstr "La BD és vella, s'està intentant actualitzar %s"
 
 #: ftparchive/cachedb.cc:73
-#, fuzzy, c-format
-msgid "Unable to open DB file %s"
-msgstr "No es pot obrir la base de dades (DB2) %s"
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "No es pot obrir el fitxer de DB %s: %s"
 
 #: ftparchive/cachedb.cc:114
 #, c-format
@@ -665,19 +665,16 @@ msgid "The following packages will be REMOVED:"
 msgstr "S'ELIMINARAN els següents paquets:"
 
 #: cmdline/apt-get.cc:421
-#, fuzzy
 msgid "The following packages have been kept back:"
-msgstr "S'han mantingut els següents paquets"
+msgstr "S'han mantingut els següents paquets:"
 
 #: cmdline/apt-get.cc:442
-#, fuzzy
 msgid "The following packages will be upgraded:"
-msgstr "S'actualitzaran els següents paquets"
+msgstr "S'actualitzaran els següents paquets:"
 
 #: cmdline/apt-get.cc:463
-#, fuzzy
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Es DESACTUALITZARAN els següents paquets"
+msgstr "Es DESACTUALITZARAN els següents paquets:"
 
 #: cmdline/apt-get.cc:483
 msgid "The following held packages will be changed:"
@@ -751,7 +748,7 @@ msgstr "Dependències sense satisfer. Proveu-ho usant -f."
 
 #: cmdline/apt-get.cc:718
 msgid "Packages need to be removed but Remove is disabled."
-msgstr "Els paquets necessiten ser eliminats però Remove està deshabilitat."
+msgstr "Els paquets necessiten ser eliminats però Remove està inhabilitat."
 
 #: cmdline/apt-get.cc:744 cmdline/apt-get.cc:1716 cmdline/apt-get.cc:1749
 msgid "Unable to lock the download directory"
@@ -807,7 +804,7 @@ msgid ""
 " ?] "
 msgstr ""
 "Esteu a punt de fer quelcom potencialment nociu\n"
-"Per a continuar escriviu en la frase '%s'\n"
+"Per a continuar escriviu en la frase «%s»\n"
 " ?] "
 
 #: cmdline/apt-get.cc:827 cmdline/apt-get.cc:846
@@ -821,7 +818,7 @@ msgstr "Voleu continuar? [S/n] "
 #: cmdline/apt-get.cc:911 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1906
 #, c-format
 msgid "Failed to fetch %s  %s\n"
-msgstr "Falla al reprendre %s  %s\n"
+msgstr "No s'ha pogut obtenir %s  %s\n"
 
 #: cmdline/apt-get.cc:929
 msgid "Some files failed to download"
@@ -882,16 +879,15 @@ msgid "You should explicitly select one to install."
 msgstr "Necessiteu seleccionar-ne un explícitament per a instal·lar-lo."
 
 #: cmdline/apt-get.cc:1040
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"El paquet %s no té versió disponible, però existeix en la base de dades.\n"
-"Això normalment vol dir que el paquet fou mencionat en una dependència\n"
-"i que no l'han pujat, s'ha tornat obsolet o que aquest no està disponible\n"
-"entre els continguts del sources.list\n"
+"El paquet %s no té versió disponible, però un altre paquet\n"
+"en fa referència. Això normalment vol dir que el paquet falta,\n"
+"s'ha tornat obsolet o només és disponible des d'una altra font.\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -916,12 +912,12 @@ msgstr "%s ja es troba en la versió més recent.\n"
 #: cmdline/apt-get.cc:1117
 #, c-format
 msgid "Release '%s' for '%s' was not found"
-msgstr "No s'ha trobat la versió puntual '%s' per a '%s'"
+msgstr "No s'ha trobat la versió puntual «%s» per a «%s»"
 
 #: cmdline/apt-get.cc:1119
 #, c-format
 msgid "Version '%s' for '%s' was not found"
-msgstr "No s'ha trobat la versió '%s' per a '%s'"
+msgstr "No s'ha trobat la versió «%s» per a «%s»"
 
 #: cmdline/apt-get.cc:1125
 #, c-format
@@ -1055,22 +1051,22 @@ msgstr "Font descarregada %s\n"
 
 #: cmdline/apt-get.cc:1911
 msgid "Failed to fetch some archives."
-msgstr "Falla al descarregar alguns arxius."
+msgstr "No s'ha pogut descarregar alguns arxius."
 
 #: cmdline/apt-get.cc:1939
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Saltant el desempaquetament de les fonts que ja ho estan en %s\n"
+msgstr "S'està ometent el desempaquetament de les fonts que ja ho estan en %s\n"
 
 #: cmdline/apt-get.cc:1951
 #, c-format
 msgid "Unpack command '%s' failed.\n"
-msgstr "L'ordre de desempaquetar '%s' ha fallat.\n"
+msgstr "L'ordre de desempaquetar «%s» ha fallat.\n"
 
 #: cmdline/apt-get.cc:1968
 #, c-format
 msgid "Build command '%s' failed.\n"
-msgstr "L'ordre de construir '%s' ha fallat.\n"
+msgstr "L'ordre de construir «%s» ha fallat.\n"
 
 #: cmdline/apt-get.cc:1987
 msgid "Child process failed"
@@ -1126,7 +1122,7 @@ msgstr "Falla al satisfer la dependència %s per a %s: %s"
 #: cmdline/apt-get.cc:2229
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
+msgstr "No s'han pogut satisfer les dependències de construcció per a %s"
 
 #: cmdline/apt-get.cc:2233
 msgid "Failed to process build dependencies"
@@ -1177,9 +1173,9 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Ús:  apt-get [opcions] ordre\n"
-"     apt-get [opcions] install|remove paq1 [paq2 ...]\n"
-"     apt-get [opcions] source paq1 [paq2 ...]\n"
+"Forma d'ús:  apt-get [opcions] ordre\n"
+"             apt-get [opcions] install|remove paq1 [paq2 ...]\n"
+"             apt-get [opcions] source paq1 [paq2 ...]\n"
 "\n"
 "apt-get és una simple interfície de línia d'ordres per a\n"
 "descarregar i instal·lar paquets. Les ordres més freqüents\n"
@@ -1747,7 +1743,7 @@ msgstr "S'ha esgotat el temps de connexió al sòcol de dades"
 msgid "Unable to accept connection"
 msgstr "No es pot acceptar la connexió"
 
-#: methods/ftp.cc:864 methods/http.cc:912 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:916 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problema escollint el fitxer"
 
@@ -1841,76 +1837,76 @@ msgstr "No s'ha pogut obrir un conducte per a %s"
 msgid "Read error from %s process"
 msgstr "Error llegint des del procés %s"
 
-#: methods/http.cc:340
+#: methods/http.cc:344
 msgid "Waiting for headers"
 msgstr "S'estan esperant les capçaleres"
 
-#: methods/http.cc:486
+#: methods/http.cc:490
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "S'ha aconseguit una sola línia de capçalera més de %u caràcters"
 
-#: methods/http.cc:494
+#: methods/http.cc:498
 msgid "Bad header line"
 msgstr "Línia de capçalera incorrecta"
 
-#: methods/http.cc:513 methods/http.cc:520
+#: methods/http.cc:517 methods/http.cc:524
 msgid "The http server sent an invalid reply header"
 msgstr "El servidor http ha enviat una capçalera de resposta no vàlida"
 
-#: methods/http.cc:549
+#: methods/http.cc:553
 msgid "The http server sent an invalid Content-Length header"
 msgstr "El servidor http ha enviat una capçalera de Content-Length no vàlida"
 
-#: methods/http.cc:564
+#: methods/http.cc:568
 msgid "The http server sent an invalid Content-Range header"
 msgstr "El servidor http ha enviat una capçalera de Content-Range no vàlida"
 
-#: methods/http.cc:566
+#: methods/http.cc:570
 msgid "This http server has broken range support"
 msgstr "Aquest servidor http té el suport d'abast trencat"
 
-#: methods/http.cc:590
+#: methods/http.cc:594
 msgid "Unknown date format"
 msgstr "Format de la data desconegut"
 
-#: methods/http.cc:733
+#: methods/http.cc:737
 msgid "Select failed"
 msgstr "Ha fallat la selecció"
 
-#: methods/http.cc:738
+#: methods/http.cc:742
 msgid "Connection timed out"
 msgstr "Connexió finalitzada"
 
-#: methods/http.cc:761
+#: methods/http.cc:765
 msgid "Error writing to output file"
 msgstr "Error escrivint en el fitxer d'eixida"
 
-#: methods/http.cc:789
+#: methods/http.cc:793
 msgid "Error writing to file"
 msgstr "Error escrivint en el fitxer"
 
-#: methods/http.cc:814
+#: methods/http.cc:818
 msgid "Error writing to the file"
 msgstr "Error escrivint en el fitxer"
 
-#: methods/http.cc:828
+#: methods/http.cc:832
 msgid "Error reading from server Remote end closed connection"
 msgstr "Error llegint, el servidor remot ha tancat la connexió"
 
-#: methods/http.cc:830
+#: methods/http.cc:834
 msgid "Error reading from server"
 msgstr "Error llegint des del servidor"
 
-#: methods/http.cc:1061
+#: methods/http.cc:1065
 msgid "Bad header Data"
 msgstr "Capçalera de dades no vàlida"
 
-#: methods/http.cc:1078
+#: methods/http.cc:1082
 msgid "Connection failed"
 msgstr "Ha fallat la connexió"
 
-#: methods/http.cc:1169
+#: methods/http.cc:1173
 msgid "Internal error"
 msgstr "Error intern"
 
@@ -1939,9 +1935,9 @@ msgid "Opening configuration file %s"
 msgstr "S'està obrint el fitxer de configuració %s"
 
 #: apt-pkg/contrib/configuration.cc:471
-#, fuzzy, c-format
+#, c-format
 msgid "Line %d too long (max %d)"
-msgstr "Línia %u massa llarga en la llista de fonts %s."
+msgstr "Línia %d massa llarga (màx %d)"
 
 #: apt-pkg/contrib/configuration.cc:567
 #, c-format
@@ -1991,7 +1987,7 @@ msgstr "%c%s... Error!"
 #: apt-pkg/contrib/progress.cc:156
 #, c-format
 msgid "%c%s... Done"
-msgstr "%c%s... Acabat"
+msgstr "%c%s... Fet"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -2002,7 +1998,7 @@ msgstr "L'opció de la línia d'ordres '%c' [de %s] és desconeguda."
 #: apt-pkg/contrib/cmndline.cc:122
 #, c-format
 msgid "Command line option %s is not understood"
-msgstr "No s'enten l'opció de la línia d'ordres %s"
+msgstr "No s'entén l'opció de la línia d'ordres %s"
 
 #: apt-pkg/contrib/cmndline.cc:127
 #, c-format
@@ -2032,7 +2028,7 @@ msgstr "L'opció '%s' és massa llarga"
 #: apt-pkg/contrib/cmndline.cc:301
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "El sentit %s no s'enten, proveu 'true' (verdader) o 'false' (fals)."
+msgstr "El sentit %s no s'entén, proveu 'true' (vertader) o 'false' (fals)."
 
 #: apt-pkg/contrib/cmndline.cc:351
 #, c-format
@@ -2253,22 +2249,22 @@ msgstr "S'està obrint %s"
 #: apt-pkg/sourcelist.cc:249
 #, c-format
 msgid "Line %u too long in source list %s."
-msgstr "Línia %u massa llarga en la llista de fonts %s."
+msgstr "La línia %u és massa llarga en la llista de fonts %s."
 
 #: apt-pkg/sourcelist.cc:266
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
-msgstr "Línia %u malformada en la llista de fonts %s (tipus)"
+msgstr "La línia %u és malformada en la llista de fonts %s (tipus)"
 
 #: apt-pkg/sourcelist.cc:270
 #, c-format
-msgid "Type '%s' is not known in on line %u in source list %s"
-msgstr "Tipus '%s' desconegut en la línia %u de la llista de fonts %s"
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
 
 #: apt-pkg/sourcelist.cc:279 apt-pkg/sourcelist.cc:282
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
-msgstr "Línia %u malformada en la llista de fonts %s (id del proveïdor)"
+msgstr "La línia %u és malformada en la llista de fonts %s (id del proveïdor)"
 
 #: apt-pkg/sourcelist.cc:296
 #, c-format
@@ -2340,9 +2336,8 @@ msgid "Packaging system '%s' is not supported"
 msgstr "El sistema d'empaquetament '%s' no està suportat."
 
 #: apt-pkg/init.cc:135
-#, fuzzy
 msgid "Unable to determine a suitable packaging system type"
-msgstr "No es pot determinar un tipus de sistema adequat."
+msgstr "No es pot determinar un tipus de sistema d'empaquetament adequat."
 
 #: apt-pkg/clean.cc:61
 #, c-format

@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.5.26")
+AC_DEFINE_UNQUOTED(VERSION,"0.5.27")
 PACKAGE="apt"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_SUBST(PACKAGE)
@@ -81,7 +81,7 @@ dnl This is often the dpkg architecture string.
 AC_MSG_CHECKING(system architecture)
 archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target_cpu\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/archtable`"
 if test "x$archset" = "x"; then
-  AC_MSG_ERROR(failed: use --host=)
+  AC_MSG_ERROR(failed: use --host= or check buildlib/archtable)
 fi
 AC_MSG_RESULT($archset)
 AC_DEFINE_UNQUOTED(COMMON_CPU,"$archset")

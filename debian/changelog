@@ -1,6 +1,52 @@
+apt (0.5.28) unstable; urgency=low
+
+  * Translation updates:
+    - Updated Hungarian from Kelemen Gábor <kelemeng@gnome.hu> (Closes: #263436)
+    - Updated Greek from George Papamichelakis (Closes: #265004)
+    - Updated Simplified Chinese from Tchaikov (Closes: #265190)
+    - Updated French by Christian Perrier (Closes: #265816)
+    - Updated Japanese by Kenshi Muto (Closes: #265630)
+    - Updated Catalan from Jordi Mallach
+    - Updated Dutch from Bart Cornelis (Closes: #268258, #278697)
+    - Updated Portuguese from Miguel Figueiredo (Closes: #268265)
+    - Updated Polish from Robert Luberda <robert@debian.org> (Closes: #268451)
+    - Updated Danish from Claus Hindsgaul (Closes: #269417)
+    - Updated Norwegian Nynorsk from Håvard Korsvoll <korsvoll@skulelinux.no>
+      (Closes: #269965)
+    - Updated Russian from Yuri Kozlov <yuray@id.ru> (Closes: #271104)
+    - Updated Italian from Samuele Giovanni Tonon <samu@debian.org>
+      (Closes: #275083)
+    - Updated Brazilian Portuguese from Andre Luis Lopes (Closes: #273944)
+    - Updated Slovak from Peter Mann (Closes: #279481)
+  * APT::Get::APT::Get::No-List-Cleanup -> APT::Get::List-Cleanup in apt-get.cc
+    (Closes: #267266)
+
+ -- 
+
+apt (0.5.27) unstable; urgency=high
+
+  * Sneak in a bunch of updated translations before the freeze
+    (no code changes)
+  * Translation updates:
+    - New Finnish translation from Tapio Lehtonen <tale@debian.org>
+      (Closes: #258999)
+    - New Bosnian translation from Safir Šećerović <sapphire@linux.org.ba>
+      (Closes: #254201)
+    - Fix Italian incontrario (Closes: #217277)
+    - Updated Spanish from Ruben Porras (Closes: #260483)
+    - Updated Danish from Claus Hindsgaul (Closes: #260569)
+    - Updated Slovak from Peter Mann (Closes: #260627)
+    - Updated Portuguese from Miguel Figueiredo (Closes: #261423)
+  * Bring configure-index up to date with documented options, patch from
+    Uwe Zeisberger <zeisberg@informatik.uni-freiburg.de> (Closes: #259540)
+  * Note in apt.conf(5) that configure-index does not contain strictly
+    default values, but also examples
+  * Add Polish translation of offline.sgml (Closes: #259229)
+
+ -- Matt Zimmerman <mdz@debian.org>  Thu, 29 Jul 2004 09:30:12 -0700
+
 apt (0.5.26) unstable; urgency=low
 
-  * Add amd64 to buildlib/archtable (Closes: #240896)
   * Translation updates:
     - Spanish update from Ruben Porras <nahoo82@telefonica.net> (Closes: #248214)
     - Sync Spanish apt(8) (Closes: #249241)
@@ -14,7 +60,16 @@ apt (0.5.26) unstable; urgency=low
     - New Hebrew translation from Lior Kaplan <webmaster@guides.co.il>
       (Closes: #253182)
     - New Basque translation from Piarres Beobide Egaña <pi@beobide.net>
-      (Vasco - Euskara - difficult language, Closes: #254407)
+      (Vasco - Euskara - difficult language, Closes: #254407) and already a
+      correction (Closes: #255760)
+    - Updated Brazilian Portuguese translation from
+      Guilherme de S. Pastore <gpastore@colband.com.br> (Closes: #256396)
+    - Updated Greek translation (complete now) from
+      George Papamichelakis <george@step.gr> (Closes: #256797)
+    - New Korean translation from Changwoo Ryu <cwryu@debian.org>
+      (Closes: #257143)
+    - German translation now available in two flavours: with Unicode usage and
+      without (related to #228486, #235759)
   * Update apt-get(8) to reflect the fact that APT::Get::Only-Source will
     affect apt-get build-dep as well as apt-get source
   * Remove aborted remnants of a different method of implementing DEB_BUILD_OPTIONS
@@ -22,8 +77,11 @@ apt (0.5.26) unstable; urgency=low
   * Fix typo in error message when encountering unknown type in source list
     (Closes: #253217)
   * Update k*bsd-gnu arch names in buildlib/ostable (Closes: #253532)
+  * Add amd64 to buildlib/archtable (Closes: #240896)
+  * Have configure output a more useful error message if the architecture
+    isn't in archtable
 
- --
+ -- Matt Zimmerman <mdz@debian.org>  Thu,  8 Jul 2004 15:53:28 -0700
 
 apt (0.5.25) unstable; urgency=low
 
@@ -56,7 +114,7 @@ apt (0.5.25) unstable; urgency=low
   * Remove extraneous '\' characters from <command> tags in
     apt_preferences.fr.5.sgml
   * Translation updates:
-    - Updated Swedish translation from Peter Karlsson  <peter@softwolves.pp.se>
+    - Updated Swedish translation from Peter Karlsson <peter@softwolves.pp.se>
       (Closes: #238943)
     - New Slovenian translation from Jure Čuhalev <gandalf@owca.info>
       (closes: #239785)

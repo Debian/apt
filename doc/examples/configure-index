@@ -1,9 +1,9 @@
-// $Id: configure-index,v 1.9 2004/04/29 17:30:22 mdz Exp $
+// $Id: configure-index,v 1.10 2004/07/17 19:37:16 mdz Exp $
 /* This file is an index of all APT configuration directives. It should
-   NOT actually be used as a real config file, though it is a completely
-   valid file. Most of the options have sane default values, unless
-   you have specific needs you should NOT include arbitary items in a custom
-   configuration.
+   NOT actually be used as a real config file, though it is (except for the
+   last line) a completely valid file. Most of the options have sane default
+   values, unless you have specific needs you should NOT include arbitary
+   items in a custom configuration.
    
    In some instances involving filenames it is possible to set the default
    directory when the path is evaluated. This means you can use relative
@@ -16,6 +16,8 @@
    This is prefixed with the current scope. Scope notation must be used
    if an option is specified on the command line with -o.
 */
+
+quiet "0";
 
 // Options for APT in general
 APT 
@@ -34,6 +36,7 @@ APT
      Fix-Broken "false";  
      Fix-Missing "false";     
      Show-Upgraded "false";
+     Show-Versions "false";
      Upgrade "true";
      Print-URIs "false";
      Compile "false";
@@ -43,6 +46,9 @@ APT
      ReInstall "false";
      Trivial-Only "false";
      Remove "true";
+     Only-Source "";
+     Diff-Only "false";
+     Tar-Only "false";
   };
 
   Cache 
@@ -51,6 +57,11 @@ APT
      AllVersions "false";
      GivenOnly "false";
      RecurseDepends "false";
+     ShowFull "false";
+     Generate "true";
+     NamesOnly "false";
+     AllNames "false";
+     Installed "false";
   };
 
   CDROM 
@@ -117,7 +128,7 @@ Acquire
   
   cdrom
   {
-    Mount "/cdrom";
+    mount "/cdrom";
 
     // You need the trailing slash!
     "/cdrom/"
@@ -134,7 +145,7 @@ Dir "/"
   // Location of the state dir
   State "var/lib/apt/" 
   {
-     lists "lists/";
+     Lists "lists/";
      xstatus "xstatus";
      userstatus "status.user";
      status "/var/lib/dpkg/status";
@@ -143,16 +154,17 @@ Dir "/"
   
   // Location of the cache dir
   Cache "var/cache/apt/" {
-     archives "archives/";
+     Archives "archives/";
      srcpkgcache "srcpkgcache.bin";
      pkgcache "pkgcache.bin";     
   };
   
   // Config files
   Etc "etc/apt/" {
-     sourcelist "sources.list";
-     main "apt.conf";
-     preferences "preferences";     
+     SourceList "sources.list";
+     Main "apt.conf";
+     Preferences "preferences";     
+     Parts "apt.conf.d/";
   };
   
   // Locations of binaries
@@ -218,6 +230,7 @@ Debug
   Acquire::Ftp "false";    // Show ftp command traffic
   Acquire::Http "false";   // Show http command traffic
   aptcdrom "false";        // Show found package files
+  IdentCdrom "false";
 }
 
 /* Whatever you do, do not use this configuration file!! Take out ONLY

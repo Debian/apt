@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.155 2004/02/26 19:17:55 mdz Exp $
+// $Id: apt-get.cc,v 1.156 2004/08/28 01:05:16 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2356,7 +2356,7 @@ void GetInitialize()
    _config->Set("APT::Get::Assume-Yes",false);
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
-   _config->Set("APT::Get::APT::Get::No-List-Cleanup",true);
+   _config->Set("APT::Get::List-Cleanup",true);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
