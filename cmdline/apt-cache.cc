@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.58 2002/03/26 07:38:58 jgg Exp $
+// $Id: apt-cache.cc,v 1.59 2002/11/09 22:47:19 doogie Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1316,7 +1316,7 @@ int main(int argc,const char *argv[])
       {'g',"generate","APT::Cache::Generate",0},
       {'a',"all-versions","APT::Cache::AllVersions",0},
       {0,"names-only","APT::Cache::NamesOnly",0},
-      {0,"all-names","APT::Cache::AllNames",0},
+      {'n',"all-names","APT::Cache::AllNames",0},
       {0,"recurse","APT::Cache::RecurseDepends",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
