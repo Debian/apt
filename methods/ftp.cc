@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.6 1999/04/11 21:23:10 jgg Exp $
+// $Id: ftp.cc,v 1.7 1999/04/17 23:18:11 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -725,8 +725,11 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    {
       // Wait for some data..
       if (WaitFd(DataFd,false,TimeOut) == false)
-	 return _error->Error("Data socket connect timed out");
-    
+      {
+	 Close();
+	 return _error->Error("Data socket timed out");
+      }
+      
       // Read the data..
       int Res = read(DataFd,Buffer,sizeof(Buffer));
       if (Res == 0)
@@ -740,7 +743,10 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    
       MD5.Add(Buffer,Res);
       if (To.Write(Buffer,Res) == false)
+      {
+	 Close();
 	 return false;
+      }      
    }
 
    // All done
