@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.h,v 1.4 1999/07/03 03:10:35 jgg Exp $
+// $Id: dpkgpm.h,v 1.5 1999/07/09 04:11:34 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -23,7 +23,7 @@ class pkgDPkgPM : public pkgPackageManager
    
    struct Item
    {
-      enum Ops {Install, Configure, Remove} Op;
+      enum Ops {Install, Configure, Remove, Purge} Op;
       string File;
       PkgIterator Pkg;
       Item(Ops Op,PkgIterator Pkg,string File = "") : Op(Op), 
@@ -39,7 +39,7 @@ class pkgDPkgPM : public pkgPackageManager
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);
    virtual bool Configure(PkgIterator Pkg);
-   virtual bool Remove(PkgIterator Pkg);
+   virtual bool Remove(PkgIterator Pkg,bool Purge = false);
    virtual bool Go();
    virtual void Reset();
    

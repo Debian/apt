@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.10 1999/07/03 03:10:35 jgg Exp $
+// $Id: dpkgpm.cc,v 1.11 1999/07/09 04:11:34 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -65,12 +65,15 @@ bool pkgDPkgPM::Configure(PkgIterator Pkg)
 // DPkgPM::Remove - Remove a package					/*{{{*/
 // ---------------------------------------------------------------------
 /* Add a remove operation to the sequence list */
-bool pkgDPkgPM::Remove(PkgIterator Pkg)
+bool pkgDPkgPM::Remove(PkgIterator Pkg,bool Purge)
 {
    if (Pkg.end() == true)
       return false;
    
-   List.push_back(Item(Item::Remove,Pkg));
+   if (Purge == true)
+      List.push_back(Item(Item::Purge,Pkg));
+   else
+      List.push_back(Item(Item::Remove,Pkg));
    return true;
 }
 									/*}}}*/
@@ -181,6 +184,15 @@ bool pkgDPkgPM::Go()
 	 Args[n++] = "--force-remove-essential";
 	 Size += strlen(Args[n-1]);
 	 Args[n++] = "--remove";
+	 Size += strlen(Args[n-1]);
+	 break;
+	 
+	 case Item::Purge:
+	 Args[n++] = "--force-depends";
+	 Size += strlen(Args[n-1]);
+	 Args[n++] = "--force-remove-essential";
+	 Size += strlen(Args[n-1]);
+	 Args[n++] = "--purge";
 	 Size += strlen(Args[n-1]);
 	 break;
 	 

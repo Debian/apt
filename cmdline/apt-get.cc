@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.67 1999/07/03 03:10:36 jgg Exp $
+// $Id: apt-get.cc,v 1.68 1999/07/09 04:11:34 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -225,8 +225,15 @@ void ShowDel(ostream &out,pkgDepCache &Dep)
    pkgCache::PkgIterator I = Dep.PkgBegin();
    string List;
    for (;I.end() != true; I++)
+   {
       if (Dep[I].Delete() == true)
-	 List += string(I.Name()) + " ";
+      {
+	 if ((Dep[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
+	    List += string(I.Name()) + "* ";
+	 else
+	    List += string(I.Name()) + " ";
+      }
+   }
    
    ShowList(out,"The following packages will be REMOVED:",List);
 }
@@ -440,6 +447,13 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    happen and then calls the download routines */
 bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey = true)
 {
+   if (_config->FindB("APT::Get::Purge",false) == true)
+   {
+      pkgCache::PkgIterator I = Cache->PkgBegin();
+      for (; I.end() == false; I++)
+	 Cache[I].iFlags |= pkgDepCache::Purge;
+   }
+   
    bool Fail = false;
    bool Essential = false;
    
@@ -768,19 +782,23 @@ bool DoInstall(CommandLine &CmdL)
       
       // See if we are removing the package
       bool Remove = DefRemove;
-      if (Cache->FindPkg(S).end() == true)
+      while (Cache->FindPkg(S).end() == true)
       {
 	 // Handle an optional end tag indicating what to do
 	 if (S[Length - 1] == '-')
 	 {
 	    Remove = true;
 	    S[--Length] = 0;
+	    continue;
 	 }
+	 
 	 if (S[Length - 1] == '+')
 	 {
 	    Remove = false;
 	    S[--Length] = 0;
+	    continue;
 	 }
+	 break;
       }
       
       // Locate the package
@@ -986,6 +1004,8 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
       if (I->SelectedState == pkgCache::State::DeInstall ||
 	  I->SelectedState == pkgCache::State::Purge)
 	 Cache->MarkDelete(I);
+      if (I->SelectedState == pkgCache::State::Purge)
+	 Cache[I].iFlags |= pkgDepCache::Purge;
    }
 
    /* Resolve any problems that dselect created, allupgrade cannot handle
@@ -1371,7 +1391,7 @@ bool ShowHelp(CommandLine &CmdL)
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
    cout << "See the apt-get(8), sources.list(5) and apt.conf(5) manual" << endl;
-   cout << "pages for more information." << endl;
+   cout << "pages for more information and options." << endl;
    return 100;
 }
 									/*}}}*/
@@ -1429,6 +1449,7 @@ int main(int argc,const char *argv[])
       {0,"no-upgrade","APT::Get::no-upgrade",0},
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
+      {0,"purge","APT::Get::Purge",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

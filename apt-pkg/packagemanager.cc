@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.16 1999/07/04 23:22:53 jgg Exp $
+// $Id: packagemanager.cc,v 1.17 1999/07/09 04:11:34 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -375,7 +375,7 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
       return true;
 
    List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
-   return Remove(Pkg);
+   return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
 }
 									/*}}}*/
 // PM::SmartUnPack - Install helper					/*{{{*/

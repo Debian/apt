@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.20 1999/07/03 03:10:35 jgg Exp $
+// $Id: algorithms.cc,v 1.21 1999/07/09 04:11:33 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -125,14 +125,17 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
 // Simulate::Remove - Simulate the removal of a package			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSimulate::Remove(PkgIterator iPkg)
+bool pkgSimulate::Remove(PkgIterator iPkg,bool Purge)
 {
    // Adapt the iterator
    PkgIterator Pkg = Sim.FindPkg(iPkg.Name());
 
    Flags[Pkg->ID] = 3;
    Sim.MarkDelete(Pkg);
-   cout << "Remv " << Pkg.Name();
+   if (Purge == true)
+      cout << "Purg " << Pkg.Name();
+   else
+      cout << "Remv " << Pkg.Name();
 
    if (Sim.BrokenCount() != 0)
       ShortBreaks();

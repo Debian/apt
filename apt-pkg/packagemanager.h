@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.8 1999/07/03 03:10:35 jgg Exp $
+// $Id: packagemanager.h,v 1.9 1999/07/09 04:11:34 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -74,7 +74,7 @@ class pkgPackageManager
    // The Actuall installation implementation
    virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
-   virtual bool Remove(PkgIterator /*Pkg*/) {return false;};
+   virtual bool Remove(PkgIterator /*Pkg*/,bool Purge=false) {return false;};
    virtual bool Go() {return true;};
    virtual void Reset() {};
    

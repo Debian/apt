@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.6 1998/10/20 02:39:18 jgg Exp $
+// $Id: algorithms.h,v 1.7 1999/07/09 04:11:34 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -49,7 +49,7 @@ class pkgSimulate : public pkgPackageManager
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);
    virtual bool Configure(PkgIterator Pkg);
-   virtual bool Remove(PkgIterator Pkg);
+   virtual bool Remove(PkgIterator Pkg,bool Purge);
    void ShortBreaks();
    
    public:
