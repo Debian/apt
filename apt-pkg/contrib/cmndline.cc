@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.11 2001/02/20 07:03:17 jgg Exp $
+// $Id: cmndline.cc,v 1.12 2001/06/09 22:39:48 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -58,7 +58,10 @@ bool CommandLine::Parse(int argc,const char **argv)
       
       // Double dash signifies the end of option processing
       if (*Opt == '-' && Opt[1] == 0)
+      {
+	 I++;
 	 break;
+      }
       
       // Single dash is a short option
       if (*Opt != '-')
