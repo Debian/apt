@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.1 1998/07/21 05:33:21 jgg Exp $
+// $Id: progress.cc,v 1.2 1998/07/22 01:45:38 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -97,7 +97,7 @@ void OpTextProgress::Done()
    if (NoUpdate == false && OldOp.empty() == false)
    {
       char S[300];
-      snprintf(S,sizeof(S),"\r%s",OldOp.c_str());
+      snprintf(S,sizeof(S),"\r%s... Done",OldOp.c_str());
       Write(S);
       cout << endl;
       OldOp = string();
