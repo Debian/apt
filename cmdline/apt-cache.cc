@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.61 2003/02/10 01:40:58 doogie Exp $
+// $Id: apt-cache.cc,v 1.62 2003/04/27 01:32:48 doogie Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -588,6 +588,225 @@ bool Depends(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+
+
+// xvcg - Generate a graph for xvcg					/*{{{*/
+// ---------------------------------------------------------------------
+// Code contributed from Junichi Uekawa <dancer@debian.org> on 20 June 2002.
+
+bool XVcg(CommandLine &CmdL)
+{
+   pkgCache &Cache = *GCache;
+   bool GivenOnly = _config->FindB("APT::Cache::GivenOnly",false);
+   
+   /* Normal packages are boxes
+      Pure Provides are triangles
+      Mixed are diamonds
+      rhomb are missing packages*/
+   const char *Shapes[] = {"ellipse","triangle","box","rhomb"};
+   
+   /* Initialize the list of packages to show.
+      1 = To Show
+      2 = To Show no recurse
+      3 = Emitted no recurse
+      4 = Emitted
+      0 = None */
+   enum States {None=0, ToShow, ToShowNR, DoneNR, Done};
+   enum TheFlags {ForceNR=(1<<0)};
+   unsigned char *Show = new unsigned char[Cache.Head().PackageCount];
+   unsigned char *Flags = new unsigned char[Cache.Head().PackageCount];
+   unsigned char *ShapeMap = new unsigned char[Cache.Head().PackageCount];
+   
+   // Show everything if no arguments given
+   if (CmdL.FileList[1] == 0)
+      for (unsigned long I = 0; I != Cache.Head().PackageCount; I++)
+	 Show[I] = ToShow;
+   else
+      for (unsigned long I = 0; I != Cache.Head().PackageCount; I++)
+	 Show[I] = None;
+   memset(Flags,0,sizeof(*Flags)*Cache.Head().PackageCount);
+   
+   // Map the shapes
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   {   
+      if (Pkg->VersionList == 0)
+      {
+	 // Missing
+	 if (Pkg->ProvidesList == 0)
+	    ShapeMap[Pkg->ID] = 0;
+	 else
+	    ShapeMap[Pkg->ID] = 1;
+      }
+      else
+      {
+	 // Normal
+	 if (Pkg->ProvidesList == 0)
+	    ShapeMap[Pkg->ID] = 2;
+	 else
+	    ShapeMap[Pkg->ID] = 3;
+      }
+   }
+   
+   // Load the list of packages from the command line into the show list
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      // Process per-package flags
+      string P = *I;
+      bool Force = false;
+      if (P.length() > 3)
+      {
+	 if (P.end()[-1] == '^')
+	 {
+	    Force = true;
+	    P.erase(P.end()-1);
+	 }
+	 
+	 if (P.end()[-1] == ',')
+	    P.erase(P.end()-1);
+      }
+      
+      // Locate the package
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(P);
+      if (Pkg.end() == true)
+      {
+	 _error->Warning(_("Unable to locate package %s"),*I);
+	 continue;
+      }
+      Show[Pkg->ID] = ToShow;
+      
+      if (Force == true)
+	 Flags[Pkg->ID] |= ForceNR;
+   }
+   
+   // Little header
+   cout << "graph: { title: \"packages\"" << endl <<
+     "xmax: 700 ymax: 700 x: 30 y: 30" << endl <<
+     "layout_downfactor: 8" << endl;
+
+   bool Act = true;
+   while (Act == true)
+   {
+      Act = false;
+      for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+      {
+	 // See we need to show this package
+	 if (Show[Pkg->ID] == None || Show[Pkg->ID] >= DoneNR)
+	    continue;
+
+	 //printf ("node: { title: \"%s\" label: \"%s\" }\n", Pkg.Name(), Pkg.Name());
+	 
+	 // Colour as done
+	 if (Show[Pkg->ID] == ToShowNR || (Flags[Pkg->ID] & ForceNR) == ForceNR)
+	 {
+	    // Pure Provides and missing packages have no deps!
+	    if (ShapeMap[Pkg->ID] == 0 || ShapeMap[Pkg->ID] == 1)
+	       Show[Pkg->ID] = Done;
+	    else
+	       Show[Pkg->ID] = DoneNR;
+	 }	 
+	 else
+	    Show[Pkg->ID] = Done;
+	 Act = true;
+
+	 // No deps to map out
+	 if (Pkg->VersionList == 0 || Show[Pkg->ID] == DoneNR)
+	    continue;
+	 
+	 pkgCache::VerIterator Ver = Pkg.VersionList();
+	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+	 {
+	    // See if anything can meet this dep
+	    // Walk along the actual package providing versions
+	    bool Hit = false;
+	    pkgCache::PkgIterator DPkg = D.TargetPkg();
+	    for (pkgCache::VerIterator I = DPkg.VersionList();
+		      I.end() == false && Hit == false; I++)
+	    {
+	       if (Cache.VS->CheckDep(I.VerStr(),D->CompareOp,D.TargetVer()) == true)
+		  Hit = true;
+	    }
+	    
+	    // Follow all provides
+	    for (pkgCache::PrvIterator I = DPkg.ProvidesList(); 
+		      I.end() == false && Hit == false; I++)
+	    {
+	       if (Cache.VS->CheckDep(I.ProvideVersion(),D->CompareOp,D.TargetVer()) == false)
+		  Hit = true;
+	    }
+	    
+
+	    // Only graph critical deps	    
+	    if (D.IsCritical() == true)
+	    {
+	       printf ("edge: { sourcename: \"%s\" targetname: \"%s\" class: 2 ",Pkg.Name(), D.TargetPkg().Name() );
+	       
+	       // Colour the node for recursion
+	       if (Show[D.TargetPkg()->ID] <= DoneNR)
+	       {
+		  /* If a conflicts does not meet anything in the database
+		     then show the relation but do not recurse */
+		  if (Hit == false && 
+		      (D->Type == pkgCache::Dep::Conflicts ||
+		       D->Type == pkgCache::Dep::Obsoletes))
+		  {
+		     if (Show[D.TargetPkg()->ID] == None && 
+			 Show[D.TargetPkg()->ID] != ToShow)
+			Show[D.TargetPkg()->ID] = ToShowNR;
+		  }		  
+		  else
+		  {
+		     if (GivenOnly == true && Show[D.TargetPkg()->ID] != ToShow)
+			Show[D.TargetPkg()->ID] = ToShowNR;
+		     else
+			Show[D.TargetPkg()->ID] = ToShow;
+		  }
+	       }
+	       
+	       // Edge colour
+	       switch(D->Type)
+	       {
+		  case pkgCache::Dep::Conflicts:
+		    printf("label: \"conflicts\" color: lightgreen }\n");
+		    break;
+		  case pkgCache::Dep::Obsoletes:
+		    printf("label: \"obsoletes\" color: lightgreen }\n");
+		    break;
+		  
+		  case pkgCache::Dep::PreDepends:
+		    printf("label: \"predepends\" color: blue }\n");
+		    break;
+		  
+		  default:
+		    printf("}\n");
+		  break;
+	       }	       
+	    }	    
+	 }
+      }
+   }   
+   
+   /* Draw the box colours after the fact since we can not tell what colour
+      they should be until everything is finished drawing */
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   {
+      if (Show[Pkg->ID] < DoneNR)
+	 continue;
+
+      if (Show[Pkg->ID] == DoneNR)
+	 printf("node: { title: \"%s\" label: \"%s\" color: orange shape: %s }\n", Pkg.Name(), Pkg.Name(),
+		Shapes[ShapeMap[Pkg->ID]]);
+      else
+	printf("node: { title: \"%s\" label: \"%s\" shape: %s }\n", Pkg.Name(), Pkg.Name(), 
+		Shapes[ShapeMap[Pkg->ID]]);
+      
+   }
+   
+   printf("}\n");
+   return true;
+}
+									/*}}}*/
+
+
 // Dotty - Generate a graph for Dotty					/*{{{*/
 // ---------------------------------------------------------------------
 /* Dotty is the graphvis program for generating graphs. It is a fairly
@@ -1281,6 +1500,7 @@ bool ShowHelp(CommandLine &Cmd)
       "   depends - Show raw dependency information for a package\n"
       "   pkgnames - List the names of all packages\n"
       "   dotty - Generate package graphs for GraphVis\n"
+      "   xvcg - Generate package graphs for xvcg\n"
       "   policy - Show policy settings\n"
       "\n"
       "Options:\n"
@@ -1336,6 +1556,7 @@ int main(int argc,const char *argv[])
                                     {"search",&Search},
                                     {"depends",&Depends},
                                     {"dotty",&Dotty},
+                                    {"xvcg",&XVcg},
                                     {"show",&ShowPackage},
                                     {"pkgnames",&ShowPkgNames},
                                     {"policy",&Policy},
