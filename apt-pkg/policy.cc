@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.9 2002/11/06 06:43:14 jgg Exp $
+// $Id: policy.cc,v 1.10 2003/08/12 00:17:37 mdz Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -293,8 +293,14 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       }
       for (; Word != End && isspace(*Word) != 0; Word++);
 
-      Plcy.CreatePin(Type,Name,string(Word,End),
-		     Tags.FindI("Pin-Priority"));
+      short int priority = Tags.FindI("Pin-Priority", 0);
+      if (priority == 0)
+      {
+         _error->Warning(_("No priority (or zero) specified for pin"));
+         continue;
+      }
+
+      Plcy.CreatePin(Type,Name,string(Word,End),priority);
    }
 
    Plcy.InitDefaults();

@@ -44,7 +44,8 @@ Several instances of the same version of a package may be available when
 the &sources-list; file contains references to more than one source.
 In this case <command>apt-get</command> downloads the instance listed
 earliest in the &sources-list; file.
-The APT preferences file does not affect the choice of instance.
+The APT preferences file does not affect the choice of instance, only
+the choice of version.
 </para>
 
 <RefSect2><Title>APT's Default Priority Assignments</>
@@ -248,7 +249,7 @@ or the installed version is more recent</simpara></listitem>
 unless there is a version available belonging to some other
 distribution or the installed version is more recent</simpara></listitem>
 <varlistentry>
-<term>0 &lt;= P &lt;=100</term>
+<term>0 &lt; P &lt;=100</term>
 <listitem><simpara>causes a version to be installed
 only if there is no installed version of the package</simpara></listitem>
 </varlistentry>
