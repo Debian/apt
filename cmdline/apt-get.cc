@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.40 1999/02/08 07:30:50 jgg Exp $
+// $Id: apt-get.cc,v 1.41 1999/02/15 05:24:35 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -522,7 +522,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    
    // Create the package manager and prepare to download
    pkgDPkgPM PM(Cache);
-   if (PM.GetArchives(&Fetcher,&List,&Recs) == false)
+   if (PM.GetArchives(&Fetcher,&List,&Recs) == false || 
+       _error->PendingError() == true)
       return false;
 
    // Display statistics
