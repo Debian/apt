@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.101 2001/02/21 04:25:20 jgg Exp $
+// $Id: apt-get.cc,v 1.102 2001/02/27 02:51:03 tausq Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1845,24 +1845,41 @@ bool DoBuildDep(CommandLine &CmdL)
 	 if ((*D).Type == pkgSrcRecords::Parser::BuildConflict || 
 	     (*D).Type == pkgSrcRecords::Parser::BuildConflictIndep)
 	 {
-	    /* conflict; need to remove if we have an installed version 
-	      that satisfies the version criteria */
+	    /* 
+	     * conflict; need to remove if we have an installed version 
+	     * that satisfies the version criterial 
+	     */
 	    if (IV.end() == false && 
 		Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
 	       TryToInstall(Pkg,Cache,Fix,true,false,ExpectedInst);
 	 } 
 	 else 
 	 {
-	    /* depends; need to install or upgrade if we don't have the
-	       package installed or if the version does not satisfy the
-	       build dep. This is complicated by the fact that if we
-	       depend on a version lower than what we already have 
-	       installed it is not clear what should be done; in practice
-	       this case should be rare though and right now nothing
-	       is done about it :-( */
-	    if (IV.end() == true ||
-		Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == false)
-	       TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst);
+	    /* 
+	     * If this is a virtual package, we need to check the list of
+	     * packages that provide it and see if any of those are
+	     * installed
+	     */
+            pkgCache::PrvIterator Prv = Pkg.ProvidesList();
+            for (; Prv.end() != true; Prv++)
+	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
+	          break;
+
+	    if (Prv.end() == true)
+	    {
+	       /* 
+		* depends; need to install or upgrade if we don't have the
+	        * package installed or if the version does not satisfy the
+	        * build dep. This is complicated by the fact that if we
+	        * depend on a version lower than what we already have 
+	        * installed it is not clear what should be done; in practice
+	        * this case should be rare though and right now nothing
+	        * is done about it :-( 
+		*/
+	       if (IV.end() == true ||
+	          Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == false)
+	             TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst);
+	    }
 	 }	       
       }
       
