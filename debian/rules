@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.5 1999/02/03 21:05:48 jgg Exp $
+# $Id: rules,v 1.6 1999/02/15 08:23:10 jgg Exp $
 
 
 # Uncomment this to turn on verbose mode.
@@ -58,9 +58,16 @@ apt: build
 	cp build/scripts/dselect/* debian/tmp/usr/lib/dpkg/methods/apt/
 #	cp debian/sources.list debian/tmp/etc/apt/
 
+	# Copy the users guide	
 	cp build/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
 	mkdir debian/tmp/usr/doc/apt/users-guide.html/
 	cp -a build/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
+	
+	# Copy the offline guide	
+	cp build/docs/offline.text debian/tmp/usr/doc/apt/offline.txt
+	mkdir debian/tmp/usr/doc/apt/offline.html/
+	cp -a build/docs/offline.html/* debian/tmp/usr/doc/apt/offline.html/
+	
 	cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
 	
 #	head -n 500 ChangeLog > debian/ChangeLog

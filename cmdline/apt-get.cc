@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.41 1999/02/15 05:24:35 jgg Exp $
+// $Id: apt-get.cc,v 1.42 1999/02/15 08:23:10 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -536,19 +536,19 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    }
       
    // Number of bytes
-   c2out << "Need to get ";
+   c1out << "Need to get ";
    if (DebBytes != FetchBytes)
-      c2out << SizeToStr(FetchBytes) << "b/" << SizeToStr(DebBytes) << 'b';
+      c1out << SizeToStr(FetchBytes) << "b/" << SizeToStr(DebBytes) << 'b';
    else
-      c2out << SizeToStr(DebBytes) << 'b';
+      c1out << SizeToStr(DebBytes) << 'b';
       
    c1out << " of archives. After unpacking ";
    
    // Size delta
    if (Cache->UsrSize() >= 0)
-      c2out << SizeToStr(Cache->UsrSize()) << "b will be used." << endl;
+      c1out << SizeToStr(Cache->UsrSize()) << "b will be used." << endl;
    else
-      c2out << SizeToStr(-1*Cache->UsrSize()) << "b will be freed." << endl;
+      c1out << SizeToStr(-1*Cache->UsrSize()) << "b will be freed." << endl;
 
    if (_error->PendingError() == true)
       return false;
