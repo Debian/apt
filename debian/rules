@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.7 1999/03/12 22:34:34 mblevin Exp $
+# $Id: rules,v 1.8 1999/03/16 09:43:41 mblevin Exp $
 
 
 # Uncomment this to turn on verbose mode.
@@ -15,6 +15,7 @@ build: build-stamp
 build-stamp: configure
 	dh_testdir
 	mkdir build
+	make startup
 	cd build; ../configure
 	cd ..
 #	cd build && CXXFLAGS="-g -Wall -D_POSIX_C_SOURCE=199309" ../configure --disable-nls --disable-static --prefix=/usr
@@ -113,6 +114,7 @@ libapt-pkg-dev: build
 	dh_fixperms -plibapt-pkg-dev
 	dh_installdeb -plibapt-pkg-dev
 	dh_shlibdeps -plibapt-pkg-dev
+	echo libapt-pkg:major=${LIBAPT_MAJOR} >> debian/libapt-pkg-dev.substvars
 	dh_gencontrol -plibapt-pkg-dev
 	dh_md5sums -plibapt-pkg-dev
 	dh_builddeb -plibapt-pkg-dev
