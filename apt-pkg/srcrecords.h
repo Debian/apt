@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.2 1999/04/04 08:07:39 jgg Exp $
+// $Id: srcrecords.h,v 1.3 1999/04/07 05:30:18 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -36,9 +36,12 @@ class pkgSrcRecords
    class Parser
    {
       FileFd *File;
-     
+      pkgSourceList::const_iterator SrcItem;
+      
       public:
 
+      inline pkgSourceList::const_iterator Source() const {return SrcItem;};
+      
       virtual bool Restart() = 0;
       virtual bool Step() = 0;
       virtual bool Jump(unsigned long Off) = 0;
@@ -51,7 +54,8 @@ class pkgSrcRecords
       virtual const char **Binaries() = 0;
       virtual bool Files(vector<File> &F) = 0;
       
-      Parser(FileFd *File) : File(File) {};
+      Parser(FileFd *File,pkgSourceList::const_iterator SrcItem) : File(File), 
+             SrcItem(SrcItem) {};
       virtual ~Parser() {delete File;};
    };
    

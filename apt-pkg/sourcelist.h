@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.7 1999/03/02 18:35:24 jgg Exp $
+// $Id: sourcelist.h,v 1.8 1999/04/07 05:30:18 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -48,7 +48,8 @@ class pkgSourceList
       string PackagesURI() const;
       string PackagesInfo() const;      
       string ReleaseURI() const;
-      string ReleaseInfo() const;      
+      string ReleaseInfo() const;
+      string SourceInfo(string Pkg,string Ver,string Comp) const;
       string SiteOnly(string URI) const;
       string ArchiveInfo(pkgCache::VerIterator Ver) const;
       string ArchiveURI(string File) const;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.cc,v 1.2 1999/04/04 08:07:39 jgg Exp $
+// $Id: debsrcrecords.cc,v 1.3 1999/04/07 05:30:18 jgg Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -75,10 +75,10 @@ bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
       return false;
 
    // Stash the / terminated directory prefix
-   string Base = Sect.FindS("Directory:");
+   string Base = Sect.FindS("Directory");
    if (Base.empty() == false && Base[Base.length()-1] != '/')
       Base += '/';
-       
+   
    // Iterate over the entire list grabbing each triplet
    const char *C = Files.c_str();
    while (*C != 0)

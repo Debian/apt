@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.12 1999/03/05 19:36:49 jgg Exp $
+// $Id: sourcelist.cc,v 1.13 1999/04/07 05:30:17 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -311,6 +311,33 @@ string pkgSourceList::Item::ArchiveURI(string File) const
       case Deb:
       case DebSrc:
       Res = URI + File;
+      break;
+   };
+   return Res;
+}
+									/*}}}*/
+// SourceList::Item::SourceInfo	- Returns an info line for a source	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string pkgSourceList::Item::SourceInfo(string Pkg,string Ver,string Comp) const
+{
+   string Res;
+   switch (Type)
+   {
+      case DebSrc:
+      case Deb:
+      Res += SiteOnly(URI) + ' ';
+      if (Dist[Dist.size() - 1] == '/')
+	 Res += Dist;
+      else
+	 Res += Dist + '/' + Section;
+      
+      Res += " ";
+      Res += Pkg;
+      Res += " ";
+      Res += Ver;
+      if (Comp.empty() == false)
+	 Res += " (" + Comp + ")";
       break;
    };
    return Res;

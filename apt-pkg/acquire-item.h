@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.17 1999/03/27 03:02:38 jgg Exp $
+// $Id: acquire-item.h,v 1.18 1999/04/07 05:30:17 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -65,10 +65,10 @@ class pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
    virtual void Start(string Message,unsigned long Size);
    virtual string Custom600Headers() {return string();};
+   virtual string DescURI() = 0;
    
    // Inquire functions
    virtual string MD5Sum() {return string();};
-   virtual string Describe() = 0;
          
    Item(pkgAcquire *Owner);
    virtual ~Item();
@@ -89,7 +89,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    // Specialized action members
    virtual void Done(string Message,unsigned long Size,string Md5Hash);   
    virtual string Custom600Headers();
-   virtual string Describe();
+   virtual string DescURI() {return Location->PackagesURI();};
 
    pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location);
 };
@@ -108,7 +108,7 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(string Message,unsigned long Size,string Md5Hash);   
    virtual string Custom600Headers();
-   virtual string Describe();
+   virtual string DescURI() {return Location->ReleaseURI();};
    
    pkgAcqIndexRel(pkgAcquire *Owner,const pkgSourceList::Item *Location);
 };
@@ -136,12 +136,28 @@ class pkgAcqArchive : public pkgAcquire::Item
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
-   virtual string Describe();
    virtual string MD5Sum() {return MD5;};
+   virtual string DescURI() {return Desc.URI;};
    
    pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 		 pkgRecords *Recs,pkgCache::VerIterator const &Version,
 		 string &StoreFilename);
+};
+
+// Fetch a generic file to the current directory
+class pkgAcqFile : public pkgAcquire::Item
+{
+   pkgAcquire::ItemDesc Desc;
+   string MD5;
+   
+   public:
+   
+   // Specialized action members
+   virtual void Done(string Message,unsigned long Size,string Md5Hash);
+   virtual string DescURI() {return Desc.URI;};
+   
+   pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,unsigned long Size,
+		  string Desc,string ShortDesc);
 };
 
 #endif

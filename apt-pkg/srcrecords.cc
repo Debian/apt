@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.cc,v 1.1 1999/04/04 01:17:29 jgg Exp $
+// $Id: srcrecords.cc,v 1.2 1999/04/07 05:30:18 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -63,7 +63,7 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 	 return;
       }
       
-      Files[Count] = new debSrcRecordParser(FD);
+      Files[Count] = new debSrcRecordParser(FD,I);
       Count++;
    }
    

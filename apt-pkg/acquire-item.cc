@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.26 1999/03/27 03:02:38 jgg Exp $
+// $Id: acquire-item.cc,v 1.27 1999/04/07 05:30:17 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -20,6 +20,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -236,14 +237,6 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
    Mode = "gzip";
 }
 									/*}}}*/
-// AcqIndex::Describe - Describe the Item				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgAcqIndex::Describe()
-{
-   return Location->PackagesURI();
-}
-									/*}}}*/
 
 // AcqIndexRel::pkgAcqIndexRel - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -320,14 +313,6 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(Location->ReleaseURI());
    Rename(DestFile,FinalFile);
-}
-									/*}}}*/
-// AcqIndexRel::Describe - Describe the Item				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgAcqIndexRel::Describe()
-{
-   return Location->ReleaseURI();
 }
 									/*}}}*/
 // AcqIndexRel::Failed - Silence failure messages for missing rel files	/*{{{*/
@@ -526,14 +511,6 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
    Complete = true;
 }
 									/*}}}*/
-// AcqArchive::Describe - Describe the Item				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgAcqArchive::Describe()
-{
-   return Desc.URI;
-}
-									/*}}}*/
 // AcqArchive::Failed - Failure handler					/*{{{*/
 // ---------------------------------------------------------------------
 /* Here we try other sources */
@@ -555,6 +532,70 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       
       StoreFilename = string();
       Item::Failed(Message,Cnf);
+   }
+}
+									/*}}}*/
+
+// AcqFile::pkgAcqFile - Constructor					/*{{{*/
+// ---------------------------------------------------------------------
+/* The file is added to the queue */
+pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
+		       unsigned long Size,string Dsc,string ShortDesc) :
+                       Item(Owner), MD5(MD5)
+{
+   DestFile = flNotDir(URI);
+   
+   // Create the item
+   Desc.URI = URI;
+   Desc.Description = Dsc;
+   Desc.Owner = this;
+
+   // Set the short description to the archive component
+   Desc.ShortDesc = ShortDesc;
+      
+   // Get the transfer sizes
+   FileSize = Size;
+   struct stat Buf;
+   if (stat(DestFile.c_str(),&Buf) == 0)
+   {
+      // Hmm, the partial file is too big, erase it
+      if ((unsigned)Buf.st_size > Size)
+	 unlink(DestFile.c_str());
+      else
+	 PartialSize = Buf.st_size;
+   }
+   
+   QueueURI(Desc);
+}
+									/*}}}*/
+// AcqFile::Done - Item downloaded OK					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
+{
+   Item::Done(Message,Size,MD5);
+
+   string FileName = LookupTag(Message,"Filename");
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "Method gave a blank filename";
+      return;
+   }
+
+   Complete = true;
+   
+   // The files timestamp matches
+   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      return;
+   
+   // We have to copy it into place
+   if (FileName != DestFile)
+   {
+      Local = true;
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
+      return;
    }
 }
 									/*}}}*/

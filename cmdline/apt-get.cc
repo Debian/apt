@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.48 1999/03/29 19:28:52 jgg Exp $
+// $Id: apt-get.cc,v 1.49 1999/04/07 05:30:18 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -37,6 +37,8 @@
 #include <apt-pkg/dpkginit.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/clean.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/version.h>
 
 #include <config.h>
 
@@ -519,9 +521,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       return false;
    
    // Lock the archive directory
+   FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
-      FileFd Lock(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
+      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
       if (_error->PendingError() == true)
 	 return _error->Error("Unable to lock the download directory");
    }
@@ -590,9 +593,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    if (Essential == true && Saftey == true)
    {
       c2out << "You are about to do something potentially harmful" << endl;
-      c2out << "To continue type in the phrase 'Yes, I understand this is bad'" << endl;
+      c2out << "To continue type in the phrase 'Yes, I understand this may be bad'" << endl;
       c2out << " ?] " << flush;
-      if (AnalPrompt("Yes, I understand this is bad") == false)
+      if (AnalPrompt("Yes, I understand this may be bad") == false)
       {
 	 c2out << "Abort." << endl;
 	 exit(1);
@@ -617,6 +620,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       }      
    }
    
+   // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
@@ -646,7 +650,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
 	 continue;
       }
       
-      cerr << "Failed to fetch " << (*I)->Describe() << endl;
+      cerr << "Failed to fetch " << (*I)->DescURI() << endl;
       cerr << "  " << (*I)->ErrorText << endl;
       Failed = true;
    }
@@ -688,9 +692,10 @@ bool DoUpdate(CommandLine &)
       return false;
 
    // Lock the list directory
+   FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
-      FileFd Lock(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
+      Lock.Fd(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
       if (_error->PendingError() == true)
 	 return _error->Error("Unable to lock the list directory");
    }
@@ -1082,7 +1087,153 @@ bool DoCheck(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DoSource - Fetch a source archive					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool DoSource(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.Open(true) == false)
+      return false;
+
+   // Read the source list
+   pkgSourceList List;
+   if (List.ReadMainList() == false)
+      return _error->Error("The list of sources could not be read.");
+   
+   // Create the text record parsers
+   pkgRecords Recs(Cache);
+   pkgSrcRecords SrcRecs(List);
+   if (_error->PendingError() == true)
+      return false;
+
+   // Create the download object
+   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
+   pkgAcquire Fetcher(&Stat);
+   
+   // Load the requestd sources into the fetcher
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      string Src;
       
+      /* Lookup the version of the package we would install if we were to
+         install a version and determine the source package name, then look
+         in the archive for a source package of the same name. In theory
+         we could stash the version string as well and match that too but
+         today there aren't multi source versions in the archive. */
+      pkgCache::PkgIterator Pkg = Cache->FindPkg(*I);
+      if (Pkg.end() == false)
+      {
+	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
+	 if (Ver.end() == false)
+	 {
+	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
+	    Src = Parse.SourcePkg();
+	 }	 
+      }   
+
+      // No source package name..
+      if (Src.empty() == true)
+	 Src = *I;
+      
+      // The best hit
+      pkgSrcRecords::Parser *Last = 0;
+      unsigned long Offset = 0;
+      string Version;
+	 
+      // Iterate over all of the hits
+      pkgSrcRecords::Parser *Parse;
+      SrcRecs.Restart();
+      while ((Parse = SrcRecs.Find(Src.c_str(),false)) != 0)
+      {
+	 string Ver = Parse->Version();
+	 if (Last == 0 || pkgVersionCompare(Version,Ver) < 0)
+	 {
+	    Last = Parse;
+	    Offset = Parse->Offset();
+	    Version = Ver;
+	 }      
+      }
+      
+      if (Last == 0)
+	 return _error->Error("Unable to find a source package for %s",Src.c_str());
+      
+      // Back track
+      vector<pkgSrcRecords::File> Lst;
+      if (Last->Jump(Offset) == false || Last->Files(Lst) == false)
+	 return false;
+
+      // Load them into the fetcher
+      for (vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
+	   I != Lst.end(); I++)
+      {
+	 // Try to guess what sort of file it is we are getting.
+	 string Comp;
+	 if (I->Path.find(".dsc") != string::npos)
+	    Comp = "dsc";
+	 if (I->Path.find(".tar.gz") != string::npos)
+	    Comp = "tar";
+	 if (I->Path.find(".diff.gz") != string::npos)
+	    Comp = "diff";
+	 
+	 new pkgAcqFile(&Fetcher,Last->Source()->ArchiveURI(I->Path),
+			I->MD5Hash,I->Size,Last->Source()->SourceInfo(Src,
+			Last->Version(),Comp),Src);
+      }
+   }
+   
+   // Display statistics
+   unsigned long FetchBytes = Fetcher.FetchNeeded();
+   unsigned long FetchPBytes = Fetcher.PartialPresent();
+   unsigned long DebBytes = Fetcher.TotalNeeded();
+
+   // Check for enough free space
+   struct statfs Buf;
+   string OutputDir = ".";
+   if (statfs(OutputDir.c_str(),&Buf) != 0)
+      return _error->Errno("statfs","Couldn't determine free space in %s",
+			   OutputDir.c_str());
+   if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
+      return _error->Error("Sorry, you don't have enough free space in %s",
+			   OutputDir.c_str());
+   
+   // Number of bytes
+   c1out << "Need to get ";
+   if (DebBytes != FetchBytes)
+      c1out << SizeToStr(FetchBytes) << "b/" << SizeToStr(DebBytes) << 'b';
+   else
+      c1out << SizeToStr(DebBytes) << 'b';
+   c1out << " of source archives." << endl;
+
+   // Just print out the uris an exit if the --print-uris flag was used
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+   {
+      pkgAcquire::UriIterator I = Fetcher.UriBegin();
+      for (; I != Fetcher.UriEnd(); I++)
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+      return true;
+   }
+   
+   // Run it
+   if (Fetcher.Run() == false)
+      return false;
+
+   // Print error messages
+   for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   {
+      if ((*I)->Status == pkgAcquire::Item::StatDone &&
+	  (*I)->Complete == true)
+	 continue;
+      
+      cerr << "Failed to fetch " << (*I)->DescURI() << endl;
+      cerr << "  " << (*I)->ErrorText << endl;
+   }
+   
+   return true;
+}
+									/*}}}*/
+
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1191,6 +1342,7 @@ int main(int argc,const char *argv[])
                                    {"clean",&DoClean},
                                    {"autoclean",&DoAutoClean},
                                    {"check",&DoCheck},
+      				   {"source",&DoSource},
       				   {"help",&ShowHelp},
                                    {0,0}};
    
