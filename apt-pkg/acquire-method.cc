@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.16 1999/01/27 02:48:52 jgg Exp $
+// $Id: acquire-method.cc,v 1.17 1999/02/08 07:30:49 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -18,6 +18,7 @@
 #include <apt-pkg/fileutl.h>
 
 #include <stdio.h>
+#include <unistd.h>
 									/*}}}*/
 
 // AcqMethod::pkgAcqMethod - Constructor				/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.27 1999/01/27 02:48:52 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.28 1999/02/08 07:30:49 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -74,6 +74,9 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
    {
       // Get a pointer to the package structure
       string PackageName = List.Package();
+      if (PackageName.empty() == true)
+	 return false;
+      
       pkgCache::PkgIterator Pkg;
       if (NewPackage(Pkg,PackageName) == false)
 	 return _error->Error("Error occured while processing %s (NewPackage)",PackageName.c_str());

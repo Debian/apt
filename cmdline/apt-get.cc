@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.39 1999/02/07 08:40:34 jgg Exp $
+// $Id: apt-get.cc,v 1.40 1999/02/08 07:30:50 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -47,6 +47,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <signal.h>
+#include <unistd.h>
 #include <stdio.h>
 									/*}}}*/
 
@@ -1001,20 +1002,22 @@ bool DoClean(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* This is similar to clean but it only purges things that cannot be 
    downloaded, that is old versions of cached packages. */
+class LogCleaner : public pkgArchiveCleaner
+{
+   protected:
+   virtual void Erase(const char *File,string Pkg,string Ver,struct stat &St) 
+   {
+      cout << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "b]" << endl;
+   };
+};
+
 bool DoAutoClean(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.Open(true) == false)
       return false;
    
-   class LogCleaner : public pkgArchiveCleaner
-   {
-      protected:
-      virtual void Erase(const char *File,string Pkg,string Ver,struct stat &St) 
-      {
-	 cout << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "b]" << endl;
-      };
-   } Cleaner;
+   LogCleaner Cleaner;
    
    return Cleaner.Go(_config->FindDir("Dir::Cache::archives"),*Cache) &&
       Cleaner.Go(_config->FindDir("Dir::Cache::archives") + "partial/",*Cache);

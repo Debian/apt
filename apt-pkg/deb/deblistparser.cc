@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.15 1999/02/01 02:22:11 jgg Exp $
+// $Id: deblistparser.cc,v 1.16 1999/02/08 07:30:50 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -44,7 +44,7 @@ string debListParser::Package()
 {
    string Result = Section.FindS("Package");
    if (Result.empty() == true)
-      _error->Error("Encoutered a section with no Package: header");
+      _error->Error("Encountered a section with no Package: header");
    return Result;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.24 1999/01/30 08:23:49 jgg Exp $
+// $Id: http.cc,v 1.25 1999/02/08 07:30:50 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -38,6 +38,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
+#include <errno.h>
 
 // Internet stuff
 #include <netinet/in.h>
