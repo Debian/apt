@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.18 1999/11/23 05:36:52 jgg Exp $
+# $Id: rules,v 1.19 1999/12/07 07:38:19 jgg Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -53,7 +53,7 @@ build-stamp: configure
 #	cd build && CXXFLAGS="-g -Wall -D_POSIX_C_SOURCE=199309" ../configure --disable-nls --disable-static --prefix=/usr
 #	cd build && make all-hdr
 #	cd build && make -s
-	
+
 	# Add here commands to compile the package.
 	make
 	touch build-stamp
@@ -78,12 +78,13 @@ libapt-pkg-doc: build debian/shlibs.local
 	dh_installdirs -p$@
 #
 # libapt-pkg-doc install
-#
+#	
+	dh_installdocs -p$@ $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
+                            $(BLD)/docs/files* $(BLD)/docs/method*
+			    
 	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
 	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/share/doc/libapt-pkg-doc/.dhelp
 	
-	dh_installdocs -p$@ $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
-                            $(BLD)/docs/files* $(BLD)/docs/method*
 	dh_installexamples -p$@
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
