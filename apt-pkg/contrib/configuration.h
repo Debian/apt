@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.10 1999/03/15 08:10:39 jgg Exp $
+// $Id: configuration.h,v 1.11 1999/04/03 00:34:33 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -46,7 +46,7 @@ class Configuration
       
       string FullTag() const;
       
-      Item() : Child(0), Next(0) {};
+      Item() : Parent(0), Child(0), Next(0) {};
    };
    Item *Root;
    
