@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.27 1999/04/20 05:02:09 jgg Exp $
+// $Id: fileutl.cc,v 1.28 1999/07/11 22:42:32 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -250,11 +250,12 @@ int ExecFork()
 }
 									/*}}}*/
 
-// FileFd::FileFd - Open a file						/*{{{*/
+// FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */
-FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
+bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
 {
+   Close();
    Flags = AutoClose;
    switch (Mode)
    {
@@ -281,12 +282,11 @@ FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
    }  
 
    if (iFd < 0)
-      _error->Errno("open","Could not open file %s",FileName.c_str());
-   else
-   {
-      this->FileName = FileName;
-      SetCloseExec(iFd,true);
-   }   
+      return _error->Errno("open","Could not open file %s",FileName.c_str());
+   
+   this->FileName = FileName;
+   SetCloseExec(iFd,true);
+   return true;
 }
 									/*}}}*/
 // FileFd::~File - Closes the file					/*{{{*/

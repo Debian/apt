@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.26 1999/07/03 03:10:35 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.27 1999/07/11 22:42:32 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -38,8 +38,8 @@
    search that short circuits when it his a package file in the dir.
    This speeds it up greatly as the majority of the size is in the
    binary-* sub dirs. */
-bool FindPackages(string CD,vector<string> &List,string &InfoDir,
-		  unsigned int Depth = 0)
+bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
+		  string &InfoDir,unsigned int Depth = 0)
 {
    static ino_t Inodes[9];
    if (Depth >= 7)
@@ -70,6 +70,14 @@ bool FindPackages(string CD,vector<string> &List,string &InfoDir,
       if (_config->FindB("APT::CDROM::Thorough",false) == false)
 	 return true;
    }
+   if (stat("Sources",&Buf) == 0) 
+   {
+      SList.push_back(CD);
+      
+      // Continue down if thorough is given
+      if (_config->FindB("APT::CDROM::Thorough",false) == false)
+	 return true;
+   }
    
    DIR *D = opendir(".");
    if (D == 0)
@@ -81,7 +89,7 @@ bool FindPackages(string CD,vector<string> &List,string &InfoDir,
       // Skip some files..
       if (strcmp(Dir->d_name,".") == 0 ||
 	  strcmp(Dir->d_name,"..") == 0 ||
-	  strcmp(Dir->d_name,"source") == 0 ||
+	  //strcmp(Dir->d_name,"source") == 0 ||
 	  strcmp(Dir->d_name,"experimental") == 0 ||
 	  strcmp(Dir->d_name,"binary-all") == 0)
 	 continue;
@@ -105,7 +113,7 @@ bool FindPackages(string CD,vector<string> &List,string &InfoDir,
       Inodes[Depth] = Buf.st_ino;
 
       // Descend
-      if (FindPackages(CD + Dir->d_name,List,InfoDir,Depth+1) == false)
+      if (FindPackages(CD + Dir->d_name,List,SList,InfoDir,Depth+1) == false)
 	 break;
 
       if (chdir(CD.c_str()) != 0)
@@ -183,15 +191,16 @@ int Score(string Path)
 // DropRepeats - Drop repeated files resulting from symlinks		/*{{{*/
 // ---------------------------------------------------------------------
 /* Here we go and stat every file that we found and strip dup inodes. */
-bool DropRepeats(vector<string> &List)
+bool DropRepeats(vector<string> &List,const char *Name)
 {
    // Get a list of all the inodes
    ino_t *Inodes = new ino_t[List.size()];
    for (unsigned int I = 0; I != List.size(); I++)
    {
       struct stat Buf;
-      if (stat((List[I] + "Packages").c_str(),&Buf) != 0)
-	 _error->Errno("stat","Failed to stat %sPackages",List[I].c_str());
+      if (stat((List[I] + Name).c_str(),&Buf) != 0)
+	 _error->Errno("stat","Failed to stat %s%s",List[I].c_str(),
+		       Name);
       Inodes[I] = Buf.st_ino;
    }
    
@@ -886,9 +895,10 @@ bool DoAdd(CommandLine &)
    cout << "Scanning Disc for index files..  " << flush;
    // Get the CD structure
    vector<string> List;
+   vector<string> sList;
    string StartDir = SafeGetCWD();
    string InfoDir;
-   if (FindPackages(CDROM,List,InfoDir) == false)
+   if (FindPackages(CDROM,List,sList,InfoDir) == false)
    {
       cout << endl;
       return false;
@@ -907,8 +917,10 @@ bool DoAdd(CommandLine &)
    
    // Fix up the list
    DropBinaryArch(List);
-   DropRepeats(List);
-   cout << "Found " << List.size() << " package index files." << endl;
+   DropRepeats(List,"Packages");
+   DropRepeats(sList,"Sources");
+   cout << "Found " << List.size() << " package indexes and " << sList.size() << 
+      " source indexes." << endl;
 
    if (List.size() == 0)
       return _error->Error("Unable to locate any package files, perhaps this is not a Debian Disc");
@@ -965,6 +977,7 @@ bool DoAdd(CommandLine &)
       return false;
    
    ReduceSourcelist(CDROM,List);
+   ReduceSourcelist(CDROM,sList);
 
    // Write the database and sourcelist
    if (_config->FindB("APT::cdrom::NoAct",false) == false)
@@ -986,6 +999,16 @@ bool DoAdd(CommandLine &)
 	 return _error->Error("Internal error");
 
       cout << "deb \"cdrom:" << Name << "/" << string(*I,0,Space) << 
+	 "\" " << string(*I,Space+1) << endl;
+   }
+
+   for (vector<string>::iterator I = sList.begin(); I != sList.end(); I++)
+   {
+      string::size_type Space = (*I).find(' ');
+      if (Space == string::npos)
+	 return _error->Error("Internal error");
+
+      cout << "deb-src \"cdrom:" << Name << "/" << string(*I,0,Space) << 
 	 "\" " << string(*I,Space+1) << endl;
    }
 
