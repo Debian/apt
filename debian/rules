@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.21 2000/06/04 05:34:58 doogie Exp $
+# $Id: rules,v 1.22 2000/06/04 05:36:15 doogie Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -59,7 +59,7 @@ build-stamp: configure
 #	cd build && make -s
 
 	# Add here commands to compile the package.
-	make
+	$(MAKE)
 	touch build-stamp
 
 clean:
@@ -192,7 +192,7 @@ l33ch: really-clean
 super-l33ch: l33ch Makefile.in
 
 configure:
-	make configure
+	$(MAKE) configure
 
 l33ch-stamp: super-l33ch
 	touch l33ch-stamp
@@ -217,8 +217,8 @@ cvs-build:
 	rm -rf debian/cvs-build
 	cvs update
 	buildlib/mkChangeLog
-	make startup
-	make doc
+	$(MAKE) startup
+	$(MAKE) doc
 	tar c --exclude CVS --exclude debian/cvs-build . |\
 		(mkdir -p debian/cvs-build/apt-$(APT_DEBVER);cd debian/cvs-build/apt-$(APT_DEBVER);tar x)
 # The next line isn't needed, as debuild will make the .tar.gz for us.
