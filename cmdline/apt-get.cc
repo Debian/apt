@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.94 1999/12/10 07:27:03 jgg Exp $
+// $Id: apt-get.cc,v 1.95 2000/01/14 06:26:37 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -955,7 +955,7 @@ bool DoUpdate(CommandLine &)
    }
    
    // Clean out any old list files
-   if (_config->FindB("APT::Get::List-Cleanup",false) == false)
+   if (_config->FindB("APT::Get::List-Cleanup",true) == true)
    {
       if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
 	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
@@ -1735,7 +1735,7 @@ int main(int argc,const char *argv[])
        _config->FindB("version") == true ||
        CmdL.FileSize() == 0)
       return ShowHelp(CmdL);
-
+   
    // Deal with stdout not being a tty
    if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
       _config->Set("quiet","1");

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.32 2000/01/10 03:44:54 jgg Exp $
+// $Id: strutl.cc,v 1.33 2000/01/14 06:26:37 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -759,7 +759,18 @@ void URI::CopyFrom(string U)
    string::const_iterator SingleSlash = I;
    if (I + 3 < U.end() && I[1] == '/' && I[2] == '/')
       SingleSlash += 3;
-   for (; SingleSlash < U.end() && *SingleSlash != '/'; SingleSlash++);
+   
+   /* Find the / indicating the end of the hostname, ignoring /'s in the
+      square brackets */
+   bool InBracket = false;
+   for (; SingleSlash < U.end() && (*SingleSlash != '/' || InBracket == true); SingleSlash++)
+   {
+      if (*SingleSlash == '[')
+	 InBracket = true;
+      if (InBracket == true && *SingleSlash == ']')
+	 InBracket = false;
+   }
+   
    if (SingleSlash > U.end())
       SingleSlash = U.end();
 
@@ -806,10 +817,39 @@ void URI::CopyFrom(string U)
 	 Password = string(U,SecondColon - U.begin() + 1,At - SecondColon - 1);
    }   
    
+   // Now we parse the RFC 2732 [] hostnames.
+   unsigned long PortEnd = 0;
+   InBracket = false;
+   for (unsigned I = 0; I != Host.length();)
+   {
+      if (Host[I] == '[')
+      {
+	 InBracket = true;
+	 Host.erase(I,1);
+	 continue;
+      }
+      
+      if (InBracket == true && Host[I] == ']')
+      {
+	 InBracket = false;
+	 Host.erase(I,1);
+	 PortEnd = I;
+	 continue;
+      }
+      I++;
+   }
+   
+   // Tsk, weird.
+   if (InBracket == true)
+   {
+      Host = string();
+      return;
+   }
+   
    // Now we parse off a port number from the hostname
    Port = 0;
    string::size_type Pos = Host.rfind(':');
-   if (Pos == string::npos)
+   if (Pos == string::npos || Pos < PortEnd)
       return;
    
    Port = atoi(string(Host,Pos+1).c_str());

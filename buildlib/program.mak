@@ -25,11 +25,15 @@ clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
 # The clean rules
-.PHONY: clean/$(LOCAL) veryclean/$(LOCAL)
+.PHONY: clean/$(LOCAL) veryclean/$(LOCAL) 
 clean/$(LOCAL):
 	-rm -f $($(@F)-OBJS) $($(@F)-DEP)
 veryclean/$(LOCAL): clean/$(LOCAL)
 	-rm -f $($(@F)-BIN)
+
+# The convience binary build rule
+.PHONY: $(PROGRAM)
+$(PROGRAM): $($(LOCAL)-BIN)
 
 # The binary build rule
 $($(LOCAL)-BIN): $($(LOCAL)-OBJS) $($(LOCAL)-MKS)

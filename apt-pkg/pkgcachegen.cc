@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.44 2000/01/10 03:44:54 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.45 2000/01/14 06:26:36 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -747,6 +747,10 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    {      
       string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
       FileFd SCacheF(SCacheFile,FileFd::WriteEmpty);
+      
+      /* Open the pkgcache, we want a new inode here so we do no corrupt
+       	 existing mmaps */
+      unlink(CacheFile.c_str());             
       FileFd CacheF(CacheFile,FileFd::WriteEmpty);
       DynamicMMap Map(CacheF,MMap::Public,MapSize);
       if (_error->PendingError() == true)
@@ -776,8 +780,11 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    
    // We use the source cache to generate the package cache
    string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-
    FileFd SCacheF(SCacheFile,FileFd::ReadOnly);
+   
+   /* Open the pkgcache, we want a new inode here so we do no corrupt
+      existing mmaps */
+   unlink(CacheFile.c_str());             
    FileFd CacheF(CacheFile,FileFd::WriteEmpty);
    DynamicMMap Map(CacheF,MMap::Public,MapSize);
    if (_error->PendingError() == true)
