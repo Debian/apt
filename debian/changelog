@@ -7,8 +7,11 @@ apt (0.5.9) unstable; urgency=low
   * Patch from Otavio Salvador to switch from dh_installmanpages to
     dh_installman.  Fixes the problem where the pt_BR man page was
     installed in the wrong location (Closes: #194558)
+  * Write records from "apt-cache show" using fwrite(3) rather than
+    write(2), in case for some reason the entire record doesn't get
+    written by a single write(2)
 
- -- Matt Zimmerman <mdz@debian.org>  Sat,  2 Aug 2003 15:50:02 -0400
+ --
 
 apt (0.5.8) unstable; urgency=medium
 
