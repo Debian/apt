@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.13 2002/11/09 23:08:08 doogie Exp $
+// $Id: apt-extracttemplates.cc,v 1.14 2003/01/11 07:18:44 jgg Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template
@@ -40,6 +40,8 @@
 #include <apti18n.h>
 #include "apt-extracttemplates.h"
 									/*}}}*/
+
+using namespace std;
 
 #define TMPDIR		"/tmp"
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.10 2002/11/09 17:11:25 doogie Exp $
+// $Id: apt-config.cc,v 1.11 2003/01/11 07:18:44 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 									/*}}}*/
+using namespace std;
 
 // DoShell - Handle the shell command					/*{{{*/
 // ---------------------------------------------------------------------

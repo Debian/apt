@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.59 2002/11/09 22:47:19 doogie Exp $
+// $Id: apt-cache.cc,v 1.60 2003/01/11 07:18:44 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -38,6 +38,8 @@
 #include <regex.h>
 #include <stdio.h>
 									/*}}}*/
+
+using namespace std;
 
 pkgCache *GCache = 0;
 pkgSourceList *SrcList = 0;

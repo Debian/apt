@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-sortpkgs.cc,v 1.4 2002/02/15 03:40:00 jgg Exp $
+// $Id: apt-sortpkgs.cc,v 1.5 2003/01/11 07:18:44 jgg Exp $
 /* ######################################################################
    
    APT Sort Packages - Program to sort Package and Source files
@@ -28,6 +28,8 @@
 #include <locale.h>
 #include <unistd.h>
 									/*}}}*/
+
+using namespace std;
 
 struct PkgName
 {
