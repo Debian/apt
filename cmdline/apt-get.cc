@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.143 2003/09/24 04:00:25 mdz Exp $
+// $Id: apt-get.cc,v 1.144 2003/10/29 17:56:31 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2156,11 +2156,18 @@ bool DoBuildDep(CommandLine &CmdL)
                            break;
                  }
                  if (CV.end() == true)
+		   if (hasAlternatives)
+		   {
+		      continue;
+		   }
+		   else
+		   {
                       return _error->Error(_("%s dependency for %s cannot be satisfied "
                                              "because no available versions of package %s "
                                              "can satisfy version requirements"),
                                            Last->BuildDepType((*D).Type),Src.c_str(),
                                            (*D).Package.c_str());
+		   }
             }
             else
             {
