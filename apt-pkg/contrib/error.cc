@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.10 2001/05/07 05:28:44 jgg Exp $
+// $Id: error.cc,v 1.11 2002/03/26 07:38:58 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -20,7 +20,7 @@
 
 #include <apt-pkg/error.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <errno.h>
 #include <stdio.h>
 #include <string>

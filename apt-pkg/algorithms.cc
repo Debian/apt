@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.37 2001/12/26 06:47:37 jgg Exp $
+// $Id: algorithms.cc,v 1.38 2002/03/26 07:38:58 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -24,7 +24,7 @@
     
 #include <apti18n.h>
     
-#include <iostream.h>
+#include <iostream>
 									/*}}}*/
 
 pkgProblemResolver *pkgProblemResolver::This = 0;

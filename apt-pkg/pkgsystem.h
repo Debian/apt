@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgsystem.h,v 1.4 2001/04/29 05:13:51 jgg Exp $
+// $Id: pkgsystem.h,v 1.5 2002/03/26 07:38:58 jgg Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -42,7 +42,7 @@
 #endif
 
 #include <apt-pkg/depcache.h>
-#include <vector.h>
+#include <vector>
     
 class pkgPackageManager;
 class pkgVersioningSystem;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.cc,v 1.9 2001/08/18 22:20:40 jgg Exp $
+// $Id: indexcopy.cc,v 1.10 2002/03/26 07:38:58 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -19,7 +19,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdio.h>

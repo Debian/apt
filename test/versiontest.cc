@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versiontest.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: versiontest.cc,v 1.3 2002/03/26 07:38:58 jgg Exp $
 /* ######################################################################
 
    Version Test - Simple program to run through a file and comare versions.
@@ -18,8 +18,8 @@
 #include <system.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/version.h>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
   static int verrevcmp(const char *val, const char *ref) 
 {

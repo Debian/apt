@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.115 2002/03/20 05:51:52 jgg Exp $
+// $Id: apt-get.cc,v 1.116 2002/03/26 07:38:58 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -46,7 +46,7 @@
 #include "acqprogress.h"
 
 #include <locale.h>
-#include <fstream.h>
+#include <fstream>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
