@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.33 1999/03/08 07:18:11 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.34 1999/04/04 01:33:09 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -438,7 +438,7 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
 	 Missing++;
       }      
    }
-      
+   
    // Open the source package cache
    if (FileExists(CacheFile) == false)
       return false;
@@ -629,7 +629,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
    bool SrcOk = pkgSrcCacheCheck(List);
    bool PkgOk = SrcOk && pkgPkgCacheCheck(CacheFile);
-   
+
    // Rebuild the source and package caches   
    if (SrcOk == false)
    {      
@@ -661,6 +661,10 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
       unsigned long CurrentSize = 0;
       for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
       {
+	 // Only cache deb source types.
+	 if (I->Type != pkgSourceList::Item::Deb)
+	    continue;
+	 
 	 string File = ListDir + URItoFileName(I->PackagesURI());
 	 
 	 if (FileExists(File) == false)
