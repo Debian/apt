@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.18 1999/01/27 02:48:52 jgg Exp $
+// $Id: strutl.cc,v 1.19 1999/02/01 08:11:57 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -116,7 +116,7 @@ bool ParseQuoteWord(const char *&String,string &Res)
       {
 	 Tmp[0] = Start[1];
 	 Tmp[1] = Start[2];
-	 Tmp[3] = 0;
+	 Tmp[2] = 0;
 	 *I = (char)strtol(Tmp,0,16);
 	 Start += 3;
 	 continue;
@@ -175,6 +175,30 @@ bool ParseCWord(const char *String,string &Res)
    *Buf = 0;
    Res = Buffer;
    return true;
+}
+									/*}}}*/
+// DeQuoteString - Convert a string from quoted from			/*{{{*/
+// ---------------------------------------------------------------------
+/* This undoes QuoteString */
+string DeQuoteString(string Str)
+{
+   string Res;
+   for (string::iterator I = Str.begin(); I != Str.end(); I++)
+   {
+      if (*I == '%' && I + 2 < Str.end())
+      {
+	 char Tmp[3];
+	 Tmp[0] = I[1];
+	 Tmp[1] = I[2];
+	 Tmp[2] = 0;
+	 Res += (char)strtol(Tmp,0,16);
+	 I += 2;
+	 continue;
+      }
+      else
+	 Res += *I;
+   }
+   return Res;
 }
 									/*}}}*/
 // QuoteString - Convert a string into quoted from			/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.11 1999/01/27 02:48:53 jgg Exp $
+// $Id: strutl.h,v 1.12 1999/02/01 08:11:57 jgg Exp $
 /* ######################################################################
 
    String Util - These are some usefull string functions
@@ -30,6 +30,7 @@ char *_strtabexpand(char *String,size_t Len);
 bool ParseQuoteWord(const char *&String,string &Res);
 bool ParseCWord(const char *String,string &Res);
 string QuoteString(string Str,const char *Bad);
+string DeQuoteString(string Str);
 string SizeToStr(double Bytes);
 string TimeToStr(unsigned long Sec);
 string SubstVar(string Str,string Subst,string Contents);

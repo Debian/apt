@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.37 1999/01/30 06:07:24 jgg Exp $
+// $Id: apt-get.cc,v 1.38 1999/02/01 08:11:57 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -36,6 +36,7 @@
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/dpkginit.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/clean.h>
 
 #include <config.h>
 
@@ -44,6 +45,7 @@
 #include <fstream.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <signal.h>
 #include <stdio.h>
 									/*}}}*/
@@ -534,17 +536,17 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    // Number of bytes
    c2out << "Need to get ";
    if (DebBytes != FetchBytes)
-      c2out << SizeToStr(FetchBytes) << '/' << SizeToStr(DebBytes);
+      c2out << SizeToStr(FetchBytes) << "b/" << SizeToStr(DebBytes) << 'b';
    else
-      c2out << SizeToStr(DebBytes);
+      c2out << SizeToStr(DebBytes) << 'b';
       
    c1out << " of archives. After unpacking ";
    
    // Size delta
    if (Cache->UsrSize() >= 0)
-      c2out << SizeToStr(Cache->UsrSize()) << " will be used." << endl;
+      c2out << SizeToStr(Cache->UsrSize()) << "b will be used." << endl;
    else
-      c2out << SizeToStr(-1*Cache->UsrSize()) << " will be freed." << endl;
+      c2out << SizeToStr(-1*Cache->UsrSize()) << "b will be freed." << endl;
 
    if (_error->PendingError() == true)
       return false;
@@ -993,6 +995,29 @@ bool DoClean(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DoAutoClean - Smartly remove downloaded archives			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is similar to clean but it only purges things that cannot be 
+   downloaded, that is old versions of cached packages. */
+bool DoAutoClean(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.Open(true) == false)
+      return false;
+   
+   class LogCleaner : public pkgArchiveCleaner
+   {
+      protected:
+      virtual void Erase(const char *File,string Pkg,string Ver,struct stat &St) 
+      {
+	 cout << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "b]" << endl;
+      };
+   } Cleaner;
+   
+   return Cleaner.Go(_config->FindDir("Dir::Cache::archives"),*Cache) &&
+      Cleaner.Go(_config->FindDir("Dir::Cache::archives") + "partial/",*Cache);
+}
+									/*}}}*/
 // DoCheck - Perform the check operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* Opening automatically checks the system, this command is mostly used
@@ -1031,6 +1056,7 @@ bool ShowHelp(CommandLine &CmdL)
    cout << "   dist-upgrade - Distribution upgrade, see apt-get(8)" << endl;
    cout << "   dselect-upgrade - Follow dselect selections" << endl;
    cout << "   clean - Erase downloaded archive files" << endl;
+   cout << "   autoclean - Erase old downloaded archive files" << endl;
    cout << "   check - Verify that there are no broken dependencies" << endl;
    cout << endl;
    cout << "Options:" << endl;
@@ -1111,6 +1137,7 @@ int main(int argc,const char *argv[])
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
                                    {"clean",&DoClean},
+                                   {"autoclean",&DoAutoClean},
                                    {"check",&DoCheck},
       				   {"help",&ShowHelp},
                                    {0,0}};
