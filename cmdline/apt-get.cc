@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.137 2003/08/09 00:26:30 mdz Exp $
+// $Id: apt-get.cc,v 1.138 2003/08/09 03:07:03 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -112,26 +112,37 @@ class CacheFile : public pkgCacheFile
 /* Returns true on a Yes.*/
 bool YnPrompt()
 {
-   // This needs to be a capital
-   const char *Yes = _("Y");
-			   
    if (_config->FindB("APT::Get::Assume-Yes",false) == true)
    {
-      c1out << Yes << endl;
+      c1out << _("Y") << endl;
       return true;
    }
-   
-   unsigned char C = 0;
-   unsigned char Jnk = 0;
-   if (read(STDIN_FILENO,&C,1) != 1)
+
+   char response[1024] = "";
+   cin.getline(response, sizeof(response));
+
+   if (!cin)
       return false;
-   while (C != '\n' && Jnk != '\n') 
-      if (read(STDIN_FILENO,&Jnk,1) != 1)
-	 return false;
+
+   if (strlen(response) == 0)
+      return true;
+
+   regex_t Pattern;
+   int Res;
+
+   Res = regcomp(&Pattern, nl_langinfo(YESEXPR),
+                 REG_EXTENDED|REG_ICASE|REG_NOSUB);
+
+   if (Res != 0) {
+      char Error[300];        
+      regerror(Res,&Pattern,Error,sizeof(Error));
+      return _error->Error(_("Regex compilation error - %s"),Error);
+   }
    
-   if (!(toupper(C) == toupper((unsigned char)(*Yes)) || C == '\n' || C == '\r'))
-      return false;
-   return true;
+   Res = regexec(&Pattern, response, 0, NULL, 0);
+   if (Res == 0)
+      return true;
+   return false;
 }
 									/*}}}*/
 // AnalPrompt - Annoying Yes No Prompt.					/*{{{*/

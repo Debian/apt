@@ -25,12 +25,10 @@ apt (0.5.9) unstable; urgency=low
     are Provided by a package which is already installed (Closes: #200395)
   * Patch to update pt_BR man page for apt_preferences(5) from Andre Luis
     Lopes <andrelop@debian.org> (Closes: #202245)
-  * Ensure that the comparison of the "yes" character in YnPrompt is done
-    with unsigned values, so that 8-bit characters work correctly.  This
-    should probably all use nl_langinfo(YESEXPR) at some point instead.
-    (Closes: #200953)
-  * Pass the translated character through toupper(3), so that it doesn't
-    really matter anymore whether the translated string is uppercase
+  * Use nl_langinfo(YESEXPR) rather than comparing to the translated
+    string "Y".  Closes: #200953 and should make the prompting generally
+    more robust in the face of i18n.  In the particular case of #200953,
+    it was being fooled because of signedness issues with toupper(3)
 
  -- Matt Zimmerman <mdz@debian.org>  Fri,  8 Aug 2003 20:25:40 -0400
 
