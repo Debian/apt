@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.13 1998/12/09 05:57:17 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.14 1998/12/22 08:41:20 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -908,15 +908,22 @@ bool DoAdd(CommandLine &)
 	 {
 	    Name = PromptLine("");
 	    if (Name.empty() == false &&
+		Name.find('"') == string::npos &&
+		Name.find(':') == string::npos &&
 		Name.find('/') == string::npos)
 	       break;
 	    cout << "That is not a valid name, try again " << endl;
-	 }
-	 
+	 }	 
       }      
    }
    else
       Name = Database.Find("CD::" + ID);
+   
+   string::iterator J = Name.begin();
+   for (; J != Name.end(); J++)
+      if (*J == '/' || *J == '"' || *J == ':')
+	 *J = '_';
+   
    Database.Set("CD::" + ID,Name);
    cout << "This Disc is called '" << Name << "'" << endl;
    
