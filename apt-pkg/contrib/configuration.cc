@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.24 2002/11/09 17:11:25 doogie Exp $
+// $Id: configuration.cc,v 1.25 2002/11/09 19:52:03 doogie Exp $
 /* ######################################################################
 
    Configuration Class
@@ -282,7 +282,7 @@ string Configuration::FindAny(const char *Name,const char *Default) const
       case 'i': 
       {
 	 char buf[16];
-	 snprintf(buf, sizeof(buf)-1, "%d", FindI(key, atoi(Default)));
+	 snprintf(buf, sizeof(buf)-1, "%d", FindI(key, Default ? atoi(Default) : 0 ));
 	 return buf;
       }
    }
