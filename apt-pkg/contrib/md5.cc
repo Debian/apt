@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.7 1999/11/14 01:47:55 jgg Exp $
+// $Id: md5.cc,v 1.8 1999/11/16 01:41:49 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
@@ -47,6 +47,7 @@
 #include <unistd.h>
 #include <netinet/in.h>                          // For htonl
 #include <inttypes.h>
+#include <config.h>
 									/*}}}*/
 
 // byteSwap - Swap bytes in a buffer					/*{{{*/
@@ -268,7 +269,7 @@ bool MD5Summation::Add(const unsigned char *data,unsigned long len)
 
    // First chunk is an odd size
    memcpy((unsigned char *)in + 64 - t,data,t);
-   byteSwap(in, 16);
+   byteSwap((uint8_t *)in, 16);
    MD5Transform(buf,in);
    data += t;
    len -= t;
@@ -277,7 +278,7 @@ bool MD5Summation::Add(const unsigned char *data,unsigned long len)
    while (len >= 64)
    {
       memcpy(in,data,64);
-      byteSwap(in,16);
+      byteSwap((uint8_t *)in,16);
       MD5Transform(buf,in);
       data += 64;
       len -= 64;
@@ -333,20 +334,20 @@ MD5SumValue MD5Summation::Result()
       if (count < 0) 
       {
 	 memset(p,0,count + 8);
-	 byteSwap(in, 16);
+	 byteSwap((uint8_t *)in, 16);
 	 MD5Transform(buf,in);
 	 p = (unsigned char *)in;
 	 count = 56;
       }
       
       memset(p, 0, count);
-      byteSwap(in, 14);
+      byteSwap((unit8_t *)in, 14);
       
       // Append length in bits and transform
       in[14] = bytes[0] << 3;
       in[15] = bytes[1] << 3 | bytes[0] >> 29;
       MD5Transform(buf,in);   
-      byteSwap(buf,4);
+      byteSwap((uint8_t *)buf,4);
       Done = true;
    }
    
