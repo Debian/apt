@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.31 1999/05/25 05:56:24 jgg Exp $
+// $Id: http.cc,v 1.32 1999/05/26 04:08:39 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -338,10 +338,15 @@ bool ServerState::Open()
       LastHost = Host;
       LastPort = Port;
    }
-      
-   // Connect to the server
+
+   // Get the printable IP address
+   char Name[NI_MAXHOST];
+   Name[0] = 0;
+   getnameinfo(LastHostAddr->ai_addr,LastHostAddr->ai_addrlen,
+	       Name,sizeof(Name),0,0,NI_NUMERICHOST);
+   Owner->Status("Connecting to %s (%s)",Host.c_str(),Name);
+   
    // Get a socket
-//   Owner->Status("Connecting to %s (%s)",Host.c_str(),inet_ntoa(LastHostA));
    if ((ServerFd = socket(LastHostAddr->ai_family,LastHostAddr->ai_socktype,
 			  LastHostAddr->ai_protocol)) < 0)
       return _error->Errno("socket","Could not create a socket");

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.cc,v 1.1 1999/05/25 05:56:24 jgg Exp $
+// $Id: rfc2553emu.cc,v 1.2 1999/05/26 04:08:39 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -14,9 +14,13 @@
 #include "rfc2553emu.h"
 #include <stdlib.h>
 #include <arpa/inet.h>
-#include <iostream.h>
+#include <string.h>
+#include <stdio.h>
 
 #ifndef HAVE_GETADDRINFO
+// getaddrinfo - Resolve a hostname					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 int getaddrinfo(const char *nodename, const char *servname,
 		const struct addrinfo *hints,
 		struct addrinfo **res)
@@ -123,7 +127,10 @@ int getaddrinfo(const char *nodename, const char *servname,
    
    return 0;
 }
-
+									/*}}}*/
+// freeaddrinfo - Free the result of getaddrinfo			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 void freeaddrinfo(struct addrinfo *ai)
 {
    struct addrinfo *Tmp;
@@ -135,5 +142,85 @@ void freeaddrinfo(struct addrinfo *ai)
       free(ai);
    }
 }
-
+									/*}}}*/
 #endif // HAVE_GETADDRINFO
+
+#ifndef HAVE_GETNAMEINFO
+// getnameinfo - Convert a sockaddr to a string 			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+int getnameinfo(const struct sockaddr *sa, socklen_t salen,
+		char *host, size_t hostlen,
+		char *serv, size_t servlen,
+		int flags)
+{
+   struct sockaddr_in *sin = (struct sockaddr_in *)sa;
+   
+   // This routine only support internet addresses
+   if (sa->sa_family != AF_INET)
+      return EAI_ADDRFAMILY;
+   
+   if (host != 0)
+   {
+      // Try to resolve the hostname
+      if ((flags & NI_NUMERICHOST) != NI_NUMERICHOST)
+      {
+	 struct hostent *Ent = gethostbyaddr((char *)&sin->sin_addr,sizeof(sin->sin_addr),
+					     AF_INET);
+	 if (Ent != 0)
+	    strncpy(host,Ent->h_name,hostlen);
+	 else
+	 {
+	    if ((flags & NI_NAMEREQD) == NI_NAMEREQD)
+	    {
+	       if (h_errno == TRY_AGAIN)
+		  return EAI_AGAIN;
+	       if (h_errno == NO_RECOVERY)
+		  return EAI_FAIL;
+	       return EAI_NONAME;
+	    }
+
+	    flags |= NI_NUMERICHOST;
+	 }
+      }
+      
+      // Resolve as a plain numberic
+      if ((flags & NI_NUMERICHOST) == NI_NUMERICHOST)
+      {
+	 strncpy(host,inet_ntoa(sin->sin_addr),hostlen);
+      }
+   }
+   
+   if (serv != 0)
+   {
+      // Try to resolve the hostname
+      if ((flags & NI_NUMERICSERV) != NI_NUMERICSERV)
+      {
+	 struct servent *Ent;
+	 if ((flags & NI_DATAGRAM) == NI_DATAGRAM)
+	    Ent = getservbyport(sin->sin_port,"udp");
+	 else
+	    Ent = getservbyport(sin->sin_port,"tcp");
+	 
+	 if (Ent != 0)
+	    strncpy(serv,Ent->s_name,servlen);
+	 else
+	 {
+	    if ((flags & NI_NAMEREQD) == NI_NAMEREQD)
+	       return EAI_NONAME;
+
+	    flags |= NI_NUMERICSERV;
+	 }
+      }
+      
+      // Resolve as a plain numberic
+      if ((flags & NI_NUMERICSERV) == NI_NUMERICSERV)
+      {
+	 snprintf(serv,servlen,"%u",sin->sin_port);
+      }
+   }
+   
+   return 0;
+}
+									/*}}}*/
+#endif // HAVE_GETNAMEINFO

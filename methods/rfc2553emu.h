@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.h,v 1.1 1999/05/25 05:56:24 jgg Exp $
+// $Id: rfc2553emu.h,v 1.2 1999/05/26 04:08:39 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -29,6 +29,11 @@
 // Autosense getaddrinfo
 #if defined(AI_PASSIVE) && defined(EAI_NONAME)
 #define HAVE_GETADDRINFO
+#endif
+
+// Autosense getnameinfo
+#if defined(NI_NUMERICHOST)
+#define HAVE_GETNAMEINFO
 #endif
 
 // getaddrinfo support?
@@ -67,7 +72,6 @@
   #define EAI_SOCKTYPE   -6
   #define EAI_SERVICE    -7
   #define EAI_ADDRFAMILY -8
-  #define EAI_ADDRFAMILY -8
   #define EAI_SYSTEM     -10
   #endif
 
@@ -80,6 +84,20 @@
 		  char *host, size_t hostlen,
 		  char *serv, size_t servlen,
 		  int flags);
+
+  #ifndef NI_MAXHOST
+  #define NI_MAXHOST 1025
+  #define NI_MAXSERV 32
+  #endif
+
+  #ifndef NI_NUMERICHOST
+  #define NI_NUMERICHOST (1<<0)
+  #define NI_NUMERICSERV (1<<1)
+//  #define NI_NOFQDN (1<<2)
+  #define NI_NAMEREQD (1<<3)
+  #define NI_DATAGRAM (1<<4)
+  #endif
+
 #endif
 
 #endif
