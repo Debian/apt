@@ -47,9 +47,10 @@ $(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
 	-rm -f $(LIB)/lib$($(@F)-LIBRARY).so* 2> /dev/null
 	echo Building shared library $@
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) -o $@ \
-	   -Wl,-soname -Wl,$($(@F)-SONAME) -shared $(filter %.opic,$^) \
-	   $($(@F)-SLIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
+	   -o $@ $(SONAME_MAGIC)$($(@F)-SONAME) -shared \
+	   $(filter %.opic,$^) \
+	   $($(@F)-SLIBS) 
 
 # Compilation rules
 vpath %.cc $(SUBDIRS)

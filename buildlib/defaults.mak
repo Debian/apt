@@ -48,9 +48,11 @@ ifeq ($(words $(BUILDX)),0)
 ifeq ($(words $(wildcard *)),0)
 error-all/environment.mak:
 	echo You have a broken version of GNU Make - upgrade.
+	error-out-and-die
 else
 error-all/environment.mak:
 	echo Can't find the build directory in $(BUILD_POSSIBLE) -- use BUILD=
+	error-out-and-die
 endif
 
 # Force include below to come to the error target
@@ -147,6 +149,7 @@ else
  endif
 endif	
 
+# Automatic -j support
 ifeq ($(NUM_PROCS),1)
   PARALLEL_RUN=no
 endif
@@ -154,8 +157,8 @@ endif
 ifndef PARALLEL_RUN
  PARALLEL_RUN=yes
  .EXPORT: PARALLEL_RUN
+ # handle recursion
  ifneq ($(NUM_PROCS),)
-# handle recursion
   MAKEFLAGS += -j $(NUM_PROCS)
  endif
 endif
