@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.12 1999/01/31 06:24:46 jgg Exp $
+// $Id: packagemanager.cc,v 1.13 1999/02/19 07:56:07 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -66,7 +66,8 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 	 continue;
 
       // Skip Packages that need configure only.
-      if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure)
+      if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
+	  Cache[Pkg].Keep() == true)
 	 continue;
       
       new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
@@ -83,15 +84,32 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 bool pkgPackageManager::FixMissing()
 {
    pkgProblemResolver Resolve(Cache);
-   
+
+   bool Bad = false;
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
-     if (Cache[I].Keep() == true)
+      // These don't need files
+      if (Cache[I].Keep() == true)
 	 continue;
-      if (FileNames[I->ID].empty() == false || Cache[I].Delete() == true)
+      if (Cache[I].Delete() == true)
 	 continue;
+      
+      // We have a filename
+      if (FileNames[I->ID].empty() == false)
+	 continue;
+      
+      // Skip Packages that need configure only.
+      if (I.State() == pkgCache::PkgIterator::NeedsConfigure && 
+	  Cache[I].Keep() == true)
+	 continue;
+      
+      // Okay, this file is missing and we need it. Mark it for keep 
+      Bad = true;
       Cache.MarkKeep(I);
    }
+   
+   if (Bad == false)
+      return true;
    
    // Now downgrade everything that is broken
    return Resolve.ResolveByKeep() == true && Cache.BrokenCount() == 0;   

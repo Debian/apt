@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.26 1999/02/15 04:48:09 jgg Exp $
+// $Id: apt-cache.cc,v 1.27 1999/02/19 07:56:07 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -23,11 +23,13 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/pkgrecords.h>
 #include <config.h>
 
 #include <iostream.h>
 #include <unistd.h>
 #include <errno.h>
+#include <regex.h>
 									/*}}}*/
 
 pkgCache *GCache = 0;
@@ -448,6 +450,49 @@ bool DoAdd(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// Search - Perform a search						/*{{{*/
+// ---------------------------------------------------------------------
+/* This searches the package names and pacakge descriptions for a pattern */
+bool Search(CommandLine &CmdL)
+{
+   pkgCache &Cache = *GCache;
+   
+   // Make sure there is at least one argument
+   if (CmdL.FileSize() != 2)
+      return _error->Error("You must give exactly one pattern");
+   
+   // Compile the regex pattern
+   regex_t Pattern;
+   if (regcomp(&Pattern,CmdL.FileList[1],REG_EXTENDED | REG_ICASE | 
+	       REG_NOSUB) != 0)
+      return _error->Error("Regex compilation error");
+   
+   // Create the text record parser
+   pkgRecords Recs(Cache);
+   if (_error->PendingError() == true)
+      return false;
+   
+   // Search package names
+   pkgCache::PkgIterator I = Cache.PkgBegin();
+   for (;I.end() != true; I++)
+   {
+      if (regexec(&Pattern,I.Name(),0,0,0) == 0)
+      {
+	 cout << I.Name();
+	 if (I->VersionList != 0)
+	 {
+	    pkgRecords::Parser &P = Recs.Lookup(I.VersionList().FileList());
+	    cout << " - " << P.ShortDesc() << endl;
+	 }
+	 else 
+	    cout << " [virtual package]" << endl;
+      }      
+   }
+   
+   regfree(&Pattern);
+   return true;
+}
+									/*}}}*/
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -487,6 +532,7 @@ bool ShowHelp(CommandLine &Cmd)
    cout << "   dumpavail - Print an available file to stdout" << endl;
    cout << "   unmet - Show unmet dependencies" << endl;
    cout << "   check - Check the cache a bit" << endl;
+   cout << "   search - Search the package list for a regex pattern" << endl;
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
@@ -532,6 +578,7 @@ int main(int argc,const char *argv[])
                                     {"dumpavail",&DumpAvail},
                                     {"unmet",&UnMet},
                                     {"check",&Check},
+                                    {"search",&Search},
                                     {0,0}};
 
    CacheInitialize();

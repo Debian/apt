@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.23 1999/02/01 08:11:57 jgg Exp $
+// $Id: acquire-item.cc,v 1.24 1999/02/19 07:56:06 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -448,7 +448,7 @@ bool pkgAcqArchive::QueueNext()
       }
 
       DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
-      
+
       // Create the item
       Desc.URI = Location->ArchiveURI(PkgFile);
       Desc.Description = Location->ArchiveInfo(Version);
@@ -541,6 +541,7 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	    return;
       }
       
+      StoreFilename = string();
       Item::Failed(Message,Cnf);
    }
 }
