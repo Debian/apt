@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.1 1998/07/02 02:58:12 jgg Exp $
+// $Id: pkgcache.h,v 1.2 1998/07/04 05:57:36 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -23,62 +23,6 @@
 #include <string>
 #include <time.h>
 #include <pkglib/mmap.h>
-
-// Definitions for Depends::Type
-#define pkgDEP_Depends 1
-#define pkgDEP_PreDepends 2
-#define pkgDEP_Suggests 3
-#define pkgDEP_Recommends 4
-#define pkgDEP_Conflicts 5
-#define pkgDEP_Replaces 6
-
-// Definitions for Version::Priority
-#define pkgPRIO_Important 1
-#define pkgPRIO_Required 2
-#define pkgPRIO_Standard 3
-#define pkgPRIO_Optional 4
-#define pkgPRIO_Extra 5
-
-// Definitions for Package::SelectedState
-#define pkgSTATE_Unkown 0
-#define pkgSTATE_Install 1
-#define pkgSTATE_Hold 2
-#define pkgSTATE_DeInstall 3
-#define pkgSTATE_Purge 4
-
-// Definitions for Package::Flags
-#define pkgFLAG_Auto (1 << 0)
-#define pkgFLAG_New (1 << 1)
-#define pkgFLAG_Obsolete (1 << 2)
-#define pkgFLAG_Essential (1 << 3)
-#define pkgFLAG_ImmediateConf (1 << 4)
-
-// Definitions for Package::InstState
-#define pkgSTATE_Ok 0
-#define pkgSTATE_ReInstReq 1
-#define pkgSTATE_Hold 2
-#define pkgSTATE_HoldReInstReq 3
-
-// Definitions for Package::CurrentState
-#define pkgSTATE_NotInstalled 0
-#define pkgSTATE_UnPacked 1
-#define pkgSTATE_HalfConfigured 2
-#define pkgSTATE_UnInstalled 3
-#define pkgSTATE_HalfInstalled 4
-#define pkgSTATE_ConfigFiles 5
-#define pkgSTATE_Installed 6
-
-// Definitions for PackageFile::Flags
-#define pkgFLAG_NotSource (1 << 0)
-
-// Definitions for Dependency::CompareOp
-#define pkgOP_OR 0x10
-#define pkgOP_LESSEQ 0x1
-#define pkgOP_GREATEREQ 0x2
-#define pkgOP_LESS 0x3
-#define pkgOP_GREATER 0x4
-#define pkgOP_EQUALS 0x5
-#define pkgOP_NOTEQUALS 0x6
 
 class pkgCache
 {
@@ -103,6 +47,21 @@ class pkgCache
    friend DepIterator;
    friend PrvIterator;
    friend PkgFileIterator;
+
+   // These are all the constants used in the cache structures
+   enum DepType {Depends=1,PreDepends=2,Suggests=3,Recommends=4,
+                 Conflicts=5,Replaces=6};
+   enum VerPriority {Important=1,Required=2,Standard=3,Optional=5,Extra=5};
+   enum PkgSelectedState {Unknown=0,Install=1,Hold=2,DeInstall=3,Purge=4};
+   enum PkgFlags {Auto=(1<<0),New=(1<<1),Obsolete=(1<<2),Essential=(1<<3),
+                  ImmediateConf=(1<<4)};
+   enum PkgInstState {Ok=0,ReInstReq=1,HoldInst=2,HoldReInstReq=3};
+   enum PkgCurrentState {NotInstalled=0,UnPacked=1,HalfConfigured=2,
+                         UnInstalled=3,HalfInstalled=4,ConfigFiles=5,
+                         Installed=6};
+   enum PkgFFlags {NotSource=(1<<0)};
+   enum DepCompareOp {Or=0x10,LessEq=0x1,GreaterEq=0x2,Less=0x3,
+                      Greater=0x4,Equals=0x5,NotEquals=0x6};
    
    protected:
    
@@ -204,7 +163,7 @@ struct pkgCache::Package
    unsigned char CurrentState;      // State
    
    unsigned short ID;
-   unsigned short Flags;
+   unsigned long Flags;
 };
 
 struct pkgCache::PackageFile
@@ -218,7 +177,7 @@ struct pkgCache::PackageFile
    // Linked list
    unsigned long NextFile;        // PackageFile
    unsigned short ID;
-   unsigned short Flags;
+   unsigned long Flags;
    time_t mtime;                  // Modification time for the file
 };
 

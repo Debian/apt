@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: fileutl.cc,v 1.2 1998/07/04 05:57:41 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -14,7 +14,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <fileutl.h>
+#include <pkglib/fileutl.h>
 #include <pkglib/error.h>
 
 #include <unistd.h>

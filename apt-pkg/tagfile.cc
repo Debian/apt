@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: tagfile.cc,v 1.2 1998/07/04 05:57:39 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -147,18 +147,31 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
 									/*}}}*/
 
 #include <pkglib/pkgcachegen.h>
+#include <pkglib/deblistparser.h>
 
 int main(int argc,char *argv[])
 {
    {
       File F(argv[1],File::ReadOnly);
-      pkgTagFile Test(F);
       File CacheF("./cache",File::WriteEmpty);
       DynamicMMap Map(CacheF,MMap::Public);
       pkgCacheGenerator Gen(Map);
-      Gen.SelectFile("tet");
+      Gen.SelectFile(argv[1]);
+      
+      debListParser Parser(F);
+      Gen.MergeList(Parser);
    }
 
+   {
+      File CacheF("./cache",File::WriteExists);
+      MMap Map(CacheF,MMap::Public);
+      pkgCache Cache(Map);
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+      {
+	 cout << "Package: " << I.Name() << endl;
+      }      
+   }
+   
 #if 0 
    pkgTagSection I;
    while (Test.Step(I) == true)

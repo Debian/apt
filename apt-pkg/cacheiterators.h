@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.1 1998/07/02 02:58:12 jgg Exp $
+// $Id: cacheiterators.h,v 1.2 1998/07/04 05:57:34 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -65,6 +65,7 @@ class pkgCache::PkgIterator
    inline VerIterator CurrentVer() const;
    inline DepIterator RevDependsList() const;
    inline PrvIterator ProvidesList() const;
+   inline unsigned long Index() const {return Pkg - Owner->PkgP;};
    OkState State() const;
    
    // Constructors
@@ -116,8 +117,9 @@ class pkgCache::VerIterator
    inline PkgIterator ParentPkg() const {return PkgIterator(Owner,Owner.PkgP + Ver->ParentPkg);};
    inline DepIterator DependsList() const;
    inline PrvIterator ProvidesList() const;
+   inline unsigned long Index() const {return Ver - Owner.VerP;};
 
-   inline VerIterator(pkgCache &Owner,Version *Trg) : Ver(Trg), Owner(Owner) 
+   inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Ver(Trg), Owner(Owner) 
    { 
       if (Ver == 0)
 	 Ver = Owner.VerP;
@@ -161,6 +163,7 @@ class pkgCache::DepIterator
    inline PkgIterator ParentPkg() {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[Dep->ParentVer].ParentPkg);};
    bool IsCritical();
    inline bool Reverse() {return Type == DepRev;};
+   inline unsigned long Index() const {return Dep - Owner->DepP;};
       
    inline DepIterator(pkgCache &Owner,Dependency *Trg,Version * = 0) :
           Dep(Trg), Type(DepVer), Owner(&Owner) 
@@ -210,6 +213,7 @@ class pkgCache::PrvIterator
    inline PkgIterator ParentPkg() {return PkgIterator(*Owner,Owner->PkgP + Prv->ParentPkg);};
    inline VerIterator OwnerVer() {return VerIterator(*Owner,Owner->VerP + Prv->Version);};
    inline PkgIterator OwnerPkg() {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[Prv->Version].ParentPkg);};
+   inline unsigned long Index() const {return Prv - Owner->ProvideP;};
 
    inline PrvIterator(pkgCache &Owner,Provides *Trg,Version *) :
           Prv(Trg), Type(PrvVer), Owner(&Owner) 
@@ -252,6 +256,7 @@ class pkgCache::PkgFileIterator
    inline const char *FileName() const {return File->FileName == 0?0:Owner->StrP + File->FileName;};
    inline const char *Version() const {return File->Version == 0?0:Owner->StrP + File->Version;};
    inline const char *Distribution() const {return File->Distribution == 0?0:Owner->StrP + File->Distribution;};
+   inline unsigned long Index() const {return File - Owner->PkgFileP;};
 
    bool IsOk();
    

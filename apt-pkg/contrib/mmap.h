@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.h,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: mmap.h,v 1.2 1998/07/04 05:57:43 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -79,7 +79,7 @@ class DynamicMMap : public MMap
    public:
 
    // Allocation
-   unsigned long RawAllocate(unsigned long Size);
+   unsigned long RawAllocate(unsigned long Size,unsigned long Aln = 0);
    unsigned long Allocate(unsigned long ItemSize);
    unsigned long WriteString(const char *String,unsigned long Len = 0);
    inline unsigned long WriteString(string S) {return WriteString(S.begin(),S.size());};

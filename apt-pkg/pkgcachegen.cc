@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.1 1998/07/02 02:58:12 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.2 1998/07/04 05:57:37 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -58,13 +58,12 @@ pkgCacheGenerator::~pkgCacheGenerator()
 bool pkgCacheGenerator::MergeList(ListParser &List)
 {
    List.Owner = this;
-   
    do
    {
       // Get a pointer to the package structure
       string Package = List.Package();
       pkgCache::PkgIterator Pkg = Cache.FindPkg(Package);
-      if (Pkg.end() == false)
+      if (Pkg.end() == true)
       {
 	 if (NewPackage(Pkg,Package) == false)
 	    return false;
@@ -72,17 +71,22 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
 	 if (List.NewPackage(Pkg) == false)
 	    return false;
       }
-      if (List.UsePackage(Pkg) == false)
-	 return false;
       
       /* Get a pointer to the version structure. We know the list is sorted
          so we use that fact in the search. Insertion of new versions is
 	 done with correct sorting */
       string Version = List.Version();
+      if (Version.empty() == true)
+      {
+	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
+	    return false;
+	 continue;
+      }
+
       pkgCache::VerIterator Ver = Pkg.VersionList();
       unsigned long *Last = &Pkg->VersionList;
       int Res;
-      for (; Ver.end() == false; Ver++, Last = &Ver->NextVer)
+      for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
       {
 	 Res = pkgVersionCompare(Version.begin(),Version.end(),Ver.VerStr(),
 				 Ver.VerStr() + strlen(Ver.VerStr()));
@@ -94,6 +98,9 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
          saw it */
       if (Res == 0)
       {
+	 if (List.UsePackage(Pkg,Ver) == false)
+	    return false;
+	 
 	 if (NewFileVer(Ver,List) == false)
 	    return false;
 	 
@@ -101,8 +108,12 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       }      
 
       // Add a new version
-      *Last = NewVersion(Ver,*Last);
+      *Last = NewVersion(Ver,Version,*Last);
+      Ver->ParentPkg = Pkg.Index();
       if (List.NewVersion(Ver) == false)
+	 return false;
+      
+      if (List.UsePackage(Pkg,Ver) == false)
 	 return false;
       
       if (NewFileVer(Ver,List) == false)
@@ -116,17 +127,17 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
 // CacheGenerator::NewPackage - Add a new package			/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a new package structure and adds it to the hash table */
-bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator Pkg,string Name)
+bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,string Name)
 {
    // Get a structure
    unsigned long Package = Map.Allocate(sizeof(pkgCache::Package));
    if (Package == 0)
       return false;
    
-   Pkg = pkgCache::PkgIterator(Cache,Cache.PackageP + Package);
+   Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
    
    // Insert it into the hash table
-   unsigned long Hash = Map.Hash(Name);
+   unsigned long Hash = Cache.Hash(Name);
    Pkg->NextPackage = Cache.HeaderP->HashTable[Hash];
    Cache.HeaderP->HashTable[Hash] = Package;
    
@@ -142,17 +153,34 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator Pkg,string Name)
 // CacheGenerator::NewFileVer - Create a new File<->Version association	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator Ver,
+bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 				   ListParser &List)
 {
+   return true;
 }
 									/*}}}*/
 // CacheGenerator::NewVersion - Create a new Version 			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This puts a version structure in the linked list */
 unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
+					    string VerStr,
 					    unsigned long Next)
 {
+   // Get a structure
+   unsigned long Version = Map.Allocate(sizeof(pkgCache::Version));
+   if (Version == 0)
+      return false;
+   
+   // Fill it in
+   Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
+   Ver->File = CurrentFile - Cache.PkgFileP;
+   Ver->NextVer = Next;
+   Ver->ID = Cache.HeaderP->VersionCount++;
+   Ver->VerStr = Map.WriteString(VerStr);
+   if (Ver->VerStr == 0)
+      return false;
+   
+   return true;
 }
 									/*}}}*/
 // CacheGenerator::SelectFile - Select the current file being parsed	/*{{{*/
@@ -180,5 +208,46 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
 
    if (CurrentFile->FileName == 0)
       return false;
+}
+									/*}}}*/
+// CacheGenerator::WriteUniqueString - Insert a unique string		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used to create handles to strings. Given the same text it
+   always returns the same number */
+unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
+						 unsigned int Size)
+{
+   // Search for an insertion point
+   pkgCache::StringItem *I = Cache.StringItemP + Cache.HeaderP->StringList;
+   int Res = 1;
+   unsigned long *Last = &Cache.HeaderP->StringList;
+   for (; I != Cache.StringItemP; Last = &I->NextItem, 
+        I = Cache.StringItemP + I->NextItem)
+   {
+      Res = strncmp(Cache.StrP + I->String,S,Size);
+      if (Res == 0 && *(Cache.StrP + I->String + Size) != 0)
+	 Res = 1;
+      if (Res >= 0)
+	 break;
+   }
+   
+   // Match
+   if (Res == 0)
+      return I - Cache.StringItemP;
+   
+   // Get a structure
+   unsigned long Item = Map.Allocate(sizeof(pkgCache::StringItem));
+   if (Item == 0)
+      return false;
+   
+   // Fill in the structure
+   pkgCache::StringItem *ItemP = Cache.StringItemP + Item;
+   ItemP->NextItem = I - Cache.StringItemP;
+   *Last = Item;
+   ItemP->String = Map.WriteString(S,Size);
+   if (ItemP->String == 0)
+      return false;
+   
+   return true;
 }
 									/*}}}*/

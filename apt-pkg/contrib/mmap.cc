@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: mmap.cc,v 1.2 1998/07/04 05:57:42 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -142,11 +142,14 @@ DynamicMMap::~DynamicMMap()
 									/*}}}*/
 // DynamicMMap::RawAllocate - Allocate a raw chunk of unaligned space	/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-unsigned long DynamicMMap::RawAllocate(unsigned long Size)
+/* This allocates a block of memory aligned to the given size */
+unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
 {
    unsigned long Result = iSize;
-   iSize += Size;
+   if (Aln != 0)
+      Result += Aln - (iSize%Aln);
+   
+   iSize = Result + Size;
    
    // Just in case error check
    if (Result > WorkSpace)
@@ -154,7 +157,6 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size)
       _error->Error("Dynamic MMap ran out of room");
       return 0;
    }
-
    return Result;
 }
 									/*}}}*/
@@ -194,9 +196,9 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
    if (I->Count == 0)
    {
       I->Count = 20*1024/ItemSize;
-      I->Start = RawAllocate(I->Count*ItemSize);
+      I->Start = RawAllocate(I->Count*ItemSize,ItemSize);
    }   
-   
+
    I->Count--;
    unsigned long Result = I->Start;
    I->Start += ItemSize;

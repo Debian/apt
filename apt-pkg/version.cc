@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.cc,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: version.cc,v 1.2 1998/07/04 05:57:40 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -212,32 +212,32 @@ bool pkgCheckDep(const char *DepVer,const char *PkgVer,int Op)
    int Res = pkgVersionCompare(PkgVer,DepVer);
    switch (Op & 0x0F)
    {
-      case pkgOP_LESSEQ:
+      case pkgCache::LessEq:
       if (Res <= 0)
 	 return true;
       break;
       
-      case pkgOP_GREATEREQ:
+      case pkgCache::GreaterEq:
       if (Res >= 0)
 	 return true;
       break;
       
-      case pkgOP_LESS:
+      case pkgCache::Less:
       if (Res < 0)
 	 return true;
       break;
       
-      case pkgOP_GREATER:
+      case pkgCache::Greater:
       if (Res > 0)
 	 return true;
       break;
       
-      case pkgOP_EQUALS:
+      case pkgCache::Equals:
       if (Res == 0)
 	 return true;
       break;
       
-      case pkgOP_NOTEQUALS:
+      case pkgCache::NotEquals:
       if (Res != 0)
 	 return true;
       break;

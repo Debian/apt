@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.1 1998/07/02 02:58:12 jgg Exp $
+// $Id: pkgcache.cc,v 1.2 1998/07/04 05:57:35 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -159,7 +159,12 @@ pkgCache::PkgIterator pkgCache::FindPkg(string Name)
 }
 									/*}}}*/
 
-// Cache::PkgIterator - operator ++ - Postfix incr			/*{{{*/
+// Bases for iterator classes						/*{{{*/
+void pkgCache::VerIterator::_dummy() {}
+void pkgCache::DepIterator::_dummy() {}
+void pkgCache::PrvIterator::_dummy() {}
+									/*}}}*/
+// PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
 void pkgCache::PkgIterator::operator ++(int) 
@@ -176,23 +181,18 @@ void pkgCache::PkgIterator::operator ++(int)
    }
 };
 									/*}}}*/
-// Bases for iterator classes						/*{{{*/
-void pkgCache::VerIterator::_dummy() {}
-void pkgCache::DepIterator::_dummy() {}
-void pkgCache::PrvIterator::_dummy() {}
-									/*}}}*/
 // PkgIterator::State - Check the State of the package			/*{{{*/
 // ---------------------------------------------------------------------
 /* By this we mean if it is either cleanly installed or cleanly removed. */
 pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 {
-   if (Pkg->CurrentState == pkgSTATE_UnPacked ||
-       Pkg->CurrentState == pkgSTATE_HalfConfigured)
+   if (Pkg->CurrentState == UnPacked ||
+       Pkg->CurrentState == HalfConfigured)
       return NeedsConfigure;
    
-   if (Pkg->CurrentState == pkgSTATE_UnInstalled ||
-       Pkg->CurrentState == pkgSTATE_HalfInstalled ||
-       Pkg->InstState != pkgSTATE_Ok)
+   if (Pkg->CurrentState == UnInstalled ||
+       Pkg->CurrentState == HalfInstalled ||
+       Pkg->InstState != Ok)
       return NeedsUnpack;
       
    return NeedsNothing;
@@ -204,8 +204,8 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
    conflicts. */
 bool pkgCache::DepIterator::IsCritical()
 {
-   if (Dep->Type == pkgDEP_Conflicts || Dep->Type == pkgDEP_Depends ||
-       Dep->Type == pkgDEP_PreDepends)
+   if (Dep->Type == Conflicts || Dep->Type == Depends ||
+       Dep->Type == PreDepends)
       return true;
    return false;
 }
@@ -280,7 +280,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	 if (pkgCheckDep(TargetVer(),I.VerStr(),Dep->CompareOp) == false)
 	    continue;
 
-	 if (Dep->Type == pkgDEP_Conflicts && ParentPkg() == I.ParentPkg())
+	 if (Dep->Type == Conflicts && ParentPkg() == I.ParentPkg())
 	    continue;
 	 
 	 Size++;
@@ -294,7 +294,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	 if (pkgCheckDep(TargetVer(),I.ProvideVersion(),Dep->CompareOp) == false)
 	    continue;
 	 
-	 if (Dep->Type == pkgDEP_Conflicts && ParentPkg() == I.OwnerPkg())
+	 if (Dep->Type == Conflicts && ParentPkg() == I.OwnerPkg())
 	    continue;
 	 
 	 Size++;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: pkgcachegen.h,v 1.2 1998/07/04 05:57:38 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -29,10 +29,13 @@ class pkgCacheGenerator
    string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
    
-   bool NewPackage(pkgCache::PkgIterator Pkg,string Pkg);
-   bool NewFileVer(pkgCache::VerIterator Ver,ListParser &List);
-   unsigned long NewVersion(pkgCache::VerIterator &Ver,unsigned long Next);
+   bool NewPackage(pkgCache::PkgIterator &Pkg,string Pkg);
+   bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
+   unsigned long NewVersion(pkgCache::VerIterator &Ver,string VerStr,unsigned long Next);
 
+   unsigned long WriteUniqString(const char *S,unsigned int Size);
+   inline unsigned long WriteUniqString(string S) {return WriteUniqString(S);};
+   
    public:
    
    // This is the abstract package list parser class.
@@ -43,9 +46,11 @@ class pkgCacheGenerator
       
       protected:
       
+      inline unsigned long WriteUniqString(string S) {return Owner->WriteUniqString(S);};
+      inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
       inline unsigned long WriteString(string S) {return Owner->Map.WriteString(S);};
       inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->Map.WriteString(S,Size);};
-
+      
       public:
       
       // These all operate against the current section
@@ -53,9 +58,11 @@ class pkgCacheGenerator
       virtual string Version() = 0;
       virtual bool NewVersion(pkgCache::VerIterator Ver) = 0;
       virtual bool NewPackage(pkgCache::PkgIterator Pkg) = 0;
-      virtual bool UsePackage(pkgCache::PkgIterator Pkg) = 0;
-      
+      virtual bool UsePackage(pkgCache::PkgIterator Pkg,
+			      pkgCache::VerIterator Ver) = 0;
+				   
       virtual bool Step() = 0;
+      virtual ~ListParser() {};
    };
    friend ListParser;
 
