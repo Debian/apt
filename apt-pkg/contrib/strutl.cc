@@ -47,7 +47,7 @@ bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest)
   iconv_t cd;
   const char *inbuf;
   char *inptr, *outbuf, *outptr;
-  size_t insize, outsize, nconv;
+  size_t insize, outsize;
   
   cd = iconv_open(codeset, "UTF-8");
   if (cd == (iconv_t)(-1)) {
