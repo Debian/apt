@@ -135,3 +135,23 @@ _LIBSTDCPP_
 	fi
 	AC_SUBST(LIBSTDCPP_VER)
 ])
+
+AC_DEFUN(ah_GCC3DEP,[
+	AC_MSG_CHECKING(if $CXX -MD works)
+	touch gcc3dep.cc
+	${CXX-c++} -MD -o gcc3dep_test.o -c gcc3dep.cc
+	rm -f gcc3dep.cc gcc3dep_test.o
+	if test -e gcc3dep.d; then
+		rm -f gcc3dep.d
+		GCC_MD=input
+		GCC3DEP=no
+	elif test -e gcc3dep_test.d; then
+		rm -f gcc3dep_test.d
+		GCC_MD=output
+		GCC3DEP=yes
+	else
+		AC_MSG_ERROR(no)
+	fi
+	AC_MSG_RESULT([yes, for $GCC_MD])
+	AC_SUBST(GCC3DEP)
+])
