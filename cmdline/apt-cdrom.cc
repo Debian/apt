@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.24 1999/05/29 04:59:52 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.25 1999/05/29 21:49:58 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -468,7 +468,8 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 	    
 	    // Get the size
 	    struct stat Buf;
-	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0)
+	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0 || 
+		Buf.st_size == 0)
 	    {
 	       // Attempt to fix busted symlink support for one instance
 	       string OrigFile = File;
