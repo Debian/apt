@@ -5,11 +5,14 @@ SUBDIR=cmdline
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-# The library name
+# The apt-cache program
 PROGRAM=apt-cache
 SLIBS = -lapt-pkg 
-
-# Source code for the contributed non-core things
 SOURCE = apt-cache.cc
+include $(PROGRAM_H)
 
+# The apt-config program
+PROGRAM=apt-config
+SLIBS = -lapt-pkg 
+SOURCE = apt-config.cc
 include $(PROGRAM_H)

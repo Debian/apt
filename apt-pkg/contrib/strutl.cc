@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.3 1998/07/19 04:22:08 jgg Exp $
+// $Id: strutl.cc,v 1.4 1998/09/22 05:30:28 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -77,7 +77,7 @@ char *_strtabexpand(char *String,size_t Len)
 // ---------------------------------------------------------------------
 /* This grabs a single word, converts any % escaped characters to their
    proper values and advances the pointer. Double quotes are understood
-   and striped out as well. */
+   and striped out as well. This is for URI/URL parsing. */
 bool ParseQuoteWord(const char *&String,string &Res)
 {
    // Skip leading whitespace
@@ -125,6 +125,47 @@ bool ParseQuoteWord(const char *&String,string &Res)
    // Skip ending white space
    for (;*C != 0 && *C == ' '; C++);
    String = C;
+   return true;
+}
+									/*}}}*/
+// ParseCWord - Parses a string like a C "" expression			/*{{{*/
+// ---------------------------------------------------------------------
+/* This expects a series of space seperated strings enclosed in ""'s. 
+   It concatenates the ""'s into a single string. */
+bool ParseCWord(const char *String,string &Res)
+{
+   // Skip leading whitespace
+   const char *C = String;
+   for (;*C != 0 && *C == ' '; C++);
+   if (*C == 0)
+      return false;
+   
+   char Buffer[1024];
+   char *Buf = Buffer;
+   if (strlen(String) >= sizeof(Buffer))
+       return false;
+       
+   for (; *C != 0; C++)
+   {
+      if (*C == '"')
+      {
+	 for (C++; *C != 0 && *C != '"'; C++)
+	    *Buf++ = *C;
+	 
+	 if (*C == 0)
+	    return false;
+	 
+	 continue;
+      }      
+      
+      if (C != String && isspace(*C) != 0 && isspace(C[-1]) != 0)
+	 continue;
+      if (isspace(*C) == 0)
+	 return false;
+      *Buf++ = ' ';
+   }   
+   *Buf = 0;
+   Res = Buffer;
    return true;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.6 1998/07/26 23:11:56 jgg Exp $
+// $Id: apt-cache.cc,v 1.7 1998/09/22 05:30:30 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache file.
@@ -30,6 +30,7 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/cmndline.h>
 
 #include <iostream.h>
 #include <fstream.h>
@@ -70,7 +71,7 @@ bool SplitArg(const char *Arg,string &File,string &Dist,string Ver)
 // DumpPackage - Show a dump of a package record			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DumpPackage(pkgCache &Cache,int argc,char *argv[])
+bool DumpPackage(pkgCache &Cache,int argc,const char *argv[])
 {   
    for (int I = 0; I != argc; I++)
    {
@@ -255,7 +256,7 @@ bool DumpAvail(pkgCache &Cache)
 // DoAdd - Perform an adding operation					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoAdd(int argc,char *argv[])
+bool DoAdd(int argc,const char *argv[])
 {
    string FileName;
    string Dist;
@@ -312,8 +313,21 @@ bool GenCaches()
 }
 									/*}}}*/
 
-int main(int argc, char *argv[])
+int main(int argc,const char *argv[])
 {
+   CommandLine::Args Args[] = {
+      {'h',"help","help",0},
+      {0,0,0,0}};
+	 
+   CommandLine Cmds(Args,_config);
+   if (pkgInitialize(*_config) == false ||
+       Cmds.Parse(argc,argv) == false)
+   {
+      _error->DumpErrors();
+      return 100;
+   }   
+   cout << _config->Find("help") << endl;
+   
    // Check arguments.
    if (argc < 3)
    {
@@ -321,7 +335,6 @@ int main(int argc, char *argv[])
       return 100;
    }
 
-   pkgInitialize(*_config);
    while (1)
    {
       CacheFile = argv[2];

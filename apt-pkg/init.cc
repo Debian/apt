@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.4 1998/07/26 04:49:26 jgg Exp $
+// $Id: init.cc,v 1.5 1998/09/22 05:30:24 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -9,6 +9,9 @@
 									/*}}}*/
 // Include files							/*{{{*/
 #include <apt-pkg/init.h>
+
+#include <sys/stat.h>
+#include <unistd.h>
 									/*}}}*/
 
 // pkgInitialize - Initialize the configuration class			/*{{{*/
@@ -42,7 +45,12 @@ bool pkgInitialize(Configuration &Cnf)
    Cnf.Set("Dir::Etc","/etc/apt/");
    Cnf.Set("Dir::Etc::sourcelist","sources.list");
    Cnf.Set("Dir::Etc::main","apt.conf");
-   
-   return true;
+
+   // Read the main config file
+   string FName = Cnf.FindDir("Dir::Etc::main");
+   struct stat Buf;   
+   if (stat(FName.c_str(),&Buf) != 0)
+      return true;
+   return ReadConfigFile(Cnf,FName);
 }
 									/*}}}*/

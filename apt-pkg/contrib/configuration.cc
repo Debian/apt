@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.3 1998/07/12 23:58:44 jgg Exp $
+// $Id: configuration.cc,v 1.4 1998/09/22 05:30:26 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -16,9 +16,11 @@
 #pragma implementation "apt-pkg/configuration.h"
 #endif
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <strutl.h>
 
 #include <stdio.h>
+#include <fstream.h>
 									/*}}}*/
 
 Configuration *_config = new Configuration;
@@ -140,6 +142,39 @@ int Configuration::FindI(const char *Name,int Default)
    return Res;
 }
 									/*}}}*/
+// Configuration::FindB - Find a boolean type				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Configuration::FindB(const char *Name,bool Default)
+{
+   Item *Itm = Lookup(Name,false);
+   if (Itm == 0 || Itm->Value.empty() == true)
+      return Default;
+   
+   char *End;
+   int Res = strtol(Itm->Value.c_str(),&End,0);
+   if (End == Itm->Value.c_str() || Res < 0 || Res > 1)
+   {
+      // Check for positives
+      if (strcasecmp(Itm->Value,"no") == 0 ||
+	  strcasecmp(Itm->Value,"false") == 0 ||
+	  strcasecmp(Itm->Value,"without") == 0 ||
+	  strcasecmp(Itm->Value,"disable") == 0)
+	 return false;
+      
+      // Check for negatives
+      if (strcasecmp(Itm->Value,"no") == 0 ||
+	  strcasecmp(Itm->Value,"false") == 0 ||
+	  strcasecmp(Itm->Value,"without") == 0 ||
+	  strcasecmp(Itm->Value,"disable") == 0)
+	 return false;
+      
+      return Default;
+   }
+   
+   return Res;
+}
+									/*}}}*/
 // Configuration::Set - Set a value					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -162,5 +197,199 @@ void Configuration::Set(const char *Name,int Value)
    char S[300];
    snprintf(S,sizeof(S),"%i",Value);
    Itm->Value = S;
+}
+									/*}}}*/
+// Configuration::Exists - Returns true if the Name exists		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Configuration::Exists(const char *Name)
+{
+   Item *Itm = Lookup(Name,false);
+   if (Itm == 0)
+      return false;
+   return true;
+}
+									/*}}}*/
+
+// ReadConfigFile - Read a configuration file				/*{{{*/
+// ---------------------------------------------------------------------
+/* The configuration format is very much like the named.conf format
+   used in bind8, in fact this routine can parse most named.conf files. */
+bool ReadConfigFile(Configuration &Conf,string FName)
+{
+   // Open the stream for reading
+   ifstream F(FName.c_str(),ios::in | ios::nocreate);
+   if (!F != 0)
+      return _error->Errno("ifstream::ifstream","Opening configuration file %s",FName.c_str());
+   
+   char Buffer[300];
+   string LineBuffer;
+   
+   // Parser state
+   string ParentTag;
+   
+   int CurLine = 0;
+   bool InComment = false;
+   while (F.eof() == false)
+   {
+      F.getline(Buffer,sizeof(Buffer));
+      CurLine++;
+      _strtabexpand(Buffer,sizeof(Buffer));
+      _strstrip(Buffer);
+
+      // Multi line comment
+      if (InComment == true)
+      {
+	 for (const char *I = Buffer; *I != 0; I++)
+	 {
+	    if (*I == '*' && I[1] == '/')
+	    {
+	       memmove(Buffer,I+2,strlen(I+2) + 1);
+	       InComment = false;
+	       break;
+	    }	    
+	 }
+	 if (InComment == true)
+	    continue;
+      }
+      
+      // Discard single line comments
+      for (char *I = Buffer; *I != 0; I++)
+      {
+	 if (*I == '/' && I[1] == '/')
+         {
+	    *I = 0;
+	    break;
+	 }
+      }
+      
+      // Look for multi line comments
+      for (char *I = Buffer; *I != 0; I++)
+      {
+	 if (*I == '/' && I[1] == '*')
+         {
+	    InComment = true;
+	    for (char *J = Buffer; *J != 0; J++)
+	    {
+	       if (*J == '*' && J[1] == '/')
+	       {
+		  memmove(I,J+2,strlen(J+2) + 1);
+		  InComment = false;
+		  break;
+	       }	       
+	    }
+	    
+	    if (InComment == true)
+	    {
+	       *I = 0;
+	       break;
+	    }	    
+	 }
+      }
+      
+      // Blank
+      if (Buffer[0] == 0)
+	 continue;
+      
+      // We now have a valid line fragment
+      for (char *I = Buffer; *I != 0;)
+      {
+	 if (*I == '{' || *I == ';' || *I == '}')
+	 {
+	    // Put the last fragement into the buffer
+	    char *Start = Buffer;
+	    char *Stop = I;
+	    for (; Start != I && isspace(*Start) != 0; Start++);
+	    for (; Stop != Start && isspace(Stop[-1]) != 0; Stop--);
+	    if (LineBuffer.empty() == false && Stop - Start != 0)
+	       LineBuffer += ' ';
+	    LineBuffer += string(Start,Stop - Start);
+	    
+	    // Remove the fragment
+	    char TermChar = *I;
+	    memmove(Buffer,I + 1,strlen(I + 1) + 1);
+	    I = Buffer;
+
+	    // Move up a tag
+	    if (TermChar == '}')
+	    {
+	       string::size_type Pos = ParentTag.rfind("::");
+	       if (Pos == string::npos)
+		  ParentTag = string();
+	       else
+		  ParentTag = string(ParentTag,0,Pos);
+	    }
+	    
+	    // Syntax Error
+	    if (TermChar == '{' && LineBuffer.empty() == true)
+	       return _error->Error("Syntax error %s:%u: Block starts with no name.",FName.c_str(),CurLine);
+	    
+	    if (LineBuffer.empty() == true)
+	       continue;
+
+	    // Parse off the tag
+	    string::size_type Pos = LineBuffer.find(' ');
+	    if (Pos == string::npos)
+	    {
+	       if (TermChar == '{')
+		  Pos = LineBuffer.length();
+	       else
+		  return _error->Error("Syntax error %s:%u: Tag with no value",FName.c_str(),CurLine);
+	    }
+	    
+	    string Tag = string(LineBuffer,0,Pos);
+
+	    // Go down a level
+	    if (TermChar == '{')
+	    {
+	       if (ParentTag.empty() == true)
+		  ParentTag = Tag;
+	       else
+		  ParentTag += string("::") + Tag;
+	       Tag = string();
+	    }
+
+	    // We dont have a value to set
+	    if (Pos == LineBuffer.length())
+	    {
+	       LineBuffer = string();
+	       continue;
+	    }
+	    
+	    // Parse off the word
+	    string Word;
+	    if (ParseCWord(LineBuffer.c_str()+Pos,Word) == false)
+	       return _error->Error("Syntax error %s:%u: Malformed value",FName.c_str(),CurLine);
+	       
+	    // Generate the item name
+	    string Item;
+	    if (ParentTag.empty() == true)
+	       Item = Tag;
+	    else
+	    {
+	       if (Tag.empty() == true)
+		  Item = ParentTag;
+	       else
+		  Item = ParentTag + "::" + Tag;
+	    }
+	    
+	    // Set the item in the configuration class
+	    Conf.Set(Item,Word);
+			    
+	    // Empty the buffer
+	    LineBuffer = string();
+	 }
+	 else
+	    I++;
+      }
+
+      // Store the fragment
+      const char *Stripd = _strstrip(Buffer);
+      if (*Stripd != 0 && LineBuffer.empty() == false)
+	 LineBuffer += " ";
+      LineBuffer += Stripd;
+   }
+   
+   return true;
 }
 									/*}}}*/
