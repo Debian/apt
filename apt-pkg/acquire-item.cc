@@ -352,7 +352,7 @@ string pkgAcqMetaSig::Custom600Headers()
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
-   
+
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 
@@ -392,8 +392,14 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    // mistakenly trusted
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    unlink(Final.c_str());
-   Final = _config->FindDir("Dir::State::lists") + "partial/"+ URItoFileName(RealURI);
-   unlink(Final.c_str());
+
+   // if we debug leave the sig-file in partial/ to see what went wrong
+   // else delete it
+   if (!_config->FindB("Debug::pkgAcquire::Auth", false)) {
+      
+      Final = _config->FindDir("Dir::State::lists") + "partial/"+ URItoFileName(RealURI);
+      unlink(Final.c_str());
+   }
 
 
    // queue a pkgAcqMetaIndex with no sigfile
