@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.cc,v 1.3 2001/05/07 05:14:53 jgg Exp $
+// $Id: debversion.cc,v 1.4 2002/11/22 06:59:35 doogie Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian
@@ -45,6 +45,12 @@ static unsigned long StrToLong(const char *begin,const char *end)
    return strtoul(S,0,10);
 }
 									/*}}}*/
+#define order(x) ((x) == '~' ? -1 \
+		: isdigit((x)) ? 0 \
+		: !(x) ? 0 \
+		: isalpha((x)) ? (x) \
+		: (x) + 256)
+
 // debVS::CmpFragment - Compare versions			        /*{{{*/
 // ---------------------------------------------------------------------
 /* This compares a fragment of the version. Dpkg has a really short 
@@ -73,55 +79,23 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
       // Starting points
       const char *Slhs = lhs;
       const char *Srhs = rhs;
+      int first_diff = 0;
       
-      // Compute ending points were we have passed over the portion
-      bool Digit = (isdigit(*lhs) > 0?true:false);
-      for (;lhs != AEnd && (isdigit(*lhs) > 0?true:false) == Digit; lhs++);
-      for (;rhs != BEnd && (isdigit(*rhs) > 0?true:false) == Digit; rhs++);
-      
-      if (Digit == true)
-      {
-	 // If the lhs has a digit and the rhs does not then <
-	 if (rhs - Srhs == 0)
-	    return -1;
-	 
-	 // Generate integers from the strings.
-	 unsigned long Ilhs = StrToLong(Slhs,lhs);
-	 unsigned long Irhs = StrToLong(Srhs,rhs);
-	 if (Ilhs != Irhs)
-	 {
-	    if (Ilhs > Irhs)
-	       return 1;
-	    return -1;
-	 }
+      while ( (lhs != AEnd && !isdigit(*lhs)) || (rhs != BEnd && !isdigit(*rhs)) ) {
+	 int vc= order(*lhs), rc= order(*rhs);
+	 if (vc != rc) return vc - rc;
+	 lhs++; rhs++;
       }
-      else
-      {
-	 // They are equal length so do a straight text compare
-	 for (;Slhs != lhs && Srhs != rhs; Slhs++, Srhs++)
-	 {
-	    if (*Slhs != *Srhs)
-	    {
-	       /* We need to compare non alpha chars as higher than alpha
-	          chars (a < !) */
-	       int lc = *Slhs;
-	       int rc = *Srhs;
-	       if (isalpha(lc) == 0) lc += 256;
-	       if (isalpha(rc) == 0) rc += 256;
-	       if (lc > rc)
-		  return 1;
-	       return -1;
-	    }
-	 }
 
-	 // If the lhs is shorter than the right it is 'less'
-	 if (lhs - Slhs < rhs - Srhs)
-	    return -1;
-
-	 // If the lhs is longer than the right it is 'more'
-	 if (lhs - Slhs > rhs - Srhs)
-	    return 1;		 
-      }      
+      while ( *lhs == '0' ) lhs++;
+      while ( *rhs == '0' ) rhs++;
+      while (isdigit(*lhs) && isdigit(*rhs)) {
+	 if (!first_diff) first_diff= *lhs - *rhs;
+	 lhs++; rhs++;
+      }
+      if (isdigit(*lhs)) return 1;
+      if (isdigit(*rhs)) return -1;
+      if (first_diff) return first_diff;
    }
 
    // The strings must be equal
