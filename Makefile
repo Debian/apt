@@ -23,10 +23,21 @@ maintainer-clean dist-clean distclean pristine sanity: veryclean
 # The startup target builds the necessary configure scripts. It should
 # be used after a CVS checkout.
 .PHONY: startup
-startup: configure
+BUILD=build
+CONVERTED=$(BUILD)/environment.mak $(BUILD)/include/config.h $(BUILD)/makefile
+startup: configure $(CONVERTED)
 
 configure: aclocal.m4 configure.in
 	autoconf	
 
 aclocal.m4:
 	aclocal -I buildlib
+
+build:
+	mkdir $(BUILD)
+$(BUILD)/config.status: configure
+	(HERE=`pwd`; cd $(BUILD) && $$HERE/configure)
+$(BUILD)/include/config.h: buildlib/config.h.in
+$(BUILD)/environment.mak: buildlib/environment.mak.in
+$(CONVERTED):
+	(cd $(BUILD) && ./config.status)
