@@ -4,7 +4,7 @@
 <title>APT Cache File Format</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: cache.sgml,v 1.1 1998/07/02 02:58:12 jgg Exp $</version>
+<version>$Id: cache.sgml,v 1.2 1998/07/05 05:43:09 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the APT
@@ -19,7 +19,7 @@ structures used by the package library and the APT GUI.
 </abstract>
 
 <copyright>
-Copyright &copy; Jason Gunthorpe, 1997.
+Copyright &copy; Jason Gunthorpe, 1997-1998.
 <p>
 APT and this document are free software; you can redistribute them and/or
 modify them under the terms of the GNU General Public License as published
@@ -81,7 +81,7 @@ effects.
 Every item in every structure is stored as the index to that structure.
 What this means is that once the files is mmaped every data access has to
 go through a fixup stage to get a real memory pointer. This is done
-by taking the tndex, multiplying it by the type size and then adding
+by taking the index, multiplying it by the type size and then adding
 it to the start address of the memory block. This sounds complex, but
 in C it is a single array dereference. Because all items are aligned to 
 their size and indexs are stored as multiples of the size of the structure
@@ -133,7 +133,8 @@ This is the first item in the file.
       unsigned short VersionSz;
       unsigned short DependencySz;
       unsigned short ProvidesSz;
-
+      unsigned short VerFileSz;
+      
       // Structure counts
       unsigned long PackageCount;
       unsigned long VersionCount;
@@ -144,11 +145,14 @@ This is the first item in the file.
       unsigned long FileList;              // PackageFile
       unsigned long StringList;            // StringItem
       
-      // Pool structures
-      unsigned long PoolStart[6];
-      unsigned long PoolSize[6];
-      unsigned long PoolAln[6];
-      
+      // Allocation pools
+      struct
+      {
+         unsigned long ItemSize;
+	 unsigned long Start;
+	 unsigned long Count;
+      } Pools[7];
+
       // Package name lookup
       unsigned long HashTable[512];        // Package
    };
@@ -173,6 +177,7 @@ be erased and rebuilt if it is true.
 <tag>PackageFileSz
 <tag>VersionSz
 <tag>DependencySz
+<tag>VerFileSz
 <tag>ProvidesSz<item>
 *Sz contains the sizeof() that particular structure. It is used as an
 extra consistancy check on the structure of the file.
@@ -198,15 +203,14 @@ This contains a list of all the unique strings (string item type strings) in
 the cache. The parser reads this list into memory so it can match strings 
 against it.
 
-<tag>PoolStart
-<tag>PoolSize
-<tag>PoolAln<item>
+<tag>Pools<item>
 The Pool structures manage the allocation pools that the generator uses.
-Start indicates the first byte of the pool, Size is the number of bytes
-remaining in the pool and Aln (alignment) is the structure size of the pool. 
-An Aln of 0 indicates the slot is empty. There should be the same number of
-slots as there are structure types. The generator stores this information 
-so future additions can make use of any unused pool blocks.
+Start indicates the first byte of the pool, Count is the number of objects
+remaining in the pool and ItemSize is the structure size (alignment factor)
+of the pool. An ItemSize of 0 indicates the pool is empty. There should be 
+the same number of pools as there are structure types. The generator 
+stores this information so future additions can make use of any unused pool 
+blocks.
 
 <tag>HashTable<item>
 HashTable is a hash table that provides indexing for all of the packages.
@@ -260,7 +264,7 @@ the Header->HashTable.
 
       // Unique ID for this pkg
       unsigned short ID;
-      unsigned short Flags;
+      unsigned long Flags;
    };
 </example>   
 
@@ -349,7 +353,7 @@ Header.FileList
       // Linked list
       unsigned long NextFile;        // PackageFile
       unsigned short ID;
-      unsigned short Flags;
+      unsigned long Flags;
       time_t mtime;                  // Modification time
    };
 </example>   
@@ -396,16 +400,15 @@ VerStr).
    struct Version
    {
       unsigned long VerStr;            // Stringtable
-      unsigned long File;              // PackageFile
       unsigned long Section;           // StringTable (StringItem)
       
       // Lists
+      unsigned long FileList;          // VerFile
       unsigned long NextVer;           // Version
       unsigned long DependsList;       // Dependency
       unsigned long ParentPkg;         // Package
       unsigned long ProvidesList;      // Provides
-     
-      unsigned long Offset;
+      
       unsigned long Size;
       unsigned long InstalledSize;
       unsigned short ID;
@@ -417,11 +420,11 @@ VerStr).
 <tag>VerStr<item>
 This is the complete version string.
 
-<tag>File<item>
-References the PackageFile that this version came out of. File can be used
-to determine what distribution the Version applies to. If File is 0 then
-this is a blank version. The structure should also have a 0 in all other
-fields excluding VerStr and Possibly NextVer.
+<tag>FileList<item>
+References the all the PackageFile's that this version came out of. FileList 
+can be used to determine what distribution(s) the Version applies to. If 
+FileList is 0 then this is a blank version. The structure should also have 
+a 0 in all other fields excluding VerStr and Possibly NextVer.
 
 <tag>Section<item>
 This string indicates which section it is part of. The string should be
@@ -439,10 +442,6 @@ to determine the package.
 
 <tag>ProvidesList<item>
 Head of the linked list of Provides::NextPkgProv, forward provides.
-
-<tag>Offset<item>
-The byte offset of the first line of this item in the specified
-PackageFile
 
 <tag>Size
 <tag>InstalledSize<item>
@@ -562,6 +561,37 @@ Next link in the singly linked list of provides (based off package)
 <tag>NextPkgProv<item>
 Next link in the singly linked list of provides for 'Version'.
 
+</taglist>
+
+                                                                  <!-- }}} -->
+<!-- VerFile		                                               {{{ -->
+<!-- ===================================================================== -->
+<sect>VerFile
+<p>
+VerFile associates a version with a PackageFile, this allows a full 
+description of all Versions in all files (and hence all sources) under
+consideration.
+
+<example>
+    struct pkgCache::VerFile
+    {
+       unsigned long File;           // PackageFile
+       unsigned long NextFile;       // PkgVerFile
+       unsigned long Offset;
+       unsigned short Size;
+    }
+</example>
+<taglist>
+<tag>File<item>
+The index of the package file that this version was found in.
+
+<tag>NextFile<item>
+The next step in the linked list.
+
+<tag>Offset
+<tag>Size<item>
+These describe the exact position in the package file for the section from 
+this version.
 </taglist>
 
                                                                   <!-- }}} -->
