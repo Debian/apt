@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.24\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2005-01-12 23:35+0100\n"
+"PO-Revision-Date: 2005-02-08 20:36+0100\n"
 "Last-Translator: Rubén Porras Campo <nahoo@inicia.es>\n"
 "Language-Team: Spanish <debian-l10n-spanish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -329,7 +329,6 @@ msgid "Error Processing Contents %s"
 msgstr "Error procesando contenidos %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -382,7 +381,7 @@ msgstr ""
 "\n"
 "apt-ftparchive genera índices para archivos de Debian. Soporta\n"
 "varios estilos de generación de reemplazos desde los completamente\n"
-"automatizados a sustituciones para dpkg-scanpackages y dpkg-scansources.\n"
+"automatizados a los funcionales para dpkg-scanpackages y dpkg-scansources.\n"
 "\n"
 "apt-ftparchive genera ficheros Package de un árbol de .debs. El fichero\n"
 "Package contiene los contenidos de todos los campos de control de cada\n"
@@ -390,11 +389,11 @@ msgstr ""
 "un archivo de predominio para forzar el valor de Priority y\n"
 "Section.\n"
 "\n"
-"Igualmente, apt-ftparchive genera ficheros de fuentes para un árbol de\n"
+"Igualmente, apt-ftparchive genera ficheros Sources para un árbol de\n"
 ".dscs. Se puede utilizar la opción --source-override para especificar un\n"
 "fichero de predominio de fuente.\n"
 "\n"
-"Las órdenes 'packages' y 'sources' deben ser ejecutadas en la raíz del\n"
+"Las órdenes 'packages' y 'sources' deben ejecutarse en la raíz del\n"
 "árbol. BinaryPath debe apuntar a la base de la búsqueda\n"
 "recursiva, y el archivo de predominio debe de contener banderas de\n"
 "predominio. Se añade Pathprefix a los campos de nombre de fichero\n"
@@ -407,8 +406,8 @@ msgstr ""
 "  -h    Este texto de ayuda\n"
 "  --md5 Generación de control MD5 \n"
 "  -s=?  Archivo fuente de predominio\n"
-"  -q    Callado\n"
-"  -d=?  Selecciona la base de datos opcional de cache\n"
+"  -q    Silencioso\n"
+"  -d=?  Selecciona la base de datos de caché opcional \n"
 "  --no-delink Habilita modo de depuración delink\n"
 "  --contents  Generación del contenido del archivo 'Control'\n"
 "  -c=?  Lee este archivo de configuración\n"
@@ -761,17 +760,16 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "Dependencias incumplidas. Pruebe de nuevo usando -f."
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "Se actualizarán los siguientes paquetes:"
+msgstr "AVISO: ¡No se han podido autenticar los siguientes paquetes!"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "¿Instalar estos paquetes sin verificación? [s/N] "
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "Algunos paquetes no se pueden autenticar"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
@@ -1589,9 +1587,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Este no es un archivo DEB válido, falta el miembro '%s'"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Este no es un archivo DEB válido, falta el miembro '%s'"
+msgstr "Este no es un archivo DEB válido, falta el miembro '%s' o '%s'"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -2524,108 +2522,104 @@ msgid "Size mismatch"
 msgstr "El tamaño difiere"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "Bloque de fabricante %s inválido"
+msgstr "Bloque de fabricante %s sin huella digital"
 
 #: apt-pkg/cdrom.cc:487
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
-msgstr "Usando punto de montaje CD-ROM"
+msgstr ""
+"Usando el punto de montaje del CD-ROM %s\n"
+"Montando el CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
 msgstr "Identificando.. "
 
 #: apt-pkg/cdrom.cc:521
-#, fuzzy, c-format
+#, c-format
 msgid "Stored Label: %s \n"
-msgstr "Etiqueta guardada: "
+msgstr "Etiqueta guardada: %s \n"
 
 #: apt-pkg/cdrom.cc:541
-#, fuzzy, c-format
+#, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr "Usando punto de montaje CD-ROM"
+msgstr "Usando el punto de montaje del CD-ROM %s\n"
 
 #: apt-pkg/cdrom.cc:559
-#, fuzzy
 msgid "Unmounting CD-ROM\n"
-msgstr "Desmontando CD-ROM"
+msgstr "Desmontando el CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "Esperando las cabeceras"
+msgstr "Esperando el disco...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
-#, fuzzy
 msgid "Mounting CD-ROM...\n"
-msgstr "Montando CD-ROM"
+msgstr "Montando el CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:589
-#, fuzzy
 msgid "Scanning Disc for index files..\n"
-msgstr "Buscando en el disco por el archivo de indexación"
+msgstr "Buscando en el disco archivos de índices...\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "Se encontraron %i índices de paquetes, %i de fuentes y %i firmas\n"
 
 #: apt-pkg/cdrom.cc:684
-#, fuzzy
 msgid "That is not a valid name, try again.\n"
-msgstr "Ese no es un nombre válido, intente de nuevo "
+msgstr "Ese no es un nombre válido, inténtelo de nuevo.\n"
 
 #: apt-pkg/cdrom.cc:700
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This Disc is called: \n"
 "'%s'\n"
-msgstr "Este disco se llama: "
+msgstr ""
+"Este disco se llama: \n"
+"'%s'\n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "Leyendo lista de paquetes"
+msgstr "Copiando las listas de paquetes..."
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "Escribiendo nueva lista de fuente"
+msgstr "Escribiendo nueva lista de fuente\n"
 
 #: apt-pkg/cdrom.cc:737
-#, fuzzy
 msgid "Source List entries for this Disc are:\n"
-msgstr "Las entradas de la lista de fuentes para este disco son:"
+msgstr "Las entradas de la lista de fuentes para este disco son:\n"
 
 #: apt-pkg/cdrom.cc:771
-#, fuzzy
 msgid "Unmounting CD-ROM..."
-msgstr "Desmontando CD-ROM"
+msgstr "Desmontando CD-ROM..."
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "%i registros escritos.\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "%i registros escritos con %i fichero de menos.\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "%i registros escritos con %i fichero mal emparejado\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
 msgstr ""
+"%i registros escritos con %i fichero de menos y %i ficheros mal emparejados\n"
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr ""
