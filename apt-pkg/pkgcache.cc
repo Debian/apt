@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.5 1998/07/07 04:17:02 jgg Exp $
+// $Id: pkgcache.cc,v 1.6 1998/07/12 01:26:04 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -356,6 +356,18 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
       if (I == B)
 	 return 1;
    return -1;
+}
+									/*}}}*/
+// VerIterator::Downloadable - Checks if the version is downloadable	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCache::VerIterator::Downloadable() const
+{
+   VerFileIterator Files = FileList();
+   for (; Files.end() == false; Files++)
+      if ((Files.File()->Flags & Flag::NotSource) != Flag::NotSource)
+	 return true;
+   return false;
 }
 									/*}}}*/
 // PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/

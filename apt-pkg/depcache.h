@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.1 1998/07/07 04:17:01 jgg Exp $
+// $Id: depcache.h,v 1.2 1998/07/12 01:26:01 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -167,9 +167,6 @@ class pkgDepCache : public pkgCache
    // This is for debuging
    void Update();
 
-   // Dep Processing for AutoKeep
-   void ResolveConflicts(unsigned char *Touched);
-   
    // Hook to keep the extra data in sync
    virtual bool ReMap();
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.4 1998/07/07 04:17:00 jgg Exp $
+// $Id: cacheiterators.h,v 1.5 1998/07/12 01:26:00 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -125,6 +125,7 @@ class pkgCache::VerIterator
    inline PrvIterator ProvidesList() const;
    inline VerFileIterator FileList() const;
    inline unsigned long Index() const {return Ver - Owner.VerP;};
+   bool Downloadable() const;
 
    inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Ver(Trg), Owner(Owner) 
    { 
@@ -300,7 +301,7 @@ class pkgCache::VerFileIterator
   
    inline PkgFileIterator File() const {return PkgFileIterator(*Owner,FileP->File + Owner->PkgFileP);};
    inline unsigned long Index() const {return FileP - Owner->VerFileP;};
-
+      
    inline VerFileIterator(pkgCache &Owner,VerFile *Trg) : Owner(&Owner), FileP(Trg) {};
 };
 

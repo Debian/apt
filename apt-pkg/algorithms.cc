@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.1 1998/07/07 04:17:00 jgg Exp $
+// $Id: algorithms.cc,v 1.2 1998/07/12 01:25:59 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -13,7 +13,6 @@
 #endif 
 #include <pkglib/algorithms.h>
 #include <pkglib/error.h>
-#include <pkglib/pkgelement.h>
 #include <iostream.h>
 									/*}}}*/
 
@@ -23,7 +22,7 @@ pkgProblemResolver *pkgProblemResolver::This = 0;
 // ---------------------------------------------------------------------
 /* */
 pkgSimulate::pkgSimulate(pkgDepCache &Cache) : pkgPackageManager(Cache), 
-                            Sim(true,true)
+                            Sim(Cache)
 {
    Flags = new unsigned char[Cache.HeaderP->PackageCount];
    memset(Flags,0,sizeof(*Flags)*Cache.HeaderP->PackageCount);
@@ -48,12 +47,12 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
 	 continue;
       
       for (DepIterator D = Sim[I].InstVerIter(Sim).DependsList(); D.end() == false; D++)
-	 if (D->Type == pkgDEP_Conflicts || D->Type == pkgDEP_PreDepends)
+	 if (D->Type == pkgCache::Dep::Conflicts || D->Type == pkgCache::Dep::PreDepends)
          {
 	    if ((Sim[D] & pkgDepCache::DepInstall) == 0)
 	    {
 	       cout << " [" << I.Name() << " on " << D.TargetPkg().Name() << ']';
-	       if (D->Type == pkgDEP_Conflicts)
+	       if (D->Type == pkgCache::Dep::Conflicts)
 		  _error->Error("Fatal, conflicts violated %s",I.Name());
 	    }	    
 	 }      
@@ -91,7 +90,7 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
 	     (Sim[D] & pkgDepCache::DepInstall) != 0)
 	    continue;
 	 
-	 if (D->Type == pkgDEP_Conflicts)
+	 if (D->Type == pkgCache::Dep::Conflicts)
 	    cout << " Conflicts:" << D.TargetPkg().Name();
 	 else
 	    cout << " Depends:" << D.TargetPkg().Name();
@@ -162,18 +161,18 @@ bool pkgApplyStatus(pkgDepCache &Cache)
       switch (I->CurrentState)
       {
 	 // This means installation failed somehow
-	 case pkgSTATE_UnPacked:
-	 case pkgSTATE_HalfConfigured:
+	 case pkgCache::State::UnPacked:
+	 case pkgCache::State::HalfConfigured:
 	 Cache.MarkKeep(I);
 	 break;
 
 	 // This means removal failed
-	 case pkgSTATE_HalfInstalled:
+	 case pkgCache::State::HalfInstalled:
 	 Cache.MarkDelete(I);
 	 break;
 	 
 	 default:
-	 if (I->InstState != pkgSTATE_Ok)
+	 if (I->InstState != pkgCache::State::Ok)
 	    return _error->Error("The package %s is not ok and I "
 				 "don't know how to fix it!",I.Name());
       }
@@ -200,7 +199,7 @@ bool pkgFixBroken(pkgDepCache &Cache)
 	  Cache[I].Delete() == true)
 	 continue;
       
-      if ((Cache[I].InstVerIter(Cache).File()->Flags & pkgFLAG_NotSource) == 0)
+      if (Cache[I].InstVerIter(Cache).Downloadable() == false)
 	 continue;
 
       Cache.MarkInstall(I,true);
@@ -229,7 +228,7 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    /* Now, auto upgrade all essential packages - this ensures that
       the essential packages are present and working */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
-      if ((I->Flags & pkgFLAG_Essential) == pkgFLAG_Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
 	 Cache.MarkInstall(I,true);
    
    /* We do it again over all previously installed packages to force 
@@ -243,7 +242,7 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    // Hold back held packages.
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
-      if (I->SelectedState == pkgSTATE_Hold)
+      if (I->SelectedState == pkgCache::State::Hold)
       {
 	 Fix.Protect(I);
 	 Cache.MarkKeep(I);
@@ -303,7 +302,7 @@ void pkgProblemResolver::MakeScores()
          essantial package above most other packages but low enough
 	 to allow an obsolete essential packages to be removed by
 	 a conflicts on a powerfull normal package (ie libc6) */
-      if ((I->Flags & pkgFLAG_Essential) == pkgFLAG_Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
 	 Score += 100;
 
       // We transform the priority
@@ -326,7 +325,7 @@ void pkgProblemResolver::MakeScores()
       
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; D++)
       {
-	 if (D->Type == pkgDEP_Depends || D->Type == pkgDEP_PreDepends)
+	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
 	    Scores[D.TargetPkg()->ID]++;
       }
    }   
@@ -347,7 +346,7 @@ void pkgProblemResolver::MakeScores()
       {
 	 // Only do it for the install version
 	 if ((pkgCache::Version *)D.ParentVer() != Cache[D.ParentPkg()].InstallVer ||
-	     (D->Type != pkgDEP_Depends && D->Type != pkgDEP_PreDepends))
+	     (D->Type != pkgCache::Dep::Depends && D->Type != pkgCache::Dep::PreDepends))
 	    continue;	 
 	 
 	 Scores[I->ID] += abs(OldScores[D.ParentPkg()->ID]);
@@ -400,7 +399,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
       for (bool LastOR = true; D.end() == false && LastOR == true; D++)
       {
 	 State |= Cache[D];
-	 LastOR = (D->CompareOp & pkgOP_OR) == pkgOP_OR;
+	 LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
 	 if (LastOR == true)
 	    End = D;
       }
@@ -437,7 +436,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
       {
 	 /* We let the algorithm deal with conflicts on its next iteration,
 	    it is much smarter than us */
-	 if (End->Type == pkgDEP_Conflicts)
+	 if (End->Type == pkgCache::Dep::Conflicts)
 	    continue;
 	 
 	 if (Debug == true)
@@ -586,7 +585,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    for (bool LastOR = true; D.end() == false && LastOR == true; D++)
 	    {
 	       State |= Cache[D];
-	       LastOR = (D->CompareOp & pkgOP_OR) == pkgOP_OR;
+	       LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
 	       if (LastOR == true)
 		  End = D;
 	    }
@@ -624,7 +623,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  " as a solution to " << I.Name() << ' ' << (int)Scores[I->ID] << endl;
 	       if (Scores[I->ID] <= Scores[Pkg->ID] ||
 		   ((Cache[End] & pkgDepCache::DepGNow) == 0 &&
-		    End->Type != pkgDEP_Conflicts))
+		    End->Type != pkgCache::Dep::Conflicts))
 	       {
 		  if ((Flags[I->ID] & Protected) != 0)
 		     continue;
@@ -661,13 +660,13 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  LEnd->Pkg = Pkg;
 		  LEnd->Dep = End;
 		  LEnd++;
-		  if (End->Type != pkgDEP_Conflicts)
+		  if (End->Type != pkgCache::Dep::Conflicts)
 		     break;
 	       }
 	    }
 
 	    // Hm, nothing can possibly satisify this dep. Nuke it.
-	    if (VList[0] == 0 && End->Type != pkgDEP_Conflicts)
+	    if (VList[0] == 0 && End->Type != pkgCache::Dep::Conflicts)
 	    {
 	       Cache.MarkKeep(I);
 	       if (Cache[I].InstBroken() == false)
@@ -698,7 +697,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    Change = true;
 	    if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
 	    {
-	       if (J->Dep->Type == pkgDEP_Conflicts)
+	       if (J->Dep->Type == pkgCache::Dep::Conflicts)
 	       {
 		  if (Debug == true)
 		     cout << "  Fixing " << I.Name() << " via remove of " << J->Pkg.Name() << endl;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.2 1998/07/09 05:41:12 jgg Exp $
+// $Id: packagemanager.cc,v 1.3 1998/07/12 01:26:02 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -64,7 +64,7 @@ bool pkgPackageManager::FixMissing()
    }
    
    // Now downgrade everything that is broken
-   Cache.ResolveConflicts(Touch);
+//   Cache.ResolveConflicts(Touch);
    delete [] Touch;
 
    return Cache.BrokenCount() == 0;
