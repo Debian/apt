@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: http.h,v 1.10 2001/03/06 07:15:29 jgg Exp $
-// $Id: http.h,v 1.10 2001/03/06 07:15:29 jgg Exp $
+// Description								/*{{{*/// $Id: http.h,v 1.11 2001/05/27 23:53:56 jgg Exp $
+// $Id: http.h,v 1.11 2001/05/27 23:53:56 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -12,6 +12,11 @@
 #define APT_HTTP_H
 
 #define MAXLEN 360
+
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 class HttpMethod;
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.51 2001/03/13 06:51:46 jgg Exp $
+// $Id: http.cc,v 1.52 2001/05/27 23:53:55 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -37,6 +37,8 @@
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
+#include <iostream>
 
 // Internet stuff
 #include <netdb.h>
@@ -46,6 +48,7 @@
 #include "http.h"
 
 									/*}}}*/
+using namespace std;
 
 string HttpMethod::FailFile;
 int HttpMethod::FailFd = -1;
@@ -138,7 +141,7 @@ void CircleBuf::FillOut()
       unsigned long Sz = LeftRead();
       if (OutQueue.length() - StrPos < Sz)
 	 Sz = OutQueue.length() - StrPos;
-      memcpy(Buf + (InP%Size),OutQueue.begin() + StrPos,Sz);
+      memcpy(Buf + (InP%Size),OutQueue.c_str() + StrPos,Sz);
       
       // Advance
       StrPos += Sz;
@@ -357,7 +360,7 @@ int ServerState::RunHeaders()
       {
 	 string::const_iterator J = I;
 	 for (; J != Data.end() && *J != '\n' && *J != '\r';J++);
-	 if (HeaderLine(string(I,J-I)) == false)
+	 if (HeaderLine(string(I,J)) == false)
 	    return 2;
 	 I = J;
       }
@@ -499,7 +502,7 @@ bool ServerState::HeaderLine(string Line)
    string Tag = string(Line,0,Pos);
    string Val = string(Line,Pos2);
    
-   if (stringcasecmp(Tag.begin(),Tag.begin()+4,"HTTP") == 0)
+   if (stringcasecmp(Tag.c_str(),Tag.c_str()+4,"HTTP") == 0)
    {
       // Evil servers return no version
       if (Line[4] == '/')
