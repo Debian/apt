@@ -31,7 +31,7 @@ if [ -f /etc/apt/sources.list ]; then
   yesno "May I include your sources.list (/etc/apt/sources.list)? [Y/n] " yep
 
   if [ "$REPLY" = "yep" ]; then
-    echo -e "\n-- /etc/apt/sources.list --\n"
+    echo -e "\n-- /etc/apt/sources.list --\n" >&3
     cat /etc/apt/sources.list >&3
   fi
 fi
