@@ -36,7 +36,7 @@ BUILD_POSSIBLE = $(BASE) $(BASE)/build
 endif
 
 BUILD:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak))
-BUILD:= $(firstword $(dir $(BUILD)))
+BUILD:= $(patsubst %/,%,$(firstword $(dir $(BUILD))))
 
 ifeq ($(words $(BUILD)),0)
 error-all:

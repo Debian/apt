@@ -10,8 +10,8 @@ export BUILD
 
 # Chain to the parent make to do the actual building
 .PHONY: headers library clean veryclean all binary program doc
-headers library clean veryclean all binary program doc:
-	$(MAKE) -C $(SRCDIR) $@
+all headers library clean veryclean binary program doc:
+	$(MAKE) -C $(SRCDIR) -f Makefile $@
 	
 # This makes any missing directories
 .PHONY: dirs
