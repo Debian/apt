@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.24 1999/07/30 05:36:52 jgg Exp $
+// $Id: acquire-worker.cc,v 1.25 1999/08/03 02:25:38 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -245,10 +245,10 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
+	    Pulse();	    
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
 	    OwnerQ->ItemDone(Itm);
-	    Pulse();
 	    if (TotalSize != 0 && 
 		atoi(LookupTag(Message,"Size","0").c_str()) != TotalSize)
 	       _error->Warning("Bizzar Error - File size is not what the server reported %s %u",
