@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkginit.cc,v 1.3 1999/07/26 17:46:08 jgg Exp $
+// $Id: dpkginit.cc,v 1.4 1999/07/30 05:36:52 jgg Exp $
 /* ######################################################################
 
    DPKG init - Initialize the dpkg stuff
@@ -62,7 +62,7 @@ bool pkgDpkgLock::GetLock(bool WithUpdates)
 			   "are you root?");
 
    // See if we need to abort with a dirty journal
-   if (WithUpdates == true && CheckUpdates() == false)
+   if (WithUpdates == true && CheckUpdates() == true)
    {
       Close();
       return _error->Error("dpkg was interrupted, you must manually "

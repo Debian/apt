@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.23 1999/07/26 17:46:07 jgg Exp $
+// $Id: acquire-worker.cc,v 1.24 1999/07/30 05:36:52 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -40,7 +40,9 @@ pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf,
    Config = Cnf;
    Access = Cnf->Access;
    CurrentItem = 0;
-
+   TotalSize = 0;
+   CurrentSize = 0;
+   
    Construct();   
 }
 									/*}}}*/
@@ -53,6 +55,8 @@ pkgAcquire::Worker::Worker(MethodConfig *Cnf)
    Config = Cnf;
    Access = Cnf->Access;
    CurrentItem = 0;
+   TotalSize = 0;
+   CurrentSize = 0;
    
    Construct();   
 }
@@ -244,8 +248,14 @@ bool pkgAcquire::Worker::RunMessages()
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
 	    OwnerQ->ItemDone(Itm);
-	    Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
-					  LookupTag(Message,"MD5-Hash"));
+	    Pulse();
+	    if (TotalSize != 0 && 
+		atoi(LookupTag(Message,"Size","0").c_str()) != TotalSize)
+	       _error->Warning("Bizzar Error - File size is not what the server reported %s %u",
+			       LookupTag(Message,"Size","0").c_str(),TotalSize);
+	    
+	    Owner->Done(Message,CurrentSize,
+			LookupTag(Message,"MD5-Hash"));
 	    ItemDone();
 	    
 	    // Log that we are done
@@ -261,7 +271,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       }	       
 	       else
 		  Log->Done(Desc);
-	    }	    
+	    }
 	    break;
 	 }	 
 	 
@@ -495,6 +505,10 @@ void pkgAcquire::Worker::Pulse()
    if (stat(CurrentItem->Owner->DestFile.c_str(),&Buf) != 0)
       return;
    CurrentSize = Buf.st_size;
+   
+   // Hmm? Should not happen...
+   if (CurrentSize > TotalSize && TotalSize != 0)
+      TotalSize = CurrentSize;
 }
 									/*}}}*/
 // Worker::ItemDone - Called when the current item is finished		/*{{{*/

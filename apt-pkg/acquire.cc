@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.37 1999/07/03 03:10:35 jgg Exp $
+// $Id: acquire.cc,v 1.38 1999/07/30 05:36:52 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -740,6 +740,10 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       TotalBytes = 1;
    if (Unknown == Count)
       TotalBytes = Unknown;
+
+   // Wha?! Is not supposed to happen.
+   if (CurrentBytes > TotalBytes)
+      CurrentBytes = TotalBytes;
    
    // Compute the CPS
    struct timeval NewTime;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.7 1999/01/27 02:48:53 jgg Exp $
+// $Id: gzip.cc,v 1.8 1999/07/30 05:37:00 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -99,8 +99,12 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
       return _error->Errno("utime","Failed to set modification time");
 
+   if (stat(Itm->DestFile.c_str(),&Buf) != 0)
+      return _error->Errno("stat","Failed to stat");
+   
    // Return a Done response
    Res.LastModified = Buf.st_mtime;
+   Res.Size = Buf.st_size;
    URIDone(Res);
    
    return true;
