@@ -1,12 +1,12 @@
-# Debian-BR translation of apt.
+# Debian-BR translation for apt.
 # Copyright (C) 2002 Free Software Foundation, Inc.
 # Gustavo Noronha Silva <kov@debian.org>, 2002.
-# André Luís Lopes <andrelop@ig.com.br>, 2002.
+# André Luís Lopes <andrelop@ig.com.br>, 2002-2003.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "POT-Creation-Date: 2003-02-09 21:51-0600\n"
-"PO-Revision-Date: 2002-11-13 21:424+0300\n"
+"PO-Revision-Date: 2003-02-15 21:11+0300\n"
 "Last-Translator: André Luís Lopes <andrelop@ig.com.br>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -148,7 +148,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s para %s %s compilado em %s %s\n"
 
 #: cmdline/apt-cache.cc:1262
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file1 ...]\n"
@@ -195,27 +194,27 @@ msgstr ""
 "\n"
 "Comandos:\n"
 "   add - Adiciona um arquivo de pacote ao cache de fontes\n"
-"   gencaches - Constrói ambos os caches de pacote e fontes\n"
+"   gencaches - Constrói ambos os caches de pacotes e fontes\n"
 "   showpkg - Mostra informações gerais sobre um pacote\n"
 "   showsrc - Mostra registros fontes\n"
-"   stats - Mostra informações estatísticas básicas\n"
+"   stats - Mostra estatísticas básicas\n"
 "   dump - Mostra o arquivo inteiro em uma forma concisa\n"
 "   dumpavail - Imprime um arquivo de disponíveis para stdout\n"
-"   unmet - Mostra dependências quebradas\n"
+"   unmet - Mostra dependências não satisfeitas (quebradas)\n"
 "   search - Procura a lista de pacotes por um padrão regex\n"
 "   show - Mostra um registro legível sobre o pacote\n"
-"   depends - Mostra informações cruas de dependência de um pacote\n"
+"   depends - Mostra informações cruas de dependências de um pacote\n"
 "   pkgnames - Lista o nome de todos os pacotes\n"
 "   dotty - Gera gráficos de pacotes para o GraphVis\n"
 "   policy - Mostra as configurações de políticas\n"
 "\n"
 "Opções:\n"
-"  -h   Esse texto de ajuda\n"
-"  -p=? O cache de pacotes\n"
-"  -s=? O cache de fontes\n"
-"  -q   Desliga o indicador de progresso\n"
-"  -i   Mostra apenas dependências importantes no comando unmet.\n"
-"  -c=? ler esse arquivo de configuração\n"
+"  -h   Esse texto de ajuda.\n"
+"  -p=? O cache de pacotes.\n"
+"  -s=? O cache de fontes.\n"
+"  -q   Desabilita o indicador de progresso.\n"
+"  -i   Mostra apenas dependências importantes para o comando unmet.\n"
+"  -c=? Ler arquivo de configuração especificado.\n"
 "  -o=? Define uma opção arbitrária de configuração, ex: -o dir::cache=/tmp\n"
 "Veja as páginas de manual apt-cache(8) e apt.conf(5) para maiores "
 "informações.\n"
@@ -292,30 +291,28 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Não foi possível conseguir a versão do debconf. Ele está instalado?"
 
 #: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:336
-#, fuzzy
 msgid "Package extension list is too long"
-msgstr "Opção '%s' é muito longa"
+msgstr "Lista de extensão de pacotes é muito extensa"
 
 #: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
 #: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:251
 #: ftparchive/apt-ftparchive.cc:265 ftparchive/apt-ftparchive.cc:287
 #, c-format
 msgid "Error Processing directory %s"
-msgstr ""
+msgstr "Erro processando o diretório %s"
 
 #: ftparchive/apt-ftparchive.cc:249
-#, fuzzy
 msgid "Source extension list is too long"
-msgstr "Opção '%s' é muito longa"
+msgstr "Lista de extensão de fontes é muito extensa"
 
 #: ftparchive/apt-ftparchive.cc:366
 msgid "Error writing header to contents file"
-msgstr ""
+msgstr "Erro ao gravar cabeçalho no arquivo de conteúdo"
 
 #: ftparchive/apt-ftparchive.cc:396
 #, c-format
 msgid "Error Processing Contents %s"
-msgstr ""
+msgstr "Erro processando Conteúdo %s"
 
 #: ftparchive/apt-ftparchive.cc:550
 msgid ""
@@ -357,218 +354,248 @@ msgid ""
 "  -c=?  Read this configuration file\n"
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
+"Uso: apt-ftparchive [opções] comando\n"
+"Comandos: packages caminho_binário [arquivo_override [prefixo_caminho]]\n"
+"          sources caminho_fonte [arquivo_override [prefixo_caminho]]\n"
+"          contents caminho\n"
+"          generate config [grupos]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive gera arquivos de índice para repositórios Debian. Ele \n"
+"suporta muitos estilos de geração, desde totalmente automatizadas até \n"
+"substitutos funcionais para o dokg-scanpackages e dpkg-scansources\n"
+"\n"
+"apt-ftparchive gera arquivos Packages a partir de uma árvore de .debs.\n"
+" O arquivo Package contém o conteúdo de todos os campos control de \n"
+"cada pacote bem como o hash MD5 e tamanho de arquivo. Um arquivo \n"
+"override é suportado ára forçar o valor de Priority e Section.\n"
+"\n"
+"Similarmente, o apt-ftparchive gera arquivos Sources a partir de uma \n"
+"árvore de .dscs. A opção --source-override pode ser usada para \n"
+"especificar um arquivo override src\n"
+"\n"
+"Os comandos 'packages' e 'sources' devem ser executados na raíz da \n"
+"árvore. CaminhoBinário deve apontar para a base de procura recursiva \n"
+"e o arquivo override deve conter as flags override. CaminhoPrefixo é \n"
+"incluído aos campos filenmae caso esteja presente. Exemplo de uso do \n"
+"repositório debian :\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Opções:\n"
+"   -h    Este texto de ajuda\n"
+"   --md5 Controla a geração de MD5\n"
+"   -s=?  Arquivo fonte (source) override\n"
+"   -q    Quieto\n"
+"   -d=?  Seleciona a base de dados de caching opcional\n"
+"   --no-delink Habilita o modo de depuração delinking\n"
+"   --contents  Controla a geração do arquivo de conteúdo\n"
+"   -c=?  Lê este arquivo de configuração\n"
+"   -o=?  Define uma opção de configuração arbitrária"
 
 #: ftparchive/apt-ftparchive.cc:731
 msgid "No selections matched"
-msgstr ""
+msgstr "Nenhuma seleção correspondente"
 
 #: ftparchive/apt-ftparchive.cc:804
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
 msgstr ""
+"Alguns arquivos estão faltando no arquivo de grupo de pacotes `%s'"
 
 #: ftparchive/cachedb.cc:43
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
-msgstr ""
+msgstr "A base de dados estava corrompida, arquivo renomeado para %s.old"
 
 #: ftparchive/cachedb.cc:59
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open DB2 file %s"
-msgstr "Impossível analizar arquivo de pacote %s (2)"
+msgstr "Impossível abrir arquivo DB2 %s"
 
 #: ftparchive/cachedb.cc:99
-#, fuzzy, c-format
+#, c-format
 msgid "File date has changed %s"
-msgstr "Impossível mudar para %s"
+msgstr "Data do arquivo mudou %s"
 
 #: ftparchive/cachedb.cc:140
 msgid "Archive has no control record"
-msgstr ""
+msgstr "Repositório não possui registro de controle"
 
 #: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
-#, fuzzy
 msgid "Unable to get a cursor"
-msgstr "Impossível ler %s"
+msgstr "Impossível obter um cursor"
 
 #: ftparchive/writer.cc:78
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to read directory %s\n"
-msgstr "Impossível criar lock no diretório de download"
+msgstr "W: Impossível ler o diretório %s\n"
 
 #: ftparchive/writer.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to stat %s\n"
-msgstr "Impossível checar %s."
+msgstr "W: Impossível checar %s\n"
 
 #: ftparchive/writer.cc:122
 msgid "E: "
-msgstr ""
+msgstr "E: "
 
 #: ftparchive/writer.cc:124
 msgid "W: "
-msgstr ""
+msgstr "W: "
 
 #: ftparchive/writer.cc:131
 msgid "E: Errors apply to file "
-msgstr ""
+msgstr "E: Erros aplicam ao arquivo "
 
 #: ftparchive/writer.cc:148 ftparchive/writer.cc:178
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to resolve %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao resolver %s"
 
 #: ftparchive/writer.cc:160
 msgid "Tree walking failed"
-msgstr ""
+msgstr "Falha ao percorrer a árvore"
 
 #: ftparchive/writer.cc:185
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao abrir %s"
 
 #: ftparchive/writer.cc:242
 #, c-format
 msgid " DeLink %s [%s]\n"
-msgstr ""
+msgstr " DeLink %s [%s]\n"
 
 #: ftparchive/writer.cc:250
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to readlink %s"
-msgstr "Impossível ler %s"
+msgstr "Falha ao executar readlink %s"
 
 #: ftparchive/writer.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to unlink %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao executar unlink %s"
 
 #: ftparchive/writer.cc:261
-#, fuzzy, c-format
+#, c-format
 msgid "*** Failed to link %s to %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "*** Falha ao ligar %s a %s"
 
 #: ftparchive/writer.cc:271
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr ""
+msgstr " Limite DeLink de %sB atingido.\n"
 
 #: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
 #: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to stat %s"
-msgstr "Impossível checar %s."
+msgstr "Falha ao checar %s"
 
 #: ftparchive/writer.cc:358
 msgid "Archive had no package field"
-msgstr ""
+msgstr "Repositório não possuía campo pacote"
 
 #: ftparchive/writer.cc:366 ftparchive/writer.cc:576
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no override entry\n"
-msgstr "%s não tem dependências de construção.\n"
+msgstr "  %s não possui entrada override\n"
 
 #: ftparchive/writer.cc:409 ftparchive/writer.cc:658
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
-msgstr ""
+msgstr "  mantenedor de %s é %s, não %s\n"
 
 #: ftparchive/contents.cc:346 ftparchive/contents.cc:377
 msgid "realloc - Failed to allocate memory"
-msgstr ""
+msgstr "realloc - Falha ao alocar memória"
 
 #: ftparchive/override.cc:38 ftparchive/override.cc:146
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open %s"
-msgstr "Impossível ler %s"
+msgstr "Impossível abrir %s"
 
 #: ftparchive/override.cc:64 ftparchive/override.cc:170
 #, c-format
 msgid "Malformed override %s line %lu #1"
-msgstr ""
+msgstr "Override malformado %s linha %lu #1"
 
 #: ftparchive/override.cc:78 ftparchive/override.cc:182
 #, c-format
 msgid "Malformed override %s line %lu #2"
-msgstr ""
+msgstr "Override malformado %s linha %lu #2"
 
 #: ftparchive/override.cc:92 ftparchive/override.cc:195
 #, c-format
 msgid "Malformed override %s line %lu #3"
-msgstr ""
+msgstr "Override malformado %s linha %lu #3"
 
 #: ftparchive/override.cc:131 ftparchive/override.cc:205
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to read the override file %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao ler o arquivo override %s"
 
 #: ftparchive/multicompress.cc:75
 #, c-format
 msgid "Unknown Compresison Algorithm '%s'"
-msgstr ""
+msgstr "Algoritmo de Compactação Desconhecido '%s'"
 
 #: ftparchive/multicompress.cc:105
 #, c-format
 msgid "Compressed output %s needs a compression set"
-msgstr ""
+msgstr "Saída compactada %s precisa de um conjunto de compressão"
 
 #: ftparchive/multicompress.cc:172 methods/rsh.cc:91
-#, fuzzy
 msgid "Failed to create IPC pipe to subprocess"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao criar pipe IPC para subprocesso"
 
 #: ftparchive/multicompress.cc:198
-#, fuzzy
 msgid "Failed to create FILE*"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao criar FILE*"
 
 #: ftparchive/multicompress.cc:201
-#, fuzzy
 msgid "Failed to fork"
-msgstr "Falhou"
+msgstr "Falha oa executar fork"
 
 #: ftparchive/multicompress.cc:215
 msgid "Compress Child"
-msgstr ""
+msgstr "Compactar Filho"
 
 #: ftparchive/multicompress.cc:238
-#, fuzzy, c-format
+#, c-format
 msgid "Internal Error, Failed to create %s"
-msgstr "Erro Interno, AllUpgrade quebrou as coisas"
+msgstr "Erro Interno, Falha ao criar %s"
 
 #: ftparchive/multicompress.cc:289
-#, fuzzy
 msgid "Failed to create subprocess IPC"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao criar subprocesso IPC"
 
 #: ftparchive/multicompress.cc:324
-#, fuzzy
 msgid "Failed to exec compressor "
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao executar compressor "
 
 #: ftparchive/multicompress.cc:363
-#, fuzzy
 msgid "decompressor"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "descompactador"
 
 #: ftparchive/multicompress.cc:406
-#, fuzzy
 msgid "IO to subprocess/file failed"
-msgstr "Processo filho falhou"
+msgstr "IO para subprocesso/arquivo falhou"
 
 #: ftparchive/multicompress.cc:458
-#, fuzzy
 msgid "Failed to read while computing MD5"
-msgstr "Impossível ler %s"
+msgstr "Falha ao ler durante o cálculo MD5"
 
 #: ftparchive/multicompress.cc:475
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking %s"
-msgstr "Problema removendo o link do arquivo"
+msgstr "Problema executando unlinking %s"
 
 #: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to rename %s to %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao renomear %s para %s"
 
 #. This needs to be a capital
 #: cmdline/apt-get.cc:116
@@ -994,16 +1021,16 @@ msgstr "Preciso pegar %sB/%sB de arquivos fonte.\n"
 #: cmdline/apt-get.cc:1736
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Precisa pegar %sB de arquivos fonte.\n"
+msgstr "Precisa obter %sB de arquivos fonte.\n"
 
 #: cmdline/apt-get.cc:1742
 #, c-format
 msgid "Fetch Source %s\n"
-msgstr "Pegar Source %s\n"
+msgstr "Obter Fonte %s\n"
 
 #: cmdline/apt-get.cc:1773
 msgid "Failed to fetch some archives."
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao fazer o download de alguns arquivos."
 
 #: cmdline/apt-get.cc:1801
 #, c-format
@@ -1041,7 +1068,7 @@ msgid "%s has no build depends.\n"
 msgstr "%s não tem dependências de construção.\n"
 
 #: cmdline/apt-get.cc:1948
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
@@ -1050,13 +1077,14 @@ msgstr ""
 "pode ser encontrado"
 
 #: cmdline/apt-get.cc:1990
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
-"a dependência de %s por %s não pode ser satisfeita porque o pacote %s não "
-"pode ser encontrado"
+"a dependência de %s por %s não pode ser satisfeita porque nenhuma "
+"versão disponível do pacote %s pode satisfazer os requerimentos "
+"de versão"
 
 #: cmdline/apt-get.cc:2017
 msgid ""
@@ -1156,7 +1184,7 @@ msgstr ""
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
-msgstr "Alcançado "
+msgstr "Atingido "
 
 #: cmdline/acqprogress.cc:79
 msgid "Get:"
@@ -1217,143 +1245,133 @@ msgstr ""
 "  -o=? Define uma opção arbitrária de configuração, ex: -o dir::cache=/tmp\n"
 
 #: apt-inst/contrib/extracttar.cc:115
-#, fuzzy
 msgid "Failed to create pipes"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao criar pipes"
 
 #: apt-inst/contrib/extracttar.cc:140
-#, fuzzy
 msgid "Failed to exec gzip "
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao executar gzip "
 
 #: apt-inst/contrib/extracttar.cc:177 apt-inst/contrib/extracttar.cc:203
 msgid "Corrupted archive"
-msgstr ""
+msgstr "Arquivo corrompido"
 
 #: apt-inst/contrib/extracttar.cc:192
-#, fuzzy
 msgid "Tar Checksum failed, archive corrupted"
-msgstr "O arquivo de cache de pacotes está corrompido"
+msgstr "Checksum do arquivo tar falhou, arquivo corrompido"
 
 #: apt-inst/contrib/extracttar.cc:295
 #, c-format
 msgid "Unkown TAR header type %u, member %s"
-msgstr ""
+msgstr "Tipo de cabeçalho TAR desconhecido %u, mebro %s"
 
 #: apt-inst/contrib/arfile.cc:73
 msgid "Invalid archive signature"
-msgstr ""
+msgstr "Assinatura de arquivo inválida"
 
 #: apt-inst/contrib/arfile.cc:81
-#, fuzzy
 msgid "Error reading archive member header"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Erro na leitura de cabeçalho membro de arquivo"
 
 #: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
 msgid "Invalid archive member header"
-msgstr ""
+msgstr "Cabeçalho membro de arquivo inválido"
 
 #: apt-inst/contrib/arfile.cc:131
 msgid "Archive is too short"
-msgstr ""
+msgstr "Arquivo é muito pequeno"
 
 #: apt-inst/contrib/arfile.cc:135
-#, fuzzy
 msgid "Failed to read the archive headers"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao ler os cabeçahos do arquivo"
 
 #: apt-inst/filelist.cc:384
 msgid "DropNode called on still linked node"
-msgstr ""
+msgstr "DropNode chamado em nodo ainda linkado"
 
 #: apt-inst/filelist.cc:416
-#, fuzzy
 msgid "Failed to locate the hash element!"
-msgstr "Impossível checar o cdrom"
+msgstr "Falha ao localizar o elemento hash !"
 
 #: apt-inst/filelist.cc:463
-#, fuzzy
 msgid "Failed to allocate diversion"
-msgstr "Falha ao baixar alguns arquivos."
+msgstr "Falha ao alocar desvio (diversion)"
 
 #: apt-inst/filelist.cc:468
-#, fuzzy
 msgid "Internal Error in AddDiversion"
-msgstr "Erro Interno, AllUpgrade quebrou as coisas"
+msgstr "Erro Interno em AddDiversion"
 
 #: apt-inst/filelist.cc:481
 #, c-format
 msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
-msgstr ""
+msgstr "Tentando sobreescrever um desvio, %s -> %s e %s/%s"
 
 #: apt-inst/filelist.cc:510
 #, c-format
 msgid "Double add of diversion %s -> %s"
-msgstr ""
+msgstr "Adição dupla de desvio %s -> %s"
 
 #: apt-inst/filelist.cc:553
 #, c-format
 msgid "Duplicate conf file %s/%s"
-msgstr ""
+msgstr "Arquivo de confgiuração duplicado %s/%s"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Failed write file %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao gravar arquivo %s"
 
 #: apt-inst/dirstream.cc:80 apt-inst/dirstream.cc:88
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to close file %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao fechar arquivo %s"
 
 #: apt-inst/extract.cc:96 apt-inst/extract.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "The path %s is too long"
-msgstr "Opção '%s' é muito longa"
+msgstr "O caminho %s é muito longo"
 
 #: apt-inst/extract.cc:127
 #, c-format
 msgid "Unpacking %s more than once"
-msgstr ""
+msgstr "Desempacotando %s mais de uma vez"
 
 #: apt-inst/extract.cc:137
 #, c-format
 msgid "The directory %s is diverted"
-msgstr ""
+msgstr "O diretório %s é desviado (diverted)"
 
 #: apt-inst/extract.cc:147
 #, c-format
 msgid "The package is trying to write to the diversion target %s/%s"
-msgstr ""
+msgstr "Opacote está tentando gravar no alvo de desvio %s/%s"
 
 #: apt-inst/extract.cc:157 apt-inst/extract.cc:300
-#, fuzzy
 msgid "The diversion path is too long"
-msgstr "O arquivo de cache de pacotes está corrompido"
+msgstr "O caminho de desvio é muito longo"
 
 #: apt-inst/extract.cc:243
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
-msgstr ""
+msgstr "O diretório %s está sendo substituído por um não-diretório"
 
 #: apt-inst/extract.cc:283
 msgid "Failed to locate node in its hash bucket"
-msgstr ""
+msgstr "Falha ao localizar nodo em seu hash bucket"
 
 #: apt-inst/extract.cc:287
-#, fuzzy
 msgid "The path is too long"
-msgstr "Opção '%s' é muito longa"
+msgstr "O caminho é muito longo"
 
 #: apt-inst/extract.cc:417
 #, c-format
 msgid "Overwrite package match with no version for %s"
-msgstr ""
+msgstr "Sobreescrita de pacote não casa com nenhuma versão para %s"
 
 #: apt-inst/extract.cc:434
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
-msgstr ""
+msgstr "Arquivo %s/%s sobreescreve arquivo no pacote %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:701
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
@@ -1362,28 +1380,29 @@ msgid "Unable to read %s"
 msgstr "Impossível ler %s"
 
 #: apt-inst/extract.cc:494
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to stat %s"
-msgstr "Impossível checar %s."
+msgstr "Impossível checar %s"
 
 #: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to remove %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao remover %s"
 
 #: apt-inst/deb/dpkgdb.cc:110 apt-inst/deb/dpkgdb.cc:112
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to create %s"
-msgstr "Impossível ler %s"
+msgstr "Impossível criar %s"
 
 #: apt-inst/deb/dpkgdb.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to stat %sinfo"
-msgstr "Impossível checar %s."
+msgstr "Impossível checar %sinfo."
 
 #: apt-inst/deb/dpkgdb.cc:123
 msgid "The info and temp directories need to be on the same filesystem"
 msgstr ""
+"Os diretórios info e temp precisam estar no mesmo sistema de arquivos"
 
 #. Build the status cache
 #: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
@@ -1393,20 +1412,18 @@ msgid "Reading Package Lists"
 msgstr "Lendo Lista de Pacotes"
 
 #: apt-inst/deb/dpkgdb.cc:180
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change to the admin dir %sinfo"
-msgstr "Impossível mudar para %s"
+msgstr "Falha ao mudar para o diretorio administrativo %sinfo"
 
 #: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:355
 #: apt-inst/deb/dpkgdb.cc:448
-#, fuzzy
 msgid "Internal Error getting a Package Name"
-msgstr "Impossível analizar arquivo de pacote %s (1)"
+msgstr "Erro Interno obtendo um Nome de Pacote"
 
 #: apt-inst/deb/dpkgdb.cc:205
-#, fuzzy
 msgid "Reading File Listing"
-msgstr "Lendo Lista de Pacotes"
+msgstr "Lendo Listagem de Pacotes"
 
 #: apt-inst/deb/dpkgdb.cc:216
 #, c-format
@@ -1415,91 +1432,87 @@ msgid ""
 "then make it empty and immediately re-install the same version of the "
 "package!"
 msgstr ""
+"Falha ao abrir o arquivo de lista '%sinfo/%s'. Caso você não consiga "
+"restaurar esse arquivo, crie um outro arquivo vazio e reinstale a mesma "
+"versão do pacote !"
 
 #: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
-#, fuzzy, c-format
-msgid "Failed reading the list file %sinfo/%s"
-msgstr "Falha ao baixar %s  %s\n"
+#, c-format
+msgid "Failed reading the list file %sinfo/%s\n"
+msgstr "Falha ao ler o arquivo de lista %sinfo/%s\n"
 
 #: apt-inst/deb/dpkgdb.cc:266
-#, fuzzy
 msgid "Internal Error getting a Node"
-msgstr "Erro Interno, AllUpgrade quebrou as coisas"
+msgstr "Erro Interno obtendo um Nodo"
 
 #: apt-inst/deb/dpkgdb.cc:309
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open the diversions file %sdiversions"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha ao abrir o arquivo de desvios %sdiversions"
 
 #: apt-inst/deb/dpkgdb.cc:324
-#, fuzzy
 msgid "The diversion file is corrupted"
-msgstr "O arquivo de cache de pacotes está corrompido"
+msgstr "O arquivo de desvios está corrompido"
 
 #: apt-inst/deb/dpkgdb.cc:331 apt-inst/deb/dpkgdb.cc:336
 #: apt-inst/deb/dpkgdb.cc:341
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid line in the diversion file: %s"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Linha inválida no arquivo de desvio: %s"
 
 #: apt-inst/deb/dpkgdb.cc:362
-#, fuzzy
 msgid "Internal Error adding a diversion"
-msgstr "Erro Interno, AllUpgrade quebrou as coisas"
+msgstr "Erro Interno ao adicionar um desvio"
 
 #: apt-inst/deb/dpkgdb.cc:383
 msgid "The pkg cache must be initialize first"
-msgstr ""
+msgstr "O cache de pacotes deve ser inicializado primeiro"
 
 #: apt-inst/deb/dpkgdb.cc:386
-#, fuzzy
 msgid "Reading File List"
-msgstr "Lendo Lista de Pacotes"
+msgstr "Lendo Listagem de Pacotes"
 
 #: apt-inst/deb/dpkgdb.cc:443
 #, c-format
 msgid "Failed to find a Package: Header, offset %lu"
-msgstr ""
+msgstr "Falha ao encontrar um Pacote: Cabeçalho, posição %lu"
 
 #: apt-inst/deb/dpkgdb.cc:465
 #, c-format
 msgid "Bad ConfFile section in the status file. Offset %lu"
-msgstr ""
+msgstr "Seção ConfFile ruim no arquivo de estado. Posição %lu"
 
 #: apt-inst/deb/dpkgdb.cc:470
 #, c-format
 msgid "Error parsing MD5. Offset %lu"
-msgstr ""
+msgstr "Erro interpretando MD5. Posição %lu"
 
 #: apt-inst/deb/debfile.cc:55
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr ""
+msgstr "Este não é um arquivo DEB válido, membro '%s' faltando"
 
 #: apt-inst/deb/debfile.cc:72
-#, fuzzy, c-format
+#, c-format
 msgid "Internal Error, could not locate member %s"
-msgstr "Erro Interno, AllUpgrade quebrou as coisas"
+msgstr "Erro Interno, não foi possível localizar membro %s"
 
 #: apt-inst/deb/debfile.cc:104
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't change to %s"
-msgstr "Não foi possível obter trava %s"
+msgstr "Não foi possível mudar para %s"
 
 #: apt-inst/deb/debfile.cc:125
-#, fuzzy
 msgid "Internal Error, could not locate member"
-msgstr "Erro Interno, AllUpgrade quebrou as coisas"
+msgstr "Erro Interno, não foi possível localizar membro"
 
 #: apt-inst/deb/debfile.cc:158
-#, fuzzy
 msgid "Failed to locate a valid control file"
-msgstr "Falha ao baixar %s  %s\n"
+msgstr "Falha em localizar um arquivo de controle válido"
 
 #: apt-inst/deb/debfile.cc:243
-#, fuzzy
 msgid "Unparsible control file"
-msgstr "Impossível ler %s"
+msgstr "Arquivo de controle não interpretável"
 
 #: dselect/install:32
 msgid "Bad default setting!"
@@ -1537,97 +1550,97 @@ msgid "Merging Available information"
 msgstr "Mesclando informação Disponível"
 
 #: methods/cdrom.cc:113
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read the cdrom database %s"
-msgstr "Impossível ler %s"
+msgstr "Impossível ler a base de dados de cdrom %s"
 
 #: methods/cdrom.cc:122
 msgid ""
 "Please use apt-cdrom to make this CD recognized by APT. apt-get update "
 "cannot be used to add new CDs"
 msgstr ""
+"Por favor use o apt-cdrom para fazer com que este CD seja reconhecido "
+"pelo APT. apt-get update não pode ser usado para adicionar novos CDs"
 
 #: methods/cdrom.cc:130 methods/cdrom.cc:168
 msgid "Wrong CD"
-msgstr ""
+msgstr "CD errado"
 
 #: methods/cdrom.cc:163
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr ""
+"Impossível desmontar o CD-ROM em %s, o mesmo ainda pode estar em uso."
 
 #: methods/cdrom.cc:177 methods/file.cc:77
-#, fuzzy
 msgid "File not found"
-msgstr "(não encontrado)"
+msgstr "Arquivo não encontrado"
 
 #: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
-#, fuzzy
 msgid "Failed to stat"
-msgstr "Impossível checar %s."
+msgstr "Falha ao checar"
 
 #: methods/copy.cc:79 methods/gzip.cc:139
-#, fuzzy
 msgid "Failed to set modification time"
-msgstr "Impossível checar %s."
+msgstr "Falha ao definir hora de modificação"
 
 #: methods/file.cc:42
 msgid "Invalid URI, local URIS must not start with //"
-msgstr ""
+msgstr "URI inválida, URIs locais não devem iniciar com //"
 
 #. Login must be before getpeername otherwise dante won't work.
 #: methods/ftp.cc:162
 msgid "Logging in"
-msgstr ""
+msgstr "Logando"
 
 #: methods/ftp.cc:168
-#, fuzzy
 msgid "Unable to determine the peer name"
-msgstr "Impossível determinar um tipo de sistema aplicável"
+msgstr "Impossível determinar o nome do ponto"
 
 #: methods/ftp.cc:173
-#, fuzzy
 msgid "Unable to determine the local name"
-msgstr "Impossível determinar um tipo de sistema aplicável"
+msgstr "Impossível determinar o nome local"
 
 #: methods/ftp.cc:204 methods/ftp.cc:230
 #, c-format
 msgid "Server refused our connection and said: %s"
-msgstr ""
+msgstr "Servidor recusou nossa conexão e respondeu: %s"
 
 #: methods/ftp.cc:210
-#, fuzzy, c-format
+#, c-format
 msgid "USER failed, server said: %s"
-msgstr "Impossível ler %s"
+msgstr "USER falhou, servidor respondeu: %s"
 
 #: methods/ftp.cc:216
-#, fuzzy, c-format
+#, c-format
 msgid "PASS failed, server said: %s"
-msgstr "Impossível ler %s"
+msgstr "PASS falhou, servidor respondeu: %s"
 
 #: methods/ftp.cc:235
 msgid ""
 "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
 "is empty."
 msgstr ""
+"Um servidor proxy foi especificado mas não um script de login, "
+"Acquire::ftp::ProxyLogin está vazio."
 
 #: methods/ftp.cc:263
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
+msgstr "Comando de script de login '%s'falhou, servidor respondeu: %s"
 
 #: methods/ftp.cc:289
-#, fuzzy, c-format
+#, c-format
 msgid "TYPE failed, server said: %s"
-msgstr "Impossível ler %s"
+msgstr "TYPE falhou, servidor respondeu: %s"
 
 #: methods/ftp.cc:327 methods/ftp.cc:438 methods/rsh.cc:183 methods/rsh.cc:226
 msgid "Connection timeout"
-msgstr ""
+msgstr "Tempo limite de conexão atingido"
 
 #: methods/ftp.cc:333
 msgid "Server closed the connection"
-msgstr ""
+msgstr "Servidor fechou a conexão"
 
 #: methods/ftp.cc:336 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
 msgid "Read error"
@@ -1635,247 +1648,232 @@ msgstr "Erro de leitura"
 
 #: methods/ftp.cc:343 methods/rsh.cc:197
 msgid "A response overflowed the buffer."
-msgstr ""
+msgstr "Uma resposta sobrecarregou o buffer"
 
 #: methods/ftp.cc:360 methods/ftp.cc:372
 msgid "Protocol corruption"
-msgstr ""
+msgstr "Corrupção de protocolo"
 
 #: methods/ftp.cc:444 methods/rsh.cc:232
-#, fuzzy
 msgid "Write Error"
-msgstr "Erro de leitura"
+msgstr "Erro de Gravação"
 
 #: methods/ftp.cc:685 methods/ftp.cc:691 methods/ftp.cc:727
-#, fuzzy
 msgid "Could not create a socket"
-msgstr "Impossível achar pacote %s"
+msgstr "Não foi possível criar um socket"
 
 #: methods/ftp.cc:696
 msgid "Could not connect data socket, connection timed out"
-msgstr ""
+msgstr "Não foi possível conectar socket de dados, conexão expirou"
 
 #: methods/ftp.cc:702
-#, fuzzy
 msgid "Could not connect passive socket."
-msgstr "Impossível achar pacote %s"
+msgstr "Não foi possível conectar socket passivo."
 
 #: methods/ftp.cc:720
 msgid "getaddrinfo was unable to get a listening socket"
-msgstr ""
+msgstr "getaddrinfo não foi capaz de obter um socket de escuta"
 
 #: methods/ftp.cc:734
-#, fuzzy
 msgid "Could not bind a socket"
-msgstr "Impossível achar pacote %s"
+msgstr "Não foi possível fazer o bind de um socket"
 
 #: methods/ftp.cc:738
-#, fuzzy
 msgid "Could not listen on the socket"
-msgstr "Impossível achar pacote %s"
+msgstr "Não foi possível ouvir no socket"
 
 #: methods/ftp.cc:745
-#, fuzzy
 msgid "Could not determine the socket's name"
-msgstr "Impossível determinar um tipo de sistema aplicável"
+msgstr "Não foi possível determinar o nome do scoket"
 
 #: methods/ftp.cc:777
-#, fuzzy
 msgid "Unable to send PORT command"
-msgstr "Impossível ler %s"
+msgstr "Impossível enviar o comando PORT"
 
 #: methods/ftp.cc:787
 #, c-format
 msgid "Unknown address family %u (AF_*)"
-msgstr ""
+msgstr "Família de endereços %u desconhecida (AF_*)"
 
 #: methods/ftp.cc:796
-#, fuzzy, c-format
+#, c-format
 msgid "EPRT failed, server said: %s"
-msgstr "Impossível ler %s"
+msgstr "EPRT falhou, servidor respondeu: %s"
 
 #: methods/ftp.cc:816
 msgid "Data socket connect timed out"
-msgstr ""
+msgstr "Conexão do socket de dados expirou"
 
 #: methods/ftp.cc:823
-#, fuzzy
 msgid "Unable to accept connection"
-msgstr "Impossível corrigir dependências"
+msgstr "Impossível aceitar conexão"
 
 #: methods/ftp.cc:862 methods/http.cc:912 methods/rsh.cc:303
-#, fuzzy
 msgid "Problem hashing file"
-msgstr "Problema sincronizando o arquivo"
+msgstr "Problema fazendo o hash do arquivo"
 
 #: methods/ftp.cc:875
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to fetch file, server said '%s'"
-msgstr "Impossível ler %s"
+msgstr "Impossível obter arquivo, servidor respondeu '%s'"
 
 #: methods/ftp.cc:890 methods/rsh.cc:322
 msgid "Data socket timed out"
-msgstr ""
+msgstr "Socket de dados expirou"
 
 #: methods/ftp.cc:920
-#, fuzzy, c-format
+#, c-format
 msgid "Data transfer failed, server said '%s'"
-msgstr "Impossível ler %s"
+msgstr "Transferência de dados falhou, servidor respondeu '%s'"
 
 #. Get the files information
 #: methods/ftp.cc:995
 msgid "Query"
-msgstr ""
+msgstr "Pesquisa"
 
 #: methods/ftp.cc:1102
-#, fuzzy
 msgid "Unable to invoke "
-msgstr "Impossível ler %s"
+msgstr "Impossível invocar "
 
 #: methods/connect.cc:64
-#, fuzzy, c-format
+#, c-format
 msgid "Connecting to %s (%s)"
-msgstr "Impossível mudar para %s"
+msgstr "Conectando em %s (%s)"
 
 #: methods/connect.cc:71
 #, c-format
 msgid "[IP: %s %s]"
-msgstr ""
+msgstr "[IP: %s %s]"
 
 #: methods/connect.cc:80
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr ""
+msgstr "Não foi possível criar um socket para %s (f=%u t=%u p=%u)"
 
 #: methods/connect.cc:86
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Impossível mudar para %s"
+msgstr "Não posso iniciar a conexão para %s:%s (%s)."
 
 #: methods/connect.cc:92
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr ""
+msgstr "Não foi possível conectar em %s:%s (%s), conexão expirou"
 
 #: methods/connect.cc:104
-#, fuzzy, c-format
+#, c-format
 msgid "Could not connect to %s:%s (%s)."
-msgstr "Impossível mudar para %s"
+msgstr "Não foi possível conectar em %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
 #: methods/connect.cc:132 methods/rsh.cc:425
 #, c-format
 msgid "Connecting to %s"
-msgstr ""
+msgstr "Conectando a %s"
 
 #: methods/connect.cc:163
-#, fuzzy, c-format
+#, c-format
 msgid "Could not resolve '%s'"
-msgstr "Não foi possível abrir arquivo %s"
+msgstr "Não foi possível resolver '%s'"
 
 #: methods/connect.cc:167
 #, c-format
 msgid "Temporary failure resolving '%s'"
-msgstr ""
+msgstr "Falaha temporária resolvendo '%s'"
 
 #: methods/connect.cc:169
 #, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i)"
-msgstr ""
+msgstr "Algo estranho aconteceu resolvendo '%s:%s' (%i)"
 
 #: methods/connect.cc:216
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to %s %s:"
-msgstr "Impossível mudar para %s"
+msgstr "Impossível conectar em %s %s:"
 
 #: methods/gzip.cc:57
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open pipe for %s"
-msgstr "Não foi possível abrir arquivo %s"
+msgstr "Não foi possível abrir pipe para %s"
 
 #: methods/gzip.cc:102
 #, c-format
 msgid "Read error from %s process"
-msgstr ""
+msgstr "Erro de leitura do processo %s"
 
 #: methods/http.cc:340
 msgid "Waiting for file"
-msgstr ""
+msgstr "Aguardando por arquivo"
 
 #: methods/http.cc:486
 #, c-format
 msgid "Got a single header line over %u chars"
-msgstr ""
+msgstr "Recebi uma única linha de cabeçalho acima de %u caracteres"
 
 #: methods/http.cc:494
 msgid "Bad header line"
-msgstr ""
+msgstr "Linha de cabeçalho ruim"
 
 #: methods/http.cc:513 methods/http.cc:520
 msgid "The http server sent an invalid reply header"
-msgstr ""
+msgstr "O servidor http enviou um cabeçalho de resposta inválido"
 
 #: methods/http.cc:549
 msgid "The http server sent an invalid Content-Length header"
-msgstr ""
+msgstr "O servidor http enviou um cabeçalho Conten-Length inválido"
 
 #: methods/http.cc:564
 msgid "The http server sent an invalid Content-Range header"
-msgstr ""
+msgstr "O servidor http enviou um cabeçalho Conten-Range inválido"
 
 #: methods/http.cc:566
 msgid "This http server has broken range support"
-msgstr ""
+msgstr "Este servidor http possui suporte a range quebrado"
 
 #: methods/http.cc:590
-#, fuzzy
 msgid "Unknown date format"
-msgstr "Registro de pacote desconhecido!"
+msgstr "Formato de data desconhecido"
 
 #: methods/http.cc:733
-#, fuzzy
 msgid "Select failed"
-msgstr " falhou."
+msgstr "Seleção falhou."
 
 #: methods/http.cc:738
 msgid "Connection timed out"
-msgstr ""
+msgstr "Conexão expirou"
 
 #: methods/http.cc:761
 msgid "Error writing to output file"
-msgstr ""
+msgstr "Erro gravando para arquivo de saída"
 
 #: methods/http.cc:789
 msgid "Error writing to file"
-msgstr ""
+msgstr "Erro gravando para arquivo"
 
 #: methods/http.cc:814
-#, fuzzy
 msgid "Error writing to the file"
-msgstr "Problema removendo o link do arquivo"
+msgstr "Erro gravando para o arquivo"
 
 #: methods/http.cc:828
 msgid "Error reading from server Remote end closed connection"
-msgstr ""
+msgstr "Erro lendo do servidor Ponto remoto fechou a conexão"
 
 #: methods/http.cc:830
 msgid "Error reading from server"
-msgstr ""
+msgstr "Erro lendo do servidor"
 
 #: methods/http.cc:1061
 msgid "Bad header Data"
-msgstr ""
+msgstr "Dados de cabeçalho ruins"
 
 #: methods/http.cc:1078
-#, fuzzy
 msgid "Connection failed"
-msgstr " falhou."
+msgstr "Conexão falhou."
 
 #: methods/http.cc:1169
-#, fuzzy
 msgid "Internal error"
-msgstr "Erro de leitura"
+msgstr "Erro interno"
 
 #: apt-pkg/contrib/mmap.cc:82
 msgid "Can't mmap an empty file"
@@ -1889,7 +1887,7 @@ msgstr "Impossível fazer mmap de %lu bytes"
 #: apt-pkg/contrib/strutl.cc:941
 #, c-format
 msgid "Selection %s not found"
-msgstr "Selecção %s não encontrada"
+msgstr "Seleção %s não encontrada"
 
 #: apt-pkg/contrib/configuration.cc:449
 #, c-format
@@ -1938,14 +1936,14 @@ msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Erro de sintaxe %s:%u: Lixo extra no final do arquivo"
 
 #: apt-pkg/contrib/progress.cc:154
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Error!"
-msgstr "%s... Erro !"
+msgstr "%c%s... Erro !"
 
 #: apt-pkg/contrib/progress.cc:156
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Done"
-msgstr "%s... Pronto"
+msgstr "%c%s... Pronto"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -1969,7 +1967,7 @@ msgid "Option %s requires an argument."
 msgstr "Opção %s requer um argumento."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr ""
 "Opção %s: Especificação de item de configuração deve possuir um =<val>."
@@ -2060,7 +2058,7 @@ msgstr "leitura, ainda restam %lu para serem lidos mas nenhum deixado"
 
 #: apt-pkg/contrib/fileutl.cc:491
 msgid "Write error"
-msgstr "Erro de leitura"
+msgstr "Erro de gravação"
 
 #: apt-pkg/contrib/fileutl.cc:503
 #, c-format
@@ -2097,7 +2095,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Este APT não suporta o Sistema de Versões '%s'"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "O cache de pacotes foi gerado para uma arquitetura diferente"
 
@@ -2333,53 +2330,53 @@ msgstr "O Cache possui um sistema de versões incompatível"
 #: apt-pkg/pkgcachegen.cc:117
 #, c-format
 msgid "Error occured while processing %s (NewPackage)"
-msgstr "Um erro ocorreu processando %s (NewPackage)"
+msgstr "Um erro ocorreu processando %s (NovoPacote)"
 
 #: apt-pkg/pkgcachegen.cc:129
 #, c-format
 msgid "Error occured while processing %s (UsePackage1)"
-msgstr "Um erro ocorreu processando %s (UsePackage1)"
+msgstr "Um erro ocorreu processando %s (UsePacote1)"
 
 #: apt-pkg/pkgcachegen.cc:150
 #, c-format
 msgid "Error occured while processing %s (UsePackage2)"
-msgstr "Um erro ocorreu processando %s (UsePackage2)"
+msgstr "Um erro ocorreu processando %s (UsePacote2)"
 
 #: apt-pkg/pkgcachegen.cc:154
 #, c-format
 msgid "Error occured while processing %s (NewFileVer1)"
-msgstr "Um erro ocorreu processando %s (NewFileVer1)"
+msgstr "Um erro ocorreu processando %s (NovoArquivoVer1)"
 
 #: apt-pkg/pkgcachegen.cc:184
 #, c-format
 msgid "Error occured while processing %s (NewVersion1)"
-msgstr "Um erro ocorreu processando %s (NewVersion1)"
+msgstr "Um erro ocorreu processando %s (NovaVersão1)"
 
 #: apt-pkg/pkgcachegen.cc:188
 #, c-format
 msgid "Error occured while processing %s (UsePackage3)"
-msgstr "Um erro ocorreu processando %s (UsePackage3)"
+msgstr "Um erro ocorreu processando %s (UsePacote3)"
 
 #: apt-pkg/pkgcachegen.cc:192
 #, c-format
 msgid "Error occured while processing %s (NewVersion2)"
-msgstr "Um erro ocorreu processando %s (NewVersion2)"
+msgstr "Um erro ocorreu processando %s (NovaVersão2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
-"Opâ, você excedeu o número de nomes de pacotes que este APT é capaz de "
+"Ops, você excedeu o número de nomes de pacotes que este APT é capaz de "
 "suportar."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr ""
-"Opâ, você excedeu o número de versões que este APT é capaz de suportar."
+"Ops, você excedeu o número de versões que este APT é capaz de suportar."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr ""
-"Opâ, você excedeu o número de dependências que este APT é capaz de suportar."
+"Ops, você excedeu o número de dependências que este APT é capaz de suportar."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2451,11 +2448,11 @@ msgstr "MD5Sum incorreto"
 
 #: methods/rsh.cc:264
 msgid "File Not Found"
-msgstr ""
+msgstr "Arquivo não encontrado"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
-msgstr ""
+msgstr "Conexão encerrada prematuramente"
 
 #~ msgid "Sorry, you don't have enough free space in %s to hold all the .debs."
 #~ msgstr ""

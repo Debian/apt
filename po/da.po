@@ -1,23 +1,24 @@
+# translation of da.po to Danish
 # Advanced Package Transfer - APT message translation catalog
 # Danish messages
-# Claus Hindsgaul <claus_h@image.dk>, 2002.
+# Claus Hindsgaul <claus_h@image.dk>, 2002,2003.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.5\n"
+"Project-Id-Version: da\n"
 "POT-Creation-Date: 2003-02-09 21:51-0600\n"
-"PO-Revision-Date: 2002-11-13 17:37GMT\n"
+"PO-Revision-Date: 2003-02-16 16:19+0100\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.6\n"
+"X-Generator: KBabel 1.0\n"
 
 #: cmdline/apt-cache.cc:133
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Pakke %s version %s har en ikke-honoreret afhængighed:\n"
+msgstr "Pakken %s version %s har en uopfyldt afhængighed:\n"
 
 #: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:671
 #: cmdline/apt-cache.cc:1037 cmdline/apt-cache.cc:1183
@@ -150,7 +151,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s for %s %s oversat på %s %s\n"
 
 #: cmdline/apt-cache.cc:1262
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file1 ...]\n"
@@ -191,8 +191,8 @@ msgstr ""
 "      apt-cache [tilvalg] showpkg pakke1 [pakke2 ...]\n"
 "      apt-cache [tilvalg] showsrc pakke1 [pakke2 ...]\n"
 "\n"
-"apt-cache er et lavniveau-værktøj, der bruge til at håndtere\n"
-"APTs binære mellemlager-filer og hente oplysninger fra dem.\n"
+"apt-cache er et lavniveau-værktøj, der bruge håndtere APTs\n"
+"binære mellemlager-filer og hente oplysninger fra dem.\n"
 "\n"
 "Kommandoer:\n"
 "   add - Tilføj en pakkefil til kilde-mellemlageret\n"
@@ -202,9 +202,9 @@ msgstr ""
 "   stats - Vis nogle grundlæggende statistikker\n"
 "   dump - Vis en hel fil i kort form\n"
 "   dumpavail - Udlæs en 'available'-fil til standard-ud\n"
-"   unmet - Vis ikke-honorerede afhængigheder\n"
+"   unmet - Vis uopfyldte afhængigheder\n"
 "   search - Gennemsøg pakkelisten med et regulært udtryk\n"
-"   show - Vis en læsbar indgang for pakken\n"
+"   show - Vis en læsbar post for pakken\n"
 "   depends - Vis de rå afhængighedsoplysninger for en pakke\n"
 "   pkgnames - Vis navnene på alle pakker\n"
 "   dotty - Generér pakkegrafer til GraphVis\n"
@@ -315,7 +315,6 @@ msgid "Error Processing Contents %s"
 msgstr "Fejl under behandling af indhold %s"
 
 #: ftparchive/apt-ftparchive.cc:550
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packges binarypath [overridefile [pathprefix]]\n"
@@ -355,26 +354,42 @@ msgid ""
 "  -c=?  Read this configuration file\n"
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
+"Brug: apt-ftparchive [tilvalg] kommando\n"
+"Kommandoer: packges binærsti [tvangsfil [sti]]\n"
+"            sources kildesti [tvangsfil [sti]]\n"
+"            contents sti\n"
+"            generate config [grupper]\n"
+"            clean config\n"
 "apt-ftparchive laver indeksfiler til Debianarkiver. Det understøtter mange\n"
 "former for generering, lige fra fuldautomatiske til funktionelle\n"
 "erstatninger for dpkg-scanpackages og dpkg-scansources\n"
 "\n"
-"apt-ftparchive genererer Package-filer fra træer af .deb'er. Package-\n"
-"filen indeholder alle kontrolfelterne fra hver pakke såvel som MD5-hash\n"
-"og filstørrelse. En gennemtvangsfil understøttes til at gennemtvinge\n"
-"Prioritet og Afsnit.\n"
+"apt-ftparchive genererer Package-filer ud fra træer af .deb'er.\n"
+"Package-filen indeholder alle kontrolfelterne fra hver pakke såvel\n"
+"som MD5-hash og filstørrelse. En tvangsfil understøttes til at\n"
+"gennemtvinge Prioritet og Afsnit.\n"
 "\n"
-"På samme måde genererer apt-ftparchive Sources-filer fra træer af\n"
-".dsc'er. Gennemtvangstilvalget --source-override kan bruges til at\n"
-"angive en src-gennemtvangsfil.\n"
+"På samme måde genererer apt-ftparchive Sources-filer ud fra træer\n"
+"med .dsc'er. Tvangstilvalget --source-override kan bruges til at\n"
+"angive en src-tvangsfil.\n"
 "\n"
-"Kommandoerne 'packages' og 'sources' bar køres i roden af træet.\n"
-"BinaryPath bar pege på basen af rekursive søgninger og gennemtvangs-\n"
-"filen bør indeholder gennemtvangsflag. Pathprefix tilføjes til "
-"filnavnfelter,\n"
-"hvis disse eksisterer. Et eksempel på brug fra Debianarkivet:\n"
+"Kommandoerne 'packages' og 'sources' skal køres i roden af træet.\n"
+"binærsti skal pege på basen af rekursive søgninger og tvangsfilen\n"
+"skal indeholde tvangsflagene. Sti foranstilles eventuelle\n"
+"filnavnfelter. Et eksempel på brug fra Debianarkivet:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Tilvalg:\n"
+"  -h    Denne hjælpetekst\n"
+"  --md5 Styr generering af MD5\n"
+"  -s=?  Kilde-tvangsfil\n"
+"  -q    Stille (vis færre statusbeskeder)\n"
+"  -d=?  Vælg den valgfrie mellemlager-database\n"
+"  --no-delink Aktivér \"delinking\" fejlsporingstilstand\n"
+"  --contents  Bestem generering af inholdsfil\n"
+"  -c=?  Læs denne opsætningsfil\n"
+"  -o=?  Sæt en opsætnings-indstilling"
 
 #: ftparchive/apt-ftparchive.cc:731
 msgid "No selections matched"
@@ -409,14 +424,14 @@ msgid "Unable to get a cursor"
 msgstr "Kunne skaffe en markør"
 
 #: ftparchive/writer.cc:78
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to read directory %s\n"
-msgstr "A: Kunne ikke læse kataloget "
+msgstr "A: Kunne ikke læse kataloget %s\n"
 
 #: ftparchive/writer.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to stat %s\n"
-msgstr "W: Kunne ikke finde "
+msgstr "W: Kunne ikke finde finde %s\n"
 
 #: ftparchive/writer.cc:122
 msgid "E: "
@@ -427,9 +442,8 @@ msgid "W: "
 msgstr "A: "
 
 #: ftparchive/writer.cc:131
-#, fuzzy
 msgid "E: Errors apply to file "
-msgstr "F: Fejlen vedrører filen '"
+msgstr "F: Fejlene vedrører filen "
 
 #: ftparchive/writer.cc:148 ftparchive/writer.cc:178
 #, c-format
@@ -448,7 +462,7 @@ msgstr "Kunne ikke åbne %s"
 #: ftparchive/writer.cc:242
 #, c-format
 msgid " DeLink %s [%s]\n"
-msgstr ""
+msgstr " DeLink %s [%s]\n"
 
 #: ftparchive/writer.cc:250
 #, c-format
@@ -466,9 +480,9 @@ msgid "*** Failed to link %s to %s"
 msgstr "*** Kunne ikke lænke %s til %s"
 
 #: ftparchive/writer.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr " DeLink-begrænsning på "
+msgstr " Nåede DeLink-begrænsningen på %sB.\n"
 
 #: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
 #: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
@@ -481,14 +495,14 @@ msgid "Archive had no package field"
 msgstr "Arkivet havde intet package-felt"
 
 #: ftparchive/writer.cc:366 ftparchive/writer.cc:576
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no override entry\n"
-msgstr " har ingen gennemtvangs-indgang"
+msgstr "  %s har ingen tvangs-post\n"
 
 #: ftparchive/writer.cc:409 ftparchive/writer.cc:658
-#, fuzzy, c-format
+#, c-format
 msgid "  %s maintainer is %s not %s\n"
-msgstr " ansvarlig er "
+msgstr "  pakkeansvarlig for %s er %s, ikke %s\n"
 
 #: ftparchive/contents.cc:346 ftparchive/contents.cc:377
 msgid "realloc - Failed to allocate memory"
@@ -559,9 +573,8 @@ msgid "Failed to exec compressor "
 msgstr "Kunne ikke udføre komprimeringsprogram"
 
 #: ftparchive/multicompress.cc:363
-#, fuzzy
 msgid "decompressor"
-msgstr "Kunne ikke udføre komprimeringsprogram"
+msgstr "dekompressions-program"
 
 #: ftparchive/multicompress.cc:406
 msgid "IO to subprocess/file failed"
@@ -572,9 +585,9 @@ msgid "Failed to read while computing MD5"
 msgstr "Kunne ikke læse under beregning af MD5"
 
 #: ftparchive/multicompress.cc:475
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking %s"
-msgstr "Problem under åbning af %s"
+msgstr "Problem under aflænkning af %s"
 
 #: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
 #, c-format
@@ -588,7 +601,7 @@ msgstr "J"
 
 #: cmdline/apt-get.cc:193
 msgid "The following packages have unmet dependencies:"
-msgstr "Følgende pakker har ikke-honorerede afhængigheder:"
+msgstr "Følgende pakker har uopfyldte afhængigheder:"
 
 #: cmdline/apt-get.cc:283
 #, c-format
@@ -708,7 +721,7 @@ msgstr "Du kan muligvis rette dette ved at køre 'apt-get -f install'."
 
 #: cmdline/apt-get.cc:604
 msgid "Unmet dependencies. Try using -f."
-msgstr "Ikke-honorerede afhængigheder. Prøv med -f."
+msgstr "Uopfyldte afhængigheder. Prøv med -f."
 
 #: cmdline/apt-get.cc:657
 msgid "Packages need to be removed but Remove is disabled."
@@ -933,7 +946,7 @@ msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Ikke-honorerede afhængigheder. Prøv 'apt-get -f install' uden pakker (eller "
+"Uopfyldte afhængigheder. Prøv 'apt-get -f install' uden pakker (eller "
 "angiv en løsning)."
 
 #: cmdline/apt-get.cc:1415
@@ -1047,20 +1060,22 @@ msgid "%s has no build depends.\n"
 msgstr "%s har ingen opbygningsafhængigheder.\n"
 
 #: cmdline/apt-get.cc:1948
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
-"%s-afhængigheden for %s kan ikke honoreres, da pakken %s ikke kan findes"
+"%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev "
+"fundet"
 
 #: cmdline/apt-get.cc:1990
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
-"%s-afhængigheden for %s kan ikke honoreres, da pakken %s ikke kan findes"
+"%s-afhængigheden for %s kan ikke opfyldes, da ingen af de tilgængelige "
+"udgaver af pakken %s kan tilfredsstille versions-kravene"
 
 #: cmdline/apt-get.cc:2017
 msgid ""
@@ -1138,7 +1153,7 @@ msgstr ""
 "   dselect-upgrade - Følg valgene fra dselect\n"
 "   clean - Fjern hentede arkivfiler\n"
 "   autoclean - Fjern gamle hentede arkivfiler\n"
-"   check - Tjek at der ikke er ikke-honorerede afhængigheder\n"
+"   check - Tjek at der ikke er uopfyldte afhængigheder\n"
 "\n"
 "Tilvalg:\n"
 "  -h  Denne hjælpetekst.\n"
@@ -1299,9 +1314,9 @@ msgid "Failed to close file %s"
 msgstr "Kunne ikke lukke filen %s"
 
 #: apt-inst/extract.cc:96 apt-inst/extract.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "The path %s is too long"
-msgstr "Stien er for lang"
+msgstr "Stien %s er for lang"
 
 #: apt-inst/extract.cc:127
 #, c-format
@@ -1352,9 +1367,9 @@ msgid "Unable to read %s"
 msgstr "Kunne ikke læse %s"
 
 #: apt-inst/extract.cc:494
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to stat %s"
-msgstr "Kunne ikke finde %s."
+msgstr "Kunne ikke finde %s"
 
 #: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
 #, c-format
@@ -1469,9 +1484,9 @@ msgid "Internal Error, could not locate member %s"
 msgstr "Intern fejl, kunne ikke finde elementet %s"
 
 #: apt-inst/deb/debfile.cc:104
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't change to %s"
-msgstr "Kunne ikke opnå låsen %s"
+msgstr "Kunne ikke skifte til %s"
 
 #: apt-inst/deb/debfile.cc:125
 msgid "Internal Error, could not locate member"
@@ -1507,14 +1522,11 @@ msgstr "pakker, der blev installeret. Det kan give gentagne fejl"
 
 #: dselect/install:102
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
+msgstr "eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
 
 #: dselect/install:103
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
+msgid "above this message are important. Please fix them and run [I]nstall again"
+msgstr "fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
 
 #: dselect/update:30
 msgid "Merging Available information"
@@ -1543,9 +1555,8 @@ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "Kunne ikke afmontere cdrommen i %s, den er muligvis stadig i brug."
 
 #: methods/cdrom.cc:177 methods/file.cc:77
-#, fuzzy
 msgid "File not found"
-msgstr "Fil blev ikke fundet"
+msgstr "Fil ikke fundet"
 
 #: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
 msgid "Failed to stat"
@@ -1592,7 +1603,7 @@ msgid ""
 "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
 "is empty."
 msgstr ""
-"Der blev angivet en mellemstation (proxyserver), men intet logpå-skript, "
+"Der blev angivet en proxyserver men intet logpå-skript; "
 "Acquire::ftp::ProxyLogin er tom."
 
 #: methods/ftp.cc:263
@@ -1626,7 +1637,6 @@ msgid "Protocol corruption"
 msgstr "Protokolfejl"
 
 #: methods/ftp.cc:444 methods/rsh.cc:232
-#, fuzzy
 msgid "Write Error"
 msgstr "Skrivefejl"
 
@@ -1663,7 +1673,7 @@ msgid "Unable to send PORT command"
 msgstr "Kunne ikke sende PORT-kommando"
 
 #: methods/ftp.cc:787
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown address family %u (AF_*)"
 msgstr "Ukendt adressefamilie %u (AF_*)"
 
@@ -1681,9 +1691,8 @@ msgid "Unable to accept connection"
 msgstr "Kunne ikke acceptere forbindelse"
 
 #: methods/ftp.cc:862 methods/http.cc:912 methods/rsh.cc:303
-#, fuzzy
 msgid "Problem hashing file"
-msgstr "Problem under synkronisering af fil"
+msgstr "Problem ved \"hashing\" af fil"
 
 #: methods/ftp.cc:875
 #, c-format
@@ -1702,7 +1711,7 @@ msgstr "Dataoverførsel mislykkedes, serveren sagde '%s'"
 #. Get the files information
 #: methods/ftp.cc:995
 msgid "Query"
-msgstr ""
+msgstr "Forespørgsel"
 
 #: methods/ftp.cc:1102
 msgid "Unable to invoke "
@@ -1716,7 +1725,7 @@ msgstr "Forbinder til %s (%s)"
 #: methods/connect.cc:71
 #, c-format
 msgid "[IP: %s %s]"
-msgstr ""
+msgstr "[IP: %s %s]"
 
 #: methods/connect.cc:80
 #, c-format
@@ -1746,14 +1755,14 @@ msgid "Connecting to %s"
 msgstr "Forbinder til %s"
 
 #: methods/connect.cc:163
-#, fuzzy, c-format
+#, c-format
 msgid "Could not resolve '%s'"
-msgstr "Kunne ikke åbne filen %s"
+msgstr "Kunne ikke omsætte navnet '%s'"
 
 #: methods/connect.cc:167
 #, c-format
 msgid "Temporary failure resolving '%s'"
-msgstr ""
+msgstr "Midlertidig fejl ved omsætning af navnet '%s'"
 
 #: methods/connect.cc:169
 #, c-format
@@ -1766,9 +1775,9 @@ msgid "Unable to connect to %s %s:"
 msgstr "Kunne ikke forbinde til %s %s:"
 
 #: methods/gzip.cc:57
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open pipe for %s"
-msgstr "Kunne ikke åbne filen %s"
+msgstr "Kunne ikke åbne datarør for %s"
 
 #: methods/gzip.cc:102
 #, c-format
@@ -1802,8 +1811,7 @@ msgstr "http-serveren sendte et ugyldigt Content-Range-hovede"
 
 #: methods/http.cc:566
 msgid "This http server has broken range support"
-msgstr ""
-"Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
+msgstr "Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
 
 #: methods/http.cc:590
 msgid "Unknown date format"
@@ -1909,14 +1917,14 @@ msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Syntaksfejl %s:%u: Overskydende affald i slutningen af filen"
 
 #: apt-pkg/contrib/progress.cc:154
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Error!"
-msgstr "%s... Fejl!"
+msgstr "%c%s... Fejl!"
 
 #: apt-pkg/contrib/progress.cc:156
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Done"
-msgstr "%s... Færdig"
+msgstr "%c%s... Færdig"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -1940,9 +1948,9 @@ msgid "Option %s requires an argument."
 msgstr "Tilvalget %s kræver et parameter"
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "Tilvalg %s: Opsætningspunktets specifikation skal have en =<værdi>."
+msgstr "Tilvalg %s: Opsætningspostens specifikation skal have en =<værdi>."
 
 #: apt-pkg/contrib/cmndline.cc:237
 #, c-format
@@ -2067,7 +2075,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Denne APT understøtter ikke versionssystemet '%s'"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Pakke-mellemlageret er lavet til en anden arkitektur"
 
@@ -2219,10 +2226,8 @@ msgstr "Indeksfiler af typen '%s' understøttes ikke"
 
 #: apt-pkg/algorithms.cc:238
 #, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr ""
-"Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
+msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr "Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
 
 #: apt-pkg/algorithms.cc:1056
 msgid ""
@@ -2234,8 +2239,7 @@ msgstr ""
 
 #: apt-pkg/algorithms.cc:1058
 msgid "Unable to correct problems, you have held broken packages."
-msgstr ""
-"Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
+msgstr "Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
 
 #: apt-pkg/acquire.cc:61
 #, c-format
@@ -2333,8 +2337,7 @@ msgstr "Der skete en fejl under behandlingen af %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
@@ -2342,8 +2345,7 @@ msgstr "Hold da op! Du nåede over det antal versioner, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
+msgstr "Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2398,8 +2400,7 @@ msgstr ""
 
 #: apt-pkg/acquire-item.cc:419
 #, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
+msgid "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Pakkeindeksfilerne er i stykker. Intet 'Filename:'-felt for pakken %s."
 
 #: apt-pkg/acquire-item.cc:501
@@ -2710,3 +2711,4 @@ msgstr "Forbindelsen lukkedes for hurtigt"
 
 #~ msgid "Errors apply to file '%s'"
 #~ msgstr "Fejlene vedrører filen '%s'"
+
