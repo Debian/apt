@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.24 1999/02/22 03:30:06 jgg Exp $
+// $Id: tagfile.cc,v 1.25 1999/07/03 06:45:40 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -33,6 +33,14 @@ pkgTagFile::pkgTagFile(FileFd &Fd,unsigned long Size) : Fd(Fd), Size(Size)
    Left = Fd.Size();
    iOffset = 0;
    Fill();
+}
+									/*}}}*/
+// pkgTagFile::~pkgTagFile - Destructor					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgTagFile::~pkgTagFile()
+{
+   delete [] Buffer;
 }
 									/*}}}*/
 // TagFile::Step - Advance to the next section				/*{{{*/
