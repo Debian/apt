@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.cc,v 1.5 2001/04/29 05:13:51 jgg Exp $
+// $Id: debindexfile.cc,v 1.6 2004/01/04 07:41:30 mdz Exp $
 /* ######################################################################
 
    Debian Specific sources.list types and the three sorts of Debian
@@ -78,9 +78,9 @@ string debSourcesIndex::Describe(bool Short) const
 {
    char S[300];
    if (Short == true)
-      snprintf(S,sizeof(S),"%s",Info("Packages").c_str());
+      snprintf(S,sizeof(S),"%s",Info("Sources").c_str());
    else
-      snprintf(S,sizeof(S),"%s (%s)",Info("Packages").c_str(),
+      snprintf(S,sizeof(S),"%s (%s)",Info("Sources").c_str(),
 	       IndexFile("Sources").c_str());
    
    return S;
