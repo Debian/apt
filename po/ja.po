@@ -3,13 +3,14 @@
 # Project Vine, Daisuke SUZUKI <daisuke@linux.or.jp>, 2001-2002
 # Debian Project, Masato Taruishi <taru@debian.org>, 2002
 # Debian Project, Keita Maehara <maehara@debian.org>, 2003
+# Debian Project, Kenshi Muto <kmuto@debian.org>, 2004
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.5\n"
+"Project-Id-Version: apt 0.5.24\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-03-14 13:46-0800\n"
-"PO-Revision-Date: 2003-06-19 22:58+0900\n"
-"Last-Translator: Keita Maehara <maehara@debian.org>\n"
+"PO-Revision-Date: 2004-04-17 14:34+0900\n"
+"Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=EUC-JP\n"
@@ -93,9 +94,8 @@ msgid "You must give exactly one pattern"
 msgstr "パターンはちょうど 1 つだけ指定してください"
 
 #: cmdline/apt-cache.cc:1385
-#, fuzzy
 msgid "No packages found"
-msgstr "壊れたパッケージ"
+msgstr "パッケージが見つかりません"
 
 #: cmdline/apt-cache.cc:1462
 msgid "Package Files:"
@@ -155,7 +155,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s for %s %s コンパイル日時: %s %s\n"
 
 #: cmdline/apt-cache.cc:1653
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -226,8 +225,8 @@ msgstr ""
 "  -q   プログレス表示をしない\n"
 "  -i   umnet コマンドで重要な依存情報のみを表示する\n"
 "  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 指定した設定オプションを読み込む。(例: -o dir::cache=/tmp)\n"
-"詳細は、apt-cache(8) や apt.conf(5) のマニュアルページを参照してください\n"
+"  -o=? 指定した設定オプションを読み込む (例: -o dir::cache=/tmp)\n"
+"詳細は、apt-cache(8) や apt.conf(5) のマニュアルページを参照してください。\n"
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -325,7 +324,6 @@ msgid "Error Processing Contents %s"
 msgstr "Contents %s の処理中にエラーが発生しました"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -370,6 +368,7 @@ msgstr ""
 "コマンド: packages binarypath [overridefile [pathprefix]]\n"
 "          sources srcpath [overridefile [pathprefix]]\n"
 "          contents path\n"
+"          release path\n"
 "          generate config [groups]\n"
 "          clean config\n"
 "\n"
@@ -661,19 +660,16 @@ msgid "The following packages will be REMOVED:"
 msgstr "以下のパッケージは削除されます:"
 
 #: cmdline/apt-get.cc:421
-#, fuzzy
 msgid "The following packages have been kept back:"
-msgstr "以下のパッケージは保留されます"
+msgstr "以下のパッケージは保留されます:"
 
 #: cmdline/apt-get.cc:442
-#, fuzzy
 msgid "The following packages will be upgraded:"
-msgstr "以下のパッケージはアップグレードされます"
+msgstr "以下のパッケージはアップグレードされます:"
 
 #: cmdline/apt-get.cc:463
-#, fuzzy
 msgid "The following packages will be DOWNGRADED:"
-msgstr "以下のパッケージはダウングレードされます"
+msgstr "以下のパッケージは「ダウングレード」されます:"
 
 #: cmdline/apt-get.cc:483
 msgid "The following held packages will be changed:"
@@ -693,7 +689,7 @@ msgstr ""
 "何をしようとしているかがちゃんとわからない場合は、実行してはいけません!"
 
 #: cmdline/apt-get.cc:574
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "アップグレード: %lu 個、新規インストール: %lu 個、"
 
@@ -713,7 +709,7 @@ msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "削除: %lu 個、保留: %lu 個\n"
 
 #: cmdline/apt-get.cc:586
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu 個のパッケージが完全にインストールまたは削除されていません。\n"
 
@@ -880,16 +876,12 @@ msgid "You should explicitly select one to install."
 msgstr "インストールするパッケージを明示的に選択する必要があります。"
 
 #: cmdline/apt-get.cc:1040
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
-msgstr ""
-"パッケージ %s はデータベースには存在しますが、入手可能なバージョンが\n"
-"ありません。おそらく、そのパッケージに依存していると記述されているにも\n"
-"関わらずアップロードされていなかったり、古くなっていたり、また、その \n"
-"sources.list の内容では入手できないという状況が考えられます。\n"
+msgstr "パッケージ %s はデータベースには存在しますが、利用できません。おそらく、そのパッケージが見つからないか、もう古くなっているか、あるいは別のソースからのみしか利用できないという状況が考えられます\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -1092,13 +1084,11 @@ msgid "%s has no build depends.\n"
 msgstr "%s には build depends が指定されていません。\n"
 
 #: cmdline/apt-get.cc:2103
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr ""
-"パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たすこと"
-"ができません。"
+msgstr "パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たすことができません"
 
 #: cmdline/apt-get.cc:2155
 #, c-format
@@ -1112,17 +1102,17 @@ msgstr ""
 #: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
+msgstr "%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s パッケージは新しすぎます"
 
 #: cmdline/apt-get.cc:2215
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "build dependency の処理に失敗しました"
+msgstr "%2$s の依存関係 %1$s を満たすことができません: %3$s"
 
 #: cmdline/apt-get.cc:2229
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
+msgstr "%s の Build-dependency を満たすことができませんでした。"
 
 #: cmdline/apt-get.cc:2233
 msgid "Failed to process build dependencies"
@@ -1133,7 +1123,6 @@ msgid "Supported Modules:"
 msgstr "サポートされているモジュール:"
 
 #: cmdline/apt-get.cc:2306
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1175,8 +1164,7 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 "使用法: apt-get [オプション] コマンド\n"
-"        apt-get [オプション] install|remove パッケージ名1 [パッケージ名"
-"2 ...]\n"
+"        apt-get [オプション] install|remove パッケージ名1 [パッケージ名2 ...]\n"
 "        apt-get [オプション] source パッケージ名1 [パッケージ名2 ...]\n"
 "\n"
 "apt-get は、パッケージをダウンロード/インストールするための簡単なコマ\n"
@@ -1192,7 +1180,7 @@ msgstr ""
 "   source - ソースアーカイブをダウンロードします\n"
 "   build-dep - ソースパッケージの構築依存関係を設定します\n"
 "   dist-upgrade - ディストリビューションをアップグレードします\n"
-"                  (apt-get(8) 参照)\n"
+"                  (apt-get(8) を参照)\n"
 "   dselect-upgrade - dselect の選択にしたがいます\n"
 "   clean - ダウンロードしたアーカイブファイルを削除します\n"
 "   autoclean - ダウンロードした古いアーカイブファイルを削除します\n"
@@ -1214,6 +1202,7 @@ msgstr ""
 "  -o=? 任意の設定オプションを指定する, 例 -o dir::cache=/tmp\n"
 "オプション・設定に関しては、マニュアルページ apt-get(8)、sources.list(5)、\n"
 "apt.conf(5) を参照してください。\n"
+"                        この APT は Super Cow Powers 化されています。\n"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1242,7 +1231,7 @@ msgid " [Working]"
 msgstr " [処理中]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
@@ -1327,7 +1316,7 @@ msgid "Tar Checksum failed, archive corrupted"
 msgstr "tar チェックサムが失敗しました。アーカイブが壊れています"
 
 #: apt-inst/contrib/extracttar.cc:296
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "未知の TAR ヘッダタイプ %u、メンバ %s"
 
@@ -1922,7 +1911,7 @@ msgstr "選択された %s が見つかりません"
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "理解できない省略形式です: '%c'"
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
@@ -2001,9 +1990,9 @@ msgid "Option %s requires an argument."
 msgstr "オプション %s には引数が必要です。"
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "オプション %s: 設定オプションには =<値> を指定する必要があります。"
+msgstr "オプション %s: 設定項目には =<値> を指定する必要があります。"
 
 #: apt-pkg/contrib/cmndline.cc:237
 #, c-format
@@ -2128,9 +2117,8 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "この APT はバージョニングシステム '%s' をサポートしていません"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
-msgstr "パッケージキャッシュが他のアーキテクチャ用に構築されています"
+msgstr "パッケージキャッシュが異なるアーキテクチャ用に構築されています"
 
 #: apt-pkg/pkgcache.cc:218
 msgid "Depends"
@@ -2325,9 +2313,8 @@ msgid "Packaging system '%s' is not supported"
 msgstr "パッケージングシステム '%s' はサポートされていません"
 
 #: apt-pkg/init.cc:135
-#, fuzzy
 msgid "Unable to determine a suitable packaging system type"
-msgstr "適切なシステムタイプを特定できません"
+msgstr "適切なパッケージシステムタイプを特定できません"
 
 #: apt-pkg/clean.cc:61
 #, c-format
@@ -2363,7 +2350,7 @@ msgstr "pin タイプ %s が理解できませんでした"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "pin で優先度 (または 0) が指定されていません"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
@@ -2490,12 +2477,3 @@ msgstr "ファイルがみつかりません"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "途中で接続がクローズされました"
-
-#~ msgid ""
-#~ "Some broken packages were found while trying to process build-"
-#~ "dependencies.\n"
-#~ "You might want to run `apt-get -f install' to correct these."
-#~ msgstr ""
-#~ "build-dependency を処理中に壊れたパッケージがいくつか見つかりました。\n"
-#~ "これを修正するためには 'apt-get -f install' を実行する必要があるかもし\n"
-#~ "れません。"
