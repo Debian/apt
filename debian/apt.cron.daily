@@ -1,0 +1,54 @@
+#!/bin/sh
+#
+# cron job for apt-get update
+#
+# Update-Package-Intervall is in days
+#
+STAMP=/var/lib/apt/update-stamp
+
+#set -e
+
+do_update()
+{
+    touch $STAMP.new
+    if apt-get update -qq; then
+	if [ -x /usr/bin/dbus-send ]; then
+	    dbus-send --system / app.apt.dbus.updated boolean:true
+	fi
+        mv $STAMP.new $STAMP
+    fi
+    rm -f $STAMP.new
+}
+
+UpdateInterval=0
+RES=`apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists`
+eval $RES
+
+if [ $UpdateInterval -eq 0 ]; then
+    exit 0
+fi
+
+# laptop check, on_ac_power returns:
+#       0 (true)    System is on mains power
+#       1 (false)   System is not on mains power
+#       255 (false) Power status could not be determined
+# Desktop systems always return 255 it seems
+if [ -x /usr/bin/on_ac_power ]; then
+    /usr/bin/on_ac_power 
+    if [ $? -eq 1 ]; then
+	exit 0
+    fi
+fi
+
+if [ ! -f $STAMP ]; then
+    do_update
+    exit 0
+fi
+
+LastUpdate=`stat -c "%Y" $STAMP 2>/dev/null` 
+Now=`date +%s`
+
+NeedUpdate=$(($LastUpdate+$UpdateInterval*3600*24))
+if [ $NeedUpdate -le $Now ]; then
+    do_update
+fi
