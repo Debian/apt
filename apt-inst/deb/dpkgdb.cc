@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgdb.cc,v 1.3 2001/05/27 23:46:28 jgg Exp $
+// $Id: dpkgdb.cc,v 1.4 2001/05/27 23:50:42 jgg Exp $
 /* ######################################################################
 
    DPKGv1 Database Implemenation
@@ -464,9 +464,9 @@ bool debDpkgDB::ReadConfFiles()
 	 	 
 	 // Insert a new entry
 	 unsigned char MD5[16];
-	 if (Hex2Num(StartMd5,EndMd5,MD5,16) == false)
+	 if (Hex2Num(string(StartMd5,EndMd5-StartMd5),MD5,16) == false)
 	    return _error->Error("Error parsing MD5. Offset %lu",Offset);
-	 
+
 	 if (FList->AddConfFile(Start,End,FlPkg,MD5) == false)
 	    return false;
 	 Start = EndMd5;
