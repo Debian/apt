@@ -79,6 +79,8 @@ PROGRAM_H = $(BASE)/buildlib/program.mak
 COPY_H = $(BASE)/buildlib/copy.mak
 YODL_MANPAGE_H = $(BASE)/buildlib/yodl_manpage.mak
 
+include $(BUILD)/environment.mak
+
 ifdef STATICLIBS
 LIBRARY_H += $(BASE)/buildlib/staticlibrary.mak
 endif
@@ -100,7 +102,6 @@ SUBDIRS+=
 HEADER_TARGETDIRS+=
 
 # Options
-include $(BUILD)/environment.mak
 CPPFLAGS+= -I$(INCLUDE)
 LDFLAGS+= -L$(LIB)
 

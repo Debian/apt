@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.17 1999/12/09 03:45:56 jgg Exp $
+// $Id: ftp.cc,v 1.18 1999/12/10 07:21:52 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -498,18 +498,7 @@ bool FTPConn::ModTime(const char *Path, time_t &Time)
       return true;
    
    // Parse it
-   struct tm tm;
-   memset(&tm,0,sizeof(tm));   
-   if (sscanf(Msg.c_str(),"%4d%2d%2d%2d%2d%2d",&tm.tm_year,&tm.tm_mon,
-	      &tm.tm_mday,&tm.tm_hour,&tm.tm_min,&tm.tm_sec) != 6)
-      return true;
-   
-   tm.tm_year -= 1900;
-   tm.tm_mon--;
-   
-   /* We use timegm from the GNU C library, libapt-pkg will provide this
-      symbol if it does not exist */
-   Time = timegm(&tm);
+   StrToTime(Msg,Time);
    return true;
 }
 									/*}}}*/

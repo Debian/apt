@@ -40,11 +40,11 @@ endif
 ifeq ($(HAVE_C9X),yes)
 	@rm -f include/inttypes.h > /dev/null 2>&1
 else
-	@cp $(SRCDIR)/buildlib/inttypes.h.in include/inttypes.h
+	@cp -p $(SRCDIR)/buildlib/inttypes.h.in include/inttypes.h
 endif
 ifeq ($(HAVE_STATVFS),yes)
 	@rm -f include/statvfs.h > /dev/null 2>&1
 else
-	@cp $(SRCDIR)/buildlib/statvfs.h.in include/statvfs.h
+	@cp -p $(SRCDIR)/buildlib/statvfs.h.in include/statvfs.h
 	ln -sf . include/sys
 endif

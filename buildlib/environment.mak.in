@@ -39,8 +39,10 @@ HAVE_STATVFS = @HAVE_STATVFS@
 # Shared library things
 HOST_OS = @host_os@
 ifeq ($(HOST_OS),linux-gnu)
-   ONLYSHAREDLIBS = yes
    SONAME_MAGIC=-Wl,-soname -Wl,
    LFLAGS_SO=
+else   
+   # Do not know how to creat shared libraries here.
+   ONLYSTATICLIBS = yes
 endif
-	 
+	

@@ -36,14 +36,14 @@ include $(PROGRAM_H)
 
 # The http method
 PROGRAM=http
-SLIBS = -lapt-pkg $SOCKETLIBS
+SLIBS = -lapt-pkg $(SOCKETLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = http.cc rfc2553emu.cc connect.cc
 include $(PROGRAM_H)
 
 # The ftp method
 PROGRAM=ftp
-SLIBS = -lapt-pkg $SOCKETLIBS
+SLIBS = -lapt-pkg $(SOCKETLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = ftp.cc rfc2553emu.cc connect.cc
 include $(PROGRAM_H)

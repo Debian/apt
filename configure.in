@@ -95,7 +95,7 @@ AC_CACHE_CHECK([for C9x integer types],c9x_ints,[
 		   c9x_ints=yes,c9x_ints=no)])
 
 dnl Single Unix Spec statvfs
-AC_CHECK_FUNC(statvfs)
+AC_CHECK_FUNC(statvfs,[HAVE_STATVFS=yes])
 AC_SUBST(HAVE_STATVFS)
 
 dnl Check the sizes etc. of the architecture

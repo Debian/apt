@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.30 1999/10/17 07:30:23 jgg Exp $
+// $Id: strutl.cc,v 1.31 1999/12/10 07:21:52 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -633,7 +633,8 @@ static time_t timegm(struct tm *t)
 /* This handles all 3 populare time formats including RFC 1123, RFC 1036
    and the C library asctime format. It requires the GNU library function
    'timegm' to convert a struct tm in UTC to a time_t. For some bizzar
-   reason the C library does not provide any such function :<*/
+   reason the C library does not provide any such function :< This also
+   handles the weird, but unambiguous FTP time format*/
 bool StrToTime(string Val,time_t &Result)
 {
    struct tm Tm;
@@ -644,6 +645,7 @@ bool StrToTime(string Val,time_t &Result)
    for (;*I != 0  && *I != ' '; I++);
    
    // Handle RFC 1123 time
+   Month[0] = 0;
    if (sscanf(I," %d %3s %d %d:%d:%d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
 	      &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
    {
@@ -656,12 +658,19 @@ bool StrToTime(string Val,time_t &Result)
 	 // asctime format
 	 if (sscanf(I," %3s %d %d:%d:%d %d",Month,&Tm.tm_mday,
 		    &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec,&Tm.tm_year) != 6)
-	    return false;
+	 {
+	    // 'ftp' time
+	    if (sscanf(I,"%4d%2d%2d%2d%2d%2d",&Tm.tm_year,&Tm.tm_mon,
+		       &Tm.tm_mday,&Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
+	       return false;
+	    Tm.tm_mon--;
+	 }	 
       }
    }
    
    Tm.tm_isdst = 0;
-   Tm.tm_mon = MonthConv(Month);
+   if (Month[0] != 0)
+      Tm.tm_mon = MonthConv(Month);
    Tm.tm_year -= 1900;
    
    // Convert to local time and then to GMT

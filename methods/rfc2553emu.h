@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.h,v 1.2 1999/05/26 04:08:39 jgg Exp $
+// $Id: rfc2553emu.h,v 1.3 1999/12/10 07:21:52 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -38,8 +38,6 @@
 
 // getaddrinfo support?
 #ifndef HAVE_GETADDRINFO
-  #error Boink
-
   // Renamed to advoid type clashing.. (for debugging)
   struct addrinfo_emu
   {   
@@ -50,9 +48,9 @@
      size_t  ai_addrlen;   /* length of ai_addr */
      char   *ai_canonname; /* canonical name for nodename */
      struct sockaddr  *ai_addr; /* binary address */
-     struct addrinfo  *ai_next; /* next structure in linked list */
+     struct addrinfo_emu  *ai_next; /* next structure in linked list */
   };
-  #define addinfo addrinfo_emu
+  #define addrinfo addrinfo_emu
 
   int getaddrinfo(const char *nodename, const char *servname,
                   const struct addrinfo *hints,
@@ -73,6 +71,7 @@
   #define EAI_SERVICE    -7
   #define EAI_ADDRFAMILY -8
   #define EAI_SYSTEM     -10
+  #define EAI_MEMORY     -11
   #endif
 
 #endif
