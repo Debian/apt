@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.31 1999/08/25 02:45:01 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.32 1999/09/03 05:46:48 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -91,6 +91,7 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
       if (strcmp(Dir->d_name,".") == 0 ||
 	  strcmp(Dir->d_name,"..") == 0 ||
 	  //strcmp(Dir->d_name,"source") == 0 ||
+	  strcmp(Dir->d_name,".disk") == 0 ||
 	  strcmp(Dir->d_name,"experimental") == 0 ||
 	  strcmp(Dir->d_name,"binary-all") == 0)
 	 continue;
@@ -537,11 +538,12 @@ bool DoAdd(CommandLine &)
 
    if (_config->FindB("Debug::aptcdrom",false) == true)
    {
-      cout << "I found:" << endl;
+      cout << "I found (binary):" << endl;
       for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
-      {
 	 cout << *I << endl;
-      }      
+      cout << "I found (source):" << endl;
+      for (vector<string>::iterator I = sList.begin(); I != sList.end(); I++)
+	 cout << *I << endl;
    }   
    
    // Fix up the list

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.cc,v 1.1 1999/07/12 02:59:36 jgg Exp $
+// $Id: indexcopy.cc,v 1.2 1999/09/03 05:46:48 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -281,7 +281,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
    cout << '.' << endl;
    
    if (Packages == 0)
-      return _error->Error("No valid records were found.");
+      return _error->Warning("No valid records were found.");
    
    if (NotFound + WrongSize > 10)
       cout << "Alot of entries were discarded, something may be wrong." << endl;
