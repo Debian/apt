@@ -144,7 +144,7 @@ AC_DEFUN(ah_GCC3DEP,[
 	if test -e gcc3dep.d; then
 		rm -f gcc3dep.d
 		GCC_MD=input
-		GCC3DEP=no
+		GCC3DEP=
 	elif test -e gcc3dep_test.d; then
 		rm -f gcc3dep_test.d
 		GCC_MD=output
