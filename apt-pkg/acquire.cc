@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.33 1999/05/23 06:47:43 jgg Exp $
+// $Id: acquire.cc,v 1.34 1999/05/24 03:39:37 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -334,6 +334,10 @@ bool pkgAcquire::Run()
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Shutdown();
 
+   // Shut down the items
+   for (Item **I = Items.begin(); I != Items.end(); I++)
+      (*I)->Finished();
+   
    return !_error->PendingError();
 }
 									/*}}}*/

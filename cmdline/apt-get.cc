@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.60 1999/05/23 05:45:12 jgg Exp $
+// $Id: apt-get.cc,v 1.61 1999/05/24 03:39:37 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -589,8 +589,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    }
    
    // Run it
-   if (Fetcher.Run() == false)
-      return false;
+   if (_config->FindB("APT::Get::No-Download",false) == false)
+      if( Fetcher.Run() == false)
+	 return false;
 
    // Print out errors
    bool Failed = false;
@@ -600,6 +601,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       if ((*I)->Status == pkgAcquire::Item::StatDone &&
 	  (*I)->Complete == true)
 	 continue;
+      
+      (*I)->Finished();
       
       if ((*I)->Status == pkgAcquire::Item::StatIdle)
       {
@@ -1397,6 +1400,7 @@ int main(int argc,const char *argv[])
       {'f',"fix-broken","APT::Get::Fix-Broken",0},
       {'u',"show-upgraded","APT::Get::Show-Upgraded",0},
       {'m',"ignore-missing","APT::Get::Fix-Missing",0},
+      {0,"no-download","APT::Get::No-Download",0},
       {0,"fix-missing","APT::Get::Fix-Missing",0},
       {0,"ignore-hold","APT::Ingore-Hold",0},      
       {0,"no-upgrade","APT::Get::no-upgrade",0},

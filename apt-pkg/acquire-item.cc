@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.29 1999/04/28 22:48:44 jgg Exp $
+// $Id: acquire-item.cc,v 1.30 1999/05/24 03:39:36 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -539,6 +539,17 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       StoreFilename = string();
       Item::Failed(Message,Cnf);
    }
+}
+									/*}}}*/
+// AcqArchive::Finished - Fetching has finished, tidy up		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqArchive::Finished()
+{
+   if (Status == pkgAcquire::Item::StatDone &&
+       Complete == true)
+      return;
+   StoreFilename = string();
 }
 									/*}}}*/
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.19 1999/04/11 21:23:09 jgg Exp $
+// $Id: acquire-item.h,v 1.20 1999/05/24 03:39:37 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -66,6 +66,7 @@ class pkgAcquire::Item
    virtual void Start(string Message,unsigned long Size);
    virtual string Custom600Headers() {return string();};
    virtual string DescURI() = 0;
+   virtual void Finished() {};
    
    // Inquire functions
    virtual string MD5Sum() {return string();};
@@ -138,6 +139,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash);
    virtual string MD5Sum() {return MD5;};
    virtual string DescURI() {return Desc.URI;};
+   virtual void Finished();
    
    pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 		 pkgRecords *Recs,pkgCache::VerIterator const &Version,
