@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.30 2000/05/10 05:56:23 jgg Exp $
+// $Id: algorithms.cc,v 1.31 2000/10/03 23:59:05 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -719,6 +719,9 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 if (Cache[I].InstallVer == 0 || Cache[I].InstBroken() == false)
 	    continue;
 	 
+	 if (Debug == true)
+	    cout << "Investigating " << I.Name() << endl;
+	 
 	 // Isolate the problem dependency
 	 PackageKill KillList[100];
 	 PackageKill *LEnd = KillList;
@@ -731,6 +734,13 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList();
 	      D.end() == false || InOr == true;)
 	 {
+	    // We only worry about critical deps.
+	    if (D.IsCritical() != true)
+	    {
+	       D++;
+	       continue;
+	    }
+	    
 	    // Compute a single dependency element (glob or)
 	    if (Start == End)
 	    {
@@ -740,23 +750,28 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  if (OldEnd == LEnd && OrOp == OrRemove)
 		  {
 		     if ((Flags[I->ID] & Protected) != Protected)
+		     {
+			if (Debug == true)
+			   clog << "  Or group remove for " << I.Name() << endl;
 			Cache.MarkDelete(I);
+		     }		     
 		  }		  
 		  if (OldEnd == LEnd && OrOp == OrKeep)
+		  {
+		     if (Debug == true)
+			clog << "  Or group keep for " << I.Name() << endl;
 		     Cache.MarkKeep(I);
+		  }		  
 	       }
 	       
 	       OrOp = OrRemove;
 	       D.GlobOr(Start,End);
 	       InOr = Start != End;
+	       cout << Start.TargetPkg().Name() << ',' << End.TargetPkg().Name() << ',' << InOr << endl;
 	       OldEnd = LEnd;
 	    }	    
 	    else
 	       Start++;
-
-	    // We only worry about critical deps.
-	    if (End.IsCritical() != true)
-	       continue;
 	    
 	    // Dep is ok
 	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
@@ -849,6 +864,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       }
 	       else
 	       {
+		  if (Debug == true)
+		     clog << "  Added " << Pkg.Name() << " to the remove list" << endl;
 		  // Skip adding to the kill list if it is protected
 		  if ((Flags[Pkg->ID] & Protected) != 0)
 		     continue;
