@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.35 1999/01/30 02:12:53 jgg Exp $
+// $Id: apt-get.cc,v 1.36 1999/01/30 03:35:28 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -367,7 +367,7 @@ class CacheFile
    inline pkgDepCache *operator ->() {return Cache;};
    inline pkgDepCache &operator *() {return *Cache;};
    
-   bool Open();
+   bool Open(bool AllowBroken = false);
    CacheFile() : File(0), Map(0), Cache(0) {};
    ~CacheFile()
    {
@@ -381,7 +381,7 @@ class CacheFile
 // ---------------------------------------------------------------------
 /* This routine generates the caches and then opens the dependency cache
    and verifies that the system is OK. */
-bool CacheFile::Open()
+bool CacheFile::Open(bool AllowBroken)
 {
    if (_error->PendingError() == true)
       return false;
@@ -427,7 +427,7 @@ bool CacheFile::Open()
       return false;
    
    // Nothing is broken
-   if (Cache->BrokenCount() == 0)
+   if (Cache->BrokenCount() == 0 || AllowBroken == true)
       return true;
 
    // Attempt to fix broken things
@@ -692,8 +692,13 @@ bool DoUpgrade(CommandLine &CmdL)
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false)
+   if (Cache.Open(CmdL.FileSize() != 1) == false)
       return false;
+   
+   // Enter the special broken fixing mode if the user specified arguments
+   bool BrokenFix = false;
+   if (Cache->BrokenCount() != 0)
+      BrokenFix = true;
    
    unsigned int ExpectedInst = 0;
    unsigned int Packages = 0;
@@ -801,10 +806,21 @@ bool DoInstall(CommandLine &CmdL)
 	 ExpectedInst++;
 
       // Install it with autoinstalling enabled.
-      if (State.InstBroken() == true)
+      if (State.InstBroken() == true && BrokenFix == false)
 	 Cache->MarkInstall(Pkg,true);
    }
 
+   /* If we are in the Broken fixing mode we do not attempt to fix the
+      problems. This is if the user invoked install without -f and gave
+      packages */
+   if (BrokenFix == true && Cache->BrokenCount() != 0)
+   {
+      c1out << "You might want to run `apt-get -f install' to correct these." << endl;
+      ShowBroken(c1out,Cache);
+
+      return _error->Error("Unmet dependencies. Try using -f.");
+   }
+   
    // Call the scored problem resolver
    Fix.InstallProtect();
    if (Fix.Resolve(true) == false)
