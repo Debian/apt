@@ -24,7 +24,8 @@ itemize(
   it() show
   it() showpkg
   it() depends
-  it() pkgnames  
+  it() pkgnames
+  it() dotty
 )
 
 Unless the -h, or --help option is given one of the above commands
@@ -165,6 +166,22 @@ This command prints the name of each package in the system. The optional
 argument is a prefix match to filter the name list. The output is suitable
 for use in a shell tab complete function and the output is generated extremly
 quickly. This command is best used with the bf(--no-generate) option.
+
+dit(bf(dotty))
+bf(dotty) Takes a list of packages on the command line and gernerates output
+suitable for use by dotty from the GraphVis
+(http://www.research.att.com/sw/tools/graphviz/) package. The result will be
+a set of nodes and edges representing the relationships between the
+packages. By default the given packages will trace out all dependent packages
+which can produce a very large graph. This can be turned off by setting the 
+APT::Cache::GivenOnly option.
+
+The resulting nodes will have several shapse, normal packages are boxes,
+pure provides are triangles, mixed provides are diamonds, 
+hexagons are missing packages. Orange boxes mean recursion was stopped 
+[leaf packages], blue lines are prre-depends, green lines are conflicts.
+
+Caution, dotty cannot graph larger sets of packages.
 
 enddit()
 
