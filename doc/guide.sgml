@@ -4,7 +4,7 @@
 <title>APT User's Guide</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: guide.sgml,v 1.2 1998/11/23 01:15:59 jgg Exp $</version>
+<version>$Id: guide.sgml,v 1.3 2001/02/20 07:03:17 jgg Exp $</version>
 
 <abstract>
 This document provides an overview of how to use the the APT package manager.
@@ -55,9 +55,9 @@ of a simple dependency. The meaning of a simple dependency is that a package
 requires another package to be installed at the same time to work properly.
 
 <p>
-For instance, mail-crypt is an emacs extension that aids in encrypting email
-with PGP. Without PGP installed mail-crypt is useless, so mail-crypt has a 
-simple dependency on PGP. Also, because it is an emacs extension it has a 
+For instance, mailcrypt is an emacs extension that aids in encrypting email
+with GPG. Without GPGP installed mail-crypt is useless, so mailcrypt has a
+simple dependency on GPG. Also, because it is an emacs extension it has a 
 simple dependency on emacs, without emacs it is completely useless.
 
 <p>
@@ -280,7 +280,7 @@ how much is left to do.
 <p>
 Before all operations, except update, APT performs a number of actions to
 prepare its internal state. It also does some checks of the systems state.
-At any time these operations can be performed by running <tt>apt-get chec</>
+At any time these operations can be performed by running <tt>apt-get check</>.
 <p>
 <example>
 # apt-get check
@@ -295,7 +295,7 @@ is run. If some of the package files are not found then they will be ignored
 and a warning will be printed when apt-get exits. 
 
 <p>
-The final operation performs a detailed analysis of the systems dependencies. 
+The final operation performs a detailed analysis of the system's dependencies.
 It checks every dependency of every installed or unpacked package and considers
 if it is ok. Should this find a problem then a report will be printed out and
 <prgn>apt-get</> will refuse to run.
@@ -328,7 +328,7 @@ problem is also included.
 
 <p>
 There are two ways a system can get into a broken state like this. The
-first is caused by <prgn>dpkg missing</> some subtle relationships between 
+first is caused by <prgn>dpkg</> missing some subtle relationships between 
 packages when performing upgrades. <footnote>APT however considers all known 
 dependencies and attempts to prevent broken packages</footnote>. The second is 
 if a package installation fails during an operation. In this situation a 
@@ -337,7 +337,7 @@ package may have been unpacked without its dependents being installed.
 <p>
 The second situation is much less serious than the first because APT places
 certain assurances on the order that packages are installed. In both cases
-supplying the <tt>-f</> option to <prgn>atp-get</> will cause APT to deduce a
+supplying the <tt>-f</> option to <prgn>apt-get</> will cause APT to deduce a
 possible solution to the problem and then continue on. The APT <prgn>dselect</> 
 method always supplies the <tt>-f</> option to allow for easy continuation
 of failed maintainer scripts.
@@ -476,7 +476,7 @@ to upgrade, they are similar to the previous examples.
 <sect>The Status Display
 <p>
 During the download of archives and package files APT prints out a series of
-status messages,
+status messages.
 
 <p>
 <example>
@@ -499,7 +499,7 @@ inaccuracies.
 
 <p>
 The next section of the status line is repeated once for each dowload thread
-and indicates the operation being performed and some usefull information
+and indicates the operation being performed and some useful information
 about what is happening. Sometimes this section will simply read <em>Forking</>
 which means the OS is loading the download module. The first word after the [
 is the fetch number as shown on the history lines. The next word
@@ -511,7 +511,7 @@ Inside of the single quote is an informative string indicating the progress
 of the negotiation phase of the download. Typically it progresses from 
 <em>Connecting</> to <em>Waiting for file</> to <em>Downloading</> or
 <em>Resuming</>. The final value is the number of bytes downloaded from the
-remote site. Once the download beings this is represented as <tt>102/10.2k</>
+remote site. Once the download begings this is represented as <tt>102/10.2k</>
 indicating that 102 bytes have been fetched and 10.2 kilobytes is expected.
 The total size is always shown in 4 figure notation to preserve space. After
 the size display is a percent meter for the file itself.
@@ -535,7 +535,7 @@ status display.
 <p>
 APT uses <prgn>dpkg</> for installing the archives and will switch
 over to the <prgn>dpkg</> interface once downloading is completed.
-<prgn>dpkg</> will also as a number of questions as it processes the packages
+<prgn>dpkg</> will also ask a number of questions as it processes the packages
 and the packages themselves may also ask several questions. Before each 
 question there is usually a description of what it is asking and the
 questions are too varied to discuss completely here.

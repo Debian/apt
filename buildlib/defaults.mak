@@ -51,7 +51,7 @@ error-all/environment.mak:
 	error-out-and-die
 else
 error-all/environment.mak:
-	echo Can't find the build directory in $(BUILD_POSSIBLE) -- use BUILD=
+	echo Can not find the build directory in $(BUILD_POSSIBLE) -- use BUILD=
 	error-out-and-die
 endif
 
@@ -76,8 +76,11 @@ LIBRARY_H = $(BASE)/buildlib/library.mak
 DEBIANDOC_H = $(BASE)/buildlib/debiandoc.mak
 MANPAGE_H = $(BASE)/buildlib/manpage.mak
 PROGRAM_H = $(BASE)/buildlib/program.mak
+PYTHON_H = $(BASE)/buildlib/python.mak
 COPY_H = $(BASE)/buildlib/copy.mak
 YODL_MANPAGE_H = $(BASE)/buildlib/yodl_manpage.mak
+SGML_MANPAGE_H = $(BASE)/buildlib/sgml_manpage.mak
+FAIL_H = $(BASE)/buildlib/fail.mak
 
 include $(BUILD)/environment.mak
 
@@ -105,9 +108,12 @@ HEADER_TARGETDIRS+=
 CPPFLAGS+= -I$(INCLUDE)
 LDFLAGS+= -L$(LIB)
 
+# Directors to create
+MKDIRS := $(BIN)
+
 # Phony rules. Other things hook these by appending to the dependency
 # list
-.PHONY: headers library clean veryclean all binary program doc
+.PHONY: headers library clean veryclean all binary program doc dirs
 .PHONY: maintainer-clean dist-clean distclean pristine sanity
 all: binary doc
 binary: library program
@@ -118,7 +124,9 @@ veryclean:
 	echo Very Clean done for $(SUBDIR)
 clean:
 	echo Clean done for $(SUBDIR)
-	
+dirs:
+	mkdir -p $(patsubst %/,%,$(sort $(MKDIRS)))
+
 # Header file control. We want all published interface headers to go
 # into the build directory from thier source dirs. We setup some
 # search paths here

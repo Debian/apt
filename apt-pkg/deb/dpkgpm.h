@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.h,v 1.6 1999/07/30 06:15:14 jgg Exp $
+// $Id: dpkgpm.h,v 1.7 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -16,6 +16,7 @@
 
 #include <apt-pkg/packagemanager.h>
 #include <vector>
+#include <stdio.h>
 
 class pkgDPkgPM : public pkgPackageManager
 {
@@ -26,7 +27,7 @@ class pkgDPkgPM : public pkgPackageManager
       enum Ops {Install, Configure, Remove, Purge} Op;
       string File;
       PkgIterator Pkg;
-      Item(Ops Op,PkgIterator Pkg,string File = "") : Op(Op), 
+      Item(Ops Op,PkgIterator Pkg,string File = "") : Op(Op),
             File(File), Pkg(Pkg) {};
       Item() {};
       
@@ -36,6 +37,7 @@ class pkgDPkgPM : public pkgPackageManager
    // Helpers
    bool RunScripts(const char *Cnf);
    bool RunScriptsWithPkgs(const char *Cnf);
+   bool SendV2Pkgs(FILE *F);
    
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);
@@ -46,7 +48,7 @@ class pkgDPkgPM : public pkgPackageManager
    
    public:
 
-   pkgDPkgPM(pkgDepCache &Cache);
+   pkgDPkgPM(pkgDepCache *Cache);
    virtual ~pkgDPkgPM();
 };
 

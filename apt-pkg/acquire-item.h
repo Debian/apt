@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.24 2000/01/27 04:15:09 jgg Exp $
+// $Id: acquire-item.h,v 1.25 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -21,7 +21,7 @@
 #define PKGLIB_ACQUIRE_ITEM_H
 
 #include <apt-pkg/acquire.h>
-#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/pkgrecords.h>
 
 #ifdef __GNUG__
@@ -49,7 +49,7 @@ class pkgAcquire::Item
    string ErrorText;
    unsigned long FileSize;
    unsigned long PartialSize;   
-   char *Mode;
+   const char *Mode;
    unsigned long ID;
    bool Complete;
    bool Local;
@@ -82,10 +82,10 @@ class pkgAcqIndex : public pkgAcquire::Item
 {
    protected:
    
-   const pkgSourceList::Item *Location;
    bool Decompression;
    bool Erase;
    pkgAcquire::ItemDesc Desc;
+   string RealURI;
    
    public:
    
@@ -93,9 +93,10 @@ class pkgAcqIndex : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
-   virtual string DescURI() {return Location->PackagesURI();};
+   virtual string DescURI() {return RealURI;};
 
-   pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location);
+   pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
+	       string ShortDesct);
 };
 
 // Item class for index files
@@ -103,8 +104,8 @@ class pkgAcqIndexRel : public pkgAcquire::Item
 {
    protected:
    
-   const pkgSourceList::Item *Location;
    pkgAcquire::ItemDesc Desc;
+   string RealURI;
    
    public:
    
@@ -113,9 +114,10 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);   
    virtual string Custom600Headers();
-   virtual string DescURI() {return Location->ReleaseURI();};
+   virtual string DescURI() {return RealURI;};
    
-   pkgAcqIndexRel(pkgAcquire *Owner,const pkgSourceList::Item *Location);
+   pkgAcqIndexRel(pkgAcquire *Owner,string URI,string URIDesc,
+	       string ShortDesct);
 };
 
 // Item class for archive files

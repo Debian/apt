@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.cc,v 1.7 2000/06/18 06:04:45 jgg Exp $
+// $Id: rfc2553emu.cc,v 1.8 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -36,20 +36,6 @@ int getaddrinfo(const char *nodename, const char *servname,
    const char *End;
    char **CurAddr;
    
-   Addr = gethostbyname(nodename);
-   if (Addr == 0)
-   {
-      if (h_errno == TRY_AGAIN)
-	 return EAI_AGAIN;
-      if (h_errno == NO_RECOVERY)
-	 return EAI_FAIL;
-      return EAI_NONAME;
-   }
-   
-   // No A records 
-   if (Addr->h_addr_list[0] == 0)
-      return EAI_NONAME;
-
    // Try to convert the service as a number
    Port = htons(strtol(servname,(char **)&End,0));
    Proto = SOCK_STREAM;
@@ -86,10 +72,32 @@ int getaddrinfo(const char *nodename, const char *servname,
 	  hints->ai_socktype != 0)
 	 return EAI_SERVICE;
    }
+      
+   // Hostname lookup, only if this is not a listening socket
+   if (hints != 0 && (hints->ai_flags & AI_PASSIVE) != AI_PASSIVE)
+   {
+      Addr = gethostbyname(nodename);
+      if (Addr == 0)
+      {
+	 if (h_errno == TRY_AGAIN)
+	    return EAI_AGAIN;
+	 if (h_errno == NO_RECOVERY)
+	    return EAI_FAIL;
+	 return EAI_NONAME;
+      }
+   
+      // No A records 
+      if (Addr->h_addr_list[0] == 0)
+	 return EAI_NONAME;
+      
+      CurAddr = Addr->h_addr_list;
+   }
+   else
+      CurAddr = (char **)&End;    // Fake!
    
    // Start constructing the linked list
    *res = 0;
-   for (CurAddr = Addr->h_addr_list; *CurAddr != 0; CurAddr++)
+   for (; *CurAddr != 0; CurAddr++)
    {
       // New result structure
       *Result = (struct addrinfo *)calloc(sizeof(**Result),1);
@@ -124,8 +132,15 @@ int getaddrinfo(const char *nodename, const char *servname,
       // Set the address
       ((struct sockaddr_in *)(*Result)->ai_addr)->sin_family = AF_INET;
       ((struct sockaddr_in *)(*Result)->ai_addr)->sin_port = Port;
-      ((struct sockaddr_in *)(*Result)->ai_addr)->sin_addr = *(in_addr *)(*CurAddr);
-
+      
+      if (hints != 0 && (hints->ai_flags & AI_PASSIVE) != AI_PASSIVE)
+	 ((struct sockaddr_in *)(*Result)->ai_addr)->sin_addr = *(in_addr *)(*CurAddr);
+      else
+      {
+         // Already zerod by calloc.
+	 break;
+      }
+      
       Result = &(*Result)->ai_next;
    }
    

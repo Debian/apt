@@ -1,4 +1,4 @@
-// $Id: configure-index,v 1.2 2000/05/13 01:52:59 jgg Exp $
+// $Id: configure-index,v 1.3 2001/02/20 07:03:17 jgg Exp $
 /* This file is an index of all APT configuration directives. It should
    NOT actually be used as a real config file, though it is a completely
    valid file. Most of the options have sane default values, unless
@@ -32,15 +32,15 @@ APT
      Fix-Broken "false";  
      Fix-Missing "false";     
      Show-Upgraded "false";
-     No-Upgrade "false";
+     Upgrade "true";
      Print-URIs "false";
      Compile "false";
-     No-Download "false";
+     Download "true";
      Purge "false";
      List-Cleanup "true";
      ReInstall "false";
      Trivial-Only "false";
-     No-Remove "false";
+     Remove "true";
   };
 
   Cache 
@@ -48,6 +48,7 @@ APT
      Important "false";
      AllVersions "false";
      GivenOnly "false";
+     RecruseDepends "false";
   };
 
   CDROM 
@@ -125,10 +126,10 @@ Acquire
 };
 
 // Directory layout
-Dir 
+Dir "/"
 {
   // Location of the state dir
-  State "/var/state/apt/" 
+  State "var/lib/apt/" 
   {
      lists "lists/";
      xstatus "xstatus";
@@ -138,16 +139,17 @@ Dir
   };
   
   // Location of the cache dir
-  Cache "/var/cache/apt/" {
+  Cache "var/cache/apt/" {
      archives "archives/";
      srcpkgcache "srcpkgcache.bin";
      pkgcache "pkgcache.bin";     
   };
   
   // Config files
-  Etc "/etc/apt/" {
+  Etc "etc/apt/" {
      sourcelist "sources.list";
      main "apt.conf";
+     preferences "preferences";     
   };
   
   // Locations of binaries
@@ -169,6 +171,7 @@ DSelect
    Options "-f";
    UpdateOptions "";
    PromptAfterUpdate "no";
+   CheckDir "no";
 }
 
 DPkg 
@@ -201,6 +204,7 @@ Debug
   pkgAcquire "false";
   pkgAcquire::Worker "false";
   pkgDPkgPM "false";
+  pkgOrderList "false";
   
   pkgInitialize "false";   // This one will dump the configuration space
   NoLocking "false";

@@ -1,0 +1,89 @@
+libapt-pkg v2 to v3 incorperates several source-incompatible changes that
+people need to be aware of.. Many of this changes are done so that most old
+source will continue to function, but perhaps at reduced functionality.
+
+* pkgDepCache is no longer self initilizing, you have to call the Init
+  method seperately after constructing it. Users of pkgCacheFile do not
+  need to worry about this
+* GetCandidateVer/etc is gone from the pkgCache. It exists only in the 
+  DepCache and is just an inline around the new Policy class
+* TargetVer/TargetDist have been eliminated. Nothing should have been using
+  these.
+* There is a policy class. The v0 policy engine which has been used since
+  APT 0.0.0 is instantiated by the DepCache by default. However pkgCacheFile 
+  constructs and initializes the new v4 engine. People accessing GetCandidate
+  version outside of a CacheFile/DepCache will need to instantiate and 
+  initialize a policy engine on their own.
+* All byte counters are now doubles to advoid 4G wraparound. The compiler 
+  should generate warnings on any incorrect use of these.
+* The PriorityType/CompType/DepType functions have been moved out of the 
+  iterators and into generate static functions of pkgCache - inline stubs
+  are left in the iterators. 
+* The deb dependency element parser has been made into a static function
+  of the list parser and enhanced to optionally understand architecture 
+  restrictions.
+* TagSections no longer include the trailing \n. This means that the 
+  Offset/Length of a package record in the version structure also does not
+  include the trailing \n.
+* GenCaches::SelectFile accepts a site parameter now too.
+* Global version compare functions are gone. If you 
+    #define APT_COMPATABILITY 1
+  They will come back as they were before. Code should be updated to 
+  reference the compare functions to the VersioningSystem (VS) referenced
+  by the Cache or _system structures.
+* Initialization is now two stage (define APT_COMPATABILITY..) The first
+  stage, pkgInitConfig is called before commandline parsing, and
+  pkgInitSystem is called after. This gives the user the oppertunity to
+  override default settings from the config files before startup has been
+  finalized.
+* pkgSourceList has been gutted. All the junk that was in there before is
+  cleaned up and put in the pkgIndexFile class. There is very little API
+  corrispondence here.. 
+* pkgMakeStatusCacheMem is gone, pkgMakeStatusCache does the same thing if
+  you set the AllowMem flag. Also, you can get a copy of the map used to
+  store the cache to advoid having to remap it in the calling code. A bunch
+  of other cache related functions are gone, but nobody should have been using
+  them in the first place!
+* Downloading the 'Package' and 'Source' index files is different, use
+  the GetIndexes call in SourceList.
+* SourceRecords::Parser::Source is gone, replaced with Index which does 
+  much the same thing.
+* DynamicMap has changed slightly, nobody should care
+* pkgMakeOnlyStatusCache exists, which creates a really small cache that
+  only contains the status file, and in memory.
+* The pkgRecords stuff is changed to abstract through the index file list
+  (should be transparent largely)
+* Locking is handled differently, there is no dpkg lock class, the _system
+  class provides Lock/UnLock methods
+* pkgDepCache is not a subclass of pkgCache, it agregates it now. Some 
+  compatibility functions are provided that make this transition fairly 
+  easy.
+* The following functions have had minor argument changes:
+   -   pkgSimulate(pkgDepCache &Cache);
+   +   pkgSimulate(pkgDepCache *Cache);
+   
+   -   pkgProblemResolver(pkgDepCache &Cache);
+   +   pkgProblemResolver(pkgDepCache *Cache);
+   
+   -   pkgDepCache(MMap &Map,Policy *Plcy = 0);
+   +   pkgDepCache(pkgCache *Cache,Policy *Plcy = 0);
+   
+   -   pkgOrderList(pkgDepCache &Cache);
+   +   pkgOrderList(pkgDepCache *Cache);
+   
+   -   pkgPackageManager(pkgDepCache &Cache);
+   +   pkgPackageManager(pkgDepCache *Cache);
+   
+   -   pkgCache(MMap &Map,bool DoMap = true);
+   +   pkgCache(MMap *Map,bool DoMap = true);
+   
+   -   pkgCacheGenerator(DynamicMMap &Map,OpProgress &Progress);
+   +   pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
+   
+   -   pkgTagFile(FileFd &F,unsigned long Size = 32*1024);
+   +   pkgTagFile(FileFd *F,unsigned long Size = 32*1024);
+   
+* Configuration class is const-correct  
+* The legacy ability to create a PkgFileIterator that started at Begin
+  is gone, everyone should be using FileBegin().
+* A new dependency relation called obsoletes that is similar to conflicts.

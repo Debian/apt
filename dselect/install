@@ -5,11 +5,15 @@ CLEAN="prompt"
 OPTS="-f"
 APTGET="/usr/bin/apt-get"
 DPKG="/usr/bin/dpkg"
+DPKG_OPTS="--admindir=$1"
+APT_OPT0="-oDir::State::status=$1/status"
+APT_OPT1="-oDPkg::Options::=$DPKG_OPTS"
 set -e
 RES=`apt-config shell CLEAN DSelect::Clean OPTS DSelect::Options \
-                      DPKG Dir::Bin::dpkg APTGET Dir::Bin::apt-get \
-		      ARCHIVES Dir::Cache::Archives/ \
-		      WAIT DSelect::WaitAfterDownload`
+                      DPKG Dir::Bin::dpkg/f APTGET Dir::Bin::apt-get/f \
+		      ARCHIVES Dir::Cache::Archives/d \
+		      WAIT DSelect::WaitAfterDownload/b \
+		      CHECKDIR DSelect::CheckDir/b`
 eval $RES
 set +e
 
@@ -39,14 +43,13 @@ yesno() {
 	echo $ans | tr YN yn
 }
 
-OLDLS=`ls -ld $ARCHIVES`
-if [ x$WAIT = "xyes" ]; then
-   $APTGET $OPTS -d dselect-upgrade
+if [ x$WAIT = "xtrue" ]; then
+   $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" -d dselect-upgrade
    echo "Press enter to continue." && read RES
-   $APTGET $OPTS dselect-upgrade
+   $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
    RES=$?
 else
-   $APTGET $OPTS dselect-upgrade
+   $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
    RES=$?
 fi
 
@@ -64,22 +67,27 @@ if [ $RES -eq 0 ]; then
    fi
 
    NEWLS=`ls -ld $ARCHIVES`
-   if [ "x$OLDLS" = "x$NEWLS" ]; then
-      exit 0
+   if [ x$CHECKDIR = "xtrue" ]; then
+      if [ "x$OLDLS" = "x$NEWLS" ]; then
+         exit 0
+      fi
    fi
    
    # Check the cleaning mode
    case `echo $CLEAN | tr '[:upper:]' '[:lower:]'` in
      auto)
-       $APTGET autoclean && echo "Press enter to continue." && read RES && exit 0;
+       $APTGET "$APT_OPT0" "$APT_OPT1" autoclean &&
+	   echo "Press enter to continue." && read RES && exit 0;
        ;;
      always)
-       $APTGET clean && echo "Press enter to continue." && read RES && exit 0;
+       $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
+	   echo "Press enter to continue." && read RES && exit 0;
        ;;
      prompt)
        exec 3>&1
-       if [ `yesno "Do you want to erase the downloaded .deb files?" y` = y ]; then
-          $APTGET clean && echo "Press enter to continue." && read RES && exit 0;
+       if [ `yesno "Do you want to erase any previously downloaded .deb files?" y` = y ]; then
+          $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
+	    echo "Press enter to continue." && read RES && exit 0;
        fi
        ;;
      *) 
@@ -91,7 +99,7 @@ else
    echo "or errors caused by missing dependencies. This is OK, only the errors"
    echo "above this message are important. Please fix them and run [I]nstall again"
    echo "Press enter to continue."
-   read RES && $DPKG --configure -a
+   read RES && $DPKG "$DPKG_OPTS" --configure -a
    exit 100
 fi
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.cc,v 1.4 1999/06/24 04:06:30 jgg Exp $
+// $Id: cachefile.cc,v 1.5 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -21,23 +21,29 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/policy.h>
+#include <apt-pkg/pkgsystem.h>
+    
+#include <apti18n.h>
 									/*}}}*/
 
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgCacheFile::pkgCacheFile() : Map(0), Cache(0), Lock(0) 
+pkgCacheFile::pkgCacheFile() : Map(0), Cache(0), DCache(0), Policy(0)
 {
 }
 									/*}}}*/
-// CacheFile::~CacheFile - Destructor						/*{{{*/
+// CacheFile::~CacheFile - Destructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgCacheFile::~pkgCacheFile()
 {
+   delete DCache;
+   delete Policy;
    delete Cache;
    delete Map;
-   delete Lock;
+   _system->UnLock(true);
 }   
 									/*}}}*/
 // CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
@@ -46,7 +52,8 @@ pkgCacheFile::~pkgCacheFile()
 bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
 {
    if (WithLock == true)
-      Lock = new pkgDpkgLock;
+      if (_system->Lock() == false)
+	 return false;
    
    if (_error->PendingError() == true)
       return false;
@@ -54,42 +61,57 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
    // Read the source list
    pkgSourceList List;
    if (List.ReadMainList() == false)
-      return _error->Error("The list of sources could not be read.");
+      return _error->Error(_("The list of sources could not be read."));
+
+   // Read the caches
+   bool Res = pkgMakeStatusCache(List,Progress,&Map,!WithLock);
+   Progress.Done();
+   if (Res == false)
+      return _error->Error(_("The package lists or status file could not be parsed or opened."));
+
+   /* This sux, remove it someday */
+   if (_error->empty() == false)
+      _error->Warning(_("You may want to run apt-get update to correct these missing files"));
+
+   Cache = new pkgCache(Map);
+   if (_error->PendingError() == true)
+      return false;
    
-   /* Build all of the caches, using the cache files if we are locking 
-      (ie as root) */
-   if (WithLock == true)
-   {
-      pkgMakeStatusCache(List,Progress);
-      Progress.Done();
-      if (_error->PendingError() == true)
-	 return _error->Error("The package lists or status file could not be parsed or opened.");
-      if (_error->empty() == false)
-	 _error->Warning("You may want to run apt-get update to correct these missing files");
-      
-      // Open the cache file
-      FileFd File(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-	 return false;
-      
-      Map = new MMap(File,MMap::Public | MMap::ReadOnly);
-      if (_error->PendingError() == true)
-	 return false;
-   }
-   else
-   {
-      Map = pkgMakeStatusCacheMem(List,Progress);
-      Progress.Done();
-      if (Map == 0)
-	 return false;
-   }
+   // The policy engine
+   Policy = new pkgPolicy(Cache);
+   if (_error->PendingError() == true)
+      return false;
+   if (ReadPinFile(*Policy) == false)
+      return false;
    
    // Create the dependency cache
-   Cache = new pkgDepCache(*Map,Progress);
+   DCache = new pkgDepCache(Cache,Policy);
+   if (_error->PendingError() == true)
+      return false;
+   
+   DCache->Init(&Progress);
    Progress.Done();
    if (_error->PendingError() == true)
       return false;
    
    return true;
+}
+									/*}}}*/
+
+// CacheFile::Close - close the cache files				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgCacheFile::Close()
+{
+   delete DCache;
+   delete Policy;
+   delete Cache;
+   delete Map;
+   _system->UnLock(true);
+
+   Map = 0;
+   DCache = 0;
+   Policy = 0;
+   Cache = 0;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.h,v 1.3 1999/06/27 03:18:28 jgg Exp $
+// $Id: cachefile.h,v 1.4 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -8,6 +8,9 @@
    This class implements a simple 2 line mechanism to open various sorts
    of caches. It can operate as root, as not root, show progress and so on,
    it transparently handles everything necessary.
+   
+   This means it can rebuild caches from the source list and instantiates
+   and prepares the standard policy mechanism.
    
    ##################################################################### */
 									/*}}}*/
@@ -19,30 +22,32 @@
 #endif 
 
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/dpkginit.h>
 
+class pkgPolicy;
 class pkgCacheFile
 {
    protected:
    
    MMap *Map;
-   pkgDepCache *Cache;
-   pkgDpkgLock *Lock;
+   pkgCache *Cache;
+   pkgDepCache *DCache;
    
    public:
+
+   pkgPolicy *Policy;
       
    // We look pretty much exactly like a pointer to a dep cache
-   inline operator pkgDepCache &() {return *Cache;};
-   inline operator pkgDepCache *() {return Cache;};
-   inline pkgDepCache *operator ->() {return Cache;};
-   inline pkgDepCache &operator *() {return *Cache;};
-   inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) {return (*Cache)[I];};
-   inline unsigned char &operator [](pkgCache::DepIterator const &I) {return (*Cache)[I];};
+   inline operator pkgCache &() {return *Cache;};
+   inline operator pkgCache *() {return Cache;};
+   inline operator pkgDepCache &() {return *DCache;};
+   inline operator pkgDepCache *() {return DCache;};
+   inline pkgDepCache *operator ->() {return DCache;};
+   inline pkgDepCache &operator *() {return *DCache;};
+   inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) {return (*DCache)[I];};
+   inline unsigned char &operator [](pkgCache::DepIterator const &I) {return (*DCache)[I];};
 
-   // Release the dpkg status lock
-   inline void ReleaseLock() {Lock->Close();};
-   
    bool Open(OpProgress &Progress,bool WithLock = true);
+   void Close();
    
    pkgCacheFile();
    ~pkgCacheFile();

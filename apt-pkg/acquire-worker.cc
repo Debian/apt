@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.31 2000/05/10 05:56:46 jgg Exp $
+// $Id: acquire-worker.cc,v 1.32 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -22,6 +22,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
+#include <apti18n.h>
+    
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -102,7 +104,7 @@ bool pkgAcquire::Worker::Start()
    // Get the method path
    string Method = _config->FindDir("Dir::Bin::Methods") + Access;
    if (FileExists(Method) == false)
-      return _error->Error("The method driver %s could not be found.",Method.c_str());
+      return _error->Error(_("The method driver %s could not be found."),Method.c_str());
 
    if (Debug == true)
       clog << "Starting method '" << Method << '\'' << endl;
@@ -154,7 +156,7 @@ bool pkgAcquire::Worker::Start()
    // Read the configuration data
    if (WaitFd(InFd) == false ||
        ReadMessages() == false)
-      return _error->Error("Method %s did not start correctly",Method.c_str());
+      return _error->Error(_("Method %s did not start correctly"),Method.c_str());
 
    RunMessages();
    if (OwnerQ != 0)
@@ -260,9 +262,9 @@ bool pkgAcquire::Worker::RunMessages()
 	       Log->Pulse(Owner->GetOwner());
 	    
 	    OwnerQ->ItemDone(Itm);
-	    if (TotalSize != 0 && 
+	    if (TotalSize != 0 &&
 		(unsigned)atoi(LookupTag(Message,"Size","0").c_str()) != TotalSize)
-	       _error->Warning("Bizzar Error - File size is not what the server reported %s %u",
+	       _error->Warning("Bizarre Error - File size is not what the server reported %s %lu",
 			       LookupTag(Message,"Size","0").c_str(),TotalSize);
 
 	    Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
@@ -313,7 +315,7 @@ bool pkgAcquire::Worker::RunMessages()
 	 
 	 // 401 General Failure
 	 case 401:
-	 _error->Error("Method %s General failure: %s",LookupTag(Message,"Message").c_str());
+	 _error->Error("Method %s General failure: %s",Access.c_str(),LookupTag(Message,"Message").c_str());
 	 break;
 	 
 	 // 403 Media Change
@@ -405,7 +407,7 @@ bool pkgAcquire::Worker::SendConfiguration()
    {
       if (Top->Value.empty() == false)
       {
-	 string Line = "Config-Item: " + Top->FullTag() + "=";
+	 string Line = "Config-Item: " + QuoteString(Top->FullTag(),"=\"\n") + "=";
 	 Line += QuoteString(Top->Value,"\n") + '\n';
 	 Message += Line;
       }

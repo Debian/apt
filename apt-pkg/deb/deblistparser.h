@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.h,v 1.8 1999/07/26 17:46:08 jgg Exp $
+// $Id: deblistparser.h,v 1.9 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Debian Package List Parser - This implements the abstract parser 
@@ -8,7 +8,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_DEBLISTPARSER_H
 #define PKGLIB_DEBLISTPARSER_H
 
@@ -17,29 +16,33 @@
 
 class debListParser : public pkgCacheGenerator::ListParser
 {
+   public:
+
+   // Parser Helper
+   struct WordList
+   {
+      const char *Str;
+      unsigned char Val;
+   };
+   
+   private:
+   
    pkgTagFile Tags;
    pkgTagSection Section;
    unsigned long iOffset;
    string Arch;
    
-   // Parser Helper
-   struct WordList
-   {
-      char *Str;
-      unsigned char Val;
-   };
-   
    unsigned long UniqFindTagWrite(const char *Tag);
    bool ParseStatus(pkgCache::PkgIterator Pkg,pkgCache::VerIterator Ver);
-   const char *ParseDepends(const char *Start,const char *Stop,
-			    string &Package,string &Ver,unsigned int &Op);
    bool ParseDepends(pkgCache::VerIterator Ver,const char *Tag,
 		     unsigned int Type);
    bool ParseProvides(pkgCache::VerIterator Ver);
-   bool GrabWord(string Word,WordList *List,int Count,unsigned char &Out);
+   static bool GrabWord(string Word,WordList *List,unsigned char &Out);
    
    public:
-   
+
+   static unsigned char GetPrio(string Str);
+      
    // These all operate against the current section
    virtual string Package();
    virtual string Version();
@@ -51,10 +54,15 @@ class debListParser : public pkgCacheGenerator::ListParser
    virtual unsigned long Size() {return Section.size();};
 
    virtual bool Step();
-
+   
    bool LoadReleaseInfo(pkgCache::PkgFileIterator FileI,FileFd &File);
    
-   debListParser(FileFd &File);
+   static const char *ParseDepends(const char *Start,const char *Stop,
+			    string &Package,string &Ver,unsigned int &Op,
+			    bool ParseArchFlags = false);
+   static const char *ConvertRelation(const char *I,unsigned int &Op);
+
+   debListParser(FileFd *File);
 };
 
 #endif

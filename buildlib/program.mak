@@ -24,6 +24,9 @@ program: $(BIN)/$(PROGRAM)
 clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
+# Make Directories
+MKDIRS += $(OBJ) $(DEP) $(BIN)
+
 # The clean rules
 .PHONY: clean/$(LOCAL) veryclean/$(LOCAL) 
 clean/$(LOCAL):

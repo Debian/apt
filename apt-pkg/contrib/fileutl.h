@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.22 1999/09/30 06:30:34 jgg Exp $
+// $Id: fileutl.h,v 1.23 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -49,7 +49,8 @@ class FileFd
    unsigned long Size();
    bool Open(string FileName,OpenMode Mode,unsigned long Perms = 0666);
    bool Close();
-
+   bool Sync();
+   
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) {iFd = fd;};
@@ -84,5 +85,7 @@ bool ExecWait(int Pid,const char *Name,bool Reap = false);
 string flNotDir(string File);
 string flNotFile(string File);
 string flNoLink(string File);
+string flExtension(string File);
+string flCombine(string Dir,string File);
 
 #endif

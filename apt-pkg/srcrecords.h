@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.5 1999/10/18 03:44:39 jgg Exp $
+// $Id: srcrecords.h,v 1.6 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -17,9 +17,11 @@
 #pragma interface "apt-pkg/srcrecords.h"
 #endif 
 
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/sourcelist.h>
+#include <string>
+#include <vector>    
 
+class pkgSourceList;
+class pkgIndexFile;
 class pkgSrcRecords
 {
    public:
@@ -30,17 +32,30 @@ class pkgSrcRecords
       string MD5Hash;
       unsigned long Size;
       string Path;
+      string Type;
    };
    
    // Abstract parser for each source record
    class Parser
    {
-      FileFd *File;
-      pkgSourceList::const_iterator SrcItem;
+      protected:
+      
+      const pkgIndexFile *iIndex;
       
       public:
 
-      inline pkgSourceList::const_iterator Source() const {return SrcItem;};
+      enum BuildDep {BuildDepend=0x0,BuildDependIndep=0x1,
+	             BuildConflict=0x2,BuildConflictIndep=0x3};
+
+      struct BuildDepRec 
+      {
+         string Package;
+	 string Version;
+	 unsigned int Op;
+	 unsigned char Type;
+      };
+	
+      inline const pkgIndexFile &Index() const {return *iIndex;};
       
       virtual bool Restart() = 0;
       virtual bool Step() = 0;
@@ -48,16 +63,19 @@ class pkgSrcRecords
       virtual unsigned long Offset() = 0;
       virtual string AsStr() = 0;
       
-      virtual string Package() = 0;
-      virtual string Version() = 0;
-      virtual string Maintainer() = 0;
-      virtual string Section() = 0;
-      virtual const char **Binaries() = 0;
+      virtual string Package() const = 0;
+      virtual string Version() const = 0;
+      virtual string Maintainer() const = 0;
+      virtual string Section() const = 0;
+      virtual const char **Binaries() = 0;   // Ownership does not transfer
+
+      virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps) = 0;
+      static const char *BuildDepType(unsigned char Type);
+
       virtual bool Files(vector<pkgSrcRecords::File> &F) = 0;
       
-      Parser(FileFd *File,pkgSourceList::const_iterator SrcItem) : File(File), 
-             SrcItem(SrcItem) {};
-      virtual ~Parser() {delete File;};
+      Parser(const pkgIndexFile *Index) : iIndex(Index) {};
+      virtual ~Parser() {};
    };
    
    private:
@@ -77,6 +95,5 @@ class pkgSrcRecords
    pkgSrcRecords(pkgSourceList &List);
    ~pkgSrcRecords();
 };
-
 
 #endif

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.14 2000/01/16 05:36:17 jgg Exp $
+// $Id: configuration.cc,v 1.15 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -18,9 +18,17 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
+#include <apti18n.h>
 
+#include <vector>
+#include <algorithm>
+#include <fstream>
+    
 #include <stdio.h>
-#include <fstream.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 									/*}}}*/
 
 Configuration *_config = new Configuration;
@@ -28,9 +36,45 @@ Configuration *_config = new Configuration;
 // Configuration::Configuration - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-Configuration::Configuration()
+Configuration::Configuration() : ToFree(true)
 {
    Root = new Item;
+}
+Configuration::Configuration(const Item *Root) : Root((Item *)Root), ToFree(false)
+{
+};
+
+									/*}}}*/
+// Configuration::~Configuration - Destructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+Configuration::~Configuration()
+{
+   if (ToFree == false)
+      return;
+   
+   Item *Top = Root;
+   for (; Top != 0;)
+   {
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+            
+      while (Top != 0 && Top->Next == 0)
+      {
+	 Item *Parent = Top->Parent;
+	 delete Top;
+	 Top = Parent;
+      }      
+      if (Top != 0)
+      {
+	 Item *Next = Top->Next;
+	 delete Top;
+	 Top = Next;
+      }
+   }
 }
 									/*}}}*/
 // Configuration::Lookup - Lookup a single item				/*{{{*/
@@ -105,9 +149,9 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool Create)
 // Configuration::Find - Find a value					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string Configuration::Find(const char *Name,const char *Default)
+string Configuration::Find(const char *Name,const char *Default) const
 {
-   Item *Itm = Lookup(Name,false);
+   const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
    {
       if (Default == 0)
@@ -124,9 +168,9 @@ string Configuration::Find(const char *Name,const char *Default)
 /* Directories are stored as the base dir in the Parent node and the
    sub directory in sub nodes with the final node being the end filename
  */
-string Configuration::FindFile(const char *Name,const char *Default)
+string Configuration::FindFile(const char *Name,const char *Default) const
 {
-   Item *Itm = Lookup(Name,false);
+   const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
    {
       if (Default == 0)
@@ -135,26 +179,35 @@ string Configuration::FindFile(const char *Name,const char *Default)
 	 return Default;
    }
    
-   // Absolute path
-   if (Itm->Value[0] == '/' || Itm->Parent == 0)
-      return Itm->Value;
-   
-   // ./ is also considered absolute as is anything with ~ in it
-   if (Itm->Value[0] != 0 && 
-       ((Itm->Value[0] == '.' && Itm->Value[1] == '/') ||
-	(Itm->Value[0] == '~' && Itm->Value[1] == '/')))
-      return Itm->Value;
-   
-   if (Itm->Parent->Value.end()[-1] == '/')
-      return Itm->Parent->Value + Itm->Value;
-   else
-      return Itm->Parent->Value + '/' + Itm->Value;
+   string val = Itm->Value;
+   while (Itm->Parent != 0 && Itm->Parent->Value.empty() == false)
+   {	 
+      // Absolute
+      if (val.length() >= 1 && val[0] == '/')
+         break;
+
+      // ~/foo or ./foo 
+      if (val.length() >= 2 && (val[0] == '~' || val[0] == '.') && val[1] == '/')
+	 break;
+	 
+      // ../foo 
+      if (val.length() >= 3 && val[0] == '.' && val[1] == '.' && val[2] == '/')
+	 break;
+      
+      if (Itm->Parent->Value.end()[-1] != '/')
+	 val.insert(0, "/");
+
+      val.insert(0, Itm->Parent->Value);
+      Itm = Itm->Parent;
+   }
+
+   return val;
 }
 									/*}}}*/
 // Configuration::FindDir - Find a directory name			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is like findfile execept the result is terminated in a / */
-string Configuration::FindDir(const char *Name,const char *Default)
+string Configuration::FindDir(const char *Name,const char *Default) const
 {
    string Res = FindFile(Name,Default);
    if (Res.end()[-1] != '/')
@@ -165,9 +218,9 @@ string Configuration::FindDir(const char *Name,const char *Default)
 // Configuration::FindI - Find an integer value				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int Configuration::FindI(const char *Name,int Default)
+int Configuration::FindI(const char *Name,int Default) const
 {
-   Item *Itm = Lookup(Name,false);
+   const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
       return Default;
    
@@ -182,13 +235,66 @@ int Configuration::FindI(const char *Name,int Default)
 // Configuration::FindB - Find a boolean type				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Configuration::FindB(const char *Name,bool Default)
+bool Configuration::FindB(const char *Name,bool Default) const
 {
-   Item *Itm = Lookup(Name,false);
+   const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
       return Default;
    
    return StringToBool(Itm->Value,Default);
+}
+									/*}}}*/
+// Configuration::FindAny - Find an arbitrary type			/*{{{*/
+// ---------------------------------------------------------------------
+/* a key suffix of /f, /d, /b or /i calls Find{File,Dir,B,I} */
+string Configuration::FindAny(const char *Name,const char *Default) const
+{
+   string key = Name;
+   char type = 0;
+
+   if (key.size() > 2 && key.end()[-2] == '/')
+   {
+      type = key.end()[-1];
+      key.resize(key.size() - 2);
+   }
+
+   switch (type)
+   {
+      // file
+      case 'f': 
+      return FindFile(key.c_str(), Default);
+      
+      // directory
+      case 'd': 
+      return FindDir(key.c_str(), Default);
+      
+      // bool
+      case 'b': 
+      return FindB(key, Default) ? "true" : "false";
+      
+      // int
+      case 'i': 
+      {
+	 char buf[16];
+	 snprintf(buf, sizeof(buf)-1, "%d", FindI(key, Default));
+	 return buf;
+      }
+   }
+
+   // fallback
+   return Find(Name, Default);
+}
+									/*}}}*/
+// Configuration::CndSet - Conditinal Set a value			/*{{{*/
+// ---------------------------------------------------------------------
+/* This will not overwrite */
+void Configuration::CndSet(const char *Name,string Value)
+{
+   Item *Itm = Lookup(Name,true);
+   if (Itm == 0)
+      return;
+   if (Itm->Value.empty() == true)
+      Itm->Value = Value;
 }
 									/*}}}*/
 // Configuration::Set - Set a value					/*{{{*/
@@ -215,15 +321,71 @@ void Configuration::Set(const char *Name,int Value)
    Itm->Value = S;
 }
 									/*}}}*/
+// Configuration::Clear - Clear an entire tree				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void Configuration::Clear(string Name)
+{
+   Item *Top = Lookup(Name.c_str(),false);
+   if (Top == 0)
+      return;
+   
+   Top->Value = string();
+   Item *Stop = Top;
+   Top = Top->Child;
+   Stop->Child = 0;
+   for (; Top != 0;)
+   {
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+
+      while (Top != 0 && Top->Next == 0)
+      {
+	 Item *Tmp = Top;
+	 Top = Top->Parent;
+	 delete Tmp;
+	 
+	 if (Top == Stop)
+	    return;
+      }
+      
+      Item *Tmp = Top;
+      if (Top != 0)
+	 Top = Top->Next;
+      delete Tmp;
+   }
+}
+									/*}}}*/
 // Configuration::Exists - Returns true if the Name exists		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Configuration::Exists(const char *Name)
+bool Configuration::Exists(const char *Name) const
 {
-   Item *Itm = Lookup(Name,false);
+   const Item *Itm = Lookup(Name);
    if (Itm == 0)
       return false;
    return true;
+}
+									/*}}}*/
+// Configuration::ExistsAny - Returns true if the Name, possibly	/*{{{*/
+// ---------------------------------------------------------------------
+/* qualified by /[fdbi] exists */
+bool Configuration::ExistsAny(const char *Name) const
+{
+   string key = Name;
+
+   if (key.size() > 2 && key.end()[-2] == '/' &&
+       key.find_first_of("fdbi",key.size()-1) < key.size())
+   {
+      key.resize(key.size() - 2);
+      if (Exists(key.c_str()))
+	 return true;
+   }
+
+   return Exists(Name);
 }
 									/*}}}*/
 // Configuration::Dump - Dump the config				/*{{{*/
@@ -233,7 +395,7 @@ void Configuration::Dump()
 {
    /* Write out all of the configuration directives by walking the 
       configuration tree */
-   const Configuration::Item *Top = _config->Tree(0);
+   const Configuration::Item *Top = Tree(0);
    for (; Top != 0;)
    {
       clog << Top->FullTag() << " \"" << Top->Value << "\";" << endl;
@@ -248,31 +410,37 @@ void Configuration::Dump()
 	 Top = Top->Parent;
       if (Top != 0)
 	 Top = Top->Next;
-   }   
+   }
 }
 									/*}}}*/
 
 // Configuration::Item::FullTag - Return the fully scoped tag		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-string Configuration::Item::FullTag() const
+/* Stop sets an optional max recursion depth if this item is being viewed as
+   part of a sub tree. */
+string Configuration::Item::FullTag(const Item *Stop) const
 {
-   if (Parent == 0 || Parent->Parent == 0)
+   if (Parent == 0 || Parent->Parent == 0 || Parent == Stop)
       return Tag;
-   return Parent->FullTag() + "::" + Tag;
+   return Parent->FullTag(Stop) + "::" + Tag;
 }
 									/*}}}*/
 
 // ReadConfigFile - Read a configuration file				/*{{{*/
 // ---------------------------------------------------------------------
 /* The configuration format is very much like the named.conf format
-   used in bind8, in fact this routine can parse most named.conf files. */
-bool ReadConfigFile(Configuration &Conf,string FName)
-{
+   used in bind8, in fact this routine can parse most named.conf files. 
+   Sectional config files are like bind's named.conf where there are 
+   sections like 'zone "foo.org" { .. };' This causes each section to be
+   added in with a tag like "zone::foo.org" instead of being split 
+   tag/value. */
+bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
+		    unsigned Depth)
+{   
    // Open the stream for reading
    ifstream F(FName.c_str(),ios::in | ios::nocreate);
    if (!F != 0)
-      return _error->Errno("ifstream::ifstream","Opening configuration file %s",FName.c_str());
+      return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
    
    char Buffer[300];
    string LineBuffer;
@@ -366,7 +534,7 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	 
 	 if (InQuote == false && (*I == '{' || *I == ';' || *I == '}'))
 	 {
-	    // Put the last fragement into the buffer
+	    // Put the last fragment into the buffer
 	    char *Start = Buffer;
 	    char *Stop = I;
 	    for (; Start != I && isspace(*Start) != 0; Start++);
@@ -379,50 +547,64 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	    char TermChar = *I;
 	    memmove(Buffer,I + 1,strlen(I + 1) + 1);
 	    I = Buffer;
-
-	    // Move up a tag
-	    if (TermChar == '}')
-	    {
-	       if (StackPos == 0)
-		  ParentTag = string();
-	       else
-		  ParentTag = Stack[--StackPos];
-	    }
 	    
 	    // Syntax Error
 	    if (TermChar == '{' && LineBuffer.empty() == true)
-	       return _error->Error("Syntax error %s:%u: Block starts with no name.",FName.c_str(),CurLine);
+	       return _error->Error(_("Syntax error %s:%u: Block starts with no name."),FName.c_str(),CurLine);
 	    
+	    // No string on this line
 	    if (LineBuffer.empty() == true)
+	    {
+	       if (TermChar == '}')
+	       {
+		  if (StackPos == 0)
+		     ParentTag = string();
+		  else
+		     ParentTag = Stack[--StackPos];
+	       }
 	       continue;
-
+	    }
+	    
 	    // Parse off the tag
 	    string Tag;
 	    const char *Pos = LineBuffer.c_str();
 	    if (ParseQuoteWord(Pos,Tag) == false)
-	       return _error->Error("Syntax error %s:%u: Malformed Tag",FName.c_str(),CurLine);	    
-	    
-	    // Go down a level
-	    if (TermChar == '{')
-	    {
-	       if (StackPos <= 100)
-		  Stack[StackPos++] = ParentTag;
-	       if (ParentTag.empty() == true)
-		  ParentTag = Tag;
-	       else
-		  ParentTag += string("::") + Tag;
-	       Tag = string();
-	    }
+	       return _error->Error(_("Syntax error %s:%u: Malformed Tag"),FName.c_str(),CurLine);
 
 	    // Parse off the word
 	    string Word;
-	    if (ParseCWord(Pos,Word) == false)
+	    if (ParseCWord(Pos,Word) == false &&
+		ParseQuoteWord(Pos,Word) == false)
 	    {
 	       if (TermChar != '{')
 	       {
 		  Word = Tag;
 		  Tag = "";
 	       }	       
+	    }
+	    if (strlen(Pos) != 0)
+	       return _error->Error(_("Syntax error %s:%u: Extra junk after value"),FName.c_str(),CurLine);
+
+	    // Go down a level
+	    if (TermChar == '{')
+	    {
+	       if (StackPos <= 100)
+		  Stack[StackPos++] = ParentTag;
+	       
+	       /* Make sectional tags incorperate the section into the
+	          tag string */
+	       if (AsSectional == true && Word.empty() == false)
+	       {
+		  Tag += "::" ;
+		  Tag += Word;
+		  Word = "";
+	       }
+	       
+	       if (ParentTag.empty() == true)
+		  ParentTag = Tag;
+	       else
+		  ParentTag += string("::") + Tag;
+	       Tag = string();
 	    }
 	    
 	    // Generate the item name
@@ -437,11 +619,50 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 		  Item = ParentTag;
 	    }
 	    
-	    // Set the item in the configuration class
-	    Conf.Set(Item,Word);
-			    
+	    // Specials
+	    if (Tag.length() >= 1 && Tag[0] == '#')
+	    {
+	       if (ParentTag.empty() == false)
+		  return _error->Error(_("Syntax error %s:%u: Directives can only be done at the top level"),FName.c_str(),CurLine);
+	       Tag.erase(Tag.begin());
+	       if (Tag == "clear")
+		  Conf.Clear(Word);
+	       else if (Tag == "include")
+	       {
+		  if (Depth > 10)
+		     return _error->Error(_("Syntax error %s:%u: Too many nested includes"),FName.c_str(),CurLine);
+		  if (Word.length() > 2 && Word.end()[-1] == '/')
+		  {
+		     if (ReadConfigDir(Conf,Word,AsSectional,Depth+1) == false)
+			return _error->Error(_("Syntax error %s:%u: Included from here"),FName.c_str(),CurLine);
+		  }
+		  else
+		  {
+		     if (ReadConfigFile(Conf,Word,AsSectional,Depth+1) == false)
+			return _error->Error(_("Syntax error %s:%u: Included from here"),FName.c_str(),CurLine);
+		  }		  
+	       }
+	       else
+		  return _error->Error(_("Syntax error %s:%u: Unsupported directive '%s'"),FName.c_str(),CurLine,Tag.c_str());
+	    }
+	    else
+	    {
+	       // Set the item in the configuration class
+	       Conf.Set(Item,Word);
+	    }
+	    
 	    // Empty the buffer
 	    LineBuffer = string();
+	    
+	    // Move up a tag, but only if there is no bit to parse
+	    if (TermChar == '}')
+	    {
+	       if (StackPos == 0)
+		  ParentTag = string();
+	       else
+		  ParentTag = Stack[--StackPos];
+	    }
+	    
 	 }
 	 else
 	    I++;
@@ -453,7 +674,60 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	 LineBuffer += " ";
       LineBuffer += Stripd;
    }
+
+   if (LineBuffer.empty() == false)
+      return _error->Error(_("Syntax error %s:%u: Extra junk at end of file"),FName.c_str(),CurLine);
+   return true;
+}
+									/*}}}*/
+// ReadConfigDir - Read a directory of config files			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool ReadConfigDir(Configuration &Conf,string Dir,bool AsSectional,
+		    unsigned Depth)
+{   
+   static const char *BadExts[] = {".disabled",".dpkg-old",".dpkg-dist",
+   				   ".rpmsave",".rpmorig","~",",v",0};
    
+   DIR *D = opendir(Dir.c_str());
+   if (D == 0)
+      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+
+   vector<string> List;
+   
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
+   {
+      if (strcmp(Ent->d_name,".") == 0 ||
+	  strcmp(Ent->d_name,"..") == 0)
+	 continue;
+      
+      // Skip bad extensions
+      const char **I;
+      for (I = BadExts; *I != 0; I++)
+      {
+	 if (strcmp(Ent->d_name + strlen(Ent->d_name) - strlen(*I),*I) == 0)
+	    break;
+      }
+      
+      if (*I != 0)
+	 continue;
+      
+      // Make sure it is a file and not something else
+      string File = flCombine(Dir,Ent->d_name);
+      struct stat St;
+      if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
+	 continue;
+      
+      List.push_back(File);      
+   }   
+   closedir(D);
+   
+   sort(List.begin(),List.end());
+
+   // Read the files
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+      if (ReadConfigFile(Conf,*I,AsSectional,Depth) == false)
+	 return false;
    return true;
 }
 									/*}}}*/

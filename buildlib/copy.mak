@@ -17,6 +17,8 @@ $(LOCAL)-LIST := $(addprefix $(TO)/,$(SOURCE))
 doc: $($(LOCAL)-LIST)
 veryclean: veryclean/$(LOCAL)
 
+MKDIRS += $(dir $($(LOCAL)-LIST))
+
 $($(LOCAL)-LIST) : $(TO)/% : %
 	echo Installing $< to $(@D)
 	cp $< $(@D)

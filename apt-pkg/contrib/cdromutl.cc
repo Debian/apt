@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdromutl.cc,v 1.11 1999/12/10 23:40:29 jgg Exp $
+// $Id: cdromutl.cc,v 1.12 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    CDROM Utilities - Some functions to manipulate CDROM mounts.
@@ -19,6 +19,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
 
+#include <apti18n.h>
+    
 #include <sys/wait.h>
 #include <sys/errno.h>
 #include <sys/statvfs.h>
@@ -50,7 +52,7 @@ bool IsMounted(string &Path)
    struct stat Buf,Buf2;
    if (stat(Path.c_str(),&Buf) != 0 || 
        stat((Path + "../").c_str(),&Buf2) != 0)
-      return _error->Errno("stat","Unable to stat the mount point %s",Path.c_str());
+      return _error->Errno("stat",_("Unable to stat the mount point %s"),Path.c_str());
 
    if (Buf.st_dev == Buf2.st_dev)
       return false;
@@ -93,7 +95,7 @@ bool UnmountCdrom(string Path)
    }
 
    // Wait for mount
-   return ExecWait(Child,"mount",true);
+   return ExecWait(Child,"umount",true);
 }
 									/*}}}*/
 // MountCdrom - Mount a cdrom						/*{{{*/
@@ -144,11 +146,11 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 
    string StartDir = SafeGetCWD();
    if (chdir(CD.c_str()) != 0)
-      return _error->Errno("chdir","Unable to change to %s",CD.c_str());
+      return _error->Errno("chdir",_("Unable to change to %s"),CD.c_str());
    
    DIR *D = opendir(".");
    if (D == 0)
-      return _error->Errno("opendir","Unable to read %s",CD.c_str());
+      return _error->Errno("opendir",_("Unable to read %s"),CD.c_str());
       
    /* Run over the directory, we assume that the reader order will never
       change as the media is read-only. In theory if the kernel did
@@ -185,7 +187,7 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    {
       struct statvfs Buf;
       if (statvfs(CD.c_str(),&Buf) != 0)
-	 return _error->Errno("statfs","Failed to stat the cdrom");
+	 return _error->Errno("statfs",_("Failed to stat the cdrom"));
       
       // We use a kilobyte block size to advoid overflow
       sprintf(S,"%lu %lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)),

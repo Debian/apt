@@ -1,0 +1,75 @@
+Acronyms
+~~~~~~~~
+* dpkg is a 'word' the first d may be upper case - Dpkg
+* APT is a proper Acronym, all upper case please.
+
+Pkg - A Package
+Ver - A version
+
+Indenting, Comments, Etc
+~~~~~~~~~~~~~~~~~~~~~~~~
+Would make Linus cry :P However it is what I prefer. 3 space indent,
+8 space tab all braces on seperate lines, function return on the same line 
+as the function, cases aligned with their code. The 'indent' options for 
+this style are:
+   indent -bl -bli0 -di1 -i3 -nsc -ts8 -npcs -npsl
+
+Each file gets a block at the top that should describe what the file does,
+basically a summary of purpose along with any special notes and 
+attributions. The }}} and {{{ are folding marks if you have a folding
+editor such as jed, the function seperators are intended to give
+a visual seperate between functions for easier browsing of the larger files,
+or indexed folding if you have such an editor.
+
+Each file should have 1 or 0 primary include files, that include
+file must always be the first include file included by the .cc. G++ 
+#pragma interface/implementation is used, as well as anti-include-twice
+#ifdefs.
+
+Include files, since there are so many, get their own subdirectory off
+the include search path, this is used consistently throughout all the code.
+#include "" should never be used for a global exported header file, only 
+local ones.
+
+C++ Features
+~~~~~~~~~~~~
+Due to the legacy compiler heritage, exceptions, RTTI and name spaces are
+not used. Templates are used *sparingly* since G++ has traditionally had
+very weak support for them, this includes STL templates.
+
+Namespaces will probably be put in the code sometime after G++ 3, which will
+be a huge re-org again to make sanity, the majority of all nested things
+will go away.
+
+The C++ standard library's non parameterized types (string is included in
+this) are used freely when appropriate.
+
+The new C++ #include <iostream> (note the lack of a .h) is used for the
+standard library, but not for my code.
+
+Arguments and Ownership
+~~~~~~~~~~~~~~~~~~~~~~~
+[much of the code follows this now]
+These guidlines should be followed except in two cases.. the first
+is where it makes no sense, such as in a casting operator and the second is to
+retain API compatibility (this should be rare, since a change in the input
+almost always designates a change in ownership rules).
+
+  * Pass by value or pass by reference should borrow the object from the
+    caller
+  * Pass by non-const reference may be used to indicate a OUT type variable
+  * Pass by pointer (except in the case where the pointer is really an array)
+    should be used when the object will be retained or ownership will be
+    transfered. Ownership transference should be rare and noted by a comment.
+  * Standard C things (FILE * etc) should be left as is.
+  
+  * Return by references should indicate a borrowed object
+  * Return by pointer (except arrays) should indicate ownership is 
+    transfered. Return by pointer should not be used unless ownership is 
+    transfered.
+  * Return by pointer to variable indicates ownership transfer unless the
+    pointer is an 'input' parameter (designated generally by an =0, 
+    indicating a default of 'none')
+     
+Non-ownership transfering arrays/lists should probably return an iterator 
+typedef or references..

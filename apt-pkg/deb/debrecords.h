@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.h,v 1.6 1999/04/07 05:30:18 jgg Exp $
+// $Id: debrecords.h,v 1.7 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -11,7 +11,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_DEBRECORDS_H
 #define PKGLIB_DEBRECORDS_H
 
@@ -24,9 +23,10 @@
 
 class debRecordParser : public pkgRecords::Parser
 {
+   FileFd File;
    pkgTagFile Tags;
    pkgTagSection Section;
-
+   
    protected:
    
    virtual bool Jump(pkgCache::VerFileIterator const &Ver);
@@ -42,9 +42,11 @@ class debRecordParser : public pkgRecords::Parser
    virtual string Maintainer();
    virtual string ShortDesc();
    virtual string LongDesc();
-   
-   debRecordParser(FileFd &File,pkgCache &Cache);
-};
+   virtual string Name();
 
+   virtual void GetRec(const char *&Start,const char *&Stop);
+   
+   debRecordParser(string FileName,pkgCache &Cache);
+};
 
 #endif

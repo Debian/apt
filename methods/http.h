@@ -1,5 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: http.h,v 1.8 2000/05/28 04:33:59 jgg Exp $
+// Description								/*{{{*/// $Id: http.h,v 1.9 2001/02/20 07:03:18 jgg Exp $
+// $Id: http.h,v 1.9 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -133,7 +134,7 @@ class HttpMethod : public pkgAcqMethod
    static void SigTerm(int);
    
    public:
-   friend ServerState;
+   friend class ServerState;
 
    FileFd *File;
    ServerState *Server;

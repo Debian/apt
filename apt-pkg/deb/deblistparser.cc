@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.23 1999/09/30 06:30:34 jgg Exp $
+// $Id: deblistparser.cc,v 1.24 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -19,10 +19,17 @@
 #include <system.h>
 									/*}}}*/
 
+static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Important},
+                       {"required",pkgCache::State::Required},
+                       {"standard",pkgCache::State::Standard},
+                       {"optional",pkgCache::State::Optional},
+	               {"extra",pkgCache::State::Extra},
+                       {}};
+
 // ListParser::debListParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debListParser::debListParser(FileFd &File) : Tags(File)
+debListParser::debListParser(FileFd *File) : Tags(File)
 {
    Arch = _config->Find("APT::architecture");
 }
@@ -80,14 +87,8 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    const char *Start;
    const char *Stop;
    if (Section.Find("Priority",Start,Stop) == true)
-   {
-      WordList PrioList[] = {{"important",pkgCache::State::Important},
-	                     {"required",pkgCache::State::Required},
-	                     {"standard",pkgCache::State::Standard},
-	                     {"optional",pkgCache::State::Optional},
-	                     {"extra",pkgCache::State::Extra}};
-      if (GrabWord(string(Start,Stop-Start),PrioList,
-		   _count(PrioList),Ver->Priority) == false)
+   {      
+      if (GrabWord(string(Start,Stop-Start),PrioList,Ver->Priority) == false)
 	 Ver->Priority = pkgCache::State::Extra;
    }
 
@@ -104,6 +105,10 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Replaces) == false)
       return false;
 
+   // Obsolete.
+   if (ParseDepends(Ver,"Optional",pkgCache::Dep::Suggests) == false)
+      return false;
+   
    if (ParseProvides(Ver) == false)
       return false;
    
@@ -205,9 +210,9 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
                           {"install",pkgCache::State::Install},
                           {"hold",pkgCache::State::Hold},
                           {"deinstall",pkgCache::State::DeInstall},
-                          {"purge",pkgCache::State::Purge}};
-   if (GrabWord(string(Start,I-Start),WantList,
-		_count(WantList),Pkg->SelectedState) == false)
+                          {"purge",pkgCache::State::Purge},
+                          {}};
+   if (GrabWord(string(Start,I-Start),WantList,Pkg->SelectedState) == false)
       return _error->Error("Malformed 1st word in the Status line");
 
    // Isloate the next word
@@ -221,9 +226,9 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
    WordList FlagList[] = {{"ok",pkgCache::State::Ok},
                           {"reinstreq",pkgCache::State::ReInstReq},
                           {"hold",pkgCache::State::HoldInst},
-                          {"hold-reinstreq",pkgCache::State::HoldReInstReq}};
-   if (GrabWord(string(Start,I-Start),FlagList,
-		_count(FlagList),Pkg->InstState) == false)
+                          {"hold-reinstreq",pkgCache::State::HoldReInstReq},
+                          {}};
+   if (GrabWord(string(Start,I-Start),FlagList,Pkg->InstState) == false)
       return _error->Error("Malformed 2nd word in the Status line");
 
    // Isloate the last word
@@ -241,9 +246,9 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
                             {"half-installed",pkgCache::State::HalfInstalled},
                             {"config-files",pkgCache::State::ConfigFiles},
                             {"post-inst-failed",pkgCache::State::HalfConfigured},
-                            {"removal-failed",pkgCache::State::HalfInstalled}};
-   if (GrabWord(string(Start,I-Start),StatusList,
-		_count(StatusList),Pkg->CurrentState) == false)
+                            {"removal-failed",pkgCache::State::HalfInstalled},
+                            {}};
+   if (GrabWord(string(Start,I-Start),StatusList,Pkg->CurrentState) == false)
       return _error->Error("Malformed 3rd word in the Status line");
 
    /* A Status line marks the package as indicating the current
@@ -266,9 +271,67 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
 // ---------------------------------------------------------------------
 /* This parses the dependency elements out of a standard string in place,
    bit by bit. */
+const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
+{
+   // Determine the operator
+   switch (*I)
+   {
+      case '<':
+      I++;
+      if (*I == '=')
+      {
+	 I++;
+	 Op = pkgCache::Dep::LessEq;
+	 break;
+      }
+      
+      if (*I == '<')
+      {
+	 I++;
+	 Op = pkgCache::Dep::Less;
+	 break;
+      }
+      
+      // < is the same as <= and << is really Cs < for some reason
+      Op = pkgCache::Dep::LessEq;
+      break;
+      
+      case '>':
+      I++;
+      if (*I == '=')
+      {
+	 I++;
+	 Op = pkgCache::Dep::GreaterEq;
+	 break;
+      }
+      
+      if (*I == '>')
+      {
+	 I++;
+	 Op = pkgCache::Dep::Greater;
+	 break;
+      }
+      
+      // > is the same as >= and >> is really Cs > for some reason
+      Op = pkgCache::Dep::GreaterEq;
+      break;
+      
+      case '=':
+      Op = pkgCache::Dep::Equals;
+      I++;
+      break;
+      
+      // HACK around bad package definitions
+      default:
+      Op = pkgCache::Dep::Equals;
+      break;
+   }
+   return I;
+}
+
 const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					string &Package,string &Ver,
-					unsigned int &Op)
+					unsigned int &Op, bool ParseArchFlags)
 {
    // Strip off leading space
    for (;Start != Stop && isspace(*Start) != 0; Start++);
@@ -298,60 +361,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       for (I++; I != Stop && isspace(*I) != 0 ; I++);
       if (I + 3 >= Stop)
 	 return 0;
-      
-      // Determine the operator
-      switch (*I)
-      {
-	 case '<':
-	 I++;
-	 if (*I == '=')
-	 {
-	    I++;
-	    Op = pkgCache::Dep::LessEq;
-	    break;
-	 }
-	 
-	 if (*I == '<')
-	 {
-	    I++;
-	    Op = pkgCache::Dep::Less;
-	    break;
-	 }
-	 
-	 // < is the same as <= and << is really Cs < for some reason
-	 Op = pkgCache::Dep::LessEq;
-	 break;
-	 
-	 case '>':
-	 I++;
-	 if (*I == '=')
-	 {
-	    I++;
-	    Op = pkgCache::Dep::GreaterEq;
-	    break;
-	 }
-	 
-	 if (*I == '>')
-	 {
-	    I++;
-	    Op = pkgCache::Dep::Greater;
-	    break;
-	 }
-	 
-	 // > is the same as >= and >> is really Cs > for some reason
-	 Op = pkgCache::Dep::GreaterEq;
-	 break;
-	 
-	 case '=':
-	 Op = pkgCache::Dep::Equals;
-	 I++;
-	 break;
-	 
-	 // HACK around bad package definitions
-	 default:
-	 Op = pkgCache::Dep::Equals;
-	 break;
-      }
+      I = ConvertRelation(I,Op);
       
       // Skip whitespace
       for (;I != Stop && isspace(*I) != 0; I++);
@@ -375,6 +385,50 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    
    // Skip whitespace
    for (;I != Stop && isspace(*I) != 0; I++);
+
+   if (ParseArchFlags == true)
+   {
+      string arch = _config->Find("APT::Architecture");
+      
+      // Parse an architecture
+      if (I != Stop && *I == '[')
+      {
+	 // malformed
+         I++;
+         if (I == Stop)
+	    return 0; 
+	 
+         const char *End = I;
+         bool Found = false;
+         while (I != Stop) 
+	 {
+            // look for whitespace or ending ']'
+	    while (End != Stop && !isspace(*End) && *End != ']') 
+	       End++;
+	 
+	    if (End == Stop) 
+	       return 0;
+	    
+	    if (stringcmp(I,End,arch.begin(),arch.end()) == 0)
+	       Found = true;
+	    
+	    if (*End++ == ']') {
+	       I = End;
+	       break;
+	    }
+	    
+	    I = End;
+	    for (;I != Stop && isspace(*I) != 0; I++);
+         }
+	 
+         if (Found == false) 
+	    Package = ""; /* not for this arch */
+      }
+      
+      // Skip whitespace
+      for (;I != Stop && isspace(*I) != 0; I++);
+   }
+
    if (I != Stop && *I == '|')
       Op |= pkgCache::Dep::Or;
    
@@ -453,10 +507,9 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
 // ListParser::GrabWord - Matches a word and returns			/*{{{*/
 // ---------------------------------------------------------------------
 /* Looks for a word in a list of words - for ParseStatus */
-bool debListParser::GrabWord(string Word,WordList *List,int Count,
-			     unsigned char &Out)
+bool debListParser::GrabWord(string Word,WordList *List,unsigned char &Out)
 {
-   for (int C = 0; C != Count; C++)
+   for (unsigned int C = 0; List[C].Str != 0; C++)
    {
       if (strcasecmp(Word.c_str(),List[C].Str) == 0)
       {
@@ -500,7 +553,7 @@ bool debListParser::Step()
 bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
 				    FileFd &File)
 {
-   pkgTagFile Tags(File);
+   pkgTagFile Tags(&File);
    pkgTagSection Section;
    if (Tags.Step(Section) == false)
       return false;
@@ -525,5 +578,17 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
       _error->Warning("Bad NotAutomatic flag");
    
    return !_error->PendingError();
+}
+									/*}}}*/
+// ListParser::GetPrio - Convert the priority from a string		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+unsigned char debListParser::GetPrio(string Str)
+{
+   unsigned char Out;
+   if (GrabWord(Str,PrioList,Out) == false)
+      Out = pkgCache::State::Extra;
+   
+   return Out;
 }
 									/*}}}*/

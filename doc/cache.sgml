@@ -4,7 +4,7 @@
 <title>APT Cache File Format</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: cache.sgml,v 1.7 1999/05/23 22:55:55 jgg Exp $</version>
+<version>$Id: cache.sgml,v 1.8 2001/02/20 07:03:17 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the APT
@@ -140,11 +140,13 @@ This is the first item in the file.
       unsigned long VersionCount;
       unsigned long DependsCount;
       unsigned long PackageFileCount;
-      unsigned long MaxVerFileSize;
       
       // Offsets
       unsigned long FileList;              // PackageFile
       unsigned long StringList;            // StringItem
+      unsigned long VerSysName;            // StringTable
+      unsigned long Architecture;          // StringTable
+      unsigned long MaxVerFileSize;
       
       // Allocation pools
       struct
@@ -155,7 +157,7 @@ This is the first item in the file.
       } Pools[7];
 
       // Package name lookup
-      unsigned long HashTable[512];        // Package
+      unsigned long HashTable[2*1024];        // Package
    };
 </example>
 <taglist>
@@ -191,8 +193,14 @@ the client should refuse the load the file.
 <tag>DependsCount
 <tag>PackageFileCount<item>
 These indicate the number of each structure contianed in the cache. 
-PackageCount is especially usefull for generating user state structures. 
+PackageCount is especially useful for generating user state structures. 
 See Package::Id for more info.
+
+<tag>VerSysName<item>
+String representing the versiong system used for this cache
+
+<tag>Architecture<item>
+Architecture the cache was built against.
 
 <tag>MaxVerFileSize<item>
 The maximum size of a raw entry from the original Package file 
@@ -252,9 +260,7 @@ the Header->HashTable.
       // Pointers
       unsigned long Name;              // Stringtable
       unsigned long VersionList;       // Version
-      unsigned long TargetVer;         // Version
       unsigned long CurrentVer;        // Version
-      unsigned long TargetDist;        // StringTable (StringItem)
       unsigned long Section;           // StringTable (StringItem)
       
       // Linked lists 
@@ -286,16 +292,9 @@ package. In this way multiple versions of a package can be cleanly handled
 by the system. Furthermore, this linked list is guarenteed to be sorted
 from Highest version to lowest version with no duplicate entries.
 
-<tag>TargetVer
 <tag>CurrentVer<item>
-This is an index (pointer) to the sub version that is being targeted for
-upgrading. CurrentVer is an index to the installed version, either can be
+CurrentVer is an index to the installed version, either can be
 0.
-
-<tag>TargetDist<item>
-This indicates the target distribution. Automatic upgrades should not go
-outside of the specified dist. If it is 0 then the global target dist should 
-be used. The string should be contained in the StringItem list.
 
 <tag>Section<item>
 This indicates the deduced section. It should be "Unknown" or the section
@@ -334,7 +333,7 @@ status file emitter uses this to track which packages have been emitted
 already.
 
 <tag>Flags<item>
-Flags are some usefull indicators of the package's state. 
+Flags are some useful indicators of the package's state. 
 
 </taglist>
 
@@ -357,6 +356,8 @@ Header.FileList
       unsigned long Origin;          // Stringtable
       unsigned long Label;           // Stringtable
       unsigned long Architecture;    // Stringtable
+      unsigned long Site;            // Stringtable
+      unsigned long IndexType;       // Stringtable
       unsigned long Size;            
 
       // Linked list
@@ -380,6 +381,12 @@ Refers the the physical disk file that this PacakgeFile represents.
 <tag>NotAutomatic<item>
 This is the release information. Please see the files document for a 
 description of what the release information means.
+
+<tag>Site<item>
+The site the index file was fetched from.
+
+<tag>IndexType<item>
+A string indicating what sort of index file this is.
 
 <tag>Size<item>
 Size is provided as a simple check to ensure that the package file has not
@@ -622,7 +629,7 @@ this version.
 <sect>StringItem
 <p>
 StringItem is used for generating single instances of strings. Some things
-like Section Name are are usefull to have as unique tags. It is part of 
+like Section Name are are useful to have as unique tags. It is part of 
 a linked list based at Header::StringList.
 <example>
    struct StringItem

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.22 1999/07/30 02:54:25 jgg Exp $
+// $Id: pkgcache.h,v 1.23 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -16,7 +16,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
 
@@ -27,7 +26,8 @@
 #include <string>
 #include <time.h>
 #include <apt-pkg/mmap.h>
-
+    
+class pkgVersioningSystem;
 class pkgCache
 {
    public:
@@ -48,18 +48,20 @@ class pkgCache
    class PrvIterator;
    class PkgFileIterator;
    class VerFileIterator;
-   friend PkgIterator;
-   friend VerIterator;
-   friend DepIterator;
-   friend PrvIterator;
-   friend PkgFileIterator;
-   friend VerFileIterator;
+   friend class PkgIterator;
+   friend class VerIterator;
+   friend class DepIterator;
+   friend class PrvIterator;
+   friend class PkgFileIterator;
+   friend class VerFileIterator;
+   
+   class Namespace;
    
    // These are all the constants used in the cache structures
    struct Dep
    {
       enum DepType {Depends=1,PreDepends=2,Suggests=3,Recommends=4,
-	 Conflicts=5,Replaces=6};
+	 Conflicts=5,Replaces=6,Obsoletes=7};
       enum DepCompareOp {Or=0x10,NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
 	 Greater=0x4,Equals=0x5,NotEquals=0x6};
    };
@@ -104,7 +106,8 @@ class pkgCache
    virtual bool ReMap();
    inline bool Sync() {return Map.Sync();};
    inline MMap &GetMap() {return Map;};
-   
+   inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();};
+      
    // String hashing function (512 range)
    inline unsigned long Hash(string S) const {return sHash(S);};
    inline unsigned long Hash(const char *S) const {return sHash(S);};
@@ -119,9 +122,16 @@ class pkgCache
    inline PkgIterator PkgEnd();
    inline PkgFileIterator FileBegin();
    inline PkgFileIterator FileEnd();
-   VerIterator GetCandidateVer(PkgIterator Pkg,bool AllowCurrent = true);
+
+   // Make me a function
+   pkgVersioningSystem *VS;
    
-   pkgCache(MMap &Map);
+   // Converters
+   static const char *CompTypeDeb(unsigned char Comp);
+   static const char *CompType(unsigned char Comp);
+   static const char *DepType(unsigned char Dep);
+   
+   pkgCache(MMap *Map,bool DoMap = true);
    virtual ~pkgCache() {};
 };
 
@@ -154,6 +164,8 @@ struct pkgCache::Header
    // Offsets
    map_ptrloc FileList;              // struct PackageFile
    map_ptrloc StringList;            // struct StringItem
+   map_ptrloc VerSysName;            // StringTable
+   map_ptrloc Architecture;          // StringTable
    unsigned long MaxVerFileSize;
 
    /* Allocation pools, there should be one of these for each structure
@@ -172,9 +184,7 @@ struct pkgCache::Package
    // Pointers
    map_ptrloc Name;              // Stringtable
    map_ptrloc VersionList;       // Version
-   map_ptrloc TargetVer;         // Version
    map_ptrloc CurrentVer;        // Version
-   map_ptrloc TargetDist;        // StringTable (StringItem)
    map_ptrloc Section;           // StringTable (StringItem)
       
    // Linked list 
@@ -201,6 +211,8 @@ struct pkgCache::PackageFile
    map_ptrloc Origin;          // Stringtable
    map_ptrloc Label;           // Stringtable
    map_ptrloc Architecture;    // Stringtable
+   map_ptrloc Site;            // Stringtable
+   map_ptrloc IndexType;       // Stringtable
    unsigned long Size;            
    unsigned long Flags;
    
@@ -249,7 +261,7 @@ struct pkgCache::Dependency
    // Specific types of depends
    unsigned char Type;
    unsigned char CompareOp;
-   unsigned short ID;
+   unsigned short ID;   
 };
 
 struct pkgCache::Provides
@@ -274,8 +286,26 @@ inline pkgCache::PkgIterator pkgCache::PkgBegin()
 inline pkgCache::PkgIterator pkgCache::PkgEnd() 
        {return PkgIterator(*this,PkgP);};
 inline pkgCache::PkgFileIterator pkgCache::FileBegin()
-       {return PkgFileIterator(*this);};
+       {return PkgFileIterator(*this,PkgFileP + HeaderP->FileList);};
 inline pkgCache::PkgFileIterator pkgCache::FileEnd()
        {return PkgFileIterator(*this,PkgFileP);};
+
+// Oh I wish for Real Name Space Support
+class pkgCache::Namespace
+{   
+   public:
+
+   typedef pkgCache::PkgIterator PkgIterator;
+   typedef pkgCache::VerIterator VerIterator;
+   typedef pkgCache::DepIterator DepIterator;
+   typedef pkgCache::PrvIterator PrvIterator;
+   typedef pkgCache::PkgFileIterator PkgFileIterator;
+   typedef pkgCache::VerFileIterator VerFileIterator;   
+   typedef pkgCache::Version Version;
+   typedef pkgCache::Package Package;
+   typedef pkgCache::Header Header;
+   typedef pkgCache::Dep Dep;
+   typedef pkgCache::Flag Flag;
+};
 
 #endif

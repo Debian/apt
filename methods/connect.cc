@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.6 2000/05/28 04:34:44 jgg Exp $
+// $Id: connect.cc,v 1.7 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -30,6 +30,18 @@ static int LastPort = 0;
 static struct addrinfo *LastHostAddr = 0;
 static struct addrinfo *LastUsed = 0;
 
+// RotateDNS - Select a new server from a DNS rotation			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is called during certain errors in order to recover by selecting a 
+   new server */
+void RotateDNS()
+{
+   if (LastUsed != 0 && LastUsed->ai_next != 0)
+      LastUsed = LastUsed->ai_next;
+   else
+      LastUsed = LastHostAddr;
+}
+									/*}}}*/
 // DoConnect - Attempt a connect operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This helper function attempts a connection to a single address. */
@@ -39,17 +51,30 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    // Show a status indicator
    char Name[NI_MAXHOST];
    char Service[NI_MAXSERV];
-   Name[0] = 0;
+   
+   Name[0] = 0;   
    Service[0] = 0;
    getnameinfo(Addr->ai_addr,Addr->ai_addrlen,
 	       Name,sizeof(Name),Service,sizeof(Service),
 	       NI_NUMERICHOST|NI_NUMERICSERV);
    Owner->Status("Connecting to %s (%s)",Host.c_str(),Name);
-   
+
+   /* If this is an IP rotation store the IP we are using.. If something goes
+      wrong this will get tacked onto the end of the error message */
+   if (LastHostAddr->ai_next != 0)
+   {
+      char Name2[NI_MAXHOST + NI_MAXSERV + 10];
+      snprintf(Name2,sizeof(Name2),"[IP: %s %s]",Name,Service);
+      Owner->SetFailExtraMsg(string(Name2));
+   }   
+   else
+      Owner->SetFailExtraMsg("");
+      
    // Get a socket
    if ((Fd = socket(Addr->ai_family,Addr->ai_socktype,
 		    Addr->ai_protocol)) < 0)
-      return _error->Errno("socket","Could not create a socket");
+      return _error->Errno("socket","Could not create a socket for %s (f=%u t=%u p=%u)",
+			   Name,Addr->ai_family,Addr->ai_socktype,Addr->ai_protocol);
    
    SetNonBlock(Fd,true);
    if (connect(Fd,Addr->ai_addr,Addr->ai_addrlen) < 0 &&
@@ -62,7 +87,7 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    if (WaitFd(Fd,true,TimeOut) == false)
       return _error->Error("Could not connect to %s:%s (%s), "
 			   "connection timed out",Host.c_str(),Service,Name);
-   
+
    // Check the socket for an error condition
    unsigned int Err;
    unsigned int Len = sizeof(Err);
@@ -134,8 +159,8 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	       return _error->Error("Could not resolve '%s'",Host.c_str());
 	    }
 	    
-	    return _error->Error("Something wicked happend resolving '%s:%s'",
-				 Host.c_str(),ServStr);
+	    return _error->Error("Something wicked happened resolving '%s:%s' (%i)",
+				 Host.c_str(),ServStr,Res);
 	 }
 	 break;
       }
@@ -165,14 +190,22 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	 CurHost = CurHost->ai_next;
       }
       while (CurHost != 0 && CurHost->ai_family == AF_UNIX);
-	 
-      LastUsed = 0;
+
+      /* If we reached the end of the search list then wrap around to the
+         start */
+      if (CurHost == 0 && LastUsed != 0)
+	 CurHost = LastHostAddr;
+      
+      // Reached the end of the search cycle
+      if (CurHost == LastUsed)
+	 break;
+      
       if (CurHost != 0)
 	 _error->Discard();
-   }
+   }   
 
    if (_error->PendingError() == true)
-      return false;
-   return _error->Error("Unable to connect to %s:",Host.c_str(),ServStr);
+      return false;   
+   return _error->Error("Unable to connect to %s %s:",Host.c_str(),ServStr);
 }
 									/*}}}*/

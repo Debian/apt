@@ -4,7 +4,7 @@
 <title>Using APT Offline</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: offline.sgml,v 1.2 2000/02/13 07:20:47 jgg Exp $</version>
+<version>$Id: offline.sgml,v 1.3 2001/02/20 07:03:17 jgg Exp $</version>
 
 <abstract>
 This document describes how to use APT in a non-networked environment, 
@@ -43,7 +43,7 @@ SuperDisk disc. These discs are not large enough to store the entire Debian
 archive but can easily fit a subset large enough for most users. The idea
 is to use APT to generate a list of packages that are required and then fetch
 them onto the disc using another machine with good connectivity. It is 
-even Possible to use another Debian machine with APT or to use a completely 
+even possible to use another Debian machine with APT or to use a completely 
 different OS and a download tool like wget.
 
 <p>
@@ -124,7 +124,7 @@ More details can be seen by examining the apt.conf man page and the sample
 configuration file in <em>/usr/doc/apt/examples/apt.conf</em>.
 
 <p>
-On the Debian machine the first thing to do is mount the disc and copy 
+On the remote Debian machine the first thing to do is mount the disc and copy 
 <em>/var/lib/dpkg/status</em> to it. You will also need to create the directories
 outlined in the Overview, <em>archives/partial/</em> and <em>lists/partial/</em>
 Then take the disc to the remote machine and configure the sources.list. 
@@ -139,8 +139,9 @@ On the remote machine execute the following:
 </example>
 
 The dist-upgrade command can be replaced with any-other standard APT commands,
-you can even use an APT front end such as <em>gnome-apt</em> [still in 
-development].
+particularly dselect-upgrad. You can even use an APT front end such as 
+<em>dselect</em> However this presents a problem in communicating your 
+selections back to the local computer.
 
 <p>
 Now the disc contains all of the index files and archives needed to upgrade
@@ -157,6 +158,13 @@ the Debian machine. Take the disc back and run:
 <p> 
 It is necessary for proper function to re-specify the status file to be the 
 local one. This is very important!
+
+<p>
+If you are using dselect you can do the very risky operation of copying 
+disc/status to /var/lib/dpkg/status so that any selections you made on the
+remote machine are updated. I highly recommend that people only make selections
+on the local machine - but this may not always be possible. DO NOT copy
+the status file if dpkg or APT have been run in the mean time!!
 
 </sect>
                                                                   <!-- }}} -->
@@ -193,6 +201,10 @@ merely use the standard APT commands to generate the file list.
  # awk '{print "wget -O " $2 " " $1}' < uris > /disc/wget-script
 </example>
 
+Any command other than dist-upgrade could be used here, including 
+dselect-upgrade.
+
+<p>
 The /disc/wget-script file will now contain a list of wget commands to execute 
 in order to fetch the necessary archives. This script should be run with the
 current directory as the disc's mount point so as to save the output on the 

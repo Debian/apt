@@ -1,12 +1,104 @@
-apt (0.3.19) frozen unstable; urgency=low
+apt (0.5.0) unstable; urgency=low
 
-  * Added --dry-run to match docs. Closes: #65153, #64292
+  * Fixed an obscure bug with missing final double new lines in 
+    package files
+  * Changed the apt-cdrom index copy routine to use the new section
+    rewriter
+  * Added a package file sorter, apt-sortpkgs
+  * Parse obsolete Optional dependencies.
+  * Added Ben's rsh method. Closes: #57794
+  * Added IPv6 FTP support and better DNS rotation support.
+  * Include the server IP in error messages when using a DNS rotation.
+    Closes: #64895
+  * Made most of the byte counters into doubles to prevent 32bit overflow.
+    Closes: #65349
+  * HTTP Authorization. Closes: #61158
+  * Ability to parse and return source index build depends from Randolph.
+  * new 'apt-get build-dep' command from Randolph. Closes: #63982
+  * Added apt-ftparchive the all dancing all singing FTP archive
+    maintinance program
+  * Allow version specifications with =1.2.4-3 and /2.2 or /stable postfixes
+    in apt-get. 
+  * Removed useless internal cruft including the xstatus file.
+  * Fixed config parser bugs. Closes: #67848, #71108
+  * Brain Damanged apt-get config options changed, does not change the command
+    line interface, except to allow --enable-* to undo a configuration
+    option:
+      No-Remove -> Remove
+      No-Download -> Download
+      No-Upgrade -> Upgrade
+  * Made this fix configable (DSelect::CheckDir) and default to disabled:
+     * No remove prompt if the archives dir has not changed. Closes: #55709
+    Because it is stupid in the case where no files were downloaded due to
+    a resumed-aborted install, or a full cache! Closes: #65952
   * Obscure divide by zero problem. Closes: #64394
   * Update sizetable for mips. Closes: #62288
   * Fixed a bug with passive FTP connections
   * Has sizetable entry for sparc64. Closes: #64869
+  * Escape special characters in the ::Label section of the cdroms.lst
+  * Created apt-utils and python-apt packages
+  * Due to the new policy engine, the available file may contain entries
+    from the status file. These are generated if the package is not obsolete
+    but the policy engine prohibits using the version from the package files. 
+    They can be identified by the lack of a Filename field.
+  * The new policy engine. Closes: #66509, #66944, #45122, #45094, #40006,
+    #36223, #33468, #22551
+  * Fixed deb-src line for non-us. Closes: #71501, #71601
+  * Fixes for G++ 2.96, s/friend/friend class/
+  * Fixed mis doc of APT::Get::Fix-Missing. Closes: #69269
+  * Confirmed fix for missing new line problem. Closes: #69386
+  * Fixed up dhelp files. Closes: #71312
+  * Added some notes about dselect and offline usage. Closes: #66473, #38316
+  * Lock files on read only file systems are ignored w/ warning. 
+    Closes: #61701
+  * apt-get update foo now gives an error! Closes: #42891
+  * Added test for shlibs on hurd. Closes: #71499
+  * Clarified apt-cache document. Closes: #71934
+  * DocBook SGML man pages and some improvements in the text.. 
+  * sigwinch thing. Closes: #72382
+  * Caching can be turned off by setting the cache file names blank.
+  * Ignores arches it does not know about when autocleaning. Closes: #72862
+  * New function in apt-config to return dirs, files, bools and integers.
+  * Fixed an odd litle bug in MarkInstall and fixed it up to handle 
+    complex cases involving OR groups and provides.
+    68754 describes confusing messages which are the result of this..
+    Closes: #63149, #69394, #68754, #77683, #66806, #81486, #78712
+  * Speeling mistake and return code for the 'wicked' resolver error
+    Closes: #72621, #75226, #77464
+  * Solved unable to upgrade libc6 from potato to woody due to 3 package
+    libc6 dependency loop problem.
+  * Leading sources.list spaces. Closes: #76010
+  * Removed a possible infinite loop while processing installations.
+  * Man page updates. Closes: #75411, #75560, #64292, #78469
+  * ReduceSourceList bug. Closes: #76027
+  * --only-source option. Closes: #76320
+  * Typos. Closes: #77812, #77999
+  * Different status messages. Closes: #76652, #78353
+  * /etc/apt/apt.conf.d/ directory for Joey and Matt and pipe protocol 2
+  * OS detection an support for the new pseduo standard of os-arch for the
+    Architecture string. Also uses regexing.. Closes: #39227, #72349
+  * Various i18n stuff. Note that this still needs some i18n wizard
+    to do the last gettextization right. Closes: #62386
+  * Fixed a problem with some odd http servers/proxies that did not return
+    the content size in the header. Closes: #79878, #44379
+  * Little acquire bugs. Closes: #77029, #55820
+  * _POSIX_THREADS may not be defined to anything, just defined..
+    Closes: #78996
+  * Spelling of Ignore-Hold correctly. Closes: #78042
+  * Unlock the dpkg db if in download only mode. Closes: #84851
+  * Brendan O'Dea's dselect admindir stuff. Closes: #62811
+  * Patch from BenC. Closes: #80810
+  * Single output of some names in lists. Closes: #80498, #43286  
+  * Nice message for people who can't read syserror output. Closes: #84734
+  * OR search function. Closes: #82894
+  * User's guide updates. Closes: #82469  
+  * The AJ/JoeyH var/state to var/lib transition patch. Closes: #59094
+  * Various CD bugs, again thanks to Greenbush 
+    Closes: #80946, #76547, #71810, #70049, #69482
+  * Using potato debhelper. Closes: #57977
+  * I cannot self-terminate. Closes: #74928
   
- -- Ben Gertzfield <che@debian.org>  Fri, 12 May 2000 21:10:54 -0700
+ -- Jason Gunthorpe <jgg@debian.org>  Wed, 25 Oct 2000 00:11:06 -0600
  
 apt (0.3.19) frozen unstable; urgency=low
   

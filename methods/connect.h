@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.h,v 1.2 1999/07/18 23:06:56 jgg Exp $
+// $Id: connect.h,v 1.3 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -15,5 +15,6 @@
 
 bool Connect(string To,int Port,const char *Service,int DefPort,
 	     int &Fd,unsigned long TimeOut,pkgAcqMethod *Owner);
+void RotateDNS();
 
 #endif

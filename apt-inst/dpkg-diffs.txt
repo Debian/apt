@@ -1,0 +1,5 @@
+- Replacing directories with files
+  dpkg permits this with the weak condition that the directory is owned only
+  by the package. APT requires that the directory have no files that are not
+  owned by the package. Replaces are specifically not checked to prevent
+  file list corruption.

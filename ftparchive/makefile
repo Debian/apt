@@ -1,0 +1,20 @@
+# -*- make -*-
+BASE=..
+SUBDIR=ftparchive
+
+# Bring in the default rules
+include ../buildlib/defaults.mak
+
+# The apt-ftparchive program
+ifdef DB2LIB
+PROGRAM=apt-ftparchive
+SLIBS = -lapt-pkg -lapt-inst $(DB2LIB)
+LIB_MAKES = apt-pkg/makefile apt-inst/makefile
+SOURCE = apt-ftparchive.cc cachedb.cc writer.cc contents.cc override.cc \
+         multicompress.cc
+include $(PROGRAM_H)
+else
+PROGRAM=apt-ftparchive
+MESSAGE="Must have db2 to build apt-ftparchive"
+include $(FAIL_H)
+endif # ifdef DB2LIB

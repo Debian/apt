@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.13 2000/05/31 02:49:37 jgg Exp $
+// $Id: depcache.h,v 1.14 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -35,7 +35,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_DEPCACHE_H
 #define PKGLIB_DEPCACHE_H
 
@@ -46,7 +45,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/progress.h>
 
-class pkgDepCache : public pkgCache
+class pkgDepCache : protected pkgCache::Namespace
 {
    public:
    
@@ -75,15 +74,15 @@ class pkgDepCache : public pkgCache
 
       // Pointer to the install version.
       Version *InstallVer;
+      
+      // Copy of Package::Flags
+      unsigned short Flags;
+      unsigned short iFlags;           // Internal flags
 
       // Various tree indicators
       signed char Status;              // -1,0,1,2
       unsigned char Mode;              // ModeList
       unsigned char DepState;          // DepState Flags
-
-      // Copy of Package::Flags
-      unsigned short Flags;
-      unsigned short iFlags;           // Internal flags
 
       // Update of candidate version
       const char *StripEpoch(const char *Ver);
@@ -110,29 +109,42 @@ class pkgDepCache : public pkgCache
    void BuildGroupOrs(VerIterator const &V);
    void UpdateVerState(PkgIterator Pkg);
 
-   bool Init(OpProgress *Prog);
-
+   // User Policy control
+   class Policy
+   {
+      public:
+      
+      virtual VerIterator GetCandidateVer(PkgIterator Pkg);
+      virtual bool IsImportantDep(DepIterator Dep);
+      
+      virtual ~Policy() {};
+   };
+     
    protected:
 
    // State information
+   pkgCache *Cache;
    StateCache *PkgState;
    unsigned char *DepState;
    
-   signed long iUsrSize;
-   unsigned long iDownloadSize;
+   double iUsrSize;
+   double iDownloadSize;
    unsigned long iInstCount;
    unsigned long iDelCount;
    unsigned long iKeepCount;
    unsigned long iBrokenCount;
    unsigned long iBadCount;
-      
+   
+   Policy *delLocalPolicy;           // For memory clean up..
+   Policy *LocalPolicy;
+   
    // Check for a matching provides
    bool CheckDep(DepIterator Dep,int Type,PkgIterator &Res);
    inline bool CheckDep(DepIterator Dep,int Type)
    {
-      PkgIterator Res(*this);
+      PkgIterator Res(*this,0);
       return CheckDep(Dep,Type,Res);
-   } 
+   }
    
    // Computes state information for deps and versions (w/o storing)
    unsigned char DependencyState(DepIterator &D);
@@ -145,17 +157,27 @@ class pkgDepCache : public pkgCache
    void Update(PkgIterator const &P);
    
    // Count manipulators
-   void AddSizes(const PkgIterator &Pkg,long Mult = 1);
+   void AddSizes(const PkgIterator &Pkg,signed long Mult = 1);
    inline void RemoveSizes(const PkgIterator &Pkg) {AddSizes(Pkg,-1);};
    void AddStates(const PkgIterator &Pkg,int Add = 1);
    inline void RemoveStates(const PkgIterator &Pkg) {AddStates(Pkg,-1);};
-
+   
    public:
 
+   // Legacy.. We look like a pkgCache
+   inline operator pkgCache &() {return *Cache;};
+   inline Header &Head() {return *Cache->HeaderP;};
+   inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
+   inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};
+
+   inline pkgCache &GetCache() {return *Cache;};
+   inline pkgVersioningSystem &VS() {return *Cache->VS;};
+   
    // Policy implementation
-   virtual VerIterator GetCandidateVer(PkgIterator Pkg,bool AllowCurrent = true);
-   virtual bool IsImportantDep(DepIterator Dep);
-         
+   inline VerIterator GetCandidateVer(PkgIterator Pkg) {return LocalPolicy->GetCandidateVer(Pkg);};
+   inline bool IsImportantDep(DepIterator Dep) {return LocalPolicy->IsImportantDep(Dep);};
+   inline Policy &GetPolicy() {return *LocalPolicy;};
+   
    // Accessors
    inline StateCache &operator [](PkgIterator const &I) {return PkgState[I->ID];};
    inline unsigned char &operator [](DepIterator const &I) {return DepState[I->ID];};
@@ -163,7 +185,8 @@ class pkgDepCache : public pkgCache
    // Manipulators
    void MarkKeep(PkgIterator const &Pkg,bool Soft = false);
    void MarkDelete(PkgIterator const &Pkg,bool Purge = false);
-   void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true);
+   void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
+		    unsigned long Depth = 0);
    void SetReInstall(PkgIterator const &Pkg,bool To);
    void SetCandidateVersion(VerIterator TargetVer);
    
@@ -171,16 +194,17 @@ class pkgDepCache : public pkgCache
    void Update(OpProgress *Prog = 0);
    
    // Size queries
-   inline signed long UsrSize() {return iUsrSize;};
-   inline unsigned long DebSize() {return iDownloadSize;};
+   inline double UsrSize() {return iUsrSize;};
+   inline double DebSize() {return iDownloadSize;};
    inline unsigned long DelCount() {return iDelCount;};
    inline unsigned long KeepCount() {return iKeepCount;};
    inline unsigned long InstCount() {return iInstCount;};
    inline unsigned long BrokenCount() {return iBrokenCount;};
    inline unsigned long BadCount() {return iBadCount;};
+
+   bool Init(OpProgress *Prog);
    
-   pkgDepCache(MMap &Map,OpProgress &Prog);
-   pkgDepCache(MMap &Map);
+   pkgDepCache(pkgCache *Cache,Policy *Plcy = 0);
    virtual ~pkgDepCache();
 };
 

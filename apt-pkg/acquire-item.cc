@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.41 2000/01/17 07:11:49 jgg Exp $
+// $Id: acquire-item.cc,v 1.42 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -18,10 +18,13 @@
 #endif
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 
+#include <apti18n.h>
+    
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -116,7 +119,7 @@ void pkgAcquire::Item::Rename(string From,string To)
    if (rename(From.c_str(),To.c_str()) != 0)
    {
       char S[300];
-      sprintf(S,"rename failed, %s (%s -> %s).",strerror(errno),
+      sprintf(S,_("rename failed, %s (%s -> %s)."),strerror(errno),
 	      From.c_str(),To.c_str());
       Status = StatError;
       ErrorText = S;
@@ -127,31 +130,24 @@ void pkgAcquire::Item::Rename(string From,string To)
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The package file is added to the queue and a second class is 
-   instantiated to fetch the revision file */
-pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) :
-             Item(Owner), Location(Location)
+   instantiated to fetch the revision file */   
+pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
+			 string URI,string URIDesc,string ShortDesc) :
+                      Item(Owner), RealURI(URI)
 {
    Decompression = false;
    Erase = false;
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(Location->PackagesURI());
+   DestFile += URItoFileName(URI);
 
    // Create the item
-   Desc.URI = Location->PackagesURI() + ".gz";
-   Desc.Description = Location->PackagesInfo();
+   Desc.URI = URI + ".gz";
+   Desc.Description = URIDesc;
    Desc.Owner = this;
-
-   // Set the short description to the archive component
-   if (Location->Dist[Location->Dist.size() - 1] == '/')
-      Desc.ShortDesc = Location->Dist;
-   else
-      Desc.ShortDesc = Location->Dist + '/' + Location->Section;  
+   Desc.ShortDesc = ShortDesc;
       
    QueueURI(Desc);
-   
-   // Create the Release fetch class
-   new pkgAcqIndexRel(Owner,Location);
 }
 									/*}}}*/
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
@@ -160,7 +156,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) 
 string pkgAcqIndex::Custom600Headers()
 {
    string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(Location->PackagesURI());
+   Final += URItoFileName(RealURI);
    
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
@@ -185,13 +181,13 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    {
       // Done, move it into position
       string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(Location->PackagesURI());
+      FinalFile += URItoFileName(RealURI);
       Rename(DestFile,FinalFile);
       
       /* We restore the original name to DestFile so that the clean operation
          will work OK */
       DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(Location->PackagesURI());
+      DestFile += URItoFileName(RealURI);
       
       // Remove the compressed version.
       if (Erase == true)
@@ -237,7 +233,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    
    Decompression = true;
    DestFile += ".decomp";
-   Desc.URI = "gzip:" + FileName,Location->PackagesInfo();
+   Desc.URI = "gzip:" + FileName;
    QueueURI(Desc);
    Mode = "gzip";
 }
@@ -247,23 +243,18 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
 // ---------------------------------------------------------------------
 /* The Release file is added to the queue */
 pkgAcqIndexRel::pkgAcqIndexRel(pkgAcquire *Owner,
-			       const pkgSourceList::Item *Location) :
-                Item(Owner), Location(Location)
+			    string URI,string URIDesc,string ShortDesc) :
+                      Item(Owner), RealURI(URI)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(Location->ReleaseURI());
+   DestFile += URItoFileName(URI);
    
    // Create the item
-   Desc.URI = Location->ReleaseURI();
-   Desc.Description = Location->ReleaseInfo();
+   Desc.URI = URI;
+   Desc.Description = URIDesc;
+   Desc.ShortDesc = ShortDesc;
    Desc.Owner = this;
 
-   // Set the short description to the archive component
-   if (Location->Dist[Location->Dist.size() - 1] == '/')
-      Desc.ShortDesc = Location->Dist;
-   else
-      Desc.ShortDesc = Location->Dist + '/' + Location->Section;  
-      
    QueueURI(Desc);
 }
 									/*}}}*/
@@ -273,7 +264,7 @@ pkgAcqIndexRel::pkgAcqIndexRel(pkgAcquire *Owner,
 string pkgAcqIndexRel::Custom600Headers()
 {
    string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(Location->ReleaseURI());
+   Final += URItoFileName(RealURI);
    
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
@@ -317,7 +308,7 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5,
    
    // Done, move it into position
    string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(Location->ReleaseURI());
+   FinalFile += URItoFileName(RealURI);
    Rename(DestFile,FinalFile);
 }
 									/*}}}*/
@@ -354,21 +345,42 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 
    if (Version.Arch() == 0)
    {
-      _error->Error("I wasn't able to locate file for the %s package. "
-		    "This might mean you need to manually fix this package. (due to missing arch)",
+      _error->Error(_("I wasn't able to locate file for the %s package. "
+		    "This might mean you need to manually fix this package. (due to missing arch)"),
 		    Version.ParentPkg().Name());
       return;
    }
    
-   // Generate the final file name as: package_version_arch.deb
-   StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
-                   QuoteString(Version.VerStr(),"_:") + '_' +
-                   QuoteString(Version.Arch(),"_:.") + ".deb";
-
+   /* We need to find a filename to determine the extension. We make the
+      assumption here that all the available sources for this version share
+      the same extension.. */
+   // Skip not source sources, they do not have file fields.
+   for (; Vf.end() == false; Vf++)
+   {
+      if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
+	 continue;
+      break;
+   }
+   
+   // Does not really matter here.. we are going to fail out below
+   if (Vf.end() != true)
+   {     
+      // If this fails to get a file name we will bomb out below.
+      pkgRecords::Parser &Parse = Recs->Lookup(Vf);
+      if (_error->PendingError() == true)
+	 return;
+            
+      // Generate the final file name as: package_version_arch.foo
+      StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
+	              QuoteString(Version.VerStr(),"_:") + '_' +
+     	              QuoteString(Version.Arch(),"_:.") + 
+	              "." + flExtension(Parse.FileName());
+   }
+      
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error("I wasn't able to locate file for the %s package. "
-		    "This might mean you need to manually fix this package.",
+      _error->Error(_("I wasn't able to locate file for the %s package. "
+		    "This might mean you need to manually fix this package."),
 		    Version.ParentPkg().Name());
 }
 									/*}}}*/
@@ -378,7 +390,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
    the archive is already available in the cache and stashs the MD5 for
    checking later. */
 bool pkgAcqArchive::QueueNext()
-{
+{   
    for (; Vf.end() == false; Vf++)
    {
       // Ignore not source sources
@@ -386,26 +398,21 @@ bool pkgAcqArchive::QueueNext()
 	 continue;
 
       // Try to cross match against the source list
-      string PkgFile = flNotDir(Vf.File().FileName());
-      pkgSourceList::const_iterator Location;
-      for (Location = Sources->begin(); Location != Sources->end(); Location++)
-	 if (PkgFile == URItoFileName(Location->PackagesURI()))
-	    break;
-
-      if (Location == Sources->end())
-	 continue;
+      pkgIndexFile *Index;
+      if (Sources->FindIndex(Vf.File(),Index) == false)
+	    continue;
       
       // Grab the text package record
       pkgRecords::Parser &Parse = Recs->Lookup(Vf);
       if (_error->PendingError() == true)
 	 return false;
       
-      PkgFile = Parse.FileName();
+      string PkgFile = Parse.FileName();
       MD5 = Parse.MD5Hash();
       if (PkgFile.empty() == true)
-	 return _error->Error("The package index files are corrupted. No Filename: "
-			      "field for package %s."
-			      ,Version.ParentPkg().Name());
+	 return _error->Error(_("The package index files are corrupted. No Filename: "
+			      "field for package %s."),
+			      Version.ParentPkg().Name());
 
       // See if we already have the file. (Legacy filenames)
       FileSize = Version->Size;
@@ -460,8 +467,9 @@ bool pkgAcqArchive::QueueNext()
       }
       
       // Create the item
-      Desc.URI = Location->ArchiveURI(PkgFile);
-      Desc.Description = Location->ArchiveInfo(Version);
+      Local = false;
+      Desc.URI = Index->ArchiveURI(PkgFile);
+      Desc.Description = Index->ArchiveInfo(Version);
       Desc.Owner = this;
       Desc.ShortDesc = Version.ParentPkg().Name();
       QueueURI(Desc);
@@ -484,7 +492,7 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
    if (Size != Version->Size)
    {
       Status = StatError;
-      ErrorText = "Size mismatch";
+      ErrorText = _("Size mismatch");
       return;
    }
    
@@ -494,7 +502,7 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
       if (Md5Hash != MD5)
       {
 	 Status = StatError;
-	 ErrorText = "MD5Sum mismatch";
+	 ErrorText = _("MD5Sum mismatch");
 	 Rename(DestFile,DestFile + ".FAILED");
 	 return;
       }
@@ -534,6 +542,20 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
 void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    ErrorText = LookupTag(Message,"Message");
+   
+   /* We don't really want to retry on failed media swaps, this prevents 
+      that. An interesting observation is that permanent failures are not
+      recorded. */
+   if (Cnf->Removable == true && 
+       StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
+   {
+      // Vf = Version.FileList();
+      while (Vf.end() == false) Vf++;
+      StoreFilename = string();
+      Item::Failed(Message,Cnf);
+      return;
+   }
+   
    if (QueueNext() == false)
    {
       // This is the retry counter

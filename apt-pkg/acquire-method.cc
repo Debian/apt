@@ -1,12 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.24 2000/01/17 07:11:49 jgg Exp $
+// $Id: acquire-method.cc,v 1.25 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire Method
 
    This is a skeleton class that implements most of the functionality
-   of a method and some usefull functions to make method implementation
+   of a method and some useful functions to make method implementation
    simpler. The methods all derive this and specialize it. The most
    complex implementation is the http method which needs to provide
    pipelining, it runs the message engine at the same time it is 
@@ -97,7 +97,8 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    if (Queue != 0)
    {
       snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: %s\n"
-	       "Message: %s\n",Queue->Uri.c_str(),Err.c_str());
+	       "Message: %s %s\n",Queue->Uri.c_str(),Err.c_str(),
+	       FailExtra.c_str());
 
       // Dequeue
       FetchItem *Tmp = Queue;
@@ -108,7 +109,8 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    }
    else
       snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: <UNKNOWN>\n"
-	       "Message: %s\n",Err.c_str());
+	       "Message: %s %s\n",Err.c_str(),
+	       FailExtra.c_str());
       
    // Set the transient flag 
    if (Transient == true)

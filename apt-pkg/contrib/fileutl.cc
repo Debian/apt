@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.34 2000/01/17 07:11:49 jgg Exp $
+// $Id: fileutl.cc,v 1.35 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -19,6 +19,9 @@
 #endif 
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/sptr.h>
+
+#include <apti18n.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -39,7 +42,7 @@ bool CopyFile(FileFd &From,FileFd &To)
       return false;
    
    // Buffered copy between fds
-   unsigned char *Buf = new unsigned char[64000];
+   SPtrArray<unsigned char> Buf = new unsigned char[64000];
    unsigned long Size = From.Size();
    while (Size != 0)
    {
@@ -49,15 +52,11 @@ bool CopyFile(FileFd &From,FileFd &To)
       
       if (From.Read(Buf,ToRead) == false || 
 	  To.Write(Buf,ToRead) == false)
-      {
-	 delete [] Buf;
 	 return false;
-      }
       
       Size -= ToRead;
    }
 
-   delete [] Buf;
    return true;   
 }
 									/*}}}*/
@@ -72,11 +71,22 @@ int GetLock(string File,bool Errors)
    int FD = open(File.c_str(),O_RDWR | O_CREAT | O_TRUNC,0640);
    if (FD < 0)
    {
+      // Read only .. cant have locking problems there.
+      if (errno == EROFS)
+      {
+	 _error->Warning(_("Not using locking for read only lock file %s"),File.c_str());
+	 return dup(0);       // Need something for the caller to close
+      }
+      
       if (Errors == true)
-	 _error->Errno("open","Could not open lock file %s",File.c_str());
+	 _error->Errno("open",_("Could not open lock file %s"),File.c_str());
+
+      // Feh.. We do this to distinguish the lock vs open case..
+      errno = EPERM;
       return -1;
    }
-   
+   SetCloseExec(FD,true);
+      
    // Aquire a write lock
    struct flock fl;
    fl.l_type = F_WRLCK;
@@ -87,12 +97,15 @@ int GetLock(string File,bool Errors)
    {
       if (errno == ENOLCK)
       {
-	 _error->Warning("Not using locking for nfs mounted lock file %s",File.c_str());
-	 return true;
+	 _error->Warning(_("Not using locking for nfs mounted lock file %s"),File.c_str());
+	 return dup(0);       // Need something for the caller to close	 
       }      
       if (Errors == true)
-	 _error->Errno("open","Could not get lock %s",File.c_str());
+	 _error->Errno("open",_("Could not get lock %s"),File.c_str());
+      
+      int Tmp = errno;
       close(FD);
+      errno = Tmp;
       return -1;
    }
 
@@ -150,6 +163,18 @@ string flNotFile(string File)
    return string(File,0,Res);
 }
 									/*}}}*/
+// flExtension - Return the extension for the file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string flExtension(string File)
+{
+   string::size_type Res = File.rfind('.');
+   if (Res == string::npos)
+      return File;
+   Res++;
+   return string(File,Res,Res - File.length());
+}
+									/*}}}*/
 // flNoLink - If file is a symlink then deref it			/*{{{*/
 // ---------------------------------------------------------------------
 /* If the name is not a link then the returned path is the input. */
@@ -189,6 +214,24 @@ string flNoLink(string File)
    }   
 }
 									/*}}}*/
+// flCombine - Combine a file and a directory				/*{{{*/
+// ---------------------------------------------------------------------
+/* If the file is an absolute path then it is just returned, otherwise
+   the directory is pre-pended to it. */
+string flCombine(string Dir,string File)
+{
+   if (File.empty() == true)
+      return string();
+   
+   if (File[0] == '/' || Dir.empty() == true)
+      return File;
+   if (File.length() >= 2 && File[0] == '.' && File[1] == '/')
+      return File;
+   if (Dir[Dir.length()-1] == '/')
+      return Dir + File;
+   return Dir + '/' + File;
+}
+									/*}}}*/
 // SetCloseExec - Set the close on exec flag				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -216,7 +259,7 @@ void SetNonBlock(int Fd,bool Block)
 									/*}}}*/
 // WaitFd - Wait for a FD to become readable				/*{{{*/
 // ---------------------------------------------------------------------
-/* This waits for a FD to become readable using select. It is usefull for
+/* This waits for a FD to become readable using select. It is useful for
    applications making use of non-blocking sockets. The timeout is 
    in seconds. */
 bool WaitFd(int Fd,bool write,unsigned long timeout)
@@ -309,7 +352,7 @@ bool ExecWait(int Pid,const char *Name,bool Reap)
       if (Reap == true)
 	 return false;
       
-      return _error->Error("Waited, for %s but it wasn't there",Name);
+      return _error->Error(_("Waited, for %s but it wasn't there"),Name);
    }
 
    
@@ -319,12 +362,12 @@ bool ExecWait(int Pid,const char *Name,bool Reap)
       if (Reap == true)
 	 return false;
       if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
-	 return _error->Error("Sub-process %s recieved a segmentation fault.",Name);
+	 return _error->Error(_("Sub-process %s received a segmentation fault."),Name);
 
       if (WIFEXITED(Status) != 0)
-	 return _error->Error("Sub-process %s returned an error code (%u)",Name,WEXITSTATUS(Status));
+	 return _error->Error(_("Sub-process %s returned an error code (%u)"),Name,WEXITSTATUS(Status));
       
-      return _error->Error("Sub-process %s exited unexpectedly",Name);
+      return _error->Error(_("Sub-process %s exited unexpectedly"),Name);
    }      
    
    return true;
@@ -363,7 +406,7 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
    }  
 
    if (iFd < 0)
-      return _error->Errno("open","Could not open file %s",FileName.c_str());
+      return _error->Errno("open",_("Could not open file %s"),FileName.c_str());
    
    this->FileName = FileName;
    SetCloseExec(iFd,true);
@@ -395,7 +438,7 @@ bool FileFd::Read(void *To,unsigned long Size,bool AllowEof)
       if (Res < 0)
       {
 	 Flags |= Fail;
-	 return _error->Errno("read","Read error");
+	 return _error->Errno("read",_("Read error"));
       }
       
       To = (char *)To + Res;
@@ -414,7 +457,7 @@ bool FileFd::Read(void *To,unsigned long Size,bool AllowEof)
    }
    
    Flags |= Fail;
-   return _error->Error("read, still have %u to read but none left",Size);
+   return _error->Error(_("read, still have %lu to read but none left"),Size);
 }
 									/*}}}*/
 // FileFd::Write - Write to the file					/*{{{*/
@@ -432,7 +475,7 @@ bool FileFd::Write(const void *From,unsigned long Size)
       if (Res < 0)
       {
 	 Flags |= Fail;
-	 return _error->Errno("write","Write error");
+	 return _error->Errno("write",_("Write error"));
       }
       
       From = (char *)From + Res;
@@ -444,7 +487,7 @@ bool FileFd::Write(const void *From,unsigned long Size)
       return true;
    
    Flags |= Fail;
-   return _error->Error("write, still have %u to write but couldn't",Size);
+   return _error->Error(_("write, still have %lu to write but couldn't"),Size);
 }
 									/*}}}*/
 // FileFd::Seek - Seek in the file					/*{{{*/
@@ -455,7 +498,7 @@ bool FileFd::Seek(unsigned long To)
    if (lseek(iFd,To,SEEK_SET) != (signed)To)
    {
       Flags |= Fail;
-      return _error->Error("Unable to seek to %u",To);
+      return _error->Error("Unable to seek to %lu",To);
    }
    
    return true;
@@ -469,7 +512,7 @@ bool FileFd::Skip(unsigned long Over)
    if (lseek(iFd,Over,SEEK_CUR) < 0)
    {
       Flags |= Fail;
-      return _error->Error("Unable to seek ahead %u",Over);
+      return _error->Error("Unable to seek ahead %lu",Over);
    }
    
    return true;
@@ -483,7 +526,7 @@ bool FileFd::Truncate(unsigned long To)
    if (ftruncate(iFd,To) != 0)
    {
       Flags |= Fail;
-      return _error->Error("Unable to truncate to %u",To);
+      return _error->Error("Unable to truncate to %lu",To);
    }
    
    return true;
@@ -519,13 +562,25 @@ bool FileFd::Close()
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
       if (iFd >= 0 && close(iFd) != 0)
-	 Res &= _error->Errno("close","Problem closing the file");
+	 Res &= _error->Errno("close",_("Problem closing the file"));
    iFd = -1;
    
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)
       if (unlink(FileName.c_str()) != 0)
-	 Res &= _error->Warning("unlnk","Problem unlinking the file");
+	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file"));
    return Res;
+}
+									/*}}}*/
+// FileFd::Sync - Sync the file						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FileFd::Sync()
+{
+#ifdef _POSIX_SYNCHRONIZED_IO
+   if (fsync(iFd) != 0)
+      return _error->Errno("sync",_("Problem syncing the file"));
+#endif
+   return true;
 }
 									/*}}}*/

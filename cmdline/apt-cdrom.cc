@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.35 2000/05/10 06:03:52 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.36 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -19,7 +19,8 @@
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/strutl.h>
 #include <config.h>
-
+#include <apti18n.h>
+    
 #include "indexcopy.h"
 
 #include <iostream>
@@ -119,7 +120,7 @@ bool FindPackages(string CD,vector<string> &List,vector<string> &SList,
 	 break;
 
       if (chdir(CD.c_str()) != 0)
-	 return _error->Errno("chdir","Unable to change to ",CD.c_str());
+	 return _error->Errno("chdir","Unable to change to %s",CD.c_str());
    };
 
    closedir(D);
@@ -255,7 +256,7 @@ bool DropRepeats(vector<string> &List,const char *Name)
 // ---------------------------------------------------------------------
 /* This takes the list of source list expressed entires and collects
    similar ones to form a single entry for each dist */
-bool ReduceSourcelist(string CD,vector<string> &List)
+void ReduceSourcelist(string CD,vector<string> &List)
 {
    sort(List.begin(),List.end());
    
@@ -269,8 +270,9 @@ bool ReduceSourcelist(string CD,vector<string> &List)
       string::size_type SSpace = (*I).find(' ',Space + 1);
       if (SSpace == string::npos)
 	 continue;
-      
+
       string Word1 = string(*I,Space,SSpace-Space);
+      string Prefix = string(*I,0,Space);
       for (vector<string>::iterator J = List.begin(); J != I; J++)
       {
 	 // Find a space..
@@ -281,6 +283,8 @@ bool ReduceSourcelist(string CD,vector<string> &List)
 	 if (SSpace2 == string::npos)
 	    continue;
 	 
+	 if (string(*J,0,Space2) != Prefix)
+	    continue;
 	 if (string(*J,Space2,SSpace2-Space2) != Word1)
 	    continue;
 	 
@@ -358,7 +362,8 @@ bool WriteSourceList(string Name,vector<string> &List,bool Source)
    string File = _config->FindFile("Dir::Etc::sourcelist");
 
    // Open the stream for reading
-   ifstream F(File.c_str(),ios::in | ios::nocreate);
+   ifstream F((FileExists(File)?File.c_str():"/dev/null"),
+	      ios::in | ios::nocreate);
    if (!F != 0)
       return _error->Errno("ifstream::ifstream","Opening %s",File.c_str());
 
@@ -577,6 +582,12 @@ bool DoAdd(CommandLine &)
 
 	 if (Name.empty() == false)
 	 {
+	    // Escape special characters
+	    string::iterator J = Name.begin();
+	    for (; J != Name.end(); J++)
+	       if (*J == '"' || *J == ']' || *J == '[')
+		  *J = '_';
+	    
 	    cout << "Found label '" << Name << "'" << endl;
 	    Database.Set("CD::" + ID + "::Label",Name);
 	 }	 
@@ -663,37 +674,78 @@ bool DoAdd(CommandLine &)
    return true;
 }
 									/*}}}*/
+// DoIdent - Ident a CDROM						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool DoIdent(CommandLine &)
+{
+   // Startup
+   string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   if (CDROM[0] == '.')
+      CDROM= SafeGetCWD() + '/' + CDROM;
+   
+   cout << "Using CD-ROM mount point " << CDROM << endl;
+   cout << "Mounting CD-ROM" << endl;
+   if (MountCdrom(CDROM) == false)
+      return _error->Error("Failed to mount the cdrom.");
+   
+   // Hash the CD to get an ID
+   cout << "Identifying.. " << flush;
+   string ID;
+   if (IdentCdrom(CDROM,ID) == false)
+   {
+      cout << endl;
+      return false;
+   }
+   
+   cout << '[' << ID << ']' << endl;
+
+   // Read the database
+   Configuration Database;
+   string DFile = _config->FindFile("Dir::State::cdroms");
+   if (FileExists(DFile) == true)
+   {
+      if (ReadConfigFile(Database,DFile) == false)
+	 return _error->Error("Unable to read the cdrom database %s",
+			      DFile.c_str());
+   }
+   cout << "Stored Label: '" << Database.Find("CD::" + ID) << "'" << endl;
+   return true;
+}
+									/*}}}*/
 
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 int ShowHelp()
 {
-   cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
-       " compiled on " << __DATE__ << "  " << __TIME__ << endl;
+   ioprintf(cout,_("%s %s for %s %s compiled on %s %s\n"),PACKAGE,VERSION,
+	    COMMON_OS,COMMON_CPU,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
-      return 100;
+      return 0;
    
-   cout << "Usage: apt-cdrom [options] command" << endl;
-   cout << endl;
-   cout << "apt-cdrom is a tool to add CDROM's to APT's source list. The " << endl;
-   cout << "CDROM mount point and device information is taken from apt.conf" << endl;
-   cout << "and /etc/fstab." << endl;
-   cout << endl;
-   cout << "Commands:" << endl;
-   cout << "   add - Add a CDROM" << endl;
-   cout << endl;
-   cout << "Options:" << endl;
-   cout << "  -h   This help text" << endl;
-   cout << "  -d   CD-ROM mount point" << endl;
-   cout << "  -r   Rename a recognized CD-ROM" << endl;
-   cout << "  -m   No mounting" << endl;
-   cout << "  -f   Fast mode, don't check package files" << endl;
-   cout << "  -a   Thorough scan mode" << endl;
-   cout << "  -c=? Read this configuration file" << endl;
-   cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
-   cout << "See fstab(5)" << endl;
-   return 100;
+   cout << 
+      "Usage: apt-cdrom [options] command\n"
+      "\n"
+      "apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+      "CDROM mount point and device information is taken from apt.conf\n"
+      "and /etc/fstab.\n"
+      "\n"
+      "Commands:\n"
+      "   add - Add a CDROM\n"
+      "   ident - Report the identity of a CDROM\n"
+      "\n"
+      "Options:\n"
+      "  -h   This help text\n"
+      "  -d   CD-ROM mount point\n"
+      "  -r   Rename a recognized CD-ROM\n"
+      "  -m   No mounting\n"
+      "  -f   Fast mode, don't check package files\n"
+      "  -a   Thorough scan mode\n"
+      "  -c=? Read this configuration file\n"
+      "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+      "See fstab(5)\n";
+   return 0;
 }
 									/*}}}*/
 
@@ -715,12 +767,14 @@ int main(int argc,const char *argv[])
       {0,0,0,0}};
    CommandLine::Dispatch Cmds[] = {
       {"add",&DoAdd},
+      {"ident",&DoIdent},
       {0,0}};
 	 
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
-   if (pkgInitialize(*_config) == false ||
-       CmdL.Parse(argc,argv) == false)
+   if (pkgInitConfig(*_config) == false ||
+       CmdL.Parse(argc,argv) == false ||
+       pkgInitSystem(*_config,_system) == false)
    {
       _error->DumpErrors();
       return 100;

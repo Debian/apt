@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.cc,v 1.3 1999/04/07 05:30:18 jgg Exp $
+// $Id: debsrcrecords.cc,v 1.4 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -13,9 +13,11 @@
 #pragma implementation "apt-pkg/debsrcrecords.h"
 #endif 
 
+#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
 									/*}}}*/
 
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
@@ -23,43 +25,63 @@
 /* This member parses the binaries field into a pair of class arrays and
    returns a list of strings representing all of the components of the
    binaries field. The returned array need not be freed and will be
-   reused by the next Binaries function call. */
+   reused by the next Binaries function call. This function is commonly
+   used during scanning to find the right package */
 const char **debSrcRecordParser::Binaries()
 {
+   // This should use Start/Stop too, it is supposed to be efficient after all.
    string Bins = Sect.FindS("Binary");
-   char *Buf = Buffer;
-   unsigned int Bin = 0;
-   if (Bins.empty() == true)
+   if (Bins.empty() == true || Bins.length() >= sizeof(Buffer))
       return 0;
    
-   // Strip any leading spaces
-   string::const_iterator Start = Bins.begin();
-   for (; Start != Bins.end() && isspace(*Start) != 0; Start++);
+   strcpy(Buffer,Bins.c_str());
+   if (TokSplitString(',',Buffer,StaticBinList,
+		      sizeof(StaticBinList)/sizeof(StaticBinList[0])) == false)
+      return 0;
+   return (const char **)StaticBinList;
+}
+									/*}}}*/
+// SrcRecordParser::BuildDepends - Return the Build-Depends information	/*{{{*/
+// ---------------------------------------------------------------------
+/* This member parses the build-depends information and returns a list of 
+   package/version records representing the build dependency. The returned 
+   array need not be freed and will be reused by the next call to this 
+   function */
+bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps)
+{
+   unsigned int I;
+   const char *Start, *Stop;
+   BuildDepRec rec;
+   const char *fields[] = {"Build-Depends", 
+                           "Build-Depends-Indep",
+			   "Build-Conflicts",
+			   "Build-Conflicts-Indep"};
 
-   string::const_iterator Pos = Start;
-   while (Pos != Bins.end())
+   BuildDeps.clear();
+
+   for (I = 0; I < 4; I++) 
    {
-      // Skip to the next ','
-      for (; Pos != Bins.end() && *Pos != ','; Pos++);
+      if (Sect.Find(fields[I], Start, Stop) == false)
+         continue;
       
-      // Back remove spaces
-      string::const_iterator End = Pos;
-      for (; End > Start && (End[-1] == ',' || isspace(End[-1]) != 0); End--);
-      
-      // Stash the string
-      memcpy(Buf,Start,End-Start);
-      StaticBinList[Bin] = Buf;
-      Bin++;
-      Buf += End-Start;
-      *Buf++ = 0;
-      
-      // Advance pos
-      for (; Pos != Bins.end() && (*Pos == ',' || isspace(*Pos) != 0); Pos++);
-      Start = Pos;
+      while (1)
+      {
+         Start = debListParser::ParseDepends(Start, Stop, 
+		     rec.Package,rec.Version,rec.Op,true);
+	 
+         if (Start == 0) 
+            return _error->Error("Problem parsing dependency: %s", fields[I]);
+	 rec.Type = I;
+
+	 if (rec.Package != "")
+   	    BuildDeps.push_back(rec);
+	 
+   	 if (Start == Stop) 
+	    break;
+      }	 
    }
    
-   StaticBinList[Bin] = 0;
-   return StaticBinList;
+   return true;
 }
 									/*}}}*/
 // SrcRecordParser::Files - Return a list of files for this source	/*{{{*/
@@ -95,6 +117,25 @@ bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
       // Parse the size and append the directory
       F.Size = atoi(Size.c_str());
       F.Path = Base + F.Path;
+      
+      // Try to guess what sort of file it is we are getting.
+      string::size_type Pos = F.Path.length()-1;
+      while (1)
+      {
+	 string::size_type Tmp = F.Path.rfind('.',Pos);
+	 if (Tmp == string::npos)
+	    break;
+	 F.Type = string(F.Path,Tmp+1,Pos-Tmp);
+	 
+	 if (F.Type == "gz" || F.Type == "bz2")
+	 {
+	    Pos = Tmp-1;
+	    continue;
+	 }
+	 
+	 break;
+      }
+      
       List.push_back(F);
    }
    

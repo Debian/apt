@@ -29,6 +29,9 @@ library: $(LIB)/lib$(LIBRARY).so $(LIB)/lib$(LIBRARY).so.$(MAJOR)
 clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
+# Make Directories
+MKDIRS += $(OBJ) $(DEP) $(LIB) $(dir $($(LOCAL)-HEADERS))
+
 # The clean rules
 .PHONY: clean/$(LOCAL) veryclean/$(LOCAL)
 clean/$(LOCAL):

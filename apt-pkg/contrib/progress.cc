@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.9 2000/06/05 04:22:25 jgg Exp $
+// $Id: progress.cc,v 1.10 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -14,6 +14,9 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+
+#include <apti18n.h>
+    
 #include <stdio.h>
 									/*}}}*/
 
@@ -110,6 +113,9 @@ bool OpProgress::CheckChange(float Interval)
    if ((int)LastPercent == (int)Percent)
       return false;
    
+   if (Interval == 0)
+      return false;
+   
    // Check time delta
    struct timeval Now;
    gettimeofday(&Now,0);
@@ -142,9 +148,9 @@ void OpTextProgress::Done()
    {
       char S[300];
       if (_error->PendingError() == true)
-	 snprintf(S,sizeof(S),"\r%s... Error!",OldOp.c_str());
+	 snprintf(S,sizeof(S),_("\r%s... Error!"),OldOp.c_str());
       else
-	 snprintf(S,sizeof(S),"\r%s... Done",OldOp.c_str());
+	 snprintf(S,sizeof(S),_("\r%s... Done"),OldOp.c_str());
       Write(S);
       cout << endl;
       OldOp = string();
@@ -162,7 +168,7 @@ void OpTextProgress::Done()
 /* */
 void OpTextProgress::Update()
 {
-   if (CheckChange() == false)
+   if (CheckChange((NoUpdate == true?0:0.7)) == false)
       return;
    
    // No percent spinner

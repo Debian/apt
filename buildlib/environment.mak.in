@@ -5,14 +5,13 @@
 CC = @CC@
 CPPFLAGS+= @CPPFLAGS@ @DEFS@ -D_REENTRANT
 CXX = @CXX@
-CXXFLAGS+= @CXXFLAGS@ @X_CFLAGS@
+CXXFLAGS+= @CXXFLAGS@
 NUM_PROCS = @NUM_PROCS@
 
 # Linker stuff
 PICFLAGS+= -fPIC -DPIC
 LFLAGS+= @LDFLAGS@
 LEFLAGS+= 
-XLIBS:= @X_LIBS@ @X_PRE_LIBS@ @X11LIB@ @X_EXTRA_LIBS@
 SOCKETLIBS:= @SOCKETLIBS@
 AR:=@AR@
 RANLIB:=@RANLIB@
@@ -24,15 +23,19 @@ INLINEDEPFLAG = -MD
 DEBIANDOC_HTML = @DEBIANDOC_HTML@
 DEBIANDOC_TEXT = @DEBIANDOC_TEXT@
 
-# YODL for the man pages
-YODL_MAN = @YODL_MAN@
+# SGML for the man pages
+NSGMLS = @NSGMLS@
+SGMLSPL = @SGMLSPL@
+DOCBOOK2MAN := $(wildcard /usr/lib/perl5/sgmlspl-specs/docbook2man-spec.pl)
 
 # Various library checks
-X11LIB = @X11LIB@
-GPMLIB = @GPMLIB@
-SLANGLIB = @SLANGLIB@
-XPMLIB = @XPMLIB@
 PTHREADLIB = @PTHREADLIB@
+PYTHONLIB = @PYTHONLIB@
+PYTHONVER = @PYTHONVER@
+PYTHONPREFIX = @PYTHONPREFIX@
+PYTHONEXECPREFIX = @PYTHONEXECPREFIX@
+PYTHONINCLUDE = @PYTHONINCLUDE@
+DB2LIB = @DB2LIB@
 
 # Shim Headerfile control
 HAVE_C9X = @HAVE_C9X@
@@ -41,11 +44,11 @@ NEED_SOCKLEN_T_DEFINE = @NEED_SOCKLEN_T_DEFINE@
 
 # Shared library things
 HOST_OS = @host_os@
-ifeq ($(HOST_OS),linux-gnu)
+ifneq ($(words $(filter linux-gnu gnu%,$(HOST_OS))),0)
    SONAME_MAGIC=-Wl,-soname -Wl,
    LFLAGS_SO=
-else   
-   # Do not know how to creat shared libraries here.
+else
+   # Do not know how to create shared libraries here.
    ONLYSTATICLIBS = yes
 endif
 	

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: clean.cc,v 1.3 1999/10/03 21:09:27 jgg Exp $
+// $Id: clean.cc,v 1.4 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Clean - Clean out downloaded directories
@@ -17,6 +17,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 
+#include <apti18n.h>    
+
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -29,16 +31,17 @@
 bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
 {
    bool CleanInstalled = _config->FindB("APT::Clean-Installed",true);
-   
-   DIR *D = opendir(Dir.c_str());   
+   string MyArch = _config->Find("APT::Architecture");
+      
+   DIR *D = opendir(Dir.c_str());
    if (D == 0)
-      return _error->Errno("opendir","Unable to read %s",Dir.c_str());
-   
+      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+
    string StartDir = SafeGetCWD();
    if (chdir(Dir.c_str()) != 0)
    {
       closedir(D);
-      return _error->Errno("chdir","Unable to change to ",Dir.c_str());
+      return _error->Errno("chdir",_("Unable to change to %s"),Dir.c_str());
    }
    
    for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
@@ -52,8 +55,12 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
 
       struct stat St;
       if (stat(Dir->d_name,&St) != 0)
-	 return _error->Errno("stat","Unable to stat %s.",Dir->d_name);
-
+      {
+	 chdir(StartDir.c_str());
+	 closedir(D);
+	 return _error->Errno("stat",_("Unable to stat %s."),Dir->d_name);
+      }
+      
       // Grab the package name
       const char *I = Dir->d_name;
       for (; *I != 0 && *I != '_';I++);
@@ -74,7 +81,10 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
       if (*I != '.')
 	 continue;
       string Arch = DeQuoteString(string(Start,I-Start));
-            
+      
+      if (Arch != "all" && Arch != MyArch)
+	 continue;
+      
       // Lookup the package
       pkgCache::PkgIterator P = Cache.FindPkg(Pkg);
       if (P.end() != true)

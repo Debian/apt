@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.11 1999/04/03 00:34:33 jgg Exp $
+// $Id: configuration.h,v 1.12 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -36,6 +36,8 @@
 
 class Configuration
 {
+   public:
+   
    struct Item
    {
       string Value;
@@ -44,42 +46,61 @@ class Configuration
       Item *Child;
       Item *Next;
       
-      string FullTag() const;
+      string FullTag(const Item *Stop = 0) const;
       
       Item() : Parent(0), Child(0), Next(0) {};
    };
+   
+   private:
+   
    Item *Root;
+   bool ToFree;
    
    Item *Lookup(Item *Head,const char *S,unsigned long Len,bool Create);
-   Item *Lookup(const char *Name,bool Create);
-      
+   Item *Lookup(const char *Name,bool Create);   
+   inline const Item *Lookup(const char *Name) const
+   {
+      return ((Configuration *)this)->Lookup(Name,false);
+   }  
+   
    public:
 
-   string Find(const char *Name,const char *Default = 0);
-   string Find(string Name,const char *Default = 0) {return Find(Name.c_str(),Default);};
-   string FindFile(const char *Name,const char *Default = 0);
-   string FindDir(const char *Name,const char *Default = 0);
-   int FindI(const char *Name,int Default = 0);
-   int FindI(string Name,bool Default = 0) {return FindI(Name.c_str(),Default);};
-   bool FindB(const char *Name,bool Default = false);
-   bool FindB(string Name,bool Default = false) {return FindB(Name.c_str(),Default);};
+   string Find(const char *Name,const char *Default = 0) const;
+   string Find(string Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
+   string FindFile(const char *Name,const char *Default = 0) const;
+   string FindDir(const char *Name,const char *Default = 0) const;
+   int FindI(const char *Name,int Default = 0) const;
+   int FindI(string Name,bool Default = 0) const {return FindI(Name.c_str(),Default);};
+   bool FindB(const char *Name,bool Default = false) const;
+   bool FindB(string Name,bool Default = false) const {return FindB(Name.c_str(),Default);};
+   string FindAny(const char *Name,const char *Default = 0) const;
 	      
    inline void Set(string Name,string Value) {Set(Name.c_str(),Value);};
+   void CndSet(const char *Name,string Value);
    void Set(const char *Name,string Value);
    void Set(const char *Name,int Value);   
    
-   inline bool Exists(string Name) {return Exists(Name.c_str());};
-   bool Exists(const char *Name);
-      
-   inline const Item *Tree(const char *Name) {return Lookup(Name,false);};
+   inline bool Exists(string Name) const {return Exists(Name.c_str());};
+   bool Exists(const char *Name) const;
+   bool ExistsAny(const char *Name) const;
+
+   void Clear(string Name);
+   
+   inline const Item *Tree(const char *Name) const {return Lookup(Name);};
 
    void Dump();
-   
+
+   Configuration(const Item *Root);
    Configuration();
+   ~Configuration();
 };
 
 extern Configuration *_config;
 
-bool ReadConfigFile(Configuration &Conf,string File);
+bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional = false,
+		    unsigned Depth = 0);
+
+bool ReadConfigDir(Configuration &Conf,string Dir,bool AsSectional = false,
+		    unsigned Depth = 0);
 
 #endif

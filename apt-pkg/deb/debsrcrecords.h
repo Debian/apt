@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.h,v 1.5 1999/10/18 04:15:25 jgg Exp $
+// $Id: debsrcrecords.h,v 1.6 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -17,13 +17,15 @@
 
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/fileutl.h>
 
 class debSrcRecordParser : public pkgSrcRecords::Parser
 {
+   FileFd Fd;
    pkgTagFile Tags;
    pkgTagSection Sect;
    char Buffer[10000];
-   const char *StaticBinList[400];
+   char *StaticBinList[400];
    unsigned long iOffset;
    
    public:
@@ -32,11 +34,12 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual bool Step() {iOffset = Tags.Offset(); return Tags.Step(Sect);};
    virtual bool Jump(unsigned long Off) {iOffset = Off; return Tags.Jump(Sect,Off);};
 
-   virtual string Package() {return Sect.FindS("Package");};
-   virtual string Version() {return Sect.FindS("Version");};
-   virtual string Maintainer() {return Sect.FindS("Maintainer");};
-   virtual string Section() {return Sect.FindS("Section");};
+   virtual string Package() const {return Sect.FindS("Package");};
+   virtual string Version() const {return Sect.FindS("Version");};
+   virtual string Maintainer() const {return Sect.FindS("Maintainer");};
+   virtual string Section() const {return Sect.FindS("Section");};
    virtual const char **Binaries();
+   virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps);
    virtual unsigned long Offset() {return iOffset;};
    virtual string AsStr() 
    {
@@ -45,10 +48,11 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
       return string(Start,Stop);
    };
    virtual bool Files(vector<pkgSrcRecords::File> &F);
-   
-   debSrcRecordParser(FileFd *File,pkgSourceList::const_iterator SrcItem) : 
-                   Parser(File,SrcItem),
-                   Tags(*File,sizeof(Buffer)) {};
+
+   debSrcRecordParser(string File,pkgIndexFile const *Index) :
+                   Parser(Index),      
+                   Fd(File,FileFd::ReadOnly),
+                   Tags(&Fd,sizeof(Buffer)) {};
 };
 
 #endif

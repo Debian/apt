@@ -1,34 +1,24 @@
 # This file contains a table of known architecture strings, with
-# things to map them to. `configure' will take the output of gcc
-# --print-libgcc-file-name, strip off leading directories up to and
-# including gcc-lib, strip off trailing /libgcc.a and trailing version
-# number directory, and then strip off everything after the first
-# hyphen.  The idea is that you're left with this bit:
-#   $ gcc --print-libgcc-file-name
-#   /usr/lib/gcc-lib/i486-linux/2.7.2/libgcc.a
-#                    ^^^^
-# This is then looked up in the table below, to find out what to map
-# it to.  If it isn't found then configure will print a warning and
-# continue.  You can override configure's ideas using --with-arch.
-# The third field is the GNU configure architecture to use with
-# this build architecture.
-#
-# This file is mirrored from dpkg.
-#
+# things to map them to. `configure' will take the output of the
+# autoconf cannon macros and look in here. This only deals with architecture
+# (CPU) names.
 
-i386	i386	i486
-i486	i386	i486
-i586	i386	i486
-i686	i386	i486
-pentium	i386	i486
-sparc	sparc	sparc
-sparc64	sparc64	sparc64
-alpha	alpha	alpha
-m68k	m68k	m68k
-arm	arm	arm
-armv4l  arm     arm
-powerpc	powerpc	powerpc
-ppc	powerpc	powerpc
-mipsel  mipsel  mipsel
-mips	mips	mips
-hppa1.1 hppa    hppa
+# The left side is a regex for awk
+
+i.86	i386
+pentium	i386
+sparc	sparc
+sparc64	sparc
+alpha.*	alpha
+m68k	m68k
+arm.*	arm
+powerpc	powerpc
+ppc	powerpc
+mipsel  mipsel
+mipseb	mips
+mips	mips
+sheb	sheb
+shel	sh
+sh	sh
+hppa.*	hppa
+ia64	ia64

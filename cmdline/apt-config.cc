@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.6 1999/06/06 05:52:37 jgg Exp $
+// $Id: apt-config.cc,v 1.7 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -19,9 +19,13 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
-#include "config.h"
+#include <apt-pkg/strutl.h>
 
+#include <config.h>
+#include <apti18n.h>
+    
 #include <iostream>
+#include <string>
 									/*}}}*/
 
 // DoShell - Handle the shell command					/*{{{*/
@@ -32,20 +36,16 @@ bool DoShell(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I += 2)
    {
       if (I[1] == 0 || strlen(I[1]) == 0)
-	 return _error->Error("Arguments not in pairs");
+	 return _error->Error(_("Arguments not in pairs"));
 
-      // Check if the caller has requested a directory path
-      if (I[1][strlen(I[1])-1] == '/')
-      {
-	 char S[300];
-	 strcpy(S,I[1]);
-	 S[strlen(S)-1] = 0;
-	 if (_config->Exists(S) == true)
-	    cout << *I << "=\"" << _config->FindDir(S) << '"' << endl;
-      }
+      string key = I[1];
+      if (key.end()[-1] == '/') // old directory format
+	 key.append("d");
+
+      if (_config->ExistsAny(key.c_str()))
+	 cout << *I << "='" << 
+	         SubstVar(_config->FindAny(key.c_str()),"'","'\\''") << '\'' << endl;
       
-      if (_config->Exists(I[1]) == true)
-	 cout << *I << "=\"" << _config->Find(I[1]) << '"' << endl;
    }
    
    return true;
@@ -65,24 +65,25 @@ bool DoDump(CommandLine &CmdL)
 /* */
 int ShowHelp()
 {
-   cout << PACKAGE << ' ' << VERSION << " for " << ARCHITECTURE <<
-       " compiled on " << __DATE__ << "  " << __TIME__ << endl;
+   ioprintf(cout,_("%s %s for %s %s compiled on %s %s\n"),PACKAGE,VERSION,
+	    COMMON_OS,COMMON_CPU,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
-      return 100;
+      return 0;
    
-   cout << "Usage: apt-config [options] command" << endl;
-   cout << endl;
-   cout << "apt-config is a simple tool to read the APT config file" << endl;   
-   cout << endl;
-   cout << "Commands:" << endl;
-   cout << "   shell - Shell mode" << endl;
-   cout << "   dump - Show the configuration" << endl;
-   cout << endl;
-   cout << "Options:" << endl;
-   cout << "  -h   This help text." << endl;
-   cout << "  -c=? Read this configuration file" << endl;
-   cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
-   return 100;
+   cout <<
+    _("Usage: apt-config [options] command\n"
+      "\n"
+      "apt-config is a simple tool to read the APT config file\n"
+      "\n"
+      "Commands:\n"
+      "   shell - Shell mode\n"
+      "   dump - Show the configuration\n"
+      "\n"
+      "Options:\n"
+      "  -h   This help text.\n" 
+      "  -c=? Read this configuration file\n" 
+      "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n");
+   return 0;
 }
 									/*}}}*/
 
@@ -100,8 +101,9 @@ int main(int argc,const char *argv[])
    
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
-   if (pkgInitialize(*_config) == false ||
-       CmdL.Parse(argc,argv) == false)
+   if (pkgInitConfig(*_config) == false ||
+       CmdL.Parse(argc,argv) == false ||
+       pkgInitSystem(*_config,_system) == false)
    {
       _error->DumpErrors();
       return 100;

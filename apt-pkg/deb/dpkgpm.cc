@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.17 2000/05/13 01:52:38 jgg Exp $
+// $Id: dpkgpm.cc,v 1.18 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -14,7 +14,9 @@
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/strutl.h>
+    
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -28,7 +30,7 @@
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDPkgPM::pkgDPkgPM(pkgDepCache &Cache) : pkgPackageManager(Cache)
+pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) : pkgPackageManager(Cache)
 {
 }
 									/*}}}*/
@@ -141,6 +143,90 @@ bool pkgDPkgPM::RunScripts(const char *Cnf)
 }
 
                                                                         /*}}}*/
+// DPkgPM::SendV2Pkgs - Send version 2 package info			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is part of the helper script communication interface, it sends
+   very complete information down to the other end of the pipe.*/
+bool pkgDPkgPM::SendV2Pkgs(FILE *F)
+{
+   fprintf(F,"VERSION 2\n");
+   
+   /* Write out all of the configuration directives by walking the 
+      configuration tree */
+   const Configuration::Item *Top = _config->Tree(0);
+   for (; Top != 0;)
+   {
+      if (Top->Value.empty() == false)
+      {
+	 fprintf(F,"%s=%s\n",
+		 QuoteString(Top->FullTag(),"=\"\n").c_str(),
+		 QuoteString(Top->Value,"\n").c_str());
+      }
+
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+      
+      while (Top != 0 && Top->Next == 0)
+	 Top = Top->Parent;
+      if (Top != 0)
+	 Top = Top->Next;
+   }   
+   fprintf(F,"\n");
+ 
+   // Write out the package actions in order.
+   for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
+   {
+      pkgDepCache::StateCache &S = Cache[I->Pkg];
+      
+      fprintf(F,"%s ",I->Pkg.Name());
+      // Current version
+      if (I->Pkg->CurrentVer == 0)
+	 fprintf(F,"- ");
+      else
+	 fprintf(F,"%s ",I->Pkg.CurrentVer().VerStr());
+      
+      // Show the compare operator
+      // Target version
+      if (S.InstallVer != 0)
+      {
+	 int Comp = 2;
+	 if (I->Pkg->CurrentVer != 0)
+	    Comp = S.InstVerIter(Cache).CompareVer(I->Pkg.CurrentVer());
+	 if (Comp < 0)
+	    fprintf(F,"> ");
+	 if (Comp == 0)
+	    fprintf(F,"= ");
+	 if (Comp > 0)
+	    fprintf(F,"< ");
+	 fprintf(F,"%s ",S.InstVerIter(Cache).VerStr());
+      }
+      else
+	 fprintf(F,"> - ");
+      
+      // Show the filename/operation
+      if (I->Op == Item::Install)
+      {
+	 // No errors here..
+	 if (I->File[0] != '/')
+	    fprintf(F,"**ERROR**\n");
+	 else
+	    fprintf(F,"%s\n",I->File.c_str());
+      }      
+      if (I->Op == Item::Configure)
+	 fprintf(F,"**CONFIGURE**\n");
+      if (I->Op == Item::Remove ||
+	  I->Op == Item::Purge)
+	 fprintf(F,"**REMOVE**\n");
+      
+      if (ferror(F) != 0)
+	 return false;
+   }
+   return true;
+}
+									/*}}}*/
 // DPkgPM::RunScriptsWithPkgs - Run scripts with package names on stdin /*{{{*/
 // ---------------------------------------------------------------------
 /* This looks for a list of scripts to run from the configuration file
@@ -158,7 +244,18 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
    {
       if (Opts->Value.empty() == true)
          continue;
-		
+
+      // Determine the protocol version
+      string OptSec = Opts->Value;
+      string::size_type Pos;
+      if ((Pos = OptSec.find(' ')) == string::npos || Pos == 0)
+	 Pos = OptSec.length();
+      else
+	 Pos--;
+      OptSec = "DPkg::Tools::Options::" + string(Opts->Value.c_str(),Pos);
+      
+      unsigned int Version = _config->FindI(OptSec+"::Version",1);
+      
       // Create the pipes
       int Pipes[2];
       if (pipe(Pipes) != 0)
@@ -185,31 +282,44 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 _exit(100);
       }
       close(Pipes[0]);
-      FileFd Fd(Pipes[1]);
-
+      FILE *F = fdopen(Pipes[1],"w");
+      if (F == 0)
+	 return _error->Errno("fdopen","Faild to open new FD");
+      
       // Feed it the filenames.
-      for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
+      bool Die = false;
+      if (Version <= 1)
       {
-	 // Only deal with packages to be installed from .deb
-	 if (I->Op != Item::Install)
-	    continue;
-
-	 // No errors here..
-	 if (I->File[0] != '/')
-	    continue;
-	 
-	 /* Feed the filename of each package that is pending install
-	    into the pipe. */
-	 if (Fd.Write(I->File.begin(),I->File.length()) == false || 
-	     Fd.Write("\n",1) == false)
+	 for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
 	 {
-	    kill(Process,SIGINT);	    
-	    Fd.Close();   
-	    ExecWait(Process,Opts->Value.c_str(),true);
-	    return _error->Error("Failure running script %s",Opts->Value.c_str());
+	    // Only deal with packages to be installed from .deb
+	    if (I->Op != Item::Install)
+	       continue;
+
+	    // No errors here..
+	    if (I->File[0] != '/')
+	       continue;
+	    
+	    /* Feed the filename of each package that is pending install
+	       into the pipe. */
+	    fprintf(F,"%s\n",I->File.c_str());
+	    if (ferror(F) != 0)
+	    {
+	       Die = true;
+	       break;
+	    }
 	 }
       }
-      Fd.Close();
+      else
+	 Die = !SendV2Pkgs(F);
+
+      fclose(F);
+      if (Die == true)
+      {
+	 kill(Process,SIGINT);
+	 ExecWait(Process,Opts->Value.c_str(),true);
+	 return _error->Error("Failure running script %s",Opts->Value.c_str());
+      }
       
       // Clean up the sub process
       if (ExecWait(Process,Opts->Value.c_str()) == false)
@@ -384,8 +494,8 @@ bool pkgDPkgPM::Go()
       {
 	 RunScripts("DPkg::Post-Invoke");
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
-	    return _error->Error("Sub-process %s recieved a segmentation fault.",Args[0]);
-	    
+	    return _error->Error("Sub-process %s received a segmentation fault.",Args[0]);
+
 	 if (WIFEXITED(Status) != 0)
 	    return _error->Error("Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
 	 

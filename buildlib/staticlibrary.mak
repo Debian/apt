@@ -24,6 +24,9 @@ library: $($(LOCAL)-LIB)
 clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
+# Make Directories
+MKDIRS += $(OBJ) $(DEP) $(LIB) $(dir $($(LOCAL)-HEADERS))
+
 # The clean rules
 .PHONY: clean/$(LOCAL) veryclean/$(LOCAL)
 clean/$(LOCAL):

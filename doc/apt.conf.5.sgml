@@ -1,0 +1,407 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt.conf</>
+   <manvolnum>5</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt.conf</>
+    <refpurpose>Configuratoin file for APT</>
+ </refnamediv>
+ 
+ <RefSect1><Title>Description</>
+   <para>   
+   <filename/apt.conf/ is the main configuration file for the APT suite of
+   tools, all tools make use of the configuration file and a common command line
+   parser to provide a uniform environment. When an APT tool starts up it will
+   read the configuration specified by the <envar/APT_CONFIG/ environment 
+   variable (if any) and then read the files in <literal/Dir::Etc::Parts/ 
+   then read the main configuration file specified by 
+   <literal/Dir::Etc::main/ then finally apply the
+   command line options to override the configuration directives, possibly 
+   loading even more config files.
+   <para>
+   The configuration file is organized in a tree with options organized into
+   functional groups. Option specification is given with a double colon
+   notation, for instance <literal/APT::Get::Assume-Yes/ is an option within 
+   the APT tool group, for the Get tool. Options do not inherit from their 
+   parent groups.
+   <para>
+   Syntacticly the configuration language is modeled after what the ISC tools
+   such as bind and dhcp use. Each line is of the form
+   <literallayout>APT::Get::Assume-Yes "true";</literallayout> The trailing 
+   semicolon is required and the quotes are optional. A new scope can be
+   opened with curly braces, like:
+<informalexample><programlisting>   
+APT {
+  Get {
+    Assume-Yes "true";
+    Fix-Broken "true";
+  };
+};
+</programlisting></informalexample>
+   with newlines placed to make it more readable. Lists can be created by 
+   opening a scope and including a single word enclosed in quotes followed by a 
+   semicolon. Multiple entries can be included, each seperated by a semicolon.
+<informalexample><programlisting>   
+DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
+</programlisting></informalexample>
+   <para>
+   In general the sample configuration file in 
+   <filename>&docdir;/examples/apt.conf</> &configureindex;
+   is a good guide for how it should look.
+   <para>
+   Two specials are allowed, <literal/#include/ and <literal/#clear/. 
+   <literal/#include/ will include the given file, unless the filename
+   ends in a slash, then the whole directory is included.  
+   <literal/#clear/ is used to erase a list of names.
+   <para>
+   All of the APT tools take a -o option which allows an arbitary configuration 
+   directive to be specified on the command line. The syntax is a full option
+   name (<literal/APT::Get::Assume-Yes/ for instance) followed by an equals
+   sign then the new value of the option. Lists can be appended too by adding 
+   a trailing :: to the list name.   
+ </RefSect1>
+
+ <RefSect1><Title>The APT Group</>
+   <para>   
+   This group of options controls general APT behavoir as well as holding the
+   options for all of the tools.
+
+   <VariableList>
+     <VarListEntry><Term>Architecture</Term>
+     <ListItem><Para>
+     System Architecture; sets the architecture to use when fetching files and
+     parsing package lists. The internal default is the architecture apt was 
+     compiled for.
+     </VarListEntry>
+     
+     <VarListEntry><Term>Ignore-Hold</Term>
+     <ListItem><Para>
+     Ignore Held packages; This global options causes the problem resolver to
+     ignore held packages in its decision making. 
+     </VarListEntry>
+
+     <VarListEntry><Term>Clean-Installed</Term>
+     <ListItem><Para>
+     Defaults to on. When turned on the autoclean feature will remove any pacakge
+     which can no longer be downloaded from the cache. If turned off then
+     packages that are locally installed are also excluded from cleaning - but
+     note that APT provides no direct means to reinstall them.
+     </VarListEntry>
+
+     <VarListEntry><Term>Immediate-Configure</Term>
+     <ListItem><Para>
+     Disable Immedate Configuration; This dangerous option disables some
+     of APT's ordering code to cause it to make fewer dpkg calls. Doing
+     so may be necessary on some extremely slow single user systems but 
+     is very dangerous and may cause package install scripts to fail or worse.
+     Use at your own risk.
+     </VarListEntry>
+
+     <VarListEntry><Term>Force-LoopBreak</Term>
+     <ListItem><Para>
+     Never Enable this option unless you -really- know what you are doing. It
+     permits APT to temporarily remove an essential package to break a
+     Conflicts/Conflicts or Conflicts/Pre-Depend loop between two essential
+     packages. SUCH A LOOP SHOULD NEVER EXIST AND IS A GRAVE BUG. This option 
+     will work if the essential packages are not tar, gzip, libc, dpkg, bash or
+     anything that those packages depend on.
+     </VarListEntry>
+
+     <VarListEntry><Term>Cache-Limit</Term>
+     <ListItem><Para>
+     APT uses a fixed size memory mapped cache file to store the 'available'
+     information. This sets the size of that cache.
+     </VarListEntry>
+
+     <VarListEntry><Term>Get</Term>
+     <ListItem><Para>
+     The Get subsection controls the &apt-get; tool, please see its
+     documentation for more information about the options here.
+     </VarListEntry>
+
+     <VarListEntry><Term>Cache</Term>
+     <ListItem><Para>
+     The Cache subsection controls the &apt-cache; tool, please see its
+     documentation for more information about the options here.
+     </VarListEntry>
+
+     <VarListEntry><Term>CDROM</Term>
+     <ListItem><Para>
+     The CDROM subsection controls the &apt-cdrom; tool, please see its
+     documentation for more information about the options here.
+     </VarListEntry>
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>The Acquire Group</>
+   <para>   
+   The <literal/Acquire/ group of options controls the download of packages 
+   and the URI handlers. 
+
+   <VariableList>
+     <VarListEntry><Term>Queue-Mode</Term>
+     <ListItem><Para>
+     Queuing mode; <literal/Queue-Mode/ can be one of <literal/host/ or 
+     <literal/access/ which determins how APT parallelizes outgoing 
+     connections. <literal/host/ means that one connection per target host 
+     will be opened, <literal/access/ means that one connection per URI type 
+     will be opened.
+     </VarListEntry>
+
+     <VarListEntry><Term>Retries</Term>
+     <ListItem><Para>
+     Number of retries to perform. If this is non-zero APT will retry failed 
+     files the given number of times.
+     </VarListEntry>
+
+     <VarListEntry><Term>Source-Symlinks</Term>
+     <ListItem><Para>
+     Use symlinks for source archives. If set to true then source archives will
+     be symlinked when possible instead of copying. True is the default
+     </VarListEntry>
+
+     <VarListEntry><Term>http</Term>
+     <ListItem><Para>
+     HTTP URIs; http::Proxy is the default http proxy to use. It is in the 
+     standard form of <literal>http://[[user][:pass]@]host[:port]/</>. Per 
+     host proxies can also be specified by using the form 
+     <literal/http::Proxy::&lt;host&gt;/ with the special keyword <literal/DIRECT/ 
+     meaning to use no proxies. The <envar/http_proxy/ environment variable
+     will override all settings.
+     <para>
+     Three settings are provided for cache control with HTTP/1.1 complient 
+     proxy caches. <literal/No-Cache/ tells the proxy to not used its cached 
+     response under any circumstances, <literal/Max-Age/ is sent only for 
+     index files and tells the cache to refresh its object if it is older than 
+     the given number of seconds. Debian updates its index files daily so the 
+     default is 1 day. <literal/No-Store/ specifies that the cache should never 
+     store this request, it is only set for archive files. This may be useful 
+     to prevent polluting a proxy cache with very large .deb files. Note: 
+     Squid 2.0.2 does not support any of these options.
+     <para>
+     The option <literal/timeout/ sets the timeout timer used by the method, 
+     this applies to all things including connection timeout and data timeout.
+     <para>
+     One setting is provided to control the pipeline depth in cases where the
+     remote server is not RFC conforming or buggy (such as Squid 2.0.2)
+     <literal/Acquire::http::Pipeline-Depth/ can be a value from 0 to 5 
+     indicating how many outstanding requests APT should send. A value of
+     zero MUST be specified if the remote host does not properly linger
+     on TCP connections - otherwise data corruption will occure. Hosts which
+     require this are in violation of RFC 2068.     
+     </VarListEntry>
+
+     <VarListEntry><Term>ftp</Term>
+     <ListItem><Para>
+     FTP URis; ftp::Proxy is the default proxy server to use. It is in the 
+     standard form of <literal>ftp://[[user][:pass]@]host[:port]/</> and is 
+     overriden by the <envar/ftp_proxy/ environment variable. To use a ftp 
+     proxy you will have to set the <literal/ftp::ProxyLogin/ script in the 
+     configuration file. This entry specifies the commands to send to tell 
+     the proxy server what to connect to. Please see 
+     &configureindex; for an example of 
+     how to do this. The subsitution variables available are 
+     <literal/$(PROXY_USER)/, <literal/$(PROXY_PASS)/, <literal/$(SITE_USER)/,
+     <literal/$(SITE_PASS)/, <literal/$(SITE)/, and <literal/$(SITE_PORT)/.
+     Each is taken from it's respective URI component.
+     <para>
+     The option <literal/timeout/ sets the timeout timer used by the method, 
+     this applies to all things including connection timeout and data timeout.
+     <para>
+     Several settings are provided to control passive mode. Generally it is 
+     safe to leave passive mode on, it works in nearly every environment. 
+     However some situations require that passive mode be disabled and port 
+     mode ftp used instead. This can be done globally, for connections that 
+     go through a proxy or for a specific host (See the sample config file 
+     for examples)
+     <para>
+     It is possible to proxy FTP over HTTP by setting the <envar/ftp_proxy/
+     environment variable to a http url - see the discussion of the http method
+     above for syntax. You cannot set this in the configuration file and it is
+     not recommended to use FTP over HTTP due to its low efficiency.
+     <para>
+     The setting <literal/ForceExtended/ controls the use of RFC2428 
+     <literal/EPSV/ and <literal/EPRT/ commands. The defaut is false, which means
+     these commands are only used if the control connection is IPv6. Setting this
+     to true forces their use even on IPv4 connections. Note that most FTP servers
+     do not support RFC2428.
+     </VarListEntry>
+
+     <VarListEntry><Term>cdrom</Term>
+     <ListItem><Para>
+     CDROM URIs; the only setting for CDROM URIs is the mount point, 
+     <literal/cdrom::Mount/ which must be the mount point for the CDROM drive 
+     as specified in <filename>/etc/fstab</>. It is possible to provide 
+     alternate mount and unmount commands if your mount point cannot be listed 
+     in the fstab (such as an SMB mount and old mount packages). The syntax 
+     is to put <literallayout>"/cdrom/"::Mount "foo";</literallayout> within 
+     the cdrom block. It is important to have the trailing slash. Unmount 
+     commands can be specified using UMount.
+     </VarListEntry>
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Directories</>
+   <para>   
+   The <literal/Dir::State/ section has directories that pertain to local 
+   state information. <literal/lists/ is the directory to place downloaded 
+   package lists in and <literal/status/ is the name of the dpkg status file.
+   <literal/preferences/ is the name of the APT preferencse file.
+   <literal/Dir::State/ contains the default directory to prefix on all sub 
+   items if they do not start with <filename>/</> or <filename>./</>. 
+   <para>
+   <literal/Dir::Cache/ contains locations pertaining to local cache 
+   information, such as the two package caches <literal/srcpkgcache/ and 
+   <literal/pkgcache/ as well as the location to place downloaded archives, 
+   <literal/Dir::Cache::archives/. Generation of caches can be turned off
+   by setting their names to be blank. This will slow down startup but
+   save disk space. It is probably prefered to turn off the pkgcache rather
+   than the srcpkgcache. Like <literal/Dir::State/ the default
+   directory is contained in <literal/Dir::Cache/
+   <para>
+   <literal/Dir::Etc/ contains the location of configuration files, 
+   <literal/sourcelist/ gives the location of the sourcelist and 
+   <literal/main/ is the default configuration file (setting has no effect,
+   unless it is done from the config file specified by 
+   <envar/APT_CONFIG/).
+   <para>
+   The <literal/Dir::Parts/ setting reads in all the config fragments in 
+   lexical order from the directory specified. After this is done then the
+   main config file is loaded.
+   <para>
+   Binary programs are pointed to by <literal/Dir::Bin/. <literal/methods/ 
+   specifies the location of the method handlers and <literal/gzip/, 
+   <literal/dpkg/, <literal/apt-get/, <literal/dpkg-source/, 
+   <literal/dpkg-buildpackage/ and <literal/apt-cache/ specify the location
+   of the respective programs.
+ </RefSect1>
+ 
+ <RefSect1><Title>APT in DSelect</>
+   <para>   
+   When APT is used as a &dselect; method several configuration directives
+   control the default behavoir. These are in the <literal/DSelect/ section.
+   
+   <VariableList>
+     <VarListEntry><Term>Clean</Term>
+     <ListItem><Para>
+     Cache Clean mode; this value may be one of always, auto, prompt and never.
+     always will remove all archives after they have been downloaded while auto
+     will only remove things that are no longer downloadable (replaced with a 
+     new version for instance)
+     </VarListEntry>
+     
+     <VarListEntry><Term>Options</Term>
+     <ListItem><Para>
+     The contents of this variable is passed to &apt-get; as command line
+     options when it is run for the install phase.
+     </VarListEntry>
+
+     <VarListEntry><Term>UpdateOptions</Term>
+     <ListItem><Para>
+     The contents of this variable is passed to &apt-get; as command line
+     options when it is run for the update phase.
+     </VarListEntry>
+
+     <VarListEntry><Term>PromptAfterUpdate</Term>
+     <ListItem><Para>
+     If true the [U]pdate operation in &dselect; will always prompt to continue. 
+     The default is to prompt only on error.
+     </VarListEntry>
+   </VariableList>
+ </RefSect1>
+ 
+ <RefSect1><Title>How APT calls dpkg</>
+   <para>   
+   Several configuration directives control how APT invokes &dpkg;. These are 
+   in the <literal/DPkg/ section.
+
+   <VariableList>
+     <VarListEntry><Term>Options</Term>
+     <ListItem><Para>
+     This is a list of options to pass to dpkg. The options must be specified
+     using the list notation and each list item is passed as a single arugment
+     to &dpkg;.
+     </VarListEntry>
+     
+     <VarListEntry><Term>Pre-Invoke</Term><Term>Post-Invoke</Term>
+     <ListItem><Para>
+     This is a list of shell commands to run before/after invoking &dpkg;. 
+     Like <literal/Options/ this must be specified in list notation. The 
+     commands are invoked in order using <filename>/bin/sh</>, should any 
+     fail APT will abort.
+     </VarListEntry>
+
+     <VarListEntry><Term>Pre-Install-Pkgs</Term>
+     <ListItem><Para>
+     This is a list of shell commands to run before invoking dpkg. Like
+     <literal/Options/ this must be specified in list notation. The commands
+     are invoked in order using <filename>/bin/sh</>, should any fail APT 
+     will abort. APT will pass to the commands on standard input the 
+     filenames of all .deb files it is going to install, one per line.
+     <para>
+     Version 2 of this protocol dumps more information, including the 
+     protocol version, the APT configuration space and the packages, files
+     and versions being changed. Version 2 is enabled by setting 
+     <literal/DPkg::Tools::Options::cmd::Version/ to 2. <literal/cmd/ is a
+     command given to <literal/Pre-Install-Pkgs/.
+     </VarListEntry>
+
+     <VarListEntry><Term>Run-Directory</Term>
+     <ListItem><Para>
+     APT chdirs to this directory before invoking dpkg, the default is 
+     <filename>/</>.
+     </VarListEntry>
+
+     <VarListEntry><Term>Build-Options</Term>
+     <ListItem><Para>
+     These options are passed to &dpkg-buildpackage; when compiling packages,
+     the default is to disable signing and produce all binaries.
+     </VarListEntry>
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Debug Options</>
+   <para>   
+   Most of the options in the <literal/debug/ section are not interesting to 
+   the normal user, however <literal/Debug::pkgProblemResolver/ shows 
+   interesting output about the decisions dist-upgrade makes. 
+   <literal/Debug::NoLocking/ disables file locking so APT can do some 
+   operations as non-root and <literal/Debug::pkgDPkgPM/ will print out the 
+   command line for each dpkg invokation. <literal/Debug::IdentCdrom/ will 
+   disable the inclusion of statfs data in CDROM IDs.
+ </RefSect1>
+ 
+ <RefSect1><Title>Examples</>
+   <para>
+   &configureindex; contains a 
+   sample configuration file showing the default values for all possible 
+   options.
+ </RefSect1>
+ 
+ <RefSect1><Title>Files</>
+   <para>
+   <filename>/etc/apt/apt.conf</>
+ </RefSect1>
+ 
+ <RefSect1><Title>See Also</>
+   <para>
+   &apt-cache; &apt-conf;
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+ 
+</refentry>

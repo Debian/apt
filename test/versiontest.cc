@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: versiontest.cc,v 1.1 1998/11/26 23:29:20 jgg Exp $
+// $Id: versiontest.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    Version Test - Simple program to run through a file and comare versions.
@@ -14,13 +14,14 @@
    
    ##################################################################### */
 									/*}}}*/
+#define APT_COMPATIBILITY 1
 #include <system.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/version.h>
 #include <iostream.h>
 #include <fstream.h>
 
-static int verrevcmp(const char *val, const char *ref) 
+  static int verrevcmp(const char *val, const char *ref) 
 {
    int vc, rc;
    long vl, rl;

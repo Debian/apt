@@ -8,10 +8,6 @@ endif
 include environment.mak
 
 SRCDIR=@top_srcdir@
-DIRS:=./docs ./bin ./obj ./include ./scripts
-SUBDIRS:= $(DIRS) ./docs/examples ./bin/methods ./include/apt-pkg \
-         ./include/deity ./obj/apt-pkg ./obj/deity ./obj/gui ./obj/cmdline \
-         ./obj/test ./obj/methods ./obj/methods/ftp ./scripts/dselect
 BUILD:=$(shell pwd)
 export BUILD
 
@@ -27,14 +23,14 @@ maintainer-clean dist-clean pristine sanity distclean:
 	-rm -rf $(DIRS)
 	-rm -f config.cache config.log config.status environment.mak makefile
 	
-# This makes any missing directories
+# Create the required directories and build the shims
+# The configure script fills in below, and then we do the right things..
+# This cannot go in the configure script since the directories have not yet
+# been created.. In any event I like the idea that you can change environment.mak
+# and run make dirs and have the shims updated.
 .PHONY: dirs
-MISSING_DIRS:=	$(filter-out $(wildcard $(SUBDIRS)),$(SUBDIRS))
-dirs:
-	@rm -f include/sys
-ifneq ($(words $(MISSING_DIRS)),0)
-	@mkdir  $(MISSING_DIRS)
-endif	
+dirs: 
+	$(MAKE) -C $(SRCDIR) -f Makefile $@
 ifeq ($(HAVE_C9X),yes)
 	@rm -f include/inttypes.h > /dev/null 2>&1
 else
@@ -51,3 +47,5 @@ ifeq ($(NEED_SOCKLEN_T_DEFINE),yes)
 else
 	@rm -f include/netdb.h > /dev/null 2>&1
 endif
+	rm -f include/python
+	ln -sf $(PYTHONINCLUDE) include/python

@@ -1,13 +1,13 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.11 2000/01/16 08:45:47 jgg Exp $
+// $Id: orderlist.cc,v 1.12 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
    
    A list of packages can be ordered by a number of conflicting criteria
    each given a specific priority. Each package also has a set of flags
-   indicating some usefull things about it that are derived in the 
+   indicating some useful things about it that are derived in the 
    course of sorting. The pkgPackageManager class uses this class for
    all of it's installation ordering needs.
 
@@ -54,6 +54,12 @@
    after flag set. This forces them and all their dependents to be ordered
    toward the end.
    
+   There are complications in this algorithm when presented with cycles.
+   For all known practical cases it works, all cases where it doesn't work
+   is fixable by tweaking the package descriptions. However, it should be
+   possible to impove this further to make some better choices when 
+   presented with cycles. 
+   
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -64,6 +70,8 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/version.h>
+#include <apt-pkg/sptr.h>
+#include <apt-pkg/configuration.h>
 									/*}}}*/
 
 pkgOrderList *pkgOrderList::Me = 0;
@@ -71,7 +79,7 @@ pkgOrderList *pkgOrderList::Me = 0;
 // OrderList::pkgOrderList - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgOrderList::pkgOrderList(pkgDepCache &Cache) : Cache(Cache)
+pkgOrderList::pkgOrderList(pkgDepCache *pCache) : Cache(*pCache)
 {
    FileList = 0;
    Primary = 0;
@@ -79,10 +87,11 @@ pkgOrderList::pkgOrderList(pkgDepCache &Cache) : Cache(Cache)
    RevDepends = 0;
    Remove = 0;
    LoopCount = -1;
-
+   Debug = _config->FindB("Debug::pkgOrderList",false);
+   
    /* Construct the arrays, egcs 1.0.1 bug requires the package count
       hack */
-   unsigned long Size = Cache.HeaderP->PackageCount;
+   unsigned long Size = Cache.Head().PackageCount;
    Flags = new unsigned short[Size];
    End = List = new Package *[Size];
    memset(Flags,0,sizeof(*Flags)*Size);
@@ -123,9 +132,9 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
 bool pkgOrderList::DoRun()
 {   
    // Temp list
-   unsigned long Size = Cache.HeaderP->PackageCount;
-   Package **NList = new Package *[Size];
-   AfterList = new Package *[Size];
+   unsigned long Size = Cache.Head().PackageCount;
+   SPtrArray<Package *> NList = new Package *[Size];
+   SPtrArray<Package *> AfterList = new Package *[Size];
    AfterEnd = AfterList;
    
    Depth = 0;
@@ -141,8 +150,6 @@ bool pkgOrderList::DoRun()
       if (VisitNode(PkgIterator(Cache,*I)) == false)
       {
 	 End = OldEnd;
-	 delete [] NList;
-	 delete [] AfterList;
 	 return false;
       }
    
@@ -152,8 +159,7 @@ bool pkgOrderList::DoRun()
    
    // Swap the main list to the new list
    delete [] List;
-   delete [] AfterList;
-   List = NList;
+   List = NList.UnGuard();
    return true;
 }
 									/*}}}*/
@@ -216,32 +222,43 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    Me = this;
    qsort(List,End - List,sizeof(*List),&OrderCompareA);
 
+   if (Debug == true)
+      clog << "** Pass A" << endl;
    if (DoRun() == false)
       return false;
    
+   if (Debug == true)
+      clog << "** Pass B" << endl;
    Secondary = 0;
    if (DoRun() == false)
       return false;
 
+   if (Debug == true)
+      clog << "** Pass C" << endl;
    LoopCount = 0;
    RevDepends = 0;
    Remove = 0;             // Otherwise the libreadline remove problem occures
    if (DoRun() == false)
       return false;
-
+      
+   if (Debug == true)
+      clog << "** Pass D" << endl;
    LoopCount = 0;
    Primary = &pkgOrderList::DepUnPackPre;
    if (DoRun() == false)
       return false;
 
-/*   cout << "----------END" << endl;
-
-   for (iterator I = List; I != End; I++)
+   if (Debug == true)
    {
-      PkgIterator P(Cache,*I);
-      if (IsNow(P) == true)
-	 cout << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
-   }*/
+      clog << "** Unpack ordering done" << endl;
+
+      for (iterator I = List; I != End; I++)
+      {
+	 PkgIterator P(Cache,*I);
+	 if (IsNow(P) == true)
+	    clog << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
+      }
+   }   
 
    return true;
 }
@@ -279,6 +296,9 @@ int pkgOrderList::Score(PkgIterator Pkg)
    if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       Score += 100;
 
+   if (IsFlag(Pkg,Immediate) == true)
+      Score += 10;
+   
    for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); 
 	D.end() == false; D++)
       if (D->Type == pkgCache::Dep::PreDepends)
@@ -375,7 +395,7 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
 									/*}}}*/
 // OrderList::OrderCompareB - Order the installation by source		/*{{{*/
 // ---------------------------------------------------------------------
-/* This orders by installation source. This is usefull to handle
+/* This orders by installation source. This is useful to handle
    inter-source breaks */
 int pkgOrderList::OrderCompareB(const void *a, const void *b)
 {
@@ -454,7 +474,7 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
 /* This routine calls visit on all providing packages. */
 bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 {   
-   Version **List = D.AllTargets();
+   SPtrArray<Version *> List = D.AllTargets();
    for (Version **I = List; *I != 0; I++)
    {
       VerIterator Ver(Cache,*I);
@@ -463,10 +483,14 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
       if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
 	 continue;
       
-      if (D->Type != pkgCache::Dep::Conflicts && Cache[Pkg].InstallVer != *I)
+      if (D->Type != pkgCache::Dep::Conflicts &&
+	  D->Type != pkgCache::Dep::Obsoletes &&
+	  Cache[Pkg].InstallVer != *I)
 	 continue;
       
-      if (D->Type == pkgCache::Dep::Conflicts && (Version *)Pkg.CurrentVer() != *I)
+      if ((D->Type == pkgCache::Dep::Conflicts ||
+	   D->Type == pkgCache::Dep::Obsoletes) &&
+	  (Version *)Pkg.CurrentVer() != *I)
 	 continue;
       
       // Skip over missing files
@@ -474,12 +498,8 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 	 continue;
 
       if (VisitNode(Pkg) == false)
-      {
-	 delete [] List;
 	 return false;
-      }
    }
-   delete [] List;
    return true;
 }
 									/*}}}*/
@@ -496,8 +516,12 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
        IsFlag(Pkg,AddPending) == true || IsFlag(Pkg,InList) == false)
       return true;
 
-/* for (int j = 0; j != Depth; j++) cout << ' ';
- cout << "Visit " << Pkg.Name() << endl;*/
+   if (Debug == true)
+   {
+      for (int j = 0; j != Depth; j++) clog << ' ';
+      clog << "Visit " << Pkg.Name() << endl;
+   }
+   
    Depth++;
    
    // Color grey
@@ -550,10 +574,13 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    
    Primary = Old;
    Depth--;
-   
-/* for (int j = 0; j != Depth; j++) cout << ' ';
-   cout << "Leave " << Pkg.Name() << ' ' << IsFlag(Pkg,Added) << ',' << IsFlag(Pkg,AddPending) << endl;*/
 
+   if (Debug == true)
+   {
+      for (int j = 0; j != Depth; j++) clog << ' ';
+      clog << "Leave " << Pkg.Name() << ' ' << IsFlag(Pkg,Added) << ',' << IsFlag(Pkg,AddPending) << endl;
+   }
+   
    return true;
 }
 									/*}}}*/
@@ -573,7 +600,8 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
       {
 	 /* Reverse depenanices are only interested in conflicts,
 	    predepend breakage is ignored here */
-	 if (D->Type != pkgCache::Dep::Conflicts)
+	 if (D->Type != pkgCache::Dep::Conflicts && 
+	     D->Type != pkgCache::Dep::Obsoletes)
 	    continue;
 
 	 // Duplication elimination, consider only the current version
@@ -594,7 +622,9 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
       {
 	 /* Forward critical dependencies MUST be correct before the 
 	    package can be unpacked. */
-	 if (D->Type != pkgCache::Dep::Conflicts && D->Type != pkgCache::Dep::PreDepends)
+	 if (D->Type != pkgCache::Dep::Conflicts &&
+	     D->Type != pkgCache::Dep::Obsoletes &&
+	     D->Type != pkgCache::Dep::PreDepends)
 	    continue;
 	 	 	 	 
 	 /* We wish to check if the dep is okay in the now state of the
@@ -702,7 +732,7 @@ bool pkgOrderList::DepUnPackPre(DepIterator D)
 	 else
 	    continue;
       }
-
+      
       /* We wish to check if the dep is okay in the now state of the
          target package against the install state of this package. */
       if (CheckDep(D) == true)
@@ -712,7 +742,7 @@ bool pkgOrderList::DepUnPackPre(DepIterator D)
 	 if (IsFlag(D.TargetPkg(),AddPending) == false)
 	    continue;
       }
-      
+
       // This is the loop detection
       if (IsFlag(D.TargetPkg(),Added) == true || 
 	  IsFlag(D.TargetPkg(),AddPending) == true)
@@ -875,7 +905,7 @@ bool pkgOrderList::AddLoop(DepIterator D)
 /* */
 void pkgOrderList::WipeFlags(unsigned long F)
 {
-   unsigned long Size = Cache.HeaderP->PackageCount;
+   unsigned long Size = Cache.Head().PackageCount;
    for (unsigned long I = 0; I != Size; I++)
       Flags[I] &= ~F;
 }
@@ -889,7 +919,7 @@ void pkgOrderList::WipeFlags(unsigned long F)
    this fails to produce a suitable result. */
 bool pkgOrderList::CheckDep(DepIterator D)
 {
-   Version **List = D.AllTargets();
+   SPtrArray<Version *> List = D.AllTargets();
    bool Hit = false;
    for (Version **I = List; *I != 0; I++)
    {
@@ -912,10 +942,11 @@ bool pkgOrderList::CheckDep(DepIterator D)
 	 if ((Version *)Pkg.CurrentVer() != *I || 
 	     Pkg.State() != PkgIterator::NeedsNothing)
 	    continue;
-            
+      
       /* Conflicts requires that all versions are not present, depends
          just needs one */
-      if (D->Type != pkgCache::Dep::Conflicts)
+      if (D->Type != pkgCache::Dep::Conflicts && 
+	  D->Type != pkgCache::Dep::Obsoletes)
       {
 	 /* Try to find something that does not have the after flag set
 	    if at all possible */
@@ -925,7 +956,6 @@ bool pkgOrderList::CheckDep(DepIterator D)
 	    continue;
 	 }
       
-	 delete [] List;
 	 return true;
       }
       else
@@ -933,11 +963,9 @@ bool pkgOrderList::CheckDep(DepIterator D)
 	 if (IsFlag(Pkg,After) == true)
 	    Flag(D.ParentPkg(),After);
 	 
-	 delete [] List;
 	 return false;
       }      
    }
-   delete [] List;
 
    // We found a hit, but it had the after flag set
    if (Hit == true && D->Type == pkgCache::Dep::PreDepends)
@@ -948,7 +976,8 @@ bool pkgOrderList::CheckDep(DepIterator D)
    
    /* Conflicts requires that all versions are not present, depends
       just needs one */
-   if (D->Type == pkgCache::Dep::Conflicts)
+   if (D->Type == pkgCache::Dep::Conflicts ||
+       D->Type == pkgCache::Dep::Obsoletes)
       return true;
    return false;
 }

@@ -6,12 +6,15 @@ OPTS="-f"
 APTGET="/usr/bin/apt-get"
 APTCACHE="/usr/bin/apt-cache"
 DPKG="/usr/bin/dpkg"
+DPKG_OPTS="--admindir=$1"
+APT_OPT0="-oDir::State::status=$1/status"
+APT_OPT1="-oDPkg::Options::=$DPKG_OPTS"
 CACHEDIR="/var/cache/apt"
-PROMPT="no"
+PROMPT="false"
 RES=`apt-config shell OPTS DSelect::UpdateOptions \
-      DPKG Dir::Bin::dpkg APTGET Dir::Bin::apt-get \
-      APTCACHE Dir::Bin::apt-cache CACHEDIR Dir::Cache \
-      PROMPT DSelect::PromptAfterUpdate`
+      DPKG Dir::Bin::dpkg/f APTGET Dir::Bin::apt-get/f \
+      APTCACHE Dir::Bin::apt-cache/f CACHEDIR Dir::Cache/d \
+      PROMPT DSelect::PromptAfterUpdate/b`
 eval $RES
 
 # It looks slightly ugly to have a double / in the dpkg output
@@ -19,16 +22,16 @@ CACHEDIR=`echo $CACHEDIR | sed -e "s|/$||"`
 
 set +e
 FAILED=0
-$APTGET $OPTS update || FAILED=1
+$APTGET $OPTS "$APT_OPT0" "$APT_OPT1" update || FAILED=1
 set -e
 
 echo "Merging Available information"
 rm -f $CACHEDIR/available
 $APTCACHE dumpavail > $CACHEDIR/available
-$DPKG --update-avail $CACHEDIR/available
+$DPKG "$DPKG_OPTS" --update-avail $CACHEDIR/available
 rm -f $CACHEDIR/available
 
-if [ $PROMPT = "yes" ]; then
+if [ x$PROMPT = "xtrue" ]; then
    echo "Press enter to continue." && read RES;
 fi
 

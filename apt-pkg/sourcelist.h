@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.8 1999/04/07 05:30:18 jgg Exp $
+// $Id: sourcelist.h,v 1.9 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -12,18 +12,22 @@
    All sources have a type associated with them that defines the layout
    of the archive. The exact format of the file is documented in
    files.sgml.
+
+   The types are mapped through a list of type definitions which handle
+   the actual construction of the type. After loading a source list all
+   you have is a list of package index files that have the ability
+   to be Acquired.
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_SOURCELIST_H
 #define PKGLIB_SOURCELIST_H
 
 #include <string>
 #include <vector>
-#include <iostream.h>
 #include <apt-pkg/pkgcache.h>
-
+#include <apt-pkg/indexfile.h>
+    
 #ifdef __GNUG__
 #pragma interface "apt-pkg/sourcelist.h"
 #endif
@@ -33,32 +37,35 @@ class pkgSourceList
 {
    public:
    
-   /* Each item in the source list, each line can have more than one
-      item */
-   struct Item
+   // List of supported source list types
+   class Type
    {
-      enum {Deb, DebSrc} Type;
-
-      string URI;
-      string Dist;
-      string Section;
+      public:
       
-      bool SetType(string S);
-      bool SetURI(string S);
-      string PackagesURI() const;
-      string PackagesInfo() const;      
-      string ReleaseURI() const;
-      string ReleaseInfo() const;
-      string SourceInfo(string Pkg,string Ver,string Comp) const;
-      string SiteOnly(string URI) const;
-      string ArchiveInfo(pkgCache::VerIterator Ver) const;
-      string ArchiveURI(string File) const;
+      // Global list of Items supported
+      static Type **GlobalList;
+      static unsigned long GlobalListLen;
+      static Type *GetType(const char *Type);
+
+      const char *Name;
+      const char *Label;
+
+      bool FixupURI(string &URI) const;
+      virtual bool ParseLine(vector<pkgIndexFile *> &List,
+			     const char *Buffer,
+			     unsigned long CurLine,string File) const;
+      virtual bool CreateItem(vector<pkgIndexFile *> &List,string URI,
+			      string Dist,string Section) const = 0;
+			      
+      Type();
+      virtual ~Type() {};
    };
-   typedef vector<Item>::const_iterator const_iterator;
+   
+   typedef vector<pkgIndexFile *>::const_iterator const_iterator;
    
    protected:
    
-   vector<Item> List;
+   vector<pkgIndexFile *> List;
    
    public:
 
@@ -71,10 +78,12 @@ class pkgSourceList
    inline unsigned int size() const {return List.size();};
    inline bool empty() const {return List.empty();};
 
+   bool FindIndex(pkgCache::PkgFileIterator File,
+		  pkgIndexFile *&Found) const;
+   bool GetIndexes(pkgAcquire *Owner) const;
+   
    pkgSourceList();
    pkgSourceList(string File);   
 };
-
-ostream &operator <<(ostream &O,pkgSourceList::Item &Itm);
 
 #endif

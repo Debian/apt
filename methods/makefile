@@ -47,3 +47,19 @@ SLIBS = -lapt-pkg $(SOCKETLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = ftp.cc rfc2553emu.cc connect.cc
 include $(PROGRAM_H)
+
+# The rsh method
+PROGRAM=rsh
+SLIBS = -lapt-pkg
+LIB_MAKES = apt-pkg/makefile
+SOURCE = rsh.cc
+include $(PROGRAM_H)
+
+# SSH method symlink
+all: $(BIN)/ssh
+veryclean: clean-$(BIN)/ssh	
+$(BIN)/ssh:
+	echo "Installing ssh method link"
+	ln -fs rsh $(BIN)/ssh
+clean-$(BIN)/ssh:
+	rm $(BIN)/ssh

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.45 2000/01/14 06:26:36 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.46 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -14,15 +14,20 @@
 #pragma implementation "apt-pkg/pkgcachegen.h"
 #endif
 
+#define APT_COMPATIBILITY 986
+
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/sptr.h>
+#include <apt-pkg/pkgsystem.h>
 
+#include <apti18n.h>
+    
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -33,23 +38,42 @@
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* We set the diry flag and make sure that is written to the disk */
-pkgCacheGenerator::pkgCacheGenerator(DynamicMMap &Map,OpProgress &Prog) :
-                    Map(Map), Cache(Map), Progress(&Prog)
+pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
+                    Map(*pMap), Cache(pMap,false), Progress(Prog)
 {
    CurrentFile = 0;
+   memset(UniqHash,0,sizeof(UniqHash));
    
    if (_error->PendingError() == true)
       return;
-   
+
    if (Map.Size() == 0)
    {
+      // Setup the map interface..
+      Cache.HeaderP = (pkgCache::Header *)Map.Data();
       Map.RawAllocate(sizeof(pkgCache::Header));
+      Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
+      
+      // Starting header
       *Cache.HeaderP = pkgCache::Header();
+      Cache.HeaderP->VerSysName = Map.WriteString(_system->VS->Label);
+      Cache.HeaderP->Architecture = Map.WriteString(_config->Find("APT::Architecture"));
+      Cache.ReMap(); 
    }
+   else
+   {
+      // Map directly from the existing file
+      Cache.ReMap(); 
+      Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
+      if (Cache.VS != _system->VS)
+      {
+	 _error->Error(_("Cache has an incompatible versioning system"));
+	 return;
+      }      
+   }
+   
    Cache.HeaderP->Dirty = true;
    Map.Sync(0,sizeof(pkgCache::Header));
-   Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
-   memset(UniqHash,0,sizeof(UniqHash));
 }
 									/*}}}*/
 // CacheGenerator::~pkgCacheGenerator - Destructor 			/*{{{*/
@@ -86,7 +110,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       
       pkgCache::PkgIterator Pkg;
       if (NewPackage(Pkg,PackageName) == false)
-	 return _error->Error("Error occured while processing %s (NewPackage)",PackageName.c_str());
+	 return _error->Error(_("Error occured while processing %s (NewPackage)"),PackageName.c_str());
       Counter++;
       if (Counter % 100 == 0 && Progress != 0)
 	 Progress->Progress(List.Offset());
@@ -98,7 +122,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (Version.empty() == true)
       {
 	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
-	    return _error->Error("Error occured while processing %s (UsePackage1)",PackageName.c_str());
+	    return _error->Error(_("Error occured while processing %s (UsePackage1)"),PackageName.c_str());
 	 continue;
       }
 
@@ -107,7 +131,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       int Res = 1;
       for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
       {
-	 Res = pkgVersionCompare(Version.begin(),Version.end(),Ver.VerStr(),
+	 Res = Cache.VS->DoCmpVersion(Version.begin(),Version.end(),Ver.VerStr(),
 				 Ver.VerStr() + strlen(Ver.VerStr()));
 	 if (Res >= 0)
 	    break;
@@ -119,10 +143,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (Res == 0 && Ver->Hash == Hash)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
-	    return _error->Error("Error occured while processing %s (UsePackage2)",PackageName.c_str());
+	    return _error->Error(_("Error occured while processing %s (UsePackage2)"),PackageName.c_str());
 
 	 if (NewFileVer(Ver,List) == false)
-	    return _error->Error("Error occured while processing %s (NewFileVer1)",PackageName.c_str());
+	    return _error->Error(_("Error occured while processing %s (NewFileVer1)"),PackageName.c_str());
 	 
 	 // Read only a single record and return
 	 if (OutVer != 0)
@@ -139,7 +163,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       {
 	 for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
 	 {
-	    Res = pkgVersionCompare(Version.begin(),Version.end(),Ver.VerStr(),
+	    Res = Cache.VS->DoCmpVersion(Version.begin(),Version.end(),Ver.VerStr(),
 				    Ver.VerStr() + strlen(Ver.VerStr()));
 	    if (Res != 0)
 	       break;
@@ -151,13 +175,13 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       Ver->ParentPkg = Pkg.Index();
       Ver->Hash = Hash;
       if (List.NewVersion(Ver) == false)
-	 return _error->Error("Error occured while processing %s (NewVersion1)",PackageName.c_str());
+	 return _error->Error(_("Error occured while processing %s (NewVersion1)"),PackageName.c_str());
 
       if (List.UsePackage(Pkg,Ver) == false)
-	 return _error->Error("Error occured while processing %s (UsePackage3)",PackageName.c_str());
+	 return _error->Error(_("Error occured while processing %s (UsePackage3)"),PackageName.c_str());
       
       if (NewFileVer(Ver,List) == false)
-	 return _error->Error("Error occured while processing %s (NewVersion2)",PackageName.c_str());
+	 return _error->Error(_("Error occured while processing %s (NewVersion2)"),PackageName.c_str());
 
       // Read only a single record and return
       if (OutVer != 0)
@@ -288,7 +312,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    // Probe the reverse dependency list for a version string that matches
    if (Version.empty() == false)
    {
-/*      for (pkgCache::DepIterator I = Pkg.RevDependsList(); I.end() == false; I++, Hit++)
+/*      for (pkgCache::DepIterator I = Pkg.RevDependsList(); I.end() == false; I++)
 	 if (I->Version != 0 && I.TargetVer() == Version)
 	    Dep->Version = I->Version;*/
       if (Dep->Version == 0)
@@ -342,7 +366,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    Prv->Version = Ver.Index();
    Prv->NextPkgProv = Ver->ProvidesList;
    Ver->ProvidesList = Prv.Index();
-   if (Version.empty() == false && (Prv->Version = WriteString(Version)) == 0)
+   if (Version.empty() == false && (Prv->ProvideVersion = WriteString(Version)) == 0)
       return false;
    
    // Locate the target package
@@ -361,13 +385,11 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
 // CacheGenerator::SelectFile - Select the current file being parsed	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is used to select which file is to be associated with all newly
-   added versions. */
-bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
+   added versions. The caller is responsible for setting the IMS fields. */
+bool pkgCacheGenerator::SelectFile(string File,string Site,
+				   const pkgIndexFile &Index,
+				   unsigned long Flags)
 {
-   struct stat Buf;
-   if (stat(File.c_str(),&Buf) == -1)
-      return _error->Errno("stat","Couldn't stat ",File.c_str());
-   
    // Get some space for the structure
    CurrentFile = Cache.PkgFileP + Map.Allocate(sizeof(*CurrentFile));
    if (CurrentFile == Cache.PkgFileP)
@@ -375,20 +397,20 @@ bool pkgCacheGenerator::SelectFile(string File,unsigned long Flags)
    
    // Fill it in
    CurrentFile->FileName = Map.WriteString(File);
-   CurrentFile->Size = Buf.st_size;
-   CurrentFile->mtime = Buf.st_mtime;
+   CurrentFile->Site = WriteUniqString(Site);
    CurrentFile->NextFile = Cache.HeaderP->FileList;
    CurrentFile->Flags = Flags;
    CurrentFile->ID = Cache.HeaderP->PackageFileCount;
+   CurrentFile->IndexType = WriteUniqString(Index.GetType()->Label);
    PkgFileName = File;
    Cache.HeaderP->FileList = CurrentFile - Cache.PkgFileP;
    Cache.HeaderP->PackageFileCount++;
-      
+
    if (CurrentFile->FileName == 0)
       return false;
    
    if (Progress != 0)
-      Progress->SubProgress(Buf.st_size);
+      Progress->SubProgress(Index.Size());
    return true;
 }
 									/*}}}*/
@@ -443,491 +465,279 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
 }
 									/*}}}*/
 
-// SrcCacheCheck - Check if the source package cache is uptodate	/*{{{*/
+// CheckValidity - Check that a cache is up-to-date			/*{{{*/
 // ---------------------------------------------------------------------
-/* The source cache is checked against the source list and the files 
-   on disk, any difference results in a false. */
-bool pkgSrcCacheCheck(pkgSourceList &List)
+/* This just verifies that each file in the list of index files exists,
+   has matching attributes with the cache and the cache does not have
+   any extra files. */
+static bool CheckValidity(string CacheFile,pkgIndexFile **Start,
+			  pkgIndexFile **End,MMap **OutMap = 0)
 {
-   if (_error->PendingError() == true)
+   // No file, certainly invalid
+   if (CacheFile.empty() == true || FileExists(CacheFile) == false)
       return false;
-
-   string CacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-   string ListDir = _config->FindDir("Dir::State::lists");
-
-   // Count the number of missing files
-   int Missing = 0;
-   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
+   
+   // Map it
+   FileFd CacheF(CacheFile,FileFd::ReadOnly);
+   SPtr<MMap> Map = new MMap(CacheF,MMap::Public | MMap::ReadOnly);
+   pkgCache Cache(Map);
+   if (_error->PendingError() == true || Map->Size() == 0)
    {
-      // Only cache deb source types.
-      if (I->Type != pkgSourceList::Item::Deb)
+      _error->Discard();
+      return false;
+   }
+   
+   /* Now we check every index file, see if it is in the cache,
+      verify the IMS data and check that it is on the disk too.. */
+   SPtrArray<bool> Visited = new bool[Cache.HeaderP->PackageFileCount];
+   memset(Visited,0,sizeof(*Visited)*Cache.HeaderP->PackageFileCount);
+   for (; Start != End; Start++)
+   {
+      if ((*Start)->HasPackages() == false)
+	 continue;
+      
+      if ((*Start)->Exists() == false)
       {
-	 Missing++;
+	 _error->WarningE("stat",_("Couldn't stat source package list %s"),
+			  (*Start)->Describe().c_str());
 	 continue;
       }
-      
-      string File = ListDir + URItoFileName(I->PackagesURI());
-      struct stat Buf;
-      if (stat(File.c_str(),&Buf) != 0)
-      {
-	 // Old format file name.. rename it
-	 if (File[0] == '_' && stat(File.c_str()+1,&Buf) == 0)
-	 {
-	    if (rename(File.c_str()+1,File.c_str()) != 0)
-	       return _error->Errno("rename","Failed to rename %s to %s",
-				    File.c_str()+1,File.c_str());
-	    continue;
-	 }	 
-	 
-	 _error->WarningE("stat","Couldn't stat source package list '%s' (%s)",
-			  I->PackagesInfo().c_str(),File.c_str());	 
-	 Missing++;
-      }      
-   }
-   
-   // Open the source package cache
-   if (FileExists(CacheFile) == false)
-      return false;
-   
-   FileFd CacheF(CacheFile,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-   {
-      _error->Discard();
-      return false;
-   }
-   
-   MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true || Map.Size() == 0)
-   {
-      _error->Discard();
-      return false;
-   }
-   
-   pkgCache Cache(Map);
-   if (_error->PendingError() == true)
-   {
-      _error->Discard();
-      return false;
-   }
 
-   // They are certianly out of sync
-   if (Cache.Head().PackageFileCount != List.size() - Missing)
-      return false;
-   
-   for (pkgCache::PkgFileIterator F(Cache); F.end() == false; F++)
-   {      
-      // Search for a match in the source list
-      bool Bad = true;
-      for (pkgSourceList::const_iterator I = List.begin(); 
-	   I != List.end(); I++)
-      {
-	 // Only cache deb source types.
-	 if (I->Type != pkgSourceList::Item::Deb)
-	    continue;
-	 
-	 string File = ListDir + URItoFileName(I->PackagesURI());
-	 if (F.FileName() == File)
-	 {
-	    Bad = false;
-	    break;
-	 }
-      }
-      
-      // Check if the file matches what was cached
-      Bad |= !F.IsOk();
-      if (Bad == true)
+      // FindInCache is also expected to do an IMS check.
+      pkgCache::PkgFileIterator File = (*Start)->FindInCache(Cache);
+      if (File.end() == true)
 	 return false;
+      
+      Visited[File->ID] = true;
    }
    
+   for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
+      if (Visited[I] == false)
+	 return false;
+   
+   if (_error->PendingError() == true)
+   {
+      _error->Discard();
+      return false;
+   }
+   
+   if (OutMap != 0)
+      *OutMap = Map.UnGuard();
    return true;
 }
 									/*}}}*/
-// PkgCacheCheck - Check if the package cache is uptodate		/*{{{*/
+// ComputeSize - Compute the total size of a bunch of files		/*{{{*/
 // ---------------------------------------------------------------------
-/* This does a simple check of all files used to compose the cache */
-bool pkgPkgCacheCheck(string CacheFile)
+/* Size is kind of an abstract notion that is only used for the progress
+   meter */
+static unsigned long ComputeSize(pkgIndexFile **Start,pkgIndexFile **End)
 {
-   if (_error->PendingError() == true)
-      return false;
-   
-   // Open the source package cache
-   if (FileExists(CacheFile) == false)
-      return false;
-   
-   FileFd CacheF(CacheFile,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
+   unsigned long TotalSize = 0;
+   for (; Start != End; Start++)
    {
-      _error->Discard();
-      return false;
+      if ((*Start)->HasPackages() == false)
+	 continue;      
+      TotalSize += (*Start)->Size();
    }
-   
-   MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true || Map.Size() == 0)
+   return TotalSize;
+}
+									/*}}}*/
+// BuildCache - Merge the list of index files into the cache		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+static bool BuildCache(pkgCacheGenerator &Gen,
+		       OpProgress &Progress,
+		       unsigned long &CurrentSize,unsigned long TotalSize,
+		       pkgIndexFile **Start,pkgIndexFile **End)
+{
+   for (; Start != End; Start++)
    {
-      _error->Discard();
-      return false;
-   }
-   
-   pkgCache Cache(Map);
-   if (_error->PendingError() == true)
-   {
-      _error->Discard();
-      return false;
-   }
-
-   // Status files that must be in the cache
-   string Status[3];
-   Status[0] = _config->FindFile("Dir::State::xstatus");
-   Status[1]= _config->FindFile("Dir::State::userstatus");
-   Status[2] = _config->FindFile("Dir::State::status");
-   
-   // Cheack each file
-   for (pkgCache::PkgFileIterator F(Cache); F.end() == false; F++)
-   {
-      if (F.IsOk() == false)
-	 return false;
+      if ((*Start)->HasPackages() == false)
+	 continue;
       
-      // See if this is one of the status files
-      for (int I = 0; I != 3; I++)
-	 if (F.FileName() == Status[I])
-	    Status[I] = string();
-   }
-   
-   // Make sure all the status files are loaded.
-   for (int I = 0; I != 3; I++)
-   {
-      if (Status[I].empty() == false && FileExists(Status[I]) == true)
+      if ((*Start)->Exists() == false)
+	 continue;
+
+      unsigned long Size = (*Start)->Size();
+      Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Reading Package Lists"));
+      CurrentSize += Size;
+      
+      if ((*Start)->Merge(Gen,Progress) == false)
 	 return false;
    }   
    
    return true;
 }
 									/*}}}*/
-// AddStatusSize - Add the size of the status files			/*{{{*/
+// MakeStatusCache - Construct the status cache				/*{{{*/
 // ---------------------------------------------------------------------
-/* This adds the size of all the status files to the size counter */
-bool pkgAddStatusSize(unsigned long &TotalSize)
-{
-   // Grab the file names
-   string xstatus = _config->FindFile("Dir::State::xstatus");
-   string userstatus = _config->FindFile("Dir::State::userstatus");
-   string status = _config->FindFile("Dir::State::status");
-   
-   // Grab the sizes
-   struct stat Buf;
-   if (stat(xstatus.c_str(),&Buf) == 0)
-      TotalSize += Buf.st_size;
-   if (stat(userstatus.c_str(),&Buf) == 0)
-      TotalSize += Buf.st_size;
-   if (stat(status.c_str(),&Buf) != 0)
-      return _error->Errno("stat","Couldn't stat the status file %s",status.c_str());
-   TotalSize += Buf.st_size;
-   
-   return true;
-}
-									/*}}}*/
-// MergeStatus - Add the status files to the cache			/*{{{*/
-// ---------------------------------------------------------------------
-/* This adds the status files to the map */
-bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
-		    unsigned long &CurrentSize,unsigned long TotalSize)
-{
-   // Grab the file names   
-   string Status[3];
-   Status[0] = _config->FindFile("Dir::State::xstatus");
-   Status[1]= _config->FindFile("Dir::State::userstatus");
-   Status[2] = _config->FindFile("Dir::State::status");
-   
-   for (int I = 0; I != 3; I++)
-   {
-      // Check if the file exists and it is not the primary status file.
-      string File = Status[I];
-      if (I != 2 && FileExists(File) == false)
-	 continue;
-	 
-      FileFd Pkg(File,FileFd::ReadOnly);
-      debListParser Parser(Pkg);
-      Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),"Reading Package Lists");
-      if (_error->PendingError() == true)
-	 return _error->Error("Problem opening %s",File.c_str());
-      CurrentSize += Pkg.Size();
-
-      Progress.SubProgress(0,"Local Package State - " + flNotDir(File));
-      if (Gen.SelectFile(File,pkgCache::Flag::NotSource) == false)
-	 return _error->Error("Problem with SelectFile %s",File.c_str());
-      
-      if (Gen.MergeList(Parser) == false)
-	 return _error->Error("Problem with MergeList %s",File.c_str());
-      Progress.Progress(Pkg.Size());
-   }
-   
-   return true;
-}
-									/*}}}*/
-// GenerateSrcCache - Write the source package lists to the map		/*{{{*/
-// ---------------------------------------------------------------------
-/* This puts the source package cache into the given generator. */
-bool pkgGenerateSrcCache(pkgSourceList &List,OpProgress &Progress,
-			 pkgCacheGenerator &Gen,
-			 unsigned long &CurrentSize,unsigned long &TotalSize)
-{
-   string ListDir = _config->FindDir("Dir::State::lists");
-   
-   // Prepare the progress indicator
-   TotalSize = 0;
-   struct stat Buf;
-   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
-   {
-      string File = ListDir + URItoFileName(I->PackagesURI());
-      if (stat(File.c_str(),&Buf) != 0)
-	 continue;
-      TotalSize += Buf.st_size;
-   }
-   
-   if (pkgAddStatusSize(TotalSize) == false)
-      return false;
-   
-   // Generate the pkg source cache
-   CurrentSize = 0;
-   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
-   {
-      // Only cache deb source types.
-      if (I->Type != pkgSourceList::Item::Deb)
-	 continue;
-      
-      string File = ListDir + URItoFileName(I->PackagesURI());
-      
-      if (FileExists(File) == false)
-	 continue;
-      
-      FileFd Pkg(File,FileFd::ReadOnly);
-      debListParser Parser(Pkg);
-      Progress.OverallProgress(CurrentSize,TotalSize,Pkg.Size(),"Reading Package Lists");
-      if (_error->PendingError() == true)
-	 return _error->Error("Problem opening %s",File.c_str());
-      CurrentSize += Pkg.Size();
-      
-      Progress.SubProgress(0,I->PackagesInfo());
-      if (Gen.SelectFile(File) == false)
-	 return _error->Error("Problem with SelectFile %s",File.c_str());
-      
-      if (Gen.MergeList(Parser) == false)
-	 return _error->Error("Problem with MergeList %s",File.c_str());
-      
-      // Check the release file
-      string RFile = ListDir + URItoFileName(I->ReleaseURI());
-      if (FileExists(RFile) == true)
-      {
-	 FileFd Rel(RFile,FileFd::ReadOnly);
-	 if (_error->PendingError() == true)
-	    return false;
-	 Parser.LoadReleaseInfo(Gen.GetCurFile(),Rel);
-      }
-   }
-   
-   return true;
-}
-									/*}}}*/
-// MakeStatusCache - Generates a cache that includes the status files	/*{{{*/
-// ---------------------------------------------------------------------
-/* This copies the package source cache and then merges the status and 
-   xstatus files into it. */
-bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
+/* This makes sure that the status cache (the cache that has all 
+   index files from the sources list and all local ones) is ready
+   to be mmaped. If OutMap is not zero then a MMap object representing
+   the cache will be stored there. This is pretty much mandetory if you
+   are using AllowMem. AllowMem lets the function be run as non-root
+   where it builds the cache 'fast' into a memory buffer. */
+bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
+			MMap **OutMap,bool AllowMem)
 {
    unsigned long MapSize = _config->FindI("APT::Cache-Limit",4*1024*1024);
    
-   Progress.OverallProgress(0,1,1,"Reading Package Lists");
+   vector<pkgIndexFile *> Files(List.begin(),List.end());
+   unsigned long EndOfSource = Files.size();
+   if (_system->AddStatusFiles(Files) == false)
+      return false;
    
+   // Decide if we can write to the files..
    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
-   bool SrcOk = pkgSrcCacheCheck(List);
-   bool PkgOk = SrcOk && pkgPkgCacheCheck(CacheFile);
-
-   // Rebuild the source and package caches   
-   if (SrcOk == false)
-   {      
-      string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-      FileFd SCacheF(SCacheFile,FileFd::WriteEmpty);
-      
-      /* Open the pkgcache, we want a new inode here so we do no corrupt
-       	 existing mmaps */
-      unlink(CacheFile.c_str());             
-      FileFd CacheF(CacheFile,FileFd::WriteEmpty);
-      DynamicMMap Map(CacheF,MMap::Public,MapSize);
-      if (_error->PendingError() == true)
-	 return false;
-
-      pkgCacheGenerator Gen(Map,Progress);
-      unsigned long CurrentSize = 0;
-      unsigned long TotalSize = 0;
-      if (pkgGenerateSrcCache(List,Progress,Gen,CurrentSize,TotalSize) == false)
-	 return false;
-      
-      // Write the src cache
-      Gen.GetCache().HeaderP->Dirty = false;
-      if (SCacheF.Write(Map.Data(),Map.Size()) == false)
-	 return _error->Error("IO Error saving source cache");
-      Gen.GetCache().HeaderP->Dirty = true;
-      
-      // Merge in the source caches
-      return pkgMergeStatus(Progress,Gen,CurrentSize,TotalSize);
-   }
-
-   if (PkgOk == true)
+   string SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
+   
+   // Decide if we can write to the cache
+   bool Writeable = false;
+   if (CacheFile.empty() == false)
+      Writeable = access(flNotFile(CacheFile).c_str(),W_OK) == 0;
+   else
+      if (SrcCacheFile.empty() == false)
+	 Writeable = access(flNotFile(SrcCacheFile).c_str(),W_OK) == 0;
+   
+   if (Writeable == false && AllowMem == false && CacheFile.empty() == false)
+      return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
+   
+   Progress.OverallProgress(0,1,1,_("Reading Package Lists"));
+   
+   // Cache is OK, Fin.
+   if (CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
    {
-      Progress.OverallProgress(1,1,1,"Reading Package Lists");      
+      Progress.OverallProgress(1,1,1,_("Reading Package Lists"));
       return true;
    }
    
-   // We use the source cache to generate the package cache
-   string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-   FileFd SCacheF(SCacheFile,FileFd::ReadOnly);
+   /* At this point we know we need to reconstruct the package cache,
+      begin. */
+   SPtr<FileFd> CacheF;
+   SPtr<DynamicMMap> Map;
+   if (Writeable == true && CacheFile.empty() == false)
+   {
+      unlink(CacheFile.c_str());
+      CacheF = new FileFd(CacheFile,FileFd::WriteEmpty);
+      Map = new DynamicMMap(*CacheF,MMap::Public,MapSize);
+      if (_error->PendingError() == true)
+	 return false;
+   }
+   else
+   {
+      // Just build it in memory..
+      Map = new DynamicMMap(MMap::Public,MapSize);
+   }
    
-   /* Open the pkgcache, we want a new inode here so we do no corrupt
-      existing mmaps */
-   unlink(CacheFile.c_str());             
-   FileFd CacheF(CacheFile,FileFd::WriteEmpty);
-   DynamicMMap Map(CacheF,MMap::Public,MapSize);
+   // Lets try the source cache.
+   unsigned long CurrentSize = 0;
+   unsigned long TotalSize = 0;
+   if (CheckValidity(SrcCacheFile,Files.begin(),
+		     Files.begin()+EndOfSource) == true)
+   {
+      // Preload the map with the source cache
+      FileFd SCacheF(SrcCacheFile,FileFd::ReadOnly);
+      if (SCacheF.Read((unsigned char *)Map->Data() + Map->RawAllocate(SCacheF.Size()),
+		       SCacheF.Size()) == false)
+	 return false;
+
+      TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
+      
+      // Build the status cache
+      pkgCacheGenerator Gen(Map.Get(),&Progress);
+      if (_error->PendingError() == true)
+	 return false;
+      if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
+		     Files.begin()+EndOfSource,Files.end()) == false)
+	 return false;
+   }
+   else
+   {
+      TotalSize = ComputeSize(Files.begin(),Files.end());
+      
+      // Build the source cache
+      pkgCacheGenerator Gen(Map.Get(),&Progress);
+      if (_error->PendingError() == true)
+	 return false;
+      if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
+		     Files.begin(),Files.begin()+EndOfSource) == false)
+	 return false;
+      
+      // Write it back
+      if (Writeable == true && SrcCacheFile.empty() == false)
+      {
+	 FileFd SCacheF(SrcCacheFile,FileFd::WriteEmpty);
+	 if (_error->PendingError() == true)
+	    return false;
+	 // Write out the main data
+	 if (SCacheF.Write(Map->Data(),Map->Size()) == false)
+	    return _error->Error(_("IO Error saving source cache"));
+	 SCacheF.Sync();
+	 
+	 // Write out the proper header
+	 Gen.GetCache().HeaderP->Dirty = false;
+	 if (SCacheF.Seek(0) == false ||
+	     SCacheF.Write(Map->Data(),sizeof(*Gen.GetCache().HeaderP)) == false)
+	    return _error->Error(_("IO Error saving source cache"));
+	 SCacheF.Sync();
+	 Gen.GetCache().HeaderP->Dirty = true;
+      }
+      
+      // Build the status cache
+      if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
+		     Files.begin()+EndOfSource,Files.end()) == false)
+	 return false;
+   }
+
    if (_error->PendingError() == true)
       return false;
+   if (OutMap != 0)
+   {
+      if (CacheF != 0)
+      {
+	 delete Map.UnGuard();
+	 *OutMap = new MMap(*CacheF,MMap::Public | MMap::ReadOnly);
+      }
+      else
+      {
+	 *OutMap = Map.UnGuard();
+      }      
+   }
    
-   // Preload the map with the source cache
-   if (SCacheF.Read((unsigned char *)Map.Data() + Map.RawAllocate(SCacheF.Size()),
-		    SCacheF.Size()) == false)
-      return false;
-      
-   pkgCacheGenerator Gen(Map,Progress);
-   
-   // Compute the progress
-   unsigned long TotalSize = 0;
-   if (pkgAddStatusSize(TotalSize) == false)
-      return false;
-
-   unsigned long CurrentSize = 0;
-   return pkgMergeStatus(Progress,Gen,CurrentSize,TotalSize);
+   return true;
 }
 									/*}}}*/
-// MakeStatusCacheMem - Returns a map for the status cache		/*{{{*/
+// MakeOnlyStatusCache - Build a cache with just the status files	/*{{{*/
 // ---------------------------------------------------------------------
-/* This creates a map object for the status cache. If the process has write
-   access to the caches then it is the same as MakeStatusCache, otherwise it
-   creates a memory block and puts the cache in there. */
-MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
+/* */
+bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
 {
    unsigned long MapSize = _config->FindI("APT::Cache-Limit",4*1024*1024);
+   vector<pkgIndexFile *> Files;
+   unsigned long EndOfSource = Files.size();
+   if (_system->AddStatusFiles(Files) == false)
+      return false;
    
-   /* If the cache file is writeable this is just a wrapper for
-      MakeStatusCache */
-   string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
-   bool Writeable = (access(CacheFile.c_str(),W_OK) == 0) ||
-                    (errno == ENOENT);
-
-   if (Writeable == true)
-   {
-      if (pkgMakeStatusCache(List,Progress) == false)
-	 return 0;
-      
-      // Open the cache file
-      FileFd File(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-	 return 0;
-      
-      MMap *Map = new MMap(File,MMap::Public | MMap::ReadOnly);
-      if (_error->PendingError() == true)
-      {
-	 delete Map;
-	 return 0;
-      }
-      return Map;
-   }      
-
-   // Mostly from MakeStatusCache..
-   Progress.OverallProgress(0,1,1,"Reading Package Lists");
-   
-   bool SrcOk = pkgSrcCacheCheck(List);
-   bool PkgOk = SrcOk && pkgPkgCacheCheck(CacheFile);
-			   
-   // Rebuild the source and package caches   
-   if (SrcOk == false)
-   {
-      DynamicMMap *Map = new DynamicMMap(MMap::Public,MapSize);
-      if (_error->PendingError() == true)
-      {
-	 delete Map;
-	 return 0;
-      }
-      
-      pkgCacheGenerator Gen(*Map,Progress);
-      unsigned long CurrentSize = 0;
-      unsigned long TotalSize = 0;
-      if (pkgGenerateSrcCache(List,Progress,Gen,CurrentSize,TotalSize) == false)
-      {
-	 delete Map;
-	 return 0;
-      }
-      
-      // Merge in the source caches
-      if (pkgMergeStatus(Progress,Gen,CurrentSize,TotalSize) == false)
-      {
-	 delete Map;
-	 return 0;
-      }
-      
-      return Map;
-   }
-
-   if (PkgOk == true)
-   {
-      Progress.OverallProgress(1,1,1,"Reading Package Lists");
-      
-      // Open the cache file
-      FileFd File(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-	 return 0;
-      
-      MMap *Map = new MMap(File,MMap::Public | MMap::ReadOnly);
-      if (_error->PendingError() == true)
-      {
-	 delete Map;
-	 return 0;
-      }
-      return Map;
-   }
-   
-   // We use the source cache to generate the package cache
-   string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-   FileFd SCacheF(SCacheFile,FileFd::ReadOnly);
-   DynamicMMap *Map = new DynamicMMap(MMap::Public,MapSize);
-   if (_error->PendingError() == true)
-   {
-      delete Map;
-      return 0;
-   }
-   
-   // Preload the map with the source cache
-   if (SCacheF.Read((unsigned char *)Map->Data() + Map->RawAllocate(SCacheF.Size()),
-		    SCacheF.Size()) == false)
-   {
-      delete Map;
-      return 0;
-   }
-      
-   pkgCacheGenerator Gen(*Map,Progress);
-   
-   // Compute the progress
-   unsigned long TotalSize = 0;
-   if (pkgAddStatusSize(TotalSize) == false)
-   {
-      delete Map;
-      return 0;
-   }
-
+   SPtr<DynamicMMap> Map;   
+   Map = new DynamicMMap(MMap::Public,MapSize);
    unsigned long CurrentSize = 0;
-   if (pkgMergeStatus(Progress,Gen,CurrentSize,TotalSize) == false)
-   {
-      delete Map;
-      return 0;
-   }
-    
-   return Map;
+   unsigned long TotalSize = 0;
+   
+   TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
+   
+   // Build the status cache
+   Progress.OverallProgress(0,1,1,_("Reading Package Lists"));
+   pkgCacheGenerator Gen(Map.Get(),&Progress);
+   if (_error->PendingError() == true)
+      return false;
+   if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
+		  Files.begin()+EndOfSource,Files.end()) == false)
+      return false;
+   
+   if (_error->PendingError() == true)
+      return false;
+   *OutMap = Map.UnGuard();
+   
+   return true;
 }
 									/*}}}*/

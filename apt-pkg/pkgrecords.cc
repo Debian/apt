@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.cc,v 1.5 1999/02/22 03:30:06 jgg Exp $
+// $Id: pkgrecords.cc,v 1.6 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records
@@ -13,9 +13,11 @@
 #pragma implementation "apt-pkg/pkgrecords.h"
 #endif
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/debrecords.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+    
+#include <apti18n.h>   
 									/*}}}*/
 
 // Records::pkgRecords - Constructor					/*{{{*/
@@ -23,25 +25,21 @@
 /* This will create the necessary structures to access the status files */
 pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 {
-   Files = new PkgFile[Cache.HeaderP->PackageFileCount];
+   Files = new Parser *[Cache.HeaderP->PackageFileCount];
+   memset(Files,0,sizeof(*Files)*Cache.HeaderP->PackageFileCount);
+   
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); 
 	I.end() == false; I++)
    {
-      // We can not initialize if the cache is out of sync.
-      if (I.IsOk() == false)
+      const pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(I.IndexType());
+      if (Type == 0)
       {
-	 _error->Error("Package file %s is out of sync.",I.FileName());
+	 _error->Error(_("Index file type '%s' is not supported"),I.IndexType());
 	 return;
       }
-   
-      // Create the file
-      Files[I->ID].File = new FileFd(I.FileName(),FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-	 return;
-      
-      // Create the parser
-      Files[I->ID].Parse = new debRecordParser(*Files[I->ID].File,Cache);
-      if (_error->PendingError() == true)
+
+      Files[I->ID] = Type->CreatePkgParser(I);
+      if (Files[I->ID] == 0)
 	 return;
    }   
 }
@@ -51,6 +49,8 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 /* */
 pkgRecords::~pkgRecords()
 {
+   for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
+      delete Files[I];
    delete [] Files;
 }
 									/*}}}*/
@@ -59,18 +59,7 @@ pkgRecords::~pkgRecords()
 /* */
 pkgRecords::Parser &pkgRecords::Lookup(pkgCache::VerFileIterator const &Ver)
 {
-   PkgFile &File = Files[Ver.File()->ID];
-   File.Parse->Jump(Ver);
-
-   return *File.Parse;
-}
-									/*}}}*/
-// Records::Pkgfile::~PkgFile - Destructor				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgRecords::PkgFile::~PkgFile()
-{
-   delete Parse;
-   delete File;
+   Files[Ver.File()->ID]->Jump(Ver);
+   return *Files[Ver.File()->ID];
 }
 									/*}}}*/

@@ -1,19 +1,18 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.h,v 1.8 2000/01/16 08:45:47 jgg Exp $
+// $Id: orderlist.h,v 1.9 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
    
    A list of packages can be ordered by a number of conflicting criteria
    each given a specific priority. Each package also has a set of flags
-   indicating some usefull things about it that are derived in the 
+   indicating some useful things about it that are derived in the 
    course of sorting. The pkgPackageManager class uses this class for
    all of it's installation ordering needs.
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_ORDERLIST_H
 #define PKGLIB_ORDERLIST_H
 
@@ -24,19 +23,11 @@
 #include <apt-pkg/pkgcache.h>
 
 class pkgDepCache;
-class pkgOrderList
+class pkgOrderList : protected pkgCache::Namespace
 {
    protected:
 
-   pkgDepCache &Cache;
-   
-   // Bring some usefull types into the local scope
-   typedef pkgCache::PkgIterator PkgIterator;
-   typedef pkgCache::VerIterator VerIterator;
-   typedef pkgCache::DepIterator DepIterator;
-   typedef pkgCache::PrvIterator PrvIterator;
-   typedef pkgCache::Package Package;
-   typedef pkgCache::Version Version;
+   pkgDepCache &Cache;   
    typedef bool (pkgOrderList::*DepFunc)(DepIterator D);
 
    // These are the currently selected ordering functions
@@ -48,13 +39,13 @@ class pkgOrderList
    // State
    Package **End;
    Package **List;
-   Package **AfterList;
    Package **AfterEnd;
    string *FileList;
    DepIterator Loops[20];
    int LoopCount;
    int Depth;
    unsigned short *Flags;
+   bool Debug;
    
    // Main visit function
    bool VisitNode(PkgIterator Pkg);
@@ -122,7 +113,7 @@ class pkgOrderList
 
    int Score(PkgIterator Pkg);
 
-   pkgOrderList(pkgDepCache &Cache);
+   pkgOrderList(pkgDepCache *Cache);
    ~pkgOrderList();
 };
 

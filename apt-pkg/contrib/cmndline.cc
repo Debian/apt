@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.10 1999/05/14 02:57:48 jgg Exp $
+// $Id: cmndline.cc,v 1.11 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -14,6 +14,8 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+
+#include <apti18n.h>    
 									/*}}}*/
 
 // CommandLine::CommandLine - Constructor				/*{{{*/
@@ -68,7 +70,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 	    Args *A;
 	    for (A = ArgList; A->end() == false && A->ShortOpt != *Opt; A++);
 	    if (A->end() == true)
-	       return _error->Error("Command line option '%c' [from %s] is not known.",*Opt,argv[I]);
+	       return _error->Error(_("Command line option '%c' [from %s] is not known."),*Opt,argv[I]);
 
 	    if (HandleOpt(I,argc,argv,Opt,A) == false)
 	       return false;
@@ -94,7 +96,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 	 for (; Opt != OptEnd && *Opt != '-'; Opt++);
 
 	 if (Opt == OptEnd)
-	    return _error->Error("Command line option %s is not understood",argv[I]);
+	    return _error->Error(_("Command line option %s is not understood"),argv[I]);
 	 Opt++;
 	 
 	 for (A = ArgList; A->end() == false &&
@@ -102,7 +104,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 
 	 // Failed again..
 	 if (A->end() == true && OptEnd - Opt != 1)
-	    return _error->Error("Command line option %s is not understood",argv[I]);
+	    return _error->Error(_("Command line option %s is not understood"),argv[I]);
 
 	 // The option could be a single letter option prefixed by a no-..
 	 if (A->end() == true)
@@ -110,12 +112,12 @@ bool CommandLine::Parse(int argc,const char **argv)
 	    for (A = ArgList; A->end() == false && A->ShortOpt != *Opt; A++);
 	    
 	    if (A->end() == true)
-	       return _error->Error("Command line option %s is not understood",argv[I]);
+	       return _error->Error(_("Command line option %s is not understood"),argv[I]);
 	 }
 	 
 	 // The option is not boolean
 	 if (A->IsBoolean() == false)
-	    return _error->Error("Command line option %s is not boolean",argv[I]);
+	    return _error->Error(_("Command line option %s is not boolean"),argv[I]);
 	 PreceedMatch = true;
       }
       
@@ -154,7 +156,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       
       // Equals was specified but we fell off the end!
       if (Opt[1] == '=' && Argument == 0)
-	 return _error->Error("Option %s requires an argument.",argv[I]);
+	 return _error->Error(_("Option %s requires an argument."),argv[I]);
       if (Opt[1] == '=')
 	 CertainArg = true;
 	 
@@ -175,7 +177,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
    if ((A->Flags & HasArg) == HasArg)
    {
       if (Argument == 0)
-	 return _error->Error("Option %s requires an argument.",argv[I]);
+	 return _error->Error(_("Option %s requires an argument."),argv[I]);
       Opt += strlen(Opt);
       I += IncI;
       
@@ -189,13 +191,13 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	 const char *J;
 	 for (J = Argument; *J != 0 && *J != '='; J++);
 	 if (*J == 0)
-	    return _error->Error("Option %s: Configuration item sepecification must have an =<val>.",argv[I]);
+	    return _error->Error(_("Option %s: Configuration item sepecification must have an =<val>."),argv[I]);
 
 	 // = is trailing
 	 if (J[1] == 0)
 	 {
 	    if (I+1 >= argc)
-	       return _error->Error("Option %s: Configuration item sepecification must have an =<val>.",argv[I]);
+	       return _error->Error(_("Option %s: Configuration item sepecification must have an =<val>."),argv[I]);
 	    Conf->Set(string(Argument,J-Argument),string(argv[I++ +1]));
 	 }
 	 else
@@ -225,7 +227,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	 
 	 // Conversion failed and the argument was specified with an =s
 	 if (EndPtr == Argument && CertainArg == true)
-	    return _error->Error("Option %s requires an integer argument, not '%s'",argv[I],Argument);
+	    return _error->Error(_("Option %s requires an integer argument, not '%s'"),argv[I],Argument);
 
 	 // Conversion was ok, set the value and return
 	 if (EndPtr != 0 && EndPtr != Argument && *EndPtr == 0)
@@ -256,7 +258,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	    break;
 	 
 	 if (strlen(argv[I]) >= sizeof(Buffer))
-	    return _error->Error("Option '%s' is too long",argv[I]);
+	    return _error->Error(_("Option '%s' is too long"),argv[I]);
 
 	 // Skip the leading dash
 	 const char *J = argv[I];
@@ -289,7 +291,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       }
 
       if (CertainArg == true)
-	 return _error->Error("Sense %s is not understood, try true or false.",Argument);
+	 return _error->Error(_("Sense %s is not understood, try true or false."),Argument);
       
       Argument = 0;
    }
@@ -339,7 +341,7 @@ bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
    if (Map[I].Match == 0)
    {
       if (NoMatch == true)
-	 _error->Error("Invalid operation %s",FileList[0]);
+	 _error->Error(_("Invalid operation %s"),FileList[0]);
    }
    
    return false;

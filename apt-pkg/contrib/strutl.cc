@@ -1,12 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.34 2000/01/16 05:36:17 jgg Exp $
+// $Id: strutl.cc,v 1.35 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
-   String Util - Some usefull string functions.
+   String Util - Some useful string functions.
 
-   These have been collected from here and there to do all sorts of usefull
-   things to strings. They are usefull in file parsers, URI handlers and
+   These have been collected from here and there to do all sorts of useful
+   things to strings. They are useful in file parsers, URI handlers and
    especially in APT methods.   
    
    This source is placed in the Public Domain, do with it what you will
@@ -21,12 +21,17 @@
 
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/error.h>
 
+#include <apti18n.h>
+    
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <regex.h>
 #include <errno.h>
+#include <stdarg.h>
 									/*}}}*/
 
 // strstrip - Remove white space from the front and back of a string	/*{{{*/
@@ -147,9 +152,9 @@ bool ParseQuoteWord(const char *&String,string &Res)
 									/*}}}*/
 // ParseCWord - Parses a string like a C "" expression			/*{{{*/
 // ---------------------------------------------------------------------
-/* This expects a series of space seperated strings enclosed in ""'s. 
+/* This expects a series of space separated strings enclosed in ""'s. 
    It concatenates the ""'s into a single string. */
-bool ParseCWord(const char *String,string &Res)
+bool ParseCWord(const char *&String,string &Res)
 {
    // Skip leading whitespace
    const char *C = String;
@@ -180,9 +185,10 @@ bool ParseCWord(const char *String,string &Res)
       if (isspace(*C) == 0)
 	 return false;
       *Buf++ = ' ';
-   }   
+   }
    *Buf = 0;
    Res = Buffer;
+   String = C;
    return true;
 }
 									/*}}}*/
@@ -324,6 +330,13 @@ string SubstVar(string Str,string Subst,string Contents)
       return Str;
    
    return Temp + string(Str,OldPos);
+}
+
+string SubstVar(string Str,const struct SubstVar *Vars)
+{
+   for (; Vars->Subst != 0; Vars++)
+      Str = SubstVar(Str,Vars->Subst,*Vars->Contents);
+   return Str;
 }
 									/*}}}*/
 // URItoFileName - Convert the uri into a unique file name		/*{{{*/
@@ -548,9 +561,11 @@ bool ReadMessages(int Fd, vector<string> &List)
 	 return false;
       
       // No data
-      if (Res <= 0)
+      if (Res < 0 && errno == EAGAIN)
 	 return true;
-
+      if (Res < 0)
+	 return false;
+			      
       End += Res;
       
       // Look for the end of the message
@@ -749,6 +764,121 @@ bool Hex2Num(const char *Start,const char *End,unsigned char *Num,
    return true;
 }
 									/*}}}*/
+// TokSplitString - Split a string up by a given token			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is intended to be a faster splitter, it does not use dynamic
+   memories. Input is changed to insert nulls at each token location. */
+bool TokSplitString(char Tok,char *Input,char **List,
+		    unsigned long ListMax)
+{
+   // Strip any leading spaces
+   char *Start = Input;
+   char *Stop = Start + strlen(Start);
+   for (; *Start != 0 && isspace(*Start) != 0; Start++);
+
+   unsigned long Count = 0;
+   char *Pos = Start;
+   while (Pos != Stop)
+   {
+      // Skip to the next Token
+      for (; Pos != Stop && *Pos != Tok; Pos++);
+      
+      // Back remove spaces
+      char *End = Pos;
+      for (; End > Start && (End[-1] == Tok || isspace(End[-1]) != 0); End--);
+      *End = 0;
+      
+      List[Count++] = Start;
+      if (Count >= ListMax)
+      {
+	 List[Count-1] = 0;
+	 return false;
+      }
+      
+      // Advance pos
+      for (; Pos != Stop && (*Pos == Tok || isspace(*Pos) != 0 || *Pos == 0); Pos++);
+      Start = Pos;
+   }
+   
+   List[Count] = 0;
+   return true;
+}
+									/*}}}*/
+// RegexChoice - Simple regex list/list matcher				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
+		      const char **ListEnd)
+{
+   for (RxChoiceList *R = Rxs; R->Str != 0; R++)
+      R->Hit = false;
+
+   unsigned long Hits = 0;
+   for (; ListBegin != ListEnd; ListBegin++)
+   {
+      // Check if the name is a regex
+      const char *I;
+      bool Regex = true;
+      for (I = *ListBegin; *I != 0; I++)
+	 if (*I == '.' || *I == '?' || *I == '*' || *I == '|')
+	    break;
+      if (*I == 0)
+	 Regex = false;
+	 
+      // Compile the regex pattern
+      regex_t Pattern;
+      if (Regex == true)
+	 if (regcomp(&Pattern,*ListBegin,REG_EXTENDED | REG_ICASE |
+		     REG_NOSUB) != 0)
+	    Regex = false;
+	 
+      // Search the list
+      bool Done = false;
+      for (RxChoiceList *R = Rxs; R->Str != 0; R++)
+      {
+	 if (R->Str[0] == 0)
+	    continue;
+	 
+	 if (strcasecmp(R->Str,*ListBegin) != 0)
+	 {
+	    if (Regex == false)
+	       continue;
+	    if (regexec(&Pattern,R->Str,0,0,0) != 0)
+	       continue;
+	 }
+	 Done = true;
+	 
+	 if (R->Hit == false)
+	    Hits++;
+	 
+	 R->Hit = true;
+      }
+      
+      if (Regex == true)
+	 regfree(&Pattern);
+      
+      if (Done == false)
+	 _error->Warning(_("Selection %s not found"),*ListBegin);
+   }
+   
+   return Hits;
+}
+									/*}}}*/
+// ioprintf - C format string outputter to C++ iostreams		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used to make the internationalization strinc easier to translate
+ and to allow reordering of parameters */
+void ioprintf(ostream &out,const char *format,...) 
+{
+   va_list args;
+   va_start(args,format);
+   
+   // sprintf the description
+   char S[400];
+   vsnprintf(S,sizeof(S),format,args);
+   out << S;
+}
+									/*}}}*/
 
 // URI::CopyFrom - Copy from an object					/*{{{*/
 // ---------------------------------------------------------------------
@@ -757,7 +887,7 @@ void URI::CopyFrom(string U)
 {
    string::const_iterator I = U.begin();
 
-   // Locate the first colon, this seperates the scheme
+   // Locate the first colon, this separates the scheme
    for (; I < U.end() && *I != ':' ; I++);
    string::const_iterator FirstColon = I;
 
@@ -910,5 +1040,18 @@ URI::operator string()
    }
    
    return Res;
+}
+									/*}}}*/
+// URI::SiteOnly - Return the schema and site for the URI		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string URI::SiteOnly(string URI)
+{
+   ::URI U(URI);
+   U.User = string();
+   U.Password = string();
+   U.Path = string();
+   U.Port = 0;
+   return U;
 }
 									/*}}}*/

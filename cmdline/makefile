@@ -32,3 +32,10 @@ SLIBS = -lapt-pkg
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-cdrom.cc indexcopy.cc
 include $(PROGRAM_H)
+
+# The apt-sortpkgs program
+PROGRAM=apt-sortpkgs
+SLIBS = -lapt-pkg
+LIB_MAKES = apt-pkg/makefile
+SOURCE = apt-sortpkgs.cc
+include $(PROGRAM_H)

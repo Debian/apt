@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.8 1999/05/18 05:28:03 jgg Exp $
+// $Id: debrecords.cc,v 1.9 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -18,8 +18,9 @@
 // RecordParser::debRecordParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debRecordParser::debRecordParser(FileFd &File,pkgCache &Cache) : 
-                   Tags(File,Cache.Head().MaxVerFileSize + 20)
+debRecordParser::debRecordParser(string FileName,pkgCache &Cache) : 
+                  File(FileName,FileFd::ReadOnly), 
+                  Tags(&File,Cache.Head().MaxVerFileSize + 200)
 {
 }
 									/*}}}*/
@@ -37,6 +38,14 @@ bool debRecordParser::Jump(pkgCache::VerFileIterator const &Ver)
 string debRecordParser::FileName()
 {
    return Section.FindS("Filename");
+}
+									/*}}}*/
+// RecordParser::Name - Return the package name				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::Name()
+{
+   return Section.FindS("Package");
 }
 									/*}}}*/
 // RecordParser::MD5Hash - Return the archive hash			/*{{{*/
@@ -85,5 +94,13 @@ string debRecordParser::SourcePkg()
    if (Pos == string::npos)
       return Res;
    return string(Res,0,Pos);
+}
+									/*}}}*/
+// RecordParser::GetRec - Return the whole record			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void debRecordParser::GetRec(const char *&Start,const char *&Stop)
+{
+   Section.GetSection(Start,Stop);
 }
 									/*}}}*/

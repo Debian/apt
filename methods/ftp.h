@@ -1,5 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/// $Id: ftp.h,v 1.2 1999/03/15 07:20:41 jgg Exp $
+// Description								/*{{{*/// $Id: ftp.h,v 1.3 2001/02/20 07:03:18 jgg Exp $
+// $Id: ftp.h,v 1.3 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -17,12 +18,20 @@ class FTPConn
    int DataFd;
    int DataListenFd;
    URI ServerName;
+   bool ForceExtended;
    bool TryPassive;
    bool Debug;
-   
-   struct sockaddr_in PasvAddr;
-   struct sockaddr_in Peer;
 
+   struct addrinfo *PasvAddr;
+   
+   // Generic Peer Address
+   struct sockaddr_storage PeerAddr;
+   socklen_t PeerAddrLen;
+   
+   // Generic Server Address (us)
+   struct sockaddr_storage ServerAddr;
+   socklen_t ServerAddrLen;
+   
    // Private helper functions
    bool ReadLine(string &Text);      
    bool Login();
@@ -41,6 +50,7 @@ class FTPConn
    bool Open(pkgAcqMethod *Owner);
    void Close();   
    bool GoPasv();
+   bool ExtGoPasv();
    
    // Query
    bool Size(const char *Path,unsigned long &Size);

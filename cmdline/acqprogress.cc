@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.20 2000/05/12 04:03:27 jgg Exp $
+// $Id: acqprogress.cc,v 1.21 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -14,6 +14,8 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
+#include <apti18n.h>
+    
 #include <stdio.h>
 #include <signal.h>
 									/*}}}*/
@@ -47,7 +49,7 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';   
    
-   cout << "Hit " << Itm.Description;
+   cout << _("Hit ") << Itm.Description;
    if (Itm.Owner->FileSize != 0)
       cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    cout << endl;
@@ -71,7 +73,7 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
    
-   cout << "Get:" << Itm.Owner->ID << ' ' << Itm.Description;
+   cout << _("Get:") << Itm.Owner->ID << ' ' << Itm.Description;
    if (Itm.Owner->FileSize != 0)
       cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    cout << endl;
@@ -102,11 +104,11 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
    {
-      cout << "Ign " << Itm.Description << endl;
+      cout << _("Ign ") << Itm.Description << endl;
    }
    else
    {
-      cout << "Err " << Itm.Description << endl;
+      cout << _("Err ") << Itm.Description << endl;
       cout << "  " << Itm.Owner->ErrorText << endl;
    }
    
@@ -125,11 +127,12 @@ void AcqTextStatus::Stop()
 
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r' << flush;
-   
+
    if (FetchedBytes != 0 && _error->PendingError() == false)
-      cout << "Fetched " << SizeToStr(FetchedBytes) << "B in " <<
-         TimeToStr(ElapsedTime) << " (" << SizeToStr(CurrentCPS) << 
-         "B/s)" << endl;
+      ioprintf(cout,_("Fetched %sB in %s (%sB/s)\n"),
+	       SizeToStr(FetchedBytes).c_str(),
+	       TimeToStr(ElapsedTime).c_str(),
+	       SizeToStr(CurrentCPS).c_str());
 }
 									/*}}}*/
 // AcqTextStatus::Pulse - Regular event pulse				/*{{{*/
@@ -216,7 +219,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    // Show something..
    if (Shown == false)
-      snprintf(S,End-S," [Working]");
+      snprintf(S,End-S,_(" [Working]"));
       
    /* Put in the ETA and cps meter, block off signals to prevent strangeness
       during resizing */
@@ -240,7 +243,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
    }
    Buffer[ScreenWidth] = 0;
    BlankLine[ScreenWidth] = 0;
-   sigprocmask(SIG_UNBLOCK,&OldSigs,0);
+   sigprocmask(SIG_SETMASK,&OldSigs,0);
 
    // Draw the current status
    if (strlen(Buffer) == strlen(BlankLine))
@@ -261,9 +264,10 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 bool AcqTextStatus::MediaChange(string Media,string Drive)
 {
    if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';   
-   cout << "Media Change: Please insert the disc labeled '" << Media << "' in "\
-           "the drive '" << Drive << "' and press enter" << endl;
+      cout << '\r' << BlankLine << '\r';
+   ioprintf(cout,_("Media Change: Please insert the disc labeled '%s' in "
+		   "the drive '%s' and press enter\n"),
+	    Media.c_str(),Drive.c_str());
 
    char C = 0;
    while (C != '\n' && C != '\r')

@@ -3,14 +3,13 @@ Section: admin
 Priority: standard
 Maintainer: APT Development Team <deity@lists.debian.org>
 Standards-Version: 3.1.1
-Build-Depends: debhelper, debiandoc-sgml
+Build-Depends: debhelper, debiandoc-sgml, python-dev, libdb2-dev
 
 Package: apt
 Architecture: any
 Depends: ${shlibs:Depends}
 Priority: standard
-Conflicts: deity
-Replaces: deity, libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
+Replaces: libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
 Provides: libapt-pkg${libapt-pkg:major}
 Suggests: dpkg-dev
 Description: Advanced front-end for dpkg
@@ -37,3 +36,12 @@ Priority: optional
 Description: Documentation for APT development
  This package contains documentation for development of the APT
  Debian package manipulation program and its libraries.
+
+Package: apt-utils
+Architecture: any
+Depends: ${shlibs:Depends}
+Priority: optional
+Provides: libapt-inst${libapt-inst:major}
+Description: APT utility programs
+ This package contains some infrequently used APT utility programs such
+ as apt-ftparchive and apt-sortpkgs.

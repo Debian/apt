@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.10 1999/07/20 05:53:33 jgg Exp $
+// $Id: packagemanager.h,v 1.11 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -20,7 +20,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_PACKAGEMANAGER_H
 #define PKGLIB_PACKAGEMANAGER_H
 
@@ -36,7 +35,7 @@ class pkgDepCache;
 class pkgSourceList;
 class pkgOrderList;
 class pkgRecords;
-class pkgPackageManager
+class pkgPackageManager : protected pkgCache::Namespace
 {
    public:
    
@@ -47,15 +46,7 @@ class pkgPackageManager
    pkgDepCache &Cache;
    pkgOrderList *List;
    bool Debug;
-   
-   // Bring some usefull types into the local scope
-   typedef pkgCache::PkgIterator PkgIterator;
-   typedef pkgCache::VerIterator VerIterator;
-   typedef pkgCache::DepIterator DepIterator;
-   typedef pkgCache::PrvIterator PrvIterator;
-   typedef pkgCache::Version Version;
-   typedef pkgCache::Package Package;
-      
+         
    bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
    OrderResult OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
@@ -71,10 +62,10 @@ class pkgPackageManager
    bool SmartRemove(PkgIterator Pkg);
    bool EarlyRemove(PkgIterator Pkg);   
    
-   // The Actuall installation implementation
-   virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
-   virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
-   virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
+   // The Actual installation implementation
+   virtual bool Install(PkgIterator Pkg,string File) {return false;};
+   virtual bool Configure(PkgIterator Pkg) {return false;};
+   virtual bool Remove(PkgIterator Pkg,bool Purge=false) {return false;};
    virtual bool Go() {return true;};
    virtual void Reset() {};
    
@@ -86,7 +77,7 @@ class pkgPackageManager
    OrderResult DoInstall();
    bool FixMissing();
    
-   pkgPackageManager(pkgDepCache &Cache);
+   pkgPackageManager(pkgDepCache *Cache);
    virtual ~pkgPackageManager();
 };
 

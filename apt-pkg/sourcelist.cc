@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.17 1999/10/17 07:30:23 jgg Exp $
+// $Id: sourcelist.cc,v 1.18 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -18,10 +18,99 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
+#include <apti18n.h>
+
 #include <fstream.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/stat.h>
+									/*}}}*/
+
+// Global list of Item supported
+static  pkgSourceList::Type *ItmList[10];
+pkgSourceList::Type **pkgSourceList::Type::GlobalList = ItmList;
+unsigned long pkgSourceList::Type::GlobalListLen = 0;
+
+// Type::Type - Constructor						/*{{{*/
+// ---------------------------------------------------------------------
+/* Link this to the global list of items*/
+pkgSourceList::Type::Type()
+{
+   ItmList[GlobalListLen] = this;
+   GlobalListLen++;
+}
+									/*}}}*/
+// Type::GetType - Get a specific meta for a given type			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgSourceList::Type *pkgSourceList::Type::GetType(const char *Type)
+{
+   for (unsigned I = 0; I != GlobalListLen; I++)
+      if (strcmp(GlobalList[I]->Name,Type) == 0)
+	 return GlobalList[I];
+   return 0;
+}
+									/*}}}*/
+// Type::FixupURI - Normalize the URI and check it..			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgSourceList::Type::FixupURI(string &URI) const
+{
+   if (URI.empty() == true)
+      return false;
+
+   if (URI.find(':') == string::npos)
+      return false;
+
+   URI = SubstVar(URI,"$(ARCH)",_config->Find("APT::Architecture"));
+   
+   // Make sure that the URN is / postfixed
+   if (URI[URI.size() - 1] != '/')
+      URI += '/';
+   
+   return true;
+}
+									/*}}}*/
+// Type::ParseLine - Parse a single line				/*{{{*/
+// ---------------------------------------------------------------------
+/* This is a generic one that is the 'usual' format for sources.list
+   Weird types may override this. */
+bool pkgSourceList::Type::ParseLine(vector<pkgIndexFile *> &List,
+				    const char *Buffer,
+				    unsigned long CurLine,
+				    string File) const
+{
+   string URI;
+   string Dist;
+   string Section;   
+   
+   if (ParseQuoteWord(Buffer,URI) == false)
+      return _error->Error(_("Malformed line %lu in source list %s (URI)"),CurLine,File.c_str());
+   if (ParseQuoteWord(Buffer,Dist) == false)
+      return _error->Error(_("Malformed line %lu in source list %s (dist)"),CurLine,File.c_str());
+      
+   if (FixupURI(URI) == false)
+      return _error->Error(_("Malformed line %lu in source list %s (URI parse)"),CurLine,File.c_str());
+   
+   // Check for an absolute dists specification.
+   if (Dist.empty() == false && Dist[Dist.size() - 1] == '/')
+   {
+      if (ParseQuoteWord(Buffer,Section) == true)
+	 return _error->Error(_("Malformed line %lu in source list %s (Absolute dist)"),CurLine,File.c_str());
+      Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
+      return CreateItem(List,URI,Dist,Section);
+   }
+   
+   // Grab the rest of the dists
+   if (ParseQuoteWord(Buffer,Section) == false)
+      return _error->Error(_("Malformed line %lu in source list %s (dist parse)"),CurLine,File.c_str());
+   
+   do
+   {
+      if (CreateItem(List,URI,Dist,Section) == false)
+	 return false;
+   }
+   while (ParseQuoteWord(Buffer,Section) == true);
+   
+   return true;
+}
 									/*}}}*/
 
 // SourceList::pkgSourceList - Constructors				/*{{{*/
@@ -52,7 +141,7 @@ bool pkgSourceList::Read(string File)
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in | ios::nocreate);
    if (!F != 0)
-      return _error->Errno("ifstream::ifstream","Opening %s",File.c_str());
+      return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
    
    List.erase(List.begin(),List.end());
    char Buffer[300];
@@ -63,318 +152,59 @@ bool pkgSourceList::Read(string File)
       F.getline(Buffer,sizeof(Buffer));
       CurLine++;
       _strtabexpand(Buffer,sizeof(Buffer));
-      _strstrip(Buffer);
+      
+      
+      char *I;
+      for (I = Buffer; *I != 0 && *I != '#'; I++);
+      *I = 0;
+      
+      const char *C = _strstrip(Buffer);
       
       // Comment or blank
-      if (Buffer[0] == '#' || Buffer[0] == 0)
+      if (C[0] == '#' || C[0] == 0)
 	 continue;
-      
+      	    
       // Grok it
-      string Type;
-      string URI;
-      Item Itm;
-      const char *C = Buffer;
-      if (ParseQuoteWord(C,Type) == false)
-	 return _error->Error("Malformed line %u in source list %s (type)",CurLine,File.c_str());
-      if (ParseQuoteWord(C,URI) == false)
-	 return _error->Error("Malformed line %u in source list %s (URI)",CurLine,File.c_str());
-      if (ParseQuoteWord(C,Itm.Dist) == false)
-	 return _error->Error("Malformed line %u in source list %s (dist)",CurLine,File.c_str());
-      if (Itm.SetType(Type) == false)
-	 return _error->Error("Malformed line %u in source list %s (type parse)",CurLine,File.c_str());
-      if (Itm.SetURI(URI) == false)
-	 return _error->Error("Malformed line %u in source list %s (URI parse)",CurLine,File.c_str());
+      string LineType;
+      if (ParseQuoteWord(C,LineType) == false)
+	 return _error->Error(_("Malformed line %u in source list %s (type)"),CurLine,File.c_str());
 
-      // Check for an absolute dists specification.
-      if (Itm.Dist.empty() == false && Itm.Dist[Itm.Dist.size() - 1] == '/')
-      {
-	 if (ParseQuoteWord(C,Itm.Section) == true)
-	    return _error->Error("Malformed line %u in source list %s (Absolute dist)",CurLine,File.c_str());
-	 Itm.Dist = SubstVar(Itm.Dist,"$(ARCH)",_config->Find("APT::Architecture"));
-	 List.push_back(Itm);
-	 continue;
-      }
-
-      // Grab the rest of the dists
-      if (ParseQuoteWord(C,Itm.Section) == false)
-	    return _error->Error("Malformed line %u in source list %s (dist parse)",CurLine,File.c_str());
+      Type *Parse = Type::GetType(LineType.c_str());
+      if (Parse == 0)
+	 return _error->Error(_("Type '%s' is not known in on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
       
-      do
-      {
-	 List.push_back(Itm);
-      }
-      while (ParseQuoteWord(C,Itm.Section) == true);
+      if (Parse->ParseLine(List,C,CurLine,File) == false)
+	 return false;
    }
    return true;
 }
 									/*}}}*/
-// SourceList::Item << - Writes the item to a stream			/*{{{*/
-// ---------------------------------------------------------------------
-/* This is not suitable for rebuilding the sourcelist file but it good for
-   debugging. */
-ostream &operator <<(ostream &O,pkgSourceList::Item &Itm)
-{
-   O << (int)Itm.Type << ' ' << Itm.URI << ' ' << Itm.Dist << ' ' << Itm.Section;
-   return O;
-}
-									/*}}}*/
-// SourceList::Item::SetType - Sets the distribution type		/*{{{*/
+// SourceList::FindIndex - Get the index associated with a file		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSourceList::Item::SetType(string S)
+bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
+			      pkgIndexFile *&Found) const
 {
-   if (S == "deb")
+   for (const_iterator I = List.begin(); I != List.end(); I++)
    {
-      Type = Deb;
-      return true;
+      if ((*I)->FindInCache(*File.Cache()) == File)
+      {
+	 Found = *I;
+	 return true;
+      }
    }
-
-   if (S == "deb-src")
-   {
-      Type = DebSrc;
-      return true;
-   }
-
+   
    return false;
 }
 									/*}}}*/
-// SourceList::Item::SetURI - Set the URI				/*{{{*/
+// SourceList::GetIndexes - Load the index files into the downloader	/*{{{*/
 // ---------------------------------------------------------------------
-/* For simplicity we strip the scheme off the uri */
-bool pkgSourceList::Item::SetURI(string S)
+/* */
+bool pkgSourceList::GetIndexes(pkgAcquire *Owner) const
 {
-   if (S.empty() == true)
-      return false;
-
-   if (S.find(':') == string::npos)
-      return false;
-
-   S = SubstVar(S,"$(ARCH)",_config->Find("APT::Architecture"));
-   
-   // Make sure that the URN is / postfixed
-   URI = S;
-   if (URI[URI.size() - 1] != '/')
-      URI += '/';
-   
+   for (const_iterator I = List.begin(); I != List.end(); I++)
+      if ((*I)->GetIndexes(Owner) == false)
+	 return false;
    return true;
-}
-									/*}}}*/
-// SourceList::Item::PackagesURI - Returns a URI to the packages file	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgSourceList::Item::PackagesURI() const
-{
-   string Res;
-   switch (Type)
-   {
-      case Deb:
-      if (Dist[Dist.size() - 1] == '/')
-      {
-	 if (Dist != "/")
-	    Res = URI + Dist;
-	 else 
-	    Res = URI;
-      }      
-      else
-	 Res = URI + "dists/" + Dist + '/' + Section +
-	 "/binary-" + _config->Find("APT::Architecture") + '/';
-      
-      Res += "Packages";
-      break;
-      
-      case DebSrc:
-      if (Dist[Dist.size() - 1] == '/')
-	 Res = URI + Dist;
-      else
-	 Res = URI + "dists/" + Dist + '/' + Section +
-	 "/source/";
-      
-      Res += "Sources";
-      break;
-   };
-   return Res;
-}
-									/*}}}*/
-// SourceList::Item::PackagesInfo - Shorter version of the URI		/*{{{*/
-// ---------------------------------------------------------------------
-/* This is a shorter version that is designed to be < 60 chars or so */
-string pkgSourceList::Item::PackagesInfo() const
-{
-   string Res;
-   switch (Type)
-   {
-      case Deb:
-      Res += SiteOnly(URI) + ' ';
-      if (Dist[Dist.size() - 1] == '/')
-      {
-	 if (Dist != "/")
-	    Res += Dist;
-      }      
-      else
-	 Res += Dist + '/' + Section;
-      
-      Res += " Packages";
-      break;
-     
-      case DebSrc:
-      Res += SiteOnly(URI) + ' ';
-      if (Dist[Dist.size() - 1] == '/')
-	 Res += Dist;
-      else
-	 Res += Dist + '/' + Section;
-      
-      Res += " Sources";
-      break;
-   };
-   return Res;
-}
-									/*}}}*/
-// SourceList::Item::ReleaseURI - Returns a URI to the release file	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgSourceList::Item::ReleaseURI() const
-{
-   string Res;
-   switch (Type)
-   {
-      case Deb:
-      if (Dist[Dist.size() - 1] == '/')
-      {
-	 if (Dist != "/")
-	    Res = URI + Dist;
-	 else
-	    Res = URI;
-      }      
-      else
-	 Res = URI + "dists/" + Dist + '/' + Section +
-	 "/binary-" + _config->Find("APT::Architecture") + '/';
-      
-      Res += "Release";
-      break;
-      
-      case DebSrc:
-      if (Dist[Dist.size() - 1] == '/')
-	 Res = URI + Dist;
-      else
-	 Res = URI + "dists/" + Dist + '/' + Section +
-	 "/source/";
-      
-      Res += "Release";
-      break;
-   };
-   return Res;
-}
-									/*}}}*/
-// SourceList::Item::ReleaseInfo - Shorter version of the URI		/*{{{*/
-// ---------------------------------------------------------------------
-/* This is a shorter version that is designed to be < 60 chars or so */
-string pkgSourceList::Item::ReleaseInfo() const
-{
-   string Res;
-   switch (Type)
-   {
-      case Deb:
-      case DebSrc:
-      Res += SiteOnly(URI) + ' ';
-      if (Dist[Dist.size() - 1] == '/')
-      {
-	 if (Dist != "/")
-	    Res += Dist;
-      }      
-      else
-	 Res += Dist + '/' + Section;
-      
-      Res += " Release";
-      break;
-   };
-   return Res;
-}
-									/*}}}*/
-// SourceList::Item::ArchiveInfo - Shorter version of the archive spec	/*{{{*/
-// ---------------------------------------------------------------------
-/* This is a shorter version that is designed to be < 60 chars or so */
-string pkgSourceList::Item::ArchiveInfo(pkgCache::VerIterator Ver) const
-{
-   string Res;
-   switch (Type)
-   {
-      case DebSrc:
-      case Deb:
-      Res += SiteOnly(URI) + ' ';
-      if (Dist[Dist.size() - 1] == '/')
-      {
-	 if (Dist != "/")
-	    Res += Dist;
-      }      
-      else
-	 Res += Dist + '/' + Section;
-      
-      Res += " ";
-      Res += Ver.ParentPkg().Name();
-      Res += " ";
-      Res += Ver.VerStr();
-      
-      break;
-   };
-   return Res;
-}
-									/*}}}*/
-// SourceList::Item::ArchiveURI - Returns a URI to the given archive	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgSourceList::Item::ArchiveURI(string File) const
-{
-   string Res;
-   switch (Type)
-   {
-      case Deb:
-      case DebSrc:
-      Res = URI + File;
-      break;
-   };
-   return Res;
-}
-									/*}}}*/
-// SourceList::Item::SourceInfo	- Returns an info line for a source	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgSourceList::Item::SourceInfo(string Pkg,string Ver,string Comp) const
-{
-   string Res;
-   switch (Type)
-   {
-      case DebSrc:
-      case Deb:
-      Res += SiteOnly(URI) + ' ';
-      if (Dist[Dist.size() - 1] == '/')
-      {
-	 if (Dist != "/")
-	    Res += Dist;
-      }      
-      else
-	 Res += Dist + '/' + Section;
-      
-      Res += " ";
-      Res += Pkg;
-      Res += " ";
-      Res += Ver;
-      if (Comp.empty() == false)
-	 Res += " (" + Comp + ")";
-      break;
-   };
-   return Res;
-}
-									/*}}}*/
-// SourceList::Item::SiteOnly - Strip off the path part of a URI	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgSourceList::Item::SiteOnly(string URI) const
-{
-   ::URI U(URI);
-   U.User = string();
-   U.Password = string();
-   U.Path = string();
-   U.Port = 0;
-   return U;
 }
 									/*}}}*/

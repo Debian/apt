@@ -1,3 +1,4 @@
+#define APT_COMPATIBILITY 1
 #include <apt-pkg/dpkgdb.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/error.h>

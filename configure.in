@@ -14,20 +14,19 @@ dnl configure.in correctly and can be run at any time
 
 AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(buildlib)
-AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in)
+AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.3.19")
+AC_DEFINE_UNQUOTED(VERSION,"0.4.11")
 AC_DEFINE_UNQUOTED(PACKAGE,"apt")
+
+dnl Check the archs, we want the target type.
+AC_CANONICAL_SYSTEM
 
 dnl Check our C compiler
 AC_CHECK_TOOL_PREFIX
 AC_PROG_CC
 AC_ISC_POSIX
-
-dnl Check the host arch (build+target not needed... yet)
-AC_CANONICAL_HOST
-AC_CHECK_TOOL_PREFIX	dnl recheck, in case the initial guess was wrong
 
 dnl Check for other programs
 AC_PROG_CXX
@@ -43,55 +42,72 @@ AC_SEARCH_LIBS(connect,socket)
 SOCKETLIBS="$LIBS"
 AC_SUBST(SOCKETLIBS)
 LIBS="$SAVE_LIBS"
+ 
+dnl Checks for pthread -- disabled due to glibc bugs jgg
+dnl AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
+AC_SUBST(PTHREADLIB)
+dnl if test "$PTHREADLIB" != "-lpthread"; then
+dnl   AC_MSG_ERROR(failed: I need posix threads, pthread)
+dnl fi
 
-dnl Section Disabled pending removal of deity widget library  -- jgg
-if test "yes" != "yes"; then
- dnl Checks for X11
- AC_PATH_X
- AC_PATH_XTRA
- AC_SUBST(X11LIB)
- X11LIB=
- if test "$no_x" != "yes"; then
-   X11LIB="-lX11"
-   AC_DEFINE(HAVE_X11)
-   dnl Checks for ZPM
-   AC_CHECK_LIB(Xpm, XpmLibraryVersion,[AC_DEFINE(HAVE_LIBXPM) XPMLIB="-lXpm"],,$X_LIBS $X_PRE_LIBS $X11LIB $X_EXTRA_LIBS)
-   AC_SUBST(XPMLIB)
-   if test "$XPMLIB" != "-lXpm"; then
-      AC_MSG_ERROR(failed: I need xpm if you are building for X)
-   fi
- fi
- 
- dnl Checks for Slang
- AC_CHECK_LIB(slang, SLang_Version,[AC_DEFINE(HAVE_LIBSLANG) SLANGLIB="-lslang"])
- AC_SUBST(SLANGLIB)
- 
- dnl Checks for GPM
- AC_ARG_WITH(gpm,[  --without-gpm		  do not use GPM mouse support])
- if test "$with_gpm" != "no"; then
-   AC_CHECK_LIB(gpm, Gpm_Open,[AC_DEFINE(HAVE_LIBGPM) GPMLIB="-lgpm"])
-   AC_SUBST(GPMLIB)
- fi
+dnl Find the version of python we are using and ensure the library and header
+dnl are available.. Also get all the paths and options from the python setup
+dnl makefile.
+AC_CACHE_CHECK("python version", ac_cv_ver_python, [ac_cv_ver_python=`python -c 'import sys;print sys.version[[:3]]' 2> /dev/null`])
+AC_CACHE_CHECK("python prefix", ac_cv_prefix_python, [ac_cv_prefix_python=`python -c 'import sys;print sys.prefix' 2> /dev/null`])
+AC_CACHE_CHECK("python exec prefix", ac_cv_execprefix_python, [ac_cv_execprefix_python=`python -c 'import sys;print sys.exec_prefix' 2> /dev/null`])
+if test "x$ac_cv_ver_python" != "x"; then
+
+   cat > pytest << EOF
+include $ac_cv_execprefix_python/lib/python$ac_cv_ver_python/config/Makefile
+.PHONY: libs include
+libs:
+	@echo \$(MODLIBS) \$(LIBS) \$(SYSLIBS)
+include:
+	@echo \$(INCLUDEPY)
+EOF
+   AC_CACHE_CHECK("python libs", ac_cv_libs_python, [ac_cv_libs_python=`make -s -f pytest libs 2> /dev/null`])
+   AC_CACHE_CHECK("python include", ac_cv_include_python, [ac_cv_include_python=`make -s -f pytest include 2> /dev/null`])
+   AC_CHECK_HEADER(python$ac_cv_ver_python/Python.h,
+     [AC_CHECK_LIB(python$ac_cv_ver_python,PyArg_ParseTuple,
+        [AC_DEFINE(HAVE_PYTHONLIB) PYTHONLIB="-lpython$ac_cv_ver_python $ac_cv_libs_python"],[],$ac_cv_libs_python)])
+   AC_SUBST(PYTHONLIB)
+   
+   PYTHONVER=$ac_cv_ver_python
+   PYTHONPREFIX=$ac_cv_prefix_python
+   PYTHONEXECPREFIX=$ac_cv_execprefix_python
+   PYTHONINCLUDE=$ac_cv_include_python
+   AC_SUBST(PYTHONVER)
+   AC_SUBST(PYTHONPREFIX)
+   AC_SUBST(PYTHONEXECPREFIX)
+   AC_SUBST(PYTHONINCLUDE)
 fi
 
-dnl Checks for pthread
-#AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
-AC_SUBST(PTHREADLIB)
-#if test "$PTHREADLIB" != "-lpthread"; then
-#  AC_MSG_ERROR(failed: I need posix threads, pthread)
-#fi
+dnl Check for DB2
+AC_CHECK_HEADER(db2/db.h,
+     [AC_CHECK_LIB(db2,db_open,
+        [AC_DEFINE(HAVE_DB2) DB2LIB="-ldb2"])])
+AC_SUBST(DB2LIB)
 
-dnl Converts the ARCH to be the same as dpkg
+dnl Converts the ARCH to be something singular for this general CPU family
+dnl This is often the dpkg architecture string.
 AC_MSG_CHECKING(system architecture)
-archset="`awk \"{ if(\\\$1 == \\\"$host_cpu\\\") print \\\$2 }\" $srcdir/buildlib/archtable`"
+archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target_cpu\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/archtable`"
 if test "x$archset" = "x"; then
   AC_MSG_ERROR(failed: use --host=)
 fi
 AC_MSG_RESULT($archset)
-AC_DEFINE_UNQUOTED(ARCHITECTURE,"$archset")
+AC_DEFINE_UNQUOTED(COMMON_CPU,"$archset")
 
-dnl We use C9x types if at all possible
-AC_CACHE_CHECK([for C9x integer types],c9x_ints,[
+dnl Get a common name for the host OS - this is primarily only for HURD and is
+dnl non fatal if it fails
+AC_MSG_CHECKING(system OS)
+osset="`awk \" ! /^#|^\\\$/ {if (match(\\\"$target_vendor-$target_os\\\",\\\$1)) {print \\\$2; exit}}\" $srcdir/buildlib/ostable`"
+AC_MSG_RESULT($osset)
+AC_DEFINE_UNQUOTED(COMMON_OS,"$osset")
+
+dnl We use C99 types if at all possible
+AC_CACHE_CHECK([for C99 integer types],c9x_ints,[
     AC_TRY_COMPILE([#include <inttypes.h>],
                    [uint8_t Foo1;uint16_t Foo2;uint32_t Foo3;],
 		   c9x_ints=yes,c9x_ints=no)])
@@ -112,7 +128,7 @@ dnl This is stupid, it should just use the AC macros like it does below
 dnl Cross compilers can either get a real C library or preload the cache
 dnl with their size values.
 changequote(,)
-archline="`grep \"^$archset\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`"
+archline="`awk \" ! /^#|^\\\$/ {if (match(\\\"$archset\\\",\\\$1)) {print; exit}}\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`"
 if test "x$archline" != "x"; then
    changequote([,])
    set $archline
@@ -128,6 +144,8 @@ if test "x$archline" != "x"; then
 fi
 
 dnl I wonder what AC_C_BIGENDIAN does if you cross compile...
+dnl This is probably bogus, as above we only care if we have to build our own
+dnl C9x types.
 if test "$cross_compiling" = "yes" -a "x$archline" = "x"; then
   AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
 fi
@@ -163,12 +181,16 @@ AC_EGREP_HEADER(h_errno, netdb.h, [AC_MSG_RESULT(normal)],
    ])
 
 dnl Check for debiandoc
-AC_CHECK_PROG(DEBIANDOC_HTML,debiandoc2html,"yes","")
-AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
+AC_PATH_PROG(DEBIANDOC_HTML,debiandoc2html)
+AC_PATH_PROG(DEBIANDOC_TEXT,debiandoc2text)
+
+dnl Check for the SGML tools needed to build man pages
+AC_PATH_PROG(NSGMLS,nsgmls)
+AC_PATH_PROG(SGMLSPL,sgmlspl)
 
 dnl Check for YODL
-AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
+dnl AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
 
 ah_NUM_PROCS
 
-AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make dirs)
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make -s dirs)

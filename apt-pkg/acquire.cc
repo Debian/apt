@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.46 2000/01/27 04:15:09 jgg Exp $
+// $Id: acquire.cc,v 1.47 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -23,6 +23,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
+#include <apti18n.h>
+    
 #include <dirent.h>
 #include <sys/time.h>
 #include <errno.h>
@@ -52,11 +54,11 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
    struct stat St;
    if (stat((_config->FindDir("Dir::State::lists") + "partial/").c_str(),&St) != 0 ||
        S_ISDIR(St.st_mode) == 0)
-      _error->Error("Lists directory %spartial is missing.",
+      _error->Error(_("Lists directory %spartial is missing."),
 		    _config->FindDir("Dir::State::lists").c_str());
    if (stat((_config->FindDir("Dir::Cache::Archives") + "partial/").c_str(),&St) != 0 ||
        S_ISDIR(St.st_mode) == 0)
-      _error->Error("Archive directory %spartial is missing.",
+      _error->Error(_("Archive directory %spartial is missing."),
 		    _config->FindDir("Dir::Cache::Archives").c_str());
 }
 									/*}}}*/
@@ -398,13 +400,13 @@ bool pkgAcquire::Clean(string Dir)
 {
    DIR *D = opendir(Dir.c_str());   
    if (D == 0)
-      return _error->Errno("opendir","Unable to read %s",Dir.c_str());
+      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
    
    string StartDir = SafeGetCWD();
    if (chdir(Dir.c_str()) != 0)
    {
       closedir(D);
-      return _error->Errno("chdir","Unable to change to ",Dir.c_str());
+      return _error->Errno("chdir",_("Unable to change to %s"),Dir.c_str());
    }
    
    for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
@@ -435,9 +437,9 @@ bool pkgAcquire::Clean(string Dir)
 // Acquire::TotalNeeded - Number of bytes to fetch			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the total number of bytes needed */
-unsigned long pkgAcquire::TotalNeeded()
+double pkgAcquire::TotalNeeded()
 {
-   unsigned long Total = 0;
+   double Total = 0;
    for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
       Total += (*I)->FileSize;
    return Total;
@@ -446,9 +448,9 @@ unsigned long pkgAcquire::TotalNeeded()
 // Acquire::FetchNeeded - Number of bytes needed to get			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the number of bytes that is not local */
-unsigned long pkgAcquire::FetchNeeded()
+double pkgAcquire::FetchNeeded()
 {
-   unsigned long Total = 0;
+   double Total = 0;
    for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
       if ((*I)->Local == false)
 	 Total += (*I)->FileSize;
@@ -458,9 +460,9 @@ unsigned long pkgAcquire::FetchNeeded()
 // Acquire::PartialPresent - Number of partial bytes we already have	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the number of bytes that is not local */
-unsigned long pkgAcquire::PartialPresent()
+double pkgAcquire::PartialPresent()
 {
-   unsigned long Total = 0;
+  double Total = 0;
    for (pkgAcquire::Item **I = ItemsBegin(); I != ItemsEnd(); I++)
       if ((*I)->Local == false)
 	 Total += (*I)->PartialSize;
@@ -736,7 +738,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       // Totally ignore local items
       if ((*I)->Local == true)
 	 continue;
-      
+
       TotalBytes += (*I)->FileSize;
       if ((*I)->Complete == true)
 	 CurrentBytes += (*I)->FileSize;

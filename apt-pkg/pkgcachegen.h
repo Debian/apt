@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.17 1999/07/26 17:46:08 jgg Exp $
+// $Id: pkgcachegen.h,v 1.18 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -16,7 +16,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_PKGCACHEGEN_H
 #define PKGLIB_PKGCACHEGEN_H
 
@@ -29,6 +28,7 @@
 class pkgSourceList;
 class OpProgress;
 class MMap;
+class pkgIndexFile;
 
 class pkgCacheGenerator
 {
@@ -39,7 +39,7 @@ class pkgCacheGenerator
    public:
    
    class ListParser;
-   friend ListParser;
+   friend class ListParser;
    
    protected:
    
@@ -54,32 +54,28 @@ class pkgCacheGenerator
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    unsigned long NewVersion(pkgCache::VerIterator &Ver,string VerStr,unsigned long Next);
 
+   public:
+
    unsigned long WriteUniqString(const char *S,unsigned int Size);
    inline unsigned long WriteUniqString(string S) {return WriteUniqString(S.c_str(),S.length());};
 
-   public:   
-
    void DropProgress() {Progress = 0;};
-   bool SelectFile(string File,unsigned long Flags = 0);
+   bool SelectFile(string File,string Site,pkgIndexFile const &Index,
+		   unsigned long Flags = 0);
    bool MergeList(ListParser &List,pkgCache::VerIterator *Ver = 0);
    inline pkgCache &GetCache() {return Cache;};
    inline pkgCache::PkgFileIterator GetCurFile() 
          {return pkgCache::PkgFileIterator(Cache,CurrentFile);};
       
-   pkgCacheGenerator(DynamicMMap &Map,OpProgress &Progress);
+   pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
 };
-
-bool pkgSrcCacheCheck(pkgSourceList &List);
-bool pkgPkgCacheCheck(string CacheFile);
-bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress);
-MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress);
 
 // This is the abstract package list parser class.
 class pkgCacheGenerator::ListParser
 {
    pkgCacheGenerator *Owner;
-   friend pkgCacheGenerator;
+   friend class pkgCacheGenerator;
    
    // Some cache items
    pkgCache::VerIterator OldDepVer;
@@ -113,8 +109,21 @@ class pkgCacheGenerator::ListParser
    virtual ~ListParser() {};
 };
 
-bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
-		    unsigned long &CurrentSize,unsigned long TotalSize);
-bool pkgAddStatusSize(unsigned long &TotalSize);
+bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
+			MMap **OutMap = 0,bool AllowMem = false);
+bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap);
+
+#ifdef APT_COMPATIBILITY
+#if APT_COMPATIBILITY != 986
+#warning "Using APT_COMPATIBILITY"
+#endif
+MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
+{
+   MMap *Map = 0;
+   if (pkgMakeStatusCache(List,Progress,&Map,true) == false)
+      return 0;
+   return Map;
+}
+#endif
 
 #endif

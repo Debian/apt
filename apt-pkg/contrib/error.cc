@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.8 1999/08/08 07:24:54 jgg Exp $
+// $Id: error.cc,v 1.9 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -34,7 +34,7 @@
    is compiled to be thread safe otherwise a non-safe version is used. A
    Per-Thread error object is maintained in much the same manner as libc
    manages errno */
-#if _POSIX_THREADS == 1 && defined(HAVE_PTHREAD)
+#if defined(_POSIX_THREADS) && defined(HAVE_PTHREAD)
  #include <pthread.h>
 
  static pthread_key_t ErrorKey;

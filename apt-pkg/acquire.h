@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.27 2000/01/27 04:15:09 jgg Exp $
+// $Id: acquire.h,v 1.28 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -52,8 +52,8 @@ class pkgAcquire
    class Worker;
    struct MethodConfig;
    struct ItemDesc;
-   friend Item;
-   friend Queue;
+   friend class Item;
+   friend class Queue;
    
    protected:
    
@@ -112,9 +112,9 @@ class pkgAcquire
    bool Clean(string Dir);
 
    // Returns the size of the total download set
-   unsigned long TotalNeeded();
-   unsigned long FetchNeeded();
-   unsigned long PartialPresent();
+   double TotalNeeded();
+   double FetchNeeded();
+   double PartialPresent();
    
    pkgAcquire(pkgAcquireStatus *Log = 0);
    virtual ~pkgAcquire();
@@ -132,8 +132,9 @@ struct pkgAcquire::ItemDesc
 // List of possible items queued for download.
 class pkgAcquire::Queue
 {
-   friend pkgAcquire;
-   friend pkgAcquire::UriIterator;
+   friend class pkgAcquire;
+   friend class pkgAcquire::UriIterator;
+   friend class pkgAcquire::Worker;
    Queue *Next;
    
    protected:
@@ -241,11 +242,11 @@ class pkgAcquireStatus
    
    struct timeval Time;
    struct timeval StartTime;
-   unsigned long LastBytes;
+   double LastBytes;
    double CurrentCPS;
-   unsigned long CurrentBytes;
-   unsigned long TotalBytes;
-   unsigned long FetchedBytes;
+   double CurrentBytes;
+   double TotalBytes;
+   double FetchedBytes;
    unsigned long ElapsedTime;
    unsigned long TotalItems;
    unsigned long CurrentItems;

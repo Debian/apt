@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.46 2000/05/28 04:33:59 jgg Exp $
+// $Id: http.cc,v 1.47 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -285,7 +285,7 @@ bool ServerState::Open()
    else
       Proxy = getenv("http_proxy");
    
-   // Parse no_proxy, a , seperated list of hosts
+   // Parse no_proxy, a , separated list of hosts
    if (getenv("no_proxy") != 0)
    {
       const char *Start = getenv("no_proxy");
@@ -376,6 +376,10 @@ int ServerState::RunHeaders()
 	 I = J;
       }
 
+      // 100 Continue is a Nop...
+      if (Result == 100)
+	 continue;
+      
       // Tidy up the connection persistance state.
       if (Encoding == Closes && HaveContent == true)
 	 Persistent = false;
@@ -537,7 +541,7 @@ bool ServerState::HeaderLine(string Line)
 	 else
 	    Persistent = true;
       }
-      
+
       return true;
    }      
       
@@ -676,6 +680,10 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       Req += string("Proxy-Authorization: Basic ") + 
           Base64Encode(Proxy.User + ":" + Proxy.Password) + "\r\n";
 
+   if (Uri.User.empty() == false || Uri.Password.empty() == false)
+      Req += string("Authorization: Basic ") + 
+          Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
+   
    Req += "User-Agent: Debian APT-HTTP/1.2\r\n\r\n";
    
    if (Debug == true)
@@ -1058,6 +1066,7 @@ int HttpMethod::Loop()
 	 {
 	    _error->Error("Bad header Data");
 	    Fail(true);
+	    RotateDNS();
 	    continue;
 	 }
 	 
@@ -1076,6 +1085,7 @@ int HttpMethod::Loop()
 	       FailCounter = 0;
 	    }
 	    
+	    RotateDNS();
 	    continue;
 	 }
       };
@@ -1093,6 +1103,11 @@ int HttpMethod::Loop()
 	    // Run the data
 	    bool Result =  Server->RunData();
 
+	    /* If the server is sending back sizeless responses then fill in
+	       the size now */
+	    if (Res.Size == 0)
+	       Res.Size = File->Size();
+	    
 	    // Close the file, destroy the FD object and timestamp it
 	    FailFd = -1;
 	    delete File;
@@ -1108,7 +1123,7 @@ int HttpMethod::Loop()
 	    // Send status to APT
 	    if (Result == true)
 	    {
-	       Res.MD5Sum = Server->In.MD5->Result();
+	       Res.MD5Sum = Server->In.MD5->Result();	       
 	       URIDone(Res);
 	    }
 	    else
@@ -1135,6 +1150,7 @@ int HttpMethod::Loop()
 	 case 5:
 	 {
 	    Fail();
+	    RotateDNS();
 	    Server->Close();
 	    break;
 	 }

@@ -27,7 +27,7 @@ vpath %.sgml $(SUBDIRS)
 $(DOC)/%.html: %.sgml
 	echo Creating html for $< to $@
 	-rm -rf $@
-	(HERE=`pwd`; cd $(@D) && debiandoc2html $$HERE/$<)
+	(HERE=`pwd`; cd $(@D) && $(DEBIANDOC_HTML) $$HERE/$<)
 
 # Clean rule
 .PHONY: veryclean/html/$(LOCAL)
@@ -48,7 +48,7 @@ veryclean: veryclean/text/$(LOCAL)
 vpath %.sgml $(SUBDIRS)
 $(DOC)/%.text: %.sgml
 	echo Creating text for $< to $@
-	debiandoc2text -O $< > $@
+	$(DEBIANDOC_TEXT) -O $< > $@
 
 # Clean rule
 .PHONY: veryclean/text/$(LOCAL)

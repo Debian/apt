@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.cc,v 1.3 1999/10/18 04:15:24 jgg Exp $
+// $Id: srcrecords.cc,v 1.4 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -17,9 +17,10 @@
 
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/configuration.h>
+#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/debsrcrecords.h>
+    
+#include <apti18n.h>    
 									/*}}}*/
 
 // SrcRecords::pkgSrcRecords - Constructor				/*{{{*/
@@ -27,45 +28,27 @@
 /* Open all the source index files */
 pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 {
-   pkgSourceList::const_iterator I = List.begin();
-   
-   // Count how many items we will need
+   Files = new Parser *[List.end() - List.begin() + 1];
+	  
    unsigned int Count = 0;
+   pkgSourceList::const_iterator I = List.begin();
    for (; I != List.end(); I++)
-      if (I->Type == pkgSourceList::Item::DebSrc)
+   {
+      Files[Count] = (*I)->CreateSrcParser();
+      if (_error->PendingError() == true)
+	 return;
+      if (Files[Count] != 0)
 	 Count++;
-
+   }
+   Files[Count] = 0;
+   
    // Doesnt work without any source index files
    if (Count == 0)
    {
-      _error->Error("Sorry, you must put some 'source' uris"
-		    " in your sources.list");
+      _error->Error(_("Sorry, you must put some 'source' URIs"
+		    " in your sources.list"));
       return;
    }   
-
-   Files = new Parser *[Count+1];
-   memset(Files,0,sizeof(*Files)*(Count+1));
-   
-   // Create the parser objects
-   Count = 0;
-   string Dir = _config->FindDir("Dir::State::lists");
-   for (I = List.begin(); I != List.end(); I++)
-   {
-      if (I->Type != pkgSourceList::Item::DebSrc)
-	 continue;
-
-      // Open the file
-      FileFd *FD = new FileFd(Dir + URItoFileName(I->PackagesURI()),
-			      FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-      {
-	 delete FD;
-	 return;
-      }
-      
-      Files[Count] = new debSrcRecordParser(FD,I);
-      Count++;
-   }
 
    Restart();
 }
@@ -81,6 +64,7 @@ pkgSrcRecords::~pkgSrcRecords()
    // Blow away all the parser objects
    for (unsigned int Count = 0; Files[Count] != 0; Count++)
       delete Files[Count];
+   delete [] Files;
 }
 									/*}}}*/
 // SrcRecords::Restart - Restart the search				/*{{{*/
@@ -136,4 +120,20 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool SrcOnly)
    }
 }
 									/*}}}*/
+// Parser::BuildDepType - Convert a build dep to a string		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+const char *pkgSrcRecords::Parser::BuildDepType(unsigned char Type)
+{
+   const char *fields[] = {"Build-Depends", 
+                           "Build-Depends-Indep",
+			   "Build-Conflicts",
+			   "Build-Conflicts-Indep"};
+   if (Type < 4) 
+      return fields[Type]; 
+   else 
+      return "";
+}
+									/*}}}*/
+
 

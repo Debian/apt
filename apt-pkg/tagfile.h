@@ -1,12 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.14 1999/07/03 06:45:40 jgg Exp $
+// $Id: tagfile.h,v 1.15 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
    
    This parser handles Debian package files (and others). Their form is
-   RFC-822 type header fields in groups seperated by a blank line.
+   RFC-822 type header fields in groups separated by a blank line.
    
    The parser reads the file and provides methods to step linearly
    over it or to jump to a pre-recorded start point and read that record.
@@ -17,7 +17,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_TAGFILE_H
 #define PKGLIB_TAGFILE_H
 
@@ -26,7 +25,8 @@
 #endif 
 
 #include <apt-pkg/fileutl.h>
-
+#include <stdio.h>
+    
 class pkgTagSection
 {
    const char *Section;
@@ -34,7 +34,7 @@ class pkgTagSection
    
    // We have a limit of 256 tags per section.
    unsigned short Indexes[256];
-   unsigned short AlphaIndexes[26 + 26*26];
+   unsigned short AlphaIndexes[0xff];
    
    unsigned int TagCount;
      
@@ -43,19 +43,21 @@ class pkgTagSection
    inline bool operator ==(const pkgTagSection &rhs) {return Section == rhs.Section;};
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
    
-   bool Find(const char *Tag,const char *&Start, const char *&End);
-   string FindS(const char *Tag);
-   signed int FindI(const char *Tag,signed long Default = 0);
+   bool Find(const char *Tag,const char *&Start, const char *&End) const;
+   bool Find(const char *Tag,unsigned &Pos) const;
+   string FindS(const char *Tag) const;
+   signed int FindI(const char *Tag,signed long Default = 0) const ;
    bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
-				unsigned long Flag);
+				unsigned long Flag) const;
    bool Scan(const char *Start,unsigned long MaxLength);
-   inline unsigned long size() {return Stop - Section;};
-
-   inline unsigned int Count() {return TagCount;};
-   inline void Get(const char *&Start,const char *&Stop,unsigned int I)
+   inline unsigned long size() const {return Stop - Section;};
+   void Trim();
+   
+   inline unsigned int Count() const {return TagCount;};
+   inline void Get(const char *&Start,const char *&Stop,unsigned int I) const
                    {Start = Section + Indexes[I]; Stop = Section + Indexes[I+1];}
 	    
-   inline void GetSection(const char *&Start,const char *&Stop)
+   inline void GetSection(const char *&Start,const char *&Stop) const
    {
       Start = Section;
       Stop = this->Stop;
@@ -73,6 +75,7 @@ class pkgTagFile
    unsigned long Left;
    unsigned long iOffset;
    unsigned long Size;
+   unsigned long TotalSize;
    
    bool Fill();
    
@@ -82,8 +85,24 @@ class pkgTagFile
    inline unsigned long Offset() {return iOffset;};
    bool Jump(pkgTagSection &Tag,unsigned long Offset);
 
-   pkgTagFile(FileFd &F,unsigned long Size = 32*1024);
+   pkgTagFile(FileFd *F,unsigned long Size = 32*1024);
    ~pkgTagFile();
 };
+
+/* This is the list of things to rewrite. The rewriter
+   goes through and changes or adds each of these headers
+   to suit. A zero forces the header to be erased, an empty string
+   causes the old value to be used. (rewrite rule ignored) */
+struct TFRewriteData
+{
+   const char *Tag;
+   const char *Rewrite;
+   const char *NewTag;
+};
+extern const char **TFRewritePackageOrder;
+extern const char **TFRewriteSourceOrder;
+
+bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
+	       TFRewriteData *Rewrite);
 
 #endif

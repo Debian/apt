@@ -1,0 +1,105 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-config</>
+   <manvolnum>8</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-config</>
+    <refpurpose>APT Configuration Query program</>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-config</>
+      <arg><option>-hv</></arg>
+      <arg><option>-o=<replaceable/config string/</></arg>
+      <arg><option>-c=<replaceable/file/</></arg>
+      <group choice=req>
+         <arg>shell</>
+         <arg>dump</>
+      </group>   
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+ <RefSect1><Title>Description</>
+   <para>
+   <command/apt-config/ is an internal program used by various portions of
+   the APT suite to provide consistent configurability. It accesses the main 
+   configuarion file <filename>/etc/apt/apt.conf</> in a manner that is 
+   easy to use by scripted applications.
+   <para>
+   Unless the <option/-h/, or <option/--help/ option is given one of the above commands
+   must be present.   
+   </para>
+   
+   <VariableList>
+     <VarListEntry><Term>shell</Term>
+     <ListItem><Para>
+     shell is used to access the configuration information from a shell 
+     script. It is given pairs of arguments, the first being a shell 
+     variable and the second the configuration value to query. As output 
+     it lists a series of shell assignments commands for each present value. 
+     In a shell script it should be used like:
+     </para>
+     
+<informalexample><programlisting>
+OPTS="-f"
+RES=`apt-config shell OPTS MyApp::Options`
+eval $RES
+</programlisting></informalexample>
+
+     <para>
+     This will set the shell environment variable $OPTS to the value of
+     MyApp::Options with a default of <option/-f/.
+     
+     <para>
+     The configuration item may be postfixed with a /[fdbi]. f returns file
+     names, d returns directories, b returns true or false and i returns an 
+     integer. Each of the returns is normalized and verified internally.
+     </VarListEntry>
+
+     <VarListEntry><Term>dump</Term>
+     <ListItem><Para>
+     Just show the contents of the configuration space.
+     </VarListEntry>
+
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Options</>
+   &apt-cmdblurb;
+   
+   <VariableList>
+   
+     &apt-commonoptions;
+     
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>See Also</>
+   <para>
+   &apt-conf;
+ </RefSect1>
+
+ <RefSect1><Title>Diagnostics</>
+   <para>
+   <command/apt-config/ returns zero on normal operation, decimal 100 on error.
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+ 
+</refentry>

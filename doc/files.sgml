@@ -4,7 +4,7 @@
 <title>APT Files</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: files.sgml,v 1.7 1999/02/15 06:38:03 jgg Exp $</version>
+<version>$Id: files.sgml,v 1.8 2001/02/20 07:03:17 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the 
@@ -41,7 +41,7 @@ multiple package files.
 <p>
 The var directory structure is as follows:
 <example>
-  /var/state/apt/
+  /var/lib/apt/
 		  lists/
 		       partial/
 		  xstatus
@@ -66,7 +66,7 @@ The var directory structure is as follows:
 </example>
 
 <p>
-As is specified in the FHS 2.0 /var/state/apt is used for application 
+As is specified in the FHS 2.1 /var/lib/apt is used for application 
 data that is not expected to be user modified. /var/cache/apt is used
 for regeneratable data and is where the package cache and downloaded .debs
 go.
@@ -156,7 +156,7 @@ URIs in the source list support a large number of access schemes.
 
 <tag>file<item>
    The file scheme allows an arbitary directory in the file system to be 
-   considered as a debian archive. This is usefull for NFS mounts and 
+   considered as a debian archive. This is useful for NFS mounts and 
    local mirrors/archives.
    <example>
    file:/var/debian
@@ -183,10 +183,10 @@ from the ascii character set. Examples:
 
 <example>
 http://www.debian.org/archive/dists/stable/binary-i386/Packages 
-/var/state/apt/lists/www.debian.org_archive_dists_stable_binary-i386_Packages
+/var/lib/apt/lists/www.debian.org_archive_dists_stable_binary-i386_Packages
 
 cdrom:Debian 1.3/debian/Packages
-/var/state/apt/info/Debian%201.3_debian_Packages
+/var/lib/apt/info/Debian%201.3_debian_Packages
 </example>
 
 <p> 

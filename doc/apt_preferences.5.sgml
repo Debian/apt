@@ -1,0 +1,227 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt_preferences</>
+   <manvolnum>5</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt_preferences</>
+    <refpurpose>Preference control file for APT</>
+ </refnamediv>
+ 
+ <RefSect1><Title>Description</>
+   <para>
+   The APT preferences file controls various aspects of the APT system. 
+   It is ment to be user editable and manipulatable from software. The file
+   consists of a number of records formed like the dpkg status file, space
+   seperated sections of text with at the start of each line tags seperated 
+   by a colon. It is stored in <filename>/etc/apt/preferences</>.
+ </RefSect1>
+
+ <RefSect1><Title>Versioning</>
+   <para>
+   One purpose of the preferences file is to let the user select which version
+   of a package will be installed. This selection can be made in a number of
+   ways that fall into three categories, version, release and origin.   
+   <para>
+   Selection by version can be done by exact match or prefix match. The format
+   is <literal/2.1.2/ or <literal/2.2*/ for a prefix match. Matching by prefix 
+   can be used to ignore the <literal/r/ in the Debian release versioning, like
+   <literal/2.1r*/ or to ignore Debian specific revisions, <literal/1.1-*/.
+   When matching versions with a prefix the highest matching version will
+   always be picked.
+   <para>
+   Selection by release is more complicated and has three forms. The primary
+   purpose of release selections is to identify a set of packages that match
+   a specific vendor, or release (ie Debian 2.1). The first two forms are 
+   shortcuts intended for quick command line use. If the first character of the
+   specification is a digit then it is considered to be a release version match, 
+   otherwise a release label match. Specifications which contain equals are
+   full release data matches and are a comma seperated list of one letter keys
+   followed by an equals then by the string. Examples:
+<informalexample><programlisting>
+v=2.1*,o=Debian,c=main
+l=Debian
+a=stable
+</programlisting></informalexample>   
+   <para>
+   The data for these matches are taken from the <filename/Release/ files
+   that APT downloads during an <literal/update/. The available keys are:
+   <VariableList>
+     <VarListEntry><term>a= Archive</term>
+     <ListItem><Para>
+     This is the common name we give our archives, such as <literal/stable/ or
+     <literal/unstable/. The special name <literal/now/ is used to designate
+     the set of packages that are currently installed.
+     </VarListEntry>
+     
+     <VarListEntry><term>c= Component</term>
+     <ListItem><Para>
+     Referes to the sub-component of the archive, <literal/main/, 
+     <literal/contrib/ etc. Component may be omitted if there are no 
+     components for this archive.
+     </VarListEntry>
+     
+     <VarListEntry><term>v= Version</term>
+     <ListItem><Para>
+     This is a version string with the same properties as in the Packages file.
+     It represents the release level of the archive. Typical Debian release
+     numbers look like <literal/2.1r2/ with the r designating the release of 
+     2.1. New releases are limited to security updates.
+     </VarListEntry>
+
+     <VarListEntry><term>o= Origin</term>
+     <ListItem><Para>
+     This specifies who is providing this archive. In the case of Debian the
+     string will read <literal/Debian/. Other providers may use their own 
+     string.
+     </VarListEntry>
+
+     <VarListEntry><term><term>l= Label</term>
+     <ListItem><Para>
+     This carries the encompassing name of the distribution. For Debian proper
+     this field reads <literal/Debian/. For derived distributions it should 
+     contain their proper name.
+     </VarListEntry>
+   </VariableList>   
+   <para>
+   The final selection method is by origin. This is simply the site name
+   of the originating package files. The empty string is used for file URIs.
+   <para>
+   Version selection, particularly the latter two methods, are used in may
+   different part of APT, not just the preferences file.
+ </RefSect1>
+ 
+ <RefSect1><Title>Candidate Version Policy</>
+   <para>
+   Interaly APT maintains a list of all available versions for all packages.
+   If you place multiple releases or vendors in your &sources-list; file then
+   these features are available. By default APT selects the highest version
+   from all automatic sources. Some sources, such as 
+   <filename>project/experimental</> are marked Not Automatic - these fall 
+   to the bottom of the selection pile.
+   <para>
+   When deciding what version to use APT assigns a priority to each available
+   version of the package. It then does two things, first it selects
+   the highest priorty version that is newer than the installed version of the 
+   package, then it selects the highest priority version that is older than
+   the installed version. Next, if the older versions have a priority greater
+   than 1000 they are compared with the priority of the upgrade set, the larger
+   becomes the selected result. Otherwise the downgrade versions are ignored
+   and the highest priority of the ugprade set is selected.
+   <para>
+   It is possible to think of the priorities in strata:
+   <VariableList>
+     <VarListEntry><term>1000 and up</term>
+     <ListItem><Para>
+     Downgradable priorities
+     </VarListEntry>
+     
+     <VarListEntry><term>1000</term>
+     <ListItem><Para>
+     The downgrade prevention barrier
+     </VarListEntry>
+     
+     <VarListEntry><term>100 to 1000</term>
+     <ListItem><Para>
+     Standard priorities. 990 is the priority set by the 
+     <option/--target-release / &apt-get; option. 989 is the start for auto
+     priorities and 500 are all the default package files.
+     </VarListEntry>
+     
+     <VarListEntry><term>100</term>
+     <ListItem><Para>
+     The currently installed version
+     </VarListEntry>
+
+     <VarListEntry><term>0 to 100</term>
+     <ListItem><Para>
+     Non automatic priorities. These are only used if the package
+     is not installed and there is no other version available.
+     </VarListEntry>
+
+     <VarListEntry><term>less than 0</term>
+     <ListItem><Para>
+     The version is never selected.
+     </VarListEntry>
+   </VariableList>   
+   <para>
+   Giving a pin a priority greater than 1000 will allow APT to downgrade
+   in order to get to that version.   
+   <para>
+   Each package may be pinned to a specific version and each Package file
+   has a priority for every package inside. The highest priority assigned
+   to a package is the one that is used.
+   <para>
+   A package pin looks like this:
+<informalexample><programlisting>
+Package: apt
+Pin: version 0.4.0
+Pin-Priority: 1001
+</programlisting></informalexample>   
+   The first line specifies the package, the second gives the Pin specification
+   and the last gives the priority of this pin. The first word of the pin
+   specification may be version, release or origin, the remainder of the field
+   is described in the Versioning sectin above.
+   <para>
+   A default pin is how the priorities of package files are set. Any number
+   of default pins may be specified, the first matching default will select
+   the priority of the package file. Only release or origin may be used in 
+   the Pin specification since they match Package files.
+<informalexample><programlisting>
+Package: *
+Pin: release v=2.1*
+Pin-Priority: 998
+</programlisting></informalexample>
+   <para>
+   If the Pin-Priorty field is omitted then the priority defaults to 989 for
+   both cases.
+   
+   <RefSect2><title>Interesting Effects</>
+   <para>
+   Due to the downgrade prevention barrier at priority 1000 it is possible
+   that a lower priority version  will be selected if the higher priority 
+   would casue a downgrade. For instance, if package foo has versions
+   <literal/1.2/, <literal/1.1/ and <literal/1.0/ installed, with 
+   <literal/1.1/ being the currently installed version and the priorities of 
+   each version being 900, 100 and 950 repectively the winning version will be 
+   <literal/1.2/.
+   <para>
+   In practice this is often desired. A user may use a default pin to
+   make the stable distribution the default and then use the 
+   <option/--target-dist/ option with &apt-get; to select newer versions
+   from unstable. The packages that have been upgraded to unstable will
+   continue to follow the versions that are available in unstable since
+   the stable versions now fall below the downgrade prevention barrier.
+   <para>
+   If this is not desired then a default pin should be used to make unstable
+   have a priority less than 100.
+   <para>
+   Users of 3rd party add ons such as Helix GNOME can use this mechanism to
+   force the usage of Helix packages, or force the usage of Debian packages
+   by setting the priority of that source sufficiently high. It is even
+   possible to mass downgrade from one set of packages to another by
+   using a priority larger than 1000.
+   </RefSect2>
+ </RefSect1>
+  
+ <RefSect1><Title>See Also</>
+   <para>
+   &apt-cache; &apt-conf;
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+ 
+</refentry>

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.20 2000/06/18 04:19:39 jgg Exp $
+// $Id: ftp.cc,v 1.21 2001/02/20 07:03:18 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -40,6 +40,20 @@
 #include "ftp.h"
 									/*}}}*/
 
+/* This table is for the EPRT and EPSV commands, it maps the OS address
+   family to the IETF address families */
+struct AFMap
+{
+   unsigned long Family;
+   unsigned long IETFFamily;
+};
+
+#ifndef AF_INET6
+struct AFMap AFMap[] = {{AF_INET,1},{}};
+#else
+struct AFMap AFMap[] = {{AF_INET,1},{AF_INET6,2},{}};
+#endif
+
 unsigned long TimeOut = 120;
 URI Proxy;
 string FtpMethod::FailFile;
@@ -53,7 +67,7 @@ FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1),
                             DataListenFd(-1), ServerName(Srv)
 {
    Debug = _config->FindB("Debug::Acquire::Ftp",false);
-   memset(&PasvAddr,0,sizeof(PasvAddr));
+   PasvAddr = 0;
 }
 									/*}}}*/
 // FTPConn::~FTPConn - Destructor					/*{{{*/
@@ -75,7 +89,10 @@ void FTPConn::Close()
    DataFd = -1;
    close(DataListenFd);
    DataListenFd = -1;
-   memset(&PasvAddr,0,sizeof(PasvAddr));
+   
+   if (PasvAddr != 0)
+      freeaddrinfo(PasvAddr);
+   PasvAddr = 0;
 }
 									/*}}}*/
 // FTPConn::Open - Open a new connection				/*{{{*/
@@ -89,7 +106,7 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
       return true;
    
    Close();
-
+   
    // Determine the proxy setting
    if (getenv("ftp_proxy") == 0)
    {
@@ -124,12 +141,21 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
       Host = Proxy.Host;
    }
 
-   // Connect to the remote server
+   /* Connect to the remote server. Since FTP is connection oriented we
+      want to make sure we get a new server every time we reconnect */
+   RotateDNS();
    if (Connect(Host,Port,"ftp",21,ServerFd,TimeOut,Owner) == false)
       return false;
-   socklen_t Len = sizeof(Peer);
-   if (getpeername(ServerFd,(sockaddr *)&Peer,&Len) != 0)
+   
+   // Get the remote server's address
+   PeerAddrLen = sizeof(PeerAddr);
+   if (getpeername(ServerFd,(sockaddr *)&PeerAddr,&PeerAddrLen) != 0)
       return _error->Errno("getpeername","Unable to determine the peer name");
+   
+   // Get the local machine's address
+   ServerAddrLen = sizeof(ServerAddr);
+   if (getsockname(ServerFd,(sockaddr *)&ServerAddr,&ServerAddrLen) != 0)
+      return _error->Errno("getsockname","Unable to determine the local name");
    
    Owner->Status("Logging in");
    return Login();
@@ -179,7 +205,7 @@ bool FTPConn::Login()
       if (_config->Exists("Acquire::FTP::Passive::" + ServerName.Host) == true)
 	 TryPassive = _config->FindB("Acquire::FTP::Passive::" + ServerName.Host,true);
       else
-	 TryPassive = _config->FindB("Acquire::FTP::Passive",true);
+	 TryPassive = _config->FindB("Acquire::FTP::Passive",true);      
    }
    else
    {      
@@ -236,6 +262,12 @@ bool FTPConn::Login()
       }            
    }
 
+   // Force the use of extended commands
+   if (_config->Exists("Acquire::FTP::ForceExtended::" + ServerName.Host) == true)
+      ForceExtended = _config->FindB("Acquire::FTP::ForceExtended::" + ServerName.Host,true);
+   else
+      ForceExtended = _config->FindB("Acquire::FTP::ForceExtended",false);
+   
    // Binary mode
    if (WriteMsg(Tag,Msg,"TYPE I") == false)
       return false;
@@ -283,6 +315,8 @@ bool FTPConn::ReadLine(string &Text)
       
       // Suck it back
       int Res = read(ServerFd,Buffer + Len,sizeof(Buffer) - Len);
+      if (Res == 0)
+	 _error->Error("Server closed the connection");
       if (Res <= 0)
       {
 	 _error->Errno("read","Read error");
@@ -409,10 +443,19 @@ bool FTPConn::WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...)
 // ---------------------------------------------------------------------
 /* Try to enter passive mode, the return code does not indicate if passive
    mode could or could not be established, only if there was a fatal error. 
-   Borrowed mostly from lftp. We have to enter passive mode every time 
- we make a data connection :| */
+   We have to enter passive mode every time we make a data connection :| */
 bool FTPConn::GoPasv()
 {
+   /* The PASV command only works on IPv4 sockets, even though it could
+      in theory suppory IPv6 via an all zeros reply */
+   if (((struct sockaddr *)&PeerAddr)->sa_family != AF_INET || 
+       ForceExtended == true)
+      return ExtGoPasv();
+   
+   if (PasvAddr != 0)
+      freeaddrinfo(PasvAddr);
+   PasvAddr = 0;
+   
    // Try to enable pasv mode
    unsigned int Tag;
    string Msg;
@@ -422,41 +465,139 @@ bool FTPConn::GoPasv()
    // Unsupported function
    string::size_type Pos = Msg.find('(');
    if (Tag >= 400 || Pos == string::npos)
-   {
-      memset(&PasvAddr,0,sizeof(PasvAddr));
       return true;
-   }
 
    // Scan it
    unsigned a0,a1,a2,a3,p0,p1;
    if (sscanf(Msg.c_str() + Pos,"(%u,%u,%u,%u,%u,%u)",&a0,&a1,&a2,&a3,&p0,&p1) != 6)
+      return true;
+   
+   /* Some evil servers return 0 to mean their addr. We can actually speak
+      to these servers natively using IPv6 */
+   if (a0 == 0 && a1 == 0 && a2 == 0 && a3 == 0)
    {
-      memset(&PasvAddr,0,sizeof(PasvAddr));
+      // Get the IP in text form
+      char Name[NI_MAXHOST];
+      char Service[NI_MAXSERV];
+      getnameinfo((struct sockaddr *)&PeerAddr,PeerAddrLen,
+		  Name,sizeof(Name),Service,sizeof(Service),
+		  NI_NUMERICHOST|NI_NUMERICSERV);
+      
+      struct addrinfo Hints;
+      memset(&Hints,0,sizeof(Hints));
+      Hints.ai_socktype = SOCK_STREAM;
+      Hints.ai_family = ((struct sockaddr *)&PeerAddr)->sa_family;
+      Hints.ai_flags |= AI_NUMERICHOST;
+      
+      // Get a new passive address.
+      char Port[100];
+      snprintf(Port,sizeof(Port),"%u",(p0 << 8) + p1);
+      if (getaddrinfo(Name,Port,&Hints,&PasvAddr) != 0)
+	 return true;
       return true;
    }
    
-   // lftp used this horrid byte order manipulation.. Ik.
-   PasvAddr.sin_family = AF_INET;
-   unsigned char *a;
-   unsigned char *p;
-   a = (unsigned char *)&PasvAddr.sin_addr;
-   p = (unsigned char *)&PasvAddr.sin_port;
+   struct addrinfo Hints;
+   memset(&Hints,0,sizeof(Hints));
+   Hints.ai_socktype = SOCK_STREAM;
+   Hints.ai_family = AF_INET;
+   Hints.ai_flags |= AI_NUMERICHOST;
    
-   // Some evil servers return 0 to mean their addr
-   if (a0 == 0 && a1 == 0 && a2 == 0 && a3 == 0)
+   // Get a new passive address.
+   char Port[100];
+   snprintf(Port,sizeof(Port),"%u",(p0 << 8) + p1);
+   char Name[100];
+   snprintf(Name,sizeof(Name),"%u.%u.%u.%u",a0,a1,a2,a3);
+   if (getaddrinfo(Name,Port,&Hints,&PasvAddr) != 0)
+      return true;
+   return true;
+}
+									/*}}}*/
+// FTPConn::ExtGoPasv - Enter Extended Passive mode			/*{{{*/
+// ---------------------------------------------------------------------
+/* Try to enter extended passive mode. See GoPasv above and RFC 2428 */
+bool FTPConn::ExtGoPasv()
+{
+   if (PasvAddr != 0)
+      freeaddrinfo(PasvAddr);
+   PasvAddr = 0;
+   
+   // Try to enable pasv mode
+   unsigned int Tag;
+   string Msg;
+   if (WriteMsg(Tag,Msg,"EPSV") == false)
+      return false;
+   
+   // Unsupported function
+   string::size_type Pos = Msg.find('(');
+   if (Tag >= 400 || Pos == string::npos)
+      return true;
+
+   // Scan it   
+   string::const_iterator List[4];
+   unsigned Count = 0;
+   Pos++;
+   for (string::const_iterator I = Msg.begin() + Pos; I < Msg.end(); I++)
    {
-      PasvAddr.sin_addr = Peer.sin_addr;
+      if (*I != Msg[Pos])
+	 continue;
+      if (Count >= 4)
+	 return true;
+      List[Count++] = I;
+   }
+   if (Count != 4)
+      return true;
+   
+   // Break it up ..
+   unsigned long Proto = 0;
+   unsigned long Port = 0;
+   string IP;
+   IP = string(List[1]+1,List[2]);
+   Port = atoi(string(List[2]+1,List[3]).c_str());
+   if (IP.empty() == false)
+      Proto = atoi(string(List[0]+1,List[1]).c_str());
+   
+   if (Port == 0)
+      return false;
+
+   // String version of the port
+   char PStr[100];
+   snprintf(PStr,sizeof(PStr),"%lu",Port);
+
+   // Get the IP in text form
+   struct addrinfo Hints;
+   memset(&Hints,0,sizeof(Hints));
+   Hints.ai_socktype = SOCK_STREAM;
+   Hints.ai_flags |= AI_NUMERICHOST;
+   
+   /* The RFC defined case, connect to the old IP/protocol using the
+      new port. */
+   if (IP.empty() == true)
+   {
+      // Get the IP in text form
+      char Name[NI_MAXHOST];
+      char Service[NI_MAXSERV];
+      getnameinfo((struct sockaddr *)&PeerAddr,PeerAddrLen,
+		  Name,sizeof(Name),Service,sizeof(Service),
+		  NI_NUMERICHOST|NI_NUMERICSERV);
+      IP = Name;
+      Hints.ai_family = ((struct sockaddr *)&PeerAddr)->sa_family;
    }
    else
    {
-      a[0] = a0; 
-      a[1] = a1; 
-      a[2] = a2; 
-      a[3] = a3;
+      // Get the family..
+      Hints.ai_family = 0;
+      for (unsigned J = 0; AFMap[J].Family != 0; J++)
+	 if (AFMap[J].IETFFamily == Proto)
+	    Hints.ai_family = AFMap[J].Family;
+      if (Hints.ai_family == 0)
+	 return true;
    }
    
-   p[0] = p0;
-   p[1] = p1;
+   // Get a new passive address.
+   int Res;
+   if ((Res = getaddrinfo(IP.c_str(),PStr,&Hints,&PasvAddr)) != 0)
+      return true;
    
    return true;
 }
@@ -517,20 +658,21 @@ bool FTPConn::CreateDataFd()
 	 return false;
       
       // Oops, didn't work out, don't bother trying again.
-      if (PasvAddr.sin_port == 0)
+      if (PasvAddr == 0)
 	 TryPassive = false;
    }
    
    // Passive mode?
-   if (PasvAddr.sin_port != 0)
+   if (PasvAddr != 0)
    {
       // Get a socket
-      if ((DataFd = socket(AF_INET,SOCK_STREAM,0)) < 0)
+      if ((DataFd = socket(PasvAddr->ai_family,PasvAddr->ai_socktype,
+			   PasvAddr->ai_protocol)) < 0)
 	 return _error->Errno("socket","Could not create a socket");
       
       // Connect to the server
       SetNonBlock(DataFd,true);
-      if (connect(DataFd,(sockaddr *)&PasvAddr,sizeof(PasvAddr)) < 0 &&
+      if (connect(DataFd,PasvAddr->ai_addr,PasvAddr->ai_addrlen) < 0 &&
 	  errno != EINPROGRESS)
 	 return _error->Errno("socket","Could not create a socket");
    
@@ -543,8 +685,8 @@ bool FTPConn::CreateDataFd()
       if (getsockopt(DataFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
 	 return _error->Errno("getsockopt","Failed");
       if (Err != 0)
-	 return _error->Error("Could not connect.");
-      
+	 return _error->Error("Could not connect passive socket.");
+
       return true;
    }
    
@@ -552,43 +694,91 @@ bool FTPConn::CreateDataFd()
    close(DataListenFd);
    DataListenFd = -1;
 
-   // Get a socket
-   if ((DataListenFd = socket(AF_INET,SOCK_STREAM,0)) < 0)
+   // Get the information for a listening socket.
+   struct addrinfo *BindAddr = 0;
+   struct addrinfo Hints;
+   memset(&Hints,0,sizeof(Hints));
+   Hints.ai_socktype = SOCK_STREAM;
+   Hints.ai_flags |= AI_PASSIVE;
+   Hints.ai_family = ((struct sockaddr *)&ServerAddr)->sa_family;
+   int Res;
+   if ((Res = getaddrinfo(0,"0",&Hints,&BindAddr)) != 0)
+      return _error->Error("getaddrinfo was unable to get a listening socket");
+   
+   // Construct the socket
+   if ((DataListenFd = socket(BindAddr->ai_family,BindAddr->ai_socktype,
+			      BindAddr->ai_protocol)) < 0)
+   {
+      freeaddrinfo(BindAddr);
       return _error->Errno("socket","Could not create a socket");
+   }
    
    // Bind and listen
-   sockaddr_in Addr;
-   memset(&Addr,0,sizeof(Addr));
-   if (bind(DataListenFd,(sockaddr *)&Addr,sizeof(Addr)) < 0)
+   if (bind(DataListenFd,BindAddr->ai_addr,BindAddr->ai_addrlen) < 0)
+   {
+      freeaddrinfo(BindAddr);
       return _error->Errno("bind","Could not bind a socket");
+   }
+   freeaddrinfo(BindAddr);   
    if (listen(DataListenFd,1) < 0)
       return _error->Errno("listen","Could not listen on the socket");
    SetNonBlock(DataListenFd,true);
    
    // Determine the name to send to the remote
-   sockaddr_in Addr2;
-   socklen_t Jnk = sizeof(Addr);
-   if (getsockname(DataListenFd,(sockaddr *)&Addr,&Jnk) < 0)
+   struct sockaddr_storage Addr;
+   socklen_t AddrLen = sizeof(Addr);
+   if (getsockname(DataListenFd,(sockaddr *)&Addr,&AddrLen) < 0)
       return _error->Errno("getsockname","Could not determine the socket's name");
-   Jnk = sizeof(Addr2);
-   if (getsockname(ServerFd,(sockaddr *)&Addr2,&Jnk) < 0)
-      return _error->Errno("getsockname","Could not determine the socket's name");
-   
-   // This bit ripped from qftp
-   unsigned long badr = ntohl(*(unsigned long *)&Addr2.sin_addr);
-   unsigned long bp = ntohs(Addr.sin_port);
 
-   // Send the port command
+   // Reverse the address. We need the server address and the data port.
+   char Name[NI_MAXHOST];
+   char Service[NI_MAXSERV];
+   char Service2[NI_MAXSERV];
+   getnameinfo((struct sockaddr *)&Addr,AddrLen,
+	       Name,sizeof(Name),Service,sizeof(Service),
+	       NI_NUMERICHOST|NI_NUMERICSERV);
+   getnameinfo((struct sockaddr *)&ServerAddr,ServerAddrLen,
+	       Name,sizeof(Name),Service2,sizeof(Service2),
+	       NI_NUMERICHOST|NI_NUMERICSERV);
+
+   // Send off an IPv4 address in the old port format
+   if (((struct sockaddr *)&Addr)->sa_family == AF_INET && 
+       ForceExtended == false)
+   {
+      // Convert the dots in the quad into commas
+      for (char *I = Name; *I != 0; I++)
+	 if (*I == '.')
+	    *I = ',';
+      unsigned long Port = atoi(Service);
+      
+      // Send the port command
+      unsigned int Tag;
+      string Msg;
+      if (WriteMsg(Tag,Msg,"PORT %s,%d,%d",
+		   Name,
+		   (int)(Port >> 8) & 0xff, (int)(Port & 0xff)) == false)
+	 return false;
+      if (Tag >= 400)
+	 return _error->Error("Unable to send PORT command");
+      return true;
+   }
+
+   // Construct an EPRT command
+   unsigned Proto = 0;
+   for (unsigned J = 0; AFMap[J].Family != 0; J++)
+      if (AFMap[J].Family == ((struct sockaddr *)&Addr)->sa_family)
+	 Proto = AFMap[J].IETFFamily;
+   if (Proto == 0)
+      return _error->Error("Unkonwn address family %u (AF_*)",
+			   ((struct sockaddr *)&Addr)->sa_family);
+   
+   // Send the EPRT command
    unsigned int Tag;
    string Msg;
-   if (WriteMsg(Tag,Msg,"PORT %d,%d,%d,%d,%d,%d", 
-		(int) (badr >> 24) & 0xff, (int) (badr >> 16) & 0xff, 
-		(int) (badr >> 8) & 0xff,  (int) badr & 0xff, 
-		(int) (bp >> 8) & 0xff, (int) bp & 0xff) == false)
+   if (WriteMsg(Tag,Msg,"EPRT |%u|%s|%s|",Proto,Name,Service) == false)
       return false;
    if (Tag >= 400)
-      return _error->Error("Unable to send port command");
-
+      return _error->Error("EPRT failed, server said: %s",Msg.c_str());
    return true;
 }
 									/*}}}*/
@@ -599,7 +789,7 @@ bool FTPConn::CreateDataFd()
 bool FTPConn::Finalize()
 {
    // Passive mode? Do nothing
-   if (PasvAddr.sin_port != 0)
+   if (PasvAddr != 0)
       return true;
    
    // Close any old socket..

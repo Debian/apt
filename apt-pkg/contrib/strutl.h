@@ -1,9 +1,9 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.15 1999/08/02 03:07:48 jgg Exp $
+// $Id: strutl.h,v 1.16 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
-   String Util - These are some usefull string functions
+   String Util - These are some useful string functions
    
    _strstrip is a function to remove whitespace from the front and end
    of a string.
@@ -25,15 +25,21 @@
 #include <vector>
 #include <time.h>
 
+#ifdef __GNUG__
+// Methods have a hidden this parameter that is visible to this attribute
+#define APT_FORMAT2 __attribute__ ((format (printf, 2, 3)))
+#else
+#define APT_FORMAT2
+#endif    
+    
 char *_strstrip(char *String);
 char *_strtabexpand(char *String,size_t Len);
 bool ParseQuoteWord(const char *&String,string &Res);
-bool ParseCWord(const char *String,string &Res);
+bool ParseCWord(const char *&String,string &Res);
 string QuoteString(string Str,const char *Bad);
 string DeQuoteString(string Str);
 string SizeToStr(double Bytes);
 string TimeToStr(unsigned long Sec);
-string SubstVar(string Str,string Subst,string Contents);
 string Base64Encode(string Str);
 string URItoFileName(string URI);
 string TimeRFC1123(time_t Date);
@@ -44,6 +50,9 @@ bool ReadMessages(int Fd, vector<string> &List);
 bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0);
 bool Hex2Num(const char *Start,const char *End,unsigned char *Num,
 	     unsigned int Length);
+bool TokSplitString(char Tok,char *Input,char **List,
+		    unsigned long ListMax);
+void ioprintf(ostream &out,const char *format,...) APT_FORMAT2;
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcmp(const char *A,const char *AEnd,const char *B) {return stringcmp(A,AEnd,B,B+strlen(B));};
@@ -51,6 +60,7 @@ inline int stringcmp(string A,const char *B) {return stringcmp(A.begin(),A.end()
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 inline int stringcasecmp(const char *A,const char *AEnd,const char *B) {return stringcasecmp(A,AEnd,B,B+strlen(B));};
 inline int stringcasecmp(string A,const char *B) {return stringcasecmp(A.begin(),A.end(),B,B+strlen(B));};
+inline int stringcasecmp(string A,string B) {return stringcasecmp(A.begin(),A.end(),B.begin(),B.end());};
 
 class URI
 {
@@ -68,9 +78,29 @@ class URI
    operator string();
    inline void operator =(string From) {CopyFrom(From);};
    inline bool empty() {return Access.empty();};
+   static string SiteOnly(string URI);
    
    URI(string Path) {CopyFrom(Path);};
    URI() : Port(0) {};
 };
+
+struct SubstVar
+{
+   const char *Subst;
+   const string *Contents;
+};
+string SubstVar(string Str,const struct SubstVar *Vars);
+string SubstVar(string Str,string Subst,string Contents);
+
+struct RxChoiceList
+{
+   void *UserData;
+   const char *Str;
+   bool Hit;
+};
+unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
+		      const char **ListEnd);
+
+#undef APT_FORMAT2
 
 #endif

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.8 1999/10/27 04:38:27 jgg Exp $
+// $Id: algorithms.h,v 1.9 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -27,7 +27,6 @@
 
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_ALGORITHMS_H
 #define PKGLIB_ALGORITHMS_H
 
@@ -42,8 +41,22 @@ class pkgSimulate : public pkgPackageManager
 {
    protected:
 
+   class Policy : public pkgDepCache::Policy
+   {
+      pkgDepCache *Cache;
+      public:
+      
+      virtual VerIterator GetCandidateVer(PkgIterator Pkg)
+      {
+	 return (*Cache)[Pkg].CandidateVerIter(*Cache);
+      }
+      
+      Policy(pkgDepCache *Cache) : Cache(Cache) {};
+   };
+   
    unsigned char *Flags;
    
+   Policy iPolicy;
    pkgDepCache Sim;
    
    // The Actuall installation implementation
@@ -51,10 +64,11 @@ class pkgSimulate : public pkgPackageManager
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge);
    void ShortBreaks();
+   void Describe(PkgIterator iPkg,ostream &out,bool Now);
    
    public:
 
-   pkgSimulate(pkgDepCache &Cache);
+   pkgSimulate(pkgDepCache *Cache);
 };
 
 class pkgProblemResolver
@@ -101,7 +115,8 @@ class pkgProblemResolver
    
    void InstallProtect();   
    
-   pkgProblemResolver(pkgDepCache &Cache);
+   pkgProblemResolver(pkgDepCache *Cache);
+   ~pkgProblemResolver();
 };
 
 bool pkgDistUpgrade(pkgDepCache &Cache);
@@ -110,4 +125,6 @@ bool pkgFixBroken(pkgDepCache &Cache);
 bool pkgAllUpgrade(pkgDepCache &Cache);
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 
+void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
+		     
 #endif

@@ -6,17 +6,17 @@ ifndef NOISY
 .SILENT:
 endif
 
+.PHONY: default
+default: startup all
+
 .PHONY: headers library clean veryclean all binary program doc
-all headers library clean veryclean binary program doc:
+all headers library clean veryclean binary program doc dirs:
 	$(MAKE) -C apt-pkg $@
+	$(MAKE) -C apt-inst $@
 	$(MAKE) -C methods $@
-#	$(MAKE) -C methods/ftp $@
 	$(MAKE) -C cmdline $@
+	$(MAKE) -C ftparchive $@
 	$(MAKE) -C dselect $@
-ifdef GUI	
-	$(MAKE) -C deity $@
-	$(MAKE) -C gui $@
-endif
 	$(MAKE) -C doc $@
 
 # Some very common aliases
@@ -25,8 +25,9 @@ maintainer-clean dist-clean distclean pristine sanity: veryclean
 
 # The startup target builds the necessary configure scripts. It should
 # be used after a CVS checkout.
-CONVERTED=environment.mak include/config.h makefile
+CONVERTED=environment.mak include/config.h include/apti18n.h makefile
 include buildlib/configure.mak
 $(BUILDDIR)/include/config.h: buildlib/config.h.in
+$(BUILDDIR)/include/apti18n.h: buildlib/apti18n.h.in
 $(BUILDDIR)/environment.mak: buildlib/environment.mak.in
 $(BUILDDIR)/makefile: buildlib/makefile.in
