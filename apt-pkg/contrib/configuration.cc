@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.26 2003/07/25 20:45:13 mdz Exp $
+// $Id: configuration.cc,v 1.27 2003/07/26 00:27:36 mdz Exp $
 /* ######################################################################
 
    Configuration Class
@@ -392,7 +392,7 @@ bool Configuration::ExistsAny(const char *Name) const
       }
       else
       {
-         _error->Warning("Unrecognized type abbreviation: '%c'", key.end()[-3]);
+         _error->Warning(_("Unrecognized type abbreviation: '%c'"), key.end()[-3]);
       }
 
    return Exists(Name);
