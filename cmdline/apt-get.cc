@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.128 2003/04/27 01:47:10 doogie Exp $
+// $Id: apt-get.cc,v 1.129 2003/04/27 05:59:33 doogie Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1507,6 +1507,7 @@ bool DoInstall(CommandLine &CmdL)
    /* Print out a list of suggested and recommended packages */
    {
       string SuggestsList, RecommendsList, List;
+      string SuggestsVersions, RecommendsVersions;
       for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
       {
 	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
@@ -1537,6 +1538,7 @@ bool DoInstall(CommandLine &CmdL)
 		       if (int(SuggestsList.find(target)) > -1)
 			 break; 
 		       SuggestsList += target;
+		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
 		     }
 		     
 		     if (Start->Type == pkgCache::Dep::Recommends) {
@@ -1554,6 +1556,7 @@ bool DoInstall(CommandLine &CmdL)
 		       if (int(RecommendsList.find(target)) > -1)
 			 break;
 		       RecommendsList += target;
+		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
 		     }
 	      if (Start == End)
 		break;
@@ -1562,8 +1565,8 @@ bool DoInstall(CommandLine &CmdL)
 	       }
 	   }
       }
-      ShowList(c1out,_("Suggested packages:"),SuggestsList);
-      ShowList(c1out,_("Recommended packages:"),RecommendsList);
+      ShowList(c1out,_("Suggested packages:"),SuggestsList,SuggestsVersions);
+      ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
 
    }
 
