@@ -9,4 +9,8 @@ include ../buildlib/defaults.mak
 SOURCE = desc.apt install names setup update
 TO = $(BUILD)/scripts/dselect
 include $(COPY_H)
-	
+
+LOCAL = dselect
+SOURCE = install update
+TYPE = sh
+include $(PODOMAIN_H)

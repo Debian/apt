@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+# Set the textdomain for the translations using $"..."
+TEXTDOMAIN="apt"
 
 # Get the configuration from /etc/apt/apt.conf
 CLEAN="prompt"
@@ -26,7 +29,7 @@ yesno() {
 		case $2 in
 			Y|y)	defp="[Y/n]" def=y;;
 			N|n)	defp="[y/N]" def=n;;
-			*)	echo "Bad default setting!" 1>&2; exit 1;;
+			*)	echo $"Bad default setting!" 1>&2; exit 1;;
 		esac
 	else
 		defp="[y/N]" def=n
@@ -45,7 +48,7 @@ yesno() {
 
 if [ x$WAIT = "xtrue" ]; then
    $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" -d dselect-upgrade
-   echo "Press enter to continue." && read RES
+   echo $"Press enter to continue." && read RES
    $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
    RES=$?
 else
@@ -77,28 +80,28 @@ if [ $RES -eq 0 ]; then
    case `echo $CLEAN | tr '[:upper:]' '[:lower:]'` in
      auto)
        $APTGET "$APT_OPT0" "$APT_OPT1" autoclean &&
-	   echo "Press enter to continue." && read RES && exit 0;
+	   echo $"Press enter to continue." && read RES && exit 0;
        ;;
      always)
        $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
-	   echo "Press enter to continue." && read RES && exit 0;
+	   echo $"Press enter to continue." && read RES && exit 0;
        ;;
      prompt)
        exec 3>&1
-       if [ `yesno "Do you want to erase any previously downloaded .deb files?" y` = y ]; then
+       if [ `yesno $"Do you want to erase any previously downloaded .deb files?" y` = y ]; then
           $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
-	    echo "Press enter to continue." && read RES && exit 0;
+	    echo $"Press enter to continue." && read RES && exit 0;
        fi
        ;;
      *) 
        ;;
    esac   
 else
-   echo "Some errors occurred while unpacking. I'm going to configure the"
-   echo "packages that were installed. This may result in duplicate errors"
-   echo "or errors caused by missing dependencies. This is OK, only the errors"
-   echo "above this message are important. Please fix them and run [I]nstall again"
-   echo "Press enter to continue."
+   echo $"Some errors occurred while unpacking. I'm going to configure the"
+   echo $"packages that were installed. This may result in duplicate errors"
+   echo $"or errors caused by missing dependencies. This is OK, only the errors"
+   echo $"above this message are important. Please fix them and run [I]nstall again"
+   echo $"Press enter to continue."
    read RES && $DPKG "$DPKG_OPTS" --configure -a
    exit 100
 fi

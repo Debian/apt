@@ -1,5 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 set -e
+
+# Set the textdomain for the translations using $"..."
+TEXTDOMAIN="apt"
 
 # Get the configuration from /etc/apt/apt.conf
 CLEAN="prompt"
@@ -24,7 +27,7 @@ CACHEDIR=`echo $CACHEDIR | sed -e "s|/$||"`
 STATUS=1
 if $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" update
 then
-    echo "Merging Available information"
+    echo $"Merging Available information"
     rm -f $CACHEDIR/available
     $APTCACHE dumpavail > $CACHEDIR/available
     $DPKG "$DPKG_OPTS" --update-avail $CACHEDIR/available
@@ -39,7 +42,7 @@ then
 fi
 
 if [ x$PROMPT = "xtrue" ]; then
-   echo "Press enter to continue." && read RES;
+   echo $"Press enter to continue." && read RES;
 fi
 
 exit $STATUS
