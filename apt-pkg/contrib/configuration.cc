@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.13 1999/07/02 23:17:00 jgg Exp $
+// $Id: configuration.cc,v 1.14 2000/01/16 05:36:17 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -322,8 +322,9 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	    break;
 	 }
       }
-      
+
       // Look for multi line comments
+      InQuote = false;
       for (char *I = Buffer; *I != 0; I++)
       {
 	 if (*I == '"')
@@ -357,9 +358,13 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	 continue;
       
       // We now have a valid line fragment
+      InQuote = false;
       for (char *I = Buffer; *I != 0;)
       {
-	 if (*I == '{' || *I == ';' || *I == '}')
+	 if (*I == '"')
+	    InQuote = !InQuote;
+	 
+	 if (InQuote == false && (*I == '{' || *I == ';' || *I == '}'))
 	 {
 	    // Put the last fragement into the buffer
 	    char *Start = Buffer;

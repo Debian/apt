@@ -15,6 +15,6 @@ SOURCE = apt-cache.8 apt-get.8 apt-cdrom.8 apt.conf.5 sources.list.5 apt-config.
 include $(YODL_MANPAGE_H)
 
 # Examples
-SOURCE = examples/apt.conf examples/sources.list
+SOURCE = examples/apt.conf examples/sources.list examples/configure-index
 TO = $(DOC)
 include $(COPY_H)

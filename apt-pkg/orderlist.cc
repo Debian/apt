@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.9 1999/11/04 06:05:02 jgg Exp $
+// $Id: orderlist.cc,v 1.10 2000/01/16 05:36:17 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -209,7 +209,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    for (iterator I = List; I != End; I++)
    {
       PkgIterator P(Cache,*I);
-      cout << P.Name() << endl;
+      cout << P.Name() << ' ' << IsMissing(P) << endl;
    }*/
 
    return true;
@@ -312,14 +312,14 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
 
    // We order packages with a set state toward the front
    int Res;
-   if ((Res = BoolCompare(Me->IsNow(A),Me->IsNow(B))) == 0)
+   if ((Res = BoolCompare(Me->IsNow(A),Me->IsNow(B))) != 0)
       return -1*Res;
    
    // We order missing files to toward the end
    if (Me->FileList != 0)
    {
       if ((Res = BoolCompare(Me->IsMissing(A),
-			     Me->IsMissing(B))) == 0)
+			     Me->IsMissing(B))) != 0)
 	 return Res;
    }
    

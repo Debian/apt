@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.32 1999/09/03 05:46:48 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.33 2000/01/16 05:36:17 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -189,6 +189,8 @@ int Score(string Path)
       Res += 2;
    if (Path.find("/source/") != string::npos)
       Res += 1;
+   if (Path.find("/debian/") != string::npos)
+      Res -= 1;
    return Res;
 }
 									/*}}}*/
@@ -366,7 +368,8 @@ bool WriteSourceList(string Name,vector<string> &List,bool Source)
 			   "Failed to open %s.new",File.c_str());
 
    // Create a short uri without the path
-   string ShortURI = "cdrom:" + Name + "/";   
+   string ShortURI = "cdrom:[" + Name + "]/";   
+   string ShortURI2 = "cdrom:" + Name + "/";     // For Compatibility
 
    const char *Type;
    if (Source == true)
@@ -398,8 +401,8 @@ bool WriteSourceList(string Name,vector<string> &List,bool Source)
 	    string::size_type Space = (*I).find(' ');
 	    if (Space == string::npos)
 	       return _error->Error("Internal error");
-	    Out << Type << " \"cdrom:" << Name << "/" << string(*I,0,Space) << 
-	       "\" " << string(*I,Space+1) << endl;
+	    Out << Type << " cdrom:[" << Name << "]/" << string(*I,0,Space) <<
+	       " " << string(*I,Space+1) << endl;
 	 }
       }
       First = false;
@@ -416,7 +419,8 @@ bool WriteSourceList(string Name,vector<string> &List,bool Source)
       }
 
       // Emit lines like this one
-      if (cType != Type || string(URI,0,ShortURI.length()) != ShortURI)
+      if (cType != Type || (string(URI,0,ShortURI.length()) != ShortURI &&
+	  string(URI,0,ShortURI.length()) != ShortURI2))
       {
 	 Out << Buffer << endl;
 	 continue;
@@ -432,8 +436,8 @@ bool WriteSourceList(string Name,vector<string> &List,bool Source)
 	 if (Space == string::npos)
 	    return _error->Error("Internal error");
 	 
-	 Out << "deb \"cdrom:" << Name << "/" << string(*I,0,Space) << 
-	    "\" " << string(*I,Space+1) << endl;
+	 Out << "deb cdrom:[" << Name << "]/" << string(*I,0,Space) << 
+	    " " << string(*I,Space+1) << endl;
       }
    }
    
@@ -597,11 +601,11 @@ bool DoAdd(CommandLine &)
    
    string::iterator J = Name.begin();
    for (; J != Name.end(); J++)
-      if (*J == '/' || *J == '"' || *J == ':')
+      if (*J == '"' || *J == ']' || *J == '[')
 	 *J = '_';
    
    Database.Set("CD::" + ID,Name);
-   cout << "This Disc is called '" << Name << "'" << endl;
+   cout << "This Disc is called:" << endl << " '" << Name << "'" << endl;
    
    // Copy the package files to the state directory
    PackageCopy Copy;
@@ -633,8 +637,8 @@ bool DoAdd(CommandLine &)
       if (Space == string::npos)
 	 return _error->Error("Internal error");
 
-      cout << "deb \"cdrom:" << Name << "/" << string(*I,0,Space) << 
-	 "\" " << string(*I,Space+1) << endl;
+      cout << "deb cdrom:[" << Name << "]/" << string(*I,0,Space) << 
+	 " " << string(*I,Space+1) << endl;
    }
 
    for (vector<string>::iterator I = sList.begin(); I != sList.end(); I++)
@@ -643,11 +647,16 @@ bool DoAdd(CommandLine &)
       if (Space == string::npos)
 	 return _error->Error("Internal error");
 
-      cout << "deb-src \"cdrom:" << Name << "/" << string(*I,0,Space) << 
-	 "\" " << string(*I,Space+1) << endl;
+      cout << "deb-src cdrom:[" << Name << "]/" << string(*I,0,Space) << 
+	 " " << string(*I,Space+1) << endl;
    }
 
    cout << "Repeat this process for the rest of the CDs in your set." << endl;
+
+   // Unmount and finish
+   if (_config->FindB("APT::CDROM::NoMount",false) == false)
+      UnmountCdrom(CDROM);
+   
    return true;
 }
 									/*}}}*/

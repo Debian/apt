@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.cc,v 1.3 1999/12/10 23:40:29 jgg Exp $
+// $Id: indexcopy.cc,v 1.4 2000/01/16 05:36:17 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -113,7 +113,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
       
       // Open the output file
       char S[400];
-      sprintf(S,"cdrom:%s/%s%s",Name.c_str(),(*I).c_str() + CDROM.length(),
+      sprintf(S,"cdrom:[%s]/%s%s",Name.c_str(),(*I).c_str() + CDROM.length(),
 	      GetFileName());
       string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
       TargetF += URItoFileName(S);
@@ -231,7 +231,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
 	    return _error->Errno("rename","Failed to rename");
 
 	 // Copy the release file
-	 sprintf(S,"cdrom:%s/%sRelease",Name.c_str(),(*I).c_str() + CDROM.length());
+	 sprintf(S,"cdrom:[%s]/%sRelease",Name.c_str(),(*I).c_str() + CDROM.length());
 	 string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
 	 TargetF += URItoFileName(S);
 	 if (FileExists(*I + "Release") == true)
@@ -386,7 +386,7 @@ void IndexCopy::ConvertToSourceList(string CD,string &Path)
    // Not a dists type.
    if (stringcmp(Path.begin(),Path.begin()+strlen("dists/"),"dists/") != 0)
       return;
-
+      
    // Isolate the dist
    string::size_type Slash = strlen("dists/");
    string::size_type Slash2 = Path.find('/',Slash + 1);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.33 2000/01/14 06:26:37 jgg Exp $
+// $Id: strutl.cc,v 1.34 2000/01/16 05:36:17 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -87,7 +87,8 @@ char *_strtabexpand(char *String,size_t Len)
 // ---------------------------------------------------------------------
 /* This grabs a single word, converts any % escaped characters to their
    proper values and advances the pointer. Double quotes are understood
-   and striped out as well. This is for URI/URL parsing. */
+   and striped out as well. This is for URI/URL parsing. It also can 
+   understand [] brackets.*/
 bool ParseQuoteWord(const char *&String,string &Res)
 {
    // Skip leading whitespace
@@ -101,7 +102,13 @@ bool ParseQuoteWord(const char *&String,string &Res)
    {
       if (*C == '"')
       {
-	 for (C++;*C != 0 && *C != '"'; C++);
+	 for (C++; *C != 0 && *C != '"'; C++);
+	 if (*C == 0)
+	    return false;
+      }
+      if (*C == '[')
+      {
+	 for (C++; *C != 0 && *C != ']'; C++);
 	 if (*C == 0)
 	    return false;
       }
@@ -867,10 +874,10 @@ URI::operator string()
       Res = Access + ':';
    
    if (Host.empty() == false)
-   {
+   {	 
       if (Access.empty() == false)
 	 Res += "//";
-      
+          
       if (User.empty() == false)
       {
 	 Res +=  User;
@@ -879,7 +886,13 @@ URI::operator string()
 	 Res += "@";
       }
       
-      Res += Host;
+      // Add RFC 2732 escaping characters
+      if (Access.empty() == false &&
+	  (Host.find('/') != string::npos || Host.find(':') != string::npos))
+	 Res += '[' + Host + ']';
+      else
+	 Res += Host;
+      
       if (Port != 0)
       {
 	 char S[30];
