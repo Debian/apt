@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.22 1998/12/05 04:30:34 jgg Exp $
+// $Id: apt-get.cc,v 1.23 1998/12/05 04:36:10 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -468,10 +468,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    ShowNew(c1out,Cache);
    if (ShwKept == true)
       ShowKept(c1out,Cache);
-   Fail |= ShowHold(c1out,Cache);
+   Fail |= !ShowHold(c1out,Cache);
    if (_config->FindB("APT::Get::Show-Upgraded",false) == true)
       ShowUpgraded(c1out,Cache);
-   Fail |= ShowEssential(c1out,Cache);
+   Fail |= !ShowEssential(c1out,Cache);
    Stats(c1out,Cache);
    
    // Sanity check
