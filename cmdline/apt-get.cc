@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.119 2002/04/26 05:36:43 jgg Exp $
+// $Id: apt-get.cc,v 1.120 2002/04/27 04:28:04 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -80,6 +80,13 @@ class CacheFile : public pkgCacheFile
    
    void Sort();
    bool CheckDeps(bool AllowBroken = false);
+   bool BuildCaches(bool WithLock = true)
+   {
+      OpTextProgress Prog(*_config);
+      if (pkgCacheFile::BuildCaches(Prog,WithLock) == false)
+	 return false;
+      return true;
+   }
    bool Open(bool WithLock = true) 
    {
       OpTextProgress Prog(*_config);
@@ -1224,7 +1231,7 @@ bool DoUpdate(CommandLine &CmdL)
    
    // Prepare the cache.   
    CacheFile Cache;
-   if (Cache.Open() == false)
+   if (Cache.BuildCaches() == false)
       return false;
    
    if (Failed == true)

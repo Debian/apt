@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.cc,v 1.7 2001/07/01 20:49:08 jgg Exp $
+// $Id: cachefile.cc,v 1.8 2002/04/27 04:28:04 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -46,10 +46,10 @@ pkgCacheFile::~pkgCacheFile()
    _system->UnLock(true);
 }   
 									/*}}}*/
-// CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
+// CacheFile::BuildCaches - Open and build the cache files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
+bool pkgCacheFile::BuildCaches(OpProgress &Progress,bool WithLock)
 {
    if (WithLock == true)
       if (_system->Lock() == false)
@@ -78,6 +78,16 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
 
    Cache = new pkgCache(Map);
    if (_error->PendingError() == true)
+      return false;
+   return true;
+}
+									/*}}}*/
+// CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
+{
+   if (BuildCaches(Progress,WithLock) == false)
       return false;
    
    // The policy engine

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cachefile.h,v 1.4 2001/02/20 07:03:17 jgg Exp $
+// $Id: cachefile.h,v 1.5 2002/04/27 04:28:04 jgg Exp $
 /* ######################################################################
    
    CacheFile - Simple wrapper class for opening, generating and whatnot
@@ -46,6 +46,7 @@ class pkgCacheFile
    inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) {return (*DCache)[I];};
    inline unsigned char &operator [](pkgCache::DepIterator const &I) {return (*DCache)[I];};
 
+   bool BuildCaches(OpProgress &Progress,bool WithLock = true);
    bool Open(OpProgress &Progress,bool WithLock = true);
    void Close();
    
