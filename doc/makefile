@@ -7,7 +7,7 @@ include ../buildlib/defaults.mak
 
 # SGML Documents
 SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml cache.sgml \
-         method.sgml
+         method.sgml offline.sgml
 include $(DEBIANDOC_H)
 
 # Man pages
