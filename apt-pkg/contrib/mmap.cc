@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.12 1999/03/18 03:20:24 doogie Exp $
+// $Id: mmap.cc,v 1.13 1999/03/18 04:10:21 doogie Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -31,6 +31,7 @@
 
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/user.h>
 #include <unistd.h>
 #include <fcntl.h>
    									/*}}}*/
@@ -118,7 +119,6 @@ bool MMap::Sync()
 /* */
 bool MMap::Sync(unsigned long Start,unsigned long Stop)
 {
-	static int PAGE_SIZE = getpagesize();
 
 #ifdef _POSIX_SYNCHRONIZED_IO   
    if ((Flags & ReadOnly) != ReadOnly)
