@@ -2,7 +2,7 @@ apt (0.5.23) unstable; urgency=low
 
   * Cosmetic updates to XML man pages from Richard Bos <radoeka@xs4all.nl>
   * Use the 'binary' target rather than 'all' so that the ssh and bzip2
-    symlinks are created correctly
+    symlinks are created correctly (thanks to Adam Heath)
   * Updated Simplified Chinese translation of message catalog from Tchaikov
     <chaisave@263.net> (Closes: #234186)
   * Set Cache-Control: max-age=0 for index files to prevent them being out
@@ -16,6 +16,10 @@ apt (0.5.23) unstable; urgency=low
   * Print a slightly clearer error message if no packaging systems are
     available (Closes: #233681)
   * Point to Build-Depends in COMPILING (Closes: #233669)
+  * Make debian/rules a bit more consistent in a few places.
+    Specifically, always use -p$@ rather than an explicit package name,
+    and always specify it first, and use dh_shlibdeps -l uniformly rather
+    than sometimes changing LD_LIBRARY_PATH dircetly
 
  --
 
