@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.h,v 1.3 1999/12/10 07:21:52 jgg Exp $
+// $Id: rfc2553emu.h,v 1.4 2000/06/18 06:04:45 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -74,6 +74,11 @@
   #define EAI_MEMORY     -11
   #endif
 
+  /* If we don't have getaddrinfo then we probably don't have 
+     sockaddr_storage either (same RFC) so we definately will not be
+     doing any IPv6 stuff. Do not use the members of this structure to
+     retain portability, cast to a sockaddr. */
+  #define sockaddr_storage sockaddr_in
 #endif
 
 // getnameinfo support (glibc2.0 has getaddrinfo only)
@@ -97,6 +102,12 @@
   #define NI_DATAGRAM (1<<4)
   #endif
 
+  #define sockaddr_storage sockaddr_in
+#endif
+
+// Glibc 2.0.7 misses this one
+#ifndef AI_NUMERICHOST
+#define AI_NUMERICHOST 0
 #endif
 
 #endif

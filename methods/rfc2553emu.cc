@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: rfc2553emu.cc,v 1.6 1999/12/11 02:11:10 jgg Exp $
+// $Id: rfc2553emu.cc,v 1.7 2000/06/18 06:04:45 jgg Exp $
 /* ######################################################################
 
    RFC 2553 Emulation - Provides emulation for RFC 2553 getaddrinfo,
@@ -202,9 +202,9 @@ int getnameinfo(const struct sockaddr *sa, socklen_t salen,
       {
 	 struct servent *Ent;
 	 if ((flags & NI_DATAGRAM) == NI_DATAGRAM)
-	    Ent = getservbyport(sin->sin_port,"udp");
+	    Ent = getservbyport(ntohs(sin->sin_port),"udp");
 	 else
-	    Ent = getservbyport(sin->sin_port,"tcp");
+	    Ent = getservbyport(ntohs(sin->sin_port),"tcp");
 	 
 	 if (Ent != 0)
 	    strncpy(serv,Ent->s_name,servlen);
@@ -220,7 +220,7 @@ int getnameinfo(const struct sockaddr *sa, socklen_t salen,
       // Resolve as a plain numberic
       if ((flags & NI_NUMERICSERV) == NI_NUMERICSERV)
       {
-	 snprintf(serv,servlen,"%u",sin->sin_port);
+	 snprintf(serv,servlen,"%u",ntohs(sin->sin_port));
       }
    }
    
