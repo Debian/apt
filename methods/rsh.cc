@@ -511,6 +511,8 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 
 int main(int argc, const char *argv[])
 {
+   setlocale(LC_ALL, "");
+
    RSHMethod Mth;
    Prog = strrchr(argv[0],'/');
    Prog++;

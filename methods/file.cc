@@ -83,6 +83,8 @@ bool FileMethod::Fetch(FetchItem *Itm)
 
 int main()
 {
+   setlocale(LC_ALL, "");
+
    FileMethod Mth;
    return Mth.Run();
 }
