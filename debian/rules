@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.63 2004/02/27 00:51:25 mdz Exp $
+# $Id: rules,v 1.64 2004/04/30 03:56:33 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -26,6 +26,12 @@ endif
 
 # See below
 -include build/environment.mak
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+  export CXXFLAGS = -O0 -g
+else
+  export CXXFLAGS = -O2 -g
+endif
 
 # Default rule
 build:
@@ -99,7 +105,7 @@ build/configure-stamp: configure
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
-	cd build && ../configure $(confflags)
+	cd build && CXXFLAGS="$(confcxxflags)" ../configure $(confflags)
 	touch $@
 
 build/build-stamp: build/configure-stamp
