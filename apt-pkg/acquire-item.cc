@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.31 1999/06/05 04:33:29 jgg Exp $
+// $Id: acquire-item.cc,v 1.32 1999/06/06 06:58:36 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -97,6 +97,9 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string)
       if (Owner->Log != 0)
 	 Owner->Log->Fetched(Size,atoi(LookupTag(Message,"Resume-Point","0").c_str()));
    }
+
+   if (FileSize == 0)
+      FileSize= Size;
    
    Status = StatDone;
    ErrorText = string();

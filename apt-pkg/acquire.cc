@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.34 1999/05/24 03:39:37 jgg Exp $
+// $Id: acquire.cc,v 1.35 1999/06/06 06:58:36 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -704,11 +704,20 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    }
    
    // Compute the current completion
+   unsigned long ResumeSize = 0;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
 	I = Owner->WorkerStep(I))
       if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
-	 CurrentBytes += I->CurrentSize - I->ResumePoint;
-      
+      {
+	 CurrentBytes += I->CurrentSize;
+	 ResumeSize += I->ResumePoint;
+	 
+	 // Files with unknown size always have 100% completion
+	 if (I->CurrentItem->Owner->FileSize == 0 && 
+	     I->CurrentItem->Owner->Complete == false)
+	    TotalBytes += I->CurrentSize;
+      }
+   
    // Normalize the figures and account for unknown size downloads
    if (TotalBytes <= 0)
       TotalBytes = 1;
@@ -728,8 +737,8 @@ void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       if (Delta < 0.01)
 	 CurrentCPS = 0;
       else
-	 CurrentCPS = (CurrentBytes - LastBytes)/Delta;
-      LastBytes = CurrentBytes;
+	 CurrentCPS = ((CurrentBytes - ResumeSize) - LastBytes)/Delta;
+      LastBytes = CurrentBytes - ResumeSize;
       ElapsedTime = (unsigned long)Delta;
       Time = NewTime;
    }
