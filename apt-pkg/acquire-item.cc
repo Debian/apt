@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.14 1998/11/29 01:24:14 jgg Exp $
+// $Id: acquire-item.cc,v 1.15 1998/12/11 04:47:50 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -365,9 +365,9 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       MD5 = Parse.MD5Hash();
       if (PkgFile.empty() == true)
       {
-	 _error->Error("Unable to locate a file name for package %s, "
-		       "perhaps the package files are corrupted.",
-		       Version.ParentPkg().Name());
+	 _error->Error("I need to reinstall package %s to fix it but I "
+		       "can't find a file for it! You must deal with "
+		       "this by hand.",Version.ParentPkg().Name());
 	 return;
       }
 
