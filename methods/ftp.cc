@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.19 2000/01/10 03:44:54 jgg Exp $
+// $Id: ftp.cc,v 1.20 2000/06/18 04:19:39 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -536,11 +536,11 @@ bool FTPConn::CreateDataFd()
    
       /* This implements a timeout for connect by opening the connection
          nonblocking */
-      if (WaitFd(ServerFd,true,TimeOut) == false)
+      if (WaitFd(DataFd,true,TimeOut) == false)
 	 return _error->Error("Could not connect data socket, connection timed out");
       unsigned int Err;
       unsigned int Len = sizeof(Err);
-      if (getsockopt(ServerFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
+      if (getsockopt(DataFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
 	 return _error->Errno("getsockopt","Failed");
       if (Err != 0)
 	 return _error->Error("Could not connect.");
