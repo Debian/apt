@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.35 1999/04/18 06:36:36 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.36 1999/04/18 07:25:32 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -623,7 +623,7 @@ static bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
 /* This puts the source package cache into the given generator. */
 bool pkgGenerateSrcCache(pkgSourceList &List,OpProgress &Progress,
 			 pkgCacheGenerator &Gen,
-			 unsigned long &CurrentSize,unsigned long TotalSize)
+			 unsigned long &CurrentSize,unsigned long &TotalSize)
 {
    string ListDir = _config->FindDir("Dir::State::lists");
    
