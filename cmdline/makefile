@@ -44,5 +44,5 @@ include $(PROGRAM_H)
 PROGRAM=apt-extracttemplates
 SLIBS = -lapt-pkg -lapt-inst
 LIB_MAKES = apt-pkg/makefile
-SOURCE = apt-extracttemplates.cc debfile.cc
+SOURCE = apt-extracttemplates.cc 
 include $(PROGRAM_H)

@@ -12,7 +12,8 @@ include $(DEBIANDOC_H)
 
 # Man pages
 SOURCE = apt-cache.8 apt-get.8 apt-cdrom.8 apt.conf.5 sources.list.5 \
-         apt-config.8 apt-sortpkgs.1 apt-ftparchive.1 apt_preferences.5
+         apt-config.8 apt-sortpkgs.1 apt-ftparchive.1 apt_preferences.5 \
+	 apt-extracttemplates.1
 INCLUDES = apt.ent	 
 include $(SGML_MANPAGE_H)
 

@@ -1,5 +1,14 @@
-#ifndef _debfile_H
-#define _debfile_H
+// -*- mode: cpp; mode: fold -*-
+// Description								/*{{{*/
+// $Id: apt-extracttemplates.h,v 1.1 2001/02/25 04:53:59 tausq Exp $
+/* ######################################################################
+
+   apt-extracttemplate - tool to extract template and config data
+   
+   ##################################################################### */
+									/*}}}*/
+#ifndef _APTEXTRACTTEMPLATE_H_
+#define _APTEXTRACTTEMPLATE_H_
 
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
@@ -7,12 +16,6 @@
 
 class DebFile : public pkgDirStream
 {
-	const char *ParseDepends(const char *Start,const char *Stop,
-				char *&Package, char *&Ver,
-				unsigned int &Op);
-
-	char *CopyString(const char *start, unsigned int len);
-
 	FileFd File;
 	unsigned long Size;
 	char *Control;
@@ -28,11 +31,11 @@ public:
 	bool Go();
 	bool ParseInfo();
 
-	static char *GetInstalledVer(const char *package);
+	static char *GetInstalledVer(const string &package);
 
-	char *Package;
-	char *Version;
-	char *DepVer, *PreDepVer;
+	string Package;
+	string Version;
+	string DepVer, PreDepVer;
 	unsigned int DepOp, PreDepOp;
 
 	char *Config;

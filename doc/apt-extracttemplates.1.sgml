@@ -1,0 +1,60 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-extracttemplates</>
+   <manvolnum>1</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-extracttemplates</>
+    <refpurpose>Utility to extract DebConf config and templates from Debian packages</>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-extracttemplate</>
+      <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+ <RefSect1><Title>Description</>
+   <para>   
+   <command/apt-extracttemplates/ will take one or more Debian package files
+   as input and write out (to a temporary directory) all associated config
+   scripts and template files. For each passed in package that contains 
+   config scripts and templates, one line of output will be generated
+   in the format:
+   <para>
+   package version template-file config-script
+ </RefSect1>
+ 
+ <RefSect1><Title>Options</>
+   &apt-cmdblurb;
+   
+ </RefSect1>
+
+ <RefSect1><Title>See Also</>
+   <para>
+   &apt-conf;
+ </RefSect1>
+
+ <RefSect1><Title>Diagnostics</>
+   <para>
+   <command/apt-sortpkgs/ returns zero on normal operation, decimal 100 on error.
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+ 
+</refentry>
