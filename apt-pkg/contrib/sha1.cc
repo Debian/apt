@@ -344,9 +344,9 @@ bool SHA1Summation::AddFD(int Fd,unsigned long Size)
    unsigned char Buf[64 * 64];
    int Res = 0;
    int ToEOF = (Size == 0);
-   while (Size != 0 || ToEOF);
+   while (Size != 0 || ToEOF)
    {
-      int n = sizeof(Buf);
+      unsigned n = sizeof(Buf);
       if (!ToEOF) n = MIN(Size,n);
       Res = read(Fd,Buf,n);
       if (Res < 0 || (!ToEOF && (unsigned) Res != n)) // error, or short read
