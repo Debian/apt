@@ -4,7 +4,7 @@
 <title>APT Method Interface </title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: method.sgml,v 1.1 1998/10/04 04:49:17 jgg Exp $</version>
+<version>$Id: method.sgml,v 1.2 1998/10/06 05:24:20 jgg Exp $</version>
 
 <abstract>
 This document describes the interface that APT uses to the archive
@@ -82,7 +82,7 @@ Universal Resource Identifier (URI) is a super-set of the familiar URL
 syntax used by web browsers. It consists of an access specification
 followed by a specific location in that access space. The form is
 &lt;access&gt;:&lt;location&gt;. Network addresses are given with the form 
-&lt;access&gt;://[&lt;user&gt;:&lt;pas&gt;>@]hostname[:port]/&lt;location&gt;. 
+&lt;access&gt;://[&lt;user&gt;[:&lt;pas&gt;]@]hostname[:port]/&lt;location&gt;. 
 Some examples:
 <example>
 file:/var/mirrors/debian/
@@ -233,7 +233,7 @@ This is a list of which headers each status code can use
 <taglist>
 <tag>100 Capabilities<item>
 Displays the capabilities of the method. 
-Fields: Version, Single-Interface, Pre-Scan
+Fields: Version, Single-Instance, Pre-Scan
 
 <tag>101 Log<item>
 A log message may be printed to the screen if debugging is enabled. This
