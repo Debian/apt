@@ -17,3 +17,9 @@ PROGRAM=copy
 SLIBS = -lapt-pkg 
 SOURCE = copy.cc
 include $(PROGRAM_H)
+
+# The gzip method
+PROGRAM=gzip
+SLIBS = -lapt-pkg 
+SOURCE = gzip.cc
+include $(PROGRAM_H)
