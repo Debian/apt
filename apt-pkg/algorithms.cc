@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.27 1999/10/22 05:58:54 jgg Exp $
+// $Id: algorithms.cc,v 1.28 1999/10/31 23:58:35 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -799,7 +799,11 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  if ((Flags[I->ID] & Protected) == Protected)
 		  {
 		     if (DoUpgrade(Pkg) == true)
+		     {
 			Scores[Pkg->ID] = Scores[I->ID];
+			break;
+		     }
+		     
 		     continue;
 		  }
 		  

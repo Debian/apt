@@ -37,7 +37,7 @@ else
 	@echo > /dev/null
 endif	
 ifeq ($(HAVE_C9X),yes)
-	-@rm include/inttypes.h	
+	-@rm include/inttypes.h > /dev/null 2>&1
 else
 	@cp $(SRCDIR)/buildlib/inttypes.h.in include/inttypes.h
 endif
