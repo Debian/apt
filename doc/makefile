@@ -6,7 +6,8 @@ SUBDIR=doc
 include ../buildlib/defaults.mak
 
 # SGML Documents
-SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml cache.sgml
+SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml cache.sgml \
+         method.sgml
 include $(DEBIANDOC_H)
 
 # Man pages

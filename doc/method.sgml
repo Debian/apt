@@ -1,0 +1,324 @@
+<!doctype debiandoc system>
+<!-- -*- mode: sgml; mode: fold -*- -->
+<book>
+<title>APT Method Interface </title>
+
+<author>Jason Gunthorpe <email>jgg@debian.org</email></author>
+<version>$Id: method.sgml,v 1.1 1998/10/04 04:49:17 jgg Exp $</version>
+
+<abstract>
+This document describes the interface that APT uses to the archive
+access methods.
+</abstract>
+
+<copyright>
+Copyright &copy; Jason Gunthorpe, 1998.
+<p>
+"APT" and this document are free software; you can redistribute them and/or
+modify them under the terms of the GNU General Public License as published
+by the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+<p>
+For more details, on Debian GNU/Linux systems, see the file
+/usr/doc/copyright/GPL for the full license.
+</copyright>
+
+<toc sect>
+
+<chapt>Introduction
+<!-- General		                                               {{{ -->
+<!-- ===================================================================== -->
+<sect>General
+
+<p>
+The APT method interface allows APT to aquire archive files (.deb), index
+files (Packages, Revision, Mirrors) and source files (.tar.gz, .diff). It
+is a general, extensible system designed to satisfy all of these
+requirements:
+
+<enumlist>
+<item>Remote methods that download files from a distant site
+<item>Resume of aborted downloads
+<item>Progress reporting
+<item>If-Modified-Since (IMS) checking for index files
+<item>In-Line MD5 generation
+<item>No-copy in-filesystem methods
+<item>Multi-media methods (like CD's)
+<item>Dynamic source selection for failure recovery
+<item>User interaction for user/password requests and media swaps
+<item>Global configuration
+</enumlist>
+
+Initial releases of APT (0.1.x) used a completely different method
+interface that only supported the first 6 items. This new interface
+deals with the remainder.
+</sect>
+                                                                  <!-- }}} -->
+<!-- Terms		                                               {{{ -->
+<!-- ===================================================================== -->
+<sect>Terms
+
+<p>
+Several terms are used through out the document, they have specific
+meanings which may not be immediately evident. To clarify they are summarized
+here.
+
+<taglist>
+<tag>source<item>
+Refers to an item in source list. More specifically it is the broken down
+item, that is each source maps to exactly one index file. Archive sources
+map to Package files and Source Code sources map to Source files.
+
+<tag>archive file<item>
+Refers to a binary package archive (.deb, .rpm, etc). 
+
+<tag>source file<item>
+Refers to one of the files making up the source code of a package. In
+debian it is one of .diff.gz, .dsc. or .tar.gz.
+
+<tag>URI<item>
+Universal Resource Identifier (URI) is a super-set of the familiar URL
+syntax used by web browsers. It consists of an access specification
+followed by a specific location in that access space. The form is
+&lt;access&gt;:&lt;location&gt;. Network addresses are given with the form 
+&lt;access&gt;://[&lt;user&gt;:&lt;pas&gt;>@]hostname[:port]/&lt;location&gt;. 
+Some examples:
+<example>
+file:/var/mirrors/debian/
+ftp://ftp.debian.org/debian
+ftp://jgg:MooCow@localhost:21/debian
+nfs://bigred/var/mirrors/debian
+rsync://debian.midco.net/debian
+cdrom:Debian 2.0r1 Disk 1/
+</example>
+
+<tag>method<item>
+There is a one to one mapping of URI access specifiers to methods. A method
+is a program that knows how to handle a URI access type and operates according
+to the specifications in this file.
+
+<tag>method instance<item>
+A specific running method. There can be more than one instance of each method
+as APT is capable of concurrent method handling.
+
+<tag>message<item>
+A series of lines terminated by a blank line sent down one of the
+communication lines. The first line should have the form xxx TAG
+where xxx are digits forming the status code and TAG is an informational
+string
+
+<tag>aquire<item>
+The act of bring a URI into the local pathname space. This may simply
+be verifiying the existance of the URI or actually downloading it from
+a remote site.
+
+</taglist>
+
+</sect>
+                                                                  <!-- }}} -->
+<chapt>Specification
+<!-- Overview		                                               {{{ -->
+<!-- ===================================================================== -->
+<sect>Overview
+
+<p>
+All methods operate as a sub process of a main controlling parent. 3 FD's
+are opened for use by the method allowing two way communication and
+emergency error reporting. The FD's corrispond to the well known unix FD's, 
+stdin, stdout and stderr.
+
+<p>
+The basic startup sequence depends on how the method is invoked. If any
+command line arguments are passed then the method should start in 
+automatic mode. This facility is provided soley to make the methods
+easier to test and perhaps use outside of APT. Upon startup the method
+will print out a header describing its capabilities and requirements.
+After that it either begins processing the command line arugments and
+exits when done or waits for commands to be fed to it.
+
+<p>
+Throught operation of the method communication is done via http 
+style plain text. Specifically RFC-822 (like the Package file) fields
+are used to describe items and a numeric-like header is used to indicate
+what is happening. Each of these distinct communication messages should be
+sent quickly and without pause.
+
+<p> 
+In some instances APT may pre-invoke a method to allow things like file
+URI's to determine how many files are available locally.
+</sect>
+                                                                  <!-- }}} -->
+<!-- Message Overview	                                               {{{ -->
+<!-- ===================================================================== -->
+<sect>Message Overview
+
+<p>
+The first line of each message is called the message header. The first
+3 digits (called the Status Code) have the usual meaning found in the 
+http protocol. 1xx is informational, 2xx is successfull and 4xx is failure. 
+The 6xx series is used to specify things sent to the method. After the 
+status code is an informational string provided for visual debugging.
+
+<list>
+<item>100 Capabilities - Method capabilities
+<item>101 Log - General Logging
+<item>102 Status - Inter-URI status reporting (login progress)
+<item>200 URI Start - URI is starting aquire
+<item>201 URI Done - URI is finished aquire
+<item>400 URI Failure - URI has failed to aquire
+<item>401 General Failure - Method did not like something sent to it
+<item>402 Authorization Required - Method requires authorization
+        to access the URI. Authorization is User/Pass
+<item>403 Media Failure - Method requires a media change	
+<item>600 URI Aquire - Request a URI be aquired
+<item>601 Configuration - Sends the configuration space
+<item>602 Authorization Credentials - Response to the 402 message
+<item>603 Media Changed - Response to the 403 message
+<item>605 Shutdown - Exit
+</list>
+
+Only the 6xx series of status codes is sent TO the method. Furthermore
+the method may not emit status codes in the 6xx range. The Codes 402
+and 403 require that the method continue reading all other 6xx codes
+until the proper 602/603 code is recieved. This means the method must be
+capable of handling an unlimited number of 600 messages.
+
+<p>
+The flow of messages starts with the method sending out a 
+<em>100 Capabilities</> and APT sending out a <em>601 Configuration</>.
+After that APT begins sending <em>600 URI Aquire</> and the method
+sends out <em>200 URI Start</>, <em>201 URI Done</> or 
+<em>400 URI Failure</>. No syncronization is performed, it is expected
+that APT will send <em>600 URI Aquire</> messages at -any- time and
+that the method should queue the messages. This allows methods like http
+to pipeline requests to the remote server. It should be noted however
+that APT will buffer messages so it is not neccessary for the method
+to be constantly ready to recieve them.
+</sect>
+                                                                  <!-- }}} -->
+<!-- Header Fields	                                               {{{ -->
+<!-- ===================================================================== -->
+<sect>Header Fields
+
+<p> 
+The following is a short index of the header fields that are supported
+
+<taglist>
+<tag>URI<item>URI being described by the message
+<tag>Filename<item>Location in the filesystem
+<tag>Last-Modified<item>A time stamp in RFC1123 notation for use by IMS checks
+<tag>Size<item>Size of the file in bytes
+<tag>Resume-Point<item>Location that transfer was started
+<tag>MD5-Hash<item>Computed MD5 hash for the file
+<tag>Message<item>String indicating some displayable message
+<tag>Media<item>String indicating the media name required
+<tag>Site<item>String indicating the site authorization is required for
+<tag>User<item>Username for authorization
+<tag>Password<item>Password for authorization
+<tag>Config-Item<item>
+A string of the form <var>item</>=<var>value</> derived from the APT 
+configuration space. These may include method specific values and general
+values not related to the method. It is up to the method to filter out
+the ones it wants.
+<tag>Single-Instance<item>Requires that only one instance of the method be run
+                          This is a yes/no value.
+<tag>Pre-Scan<item>Method can detect if archives are already available.
+                   This is a yes/no value.
+<tag>Version<item>Version string for the method
+</taglist>
+
+This is a list of which headers each status code can use
+
+<taglist>
+<tag>100 Capabilities<item>
+Displays the capabilities of the method. 
+Fields: Version, Single-Interface, Pre-Scan
+
+<tag>101 Log<item>
+A log message may be printed to the screen if debugging is enabled. This
+is only for debugging the method.
+Fields: Message
+
+<tag>102 Status<item>
+Message gives a progress indication for the method. It can be used to show
+pre-transfer status for internet type methods.
+Fields: Message
+
+<tag>200 URI Start<item>
+Indicates the URI is starting to be transfered. The URI is specified
+along with stats about the file itself.
+Fields: URI, Size, Last-Modified, Resume-Point
+
+<tag>201 URI Done<item>
+Indicates that a URI has completed being transfered. It is possible
+to specify a <em>201 URI Done</> without a <em>URI Start</> which would
+mean no data was transfered but the file is now available. A Filename
+field is specified when the URI is directly available in the local 
+pathname space. APT will either directly use that file or copy it into 
+another location.
+Fields: URI, Size, Last-Modified, Filename, MD5-Hash
+
+<tag>400 URI Failure<item>
+Indicates a fatal URI failure. The URI is not retrievable from this source.
+As with <em>201 URI Done</> <em>200 URI Start</> is not required to preceed
+this message
+Fields: URI, Message
+
+<tag>401 General Failure<item>
+Indicates that some unspecific failure has occured and the method is unable
+to continue. The method should terminate after sending this message. It 
+is intended to check for invalid configuration options or other severe
+conditions.
+Fields: Message
+
+<tag>402 Authorization Required<item>
+The method requires a Username and Password pair to continue. After sending
+this message the method will expect APT to send a <em>602 Authorization 
+Credentials</> message with the required information. It is possible for
+a method to send this multiple times.
+Fields: Site
+
+<tag>403 Media Failure<item>
+A method that deals with multiple media requires that a new media be inserted.
+The Media field contains the name of the media to be inserted.
+Fields: Media
+
+<tag>600 URI Aquire<item>
+APT is requesting that a new URI be added to the aquire list. Last-Modified
+has the time stamp of the currently cache file if applicable. Filename
+is the name of the file that the aquired URI should be written to.
+Fields: URI, Filename Last-Modified
+
+<tag>601 Configuration<item>
+APT is sending the configuration space to the method. A series of
+Config-Item fields will be part of this message, each containing an entry
+from the configuration space.
+Fields: Config-Item.
+
+<tag>602 Authorization Credentials<item>
+This is sent in response to a <em>402 Authorization Required</> message. 
+It contains the entered username and password.
+Fields: Site, User, Password
+
+<tag>603 Media Changed<item>
+This is sent in response to a <em>403 Media Failure</> message. It
+indicates that the user has changed media and it is safe to proceed.
+Fields: Media
+
+<tag>605 Shutdown<item>
+APT sends this to signal the shutdown of the method. The method should
+terminate immidiately.
+Fields: None
+</taglist>
+
+</sect>
+                                                                  <!-- }}} -->
+<!-- Examples		                                               {{{ -->
+<!-- ===================================================================== -->
+<sect>Examples
+
+</sect>
+                                                                  <!-- }}} -->
+
+</book>
