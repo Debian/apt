@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.12 1999/02/23 06:46:24 jgg Exp $
+// $Id: pkgcachegen.h,v 1.13 1999/04/18 06:36:36 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -28,6 +28,7 @@
 
 class pkgSourceList;
 class OpProgress;
+class MMap;
 
 class pkgCacheGenerator
 {
@@ -71,6 +72,7 @@ class pkgCacheGenerator
 bool pkgSrcCacheCheck(pkgSourceList &List);
 bool pkgPkgCacheCheck(string CacheFile);
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress);
+MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress);
 
 // This is the abstract package list parser class.
 class pkgCacheGenerator::ListParser

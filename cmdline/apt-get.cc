@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.51 1999/04/12 02:25:25 jgg Exp $
+// $Id: apt-get.cc,v 1.52 1999/04/18 06:36:36 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -30,15 +30,14 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/dpkgpm.h>
-#include <apt-pkg/dpkginit.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/clean.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/version.h>
+#include <apt-pkg/cachefile.h>
 
 #include <config.h>
 
@@ -372,70 +371,27 @@ void Stats(ostream &out,pkgDepCache &Dep)
 // class CacheFile - Cover class for some dependency cache functions	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-class CacheFile
+class CacheFile : public pkgCacheFile
 {
    public:
    
-   FileFd *File;
-   MMap *Map;
-   pkgDepCache *Cache;
-   pkgDpkgLock Lock;
-   
-   inline operator pkgDepCache &() {return *Cache;};
-   inline pkgDepCache *operator ->() {return Cache;};
-   inline pkgDepCache &operator *() {return *Cache;};
-   
-   bool Open(bool AllowBroken = false);
-   CacheFile() : File(0), Map(0), Cache(0) {};
-   ~CacheFile()
+   bool CheckDeps(bool AllowBroken = false);
+   bool Open(bool WithLock = true) 
    {
-      delete Cache;
-      delete Map;
-      delete File;
-   }   
+      OpTextProgress Prog(*_config); 
+      return pkgCacheFile::Open(Prog,WithLock);
+   };
 };
 									/*}}}*/
 // CacheFile::Open - Open the cache file				/*{{{*/
 // ---------------------------------------------------------------------
 /* This routine generates the caches and then opens the dependency cache
    and verifies that the system is OK. */
-bool CacheFile::Open(bool AllowBroken)
+bool CacheFile::CheckDeps(bool AllowBroken)
 {
    if (_error->PendingError() == true)
       return false;
-   
-   // Create a progress class
-   OpTextProgress Progress(*_config);
-      
-   // Read the source list
-   pkgSourceList List;
-   if (List.ReadMainList() == false)
-      return _error->Error("The list of sources could not be read.");
-   
-   // Build all of the caches
-   pkgMakeStatusCache(List,Progress);
-   if (_error->PendingError() == true)
-      return _error->Error("The package lists or status file could not be parsed or opened.");
-   if (_error->empty() == false)
-      _error->Warning("You may want to run apt-get update to correct theses missing files");
-   
-   Progress.Done();
-   
-   // Open the cache file
-   File = new FileFd(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   Map = new MMap(*File,MMap::Public | MMap::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   Cache = new pkgDepCache(*Map,Progress);
-   if (_error->PendingError() == true)
-      return false;
 
-   Progress.Done();
-   
    // Check that the system is OK
    if (Cache->DelCount() != 0 || Cache->InstCount() != 0)
       return _error->Error("Internal Error, non-zero counts");
@@ -676,7 +632,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
       return _error->Error("Aborting Install.");
    }
    
-   Cache.Lock.Close();
+   Cache.ReleaseLock();
    return PM.DoInstall();
 }
 									/*}}}*/
@@ -724,7 +680,7 @@ bool DoUpdate(CommandLine &)
    
    // Prepare the cache.   
    CacheFile Cache;
-   if (Cache.Open() == false)
+   if (Cache.Open() == false || Cache.CheckDeps() == false)
       return false;
    
    return true;
@@ -737,7 +693,7 @@ bool DoUpdate(CommandLine &)
 bool DoUpgrade(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false)
+   if (Cache.Open() == false || Cache.CheckDeps() == false)
       return false;
 
    // Do the upgrade
@@ -756,7 +712,7 @@ bool DoUpgrade(CommandLine &CmdL)
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open(CmdL.FileSize() != 1) == false)
+   if (Cache.Open() == false || Cache.CheckDeps(CmdL.FileSize() != 1) == false)
       return false;
    
    // Enter the special broken fixing mode if the user specified arguments
@@ -949,7 +905,7 @@ bool DoInstall(CommandLine &CmdL)
 bool DoDistUpgrade(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false)
+   if (Cache.Open() == false || Cache.CheckDeps() == false)
       return false;
 
    c0out << "Calculating Upgrade... " << flush;
@@ -971,7 +927,7 @@ bool DoDistUpgrade(CommandLine &CmdL)
 bool DoDSelectUpgrade(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open() == false)
+   if (Cache.Open() == false || Cache.CheckDeps() == false)
       return false;
    
    // Install everything with the install flag set
@@ -1066,7 +1022,7 @@ class LogCleaner : public pkgArchiveCleaner
 bool DoAutoClean(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open(true) == false)
+   if (Cache.Open() == false)
       return false;
    
    LogCleaner Cleaner;
@@ -1083,19 +1039,23 @@ bool DoCheck(CommandLine &CmdL)
 {
    CacheFile Cache;
    Cache.Open();
+   Cache.CheckDeps();
    
    return true;
 }
 									/*}}}*/
 // DoSource - Fetch a source archive					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Fetch souce packages */
 bool DoSource(CommandLine &CmdL)
 {
    CacheFile Cache;
-   if (Cache.Open(true) == false)
+   if (Cache.Open(false) == false)
       return false;
 
+   if (CmdL.FileSize() <= 1)
+      return _error->Error("Must specify at least one package to fetch source for");
+   
    // Read the source list
    pkgSourceList List;
    if (List.ReadMainList() == false)

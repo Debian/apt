@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.h,v 1.8 1999/01/18 06:20:08 jgg Exp $
+// $Id: mmap.h,v 1.9 1999/04/18 06:36:36 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -36,17 +36,17 @@ class MMap
 {
    protected:
    
-   FileFd &Fd;
-   unsigned long Flags;   
+   unsigned long Flags;
    unsigned long iSize;
    void *Base;
 
-   bool Map();
-   bool Close(bool DoClose = true,bool DoSync = true);
+   bool Map(FileFd &Fd);
+   bool Close(bool DoSync = true);
    
    public:
 
-   enum OpenFlags {NoImmMap = (1<<0),Public = (1<<1),ReadOnly = (1<<2)};
+   enum OpenFlags {NoImmMap = (1<<0),Public = (1<<1),ReadOnly = (1<<2),
+                   UnMapped = (1<<3)};
       
    // Simple accessors
    inline operator void *() {return Base;};
@@ -58,6 +58,7 @@ class MMap
    bool Sync(unsigned long Start,unsigned long Stop);
    
    MMap(FileFd &F,unsigned long Flags);
+   MMap(unsigned long Flags);
    virtual ~MMap();
 };
 
@@ -75,6 +76,7 @@ class DynamicMMap : public MMap
    
    protected:
    
+   FileFd *Fd;
    unsigned long WorkSpace;
    Pool *Pools;
    unsigned int PoolCount;
@@ -89,6 +91,7 @@ class DynamicMMap : public MMap
    void UsePools(Pool &P,unsigned int Count) {Pools = &P; PoolCount = Count;}; 
    
    DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace = 2*1024*1024);
+   DynamicMMap(unsigned long Flags,unsigned long WorkSpace = 2*1024*1024);
    virtual ~DynamicMMap();
 };
 

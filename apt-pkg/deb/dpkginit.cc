@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkginit.cc,v 1.1 1998/11/23 07:03:10 jgg Exp $
+// $Id: dpkginit.cc,v 1.2 1999/04/18 06:36:36 jgg Exp $
 /* ######################################################################
 
    DPKG init - Initialize the dpkg stuff
@@ -54,8 +54,8 @@ bool pkgDpkgLock::GetLock()
    string AdminDir = flNotFile(_config->Find("Dir::State::status"));
    LockFD = ::GetLock(AdminDir + "lock");
    if (LockFD == -1)
-      return _error->Errno("Open","Unable to lock the administration directory "
-			   "%s, are you root?",AdminDir.c_str());
+      return _error->Error("Unable to lock the administration directory, "
+			   "are you root?");
    
    // Check for updates.. (dirty)
    string File = AdminDir + "updates/";

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.14 1999/03/18 04:32:46 jgg Exp $
+// $Id: mmap.cc,v 1.15 1999/04/18 06:36:36 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -38,11 +38,19 @@
 // MMap::MMap - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-MMap::MMap(FileFd &F,unsigned long Flags) : Fd(F), Flags(Flags), iSize(0),
+MMap::MMap(FileFd &F,unsigned long Flags) : Flags(Flags), iSize(0),
                      Base(0)
 {
    if ((Flags & NoImmMap) != NoImmMap)
-      Map();
+      Map(F);
+}
+									/*}}}*/
+// MMap::MMap - Constructor						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+MMap::MMap(unsigned long Flags) : Flags(Flags), iSize(0),
+                     Base(0)
+{
 }
 									/*}}}*/
 // MMap::~MMap - Destructor						/*{{{*/
@@ -50,13 +58,13 @@ MMap::MMap(FileFd &F,unsigned long Flags) : Fd(F), Flags(Flags), iSize(0),
 /* */
 MMap::~MMap()
 {
-   Close(true);
+   Close();
 }
 									/*}}}*/
 // MMap::Map - Perform the mapping					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool MMap::Map()
+bool MMap::Map(FileFd &Fd)
 {
    iSize = Fd.Size();
    
@@ -82,11 +90,11 @@ bool MMap::Map()
 // MMap::Close - Close the map						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool MMap::Close(bool DoClose, bool DoSync)
+bool MMap::Close(bool DoSync)
 {
-   if (Fd.IsOpen() == false)
+   if ((Flags & UnMapped) == UnMapped || Base == 0 || iSize == 0)
       return true;
-
+   
    if (DoSync == true)
       Sync();
    
@@ -94,8 +102,6 @@ bool MMap::Close(bool DoClose, bool DoSync)
       _error->Warning("Unable to munmap");
    
    iSize = 0;
-   if (DoClose == true)
-      Fd.Close();
    return true;
 }
 									/*}}}*/
@@ -105,6 +111,9 @@ bool MMap::Close(bool DoClose, bool DoSync)
    not return till all IO is complete */
 bool MMap::Sync()
 {   
+   if ((Flags & UnMapped) == UnMapped)
+      return true;
+   
 #ifdef _POSIX_SYNCHRONIZED_IO   
    if ((Flags & ReadOnly) != ReadOnly)
       if (msync((char *)Base,iSize,MS_SYNC) != 0)
@@ -118,6 +127,9 @@ bool MMap::Sync()
 /* */
 bool MMap::Sync(unsigned long Start,unsigned long Stop)
 {
+   if ((Flags & UnMapped) == UnMapped)
+      return true;
+   
 #ifdef _POSIX_SYNCHRONIZED_IO
    unsigned long PSize = sysconf(_SC_PAGESIZE);
    if ((Flags & ReadOnly) != ReadOnly)
@@ -132,17 +144,30 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 // ---------------------------------------------------------------------
 /* */
 DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) : 
-             MMap(F,Flags | NoImmMap), WorkSpace(WorkSpace)
+             MMap(F,Flags | NoImmMap), Fd(&F), WorkSpace(WorkSpace)
 {
    if (_error->PendingError() == true)
       return;
    
-   unsigned long EndOfFile = Fd.Size();
-   Fd.Seek(WorkSpace);
+   unsigned long EndOfFile = Fd->Size();
+   Fd->Seek(WorkSpace);
    char C = 0;
-   Fd.Write(&C,sizeof(C));
-   Map();
+   Fd->Write(&C,sizeof(C));
+   Map(F);
    iSize = EndOfFile;
+}
+									/*}}}*/
+// DynamicMMap::DynamicMMap - Constructor for a non-file backed map	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is just a fancy malloc really.. */
+DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long WorkSpace) :
+             MMap(Flags | NoImmMap | UnMapped), Fd(0), WorkSpace(WorkSpace)
+{
+   if (_error->PendingError() == true)
+      return;
+   
+   Base = new unsigned char[WorkSpace];
+   iSize = 0;
 }
 									/*}}}*/
 // DynamicMMap::~DynamicMMap - Destructor				/*{{{*/
@@ -150,12 +175,18 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) 
 /* We truncate the file to the size of the memory data set */
 DynamicMMap::~DynamicMMap()
 {
+   if (Fd == 0)
+   {
+      delete [] (unsigned char *)Base;
+      return;
+   }
+   
    unsigned long EndOfFile = iSize;
    Sync();
    iSize = WorkSpace;
-   Close(false,false);
-   ftruncate(Fd.Fd(),EndOfFile);
-   Fd.Close();
+   Close(false);
+   ftruncate(Fd->Fd(),EndOfFile);
+   Fd->Close();
 }  
 									/*}}}*/
 // DynamicMMap::RawAllocate - Allocate a raw chunk of unaligned space	/*{{{*/
