@@ -1,8 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.1 1998/11/27 01:52:56 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.2 1998/11/27 04:49:42 jgg Exp $
 /* ######################################################################
    
+   APT CDROM - Tool for handling APT's CDROM database.
+   
+   Currently the only option is 'add' which will take the current CD
+   in the drive and add it into the database.
    
    ##################################################################### */
 									/*}}}*/
@@ -18,6 +22,7 @@
 #include <config.h>
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <sys/wait.h>
@@ -43,11 +48,11 @@ bool UnmountCdrom(string Path)
    if (Child == 0)
    {
       // Make all the fds /dev/null
-      for (int I = 0; I != 10;)
+      for (int I = 0; I != 10; I++)
 	 close(I);
-      for (int I = 0; I != 3;)
+      for (int I = 0; I != 3; I++)
 	 dup2(open("/dev/null",O_RDWR),I);
-      
+
       const char *Args[10];
       Args[0] = "umount";
       Args[1] = Path.c_str();
@@ -84,9 +89,9 @@ bool MountCdrom(string Path)
    if (Child == 0)
    {
       // Make all the fds /dev/null
-      for (int I = 0; I != 10;)
+      for (int I = 0; I != 10; I++)
 	 close(I);      
-      for (int I = 0; I != 3;)
+      for (int I = 0; I != 3; I++)
 	 dup2(open("/dev/null",O_RDWR),I);
       
       const char *Args[10];
@@ -261,7 +266,10 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
       char S[400];
       sprintf(S,"cdrom:%s/%sPackages",Name.c_str(),(*I).c_str() + CDROM.length());
       string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
-      FileFd Target(TargetF + URItoFileName(S),FileFd::WriteEmpty);      
+      TargetF += URItoFileName(S);
+      if (_config->FindB("APT::CDROM::NoAct",false) == true)
+	 TargetF = "/dev/null";
+      FileFd Target(TargetF,FileFd::WriteEmpty);      
       if (_error->PendingError() == true)
 	 return false;
       
@@ -522,6 +530,56 @@ bool ConvertToSourcelist(string CD,vector<string> &List)
    }
 }
 									/*}}}*/
+// WriteDatabase - Write the CDROM Database file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool WriteDatabase(Configuration &Cnf)
+{
+   string DFile = _config->FindFile("Dir::State::cdroms");
+
+   ofstream Out(string(DFile + ".new").c_str());
+   if (!Out)
+      return _error->Error("Failed to open %s.new",DFile.c_str());
+   
+   /* Write out all of the configuration directives by walking the
+      configuration tree */
+   const Configuration::Item *Top = Cnf.Tree(0);
+   for (; Top != 0;)
+   {
+      // Print the config entry
+      if (Top->Value.empty() == false)
+	 Out <<  Top->FullTag() + " \"" << Top->Value << "\";" << endl;
+      
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+      
+      while (Top != 0 && Top->Next == 0)
+	 Top = Top->Parent;
+      if (Top != 0)
+	 Top = Top->Next;
+   }   
+
+   Out.close();
+   
+   rename(DFile.c_str(),string(DFile + '~').c_str());
+   if (rename(string(DFile + ".new").c_str(),DFile.c_str()) != 0)
+      return _error->Errno("rename","Failed to rename %s.new to %s",
+			   DFile.c_str(),DFile.c_str());
+
+   return true;
+}
+									/*}}}*/
+// WriteSourceList - Write an updated sourcelist			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool WriteSourceList(string Name,vector<string> &List)
+{
+   return true;
+}
+									/*}}}*/
 
 // Prompt - Simple prompt						/*{{{*/
 // ---------------------------------------------------------------------
@@ -572,9 +630,9 @@ bool DoAdd(CommandLine &)
    {
       cout << "Unmounting CD-ROM" << endl;
       UnmountCdrom(CDROM);
-   
+
       // Mount the new CDROM
-      Prompt("Please insert a CD-ROM and press any key");
+      Prompt("Please insert a Disc in the drive and press any key");
       cout << "Mounting CD-ROM" << endl;
       if (MountCdrom(CDROM) == false)
       {
@@ -584,7 +642,7 @@ bool DoAdd(CommandLine &)
    }
    
    // Hash the CD to get an ID
-   cout << "Indentifying.. " << flush;
+   cout << "Identifying.. " << flush;
    string ID;
    if (IdentCdrom(CDROM,ID) == false)
       return false;
@@ -616,6 +674,7 @@ bool DoAdd(CommandLine &)
    }
    else
       Name = Database.Find("CD::" + ID);
+   Database.Set("CD::" + ID,Name);
    cout << "This Disc is called '" << Name << "'" << endl;
    
    // Copy the package files to the state directory
@@ -628,6 +687,13 @@ bool DoAdd(CommandLine &)
    cout << "Source List entires for this Disc are:" << endl;
    for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
       cout << "deb \"cdrom:" << Name << "/\" " << *I << endl;
+
+   // Write the database and sourcelist
+   if (_config->FindB("APT::cdrom::NoAct",false) == false)
+   {
+      if (WriteDatabase(Database) == false)
+	 return false;
+   }
    
    return true;
 }
@@ -655,6 +721,7 @@ int ShowHelp()
    cout << "  -d   CD-ROM mount point" << endl;
    cout << "  -r   Rename a recognized CD-ROM" << endl;
    cout << "  -m   No mounting" << endl;
+   cout << "  -f   Fast mode, don't check package files" << endl;
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
    cout << "See fstab(5)" << endl;
@@ -670,6 +737,9 @@ int main(int argc,const char *argv[])
       {'r',"rename","APT::CDROM::Rename",0},
       {'m',"no-mount","APT::CDROM::NoMount",0},
       {'f',"fast","APT::CDROM::Fast",0},
+      {'n',"just-print","APT::CDROM::NoAct",0},      
+      {'n',"recon","APT::CDROM::NoAct",0},      
+      {'n',"no-act","APT::CDROM::NoAct",0},      
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
