@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.44 2003/02/02 21:57:32 doogie Exp $
+# $Id: rules,v 1.45 2003/02/02 22:00:24 doogie Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -236,7 +236,7 @@ libapt-pkg-dev: build debian/shlibs.local
 	dh_fixperms -p$@
 #	dh_suidregister -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE) -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
