@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.14 1998/12/22 08:41:20 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.15 1998/12/30 06:26:00 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -54,8 +54,7 @@ bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
       this dir is controlled by those package files so we don't look down
       anymore */
    struct stat Buf;
-   if (stat("Packages",&Buf) == 0 ||
-       stat("Packages.gz",&Buf) == 0)
+   if (stat("Packages",&Buf) == 0) 
    {
       List.push_back(CD);
       
@@ -92,10 +91,7 @@ bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
 	 if (Inodes[I] == Buf.st_ino)
 	    break;
       if (I != Depth)
-      {
-	 cout << "Inode throw away " <<  Dir->d_name << endl;
 	 continue;
-      }
       
       // Store the inodes weve seen
       Inodes[Depth] = Buf.st_ino;
@@ -187,9 +183,12 @@ bool DropRepeats(vector<string> &List)
    {
       struct stat Buf;
       if (stat((List[I] + "Packages").c_str(),&Buf) != 0)
-	 _error->Errno("stat","Failed to stat %s",List[I].c_str());
+	 _error->Errno("stat","Failed to stat %sPackages",List[I].c_str());
       Inodes[I] = Buf.st_ino;
    }
+   
+   if (_error->PendingError() == true)
+      return false;
    
    // Look for dups
    for (unsigned int I = 0; I != List.size(); I++)
