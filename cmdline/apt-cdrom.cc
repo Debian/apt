@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.11 1998/12/09 00:55:23 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.12 1998/12/09 01:03:00 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -933,7 +933,7 @@ bool DoAdd(CommandLine &)
    }
 
    // Print the sourcelist entries
-   cout << "Source List entires for this Disc are:" << endl;
+   cout << "Source List entries for this Disc are:" << endl;
    for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
    {
       string::size_type Space = (*I).find(' ');
