@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.50 2001/06/08 05:15:42 jgg Exp $
+// $Id: apt-cache.cc,v 1.51 2001/06/10 02:03:33 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -475,7 +475,7 @@ bool DumpAvail(CommandLine &Cmd)
 	 if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	 {
 	    pkgTagSection Tags;
-	    TFRewriteData RW[] = {{"Status",0},{}};
+	    TFRewriteData RW[] = {{"Status",0},{"Config-Version",0},{}};
 	    const char *Zero = 0;
 	    if (Tags.Scan(Buffer+Jitter,VF.Size+1) == false ||
 		TFRewrite(stdout,Tags,&Zero,RW) == false)
