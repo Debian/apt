@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.19 2001/03/11 07:22:19 jgg Exp $
+// $Id: configuration.cc,v 1.20 2001/04/27 05:49:34 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -690,9 +690,6 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 bool ReadConfigDir(Configuration &Conf,string Dir,bool AsSectional,
 		    unsigned Depth)
 {   
-   static const char *BadExts[] = {".disabled",".dpkg-old",".dpkg-dist",
-   				   ".rpmsave",".rpmorig","~",",v",0};
-   
    DIR *D = opendir(Dir.c_str());
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
@@ -704,15 +701,12 @@ bool ReadConfigDir(Configuration &Conf,string Dir,bool AsSectional,
       if (Ent->d_name[0] == '.')
 	 continue;
       
-      // Skip bad extensions
-      const char **I;
-      for (I = BadExts; *I != 0; I++)
-      {
-	 if (strcmp(Ent->d_name + strlen(Ent->d_name) - strlen(*I),*I) == 0)
+      // Skip bad file names ala run-parts
+      const char *C = Ent->d_name;
+      for (; *C != 0; C++)
+	 if (isalpha(*C) == 0 && isdigit(*C) == 0 && *C != '_' && *C != '-')
 	    break;
-      }
-      
-      if (*I != 0)
+      if (*C != 0)
 	 continue;
       
       // Make sure it is a file and not something else
