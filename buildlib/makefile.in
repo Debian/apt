@@ -1,0 +1,24 @@
+# -*- make -*-
+
+# This is the build directory make file, it sets the build directory
+# and runs the src makefile.
+
+SRCDIR=@top_srcdir@
+SUBDIRS:=./doc ./bin ./obj ./include/apt-pkg ./include/deity
+BUILD:=$(shell pwd)
+export BUILD
+
+# Chain to the parent make to do the actual building
+.PHONY: headers library clean veryclean all binary program doc
+headers library clean veryclean all binary program doc:
+	$(MAKE) -C $(SRCDIR) $@
+	
+# This makes any missing directories
+.PHONY: dirs
+MISSING_DIRS:=	$(filter-out $(wildcard $(SUBDIRS)),$(SUBDIRS))
+dirs:
+ifneq ($(words $(MISSING_DIRS)),0)
+	@mkdir  $(MISSING_DIRS)
+else
+	@echo > /dev/null
+endif	

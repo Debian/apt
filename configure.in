@@ -9,6 +9,7 @@ dnl need a C++ compiler that is semi-standard conformant, exceptions are
 dnl not used but STL is.
 
 AC_INIT(configure.in)
+AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in)
 
 dnl Tom's host stuff
@@ -84,7 +85,4 @@ dnl Check for debiandoc
 AC_CHECK_PROG(DEBIANDOC_HTML,debiandoc2html,"yes","")
 AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
 
-AC_OUTPUT(environment.mak:buildlib/environment.mak.in)
-
-dnl Setup the directories
-mkdir doc bin obj include/apt-pkg include/deity
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make dirs)
