@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.49 2001/05/27 05:55:27 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.50 2001/07/01 22:28:24 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -192,6 +192,15 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       }      
    }
 
+   if (Cache.HeaderP->PackageCount >= (1ULL<<sizeof(Cache.PkgP->ID)*8)-1)
+      return _error->Error(_("Wow, you exceeded the number of package "
+			     "names this APT is capable of."));
+   if (Cache.HeaderP->VersionCount >= (1ULL<<(sizeof(Cache.VerP->ID)*8))-1)
+      return _error->Error(_("Wow, you exceeded the number of versions "
+			     "this APT is capable of."));
+   if (Cache.HeaderP->DependsCount >= (1ULL<<(sizeof(Cache.DepP->ID)*8))-1ULL)
+      return _error->Error(_("Wow, you exceeded the number of dependencies "
+			     "this APT is capable of."));
    return true;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.24 2001/05/07 04:24:08 jgg Exp $
+// $Id: pkgcache.h,v 1.25 2001/07/01 22:28:24 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -261,9 +261,9 @@ struct pkgCache::Dependency
    map_ptrloc ParentVer;       // Version
    
    // Specific types of depends
+   map_ptrloc ID;   
    unsigned char Type;
    unsigned char CompareOp;
-   unsigned short ID;   
 };
 
 struct pkgCache::Provides
