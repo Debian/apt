@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.120 2002/04/27 04:28:04 jgg Exp $
+// $Id: apt-get.cc,v 1.121 2002/07/08 04:09:52 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1340,7 +1340,8 @@ bool DoInstall(CommandLine &CmdL)
 	 // Check if the name is a regex
 	 const char *I;
 	 for (I = S; *I != 0; I++)
-	    if (*I == '.' || *I == '?' || *I == '*' || *I == '|')
+	    if (*I == '?' || *I == '*' || *I == '|' ||
+	        *I == '[' || *I == '^' || *I == '$')
 	       break;
 	 if (*I == 0)
 	    return _error->Error(_("Couldn't find package %s"),S);
@@ -1354,7 +1355,7 @@ bool DoInstall(CommandLine &CmdL)
 	 if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
 		     REG_NOSUB)) != 0)
 	 {
-	    char Error[300];
+	    char Error[300];	    
 	    regerror(Res,&Pattern,Error,sizeof(Error));
 	    return _error->Error(_("Regex compilation error - %s"),Error);
 	 }
@@ -1365,6 +1366,9 @@ bool DoInstall(CommandLine &CmdL)
 	 {
 	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
 	       continue;
+	    
+	    ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
+		     Pkg.Name(),S);
 	    
 	    if (VerTag != 0)
 	       if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
