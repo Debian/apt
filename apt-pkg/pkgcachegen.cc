@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.50 2001/07/01 22:28:24 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.51 2002/04/26 05:35:57 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -125,7 +125,8 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (Version.empty() == true)
       {
 	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
-	    return _error->Error(_("Error occured while processing %s (UsePackage1)"),PackageName.c_str());
+	    return _error->Error(_("Error occured while processing %s (UsePackage1)"),
+				 PackageName.c_str());
 	 continue;
       }
 
@@ -145,10 +146,12 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (Res == 0 && Ver->Hash == Hash)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
-	    return _error->Error(_("Error occured while processing %s (UsePackage2)"),PackageName.c_str());
+	    return _error->Error(_("Error occured while processing %s (UsePackage2)"),
+				 PackageName.c_str());
 
 	 if (NewFileVer(Ver,List) == false)
-	    return _error->Error(_("Error occured while processing %s (NewFileVer1)"),PackageName.c_str());
+	    return _error->Error(_("Error occured while processing %s (NewFileVer1)"),
+				 PackageName.c_str());
 	 
 	 // Read only a single record and return
 	 if (OutVer != 0)
@@ -176,13 +179,16 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       Ver->ParentPkg = Pkg.Index();
       Ver->Hash = Hash;
       if (List.NewVersion(Ver) == false)
-	 return _error->Error(_("Error occured while processing %s (NewVersion1)"),PackageName.c_str());
+	 return _error->Error(_("Error occured while processing %s (NewVersion1)"),
+			      PackageName.c_str());
 
       if (List.UsePackage(Pkg,Ver) == false)
-	 return _error->Error(_("Error occured while processing %s (UsePackage3)"),PackageName.c_str());
+	 return _error->Error(_("Error occured while processing %s (UsePackage3)"),
+			      PackageName.c_str());
       
       if (NewFileVer(Ver,List) == false)
-	 return _error->Error(_("Error occured while processing %s (NewVersion2)"),PackageName.c_str());
+	 return _error->Error(_("Error occured while processing %s (NewVersion2)"),
+			      PackageName.c_str());
 
       // Read only a single record and return
       if (OutVer != 0)
@@ -636,6 +642,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    {
       unlink(CacheFile.c_str());
       CacheF = new FileFd(CacheFile,FileFd::WriteEmpty);
+      fchmod(CacheF->Fd(),0644);
       Map = new DynamicMMap(*CacheF,MMap::Public,MapSize);
       if (_error->PendingError() == true)
 	 return false;
@@ -686,6 +693,9 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 	 FileFd SCacheF(SrcCacheFile,FileFd::WriteEmpty);
 	 if (_error->PendingError() == true)
 	    return false;
+	 
+	 fchmod(SCacheF.Fd(),0644);
+	 
 	 // Write out the main data
 	 if (SCacheF.Write(Map->Data(),Map->Size()) == false)
 	    return _error->Error(_("IO Error saving source cache"));
@@ -696,8 +706,8 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 	 if (SCacheF.Seek(0) == false ||
 	     SCacheF.Write(Map->Data(),sizeof(*Gen.GetCache().HeaderP)) == false)
 	    return _error->Error(_("IO Error saving source cache"));
-	 SCacheF.Sync();
 	 Gen.GetCache().HeaderP->Dirty = true;
+	 SCacheF.Sync();
       }
       
       // Build the status cache

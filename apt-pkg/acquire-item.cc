@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.44 2001/05/07 05:49:43 jgg Exp $
+// $Id: acquire-item.cc,v 1.45 2002/04/26 05:35:57 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -125,7 +125,7 @@ void pkgAcquire::Item::Rename(string From,string To)
 	      From.c_str(),To.c_str());
       Status = StatError;
       ErrorText = S;
-   }      
+   }   
 }
 									/*}}}*/
 
@@ -185,6 +185,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
       Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
       
       /* We restore the original name to DestFile so that the clean operation
          will work OK */
@@ -312,6 +313,8 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5,
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
    Rename(DestFile,FinalFile);
+   
+   chmod(FinalFile.c_str(),0644);
 }
 									/*}}}*/
 // AcqIndexRel::Failed - Silence failure messages for missing rel files	/*{{{*/
@@ -348,7 +351,8 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
    if (Version.Arch() == 0)
    {
       _error->Error(_("I wasn't able to locate a file for the %s package. "
-		    "This might mean you need to manually fix this package. (due to missing arch)"),
+		      "This might mean you need to manually fix this package. "
+		      "(due to missing arch)"),
 		    Version.ParentPkg().Name());
       return;
    }
