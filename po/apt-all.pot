@@ -6,7 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-05-19 12:54-0500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-25 19:58-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +21,8 @@ msgid "Package %s version %s has an unmet dep:\n"
 msgstr ""
 
 #: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:613
-#: cmdline/apt-cache.cc:769 cmdline/apt-cache.cc:987 cmdline/apt-cache.cc:1353
-#: cmdline/apt-cache.cc:1499
+#: cmdline/apt-cache.cc:769 cmdline/apt-cache.cc:987 cmdline/apt-cache.cc:1355
+#: cmdline/apt-cache.cc:1506
 #, c-format
 msgid "Unable to locate package %s"
 msgstr ""
@@ -91,64 +92,68 @@ msgstr ""
 msgid "You must give exactly one pattern"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1453
+#: cmdline/apt-cache.cc:1383
+msgid "No packages found"
+msgstr ""
+
+#: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1460 cmdline/apt-cache.cc:1546
+#: cmdline/apt-cache.cc:1467 cmdline/apt-cache.cc:1553
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1461
+#: cmdline/apt-cache.cc:1468
 #, c-format
 msgid "%4i %s\n"
 msgstr ""
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1473
+#: cmdline/apt-cache.cc:1480
 msgid "Pinned Packages:"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1485 cmdline/apt-cache.cc:1526
+#: cmdline/apt-cache.cc:1492 cmdline/apt-cache.cc:1533
 msgid "(not found)"
 msgstr ""
 
 #. Installed version
-#: cmdline/apt-cache.cc:1506
+#: cmdline/apt-cache.cc:1513
 msgid "  Installed: "
 msgstr ""
 
-#: cmdline/apt-cache.cc:1508 cmdline/apt-cache.cc:1516
+#: cmdline/apt-cache.cc:1515 cmdline/apt-cache.cc:1523
 msgid "(none)"
 msgstr ""
 
 #. Candidate Version
-#: cmdline/apt-cache.cc:1513
+#: cmdline/apt-cache.cc:1520
 msgid "  Candidate: "
 msgstr ""
 
-#: cmdline/apt-cache.cc:1523
+#: cmdline/apt-cache.cc:1530
 msgid "  Package Pin: "
 msgstr ""
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1532
+#: cmdline/apt-cache.cc:1539
 msgid "  Version Table:"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1547
+#: cmdline/apt-cache.cc:1554
 #, c-format
 msgid "       %4i %s\n"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1574 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
+#: cmdline/apt-cache.cc:1581 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:544
-#: cmdline/apt-get.cc:2168 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2178 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr ""
 
-#: cmdline/apt-cache.cc:1578
+#: cmdline/apt-cache.cc:1585
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -226,12 +231,12 @@ msgid ""
 "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
 
-#: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:699
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
 #, c-format
 msgid "Unable to write to %s"
 msgstr ""
 
-#: cmdline/apt-extracttemplates.cc:302
+#: cmdline/apt-extracttemplates.cc:310
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr ""
 
@@ -262,7 +267,7 @@ msgstr ""
 #: ftparchive/apt-ftparchive.cc:550
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
-"Commands: packges binarypath [overridefile [pathprefix]]\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
 "          sources srcpath [overridefile [pathprefix]]\n"
 "          contents path\n"
 "          generate config [groups]\n"
@@ -282,9 +287,9 @@ msgid ""
 "\n"
 "The 'packages' and 'sources' command should be run in the root of the\n"
 "tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contian the override flags. Pathprefix is\n"
+"override file should contain the override flags. Pathprefix is\n"
 "appended to the filename fields if present. Example usage from the \n"
-"debian archive:\n"
+"Debian archive:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
@@ -630,57 +635,57 @@ msgstr ""
 msgid "Unmet dependencies. Try using -f."
 msgstr ""
 
-#: cmdline/apt-get.cc:705
+#: cmdline/apt-get.cc:706
 msgid "Packages need to be removed but Remove is disabled."
 msgstr ""
 
-#: cmdline/apt-get.cc:731 cmdline/apt-get.cc:1697 cmdline/apt-get.cc:1730
+#: cmdline/apt-get.cc:732 cmdline/apt-get.cc:1698 cmdline/apt-get.cc:1731
 msgid "Unable to lock the download directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:741 cmdline/apt-get.cc:1778 cmdline/apt-get.cc:1989
+#: cmdline/apt-get.cc:742 cmdline/apt-get.cc:1779 cmdline/apt-get.cc:1990
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr ""
 
-#: cmdline/apt-get.cc:761
+#: cmdline/apt-get.cc:762
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:764
+#: cmdline/apt-get.cc:765
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:769
+#: cmdline/apt-get.cc:770
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:772
+#: cmdline/apt-get.cc:773
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:789
+#: cmdline/apt-get.cc:790
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr ""
 
-#: cmdline/apt-get.cc:798
+#: cmdline/apt-get.cc:799
 msgid "There are problems and -y was used without --force-yes"
 msgstr ""
 
-#: cmdline/apt-get.cc:804 cmdline/apt-get.cc:824
+#: cmdline/apt-get.cc:805 cmdline/apt-get.cc:825
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr ""
 
-#: cmdline/apt-get.cc:806
+#: cmdline/apt-get.cc:807
 msgid "Yes, do as I say!"
 msgstr ""
 
-#: cmdline/apt-get.cc:808
+#: cmdline/apt-get.cc:809
 #, c-format
 msgid ""
 "You are about to do something potentially harmful\n"
@@ -688,74 +693,74 @@ msgid ""
 " ?] "
 msgstr ""
 
-#: cmdline/apt-get.cc:814 cmdline/apt-get.cc:833
+#: cmdline/apt-get.cc:815 cmdline/apt-get.cc:834
 msgid "Abort."
 msgstr ""
 
-#: cmdline/apt-get.cc:829
+#: cmdline/apt-get.cc:830
 msgid "Do you want to continue? [Y/n] "
 msgstr ""
 
-#: cmdline/apt-get.cc:898 cmdline/apt-get.cc:1269 cmdline/apt-get.cc:1887
+#: cmdline/apt-get.cc:899 cmdline/apt-get.cc:1270 cmdline/apt-get.cc:1888
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:916
+#: cmdline/apt-get.cc:917
 msgid "Some files failed to download"
 msgstr ""
 
-#: cmdline/apt-get.cc:917 cmdline/apt-get.cc:1896
+#: cmdline/apt-get.cc:918 cmdline/apt-get.cc:1897
 msgid "Download complete and in download only mode"
 msgstr ""
 
-#: cmdline/apt-get.cc:923
+#: cmdline/apt-get.cc:924
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
 
-#: cmdline/apt-get.cc:927
+#: cmdline/apt-get.cc:928
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr ""
 
-#: cmdline/apt-get.cc:932
+#: cmdline/apt-get.cc:933
 msgid "Unable to correct missing packages."
 msgstr ""
 
-#: cmdline/apt-get.cc:933
+#: cmdline/apt-get.cc:934
 msgid "Aborting Install."
 msgstr ""
 
-#: cmdline/apt-get.cc:966
+#: cmdline/apt-get.cc:967
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:976
+#: cmdline/apt-get.cc:977
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:994
+#: cmdline/apt-get.cc:995
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1005
+#: cmdline/apt-get.cc:1006
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1017
+#: cmdline/apt-get.cc:1018
 msgid " [Installed]"
 msgstr ""
 
-#: cmdline/apt-get.cc:1022
+#: cmdline/apt-get.cc:1023
 msgid "You should explicitly select one to install."
 msgstr ""
 
-#: cmdline/apt-get.cc:1027
+#: cmdline/apt-get.cc:1028
 #, c-format
 msgid ""
 "Package %s has no available version, but exists in the database.\n"
@@ -764,84 +769,84 @@ msgid ""
 "of sources.list\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1047
+#: cmdline/apt-get.cc:1048
 msgid "However the following packages replace it:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1050
+#: cmdline/apt-get.cc:1051
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr ""
 
-#: cmdline/apt-get.cc:1070
+#: cmdline/apt-get.cc:1071
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1078
+#: cmdline/apt-get.cc:1079
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1105
+#: cmdline/apt-get.cc:1106
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr ""
 
-#: cmdline/apt-get.cc:1107
+#: cmdline/apt-get.cc:1108
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr ""
 
-#: cmdline/apt-get.cc:1113
+#: cmdline/apt-get.cc:1114
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1223
+#: cmdline/apt-get.cc:1224
 msgid "The update command takes no arguments"
 msgstr ""
 
-#: cmdline/apt-get.cc:1236
+#: cmdline/apt-get.cc:1237
 msgid "Unable to lock the list directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:1288
+#: cmdline/apt-get.cc:1289
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
 msgstr ""
 
-#: cmdline/apt-get.cc:1307
+#: cmdline/apt-get.cc:1308
 msgid "Internal Error, AllUpgrade broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:1397 cmdline/apt-get.cc:1433
+#: cmdline/apt-get.cc:1398 cmdline/apt-get.cc:1434
 #, c-format
 msgid "Couldn't find package %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1410
+#: cmdline/apt-get.cc:1411
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1420
+#: cmdline/apt-get.cc:1421
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1450
+#: cmdline/apt-get.cc:1451
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1453
+#: cmdline/apt-get.cc:1454
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
 
-#: cmdline/apt-get.cc:1465
+#: cmdline/apt-get.cc:1466
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -849,140 +854,140 @@ msgid ""
 "or been moved out of Incoming."
 msgstr ""
 
-#: cmdline/apt-get.cc:1473
+#: cmdline/apt-get.cc:1474
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
 "that package should be filed."
 msgstr ""
 
-#: cmdline/apt-get.cc:1478
+#: cmdline/apt-get.cc:1479
 msgid "The following information may help to resolve the situation:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1481
+#: cmdline/apt-get.cc:1482
 msgid "Broken packages"
 msgstr ""
 
-#: cmdline/apt-get.cc:1507
+#: cmdline/apt-get.cc:1508
 msgid "The following extra packages will be installed:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1571
+#: cmdline/apt-get.cc:1572
 msgid "Suggested packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1572
+#: cmdline/apt-get.cc:1573
 msgid "Recommended packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1592
+#: cmdline/apt-get.cc:1593
 msgid "Calculating Upgrade... "
 msgstr ""
 
-#: cmdline/apt-get.cc:1595 methods/ftp.cc:700 methods/connect.cc:99
+#: cmdline/apt-get.cc:1596 methods/ftp.cc:700 methods/connect.cc:99
 msgid "Failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:1600
+#: cmdline/apt-get.cc:1601
 msgid "Done"
 msgstr ""
 
-#: cmdline/apt-get.cc:1773
+#: cmdline/apt-get.cc:1774
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 
-#: cmdline/apt-get.cc:1800 cmdline/apt-get.cc:2007
+#: cmdline/apt-get.cc:1801 cmdline/apt-get.cc:2008
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1847
+#: cmdline/apt-get.cc:1848
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1852
+#: cmdline/apt-get.cc:1853
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1855
+#: cmdline/apt-get.cc:1856
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1861
+#: cmdline/apt-get.cc:1862
 #, c-format
 msgid "Fetch Source %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1892
+#: cmdline/apt-get.cc:1893
 msgid "Failed to fetch some archives."
 msgstr ""
 
-#: cmdline/apt-get.cc:1920
+#: cmdline/apt-get.cc:1921
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1932
+#: cmdline/apt-get.cc:1933
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1949
+#: cmdline/apt-get.cc:1950
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1968
+#: cmdline/apt-get.cc:1969
 msgid "Child process failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:1984
+#: cmdline/apt-get.cc:1985
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2012
+#: cmdline/apt-get.cc:2013
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2032
+#: cmdline/apt-get.cc:2033
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2067
+#: cmdline/apt-get.cc:2068
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
 
-#: cmdline/apt-get.cc:2109
+#: cmdline/apt-get.cc:2118
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
 
-#: cmdline/apt-get.cc:2136
+#: cmdline/apt-get.cc:2146
 msgid ""
 "Some broken packages were found while trying to process build-dependencies.\n"
 "You might want to run `apt-get -f install' to correct these."
 msgstr ""
 
-#: cmdline/apt-get.cc:2141
+#: cmdline/apt-get.cc:2151
 msgid "Failed to process build dependencies"
 msgstr ""
 
-#: cmdline/apt-get.cc:2173
+#: cmdline/apt-get.cc:2183
 msgid "Supported Modules:"
 msgstr ""
 
-#: cmdline/apt-get.cc:2214
+#: cmdline/apt-get.cc:2224
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1123,7 +1128,7 @@ msgstr ""
 
 #: apt-inst/contrib/extracttar.cc:295
 #, c-format
-msgid "Unkown TAR header type %u, member %s"
+msgid "Unknown TAR header type %u, member %s"
 msgstr ""
 
 #: apt-inst/contrib/arfile.cc:73
@@ -1234,7 +1239,7 @@ msgstr ""
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr ""
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:701
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1706,47 +1711,47 @@ msgstr ""
 msgid "Selection %s not found"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:449
+#: apt-pkg/contrib/configuration.cc:453
 #, c-format
 msgid "Opening configuration file %s"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:559
+#: apt-pkg/contrib/configuration.cc:563
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:578
+#: apt-pkg/contrib/configuration.cc:582
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:595
+#: apt-pkg/contrib/configuration.cc:599
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:635
+#: apt-pkg/contrib/configuration.cc:639
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:642
+#: apt-pkg/contrib/configuration.cc:646
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:646 apt-pkg/contrib/configuration.cc:651
+#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:689
+#: apt-pkg/contrib/configuration.cc:693
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr ""
