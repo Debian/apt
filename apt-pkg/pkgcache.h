@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.13 1998/12/14 02:23:46 jgg Exp $
+// $Id: pkgcache.h,v 1.14 1998/12/14 03:39:15 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -153,6 +153,8 @@ struct pkgCache::Header
    unsigned long VersionCount;
    unsigned long DependsCount;
    unsigned long PackageFileCount;
+   unsigned long VerFileCount;
+   unsigned long ProvidesCount;
    
    // Offsets
    __apt_ptrloc FileList;              // struct PackageFile

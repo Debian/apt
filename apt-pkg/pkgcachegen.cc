@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.25 1998/12/14 02:23:47 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.26 1998/12/14 03:39:15 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -188,6 +188,8 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    VF->Size = List.Size();
    if (Cache.HeaderP->MaxVerFileSize < VF->Size)
       Cache.HeaderP->MaxVerFileSize = VF->Size;
+   Cache.HeaderP->VerFileCount++;
+   
    return true;
 }
 									/*}}}*/
@@ -295,6 +297,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    unsigned long Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
    if (Provides == 0)
       return false;
+   Cache.HeaderP->ProvidesCount++;
    
    // Fill it in
    pkgCache::PrvIterator Prv(Cache,Cache.ProvideP + Provides,Cache.PkgP);

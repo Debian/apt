@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.19 1998/12/14 02:23:47 jgg Exp $
+// $Id: apt-cache.cc,v 1.20 1998/12/14 03:39:15 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -237,8 +237,10 @@ bool Stats(CommandLine &Cmd)
    cout << "Total Dependencies: " << Cache.Head().DependsCount << " (" << 
       SizeToStr(Cache.Head().DependsCount*Cache.Head().DependencySz) << ')' << endl;
    
-   cout << "Total Ver/File relations: " << Cache.Head().PackageCount << " (" <<
-      SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
+   cout << "Total Ver/File relations: " << Cache.Head().VerFileCount << " (" <<
+      SizeToStr(Cache.Head().VerFileCount*Cache.Head().VerFileSz) << ')' << endl;
+   cout << "Total Provides Mappings: " << Cache.Head().ProvidesCount << " (" <<
+      SizeToStr(Cache.Head().ProvidesCount*Cache.Head().ProvidesSz) << ')' << endl;
    
    // String list stats
    unsigned long Size = 0;
@@ -259,7 +261,9 @@ bool Stats(CommandLine &Cmd)
    unsigned long Total = 0;
    Total = Slack + Size + Cache.Head().DependsCount*Cache.Head().DependencySz + 
            Cache.Head().VersionCount*Cache.Head().VersionSz +
-           Cache.Head().PackageCount*Cache.Head().PackageSz;
+           Cache.Head().PackageCount*Cache.Head().PackageSz + 
+           Cache.Head().VerFileCount*Cache.Head().VerFileSz +
+           Cache.Head().ProvidesCount*Cache.Head().ProvidesSz;
    cout << "Total Space Accounted for: " << SizeToStr(Total) << endl;
    
    return true;
