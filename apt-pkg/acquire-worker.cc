@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.16 1998/12/14 06:54:41 jgg Exp $
+// $Id: acquire-worker.cc,v 1.17 1999/01/20 05:11:25 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -257,7 +257,12 @@ bool pkgAcquire::Worker::RunMessages()
 	    {
 	       if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true ||
 		   StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
-		  Log->IMSHit(Desc);
+	       {
+		  /* Hide 'hits' for local only sources - we also manage to
+		     hide gets */
+		  if (Config->LocalOnly == false)
+		     Log->IMSHit(Desc);
+	       }	       
 	       else
 		  Log->Done(Desc);
 	    }	    

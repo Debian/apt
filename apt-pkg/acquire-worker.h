@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.8 1998/12/04 21:16:48 jgg Exp $
+// $Id: acquire-worker.h,v 1.9 1999/01/20 05:11:25 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
@@ -36,7 +36,7 @@ class pkgAcquire::Worker
    pkgAcquireStatus *Log;
    MethodConfig *Config;
    string Access;
-      
+
    // This is the subprocess IPC setup
    pid_t Process;
    int InFd;
