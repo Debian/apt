@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.32 2001/02/20 07:03:17 jgg Exp $
+// $Id: pkgcache.cc,v 1.33 2001/03/05 02:43:28 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -525,7 +525,7 @@ string pkgCache::VerIterator::RelStr()
 	    Seen = true;
 	    break;
 	 }
-	 if (File2->Version == 0)
+	 if (File2->Version == 0 || File->Version == 0)
 	    break;
 	 if (strcmp(File.Version(),File2.Version()) == 0)
 	    Seen = true;
