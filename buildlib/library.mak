@@ -21,7 +21,7 @@ $(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .opic.d,$(notdir $(basename $(SO
 $(LOCAL)-HEADERS := $(addprefix $(INCLUDE)/,$(HEADERS))
 $(LOCAL)-SONAME := lib$(LIBRARY).so.$(MAJOR)
 $(LOCAL)-SLIBS := $(SLIBS)
-$(LOCAL)-LIBRARY := $(LIBARARY)
+$(LOCAL)-LIBRARY := $(LIBRARY)
 
 # Install the command hooks
 headers: $($(LOCAL)-HEADERS)
@@ -45,6 +45,7 @@ $(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 	
 # The binary build rule
 $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
+	-rm -f lib$($(@F)-LIBRARY).so* 2> /dev/null
 	echo Building shared library $@
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) -o $@ \
 	   -Wl,-soname -Wl,$($(@F)-SONAME) -shared $(filter %.opic,$^) \
