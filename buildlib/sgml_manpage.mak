@@ -11,8 +11,6 @@
 # See defaults.mak for information about LOCAL
 
 # Some local definitions
-ifdef NSGMLS
-ifdef SGMLSPL
 ifdef DOCBOOK2MAN
 
 LOCAL := sgml-manpage-$(firstword $(SOURCE))
@@ -24,7 +22,7 @@ veryclean: veryclean/$(LOCAL)
 
 $($(LOCAL)-LIST) :: % : %.sgml $(INCLUDES)
 	echo Creating man page $@
-	$(NSGMLS) $< | $(SGMLSPL) $(DOCBOOK2MAN) 
+	$(DOCBOOK2MAN) $<
 
 # Clean rule
 .PHONY: veryclean/$(LOCAL)
@@ -32,8 +30,6 @@ veryclean/$(LOCAL):
 	-rm -rf $($(@F)-LIST)
 
 HAVE_SGML=yes
-endif
-endif
 endif
 
 INCLUDES :=
