@@ -13,10 +13,11 @@
 BUILDDIR=build
 
 .PHONY: startup
-startup: configure $(addprefix $(BUILDDIR)/,$(CONVERTED))
+startup: configure $(BUILDDIR)/config.status $(addprefix $(BUILDDIR)/,$(CONVERTED)) 
 
 configure: aclocal.m4 configure.in
-	autoconf	
+	autoconf
+
 aclocal.m4:
 	aclocal -I buildlib
 $(BUILDDIR)/config.status: configure
