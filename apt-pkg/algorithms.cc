@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.35 2001/05/07 02:15:33 jgg Exp $
+// $Id: algorithms.cc,v 1.36 2001/05/27 03:46:10 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -213,6 +213,9 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 {
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
+      if (I->VersionList == 0)
+	 continue;
+	 
       // Only choice for a ReInstReq package is to reinstall
       if (I->InstState == pkgCache::State::ReInstReq ||
 	  I->InstState == pkgCache::State::HoldReInstReq)
