@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.17 1999/04/28 22:48:45 jgg Exp $
+// $Id: algorithms.cc,v 1.18 1999/06/04 02:31:37 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -776,7 +776,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			   Scores[I->ID] = Scores[Pkg->ID];
 		     }
 		  }
-
+		  		  
 		  Change = true;
 		  Done = true;
 		  break;
@@ -856,8 +856,19 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    delete [] PList;
    
    if (Cache.BrokenCount() != 0)
-      return _error->Error("Internal error, pkgProblemResolver::Resolve generated breaks.");
-
+   {
+      // See if this is the result of a hold
+      pkgCache::PkgIterator I = Cache.PkgBegin();
+      for (;I.end() != true; I++)
+      {
+	 if (Cache[I].InstBroken() == false)
+	    continue;
+	 if ((Flags[I->ID] & Protected) != Protected)
+	    return _error->Error("Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.");
+      }
+      return _error->Error("Unable to correct problems, you have held broken packages.");
+   }
+   
    return true;
 }
 									/*}}}*/

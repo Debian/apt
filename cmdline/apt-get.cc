@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.61 1999/05/24 03:39:37 jgg Exp $
+// $Id: apt-get.cc,v 1.62 1999/06/04 02:31:37 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -846,10 +846,10 @@ bool DoInstall(CommandLine &CmdL)
       packages */
    if (BrokenFix == true && Cache->BrokenCount() != 0)
    {
-      c1out << "You might want to run `apt-get -f install' to correct these." << endl;
+      c1out << "You might want to run `apt-get -f install' to correct these:" << endl;
       ShowBroken(c1out,Cache);
 
-      return _error->Error("Unmet dependencies. Try using -f.");
+      return _error->Error("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).");
    }
    
    // Call the scored problem resolver
@@ -1344,7 +1344,7 @@ bool ShowHelp(CommandLine &CmdL)
    cout << "  -f  Attempt to continue if the integrity check fails" << endl;
    cout << "  -m  Attempt to continue if archives are unlocatable" << endl;
    cout << "  -u  Show a list of upgraded packages as well" << endl;
-   cout << "  -b  Bulid the source package after fetching itl" << endl;
+   cout << "  -b  Build the source package after fetching it" << endl;
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
    cout << "See the apt-get(8), sources.list(5) and apt.conf(5) manual" << endl;
