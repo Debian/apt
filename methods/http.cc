@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.30 1999/04/04 02:02:04 jgg Exp $
+// $Id: http.cc,v 1.31 1999/05/25 05:56:24 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -41,12 +41,14 @@
 #include <errno.h>
 
 // Internet stuff
-#include <netinet/in.h>
+/*#include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <netdb.h>
+#include <netdb.h>*/
 
+#include "rfc2553emu.h"
 #include "http.h"
+
 									/*}}}*/
 
 string HttpMethod::FailFile;
@@ -258,7 +260,8 @@ ServerState::ServerState(URI Srv,HttpMethod *Owner) : Owner(Owner),
 // ---------------------------------------------------------------------
 /* This opens a connection to the server. */
 string LastHost;
-in_addr LastHostA;
+int LastPort = 0;
+struct addrinfo *LastHostAddr = 0;
 bool ServerState::Open()
 {
    // Use the already open connection if possible.
@@ -288,7 +291,7 @@ bool ServerState::Open()
       Proxy = getenv("http_proxy");
    
    // Determine what host and port to use based on the proxy settings
-   int Port = 80;
+   int Port = 0;
    string Host;   
    if (Proxy.empty() == true)
    {
@@ -306,33 +309,46 @@ bool ServerState::Open()
    /* We used a cached address record.. Yes this is against the spec but
       the way we have setup our rotating dns suggests that this is more
       sensible */
-   if (LastHost != Host)
+   if (LastHost != Host || LastPort != Port)
    {
       Owner->Status("Connecting to %s",Host.c_str());
 
       // Lookup the host
-      hostent *Addr = gethostbyname(Host.c_str());
-      if (Addr == 0 || Addr->h_addr_list[0] == 0)
+      char S[30] = "http";
+      if (Port != 0)
+	 snprintf(S,sizeof(S),"%u",Port);
+
+      // Free the old address structure
+      if (LastHostAddr != 0)
+      {
+	 freeaddrinfo(LastHostAddr);
+	 LastHostAddr = 0;
+      }
+      
+      // We only understand SOCK_STREAM sockets.
+      struct addrinfo Hints;
+      memset(&Hints,0,sizeof(Hints));
+      Hints.ai_socktype = SOCK_STREAM;
+      
+      // Resolve both the host and service simultaneously
+      if (getaddrinfo(Host.c_str(),S,&Hints,&LastHostAddr) != 0 ||
+	  LastHostAddr == 0)
 	 return _error->Error("Could not resolve '%s'",Host.c_str());
+
       LastHost = Host;
-      LastHostA = *(in_addr *)(Addr->h_addr_list[0]);
+      LastPort = Port;
    }
-   
-   Owner->Status("Connecting to %s (%s)",Host.c_str(),inet_ntoa(LastHostA));
-   
-   // Get a socket
-   if ((ServerFd = socket(AF_INET,SOCK_STREAM,0)) < 0)
-      return _error->Errno("socket","Could not create a socket");
-   
+      
    // Connect to the server
-   struct sockaddr_in server;
-   server.sin_family = AF_INET;
-   server.sin_port = htons(Port);
-   server.sin_addr = LastHostA;
-   SetNonBlock(ServerFd,true);
-   if (connect(ServerFd,(sockaddr *)&server,sizeof(server)) < 0 &&
-       errno != EINPROGRESS)
+   // Get a socket
+//   Owner->Status("Connecting to %s (%s)",Host.c_str(),inet_ntoa(LastHostA));
+   if ((ServerFd = socket(LastHostAddr->ai_family,LastHostAddr->ai_socktype,
+			  LastHostAddr->ai_protocol)) < 0)
       return _error->Errno("socket","Could not create a socket");
+   SetNonBlock(ServerFd,true);
+   if (connect(ServerFd,LastHostAddr->ai_addr,LastHostAddr->ai_addrlen) < 0 &&
+       errno != EINPROGRESS)
+      return _error->Errno("connect","Connect initiate the connection");
 
    /* This implements a timeout for connect by opening the connection
       nonblocking */

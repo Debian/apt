@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.9 1999/05/23 23:30:09 jgg Exp $
+// $Id: ftp.cc,v 1.10 1999/05/25 05:56:24 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -9,7 +9,9 @@
    at all. Commands are sent syncronously with the FTP server (as the
    rfc recommends, but it is not really necessary..) and no tricks are
    done to speed things along.
-							       
+			
+   RFC 2428 describes the IPv6 FTP behavior
+   
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/

@@ -38,7 +38,7 @@ include $(PROGRAM_H)
 PROGRAM=http
 SLIBS = -lapt-pkg 
 LIB_MAKES = apt-pkg/makefile
-SOURCE = http.cc
+SOURCE = http.cc rfc2553emu.cc
 include $(PROGRAM_H)
 
 # The ftp method
