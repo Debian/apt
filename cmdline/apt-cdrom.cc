@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.21 1999/04/07 05:57:04 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.22 1999/04/07 06:00:20 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -893,9 +893,9 @@ bool DoAdd(CommandLine &)
    {
       // Try to use the CDs label if at all possible
       if (InfoDir.empty() == false &&
-	  FileExists(CDROM + InfoDir + "/info") == true)
+	  FileExists(InfoDir + "/info") == true)
       {
-	 ifstream F(string(CDROM + InfoDir + "/info").c_str());
+	 ifstream F(string(InfoDir + "/info").c_str());
 	 if (!F == 0)
 	    getline(F,Name);
 
