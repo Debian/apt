@@ -19,7 +19,7 @@ AC_DEFUN(ah_NUM_CPUS,
 	AC_ARG_WITH(cpus,
 		[  --with-cpus             The number of cpus to be used for building(see --with-procs, default 1)],
 		[if test "$withval" = "yes"; then
-			if test "$GETCONF";then
+			if test ! -z "$GETCONF";then
 				NUM_CPUS=`$GETCONF _NPROCESSORS_ONLN 2>/dev/null`
 			else
 				NUM_CPUS=1
