@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.23 1999/01/30 02:12:53 jgg Exp $
+// $Id: apt-cache.cc,v 1.24 1999/02/08 07:54:58 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -23,9 +23,10 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
+#include <config.h>
 
 #include <iostream.h>
-#include <config.h>
+#include <errno.h>
 									/*}}}*/
 
 pkgCache *GCache = 0;
