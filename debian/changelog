@@ -20,10 +20,10 @@ apt (0.5.5) unstable; urgency=low
     is to work. Closes: #133943
   * Typos, Doc Stuff. Closes: #132772, #129970, #123642, #114892, #113786,
          #109591, #105920, #103678, #139752, #138186, #138054, #138050,
-	 #139994, #142955, #151654, #151834, #147611, #154268
+	 #139994, #142955, #151654, #151834, #147611, #154268, #173971
   * Fix possibility for tag file parsing to fail in some unlikely situations.
     Closes: #139328
-  * Use std C++ names for some header files. Closes: #128741, 
+  * Use std C++ names for some header files. Closes: #128741
   * Do not check for free space if --no-download. Closes: #117856
   * Actually implement or group handling for 'upgrade'. Closes: #133950
   * "Internal Error, Couldn't configure pre-depend" is not actually an
@@ -50,7 +50,7 @@ apt (0.5.5) unstable; urgency=low
   * Show file name on apt-extracttemplate error messges. Closes: #151835
   * i18n gettext stuff, based on work from Michael Piefel: Closes: #95933
   * Some highly unlikely memory faults. Closes: #155842
-  * C++ stuff for G++3.2. Closes: #162617, #165515, 
+  * C++ stuff for G++3.2. Closes: #162617, #165515,
   * apt-config dumps sends to stdout not stderr now.  Closes: #146294
   * Fix segfault in FindAny when /i is used, and there is no default.
     Closes: #165891
@@ -76,13 +76,18 @@ apt (0.5.5) unstable; urgency=low
     #165518
   * Check the currently mounted cdrom, to see if it's the one we are
     interested in.  Closes: #154602
+  * Refer to reportbug instead of bug in the man pages. Closes: #173745
+  * Link apt-inst to apt-pkg. Closes: #175055
+  * New apt_preferences man page from Thomas Hood, Susan Kleinmann,
+    and others.
+  * Fix > 300 col screen segfault. Closes: #176052
   * Rebuild with gcc-3.2. Closes: #177752, #178008.
-  * Fix build-dep handling of | dependencies. 
+  * Fix build-dep handling of | dependencies.
     Closes: #98640, #145997, #158896, #172901
   * Double default value of APT::Cache-Limit, until such time as it
     can be made more dynamic.  Closes: #178623.
   * Report uris with '.gz' when there are errors.  Closes: #178435.
-  * When installing build-deps, make sure the new version will 
+  * When installing build-deps, make sure the new version will
     satisfy build requirements. Closes: #178121
 
  -- Jason Gunthorpe <jgg@debian.org>  Sun, 15 Sep 2002 17:16:59 -0600
@@ -109,7 +114,7 @@ apt (0.5.4) unstable; urgency=low
   * Reordered some things to make dante and FTP happier. Closes: #92757
   * James R. Van Zandt's guide.sgml updates. Closes: #90027
   * apt-ftparchive copes with no uncompressed package files + contents.
-  * French man pages from philippe batailler - well sort of. They 
+  * French man pages from philippe batailler - well sort of. They
     don't build yet..
   * run-parts. Closes: #94286
   * 'apt-cache policy' preferences debug tool.
@@ -118,18 +123,18 @@ apt (0.5.4) unstable; urgency=low
   * More apt-utils verbage. Closes: #86954
   * Fliped comparision operator. Closes: #94618
   * Used the right copyright file. Closes: #65691
-  * Randolph's G++3 patches. 
+  * Randolph's G++3 patches.
   * Fixed no_proxy tokanizing. Closes: #100046
   * Strip Config-Version when copying status to available. Closes: #97520
   * Segfault with missing source files. Closes: #100325
   * EINTR check. Closes: #102293
-  * Various changes to the locking metholodgy for --print-uris. 
+  * Various changes to the locking metholodgy for --print-uris.
     Closes: #100590
   * Lame LD_LIBRARY_PATH thing. Closes: #98928
   * apt-cache search searchs provide names too now. Closes: #98695
   * Checksum and long lines problem. Closes: #106591
-  * .aptignr and empty files are just a warning. Closes: #97364  
-  
+  * .aptignr and empty files are just a warning. Closes: #97364
+
  -- Jason Gunthorpe <jgg@debian.org>  Sat, 18 Aug 2001 17:21:59 -0500
 
 apt (0.5.3) unstable; urgency=low
@@ -137,7 +142,7 @@ apt (0.5.3) unstable; urgency=low
   * JoeyH's dpkg::preconfig not working. Closes: #88675
   * Fixed apt override disparity
   * Alfredo's SHA-1 and related patches
-  
+
  -- Jason Gunthorpe <jgg@debian.org>  Sun,  4 Mar 2001 15:39:43 -0700
 
 apt (0.5.2) unstable; urgency=low
@@ -146,7 +151,7 @@ apt (0.5.2) unstable; urgency=low
   * JoeyH's downgrade bug -- don't use 0.5.1
   * Doc bug. Closes: #88538
   * Fault in building release strings. Closes: #88533
-  
+
  -- Jason Gunthorpe <jgg@debian.org>  Sun,  4 Mar 2001 15:39:43 -0700
 
 apt (0.5.1) unstable; urgency=low
@@ -158,7 +163,7 @@ apt (0.5.1) unstable; urgency=low
   * Alfredo's no_proxy patch
   * Documentation fixes. Closes: #87091
   * JoeyH's double slash bug. Closes: #87266
-  * Unintitialized buffer and apt-ftparchive contents generation. 
+  * Unintitialized buffer and apt-ftparchive contents generation.
      Closes: #87612
   * Build-deps on virtual packages. Closes: #87639
   * Fixes glibc/libstdc++ symbol dependencies by including glibc and
@@ -172,12 +177,12 @@ apt (0.5.1) unstable; urgency=low
     non-sensical way. Closes: #87390
   * Work better if there are duplicate sources.list entries.
   * Fixed the resetting of Dir with "dir {};". Closes: #87323
-  
+
  -- Randolph Chung <tausq@debian.org>  Sat, 3 Mar 2001 15:37:38 -0700
 
 apt (0.5.0) unstable; urgency=low
 
-  * Fixed an obscure bug with missing final double new lines in 
+  * Fixed an obscure bug with missing final double new lines in
     package files
   * Changed the apt-cdrom index copy routine to use the new section
     rewriter
@@ -195,7 +200,7 @@ apt (0.5.0) unstable; urgency=low
   * Added apt-ftparchive the all dancing all singing FTP archive
     maintinance program
   * Allow version specifications with =1.2.4-3 and /2.2 or /stable postfixes
-    in apt-get. 
+    in apt-get.
   * Removed useless internal cruft including the xstatus file.
   * Fixed config parser bugs. Closes: #67848, #71108
   * Brain Damanged apt-get config options changed, does not change the command
@@ -216,7 +221,7 @@ apt (0.5.0) unstable; urgency=low
   * Created apt-utils and python-apt packages
   * Due to the new policy engine, the available file may contain entries
     from the status file. These are generated if the package is not obsolete
-    but the policy engine prohibits using the version from the package files. 
+    but the policy engine prohibits using the version from the package files.
     They can be identified by the lack of a Filename field.
   * The new policy engine. Closes: #66509, #66944, #45122, #45094, #40006,
     #36223, #33468, #22551
@@ -226,17 +231,17 @@ apt (0.5.0) unstable; urgency=low
   * Confirmed fix for missing new line problem. Closes: #69386
   * Fixed up dhelp files. Closes: #71312
   * Added some notes about dselect and offline usage. Closes: #66473, #38316
-  * Lock files on read only file systems are ignored w/ warning. 
+  * Lock files on read only file systems are ignored w/ warning.
     Closes: #61701
   * apt-get update foo now gives an error! Closes: #42891
   * Added test for shlibs on hurd. Closes: #71499
   * Clarified apt-cache document. Closes: #71934
-  * DocBook SGML man pages and some improvements in the text.. 
+  * DocBook SGML man pages and some improvements in the text..
   * sigwinch thing. Closes: #72382
   * Caching can be turned off by setting the cache file names blank.
   * Ignores arches it does not know about when autocleaning. Closes: #72862
   * New function in apt-config to return dirs, files, bools and integers.
-  * Fixed an odd litle bug in MarkInstall and fixed it up to handle 
+  * Fixed an odd litle bug in MarkInstall and fixed it up to handle
     complex cases involving OR groups and provides.
     68754 describes confusing messages which are the result of this..
     Closes: #63149, #69394, #68754, #77683, #66806, #81486, #78712
@@ -265,20 +270,20 @@ apt (0.5.0) unstable; urgency=low
   * Unlock the dpkg db if in download only mode. Closes: #84851
   * Brendan O'Dea's dselect admindir stuff. Closes: #62811
   * Patch from BenC. Closes: #80810
-  * Single output of some names in lists. Closes: #80498, #43286  
+  * Single output of some names in lists. Closes: #80498, #43286
   * Nice message for people who can't read syserror output. Closes: #84734
   * OR search function. Closes: #82894
-  * User's guide updates. Closes: #82469  
+  * User's guide updates. Closes: #82469
   * The AJ/JoeyH var/state to var/lib transition patch. Closes: #59094
-  * Various CD bugs, again thanks to Greenbush 
+  * Various CD bugs, again thanks to Greenbush
     Closes: #80946, #76547, #71810, #70049, #69482
   * Using potato debhelper. Closes: #57977
   * I cannot self-terminate. Closes: #74928
-  
+
  -- Jason Gunthorpe <jgg@debian.org>  Wed, 21 Feb 2001 00:39:15 -0500
- 
+
 apt (0.3.19) frozen unstable; urgency=low
-  
+
   * Updates to apt-cdrom to support integrated non-us nicely, thanks to
     Paul Wade.
   * Fixed that apt-get/cdrom deadlock thing. Closes: #59853, #62945, #61976
@@ -288,51 +293,51 @@ apt (0.3.19) frozen unstable; urgency=low
   * Space check is supressed if --print-uris is given. Closes: #58965
   * Clarified the documenation examples for non-us. Closes: #58646
   * Typo in the package description. Closes: #60230
-  * Man Page typo. Closes: #60347 
+  * Man Page typo. Closes: #60347
   * Typo in Algorithms.cc. Closes: #63577
   * Evil dotty function in apt-cache for generating dependency graphs
     with the as-yet-unpackaged GraphVis.
   * Appears to have been fixed in Janurary.. Closes: #57981
   * New config.guess/sub for the new archs. Closes: #60874
-  * Fixed error reporting for certain kinds of resolution failures. 
+  * Fixed error reporting for certain kinds of resolution failures.
     Closes: #61327
   * Made autoclean respect 'q' settings. Closes: #63023
   * Fixed up the example sources.list. Closes: #63676
   * Added DPkg::FlushSTDIN to control the flushing of stdin before
     forking dpkg. Closes: #63991
-    
+
  -- Ben Gertzfield <che@debian.org>  Fri, 12 May 2000 21:10:54 -0700
 
 apt (0.3.18) frozen unstable; urgency=low
-  
+
   * Changes in the postinst script. Closes: #56855, #57237
   * Fixed bashism. Closes: #57216, #57335
   * Doc updates. Closes: #57772, #57069, #57331, #57833, #57896
-     
+
  -- Ben Gertzfield <che@debian.org>  Sun, 13 Feb 2000 01:52:31 -0800
 
 apt (0.3.17) unstable; urgency=low
 
   * RFC 2732 usage for CDROM URIs and fixes to apt-cdrom
-  * Fixed the configuration parser to not blow up if ; is in the config 
+  * Fixed the configuration parser to not blow up if ; is in the config
     string
   * Applied visual patch to dselect install script . Closes #55214
   * Included the configure-index example
   * Minimal CD swaps
   * Library soname has increased
-  * Fixed default sources.list to have correct URLs for potato when it 
+  * Fixed default sources.list to have correct URLs for potato when it
     becomes stable
   * Added a message about erasing sources.list to dselect setup script
     Closes: #55755
   * No remove prompt if the archives dir has not changed. Closes: #55709
   * Fixed inclusion of 2nd sample config file. Closes: #55374
-  * Made file mtimes of 0 not confuse the methods If-Modifed-Since check. 
+  * Made file mtimes of 0 not confuse the methods If-Modifed-Since check.
     Closes: #55991
-  
+
  -- Ben Gertzfield <che@debian.org>  Mon, 31 Jan 2000 12:12:40 -0800
- 
+
 apt (0.3.16) unstable; urgency=low
- 
+
   * Made --no-download work. Closes: #52993
   * Now compiles on OpenBSD, Solaris and HP-UX
   * Clarify segfault errors
@@ -344,9 +349,9 @@ apt (0.3.16) unstable; urgency=low
   * Fixed --no-list-cleanup
   * RFC 2732 URI parsing ([] for hostnames).
   * Typo in apt-cache man page. Closes: #54949
-  
+
  -- Ben Gertzfield <che@debian.org>  Fri, 14 Jan 2000 08:04:15 -0800
-  
+
 apt (0.3.15) unstable; urgency=low
 
   * Added DSelect::WaitAfterDownload Closes: #49549
@@ -396,22 +401,22 @@ apt (0.3.14) unstable; urgency=low
   * Problem resolver does not install all virtual packages. Closes: #48591, #49252
   * Clearer usage message about 'source' Closes: #48858
   * Immediate configure internal error Closes: #49062, #48884
-  
+
  -- Ben Gertzfield <che@debian.org>  Sun,  7 Nov 1999 20:21:25 -0800
- 
+
 apt (0.3.13) unstable; urgency=low
-  
+
   * Fix timestamp miss in FTP. Closes: #44363
   * Fix sorting of Kept packages. Closes: #44377
   * Fix Segfault for dselect-upgrade. Closes: #44436
   * Fix handling of '/' for the dist name. Closes #43830
   * Added APT::Get::Diff-Only and Tar-Only options. Closes #44384
-  * Add commented-out deb-src URI to default sources.list file.  
+  * Add commented-out deb-src URI to default sources.list file.
 
  -- Ben Gertzfield <che@debian.org>  Sun, 19 Sep 1999 18:54:20 -0700
- 
+
 apt (0.3.12) unstable; urgency=low
-  
+
   * Fix for typo in the dhelp index. Closes: #40377
   * Multiple media swap support
   * Purge support. Closes: #33291, #40694
@@ -428,9 +433,9 @@ apt (0.3.12) unstable; urgency=low
   * apt-cdrom understands .gz Package files too. Closes: #42779
   * Spelling error in dselect method description. Closes: #43251
   * Added security to the default source list. Closes: #43356
-  
+
  -- Ben Gertzfield <che@debian.org>  Fri,  3 Sep 1999 09:04:28 -0700
- 
+
 apt (0.3.11) unstable; urgency=low
 
   * Fix for mis-parsed file: URIs. Closes: #40373, #40366, #40230
@@ -441,7 +446,7 @@ apt (0.3.11) unstable; urgency=low
 apt (0.3.9) unstable; urgency=low
 
   * Spelling error in cachefile.cc. Closes: #39885
-  * Trailing slash in dselect install if you try to use the 
+  * Trailing slash in dselect install if you try to use the
     default config file. Closes: #40011
   * Simulate works for autoclean. Closes: #39141
   * Fixed spelling errors. Closes: #39673
@@ -476,10 +481,10 @@ apt (0.3.7) unstable; urgency=low
   * Improved the error message in the case of broken held package. Closes: #38777
   * Fixed handling of MD5 failures
   * Documented list notation Closes: #39008
-  * Change the 'b' to 'B'. Closes: #39007 
-  
+  * Change the 'b' to 'B'. Closes: #39007
+
  -- Ben Gertzfield <che@debian.org>  Sun, 20 Jun 1999 18:36:20 -0700
- 
+
 apt (0.3.6) unstable; urgency=low
 
   * Note that 0.3.5 never made it out the door..
@@ -488,7 +493,7 @@ apt (0.3.6) unstable; urgency=low
   * Buffer munching fix for FTP. Closes: #35868
   * Typo in sample config file. Closes: #35907
   * Fixed whitespace in version compares. Closes: #35968, #36283, #37051
-  * Changed installed size counter to only count unpacked packages. 
+  * Changed installed size counter to only count unpacked packages.
     Closes: #36201
   * apt-get source support. Closes: #23934, #27190
   * Renames .debs that fail MD5 checking, provides automatic corruption
@@ -497,7 +502,7 @@ apt (0.3.6) unstable; urgency=low
   * Random Segfaulting. Closes: #37312, #37530
   * Fixed apt-cache man page. Closes: #36904
   * Added a newline to apt-cache showpkg. Closes: #36903
-  
+
  -- Ben Gertzfield <che@debian.org>  Wed, 12 May 1999 09:18:49 -0700
 
 apt (0.3.4) unstable; urgency=low
@@ -606,7 +611,7 @@ apt (0.1) unstable; urgency=low
   * Fixed version numbering. From now on, numbering will be:
     0.1 (no actual release) -> 0.1.0bo (release for libc5) ->
     0.1.1 (release for unstable). Thanks, Manoj.
-  
+
  -- Ben Gertzfield <che@debian.org>  Tue, 30 Jun 1998 20:40:58 -0700
 
 apt (0.0.17-1) experimental; urgency=low
@@ -629,14 +634,14 @@ apt (0.0.15-0.2bo) experimental; urgency=low
 
   * Bo compilation
   * Bob Hilliards crash
-  
+
  -- Jason Gunthorpe <jgg@debian.org>  Sun, 31 May 1998 20:18:35 -0600
 
 apt (0.0.15-0.1bo) experimental; urgency=low
 
   * Bo compilation
   * libstdc++272 patch
-  
+
  -- Jason Gunthorpe <jgg@debian.org>  Sun, 31 May 1998 20:18:35 -0600
 
 apt (0.0.15) experimental; urgency=low
@@ -656,7 +661,7 @@ apt (0.0.13-bo1) experimental; urgency=low
 
   * Bo compilation
 
- -- Jason Gunthorpe <jgg@debian.org>  Mon, 18 May 1998 15:10:49 -0600 
+ -- Jason Gunthorpe <jgg@debian.org>  Mon, 18 May 1998 15:10:49 -0600
 
 apt (0.0.13) experimental; urgency=low
 
@@ -699,7 +704,7 @@ apt (0.0.9) experimental; urgency=low
 
   * Added ftp support.
   * Various other less visible bug fixes.
-  * Fixed problem with segfault when apt-get invoked in a non-existant 
+  * Fixed problem with segfault when apt-get invoked in a non-existant
     directory (Bug #21863)
   * Bumped policy to 2.4.1
 
@@ -723,7 +728,7 @@ apt (0.0.7) experimental; urgency=low
   * Added timeout to http transfers (#21269)
   * Updated setup for dselect/apt method.
   * Updated man pages
-  * Long options (added in 0.0.6) 
+  * Long options (added in 0.0.6)
 
  -- Scott K. Ellis <scott@debian.org>  Tue, 21 Apr 1998 09:06:49 -0400
 
@@ -741,8 +746,8 @@ apt (0.0.5) experimental; urgency=low
   * Ignore signals while dpkg is running so we don't leave dpkg running in
     the background (#20804)
   * Check Packages as well as Packages.gz for file URIs (#20784)
-  * Spelling cleanup (#20800) 
-  * Added -m option to permit upgrade to go on in the case of a bad mirror. 
+  * Spelling cleanup (#20800)
+  * Added -m option to permit upgrade to go on in the case of a bad mirror.
     This option may result in incomplete upgrades when used with -f.
 
  -- Scott K. Ellis <scott@debian.org>  Tue,  7 Apr 1998 12:40:29 -0400
