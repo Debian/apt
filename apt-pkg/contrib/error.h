@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.h,v 1.3 1998/07/12 23:58:47 jgg Exp $
+// $Id: error.h,v 1.4 1998/09/12 02:46:27 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -82,8 +82,8 @@ class GlobalError
    GlobalError();
 };
 
-/* The 'extra-ansi' syntax is used to help with collisions. This is the 
-   single global instance of this class. */
-extern GlobalError *_error;
+// The 'extra-ansi' syntax is used to help with collisions. 
+GlobalError *_GetErrorObj();
+#define _error _GetErrorObj()
 
 #endif

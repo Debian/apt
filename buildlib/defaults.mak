@@ -95,7 +95,7 @@ $(INCLUDE)/%.h $(addprefix $(INCLUDE)/,$(addsuffix /%.h,$(HEADER_TARGETDIRS))) :
 # makedep program that can be called after compiling, that's illistrated
 # by the DEPFLAG case.
 # Compile rules are expected to call this macro after calling the compiler
- ifdef INLINEDEPFLAG
+ifdef INLINEDEPFLAG
  define DoDep
 	sed -e "1s/.*:/$(subst /,\\/,$@):/" $(basename $(@F)).d > $(DEP)/$(basename $(@F)).d
 	-rm -f $(basename $(@F)).d

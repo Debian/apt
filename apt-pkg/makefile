@@ -13,6 +13,7 @@ include ../buildlib/defaults.mak
 LIBRARY=apt-pkg
 MAJOR=2
 MINOR=0.0
+SLIBS=$(PTHREADLIB)
 
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.3 1998/07/12 23:58:46 jgg Exp $
+// $Id: error.cc,v 1.4 1998/09/12 02:46:26 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -18,15 +18,46 @@
 #pragma implementation "apt-pkg/error.h"
 #endif 
 
+#include <apt-pkg/error.h>
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <unistd.h>
 
-#include <apt-pkg/error.h>
    									/*}}}*/
 
-GlobalError *_error = new GlobalError;
+// Global Error Object							/*{{{*/
+/* If the implementation supports posix threads then the accessor function
+   is compiled to be thread safe otherwise a non-safe version is used. A
+   Per-Thread error object is maintained in much the same manner as libc
+   manages errno */
+#if _POSIX_THREADS == 1
+ #include <pthread.h>
+
+ static pthread_key_t ErrorKey;
+ static void ErrorDestroy(void *Obj) {delete (GlobalError *)Obj;};
+ static void KeyAlloc() {pthread_key_create(&ErrorKey,ErrorDestroy);};
+
+ GlobalError *_GetErrorObj()
+ {
+    static pthread_once_t Once = PTHREAD_ONCE_INIT;
+    pthread_once(&Once,KeyAlloc);
+    
+    void *Res = pthread_getspecific(ErrorKey);
+    if (Res == 0)
+       pthread_setspecific(ErrorKey,Res = new GlobalError);
+    return (GlobalError *)Res;
+ }
+#else
+ GlobalError *_GetErrorObj()
+ {
+    static GlobalError *Obj = new GlobalError;
+    return Obj;
+ }
+#endif
+									/*}}}*/
 
 // GlobalError::GlobalError - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
