@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.47 1999/03/27 03:02:39 jgg Exp $
+// $Id: apt-get.cc,v 1.48 1999/03/29 19:28:52 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1122,7 +1122,7 @@ bool ShowHelp(CommandLine &CmdL)
    cout << "  -m  Attempt to continue if archives are unlocatable" << endl;
    cout << "  -u  Show a list of upgraded packages as well" << endl;
    cout << "  -c=? Read this configuration file" << endl;
-   cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
+   cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
    cout << "See the apt-get(8), sources.list(5) and apt.conf(5) manual" << endl;
    cout << "pages for more information." << endl;
    return 100;

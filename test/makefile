@@ -22,3 +22,9 @@ PROGRAM=versiontest
 SLIBS = -lapt-pkg 
 SOURCE = versiontest.cc
 include $(PROGRAM_H)
+
+# Version compare tester
+PROGRAM=srcrfind
+SLIBS = -lapt-pkg 
+SOURCE = srcrfind.cc
+include $(PROGRAM_H)

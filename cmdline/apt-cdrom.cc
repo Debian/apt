@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.18 1999/03/27 01:30:38 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.19 1999/03/29 19:28:52 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -986,7 +986,7 @@ int ShowHelp()
    cout << "  -f   Fast mode, don't check package files" << endl;
    cout << "  -a   Thorough scan mode" << endl;
    cout << "  -c=? Read this configuration file" << endl;
-   cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
+   cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
    cout << "See fstab(5)" << endl;
    return 100;
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.h,v 1.4 1999/02/22 03:30:06 jgg Exp $
+// $Id: debrecords.h,v 1.5 1999/03/29 19:28:52 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -26,8 +26,6 @@ class debRecordParser : public pkgRecords::Parser
 {
    pkgTagFile Tags;
    pkgTagSection Section;
-
-   string FindTag(const char *Tag);
 
    protected:
    

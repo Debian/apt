@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debrecords.cc,v 1.5 1999/02/22 03:30:06 jgg Exp $
+// $Id: debrecords.cc,v 1.6 1999/03/29 19:28:52 jgg Exp $
 /* ######################################################################
    
    Debian Package Records - Parser for debian package records
@@ -31,24 +31,12 @@ bool debRecordParser::Jump(pkgCache::VerFileIterator const &Ver)
    return Tags.Jump(Section,Ver->Offset);
 }
 									/*}}}*/
-// RecordParser::FindTag - Locate a tag and return a string		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::FindTag(const char *Tag)
-{
-   const char *Start;
-   const char *Stop;
-   if (Section.Find(Tag,Start,Stop) == false)
-      return string();
-   return string(Start,Stop - Start);
-}
-									/*}}}*/
 // RecordParser::FileName - Return the archive filename on the site	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 string debRecordParser::FileName()
 {
-   return FindTag("Filename");
+   return Section.FindS("Filename");
 }
 									/*}}}*/
 // RecordParser::MD5Hash - Return the archive hash			/*{{{*/
@@ -56,7 +44,7 @@ string debRecordParser::FileName()
 /* */
 string debRecordParser::MD5Hash()
 {
-   return FindTag("MD5sum");
+   return Section.FindS("MD5sum");
 }
 									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/
@@ -64,7 +52,7 @@ string debRecordParser::MD5Hash()
 /* */
 string debRecordParser::Maintainer()
 {
-   return FindTag("Maintainer");
+   return Section.FindS("Maintainer");
 }
 									/*}}}*/
 // RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
@@ -72,7 +60,7 @@ string debRecordParser::Maintainer()
 /* */
 string debRecordParser::ShortDesc()
 {
-   string Res = FindTag("Description");
+   string Res = Section.FindS("Description");
    string::size_type Pos = Res.find('\n');
    if (Pos == string::npos)
       return Res;
@@ -84,6 +72,6 @@ string debRecordParser::ShortDesc()
 /* */
 string debRecordParser::LongDesc()
 {
-   return FindTag("Description");
+   return Section.FindS("Description");
 }
 									/*}}}*/

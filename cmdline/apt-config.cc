@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.3 1999/01/30 02:12:53 jgg Exp $
+// $Id: apt-config.cc,v 1.4 1999/03/29 19:28:52 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files
@@ -60,7 +60,7 @@ int ShowHelp()
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
    cout << "  -c=? Read this configuration file" << endl;
-   cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
+   cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
    return 100;
 }
 									/*}}}*/

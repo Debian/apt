@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.31 1999/03/27 01:30:38 jgg Exp $
+// $Id: apt-cache.cc,v 1.32 1999/03/29 19:28:52 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -616,7 +616,7 @@ bool ShowHelp(CommandLine &Cmd)
    cout << "  -q   Disable progress indicator." << endl;
    cout << "  -i   Show only important deps for the unmet command." << endl;
    cout << "  -c=? Read this configuration file" << endl;
-   cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
+   cout << "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp" << endl;
    cout << "See the apt-cache(8) and apt.conf(5) manual pages for more information." << endl;
    return 100;
 }
