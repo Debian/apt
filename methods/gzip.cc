@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.12 2001/03/06 07:15:29 jgg Exp $
+// $Id: gzip.cc,v 1.13 2001/03/11 05:30:20 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -34,7 +34,8 @@ class GzipMethod : public pkgAcqMethod
 
 // GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This forks gzip and hashes the resulting decompressed output as it
+   flows to the destination file */
 bool GzipMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
@@ -102,7 +103,11 @@ bool GzipMethod::Fetch(FetchItem *Itm)
 	 break;
       
       Hash.Add(Buffer,Count);
-      To.Write(Buffer,Count);
+      if (To.Write(Buffer,Count) == false)
+      {	 
+	 Failed = true;
+	 break;
+      }	 
    }
    
    // Wait for gzip to finish

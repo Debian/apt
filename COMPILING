@@ -8,9 +8,18 @@ To compile this you need a couple things
   - A working ANSI C++ compiler, this is not g++ 2.7.* 
     g++ 2.8 works OK and newer egcs work well also. Nobody has tried it
     on other compilers :< You will need a properly working STL as well.
+    g++ 3 does not presently work because they made the STL headers
+    use namespaces. 
   - A C library with the usual POSIX functions and a BSD socket layer. 
-    If you OS conforms to the Single User Spec then you are fine:
+    If you OS conforms to the Single Unix Spec then you are fine:
       http://www.opengroup.org/onlinepubs/7908799/index.html      
+
+** NOTICE **
+The C++ global constructors do not link correctly when using non-shared
+libaries. This is probably the correct behavior of the linker, but I have
+not yet had time to devise a work around for it. The correct thing to 
+do is add a reference to debSystem in apt-pkg/init.cc, 
+assert(&debSystem == 0) would be fine for instance.
 
 Guidelines
 ~~~~~~~~~~
@@ -27,12 +36,12 @@ functionality. Patches to make autoconf detect these cases and generate the
 required shims are OK.
 
 Current shims:
-  * C9x integer types 'inttypes.h' 
-  * sys/statvfs.h to convert from BSD/Linux statfs to SUS statvfs
+  * C99 integer types 'inttypes.h' 
+  * sys/statvfs.h to convert from BSD/old-glibc statfs to SUS statvfs
   * rfc2553 hostname resolution (methods/rfc*), shims to normal gethostbyname.
     The more adventerous could steal the KAME IPv6 enabled resolvers for those
     OS's with IPv6 support but no rfc2553 (why?)
-  * define _XOPEN_EXTENDES_SOURCE to bring in h_errno on HP-UX
+  * define _XOPEN_EXTENDED_SOURCE to bring in h_errno on HP-UX
   * socklen_t shim in netdb.h if the OS does not have socklen_t
   
 The only completely non-shimed OS is Linux with glibc2.1, glibc2.0 requires
@@ -42,24 +51,29 @@ Platform Notes
 ~~~~~~~~~~~~~~
 Debian GNU Linux 2.1 'slink'
 Debian GNU Linux 'potato'
+Debian GNU Linux 'woody'
   * All Archs
   - Works flawlessly
-  - You will want to have debiandoc-sgml and yodl installed to get
+  - You will want to have debiandoc-sgml and docbook2man installed to get
     best results.
   - No IPv6 Support in glibc's < 2.1.
 
 Sun Solaris
   SunOS cab101 5.7 Generic_106541-04 sun4u sparc
+  SunOS csu201 5.8 Generic_108528-04 sun4u sparc  
   - Works fine
   - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
 
 OpenBSD
   OpenBSD gsb086 2.5 CMPUT#0 i386 unknown
-  - Works fine
+  OpenBSD csu101 2.7 CMPUT#1 i386 unknown  
   - OS needs 'ranlib' to generate the symbol table after 'ar'.. (not using
     GNU ar with the gnu tool chain :<)
-  - Note, no IPv6 Support, OS lacks RFC 2553 hostname resolution
-  
+  - '2.5' does not have RFC 2553 hostname resolution, but '2.7' does
+  - Testing on '2.7' suggests the OS has a bug in its handling of 
+    ftruncate on files that have been written via mmap. It fills the page 
+    that crosses the truncation boundary with 0's. 
+    
 HP-UX
   HP-UX nyquist B.10.20 C 9000/780 2016574337 32-user license
   - Evil OS, does not conform very well to SUS

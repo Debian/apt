@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: hashes.h,v 1.1 2001/03/06 07:15:29 jgg Exp $
+// $Id: hashes.h,v 1.2 2001/03/11 05:30:20 jgg Exp $
 /* ######################################################################
 
    Hashes - Simple wrapper around the hash functions
@@ -14,7 +14,7 @@
 #define APTPKG_HASHES_H
 
 #ifdef __GNUG__
-#pragma interface "apt-pkg/hashesh.h"
+#pragma interface "apt-pkg/hashes.h"
 #endif 
 
 #include <apt-pkg/md5.h>
@@ -29,8 +29,7 @@ class Hashes
    
    inline bool Add(const unsigned char *Data,unsigned long Size)
    {
-      MD5.Add(Data,Size);
-      SHA1.Add(Data,Size);
+      return MD5.Add(Data,Size) && SHA1.Add(Data,Size);
    };
    inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
    bool AddFD(int Fd,unsigned long Size);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description                                                          /*{{{*/
-// $Id: sha1.cc,v 1.1 2001/03/06 05:03:49 jgg Exp $
+// $Id: sha1.cc,v 1.2 2001/03/11 05:30:20 jgg Exp $
 /* ######################################################################
    
    SHA1 - SHA-1 Secure Hash Algorithm.
@@ -269,7 +269,6 @@ SHA1SumValue SHA1Summation::Result()
 {
    uint32_t *state = (uint32_t *)State;
    uint32_t *count = (uint32_t *)Count;
-   uint8_t *buffer = (uint8_t *)Buffer;
    
    // Apply the padding
    if (Done == false)
