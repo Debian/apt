@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: copy.cc,v 1.2 1998/10/25 07:07:29 jgg Exp $
+// $Id: copy.cc,v 1.3 1998/10/26 07:11:52 jgg Exp $
 /* ######################################################################
 
    Copy URI - This method takes a uri like a file: uri and copies it
@@ -121,6 +121,7 @@ int main()
 	 TimeBuf.modtime = Buf.st_mtime;
 	 if (utime(Target.c_str(),&TimeBuf) != 0)
 	 {
+	    To.OpFail();
 	    _error->Errno("utime","Failed to set modification time");
 	    Fail(URI);
 	    continue;

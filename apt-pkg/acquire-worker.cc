@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.6 1998/10/24 04:57:58 jgg Exp $
+// $Id: acquire-worker.cc,v 1.7 1998/10/26 07:11:45 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -106,7 +106,9 @@ bool pkgAcquire::Worker::Start()
 	 close(Pipes[I]);
       return false;
    }
-      
+   for (int I = 0; I != 4; I++)
+      SetCloseExec(Pipes[0],true);
+   
    // Fork off the process
    Process = fork();
    if (Process < 0)
@@ -122,8 +124,6 @@ bool pkgAcquire::Worker::Start()
       dup2(Pipes[1],STDOUT_FILENO);
       dup2(Pipes[2],STDIN_FILENO);
       dup2(((filebuf *)clog.rdbuf())->fd(),STDERR_FILENO);
-      for (int I = 0; I != 4; I++)
-	 close(Pipes[I]);
       SetCloseExec(STDOUT_FILENO,false);
       SetCloseExec(STDIN_FILENO,false);      
       SetCloseExec(STDERR_FILENO,false);
@@ -152,7 +152,8 @@ bool pkgAcquire::Worker::Start()
       return _error->Error("Method %s did not start correctly",Method.c_str());
 
    RunMessages();
-   SendConfiguration();
+   if (OwnerQ != 0)
+      SendConfiguration();
    
    return true;
 }
@@ -414,5 +415,37 @@ bool pkgAcquire::Worker::MethodFailure()
    MessageQueue.erase(MessageQueue.begin(),MessageQueue.end());
    
    return false;
+}
+									/*}}}*/
+
+// InjectConfiguration - Configuration aid for methods			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgInjectConfiguration(string &Message,Configuration &Cnf)
+{
+   const char *I = Message.begin();
+   
+   unsigned int Length = strlen("Config-Item");
+   for (; I + Length < Message.end(); I++)
+   {
+      // Not a config item
+      if (I[Length] != ':' || stringcasecmp(I,I+Length,"Config-Item") != 0)
+	 continue;
+      
+      I += Length + 1;
+      
+      for (; I < Message.end() && *I == ' '; I++);
+      const char *Equals = I;
+      for (; Equals < Message.end() && *Equals != '='; Equals++);
+      const char *End = Equals;
+      for (; End < Message.end() && *End != '\n'; End++);
+      if (End == Equals)
+	 return false;
+      
+      Cnf.Set(string(I,Equals-I),string(Equals+1,End-Equals-1));
+      I = End;
+   }
+   
+   return true;
 }
 									/*}}}*/

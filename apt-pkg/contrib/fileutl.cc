@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.12 1998/10/24 22:15:41 jgg Exp $
+// $Id: fileutl.cc,v 1.13 1998/10/26 07:11:49 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -29,7 +29,7 @@
 // CopyFile - Buffered copy of a file					/*{{{*/
 // ---------------------------------------------------------------------
 /* The caller is expected to set things so that failure causes erasure */
-bool CopyFile(FileFd From,FileFd To)
+bool CopyFile(FileFd &From,FileFd &To)
 {
    if (From.IsOpen() == false || To.IsOpen() == false)
       return false;

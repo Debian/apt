@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.3 1998/10/24 04:57:57 jgg Exp $
+// $Id: acquire-item.h,v 1.4 1998/10/26 07:11:44 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -33,6 +33,8 @@ class pkgAcquire::Item
    inline void QueueURI(string URI,string Description) 
                  {Owner->Enqueue(this,URI,Description);};
    
+   void Rename(string From,string To);
+   
    public:
 
    // State of the item
@@ -60,9 +62,11 @@ class pkgAcqIndex : public pkgAcquire::Item
    protected:
    
    const pkgSourceList::Item *Location;
+   bool Decompression;
    
    public:
    
+   virtual void Done(string Message,unsigned long Size,string Md5Hash);   
    virtual string Custom600Headers();
 
    pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location);
@@ -77,8 +81,7 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    
    public:
    
-   virtual void Done(string Message,unsigned long Size,string Md5Hash);
-   
+   virtual void Done(string Message,unsigned long Size,string Md5Hash);   
    virtual string Custom600Headers();
    
    pkgAcqIndexRel(pkgAcquire *Owner,const pkgSourceList::Item *Location);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.4 1998/10/24 04:58:02 jgg Exp $
+// $Id: acquire.h,v 1.5 1998/10/26 07:11:48 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -66,6 +66,7 @@ class pkgAcquire
    // Configurable parameters for the schedular
    enum {QueueHost,QueueAccess} QueueMode;
    bool Debug;
+   bool Running;
    
    void Add(Item *Item);
    void Remove(Item *Item);

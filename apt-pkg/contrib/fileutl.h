@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.7 1998/10/20 02:39:29 jgg Exp $
+// $Id: fileutl.h,v 1.8 1998/10/26 07:11:50 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -59,7 +59,7 @@ class FileFd
    virtual ~FileFd();
 };
 
-bool CopyFile(FileFd From,FileFd To);
+bool CopyFile(FileFd &From,FileFd &To);
 int GetLock(string File,bool Errors = true);
 bool FileExists(string File);
 string SafeGetCWD();

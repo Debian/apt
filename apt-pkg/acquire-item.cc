@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.4 1998/10/24 04:57:56 jgg Exp $
+// $Id: acquire-item.cc,v 1.5 1998/10/26 07:11:43 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -65,6 +65,22 @@ void pkgAcquire::Item::Done(string,unsigned long,string)
    Owner->Dequeue(this);
 }
 									/*}}}*/
+// Acquire::Item::Rename - Rename a file				/*{{{*/
+// ---------------------------------------------------------------------
+/* This helper function is used by alot of item methods as thier final
+   step */
+void pkgAcquire::Item::Rename(string From,string To)
+{
+   if (rename(From.c_str(),To.c_str()) != 0)
+   {
+      char S[300];
+      sprintf(S,"rename failed, %s (%s -> %s).",strerror(errno),
+	      From.c_str(),To.c_str());
+      Status = StatError;
+      ErrorText = S;
+   }      
+}
+									/*}}}*/
 
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -73,6 +89,8 @@ void pkgAcquire::Item::Done(string,unsigned long,string)
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) :
              Item(Owner), Location(Location)
 {
+   Decompression = false;
+   
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(Location->PackagesURI());
    
@@ -97,6 +115,57 @@ string pkgAcqIndex::Custom600Headers()
    return "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
+// AcqIndex::Done - Finished a fetch					/*{{{*/
+// ---------------------------------------------------------------------
+/* This goes through a number of states.. On the initial fetch the
+   method could possibly return an alternate filename which points
+   to the uncompressed version of the file. If this is so the file
+   is copied into the partial directory. In all other cases the file
+   is decompressed with a gzip uri. */
+void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
+{
+   Item::Done(Message,Size,MD5);
+
+   if (Decompression == true)
+   {
+      // Done, move it into position
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(Location->PackagesURI());
+      Rename(DestFile,FinalFile);
+      return;
+   }
+      
+   // Handle the unzipd case
+   string FileName = LookupTag(Message,"Alt-Filename");
+   if (FileName.empty() == false)
+   {
+      // The files timestamp matches
+      if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
+	 return;
+      
+      Decompression = true;
+      DestFile += ".decomp";
+      QueueURI("copy:" + FileName,string());
+      return;
+   }
+
+   FileName = LookupTag(Message,"Filename");
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "Method gave a blank filename";
+   }
+   
+   // The files timestamp matches
+   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      return;
+   
+   Decompression = true;
+   DestFile += ".decomp";
+   QueueURI("gzip:" + FileName,string());
+}
+									/*}}}*/
+
 // AcqIndexRel::pkgAcqIndexRel - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* The Release file is added to the queue */
@@ -139,7 +208,12 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
    {
       Status = StatError;
       ErrorText = "Method gave a blank filename";
+      return;
    }
+
+   // The files timestamp matches
+   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      return;
    
    // We have to copy it into place
    if (FileName != DestFile)
@@ -151,14 +225,6 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
    // Done, move it into position
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(Location->ReleaseURI());
-   
-   if (rename(DestFile.c_str(),FinalFile.c_str()) != 0)
-   {
-      char S[300];
-      sprintf(S,"rename failed, %s (%s -> %s).",strerror(errno),
-	      DestFile.c_str(),FinalFile.c_str());
-      Status = StatError;
-      ErrorText = S;
-   }
+   Rename(DestFile,FinalFile);
 }
 									/*}}}*/

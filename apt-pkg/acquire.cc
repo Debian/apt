@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.4 1998/10/24 04:58:01 jgg Exp $
+// $Id: acquire.cc,v 1.5 1998/10/26 07:11:47 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -33,6 +33,7 @@ pkgAcquire::pkgAcquire()
    Configs = 0;
    Workers = 0;
    ToFetch = 0;
+   Running = false;
    
    string Mode = _config->Find("Acquire::Queue-Mode","host");
    if (strcasecmp(Mode.c_str(),"host") == 0)
@@ -133,6 +134,9 @@ void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
    // Queue it into the named queue
    I->Enqueue(Itm,URI,Description);
    ToFetch++;
+   
+   if (Running == true)
+      I->Startup();
       
    // Some trace stuff
    if (Debug == true)
@@ -249,6 +253,8 @@ void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
    manage the actual fetch. */
 bool pkgAcquire::Run()
 {
+   Running = true;
+   
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Startup();
    
@@ -263,7 +269,10 @@ bool pkgAcquire::Run()
       SetFds(Highest,&RFds,&WFds);
       
       if (select(Highest+1,&RFds,&WFds,0,0) <= 0)
+      {
+	 Running = false;
 	 return _error->Errno("select","Select has failed");
+      }
       
       RunFds(&RFds,&WFds);
    }   
@@ -271,6 +280,7 @@ bool pkgAcquire::Run()
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Shutdown();
 
+   Running = false;
    return true;
 }
 									/*}}}*/

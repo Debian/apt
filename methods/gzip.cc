@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.1 1998/10/25 07:07:30 jgg Exp $
+// $Id: gzip.cc,v 1.2 1998/10/26 07:11:53 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -123,20 +123,25 @@ int main()
 	 {
 	    dup2(From.Fd(),STDIN_FILENO);
 	    dup2(To.Fd(),STDOUT_FILENO);
+	    From.Close();
+	    To.Close();
+	    SetCloseExec(STDIN_FILENO,false);
+	    SetCloseExec(STDOUT_FILENO,false);
 	    
 	    const char *Args[3];
-	    Args[0] = _config->FindFile("Dir::bin::gzip","gzip").c_str();
+	    Args[0] = _config->Find("Dir::bin::gzip","gzip").c_str();
 	    Args[1] = "-d";
 	    Args[2] = 0;
 	    execvp(Args[0],(char **)Args);
+	    exit(100);
 	 }
 	 From.Close();
-	 To.Close();
 	 
 	 // Wait for gzip to finish
 	 int Status;
 	 if (waitpid(Process,&Status,0) != Process)
 	 {
+	    To.OpFail();
 	    _error->Errno("wait","Waiting for gzip failed");
 	    Fail(URI);
 	    continue;
@@ -144,10 +149,13 @@ int main()
 
 	 if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
 	 {
+	    To.OpFail();
 	    _error->Error("gzip failed, perhaps the disk is full or the directory permissions are wrong.");
 	    Fail(URI);
 	    continue;
 	 }	 
+	 
+	 To.Close();
 	 
 	 // Transfer the modification times
 	 struct stat Buf;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.4 1998/10/24 04:57:59 jgg Exp $
+// $Id: acquire-worker.h,v 1.5 1998/10/26 07:11:46 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
@@ -13,6 +13,7 @@
 #define PKGLIB_ACQUIRE_WORKER_H
 
 #include <apt-pkg/acquire.h>
+#include <apt-pkg/configuration.h>
 
 #ifdef __GNUG__
 #pragma interface "apt-pkg/acquire-worker.h"
@@ -79,5 +80,7 @@ class pkgAcquire::Worker
    Worker(MethodConfig *Config);
    ~Worker();
 };
+
+bool pkgInjectConfiguration(string &Message,Configuration &Cnf);
 
 #endif
