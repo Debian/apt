@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.65 2004/04/30 04:37:47 mdz Exp $
+# $Id: rules,v 1.66 2004/05/08 19:52:33 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -39,6 +39,7 @@ build:
 DEB_BUILD_PROG:=debuild --preserve-envvar PATH --preserve-envvar CCACHE_DIR -us -uc
 APT_DEBVER=$(shell dpkg-parsechangelog |sed -n -e '/^Version:/s/^Version: //p')
 APT_CONFVER=$(shell sed -n -e 's/^AC_DEFINE_UNQUOTED(VERSION,"\(.*\)")/\1/p' configure.in)
+APT_CVSTAG=$(shell echo "$(APT_DEBVER)" | sed -e 's/^/v/' -e 's/\./_/g')
 
 # Determine the build directory to use
 BASE=.
@@ -312,14 +313,16 @@ binary: binary-indep binary-arch
 # edit configure.in
 # debian/rules cvs-build
 
+CVS_BUILDDIR=apt-$(APT_DEBVER)
+CVS_ROOT=$(shell cat CVS/Root)
+CVS_MODULE=$(shell cat CVS/Repository)
 cvs-build:
 	rm -rf debian/cvs-build
 	cvs update -d
-	$(MAKE) startup
-	$(MAKE) doc
-	tar c --exclude CVS --exclude cvs-build --exclude '.#*' . |\
-		(mkdir -p debian/cvs-build/apt-$(APT_DEBVER);cd debian/cvs-build/apt-$(APT_DEBVER);tar x)
-	(cd debian/cvs-build/apt-$(APT_DEBVER);$(DEB_BUILD_PROG))
+	mkdir -p debian/cvs-build
+	(cd debian/cvs-build;cvs -d $(CVS_ROOT) export -r$(APT_CVSTAG) -d apt-$(APT_DEBVER) $(CVS_MODULE))
+	$(MAKE) -C debian/cvs-build/$(CVS_BUILDDIR) startup doc
+	(cd debian/cvs-build/$(CVS_BUILDDIR);$(DEB_BUILD_PROG))
 
 cvs-mkul:
 	-mkdir -p ../upload-$(APT_DEBVER)
