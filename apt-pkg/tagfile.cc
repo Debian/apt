@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.4 1998/07/05 05:33:58 jgg Exp $
+// $Id: tagfile.cc,v 1.5 1998/07/07 04:17:06 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -11,6 +11,10 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#ifdef __GNUG__
+#pragma implementation "pkglib/tagfile.h"
+#endif
+
 #include <pkglib/tagfile.h>
 #include <pkglib/error.h>
 

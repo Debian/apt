@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.4 1998/07/05 05:33:55 jgg Exp $
+// $Id: pkgcache.h,v 1.5 1998/07/07 04:17:03 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -19,6 +19,10 @@
 // Header section: pkglib
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
+
+#ifdef __GNUG__
+#pragma interface "pkglib/pkgcache.h"
+#endif 
 
 #include <string>
 #include <time.h>
@@ -52,19 +56,29 @@ class pkgCache
    friend VerFileIterator;
    
    // These are all the constants used in the cache structures
-   enum DepType {Depends=1,PreDepends=2,Suggests=3,Recommends=4,
-                 Conflicts=5,Replaces=6};
-   enum VerPriority {Important=1,Required=2,Standard=3,Optional=5,Extra=5};
-   enum PkgSelectedState {Unknown=0,Install=1,Hold=2,DeInstall=3,Purge=4};
-   enum PkgFlags {Auto=(1<<0),New=(1<<1),Obsolete=(1<<2),Essential=(1<<3),
-                  ImmediateConf=(1<<4)};
-   enum PkgInstState {Ok=0,ReInstReq=1,HoldInst=2,HoldReInstReq=3};
-   enum PkgCurrentState {NotInstalled=0,UnPacked=1,HalfConfigured=2,
-                         UnInstalled=3,HalfInstalled=4,ConfigFiles=5,
-                         Installed=6};
-   enum PkgFFlags {NotSource=(1<<0)};
-   enum DepCompareOp {Or=0x10,NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
-                      Greater=0x4,Equals=0x5,NotEquals=0x6};
+   struct Dep
+   {
+      enum DepType {Depends=1,PreDepends=2,Suggests=3,Recommends=4,
+	 Conflicts=5,Replaces=6};
+      enum DepCompareOp {Or=0x10,NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
+	 Greater=0x4,Equals=0x5,NotEquals=0x6};
+   };
+   
+   struct State
+   {
+      enum VerPriority {Important=1,Required=2,Standard=3,Optional=5,Extra=5};
+      enum PkgSelectedState {Unknown=0,Install=1,Hold=2,DeInstall=3,Purge=4};
+      enum PkgInstState {Ok=0,ReInstReq=1,HoldInst=2,HoldReInstReq=3};
+      enum PkgCurrentState {NotInstalled=0,UnPacked=1,HalfConfigured=2,
+	 UnInstalled=3,HalfInstalled=4,ConfigFiles=5,Installed=6};
+   };
+   
+   struct Flag
+   {
+      enum PkgFlags {Auto=(1<<0),New=(1<<1),Obsolete=(1<<2),Essential=(1<<3),
+	 ImmediateConf=(1<<4)};
+      enum PkgFFlags {NotSource=(1<<0)};
+   };
    
    protected:
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.4 1998/07/05 05:33:53 jgg Exp $
+// $Id: pkgcache.cc,v 1.5 1998/07/07 04:17:02 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -20,6 +20,10 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#ifdef __GNUG__
+#pragma implementation "pkglib/pkgcache.h"
+#pragma implementation "pkglib/cacheiterators.h"
+#endif 
 #include <pkglib/pkgcache.h>
 #include <pkglib/version.h>
 #include <pkglib/error.h>
@@ -199,13 +203,13 @@ void pkgCache::PkgIterator::operator ++(int)
 /* By this we mean if it is either cleanly installed or cleanly removed. */
 pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 {
-   if (Pkg->CurrentState == UnPacked ||
-       Pkg->CurrentState == HalfConfigured)
+   if (Pkg->CurrentState == State::UnPacked ||
+       Pkg->CurrentState == State::HalfConfigured)
       return NeedsConfigure;
    
-   if (Pkg->CurrentState == UnInstalled ||
-       Pkg->CurrentState == HalfInstalled ||
-       Pkg->InstState != Ok)
+   if (Pkg->CurrentState == State::UnInstalled ||
+       Pkg->CurrentState == State::HalfInstalled ||
+       Pkg->InstState != State::Ok)
       return NeedsUnpack;
       
    return NeedsNothing;
@@ -217,8 +221,8 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
    conflicts. */
 bool pkgCache::DepIterator::IsCritical()
 {
-   if (Dep->Type == Conflicts || Dep->Type == Depends ||
-       Dep->Type == PreDepends)
+   if (Dep->Type == Dep::Conflicts || Dep->Type == Dep::Depends ||
+       Dep->Type == Dep::PreDepends)
       return true;
    return false;
 }
@@ -293,7 +297,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	 if (pkgCheckDep(TargetVer(),I.VerStr(),Dep->CompareOp) == false)
 	    continue;
 
-	 if (Dep->Type == Conflicts && ParentPkg() == I.ParentPkg())
+	 if (Dep->Type == Dep::Conflicts && ParentPkg() == I.ParentPkg())
 	    continue;
 	 
 	 Size++;
@@ -307,7 +311,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	 if (pkgCheckDep(TargetVer(),I.ProvideVersion(),Dep->CompareOp) == false)
 	    continue;
 	 
-	 if (Dep->Type == Conflicts && ParentPkg() == I.OwnerPkg())
+	 if (Dep->Type == Dep::Conflicts && ParentPkg() == I.OwnerPkg())
 	    continue;
 	 
 	 Size++;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.2 1998/07/04 05:57:41 jgg Exp $
+// $Id: fileutl.cc,v 1.3 1998/07/07 04:17:12 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -14,6 +14,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#ifdef __GNUG__
+#pragma implementation "pkglib/fileutl.h"
+#endif 
 #include <pkglib/fileutl.h>
 #include <pkglib/error.h>
 

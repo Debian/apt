@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: error.cc,v 1.2 1998/07/07 04:17:10 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -14,6 +14,10 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#ifdef __GNUG__
+#pragma implementation "pkglib/error.h"
+#endif 
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,7 +31,7 @@ GlobalError *_error = new GlobalError;
 // GlobalError::GlobalError - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-GlobalError::GlobalError() : PendingFlag(false)
+GlobalError::GlobalError() : List(0), PendingFlag(false)
 {
 }
 									/*}}}*/
@@ -49,10 +53,10 @@ bool GlobalError::Errno(const char *Function,const char *Description,...)
    sprintf(S + strlen(S)," - %s (%i %s)",Function,errno,strerror(errno));
 
    // Put it on the list
-   Item Itm;
-   Itm.Text = S;
-   Itm.Error = true;
-   List.push_back(Itm);
+   Item *Itm = new Item;
+   Itm->Text = S;
+   Itm->Error = true;
+   Insert(Itm);
    
    PendingFlag = true;
 
@@ -72,10 +76,10 @@ bool GlobalError::Error(const char *Description,...)
    vsprintf(S,Description,args);
 
    // Put it on the list
-   Item Itm;
-   Itm.Text = S;
-   Itm.Error = true;
-   List.push_back(Itm);
+   Item *Itm = new Item;
+   Itm->Text = S;
+   Itm->Error = true;
+   Insert(Itm);
    
    PendingFlag = true;
    
@@ -95,10 +99,10 @@ bool GlobalError::Warning(const char *Description,...)
    vsprintf(S,Description,args);
 
    // Put it on the list
-   Item Itm;
-   Itm.Text = S;
-   Itm.Error = false;
-   List.push_back(Itm);
+   Item *Itm = new Item;
+   Itm->Text = S;
+   Itm->Error = false;
+   Insert(Itm);
    
    return false;
 }
@@ -109,12 +113,17 @@ bool GlobalError::Warning(const char *Description,...)
    true if the message is an error. */
 bool GlobalError::PopMessage(string &Text)
 {
-   bool Ret = List.front().Error;
-   Text = List.front().Text;
-   List.erase(List.begin());
-
+   if (List == 0)
+      return false;
+      
+   bool Ret = List->Error;
+   Text = List->Text;
+   Item *Old = List;
+   List = List->Next;
+   delete Old;
+   
    // This really should check the list to see if only warnings are left..
-   if (empty())
+   if (List == 0)
       PendingFlag = false;
    
    return Ret;
@@ -135,5 +144,32 @@ void GlobalError::DumpErrors()
       else
 	 cerr << "W: " << Err << endl;
    }
+}
+									/*}}}*/
+// GlobalError::Discard - Discard									/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void GlobalError::Discard()
+{
+   while (List != 0)
+   {
+      Item *Old = List;
+      List = List->Next;
+      delete Old;
+   }
+   
+   PendingFlag = false;
+};
+									/*}}}*/
+// GlobalError::Insert - Insert a new item at the end			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void GlobalError::Insert(Item *Itm)
+{
+   Item **End = &List;
+   for (Item *I = List; I != 0; I = I->Next)
+      End = &I->Next;
+   Itm->Next = *End;
+   *End = Itm;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.cc,v 1.2 1998/07/04 05:57:40 jgg Exp $
+// $Id: version.cc,v 1.3 1998/07/07 04:17:08 jgg Exp $
 /* ######################################################################
 
    Version - Version string 
@@ -17,6 +17,10 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#ifdef __GNUG__
+#pragma implementation "pkglib/version.h"
+#endif 
+
 #include <pkglib/version.h>
 #include <pkglib/pkgcache.h>
 
@@ -212,32 +216,32 @@ bool pkgCheckDep(const char *DepVer,const char *PkgVer,int Op)
    int Res = pkgVersionCompare(PkgVer,DepVer);
    switch (Op & 0x0F)
    {
-      case pkgCache::LessEq:
+      case pkgCache::Dep::LessEq:
       if (Res <= 0)
 	 return true;
       break;
       
-      case pkgCache::GreaterEq:
+      case pkgCache::Dep::GreaterEq:
       if (Res >= 0)
 	 return true;
       break;
       
-      case pkgCache::Less:
+      case pkgCache::Dep::Less:
       if (Res < 0)
 	 return true;
       break;
       
-      case pkgCache::Greater:
+      case pkgCache::Dep::Greater:
       if (Res > 0)
 	 return true;
       break;
       
-      case pkgCache::Equals:
+      case pkgCache::Dep::Equals:
       if (Res == 0)
 	 return true;
       break;
       
-      case pkgCache::NotEquals:
+      case pkgCache::Dep::NotEquals:
       if (Res != 0)
 	 return true;
       break;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.3 1998/07/05 05:34:00 jgg Exp $
+// $Id: deblistparser.cc,v 1.4 1998/07/07 04:17:16 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -147,27 +147,27 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    const char *Stop;
    if (Section.Find("Priority",Start,Stop) == true)
    {
-      WordList PrioList[] = {{"important",pkgCache::Important},
-	                     {"required",pkgCache::Required},
-	                     {"standard",pkgCache::Standard},
-                             {"optional",pkgCache::Optional},
-                             {"extra",pkgCache::Extra}};
+      WordList PrioList[] = {{"important",pkgCache::State::Important},
+	                     {"required",pkgCache::State::Required},
+	                     {"standard",pkgCache::State::Standard},
+	                     {"optional",pkgCache::State::Optional},
+	                     {"extra",pkgCache::State::Extra}};
       if (GrabWord(string(Start,Stop-Start),PrioList,
 		   _count(PrioList),Ver->Priority) == false)
 	 return _error->Error("Malformed Priority line");
    }
 
-   if (ParseDepends(Ver,"Depends",pkgCache::Depends) == false)
+   if (ParseDepends(Ver,"Depends",pkgCache::Dep::Depends) == false)
       return false;
-   if (ParseDepends(Ver,"PreDepends",pkgCache::PreDepends) == false)
+   if (ParseDepends(Ver,"PreDepends",pkgCache::Dep::PreDepends) == false)
       return false;
-   if (ParseDepends(Ver,"Suggests",pkgCache::Suggests) == false)
+   if (ParseDepends(Ver,"Suggests",pkgCache::Dep::Suggests) == false)
       return false;
-   if (ParseDepends(Ver,"Recommends",pkgCache::Recommends) == false)
+   if (ParseDepends(Ver,"Recommends",pkgCache::Dep::Recommends) == false)
       return false;
-   if (ParseDepends(Ver,"Conflicts",pkgCache::Conflicts) == false)
+   if (ParseDepends(Ver,"Conflicts",pkgCache::Dep::Conflicts) == false)
       return false;
-   if (ParseDepends(Ver,"Replaces",pkgCache::Depends) == false)
+   if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Depends) == false)
       return false;
 
    if (ParseProvides(Ver) == false)
@@ -186,9 +186,9 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
    if (Pkg->Section == 0)
       if ((Pkg->Section = UniqFindTagWrite("Section")) == 0)
 	 return false;
-   if (HandleFlag("Essential",Pkg->Flags,pkgCache::Essential) == false)
+   if (HandleFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
       return false;
-   if (HandleFlag("Immediate-Configure",Pkg->Flags,pkgCache::ImmediateConf) == false)
+   if (HandleFlag("Immediate-Configure",Pkg->Flags,pkgCache::Flag::ImmediateConf) == false)
       return false;
    if (ParseStatus(Pkg,Ver) == false)
       return false;
@@ -223,11 +223,11 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
       return _error->Error("Malformed Status line");
 
    // Process the want field
-   WordList WantList[] = {{"unknown",pkgCache::Unknown},
-                          {"install",pkgCache::Install},
-                          {"hold",pkgCache::Hold},
-                          {"deinstall",pkgCache::DeInstall},
-                          {"purge",pkgCache::Purge}};
+   WordList WantList[] = {{"unknown",pkgCache::State::Unknown},
+                          {"install",pkgCache::State::Install},
+                          {"hold",pkgCache::State::Hold},
+                          {"deinstall",pkgCache::State::DeInstall},
+                          {"purge",pkgCache::State::Purge}};
    if (GrabWord(string(Start,I-Start),WantList,
 		_count(WantList),Pkg->SelectedState) == false)
       return _error->Error("Malformed 1st word in the Status line");
@@ -240,10 +240,10 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
       return _error->Error("Malformed status line, no 2nd word");
 
    // Process the flag field
-   WordList FlagList[] = {{"ok",pkgCache::Ok},
-                          {"reinstreq",pkgCache::ReInstReq},
-                          {"hold",pkgCache::HoldInst},
-                          {"hold-reinstreq",pkgCache::HoldReInstReq}};
+   WordList FlagList[] = {{"ok",pkgCache::State::Ok},
+                          {"reinstreq",pkgCache::State::ReInstReq},
+                          {"hold",pkgCache::State::HoldInst},
+                          {"hold-reinstreq",pkgCache::State::HoldReInstReq}};
    if (GrabWord(string(Start,I-Start),FlagList,
 		_count(FlagList),Pkg->InstState) == false)
       return _error->Error("Malformed 2nd word in the Status line");
@@ -256,15 +256,15 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
       return _error->Error("Malformed Status line, no 3rd word");
 
    // Process the flag field
-   WordList StatusList[] = {{"not-installed",pkgCache::NotInstalled},
-                            {"unpacked",pkgCache::UnPacked},
-                            {"half-configured",pkgCache::HalfConfigured},
-                            {"installed",pkgCache::Installed},
-                            {"uninstalled",pkgCache::UnInstalled},
-                            {"half-installed",pkgCache::HalfInstalled},
-                            {"config-files",pkgCache::ConfigFiles},
-                            {"post-inst-failed",pkgCache::HalfConfigured},
-                            {"removal-failed",pkgCache::HalfInstalled}};
+   WordList StatusList[] = {{"not-installed",pkgCache::State::NotInstalled},
+                            {"unpacked",pkgCache::State::UnPacked},
+                            {"half-configured",pkgCache::State::HalfConfigured},
+                            {"installed",pkgCache::State::Installed},
+                            {"uninstalled",pkgCache::State::UnInstalled},
+                            {"half-installed",pkgCache::State::HalfInstalled},
+                            {"config-files",pkgCache::State::ConfigFiles},
+                            {"post-inst-failed",pkgCache::State::HalfConfigured},
+                            {"removal-failed",pkgCache::State::HalfInstalled}};
    if (GrabWord(string(Start,I-Start),StatusList,
 		_count(StatusList),Pkg->CurrentState) == false)
       return _error->Error("Malformed 3rd word in the Status line");
@@ -273,8 +273,8 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
       version as well. Only if it is actually installed.. Otherwise
       the interesting dpkg handling of the status file creates bogus 
       entries. */
-   if (!(Pkg->CurrentState == pkgCache::NotInstalled ||
-	 Pkg->CurrentState == pkgCache::ConfigFiles))
+   if (!(Pkg->CurrentState == pkgCache::State::NotInstalled ||
+	 Pkg->CurrentState == pkgCache::State::ConfigFiles))
    {
       if (Ver.end() == true)
 	 _error->Warning("Encountered status field in a non-version description");
@@ -330,19 +330,19 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	 if (*I == '=')
 	 {
 	    I++;
-	    Op = pkgCache::LessEq;
+	    Op = pkgCache::Dep::LessEq;
 	    break;
 	 }
 	 
 	 if (*I == '<')
 	 {
 	    I++;
-	    Op = pkgCache::Less;
+	    Op = pkgCache::Dep::Less;
 	    break;
 	 }
 	 
 	 // < is the same as <= and << is really Cs < for some reason
-	 Op = pkgCache::LessEq;
+	 Op = pkgCache::Dep::LessEq;
 	 break;
 	 
 	 case '>':
@@ -350,29 +350,29 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	 if (*I == '=')
 	 {
 	    I++;
-	    Op = pkgCache::GreaterEq;
+	    Op = pkgCache::Dep::GreaterEq;
 	    break;
 	 }
 	 
 	 if (*I == '>')
 	 {
 	    I++;
-	    Op = pkgCache::Greater;
+	    Op = pkgCache::Dep::Greater;
 	    break;
 	 }
 	 
 	 // > is the same as >= and >> is really Cs > for some reason
-	 Op = pkgCache::GreaterEq;
+	 Op = pkgCache::Dep::GreaterEq;
 	 break;
 	 
 	 case '=':
-	 Op = pkgCache::Equals;
+	 Op = pkgCache::Dep::Equals;
 	 I++;
 	 break;
 	 
 	 // HACK around bad package definitions
 	 default:
-	 Op = pkgCache::Equals;
+	 Op = pkgCache::Dep::Equals;
 	 break;
       }
       
@@ -389,13 +389,13 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    else
    {
       Ver = string();
-      Op = pkgCache::NoOp;
+      Op = pkgCache::Dep::NoOp;
    }
    
    // Skip whitespace
    for (;I != Stop && isspace(*I) != 0; I++);
    if (I != Stop && *I == '|')
-      Op |= pkgCache::Or;
+      Op |= pkgCache::Dep::Or;
    
    if (I == Stop || *I == ',' || *I == '|')
    {
@@ -453,7 +453,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
       Start = ParseDepends(Start,Stop,Package,Version,Op);
       if (Start == 0)
 	 return _error->Error("Problem parsing Provides line");
-      if (Op != pkgCache::NoOp)
+      if (Op != pkgCache::Dep::NoOp)
 	 return _error->Error("Malformed provides line");
 
       if (NewProvides(Ver,Package,Version) == false)

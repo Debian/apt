@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.h,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: error.h,v 1.2 1998/07/07 04:17:11 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -41,8 +41,11 @@
 #ifndef PKGLIB_ERROR_H
 #define PKGLIB_ERROR_H
 
+#ifdef __GNUG__
+#pragma interface "pkglib/error.h"
+#endif 
+
 #include <string>
-#include <vector.h>
 
 class GlobalError
 {
@@ -50,10 +53,12 @@ class GlobalError
    {
       string Text;
       bool Error;
+      Item *Next;
    };
    
-   vector<Item> List;
+   Item *List;
    bool PendingFlag;
+   void Insert(Item *I);
    
    public:
 
@@ -67,9 +72,9 @@ class GlobalError
 
    // Simple accessors
    inline bool PendingError() {return PendingFlag;};
-   inline bool empty() {return List.empty();};
+   inline bool empty() {return List == 0;};
    bool PopMessage(string &Text);
-   void Discard() {List.erase(List.begin(),List.end()); PendingFlag = false;};
+   void Discard();
 
    // Usefull routine to dump to cerr
    void DumpErrors();

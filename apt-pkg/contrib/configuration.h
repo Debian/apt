@@ -1,0 +1,61 @@
+// -*- mode: cpp; mode: fold -*-
+// Description								/*{{{*/
+// $Id: configuration.h,v 1.1 1998/07/07 04:17:10 jgg Exp $
+/* ######################################################################
+
+   Configuration Class
+   
+   This class provides a configuration file and command line parser
+   for a tree-oriented configuration environment. All runtime configuration
+   is stored in here.
+   
+   Each configuration name is given as a fully scoped string such as
+     Foo::Bar
+   And has associated with it a text string. The Configuration class only
+   provides storage and lookup for this tree, other classes provide
+   configuration file formats (and parsers/emitters if needed).
+   
+   Most things can get by quite happily with,
+     cout << _config->Find("Foo::Bar") << endl;
+   
+   ##################################################################### */
+									/*}}}*/
+// Header section: pkglib
+#ifndef PKGLIB_TAGFILE_H
+#define PKGLIB_TAGFILE_H
+
+#ifdef __GNUG__
+#pragma interface "pkglib/configuration.h"
+#endif 
+
+#include <string>
+
+class Configuration
+{
+   struct Item
+   {
+      string Value;
+      string Tag;
+      Item *Child;
+      Item *Next;
+      Item() : Child(0), Next(0) {};
+   };
+   Item *Root;
+   
+   Item *Lookup(Item *Head,const char *S,unsigned long Len,bool Create);
+   Item *Lookup(const char *Name,bool Create);
+      
+   public:
+
+   string Find(const char *Name,const char *Default = 0);
+   int FindI(const char *Name,int Default = 0);
+   
+   void Set(const char *Name,string Value);
+   void Set(const char *Name,int Value);
+
+   Configuration();
+};
+
+extern Configuration *_config;
+
+#endif

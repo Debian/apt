@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cacheiterators.h,v 1.3 1998/07/05 05:33:52 jgg Exp $
+// $Id: cacheiterators.h,v 1.4 1998/07/07 04:17:00 jgg Exp $
 /* ######################################################################
    
    Cache Iterators - Iterators for navigating the cache structure
@@ -21,7 +21,8 @@
    The DepIterator can iterate over two lists, a list of 'version depends'
    or a list of 'package reverse depends'. The type is determined by the
    structure passed to the constructor, which should be the structure
-   that has the depends pointer as a member.
+   that has the depends pointer as a member. The provide iterator has the
+   same system.
    
    This header is not user includable, please use pkglib/pkgcache.h
    
@@ -30,6 +31,10 @@
 // Header section: pkglib
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
+
+#ifdef __GNUG__
+#pragma interface "pkglib/cacheiterators.h"
+#endif 
 
 // Package Iterator
 class pkgCache::PkgIterator
@@ -57,6 +62,7 @@ class pkgCache::PkgIterator
    inline Package const &operator *() const {return *Pkg;};
    inline operator Package *() {return Pkg == Owner->PkgP?0:Pkg;};
    inline operator Package const *() const {return Pkg == Owner->PkgP?0:Pkg;};
+   
    inline const char *Name() const {return Pkg->Name == 0?0:Owner->StrP + Pkg->Name;};
    inline const char *Section() const {return Pkg->Section == 0?0:Owner->StrP + Pkg->Section;};
    inline const char *TargetDist() const {return Pkg->TargetDist == 0?0:Owner->StrP + Pkg->TargetDist;};
@@ -111,13 +117,14 @@ class pkgCache::VerIterator
    inline Version const &operator *() const {return *Ver;};
    inline operator Version *() {return Ver == Owner.VerP?0:Ver;};
    inline operator Version const *() const {return Ver == Owner.VerP?0:Ver;};
+
    inline const char *VerStr() const {return Ver->VerStr == 0?0:Owner.StrP + Ver->VerStr;};
    inline const char *Section() const {return Ver->Section == 0?0:Owner.StrP + Ver->Section;};
    inline PkgIterator ParentPkg() const {return PkgIterator(Owner,Owner.PkgP + Ver->ParentPkg);};
    inline DepIterator DependsList() const;
    inline PrvIterator ProvidesList() const;
-   inline unsigned long Index() const {return Ver - Owner.VerP;};
    inline VerFileIterator FileList() const;
+   inline unsigned long Index() const {return Ver - Owner.VerP;};
 
    inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Ver(Trg), Owner(Owner) 
    { 
@@ -154,16 +161,17 @@ class pkgCache::DepIterator
    inline Dependency const &operator *() const {return *Dep;};
    inline operator Dependency *() {return Dep == Owner->DepP?0:Dep;};
    inline operator Dependency const *() const {return Dep == Owner->DepP?0:Dep;};
+   
    inline const char *TargetVer() const {return Dep->Version == 0?0:Owner->StrP + Dep->Version;};
    inline PkgIterator TargetPkg() {return PkgIterator(*Owner,Owner->PkgP + Dep->Package);};
-   Version **AllTargets();   
-   bool SmartTargetPkg(PkgIterator &Result);
    inline PkgIterator SmartTargetPkg() {PkgIterator R(*Owner);SmartTargetPkg(R);return R;};
    inline VerIterator ParentVer() {return VerIterator(*Owner,Owner->VerP + Dep->ParentVer);};
    inline PkgIterator ParentPkg() {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[Dep->ParentVer].ParentPkg);};
-   bool IsCritical();
    inline bool Reverse() {return Type == DepRev;};
    inline unsigned long Index() const {return Dep - Owner->DepP;};
+   bool IsCritical();
+   Version **AllTargets();   
+   bool SmartTargetPkg(PkgIterator &Result);
       
    inline DepIterator(pkgCache &Owner,Dependency *Trg,Version * = 0) :
           Dep(Trg), Type(DepVer), Owner(&Owner) 
@@ -208,6 +216,7 @@ class pkgCache::PrvIterator
    inline Provides const &operator *() const {return *Prv;};
    inline operator Provides *() {return Prv == Owner->ProvideP?0:Prv;};
    inline operator Provides const *() const {return Prv == Owner->ProvideP?0:Prv;};
+
    inline const char *Name() const {return Owner->StrP + Owner->PkgP[Prv->ParentPkg].Name;};
    inline const char *ProvideVersion() const {return Prv->ProvideVersion == 0?0:Owner->StrP + Prv->ProvideVersion;};
    inline PkgIterator ParentPkg() {return PkgIterator(*Owner,Owner->PkgP + Prv->ParentPkg);};

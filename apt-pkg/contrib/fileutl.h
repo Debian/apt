@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.1 1998/07/02 02:58:13 jgg Exp $
+// $Id: fileutl.h,v 1.2 1998/07/07 04:17:13 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -21,6 +21,10 @@
 // Header section: pkglib
 #ifndef PKGLIB_FILEUTL_H
 #define PKGLIB_FILEUTL_H
+
+#ifdef __GNUG__
+#pragma interface "pkglib/fileutl.h"
+#endif 
 
 #include <string>
 
