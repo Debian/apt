@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.cc,v 1.5 2002/11/23 07:54:36 jgg Exp $
+// $Id: debversion.cc,v 1.6 2003/01/27 00:05:59 jgg Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian
@@ -63,9 +63,6 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
    const char *rhs = B;
    while (lhs != AEnd && rhs != BEnd)
    {
-      // Starting points
-      const char *Slhs = lhs;
-      const char *Srhs = rhs;
       int first_diff = 0;
 
       while ((lhs != AEnd && !isdigit(*lhs)) ||
