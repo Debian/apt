@@ -139,14 +139,15 @@ Configuration Item: bf(APT::Get::Download-Only).
 
 dit(bf(-f, --fix-broken))
 Fix; attempt to correct a system with broken dependencies in            
-place. This option may be used alone or in conjunction with any of the  
-command actions, and is sometimes necessary when running APT for the    
-first time; APT itself does not allow broken package dependencies to    
-exist on a system. It is possible that a system's dependency structure  
-can be so corrupt as to require manual intervention (which usually
-means using dselect or dpkg --remove to eliminate some of the offending 
-packages). Use of this option together with -m may produce an error in
-some situations. Configuration Item: bf(APT::Get::Fix-Broken).
+place. This option, when used with install/remove, can omit any packages
+to permit APT to deduce a likely soltion. Any Package that are specified
+must completly correct the problem. The option is sometimes necessary when 
+running APT for the first time; APT itself does not allow broken package 
+dependencies to exist on a system. It is possible that a system's 
+dependency structure can be so corrupt as to require manual intervention 
+(which usually means using dselect or dpkg --remove to eliminate some of 
+the offending packages). Use of this option together with -m may produce an 
+error in some situations. Configuration Item: bf(APT::Get::Fix-Broken).
 
 dit(bf(-h, --help))
 Help; display a helpful usage message and exits.
