@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.34 1999/05/29 03:25:03 jgg Exp $
+// $Id: http.cc,v 1.35 1999/06/05 07:30:18 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -643,7 +643,8 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
 bool HttpMethod::Go(bool ToFile,ServerState *Srv)
 {
    // Server has closed the connection
-   if (Srv->ServerFd == -1 && Srv->In.WriteSpace() == false)
+   if (Srv->ServerFd == -1 && (Srv->In.WriteSpace() == false || 
+			       ToFile == false))
       return false;
    
    fd_set rfds,wfds,efds;
@@ -678,7 +679,7 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    int MaxFd = FileFD;
    if (MaxFd < Srv->ServerFd)
       MaxFd = Srv->ServerFd;
-   
+
    // Select
    struct timeval tv;
    tv.tv_sec = TimeOut;
@@ -1016,7 +1017,7 @@ int HttpMethod::Loop()
 
 	    if (FailCounter >= 2)
 	    {
-	       Fail("Connection timed out",true);
+	       Fail("Connection failed",true);
 	       FailCounter = 0;
 	    }
 	    
