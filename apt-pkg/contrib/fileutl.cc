@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.15 1998/11/27 01:14:08 jgg Exp $
+// $Id: fileutl.cc,v 1.16 1998/11/27 04:20:52 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -186,9 +186,13 @@ FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
       break;
       
       case WriteEmpty:
-      unlink(FileName.c_str());
-      iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_EXCL,Perms);
-      break;
+      {
+	 struct stat Buf;
+	 if (stat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
+	    unlink(FileName.c_str());
+	 iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_TRUNC,Perms);
+	 break;
+      }
       
       case WriteExists:
       iFd = open(FileName.c_str(),O_RDWR);
