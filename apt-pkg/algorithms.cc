@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.18 1999/06/04 02:31:37 jgg Exp $
+// $Id: algorithms.cc,v 1.19 1999/06/28 03:11:24 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -755,10 +755,16 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		   ((Cache[End] & pkgDepCache::DepGNow) == 0 &&
 		    End->Type != pkgCache::Dep::Conflicts))
 	       {
+		  // Try a little harder to fix protected packages..
 		  if ((Flags[I->ID] & Protected) == Protected)
+		  {
+		     if (DoUpgrade(Pkg) == true)
+			Scores[Pkg->ID] = Scores[I->ID];
 		     continue;
-
-		  // See if a keep will do
+		  }
+		  
+		  /* See if a keep will do, unless the package is protected,
+		     then installing it will be necessary */	
 		  Cache.MarkKeep(I);
 		  if (Cache[I].InstBroken() == false)
 		  {
