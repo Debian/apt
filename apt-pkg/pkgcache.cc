@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.9 1998/10/02 04:39:46 jgg Exp $
+// $Id: pkgcache.cc,v 1.10 1998/10/08 05:02:06 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -204,13 +204,13 @@ void pkgCache::PkgIterator::operator ++(int)
 /* By this we mean if it is either cleanly installed or cleanly removed. */
 pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 {
-   if (Pkg->CurrentState == State::UnPacked ||
-       Pkg->CurrentState == State::HalfConfigured)
+   if (Pkg->CurrentState == pkgCache::State::UnPacked ||
+       Pkg->CurrentState == pkgCache::State::HalfConfigured)
       return NeedsConfigure;
    
-   if (Pkg->CurrentState == State::UnInstalled ||
-       Pkg->CurrentState == State::HalfInstalled ||
-       Pkg->InstState != State::Ok)
+   if (Pkg->CurrentState == pkgCache::State::UnInstalled ||
+       Pkg->CurrentState == pkgCache::State::HalfInstalled ||
+       Pkg->InstState != pkgCache::State::Ok)
       return NeedsUnpack;
       
    return NeedsNothing;
