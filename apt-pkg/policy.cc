@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.7 2001/05/27 05:36:04 jgg Exp $
+// $Id: policy.cc,v 1.8 2001/05/27 23:40:56 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -168,9 +168,6 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 	    break;
       }            
    }
-
-   if (Pref.end() == true)
-      return Pkg.VersionList();
    return Pref;
 }
 									/*}}}*/
@@ -183,33 +180,24 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 			  string Data,signed short Priority)
 {
-   pkgCache::PkgIterator Pkg = Cache->FindPkg(Name);
    Pin *P = 0;
    
    if (Name.empty() == true)
-      // tausq:g++v3 begin
-	;
-      // P = Defaults.insert(Defaults.end());
-      // tausq:g++v3 end
+      P = &*Defaults.insert(Defaults.end());
    else
    {
       // Get a spot to put the pin
+      pkgCache::PkgIterator Pkg = Cache->FindPkg(Name);
       if (Pkg.end() == true)
       {
 	 // Check the unmatched table
 	 for (vector<PkgPin>::iterator I = Unmatched.begin(); 
 	      I != Unmatched.end() && P == 0; I++)
 	    if (I->Pkg == Name)
-               // tausq:g++-v3 begin
-	       P = &(*I);
-	       // P = I;
-               // tausq:g++-v3 end
+	       P = &*I;
 	 
 	 if (P == 0)
-            // tausq:g++v3 begin
-            ;
-	    // P = Unmatched.insert(Unmatched.end());      
-            // tausq:g++v3 end
+	    P = &*Unmatched.insert(Unmatched.end());      
       }
       else
       {
