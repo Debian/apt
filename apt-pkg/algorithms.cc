@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.39 2002/04/02 05:55:24 jgg Exp $
+// $Id: algorithms.cc,v 1.40 2002/04/25 05:45:18 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -800,6 +800,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			if (Debug == true)
 			   clog << "  Or group remove for " << I.Name() << endl;
 			Cache.MarkDelete(I);
+			Change = true;
 		     }		     
 		  }		  
 		  if (OldEnd == LEnd && OrOp == OrKeep)
@@ -807,6 +808,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		     if (Debug == true)
 			clog << "  Or group keep for " << I.Name() << endl;
 		     Cache.MarkKeep(I);
+		     Change = true;
 		  }
 	       }
 	       
@@ -817,21 +819,24 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       D.GlobOr(Start,End);
 	       if (Start.end() == true)
 		  break;
-	       
+
 	       // We only worry about critical deps.
 	       if (End.IsCritical() != true)
 		  continue;
-	       
+
 	       InOr = Start != End;
 	       OldEnd = LEnd;
-	    }	    
+	    }
 	    else
 	       Start++;
-	    
+
 	    // Dep is ok
 	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
+	    {
+	       InOr = false;
 	       continue;
-	    	    
+	    }
+	    
 	    if (Debug == true)
 	       clog << "Package " << I.Name() << " has broken dep on " << Start.TargetPkg().Name() << endl;
 
