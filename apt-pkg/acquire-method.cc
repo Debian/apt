@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.3 1998/11/01 08:07:11 jgg Exp $
+// $Id: acquire-method.cc,v 1.4 1998/11/05 07:21:38 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -263,10 +263,11 @@ int pkgAcqMethod::Run(bool Single)
 	    FetchItem **I = &Queue;
 	    for (; *I != 0; I = &(*I)->Next);
 	    *I = Tmp;
-	    cout << "GOT " << Tmp->Uri << endl;
-	    
+
+	    // Notify that this item is to be fetched.
 	    if (Fetch(Tmp) == false)
 	       Fail();
+	    
 	    break;					     
 	 }   
       }      

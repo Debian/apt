@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.3 1998/11/04 07:10:49 jgg Exp $
+// $Id: http.cc,v 1.4 1998/11/05 07:21:48 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -951,6 +951,7 @@ int HttpMethod::Loop()
       
       // Decide what to do.
       FetchResult Res;
+      Res.Filename = Queue->DestFile;
       switch (DealWithHeaders(Res,Server))
       {
 	 // Ok, the file is Open

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.4 1998/11/01 05:27:43 jgg Exp $
+// $Id: gzip.cc,v 1.5 1998/11/05 07:21:47 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -36,7 +36,7 @@ class GzipMethod : public pkgAcqMethod
 bool GzipMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
-   
+
    // Open the source and destintation files
    FileFd From(Get.Path,FileFd::ReadOnly);
    FileFd To(Itm->DestFile,FileFd::WriteEmpty);   

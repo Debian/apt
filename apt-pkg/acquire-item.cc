@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.6 1998/10/30 07:53:34 jgg Exp $
+// $Id: acquire-item.cc,v 1.7 1998/11/05 07:21:35 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -94,6 +94,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) 
              Item(Owner), Location(Location)
 {
    Decompression = false;
+   Erase = false;
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(Location->PackagesURI());
@@ -136,9 +137,19 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(Location->PackagesURI());
       Rename(DestFile,FinalFile);
+      
+      // Remove the compressed version.
+      if (Erase == true)
+      {
+	 DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+	 DestFile += URItoFileName(Location->PackagesURI());
+	 unlink(DestFile.c_str());
+      }      
       return;
    }
-      
+
+   Erase = false;
+   
    // Handle the unzipd case
    string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
@@ -163,6 +174,9 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
       return;
+
+   if (FileName == DestFile)
+      Erase = true;
    
    Decompression = true;
    DestFile += ".decomp";

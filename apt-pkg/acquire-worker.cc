@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.9 1998/11/01 05:27:33 jgg Exp $
+// $Id: acquire-worker.cc,v 1.10 1998/11/05 07:21:39 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -192,7 +192,7 @@ bool pkgAcquire::Worker::RunMessages()
       pkgAcquire::Queue::QItem *Itm = 0;
       if (URI.empty() == false)
 	 Itm = OwnerQ->FindItem(URI,this);
-	 
+      
       // Determine the message number and dispatch
       switch (Number)
       {
@@ -237,8 +237,9 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
+	    pkgAcquire::Item *Owner = Itm->Owner;
 	    OwnerQ->ItemDone(Itm);
-	    Itm->Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
+	    Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
 					  LookupTag(Message,"MD5-Hash"));
 	    break;
 	 }	 
@@ -252,8 +253,9 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
+	    pkgAcquire::Item *Owner = Itm->Owner;
 	    OwnerQ->ItemDone(Itm);
-	    Itm->Owner->Failed(Message);
+	    Owner->Failed(Message);
 	    break;
 	 }	 
 	 

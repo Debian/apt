@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.7 1998/11/01 05:27:34 jgg Exp $
+// $Id: acquire.cc,v 1.8 1998/11/05 07:21:40 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -143,6 +143,8 @@ void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
       if (Running == true)
 	 I->Startup();
    }
+
+   Itm->Status = Item::StatIdle;
    
    // Queue it into the named queue
    I->Enqueue(Itm,URI,Description);
@@ -164,12 +166,14 @@ void pkgAcquire::Enqueue(Item *Itm,string URI,string Description)
 void pkgAcquire::Dequeue(Item *Itm)
 {
    Queue *I = Queues;
+   bool Res = false;
    for (; I != 0; I = I->Next)
-      I->Dequeue(Itm);
+      Res |= I->Dequeue(Itm);
    
    if (Debug == true)
       clog << "Dequeuing " << Itm->DestFile << endl;
-   ToFetch--;
+   if (Res == true)
+      ToFetch--;
 }
 									/*}}}*/
 // Acquire::QueueName - Return the name of the queue for this URI	/*{{{*/
@@ -371,9 +375,11 @@ void pkgAcquire::Queue::Enqueue(Item *Owner,string URI,string Description)
 									/*}}}*/
 // Queue::Dequeue - Remove an item from the queue			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-void pkgAcquire::Queue::Dequeue(Item *Owner)
+/* We return true if we hit something*/
+bool pkgAcquire::Queue::Dequeue(Item *Owner)
 {
+   bool Res = false;
+   
    QItem **I = &Items;
    for (; *I != 0;)
    {
@@ -383,10 +389,13 @@ void pkgAcquire::Queue::Dequeue(Item *Owner)
 	 *I = (*I)->Next;
 	 Owner->QueueCounter--;
 	 delete Jnk;
+	 Res = true;
       }
       else
 	 I = &(*I)->Next;
    }
+   
+   return Res;
 }
 									/*}}}*/
 // Queue::Startup - Start the worker processes				/*{{{*/
@@ -463,6 +472,8 @@ bool pkgAcquire::Queue::Cycle()
    if (Items == 0 || Workers == 0)
       return true;
 
+   cout << "Cylce for " << Name << endl;
+
    // Look for a queable item
    QItem *I = Items;
    for (; I != 0; I = I->Next)
@@ -475,6 +486,7 @@ bool pkgAcquire::Queue::Cycle()
    
    I->Worker = Workers;
    I->Owner->Status = pkgAcquire::Item::StatFetching;
+   cout << "Item has been queued!" << endl;
    return Workers->QueueItem(I);
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.4 1998/10/26 07:11:44 jgg Exp $
+// $Id: acquire-item.h,v 1.5 1998/11/05 07:21:36 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -63,6 +63,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    
    const pkgSourceList::Item *Location;
    bool Decompression;
+   bool Erase;
    
    public:
    

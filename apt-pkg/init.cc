@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.9 1998/10/30 07:53:39 jgg Exp $
+// $Id: init.cc,v 1.10 1998/11/05 07:21:42 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -46,7 +46,7 @@ bool pkgInitialize(Configuration &Cnf)
    Cnf.Set("Dir::Etc","/etc/apt/");
    Cnf.Set("Dir::Etc::sourcelist","sources.list");
    Cnf.Set("Dir::Etc::main","apt.conf");
-   Cnf.Set("Dir::Bin::methods","/usr/lib/apt/metods");
+   Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
    
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");
@@ -57,7 +57,9 @@ bool pkgInitialize(Configuration &Cnf)
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
    
-   if (ReadConfigFile(Cnf,FName) != true || ReadConfigFile(Cnf,Cfg) != true)
+   // Read both config files, either existing will be OK
+   if ((ReadConfigFile(Cnf,FName) != true) |
+       (ReadConfigFile(Cnf,Cfg) != true))
       return false;
    
    if (Cnf.FindB("Debug::pkgInitialize",false) == true)

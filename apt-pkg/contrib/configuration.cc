@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.9 1998/10/30 07:53:42 jgg Exp $
+// $Id: configuration.cc,v 1.10 1998/11/05 07:21:43 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -292,8 +292,14 @@ bool ReadConfigFile(Configuration &Conf,string FName)
       }
       
       // Discard single line comments
+      bool InQuote = false;
       for (char *I = Buffer; *I != 0; I++)
       {
+	 if (*I == '"')
+	    InQuote = !InQuote;
+	 if (InQuote == true)
+	    continue;
+	 
 	 if (*I == '/' && I[1] == '/')
          {
 	    *I = 0;
@@ -304,6 +310,11 @@ bool ReadConfigFile(Configuration &Conf,string FName)
       // Look for multi line comments
       for (char *I = Buffer; *I != 0; I++)
       {
+	 if (*I == '"')
+	    InQuote = !InQuote;
+	 if (InQuote == true)
+	    continue;
+	 
 	 if (*I == '/' && I[1] == '*')
          {
 	    InComment = true;
@@ -398,7 +409,7 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	    string Word;
 	    if (ParseCWord(LineBuffer.c_str()+Pos,Word) == false)
 	       return _error->Error("Syntax error %s:%u: Malformed value",FName.c_str(),CurLine);
-	       
+	    
 	    // Generate the item name
 	    string Item;
 	    if (ParentTag.empty() == true)

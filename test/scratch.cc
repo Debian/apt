@@ -8,7 +8,7 @@ int main(int argc,char *argv[])
 {
    signal(SIGPIPE,SIG_IGN);
 
-   URI Foo(argv[1]);
+/*   URI Foo(argv[1]);
    cout << Foo.Access << '\'' << endl;
    cout << Foo.Host << '\'' << endl;
    cout << Foo.Path << '\'' << endl;
@@ -16,7 +16,7 @@ int main(int argc,char *argv[])
    cout << Foo.Password << '\'' << endl;
    cout << Foo.Port << endl;
    
-   return 0;
+   return 0;*/
 
    pkgInitialize(*_config);
    

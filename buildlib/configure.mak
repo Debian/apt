@@ -24,12 +24,3 @@ $(BUILD)/config.status: configure
 	(HERE=`pwd`; cd $(BUILD) && $$HERE/configure)
 $(CONVERTED): $(BUILD)/config.status
 	(cd $(BUILD) && ./config.status)
-
-# We include the environment if it exists and re-export it to configure. This
-# allows someone to edit it and not have their changes blown away.
-Env = $(wildcard $(BUILD)/environment.mak)
-ifneq ($(words $(Env)),0)
-include $(Env)
-export CFLAGS CXXFLAGS CPPFLAGS LDFLAGS PICFLAGS
-endif
-

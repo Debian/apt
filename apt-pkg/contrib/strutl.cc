@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.12 1998/11/04 07:11:13 jgg Exp $
+// $Id: strutl.cc,v 1.13 1998/11/05 07:21:44 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -623,23 +623,14 @@ void URI::CopyFrom(string U)
    for (; I < U.end() && *I != ':' ; I++);
    string::const_iterator FirstColon = I;
 
-   // Determine if this is a host type URI with a leading double //
+   /* Determine if this is a host type URI with a leading double //
+      and then search for the first single / */
    string::const_iterator SingleSlash = I;
    if (I + 3 < U.end() && I[1] == '/' && I[2] == '/')
-   {
-      // Locate the single / that starts the path
-      for (; I < U.end(); I++)
-      {
-	 if (*I == '/' && I+1 < U.end() && I[1] == '/')
-	    I += 2;
-	 else 
-	    if (*I == '/')
-	       break;
-      }
-      if (I > U.end())
-	 I = U.end();
-      SingleSlash = I;      
-   }
+      SingleSlash += 3;
+   for (; SingleSlash < U.end() && *SingleSlash != '/'; SingleSlash++);
+   if (SingleSlash > U.end())
+	 SingleSlash = U.end();
 
    // We can now write the access and path specifiers
    Access = string(U,0,FirstColon - U.begin());
