@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.9 1998/11/13 07:08:57 jgg Exp $
+// $Id: algorithms.cc,v 1.10 1998/11/14 03:32:36 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -700,10 +700,20 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    	    
 	    if (Debug == true)
 	       clog << "Package " << I.Name() << " has broken dep on " << End.TargetPkg().Name() << endl;
-	    
-	    /* Conflicts is simple, decide if we should remove this package
-	       or the conflicted one */
+
+	    /* Look across the version list. If there are no possible
+	       targets then we keep the package and bail. This is necessary
+	       if a package has a dep on another package that cant be found */
 	    pkgCache::Version **VList = End.AllTargets();
+	    if (*VList == 0 && (Flags[I->ID] & Protected) != Protected &&
+		End->Type != pkgCache::Dep::Conflicts && 
+		Cache[I].NowBroken() == false)
+	    {
+	       Change = true;
+	       Cache.MarkKeep(I);
+	       break;
+	    }
+	    
 	    bool Done = false;
 	    for (pkgCache::Version **V = VList; *V != 0; V++)
 	    {
