@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.h,v 1.3 1999/07/03 03:10:35 jgg Exp $
+// $Id: orderlist.h,v 1.4 1999/07/04 23:22:53 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -99,7 +99,9 @@ class pkgOrderList
    inline void Flag(PkgIterator Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
    inline void Flag(Package *Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
    inline bool IsNow(PkgIterator Pkg) {return (Flags[Pkg->ID] & States) == 0;};
+   bool IsMissing(PkgIterator Pkg);
    void WipeFlags(unsigned long F);
+   void SetFileList(string *FileList) {this->FileList = FileList;};
    
    // Accessors
    inline iterator begin() {return List;};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.15 1999/07/03 03:10:35 jgg Exp $
+// $Id: packagemanager.cc,v 1.16 1999/07/04 23:22:53 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -89,25 +89,14 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 bool pkgPackageManager::FixMissing()
 {
    pkgProblemResolver Resolve(Cache);
-
+   List->SetFileList(FileNames);
+   
    bool Bad = false;
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
-      // These don't need files
-      if (Cache[I].Keep() == true)
+      if (List->IsMissing(I) == false)
 	 continue;
-      if (Cache[I].Delete() == true)
-	 continue;
-      
-      // We have a filename
-      if (FileNames[I->ID].empty() == false)
-	 continue;
-      
-      // Skip Packages that need configure only.
-      if (I.State() == pkgCache::PkgIterator::NeedsConfigure && 
-	  Cache[I].Keep() == true)
-	 continue;
-      
+   
       // Okay, this file is missing and we need it. Mark it for keep 
       Bad = true;
       Cache.MarkKeep(I);
@@ -526,7 +515,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	 continue;
       }
       
-      if (Cache[Pkg].Delete() == false && FileNames[Pkg->ID].empty() == true)
+      if (List->IsMissing(Pkg) == true)
       {
 	 if (Debug == true)
 	    clog << "Sequence completed at" << Pkg.Name() << endl;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.4 1999/07/03 03:10:35 jgg Exp $
+// $Id: orderlist.cc,v 1.5 1999/07/04 23:22:53 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -87,6 +87,25 @@ pkgOrderList::~pkgOrderList()
 {
    delete [] List;
    delete [] Flags;
+}
+									/*}}}*/
+// OrderList::IsMissing - Check if a file is missing			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgOrderList::IsMissing(PkgIterator Pkg) 
+{
+   // Skip packages to erase
+   if (Cache[Pkg].Delete() == true)
+      return false;
+
+   // Skip Packages that need configure only.
+   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
+       Cache[Pkg].Keep() == true)
+      return false;
+   
+   if (FileList != 0 && FileList[Pkg->ID].empty() == false)
+      return false;
+   return true;
 }
 									/*}}}*/
 
@@ -299,9 +318,9 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
    // We order missing files to toward the end
    if (Me->FileList != 0)
    {
-      if ((Res = BoolCompare(Me->FileList[A->ID].empty() && !Me->Cache[A].Delete(),
-			     Me->FileList[B->ID].empty() && !Me->Cache[B].Delete())) == 0)
-	 return -1*Res;
+      if ((Res = BoolCompare(Me->IsMissing(A),
+			     Me->IsMissing(B))) == 0)
+	 return Res;
    }
    
    if (A.State() != pkgCache::PkgIterator::NeedsNothing && 
