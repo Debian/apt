@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.60 2003/01/11 07:18:44 jgg Exp $
+// $Id: apt-cache.cc,v 1.61 2003/02/10 01:40:58 doogie Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1268,7 +1268,7 @@ bool ShowHelp(CommandLine &Cmd)
       "cache files, and query information from them\n"
       "\n"
       "Commands:\n"
-      "   add - Add an package file to the source cache\n"
+      "   add - Add a package file to the source cache\n"
       "   gencaches - Build both the package and source cache\n"
       "   showpkg - Show some general information for a single package\n"
       "   showsrc - Show source records\n"
