@@ -33,16 +33,17 @@ AC_SUBST(X11LIB)
 X11LIB=
 if test "$no_x" != "yes"; then
   X11LIB="-lx11"
+  AC_DEFINE(HAVE_X11)
 fi
 
 dnl Checks for Slang
-AC_CHECK_LIB(slang, init_SLang,SLANGLIB="-lslang")
+AC_CHECK_LIB(slang, init_SLang,[AC_DEFINE(HAVE_LIBSLANG) SLANGLIB="-lslang"])
 AC_SUBST(SLANGLIB)
 
 dnl Checks for GPM
 AC_ARG_WITH(gpm,[  --without-gpm		  do not use GPM mouse support])
 if test "$with_gpm" != "no"; then
-  AC_CHECK_LIB(gpm, Gpm_Open,GPMLIB="-lgpm")
+  AC_CHECK_LIB(gpm, Gpm_Open,[AC_DEFINE(HAVE_LIBGPM) GPMLIB="-lgpm"])
   AC_SUBST(GPMLIB)
 fi
 
@@ -84,3 +85,6 @@ AC_CHECK_PROG(DEBIANDOC_HTML,debiandoc2html,"yes","")
 AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
 
 AC_OUTPUT(environment.mak:buildlib/environment.mak.in)
+
+dnl Setup the directories
+mkdir doc bin obj include/apt-pkg include/deity

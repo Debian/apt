@@ -26,9 +26,21 @@
 # but by explicly setting the BUILD variable. Make is invoked from
 # within the source itself which is much more compatible with compilation
 # environments.
+.SILENT:
 
-ifndef BUILD
-BUILD=$(BASE)/build
+# Search for the build directory
+ifdef BUILD
+BUILD_POSSIBLE = $(BUILD)
+else
+BUILD_POSSIBLE = $(BASE) $(BASE)/build
+endif
+
+BUILD:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak))
+BUILD:= $(firstword $(dir $(BUILD)))
+
+ifeq ($(words $(BUILD)),0)
+error-all:
+	echo Can't find the build directory in $(BUILD_POSSIBLE) -- use BUILD=
 endif
 
 # Base definitions
@@ -57,15 +69,8 @@ SUBDIRS+=
 HEADER_TARGETDIRS+=
 
 # Options
-CXX = c++
-CC = cc
-CPPFLAGS+= -I$(INCLUDE)
-CXXFLAGS+= -Wall -g -fno-implicit-templates  -fno-exceptions
-PICFLAGS+= -fPIC -DPIC
-LFLAGS+= 
-INLINEDEPFLAG = -MD
-DEBIANDOC_HTML = yes
-DEBIANDOC_TEXT = yes
+include $(BUILD)/environment.mak
+CPPFLAGS+= -I$(BUILD)/include
 
 # Phony rules. Other things hook these by appending to the dependency
 # list
