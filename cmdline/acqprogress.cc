@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.1 1998/11/11 23:45:52 jgg Exp $
+// $Id: acqprogress.cc,v 1.2 1998/11/12 05:30:07 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -18,7 +18,7 @@
 // AcqTextStatus::AcqTextStatus - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-AcqTextStatus::AcqTextStatus(unsigned int ScreenWidth,unsigned int Quiet) :
+AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int Quiet) :
     ScreenWidth(ScreenWidth), Quiet(Quiet)
 {
 }

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.7 1998/11/12 04:10:56 jgg Exp $
+// $Id: apt-get.cc,v 1.8 1998/11/12 05:30:10 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -39,6 +39,9 @@
 #include "acqprogress.h"
 
 #include <fstream.h>
+#include <termios.h>
+#include <sys/ioctl.h>
+#include <signal.h>
 									/*}}}*/
 
 ostream c0out;
@@ -801,6 +804,20 @@ void GetInitialize()
    _config->Set("APT::Get::Fix-Broken",false);
 }
 									/*}}}*/
+// SigWinch - Window size change signal handler				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void SigWinch(int)
+{
+   // Riped from GNU ls
+#ifdef TIOCGWINSZ
+   struct winsize ws;
+  
+   if (ioctl(1, TIOCGWINSZ, &ws) != -1 && ws.ws_col >= 5)
+      ScreenWidth = ws.ws_col - 1;
+#endif
+}
+									/*}}}*/
 
 int main(int argc,const char *argv[])
 {
@@ -845,6 +862,11 @@ int main(int argc,const char *argv[])
       c0out.rdbuf(devnull.rdbuf());
    if (_config->FindI("quiet",0) > 1)
       c1out.rdbuf(devnull.rdbuf());
+
+   // Setup the signals
+   signal(SIGPIPE,SIG_IGN);
+   signal(SIGWINCH,SigWinch);
+   SigWinch(0);
    
    // Match the operation
    struct 
