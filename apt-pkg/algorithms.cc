@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.28 1999/10/31 23:58:35 jgg Exp $
+// $Id: algorithms.cc,v 1.29 1999/11/17 01:52:01 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -738,7 +738,10 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       if (InOr == true)
 	       {
 		  if (OldEnd == LEnd && OrOp == OrRemove)
-		     Cache.MarkDelete(I);
+		  {
+		     if ((Flags[I->ID] & Protected) != Protected)
+			Cache.MarkDelete(I);
+		  }		  
 		  if (OldEnd == LEnd && OrOp == OrKeep)
 		     Cache.MarkKeep(I);
 	       }

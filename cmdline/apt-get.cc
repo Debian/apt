@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.88 1999/11/16 03:16:34 jgg Exp $
+// $Id: apt-get.cc,v 1.89 1999/11/17 01:52:01 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -842,7 +842,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    }
 
    Fix.Clear(Pkg);
-   Fix.Protect(Pkg);
+   Fix.Protect(Pkg);   
    if (Remove == true)
    {
       Fix.Remove(Pkg);
