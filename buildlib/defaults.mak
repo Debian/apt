@@ -62,6 +62,7 @@ LIBRARY_H = $(BASE)/buildlib/library.mak
 DEBIANDOC_H = $(BASE)/buildlib/debiandoc.mak
 MANPAGE_H = $(BASE)/buildlib/manpage.mak
 PROGRAM_H = $(BASE)/buildlib/program.mak
+COPY_H = $(BASE)/buildlib/copy.mak
 
 # Source location control
 # SUBDIRS specifies sub components of the module that
