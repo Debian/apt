@@ -1,5 +1,5 @@
 <!-- -*- mode: sgml; mode: fold -*- -->
-<!-- translation of version 1.6 -->
+<!-- translation of version 1.7 -->
 <!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 
 <!ENTITY % aptent SYSTEM "apt.ent.fr">
@@ -30,27 +30,27 @@ choisir la version des paquets que l'on veut installer.
 <para>Quand le fichier &sources-list; contient des références à plusieurs
 distributions (par exemple, <literal>stable</literal> et 
 <literal>testing</literal>), plusieurs versions d'un paquet peuvent être
-installées&nbsp;; et, si ce fichier contient, pour une même distribution, 
+installées. Apt affecte une priorité à chaque version disponible. La commande 
+<command>apt-get</command>, tenant compte des contraintes de
+dépendance, installe la version qui possède la priorité la plus haute. 
+Le fichier des préférences annule les priorités assignées par défaut
+aux versions des paquets&nbsp;: ainsi l'utilisateur peut choisir la version 
+qu'il veut installer.
+    </para>
+<para>
+Si le fichier &sources-list; contient, pour une même distribution, 
 des références à plusieurs sites de téléchargement, il peut exister plusieurs
-exemplaires de la même version d'un paquet. Apt affecte une priorité à 
-chaque exemplaire disponible. (Dans ce qui suit, un exemplaire est l'
-exemplaire d'un paquet disponible selon le fichier &sources-list;.)
-La commande <command>apt-get</command>, tenant compte des contraintes de
-dépendance, installe l'exemplaire possédant la plus haute priorité. Si deux
-exemplaires ont la même priorité, elle installe l'exemplaire le plus récent,
-c'est-à-dire celui qui possède le numéro de version le plus haut.
-</para>
+exemplaires de la même version d'un paquet. Dans ce cas, 
+<command>apt-get</command> télécharge l'exemplaire qui apparaît en premier
+dans le fichier &sources-list;. Le fichier des préférences n'influe pas sur
+le choix des exemplaires, seulement sur le choix de la version.
+    </para>
 
-<para>Le fichier des préférences annule les priorités assignées par défaut
-aux exemplaires des paquets&nbsp;: ainsi l'utilisateur peut choisir
-l'exemplaire qu'il veut installer.
-</para>
-
-<RefSect2><Title>Les priorités assignées par défaut</>
+<RefSect2><Title>Les priorités affectées par défaut</>
 
 <para>Quand le fichier des préférences n'existe pas, ou quand aucune entrée 
-de ce fichier ne s'applique à un exemplaire précis, la priorité affectée à
-cet exemplaire est la priorité de la distribution à laquelle il appartient.
+de ce fichier ne s'applique à une version précise, la priorité affectée à
+cette version est la priorité de la distribution à laquelle elle appartient.
 On peut distinguer une distribution et lui donner une priorité plus haute
 que celle des autres distributions&nbsp;: on l'appelle la distribution par
 défaut ou «&nbsp;target release&nbsp;» et elle peut être définie sur la ligne 
@@ -59,36 +59,33 @@ d'APT, <filename>/etc/apt/apt.conf</filename>.
 Par exemple&nbsp;:
 
 <programlisting>
-# Commande pour installer la version <literal/testing/ d'un <replaceable>paquet</replaceable>
 <command>apt-get install -t testing <replaceable>paquet</replaceable></command>
 </programlisting>
 
 <programlisting>
-# Utiliser le fichier de configuration pour rendre la distribution 
-<literal/stable/ la distribution par defaut (ou «&nbsp;target release&nbsp;») 
 APT::Default-Release "stable";
 </programlisting>
 </para>
 
 <para>Quand une distribution par défaut a été indiquée, APT utilise 
-l'algorithme suivant pour déterminer la priorité des exemplaires d'un
+l'algorithme suivant pour déterminer la priorité des versions d'un
 paquet&nbsp;:
 
 <variablelist>
 <varlistentry>
 <term>une priorité égale à 100</term>
-<listitem><simpara>est affectée à l'exemplaire déjà installé (s'il existe).
+<listitem><simpara>est affectée à la version déjà installée (si elle existe).
 </simpara></listitem>
 </varlistentry>
 <varlistentry>
 <term>une priorité égale à 500</term>
-<listitem><simpara>est affectée aux exemplaires qui ne sont pas installés et 
+<listitem><simpara>est affectée aux versions qui ne sont pas installées et 
 qui n'appartiennent pas à la distribution par défaut.
 </simpara></listitem>
 </varlistentry>
 <varlistentry>
 <term>une priorité égale à 990</term>
-<listitem><simpara>est affectée aux exemplaires qui ne sont pas installés et 
+<listitem><simpara>est affectée aux versions qui ne sont pas installées et 
 qui appartiennent à la distribution par défaut.
 </simpara></listitem>
 </varlistentry>
@@ -96,52 +93,57 @@ qui appartiennent à la distribution par défaut.
 </para>
 
 <para>Quand aucune distribution par défaut n'a été indiquée, APT affecte
-simplement une priorité égale à 100 à tout exemplaire installé d'un paquet 
-et une priorité égale à 500 à tout exemplaire non installé d'un paquet.
+simplement une priorité égale à 100 à toute version installée d'un paquet 
+et une priorité égale à 500 à tout version non installée.
 </para>
 
-<para>Puis APT applique les règles suivantes pour déterminer l'exemplaire
+<para>Puis APT applique les règles suivantes pour déterminer la version
 du paquet qu'il faut installer (elles sont listées par ordre de priorité)&nbsp;: 
 
 <itemizedlist>
-<listitem><simpara>Ne jamais revenir en arrière, sauf si la priorité d'un
-exemplaire disponible dépasse 1000. («&nbsp;Revenir en arrière&nbsp;» signifie
+<listitem><simpara>Ne jamais revenir en arrière, sauf si la priorité d'une
+version disponible dépasse 1000. «&nbsp;Revenir en arrière&nbsp;» signifie
 installer une version moins récente que la version installée. Il
 faut noter qu'aucune des priorités par défaut n'excède 1000&nbsp;; de telles
-valeurs ne peuvent être définies que dans le fichier des préférences.)
+valeurs ne peuvent être définies que dans le fichier des préférences. Notez 
+aussi qu'il est risqué de revenir en arrière.
 </simpara></listitem>
-<listitem><simpara>Installer l'exemplaire qui possède la priorité la plus 
+<listitem><simpara>Installer la version qui possède la priorité la plus 
 haute.
 </simpara></listitem>
-<listitem><simpara>Quand deux (ou plus) exemplaires ont la même priorité, 
-installer l'exemplaire le plus récent.
+<listitem><simpara>Quand deux (ou plus) versions ont la même priorité, 
+installer la version la plus récente (c.-à-d. celle dont le numéro de 
+version est le plus grand).
 </simpara></listitem>
-<listitem><simpara>Quand deux (ou plus) exemplaires ont le même numéro de 
-version, installer l'exemplaire dont la source est listée en premier dans
-&sources-list;. (L'exemplaire installé, s'il existe, est toujours choisi
-dans une telle comparaison, sauf si la commande 
-<command>apt-get --reinstall</command> est utilisée.)
+<listitem><simpara>Quand deux (ou plus) versions ont la même priorité et le 
+même numéro de version, mais soit les paquets diffèrent par certaines
+métadonnées, soit l'option <literal/--reinstall/ a été donnée, installer la 
+version qui n'est pas installée.
 </simpara></listitem>
 </itemizedlist>
 </para>
 
-<para>En général, l'exemplaire installé d'un paquet (priorité 100) n'est
-pas aussi récent que l'un des exemplaires disponibles dans les sources
+<para>En général, la version installée d'un paquet (priorité 100) n'est
+pas aussi récente que les versions disponibles dans les sources
 listées dans le fichier &sources-list; (priorité 500 ou 990). Et donc le
 paquet sera mis à niveau avec la commande&nbsp;:
-<command>apt-get install</command> ou <command>apt-get dist-upgrade</command>.
+<command>apt-get install <replaceable>paquet</replaceable></command> ou 
+<command>apt-get dist-upgrade</command>.
 </para>
 
-<para>L'exemplaire installé d'un paquet peut être - rarement - 
-<emphasis/plus/ récent que tout autre exemplaire disponible. Pas de retour 
-en arrière.
+<para>La version installée d'un paquet peut être - rarement - 
+<emphasis/plus/ récente que tout autre version disponible. Les commandes 
+<command>apt-get install <replaceable>paquet</replaceable></command\> ou 
+<command>apt-get upgrade</command> ne provoquent pas de retour en arrière.
 </para>
 
-<para>Parfois, l'exemplaire installé d'un paquet est plus récent que la
-version appartenant à la distribution par défaut, mais moins récent que
-la version appartenant à une autre distribution. Un tel exemplaire sera mis
-à niveau car au moins <emphasis/l'un/ des exemplaires disponibles possède
-une plus haute priorité que la sienne.
+<para>Parfois, la version installée d'un paquet est plus récente que la
+version appartenant à la distribution par défaut, mais moins récente que
+la version appartenant à une autre distribution. Une telle version sera mise
+à niveau par les commandes 
+<command>apt-get install <replaceable>paquet</replaceable></command\> ou 
+<command>apt-get upgrade</command> car au moins <emphasis/l'une/ des versions 
+disponibles possède une plus haute priorité que celle de la version installée.
 </para>
 
 </RefSect2>
@@ -149,9 +151,9 @@ une plus haute priorité que la sienne.
 <RefSect2><Title>Conséquences des préférences</>
 
 <para>Le fichier des préférences permet à l'administrateur-système de
-choisir ses priorités. Ce fichier est constitué d'une ou plusieurs entrées
-séparées par des lignes blanches. Ces entrées peuvent avoir deux formes,
-une forme particulière et une forme générale.
+contrôler l'affectation des priorités. Ce fichier est constitué d'une ou 
+plusieurs entrées séparées par des lignes blanches. Ces entrées peuvent avoir 
+deux formes, une forme particulière et une forme générale.
 <itemizedlist>
 <listitem>
 <simpara>La forme particulière affecte une priorité 
@@ -178,7 +180,7 @@ qualifié.
 
 <simpara>Cette forme générale des entrées du fichier des préférences
 s'applique seulement aux groupes de paquets. Par exemple, l'entrée suivante
-affecte une priorité haute à tous les exemplaires disponibles dans le
+affecte une priorité haute à toutes les versions disponibles dans le
 site local.
 </simpara>
 
@@ -189,15 +191,15 @@ Pin-Priority: 999
 </programlisting>
 
 <simpara>Attention ! le mot-clé utilisé ici, <literal/origin/, ne doit pas
-être confondu avec l'«&nbsp;Origin:&nbsp;» d'une distribution indiqué dans
+être confondu avec l'Origine d'une distribution indiquée dans
 un fichier <filename/Release/. Ce qui suit l'étiquette «&nbsp;Origin:&nbsp;» 
-dans un fichier <filename/Release/ n'est pas l'adresse d'un site internet
-mais le nom d'un auteur ou d'un vendeur, comme Debian ou Ximian.
+dans un fichier <filename/Release/ n'est pas une adresse internet
+mais le nom d'un auteur ou d'un distributeur, comme Debian ou Ximian.
 </simpara>
 
 <simpara>L'entrée suivante affecte une priorité basse à toutes les versions
-d'un paquet appartenant à tout distribution dont le nom 
-d'«&nbsp;Archive&nbsp;» (<literal/a/) est <literal/unstable/.
+d'un paquet appartenant à toute distribution dont le nom 
+d'«&nbsp;Archive&nbsp;» est <literal/unstable/.
 </simpara>
 
 <programlisting>
@@ -208,8 +210,8 @@ Pin-Priority: 50
 
 <simpara>L'entrée suivante affecte une priorité haute à toutes les versions
 d'un paquet appartenant à toute distribution dont le nom 
-d'«&nbsp;Archive&nbsp;» (<literal/a/) est <literal/stable/ et dont le numéro
-de «&nbsp;Version&nbsp;» (<literal/v/) est <literal/3.0/. 
+d'«&nbsp;Archive&nbsp;» est <literal/stable/ et dont le numéro
+de «&nbsp;Version&nbsp;» est <literal/3.0/. 
 </simpara>
 
 <programlisting>
@@ -226,7 +228,8 @@ Pin-Priority: 50
 <RefSect2><Title>Comment APT interprète-t-il les priorités&nbsp;?</Title>
 
 <para>Les priorités (P) indiquées dans le fichier des préférences doivent
-être des entiers positifs ou négatifs. Ils sont interprétés comme suit&nbsp;:
+être des entiers positifs ou négatifs. Ils sont interprétés à peu près 
+comme suit&nbsp;:
 
 <variablelist>
 <varlistentry><term>P &gt; 1000</term>
@@ -235,44 +238,43 @@ s'agit d'un retour en arrière.
 </simpara></listitem>
 </varlistentry>
 <varlistentry><term>990 &lt; P &lt;=1000</term>
-<listitem><simpara>L'exemplaire sera installé, même s'il n'appartient pas à
-la distribution par défaut&nbsp;; mais il ne sera pas installé si l'exemplaire
-installé est plus récent.
+<listitem><simpara>La version sera installée, même si elle n'appartient pas à
+la distribution par défaut&nbsp;; mais elle ne sera pas installée si la 
+version installée est plus récente.
 </simpara></listitem>
 </varlistentry>
 <varlistentry><term>500 &lt; P &lt;=990</term>
-<listitem><simpara>L'exemplaire sera installé, sauf s'il existe un exemplaire 
+<listitem><simpara>La version sera installée, sauf s'il existe une version 
 appartenant à la distribution par défaut ou si la version installée est plus
 récente.
 </simpara></listitem>
 </varlistentry>
 <varlistentry><term>100 &lt; P &lt;=500</term>
-<listitem><simpara>L'exemplaire sera installé, sauf s'il existe un exemplaire
+<listitem><simpara>La version sera installée, sauf s'il existe une version
 appartenant à une autre distribution ou si la version installée est plus
 récente.
 </simpara></listitem>
-<varlistentry><term>0 &lt;= P &lt;=100</term>
-<listitem><simpara> L'exemplaire sera installé si aucun exemplaire du paquet
-n'est installé.
+<varlistentry><term>0 &lt; P &lt;=100</term>
+<listitem><simpara> La version sera installée si aucune version du paquet
+n'est installée.
 </simpara></listitem>
 </varlistentry>
 <varlistentry><term>P &lt; 0</term>
-<listitem><simpara>Cette priorité empêche l'installation de l'exemplaire.
+<listitem><simpara>Cette priorité empêche l'installation de la version.
 </simpara></listitem>
 </varlistentry>
 </variablelist>
 </para>
 
-<para>Si l'une des entrées de forme particulière correspond à l'exemplaire
-disponible d'un paquet, cette entrée détermine la priorité de cet exemplaire.
-Si deux entrées de forme particulière correspondent à l'exemplaire disponible 
-d'un paquet, la première entrée rencontrée détermine la priorité. Si deux
-entrées de forme générale correspondent à l'exemplaire disponible d'un paquet,
-la première entrée rencontrée détermine la priorité.
+<para>Si l'une des entrées de forme particulière correspond à la version
+disponible d'un paquet, la première entrée trouvée détermine la priorité de 
+cette version. S'il n'en existe pas, et si l'une des entrées de forme générale 
+correspond à la version disponible d'un paquet, la première entrée trouvée 
+détermine la priorité.
 </para>
 
 <para>Supposons par exemple que le fichier des préférences contienne les trois
-entrées décrites plus haut&nbsp;:
+entrées décrites ci-dessous&nbsp;:
 
 <programlisting>
 Package: perl
@@ -296,14 +298,14 @@ installé pour autant que son numéro de version commence par <literal/5.8/.
 Si l'<emphasis/une/ des versions 5.8* existe et si la version installée est
 une version 5.9*, il y aura un retour en arrière.
 </simpara></listitem>
-<listitem><simpara>Les exemplaires des paquets (autres que <literal/perl/)
-disponibles dans le site local ont priorité sur les autres exemplaires,
-même ceux appartenant à la distribution par défaut.
+<listitem><simpara>Les versions des paquets (autres que <literal/perl/)
+disponibles dans le site local ont priorité sur les autres versions,
+même celles appartenant à la distribution par défaut.
 </simpara></listitem>
-<listitem><simpara> L'exemplaire d'un paquet dont l'origine n'est pas le site
+<listitem><simpara> La version d'un paquet dont l'origine n'est pas le site
 local mais un site internet listé dans &sources-list; et qui appartient à une
-distribution <literal/unstable/, ne sera installé que si aucun exemplaire
-du paquet n'est déjà installé.
+distribution <literal/unstable/, ne sera installée que si aucune version
+du paquet n'est déjà installée.
 </simpara></listitem>
 </itemizedlist>
 </para>
@@ -314,7 +316,7 @@ distributions</Title>
 
 <para>Chaque source listée dans le fichier &sources-list; doit fournir
 les fichiers <filename>Packages</filename> et <filename>Release</filename>
-qui décrivent les exemplaires des paquets disponibles à cet endroit.
+qui décrivent les paquets disponibles à cet endroit.
 </para>
 
 <para>Le fichier <filename>Packages</filename> se trouve normalement dans le
@@ -340,7 +342,7 @@ détermination des priorités&nbsp;:
 répertoire
 <filename>.../dists/<replaceable>dist-name</replaceable></filename>, par exemple, <filename>.../dists/stable/Release</filename>, ou <filename>.../dists/woody/Release</filename>.
 Il consiste en une seule entrée composée de plusieurs lignes qui s'applique à
-<emphasis/tous/ les exemplaires des paquets situés dans les répertoires sous
+<emphasis/tous/ les paquets situés dans les répertoires sous
 le répertoire parent. Contrairement au fichier <filename/Packages/, presque 
 toutes les lignes du fichier <filename/Release/ sont pertinentes pour
 déterminer les priorités&nbsp;:
@@ -348,7 +350,7 @@ déterminer les priorités&nbsp;:
 <varlistentry>
 <term>La ligne <literal/Archive:/ </term>
 <listitem><simpara>nomme l'archive à laquelle appartiennent tous les 
-exemplaires des paquets situés dans les répertoires. Par exemple, la ligne
+paquets situés dans les répertoires. Par exemple, la ligne
 <literal/Archive: stable/ indique que tous les paquets dans les répertoires
 situés sous le répertoire parent du fichier <filename/Release/ appartiennent
 à l'archive <literal/stable/. Indiquer cette valeur dans le fichier des
@@ -364,16 +366,16 @@ Pin: release a=stable
 <varlistentry>
 <term>La ligne <literal/Version:/ </term>
 <listitem><simpara>indique la version de la distribution. Par exemple, les
-exemplaires des paquets dans les répertoires peuvent appartenir à la
+paquets dans les répertoires peuvent appartenir à la
 distribution Debian GNU/Linux version 3.0. Il n'y a pas de numéro de version
-pour les distributions testing et unstable car elles n'ont pas encore été
-publiées. Indiquer cette valeur dans le fichier des préférences demanderait 
+pour les distributions <literal/testing/ et <literal/unstable/ car elles 
+n'ont pas encore été publiées. Indiquer cette valeur dans le fichier des préférences demanderait 
 ces lignes&nbsp;:
 </simpara>
 
 <programlisting>
 Pin: release v=3.0
-Pin: release a=stable v=3.0
+Pin: release a=stable, v=3.0
 Pin: release 3.0
 </programlisting>
 
@@ -382,8 +384,8 @@ Pin: release 3.0
 
 <varlistentry>
 <term>La ligne <literal/Component:/</term>
-<listitem><simpara>nomme un composant qui indique le type de licence associé
-aux exemplaires situés dans les répertoires sous le fichier 
+<listitem><simpara>nomme un composant qui indique le type de licence associée
+aux paquets situés dans les répertoires sous le fichier 
 <filename/Release/. Par exemple, la ligne <literal/Component: main/ indique
 que tous les exemplaires dans les répertoires appartiennent au composant
 <literal/main/, c'est-à-dire que leur licence est en accord avec les
@@ -399,7 +401,7 @@ Pin: release c=main
 
 <varlistentry>
 <term>La ligne <literal/Origin:/ </term>
-<listitem><simpara>nomme le producteur des exemplaires des paquets situés
+<listitem><simpara>nomme l'origine des paquets situés
 dans les répertoires sous le fichier <filename/Release/. En général, c'est
 <literal/Debian/. Indiquer cette origine dans le fichier des préférences 
 demanderait cette ligne&nbsp;:
@@ -413,7 +415,8 @@ Pin: release o=Debian
 
 <varlistentry>
 <term>La ligne <literal/Label:/ </term>
-<listitem><simpara>semble redondante. En général, c'est
+<listitem><simpara>indique un label pour les paquets qui se trouvent
+dans les répertoires sous le fichier <filename/Release/. En général, c'est
 <literal/Debian/. Indiquer cette origine dans le fichier des préférences
 demanderait cette ligne&nbsp;:
 </simpara>
@@ -442,8 +445,8 @@ composant <literal/contrib/ de la distribution <literal/unstable/.
 <RefSect2><Title>Lignes facultatives dans le fichier des préférences</Title>
 
 <para>Toute entrée du fichier des préférences peut commencer par une ou
-plusieurs lignes contenant le mot <literal/Explanation:/. Cela permet de
-commenter l'entrée.
+plusieurs lignes contenant le mot <literal/Explanation:/. Cela permet des
+commentaires.
 </para>
 
 <para>La ligne <literal/Pin-Priority:/ d'une entrée est facultative. Si elle
@@ -462,12 +465,12 @@ distribution <literal/stable/ et une priorité prohibitivement basse à tous
 les exemplaires appartenant à d'autres distributions <literal/Debian/.
 
 <programlisting>
+Explanation: Ne pas installer des exemplaires d'origine Debian
+Explanation: sauf ceux de la distribution stable
 Package: *
 Pin: release a=stable
 Pin-Priority: 900
 
-Explanation: Ne pas installer des exemplaires d'origine Debian
-Explanation: sauf ceux de la distribution stable 
 Package: *
 Pin: release o=Debian
 Pin-Priority: -10
@@ -487,14 +490,15 @@ apt-get dist-upgrade
 
 <para>La commande suivante utilisera la version la plus récente de la 
 distribution <literal/testing/ pour mettre à niveau le paquet spécifié&nbsp;;
-cependant les mises à niveau ultérieures ne se feront pas automatiquement.
+cependant les mises à niveau ultérieures du paquet ne se feront pas 
+à moins de relancer la commande.
 
 <programlisting>
 apt-get install <replaceable>paquet</replaceable>/testing
 </programlisting>
 </RefSect2>
 
- <RefSect2><Title>Comment suivre Testing&nbsp;?</Title>
+ <RefSect2><Title>Comment suivre Testing ou Unstable&nbsp;?</Title>
 
 <para>Le fichier des préférences suivant affecte une priorité haute aux
 versions des paquets appartenant à la distribution <literal/testing/, une
@@ -517,7 +521,8 @@ Pin-Priority: -10
 </programlisting>
 </para>
 
-<para>Avec le fichier des préférences ci-dessus, les commandes suivantes
+<para>Avec un fichier &sources-list; approprié et le fichier des préférences 
+ci-dessus, les commandes suivantes
 utiliseront les versions les plus récentes de <literal/testing/ pour faire
 la mise à niveau&nbsp;:
 
@@ -530,9 +535,10 @@ apt-get dist-upgrade
 
 <para>La commande suivante utilisera la version la plus récente de la
 distribution <literal/unstable/ pour mettre à niveau le paquet spécifié&nbsp;;
-Par la suite, <command>apt-get dist-upgrade</command> et les autres
-commandes <emphasis/utiliseront/  les versions les plus récentes de
-<literal/unstable/ pour mettre à niveau le paquet.
+Par la suite, <command>apt-get upgrade</command> mettra le paquet à jour
+avec la plus récente version dans <literal/testing/  si elle est plus récente
+que la version installée ou avec la plus récente version dans 
+<literal/unstable/ si elle est plus récente que la version installée.
 
 <programlisting>
 apt-get install <replaceable>paquet</replaceable>/unstable

@@ -1,5 +1,5 @@
 <!-- -*- mode: sgml; mode: fold -*- -->
-<!-- translation of version 1.12 -->
+<!-- translation of version 1.18 -->
 <!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 
 <!ENTITY % aptent SYSTEM "apt.ent.fr">
@@ -7,7 +7,7 @@
 
 ]>
 
-<refentry lang=fr>
+<refentry lang="fr">
  &apt-docinfo;
  
  <refmeta>
@@ -84,8 +84,8 @@ nouvelles versions des paquets.
 
      <VarListEntry><Term>dselect-upgrade</Term>
      <ListItem><Para>   
-Cette commande est utilisée conjointement avec &dselect;, l'interface 
-traditionnelle Debian GNU/Linux pour la gestion des paquets.
+<literal/dselect-upgrade/ est utilisée conjointement avec &dselect;, l'interface 
+traditionnelle Debian pour la gestion des paquets.
 La commande <literal/dselect-upgrade/ suit les modifications faites par
 &dselect; dans le champ <literal/Status/ des paquets disponibles, et effectue
 les actions nécessaires à la réalisation de cet état (par exemple, 
@@ -101,14 +101,16 @@ nouvelles versions des paquets&nbsp;; <command/apt-get/ possède un système
 nécessaire, de mettre à niveau les paquets les plus importants aux dépens 
 des paquets les moins importants. Le fichier <filename>/etc/apt/sources.list</>
 contient une liste de sources où récupérer les paquets désirés.
-     </VarListEntry>
+Voyez aussi &apt-preferences; pour un mécanisme d'annulation des paramètres
+d'un simple paquet.
+    </VarListEntry>
 
      <VarListEntry><Term>install</Term>
      <ListItem><Para>   
 La commande <literal/install/ est suivie par un ou plusieurs paquets à
 installer. Chaque paquet est un nom de paquet&nbsp;; ce n'est pas un nom de
 fichier pleinement déterminé (par exemple, dans un système Debian GNU/Linux,
-on indiquera libc6  et non pas <filename>libc6_1.9.6-2.deb</>). Tous les 
+on indiquera libc6  et non pas <literal>libc6_1.9.6-2.deb</literal>). Tous les 
 paquets requis par le(s) paquet(s) que l'on veut installer sont aussi 
 récupérés et installés. On se sert du fichier 
 <filename>/etc/apt/sources.list</> pour localiser les paquets désirés. Quand 
@@ -122,11 +124,14 @@ On peut choisir d'installer une version particulière d'un paquet en faisant
 suivre son nom par un signe égal et par la version. Cette version sera
 localisée et l'installation sera demandée. On peut aussi choisir une
 distribution particulière en faisant suivre le nom du paquet par une barre
-oblique et par le nom de la distribution ou de l'archive (stable, frozen, 
+oblique et par le nom de la distribution ou de l'archive (stable, testing, 
 unstable).
      <para>
 Avec ces possibilités de choisir la version, de vieilles versions d'un paquet
 peuvent être installées. Il faut faire attention.
+     <para>
+Enfin, le mécanisme de &apt-preferences; permet de créer d'autres règles pour
+l'installation des paquets.
      <para>
 Quand aucun paquet ne correspond à l'expression donnée en argument et que cette
 expression contient l'un des caractères «&nbsp;.&nbsp;», «&nbsp;?&nbsp;» ou 
@@ -134,15 +139,17 @@ expression contient l'un des caractères «&nbsp;.&nbsp;», «&nbsp;?&nbsp;» ou
 elle est appliquée à tous les paquets de la base de données. Tout paquet 
 correspondant est installé (ou supprimé). Notez que la comparaison est 
 effectuée par sous-chaîne et «&nbsp;lo&nbsp;» correspond aussi bien à 
-«&nbsp;how-lo&nbsp;» qu'à «&nbsp;lowest&nbsp;». Préfixez l'expression par 
-un caractère «&nbsp;^&nbsp;» si vous ne le voulez pas.
+«&nbsp;how-lo&nbsp;» qu'à «&nbsp;lowest&nbsp;». Si vous ne le voulez pas, ancrez 
+l'expression par un caractère «&nbsp;^&nbsp;» ou un  caractère «&nbsp;$&nbsp;», 
+ou bien créez une expression plus précise.
      </VarListEntry>
 
      <VarListEntry><Term>remove</Term>
      <ListItem><Para>   
 La commande <literal/remove/ est identique à la commande <literal/install/&nbsp;;
 Mais les paquets sont supprimés et non pas installés. Quand un signe plus est 
-accolé (sans espace intermédiaire) au nom du paquet, le paquet est installé.
+accolé (sans espace intermédiaire) au nom du paquet, le paquet est installé au lieu
+d'être supprimé.
      </VarListEntry>
 
      <VarListEntry><Term>source</Term>
@@ -187,7 +194,7 @@ le cache des paquets et cherche des dépendances défectueuses.
      <ListItem><Para>   
 La commande <literal/clean/ nettoie le référentiel local des paquets 
 récupérés. Il supprime tout, excepté le fichier lock situé dans
-<filename>&cachedir;/archives/</> et <filename>&cachedir;/archive/partial/</>.
+<filename>&cachedir;/archives/</> et <filename>&cachedir;/archives/partial/</>.
 Quand APT est utilisé comme mode de &dselect;, <literal/clean/ est effectué
 automatiquement. Quand on n'utilise pas &dselect;, il faut exécuter
 <literal/apt-get clean/ de temps en temps si l'on veut libérer de l'espace 
@@ -301,6 +308,13 @@ Afficher les paquets mis à niveau&nbsp;; affiche une liste de tous les paquets à
 mettre à niveau. Élément de configuration&nbsp;: <literal/APT::Get::Show-Upgraded/.
      </VarListEntry>
 
+     <VarListEntry><term><option/-V/</><term><option/--verbose-versions/</>
+     <ListItem><Para>
+Afficher les versions complètes des paquets installés ou mis à niveau.
+Élément de configuration&nbsp;: <literal/APT::Get::Show-Versions/.
+     </VarListEntry>
+
+
      <VarListEntry><term><option/-b/</><term><option/--compile/</>
                    <term><option/--build/</>
      <ListItem><Para>
@@ -319,8 +333,8 @@ indésirables. Élément de configuration&nbsp;: <literal/APT::Ignore-Hold/.
      <VarListEntry><term><option/--no-upgrade/</>
      <ListItem><Para>
 Aucune mise à niveau&nbsp;; quand elle est utilisée avec <literal/install/, 
-cette commande empêche les paquets listés et déja installés  d'être mis à 
-niveau.
+cette commande empêche les paquets listés sur la ligne de commande d'être mis 
+à niveau.
 Élément de configuration&nbsp;: <literal/APT::Get::Upgrade/.
      </VarListEntry>
 
@@ -347,6 +361,7 @@ aussi avec la commande <literal/source/.
      <ListItem><Para>
 Utiliser purge à la place de remove pour supprimer tout ce qui peut être 
 supprimé.
+Un astérisque (*)sera affiché près des paquets qui vont être purgés.
 Élément de configuration&nbsp;: <literal/APT::Get::Purge/.
      </VarListEntry>
 
@@ -372,10 +387,12 @@ est une modification fréquente de votre liste de sources.
      <ListItem><Para>
 Cette option contrôle l'entrée par défaut pour les questions de 
 distribution&nbsp;; une étiquette (pin) par défaut dont la priorité vaut 990 
-est crée en utilisant la chaîne spécifiée. Le fichier des préférences peut 
+est créé en utilisant la chaîne spécifiée. Le fichier des préférences peut 
 annuler cette décision. En clair, cette option permet de contrôler simplement 
 dans quelle distribution seront récupérés les paquets. Par exemple&nbsp;: 
-<option>-t '2.1*'</> ou <option>-t unstable</>. Élément de configuration&nbsp;: <literal/APT::Default-Release/.
+<option>-t '2.1*'</> ou <option>-t unstable</>. 
+Élément de configuration&nbsp;: <literal/APT::Default-Release/.
+Voyez aussi la page de manuel &apt-preferences;.
      </VarListEntry>
 
      <VarListEntry><term><option/--trivial-only/</>
@@ -397,10 +414,13 @@ poser de questions. Élément de configuration&nbsp;: <literal/APT::Get::Remove/.
      <ListItem><Para>
 Cette option n'a de sens qu'avec la commande <literal/source/. Elle indique
 que les noms de sources donnés ne doivent pas être repérés à travers la
-table binaire.
+table binaire. Cela signifie que si cette option est choisie, la commande
+<literal/source/ acceptera seulement des noms de paquets-source 
+comme argument&nbsp;; elle n'acceptera pas de les rechercher à partir des noms de 
+paquets binaires correspondants.
 Élément de configuration&nbsp;: <literal/APT::Get::Only-Source/
      </VarListEntry>
-
+     
      <VarListEntry><term><option/--diff-only/</><term><option/--tar-only/</>
      <ListItem><Para>
 Ne récupérer que le fichier diff ou tar d'une archive de source.
@@ -443,6 +463,9 @@ Fichier de configuration d'APT.
      <VarListEntry><term><filename>/etc/apt/preferences</></term>
      <ListItem><Para>
 Fichier des préférences.
+C'est dans ce fichier qu'on peut faire de l'étiquetage (pinning) c'est-à-dire,
+choisir d'obtenir des paquets d'une source distincte ou d'une distribution
+différente.
 Élément de configuration&nbsp;: <literal/Dir::Etc::Preferences/.
      </VarListEntry>
 
@@ -476,8 +499,10 @@ Zone de stockage pour les informations d'état des paquets en transit.
 
  <RefSect1><Title>Voir aussi</>
    <para>
-   &apt-cache;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, Le guide
-   «&nbsp;APT users guide&nbsp;» dans &docdir;, &apt-preferences;.
+   &apt-cache;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, 
+&apt-config;,
+le guide «&nbsp;APT users guide&nbsp;» dans &docdir;, &apt-preferences;, 
+le APT Howto.
  </RefSect1>
 
  <RefSect1><Title>Diagnostics</>

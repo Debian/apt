@@ -1,5 +1,5 @@
 <!-- -*- mode: sgml; mode: fold -*- -->
-<!-- translation of version 1.9 -->
+<!-- translation of version 1.10 -->
 <!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 
 <!ENTITY % aptent SYSTEM "apt.ent.fr">
@@ -40,8 +40,9 @@ une option pour le groupe d'outils APT, destinée à l'outil Get. Les options
 n'héritent pas des groupes de leurs parents.
    <para>
 Syntaxiquement, le langage de configuration est conçu sur le même modèle
-que les langages utilisés par des outils ISC tels que bind et dhcp. Chaque 
-ligne est de la forme&nbsp;:
+que les langages utilisés par des outils ISC tels que bind et dhcp. Une ligne
+qui commence par <literal>//</literal> est un commentaire et elle est ignorée.
+Chaque ligne est de la forme&nbsp;:
    <literallayout>APT::Get::Assume-Yes "true";</literallayout> 
 Le point-virgule final est obligatoire et les guillemets sont optionnels.
 On peut déclarer un nouveau champ d'action avec des accolades, comme 
@@ -62,7 +63,7 @@ séparées par un point-virgule.
 DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 </programlisting></informalexample>
    <para>
-Les modèles <filename>&docdir;examples/apt.conf</> &configureindex;
+Les modèles <filename>&docdir;/examples/apt.conf</> &configureindex;
 montrent à quoi devrait ressembler le fichier de configuration.
    <para>
 Deux éléments spéciaux sont autorisés&nbsp;: <literal/#include/ et 
@@ -316,7 +317,7 @@ de configuration est chargé.
    <para>
 Les programmes binaires sont pointés par <literal/Dir::Bin/.
 L'emplacement des gestionnaires de méthodes est indiqué par
-<literal/methods/&nbsp;; <literal/gzip/, <literal/Dpkg/, <literal/apt-get/,
+<literal/Dir::Bin::Methods/&nbsp;; <literal/gzip/, <literal/Dpkg/, <literal/apt-get/,
 <literal/dpkg-source/, <literal/dpkg-buildpackage/ et <literal/apt-cache/
 indiquent l'emplacement des programmes correspondants.
  </RefSect1>

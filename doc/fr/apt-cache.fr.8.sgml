@@ -1,5 +1,5 @@
 <!-- -*- mode: sgml; mode: fold -*- -->
-<!-- translation of version 1.10 -->
+<!-- translation of version 1.17 -->
 <!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 
 <!ENTITY % aptent SYSTEM "apt.ent.fr">
@@ -7,7 +7,7 @@
 
 ]>
 
-<refentry lang=fr>
+<refentry lang="fr">
  &apt-docinfo;
  
  <refmeta>
@@ -39,11 +39,12 @@
          <arg>unmet</>
          <arg>search <arg choice="plain"><replaceable>regex</replaceable></arg></arg>
          <arg>show <arg choice="plain" rep="repeat"><replaceable>paquet</replaceable></arg></arg>
-         <arg>showpkg <arg choice="plain" rep="repeat"><replaceable>paquet</replaceable></arg></arg>
          <arg>depends <arg choice="plain" rep="repeat"><replaceable>paquet</replaceable></arg></arg>
+         <arg>rdepends <arg choice="plain" rep="repeat"><replaceable>paquet</replaceable></arg></arg>
          <arg>pkgnames <arg choice="plain"><replaceable>prefix</replaceable></arg></arg>
          <arg>dotty <arg choice="plain" rep="repeat"><replaceable>paquet</replaceable></arg></arg>
          <arg>policy <arg choice="plain" rep="repeat"><replaceable>paquets</replaceable></arg></arg>
+         <arg>madison <arg choice="plain" rep="repeat"><replaceable>paquets</replaceable></arg></arg>
       </group>   
    </cmdsynopsis>
  </refsynopsisdiv>
@@ -60,7 +61,7 @@ d'intéressantes informations.
 des commandes suivantes doit être présente.
 
    <VariableList>
-     <VarListEntry><Term>add</Term>
+     <VarListEntry><Term>add <replaceable/fichier(s)/</Term>
      <ListItem><Para>
 La commande <literal/add/ ajoute des fichiers indexant des paquets au cache des
 paquets. Cela sert uniquement pour le débogage.
@@ -74,7 +75,7 @@ La commande <literal/gencaches/ fait la même chose que
 <filename>/var/lib/dpkg/status</>.
      </VarListEntry>
 
-     <VarListEntry><Term>showpkg</Term>
+     <VarListEntry><Term>showpkg <replaceable/paquet(s)/</Term>
      <ListItem><Para>
 La commande <literal/showpkg/ affiche des informations sur les paquets donnés
 en argument. Les arguments restants sont les noms de paquets. Les versions
@@ -104,8 +105,8 @@ Reverse Provides:
 On peut voir que libreadline2, version 2.1-8, dépend de libc5, ncurses3.0, et 
 ldso&nbsp;; ces paquets doivent être installés au préalable pour que 
 libreadline2 fonctionne. À leur tour, libreadlineg2 et libreadline2-altdev 
-dépendent de libreadline2. Si libreadline2 est installé, libc5, ncurses3.0 et 
-ldso doivent être installés&nbsp;; libreadlineg2 et libreadline2-altdev 
+dépendent de libreadline2. Si libreadline2 est installé, libc5 et ncurses3.0 (et 
+ldso) doivent être installés&nbsp;; libreadlineg2 et libreadline2-altdev 
 n'ont pas à l'être. Pour connaître le sens de la fin de chaîne, il est 
 préférable de consulter le code source d'APT.
      </VarListEntry>
@@ -148,7 +149,7 @@ seul le paquet «&nbsp;xless&nbsp;» remplit «&nbsp;X11-text-viewer&nbsp;».
 <literal/Mixed virtual packages/ est le nombre des paquets qui remplissent un
 paquet virtuel particulier ou dont le nom est un nom de paquet virtuel.
 Par exemple, au sein du système Debian GNU/Linux, «&nbsp;debconf&nbsp;» est 
-un paquet réel et il est aussi rempli par «&nbsp;debconf-tiny&nbsp;».
+un paquet réel et il est aussi fourni par «&nbsp;debconf-tiny&nbsp;».
        </listitem>
    
        <listitem><para>
@@ -174,7 +175,7 @@ déclarées par tous les paquets présents dans le cache.
      </itemizedlist>
      </VarListEntry>
 
-     <VarListEntry><Term>showsrc</Term>
+     <VarListEntry><Term>showsrc <replaceable/paquet(s)/</Term>
      <ListItem><Para>
      <literal/showsrc/ affiche toutes les entrées de paquet-source qui
 correspondent aux noms donnés. Toutes les versions sont affichées et toutes
@@ -201,13 +202,13 @@ La commande <literal/unmet/ affiche un résumé concernant toutes les
 dépendances absentes dans le cache de paquets.
      </VarListEntry>
 
-     <VarListEntry><Term>show</Term>
+     <VarListEntry><Term>show <replaceable/paquet(s)/</Term>
      <ListItem><Para>
-La commande <literal/show/ est semblable à <literal/dpkg --print-avail/&nbsp;; 
+La commande <literal/show/ est semblable à <literal/dpkg --print-avail/&nbsp;;
 elle affiche des informations sur les paquets donnés en argument.
      </VarListEntry>
 
-     <VarListEntry><Term>search</Term>
+     <VarListEntry><Term>search <replaceable/regex [ regex ... ]/</Term>
      <ListItem><Para>
 La commande <literal/search/ recherche l'expression régulière donnée en
 argument sur tous les paquets disponibles. Elle cherche une occurrence de la 
@@ -221,14 +222,20 @@ On peut utiliser des arguments distincts pour indiquer des expressions
 régulières différentes sur lesquelles sera réalisé un «&nbsp;et&nbsp;» logique.
      </VarListEntry>
 
-     <VarListEntry><Term>depends</Term>
+     <VarListEntry><Term>depends <replaceable/paquet(s)/</Term>
      <ListItem><Para>
 La commande <literal/depends/ affiche la liste de toutes les dépendances
 d'un paquet et la liste de tous les paquets possibles qui satisfont ces
 dépendances.
      </VarListEntry>
 
-     <VarListEntry><Term>pkgnames</Term>
+     <VarListEntry><Term>rdepends <replaceable/paquet(s)/</Term>
+     <ListItem><Para>
+La commande <literal/rdepends/ affiche la liste de toutes les dépendances inverses
+d'un paquet.
+      </VarListEntry>
+
+     <VarListEntry><Term>pkgnames <replaceable/[ prefix ]/ </Term>
      <ListItem><Para>
 Cette commande affiche le nom de chaque paquet du système. Un préfixe pour
 filtrer la liste des noms peut être donné en argument. La sortie est
@@ -237,16 +244,16 @@ elle est produite très rapidement. On utilise au mieux cette commande avec
 l'option <option/--generate/.
      </VarListEntry>
      
-     <VarListEntry><Term>dotty</Term>
+     <VarListEntry><Term>dotty <replaceable/paquet(s)/</Term>
      <ListItem><Para>
 La commande <literal/dotty/ prend une liste de paquets sur la ligne de commande
 et affiche une sortie appropriée à une utilisation par dotty avec le paquet
 <ulink url="http://www.research.att.com/sw/tools/graphviz/">GraphViz</>.
 Il en résulte un ensemble de noeuds et d'arcs représentant les relations 
 entre les paquets. Par défaut les paquets donnés en argument suivent toutes
-leurs dépendances, ce qui peut produire un graphe très volumineux. On peut
-désactiver ce comportement en  positionnant l'option
-<literal>APT::Cache::GivenOnly</literal>.
+leurs dépendances, ce qui peut produire un graphe très volumineux. 
+Pour limiter la sortie aux paquets listés sur la ligne de commande, positionnez
+l'option <literal>APT::Cache::GivenOnly</>.
 	      </para>
 <para>
 Les noeuds résultants ont plusieurs formes&nbsp;; les paquets normaux sont 
@@ -261,14 +268,26 @@ Attention, dotty ne peut pas représenter des ensembles de paquets
 plus volumineux.
      </VarListEntry>
 
-     <VarListEntry><Term>policy</Term>
+     <VarListEntry><Term>policy <replaceable/[ paquet(s) ]/</Term>
      <ListItem><Para>
      <literal/policy/ sert à déboguer des problèmes relatifs au fichier des
 préférences. Sans argument, la commande affiche la priorité de chaque source.
 Sinon, elle affiche des informations précises sur la priorité du paquet donné
 en argument.
      </VarListEntry>
- 
+
+     <VarListEntry><Term>madison <replaceable/[ paquet(s) ]/</Term>
+     <ListItem><Para>
+
+     La commande <literal/madison/ d'<literal/apt-cache/ cherche à mimer le
+format de sortie propre à l'outil debian de gestion d'archives, 
+<literal/madison/, ainsi qu'une part de ses fonctionnalités. Elle affiche les
+versions disponibles d'un paquet dans un tableau. Contrairement au programme
+original <literal/madison/, elle n'affiche que des informations qui cocernent 
+l'architecture pour laquelle Apt a lu la liste des paquets disponibles
+(<literal/APT::Architecture/).
+     </VarListEntry>
+
   </VariableList>
  </RefSect1>
  
@@ -320,7 +339,11 @@ recherche.
      <VarListEntry><term><option/-a/</><term><option/--all-versions/</>
      <ListItem><Para>
 Affiche la totalité des champs d'information pour toutes les versions
-disponibles&nbsp;: cette option concerne seulement la commande show.
+disponibles&nbsp;: c'est la valeur par défaut. Pour la désactiver, utilisez
+l'option <option/--no-all-versions/. Quand l'option <option/--no-all-versions/
+est choisie, seuls les éléments de la version choisie (celle qui serait 
+installée) seront affichés.
+Ctte option concerne seulement la commande <literal/show/.
 Élément de configuration&nbsp;: <literal/APT::Cache::AllVersions/.
      </VarListEntry>
 
@@ -333,9 +356,9 @@ Pour désactiver cette option (option par défaut), utiliser l'option
 Élément de configuration&nbsp;: <literal/APT::Cache::Generate/.
      </VarListEntry>
 
-     <VarListEntry><term><option/--names-only/</>
+ <VarListEntry><term><option/--names-only/</><term><option/-n/</>
      <ListItem><Para>
-N'effectue une recherche que sur les noms de paquets et non sur les
+N'effectue une recherche que sur les noms de paquets et pas sur les
 descriptions longues.
 Élément de configuration&nbsp;: <literal/APT::Cache::NamesOnly/.
      </VarListEntry>
@@ -349,9 +372,16 @@ paquets virtuels et les dépendances manquantes.
 
      <VarListEntry><term><option/--recurse/</>
      <ListItem><Para>
-Avec cette option <literal/depends/ est récursive de manière à n'afficher 
-qu'une seule fois les paquets mentionnés.
+Avec cette option <literal/depends/ et <literal/rdepends/ sont récursives de 
+manière à n'afficher qu'une seule fois les paquets mentionnés.
 Élément de configuration&nbsp;: <literal/APT::Cache::RecurseDepends/.
+     </VarListEntry>
+
+     <VarListEntry><term><option/--installed/</>
+     <ListItem><Para>
+Cette option limite la sortie de <literal/depends/ et de <literal/rdepends/ 
+aux paquets qui sont actuellement installés.
+Élément de configuration&nbsp;: <literal/APT::Cache::Installed/.
      </VarListEntry>
 
      &apt-commonoptions;
