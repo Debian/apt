@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.5 1998/11/11 06:54:21 jgg Exp $
+// $Id: http.cc,v 1.6 1998/11/21 06:09:09 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -789,7 +789,8 @@ bool HttpMethod::ServerDie(ServerState *Srv)
      0 - File is open,
      1 - IMS hit
      3 - Unrecoverable error 
-     4 - Error with error content page */
+     4 - Error with error content page
+     5 - Unrecoverable non-server error (close the connection) */
 int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
 {
    // Not Modified
@@ -819,7 +820,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    delete File;
    File = new FileFd(Queue->DestFile,FileFd::WriteAny);
    if (_error->PendingError() == true)
-      return 3;
+      return 5;
 
    FailFile = Queue->DestFile;
    FailFd = File->Fd();
@@ -845,7 +846,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       if (Srv->In.MD5->AddFD(File->Fd(),Srv->StartPos) == false)
       {
 	 _error->Errno("read","Problem hashing file");
-	 return 3;
+	 return 5;
       }
       lseek(File->Fd(),0,SEEK_END);
    }
@@ -997,6 +998,14 @@ int HttpMethod::Loop()
 	 case 3:
 	 {
 	    Fail();
+	    break;
+	 }
+	  
+	 // Hard internal error, kill the connection and fail
+	 case 5:
+	 {
+	    Fail();
+	    Server->Close();
 	    break;
 	 }
 
