@@ -1,3 +1,18 @@
+apt (0.5.6) unstable; urgency=low
+
+  * Adam Heath <doogie@debian.org>
+    - Fix segfault when handling /etc/apt/preferences.  Closes: #192409.
+  * Matt Zimmerman <mdz@debian.org>
+    - Clean up some string handling, patch from Peter Lundkvist
+      <p.lundkvist@telia.com> (Closes: #192225)
+    - Don't fall off the end of the buffer when comparing versions.
+      Patch from Koblinger Egmont <egmont@uhulinux.hu> (Closes: #194327)
+    - Minor fixes to apt-ftparchive(1) (Closes: #118156)
+    - Fix typo in apt-ftparchive help text (Closes: #119072)
+    - Update config.guess, config.sub to latest versions
+
+ -- 
+
 apt (0.5.5.1) unstable; urgency=low
 
   * Move the target of the example docs from doc to binary.  Closes:
@@ -6,7 +21,6 @@ apt (0.5.5.1) unstable; urgency=low
     backing out change that incorretly attempted to handle Package sections
     larger than 32k.  Closes: #192373
   * Fix never-ending loop with apt-get install -V.  Closes: #192355.
-  * Fix segfault when handling /etc/apt/preferences.  Closes: #192409.
 
  -- Adam Heath <doogie@debian.org>  Mon, 19 May 2003 12:30:16 -0500
 
