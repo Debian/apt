@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.28 1999/08/02 03:07:48 jgg Exp $
+// $Id: strutl.cc,v 1.29 1999/08/28 01:49:08 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -713,7 +713,7 @@ static int HexDigit(int c)
 bool Hex2Num(const char *Start,const char *End,unsigned char *Num,
 	     unsigned int Length)
 {
-   if (End - Start != Length*2)
+   if (End - Start != (signed)(Length*2))
       return false;
    
    // Convert each digit. We store it in the same order as the string
