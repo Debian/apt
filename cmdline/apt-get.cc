@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.93 1999/12/10 06:30:42 jgg Exp $
+// $Id: apt-get.cc,v 1.94 1999/12/10 07:27:03 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -632,7 +632,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    struct statvfs Buf;
    string OutputDir = _config->FindDir("Dir::Cache::Archives");
    if (statvfs(OutputDir.c_str(),&Buf) != 0)
-      return _error->Errno("statfs","Couldn't determine free space in %s",
+      return _error->Errno("statvfs","Couldn't determine free space in %s",
 			   OutputDir.c_str());
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
       return _error->Error("Sorry, you don't have enough free space in %s to hold all the .debs.",
@@ -1467,10 +1467,10 @@ bool DoSource(CommandLine &CmdL)
    unsigned long DebBytes = Fetcher.TotalNeeded();
 
    // Check for enough free space
-   struct statfs Buf;
+   struct statvfs Buf;
    string OutputDir = ".";
-   if (statfs(OutputDir.c_str(),&Buf) != 0)
-      return _error->Errno("statfs","Couldn't determine free space in %s",
+   if (statvfs(OutputDir.c_str(),&Buf) != 0)
+      return _error->Errno("statvfs","Couldn't determine free space in %s",
 			   OutputDir.c_str());
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
       return _error->Error("Sorry, you don't have enough free space in %s",
