@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.111 2001/11/04 17:09:18 tausq Exp $
+// $Id: apt-get.cc,v 1.112 2001/12/05 07:22:40 tausq Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1863,6 +1863,22 @@ bool DoBuildDep(CommandLine &CmdL)
       if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only",false)) == false)
       	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
+      // Also ensure that build-essential packages are present
+      Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
+      if (Opts) 
+	 Opts = Opts->Child;
+      for (; Opts; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+
+         pkgSrcRecords::Parser::BuildDepRec rec;
+	 rec.Package = Opts->Value;
+	 rec.Type = pkgSrcRecords::Parser::BuildDependIndep;
+	 rec.Op = 0;
+	 BuildDeps.insert(BuildDeps.begin(), rec);
+      }
+
       if (BuildDeps.size() == 0)
       {
 	 ioprintf(c1out,_("%s has no build depends.\n"),Src.c_str());

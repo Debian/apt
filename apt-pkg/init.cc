@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.16 2001/03/13 06:51:46 jgg Exp $
+// $Id: init.cc,v 1.17 2001/12/05 07:22:39 tausq Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -39,6 +39,7 @@ bool pkgInitConfig(Configuration &Cnf)
       Cnf.Set("APT::Architecture",COMMON_CPU);
    else
       Cnf.Set("APT::Architecture",COMMON_OS "-" COMMON_CPU);
+   Cnf.Set("APT::Build-Essential::", "build-essential");
    Cnf.Set("Dir","/");
    
    // State   

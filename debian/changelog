@@ -1,3 +1,16 @@
+apt (0.5.5) unstable; urgency=low
+
+  * Fix handling of [!arch] for build-dependencies. Closes: #88798
+  * Fix handling of build-deps on unknown packages. Closes: #88664
+  * "apt-get --arch-only build-dep" to install only architecture-
+    dependent build dependencies. Bump minor shared lib number to reflect
+    small change in BuildDepend API.
+  * APT::Build-Essential configuration option (defaults to "build-essential")
+    so that "apt-get build-dep" will ensure build essential packages are
+    installed prior to installing other build-dependencies
+
+ -- Randolph Chung <tausq@debian.org>  Tue,  4 Dec 2001 23:26:42 -0800
+
 apt (0.5.4) unstable; urgency=low
 
   * M68k config.guess patch. Closes: #88913
