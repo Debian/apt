@@ -11,14 +11,14 @@ include ../buildlib/defaults.mak
 
 # The library name
 LIBRARY=apt-pkg
-MAJOR=2.4
+MAJOR=2.5
 MINOR=0
 SLIBS=$(PTHREADLIB)
 
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
          contrib/configuration.cc contrib/progress.cc contrib/cmndline.cc \
-	 contrib/md5.cc contrib/cdromutl.h
+	 contrib/md5.cc contrib/cdromutl.cc contrib/crc-16.cc
 
 # Source code for the main library
 SOURCE+= pkgcache.cc version.cc fileutl.cc pkgcachegen.cc depcache.cc \
@@ -38,7 +38,7 @@ HEADERS = algorithms.h depcache.h mmap.h pkgcachegen.h cacheiterators.h \
           version.h progress.h pkgrecords.h debrecords.h cmndline.h \
 	  acquire.h acquire-worker.h acquire-item.h acquire-method.h md5.h \
 	  dpkgpm.h dpkginit.h cdromutl.h strutl.h clean.h srcrecords.h \
-	  debsrcrecords.h cachefile.h
+	  debsrcrecords.h cachefile.h crc-16.h
 
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 

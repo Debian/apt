@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.19 1999/04/12 04:21:20 jgg Exp $
+// $Id: pkgcache.h,v 1.20 1999/05/23 22:55:54 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -238,6 +238,7 @@ struct pkgCache::Version
    
    __apt_ptrloc Size;              // These are the .deb size
    __apt_ptrloc InstalledSize;
+   unsigned short Hash;
    unsigned short ID;
    unsigned char Priority;
 };

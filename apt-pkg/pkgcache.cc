@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.24 1999/04/12 04:21:20 jgg Exp $
+// $Id: pkgcache.cc,v 1.25 1999/05/23 22:55:54 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -43,8 +43,8 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 2;
-   MinorVersion = 3;
+   MajorVersion = 3;
+   MinorVersion = 1;
    Dirty = true;
    
    HeaderSz = sizeof(pkgCache::Header);

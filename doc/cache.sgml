@@ -4,7 +4,7 @@
 <title>APT Cache File Format</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: cache.sgml,v 1.6 1999/02/01 02:22:11 jgg Exp $</version>
+<version>$Id: cache.sgml,v 1.7 1999/05/23 22:55:55 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the APT
@@ -425,6 +425,7 @@ VerStr).
       
       unsigned long Size;
       unsigned long InstalledSize;
+      unsigned long Hash;
       unsigned short ID;
       unsigned char Priority;
    };
@@ -464,6 +465,10 @@ Head of the linked list of Provides::NextPkgProv, forward provides.
 <tag>InstalledSize<item>
 The archive size for this version. For debian this is the size of the .deb
 file. Installed size is the uncompressed size for this version
+
+<tag>Hash<item>
+This is a characteristic value representing this package. No two packages
+in existance should have the same VerStr and Hash with different contents.
 
 <tag>ID<item>
 See Package::ID.

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.18 1999/04/12 19:16:11 jgg Exp $
+// $Id: deblistparser.cc,v 1.19 1999/05/23 22:55:54 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -14,6 +14,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/crc-16.h>
 
 #include <system.h>
 									/*}}}*/
@@ -128,6 +129,40 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
    if (ParseStatus(Pkg,Ver) == false)
       return false;
    return true;
+}
+									/*}}}*/
+// ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+unsigned short debListParser::VersionHash()
+{
+   const char *Sections[] ={"Installed-Size",
+                            "Depends",
+                            "Pre-Depends",
+                            "Suggests",
+                            "Recommends",
+                            "Conflicts",
+                            "Replaces",0};
+   unsigned long Result = INIT_FCS;
+   char S[300];
+   for (const char **I = Sections; *I != 0; I++)
+   {
+      const char *Start;
+      const char *End;
+      if (Section.Find(*I,Start,End) == false || End - Start >= (signed)sizeof(S))
+	 continue;
+      
+      /* Strip out any spaces from the text, this undoes dpkgs reformatting
+         of certain fields */
+      char *I = S;
+      for (; Start != End; Start++)
+	 if (isspace(*Start) == 0)
+	    *I++ = *Start;
+      
+      Result = AddCRC16(Result,S,I - S);
+   }
+   
+   return Result;
 }
 									/*}}}*/
 // ListParser::ParseStatus - Parse the status field			/*{{{*/

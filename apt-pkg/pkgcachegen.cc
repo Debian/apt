@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.37 1999/04/19 02:35:38 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.38 1999/05/23 22:55:54 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -111,7 +111,8 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       
       /* We already have a version for this item, record that we
          saw it */
-      if (Res == 0)
+      unsigned long Hash = List.VersionHash();
+      if (Res == 0 && Ver->Hash == Hash)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
 	    return _error->Error("Error occured while processing %s (UsePackage2)",PackageName.c_str());
@@ -122,9 +123,22 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
 	 continue;
       }      
 
+      // Skip to the end of the same version set.
+      if (Res == 0)
+      {
+	 for (; Ver.end() == false; Last = &Ver->NextVer, Ver++)
+	 {
+	    Res = pkgVersionCompare(Version.begin(),Version.end(),Ver.VerStr(),
+				    Ver.VerStr() + strlen(Ver.VerStr()));
+	    if (Res != 0)
+	       break;
+	 }
+      }
+
       // Add a new version
       *Last = NewVersion(Ver,Version,*Last);
       Ver->ParentPkg = Pkg.Index();
+      Ver->Hash = Hash;
       if (List.NewVersion(Ver) == false)
 	 return _error->Error("Error occured while processing %s (NewVersion1)",PackageName.c_str());
 

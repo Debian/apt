@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.h,v 1.6 1998/12/14 02:23:47 jgg Exp $
+// $Id: deblistparser.h,v 1.7 1999/05/23 22:55:55 jgg Exp $
 /* ######################################################################
    
    Debian Package List Parser - This implements the abstract parser 
@@ -43,6 +43,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    virtual string Package();
    virtual string Version();
    virtual bool NewVersion(pkgCache::VerIterator Ver);
+   virtual unsigned short VersionHash();
    virtual bool UsePackage(pkgCache::PkgIterator Pkg,
 			   pkgCache::VerIterator Ver);
    virtual unsigned long Offset() {return iOffset;};
