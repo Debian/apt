@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.39 1999/10/18 03:18:40 jgg Exp $
+// $Id: http.cc,v 1.40 1999/11/29 23:20:27 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -910,7 +910,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
 void HttpMethod::SigTerm(int)
 {
    if (FailFd == -1)
-      exit(100);
+      _exit(100);
    close(FailFd);
    
    // Timestamp
@@ -919,7 +919,7 @@ void HttpMethod::SigTerm(int)
    UBuf.modtime = FailTime;
    utime(FailFile.c_str(),&UBuf);
    
-   exit(100);
+   _exit(100);
 }
 									/*}}}*/
 // HttpMethod::Fetch - Fetch an item					/*{{{*/

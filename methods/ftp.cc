@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.15 1999/09/05 05:41:41 jgg Exp $
+// $Id: ftp.cc,v 1.16 1999/11/29 23:20:27 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the FTP aquire method for APT.
@@ -745,7 +745,7 @@ FtpMethod::FtpMethod() : pkgAcqMethod("1.0",SendConfig)
 void FtpMethod::SigTerm(int)
 {
    if (FailFd == -1)
-      exit(100);
+      _exit(100);
    close(FailFd);
    
    // Timestamp
@@ -754,7 +754,7 @@ void FtpMethod::SigTerm(int)
    UBuf.modtime = FailTime;
    utime(FailFile.c_str(),&UBuf);
    
-   exit(100);
+   _exit(100);
 }
 									/*}}}*/
 // FtpMethod::Configuration - Handle a configuration message		/*{{{*/
