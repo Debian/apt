@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.31 1998/12/14 02:23:47 jgg Exp $
+// $Id: apt-get.cc,v 1.32 1998/12/31 01:32:20 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -993,7 +993,7 @@ bool ShowHelp(CommandLine &CmdL)
    cout << "  -u  Show a list of upgraded packages as well" << endl;
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
-   cout << "See the apt-get(8), sources.list(8) and apt.conf(8) manual" << endl;
+   cout << "See the apt-get(8), sources.list(5) and apt.conf(5) manual" << endl;
    cout << "pages for more information." << endl;
    return 100;
 }
