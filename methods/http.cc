@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.43 1999/12/10 23:40:29 jgg Exp $
+// $Id: http.cc,v 1.44 2000/01/30 08:16:43 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -367,6 +367,9 @@ int ServerState::RunHeaders()
       string Data;
       if (In.WriteTillEl(Data) == false)
 	 continue;
+
+      if (Debug == true)
+	 clog << Data;
       
       for (string::const_iterator I = Data.begin(); I < Data.end(); I++)
       {
