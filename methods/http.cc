@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.19 1998/12/31 05:45:26 jgg Exp $
+// $Id: http.cc,v 1.20 1999/01/04 00:51:23 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -346,7 +346,7 @@ bool ServerState::Open()
       return _error->Errno("select","Select failed");
    if (Res == 0)
       return _error->Error("Could not connect, connection timed out");
-   unsigned int Err,Len;
+   unsigned int Err,Len=sizeof(Err);
    if (getsockopt(ServerFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
       return _error->Errno("getsockopt","Failed");
    if (Err != 0)
