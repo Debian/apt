@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.19 1999/02/01 08:11:57 jgg Exp $
+// $Id: strutl.cc,v 1.20 1999/02/27 22:29:11 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -25,6 +25,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 									/*}}}*/
 
 // strstrip - Remove white space from the front and back of a string	/*{{{*/

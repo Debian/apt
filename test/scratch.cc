@@ -1,22 +1,21 @@
-#include <apt-pkg/acquire-item.h>
-#include <apt-pkg/acquire-worker.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/error.h>
-#include <strutl.h>
+#include <apt-pkg/tagfile.h>
 
 #include <signal.h>
 #include <stdio.h>
 
 int main(int argc,char *argv[])
 {
-
-   URI Foo(argv[1]);
-   cout << Foo.Access << '\'' << endl;
-   cout << Foo.Host << '\'' << endl;
-   cout << Foo.Path << '\'' << endl;
-   cout << Foo.User << '\'' << endl;
-   cout << Foo.Password << '\'' << endl;
-   cout << Foo.Port << endl;
+   FileFd F(argv[1],FileFd::ReadOnly);
+   pkgTagFile Reader(F);
+   
+   pkgTagSection Sect;
+   while (Reader.Step(Sect) == true)
+   {
+      Sect.FindS("Package");
+      Sect.FindS("Section");
+      Sect.FindS("Version");
+      Sect.FindI("Size");
+   };
    
    return 0;
 }

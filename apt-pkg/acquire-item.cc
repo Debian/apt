@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.24 1999/02/19 07:56:06 jgg Exp $
+// $Id: acquire-item.cc,v 1.25 1999/02/27 22:29:11 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -339,7 +339,9 @@ void pkgAcqIndexRel::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    if (Cnf->LocalOnly == true || 
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
    {      
-      Status = StatIdle;
+      // Ignore this
+      Status = StatDone;
+      Complete = false;
       Dequeue();
       return;
    }

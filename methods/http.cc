@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.26 1999/02/15 00:26:55 jgg Exp $
+// $Id: http.cc,v 1.27 1999/02/27 22:29:11 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -795,6 +795,8 @@ bool HttpMethod::Flush(ServerState *Srv)
 /* */
 bool HttpMethod::ServerDie(ServerState *Srv)
 {
+   unsigned int LErrno = errno;
+   
    // Dump the buffer to the file
    if (Srv->State == ServerState::Data)
    {
@@ -815,8 +817,9 @@ bool HttpMethod::ServerDie(ServerState *Srv)
        Srv->Encoding != ServerState::Closes)
    {
       Srv->Close();
-      if (errno == 0)
+      if (LErrno == 0)
 	 return _error->Error("Error reading from server Remote end closed connection");
+      errno = LErrno;
       return _error->Errno("read","Error reading from server");
    }
    else
@@ -986,13 +989,7 @@ int HttpMethod::Loop()
    
    int FailCounter = 0;
    while (1)
-   {
-      if (FailCounter >= 2)
-      {
-	 Fail("Massive Server Brain Damage",true);
-	 FailCounter = 0;
-      }
-      
+   {      
       // We have no commands, wait for some to arrive
       if (Queue == 0)
       {
@@ -1051,6 +1048,13 @@ int HttpMethod::Loop()
 	    FailCounter++;
 	    _error->Discard();
 	    Server->Close();
+
+	    if (FailCounter >= 2)
+	    {
+	       Fail("Connection timed out",true);
+	       FailCounter = 0;
+	    }
+	    
 	    continue;
 	 }
       };
@@ -1087,7 +1091,7 @@ int HttpMethod::Loop()
 	       URIDone(Res);
 	    }
 	    else
-	       Fail();
+	       Fail(true);
 
 	    break;
 	 }
