@@ -15,7 +15,7 @@ SUBDIR=po
 include ../buildlib/defaults.mak
 
 CATALOGS := $(addsuffix .gmo,$(shell cat LINGUAS))
-DOMAINS = $(notdir $(wildcard $(PO_DOMAINS)/*))
+DOMAINS := $(notdir $(wildcard $(PO_DOMAINS)/*))
 POTFILES := $(addsuffix .pot,$(addprefix $(PO)/,$(DOMAINS)))
 
 # Construct a list of all mo files for all domains under $(PO_DOMAINS)
@@ -24,10 +24,11 @@ MOFILES := $(foreach D,$(DOMAINS),$(addprefix $(PO_DOMAINS)/$(D)/,$(MOFILES)))
 LANG_POFILES := $(patsubst %.mo,%.po,$(MOFILES))
 LINGUAS := $(patsubst %.gmo,%,$(CATALOGS))
 
-GETDOMAIN = $(filter $(DOMAINS),$(subst /, ,$(1)))
+GETDOMAIN = $(word 1,$(subst /, ,$(1)))
+
 # Generate the list of files from the bits the other make files dropped 
 # and produce the .pot file.
-$(POTFILES) : $(PO)/%.pot : 
+$(POTFILES) : $(PO)/%.pot :
 	printf "%s " "Generating POT file $@"
 	echo $@ : $(wildcard $(PO)/domains/$*/*.*list) $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/$*/*.srclist))) > $@.d
 # From sh source
@@ -47,12 +48,12 @@ $(PO)/$(PACKAGE)-all.pot: $(POTFILES)
 # only the subtext needed for this domain
 # We cannot express the dependencies required for this directly with a pattern
 # rule, so we use the .d hack.
-$(LANG_POFILES) : %.po : $(PO)/$(PACKAGE)-all.pot
+$(LANG_POFILES) : $(PO_DOMAINS)/%.po : $(PO)/$(PACKAGE)-all.pot
 	printf "%s " "Generating $@"
 	echo $@ : $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot > $(PO)/$(call GETDOMAIN,$*)_$(notdir $@).d
 	$(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
 
-$(MOFILES) : %.mo : %.po
+$(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	printf "%s: " "Generating $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo"
 	$(GMSGFMT) --statistics -o $@ $<
 	mkdir -p $(LOCALE)/$(notdir $*)/LC_MESSAGES/
