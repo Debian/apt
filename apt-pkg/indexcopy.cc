@@ -593,17 +593,41 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 
       // verify the gpg signature of "Release"
       // gpg --verify "*I+Release.gpg", "*I+Release"
+      const char *Args[400];
+      unsigned int i = 0;
+
       string gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
       string pubringpath = _config->Find("Apt::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
+      Args[i++] = gpgvpath.c_str();
+      Args[i++] = "--keyring";
+      Args[i++] = pubringpath.c_str();
+      Configuration::Item const *Opts;
+      Opts = _config->Tree("Acquire::gpgv::Options");
+      if (Opts != 0)
+      {
+         Opts = Opts->Child;
+	 for (; Opts != 0; Opts = Opts->Next)
+         {
+            if (Opts->Value.empty() == true)
+               continue;
+            Args[i++] = Opts->Value.c_str();
+	    if(i >= 390) { 
+	       _error->Error("Argument list from Acquire::gpgv::Options too long. Exiting.");
+	       return false;
+	    }
+         }
+      }
+      Args[i++] = string(*I+"Release.gpg").c_str();
+      Args[i++] = string(*I+"Release").c_str();
+      Args[i++] = NULL;
+      
       pid_t pid = ExecFork();
       if(pid < 0) {
 	 _error->Error("Fork failed");
 	 return false;
       }
       if(pid == 0) {
-	 execlp(gpgvpath.c_str(), gpgvpath.c_str(), "--keyring", 
-		pubringpath.c_str(), string(*I+"Release.gpg").c_str(), 
-		string(*I+"Release").c_str(), NULL);
+	 execvp(gpgvpath.c_str(), (char**)Args);
       }
       if(!ExecWait(pid, "gpgv")) {
 	 _error->Warning("Signature verification failed for: %s",
