@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.6 1998/11/29 01:19:20 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.7 1998/12/04 23:33:18 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -791,8 +791,11 @@ bool DoAdd(CommandLine &)
 {
    // Startup
    string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
-   cout << "Using CD-ROM mount point " << CDROM << endl;
+   if (CDROM[0] == '.')
+      CDROM= SafeGetCWD() + '/' + CDROM;
    
+   cout << "Using CD-ROM mount point " << CDROM << endl;
+      
    // Read the database
    Configuration Database;
    string DFile = _config->FindFile("Dir::State::cdroms");
@@ -823,7 +826,11 @@ bool DoAdd(CommandLine &)
    cout << "Identifying.. " << flush;
    string ID;
    if (IdentCdrom(CDROM,ID) == false)
+   {
+      cout << endl;
       return false;
+   }
+   
    cout << '[' << ID << ']' << endl;
 
    cout << "Scanning Disc for index files..  " << flush;
@@ -831,7 +838,11 @@ bool DoAdd(CommandLine &)
    vector<string> List;
    string StartDir = SafeGetCWD();
    if (FindPackages(CDROM,List) == false)
+   {
+      cout << endl;
       return false;
+   }
+   
    chdir(StartDir.c_str());
 
    if (_config->FindB("Debug::aptcdrom",false) == true)

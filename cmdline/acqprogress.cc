@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.5 1998/12/04 21:16:52 jgg Exp $
+// $Id: acqprogress.cc,v 1.6 1998/12/04 23:33:17 jgg Exp $
 /* ######################################################################
 
    Acquire Progress - Command line progress meter 
@@ -235,11 +235,12 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
 {
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';   
-   cout << "Media Change: Please insert the Disc labeled '" << Media << "' in "\
-           " the drive '" << Drive << "' and press a key" << endl;
+   cout << "Media Change: Please insert the disc labeled '" << Media << "' in "\
+           "the drive '" << Drive << "' and press enter" << endl;
 
-   char C;
-   read(STDIN_FILENO,&C,1);
+   char C = 0;
+   while (C != '\n' && C != '\r')
+      read(STDIN_FILENO,&C,1);
    
    Update = true;
    return true;
