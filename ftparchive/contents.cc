@@ -308,11 +308,18 @@ bool ContentsExtract::Read(debDebFile &Deb)
    
    // Get the archive member and positition the file 
    const ARArchive::Member *Member = Deb.GotoMember("data.tar.gz");
-   if (Member == 0)
+   const char *Compressor = "gzip";
+   if (Member == 0) {
+      Member = Deb.GotoMember("data.tar.bz2");
+      Compressor = "bzip2";
+   }
+   if (Member == 0) {
+      _error->Error(_("Internal Error, could not locate member %s"),"data.tar.gz");
       return false;
+   }
       
    // Extract it.
-   ExtractTar Tar(Deb.GetFile(),Member->Size);
+   ExtractTar Tar(Deb.GetFile(),Member->Size,Compressor);
    if (Tar.Go(*this) == false)
       return false;   
    return true;   

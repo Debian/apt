@@ -38,6 +38,7 @@ class ExtractTar
    int GZPid;
    FileFd InFd;
    bool Eof;
+   string DecompressProg;
    
    // Fork and reap gzip
    bool StartGzip();
@@ -47,7 +48,7 @@ class ExtractTar
 
    bool Go(pkgDirStream &Stream);
    
-   ExtractTar(FileFd &Fd,unsigned long Max);
+   ExtractTar(FileFd &Fd,unsigned long Max,string DecompressionProgram);
    virtual ~ExtractTar();
 };
 

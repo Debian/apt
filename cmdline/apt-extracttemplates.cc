@@ -99,7 +99,7 @@ bool DebFile::Go()
 	
 	if (File.Seek(Member->Start) == false)
 		return false;
-	ExtractTar Tar(File, Member->Size);
+	ExtractTar Tar(File, Member->Size,"gzip");
 	return Tar.Go(*this);
 }
 									/*}}}*/

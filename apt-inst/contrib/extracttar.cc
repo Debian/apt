@@ -58,8 +58,8 @@ struct ExtractTar::TarHeader
 // ExtractTar::ExtractTar - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ExtractTar::ExtractTar(FileFd &Fd,unsigned long Max) : File(Fd), 
-                         MaxInSize(Max)
+ExtractTar::ExtractTar(FileFd &Fd,unsigned long Max,string DecompressionProgram) : File(Fd), 
+                         MaxInSize(Max), DecompressProg(DecompressionProgram)
 
 {
    GZPid = -1;
@@ -93,7 +93,8 @@ bool ExtractTar::Done(bool Force)
    
    // Make sure we clean it up!
    kill(GZPid,SIGINT);
-   if (ExecWait(GZPid,_config->Find("dir::bin::gzip","/bin/gzip").c_str(),
+   string confvar = string("dir::bin::") + DecompressProg;
+   if (ExecWait(GZPid,_config->Find(confvar.c_str(),DecompressProg.c_str()).c_str(),
 		Force) == false)
    {
       GZPid = -1;
@@ -134,10 +135,11 @@ bool ExtractTar::StartGzip()
       SetCloseExec(STDERR_FILENO,false);
       
       const char *Args[3];
-      Args[0] = _config->Find("dir::bin::gzip","/bin/gzip").c_str();
+      string confvar = string("dir::bin::") + DecompressProg;
+      Args[0] = _config->Find(confvar.c_str(),DecompressProg.c_str()).c_str();
       Args[1] = "-d";
       Args[2] = 0;
-      execv(Args[0],(char **)Args);
+      execvp(Args[0],(char **)Args);
       cerr << _("Failed to exec gzip ") << Args[0] << endl;
       _exit(100);
    }
