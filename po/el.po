@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt.el\n"
-"POT-Creation-Date: 2003-02-09 21:51-0600\n"
-"PO-Revision-Date: 2003-02-21 22:28+0200\n"
+"Project-Id-Version: apt 0.5.5\n"
+"POT-Creation-Date: 2003-04-27 01:12-0500\n"
+"PO-Revision-Date: 2003-05-17 23:00+0200\n"
 "Last-Translator: Dokianakis Fanis <madf@hellug.gr>\n"
 "Language-Team: Greek <el@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,8 +19,9 @@ msgstr ""
 msgid "Package %s version %s has an unmet dep:\n"
 msgstr "Το πακέτο %s έκδοση %s έχει αναπάντητες εξαρτήσεις:\n"
 
-#: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:671
-#: cmdline/apt-cache.cc:1037 cmdline/apt-cache.cc:1183
+#: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:613
+#: cmdline/apt-cache.cc:769 cmdline/apt-cache.cc:987 cmdline/apt-cache.cc:1353
+#: cmdline/apt-cache.cc:1499
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Αδυναμία εντοπισμού του πακέτου %s"
@@ -81,73 +82,73 @@ msgstr "Συνολικός Αδρανής χώρος: "
 msgid "Total Space Accounted for: "
 msgstr "Συνολικός Χώρος που Υπολογίστηκε για: "
 
-#: cmdline/apt-cache.cc:444 cmdline/apt-cache.cc:871
+#: cmdline/apt-cache.cc:444 cmdline/apt-cache.cc:1187
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "Αρχείο πακέτου %s είναι εκτός συνχρονισμού."
 
-#: cmdline/apt-cache.cc:913
+#: cmdline/apt-cache.cc:1229
 msgid "You must give exactly one pattern"
 msgstr "Πρέπει να δώσετε ακριβώς μία μορφή"
 
-#: cmdline/apt-cache.cc:1137
+#: cmdline/apt-cache.cc:1453
 msgid "Package Files:"
 msgstr "Αρχεία Πακέτου:"
 
-#: cmdline/apt-cache.cc:1144 cmdline/apt-cache.cc:1230
+#: cmdline/apt-cache.cc:1460 cmdline/apt-cache.cc:1546
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr "Η cache είναι εκτός συνχρονισμού, αδυναμία x-ref ενός αρχείου πακέτου"
 
-#: cmdline/apt-cache.cc:1145
+#: cmdline/apt-cache.cc:1461
 #, c-format
 msgid "%4i %s\n"
 msgstr "%4i %s\n"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1157
+#: cmdline/apt-cache.cc:1473
 msgid "Pinned Packages:"
 msgstr "Καθηλωμένα Πακέτα:"
 
-#: cmdline/apt-cache.cc:1169 cmdline/apt-cache.cc:1210
+#: cmdline/apt-cache.cc:1485 cmdline/apt-cache.cc:1526
 msgid "(not found)"
 msgstr "(δε βρέθηκαν)"
 
 #. Installed version
-#: cmdline/apt-cache.cc:1190
+#: cmdline/apt-cache.cc:1506
 msgid "  Installed: "
 msgstr "  Εγκατεστημένα: "
 
-#: cmdline/apt-cache.cc:1192 cmdline/apt-cache.cc:1200
+#: cmdline/apt-cache.cc:1508 cmdline/apt-cache.cc:1516
 msgid "(none)"
 msgstr "(κανένα)"
 
 #. Candidate Version
-#: cmdline/apt-cache.cc:1197
+#: cmdline/apt-cache.cc:1513
 msgid "  Candidate: "
 msgstr "  Υποψήφιο: "
 
-#: cmdline/apt-cache.cc:1207
+#: cmdline/apt-cache.cc:1523
 msgid "  Package Pin: "
 msgstr " Καθήλωση Πακέτου: "
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1216
+#: cmdline/apt-cache.cc:1532
 msgid "  Version Table:"
 msgstr "  Πίνακας Έκδοσης:"
 
-#: cmdline/apt-cache.cc:1231
+#: cmdline/apt-cache.cc:1547
 #, c-format
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1258 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 cmdline/apt-get.cc:2049
-#: cmdline/apt-sortpkgs.cc:144 ftparchive/apt-ftparchive.cc:544
+#: cmdline/apt-cache.cc:1574 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:544
+#: cmdline/apt-get.cc:2165 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s για %s %s είναι μεταγλωττισμένο σε %s %s\n"
 
-#: cmdline/apt-cache.cc:1262
+#: cmdline/apt-cache.cc:1578
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file1 ...]\n"
@@ -169,8 +170,10 @@ msgid ""
 "   search - Search the package list for a regex pattern\n"
 "   show - Show a readable record for the package\n"
 "   depends - Show raw dependency information for a package\n"
+"   rdepends - Show reverse dependency information for a package\n"
 "   pkgnames - List the names of all packages\n"
 "   dotty - Generate package graphs for GraphVis\n"
+"   xvcg - Generate package graphs for xvcg\n"
 "   policy - Show policy settings\n"
 "\n"
 "Options:\n"
@@ -199,13 +202,16 @@ msgstr ""
 "   stats - Εμφάνιση μερικών βασικών στατιστικών\n"
 "   dump - Εμφάνιση όλου του αρχείου σε περιληπτική μορφή.\n"
 "   dumpavail - Εκτύπωση μιας λίστας με διαθέσιμα στο stdout\n"
-"   unmet - Εμφάνιση αναπάντητων εξαρτήσεων   "
+"   unmet - Εμφάνιση αναπάντητων εξαρτήσεων\n"
 "   search - Αναζήτηση στη λίστα πακέτων για αυτή τη regex μορφή\n"
 "   show - Εμφάνιση μιας αναγνώσιμης εγγραφής για το πακέτο\n"
 "   depends - Εμφάνιση ομών πληροφοριών για τις εξαρτήσεις ενός πακέτου\n"
+"   rdepends - Εμφάνιση αντίστροφων πληροφοριών για εξαρτήσεις ενός πακέτου\n"
 "   pkgnames - Εμφάνιση λίστας με τα ονόματα όλων των πακέτων\n"
 "   dotty - Παραγωγή γραφημάτων πακέτων για το GraphVis\n"
+"   xvcg - Παραγωγή γραφημάτων πακέτων για το xvcg\n"
 "   policy - Εμφάνιση ρυθμίσεων πολιτικής\n"
+"\n"
 "Επιλογές:\n"
 "  -h   Αυτό το κείμενο βοήθειας.\n"
 "  -p=? Η cache πακέτου.\n"
@@ -278,14 +284,15 @@ msgstr ""
 "  -c=? Ανάγνωση του αρχείου ρυθμίσεων\n"
 "  -o=? Χρήση μιας αυθαίρετη επιλογής ρυθμίσεων, πχ -o dir::cache=/tmp\n"
 
-#: apt-pkg/pkgcachegen.cc:699 cmdline/apt-extracttemplates.cc:259
+#: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:699
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Αδυναμία γραφής στο %s"
 
 #: cmdline/apt-extracttemplates.cc:302
 msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Αδυναμία εύρεσης της έκδοσης του debconf. Το debconf έχει εγκατασταθεί;"
+msgstr ""
+"Αδυναμία εύρεσης της έκδοσης του debconf. Το debconf έχει εγκατασταθεί;"
 
 #: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:336
 msgid "Package extension list is too long"
@@ -368,7 +375,8 @@ msgstr ""
 "υπέρβασης για να αναγκάσει την τιμή του Priority και του Section.\n"
 "\n"
 "Παρόμοια το apt-ftparchive παράγει αρχεία Κώδικα πηγής από ένα δένδρο από\n"
-".dscs. Η επιλογή --source-override μπορεί να ορίσει ένα αρχείο υπέρβασης src\n"
+".dscs. Η επιλογή --source-override μπορεί να ορίσει ένα αρχείο υπέρβασης "
+"src\n"
 "\n"
 "Οι εντολές 'packages' και 'sources' πρέπει να εκτελεστούν στη ρίζα του\n"
 "δένδρου. Η ΔιαδρομήΔυαδικού πρέπει να δείχνει στη βάση της αναδρομικής\n"
@@ -482,8 +490,8 @@ msgstr "Αποτυχία της σύνδεσης του %s με το %s"
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Άφιξη στο όριο ΑποΣύνδεσης των %sB.\n"
 
-#: apt-inst/deb/dpkgdb.cc:121 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 ftparchive/writer.cc:338
+#: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Αποτυχία της εύρεσης της κατάστασης του %s."
@@ -587,7 +595,7 @@ msgstr "Αποτυχία ανάγνωσης κατά τον υπολογισμό του MD5"
 msgid "Problem unlinking %s"
 msgstr "Πρόβλημα στην αποσύνδεση του %s"
 
-#: apt-inst/extract.cc:188 ftparchive/multicompress.cc:490
+#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "Αποτυχία στη μετονομασία του %s σε %s"
@@ -597,70 +605,70 @@ msgstr "Αποτυχία στη μετονομασία του %s σε %s"
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:193
+#: cmdline/apt-get.cc:220
 msgid "The following packages have unmet dependencies:"
 msgstr "Τα πακέτα που ακολουθούν έχουν αναπάντητες εξαρτήσεις:"
 
-#: cmdline/apt-get.cc:283
+#: cmdline/apt-get.cc:310
 #, c-format
 msgid "but %s is installed"
 msgstr "αλλά το %s είναι εγκατεστημένο"
 
-#: cmdline/apt-get.cc:285
+#: cmdline/apt-get.cc:312
 #, c-format
 msgid "but %s is to be installed"
 msgstr "αλλά το %s πρόκειτε να εγκατασταθεί"
 
-#: cmdline/apt-get.cc:292
+#: cmdline/apt-get.cc:319
 msgid "but it is not installable"
 msgstr "αλλά δεν μπορεί να εγκατασταθεί"
 
-#: cmdline/apt-get.cc:294
+#: cmdline/apt-get.cc:321
 msgid "but it is a virtual package"
 msgstr "αλλά είναι ένα εικονικό πακέτο"
 
-#: cmdline/apt-get.cc:297
+#: cmdline/apt-get.cc:324
 msgid "but it is not installed"
 msgstr "αλλά δεν είναι εγκατεστημένο"
 
-#: cmdline/apt-get.cc:297
+#: cmdline/apt-get.cc:324
 msgid "but it is not going to be installed"
 msgstr "αλλά δε πρόκειτε να εγκατασταθεί"
 
-#: cmdline/apt-get.cc:302
+#: cmdline/apt-get.cc:329
 msgid " or"
 msgstr "ή"
 
-#: cmdline/apt-get.cc:328
+#: cmdline/apt-get.cc:358
 msgid "The following NEW packages will be installed:"
 msgstr "Τα ακόλουθα ΝΕΑ πακέτα θα εγκατασταθούν:"
 
-#: cmdline/apt-get.cc:351
+#: cmdline/apt-get.cc:384
 msgid "The following packages will be REMOVED:"
 msgstr "Τα ακόλουθα πακέτα θα ΑΦΑΙΡΕΘΟΥΝ:"
 
-#: cmdline/apt-get.cc:371
+#: cmdline/apt-get.cc:406
 msgid "The following packages have been kept back"
 msgstr "Τα ακόλουθα πακέτα έχουν κρατηθεί"
 
-#: cmdline/apt-get.cc:390
+#: cmdline/apt-get.cc:427
 msgid "The following packages will be upgraded"
 msgstr "Τα ακόλουθα πακέτα θα αναβαθμιστούν"
 
-#: cmdline/apt-get.cc:409
+#: cmdline/apt-get.cc:448
 msgid "The following packages will be DOWNGRADED"
 msgstr "Τα ακόλουθα πακέτα θα ΥΠΟΒΑΘΜΙΣΤΟΥΝ"
 
-#: cmdline/apt-get.cc:426
+#: cmdline/apt-get.cc:468
 msgid "The following held packages will be changed:"
 msgstr "Τα ακόλουθα κρατημένα πακέτα θα αλλάξουν:"
 
-#: cmdline/apt-get.cc:477
+#: cmdline/apt-get.cc:521
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (αναμένετε σε %s) "
 
-#: cmdline/apt-get.cc:484
+#: cmdline/apt-get.cc:529
 msgid ""
 "WARNING: The following essential packages will be removed\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -668,110 +676,110 @@ msgstr ""
 "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Τα ακόλουθα απαραίτητα πακέτα θα αφαιρεθούν\n"
 "Αυτό ΔΕΝ πρέπει να γίνει εκτός και εάν ξέρετε ακριβώς τι κάνετε!"
 
-#: cmdline/apt-get.cc:514
+#: cmdline/apt-get.cc:559
 #, c-format
 msgid "%lu packages upgraded, %lu newly installed, "
 msgstr "%lu πακέτα αναβαθμίζονται, %lu νέα εγκαταστημένα, "
 
-#: cmdline/apt-get.cc:518
+#: cmdline/apt-get.cc:563
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu επαναγκαταστατήθηκαν, "
 
-#: cmdline/apt-get.cc:520
+#: cmdline/apt-get.cc:565
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu υποβαθμίστηκαν, "
 
-#: cmdline/apt-get.cc:522
+#: cmdline/apt-get.cc:567
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu θα αφαιρεθούν και %lu δεν αναβαθμίστηκαν.\n"
 
-#: cmdline/apt-get.cc:526
+#: cmdline/apt-get.cc:571
 #, c-format
 msgid "%lu packages not fully installed or removed.\n"
 msgstr "%lu πακέτα δεν έχουν εγκατασταθεί ή αφαιρεθεί.\n"
 
-#: cmdline/apt-get.cc:586
+#: cmdline/apt-get.cc:631
 msgid "Correcting dependencies..."
 msgstr "Διόρθωση εξαρτήσεων..."
 
-#: cmdline/apt-get.cc:589
+#: cmdline/apt-get.cc:634
 msgid " failed."
 msgstr " απέτυχαν."
 
-#: cmdline/apt-get.cc:592
+#: cmdline/apt-get.cc:637
 msgid "Unable to correct dependencies"
 msgstr "Αδυναμία στη διόρθωση των εξαρτήσεων"
 
-#: cmdline/apt-get.cc:595
+#: cmdline/apt-get.cc:640
 msgid "Unable to minimize the upgrade set"
 msgstr "Αδυναμία στην ελάττωση του σετ αναβάθμισης"
 
-#: cmdline/apt-get.cc:597
+#: cmdline/apt-get.cc:642
 msgid " Done"
 msgstr " Έγινε"
 
-#: cmdline/apt-get.cc:601
+#: cmdline/apt-get.cc:646
 msgid "You might want to run `apt-get -f install' to correct these."
 msgstr "Ίσως θα πρέπει να τρέξετε `apt-get -f install' για να διορθωθούν."
 
-#: cmdline/apt-get.cc:604
+#: cmdline/apt-get.cc:649
 msgid "Unmet dependencies. Try using -f."
 msgstr "Αναπάντητες εξαρτήσεις. Προσπαθείστε με χρήση του -f."
 
-#: cmdline/apt-get.cc:657
+#: cmdline/apt-get.cc:702
 msgid "Packages need to be removed but Remove is disabled."
 msgstr "Πακέτα πρέπει να αφαιρεθούν αλλά η Αφαίρεση απενεργοποιήθηκε."
 
-#: cmdline/apt-get.cc:683 cmdline/apt-get.cc:1578 cmdline/apt-get.cc:1611
+#: cmdline/apt-get.cc:728 cmdline/apt-get.cc:1694 cmdline/apt-get.cc:1727
 msgid "Unable to lock the download directory"
 msgstr "Αδυναμία στο κλείδωμα του φακέλου μεταφόρτωσης"
 
-#: apt-pkg/cachefile.cc:67 cmdline/apt-get.cc:693 cmdline/apt-get.cc:1659
-#: cmdline/apt-get.cc:1870
+#: cmdline/apt-get.cc:738 cmdline/apt-get.cc:1775 cmdline/apt-get.cc:1986
+#: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Αδυναμία ανάγνωσης της λίστας με τις πηγές."
 
-#: cmdline/apt-get.cc:713
+#: cmdline/apt-get.cc:758
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Πρέπει να κατεβούν %sB/%sB αρχείων\n"
 
-#: cmdline/apt-get.cc:716
+#: cmdline/apt-get.cc:761
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Πρέπει να κατεβούν %sB αρχείων\n"
 
-#: cmdline/apt-get.cc:721
+#: cmdline/apt-get.cc:766
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr "Μετά το ξεπακετάρισμα %sB επιπλέων χώρος θα χρησιμοποιηθεί.\n"
 
-#: cmdline/apt-get.cc:724
+#: cmdline/apt-get.cc:769
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Μετά το ξεπακετάρισμα %sB χώρος θα απελευθερωθεί.\n"
 
-#: cmdline/apt-get.cc:741
+#: cmdline/apt-get.cc:786
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Δεν έχετε αρκετό ελεύθερο χώρο στο %s."
 
-#: cmdline/apt-get.cc:750
+#: cmdline/apt-get.cc:795
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Υπάρχουν προβλήματα και το -y χρησιμοποιήθηκε χωρίς --force-yes"
 
-#: cmdline/apt-get.cc:756 cmdline/apt-get.cc:776
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:821
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Καθορίστηκε το Trivial Only αλλά αυτή η λειτουργία δεν είναι ασήμαντη."
 
-#: cmdline/apt-get.cc:758
+#: cmdline/apt-get.cc:803
 msgid "Yes, do as I say!"
 msgstr "Ναι, κάνε όπως λέω!"
 
-#: cmdline/apt-get.cc:760
+#: cmdline/apt-get.cc:805
 #, c-format
 msgid ""
 "You are about to do something potentially harmful\n"
@@ -782,28 +790,28 @@ msgstr ""
 "Για να συνεχίσετε πληκτρολογήστε την φράση '%s'\n"
 " ?] "
 
-#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:785
+#: cmdline/apt-get.cc:811 cmdline/apt-get.cc:830
 msgid "Abort."
 msgstr "Ματαίωση."
 
-#: cmdline/apt-get.cc:781
+#: cmdline/apt-get.cc:826
 msgid "Do you want to continue? [Y/n] "
 msgstr "Θέλετε να συνεχίσετε; [Y/n] "
 
-#: cmdline/apt-get.cc:850 cmdline/apt-get.cc:1219 cmdline/apt-get.cc:1768
+#: cmdline/apt-get.cc:895 cmdline/apt-get.cc:1266 cmdline/apt-get.cc:1884
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Αποτυχία να κατέβει το %s  %s\n"
 
-#: cmdline/apt-get.cc:868
+#: cmdline/apt-get.cc:913
 msgid "Some files failed to download"
 msgstr "Μερικά αρχεία απέτυχαν να μεταφορτωθούν"
 
-#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:1777
+#: cmdline/apt-get.cc:914 cmdline/apt-get.cc:1893
 msgid "Download complete and in download only mode"
 msgstr "Η μεταφόρτωση ολοκληρώθηκε και σε κατάσταση μόνο μεταφόρτωσης"
 
-#: cmdline/apt-get.cc:875
+#: cmdline/apt-get.cc:920
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -811,47 +819,47 @@ msgstr ""
 "Αδυναμία να κατέβουν μερικά αρχεία, ίσως να τρέξετε apt-get update ή\n"
 "προσπαθείστε με --fix-missing?"
 
-#: cmdline/apt-get.cc:879
+#: cmdline/apt-get.cc:924
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "το --fix-missing και η εναλλαγή μέσων προς το παρών δεν υποστηρίζεται"
 
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:929
 msgid "Unable to correct missing packages."
 msgstr "Αδυναμία διόρθωσης των αγνοούμενων πακέτων."
 
-#: cmdline/apt-get.cc:885
+#: cmdline/apt-get.cc:930
 msgid "Aborting Install."
 msgstr "Ματαίωση Εγκατάστασης."
 
-#: cmdline/apt-get.cc:918
+#: cmdline/apt-get.cc:963
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Σημείωση, επιλογή του %s αντί του %s\n"
 
-#: cmdline/apt-get.cc:928
+#: cmdline/apt-get.cc:973
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Παράλειψη του %s, έχει ήδη εγκατασταθεί και δεν ορίστηκε αναβάθμιση.\n"
 
-#: cmdline/apt-get.cc:946
+#: cmdline/apt-get.cc:991
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Το πακέτο %s δεν είναι εγκατεστημένο, οπότε δεν θα απεγκατασταθεί\n"
 
-#: cmdline/apt-get.cc:957
+#: cmdline/apt-get.cc:1002
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Το πακέτο %s είναι ένα εικονικό πακέτο που παρέχεται από:\n"
 
-#: cmdline/apt-get.cc:969
+#: cmdline/apt-get.cc:1014
 msgid " [Installed]"
 msgstr " [Εγκατεστημένα]"
 
-#: cmdline/apt-get.cc:974
+#: cmdline/apt-get.cc:1019
 msgid "You should explicitly select one to install."
 msgstr "Πρέπει σαφέστατα να επιλέξετε ένα για εγκατάσταση."
 
-#: cmdline/apt-get.cc:979
+#: cmdline/apt-get.cc:1024
 #, c-format
 msgid ""
 "Package %s has no available version, but exists in the database.\n"
@@ -864,49 +872,50 @@ msgstr ""
 "δεν διατέθηκε, είναι απαρχαιωμένο ή δεν είναι διαθέσιμο με τα περιεχόμενα\n"
 "του sources.list\n"
 
-#: cmdline/apt-get.cc:997
+#: cmdline/apt-get.cc:1044
 msgid "However the following packages replace it:"
 msgstr "Όμως τα ακόλουθα πακέτα το αντικαθιστούν:"
 
-#: cmdline/apt-get.cc:1000
+#: cmdline/apt-get.cc:1047
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Το πακέτο %s δεν έχει υποψήφιο για εγκατάσταση"
 
-#: cmdline/apt-get.cc:1020
+#: cmdline/apt-get.cc:1067
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "Δεν είναι δυνατή η επανεγκατάσταση του %s, δε μπορεί να μεταφορτωθεί.\n"
+msgstr ""
+"Δεν είναι δυνατή η επανεγκατάσταση του %s, δε μπορεί να μεταφορτωθεί.\n"
 
-#: cmdline/apt-get.cc:1028
+#: cmdline/apt-get.cc:1075
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "Το %s είναι ήδη στη νεότερη έκδοση.\n"
 
-#: cmdline/apt-get.cc:1055
+#: cmdline/apt-get.cc:1102
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Η κυκλοφορία '%s' για το '%s' δε βρέθηκε"
 
-#: cmdline/apt-get.cc:1057
+#: cmdline/apt-get.cc:1104
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Η έκδοση '%s' για το '%s' δε βρέθηκε"
 
-#: cmdline/apt-get.cc:1063
+#: cmdline/apt-get.cc:1110
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Επιλεγμένη έκδοση %s (%s) για το %s\n"
 
-#: cmdline/apt-get.cc:1173
+#: cmdline/apt-get.cc:1220
 msgid "The update command takes no arguments"
 msgstr "Η εντολή update δεν χρησιμοποιεί παραμέτρους"
 
-#: cmdline/apt-get.cc:1186
+#: cmdline/apt-get.cc:1233
 msgid "Unable to lock the list directory"
 msgstr "Αδυναμία κλειδώματος του φακέλου της λίστας"
 
-#: cmdline/apt-get.cc:1238
+#: cmdline/apt-get.cc:1285
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -914,30 +923,30 @@ msgstr ""
 "Μερικά αρχεία ευρετηρίων απέτυχαν να μεταφορτωθούν, έχουν αγνοηθεί ή γίνεται "
 "χρήση παλιών αντίθετα."
 
-#: cmdline/apt-get.cc:1257
+#: cmdline/apt-get.cc:1304
 msgid "Internal Error, AllUpgrade broke stuff"
 msgstr "Εσωτερικό Σφάλμα, το AllUpgrade χάλασε διάφορα πράγματα"
 
-#: cmdline/apt-get.cc:1347 cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1394 cmdline/apt-get.cc:1430
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Αδυναμία εύρεσης του πακέτου %s"
 
-#: cmdline/apt-get.cc:1360
+#: cmdline/apt-get.cc:1407
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Σφάλμα μεταγλώττισης regex - %s"
 
-#: cmdline/apt-get.cc:1370
+#: cmdline/apt-get.cc:1417
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Σημείωση, επιλογή του %s για το regex '%s'\n"
 
-#: cmdline/apt-get.cc:1400
+#: cmdline/apt-get.cc:1447
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Ίσως θα θέλατε να τρέξετε `apt-get -f install' για να διορθώσετε αυτά:"
 
-#: cmdline/apt-get.cc:1403
+#: cmdline/apt-get.cc:1450
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -945,7 +954,7 @@ msgstr ""
 "Αναπάντητες εξαρτήσεις. Δοκιμάστε 'apt-get -f install' χωρίς πακέτα ή\n"
 "ορίσατε μια λύση)."
 
-#: cmdline/apt-get.cc:1415
+#: cmdline/apt-get.cc:1462
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -957,7 +966,7 @@ msgstr ""
 "διανομή ότι μερικά απαιτούμενα πακέτα δεν έχουν δημιουργηθεί ή έχουν\n"
 "μετακομίσει από το Incoming."
 
-#: cmdline/apt-get.cc:1423
+#: cmdline/apt-get.cc:1470
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -967,97 +976,106 @@ msgstr ""
 "το πακέτο απλά δεν μπορεί να εγκατασταθεί και θα πρέπει να συμπληρωθεί\n"
 "μια αναφορά σφαλμάτων για αυτό."
 
-#: cmdline/apt-get.cc:1428
+#: cmdline/apt-get.cc:1475
 msgid "The following information may help to resolve the situation:"
 msgstr "Οι ακόλουθες πληροφορίες ίσως βοηθήσουν να αναλυθεί η κατάσταση:"
 
-#: cmdline/apt-get.cc:1431
+#: cmdline/apt-get.cc:1478
 msgid "Broken packages"
 msgstr "Χαλασμένα πακέτα"
 
-#: cmdline/apt-get.cc:1454
+#: cmdline/apt-get.cc:1504
 msgid "The following extra packages will be installed:"
 msgstr "Τα ακόλουθα επιπλέον πακέτα θα εγκατασταθούν:"
 
-#: cmdline/apt-get.cc:1473
+#: cmdline/apt-get.cc:1568
+msgid "Suggested packages:"
+msgstr "Προτηνώμενα Πακέτα:"
+
+#: cmdline/apt-get.cc:1569
+msgid "Recommended packages:"
+msgstr "Συνιστώμενα πακέτα:"
+
+#: cmdline/apt-get.cc:1589
 msgid "Calculating Upgrade... "
 msgstr "Υπολογισμός Αναβάθμισης..."
 
-#: cmdline/apt-get.cc:1476 methods/connect.cc:99 methods/ftp.cc:700
+#: cmdline/apt-get.cc:1592 methods/ftp.cc:700 methods/connect.cc:99
 msgid "Failed"
 msgstr "Απέτυχε"
 
-#: cmdline/apt-get.cc:1481
+#: cmdline/apt-get.cc:1597
 msgid "Done"
 msgstr "Έγινε"
 
-#: cmdline/apt-get.cc:1654
+#: cmdline/apt-get.cc:1770
 msgid "Must specify at least one package to fetch source for"
 msgstr "Πρέπει να καθοριστεί τουλάχιστον ένα πακέτο για λήψη κώδικα για αυτό"
 
-#: cmdline/apt-get.cc:1681 cmdline/apt-get.cc:1888
+#: cmdline/apt-get.cc:1797 cmdline/apt-get.cc:2004
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Αδυναμία εύρεσης πακέτου κώδικα πηγής για το %s"
 
-#: cmdline/apt-get.cc:1728
+#: cmdline/apt-get.cc:1844
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Δεν υπάρχει αρκετός ελεύθερος χώρος στο %s"
 
-#: cmdline/apt-get.cc:1733
+#: cmdline/apt-get.cc:1849
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB πακέτων κώδικα πηγής.\n"
 
-#: cmdline/apt-get.cc:1736
+#: cmdline/apt-get.cc:1852
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB πακέτων κώδικα πηγής.\n"
 
-#: cmdline/apt-get.cc:1742
+#: cmdline/apt-get.cc:1858
 #, c-format
 msgid "Fetch Source %s\n"
 msgstr "Λήψη Κώδικα Πηγής %s\n"
 
-#: cmdline/apt-get.cc:1773
+#: cmdline/apt-get.cc:1889
 msgid "Failed to fetch some archives."
 msgstr "Αποτυχία λήψης ορισμένων αρχείων."
 
-#: cmdline/apt-get.cc:1801
+#: cmdline/apt-get.cc:1917
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Παράλειψη αποσυμπίεσης του ήδη αποσυμπιεσμένου κώδικα πηγής στο %s\n"
 
-#: cmdline/apt-get.cc:1813
+#: cmdline/apt-get.cc:1929
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή αποσυμπίεσης '%s'.\n"
 
-#: cmdline/apt-get.cc:1830
+#: cmdline/apt-get.cc:1946
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή κατασκευής '%s'.\n"
 
-#: cmdline/apt-get.cc:1849
+#: cmdline/apt-get.cc:1965
 msgid "Child process failed"
 msgstr "Απέτυχε η θυγατρική διεργασία"
 
-#: cmdline/apt-get.cc:1865
+#: cmdline/apt-get.cc:1981
 msgid "Must specify at least one package to check builddeps for"
-msgstr "Πρέπει να καθοριστεί τουλάχιστον ένα πακέτο για έλεγχο builddeps για αυτό"
+msgstr ""
+"Πρέπει να καθοριστεί τουλάχιστον ένα πακέτο για έλεγχο builddeps για αυτό"
 
-#: cmdline/apt-get.cc:1893
+#: cmdline/apt-get.cc:2009
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Αδυναμία λήψης πληροφοριών build-dependency για το %s"
 
-#: cmdline/apt-get.cc:1913
+#: cmdline/apt-get.cc:2029
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "Το %s δεν έχει εξαρτήσεις κατασκευής.\n"
 
-#: cmdline/apt-get.cc:1948
+#: cmdline/apt-get.cc:2064
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1066,7 +1084,7 @@ msgstr ""
 "Η %s εξάρτηση στο %s δε μπορεί να ικανοποιηθεί γιατί το πακέτο %s δεν "
 "εντοπίζεται"
 
-#: cmdline/apt-get.cc:1990
+#: cmdline/apt-get.cc:2106
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1075,7 +1093,7 @@ msgstr ""
 "Η %s εξάρτηση στο %s δε μπορεί να ικανοποιηθεί γιατί καμμία διαθέσιμη έκδοση "
 "του πακέτο %s δεν ικανοποιεί τις απαιτήσεις έκδοσης"
 
-#: cmdline/apt-get.cc:2017
+#: cmdline/apt-get.cc:2133
 msgid ""
 "Some broken packages were found while trying to process build-dependencies.\n"
 "You might want to run `apt-get -f install' to correct these."
@@ -1083,15 +1101,15 @@ msgstr ""
 "Βρέθηκαν μερικά χαλασμένα πακέτα στη προσπάθεια επεξεργασίας των εξαρτήσεων\n"
 "Ίσως θα θέλατε να τρέξετε `apt-get -f install' για να τα διορθώσετε."
 
-#: cmdline/apt-get.cc:2022
+#: cmdline/apt-get.cc:2138
 msgid "Failed to process build dependencies"
 msgstr "Αποτυχία επεξεργασίας των εξαρτήσεων κατασκευής"
 
-#: cmdline/apt-get.cc:2054
+#: cmdline/apt-get.cc:2170
 msgid "Supported Modules:"
 msgstr "Υποστηριζόμενα Αρθρώματα:"
 
-#: cmdline/apt-get.cc:2095
+#: cmdline/apt-get.cc:2211
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1125,6 +1143,7 @@ msgid ""
 "  -m  Attempt to continue if archives are unlocatable\n"
 "  -u  Show a list of upgraded packages as well\n"
 "  -b  Build the source package after fetching it\n"
+"  -V  Show verbose version numbers\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
@@ -1163,6 +1182,7 @@ msgstr ""
 "  -m  Προσπάθεια για συνέχεια εάν τα πακέτα δεν εντοπίζονται\n"
 "  -u  Εμφάνιση μιας λίστας με τα πακέτα προς αναβάθμιση επίσης\n"
 "  -b  Κατασκευή του πακέτου κώδικα πηγής μετά τη λήψη του\n"
+"  -V  Εμφάνιση λεπτομερών πληροφοριών έκδοσης\n"
 "  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
 "  -o=? Χρήση μιας αυθαίρετη επιλογής ρυθμίσεων, πχ -o dir::cache=/tmp\n"
 "Δείτε τις σελίδες manual των apt-get(8), sources.list(5) και apt.conf(5)\n"
@@ -1197,11 +1217,13 @@ msgstr " [Δουλεύει]"
 #: cmdline/acqprogress.cc:271
 #, c-format
 msgid ""
-"Media Change: Please insert the disc labeled '%s' in the drive '%s' and "
-"press enter\n"
+"Media Change: Please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
 msgstr ""
-"Αλλαγή Μέσου: Παρακαλώ τοποθετήστε τον δίσκο με επιγραφή '%s' στον οδηγό\n"
-"%s και πατήστε enter\n"
+"Αλλαγή Μέσου: Παρακαλώ τοποθετήστε τον δίσκο με ετικέτα\n"
+"'%s'\n"
+"στον οδηγό %s και πατήστε enter\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1230,6 +1252,38 @@ msgstr ""
 "  -s   Χρήση στοιχειοθέτησης αρχείου πηγής\n"
 "  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
 "  -o=? Χρήση μιας αυθαίρετη επιλογής ρυθμίσεων, πχ -o dir::cache=/tmp\n"
+
+#: dselect/install:32
+msgid "Bad default setting!"
+msgstr "Εσφαλμένη εξ ορισμού ρύθμιση!"
+
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
+#: dselect/install:104 dselect/update:45
+msgid "Press enter to continue."
+msgstr "Πατήστε enter για συνέχεια."
+
+#: dselect/install:100
+msgid "Some errors occurred while unpacking. I'm going to configure the"
+msgstr "Ορισμένα σφάλματα συνέβησαν κατα την αποσυμπίεση. Τα πακέτα που"
+
+#: dselect/install:101
+msgid "packages that were installed. This may result in duplicate errors"
+msgstr "εγκαταστάθηκαν πρόκειτε να ρυθμιστούν. Αυτό ίσως προκαλέσει διπλά"
+
+#: dselect/install:102
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr "σφάλματα ή σφάλματα λόγω αγνοούμενων εξαρτήσεων. Είναι φυσιολογικό,"
+
+#: dselect/install:103
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+"μόνο τα σφάλματα πάνω από αυτό το μήνυμα είναι σημαντικά. Διορθώστε τα και\n"
+"τρέξτε [I]nstall ξανά"
+
+#: dselect/update:30
+msgid "Merging Available information"
+msgstr "Συγχώνευση Διαθέσιμων πληροφοριών"
 
 #: apt-inst/contrib/extracttar.cc:115
 msgid "Failed to create pipes"
@@ -1360,8 +1414,8 @@ msgstr "Το ταίριασμα εππεγραφόμενου πακέτου χωρίς καμμία εκδόση για το %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Το αρχείο %s/%s εππεγράφει αυτό στο πακέτο %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/contrib/configuration.cc:701
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:701
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Αδυναμία ανάγνωσης του %s"
@@ -1419,8 +1473,8 @@ msgid ""
 "package!"
 msgstr ""
 "Αποτυχία στο άνοιγμα του αρχείου λίστας '%sinfo/%s'.Εάν δε μπορείτε να "
-"επαναφέρετε το αρχείο τότε αδειάστε το και άμεσα να εγκαταστήσετε ξανά "
-"την ίδια έκδοση του πακέτου!"
+"επαναφέρετε το αρχείο τότε αδειάστε το και άμεσα να εγκαταστήσετε ξανά την "
+"ίδια έκδοση του πακέτου!"
 
 #: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
 #, c-format
@@ -1500,37 +1554,6 @@ msgstr "Αποτυχία εντοπισμού ενός έγκυρου αρχείου control"
 msgid "Unparsible control file"
 msgstr "Μη αναλύσιμο αρχείο control"
 
-#: dselect/install:32
-msgid "Bad default setting!"
-msgstr "Εσφαλμένη εξ ορισμού ρύθμιση!"
-
-#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
-#: dselect/install:104 dselect/update:45
-msgid "Press enter to continue."
-msgstr "Πατήστε enter για συνέχεια."
-
-#: dselect/install:100
-msgid "Some errors occurred while unpacking. I'm going to configure the"
-msgstr "Ορισμένα σφάλματα συνέβησαν κατα την αποσυμπίεση. Τα πακέτα που"
-
-#: dselect/install:101
-msgid "packages that were installed. This may result in duplicate errors"
-msgstr "εγκαταστάθηκαν πρόκειτε να ρυθμιστούν. Αυτό ίσως προκαλέσει διπλά"
-
-#: dselect/install:102
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "σφάλματα ή σφάλματα λόγω αγνοούμενων εξαρτήσεων. Είναι φυσιολογικό,"
-
-#: dselect/install:103
-msgid "above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"μόνο τα σφάλματα πάνω από αυτό το μήνυμα είναι σημαντικά. Διορθώστε τα και\n"
-"τρέξτε [I]nstall ξανά"
-
-#: dselect/update:30
-msgid "Merging Available information"
-msgstr "Συγχώνευση Διαθέσιμων πληροφοριών"
-
 #: methods/cdrom.cc:113
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1541,8 +1564,8 @@ msgid ""
 "Please use apt-cdrom to make this CD recognized by APT. apt-get update "
 "cannot be used to add new CDs"
 msgstr ""
-"Παρακαλώ χρησιμοποιείστε το apt-cdrom για να αναγνωριστεί αυτό το CD από "
-"το APT. Το apt-get update δε χρησιμεύει για να προσθέτει νέα CD"
+"Παρακαλώ χρησιμοποιείστε το apt-cdrom για να αναγνωριστεί αυτό το CD από το "
+"APT. Το apt-get update δε χρησιμεύει για να προσθέτει νέα CD"
 
 #: methods/cdrom.cc:130 methods/cdrom.cc:168
 msgid "Wrong CD"
@@ -1623,7 +1646,7 @@ msgstr "Λήξη χρόνου σύνδεσης"
 msgid "Server closed the connection"
 msgstr "Ο διακομιστής έκλεισε την σύνδεση"
 
-#: apt-pkg/contrib/fileutl.cc:452 methods/ftp.cc:336 methods/rsh.cc:190
+#: methods/ftp.cc:336 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
 msgid "Read error"
 msgstr "Σφάλμα ανάγνωσης"
 
@@ -1784,8 +1807,8 @@ msgid "Read error from %s process"
 msgstr "Σφάλμα ανάγνωσης από τη διεργασία %s"
 
 #: methods/http.cc:340
-msgid "Waiting for file"
-msgstr "Αναμονή για το αρχείο"
+msgid "Waiting for headers"
+msgstr "Αναμονή για επικεφαλίδες"
 
 #: methods/http.cc:486
 #, c-format
@@ -1838,7 +1861,8 @@ msgstr "Σφάλμα στην εγγραφή στο αρχείο"
 
 #: methods/http.cc:828
 msgid "Error reading from server Remote end closed connection"
-msgstr "Σφάλμα στην ανάγνωση από το διακομιστή, η άλλη μεριά έκλεισε τη σύνδεση"
+msgstr ""
+"Σφάλμα στην ανάγνωση από το διακομιστή, η άλλη μεριά έκλεισε τη σύνδεση"
 
 #: methods/http.cc:830
 msgid "Error reading from server"
@@ -1893,7 +1917,8 @@ msgstr "Συντακτικό σφάλμα %s:%u: Επιπλέον σκουπίδια μετά την τιμή"
 #: apt-pkg/contrib/configuration.cc:635
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "Συντακτικό σφάλμα %s:%u: Οι οδηγίες βρίσκονται μόνο στο ανώτερο επίπεδο"
+msgstr ""
+"Συντακτικό σφάλμα %s:%u: Οι οδηγίες βρίσκονται μόνο στο ανώτερο επίπεδο"
 
 #: apt-pkg/contrib/configuration.cc:642
 #, c-format
@@ -1949,7 +1974,8 @@ msgstr "Η επιλογή %s απαιτεί ένα όρισμα."
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "Επιλογή %s: Οι προδιαγραφές του αντικειμένου ρυθμίσεων απαιτούν =<val>."
+msgstr ""
+"Επιλογή %s: Οι προδιαγραφές του αντικειμένου ρυθμίσεων απαιτούν =<val>."
 
 #: apt-pkg/contrib/cmndline.cc:237
 #, c-format
@@ -1976,7 +2002,7 @@ msgstr "Μη έγκυρη λειτουργία %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Αδυναμία εύρεσης της κατάστασης του σημείου mount %s"
 
-#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44 apt-pkg/contrib/cdromutl.cc:149
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Αδυναμία αλλαγής σε %s"
@@ -1998,7 +2024,8 @@ msgstr "Αδυναμία ανοίγματος του αρχείου κλειδώματος %s"
 #: apt-pkg/contrib/fileutl.cc:103
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
-msgstr "Όχι χρήση κλειδώματος για το προσαρτημένο από nfs αρχείο κλειδώματος %s"
+msgstr ""
+"Όχι χρήση κλειδώματος για το προσαρτημένο από nfs αρχείο κλειδώματος %s"
 
 #: apt-pkg/contrib/fileutl.cc:107
 #, c-format
@@ -2137,12 +2164,12 @@ msgstr "Υποψήφιες Εκδόσεις"
 msgid "Dependency Generation"
 msgstr "Παραγωγή Εξαρτήσεων"
 
-#: apt-pkg/tagfile.cc:71
+#: apt-pkg/tagfile.cc:81
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Αδυναμία ανάλυσης του αρχείου πακέτου %s (1)"
 
-#: apt-pkg/tagfile.cc:158
+#: apt-pkg/tagfile.cc:174
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Αδυναμία ανάλυσης του αρχείου πακέτου %s (2)"
@@ -2226,7 +2253,8 @@ msgstr "Ο τύπος αρχείου ευρετηρίου '%s' δεν υποστηρίζεται"
 
 #: apt-pkg/algorithms.cc:238
 #, c-format
-msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "Το πακέτο '%s' χρειάζεται να επαναγκατασταθεί, αλλά είναι αδύνατη η εύρεση "
 "ενός αρχείο για αυτό."
@@ -2283,11 +2311,13 @@ msgstr "Πρέπει να τοποθετήσετε μερικά URI 'πηγών' στο sources.list"
 
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
-msgstr "Οι λίστες πακέτων ή το αρχείο κατάταστασης δε μπορεί να ανοιχθεί ή αναλυθεί"
+msgstr ""
+"Οι λίστες πακέτων ή το αρχείο κατάταστασης δε μπορεί να ανοιχθεί ή αναλυθεί"
 
 #: apt-pkg/cachefile.cc:77
 msgid "You may want to run apt-get update to correct these problems"
-msgstr "Ίσως να θέλετε να τρέξετε apt-get update για να διορθώσετε αυτά τα προβλήματα"
+msgstr ""
+"Ίσως να θέλετε να τρέξετε apt-get update για να διορθώσετε αυτά τα προβλήματα"
 
 #: apt-pkg/policy.cc:269
 msgid "Invalid record in the preferences file, no Package header"
@@ -2339,7 +2369,8 @@ msgstr "Σφάλμα κατά την επεξεργασία του %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "Εκπληκτικό, υπερβήκατε τον αριθμό των ονομάτων πακέτων που χειρίζεται το APT."
+msgstr ""
+"Εκπληκτικό, υπερβήκατε τον αριθμό των ονομάτων πακέτων που χειρίζεται το APT."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
@@ -2347,7 +2378,8 @@ msgstr "Εκπληκτικό, υπερβήκατε τον αριθμό των εκδόσεων που χειρίζεται το APT."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "Εκπληκτικό, υπερβήκατε τον αριθμό των εξαρτήσεων που χειρίζεται το APT."
+msgstr ""
+"Εκπληκτικό, υπερβήκατε τον αριθμό των εξαρτήσεων που χειρίζεται το APT."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2402,8 +2434,10 @@ msgstr ""
 
 #: apt-pkg/acquire-item.cc:419
 #, c-format
-msgid "The package index files are corrupted. No Filename: field for package %s."
-msgstr "Κατεστραμμένα αρχεία ευρετηρίου πακέτων. Όχι πεδίο Filename: στο πακέτο %s."
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"Κατεστραμμένα αρχεία ευρετηρίου πακέτων. Όχι πεδίο Filename: στο πακέτο %s."
 
 #: apt-pkg/acquire-item.cc:501
 msgid "Size mismatch"
@@ -2420,4 +2454,3 @@ msgstr "Το αρχείο Δε Βρέθηκε"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Η σύνδεση έκλεισε πρόωρα"
-
