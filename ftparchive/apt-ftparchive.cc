@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.2 2001/02/20 07:03:18 jgg Exp $
+// $Id: apt-ftparchive.cc,v 1.3 2001/05/29 04:39:31 jgg Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -32,9 +32,10 @@
 #include "writer.h"    
 									/*}}}*/
 
-ostream c0out;
-ostream c1out;
-ostream c2out;
+using namespace std;    
+ostream c0out(0);
+ostream c1out(0);
+ostream c2out(0);
 ofstream devnull("/dev/null");
 unsigned Quiet = 0;
 
@@ -93,7 +94,8 @@ struct PackageMap
    bool GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats);
    bool GenSources(Configuration &Setup,struct CacheDB::Stats &Stats);
    bool GenContents(Configuration &Setup,
-		    PackageMap *Begin,PackageMap *End,
+		    vector<PackageMap>::iterator Begin,
+		    vector<PackageMap>::iterator End,
 		    unsigned long &Left);
    
    PackageMap() : DeLinkLimit(0), Permissions(1), ContentsDone(false), 
@@ -307,8 +309,9 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    It searches the given iterator range for other package files that map
    into this contents file and includes their data as well when building. */
 bool PackageMap::GenContents(Configuration &Setup,
-			    PackageMap *Begin,PackageMap *End,
-			    unsigned long &Left)
+			     vector<PackageMap>::iterator Begin,
+			     vector<PackageMap>::iterator End,
+			     unsigned long &Left)
 {
    if (Contents.empty() == true)
       return true;
@@ -366,7 +369,7 @@ bool PackageMap::GenContents(Configuration &Setup,
       files associated with this contents file into one great big honking
       memory structure, then dump the sorted version */
    c0out << ' ' << this->Contents << ":" << flush;
-   for (PackageMap *I = Begin; I != End; I++)
+   for (vector<PackageMap>::iterator I = Begin; I != End; I++)
    {
       if (I->Contents != this->Contents)
 	 continue;
@@ -447,12 +450,14 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
       string Dist = Top->Tag;
 
       // Parse the sections
-      const char *Sections = Block.Find("Sections").c_str();
+      string Tmp = Block.Find("Sections");
+      const char *Sections = Tmp.c_str();
       string Section;
       while (ParseQuoteWord(Sections,Section) == true)
       {
-	 const char *Archs = Block.Find("Architectures").c_str();
+	 string Tmp2 = Block.Find("Architectures");
 	 string Arch;
+	 const char *Archs = Tmp2.c_str();
 	 while (ParseQuoteWord(Archs,Arch) == true)
 	 {
 	    struct SubstVar Vars[] = {{"$(DIST)",&Dist},
@@ -687,10 +692,10 @@ bool Generate(CommandLine &CmdL)
    // Generate packages
    if (CmdL.FileSize() <= 2)
    {
-      for (PackageMap *I = PkgList.begin(); I != PkgList.end(); I++)
+      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
 	 if (I->GenPackages(Setup,Stats) == false)
 	    _error->DumpErrors();
-      for (PackageMap *I = PkgList.begin(); I != PkgList.end(); I++)
+      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
 	 if (I->GenSources(Setup,SrcStats) == false)
 	    _error->DumpErrors();
    }
@@ -699,13 +704,13 @@ bool Generate(CommandLine &CmdL)
       // Make a choice list out of the package list..
       RxChoiceList *List = new RxChoiceList[2*PkgList.size()+1];
       RxChoiceList *End = List;
-      for (PackageMap *I = PkgList.begin(); I != PkgList.end(); I++)
+      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
       {
-	 End->UserData = I;
+	 End->UserData = &(*I);
 	 End->Str = I->BaseDir.c_str();
 	 End++;
 	 
-	 End->UserData = I;
+	 End->UserData = &(*I);
 	 End->Str = I->Tag.c_str();
 	 End++;	 
       }
@@ -755,7 +760,7 @@ bool Generate(CommandLine &CmdL)
 
    // Sort the contents file list by date
    string ArchiveDir = Setup.FindDir("Dir::ArchiveDir");
-   for (PackageMap *I = PkgList.begin(); I != PkgList.end(); I++)
+   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
    {
       struct stat A;
       if (MultiCompress::GetStat(flCombine(ArchiveDir,I->Contents),
@@ -772,7 +777,7 @@ bool Generate(CommandLine &CmdL)
       hashes of the .debs this means they have not changed either so the 
       contents must be up to date. */
    unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",UINT_MAX)*1024;
-   for (PackageMap *I = PkgList.begin(); I != PkgList.end(); I++)
+   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
    {
       // This record is not relevent
       if (I->ContentsDone == true ||
@@ -840,7 +845,7 @@ bool Clean(CommandLine &CmdL)
 
    string CacheDir = Setup.FindDir("Dir::CacheDir");
    
-   for (PackageMap *I = PkgList.begin(); I != PkgList.end(); )
+   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); )
    {
       c0out << I->BinCacheDB << endl;
       CacheDB DB(flCombine(CacheDir,I->BinCacheDB));
