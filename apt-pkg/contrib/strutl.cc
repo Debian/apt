@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.25 1999/06/24 04:34:25 jgg Exp $
+// $Id: strutl.cc,v 1.26 1999/06/27 04:55:54 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -707,6 +707,8 @@ void URI::CopyFrom(string U)
    
    // Find the colon...
    I = FirstColon + 1;
+   if (I > SingleSlash)
+      I = SingleSlash;
    for (; I < SingleSlash && *I != ':'; I++);
    string::const_iterator SecondColon = I;
    
@@ -728,7 +730,7 @@ void URI::CopyFrom(string U)
 	 Password = string(U,SecondColon - U.begin() + 1,At - SecondColon - 1);
    }   
    
-   // Now we parse off a pot number from the hostname
+   // Now we parse off a port number from the hostname
    Port = 0;
    string::size_type Pos = Host.rfind(':');
    if (Pos == string::npos)
