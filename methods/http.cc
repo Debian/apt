@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.17 1998/12/14 08:23:10 jgg Exp $
+// $Id: http.cc,v 1.18 1998/12/30 02:28:29 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -659,8 +659,9 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       }
    }
 
-/*   if (ProxyAuth.empty() == false)
-      Req += string("Proxy-Authorization: Basic ") + Base64Encode(ProxyAuth) + "\r\n";*/
+   if (Proxy.User.empty() == false || Proxy.Password.empty() == false)
+      Req += string("Proxy-Authorization: Basic ") + 
+          Base64Encode(Proxy.User + ":" + Proxy.Password) + "\r\n";
 
    Req += "User-Agent: Debian APT-HTTP/1.2\r\n\r\n";
 //   cerr << Req << endl;
