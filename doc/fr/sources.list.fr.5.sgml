@@ -1,5 +1,5 @@
 <!-- -*- mode: sgml; mode: fold -*- -->
-<!-- translation of version 1.2 -->
+<!-- translation of version 1.5 -->
 <!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 
 <!ENTITY % aptent SYSTEM "apt.ent.fr">
@@ -26,15 +26,15 @@
 La liste des ressources de paquets indique où trouver les archives
 du système de distribution de paquets utilisé. Pour l'instant, cette page 
 de manuel ne documente que le système d'empaquetage utilisé par le système 
-Debian GNU-Linux. Ce fichier de contrôle est situé dans 
+Debian GNU/Linux. Ce fichier de contrôle est situé dans 
 <filename>/etc/apt/sources.list</>.
    <para>
 La liste des sources est conçue pour prendre en compte un nombre quelconque
-de sources actives et différents média source. Le fichier présente
+de sources actives et différents média. Le fichier présente
 une source par ligne et la source préférée apparaît en premier. Le format de 
 chaque ligne est&nbsp;: <literal/type uri args/. Le premier élément, 
 <literal/type/, détermine le format des <literal/args/. <literal/uri/  est un 
-identificateur universel de ressources (URI), qui est un surensemble du plus 
+identificateur universel de ressources (URI), qui est un sur-ensemble du plus 
 spécifique et bien connu repère universel de ressources, ou URL. La fin de la
 ligne peut être un commentaire commençant par un caractère #. 
  </RefSect1>
@@ -44,7 +44,7 @@ ligne peut être un commentaire commençant par un caractère #.
 Le type <literal/deb/ décrit une archive Debian classique à deux niveaux,
 <filename>distribution/composant</>. <literal/distribution/ peut prendre
 l'une des valeurs suivantes&nbsp;: <literal/stable/, <literal/unstable/, ou 
-<literal/testing/, et composant&nbsp;: <literal/main/, <literal/contrib/, 
+<literal/frozen/, et composant&nbsp;: <literal/main/, <literal/contrib/, 
 <literal/non-free/, ou <literal/non-us/. Le type <literal/deb-src/ décrit le
 code source pour une distribution Debian dans le même format que le type
 <literal/deb/. Une ligne <literal/deb-src/ est nécessaire pour récupérer les
@@ -67,15 +67,15 @@ présent.
 qui sera remplacée par l'architecture Debian (i386, m68k, powerpc, ...)
 sur laquelle s'exécute le système. On peut ainsi utiliser un fichier
 <filename/sources.list/ qui ne dépend pas d'une architecture. En général,
-ce n'est intéressant que si l'on indique un chemin exact&thinsp;; sinon 
+ce n'est intéressant que si l'on indique un chemin exact&nbsp;; sinon 
 <literal/APT/ crée automatiquement un URI en fonction de l'architecture 
 effective.
    <para>
 Puisqu'on ne peut indiquer qu'une seule distribution par ligne, il peut être
 nécessaire de disposer le même URI sur plusieurs lignes quand on veut
 accéder à un sous-ensemble des distributions ou composants disponibles à cette
-adresse. APT trie les URIs après avoir crée pour lui-même la liste 
-complète&thinsp;; il regroupe les références multiples au même hôte Internet 
+adresse. APT trie les URI après avoir crée pour lui-même la liste 
+complète&nbsp;; il regroupe les références multiples au même hôte Internet 
 en vue d'une connexion unique et il évite ainsi, par exemple, d'établir une 
 connexion FTP, de la fermer, faire autre chose, puis d'établir encore cette 
 connexion. Cette fonctionnalité permet l'accès à des sites FTP surchargés qui 
@@ -85,25 +85,25 @@ efficacement parti des sites à faible bande passante.
    <para>
 Il est important d'indiquer les sources par ordre de préférence,
 la source principale apparaissant en premier. Un tri est fait, de la plus
-rapide à la plus lente&thinsp;; par exemple, CD-ROM suivi par les hôtes d'un 
+rapide à la plus lente&nbsp;; par exemple, CD-ROM suivi par les hôtes d'un 
 réseau local, puis les hôtes Internet distants.
    <para>
-Quelques exemples&nbsp;:
+Voici quelques exemples&nbsp;:
    <literallayout>
 deb http://http.us.debian.org/debian stable main contrib non-free
 deb http://http.us.debian.org/debian dists/stable-updates/
    </literallayout>
  </RefSect1>
 
- <RefSect1><title>La spécification des URIs</title>
+ <RefSect1><title>La spécification des URI</title>
    <para>
-Les URIs actuellement reconnus sont&nbsp;: cdrom, file, http et ftp.
+Les URI actuellement reconnus sont&nbsp;: cdrom, file, http et ftp.
    <VariableList>
     <VarListEntry><term>file</term>
     <ListItem><Para>
 Le procédé <literal/file/ permet qu'un répertoire arbitraire au sein du 
 système de fichier soit considéré comme une archive. On s'en sert avec les 
-montages NFS, les miroirs et archives locaux.
+montages NFS, les miroirs et les archives locaux.
     </VarListEntry>
     
     <VarListEntry><term>cdrom</term>
@@ -126,7 +126,7 @@ méthode d'authentification peu sûre.
     <VarListEntry><term>ftp</term>
     <ListItem><Para>
 Le procédé <literal/ftp/ indique un serveur FTP comme archive. Le 
-fonctionnement en mode ftp est grandement configurable&thinsp;; référez-vous 
+fonctionnement en mode ftp est grandement configurable&nbsp;; référez-vous 
 à la page de manuel de &apt-conf; pour davantage de renseignements. On 
 remarquera qu'on peut indiquer un mandataire ftp avec la variable 
 d'environnement <EnVar/ftp_proxy/. On peut aussi spécifier un mandataire http 
@@ -145,12 +145,12 @@ disque zip pour recopier des fichiers un peu partout via APT.
     
     <VarListEntry><term>rsh</term><term>ssh</term>
     <ListItem><Para>
-Le procédé <literal/rsh&sol;ssh/ utilise rsh/ssh pour se connecter à une 
+Le procédé rsh/ssh utilise rsh/ssh pour se connecter à une 
 machine distante en tant que tel utilisateur donné et pour accéder aux 
 fichiers. Aucune authentification par mot de passe n'est possible&nbsp;: il 
 faut au préalable régler ce problème avec des clés RSA ou bien rhosts. Pour 
 l'accès aux fichiers de la machine distante et le transfert, on utilise les 
-commandes standards <command/find/ et <command/dd/.
+commandes standard <command/find/ et <command/dd/.
     </VarListEntry>
   </VariableList>
  </RefSect1>
@@ -192,7 +192,7 @@ répertoire debian-non-US, et n'utiliser que les fichiers trouvés dans
 <filename>unstable/binary-m68k</> pour les machines m68k et ainsi de suite
 pour les autres architectures supportées. [Notez que cet exemple montre 
 seulement la manière d'utiliser la variable à substituer, non-us n'étant plus 
-structuré comme suit.]
+structuré de cette manière.]
    <literallayout>deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/</literallayout>
  </RefSect1>
  

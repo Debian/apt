@@ -1,0 +1,104 @@
+<!-- -*- mode: sgml; mode: fold -*- -->
+<!-- translation of version 1.2 -->
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.fr">
+%aptent;
+
+]>
+
+<refentry lang=fr>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>vendors.list</>
+   <manvolnum>5</>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>vendors.list</>
+    <refpurpose>Configuration de la clé de sécurité pour APT</>
+ </refnamediv>
+ 
+ <RefSect1><Title>Description</>
+   <para>   
+La liste des distributeurs de paquets contient une liste de tous les 
+distributeurs
+pour lesquels vous souhaitez authentifier les paquets que vous téléchargez.
+Pour chaque distributeur, elle doit contenir l'empreinte de la clé PGP&nbsp;; 
+ce qui permettra une vérification de la signature du fichier « release » et la
+la vérification conséquente des sommes de contrôle des paquets téléchargés.
+Pour cela, vous devez ajouter, dans une ligne du fichier sources.list, la 
+chaîne, enfermée dans des crochets, identifiant le distributeur 
+(voyez plus loin), et cela pour tous les miroirs du référentiel de ce 
+distributeur.
+   <para>
+Le format de ce fichier est semblable au format du fichier apt.conf. C'est un 
+nombre quelconque de blocs concernant des distributeurs&nbsp;; chaque bloc 
+commence
+par une chaîne donnant la <replaceable/key_type/ et le <replaceable/vendor_id/.
+   <para>
+Un distributeur peut avoir plusieurs blocs pour définir différentes règles
+de sécurité pour différentes distributions. Par exemple, Debian utilise
+des méthodes de signature différents pour les distributions stable et unstable.
+   <para>
+   <replaceable/key_type/ est le type de vérification requis.
+Actuellement, il n'existe qu'un seul type disponible, à savoir
+ <literal/simple-key/.
+   <para>
+   <replaceable/vendor_id/ est la chaîne identifiant le distributeur. C'est
+une chaîne quelconque que vous devez donner pour identifier de façon unique
+un distributeur listé dans ce fichier.
+   
+   Exemple :
+<informalexample><programlisting>   
+simple-key "joe"
+{
+   Fingerprint "0987AB4378FSD872343298787ACC";
+   Name "Joe Shmoe &lt;joe@shmoe.com&gt;";
+}						    
+</programlisting></informalexample>
+   
+ </RefSect1>
+
+ <RefSect1><Title>Le type simple-key</>
+   <para>   
+Ce type de vérification est utilisé quand le distributeur possède une 
+seule clé servant à la signature du fichier « Release ». Les éléments
+suivants doivent être présents&nbsp;:
+   
+   <VariableList>
+     <VarListEntry><Term>Fingerprint</Term>
+     <ListItem><Para>
+ L'empreinte PGP de la clé. L'empreinte sera notée de façon standard avec
+ou sans espaces. L'option <option/--fingerprint/ pour
+     <CiteRefEntry><RefEntryTitle><command/gpg/</RefEntryTitle><ManVolNum/1/</CiteRefEntry>
+affichera L'empreinte pour la (les) clé(s) sélectionné(e)s.
+     </VarListEntry>
+     
+     <VarListEntry><Term>Name</Term>
+     <ListItem><Para>
+C'est une chaîne décrivant le propriétaire de la clé ou le distributeur. On
+peut mettre le nom du distributeur et son adresse électronique. Cette chaîne
+doit être mise entre des « " ».
+     </VarListEntry>
+     
+   </VariableList>
+ </RefSect1>
+
+ <RefSect1><Title>Fichiers</>
+   <para>
+   <filename>/etc/apt/vendors.list</>
+ </RefSect1>
+ 
+ <RefSect1><Title>Voir aussi</>
+   <para>
+   &sources-list;
+ </RefSect1>
+
+ &manbugs;
+ &manauthor;
+ &traducteur;
+</refentry>
+   
