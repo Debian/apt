@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.h,v 1.2 1998/11/23 07:03:12 jgg Exp $
+// $Id: dpkgpm.h,v 1.3 1999/01/31 08:49:39 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -32,7 +32,10 @@ class pkgDPkgPM : public pkgPackageManager
       
    };
    vector<Item> List;
-      
+
+   // Helpers
+   bool RunScripts(const char *Cnf);
+   
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);
    virtual bool Configure(PkgIterator Pkg);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.5 1998/12/14 06:54:44 jgg Exp $
+// $Id: dpkgpm.cc,v 1.6 1999/01/31 08:49:39 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -74,11 +74,89 @@ bool pkgDPkgPM::Remove(PkgIterator Pkg)
    return true;
 }
 									/*}}}*/
+// DPkgPM::RunScripts - Run a set of scripts				/*{{{*/
+// ---------------------------------------------------------------------
+/* This looks for a list of script sto run from the configuration file,
+   each one is run with system from a forked child. */
+bool pkgDPkgPM::RunScripts(const char *Cnf)
+{
+   Configuration::Item const *Opts = _config->Tree(Cnf);
+   if (Opts == 0 || Opts->Child == 0)
+      return true;
+   Opts = Opts->Child;
+
+   // Fork for running the system calls
+   pid_t Child = fork();
+   if (Child < 0)
+      return _error->Errno("fork","Could't fork");
+   
+   // This is the child
+   if (Child == 0)
+   {
+      signal(SIGPIPE,SIG_DFL);
+      signal(SIGQUIT,SIG_DFL);
+      signal(SIGINT,SIG_DFL);
+      signal(SIGWINCH,SIG_DFL);
+      signal(SIGCONT,SIG_DFL);
+      signal(SIGTSTP,SIG_DFL);
+      
+      if (chdir("/tmp/") != 0)
+	 _exit(100);
+	 
+      // Close all of our FDs - just in case
+      for (int K = 3; K != 40; K++)
+	 fcntl(K,F_SETFD,FD_CLOEXEC);
+
+      unsigned int Count = 1;
+      for (; Opts != 0; Opts = Opts->Next, Count++)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 
+	 if (system(Opts->Value.c_str()) != 0)
+	    _exit(100+Count);
+      }
+      _exit(0);
+   }      
+
+   // Wait for the child
+   int Status = 0;
+   while (waitpid(Child,&Status,0) != Child)
+   {
+      if (errno == EINTR)
+	 continue;
+      return _error->Errno("waitpid","Couldn't wait for subprocess");
+   }
+
+   // Restore sig int/quit
+   signal(SIGQUIT,SIG_DFL);
+   signal(SIGINT,SIG_DFL);   
+       
+   // Check for an error code.
+   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
+   {
+      unsigned int Count = WEXITSTATUS(Status);
+      if (Count > 100)
+      {
+	 Count -= 100;
+	 for (; Opts != 0 && Count != 1; Opts = Opts->Next, Count--);
+	 _error->Error("Probablem executing scripts %s '%s'",Cnf,Opts->Value.c_str());
+      }
+      
+      return _error->Error("Sub-process returned an error code");
+   }
+   
+   return true;
+}
+									/*}}}*/
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg */
 bool pkgDPkgPM::Go()
 {
+   if (RunScripts("DPkg::Pre-Invoke") == false)
+      return false;
+   
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
    {
       vector<Item>::iterator J = I;
@@ -93,6 +171,20 @@ bool pkgDPkgPM::Go()
       unsigned long Size = 0;
       Args[n++] = _config->Find("Dir::Bin::dpkg","dpkg").c_str();
       Size += strlen(Args[n-1]);
+      
+      // Stick in any custom dpkg options
+      Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+      if (Opts != 0)
+      {
+	 Opts = Opts->Child;
+	 for (; Opts != 0; Opts = Opts->Next)
+	 {
+	    if (Opts->Value.empty() == true)
+	       continue;
+	    Args[n++] = Opts->Value.c_str();
+	    Size += Opts->Value.length();
+	 }	 
+      }
       
       switch (I->Op)
       {
@@ -154,12 +246,12 @@ bool pkgDPkgPM::Go()
 	 it doesn't die but we do! So we must also ignore it */
       signal(SIGQUIT,SIG_IGN);
       signal(SIGINT,SIG_IGN);
-	     
+		     
       // Fork dpkg
       pid_t Child = fork();
       if (Child < 0)
 	 return _error->Errno("fork","Could't fork");
-      
+            
       // This is the child
       if (Child == 0)
       {
@@ -169,7 +261,7 @@ bool pkgDPkgPM::Go()
 	 signal(SIGWINCH,SIG_DFL);
 	 signal(SIGCONT,SIG_DFL);
 	 signal(SIGTSTP,SIG_DFL);
-
+	 
 	 if (chdir(_config->FindDir("Dir::Cache::Archives").c_str()) != 0)
 	    _exit(100);
 	 
@@ -204,17 +296,24 @@ bool pkgDPkgPM::Go()
       {
 	 if (errno == EINTR)
 	    continue;
+	 RunScripts("DPkg::Post-Invoke");
 	 return _error->Errno("waitpid","Couldn't wait for subprocess");
       }
-      
-      // Check for an error code.
-      if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
-	 return _error->Error("Sub-process returned an error code");
 
       // Restore sig int/quit
       signal(SIGQUIT,SIG_DFL);
       signal(SIGINT,SIG_DFL);
+       
+      // Check for an error code.
+      if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
+      {
+	 RunScripts("DPkg::Post-Invoke");
+	 return _error->Error("Sub-process returned an error code");
+      }      
    }
+
+   if (RunScripts("DPkg::Post-Invoke") == false)
+      return false;
    return true;
 }
 									/*}}}*/

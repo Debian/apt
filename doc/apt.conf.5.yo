@@ -155,6 +155,21 @@ If true the [U]pdate operation in dselect will always prompt to continue.
 The default is to prompt only on error.
 enddit()
 
+manpagesection(How APT calls DPkg)
+Several configuration directives control how APT invokes dpkg. These are in 
+the bf(DPkg) section.
+
+startdit()
+dit(bf(Options))
+This is a list of options to pass to dpkg. The options must be specified
+using the list notation and each list item is passed as a single arugment
+to dpkg.
+
+dit(bf(Pre-Invoke))
+This is a list of shell commands to run before invoking dpkg. 
+
+enddit()
+
 manpagesection(Debug Options)
 Most of the options in the bf(debug) section are not interesting to the
 normal user, however bf(Debug::pkgProblemResolver) shows interesting
