@@ -70,7 +70,7 @@ AC_SUBST(PTHREADLIB)
 
 dnl Converts the ARCH to be the same as dpkg
 AC_MSG_CHECKING(system architecture)
-archset="`awk '$1 == \"$host_cpu\" { print $2 }' $srcdir/buildlib/archtable`"
+archset="`awk \"{ if(\\\$1 == \\\"$host_cpu\\\") print $2 }\" $srcdir/buildlib/archtable`"
 if test "x$archset" = "x"; then
   AC_MSG_ERROR(failed: use --host=)
 fi
