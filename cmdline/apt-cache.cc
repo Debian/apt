@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.52 2001/07/02 00:10:32 jgg Exp $
+// $Id: apt-cache.cc,v 1.53 2001/12/07 05:57:43 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -374,8 +374,9 @@ bool DumpAvail(CommandLine &Cmd)
    if (ReadPinFile(Plcy) == false)
       return false;
    
-   pkgCache::VerFile **VFList = new pkgCache::VerFile *[Cache.HeaderP->PackageCount];
-   memset(VFList,0,sizeof(*VFList)*Cache.HeaderP->PackageCount);
+   unsigned long Count = Cache.HeaderP->PackageCount+1;
+   pkgCache::VerFile **VFList = new pkgCache::VerFile *[Count];
+   memset(VFList,0,sizeof(*VFList)*Count);
    
    // Map versions that we want to write out onto the VerList array.
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
@@ -428,7 +429,7 @@ bool DumpAvail(CommandLine &Cmd)
       VFList[P->ID] = VF;
    }
    
-   LocalitySort(VFList,Cache.HeaderP->PackageCount,sizeof(*VFList));
+   LocalitySort(VFList,Count,sizeof(*VFList));
 
    // Iterate over all the package files and write them out.
    char *Buffer = new char[Cache.HeaderP->MaxVerFileSize+10];
