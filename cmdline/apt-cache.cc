@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.28 1999/02/19 08:57:41 jgg Exp $
+// $Id: apt-cache.cc,v 1.29 1999/03/17 03:25:25 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -361,9 +361,6 @@ bool DumpAvail(CommandLine &Cmd)
 
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); I.end() == false; I++)
    {
-      if ((I->Flags & pkgCache::Flag::NotSource) != 0)
-	 continue;
-      
       if (I.IsOk() == false)
       {
 	 delete [] Buffer;

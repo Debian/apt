@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.23 1999/03/16 00:43:55 jgg Exp $
+// $Id: fileutl.cc,v 1.24 1999/03/17 03:25:25 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -45,7 +45,7 @@ bool CopyFile(FileFd &From,FileFd &To)
       if (Size > 64000)
 	 ToRead = 64000;
       
-      if (To.Read(Buf,ToRead) == false || 
+      if (From.Read(Buf,ToRead) == false || 
 	  To.Write(Buf,ToRead) == false)
       {
 	 delete [] Buf;
