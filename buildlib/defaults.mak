@@ -64,6 +64,10 @@ MANPAGE_H = $(BASE)/buildlib/manpage.mak
 PROGRAM_H = $(BASE)/buildlib/program.mak
 COPY_H = $(BASE)/buildlib/copy.mak
 
+ifdef STATICLIBS
+LIBRARY_H += $(BASE)/buildlib/staticlibrary.mak
+endif
+
 # Source location control
 # SUBDIRS specifies sub components of the module that
 # may be located in subdrictories of the source dir. 
@@ -105,14 +109,14 @@ $(INCLUDE)/%.h $(addprefix $(INCLUDE)/,$(addsuffix /%.h,$(HEADER_TARGETDIRS))) :
 # Compile rules are expected to call this macro after calling the compiler
 ifdef INLINEDEPFLAG
  define DoDep
-	sed -e "1s/.*:/$(subst /,\\/,$@):/" $(basename $(@F)).d > $(DEP)/$(basename $(@F)).d
+	sed -e "1s/.*:/$(subst /,\\/,$@):/" $(basename $(@F)).d > $(DEP)/$(@F).d
 	-rm -f $(basename $(@F)).d
  endef
 else
  ifdef DEPFLAG
   define DoDep
 	$(CXX) $(DEPFLAG) $(CPPFLAGS) -o $@ $<
-	sed -e "1s/.*:/$(subst /,\\/,$@):/" $(basename $(@F)).d > $(DEP)/$(basename $(@F)).d
+	sed -e "1s/.*:/$(subst /,\\/,$@):/" $(basename $(@F)).d > $(DEP)/$(@F).d
 	-rm -f $(basename $(@F)).d
   endef
  else

@@ -17,10 +17,11 @@
 # Some local definitions
 LOCAL := lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 $(LOCAL)-OBJS := $(addprefix $(OBJ)/,$(addsuffix .opic,$(notdir $(basename $(SOURCE)))))
-$(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .d,$(notdir $(basename $(SOURCE)))))
+$(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .opic.d,$(notdir $(basename $(SOURCE)))))
 $(LOCAL)-HEADERS := $(addprefix $(INCLUDE)/,$(HEADERS))
 $(LOCAL)-SONAME := lib$(LIBRARY).so.$(MAJOR)
 $(LOCAL)-SLIBS := $(SLIBS)
+$(LOCAL)-LIBRARY := $(LIBARARY)
 
 # Install the command hooks
 headers: $($(LOCAL)-HEADERS)
@@ -33,7 +34,7 @@ veryclean: veryclean/$(LOCAL)
 clean/$(LOCAL):
 	-rm -f $($(@F)-OBJS) $($(@F)-DEP)
 veryclean/$(LOCAL): clean/$(LOCAL)
-	-rm -f $($(@F)-HEADERS) $(LIB)/lib$(LIBRARY).so*
+	-rm -f $($(@F)-HEADERS) $(LIB)/lib$($(@F)-LIBRARY).so*
 
 # Build rules for the two symlinks
 .PHONY: $(LIB)/lib$(LIBRARY).so.$(MAJOR) $(LIB)/lib$(LIBRARY).so
