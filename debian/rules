@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.66 2004/05/08 19:52:33 mdz Exp $
+# $Id: rules,v 1.67 2004/05/08 19:57:31 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -318,7 +318,6 @@ CVS_ROOT=$(shell cat CVS/Root)
 CVS_MODULE=$(shell cat CVS/Repository)
 cvs-build:
 	rm -rf debian/cvs-build
-	cvs update -d
 	mkdir -p debian/cvs-build
 	(cd debian/cvs-build;cvs -d $(CVS_ROOT) export -r$(APT_CVSTAG) -d apt-$(APT_DEBVER) $(CVS_MODULE))
 	$(MAKE) -C debian/cvs-build/$(CVS_BUILDDIR) startup doc
