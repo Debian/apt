@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-02-26 16:47-0800\n"
+"POT-Creation-Date: 2004-03-14 13:46-0800\n"
 "PO-Revision-Date: 2003-08-28 09:46+0200\n"
 "Last-Translator: Samuele Giovanni Tonon <samu@debian.org>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -145,7 +145,9 @@ msgstr "  Tabella Versione:"
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1646
+#: cmdline/apt-cache.cc:1646 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
+#: cmdline/apt-get.cc:2260 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s per %s %s compilato il %s %s\n"
@@ -225,6 +227,1098 @@ msgstr ""
 "  -o=? Imposta un'opzione di configurazione, come -o dir::cache=/tmp\n"
 "Consultare le pagine del man apt-cache(8) e apt.conf(5) per maggiori "
 "informazioni\n"
+
+#: cmdline/apt-config.cc:41
+msgid "Arguments not in pairs"
+msgstr "Argomenti non in coppia"
+
+#: cmdline/apt-config.cc:76
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is a simple tool to read the APT config file\n"
+"\n"
+"Commands:\n"
+"   shell - Shell mode\n"
+"   dump - Show the configuration\n"
+"\n"
+"Options:\n"
+"  -h   This help text.\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"Utilizzo: apt-config [opzioni] comando\n"
+"\n"
+"apt-config è un semplice programma per leggere il file di configurazione di "
+"APT\n"
+"\n"
+"Comandi:\n"
+"   shell - Modalità shell\n"
+"   dump - Mostra la configurazione\n"
+"\n"
+"Opzioni\n"
+"  -h   Questo help.\n"
+"  -c=? Legge questo file di configurazione\n"
+"  -o=? Imposta un'opzione di configurazione, come -o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc:98
+#, c-format
+msgid "%s not a valid DEB package."
+msgstr "%s non è un pacchetto DEB valido."
+
+#: cmdline/apt-extracttemplates.cc:232
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is a tool to extract config and template info\n"
+"from debian packages\n"
+"\n"
+"Options:\n"
+"  -h   This help text\n"
+"  -t   Set the temp dir\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"Utilizzo: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates è un tool per estrarre configurazioni e template\n"
+"dai pacchetti debian\n"
+"\n"
+"Opzioni:\n"
+"  -h   Questo help.\n"
+"  -t   Imposta la directory temporanea\n"
+"  -c=? Legge come configurazione il file specificato\n"
+"  -o=? Imposta un'opzione di configurazione, come -o dir::cache=/tmp\n"
+"\n"
+
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Impossibile scrivere in %s"
+
+#: cmdline/apt-extracttemplates.cc:310
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "Impossibile trovare una versione di debconf. Debconf è installato?"
+
+#: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:337
+msgid "Package extension list is too long"
+msgstr "L'estensione del pacchetto è troppo lunga"
+
+#: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
+#: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:252
+#: ftparchive/apt-ftparchive.cc:266 ftparchive/apt-ftparchive.cc:288
+#, c-format
+msgid "Error Processing directory %s"
+msgstr "Errore durante l'analisi della directory %s"
+
+#: ftparchive/apt-ftparchive.cc:250
+msgid "Source extension list is too long"
+msgstr "L'estensione del sorgente è troppo lunga"
+
+#: ftparchive/apt-ftparchive.cc:367
+msgid "Error writing header to contents file"
+msgstr "Errore nella scrittura dell'header nel file contents"
+
+#: ftparchive/apt-ftparchive.cc:397
+#, c-format
+msgid "Error Processing Contents %s"
+msgstr "Errore nell'analisi di Contents %s"
+
+#: ftparchive/apt-ftparchive.cc:551
+#, fuzzy
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitary configuration option"
+msgstr ""
+"Utilizzo: apt-ftparchive [opzioni] comando\n"
+"Comandi: packages pathaibinari [filedioverride [pathprefix]\n"
+"          sources pathaisorgenti [filedioverride [pathprefix]\n"
+"          contents path\n"
+"          generate config [gruppi]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive genera file di indice per gli archivi Debian. Supporta\n"
+"molti stili di generazione da completamente automatici a alternative "
+"funzionali\n"
+"per dpkg-scanpackages e dpkg-scansources\n"
+"\n"
+"apt-ftparchive genera file Packages da un albero di .deb. Il\n"
+"file Package contiene le informazioni di tutti i campi control da ogni\n"
+"pacchetto così come l'hash MD5 e la dimensione del file. Un file override\n"
+"è supportato per forzare il valore di Priorità e Sezione.\n"
+"\n"
+"Similarmente apt-ftparchive genera file Sources da un albero di .dscs.\n"
+"L'opzione --source-override può essere usata per specificare un file di "
+"override\n"
+"per i sorgenti\n"
+"\n"
+"I comandi 'packages' e 'sources' devono essere seguiti nella root "
+"dell'albero.\n"
+"BinaryPath deve puntare alla base della ricerca ricorsiva e il file override "
+"deve\n"
+"contenere le opzioni di override. Pathprefix è aggiunto al campo filename se "
+"presente.\n"
+"Esempio di utilizzo dall'archivio debian:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages \n"
+"\n"
+"Opzioni:\n"
+"  -h   Questo help\n"
+"  --md5 Controlla la generazione del MD5\n"
+"  -s=?   File override dei sorgenti\n"
+"  -q    Silenzioso\n"
+"  -d=?  Seleziona il database di cache opzionale\n"
+"  --no-delink Abilita modalità di debug del delinking\n"
+"  --contents  Controlla la generazione del file contents\n"
+"  -c=? Legge come configurazione il file specificato\n"
+"  -o=? Imposta un'opzione arbitraria di configurazione"
+
+#: ftparchive/apt-ftparchive.cc:757
+msgid "No selections matched"
+msgstr "Nessuna selezione corrisponde"
+
+#: ftparchive/apt-ftparchive.cc:830
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "Mancano alcuni file nel file group di pacchetti `%s'"
+
+#: ftparchive/cachedb.cc:43
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "DB era corrotto, il file è stato rinominato in %s.old"
+
+#: ftparchive/cachedb.cc:59
+#, c-format
+msgid "Unable to open DB2 file %s"
+msgstr "Impossibile aprire il file DB2 %s"
+
+#: ftparchive/cachedb.cc:99
+#, c-format
+msgid "File date has changed %s"
+msgstr "La data del file è cambiata %s"
+
+#: ftparchive/cachedb.cc:140
+msgid "Archive has no control record"
+msgstr "L'Archivio non ha un campo control"
+
+#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+msgid "Unable to get a cursor"
+msgstr "Impossibile ottenere un cursore"
+
+#: ftparchive/writer.cc:79
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: Impossibile leggere la directory %s\n"
+
+#: ftparchive/writer.cc:84
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: Impossibile analizzare %s\n"
+
+#: ftparchive/writer.cc:126
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc:128
+msgid "W: "
+msgstr "W: "
+
+#: ftparchive/writer.cc:135
+msgid "E: Errors apply to file "
+msgstr "E: Errori applicati al file "
+
+#: ftparchive/writer.cc:152 ftparchive/writer.cc:182
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Impossibile risolvere %s"
+
+#: ftparchive/writer.cc:164
+msgid "Tree walking failed"
+msgstr "Visita dell'albero fallita"
+
+#: ftparchive/writer.cc:189
+#, c-format
+msgid "Failed to open %s"
+msgstr "Impossibile aprire %s"
+
+#: ftparchive/writer.cc:246
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc:254
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Impossibile eseguire readlink su %s"
+
+#: ftparchive/writer.cc:258
+#, c-format
+msgid "Failed to unlink %s"
+msgstr "Impossibile eseguire unlink su %s"
+
+#: ftparchive/writer.cc:265
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Impossibile eseguire link tra %s e %s"
+
+#: ftparchive/writer.cc:275
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " DeLink limite di %sB raggiunto.\n"
+
+#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Impossibile analizzare %s"
+
+#: ftparchive/writer.cc:378
+msgid "Archive had no package field"
+msgstr "L'archivio non ha un campo package"
+
+#: ftparchive/writer.cc:386 ftparchive/writer.cc:595
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  %s non ha un campo override\n"
+
+#: ftparchive/writer.cc:429 ftparchive/writer.cc:677
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  %s mantainer è %s non %s\n"
+
+#: ftparchive/contents.cc:346 ftparchive/contents.cc:377
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - Impossibile allocare memoria"
+
+#: ftparchive/override.cc:38 ftparchive/override.cc:146
+#, c-format
+msgid "Unable to open %s"
+msgstr "Impossibile aprire %s"
+
+#: ftparchive/override.cc:64 ftparchive/override.cc:170
+#, c-format
+msgid "Malformed override %s line %lu #1"
+msgstr "Override malformato %s linea %lu #1"
+
+#: ftparchive/override.cc:78 ftparchive/override.cc:182
+#, c-format
+msgid "Malformed override %s line %lu #2"
+msgstr "Override malformato %s linea %lu #2"
+
+#: ftparchive/override.cc:92 ftparchive/override.cc:195
+#, c-format
+msgid "Malformed override %s line %lu #3"
+msgstr "Override malformato %s linea %lu #3"
+
+#: ftparchive/override.cc:131 ftparchive/override.cc:205
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Impossibile leggere il file override %s"
+
+#: ftparchive/multicompress.cc:75
+#, c-format
+msgid "Unknown Compresison Algorithm '%s'"
+msgstr "Algoritmo di compressione '%s' sconosciuto"
+
+#: ftparchive/multicompress.cc:105
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "L'output compresso %s necessita di un insieme di compressione"
+
+#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Impossibile creare un pipe IPC verso il sottoprocesso"
+
+#: ftparchive/multicompress.cc:198
+msgid "Failed to create FILE*"
+msgstr "Impossibile creare FILE*"
+
+#: ftparchive/multicompress.cc:201
+msgid "Failed to fork"
+msgstr "Impossibile eseguire fork"
+
+#: ftparchive/multicompress.cc:215
+msgid "Compress Child"
+msgstr "Figlio compressore"
+
+#: ftparchive/multicompress.cc:238
+#, c-format
+msgid "Internal Error, Failed to create %s"
+msgstr "Errore interno, Impossibile creare %s"
+
+#: ftparchive/multicompress.cc:289
+msgid "Failed to create subprocess IPC"
+msgstr "Impossibile creare un sottoprocesso IPC"
+
+#: ftparchive/multicompress.cc:324
+msgid "Failed to exec compressor "
+msgstr "Impossibile eseguire compressor"
+
+#: ftparchive/multicompress.cc:363
+msgid "decompressor"
+msgstr "decompressore"
+
+#: ftparchive/multicompress.cc:406
+msgid "IO to subprocess/file failed"
+msgstr "I/O al sottoprocesso/file fallito"
+
+#: ftparchive/multicompress.cc:458
+msgid "Failed to read while computing MD5"
+msgstr "Impossibile leggere durante l'elaborazione MD5"
+
+#: ftparchive/multicompress.cc:475
+#, c-format
+msgid "Problem unlinking %s"
+msgstr "Problema nell'unlink di %s"
+
+#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Impossibile rinominare %s in %s"
+
+#: cmdline/apt-get.cc:118
+msgid "Y"
+msgstr "S"
+
+#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1422
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Errore di compilazione della regex - %s"
+
+#: cmdline/apt-get.cc:235
+msgid "The following packages have unmet dependencies:"
+msgstr "I seguenti pacchetti hanno dipendenze non soddisfatte:"
+
+#: cmdline/apt-get.cc:325
+#, c-format
+msgid "but %s is installed"
+msgstr "ma %s è installato"
+
+#: cmdline/apt-get.cc:327
+#, c-format
+msgid "but %s is to be installed"
+msgstr "ma %s sta per essere installato"
+
+#: cmdline/apt-get.cc:334
+msgid "but it is not installable"
+msgstr "ma non è installabile"
+
+#: cmdline/apt-get.cc:336
+msgid "but it is a virtual package"
+msgstr "ma è un pacchetto virtuale"
+
+#: cmdline/apt-get.cc:339
+msgid "but it is not installed"
+msgstr "ma non è installato"
+
+#: cmdline/apt-get.cc:339
+msgid "but it is not going to be installed"
+msgstr "ma non sta per essere installato"
+
+#: cmdline/apt-get.cc:344
+msgid " or"
+msgstr " oppure"
+
+#: cmdline/apt-get.cc:373
+msgid "The following NEW packages will be installed:"
+msgstr "I seguenti pacchetti NUOVI (NEW) saranno installati:"
+
+#: cmdline/apt-get.cc:399
+msgid "The following packages will be REMOVED:"
+msgstr "I seguenti pacchetti saranno RIMOSSI:"
+
+#: cmdline/apt-get.cc:421
+#, fuzzy
+msgid "The following packages have been kept back:"
+msgstr "I seguenti pacchetti sono stati mantenuti alla versione precedente"
+
+#: cmdline/apt-get.cc:442
+#, fuzzy
+msgid "The following packages will be upgraded:"
+msgstr "I seguenti pacchetti saranno aggiornati"
+
+#: cmdline/apt-get.cc:463
+#, fuzzy
+msgid "The following packages will be DOWNGRADED:"
+msgstr "I seguenti pacchetti saranno RETROCESSI (DOWNGRADED)"
+
+#: cmdline/apt-get.cc:483
+msgid "The following held packages will be changed:"
+msgstr "I seguenti pacchetti bloccati saranno cambiati:"
+
+#: cmdline/apt-get.cc:536
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (a causa di %s) "
+
+#: cmdline/apt-get.cc:544
+msgid ""
+"WARNING: The following essential packages will be removed\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"ATTENZIONE: il seguente pacchetto ESSENZIALE sta per essere rimosso\n"
+"Questo non dovrebbe essere fatto a meno che non si sappia esattamente cosa "
+"si sta facendo!"
+
+#: cmdline/apt-get.cc:574
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu aggiornati, %lu installati, "
+
+#: cmdline/apt-get.cc:578
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu reinstallati, "
+
+#: cmdline/apt-get.cc:580
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu retrocessi (downgraded), "
+
+#: cmdline/apt-get.cc:582
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu da rimuovere e %lu non aggiornati.\n"
+
+#: cmdline/apt-get.cc:586
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu non completamente installati o rimossi.\n"
+
+#: cmdline/apt-get.cc:646
+msgid "Correcting dependencies..."
+msgstr "Correzione delle dipendenze in corso..."
+
+#: cmdline/apt-get.cc:649
+msgid " failed."
+msgstr " fallita."
+
+#: cmdline/apt-get.cc:652
+msgid "Unable to correct dependencies"
+msgstr "Impossibile correggere le dipendenze"
+
+#: cmdline/apt-get.cc:655
+msgid "Unable to minimize the upgrade set"
+msgstr "Impossibile minimizzare l'insieme da aggiornare"
+
+#: cmdline/apt-get.cc:657
+msgid " Done"
+msgstr " Fatto"
+
+#: cmdline/apt-get.cc:661
+msgid "You might want to run `apt-get -f install' to correct these."
+msgstr ""
+"È consigliabile eseguire `apt-get -f install' per correggere questi problemi."
+
+#: cmdline/apt-get.cc:664
+msgid "Unmet dependencies. Try using -f."
+msgstr "Dipendenze non trovate. Riprovare usando -f."
+
+#: cmdline/apt-get.cc:718
+msgid "Packages need to be removed but Remove is disabled."
+msgstr "I pacchetti devono essere rimossi ma Remove è disabilitata"
+
+#: cmdline/apt-get.cc:744 cmdline/apt-get.cc:1716 cmdline/apt-get.cc:1749
+msgid "Unable to lock the download directory"
+msgstr "Impossibile creare un lock sulla directory di download"
+
+#: cmdline/apt-get.cc:754 cmdline/apt-get.cc:1797 cmdline/apt-get.cc:2008
+#: apt-pkg/cachefile.cc:67
+msgid "The list of sources could not be read."
+msgstr "La lista dei sorgenti non può essere letta."
+
+#: cmdline/apt-get.cc:774
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "È necessario prendere %sB/%sB di archivi. \n"
+
+#: cmdline/apt-get.cc:777
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "È necessario prendere %sB di archivi. \n"
+
+#: cmdline/apt-get.cc:782
+#, c-format
+msgid "After unpacking %sB of additional disk space will be used.\n"
+msgstr "Dopo l'estrazione, verranno occupati %sB di spazio su disco.\n"
+
+#: cmdline/apt-get.cc:785
+#, c-format
+msgid "After unpacking %sB disk space will be freed.\n"
+msgstr "Dopo l'estrazione, verranno liberati %sB di spazio su disco.\n"
+
+#: cmdline/apt-get.cc:802
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "Lo spazio libero in %s non è sufficente."
+
+#: cmdline/apt-get.cc:811
+msgid "There are problems and -y was used without --force-yes"
+msgstr "Sussistono dei problemi e -y è stata usata senza --force-yes"
+
+#: cmdline/apt-get.cc:817 cmdline/apt-get.cc:837
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr ""
+"È stata specificata la modalità Trivial Only ma questa non è un'operazione "
+"triviale"
+
+#: cmdline/apt-get.cc:819
+msgid "Yes, do as I say!"
+msgstr "SI, esegui come richiesto!"
+
+#: cmdline/apt-get.cc:821
+#, c-format
+msgid ""
+"You are about to do something potentially harmful\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"Si sta per compiere un'azione potenzialmente distruttiva\n"
+"Per continuare scrivere la frase '%s' \n"
+" ?] "
+
+#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:846
+msgid "Abort."
+msgstr "Interrotto."
+
+#: cmdline/apt-get.cc:842
+msgid "Do you want to continue? [Y/n] "
+msgstr "Continuare? [S/n] "
+
+#: cmdline/apt-get.cc:911 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1906
+#, c-format
+msgid "Failed to fetch %s  %s\n"
+msgstr "Impossibile ottenere %s  %s\n"
+
+#: cmdline/apt-get.cc:929
+msgid "Some files failed to download"
+msgstr "Il download di alcuni file è fallito"
+
+#: cmdline/apt-get.cc:930 cmdline/apt-get.cc:1915
+msgid "Download complete and in download only mode"
+msgstr "Download completato e in modalità download-only"
+
+#: cmdline/apt-get.cc:936
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Impossibile prendere alcuni archivi, forse è meglio eseguire apt-get update "
+"o provare l'opzione --fix-missing"
+
+#: cmdline/apt-get.cc:940
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "--fix-missing su media estraibili non è ancora supportato"
+
+#: cmdline/apt-get.cc:945
+msgid "Unable to correct missing packages."
+msgstr "Impossibile correggere i pacchetti mancanti"
+
+#: cmdline/apt-get.cc:946
+msgid "Aborting Install."
+msgstr "Interruzione dell'installazione in corso."
+
+#: cmdline/apt-get.cc:979
+#, c-format
+msgid "Note, selecting %s instead of %s\n"
+msgstr "Nota, si sta selezionando %s al posto di %s\n"
+
+#: cmdline/apt-get.cc:989
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr ""
+"%s è stato saltato, perché è già installato e l'aggiornamento non è stato "
+"impostato.\n"
+
+#: cmdline/apt-get.cc:1007
+#, c-format
+msgid "Package %s is not installed, so not removed\n"
+msgstr "Il pacchetto %s non è installato, quindi non è stato rimosso\n"
+
+#: cmdline/apt-get.cc:1018
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "Il pacchetto %s è un pacchetto virtuale fornito da:\n"
+
+#: cmdline/apt-get.cc:1030
+msgid " [Installed]"
+msgstr " [Installato]"
+
+#: cmdline/apt-get.cc:1035
+msgid "You should explicitly select one to install."
+msgstr "Bisogna esplicitamente sceglierne uno da installare."
+
+#: cmdline/apt-get.cc:1040
+#, fuzzy, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"Il pacchetto %s non ha versioni disponibili, ma esiste nel database.\n"
+"Questo significa che il pacchetto è stato menzionato nelle dipendenze e\n"
+"mai uploadato, è diventato obsoleto o non è disponibile all'interno\n"
+"di sources.list\n"
+
+#: cmdline/apt-get.cc:1059
+msgid "However the following packages replace it:"
+msgstr "Comunque il seguente pacchetto lo sostituisce:"
+
+#: cmdline/apt-get.cc:1062
+#, c-format
+msgid "Package %s has no installation candidate"
+msgstr "Il pacchetto %s non ha candidati da installare"
+
+#: cmdline/apt-get.cc:1082
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "La reinstallazione di %s non è possibile, non può esssere scaricato.\n"
+
+#: cmdline/apt-get.cc:1090
+#, c-format
+msgid "%s is already the newest version.\n"
+msgstr "%s è già alla versione più recente.\n"
+
+#: cmdline/apt-get.cc:1117
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Non è stata trovata la release '%s' per '%s'"
+
+#: cmdline/apt-get.cc:1119
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Non è stata trovata la versione '%s' per '%s'"
+
+#: cmdline/apt-get.cc:1125
+#, c-format
+msgid "Selected version %s (%s) for %s\n"
+msgstr "Versione selezionata %s (%s) per %s\n"
+
+#: cmdline/apt-get.cc:1235
+msgid "The update command takes no arguments"
+msgstr "Il comando update non accetta argomenti"
+
+#: cmdline/apt-get.cc:1248
+msgid "Unable to lock the list directory"
+msgstr "Impossibile creare un lock sulla directory di list"
+
+#: cmdline/apt-get.cc:1300
+msgid ""
+"Some index files failed to download, they have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Impossibile scaricare alcune file di indice, essi verranno ignorati, oppure "
+"si useranno quelli precedenti."
+
+#: cmdline/apt-get.cc:1319
+msgid "Internal Error, AllUpgrade broke stuff"
+msgstr "Errore interno, AllUpgrade ha rotto qualcosa"
+
+#: cmdline/apt-get.cc:1409 cmdline/apt-get.cc:1445
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "Impossibile trovare %s"
+
+#: cmdline/apt-get.cc:1432
+#, c-format
+msgid "Note, selecting %s for regex '%s'\n"
+msgstr "Nota, si sta selezionando %s per la regex '%s'\n"
+
+#: cmdline/apt-get.cc:1462
+msgid "You might want to run `apt-get -f install' to correct these:"
+msgstr ""
+"È consigliabile eseguire 'apt-get -f install' per correggere questi problemi:"
+
+#: cmdline/apt-get.cc:1465
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"Dipendenze non soddisfatte. Provare 'apt-get -f install' senza pacchetti (o "
+"specificare una soluzione)."
+
+#: cmdline/apt-get.cc:1477
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Alcuni pacchetti non possono essere installati. Questo può voler\n"
+"dire che è stata richiesta una situazione impossibile oppure, se\n"
+"si sta usando la distribuzione \"unstable\", che alcuni pacchetti\n"
+"richiesti non sono ancora stati creati o rimossi da incoming."
+
+#: cmdline/apt-get.cc:1485
+msgid ""
+"Since you only requested a single operation it is extremely likely that\n"
+"the package is simply not installable and a bug report against\n"
+"that package should be filed."
+msgstr ""
+"Poichè è stata richiesta solo una singola operazione è molto facile che\n"
+"il pacchetto semplicemente non sia installabile, si consiglia\n"
+"di inviare un \"bug report\" per tale pacchetto."
+
+#: cmdline/apt-get.cc:1490
+msgid "The following information may help to resolve the situation:"
+msgstr "Le seguenti informazioni possono aiutare a risolvere la situazione: "
+
+#: cmdline/apt-get.cc:1493
+msgid "Broken packages"
+msgstr "Pacchetto non integro"
+
+#: cmdline/apt-get.cc:1519
+msgid "The following extra packages will be installed:"
+msgstr "I seguenti pacchetti verranno inoltre installati:"
+
+#: cmdline/apt-get.cc:1590
+msgid "Suggested packages:"
+msgstr "Pacchetti suggeriti:"
+
+#: cmdline/apt-get.cc:1591
+msgid "Recommended packages:"
+msgstr "Pacchetti raccomandati:"
+
+#: cmdline/apt-get.cc:1611
+msgid "Calculating Upgrade... "
+msgstr "Calcolo dell'aggiornamento in corso... "
+
+#: cmdline/apt-get.cc:1614 methods/ftp.cc:702 methods/connect.cc:99
+msgid "Failed"
+msgstr "Fallito"
+
+#: cmdline/apt-get.cc:1619
+msgid "Done"
+msgstr "Fatto"
+
+#: cmdline/apt-get.cc:1792
+msgid "Must specify at least one package to fetch source for"
+msgstr "Bisogna specificare almeno un pacchetto cui scaricare il sorgente"
+
+#: cmdline/apt-get.cc:1819 cmdline/apt-get.cc:2026
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Impossibile trovare un pacchetto sorgente per %s"
+
+#: cmdline/apt-get.cc:1866
+#, c-format
+msgid "You don't have enough free space in %s"
+msgstr "Lo spazio libero in %s non è sufficente"
+
+#: cmdline/apt-get.cc:1871
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "È necessario prendere %sB/%sB di sorgenti.\n"
+
+#: cmdline/apt-get.cc:1874
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "È necessario prendere %sB di sorgenti\n"
+
+#: cmdline/apt-get.cc:1880
+#, c-format
+msgid "Fetch Source %s\n"
+msgstr "Prelievo del sorgente %s\n"
+
+#: cmdline/apt-get.cc:1911
+msgid "Failed to fetch some archives."
+msgstr "Non è stato possibile scaricare alcuni archivi."
+
+#: cmdline/apt-get.cc:1939
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Si è saltata l'estrazione del sorgente già estratto in %s\n"
+
+#: cmdline/apt-get.cc:1951
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Comando di estrazione '%s' fallito.\n"
+
+#: cmdline/apt-get.cc:1968
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Comando di costruzione '%s' fallito.\n"
+
+#: cmdline/apt-get.cc:1987
+msgid "Child process failed"
+msgstr "Processo figlio fallito"
+
+#: cmdline/apt-get.cc:2003
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Bisogna specificare almeno un pacchetto di cui controllare la generazione di "
+"dipendenze"
+
+#: cmdline/apt-get.cc:2031
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Impossibile ottenere informazioni di dipendenza di costruzione per %s"
+
+#: cmdline/apt-get.cc:2051
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s non ha dipendenze di costruzione.\n"
+
+#: cmdline/apt-get.cc:2103
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"%s dipendenze per %s non possono essere soddisfatte perché non si trova il "
+"pacchetto %s"
+
+#: cmdline/apt-get.cc:2155
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because no available versions of "
+"package %s can satisfy version requirements"
+msgstr ""
+"%s dipendenze per %s non possono essere soddisfatte perché nessuna versione "
+"del pacchetto %s può soddisfare le richieste di versione"
+
+#: cmdline/apt-get.cc:2190
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+
+#: cmdline/apt-get.cc:2215
+#, fuzzy, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Il calcolo delle dipendenze per la costruzione è fallito"
+
+#: cmdline/apt-get.cc:2229
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr ""
+
+#: cmdline/apt-get.cc:2233
+msgid "Failed to process build dependencies"
+msgstr "Il calcolo delle dipendenze per la costruzione è fallito"
+
+#: cmdline/apt-get.cc:2265
+msgid "Supported Modules:"
+msgstr "Moduli Supportati:"
+
+#: cmdline/apt-get.cc:2306
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a simple command line interface for downloading and\n"
+"installing packages. The most frequently used commands are update\n"
+"and install.\n"
+"\n"
+"Commands:\n"
+"   update - Retrieve new lists of packages\n"
+"   upgrade - Perform an upgrade\n"
+"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
+"   remove - Remove packages\n"
+"   source - Download source archives\n"
+"   build-dep - Configure build-dependencies for source packages\n"
+"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
+"   dselect-upgrade - Follow dselect selections\n"
+"   clean - Erase downloaded archive files\n"
+"   autoclean - Erase old downloaded archive files\n"
+"   check - Verify that there are no broken dependencies\n"
+"\n"
+"Options:\n"
+"  -h  This help text.\n"
+"  -q  Loggable output - no progress indicator\n"
+"  -qq No output except for errors\n"
+"  -d  Download only - do NOT install or unpack archives\n"
+"  -s  No-act. Perform ordering simulation\n"
+"  -y  Assume Yes to all queries and do not prompt\n"
+"  -f  Attempt to continue if the integrity check fails\n"
+"  -m  Attempt to continue if archives are unlocatable\n"
+"  -u  Show a list of upgraded packages as well\n"
+"  -b  Build the source package after fetching it\n"
+"  -V  Show verbose version numbers\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
+"pages for more information and options.\n"
+"                       This APT has Super Cow Powers.\n"
+msgstr ""
+"Utilizzo: apt-get [opzioni] comando\n"
+"        apt-get [opzioni] install|remove pkg1 [pkg2 ...]\n"
+"        apt-get [opzioni] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get è una semplice interfaccia a linea di comando per scaricare \n"
+"e installare pacchetti. I comandi più usati sono update \n"
+"e install.\n"
+"\n"
+"Comandi:\n"
+"   update - Aggiorna la lista dei pacchetti\n"
+"   upgrade - Esegue un aggiornamento\n"
+"   install - Installa nuovi pacchetti (pkg è libc6 non libc6.deb)\n"
+"   remove - Rimuove pacchetti\n"
+"   source - Scarica i pacchetti sorgente\n"
+"   build-dep - Configura le dipendenze di compilazione per i pacchetti "
+"sorgente\n"
+"   dist-upgrade - Aggiorna la distribuzione, vedere apt-get(8)\n"
+"   dselect-upgrade - Segue le selezioni di dselect\n"
+"   clean - Cancella gli archivi dei pacchetti scaricati \n"
+"   autoclean - Cancella gli archivi vecchi scaricati\n"
+"   check - Verifica che non ci siano dipendenze rotte\n"
+"\n"
+"Opzioni:\n"
+"  -h  Questo help.\n"
+"  -q  Output registrabile - nessun indicatore di progresso\n"
+"  -qq Nessun output eccetto per gli errori\n"
+"  -d  Solamente download - NON installa o decomprime gli archivi\n"
+"  -s  Nessuna azione. Simula i passi in ordine\n"
+"  -y  Assume sì a tutte le domande e non chiede conferma\n"
+"  -f  Tenta di continuare se il controllo di integrità fallisce\n"
+"  -m  Tenta di continuare se gli archivi non si trovano\n"
+"  -u  Mostra una lista dei pacchetti da aggiornare\n"
+"  -b  Costruisce il pacchetto sorgente dopo averlo scaricato\n"
+"  -V  Mostra dettagliatamente i numeri di versione\n"
+"  -c=? Legge come configurazione il file specificato\n"
+"  -o=? Imposta un'opzione di configurazione, es -o dir::cache=/tmp\n"
+"Consultare le pagine apt-get(8), sources.list(5) e apt.conf(5) del manuale\n"
+"per maggiori informazioni e opzioni.\n"
+"                       Questo APT ha i Poteri della Super Mucca.\n"
+
+#: cmdline/acqprogress.cc:55
+msgid "Hit "
+msgstr "Hit "
+
+#: cmdline/acqprogress.cc:79
+msgid "Get:"
+msgstr "Get:"
+
+#: cmdline/acqprogress.cc:110
+msgid "Ign "
+msgstr "Ign "
+
+#: cmdline/acqprogress.cc:114
+msgid "Err "
+msgstr "Err "
+
+#: cmdline/acqprogress.cc:135
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Scaricato %sB in %s (%sB/s)\n"
+
+#: cmdline/acqprogress.cc:225
+#, c-format
+msgid " [Working]"
+msgstr " [In corso]"
+
+#: cmdline/acqprogress.cc:271
+#, c-format
+msgid ""
+"Media Change: Please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
+msgstr ""
+"Cambio disco: Inserire il disco chiamato\n"
+" '%s'\n"
+"nel dispositivo '%s' e premere invio\n"
+
+#: cmdline/apt-sortpkgs.cc:86
+msgid "Unknown package record!"
+msgstr "Campo del pacchetto sconosciuto!"
+
+#: cmdline/apt-sortpkgs.cc:150
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
+"to indicate what kind of file it is.\n"
+"\n"
+"Options:\n"
+"  -h   This help text\n"
+"  -s   Use source file sorting\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"Utilizzo: apt-sortpkgs [opzioni] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs è un semplice tool per ordinare il file dei pacchetti. "
+"L'opzione -s\n"
+"è usata per indicare che tipo di file si sta utilizzando.\n"
+"\n"
+"Opzioni:\n"
+"  -h   Questo help\n"
+"  -s   Ordina per pacchetto sorgente\n"
+"  -c=? Legge come configurazione il file specificato\n"
+"  -o=? Imposta un'opzione di configurazione, es -o dir::cache=/tmp\n"
+
+#: dselect/install:32
+msgid "Bad default setting!"
+msgstr "Opzione predefinita errata!"
+
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
+#: dselect/install:104 dselect/update:45
+msgid "Press enter to continue."
+msgstr "Premere invio per continuare."
+
+# Note to translators: The following four messages belong together. It doesn't
+# matter where sentences start, but it has to fit in just these four lines, and
+# at only 80 characters per line, if possible.
+#: dselect/install:100
+msgid "Some errors occurred while unpacking. I'm going to configure the"
+msgstr "Si sono verificati alcuni errori nella scompattazione. Si cercherà di "
+
+#: dselect/install:101
+msgid "packages that were installed. This may result in duplicate errors"
+msgstr ""
+"configurare i pacchetti che sono stati installati. Questo potrebbe generare "
+
+#: dselect/install:102
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr ""
+"errori duplicati o errori causati da dipendenze non soddisfatte. Questo va "
+
+#: dselect/install:103
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+" bene solo se gli errori sopra questo messaggio sono importanti. Si prega "
+"di  correggerli e di eseguire [I]nstall un'altra volta"
+
+#: dselect/update:30
+msgid "Merging Available information"
+msgstr "Aggiornamento delle informazioni disponibili"
 
 #: apt-inst/contrib/extracttar.cc:116
 msgid "Failed to create pipes"
@@ -333,17 +1427,6 @@ msgstr ""
 #: apt-inst/extract.cc:157 apt-inst/extract.cc:300
 msgid "The diversion path is too long"
 msgstr "Il path della deviazione è troppo lungo"
-
-#: apt-inst/extract.cc:181 apt-inst/extract.cc:193 apt-inst/extract.cc:210
-#: apt-inst/deb/dpkgdb.cc:121
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Impossibile analizzare %s"
-
-#: apt-inst/extract.cc:188
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Impossibile rinominare %s in %s"
 
 #: apt-inst/extract.cc:243
 #, c-format
@@ -624,10 +1707,6 @@ msgstr "Impossibile creare un socket"
 msgid "Could not connect data socket, connection timed out"
 msgstr ""
 "Impossibile connettersi al socket dati, tempo limite di connessione esaurito"
-
-#: methods/ftp.cc:702 methods/connect.cc:99
-msgid "Failed"
-msgstr "Fallito"
 
 #: methods/ftp.cc:704
 msgid "Could not connect passive socket."
@@ -1276,10 +2355,6 @@ msgstr "Impossibile analizzare %s."
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr "Bisogna inserire alcuni URI di tipo 'source' in sources.list"
 
-#: apt-pkg/cachefile.cc:67
-msgid "The list of sources could not be read."
-msgstr "La lista dei sorgenti non può essere letta."
-
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
 msgstr ""
@@ -1384,11 +2459,6 @@ msgstr "Impossibile controllare la lista dei pacchetti sorgente %s"
 msgid "Collecting File Provides"
 msgstr "Il File Collezionato Fornisce"
 
-#: apt-pkg/pkgcachegen.cc:699
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Impossibile scrivere in %s"
-
 #: apt-pkg/pkgcachegen.cc:774 apt-pkg/pkgcachegen.cc:781
 msgid "IO Error saving source cache"
 msgstr "Errore di I/O nel salvataggio del cache sorgente"
@@ -1433,10 +2503,6 @@ msgstr "Le Dimensioni non corrispondono"
 msgid "MD5Sum mismatch"
 msgstr "Somma MD5 non corrispondente"
 
-#: methods/rsh.cc:91
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "Impossibile creare un pipe IPC verso il sottoprocesso"
-
 #: methods/rsh.cc:264
 msgid "File Not Found"
 msgstr "File Non Trovato"
@@ -1444,646 +2510,6 @@ msgstr "File Non Trovato"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Connessione chiusa prematuramente"
-
-#~ msgid "Arguments not in pairs"
-#~ msgstr "Argomenti non in coppia"
-
-#~ msgid ""
-#~ "Usage: apt-config [options] command\n"
-#~ "\n"
-#~ "apt-config is a simple tool to read the APT config file\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   shell - Shell mode\n"
-#~ "   dump - Show the configuration\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text.\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Utilizzo: apt-config [opzioni] comando\n"
-#~ "\n"
-#~ "apt-config è un semplice programma per leggere il file di configurazione "
-#~ "di APT\n"
-#~ "\n"
-#~ "Comandi:\n"
-#~ "   shell - Modalità shell\n"
-#~ "   dump - Mostra la configurazione\n"
-#~ "\n"
-#~ "Opzioni\n"
-#~ "  -h   Questo help.\n"
-#~ "  -c=? Legge questo file di configurazione\n"
-#~ "  -o=? Imposta un'opzione di configurazione, come -o dir::cache=/tmp\n"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s non è un pacchetto DEB valido."
-
-#~ msgid ""
-#~ "Usage: apt-extracttemplates file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-extracttemplates is a tool to extract config and template info\n"
-#~ "from debian packages\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -t   Set the temp dir\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Utilizzo: apt-extracttemplates file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-extracttemplates è un tool per estrarre configurazioni e template\n"
-#~ "dai pacchetti debian\n"
-#~ "\n"
-#~ "Opzioni:\n"
-#~ "  -h   Questo help.\n"
-#~ "  -t   Imposta la directory temporanea\n"
-#~ "  -c=? Legge come configurazione il file specificato\n"
-#~ "  -o=? Imposta un'opzione di configurazione, come -o dir::cache=/tmp\n"
-#~ "\n"
-
-#~ msgid "Cannot get debconf version. Is debconf installed?"
-#~ msgstr "Impossibile trovare una versione di debconf. Debconf è installato?"
-
-#~ msgid "Package extension list is too long"
-#~ msgstr "L'estensione del pacchetto è troppo lunga"
-
-#~ msgid "Error Processing directory %s"
-#~ msgstr "Errore durante l'analisi della directory %s"
-
-#~ msgid "Source extension list is too long"
-#~ msgstr "L'estensione del sorgente è troppo lunga"
-
-#~ msgid "Error writing header to contents file"
-#~ msgstr "Errore nella scrittura dell'header nel file contents"
-
-#~ msgid "Error Processing Contents %s"
-#~ msgstr "Errore nell'analisi di Contents %s"
-
-#~ msgid ""
-#~ "Usage: apt-ftparchive [options] command\n"
-#~ "Commands: packages binarypath [overridefile [pathprefix]]\n"
-#~ "          sources srcpath [overridefile [pathprefix]]\n"
-#~ "          contents path\n"
-#~ "          generate config [groups]\n"
-#~ "          clean config\n"
-#~ "\n"
-#~ "apt-ftparchive generates index files for Debian archives. It supports\n"
-#~ "many styles of generation from fully automated to functional "
-#~ "replacements\n"
-#~ "for dpkg-scanpackages and dpkg-scansources\n"
-#~ "\n"
-#~ "apt-ftparchive generates Package files from a tree of .debs. The\n"
-#~ "Package file contains the contents of all the control fields from\n"
-#~ "each package as well as the MD5 hash and filesize. An override file\n"
-#~ "is supported to force the value of Priority and Section.\n"
-#~ "\n"
-#~ "Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-#~ "The --source-override option can be used to specify a src override file\n"
-#~ "\n"
-#~ "The 'packages' and 'sources' command should be run in the root of the\n"
-#~ "tree. BinaryPath should point to the base of the recursive search and \n"
-#~ "override file should contain the override flags. Pathprefix is\n"
-#~ "appended to the filename fields if present. Example usage from the \n"
-#~ "Debian archive:\n"
-#~ "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-#~ "               dists/potato/main/binary-i386/Packages\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h    This help text\n"
-#~ "  --md5 Control MD5 generation\n"
-#~ "  -s=?  Source override file\n"
-#~ "  -q    Quiet\n"
-#~ "  -d=?  Select the optional caching database\n"
-#~ "  --no-delink Enable delinking debug mode\n"
-#~ "  --contents  Control contents file generation\n"
-#~ "  -c=?  Read this configuration file\n"
-#~ "  -o=?  Set an arbitary configuration option"
-#~ msgstr ""
-#~ "Utilizzo: apt-ftparchive [opzioni] comando\n"
-#~ "Comandi: packages pathaibinari [filedioverride [pathprefix]\n"
-#~ "          sources pathaisorgenti [filedioverride [pathprefix]\n"
-#~ "          contents path\n"
-#~ "          generate config [gruppi]\n"
-#~ "          clean config\n"
-#~ "\n"
-#~ "apt-ftparchive genera file di indice per gli archivi Debian. Supporta\n"
-#~ "molti stili di generazione da completamente automatici a alternative "
-#~ "funzionali\n"
-#~ "per dpkg-scanpackages e dpkg-scansources\n"
-#~ "\n"
-#~ "apt-ftparchive genera file Packages da un albero di .deb. Il\n"
-#~ "file Package contiene le informazioni di tutti i campi control da ogni\n"
-#~ "pacchetto così come l'hash MD5 e la dimensione del file. Un file "
-#~ "override\n"
-#~ "è supportato per forzare il valore di Priorità e Sezione.\n"
-#~ "\n"
-#~ "Similarmente apt-ftparchive genera file Sources da un albero di .dscs.\n"
-#~ "L'opzione --source-override può essere usata per specificare un file di "
-#~ "override\n"
-#~ "per i sorgenti\n"
-#~ "\n"
-#~ "I comandi 'packages' e 'sources' devono essere seguiti nella root "
-#~ "dell'albero.\n"
-#~ "BinaryPath deve puntare alla base della ricerca ricorsiva e il file "
-#~ "override deve\n"
-#~ "contenere le opzioni di override. Pathprefix è aggiunto al campo filename "
-#~ "se presente.\n"
-#~ "Esempio di utilizzo dall'archivio debian:\n"
-#~ "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-#~ "               dists/potato/main/binary-i386/Packages \n"
-#~ "\n"
-#~ "Opzioni:\n"
-#~ "  -h   Questo help\n"
-#~ "  --md5 Controlla la generazione del MD5\n"
-#~ "  -s=?   File override dei sorgenti\n"
-#~ "  -q    Silenzioso\n"
-#~ "  -d=?  Seleziona il database di cache opzionale\n"
-#~ "  --no-delink Abilita modalità di debug del delinking\n"
-#~ "  --contents  Controlla la generazione del file contents\n"
-#~ "  -c=? Legge come configurazione il file specificato\n"
-#~ "  -o=? Imposta un'opzione arbitraria di configurazione"
-
-#~ msgid "No selections matched"
-#~ msgstr "Nessuna selezione corrisponde"
-
-#~ msgid "Some files are missing in the package file group `%s'"
-#~ msgstr "Mancano alcuni file nel file group di pacchetti `%s'"
-
-#~ msgid "DB was corrupted, file renamed to %s.old"
-#~ msgstr "DB era corrotto, il file è stato rinominato in %s.old"
-
-#~ msgid "Unable to open DB2 file %s"
-#~ msgstr "Impossibile aprire il file DB2 %s"
-
-#~ msgid "File date has changed %s"
-#~ msgstr "La data del file è cambiata %s"
-
-#~ msgid "Archive has no control record"
-#~ msgstr "L'Archivio non ha un campo control"
-
-#~ msgid "Unable to get a cursor"
-#~ msgstr "Impossibile ottenere un cursore"
-
-#~ msgid "W: Unable to read directory %s\n"
-#~ msgstr "W: Impossibile leggere la directory %s\n"
-
-#~ msgid "W: Unable to stat %s\n"
-#~ msgstr "W: Impossibile analizzare %s\n"
-
-#~ msgid "E: "
-#~ msgstr "E: "
-
-#~ msgid "W: "
-#~ msgstr "W: "
-
-#~ msgid "E: Errors apply to file "
-#~ msgstr "E: Errori applicati al file "
-
-#~ msgid "Failed to resolve %s"
-#~ msgstr "Impossibile risolvere %s"
-
-#~ msgid "Tree walking failed"
-#~ msgstr "Visita dell'albero fallita"
-
-#~ msgid "Failed to open %s"
-#~ msgstr "Impossibile aprire %s"
-
-#~ msgid " DeLink %s [%s]\n"
-#~ msgstr " DeLink %s [%s]\n"
-
-#~ msgid "Failed to readlink %s"
-#~ msgstr "Impossibile eseguire readlink su %s"
-
-#~ msgid "Failed to unlink %s"
-#~ msgstr "Impossibile eseguire unlink su %s"
-
-#~ msgid "*** Failed to link %s to %s"
-#~ msgstr "*** Impossibile eseguire link tra %s e %s"
-
-#~ msgid " DeLink limit of %sB hit.\n"
-#~ msgstr " DeLink limite di %sB raggiunto.\n"
-
-#~ msgid "Archive had no package field"
-#~ msgstr "L'archivio non ha un campo package"
-
-#~ msgid "  %s has no override entry\n"
-#~ msgstr "  %s non ha un campo override\n"
-
-#~ msgid "  %s maintainer is %s not %s\n"
-#~ msgstr "  %s mantainer è %s non %s\n"
-
-#~ msgid "realloc - Failed to allocate memory"
-#~ msgstr "realloc - Impossibile allocare memoria"
-
-#~ msgid "Unable to open %s"
-#~ msgstr "Impossibile aprire %s"
-
-#~ msgid "Malformed override %s line %lu #1"
-#~ msgstr "Override malformato %s linea %lu #1"
-
-#~ msgid "Malformed override %s line %lu #2"
-#~ msgstr "Override malformato %s linea %lu #2"
-
-#~ msgid "Malformed override %s line %lu #3"
-#~ msgstr "Override malformato %s linea %lu #3"
-
-#~ msgid "Failed to read the override file %s"
-#~ msgstr "Impossibile leggere il file override %s"
-
-#~ msgid "Unknown Compresison Algorithm '%s'"
-#~ msgstr "Algoritmo di compressione '%s' sconosciuto"
-
-#~ msgid "Compressed output %s needs a compression set"
-#~ msgstr "L'output compresso %s necessita di un insieme di compressione"
-
-#~ msgid "Failed to create FILE*"
-#~ msgstr "Impossibile creare FILE*"
-
-#~ msgid "Failed to fork"
-#~ msgstr "Impossibile eseguire fork"
-
-#~ msgid "Compress Child"
-#~ msgstr "Figlio compressore"
-
-#~ msgid "Internal Error, Failed to create %s"
-#~ msgstr "Errore interno, Impossibile creare %s"
-
-#~ msgid "Failed to create subprocess IPC"
-#~ msgstr "Impossibile creare un sottoprocesso IPC"
-
-#~ msgid "Failed to exec compressor "
-#~ msgstr "Impossibile eseguire compressor"
-
-#~ msgid "decompressor"
-#~ msgstr "decompressore"
-
-#~ msgid "IO to subprocess/file failed"
-#~ msgstr "I/O al sottoprocesso/file fallito"
-
-#~ msgid "Failed to read while computing MD5"
-#~ msgstr "Impossibile leggere durante l'elaborazione MD5"
-
-#~ msgid "Problem unlinking %s"
-#~ msgstr "Problema nell'unlink di %s"
-
-#~ msgid "Y"
-#~ msgstr "S"
-
-#~ msgid "Regex compilation error - %s"
-#~ msgstr "Errore di compilazione della regex - %s"
-
-#~ msgid "The following packages have unmet dependencies:"
-#~ msgstr "I seguenti pacchetti hanno dipendenze non soddisfatte:"
-
-#~ msgid "but %s is installed"
-#~ msgstr "ma %s è installato"
-
-#~ msgid "but %s is to be installed"
-#~ msgstr "ma %s sta per essere installato"
-
-#~ msgid "but it is not installable"
-#~ msgstr "ma non è installabile"
-
-#~ msgid "but it is a virtual package"
-#~ msgstr "ma è un pacchetto virtuale"
-
-#~ msgid "but it is not installed"
-#~ msgstr "ma non è installato"
-
-#~ msgid "but it is not going to be installed"
-#~ msgstr "ma non sta per essere installato"
-
-#~ msgid " or"
-#~ msgstr " oppure"
-
-#~ msgid "The following NEW packages will be installed:"
-#~ msgstr "I seguenti pacchetti NUOVI (NEW) saranno installati:"
-
-#~ msgid "The following packages will be REMOVED:"
-#~ msgstr "I seguenti pacchetti saranno RIMOSSI:"
-
-#~ msgid "The following packages have been kept back"
-#~ msgstr "I seguenti pacchetti sono stati mantenuti alla versione precedente"
-
-#~ msgid "The following packages will be upgraded"
-#~ msgstr "I seguenti pacchetti saranno aggiornati"
-
-#~ msgid "The following packages will be DOWNGRADED"
-#~ msgstr "I seguenti pacchetti saranno RETROCESSI (DOWNGRADED)"
-
-#~ msgid "The following held packages will be changed:"
-#~ msgstr "I seguenti pacchetti bloccati saranno cambiati:"
-
-#~ msgid "%s (due to %s) "
-#~ msgstr "%s (a causa di %s) "
-
-#~ msgid ""
-#~ "WARNING: The following essential packages will be removed\n"
-#~ "This should NOT be done unless you know exactly what you are doing!"
-#~ msgstr ""
-#~ "ATTENZIONE: il seguente pacchetto ESSENZIALE sta per essere rimosso\n"
-#~ "Questo non dovrebbe essere fatto a meno che non si sappia esattamente "
-#~ "cosa si sta facendo!"
-
-#~ msgid "%lu upgraded, %lu newly installed, "
-#~ msgstr "%lu aggiornati, %lu installati, "
-
-#~ msgid "%lu reinstalled, "
-#~ msgstr "%lu reinstallati, "
-
-#~ msgid "%lu downgraded, "
-#~ msgstr "%lu retrocessi (downgraded), "
-
-#~ msgid "%lu to remove and %lu not upgraded.\n"
-#~ msgstr "%lu da rimuovere e %lu non aggiornati.\n"
-
-#~ msgid "%lu not fully installed or removed.\n"
-#~ msgstr "%lu non completamente installati o rimossi.\n"
-
-#~ msgid "Correcting dependencies..."
-#~ msgstr "Correzione delle dipendenze in corso..."
-
-#~ msgid " failed."
-#~ msgstr " fallita."
-
-#~ msgid "Unable to correct dependencies"
-#~ msgstr "Impossibile correggere le dipendenze"
-
-#~ msgid "Unable to minimize the upgrade set"
-#~ msgstr "Impossibile minimizzare l'insieme da aggiornare"
-
-#~ msgid " Done"
-#~ msgstr " Fatto"
-
-#~ msgid "You might want to run `apt-get -f install' to correct these."
-#~ msgstr ""
-#~ "È consigliabile eseguire `apt-get -f install' per correggere questi "
-#~ "problemi."
-
-#~ msgid "Unmet dependencies. Try using -f."
-#~ msgstr "Dipendenze non trovate. Riprovare usando -f."
-
-#~ msgid "Packages need to be removed but Remove is disabled."
-#~ msgstr "I pacchetti devono essere rimossi ma Remove è disabilitata"
-
-#~ msgid "Unable to lock the download directory"
-#~ msgstr "Impossibile creare un lock sulla directory di download"
-
-#~ msgid "Need to get %sB/%sB of archives.\n"
-#~ msgstr "È necessario prendere %sB/%sB di archivi. \n"
-
-#~ msgid "Need to get %sB of archives.\n"
-#~ msgstr "È necessario prendere %sB di archivi. \n"
-
-#~ msgid "After unpacking %sB of additional disk space will be used.\n"
-#~ msgstr "Dopo l'estrazione, verranno occupati %sB di spazio su disco.\n"
-
-#~ msgid "After unpacking %sB disk space will be freed.\n"
-#~ msgstr "Dopo l'estrazione, verranno liberati %sB di spazio su disco.\n"
-
-#~ msgid "You don't have enough free space in %s."
-#~ msgstr "Lo spazio libero in %s non è sufficente."
-
-#~ msgid "There are problems and -y was used without --force-yes"
-#~ msgstr "Sussistono dei problemi e -y è stata usata senza --force-yes"
-
-#~ msgid "Trivial Only specified but this is not a trivial operation."
-#~ msgstr ""
-#~ "È stata specificata la modalità Trivial Only ma questa non è "
-#~ "un'operazione triviale"
-
-#~ msgid "Yes, do as I say!"
-#~ msgstr "SI, esegui come richiesto!"
-
-#~ msgid ""
-#~ "You are about to do something potentially harmful\n"
-#~ "To continue type in the phrase '%s'\n"
-#~ " ?] "
-#~ msgstr ""
-#~ "Si sta per compiere un'azione potenzialmente distruttiva\n"
-#~ "Per continuare scrivere la frase '%s' \n"
-#~ " ?] "
-
-#~ msgid "Abort."
-#~ msgstr "Interrotto."
-
-#~ msgid "Do you want to continue? [Y/n] "
-#~ msgstr "Continuare? [S/n] "
-
-#~ msgid "Failed to fetch %s  %s\n"
-#~ msgstr "Impossibile ottenere %s  %s\n"
-
-#~ msgid "Some files failed to download"
-#~ msgstr "Il download di alcuni file è fallito"
-
-#~ msgid "Download complete and in download only mode"
-#~ msgstr "Download completato e in modalità download-only"
-
-#~ msgid ""
-#~ "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-#~ "missing?"
-#~ msgstr ""
-#~ "Impossibile prendere alcuni archivi, forse è meglio eseguire apt-get "
-#~ "update o provare l'opzione --fix-missing"
-
-#~ msgid "--fix-missing and media swapping is not currently supported"
-#~ msgstr "--fix-missing su media estraibili non è ancora supportato"
-
-#~ msgid "Unable to correct missing packages."
-#~ msgstr "Impossibile correggere i pacchetti mancanti"
-
-#~ msgid "Aborting Install."
-#~ msgstr "Interruzione dell'installazione in corso."
-
-#~ msgid "Note, selecting %s instead of %s\n"
-#~ msgstr "Nota, si sta selezionando %s al posto di %s\n"
-
-#~ msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-#~ msgstr ""
-#~ "%s è stato saltato, perché è già installato e l'aggiornamento non è stato "
-#~ "impostato.\n"
-
-#~ msgid "Package %s is not installed, so not removed\n"
-#~ msgstr "Il pacchetto %s non è installato, quindi non è stato rimosso\n"
-
-#~ msgid "Package %s is a virtual package provided by:\n"
-#~ msgstr "Il pacchetto %s è un pacchetto virtuale fornito da:\n"
-
-#~ msgid " [Installed]"
-#~ msgstr " [Installato]"
-
-#~ msgid "You should explicitly select one to install."
-#~ msgstr "Bisogna esplicitamente sceglierne uno da installare."
-
-#~ msgid ""
-#~ "Package %s has no available version, but exists in the database.\n"
-#~ "This typically means that the package was mentioned in a dependency and\n"
-#~ "never uploaded, has been obsoleted or is not available with the contents\n"
-#~ "of sources.list\n"
-#~ msgstr ""
-#~ "Il pacchetto %s non ha versioni disponibili, ma esiste nel database.\n"
-#~ "Questo significa che il pacchetto è stato menzionato nelle dipendenze e\n"
-#~ "mai uploadato, è diventato obsoleto o non è disponibile all'interno\n"
-#~ "di sources.list\n"
-
-#~ msgid "However the following packages replace it:"
-#~ msgstr "Comunque il seguente pacchetto lo sostituisce:"
-
-#~ msgid "Package %s has no installation candidate"
-#~ msgstr "Il pacchetto %s non ha candidati da installare"
-
-#~ msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-#~ msgstr ""
-#~ "La reinstallazione di %s non è possibile, non può esssere scaricato.\n"
-
-#~ msgid "%s is already the newest version.\n"
-#~ msgstr "%s è già alla versione più recente.\n"
-
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "Non è stata trovata la release '%s' per '%s'"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "Non è stata trovata la versione '%s' per '%s'"
-
-#~ msgid "Selected version %s (%s) for %s\n"
-#~ msgstr "Versione selezionata %s (%s) per %s\n"
-
-#~ msgid "The update command takes no arguments"
-#~ msgstr "Il comando update non accetta argomenti"
-
-#~ msgid "Unable to lock the list directory"
-#~ msgstr "Impossibile creare un lock sulla directory di list"
-
-#~ msgid ""
-#~ "Some index files failed to download, they have been ignored, or old ones "
-#~ "used instead."
-#~ msgstr ""
-#~ "Impossibile scaricare alcune file di indice, essi verranno ignorati, "
-#~ "oppure si useranno quelli precedenti."
-
-#~ msgid "Internal Error, AllUpgrade broke stuff"
-#~ msgstr "Errore interno, AllUpgrade ha rotto qualcosa"
-
-#~ msgid "Couldn't find package %s"
-#~ msgstr "Impossibile trovare %s"
-
-#~ msgid "Note, selecting %s for regex '%s'\n"
-#~ msgstr "Nota, si sta selezionando %s per la regex '%s'\n"
-
-#~ msgid "You might want to run `apt-get -f install' to correct these:"
-#~ msgstr ""
-#~ "È consigliabile eseguire 'apt-get -f install' per correggere questi "
-#~ "problemi:"
-
-#~ msgid ""
-#~ "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify "
-#~ "a solution)."
-#~ msgstr ""
-#~ "Dipendenze non soddisfatte. Provare 'apt-get -f install' senza pacchetti "
-#~ "(o specificare una soluzione)."
-
-#~ msgid ""
-#~ "Some packages could not be installed. This may mean that you have\n"
-#~ "requested an impossible situation or if you are using the unstable\n"
-#~ "distribution that some required packages have not yet been created\n"
-#~ "or been moved out of Incoming."
-#~ msgstr ""
-#~ "Alcuni pacchetti non possono essere installati. Questo può voler\n"
-#~ "dire che è stata richiesta una situazione impossibile oppure, se\n"
-#~ "si sta usando la distribuzione \"unstable\", che alcuni pacchetti\n"
-#~ "richiesti non sono ancora stati creati o rimossi da incoming."
-
-#~ msgid ""
-#~ "Since you only requested a single operation it is extremely likely that\n"
-#~ "the package is simply not installable and a bug report against\n"
-#~ "that package should be filed."
-#~ msgstr ""
-#~ "Poichè è stata richiesta solo una singola operazione è molto facile che\n"
-#~ "il pacchetto semplicemente non sia installabile, si consiglia\n"
-#~ "di inviare un \"bug report\" per tale pacchetto."
-
-#~ msgid "The following information may help to resolve the situation:"
-#~ msgstr ""
-#~ "Le seguenti informazioni possono aiutare a risolvere la situazione: "
-
-#~ msgid "Broken packages"
-#~ msgstr "Pacchetto non integro"
-
-#~ msgid "The following extra packages will be installed:"
-#~ msgstr "I seguenti pacchetti verranno inoltre installati:"
-
-#~ msgid "Suggested packages:"
-#~ msgstr "Pacchetti suggeriti:"
-
-#~ msgid "Recommended packages:"
-#~ msgstr "Pacchetti raccomandati:"
-
-#~ msgid "Calculating Upgrade... "
-#~ msgstr "Calcolo dell'aggiornamento in corso... "
-
-#~ msgid "Done"
-#~ msgstr "Fatto"
-
-#~ msgid "Must specify at least one package to fetch source for"
-#~ msgstr "Bisogna specificare almeno un pacchetto cui scaricare il sorgente"
-
-#~ msgid "Unable to find a source package for %s"
-#~ msgstr "Impossibile trovare un pacchetto sorgente per %s"
-
-#~ msgid "You don't have enough free space in %s"
-#~ msgstr "Lo spazio libero in %s non è sufficente"
-
-#~ msgid "Need to get %sB/%sB of source archives.\n"
-#~ msgstr "È necessario prendere %sB/%sB di sorgenti.\n"
-
-#~ msgid "Need to get %sB of source archives.\n"
-#~ msgstr "È necessario prendere %sB di sorgenti\n"
-
-#~ msgid "Fetch Source %s\n"
-#~ msgstr "Prelievo del sorgente %s\n"
-
-#~ msgid "Failed to fetch some archives."
-#~ msgstr "Non è stato possibile scaricare alcuni archivi."
-
-#~ msgid "Skipping unpack of already unpacked source in %s\n"
-#~ msgstr "Si è saltata l'estrazione del sorgente già estratto in %s\n"
-
-#~ msgid "Unpack command '%s' failed.\n"
-#~ msgstr "Comando di estrazione '%s' fallito.\n"
-
-#~ msgid "Build command '%s' failed.\n"
-#~ msgstr "Comando di costruzione '%s' fallito.\n"
-
-#~ msgid "Child process failed"
-#~ msgstr "Processo figlio fallito"
-
-#~ msgid "Must specify at least one package to check builddeps for"
-#~ msgstr ""
-#~ "Bisogna specificare almeno un pacchetto di cui controllare la generazione "
-#~ "di dipendenze"
-
-#~ msgid "Unable to get build-dependency information for %s"
-#~ msgstr ""
-#~ "Impossibile ottenere informazioni di dipendenza di costruzione per %s"
-
-#~ msgid "%s has no build depends.\n"
-#~ msgstr "%s non ha dipendenze di costruzione.\n"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
-#~ "found"
-#~ msgstr ""
-#~ "%s dipendenze per %s non possono essere soddisfatte perché non si trova "
-#~ "il pacchetto %s"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because no available versions of "
-#~ "package %s can satisfy version requirements"
-#~ msgstr ""
-#~ "%s dipendenze per %s non possono essere soddisfatte perché nessuna "
-#~ "versione del pacchetto %s può soddisfare le richieste di versione"
 
 #~ msgid ""
 #~ "Some broken packages were found while trying to process build-"
@@ -2094,181 +2520,6 @@ msgstr "Connessione chiusa prematuramente"
 #~ "cotruire\n"
 #~ "le dipendenze. Si consiglia di eseguire `apt-get -f install` per "
 #~ "correggerli."
-
-#~ msgid "Failed to process build dependencies"
-#~ msgstr "Il calcolo delle dipendenze per la costruzione è fallito"
-
-#~ msgid "Supported Modules:"
-#~ msgstr "Moduli Supportati:"
-
-#~ msgid ""
-#~ "Usage: apt-get [options] command\n"
-#~ "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-#~ "       apt-get [options] source pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-get is a simple command line interface for downloading and\n"
-#~ "installing packages. The most frequently used commands are update\n"
-#~ "and install.\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   update - Retrieve new lists of packages\n"
-#~ "   upgrade - Perform an upgrade\n"
-#~ "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-#~ "   remove - Remove packages\n"
-#~ "   source - Download source archives\n"
-#~ "   build-dep - Configure build-dependencies for source packages\n"
-#~ "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-#~ "   dselect-upgrade - Follow dselect selections\n"
-#~ "   clean - Erase downloaded archive files\n"
-#~ "   autoclean - Erase old downloaded archive files\n"
-#~ "   check - Verify that there are no broken dependencies\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -qq No output except for errors\n"
-#~ "  -d  Download only - do NOT install or unpack archives\n"
-#~ "  -s  No-act. Perform ordering simulation\n"
-#~ "  -y  Assume Yes to all queries and do not prompt\n"
-#~ "  -f  Attempt to continue if the integrity check fails\n"
-#~ "  -m  Attempt to continue if archives are unlocatable\n"
-#~ "  -u  Show a list of upgraded packages as well\n"
-#~ "  -b  Build the source package after fetching it\n"
-#~ "  -V  Show verbose version numbers\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-#~ "pages for more information and options.\n"
-#~ "                       This APT has Super Cow Powers.\n"
-#~ msgstr ""
-#~ "Utilizzo: apt-get [opzioni] comando\n"
-#~ "        apt-get [opzioni] install|remove pkg1 [pkg2 ...]\n"
-#~ "        apt-get [opzioni] source pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-get è una semplice interfaccia a linea di comando per scaricare \n"
-#~ "e installare pacchetti. I comandi più usati sono update \n"
-#~ "e install.\n"
-#~ "\n"
-#~ "Comandi:\n"
-#~ "   update - Aggiorna la lista dei pacchetti\n"
-#~ "   upgrade - Esegue un aggiornamento\n"
-#~ "   install - Installa nuovi pacchetti (pkg è libc6 non libc6.deb)\n"
-#~ "   remove - Rimuove pacchetti\n"
-#~ "   source - Scarica i pacchetti sorgente\n"
-#~ "   build-dep - Configura le dipendenze di compilazione per i pacchetti "
-#~ "sorgente\n"
-#~ "   dist-upgrade - Aggiorna la distribuzione, vedere apt-get(8)\n"
-#~ "   dselect-upgrade - Segue le selezioni di dselect\n"
-#~ "   clean - Cancella gli archivi dei pacchetti scaricati \n"
-#~ "   autoclean - Cancella gli archivi vecchi scaricati\n"
-#~ "   check - Verifica che non ci siano dipendenze rotte\n"
-#~ "\n"
-#~ "Opzioni:\n"
-#~ "  -h  Questo help.\n"
-#~ "  -q  Output registrabile - nessun indicatore di progresso\n"
-#~ "  -qq Nessun output eccetto per gli errori\n"
-#~ "  -d  Solamente download - NON installa o decomprime gli archivi\n"
-#~ "  -s  Nessuna azione. Simula i passi in ordine\n"
-#~ "  -y  Assume sì a tutte le domande e non chiede conferma\n"
-#~ "  -f  Tenta di continuare se il controllo di integrità fallisce\n"
-#~ "  -m  Tenta di continuare se gli archivi non si trovano\n"
-#~ "  -u  Mostra una lista dei pacchetti da aggiornare\n"
-#~ "  -b  Costruisce il pacchetto sorgente dopo averlo scaricato\n"
-#~ "  -V  Mostra dettagliatamente i numeri di versione\n"
-#~ "  -c=? Legge come configurazione il file specificato\n"
-#~ "  -o=? Imposta un'opzione di configurazione, es -o dir::cache=/tmp\n"
-#~ "Consultare le pagine apt-get(8), sources.list(5) e apt.conf(5) del "
-#~ "manuale\n"
-#~ "per maggiori informazioni e opzioni.\n"
-#~ "                       Questo APT ha i Poteri della Super Mucca.\n"
-
-#~ msgid "Hit "
-#~ msgstr "Hit "
-
-#~ msgid "Get:"
-#~ msgstr "Get:"
-
-#~ msgid "Ign "
-#~ msgstr "Ign "
-
-#~ msgid "Err "
-#~ msgstr "Err "
-
-#~ msgid "Fetched %sB in %s (%sB/s)\n"
-#~ msgstr "Scaricato %sB in %s (%sB/s)\n"
-
-#~ msgid " [Working]"
-#~ msgstr " [In corso]"
-
-#~ msgid ""
-#~ "Media Change: Please insert the disc labeled\n"
-#~ " '%s'\n"
-#~ "in the drive '%s' and press enter\n"
-#~ msgstr ""
-#~ "Cambio disco: Inserire il disco chiamato\n"
-#~ " '%s'\n"
-#~ "nel dispositivo '%s' e premere invio\n"
-
-#~ msgid "Unknown package record!"
-#~ msgstr "Campo del pacchetto sconosciuto!"
-
-#~ msgid ""
-#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
-#~ "used\n"
-#~ "to indicate what kind of file it is.\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -s   Use source file sorting\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Utilizzo: apt-sortpkgs [opzioni] file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs è un semplice tool per ordinare il file dei pacchetti. "
-#~ "L'opzione -s\n"
-#~ "è usata per indicare che tipo di file si sta utilizzando.\n"
-#~ "\n"
-#~ "Opzioni:\n"
-#~ "  -h   Questo help\n"
-#~ "  -s   Ordina per pacchetto sorgente\n"
-#~ "  -c=? Legge come configurazione il file specificato\n"
-#~ "  -o=? Imposta un'opzione di configurazione, es -o dir::cache=/tmp\n"
-
-#~ msgid "Bad default setting!"
-#~ msgstr "Opzione predefinita errata!"
-
-#~ msgid "Press enter to continue."
-#~ msgstr "Premere invio per continuare."
-
-# Note to translators: The following four messages belong together. It doesn't
-# matter where sentences start, but it has to fit in just these four lines, and
-# at only 80 characters per line, if possible.
-#~ msgid "Some errors occurred while unpacking. I'm going to configure the"
-#~ msgstr ""
-#~ "Si sono verificati alcuni errori nella scompattazione. Si cercherà di "
-
-#~ msgid "packages that were installed. This may result in duplicate errors"
-#~ msgstr ""
-#~ "configurare i pacchetti che sono stati installati. Questo potrebbe "
-#~ "generare "
-
-#~ msgid ""
-#~ "or errors caused by missing dependencies. This is OK, only the errors"
-#~ msgstr ""
-#~ "errori duplicati o errori causati da dipendenze non soddisfatte. Questo "
-#~ "va "
-
-#~ msgid ""
-#~ "above this message are important. Please fix them and run [I]nstall again"
-#~ msgstr ""
-#~ " bene solo se gli errori sopra questo messaggio sono importanti. Si prega "
-#~ "di  correggerli e di eseguire [I]nstall un'altra volta"
-
-#~ msgid "Merging Available information"
-#~ msgstr "Aggiornamento delle informazioni disponibili"
 
 #~ msgid "<- '"
 #~ msgstr "<- '"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-02-26 16:47-0800\n"
+"POT-Creation-Date: 2004-03-14 13:46-0800\n"
 "PO-Revision-Date: 2004-02-26 17:05-0800\n"
 "Last-Translator: Tchaikov <chaisave@263.net>\n"
 "Language-Team: Chinese (simplified) <i18n-translation@lists.linux.net.cn>\n"
@@ -149,7 +149,9 @@ msgstr "  版本列表："
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1646
+#: cmdline/apt-cache.cc:1646 cmdline/apt-cdrom.cc:731 cmdline/apt-config.cc:70
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
+#: cmdline/apt-get.cc:2260 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s for %s %s ，编译于 %s %s\n"
@@ -226,6 +228,1061 @@ msgstr ""
 "  -c=? 读取指定配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 "若要深入了解，您还可以查阅 apt-cache(8) 和 apt.conf(5) 参考手册。\n"
+
+#: cmdline/apt-config.cc:41
+msgid "Arguments not in pairs"
+msgstr "参数没有成对"
+
+#: cmdline/apt-config.cc:76
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is a simple tool to read the APT config file\n"
+"\n"
+"Commands:\n"
+"   shell - Shell mode\n"
+"   dump - Show the configuration\n"
+"\n"
+"Options:\n"
+"  -h   This help text.\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"用法：apt-config [选项] 命令\n"
+"\n"
+"apt-config 是一个用于读取 APT 配置文件的简单工具\n"
+"\n"
+"命令：\n"
+"   shell - Shell 模式\n"
+"   dump - 显示配置文件\n"
+"\n"
+"选项：\n"
+"  -h  本帮助文本。\n"
+"  -c=? 读取指定的配置文件\n"
+"  -o=? 设置任意指定的配置选项，例如：-o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc:98
+#, c-format
+msgid "%s not a valid DEB package."
+msgstr "%s 不是一个有效的 DEB 软件包。"
+
+#: cmdline/apt-extracttemplates.cc:232
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is a tool to extract config and template info\n"
+"from debian packages\n"
+"\n"
+"Options:\n"
+"  -h   This help text\n"
+"  -t   Set the temp dir\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"用法： apt-extracttemplates 文件甲 [文件乙 ...]\n"
+"\n"
+"apt-extracttemplates 是用来从 debian 软件包中解压出配置文件和模板\n"
+"信息的工具\n"
+"\n"
+"选项：\n"
+"  -h   本帮助文本\n"
+"  -t   设置temp目录\n"
+"  -c=? 读指定的配置文件\n"
+"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
+#, c-format
+msgid "Unable to write to %s"
+msgstr "无法写入 %s"
+
+#: cmdline/apt-extracttemplates.cc:310
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "无法获得 debconf 的版本。您安装了 debconf 吗?"
+
+#: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:337
+msgid "Package extension list is too long"
+msgstr "软件包的扩展列表超长"
+
+#: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
+#: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:252
+#: ftparchive/apt-ftparchive.cc:266 ftparchive/apt-ftparchive.cc:288
+#, c-format
+msgid "Error Processing directory %s"
+msgstr "处理目录 %s 时出错"
+
+#: ftparchive/apt-ftparchive.cc:250
+msgid "Source extension list is too long"
+msgstr "源扩展列表超长"
+
+#: ftparchive/apt-ftparchive.cc:367
+msgid "Error writing header to contents file"
+msgstr "将 header 写到 contents 文件时出错"
+
+#: ftparchive/apt-ftparchive.cc:397
+#, c-format
+msgid "Error Processing Contents %s"
+msgstr "处理 Contents %s 时出错"
+
+#: ftparchive/apt-ftparchive.cc:551
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitary configuration option"
+msgstr ""
+"用法： apt-ftparchive [选项] 命令\n"
+"命令： packages 二进制软件包搜索路径 [overridefile [路径前缀]]\n"
+"       sources 源代码包搜索路径 [overridefile [路径前缀]]\n"
+"       contents 搜索路径\n"
+"       release 搜索路径\n"
+"       generate 配置文件 [groups]\n"
+"       clean 配置文件\n"
+"\n"
+"apt-ftparchive 被用来为 Debian 软件包生成索引文件。它能支持\n"
+"多种生成索引的方式，从全自动的生成到在功能上对 dpkg-scanpackages \n"
+"和 dpkg-scansources 的替代，都能游刃有余\n"
+"\n"
+"apt-ftparchive 能依据一个由 .deb 文件构成的文件树生成 Package 文件。\n"
+"Package 文件里不仅注有每个软件包的 MD5 校验码和文件大小，\n"
+"还有软件包的所有控制字段的内容。该软件同时支持覆盖(override)文件，\n"
+"通过它可以强制指定软件包的优先级及其所属的软件类别。\n"
+"\n"
+"与上面类似，apt-ftparchive 也能由 .dsc 的文件树生成 Source 文件。\n"
+"可以通过使用 --source-override 选项来指定一个覆盖(override)文件\n"
+"\n"
+"使用“packages”和“source”命令时，必须在文件树的根部执行本程序。\n"
+"\n"
+"二进制包的搜索路径一定要是递归搜索的底层，而且覆盖(override)文件里\n"
+"应该注明 override 的标志。若指定了路径前缀，那么它会被加到文件名前面。\n"
+"下面有个来自 Debian 文档的例子：\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386 > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"选项:\n"
+"  -h    本帮助文档\n"
+"  --md5 使之生成 MD5 校验和\n"
+"  -s=?  源代码包覆盖(override)文件\n"
+"  -q    输出精简信息  -d=?  指定可选的缓存数据库\n"
+"  --no-delink 开启delink的调试模式\n"
+"  --contents  使之生成控制内容文件\n"
+"  -c=?  读取指定配置文件\n"
+"  -o=?  设置任意指定的配置选项"
+
+#: ftparchive/apt-ftparchive.cc:757
+msgid "No selections matched"
+msgstr "没有任何选定项是匹配的"
+
+#: ftparchive/apt-ftparchive.cc:830
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "软件包文件组“%s”中缺少一些文件"
+
+#: ftparchive/cachedb.cc:43
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "缓存数据库被损坏了，该数据库文件的文件名已改成 %s.old"
+
+#: ftparchive/cachedb.cc:59
+#, c-format
+msgid "Unable to open DB2 file %s"
+msgstr "无法打开 DB2 文件 %s"
+
+#: ftparchive/cachedb.cc:99
+#, c-format
+msgid "File date has changed %s"
+msgstr "文件 %s 的时间已被改动"
+
+#: ftparchive/cachedb.cc:140
+msgid "Archive has no control record"
+msgstr "存档没有包含控制字段"
+
+#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+msgid "Unable to get a cursor"
+msgstr "无法获得游标(cursor)"
+
+#: ftparchive/writer.cc:79
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "警告：无法读取目录 %s\n"
+
+#: ftparchive/writer.cc:84
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "警告：无法对 %s 进行统计\n"
+
+#: ftparchive/writer.cc:126
+msgid "E: "
+msgstr "错误："
+
+#: ftparchive/writer.cc:128
+msgid "W: "
+msgstr "警告："
+
+#: ftparchive/writer.cc:135
+msgid "E: Errors apply to file "
+msgstr "错误：处理文件时出错 "
+
+#: ftparchive/writer.cc:152 ftparchive/writer.cc:182
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "无法解析路径 %s"
+
+#: ftparchive/writer.cc:164
+msgid "Tree walking failed"
+msgstr "无法遍历目录树"
+
+#: ftparchive/writer.cc:189
+#, c-format
+msgid "Failed to open %s"
+msgstr "无法打开 %s"
+
+#: ftparchive/writer.cc:246
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc:254
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "无法读取符号链接 %s"
+
+#: ftparchive/writer.cc:258
+#, c-format
+msgid "Failed to unlink %s"
+msgstr "无法 unlink %s"
+
+#: ftparchive/writer.cc:265
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** 无法将 %s 链接到 %s"
+
+#: ftparchive/writer.cc:275
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " 达到了 DeLink 的上限 %sB。\n"
+
+#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#, c-format
+msgid "Failed to stat %s"
+msgstr "无法读取 %s 的状态"
+
+#: ftparchive/writer.cc:378
+msgid "Archive had no package field"
+msgstr "存档没有包含软件包(package)字段"
+
+#: ftparchive/writer.cc:386 ftparchive/writer.cc:595
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  %s 中没有覆盖(override)项\n"
+
+#: ftparchive/writer.cc:429 ftparchive/writer.cc:677
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  %s 的维护者 %s 并非 %s\n"
+
+#: ftparchive/contents.cc:346 ftparchive/contents.cc:377
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - 无法再分配内存"
+
+#: ftparchive/override.cc:38 ftparchive/override.cc:146
+#, c-format
+msgid "Unable to open %s"
+msgstr "无法打开 %s"
+
+#: ftparchive/override.cc:64 ftparchive/override.cc:170
+#, c-format
+msgid "Malformed override %s line %lu #1"
+msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #1"
+
+#: ftparchive/override.cc:78 ftparchive/override.cc:182
+#, c-format
+msgid "Malformed override %s line %lu #2"
+msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #2"
+
+#: ftparchive/override.cc:92 ftparchive/override.cc:195
+#, c-format
+msgid "Malformed override %s line %lu #3"
+msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #3"
+
+#: ftparchive/override.cc:131 ftparchive/override.cc:205
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "无法读取覆盖(override)文件 %s"
+
+#: ftparchive/multicompress.cc:75
+#, c-format
+msgid "Unknown Compresison Algorithm '%s'"
+msgstr "未知的压缩算法“%s”"
+
+#: ftparchive/multicompress.cc:105
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "压缩后的输出文件 %s 要求有一个压缩文件集合"
+
+#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "无法为子进程创建 IPC 管道"
+
+#: ftparchive/multicompress.cc:198
+msgid "Failed to create FILE*"
+msgstr "无法创建 FILE*"
+
+#: ftparchive/multicompress.cc:201
+msgid "Failed to fork"
+msgstr "无法 fork"
+
+#: ftparchive/multicompress.cc:215
+msgid "Compress Child"
+msgstr "压缩子进程"
+
+#: ftparchive/multicompress.cc:238
+#, c-format
+msgid "Internal Error, Failed to create %s"
+msgstr "内部错误，无法建立 %s"
+
+#: ftparchive/multicompress.cc:289
+msgid "Failed to create subprocess IPC"
+msgstr "无法建立子进程的 IPC 管道"
+
+#: ftparchive/multicompress.cc:324
+msgid "Failed to exec compressor "
+msgstr "无法执行压缩程序"
+
+#: ftparchive/multicompress.cc:363
+msgid "decompressor"
+msgstr "解压程序"
+
+#: ftparchive/multicompress.cc:406
+msgid "IO to subprocess/file failed"
+msgstr "无法对子进程或文件进行读写"
+
+#: ftparchive/multicompress.cc:458
+msgid "Failed to read while computing MD5"
+msgstr "在计算 MD5 校验和时，无法读取数据"
+
+#: ftparchive/multicompress.cc:475
+#, c-format
+msgid "Problem unlinking %s"
+msgstr "在 unlink %s 时出错"
+
+#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "无法将 %s 重命名为 %s"
+
+#: cmdline/apt-get.cc:118
+msgid "Y"
+msgstr "Y"
+
+#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1422
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "编译正则表达式时出错 - %s"
+
+#: cmdline/apt-get.cc:235
+msgid "The following packages have unmet dependencies:"
+msgstr "下列的软件包有不能满足的依赖关系："
+
+#: cmdline/apt-get.cc:325
+#, c-format
+msgid "but %s is installed"
+msgstr "但是，%s 已经安装了"
+
+#: cmdline/apt-get.cc:327
+#, c-format
+msgid "but %s is to be installed"
+msgstr "但是，%s 正要被安装"
+
+#: cmdline/apt-get.cc:334
+msgid "but it is not installable"
+msgstr "但是，它无法被安装"
+
+#: cmdline/apt-get.cc:336
+msgid "but it is a virtual package"
+msgstr "但是，它只是个虚拟软件包"
+
+#: cmdline/apt-get.cc:339
+msgid "but it is not installed"
+msgstr "但是，它还没有被安装"
+
+#: cmdline/apt-get.cc:339
+msgid "but it is not going to be installed"
+msgstr "但是，它将不会被安装"
+
+#: cmdline/apt-get.cc:344
+msgid " or"
+msgstr " 或"
+
+#: cmdline/apt-get.cc:373
+msgid "The following NEW packages will be installed:"
+msgstr "下列【新】软件包将被安装："
+
+#: cmdline/apt-get.cc:399
+msgid "The following packages will be REMOVED:"
+msgstr "下列软件包将被【卸载】："
+
+#: cmdline/apt-get.cc:421
+msgid "The following packages have been kept back:"
+msgstr "下列的软件包的版本将保持持不变："
+
+#: cmdline/apt-get.cc:442
+msgid "The following packages will be upgraded:"
+msgstr "下列的软件包将被升级："
+
+#: cmdline/apt-get.cc:463
+msgid "The following packages will be DOWNGRADED:"
+msgstr "下列软件包将被【降级】："
+
+#: cmdline/apt-get.cc:483
+msgid "The following held packages will be changed:"
+msgstr "下列被要求保持版本不变的软件包将被改变："
+
+#: cmdline/apt-get.cc:536
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (是由于 %s) "
+
+#: cmdline/apt-get.cc:544
+msgid ""
+"WARNING: The following essential packages will be removed\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"注意：下列的重要软件包将被卸载 \n"
+"请勿尝试，除非您确实清楚您正在执行的操作！"
+
+#: cmdline/apt-get.cc:574
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "共升级了 %lu 个软件包，新安装了 %lu 个软件包，"
+
+#: cmdline/apt-get.cc:578
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "共重新安装了 %lu 个软件包，"
+
+#: cmdline/apt-get.cc:580
+#, c-format
+msgid "%lu downgraded, "
+msgstr "降级了 %lu 个软件包，"
+
+#: cmdline/apt-get.cc:582
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "要卸载 %lu 个软件包，有 %lu 个软件未被升级。\n"
+
+#: cmdline/apt-get.cc:586
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "有 %lu 个软件包没有被完全安装或卸载。\n"
+
+#: cmdline/apt-get.cc:646
+msgid "Correcting dependencies..."
+msgstr "正在更正依赖关系..."
+
+#: cmdline/apt-get.cc:649
+msgid " failed."
+msgstr " 失败。"
+
+#: cmdline/apt-get.cc:652
+msgid "Unable to correct dependencies"
+msgstr "无法更正依赖关系"
+
+#: cmdline/apt-get.cc:655
+msgid "Unable to minimize the upgrade set"
+msgstr "无法使升级的软件包集最小化"
+
+#: cmdline/apt-get.cc:657
+msgid " Done"
+msgstr " 完成"
+
+#: cmdline/apt-get.cc:661
+msgid "You might want to run `apt-get -f install' to correct these."
+msgstr "您也许需要运行“apt-get -f install”来纠正上面的错误。"
+
+#: cmdline/apt-get.cc:664
+msgid "Unmet dependencies. Try using -f."
+msgstr "不能满足依赖关系。不妨试一下 -f 选项。"
+
+#: cmdline/apt-get.cc:718
+msgid "Packages need to be removed but Remove is disabled."
+msgstr "有软件包需要被卸载，但是卸载动作被程序设置所禁止。"
+
+#: cmdline/apt-get.cc:744 cmdline/apt-get.cc:1716 cmdline/apt-get.cc:1749
+msgid "Unable to lock the download directory"
+msgstr "无法对下载目录加锁"
+
+#: cmdline/apt-get.cc:754 cmdline/apt-get.cc:1797 cmdline/apt-get.cc:2008
+#: apt-pkg/cachefile.cc:67
+msgid "The list of sources could not be read."
+msgstr "无法读取安装源列表。"
+
+#: cmdline/apt-get.cc:774
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "需要下载 %sB/%sB 的软件包。\n"
+
+#: cmdline/apt-get.cc:777
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "需要下载 %sB 的软件包。\n"
+
+#: cmdline/apt-get.cc:782
+#, c-format
+msgid "After unpacking %sB of additional disk space will be used.\n"
+msgstr "解压缩后会消耗掉 %sB 的额外空间。\n"
+
+#: cmdline/apt-get.cc:785
+#, c-format
+msgid "After unpacking %sB disk space will be freed.\n"
+msgstr "解压缩后将会空出 %sB 的空间。\n"
+
+#: cmdline/apt-get.cc:802
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "您在 %s 中没有足够的空余空间。"
+
+#: cmdline/apt-get.cc:811
+msgid "There are problems and -y was used without --force-yes"
+msgstr "碰到了一些问题，您使用了 -y 选项但是没有用 --force-yes。"
+
+#: cmdline/apt-get.cc:817 cmdline/apt-get.cc:837
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "虽然您指定了 Trivial Only，但这不是个日常(trivial)操作。"
+
+#: cmdline/apt-get.cc:819
+msgid "Yes, do as I say!"
+msgstr ""
+
+#: cmdline/apt-get.cc:821
+#, c-format
+msgid ""
+"You are about to do something potentially harmful\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"您的操作会导致潜在的危害\n"
+"若还想继续的话，就输入下面的短句“%s”\n"
+" ?] "
+
+#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:846
+msgid "Abort."
+msgstr "中止执行。"
+
+#: cmdline/apt-get.cc:842
+msgid "Do you want to continue? [Y/n] "
+msgstr "您希望继续执行吗？[Y/n]"
+
+#: cmdline/apt-get.cc:911 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1906
+#, c-format
+msgid "Failed to fetch %s  %s\n"
+msgstr "无法下载 %s  %s\n"
+
+#: cmdline/apt-get.cc:929
+msgid "Some files failed to download"
+msgstr "有一些文件下载失败"
+
+#: cmdline/apt-get.cc:930 cmdline/apt-get.cc:1915
+msgid "Download complete and in download only mode"
+msgstr "下载完毕，目前是“仅下载”模式"
+
+#: cmdline/apt-get.cc:936
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"有几个软件包无法下载，您可以运行 apt-get update 或者加上 --fix-missing 的选项"
+"再试试？"
+
+#: cmdline/apt-get.cc:940
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "目前还不支持 --fix-missing 和介质交换(media swapping)"
+
+#: cmdline/apt-get.cc:945
+msgid "Unable to correct missing packages."
+msgstr "无法更正缺少的软件包。"
+
+#: cmdline/apt-get.cc:946
+msgid "Aborting Install."
+msgstr "放弃安装。"
+
+#: cmdline/apt-get.cc:979
+#, c-format
+msgid "Note, selecting %s instead of %s\n"
+msgstr "注意，我选了 %s 而非 %s\n"
+
+#: cmdline/apt-get.cc:989
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "忽略了 %s，它已经被安装而且没有指定要升级。\n"
+
+#: cmdline/apt-get.cc:1007
+#, c-format
+msgid "Package %s is not installed, so not removed\n"
+msgstr "软件包 %s 还未安装，因而不会被卸载\n"
+
+#: cmdline/apt-get.cc:1018
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "软件包 %s 是一个由下面的软件包提供的虚拟软件包：\n"
+
+#: cmdline/apt-get.cc:1030
+msgid " [Installed]"
+msgstr " [已安装]"
+
+#: cmdline/apt-get.cc:1035
+msgid "You should explicitly select one to install."
+msgstr "请您明确地选择一个来进行安装。"
+
+#: cmdline/apt-get.cc:1040
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"现在没有可用的软件包 %s，但是它被其它的软件包引用了。\n"
+"这可能意味着这个缺失的软件包可能已被废弃，\n"
+"或者只能在其他发布源中找到\n"
+
+#: cmdline/apt-get.cc:1059
+msgid "However the following packages replace it:"
+msgstr "可是下列的软件包取代了它："
+
+#: cmdline/apt-get.cc:1062
+#, c-format
+msgid "Package %s has no installation candidate"
+msgstr "软件包 %s 还没有可供安装的候选者"
+
+#: cmdline/apt-get.cc:1082
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "不能重新安装 %s，因为无法下载它。\n"
+
+#: cmdline/apt-get.cc:1090
+#, c-format
+msgid "%s is already the newest version.\n"
+msgstr "%s 已经是最新的版本了。\n"
+
+#: cmdline/apt-get.cc:1117
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "未找到“%2$s”的“%1$s”发布版本"
+
+#: cmdline/apt-get.cc:1119
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "未找到“%2$s”的“%1$s”版本"
+
+#: cmdline/apt-get.cc:1125
+#, c-format
+msgid "Selected version %s (%s) for %s\n"
+msgstr "选定了版本为 %s (%s) 的 %s\n"
+
+#: cmdline/apt-get.cc:1235
+msgid "The update command takes no arguments"
+msgstr " update 命令是不需任何参数的"
+
+#: cmdline/apt-get.cc:1248
+msgid "Unable to lock the list directory"
+msgstr "无法对状态列表目录加锁"
+
+#: cmdline/apt-get.cc:1300
+msgid ""
+"Some index files failed to download, they have been ignored, or old ones "
+"used instead."
+msgstr ""
+"有一些索引文件不能下载，它们可能被忽略了，也可能转而使用了旧的索引文件。"
+
+#: cmdline/apt-get.cc:1319
+msgid "Internal Error, AllUpgrade broke stuff"
+msgstr "内部错误，AllUpgrade 造成某些故障"
+
+#: cmdline/apt-get.cc:1409 cmdline/apt-get.cc:1445
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "无法找到软件包 %s"
+
+#: cmdline/apt-get.cc:1432
+#, c-format
+msgid "Note, selecting %s for regex '%s'\n"
+msgstr "注意，根据正则表达式“%2$s”选中了 %1$s\n"
+
+#: cmdline/apt-get.cc:1462
+msgid "You might want to run `apt-get -f install' to correct these:"
+msgstr "您可能需要运行“apt-get -f install”来纠正下列错误："
+
+#: cmdline/apt-get.cc:1465
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"有未能满足的依赖关系。请尝试不指明软件包的名字来运行“apt-get -f install”(也可"
+"以指定一个解决办法)。"
+
+#: cmdline/apt-get.cc:1477
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"有一些软件包无法被安装。如果您用的是不稳定(unstable)发行版，这也许是\n"
+"因为系统无法达到您要求的状态造成的。该版本中可能会有一些您需要的软件\n"
+"包尚未被创建或是它们还在新到(incoming)目录中。"
+
+#: cmdline/apt-get.cc:1485
+msgid ""
+"Since you only requested a single operation it is extremely likely that\n"
+"the package is simply not installable and a bug report against\n"
+"that package should be filed."
+msgstr ""
+"您仅要求对单一软件包进行操作，这极有可能是因为该软件包安装不上，同时，\n"
+"您最好提交一个针对这个软件包的故障报告。"
+
+#: cmdline/apt-get.cc:1490
+msgid "The following information may help to resolve the situation:"
+msgstr "下列的信息可能会对问题的解决有所帮助："
+
+#: cmdline/apt-get.cc:1493
+msgid "Broken packages"
+msgstr "受损安装包"
+
+#: cmdline/apt-get.cc:1519
+msgid "The following extra packages will be installed:"
+msgstr "将会安装下列的额外的软件包："
+
+#: cmdline/apt-get.cc:1590
+msgid "Suggested packages:"
+msgstr "建议安装的软件包："
+
+#: cmdline/apt-get.cc:1591
+msgid "Recommended packages:"
+msgstr "推荐安装的软件包："
+
+#: cmdline/apt-get.cc:1611
+msgid "Calculating Upgrade... "
+msgstr "正在筹划升级... "
+
+#: cmdline/apt-get.cc:1614 methods/ftp.cc:702 methods/connect.cc:99
+msgid "Failed"
+msgstr "失败"
+
+#: cmdline/apt-get.cc:1619
+msgid "Done"
+msgstr "完成"
+
+#: cmdline/apt-get.cc:1792
+msgid "Must specify at least one package to fetch source for"
+msgstr "要下载源代码，必须指定至少一个对应的软件包"
+
+#: cmdline/apt-get.cc:1819 cmdline/apt-get.cc:2026
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "无法找到与 %s 对应的源代码包"
+
+#: cmdline/apt-get.cc:1866
+#, c-format
+msgid "You don't have enough free space in %s"
+msgstr "您在 %s 上没有足够的空余空间"
+
+#: cmdline/apt-get.cc:1871
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "需要下载 %sB/%sB 的源代码包。\n"
+
+#: cmdline/apt-get.cc:1874
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "需要下载 %sB 的源代码包。\n"
+
+#: cmdline/apt-get.cc:1880
+#, c-format
+msgid "Fetch Source %s\n"
+msgstr "下载源代码 %s\n"
+
+#: cmdline/apt-get.cc:1911
+msgid "Failed to fetch some archives."
+msgstr "有一些包文件无法下载。"
+
+#: cmdline/apt-get.cc:1939
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "对于已经被解包到 %s 目录的源代码包就不再解开了\n"
+
+#: cmdline/apt-get.cc:1951
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "运行解包的命令“%s”出错。\n"
+
+#: cmdline/apt-get.cc:1968
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "执行构造软件包命令“%s”失败。\n"
+
+#: cmdline/apt-get.cc:1987
+msgid "Child process failed"
+msgstr "子进程出错"
+
+#: cmdline/apt-get.cc:2003
+msgid "Must specify at least one package to check builddeps for"
+msgstr "要检查生成软件包的构建依赖关系(builddeps)，必须指定至少一个软件包"
+
+#: cmdline/apt-get.cc:2031
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "无法获得 %s 的构建依赖关系(build-dependency)信息"
+
+#: cmdline/apt-get.cc:2051
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr " %s 没有构建依赖关系信息。\n"
+
+#: cmdline/apt-get.cc:2103
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+
+#: cmdline/apt-get.cc:2155
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because no available versions of "
+"package %s can satisfy version requirements"
+msgstr ""
+"由于无法找到符合要求的软件包 %3$s 的可用版本，因此不能满足 %2$s 所要求的 %1"
+"$s 依赖关系"
+
+#: cmdline/apt-get.cc:2190
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新了"
+
+#: cmdline/apt-get.cc:2215
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
+
+#: cmdline/apt-get.cc:2229
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "不能满足软件包 %s 所要求的构建依赖关系。"
+
+#: cmdline/apt-get.cc:2233
+msgid "Failed to process build dependencies"
+msgstr "无法处理构建依赖关系"
+
+#: cmdline/apt-get.cc:2265
+msgid "Supported Modules:"
+msgstr "被支持模块："
+
+#: cmdline/apt-get.cc:2306
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a simple command line interface for downloading and\n"
+"installing packages. The most frequently used commands are update\n"
+"and install.\n"
+"\n"
+"Commands:\n"
+"   update - Retrieve new lists of packages\n"
+"   upgrade - Perform an upgrade\n"
+"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
+"   remove - Remove packages\n"
+"   source - Download source archives\n"
+"   build-dep - Configure build-dependencies for source packages\n"
+"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
+"   dselect-upgrade - Follow dselect selections\n"
+"   clean - Erase downloaded archive files\n"
+"   autoclean - Erase old downloaded archive files\n"
+"   check - Verify that there are no broken dependencies\n"
+"\n"
+"Options:\n"
+"  -h  This help text.\n"
+"  -q  Loggable output - no progress indicator\n"
+"  -qq No output except for errors\n"
+"  -d  Download only - do NOT install or unpack archives\n"
+"  -s  No-act. Perform ordering simulation\n"
+"  -y  Assume Yes to all queries and do not prompt\n"
+"  -f  Attempt to continue if the integrity check fails\n"
+"  -m  Attempt to continue if archives are unlocatable\n"
+"  -u  Show a list of upgraded packages as well\n"
+"  -b  Build the source package after fetching it\n"
+"  -V  Show verbose version numbers\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
+"pages for more information and options.\n"
+"                       This APT has Super Cow Powers.\n"
+msgstr ""
+"用法： apt-get [选项] 命令\n"
+"       apt-get [选项] install|remove 包甲 [包乙 ...]\n"
+"       apt-get [选项] source 包甲 [包乙 ...]\n"
+"\n"
+"apt-get 提供了一个用于下载和安装软件包的简易命令行界面。\n"
+"最常用命令是 update 和 install。\n"
+"\n"
+"命令：\n"
+"   update - 下载更新软件包列表信息\n"
+"   upgrade - 进行一次升级\n"
+"   install - 安装新的软件包(注：包名是 libc6 而非 libc6.deb)\n"
+"   remove - 卸载软件包\n"
+"   source - 下载源码包文件\n"
+"   build-dep - 为源码包配置所需的构建依赖关系\n"
+"   dist-upgrade - 发布版升级，见 apt-get(8)   dselect-upgrade - 根据 dselect "
+"的选择来进行升级\n"
+"   clean - 删除所有已下载的包文件\n"
+"   auto-clean - 删除老版本的已下载的包文件\n"
+"   check - 核对以确认系统的依赖关系的完整性\n"
+"选项：\n"
+"  -h  本帮助文档。\n"
+"  -q  让输出可作为日志 - 不显示进度\n"
+"  -qq 除了错误外，什么都不输出\n"
+"  -d  仅仅下载 - 【不】安装或解开包文件\n"
+"  -s  不作实际操作。只是依次模拟执行命令\n"
+"  -y  对所有询问都作肯定的回答，同时不作任何提示\n"
+"  -f  当没有通过完整性测试时，程序仍试图继续执行\n"
+"  -m  当有包文件无法找到时，程序仍试图继续执行\n"
+"  -u  显示已升级的软件包列表\n"
+"  -b  在下载完源码包后，编译生成相应的软件包\n"
+"  -V  显示详尽的版本号\n"
+"  -c=? 读取指定配置文件\n"
+"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
+"请查阅 apt-get(8)、sources.list(5) 和 apt.conf(5)的参考手册\n"
+"以猎取更多信息和选项。\n"
+"                       本 APT 有着超级牛力。\n"
+
+#: cmdline/acqprogress.cc:55
+msgid "Hit "
+msgstr "命中 "
+
+#: cmdline/acqprogress.cc:79
+msgid "Get:"
+msgstr "获取："
+
+#: cmdline/acqprogress.cc:110
+msgid "Ign "
+msgstr "忽略 "
+
+#: cmdline/acqprogress.cc:114
+msgid "Err "
+msgstr "错误 "
+
+#: cmdline/acqprogress.cc:135
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "下载 %sB，耗时 %s (%sB/s)\n"
+
+#: cmdline/acqprogress.cc:225
+#, c-format
+msgid " [Working]"
+msgstr " [执行中]"
+
+#: cmdline/acqprogress.cc:271
+#, c-format
+msgid ""
+"Media Change: Please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
+msgstr ""
+"更换介质：请把标有\n"
+"“%s”\n"
+"的碟片插入驱动器“%s”再按回车键\n"
+
+#: cmdline/apt-sortpkgs.cc:86
+msgid "Unknown package record!"
+msgstr "未知的软件包记录！"
+
+#: cmdline/apt-sortpkgs.cc:150
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
+"to indicate what kind of file it is.\n"
+"\n"
+"Options:\n"
+"  -h   This help text\n"
+"  -s   Use source file sorting\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
+"用法： apt-sortpkgs [选项] 文件甲 [文件乙 ...]\n"
+"\n"
+"apt-sortpkgs 是对软件包索引文件内容进行排序的简单工具。-s 选项\n"
+"是用来指出后面参数所示文件是哪种文件。\n"
+"\n"
+"选项：\n"
+"  -h   本帮助文档\n"
+"  -s   根据源文件排序\n"
+"  -c=? 读取指定配置文件\n"
+"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
+
+#: dselect/install:32
+msgid "Bad default setting!"
+msgstr "错误的默认设置！"
+
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
+#: dselect/install:104 dselect/update:45
+msgid "Press enter to continue."
+msgstr "按回车键继续。"
+
+#: dselect/install:100
+msgid "Some errors occurred while unpacking. I'm going to configure the"
+msgstr "在解包时发生了一些错误。我正准备配置"
+
+#: dselect/install:101
+msgid "packages that were installed. This may result in duplicate errors"
+msgstr "已经安装的软件包。这个操作可能会导致出现重复的错误"
+
+#: dselect/install:102
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr "或一些由于依赖关系不能满足所产生的错误。这个问题不大，只有"
+
+#: dselect/install:103
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr "这个提示之前的错误消息才值得您注意。请更正它们，然后再次执行 [I]nstall"
+
+#: dselect/update:30
+msgid "Merging Available information"
+msgstr "正在合并现有信息"
 
 #: apt-inst/contrib/extracttar.cc:116
 msgid "Failed to create pipes"
@@ -332,17 +1389,6 @@ msgstr "该软件包正尝试写入转移对象(diversion target) %s/%s"
 #: apt-inst/extract.cc:157 apt-inst/extract.cc:300
 msgid "The diversion path is too long"
 msgstr "该转移路径(diversion path)过长"
-
-#: apt-inst/extract.cc:181 apt-inst/extract.cc:193 apt-inst/extract.cc:210
-#: apt-inst/deb/dpkgdb.cc:121
-#, c-format
-msgid "Failed to stat %s"
-msgstr "无法读取 %s 的状态"
-
-#: apt-inst/extract.cc:188
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "无法将 %s 重命名为 %s"
 
 #: apt-inst/extract.cc:243
 #, c-format
@@ -620,10 +1666,6 @@ msgstr "不能创建套接字"
 #: methods/ftp.cc:698
 msgid "Could not connect data socket, connection timed out"
 msgstr "无法连接上数据套接字，连接超时"
-
-#: methods/ftp.cc:702 methods/connect.cc:99
-msgid "Failed"
-msgstr "失败"
 
 #: methods/ftp.cc:704
 msgid "Could not connect passive socket."
@@ -1265,10 +2307,6 @@ msgstr "无法读取 %s 的状态。"
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr "您必须在您的 sources.list 输入一些“软件包源”的 URL"
 
-#: apt-pkg/cachefile.cc:67
-msgid "The list of sources could not be read."
-msgstr "无法读取安装源列表。"
-
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
 msgstr "无法解析或打开软件包的列表或是状态文件。"
@@ -1365,11 +2403,6 @@ msgstr "无法获取源软件包列表 %s 的状态"
 msgid "Collecting File Provides"
 msgstr "正在收集文件所提供的软件包"
 
-#: apt-pkg/pkgcachegen.cc:699
-#, c-format
-msgid "Unable to write to %s"
-msgstr "无法写入 %s"
-
 #: apt-pkg/pkgcachegen.cc:774 apt-pkg/pkgcachegen.cc:781
 msgid "IO Error saving source cache"
 msgstr "无法写入来源缓存文件"
@@ -1410,10 +2443,6 @@ msgstr "大小不符"
 msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
-#: methods/rsh.cc:91
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "无法为子进程创建 IPC 管道"
-
 #: methods/rsh.cc:264
 msgid "File Not Found"
 msgstr "无法找到该文件"
@@ -1421,783 +2450,3 @@ msgstr "无法找到该文件"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "连接被永久关闭"
-
-#~ msgid "Arguments not in pairs"
-#~ msgstr "参数没有成对"
-
-#~ msgid ""
-#~ "Usage: apt-config [options] command\n"
-#~ "\n"
-#~ "apt-config is a simple tool to read the APT config file\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   shell - Shell mode\n"
-#~ "   dump - Show the configuration\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text.\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "用法：apt-config [选项] 命令\n"
-#~ "\n"
-#~ "apt-config 是一个用于读取 APT 配置文件的简单工具\n"
-#~ "\n"
-#~ "命令：\n"
-#~ "   shell - Shell 模式\n"
-#~ "   dump - 显示配置文件\n"
-#~ "\n"
-#~ "选项：\n"
-#~ "  -h  本帮助文本。\n"
-#~ "  -c=? 读取指定的配置文件\n"
-#~ "  -o=? 设置任意指定的配置选项，例如：-o dir::cache=/tmp\n"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s 不是一个有效的 DEB 软件包。"
-
-#~ msgid ""
-#~ "Usage: apt-extracttemplates file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-extracttemplates is a tool to extract config and template info\n"
-#~ "from debian packages\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -t   Set the temp dir\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "用法： apt-extracttemplates 文件甲 [文件乙 ...]\n"
-#~ "\n"
-#~ "apt-extracttemplates 是用来从 debian 软件包中解压出配置文件和模板\n"
-#~ "信息的工具\n"
-#~ "\n"
-#~ "选项：\n"
-#~ "  -h   本帮助文本\n"
-#~ "  -t   设置temp目录\n"
-#~ "  -c=? 读指定的配置文件\n"
-#~ "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
-
-#~ msgid "Cannot get debconf version. Is debconf installed?"
-#~ msgstr "无法获得 debconf 的版本。您安装了 debconf 吗?"
-
-#~ msgid "Package extension list is too long"
-#~ msgstr "软件包的扩展列表超长"
-
-#~ msgid "Error Processing directory %s"
-#~ msgstr "处理目录 %s 时出错"
-
-#~ msgid "Source extension list is too long"
-#~ msgstr "源扩展列表超长"
-
-#~ msgid "Error writing header to contents file"
-#~ msgstr "将 header 写到 contents 文件时出错"
-
-#~ msgid "Error Processing Contents %s"
-#~ msgstr "处理 Contents %s 时出错"
-
-#~ msgid ""
-#~ "Usage: apt-ftparchive [options] command\n"
-#~ "Commands: packages binarypath [overridefile [pathprefix]]\n"
-#~ "          sources srcpath [overridefile [pathprefix]]\n"
-#~ "          contents path\n"
-#~ "          release path\n"
-#~ "          generate config [groups]\n"
-#~ "          clean config\n"
-#~ "\n"
-#~ "apt-ftparchive generates index files for Debian archives. It supports\n"
-#~ "many styles of generation from fully automated to functional "
-#~ "replacements\n"
-#~ "for dpkg-scanpackages and dpkg-scansources\n"
-#~ "\n"
-#~ "apt-ftparchive generates Package files from a tree of .debs. The\n"
-#~ "Package file contains the contents of all the control fields from\n"
-#~ "each package as well as the MD5 hash and filesize. An override file\n"
-#~ "is supported to force the value of Priority and Section.\n"
-#~ "\n"
-#~ "Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-#~ "The --source-override option can be used to specify a src override file\n"
-#~ "\n"
-#~ "The 'packages' and 'sources' command should be run in the root of the\n"
-#~ "tree. BinaryPath should point to the base of the recursive search and \n"
-#~ "override file should contain the override flags. Pathprefix is\n"
-#~ "appended to the filename fields if present. Example usage from the \n"
-#~ "Debian archive:\n"
-#~ "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-#~ "               dists/potato/main/binary-i386/Packages\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h    This help text\n"
-#~ "  --md5 Control MD5 generation\n"
-#~ "  -s=?  Source override file\n"
-#~ "  -q    Quiet\n"
-#~ "  -d=?  Select the optional caching database\n"
-#~ "  --no-delink Enable delinking debug mode\n"
-#~ "  --contents  Control contents file generation\n"
-#~ "  -c=?  Read this configuration file\n"
-#~ "  -o=?  Set an arbitary configuration option"
-#~ msgstr ""
-#~ "用法： apt-ftparchive [选项] 命令\n"
-#~ "命令： packages 二进制软件包搜索路径 [overridefile [路径前缀]]\n"
-#~ "       sources 源代码包搜索路径 [overridefile [路径前缀]]\n"
-#~ "       contents 搜索路径\n"
-#~ "       release 搜索路径\n"
-#~ "       generate 配置文件 [groups]\n"
-#~ "       clean 配置文件\n"
-#~ "\n"
-#~ "apt-ftparchive 被用来为 Debian 软件包生成索引文件。它能支持\n"
-#~ "多种生成索引的方式，从全自动的生成到在功能上对 dpkg-scanpackages \n"
-#~ "和 dpkg-scansources 的替代，都能游刃有余\n"
-#~ "\n"
-#~ "apt-ftparchive 能依据一个由 .deb 文件构成的文件树生成 Package 文件。\n"
-#~ "Package 文件里不仅注有每个软件包的 MD5 校验码和文件大小，\n"
-#~ "还有软件包的所有控制字段的内容。该软件同时支持覆盖(override)文件，\n"
-#~ "通过它可以强制指定软件包的优先级及其所属的软件类别。\n"
-#~ "\n"
-#~ "与上面类似，apt-ftparchive 也能由 .dsc 的文件树生成 Source 文件。\n"
-#~ "可以通过使用 --source-override 选项来指定一个覆盖(override)文件\n"
-#~ "\n"
-#~ "使用“packages”和“source”命令时，必须在文件树的根部执行本程序。\n"
-#~ "\n"
-#~ "二进制包的搜索路径一定要是递归搜索的底层，而且覆盖(override)文件里\n"
-#~ "应该注明 override 的标志。若指定了路径前缀，那么它会被加到文件名前面。\n"
-#~ "下面有个来自 Debian 文档的例子：\n"
-#~ "   apt-ftparchive packages dists/potato/main/binary-i386 > \\\n"
-#~ "               dists/potato/main/binary-i386/Packages\n"
-#~ "\n"
-#~ "选项:\n"
-#~ "  -h    本帮助文档\n"
-#~ "  --md5 使之生成 MD5 校验和\n"
-#~ "  -s=?  源代码包覆盖(override)文件\n"
-#~ "  -q    输出精简信息  -d=?  指定可选的缓存数据库\n"
-#~ "  --no-delink 开启delink的调试模式\n"
-#~ "  --contents  使之生成控制内容文件\n"
-#~ "  -c=?  读取指定配置文件\n"
-#~ "  -o=?  设置任意指定的配置选项"
-
-#~ msgid "No selections matched"
-#~ msgstr "没有任何选定项是匹配的"
-
-#~ msgid "Some files are missing in the package file group `%s'"
-#~ msgstr "软件包文件组“%s”中缺少一些文件"
-
-#~ msgid "DB was corrupted, file renamed to %s.old"
-#~ msgstr "缓存数据库被损坏了，该数据库文件的文件名已改成 %s.old"
-
-#~ msgid "Unable to open DB2 file %s"
-#~ msgstr "无法打开 DB2 文件 %s"
-
-#~ msgid "File date has changed %s"
-#~ msgstr "文件 %s 的时间已被改动"
-
-#~ msgid "Archive has no control record"
-#~ msgstr "存档没有包含控制字段"
-
-#~ msgid "Unable to get a cursor"
-#~ msgstr "无法获得游标(cursor)"
-
-#~ msgid "W: Unable to read directory %s\n"
-#~ msgstr "警告：无法读取目录 %s\n"
-
-#~ msgid "W: Unable to stat %s\n"
-#~ msgstr "警告：无法对 %s 进行统计\n"
-
-#~ msgid "E: "
-#~ msgstr "错误："
-
-#~ msgid "W: "
-#~ msgstr "警告："
-
-#~ msgid "E: Errors apply to file "
-#~ msgstr "错误：处理文件时出错 "
-
-#~ msgid "Failed to resolve %s"
-#~ msgstr "无法解析路径 %s"
-
-#~ msgid "Tree walking failed"
-#~ msgstr "无法遍历目录树"
-
-#~ msgid "Failed to open %s"
-#~ msgstr "无法打开 %s"
-
-#~ msgid " DeLink %s [%s]\n"
-#~ msgstr " DeLink %s [%s]\n"
-
-#~ msgid "Failed to readlink %s"
-#~ msgstr "无法读取符号链接 %s"
-
-#~ msgid "Failed to unlink %s"
-#~ msgstr "无法 unlink %s"
-
-#~ msgid "*** Failed to link %s to %s"
-#~ msgstr "*** 无法将 %s 链接到 %s"
-
-#~ msgid " DeLink limit of %sB hit.\n"
-#~ msgstr " 达到了 DeLink 的上限 %sB。\n"
-
-#~ msgid "Archive had no package field"
-#~ msgstr "存档没有包含软件包(package)字段"
-
-#~ msgid "  %s has no override entry\n"
-#~ msgstr "  %s 中没有覆盖(override)项\n"
-
-#~ msgid "  %s maintainer is %s not %s\n"
-#~ msgstr "  %s 的维护者 %s 并非 %s\n"
-
-#~ msgid "realloc - Failed to allocate memory"
-#~ msgstr "realloc - 无法再分配内存"
-
-#~ msgid "Unable to open %s"
-#~ msgstr "无法打开 %s"
-
-#~ msgid "Malformed override %s line %lu #1"
-#~ msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #1"
-
-#~ msgid "Malformed override %s line %lu #2"
-#~ msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #2"
-
-#~ msgid "Malformed override %s line %lu #3"
-#~ msgstr "覆盖(override)文件 %s 第 %lu 行的格式有误 #3"
-
-#~ msgid "Failed to read the override file %s"
-#~ msgstr "无法读取覆盖(override)文件 %s"
-
-#~ msgid "Unknown Compresison Algorithm '%s'"
-#~ msgstr "未知的压缩算法“%s”"
-
-#~ msgid "Compressed output %s needs a compression set"
-#~ msgstr "压缩后的输出文件 %s 要求有一个压缩文件集合"
-
-#~ msgid "Failed to create FILE*"
-#~ msgstr "无法创建 FILE*"
-
-#~ msgid "Failed to fork"
-#~ msgstr "无法 fork"
-
-#~ msgid "Compress Child"
-#~ msgstr "压缩子进程"
-
-#~ msgid "Internal Error, Failed to create %s"
-#~ msgstr "内部错误，无法建立 %s"
-
-#~ msgid "Failed to create subprocess IPC"
-#~ msgstr "无法建立子进程的 IPC 管道"
-
-#~ msgid "Failed to exec compressor "
-#~ msgstr "无法执行压缩程序"
-
-#~ msgid "decompressor"
-#~ msgstr "解压程序"
-
-#~ msgid "IO to subprocess/file failed"
-#~ msgstr "无法对子进程或文件进行读写"
-
-#~ msgid "Failed to read while computing MD5"
-#~ msgstr "在计算 MD5 校验和时，无法读取数据"
-
-#~ msgid "Problem unlinking %s"
-#~ msgstr "在 unlink %s 时出错"
-
-#~ msgid "Y"
-#~ msgstr "Y"
-
-#~ msgid "Regex compilation error - %s"
-#~ msgstr "编译正则表达式时出错 - %s"
-
-#~ msgid "The following packages have unmet dependencies:"
-#~ msgstr "下列的软件包有不能满足的依赖关系："
-
-#~ msgid "but %s is installed"
-#~ msgstr "但是，%s 已经安装了"
-
-#~ msgid "but %s is to be installed"
-#~ msgstr "但是，%s 正要被安装"
-
-#~ msgid "but it is not installable"
-#~ msgstr "但是，它无法被安装"
-
-#~ msgid "but it is a virtual package"
-#~ msgstr "但是，它只是个虚拟软件包"
-
-#~ msgid "but it is not installed"
-#~ msgstr "但是，它还没有被安装"
-
-#~ msgid "but it is not going to be installed"
-#~ msgstr "但是，它将不会被安装"
-
-#~ msgid " or"
-#~ msgstr " 或"
-
-#~ msgid "The following NEW packages will be installed:"
-#~ msgstr "下列【新】软件包将被安装："
-
-#~ msgid "The following packages will be REMOVED:"
-#~ msgstr "下列软件包将被【卸载】："
-
-#~ msgid "The following packages have been kept back:"
-#~ msgstr "下列的软件包的版本将保持持不变："
-
-#~ msgid "The following packages will be upgraded:"
-#~ msgstr "下列的软件包将被升级："
-
-#~ msgid "The following packages will be DOWNGRADED:"
-#~ msgstr "下列软件包将被【降级】："
-
-#~ msgid "The following held packages will be changed:"
-#~ msgstr "下列被要求保持版本不变的软件包将被改变："
-
-#~ msgid "%s (due to %s) "
-#~ msgstr "%s (是由于 %s) "
-
-#~ msgid ""
-#~ "WARNING: The following essential packages will be removed\n"
-#~ "This should NOT be done unless you know exactly what you are doing!"
-#~ msgstr ""
-#~ "注意：下列的重要软件包将被卸载 \n"
-#~ "请勿尝试，除非您确实清楚您正在执行的操作！"
-
-#~ msgid "%lu upgraded, %lu newly installed, "
-#~ msgstr "共升级了 %lu 个软件包，新安装了 %lu 个软件包，"
-
-#~ msgid "%lu reinstalled, "
-#~ msgstr "共重新安装了 %lu 个软件包，"
-
-#~ msgid "%lu downgraded, "
-#~ msgstr "降级了 %lu 个软件包，"
-
-#~ msgid "%lu to remove and %lu not upgraded.\n"
-#~ msgstr "要卸载 %lu 个软件包，有 %lu 个软件未被升级。\n"
-
-#~ msgid "%lu not fully installed or removed.\n"
-#~ msgstr "有 %lu 个软件包没有被完全安装或卸载。\n"
-
-#~ msgid "Correcting dependencies..."
-#~ msgstr "正在更正依赖关系..."
-
-#~ msgid " failed."
-#~ msgstr " 失败。"
-
-#~ msgid "Unable to correct dependencies"
-#~ msgstr "无法更正依赖关系"
-
-#~ msgid "Unable to minimize the upgrade set"
-#~ msgstr "无法使升级的软件包集最小化"
-
-#~ msgid " Done"
-#~ msgstr " 完成"
-
-#~ msgid "You might want to run `apt-get -f install' to correct these."
-#~ msgstr "您也许需要运行“apt-get -f install”来纠正上面的错误。"
-
-#~ msgid "Unmet dependencies. Try using -f."
-#~ msgstr "不能满足依赖关系。不妨试一下 -f 选项。"
-
-#~ msgid "Packages need to be removed but Remove is disabled."
-#~ msgstr "有软件包需要被卸载，但是卸载动作被程序设置所禁止。"
-
-#~ msgid "Unable to lock the download directory"
-#~ msgstr "无法对下载目录加锁"
-
-#~ msgid "Need to get %sB/%sB of archives.\n"
-#~ msgstr "需要下载 %sB/%sB 的软件包。\n"
-
-#~ msgid "Need to get %sB of archives.\n"
-#~ msgstr "需要下载 %sB 的软件包。\n"
-
-#~ msgid "After unpacking %sB of additional disk space will be used.\n"
-#~ msgstr "解压缩后会消耗掉 %sB 的额外空间。\n"
-
-#~ msgid "After unpacking %sB disk space will be freed.\n"
-#~ msgstr "解压缩后将会空出 %sB 的空间。\n"
-
-#~ msgid "You don't have enough free space in %s."
-#~ msgstr "您在 %s 中没有足够的空余空间。"
-
-#~ msgid "There are problems and -y was used without --force-yes"
-#~ msgstr "碰到了一些问题，您使用了 -y 选项但是没有用 --force-yes。"
-
-#~ msgid "Trivial Only specified but this is not a trivial operation."
-#~ msgstr "虽然您指定了 Trivial Only，但这不是个日常(trivial)操作。"
-
-#~ msgid ""
-#~ "You are about to do something potentially harmful\n"
-#~ "To continue type in the phrase '%s'\n"
-#~ " ?] "
-#~ msgstr ""
-#~ "您的操作会导致潜在的危害\n"
-#~ "若还想继续的话，就输入下面的短句“%s”\n"
-#~ " ?] "
-
-#~ msgid "Abort."
-#~ msgstr "中止执行。"
-
-#~ msgid "Do you want to continue? [Y/n] "
-#~ msgstr "您希望继续执行吗？[Y/n]"
-
-#~ msgid "Failed to fetch %s  %s\n"
-#~ msgstr "无法下载 %s  %s\n"
-
-#~ msgid "Some files failed to download"
-#~ msgstr "有一些文件下载失败"
-
-#~ msgid "Download complete and in download only mode"
-#~ msgstr "下载完毕，目前是“仅下载”模式"
-
-#~ msgid ""
-#~ "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-#~ "missing?"
-#~ msgstr ""
-#~ "有几个软件包无法下载，您可以运行 apt-get update 或者加上 --fix-missing 的"
-#~ "选项再试试？"
-
-#~ msgid "--fix-missing and media swapping is not currently supported"
-#~ msgstr "目前还不支持 --fix-missing 和介质交换(media swapping)"
-
-#~ msgid "Unable to correct missing packages."
-#~ msgstr "无法更正缺少的软件包。"
-
-#~ msgid "Aborting Install."
-#~ msgstr "放弃安装。"
-
-#~ msgid "Note, selecting %s instead of %s\n"
-#~ msgstr "注意，我选了 %s 而非 %s\n"
-
-#~ msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-#~ msgstr "忽略了 %s，它已经被安装而且没有指定要升级。\n"
-
-#~ msgid "Package %s is not installed, so not removed\n"
-#~ msgstr "软件包 %s 还未安装，因而不会被卸载\n"
-
-#~ msgid "Package %s is a virtual package provided by:\n"
-#~ msgstr "软件包 %s 是一个由下面的软件包提供的虚拟软件包：\n"
-
-#~ msgid " [Installed]"
-#~ msgstr " [已安装]"
-
-#~ msgid "You should explicitly select one to install."
-#~ msgstr "请您明确地选择一个来进行安装。"
-
-#~ msgid ""
-#~ "Package %s is not available, but is referred to by another package.\n"
-#~ "This may mean that the package is missing, has been obsoleted, or\n"
-#~ "is only available from another source\n"
-#~ msgstr ""
-#~ "现在没有可用的软件包 %s，但是它被其它的软件包引用了。\n"
-#~ "这可能意味着这个缺失的软件包可能已被废弃，\n"
-#~ "或者只能在其他发布源中找到\n"
-
-#~ msgid "However the following packages replace it:"
-#~ msgstr "可是下列的软件包取代了它："
-
-#~ msgid "Package %s has no installation candidate"
-#~ msgstr "软件包 %s 还没有可供安装的候选者"
-
-#~ msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-#~ msgstr "不能重新安装 %s，因为无法下载它。\n"
-
-#~ msgid "%s is already the newest version.\n"
-#~ msgstr "%s 已经是最新的版本了。\n"
-
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "未找到“%2$s”的“%1$s”发布版本"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "未找到“%2$s”的“%1$s”版本"
-
-#~ msgid "Selected version %s (%s) for %s\n"
-#~ msgstr "选定了版本为 %s (%s) 的 %s\n"
-
-#~ msgid "The update command takes no arguments"
-#~ msgstr " update 命令是不需任何参数的"
-
-#~ msgid "Unable to lock the list directory"
-#~ msgstr "无法对状态列表目录加锁"
-
-#~ msgid ""
-#~ "Some index files failed to download, they have been ignored, or old ones "
-#~ "used instead."
-#~ msgstr ""
-#~ "有一些索引文件不能下载，它们可能被忽略了，也可能转而使用了旧的索引文件。"
-
-#~ msgid "Internal Error, AllUpgrade broke stuff"
-#~ msgstr "内部错误，AllUpgrade 造成某些故障"
-
-#~ msgid "Couldn't find package %s"
-#~ msgstr "无法找到软件包 %s"
-
-#~ msgid "Note, selecting %s for regex '%s'\n"
-#~ msgstr "注意，根据正则表达式“%2$s”选中了 %1$s\n"
-
-#~ msgid "You might want to run `apt-get -f install' to correct these:"
-#~ msgstr "您可能需要运行“apt-get -f install”来纠正下列错误："
-
-#~ msgid ""
-#~ "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify "
-#~ "a solution)."
-#~ msgstr ""
-#~ "有未能满足的依赖关系。请尝试不指明软件包的名字来运行“apt-get -f "
-#~ "install”(也可以指定一个解决办法)。"
-
-#~ msgid ""
-#~ "Some packages could not be installed. This may mean that you have\n"
-#~ "requested an impossible situation or if you are using the unstable\n"
-#~ "distribution that some required packages have not yet been created\n"
-#~ "or been moved out of Incoming."
-#~ msgstr ""
-#~ "有一些软件包无法被安装。如果您用的是不稳定(unstable)发行版，这也许是\n"
-#~ "因为系统无法达到您要求的状态造成的。该版本中可能会有一些您需要的软件\n"
-#~ "包尚未被创建或是它们还在新到(incoming)目录中。"
-
-#~ msgid ""
-#~ "Since you only requested a single operation it is extremely likely that\n"
-#~ "the package is simply not installable and a bug report against\n"
-#~ "that package should be filed."
-#~ msgstr ""
-#~ "您仅要求对单一软件包进行操作，这极有可能是因为该软件包安装不上，同时，\n"
-#~ "您最好提交一个针对这个软件包的故障报告。"
-
-#~ msgid "The following information may help to resolve the situation:"
-#~ msgstr "下列的信息可能会对问题的解决有所帮助："
-
-#~ msgid "Broken packages"
-#~ msgstr "受损安装包"
-
-#~ msgid "The following extra packages will be installed:"
-#~ msgstr "将会安装下列的额外的软件包："
-
-#~ msgid "Suggested packages:"
-#~ msgstr "建议安装的软件包："
-
-#~ msgid "Recommended packages:"
-#~ msgstr "推荐安装的软件包："
-
-#~ msgid "Calculating Upgrade... "
-#~ msgstr "正在筹划升级... "
-
-#~ msgid "Done"
-#~ msgstr "完成"
-
-#~ msgid "Must specify at least one package to fetch source for"
-#~ msgstr "要下载源代码，必须指定至少一个对应的软件包"
-
-#~ msgid "Unable to find a source package for %s"
-#~ msgstr "无法找到与 %s 对应的源代码包"
-
-#~ msgid "You don't have enough free space in %s"
-#~ msgstr "您在 %s 上没有足够的空余空间"
-
-#~ msgid "Need to get %sB/%sB of source archives.\n"
-#~ msgstr "需要下载 %sB/%sB 的源代码包。\n"
-
-#~ msgid "Need to get %sB of source archives.\n"
-#~ msgstr "需要下载 %sB 的源代码包。\n"
-
-#~ msgid "Fetch Source %s\n"
-#~ msgstr "下载源代码 %s\n"
-
-#~ msgid "Failed to fetch some archives."
-#~ msgstr "有一些包文件无法下载。"
-
-#~ msgid "Skipping unpack of already unpacked source in %s\n"
-#~ msgstr "对于已经被解包到 %s 目录的源代码包就不再解开了\n"
-
-#~ msgid "Unpack command '%s' failed.\n"
-#~ msgstr "运行解包的命令“%s”出错。\n"
-
-#~ msgid "Build command '%s' failed.\n"
-#~ msgstr "执行构造软件包命令“%s”失败。\n"
-
-#~ msgid "Child process failed"
-#~ msgstr "子进程出错"
-
-#~ msgid "Must specify at least one package to check builddeps for"
-#~ msgstr "要检查生成软件包的构建依赖关系(builddeps)，必须指定至少一个软件包"
-
-#~ msgid "Unable to get build-dependency information for %s"
-#~ msgstr "无法获得 %s 的构建依赖关系(build-dependency)信息"
-
-#~ msgid "%s has no build depends.\n"
-#~ msgstr " %s 没有构建依赖关系信息。\n"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
-#~ "found"
-#~ msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because no available versions of "
-#~ "package %s can satisfy version requirements"
-#~ msgstr ""
-#~ "由于无法找到符合要求的软件包 %3$s 的可用版本，因此不能满足 %2$s 所要求的 %"
-#~ "1$s 依赖关系"
-
-#~ msgid ""
-#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-#~ msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新了"
-
-#~ msgid "Failed to satisfy %s dependency for %s: %s"
-#~ msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
-
-#~ msgid "Build-dependencies for %s could not be satisfied."
-#~ msgstr "不能满足软件包 %s 所要求的构建依赖关系。"
-
-#~ msgid "Failed to process build dependencies"
-#~ msgstr "无法处理构建依赖关系"
-
-#~ msgid "Supported Modules:"
-#~ msgstr "被支持模块："
-
-#~ msgid ""
-#~ "Usage: apt-get [options] command\n"
-#~ "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-#~ "       apt-get [options] source pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-get is a simple command line interface for downloading and\n"
-#~ "installing packages. The most frequently used commands are update\n"
-#~ "and install.\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   update - Retrieve new lists of packages\n"
-#~ "   upgrade - Perform an upgrade\n"
-#~ "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-#~ "   remove - Remove packages\n"
-#~ "   source - Download source archives\n"
-#~ "   build-dep - Configure build-dependencies for source packages\n"
-#~ "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-#~ "   dselect-upgrade - Follow dselect selections\n"
-#~ "   clean - Erase downloaded archive files\n"
-#~ "   autoclean - Erase old downloaded archive files\n"
-#~ "   check - Verify that there are no broken dependencies\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -qq No output except for errors\n"
-#~ "  -d  Download only - do NOT install or unpack archives\n"
-#~ "  -s  No-act. Perform ordering simulation\n"
-#~ "  -y  Assume Yes to all queries and do not prompt\n"
-#~ "  -f  Attempt to continue if the integrity check fails\n"
-#~ "  -m  Attempt to continue if archives are unlocatable\n"
-#~ "  -u  Show a list of upgraded packages as well\n"
-#~ "  -b  Build the source package after fetching it\n"
-#~ "  -V  Show verbose version numbers\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-#~ "pages for more information and options.\n"
-#~ "                       This APT has Super Cow Powers.\n"
-#~ msgstr ""
-#~ "用法： apt-get [选项] 命令\n"
-#~ "       apt-get [选项] install|remove 包甲 [包乙 ...]\n"
-#~ "       apt-get [选项] source 包甲 [包乙 ...]\n"
-#~ "\n"
-#~ "apt-get 提供了一个用于下载和安装软件包的简易命令行界面。\n"
-#~ "最常用命令是 update 和 install。\n"
-#~ "\n"
-#~ "命令：\n"
-#~ "   update - 下载更新软件包列表信息\n"
-#~ "   upgrade - 进行一次升级\n"
-#~ "   install - 安装新的软件包(注：包名是 libc6 而非 libc6.deb)\n"
-#~ "   remove - 卸载软件包\n"
-#~ "   source - 下载源码包文件\n"
-#~ "   build-dep - 为源码包配置所需的构建依赖关系\n"
-#~ "   dist-upgrade - 发布版升级，见 apt-get(8)   dselect-upgrade - 根据 "
-#~ "dselect 的选择来进行升级\n"
-#~ "   clean - 删除所有已下载的包文件\n"
-#~ "   auto-clean - 删除老版本的已下载的包文件\n"
-#~ "   check - 核对以确认系统的依赖关系的完整性\n"
-#~ "选项：\n"
-#~ "  -h  本帮助文档。\n"
-#~ "  -q  让输出可作为日志 - 不显示进度\n"
-#~ "  -qq 除了错误外，什么都不输出\n"
-#~ "  -d  仅仅下载 - 【不】安装或解开包文件\n"
-#~ "  -s  不作实际操作。只是依次模拟执行命令\n"
-#~ "  -y  对所有询问都作肯定的回答，同时不作任何提示\n"
-#~ "  -f  当没有通过完整性测试时，程序仍试图继续执行\n"
-#~ "  -m  当有包文件无法找到时，程序仍试图继续执行\n"
-#~ "  -u  显示已升级的软件包列表\n"
-#~ "  -b  在下载完源码包后，编译生成相应的软件包\n"
-#~ "  -V  显示详尽的版本号\n"
-#~ "  -c=? 读取指定配置文件\n"
-#~ "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
-#~ "请查阅 apt-get(8)、sources.list(5) 和 apt.conf(5)的参考手册\n"
-#~ "以猎取更多信息和选项。\n"
-#~ "                       本 APT 有着超级牛力。\n"
-
-#~ msgid "Hit "
-#~ msgstr "命中 "
-
-#~ msgid "Get:"
-#~ msgstr "获取："
-
-#~ msgid "Ign "
-#~ msgstr "忽略 "
-
-#~ msgid "Err "
-#~ msgstr "错误 "
-
-#~ msgid "Fetched %sB in %s (%sB/s)\n"
-#~ msgstr "下载 %sB，耗时 %s (%sB/s)\n"
-
-#~ msgid " [Working]"
-#~ msgstr " [执行中]"
-
-#~ msgid ""
-#~ "Media Change: Please insert the disc labeled\n"
-#~ " '%s'\n"
-#~ "in the drive '%s' and press enter\n"
-#~ msgstr ""
-#~ "更换介质：请把标有\n"
-#~ "“%s”\n"
-#~ "的碟片插入驱动器“%s”再按回车键\n"
-
-#~ msgid "Unknown package record!"
-#~ msgstr "未知的软件包记录！"
-
-#~ msgid ""
-#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
-#~ "used\n"
-#~ "to indicate what kind of file it is.\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -s   Use source file sorting\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "用法： apt-sortpkgs [选项] 文件甲 [文件乙 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs 是对软件包索引文件内容进行排序的简单工具。-s 选项\n"
-#~ "是用来指出后面参数所示文件是哪种文件。\n"
-#~ "\n"
-#~ "选项：\n"
-#~ "  -h   本帮助文档\n"
-#~ "  -s   根据源文件排序\n"
-#~ "  -c=? 读取指定配置文件\n"
-#~ "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
-
-#~ msgid "Bad default setting!"
-#~ msgstr "错误的默认设置！"
-
-#~ msgid "Press enter to continue."
-#~ msgstr "按回车键继续。"
-
-#~ msgid "Some errors occurred while unpacking. I'm going to configure the"
-#~ msgstr "在解包时发生了一些错误。我正准备配置"
-
-#~ msgid "packages that were installed. This may result in duplicate errors"
-#~ msgstr "已经安装的软件包。这个操作可能会导致出现重复的错误"
-
-#~ msgid ""
-#~ "or errors caused by missing dependencies. This is OK, only the errors"
-#~ msgstr "或一些由于依赖关系不能满足所产生的错误。这个问题不大，只有"
-
-#~ msgid ""
-#~ "above this message are important. Please fix them and run [I]nstall again"
-#~ msgstr ""
-#~ "这个提示之前的错误消息才值得您注意。请更正它们，然后再次执行 [I]nstall"
-
-#~ msgid "Merging Available information"
-#~ msgstr "正在合并现有信息"
