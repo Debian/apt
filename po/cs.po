@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-05 19:52+0100\n"
-"PO-Revision-Date: 2005-01-12 10:04+0100\n"
+"PO-Revision-Date: 2005-02-11 16:14+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <provoz@debian.cz>\n"
 "MIME-Version: 1.0\n"
@@ -320,7 +320,6 @@ msgid "Error Processing Contents %s"
 msgstr "Chyba při zpracovávání obsahu %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -385,7 +384,7 @@ msgstr ""
 "BinárníCesta by měla ukazovat na začátek rekurzivního hledání a soubor \n"
 "override by měl obsahovat příznaky pro přepis. PrefixCesty, pokud je\n"
 "přítomen, je přidán do polí Filename.\n"
-"Reálný příklad na archívu Debianu:\n"
+"Reálný příklad na archivu Debianu:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
@@ -747,17 +746,16 @@ msgid "Unmet dependencies. Try using -f."
 msgstr "Nesplněné závislosti. Zkuste použít -f."
 
 #: cmdline/apt-get.cc:687
-#, fuzzy
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "Následující balíky budou aktualizovány:"
+msgstr "VAROVÁNÍ: Následující balíky nemohou být autentizovány!"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification? [y/N] "
-msgstr ""
+msgstr "Instalovat tyto balíky bez ověření? [y/N] "
 
 #: cmdline/apt-get.cc:700
 msgid "Some packages could not be authenticated"
-msgstr ""
+msgstr "Některé balíky nemohly být autentizovány"
 
 #: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
 msgid "There are problems and -y was used without --force-yes"
@@ -1559,9 +1557,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Toto není platný DEB archív, chybí část '%s'"
 
 #: apt-inst/deb/debfile.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Toto není platný DEB archív, chybí část '%s'"
+msgstr "Toto není platný DEB archív, neobsahuje část '%s' ani '%s'"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -2479,9 +2477,9 @@ msgid "Size mismatch"
 msgstr "Velikosti nesouhlasí"
 
 #: apt-pkg/vendorlist.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "Blok výrobce %s je neplatný"
+msgstr "Blok výrobce %s neobsahuje otisk klíče"
 
 #: apt-pkg/cdrom.cc:487
 #, c-format
@@ -2489,47 +2487,48 @@ msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
 msgstr ""
+"Používám přípojný bod %s\n"
+"Připojuji CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:496 apt-pkg/cdrom.cc:578
 msgid "Identifying.. "
-msgstr ""
+msgstr "Rozpoznávám... "
 
 #: apt-pkg/cdrom.cc:521
 #, c-format
 msgid "Stored Label: %s \n"
-msgstr ""
+msgstr "Uložený název: %s \n"
 
 #: apt-pkg/cdrom.cc:541
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr ""
+msgstr "Používám přípojný bod %s\n"
 
 #: apt-pkg/cdrom.cc:559
 msgid "Unmounting CD-ROM\n"
-msgstr ""
+msgstr "Odpojuji CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:563
-#, fuzzy
 msgid "Waiting for disc...\n"
-msgstr "Čekám na hlavičky"
+msgstr "Čekám na disk...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:571
 msgid "Mounting CD-ROM...\n"
-msgstr ""
+msgstr "Připojuji CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:589
 msgid "Scanning Disc for index files..\n"
-msgstr ""
+msgstr "Hledám na disku indexové soubory...\n"
 
 #: apt-pkg/cdrom.cc:627
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
+msgstr "Nalezl jsem indexy balíků (%i), indexy zdrojů (%i) a podpisy (%i)\n"
 
 #: apt-pkg/cdrom.cc:684
 msgid "That is not a valid name, try again.\n"
-msgstr ""
+msgstr "Nejedná se o platné jméno, zkuste to znovu.\n"
 
 #: apt-pkg/cdrom.cc:700
 #, c-format
@@ -2537,44 +2536,42 @@ msgid ""
 "This Disc is called: \n"
 "'%s'\n"
 msgstr ""
+"Tento disk se nazývá: \n"
+"'%s'\n"
 
 #: apt-pkg/cdrom.cc:704
-#, fuzzy
 msgid "Copying package lists..."
-msgstr "Čtu seznamy balíků"
+msgstr "Kopíruji seznamy balíků..."
 
 #: apt-pkg/cdrom.cc:728
-#, fuzzy
 msgid "Writing new source list\n"
-msgstr "Řádek %u v seznamu zdrojů %s je příliš dlouhý."
+msgstr "Zapisuji nový seznam balíků\n"
 
 #: apt-pkg/cdrom.cc:737
 msgid "Source List entries for this Disc are:\n"
-msgstr ""
+msgstr "Seznamy zdrojů na tomto disku jsou:\n"
 
 #: apt-pkg/cdrom.cc:771
 msgid "Unmounting CD-ROM..."
-msgstr ""
+msgstr "Odpojuji CD-ROM..."
 
 #: apt-pkg/indexcopy.cc:261
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr ""
+msgstr "Zapsal jsem %i záznamů.\n"
 
 #: apt-pkg/indexcopy.cc:263
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr ""
+msgstr "Zapsal jsem %i záznamů s chybějícími soubory (%i).\n"
 
 #: apt-pkg/indexcopy.cc:266
 #, c-format
 msgid "Wrote %i records with %i mismachted files\n"
-msgstr ""
+msgstr "Zapsal jsem %i záznamů s nesouhlasícími soubory (%i).\n"
 
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismachted files\n"
 msgstr ""
-
-#~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
-#~ msgstr "Neznámé ID výrobce '%s' na řádce %u v seznamu zdrojů %s"
+"Zapsal jsem %i záznamů s chybějícími (%i) a nesouhlasícími (%i) soubory.\n"
