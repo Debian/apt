@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.7 2001/02/20 07:03:18 jgg Exp $
+// $Id: connect.cc,v 1.8 2002/02/28 03:51:55 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -159,6 +159,9 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	       return _error->Error("Could not resolve '%s'",Host.c_str());
 	    }
 	    
+	    if (Res == EAI_AGAIN)
+	       return _error->Error("Temporary failure resolving '%s'",
+				    Host.c_str());
 	    return _error->Error("Something wicked happened resolving '%s:%s' (%i)",
 				 Host.c_str(),ServStr,Res);
 	 }
