@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.154 2004/01/26 18:14:36 mdz Exp $
+// $Id: apt-get.cc,v 1.155 2004/02/26 19:17:55 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -673,7 +673,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
 /* This displays the informative messages describing what is going to 
    happen and then calls the download routines */
 bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
-		     bool Saftey = true)
+		     bool Safety = true)
 {
    if (_config->FindB("APT::Get::Purge",false) == true)
    {
@@ -811,7 +811,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 return _error->Error(_("There are problems and -y was used without --force-yes"));
    }         
 
-   if (Essential == true && Saftey == true)
+   if (Essential == true && Safety == true)
    {
       if (_config->FindB("APT::Get::Trivial-Only",false) == true)
 	 return _error->Error(_("Trivial Only specified but this is not a trivial operation."));
