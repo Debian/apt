@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.17 1998/11/23 07:03:05 jgg Exp $
+// $Id: pkgcache.cc,v 1.18 1998/11/27 00:07:24 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -420,6 +420,18 @@ bool pkgCache::VerIterator::Downloadable() const
       if ((Files.File()->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource)
 	 return true;
    return false;
+}
+									/*}}}*/
+// VerIterator::PriorityType - Return a string describing the priority	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+const char *pkgCache::VerIterator::PriorityType()
+{
+   const char *Types[] = {"","Important","Required","Standard",
+                          "Optional","Extra"};
+   if (Ver->Priority < 6)
+      return Types[Ver->Priority];
+   return "";
 }
 									/*}}}*/
 // PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
