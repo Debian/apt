@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.cc,v 1.5 2001/02/23 06:41:55 jgg Exp $
+// $Id: srcrecords.cc,v 1.6 2001/06/10 02:12:09 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -29,7 +29,8 @@
 pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 {
    Files = new Parser *[List.end() - List.begin() + 1];
-	  
+   memset(Files,0,sizeof(*Files)*(List.end() - List.begin() + 1));
+   
    unsigned int Count = 0;
    pkgSourceList::const_iterator I = List.begin();
    for (; I != List.end(); I++)
