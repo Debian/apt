@@ -23,8 +23,10 @@ apt (0.5.8) unstable; urgency=medium
     YnPrompt works correctly (Closes: #200953).  No other translations seem
     to have this problem
   * Regenerate POT file and sync .po files
+  * Only try to clear stdin if it is a tty, to avoid looping if there is
+    lots of stuff (perhaps an infinite amount) to read (Closes: #192228)
 
- --
+ -- Matt Zimmerman <mdz@debian.org>  Fri, 25 Jul 2003 20:21:53 -0400
 
 apt (0.5.7) unstable; urgency=low
 

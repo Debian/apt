@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.26 2003/04/27 03:02:40 doogie Exp $
+// $Id: dpkgpm.cc,v 1.27 2003/07/26 00:25:44 mdz Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -448,7 +448,7 @@ bool pkgDPkgPM::Go()
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
 	 
-	 if (_config->FindB("DPkg::FlushSTDIN",true) == true)
+	 if (_config->FindB("DPkg::FlushSTDIN",true) == true && isatty(STDIN_FILENO))
 	 {
 	    int Flags,dummy;
 	    if ((Flags = fcntl(STDIN_FILENO,F_GETFL,dummy)) < 0)
