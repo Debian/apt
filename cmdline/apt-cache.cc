@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.53 2001/12/07 05:57:43 jgg Exp $
+// $Id: apt-cache.cc,v 1.54 2001/12/26 06:47:58 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1362,7 +1362,7 @@ int main(int argc,const char *argv[])
 
    if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
    { 
-      MMap *Map;
+      MMap *Map = 0;
       if (_config->FindB("APT::Cache::Generate",true) == false)
       {
 	 Map = new MMap(*new FileFd(_config->FindFile("Dir::Cache::pkgcache"),

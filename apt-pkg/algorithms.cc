@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.36 2001/05/27 03:46:10 jgg Exp $
+// $Id: algorithms.cc,v 1.37 2001/12/26 06:47:37 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -225,7 +225,8 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	 else
 	 {
 	    // Is this right? Will dpkg choke on an upgrade?
-	    if (Cache[I].CandidateVerIter(Cache).Downloadable() == true)
+	    if (Cache[I].CandidateVer != 0 &&
+		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
 	       Cache.MarkInstall(I);
 	    else
 	       return _error->Error(_("The package %s needs to be reinstalled, "
@@ -246,7 +247,8 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	    Cache.MarkKeep(I);
 	 else
 	 {
-	    if (Cache[I].CandidateVerIter(Cache).Downloadable() == true)
+	    if (Cache[I].CandidateVer != 0 &&
+		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
 	       Cache.MarkInstall(I);
 	    else
 	       Cache.MarkDelete(I);
