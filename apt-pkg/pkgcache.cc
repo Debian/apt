@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.10 1998/10/08 05:02:06 jgg Exp $
+// $Id: pkgcache.cc,v 1.11 1998/10/08 05:05:05 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -222,8 +222,9 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
    conflicts. */
 bool pkgCache::DepIterator::IsCritical()
 {
-   if (Dep->Type == Dep::Conflicts || Dep->Type == Dep::Depends ||
-       Dep->Type == Dep::PreDepends)
+   if (Dep->Type == pkgCache::Dep::Conflicts || 
+       Dep->Type == pkgCache::Dep::Depends ||
+       Dep->Type == pkgCache::Dep::PreDepends)
       return true;
    return false;
 }
@@ -298,7 +299,8 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	 if (pkgCheckDep(TargetVer(),I.VerStr(),Dep->CompareOp) == false)
 	    continue;
 
-	 if (Dep->Type == Dep::Conflicts && ParentPkg() == I.ParentPkg())
+	 if (Dep->Type == pkgCache::Dep::Conflicts && 
+	     ParentPkg() == I.ParentPkg())
 	    continue;
 	 
 	 Size++;
@@ -312,7 +314,8 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	 if (pkgCheckDep(TargetVer(),I.ProvideVersion(),Dep->CompareOp) == false)
 	    continue;
 	 
-	 if (Dep->Type == Dep::Conflicts && ParentPkg() == I.OwnerPkg())
+	 if (Dep->Type == pkgCache::Dep::Conflicts && 
+	     ParentPkg() == I.OwnerPkg())
 	    continue;
 	 
 	 Size++;
@@ -378,7 +381,7 @@ bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; Files++)
-      if ((Files.File()->Flags & Flag::NotSource) != Flag::NotSource)
+      if ((Files.File()->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource)
 	 return true;
    return false;
 }
