@@ -35,3 +35,8 @@ ifneq ($(words $(MISSING_DIRS)),0)
 else
 	@echo > /dev/null
 endif	
+ifneq ($(HAVE_C9X),yes)
+	-@rm include/inttypes.h	
+else
+	@cp $(SRCDIR)/buildlib/inttypes.h.in include/inttypes.h
+endif

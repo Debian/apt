@@ -105,11 +105,15 @@ fi
 AC_C_BIGENDIAN
    
 dnl We do not need this if we have inttypes..
+HAVE_C9X=yes
 if test x"$c9x_ints" = x"no"; then
    AC_CHECK_SIZEOF(char,$size_char)
    AC_CHECK_SIZEOF(int,$size_int)
    AC_CHECK_SIZEOF(short,$size_short)
    AC_CHECK_SIZEOF(long,$size_long)
+  
+   HAVE_C9X=
+   AC_SUBST(HAVE_C9X)
 fi
 
 
@@ -120,8 +124,4 @@ AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
 dnl Check for YODL
 AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
 
-if test x"$c9x_ints" = x"no"; then
-   AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in include/inttypes.h:buildlib/inttypes.h.in,make dirs)
-else
-   AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make dirs)
-fi
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make dirs)
