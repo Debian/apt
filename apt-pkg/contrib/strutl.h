@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.20 2001/05/29 04:40:34 jgg Exp $
+// $Id: strutl.h,v 1.21 2001/05/29 05:09:44 jgg Exp $
 /* ######################################################################
 
    String Util - These are some useful string functions
@@ -69,19 +69,27 @@ inline int name(string A,const char *B,const char *BEnd) {return func(A.c_str(),
 inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
 inline int name(string A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));}; \
 inline int name(string A,string B) {return func(A.begin(),A.end(),B.begin(),B.end());}; \
-inline int name(string A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}; \
-inline int name(string::const_iterator A,string::const_iterator Aend,const char *B) {return func(A,Aend,B,B+strlen(B));}; 
+inline int name(string A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}; 
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+
+/* We assume that GCC 3 indicates that libstdc++3 is in use too. In that
+   case the definition of string::const_iterator is not the same as
+   const char * and we need these extra functions */
+#if __GNUC__ >= 3
 int stringcmp(string::const_iterator A,string::const_iterator AEnd,
 	      const char *B,const char *BEnd);
 int stringcmp(string::const_iterator A,string::const_iterator AEnd,
 	      string::const_iterator B,string::const_iterator BEnd);
-int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
 		  const char *B,const char *BEnd);
 int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
                   string::const_iterator B,string::const_iterator BEnd);
+
+inline int stringcmp(string::const_iterator A,string::const_iterator Aend,const char *B) {return stringcmp(A,Aend,B,B+strlen(B));};
+inline int stringcasecmp(string::const_iterator A,string::const_iterator Aend,const char *B) {return stringcasecmp(A,Aend,B,B+strlen(B));};
+#endif
 
 APT_MKSTRCMP2(stringcmp,stringcmp);
 APT_MKSTRCMP2(stringcasecmp,stringcasecmp);

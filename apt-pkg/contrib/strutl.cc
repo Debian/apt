@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.42 2001/05/29 04:40:34 jgg Exp $
+// $Id: strutl.cc,v 1.43 2001/05/29 05:09:44 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -440,6 +440,8 @@ int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
       return -1;
    return 1;
 }
+
+#if __GNUC__ >= 3
 int stringcmp(string::const_iterator A,string::const_iterator AEnd,
 	      const char *B,const char *BEnd)
 {
@@ -474,6 +476,7 @@ int stringcmp(string::const_iterator A,string::const_iterator AEnd,
       return -1;
    return 1;
 }
+#endif
 									/*}}}*/
 // stringcasecmp - Arbitary case insensitive string compare		/*{{{*/
 // ---------------------------------------------------------------------
@@ -494,6 +497,7 @@ int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
       return -1;
    return 1;
 }
+#if __GNUC__ >= 3
 int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
 		  const char *B,const char *BEnd)
 {
@@ -528,6 +532,7 @@ int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
       return -1;
    return 1;
 }
+#endif
 									/*}}}*/
 // LookupTag - Lookup the value of a tag in a taged string		/*{{{*/
 // ---------------------------------------------------------------------
