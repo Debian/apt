@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.19 1999/05/23 22:55:54 jgg Exp $
+// $Id: deblistparser.cc,v 1.20 1999/06/04 05:54:20 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -139,8 +139,8 @@ unsigned short debListParser::VersionHash()
    const char *Sections[] ={"Installed-Size",
                             "Depends",
                             "Pre-Depends",
-                            "Suggests",
-                            "Recommends",
+//                            "Suggests",
+//                            "Recommends",
                             "Conflicts",
                             "Replaces",0};
    unsigned long Result = INIT_FCS;

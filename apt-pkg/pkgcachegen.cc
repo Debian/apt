@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.38 1999/05/23 22:55:54 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.39 1999/06/04 05:54:20 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -116,7 +116,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
 	    return _error->Error("Error occured while processing %s (UsePackage2)",PackageName.c_str());
-	 
+
 	 if (NewFileVer(Ver,List) == false)
 	    return _error->Error("Error occured while processing %s (NewFileVer1)",PackageName.c_str());
 	 
