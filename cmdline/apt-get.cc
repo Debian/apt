@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.49 1999/04/07 05:30:18 jgg Exp $
+// $Id: apt-get.cc,v 1.50 1999/04/07 06:34:48 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1256,6 +1256,7 @@ bool ShowHelp(CommandLine &CmdL)
    cout << "   upgrade - Perform an upgrade" << endl;
    cout << "   install - Install new packages (pkg is libc6 not libc6.deb)" << endl;
    cout << "   remove - Remove packages" << endl;
+   cout << "   source - Download source archives" << endl;
    cout << "   dist-upgrade - Distribution upgrade, see apt-get(8)" << endl;
    cout << "   dselect-upgrade - Follow dselect selections" << endl;
    cout << "   clean - Erase downloaded archive files" << endl;

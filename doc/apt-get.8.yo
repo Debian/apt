@@ -18,6 +18,7 @@ itemize(
   it() dist-upgrade
   it() install package1 [package2] [...]
   it() remove package1 [package2] [...]
+  it() source package1 [package2] [...]
   it() check
   it() clean
   it() autoclean
@@ -34,7 +35,9 @@ location(s) specified in bf(/etc/apt/sources.list).
 For example, when using a Debian archive, this command retrieves and
 scans the bf(Packages.gz) files, so that information about new and updated 
 packages is available. An bf(update) should always be performed before an
-bf(upgrade) bf(dist-upgrade).
+bf(upgrade) bf(dist-upgrade). Please be aware that the overall progress
+meter will be incorrect as the size of the package files cannot be known in
+advance.
 
 dit(bf(upgrade))
 bf(upgrade) is used to install the newest versions of all packages currently 
@@ -78,6 +81,15 @@ dit(bf(remove))
 bf(remove) is identical to bf(install) except that packages are removed
 instead of installed. If a plus sign is appended to the package name (with no
 intervening space), the identified package will be installed.
+
+dit(bf(source))
+bf(source) causes apt-get to fetch source packages. APT will examine the
+available packages to decide which source package to fetch. It will then
+find and download into the current directory the newest available version of
+that source package. Source packages are tracked seperately from binary
+packages via df(deb-src) type lines in the bf(/etc/apt/sources.list) file.
+This probably will mean that you will not get the same source as the package
+you have installed or as you could install.
 
 dit(bf(check))
 bf(check) is a diagnostic tool; it updates the package cache and checks for 
@@ -181,7 +193,8 @@ dit(bf(--print-uris))
 Instead of fetching the files to install their URIs are printed. Each
 URI will have the path, the destination file name, the size and the expected
 md5 hash. Note that the file name to write to will not always match
-the file name on the remote site! See bf(APT::Get::Print-URIs).
+the file name on the remote site! This also works with the bf(source)
+command See bf(APT::Get::Print-URIs).
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will
