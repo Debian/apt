@@ -1,0 +1,128 @@
+mailto(apt@packages.debian.org)
+manpage(sources.list)(5)(5 Dec 1998)(apt)()
+manpagename(sources.list)(package resource list for APT)
+
+manpagedescription()
+The package resource list is used to locate archives of the package
+distribution system in use on the system. At this time, this manual page
+documents only the packaging system used by the Debian GNU/Linux system.
+
+The source list is designed to support any number of active sources and a
+variety of source media. The file lists one source per line, with the
+most preferred source listed first. The format of each line is:
+em(type uri args) The first item, em(type), determines the format for
+em(args). em(uri) is a Universal Resource Identifier (URI), which is a 
+superset of the more specific and well-known Universal Resource Locator, or 
+URL.
+
+manpagesection(The deb type)
+The bf(deb) type describes a typical two-level Debian archive,
+em(distribution/component). Typically, em(distribution) is one of
+em(stable), em(unstable), or em(frozen), while component is one of
+em(main), em(contrib), em(non-free), or em(non-us).
+The format for a bf(sources.list) entry using the em(deb)
+type is:
+verb(deb uri distribution [component1] [componenent2] [...])
+The URI for the em(deb) type must specify the base of the Debian distribution, 
+from which bf(APT) will find the information it needs. em(distribution)
+can specify an exact path, in which case the em(component)s
+must be omitted and bf(distribution) must end with a slash (/). This is 
+useful for when only a particular sub-section of the archive denoted by the 
+URI is of interest. If bf(distribution) does not specify an exact path, at 
+least one bf(component) must be present.
+
+bf(distribution) may also contain a variable, bf($(ARCH)),
+which expands to the Debian architecture (i386, m68k, powerpc, ...)     
+used on the system. This permits archiecture-independent                
+bf(sources.list) files to be used. In general this is only of interest
+when specifying an exact path, bf(APT) will automatically generate a URI
+with the current architecture otherwise.
+
+Since only one distribution can be specified per line it may be necessary
+to have multiple lines for the same URI, if a subset of all available
+distributions or components at that location is desired.
+bf(APT) will sort the URI list after it has generated a complete set 
+internally, and will collapse multiple references to the same Internet host, 
+for instance, into a single connection, so that it does not inefficiently
+establish an FTP connection, close it, do something else, and then
+re-establish a connection to that same host. This feature is useful
+for accessing busy FTP sites with limits on the number of simultaneous
+anonymous users. bf(APT) also parallizes connections to different hosts
+to more effectively deal with sites with low bandwidth.
+
+It is important to list sources in order of preference, with the most
+preferred source listed first. Typically this will result in sorting
+by speed from fastest to slowest (CD-ROM followed by hosts on a local
+network, followed by distant Internet hosts, for example).
+
+manpagesection(URI specification)
+The currently recognized URI types are cdrom, file, http, and ftp.
+
+startdit()
+dit(bf(file))
+The file scheme allows an arbitrary directory in the file system to be
+considered an archive. This is useful for NFS mounts and local mirrors or
+archives.
+
+dit(bf(cdrom))
+The cdrom scheme allows bf(APT) to use a local CDROM drive with media
+swapping. Use the bf(apt-cdrom(8)) program to create cdrom entires in the
+source list.
+
+dit(bf(http))
+The http scheme specifies an HTTP server for the archive. If an environment
+variable bf($http_proxy) is set with the format 
+bf(http://server:port/), the proxy server specified in
+bf($http_proxy) will be used. Users of authenticated HTTP/1.1 proxies may 
+use a string of the format bf(http://user:pass@server:port/)
+Note that this is an insecure method of authentication.
+
+dit(bf(ftp))
+The ftp scheme specifies an FTP server for the archive. APT's FTP behavior
+is highly configurable; for more information see the
+bf(apt.conf(5)) manual page.
+enddit()
+
+manpagesection(EXAMPLES)
+Uses the archive stored locally (or NFS mounted) at /home/jason/debian
+for stable/main, stable/contrib, and stable/non-free.
+quote("deb file:/home/jason/debian stable main contrib non-free")
+
+As above, except this uses the unstable (development) distribution.
+quote("deb file:/home/jason/debian unstable main contrib non-free")
+
+Uses HTTP to access the archive at www.debian.org, and uses only the
+stable/main area.
+quote("deb http://www.debian.org/archive stable main")
+
+Uses FTP to access the archive at ftp.debian.org, under the debian
+directory, and uses only the stable/contrib area.
+quote("deb ftp://ftp.debian.org/debian stable contrib")
+
+Uses FTP to access the archive at ftp.debian.org, under the debian
+directory, and uses only the unstable/contrib area. If this line appears as
+well as the one in the previous example in bf(sources.list),
+a single FTP session will be used for both resource lines.
+quote("deb ftp://ftp.debian.org/debian unstable contrib")
+
+Uses FTP to access the archive at nonus.debian.org, under the debian-non-US
+directory, and uses only files found under unstable/binary-i386.
+quote("deb ftp://nonus.debian.org/debian-non-US unstable/binary-i386/")
+
+Uses HTTP to access the archive at nonus.debian.org, under the
+debian-non-US directory, and uses only files found under
+unstable/binary-i386 on i386 machines, unstable/binary-m68k on m68k, and so
+forth for other supported architectures.
+quote("deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/")
+
+manpageseealso()
+apt-cache (8),
+apt.conf (5)
+
+manpagebugs()
+See http://www.debian.org/Bugs/db/pa/lapt.html.  If you wish to report a
+bug in bf(apt-get), please see bf(/usr/doc/debian/bug-reporting.txt)
+or the bf(bug(1)) command.
+
+manpageauthor()
+apt-get was written by the APT team <apt@packages.debian.org>.

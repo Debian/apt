@@ -1,0 +1,203 @@
+mailto(apt@packages.debian.org)
+manpage(apt-cache)(8)(4 Dec 1998)(apt)()
+manpagename(apt-cache)(APT package handling utility -- cache manipulator)
+
+manpagesynopsis()
+apt-cache command [argument ...]
+
+manpagedescription()
+bf(apt-cache) performs a variety of operations on APT's package cache.
+bf(apt-cache) is seldom called directly; instead its operations are
+performed automatically by the other bf(apt) utilities.
+
+em(command) is one of:
+itemize(
+  it() add file1 [file2] [...]
+  it() gencaches
+  it() showpkg package1 [package2] [...]
+  it() stats 
+  it() dump
+  it() dumpavail
+  it() unmet
+  it() check
+)
+
+Unless the -h, or --help option is given one of the above commands
+must be present.
+
+startdit()
+dit(bf(add))
+bf(add) adds the names package index files to the package cache.
+
+dit(bf(gencaches))
+bf(gencaches) performs the same opration as bf(apt-get check). It builds
+the source and package caches from thes sources in bf(/etc/apt/sources.list)
+and from bf(/var/lib/dpkg/status).
+
+dit(bf(showpkg))
+bf(showpkg) displays information about the packages listed on the 
+command line. Remaining arguments are package names. The available versions 
+and reverse dependencies of each package listed are listed, as well as      
+forward dependencies for each version. Forward (normal) dependencies   
+are those packages upon which the package in question depends; reverse  
+dependencies are those packages that depend upon the package in         
+question. Thus, forward dependencies must be satisfied for a package,  
+but reverse dependencies need not be.
+For instance, bf(apt-cache showpkg libreadline2) would produce output similar
+to the following:
+
+verb(
+Package: libreadline2
+
+Versions:
+
+2.1-12(/var/state/apt/lists/debian.midco.net_debian_dists_slink_main_binary-i386_Packages),
+
+Reverse Depends: 
+
+  libreadlineg2,libreadline2
+
+  libreadline2-altdev,libreadline2
+Dependencies:
+
+2.1-12 - libc5 (2 5.4.0-0) ncurses3.0 (0 (null)) ldso (2 1.9.0-1)
+
+Provides: 
+
+2.1-12 - 
+
+Reverse Provides: 
+)			    
+
+Thus it may be seen that libreadline2, version 2.1-8, depends on libc5,
+ncurses3.0, and ldso, which must be installed for libreadline2 to work. In
+turn, libreadlineg2 and libreadline2-altdev depend on libreadline2. If
+libreadline2 is installed, libc5, ncurses3.0, and ldso must also be
+installed; libreadlineg2 and libreadline2-altdev do not have to be
+installed. For the specific meaning of the remainder of the output it
+is best to consult the apt source code.
+
+dit(bf(stats))
+bf(stats) displays some statistics about bf(cache).
+No further arguments are expected. Statistics reported are:
+itemize(
+   it() bf(Total package names) is the number of package names found in the cache.
+   
+   it() bf(Normal packages) is the number of regular, ordinary package names; these
+   are packages that bear a one-to-one correspondence between their names and
+   the names used by other packages for them in dependencies. The majority of
+   packages fall into this category.
+
+   it() bf(Pure virtual packages) is the number of packages that exist only as 
+   a virtual package name; that is, packages only "provide" the virtual 
+   package name, and no package actually uses the name. For instance, 
+   "mail-transport-agent" in the Debian GNU/Linux system is a pure virtual 
+   package; several packages provide "mail-transport-agent", but there is no 
+   package named "mail-transport-agent".
+   
+   it() bf(Single virtual packages) is the number of packages with only one 
+   package providing a particular virtual package. For instance, in the 
+   Debian GNU/Linux system, "X11-text-viewer" is a virtual package, but only 
+   one package, xless, provides "X11-text-viewer".
+
+   it() bf(Mixed virtual packages) is the number of packages that either provide 
+   a particular virtual package or have the virtual package name as the 
+   package name. For instance, in the Debian GNU/Linux system, e2fsprogs is 
+   both an actual package, and provided by the e2compr package.
+   
+   it() bf(Missing) is the number of package names that were referenced in a 
+   dependency but were not provided by any package. Missing packages may be 
+   in evidence if a full distribution is not accesssed, or if a package 
+   (real or virtual) has been dropped from the distribution.
+
+   it() bf(Total distinct) versions is the number of package versions found in 
+   the cache; this value is therefore at least equal to the number of total 
+   package names. If more than one distribution (both "stable" and "unstable", 
+   for instance), is being accessed, this value can be considerably larger 
+   than the number of total package names.
+
+   it() bf(Total dependencies) is the number of dependency relationships claimed 
+   by all of the packages in the cache.
+)
+
+dit(bf(dump))
+bf(dump) shows a short listing of every package in the cache. It is primarily
+for debugging.
+
+dit(bf(dumpavail))
+bf(dumpavail) prints out an available list to stdout. This is suitable for use
+with df(dpkg) and is used by the bf(dselect) method.
+
+dit(bf(unmet))
+bf(unmet) displays a summary of all unmet dependencies in the package cache.
+
+dit(bf(check))
+bf(check) is a random function for testing certain aspects of the cache.
+Do not use it.
+
+enddit()
+
+manpageoptions()
+
+startdit()
+dit(bf(-h, --help))
+Show a short usage summary.
+
+dit(bf(-p --pkg-cache))
+Select the file to store the package cache. The package cache is the primary
+cache used by all operations.
+
+dit(bf(-s --src-cache))
+Select the file to store the source cache. The source is used only by
+bf(gencaches) and it stores a parsed version of the package information from
+remote sources. When building the package cache the source cache is used
+to advoid reparsing all of the package files.
+
+dit(bf(-q, --quiet))
+Quiet; produces output suitable for logging, omitting progress indicators.
+More qs will produce more quite up to a maximum of 2. You can also use
+bf(-q=#) to set the quiet level, overriding the configuration file.
+
+dit(bf(-i --important))
+Print only important deps; for use with unmet causes only em(Depends) and 
+em(Pre-Depends) relations to be printed.
+
+dit(bf(-c, --config-file))
+Configuration File; Specify a configuration file to use. bf(apt-get) will
+read the default configuration file and then this configuration file. See
+bf(apt.conf(5)) for syntax information.
+
+dit(bf(-o, --option))
+Set a Configuration Option; This will set an arbitary configuration option.
+The syntax is 
+verb(-o Foo::Bar=bar)
+enddit()
+
+manpagefiles()
+itemize(
+  it() /etc/apt/sources.list 
+  locations to fetch packages from
+  
+  it() /var/state/apt/lists/
+  storage area for state information for each package resource specified in
+  
+  it() /var/state/apt/lists/partial/
+  storage area for state information in transit
+)
+
+manpageseealso()
+apt-get (8),
+dpkg (8),
+dselect (8),
+sources.list (5)
+
+manpagediagnostics()
+apt-cache returns zero on normal operation, decimal 100 on error.
+
+manpagebugs()
+See http://www.debian.org/Bugs/db/pa/lapt.html.  If you wish to report a
+bug in bf(apt-cache), please see bf(/usr/doc/debian/bug-reporting.txt)
+or the bf(bug(1)) command.
+
+manpageauthor()
+apt-get was written by the APT team <apt@packages.debian.org>.

@@ -16,14 +16,14 @@ itemize(
   it() upgrade
   it() dselect-upgrade
   it() dist-upgrade
-  it() install
-  it() remove
+  it() install package1 [package2] [...]
+  it() remove package1 [package2] [...]
   it() check
   it() clean
 )
 
 Unless the -h, or --help option is given one of the above commands
-must be present. Only the install command requires any further arguments.
+must be present.
 
 startdit()
 dit(bf(update))
@@ -73,6 +73,11 @@ hyphen is appended to the package name (with no intervening space), the
 identified package will be removed if it is installed. This latter feature 
 may be used to override decisions made by apt-get's conflict resolution system.
 
+dit(bf(remove))
+bf(remove) is identical to bf(install) except that packages are removed
+instead of installed. If a plus sign is appended to the package name (with no
+intervening space), the identified package will be installed.
+
 dit(bf(check))
 bf(check) is a diagnostic tool; it updates the package cache and checks for 
 brokenpackages.
@@ -112,7 +117,7 @@ integrity check after retrieval (corrupted package files), hold back
 those packages and handle the result. Use of this option together with  
 -f is discouraged.
 
-dit(bf(-q, --silent))
+dit(bf(-q, --quiet))
 Quiet; produces output suitable for logging, omitting progress indicators.
 More qs will produce more quite up to a maximum of 2. You can also use
 bf(-q=#) to set the quiet level, overriding the configuration file.
@@ -156,6 +161,7 @@ dit(bf(-o, --option))
 Set a Configuration Option; This will set an arbitary configuration option.
 The syntax is 
 verb(-o Foo::Bar=bar)
+enddit()
 
 manpagefiles()
 itemize(
@@ -176,10 +182,11 @@ itemize(
 )
 
 manpageseealso()
-apt-cache (8),
-dpkg (8),
-dselect (8),
-sources.list (5)
+apt-cache(8),
+dpkg(8),
+dselect(8),
+sources.list(5),
+The APT Users Guide in /usr/doc/apt/
 
 manpagediagnostics()
 apt-get returns zero on normal operation, decimal 100 on error.
