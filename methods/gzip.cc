@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.13 2001/03/11 05:30:20 jgg Exp $
+// $Id: gzip.cc,v 1.14 2001/03/11 22:37:35 jgg Exp $
 /* ######################################################################
 
    GZip method - Take a file URI in and decompress it into the target 
@@ -22,6 +22,8 @@
 #include <errno.h>
 									/*}}}*/
 
+const char *Prog;
+
 class GzipMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
@@ -34,13 +36,14 @@ class GzipMethod : public pkgAcqMethod
 
 // GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
 // ---------------------------------------------------------------------
-/* This forks gzip and hashes the resulting decompressed output as it
-   flows to the destination file */
+/* */
 bool GzipMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
    string Path = Get.Host + Get.Path; // To account for relative paths
    
+   string GzPathOption = "Dir::bin::"+string(Prog);
+
    FetchResult Res;
    Res.Filename = Itm->DestFile;
    URIStart(Res);
@@ -50,7 +53,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
 
    int GzOut[2];   
    if (pipe(GzOut) < 0)
-      return _error->Errno("pipe","Couldn't open pipe for gzip");
+      return _error->Errno("pipe","Couldn't open pipe for %s",Prog);
 
    // Fork gzip
    int Process = ExecFork();
@@ -65,7 +68,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       SetCloseExec(STDOUT_FILENO,false);
       
       const char *Args[3];
-      Args[0] = _config->Find("Dir::bin::gzip","gzip").c_str();
+      Args[0] = _config->Find(GzPathOption,Prog).c_str();
       Args[1] = "-d";
       Args[2] = 0;
       execvp(Args[0],(char **)Args);
@@ -94,7 +97,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       
       if (Count < 0)
       {
-	 _error->Errno("read", "Read error from gzip process");
+	 _error->Errno("read", "Read error from %s process",Prog);
 	 Failed = true;
 	 break;
       }
@@ -104,14 +107,14 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       
       Hash.Add(Buffer,Count);
       if (To.Write(Buffer,Count) == false)
-      {	 
+      {
 	 Failed = true;
 	 break;
-      }	 
+      }      
    }
    
    // Wait for gzip to finish
-   if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
+   if (ExecWait(Process,_config->Find(GzPathOption,Prog).c_str(),false) == false)
    {
       To.OpFail();
       return false;
@@ -147,8 +150,12 @@ bool GzipMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main()
+int main(int argc, char *argv[])
 {
    GzipMethod Mth;
+
+   Prog = strrchr(argv[0],'/');
+   Prog++;
+   
    return Mth.Run();
 }

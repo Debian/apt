@@ -55,11 +55,17 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = rsh.cc
 include $(PROGRAM_H)
 
-# SSH method symlink
-all: $(BIN)/ssh
-veryclean: clean-$(BIN)/ssh	
+# SSH and vzip2 method symlink
+all: $(BIN)/ssh $(BIN)/bzip2
+veryclean: clean-$(BIN)/ssh clean-$(BIN)/bzip2
 $(BIN)/ssh:
 	echo "Installing ssh method link"
 	ln -fs rsh $(BIN)/ssh
 clean-$(BIN)/ssh:
-	rm $(BIN)/ssh
+	-rm $(BIN)/ssh
+
+$(BIN)/bzip2:
+	echo "Installing bzip2 method link"
+	ln -fs gzip $(BIN)/bzip2
+clean-$(BIN)/bzip2:
+	-rm $(BIN)/bzip2
