@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.73 1999/09/05 20:27:37 jgg Exp $
+// $Id: apt-get.cc,v 1.74 1999/09/09 06:23:52 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1277,6 +1277,16 @@ bool DoSource(CommandLine &CmdL)
 	 if (I->Path.find(".diff.gz") != string::npos)
 	    Comp = "diff";
 	 
+	 // Diff only mode only fetches .diff files
+	 if (_config->FindB("APT::Get::Diff-Only",false) == true &&
+	     Comp != "diff")
+	    continue;
+	 
+	 // Tar only mode only fetches .tar files
+	 if (_config->FindB("APT::Get::Tar-Only",false) == true &&
+	     Comp != "tar")
+	    continue;
+	 
 	 new pkgAcqFile(&Fetcher,Last->Source()->ArchiveURI(I->Path),
 			I->MD5Hash,I->Size,Last->Source()->SourceInfo(Src,
 			Last->Version(),Comp),Src);
@@ -1353,6 +1363,11 @@ bool DoSource(CommandLine &CmdL)
       for (unsigned I = 0; I != J; I++)
       {
 	 string Dir = Dsc[I].Package + '-' + pkgBaseVersion(Dsc[I].Version.c_str());
+	 
+	 // Diff only mode only fetches .diff files
+	 if (_config->FindB("APT::Get::Diff-Only",false) == true ||
+	     _config->FindB("APT::Get::Tar-Only",false) == true)
+	    continue;
 	 
 	 // See if the package is already unpacked
 	 struct stat Stat;
