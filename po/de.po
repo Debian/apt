@@ -1,13 +1,13 @@
 # German messages for the apt suite.
 # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
-# Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002.
+# Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003.
 # Rüdiger Kuhlmann <Uebersetzung@ruediger-kuhlmann.de>, 2002.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.5\n"
+"Project-Id-Version: apt 0.5.4.9\n"
 "POT-Creation-Date: 2003-02-09 21:51-0600\n"
-"PO-Revision-Date: 2002-11-10 20:56+0100\n"
+"PO-Revision-Date: 2003-02-10 11:28:23+0100\n"
 "Last-Translator: Michael Piefel <piefel@debian.org>\n"
 "Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -148,7 +148,6 @@ msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s für %s %s kompiliert am %s %s\n"
 
 #: cmdline/apt-cache.cc:1262
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file1 ...]\n"
@@ -357,6 +356,43 @@ msgid ""
 "  -c=?  Read this configuration file\n"
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
+"Aufruf: apt-ftparchive [optionen] befehl\n"
+"Befehle: packages binarypath [overridefile [pathprefix]]\n"
+"         sources srcpath [overridefile [pathprefix]]\n"
+"         contents path\n"
+"         generate config [groups]\n"
+"         clean config\n"
+"\n"
+"apt-ftparchive generiert Indexdateien für Debian-Archive. Es unterstützt viele\n"
+"verschiedene Arten der Generierung, von vollautomatisch bis hin zu den\n"
+"funktionalen Äquivalenten von dpkg-scanpackages und dpkg-scansources.\n"
+"\n"
+"apt-ftparchive generiert Package-Dateien aus einem Baum von .debs. Die Package-\n"
+"Datei enthält die Inhalt aller Kontrollfelder aus jedem Paket sowie einen MD5-\n"
+"Hashwert und die Dateigröße. Eine Override-Datei wird unterstützt, um Werte für\n"
+"Priorität und Sektion zu erzwingen.\n"
+"\n"
+"Auf ganz ähnliche Weise erzeugt apt-ftparchive Sources-Dateien aus einem Baum\n"
+"von .dscs. Die Option --source-override kann benutzt werden, um eine Override-\n"
+"Datei für Quellen anzugeben.\n"
+"\n"
+"Die Befehle »packages« und »source« sollten in der Wurzel des Baumes aufgerufen\n"
+"werden.  BinaryPath sollte auf die Basis der rekursiven Suche zeigen und\n"
+"overridefile sollte die Override-Flags enthalten. Pathprefix wird wird, so\n"
+"vorhanden, jedem Dateinamen vorangestellt. Beispielaufruf im Debian-Archiv:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Optionen:\n"
+"  -h     Dieser Hilfe-Text.\n"
+"  --md5  Steuere MD5-Generierung\n"
+"  -s=?   Override-Datei für Quellen ein\n"
+"  -q     Ruhig\n"
+"  -d=?   Optionale Cache-Datenbank auswählen\n"
+"  --no-delink  Debug-Modus für Delinking setzen\n"
+"  --contents   Steuere Inhaltsdatei-Generierung\n"
+"  -c=?   Lese diese Konfigurationsdatei\n"
+"  -o=?   Setze eine beliebige Konfigurations-Option"
 
 #: ftparchive/apt-ftparchive.cc:731
 msgid "No selections matched"
@@ -370,7 +406,7 @@ msgstr "Einige Dateien fehlen in der Paketdateigruppe »%s«"
 #: ftparchive/cachedb.cc:43
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
-msgstr ""
+msgstr "DB wurde beschädigt, Datei umbenannt in %s.old"
 
 #: ftparchive/cachedb.cc:59
 #, c-format
@@ -383,24 +419,22 @@ msgid "File date has changed %s"
 msgstr "Dateidatum hat sich geändert %s"
 
 #: ftparchive/cachedb.cc:140
-#, fuzzy
 msgid "Archive has no control record"
-msgstr "Archiv ist zu kurz"
+msgstr "Archiv ist keinen Steuerungs-Datensatz"
 
 #: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
-#, fuzzy
 msgid "Unable to get a cursor"
-msgstr "Kann %s nicht lesen"
+msgstr "Kann keinen Cursor bekommen"
 
 #: ftparchive/writer.cc:78
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to read directory %s\n"
-msgstr "Kann %s nicht lesen"
+msgstr "W: Kann Verzeichnis %s nicht lesen\n"
 
 #: ftparchive/writer.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "W: Unable to stat %s\n"
-msgstr "W: Kann nicht zugreifen auf "
+msgstr "W: Kann nicht zugreifen auf %s\n"
 
 #: ftparchive/writer.cc:122
 msgid "E: "
@@ -411,9 +445,8 @@ msgid "W: "
 msgstr "W: "
 
 #: ftparchive/writer.cc:131
-#, fuzzy
 msgid "E: Errors apply to file "
-msgstr "F: Fehler gehören zu Datei »"
+msgstr "F: Fehler gehören zu Datei "
 
 #: ftparchive/writer.cc:148 ftparchive/writer.cc:178
 #, c-format
@@ -432,7 +465,7 @@ msgstr "Konnte %s nicht öffnen"
 #: ftparchive/writer.cc:242
 #, c-format
 msgid " DeLink %s [%s]\n"
-msgstr ""
+msgstr " DeLink %s [%s]\n"
 
 #: ftparchive/writer.cc:250
 #, c-format
@@ -445,14 +478,14 @@ msgid "Failed to unlink %s"
 msgstr "Konnte %s entfernen (unlink)"
 
 #: ftparchive/writer.cc:261
-#, fuzzy, c-format
+#, c-format
 msgid "*** Failed to link %s to %s"
-msgstr "Konnte %s nicht in %s umbenennen"
+msgstr "*** Konnte keine Verknüpfung von %s zu %s anlegen"
 
 #: ftparchive/writer.cc:271
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr ""
+msgstr " DeLink-Limit von %sB erreicht.\n"
 
 #: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
 #: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
@@ -462,22 +495,21 @@ msgstr "Kann auf %s nicht zugreifen."
 
 #: ftparchive/writer.cc:358
 msgid "Archive had no package field"
-msgstr ""
+msgstr "Archiv hatte kein Paket-Feld"
 
 #: ftparchive/writer.cc:366 ftparchive/writer.cc:576
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no override entry\n"
-msgstr "%s hat keine Build-Dependencies.\n"
+msgstr "  %s hat keinen Eintrag in der Override-Liste.\n"
 
 #: ftparchive/writer.cc:409 ftparchive/writer.cc:658
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
-msgstr ""
+msgstr "  %s-Maintainer ist %s und nicht %s\n"
 
 #: ftparchive/contents.cc:346 ftparchive/contents.cc:377
-#, fuzzy
 msgid "realloc - Failed to allocate memory"
-msgstr "Konnte Umleitung nicht reservieren"
+msgstr "realloc - Speicheranforderung fehlgeschlagen"
 
 #: ftparchive/override.cc:38 ftparchive/override.cc:146
 #, c-format
@@ -487,22 +519,22 @@ msgstr "Kann %s nicht öffnen"
 #: ftparchive/override.cc:64 ftparchive/override.cc:170
 #, c-format
 msgid "Malformed override %s line %lu #1"
-msgstr ""
+msgstr "Missgestaltetes Override %s Zeile %lu #1"
 
 #: ftparchive/override.cc:78 ftparchive/override.cc:182
 #, c-format
 msgid "Malformed override %s line %lu #2"
-msgstr ""
+msgstr "Missgestaltetes Override %s Zeile %lu #2"
 
 #: ftparchive/override.cc:92 ftparchive/override.cc:195
 #, c-format
 msgid "Malformed override %s line %lu #3"
-msgstr ""
+msgstr "Missgestaltetes Override %s Zeile %lu #2"
 
 #: ftparchive/override.cc:131 ftparchive/override.cc:205
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to read the override file %s"
-msgstr "Konnte Archiveköpfe nicht lesen."
+msgstr "Konnte die Override-Datei %s nicht lesen."
 
 #: ftparchive/multicompress.cc:75
 #, c-format
@@ -512,16 +544,15 @@ msgstr "Unbekannter Komprimierungsalgorithmus »%s«"
 #: ftparchive/multicompress.cc:105
 #, c-format
 msgid "Compressed output %s needs a compression set"
-msgstr ""
+msgstr "Komprimierte Ausgabe %s braucht einen Komprimierungs-Satz"
 
 #: ftparchive/multicompress.cc:172 methods/rsh.cc:91
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Konnte Interprozesskommunikation mit Unterprozess nicht erzeugen"
 
 #: ftparchive/multicompress.cc:198
-#, fuzzy
 msgid "Failed to create FILE*"
-msgstr "Konnte Weiterleitungen nicht erzeugen"
+msgstr "Konnte FILE* nicht erzeugen"
 
 #: ftparchive/multicompress.cc:201
 msgid "Failed to fork"
@@ -529,7 +560,7 @@ msgstr "Fork Fehlgeschlagen"
 
 #: ftparchive/multicompress.cc:215
 msgid "Compress Child"
-msgstr ""
+msgstr "Kindprozess Komprimieren"
 
 #: ftparchive/multicompress.cc:238
 #, c-format
@@ -537,32 +568,29 @@ msgid "Internal Error, Failed to create %s"
 msgstr "Interner Fehler, konnte %s nicht erzeugen"
 
 #: ftparchive/multicompress.cc:289
-#, fuzzy
 msgid "Failed to create subprocess IPC"
 msgstr "Konnte Interprozesskommunikation mit Unterprozess nicht erzeugen"
 
 #: ftparchive/multicompress.cc:324
-#, fuzzy
 msgid "Failed to exec compressor "
-msgstr "Konnte gzip nicht ausführen"
+msgstr "Konnte Komprimierer nicht ausführen"
 
 #: ftparchive/multicompress.cc:363
 msgid "decompressor"
-msgstr ""
+msgstr "Dekomprimierer"
 
 #: ftparchive/multicompress.cc:406
 msgid "IO to subprocess/file failed"
 msgstr "E/A zu Kindprozess/Datei fehlgeschlagen"
 
 #: ftparchive/multicompress.cc:458
-#, fuzzy
 msgid "Failed to read while computing MD5"
-msgstr "Kann kein readlink auf %s durchführen"
+msgstr "Kann nicht lesen während der MD5-Berechnung"
 
 #: ftparchive/multicompress.cc:475
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking %s"
-msgstr "Problem beim Öffnen von %s"
+msgstr "Problem beim Unlinking von %s"
 
 #: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
 #, c-format
@@ -1049,22 +1077,21 @@ msgid "%s has no build depends.\n"
 msgstr "%s hat keine Build-Dependencies.\n"
 
 #: cmdline/apt-get.cc:1948
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
-"%s Abhängigkeit von %s kann nicht befriedigt werden, da Paket %s nicht "
+"%s Abhängigkeit für %s kann nicht befriedigt werden, da Paket %s nicht "
 "gefunden werden kann."
 
 #: cmdline/apt-get.cc:1990
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
-"%s Abhängigkeit von %s kann nicht befriedigt werden, da Paket %s nicht "
-"gefunden werden kann."
+"%s Abhängigkeit für %s kann nicht befriedigt werden, da keine verfügbare Version von Paket %s die Versionsanforderungen erfüllen kann."
 
 #: cmdline/apt-get.cc:2017
 msgid ""
@@ -1307,9 +1334,9 @@ msgid "Failed to close file %s"
 msgstr "Konnte Datei %s nicht schließen"
 
 #: apt-inst/extract.cc:96 apt-inst/extract.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "The path %s is too long"
-msgstr "Der Pfad ist zu lang"
+msgstr "Der Pfad %s ist zu lang"
 
 #: apt-inst/extract.cc:127
 #, c-format
@@ -1360,9 +1387,9 @@ msgid "Unable to read %s"
 msgstr "Kann %s nicht lesen"
 
 #: apt-inst/extract.cc:494
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to stat %s"
-msgstr "Kann nicht auf %s zugreifen."
+msgstr "Kann nicht auf %s zugreifen"
 
 #: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
 #, c-format
@@ -1479,9 +1506,9 @@ msgid "Internal Error, could not locate member %s"
 msgstr "Interner Fehler, konnte Bestandteil %s nicht finden"
 
 #: apt-inst/deb/debfile.cc:104
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't change to %s"
-msgstr "Konnte Lock %s nicht bekommen"
+msgstr "Konnte nicht in  %s wechseln"
 
 #: apt-inst/deb/debfile.cc:125
 msgid "Internal Error, could not locate member"
@@ -1556,7 +1583,6 @@ msgstr ""
 "verwendet."
 
 #: methods/cdrom.cc:177 methods/file.cc:77
-#, fuzzy
 msgid "File not found"
 msgstr "Datei nicht gefunden"
 
@@ -1640,7 +1666,6 @@ msgid "Protocol corruption"
 msgstr "Protokollkorrumption"
 
 #: methods/ftp.cc:444 methods/rsh.cc:232
-#, fuzzy
 msgid "Write Error"
 msgstr "Schreibfehler"
 
@@ -1678,7 +1703,7 @@ msgid "Unable to send PORT command"
 msgstr "Konnte PORT-Befehl nicht senden"
 
 #: methods/ftp.cc:787
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown address family %u (AF_*)"
 msgstr "Unbekannte Adressfamilie %u (AF_*)"
 
@@ -1696,9 +1721,8 @@ msgid "Unable to accept connection"
 msgstr "Kann Verbindung nicht annehmen"
 
 #: methods/ftp.cc:862 methods/http.cc:912 methods/rsh.cc:303
-#, fuzzy
 msgid "Problem hashing file"
-msgstr "Beim Synchronisieren einer Datei trat ein Problem auf"
+msgstr "Bei Bestimmung des Hashwertes einer Datei trat ein Problem auf"
 
 #: methods/ftp.cc:875
 #, c-format
@@ -1717,7 +1741,7 @@ msgstr "Datenübertragung fehlgeschlagen, Server antwortete »%s«"
 #. Get the files information
 #: methods/ftp.cc:995
 msgid "Query"
-msgstr ""
+msgstr "Abfrage"
 
 #: methods/ftp.cc:1102
 msgid "Unable to invoke "
@@ -1731,7 +1755,7 @@ msgstr "Verbinde mit %s (%s)"
 #: methods/connect.cc:71
 #, c-format
 msgid "[IP: %s %s]"
-msgstr ""
+msgstr "[IP: %s %s]"
 
 #: methods/connect.cc:80
 #, c-format
@@ -1762,14 +1786,14 @@ msgid "Connecting to %s"
 msgstr "Verbinde mit %s"
 
 #: methods/connect.cc:163
-#, fuzzy, c-format
+#, c-format
 msgid "Could not resolve '%s'"
-msgstr "Konnte Datei %s nicht öffnen"
+msgstr "Konnte »%s« nicht auflösen"
 
 #: methods/connect.cc:167
 #, c-format
 msgid "Temporary failure resolving '%s'"
-msgstr ""
+msgstr "Temporärer Fehlschlag beim Auflösen von »%s«"
 
 #: methods/connect.cc:169
 #, c-format
@@ -1782,9 +1806,9 @@ msgid "Unable to connect to %s %s:"
 msgstr "Kann nicht mit %s:%s verbinden:"
 
 #: methods/gzip.cc:57
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open pipe for %s"
-msgstr "Konnte Datei %s nicht öffnen"
+msgstr "Konnte keine Pipe für %s öffnen"
 
 #: methods/gzip.cc:102
 #, c-format
@@ -1927,14 +1951,14 @@ msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Syntaxfehler %s:%u: Zusätzlicher Müll am Dateiende"
 
 #: apt-pkg/contrib/progress.cc:154
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Error!"
-msgstr "%s... Fehler!"
+msgstr "%c%s... Fehler!"
 
 #: apt-pkg/contrib/progress.cc:156
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... Done"
-msgstr "%s... Fertig"
+msgstr "%c%s... Fertig"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -1958,7 +1982,7 @@ msgid "Option %s requires an argument."
 msgstr "Option %s erfordert ein Argument."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr ""
 "Option %s: Konfigurationseinstellungspezifikation muss ein =<wert> haben."
@@ -2086,7 +2110,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Dieses APT unterstützt das Versionssystem »%s« nicht"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Dieser Paketcache wurde für eine andere Architektur aufgebaut"
 
