@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.64 2004/04/30 03:56:33 mdz Exp $
+# $Id: rules,v 1.65 2004/04/30 04:37:47 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -28,9 +28,9 @@ endif
 -include build/environment.mak
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-  export CXXFLAGS = -O0 -g
+  export CXXFLAGS = -O0 -g -Wall
 else
-  export CXXFLAGS = -O2 -g
+  export CXXFLAGS = -O2 -g -Wall
 endif
 
 # Default rule
