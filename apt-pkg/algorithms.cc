@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.5 1998/10/08 04:54:58 jgg Exp $
+// $Id: algorithms.cc,v 1.6 1998/10/20 02:39:17 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -713,7 +713,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		   ((Cache[End] & pkgDepCache::DepGNow) == 0 &&
 		    End->Type != pkgCache::Dep::Conflicts))
 	       {
-		  if ((Flags[I->ID] & Protected) != 0)
+		  if ((Flags[I->ID] & Protected) == Protected)
 		     continue;
 
 		  // See if a keep will do
@@ -755,7 +755,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    }
 
 	    // Hm, nothing can possibly satisify this dep. Nuke it.
-	    if (VList[0] == 0 && End->Type != pkgCache::Dep::Conflicts)
+	    if (VList[0] == 0 && End->Type != pkgCache::Dep::Conflicts &&
+		(Flags[I->ID] & Protected) != Protected)
 	    {
 	       Cache.MarkKeep(I);
 	       if (Cache[I].InstBroken() == false)
@@ -940,5 +941,22 @@ bool pkgProblemResolver::ResolveByKeep()
    }   
 
    return true;
+}
+									/*}}}*/
+// ProblemResolver::InstallProtect - Install all protected packages	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used to make sure protected packages are installed */
+void pkgProblemResolver::InstallProtect()
+{
+   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+   {
+      if ((Flags[I->ID] & Protected) == Protected)
+      {
+	 if ((Flags[I->ID] & ToRemove) == ToRemove)
+	    Cache.MarkDelete(I);
+	 else
+	    Cache.MarkInstall(I,false);
+      }
+   }   
 }
 									/*}}}*/

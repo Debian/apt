@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.8 1998/10/02 04:39:50 jgg Exp $
+// $Id: fileutl.cc,v 1.9 1998/10/20 02:39:28 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -119,6 +119,45 @@ string flNotDir(string File)
    return string(File,Res,Res - File.length());
 }
 									/*}}}*/
+// SetCloseExec - Set the close on exec flag				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void SetCloseExec(int Fd,bool Close)
+{   
+   if (fcntl(Fd,F_SETFD,(Close == false)?0:FD_CLOEXEC) != 0)
+   {
+      cerr << "FATAL -> Could not set close on exec " << strerror(errno) << endl;
+      exit(100);
+   }
+}
+									/*}}}*/
+// SetNonBlock - Set the nonblocking flag				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void SetNonBlock(int Fd,bool Block)
+{   
+   int Flags = fcntl(Fd,F_GETFL);
+   if (fcntl(Fd,F_SETFL,(Block == false)?0:O_NONBLOCK) != 0)
+   {
+      cerr << "FATAL -> Could not set non-blocking flag " << strerror(errno) << endl;
+      exit(100);
+   }
+}
+									/*}}}*/
+// WaitFd - Wait for a FD to become readable				/*{{{*/
+// ---------------------------------------------------------------------
+/* This waits for a FD to become readable using select. It is usefull for
+   applications making use of non-blocking sockets. */
+bool WaitFd(int Fd)
+{
+   fd_set Set;
+   FD_ZERO(&Set);
+   FD_SET(Fd,&Set);
+   if (select(Fd+1,&Set,0,0,0) <= 0)
+      return false;
+   return true;
+}
+									/*}}}*/
 
 // FileFd::FileFd - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
@@ -155,6 +194,7 @@ FileFd::FileFd(string FileName,OpenMode Mode, unsigned long Perms)
       _error->Errno("open","Could not open file %s",FileName.c_str());
    else
       this->FileName = FileName;
+   SetCloseExec(iFd,true);
 }
 									/*}}}*/
 // FileFd::~File - Closes the file					/*{{{*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.4 1998/09/22 05:30:28 jgg Exp $
+// $Id: strutl.cc,v 1.5 1998/10/20 02:39:30 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -303,6 +303,17 @@ string URItoFileName(string URI)
    return URI;
 }
 									/*}}}*/
+// URIAccess - Return the access method for the URI			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string URIAccess(string URI)
+{
+   string::size_type Pos = URI.find(':');
+   if (Pos == string::npos)
+      return string();
+   return string(URI,0,Pos);
+}
+									/*}}}*/
 // Base64Encode - Base64 Encoding routine for short strings		/*{{{*/
 // ---------------------------------------------------------------------
 /* This routine performs a base64 transformation on a string. It was ripped
@@ -389,7 +400,7 @@ int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
    for (; A != AEnd && B != BEnd; A++, B++)
       if (toupper(*A) != toupper(*B))
 	 break;
-   
+
    if (A == AEnd && B == BEnd)
       return 0;
    if (A == AEnd)
@@ -399,5 +410,65 @@ int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
    if (toupper(*A) < toupper(*B))
       return -1;
    return 1;
+}
+									/*}}}*/
+// LookupTag - Lookup the value of a tag in a taged string		/*{{{*/
+// ---------------------------------------------------------------------
+/* The format is like those used in package files and the method 
+   communication system */
+string LookupTag(string Message,const char *Tag,const char *Default)
+{
+   // Look for a matching tag.
+   int Length = strlen(Tag);
+   for (string::iterator I = Message.begin(); I + Length < Message.end(); I++)
+   {
+      // Found the tag
+      if (I[Length] == ':' && stringcasecmp(I,I+Length,Tag) == 0)
+      {
+	 // Find the end of line and strip the leading/trailing spaces
+	 string::iterator J;
+	 I += Length + 1;
+	 for (; isspace(*I) != 0 && I < Message.end(); I++);
+	 for (J = I; *J != '\n' && J < Message.end(); J++);
+	 for (; J > I && isspace(J[-1]) != 0; J--);
+	 
+	 return string(I,J-I);
+      }
+      
+      for (; *I != '\n' && I < Message.end(); I++);
+   }   
+   
+   // Failed to find a match
+   if (Default == 0)
+      return string();
+   return Default;
+}
+									/*}}}*/
+// StringToBool - Converts a string into a boolean			/*{{{*/
+// ---------------------------------------------------------------------
+/* This inspects the string to see if it is true or if it is false and
+   then returns the result. Several varients on true/false are checked. */
+int StringToBool(string Text,int Default = -1)
+{
+   char *End;
+   int Res = strtol(Text.c_str(),&End,0);   
+   if (End != Text.c_str() && Res >= 0 && Res <= 1)
+      return Res;
+   
+   // Check for positives
+   if (strcasecmp(Text.c_str(),"no") == 0 ||
+       strcasecmp(Text.c_str(),"false") == 0 ||
+       strcasecmp(Text.c_str(),"without") == 0 ||
+       strcasecmp(Text.c_str(),"disable") == 0)
+      return 0;
+   
+   // Check for negatives
+   if (strcasecmp(Text.c_str(),"yes") == 0 ||
+       strcasecmp(Text.c_str(),"true") == 0 ||
+       strcasecmp(Text.c_str(),"with") == 0 ||
+       strcasecmp(Text.c_str(),"enable") == 0)
+      return 1;
+   
+   return Default;
 }
 									/*}}}*/

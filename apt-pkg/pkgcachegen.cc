@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.19 1998/10/15 07:00:00 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.20 1998/10/20 02:39:21 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -384,8 +384,8 @@ bool pkgSrcCacheCheck(pkgSourceList &List)
    if (_error->PendingError() == true)
       return false;
 
-   string CacheFile = _config->FindDir("Dir::Cache::srcpkgcache");
-   string ListDir = _config->FindDir("Dir::State::lists");
+   string CacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
+   string ListDir = _config->FindFile("Dir::State::lists");
 
    // Count the number of missing files
    int Missing = 0;
@@ -489,9 +489,9 @@ bool pkgPkgCacheCheck(string CacheFile)
 
    // Status files that must be in the cache
    string Status[3];
-   Status[0] = _config->FindDir("Dir::State::xstatus");
-   Status[1]= _config->FindDir("Dir::State::userstatus");
-   Status[2] = _config->FindDir("Dir::State::status");
+   Status[0] = _config->FindFile("Dir::State::xstatus");
+   Status[1]= _config->FindFile("Dir::State::userstatus");
+   Status[2] = _config->FindFile("Dir::State::status");
    
    // Cheack each file
    for (pkgCache::PkgFileIterator F(Cache); F.end() == false; F++)
@@ -521,9 +521,9 @@ bool pkgPkgCacheCheck(string CacheFile)
 static bool pkgAddSourcesSize(unsigned long &TotalSize)
 {
    // Grab the file names
-   string xstatus = _config->FindDir("Dir::State::xstatus");
-   string userstatus = _config->FindDir("Dir::State::userstatus");
-   string status = _config->FindDir("Dir::State::status");
+   string xstatus = _config->FindFile("Dir::State::xstatus");
+   string userstatus = _config->FindFile("Dir::State::userstatus");
+   string status = _config->FindFile("Dir::State::status");
    
    // Grab the sizes
    struct stat Buf;
@@ -546,9 +546,9 @@ static bool pkgMergeStatus(OpProgress &Progress,pkgCacheGenerator &Gen,
 {
    // Grab the file names   
    string Status[3];
-   Status[0] = _config->FindDir("Dir::State::xstatus");
-   Status[1]= _config->FindDir("Dir::State::userstatus");
-   Status[2] = _config->FindDir("Dir::State::status");
+   Status[0] = _config->FindFile("Dir::State::xstatus");
+   Status[1]= _config->FindFile("Dir::State::userstatus");
+   Status[2] = _config->FindFile("Dir::State::status");
    
    for (int I = 0; I != 3; I++)
    {
@@ -584,15 +584,15 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
 {
    Progress.OverallProgress(0,1,1,"Reading Package Lists");
    
-   string CacheFile = _config->FindDir("Dir::Cache::pkgcache");
+   string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
    bool SrcOk = pkgSrcCacheCheck(List);
    bool PkgOk = SrcOk && pkgPkgCacheCheck(CacheFile);
    
    // Rebuild the source and package caches   
    if (SrcOk == false)
    {      
-      string SCacheFile = _config->FindDir("Dir::Cache::srcpkgcache");
-      string ListDir = _config->FindDir("Dir::State::lists");
+      string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
+      string ListDir = _config->FindFile("Dir::State::lists");
       
       FileFd SCacheF(SCacheFile,FileFd::WriteEmpty);
       FileFd CacheF(CacheFile,FileFd::WriteEmpty);
@@ -657,7 +657,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    }
    
    // We use the source cache to generate the package cache
-   string SCacheFile = _config->FindDir("Dir::Cache::srcpkgcache");
+   string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
 
    FileFd SCacheF(SCacheFile,FileFd::ReadOnly);
    FileFd CacheF(CacheFile,FileFd::WriteEmpty);

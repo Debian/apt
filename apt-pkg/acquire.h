@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.1 1998/10/15 06:59:59 jgg Exp $
+// $Id: acquire.h,v 1.2 1998/10/20 02:39:16 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -60,6 +60,9 @@ class pkgAcquire
    void Enqueue(Item *Item,string URI);
    
    public:
+
+   const MethodConfig *GetConfig(string Access);
+   string QueueName(string URI);
    
    pkgAcquire();
    ~pkgAcquire();
@@ -73,9 +76,8 @@ class pkgAcquire::Queue
    
    protected:
    
-   string Access;
    string URIMatch;
-   
+
    vector<Item *> Items;
    
    public:
@@ -84,6 +86,8 @@ class pkgAcquire::Queue
 // Configuration information from each method
 struct pkgAcquire::MethodConfig
 {
+   MethodConfig *Next;
+   
    string Access;
 
    string Version;
@@ -91,7 +95,6 @@ struct pkgAcquire::MethodConfig
    bool PreScan;
    
    MethodConfig();
-   ~MethodConfig();
 };
 
 #endif

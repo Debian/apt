@@ -1,9 +1,11 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.1 1998/10/15 06:59:59 jgg Exp $
+// $Id: acquire-worker.h,v 1.2 1998/10/20 02:39:14 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
+   
+   Each worker class is associated with exaclty one subprocess.
    
    ##################################################################### */
 									/*}}}*/
@@ -20,18 +22,40 @@
 class pkgAcquire::Worker
 {
    protected:
-   
-   Queue *OwnerQ;
-   MethodConfig *Config;   
+   friend Queue;
+
    Worker *Next;
    
-   friend Queue;
+   // The access association
+   Queue *OwnerQ;
+   MethodConfig *Config;
+   string Access;
+      
+   // This is the subprocess IPC setup
+   pid_t Process;
+   int InFd;
+   int OutFd;
+   
+   // Various internal things
+   bool Debug;
+   vector<string> MessageQueue;
+
+   // Private constructor helper
+   void Construct();
+   
+   // Message handling things
+   bool ReadMessages();
+   bool RunMessages();
+   
+   // The message handlers
+   bool Capabilities(string Message);
    
    public:
    
-   bool Create();
+   // Load the method and do the startup 
+   bool Start();   
    
-   Worker(Queue *OwnerQ);
+   Worker(Queue *OwnerQ,string Access);
    Worker(MethodConfig *Config);
    ~Worker();
 };

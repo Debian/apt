@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.1 1998/10/15 06:59:59 jgg Exp $
+// $Id: acquire-item.cc,v 1.2 1998/10/20 02:39:12 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -56,7 +56,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,const pkgSourceList::Item *Location) 
 /* */
 string pkgAcqIndex::ToFile()
 {
-   string PartialDir = _config->FindDir("Dir::State::lists") + "/partial/";
+   string PartialDir = _config->FindFile("Dir::State::lists") + "/partial/";
    
    return PartialDir + URItoFileName(Location->PackagesURI());
 }
@@ -78,7 +78,7 @@ pkgAcqIndexRel::pkgAcqIndexRel(pkgAcquire *Owner,
 /* */
 string pkgAcqIndexRel::ToFile()
 {
-   string PartialDir = _config->FindDir("Dir::State::lists") + "/partial/";
+   string PartialDir = _config->FindFile("Dir::State::lists") + "/partial/";
    
    return PartialDir + URItoFileName(Location->ReleaseURI());
 }

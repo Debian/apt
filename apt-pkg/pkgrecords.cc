@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.cc,v 1.2 1998/08/19 06:16:10 jgg Exp $
+// $Id: pkgrecords.cc,v 1.3 1998/10/20 02:39:23 jgg Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records
@@ -23,7 +23,7 @@
 /* This will create the necessary structures to access the status files */
 pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 {
-   string ListDir = _config->FindDir("Dir::State::lists");
+   string ListDir = _config->FindFile("Dir::State::lists");
    
    Files = new PkgFile[Cache.HeaderP->PackageFileCount];   
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); 

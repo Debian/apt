@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.5 1998/10/08 04:54:59 jgg Exp $
+// $Id: algorithms.h,v 1.6 1998/10/20 02:39:18 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -68,7 +68,8 @@ class pkgProblemResolver
    typedef pkgCache::Package Package;
    
    enum Flags {Protected = (1 << 0), PreInstalled = (1 << 1),
-               Upgradable = (1 << 2), ReInstateTried = (1 << 3)};
+               Upgradable = (1 << 2), ReInstateTried = (1 << 3),
+               ToRemove = (1 << 4)};
    signed short *Scores;
    unsigned char *Flags;
    bool Debug;
@@ -89,13 +90,16 @@ class pkgProblemResolver
    public:
    
    inline void Protect(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= Protected;};
+   inline void Remove(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= ToRemove;};
 
    // Try to intelligently resolve problems by installing and removing packages   
    bool Resolve(bool BrokenFix = false);
-
+   
    // Try to resolve problems only by using keep
    bool ResolveByKeep();
-      
+   
+   void InstallProtect();   
+   
    pkgProblemResolver(pkgDepCache &Cache);
 };
 

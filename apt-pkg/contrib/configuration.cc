@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.6 1998/10/02 04:39:49 jgg Exp $
+// $Id: configuration.cc,v 1.7 1998/10/20 02:39:26 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -102,12 +102,12 @@ string Configuration::Find(const char *Name,const char *Default)
    return Itm->Value;
 }
 									/*}}}*/
-// Configuration::FindDir - Find a directory				/*{{{*/
+// Configuration::FindFile - Find a Filename				/*{{{*/
 // ---------------------------------------------------------------------
 /* Directories are stored as the base dir in the Parent node and the
-   sub directory in sub nodes
+   sub directory in sub nodes with the final node being the end filename
  */
-string Configuration::FindDir(const char *Name,const char *Default = 0)
+string Configuration::FindFile(const char *Name,const char *Default)
 {
    Item *Itm = Lookup(Name,false);
    if (Itm == 0 || Itm->Value.empty() == true)
@@ -132,6 +132,17 @@ string Configuration::FindDir(const char *Name,const char *Default = 0)
       return Itm->Parent->Value + Itm->Value;
    else
       return Itm->Parent->Value + '/' + Itm->Value;
+}
+									/*}}}*/
+// Configuration::FindDir - Find a directory name			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is like findfile execept the result is terminated in a / */
+string Configuration::FindDir(const char *Name,const char *Default)
+{
+   string Res = FindFile(Name,Default);
+   if (Res.end()[-1] != '/')
+      return Res + '/';
+   return Res;
 }
 									/*}}}*/
 // Configuration::FindI - Find an integer value				/*{{{*/
@@ -160,28 +171,7 @@ bool Configuration::FindB(const char *Name,bool Default)
    if (Itm == 0 || Itm->Value.empty() == true)
       return Default;
    
-   char *End;
-   int Res = strtol(Itm->Value.c_str(),&End,0);
-   if (End == Itm->Value.c_str() || Res < 0 || Res > 1)
-   {
-      // Check for positives
-      if (strcasecmp(Itm->Value.c_str(),"no") == 0 ||
-	  strcasecmp(Itm->Value.c_str(),"false") == 0 ||
-	  strcasecmp(Itm->Value.c_str(),"without") == 0 ||
-	  strcasecmp(Itm->Value.c_str(),"disable") == 0)
-	 return false;
-      
-      // Check for negatives
-      if (strcasecmp(Itm->Value.c_str(),"yes") == 0 ||
-	  strcasecmp(Itm->Value.c_str(),"true") == 0 ||
-	  strcasecmp(Itm->Value.c_str(),"with") == 0 ||
-	  strcasecmp(Itm->Value.c_str(),"enable") == 0)
-	 return true;
-      
-      return Default;
-   }
-   
-   return Res;
+   return StringToBool(Itm->Value,Default);
 }
 									/*}}}*/
 // Configuration::Set - Set a value					/*{{{*/

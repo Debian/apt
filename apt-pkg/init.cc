@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.7 1998/10/09 19:57:21 jgg Exp $
+// $Id: init.cc,v 1.8 1998/10/20 02:39:19 jgg Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -47,7 +47,7 @@ bool pkgInitialize(Configuration &Cnf)
    Cnf.Set("Dir::Etc::main","apt.conf");
 
    // Read the main config file
-   string FName = Cnf.FindDir("Dir::Etc::main");
+   string FName = Cnf.FindFile("Dir::Etc::main");
    struct stat Buf;   
    if (stat(FName.c_str(),&Buf) != 0)
       return true;

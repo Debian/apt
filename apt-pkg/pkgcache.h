@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.7 1998/07/19 04:22:01 jgg Exp $
+// $Id: pkgcache.h,v 1.8 1998/10/20 02:39:20 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -85,9 +85,6 @@ class pkgCache
    // Memory mapped cache file
    string CacheFile;
    MMap &Map;
-
-   bool Public;
-   bool ReadOnly;
 
    static unsigned long sHash(string S);
    static unsigned long sHash(const char *S);

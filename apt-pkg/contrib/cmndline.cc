@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.3 1998/10/08 04:55:01 jgg Exp $
+// $Id: cmndline.cc,v 1.4 1998/10/20 02:39:25 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -259,14 +259,10 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	    break;
       }
 
-      // Check for positives
-      if (strcasecmp(Argument,"yes") == 0 ||
-	  strcasecmp(Argument,"true") == 0 ||
-	  strcasecmp(Argument,"with") == 0 ||
-	  strcasecmp(Argument,"enable") == 0)
+      // Check for boolean
+      Sense = StringToBool(Argument);
+      if (Sense >= 0)
       {
-	 Sense = 1;
-
 	 // Eat the argument	 
 	 if (Argument != Buffer)
 	 {
@@ -276,23 +272,6 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	 break;
       }
 
-      // Check for negatives
-      if (strcasecmp(Argument,"no") == 0 ||
-	  strcasecmp(Argument,"false") == 0 ||
-	  strcasecmp(Argument,"without") == 0 ||
-	  strcasecmp(Argument,"disable") == 0)
-      {
-	 Sense = 0;
-	 
-	 // Eat the argument	 
-	 if (Argument != Buffer)
-	 {
-	    Opt += strlen(Opt);
-	    I += IncI;
-	 }	 
-	 break;
-      }
-      
       if (CertainArg == true)
 	 return _error->Error("Sense %s is not understood, try true or false.",Argument);
       
