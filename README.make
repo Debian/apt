@@ -28,7 +28,7 @@ Furthermore, the make system runs with a current directory equal to the
 source directory irregardless of the destination directory. This means
 #include "" and #include <> work as epected and more importantly
 running 'make' in the source directory will work as expected. The
-environment variable or make parameter 'BUILD' sets the build directory.
+environment variable or make parameter 'BUILD' set the build directory.
 It may be an absolute path or a path relative to the top level directory.
 By default build/ will be used with a fall back to ./ This means
 you can get all the advantages of a build directory without having to
@@ -91,6 +91,7 @@ Straight out of CVS you have to initialize autoconf. This requires
 automake (I really don't know why) and autoconf and requires doing 
   aclocal -I buidlib
   autoconf
+[Altertatively you can run make startup in the top level build dir]
 
 Autoconf is configured to do some basic system probes for optional and 
 required functionality and generate an environment.mak and include/config.h 
@@ -110,4 +111,4 @@ There is one big warning, you can't use both this make file and the
 ones in the top level tree. Make is not able to resolve rules that 
 go to the same file through different paths and this will confuse the
 depends mechanism. I recommend always using the makefiles in the
-source directory and exporting BUILD
+source directory and exporting BUILD.
