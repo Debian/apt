@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.h,v 1.7 1998/11/12 03:14:40 jgg Exp $
+// $Id: mmap.h,v 1.8 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -22,7 +22,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_MMAP_H
 #define PKGLIB_MMAP_H
 

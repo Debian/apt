@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.h,v 1.5 1998/12/14 02:23:47 jgg Exp $
+// $Id: cmndline.h,v 1.6 1999/01/18 06:20:07 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -38,7 +38,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_CMNDLINE_H
 #define PKGLIB_CMNDLINE_H
 

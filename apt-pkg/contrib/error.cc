@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.5 1998/09/18 02:42:40 jgg Exp $
+// $Id: error.cc,v 1.6 1999/01/18 06:20:07 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -80,8 +80,9 @@ bool GlobalError::Errno(const char *Function,const char *Description,...)
 
    // sprintf the description
    char S[400];
-   vsprintf(S,Description,args);
-   sprintf(S + strlen(S)," - %s (%i %s)",Function,errno,strerror(errno));
+   vsnprintf(S,sizeof(S),Description,args);
+   snprintf(S + strlen(S),sizeof(S) - strlen(S),
+	    " - %s (%i %s)",Function,errno,strerror(errno));
 
    // Put it on the list
    Item *Itm = new Item;
@@ -108,8 +109,8 @@ bool GlobalError::WarningE(const char *Function,const char *Description,...)
 
    // sprintf the description
    char S[400];
-   vsprintf(S,Description,args);
-   sprintf(S + strlen(S)," - %s (%i %s)",Function,errno,strerror(errno));
+   vsnprintf(S,sizeof(S),Description,args);
+   snprintf(S + strlen(S),sizeof(S) - strlen(S)," - %s (%i %s)",Function,errno,strerror(errno));
 
    // Put it on the list
    Item *Itm = new Item;
@@ -130,7 +131,7 @@ bool GlobalError::Error(const char *Description,...)
 
    // sprintf the description
    char S[400];
-   vsprintf(S,Description,args);
+   vsnprintf(S,sizeof(S),Description,args);
 
    // Put it on the list
    Item *Itm = new Item;
@@ -153,7 +154,7 @@ bool GlobalError::Warning(const char *Description,...)
 
    // sprintf the description
    char S[400];
-   vsprintf(S,Description,args);
+   vsnprintf(S,sizeof(S),Description,args);
 
    // Put it on the list
    Item *Itm = new Item;

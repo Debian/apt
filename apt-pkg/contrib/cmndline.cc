@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.7 1998/12/14 02:23:47 jgg Exp $
+// $Id: cmndline.cc,v 1.8 1999/01/18 06:20:07 jgg Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser
@@ -96,7 +96,6 @@ bool CommandLine::Parse(int argc,const char **argv)
 	 if (Opt == OptEnd)
 	    return _error->Error("Command line option %s is not understood",argv[I]);
 	 Opt++;
-	 cout << Opt << endl;
 	 
 	 for (A = ArgList; A->end() == false &&
 	      stringcasecmp(Opt,OptEnd,A->LongOpt) != 0; A++);
@@ -205,7 +204,13 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	 return true;
       }
       
-      Conf->Set(A->ConfName,Argument);
+      const char *I = A->ConfName;
+      for (; *I != 0 && *I != ' '; I++);
+      if (*I == ' ')
+	 Conf->Set(string(A->ConfName,0,I-A->ConfName),string(I+1) + Argument);
+      else
+	 Conf->Set(A->ConfName,string(I) + Argument);
+	 
       return true;
    }
    

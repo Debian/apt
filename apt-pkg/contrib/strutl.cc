@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.16 1998/12/31 05:45:26 jgg Exp $
+// $Id: strutl.cc,v 1.17 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -189,7 +189,7 @@ string QuoteString(string Str,const char *Bad)
 	  *I <= 0x20 || *I >= 0x7F)
       {
 	 char Buf[10];
-	 sprintf(Buf,"%%%02x",(unsigned int)((unsigned char)*I));
+	 sprintf(Buf,"%%%02x",(int)*I);
 	 Res += Buf;
       }
       else
@@ -214,7 +214,7 @@ string SizeToStr(double Size)
    
    /* bytes, KiloBytes, MegaBytes, GigaBytes, TeraBytes, PetaBytes, 
       ExaBytes, ZettaBytes, YottaBytes */
-   char Ext[] = {'b','k','M','G','T','P','E','Z','Y'};
+   char Ext[] = {'\0','k','M','G','T','P','E','Z','Y'};
    int I = 0;
    while (I <= 8)
    {
@@ -456,6 +456,7 @@ int StringToBool(string Text,int Default = -1)
    if (strcasecmp(Text.c_str(),"no") == 0 ||
        strcasecmp(Text.c_str(),"false") == 0 ||
        strcasecmp(Text.c_str(),"without") == 0 ||
+       strcasecmp(Text.c_str(),"off") == 0 ||
        strcasecmp(Text.c_str(),"disable") == 0)
       return 0;
    
@@ -463,6 +464,7 @@ int StringToBool(string Text,int Default = -1)
    if (strcasecmp(Text.c_str(),"yes") == 0 ||
        strcasecmp(Text.c_str(),"true") == 0 ||
        strcasecmp(Text.c_str(),"with") == 0 ||
+       strcasecmp(Text.c_str(),"on") == 0 ||
        strcasecmp(Text.c_str(),"enable") == 0)
       return 1;
    

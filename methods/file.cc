@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: file.cc,v 1.6 1998/11/14 01:39:49 jgg Exp $
+// $Id: file.cc,v 1.7 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
 
    File URI method for APT
@@ -37,7 +37,9 @@ bool FileMethod::Fetch(FetchItem *Itm)
    URI Get = Itm->Uri;
    string File = Get.Path;
    FetchResult Res;
-   
+   if (Get.Host.empty() == false)
+      return _error->Error("Invalid URI, local URIS must not start with //");
+
    // See if the file exists
    struct stat Buf;
    if (stat(File.c_str(),&Buf) == 0)

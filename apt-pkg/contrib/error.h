@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.h,v 1.5 1998/09/18 02:42:41 jgg Exp $
+// $Id: error.h,v 1.6 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -37,7 +37,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_ERROR_H
 #define PKGLIB_ERROR_H
 

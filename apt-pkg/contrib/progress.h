@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.h,v 1.4 1998/10/02 04:39:54 jgg Exp $
+// $Id: progress.h,v 1.5 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -18,7 +18,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_PROGRESS_H
 #define PKGLIB_PROGRESS_H
 

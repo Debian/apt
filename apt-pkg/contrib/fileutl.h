@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.11 1998/12/08 05:24:43 jgg Exp $
+// $Id: fileutl.h,v 1.12 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -18,7 +18,6 @@
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_FILEUTL_H
 #define PKGLIB_FILEUTL_H
 
@@ -43,6 +42,7 @@ class FileFd
    bool Read(void *To,unsigned long Size);
    bool Write(const void *From,unsigned long Size);
    bool Seek(unsigned long To);
+   unsigned long Tell();
    unsigned long Size();
    bool Close();
 

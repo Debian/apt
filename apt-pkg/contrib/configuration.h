@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.8 1998/11/04 07:11:12 jgg Exp $
+// $Id: configuration.h,v 1.9 1999/01/18 06:20:07 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -14,13 +14,17 @@
    And has associated with it a text string. The Configuration class only
    provides storage and lookup for this tree, other classes provide
    configuration file formats (and parsers/emitters if needed).
-   
+
    Most things can get by quite happily with,
      cout << _config->Find("Foo::Bar") << endl;
+
+   A special extension, support for ordered lists is provided by using the
+   special syntax, "block::list::" the trailing :: designates the 
+   item as a list. To access the list you must use the tree function on
+   "block::list".
    
    ##################################################################### */
 									/*}}}*/
-// Header section: pkglib
 #ifndef PKGLIB_CONFIGURATION_H
 #define PKGLIB_CONFIGURATION_H
 

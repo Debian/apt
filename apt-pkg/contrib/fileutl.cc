@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.16 1998/11/27 04:20:52 jgg Exp $
+// $Id: fileutl.cc,v 1.17 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -102,8 +102,11 @@ string SafeGetCWD()
    // Stash the current dir.
    char S[300];
    S[0] = 0;
-   if (getcwd(S,sizeof(S)) == 0)
+   if (getcwd(S,sizeof(S)-2) == 0)
       return "/";
+   unsigned int Len = strlen(S);
+   S[Len] = '/';
+   S[Len+1] = 0;
    return S;
 }
 									/*}}}*/
@@ -261,6 +264,17 @@ bool FileFd::Seek(unsigned long To)
    }
    
    return true;
+}
+									/*}}}*/
+// FileFd::Tell - Current seek position					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+unsigned long FileFd::Tell()
+{
+   off_t Res = lseek(iFd,0,SEEK_CUR);
+   if (Res == (off_t)-1)
+      _error->Errno("lseek","Failed to determine the current file position");
+   return Res;
 }
 									/*}}}*/
 // FileFd::Size - Return the size of the file				/*{{{*/

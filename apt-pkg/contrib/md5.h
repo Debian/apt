@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.h,v 1.2 1998/11/25 23:54:45 jgg Exp $
+// $Id: md5.h,v 1.3 1999/01/18 06:20:08 jgg Exp $
 /* ######################################################################
    
    MD5SumValue - Storage for a MD5Sum
@@ -39,9 +39,13 @@ class MD5SumValue
    // Accessors
    bool operator ==(const MD5SumValue &rhs) const; 
    string Value() const;
-   inline operator string() const {return Value();}; 
+   inline void Value(unsigned char S[16]) 
+         {for (int I = 0; I != sizeof(Sum); I++) S[I] = Sum[I];};
+   inline operator string() const {return Value();};
    bool Set(string Str);
-   
+   inline void Set(unsigned char S[16]) 
+         {for (int I = 0; I != sizeof(Sum); I++) Sum[I] = S[I];};
+
    MD5SumValue(string Str);
    MD5SumValue();
 };

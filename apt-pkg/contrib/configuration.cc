@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.10 1998/11/05 07:21:43 jgg Exp $
+// $Id: configuration.cc,v 1.11 1999/01/18 06:20:07 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -43,10 +43,17 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
    int Res = 1;
    Item *I = Head->Child;
    Item **Last = &Head->Child;
-   for (; I != 0; Last = &I->Next, I = I->Next)
-      if ((Res = stringcasecmp(I->Tag.begin(),I->Tag.end(),S,S + Len)) == 0)
-	 break;
    
+   // Empty strings match nothing. They are used for lists.
+   if (Len != 0)
+   {
+      for (; I != 0; Last = &I->Next, I = I->Next)
+	 if ((Res = stringcasecmp(I->Tag.begin(),I->Tag.end(),S,S + Len)) == 0)
+	    break;
+   }
+   else
+      for (; I != 0; Last = &I->Next, I = I->Next);
+      
    if (Res == 0)
       return I;
    if (Create == false)
@@ -73,7 +80,7 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool Create)
    const char *End = Start + strlen(Name);
    const char *TagEnd = Name;
    Item *Itm = Root;
-   for (; End - TagEnd > 2; TagEnd++)
+   for (; End - TagEnd >= 2; TagEnd++)
    {
       if (TagEnd[0] == ':' && TagEnd[1] == ':')
       {
@@ -84,6 +91,13 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool Create)
       }
    }   
 
+   // This must be a trailing ::, we create unique items in a list
+   if (End - Start == 0)
+   {
+      if (Create == false)
+	 return 0;
+   }
+   
    Itm = Lookup(Itm,Start,End - Start,Create);
    return Itm;
 }
@@ -377,17 +391,11 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	       continue;
 
 	    // Parse off the tag
-	    string::size_type Pos = LineBuffer.find(' ');
-	    if (Pos == string::npos)
-	    {
-	       if (TermChar == '{')
-		  Pos = LineBuffer.length();
-	       else
-		  return _error->Error("Syntax error %s:%u: Tag with no value",FName.c_str(),CurLine);
-	    }
+	    string Tag;
+	    const char *Pos = LineBuffer.c_str();
+	    if (ParseQuoteWord(Pos,Tag) == false)
+	       return _error->Error("Syntax error %s:%u: Malformed Tag",FName.c_str(),CurLine);	    
 	    
-	    string Tag = string(LineBuffer,0,Pos);
-
 	    // Go down a level
 	    if (TermChar == '{')
 	    {
@@ -398,17 +406,16 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	       Tag = string();
 	    }
 
-	    // We dont have a value to set
-	    if (Pos == LineBuffer.length())
-	    {
-	       LineBuffer = string();
-	       continue;
-	    }
-	    
 	    // Parse off the word
 	    string Word;
-	    if (ParseCWord(LineBuffer.c_str()+Pos,Word) == false)
-	       return _error->Error("Syntax error %s:%u: Malformed value",FName.c_str(),CurLine);
+	    if (ParseCWord(Pos,Word) == false)
+	    {
+	       if (TermChar != '{')
+	       {
+		  Word = Tag;
+		  Tag = "";
+	       }	       
+	    }
 	    
 	    // Generate the item name
 	    string Item;
@@ -416,10 +423,10 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	       Item = Tag;
 	    else
 	    {
-	       if (Tag.empty() == true)
-		  Item = ParentTag;
-	       else
+	       if (TermChar != '{' || Tag.empty() == false)
 		  Item = ParentTag + "::" + Tag;
+	       else
+		  Item = ParentTag;
 	    }
 	    
 	    // Set the item in the configuration class
