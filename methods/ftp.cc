@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.27 2001/04/10 04:51:50 jgg Exp $
+// $Id: ftp.cc,v 1.28 2001/05/22 04:02:00 jgg Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <iostream>
 
 // Internet stuff
 #include <netinet/in.h>
@@ -39,6 +40,8 @@
 #include "connect.h"
 #include "ftp.h"
 									/*}}}*/
+
+using namespace std;
 
 /* This table is for the EPRT and EPSV commands, it maps the OS address
    family to the IETF address families */

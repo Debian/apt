@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.17 2000/01/17 07:11:49 jgg Exp $
+// $Id: cdrom.cc,v 1.18 2001/05/22 04:01:41 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -16,7 +16,11 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <iostream>
 									/*}}}*/
+
+using namespace std;
 
 class CDROMMethod : public pkgAcqMethod
 {
