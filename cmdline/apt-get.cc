@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.11 1998/11/14 01:39:48 jgg Exp $
+// $Id: apt-get.cc,v 1.12 1998/11/14 03:32:26 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -44,6 +44,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <signal.h>
+#include <stdio.h>
 									/*}}}*/
 
 ostream c0out;
@@ -295,13 +296,21 @@ void ShowEssential(ostream &out,pkgDepCache &Dep)
       // Print out any essential package depenendents that are to be removed
       for (pkgDepCache::DepIterator D = I.CurrentVer().DependsList(); D.end() == false; D++)
       {
+	 // Skip everything but depends
+	 if (D->Type != pkgCache::Dep::PreDepends &&
+	     D->Type != pkgCache::Dep::Depends)
+	    continue;
+	 
 	 pkgCache::PkgIterator P = D.SmartTargetPkg();
 	 if (Dep[P].Delete() == true)
 	 {
 	    if (Added[P->ID] == true)
 	       continue;
 	    Added[P->ID] = true;
-	    List += string(P.Name()) + " ";
+	    
+	    char S[300];
+	    sprintf(S,"%s (due to %s) ",P.Name(),I.Name());
+	    List += S;
 	 }	 
       }      
    }
