@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: ftp.cc,v 1.25 2001/03/13 06:51:46 jgg Exp $
+// $Id: ftp.cc,v 1.26 2001/03/24 22:34:55 jgg Exp $
 /* ######################################################################
 
    FTP Aquire Method - This is the FTP aquire method for APT.
@@ -1079,13 +1079,6 @@ int main(int argc,const char *argv[])
    {
       URI Proxy = string(getenv("ftp_proxy"));
       
-      // Parse no_proxy, a , separated list of domains
-      if (getenv("no_proxy") != 0)
-      {
-	 if (CheckDomainList(Proxy.Host,getenv("no_proxy")) == true)
-	    Proxy.Access = "";
-      }
-      
       // Run the HTTP method
       if (Proxy.Access == "http")
       {
@@ -1093,6 +1086,7 @@ int main(int argc,const char *argv[])
 	 char S[300];
 	 snprintf(S,sizeof(S),"http_proxy=%s",getenv("ftp_proxy"));
 	 putenv(S);
+	 putenv("no_proxy=");
 	 
 	 // Run the http method
 	 string Path = flNotFile(argv[0]) + "/http";
