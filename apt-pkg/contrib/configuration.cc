@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.27 2003/07/26 00:27:36 mdz Exp $
+// $Id: configuration.cc,v 1.28 2004/04/30 04:00:15 mdz Exp $
 /* ######################################################################
 
    Configuration Class
@@ -452,7 +452,7 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
    
-   char Buffer[300];
+   char Buffer[1024];
    string LineBuffer;
    string Stack[100];
    unsigned int StackPos = 0;
@@ -466,6 +466,10 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
    {
       F.getline(Buffer,sizeof(Buffer));
       CurLine++;
+      // This should be made to work instead, but this is better than looping
+      if (F.fail() && !F.eof())
+         return _error->Error(_("Line %d too long (max %d)"), CurLine, sizeof(Buffer));
+
       _strtabexpand(Buffer,sizeof(Buffer));
       _strstrip(Buffer);
 
