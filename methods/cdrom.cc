@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.16 1999/10/18 00:37:36 jgg Exp $
+// $Id: cdrom.cc,v 1.17 2000/01/17 07:11:49 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -38,8 +38,9 @@ class CDROMMethod : public pkgAcqMethod
 // CDROMMethod::CDROMethod - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly | 
-					  SendConfig | NeedsCleanup), 
+CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
+					  SendConfig | NeedsCleanup |
+					  Removable), 
                                           DatabaseLoaded(false), 
                                           Mounted(false)
 {
@@ -175,7 +176,6 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    if (NewID.empty() == false)
       CurrentID = NewID;
    Res.LastModified = Buf.st_mtime;
-   Res.IMSHit = true;
    Res.Size = Buf.st_size;
    URIDone(Res);
    return true;

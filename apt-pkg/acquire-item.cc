@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.40 1999/10/31 06:32:27 jgg Exp $
+// $Id: acquire-item.cc,v 1.41 2000/01/17 07:11:49 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -88,7 +88,8 @@ void pkgAcquire::Item::Start(string /*Message*/,unsigned long Size)
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Item::Done(string Message,unsigned long Size,string)
+void pkgAcquire::Item::Done(string Message,unsigned long Size,string,
+			    pkgAcquire::MethodConfig *Cnf)
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
@@ -175,9 +176,10 @@ string pkgAcqIndex::Custom600Headers()
    to the uncompressed version of the file. If this is so the file
    is copied into the partial directory. In all other cases the file
    is decompressed with a gzip uri. */
-void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
+void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
+		       pkgAcquire::MethodConfig *Cfg)
 {
-   Item::Done(Message,Size,MD5);
+   Item::Done(Message,Size,MD5,Cfg);
 
    if (Decompression == true)
    {
@@ -285,9 +287,10 @@ string pkgAcqIndexRel::Custom600Headers()
 /* The release file was not placed into the download directory then
    a copy URI is generated and it is copied there otherwise the file
    in the partial directory is moved into .. and the URI is finished. */
-void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
+void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5,
+			  pkgAcquire::MethodConfig *Cfg)
 {
-   Item::Done(Message,Size,MD5);
+   Item::Done(Message,Size,MD5,Cfg);
 
    string FileName = LookupTag(Message,"Filename");
    if (FileName.empty() == true)
@@ -472,9 +475,10 @@ bool pkgAcqArchive::QueueNext()
 // AcqArchive::Done - Finished fetching					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash)
+void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
+			 pkgAcquire::MethodConfig *Cfg)
 {
-   Item::Done(Message,Size,Md5Hash);
+   Item::Done(Message,Size,Md5Hash,Cfg);
    
    // Check the size
    if (Size != Version->Size)
@@ -597,7 +601,8 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
 // AcqFile::Done - Item downloaded OK					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
+void pkgAcqFile::Done(string Message,unsigned long Size,string MD5,
+		      pkgAcquire::MethodConfig *Cnf)
 {
    // Check the md5
    if (Md5Hash.empty() == false && MD5.empty() == false)
@@ -611,7 +616,7 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
       }
    }
    
-   Item::Done(Message,Size,MD5);
+   Item::Done(Message,Size,MD5,Cnf);
 
    string FileName = LookupTag(Message,"Filename");
    if (FileName.empty() == true)
@@ -631,7 +636,8 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string MD5)
    if (FileName != DestFile)
    {
       Local = true;
-      if (_config->FindB("Acquire::Source-Symlinks",true) == false)
+      if (_config->FindB("Acquire::Source-Symlinks",true) == false ||
+	  Cnf->Removable == true)
       {
 	 Desc.URI = "copy:" + FileName;
 	 QueueURI(Desc);

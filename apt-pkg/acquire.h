@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.25 1999/10/18 00:37:35 jgg Exp $
+// $Id: acquire.h,v 1.26 2000/01/17 07:11:49 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -230,6 +230,7 @@ struct pkgAcquire::MethodConfig
    bool SendConfig;
    bool LocalOnly;
    bool NeedsCleanup;
+   bool Removable;
    
    MethodConfig();
 };

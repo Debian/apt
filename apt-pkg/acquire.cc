@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.44 1999/12/09 05:22:33 jgg Exp $
+// $Id: acquire.cc,v 1.45 2000/01/17 07:11:49 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -65,14 +65,14 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
 /* Free our memory, clean up the queues (destroy the workers) */
 pkgAcquire::~pkgAcquire()
 {
+   Shutdown();
+   
    while (Configs != 0)
    {
       MethodConfig *Jnk = Configs;
       Configs = Configs->Next;
       delete Jnk;
    }   
-   
-   Shutdown();
 }
 									/*}}}*/
 // Acquire::Shutdown - Clean out the acquire object			/*{{{*/
@@ -493,6 +493,7 @@ pkgAcquire::MethodConfig::MethodConfig()
    Pipeline = false;
    SendConfig = false;
    LocalOnly = false;
+   Removable = false;
    Next = 0;
 }
 									/*}}}*/

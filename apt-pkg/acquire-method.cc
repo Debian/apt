@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.23 1999/12/09 21:18:01 jgg Exp $
+// $Id: acquire-method.cc,v 1.24 2000/01/17 07:11:49 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -53,6 +53,9 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
 
    if ((Flags & NeedsCleanup) == NeedsCleanup)
       strcat(End,"Needs-Cleanup: true\n");
+
+   if ((Flags & Removable) == Removable)
+      strcat(End,"Removable: true\n");
    strcat(End,"\n");
 
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))

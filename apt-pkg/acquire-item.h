@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.22 1999/10/17 20:58:36 jgg Exp $
+// $Id: acquire-item.h,v 1.23 2000/01/17 07:11:49 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -62,7 +62,8 @@ class pkgAcquire::Item
 
    // Action members invoked by the worker
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
    virtual void Start(string Message,unsigned long Size);
    virtual string Custom600Headers() {return string();};
    virtual string DescURI() = 0;
@@ -88,7 +89,8 @@ class pkgAcqIndex : public pkgAcquire::Item
    public:
    
    // Specialized action members
-   virtual void Done(string Message,unsigned long Size,string Md5Hash);   
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
    virtual string DescURI() {return Location->PackagesURI();};
 
@@ -107,7 +109,8 @@ class pkgAcqIndexRel : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash);   
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);   
    virtual string Custom600Headers();
    virtual string DescURI() {return Location->ReleaseURI();};
    
@@ -136,7 +139,8 @@ class pkgAcqArchive : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
    virtual string MD5Sum() {return MD5;};
    virtual string DescURI() {return Desc.URI;};
    virtual void Finished();
@@ -157,7 +161,8 @@ class pkgAcqFile : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
    virtual string MD5Sum() {return Md5Hash;};
    virtual string DescURI() {return Desc.URI;};
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.28 1999/10/18 00:37:35 jgg Exp $
+// $Id: acquire-worker.cc,v 1.29 2000/01/17 07:11:49 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -257,7 +257,7 @@ bool pkgAcquire::Worker::RunMessages()
 			       LookupTag(Message,"Size","0").c_str(),TotalSize);
 
 	    Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
-			LookupTag(Message,"MD5-Hash"));
+			LookupTag(Message,"MD5-Hash"),Config);
 	    ItemDone();
 	    
 	    // Log that we are done
@@ -327,15 +327,19 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->SendConfig = StringToBool(LookupTag(Message,"Send-Config"),false);
    Config->LocalOnly = StringToBool(LookupTag(Message,"Local-Only"),false);
    Config->NeedsCleanup = StringToBool(LookupTag(Message,"Needs-Cleanup"),false);
+   Config->Removable = StringToBool(LookupTag(Message,"Removable"),false);
 
    // Some debug text
    if (Debug == true)
    {
       clog << "Configured access method " << Config->Access << endl;
-      clog << "Version:" << Config->Version << " SingleInstance:" <<
-	 Config->SingleInstance << 
-	 " Pipeline:" << Config->Pipeline << " SendConfig:" << 
-	 Config->SendConfig << endl;
+      clog << "Version:" << Config->Version <<
+	      " SingleInstance:" << Config->SingleInstance <<
+	      " Pipeline:" << Config->Pipeline << 
+	      " SendConfig:" << Config->SendConfig << 
+	      " LocalOnly: " << Config->LocalOnly << 
+	      " NeedsCleanup: " << Config->NeedsCleanup << 
+	      " Removable: " << Config->Removable << endl;
    }
    
    return true;
