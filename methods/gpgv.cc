@@ -100,8 +100,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       if (_config->FindB("Debug::Acquire::gpgv", false))
       {
          std::cerr << "Preparing to exec: " << gpgvpath;
-	 int j;
-	 for(j=0;Args[j] != NULL; j++)
+	 for(unsigned int j=0;Args[j] != NULL; j++)
 	    std::cerr << Args[j] << " ";
 	 std::cerr << std::endl;
       }
