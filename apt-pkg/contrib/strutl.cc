@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.22 1999/03/16 00:43:55 jgg Exp $
+// $Id: strutl.cc,v 1.23 1999/03/16 07:27:17 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -20,7 +20,7 @@
 #endif
 
 #include <apt-pkg/strutl.h>
-#include <apt-pkg//fileutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <ctype.h>
 #include <string.h>
