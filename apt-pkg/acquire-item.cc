@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.32 1999/06/06 06:58:36 jgg Exp $
+// $Id: acquire-item.cc,v 1.33 1999/07/10 05:32:25 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -323,7 +323,6 @@ void pkgAcqIndexRel::Done(string Message,unsigned long Size,string MD5)
 /* */
 void pkgAcqIndexRel::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   // This is the retry counter
    if (Cnf->LocalOnly == true || 
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
    {      

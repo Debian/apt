@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.69 1999/07/10 04:58:42 jgg Exp $
+// $Id: apt-get.cc,v 1.70 1999/07/10 05:32:26 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -719,16 +719,32 @@ bool DoUpdate(CommandLine &)
    if (Fetcher.Run() == pkgAcquire::Failed)
       return false;
 
+   bool Failed = false;
+   for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   {
+      if ((*I)->Status == pkgAcquire::Item::StatDone)
+	 continue;
+
+      (*I)->Finished();
+      
+      Failed = true;
+   }
+   
    // Clean out any old list files
-   if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
-       Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
-      return false;
+   if (_config->FindB("APT::Get::List-Cleanup",false) == false)
+   {
+      if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
+	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
+	 return false;
+   }
    
    // Prepare the cache.   
    CacheFile Cache;
    if (Cache.Open() == false)
       return false;
    
+   if (Failed == true)
+      return _error->Error("Some index files failed to download, they have been ignored, or old ones used instead.");
    return true;
 }
 									/*}}}*/
@@ -1408,6 +1424,7 @@ void GetInitialize()
    _config->Set("APT::Get::Assume-Yes",false);
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
+   _config->Set("APT::Get::APT::Get::No-List-Cleanup",true);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
@@ -1451,6 +1468,7 @@ int main(int argc,const char *argv[])
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
       {0,"purge","APT::Get::Purge",0},
+      {0,"list-cleanup","APT::Get::List-Cleanup",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

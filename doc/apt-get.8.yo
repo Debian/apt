@@ -210,6 +210,12 @@ command See bf(APT::Get::Print-URIs).
 dit(bf(--purge))
 Use purge instead of remove for anything that would be removed.
 
+dit(bf(--list-cleanup))
+This option defaults to on, use bf(--no-list-cleanup) to turn it off.
+When on apt-get will automatically manage the contents of 
+/var/state/apt/lists to ensure that obsolete files are erased. The only 
+reason to turn it off is if you frequently change your source list.
+
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will
 read the default configuration file and then this configuration file. See
