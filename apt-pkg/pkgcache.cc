@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.18 1998/11/27 00:07:24 jgg Exp $
+// $Id: pkgcache.cc,v 1.19 1998/12/04 22:56:52 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -379,9 +379,10 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    // Compute a single dependency element (glob or)
    Start = *this;
    End = *this;
-   for (bool LastOR = true; end() == false && LastOR == true; (*this)++)
+   for (bool LastOR = true; end() == false && LastOR == true;)
    {
       LastOR = (Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+      (*this)++;
       if (LastOR == true)
 	 End = (*this);
    }

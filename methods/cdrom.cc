@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cdrom.cc,v 1.1 1998/12/03 07:29:21 jgg Exp $
+// $Id: cdrom.cc,v 1.2 1998/12/04 22:56:55 jgg Exp $
 /* ######################################################################
 
    CDROM URI method for APT
@@ -115,7 +115,12 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 	 break;
       
       UnmountCdrom(CDROM);
-      MediaFail(Get.Host,CDROM);
+      if (MediaFail(Get.Host,CDROM) == false)
+      {
+	 ID = "FAIL";
+	 break;
+      }
+      
       MountCdrom(CDROM);
    }
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.11 1998/12/04 21:16:46 jgg Exp $
+// $Id: acquire-method.cc,v 1.12 1998/12/04 22:56:50 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -189,7 +189,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 // ---------------------------------------------------------------------
 /* This sends a 403 Media Failure message to the APT and waits for it
    to be ackd */
-void pkgAcqMethod::MediaFail(string Required,string Drive)
+bool pkgAcqMethod::MediaFail(string Required,string Drive)
 {
    char S[1024];
    snprintf(S,sizeof(S),"403 Media Failure\nMedia: %s\nDrive: %s\n\n",

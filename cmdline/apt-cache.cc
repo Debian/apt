@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.13 1998/11/27 01:52:53 jgg Exp $
+// $Id: apt-cache.cc,v 1.14 1998/12/04 22:56:53 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -32,25 +32,36 @@
 /* */
 bool UnMet(pkgCache &Cache)
 {
+   bool Important = _config->FindB("Important",false);
+   
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
       {
 	 bool Header = false;
-	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
+	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false;)
 	 {
 	    // Collect or groups
 	    pkgCache::DepIterator Start;
 	    pkgCache::DepIterator End;
 	    D.GlobOr(Start,End);
 	    
-	    // Skip everything but depends
+/*	    cout << "s: Check " << Start.TargetPkg().Name() << ',' <<
+	       End.TargetPkg().Name() << endl;*/
+	       
+	    // Skip conflicts and replaces
 	    if (End->Type != pkgCache::Dep::PreDepends &&
 		End->Type != pkgCache::Dep::Depends && 
 		End->Type != pkgCache::Dep::Suggests &&
 		End->Type != pkgCache::Dep::Recommends)
 	       continue;
 
+	    // Important deps only
+	    if (Important == true)
+	       if (End->Type != pkgCache::Dep::PreDepends &&
+		   End->Type != pkgCache::Dep::Depends)
+		  continue;
+	    
 	    // Verify the or group
 	    bool OK = false;
 	    pkgCache::DepIterator RealStart = Start;
@@ -330,7 +341,7 @@ bool DoAdd(CommandLine &CmdL)
       return _error->Error("You must give at least one file name");
    
    // Open the cache
-   FileFd CacheF(_config->FindFile("Dir::Cache::srcpkgcache"),FileFd::WriteAny);
+   FileFd CacheF(_config->FindFile("Dir::Cache::pkgcache"),FileFd::WriteAny);
    if (_error->PendingError() == true)
       return false;
    
@@ -347,7 +358,8 @@ bool DoAdd(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       Progress.OverallProgress(I - CmdL.FileList,Length,1,"Generating cache");
-      
+      Progress.SubProgress(Length);
+
       // Do the merge
       FileFd TagF(*I,FileFd::ReadOnly);
       debListParser Parser(TagF);
@@ -433,6 +445,7 @@ int main(int argc,const char *argv[])
       {'p',"pkg-cache","Dir::Cache::pkgcache",CommandLine::HasArg},
       {'s',"src-cache","Dir::Cache::srcpkgcache",CommandLine::HasArg},
       {'q',"quiet","quiet",CommandLine::IntLevel},
+      {'i',"important","Important",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
