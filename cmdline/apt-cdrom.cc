@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.4 1998/11/28 03:54:34 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.5 1998/11/28 08:39:46 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -349,6 +349,8 @@ void ConvertToSourceList(string CD,string &Path)
    
    // Strip the cdrom base path
    Path = string(Path,CD.length());
+   if (Path.empty() == true)
+      Path = "/";
    
    // Too short to be a dists/ type
    if (Path.length() < strlen("dists/"))
@@ -612,7 +614,8 @@ bool CopyPackages(string CDROM,string Name,vector<string> &List)
 		  if (Target.Write(Start,Stop-Start) == false)
 		     return false;		  
 	    }
-	    
+	    if (Target.Write("\n",1) == false)
+	       return false;
 	 }
 	 else
 	 {
