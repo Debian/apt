@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.55 2003/09/22 14:36:20 mdz Exp $
+# $Id: rules,v 1.56 2003/12/21 00:07:35 mdz Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -308,7 +308,7 @@ binary: binary-indep binary-arch
 
 cvs-build:
 	rm -rf debian/cvs-build
-	cvs update
+	cvs update -d
 	$(MAKE) startup
 	$(MAKE) doc
 	tar c --exclude CVS --exclude cvs-build --exclude '.#*' . |\
