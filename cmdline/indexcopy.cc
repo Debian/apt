@@ -83,7 +83,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List)
 	 fclose(tmp);
 	 
 	 // Fork gzip
-	 int Process = fork();
+	 pid_t Process = fork();
 	 if (Process < 0)
 	    return _error->Errno("fork","Couldn't fork gzip");
 	 

@@ -57,7 +57,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       return _error->Errno("pipe",_("Couldn't open pipe for %s"),Prog);
 
    // Fork gzip
-   int Process = ExecFork();
+   pid_t Process = ExecFork();
    if (Process == 0)
    {
       close(GzOut[0]);

@@ -87,8 +87,8 @@ string SafeGetCWD();
 void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);
 bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
-int ExecFork();
-bool ExecWait(int Pid,const char *Name,bool Reap = false);
+pid_t ExecFork();
+bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
 // File string manipulators
 string flNotDir(string File);

@@ -1,6 +1,16 @@
 apt (0.6.27) hoary; urgency=low
 
-  * Merge apt--authentication--0 branch (gpg authentication)
+  * Merge apt--authentication--0 branch
+    - Implement gpg authentication for package repositories (Closes: #203741)
+    - Also includes Michael Vogt's fixes
+  * Merge apt--misc-abi-changes--0 branch
+    - Use pid_t throughout to hold process IDs (Closes: #226701)
+    - Import patch from Debian bug #195510: (Closes: #195510)
+      - Make Simulate::Describe and Simulate::ShortBreaks private member
+        functions
+      - Add a parameter (Candidate) to Describe to control whether the
+        candidate version is displayed
+      - Pass an appropriate value for Candidate everywhere Describe is called
 
  -- Matt Zimmerman <mdz@canonical.com>  Mon, 13 Dec 2004 01:03:11 -0800
 

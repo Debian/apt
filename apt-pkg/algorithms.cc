@@ -50,26 +50,29 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
 									/*}}}*/
 // Simulate::Describe - Describe a package				/*{{{*/
 // ---------------------------------------------------------------------
-/* Parameter Now == true gives both current and available varsion,
-   Parameter Now == false gives only the available package version */
-void pkgSimulate::Describe(PkgIterator Pkg,ostream &out,bool Now)
+/* Parameter Current == true displays the current package version,
+   Parameter Candidate == true displays the candidate package version */
+void pkgSimulate::Describe(PkgIterator Pkg,ostream &out,bool Current,bool Candidate)
 {
    VerIterator Ver(Sim);
  
    out << Pkg.Name();
 
-   if (Now == true)
+   if (Current == true)
    {
       Ver = Pkg.CurrentVer();
       if (Ver.end() == false)
          out << " [" << Ver.VerStr() << ']';
    }
 
-   Ver = Sim[Pkg].CandidateVerIter(Sim);
-   if (Ver.end() == true)
-      return;
+   if (Candidate == true)
+   {
+      Ver = Sim[Pkg].CandidateVerIter(Sim);
+      if (Ver.end() == true)
+         return;
    
-   out << " (" << Ver.VerStr() << ' ' << Ver.RelStr() << ')';
+      out << " (" << Ver.VerStr() << ' ' << Ver.RelStr() << ')';
+   }
 }
 									/*}}}*/
 // Simulate::Install - Simulate unpacking of a package			/*{{{*/
@@ -82,7 +85,7 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
    Flags[Pkg->ID] = 1;
    
    cout << "Inst ";
-   Describe(Pkg,cout,true);
+   Describe(Pkg,cout,true,true);
    Sim.MarkInstall(Pkg,false);
    
    // Look for broken conflicts+predepends.
@@ -156,7 +159,7 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
    else
    {
       cout << "Conf "; 
-      Describe(Pkg,cout,false);
+      Describe(Pkg,cout,false,true);
    }
 
    if (Sim.BrokenCount() != 0)
@@ -181,7 +184,7 @@ bool pkgSimulate::Remove(PkgIterator iPkg,bool Purge)
       cout << "Purg ";
    else
       cout << "Remv ";
-   Describe(Pkg,cout,false);
+   Describe(Pkg,cout,true,false);
 
    if (Sim.BrokenCount() != 0)
       ShortBreaks();

@@ -61,7 +61,7 @@ static bool EraseDir(const char *Dir)
       return _error->Errno("rmdir",_("Failed to remove %s"),Dir);
    
    // Purge it using rm
-   int Pid = ExecFork();
+   pid_t Pid = ExecFork();
 
    // Spawn the subprocess
    if (Pid == 0)
