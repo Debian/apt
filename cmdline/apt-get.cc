@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.2 1998/10/08 04:55:05 jgg Exp $
+// $Id: apt-get.cc,v 1.3 1998/10/19 23:45:36 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -85,49 +85,66 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
    pkgCache::PkgIterator I = Cache.PkgBegin();
    for (;I.end() != true; I++)
    {
-      if (Cache[I].InstBroken() == true)
+      if (Cache[I].InstBroken() == false)
+	  continue;
+	  
+      // Print out each package and the failed dependencies
+      out <<"  " <<  I.Name() << ":";
+      int Indent = strlen(I.Name()) + 3;
+      bool First = true;
+      if (Cache[I].InstVerIter(Cache).end() == true)
       {
-	 // Print out each package and the failed dependencies
-	 out <<"  " <<  I.Name() << ":";
-	 int Indent = strlen(I.Name()) + 3;
-	 bool First = true;
-	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; D++)
+	 cout << endl;
+	 continue;
+      }
+      
+      for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; D++)
+      {
+	 if (Cache.IsImportantDep(D) == false || (Cache[D] &
+						  pkgDepCache::DepInstall) != 0)
+	    continue;
+	 
+	 if (First == false)
+	    for (int J = 0; J != Indent; J++)
+	       out << ' ';
+	 First = false;
+	 
+	 if (D->Type == pkgCache::Dep::Conflicts)
+	    out << " Conflicts:" << D.TargetPkg().Name();
+	 else
+	    out << " Depends:" << D.TargetPkg().Name();
+	 
+	 // Show a quick summary of the version requirements
+	 if (D.TargetVer() != 0)
+	    out << " (" << D.CompType() << " " << D.TargetVer() << 
+	    ")";
+	 
+	 /* Show a summary of the target package if possible. In the case
+	  of virtual packages we show nothing */
+	 
+	 pkgCache::PkgIterator Targ = D.TargetPkg();
+	 if (Targ->ProvidesList == 0)
 	 {
-	    if (Cache.IsImportantDep(D) == false || (Cache[D] &
-						     pkgDepCache::DepInstall) != 0)
-	       continue;
-	    
-	    if (First == false)
-	       for (int J = 0; J != Indent; J++)
-		  out << ' ';
-	    First = false;
-	    
-	    if (D->Type == pkgCache::Dep::Conflicts)
-	       out << " Conflicts:" << D.TargetPkg().Name();
+	    out << " but ";
+	    pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
+	    if (Ver.end() == false)
+	       out << Ver.VerStr() << " is installed";
 	    else
-	       out << " Depends:" << D.TargetPkg().Name();
-	    
-	    // Show a quick summary of the version requirements
-	    if (D.TargetVer() != 0)
-	       out << " (" << D.CompType() << " " << D.TargetVer() << 
-	           ")";
-	    
-	    /* Show a summary of the target package if possible. In the case
-	       of virtual packages we show nothing */
-	    pkgCache::PkgIterator Targ = D.TargetPkg();
-	    if (Targ->ProvidesList == 0)
 	    {
-	       out << " but ";
-	       pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
-	       if (Ver.end() == false)
-		  out << Ver.VerStr() << "is installed";
+	       if (Cache[Targ].CandidateVerIter(Cache).end() == true)
+	       {
+		  if (Targ->ProvidesList == 0)
+		     out << "it is not installable";
+		  else
+		     out << "it is a virtual package";
+	       }		  
 	       else
 		  out << "it is not installed";
-	    }
-	    
-	    out << endl;
-	 }	    
-      }   
+	    }	       
+	 }
+	 
+	 out << endl;
+      }	    
    }   
 }
 									/*}}}*/
@@ -340,7 +357,7 @@ bool CacheFile::Open()
    Progress.Done();
    
    // Open the cache file
-   File = new FileFd(_config->FindDir("Dir::Cache::pkgcache"),FileFd::ReadOnly);
+   File = new FileFd(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
    if (_error->PendingError() == true)
       return false;
    
@@ -463,7 +480,12 @@ bool DoInstall(CommandLine &CmdL)
       return false;
    
    int ExpectedInst = 0;
+   int Packages = 0;
    pkgProblemResolver Fix(Cache);
+   
+   bool DefRemove = false;
+   if (strcasecmp(CmdL.FileList[0],"remove") == 0)
+      DefRemove = true;
    
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
@@ -475,26 +497,60 @@ bool DoInstall(CommandLine &CmdL)
       strcpy(S,*I);
       
       // See if we are removing the package
-      bool Remove = false;
+      bool Remove = DefRemove;
       if (S[Length - 1] == '-')
       {
 	 Remove = true;
 	 S[--Length] = 0;
       }
+      if (S[Length - 1] == '+')
+      {
+	 Remove = false;
+	 S[--Length] = 0;
+      }
       
       // Locate the package
       pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
+      Packages++;
       if (Pkg.end() == true)
 	 return _error->Error("Couldn't find package %s",S);
       
       // Check if there is something new to install
       pkgDepCache::StateCache &State = (*Cache)[Pkg];
       if (State.CandidateVer == 0)
+      {
+	 if (Pkg->ProvidesList != 0)
+	 {
+	    c1out << "Package " << S << " is a virtual package provided by:" << endl;
+
+	    pkgCache::PrvIterator I = Pkg.ProvidesList();
+	    for (; I.end() == false; I++)
+	    {
+	       pkgCache::PkgIterator Pkg = I.OwnerPkg();
+	       
+	       if ((*Cache)[Pkg].CandidateVerIter(*Cache) == I.OwnerVer())
+		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() << endl;
+
+	       if ((*Cache)[Pkg].InstVerIter(*Cache) == I.OwnerVer())
+		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() <<
+		    " [Installed]"<< endl;
+	    }
+	    c1out << "You should explicly select one to install." << endl;
+	 }
+	 else
+	 {
+	    c1out << "Package " << S << " has no available version, but exists in the database." << endl;
+	    c1out << "This typically means that the package was mentioned in a dependency and " << endl;
+	    c1out << "never uploaded, or that it is an obsolete package." << endl;
+	 }
+	 
 	 return _error->Error("Package %s has no installation candidate",S);
+      }
       
       Fix.Protect(Pkg);
       if (Remove == true)
       {
+	 Fix.Remove(Pkg);
 	 Cache->MarkDelete(Pkg);
 	 continue;
       }
@@ -512,12 +568,27 @@ bool DoInstall(CommandLine &CmdL)
    }
 
    // Call the scored problem resolver
+   Fix.InstallProtect();
    if (Fix.Resolve(true) == false)
       _error->Discard();
 
    // Now we check the state of the packages,
    if (Cache->BrokenCount() != 0)
    {
+      c1out << "Some packages could not be installed. This may mean that you have" << endl;
+      c1out << "requested an impossible situation or if you are using the unstable" << endl;
+      c1out << "distribution that some required packages have not yet been created" << endl;
+      c1out << "or been moved out of Incoming." << endl;
+      if (Packages == 1)
+      {
+	 c1out << endl;
+	 c1out << "Since you only requested a single operation it is extremely likely that" << endl;
+	 c1out << "the package is simply not installable and a bug report against" << endl;
+	 c1out << "that package should be filed." << endl;
+      }
+
+      c1out << "The following information may help to resolve the situation:" << endl;
+      c1out << endl;
       ShowBroken(c1out,Cache);
       return _error->Error("Sorry, broken packages");
    }   
@@ -659,6 +730,7 @@ int ShowHelp()
    cout << "   update - Retrieve new lists of packages" << endl;
    cout << "   upgrade - Perform an upgrade" << endl;
    cout << "   install - Install new packages (pkg is libc6 not libc6.deb)" << endl;
+   cout << "   remove - Remove packages" << endl;
    cout << "   dist-upgrade - Distribution upgrade, see apt-get(8)" << endl;
    cout << "   dselect-upgrade - Follow dselect selections" << endl;
    cout << "   clean - Erase downloaded archive files" << endl;
@@ -746,6 +818,7 @@ int main(int argc,const char *argv[])
    } Map[] = {{"update",&DoUpdate},
               {"upgrade",&DoUpgrade},
               {"install",&DoInstall},
+              {"remove",&DoInstall},
               {"dist-upgrade",&DoDistUpgrade},
               {"dselect-upgrade",&DoDSelectUpgrade},
               {"clean",&DoClean},

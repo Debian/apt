@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.9 1998/10/02 04:39:55 jgg Exp $
+// $Id: apt-cache.cc,v 1.10 1998/10/19 23:45:35 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -222,7 +222,7 @@ bool DoAdd(CommandLine &CmdL)
       return _error->Error("You must give at least one file name");
    
    // Open the cache
-   FileFd CacheF(_config->FindDir("Dir::Cache::srcpkgcache"),FileFd::WriteAny);
+   FileFd CacheF(_config->FindFile("Dir::Cache::srcpkgcache"),FileFd::WriteAny);
    if (_error->PendingError() == true)
       return false;
    
@@ -284,7 +284,7 @@ int ShowHelp()
    cout << "       apt-cache [options] showpkg pkg1 [pkg2 ...]" << endl;
    cout << endl;
    cout << "apt-cache is a low-level tool used to manipulate APT's binary" << endl;
-   cout << "cache files stored in " << _config->FindDir("Dir::Cache") << endl;
+   cout << "cache files stored in " << _config->FindFile("Dir::Cache") << endl;
    cout << "It is not ment for ordinary use only as a debug aide." << endl;
    cout << endl;
    cout << "Commands:" << endl;
@@ -297,8 +297,8 @@ int ShowHelp()
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
-   cout << "  -p=? The package cache. [" << _config->FindDir("Dir::Cache::pkgcache") << ']' << endl;
-   cout << "  -s=? The source cache. [" << _config->FindDir("Dir::Cache::srcpkgcache") << ']' << endl;
+   cout << "  -p=? The package cache. [" << _config->FindFile("Dir::Cache::pkgcache") << ']' << endl;
+   cout << "  -s=? The source cache. [" << _config->FindFile("Dir::Cache::srcpkgcache") << ']' << endl;
    cout << "  -q   Disable progress indicator. " << endl;
    cout << "  -c=? Read this configuration file" << endl;
    cout << "  -o=? Set an arbitary configuration option, ie -o dir::cache=/tmp" << endl;
@@ -358,7 +358,7 @@ int main(int argc,const char *argv[])
       }
 
       // Open the cache file
-      FileFd CacheF(_config->FindDir("Dir::Cache::pkgcache"),FileFd::ReadOnly);
+      FileFd CacheF(_config->FindFile("Dir::Cache::pkgcache"),FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 break;
       
