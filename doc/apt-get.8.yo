@@ -158,11 +158,15 @@ dit(bf(-m, --ignore-missing, --fix-missing))
 Ignore missing packages; If packages cannot be retrieved or fail the    
 integrity check after retrieval (corrupted package files), hold back    
 those packages and handle the result. Use of this option together with  
--f may produce an error in some situations. Configuration Item: bf(ignore-missing).
+-f may produce an error in some situations. If a package is selected for 
+installation (particularly if it is mentioned on the command line) and it
+could not be downloaded then it will be silently held back.
+Configuration Item: bf(APT::Get::ignore-missing).
 
 dit(bf(--no-download))
 Disables downloading of packages. This is best used with --ignore-missing to
 force APT to use only the .debs it has already downloaded.
+Configuration Item: bf(APT::Get::No-Download).
 
 dit(bf(-q, --quiet))
 Quiet; produces output suitable for logging, omitting progress indicators.
@@ -195,6 +199,7 @@ upgraded. Configuration Item: bf(APT::Get::Show-Upgraded).
 
 dit(bf(-b, --compile, --build))
 Compile source packages after downloading them.
+Configuration Item: bf(APT::Get::Compile).
 
 dit(bf(--ignore-hold))
 Ignore package Holds; This causes bf(apt-get) to ignore a hold placed on 
@@ -221,6 +226,7 @@ command. Configuration Item: bf(APT::Get::Print-URIs).
 
 dit(bf(--purge))
 Use purge instead of remove for anything that would be removed.
+Configuration Item: bf(APT::Get::Purge).
 
 dit(bf(--reinstall))
 Re-Install packages that are already installed and at the newest version.
@@ -241,7 +247,7 @@ dit(bf(--no-remove))
 If any packages are to be removed apt-get immediately aborts without
 prompting. Configuration Item: bf(APT::Get::No-Remove)
 
-dit(bf(--diff-only), bd(--tar-only))
+dit(bf(--diff-only), bf(--tar-only))
 Download only the diff or tar file of a source archive. 
 Configuration Item: bf(APT::Get::Diff-Only)
 

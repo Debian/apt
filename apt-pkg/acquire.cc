@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.43 1999/10/27 22:34:29 jgg Exp $
+// $Id: acquire.cc,v 1.44 1999/12/09 05:22:33 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -105,6 +105,8 @@ void pkgAcquire::Add(Item *Itm)
 /* Remove an item from the acquire list. This is usually not used.. */
 void pkgAcquire::Remove(Item *Itm)
 {
+   Dequeue(Itm);
+   
    for (vector<Item *>::iterator I = Items.begin(); I < Items.end(); I++)
    {
       if (*I == Itm)

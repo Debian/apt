@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.91 1999/11/28 01:03:28 jgg Exp $
+// $Id: apt-get.cc,v 1.92 1999/12/09 05:22:33 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -516,7 +516,8 @@ bool CacheFile::CheckDeps(bool AllowBroken)
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
    happen and then calls the download routines */
-bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey = true)
+bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+		     bool Saftey = true)
 {
    if (_config->FindB("APT::Get::Purge",false) == true)
    {
@@ -694,13 +695,33 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    // Run it
    while (1)
    {
-      if (_config->FindB("APT::Get::No-Download",false) == false)
-	 if (Fetcher.Run() == pkgAcquire::Failed)
-	    return false;
+      bool Transient = false;
+      if (_config->FindB("APT::Get::No-Download",false) == true)
+      {
+	 for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd();)
+	 {
+	    if ((*I)->Local == true)
+	    {
+	       I++;
+	       continue;
+	    }
+
+	    // Close the item and check if it was found in cache
+	    (*I)->Finished();
+	    if ((*I)->Complete == false)
+	       Transient = true;
+	    
+	    // Clear it out of the fetch list
+	    delete *I;
+	    I = Fetcher.ItemsBegin();
+	 }	 
+      }
+      
+      if (Fetcher.Run() == pkgAcquire::Failed)
+	 return false;
       
       // Print out errors
       bool Failed = false;
-      bool Transient = false;
       for (pkgAcquire::Item **I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
       {
 	 if ((*I)->Status == pkgAcquire::Item::StatDone &&
@@ -713,16 +734,16 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
 	    // Failed = true;
 	    continue;
 	 }
-	 
+
 	 cerr << "Failed to fetch " << (*I)->DescURI() << endl;
 	 cerr << "  " << (*I)->ErrorText << endl;
 	 Failed = true;
       }
 
-      /* If we are in no download mode and missing files then there were
+      /* If we are in no download mode and missing files and there were
          'failures' then the user must specify -m. Furthermore, there 
          is no such thing as a transient error in no-download mode! */
-      if (Transient == true && 
+      if (Transient == true &&
 	  _config->FindB("APT::Get::No-Download",false) == true)
       {
 	 Transient = false;
@@ -750,7 +771,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
 	 cerr << "Unable to correct missing packages." << endl;
 	 return _error->Error("Aborting Install.");
       }
-      
+       	 
       Cache.ReleaseLock();
       pkgPackageManager::OrderResult Res = PM.DoInstall();
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
@@ -1513,9 +1534,10 @@ bool DoSource(CommandLine &CmdL)
 	 
 	 // Diff only mode only fetches .diff files
 	 if (_config->FindB("APT::Get::Diff-Only",false) == true ||
-	     _config->FindB("APT::Get::Tar-Only",false) == true)
+	     _config->FindB("APT::Get::Tar-Only",false) == true ||
+	     Dsc[I].Dsc.empty() == true)
 	    continue;
-	 
+
 	 // See if the package is already unpacked
 	 struct stat Stat;
 	 if (stat(Dir.c_str(),&Stat) == 0 &&

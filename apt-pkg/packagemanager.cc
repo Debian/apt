@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.22 1999/10/22 05:58:54 jgg Exp $
+// $Id: packagemanager.cc,v 1.23 1999/12/09 05:22:33 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -547,7 +547,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       if (List->IsMissing(Pkg) == true)
       {
 	 if (Debug == true)
-	    clog << "Sequence completed at" << Pkg.Name() << endl;
+	    clog << "Sequence completed at " << Pkg.Name() << endl;
 	 if (DoneSomething == false)
 	 {
 	    _error->Error("Internal Error, ordering was unable to handle the media swap");
