@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.12 1999/01/27 02:48:52 jgg Exp $
+// $Id: configuration.cc,v 1.13 1999/07/02 23:17:00 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -276,6 +276,8 @@ bool ReadConfigFile(Configuration &Conf,string FName)
    
    char Buffer[300];
    string LineBuffer;
+   string Stack[100];
+   unsigned int StackPos = 0;
    
    // Parser state
    string ParentTag;
@@ -376,11 +378,10 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	    // Move up a tag
 	    if (TermChar == '}')
 	    {
-	       string::size_type Pos = ParentTag.rfind("::");
-	       if (Pos == string::npos)
+	       if (StackPos == 0)
 		  ParentTag = string();
 	       else
-		  ParentTag = string(ParentTag,0,Pos);
+		  ParentTag = Stack[--StackPos];
 	    }
 	    
 	    // Syntax Error
@@ -399,6 +400,8 @@ bool ReadConfigFile(Configuration &Conf,string FName)
 	    // Go down a level
 	    if (TermChar == '{')
 	    {
+	       if (StackPos <= 100)
+		  Stack[StackPos++] = ParentTag;
 	       if (ParentTag.empty() == true)
 		  ParentTag = Tag;
 	       else
