@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.cc,v 1.4 2000/01/16 05:36:17 jgg Exp $
+// $Id: indexcopy.cc,v 1.5 2000/05/10 06:02:26 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -368,7 +368,18 @@ bool IndexCopy::ReconstructChop(unsigned long &Chop,string Dir,string File)
 // ---------------------------------------------------------------------
 /* We look for things in dists/ notation and convert them to 
    <dist> <component> form otherwise it is left alone. This also strips
-   the CD path. */
+   the CD path. 
+ 
+   This implements a regex sort of like: 
+    (.*)/dists/([^/]*)/(.*)/binary-* 
+     ^          ^      ^- Component
+     |          |-------- Distribution
+     |------------------- Path
+   
+   It was deciced to use only a single word for dist (rather than say
+   unstable/non-us) to increase the chance that each CD gets a single
+   line in sources.list.
+ */
 void IndexCopy::ConvertToSourceList(string CD,string &Path)
 {
    char S[300];
@@ -395,21 +406,26 @@ void IndexCopy::ConvertToSourceList(string CD,string &Path)
    string Dist = string(Path,Slash,Slash2 - Slash);
    
    // Isolate the component
-   Slash = Path.find('/',Slash2+1);
-   if (Slash == string::npos || Slash + 2 >= Path.length())
+   Slash = Slash2;
+   for (unsigned I = 0; I != 10; I++)
+   {
+      Slash = Path.find('/',Slash+1);
+      if (Slash == string::npos || Slash + 2 >= Path.length())
+	 return;
+      string Comp = string(Path,Slash2+1,Slash - Slash2-1);
+	 
+      // Verify the trailing binary- bit
+      string::size_type BinSlash = Path.find('/',Slash + 1);
+      if (Slash == string::npos)
+	 return;
+      string Binary = string(Path,Slash+1,BinSlash - Slash-1);
+      
+      if (Binary != S && Binary != "source")
+	 continue;
+
+      Path = Dist + ' ' + Comp;
       return;
-   string Comp = string(Path,Slash2+1,Slash - Slash2-1);
-   
-   // Verify the trailing binar - bit
-   Slash2 = Path.find('/',Slash + 1);
-   if (Slash == string::npos)
-      return;
-   string Binary = string(Path,Slash+1,Slash2 - Slash-1);
-   
-   if (Binary != S && Binary != "source")
-      return;
-   
-   Path = Dist + ' ' + Comp;
+   }   
 }
 									/*}}}*/
 // IndexCopy::GrabFirst - Return the first Depth path components	/*{{{*/
