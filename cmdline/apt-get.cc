@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.43 1999/02/21 08:38:53 jgg Exp $
+// $Id: apt-get.cc,v 1.44 1999/03/06 02:13:48 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -77,6 +77,18 @@ bool YnPrompt()
    if (!(C == 'Y' || C == 'y' || C == '\n' || C == '\r'))
       return false;
    return true;
+}
+									/*}}}*/
+// AnalPrompt - Annoying Yes No Prompt.					/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns true on a Yes.*/
+bool AnalPrompt(const char *Text)
+{
+   char Buf[1024];
+   cin.getline(Buf,sizeof(Buf));
+   if (strcmp(Buf,Text) == 0)
+      return true;
+   return false;
 }
 									/*}}}*/
 // ShowList - Show a list						/*{{{*/
@@ -466,9 +478,10 @@ bool CacheFile::Open(bool AllowBroken)
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
    happen and then calls the download routines */
-bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
+bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey = true)
 {
    bool Fail = false;
+   bool Essential = false;
    
    // Show all the various warning indicators
    ShowDel(c1out,Cache);
@@ -478,7 +491,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
    Fail |= !ShowHold(c1out,Cache);
    if (_config->FindB("APT::Get::Show-Upgraded",false) == true)
       ShowUpgraded(c1out,Cache);
-   Fail |= !ShowEssential(c1out,Cache);
+   Essential = !ShowEssential(c1out,Cache);
+   Fail |= Essential;
    Stats(c1out,Cache);
    
    // Sanity check
@@ -570,18 +584,35 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
       if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false)
 	 return _error->Error("There are problems and -y was used without --force-yes");
    }         
-   
-   // Prompt to continue
-   if (Ask == true)
-   {            
-      if (_config->FindI("quiet",0) < 2 ||
-	  _config->FindB("APT::Get::Assume-Yes",false) == false)
-	 c2out << "Do you want to continue? [Y/n] " << flush;
 
-      if (YnPrompt() == false)
+   if (Essential == true && Saftey == true)
+   {
+      c2out << "You are about to do something potentially harmful" << endl;
+      c2out << "To continue type in the phrase 'Yes, I understand this is bad'" << endl;
+      c2out << " ?] " << flush;
+      if (AnalPrompt("Yes, I understand this is bad") == false)
+      {
+	 c2out << "Abort." << endl;
 	 exit(1);
-   }      
-
+      }     
+   }
+   else
+   {
+      // Prompt to continue
+      if (Ask == true)
+      {            
+	 if (_config->FindI("quiet",0) < 2 ||
+	     _config->FindB("APT::Get::Assume-Yes",false) == false)
+	    c2out << "Do you want to continue? [Y/n] " << flush;
+	 
+	 if (YnPrompt() == false)
+	 {
+	    c2out << "Abort." << endl;
+	    exit(1);
+	 }     
+      }      
+   }
+   
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
