@@ -1,4 +1,4 @@
-apt (0.5.8) unstable; urgency=low
+apt (0.5.8) unstable; urgency=medium
 
   * Clarify the meaning of the only-source option in apt-get(8)
     (Closes: #177258)
@@ -11,6 +11,12 @@ apt (0.5.8) unstable; urgency=low
     are not installed.  Note that this only works if there is only one
     package providing the virtual package, as in other cases (Closes: #165404)
   * Update config.guess and config.sub from autotools-dev 20030717.1
+  * Tweak SGML in apt-extracttemplates.1.sgml so that literal '>' doesn't end
+    up in output
+  * urgency=medium because the changes since 0.5.5.1 are pretty safe as
+    far as core functionality, 0.5.5.1 survived unstable for 10 days, and
+    I don't want to delay apt's progress into testing any further.  It's
+    decidedly better than 0.5.4.
 
  --
 
