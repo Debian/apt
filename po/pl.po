@@ -1,13 +1,13 @@
 # Advanced Package Transfer - APT message translation catalog
 # Polish translation by:
-# Marcin Owsiany <porridge@debian.org>, 2002, 2003.
+# Marcin Owsiany <porridge@debian.org>, 2002, 2003, 2004.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-03-14 13:46-0800\n"
-"PO-Revision-Date: 2003-08-27 12:03+0200\n"
+"PO-Revision-Date: 2004-03-16 16:08+0100\n"
 "Last-Translator: Marcin Owsiany <porridge@debian.org>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -324,7 +324,6 @@ msgid "Error Processing Contents %s"
 msgstr "B³±d przy przetwarzaniu zawarto¶ci %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -369,6 +368,7 @@ msgstr ""
 "Komendy: packages ¶cie¿ka_do_binariów [plik_override [przedrostek]]\n"
 "         sources ¶cie¿ka_do_¼róde³ [plik_override [przedrostek]]\n"
 "         contents ¶cie¿ka\n"
+"         release ¶cie¿ka\n"
 "         generate konfiguracja [grupy]\n"
 "         clean konfiguracja\n"
 "\n"
@@ -660,19 +660,16 @@ msgid "The following packages will be REMOVED:"
 msgstr "Nastêpuj±ce pakiety zostan± USUNIÊTE:"
 
 #: cmdline/apt-get.cc:421
-#, fuzzy
 msgid "The following packages have been kept back:"
-msgstr "Nastêpuj±ce pakiety zosta³y zatrzymane"
+msgstr "Nastêpuj±ce pakiety zosta³y zatrzymane:"
 
 #: cmdline/apt-get.cc:442
-#, fuzzy
 msgid "The following packages will be upgraded:"
-msgstr "Nastêpuj±ce pakiety zostan± zaktualizowane"
+msgstr "Nastêpuj±ce pakiety zostan± zaktualizowane:"
 
 #: cmdline/apt-get.cc:463
-#, fuzzy
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Zostan± zainstalowane STARE wersje nastêpuj±cych pakietów"
+msgstr "Zostan± zainstalowane STARE wersje nastêpuj±cych pakietów:"
 
 #: cmdline/apt-get.cc:483
 msgid "The following held packages will be changed:"
@@ -738,7 +735,7 @@ msgstr " Gotowe"
 
 #: cmdline/apt-get.cc:661
 msgid "You might want to run `apt-get -f install' to correct these."
-msgstr "Powiniene¶/na¶ uruchomiæ `apt-get -f install' aby je naprawiæ."
+msgstr "Nale¿y uruchomiæ `apt-get -f install' aby je naprawiæ."
 
 #: cmdline/apt-get.cc:664
 msgid "Unmet dependencies. Try using -f."
@@ -873,19 +870,18 @@ msgstr " [Zainstalowany]"
 
 #: cmdline/apt-get.cc:1035
 msgid "You should explicitly select one to install."
-msgstr "Powieniene¶/na¶ jednoznacznie wybraæ jeden z nich do instalacji."
+msgstr "Nale¿y jednoznacznie wybraæ jeden z nich do instalacji."
 
 #: cmdline/apt-get.cc:1040
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"Pakiet %s nie ma dostêpnej wersji, ale istnieje w bazie danych.\n"
-"Zazwyczaj oznacza to, ¿e pakiet zosta³ wspomniany w zale¿no¶ci, ale nie\n"
-"zosta³ nigdy do³±czony do dystrybucji, zosta³ zast±piony przez inny pakiet,\n"
-"lub nie jest dostêpny przy pomocy obecnego sources.list.\n"
+"Pakiet %s nie ma dostêpnej wersji, ale odnosi siê do niego inny pakiet.\n"
+"Zazwyczaj oznacza to, ¿e pakietu brakuje, zosta³ zast±piony przez inny\n"
+"pakiet, lub nie jest dostêpny przy pomocy obecnie ustawionych ¼róde³.\n"
 
 #: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
@@ -954,7 +950,7 @@ msgstr "Uwaga, wybieranie %s za wyra¿enie '%s'\n"
 
 #: cmdline/apt-get.cc:1462
 msgid "You might want to run `apt-get -f install' to correct these:"
-msgstr "Powiniene¶/na¶ uruchomiæ `apt-get -f install' aby je naprawiæ:"
+msgstr "Nale¿y uruchomiæ `apt-get -f install' aby je naprawiæ:"
 
 #: cmdline/apt-get.cc:1465
 msgid ""
@@ -1110,12 +1106,12 @@ msgstr ""
 #: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
+msgstr "Nie uda³o siê spe³niæ zale¿no¶ci %s od %s: Zainstalowany pakiet %s jest zbyt nowy"
 
 #: cmdline/apt-get.cc:2215
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Nie uda³o siê przetworzyæ zale¿no¶ci na czas budowania"
+msgstr "Nie uda³o siê spe³niæ zale¿no¶ci %s od %s: %s"
 
 #: cmdline/apt-get.cc:2229
 #, c-format
@@ -1238,7 +1234,7 @@ msgid " [Working]"
 msgstr " [Pracuje]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
@@ -2002,7 +1998,7 @@ msgid "Option %s requires an argument."
 msgstr "Opcja %s wymaga argumentu."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "Opcja %s: Specyfikacja elementu konfiguracji musi zawieraæ =<warto¶æ>."
 
@@ -2129,7 +2125,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Ta wersja APT nie obs³uguje systemu wersji '%s'"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Ten magazyn podrêczny pakietów zosta³ zbudowany dla innej architektury"
 
@@ -2325,9 +2320,8 @@ msgid "Packaging system '%s' is not supported"
 msgstr "System pakietów '%s' nie jest obs³ugiwany"
 
 #: apt-pkg/init.cc:135
-#, fuzzy
 msgid "Unable to determine a suitable packaging system type"
-msgstr "Nie uda³o siê okre¶liæ odpowiedniego typu systemu"
+msgstr "Nie uda³o siê okre¶liæ odpowiedniego typu systemu pakietów"
 
 #: apt-pkg/clean.cc:61
 #, c-format
@@ -2344,7 +2338,7 @@ msgstr "Nie uda³o siê otworzyæ lub zanalizowaæ zawarto¶ci list pakietów."
 
 #: apt-pkg/cachefile.cc:77
 msgid "You may want to run apt-get update to correct these problems"
-msgstr "Powiniene¶/na¶ uruchomiæ apt-get update aby naprawiæ te problemy."
+msgstr "Nale¿y uruchomiæ apt-get update aby naprawiæ te problemy."
 
 #: apt-pkg/policy.cc:269
 msgid "Invalid record in the preferences file, no Package header"
@@ -2489,11 +2483,3 @@ msgstr "Nie odnaleziono pliku"
 msgid "Connection closed prematurely"
 msgstr "Po³±czenie zosta³o zamkniête przedwcze¶nie"
 
-#~ msgid ""
-#~ "Some broken packages were found while trying to process build-"
-#~ "dependencies.\n"
-#~ "You might want to run `apt-get -f install' to correct these."
-#~ msgstr ""
-#~ "W czasie przetwarzania zale¿no¶ci na czas budowania znaleziono "
-#~ "uszkodzone\n"
-#~ "pakiety. Powiniene¶/na¶ uruchomiæ `apt-get -f install' aby je naprawiæ."
