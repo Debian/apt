@@ -5,10 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.5\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: apt 0.5.8\n"
 "POT-Creation-Date: 2003-08-17 21:45-0400\n"
-"PO-Revision-Date: 2003-05-17 23:00+0200\n"
+"PO-Revision-Date: 2003-08-30 22:00+0200\n"
 "Last-Translator: Dokianakis Fanis <madf@hellug.gr>\n"
 "Language-Team: Greek <el@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -93,9 +92,8 @@ msgid "You must give exactly one pattern"
 msgstr "Πρέπει να δώσετε ακριβώς μία μορφή"
 
 #: cmdline/apt-cache.cc:1383
-#, fuzzy
 msgid "No packages found"
-msgstr "Χαλασμένα πακέτα"
+msgstr "Δε βρέθηκαν πακέτα"
 
 #: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
@@ -148,14 +146,13 @@ msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1581 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:544
-#: cmdline/apt-get.cc:2205 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-extracttemplates.cc:225 cmdline/apt-get.cc:2205
+#: cmdline/apt-sortpkgs.cc:144 ftparchive/apt-ftparchive.cc:544
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s για %s %s είναι μεταγλωττισμένο σε %s %s\n"
 
 #: cmdline/apt-cache.cc:1588
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -194,7 +191,7 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "Χρήση: apt-cache [επιλογές] εντολή\n"
-"       apt-cache [επιλογές] add file1 [file1 ...]\n"
+"       apt-cache [επιλογές] add file1 [file2 ...]\n"
 "       apt-cache [επιλογές] showpkg pkg1 [pkg2 ...]\n"
 "       apt-cache [επιλογές] showsrc pkg1 [pkg2 ...]\n"
 "\n"
@@ -221,8 +218,8 @@ msgstr ""
 "\n"
 "Επιλογές:\n"
 "  -h   Αυτό το κείμενο βοήθειας.\n"
-"  -p=? Η cache πακέτου.\n"
-"  -s=? Η cache πηγής.\n"
+"  -p=? Η cache πακέτων.\n"
+"  -s=? Η cache πηγών.\n"
 "  -q   Απενεργοποίηση του δείκτη προόδου.\n"
 "  -i   Εμφάνιση μόνο των σημαντικων εξαρτ. για την εντολή unmet.\n"
 "  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
@@ -291,7 +288,7 @@ msgstr ""
 "  -c=? Ανάγνωση του αρχείου ρυθμίσεων\n"
 "  -o=? Χρήση μιας αυθαίρετη επιλογής ρυθμίσεων, πχ -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
+#: apt-pkg/pkgcachegen.cc:699 cmdline/apt-extracttemplates.cc:267
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Αδυναμία γραφής στο %s"
@@ -326,7 +323,6 @@ msgid "Error Processing Contents %s"
 msgstr "Σφάλμα στην Επεξεργασία των Περιεχομένων %s"
 
 #: ftparchive/apt-ftparchive.cc:550
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -367,7 +363,7 @@ msgid ""
 "  -o=?  Set an arbitary configuration option"
 msgstr ""
 "Χρήση: apt-ftparchive [επιλογές] εντολή\n"
-"Commands: packges binarypath [overridefile [pathprefix]]\n"
+"Εντολές:  packages binarypath [overridefile [pathprefix]]\n"
 "          sources srcpath [overridefile [pathprefix]]\n"
 "          contents path\n"
 "          generate config [groups]\n"
@@ -498,8 +494,8 @@ msgstr "Αποτυχία της σύνδεσης του %s με το %s"
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Άφιξη στο όριο ΑποΣύνδεσης των %sB.\n"
 
-#: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#: apt-inst/deb/dpkgdb.cc:121 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 ftparchive/writer.cc:338
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Αποτυχία της εύρεσης της κατάστασης του %s."
@@ -603,7 +599,7 @@ msgstr "Αποτυχία ανάγνωσης κατά τον υπολογισμό του MD5"
 msgid "Problem unlinking %s"
 msgstr "Πρόβλημα στην αποσύνδεση του %s"
 
-#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
+#: apt-inst/extract.cc:188 ftparchive/multicompress.cc:490
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "Αποτυχία στη μετονομασία του %s σε %s"
@@ -689,9 +685,9 @@ msgstr ""
 "Αυτό ΔΕΝ πρέπει να γίνει εκτός και εάν ξέρετε ακριβώς τι κάνετε!"
 
 #: cmdline/apt-get.cc:573
-#, fuzzy, c-format
+#, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu πακέτα αναβαθμίζονται, %lu νέα εγκαταστημένα, "
+msgstr "%lu αναβαθμίστηκαν, %lu νέα εγκαταστάθηκαν, "
 
 #: cmdline/apt-get.cc:577
 #, c-format
@@ -709,9 +705,9 @@ msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu θα αφαιρεθούν και %lu δεν αναβαθμίστηκαν.\n"
 
 #: cmdline/apt-get.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu πακέτα δεν έχουν εγκατασταθεί ή αφαιρεθεί.\n"
+msgstr "%lu δεν έχουν πλήρως εγκατασταθεί ή αφαιρεθεί.\n"
 
 #: cmdline/apt-get.cc:645
 msgid "Correcting dependencies..."
@@ -749,8 +745,8 @@ msgstr "Πακέτα πρέπει να αφαιρεθούν αλλά η Αφαίρεση απενεργοποιήθηκε."
 msgid "Unable to lock the download directory"
 msgstr "Αδυναμία στο κλείδωμα του φακέλου μεταφόρτωσης"
 
-#: cmdline/apt-get.cc:753 cmdline/apt-get.cc:1806 cmdline/apt-get.cc:2017
-#: apt-pkg/cachefile.cc:67
+#: apt-pkg/cachefile.cc:67 cmdline/apt-get.cc:753 cmdline/apt-get.cc:1806
+#: cmdline/apt-get.cc:2017
 msgid "The list of sources could not be read."
 msgstr "Αδυναμία ανάγνωσης της λίστας με τις πηγές."
 
@@ -1007,7 +1003,7 @@ msgstr "Συνιστώμενα πακέτα:"
 msgid "Calculating Upgrade... "
 msgstr "Υπολογισμός Αναβάθμισης..."
 
-#: cmdline/apt-get.cc:1623 methods/ftp.cc:702 methods/connect.cc:99
+#: cmdline/apt-get.cc:1623 methods/connect.cc:99 methods/ftp.cc:702
 msgid "Failed"
 msgstr "Απέτυχε"
 
@@ -1083,7 +1079,7 @@ msgid "%s has no build depends.\n"
 msgstr "Το %s δεν έχει εξαρτήσεις κατασκευής.\n"
 
 #: cmdline/apt-get.cc:2095
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
@@ -1117,7 +1113,6 @@ msgid "Supported Modules:"
 msgstr "Υποστηριζόμενα Αρθρώματα:"
 
 #: cmdline/apt-get.cc:2251
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1223,7 +1218,7 @@ msgid " [Working]"
 msgstr " [Δουλεύει]"
 
 #: cmdline/acqprogress.cc:271
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media Change: Please insert the disc labeled\n"
 " '%s'\n"
@@ -1310,9 +1305,9 @@ msgid "Tar Checksum failed, archive corrupted"
 msgstr "Το Tar Checksum απέτυχε, το αρχείο είναι κατεστραμμένο"
 
 #: apt-inst/contrib/extracttar.cc:295
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown TAR header type %u, member %s"
-msgstr "Άγνωστη επικεφαλίδα TAR τύπος %u, member %s"
+msgstr "Άγνωστη επικεφαλίδα TAR τύπος %u, μέλος %s"
 
 #: apt-inst/contrib/arfile.cc:73
 msgid "Invalid archive signature"
@@ -1422,8 +1417,8 @@ msgstr "Το ταίριασμα εππεγραφόμενου πακέτου χωρίς καμμία εκδόση για το %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Το αρχείο %s/%s εππεγράφει αυτό στο πακέτο %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
+#: apt-inst/extract.cc:467 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/contrib/configuration.cc:705
 #, c-format
 msgid "Unable to read %s"
 msgstr "Αδυναμία ανάγνωσης του %s"
@@ -1654,7 +1649,7 @@ msgstr "Λήξη χρόνου σύνδεσης"
 msgid "Server closed the connection"
 msgstr "Ο διακομιστής έκλεισε την σύνδεση"
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
+#: apt-pkg/contrib/fileutl.cc:452 methods/ftp.cc:338 methods/rsh.cc:190
 msgid "Read error"
 msgstr "Σφάλμα ανάγνωσης"
 
@@ -1905,7 +1900,7 @@ msgstr "Η επιλογή %s δε βρέθηκε"
 #: apt-pkg/contrib/configuration.cc:395
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr ""
+msgstr "Μη αναγνωρισμένος τύπος σύντμησης: '%c'"
 
 #: apt-pkg/contrib/configuration.cc:453
 #, c-format
@@ -1985,7 +1980,7 @@ msgid "Option %s requires an argument."
 msgstr "Η επιλογή %s απαιτεί ένα όρισμα."
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr ""
 "Επιλογή %s: Οι προδιαγραφές του αντικειμένου ρυθμίσεων απαιτούν =<val>."
@@ -2015,7 +2010,7 @@ msgstr "Μη έγκυρη λειτουργία %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Αδυναμία εύρεσης της κατάστασης του σημείου mount %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44
+#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:44 apt-pkg/contrib/cdromutl.cc:149
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Αδυναμία αλλαγής σε %s"
@@ -2114,7 +2109,6 @@ msgid "This APT does not support the Versioning System '%s'"
 msgstr "Αυτό το APT δεν υποστηρίζει το Σύστημα Απόδοσης Έκδοσης '%s'"
 
 #: apt-pkg/pkgcache.cc:147
-#, fuzzy
 msgid "The package cache was built for a different architecture"
 msgstr "Η cache πακέτων κατασκευάστηκε για μια διαφορετική αρχιτεκτονική"
 
@@ -2344,7 +2338,7 @@ msgstr "Αδυναμία κατανόησης του τύπου καθήλωσης %s"
 
 #: apt-pkg/policy.cc:299
 msgid "No priority (or zero) specified for pin"
-msgstr ""
+msgstr "Καμμιά προτεραιότητα (ή μηδενική) δεν έχει οριστεί για την καθήλωση"
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
