@@ -1083,6 +1083,8 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 
 int main(int argc,const char *argv[])
 { 
+   setlocale(LC_ALL, "");
+
    /* See if we should be come the http client - we do this for http
       proxy urls */
    if (getenv("ftp_proxy") != 0)

@@ -187,6 +187,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 
 int main()
 {
+   setlocale(LC_ALL, "");
+
    CDROMMethod Mth;
    return Mth.Run();
 }
