@@ -6,7 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
-"POT-Creation-Date: 2003-01-11 21:19-0500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-08-09 01:57-0400\n"
 "PO-Revision-Date: 2003-08-09 01:02-0400\n"
 "Last-Translator: Тихомир <Tichomir.Koryakov@usu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -20,9 +21,9 @@ msgstr ""
 msgid "Package %s version %s has an unmet dep:\n"
 msgstr "Пакет %s версии %s имеет неразрешенную зависимость:\n"
 
-#: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:671
-#: cmdline/apt-cache.cc:885 cmdline/apt-cache.cc:1257
-#: cmdline/apt-cache.cc:1403
+#: cmdline/apt-cache.cc:173 cmdline/apt-cache.cc:525 cmdline/apt-cache.cc:613
+#: cmdline/apt-cache.cc:769 cmdline/apt-cache.cc:987 cmdline/apt-cache.cc:1355
+#: cmdline/apt-cache.cc:1506
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Невозможно определить местонахождение пакета %s"
@@ -83,77 +84,82 @@ msgstr "Общее свободное пространство:"
 msgid "Total Space Accounted for: "
 msgstr "Общее пространство посчитанное для:"
 
-#: cmdline/apt-cache.cc:444 cmdline/apt-cache.cc:1091
+#: cmdline/apt-cache.cc:444 cmdline/apt-cache.cc:1187
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "Файл пакета %s не синхронизирован."
 
-#: cmdline/apt-cache.cc:1133
+#: cmdline/apt-cache.cc:1229
 msgid "You must give exactly one pattern"
 msgstr "Вы должны задать в точности один шаблон"
 
-#: cmdline/apt-cache.cc:1357
+#: cmdline/apt-cache.cc:1383
+#, fuzzy
+msgid "No packages found"
+msgstr " , а также индексов исходных текстов: "
+
+#: cmdline/apt-cache.cc:1460
 msgid "Package Files:"
 msgstr "Файлы пакета:"
 
-#: cmdline/apt-cache.cc:1364 cmdline/apt-cache.cc:1450
+#: cmdline/apt-cache.cc:1467 cmdline/apt-cache.cc:1553
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr "Кеш не синхронизирован, не могу обнаружить x-ссылку в файле пакета"
 
-#: cmdline/apt-cache.cc:1365
+#: cmdline/apt-cache.cc:1468
 #, c-format
 msgid "%4i %s\n"
 msgstr "%4i %s\n"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1377
+#: cmdline/apt-cache.cc:1480
 msgid "Pinned Packages:"
 msgstr "Связанные пакеты:"
 
-#: cmdline/apt-cache.cc:1389 cmdline/apt-cache.cc:1430
+#: cmdline/apt-cache.cc:1492 cmdline/apt-cache.cc:1533
 msgid "(not found)"
 msgstr "(не найден)"
 
 #. Installed version
-#: cmdline/apt-cache.cc:1410
+#: cmdline/apt-cache.cc:1513
 msgid "  Installed: "
 msgstr "  Установлен: "
 
-#: cmdline/apt-cache.cc:1412 cmdline/apt-cache.cc:1420
+#: cmdline/apt-cache.cc:1515 cmdline/apt-cache.cc:1523
 msgid "(none)"
 msgstr "(отсутствует)"
 
 #. Candidate Version
-#: cmdline/apt-cache.cc:1417
+#: cmdline/apt-cache.cc:1520
 msgid "  Candidate: "
 msgstr "  Кандидат: "
 
-#: cmdline/apt-cache.cc:1427
+#: cmdline/apt-cache.cc:1530
 msgid "  Package Pin: "
 msgstr "  Связь пакета: "
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1436
+#: cmdline/apt-cache.cc:1539
 msgid "  Version Table:"
 msgstr "  Таблица версий: "
 
-#: cmdline/apt-cache.cc:1451
+#: cmdline/apt-cache.cc:1554
 #, c-format
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1478 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 cmdline/apt-get.cc:2015
-#: cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-cache.cc:1581 cmdline/apt-cdrom.cc:730 cmdline/apt-config.cc:70
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:544
+#: cmdline/apt-get.cc:2205 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s для %s %s скомпилировано %s %s\n"
 
-#: cmdline/apt-cache.cc:1482
+#: cmdline/apt-cache.cc:1588
 #, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] add file1 [file1 ...]\n"
+"       apt-cache [options] add file1 [file2 ...]\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
 "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
 "\n"
@@ -161,7 +167,7 @@ msgid ""
 "cache files, and query information from them\n"
 "\n"
 "Commands:\n"
-"   add - Add an package file to the source cache\n"
+"   add - Add a package file to the source cache\n"
 "   gencaches - Build both the package and source cache\n"
 "   showpkg - Show some general information for a single package\n"
 "   showsrc - Show source records\n"
@@ -172,8 +178,10 @@ msgid ""
 "   search - Search the package list for a regex pattern\n"
 "   show - Show a readable record for the package\n"
 "   depends - Show raw dependency information for a package\n"
+"   rdepends - Show reverse dependency information for a package\n"
 "   pkgnames - List the names of all packages\n"
 "   dotty - Generate package graphs for GraphVis\n"
+"   xvcg - Generate package graphs for xvcg\n"
 "   policy - Show policy settings\n"
 "\n"
 "Options:\n"
@@ -278,84 +286,378 @@ msgstr ""
 "  -c=? Читать указанный конфигурационный файл\n"
 "  -o=? Произвольная опция конфигурации, к примеру, -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:699
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:699
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Невозможно записать в %s"
 
-#: cmdline/apt-extracttemplates.cc:302
+#: cmdline/apt-extracttemplates.cc:310
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Невозможно определить версию debconf. Установлен ли он?"
 
-#. This needs to be a capital
-#: cmdline/apt-get.cc:116
+#: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:336
+#, fuzzy
+msgid "Package extension list is too long"
+msgstr "Список расширений исходных текстов слишком длинен"
+
+#: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
+#: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:251
+#: ftparchive/apt-ftparchive.cc:265 ftparchive/apt-ftparchive.cc:287
+#, c-format
+msgid "Error Processing directory %s"
+msgstr "Ошибка обработки каталога %s"
+
+#: ftparchive/apt-ftparchive.cc:249
+msgid "Source extension list is too long"
+msgstr "Список расширений исходных текстов слишком длинен"
+
+#: ftparchive/apt-ftparchive.cc:366
+msgid "Error writing header to contents file"
+msgstr "Ошибка записи заголовка в содержимое файла"
+
+#: ftparchive/apt-ftparchive.cc:396
+#, c-format
+msgid "Error Processing Contents %s"
+msgstr "ошибка обработки содержимого %s"
+
+#: ftparchive/apt-ftparchive.cc:550
+#, fuzzy
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitary configuration option"
+msgstr ""
+"apt-ftparchive генерирует индесные файлы для архивов Debian. Поддерживает\n"
+"множество стилей генерации от полностью автоматической до замены функций\n"
+"пакетов dpkg-scanpackages и dpkg-scansources\n"
+"\n"
+"apt-ftparchive генериреует файлы Package из дерева .debs. Файл Package\n"
+"содержит содержимое всех управляющих полей из каждого пакета, а также\n"
+"хеши MD5 и размеры файлов. Для определения значений Приоритета и Раздела\n"
+"поддерживается файл override.\n"
+"\n"
+"Аналогично apt-ftparchive генерирует файлы Sources из дерева .dscs.\n"
+"Для указания файла override можно использовать опцию --source-override.\n"
+"\n"
+"Команды 'packages' и 'sources' надо запускать из корня дерева.\n"
+"BinaryPath должен указывать на базовую точку рекурсивного поиска, а файл\n"
+"override должен содержать перекрывающие флажки. Pathprefix, если есть,\n"
+"добавляется к полям filename. Пример использования из архива debian:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+
+#: ftparchive/apt-ftparchive.cc:731
+msgid "No selections matched"
+msgstr "Нет соответствий выбранному"
+
+#: ftparchive/apt-ftparchive.cc:804
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "В группе пакетов файлов `%s' пропущены некоторые файлы"
+
+#: ftparchive/cachedb.cc:43
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "БД была повреждена, файл переименован в %s.old"
+
+#: ftparchive/cachedb.cc:59
+#, c-format
+msgid "Unable to open DB2 file %s"
+msgstr "Не удалось открыть DB2 файл %s"
+
+#: ftparchive/cachedb.cc:99
+#, c-format
+msgid "File date has changed %s"
+msgstr "Дата файла %s изменена"
+
+#: ftparchive/cachedb.cc:140
+msgid "Archive has no control record"
+msgstr "В архиве нет управляющей записи"
+
+#: ftparchive/cachedb.cc:253 ftparchive/cachedb.cc:257
+msgid "Unable to get a cursor"
+msgstr "Невозможно получить курсор"
+
+#: ftparchive/writer.cc:78
+#, fuzzy, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: Неудалось прочитать директорию "
+
+#: ftparchive/writer.cc:83
+#, fuzzy, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: Не удалось получить атрибуты "
+
+#: ftparchive/writer.cc:122
+msgid "E: "
+msgstr ""
+
+#: ftparchive/writer.cc:124
+msgid "W: "
+msgstr ""
+
+#: ftparchive/writer.cc:131
+#, fuzzy
+msgid "E: Errors apply to file "
+msgstr "E: Ошибки отногсяться к файлу '"
+
+#: ftparchive/writer.cc:148 ftparchive/writer.cc:178
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Не удалось разрешить %s"
+
+#: ftparchive/writer.cc:160
+msgid "Tree walking failed"
+msgstr "Не удалось совершить обход дерева"
+
+#: ftparchive/writer.cc:185
+#, c-format
+msgid "Failed to open %s"
+msgstr "Не удалось открыть %s"
+
+#: ftparchive/writer.cc:242
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr ""
+
+#: ftparchive/writer.cc:250
+#, fuzzy, c-format
+msgid "Failed to readlink %s"
+msgstr "Не удалось удалить линк %s"
+
+#: ftparchive/writer.cc:254
+#, c-format
+msgid "Failed to unlink %s"
+msgstr "Не удалось удалить линк %s"
+
+#: ftparchive/writer.cc:261
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Не удалось создать линк %s на %s"
+
+#: ftparchive/writer.cc:271
+#, fuzzy, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " Ограничение DeLink в "
+
+#: ftparchive/writer.cc:338 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Не удалось получить атрибуты %s"
+
+#: ftparchive/writer.cc:358
+msgid "Archive had no package field"
+msgstr "В архиве нет поля package"
+
+#: ftparchive/writer.cc:366 ftparchive/writer.cc:576
+#, fuzzy, c-format
+msgid "  %s has no override entry\n"
+msgstr " не имеет записи override"
+
+#: ftparchive/writer.cc:409 ftparchive/writer.cc:658
+#, fuzzy, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr " сопровождающий "
+
+#: ftparchive/contents.cc:346 ftparchive/contents.cc:377
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - не удалось выделить память"
+
+#: ftparchive/override.cc:38 ftparchive/override.cc:146
+#, c-format
+msgid "Unable to open %s"
+msgstr "Не удалось открыть %s"
+
+#: ftparchive/override.cc:64 ftparchive/override.cc:170
+#, c-format
+msgid "Malformed override %s line %lu #1"
+msgstr ""
+
+#: ftparchive/override.cc:78 ftparchive/override.cc:182
+#, c-format
+msgid "Malformed override %s line %lu #2"
+msgstr ""
+
+#: ftparchive/override.cc:92 ftparchive/override.cc:195
+#, c-format
+msgid "Malformed override %s line %lu #3"
+msgstr ""
+
+#: ftparchive/override.cc:131 ftparchive/override.cc:205
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Не удалось прочесть override-файл %s"
+
+#: ftparchive/multicompress.cc:75
+#, c-format
+msgid "Unknown Compresison Algorithm '%s'"
+msgstr "Неизвестный алгоритм сжатия '%s'"
+
+#: ftparchive/multicompress.cc:105
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr ""
+
+#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Не удалось создать IPC-канал для подпроцесса"
+
+#: ftparchive/multicompress.cc:198
+msgid "Failed to create FILE*"
+msgstr "Не удалось создать FILE*"
+
+#: ftparchive/multicompress.cc:201
+msgid "Failed to fork"
+msgstr "Не удалось запустить порожденный процесс"
+
+#: ftparchive/multicompress.cc:215
+msgid "Compress Child"
+msgstr "Сжатие потомка"
+
+#: ftparchive/multicompress.cc:238
+#, c-format
+msgid "Internal Error, Failed to create %s"
+msgstr "Внутренняя ошибка, не удалось создать %s"
+
+#: ftparchive/multicompress.cc:289
+msgid "Failed to create subprocess IPC"
+msgstr "Не удалось создать подпроцесс IPC"
+
+#: ftparchive/multicompress.cc:324
+msgid "Failed to exec compressor "
+msgstr "Не удалось выполнить компрессор "
+
+#: ftparchive/multicompress.cc:363
+#, fuzzy
+msgid "decompressor"
+msgstr "Не удалось выполнить компрессор "
+
+#: ftparchive/multicompress.cc:406
+msgid "IO to subprocess/file failed"
+msgstr "Ошибка ввода/вывода в подпроцесс/файл"
+
+#: ftparchive/multicompress.cc:458
+msgid "Failed to read while computing MD5"
+msgstr "Ошибка чтения во время вычисления MD5"
+
+#: ftparchive/multicompress.cc:475
+#, fuzzy, c-format
+msgid "Problem unlinking %s"
+msgstr "Обнаружена проблема %s"
+
+#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Не удалось переименовать %s в %s"
+
+#: cmdline/apt-get.cc:117
 msgid "Y"
 msgstr "д"
 
-#: cmdline/apt-get.cc:193
+#: cmdline/apt-get.cc:139 cmdline/apt-get.cc:1422
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Ошибка компиляции регулярного выражения - %s"
+
+#: cmdline/apt-get.cc:234
 msgid "The following packages have unmet dependencies:"
 msgstr "К сожалению следующие пакеты имеют не разрешенные зависимости:"
 
-#: cmdline/apt-get.cc:283
+#: cmdline/apt-get.cc:324
 #, c-format
 msgid "but %s is installed"
 msgstr "но %s уже установлен"
 
-#: cmdline/apt-get.cc:285
+#: cmdline/apt-get.cc:326
 #, c-format
 msgid "but %s is to be installed"
 msgstr "но %s должен быть установлен"
 
-#: cmdline/apt-get.cc:292
+#: cmdline/apt-get.cc:333
 msgid "but it is not installable"
 msgstr "но это не устанавливаемый пакет"
 
-#: cmdline/apt-get.cc:294
+#: cmdline/apt-get.cc:335
 msgid "but it is a virtual package"
 msgstr "но это виртуальный пакет"
 
-#: cmdline/apt-get.cc:297
+#: cmdline/apt-get.cc:338
 msgid "but it is not installed"
 msgstr "но это не установлено"
 
-#: cmdline/apt-get.cc:297
+#: cmdline/apt-get.cc:338
 msgid "but it is not going to be installed"
 msgstr "но это не предполагается устанавливать"
 
-#: cmdline/apt-get.cc:302
+#: cmdline/apt-get.cc:343
 msgid " or"
 msgstr " или"
 
-#: cmdline/apt-get.cc:328
+#: cmdline/apt-get.cc:372
 msgid "The following NEW packages will be installed:"
 msgstr "Следующие НОВЫЕ пакеты будут установлены:"
 
-#: cmdline/apt-get.cc:351
+#: cmdline/apt-get.cc:398
 msgid "The following packages will be REMOVED:"
 msgstr "Эти пакеты будут УДАЛЕНЫ:"
 
-#: cmdline/apt-get.cc:371
+#: cmdline/apt-get.cc:420
 msgid "The following packages have been kept back"
 msgstr "Эти пакеты будут сохранены"
 
-#: cmdline/apt-get.cc:390
+#: cmdline/apt-get.cc:441
 msgid "The following packages will be upgraded"
 msgstr "Эти пакеты будут обновлены"
 
-#: cmdline/apt-get.cc:409
+#: cmdline/apt-get.cc:462
 msgid "The following packages will be DOWNGRADED"
 msgstr "Эти пакеты будут заменены на СТАРЫЕ"
 
-#: cmdline/apt-get.cc:426
+#: cmdline/apt-get.cc:482
 msgid "The following held packages will be changed:"
 msgstr "Эти удерживаемые пакеты будут заменены:"
 
-#: cmdline/apt-get.cc:477
+#: cmdline/apt-get.cc:535
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (вследствие %s) "
 
-#: cmdline/apt-get.cc:484
+#: cmdline/apt-get.cc:543
 msgid ""
 "WARNING: The following essential packages will be removed\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -363,110 +665,110 @@ msgstr ""
 "ВНИМАНИЕ: Эти существенно важные пакеты будут удалены\n"
 "Это НЕ СЛЕДУЕТ делать если вы не абсолютно уверены в своих действиях!"
 
-#: cmdline/apt-get.cc:514
+#: cmdline/apt-get.cc:573
 #, c-format
 msgid "%lu packages upgraded, %lu newly installed, "
 msgstr "%lu пакетов обновлено, %lu новых пакетов установлено, "
 
-#: cmdline/apt-get.cc:518
+#: cmdline/apt-get.cc:577
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu пакетов переустановлено, "
 
-#: cmdline/apt-get.cc:520
+#: cmdline/apt-get.cc:579
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu пакетов заменены на старые, "
 
-#: cmdline/apt-get.cc:522
+#: cmdline/apt-get.cc:581
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu пакетов для удаления и %lu не обновлены.\n"
 
-#: cmdline/apt-get.cc:526
+#: cmdline/apt-get.cc:585
 #, c-format
 msgid "%lu packages not fully installed or removed.\n"
 msgstr "%lu пакетов не полностью установлено или удалено.\n"
 
-#: cmdline/apt-get.cc:586
+#: cmdline/apt-get.cc:645
 msgid "Correcting dependencies..."
 msgstr "Исправление зависимостей..."
 
-#: cmdline/apt-get.cc:589
+#: cmdline/apt-get.cc:648
 msgid " failed."
 msgstr " неудачно."
 
-#: cmdline/apt-get.cc:592
+#: cmdline/apt-get.cc:651
 msgid "Unable to correct dependencies"
 msgstr "Невозможно скорректировать зависимости"
 
-#: cmdline/apt-get.cc:595
+#: cmdline/apt-get.cc:654
 msgid "Unable to minimize the upgrade set"
 msgstr "Невозможно минимизировать множесто обновлений"
 
-#: cmdline/apt-get.cc:597
+#: cmdline/apt-get.cc:656
 msgid " Done"
 msgstr " Сделано"
 
-#: cmdline/apt-get.cc:601
+#: cmdline/apt-get.cc:660
 msgid "You might want to run `apt-get -f install' to correct these."
 msgstr "Чтобы скорректировать это вы можете запустить `apt-get -f install'."
 
-#: cmdline/apt-get.cc:604
+#: cmdline/apt-get.cc:663
 msgid "Unmet dependencies. Try using -f."
 msgstr "Не разрешенные зависимости. попытайтесь использовать -f."
 
-#: cmdline/apt-get.cc:657
+#: cmdline/apt-get.cc:717
 msgid "Packages need to be removed but Remove is disabled."
 msgstr "Пакеты необходимо удалить, но Удаление запрещено."
 
-#: cmdline/apt-get.cc:683 cmdline/apt-get.cc:1578 cmdline/apt-get.cc:1611
+#: cmdline/apt-get.cc:743 cmdline/apt-get.cc:1725 cmdline/apt-get.cc:1758
 msgid "Unable to lock the download directory"
 msgstr "Невозможно заблокировать каталог для загрузки"
 
-#: cmdline/apt-get.cc:693 cmdline/apt-get.cc:1659 cmdline/apt-get.cc:1870
+#: cmdline/apt-get.cc:753 cmdline/apt-get.cc:1806 cmdline/apt-get.cc:2017
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Не читается список исходных текстов."
 
-#: cmdline/apt-get.cc:713
+#: cmdline/apt-get.cc:773
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Необходимо скачать %sB/%sB архивов.\n"
 
-#: cmdline/apt-get.cc:716
+#: cmdline/apt-get.cc:776
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Нужно скачать %sБ архивов.\n"
 
-#: cmdline/apt-get.cc:721
+#: cmdline/apt-get.cc:781
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr "После распаковки будет занято %sБ.\n"
 
-#: cmdline/apt-get.cc:724
+#: cmdline/apt-get.cc:784
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "После распаковки будет освобождено %sБ.\n"
 
-#: cmdline/apt-get.cc:741
+#: cmdline/apt-get.cc:801
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "К сожалению у вас не хватает места в %s."
 
-#: cmdline/apt-get.cc:750
+#: cmdline/apt-get.cc:810
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Существуют проблемы, причем использована -y без --force-yes"
 
-#: cmdline/apt-get.cc:756 cmdline/apt-get.cc:776
+#: cmdline/apt-get.cc:816 cmdline/apt-get.cc:836
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Указана Trivial Only, но это не тривиальная операция."
 
-#: cmdline/apt-get.cc:758
+#: cmdline/apt-get.cc:818
 msgid "Yes, do as I say!"
 msgstr "Да, делать как я скажу!"
 
-#: cmdline/apt-get.cc:760
+#: cmdline/apt-get.cc:820
 #, c-format
 msgid ""
 "You are about to do something potentially harmful\n"
@@ -477,28 +779,28 @@ msgstr ""
 "Перед тем как продолжить, введите фразу: '%s'\n"
 " ?] "
 
-#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:785
+#: cmdline/apt-get.cc:826 cmdline/apt-get.cc:845
 msgid "Abort."
 msgstr "Аварийное завершение."
 
-#: cmdline/apt-get.cc:781
+#: cmdline/apt-get.cc:841
 msgid "Do you want to continue? [Y/n] "
 msgstr "Хотите продолжить? [Д/н] "
 
-#: cmdline/apt-get.cc:850 cmdline/apt-get.cc:1219 cmdline/apt-get.cc:1768
+#: cmdline/apt-get.cc:910 cmdline/apt-get.cc:1281 cmdline/apt-get.cc:1915
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Не удалось скачать %s  %s\n"
 
-#: cmdline/apt-get.cc:868
+#: cmdline/apt-get.cc:928
 msgid "Some files failed to download"
 msgstr "Некоторые файлы не загрузились"
 
-#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:1777
+#: cmdline/apt-get.cc:929 cmdline/apt-get.cc:1924
 msgid "Download complete and in download only mode"
 msgstr "Загрузка завершена, но установлен режим download only"
 
-#: cmdline/apt-get.cc:875
+#: cmdline/apt-get.cc:935
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -506,48 +808,48 @@ msgstr ""
 "Невозможно получить некоторые архивы, вероятно надо запустить apt-get update "
 "или попытаться --fix-missing"
 
-#: cmdline/apt-get.cc:879
+#: cmdline/apt-get.cc:939
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing и смена носителя в данный момент не поддерживаются"
 
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:944
 msgid "Unable to correct missing packages."
 msgstr "Невозможно исправить пропущенные пакеты."
 
-#: cmdline/apt-get.cc:885
+#: cmdline/apt-get.cc:945
 msgid "Aborting Install."
 msgstr "Аварийное завершение установки."
 
-#: cmdline/apt-get.cc:918
+#: cmdline/apt-get.cc:978
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Заметьте, выбирается %s вместо %s\n"
 
-#: cmdline/apt-get.cc:928
+#: cmdline/apt-get.cc:988
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "Пропускается %s - пакет уже установлен, но опция upgrade не установлена.\n"
 
-#: cmdline/apt-get.cc:946
+#: cmdline/apt-get.cc:1006
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Пакет %s не установлен, поэтому и не удален\n"
 
-#: cmdline/apt-get.cc:957
+#: cmdline/apt-get.cc:1017
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Пакет %s - виртуальный, его наличие обеспечено пакетом:\n"
 
-#: cmdline/apt-get.cc:969
+#: cmdline/apt-get.cc:1029
 msgid " [Installed]"
 msgstr "[Установлен]"
 
-#: cmdline/apt-get.cc:974
+#: cmdline/apt-get.cc:1034
 msgid "You should explicitly select one to install."
 msgstr "Для установки вы должны указать строго один."
 
-#: cmdline/apt-get.cc:979
+#: cmdline/apt-get.cc:1039
 #, c-format
 msgid ""
 "Package %s has no available version, but exists in the database.\n"
@@ -560,49 +862,49 @@ msgstr ""
 "но никогда не загружался или он устаревший или не пригоден в контексте\n"
 "используемого source.list\n"
 
-#: cmdline/apt-get.cc:997
+#: cmdline/apt-get.cc:1059
 msgid "However the following packages replace it:"
 msgstr "Однако следующие пакеты заменят его:"
 
-#: cmdline/apt-get.cc:1000
+#: cmdline/apt-get.cc:1062
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Пакет %s - не кандидат на установку"
 
-#: cmdline/apt-get.cc:1020
+#: cmdline/apt-get.cc:1082
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "К сожалению переустановка %s не возможна, он не загружается.\n"
 
-#: cmdline/apt-get.cc:1028
+#: cmdline/apt-get.cc:1090
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "К сожалению новейшая версия %s уже установлена.\n"
 
-#: cmdline/apt-get.cc:1055
+#: cmdline/apt-get.cc:1117
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Релиз '%s' для '%s' не найден"
 
-#: cmdline/apt-get.cc:1057
+#: cmdline/apt-get.cc:1119
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Версия '%s' для '%s' не найдена"
 
-#: cmdline/apt-get.cc:1063
+#: cmdline/apt-get.cc:1125
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Выбрана версия %s (%s) для %s\n"
 
-#: cmdline/apt-get.cc:1173
+#: cmdline/apt-get.cc:1235
 msgid "The update command takes no arguments"
 msgstr "Комманде update не нужны аргументы"
 
-#: cmdline/apt-get.cc:1186
+#: cmdline/apt-get.cc:1248
 msgid "Unable to lock the list directory"
 msgstr "Невозможно заблокировать директорию list"
 
-#: cmdline/apt-get.cc:1238
+#: cmdline/apt-get.cc:1300
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -610,30 +912,25 @@ msgstr ""
 "Некоторые индексные файлы не загрузились, они были проигнорированы или "
 "заменены на старые"
 
-#: cmdline/apt-get.cc:1257
+#: cmdline/apt-get.cc:1319
 msgid "Internal Error, AllUpgrade broke stuff"
 msgstr "Внутренняя ошибка, битый набор AllUpgrade"
 
-#: cmdline/apt-get.cc:1347 cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1409 cmdline/apt-get.cc:1445
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Не могу найти пакет %s"
 
-#: cmdline/apt-get.cc:1360
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Ошибка компиляции регулярного выражения - %s"
-
-#: cmdline/apt-get.cc:1370
+#: cmdline/apt-get.cc:1432
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Заметьте, выбирается %s для регулярного выражения %s\n"
 
-#: cmdline/apt-get.cc:1400
+#: cmdline/apt-get.cc:1462
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Для исправления вы можете запустить `apt-get -f install':"
 
-#: cmdline/apt-get.cc:1403
+#: cmdline/apt-get.cc:1465
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -641,7 +938,7 @@ msgstr ""
 "Неразрешенные зависимости. Попытайтесь 'apt-get -f install', не указывая "
 "пакета, (или найдите решение)"
 
-#: cmdline/apt-get.cc:1415
+#: cmdline/apt-get.cc:1477
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -653,7 +950,7 @@ msgstr ""
 "дистрибутива потребовались пакеты еще не созданные либо\n"
 "убранные."
 
-#: cmdline/apt-get.cc:1423
+#: cmdline/apt-get.cc:1485
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -663,106 +960,124 @@ msgstr ""
 "пакет просто не устанавливаемый и bug report сообщает,\n"
 "что пакет будет доведен."
 
-#: cmdline/apt-get.cc:1428
+#: cmdline/apt-get.cc:1490
 msgid "The following information may help to resolve the situation:"
 msgstr "Следующая информация может помочь разрешить ситуацию:"
 
-#: cmdline/apt-get.cc:1431
+#: cmdline/apt-get.cc:1493
 msgid "Broken packages"
 msgstr "Сломанные пакеты"
 
-#: cmdline/apt-get.cc:1454
+#: cmdline/apt-get.cc:1519
 msgid "The following extra packages will be installed:"
 msgstr "Следующие дополнительные пакеты будут установлены:"
 
-#: cmdline/apt-get.cc:1473
+#: cmdline/apt-get.cc:1599
+#, fuzzy
+msgid "Suggested packages:"
+msgstr "Связанные пакеты:"
+
+#: cmdline/apt-get.cc:1600
+#, fuzzy
+msgid "Recommended packages:"
+msgstr "Сломанные пакеты"
+
+#: cmdline/apt-get.cc:1620
 msgid "Calculating Upgrade... "
 msgstr "Обработка Upgrade... "
 
-#: cmdline/apt-get.cc:1476
+#: cmdline/apt-get.cc:1623 methods/ftp.cc:702 methods/connect.cc:99
 msgid "Failed"
 msgstr "Не удачно"
 
-#: cmdline/apt-get.cc:1481
+#: cmdline/apt-get.cc:1628
 msgid "Done"
 msgstr "Сделано"
 
-#: cmdline/apt-get.cc:1654
+#: cmdline/apt-get.cc:1801
 msgid "Must specify at least one package to fetch source for"
 msgstr "Надо указать как минимум один пакет для скачивания исходного текста"
 
-#: cmdline/apt-get.cc:1681 cmdline/apt-get.cc:1888
+#: cmdline/apt-get.cc:1828 cmdline/apt-get.cc:2035
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Невозможно найти пакет исходников для %s"
 
-#: cmdline/apt-get.cc:1728
+#: cmdline/apt-get.cc:1875
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "К сожалению у вас не хватает места в %s"
 
-#: cmdline/apt-get.cc:1733
+#: cmdline/apt-get.cc:1880
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Нужно скачать %sБ/%sБ из исходных архивов.\n"
 
-#: cmdline/apt-get.cc:1736
+#: cmdline/apt-get.cc:1883
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Нужно скачать %sБ исходных архивов.\n"
 
-#: cmdline/apt-get.cc:1742
+#: cmdline/apt-get.cc:1889
 #, c-format
 msgid "Fetch Source %s\n"
 msgstr "Скачивание исходного текста %s\n"
 
-#: cmdline/apt-get.cc:1773
+#: cmdline/apt-get.cc:1920
 msgid "Failed to fetch some archives."
 msgstr "Неудачное получение нескольких архивов."
 
-#: cmdline/apt-get.cc:1801
+#: cmdline/apt-get.cc:1948
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Пропущена распаковка уже распакованного исходного текста в %s\n"
 
-#: cmdline/apt-get.cc:1813
+#: cmdline/apt-get.cc:1960
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Комманда распаковки '%s' завершилась не удачно.\n"
 
-#: cmdline/apt-get.cc:1830
+#: cmdline/apt-get.cc:1977
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Комманда сборки '%s' завершилась не удачно.\n"
 
-#: cmdline/apt-get.cc:1849
+#: cmdline/apt-get.cc:1996
 msgid "Child process failed"
 msgstr "Дочерний процесс завершился не удачно"
 
-#: cmdline/apt-get.cc:1865
+#: cmdline/apt-get.cc:2012
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Для проверки схемы зависимостей необходимо указать не менее одного пакета"
 
-#: cmdline/apt-get.cc:1893
+#: cmdline/apt-get.cc:2040
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Невозможно получить информацию о схеме зависимостей для %s"
 
-#: cmdline/apt-get.cc:1913
+#: cmdline/apt-get.cc:2060
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s не имеет схемы зависимостей.\n"
 
-#: cmdline/apt-get.cc:1931
+#: cmdline/apt-get.cc:2095
 #, fuzzy, c-format
 msgid ""
-"%s dependency on %s cannot be satisfied because the package %s cannot be "
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
 "Зависимость %s от %s не может быть удовлетворена ибо пакет %s не найден"
 
-#: cmdline/apt-get.cc:1983
+#: cmdline/apt-get.cc:2145
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because no available versions of "
+"package %s can satisfy version requirements"
+msgstr ""
+"Зависимость %s от %s не может быть удовлетворена ибо пакет %s не найден"
+
+#: cmdline/apt-get.cc:2173
 msgid ""
 "Some broken packages were found while trying to process build-dependencies.\n"
 "You might want to run `apt-get -f install' to correct these."
@@ -771,15 +1086,15 @@ msgstr ""
 "зависимостей.\n"
 "Чтобы исправить это попытайтесь запустить `apt-get -f install'."
 
-#: cmdline/apt-get.cc:1988
+#: cmdline/apt-get.cc:2178
 msgid "Failed to process build dependencies"
 msgstr "Процесс построения зависимостей завершился не удачно"
 
-#: cmdline/apt-get.cc:2020
+#: cmdline/apt-get.cc:2210
 msgid "Supported Modules:"
 msgstr "Поддерживаемые Модули:"
 
-#: cmdline/apt-get.cc:2061
+#: cmdline/apt-get.cc:2251
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -814,6 +1129,7 @@ msgid ""
 "  -m  Attempt to continue if archives are unlocatable\n"
 "  -u  Show a list of upgraded packages as well\n"
 "  -b  Build the source package after fetching it\n"
+"  -V  Show verbose version numbers\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
@@ -888,8 +1204,9 @@ msgstr "[Работаю]"
 #: cmdline/acqprogress.cc:271
 #, fuzzy, c-format
 msgid ""
-"Media Change: Please insert the disc labeled '%s' in the drive '%s' and "
-"press enter\n"
+"Media Change: Please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
 msgstr ""
 "Смена носителя: вставьте диск с меткой '%s' в устройство '%s' и нажмите "
 "ввод\n"
@@ -1064,17 +1381,6 @@ msgstr "Пакет пытается писать в обходной каталог %s/%s"
 msgid "The diversion path is too long"
 msgstr "Обходной путь слишком длинен"
 
-#: apt-inst/extract.cc:181 apt-inst/extract.cc:193 apt-inst/extract.cc:210
-#: apt-inst/deb/dpkgdb.cc:121
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Не удалось получить атрибуты %s"
-
-#: apt-inst/extract.cc:188
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Не удалось переименовать %s в %s"
-
 #: apt-inst/extract.cc:243
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -1098,7 +1404,7 @@ msgstr "У переписываемого пакета нет версии для %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Файл %s/%s переписывает файл в пакете %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:701
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:705
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:412 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
@@ -1239,6 +1545,336 @@ msgstr "Не могу разместить правильный control-файл"
 msgid "Unparsible control file"
 msgstr "Не могу разобрать control-файл"
 
+#: methods/cdrom.cc:113
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "Невозможно прочитать CD-базу %s"
+
+#: methods/cdrom.cc:122
+msgid ""
+"Please use apt-cdrom to make this CD recognized by APT. apt-get update "
+"cannot be used to add new CDs"
+msgstr ""
+"Пожалуйста, используйте apt-cdrom, чтобы APT смог распознать данный CD. apt-"
+"get update не используется для добавления нового CD"
+
+#: methods/cdrom.cc:130 methods/cdrom.cc:168
+msgid "Wrong CD"
+msgstr "Ошибочный CD"
+
+#: methods/cdrom.cc:163
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "Невозможно размонтировать CD-ROM в %s, вероятно он еще используется."
+
+#: methods/cdrom.cc:177 methods/file.cc:77
+#, fuzzy
+msgid "File not found"
+msgstr "Файл не найден"
+
+#: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
+msgid "Failed to stat"
+msgstr "Не удалось получить атрибуты"
+
+#: methods/copy.cc:79 methods/gzip.cc:139
+msgid "Failed to set modification time"
+msgstr "Не удалось установить время модификации"
+
+#: methods/file.cc:42
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "Неправильный URI, местный URI не должен начинаться с //"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc:162
+msgid "Logging in"
+msgstr "Регистрация в"
+
+#: methods/ftp.cc:168
+msgid "Unable to determine the peer name"
+msgstr "Невозможно определить имя удаленного сервера"
+
+#: methods/ftp.cc:173
+msgid "Unable to determine the local name"
+msgstr "Невозможно определить локальное имя"
+
+#: methods/ftp.cc:204 methods/ftp.cc:232
+#, c-format
+msgid "Server refused our connection and said: %s"
+msgstr "Сервер разорвал наше соединение и сообщил: %s"
+
+#: methods/ftp.cc:210
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "Комманда USER завершилась не удачно, сервер сообщил: %s"
+
+#: methods/ftp.cc:217
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "Комманда PASS завершилась не удачно, сервер сообщил: %s"
+
+#: methods/ftp.cc:237
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"Proxy-сервер указан, однако нет сценария входа в систему, Acquire::ftp::"
+"ProxyLogin пуст"
+
+#: methods/ftp.cc:265
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "Комманда '%s' завершилась неудачно, сервер сообщил: %s"
+
+#: methods/ftp.cc:291
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "Комманда TYPE завершилась не удачно, сервер сообщил: %s"
+
+#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
+msgid "Connection timeout"
+msgstr "Время соединения вышло"
+
+#: methods/ftp.cc:335
+msgid "Server closed the connection"
+msgstr "Сервер закрыл соединение"
+
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:452 methods/rsh.cc:190
+msgid "Read error"
+msgstr "Ошибка чтения"
+
+#: methods/ftp.cc:345 methods/rsh.cc:197
+msgid "A response overflowed the buffer."
+msgstr "Ответ переполнил буфер."
+
+#: methods/ftp.cc:362 methods/ftp.cc:374
+msgid "Protocol corruption"
+msgstr "Искажение протокола"
+
+#: methods/ftp.cc:446 methods/rsh.cc:232
+#, fuzzy
+msgid "Write Error"
+msgstr "Ошибка записи"
+
+#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
+msgid "Could not create a socket"
+msgstr "Не удалось создать сокет"
+
+#: methods/ftp.cc:698
+msgid "Could not connect data socket, connection timed out"
+msgstr "Не могу присоединить сокет данных, время соединения вышло"
+
+#: methods/ftp.cc:704
+msgid "Could not connect passive socket."
+msgstr "Невозможно присоединить пассивный сокет"
+
+#: methods/ftp.cc:722
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr ""
+
+#: methods/ftp.cc:736
+#, fuzzy
+msgid "Could not bind a socket"
+msgstr "Невозможно присвоить имя гнезду"
+
+#: methods/ftp.cc:740
+msgid "Could not listen on the socket"
+msgstr "Не могу принимать запросы соединения на сокете"
+
+#: methods/ftp.cc:747
+msgid "Could not determine the socket's name"
+msgstr "Не удалось определить имя гнезда"
+
+#: methods/ftp.cc:779
+msgid "Unable to send PORT command"
+msgstr "Невозможно послать комманду PORT"
+
+#: methods/ftp.cc:789
+#, fuzzy, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Неизвестное семейство адресов %u (AF_*)"
+
+#: methods/ftp.cc:798
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "Комманда EPRT завершилась не удачно, сервер сообщил: %s"
+
+#: methods/ftp.cc:818
+msgid "Data socket connect timed out"
+msgstr "Время содинения сокета данных вышло"
+
+#: methods/ftp.cc:825
+msgid "Unable to accept connection"
+msgstr "Невозможно принять соединение"
+
+#: methods/ftp.cc:864 methods/http.cc:912 methods/rsh.cc:303
+#, fuzzy
+msgid "Problem hashing file"
+msgstr "Проблема синхронизации файла"
+
+#: methods/ftp.cc:877
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Невозможно получить файл, сервер сообщил: '%s'"
+
+#: methods/ftp.cc:892 methods/rsh.cc:322
+msgid "Data socket timed out"
+msgstr "Время сокета данных вышло"
+
+#: methods/ftp.cc:922
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Передача данных завершилась не удачно, сервер сообщил: '%s'"
+
+#. Get the files information
+#: methods/ftp.cc:997
+msgid "Query"
+msgstr ""
+
+#: methods/ftp.cc:1104
+msgid "Unable to invoke "
+msgstr "Невозможно вызвать "
+
+#: methods/connect.cc:64
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Присоединение к %s (%s)"
+
+#: methods/connect.cc:71
+#, c-format
+msgid "[IP: %s %s]"
+msgstr ""
+
+#: methods/connect.cc:80
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Не удается создать сокет для %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc:86
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Невозможно инициализировать соединение с %s:%s (%s)."
+
+#: methods/connect.cc:92
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Не удается присоединиться к %s:%s (%s), connection timed out"
+
+#: methods/connect.cc:104
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "Не удается присоединиться к %s:%s (%s)."
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc:132 methods/rsh.cc:425
+#, c-format
+msgid "Connecting to %s"
+msgstr "Присоединение к %s"
+
+#: methods/connect.cc:163
+#, fuzzy, c-format
+msgid "Could not resolve '%s'"
+msgstr "Не могу открыть файл %s"
+
+#: methods/connect.cc:167
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr ""
+
+#: methods/connect.cc:169
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i)"
+msgstr "Что-то повредилось при разрешении имени '%s:%s' (%i)"
+
+#: methods/connect.cc:216
+#, c-format
+msgid "Unable to connect to %s %s:"
+msgstr "Невозможно присоединиться к %s %s:"
+
+#: methods/gzip.cc:57
+#, fuzzy, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Не могу открыть файл %s"
+
+#: methods/gzip.cc:102
+#, c-format
+msgid "Read error from %s process"
+msgstr "Ошибка чтения в процессе %s"
+
+#: methods/http.cc:340
+#, fuzzy
+msgid "Waiting for headers"
+msgstr "Ожидание файла"
+
+#: methods/http.cc:486
+#, c-format
+msgid "Got a single header line over %u chars"
+msgstr "Получен заголовок длиннее %u символов"
+
+#: methods/http.cc:494
+msgid "Bad header line"
+msgstr "Неверный заголовок"
+
+#: methods/http.cc:513 methods/http.cc:520
+msgid "The http server sent an invalid reply header"
+msgstr "http сервер послал неверный заголовок reply "
+
+#: methods/http.cc:549
+msgid "The http server sent an invalid Content-Length header"
+msgstr "http сервер послал неверный заголовок Content-Length"
+
+#: methods/http.cc:564
+msgid "The http server sent an invalid Content-Range header"
+msgstr "http сервер послал неверный заголовок Content-Range"
+
+#: methods/http.cc:566
+msgid "This http server has broken range support"
+msgstr "Этот http сервер имеет бутую поддержку диапазона"
+
+#: methods/http.cc:590
+msgid "Unknown date format"
+msgstr "Неизвестный формат данных"
+
+#: methods/http.cc:733
+msgid "Select failed"
+msgstr "Выбрать не удалось"
+
+#: methods/http.cc:738
+msgid "Connection timed out"
+msgstr "Время соединения вышло"
+
+#: methods/http.cc:761
+msgid "Error writing to output file"
+msgstr "Ошибка записи в выходной файл"
+
+#: methods/http.cc:789
+msgid "Error writing to file"
+msgstr "Ошибка записи в файл"
+
+#: methods/http.cc:814
+msgid "Error writing to the file"
+msgstr "Ошибка записи в файл"
+
+#: methods/http.cc:828
+msgid "Error reading from server Remote end closed connection"
+msgstr "Ошибка чтения, удаленный сервер закрыл соединение"
+
+#: methods/http.cc:830
+msgid "Error reading from server"
+msgstr "Ошибка чтения с сервера"
+
+#: methods/http.cc:1061
+msgid "Bad header Data"
+msgstr "Не верный заголовок данных"
+
+#: methods/http.cc:1078
+msgid "Connection failed"
+msgstr "Соединение разорвано"
+
+#: methods/http.cc:1169
+msgid "Internal error"
+msgstr "Внутреняя ошибка"
+
 #: apt-pkg/contrib/mmap.cc:82
 msgid "Can't mmap an empty file"
 msgstr ""
@@ -1253,49 +1889,54 @@ msgstr "Не могу сделать mmap %lu байт"
 msgid "Selection %s not found"
 msgstr "Выделенный %s не найден"
 
-#: apt-pkg/contrib/configuration.cc:449
+#: apt-pkg/contrib/configuration.cc:395
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:453
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "Открытие файла конфигурации %s"
 
-#: apt-pkg/contrib/configuration.cc:559
+#: apt-pkg/contrib/configuration.cc:563
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Синтаксическая ошибка %s:%u: Вначале блока нет имени"
 
-#: apt-pkg/contrib/configuration.cc:578
+#: apt-pkg/contrib/configuration.cc:582
 #, c-format
 msgid "Syntax error %s:%u: Malformed Tag"
 msgstr "Синтаксическая ошибка %s:%u: Бесформенный тэг"
 
-#: apt-pkg/contrib/configuration.cc:595
+#: apt-pkg/contrib/configuration.cc:599
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Синтаксическая ошибка %s:%u: Дополнительный кусок после значения"
 
-#: apt-pkg/contrib/configuration.cc:635
+#: apt-pkg/contrib/configuration.cc:639
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Синтаксическая ошибка %s:%u: Директивы могут задаваться только на верхнем "
 "уровне"
 
-#: apt-pkg/contrib/configuration.cc:642
+#: apt-pkg/contrib/configuration.cc:646
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Синтаксическая ошибка %s:%u: Слишком много встроенных включений"
 
-#: apt-pkg/contrib/configuration.cc:646 apt-pkg/contrib/configuration.cc:651
+#: apt-pkg/contrib/configuration.cc:650 apt-pkg/contrib/configuration.cc:655
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Синтаксическая ошибка %s:%u: Включено отсюда"
 
-#: apt-pkg/contrib/configuration.cc:655
+#: apt-pkg/contrib/configuration.cc:659
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Синтаксическая ошибка %s:%u: Неподдерживаемая директива '%s'"
 
-#: apt-pkg/contrib/configuration.cc:689
+#: apt-pkg/contrib/configuration.cc:693
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Синтаксическая ошибка %s:%u: Дополнительный кусок в конце файла"
@@ -1333,7 +1974,7 @@ msgstr "Опция %s требует аргумента"
 
 #: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
 #, fuzzy, c-format
-msgid "Option %s: Configuration item sepecification must have an =<val>."
+msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr ""
 "Опция %s: Спецификация конфигурационного элемента подразумевает конструкцию "
 "=<val>"
@@ -1417,10 +2058,6 @@ msgstr "Подпроцесс %s неожиданно завершился"
 msgid "Could not open file %s"
 msgstr "Не могу открыть файл %s"
 
-#: apt-pkg/contrib/fileutl.cc:452
-msgid "Read error"
-msgstr "Ошибка чтения"
-
 #: apt-pkg/contrib/fileutl.cc:473
 #, c-format
 msgid "read, still have %lu to read but none left"
@@ -1466,7 +2103,7 @@ msgstr "Данный APT не поддерживает Систему Версий '%s'"
 
 #: apt-pkg/pkgcache.cc:147
 #, fuzzy
-msgid "The package cache was build for a different architecture"
+msgid "The package cache was built for a different architecture"
 msgstr "Кэш пакетов был собран для другой архитектуры"
 
 #: apt-pkg/pkgcache.cc:218
@@ -1529,12 +2166,12 @@ msgstr "Версии-кандидаты"
 msgid "Dependency Generation"
 msgstr "Генерирование зависимости"
 
-#: apt-pkg/tagfile.cc:72
+#: apt-pkg/tagfile.cc:71
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Невозможно разобрать файл пакета %s (1)"
 
-#: apt-pkg/tagfile.cc:159
+#: apt-pkg/tagfile.cc:158
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Невозможно разобрать файл пакета %s (2)"
@@ -1653,12 +2290,12 @@ msgstr "Драйвер метода %s не найден."
 msgid "Method %s did not start correctly"
 msgstr "Метод %s запустился не корректно"
 
-#: apt-pkg/init.cc:117
+#: apt-pkg/init.cc:119
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "Система упаковки '%s' не поддерживается"
 
-#: apt-pkg/init.cc:133
+#: apt-pkg/init.cc:135
 msgid "Unable to determine a suitable system type"
 msgstr "Невозможно определить подходящий тип системы"
 
@@ -1688,6 +2325,10 @@ msgstr "Неверная запись в файле предпочтений: отсутствует заголовок пакета"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Не известный pin-тип %s"
+
+#: apt-pkg/policy.cc:299
+msgid "No priority (or zero) specified for pin"
+msgstr ""
 
 #: apt-pkg/pkgcachegen.cc:74
 msgid "Cache has an incompatible versioning system"
@@ -1808,435 +2449,13 @@ msgstr "Неподходящий размер"
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum не подходит"
 
-#, fuzzy
-#~ msgid "Package extension list is too long"
-#~ msgstr "Список расширений исходных текстов слишком длинен"
-
-#~ msgid "Error Processing directory %s"
-#~ msgstr "Ошибка обработки каталога %s"
-
-#~ msgid "Source extension list is too long"
-#~ msgstr "Список расширений исходных текстов слишком длинен"
-
-#~ msgid "Error writing header to contents file"
-#~ msgstr "Ошибка записи заголовка в содержимое файла"
-
-#~ msgid "Error Processing Contents %s"
-#~ msgstr "ошибка обработки содержимого %s"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: apt-ftparchive [options] command\n"
-#~ "Commands: packges binarypath [overridefile [pathprefix]]\n"
-#~ "          sources srcpath [overridefile [pathprefix]]\n"
-#~ "          contents path\n"
-#~ "          generate config [groups]\n"
-#~ "          clean config\n"
-#~ "\n"
-#~ "apt-ftparchive generates index files for Debian archives. It supports\n"
-#~ "many styles of generation from fully automated to functional "
-#~ "replacements\n"
-#~ "for dpkg-scanpackages and dpkg-scansources\n"
-#~ "\n"
-#~ "apt-ftparchive generates Package files from a tree of .debs. The\n"
-#~ "Package file contains the contents of all the control fields from\n"
-#~ "each package as well as the MD5 hash and filesize. An override file\n"
-#~ "is supported to force the value of Priority and Section.\n"
-#~ "\n"
-#~ "Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-#~ "The --source-override option can be used to specify a src override file\n"
-#~ "\n"
-#~ "The 'packages' and 'sources' command should be run in the root of the\n"
-#~ "tree. BinaryPath should point to the base of the recursive search and \n"
-#~ "override file should contian the override flags. Pathprefix is\n"
-#~ "appended to the filename fields if present. Example usage from the \n"
-#~ "debian archive:\n"
-#~ "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-#~ "               dists/potato/main/binary-i386/Packages\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h    This help text\n"
-#~ "  --md5 Control MD5 generation\n"
-#~ "  -s=?  Source override file\n"
-#~ "  -q    Quiet\n"
-#~ "  -d=?  Select the optional caching database\n"
-#~ "  --no-delink Enable delinking debug mode\n"
-#~ "  --contents  Control contents file generation\n"
-#~ "  -c=?  Read this configuration file\n"
-#~ "  -o=?  Set an arbitary configuration option"
-#~ msgstr ""
-#~ "apt-ftparchive генерирует индесные файлы для архивов Debian. "
-#~ "Поддерживает\n"
-#~ "множество стилей генерации от полностью автоматической до замены функций\n"
-#~ "пакетов dpkg-scanpackages и dpkg-scansources\n"
-#~ "\n"
-#~ "apt-ftparchive генериреует файлы Package из дерева .debs. Файл Package\n"
-#~ "содержит содержимое всех управляющих полей из каждого пакета, а также\n"
-#~ "хеши MD5 и размеры файлов. Для определения значений Приоритета и Раздела\n"
-#~ "поддерживается файл override.\n"
-#~ "\n"
-#~ "Аналогично apt-ftparchive генерирует файлы Sources из дерева .dscs.\n"
-#~ "Для указания файла override можно использовать опцию --source-override.\n"
-#~ "\n"
-#~ "Команды 'packages' и 'sources' надо запускать из корня дерева.\n"
-#~ "BinaryPath должен указывать на базовую точку рекурсивного поиска, а файл\n"
-#~ "override должен содержать перекрывающие флажки. Pathprefix, если есть,\n"
-#~ "добавляется к полям filename. Пример использования из архива debian:\n"
-#~ "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-#~ "               dists/potato/main/binary-i386/Packages\n"
-
-#~ msgid "No selections matched"
-#~ msgstr "Нет соответствий выбранному"
-
-#~ msgid "Some files are missing in the package file group `%s'"
-#~ msgstr "В группе пакетов файлов `%s' пропущены некоторые файлы"
-
-#~ msgid "DB was corrupted, file renamed to %s.old"
-#~ msgstr "БД была повреждена, файл переименован в %s.old"
-
-#~ msgid "Unable to open DB2 file %s"
-#~ msgstr "Не удалось открыть DB2 файл %s"
-
-#~ msgid "File date has changed %s"
-#~ msgstr "Дата файла %s изменена"
-
-#~ msgid "Archive has no control record"
-#~ msgstr "В архиве нет управляющей записи"
-
-#~ msgid "Unable to get a cursor"
-#~ msgstr "Невозможно получить курсор"
-
-#, fuzzy
-#~ msgid "W: Unable to read directory %s\n"
-#~ msgstr "W: Неудалось прочитать директорию "
-
-#, fuzzy
-#~ msgid "W: Unable to stat %s\n"
-#~ msgstr "W: Не удалось получить атрибуты "
-
-#, fuzzy
-#~ msgid "E: Errors apply to file "
-#~ msgstr "E: Ошибки отногсяться к файлу '"
-
-#~ msgid "Failed to resolve %s"
-#~ msgstr "Не удалось разрешить %s"
-
-#~ msgid "Tree walking failed"
-#~ msgstr "Не удалось совершить обход дерева"
-
-#~ msgid "Failed to open %s"
-#~ msgstr "Не удалось открыть %s"
-
-#, fuzzy
-#~ msgid "Failed to readlink %s"
-#~ msgstr "Не удалось удалить линк %s"
-
-#~ msgid "Failed to unlink %s"
-#~ msgstr "Не удалось удалить линк %s"
-
-#~ msgid "*** Failed to link %s to %s"
-#~ msgstr "*** Не удалось создать линк %s на %s"
-
-#, fuzzy
-#~ msgid " DeLink limit of %sB hit.\n"
-#~ msgstr " Ограничение DeLink в "
-
-#~ msgid "Archive had no package field"
-#~ msgstr "В архиве нет поля package"
-
-#, fuzzy
-#~ msgid "  %s has no override entry\n"
-#~ msgstr " не имеет записи override"
-
-#, fuzzy
-#~ msgid "  %s maintainer is %s not %s\n"
-#~ msgstr " сопровождающий "
-
-#~ msgid "realloc - Failed to allocate memory"
-#~ msgstr "realloc - не удалось выделить память"
-
-#~ msgid "Unable to open %s"
-#~ msgstr "Не удалось открыть %s"
-
-#~ msgid "Failed to read the override file %s"
-#~ msgstr "Не удалось прочесть override-файл %s"
-
-#~ msgid "Unknown Compresison Algorithm '%s'"
-#~ msgstr "Неизвестный алгоритм сжатия '%s'"
-
-#~ msgid "Failed to create IPC pipe to subprocess"
-#~ msgstr "Не удалось создать IPC-канал для подпроцесса"
-
-#~ msgid "Failed to create FILE*"
-#~ msgstr "Не удалось создать FILE*"
-
-#~ msgid "Failed to fork"
-#~ msgstr "Не удалось запустить порожденный процесс"
-
-#~ msgid "Compress Child"
-#~ msgstr "Сжатие потомка"
-
-#~ msgid "Internal Error, Failed to create %s"
-#~ msgstr "Внутренняя ошибка, не удалось создать %s"
-
-#~ msgid "Failed to create subprocess IPC"
-#~ msgstr "Не удалось создать подпроцесс IPC"
-
-#~ msgid "Failed to exec compressor "
-#~ msgstr "Не удалось выполнить компрессор "
-
-#, fuzzy
-#~ msgid "decompressor"
-#~ msgstr "Не удалось выполнить компрессор "
-
-#~ msgid "IO to subprocess/file failed"
-#~ msgstr "Ошибка ввода/вывода в подпроцесс/файл"
-
-#~ msgid "Failed to read while computing MD5"
-#~ msgstr "Ошибка чтения во время вычисления MD5"
-
-#, fuzzy
-#~ msgid "Problem unlinking %s"
-#~ msgstr "Обнаружена проблема %s"
-
-#, fuzzy
-#~ msgid "Suggested packages:"
-#~ msgstr "Связанные пакеты:"
-
-#, fuzzy
-#~ msgid "Recommended packages:"
-#~ msgstr "Сломанные пакеты"
-
-#, fuzzy
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because no available versions of "
-#~ "package %s can satisfy version requirements"
-#~ msgstr ""
-#~ "Зависимость %s от %s не может быть удовлетворена ибо пакет %s не найден"
-
-#~ msgid "Unable to read the cdrom database %s"
-#~ msgstr "Невозможно прочитать CD-базу %s"
-
-#~ msgid ""
-#~ "Please use apt-cdrom to make this CD recognized by APT. apt-get update "
-#~ "cannot be used to add new CDs"
-#~ msgstr ""
-#~ "Пожалуйста, используйте apt-cdrom, чтобы APT смог распознать данный CD. "
-#~ "apt-get update не используется для добавления нового CD"
-
-#~ msgid "Wrong CD"
-#~ msgstr "Ошибочный CD"
-
-#~ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-#~ msgstr ""
-#~ "Невозможно размонтировать CD-ROM в %s, вероятно он еще используется."
-
-#, fuzzy
-#~ msgid "File not found"
-#~ msgstr "Файл не найден"
-
-#~ msgid "Failed to stat"
-#~ msgstr "Не удалось получить атрибуты"
-
-#~ msgid "Failed to set modification time"
-#~ msgstr "Не удалось установить время модификации"
-
-#~ msgid "Invalid URI, local URIS must not start with //"
-#~ msgstr "Неправильный URI, местный URI не должен начинаться с //"
-
-#~ msgid "Logging in"
-#~ msgstr "Регистрация в"
-
-#~ msgid "Unable to determine the peer name"
-#~ msgstr "Невозможно определить имя удаленного сервера"
-
-#~ msgid "Unable to determine the local name"
-#~ msgstr "Невозможно определить локальное имя"
-
-#~ msgid "Server refused our connection and said: %s"
-#~ msgstr "Сервер разорвал наше соединение и сообщил: %s"
-
-#~ msgid "USER failed, server said: %s"
-#~ msgstr "Комманда USER завершилась не удачно, сервер сообщил: %s"
-
-#~ msgid "PASS failed, server said: %s"
-#~ msgstr "Комманда PASS завершилась не удачно, сервер сообщил: %s"
-
-#~ msgid ""
-#~ "A proxy server was specified but no login script, Acquire::ftp::"
-#~ "ProxyLogin is empty."
-#~ msgstr ""
-#~ "Proxy-сервер указан, однако нет сценария входа в систему, Acquire::ftp::"
-#~ "ProxyLogin пуст"
-
-#~ msgid "Login script command '%s' failed, server said: %s"
-#~ msgstr "Комманда '%s' завершилась неудачно, сервер сообщил: %s"
-
-#~ msgid "TYPE failed, server said: %s"
-#~ msgstr "Комманда TYPE завершилась не удачно, сервер сообщил: %s"
-
-#~ msgid "Connection timeout"
-#~ msgstr "Время соединения вышло"
-
-#~ msgid "Server closed the connection"
-#~ msgstr "Сервер закрыл соединение"
-
-#~ msgid "A response overflowed the buffer."
-#~ msgstr "Ответ переполнил буфер."
-
-#~ msgid "Protocol corruption"
-#~ msgstr "Искажение протокола"
-
-#, fuzzy
-#~ msgid "Write Error"
-#~ msgstr "Ошибка записи"
-
-#~ msgid "Could not create a socket"
-#~ msgstr "Не удалось создать сокет"
-
-#~ msgid "Could not connect data socket, connection timed out"
-#~ msgstr "Не могу присоединить сокет данных, время соединения вышло"
-
-#~ msgid "Could not connect passive socket."
-#~ msgstr "Невозможно присоединить пассивный сокет"
-
-#, fuzzy
-#~ msgid "Could not bind a socket"
-#~ msgstr "Невозможно присвоить имя гнезду"
-
-#~ msgid "Could not listen on the socket"
-#~ msgstr "Не могу принимать запросы соединения на сокете"
-
-#~ msgid "Could not determine the socket's name"
-#~ msgstr "Не удалось определить имя гнезда"
-
-#~ msgid "Unable to send PORT command"
-#~ msgstr "Невозможно послать комманду PORT"
-
-#, fuzzy
-#~ msgid "Unknown address family %u (AF_*)"
-#~ msgstr "Неизвестное семейство адресов %u (AF_*)"
-
-#~ msgid "EPRT failed, server said: %s"
-#~ msgstr "Комманда EPRT завершилась не удачно, сервер сообщил: %s"
-
-#~ msgid "Data socket connect timed out"
-#~ msgstr "Время содинения сокета данных вышло"
-
-#~ msgid "Unable to accept connection"
-#~ msgstr "Невозможно принять соединение"
-
-#, fuzzy
-#~ msgid "Problem hashing file"
-#~ msgstr "Проблема синхронизации файла"
-
-#~ msgid "Unable to fetch file, server said '%s'"
-#~ msgstr "Невозможно получить файл, сервер сообщил: '%s'"
-
-#~ msgid "Data socket timed out"
-#~ msgstr "Время сокета данных вышло"
-
-#~ msgid "Data transfer failed, server said '%s'"
-#~ msgstr "Передача данных завершилась не удачно, сервер сообщил: '%s'"
-
-#~ msgid "Unable to invoke "
-#~ msgstr "Невозможно вызвать "
-
-#~ msgid "Connecting to %s (%s)"
-#~ msgstr "Присоединение к %s (%s)"
-
-#~ msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-#~ msgstr "Не удается создать сокет для %s (f=%u t=%u p=%u)"
-
-#~ msgid "Cannot initiate the connection to %s:%s (%s)."
-#~ msgstr "Невозможно инициализировать соединение с %s:%s (%s)."
-
-#~ msgid "Could not connect to %s:%s (%s), connection timed out"
-#~ msgstr "Не удается присоединиться к %s:%s (%s), connection timed out"
-
-#~ msgid "Could not connect to %s:%s (%s)."
-#~ msgstr "Не удается присоединиться к %s:%s (%s)."
-
-#~ msgid "Connecting to %s"
-#~ msgstr "Присоединение к %s"
-
-#, fuzzy
-#~ msgid "Could not resolve '%s'"
-#~ msgstr "Не могу открыть файл %s"
-
-#~ msgid "Something wicked happened resolving '%s:%s' (%i)"
-#~ msgstr "Что-то повредилось при разрешении имени '%s:%s' (%i)"
-
-#~ msgid "Unable to connect to %s %s:"
-#~ msgstr "Невозможно присоединиться к %s %s:"
-
-#, fuzzy
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Не могу открыть файл %s"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "Ошибка чтения в процессе %s"
-
-#, fuzzy
-#~ msgid "Waiting for headers"
-#~ msgstr "Ожидание файла"
-
-#~ msgid "Got a single header line over %u chars"
-#~ msgstr "Получен заголовок длиннее %u символов"
-
-#~ msgid "Bad header line"
-#~ msgstr "Неверный заголовок"
-
-#~ msgid "The http server sent an invalid reply header"
-#~ msgstr "http сервер послал неверный заголовок reply "
-
-#~ msgid "The http server sent an invalid Content-Length header"
-#~ msgstr "http сервер послал неверный заголовок Content-Length"
-
-#~ msgid "The http server sent an invalid Content-Range header"
-#~ msgstr "http сервер послал неверный заголовок Content-Range"
-
-#~ msgid "This http server has broken range support"
-#~ msgstr "Этот http сервер имеет бутую поддержку диапазона"
-
-#~ msgid "Unknown date format"
-#~ msgstr "Неизвестный формат данных"
-
-#~ msgid "Select failed"
-#~ msgstr "Выбрать не удалось"
-
-#~ msgid "Connection timed out"
-#~ msgstr "Время соединения вышло"
-
-#~ msgid "Error writing to output file"
-#~ msgstr "Ошибка записи в выходной файл"
-
-#~ msgid "Error writing to file"
-#~ msgstr "Ошибка записи в файл"
-
-#~ msgid "Error writing to the file"
-#~ msgstr "Ошибка записи в файл"
-
-#~ msgid "Error reading from server Remote end closed connection"
-#~ msgstr "Ошибка чтения, удаленный сервер закрыл соединение"
-
-#~ msgid "Error reading from server"
-#~ msgstr "Ошибка чтения с сервера"
-
-#~ msgid "Bad header Data"
-#~ msgstr "Не верный заголовок данных"
-
-#~ msgid "Connection failed"
-#~ msgstr "Соединение разорвано"
-
-#~ msgid "Internal error"
-#~ msgstr "Внутреняя ошибка"
-
-#~ msgid "File Not Found"
-#~ msgstr "Файл не найден"
-
-#~ msgid "Connection closed prematurely"
-#~ msgstr "Соединение закрыто преждевременно"
+#: methods/rsh.cc:264
+msgid "File Not Found"
+msgstr "Файл не найден"
+
+#: methods/rsh.cc:330
+msgid "Connection closed prematurely"
+msgstr "Соединение закрыто преждевременно"
 
 #~ msgid "Sorry, you don't have enough free space in %s to hold all the .debs."
 #~ msgstr ""
@@ -2326,9 +2545,6 @@ msgstr "MD5Sum не подходит"
 
 #~ msgid "Found "
 #~ msgstr "Найдено индексов пакетов: "
-
-#~ msgid " package indexes and "
-#~ msgstr " , а также индексов исходных текстов: "
 
 #~ msgid " source indexes."
 #~ msgstr "."
