@@ -41,14 +41,14 @@ $(POTFILES) : $(PO)/%.pot :
 	rm -f $(PO)/POTFILES_$*.in
 	$(MSGCOMM) --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
 
-$(PO)/$(PACKAGE)-all.pot: $(POTFILES)
+$(PACKAGE)-all.pot: $(POTFILES)
 	$(MSGCOMM) --more-than=0 $(POTFILES) --output=$@
 
 # Filter the complete translation with the domain specific file to produce
 # only the subtext needed for this domain
 # We cannot express the dependencies required for this directly with a pattern
 # rule, so we use the .d hack.
-$(LANG_POFILES) : $(PO_DOMAINS)/%.po : $(PO)/$(PACKAGE)-all.pot
+$(LANG_POFILES) : $(PO_DOMAINS)/%.po : $(PACKAGE)-all.pot
 	printf "%s " "Generating $@"
 	echo $@ : $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot > $(PO)/$(call GETDOMAIN,$*)_$(notdir $@).d
 	$(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
