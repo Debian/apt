@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.3 1999/08/02 03:07:47 jgg Exp $
+// $Id: md5.cc,v 1.4 1999/10/25 03:36:41 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
@@ -45,19 +45,20 @@
 #include <system.h>
 #include <unistd.h>
 #include <config.h>
+#include <inttypes.h>
 									/*}}}*/
 
 // byteSwap - Swap bytes in a buffer					/*{{{*/
 // ---------------------------------------------------------------------
 /* This byteswap function will swap byte in a buffer of data */
 #ifdef WORDS_BIGENDIAN
-static void byteSwap(UINT32 *buf, unsigned words)
+static void byteSwap(uint32_t *buf, unsigned words)
 {
    unsigned char *p = (unsigned char *)buf;
    
    do 
    {
-      *buf++ = (UINT32)((unsigned)p[3] << 8 | p[2]) << 16 |
+      *buf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 |
 	 ((unsigned)p[1] << 8 | p[0]);
       p += 4;
    } while (--words);
@@ -83,9 +84,9 @@ static void byteSwap(UINT32 *buf, unsigned words)
 #define MD5STEP(f,w,x,y,z,in,s) \
 	 (w += f(x,y,z) + in, w = (w<<s | w>>(32-s)) + x)
 
-static void MD5Transform(UINT32 buf[4], UINT32 const in[16])
+static void MD5Transform(uint32_t buf[4], uint32_t const in[16])
 {
-   register UINT32 a, b, c, d;
+   register uint32_t a, b, c, d;
    
    a = buf[0];
    b = buf[1];
@@ -226,8 +227,8 @@ bool MD5SumValue::operator ==(const MD5SumValue &rhs) const
 /* This assigns the deep magic initial values */
 MD5Summation::MD5Summation()
 {
-   UINT32 *buf = (UINT32 *)Buf;
-   UINT32 *bytes = (UINT32 *)Bytes;
+   uint32_t *buf = (uint32_t *)Buf;
+   uint32_t *bytes = (uint32_t *)Bytes;
    
    buf[0] = 0x67452301;
    buf[1] = 0xefcdab89;
@@ -247,12 +248,12 @@ bool MD5Summation::Add(const unsigned char *data,unsigned long len)
    if (Done == true)
       return false;
 
-   UINT32 *buf = (UINT32 *)Buf;
-   UINT32 *bytes = (UINT32 *)Bytes;
-   UINT32 *in = (UINT32 *)In;
+   uint32_t *buf = (uint32_t *)Buf;
+   uint32_t *bytes = (uint32_t *)Bytes;
+   uint32_t *in = (uint32_t *)In;
 
    // Update byte count and carry (this could be done with a long long?)
-   UINT32 t = bytes[0];
+   uint32_t t = bytes[0];
    if ((bytes[0] = t + len) < t)
       bytes[1]++;	
 
@@ -311,9 +312,9 @@ bool MD5Summation::AddFD(int Fd,unsigned long Size)
    from calling add after. */
 MD5SumValue MD5Summation::Result()
 {
-   UINT32 *buf = (UINT32 *)Buf;
-   UINT32 *bytes = (UINT32 *)Bytes;
-   UINT32 *in = (UINT32 *)In;
+   uint32_t *buf = (uint32_t *)Buf;
+   uint32_t *bytes = (uint32_t *)Bytes;
+   uint32_t *in = (uint32_t *)In;
    
    if (Done == false)
    {

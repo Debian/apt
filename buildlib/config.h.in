@@ -35,37 +35,3 @@
 /* The package name string */
 #undef PACKAGE
 
-/* Generate the fixed bit size types */
-#if SIZEOF_INT == 4
-# define INT32 int
-# define UINT32 unsigned int
-#else
-# if SIZEOF_LONG == 4
-#  define INT32 long
-#  define UINT32 unsigned long
-# else
-#  if SIZEOF_SHORT == 4
-#   define INT32 short
-#   define UINT32 unsigned short
-#  else
-#   error Must have a form of 32-bit integer
-#  endif
-# endif
-#endif
-
-#if SIZEOF_INT == 2
-# define INT16 int
-# define UINT16 unsigned int
-#else
-# if SIZEOF_LONG == 2
-#  define INT16 long
-#  define UINT16 unsigned long
-# else
-#  if SIZEOF_SHORT == 2
-#   define INT16 short
-#   define UINT16 short
-#  else
-#   error Must have a form of 16-bit integer
-#  endif
-# endif
-#endif
