@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.20 2001/05/07 05:14:24 jgg Exp $
+// $Id: dpkgpm.cc,v 1.21 2001/05/07 05:35:46 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -26,9 +26,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <iostream>
+									/*}}}*/
 
 using namespace std;
-									/*}}}*/
 
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
