@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.11 2001/02/20 07:03:17 jgg Exp $
+// $Id: packagemanager.h,v 1.12 2001/03/11 07:35:49 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -63,9 +63,9 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool EarlyRemove(PkgIterator Pkg);   
    
    // The Actual installation implementation
-   virtual bool Install(PkgIterator Pkg,string File) {return false;};
-   virtual bool Configure(PkgIterator Pkg) {return false;};
-   virtual bool Remove(PkgIterator Pkg,bool Purge=false) {return false;};
+   virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
+   virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
+   virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
    virtual bool Go() {return true;};
    virtual void Reset() {};
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgsystem.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: pkgsystem.h,v 1.3 2001/03/11 07:35:49 jgg Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -72,7 +72,7 @@ class pkgSystem
 
    /* Load environment specific configuration and perform any other setup
       necessary */
-   virtual bool Initialize(Configuration &Cnf) {return true;};
+   virtual bool Initialize(Configuration &/*Cnf*/) {return true;};
    
    /* Type is some kind of Globally Unique way of differentiating
       archive file types.. */
@@ -83,7 +83,7 @@ class pkgSystem
    
    /* Evauluate how 'right' we are for this system based on the filesystem
       etc.. */
-   virtual signed Score(Configuration const &Cnf) {return 0;};
+   virtual signed Score(Configuration const &/*Cnf*/) {return 0;};
    
    pkgSystem();
    virtual ~pkgSystem() {};

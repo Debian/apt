@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexfile.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: indexfile.h,v 1.3 2001/03/11 07:35:49 jgg Exp $
 /* ######################################################################
 
    Index File - Abstraction for an index of archive/source file.
@@ -48,7 +48,7 @@ class pkgIndexFile
 
       const char *Label;
 
-      virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const {return 0;};
+      virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator /*File*/) const {return 0;};
       Type();
    };
 
@@ -61,7 +61,7 @@ class pkgIndexFile
    virtual string Describe() const = 0;   
 
    // Interface for acquire
-   virtual string ArchiveURI(string File) const {return string();};
+   virtual string ArchiveURI(string /*File*/) const {return string();};
    virtual bool GetIndexes(pkgAcquire *Owner) const;
 
    // Interface for the record parsers
@@ -71,7 +71,7 @@ class pkgIndexFile
    virtual bool Exists() const = 0;
    virtual bool HasPackages() const = 0;
    virtual unsigned long Size() const = 0;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const {return false;};
+   virtual bool Merge(pkgCacheGenerator &/*Gen*/,OpProgress &/*Prog*/) const {return false;};
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
    
    virtual ~pkgIndexFile() {};
