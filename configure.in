@@ -1,0 +1,86 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl The ONLY thing this is used for is to configure for different
+dnl linux architectures and configurations, it is not used to make the
+dnl code more portable
+
+dnl You MUST have an environment that has all the POSIX functions and
+dnl some of the more populare bsd/sysv ones (like select). You'll also
+dnl need a C++ compiler that is semi-standard conformant, exceptions are 
+dnl not used but STL is.
+
+AC_INIT(configure.in)
+AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in)
+
+dnl Tom's host stuff
+tl_CHECK_TOOL_PREFIX	dnl Initial guess
+
+dnl Check our C compiler
+tl_PROG_CC
+AC_ISC_POSIX
+
+dnl Check the host arch (build+target not needed... yet)
+tl_CANONICAL_HOST
+tl_CHECK_TOOL_PREFIX	dnl recheck, in case the initial guess was wrong
+
+dnl Check for other programs
+tl_PROG_CXX
+AC_LANG_CPLUSPLUS
+
+dnl Checks for X11
+AC_PATH_X
+AC_PATH_XTRA
+AC_SUBST(X11LIB)
+X11LIB=
+if test "$no_x" != "yes"; then
+  X11LIB="-lx11"
+fi
+
+dnl Checks for Slang
+AC_CHECK_LIB(slang, init_SLang,SLANGLIB="-lslang")
+AC_SUBST(SLANGLIB)
+
+dnl Checks for GPM
+AC_ARG_WITH(gpm,[  --without-gpm		  do not use GPM mouse support])
+if test "$with_gpm" != "no"; then
+  AC_CHECK_LIB(gpm, Gpm_Open,GPMLIB="-lgpm")
+  AC_SUBST(GPMLIB)
+fi
+
+dnl Converts the ARCH to be the same as dpkg
+AC_MSG_CHECKING(system architecture)
+archset="`awk '$1 == "'$host_cpu'" { print $2 }' $srcdir/buildlib/archtable`"
+if test "x$archset" = "x"; then
+  AC_MSG_ERROR(failed: use --host=)
+fi
+AC_MSG_RESULT($archset)
+AC_DEFINE_UNQUOTED(PKG_DEB_ARCH,"$archset")
+
+dnl Check the sizes etc. of the architecture
+changequote(,)
+if archline="`sed -ne 's/^'$archset':[ 	]\+\(.*\)/\1/gp' $srcdir/buildlib/sizetable`"; then
+changequote([,])
+  set $archline
+  if test "$1" = "little"; then
+    ac_cv_c_bigendian=no
+  else
+    ac_cv_c_bigendian=yes
+  fi
+  size_char=$2
+  size_int=$3
+  size_short=$4
+  size_long=$5
+fi
+if test "$cross_compiling" = "yes" -a "$archline" = ""; then
+  AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
+fi
+AC_C_BIGENDIAN
+AC_CHECK_SIZEOF(char,$size_char)
+AC_CHECK_SIZEOF(int,$size_int)
+AC_CHECK_SIZEOF(short,$size_short)
+AC_CHECK_SIZEOF(long,$size_long)
+
+dnl Check for debiandoc
+AC_CHECK_PROG(DEBIANDOC_HTML,debiandoc2html,"yes","")
+AC_CHECK_PROG(DEBIANDOC_TEXT,debiandoc2text,"yes","")
+
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in)

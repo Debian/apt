@@ -1,0 +1,25 @@
+# This file contains everything that autoconf guessed for your system.
+# if you want you can edit it, just don't re-run configure.
+
+# C++ compiler options
+CC = @CC@
+CPPFLAGS+= @CPPFLAGS@ @DEFS@
+CXX = @CXX@
+CXXFLAGS+= @CXXFLAGS@ @X_CFLAGS@
+
+# Linker stuff
+PICFLAGS+= -fPIC -DPIC
+LFLAGS+= @LDFLAGS@ 
+XLIBS:=@X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@
+
+# Dep generation - this only works for gnu stuff
+INLINEDEPFLAG = -MD
+
+# Debian doc stuff
+DEBIANDOC_HTML = @DEBIANDOC_HTML@
+DEBIANDOC_TEXT = @DEBIANDOC_TEXT@
+
+# Various library checks
+X11LIB = @X11LIB@
+GPMLIB = @GPMLIB@
+SLANGLIB = @SLANGLIB@
