@@ -1,5 +1,7 @@
 #! /bin/sh
 
+#DEBHELPER#
+
 if [ "$1" = "upgrade" -o "$1" = "failed-upgrade" ] && 
    dpkg --compare-versions "$2" "<<" 0.4.10
 then

@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.24 2001/02/20 07:03:17 jgg Exp $
+# $Id: rules,v 1.25 2001/02/21 04:25:20 jgg Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/tmp/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/tmp/usr/lib/libapt-pkg.so.2.9 not found.
@@ -279,15 +279,15 @@ binary: binary-indep binary-arch
 cvs-build:
 	rm -rf debian/cvs-build
 	cvs update
-	buildlib/mkChangeLog
+	#buildlib/mkChangeLog
 	$(MAKE) startup
 	$(MAKE) doc
-	tar c --exclude CVS --exclude debian/cvs-build . |\
+	tar c --exclude CVS --exclude cvs-build . |\
 		(mkdir -p debian/cvs-build/apt-$(APT_DEBVER);cd debian/cvs-build/apt-$(APT_DEBVER);tar x)
 # The next line isn't needed, as debuild will make the .tar.gz for us.
 #	(cd debian/cvs-build;tar zcf apt_$(APT_DEBVER).tar.gz apt-$(APT_DEBVER))
 	(cd debian/cvs-build/apt-$(APT_DEBVER);$(DEB_BUILD_PROG))
-	rm ChangeLog
+	#rm ChangeLog
 
 cvs-mkul:
 	-mkdir -p ../upload-$(APT_DEBVER)

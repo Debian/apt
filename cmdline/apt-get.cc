@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.100 2001/02/20 07:03:17 jgg Exp $
+// $Id: apt-get.cc,v 1.101 2001/02/21 04:25:20 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -891,7 +891,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
          otherwise this is not really an error. */
       if (AllowFail == false)
 	 return false;      
-      ioprintf(c1out,_("Package %s is not installed, so not removed"),Pkg.Name());
+      ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.Name());
       return true;
    }
    
