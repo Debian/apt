@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.5 1998/11/13 23:20:06 jgg Exp $
+// $Id: depcache.cc,v 1.6 1998/11/23 01:45:58 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -51,7 +51,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
    if (Prog != 0)
    {
       Prog->OverallProgress(0,2*Head().PackageCount,Head().PackageCount,
-			    "Building Dependancy Tree");
+			    "Building Dependency Tree");
       Prog->SubProgress(Head().PackageCount,"Candidate Versions");
    }
    
@@ -80,7 +80,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
       
       Prog->OverallProgress(Head().PackageCount,2*Head().PackageCount,
 			    Head().PackageCount,
-			    "Building Dependancy Tree");
+			    "Building Dependency Tree");
       Prog->SubProgress(Head().PackageCount,"Dependency Generation");
    }
    

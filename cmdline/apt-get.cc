@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.16 1998/11/22 23:37:07 jgg Exp $
+// $Id: apt-get.cc,v 1.17 1998/11/23 01:45:59 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -913,8 +913,8 @@ int ShowHelp()
    cout << "   check - Verify that there are no broken dependencies" << endl;
    cout << endl;
    cout << "Options:" << endl;
-   cout << "  -h   This help text." << endl;
-   cout << "  -q   Loggable output - no progress indicator" << endl;
+   cout << "  -h  This help text." << endl;
+   cout << "  -q  Loggable output - no progress indicator" << endl;
    cout << "  -qq No output except for errors" << endl;
    cout << "  -d  Download only - do NOT install or unpack archives" << endl;
    cout << "  -s  No-act. Perform ordering simulation" << endl;
