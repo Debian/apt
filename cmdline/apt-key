@@ -21,7 +21,7 @@ update() {
     fi
 
     # add new keys
-    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
+    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --ignore-time-conflict --import
 
     # remove no-longer used keys
     keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys|awk '/^pub/{FS=":";print $5}'`
