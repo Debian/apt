@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.22 2000/06/04 05:36:15 doogie Exp $
+# $Id: rules,v 1.23 2000/06/04 05:37:30 doogie Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -60,7 +60,7 @@ build-stamp: configure
 
 	# Add here commands to compile the package.
 	$(MAKE)
-	touch build-stamp
+	touch $@
 
 clean:
 	dh_testdir
@@ -195,7 +195,7 @@ configure:
 	$(MAKE) configure
 
 l33ch-stamp: super-l33ch
-	touch l33ch-stamp
+	touch $@
 
 really-clean: clean
 	-find -name Makefile.in -print0 | xargs -0r rm -f
