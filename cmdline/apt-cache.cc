@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.70 2004/01/04 07:41:52 mdz Exp $
+// $Id: apt-cache.cc,v 1.71 2004/01/04 19:00:10 mdz Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -1589,21 +1589,20 @@ bool Madison(CommandLine &CmdL)
          {
             for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; VF++)
             {
-               if (VF.File().Archive() != 0)
+// This might be nice, but wouldn't uniquely identify the source -mdz
+//                if (VF.File().Archive() != 0)
+//                {
+//                   cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
+//                        << VF.File().Archive() << endl;
+//                }
+
+               // Locate the associated index files so we can derive a description
+               for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); S++)
                {
-                  cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
-                       << VF.File().Archive() << endl;
-               }
-               else
-               {
-                  // Locate the associated index files so we can derive a description
-                  for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); S++)
+                  if ((*S)->FindInCache(*(VF.File().Cache())) == VF.File())
                   {
-                     if ((*S)->FindInCache(*(VF.File().Cache())) == VF.File())
-                     {
-                        cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
-                             << (*S)->Describe(true) << endl;
-                     }
+                     cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
+                          << (*S)->Describe(true) << endl;
                   }
                }
             }
