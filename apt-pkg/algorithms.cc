@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.22 1999/07/20 05:53:33 jgg Exp $
+// $Id: algorithms.cc,v 1.23 1999/07/30 02:54:25 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -340,6 +340,7 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
    
    // We loop indefinately to get the minimal set size.
    bool Change = false;
+   unsigned int Count = 0;
    do
    {
       Change = false;
@@ -348,16 +349,21 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 	 // Not interesting
 	 if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
 	    continue;
-	 
+
 	 // Keep it and see if that is OK
 	 Cache.MarkKeep(I);
 	 if (Cache.BrokenCount() != 0)
 	    Cache.MarkInstall(I,false);
 	 else
-	    Change = true;
+	 {
+	    // If keep didnt actually do anything then there was no change..
+	    if (Cache[I].Upgrade() == false)
+	       Change = true;
+	 }	 
       }      
+      Count++;
    }
-   while (Change == true);
+   while (Change == true && Count < 10);
 
    if (Cache.BrokenCount() != 0)
       return _error->Error("Internal Error in pkgMinimizeUpgrade");

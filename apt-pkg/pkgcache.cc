@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.27 1999/07/26 17:46:07 jgg Exp $
+// $Id: pkgcache.cc,v 1.28 1999/07/30 02:54:25 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -250,8 +250,7 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
        Pkg->CurrentState == pkgCache::State::HalfConfigured)
       return NeedsConfigure;
    
-   if (Pkg->CurrentState == pkgCache::State::UnInstalled ||
-       Pkg->CurrentState == pkgCache::State::HalfInstalled ||
+   if (Pkg->CurrentState == pkgCache::State::HalfInstalled ||
        Pkg->InstState != pkgCache::State::Ok)
       return NeedsUnpack;
       

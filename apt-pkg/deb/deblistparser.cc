@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.21 1999/07/26 17:46:08 jgg Exp $
+// $Id: deblistparser.cc,v 1.22 1999/07/30 02:54:25 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -172,7 +172,7 @@ unsigned short debListParser::VersionHash()
      Status: want flag status
    want = unknown, install, hold, deinstall, purge
    flag = ok, reinstreq, hold, hold-reinstreq
-   status = not-installed, unpacked, half-configured, uninstalled,
+   status = not-installed, unpacked, half-configured,
             half-installed, config-files, post-inst-failed, 
             removal-failed, installed
    
@@ -231,7 +231,6 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
                             {"unpacked",pkgCache::State::UnPacked},
                             {"half-configured",pkgCache::State::HalfConfigured},
                             {"installed",pkgCache::State::Installed},
-                            {"uninstalled",pkgCache::State::UnInstalled},
                             {"half-installed",pkgCache::State::HalfInstalled},
                             {"config-files",pkgCache::State::ConfigFiles},
                             {"post-inst-failed",pkgCache::State::HalfConfigured},

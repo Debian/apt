@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.21 1999/07/15 03:15:48 jgg Exp $
+// $Id: pkgcache.h,v 1.22 1999/07/30 02:54:25 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -70,7 +70,7 @@ class pkgCache
       enum PkgSelectedState {Unknown=0,Install=1,Hold=2,DeInstall=3,Purge=4};
       enum PkgInstState {Ok=0,ReInstReq=1,HoldInst=2,HoldReInstReq=3};
       enum PkgCurrentState {NotInstalled=0,UnPacked=1,HalfConfigured=2,
-	 UnInstalled=3,HalfInstalled=4,ConfigFiles=5,Installed=6};
+	   HalfInstalled=4,ConfigFiles=5,Installed=6};
    };
    
    struct Flag
