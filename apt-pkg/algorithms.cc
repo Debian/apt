@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.40 2002/04/25 05:45:18 jgg Exp $
+// $Id: algorithms.cc,v 1.41 2002/04/26 05:36:20 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -557,6 +557,8 @@ void pkgProblemResolver::MakeScores()
 bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 {
    if ((Flags[Pkg->ID] & Upgradable) == 0 || Cache[Pkg].Upgradable() == false)
+      return false;
+   if ((Flags[Pkg->ID] & Protected) == Protected)
       return false;
    
    Flags[Pkg->ID] &= ~Upgradable;
