@@ -20,6 +20,7 @@ itemize(
   it() remove package1 [package2] [...]
   it() check
   it() clean
+  it() autoclean
 )
 
 Unless the -h, or --help option is given one of the above commands
@@ -89,6 +90,14 @@ and bf(/var/cache/apt/archives/partial/).
 When APT is used as a bf(dselect(8)) method, bf(clean) is run automatically.
 Those who do not use dselect will likely want to run code(apt-get clean)
 from time to time to free up disk space.
+
+dit(bf(autoclean))
+Like bf(clean), df(autoclean) clears out the local repository of retrieved 
+package files. The difference is that it only removes package files that
+can no longer be downloaded, and are largely useless. This allows a
+cache to be maintained over a long period without it growing out of
+control.
+
 enddit()
 
 manpageoptions()

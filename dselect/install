@@ -49,7 +49,10 @@ fi
 if [ $RES -eq 0 ]; then
    # Check the cleaning mode
    case `echo $CLEAN | tr '[:upper:]' '[:lower:]'` in
-     always|auto) 
+     auto)
+       $APTGET autoclean && echo "Press enter to continue." && read RES && exit 0;
+       ;;
+     always)
        $APTGET clean && echo "Press enter to continue." && read RES && exit 0;
        ;;
      prompt)
