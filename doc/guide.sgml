@@ -4,7 +4,7 @@
 <title>APT User's Guide</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: guide.sgml,v 1.3 2001/02/20 07:03:17 jgg Exp $</version>
+<version>$Id: guide.sgml,v 1.4 2001/04/10 07:02:55 jgg Exp $</version>
 
 <abstract>
 This document provides an overview of how to use the the APT package manager.
@@ -39,14 +39,14 @@ the Internet.
 <p>
 The Debian packaging system has a large amount of information associated with
 each package to help assure that it integrates cleanly and easily into
-the system. The most prominent of features is the dependency system.
+the system. The most prominent of its features is the dependency system.
 
 <p>
 The dependency system allows individual programs to make use of shared 
 elements in the system such as libraries. It simplifies placing infrequently 
 used portions of a program in separate packages to reduce the
 number of things the average user is required to install. Also, it allows
-a choices in for such things as mail transport agents, X servers and 
+for choices in mail transport agents, X servers and 
 so on.
 
 <p>
@@ -96,7 +96,7 @@ for installation.
 <p>
 <prgn>apt-get</> provides a simple way to install packages from the command 
 line. Unlike <prgn>dpkg</>, <prgn>apt-get</> does not understand .deb files, 
-it works with the packages proper name and can only install .deb archives from 
+it works with the package's proper name and can only install .deb archives from 
 a <em>Source</>.
 
 <p>
@@ -116,7 +116,7 @@ Building Dependency Tree... Done
 </example>
 
 <p>
-Once updated there are several useful commands that can be used,
+Once updated there are several commands that can be used:
 <taglist>
 <tag>upgrade<item>
 Upgrade will attempt to gently upgrade the whole system. Upgrade will
@@ -125,20 +125,20 @@ ever upgrade a package that might cause some other package to break.
 This can be used daily to relatively safely upgrade the system. Upgrade
 will list all of the packages that it could not upgrade, this usually
 means that they depend on new packages or conflict with some other package.
-<prgn>Dselect</> or <tt>apt-get install</> can be used to force these
+<prgn>dselect</> or <tt>apt-get install</> can be used to force these
 packages to install.
 
 <tag>install<item>
-Install is used to install single packages by name. The package is 
+Install is used to install packages by name. The package is 
 automatically fetched and installed. This can be useful if you already
 know the name of the package to install and do not want to go into a GUI
 to select it. Any number of packages may be passed to install, they will
 all be fetched. Install automatically attempts to resolve dependency problems
 with the listed packages and will print a summary and ask for confirmation
-if anything other than it's arguments are changed
+if anything other than its arguments are changed.
 
 <tag>dist-upgrade<item>
-Dist-upgrade is a complete upgrader designed to make simple upgrading between
+Dist-upgrade is a complete upgrader designed to simplify upgrading between
 releases of Debian. It uses a sophisticated algorithm to determine the best
 set of packages to install, upgrade and remove to get as much of the system
 to the newest release. In some situations it may be desired to use dist-upgrade
@@ -152,7 +152,7 @@ decisions may sometimes be quite surprising.
 </taglist>
 
 <p>
-<prgn>apt-get</> has several command line options that are detailed in it's
+<prgn>apt-get</> has several command line options that are detailed in its
 man page, <manref name="apt-get" section="8">. The most useful option is 
 <tt>-d</> which does not install the fetched files. If the system has to
 download a large number of package it would be undesired to start installing
@@ -229,7 +229,7 @@ US is legal however.
 
 <p>
 The components list refers to the list of sub distributions to fetch. The
-distribution is split up based on software copyright, main being DFSG free
+distribution is split up based on software licenses, main being DFSG free
 packages while contrib and non-free contain things that have various 
 restrictions placed on their use and distribution.
 
@@ -251,8 +251,8 @@ the [C]onfig and [R]emove commands have no meaning, the [I]nstall command
 performs both of them together. 
 
 <p>
-By default APT will automatically remove the packages once they have been
-sucessfully installed. To change this behavor place <tt>Dselect::clean 
+By default APT will automatically remove the package (.deb) files once they have been
+successfully installed. To change this behavior place <tt>Dselect::clean 
 "prompt";</> in /etc/apt/apt.conf.
 
 </chapt>
@@ -278,14 +278,14 @@ how much is left to do.
 <sect>Startup
 
 <p>
-Before all operations, except update, APT performs a number of actions to
-prepare its internal state. It also does some checks of the systems state.
+Before all operations except update, APT performs a number of actions to
+prepare its internal state. It also does some checks of the system's state.
 At any time these operations can be performed by running <tt>apt-get check</>.
 <p>
 <example>
 # apt-get check
 Reading Package Lists... Done
-Building Dependancy Tree... Done
+Building Dependency Tree... Done
 </example>
 
 <p>
@@ -297,14 +297,14 @@ and a warning will be printed when apt-get exits.
 <p>
 The final operation performs a detailed analysis of the system's dependencies.
 It checks every dependency of every installed or unpacked package and considers
-if it is ok. Should this find a problem then a report will be printed out and
+if it is OK. Should this find a problem then a report will be printed out and
 <prgn>apt-get</> will refuse to run.
 
 <p>
 <example>
 # apt-get check
 Reading Package Lists... Done
-Building Dependancy Tree... Done
+Building Dependency Tree... Done
 You might want to run apt-get -f install' to correct these.
 Sorry, but the following packages have unmet dependencies:
   9fonts: Depends: xlib6g but it is not installed
@@ -336,7 +336,7 @@ package may have been unpacked without its dependents being installed.
 
 <p>
 The second situation is much less serious than the first because APT places
-certain assurances on the order that packages are installed. In both cases
+certain constraints on the order that packages are installed. In both cases
 supplying the <tt>-f</> option to <prgn>apt-get</> will cause APT to deduce a
 possible solution to the problem and then continue on. The APT <prgn>dselect</> 
 method always supplies the <tt>-f</> option to allow for easy continuation
@@ -395,7 +395,7 @@ should be given a careful inspection to ensure nothing important is to
 be taken off. The <tt>-f</> option is especially good at generating packages
 to remove so extreme care should be used in that case. The list may contain
 packages that are going to be removed because they are only 
-partially removed, possibly due to an aborted installation.
+partially installed, possibly due to an aborted installation.
 </sect1>
 
 <sect1>The New Packages list
@@ -498,7 +498,7 @@ files. Unfortunately since the size of the Package files is unknown
 inaccuracies.
 
 <p>
-The next section of the status line is repeated once for each dowload thread
+The next section of the status line is repeated once for each download thread
 and indicates the operation being performed and some useful information
 about what is happening. Sometimes this section will simply read <em>Forking</>
 which means the OS is loading the download module. The first word after the [
@@ -511,11 +511,11 @@ Inside of the single quote is an informative string indicating the progress
 of the negotiation phase of the download. Typically it progresses from 
 <em>Connecting</> to <em>Waiting for file</> to <em>Downloading</> or
 <em>Resuming</>. The final value is the number of bytes downloaded from the
-remote site. Once the download begings this is represented as <tt>102/10.2k</>
+remote site. Once the download begins this is represented as <tt>102/10.2k</>
 indicating that 102 bytes have been fetched and 10.2 kilobytes is expected.
 The total size is always shown in 4 figure notation to preserve space. After
 the size display is a percent meter for the file itself.
-The second last element is the instantenous average speed. This values is 
+The second last element is the instantaneous average speed. This values is 
 updated every 5 seconds and reflects the rate of data transfer for that 
 period. Finally is shown the estimated transfer time. This is updated
 regularly and reflects the time to complete everything at the shown 
