@@ -1688,7 +1688,7 @@ bool ShowHelp(CommandLine &Cmd)
       "  -q   Disable progress indicator.\n"
       "  -i   Show only important deps for the unmet command.\n"
       "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitary configuration option, eg -o dir::cache=/tmp\n"
+      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
       "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n");
    return true;
 }
