@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.12 2001/02/20 07:03:17 jgg Exp $
+// $Id: orderlist.cc,v 1.13 2001/04/27 04:47:58 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.
@@ -119,8 +119,11 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
        Cache[Pkg].Keep() == true)
       return false;
+
+   if (FileList == 0)
+      return false;
    
-   if (FileList != 0 && FileList[Pkg->ID].empty() == false)
+   if (FileList[Pkg->ID].empty() == false)
       return false;
    return true;
 }
