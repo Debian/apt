@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.17 1999/05/14 02:51:37 jgg Exp $
+# $Id: rules,v 1.18 1999/11/23 05:36:52 jgg Exp $
 
 
 # For the deb builder, you can run 'debian/rules cvs-build', which does all
@@ -79,10 +79,11 @@ libapt-pkg-doc: build debian/shlibs.local
 #
 # libapt-pkg-doc install
 #
-	-cp -a $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
-	  $(BLD)/docs/files* $(BLD)/docs/method* debian/libapt-pkg-doc/usr/doc/apt/
-	cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
-	dh_installdocs -p$@
+	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
+	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/share/doc/libapt-pkg-doc/.dhelp
+	
+	dh_installdocs -p$@ $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
+                            $(BLD)/docs/files* $(BLD)/docs/method*
 	dh_installexamples -p$@
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
@@ -121,35 +122,24 @@ apt: build debian/shlibs.local
 	cp $(BLD)/bin/methods/* debian/tmp/usr/lib/apt/methods/
 
 	cp $(BLD)/scripts/dselect/* debian/tmp/usr/lib/dpkg/methods/apt/
-#	cp debian/sources.list debian/tmp/etc/apt/
 
-	# Copy the users guide	
-	-cp $(BLD)/docs/guide.text debian/tmp/usr/doc/apt/users-guide.txt
-	-cp -a $(BLD)/docs/guide.html/* debian/tmp/usr/doc/apt/users-guide.html/
+	# Copy the guides
+	dh_installdocs -p$@ $(BLD)/docs/guide.text $(BLD)/docs/guide.html \
+	               $(BLD)/docs/offline.text $(BLD)/docs/offline.html
 	
-	# Copy the offline guide	
-	-cp $(BLD)/docs/offline.text debian/tmp/usr/doc/apt/offline.txt
-	-cp -a $(BLD)/docs/offline.html/* debian/tmp/usr/doc/apt/offline.html/
-	
-	cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
+	# One or the other..
+	-cp -a debian/dhelp debian/tmp/usr/doc/apt/.dhelp
+	-cp -a debian/dhelp debian/tmp/usr/share/doc/apt/.dhelp 
 	
 #	head -n 500 ChangeLog > debian/ChangeLog
 
-
-
-	dh_installdocs -p$@
 	dh_installexamples -papt $(BLD)/docs/examples/*
-#	dh_installmenu -papt
-#	dh_installinit -papt
-#	dh_installcron -papt
 	dh_installmanpages -p$@
 
-#	dh_undocumented -papt
 	dh_installchangelogs -p$@
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-#	dh_suidregister -p$@
 	dh_installdeb -p$@
 	LD_LIBRARY_PATH=`pwd`/debian/tmp/usr/lib dh_shlibdeps -papt
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:major=${LIBAPT_MAJOR}
@@ -165,7 +155,8 @@ libapt-pkg-dev: build debian/shlibs.local
 #
 # libapt-pkg-dev install
 #
-	ln -s libapt-pkg.so.${LIBAPT_MAJOR} debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
+	cp -a $(BLD)/bin/libapt-pkg.so debian/libapt-pkg-dev/usr/lib/
+	#ln -s libapt-pkg.so.${LIBAPT_MAJOR} debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
 	cp $(BLD)/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
 
 	dh_installdocs -p$@
