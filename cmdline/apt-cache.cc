@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.11 1998/11/13 04:24:01 jgg Exp $
+// $Id: apt-cache.cc,v 1.12 1998/11/14 07:20:29 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -27,6 +27,86 @@
 #include <config.h>
 									/*}}}*/
 
+// UnMet - Show unmet dependencies					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool UnMet(pkgCache &Cache)
+{
+   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+   {
+      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
+      {
+	 bool Header = false;
+	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
+	 {
+	    // Collect or groups
+	    pkgCache::DepIterator Start;
+	    pkgCache::DepIterator End;
+	    D.GlobOr(Start,End);
+	    
+	    // Skip everything but depends
+	    if (End->Type != pkgCache::Dep::PreDepends &&
+		End->Type != pkgCache::Dep::Depends && 
+		End->Type != pkgCache::Dep::Suggests &&
+		End->Type != pkgCache::Dep::Recommends)
+	       continue;
+
+	    // Verify the or group
+	    bool OK = false;
+	    pkgCache::DepIterator RealStart = Start;
+	    do
+	    {
+	       // See if this dep is Ok
+	       pkgCache::Version **VList = Start.AllTargets();
+	       if (*VList != 0)
+	       {
+		  OK = true;
+		  delete [] VList;
+		  break;
+	       }
+	       delete [] VList;
+	       
+	       if (Start == End)
+		  break;
+	       Start++;
+	    }
+	    while (1);
+
+	    // The group is OK
+	    if (OK == true)
+	       continue;
+	    
+	    // Oops, it failed..
+	    if (Header == false)
+		  cout << "Package " << P.Name() << " version " << 
+	       V.VerStr() << " has an unmet dep:" << endl;
+	    Header = true;
+	    
+	    // Print out the dep type
+	    cout << " " << End.DepType() << ": ";
+
+	    // Show the group
+	    Start = RealStart;
+	    do
+	    {
+	       cout << Start.TargetPkg().Name();
+	       if (Start.TargetVer() != 0)
+		  cout << " (" << Start.CompType() << " " << Start.TargetVer() <<
+		  ")";
+	       if (Start == End)
+		  break;
+	       cout << " | ";
+	       Start++;
+	    }
+	    while (1);
+	    
+	    cout << endl;
+	 }	 
+      }
+   }   
+   return true;
+}
+									/*}}}*/
 // DumpPackage - Show a dump of a package record			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -301,6 +381,7 @@ int ShowHelp()
    cout << "   stats - Show some basic statistics" << endl;
    cout << "   dump - Show the entire file in a terse form" << endl;
    cout << "   dumpavail - Print an available file to stdout" << endl;
+   cout << "   unmet - Show unmet dependencies" << endl;
    cout << endl;
    cout << "Options:" << endl;
    cout << "  -h   This help text." << endl;
@@ -398,6 +479,12 @@ int main(int argc,const char *argv[])
       if (strcmp(CmdL.FileList[0],"dumpavail") == 0)
       {
 	 DumpAvail(Cache);
+	 break;
+      }
+      
+      if (strcmp(CmdL.FileList[0],"unmet") == 0)
+      {
+	 UnMet(Cache);
 	 break;
       }
             

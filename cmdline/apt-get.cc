@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.12 1998/11/14 03:32:26 jgg Exp $
+// $Id: apt-get.cc,v 1.13 1998/11/14 07:20:30 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -138,11 +138,8 @@ void ShowBroken(ostream &out,pkgDepCache &Cache)
 	    for (int J = 0; J != Indent; J++)
 	       out << ' ';
 	 First = false;
-	 
-	 if (D->Type == pkgCache::Dep::Conflicts)
-	    out << " Conflicts:" << D.TargetPkg().Name();
-	 else
-	    out << " Depends:" << D.TargetPkg().Name();
+
+	 cout << ' ' << D.DepType() << ": ";
 	 
 	 // Show a quick summary of the version requirements
 	 if (D.TargetVer() != 0)
