@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.24 1999/01/27 02:48:52 jgg Exp $
+// $Id: acquire.cc,v 1.25 1999/01/30 06:07:24 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -411,6 +411,22 @@ unsigned long pkgAcquire::FetchNeeded()
       if ((*I)->Local == false)
 	 Total += (*I)->FileSize;
    return Total;
+}
+									/*}}}*/
+// pkgAcquire::UriBegin - Start iterator for the uri list		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgAcquire::UriIterator pkgAcquire::UriBegin()
+{
+   return UriIterator(Queues);
+}
+									/*}}}*/
+// pkgAcquire::UriEnd - End iterator for the uri list			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgAcquire::UriIterator pkgAcquire::UriEnd()
+{
+   return UriIterator(0);
 }
 									/*}}}*/
 

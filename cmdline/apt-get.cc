@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.36 1999/01/30 03:35:28 jgg Exp $
+// $Id: apt-get.cc,v 1.37 1999/01/30 06:07:24 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -566,6 +566,15 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true)
       if (YnPrompt() == false)
 	 exit(1);
    }      
+
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+   {
+      pkgAcquire::UriIterator I = Fetcher.UriBegin();
+      for (; I != Fetcher.UriEnd(); I++)
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+      return true;
+   }
    
    // Run it
    if (Fetcher.Run() == false)
@@ -1091,6 +1100,7 @@ int main(int argc,const char *argv[])
       {0,"ignore-hold","APT::Ingore-Hold",0},      
       {0,"no-upgrade","APT::Get::no-upgrade",0},
       {0,"force-yes","APT::Get::force-yes",0},
+      {0,"print-uris","APT::Get::Print-URIs",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

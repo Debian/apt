@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.18 1998/12/11 07:20:33 jgg Exp $
+// $Id: acquire.h,v 1.19 1999/01/30 06:07:24 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -98,7 +98,12 @@ class pkgAcquire
    Worker *WorkerStep(Worker *I);
    inline Item **ItemsBegin() {return Items.begin();};
    inline Item **ItemsEnd() {return Items.end();};
-
+   
+   // Iterate over queued Item URIs
+   class UriIterator;
+   UriIterator UriBegin();
+   UriIterator UriEnd();
+   
    // Cleans out the download dir
    bool Clean(string Dir);
 
@@ -123,6 +128,7 @@ struct pkgAcquire::ItemDesc
 class pkgAcquire::Queue
 {
    friend pkgAcquire;
+   friend pkgAcquire::UriIterator;
    Queue *Next;
    
    protected:
@@ -170,6 +176,40 @@ class pkgAcquire::Queue
    
    Queue(string Name,pkgAcquire *Owner);
    ~Queue();
+};
+
+class pkgAcquire::UriIterator
+{
+   pkgAcquire::Queue *CurQ;
+   pkgAcquire::Queue::QItem *CurItem;
+   
+   public:
+   
+   // Advance to the next item
+   inline void operator ++() {operator ++();};
+   void operator ++(int)
+   {
+      CurItem = CurItem->Next;
+      while (CurItem == 0 && CurQ != 0)
+      {
+	 CurItem = CurQ->Items;
+	 CurQ = CurQ->Next;
+      }
+   };
+   
+   // Accessors
+   inline pkgAcquire::ItemDesc const *operator ->() const {return CurItem;};
+   inline bool operator !=(UriIterator const &rhs) const {return rhs.CurQ != CurQ || rhs.CurItem != CurItem;};
+   inline bool operator ==(UriIterator const &rhs) const {return rhs.CurQ == CurQ && rhs.CurItem == CurItem;};
+   
+   UriIterator(pkgAcquire::Queue *Q) : CurQ(Q), CurItem(0)
+   {
+      while (CurItem == 0 && CurQ != 0)
+      {
+	 CurItem = CurQ->Items;
+	 CurQ = CurQ->Next;
+      }
+   }   
 };
 
 // Configuration information from each method
