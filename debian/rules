@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.36 2001/12/07 05:53:25 jgg Exp $
+# $Id: rules,v 1.37 2002/09/15 22:51:44 jgg Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -76,7 +76,7 @@ debian/shlibs.local: apt-pkg/makefile
 
 	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@
 	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
-	
+
 build: build/build-stamp	
 
 # Note that this is unconditionally done first as part of loading environment.mak
@@ -84,7 +84,7 @@ build: build/build-stamp
 # configure-stamp. Otherwise we can get stale or invalid, or missing config data.
 build/environment.mak: build/configure-stamp
 	@true
-	
+
 configure: configure.in
 build/configure-stamp: configure
 	dh_testdir
@@ -104,7 +104,7 @@ clean:
 	rm -f build-stamp debian/shlibs.local
 	rm -rf build
 	rm -f debian/shlibs.local.apt debian/shlibs.local.apt-utils
-	
+
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
 	-$(MAKE) distclean
@@ -123,10 +123,10 @@ libapt-pkg-doc: build debian/shlibs.local
 	dh_installdocs -p$@ $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
                             $(BLD)/docs/files* $(BLD)/docs/method* \
 			    doc/libapt-pkg2_to_3.txt doc/style.txt
-			    
+
 	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/doc/libapt-pkg-doc/.dhelp
 	-cp -a debian/libapt-pkg-doc.dhelp debian/libapt-pkg-doc/usr/share/doc/libapt-pkg-doc/.dhelp
-	
+
 	dh_installexamples -p$@
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
@@ -157,10 +157,10 @@ apt: build debian/shlibs.local
 # apt install
 #
 	cp $(BLD)/bin/apt-* debian/apt/usr/bin/
-	
+
 	# Remove the bits that are in apt-utils
 	rm $(addprefix debian/apt/usr/bin/apt-,$(APT_UTILS))
-	
+
 	# install the shared libs
 	find $(BLD)/bin/ -type f -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/apt/usr/lib/ \;
 	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/apt/usr/lib/ \;
@@ -172,11 +172,11 @@ apt: build debian/shlibs.local
 	# Copy the guides
 	dh_installdocs -p$@ $(BLD)/docs/guide*.text $(BLD)/docs/guide*.html \
 	               $(BLD)/docs/offline.text $(BLD)/docs/offline.html
-	
+
 	# One or the other..
 	-cp -a debian/dhelp debian/apt/usr/doc/apt/.dhelp
 	-cp -a debian/dhelp debian/apt/usr/share/doc/apt/.dhelp
-	
+
 #	head -n 500 ChangeLog > debian/ChangeLog
 
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
@@ -188,7 +188,6 @@ apt: build debian/shlibs.local
 	dh_fixperms -p$@
 	dh_installdeb -p$@
 	dh_shlibdeps -papt -l`pwd`/debian/apt/usr/lib -- -Ldebian/shlibs.local.apt
-#	LD_LIBRARY_PATH=`pwd`/debian/apt/usr/lib dh_shlibdeps -papt
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_makeshlibs -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)' -papt
 	dh_md5sums -p$@
@@ -204,7 +203,7 @@ libapt-pkg-dev: build debian/shlibs.local
 #
 	cp -a $(BLD)/bin/libapt-pkg*.so debian/libapt-pkg-dev/usr/lib/
 	cp -a $(BLD)/bin/libapt-inst*.so debian/libapt-pkg-dev/usr/lib/
-	#ln -s libapt-pkg.so.$(LIBAPTPKG_MAJOR) debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
+#	ln -s libapt-pkg.so.$(LIBAPTPKG_MAJOR) debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
 	cp $(BLD)/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
 
 	dh_installdocs -p$@
@@ -235,7 +234,7 @@ apt-utils: build debian/shlibs.local
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
 	dh_installdocs -p$@
-	
+
 	# Install the man pages..
 	mkdir -p debian/$@/usr/share/man/man1
 	-cp doc/apt-sortpkgs.1 doc/apt-ftparchive.1 doc/apt-extracttemplates.1 debian/$@/usr/share/man/man1/
@@ -287,15 +286,11 @@ binary: binary-indep binary-arch
 cvs-build:
 	rm -rf debian/cvs-build
 	cvs update
-	#buildlib/mkChangeLog
 	$(MAKE) startup
 	$(MAKE) doc
 	tar c --exclude CVS --exclude cvs-build . |\
 		(mkdir -p debian/cvs-build/apt-$(APT_DEBVER);cd debian/cvs-build/apt-$(APT_DEBVER);tar x)
-# The next line isn't needed, as debuild will make the .tar.gz for us.
-#	(cd debian/cvs-build;tar zcf apt_$(APT_DEBVER).tar.gz apt-$(APT_DEBVER))
 	(cd debian/cvs-build/apt-$(APT_DEBVER);$(DEB_BUILD_PROG))
-	#rm ChangeLog
 
 cvs-mkul:
 	-mkdir -p ../upload-$(APT_DEBVER)
