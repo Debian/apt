@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.11 2004/01/02 21:48:13 mdz Exp $
+// $Id: writer.cc,v 1.12 2004/01/02 21:55:09 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -852,7 +852,7 @@ bool ReleaseWriter::DoPackage(string FileName)
    {
       NewFileName = string(FileName.begin() + DirStrip.length(),FileName.end());
       while (NewFileName[0] == '/')
-           NewFileName = string(FileName.begin() + 1,FileName.end());
+         NewFileName = string(NewFileName.begin() + 1,NewFileName.end());
    }
    else 
       NewFileName = FileName;
