@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.44 2001/06/08 05:16:39 jgg Exp $
+// $Id: strutl.cc,v 1.45 2002/04/26 05:52:27 jgg Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -622,7 +622,7 @@ string TimeRFC1123(time_t Date)
    fancy buffering is used. */
 bool ReadMessages(int Fd, vector<string> &List)
 {
-   char Buffer[4000];
+   char Buffer[64000];
    char *End = Buffer;
    
    while (1)
