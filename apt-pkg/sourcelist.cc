@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.4 1998/07/19 04:22:04 jgg Exp $
+// $Id: sourcelist.cc,v 1.5 1998/07/26 04:49:33 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -41,7 +41,7 @@ pkgSourceList::pkgSourceList(string File)
 /* */
 bool pkgSourceList::ReadMainList()
 {
-   return Read(_config->Find("APT::Etc:sourcelist"));
+   return Read(_config->FindDir("Dir::Etc::sourcelist"));
 }
 									/*}}}*/
 // SourceList::Read - Parse the sourcelist file				/*{{{*/

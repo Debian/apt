@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.2 1998/07/22 01:45:38 jgg Exp $
+// $Id: progress.cc,v 1.3 1998/07/26 04:49:35 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -97,7 +97,10 @@ void OpTextProgress::Done()
    if (NoUpdate == false && OldOp.empty() == false)
    {
       char S[300];
-      snprintf(S,sizeof(S),"\r%s... Done",OldOp.c_str());
+      if (_errors->PendingError() == true)
+	 snprintf(S,sizeof(S),"\r%s... Error!",OldOp.c_str());
+      else
+	 snprintf(S,sizeof(S),"\r%s... Done",OldOp.c_str());
       Write(S);
       cout << endl;
       OldOp = string();
@@ -109,7 +112,7 @@ void OpTextProgress::Done()
 /* */
 void OpTextProgress::Update()
 {
-   if (CheckChange(0) == false)
+   if (CheckChange() == false)
       return;
    
    // No percent spinner

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.7 1998/07/19 04:42:14 jgg Exp $
+// $Id: mmap.cc,v 1.8 1998/07/26 04:49:34 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -68,6 +68,9 @@ bool MMap::Map()
       Prot |= PROT_WRITE;
    if ((Flags & Public) != Public)
       Map = MAP_PRIVATE;
+   
+   if (iSize == 0)
+      return _error->Error("Can't mmap an empty file");
    
    // Map it.
    Base = mmap(0,iSize,Prot,Map,Fd.Fd(),0);

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.8 1998/07/19 04:42:16 jgg Exp $
+// $Id: deblistparser.cc,v 1.9 1998/07/26 04:49:37 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -133,16 +133,13 @@ string debListParser::Version()
 bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 {
    // Parse the section
-   if ((Ver->Section = UniqFindTagWrite("Section")) == 0)
-      return _error->Warning("Missing Section tag");
+   Ver->Section = UniqFindTagWrite("Section");
    
    // Archive Size
-   if ((Ver->Size = (unsigned)FindTagI("Size")) == 0)
-      return _error->Error("Unparsable Size field");
+   Ver->Size = (unsigned)FindTagI("Size");
    
    // Unpacked Size (in K)
-   if ((Ver->InstalledSize = (unsigned)FindTagI("Installed-Size")) == 0)
-      return _error->Error("Unparsable Installed-Size field");
+   Ver->InstalledSize = (unsigned)FindTagI("Installed-Size");
    Ver->InstalledSize *= 1024;
 
    // Priority
@@ -187,8 +184,7 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
 			       pkgCache::VerIterator Ver)
 {
    if (Pkg->Section == 0)
-      if ((Pkg->Section = UniqFindTagWrite("Section")) == 0)
-	 return false;
+      Pkg->Section = UniqFindTagWrite("Section");
    if (HandleFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
       return false;
    if (HandleFlag("Immediate-Configure",Pkg->Flags,pkgCache::Flag::ImmediateConf) == false)
