@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description                                                          /*{{{*/
-// $Id: sha1.cc,v 1.2 2001/03/11 05:30:20 jgg Exp $
+// $Id: sha1.cc,v 1.3 2001/05/13 05:15:03 jgg Exp $
 /* ######################################################################
    
    SHA1 - SHA-1 Secure Hash Algorithm.
@@ -206,7 +206,7 @@ SHA1SumValue::SHA1SumValue()
 /* Converts the hex string into a set of chars */
 bool SHA1SumValue::Set(string Str)
 {
-   return Hex2Num(Str.begin(),Str.end(),Sum,sizeof(Sum));
+   return Hex2Num(Str,Sum,sizeof(Sum));
 }
 
 									/*}}} */
