@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.10 2001/02/20 07:03:17 jgg Exp $
+// $Id: progress.cc,v 1.11 2001/05/07 05:25:13 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -16,9 +16,12 @@
 #include <apt-pkg/configuration.h>
 
 #include <apti18n.h>
-    
+
+#include <iostream>
 #include <stdio.h>
 									/*}}}*/
+
+using namespace std;
 
 // OpProgress::OpProgress - Constructor					/*{{{*/
 // ---------------------------------------------------------------------

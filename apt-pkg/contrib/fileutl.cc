@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.38 2001/04/22 05:42:52 jgg Exp $
+// $Id: fileutl.cc,v 1.39 2001/05/07 05:30:31 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -23,6 +23,7 @@
 
 #include <apti18n.h>
 
+#include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -32,6 +33,8 @@
 #include <signal.h>
 #include <errno.h>
 									/*}}}*/
+
+using namespace std;
 
 // CopyFile - Buffered copy of a file					/*{{{*/
 // ---------------------------------------------------------------------

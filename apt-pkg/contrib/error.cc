@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: error.cc,v 1.9 2001/02/20 07:03:17 jgg Exp $
+// $Id: error.cc,v 1.10 2001/05/07 05:28:44 jgg Exp $
 /* ######################################################################
    
    Global Erorr Class - Global error mechanism
@@ -20,14 +20,17 @@
 
 #include <apt-pkg/error.h>
 
+#include <iostream.h>
 #include <errno.h>
 #include <stdio.h>
-#include <string.h>
+#include <string>
 #include <stdarg.h>
 #include <unistd.h>
 
 #include "config.h"
    									/*}}}*/
+
+using namespace std;
 
 // Global Error Object							/*{{{*/
 /* If the implementation supports posix threads then the accessor function
