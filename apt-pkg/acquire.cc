@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.11 1998/11/11 06:54:16 jgg Exp $
+// $Id: acquire.cc,v 1.12 1998/11/11 07:30:55 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -636,7 +636,7 @@ void pkgAcquireStatus::Stop()
 // ---------------------------------------------------------------------
 /* This is used to get accurate final transfer rate reporting. */
 void pkgAcquireStatus::Fetched(unsigned long Size,unsigned long Resume)
-{
+{   
    FetchedBytes += Size - Resume;
 }
 									/*}}}*/

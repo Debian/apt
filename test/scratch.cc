@@ -103,7 +103,7 @@ void AcqTextStatus::Pulse(pkgAcquire *Owner)
    
    enum {Long = 0,Medium,Short} Mode = Long;
    
-   ScreenWidth = 140;
+   ScreenWidth = 78;
    char Buffer[300];
    char *End = Buffer + sizeof(Buffer);
    char *S = Buffer;

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.6 1998/11/11 06:54:15 jgg Exp $
+// $Id: acquire-method.cc,v 1.7 1998/11/11 07:30:54 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -334,8 +334,8 @@ void pkgAcqMethod::Status(const char *Format,...)
 // AcqMethod::FetchResult::FetchResult - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcqMethod::FetchResult::FetchResult() : LastModified(0), 
-                                   IMSHit(false), Size(0)
+pkgAcqMethod::FetchResult::FetchResult() : LastModified(0),
+                                   IMSHit(false), Size(0), ResumePoint(0)
 {
 }
 									/*}}}*/
