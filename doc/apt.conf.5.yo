@@ -68,7 +68,7 @@ URI handlers.
 startdit()
 dit(bf(Queue-Mode))
 Queuing mode; bf(Queue-Mode) can be one of bf(host) or bf(access) which 
-determins how APT parallelizesoutgoing connections. bf(host) means that
+determins how APT parallelizes outgoing connections. bf(host) means that
 one connection per target host will be opened, bf(access) means that one
 connection per URI type will be opened.
 
@@ -82,8 +82,8 @@ will override all settings.
 Three settings are provided for cache control with HTTP/1.1 complient proxy
 caches. bf(No-Cache) tells the proxy to not used its cached response under
 any circumstances, bf(Max-Age) is sent only for index files and tells the
-cache to refresh its object if it is older than the given value. Debian
-updates its index files daily so the default is 1 day. bd(No-Store) 
+cache to refresh its object if it is older than the given number of seconds. 
+Debian updates its index files daily so the default is 1 day. bf(No-Store) 
 specifies that the cache should never store this request, it is only
 set for archive files. This may be usefull to prevent polluting a proxy cache
 with very large .deb files. Note: Squid 2.0.2 does not support any of
@@ -154,6 +154,9 @@ bf(Debug::pkgDPkgPM) will print out the command line for each dpkg invokation.
 manpagesection(EXAMPLES)
 bf(/usr/doc/apt/examples/apt.conf) contains a sample configuration file
 showing the default values for all possible options.
+
+mapagesection(FILES)
+/etc/apt/apt.conf
 
 manpageseealso()
 apt-cache (8),

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.21 1999/01/04 00:57:56 jgg Exp $
+// $Id: http.cc,v 1.22 1999/01/20 04:36:43 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -875,6 +875,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       return 5;
 
    FailFile = Queue->DestFile;
+   FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
    FailFd = File->Fd();
    FailTime = Srv->Date;
       
