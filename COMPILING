@@ -61,7 +61,8 @@ HP-UX
      1) snprintf exists but is not prototyped, ignore spurios warnings
      2) No socklen_t
      3) Requires -D_XOPEN_SOURCE_EXTENDED for h_errno
-    Items 2 and 3 have to be fixed by hand. Insert this into
+    configure attempts to detect items 2 and 3, and tries to fix them.  If
+    not, you can add the following into(patches welcome to configure.in)
     build/include/netdb.h:
     
     #define _XOPEN_SOURCE_EXTENDED

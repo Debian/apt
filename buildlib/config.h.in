@@ -32,6 +32,20 @@
 /* Define if we have enabled pthread support */
 #undef HAVE_PTHREAD
 
+/* Define if h_errno is in netdb.h */
+#undef HAVE_NETDB_H
+
+/* Define if socklen_t is in sys/socket.h  This does not mean we
+   shouldn't include sys/socket.h tho!  */
+#undef HAVE_SYS_SOCKET_H
+
+/* If there is no socklen_t, define this(might want to update
+   configure.in.  */
+#undef NEED_SOCKLEN_T_DEFINE
+
+/* Define on HP-UX */
+#undef NEED_XOPEN_NETDB_H
+
 /* Define the architecture name string */
 #undef ARCHITECTURE
 
@@ -40,4 +54,3 @@
 
 /* The package name string */
 #undef PACKAGE
-
