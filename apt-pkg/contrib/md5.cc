@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: md5.cc,v 1.4 1999/10/25 03:36:41 jgg Exp $
+// $Id: md5.cc,v 1.5 1999/10/25 04:10:02 jgg Exp $
 /* ######################################################################
    
    MD5Sum - MD5 Message Digest Algorithm.
@@ -28,8 +28,9 @@
    Still in the public domain.
 
    The classes use arrays of char that are a specific size. We cast those
-   arrays to UINT32's and go from there. This allows us to advoid using
-   config.h in a public header or internally newing memory. 
+   arrays to uint8_t's and go from there. This allows us to advoid using
+   the uncommon inttypes.h in a public header or internally newing memory.
+   In theory if C9x becomes nicely accepted
    
    ##################################################################### */
 									/*}}}*/
@@ -44,28 +45,21 @@
 #include <string.h>
 #include <system.h>
 #include <unistd.h>
-#include <config.h>
+#include <netinet/in.h>                          // For htonl
 #include <inttypes.h>
 									/*}}}*/
 
 // byteSwap - Swap bytes in a buffer					/*{{{*/
 // ---------------------------------------------------------------------
-/* This byteswap function will swap byte in a buffer of data */
-#ifdef WORDS_BIGENDIAN
-static void byteSwap(uint32_t *buf, unsigned words)
+/* Swap n 32 bit longs in given buffer */
+inline static void byteSwap(uint32_t *buf, unsigned words)
 {
-   unsigned char *p = (unsigned char *)buf;
-   
-   do 
+   do
    {
-      *buf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 |
-	 ((unsigned)p[1] << 8 | p[0]);
-      p += 4;
-   } while (--words);
+      *buf++ = htonl(*buf);
+   }
+   while (--words);   
 }
-#else
-#define byteSwap(buf,words)
-#endif
 									/*}}}*/
 // MD5Transform - Alters an existing MD5 hash				/*{{{*/
 // ---------------------------------------------------------------------

@@ -83,28 +83,29 @@ AC_CACHE_CHECK([for C9x integer types],c9x_ints,[
                    [uint8_t Foo1;uint16_t Foo2;uint32_t Foo3;uint64_t Foo],
 		   c9x_ints=yes,c9x_ints=no)])
 
-dnl Check the sizes etc. of the architecture
-changequote(,)
-if archline="`sed -ne 's/^'$archset':[ 	]\+\(.*\)/\1/gp' $srcdir/buildlib/sizetable`"; then
-   changequote([,])
-   set $archline
-   if test "$1" = "little"; then
-      ac_cv_c_bigendian=no
-   else
-      ac_cv_c_bigendian=yes
+dnl We do not need this if we have inttypes..
+   if test x"$c9x_ints" = x"no"; then
+   dnl Check the sizes etc. of the architecture
+   changequote(,)
+   if archline="`sed -ne 's/^'$archset':[ 	]\+\(.*\)/\1/gp' $srcdir/buildlib/sizetable`"; then
+      changequote([,])
+      set $archline
+      if test "$1" = "little"; then
+         ac_cv_c_bigendian=no
+      else
+         ac_cv_c_bigendian=yes
+      fi
+      size_char=$2
+      size_int=$3
+      size_short=$4
+      size_long=$5
    fi
-   size_char=$2
-   size_int=$3
-   size_short=$4
-   size_long=$5
-fi
 
-if test "$cross_compiling" = "yes" -a "$archline" = ""; then
-  AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
-fi
-AC_C_BIGENDIAN
+   if test "$cross_compiling" = "yes" -a "$archline" = ""; then
+     AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
+   fi
+   AC_C_BIGENDIAN
    
-if test x"$c9x_ints" = x"no"; then
    AC_CHECK_SIZEOF(char,$size_char)
    AC_CHECK_SIZEOF(int,$size_int)
    AC_CHECK_SIZEOF(short,$size_short)
