@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.16 1999/04/07 05:30:18 jgg Exp $
+// $Id: fileutl.h,v 1.17 1999/04/07 05:35:55 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -49,7 +49,7 @@ class FileFd
 
    // Simple manipulators
    inline int Fd() {return iFd;};
-   inline void Fd(int fd) {iFd = fd1;};
+   inline void Fd(int fd) {iFd = fd;};
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
    inline void EraseOnFailure() {Flags |= DelOnFail;};
