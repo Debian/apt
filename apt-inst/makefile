@@ -14,7 +14,7 @@ LIBRARY=apt-inst
 LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=1.0
 MINOR=0
-SLIBS=$(PTHREADLIB)
+SLIBS=$(PTHREADLIB) -lapt-pkg
 
 # Source code for the contributed non-core things
 SOURCE = contrib/extracttar.cc contrib/arfile.cc
