@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.5 2000/05/12 05:04:57 jgg Exp $
+// $Id: connect.cc,v 1.6 2000/05/28 04:34:44 jgg Exp $
 /* ######################################################################
 
    Connect - Replacement connect call
@@ -38,9 +38,12 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
 {
    // Show a status indicator
    char Name[NI_MAXHOST];
+   char Service[NI_MAXSERV];
    Name[0] = 0;
+   Service[0] = 0;
    getnameinfo(Addr->ai_addr,Addr->ai_addrlen,
-	       Name,sizeof(Name),0,0,NI_NUMERICHOST);
+	       Name,sizeof(Name),Service,sizeof(Service),
+	       NI_NUMERICHOST|NI_NUMERICSERV);
    Owner->Status("Connecting to %s (%s)",Host.c_str(),Name);
    
    // Get a socket
@@ -52,13 +55,13 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    if (connect(Fd,Addr->ai_addr,Addr->ai_addrlen) < 0 &&
        errno != EINPROGRESS)
       return _error->Errno("connect","Cannot initiate the connection "
-			   "to %s (%s).",Host.c_str(),Name);
+			   "to %s:%s (%s).",Host.c_str(),Service,Name);
    
    /* This implements a timeout for connect by opening the connection
       nonblocking */
    if (WaitFd(Fd,true,TimeOut) == false)
-      return _error->Error("Could not connect to %s (%s), "
-			   "connection timed out",Host.c_str(),Name);
+      return _error->Error("Could not connect to %s:%s (%s), "
+			   "connection timed out",Host.c_str(),Service,Name);
    
    // Check the socket for an error condition
    unsigned int Err;
@@ -67,8 +70,12 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
       return _error->Errno("getsockopt","Failed");
    
    if (Err != 0)
-      return _error->Error("Could not connect to %s (%s).",Host.c_str(),Name);
-
+   {
+      errno = Err;
+      return _error->Errno("connect","Could not connect to %s:%s (%s).",Host.c_str(),
+			   Service,Name);
+   }
+   
    return true;
 }
 									/*}}}*/
@@ -80,6 +87,13 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 {
    if (_error->PendingError() == true)
       return false;
+
+   // Convert the port name/number
+   char ServStr[300];
+   if (Port != 0)
+      snprintf(ServStr,sizeof(ServStr),"%u",Port);
+   else
+      snprintf(ServStr,sizeof(ServStr),"%s",Service);
    
    /* We used a cached address record.. Yes this is against the spec but
       the way we have setup our rotating dns suggests that this is more
@@ -88,59 +102,49 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
    {
       Owner->Status("Connecting to %s",Host.c_str());
 
-      // Lookup the host
-      char S[300];
-      if (Port != 0)
-	 snprintf(S,sizeof(S),"%u",Port);
-      else
-	 snprintf(S,sizeof(S),"%s",Service);
-
       // Free the old address structure
       if (LastHostAddr != 0)
       {
 	 freeaddrinfo(LastHostAddr);
 	 LastHostAddr = 0;
+	 LastUsed = 0;
       }
       
       // We only understand SOCK_STREAM sockets.
       struct addrinfo Hints;
       memset(&Hints,0,sizeof(Hints));
       Hints.ai_socktype = SOCK_STREAM;
-      Hints.ai_protocol = IPPROTO_TCP;       // Right?
+      Hints.ai_protocol = 0;
       
       // Resolve both the host and service simultaneously
       while (1)
       {
 	 int Res;
-	 if ((Res = getaddrinfo(Host.c_str(),S,&Hints,&LastHostAddr)) != 0 ||
+	 if ((Res = getaddrinfo(Host.c_str(),ServStr,&Hints,&LastHostAddr)) != 0 ||
 	     LastHostAddr == 0)
 	 {
 	    if (Res == EAI_NONAME || Res == EAI_SERVICE)
 	    {
 	       if (DefPort != 0)
 	       {
-		  snprintf(S,sizeof(S),"%u",DefPort);
+		  snprintf(ServStr,sizeof(ServStr),"%u",DefPort);
 		  DefPort = 0;
 		  continue;
 	       }
 	       return _error->Error("Could not resolve '%s'",Host.c_str());
 	    }
 	    
-	    return _error->Error("Something wicked happend resolving '%s/%s'",
-				 Host.c_str(),S);
+	    return _error->Error("Something wicked happend resolving '%s:%s'",
+				 Host.c_str(),ServStr);
 	 }
 	 break;
       }
       
-      if (LastHostAddr->ai_family == AF_UNIX)
-	 return _error->Error("getaddrinfo returned a unix domain socket\n");
-      
       LastHost = Host;
       LastPort = Port;
-      LastUsed = 0;
    }
 
-   // Get the printable IP address
+   // When we have an IP rotation stay with the last IP.
    struct addrinfo *CurHost = LastHostAddr;
    if (LastUsed != 0)
        CurHost = LastUsed;
@@ -155,14 +159,20 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
       close(Fd);
       Fd = -1;
       
-      CurHost = CurHost->ai_next;
+      // Ignore UNIX domain sockets
+      do
+      {
+	 CurHost = CurHost->ai_next;
+      }
+      while (CurHost != 0 && CurHost->ai_family == AF_UNIX);
+	 
       LastUsed = 0;
       if (CurHost != 0)
 	 _error->Discard();
    }
-   
+
    if (_error->PendingError() == true)
       return false;
-   return _error->Error("Unable to connect to '%s'",Host.c_str());
+   return _error->Error("Unable to connect to %s:",Host.c_str(),ServStr);
 }
 									/*}}}*/
