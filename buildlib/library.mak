@@ -8,7 +8,7 @@
 # $(LIBRARY) - The name of the library without lib or .so 
 # $(MAJOR) - The major version number of this library
 # $(MINOR) - The minor version number of this library
-# $(DOMAIN) - The text domain for this library
+# $(APT_DOMAIN) - The text domain for this library
 
 # All output is writtin to .opic files in the build directory to
 # signify the PIC output.

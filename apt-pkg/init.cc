@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.18 2002/10/16 05:21:33 jgg Exp $
+// $Id: init.cc,v 1.19 2002/11/11 07:00:16 doogie Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -96,7 +96,7 @@ bool pkgInitConfig(Configuration &Cnf)
    
    if (Cnf.Exists("Dir::Locale"))
    {  
-      bindtextdomain(DOMAIN,Cnf.FindDir("Dir::Locale").c_str());
+      bindtextdomain(APT_DOMAIN,Cnf.FindDir("Dir::Locale").c_str());
       bindtextdomain(textdomain(0),Cnf.FindDir("Dir::Locale").c_str());
    }
    

@@ -16,7 +16,7 @@ LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=3.3
 MINOR=0
 SLIBS=$(PTHREADLIB)
-DOMAIN:=libapt-pkg$(MAJOR)
+APT_DOMAIN:=libapt-pkg$(MAJOR)
 
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
