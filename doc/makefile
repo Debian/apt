@@ -25,7 +25,7 @@ TARGET = binary
 include $(COPY_H)
 
 #.PHONY: headers library clean veryclean all binary program doc doc.pt_BR doc.fr
-doc: doc.fr doc.pt_BR doc.es
+doc: doc.fr doc.ja doc.pt_BR doc.es
 
 doc.fr: %.fr:
 	$(MAKE) -C fr $*
@@ -35,3 +35,6 @@ doc.pt_BR: %.pt_BR:
 
 doc.es: %.es:
 	$(MAKE) -C es $*
+
+doc.ja: %.ja:
+	$(MAKE) -C ja $*
