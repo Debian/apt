@@ -4,7 +4,7 @@
 <title>APT Files</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: files.sgml,v 1.8 2001/02/20 07:03:17 jgg Exp $</version>
+<version>$Id: files.sgml,v 1.9 2001/04/04 05:00:15 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the 
@@ -101,7 +101,7 @@ which indicates a standard debian archive with a dists dir.
    contrib, non-free or non-us. The format for the deb line is as follows:
 
    <p>
-   deb <var>uri</var> <var>distribution</var> <var>compontent</var> 
+   deb <var>uri</var> <var>distribution</var> <var>component</var> 
    [<var>component</var> ...]
 
    <p>
@@ -116,7 +116,7 @@ which indicates a standard debian archive with a dists dir.
    necessary to list a number of deb lines for the same URI. APT will
    sort the URI list after it has generated a complete set to allow 
    connection reuse. It is important to order things in the sourcelist
-   from most prefered to least prefered (fastest to slowest).
+   from most preferred to least preferred (fastest to slowest).
 </sect1>
 
 <sect1>URI specification
@@ -125,12 +125,12 @@ URIs in the source list support a large number of access schemes.
 
 <taglist>
 <tag>cdrom<item>
-   The cdrom scheme is special in that If Modifed Since queries are never
+   The cdrom scheme is special in that If Modified Since queries are never
    performed and that APT knows how to match a cdrom to the name it
    was given when first inserted. APT also knows all of the possible 
    mount points the cdrom drives and that the user should be prompted
    to insert a CD if it cannot be found. The path is relative to an 
-   arbitary mount point (of APT's choosing) and must not start with a 
+   arbitrary mount point (of APT's choosing) and must not start with a 
    slash. The first pathname component is the given name and is purely
    descriptive and of the users choice. However, if a file in the root of 
    the cdrom is called '.disk/info' its contents will be used instead of 
@@ -140,7 +140,7 @@ URIs in the source list support a large number of access schemes.
    </example>
 
 <tag>http<item>
-   This scheme specifies a HTTP server for the debian archive. HTTP is prefered
+   This scheme specifies a HTTP server for the debian archive. HTTP is preferred
    over FTP because If Modified Since queries against the Package file are
    possible as well as deep pipelining and resume capabilities.
    <example>
@@ -155,7 +155,7 @@ URIs in the source list support a large number of access schemes.
    </example>
 
 <tag>file<item>
-   The file scheme allows an arbitary directory in the file system to be 
+   The file scheme allows an arbitrary directory in the file system to be 
    considered as a debian archive. This is useful for NFS mounts and 
    local mirrors/archives.
    <example>
@@ -173,13 +173,13 @@ URIs in the source list support a large number of access schemes.
 
 <sect1>Hashing the URI
 <p>
-All permanent information aquired from any of the sources is stored in the
+All permanent information acquired from any of the sources is stored in the
 lists directory. Thus, there must be a way to relate the filename in the
 lists directory to a line in the sourcelist. To simplify things this is
 done by quoting the URI and treating _'s as quoteable characters and
 converting / to _. The URI spec says this is done by converting a 
 sensitive character into %xx where xx is the hexadecimal representation 
-from the ascii character set. Examples:
+from the ASCII character set. Examples:
 
 <example>
 http://www.debian.org/archive/dists/stable/binary-i386/Packages 
@@ -209,9 +209,9 @@ here as well.
 The extra status file serves the same purpose as the normal dpkg status file
 (/var/lib/dpkg/status) except that it stores information unique to apt.
 This includes the autoflag, target distribution and version and any other
-uniqe features that come up over time. It duplicates nothing from the normal
+unique features that come up over time. It duplicates nothing from the normal
 dpkg status file.  Please see other APT documentation for a discussion
-of the exact internal behavior of these fields. The Package field is
+of the exact internal behaviour of these fields. The Package field is
 placed directly before the new fields to indicate which package they
 apply to. The new fields are as follows:
 
@@ -251,12 +251,12 @@ change to use a prebuilt version for greater speed.
 <p>
 The archives directory is where all downloaded .deb archives go. When the
 file transfer is initiated the deb is placed in partial. Once the file
-is fully downloaded and its MD5 hash and size are verifitied it is moved
+is fully downloaded and its MD5 hash and size are verified it is moved
 from partial into archives/. Any files found in archives/ can be assumed 
 to be verified.
 
 <p>
-No dirctory structure is transfered from the receiving site and all .deb
+No directory structure is transfered from the receiving site and all .deb
 file names conform to debian conventions. No short (msdos) filename should
 be placed in archives. If the need arises .debs should be unpacked, scanned
 and renamed to their correct internal names. This is mostly to prevent
@@ -290,7 +290,7 @@ format and style mirror the Package file.
 <taglist>
 <tag>Site<item>
 This is the proper host name of the site. It should not be a host within
-debian.org and generally cnames should be advoided here.
+debian.org and generally cnames should be avoided here.
 
 <tag>Aliases<item>
 These list any commonly used aliases for the site. This field is used to make
@@ -305,7 +305,7 @@ other mirrors are leaf.
 The Archive field gives the path(s) to the debian archive. [access] 
 specifies the access method and may be one of ftp, http, rsync, nfs, or
 smb. For many of the types it is possible to prefix the path with :###
-indicating that an alternate port should be used. Generaly paths
+indicating that an alternate port should be used. Generally paths
 start with a / and end with a /, rsync is an exception in that the
 first directory component is not a path but a label.
 
@@ -370,7 +370,7 @@ This is the common name we give our archives, such as <em>stable</> or
 <em>unstable</>.
 
 <tag>Component<item>
-Referes to the sub-component of the archive, <em>main</>, <em>contrib</>
+Refers to the sub-component of the archive, <em>main</>, <em>contrib</>
 etc. Component may be omitted if there are no components for this archive.
 
 <tag>Version<item>
@@ -409,7 +409,7 @@ release, 1.3.1r6
 
 <example>
 Archive: stable
-Compontent: main
+Component: main
 Version: 1.3.1r6
 Origin: Debian
 Label: Debian
@@ -429,7 +429,7 @@ NotAutomatic: Yes
 And unstable,
 <example>
 Archive: unstable
-Compontent: main
+Component: main
 Version: 2.1
 Origin: Debian
 Label: Debian

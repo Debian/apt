@@ -7,7 +7,7 @@
 	<name>Manoj Srivastava</name>
 	<email>srivasta@debian.org</email>
       </author>
-      <version>$Id: design.sgml,v 1.1 1998/07/02 02:58:12 jgg Exp $</version>
+      <version>$Id: design.sgml,v 1.2 2001/04/04 05:00:15 jgg Exp $</version>
       <abstract>
 	This document is an overview of the specifications and design
 	goals of the APT project. It also attempts to give a broad
@@ -118,7 +118,7 @@
 	      allowing the removal of packages that left the system in
 	      an untenable state by breaking the dependencies on
 	      packages that were dependent on the package being
-	      removed. A special emhasis is placed on handling
+	      removed. A special emphasis is placed on handling
 	      pre-dependencies correctly; the target of a
 	      predependency has to be fully configured before
 	      attempting to install the pre-dependent package. Also,
@@ -138,11 +138,11 @@
 	      Handle source lists for updates from multiple
 	      sources. APT should also be able to handle diverse
 	      methods of acquiring new packages; local filesystem,
-	      mountable CD-ROM drives, FTP accesible repositories are
+	      mountable CD-ROM drives, FTP accessible repositories are
 	      some of the methods that come to mind.  Also, the source
 	      lists can be separated into categories, such as main,
 	      contrib, non-us, non-local, non-free, my-very-own,
-	      etc. APT should be set up to retrive the Packages
+	      etc. APT should be set up to retrieve the Packages
 	      files from these multiple source lists, as well as
 	      retrieving the packages themselves. </p>
 	  </item>
@@ -272,7 +272,7 @@
 	    <p>
 	      Take the order of installations and removals and build
 	      up a stream of events to send to the packaging system
-	      (dpkg). Execute the list of events if succesful. Do not
+	      (dpkg). Execute the list of events if successful. Do not
 	      partially install packages and leave system in broken
 	      state. Go to The Selection step as needed.</p>
 	  </item>
@@ -298,7 +298,7 @@
 	    <p>	    
 	      Distinct versions of the same package are recorded
 	      separately, but if multiple Packages files contain the
-	      same version of a package, then only the forst one is
+	      same version of a package, then only the first one is
 	      recorded. For this reason, the least expensive update
 	      source should be listed first (local file system is
 	      better than a remote ftp site)</p>
@@ -356,7 +356,7 @@
 	  <item>
 	    <p>Create an ordering of the actions to be taken.</p>
 	  </item>
-	  <tag>Event genrator</tag>
+	  <tag>Event generator</tag>
 	  <item>
 	    <p>module to interact with dpkg</p>
 	  </item>

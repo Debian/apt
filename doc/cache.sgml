@@ -4,7 +4,7 @@
 <title>APT Cache File Format</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: cache.sgml,v 1.8 2001/02/20 07:03:17 jgg Exp $</version>
+<version>$Id: cache.sgml,v 1.9 2001/04/04 05:00:14 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the APT
@@ -53,10 +53,10 @@ contained in the status file which might be considered a separate package
 file.
 
 <p>
-Please understand, this is designed as a -CACHE FILE- it is not ment to be
-used on any system other than the one it was created for. It is not ment to
-be authoritative either, ie if a system crash or software failure occures it
-must be perfectly acceptable for the cache file to be in an inconsistant
+Please understand, this is designed as a -CACHE FILE- it is not meant to be
+used on any system other than the one it was created for. It is not meant to
+be authoritative either, i.e. if a system crash or software failure occurs it
+must be perfectly acceptable for the cache file to be in an inconsistent
 state. Furthermore at any time the cache file may be erased without losing
 any information.
 
@@ -67,7 +67,7 @@ to extend it with associate cache files that contain other information.
 
 <p>
 To keep memory use down the cache file only contains often used fields and
-fields that are inexepensive to store, the Package file has a full list of
+fields that are inexpensive to store, the Package file has a full list of
 fields. Also the client may assume that all items are perfectly valid and
 need not perform checks against their correctness. Removal of information
 from the cache is possible, but blanks will be left in the file, and
@@ -84,7 +84,7 @@ go through a fixup stage to get a real memory pointer. This is done
 by taking the index, multiplying it by the type size and then adding
 it to the start address of the memory block. This sounds complex, but
 in C it is a single array dereference. Because all items are aligned to 
-their size and indexs are stored as multiples of the size of the structure
+their size and indexes are stored as multiples of the size of the structure
 the format is immediately portable to all possible architectures - BUT the
 generated files are -NOT-.
 
@@ -183,7 +183,7 @@ be erased and rebuilt if it is true.
 <tag>VerFileSz
 <tag>ProvidesSz<item>
 *Sz contains the sizeof() that particular structure. It is used as an
-extra consistancy check on the structure of the file.
+extra consistency check on the structure of the file.
 
 If any of the size values do not exactly match what the client expects then
 the client should refuse the load the file.
@@ -192,23 +192,23 @@ the client should refuse the load the file.
 <tag>VersionCount
 <tag>DependsCount
 <tag>PackageFileCount<item>
-These indicate the number of each structure contianed in the cache. 
+These indicate the number of each structure contained in the cache. 
 PackageCount is especially useful for generating user state structures. 
 See Package::Id for more info.
 
 <tag>VerSysName<item>
-String representing the versiong system used for this cache
+String representing the version system used for this cache
 
 <tag>Architecture<item>
 Architecture the cache was built against.
 
 <tag>MaxVerFileSize<item>
 The maximum size of a raw entry from the original Package file 
-(ie VerFile::Size) is stored here.
+(i.e. VerFile::Size) is stored here.
 
 <tag>FileList<item>
 This contains the index of the first PackageFile structure. The PackageFile
-structures are singely linked lists that represent all package files that
+structures are singly linked lists that represent all package files that
 have been merged into the cache.
 
 <tag>StringList<item>
@@ -240,9 +240,9 @@ function:
 </example>
 <p>
 By iterating over each entry in the hash table it is possible to iterate over 
-the entire list of packages. Hash Collisions are handled with a singely linked
+the entire list of packages. Hash Collisions are handled with a singly linked
 list of packages based at the hash item. The linked list contains only 
-packages that macth the hashing function.
+packages that match the hashing function.
 
 </taglist>
                                                                   <!-- }}} -->
@@ -250,7 +250,7 @@ packages that macth the hashing function.
 <!-- ===================================================================== -->
 <sect>Package
 <p>
-This contians information for a single unique package. There can be any
+This contains information for a single unique package. There can be any
 number of versions of a given package. Package exists in a singly
 linked list of package records starting at the hash index of the name in 
 the Header->HashTable.
@@ -284,12 +284,12 @@ the Header->HashTable.
 Name of the package.
 
 <tag>VersionList<item>
-Base of a singely linked list of version structures. Each structure 
+Base of a singly linked list of version structures. Each structure 
 represents a unique version of the package. The version structures
 contain links into PackageFile and the original text file as well as
-detailed infromation about the size and dependencies of the specific
+detailed information about the size and dependencies of the specific
 package. In this way multiple versions of a package can be cleanly handled
-by the system. Furthermore, this linked list is guarenteed to be sorted
+by the system. Furthermore, this linked list is guaranteed to be sorted
 from Highest version to lowest version with no duplicate entries.
 
 <tag>CurrentVer<item>
@@ -313,14 +313,14 @@ This is a linked list of all provides for this package name.
 <tag>SelectedState
 <tag>InstState
 <tag>CurrentState<item>
-These corrispond to the 3 items in the Status field found in the status
+These correspond to the 3 items in the Status field found in the status
 file. See the section on defines for the possible values.
 <p>
 SelectedState is the state that the user wishes the package to be
 in.
 <p>
 InstState is the installation state of the package. This normally
-should be Ok, but if the installation had an accident it may be otherwise.
+should be OK, but if the installation had an accident it may be otherwise.
 <p>
 CurrentState indicates if the package is installed, partially installed or
 not installed.
@@ -342,7 +342,7 @@ Flags are some useful indicators of the package's state.
 <!-- ===================================================================== -->
 <sect>PackageFile
 <p>
-This contians information for a single package file. Package files are
+This contains information for a single package file. Package files are
 referenced by Version structures. This is a singly linked list based from
 Header.FileList
 <example>
@@ -408,8 +408,8 @@ Modification time for the file at time of cache generation.
 <!-- ===================================================================== -->
 <sect>Version
 <p>
-This contians the information for a single version of a package. This is a
-singley linked list based from Package.Versionlist.
+This contains the information for a single version of a package. This is a
+single linked list based from Package.Versionlist.
 
 <p>
 The version list is always sorted from highest version to lowest version by
@@ -470,12 +470,12 @@ Head of the linked list of Provides::NextPkgProv, forward provides.
 
 <tag>Size
 <tag>InstalledSize<item>
-The archive size for this version. For debian this is the size of the .deb
+The archive size for this version. For Debian this is the size of the .deb
 file. Installed size is the uncompressed size for this version
 
 <tag>Hash<item>
 This is a characteristic value representing this package. No two packages
-in existance should have the same VerStr and Hash with different contents.
+in existence should have the same VerStr and Hash with different contents.
 
 <tag>ID<item>
 See Package::ID.
@@ -775,7 +775,7 @@ allows the specification of a specific version and a target distribution.
 
 <p>
 Different section names on different versions is supported, but I 
-do not expect to use it. To simplify the GUI it will mearly use the section
+do not expect to use it. To simplify the GUI it will merely use the section
 in the Package structure. This should be okay as I hope sections do not change
 much.
 
@@ -814,7 +814,7 @@ information. (/var/cache/apt, FHS2)
 <p>
 Caching of the info/*.list is an excellent place to start, by generating all
 the list files into a tree structure and reverse linking them to the package
-structures in the main cache file major speed gains in dpkg might be achived.
+structures in the main cache file major speed gains in dpkg might be achieved.
 
                                                                   <!-- }}} -->
 
