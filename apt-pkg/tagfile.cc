@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.2 1998/07/04 05:57:39 jgg Exp $
+// $Id: tagfile.cc,v 1.3 1998/07/04 22:32:14 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -164,12 +164,21 @@ int main(int argc,char *argv[])
 
    {
       File CacheF("./cache",File::WriteExists);
-      MMap Map(CacheF,MMap::Public);
+      MMap Map(CacheF,MMap::Public | MMap::ReadOnly);
       pkgCache Cache(Map);
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
 	 cout << "Package: " << I.Name() << endl;
-      }      
+	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
+	 {
+	    cout << "Version: " << V.VerStr() << endl;
+	    cout << "Size: " << V->Size << endl;
+	    cout << "Installed-Size: " << V->InstalledSize << endl;
+	    cout << "Section: " << V.Section() << endl;
+	    cout << "Priority: " << Cache.Priority(V->Priority) << endl;
+	 }	 
+	 cout << endl;
+      }
    }
    
 #if 0 

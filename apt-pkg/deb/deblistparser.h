@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.h,v 1.1 1998/07/04 05:58:08 jgg Exp $
+// $Id: deblistparser.h,v 1.2 1998/07/04 22:32:18 jgg Exp $
 /* ######################################################################
    
    Debian Package List Parser - This implements the abstract parser 
@@ -28,6 +28,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    };
    
    string FindTag(const char *Tag);
+   signed long FindTagI(const char *Tag,signed long Default = 0);
    unsigned long UniqFindTagWrite(const char *Tag);
    bool HandleFlag(const char *Tag,unsigned long &Flags,unsigned long Flag);
    bool ParseStatus(pkgCache::PkgIterator Pkg,pkgCache::VerIterator Ver);

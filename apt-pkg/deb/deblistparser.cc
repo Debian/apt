@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.cc,v 1.1 1998/07/04 05:58:08 jgg Exp $
+// $Id: deblistparser.cc,v 1.2 1998/07/04 22:32:17 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -20,7 +20,6 @@
 /* */
 debListParser::debListParser(File &File) : Tags(File)
 {
-   Step();
 }
 									/*}}}*/
 // ListParser::FindTag - Find the tag and return a string		/*{{{*/
@@ -33,6 +32,30 @@ string debListParser::FindTag(const char *Tag)
    if (Section.Find(Tag,Start,Stop) == false)
       return string();
    return string(Start,Stop - Start);
+}
+									/*}}}*/
+// ListParser::FindTagI - Find the tag and return an int		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+signed long debListParser::FindTagI(const char *Tag,signed long Default)
+{
+   const char *Start;
+   const char *Stop;
+   if (Section.Find(Tag,Start,Stop) == false)
+      return Default;
+   
+   // Copy it into a temp buffer so we can use strtol
+   char S[300];
+   if ((unsigned)(Stop - Start) >= sizeof(S))
+      return Default;
+   strncpy(S,Start,Stop-Start);
+   S[Stop - Start] = 0;
+   
+   char *End;
+   signed long Result = strtol(S,&End,10);
+   if (S == End)
+      return Default;
+   return Result;
 }
 									/*}}}*/
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
@@ -115,7 +138,35 @@ bool debListParser::NewPackage(pkgCache::PkgIterator Pkg)
 // ---------------------------------------------------------------------
 /* */
 bool debListParser::NewVersion(pkgCache::VerIterator Ver)
-{   
+{
+   // Parse the section
+   if ((Ver->Section = UniqFindTagWrite("Section")) == 0)
+      return _error->Warning("Missing Section tag");
+   
+   // Archive Size
+   if ((Ver->Size = (unsigned)FindTagI("Size")) == 0)
+      return _error->Error("Unparsable Size field");
+   
+   // Unpacked Size (in K)
+   if ((Ver->InstalledSize = (unsigned)FindTagI("Installed-Size")) == 0)
+      return _error->Error("Unparsable Installed-Size field");
+   Ver->InstalledSize *= 1024;
+
+   // Priority
+   const char *Start;
+   const char *Stop;
+   if (Section.Find("Priority",Start,Stop) == true)
+   {
+      WordList PrioList[] = {{"important",pkgCache::Important},
+	                     {"required",pkgCache::Required},
+	                     {"standard",pkgCache::Standard},
+                             {"optional",pkgCache::Optional},
+                             {"extra",pkgCache::Extra}};
+      if (GrabWord(string(Start,Stop-Start),PrioList,
+		   _count(PrioList),Ver->Priority) == false)
+	 return _error->Error("Malformed Priority line");
+   }
+   
    return true;
 }
 									/*}}}*/
@@ -247,9 +298,26 @@ bool debListParser::GrabWord(string Word,WordList *List,int Count,
 									/*}}}*/
 // ListParser::Step - Move to the next section in the file		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This has to be carefull to only process the correct architecture */
 bool debListParser::Step()
 {
-   return Tags.Step(Section);
+   while (Tags.Step(Section) == true)
+   {
+      /* See if this is the correct Architecture, if it isnt then we
+         drop the whole section */
+      const char *Start;
+      const char *Stop;
+      if (Section.Find("Architecture",Start,Stop) == false)
+	 return true;
+            
+      if (strncmp(Start,"i386",Stop - Start) == 0 &&
+	  strlen("i386") == (unsigned)(Stop - Start))
+	 return true;
+
+      if (strncmp(Start,"all",Stop - Start) == 0 &&
+	  3 == (unsigned)(Stop - Start))
+	 return true;
+   }   
+   return false;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.2 1998/07/04 05:57:37 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.3 1998/07/04 22:32:13 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -58,7 +58,8 @@ pkgCacheGenerator::~pkgCacheGenerator()
 bool pkgCacheGenerator::MergeList(ListParser &List)
 {
    List.Owner = this;
-   do
+
+   while (List.Step() == true)
    {
       // Get a pointer to the package structure
       string Package = List.Package();
@@ -112,15 +113,14 @@ bool pkgCacheGenerator::MergeList(ListParser &List)
       Ver->ParentPkg = Pkg.Index();
       if (List.NewVersion(Ver) == false)
 	 return false;
-      
+
       if (List.UsePackage(Pkg,Ver) == false)
 	 return false;
       
       if (NewFileVer(Ver,List) == false)
 	 return false;
    }
-   while (List.Step() == true);
-      
+
    return true;
 }
 									/*}}}*/
@@ -169,7 +169,7 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    // Get a structure
    unsigned long Version = Map.Allocate(sizeof(pkgCache::Version));
    if (Version == 0)
-      return false;
+      return 0;
    
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
@@ -178,9 +178,9 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    Ver->ID = Cache.HeaderP->VersionCount++;
    Ver->VerStr = Map.WriteString(VerStr);
    if (Ver->VerStr == 0)
-      return false;
+      return 0;
    
-   return true;
+   return Version;
 }
 									/*}}}*/
 // CacheGenerator::SelectFile - Select the current file being parsed	/*{{{*/
@@ -233,21 +233,21 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    
    // Match
    if (Res == 0)
-      return I - Cache.StringItemP;
+      return I->String;
    
    // Get a structure
    unsigned long Item = Map.Allocate(sizeof(pkgCache::StringItem));
    if (Item == 0)
-      return false;
-   
+      return 0;
+
    // Fill in the structure
    pkgCache::StringItem *ItemP = Cache.StringItemP + Item;
    ItemP->NextItem = I - Cache.StringItemP;
    *Last = Item;
    ItemP->String = Map.WriteString(S,Size);
    if (ItemP->String == 0)
-      return false;
+      return 0;
    
-   return true;
+   return ItemP->String;
 }
 									/*}}}*/

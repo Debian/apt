@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.2 1998/07/04 05:57:35 jgg Exp $
+// $Id: pkgcache.cc,v 1.3 1998/07/04 22:32:11 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -156,6 +156,17 @@ pkgCache::PkgIterator pkgCache::FindPkg(string Name)
 	 return PkgIterator(*this,Pkg);
    }
    return PkgIterator(*this,0);
+}
+									/*}}}*/
+// Cache::Priority - Convert a priority value to a string		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+const char *pkgCache::Priority(unsigned char Prio)
+{
+   const char *Mapping[] = {0,"important","required","standard","optional","extra"};
+   if (Prio < _count(Mapping))
+      return Mapping[Prio];
+   return 0;
 }
 									/*}}}*/
 

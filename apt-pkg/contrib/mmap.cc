@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mmap.cc,v 1.2 1998/07/04 05:57:42 jgg Exp $
+// $Id: mmap.cc,v 1.3 1998/07/04 22:32:15 jgg Exp $
 /* ######################################################################
    
    MMap Class - Provides 'real' mmap or a faked mmap using read().
@@ -94,7 +94,8 @@ bool MMap::Close(bool DoClose)
 									/*}}}*/
 // MMap::Sync - Syncronize the map with the disk			/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This is done in syncronous mode - the docs indicate that this will 
+   not return till all IO is complete */
 bool MMap::Sync()
 {   
    if ((Flags & ReadOnly) == ReadOnly)

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.h,v 1.2 1998/07/04 05:57:36 jgg Exp $
+// $Id: pkgcache.h,v 1.3 1998/07/04 22:32:12 jgg Exp $
 /* ######################################################################
    
    Cache - Structure definitions for the cache file
@@ -94,6 +94,9 @@ class pkgCache
    inline unsigned long Hash(string S) const {return sHash(S);};
    inline unsigned long Hash(const char *S) const {return sHash(S);};
 
+   // Usefull transformation things
+   const char *Priority(unsigned char Priority);
+   
    // Accessors
    PkgIterator FindPkg(string Name);
    Header &Head() {return *HeaderP;};
