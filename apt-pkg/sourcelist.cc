@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.22 2002/03/26 07:38:58 jgg Exp $
+// $Id: sourcelist.cc,v 1.23 2002/07/01 21:41:11 jgg Exp $
 /* ######################################################################
 
    List of Sources
@@ -128,6 +128,18 @@ pkgSourceList::pkgSourceList(string File)
    Read(File);
 }
 									/*}}}*/
+// SourceList::~pkgSourceList - Destructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgSourceList::~pkgSourceList()
+{
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+      delete *I;
+   for (vector<Vendor const *>::const_iterator I = VendorList.begin(); 
+	I != VendorList.end(); I++)
+      delete *I;
+}
+									/*}}}*/
 // SourceList::ReadVendors - Read list of known package vendors		/*{{{*/
 // ---------------------------------------------------------------------
 /* This also scans a directory of vendor files similar to apt.conf.d 
@@ -147,6 +159,11 @@ bool pkgSourceList::ReadVendors()
       if (ReadConfigFile(Cnf,CnfFile,true) == false)
 	 return false;
 
+   for (vector<Vendor const *>::const_iterator I = VendorList.begin(); 
+	I != VendorList.end(); I++)
+      delete *I;
+   VendorList.erase(VendorList.begin(),VendorList.end());
+   
    // Process 'simple-key' type sections
    const Configuration::Item *Top = Cnf.Tree("simple-key");
    for (Top = (Top == 0?0:Top->Child); Top != 0; Top = Top->Next)
@@ -217,6 +234,8 @@ bool pkgSourceList::Read(string File)
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
    
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+      delete *I;
    SrcList.erase(SrcList.begin(),SrcList.end());
    char Buffer[300];
 

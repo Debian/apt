@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.11 2001/05/07 04:24:08 jgg Exp $
+// $Id: sourcelist.h,v 1.12 2002/07/01 21:41:11 jgg Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -106,7 +106,8 @@ class pkgSourceList
    bool GetIndexes(pkgAcquire *Owner) const;
    
    pkgSourceList();
-   pkgSourceList(string File);   
+   pkgSourceList(string File);
+   ~pkgSourceList();      
 };
 
 #endif
