@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.75 1999/09/09 06:27:42 jgg Exp $
+// $Id: apt-get.cc,v 1.76 1999/09/16 02:08:09 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -774,6 +774,8 @@ bool DoUpdate(CommandLine &)
 
       (*I)->Finished();
       
+      cerr << "Failed to fetch " << (*I)->DescURI() << endl;
+      cerr << "  " << (*I)->ErrorText << endl;
       Failed = true;
    }
    
