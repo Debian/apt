@@ -1,5 +1,6 @@
 # -*- make -*-
 BASE=..
+SUBDIR=apt-pkg
 
 # Header location
 SUBDIRS = deb contrib

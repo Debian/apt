@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.cc,v 1.1 1998/08/09 00:51:35 jgg Exp $
+// $Id: pkgrecords.cc,v 1.2 1998/08/19 06:16:10 jgg Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records
@@ -15,6 +15,7 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/debrecords.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
 									/*}}}*/
 
 // Records::pkgRecords - Constructor					/*{{{*/
@@ -22,13 +23,25 @@
 /* This will create the necessary structures to access the status files */
 pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 {
+   string ListDir = _config->FindDir("Dir::State::lists");
+   
    Files = new PkgFile[Cache.HeaderP->PackageFileCount];   
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); 
 	I.end() == false; I++)
    {
-      Files[I->ID].File = new FileFd(I.FileName(),FileFd::ReadOnly);
+      // We can not initialize if the cache is out of sync.
+      if (I.IsOk() == false)
+      {
+	 _error->Error("Package file %s is out of sync.",I.FileName());
+	 return;
+      }
+   
+      // Create the file
+      Files[I->ID].File = new FileFd(ListDir + I.FileName(),FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 return;
+      
+      // Create the parser
       Files[I->ID].Parse = new debRecordParser(*Files[I->ID].File);
       if (_error->PendingError() == true)
 	 return;

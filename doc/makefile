@@ -1,5 +1,6 @@
 # -*- make -*-
 BASE=..
+SUBDIR=doc
 
 # Bring in the default rules
 include ../buildlib/defaults.mak

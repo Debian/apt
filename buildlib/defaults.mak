@@ -47,7 +47,7 @@ endif
 INCLUDE := $(BUILD)/include
 BIN := $(BUILD)/bin
 LIB := $(BIN)
-OBJ := $(BUILD)/obj
+OBJ := $(BUILD)/obj/$(SUBDIR)
 DEP := $(OBJ)
 DOC := $(BUILD)/doc
 

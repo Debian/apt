@@ -1,5 +1,6 @@
 # -*- make -*-
 BASE=..
+SUBDIR=cmdline
 
 # Bring in the default rules
 include ../buildlib/defaults.mak
