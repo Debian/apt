@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.36 1999/07/18 23:06:56 jgg Exp $
+// $Id: http.cc,v 1.37 1999/08/03 06:08:23 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -724,7 +724,7 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    // Handle commands from APT
    if (FD_ISSET(STDIN_FILENO,&rfds))
    {
-      if (Run(true) != 0)
+      if (Run(true) != -1)
 	 exit(100);
    }   
        
@@ -963,8 +963,10 @@ int HttpMethod::Loop()
 	    return 0;
       }
       
-      // Run messages
-      if (Run(true) != 0)
+      /* Run messages, we can accept 0 (no message) if we didn't
+         do a WaitFd above.. Otherwise the FD is closed. */
+      int Result = Run(true);
+      if (Result != -1 && (Result != 0 || Queue == 0))
 	 return 100;
 
       if (Queue == 0)
