@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.h,v 1.5 2003/12/26 20:08:56 mdz Exp $
+// $Id: writer.h,v 1.6 2003/12/26 20:50:01 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "cachedb.h"
 #include "override.h"
@@ -30,6 +31,7 @@ using std::string;
 using std::cout;
 using std::endl;
 using std::vector;
+using std::map;
     
 class FTWScanner
 {
@@ -154,11 +156,22 @@ class ReleaseWriter : public FTWScanner
 public:
    ReleaseWriter(string DB);
    virtual bool DoPackage(string FileName);
-protected:
+   void Finish();
+
+   FILE *Output;
    // General options
    string PathPrefix;
    string DirStrip;
-   FILE *Output;
+
+protected:
+   struct CheckSum
+   {
+      string MD5;
+      string SHA1;
+      // Limited by FileFd::Size()
+      unsigned long size;
+   };
+   map<string,struct CheckSum> CheckSums;
 };
 
 #endif

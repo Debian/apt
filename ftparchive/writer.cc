@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: writer.cc,v 1.8 2003/12/26 20:08:56 mdz Exp $
+// $Id: writer.cc,v 1.9 2003/12/26 20:50:01 mdz Exp $
 /* ######################################################################
 
    Writer 
@@ -22,6 +22,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/sha1.h>
 #include <apt-pkg/deblistparser.h>
 
 #include <sys/types.h>
@@ -829,8 +830,6 @@ ReleaseWriter::ReleaseWriter(string DB)
 
       fprintf(Output, "%s: %s\n", (*I).first.c_str(), Value.c_str());
    }
-
-   fprintf(Output, "MD5Sum:\n");
 }
 									/*}}}*/
 // ReleaseWriter::DoPackage - Process a single package			/*{{{*/
@@ -856,14 +855,47 @@ bool ReleaseWriter::DoPackage(string FileName)
       return false;
    }
 
+   CheckSums[FileName].size = fd.Size();
+
    MD5Summation MD5;
    MD5.AddFD(fd.Fd(), fd.Size());
+   CheckSums[FileName].MD5 = MD5.Result();
 
-   string MD5Sum = MD5.Result();
-   fprintf(Output, " %s %16d %s\n",
-           MD5Sum.c_str(), fd.Size(), FileName.c_str());
+   fd.Seek(0);
+   SHA1Summation SHA1;
+   SHA1.AddFD(fd.Fd(), fd.Size());
+   CheckSums[FileName].SHA1 = SHA1.Result();
 
    fd.Close();
    
    return true;
 }
+
+									/*}}}*/
+// ReleaseWriter::Finish - Output the checksums				/*{{{*/
+// ---------------------------------------------------------------------
+void ReleaseWriter::Finish()
+{
+   fprintf(Output, "MD5Sum:\n");
+   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+       I != CheckSums.end();
+       ++I)
+   {
+      fprintf(Output, " %s %16ld %s\n",
+              (*I).second.MD5.c_str(),
+              (*I).second.size,
+              (*I).first.c_str());
+   }
+
+   fprintf(Output, "SHA1:\n");
+   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+       I != CheckSums.end();
+       ++I)
+   {
+      fprintf(Output, " %s %16ld %s\n",
+              (*I).second.SHA1.c_str(),
+              (*I).second.size,
+              (*I).first.c_str());
+   }
+}
+

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-ftparchive.cc,v 1.9 2003/12/26 20:08:56 mdz Exp $
+// $Id: apt-ftparchive.cc,v 1.10 2003/12/26 20:50:01 mdz Exp $
 /* ######################################################################
 
    apt-scanpackages - Efficient work-alike for dpkg-scanpackages
@@ -683,6 +683,8 @@ bool SimpleGenRelease(CommandLine &CmdL)
 
    if (Release.RecursiveScan(CmdL.FileList[1]) == false)
       return false;
+
+   Release.Finish();
 
    return true;
 }
