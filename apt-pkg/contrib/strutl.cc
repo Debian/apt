@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.47 2003/02/02 22:20:27 jgg Exp $
+// $Id: strutl.cc,v 1.48 2003/07/18 14:15:11 mdz Exp $
 /* ######################################################################
 
    String Util - Some useful string functions.
@@ -652,7 +652,7 @@ bool ReadMessages(int Fd, vector<string> &List)
 	    continue;
 	 
 	 // Pull the message out
-	 string Message(Buffer,0,I-Buffer);
+	 string Message(Buffer,I-Buffer);
 
 	 // Fix up the buffer
 	 for (; I < End && *I == '\n'; I++);
@@ -1045,7 +1045,7 @@ void URI::CopyFrom(string U)
       Path = "/";
 
    // Now we attempt to locate a user:pass@host fragment
-   if (FirstColon[1] == '/' && FirstColon[2] == '/')
+   if (FirstColon + 2 <= U.end() && FirstColon[1] == '/' && FirstColon[2] == '/')
       FirstColon += 3;
    else
       FirstColon += 1;
