@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.13 1998/12/10 05:39:55 jgg Exp $
+// $Id: http.cc,v 1.14 1998/12/11 01:07:31 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -51,7 +51,8 @@
 string HttpMethod::FailFile;
 int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
-unsigned long PipelineDepth = 5;
+unsigned long PipelineDepth = 10;
+unsigned long TimeOut = 120;
 
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
@@ -246,7 +247,7 @@ void CircleBuf::Stats()
 // ---------------------------------------------------------------------
 /* */
 ServerState::ServerState(URI Srv,HttpMethod *Owner) : Owner(Owner),
-                        In(64*1024), Out(1*1024),
+                        In(64*1024), Out(4*1024),
                         ServerName(Srv)
 {
    Reset();
@@ -310,7 +311,7 @@ bool ServerState::Open()
 
       // Lookup the host
       hostent *Addr = gethostbyname(Host.c_str());
-      if (Addr == 0)
+      if (Addr == 0 || Addr->h_addr_list[0] == 0)
 	 return _error->Error("Could not resolve '%s'",Host.c_str());
       LastHost = Host;
       LastHostA = *(in_addr *)(Addr->h_addr_list[0]);
@@ -327,10 +328,30 @@ bool ServerState::Open()
    server.sin_family = AF_INET;
    server.sin_port = htons(Port);
    server.sin_addr = LastHostA;
-   if (connect(ServerFd,(sockaddr *)&server,sizeof(server)) < 0)
+   SetNonBlock(ServerFd,true);
+   if (connect(ServerFd,(sockaddr *)&server,sizeof(server)) < 0 &&
+       errno != EINPROGRESS)
       return _error->Errno("socket","Could not create a socket");
 
-   SetNonBlock(ServerFd,true);
+   /* This implements a timeout for connect by opening the connection
+      nonblocking */
+   fd_set wfds;
+   FD_ZERO(&wfds);
+   FD_SET(ServerFd,&wfds);
+   struct timeval tv;
+   tv.tv_sec = TimeOut;
+   tv.tv_usec = 0;
+   int Res = 0;
+   if ((Res = select(ServerFd+1,0,&wfds,0,&tv)) < 0)
+      return _error->Errno("select","Select failed");
+   if (Res == 0)
+      return _error->Error("Could not connect, connection timed out");
+   unsigned int Err,Len;
+   if (getsockopt(ServerFd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
+      return _error->Errno("getsockopt","Failed");
+   if (Err != 0)
+      return _error->Error("Could not connect.");
+   
    return true;
 }
 									/*}}}*/
@@ -692,7 +713,7 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    
    // Select
    struct timeval tv;
-   tv.tv_sec = 120;
+   tv.tv_sec = TimeOut;
    tv.tv_usec = 0;
    int Res = 0;
    if ((Res = select(MaxFd+1,&rfds,&wfds,&efds,&tv)) < 0)
@@ -913,7 +934,7 @@ bool HttpMethod::Fetch(FetchItem *)
 {
    if (Server == 0)
       return true;
-   
+
    // Queue the requests
    int Depth = -1;
    bool Tail = false;
@@ -922,12 +943,10 @@ bool HttpMethod::Fetch(FetchItem *)
       // Make sure we stick with the same server
       if (Server->Comp(I->Uri) == false)
 	 break;
-      
       if (QueueBack == I)
 	 Tail = true;
       if (Tail == true)
       {
-	 Depth++;
 	 QueueBack = I->Next;
 	 SendReq(I,Server->Out);
 	 continue;
@@ -945,7 +964,9 @@ bool HttpMethod::Configuration(string Message)
    if (pkgAcqMethod::Configuration(Message) == false)
       return false;
    
+   TimeOut = _config->FindI("Acquire::http::Timeout",120);
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",5);
+   
    return true;
 }
 									/*}}}*/
