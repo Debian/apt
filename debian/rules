@@ -58,9 +58,11 @@ endif
 
 # Rebuild configure.in to have the correct version from the change log
 ifneq ($(APT_DEBVER),$(APT_CONFVER))
+ifneq ($(APT_DEBVER),)
 .PHONY: configure.in
 configure.in:
 	sed -e 's/$(APT_CONFVER)/$(APT_DEBVER)/' $@ > $@.$$$$ && mv $@.$$$$ $@
+fi
 else
 configure.in:
 endif
