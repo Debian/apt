@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.14 1998/11/13 04:23:36 jgg Exp $
+// $Id: tagfile.cc,v 1.15 1998/11/27 01:14:06 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -178,5 +178,30 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
    }
    Start = End = 0;
    return false;
+}
+									/*}}}*/
+// pkgTagSection::FindS - Find a string					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string pkgTagSection::FindS(const char *Tag)
+{
+   const char *Start;
+   const char *End;
+   if (Find(Tag,Start,End) == false)
+      return string();
+   return string(Start,End);      
+}
+									/*}}}*/
+// TagSection::FindI - Find an integer					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+unsigned int pkgTagSection::FindI(const char *Tag)
+{
+   const char *Start;
+   const char *End;
+   if (Find(Tag,Start,End) == false)
+      return 0;
+   
+   return atoi(string(Start,End).c_str());
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.cc,v 1.14 1998/11/23 07:03:06 jgg Exp $
+// $Id: fileutl.cc,v 1.15 1998/11/27 01:14:08 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -234,7 +234,7 @@ bool FileFd::Read(void *To,unsigned long Size)
 // FileFd::Write - Write to the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileFd::Write(void *From,unsigned long Size)
+bool FileFd::Write(const void *From,unsigned long Size)
 {
    if (write(iFd,From,Size) != (signed)Size)
    {

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: fileutl.h,v 1.9 1998/11/23 07:03:07 jgg Exp $
+// $Id: fileutl.h,v 1.10 1998/11/27 01:14:09 jgg Exp $
 /* ######################################################################
    
    File Utilities
@@ -41,7 +41,7 @@ class FileFd
    enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny};
    
    bool Read(void *To,unsigned long Size);
-   bool Write(void *From,unsigned long Size);
+   bool Write(const void *From,unsigned long Size);
    bool Seek(unsigned long To);
    unsigned long Size();
    bool Close();
