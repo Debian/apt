@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.7 1998/12/05 04:19:02 jgg Exp $
+// $Id: acquire-method.h,v 1.8 1998/12/22 07:58:49 jgg Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -56,6 +56,7 @@ class pkgAcqMethod
    
    // Outgoing messages
    void Fail(bool Transient = false);
+   inline void Fail(const char *Why, bool Transient = false) {Fail(Why,Transient);};
    void Fail(string Why, bool Transient = false);
    void URIStart(FetchResult &Res);
    void URIDone(FetchResult &Res,FetchResult *Alt = 0);

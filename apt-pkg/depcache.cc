@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.12 1998/12/14 08:07:29 jgg Exp $
+// $Id: depcache.cc,v 1.13 1998/12/22 07:58:50 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -12,6 +12,7 @@
 #pragma implementation "apt-pkg/depcache.h"
 #endif
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/configuration.h>
 
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
@@ -104,18 +105,40 @@ pkgDepCache::VerIterator pkgDepCache::GetCandidateVer(PkgIterator Pkg)
    // Try to use an explicit target
    if (Pkg->TargetVer == 0)
    {
-      /* Not source/not automatic versions cannot be a candidate version 
-         unless they are already installed */
-      for (VerIterator I = Pkg.VersionList(); I.end() == false; I++)
+      string DistHack = _config->Find("to");
+
+      /* If disthack is set then we look for a dist by that name to install
+         from */
+      if (DistHack.empty() == false)
       {
-	 if (Pkg.CurrentVer() == I)
-	    return I;
-	 for (VerFileIterator J = I.FileList(); J.end() == false; J++)
-	    if ((J.File()->Flags & Flag::NotSource) == 0 &&
-		(J.File()->Flags & Flag::NotAutomatic) == 0)
-		return I;
-      }
+	 for (VerIterator I = Pkg.VersionList(); I.end() == false; I++)
+	 {
+	    for (VerFileIterator J = I.FileList(); J.end() == false; J++)
+	       if ((J.File()->Flags & Flag::NotSource) == 0 &&
+		   (J.File()->Flags & Flag::NotAutomatic) == 0 &&
+		   J.File().Archive() == DistHack)
+		  return I;	    
+	 }
 	 
+	 // Hmm, target is current if there is no alternative.
+	 if (Pkg->CurrentVer != 0)
+	    return Pkg.CurrentVer();
+      }
+      else
+      {
+	 /* Not source/not automatic versions cannot be a candidate version 
+	    unless they are already installed */
+	 for (VerIterator I = Pkg.VersionList(); I.end() == false; I++)
+	 {
+	    if (Pkg.CurrentVer() == I)
+	       return I;
+	    for (VerFileIterator J = I.FileList(); J.end() == false; J++)
+	       if ((J.File()->Flags & Flag::NotSource) == 0 &&
+		   (J.File()->Flags & Flag::NotAutomatic) == 0)
+		  return I;
+	 }
+      }
+      
       return VerIterator(*this,0);
    }
    else
@@ -288,6 +311,8 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
    {
       if (State.Mode == ModeDelete)
 	 iDelCount += Add;
+      if (State.Mode == ModeInstall)
+	 iInstCount += Add;
       return;
    }
    
