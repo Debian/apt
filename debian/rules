@@ -2,7 +2,7 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.37 2002/09/15 22:51:44 jgg Exp $
+# $Id: rules,v 1.38 2002/10/16 05:58:16 jgg Exp $
 
 # LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
 # dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
@@ -168,6 +168,7 @@ apt: build debian/shlibs.local
 	cp $(BLD)/bin/methods/* debian/apt/usr/lib/apt/methods/
 
 	cp $(BLD)/scripts/dselect/* debian/apt/usr/lib/dpkg/methods/apt/
+	cp -r $(BLD)/locale debian/apt/usr/
 
 	# Copy the guides
 	dh_installdocs -p$@ $(BLD)/docs/guide*.text $(BLD)/docs/guide*.html \
