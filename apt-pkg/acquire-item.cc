@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.8 1998/11/09 01:09:19 jgg Exp $
+// $Id: acquire-item.cc,v 1.9 1998/11/11 06:54:13 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -31,7 +31,7 @@
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::Item::Item(pkgAcquire *Owner) : Owner(Owner), FileSize(0),
-                       Complete(false), QueueCounter(0)
+                       Mode(0), ID(0), Complete(false), QueueCounter(0)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -73,8 +73,16 @@ void pkgAcquire::Item::Start(string Message,unsigned long Size)
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Item::Done(string,unsigned long,string)
+void pkgAcquire::Item::Done(string Message,unsigned long Size,string)
 {
+   // We just downloaded something..
+   string FileName = LookupTag(Message,"Filename");
+   if (Complete == false && FileName == DestFile)
+   {
+      if (Owner->Log != 0)
+	 Owner->Log->Fetched(Size,atoi(LookupTag(Message,"Resume-Point","0").c_str()));
+   }
+   
    Status = StatDone;
    ErrorText = string();
    Owner->Dequeue(this);
@@ -186,6 +194,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
       DestFile += ".decomp";
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
+      Mode = "copy";
       return;
    }
 
@@ -209,6 +218,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5)
    DestFile += ".decomp";
    Desc.URI = "gzip:" + FileName,Location->PackagesInfo();
    QueueURI(Desc);
+   Mode = "gzip";
 }
 									/*}}}*/
 

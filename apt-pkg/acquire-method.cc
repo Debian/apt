@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.cc,v 1.5 1998/11/09 01:09:22 jgg Exp $
+// $Id: acquire-method.cc,v 1.6 1998/11/11 06:54:15 jgg Exp $
 /* ######################################################################
 
    Acquire Method
@@ -141,6 +141,10 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    if (Res.MD5Sum.empty() == false)
       End += snprintf(End,sizeof(S) - (End - S),"MD5Sum: %s\n",Res.MD5Sum.c_str());
 
+   if (Res.ResumePoint != 0)
+      End += snprintf(End,sizeof(S) - (End - S),"Resume-Point: %u\n",
+		      Res.ResumePoint);
+
    if (Res.IMSHit == true)
       strcat(End,"IMS-Hit: true\n");
    End = S + strlen(S);
@@ -256,7 +260,9 @@ int pkgAcqMethod::Run(bool Single)
 	    
 	    Tmp->Uri = LookupTag(Message,"URI");
 	    Tmp->DestFile = LookupTag(Message,"FileName");
-	    StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified);
+	    if (StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified) == false)
+	       Tmp->LastModified = 0;
+	    
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list

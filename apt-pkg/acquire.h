@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.9 1998/11/09 01:09:26 jgg Exp $
+// $Id: acquire.h,v 1.10 1998/11/11 06:54:17 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -39,6 +39,7 @@
 #pragma interface "apt-pkg/acquire.h"
 #endif 
 
+#include <sys/time.h>
 #include <unistd.h>
 
 class pkgAcquireStatus;
@@ -180,18 +181,34 @@ struct pkgAcquire::MethodConfig
 
 class pkgAcquireStatus
 {
+   protected:
+   
+   struct timeval Time;
+   struct timeval StartTime;
+   unsigned long LastBytes;
+   double CurrentCPS;
+   unsigned long CurrentBytes;
+   unsigned long TotalBytes;
+   unsigned long FetchedBytes;
+   unsigned long ElapsedTime;
+   
    public:
 
    bool Update;
+   
+   // Called by items when they have finished a real download
+   virtual void Fetched(unsigned long Size,unsigned long ResumePoint);
    
    // Each of these is called by the workers when an event occures
    virtual void IMSHit(pkgAcquire::ItemDesc &Itm) {};
    virtual void Fetch(pkgAcquire::ItemDesc &Itm) {};
    virtual void Done(pkgAcquire::ItemDesc &Itm) {};
    virtual void Fail(pkgAcquire::ItemDesc &Itm) {};   
-   virtual void Pulse(pkgAcquire *Owner) {};
-   
-   pkgAcquireStatus() : Update(false) {};
+   virtual void Pulse(pkgAcquire *Owner);
+   virtual void Start();
+   virtual void Stop();
+
+   pkgAcquireStatus();
    virtual ~pkgAcquireStatus() {};
 };
 

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.10 1998/11/09 01:09:25 jgg Exp $
+// $Id: acquire.cc,v 1.11 1998/11/11 06:54:16 jgg Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -194,7 +194,7 @@ string pkgAcquire::QueueName(string Uri)
    /* Single-Instance methods get exactly one queue per URI. This is
       also used for the Access queue method  */
    if (Config->SingleInstance == true || QueueMode == QueueAccess)
-      return U.Access;
+       return U.Access;
 
    return U.Access + ':' + U.Host;
 }
@@ -276,6 +276,9 @@ bool pkgAcquire::Run()
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Startup();
    
+   if (Log != 0)
+      Log->Start();
+   
    // Run till all things have been acquired
    struct timeval tv;
    tv.tv_sec = 0;
@@ -311,6 +314,9 @@ bool pkgAcquire::Run()
       }      
    }   
 
+   if (Log != 0)
+      Log->Stop();
+   
    // Shut down the acquire bits
    Running = false;
    for (Queue *I = Queues; I != 0; I = I->Next)
@@ -512,5 +518,125 @@ bool pkgAcquire::Queue::Cycle()
 /* */
 void pkgAcquire::Queue::Bump()
 {
+}
+									/*}}}*/
+
+// AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgAcquireStatus::pkgAcquireStatus()
+{
+   Start();
+}
+									/*}}}*/
+// AcquireStatus::Pulse - Called periodically				/*{{{*/
+// ---------------------------------------------------------------------
+/* This computes some internal state variables for the derived classes to
+   use. It generates the current downloaded bytes and total bytes to download
+   as well as the current CPS estimate. */
+void pkgAcquireStatus::Pulse(pkgAcquire *Owner)
+{
+   TotalBytes = 0;
+   CurrentBytes = 0;
+   
+   // Compute the total number of bytes to fetch
+   unsigned int Unknown = 0;
+   unsigned int Count = 0;
+   for (pkgAcquire::Item **I = Owner->ItemsBegin(); I != Owner->ItemsEnd(); 
+	I++, Count++)
+   {
+      TotalBytes += (*I)->FileSize;
+      if ((*I)->Complete == true)
+	 CurrentBytes += (*I)->FileSize;
+      if ((*I)->FileSize == 0 && (*I)->Complete == false)
+	 Unknown++;
+   }
+   
+   // Compute the current completion
+   for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
+	I = Owner->WorkerStep(I))
+      if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
+	 CurrentBytes += I->CurrentSize;
+      
+   // Normalize the figures and account for unknown size downloads
+   if (TotalBytes <= 0)
+      TotalBytes = 1;
+   if (Unknown == Count)
+      TotalBytes = Unknown;
+   else
+      TotalBytes += TotalBytes/(Count - Unknown)*Unknown;
+   
+   // Compute the CPS
+   struct timeval NewTime;
+   gettimeofday(&NewTime,0);
+   if (NewTime.tv_sec - Time.tv_sec == 6 && NewTime.tv_usec > Time.tv_usec ||
+       NewTime.tv_sec - Time.tv_sec > 6)
+   {    
+      // Compute the delta time with full accuracy
+      long usdiff = NewTime.tv_usec - Time.tv_usec;
+      long sdiff = NewTime.tv_sec - Time.tv_sec;
+      
+      // Borrow
+      if (usdiff < 0)
+      {	 
+	 usdiff += 1000000;
+	 sdiff--;
+      }
+            
+      // Compute the CPS value
+      CurrentCPS = (CurrentBytes - LastBytes)/(sdiff + usdiff/1000000.0);
+      LastBytes = CurrentBytes;
+      ElapsedTime = NewTime.tv_sec - StartTime.tv_sec;
+      Time = NewTime;
+   }
+}
+									/*}}}*/
+// AcquireStatus::Start - Called when the download is started		/*{{{*/
+// ---------------------------------------------------------------------
+/* We just reset the counters */
+void pkgAcquireStatus::Start()
+{
+   gettimeofday(&Time,0);
+   gettimeofday(&StartTime,0);
+   LastBytes = 0;
+   CurrentCPS = 0;
+   CurrentBytes = 0;
+   TotalBytes = 0;
+   FetchedBytes = 0;
+   ElapsedTime = 0;
+}
+									/*}}}*/
+// pkgAcquireStatus::Stop - Finished downloading			/*{{{*/
+// ---------------------------------------------------------------------
+/* This accurately computes the elapsed time and the total overall CPS. */
+void pkgAcquireStatus::Stop()
+{
+   // Compute the CPS and elapsed time
+   struct timeval NewTime;
+   gettimeofday(&NewTime,0);
+   
+   // Compute the delta time with full accuracy
+   long usdiff = NewTime.tv_usec - StartTime.tv_usec;
+   long sdiff = NewTime.tv_sec - StartTime.tv_sec;
+   
+   // Borrow
+   if (usdiff < 0)
+   {	 
+      usdiff += 1000000;
+      sdiff--;
+   }
+   
+   // Compute the CPS value
+   CurrentCPS = FetchedBytes/(sdiff + usdiff/1000000.0);
+   LastBytes = CurrentBytes;
+   ElapsedTime = sdiff;
+}
+									/*}}}*/
+// AcquireStatus::Fetched - Called when a byte set has been fetched	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used to get accurate final transfer rate reporting. */
+void pkgAcquireStatus::Fetched(unsigned long Size,unsigned long Resume)
+{
+   FetchedBytes += Size - Resume;
 }
 									/*}}}*/

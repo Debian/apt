@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.h,v 1.3 1998/11/04 07:10:50 jgg Exp $
+// $Id: http.h,v 1.4 1998/11/11 06:54:22 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -133,7 +133,7 @@ class HttpMethod : public pkgAcqMethod
    
    int Loop();
    
-   HttpMethod() : pkgAcqMethod("1.2",SingleInstance | Pipeline | SendConfig) 
+   HttpMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig) 
    {
       Depth = 0;
       File = 0;
