@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.124 2003/02/01 20:18:46 tausq Exp $
+// $Id: apt-get.cc,v 1.125 2003/02/02 03:30:53 tausq Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -1945,7 +1945,7 @@ bool DoBuildDep(CommandLine &CmdL)
             {
                // Check if there are any alternatives
                if (((*D).Op & pkgCache::Dep::Or) != pkgCache::Dep::Or)
-	          return _error->Error(_("%s dependency on %s cannot be satisfied "
+	          return _error->Error(_("%s dependency for %s cannot be satisfied "
                                          "because the package %s cannot be found"),
 				         Last->BuildDepType((*D).Type),Src.c_str(),
                                          (*D).Package.c_str());
@@ -1967,9 +1967,6 @@ bool DoBuildDep(CommandLine &CmdL)
                    (((*D).Op & pkgCache::Dep::Or) == pkgCache::Dep::Or))
                D++;
                        
-            // Get installed versions
-	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
-
 	    /* 
 	     * If this is a virtual package, we need to check the list of
 	     * packages that provide it and see if any of those are
@@ -1979,6 +1976,22 @@ bool DoBuildDep(CommandLine &CmdL)
             for (; Prv.end() != true; Prv++)
 	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
 	          break;
+            
+            // Get installed version and version we are going to install
+	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
+	    pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
+
+            for (; CV.end() != true; CV++)
+            {
+               if (Cache->VS().CheckDep(CV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+                  break;
+            }
+            if (CV.end() == true)
+	       return _error->Error(_("%s dependency for %s cannot be satisfied "
+                                      "because no available versions of package %s "
+                                      "can satisfy version requirements"),
+				      Last->BuildDepType((*D).Type),Src.c_str(),
+                                      (*D).Package.c_str());
 
             /*
 	     * TODO: if we depend on a version lower than what we already have 
