@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.cc,v 1.28 1999/04/20 05:59:29 jgg Exp $
+// $Id: acquire-item.cc,v 1.29 1999/04/28 22:48:44 jgg Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -346,7 +346,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
                StoreFilename(StoreFilename), Vf(Version.FileList())
 {
    Retries = _config->FindI("Acquire::Retries",0);
-      
+
+   if (Version.Arch() == 0)
+      _error->Error("I wasn't able to locate file for the %s package. "
+		    "This might mean you need to manually fix this package. (due to missing arch)",
+		    Version.ParentPkg().Name());
+   
    // Generate the final file name as: package_version_arch.deb
    StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
                    QuoteString(Version.VerStr(),"_:") + '_' +

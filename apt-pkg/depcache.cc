@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.17 1999/04/16 21:46:13 jgg Exp $
+// $Id: depcache.cc,v 1.18 1999/04/28 22:48:45 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.
@@ -518,6 +518,12 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg,bool Soft)
 {
    // Simplifies other routines.
    if (Pkg.end() == true)
+      return;
+
+   /* Reject an attempt to keep a non-source broken installed package, those
+      must be upgraded */
+   if (Pkg.State() == PkgIterator::NeedsUnpack && 
+       Pkg.CurrentVer().Downloadable() == false)
       return;
    
    /* We changed the soft state all the time so the UI is a bit nicer

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.13 1999/04/18 06:36:36 jgg Exp $
+// $Id: pkgcachegen.h,v 1.14 1999/04/28 22:48:45 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -55,8 +55,8 @@ class pkgCacheGenerator
    unsigned long NewVersion(pkgCache::VerIterator &Ver,string VerStr,unsigned long Next);
 
    unsigned long WriteUniqString(const char *S,unsigned int Size);
-   inline unsigned long WriteUniqString(string S) {return WriteUniqString(S);};
-   
+   inline unsigned long WriteUniqString(string S) {return WriteUniqString(S.c_str(),S.length());};
+
    public:   
 
    bool SelectFile(string File,unsigned long Flags = 0);
@@ -85,7 +85,7 @@ class pkgCacheGenerator::ListParser
    __apt_ptrloc *OldDepLast;
       
    protected:
-   
+
    inline unsigned long WriteUniqString(string S) {return Owner->WriteUniqString(S);};
    inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
    inline unsigned long WriteString(string S) {return Owner->Map.WriteString(S);};

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.16 1999/02/05 02:26:00 jgg Exp $
+// $Id: algorithms.cc,v 1.17 1999/04/28 22:48:45 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -169,16 +169,37 @@ bool pkgApplyStatus(pkgDepCache &Cache)
       if (I->InstState == pkgCache::State::ReInstReq ||
 	  I->InstState == pkgCache::State::HoldReInstReq)
       {
-	 Cache.MarkKeep(I);
+	 if (I.CurrentVer().Downloadable() == true)
+	    Cache.MarkKeep(I);
+	 else
+	 {
+	    // Is this right? Will dpkg choke on an upgrade?
+	    if (Cache[I].CandidateVerIter(Cache).Downloadable() == true)
+	       Cache.MarkInstall(I);
+	    else
+	       return _error->Error("The package %s needs to be reinstalled, "
+				    "but I can't find an archive for it.",I.Name());
+	 }
+	 
 	 continue;
       }
       
       switch (I->CurrentState)
       {
-	 // This means installation failed somehow
+	 /* This means installation failed somehow - it does not need to be
+	    re-unpacked (probably) */
 	 case pkgCache::State::UnPacked:
 	 case pkgCache::State::HalfConfigured:
-	 Cache.MarkKeep(I);
+	 if (I.CurrentVer().Downloadable() == true || 
+	     I.State() != pkgCache::PkgIterator::NeedsUnpack)
+	    Cache.MarkKeep(I);
+	 else
+	 {
+	    if (Cache[I].CandidateVerIter(Cache).Downloadable() == true)
+	       Cache.MarkInstall(I);
+	    else
+	       Cache.MarkDelete(I);
+	 }
 	 break;
 
 	 // This means removal failed
