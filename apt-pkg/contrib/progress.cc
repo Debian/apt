@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.cc,v 1.4 1998/07/26 04:51:45 jgg Exp $
+// $Id: progress.cc,v 1.5 1998/08/23 03:52:22 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -76,9 +76,14 @@ bool OpProgress::CheckChange(float Interval)
    }
    MajorChange = false;
 
+   if (SubOp != LastSubOp)
+   {
+      LastSubOp = SubOp;
+      return true;
+   }
+   
    if ((int)LastPercent == (int)Percent)
       return false;
-   LastPercent = Percent;
    
    // Check time delta
    struct timeval Now;
@@ -87,6 +92,7 @@ bool OpProgress::CheckChange(float Interval)
    if (Diff < Interval)
       return false;
    LastTime = Now;   
+   LastPercent = Percent;
    return true;
 }
 									/*}}}*/

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: progress.h,v 1.1 1998/07/21 05:33:21 jgg Exp $
+// $Id: progress.h,v 1.2 1998/08/23 03:52:23 jgg Exp $
 /* ######################################################################
    
    OpProgress - Operation Progress
@@ -40,6 +40,7 @@ class OpProgress
    // Change reduction code
    struct timeval LastTime;
    string LastOp;
+   string LastSubOp;
    
    protected:
    
@@ -58,7 +59,8 @@ class OpProgress
    void SubProgress(unsigned long SubTotal,string Op);
    void OverallProgress(unsigned long Current,unsigned long Total,
 			unsigned long Size,string Op);
-
+   virtual void Done() {};
+   
    OpProgress();
    virtual ~OpProgress() {};
 };
@@ -75,7 +77,7 @@ class OpTextProgress : public OpProgress
    
    public:
 
-   void Done();
+   virtual void Done();
    
    OpTextProgress(bool NoUpdate = false) : NoUpdate(NoUpdate), LastLen(0) {};
    virtual ~OpTextProgress() {Done();};
