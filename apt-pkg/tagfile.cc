@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.cc,v 1.26 2001/02/20 07:03:17 jgg Exp $
+// $Id: tagfile.cc,v 1.27 2001/02/23 06:41:55 jgg Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -30,6 +30,15 @@
 /* */
 pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) : Fd(*pFd), Size(Size)
 {
+   if (Fd.IsOpen() == false)
+   {
+      Buffer = 0;
+      Start = End = Buffer = 0;
+      Left = 0;
+      iOffset = 0;
+      return;
+   }
+   
    Buffer = new char[Size];
    Start = End = Buffer;
    Left = Fd.Size();

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.cc,v 1.2 2001/02/20 07:03:17 jgg Exp $
+// $Id: debindexfile.cc,v 1.3 2001/02/23 06:41:55 jgg Exp $
 /* ######################################################################
 
    Debian Specific sources.list types and the three sorts of Debian
@@ -66,15 +66,7 @@ string debSourcesIndex::SourceInfo(pkgSrcRecords::Parser const &Record,
 /* */
 pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 {
-   string SourcesURI;
-   if (Dist[Dist.size() - 1] == '/')
-      SourcesURI = URI + Dist;
-   else
-      SourcesURI = URI + "dists/" + Dist + '/' + Section +
-      "/source/";
-   
-   SourcesURI += "Sources";
-   SourcesURI = URItoFileName(SourcesURI);
+   string SourcesURI = URItoFileName(IndexURI("Sources"));
    return new debSrcRecordParser(_config->FindDir("Dir::State::lists") +
 				 SourcesURI,this);
 }
