@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cdrom.cc,v 1.20 1999/04/03 01:05:25 jgg Exp $
+// $Id: apt-cdrom.cc,v 1.21 1999/04/07 05:57:04 jgg Exp $
 /* ######################################################################
    
    APT CDROM - Tool for handling APT's CDROM database.
@@ -38,7 +38,8 @@
    search that short circuits when it his a package file in the dir.
    This speeds it up greatly as the majority of the size is in the
    binary-* sub dirs. */
-bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
+bool FindPackages(string CD,vector<string> &List,string &InfoDir,
+		  unsigned int Depth = 0)
 {
    static ino_t Inodes[9];
    if (Depth >= 7)
@@ -63,6 +64,13 @@ bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
 	 return true;
    }
 
+   // Look for a .disk subdirectory
+   if (stat(".disk",&Buf) == 0)
+   {
+      if (InfoDir.empty() == true)
+	 InfoDir = CD + ".disk/";
+   }
+   
    DIR *D = opendir(".");
    if (D == 0)
       return _error->Errno("opendir","Unable to read %s",CD.c_str());
@@ -97,7 +105,7 @@ bool FindPackages(string CD,vector<string> &List, unsigned int Depth = 0)
       Inodes[Depth] = Buf.st_ino;
 
       // Descend
-      if (FindPackages(CD + Dir->d_name,List,Depth+1) == false)
+      if (FindPackages(CD + Dir->d_name,List,InfoDir,Depth+1) == false)
 	 break;
 
       if (chdir(CD.c_str()) != 0)
@@ -852,7 +860,8 @@ bool DoAdd(CommandLine &)
    // Get the CD structure
    vector<string> List;
    string StartDir = SafeGetCWD();
-   if (FindPackages(CDROM,List) == false)
+   string InfoDir;
+   if (FindPackages(CDROM,List,InfoDir) == false)
    {
       cout << endl;
       return false;
@@ -883,9 +892,10 @@ bool DoAdd(CommandLine &)
        _config->FindB("APT::CDROM::Rename",false) == true)
    {
       // Try to use the CDs label if at all possible
-      if (FileExists(CDROM + "/.disk/info") == true)
+      if (InfoDir.empty() == false &&
+	  FileExists(CDROM + InfoDir + "/info") == true)
       {
-	 ifstream F(string(CDROM+ "/.disk/info").c_str());
+	 ifstream F(string(CDROM + InfoDir + "/info").c_str());
 	 if (!F == 0)
 	    getline(F,Name);
 
