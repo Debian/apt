@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.50 1999/04/07 06:34:48 jgg Exp $
+// $Id: apt-get.cc,v 1.51 1999/04/12 02:25:25 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -604,7 +604,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,bool Saftey =
    else
    {
       // Prompt to continue
-      if (Ask == true)
+      if (Ask == true || Fail == true)
       {            
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
