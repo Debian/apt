@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.118 2002/04/02 07:16:24 jgg Exp $
+// $Id: apt-get.cc,v 1.119 2002/04/26 05:36:43 jgg Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -927,10 +927,15 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    pkgDepCache::StateCache &State = Cache[Pkg];
    if (Remove == true && Pkg->CurrentVer == 0)
    {
+      Fix.Clear(Pkg);
+      Fix.Protect(Pkg);
+      Fix.Remove(Pkg);
+      
       /* We want to continue searching for regex hits, so we return false here
          otherwise this is not really an error. */
       if (AllowFail == false)
-	 return false;      
+	 return false;
+      
       ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.Name());
       return true;
    }
@@ -1032,7 +1037,8 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 bool TryToChangeVer(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		    const char *VerTag,bool IsRel)
 {
-   pkgVersionMatch Match(VerTag,(IsRel == true?pkgVersionMatch::Release:pkgVersionMatch::Version));
+   pkgVersionMatch Match(VerTag,(IsRel == true?pkgVersionMatch::Release : 
+				 pkgVersionMatch::Version));
    
    pkgCache::VerIterator Ver = Match.Find(Pkg);
 			 
