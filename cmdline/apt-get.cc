@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.131 2003/07/22 01:49:26 mdz Exp $
+// $Id: apt-get.cc,v 1.132 2003/07/22 03:00:19 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2093,25 +2093,32 @@ bool DoBuildDep(CommandLine &CmdL)
 	     * installed
 	     */
             pkgCache::PrvIterator Prv = Pkg.ProvidesList();
-            for (; Prv.end() != true; Prv++)
+            for (; Prv.end() != true; Prv++) {
 	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
 	          break;
+            }
             
             // Get installed version and version we are going to install
 	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
-	    pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
 
-            for (; CV.end() != true; CV++)
-            {
-               if (Cache->VS().CheckDep(CV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
-                  break;
+            if (Prv.end() == true || (*D).Version != "") {
+                 /* We either have a versioned dependency (so a provides won't do)
+                    or nothing is providing this package */
+
+                 pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
+
+                 for (; CV.end() != true; CV++)
+                 {
+                      if (Cache->VS().CheckDep(CV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+                           break;
+                 }
+                 if (CV.end() == true)
+                      return _error->Error(_("%s dependency for %s cannot be satisfied "
+                                             "because no available versions of package %s "
+                                             "can satisfy version requirements"),
+                                           Last->BuildDepType((*D).Type),Src.c_str(),
+                                           (*D).Package.c_str());
             }
-            if (CV.end() == true)
-	       return _error->Error(_("%s dependency for %s cannot be satisfied "
-                                      "because no available versions of package %s "
-                                      "can satisfy version requirements"),
-				      Last->BuildDepType((*D).Type),Src.c_str(),
-                                      (*D).Package.c_str());
 
             /*
 	     * TODO: if we depend on a version lower than what we already have 
