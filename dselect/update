@@ -22,7 +22,7 @@ $APTCACHE dumpavail > $CACHEDIR/available
 $DPKG --update-avail $CACHEDIR/available
 rm -f $CACHEDIR/available
 
-if [ $PROMPT == "yes" ]; then
+if [ $PROMPT = "yes" ]; then
    echo "Press enter to continue." && read RES;
 fi
 
