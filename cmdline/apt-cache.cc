@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.24 1999/02/08 07:54:58 jgg Exp $
+// $Id: apt-cache.cc,v 1.25 1999/02/11 00:03:07 jgg Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
@@ -26,6 +26,7 @@
 #include <config.h>
 
 #include <iostream.h>
+#include <unistd.h>
 #include <errno.h>
 									/*}}}*/
 
