@@ -138,6 +138,10 @@ Do not use it.
 enddit()
 
 manpageoptions()
+All command line options may be set using the configuration file, the
+descriptions indicate the configuration option to set. For boolean
+options you can override the config file by using something like bf(-f-),
+bf(--no-f), bf(-f=no) or several other variations.
 
 startdit()
 dit(bf(-h, --help))
@@ -146,21 +150,25 @@ Show a short usage summary.
 dit(bf(-p --pkg-cache))
 Select the file to store the package cache. The package cache is the primary
 cache used by all operations.
+See bf(Dir::Cache::pkgcache).
 
 dit(bf(-s --src-cache))
 Select the file to store the source cache. The source is used only by
 bf(gencaches) and it stores a parsed version of the package information from
 remote sources. When building the package cache the source cache is used
 to advoid reparsing all of the package files.
+See bf(Dir::Cache::srcpkgcache).
 
 dit(bf(-q, --quiet))
 Quiet; produces output suitable for logging, omitting progress indicators.
 More qs will produce more quite up to a maximum of 2. You can also use
 bf(-q=#) to set the quiet level, overriding the configuration file.
+See bf(quiet).
 
 dit(bf(-i --important))
 Print only important deps; for use with unmet causes only em(Depends) and 
 em(Pre-Depends) relations to be printed.
+See bf(APT::Cache::Important).
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will
@@ -186,10 +194,9 @@ itemize(
 )
 
 manpageseealso()
-apt-get (8),
-dpkg (8),
-dselect (8),
-sources.list (5)
+apt-get(8),
+sources.list(5),
+apt.conf(5)
 
 manpagediagnostics()
 apt-cache returns zero on normal operation, decimal 100 on error.

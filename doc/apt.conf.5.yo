@@ -1,0 +1,153 @@
+mailto(apt@packages.debian.org)
+manpage(apt.conf)(5)(5 Dec 1998)(apt)()
+manpagename(apt.conf)(configuration file for APT)
+
+manpagedescription()
+bf(apt.conf) is the main configuration file for the APT suite of
+tools, all tools make use of the configuration file and a common command line
+parser to provide a uniform environment. When an APT tool starts up it will
+read bf(/etc/apt/apt.conf), then read the configuration specified by the
+bf($APT_CONFIG) environment variable and then finally apply the command line
+options to override the configuration directives, possibly loading more 
+config files.
+
+The configuration file is organized in a tree with options organized into
+functional groups. Option specification is given with a double colon
+notation, for instance em(APT::Get::Assume-Yes) is an option within the
+APT tool group, for the Get tool. Options do not inherit from their parent
+groups.
+
+Syntacticly the configuration language is modeled after what the ISC tools
+such as bind and dhcp use. Each line is of the form
+quote(APT::Get::Assume-Yes "true";) The trailing semicolon is required and
+the quotes are optional. A new em(scope) can be opened with curly braces,
+like: 
+verb(APT {
+  Get {
+    Assume-Yes "true";
+    Fix-Broken "true";
+  };
+};
+)
+with newlines placed to make
+it more readable. In general the sample configuration file in
+em(/usr/doc/apt/examples/apt.conf) is a good guide for how it should look.
+
+manpagesection(The APT Group)
+This group of options controls general APT behavoir as well as holding the
+options for all of the tools.
+
+startdit()
+dit(bf(Architecture))
+System Architecture; sets the architecture to use when fetching files and
+parsing package lists. The internal default is the architecture apt was 
+compiled for.
+
+dit(bf(Ignore-Hold))
+Ignore Held packages; This global options causes the problem resolver to
+ignore held packages in its decision making. 
+
+dit(bf(Get))
+The Get subsection controls the bf(apt-get(8)) tool, please see its
+documentation for more information about the options here.
+
+dit(bf(Cache))
+The Cache subsection controls the bf(apt-cache(8)) tool, please see it
+sdocumentation for more information about the options here.
+
+dit(bf(CDROM))
+The CDROM subsection controls the bf(apt-cdrom(8)) tool, please see it
+sdocumentation for more information about the options here.
+
+enddit()
+
+manpagesection(The Acquire Group)
+The bf(Acquire) group of options controls the download of packages and the 
+URI handlers. 
+
+startdit()
+dit(bf(Queue-Mode))
+Queuing mode; bf(Queue-Mode) can be one of bf(host) or bf(access) which 
+determins how APT parallelizesoutgoing connections. bf(host) means that
+one connection per target host will be opened, bf(access) means that one
+connection per URI type will be opened.
+
+dit(bf(http))
+HTTP URIs; http::Proxy is the default http proxy to use. It is in the standard
+form of em(http://[[user][:pass]@]host[:port]/). Per host proxies can also
+be specified by using the form http::Proxy::<host> with the special keyword
+em(DIRECT) meaning to use no proxies. The em($http_proxy) environment variable
+will override all settings.
+
+dit(bf(cdrom))
+CDROM URIs; the only setting for CDROM URIs is the mount point, cdrom::Mount
+which must be the mount point for the CDROM drive as specified in /etc/fstab.
+
+enddit()
+
+manpagesection(Directories)
+The bf(Dir::State) section has directories that pertain to local state
+information. bf(lists) is the directory to place downloaded package lists
+in and bf(status) is the name of the dpkg status file. bf(Dir::State)
+contains the default directory to prefix on all sub items if they do not
+start with em(/) or em(./). bf(xstatus) and bf(userstatus) are for future
+use.
+
+bf(Dir::Cache) contains locations pertaining to local cache information, such
+as the two package caches bf(srcpkgcache) and bf(pkgcache) as well as the
+location to place downloaded archives, bf(Dir::Cache::archives). Like 
+bf(Dir::State) the default directory is contained in bf(Dir::Cache)
+
+bf(Dir::Etc) contains the location of configuration files, bd(sourcelist)
+gives the location of the sourcelist and bf(main) is the default configuration
+file (setting has no effect)
+
+Binary programs are pointed to by bf(Dir::Bin). bf(methods) specifies the
+location of the method handlers and bf(gzip), bf(dpkg), bf(apt-get), and
+bf(apt-cache) specify the location of the respective programs.
+
+manpagesection(APT in DSelect)
+When APT is used as a bf(dselect(8)) method several configuration directives
+control the default behavoir. These are in the bf(DSelect) section.
+
+startdit()
+dit(bf(Clean))
+Cache Clean mode; this value may be one of always, auto, prompt and never.
+Currently always and auto are identical but their meanings may diverge in
+future to have auto only clean useless archives and always clean all archives.
+
+dit(bf(Options))
+The contents of this variable is passed to bf(apt-get(8)) as command line
+options when it is run for the install phase.
+
+dit(bf(UpdateOptions))
+The contents of this variable is passed to bf(apt-get(8)) as command line
+options when it is run for the update phase.
+
+dit(bf(PromptAfterUpdate))
+If true the [U]pdate operation in dselect will always prompt to continue. 
+The default is to prompt only on error.
+enddit()
+
+manpagesection(Debug Options)
+Most of the options in the bf(debug) section are not interesting to the
+normal user, however bf(Debug::pkgProblemResolver) shows interesting
+output about the decisions dist-upgrade makes. bf(Debug::NoLocking)
+disables file locking so apt can do some operations as non-root and
+bf(Debug::pkgDPkgPM) will print out the command line for each dpkg invokation.
+
+manpagesection(EXAMPLES)
+bf(/usr/doc/apt/examples/apt.conf) contains a sample configuration file
+showing the default values for all possible options.
+
+manpageseealso()
+apt-cache (8),
+apt.conf (5)
+
+manpagebugs()
+See http://www.debian.org/Bugs/db/pa/lapt.html.  If you wish to report a
+bug in bf(apt-get), please see bf(/usr/doc/debian/bug-reporting.txt)
+or the bf(bug(1)) command.
+
+manpageauthor()
+apt-get was written by the APT team <apt@packages.debian.org>.

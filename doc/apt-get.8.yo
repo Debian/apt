@@ -92,10 +92,15 @@ from time to time to free up disk space.
 enddit()
 
 manpageoptions()
+All command line options may be set using the configuration file, the
+descriptions indicate the configuration option to set. For boolean
+options you can override the config file by using something like bf(-f-),
+bf(--no-f), bf(-f=no) or several other variations.
 
 startdit()
 dit(bf(-d, --download-only))
 Download only; package files are only retrieved, not unpacked or installed.
+See bf(APT::Get::Download-Only).
 
 dit(bf(-f, --fix-broken))
 Fix; attempt to correct a system with broken dependencies in            
@@ -106,7 +111,7 @@ exist on a system. It is possible that a system's dependency structure
 can be so corrupt as to require manual intervention (which usually
 means using dselect or dpkg --remove to eliminate some of the offending 
 packages). Use of this option together with -m may produce an error in
-some situations.
+some situations. See bf(APT::Get::Fix-Broken).
 
 dit(bf(-h, --help))
 Help; display a helpful usage message and exits.
@@ -115,42 +120,43 @@ dit(bf(-m, --ignore-missing))
 Ignore missing packages; If packages cannot be retrieved or fail the    
 integrity check after retrieval (corrupted package files), hold back    
 those packages and handle the result. Use of this option together with  
--f is discouraged.
+-f is discouraged. See bf(ignore-missing).
 
 dit(bf(-q, --quiet))
 Quiet; produces output suitable for logging, omitting progress indicators.
 More qs will produce more quite up to a maximum of 2. You can also use
 bf(-q=#) to set the quiet level, overriding the configuration file.
+See bf(quiet)
 
 dit(bf(-s, --simulate, --just-print, --dry-run, --recon, --no-act))
 No action; perform a simulation of events that would occur but do not
-actually change the system.
+actually change the system. See bf(APT::Get::Simulate).
 
 dit(bf(-y, --yes, --assume-yes))
 Automatic yes to prompts; assume "yes" as answer to all prompts and run
 non-interactively. If an undesireable situation, such as changing a held
 package or removing an essential package occures then bf(apt-get) will
-abort.
+abort. See bf(APT::Get::Assume-Yes).
 
 dit(bf(-u, --show-upgraded))
 Show upgraded packages; Print out a list of all packages that are to be
-upgraded.
+upgraded. See bf(APT::Get::Show-Upgraded).
 
 dit(bf(--ignore-hold))
 Ignore package Holds; This causes bf(apt-get) to ignore a hold placed on 
 a package. This may be usefull in conjunction with bf(dist-upgrade) to
-override a large number of undesired holds.
+override a large number of undesired holds. See bf(APT::Ingore-Hold).
 
 dit(bf(--no-upgrade))
 Do not upgrade packages; When used in conjunction with bf(install)
 bf(no-upgrade) will prevent packages listed from being upgraded if they
-are already installed.
+are already installed. See bf(APT::Get::no-upgrade).
 
 dit(bf(--force-yes))
 Force yes; This is a dangerous option that will cause apt to continue without
 prompting if it is doing something potentially harmfull. It should not be used
 except in very special situations. Using bf(force-yes) can potentially destroy
-your system!
+your system! See bf(APT::Get::force-yes).
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will
@@ -186,6 +192,7 @@ apt-cache(8),
 dpkg(8),
 dselect(8),
 sources.list(5),
+apt.conf(5),
 The APT Users Guide in /usr/doc/apt/
 
 manpagediagnostics()

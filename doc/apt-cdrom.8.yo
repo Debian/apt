@@ -34,6 +34,10 @@ maintains a database of these IDs in bf(/var/state/apt/cdroms.list)
 enddit()
 
 manpageoptions()
+All command line options may be set using the configuration file, the
+descriptions indicate the configuration option to set. For boolean
+options you can override the config file by using something like bf(-f-),
+bf(--no-f), bf(-f=no) or several other variations.
 
 startdit()
 dit(bf(-h, --help))
@@ -41,24 +45,29 @@ Show a short usage summary.
 
 dit(bf(-d --cdrom))
 Mount point; specify the location to mount the cdrom. This mount point must
-be listed in bf(/etc/fstab) and propely configured.
+be listed in bf(/etc/fstab) and propely configured. 
+See bf(Acquire::cdrom::mount).
 
 dit(bf(-r --rename))
 Rename a disc; change the label of a disk or override the disks given label.
 This option will cause bf(apt-cdrom) to prompt for a new label
+See bf(APT::CDROM::Rename).
 
 dit(bf(-m, --no-mount))
 No mounting; prevent bf(apt-cdrom) from mounting and unmounting the mount
 point.
+See bf(APT::CDROM::NoMount).
 
 dit(bf(-f, --fast))
 Fast Copy; Assume the package files are valid and do not check every package.
 This option should be used only if bf(apt-cdrom) has been run on this disc
 before and did not detect any errors.
+See bf(APT::CDROM::Fast).
  
 dit(bf(-n --just-print, --recon, --no-act))
 No Changes; Do not change the sources.list and do not write package files. 
 Everything is still checked however.
+See bf(APT::CDROM::NoAct).
 
 dit(bf(-c, --config-file))
 Configuration File; Specify a configuration file to use. bf(apt-get) will
@@ -87,8 +96,8 @@ itemize(
 )
 
 manpageseealso()
-apt-get (8),
-sources.list (5),
+apt-get(8),
+sources.list(5),
 apt.conf(5)
 
 manpagediagnostics()
