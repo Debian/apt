@@ -4,7 +4,7 @@
 <title>APT Files</title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: files.sgml,v 1.3 1998/10/02 04:39:57 jgg Exp $</version>
+<version>$Id: files.sgml,v 1.4 1998/12/14 04:00:33 jgg Exp $</version>
 
 <abstract>
 This document describes the complete implementation and format of the 
@@ -45,6 +45,8 @@ The var directory structure is as follows:
 		  lists/
 		       partial/
 		  xstatus
+		  userstatus
+		  cdroms.list
   /var/cache/apt/
                   pkgcache.bin
 		  srcpkgcache.bin
@@ -52,12 +54,15 @@ The var directory structure is as follows:
 		          partial/
   /etc/apt/
            sources.list
-	   cdromdevs.list
+	   apt.conf
   /usr/lib/apt/
                 methods/
 		       cdrom
 		       ftp
 		       http
+		       file
+		       gzip
+		       copy
 </example>
 
 <p>
@@ -80,7 +85,7 @@ support a mix of source media. The file lists one source per line, with the
 fastest source listed first. The format of each line is:
 
 <p>
-<var>type ui args</var>
+<var>type uri args</var>
 
 <p>
 The first item, <var>type</var>, indicates the format for the remainder 
@@ -122,17 +127,14 @@ URIs in the source list support a large number of access schemes.
 <tag>cdrom<item>
    The cdrom scheme is special in that If Modifed Since queries are never
    performed and that APT knows how to match a cdrom to the name it
-   was given when first inserted. It does this by examining the date
-   and size of the package file. APT also knows all of the possible 
-   prefix paths for the cdrom drives and that the user should be prompted
+   was given when first inserted. APT also knows all of the possible 
+   mount points the cdrom drives and that the user should be prompted
    to insert a CD if it cannot be found. The path is relative to an 
    arbitary mount point (of APT's choosing) and must not start with a 
    slash. The first pathname component is the given name and is purely
    descriptive and of the users choice. However, if a file in the root of 
-   the cdrom is called 'cdname' its contents will be used instead of 
+   the cdrom is called '.disk/info' its contents will be used instead of 
    prompting. The name serves as a tag for the cdrom and should be unique.
-   APT will track the CDROM's based on their tag and package file
-   properties.
    <example>
    cdrom:Debian 1.3/debian
    </example>
@@ -140,8 +142,7 @@ URIs in the source list support a large number of access schemes.
 <tag>http<item>
    This scheme specifies a HTTP server for the debian archive. HTTP is prefered
    over FTP because If Modified Since queries against the Package file are
-   possible. Newer HTTP protcols may even support reget which would make
-   http the protocol of choice.
+   possible as well as deep pipelining and resume capabilities.
    <example>
    http://www.debian.org/archive
    </example>

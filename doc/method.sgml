@@ -4,7 +4,7 @@
 <title>APT Method Interface </title>
 
 <author>Jason Gunthorpe <email>jgg@debian.org</email></author>
-<version>$Id: method.sgml,v 1.5 1998/12/04 21:16:54 jgg Exp $</version>
+<version>$Id: method.sgml,v 1.6 1998/12/14 04:00:34 jgg Exp $</version>
 
 <abstract>
 This document describes the interface that APT uses to the archive
@@ -33,7 +33,7 @@ For more details, on Debian GNU/Linux systems, see the file
 
 <p>
 The APT method interface allows APT to acquire archive files (.deb), index
-files (Packages, Revision, Mirrors) and source files (.tar.gz, .diff). It
+files (Packages, Release, Mirrors) and source files (.tar.gz, .diff). It
 is a general, extensible system designed to satisfy all of these
 requirements:
 
@@ -307,9 +307,42 @@ Fields: Media, Fail
 
 </sect>
                                                                   <!-- }}} -->
-<!-- Examples		                                               {{{ -->
+<!-- Method Notes		                                       {{{ -->
 <!-- ===================================================================== -->
-<sect>Examples
+<sect>Notes
+
+<p>
+The methods supplied by the stock apt are:
+<enumlist>
+<item>cdrom - For Multi-Disc CDROMs
+<item>copy - (internal) For copying files around the filesystem
+<item>file - For local files
+<item>gzip - (internal) For decompression
+<item>http - For HTTP servers
+</enumlist>
+
+<p>
+The two internal methods, copy and gzip, are used by the acquire code to
+parallize and simplify the automatic decompression of package files as well 
+as copying package files around the file system. Both methods can be seen to 
+act the same except that one decompresses on the fly. APT uses them by
+generating a copy URI that is formed identically to a file URI. The destination
+file is send as normal. The method then takes the file specified by the 
+URI and writes it to the destination file. A typical set of operations may
+be:
+<example>
+http://foo.com/Packages.gz -> /bar/Packages.gz
+gzip:/bar/Packages.gz -> /bar/Packages.decomp
+rename Packages.decomp to /final/Packages
+</example>
+
+<p>
+The http method implements a fully featured HTTP/1.1 client that supports
+deep pipelining and reget. It works best when coupled with an apache 1.3
+server. The file method simply generates failures or success responses with
+the filename field set to the proper location. The cdrom method acts the same
+except that it checks that the mount point has a valid cdrom in it. It does 
+this by (effectively) computing a md5 hash of 'ls -l' on the mountpoint.
 
 </sect>
                                                                   <!-- }}} -->
