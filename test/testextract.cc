@@ -1,4 +1,3 @@
-#define APT_COMPATIBILITY 1
 #include <apt-pkg/dpkgdb.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/error.h>
@@ -10,6 +9,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+using namespace std;
 
 bool Go(int argc,char *argv[])
 {
@@ -83,7 +84,8 @@ bool Go(int argc,char *argv[])
 
 int main(int argc,char *argv[])
 {
-   pkgInitialize(*_config);
+   pkgInitConfig(*_config);
+   pkgInitSystem(*_config,_system);
    _config->Set("Dir::State::status","/tmp/testing/status");
 
    Go(argc,argv);

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <unistd.h>
 
+using namespace std;
+
 bool ExtractMember(const char *File,const char *Member)
 {
    FileFd Fd(File,FileFd::ReadOnly);

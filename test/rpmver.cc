@@ -8,6 +8,8 @@
 #define xisalpha(x) isalpha(x)
 #define xisalnum(x) (isdigit(x) || isalpha(x))
 
+using namespace std;
+
 int rpmvercmp(const char * a, const char * b)
 {
     char oldch1, oldch2;

@@ -1,4 +1,3 @@
-#define APT_COMPATIBILITY 1
 #include <apt-pkg/dpkgdb.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/error.h>
@@ -8,9 +7,12 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 
+using namespace std;
+
 int main(int argc,char *argv[])
 {
-   pkgInitialize(*_config);
+   pkgInitConfig(*_config);
+   pkgInitSystem(*_config,_system);
 
 //   cout << flNoLink(argv[1]) << endl;
    

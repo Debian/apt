@@ -1,6 +1,8 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 
+using namespace std;
+
 int main(int argc,const char *argv[])
 {
    Configuration Cnf;
