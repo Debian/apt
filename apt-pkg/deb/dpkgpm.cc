@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dpkgpm.cc,v 1.4 1998/11/23 07:32:21 jgg Exp $
+// $Id: dpkgpm.cc,v 1.5 1998/12/14 06:54:44 jgg Exp $
 /* ######################################################################
 
    DPKG Package Manager - Provide an interface to dpkg
@@ -171,7 +171,7 @@ bool pkgDPkgPM::Go()
 	 signal(SIGTSTP,SIG_DFL);
 
 	 if (chdir(_config->FindDir("Dir::Cache::Archives").c_str()) != 0)
-	    exit(100);
+	    _exit(100);
 	 
 	 // Close all of our FDs - just in case
 	 for (int K = 3; K != 40; K++)
@@ -179,23 +179,23 @@ bool pkgDPkgPM::Go()
 
 	 int Flags,dummy;
 	 if ((Flags = fcntl(STDIN_FILENO,F_GETFL,dummy)) < 0)
-	    exit(100);
+	    _exit(100);
 	 
 	 // Discard everything in stdin before forking dpkg
 	 if (fcntl(STDIN_FILENO,F_SETFL,Flags | O_NONBLOCK) < 0)
-	    exit(100);
+	    _exit(100);
 	 
 	 while (read(STDIN_FILENO,&dummy,1) == 1);
 	 
 	 if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
-	    exit(100);
+	    _exit(100);
 
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 setenv("DPKG_NO_TSTP","yes",1);
 	 execvp(Args[0],(char **)Args);
 	 cerr << "Could not exec dpkg!" << endl;
-	 exit(100);
+	 _exit(100);
       }      
 
       // Wait for dpkg

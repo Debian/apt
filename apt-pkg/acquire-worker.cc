@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.cc,v 1.15 1998/12/05 01:45:20 jgg Exp $
+// $Id: acquire-worker.cc,v 1.16 1998/12/14 06:54:41 jgg Exp $
 /* ######################################################################
 
    Acquire Worker 
@@ -136,7 +136,7 @@ bool pkgAcquire::Worker::Start()
       Args[1] = 0;
       execv(Args[0],(char **)Args);
       cerr << "Failed to exec method " << Args[0] << endl;
-      exit(100);
+      _exit(100);
    }
 
    // Fix up our FDs
