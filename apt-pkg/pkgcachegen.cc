@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.cc,v 1.41 1999/07/26 17:46:07 jgg Exp $
+// $Id: pkgcachegen.cc,v 1.42 1999/10/29 04:49:37 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -724,6 +724,8 @@ bool pkgGenerateSrcCache(pkgSourceList &List,OpProgress &Progress,
    xstatus files into it. */
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
 {
+   unsigned long MapSize = _config->FindI("APT::Cache-Limit",4*1024*1024);
+   
    Progress.OverallProgress(0,1,1,"Reading Package Lists");
    
    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
@@ -736,7 +738,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
       string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
       FileFd SCacheF(SCacheFile,FileFd::WriteEmpty);
       FileFd CacheF(CacheFile,FileFd::WriteEmpty);
-      DynamicMMap Map(CacheF,MMap::Public);
+      DynamicMMap Map(CacheF,MMap::Public,MapSize);
       if (_error->PendingError() == true)
 	 return false;
 
@@ -767,7 +769,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
 
    FileFd SCacheF(SCacheFile,FileFd::ReadOnly);
    FileFd CacheF(CacheFile,FileFd::WriteEmpty);
-   DynamicMMap Map(CacheF,MMap::Public);
+   DynamicMMap Map(CacheF,MMap::Public,MapSize);
    if (_error->PendingError() == true)
       return false;
    
@@ -794,6 +796,8 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress)
    creates a memory block and puts the cache in there. */
 MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
 {
+   unsigned long MapSize = _config->FindI("APT::Cache-Limit",4*1024*1024);
+   
    /* If the cache file is writeable this is just a wrapper for
       MakeStatusCache */
    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
@@ -828,7 +832,7 @@ MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
    // Rebuild the source and package caches   
    if (SrcOk == false)
    {
-      DynamicMMap *Map = new DynamicMMap(MMap::Public);
+      DynamicMMap *Map = new DynamicMMap(MMap::Public,MapSize);
       if (_error->PendingError() == true)
       {
 	 delete Map;
@@ -875,7 +879,7 @@ MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
    // We use the source cache to generate the package cache
    string SCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
    FileFd SCacheF(SCacheFile,FileFd::ReadOnly);
-   DynamicMMap *Map = new DynamicMMap(MMap::Public);
+   DynamicMMap *Map = new DynamicMMap(MMap::Public,MapSize);
    if (_error->PendingError() == true)
    {
       delete Map;
