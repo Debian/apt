@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcache.cc,v 1.29 1999/10/02 03:11:50 jgg Exp $
+// $Id: pkgcache.cc,v 1.30 1999/12/05 05:37:45 jgg Exp $
 /* ######################################################################
    
    Package Cache - Accessor code for the cache
@@ -27,6 +27,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/strutl.h>
 #include <system.h>
 
 #include <string>
@@ -44,7 +45,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    MajorVersion = 3;
-   MinorVersion = 4;
+   MinorVersion = 5;
    Dirty = true;
    
    HeaderSz = sizeof(pkgCache::Header);
@@ -136,7 +137,7 @@ unsigned long pkgCache::sHash(string Str) const
 {
    unsigned long Hash = 0;
    for (const char *I = Str.begin(); I != Str.end(); I++)
-      Hash = 5*Hash + *I;
+      Hash = 5*Hash + tolower(*I);
    return Hash % _count(HeaderP->HashTable);
 }
 
@@ -144,7 +145,7 @@ unsigned long pkgCache::sHash(const char *Str) const
 {
    unsigned long Hash = 0;
    for (const char *I = Str; *I != 0; I++)
-      Hash = 5*Hash + *I;
+      Hash = 5*Hash + tolower(*I);
    return Hash % _count(HeaderP->HashTable);
 }
 
@@ -159,9 +160,8 @@ pkgCache::PkgIterator pkgCache::FindPkg(string Name)
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
    {
       if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
-	  StrP + Pkg->Name == Name)
+	  stringcasecmp(Name.begin(),Name.end(),StrP + Pkg->Name) == 0)
 	 return PkgIterator(*this,Pkg);
-//      cout << "b" << flush;
    }
    return PkgIterator(*this,0);
 }
