@@ -22,5 +22,5 @@ aclocal.m4:
 $(BUILDDIR)/config.status: configure
 	test -e $(BUILDDIR) || mkdir $(BUILDDIR)	
 	(HERE=`pwd`; cd $(BUILDDIR) && $$HERE/configure)
-$(addprefix $(BUILDDIR)/,$(CONVERTED)): $(BUILDDIR)/config.status
+$(addprefix $(BUILDDIR)/,$(CONVERTED)):
 	(cd $(BUILDDIR) && ./config.status)

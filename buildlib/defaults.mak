@@ -63,6 +63,7 @@ DEBIANDOC_H = $(BASE)/buildlib/debiandoc.mak
 MANPAGE_H = $(BASE)/buildlib/manpage.mak
 PROGRAM_H = $(BASE)/buildlib/program.mak
 COPY_H = $(BASE)/buildlib/copy.mak
+YODL_MANPAGE_H = $(BASE)/buildlib/yodl_manpage.mak
 
 ifdef STATICLIBS
 LIBRARY_H += $(BASE)/buildlib/staticlibrary.mak
