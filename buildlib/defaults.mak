@@ -82,7 +82,7 @@ YODL_MANPAGE_H = $(BASE)/buildlib/yodl_manpage.mak
 SGML_MANPAGE_H = $(BASE)/buildlib/sgml_manpage.mak
 FAIL_H = $(BASE)/buildlib/fail.mak
 
-include $(BUILD)/environment.mak
+include $(wildcard $(BUILD)/environment.*mak)
 
 ifdef STATICLIBS
 LIBRARY_H += $(BASE)/buildlib/staticlibrary.mak

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.17 2001/03/04 00:44:35 jgg Exp $
+// $Id: configuration.cc,v 1.18 2001/03/05 21:09:12 jgg Exp $
 /* ######################################################################
 
    Configuration Class
@@ -582,7 +582,8 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 		  Word = Tag;
 		  Tag = "";
 	       }
-	       NoWord = true;
+	       else
+		  NoWord = true;
 	    }
 	    if (strlen(Pos) != 0)
 	       return _error->Error(_("Syntax error %s:%u: Extra junk after value"),FName.c_str(),CurLine);

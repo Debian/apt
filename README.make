@@ -26,12 +26,12 @@ and configure substitutions across build makefiles is not used at all.
 
 Furthermore, the make system runs with a current directory equal to the
 source directory irregardless of the destination directory. This means
-#include "" and #include <> work as epected and more importantly
+#include "" and #include <> work as expected and more importantly
 running 'make' in the source directory will work as expected. The
-environment variable or make parameter 'BUILD' set the build directory.
+environment variable or make parameter 'BUILD' sets the build directory.
 It may be an absolute path or a path relative to the top level directory.
-By default build/ will be used with a fall back to ./ This means
-you can get all the advantages of a build directory without having to
+By default build-arch/ then build/ will be used with a fall back to ./ This 
+means you can get all the advantages of a build directory without having to
 cd into it to edit your source code!
 
 The make system also performs dependency generation on the fly as the
@@ -49,10 +49,8 @@ the source directory but is logically divided in the following manner
      examples/
    include/
      apt-pkg/
-     deity/
    obj/
      apt-pkg/
-     deity/
      cmndline/
      [...]
 Only .o and .d files are placed in the obj/ subdirectory. The final compiled
