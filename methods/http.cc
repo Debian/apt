@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.25 1999/02/08 07:30:50 jgg Exp $
+// $Id: http.cc,v 1.26 1999/02/15 00:26:55 jgg Exp $
 /* ######################################################################
 
    HTTP Aquire Method - This is the HTTP aquire method for APT.
@@ -448,7 +448,7 @@ bool ServerState::RunData()
 	    while ((Last = Owner->Go(false,this)) == true);
 	    if (Last == false)
 	       return false;
-	    return true;
+	    return !_error->PendingError();
 	 }
 	 
 	 // Transfer the block
@@ -490,12 +490,12 @@ bool ServerState::RunData()
 	    continue;
 	 
 	 In.Limit(-1);
-	 return true;
+	 return !_error->PendingError();
       }
       while (Owner->Go(true,this) == true);
    }
 
-   return Owner->Flush(this);
+   return Owner->Flush(this) && !_error->PendingError();
 }
 									/*}}}*/
 // ServerState::HeaderLine - Process a header line			/*{{{*/
