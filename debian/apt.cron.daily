@@ -59,7 +59,7 @@ check_size_constraints()
 
     # check age
     if [ ! $MaxAge -eq 0 ]; then
-	find $Cache -name "*.deb"  -mtime +$MaxAge -exec rm -f {} \;
+	find $Cache -name "*.deb"  -mtime +$MaxAge -print0 | xargs -r -0 rm -f
     fi
     
     # check size
