@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.146 2003/11/19 23:50:51 mdz Exp $
+// $Id: apt-get.cc,v 1.147 2003/12/20 23:39:54 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg
@@ -2468,7 +2468,7 @@ int main(int argc,const char *argv[])
    }
    
    // Deal with stdout not being a tty
-   if (isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
+   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
       _config->Set("quiet","1");
 
    // Setup the output streams
