@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.cc,v 1.23 1999/03/16 07:27:17 jgg Exp $
+// $Id: strutl.cc,v 1.24 1999/04/04 08:07:39 jgg Exp $
 /* ######################################################################
 
    String Util - Some usefull string functions.
@@ -97,7 +97,7 @@ bool ParseQuoteWord(const char *&String,string &Res)
       return false;
    
    // Jump to the next word
-   for (;*C != 0 && *C != ' '; C++)
+   for (;*C != 0 && isspace(*C) == 0; C++)
    {
       if (*C == '"')
       {
@@ -133,7 +133,7 @@ bool ParseQuoteWord(const char *&String,string &Res)
    Res = Buffer;
    
    // Skip ending white space
-   for (;*C != 0 && *C == ' '; C++);
+   for (;*C != 0 && isspace(*C) != 0; C++);
    String = C;
    return true;
 }

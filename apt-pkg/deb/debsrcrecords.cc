@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.cc,v 1.1 1999/04/04 01:17:29 jgg Exp $
+// $Id: debsrcrecords.cc,v 1.2 1999/04/04 08:07:39 jgg Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
@@ -15,6 +15,7 @@
 
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/strutl.h>
 									/*}}}*/
 
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
@@ -59,5 +60,44 @@ const char **debSrcRecordParser::Binaries()
    
    StaticBinList[Bin] = 0;
    return StaticBinList;
+}
+									/*}}}*/
+// SrcRecordParser::Files - Return a list of files for this source	/*{{{*/
+// ---------------------------------------------------------------------
+/* This parses the list of files and returns it, each file is required to have
+   a complete source package */
+bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
+{
+   List.erase(List.begin(),List.end());
+   
+   string Files = Sect.FindS("Files");
+   if (Files.empty() == true)
+      return false;
+
+   // Stash the / terminated directory prefix
+   string Base = Sect.FindS("Directory:");
+   if (Base.empty() == false && Base[Base.length()-1] != '/')
+      Base += '/';
+       
+   // Iterate over the entire list grabbing each triplet
+   const char *C = Files.c_str();
+   while (*C != 0)
+   {   
+      pkgSrcRecords::File F;
+      string Size;
+      
+      // Parse each of the elements
+      if (ParseQuoteWord(C,F.MD5Hash) == false ||
+	  ParseQuoteWord(C,Size) == false ||
+	  ParseQuoteWord(C,F.Path) == false)
+	 return _error->Error("Error parsing file record");
+      
+      // Parse the size and append the directory
+      F.Size = atoi(Size.c_str());
+      F.Path = Base + F.Path;
+      List.push_back(F);
+   }
+   
+   return true;
 }
 									/*}}}*/

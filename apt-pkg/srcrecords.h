@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.1 1999/04/04 01:17:29 jgg Exp $
+// $Id: srcrecords.h,v 1.2 1999/04/04 08:07:39 jgg Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -23,7 +23,16 @@
 class pkgSrcRecords
 {
    public:
+
+   // Describes a single file
+   struct File
+   {
+      string MD5Hash;
+      unsigned long Size;
+      string Path;
+   };
    
+   // Abstract parser for each source record
    class Parser
    {
       FileFd *File;
@@ -40,6 +49,7 @@ class pkgSrcRecords
       virtual string Maintainer() = 0;
       virtual string Section() = 0;
       virtual const char **Binaries() = 0;
+      virtual bool Files(vector<File> &F) = 0;
       
       Parser(FileFd *File) : File(File) {};
       virtual ~Parser() {delete File;};
