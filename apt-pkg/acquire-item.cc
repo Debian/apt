@@ -369,6 +369,12 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
       // File was already in place.  It needs to be re-verified
       // because Release might have changed, so Move it into partial
       Rename(Final,DestFile);
+      // unlink the file and do not try to use I-M-S and Last-Modified
+      // if the users proxy is broken
+      if(_config->FindB("Acquire::BrokenProxy", false) == true) {
+	 std::cerr << "forcing re-get of the signature file as requested" << std::endl;
+	 unlink(DestFile.c_str());
+      }
    }
 
    QueueURI(Desc);
