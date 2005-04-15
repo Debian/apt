@@ -82,6 +82,41 @@ class pkgAcquire::Item
    virtual ~Item();
 };
 
+// item for index diffs
+class pkgAcqIndexDiffs : public pkgAcquire::Item
+{
+   protected:
+   bool Debug;
+   pkgAcquire::ItemDesc Desc;
+   string RealURI;
+   string ExpectedMD5;
+   // this is the SHA-1 sum we expect after the patching
+   string ServerSha1;
+   string CurrentPackagesFile;
+   string Description;
+   vector<string> needed_files;
+   
+   public:
+   
+   // Specialized action members
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual string DescURI() {return RealURI + "Index";};
+
+
+   // various helpers
+   bool ParseIndexDiff(string IndexDiffFile);
+   void QueueDiffIndex(string URI);
+   bool QueueNextDiff();
+   bool ApplyDiff(string PatchFile);
+   void Finish(bool allDone=false);
+
+   pkgAcqIndexDiffs(pkgAcquire *Owner,string URI,string URIDesc,
+		    string ShortDesct, string ExpectedMD5,
+		    vector<string> diffs=vector<string>());
+};
+
 // Item class for index files
 class pkgAcqIndex : public pkgAcquire::Item
 {
@@ -92,7 +127,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcquire::ItemDesc Desc;
    string RealURI;
    string ExpectedMD5;
-   
+
    public:
    
    // Specialized action members

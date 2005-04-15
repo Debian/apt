@@ -24,6 +24,8 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/sha1.h>
+#include <apt-pkg/tagfile.h>
 
 #include <apti18n.h>
     
@@ -31,6 +33,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string>
+#include <sstream>
 #include <stdio.h>
 									/*}}}*/
 
@@ -131,14 +134,251 @@ void pkgAcquire::Item::Rename(string From,string To)
 }
 									/*}}}*/
 
+// AcqIndexDiffs::AcqIndexDiffs - Constructor			
+// ---------------------------------------------------------------------
+/* The package diff is added to the queue. one object is constructed
+ * for each diff and the index
+ */
+pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
+				   string URI,string URIDesc,string ShortDesc,
+				   string ExpectedMD5, vector<string> diffs) 
+   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), needed_files(diffs)
+{
+   
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(URI);
+
+   Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
+
+   Desc.Description = URIDesc;
+   Desc.Owner = this;
+   Desc.ShortDesc = ShortDesc;
+
+   CurrentPackagesFile = _config->FindDir("Dir::State::lists");
+   CurrentPackagesFile += URItoFileName(RealURI);
+
+   if(Debug) {
+      std::clog << "pkgAcqIndexDiffs::pkgAcqIndexDiffs(): " 
+		<< CurrentPackagesFile << std::endl;
+   }
+
+   if(!FileExists(CurrentPackagesFile) || 
+      !_config->FindB("Acquire::Diffs",true)) {
+      // we don't have a pkg file or we don't want to queue
+      if(Debug)
+	 std::clog << "No index file or canceld by user" << std::endl;
+      Failed("", NULL);
+      return;
+   }
+
+   if(needed_files.size() == 0)
+      QueueDiffIndex(URI);
+   else
+      QueueNextDiff();
+}
+
+void pkgAcqIndexDiffs::QueueDiffIndex(string URI)
+{
+   Desc.URI = URI + ".diff/Index";
+   Desc.Description = Description + "IndexDiff";
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(URI) + string(".IndexDiff");
+
+   if(Debug)
+      std::clog << "QueueDiffIndex: " << Desc.URI << std::endl;
+
+   QueueURI(Desc);
+}
+
+void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   if(Debug)
+      std::clog << "Failed(): " << Desc.URI << std::endl
+		<< "Falling back to big package file" << std::endl;
+   new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc, 
+		   ExpectedMD5);
+   Finish();
+}
+
+
+// helper that cleans the item out of the fetcher queue
+void pkgAcqIndexDiffs::Finish(bool allDone)
+{
+   // we restore the original name, this is required, otherwise
+   // the file will be cleaned
+   if(allDone) {
+      // this is for the "real" finish
+      DestFile = _config->FindDir("Dir::State::lists");
+      DestFile += URItoFileName(RealURI);
+      Complete = true;
+      Dequeue();
+      if(Debug)
+	 std::clog << "\n\nallDone: " << DestFile << "\n" << std::endl;
+      return;
+
+   }
+
+   if(Debug)
+      std::clog << "Finishing: " << Desc.URI << std::endl;
+   Complete = false;
+   Status = StatDone;
+   Dequeue();
+   return;
+}
+
+
+// this needs to be rewriten to not depend on the external ed
+bool pkgAcqIndexDiffs::ApplyDiff(string PatchFile)
+{
+   char *error;
+   int res=0;
+
+   string FinalFile = _config->FindDir("Dir::State::lists");
+   FinalFile += URItoFileName(RealURI);
+
+   int Process = ExecFork();
+   if (Process == 0)
+   {
+      chdir(_config->FindDir("Dir::State::lists").c_str());
+      string cmd = "(zcat " + PatchFile + "; echo \"wq\" ) | ed  " + FinalFile + " >/dev/null 2>/dev/null";
+      if(Debug)
+	 std::clog << "Runing: " << cmd << std::endl;
+      res = system(cmd.c_str());
+      _exit(WEXITSTATUS(res));
+   }
+   if(!ExecWait(Process, error, true)) {
+      //_error->Error("Patch failed: %s ", error);
+      return false;
+   }
+
+   return true;
+}
+
+bool pkgAcqIndexDiffs::QueueNextDiff()
+{
+   // queue diff
+   Desc.URI = string(RealURI) + string(".diff/") + needed_files[0] + string(".gz");
+   Desc.Description = Description + string("-diff");
+
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(RealURI + string(".diff/") + needed_files[0]);
+
+   if(Debug)
+      std::clog << "pkgAcqIndexDiffs::QueueNextDiff(): " << Desc.URI << std::endl;
+   
+   QueueURI(Desc);
+
+   return true;
+}
+
+bool pkgAcqIndexDiffs::ParseIndexDiff(string IndexDiffFile)
+{
+   if(Debug)
+      std::clog << "pkgAcqIndexDiffs::ParseIndexDiff() " << IndexDiffFile 
+		<< std::endl;
+   
+   FileFd Fd(IndexDiffFile,FileFd::ReadOnly);
+   pkgTagFile TF(&Fd);
+   if (_error->PendingError() == true)
+      return false;
+   pkgTagSection Tags;
+   if(TF.Step(Tags) == true)
+   {
+      string local_sha1;
+      string tmp = Tags.FindS("SHA1-Current");
+      std::stringstream ss(tmp);
+      ss >> ServerSha1;
+
+      FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
+      SHA1Summation SHA1;
+      SHA1.AddFD(fd.Fd(), fd.Size());
+      local_sha1 = string(SHA1.Result());
+
+      if(local_sha1 == ServerSha1) {
+	 if(Debug)
+	    std::clog << "Package file is up-to-date" << std::endl;
+	 Finish(true);
+	 return true;
+      }
+      if(Debug)
+	 std::clog << "SHA1-Current: " << ServerSha1 << std::endl;
+
+      // check the historie and see what patches we need
+      string history = Tags.FindS("SHA1-History");     
+      std::stringstream hist(history);
+      string sha1, size, file;
+      bool found = false;
+      while(hist >> sha1 >> size >> file) {
+	 if(sha1 == local_sha1) 
+	    found=true;
+	 if(found) {
+	    if(Debug)
+	       std::clog << "Need to get diff: " << file << std::endl;
+	    needed_files.push_back(file);
+	 }
+      }
+      // no information how to get the patches, bail out
+      if(!found) {
+	 if(Debug)
+	    std::clog << "Can't find a patch in the index file" << std::endl;
+	 // Failed will queue a big package file
+	 Failed("", NULL);
+      } else {
+	 // queue the diffs
+	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
+			      ExpectedMD5, needed_files);
+	 Finish();
+	 return true;
+      }
+   }
+
+   return false;
+}
+
+
+void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
+			    pkgAcquire::MethodConfig *Cnf)
+{
+   if(Debug)
+      std::clog << "pkgAcqIndexDiffs::Done(): " << Desc.URI << std::endl;
+
+   Item::Done(Message,Size,Md5Hash,Cnf);
+
+   int len = Desc.URI.size();
+   // sucess in downloading the index
+   if(Desc.URI.substr(len-strlen("Index"),len-1) == "Index") {
+      if(!ParseIndexDiff(DestFile))
+	 return Failed("", NULL);
+      else
+	 return Finish();
+   }
+
+   // sucess in downloading a diff
+   if(Desc.URI.find(".diff") != string::npos) {
+      ApplyDiff(DestFile);
+      needed_files.erase(needed_files.begin());
+
+      if(needed_files.size() > 0) {
+	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
+			      ExpectedMD5, needed_files);
+      } else {
+	 Finish(true);
+	 return;
+      }
+   }
+
+   Finish();
+}
+
+
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The package file is added to the queue and a second class is 
    instantiated to fetch the revision file */   
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
-			 string ExpectedMD5, string comprExt) :
-   Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5)
+			 string ExpectedMD5, string comprExt)
+   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5)
 {
    Decompression = false;
    Erase = false;
@@ -593,8 +833,8 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
       }
       
       // Queue Packages file
-      new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
-                      (*Target)->ShortDesc, ExpectedIndexMD5);
+      new pkgAcqIndexDiffs(Owner, (*Target)->URI, (*Target)->Description,
+			   (*Target)->ShortDesc, ExpectedIndexMD5);
    }
 }
 
