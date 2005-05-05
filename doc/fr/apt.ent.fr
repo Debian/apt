@@ -1,163 +1,210 @@
 <!-- -*- mode: sgml; mode: fold -*- -->
-<!-- translation of version 1.9 -->
+
 <!-- Some common paths.. -->
 <!ENTITY docdir "/usr/share/doc/apt/">
-<!ENTITY configureindex "<filename>&docdir;examples/configure-index.gz</>">
-<!ENTITY aptconfdir "<filename>/etc/apt.conf</>">
+<!ENTITY configureindex "<filename>&docdir;examples/configure-index.gz</filename>">
+<!ENTITY aptconfdir "<filename>/etc/apt.conf</filename>">
 <!ENTITY statedir "/var/lib/apt">
 <!ENTITY cachedir "/var/cache/apt">
 
 <!-- Cross references to other man pages -->
-<!ENTITY apt-conf "<CiteRefEntry>
-    <RefEntryTitle><filename/apt.conf/</RefEntryTitle>
-    <ManVolNum/5/
-  </CiteRefEntry>
+<!ENTITY apt-conf "<citerefentry>
+    <refentrytitle><filename>apt.conf</filename></refentrytitle>
+    <manvolnum>5</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY apt-get "<CiteRefEntry>
-    <RefEntryTitle><command/apt-get/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>
+<!ENTITY apt-get "<citerefentry>
+    <refentrytitle><command>apt-get</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY apt-config "<CiteRefEntry>
-    <RefEntryTitle><command/apt-config/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>">
+<!ENTITY apt-config "<citerefentry>
+    <refentrytitle><command>apt-config</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>">
 
-<!ENTITY apt-cdrom "<CiteRefEntry>
-    <RefEntryTitle><command/apt-cdrom/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>
+<!ENTITY apt-cdrom "<citerefentry>
+    <refentrytitle><command>apt-cdrom</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY apt-cache "<CiteRefEntry>
-    <RefEntryTitle><command/apt-cache/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>
+<!ENTITY apt-cache "<citerefentry>
+    <refentrytitle><command>apt-cache</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY apt-preferences "<CiteRefEntry>
-    <RefEntryTitle><command/apt_preferences/</RefEntryTitle>
-    <ManVolNum/5/
-  </CiteRefEntry>">
+<!ENTITY apt-preferences "<citerefentry>
+    <refentrytitle><command>apt_preferences</command></refentrytitle>
+    <manvolnum>5</manvolnum>
+  </citerefentry>">
 
-<!ENTITY sources-list "<CiteRefEntry>
-    <RefEntryTitle><filename/sources.list/</RefEntryTitle>
-    <ManVolNum/5/
-  </CiteRefEntry>
+<!ENTITY sources-list "<citerefentry>
+    <refentrytitle><filename>sources.list</filename></refentrytitle>
+    <manvolnum>5</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY reportbug "<CiteRefEntry>
-    <RefEntryTitle><command/reportbug/</RefEntryTitle>
-    <ManVolNum/1/
-  </CiteRefEntry>
+<!ENTITY reportbug "<citerefentry>
+    <refentrytitle><command>reportbug</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY dpkg "<CiteRefEntry>
-    <RefEntryTitle><command/dpkg/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>
+<!ENTITY dpkg "<citerefentry>
+    <refentrytitle><command>dpkg</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY dpkg-buildpackage "<CiteRefEntry>
-    <RefEntryTitle><command/dpkg-buildpackage/</RefEntryTitle>
-    <ManVolNum/1/
-  </CiteRefEntry>
+<!ENTITY dpkg-buildpackage "<citerefentry>
+    <refentrytitle><command>dpkg-buildpackage</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY gzip "<CiteRefEntry>
-    <RefEntryTitle><command/gzip/</RefEntryTitle>
-    <ManVolNum/1/
-  </CiteRefEntry>
+<!ENTITY gzip "<citerefentry>
+    <refentrytitle><command>gzip</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY dpkg-scanpackages "<CiteRefEntry>
-    <RefEntryTitle><command/dpkg-scanpackages/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>
+<!ENTITY dpkg-scanpackages "<citerefentry>
+    <refentrytitle><command>dpkg-scanpackages</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY dpkg-scansources "<CiteRefEntry>
-    <RefEntryTitle><command/dpkg-scansources/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>
+<!ENTITY dpkg-scansources "<citerefentry>
+    <refentrytitle><command>dpkg-scansources</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>
 ">
 
-<!ENTITY dselect "<CiteRefEntry>
-    <RefEntryTitle><command/dselect/</RefEntryTitle>
-    <ManVolNum/8/
-  </CiteRefEntry>">
+<!ENTITY dselect "<citerefentry>
+    <refentrytitle><command>dselect</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>">
     
 <!-- Boiler plate docinfo section -->
 <!ENTITY apt-docinfo "
- <docinfo>
-   <address><email>apt@packages.debian.org</></address>
-   <author><firstname>Jason</> <surname>Gunthorpe</></>
-   <copyright><year>1998-2001</> <holder>Jason Gunthorpe</></>
-   <date>12 March 2001</>
- </docinfo>
+ <refentryinfo>
+   <address><email>apt@packages.debian.org</email></address>
+   <author><firstname>Jason</firstname> <surname>Gunthorpe</surname></author>
+   <copyright><year>1998-2001</year> <holder>Jason Gunthorpe</holder></copyright>
+   <date>14 décembre 2003</date>
+   <productname>Linux</productname>  
+ </refentryinfo>
 "> 
+
+<!ENTITY apt-email "
+   <address>
+    <email>apt@packages.debian.org</email>
+   </address>
+">
+
+<!ENTITY apt-author.jgunthorpe "
+   <author>
+    <firstname>Jason</firstname>
+    <surname>Gunthorpe</surname>
+   </author>
+">
+
+<!ENTITY apt-author.team "
+   <author>
+    <othername>APT team</othername>
+   </author>
+">
+
+<!ENTITY apt-product "
+   <productname>Linux</productname>
+">
+<!ENTITY apt-email "
+   <address>
+    <email>apt@packages.debian.org</email>
+   </address>
+">
+
+<!ENTITY apt-copyright "
+    <copyright>
+     <holder>Jason Gunthorpe</holder>
+     <year>1998-2001</year>
+    </copyright>
+">
+
 
 <!-- Boiler plate Bug reporting section -->
 <!ENTITY manbugs "
- <RefSect1><Title>Bogues</>
+ <refsect1><title>Bogues</title>
    <para>
-Voyez la <ulink url='http://bugs.debian.org/src:apt'> page concernant les bogues de APT</>.  
+Voyez la <ulink url='http://bugs.debian.org/src:apt'> page concernant les bogues de APT</ulink>.  
    Si vous voulez rapporter un bogue, consultez le texte 
-   <filename>/usr/share/doc/debian/bug-reporting.txt</> ou utilisez la 
-commande &reportbug;.
- </RefSect1>
-">
+   <filename>/usr/share/doc/debian/bug-reporting.txt</filename> ou utilisez la 
+commande &reportbug;.</para>
+ </refsect1>
+ ">
 
 <!-- Boiler plate Author section -->
 <!ENTITY manauthor "
- <RefSect1><Title>Auteur</>
+ <refsect1><title>Auteur</title>
    <para>
-   APT a été écrit par l'équipe APT <email>apt@packages.debian.org</>.
- </RefSect1>
+   APT a été écrit par l'équipe APT <email>apt@packages.debian.org</email>.
+</para>
+ </refsect1>
 ">
 
 <!-- Section traduction -->
 <!ENTITY deux-traducteurs "
-<RefSect1><Title>Traduction</>
+<refsect1><title>Traduction</title>
 <para>
-Jérôme Marant. 2000&nbsp;; mise à jour : Philippe Batailler. 2004.
-</RefSect1>
+Jérôme Marant. 2000&nbsp;; mise à jour : Philippe Batailler. 2005.
+</para>
+</refsect1>
 ">
 
 <!ENTITY traducteur "
-<RefSect1><Title>Traduction</>
+<refsect1><title>Traduction</title>
 <para>
-Philippe Batailler. <email>debian-l10n-french@lists.debian.org</>. 2004.
-</RefSect1>
+Philippe Batailler. <email>debian-l10n-french@lists.debian.org</email>. 2005.
+</para></refsect1>
 ">
 
 <!-- Should be used within the option section of the text to
      put in the blurb about -h, -v, -c and -o -->
 <!ENTITY apt-commonoptions "
-     <VarListEntry><term><option/-h/</><term><option/--help/</>
-     <ListItem><Para>
+     <varlistentry><term><option>-h</option></term>
+                   <term><option>--help</option></term>
+     <listitem><para>
 Affiche un mode d'emploi succinct.
-     </VarListEntry>
+</para></listitem>
+     </varlistentry>
      
-     <VarListEntry><term><option/-v/</><term><option/--version/</>
-     <ListItem><Para>
+     <varlistentry><term><option>-v</option></term>
+                   <term><option>--version</option></term>
+     <listitem><para>
 Affiche la version du programme.
-     </VarListEntry>
+</para></listitem>
+     </varlistentry>
 
-     <VarListEntry><term><option/-c/</><term><option/--config-file/</>
-     <ListItem><Para>
+     <varlistentry><term><option>-c</option></term>
+                   <term><option>--config-file</option></term>
+     <listitem><para>
 Fichier de configuration&nbsp;; indique quel fichier de configuration utiliser.
 Le programme lit le fichier de configuration par défaut, puis celui-ci.
 Voyez &apt-conf; pour la syntaxe.
-     </VarListEntry>
+</para></listitem>
+     </varlistentry>
      
-     <VarListEntry><term><option/-o/</><term><option/--option/</>
-     <ListItem><Para>
+     <varlistentry><term><option>-o</option></term>
+                   <term><option>--option</option></term>
+     <listitem><para>
 Donne une option de  configuration&nbsp;; cela fixe une option de configuration
-arbitraire. La syntaxe est : <option>-o Foo::Bar=bar</>.
-     </VarListEntry>
+arbitraire. La syntaxe est : <option>-o Foo::Bar=bar</option>.
+</para></listitem>
+     </varlistentry>
 ">
 
 <!-- Should be used within the option section of the text to
@@ -168,6 +215,7 @@ Toutes les options en ligne de commande peuvent être positionnées via le
 fichier de configuration&nbsp;; les descriptifs indiquent l'option de
 configuration à positionner. En ce qui concerne les options booléennes,
 on peut annuler le fichier de configuration en utilisant quelque chose comme
-<option/-f-/,<option/--no-f/, <option/-f=no/ ou d'autres variantes.
+<option>-f-</option>,<option>--no-f</option>, <option>-f=no</option> 
+ou d'autres variantes.
    </para>
 ">

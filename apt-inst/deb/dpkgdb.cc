@@ -380,7 +380,7 @@ bool debDpkgDB::ReadDiversions()
 bool debDpkgDB::ReadyFileList(OpProgress &Progress)
 {
    if (Cache == 0)
-      return _error->Error(_("The pkg cache must be initialize first"));
+      return _error->Error(_("The pkg cache must be initialized first"));
    if (FList != 0)
    {
       Progress.OverallProgress(1,1,1,_("Reading file list"));
