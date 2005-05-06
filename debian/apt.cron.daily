@@ -110,7 +110,7 @@ check_size_constraints()
 	MinAge=$(($MinAge*24*60*60))
 
 	# reverse-sort by mtime
-	for file in $(ls -rt $Cache/*.deb); do 
+	for file in $(ls -rt $Cache/*.deb 2>/dev/null); do 
 	    du=$(du -s $Cache)
 	    size=${du%%/*}
 	    # check if the cache is small enough
@@ -125,7 +125,7 @@ check_size_constraints()
 		#echo "$file ($delta), $MinAge"
 		if [ $delta -le $MinAge ]; then
 		    #echo "Skiping $file (delta=$delta)"
-		    continue
+		    break
 		fi
 	    fi
 
