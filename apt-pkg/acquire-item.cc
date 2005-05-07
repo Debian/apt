@@ -142,7 +142,7 @@ void pkgAcquire::Item::Rename(string From,string To)
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 				   string URI,string URIDesc,string ShortDesc,
 				   string ExpectedMD5, vector<DiffInfo> diffs) 
-   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), needed_files(diffs)
+   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), available_patches(diffs)
 {
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -171,7 +171,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
       return;
    }
 
-   if(needed_files.size() == 0)
+   if(available_patches.size() == 0)
       QueueDiffIndex(URI);
    else
       QueueNextDiff();
@@ -261,7 +261,8 @@ bool pkgAcqIndexDiffs::ApplyDiff(string PatchFile)
    if (Process == 0)
    {
       chdir(_config->FindDir("Dir::State::lists").c_str());
-      string cmd = "(zcat " + PatchFile + "; echo \"wq\" ) | red  " + FinalFile + " >/dev/null 2>/dev/null";
+      // for some reason "red" fails with the pdiffs from p.d.o/~aba ?!? 
+      string cmd = "(zcat " + PatchFile + "; echo \"wq\" ) | /bin/ed  " + FinalFile + " >/dev/null 2>/dev/null";
       if(Debug)
 	 std::clog << "Runing: " << cmd << std::endl;
       res = system(cmd.c_str());
@@ -277,16 +278,35 @@ bool pkgAcqIndexDiffs::ApplyDiff(string PatchFile)
 
 bool pkgAcqIndexDiffs::QueueNextDiff()
 {
-   // FIXME: don't use the needed_files[0] but check sha1 and search
-   //        for the right patch in needed_files
-   //        -> and rename needed_files to "available_patches" 
+   // calc sha1 of the just patched file
+   string FinalFile = _config->FindDir("Dir::State::lists");
+   FinalFile += URItoFileName(RealURI);
 
-   // queue diff
-   Desc.URI = string(RealURI) + string(".diff/") + needed_files[0].file + string(".gz");
-   Desc.Description = needed_files[0].file + string(".pdiff");
+   FileFd fd(FinalFile, FileFd::ReadOnly);
+   SHA1Summation SHA1;
+   SHA1.AddFD(fd.Fd(), fd.Size());
+   string local_sha1 = string(SHA1.Result());
+
+   // see if we have a patch for it, the patch list must be ordered
+   for(vector<DiffInfo>::iterator I=available_patches.begin();
+       I != available_patches.end(); I++) {
+      // if the patch does not fit, it's not interessting
+      if((*I).sha1 != local_sha1)
+	 available_patches.erase(I);
+   }
+
+   // error checking and falling back if no patch was found
+   if(available_patches.size() == 0) { 
+      Failed("", NULL);
+      return false;
+   }
+
+   // queue the right diff
+   Desc.URI = string(RealURI) + string(".diff/") + available_patches[0].file + string(".gz");
+   Desc.Description = available_patches[0].file + string(".pdiff");
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI + string(".diff/") + needed_files[0].file);
+   DestFile += URItoFileName(RealURI + string(".diff/") + available_patches[0].file);
 
    if(Debug)
       std::clog << "pkgAcqIndexDiffs::QueueNextDiff(): " << Desc.URI << std::endl;
@@ -341,7 +361,7 @@ bool pkgAcqIndexDiffs::ParseIndexDiff(string IndexDiffFile)
 	 if(found) {
 	    if(Debug)
 	       std::clog << "Need to get diff: " << d.file << std::endl;
-	    needed_files.push_back(d);
+	    available_patches.push_back(d);
 	 }
       }
       // no information how to get the patches, bail out
@@ -353,7 +373,7 @@ bool pkgAcqIndexDiffs::ParseIndexDiff(string IndexDiffFile)
       } else {
 	 // queue the diffs
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedMD5, needed_files);
+			      ExpectedMD5, available_patches);
 	 Finish();
 	 return true;
       }
@@ -394,11 +414,11 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
    // sucess in downloading a diff
    if(Desc.URI.find(".diff") != string::npos) {
       ApplyDiff(DestFile);
-      needed_files.erase(needed_files.begin());
+      available_patches.erase(available_patches.begin());
 
-      if(needed_files.size() > 0) {
+      if(available_patches.size() > 0) {
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedMD5, needed_files);
+			      ExpectedMD5, available_patches);
       } else {
 	 Finish(true);
 	 return;
@@ -618,6 +638,12 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
       // File was already in place.  It needs to be re-verified
       // because Release might have changed, so Move it into partial
       Rename(Final,DestFile);
+      // unlink the file and do not try to use I-M-S and Last-Modified
+      // if the users proxy is broken
+      if(_config->FindB("Acquire::BrokenProxy", false) == true) {
+	 std::cerr << "forcing re-get of the signature file as requested" << std::endl;
+	 unlink(DestFile.c_str());
+      }
    }
 
    QueueURI(Desc);

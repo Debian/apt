@@ -99,7 +99,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
       string sha1;
       unsigned long size;
    };
-   vector<DiffInfo> needed_files;
+   vector<DiffInfo> available_patches;
    
 
    public:
