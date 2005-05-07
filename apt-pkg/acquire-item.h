@@ -94,8 +94,14 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
    string ServerSha1;
    string CurrentPackagesFile;
    string Description;
-   vector<string> needed_files;
+   struct DiffInfo {
+      string file;
+      string sha1;
+      unsigned long size;
+   };
+   vector<DiffInfo> needed_files;
    
+
    public:
    
    // Specialized action members
@@ -103,7 +109,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return RealURI + "Index";};
-
+   virtual string Custom600Headers();
 
    // various helpers
    bool ParseIndexDiff(string IndexDiffFile);
@@ -114,7 +120,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
 
    pkgAcqIndexDiffs(pkgAcquire *Owner,string URI,string URIDesc,
 		    string ShortDesct, string ExpectedMD5,
-		    vector<string> diffs=vector<string>());
+		    vector<DiffInfo> diffs=vector<DiffInfo>());
 };
 
 // Item class for index files

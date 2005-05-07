@@ -141,7 +141,7 @@ void pkgAcquire::Item::Rename(string From,string To)
  */
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 				   string URI,string URIDesc,string ShortDesc,
-				   string ExpectedMD5, vector<string> diffs) 
+				   string ExpectedMD5, vector<DiffInfo> diffs) 
    : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), needed_files(diffs)
 {
    
@@ -188,6 +188,27 @@ void pkgAcqIndexDiffs::QueueDiffIndex(string URI)
       std::clog << "QueueDiffIndex: " << Desc.URI << std::endl;
 
    QueueURI(Desc);
+}
+
+// AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
+// ---------------------------------------------------------------------
+/* The only header we use is the last-modified header. */
+string pkgAcqIndexDiffs::Custom600Headers()
+{
+   if(DestFile.rfind(".IndexDiff") == string::npos)
+      return string("");
+
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(RealURI) + string(".IndexDiff");
+   
+   if(Debug)
+      std::clog << "Custom600Header-IMS: " << Final << std::endl;
+
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) != 0)
+      return "\nIndex-File: true";
+   
+   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 
 void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
@@ -240,7 +261,7 @@ bool pkgAcqIndexDiffs::ApplyDiff(string PatchFile)
    if (Process == 0)
    {
       chdir(_config->FindDir("Dir::State::lists").c_str());
-      string cmd = "(zcat " + PatchFile + "; echo \"wq\" ) | ed  " + FinalFile + " >/dev/null 2>/dev/null";
+      string cmd = "(zcat " + PatchFile + "; echo \"wq\" ) | red  " + FinalFile + " >/dev/null 2>/dev/null";
       if(Debug)
 	 std::clog << "Runing: " << cmd << std::endl;
       res = system(cmd.c_str());
@@ -256,12 +277,16 @@ bool pkgAcqIndexDiffs::ApplyDiff(string PatchFile)
 
 bool pkgAcqIndexDiffs::QueueNextDiff()
 {
+   // FIXME: don't use the needed_files[0] but check sha1 and search
+   //        for the right patch in needed_files
+   //        -> and rename needed_files to "available_patches" 
+
    // queue diff
-   Desc.URI = string(RealURI) + string(".diff/") + needed_files[0] + string(".gz");
-   Desc.Description = Description + string("-diff");
+   Desc.URI = string(RealURI) + string(".diff/") + needed_files[0].file + string(".gz");
+   Desc.Description = needed_files[0].file + string(".pdiff");
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI + string(".diff/") + needed_files[0]);
+   DestFile += URItoFileName(RealURI + string(".diff/") + needed_files[0].file);
 
    if(Debug)
       std::clog << "pkgAcqIndexDiffs::QueueNextDiff(): " << Desc.URI << std::endl;
@@ -306,15 +331,17 @@ bool pkgAcqIndexDiffs::ParseIndexDiff(string IndexDiffFile)
       // check the historie and see what patches we need
       string history = Tags.FindS("SHA1-History");     
       std::stringstream hist(history);
-      string sha1, size, file;
+      DiffInfo d;
+      string size;
       bool found = false;
-      while(hist >> sha1 >> size >> file) {
-	 if(sha1 == local_sha1) 
+      while(hist >> d.sha1 >> size >> d.file) {
+	 d.size = atoi(size.c_str());
+	 if(d.sha1 == local_sha1) 
 	    found=true;
 	 if(found) {
 	    if(Debug)
-	       std::clog << "Need to get diff: " << file << std::endl;
-	    needed_files.push_back(file);
+	       std::clog << "Need to get diff: " << d.file << std::endl;
+	    needed_files.push_back(d);
 	 }
       }
       // no information how to get the patches, bail out
@@ -347,9 +374,20 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
    int len = Desc.URI.size();
    // sucess in downloading the index
    if(Desc.URI.substr(len-strlen("Index"),len-1) == "Index") {
+
+      // rename
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI) + string(".IndexDiff");
+      if(Debug)
+	 std::clog << "Renaming: " << DestFile << " -> " << FinalFile 
+		   << std::endl;
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+      DestFile = FinalFile;
+
       if(!ParseIndexDiff(DestFile))
 	 return Failed("", NULL);
-      else
+      else 
 	 return Finish();
    }
 
