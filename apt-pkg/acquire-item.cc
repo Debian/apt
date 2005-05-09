@@ -287,13 +287,13 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
    SHA1.AddFD(fd.Fd(), fd.Size());
    string local_sha1 = string(SHA1.Result());
 
-   // see if we have a patch for it, the patch list must be ordered
+   // remove all patches until the next matching patch is found
+   // this requires the Index file to be ordered
    for(vector<DiffInfo>::iterator I=available_patches.begin();
-       I != available_patches.end(); I++) {
-      // if the patch does not fit, it's not interessting
-      if((*I).sha1 != local_sha1)
-	 available_patches.erase(I);
-   }
+       (*I).sha1 == local_sha1 || I != available_patches.end(); 
+       I++) 
+      available_patches.erase(I);
+   
 
    // error checking and falling back if no patch was found
    if(available_patches.size() == 0) { 
