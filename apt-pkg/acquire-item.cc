@@ -290,10 +290,9 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
    // remove all patches until the next matching patch is found
    // this requires the Index file to be ordered
    for(vector<DiffInfo>::iterator I=available_patches.begin();
-       (*I).sha1 == local_sha1 || I != available_patches.end(); 
+       I != available_patches.end() && (*I).sha1 != local_sha1; 
        I++) 
       available_patches.erase(I);
-   
 
    // error checking and falling back if no patch was found
    if(available_patches.size() == 0) { 
@@ -356,14 +355,17 @@ bool pkgAcqIndexDiffs::ParseIndexDiff(string IndexDiffFile)
       bool found = false;
       while(hist >> d.sha1 >> size >> d.file) {
 	 d.size = atoi(size.c_str());
+	 // read until the first match is found
 	 if(d.sha1 == local_sha1) 
 	    found=true;
+	 // from that point on, we probably need all diffs
 	 if(found) {
 	    if(Debug)
 	       std::clog << "Need to get diff: " << d.file << std::endl;
 	    available_patches.push_back(d);
 	 }
       }
+
       // no information how to get the patches, bail out
       if(!found) {
 	 if(Debug)
