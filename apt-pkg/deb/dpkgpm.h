@@ -40,7 +40,7 @@ class pkgDPkgPM : public pkgPackageManager
    bool RunScripts(const char *Cnf);
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
-   
+
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);
    virtual bool Configure(PkgIterator Pkg);

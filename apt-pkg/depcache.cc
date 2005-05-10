@@ -16,6 +16,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/algorithms.h>
+
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/tagfile.h>
     
 #include <apti18n.h>    
 									/*}}}*/
@@ -72,7 +76,10 @@ bool pkgDepCache::Init(OpProgress *Prog)
       // Find the proper cache slot
       StateCache &State = PkgState[I->ID];
       State.iFlags = 0;
-      
+      State.DirtyState = pkgCache::State::RemoveUnknown;
+      //State.AutomaticRemove = I->AutomaticRemove;
+      State.AutomaticRemove = pkgCache::State::RemoveUnknown;
+
       // Figure out the install version
       State.CandidateVer = GetCandidateVer(I);
       State.InstallVer = I.CurrentVer();
@@ -447,6 +454,35 @@ void pkgDepCache::Update(OpProgress *Prog)
       AddStates(I);
    }
 
+   // read the state file ------------------------------
+   FileFd state_file;
+   string state = _config->FindDir("Dir::State") + "pkgstates";
+   if(FileExists(state)) {
+      state_file.Open(state, FileFd::ReadOnly);
+      int file_size = state_file.Size();
+      Prog->OverallProgress(0, file_size, 1, _("Reading extended state information"));
+
+      pkgTagFile tagfile(&state_file);
+      pkgTagSection section;
+      int amt=0;
+      while(tagfile.Step(section)) {
+	 string pkgname = section.FindS("Package");
+	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
+	 // Silently ignore unknown packages and packages with no actual
+	 // version.
+	 if(!pkg.end() && !pkg.VersionList().end()) {
+	    short reason = section.FindI("Remove-Reason", pkgCache::State::RemoveManual);
+	    PkgState[pkg->ID].AutomaticRemove = reason;
+	    //std::cout << "Set: " << pkgname << " to " << reason << std::endl;
+	    amt+=section.size();
+	    Prog->OverallProgress(amt, file_size, 1, _("Reading extended state information"));
+	 }
+	 Prog->OverallProgress(file_size, file_size, 1, _("Reading extended state information"));
+      }
+   }
+   //--------------------------------------
+
+
    if (Prog != 0)      
       Prog->Progress(Done);
 }
@@ -582,7 +618,8 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge)
    else
       P.Mode = ModeDelete;
    P.InstallVer = 0;
-   P.Flags &= Flag::Auto;
+   // This was not inverted before, but I think it should be
+   P.Flags &= ~Flag::Auto;
 
    AddStates(Pkg);   
    Update(Pkg);
@@ -752,6 +789,15 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
    
    AddStates(Pkg);
    AddSizes(Pkg);
+}
+									/*}}}*/
+// DepCache::SetDirty - Switch the package between dirty states		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgDepCache::SetDirty(PkgIterator const &Pkg, pkgCache::State::PkgRemoveState To)
+{
+   StateCache &P = PkgState[Pkg->ID];
+   P.DirtyState = To;
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/

@@ -79,6 +79,10 @@ class pkgDepCache : protected pkgCache::Namespace
       unsigned short Flags;
       unsigned short iFlags;           // Internal flags
 
+      // Traversal status and state for automatic removal
+      unsigned char DirtyState;
+      unsigned char AutomaticRemove;
+
       // Various tree indicators
       signed char Status;              // -1,0,1,2
       unsigned char Mode;              // ModeList
@@ -99,6 +103,7 @@ class pkgDepCache : protected pkgCache::Namespace
       inline bool NowBroken() const {return (DepState & DepNowMin) != DepNowMin;};
       inline bool InstBroken() const {return (DepState & DepInstMin) != DepInstMin;};
       inline bool Install() const {return Mode == ModeInstall;};
+      inline unsigned char Dirty() const {return DirtyState;};
       inline VerIterator InstVerIter(pkgCache &Cache)
                 {return VerIterator(Cache,InstallVer);};
       inline VerIterator CandidateVerIter(pkgCache &Cache)
@@ -189,6 +194,7 @@ class pkgDepCache : protected pkgCache::Namespace
 		    unsigned long Depth = 0);
    void SetReInstall(PkgIterator const &Pkg,bool To);
    void SetCandidateVersion(VerIterator TargetVer);
+   void SetDirty(PkgIterator const &Pkg, pkgCache::State::PkgRemoveState To);
    
    // This is for debuging
    void Update(OpProgress *Prog = 0);

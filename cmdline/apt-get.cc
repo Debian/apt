@@ -58,6 +58,7 @@
 #include <errno.h>
 #include <regex.h>
 #include <sys/wait.h>
+#include <sstream>
 									/*}}}*/
 
 using namespace std;
@@ -992,6 +993,26 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 cerr << _("Unable to correct missing packages.") << endl;
 	 return _error->Error(_("Aborting install."));
       }
+
+      // write the auto-mark list ----------------------------------
+      // -- we do it here because there is no libapt::Commit() :/
+      FileFd state_file;
+      string state = _config->FindDir("Dir::State") + "pkgstates";
+
+
+      state_file.Open(state, FileFd::WriteEmpty);
+      std::ostringstream ostr;
+      for(pkgCache::PkgIterator p=Cache->PkgBegin(); !p.end();p++) {
+	 if(Cache[p].AutomaticRemove != pkgCache::State::RemoveUnknown) {
+	    ostr.str(string(""));
+	    ostr << "Package: " << p.Name()
+		 << "\nRemove-Reason: "
+		 << (int)(Cache[p].AutomaticRemove) << "\n\n";
+	    state_file.Write(ostr.str().c_str(), ostr.str().size());
+	    //std::cout << "Writing auto-mark: " << ostr.str() << endl;
+	 }
+      }
+      // ----------------------------------------------------------
        	 
       _system->UnLock();
       pkgPackageManager::OrderResult Res = PM->DoInstall();
@@ -1375,6 +1396,135 @@ bool DoUpgrade(CommandLine &CmdL)
    return InstallPackages(Cache,true);
 }
 									/*}}}*/
+// RecurseDirty - Mark used packages as dirty				/*{{{*/
+// ---------------------------------------------------------------------
+/* Mark all reachable packages as dirty. */
+void RecurseDirty (CacheFile &Cache, pkgCache::PkgIterator Pkg, pkgCache::State::PkgRemoveState DirtLevel)
+{
+   // If it is not installed, and we are in manual mode, ignore it
+   if ((Pkg->CurrentVer == 0 && Cache[Pkg].Install() == false || Cache[Pkg].Delete() == true) &&
+       DirtLevel == pkgCache::State::RemoveManual) 
+   {
+//      fprintf(stdout,"This one is not installed/virtual %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+      return;
+   }
+
+   // If it is not installed, and it is not virtual, ignore it
+   if ((Pkg->CurrentVer == 0 && Cache[Pkg].Install() == false || Cache[Pkg].Delete() == true) &&
+       Pkg->VersionList != 0)
+   {
+//      fprintf(stdout,"This one is not installed %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+      return;
+   }
+
+   // If it is similar or more dirty than we are ;-), because we've been here already, don't mark it
+   // This is necessary because virtual packages just relay the current level,
+   // so it may be possible e.g. that this was already seen with ::RemoveSuggested, but
+   // we are ::RemoveRequired
+   if (Cache[Pkg].Dirty() >= DirtLevel) 
+   {
+      //fprintf(stdout,"Seen already %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+      return;
+   }
+   
+   // If it is less important than the current DirtLevel, don't mark it
+   if (Cache[Pkg].AutomaticRemove != pkgCache::State::RemoveManual && 
+      Cache[Pkg].AutomaticRemove > DirtLevel) 
+   {
+//       fprintf(stdout,"We don't need %s %d %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel, Cache[Pkg].Dirty());
+       return;
+   }
+
+   // Mark it as used
+   Cache->SetDirty(Pkg, DirtLevel);
+       
+   //fprintf(stdout,"We keep %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+
+   // We are a virtual package
+   if (Pkg->VersionList == 0)
+   {
+//      fprintf(stdout,"We are virtual %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+      for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); ! Prv.end(); ++Prv)
+	 RecurseDirty (Cache, Prv.OwnerPkg(), DirtLevel);
+      return;
+   }
+
+   // Depending on the type of dependency, follow it
+   for (pkgCache::DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); ! D.end(); ++D) 
+   {
+//      fprintf(stdout,"We depend on %s %s\n", D.TargetPkg().Name(), D.DepType());
+
+      switch(D->Type) 
+      {
+	 case pkgCache::Dep::Depends:
+	 case pkgCache::Dep::PreDepends:
+	    RecurseDirty (Cache, D.TargetPkg(), pkgCache::State::RemoveRequired);
+	    break;
+	 case pkgCache::Dep::Recommends:
+            RecurseDirty (Cache, D.TargetPkg(), pkgCache::State::RemoveRecommended);
+	    break;
+         case pkgCache::Dep::Suggests:
+            RecurseDirty (Cache, D.TargetPkg(), pkgCache::State::RemoveSuggested);
+	    break;
+	 case pkgCache::Dep::Conflicts:
+	 case pkgCache::Dep::Replaces:
+	 case pkgCache::Dep::Obsoletes:
+	    // We don't handle these here
+	    break;
+      }
+   }
+//   fprintf(stdout,"We keep %s %d %d <END>\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+}
+									/*}}}*/
+// DoAutomaticRemove - Remove all automatic unused packages		/*{{{*/
+// ---------------------------------------------------------------------
+/* Remove unused automatic packages */
+bool DoAutomaticRemove(CacheFile &Cache)
+{
+   std::cout << "DoAutomaticRemove()" << std::endl;
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+      if(!Cache[Pkg].Dirty() && Cache[Pkg].AutomaticRemove > 0)
+	 std::cout << "has auto-remove information: " << Pkg.Name() 
+		   << " " << (int)Cache[Pkg].AutomaticRemove 
+		   << std::endl;
+
+
+   if (_config->FindB("APT::Get::Remove",true) == false)
+      return _error->Error(_("We are not supposed to delete stuff, can't start AutoRemover"));
+
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+      Cache->SetDirty(Pkg, pkgCache::State::RemoveUnknown);
+
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg) 
+      RecurseDirty (Cache, Pkg, pkgCache::State::RemoveManual);
+   
+
+
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+   {
+      if (! Cache[Pkg].Dirty() &&
+          (Pkg->CurrentVer != 0 && Cache[Pkg].Install() == false && Cache[Pkg].Delete() == false))
+      {
+         fprintf(stdout,"We could delete %s %d\n", Pkg.Name(), Cache[Pkg].AutomaticRemove);
+         Cache->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
+      }
+   }
+
+   // Now see if we destroyed anything
+   if (Cache->BrokenCount() != 0)
+   {
+      c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
+	         "shouldn't happen. Please file a bug report against apt.") << endl;
+      c1out << endl;
+      c1out << _("The following information may help to resolve the situation:") << endl;
+      c1out << endl;
+      ShowBroken(c1out,Cache,false);
+
+      return _error->Error(_("Internal Error, AutoRemover broke stuff"));
+   }
+   return true;
+}
+									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -1546,6 +1696,11 @@ bool DoInstall(CommandLine &CmdL)
       return _error->Error(_("Broken packages"));
    }   
    
+   //if (_config->FindB("APT::Get::AutomaticRemove")) {
+      if (!DoAutomaticRemove(Cache)) 
+	 return false;
+   //}
+
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
    if (Cache->InstCount() != ExpectedInst)
@@ -1565,6 +1720,8 @@ bool DoInstall(CommandLine &CmdL)
 	 
 	 if (*J == 0) {
 	    List += string(I.Name()) + " ";
+	    //if (_config->FindB("APT::Get::AutomaticRemove"))
+	       Cache[I].AutomaticRemove = pkgCache::State::RemoveRequired;
         VersionsList += string(Cache[I].CandVersion) + "\n";
      }
       }
@@ -2410,6 +2567,7 @@ void GetInitialize()
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
    _config->Set("APT::Get::List-Cleanup",true);
+   _config->Set("APT::Get::AutomaticRemove",false);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
@@ -2465,6 +2623,7 @@ int main(int argc,const char *argv[])
       {0,"remove","APT::Get::Remove",0},
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
+      {0,"experimental-automatic-remove","APT::Get::AutomaticRemove",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
