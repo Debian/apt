@@ -1360,6 +1360,20 @@ bool ShowPackage(CommandLine &CmdL)
 
       ++found;
 
+      // Show virtual packages
+      if (Pkg->ProvidesList != 0)
+      {
+	 ioprintf(std::cout,_("Package %s is a virtual package provided by:\n"),
+		  Pkg.Name());
+	 
+	 pkgCache::PrvIterator I = Pkg.ProvidesList();
+	 for (; I.end() == false; I++)
+	    cout << "  " << I.OwnerPkg().Name() << endl;
+	 cout << _("You should explicitly select one to show.") << endl;
+	 continue;
+      }
+
+
       // Find the proper version to use.
       if (_config->FindB("APT::Cache::AllVersions","true") == true)
       {
