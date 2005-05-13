@@ -406,7 +406,7 @@ string debTranslationsIndex::Info(const char *Type) const
 /* */
 bool debTranslationsIndex::Exists() const
 {
-   return true;
+   return FileExists(IndexFile(LanguageCode().c_str()));
 }
 									/*}}}*/
 // TranslationsIndex::Size - Return the size of the index		/*{{{*/

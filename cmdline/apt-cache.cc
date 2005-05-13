@@ -1228,9 +1228,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
    // Strip the Description
    unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
    *DescP='\0';
-
-   // Write all the rest
-   if (fwrite(Buffer,1,V.FileList()->Size+1,stdout) < (size_t)(V.FileList()->Size+1))
+   if (write(STDOUT_FILENO,Buffer, strlen((char*)Buffer)+1) != strlen((char *)Buffer)+1)
    {
       delete [] Buffer;
       return false;
