@@ -453,7 +453,28 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
    return true;
 }
 									/*}}}*/
-
+// TranslationsIndex::FindInCache - Find this index				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) const
+{
+   pkgCache::PkgFileIterator File = Cache.FileBegin();
+   if (this->UseTranslation()) 
+     for (; File.end() == false; File++)
+       {
+	 if (IndexFile(LanguageCode().c_str()) != File.FileName())
+	   continue;
+      
+	 struct stat St;
+	 if (stat(File.FileName(),&St) != 0)
+	   return pkgCache::PkgFileIterator(Cache);
+	 if ((unsigned)St.st_size != File->Size || St.st_mtime != File->mtime)
+	   return pkgCache::PkgFileIterator(Cache);
+	 return File;
+       }   
+   return File;
+}
+									/*}}}*/
 // StatusIndex::debStatusIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
