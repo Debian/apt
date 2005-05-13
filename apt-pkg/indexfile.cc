@@ -86,6 +86,12 @@ bool pkgIndexFile::UseTranslation()
 // IndexFile::CheckLanguageCode - Check the Language Code   	        /*{{{*/
 // ---------------------------------------------------------------------
 /* */
+/* common cases: de_DE, de_DE@euro, de_DE.UTF-8, de_DE.UTF-8@euro,
+                 de_DE.ISO8859-1, tig_ER
+                 more in /etc/gdm/locale.conf 
+		 approach: just get the first letter before the underscore?!?
+*/
+
 bool pkgIndexFile::CheckLanguageCode(const char *Lang)
 {
   if (strlen(Lang) == 2 || (strlen(Lang) == 5 && Lang[2] == '_'))
@@ -104,8 +110,13 @@ string pkgIndexFile::LanguageCode()
 {
   const string Translation = _config->Find("APT::Acquire::Translation");
 
-  if (Translation.compare("environment") == 0)
-     return std::setlocale(LC_ALL,NULL);
+  if (Translation.compare("environment") == 0) {
+     string lang = std::setlocale(LC_MESSAGES,NULL);
+     if(lang.size() > 2)
+	return lang.substr(0,2);
+     else
+	return lang;
+  }
   else 
      return Translation;
 }
