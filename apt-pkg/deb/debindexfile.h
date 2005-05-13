@@ -96,7 +96,7 @@ class debTranslationsIndex : public pkgIndexFile
    
    // Interface for the Cache Generator
    virtual bool Exists() const;
-   virtual bool HasPackages() const {return true;};
+   virtual bool HasPackages() const { return UseTranslation();};
    virtual unsigned long Size() const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;

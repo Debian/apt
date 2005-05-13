@@ -458,20 +458,21 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 /* */
 pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) const
 {
+   string FileName = TranslationFile();
+
    pkgCache::PkgFileIterator File = Cache.FileBegin();
-   if (this->UseTranslation()) 
-     for (; File.end() == false; File++)
-       {
-	 if (IndexFile(LanguageCode().c_str()) != File.FileName())
-	   continue;
+   for (; File.end() == false; File++)
+   {
+      if (FileName != File.FileName())
+	 continue;
       
-	 struct stat St;
-	 if (stat(File.FileName(),&St) != 0)
-	   return pkgCache::PkgFileIterator(Cache);
-	 if ((unsigned)St.st_size != File->Size || St.st_mtime != File->mtime)
-	   return pkgCache::PkgFileIterator(Cache);
-	 return File;
-       }   
+      struct stat St;
+      if (stat(File.FileName(),&St) != 0)
+	 return pkgCache::PkgFileIterator(Cache);
+      if ((unsigned)St.st_size != File->Size || St.st_mtime != File->mtime)
+	 return pkgCache::PkgFileIterator(Cache);
+      return File;
+   }   
    return File;
 }
 									/*}}}*/
