@@ -401,6 +401,14 @@ string debTranslationsIndex::Info(const char *Type) const
    return Info;
 }
 									/*}}}*/
+bool debTranslationsIndex::HasPackages() const
+{
+   if(!UseTranslation())
+      return false;
+   
+   return FileExists(IndexFile(LanguageCode().c_str()));
+}
+
 // TranslationsIndex::Exists - Check if the index is available		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
