@@ -458,14 +458,14 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 /* */
 pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) const
 {
-   string FileName = TranslationFile();
-
+   string FileName = IndexFile(LanguageCode().c_str());
+   
    pkgCache::PkgFileIterator File = Cache.FileBegin();
    for (; File.end() == false; File++)
    {
       if (FileName != File.FileName())
 	 continue;
-      
+
       struct stat St;
       if (stat(File.FileName(),&St) != 0)
 	 return pkgCache::PkgFileIterator(Cache);
