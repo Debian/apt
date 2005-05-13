@@ -157,6 +157,14 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 		     ComputeIndexTargets(),
 		     new indexRecords (Dist));
 
+   // Queue the translations
+   for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin(); 
+	I != SectionEntries.end(); I++) {
+
+      debTranslationsIndex i = debTranslationsIndex(URI,Dist,(*I)->Section);
+      i.GetIndexes(Owner);
+   }
+
    return true;
 }
 

@@ -572,6 +572,11 @@ class debIFTypePkg : public pkgIndexFile::Type
    };
    debIFTypePkg() {Label = "Debian Package Index";};
 };
+class debIFTypeTrans : public debIFTypePkg
+{
+   public:
+   debIFTypeTrans() {Label = "Debian Translation Index";};
+};
 class debIFTypeStatus : public pkgIndexFile::Type
 {
    public:
@@ -584,6 +589,7 @@ class debIFTypeStatus : public pkgIndexFile::Type
 };
 static debIFTypeSrc _apt_Src;
 static debIFTypePkg _apt_Pkg;
+static debIFTypeTrans _apt_Trans;
 static debIFTypeStatus _apt_Status;
 
 const pkgIndexFile::Type *debSourcesIndex::GetType() const
@@ -596,7 +602,7 @@ const pkgIndexFile::Type *debPackagesIndex::GetType() const
 }
 const pkgIndexFile::Type *debTranslationsIndex::GetType() const
 {
-   return &_apt_Pkg;
+   return &_apt_Trans;
 }
 const pkgIndexFile::Type *debStatusIndex::GetType() const
 {
