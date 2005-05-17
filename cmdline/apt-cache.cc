@@ -1225,10 +1225,11 @@ bool DisplayRecord(pkgCache::VerIterator V)
       return false;
    }
 
-   // Strip the Description
+   // Get a pointer to start of Description field
    unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
-   *DescP='\0';
-   if (write(STDOUT_FILENO,Buffer, strlen((char*)Buffer)+1) != strlen((char *)Buffer)+1)
+
+   // Write all but Description
+   if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
    {
       delete [] Buffer;
       return false;
