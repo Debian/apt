@@ -43,6 +43,7 @@ class IndexCopy
 
    bool CopyPackages(string CDROM,string Name,vector<string> &List,
 		     pkgCdromStatus *log);
+   virtual ~IndexCopy() {};
 };
 
 class PackageCopy : public IndexCopy

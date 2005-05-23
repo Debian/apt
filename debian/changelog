@@ -1,15 +1,29 @@
-apt (0.6.36ubuntu1) breezy; urgency=low
+apt (0.6.37) breezy; urgency=low
 
   * apt-cache show <virtualpkg> shows the available packages providing 
     the virtual pkg (thanks to otavio) (closes: #202493)
   * make pinning on the "component" work again (using the section of the 
     archive, we don't use per-section Release files anymore with apt-0.6)
     (closes ubuntu #9935)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 23 May 2005 23:02:50 +0200
+
+apt (0.6.36ubuntu1) breezy; urgency=low
+
   * make it possible to write a cache-control: no-cache header even if
     no proxy is set to support transparent proxies (closes ubuntu: #10773)
 
- --
+  * Merge otavio@debian.org--2005/apt--fixes--0.6:
+    - Fix comment about the need of xmlto while building from Arch;
+    - Fix StatStore struct on cachedb.h to use time_t and then fix a compile
+      warning;
+    - Lock database at start of DoInstall routine to avoid concurrent
+      runs of install/remove and update commands (Closes: #194467)
+    - Fix warnings while compiling with GCC 4.0 compiler  
 
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 23 May 2005 11:57:53 +0200
+
+>>>>>>> MERGE-SOURCE
 apt (0.6.36) experimental; urgency=low
 
   * Merge apt--mvo--0:
@@ -21,7 +35,11 @@ apt (0.6.36) experimental; urgency=low
     - apt-pkg/cdrom.cc:
       honor "Acquire::gpgv::Options" when verifying the signature (Ubuntu #8496)
  
+<<<<<<< TREE
  -- Michael Vogt <mvo@debian.org>  Fri,  6 May 2005 10:12:20 +0200
+=======
+ -- Michael Vogt <mvo@debian.org>  Thu, 31 Mar 2005 20:37:11 +0200
+>>>>>>> MERGE-SOURCE
 
 apt (0.6.35) hoary; urgency=low
 
