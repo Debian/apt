@@ -19,8 +19,10 @@
 #endif 
 
 #include <string>
+#include <algorithm>
 
 using std::string;
+using std::min;
 
 class SHA1Summation;
 

@@ -25,6 +25,7 @@ class pkgArchiveCleaner
    public:   
    
    bool Go(string Dir,pkgCache &Cache);
+   virtual ~pkgArchiveCleaner() {};
 };
 
 #endif
