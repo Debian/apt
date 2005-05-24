@@ -541,7 +541,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
    }
    
    delete [] Added;
-   return ShowList(out,_("WARNING: The following essential packages will be removed\n"
+   return ShowList(out,_("WARNING: The following essential packages will be removed.\n"
 			 "This should NOT be done unless you know exactly what you are doing!"),List,VersionsList);
 }
 
@@ -862,7 +862,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       
       const char *Prompt = _("Yes, do as I say!");
       ioprintf(c2out,
-	       _("You are about to do something potentially harmful\n"
+	       _("You are about to do something potentially harmful.\n"
 		 "To continue type in the phrase '%s'\n"
 		 " ?] "),Prompt);
       c2out << flush;
