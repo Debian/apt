@@ -88,9 +88,11 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    
    /* This implements a timeout for connect by opening the connection
       nonblocking */
-   if (WaitFd(Fd,true,TimeOut) == false)
+   if (WaitFd(Fd,true,TimeOut) == false) {
+      Owner->SetFailExtraMsg("\nFailReason: Timeout");
       return _error->Error(_("Could not connect to %s:%s (%s), "
 			   "connection timed out"),Host.c_str(),Service,Name);
+   }
 
    // Check the socket for an error condition
    unsigned int Err;
