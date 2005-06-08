@@ -42,15 +42,15 @@ bool pkgDirStream::DoItem(Item &Itm,int &Fd)
 	 int iFd = open(Itm.Name,O_NDELAY|O_WRONLY|O_CREAT|O_TRUNC|O_APPEND,
 		       Itm.Mode);
 	 if (iFd < 0)
-	    return _error->Errno("open",_("Failed write file %s"),
+	    return _error->Errno("open",_("Failed to write file %s"),
 				 Itm.Name);
 	 
 	 // fchmod deals with umask and fchown sets the ownership
 	 if (fchmod(iFd,Itm.Mode) != 0)
-	    return _error->Errno("fchmod",_("Failed write file %s"),
+	    return _error->Errno("fchmod",_("Failed to write file %s"),
 				 Itm.Name);
 	 if (fchown(iFd,Itm.UID,Itm.GID) != 0 && errno != EPERM)
-	    return _error->Errno("fchown",_("Failed write file %s"),
+	    return _error->Errno("fchown",_("Failed to write file %s"),
 				 Itm.Name);
 	 Fd = iFd;
 	 return true;

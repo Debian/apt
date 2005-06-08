@@ -30,8 +30,8 @@ bool Hashes::AddFD(int Fd,unsigned long Size)
    int Res = 0;
    while (Size != 0)
    {
-      Res = read(Fd,Buf,MIN(Size,sizeof(Buf)));
-      if (Res < 0 || (unsigned)Res != MIN(Size,sizeof(Buf)))
+      Res = read(Fd,Buf,min(Size,(unsigned long)sizeof(Buf)));
+      if (Res < 0 || (unsigned)Res != min(Size,(unsigned long)sizeof(Buf)))
 	 return false;
       Size -= Res;
       MD5.Add(Buf,Res);

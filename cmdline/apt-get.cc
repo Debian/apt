@@ -541,7 +541,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
    }
    
    delete [] Added;
-   return ShowList(out,_("WARNING: The following essential packages will be removed\n"
+   return ShowList(out,_("WARNING: The following essential packages will be removed.\n"
 			 "This should NOT be done unless you know exactly what you are doing!"),List,VersionsList);
 }
 
@@ -862,7 +862,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       
       const char *Prompt = _("Yes, do as I say!");
       ioprintf(c2out,
-	       _("You are about to do something potentially harmful\n"
+	       _("You are about to do something potentially harmful.\n"
 		 "To continue type in the phrase '%s'\n"
 		 " ?] "),Prompt);
       c2out << flush;
@@ -1380,6 +1380,15 @@ bool DoUpgrade(CommandLine &CmdL)
 /* Install named packages */
 bool DoInstall(CommandLine &CmdL)
 {
+   // Lock the list directory
+   FileFd Lock;
+   if (_config->FindB("Debug::NoLocking",false) == false)
+   {
+      Lock.Fd(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
+      if (_error->PendingError() == true)
+        return _error->Error(_("Unable to lock the list directory"));
+   }
+   
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || 
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)

@@ -1,3 +1,35 @@
+apt (0.6.37) breezy; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-81
+    - patch-66: Italian update
+    - patch-71: French update
+    - patch-73: Basque update
+    - patch-74: Hebrew update
+    - patch-76: Correct Hebrew translation (Closes: #306658)
+    - patch-77: French man page update
+    - patch-79: Correct syntax errors in Hebrew translation
+    - patch-81: Portuguese update
+  * Fix build of French man pages (now using XML, not SGML)
+  * Add Welsh translation from Dafydd Harries
+    (daf@muse.19inch.net--2005/apt--main--0--patch-1)
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 24 May 2005 14:38:25 -0700
+
+apt (0.6.36ubuntu1) breezy; urgency=low
+
+  * make it possible to write a cache-control: no-cache header even if
+    no proxy is set to support transparent proxies (closes ubuntu: #10773)
+
+  * Merge otavio@debian.org--2005/apt--fixes--0.6:
+    - Fix comment about the need of xmlto while building from Arch;
+    - Fix StatStore struct on cachedb.h to use time_t and then fix a compile
+      warning;
+    - Lock database at start of DoInstall routine to avoid concurrent
+      runs of install/remove and update commands (Closes: #194467)
+    - Fix warnings while compiling with GCC 4.0 compiler  
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 23 May 2005 11:57:53 +0200
+
 apt (0.6.36) experimental; urgency=low
 
   * Merge apt--mvo--0:
@@ -9,7 +41,7 @@ apt (0.6.36) experimental; urgency=low
     - apt-pkg/cdrom.cc:
       honor "Acquire::gpgv::Options" when verifying the signature (Ubuntu #8496)
  
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 31 Mar 2005 20:37:11 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 31 Mar 2005 20:37:11 +0200
 
 apt (0.6.35) hoary; urgency=low
 
