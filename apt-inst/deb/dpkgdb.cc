@@ -67,7 +67,7 @@ static bool EraseDir(const char *Dir)
    if (Pid == 0)
    {
       execlp(_config->Find("Dir::Bin::rm","/bin/rm").c_str(),
-	     "rm","-rf","--",Dir,0);
+	     "rm","-rf","--",Dir,(char *)NULL);
       _exit(100);
    }
    return ExecWait(Pid,_config->Find("dir::bin::rm","/bin/rm").c_str());
@@ -380,7 +380,7 @@ bool debDpkgDB::ReadDiversions()
 bool debDpkgDB::ReadyFileList(OpProgress &Progress)
 {
    if (Cache == 0)
-      return _error->Error(_("The pkg cache must be initialize first"));
+      return _error->Error(_("The pkg cache must be initialized first"));
    if (FList != 0)
    {
       Progress.OverallProgress(1,1,1,_("Reading file list"));

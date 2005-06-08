@@ -635,9 +635,9 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
        	 and a no-store directive for archives. */
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
 	      Itm->Uri.c_str(),ProperHost.c_str());
-      if (_config->FindB("Acquire::http::No-Cache",false) == true)
-	 strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
-      else
+      // only generate a cache control header if we actually want to 
+      // use a cache
+      if (_config->FindB("Acquire::http::No-Cache",false) == false)
       {
 	 if (Itm->IndexFile == true)
 	    sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
@@ -649,6 +649,10 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
 	 }	 
       }
    }
+   // generate a no-cache header if needed
+   if (_config->FindB("Acquire::http::No-Cache",false) == true)
+      strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
+
    
    string Req = Buf;
 

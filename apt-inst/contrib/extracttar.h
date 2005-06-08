@@ -21,6 +21,10 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/dirstream.h>
 
+#include <algorithm>
+
+using std::min;
+
 class ExtractTar
 {
    protected:

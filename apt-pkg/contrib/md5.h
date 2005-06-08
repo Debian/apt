@@ -28,8 +28,10 @@
 #endif 
 
 #include <string>
+#include <algorithm>
 
 using std::string;
+using std::min;
 
 class MD5Summation;
 
