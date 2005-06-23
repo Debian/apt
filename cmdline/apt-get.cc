@@ -994,25 +994,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 return _error->Error(_("Aborting install."));
       }
 
-      // write the auto-mark list ----------------------------------
       // -- we do it here because there is no libapt::Commit() :/
-      FileFd state_file;
-      string state = _config->FindDir("Dir::State") + "pkgstates";
-
-
-      state_file.Open(state, FileFd::WriteEmpty);
-      std::ostringstream ostr;
-      for(pkgCache::PkgIterator p=Cache->PkgBegin(); !p.end();p++) {
-	 if(Cache[p].AutomaticRemove != pkgCache::State::RemoveUnknown) {
-	    ostr.str(string(""));
-	    ostr << "Package: " << p.Name()
-		 << "\nRemove-Reason: "
-		 << (int)(Cache[p].AutomaticRemove) << "\n\n";
-	    state_file.Write(ostr.str().c_str(), ostr.str().size());
-	    //std::cout << "Writing auto-mark: " << ostr.str() << endl;
-	 }
-      }
-      // ----------------------------------------------------------
+      Cache->writeStateFile(NULL);
        	 
       _system->UnLock();
       pkgPackageManager::OrderResult Res = PM->DoInstall();
@@ -1720,8 +1703,8 @@ bool DoInstall(CommandLine &CmdL)
 	 
 	 if (*J == 0) {
 	    List += string(I.Name()) + " ";
-	    //if (_config->FindB("APT::Get::AutomaticRemove"))
-	       Cache[I].AutomaticRemove = pkgCache::State::RemoveRequired;
+	    // mark each pkg as auto-installed 
+	    Cache[I].AutomaticRemove = pkgCache::State::RemoveRequired;
         VersionsList += string(Cache[I].CandVersion) + "\n";
      }
       }

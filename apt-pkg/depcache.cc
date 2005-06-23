@@ -20,7 +20,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
-    
+#include <sstream>    
 #include <apti18n.h>    
 									/*}}}*/
 
@@ -102,6 +102,66 @@ bool pkgDepCache::Init(OpProgress *Prog)
    return true;
 } 
 									/*}}}*/
+
+bool pkgDepCache::readStateFile(OpProgress *Prog)
+{
+   FileFd state_file;
+   string state = _config->FindDir("Dir::State") + "pkgstates";
+   if(FileExists(state)) {
+      state_file.Open(state, FileFd::ReadOnly);
+      int file_size = state_file.Size();
+      Prog->OverallProgress(0, file_size, 1, 
+			    _("Reading extended state information"));
+
+      pkgTagFile tagfile(&state_file);
+      pkgTagSection section;
+      int amt=0;
+      while(tagfile.Step(section)) {
+	 string pkgname = section.FindS("Package");
+	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
+	 // Silently ignore unknown packages and packages with no actual
+	 // version.
+	 if(!pkg.end() && !pkg.VersionList().end()) {
+	    short reason = section.FindI("Remove-Reason", 
+					 pkgCache::State::RemoveManual);
+	    PkgState[pkg->ID].AutomaticRemove = reason;
+	    //std::cout << "Set: " << pkgname << " to " << reason << std::endl;
+	    amt+=section.size();
+	    Prog->OverallProgress(amt, file_size, 1, 
+				  _("Reading extended state information"));
+	 }
+	 Prog->OverallProgress(file_size, file_size, 1, 
+			       _("Reading extended state information"));
+      }
+   }
+
+   return true;
+}
+
+bool pkgDepCache::writeStateFile(OpProgress *prog)
+{
+   // write the auto-mark list ----------------------------------
+
+   FileFd StateFile;
+   string state = _config->FindDir("Dir::State") + "pkgstates";
+
+   if(!StateFile.Open(state, FileFd::WriteEmpty))
+      return _error->Error(_("Failed to write StateFile %s"),
+			   state.c_str());
+
+   std::ostringstream ostr;
+   for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end();pkg++) {
+      if(PkgState[pkg->ID].AutomaticRemove != pkgCache::State::RemoveUnknown) {
+	 ostr.str(string(""));
+	 ostr << "Package: " << pkg.Name()
+	      << "\nRemove-Reason: "
+	      << (int)(PkgState[pkg->ID].AutomaticRemove) << "\n\n";
+	 StateFile.Write(ostr.str().c_str(), ostr.str().size());
+	 //std::cout << "Writing auto-mark: " << ostr.str() << endl;
+      }
+   }
+   return true;
+}
 
 // DepCache::CheckDep - Checks a single dependency			/*{{{*/
 // ---------------------------------------------------------------------
@@ -454,34 +514,7 @@ void pkgDepCache::Update(OpProgress *Prog)
       AddStates(I);
    }
 
-   // read the state file ------------------------------
-   FileFd state_file;
-   string state = _config->FindDir("Dir::State") + "pkgstates";
-   if(FileExists(state)) {
-      state_file.Open(state, FileFd::ReadOnly);
-      int file_size = state_file.Size();
-      Prog->OverallProgress(0, file_size, 1, _("Reading extended state information"));
-
-      pkgTagFile tagfile(&state_file);
-      pkgTagSection section;
-      int amt=0;
-      while(tagfile.Step(section)) {
-	 string pkgname = section.FindS("Package");
-	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
-	 // Silently ignore unknown packages and packages with no actual
-	 // version.
-	 if(!pkg.end() && !pkg.VersionList().end()) {
-	    short reason = section.FindI("Remove-Reason", pkgCache::State::RemoveManual);
-	    PkgState[pkg->ID].AutomaticRemove = reason;
-	    //std::cout << "Set: " << pkgname << " to " << reason << std::endl;
-	    amt+=section.size();
-	    Prog->OverallProgress(amt, file_size, 1, _("Reading extended state information"));
-	 }
-	 Prog->OverallProgress(file_size, file_size, 1, _("Reading extended state information"));
-      }
-   }
-   //--------------------------------------
-
+   readStateFile(Prog);
 
    if (Prog != 0)      
       Prog->Progress(Done);
