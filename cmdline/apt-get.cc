@@ -994,9 +994,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 return _error->Error(_("Aborting install."));
       }
 
-      // -- we do it here because there is no libapt::Commit() :/
-      Cache->writeStateFile(NULL);
-       	 
       _system->UnLock();
       pkgPackageManager::OrderResult Res = PM->DoInstall();
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
