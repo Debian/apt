@@ -132,5 +132,9 @@ bool pkgAllUpgrade(pkgDepCache &Cache);
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
+
+// mark all reachable packages, everything that is not reach can 
+// be removed
+bool pkgMarkUsed(pkgDepCache &Cache);
 		     
 #endif
