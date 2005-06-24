@@ -627,21 +627,3 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    return Completed;
 }
 									/*}}}*/
-// PM::DoInstall - Does the installation				/*{{{*/
-// ---------------------------------------------------------------------
-/* This uses the filenames in FileNames and the information in the
-   DepCache to perform the installation of packages.*/
-pkgPackageManager::OrderResult pkgPackageManager::DoInstall()
-{
-   OrderResult Res = OrderInstall();
-   if (Res != Failed)
-      if (Go() == false)
-	 return Failed;
-
-   // if all was fine update the state file
-   if(Res == Completed)
-      Cache.writeStateFile(NULL);
-
-   return Res;
-}
-									/*}}}*/

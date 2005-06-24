@@ -140,7 +140,8 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 
 bool pkgDepCache::writeStateFile(OpProgress *prog)
 {
-   // write the auto-mark list ----------------------------------
+   // FIXME: this function needs to be called inside the commit()
+   // of the package manager. so after 
 
    FileFd StateFile;
    string state = _config->FindDir("Dir::State") + "pkgstates";
