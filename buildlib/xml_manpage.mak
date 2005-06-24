@@ -2,7 +2,7 @@
 
 # This handles man pages in DocBook XML format. We convert to the respective
 # output in the source directory then copy over to the final dest. This
-# means yodl is only needed if compiling from CVS
+# means xmlto is only needed if compiling from Arch
 
 # Input
 # $(SOURCE) - The documents to use, in the form foo.sect, ie apt-cache.8

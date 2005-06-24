@@ -69,7 +69,7 @@ class CacheDB
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2)};
    struct StatStore
    {
-      uint32_t mtime;          
+      time_t   mtime;          
       uint32_t Flags;
    } CurStat;
    struct StatStore OldStat;

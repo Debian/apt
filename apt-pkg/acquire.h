@@ -100,8 +100,7 @@ class pkgAcquire
 
    enum RunResult {Continue,Failed,Cancelled};
 
-   RunResult Run() { return Run(500000); }; // Binary compatibility
-   RunResult Run(int PulseIntervall);
+   RunResult Run(int PulseIntervall=500000);
    void Shutdown();
    
    // Simple iteration mechanism

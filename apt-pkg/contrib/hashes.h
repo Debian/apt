@@ -20,6 +20,10 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 
+#include <algorithm>
+
+using std::min;
+
 class Hashes
 {
    public:
