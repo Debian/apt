@@ -67,7 +67,7 @@ static bool EraseDir(const char *Dir)
    if (Pid == 0)
    {
       execlp(_config->Find("Dir::Bin::rm","/bin/rm").c_str(),
-	     "rm","-rf","--",Dir,0);
+	     "rm","-rf","--",Dir,(char *)NULL);
       _exit(100);
    }
    return ExecWait(Pid,_config->Find("dir::bin::rm","/bin/rm").c_str());

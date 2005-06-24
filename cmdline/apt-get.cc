@@ -1380,6 +1380,15 @@ bool DoUpgrade(CommandLine &CmdL)
 /* Install named packages */
 bool DoInstall(CommandLine &CmdL)
 {
+   // Lock the list directory
+   FileFd Lock;
+   if (_config->FindB("Debug::NoLocking",false) == false)
+   {
+      Lock.Fd(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
+      if (_error->PendingError() == true)
+        return _error->Error(_("Unable to lock the list directory"));
+   }
+   
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || 
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)

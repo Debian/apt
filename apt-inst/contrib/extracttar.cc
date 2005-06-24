@@ -309,7 +309,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       while (Size != 0)
       {
 	 unsigned char Junk[32*1024];
-	 unsigned long Read = MIN(Size,sizeof(Junk));
+	 unsigned long Read = min(Size,(unsigned long)sizeof(Junk));
 	 if (InFd.Read(Junk,((Read+511)/512)*512) == false)
 	    return false;
 	 
