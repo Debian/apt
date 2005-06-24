@@ -1061,6 +1061,17 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
       return _error->Error(_("Unable to correct problems, you have held broken packages."));
    }
    
+   // set the auto-flags (mvo: I'm not sure if we _really_ need this, but
+   // I didn't managed 
+   pkgCache::PkgIterator I = Cache.PkgBegin();
+   for (;I.end() != true; I++) {
+      if (Cache[I].NewInstall() && !(Flags[I->ID] & PreInstalled)) {
+	 std::cout << "Resolve installed new pkg: " << I.Name() << " (now marking it as auto)" << std::endl;
+	 Cache[I].Flags |= pkgCache::Flag::Auto;
+      }
+   }
+
+
    return true;
 }
 									/*}}}*/

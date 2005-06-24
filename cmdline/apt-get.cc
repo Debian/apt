@@ -1703,10 +1703,8 @@ bool DoInstall(CommandLine &CmdL)
 	 
 	 if (*J == 0) {
 	    List += string(I.Name()) + " ";
-	    // mark each pkg as auto-installed 
-	    Cache[I].AutomaticRemove = pkgCache::State::RemoveRequired;
-        VersionsList += string(Cache[I].CandVersion) + "\n";
-     }
+	    VersionsList += string(Cache[I].CandVersion) + "\n";
+	 }
       }
       
       ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);

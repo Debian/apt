@@ -151,6 +151,17 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 
    std::ostringstream ostr;
    for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end();pkg++) {
+
+      // clear out no longer installed pkg
+      if(PkgState[pkg->ID].Delete() || pkg.CurrentVer() == NULL) 
+	 PkgState[pkg->ID].AutomaticRemove = pkgCache::State::RemoveUnknown;
+
+      // check if we have new information
+      if(PkgState[pkg->ID].Flags & pkgCache::Flag::Auto) {
+	 std::cout << "pkg: " << pkg.Name() << " is auto-dep" << std::endl;
+	 PkgState[pkg->ID].AutomaticRemove = pkgCache::State::RemoveRequired;
+      }
+
       if(PkgState[pkg->ID].AutomaticRemove != pkgCache::State::RemoveUnknown) {
 	 ostr.str(string(""));
 	 ostr << "Package: " << pkg.Name()
