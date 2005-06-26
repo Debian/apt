@@ -336,4 +336,4 @@ arch-build:
 	mkdir -p debian/arch-build/apt-$(APT_DEBVER)
 	baz inventory -s | xargs cp -a --parents --target=debian/arch-build/apt-$(APT_DEBVER)
 	$(MAKE) -C debian/arch-build/apt-$(APT_DEBVER) startup doc
-	(cd debian/arch-build/apt-$(APT_DEBVER); $(DEB_BUILD_PROG))
+	(cd debian/arch-build/apt-$(APT_DEBVER); $(DEB_BUILD_PROG); dpkg-genchanges -S > ../apt_$(APT_DEBVER)_source.changes)
