@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt-da\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-03-29 07:17+0200\n"
-"PO-Revision-Date: 2005-02-10 20:50+0100\n"
+"PO-Revision-Date: 2005-06-23 10:46+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -44,7 +44,7 @@ msgstr "  Rene virtuelle pakker: "
 
 #: cmdline/apt-cache.cc:274
 msgid "  Single virtual packages: "
-msgstr "  Enkelt-virtuelle pakker: "
+msgstr "  Enkelte virtuelle pakker: "
 
 #: cmdline/apt-cache.cc:275
 msgid "  Mixed virtual packages: "
@@ -259,7 +259,7 @@ msgstr ""
 "   shell - Skal-tilstand\n"
 "   dump - Vis opsætningen\n"
 "\n"
-"Options:\n"
+"Tilvalg:\n"
 "  -h   Denne hjælpetekst.\n"
 "  -c=? Læs denne opsætningsfil\n"
 "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
@@ -287,7 +287,7 @@ msgstr ""
 "apt-extracttemplates er et værktøj til at uddrage opsætnings- og skabelon-"
 "oplysninger fra Debianpakker\n"
 "\n"
-"Options:\n"
+"Tilvalg:\n"
 "  -h   Denne hjælpetekst\n"
 "  -t   Angiv temp-mappe\n"
 "  -c=? Læs denne opsætningsfil\n"
@@ -327,7 +327,6 @@ msgid "Error processing contents %s"
 msgstr "Fejl under behandling af indhold %s"
 
 #: ftparchive/apt-ftparchive.cc:551
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -400,10 +399,10 @@ msgstr ""
 "  -h    Denne hjælpetekst\n"
 "  --md5 Styr generering af MD5\n"
 "  -s=?  Kilde-tvangsfil\n"
-"  -q    Stille (vis færre statusbeskeder)\n"
+"  -q    Stille\n"
 "  -d=?  Vælg den valgfrie mellemlager-database\n"
-"  --no-delink Aktivér \"delinking\" fejlsporingstilstand\n"
-"  --contents  Bestem generering af inholdsfil\n"
+"  --no-delink Aktivér \"delinking\"-fejlsporingstilstand\n"
+"  --contents  Bestem generering af indholdsfil\n"
 "  -c=?  Læs denne opsætningsfil\n"
 "  -o=?  Sæt en opsætnings-indstilling"
 
@@ -600,7 +599,7 @@ msgstr "Kunne ikke udføre komprimeringsprogram"
 
 #: ftparchive/multicompress.cc:363
 msgid "decompressor"
-msgstr "dekompressions-program"
+msgstr "dekomprimerings-program"
 
 #: ftparchive/multicompress.cc:406
 msgid "IO to subprocess/file failed"
@@ -669,7 +668,7 @@ msgstr "Følgende NYE pakker vil blive installeret:"
 
 #: cmdline/apt-get.cc:399
 msgid "The following packages will be REMOVED:"
-msgstr "Følgende pakker vil blive FJERNET:"
+msgstr "Følgende pakker vil blive AFINSTALLERET:"
 
 #: cmdline/apt-get.cc:421
 msgid "The following packages have been kept back:"
@@ -697,33 +696,33 @@ msgid ""
 "WARNING: The following essential packages will be removed\n"
 "This should NOT be done unless you know exactly what you are doing!"
 msgstr ""
-"ADVARSEL: Følgende essentielle pakker vil blive fjernet\n"
+"ADVARSEL: Følgende essentielle pakker vil blive afinstalleret\n"
 "Dette bør IKKE ske medmindre du er helt klar over, hvad du laver!"
 
 #: cmdline/apt-get.cc:575
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu opgraderede, %lu netop installerede, "
+msgstr "%lu opgraderes, %lu nyinstalleres, "
 
 #: cmdline/apt-get.cc:579
 #, c-format
 msgid "%lu reinstalled, "
-msgstr "%lu geninstallerede, "
+msgstr "%lu geninstalleres, "
 
 #: cmdline/apt-get.cc:581
 #, c-format
 msgid "%lu downgraded, "
-msgstr "%lu nedgraderede, "
+msgstr "%lu nedgraderes, "
 
 #: cmdline/apt-get.cc:583
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu at fjerne og %lu ikke opgraderede.\n"
+msgstr "%lu afinstalleres og %lu opgraderes ikke.\n"
 
 #: cmdline/apt-get.cc:587
 #, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu ikke fuldstændigt installerede eller fjernede.\n"
+msgstr "%lu ikke fuldstændigt installerede eller afinstallerede.\n"
 
 #: cmdline/apt-get.cc:647
 msgid "Correcting dependencies..."
@@ -771,7 +770,7 @@ msgstr "Der er problemer og -y blev brugt uden --force-yes"
 
 #: cmdline/apt-get.cc:762
 msgid "Packages need to be removed but remove is disabled."
-msgstr "Pakker skal fjernes, men Remove er deaktiveret."
+msgstr "Pakker skal afinstalleres, men Remove er deaktiveret."
 
 #: cmdline/apt-get.cc:788 cmdline/apt-get.cc:1769 cmdline/apt-get.cc:1802
 msgid "Unable to lock the download directory"
@@ -882,7 +881,7 @@ msgstr ""
 #: cmdline/apt-get.cc:1054
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
-msgstr "Pakken %s er ikke installeret, så den fjernes ikke\n"
+msgstr "Pakken %s er ikke installeret, så den afinstalleres ikke\n"
 
 #: cmdline/apt-get.cc:1065
 #, c-format
@@ -1197,13 +1196,13 @@ msgstr ""
 "   update - Hent nye lister over pakker\n"
 "   upgrade - Udfør en opgradering\n"
 "   install - Installér nye pakker (pakke er libc6, ikke libc6.deb)\n"
-"   remove - Fjern pakker\n"
+"   remove - Afinstallér pakker\n"
 "   source - Hent kildetekstarkiver\n"
 "   build-dep - Sæt opbygningsafhængigheder op for kildetekstpakker\n"
 "   dist-upgrade - Distributionsopgradering, se apt-get(8)\n"
 "   dselect-upgrade - Følg valgene fra dselect\n"
-"   clean - Fjern hentede arkivfiler\n"
-"   autoclean - Fjern gamle hentede arkivfiler\n"
+"   clean - Slet hentede arkivfiler\n"
+"   autoclean - Slet gamle hentede arkivfiler\n"
 "   check - Tjek at der ikke er uopfyldte afhængigheder\n"
 "\n"
 "Tilvalg:\n"
@@ -1283,7 +1282,7 @@ msgstr ""
 "apt-sortpkgs er et simpelt værktøj til at sortere pakkefiler. Tilvalget -s\n"
 "bruges til at angive filens type.\n"
 "\n"
-"Options:\n"
+"Tilvalg:\n"
 "  -h   Denne hjælpetekst\n"
 "  -s   Benyt kildefils-sortering\n"
 "  -c=? Læs denne opsætningsfil\n"
@@ -1367,7 +1366,7 @@ msgstr "Kunne ikke læse arkivhovederne"
 
 #: apt-inst/filelist.cc:384
 msgid "DropNode called on still linked node"
-msgstr "DropNode kaldt med endnu-forbundet knude"
+msgstr "DropNode kaldt med endnu forbundet knude"
 
 #: apt-inst/filelist.cc:416
 msgid "Failed to locate the hash element!"
@@ -1467,7 +1466,7 @@ msgstr "Kunne ikke finde %s"
 #: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
 #, c-format
 msgid "Failed to remove %s"
-msgstr "Kunne ikke fjerne %s"
+msgstr "Kunne ikke slette %s"
 
 #: apt-inst/deb/dpkgdb.cc:110 apt-inst/deb/dpkgdb.cc:112
 #, c-format
@@ -1544,7 +1543,8 @@ msgid "Internal error adding a diversion"
 msgstr "Intern fejl under tilføjelse af omrokering"
 
 #: apt-inst/deb/dpkgdb.cc:383
-msgid "The pkg cache must be initialized first"
+#, fuzzy
+msgid "The pkg cache must be initialize first"
 msgstr "pkg-mellemlageret skal initialiseres først"
 
 #: apt-inst/deb/dpkgdb.cc:386
@@ -2234,17 +2234,17 @@ msgstr "Ugyldig linje %lu i kildelisten %s (dist)"
 #: apt-pkg/sourcelist.cc:92
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Ugyldig linje %lu i kildelisten %s (URI parse)"
+msgstr "Ugyldig linje %lu i kildelisten %s (tolkning af URI)"
 
 #: apt-pkg/sourcelist.cc:98
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Ugyldig linje %lu i kildelisten %s (absolute dist)"
+msgstr "Ugyldig linje %lu i kildelisten %s (absolut dist)"
 
 #: apt-pkg/sourcelist.cc:105
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Ugyldig linje %lu i kildelisten %s (dist parse)"
+msgstr "Ugyldig linje %lu i kildelisten %s (tolkning af dist)"
 
 #: apt-pkg/sourcelist.cc:156
 #, c-format
@@ -2269,7 +2269,7 @@ msgstr "Typen '%s' er ukendt på linje %u i kildelisten %s"
 #: apt-pkg/sourcelist.cc:199 apt-pkg/sourcelist.cc:202
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
-msgstr "Ugyldig linje %u i kildelisten %s (vendor id)"
+msgstr "Ugyldig linje %u i kildelisten %s (producent-id)"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
@@ -2278,9 +2278,10 @@ msgid ""
 "package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
 "you really want to do it, activate the APT::Force-LoopBreak option."
 msgstr ""
-"Kørsel af denne installation kræver midlertidig fjernelse af den essentielle "
-"pakke %s grundet en afhængighedsløkke. Det er ofte en dårlig idé, men hvis "
-"du virkelig vil gøre det, kan du aktivere valget 'APT::Force-LoopBreak'."
+"Kørsel af denne installation kræver midlertidig afinstallation af den "
+"essentielle pakke %s grundet en afhængighedsløkke. Det er ofte en dårlig "
+"idé, men hvis du virkelig vil gøre det, kan du aktivere valget 'APT::Force-"
+"LoopBreak'."
 
 #: apt-pkg/pkgrecords.cc:37
 #, c-format
@@ -2371,38 +2372,38 @@ msgid "Cache has an incompatible versioning system"
 msgstr "Mellemlageret benytter en inkompatibel versionsstyring"
 
 #: apt-pkg/pkgcachegen.cc:117
-#, c-format
-msgid "Error occurred while processing %s (NewPackage)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (NewPackage)"
 msgstr "Der skete en fejl under behandlingen af %s (NewPackage)"
 
 #: apt-pkg/pkgcachegen.cc:129
-#, c-format
-msgid "Error occurred while processing %s (UsePackage1)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (UsePackage1)"
 msgstr "Der skete en fejl under behandlingen af %s (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:150
-#, c-format
-msgid "Error occurred while processing %s (UsePackage2)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (UsePackage2)"
 msgstr "Der skete en fejl under behandlingen af %s (UsePackage2)"
 
 #: apt-pkg/pkgcachegen.cc:154
-#, c-format
-msgid "Error occurred while processing %s (NewFileVer1)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (NewFileVer1)"
 msgstr "Der skete en fejl under behandlingen af %s (NewFileVer1)"
 
 #: apt-pkg/pkgcachegen.cc:184
-#, c-format
-msgid "Error occurred while processing %s (NewVersion1)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (NewVersion1)"
 msgstr "Der skete en fejl under behandlingen af %s (NewVersion1)"
 
 #: apt-pkg/pkgcachegen.cc:188
-#, c-format
-msgid "Error occurred while processing %s (UsePackage3)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (UsePackage3)"
 msgstr "Der skete en fejl under behandlingen af %s (UsePackage3)"
 
 #: apt-pkg/pkgcachegen.cc:192
-#, c-format
-msgid "Error occurred while processing %s (NewVersion2)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (NewVersion2)"
 msgstr "Der skete en fejl under behandlingen af %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
@@ -2420,13 +2421,13 @@ msgstr ""
 "Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:241
-#, c-format
-msgid "Error occurred while processing %s (FindPkg)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (FindPkg)"
 msgstr "Der skete en fejl under behandlingen af %s (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:254
-#, c-format
-msgid "Error occurred while processing %s (CollectFileProvides)"
+#, fuzzy, c-format
+msgid "Error occured while processing %s (CollectFileProvides)"
 msgstr "Der skete en fejl under behandlingen af %s (CollectfileProvides)"
 
 #: apt-pkg/pkgcachegen.cc:260
@@ -2452,11 +2453,11 @@ msgstr "IO-fejl ved gemning af kilde-mellemlageret"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "omdøbning mislykkedes, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:235 apt-pkg/acquire-item.cc:894
+#: apt-pkg/acquire-item.cc:235 apt-pkg/acquire-item.cc:900
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum stemmer ikke"
 
-#: apt-pkg/acquire-item.cc:708
+#: apt-pkg/acquire-item.cc:714
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2465,7 +2466,7 @@ msgstr ""
 "Jeg kunne ikke lokalisere filen til %s-pakken. Det betyder muligvis at du er "
 "nødt til manuelt at reparere denne pakke. (grundet manglende arch)"
 
-#: apt-pkg/acquire-item.cc:761
+#: apt-pkg/acquire-item.cc:767
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2474,13 +2475,13 @@ msgstr ""
 "Jeg kunne ikke lokalisere filen til %s-pakken. Det betyder muligvis at du er "
 "nødt til manuelt at reparere denne pakke."
 
-#: apt-pkg/acquire-item.cc:797
+#: apt-pkg/acquire-item.cc:803
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Pakkeindeksfilerne er i stykker. Intet 'Filename:'-felt for pakken %s."
 
-#: apt-pkg/acquire-item.cc:884
+#: apt-pkg/acquire-item.cc:890
 msgid "Size mismatch"
 msgstr "Størrelsen stemmer ikke"
 
