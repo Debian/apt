@@ -564,12 +564,19 @@ bool debListParser::Step()
 // ---------------------------------------------------------------------
 /* */
 bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
-				    FileFd &File)
+				    FileFd &File, string component)
 {
    pkgTagFile Tags(&File, File.Size() + 256); // XXX
    pkgTagSection Section;
    if (Tags.Step(Section) == false)
       return false;
+
+   //mvo: I don't think we need to fill that in (it's unused since apt-0.6)
+   //FileI->Architecture = WriteUniqString(Arch);
+   
+   // apt-secure does no longer download individual (per-section) Release
+   // file. to provide Component pinning we use the section name now
+   FileI->Component = WriteUniqString(component);
 
    const char *Start;
    const char *Stop;
@@ -589,7 +596,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
    if (Section.FindFlag("NotAutomatic",FileI->Flags,
 			pkgCache::Flag::NotAutomatic) == false)
       _error->Warning("Bad NotAutomatic flag");
-   
+
    return !_error->PendingError();
 }
 									/*}}}*/

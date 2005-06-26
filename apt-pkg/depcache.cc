@@ -91,6 +91,9 @@ bool pkgDepCache::Init(OpProgress *Prog)
    }
    
    Update(Prog);
+
+   if(Prog != 0)
+      Prog->Done();
    
    return true;
 } 
