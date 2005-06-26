@@ -56,6 +56,9 @@ struct PackageMap
    string BinCacheDB;
    string BinOverride;
    string ExtraOverride;
+
+   // We generate for this given arch
+   string Arch;
    
    // Stuff for the Source File
    string SrcFile;
@@ -158,7 +161,8 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    // Create a package writer object.
    PackagesWriter Packages(flCombine(CacheDir,BinCacheDB),
 			   flCombine(OverrideDir,BinOverride),
-			   flCombine(OverrideDir,ExtraOverride));
+			   flCombine(OverrideDir,ExtraOverride),
+			   Arch);
    if (PkgExt.empty() == false && Packages.SetExts(PkgExt) == false)
       return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
@@ -489,6 +493,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.BaseDir = SubstVar(Block.Find("Directory",DDir.c_str()),Vars);
 	       Itm.PkgFile = SubstVar(Block.Find("Packages",DPkg.c_str()),Vars);
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/$(ARCH)",Vars);
+	       Itm.Arch = Arch;
 	       Itm.Contents = SubstVar(Block.Find("Contents",DContents.c_str()),Vars);
 	       Itm.ContentsHead = SubstVar(Block.Find("Contents::Header",DContentsH.c_str()),Vars);
 	       Itm.FLFile = SubstVar(Block.Find("FileList",DFLFile.c_str()),Vars);

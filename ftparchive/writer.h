@@ -92,13 +92,15 @@ class PackagesWriter : public FTWScanner
    string DirStrip;
    FILE *Output;
    struct CacheDB::Stats &Stats;
-   
+   string Arch;
+
    inline bool ReadOverride(string File) {return Over.ReadOverride(File);};
    inline bool ReadExtraOverride(string File) 
       {return Over.ReadExtraOverride(File);};
    virtual bool DoPackage(string FileName);
 
-   PackagesWriter(string DB,string Overrides,string ExtOverrides=string());
+   PackagesWriter(string DB,string Overrides,string ExtOverrides=string(),
+		  string Arch=string());
    virtual ~PackagesWriter() {};
 };
 
@@ -170,6 +172,7 @@ protected:
       string SHA1;
       // Limited by FileFd::Size()
       unsigned long size;
+      ~CheckSum() {};
    };
    map<string,struct CheckSum> CheckSums;
 };
