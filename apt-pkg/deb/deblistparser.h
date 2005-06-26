@@ -55,7 +55,8 @@ class debListParser : public pkgCacheGenerator::ListParser
 
    virtual bool Step();
    
-   bool LoadReleaseInfo(pkgCache::PkgFileIterator FileI,FileFd &File);
+   bool LoadReleaseInfo(pkgCache::PkgFileIterator FileI,FileFd &File,
+			string section);
    
    static const char *ParseDepends(const char *Start,const char *Stop,
 			    string &Package,string &Ver,unsigned int &Op,
