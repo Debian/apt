@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="iso-8859-15" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.fr">
+%aptent;
+
+]>
+
+<refentry lang="fr">
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+
+<refmeta>
+<refentrytitle>apt-sortpkgs</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv lang="fr">
+<refname>apt-sortpkgs</refname><refpurpose>Un outil pour trier les index de paquets.
+ </refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>apt-sortpkgs</command>
+<arg><option>-hvs</option></arg>
+<arg><option>-o=<replaceable>option de configuration</replaceable></option></arg>
+<arg><option>-c=<replaceable>fichier</replaceable></option></arg>
+<arg choice="plain" rep="repeat"><replaceable>fichier</replaceable></arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+<para>   
+<command>Apt-sortpkgs</command> prend un index (un index de Source ou un index de
+paquet) et trie leurs enregistrements selon le nom de paquet. Un tri des
+champs de chaque enregistrement est réalisé selon des règles internes.
+
+   </para>
+<para>
+Le résultat est envoyé sur la sortie standard&nbsp;; l'entrée doit être un 
+fichier analysable.
+ </para>
+</refsect1>
+
+<refsect1><title>Options</title>
+&apt-cmdblurb;
+
+<variablelist>
+<varlistentry><term><option>-s</option></term><term><option>--source</option></term>
+<listitem><para>
+Se servir d'un index de sources pour le tri des champs.
+Élément de configuration&nbsp;: <literal>APT::SortPkgs::Source</literal>.
+     </para></listitem>
+</varlistentry>
+
+&apt-commonoptions;
+</variablelist>
+</refsect1>
+
+<refsect1><title>Voir aussi</title>
+<para>
+&apt-conf;</para>
+</refsect1>
+
+
+<refsect1><title>Diagnostics</title>
+<para>
+<command>apt-sortpkgs</command> retourne zéro si tout se passe bien ou 100 en cas 
+d'erreur.
+ </para>
+</refsect1>
+
+&manbugs;
+&traducteur;
+</refentry>

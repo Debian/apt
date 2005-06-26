@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="iso-8859-15" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.fr">
+%aptent;
+
+]>
+
+<refentry lang="fr">
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 Février 2004</date>
+ </refentryinfo>
+
+<refmeta>
+<refentrytitle>apt.conf</refentrytitle>
+<manvolnum>5</manvolnum>
+</refmeta>
+
+<refnamediv><refname>apt.conf</refname>
+<refpurpose>Fichier de configuration pour APT</refpurpose>
+</refnamediv>
+
+<refsect1><title>Description</title>
+<para>   
+Le fichier <filename>apt.conf</filename> est le principal fichier de configuration 
+de la collection d'outils que constitue APT&nbsp;; tous les outils font appel à ce 
+fichier de configuration et utilisent un analyseur syntaxique en ligne de 
+commande commun afin de fournir un environnement uniforme. Quand un outil
+d'APT démarre, il lit (si elle existe) la variable d'environnement 
+<envar>APT_CONFIG</envar>&nbsp;; puis il lit les fichiers situés dans 
+<literal>Dir::Etc::Parts</literal> ainsi que le principal fichier de configuration
+indiqué par <literal>Dir::Etc::main</literal>&nbsp;; enfin il applique les options de 
+la ligne de commande qui annulent les directives de configuration, chargeant,
+si nécessaire, d'autres fichiers de configuration.
+   </para>
+<para>
+Le fichier de configuration est construit comme un arbre d'options
+organisées en groupes fonctionnels. On se sert du double deux points («&nbsp;::&nbsp;») 
+pour indiquer une option&nbsp;; par exemple, <literal>APT::Get::Assume-Yes</literal> est
+une option pour le groupe d'outils APT, destinée à l'outil Get. Les options
+n'héritent pas des groupes de leurs parents.
+   </para>
+<para>
+Syntaxiquement, le langage de configuration est conçu sur le même modèle
+que les langages utilisés par des outils ISC tels que bind et dhcp. Une ligne
+qui commence par <literal>//</literal> est un commentaire et elle est ignorée.
+Chaque ligne est de la forme&nbsp;:
+   <literal>APT::Get::Assume-Yes "true";</literal> 
+Le point-virgule final est obligatoire et les guillemets sont optionnels.
+On peut déclarer un nouveau champ d'action avec des accolades, comme 
+suit&nbsp;:
+</para>
+
+<informalexample><programlisting>   
+APT {
+  Get {
+    Assume-Yes "true";
+    Fix-Broken "true";
+  };
+};
+</programlisting></informalexample>
+
+<para>
+avec des retours à la ligne pour faciliter la lecture. On peut créer des 
+listes en ouvrant un champ d'action et en mettant un seul mot entre 
+apostrophes suivi d'un point-virgule. On peut mettre plusieurs entrées,
+séparées par un point-virgule.
+</para>
+
+<informalexample><programlisting>   
+DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
+</programlisting></informalexample>
+
+<para>
+Les modèles <filename>&docdir;examples/apt.conf</filename> &configureindex;
+montrent à quoi devrait ressembler le fichier de configuration.
+   </para>
+<para>
+Deux éléments spéciaux sont autorisés&nbsp;: <literal>#include</literal> et 
+<literal>#clear</literal>. <literal>#include</literal> inclut le fichier donné en argument,
+à moins que le nom ne se termine par une barre oblique. <literal>#clear</literal> sert à 
+effacer une liste de noms.
+   </para>
+<para>
+Tous les outils d'APT possèdent une option <option>-o</option> qui permet de 
+spécifier une configuration arbitraire depuis la ligne de commande. La 
+syntaxe consiste en un nom complet d'option (par exemple 
+<literal>APT::Get::Assume-Yes</literal>) suivi par un signe égal, puis par la nouvelle 
+valeur de l'option. On peut compléter une liste en ajoutant un «&nbsp;::&nbsp;» au nom 
+de la liste.
+ </para>
+</refsect1>
+
+<refsect1><title>Le groupe APT</title>
+<para>   
+Ce groupe d'options contrôle aussi bien le comportement global d'APT que
+la prise en compte des options pour chaque outil.
+</para>
+   <variablelist>
+<varlistentry><term>Architecture</term>
+<listitem><para>
+L'architecture du système&nbsp;; cette option positionne l'architecture à utiliser 
+pour récupérer des fichiers et analyser des listes de paquets. L'architecture 
+interne par défaut est celle pour laquelle APT a été compilé.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Ignore-Hold</term><listitem>
+<para>
+Ignore les paquets «&nbsp;gelés&nbsp;»&nbsp;; cette option globale indique au 
+système de résolution de ne pas tenir compte des paquets «&nbsp;gelés&nbsp;» 
+dans sa prise de décision.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Clean-Installed</term>
+<listitem><para>
+Avec cette option qui est activée par défaut, la fonctionnalité «&nbsp;autoclean&nbsp;»
+supprime tout paquet qui ne peut plus être récupéré dans le cache.
+Quand cette option est désactivée, les paquets qui sont installés localement
+sont aussi exclus du nettoyage - mais notez que APT ne fournit aucun moyen
+direct pour les réinstaller.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Immediate-Configure</term>
+<listitem><para>
+Désactive la configuration immédiate&nbsp;; cette dangereuse option désactive
+une partie du code de mise en ordre de APT pour que ce dernier effectue le
+moins d'appels possible à Dpkg. C'est peut-être nécessaire sur des systèmes
+lents à un seul utilisateur mais c'est extrêmement dangereux et cela peut 
+faire échouer les scripts d'installation, voire pire.
+Utilisez-la à vos risques et périls.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Force-LoopBreak</term>
+<listitem><para>
+Ne jamais activer cette option à moins que vous ne sachiez - réellement - ce 
+que vous faites. Elle autorise APT à supprimer temporairement un paquet
+essentiel pour mettre fin à une boucle Conflicts / Conflicts ou
+Conflicts / Pre-Depends entre deux paquets essentiels. UNE TELLE BOUCLE
+NE DOIT JAMAIS SE PRODUIRE&nbsp;: C'EST UN BOGUE SÉRIEUX. Cette option 
+fonctionne si les paquets essentiels ne sont pas tar, gzip, libc, dpkg, bash 
+ou tous les paquets dont ces paquets dépendent.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Cache-Limit</term>
+<listitem><para>
+APT utilise un fichier cache d'une taille mémoire fixe pour ranger les
+informations du fichier «&nbsp;available&nbsp;». Cette option fixe la taille 
+de ce cache.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Build-Essential</term>
+<listitem><para>
+     Cette option définit les paquets qui sont considérés comme faisant partie
+des dépendances essentielles pour la construction des paquets.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Get</term>
+<listitem><para>La sous-section <literal>Get</literal> contrôle l'outil &apt-get;, 
+veuillez consulter
+sa documentation pour avoir plus d'informations sur les options en question.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Cache</term>
+<listitem><para>La sous-section <literal>Cache</literal> contrôle l'outil &apt-cache;, 
+veuillez 
+consulter sa documentation pour avoir plus d'informations sur les options en 
+question.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>CDROM</term>
+<listitem><para>La sous-section <literal>CDROM</literal> contrôle l'outil&apt-cdrom;, 
+veuillez 
+consulter sa documentation pour avoir plus d'informations sur les options en 
+question.
+     </para></listitem>
+</varlistentry>
+</variablelist>
+ </refsect1>
+
+<refsect1><title>Le groupe Acquire</title>
+<para>   
+Le groupe d'options <literal>Acquire</literal> contrôle le téléchargement des paquets et
+les gestionnaires d'URI.
+
+   <variablelist>
+<varlistentry><term>Queue-Mode</term>
+<listitem><para>
+Le mode file d'attente&nbsp;; <literal>Queue-Mode</literal> peut prendre une valeur 
+parmi <literal>host</literal> ou <literal>access</literal> et cela détermine comment APT 
+parallélise les connexions sortantes. <literal>Host</literal> signifie qu'une 
+connexion par cible sera initiée, tandis que <literal>access</literal> signifie qu'une 
+connexion par type d'URI sera initiée.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Retries</term>
+<listitem><para>
+Nombre d'essais à effectuer. Si ce nombre n'est pas nul, APT essaie de
+récupérer, le nombre donné de fois, les fichiers dont la récupération a échoué.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Source-Symlinks</term>
+<listitem><para>
+Utilise des liens symboliques pour les archives de sources. Positionnée à 
+«&nbsp;true&nbsp;»,  cette option crée si possible des liens symboliques vers 
+les archives de sources au lieu de les copier. 
+Par défaut à «&nbsp;true&nbsp;».
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>http</term>
+<listitem><para>
+URI HTTP ; http::Proxy est le mandataire (proxy) http à utiliser par défaut.
+Il se présente sous la forme standard&nbsp;:
+<literal>http://[[user][:pass]@]host[:port]/</literal>. En utilisant la syntaxe&nbsp;:
+<literal>http::Proxy::&lt;host&gt;</literal>, où le mot-clé spécial <literal>DIRECT</literal>
+indique de n'utiliser aucun mandataire, on peut spécifier un mandataire
+pour chaque machine distante. La variable d'environnement <envar>http_proxy</envar>
+remplace tous ces paramètres.
+     </para>
+<para>
+Trois options de configuration sont fournies pour le contrôle des caches qui
+sont compatibles avec HTTP/1.1. <literal>No-Cache</literal> signifie que le mandataire
+ne doit pas du tout utiliser les réponses qu'il a stockées&nbsp;; <literal>Max-Age</literal>
+sert uniquement pour les fichiers d'index&nbsp;: cela demande au cache de les 
+mettre à jour quand leur ancienneté est supérieure au nombre de secondes 
+donné. Debian met à jour son fichier d'index de manière journalière, la
+valeur par défaut est donc de 1 jour. <literal>No-Store</literal> sert uniquement
+pour les fichiers d'archive&nbsp;: cela demande au cache de ne jamais garder 
+la requête. Cela peut éviter de polluer un cache mandataire avec des 
+fichiers .deb très grands. Note&nbsp;: Squid 2.0.2 ne prend en compte aucune de 
+ces options.
+     </para>
+<para>
+L'option <literal>timeout</literal> positionne le compteur de temps mort (timeout)
+utilisé par la méthode&nbsp;: cela vaut pour tout (connexion, données).
+     </para>
+<para>
+Une option de configuration est fournie pour contrôler la profondeur du tube
+pour le cas où un serveur distant n'est pas conforme à la RFC ou est bogué
+(comme Squid 2.0.2). <literal>Acquire::http::Pipeline-Depth </literal> a une valeur
+comprise entre 0 et 5&nbsp;: elle indique le nombre de requêtes en attente qui 
+peuvent être émises. Quand la machine distante ne conserve pas correctement
+les connexions TCP, on DOIT donner une valeur égale à 0 -- sinon des
+données seront corrompues. Les machines qui ont besoin de cette option
+ne respectent pas la RFC 2068.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>ftp</term>
+<listitem><para>
+URI FTP ; ftp::Proxy est le serveur mandataire par défaut à utiliser. Il se
+présente sous la forme standard&nbsp;: 
+<literal>ftp://[[user][:pass]@]host[:port]/</literal>&nbsp;; il est remplacé par la 
+variable d'environnement <envar>ftp_proxy</envar>. Pour utiliser un mandataire ftp,
+vous devez renseigner l'entrée <literal>ftp::ProxyLogin</literal> dans le fichier de
+configuration. Cette entrée spécifie les commandes qui disent au serveur
+mandataire comment se connecter. Voyez &configureindex; pour savoir
+comment faire. Les variables de substitution disponibles sont&nbsp;:
+<literal>$(PROXY_USER)</literal>, <literal>$(PROXY_PASS)</literal>, <literal>$(SITE_USER)</literal>,
+<literal>$(SITE_PASS)</literal>, <literal>$(SITE)</literal>, et <literal>$(SITE_PORT)</literal>.
+Chacune correspond à un élément de l'URI.
+     </para>
+<para>
+L'option <literal>timeout</literal> positionne le compteur de temps mort (timeout)
+utilisé par la méthode&nbsp;: cela vaut pour tout (connexion, données).
+     </para>
+<para>
+Plusieurs options de configuration sont fournies pour contrôler le mode 
+passif. Généralement, c'est plus sûr d'activer le mode passif&nbsp;; cela 
+marche dans presque tous les environnements. Cependant, certaines situations
+nécessitent que le mode passif soit désactivé et que le mode 
+«&nbsp;port&nbsp;» de ftp
+soit utilisé à la place. On peut le faire globalement, pour des
+connexions qui passent par un mandataire ou pour une machine
+spécifique (examinez le modèle de fichier de configuration).
+     </para>
+<para>
+On peut utiliser un mandataire FTP pour atteindre une cible HTTP en
+positionnant la variable d'environnement <envar>ftp_proxy</envar> à une url http --
+consultez la méthode http ci-dessus pour la syntaxe. On ne peut pas fixer
+cette variable dans le fichier de configuration et il n'est pas recommandé
+d'utiliser HTTP par FTP à cause de son peu d'efficacité.
+     </para>
+<para>
+L'option <literal>ForceExtended</literal> contrôle l'utilisation des commandes liées 
+à la RFC 2428, <literal>EPSV</literal> et <literal>EPRT</literal>. Par défaut, elle vaut 
+«&nbsp;false&nbsp;»&nbsp;; ce qui signifie que ces commandes ne sont 
+utilisées que pour une connexion de type IPv6. Quand elle vaut 
+«&nbsp;true&nbsp;», on les utilise même si la connexion est de type IPv4. La 
+plupart des serveurs FTP ne suivent pas la RFC 2428.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>cdrom</term>
+<listitem><para>
+URI CDROM&nbsp;; la seule option de configuration pour les URI de CDROM
+est le point de montage&nbsp;: <literal>cdrom::Mount</literal>&nbsp;; il doit 
+représenter le point de montage du lecteur de cédérom indiqué dans 
+<filename>/etc/fstab</filename>. 
+On peut fournir d'autres commandes de montage et de démontage quand le
+point de montage ne peut être listé dans le fichier <filename>/etc/fstab</filename>
+(par exemple, un montage SMB). Syntaxiquement, il faut placer
+<literallayout>"/cdrom/"::Mount "foo";</literallayout> dans le bloc cdrom.
+La barre oblique finale est importante. Les commandes de démontage
+peuvent être spécifiées en utilisant <literal>UMount</literal>.
+     </para></listitem>
+</varlistentry>
+
+     <varlistentry><term>gpgv</term>
+     <listitem><para>
+URI GPGV ; la seule option pour les URI GPGV est celle qui permet de
+     passer des paramètres à gpgv.
+     <literal>gpgv::Options</literal> Options supplémentaires passées à
+     gpgv.
+</para>
+	  </listitem>
+	</varlistentry>
+</variablelist>
+ </para>
+</refsect1>
+
+<refsect1><title>Les répertoires</title>
+<para>   
+Les répertoires de la section <literal>Dir::State</literal> concernent le système
+local. <literal>lists</literal> est le répertoire où placer les listes de paquets
+téléchargés et <literal>status</literal> est le nom du fichier d'état de Dpkg.
+<literal>preferences</literal> concerne APT&nbsp;: c'est le nom du fichier des 
+préférences.
+<literal>Dir::State</literal> contient le répertoire par défaut préfixé à tous les
+sous-éléments, quand ceux-ci ne commencent pas par <filename>/</filename> 
+ou <filename>./</filename>.
+   </para>
+<para>
+<literal>Dir::Cache</literal> contient les emplacements qui renseignent sur le
+cache local&nbsp;: par exemple, les deux caches de paquets 
+<literal>srcpkgcache</literal> et <literal>pkgcache</literal>, et aussi l'endroit où sont 
+placées les archives téléchargées, <literal>Dir::Cache::archives</literal>. On peut 
+empêcher la création des caches en laissant leur nom en blanc. Cela ralentit 
+le démarrage mais cela sauve de l'espace disque. Il vaut mieux se passer du 
+cache <literal>pkgcache</literal> plutôt que se passer du cache <literal>srcpkgcache</literal>. 
+Comme pour <literal>Dir::State</literal>, le répertoire par défaut est contenu dans
+<literal>Dir::Cache</literal>.
+   </para>
+<para>
+<literal>Dir::Etc</literal> contient l'emplacement des fichiers de configuration,
+<literal>sourcelist</literal> indique l'emplacement de la liste de sources et 
+<literal>main</literal> est le fichier de configuration par défaut (le modifier
+n'a aucun effet, à moins qu'on ne le modifie avec le fichier de 
+configuration indiqué par la variable <envar>APT_CONFIG</envar>). 
+   </para>
+<para>
+<literal>Dir::Parts</literal> lit, par ordre d'entrée, tous les fragments de 
+configuration dans le répertoire indiqué. Ensuite, le fichier principal
+de configuration est chargé.
+   </para>
+<para>
+Les programmes binaires sont pointés par <literal>Dir::Bin</literal>.
+L'emplacement des gestionnaires de méthodes est indiqué par
+<literal>Dir::Bin::Methods</literal>&nbsp;; <literal>gzip</literal>, 
+<literal>Dpkg</literal>, <literal>apt-get</literal>,
+<literal>dpkg-source</literal>, <literal>dpkg-buildpackage</literal> 
+et <literal>apt-cache</literal>
+indiquent l'emplacement des programmes correspondants.
+ </para>
+</refsect1>
+
+<refsect1><title>APT et DSelect</title>
+<para>   
+Quand APT est utilisé comme une méthode de &dselect;, plusieurs directives 
+contrôlent le comportement par défaut. On les trouve dans la section
+<literal>DSelect</literal>.
+   </para>
+
+   <variablelist>
+<varlistentry><term>Clean</term>
+<listitem><para>
+Mode de nettoyage du cache&nbsp;; cette variable peut prendre l'une des valeurs
+suivantes&nbsp;: «&nbsp;always&nbsp;», «&nbsp;prompt&nbsp;», 
+«&nbsp;auto&nbsp;», «&nbsp;pre-auto&nbsp;» et «&nbsp;never&nbsp;». 
+«&nbsp;always&nbsp;» et «&nbsp;prompt&nbsp;» suppriment tous les paquets du 
+cache après la mise à niveau&nbsp;; «&nbsp;prompt&nbsp;» (valeur par défaut) 
+les supprime après une demande et «&nbsp;auto&nbsp;» ne supprime que les 
+archives qui ne peuvent plus être téléchargées (remplacées, par exemple, par 
+une nouvelle version). «&nbsp;pre-auto&nbsp;» les supprime avant de récupérer 
+de nouveaux paquets.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>Options</term>
+<listitem><para>
+Le contenu de cette variable est passé à &apt-get; avec les options de la ligne
+de commande quand ce programme est utilisé dans la phase d'installation.
+     </para></listitem>
+</varlistentry>
+<varlistentry><term>UpdateOptions</term>
+<listitem><para>
+Le contenu de cette variable est passé à &apt-get; avec les options de la 
+ligne de commande quand ce programme est utilisé dans la phase de mise à jour.
+     </para></listitem>
+</varlistentry>
+
+<varlistentry><term>PromptAfterUpdate</term>
+<listitem><para>
+Si cette option est «&nbsp;vraie&nbsp;», l'opération [U]pdate de &dselect; 
+interroge toujours l'utilisateur avant de continuer. Par défaut, ce n'est 
+qu'en cas d'erreur que l'on propose à l'utilisateur d'intervenir.
+     </para></listitem>
+</varlistentry>
+</variablelist>
+</refsect1>
+
+<refsect1><title>Comment APT appelle Dpkg</title>
+<para>   
+Plusieurs directives de configuration contrôlent la manière dont APT
+invoque &dpkg;&nbsp;: elles figurent dans la section <literal>DPkg</literal>.
+</para>
+   <variablelist>
+<varlistentry><term>Options</term>
+<listitem><para>
+Il s'agit d'une liste d'options à passer à dpkg. Les options doivent être
+déclarées en utilisant la notation de liste et chaque élément de liste est
+passé comme un seul argument à &dpkg;.
+     </para></listitem>
+</varlistentry>
+<varlistentry><term>Pre-Invoke</term><term>Post-Invoke</term>
+<listitem><para>
+Il s'agit d'une liste de commandes shell à exécuter avant ou après l'appel de
+&dpkg;. Tout comme pour <literal>Options</literal>, on doit utiliser la notation de
+liste. Les commandes sont appelées dans l'ordre, en utilisant 
+<filename>/bin/sh</filename>&nbsp;: APT s'arrête dès que l'une d'elles échoue.
+     </para></listitem>
+</varlistentry>
+<varlistentry><term>Pre-Install-Pkgs</term>
+<listitem><para>
+Il s'agit d'une liste de commandes shell à exécuter avant d'appeler Dpkg. 
+Tout comme pour <literal>Options</literal>, on doit utiliser la notation de liste.
+Les commandes sont appelées dans l'ordre, en utilisant 
+<filename>/bin/sh</filename>&nbsp;: APT s'arrête dès que l'une d'elles échoue. Sur 
+l'entrée standard, APT transmet aux commandes les noms de tous les fichiers 
+.deb qu'il va installer, à raison d'un par ligne.
+     </para>
+<para>
+La deuxième version de ce protocole donne plus de renseignements&nbsp;: on 
+obtient la version du protocole, la configuration de APT et les paquets, 
+fichiers ou versions qui ont changé. On autorise cette version en positionnant
+<literal>DPkg::Tools::Options::cmd::Version</literal> à 2. <literal>cmd</literal> est une 
+commande passée à <literal>Pre-Install-Pkgs</literal>.
+     </para></listitem>
+</varlistentry>
+<varlistentry><term>Run-Directory</term>
+<listitem><para>
+APT se place dans ce répertoire avant d'appeler Dpkg&nbsp;; par défaut c'est 
+le répertoire <filename>/</filename>.
+     </para></listitem>
+</varlistentry>
+<varlistentry><term>Build-Options</term>
+<listitem><para>
+Ces options sont passées à &dpkg-buildpackage; lors de la compilation des
+paquets&nbsp;; par défaut la signature est désactivée et tous les binaires sont
+créés.
+     </para></listitem>
+</varlistentry>
+</variablelist>
+ </refsect1>
+
+<refsect1><title>Les options de débogage</title>
+<para>   
+La plupart des options de la section <literal>debug</literal> n'ont aucun intérêt
+pour le simple utilisateur&nbsp;; cependant, 
+<literal>Debug::pkgProblemResolver</literal> affiche d'intéressantes informations sur 
+les décisions que prend la commande dist-upgrade. <literal>Debug::NoLocking</literal> 
+désactive le verrouillage de fichier de manière à ce que APT puisse effectuer 
+quelques opérations sans être «&nbsp;root&nbsp;» et 
+<literal>Debug::pkgDPkgPM</literal> affiche la ligne de commande à chaque appel de 
+Dpkg. <literal>Debug::IdentCdrom</literal> désactive l'inclusion de 
+données de type statfs dans les ID de CDROM.
+<literal>Debug::Acquire::gpgv</literal> Débogage de la méthode gpgv.
+ </para>
+</refsect1>
+
+<refsect1><title>Exemples</title>
+<para>
+Le fichier &configureindex; contient un modèle de fichier montrant les valeurs par
+défaut de toutes les options possibles.
+ </para>
+</refsect1>
+
+<refsect1><title>Fichiers</title>
+<para>   <filename>/etc/apt/apt.conf</filename>
+ </para>
+</refsect1>
+<refsect1><title>Voir aussi</title>
+<para>
+&apt-cache;, &apt-config;<!-- ? reading apt.conf -->, &apt-preferences;.</para>
+</refsect1>
+
+&manbugs;
+&deux-traducteurs;
+</refentry>
