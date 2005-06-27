@@ -1330,11 +1330,12 @@ void pkgMarkPkgUsed(pkgDepCache &Cache, pkgCache::PkgIterator Pkg,
 bool pkgMarkUsed(pkgDepCache &Cache)
 {
    // debug only
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); ! Pkg.end(); ++Pkg)
-      if(!Cache[Pkg].Dirty() && Cache[Pkg].AutomaticRemove > 0)
-	 std::cout << "has auto-remove information: " << Pkg.Name() 
-		   << " " << (int)Cache[Pkg].AutomaticRemove 
-		   << std::endl;
+   if(_config->FindI("Debug::pkgAutoRemove",false) == true)
+     for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); ! Pkg.end(); ++Pkg)
+        if(!Cache[Pkg].Dirty() && Cache[Pkg].AutomaticRemove > 0)
+  	   std::cout << "has auto-remove information: " << Pkg.Name() 
+	 	     << " " << (int)Cache[Pkg].AutomaticRemove 
+		     << std::endl;
 
    // init with defaults
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); ! Pkg.end(); ++Pkg)
