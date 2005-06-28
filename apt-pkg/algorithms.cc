@@ -1066,7 +1066,10 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    pkgCache::PkgIterator I = Cache.PkgBegin();
    for (;I.end() != true; I++) {
       if (Cache[I].NewInstall() && !(Flags[I->ID] & PreInstalled)) {
-	 std::cout << "Resolve installed new pkg: " << I.Name() << " (now marking it as auto)" << std::endl;
+	 if(_config->FindI("Debug::pkgAutoRemove",false)) {
+	    std::clog << "Resolve installed new pkg: " << I.Name() 
+		      << " (now marking it as auto)" << std::endl;
+	 }
 	 Cache[I].Flags |= pkgCache::Flag::Auto;
       }
    }
@@ -1333,7 +1336,7 @@ bool pkgMarkUsed(pkgDepCache &Cache)
    if(_config->FindI("Debug::pkgAutoRemove",false) == true)
      for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); ! Pkg.end(); ++Pkg)
         if(!Cache[Pkg].Dirty() && Cache[Pkg].AutomaticRemove > 0)
-  	   std::cout << "has auto-remove information: " << Pkg.Name() 
+  	   std::clog << "has auto-remove information: " << Pkg.Name() 
 	 	     << " " << (int)Cache[Pkg].AutomaticRemove 
 		     << std::endl;
 

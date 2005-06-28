@@ -20,6 +20,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
+
+#include <iostream>
 #include <sstream>    
 #include <apti18n.h>    
 									/*}}}*/
@@ -162,7 +164,8 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 
       // check if we have new information
       if(PkgState[pkg->ID].Flags & pkgCache::Flag::Auto) {
-	 std::cout << "pkg: " << pkg.Name() << " is auto-dep" << std::endl;
+	 if(_config->FindI("Debug::pkgAutoRemove",false))
+	    std::clog << "pkg: " << pkg.Name() << " is auto-dep" << std::endl;
 	 PkgState[pkg->ID].AutomaticRemove = pkgCache::State::RemoveRequired;
       }
 
@@ -172,7 +175,6 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 	      << "\nRemove-Reason: "
 	      << (int)(PkgState[pkg->ID].AutomaticRemove) << "\n\n";
 	 StateFile.Write(ostr.str().c_str(), ostr.str().size());
-	 //std::cout << "Writing auto-mark: " << ostr.str() << endl;
       }
    }
    return true;

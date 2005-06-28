@@ -1361,7 +1361,8 @@ bool DoUpdate(CommandLine &CmdL)
 /* Remove unused automatic packages */
 bool DoAutomaticRemove(CacheFile &Cache)
 {
-   std::cout << "DoAutomaticRemove()" << std::endl;
+   if(_config->FindI("Debug::pkgAutoRemove",false))
+      std::cout << "DoAutomaticRemove()" << std::endl;
 
    if (_config->FindB("APT::Get::Remove",true) == false)
       return _error->Error(_("We are not supposed to delete stuff, can't "
@@ -1597,10 +1598,10 @@ bool DoInstall(CommandLine &CmdL)
       return _error->Error(_("Broken packages"));
    }   
    
-   //if (_config->FindB("APT::Get::AutomaticRemove")) {
+   if (_config->FindB("APT::Get::AutomaticRemove")) {
       if (!DoAutomaticRemove(Cache)) 
 	 return false;
-   //}
+   }
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
@@ -2522,7 +2523,7 @@ int main(int argc,const char *argv[])
       {0,"remove","APT::Get::Remove",0},
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
-      {0,"experimental-automatic-remove","APT::Get::AutomaticRemove",0},
+      {0,"automatic-remove","APT::Get::AutomaticRemove",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
