@@ -20,7 +20,10 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
+
     
 #include <apti18n.h>
     
@@ -1248,106 +1251,186 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
 									/*}}}*/
 
 
-// pkgMarkPkgUsed - Mark used packages as dirty				/*{{{*/
-// ---------------------------------------------------------------------
-/* Mark all reachable packages as dirty. */
-void pkgMarkPkgUsed(pkgDepCache &Cache, pkgCache::PkgIterator Pkg, 
-		   pkgCache::State::PkgRemoveState DirtLevel)
+// mark a single package in Mark-and-Sweep
+void pkgMarkPackage(pkgDepCache &Cache,
+		    const pkgCache::PkgIterator &pkg,
+		    const pkgCache::VerIterator &ver,
+		    bool follow_recommends,
+		    bool follow_suggests)
 {
-   // If it is not installed, and we are in manual mode, ignore it
-   if ((Pkg->CurrentVer == 0 && Cache[Pkg].Install() == false || Cache[Pkg].Delete() == true) &&
-       DirtLevel == pkgCache::State::RemoveManual) 
+   pkgDepCache::StateCache &state=Cache[pkg];
+   pkgCache::VerIterator candver=state.CandidateVerIter(Cache);
+   pkgCache::VerIterator instver=state.InstVerIter(Cache);
+
+#if 0
+   // If a package was garbage-collected but is now being marked, we
+   // should re-select it 
+   // For cases when a pkg is set to upgrade and this trigger the
+   // removal of a no-longer used dependency.  if the pkg is set to
+   // keep again later it will result in broken deps
+   if(state.Delete() && state.RemoveReason=pkgDepCache::Unused) 
    {
-//      fprintf(stdout,"This one is not installed/virtual %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+      if(ver==candver)
+	 mark_install(pkg, false, false, NULL);
+      else if(ver==pkg.CurrentVer())
+	 MarkKeep(pkg);
+      
+      instver=state.InstVerIter(*this);
+   }
+#endif
+
+   // Ignore versions other than the InstVer, and ignore packages
+   // that are already going to be removed or just left uninstalled.
+   if(!(ver==instver && !instver.end()))
       return;
-   }
 
-   // If it is not installed, and it is not virtual, ignore it
-   if ((Pkg->CurrentVer == 0 && Cache[Pkg].Install() == false || Cache[Pkg].Delete() == true) &&
-       Pkg->VersionList != 0)
-   {
-//      fprintf(stdout,"This one is not installed %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
+   // if we are marked already we are done
+   if(state.Marked)
       return;
-   }
 
-   // If it is similar or more dirty than we are ;-), because we've been here already, don't mark it
-   // This is necessary because virtual packages just relay the current level,
-   // so it may be possible e.g. that this was already seen with ::RemoveSuggested, but
-   // we are ::RemoveRequired
-   if (Cache[Pkg].Dirty() >= DirtLevel) 
+   //std::cout << "Setting Marked for: " << pkg.Name() << std::endl;
+   state.Marked=true;
+
+   if(!ver.end())
    {
-      //fprintf(stdout,"Seen already %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
-      return;
+     for(pkgCache::DepIterator d=ver.DependsList(); !d.end(); ++d)
+     {
+	if(d->Type==pkgCache::Dep::Depends ||
+	   d->Type==pkgCache::Dep::PreDepends ||
+	   (follow_recommends &&
+	    d->Type==pkgCache::Dep::Recommends) ||
+	   (follow_suggests &&
+	    d->Type==pkgCache::Dep::Suggests))
+        {
+	   // Try all versions of this package.
+	   for(pkgCache::VerIterator V=d.TargetPkg().VersionList(); 
+	       !V.end(); ++V)
+	   {
+	      if(_system->VS->CheckDep(V.VerStr(),d->CompareOp, d.TargetVer()))
+	      {
+		 pkgMarkPackage(Cache, V.ParentPkg(), V, 
+				follow_recommends, follow_suggests);
+	      }
+	   }
+	   // Now try virtual packages
+	   for(pkgCache::PrvIterator prv=d.TargetPkg().ProvidesList(); 
+	       !prv.end(); ++prv)
+	   {
+	      if(_system->VS->CheckDep(prv.ProvideVersion(), d->CompareOp, 
+				       d.TargetVer()))
+	      {
+		 pkgMarkPackage(Cache, prv.OwnerPkg(), prv.OwnerVer(),
+				follow_recommends, follow_suggests);
+	      }
+	   }
+	}
+     }
    }
-   
-   // If it is less important than the current DirtLevel, don't mark it
-   if (Cache[Pkg].AutomaticRemove != pkgCache::State::RemoveManual && 
-      Cache[Pkg].AutomaticRemove > DirtLevel) 
-   {
-//       fprintf(stdout,"We don't need %s %d %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel, Cache[Pkg].Dirty());
-       return;
-   }
-
-   // Mark it as used
-   Cache.SetDirty(Pkg, DirtLevel);
-       
-   //fprintf(stdout,"We keep %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
-
-   // We are a virtual package
-   if (Pkg->VersionList == 0)
-   {
-//      fprintf(stdout,"We are virtual %s %d %d\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
-      for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); ! Prv.end(); ++Prv)
-	 pkgMarkPkgUsed (Cache, Prv.OwnerPkg(), DirtLevel);
-      return;
-   }
-
-   // Depending on the type of dependency, follow it
-   for (pkgCache::DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); ! D.end(); ++D) 
-   {
-//      fprintf(stdout,"We depend on %s %s\n", D.TargetPkg().Name(), D.DepType());
-
-      switch(D->Type) 
-      {
-	 case pkgCache::Dep::Depends:
-	 case pkgCache::Dep::PreDepends:
-	    pkgMarkPkgUsed (Cache, D.TargetPkg(), pkgCache::State::RemoveRequired);
-	    break;
-	 case pkgCache::Dep::Recommends:
-            pkgMarkPkgUsed (Cache, D.TargetPkg(), pkgCache::State::RemoveRecommended);
-	    break;
-         case pkgCache::Dep::Suggests:
-            pkgMarkPkgUsed (Cache, D.TargetPkg(), pkgCache::State::RemoveSuggested);
-	    break;
-	 case pkgCache::Dep::Conflicts:
-	 case pkgCache::Dep::Replaces:
-	 case pkgCache::Dep::Obsoletes:
-	    // We don't handle these here
-	    break;
-      }
-   }
-//   fprintf(stdout,"We keep %s %d %d <END>\n", Pkg.Name(), Pkg->AutomaticRemove, DirtLevel);
 }
-									/*}}}*/
+
 
 bool pkgMarkUsed(pkgDepCache &Cache)
 {
-   // debug only
-   if(_config->FindI("Debug::pkgAutoRemove",false) == true)
-     for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); ! Pkg.end(); ++Pkg)
-        if(!Cache[Pkg].Dirty() && Cache[Pkg].AutomaticRemove > 0)
-  	   std::clog << "has auto-remove information: " << Pkg.Name() 
-	 	     << " " << (int)Cache[Pkg].AutomaticRemove 
-		     << std::endl;
+   bool follow_recommends;
+   bool follow_suggests;
 
-   // init with defaults
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); ! Pkg.end(); ++Pkg)
-      Cache.SetDirty(Pkg, pkgCache::State::RemoveUnknown);
+   // init the states
+   for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
+   {
+      Cache[p].Marked=false;
+      Cache[p].Garbage=false;
+   }
 
-   // go recursive over the cache
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); ! Pkg.end(); ++Pkg) 
-      pkgMarkPkgUsed (Cache, Pkg, pkgCache::State::RemoveManual);
+   // init vars
+   follow_recommends=_config->FindB("APT::AutoRemove::RecommendsImportant",false);
+   follow_suggests=_config->FindB("APT::AutoRemove::SuggestsImportend", false);
 
-   
+
+   // do the mark part
+   for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
+   {
+      if(Cache[p].InstallReason==pkgDepCache::Manual ||
+	 (p->Flags & pkgCache::Flag::Essential))
+      {
+	 if(Cache[p].Keep() && !p.CurrentVer().end())
+	    pkgMarkPackage(Cache, p, p.CurrentVer(),
+			   follow_recommends, follow_suggests);
+	 else if(Cache[p].Install())
+	    pkgMarkPackage(Cache, p, Cache[p].InstVerIter(Cache),
+			   follow_recommends, follow_suggests);
+      }
+   }
+
+
+   // do the sweep
+   for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
+  {
+     pkgDepCache::StateCache &state=Cache[p];
+
+     if(!state.Marked)
+     {
+	// mark installed but not yet marked stuff as garbage
+	if(p->CurrentVer != 0) {
+	   state.Garbage=true;
+	   std::cout << "Garbage: " << p.Name() << std::endl;
+	}
+
+#if 0   // mvo: the below bits still needs to be ported
+
+	// Be sure not to re-delete already deleted packages.
+	if(delete_unused && (!p.CurrentVer().end() || state.Install()) &&
+	   !state.Delete())
+	{
+	      bool do_delete=true;
+
+	      // If the package is being upgraded, check if we're
+	      // losing a versioned dep.  If the dependency matches
+	      // the previous version and not the new version, keep
+	      // the package back instead of removing it.
+	      if(!p.CurrentVer().end() && state.Install())
+		{
+		  const char *vs=p.CurrentVer().VerStr();
+
+		  // Check direct revdeps only.  THIS ASSUMES NO
+		  // VERSIONED PROVIDES, but Debian probably won't
+		  // have them for ages if ever.
+		  for(pkgCache::DepIterator revdep=p.RevDependsList();
+		      !revdep.end(); ++revdep)
+		    {
+		      pkgCache::PkgIterator depender=revdep.ParentPkg();
+		      // Find which version of the depending package
+		      // will be installed.
+		      pkgCache::VerIterator instver=(*this)[depender].InstVerIter(*this);
+
+		      // Only pay attention to strong positive
+		      // dependencies whose parents will be installed.
+		      if(revdep.ParentVer()==instver &&
+			 (revdep->Type==pkgCache::Dep::Depends ||
+			  revdep->Type==pkgCache::Dep::PreDepends ||
+			  (revdep->Type==pkgCache::Dep::Recommends &&
+			   follow_recommends)))
+			{
+			  // If the previous version matched, cancel the
+			  // deletion.  (note that I assume that the new
+			  // version does NOT match; otherwise it would
+			  // not be unused!)
+			  if(_system->VS->CheckDep(vs,
+						   revdep->CompareOp,
+						   revdep.TargetVer()))
+			    {
+			      mark_keep(p, false, false, undo);
+			      do_delete=false;
+			      break;
+			    }
+			}
+		    }
+		}
+
+	      if(do_delete)
+		mark_delete(p, false, true, undo);
+	    }
+#endif
+     }
+  }
    return true;
 }

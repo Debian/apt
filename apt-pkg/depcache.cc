@@ -78,9 +78,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
       // Find the proper cache slot
       StateCache &State = PkgState[I->ID];
       State.iFlags = 0;
-      State.DirtyState = pkgCache::State::RemoveUnknown;
-      //State.AutomaticRemove = I->AutomaticRemove;
-      State.AutomaticRemove = pkgCache::State::RemoveUnknown;
+      State.InstallReason = Manual;
 
       // Figure out the install version
       State.CandidateVer = GetCandidateVer(I);
@@ -116,7 +114,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
       state_file.Open(state, FileFd::ReadOnly);
       int file_size = state_file.Size();
       Prog->OverallProgress(0, file_size, 1, 
-			    _("Reading extended state information"));
+			    _("Reading state information"));
 
       pkgTagFile tagfile(&state_file);
       pkgTagSection section;
@@ -127,16 +125,17 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 	 // Silently ignore unknown packages and packages with no actual
 	 // version.
 	 if(!pkg.end() && !pkg.VersionList().end()) {
-	    short reason = section.FindI("Remove-Reason", 
-					 pkgCache::State::RemoveManual);
-	    PkgState[pkg->ID].AutomaticRemove = reason;
-	    //std::cout << "Set: " << pkgname << " to " << reason << std::endl;
+	    short reason = section.FindI("Install-Reason",pkgDepCache::Manual);
+	    PkgState[pkg->ID].InstallReason = (ChangedReason)reason;
+	    if(_config->FindB("Debug::pkgAutoRemove",false))
+	       std::cout << "Install-Reason for: " << pkgname 
+			 << " is " << reason << std::endl;
 	    amt+=section.size();
 	    Prog->OverallProgress(amt, file_size, 1, 
-				  _("Reading extended state information"));
+				  _("Reading state information"));
 	 }
 	 Prog->OverallProgress(file_size, file_size, 1, 
-			       _("Reading extended state information"));
+			       _("Reading state information"));
       }
    }
 
@@ -145,9 +144,6 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 
 bool pkgDepCache::writeStateFile(OpProgress *prog)
 {
-   // FIXME: this function needs to be called inside the commit()
-   // of the package manager. so after 
-
    FileFd StateFile;
    string state = _config->FindDir("Dir::State") + "pkgstates";
 
@@ -160,20 +156,20 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 
       // clear out no longer installed pkg
       if(PkgState[pkg->ID].Delete() || pkg.CurrentVer() == NULL) 
-	 PkgState[pkg->ID].AutomaticRemove = pkgCache::State::RemoveUnknown;
+	 PkgState[pkg->ID].InstallReason = Manual;
 
       // check if we have new information
       if(PkgState[pkg->ID].Flags & pkgCache::Flag::Auto) {
 	 if(_config->FindI("Debug::pkgAutoRemove",false))
 	    std::clog << "pkg: " << pkg.Name() << " is auto-dep" << std::endl;
-	 PkgState[pkg->ID].AutomaticRemove = pkgCache::State::RemoveRequired;
+	 PkgState[pkg->ID].InstallReason = Libapt;
       }
 
-      if(PkgState[pkg->ID].AutomaticRemove != pkgCache::State::RemoveUnknown) {
+      if(PkgState[pkg->ID].InstallReason != Manual) {
 	 ostr.str(string(""));
-	 ostr << "Package: " << pkg.Name()
-	      << "\nRemove-Reason: "
-	      << (int)(PkgState[pkg->ID].AutomaticRemove) << "\n\n";
+	 ostr << "Package: " << pkg.Name() 
+	      << "\nInstall-Reason: "
+	      << (int)(PkgState[pkg->ID].InstallReason) << "\n\n";
 	 StateFile.Write(ostr.str().c_str(), ostr.str().size());
       }
    }
@@ -839,15 +835,6 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
    
    AddStates(Pkg);
    AddSizes(Pkg);
-}
-									/*}}}*/
-// DepCache::SetDirty - Switch the package between dirty states		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void pkgDepCache::SetDirty(PkgIterator const &Pkg, pkgCache::State::PkgRemoveState To)
-{
-   StateCache &P = PkgState[Pkg->ID];
-   P.DirtyState = To;
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/

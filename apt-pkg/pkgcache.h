@@ -75,7 +75,6 @@ class pkgCache
       enum PkgInstState {Ok=0,ReInstReq=1,HoldInst=2,HoldReInstReq=3};
       enum PkgCurrentState {NotInstalled=0,UnPacked=1,HalfConfigured=2,
 	   HalfInstalled=4,ConfigFiles=5,Installed=6};
-      enum PkgRemoveState {RemoveUnknown=0, RemoveManual=1,RemoveSuggested=2,RemoveRecommended=3,RemoveRequired=4};
    };
    
    struct Flag

@@ -1374,12 +1374,11 @@ bool DoAutomaticRemove(CacheFile &Cache)
    // look over the cache to see what can be removed
    for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
    {
-      if (! Cache[Pkg].Dirty() &&
+      if (Cache[Pkg].Garbage &&
           (Pkg->CurrentVer != 0 && Cache[Pkg].Install() == false && 
 	   Cache[Pkg].Delete() == false))
       {
-         fprintf(stdout,"We could delete %s %d\n", 
-		 Pkg.Name(), Cache[Pkg].AutomaticRemove);
+         fprintf(stdout,"We could delete %s\n", Pkg.Name());
          Cache->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
       }
    }

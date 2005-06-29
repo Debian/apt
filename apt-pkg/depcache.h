@@ -63,6 +63,10 @@ class pkgDepCache : protected pkgCache::Namespace
       
    enum VersionTypes {NowVersion, InstallVersion, CandidateVersion};
    enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2};
+
+   // Flags for the GC
+   enum ChangedReason {Manual, UserAuto, Libapt, FromResolver, PkgIsUnused};
+
    struct StateCache
    {
       // Epoch stripped text versions of the two version fields
@@ -79,9 +83,13 @@ class pkgDepCache : protected pkgCache::Namespace
       unsigned short Flags;
       unsigned short iFlags;           // Internal flags
 
-      // Traversal status and state for automatic removal
-      unsigned char DirtyState;
-      unsigned char AutomaticRemove;
+      // mark and sweep flags
+      ChangedReason InstallReason;
+#if 0
+      ChangedReason RemoveReason;
+#endif
+      bool Marked;
+      bool Garbage;
 
       // Various tree indicators
       signed char Status;              // -1,0,1,2
@@ -103,7 +111,6 @@ class pkgDepCache : protected pkgCache::Namespace
       inline bool NowBroken() const {return (DepState & DepNowMin) != DepNowMin;};
       inline bool InstBroken() const {return (DepState & DepInstMin) != DepInstMin;};
       inline bool Install() const {return Mode == ModeInstall;};
-      inline unsigned char Dirty() const {return DirtyState;};
       inline VerIterator InstVerIter(pkgCache &Cache)
                 {return VerIterator(Cache,InstallVer);};
       inline VerIterator CandidateVerIter(pkgCache &Cache)
@@ -194,7 +201,6 @@ class pkgDepCache : protected pkgCache::Namespace
 		    unsigned long Depth = 0);
    void SetReInstall(PkgIterator const &Pkg,bool To);
    void SetCandidateVersion(VerIterator TargetVer);
-   void SetDirty(PkgIterator const &Pkg, pkgCache::State::PkgRemoveState To);
    
    // This is for debuging
    void Update(OpProgress *Prog = 0);
