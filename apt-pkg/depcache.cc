@@ -112,8 +112,9 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
    if(FileExists(state)) {
       state_file.Open(state, FileFd::ReadOnly);
       int file_size = state_file.Size();
-      Prog->OverallProgress(0, file_size, 1, 
-			    _("Reading state information"));
+      if(Prog != NULL)
+	 Prog->OverallProgress(0, file_size, 1, 
+			       _("Reading state information"));
 
       pkgTagFile tagfile(&state_file);
       pkgTagSection section;
@@ -131,11 +132,13 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 	       std::cout << "Install-Reason for: " << pkgname 
 			 << " is " << reason << std::endl;
 	    amt+=section.size();
-	    Prog->OverallProgress(amt, file_size, 1, 
-				  _("Reading state information"));
+	    if(Prog != NULL)
+	       Prog->OverallProgress(amt, file_size, 1, 
+				     _("Reading state information"));
 	 }
-	 Prog->OverallProgress(file_size, file_size, 1, 
-			       _("Reading state information"));
+	 if(Prog != NULL)
+	    Prog->OverallProgress(file_size, file_size, 1, 
+				  _("Reading state information"));
       }
    }
 
