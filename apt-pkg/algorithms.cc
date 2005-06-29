@@ -1349,7 +1349,7 @@ bool pkgMarkUsed(pkgDepCache &Cache)
    // do the mark part
    for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
    {
-      if(Cache[p].InstallReason==pkgDepCache::Manual ||
+      if(!(Cache[p].Flags & pkgCache::Flag::Auto) ||
 	 (p->Flags & pkgCache::Flag::Essential))
       {
 	 if(Cache[p].Keep() && !p.CurrentVer().end())

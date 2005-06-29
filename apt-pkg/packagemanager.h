@@ -28,6 +28,7 @@
 #endif
 
 #include <string>
+#include <iostream>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/depcache.h>
 
@@ -101,11 +102,11 @@ class pkgPackageManager : protected pkgCache::Namespace
       bool goResult = Go(statusFd);
       if(goResult == false) 
 	 return Failed;
-      
-      // if all was fine update the state file
-      if(Res == Completed)
-	 Cache.writeStateFile(NULL);
 
+      // if all was fine update the state file
+      if(Res == Completed) {
+	 Cache.writeStateFile(NULL);
+      }
       return Res;
    };
 

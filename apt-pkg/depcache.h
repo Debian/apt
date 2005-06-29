@@ -64,9 +64,6 @@ class pkgDepCache : protected pkgCache::Namespace
    enum VersionTypes {NowVersion, InstallVersion, CandidateVersion};
    enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2};
 
-   // Flags for the GC
-   enum ChangedReason {Manual, UserAuto, Libapt, FromResolver, PkgIsUnused};
-
    struct StateCache
    {
       // Epoch stripped text versions of the two version fields
@@ -84,10 +81,6 @@ class pkgDepCache : protected pkgCache::Namespace
       unsigned short iFlags;           // Internal flags
 
       // mark and sweep flags
-      ChangedReason InstallReason;
-#if 0
-      ChangedReason RemoveReason;
-#endif
       bool Marked;
       bool Garbage;
 

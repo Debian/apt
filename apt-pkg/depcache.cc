@@ -78,7 +78,6 @@ bool pkgDepCache::Init(OpProgress *Prog)
       // Find the proper cache slot
       StateCache &State = PkgState[I->ID];
       State.iFlags = 0;
-      State.InstallReason = Manual;
 
       // Figure out the install version
       State.CandidateVer = GetCandidateVer(I);
@@ -125,8 +124,9 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 	 // Silently ignore unknown packages and packages with no actual
 	 // version.
 	 if(!pkg.end() && !pkg.VersionList().end()) {
-	    short reason = section.FindI("Install-Reason",pkgDepCache::Manual);
-	    PkgState[pkg->ID].InstallReason = (ChangedReason)reason;
+	    short reason = section.FindI("Install-Reason", 0);
+	    if(reason > 0)
+	       PkgState[pkg->ID].Flags  |= pkgCache::Flag::Auto;
 	    if(_config->FindB("Debug::pkgAutoRemove",false))
 	       std::cout << "Install-Reason for: " << pkgname 
 			 << " is " << reason << std::endl;
@@ -147,6 +147,9 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
    FileFd StateFile;
    string state = _config->FindDir("Dir::State") + "pkgstates";
 
+   if(_config->FindB("Debug::pkgAutoRemove",false))
+      std::clog << "pkgDepCache::writeStateFile()" << std::endl;
+
    if(!StateFile.Open(state, FileFd::WriteEmpty))
       return _error->Error(_("Failed to write StateFile %s"),
 			   state.c_str());
@@ -154,22 +157,12 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
    std::ostringstream ostr;
    for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end();pkg++) {
 
-      // clear out no longer installed pkg
-      if(PkgState[pkg->ID].Delete() || pkg.CurrentVer() == NULL) 
-	 PkgState[pkg->ID].InstallReason = Manual;
-
-      // check if we have new information
       if(PkgState[pkg->ID].Flags & pkgCache::Flag::Auto) {
-	 if(_config->FindI("Debug::pkgAutoRemove",false))
-	    std::clog << "pkg: " << pkg.Name() << " is auto-dep" << std::endl;
-	 PkgState[pkg->ID].InstallReason = Libapt;
-      }
-
-      if(PkgState[pkg->ID].InstallReason != Manual) {
+	 if(_config->FindB("Debug::pkgAutoRemove",false))
+	    std::clog << "AutoInstal: " << pkg.Name() << std::endl;
 	 ostr.str(string(""));
 	 ostr << "Package: " << pkg.Name() 
-	      << "\nInstall-Reason: "
-	      << (int)(PkgState[pkg->ID].InstallReason) << "\n\n";
+	      << "\nInstall-Reason: 1\n\n";
 	 StateFile.Write(ostr.str().c_str(), ostr.str().size());
       }
    }

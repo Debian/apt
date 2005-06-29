@@ -1,4 +1,18 @@
-apt (0.6.38ubuntu1mvo1) unstable; urgency=low
+apt (0.6.39ubuntu1mvo1) unstable; urgency=low
+
+  * Michael Vogt
+    - Change debian/bugscript to use #!/bin/bash (Closes: #313402)
+    - Fix a incorrect example in the man-page (closes: #282918)
+    - Support architecture-specific extra overrides
+      (closes: #225947). Thanks to  Anthony Towns for idea and
+      the patch, thanks to Colin Watson for testing it.
+    - better report network timeouts from the methods to the acuire code,
+      only timeout once per sources.list line
+    - support for automatic removal of unused dependencies added
+
+ -- 
+
+apt (0.6.39) unstable; urgency=low
 
   * Welsh translation update: daf@muse.19inch.net--2005/apt--main--0--patch-6
   * Merge mvo's changes from 0.6.36ubuntu1:
@@ -6,19 +20,9 @@ apt (0.6.38ubuntu1mvo1) unstable; urgency=low
   * Merge aggregated translation updates:
     bubulle@debian.org--2005/apt--main--0
   * Update priority of apt-utils to important, to match the override file
-  * Michael Vogt
-    - Change debian/bugscript to use #!/bin/bash (Closes: #313402)
-    - Fix a incorrect example in the man-page (closes: #282918)
-    - Support architecture-specific extra overrides 
-      (closes: #225947). Thanks to  Anthony Towns for idea and 
-      the patch, thanks to Colin Watson for testing it.
-    - better report network timeouts from the methods to the acuire code, 
-      only timeout once per sources.list line 
-    - started to port the great automatic dependency mangement code from
-      aptitude over to apt (thanks dburrows for answering my silly 
-      questions and your great help!)
-  
- -- 
+  * Install only one keyring on each branch (Closes: #316119)
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Jun 2005 11:35:21 -0700
 
 apt (0.6.38ubuntu1) breezy; urgency=low
 
@@ -42,22 +46,6 @@ apt (0.6.38) unstable; urgency=low
   
  -- Matt Zimmerman <mdz@debian.org>  Sat, 25 Jun 2005 09:51:00 -0700
 
-apt (0.6.38) unstable; urgency=low
-
-  * Merge michael.vogt@ubuntu.com--2005/apt--fixes--0--patch-6, a workaround
-    for the French man pages' failure to build
-  * Branch Debian and Ubuntu
-    - apt.postinst, apt-key: use the appropriate keyring
-    - debian/rules: install all keyrings
-  * Add the current Debian archive signing key (4F368D5D) to
-    debian-archive.gpg
-  * make pinning on the "component" work again (using the section of the 
-    archive, we don't use per-section Release files anymore with apt-0.6)
-    (closes ubuntu #9935)
-  
- -- Matt Zimmerman <mdz@debian.org>  Sat, 25 Jun 2005 09:51:00 -0700
-
->>>>>>> MERGE-SOURCE
 apt (0.6.37) breezy; urgency=low
 
   * Merge bubulle@debian.org--2005/apt--main--0 up to patch-81
