@@ -1329,7 +1329,7 @@ void pkgMarkPackage(pkgDepCache &Cache,
 }
 
 
-bool pkgMarkUsed(pkgDepCache &Cache)
+bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
 {
    bool follow_recommends;
    bool follow_suggests;
@@ -1343,14 +1343,16 @@ bool pkgMarkUsed(pkgDepCache &Cache)
 
    // init vars
    follow_recommends=_config->FindB("APT::AutoRemove::RecommendsImportant",false);
-   follow_suggests=_config->FindB("APT::AutoRemove::SuggestsImportend", false);
+   follow_suggests=_config->FindB("APT::AutoRemove::SuggestsImportant", false);
 
 
    // do the mark part
    for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
    {
-      if(!(Cache[p].Flags & pkgCache::Flag::Auto) ||
-	 (p->Flags & pkgCache::Flag::Essential))
+      if( (func != NULL ? (*func)(p) : false) ||
+	 !(Cache[p].Flags & pkgCache::Flag::Auto) ||
+	  (p->Flags & pkgCache::Flag::Essential))
+          
       {
 	 if(Cache[p].Keep() && !p.CurrentVer().end())
 	    pkgMarkPackage(Cache, p, p.CurrentVer(),
