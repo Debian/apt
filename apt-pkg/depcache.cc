@@ -127,7 +127,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 	 if(!pkg.end() && !pkg.VersionList().end()) {
 	    short reason = section.FindI("Auto-Installed", 0);
 	    if(reason > 0)
-	       PkgState[pkg->ID].Flags  |= pkgCache::Flag::Auto;
+	       PkgState[pkg->ID].Flags  |= Flag::Auto;
 	    if(_config->FindB("Debug::pkgAutoRemove",false))
 	       std::cout << "Auto-Installed : " << pkgname << std::endl;
 	    amt+=section.size();
@@ -159,7 +159,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
    std::ostringstream ostr;
    for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end();pkg++) {
 
-      if(PkgState[pkg->ID].Flags & pkgCache::Flag::Auto) {
+      if(PkgState[pkg->ID].Flags & Flag::Auto) {
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "AutoInstal: " << pkg.Name() << std::endl;
 	 ostr.str(string(""));

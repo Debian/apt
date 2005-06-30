@@ -1353,6 +1353,11 @@ bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
    {
       Cache[p].Marked=false;
       Cache[p].Garbage=false;
+
+      // debug output
+      if(_config->FindB("Debug::pkgAutoRemove",false) 
+	 && Cache[p].Flags & pkgCache::Flag::Auto)
+  	 std::clog << "AutoDep: " << p.Name() << std::endl;
    }
 
    // init vars
@@ -1412,14 +1417,13 @@ bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
   {
      pkgDepCache::StateCache &state=Cache[p];
 
-     if(!state.Marked)
+     // if it is not marked and it is installed, it's garbage 
+     if(!state.Marked && !p.CurrentVer().end())
      {
-	// mark installed but not yet marked stuff as garbage
-	if(p->CurrentVer != 0) {
-	   state.Garbage=true;
+	state.Garbage=true;
+	if(_config->FindB("Debug::pkgAutoRemove",false))
 	   std::cout << "Garbage: " << p.Name() << std::endl;
-	}
-
+     
 #if 0   // mvo: the below bits still needs to be ported
 
 	// Be sure not to re-delete already deleted packages.

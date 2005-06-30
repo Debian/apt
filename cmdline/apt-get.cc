@@ -2522,7 +2522,7 @@ int main(int argc,const char *argv[])
       {0,"remove","APT::Get::Remove",0},
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
-      {0,"automatic-remove","APT::Get::AutomaticRemove",0},
+      {0,"auto-remove","APT::Get::AutomaticRemove",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
