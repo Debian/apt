@@ -125,12 +125,11 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 	 // Silently ignore unknown packages and packages with no actual
 	 // version.
 	 if(!pkg.end() && !pkg.VersionList().end()) {
-	    short reason = section.FindI("Install-Reason", 0);
+	    short reason = section.FindI("Auto-Installed", 0);
 	    if(reason > 0)
 	       PkgState[pkg->ID].Flags  |= pkgCache::Flag::Auto;
 	    if(_config->FindB("Debug::pkgAutoRemove",false))
-	       std::cout << "Install-Reason for: " << pkgname 
-			 << " is " << reason << std::endl;
+	       std::cout << "Auto-Installed : " << pkgname << std::endl;
 	    amt+=section.size();
 	    if(Prog != NULL)
 	       Prog->OverallProgress(amt, file_size, 1, 
@@ -165,7 +164,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 	    std::clog << "AutoInstal: " << pkg.Name() << std::endl;
 	 ostr.str(string(""));
 	 ostr << "Package: " << pkg.Name() 
-	      << "\nInstall-Reason: 1\n\n";
+	      << "\nAuto-Installed: 1\n\n";
 	 StateFile.Write(ostr.str().c_str(), ostr.str().size());
       }
    }
