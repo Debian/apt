@@ -135,12 +135,13 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
 
 
 // callback function that can be used by the client to bring in
-// certain own packages into the root set
+// certain own packages into the root set (if the client returns
+// True the package will be considered as part of the root set)
 typedef bool (*InRootSetFunc)(pkgCache::PkgIterator);
 
-// Mark all reachable packages with pkgDepCache::StateCache.Marked 
-// the root-set are all essential packages+everything that was installed
-// manually
+// Mark all reachable packages with "pkgDepCache::StateCache.Marked=1"
+// the root-set are all essential packages+everything that was not 
+// installed automatically
 //
 // If InRootSetFunc is set, it will be called for each PkgIterator. This
 // is usefull for clients that have there own idea about the root-set

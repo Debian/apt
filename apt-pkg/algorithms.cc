@@ -1386,18 +1386,20 @@ bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
    }
 
 
-   // do the mark part
+   // do the mark part, this is the core bit of the algorithm
    for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
    {
       if( (func != NULL ? (*func)(p) : false) ||
-	  pkgMarkAlwaysInclude(p, neverAutoRemoveRegexp) ||
+	   pkgMarkAlwaysInclude(p, neverAutoRemoveRegexp) ||
 	 !(Cache[p].Flags & pkgCache::Flag::Auto) ||
 	  (p->Flags & pkgCache::Flag::Essential))
           
       {
+	 // the package is installed (and set to keep)
 	 if(Cache[p].Keep() && !p.CurrentVer().end())
 	    pkgMarkPackage(Cache, p, p.CurrentVer(),
 			   follow_recommends, follow_suggests);
+	 // the package is to be installed 
 	 else if(Cache[p].Install())
 	    pkgMarkPackage(Cache, p, Cache[p].InstVerIter(Cache),
 			   follow_recommends, follow_suggests);
