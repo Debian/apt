@@ -26,7 +26,8 @@
 
     
 #include <apti18n.h>
-    
+#include <sys/types.h>
+#include <regex.h>
 #include <iostream>
 									/*}}}*/
 using namespace std;
@@ -1329,6 +1330,19 @@ void pkgMarkPackage(pkgDepCache &Cache,
 }
 
 
+// Helper for APT::NeverAutoRemove, always include the packages matching
+// this regexp into the root-set
+inline bool 
+pkgMarkAlwaysInclude(pkgCache::PkgIterator p, vector<regex_t*> alwaysMark)
+{
+   for(unsigned int i=0;i<alwaysMark.size();i++)
+      if (regexec(alwaysMark[i],p.Name(),0,0,0) == 0)
+	 return true;
+
+   return false;
+}
+
+// the main mark algorithm
 bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
 {
    bool follow_recommends;
@@ -1346,10 +1360,37 @@ bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
    follow_suggests=_config->FindB("APT::AutoRemove::SuggestsImportant", false);
 
 
+   // init the "NeverAutoRemove" variable
+   vector<regex_t *> neverAutoRemoveRegexp;
+   Configuration::Item const *Opts;
+   Opts = _config->Tree("APT::NeverAutoRemove");
+   if (Opts != 0 && Opts->Child != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+
+	 regex_t *p = new regex_t;
+	 if(regcomp(p,Opts->Value.c_str(),
+		    REG_EXTENDED | REG_ICASE |  REG_NOSUB) != 0)
+	 {
+	    regfree(p);
+	    for(unsigned int i=0;i<neverAutoRemoveRegexp.size();i++)
+	       regfree(neverAutoRemoveRegexp[i]);
+	    return _error->Error("Regex compilation error for APT::NeverAutoRemove");
+	 }
+	 neverAutoRemoveRegexp.push_back(p);
+      }
+   }
+
+
    // do the mark part
    for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
    {
       if( (func != NULL ? (*func)(p) : false) ||
+	  pkgMarkAlwaysInclude(p, neverAutoRemoveRegexp) ||
 	 !(Cache[p].Flags & pkgCache::Flag::Auto) ||
 	  (p->Flags & pkgCache::Flag::Essential))
           
@@ -1434,5 +1475,11 @@ bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
 #endif
      }
   }
+
+   // cleanup
+   for(unsigned int i=0;i<neverAutoRemoveRegexp.size();i++)
+      regfree(neverAutoRemoveRegexp[i]);
+   
+
    return true;
 }
