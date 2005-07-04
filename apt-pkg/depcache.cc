@@ -708,7 +708,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    
    P.Mode = ModeInstall;
    P.InstallVer = P.CandidateVer;
-   P.Flags &= ~Flag::Auto;
+   // invert the auto-flag only for new installs, not for upgrades
+   if(P.Status == 0)
+      P.Flags &= ~Flag::Auto;
    if (P.CandidateVer == (Version *)Pkg.CurrentVer())
       P.Mode = ModeKeep;
        
