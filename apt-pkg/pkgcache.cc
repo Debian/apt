@@ -244,11 +244,11 @@ const char *pkgCache::Priority(unsigned char Prio)
    return 0;
 }
 									/*}}}*/
-
 // Bases for iterator classes						/*{{{*/
 void pkgCache::VerIterator::_dummy() {}
 void pkgCache::DepIterator::_dummy() {}
 void pkgCache::PrvIterator::_dummy() {}
+void pkgCache::DescIterator::_dummy() {}
 									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------

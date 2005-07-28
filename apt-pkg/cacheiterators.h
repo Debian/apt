@@ -99,7 +99,7 @@ class pkgCache::VerIterator
 {
    Version *Ver;
    pkgCache *Owner;
-   
+
    void _dummy();
    
    public:

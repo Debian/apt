@@ -125,31 +125,39 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       string Version = List.Version();
       if (Version.empty() == true)
       {
+	 // we first process the package, then the descriptions
+	 // (this has the bonus that we get MMap error when we run out
+	 //  of MMap space)
+	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
+	    return _error->Error(_("Error occurred while processing %s (UsePackage1)"),
+				 PackageName.c_str());
+
  	 // Find the right version to write the description
  	 MD5SumValue CurMd5 = List.Description_md5();
  	 pkgCache::VerIterator Ver = Pkg.VersionList();
  	 map_ptrloc *LastVer = &Pkg->VersionList;
- 	 
+
   	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++) 
  	 {
  	    pkgCache::DescIterator Desc = Ver.DescriptionList();
  	    map_ptrloc *LastDesc = &Ver->DescriptionList;
-       
+
  	    for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++)
- 	       if (MD5SumValue(Desc.md5()) == CurMd5) {
+	    {
+
+ 	       if (MD5SumValue(Desc.md5()) == CurMd5) 
+               {
  		  // Add new description
  		  *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
  		  Desc->ParentPkg = Pkg.Index();
- 
+		  
  		  if (NewFileDesc(Desc,List) == false)
  		     return _error->Error(_("Error occured while processing %s (NewFileDesc1)"),PackageName.c_str());
  		  break;
  	       }
+	    }
  	 }
- 
-	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
-	    return _error->Error(_("Error occurred while processing %s (UsePackage1)"),
-				 PackageName.c_str());
+
 	 continue;
       }
 
@@ -403,14 +411,15 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
    unsigned long DescFile = Map.Allocate(sizeof(pkgCache::DescFile));
    if (DescFile == 0)
       return 0;
-   
+
    pkgCache::DescFileIterator DF(Cache,Cache.DescFileP + DescFile);
    DF->File = CurrentFile - Cache.PkgFileP;
-   
+
    // Link it to the end of the list
    map_ptrloc *Last = &Desc->FileList;
    for (pkgCache::DescFileIterator D = Desc.FileList(); D.end() == false; D++)
       Last = &D->NextFile;
+
    DF->NextFile = *Last;
    *Last = DF.Index();
    

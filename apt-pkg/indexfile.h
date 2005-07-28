@@ -81,7 +81,7 @@ class pkgIndexFile
    virtual bool MergeFileProvides(pkgCacheGenerator &/*Gen*/,OpProgress &/*Prog*/) const {return true;};
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   static bool UseTranslation();
+   static bool TranslationsAvailable();
    static bool CheckLanguageCode(const char *Lang);
    static string LanguageCode();
 

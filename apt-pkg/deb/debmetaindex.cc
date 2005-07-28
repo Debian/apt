@@ -189,8 +189,10 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
       if ((*I)->IsSrc)
          Indexes->push_back(new debSourcesIndex (URI, Dist, (*I)->Section, IsTrusted()));
       else 
+      {
          Indexes->push_back(new debPackagesIndex (URI, Dist, (*I)->Section, IsTrusted()));
-      Indexes->push_back(new debTranslationsIndex(URI,Dist,(*I)->Section));
+	 Indexes->push_back(new debTranslationsIndex(URI, Dist, (*I)->Section));
+      }
    }
 
    return Indexes;

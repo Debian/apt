@@ -70,10 +70,10 @@ string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &Record,
    return string();
 }
 									/*}}}*/
-// IndexFile::UseTranslation - Check if will use Translation	        /*{{{*/
+// IndexFile::TranslationsAvailable - Check if will use Translation    /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgIndexFile::UseTranslation()
+bool pkgIndexFile::TranslationsAvailable()
 {
   const string Translation = _config->Find("APT::Acquire::Translation");
   
@@ -89,7 +89,6 @@ bool pkgIndexFile::UseTranslation()
 /* common cases: de_DE, de_DE@euro, de_DE.UTF-8, de_DE.UTF-8@euro,
                  de_DE.ISO8859-1, tig_ER
                  more in /etc/gdm/locale.conf 
-		 approach: just get the first letter before the underscore?!?
 */
 
 bool pkgIndexFile::CheckLanguageCode(const char *Lang)
@@ -105,13 +104,20 @@ bool pkgIndexFile::CheckLanguageCode(const char *Lang)
 									/*}}}*/
 // IndexFile::LanguageCode - Return the Language Code            	/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* return the language code */
 string pkgIndexFile::LanguageCode()
 {
   const string Translation = _config->Find("APT::Acquire::Translation");
 
-  if (Translation.compare("environment") == 0) {
+  if (Translation.compare("environment") == 0) 
+  {
      string lang = std::setlocale(LC_MESSAGES,NULL);
+
+     // FIXME: this needs to be added
+     // we have a mapping of the language codes that contains all the language
+     // codes that need the country code as well 
+     // (like pt_BR, pt_PT, sv_SE, zh_*, en_*)
+
      if(lang.size() > 2)
 	return lang.substr(0,2);
      else

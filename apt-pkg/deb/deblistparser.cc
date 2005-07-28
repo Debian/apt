@@ -143,14 +143,16 @@ string debListParser::DescriptionLanguage()
                                                                         /*}}}*/
 // ListParser::Description - Return the description_md5 MD5SumValue	/*{{{*/
 // ---------------------------------------------------------------------
-/* This is to return the md5 string to allow the check if is the right
-   description. If thisreturns a blank string then calculate the md5
-   value. */
+/* This is to return the md5 string to allow the check if it is the right
+   description. If no Description-md5 is found in the section it will be
+   calculated.
+ */
 MD5SumValue debListParser::Description_md5()
 {
    string value = Section.FindS("Description-md5");
 
-   if (value.empty()) {
+   if (value.empty()) 
+   {
       MD5Summation md5;
       md5.Add((Description() + "\n").c_str());
       return md5.Result();

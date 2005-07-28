@@ -358,7 +358,7 @@ string debTranslationsIndex::IndexURI(const char *Type) const
 /* */
 bool debTranslationsIndex::GetIndexes(pkgAcquire *Owner) const
 {
-   if (UseTranslation()) {
+   if (TranslationsAvailable()) {
      string TranslationFile = "Translation-" + LanguageCode();
      new pkgAcqIndexTrans(Owner, IndexURI(LanguageCode().c_str()),
 			  Info(TranslationFile.c_str()),
@@ -403,7 +403,7 @@ string debTranslationsIndex::Info(const char *Type) const
 									/*}}}*/
 bool debTranslationsIndex::HasPackages() const
 {
-   if(!UseTranslation())
+   if(!TranslationsAvailable())
       return false;
    
    return FileExists(IndexFile(LanguageCode().c_str()));
@@ -435,7 +435,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 {
    // Check the translation file, if in use
    string TranslationFile = IndexFile(LanguageCode().c_str());
-   if (UseTranslation() && FileExists(TranslationFile))
+   if (TranslationsAvailable() && FileExists(TranslationFile))
    {
      FileFd Trans(TranslationFile,FileFd::ReadOnly);
      debListParser TransParser(&Trans);
