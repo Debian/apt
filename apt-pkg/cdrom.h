@@ -50,8 +50,11 @@ class pkgCdrom
    };
 
 
-   bool FindPackages(string CD,vector<string> &List,
-		     vector<string> &SList, vector<string> &SigList,
+   bool FindPackages(string CD,
+		     vector<string> &List,
+		     vector<string> &SList, 
+		     vector<string> &SigList,
+		     vector<string> &TransList,
 		     string &InfoDir, pkgCdromStatus *log,
 		     unsigned int Depth = 0);
    bool DropBinaryArch(vector<string> &List);

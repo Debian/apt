@@ -70,6 +70,17 @@ class SourceCopy : public IndexCopy
    public:
 };
 
+class TranslationsCopy
+{
+   protected:
+   pkgTagSection *Section;
+
+   public:
+   bool CopyTranslations(string CDROM,string Name,vector<string> &List,
+			 pkgCdromStatus *log);
+};
+
+
 class SigVerify 
 {
    bool Verify(string prefix,string file, indexRecords *records);
@@ -80,5 +91,7 @@ class SigVerify
    bool CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 		      vector<string> PkgList,vector<string> SrcList);
 };
+
+
 
 #endif
