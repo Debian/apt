@@ -1,0 +1,40 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 01_ubuntu_archive_key.dpatch by  <egon@localhost.localdomain>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: use the ubuntu archive key (instead of the debian one) 
+
+@DPATCH@
+diff -urNad --exclude=CVS --exclude=.svn ./cmdline/apt-key /tmp/dpep-work.o4yrSO/apt--mvo/cmdline/apt-key
+--- ./cmdline/apt-key	2005-06-26 22:41:36.000000000 +0200
++++ /tmp/dpep-work.o4yrSO/apt--mvo/cmdline/apt-key	2005-08-01 17:59:56.000000000 +0200
+@@ -9,14 +9,14 @@
+ GPG="$GPG_CMD --keyring /etc/apt/trusted.gpg"
+ 
+ 
+-ARCHIVE_KEYRING=/usr/share/keyrings/debian-archive-keyring.gpg
+-REMOVED_KEYS=/usr/share/keyrings/debian-archive-removed-keys.gpg
++ARCHIVE_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
++REMOVED_KEYS=/usr/share/keyrings/ubuntu-archive-removed-keys.gpg
+ 
+ 
+ update() {
+     if [ ! -f $ARCHIVE_KEYRING ]; then
+ 	echo >&2 "ERROR: Can't find the archive-keyring"
+-	echo >&2 "Is the debian-keyring package installed?"
++	echo >&2 "Is the ubuntu-keyring package installed?"
+ 	exit 1
+     fi
+ 
+diff -urNad --exclude=CVS --exclude=.svn ./debian/apt.postinst /tmp/dpep-work.o4yrSO/apt--mvo/debian/apt.postinst
+--- ./debian/apt.postinst	2005-06-26 22:41:36.000000000 +0200
++++ /tmp/dpep-work.o4yrSO/apt--mvo/debian/apt.postinst	2005-08-01 18:00:23.000000000 +0200
+@@ -17,7 +17,7 @@
+     configure)
+ 
+         if ! test -f /etc/apt/trusted.gpg; then
+-                cp /usr/share/apt/debian-archive.gpg /etc/apt/trusted.gpg
++                cp /usr/share/apt/ubuntu-archive.gpg /etc/apt/trusted.gpg
+         fi
+ 
+     ;;
