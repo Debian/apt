@@ -688,7 +688,7 @@ static bool CheckAuth(pkgAcquire& Fetcher)
 
    if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
    {
-      c2out << "Authentication warning overridden.\n";
+      c2out << _("Authentication warning overridden.\n");
       return true;
    }
 
@@ -750,7 +750,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (Cache->BrokenCount() != 0)
    {
       ShowBroken(c1out,Cache,false);
-      return _error->Error("Internal error, InstallPackages was called with broken packages!");
+      return _error->Error(_("Internal error, InstallPackages was called with broken packages!"));
    }
 
    if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
@@ -769,7 +769,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       if (Res == pkgPackageManager::Failed)
 	 return false;
       if (Res != pkgPackageManager::Completed)
-	 return _error->Error("Internal error, Ordering didn't finish");
+	 return _error->Error(_("Internal error, Ordering didn't finish"));
       return true;
    }
    
@@ -810,7 +810,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (DebBytes != Cache->DebSize())
    {
       c0out << DebBytes << ',' << Cache->DebSize() << endl;
-      c0out << "How odd.. The sizes didn't match, email apt@packages.debian.org" << endl;
+      c0out << _("How odd.. The sizes didn't match, email apt@packages.debian.org") << endl;
    }
    
    // Number of bytes
@@ -840,7 +840,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       struct statvfs Buf;
       string OutputDir = _config->FindDir("Dir::Cache::Archives");
       if (statvfs(OutputDir.c_str(),&Buf) != 0)
-	 return _error->Errno("statvfs","Couldn't determine free space in %s",
+	 return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
 			      OutputDir.c_str());
       if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
 	 return _error->Error(_("You don't have enough free space in %s."),
@@ -1743,7 +1743,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
       if (Fix.Resolve() == false)
       {
 	 ShowBroken(c1out,Cache,false);
-	 return _error->Error("Internal error, problem resolver broke stuff");
+	 return _error->Error(_("Internal error, problem resolver broke stuff"));
       }
    }
 
@@ -1751,7 +1751,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    if (pkgAllUpgrade(Cache) == false)
    {
       ShowBroken(c1out,Cache,false);
-      return _error->Error("Internal error, problem resolver broke stuff");
+      return _error->Error(_("Internal error, problem resolver broke stuff"));
    }
    
    return InstallPackages(Cache,false);
@@ -1922,7 +1922,7 @@ bool DoSource(CommandLine &CmdL)
    struct statvfs Buf;
    string OutputDir = ".";
    if (statvfs(OutputDir.c_str(),&Buf) != 0)
-      return _error->Errno("statvfs","Couldn't determine free space in %s",
+      return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
 			   OutputDir.c_str());
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
       return _error->Error(_("You don't have enough free space in %s"),
