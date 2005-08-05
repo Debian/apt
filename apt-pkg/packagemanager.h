@@ -76,7 +76,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    // Main action members
    bool GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 		    pkgRecords *Recs);
-   OrderResult DoInstall();
+   OrderResult DoInstall(int statusFd=-1); 
    bool FixMissing();
    
    pkgPackageManager(pkgDepCache *Cache);

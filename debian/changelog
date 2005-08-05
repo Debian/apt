@@ -1,35 +1,17 @@
-apt (0.6.39ubuntu4) breezy; urgency=low
+apt (0.6.40) unstable; urgency=low
 
-  * Fix keyring paths in apt-key, apt.postinst (I swear I remember doing this
-    before...)
+  * Patch from Jordi Mallach to mark some additional strings for translation
+  * Updated Catalan translation from Jordi Mallach
+  * Merge from bubulle@debian.org--2005/apt--main--0:
+    - Update pot and merge with *.po
+    - Updated French translation, including apt-key.fr.8
+  * Restore changelog entries from the 0.6.x series that went to Debian
+    experimental
+  * Merge michael.vogt@ubuntu.com--2005/apt--progress-reporting--0
+    - Provide an interface for progress reporting which can be used by
+      (e.g.) base-config
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 29 Jun 2005 08:39:17 -0700
-
-apt (0.6.39ubuntu3) breezy; urgency=low
-
-  * Fix keyring locations for Ubuntu in apt-key too.
-
- -- Colin Watson <cjwatson@ubuntu.com>  Wed, 29 Jun 2005 14:45:36 +0100
-
-apt (0.6.39ubuntu2) breezy; urgency=low
-
-  * Install ubuntu-archive.gpg rather than debian-archive.gpg as
-    /etc/apt/trusted.gpg.
-
- -- Colin Watson <cjwatson@ubuntu.com>  Wed, 29 Jun 2005 11:53:34 +0100
-
-apt (0.6.39ubuntu1) breezy; urgency=low
-
-  * Michael Vogt
-    - Change debian/bugscript to use #!/bin/bash (Closes: #313402)
-    - Fix a incorrect example in the man-page (closes: #282918)
-    - Support architecture-specific extra overrides
-      (closes: #225947). Thanks to  Anthony Towns for idea and
-      the patch, thanks to Colin Watson for testing it.
-    - better report network timeouts from the methods to the acuire code,
-      only timeout once per sources.list line
-
- -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Jun 2005 11:52:24 -0700
+ -- Matt Zimmerman <mdz@debian.org>  Thu, 28 Jul 2005 11:57:32 -0700
 
 apt (0.6.39) unstable; urgency=low
 
@@ -41,32 +23,7 @@ apt (0.6.39) unstable; urgency=low
   * Update priority of apt-utils to important, to match the override file
   * Install only one keyring on each branch (Closes: #316119)
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Jun 2005 11:35:21 -0700
-
-apt (0.6.38ubuntu1) breezy; urgency=low
-
-  * First release from Ubuntu branch
-  * Merge with --main--0, switch back to Ubuntu keyring
-
- -- Matt Zimmerman <mdz@ubuntu.com>  Sat, 25 Jun 2005 16:52:41 -0700
-
-apt (0.6.38) unstable; urgency=low
-
-  * Merge michael.vogt@ubuntu.com--2005/apt--fixes--0--patch-6, a workaround
-    for the French man pages' failure to build
-  * Branch Debian and Ubuntu
-    - apt.postinst, apt-key: use the appropriate keyring
-    - debian/rules: install all keyrings
-  * Add the current Debian archive signing key (4F368D5D) to
-    debian-archive.gpg
-  * make pinning on the "component" work again (using the section of the 
-    archive, we don't use per-section Release files anymore with apt-0.6)
-    (closes ubuntu #9935)
-  
- -- Matt Zimmerman <mdz@debian.org>  Sat, 25 Jun 2005 09:51:00 -0700
-=======
- -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Jun 2005 11:51:09 -0700
->>>>>>> MERGE-SOURCE
+ -- Matt Zimmerman <mdz@debian.org>  Tue, 28 Jun 2005 11:51:09 -0700
 
 apt (0.6.38) unstable; urgency=low
 
@@ -83,7 +40,6 @@ apt (0.6.38) unstable; urgency=low
   
  -- Matt Zimmerman <mdz@debian.org>  Sat, 25 Jun 2005 09:51:00 -0700
 
->>>>>>> MERGE-SOURCE
 apt (0.6.37) breezy; urgency=low
 
   * Merge bubulle@debian.org--2005/apt--main--0 up to patch-81
@@ -261,6 +217,236 @@ apt (0.6.27) hoary; urgency=low
       - Pass an appropriate value for Candidate everywhere Describe is called
 
  -- Matt Zimmerman <mdz@canonical.com>  Mon, 13 Dec 2004 01:03:11 -0800
+
+apt (0.6.25) experimental; urgency=low
+
+  * Fix handling of two-part sources for sources.list deb-src entries in
+    the same way that deb entries were fixed
+
+ -- Matt Zimmerman <mdz@debian.org>  Wed,  9 Jun 2004 05:29:50 -0700
+
+apt (0.6.24) experimental; urgency=low
+
+  * YnPrompt fixes were inadvertently left out, include them (Closes:
+    #249251)
+
+ -- Matt Zimmerman <mdz@debian.org>  Sun, 16 May 2004 14:18:53 -0700
+
+apt (0.6.23) experimental; urgency=low
+
+  * Remove obsolete pkgIterator::TargetVer() (Closes: #230159)
+  * Reverse test in CheckAuth to match new prompt (Closes: #248211)
+
+ -- Matt Zimmerman <mdz@debian.org>  Sun,  9 May 2004 21:01:58 -0700
+
+apt (0.6.22) experimental; urgency=low
+
+  * Merge 0.5.25
+  * Make the unauthenticated packages prompt more intuitive (yes to
+    continue, default no), but require --force-yes in addition to
+    --assume-yes in order to override
+
+ -- Matt Zimmerman <mdz@debian.org>  Fri, 19 Mar 2004 13:55:35 -0800
+
+apt (0.6.21) experimental; urgency=low
+
+  * Merge 0.5.24
+
+ -- Matt Zimmerman <mdz@debian.org>  Tue, 16 Mar 2004 22:52:34 -0800
+
+apt (0.6.20) experimental; urgency=low
+
+  * Merge 0.5.23
+
+ -- Matt Zimmerman <mdz@debian.org>  Thu, 26 Feb 2004 17:17:02 -0800
+
+apt (0.6.19) experimental; urgency=low
+
+  * Merge 0.5.22
+  * Convert apt-key(8) to docbook XML
+
+ -- Matt Zimmerman <mdz@debian.org>  Mon,  9 Feb 2004 15:44:49 -0800
+
+apt (0.6.18) experimental; urgency=low
+
+  * Add new Debian Archive Automatic Signing Key to the default keyring
+    (existing keyrings are not updated; do that yourself)
+
+ -- Matt Zimmerman <mdz@debian.org>  Sat, 17 Jan 2004 17:04:30 -0800
+
+apt (0.6.17) experimental; urgency=low
+
+  * Merge 0.5.21
+  * Handle more IMS stuff correctly
+
+ -- Matt Zimmerman <mdz@debian.org>  Fri, 16 Jan 2004 10:54:25 -0800
+
+apt (0.6.16) experimental; urgency=low
+
+  * Fix some cases where the .gpg file could be left in place when it is
+    invalid
+
+ -- Matt Zimmerman <mdz@debian.org>  Fri,  9 Jan 2004 09:22:15 -0800
+
+apt (0.6.15) experimental; urgency=low
+
+  * s/Debug::Acquire::gpg/&v/
+  * Honor the [vendor] syntax in sources.list again (though it is not
+    presently used for anything)
+  * Don't ship vendors.list(5) since it isn't used yet
+  * Revert change from 0.6.10; it was right in the first place and the
+    problem was apparently something else.  Archive = Suite.
+
+ -- Matt Zimmerman <mdz@debian.org>  Mon,  5 Jan 2004 17:43:01 -0800
+
+apt (0.6.14) experimental; urgency=low
+
+  * Merge 0.5.20
+
+ -- Matt Zimmerman <mdz@debian.org>  Sun,  4 Jan 2004 11:09:21 -0800
+
+apt (0.6.13) experimental; urgency=low
+
+  * Merge 0.5.19
+
+ -- Matt Zimmerman <mdz@debian.org>  Sat,  3 Jan 2004 16:22:31 -0800
+
+apt (0.6.12) experimental; urgency=low
+
+  * Have pkgAcquireIndex calculate an MD5 sum if one is not provided by
+    the method (as with file: and copy:).  Local repositories
+  * Fix warning about dist name mismatch to actually print what it was
+    expecting
+  * Don't expect any particular distribution name for two-part
+    sources.list entries
+  * Merge 0.5.18
+
+ -- Matt Zimmerman <mdz@debian.org>  Fri,  2 Jan 2004 13:59:00 -0800
+
+apt (0.6.11) experimental; urgency=low
+
+  * Support IMS requests of Release.gpg and Release
+  * This required API changes, bump the libapt-pkg version
+  * Copy local Release files into Dir::State::Lists
+  * Set IndexFile attribute when retrieving Release and Release.gpg so
+    that the appropriate Cache-Control headers are sent
+
+ -- Matt Zimmerman <mdz@debian.org>  Fri,  2 Jan 2004 10:46:17 -0800
+
+apt (0.6.10) experimental; urgency=low
+
+  * Use "Codename" (woody, sarge, etc.) to supply the value of the
+    "Archive" package file attribute, used to match "release a=" type
+    pins, rather than "Suite" (stable, testing, etc.)
+
+ -- Matt Zimmerman <mdz@debian.org>  Thu,  1 Jan 2004 16:56:47 -0800
+
+apt (0.6.9) experimental; urgency=low
+
+  * Another tagfile workaround
+
+ -- Matt Zimmerman <mdz@debian.org>  Thu,  1 Jan 2004 13:56:08 -0800
+
+apt (0.6.8) experimental; urgency=low
+
+  * Add a config option and corresponding command line option
+    (--allow-unauthenticated) to apt-get, to make buildd operators happy
+    (Closes: #225648)
+
+ -- Matt Zimmerman <mdz@debian.org>  Wed, 31 Dec 2003 08:28:04 -0800
+
+apt (0.6.7) experimental; urgency=low
+
+  * Forgot to revert part of the changes to tagfile in 0.6.4.  Hopefully
+    will fix segfaults for some folks.
+
+ -- Matt Zimmerman <mdz@debian.org>  Wed, 31 Dec 2003 08:01:28 -0800
+
+apt (0.6.6) experimental; urgency=low
+
+  * Restore the ugly hack I removed from indexRecords::Load which set the
+    pkgTagFile buffer size to (file size)+256.  This is concealing a bug,
+    but I can't fix it right now.  This should fix the segfaults that
+    folks are seeing with 0.6.[45].
+
+ -- Matt Zimmerman <mdz@debian.org>  Mon, 29 Dec 2003 18:11:13 -0800
+
+apt (0.6.5) experimental; urgency=low
+
+  * Move the authentication check into a separate function in apt-get
+  * Fix display of unauthenticated packages when they are in the cache
+    (Closes: #225336)
+
+ -- Matt Zimmerman <mdz@debian.org>  Sun, 28 Dec 2003 16:47:57 -0800
+
+apt (0.6.4) experimental; urgency=low
+
+  * Use the top-level Release file in LoadReleaseInfo, rather than looking
+    for the per-section ones (which aren't downloaded anymore).  This
+    unbreaks release pinning, including the NotAutomatic bit used by
+    project/experimental
+  * Use FileFd::Size() rather than a separate stat() call in
+    LoadReleaseInfo
+  * Fix pkgTagFile to leave a little extra room at the end of the buffer
+    to append the record separator if it isn't present
+  * Change LoadReleaseInfo to use "Suite" rather than "Archive", to match
+    the Debian archive's dist-level Release files
+
+ -- Matt Zimmerman <mdz@debian.org>  Sun, 28 Dec 2003 15:55:55 -0800
+
+apt (0.6.3) experimental; urgency=low
+
+  * Fix MetaIndexURI for flat ("foo/") sources
+
+ -- Matt Zimmerman <mdz@debian.org>  Sun, 28 Dec 2003 12:11:56 -0800
+
+apt (0.6.2) experimental; urgency=low
+
+  * Add space between package names when multiple unauthenticated packages
+    are being installed (Closes: #225212)
+  * Provide apt-key with a secret keyring and a trustdb, even though we
+    would never use them, because it blows up if it doesn't have them
+  * Fix typo in apt-key(8) (standard input is '-', not '/')
+
+ -- Matt Zimmerman <mdz@debian.org>  Sat, 27 Dec 2003 13:01:40 -0800
+
+apt (0.6.1) experimental; urgency=low
+
+  * Merge apt 0.5.17
+  * Rearrange Release file authentication code to be more clear
+  * If Release is present, but Release.gpg is not, don't forget to still
+    queue Packages files
+  * Convert distribution "../project/experimental" to "experimental" for
+    comparison purposes
+  * Make a number of Release file errors into warnings; for now, it is OK
+    not to have a codename, for example.  We mostly care about checksums
+    for now
+
+ -- Matt Zimmerman <mdz@debian.org>  Fri, 26 Dec 2003 15:12:47 -0800
+
+apt (0.6.0) experimental; urgency=low
+
+  * Signature verification support patch ("apt-secure") from Colin Walters
+    <walters@debian.org> and Isaac Jones <ijones@syntaxpolice.org>.  This
+    implements:
+     - Release signature verification (Release.gpg)
+     - Packages, Sources md5sum verification against Release
+     - Closes: #203741
+  * Make some modifications to signature verification support:
+    - Release.gpg is always retrieved and verified if present, rather than
+      requiring that sources be configured as secure
+    - Print a hint about installing gnupg if exec(gpgv) fails
+    - Remove obsolete pkgAcqIndexRel
+    - Move vendors.list stuff into a separate module (vendorlist.{h,cc})
+    - If any files about to be retrieved are not authenticated, issue a
+      warning to the user and require confirmation
+    - Fix a heap corruption bug in pkgSrcRecords::pkgSrcRecords()
+  * Suggests: gnupg
+  * Install a keyring in /usr/share/apt/debian-archive.gpg containing an
+    initial set of Debian archive signing keys to seed /etc/apt/trusted.gpg
+  * Add a new tool, apt-key(8) used to manage the keyring
+
+ -- Matt Zimmerman <mdz@debian.org>  Fri, 26 Dec 2003 08:27:19 -0800
 
 apt (0.5.32) hoary; urgency=low
 

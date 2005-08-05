@@ -84,6 +84,13 @@ APT
   Force-LoopBreak "false";         // DO NOT turn this on, see the man page
   Cache-Limit "4194304";
   Default-Release "";
+
+
+  // Write progress messages on this fd (for stuff like base-config)
+  Status-Fd "-1";
+  // Keep the list of FDs open (normally apt closes all fds when it
+  // does a ExecFork)
+  Keep-Fds {};
 };
 
 // Options for the downloading routines
@@ -234,6 +241,7 @@ Debug
   pkgAcquire "false";
   pkgAcquire::Worker "false";
   pkgDPkgPM "false";
+  pkgDPkgProgressReporting "false";
   pkgOrderList "false";
   
   pkgInitialize "false";   // This one will dump the configuration space

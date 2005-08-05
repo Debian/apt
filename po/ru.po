@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-03-29 07:17+0200\n"
+"POT-Creation-Date: 2005-07-02 11:19-0700\n"
 "PO-Revision-Date: 2005-02-09 19:50+0400\n"
 "Last-Translator: Yuri Kozlov <yuray@id.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -161,7 +161,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
-#: cmdline/apt-get.cc:2313 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2322 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s для %s %s скомпилирован %s %s\n"
@@ -644,7 +644,7 @@ msgstr "Не удалось переименовать %s в %s"
 msgid "Y"
 msgstr "д"
 
-#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1475
+#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1484
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Ошибка компиляции регулярного выражения - %s"
@@ -714,8 +714,9 @@ msgid "%s (due to %s) "
 msgstr "%s (вследствие %s) "
 
 #: cmdline/apt-get.cc:544
+#, fuzzy
 msgid ""
-"WARNING: The following essential packages will be removed\n"
+"WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
 msgstr ""
 "ВНИМАНИЕ: Эти существенно важные пакеты будут удалены\n"
@@ -796,11 +797,11 @@ msgstr "Существуют проблемы, а опция -y использо
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Пакеты необходимо удалить, но удаление запрещено."
 
-#: cmdline/apt-get.cc:788 cmdline/apt-get.cc:1769 cmdline/apt-get.cc:1802
+#: cmdline/apt-get.cc:788 cmdline/apt-get.cc:1778 cmdline/apt-get.cc:1811
 msgid "Unable to lock the download directory"
 msgstr "Невозможно заблокировать каталог для загрузки"
 
-#: cmdline/apt-get.cc:798 cmdline/apt-get.cc:1850 cmdline/apt-get.cc:2061
+#: cmdline/apt-get.cc:798 cmdline/apt-get.cc:1859 cmdline/apt-get.cc:2070
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Не читается перечень источников."
@@ -843,9 +844,9 @@ msgid "Yes, do as I say!"
 msgstr "Да, делать, как я скажу!"
 
 #: cmdline/apt-get.cc:865
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"You are about to do something potentially harmful\n"
+"You are about to do something potentially harmful.\n"
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
@@ -861,7 +862,7 @@ msgstr "Аварийное завершение."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Хотите продолжить [Д/н]? "
 
-#: cmdline/apt-get.cc:958 cmdline/apt-get.cc:1334 cmdline/apt-get.cc:1959
+#: cmdline/apt-get.cc:958 cmdline/apt-get.cc:1334 cmdline/apt-get.cc:1968
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Не удалось загрузить %s  %s\n"
@@ -870,7 +871,7 @@ msgstr "Не удалось загрузить %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Некоторые файлы не удалось загрузить"
 
-#: cmdline/apt-get.cc:977 cmdline/apt-get.cc:1968
+#: cmdline/apt-get.cc:977 cmdline/apt-get.cc:1977
 msgid "Download complete and in download only mode"
 msgstr "Указан режим \"только загрузка\", и загрузка завершена"
 
@@ -972,7 +973,7 @@ msgstr "Выбрана версия %s (%s) для %s\n"
 msgid "The update command takes no arguments"
 msgstr "Команде update не нужны аргументы"
 
-#: cmdline/apt-get.cc:1295
+#: cmdline/apt-get.cc:1295 cmdline/apt-get.cc:1389
 msgid "Unable to lock the list directory"
 msgstr "Невозможно заблокировать каталог со списками пакетов"
 
@@ -988,23 +989,23 @@ msgstr ""
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Внутренняя ошибка, AllUpgrade все поломал"
 
-#: cmdline/apt-get.cc:1462 cmdline/apt-get.cc:1498
+#: cmdline/apt-get.cc:1471 cmdline/apt-get.cc:1507
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Не могу найти пакет %s"
 
-#: cmdline/apt-get.cc:1485
+#: cmdline/apt-get.cc:1494
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Заметьте, регулярное выражение %2$s приводит к выбору %1$s\n"
 
-#: cmdline/apt-get.cc:1515
+#: cmdline/apt-get.cc:1524
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr ""
 "Возможно, для исправления этих ошибок вы захотите воспользоваться `apt-get -"
 "f install':"
 
-#: cmdline/apt-get.cc:1518
+#: cmdline/apt-get.cc:1527
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1012,7 +1013,7 @@ msgstr ""
 "Неудовлетворённые зависимости. Попытайтесь выполнить 'apt-get -f install', "
 "не указывая имени пакета, (или найдите другое решение)."
 
-#: cmdline/apt-get.cc:1530
+#: cmdline/apt-get.cc:1539
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1023,7 +1024,7 @@ msgstr ""
 "или же используете нестабильного дистрибутив, и запрошенные Вами пакеты\n"
 "ещё не созданы или были удалены из Incoming."
 
-#: cmdline/apt-get.cc:1538
+#: cmdline/apt-get.cc:1547
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -1033,111 +1034,111 @@ msgstr ""
 "пакет просто не может быть установлен из-за ошибок в самом пакете.\n"
 "Необходимо послать отчёт об этой ошибке."
 
-#: cmdline/apt-get.cc:1543
+#: cmdline/apt-get.cc:1552
 msgid "The following information may help to resolve the situation:"
 msgstr "Следующая информация возможно поможет Вам:"
 
-#: cmdline/apt-get.cc:1546
+#: cmdline/apt-get.cc:1555
 msgid "Broken packages"
 msgstr "Сломанные пакеты"
 
-#: cmdline/apt-get.cc:1572
+#: cmdline/apt-get.cc:1581
 msgid "The following extra packages will be installed:"
 msgstr "Будут установлены следующие дополнительные пакеты:"
 
-#: cmdline/apt-get.cc:1643
+#: cmdline/apt-get.cc:1652
 msgid "Suggested packages:"
 msgstr "Настойчиво рекомендуемые пакеты:"
 
-#: cmdline/apt-get.cc:1644
+#: cmdline/apt-get.cc:1653
 msgid "Recommended packages:"
 msgstr "Рекомендуемые пакеты:"
 
-#: cmdline/apt-get.cc:1664
+#: cmdline/apt-get.cc:1673
 msgid "Calculating upgrade... "
 msgstr "Рассчёт обновлений... "
 
-#: cmdline/apt-get.cc:1667 methods/ftp.cc:702 methods/connect.cc:99
+#: cmdline/apt-get.cc:1676 methods/ftp.cc:702 methods/connect.cc:99
 msgid "Failed"
 msgstr "Неудачно"
 
-#: cmdline/apt-get.cc:1672
+#: cmdline/apt-get.cc:1681
 msgid "Done"
 msgstr "Готово"
 
-#: cmdline/apt-get.cc:1845
+#: cmdline/apt-get.cc:1854
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Укажите как минимум один пакет, для которого необходимо загрузить исходные "
 "тексты"
 
-#: cmdline/apt-get.cc:1872 cmdline/apt-get.cc:2079
+#: cmdline/apt-get.cc:1881 cmdline/apt-get.cc:2088
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Невозможно найти пакет с исходными текстами для %s"
 
-#: cmdline/apt-get.cc:1919
+#: cmdline/apt-get.cc:1928
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Недостаточно места в %s"
 
-#: cmdline/apt-get.cc:1924
+#: cmdline/apt-get.cc:1933
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Необходимо загрузить %sB/%sB из архивов исходных текстов.\n"
 
-#: cmdline/apt-get.cc:1927
+#: cmdline/apt-get.cc:1936
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Нужно загрузить %sB архивов с исходными текстами.\n"
 
-#: cmdline/apt-get.cc:1933
+#: cmdline/apt-get.cc:1942
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Загрузка исходных текстов %s\n"
 
-#: cmdline/apt-get.cc:1964
+#: cmdline/apt-get.cc:1973
 msgid "Failed to fetch some archives."
 msgstr "Некоторые архивы не удалось загрузить."
 
-#: cmdline/apt-get.cc:1992
+#: cmdline/apt-get.cc:2001
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 "Распаковка исходных текстов пропущена, так как в %s уже находятся "
 "распакованные исходные тексты\n"
 
-#: cmdline/apt-get.cc:2004
+#: cmdline/apt-get.cc:2013
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Команда распаковки '%s' завершилась неудачно.\n"
 
-#: cmdline/apt-get.cc:2021
+#: cmdline/apt-get.cc:2030
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Команда сборки '%s' завершилась неудачно.\n"
 
-#: cmdline/apt-get.cc:2040
+#: cmdline/apt-get.cc:2049
 msgid "Child process failed"
 msgstr "Порождённый процесс завершился неудачно"
 
-#: cmdline/apt-get.cc:2056
+#: cmdline/apt-get.cc:2065
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Для проверки зависимостей для сборки необходимо указать как минимум один "
 "пакет"
 
-#: cmdline/apt-get.cc:2084
+#: cmdline/apt-get.cc:2093
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Невозможно получить информацию о зависимостях для сборки %s"
 
-#: cmdline/apt-get.cc:2104
+#: cmdline/apt-get.cc:2113
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s не имеет зависимостей для сборки.\n"
 
-#: cmdline/apt-get.cc:2156
+#: cmdline/apt-get.cc:2165
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1146,7 +1147,7 @@ msgstr ""
 "Зависимость типа %s для %s не может быть удовлетворена, так как пакет %s не "
 "найден"
 
-#: cmdline/apt-get.cc:2208
+#: cmdline/apt-get.cc:2217
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1155,32 +1156,32 @@ msgstr ""
 "Зависимость типа %s для %s не может быть удовлетворена, поскольку ни одна из "
 "версий пакета %s не удовлетворяет требованиям"
 
-#: cmdline/apt-get.cc:2243
+#: cmdline/apt-get.cc:2252
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Не удалось удовлетворить зависимость типа %s для пакета %s: Установленный "
 "пакет %s новее, чем надо"
 
-#: cmdline/apt-get.cc:2268
+#: cmdline/apt-get.cc:2277
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Невозможно удовлетворить зависимость типа %s для пакета %s: %s"
 
-#: cmdline/apt-get.cc:2282
+#: cmdline/apt-get.cc:2291
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Зависимости для сборки %s не могут быть удовлетворены."
 
-#: cmdline/apt-get.cc:2286
+#: cmdline/apt-get.cc:2295
 msgid "Failed to process build dependencies"
 msgstr "Обработка зависимостей для сборки завершилась неудачно"
 
-#: cmdline/apt-get.cc:2318
+#: cmdline/apt-get.cc:2327
 msgid "Supported modules:"
 msgstr "Поддерживаемые модули:"
 
-#: cmdline/apt-get.cc:2359
+#: cmdline/apt-get.cc:2368
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1432,8 +1433,8 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Повторно указанный конфигурационный файл %s/%s"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, c-format
-msgid "Failed write file %s"
+#, fuzzy, c-format
+msgid "Failed to write file %s"
 msgstr "Не удалось записать файл %s"
 
 #: apt-inst/dirstream.cc:80 apt-inst/dirstream.cc:88
@@ -1789,7 +1790,7 @@ msgstr "Время установления соединения для соке
 msgid "Unable to accept connection"
 msgstr "Невозможно принять соединение"
 
-#: methods/ftp.cc:864 methods/http.cc:916 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Проблема при хэшировании файла"
 
@@ -1917,43 +1918,43 @@ msgstr "Этот http-сервер не поддерживает загрузк�
 msgid "Unknown date format"
 msgstr "Неизвестный формат данных"
 
-#: methods/http.cc:737
+#: methods/http.cc:741
 msgid "Select failed"
 msgstr "Ошибка в select"
 
-#: methods/http.cc:742
+#: methods/http.cc:746
 msgid "Connection timed out"
 msgstr "Время ожидания для соединения истекло"
 
-#: methods/http.cc:765
+#: methods/http.cc:769
 msgid "Error writing to output file"
 msgstr "Ошибка записи в выходной файл"
 
-#: methods/http.cc:793
+#: methods/http.cc:797
 msgid "Error writing to file"
 msgstr "Ошибка записи в файл"
 
-#: methods/http.cc:818
+#: methods/http.cc:822
 msgid "Error writing to the file"
 msgstr "Ошибка записи в файл"
 
-#: methods/http.cc:832
+#: methods/http.cc:836
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Ошибка чтения, удалённый сервер прервал соединение"
 
-#: methods/http.cc:834
+#: methods/http.cc:838
 msgid "Error reading from server"
 msgstr "Ошибка чтения с сервера"
 
-#: methods/http.cc:1065
+#: methods/http.cc:1069
 msgid "Bad header data"
 msgstr "Неверный заголовок данных"
 
-#: methods/http.cc:1082
+#: methods/http.cc:1086
 msgid "Connection failed"
 msgstr "Соединение разорвано"
 
-#: methods/http.cc:1173
+#: methods/http.cc:1177
 msgid "Internal error"
 msgstr "Внутренняя ошибка"
 
@@ -2495,11 +2496,11 @@ msgstr "Ошибка ввода/вывода при попытке сохран�
 msgid "rename failed, %s (%s -> %s)."
 msgstr "переименовать не удалось, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:235 apt-pkg/acquire-item.cc:894
+#: apt-pkg/acquire-item.cc:235 apt-pkg/acquire-item.cc:900
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum не совпадает"
 
-#: apt-pkg/acquire-item.cc:708
+#: apt-pkg/acquire-item.cc:714
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2508,7 +2509,7 @@ msgstr ""
 "Я не в состоянии обнаружить файл пакета %s. Это может означать, что Вам "
 "придётся вручную исправить этот пакет (возможно, пропущен arch)"
 
-#: apt-pkg/acquire-item.cc:761
+#: apt-pkg/acquire-item.cc:767
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2517,13 +2518,13 @@ msgstr ""
 "Я не в состоянии обнаружить файл пакета %s. Это может означать, что Вам "
 "придётся вручную исправить этот пакет."
 
-#: apt-pkg/acquire-item.cc:797
+#: apt-pkg/acquire-item.cc:803
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Некорректный перечень пакетов. Нет поля Filename: для пакета %s."
 
-#: apt-pkg/acquire-item.cc:884
+#: apt-pkg/acquire-item.cc:890
 msgid "Size mismatch"
 msgstr "Не совпадает размер"
 
