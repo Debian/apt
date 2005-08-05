@@ -357,27 +357,27 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       { 
 	 {"half-installed", _("Preparing %s")}, 
 	 {"unpacked", _("Unpacking %s") }, 
-	 NULL
+	 {NULL, NULL}
       },
       // Configure operation
       { 
 	 {"unpacked",_("Preparing to configure %s") },
 	 {"half-configured", _("Configuring %s") },
 	 { "installed", _("Installed %s")},
-	  NULL
+	 {NULL, NULL}
       },
       // Remove operation
       { 
 	 {"half-configured", _("Preparing for removal of %s")},
 	 {"half-installed", _("Removing %s")},
 	 {"config-files",  _("Removed %s")},
-	  NULL
+	 {NULL, NULL}
       },
       // Purge operation
       { 
 	 {"config-files", _("Preparing for remove with config %s")},
 	 {"not-installed", _("Removed with config %s")},
-	 NULL 
+	 {NULL, NULL}
       },
    };
 
@@ -627,13 +627,18 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 char *pkg = list[1];
 	 char *action = list[2];
 	 vector<struct DpkgState> &states = PackageOps[pkg];
-	 const char *next_action = states[PackageOpsDone[pkg]].state;
-	 const char *translation = states[PackageOpsDone[pkg]].str;
-	 char s[200];
-	 snprintf(s, sizeof(s), translation, pkg);
+	 const char *next_action = NULL;
+	 if(PackageOpsDone[pkg] < states.size())
+	    next_action = states[PackageOpsDone[pkg]].state;
 	 // check if the package moved to the next dpkg state
 	 if(next_action && (strcmp(action, next_action) == 0)) 
 	 {
+	    // only read the translation if there is actually a next
+	    // action
+	    const char *translation = states[PackageOpsDone[pkg]].str;
+	    char s[200];
+	    snprintf(s, sizeof(s), translation, pkg);
+
 	    // we moved from one dpkg state to a new one, report that
 	    PackageOpsDone[pkg]++;
 	    Done++;

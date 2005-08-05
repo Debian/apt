@@ -374,10 +374,9 @@ void Configuration::Clear(string Name, string Value)
 void Configuration::Clear(string Name)
 {
    Item *Top = Lookup(Name.c_str(),false);
-   if (Top == 0) {
-      cout << "config item: " << Name << " not found" << endl;
+   if (Top == 0) 
       return;
-   }
+
    Top->Value = string();
    Item *Stop = Top;
    Top = Top->Child;
