@@ -17,9 +17,6 @@
 export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
-# apt can be build from the same source on debian and ubuntu
-DIST = $(shell lsb_release -i -s)
-
 # FOR AUTOCONF 2.52 AND NEWER ONLY
 ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
   confflags += --build $(DEB_HOST_GNU_TYPE)
@@ -114,7 +111,7 @@ build/configure-stamp: configure
 	cd build && CXXFLAGS="$(confcxxflags)" ../configure $(confflags)
 	touch $@
 
-build/build-stamp: build/configure-stamp patch
+build/build-stamp: build/configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE) binary
 	touch $@
@@ -124,7 +121,7 @@ build/build-doc-stamp: build/configure-stamp
 	$(MAKE) doc
 	touch $@
 
-clean: unpatch
+clean:
 	dh_testdir
 #	dh_testroot
 	-$(MAKE) clean
@@ -333,17 +330,6 @@ cvs-build:
 cvs-mkul:
 	-mkdir -p ../upload-$(APT_DEBVER)
 	cp `find debian/cvs-build -maxdepth 1 -type f` ../upload-$(APT_DEBVER)
-
-patch: patch-stamp
-patch-stamp:
-	cp debian/patches/00list.$(DIST) debian/patches/00list
-	dpatch apply-all
-	touch patch-stamp
-
-unpatch:
-	cp debian/patches/00list.$(DIST) debian/patches/00list
-	dpatch deapply-all
-	rm -rf patch-stamp debian/patched
 
 arch-build:
 	rm -rf debian/arch-build
