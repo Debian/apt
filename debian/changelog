@@ -1,3 +1,9 @@
+apt (0.6.40.1ubuntu1) breezy; urgency=low
+
+  * Synchronize with Debian 
+
+ -- Michael Vogt <michael.vogt@ubuntu.com> Fri, 5 Aug 2005 14:20:56 +0200
+
 apt (0.6.40.1) unstable; urgency=low
 
   * bugfix in the parsing code for the apt<->dpkg communication. apt 
@@ -5,7 +11,13 @@ apt (0.6.40.1) unstable; urgency=low
     conditions
   * 0.6.40 breaks the ABI but I accidentally didn't change the soname :/
 
- --
+ -- Michael Vogt <mvo@debian.org> Fri, 5 Aug 2005 13:24:58 +0200
+
+apt (0.6.40ubuntu1) breezy; urgency=low
+
+   * Synchronize with Debian 
+
+ -- Matt Zimmerman <mdz@ubuntu.com> Thu, 4 Aug 2005 15:53:22 -0700
 
 apt (0.6.40) unstable; urgency=low
 
@@ -22,6 +34,39 @@ apt (0.6.40) unstable; urgency=low
 
  -- Matt Zimmerman <mdz@debian.org>  Thu, 28 Jul 2005 11:57:32 -0700
 
+apt (0.6.39ubuntu4) breezy; urgency=low
+
+  * Fix keyring paths in apt-key, apt.postinst (I swear I remember doing this
+    before...)
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 29 Jun 2005 08:39:17 -0700
+
+apt (0.6.39ubuntu3) breezy; urgency=low
+
+  * Fix keyring locations for Ubuntu in apt-key too.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Wed, 29 Jun 2005 14:45:36 +0100
+
+apt (0.6.39ubuntu2) breezy; urgency=low
+
+  * Install ubuntu-archive.gpg rather than debian-archive.gpg as
+    /etc/apt/trusted.gpg.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Wed, 29 Jun 2005 11:53:34 +0100
+
+apt (0.6.39ubuntu1) breezy; urgency=low
+
+  * Michael Vogt
+    - Change debian/bugscript to use #!/bin/bash (Closes: #313402)
+    - Fix a incorrect example in the man-page (closes: #282918)
+    - Support architecture-specific extra overrides
+      (closes: #225947). Thanks to  Anthony Towns for idea and
+      the patch, thanks to Colin Watson for testing it.
+    - better report network timeouts from the methods to the acuire code,
+      only timeout once per sources.list line
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Jun 2005 11:52:24 -0700
+
 apt (0.6.39) unstable; urgency=low
 
   * Welsh translation update: daf@muse.19inch.net--2005/apt--main--0--patch-6
@@ -32,7 +77,14 @@ apt (0.6.39) unstable; urgency=low
   * Update priority of apt-utils to important, to match the override file
   * Install only one keyring on each branch (Closes: #316119)
 
- -- Matt Zimmerman <mdz@debian.org>  Tue, 28 Jun 2005 11:51:09 -0700
+ -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Jun 2005 11:35:21 -0700
+
+apt (0.6.38ubuntu1) breezy; urgency=low
+
+  * First release from Ubuntu branch
+  * Merge with --main--0, switch back to Ubuntu keyring
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Sat, 25 Jun 2005 16:52:41 -0700
 
 apt (0.6.38) unstable; urgency=low
 
