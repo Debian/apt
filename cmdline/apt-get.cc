@@ -765,7 +765,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (_config->FindB("APT::Get::Simulate") == true)
    {
       pkgSimulate PM(Cache);
-      pkgPackageManager::OrderResult Res = PM.DoInstall();
+      int status_fd = _config->FindI("APT::Status-Fd",-1);
+      pkgPackageManager::OrderResult Res = PM.DoInstall(status_fd);
       if (Res == pkgPackageManager::Failed)
 	 return false;
       if (Res != pkgPackageManager::Completed)
@@ -994,7 +995,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       }
        	 
       _system->UnLock();
-      pkgPackageManager::OrderResult Res = PM->DoInstall();
+      int status_fd = _config->FindI("APT::Status-Fd",-1);
+      pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;
       if (Res == pkgPackageManager::Completed)
