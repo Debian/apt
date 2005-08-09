@@ -400,6 +400,12 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    unlink(Final.c_str());
 
+   // if we get a timeout if fail
+   if(LookupTag(Message,"FailReason") == "Timeout") {
+      Item::Failed(Message,Cnf);
+      return;
+   }
+
    // queue a pkgAcqMetaIndex with no sigfile
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
 		       "", IndexTargets, MetaIndexParser);
