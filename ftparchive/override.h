@@ -34,17 +34,16 @@ class Override
 
       map<string,string> FieldOverride;
       string SwapMaint(string Orig,bool &Failed);
+      ~Item() {};
    };
    
    map<string,Item> Mapping;
    
    inline Item *GetItem(string Package) 
    {
-      map<string,Item>::iterator I = Mapping.find(Package);
-      if (I == Mapping.end())
-	 return 0;
-      return &I->second;
-   };
+      return GetItem(Package, "");
+   }
+   Item *GetItem(string Package, string Architecture);
    
    bool ReadOverride(string File,bool Source = false);
    bool ReadExtraOverride(string File,bool Source = false);
