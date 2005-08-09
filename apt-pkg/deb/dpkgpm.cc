@@ -612,20 +612,49 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
 	    std::clog << "got from dpkg '" << line << "'" << std::endl;
 
-	 // pass "error" and "conffile-prompt" messages from dpkg verbatim
-	 if((strncmp(line,"error",strlen("error")) == 0) ||
-	    (strncmp(line,"conffile-prompt",strlen("conffile-prompt")) == 0))
-	 {
-	       write(OutStatusFd, line, strlen(line));
-	       line[0]=0;
-	       continue;
-	 }
-	 // line contains the dpkg status info now. it has the form:
-	 // 'status:   <pkg>:  <pkg  qstate>' (see dpkg(1) for details)
-	 char* list[5];
+	 // the status we output
+	 ostringstream status;
+
+	 /* dpkg sends strings like this:
+	    'status:   <pkg>:  <pkg  qstate>'
+	    errors look like this:
+	    'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
+	    and conffile-prompt like this
+	    'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+	    
+	 */
+	 char* list[4];
 	 TokSplitString(':', line, list, 5);
 	 char *pkg = list[1];
-	 char *action = list[2];
+	 char *action = _strstrip(list[2]);
+
+	 if(strncmp(action,"error",strlen("error")) == 0)
+	 {
+	    status << "pmerror:" << list[1]
+		   << ":"  << (Done/float(Total)*100.0) 
+		   << ":" << list[3]
+		   << endl;
+	    if(OutStatusFd > 0)
+	       write(OutStatusFd, status.str().c_str(), status.str().size());
+	    line[0]=0;
+	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	       std::clog << "send: '" << status.str() << "'" << endl;
+	    continue;
+	 }
+	 if(strncmp(action,"conffile",strlen("conffile")) == 0)
+	 {
+	    status << "pmconffile:" << list[1]
+		   << ":"  << (Done/float(Total)*100.0) 
+		   << ":" << list[3]
+		   << endl;
+	    if(OutStatusFd > 0)
+	       write(OutStatusFd, status.str().c_str(), status.str().size());
+	    line[0]=0;
+	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	       std::clog << "send: '" << status.str() << "'" << endl;
+	    continue;
+	 }
+
 	 vector<struct DpkgState> &states = PackageOps[pkg];
 	 const char *next_action = NULL;
 	 if(PackageOpsDone[pkg] < states.size())
@@ -642,7 +671,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // we moved from one dpkg state to a new one, report that
 	    PackageOpsDone[pkg]++;
 	    Done++;
-	    ostringstream status;
 	    // build the status str
 	    status << "pmstatus:" << pkg 
 		   << ":"  << (Done/float(Total)*100.0) 
@@ -651,11 +679,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if(OutStatusFd > 0)
 	       write(OutStatusFd, status.str().c_str(), status.str().size());
 	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	    {
-	       std::clog << "send to fd: '" << status.str() 
-			 << "'" << std::endl;
-	       
-	    }
+	       std::clog << "send: '" << status.str() << "'" << endl;
 
 	 }
 	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
