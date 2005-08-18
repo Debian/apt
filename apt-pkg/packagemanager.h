@@ -83,12 +83,7 @@ class pkgPackageManager : protected pkgCache::Namespace
 		    pkgRecords *Recs);
 
    // Do the installation 
-   OrderResult DoInstall() {
-      if(DoInstallPreFork() == Failed)
-	 return Failed;
-
-      return DoInstallPostFork();
-   }
+   OrderResult DoInstall(int statusFd=-1);
 
    // stuff that needs to be done before the fork() of a library that
    // uses apt

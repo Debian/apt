@@ -327,15 +327,56 @@ void Configuration::Set(const char *Name,int Value)
    Itm->Value = S;
 }
 									/*}}}*/
+// Configuration::Clear - Clear an single value from a list	        /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void Configuration::Clear(string Name, int Value)
+{
+   char S[300];
+   snprintf(S,sizeof(S),"%i",Value);
+   Clear(Name, S);
+}
+									/*}}}*/
+// Configuration::Clear - Clear an single value from a list	        /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void Configuration::Clear(string Name, string Value)
+{
+   Item *Top = Lookup(Name.c_str(),false);
+   if (Top == 0 || Top->Child == 0)
+      return;
+
+   Item *Tmp, *Prev, *I;
+   Prev = I = Top->Child;
+
+   while(I != NULL)
+   {
+      if(I->Value == Value)
+      {
+	 Tmp = I;
+	 // was first element, point parent to new first element
+	 if(Top->Child == Tmp)
+	    Top->Child = I->Next;
+	 I = I->Next;
+	 Prev->Next = I;
+	 delete Tmp;
+      } else {
+	 Prev = I;
+	 I = I->Next;
+      }
+   }
+     
+}
+									/*}}}*/
 // Configuration::Clear - Clear an entire tree				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void Configuration::Clear(string Name)
 {
    Item *Top = Lookup(Name.c_str(),false);
-   if (Top == 0)
+   if (Top == 0) 
       return;
-   
+
    Top->Value = string();
    Item *Stop = Top;
    Top = Top->Child;

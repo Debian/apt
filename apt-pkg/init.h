@@ -18,7 +18,7 @@
 
 // See the makefile
 #define APT_PKG_MAJOR 3
-#define APT_PKG_MINOR 5
+#define APT_PKG_MINOR 11
 #define APT_PKG_RELEASE 0
     
 extern const char *pkgVersion;

@@ -627,3 +627,15 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    return Completed;
 }
 									/*}}}*/
+// PM::DoInstall - Does the installation				/*{{{*/
+// ---------------------------------------------------------------------
+/* This uses the filenames in FileNames and the information in the
+   DepCache to perform the installation of packages.*/
+pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
+{
+   if(DoInstallPreFork() == Failed)
+      return Failed;
+   
+   return DoInstallPostFork();
+}
+									/*}}}*/

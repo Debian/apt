@@ -23,6 +23,13 @@ using std::vector;
 class pkgDPkgPM : public pkgPackageManager
 {
    protected:
+
+   // used for progress reporting
+   struct DpkgState 
+   {
+      const char *state;     // the dpkg state (e.g. "unpack")
+      const char *str;       // the human readable translation of the state
+   };
    
    struct Item
    {
@@ -45,7 +52,7 @@ class pkgDPkgPM : public pkgPackageManager
    virtual bool Install(PkgIterator Pkg,string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge = false);
-   virtual bool Go(int status_fd=-1);
+   virtual bool Go(int StatusFd=-1);
    virtual void Reset();
    
    public:
