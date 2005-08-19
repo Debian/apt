@@ -141,8 +141,9 @@ void pkgAcquire::Item::Rename(string From,string To)
  */
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 				   string URI,string URIDesc,string ShortDesc,
-				   string ExpectedMD5, vector<DiffInfo> diffs) 
-   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), available_patches(diffs)
+				   string ExpectedMD5, vector<DiffInfo> diffs)
+   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), 
+     available_patches(diffs)
 {
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -171,10 +172,13 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
       return;
    }
 
-   if(available_patches.size() == 0)
+   if(available_patches.size() == 0) {
+      State = StateFetchIndex;
       QueueDiffIndex(URI);
-   else
+   } else {
+      State = StateFetchDiff;
       QueueNextDiff();
+   }
 }
 
 void pkgAcqIndexDiffs::QueueDiffIndex(string URI)
@@ -195,7 +199,8 @@ void pkgAcqIndexDiffs::QueueDiffIndex(string URI)
 /* The only header we use is the last-modified header. */
 string pkgAcqIndexDiffs::Custom600Headers()
 {
-   if(DestFile.rfind(".IndexDiff") == string::npos)
+   // we only care for the IndexDiff file
+   if(State != StateFetchIndex)
       return string("");
 
    string Final = _config->FindDir("Dir::State::lists");
@@ -248,33 +253,6 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 }
 
 
-// this needs to be rewriten to not depend on the external ed
-bool pkgAcqIndexDiffs::ApplyDiff(string PatchFile)
-{
-   char *error;
-   int res=0;
-
-   string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(RealURI);
-
-   int Process = ExecFork();
-   if (Process == 0)
-   {
-      chdir(_config->FindDir("Dir::State::lists").c_str());
-      // for some reason "red" fails with the pdiffs from p.d.o/~aba ?!? 
-      string cmd = "(zcat " + PatchFile + "; echo \"wq\" ) | /bin/ed  " + FinalFile + " >/dev/null 2>/dev/null";
-      if(Debug)
-	 std::clog << "Runing: " << cmd << std::endl;
-      res = system(cmd.c_str());
-      _exit(WEXITSTATUS(res));
-   }
-   if(!ExecWait(Process, error, true)) {
-      //_error->Error("Patch failed: %s ", error);
-      return false;
-   }
-
-   return true;
-}
 
 bool pkgAcqIndexDiffs::QueueNextDiff()
 {
@@ -393,13 +371,14 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
 
    Item::Done(Message,Size,Md5Hash,Cnf);
 
-   int len = Desc.URI.size();
-   // sucess in downloading the index
-   if(Desc.URI.substr(len-strlen("Index"),len-1) == "Index") {
+   string FinalFile;
+   FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
 
-      // rename
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI) + string(".IndexDiff");
+   // sucess in downloading the index
+   if(State == StateFetchIndex) 
+   {
+      // rename the index
+      FinalFile += string(".IndexDiff");
       if(Debug)
 	 std::clog << "Renaming: " << DestFile << " -> " << FinalFile 
 		   << std::endl;
@@ -413,21 +392,60 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
 	 return Finish();
    }
 
-   // sucess in downloading a diff
-   if(Desc.URI.find(".diff") != string::npos) {
-      ApplyDiff(DestFile);
+   // sucess in downloading a diff, enter ApplyDiff state
+   if(State == StateFetchDiff) 
+   {
+
+      if(Debug)
+	 std::clog << "Sending to gzip method: " << FinalFile << std::endl;
+
+      string FileName = LookupTag(Message,"Filename");
+      State = StateUnzipDiff;
+      Desc.URI = "gzip:" + FileName;
+      DestFile += ".decomp";
+      QueueURI(Desc);
+      Mode = "gzip";
+      return;
+   } 
+
+   // sucess in downloading a diff, enter ApplyDiff state
+   if(State == StateUnzipDiff) 
+   {
+
+      // rred excepts the patch as $FinalFile.ed
+      Rename(DestFile,FinalFile+".ed");
+
+      if(Debug)
+	 std::clog << "Sending to rred method: " << FinalFile << std::endl;
+
+      State = StateApplyDiff;
+      Desc.URI = "rred:" + FinalFile;
+      QueueURI(Desc);
+      Mode = "rred";
+      return;
+   } 
+
+
+   // success in download/apply a diff, queue next (if needed)
+   if(State == StateApplyDiff)
+   {
+      // remove the just applied patch
       available_patches.erase(available_patches.begin());
 
+      // move into place
+      if(Debug)
+	 std::clog << "Moving patched file in place: " << std::endl
+		   << DestFile << " -> " << FinalFile << std::endl;
+      Rename(DestFile,FinalFile);
+
+      // see if there is more to download
       if(available_patches.size() > 0) {
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
 			      ExpectedMD5, available_patches);
-      } else {
-	 Finish(true);
-	 return;
-      }
+	 return Finish();
+      } else 
+	 return Finish(true);
    }
-
-   Finish();
 }
 
 

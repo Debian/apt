@@ -63,7 +63,7 @@ include $(PROGRAM_H)
 PROGRAM=rred
 SLIBS = -lapt-pkg $(SOCKETLIBS)
 LIB_MAKES = apt-pkg/makefile
-SOURCE = rred
+SOURCE = rred.cc
 include $(PROGRAM_H)
 
 # The rsh method

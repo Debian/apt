@@ -90,6 +90,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
    pkgAcquire::ItemDesc Desc;
    string RealURI;
    string ExpectedMD5;
+
    // this is the SHA-1 sum we expect after the patching
    string ServerSha1;
    string CurrentPackagesFile;
@@ -100,7 +101,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
       unsigned long size;
    };
    vector<DiffInfo> available_patches;
-   
+   enum {StateFetchIndex,StateFetchDiff,StateUnzipDiff,StateApplyDiff} State;
 
    public:
    

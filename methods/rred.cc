@@ -177,7 +177,7 @@ bool RredMethod::Fetch(FetchItem *Itm)
    Res.Filename = Itm->DestFile;
    URIStart(Res);
    // Res.Filename the destination filename
-   
+
    // Open the source and destination files
    FileFd From(Path,FileFd::ReadOnly);
    FileFd Patch(Path+".ed",FileFd::ReadOnly);
