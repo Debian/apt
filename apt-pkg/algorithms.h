@@ -134,10 +134,16 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
 
 
-// callback function that can be used by the client to bring in
+// class that can be subclassed by the client to bring in
 // certain own packages into the root set (if the client returns
 // True the package will be considered as part of the root set)
-typedef bool (*InRootSetFunc)(pkgCache::PkgIterator);
+class InRootSetFunc
+{
+ public:
+   virtual bool InRootSet(const pkgCache::PkgIterator &pkg) {return false;};
+   virtual ~InRootSetFunc() {};
+};
+
 
 // Mark all reachable packages with "pkgDepCache::StateCache.Marked=1"
 // the root-set are all essential packages+everything that was not 
@@ -147,7 +153,7 @@ typedef bool (*InRootSetFunc)(pkgCache::PkgIterator);
 // is usefull for clients that have there own idea about the root-set
 // 
 // Everything that is not reach can be removed
-bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc f=NULL);
-		 
+bool pkgMarkUsed(pkgDepCache &Cache);
+bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc &f);
 		     
 #endif

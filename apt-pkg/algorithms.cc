@@ -1342,8 +1342,14 @@ pkgMarkAlwaysInclude(pkgCache::PkgIterator p, vector<regex_t*> alwaysMark)
    return false;
 }
 
+bool pkgMarkUsed(pkgDepCache &Cache)
+{
+   InRootSetFunc f;
+   return pkgMarkUsed(Cache, f);
+}
+
 // the main mark algorithm
-bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
+bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc &userFunc)
 {
    bool follow_recommends;
    bool follow_suggests;
@@ -1394,7 +1400,7 @@ bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc func)
    // do the mark part, this is the core bit of the algorithm
    for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
    {
-      if( (func != NULL ? (*func)(p) : false) ||
+      if( userFunc.InRootSet(p) ||
 	   pkgMarkAlwaysInclude(p, neverAutoRemoveRegexp) ||
 	 !(Cache[p].Flags & pkgCache::Flag::Auto) ||
 	  (p->Flags & pkgCache::Flag::Essential))
