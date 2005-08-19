@@ -1,6 +1,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
+#include <apti18n.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -88,7 +89,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
                continue;
             Args[i++] = Opts->Value.c_str();
 	    if(i >= 395) { 
-	       std::cerr << "E: Argument list from Acquire::gpgv::Options too long. Exiting." << std::endl;
+	       std::cerr << _("E: Argument list from Acquire::gpgv::Options too long. Exiting.") << std::endl;
 	       exit(111);
 	    }
          }
@@ -181,27 +182,28 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    waitpid(pid, &status, 0);
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
-      std::cerr <<"gpgv exited\n";
+      std::cerr << "gpgv exited\n";
    }
    
    if (WEXITSTATUS(status) == 0)
    {
       if (GoodSigners.empty())
-         return "Internal error: Good signature, but could not determine key fingerprint?!";
+         return _("Internal error: Good signature, but could not determine key fingerprint?!");
       return NULL;
    }
    else if (WEXITSTATUS(status) == 1)
    {
-      return "At least one invalid signature was encountered.";
+      return _("At least one invalid signature was encountered.");
    }
    else if (WEXITSTATUS(status) == 111)
    {
-      return (string("Could not execute ") + gpgvpath +
-	      string(" to verify signature (is gnupg installed?)")).c_str();
+      // FIXME String concatenation considered harmful.
+      return (string(_("Could not execute ")) + gpgvpath +
+	      string(_(" to verify signature (is gnupg installed?)"))).c_str();
    }
    else
    {
-      return "Unknown error executing gpgv";
+      return _("Unknown error executing gpgv");
    }
 }
 
@@ -232,14 +234,14 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
       {
          if (!BadSigners.empty())
          {
-            errmsg += "The following signatures were invalid:\n";
+            errmsg += _("The following signatures were invalid:\n");
             for (vector<string>::iterator I = BadSigners.begin();
 		 I != BadSigners.end(); I++)
                errmsg += (*I + "\n");
          }
          if (!NoPubKeySigners.empty())
          {
-             errmsg += "The following signatures couldn't be verified because the public key is not available:\n";
+             errmsg += _("The following signatures couldn't be verified because the public key is not available:\n");
             for (vector<string>::iterator I = NoPubKeySigners.begin();
 		 I != NoPubKeySigners.end(); I++)
                errmsg += (*I + "\n");
@@ -251,16 +253,16 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
    // Transfer the modification times
    struct stat Buf;
    if (stat(Path.c_str(),&Buf) != 0)
-      return _error->Errno("stat","Failed to stat %s", Path.c_str());
+      return _error->Errno("stat",_("Failed to stat %s"), Path.c_str());
 
    struct utimbuf TimeBuf;
    TimeBuf.actime = Buf.st_atime;
    TimeBuf.modtime = Buf.st_mtime;
    if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
-      return _error->Errno("utime","Failed to set modification time");
+      return _error->Errno("utime",_("Failed to set modification time"));
 
    if (stat(Itm->DestFile.c_str(),&Buf) != 0)
-      return _error->Errno("stat","Failed to stat");
+      return _error->Errno("stat",_("Failed to stat"));
    
    // Return a Done response
    Res.LastModified = Buf.st_mtime;
@@ -275,7 +277,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
-      std::cerr <<"gpgv suceeded\n";
+      std::cerr << "gpgv succeeded\n";
    }
 
    return true;
@@ -284,6 +286,8 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 
 int main()
 {
+   setlocale(LC_ALL, "");
+   
    GPGVMethod Mth;
 
    return Mth.Run();

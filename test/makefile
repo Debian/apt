@@ -39,6 +39,12 @@ SOURCE = testextract.cc
 include $(PROGRAM_H)
 
 # Program for testing the config file parser
+PROGRAM=conftest_clear
+SLIBS = -lapt-pkg
+SOURCE = conf_clear.cc
+include $(PROGRAM_H)
+
+# Program for testing the config file parser
 PROGRAM=conftest
 SLIBS = -lapt-pkg
 SOURCE = conf.cc

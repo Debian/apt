@@ -26,6 +26,7 @@
 #include <apti18n.h>
 
 #include <iostream>
+#include <sstream>
     
 #include <dirent.h>
 #include <sys/time.h>
@@ -805,6 +806,26 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       LastBytes = CurrentBytes - ResumeSize;
       ElapsedTime = (unsigned long)Delta;
       Time = NewTime;
+   }
+
+   int fd = _config->FindI("APT::Status-Fd",-1);
+   if(fd > 0) 
+   {
+      ostringstream status;
+
+      char msg[200];
+      long i = CurrentItems < TotalItems ? CurrentItems + 1 : CurrentItems;
+      unsigned long ETA =
+	 (unsigned long)((TotalBytes - CurrentBytes) / CurrentCPS);
+
+      snprintf(msg,sizeof(msg), _("Downloading file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
+
+      // build the status str
+      status << "dlstatus:" << i
+	     << ":"  << (CurrentBytes/float(TotalBytes)*100.0) 
+	     << ":" << msg 
+	     << endl;
+      write(fd, status.str().c_str(), status.str().size());
    }
 
    return true;

@@ -87,8 +87,13 @@ class Configuration
    bool Exists(const char *Name) const;
    bool ExistsAny(const char *Name) const;
 
+   // clear a whole tree
    void Clear(string Name);
-   
+
+   // remove a certain value from a list (e.g. the list of "APT::Keep-Fds")
+   void Clear(string List, string Value);
+   void Clear(string List, int Value);
+
    inline const Item *Tree(const char *Name) const {return Lookup(Name);};
 
    inline void Dump() { Dump(std::clog); };
