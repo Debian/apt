@@ -218,9 +218,8 @@ string pkgAcqIndexDiffs::Custom600Headers()
 
 void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   if(Debug)
-      std::clog << "Failed(): " << Desc.URI << std::endl
-		<< "Falling back to big package file" << std::endl;
+   std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
+	     << "Falling back to normal index file aquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc, 
 		   ExpectedMD5);
    Finish();
@@ -268,9 +267,11 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
    // remove all patches until the next matching patch is found
    // this requires the Index file to be ordered
    for(vector<DiffInfo>::iterator I=available_patches.begin();
-       I != available_patches.end() && (*I).sha1 != local_sha1; 
-       I++) 
+       available_patches.size() > 0 && I != available_patches.end() 
+	  && (*I).sha1 != local_sha1; 
+       I++) {
       available_patches.erase(I);
+   }
 
    // error checking and falling back if no patch was found
    if(available_patches.size() == 0) { 
@@ -433,9 +434,11 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
       available_patches.erase(available_patches.begin());
 
       // move into place
-      if(Debug)
+      if(Debug) 
+      {
 	 std::clog << "Moving patched file in place: " << std::endl
 		   << DestFile << " -> " << FinalFile << std::endl;
+      }
       Rename(DestFile,FinalFile);
 
       // see if there is more to download

@@ -178,7 +178,8 @@ bool RredMethod::Fetch(FetchItem *Itm)
    URIStart(Res);
    // Res.Filename the destination filename
 
-   // Open the source and destination files
+   // Open the source and destination files (the d'tor of FileFd will do 
+   // the cleanup/closing of the fds)
    FileFd From(Path,FileFd::ReadOnly);
    FileFd Patch(Path+".ed",FileFd::ReadOnly);
    FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
@@ -193,14 +194,6 @@ bool RredMethod::Fetch(FetchItem *Itm)
    // now do the actual patching
    ed_file(fPatch, fFrom, fTo, &Hash);
 
-   // clean up
-   fclose(fFrom);
-   fclose(fPatch);
-   fclose(fTo);
-   To.Close();
-   From.Close();
-   Patch.Close();
-   
    // XXX need to get the size 
    // Res.Size = Buf.st_size;
    Res.TakeHashes(Hash);
