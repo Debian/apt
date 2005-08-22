@@ -17,8 +17,13 @@ apt (0.6.40.2) unstable; urgency=low
   * Andreas Pakulat:
     - added example apt-ftparchive.conf file to doc/examples 
       (closes: #322483)
+  * methods/connect.cc:
+    - send failure reason for EAI_AGAIN (TmpResolveFailure) to acuire-item
+  * apt-pkg/acquire-item.cc:
+    - fail early if a FailReason is TmpResolveFailure (avoids hangs during
+      the install when no network is available)
   
- -- 
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 23 Aug 2005 00:15:00 +0200
 
 apt (0.6.40.1) unstable; urgency=low
 

@@ -401,7 +401,8 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    unlink(Final.c_str());
 
    // if we get a timeout if fail
-   if(LookupTag(Message,"FailReason") == "Timeout") {
+   if(LookupTag(Message,"FailReason") == "Timeout" || 
+      LookupTag(Message,"FailReason") == "TmpResolveFailure") {
       Item::Failed(Message,Cnf);
       return;
    }
