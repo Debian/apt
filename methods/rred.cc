@@ -25,15 +25,17 @@ class RredMethod : public pkgAcqMethod
 
 #define BUF_SIZE	(1024)
 
-// XX use enums
+// XXX use enums
 #define MODE_CHANGED	0
 #define MODE_DELETED	1
 #define MODE_ADDED		2
 
+#define ED_OK                   0
 #define ED_ORDERING		1
 #define ED_PARSER		2
 #define ED_FAILURE		3
 
+// XXX someone better go out and understand the error reporting/handling here...
 int ed_rec(FILE *ed_cmds, FILE *in_file, FILE *out_file, int line, 
 		char *buffer, unsigned int bufsize, Hashes *hash) {
 	int pos;
@@ -154,8 +156,7 @@ int ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file, Hashes *hash) {
 	if (result > 0) {
 		while (fgets(buffer, BUF_SIZE, in_file) != NULL) {
 			written = fwrite(buffer, 1, strlen(buffer), out_file);
-			// XXX add to hash
-			// sha_process_bytes(buffer, written, &sha);
+			hash->Add((unsigned char*)buffer, written);
 		}
 	}
 	else {
@@ -163,7 +164,7 @@ int ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file, Hashes *hash) {
 		fprintf(stderr, "Error: %i\n", result);
 		return ED_FAILURE;
 	}
-	return 0;
+	return ED_OK;
 }
 
 
@@ -192,13 +193,38 @@ bool RredMethod::Fetch(FetchItem *Itm)
    FILE* fPatch = fdopen(Patch.Fd(), "r");
    FILE* fTo = fdopen(To.Fd(), "w");
    // now do the actual patching
-   ed_file(fPatch, fFrom, fTo, &Hash);
+   if (ed_file(fPatch, fFrom, fTo, &Hash) != ED_OK) {
+      return false;
+   }
 
-   // XXX need to get the size 
-   // Res.Size = Buf.st_size;
+   // write out the result
+   fflush(fFrom);
+   fflush(fPatch);
+   fflush(fTo);
+   From.Close();
+   Patch.Close();
+   To.Close();
+
+   // Transfer the modification times
+   struct stat Buf;
+   if (stat(Path.c_str(),&Buf) != 0)
+      return _error->Errno("stat",_("Failed to stat"));
+
+   struct utimbuf TimeBuf;
+   TimeBuf.actime = Buf.st_atime;
+   TimeBuf.modtime = Buf.st_mtime;
+   if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
+      return _error->Errno("utime",_("Failed to set modification time"));
+
+   if (stat(Itm->DestFile.c_str(),&Buf) != 0)
+      return _error->Errno("stat",_("Failed to stat"));
+
+   // return done
+   Res.LastModified = Buf.st_mtime;
+   Res.Size = Buf.st_size;
    Res.TakeHashes(Hash);
    URIDone(Res);
-   
+
    return true;
 }
 									/*}}}*/

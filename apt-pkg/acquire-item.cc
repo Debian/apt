@@ -255,6 +255,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 
 bool pkgAcqIndexDiffs::QueueNextDiff()
 {
+
    // calc sha1 of the just patched file
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
@@ -263,6 +264,9 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
    SHA1Summation SHA1;
    SHA1.AddFD(fd.Fd(), fd.Size());
    string local_sha1 = string(SHA1.Result());
+   if(Debug)
+      std::clog << "QueueNextDiff: " 
+		<< FinalFile << " (" << local_sha1 << ")"<<std::endl;
 
    // remove all patches until the next matching patch is found
    // this requires the Index file to be ordered
