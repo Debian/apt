@@ -1659,7 +1659,7 @@ bool DoInstall(CommandLine &CmdL)
    // See if we need to prompt
    if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
       return InstallPackages(Cache,false,false);
-   
+
    return InstallPackages(Cache,false);   
 }
 									/*}}}*/

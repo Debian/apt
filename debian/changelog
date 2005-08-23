@@ -3,6 +3,14 @@ apt (0.6.40.2) unstable; urgency=low
   * improved the support for "error" and "conffile" reporting from
     dpkg, added the format to README.progress-reporting
   * added README.progress-reporting to the apt-doc package
+  * Do md5sum checking for file and cdrom method (closes: #319142)
+  * Change pkgPolicy::Pin from private to protected to let subclasses
+    access it too (closes: #321799)
+  * methods/connect.cc:
+    - send failure reason for EAI_AGAIN (TmpResolveFailure) to acuire-item
+  * apt-pkg/acquire-item.cc:
+    - fail early if a FailReason is TmpResolveFailure (avoids hangs during
+      the install when no network is available)
 
  --
 
