@@ -1,11 +1,11 @@
-apt (0.6.40.2) unstable; urgency=low
+apt (0.6.41) unstable; urgency=low
 
   * improved the support for "error" and "conffile" reporting from
     dpkg, added the format to README.progress-reporting
   * added README.progress-reporting to the apt-doc package
   * improved the network timeout handling, if a index file from a 
-    sources.list times out, don't try to get the other files from
-    that entry
+    sources.list times out or EAI_AGAIN is returned from getaddrinfo, 
+    don't try to get the other files from that entry
   * Support architecture-specific extra overrides
     (closes: #225947). Thanks to  Anthony Towns for idea and
     the patch, thanks to Colin Watson for testing it.
@@ -17,11 +17,15 @@ apt (0.6.40.2) unstable; urgency=low
   * Andreas Pakulat:
     - added example apt-ftparchive.conf file to doc/examples 
       (closes: #322483)
-  * methods/connect.cc:
-    - send failure reason for EAI_AGAIN (TmpResolveFailure) to acuire-item
-  * apt-pkg/acquire-item.cc:
-    - fail early if a FailReason is TmpResolveFailure (avoids hangs during
-      the install when no network is available)
+  * Fix a incorrect example in the man-page (closes: #282918)
+  * Fix a bug for very long lines in the apt-cdrom code (closes: #280356)
+  * Fix a manual page bug (closes: #316314)
+  * Do md5sum checking for file and cdrom method (closes: #319142)
+  * Change pkgPolicy::Pin from private to protected to let subclasses
+    access it too (closes: #321799)
+  * add default constructor for PrvIterator (closes: #322267)
+  * Reread status configuration on debSystem::Initialize() 
+    (needed for apt-proxy, thanks to Otavio for this patch)
   
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 23 Aug 2005 00:15:00 +0200
 

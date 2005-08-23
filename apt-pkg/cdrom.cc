@@ -422,6 +422,9 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    {      
       F.getline(Buffer,sizeof(Buffer));
       CurLine++;
+      if (F.fail() && !F.eof())
+	 return _error->Error(_("Line %u too long in source list %s."),
+			      CurLine,File.c_str());
       _strtabexpand(Buffer,sizeof(Buffer));
       _strstrip(Buffer);
             
