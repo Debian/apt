@@ -11,164 +11,170 @@
 #include <errno.h>
 #include <apti18n.h>
 
+/* this method implements a patch functionality similar to "patch --ed" that is
+ * used by the "tiffany" incremental packages download stuff. it differs from 
+ * "ed" insofar that it is way more restricted (and therefore secure). in the
+ * moment only the "c", "a" and "d" commands of ed are implemented (diff 
+ * doesn't output any other). additionally the records must be reverse sorted 
+ * by line number and may not overlap (diff *seems* to produce this kind of 
+ * output). 
+ * */
+
 const char *Prog;
 
 class RredMethod : public pkgAcqMethod
 {
+   // the size of this doesn't really matter (except for performance)    
+   const static int BUF_SIZE = 1024;
+   // the ed commands
+   enum Mode {MODE_CHANGED, MODE_DELETED, MODE_ADDED};
+   // return values
+   enum State {ED_OK, ED_ORDERING, ED_PARSER, ED_FAILURE};
+   // this applies a single hunk, it uses a tail recursion to 
+   // reverse the hunks in the file
+   int ed_rec(FILE *ed_cmds, FILE *in_file, FILE *out_file, int line, 
+      char *buffer, unsigned int bufsize, Hashes *hash);
+   // apply a patch file
+   int ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file, Hashes *hash);
+   // the methods main method
    virtual bool Fetch(FetchItem *Itm);
    
    public:
    
    RredMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
-
 };
 
-#define BUF_SIZE	(1024)
+int RredMethod::ed_rec(FILE *ed_cmds, FILE *in_file, FILE *out_file, int line, 
+      char *buffer, unsigned int bufsize, Hashes *hash) {
+   int pos;
+   int startline;
+   int stopline;
+   int mode;
+   int written;
+   char *idx;
 
-// XXX use enums
-#define MODE_CHANGED	0
-#define MODE_DELETED	1
-#define MODE_ADDED		2
-
-#define ED_OK                   0
-#define ED_ORDERING		1
-#define ED_PARSER		2
-#define ED_FAILURE		3
-
-// XXX someone better go out and understand the error reporting/handling here...
-int ed_rec(FILE *ed_cmds, FILE *in_file, FILE *out_file, int line, 
-		char *buffer, unsigned int bufsize, Hashes *hash) {
-	int pos;
-	int startline;
-	int stopline;
-	int mode;
-	int written;
-	char *idx;
-
-	/* get the current command and parse it*/
-	if (fgets(buffer, bufsize, ed_cmds) == NULL) {
-		return line;
-	}
-	startline = strtol(buffer, &idx, 10);
-	if (startline < line) {
-		return ED_ORDERING;
-	}
-	if (*idx == ',') {
-		idx++;
-		stopline = strtol(idx, &idx, 10);
-	}
-	else {
-		stopline = startline;
-	}
-	if (*idx == 'c') {
-		mode = MODE_CHANGED;
-	}
-	else if (*idx == 'a') {
-		mode = MODE_ADDED;
-	}
-	else if (*idx == 'd') {
-		mode = MODE_DELETED;
-	}
-	else {
-		return ED_PARSER;
-	}
-	/* get the current position */
-	pos = ftell(ed_cmds);
-	/* if this is add or change then go to the next full stop */
-	if ((mode == MODE_CHANGED) || (mode == MODE_ADDED)) {
-		do {
-			fgets(buffer, bufsize, ed_cmds);
-			while ((strlen(buffer) == (bufsize - 1)) 
-					&& (buffer[bufsize - 2] != '\n')) {
-				fgets(buffer, bufsize, ed_cmds);
-				buffer[0] = ' ';
-			}
-		} while (strncmp(buffer, ".", 1) != 0);
-	}
-	/* do the recursive call */
-	line = ed_rec(ed_cmds, in_file, out_file, line, buffer, bufsize, 
-			hash);
-	/* pass on errors */
-	if (line < 0) {
-		return line;
-	}
-	/* apply our hunk */
-	fseek(ed_cmds, pos, SEEK_SET); 
-	/* first wind to the current position */
-	if (mode != MODE_ADDED) {
-		startline -= 1;
-	}
-	while (line < startline) {
-		fgets(buffer, bufsize, in_file);
-		written = fwrite(buffer, 1, strlen(buffer), out_file);
-		hash->Add((unsigned char*)buffer, written);
-		while ((strlen(buffer) == (bufsize - 1)) 
-				&& (buffer[bufsize - 2] != '\n')) {
-			fgets(buffer, bufsize, in_file);
-			written = fwrite(buffer, 1, strlen(buffer), out_file);
-			hash->Add((unsigned char*)buffer, written);
-		}
-		line++;
-	}
-	/* include from ed script */
-	if ((mode == MODE_ADDED) || (mode == MODE_CHANGED)) {
-		do {
-			fgets(buffer, bufsize, ed_cmds);
-			if (strncmp(buffer, ".", 1) != 0) {
-				written = fwrite(buffer, 1, strlen(buffer), out_file);
-				hash->Add((unsigned char*)buffer, written);
-				while ((strlen(buffer) == (bufsize - 1)) 
-						&& (buffer[bufsize - 2] != '\n')) {
-					fgets(buffer, bufsize, ed_cmds);
-					written = fwrite(buffer, 1, strlen(buffer), out_file);
-					hash->Add((unsigned char*)buffer, written);
-				}
-			}
-			else {
-				break;
-			}
-		} while (1);
-	}
-	/* ignore the corresponding number of lines from input */
-	if ((mode == MODE_DELETED) || (mode == MODE_CHANGED)) {
-		while (line < stopline) {
-			fgets(buffer, bufsize, in_file);
-			while ((strlen(buffer) == (bufsize - 1)) 
-					&& (buffer[bufsize - 2] != '\n')) {
-				fgets(buffer, bufsize, in_file);
-			}
-			line++;
-		}
-	}
-	return line;
+   /* get the current command and parse it*/
+   if (fgets(buffer, bufsize, ed_cmds) == NULL) {
+      return line;
+   }
+   startline = strtol(buffer, &idx, 10);
+   if (startline < line) {
+      return ED_ORDERING;
+   }
+   if (*idx == ',') {
+      idx++;
+      stopline = strtol(idx, &idx, 10);
+   }
+   else {
+      stopline = startline;
+   }
+   if (*idx == 'c') {
+      mode = MODE_CHANGED;
+   }
+   else if (*idx == 'a') {
+      mode = MODE_ADDED;
+   }
+   else if (*idx == 'd') {
+      mode = MODE_DELETED;
+   }
+   else {
+      return ED_PARSER;
+   }
+   /* get the current position */
+   pos = ftell(ed_cmds);
+   /* if this is add or change then go to the next full stop */
+   if ((mode == MODE_CHANGED) || (mode == MODE_ADDED)) {
+      do {
+         fgets(buffer, bufsize, ed_cmds);
+         while ((strlen(buffer) == (bufsize - 1)) 
+               && (buffer[bufsize - 2] != '\n')) {
+            fgets(buffer, bufsize, ed_cmds);
+            buffer[0] = ' ';
+         }
+      } while (strncmp(buffer, ".", 1) != 0);
+   }
+   /* do the recursive call */
+   line = ed_rec(ed_cmds, in_file, out_file, line, buffer, bufsize, 
+         hash);
+   /* pass on errors */
+   if (line < 0) {
+      return line;
+   }
+   /* apply our hunk */
+   fseek(ed_cmds, pos, SEEK_SET); 
+   /* first wind to the current position */
+   if (mode != MODE_ADDED) {
+      startline -= 1;
+   }
+   while (line < startline) {
+      fgets(buffer, bufsize, in_file);
+      written = fwrite(buffer, 1, strlen(buffer), out_file);
+      hash->Add((unsigned char*)buffer, written);
+      while ((strlen(buffer) == (bufsize - 1)) 
+            && (buffer[bufsize - 2] != '\n')) {
+         fgets(buffer, bufsize, in_file);
+         written = fwrite(buffer, 1, strlen(buffer), out_file);
+         hash->Add((unsigned char*)buffer, written);
+      }
+      line++;
+   }
+   /* include from ed script */
+   if ((mode == MODE_ADDED) || (mode == MODE_CHANGED)) {
+      do {
+         fgets(buffer, bufsize, ed_cmds);
+         if (strncmp(buffer, ".", 1) != 0) {
+            written = fwrite(buffer, 1, strlen(buffer), out_file);
+            hash->Add((unsigned char*)buffer, written);
+            while ((strlen(buffer) == (bufsize - 1)) 
+                  && (buffer[bufsize - 2] != '\n')) {
+               fgets(buffer, bufsize, ed_cmds);
+               written = fwrite(buffer, 1, strlen(buffer), out_file);
+               hash->Add((unsigned char*)buffer, written);
+            }
+         }
+         else {
+            break;
+         }
+      } while (1);
+   }
+   /* ignore the corresponding number of lines from input */
+   if ((mode == MODE_DELETED) || (mode == MODE_CHANGED)) {
+      while (line < stopline) {
+         fgets(buffer, bufsize, in_file);
+         while ((strlen(buffer) == (bufsize - 1)) 
+               && (buffer[bufsize - 2] != '\n')) {
+            fgets(buffer, bufsize, in_file);
+         }
+         line++;
+      }
+   }
+   return line;
 }
 
-int ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file, Hashes *hash) {
-	char buffer[BUF_SIZE];
-	int result;
-	int written;
-	
-	/* we do a tail recursion to read the commands in the right order */
-	result = ed_rec(ed_cmds, in_file, out_file, 0, buffer, BUF_SIZE, 
-			hash);
-	
-	/* read the rest from infile */
-	if (result > 0) {
-		while (fgets(buffer, BUF_SIZE, in_file) != NULL) {
-			written = fwrite(buffer, 1, strlen(buffer), out_file);
-			hash->Add((unsigned char*)buffer, written);
-		}
-	}
-	else {
-		// XXX better error handling
-		fprintf(stderr, "Error: %i\n", result);
-		return ED_FAILURE;
-	}
-	return ED_OK;
+int RredMethod::ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file, 
+      Hashes *hash) {
+   char buffer[BUF_SIZE];
+   int result;
+   int written;
+   
+   /* we do a tail recursion to read the commands in the right order */
+   result = ed_rec(ed_cmds, in_file, out_file, 0, buffer, BUF_SIZE, 
+         hash);
+   
+   /* read the rest from infile */
+   if (result > 0) {
+      while (fgets(buffer, BUF_SIZE, in_file) != NULL) {
+         written = fwrite(buffer, 1, strlen(buffer), out_file);
+         hash->Add((unsigned char*)buffer, written);
+      }
+   }
+   else {
+      return ED_FAILURE;
+   }
+   return ED_OK;
 }
 
 
-// XXX do we need modification times as well?
 bool RredMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
@@ -194,6 +200,7 @@ bool RredMethod::Fetch(FetchItem *Itm)
    FILE* fTo = fdopen(To.Fd(), "w");
    // now do the actual patching
    if (ed_file(fPatch, fFrom, fTo, &Hash) != ED_OK) {
+     _error->Errno("rred", _("Could not patch file"));  
       return false;
    }
 
@@ -227,7 +234,6 @@ bool RredMethod::Fetch(FetchItem *Itm)
 
    return true;
 }
-									/*}}}*/
 
 int main(int argc, char *argv[])
 {
