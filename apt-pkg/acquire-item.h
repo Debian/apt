@@ -83,6 +83,27 @@ class pkgAcquire::Item
 };
 
 // item for index diffs
+class pkgAcqDiffIndex : public pkgAcquire::Item
+{
+ protected:
+   bool Debug;
+   string RealURI;
+
+ public:
+   // Specialized action members
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual string DescURI() {return RealURI + "Index";};
+   virtual string Custom600Headers();
+
+   // helpers
+   bool ParseDiffIndex(string IndexDiffFile);
+   
+   pkgAcqDiffIndex(pkgAcquire *Owner,string URI,string URIDesc,
+		   string ShortDesct, string ExpectedMD5);
+}
+
 class pkgAcqIndexDiffs : public pkgAcquire::Item
 {
    protected:
@@ -113,8 +134,6 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
    virtual string Custom600Headers();
 
    // various helpers
-   bool ParseIndexDiff(string IndexDiffFile);
-   void QueueDiffIndex(string URI);
    bool QueueNextDiff();
    bool ApplyDiff(string PatchFile);
    void Finish(bool allDone=false);
