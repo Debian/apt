@@ -220,6 +220,10 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
    if(TF.Step(Tags) == true)
    {
       string local_sha1;
+      bool found = false;
+      DiffInfo d;
+      string size;
+
       string tmp = Tags.FindS("SHA1-Current");
       std::stringstream ss(tmp);
       ss >> ServerSha1;
@@ -232,32 +236,27 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       if(local_sha1 == ServerSha1) {
 	 if(Debug)
 	    std::clog << "Package file is up-to-date" << std::endl;
-	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedMD5, available_patches);
-	 Complete = false;
-	 Status = StatDone;
-	 Dequeue();
-	 return true;
-      }
-      if(Debug)
-	 std::clog << "SHA1-Current: " << ServerSha1 << std::endl;
+	 // set found to true, this will queue a pkgAcqIndexDiffs with
+	 // a empty availabe_patches
+	 found = true;
+      } else {
+	 if(Debug)
+	    std::clog << "SHA1-Current: " << ServerSha1 << std::endl;
 
-      // check the historie and see what patches we need
-      string history = Tags.FindS("SHA1-History");     
-      std::stringstream hist(history);
-      DiffInfo d;
-      string size;
-      bool found = false;
-      while(hist >> d.sha1 >> size >> d.file) {
-	 d.size = atoi(size.c_str());
-	 // read until the first match is found
-	 if(d.sha1 == local_sha1) 
-	    found=true;
-	 // from that point on, we probably need all diffs
-	 if(found) {
-	    if(Debug)
-	       std::clog << "Need to get diff: " << d.file << std::endl;
-	    available_patches.push_back(d);
+	 // check the historie and see what patches we need
+	 string history = Tags.FindS("SHA1-History");     
+	 std::stringstream hist(history);
+	 while(hist >> d.sha1 >> size >> d.file) {
+	    d.size = atoi(size.c_str());
+	    // read until the first match is found
+	    if(d.sha1 == local_sha1) 
+	       found=true;
+	    // from that point on, we probably need all diffs
+	    if(found) {
+	       if(Debug)
+		  std::clog << "Need to get diff: " << d.file << std::endl;
+	       available_patches.push_back(d);
+	    }
 	 }
       }
 
@@ -287,7 +286,7 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << std::endl
 		<< "Falling back to normal index file aquire" << std::endl;
 
-   new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
+   new pkgAcqIndex(Owner, RealURI, Description, Desc.ShortDesc, 
 		   ExpectedMD5);
 
    Complete = false;
