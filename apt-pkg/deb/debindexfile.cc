@@ -158,6 +158,21 @@ debPackagesIndex::debPackagesIndex(string URI,string Dist,string Section,bool Tr
 {
 }
 									/*}}}*/
+
+string debPackagesIndex::ArchiveURI(string File) const
+{
+   // FIXME: Remove as soon as pdiff support is offical
+   string remap = _config->Find("APT::Diffs::Remap::"+URI,"");
+   if(!remap.empty())
+   {
+      std::cout << "doing a evil remapping to the URI as requested!\n";
+      std::cout << URI << " -> " << remap << std::endl;
+      return remap+File;
+   }
+
+   return URI + File;
+}
+
 // PackagesIndex::ArchiveInfo - Short version of the archive url	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a shorter version that is designed to be < 60 chars or so */

@@ -24,6 +24,7 @@ const char *Prog;
 
 class RredMethod : public pkgAcqMethod
 {
+   bool Debug;
    // the size of this doesn't really matter (except for performance)    
    const static int BUF_SIZE = 1024;
    // the ed commands
@@ -70,12 +71,23 @@ int RredMethod::ed_rec(FILE *ed_cmds, FILE *in_file, FILE *out_file, int line,
    }
    if (*idx == 'c') {
       mode = MODE_CHANGED;
+	   if (Debug == true) {
+		   std::clog << "changing from line " << startline 
+			     << " to " << stopline << std::endl;
+	   }
    }
    else if (*idx == 'a') {
       mode = MODE_ADDED;
+	   if (Debug == true) {
+		   std::clog << "adding after line " << startline << std::endl;
+	   }
    }
    else if (*idx == 'd') {
       mode = MODE_DELETED;
+	   if (Debug == true) {
+		   std::clog << "deleting from line " << startline 
+			     <<  " to " << stopline << std::endl;
+	   }
    }
    else {
       return ED_PARSER;
@@ -177,6 +189,7 @@ int RredMethod::ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file,
 
 bool RredMethod::Fetch(FetchItem *Itm)
 {
+   Debug = _config->FindB("Debug::pkgAcquire::RRed",false);
    URI Get = Itm->Uri;
    string Path = Get.Host + Get.Path; // To account for relative paths
    // Path contains the filename to patch
@@ -185,6 +198,9 @@ bool RredMethod::Fetch(FetchItem *Itm)
    URIStart(Res);
    // Res.Filename the destination filename
 
+   if (Debug == true) 
+      std::clog << "Patching " << Path << " with " << Path 
+         << ".ed and putting result into " << Itm->DestFile << std::endl;
    // Open the source and destination files (the d'tor of FileFd will do 
    // the cleanup/closing of the fds)
    FileFd From(Path,FileFd::ReadOnly);

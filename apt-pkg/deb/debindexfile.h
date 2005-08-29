@@ -59,7 +59,7 @@ class debPackagesIndex : public pkgIndexFile
 
    // Stuff for accessing files on remote items
    virtual string ArchiveInfo(pkgCache::VerIterator Ver) const;
-   virtual string ArchiveURI(string File) const {return URI + File;};
+   virtual string ArchiveURI(string File) const;
    
    // Interface for acquire
    virtual string Describe(bool Short) const;   
