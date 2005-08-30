@@ -24,7 +24,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/debmetaindex.h>
-    
+
 #include <sys/stat.h>
 									/*}}}*/
 
@@ -290,7 +290,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
       FileFd Rel(ReleaseFile,FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 return false;
-      Parser.LoadReleaseInfo(File,Rel);
+      Parser.LoadReleaseInfo(File,Rel,Section);
    }
    
    return true;

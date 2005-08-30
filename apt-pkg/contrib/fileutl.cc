@@ -20,6 +20,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/configuration.h>
 
 #include <apti18n.h>
 
@@ -32,6 +33,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
+#include <set>
 									/*}}}*/
 
 using namespace std;
@@ -306,7 +308,7 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
 /* This is used if you want to cleanse the environment for the forked 
    child, it fixes up the important signals and nukes all of the fds,
    otherwise acts like normal fork. */
-pid_t ExecFork(int dontCloseThisFd)
+pid_t ExecFork()
 {
    // Fork off the process
    pid_t Process = fork();
@@ -326,11 +328,27 @@ pid_t ExecFork(int dontCloseThisFd)
       signal(SIGWINCH,SIG_DFL);
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
-      
+
+      set<int> KeepFDs;
+      Configuration::Item const *Opts = _config->Tree("APT::Keep-Fds");
+      if (Opts != 0 && Opts->Child != 0)
+      {
+	 Opts = Opts->Child;
+	 for (; Opts != 0; Opts = Opts->Next)
+	 {
+	    if (Opts->Value.empty() == true)
+	       continue;
+	    int fd = atoi(Opts->Value.c_str());
+	    KeepFDs.insert(fd);
+	 }
+      }
+
       // Close all of our FDs - just in case
       for (int K = 3; K != 40; K++)
-	 if(K != dontCloseThisFd)
+      {
+	 if(KeepFDs.find(K) == KeepFDs.end())
 	    fcntl(K,F_SETFD,FD_CLOEXEC);
+      }
    }
    
    return Process;

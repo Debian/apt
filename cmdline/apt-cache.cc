@@ -1226,16 +1226,14 @@ bool DisplayRecord(pkgCache::VerIterator V)
    }
 
    // Get a pointer to start of Description field
-   unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
+   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
 
    // Write all but Description
-   if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
+   if (fwrite(Buffer,1,DescP - Buffer-1,stdout) < (size_t)(DescP - Buffer-1))
    {
       delete [] Buffer;
       return false;
    }
-
-   delete [] Buffer;
 
    // Show the right description
    pkgRecords Recs(*GCache);
@@ -1247,8 +1245,27 @@ bool DisplayRecord(pkgCache::VerIterator V)
    if (Desc.end() == true) Desc = DescDefault;
 
    pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
-   cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc() << endl;
+   cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
 
+   // Find the first field after the description (if there is any)
+   for(DescP++;DescP != &Buffer[V.FileList()->Size];DescP++) 
+   {
+      if(*DescP == '\n' && *(DescP+1) != ' ') 
+      {
+	 // write the rest of the buffer
+	 const unsigned char *end=&Buffer[V.FileList()->Size];
+	 if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP)) 
+	 {
+	    delete [] Buffer;
+	    return false;
+	 }
+
+	 break;
+      }
+   }
+   // write a final newline (after the description)
+   cout<<endl;
+   delete [] Buffer;
 
    return true;
 }
