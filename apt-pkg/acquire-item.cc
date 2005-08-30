@@ -379,6 +379,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI);
       Complete = true;
+      Status = StatDone;
       Dequeue();
       if(Debug)
 	 std::clog << "\n\nallDone: " << DestFile << "\n" << std::endl;
