@@ -25,6 +25,7 @@
 #include <apti18n.h>
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
     
 #include <sys/stat.h>
@@ -367,6 +368,19 @@ bool pkgAcquire::Worker::Capabilities(string Message)
 /* */
 bool pkgAcquire::Worker::MediaChange(string Message)
 {
+   int status_fd = _config->FindI("APT::Status-Fd",-1);
+   if(status_fd > 0) 
+   {
+      string Media = LookupTag(Message,"Media");
+      string Drive = LookupTag(Message,"Drive"); 
+      ostringstream msg,status;
+      status << "media-change: "  // message
+	     << Media  << ":"     //media
+	     << Drive  //drive
+	     << endl;
+      write(status_fd, status.str().c_str(), status.str().size());
+   }
+
    if (Log == 0 || Log->MediaChange(LookupTag(Message,"Media"),
 				    LookupTag(Message,"Drive")) == false)
    {
