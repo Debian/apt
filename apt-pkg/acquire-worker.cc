@@ -374,9 +374,14 @@ bool pkgAcquire::Worker::MediaChange(string Message)
       string Media = LookupTag(Message,"Media");
       string Drive = LookupTag(Message,"Drive"); 
       ostringstream msg,status;
+      ioprintf(msg,_("Please insert the disc labeled: "
+		     "'%s' "
+		     "in the drive '%s' and press enter."),
+	       Media.c_str(),Drive.c_str());
       status << "media-change: "  // message
-	     << Media  << ":"     //media
-	     << Drive  //drive
+	     << Media  << ":"     // media
+	     << Drive  << ":"     // drive
+	     << msg.str()         // l10n message
 	     << endl;
       write(status_fd, status.str().c_str(), status.str().size());
    }
