@@ -244,7 +244,7 @@ class pkgCache::PrvIterator
    inline PkgIterator OwnerPkg() {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[Prv->Version].ParentPkg);};
    inline unsigned long Index() const {return Prv - Owner->ProvideP;};
 
-   inline PrvIterator() : Owner(0), Prv(0), Type(PrvVer) {};
+   inline PrvIterator() : Prv(0), Type(PrvVer), Owner(0)  {};
 
    inline PrvIterator(pkgCache &Owner,Provides *Trg,Version *) :
           Prv(Trg), Type(PrvVer), Owner(&Owner) 

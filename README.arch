@@ -4,5 +4,9 @@ packages (in addtion to the usual build-depends):
 xmlto perlsgml sgml2x sgmlspl docbook
 
 then run:
-debian/rules arch-build
 
+$ debian/rules arch-build
+
+that will build packages in the "debian/arch-build" directory. It will
+honor "DEB_BUILD_PROG_OPTS" as options that are passed to debuild (e.g. -S 
+may be usefull).
