@@ -1,10 +1,33 @@
-apt (0.6.40.2) unstable; urgency=low
+apt (0.6.41) unstable; urgency=low
 
   * improved the support for "error" and "conffile" reporting from
     dpkg, added the format to README.progress-reporting
   * added README.progress-reporting to the apt-doc package
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 22 Aug 2005 12:22:04 +0200
+  * improved the network timeout handling, if a index file from a 
+    sources.list times out or EAI_AGAIN is returned from getaddrinfo, 
+    don't try to get the other files from that entry
+  * Support architecture-specific extra overrides
+    (closes: #225947). Thanks to  Anthony Towns for idea and
+    the patch, thanks to Colin Watson for testing it.
+  * Javier Fernandez-Sanguino Pen~a:
+    - Added a first version of an apt-secure.8 manpage, and modified
+      apt-key and apt.end accordingly. Also added the 'update'
+      argument to apt-key which was previously not documented 
+      (Closes: #322120)
+  * Andreas Pakulat:
+    - added example apt-ftparchive.conf file to doc/examples 
+      (closes: #322483)
+  * Fix a incorrect example in the man-page (closes: #282918)
+  * Fix a bug for very long lines in the apt-cdrom code (closes: #280356)
+  * Fix a manual page bug (closes: #316314)
+  * Do md5sum checking for file and cdrom method (closes: #319142)
+  * Change pkgPolicy::Pin from private to protected to let subclasses
+    access it too (closes: #321799)
+  * add default constructor for PrvIterator (closes: #322267)
+  * Reread status configuration on debSystem::Initialize() 
+    (needed for apt-proxy, thanks to Otavio for this patch)
+  
+ -- Michael Vogt <mvo@debian.org>  Mon,  5 Sep 2005 22:59:03 +0200
 
 apt (0.6.40.1) unstable; urgency=low
 

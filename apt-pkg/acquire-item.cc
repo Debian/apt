@@ -524,20 +524,21 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 {
    Decompression = false;
    Erase = false;
-   
+
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
    if(comprExt.empty()) 
    {
-      // autoselect 
-      if(FileExists("/usr/bin/bzip2"))
-	 Desc.URI = URI + ".bz2"; 
-      else
-	 Desc.URI = URI + ".gz"; 
+      // autoselect the compression method
+      if(FileExists("/usr/bin/bzip2")) 
+	 CompressionExtension = ".bz2";
+      else 
+	 CompressionExtension = ".gz";
    } else {
-      Desc.URI = URI + comprExt; 
+      CompressionExtension = comprExt;
    }
+   Desc.URI = URI + CompressionExtension; 
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
@@ -781,6 +782,13 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    // mistakenly trusted
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    unlink(Final.c_str());
+
+   // if we get a timeout if fail
+   if(LookupTag(Message,"FailReason") == "Timeout" || 
+      LookupTag(Message,"FailReason") == "TmpResolveFailure") {
+      Item::Failed(Message,Cnf);
+      return;
+   }
 
    // queue a pkgAcqMetaIndex with no sigfile
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
@@ -1280,7 +1288,8 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
       {
 	 Status = StatError;
 	 ErrorText = _("MD5Sum mismatch");
-	 Rename(DestFile,DestFile + ".FAILED");
+	 if(FileExists(DestFile))
+	    Rename(DestFile,DestFile + ".FAILED");
 	 return;
       }
    }

@@ -13,6 +13,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -180,6 +181,12 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       CurrentID = NewID;
    Res.LastModified = Buf.st_mtime;
    Res.Size = Buf.st_size;
+
+   Hashes Hash;
+   FileFd Fd(Res.Filename, FileFd::ReadOnly);
+   Hash.AddFD(Fd.Fd(), Fd.Size());
+   Res.TakeHashes(Hash);
+
    URIDone(Res);
    return true;
 }

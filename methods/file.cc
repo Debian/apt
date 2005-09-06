@@ -15,6 +15,8 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/fileutl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -75,7 +77,11 @@ bool FileMethod::Fetch(FetchItem *Itm)
    
    if (Res.Filename.empty() == true)
       return _error->Error(_("File not found"));
-   
+
+   Hashes Hash;
+   FileFd Fd(Res.Filename, FileFd::ReadOnly);
+   Hash.AddFD(Fd.Fd(), Fd.Size());
+   Res.TakeHashes(Hash);
    URIDone(Res);
    return true;
 }

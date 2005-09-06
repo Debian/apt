@@ -45,6 +45,8 @@ using std::vector;
 
 class pkgPolicy : public pkgDepCache::Policy
 {
+   protected:
+
    struct Pin
    {
       pkgVersionMatch::MatchType Type;
@@ -57,8 +59,6 @@ class pkgPolicy : public pkgDepCache::Policy
    {
       string Pkg;
    };
-   
-   protected:
    
    Pin *Pins;
    signed short *PFPriority;

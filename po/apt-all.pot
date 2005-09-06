@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-06 14:00+0200\n"
+"POT-Creation-Date: 2005-08-19 11:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -405,7 +405,7 @@ msgid " DeLink limit of %sB hit.\n"
 msgstr ""
 
 #: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:256
 #, c-format
 msgid "Failed to stat %s"
 msgstr ""
@@ -1270,8 +1270,8 @@ msgstr ""
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr ""
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr ""
@@ -1407,331 +1407,6 @@ msgstr ""
 msgid "Unparsable control file"
 msgstr ""
 
-#: methods/cdrom.cc:113
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr ""
-
-#: methods/cdrom.cc:122
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-
-#: methods/cdrom.cc:130 methods/cdrom.cc:168
-msgid "Wrong CD-ROM"
-msgstr ""
-
-#: methods/cdrom.cc:163
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr ""
-
-#: methods/cdrom.cc:177 methods/file.cc:77 methods/rsh.cc:264
-msgid "File not found"
-msgstr ""
-
-#: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
-msgid "Failed to stat"
-msgstr ""
-
-#: methods/copy.cc:79 methods/gzip.cc:139
-msgid "Failed to set modification time"
-msgstr ""
-
-#: methods/file.cc:42
-msgid "Invalid URI, local URIS must not start with //"
-msgstr ""
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc:162
-msgid "Logging in"
-msgstr ""
-
-#: methods/ftp.cc:168
-msgid "Unable to determine the peer name"
-msgstr ""
-
-#: methods/ftp.cc:173
-msgid "Unable to determine the local name"
-msgstr ""
-
-#: methods/ftp.cc:204 methods/ftp.cc:232
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr ""
-
-#: methods/ftp.cc:210
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc:217
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc:237
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-
-#: methods/ftp.cc:265
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc:291
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
-msgid "Connection timeout"
-msgstr ""
-
-#: methods/ftp.cc:335
-msgid "Server closed the connection"
-msgstr ""
-
-#: methods/ftp.cc:338 methods/rsh.cc:190 apt-pkg/contrib/fileutl.cc:453
-msgid "Read error"
-msgstr ""
-
-#: methods/ftp.cc:345 methods/rsh.cc:197
-msgid "A response overflowed the buffer."
-msgstr ""
-
-#: methods/ftp.cc:362 methods/ftp.cc:374
-msgid "Protocol corruption"
-msgstr ""
-
-#: methods/ftp.cc:446 methods/rsh.cc:232 apt-pkg/contrib/fileutl.cc:492
-msgid "Write error"
-msgstr ""
-
-#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
-msgid "Could not create a socket"
-msgstr ""
-
-#: methods/ftp.cc:698
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-
-#: methods/ftp.cc:704
-msgid "Could not connect passive socket."
-msgstr ""
-
-#: methods/ftp.cc:722
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr ""
-
-#: methods/ftp.cc:736
-msgid "Could not bind a socket"
-msgstr ""
-
-#: methods/ftp.cc:740
-msgid "Could not listen on the socket"
-msgstr ""
-
-#: methods/ftp.cc:747
-msgid "Could not determine the socket's name"
-msgstr ""
-
-#: methods/ftp.cc:779
-msgid "Unable to send PORT command"
-msgstr ""
-
-#: methods/ftp.cc:789
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr ""
-
-#: methods/ftp.cc:798
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc:818
-msgid "Data socket connect timed out"
-msgstr ""
-
-#: methods/ftp.cc:825
-msgid "Unable to accept connection"
-msgstr ""
-
-#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
-msgid "Problem hashing file"
-msgstr ""
-
-#: methods/ftp.cc:877
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr ""
-
-#: methods/ftp.cc:892 methods/rsh.cc:322
-msgid "Data socket timed out"
-msgstr ""
-
-#: methods/ftp.cc:922
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr ""
-
-#. Get the files information
-#: methods/ftp.cc:997
-msgid "Query"
-msgstr ""
-
-#: methods/ftp.cc:1106
-msgid "Unable to invoke "
-msgstr ""
-
-#: methods/connect.cc:64
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr ""
-
-#: methods/connect.cc:71
-#, c-format
-msgid "[IP: %s %s]"
-msgstr ""
-
-#: methods/connect.cc:80
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr ""
-
-#: methods/connect.cc:86
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr ""
-
-#: methods/connect.cc:92
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr ""
-
-#: methods/connect.cc:104
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr ""
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc:132 methods/rsh.cc:425
-#, c-format
-msgid "Connecting to %s"
-msgstr ""
-
-#: methods/connect.cc:163
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr ""
-
-#: methods/connect.cc:167
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr ""
-
-#: methods/connect.cc:169
-#, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i)"
-msgstr ""
-
-#: methods/connect.cc:216
-#, c-format
-msgid "Unable to connect to %s %s:"
-msgstr ""
-
-#: methods/gzip.cc:57
-#, c-format
-msgid "Couldn't open pipe for %s"
-msgstr ""
-
-#: methods/gzip.cc:102
-#, c-format
-msgid "Read error from %s process"
-msgstr ""
-
-#: methods/http.cc:344
-msgid "Waiting for headers"
-msgstr ""
-
-#: methods/http.cc:490
-#, c-format
-msgid "Got a single header line over %u chars"
-msgstr ""
-
-#: methods/http.cc:498
-msgid "Bad header line"
-msgstr ""
-
-#: methods/http.cc:517 methods/http.cc:524
-msgid "The HTTP server sent an invalid reply header"
-msgstr ""
-
-#: methods/http.cc:553
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr ""
-
-#: methods/http.cc:568
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr ""
-
-#: methods/http.cc:570
-msgid "This HTTP server has broken range support"
-msgstr ""
-
-#: methods/http.cc:594
-msgid "Unknown date format"
-msgstr ""
-
-#: methods/http.cc:741
-msgid "Select failed"
-msgstr ""
-
-#: methods/http.cc:746
-msgid "Connection timed out"
-msgstr ""
-
-#: methods/http.cc:769
-msgid "Error writing to output file"
-msgstr ""
-
-#: methods/http.cc:797
-msgid "Error writing to file"
-msgstr ""
-
-#: methods/http.cc:822
-msgid "Error writing to the file"
-msgstr ""
-
-#: methods/http.cc:836
-msgid "Error reading from server. Remote end closed connection"
-msgstr ""
-
-#: methods/http.cc:838
-msgid "Error reading from server"
-msgstr ""
-
-#: methods/http.cc:1069
-msgid "Bad header data"
-msgstr ""
-
-#: methods/http.cc:1086
-msgid "Connection failed"
-msgstr ""
-
-#: methods/http.cc:1177
-msgid "Internal error"
-msgstr ""
-
-#: methods/rsh.cc:330
-msgid "Connection closed prematurely"
-msgstr ""
-
 #: apt-pkg/contrib/mmap.cc:82
 msgid "Can't mmap an empty file"
 msgstr ""
@@ -1746,57 +1421,57 @@ msgstr ""
 msgid "Selection %s not found"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:395
+#: apt-pkg/contrib/configuration.cc:436
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:453
+#: apt-pkg/contrib/configuration.cc:494
 #, c-format
 msgid "Opening configuration file %s"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:471
+#: apt-pkg/contrib/configuration.cc:512
 #, c-format
 msgid "Line %d too long (max %d)"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:567
+#: apt-pkg/contrib/configuration.cc:608
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:586
+#: apt-pkg/contrib/configuration.cc:627
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:603
+#: apt-pkg/contrib/configuration.cc:644
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:643
+#: apt-pkg/contrib/configuration.cc:684
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:650
+#: apt-pkg/contrib/configuration.cc:691
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:695 apt-pkg/contrib/configuration.cc:700
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:663
+#: apt-pkg/contrib/configuration.cc:704
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:697
+#: apt-pkg/contrib/configuration.cc:738
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr ""
@@ -1862,7 +1537,7 @@ msgstr ""
 msgid "Unable to stat the mount point %s"
 msgstr ""
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr ""
@@ -1871,70 +1546,78 @@ msgstr ""
 msgid "Failed to stat the cdrom"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:80
+#: apt-pkg/contrib/fileutl.cc:82
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:85
+#: apt-pkg/contrib/fileutl.cc:87
 #, c-format
 msgid "Could not open lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:103
+#: apt-pkg/contrib/fileutl.cc:105
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:107
+#: apt-pkg/contrib/fileutl.cc:109
 #, c-format
 msgid "Could not get lock %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:359
+#: apt-pkg/contrib/fileutl.cc:377
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:369
+#: apt-pkg/contrib/fileutl.cc:387
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:372
+#: apt-pkg/contrib/fileutl.cc:390
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:374
+#: apt-pkg/contrib/fileutl.cc:392
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:418
+#: apt-pkg/contrib/fileutl.cc:436
 #, c-format
 msgid "Could not open file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:474
+#: apt-pkg/contrib/fileutl.cc:471 methods/ftp.cc:338 methods/rsh.cc:190
+msgid "Read error"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:492
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:504
+#: apt-pkg/contrib/fileutl.cc:510 methods/ftp.cc:446 methods/rsh.cc:232
+msgid "Write error"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:522
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:579
+#: apt-pkg/contrib/fileutl.cc:597
 msgid "Problem closing the file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:585
+#: apt-pkg/contrib/fileutl.cc:603
 msgid "Problem unlinking the file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:596
+#: apt-pkg/contrib/fileutl.cc:614
 msgid "Problem syncing the file"
 msgstr ""
 
@@ -2059,7 +1742,7 @@ msgstr ""
 msgid "Opening %s"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:170
+#: apt-pkg/sourcelist.cc:170 apt-pkg/cdrom.cc:426
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr ""
@@ -2108,24 +1791,34 @@ msgstr ""
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 
-#: apt-pkg/acquire.cc:61
+#: apt-pkg/acquire.cc:62
 #, c-format
 msgid "Lists directory %spartial is missing."
 msgstr ""
 
-#: apt-pkg/acquire.cc:65
+#: apt-pkg/acquire.cc:66
 #, c-format
 msgid "Archive directory %spartial is missing."
 msgstr ""
 
-#: apt-pkg/acquire-worker.cc:112
+#: apt-pkg/acquire.cc:821
+#, c-format
+msgid "Downloading file %li of %li (%s remaining)"
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc:113 apt-pkg/acquire-worker.cc:112
 #, c-format
 msgid "The method driver %s could not be found."
 msgstr ""
 
-#: apt-pkg/acquire-worker.cc:161
+#: apt-pkg/acquire-worker.cc:162 apt-pkg/acquire-worker.cc:161
 #, c-format
 msgid "Method %s did not start correctly"
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc:377
+#, c-format
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 
 #: apt-pkg/init.cc:119
@@ -2246,36 +1939,37 @@ msgstr ""
 msgid "IO Error saving source cache"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:126
+#: apt-pkg/acquire-item.cc:129
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:235 apt-pkg/acquire-item.cc:900
+#: apt-pkg/acquire-item.cc:618 apt-pkg/acquire-item.cc:1290
+#: apt-pkg/acquire-item.cc:553 apt-pkg/acquire-item.cc:1218
 msgid "MD5Sum mismatch"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:714
+#: apt-pkg/acquire-item.cc:1104 apt-pkg/acquire-item.cc:1032
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:767
+#: apt-pkg/acquire-item.cc:1157 apt-pkg/acquire-item.cc:1085
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
 "manually fix this package."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:803
+#: apt-pkg/acquire-item.cc:1193 apt-pkg/acquire-item.cc:1121
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:890
+#: apt-pkg/acquire-item.cc:1280 apt-pkg/acquire-item.cc:1208
 msgid "Size mismatch"
 msgstr ""
 
@@ -2284,73 +1978,74 @@ msgstr ""
 msgid "Vendor block %s contains no fingerprint"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:504
+#: apt-pkg/cdrom.cc:507 apt-pkg/cdrom.cc:504
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:513 apt-pkg/cdrom.cc:595
+#: apt-pkg/cdrom.cc:516 apt-pkg/cdrom.cc:598 apt-pkg/cdrom.cc:513
+#: apt-pkg/cdrom.cc:595
 msgid "Identifying.. "
 msgstr ""
 
-#: apt-pkg/cdrom.cc:538
+#: apt-pkg/cdrom.cc:541 apt-pkg/cdrom.cc:538
 #, c-format
 msgid "Stored label: %s \n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:558
+#: apt-pkg/cdrom.cc:561 apt-pkg/cdrom.cc:558
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:576
+#: apt-pkg/cdrom.cc:579 apt-pkg/cdrom.cc:576
 msgid "Unmounting CD-ROM\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:580
+#: apt-pkg/cdrom.cc:583 apt-pkg/cdrom.cc:580
 msgid "Waiting for disc...\n"
 msgstr ""
 
 #. Mount the new CDROM
-#: apt-pkg/cdrom.cc:588
+#: apt-pkg/cdrom.cc:591 apt-pkg/cdrom.cc:588
 msgid "Mounting CD-ROM...\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:606
+#: apt-pkg/cdrom.cc:609 apt-pkg/cdrom.cc:606
 msgid "Scanning disc for index files..\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:644
+#: apt-pkg/cdrom.cc:647 apt-pkg/cdrom.cc:644
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:701
+#: apt-pkg/cdrom.cc:704 apt-pkg/cdrom.cc:701
 msgid "That is not a valid name, try again.\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:717
+#: apt-pkg/cdrom.cc:720 apt-pkg/cdrom.cc:717
 #, c-format
 msgid ""
 "This disc is called: \n"
 "'%s'\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:721
+#: apt-pkg/cdrom.cc:724 apt-pkg/cdrom.cc:721
 msgid "Copying package lists..."
 msgstr ""
 
-#: apt-pkg/cdrom.cc:745
+#: apt-pkg/cdrom.cc:748 apt-pkg/cdrom.cc:745
 msgid "Writing new source list\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:754
+#: apt-pkg/cdrom.cc:757 apt-pkg/cdrom.cc:754
 msgid "Source list entries for this disc are:\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:788
+#: apt-pkg/cdrom.cc:791 apt-pkg/cdrom.cc:788
 msgid "Unmounting CD-ROM..."
 msgstr ""
 
@@ -2372,4 +2067,408 @@ msgstr ""
 #: apt-pkg/indexcopy.cc:269
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:358
+#, c-format
+msgid "Preparing %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:359
+#, c-format
+msgid "Unpacking %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:364
+#, c-format
+msgid "Preparing to configure %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:365
+#, c-format
+msgid "Configuring %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:366
+#, c-format
+msgid "Installed %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:371
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:372
+#, c-format
+msgid "Removing %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:373
+#, c-format
+msgid "Removed %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:378
+#, c-format
+msgid "Preparing for remove with config %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:379
+#, c-format
+msgid "Removed with config %s"
+msgstr ""
+
+#: methods/cdrom.cc:113
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr ""
+
+#: methods/cdrom.cc:122
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+
+#: methods/cdrom.cc:130 methods/cdrom.cc:168
+msgid "Wrong CD-ROM"
+msgstr ""
+
+#: methods/cdrom.cc:163
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr ""
+
+#: methods/cdrom.cc:177 methods/file.cc:77 methods/rsh.cc:264
+msgid "File not found"
+msgstr ""
+
+#: methods/copy.cc:42 methods/gpgv.cc:265 methods/gzip.cc:133
+#: methods/gzip.cc:142
+msgid "Failed to stat"
+msgstr ""
+
+#: methods/copy.cc:79 methods/gpgv.cc:262 methods/gzip.cc:139
+msgid "Failed to set modification time"
+msgstr ""
+
+#: methods/file.cc:42
+msgid "Invalid URI, local URIS must not start with //"
+msgstr ""
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc:162
+msgid "Logging in"
+msgstr ""
+
+#: methods/ftp.cc:168
+msgid "Unable to determine the peer name"
+msgstr ""
+
+#: methods/ftp.cc:173
+msgid "Unable to determine the local name"
+msgstr ""
+
+#: methods/ftp.cc:204 methods/ftp.cc:232
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr ""
+
+#: methods/ftp.cc:210
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr ""
+
+#: methods/ftp.cc:217
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr ""
+
+#: methods/ftp.cc:237
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+
+#: methods/ftp.cc:265
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr ""
+
+#: methods/ftp.cc:291
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr ""
+
+#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
+msgid "Connection timeout"
+msgstr ""
+
+#: methods/ftp.cc:335
+msgid "Server closed the connection"
+msgstr ""
+
+#: methods/ftp.cc:345 methods/rsh.cc:197
+msgid "A response overflowed the buffer."
+msgstr ""
+
+#: methods/ftp.cc:362 methods/ftp.cc:374
+msgid "Protocol corruption"
+msgstr ""
+
+#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
+msgid "Could not create a socket"
+msgstr ""
+
+#: methods/ftp.cc:698
+msgid "Could not connect data socket, connection timed out"
+msgstr ""
+
+#: methods/ftp.cc:704
+msgid "Could not connect passive socket."
+msgstr ""
+
+#: methods/ftp.cc:722
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr ""
+
+#: methods/ftp.cc:736
+msgid "Could not bind a socket"
+msgstr ""
+
+#: methods/ftp.cc:740
+msgid "Could not listen on the socket"
+msgstr ""
+
+#: methods/ftp.cc:747
+msgid "Could not determine the socket's name"
+msgstr ""
+
+#: methods/ftp.cc:779
+msgid "Unable to send PORT command"
+msgstr ""
+
+#: methods/ftp.cc:789
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr ""
+
+#: methods/ftp.cc:798
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr ""
+
+#: methods/ftp.cc:818
+msgid "Data socket connect timed out"
+msgstr ""
+
+#: methods/ftp.cc:825
+msgid "Unable to accept connection"
+msgstr ""
+
+#: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
+msgid "Problem hashing file"
+msgstr ""
+
+#: methods/ftp.cc:877
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr ""
+
+#: methods/ftp.cc:892 methods/rsh.cc:322
+msgid "Data socket timed out"
+msgstr ""
+
+#: methods/ftp.cc:922
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr ""
+
+#. Get the files information
+#: methods/ftp.cc:997
+msgid "Query"
+msgstr ""
+
+#: methods/ftp.cc:1106
+msgid "Unable to invoke "
+msgstr ""
+
+#: methods/connect.cc:64
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr ""
+
+#: methods/connect.cc:71
+#, c-format
+msgid "[IP: %s %s]"
+msgstr ""
+
+#: methods/connect.cc:80
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr ""
+
+#: methods/connect.cc:86
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr ""
+
+#: methods/connect.cc:92
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr ""
+
+#: methods/connect.cc:104
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr ""
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc:132 methods/rsh.cc:425
+#, c-format
+msgid "Connecting to %s"
+msgstr ""
+
+#: methods/connect.cc:163
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr ""
+
+#: methods/connect.cc:167
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr ""
+
+#: methods/connect.cc:169
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i)"
+msgstr ""
+
+#: methods/connect.cc:216
+#, c-format
+msgid "Unable to connect to %s %s:"
+msgstr ""
+
+#: methods/gpgv.cc:92
+msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
+msgstr ""
+
+#: methods/gpgv.cc:191
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr ""
+
+#: methods/gpgv.cc:196
+msgid "At least one invalid signature was encountered."
+msgstr ""
+
+#. FIXME String concatenation considered harmful.
+#: methods/gpgv.cc:201
+msgid "Could not execute "
+msgstr ""
+
+#: methods/gpgv.cc:202
+msgid " to verify signature (is gnupg installed?)"
+msgstr ""
+
+#: methods/gpgv.cc:206
+msgid "Unknown error executing gpgv"
+msgstr ""
+
+#: methods/gpgv.cc:237
+msgid "The following signatures were invalid:\n"
+msgstr ""
+
+#: methods/gpgv.cc:244
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
+
+#: methods/gzip.cc:57
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr ""
+
+#: methods/gzip.cc:102
+#, c-format
+msgid "Read error from %s process"
+msgstr ""
+
+#: methods/http.cc:381
+msgid "Waiting for headers"
+msgstr ""
+
+#: methods/http.cc:527
+#, c-format
+msgid "Got a single header line over %u chars"
+msgstr ""
+
+#: methods/http.cc:535
+msgid "Bad header line"
+msgstr ""
+
+#: methods/http.cc:554 methods/http.cc:561
+msgid "The HTTP server sent an invalid reply header"
+msgstr ""
+
+#: methods/http.cc:590
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr ""
+
+#: methods/http.cc:605
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr ""
+
+#: methods/http.cc:607
+msgid "This HTTP server has broken range support"
+msgstr ""
+
+#: methods/http.cc:631
+msgid "Unknown date format"
+msgstr ""
+
+#: methods/http.cc:778
+msgid "Select failed"
+msgstr ""
+
+#: methods/http.cc:783
+msgid "Connection timed out"
+msgstr ""
+
+#: methods/http.cc:806
+msgid "Error writing to output file"
+msgstr ""
+
+#: methods/http.cc:834
+msgid "Error writing to file"
+msgstr ""
+
+#: methods/http.cc:859
+msgid "Error writing to the file"
+msgstr ""
+
+#: methods/http.cc:873
+msgid "Error reading from server. Remote end closed connection"
+msgstr ""
+
+#: methods/http.cc:875
+msgid "Error reading from server"
+msgstr ""
+
+#: methods/http.cc:1106
+msgid "Bad header data"
+msgstr ""
+
+#: methods/http.cc:1123
+msgid "Connection failed"
+msgstr ""
+
+#: methods/http.cc:1214
+msgid "Internal error"
+msgstr ""
+
+#: methods/rsh.cc:330
+msgid "Connection closed prematurely"
 msgstr ""

@@ -36,7 +36,6 @@
 #include "apt-ftparchive.h"
 #include "multicompress.h"
 									/*}}}*/
-
 using namespace std;
 FTWScanner *FTWScanner::Owner;
 
@@ -285,8 +284,9 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides) :
-		    Db(DB),Stats(Db.Stats)
+PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
+			       string aArch) :
+   Db(DB),Stats(Db.Stats), Arch(aArch)
 {
    Output = stdout;
    SetExts(".deb .udeb .foo .bar .baz");
@@ -371,14 +371,22 @@ bool PackagesWriter::DoPackage(string FileName)
    // Lookup the overide information
    pkgTagSection &Tags = Db.Control.Section;
    string Package = Tags.FindS("Package");
-   Override::Item Tmp;
-   Override::Item *OverItem = Over.GetItem(Package);
+   string Architecture;
+   // if we generate a Packages file for a given arch, we use it to
+   // look for overrides. if we run in "simple" mode without the 
+   // "Architecures" variable in the config we use the architecure value
+   // from the deb file
+   if(Arch != "")
+      Architecture = Arch;
+   else
+      Architecture = Tags.FindS("Architecture");
+   auto_ptr<Override::Item> OverItem(Over.GetItem(Package,Architecture));
    
    if (Package.empty() == true)
       return _error->Error(_("Archive had no package field"));
-   
+
    // If we need to do any rewriting of the header do it now..
-   if (OverItem == 0)
+   if (OverItem.get() == 0)
    {
       if (NoOverride == false)
       {
@@ -386,9 +394,9 @@ bool PackagesWriter::DoPackage(string FileName)
 	 ioprintf(c1out, _("  %s has no override entry\n"), Package.c_str());
       }
       
-      OverItem = &Tmp;
-      Tmp.FieldOverride["Section"] = Tags.FindS("Section");
-      Tmp.Priority = Tags.FindS("Priority");
+      OverItem = auto_ptr<Override::Item>(new Override::Item);
+      OverItem->FieldOverride["Section"] = Tags.FindS("Section");
+      OverItem->Priority = Tags.FindS("Priority");
    }
 
    char Size[40];
@@ -557,7 +565,7 @@ bool SourcesWriter::DoPackage(string FileName)
    string BestPrio;
    string Bins = Tags.FindS("Binary");
    char Buffer[Bins.length() + 1];
-   Override::Item *OverItem = 0;
+   auto_ptr<Override::Item> OverItem(0);
    if (Bins.empty() == false)
    {
       strcpy(Buffer,Bins.c_str());
@@ -570,10 +578,10 @@ bool SourcesWriter::DoPackage(string FileName)
       unsigned char BestPrioV = pkgCache::State::Extra;
       for (unsigned I = 0; BinList[I] != 0; I++)
       {
-	 Override::Item *Itm = BOver.GetItem(BinList[I]);
-	 if (Itm == 0)
+	 auto_ptr<Override::Item> Itm(BOver.GetItem(BinList[I]));
+	 if (Itm.get() == 0)
 	    continue;
-	 if (OverItem == 0)
+	 if (OverItem.get() == 0)
 	    OverItem = Itm;
 
 	 unsigned char NewPrioV = debListParser::GetPrio(Itm->Priority);
@@ -586,8 +594,7 @@ bool SourcesWriter::DoPackage(string FileName)
    }
    
    // If we need to do any rewriting of the header do it now..
-   Override::Item Tmp;   
-   if (OverItem == 0)
+   if (OverItem.get() == 0)
    {
       if (NoOverride == false)
       {
@@ -595,15 +602,19 @@ bool SourcesWriter::DoPackage(string FileName)
 	 ioprintf(c1out, _("  %s has no override entry\n"), Tags.FindS("Source").c_str());
       }
       
-      OverItem = &Tmp;
+      OverItem = auto_ptr<Override::Item>(new Override::Item);
    }
    
-   Override::Item *SOverItem = SOver.GetItem(Tags.FindS("Source"));
-   if (SOverItem == 0)
+   auto_ptr<Override::Item> SOverItem(SOver.GetItem(Tags.FindS("Source")));
+   const auto_ptr<Override::Item> autoSOverItem(SOverItem);
+   if (SOverItem.get() == 0)
    {
-      SOverItem = BOver.GetItem(Tags.FindS("Source"));
-      if (SOverItem == 0)
-	 SOverItem = OverItem;
+      SOverItem = auto_ptr<Override::Item>(BOver.GetItem(Tags.FindS("Source")));
+      if (SOverItem.get() == 0)
+      {
+	 SOverItem = auto_ptr<Override::Item>(new Override::Item);
+	 *SOverItem = *OverItem;
+      }
    }
    
    // Add the dsc to the files hash list

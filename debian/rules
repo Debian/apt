@@ -269,6 +269,7 @@ apt-utils: build debian/shlibs.local
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
 	dh_installdocs -p$@
+	dh_installexamples -p$@
 
 	# Install the man pages..
 	dh_installman -p$@
