@@ -95,9 +95,9 @@ check_size_constraints()
 
     # check age
     if [ ! $MaxAge -eq 0 ] && [ ! $MinAge -eq 0 ]; then
-	find $Cache -name "*.deb"  -mtime +$MaxAge -and -not -mtime -$MinAge -print0 | xargs -r -0 rm -f
+	find $Cache -name "*.deb"  \( -mtime +$MaxAge -and -ctime +$MaxAge \) -and -not \( -mtime -$MinAge -or -ctime -$MinAge \) -print0 | xargs -r -0 rm -f
     elif [ ! $MaxAge -eq 0 ]; then
-	find $Cache -name "*.deb"  -mtime +$MaxAge -print0 | xargs -r -0 rm -f
+	find $Cache -name "*.deb"  -ctime +$MaxAge -and -mtime +$MaxAge -print0 | xargs -r -0 rm -f
     fi
     
     # check size
@@ -120,8 +120,14 @@ check_size_constraints()
 
 	    # check for MinAge of the file
 	    if [ ! $MinAge -eq 0 ]; then 
-		mtime=$(date --date=$(date -r $file --iso-8601) +%s)
-		delta=$(($now-$mtime))
+		# check both ctime and mtime 
+		mtime=$(date -c %Y $file)
+		ctime=$(stat -c %Z $file)
+		if [ $mtime -gt $ctime ]; then
+		    delta=$(($now-$mtime))
+		else
+		    delta=$(($now-$ctime))
+		fi
 		#echo "$file ($delta), $MinAge"
 		if [ $delta -le $MinAge ]; then
 		    #echo "Skiping $file (delta=$delta)"

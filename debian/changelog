@@ -1,3 +1,12 @@
+apt (0.6.40.1ubuntu3) breezy; urgency=low
+
+  * debian/apt.cron.daily:
+    - use the ctime as well when figuring what packages need to
+      be removed. This fixes the problem that packages copied with    
+      "cp -a" (e.g. from the installer) have old mtimes (ubuntu #14504)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue,  6 Sep 2005 18:30:46 +0200
+
 apt (0.6.40.1ubuntu2) breezy; urgency=low
 
   * improved the support for "error" and "conffile" reporting from
@@ -32,7 +41,7 @@ apt (0.6.40.1) unstable; urgency=low
 
 apt (0.6.40ubuntu1) breezy; urgency=low
 
-   * Synchronize with Debian
+  * Synchronize with Debian
 
  -- Matt Zimmerman <mdz@ubuntu.com>  Thu,  4 Aug 2005 15:53:22 -0700
 
@@ -94,7 +103,7 @@ apt (0.6.39) unstable; urgency=low
   * Update priority of apt-utils to important, to match the override file
   * Install only one keyring on each branch (Closes: #316119)
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Jun 2005 11:35:21 -0700
+ -- Matt Zimmerman <mdz@debian.org>  Tue, 28 Jun 2005 11:35:21 -0700
 
 apt (0.6.38ubuntu1) breezy; urgency=low
 
