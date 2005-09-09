@@ -375,9 +375,26 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
    // we restore the original name, this is required, otherwise
    // the file will be cleaned
    if(allDone) {
-      // this is for the "real" finish
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI);
+
+      // do the final md5sum checking
+      MD5Summation sum;
+      FileFd Fd(DestFile, FileFd::ReadOnly);
+      sum.AddFD(Fd.Fd(), Fd.Size());
+      Fd.Close();
+      string MD5 = (string)sum.Result();
+
+      if (!ExpectedMD5.empty() && MD5 != ExpectedMD5)
+      {
+	 Status = StatAuthError;
+	 ErrorText = _("MD5Sum mismatch");
+	 Rename(DestFile,DestFile + ".FAILED");
+	 Dequeue();
+	 return;
+      }
+
+      // this is for the "real" finish
       Complete = true;
       Status = StatDone;
       Dequeue();
