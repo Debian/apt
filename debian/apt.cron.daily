@@ -121,7 +121,7 @@ check_size_constraints()
 	    # check for MinAge of the file
 	    if [ ! $MinAge -eq 0 ]; then 
 		# check both ctime and mtime 
-		mtime=$(date -c %Y $file)
+		mtime=$(stat -c %Y $file)
 		ctime=$(stat -c %Z $file)
 		if [ $mtime -gt $ctime ]; then
 		    delta=$(($now-$mtime))
