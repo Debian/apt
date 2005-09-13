@@ -166,8 +166,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       if (MediaFail(Get.Host,CDROM) == false)
       {
 	 CurrentID = "FAIL";
-	 Fail(_("Wrong CD-ROM"),true);
-	 return true;
+	 return _error->Error(_("Disk not found."));
       }
    }
    
