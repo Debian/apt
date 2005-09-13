@@ -274,10 +274,16 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
 	    Media.c_str(),Drive.c_str());
 
    char C = 0;
+   bool bStatus = true;
    while (C != '\n' && C != '\r')
-      read(STDIN_FILENO,&C,1);
-   
-   Update = true;
-   return true;
+   {
+      int len = read(STDIN_FILENO,&C,1);
+      if(C == 'c' || len <= 0)
+	 bStatus = false;
+   }
+
+   if(bStatus)
+      Update = true;
+   return bStatus;
 }
 									/*}}}*/
