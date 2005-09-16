@@ -2013,6 +2013,7 @@ bool DoSource(CommandLine &CmdL)
 	    if (system(S) != 0)
 	    {
 	       fprintf(stderr,_("Unpack command '%s' failed.\n"),S);
+	       fprintf(stderr,_("Check if the 'dpkg-dev' package is installed.\n");
 	       _exit(1);
 	    }	    
 	 }
