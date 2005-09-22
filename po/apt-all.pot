@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-23 09:45+0200\n"
+"POT-Creation-Date: 2005-09-22 23:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -148,7 +148,7 @@ msgstr ""
 
 #: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2324 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2325 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr ""
@@ -686,7 +686,7 @@ msgstr ""
 msgid "Unable to lock the download directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:799 cmdline/apt-get.cc:1861 cmdline/apt-get.cc:2072
+#: cmdline/apt-get.cc:799 cmdline/apt-get.cc:1861 cmdline/apt-get.cc:2073
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr ""
@@ -943,7 +943,7 @@ msgstr ""
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 
-#: cmdline/apt-get.cc:1883 cmdline/apt-get.cc:2090
+#: cmdline/apt-get.cc:1883 cmdline/apt-get.cc:2091
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr ""
@@ -982,67 +982,72 @@ msgstr ""
 msgid "Unpack command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2032
+#: cmdline/apt-get.cc:2016
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr ""
+
+#: cmdline/apt-get.cc:2033
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2051
+#: cmdline/apt-get.cc:2052
 msgid "Child process failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:2067
+#: cmdline/apt-get.cc:2068
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2095
+#: cmdline/apt-get.cc:2096
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2115
+#: cmdline/apt-get.cc:2116
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2167
+#: cmdline/apt-get.cc:2168
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
 
-#: cmdline/apt-get.cc:2219
+#: cmdline/apt-get.cc:2220
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
 
-#: cmdline/apt-get.cc:2254
+#: cmdline/apt-get.cc:2255
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 
-#: cmdline/apt-get.cc:2279
+#: cmdline/apt-get.cc:2280
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2293
+#: cmdline/apt-get.cc:2294
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr ""
 
-#: cmdline/apt-get.cc:2297
+#: cmdline/apt-get.cc:2298
 msgid "Failed to process build dependencies"
 msgstr ""
 
-#: cmdline/apt-get.cc:2329
+#: cmdline/apt-get.cc:2330
 msgid "Supported modules:"
 msgstr ""
 
-#: cmdline/apt-get.cc:2370
+#: cmdline/apt-get.cc:2371
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1443,7 +1448,7 @@ msgid ""
 "cannot be used to add new CD-ROMs"
 msgstr ""
 
-#: methods/cdrom.cc:131 methods/cdrom.cc:169
+#: methods/cdrom.cc:131
 msgid "Wrong CD-ROM"
 msgstr ""
 
@@ -1452,7 +1457,11 @@ msgstr ""
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr ""
 
-#: methods/cdrom.cc:178 methods/file.cc:79 methods/rsh.cc:264
+#: methods/cdrom.cc:169
+msgid "Disk not found."
+msgstr ""
+
+#: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr ""
 
@@ -2181,14 +2190,19 @@ msgstr ""
 msgid "Downloading file %li of %li (%s remaining)"
 msgstr ""
 
-#: apt-pkg/acquire-worker.cc:112
+#: apt-pkg/acquire-worker.cc:113
 #, c-format
 msgid "The method driver %s could not be found."
 msgstr ""
 
-#: apt-pkg/acquire-worker.cc:161
+#: apt-pkg/acquire-worker.cc:162
 #, c-format
 msgid "Method %s did not start correctly"
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc:377
+#, c-format
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 
 #: apt-pkg/init.cc:119
@@ -2390,30 +2404,30 @@ msgstr ""
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:704
+#: apt-pkg/cdrom.cc:710
 msgid "That is not a valid name, try again.\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:720
+#: apt-pkg/cdrom.cc:726
 #, c-format
 msgid ""
 "This disc is called: \n"
 "'%s'\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:724
+#: apt-pkg/cdrom.cc:730
 msgid "Copying package lists..."
 msgstr ""
 
-#: apt-pkg/cdrom.cc:748
+#: apt-pkg/cdrom.cc:754
 msgid "Writing new source list\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:757
+#: apt-pkg/cdrom.cc:763
 msgid "Source list entries for this disc are:\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:791
+#: apt-pkg/cdrom.cc:803
 msgid "Unmounting CD-ROM..."
 msgstr ""
 
