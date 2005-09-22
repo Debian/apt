@@ -118,7 +118,8 @@ class pkgProblemResolver
    
    // Try to resolve problems only by using keep
    bool ResolveByKeep();
-   
+
+   // Install all protected packages   
    void InstallProtect();   
    
    pkgProblemResolver(pkgDepCache *Cache);
