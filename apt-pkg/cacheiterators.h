@@ -267,7 +267,7 @@ class pkgCache::PrvIterator
    void operator ++(int) {if (Prv != Owner->ProvideP) Prv = Owner->ProvideP +
 	(Type == PrvVer?Prv->NextPkgProv:Prv->NextProvides);};
    inline void operator ++() {operator ++(0);};
-   inline bool end() const {return Prv == Owner->ProvideP?true:false;};
+   inline bool end() const {return Owner == 0 || Prv == Owner->ProvideP?true:false;};
    
    // Comparison
    inline bool operator ==(const PrvIterator &B) const {return Prv == B.Prv;};
@@ -288,6 +288,8 @@ class pkgCache::PrvIterator
    inline VerIterator OwnerVer() {return VerIterator(*Owner,Owner->VerP + Prv->Version);};
    inline PkgIterator OwnerPkg() {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[Prv->Version].ParentPkg);};
    inline unsigned long Index() const {return Prv - Owner->ProvideP;};
+
+   inline PrvIterator() : Prv(0), Type(PrvVer), Owner(0)  {};
 
    inline PrvIterator(pkgCache &Owner,Provides *Trg,Version *) :
           Prv(Trg), Type(PrvVer), Owner(&Owner) 

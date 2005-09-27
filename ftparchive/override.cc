@@ -207,6 +207,44 @@ bool Override::ReadExtraOverride(string File,bool Source)
    return true;
 }
 									/*}}}*/
+
+// Override::GetItem - Get a architecture specific item 	/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns a override item for the given package and the given architecture.
+ * Treats "all" special
+ */
+Override::Item* Override::GetItem(string Package, string Architecture)
+{
+   map<string,Item>::iterator I = Mapping.find(Package);
+   map<string,Item>::iterator J = Mapping.find(Package + "/" + Architecture);
+
+   if (I == Mapping.end() && J == Mapping.end())
+   {
+      return 0;
+   }
+
+   Item *result = new Item;
+   if (I == Mapping.end()) *result = J->second;
+   else
+   {
+      *result = I->second;
+      if (J != Mapping.end())
+      {
+	 Item *R = &J->second;
+	 if (R->Priority != "") result->Priority = R->Priority;
+	 if (R->OldMaint != "") result->OldMaint = R->OldMaint;
+	 if (R->NewMaint != "") result->NewMaint = R->NewMaint;
+	 for (map<string,string>::iterator foI = R->FieldOverride.begin();
+	      foI != R->FieldOverride.end(); foI++)
+         {
+	    result->FieldOverride[foI->first] = foI->second;
+	 }
+      } 
+   } 
+   return result;
+};
+
+
 // Override::Item::SwapMaint - Swap the maintainer field if necessary	/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns the new maintainer string after evaluating the rewriting rule. If

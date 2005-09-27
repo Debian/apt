@@ -446,6 +446,9 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    {      
       F.getline(Buffer,sizeof(Buffer));
       CurLine++;
+      if (F.fail() && !F.eof())
+	 return _error->Error(_("Line %u too long in source list %s."),
+			      CurLine,File.c_str());
       _strtabexpand(Buffer,sizeof(Buffer));
       _strstrip(Buffer);
             
@@ -588,7 +591,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    string DFile = _config->FindFile("Dir::State::cdroms");
    if (FileExists(DFile) == true)
    {
-      if (ReadConfigFile(Database,DFile) == false)
+      if (ReadConfigFile(Database,DFile) == false) 
 	 return _error->Error("Unable to read the cdrom database %s",
 			      DFile.c_str());
    }
@@ -674,8 +677,11 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
       log->Update(msg.str(), STEP_SCAN);
    }
 
-   if (List.size() == 0 && SourceList.size() == 0)
+   if (List.size() == 0 && SourceList.size() == 0) 
+   {
+      UnmountCdrom(CDROM);
       return _error->Error("Unable to locate any package files, perhaps this is not a Debian Disc");
+   }
 
    // Check if the CD is in the database
    string Name;
@@ -711,7 +717,10 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
 	  Name.empty() == true)
       {
 	 if(!log) 
+         {
+	    UnmountCdrom(CDROM);
 	    return _error->Error("No disc name found and no way to ask for it");
+	 }
 
 	 while(true) {
 	    if(!log->AskCdromName(Name)) {
@@ -786,7 +795,10 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    {
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
+      {
+	 UnmountCdrom(CDROM);
 	 return _error->Error("Internal error");
+      }
 
       if(log) {
 	 msg.str("");
@@ -800,7 +812,10 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    {
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
+      {
+	 UnmountCdrom(CDROM);
 	 return _error->Error("Internal error");
+      }
 
       if(log) {
 	 msg.str("");

@@ -68,6 +68,20 @@
      <para>
 
        List trusted keys.
+
+     </para>
+
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>update</term>
+     <listitem>
+     <para>
+
+       Update the local keyring with the keyring of Debian archive
+       keys and removes from the keyring the archive keys which are no
+       longer valid.
+
      </para>
 
      </listitem>
@@ -75,10 +89,35 @@
    </variablelist>
 </refsect1>
 
-<!--  <refsect1><title>See Also</title> -->
-<!--    <para> -->
-<!--    &apt-conf;, &apt-get;, &sources-list; -->
-<!--  </refsect1> -->
+ <refsect1><title>Files</title>
+   <variablelist>
+     <varlistentry><term><filename>/etc/apt/trusted.gpg</filename></term>
+     <listitem><para>Keyring of local trusted keys, new keys will be added here.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/etc/apt/trustdb.gpg</filename></term>
+     <listitem><para>Local trust database of archive keys.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/usr/share/keyrings/debian-archive-keyring.gpg</filename></term>
+     <listitem><para>Keyring of Debian archive trusted keys.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename></term>
+     <listitem><para>Keyring of Debian archive removed trusted keys.</para></listitem>
+     </varlistentry>
+
+
+
+   </variablelist>
+
+</refsect1>
+
+<refsect1><title>See Also</title>
+<para>
+&apt-get;, &apt-secure;
+</para>
+</refsect1>
 
  &manbugs;
  &manauthor;

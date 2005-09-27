@@ -1659,7 +1659,7 @@ bool DoInstall(CommandLine &CmdL)
    // See if we need to prompt
    if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
       return InstallPackages(Cache,false,false);
-   
+
    return InstallPackages(Cache,false);   
 }
 									/*}}}*/
@@ -2013,6 +2013,7 @@ bool DoSource(CommandLine &CmdL)
 	    if (system(S) != 0)
 	    {
 	       fprintf(stderr,_("Unpack command '%s' failed.\n"),S);
+	       fprintf(stderr,_("Check if the 'dpkg-dev' package is installed.\n"));
 	       _exit(1);
 	    }	    
 	 }
