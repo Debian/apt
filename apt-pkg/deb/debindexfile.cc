@@ -338,23 +338,15 @@ inline string debTranslationsIndex::IndexFile(const char *Type) const
 string debTranslationsIndex::IndexURI(const char *Type) const
 {
    string Res;
-
-   string theURI = URI;
-   // FIXME: EVIL! Remove as soon as pdiff support is offical
-   string remap = _config->Find("DDTP::URL-Remap::"+URI,"");
-   if(!remap.empty())
-      theURI = remap;
-
-
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
-	 Res = theURI + Dist;
+	 Res = URI + Dist;
       else 
-	 Res = theURI;
+	 Res = URI;
    }
    else
-      Res = theURI + "dists/" + Dist + '/' + Section +
+      Res = URI + "dists/" + Dist + '/' + Section +
       "/i18n/Translation-";
    
    Res += Type;
