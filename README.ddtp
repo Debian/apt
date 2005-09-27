@@ -1,0 +1,74 @@
+TODO:
+- URL-Remap for the translation files (to hack around the problem that
+  they are not on any ftp server yet but only on http://ddtp.debian.org/)
+
+Here is the original announcement of the ddtp support:
+
+* To: debian-devel-announce@lists.debian.org
+* Subject: Translate files
+* From: Michael Bramer <grisu@debian.org>
+* Date: Sun, 6 Oct 2002 21:56:06 +0200
+* Mail-followup-to: debian-devel@lists.debian.org
+* Message-id: <20021006195605.GA30516@home.debsupport.de>
+* Old-return-path: <michael@home.debsupport.de>
+* User-agent: Mutt/1.3.28i
+
+Hello all
+
+After some discussion between Anthony Towns (a ftpmaster), Jason
+Gunthorpe (APT Developer) and some DDTP Coordinators we find a way to
+transfer the translated package descriptions from the archive to the
+user. 
+
+The translated descriptions need to be downloadable befor any
+installation process, like the other package meta information. We
+choose a new file per languages with all translated package
+descriptions. The package system can download one or more of this
+files at 'apt-get update' time and know the translations.
+
+The new files are names 'Translate-$lang' and the file have this
+rfc822-format:
+  Package: &lt;package-name&gt;
+  Description-md5: &lt;the md5 checksum of the english description&gt;
+  Description-$lang.$encoding: &lt;translated headline&gt;
+   &lt;translated section&gt;
+
+The encoding of the Description is 'UTF-8' in all languages normal.
+The files will be located at 'debian/dists/sid/main/i18n/' on the ftp
+server (for all architecture). In addition of the plain
+'Translate-$lang' file, there will be a 'gz' and a 'bz2' version and
+in future also the new incremental format version.
+
+The &lt;the md5 checksum of the english description&gt; is the md5 checksum
+of the full english description, without the 'Description: '-tag and
+with all spaces and newlines. Look at this example:
+ Description: XXX
+  YYY
+  .
+  ZZZ
+is md5(&quot;XXX\n YYY\n .\n ZZZ\n&quot;) (perl-syntax).
+
+
+A future APT version will download one or some 'Translate-$lang'
+file(s) at 'update'-time. After this download it show a translated
+description instead of the english form, if it found a translated
+description of the package with the right md5 chechsum. The enviroment
+of the user will controlled this process (LANG, LANGUAGE, LC_MESSAGES,
+etc). With this the package system will never show a outdated
+translation.
+
+The translations come all from the DDTP. A daily process on
+ddtp.debian.org make new 'Translated-$lang' files and a script on
+ftp-master request this files and move this to the debian archive.
+Now the first files are accessable at 
+	<a  href="http://ddtp.debian.org/pdesc/translatefiles/">http://ddtp.debian.org/pdesc/translatefiles/</a>
+
+If you found wrong translations, please read the guides on
+ddtp.debian.org, make a better translation and send this per mail to
+the DDTP server. Don't bug the package maintainer!
+
+Thanks
+Grisu
+-- 
+Michael Bramer  -  a Debian Linux Developer      <a  href="http://www.debsupport.de">http://www.debsupport.de</a>
+PGP: finger grisu@db.debian.org  -- Linux Sysadmin   -- Use Debian Linux
