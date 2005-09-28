@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-09-13 15:16+0200\n"
-"PO-Revision-Date: 2005-07-28 20:52+0200\n"
+"PO-Revision-Date: 2005-09-28 19:44+0200\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -765,7 +765,7 @@ msgstr "ATTENTION : les paquets suivants n'ont pas été authentifiés."
 
 #: cmdline/apt-get.cc:691
 msgid "Authentication warning overridden.\n"
-msgstr ""
+msgstr "Avertissement d'authentification forcé.\n"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification [y/N]? "
@@ -781,7 +781,7 @@ msgstr "Il y a des problèmes et -y a été employé sans --force-yes"
 
 #: cmdline/apt-get.cc:753
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr ""
+msgstr "Erreur interne, InstallPackages a été appelé avec des paquets cassés !?"
 
 #: cmdline/apt-get.cc:762
 msgid "Packages need to be removed but remove is disabled."
@@ -789,9 +789,8 @@ msgstr ""
 "Les paquets doivent être enlevés mais la désinstallation est désactivée."
 
 #: cmdline/apt-get.cc:773
-#, fuzzy
 msgid "Internal error, Ordering didn't finish"
-msgstr "Erreur interne en ajoutant une déviation"
+msgstr "Erreur interne, la mise en ordre ne s'est pas terminée"
 
 #: cmdline/apt-get.cc:789 cmdline/apt-get.cc:1780 cmdline/apt-get.cc:1813
 msgid "Unable to lock the download directory"
@@ -804,7 +803,7 @@ msgstr "La liste des sources ne peut être lue."
 
 #: cmdline/apt-get.cc:814
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
-msgstr ""
+msgstr "Comme c'est étrange... Les tailles ne correspondent pas, veuillez mailer apt@packages.debian.org"
 
 #: cmdline/apt-get.cc:819
 #, c-format
@@ -828,9 +827,9 @@ msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Après dépaquetage, %so d'espace disque seront libérés.\n"
 
 #: cmdline/apt-get.cc:844 cmdline/apt-get.cc:1927
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't determine free space in %s"
-msgstr "Pas assez d'espace disponible sur %s"
+msgstr "Impossible de déterminer l'espace disponible sur %s"
 
 #: cmdline/apt-get.cc:847
 #, c-format
@@ -1074,9 +1073,8 @@ msgid "Done"
 msgstr "Fait"
 
 #: cmdline/apt-get.cc:1748 cmdline/apt-get.cc:1756
-#, fuzzy
 msgid "Internal error, problem resolver broke stuff"
-msgstr "Erreur interne, AllUpgrade a cassé le boulot !"
+msgstr "Erreur interne, le solveur de problèmes a cassé des choses"
 
 #: cmdline/apt-get.cc:1856
 msgid "Must specify at least one package to fetch source for"
@@ -1670,9 +1668,8 @@ msgstr ""
 "d'utilisation."
 
 #: methods/cdrom.cc:169
-#, fuzzy
 msgid "Disk not found."
-msgstr "Fichier non trouvé"
+msgstr "Disque non trouvé."
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
@@ -1901,41 +1898,39 @@ msgstr "Impossible de se connecter à %s %s :"
 
 #: methods/gpgv.cc:92
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-msgstr ""
+msgstr "E : Liste d'arguments de Acquire::gpgv::Options trop longues. Sortie."
 
 #: methods/gpgv.cc:191
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
+msgstr "Erreur interne : Signature correcte, mais impossible de déterminer l'empreinte de la clé !?"
 
 #: methods/gpgv.cc:196
 msgid "At least one invalid signature was encountered."
-msgstr ""
+msgstr "Une signature invalide, au moins, a été rencontrée."
 
 #. FIXME String concatenation considered harmful.
 #: methods/gpgv.cc:201
-#, fuzzy
 msgid "Could not execute "
-msgstr "Impossible de verrouiller %s"
+msgstr "Impossible de démarrer"
 
 #: methods/gpgv.cc:202
 msgid " to verify signature (is gnupg installed?)"
-msgstr ""
+msgstr " pour vérifer la signature (est-ce que gnupg est installé ?)"
 
 #: methods/gpgv.cc:206
 msgid "Unknown error executing gpgv"
-msgstr ""
+msgstr "Erreur inconnue lors du lancement de gpgv"
 
 #: methods/gpgv.cc:237
-#, fuzzy
 msgid "The following signatures were invalid:\n"
-msgstr "Les paquets supplémentaires suivants seront installés : "
+msgstr "Les signatures suivantes étaient invalides :\n"
 
 #: methods/gpgv.cc:244
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
-msgstr ""
+msgstr "Les signatures suivantes n'ont pas pu être vérifiées parce que la clé publique n'est pas disponible :\n"
 
 #: methods/gzip.cc:57
 #, c-format
@@ -2425,7 +2420,7 @@ msgstr "Le répertoire d'archive %spartial n'existe pas."
 #: apt-pkg/acquire.cc:817
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
-msgstr ""
+msgstr "Téléchargement du fichier %li sur %li (%s restants)"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2438,12 +2433,9 @@ msgid "Method %s did not start correctly"
 msgstr "La méthode %s n'a pas démarré correctement"
 
 #: apt-pkg/acquire-worker.cc:377
-#, fuzzy, c-format
+#, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr ""
-"Changement de support : veuillez insérer le disque\n"
-"« %s »\n"
-"dans le lecteur « %s » et appuyez sur la touche Entrée\n"
+msgstr "Veuillez insérer le disque « %s » dans le lecteur « %s » et appuyez sur la touche Entrée."
 
 #: apt-pkg/init.cc:119
 #, c-format
@@ -2718,54 +2710,54 @@ msgstr ""
 "correspondent pas\n"
 
 #: apt-pkg/deb/dpkgpm.cc:358
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing %s"
-msgstr "Ouverture de %s"
+msgstr "Préparation de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Unpacking %s"
-msgstr "Ouverture de %s"
+msgstr "Dépaquetage de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:364
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to configure %s"
-msgstr "Ouverture du fichier de configuration %s"
+msgstr "Préparation de la configuration de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:365
 #, c-format
 msgid "Configuring %s"
-msgstr ""
+msgstr "Configuration de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:366
-#, fuzzy, c-format
+#, c-format
 msgid "Installed %s"
-msgstr "  Installé : "
+msgstr "Installation de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr ""
+msgstr "Preparation de la suppression de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:372
-#, fuzzy, c-format
+#, c-format
 msgid "Removing %s"
-msgstr "Ouverture de %s"
+msgstr "Suppression de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:373
 #, c-format
 msgid "Removed %s"
-msgstr ""
+msgstr "Suppression de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:378
 #, c-format
 msgid "Preparing for remove with config %s"
-msgstr ""
+msgstr "Préparation pour la suppression avec configuration %s"
 
 #: apt-pkg/deb/dpkgpm.cc:379
 #, c-format
 msgid "Removed with config %s"
-msgstr ""
+msgstr "Supprimé avec configuration %s"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
