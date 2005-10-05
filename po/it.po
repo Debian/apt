@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-09-22 23:07+0200\n"
-"PO-Revision-Date: 2005-03-26 00:42+0100\n"
+"PO-Revision-Date: 2005-10-05 17:38+0200\n"
 "Last-Translator: Samuele Giovanni Tonon <samu@debian.org>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -324,7 +324,6 @@ msgid "Error processing contents %s"
 msgstr "Errore nell'analisi dei contents %s"
 
 #: ftparchive/apt-ftparchive.cc:556
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -390,8 +389,8 @@ msgstr ""
 "dell'albero. BinaryPath deve puntare alla base della ricerca \n"
 "ricorsiva e il file override devecontenere le opzioni di override. "
 "Pathprefix �\n"
-" aggiunto al campo filename se presente. Esempio di utilizzo dall'archivio "
-"debian:\n"
+" aggiunto al campo filename se presente. Esempio di utilizzo \n"
+"dall'archivio debian:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages \n"
 "\n"
@@ -692,7 +691,6 @@ msgid "%s (due to %s) "
 msgstr "%s (a causa di %s) "
 
 #: cmdline/apt-get.cc:544
-#, fuzzy
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -761,7 +759,7 @@ msgstr "ATTENZIONE: i seguenti pacchetti non possono essere autenticati!"
 
 #: cmdline/apt-get.cc:691
 msgid "Authentication warning overridden.\n"
-msgstr ""
+msgstr "Avviso di autenticazione disabilitato \n"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification [y/N]? "
@@ -776,18 +774,17 @@ msgid "There are problems and -y was used without --force-yes"
 msgstr "Sussistono dei problemi e -y � stata usata senza --force-yes"
 
 #: cmdline/apt-get.cc:753
-#, fuzzy
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "Errore interno, InstallPackages ÃÅ¡ stato chiamato con un pacchetto rotto!"
+msgstr ""
+"Errore interno, InstallPackages � stato chiamato con un pacchetto rotto!"
 
 #: cmdline/apt-get.cc:762
 msgid "Packages need to be removed but remove is disabled."
 msgstr "I pacchetti devono essere rimossi ma il remove � disabilitato."
 
 #: cmdline/apt-get.cc:773
-#, fuzzy
 msgid "Internal error, Ordering didn't finish"
-msgstr "Errore interno, l'ordinamento non ÃÅ¡ finito"
+msgstr "Errore interno, l'ordinamento non � terminato"
 
 #: cmdline/apt-get.cc:789 cmdline/apt-get.cc:1780 cmdline/apt-get.cc:1813
 msgid "Unable to lock the download directory"
@@ -845,13 +842,13 @@ msgid "Yes, do as I say!"
 msgstr "SI, esegui come richiesto!"
 
 #: cmdline/apt-get.cc:866
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
-"Si sta per compiere un'azione potenzialmente distruttiva\n"
+"Si sta per compiere un'azione potenzialmente pericolosa\n"
 "Per continuare scrivere la frase '%s' \n"
 " ?] "
 
@@ -1070,7 +1067,6 @@ msgid "Done"
 msgstr "Fatto"
 
 #: cmdline/apt-get.cc:1748 cmdline/apt-get.cc:1756
-#, fuzzy
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Errore interno, problem resolver ha rotto qualcosa"
 
@@ -1120,7 +1116,7 @@ msgstr "Comando di estrazione '%s' fallito.\n"
 #: cmdline/apt-get.cc:2016
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr ""
+msgstr "Verificare se il pacchetto 'dpkg-dev' � installato.\n"
 
 #: cmdline/apt-get.cc:2033
 #, c-format
@@ -1448,9 +1444,9 @@ msgid "Duplicate conf file %s/%s"
 msgstr "File di configurazione duplice %s/%s"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write file %s"
-msgstr "Scrittura del file %s fallita"
+msgstr "Impossibile scrivere il file %s"
 
 #: apt-inst/dirstream.cc:80 apt-inst/dirstream.cc:88
 #, c-format
@@ -1668,9 +1664,8 @@ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "Impossibile smontare il CD-ROM in %s, potrebbe essere ancora in uso."
 
 #: methods/cdrom.cc:169
-#, fuzzy
 msgid "Disk not found."
-msgstr "File non trovato"
+msgstr "Disco non trovato"
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
@@ -1898,40 +1893,43 @@ msgstr "Impossibile connettersi a %s %s:"
 #: methods/gpgv.cc:92
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr ""
+"E: Lista argomento da Acquire::gpgv::Options troppo lunga. Uscita in corso."
 
 #: methods/gpgv.cc:191
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
+"Errore interno: Firma corretta, ma non � stato possibile determinare il "
+"fingerprint della chiave?!"
 
 #: methods/gpgv.cc:196
 msgid "At least one invalid signature was encountered."
-msgstr ""
+msgstr "Almeno una firma non valida � stata trovata."
 
 #. FIXME String concatenation considered harmful.
 #: methods/gpgv.cc:201
-#, fuzzy
 msgid "Could not execute "
-msgstr "Impossibile ottenere il lock %s"
+msgstr "Impossibile eseguire "
 
 #: methods/gpgv.cc:202
 msgid " to verify signature (is gnupg installed?)"
-msgstr ""
+msgstr " per verificare la firma (gnugp � installato?)"
 
 #: methods/gpgv.cc:206
 msgid "Unknown error executing gpgv"
-msgstr ""
+msgstr "Errore sconosciuto durante l'esecuzione di gpgv"
 
 #: methods/gpgv.cc:237
-#, fuzzy
 msgid "The following signatures were invalid:\n"
-msgstr "I seguenti pacchetti verranno inoltre installati:"
+msgstr "Le seguenti firme non erano valide:\n"
 
 #: methods/gpgv.cc:244
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr ""
+"Le seguenti firme non sono state verificate perch� la chiave pubblica non � "
+"disponibile:\n"
 
 #: methods/gzip.cc:57
 #, c-format
@@ -2418,7 +2416,7 @@ msgstr "Manca la directory di archivio %spartial."
 #: apt-pkg/acquire.cc:817
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
-msgstr ""
+msgstr "Scaricamento del file %li di %li (%s rimanente)"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2431,12 +2429,11 @@ msgid "Method %s did not start correctly"
 msgstr "Il metodo %s non � partito correttamente"
 
 #: apt-pkg/acquire-worker.cc:377
-#, fuzzy, c-format
+#, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
-"Cambio disco: Inserire il disco chiamato\n"
-" '%s'\n"
-"nel dispositivo '%s' e premere invio\n"
+"Per favore inserire il disco chiamato '%s' nel dispositivo '%s' e premere "
+"invio."
 
 #: apt-pkg/init.cc:119
 #, c-format
@@ -2704,54 +2701,54 @@ msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Scritti %i record con %i file mancanti e %i file senza match\n"
 
 #: apt-pkg/deb/dpkgpm.cc:358
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing %s"
-msgstr "Apertura di %s in corso"
+msgstr "Preparazione di %s in corso"
 
 #: apt-pkg/deb/dpkgpm.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Unpacking %s"
-msgstr "Apertura di %s in corso"
+msgstr "Scompattamento di %s in corso"
 
 #: apt-pkg/deb/dpkgpm.cc:364
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to configure %s"
-msgstr "Apertura del file di configurazione %s in corso"
+msgstr "Preparazione alla configurazione di %s in corso"
 
 #: apt-pkg/deb/dpkgpm.cc:365
-#, fuzzy, c-format
+#, c-format
 msgid "Configuring %s"
-msgstr "Connessione a %s in corso"
+msgstr "Configurazione di %s in corso"
 
 #: apt-pkg/deb/dpkgpm.cc:366
-#, fuzzy, c-format
+#, c-format
 msgid "Installed %s"
-msgstr "  Installato: "
+msgstr "%s Installato"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr ""
+msgstr "Preparazione per la rimozione di %s in corso"
 
 #: apt-pkg/deb/dpkgpm.cc:372
-#, fuzzy, c-format
+#, c-format
 msgid "Removing %s"
-msgstr "Apertura di %s in corso"
+msgstr "Rimozione di %s in corso"
 
 #: apt-pkg/deb/dpkgpm.cc:373
-#, fuzzy, c-format
+#, c-format
 msgid "Removed %s"
-msgstr "Raccomanda"
+msgstr "%s rimosso"
 
 #: apt-pkg/deb/dpkgpm.cc:378
 #, c-format
 msgid "Preparing for remove with config %s"
-msgstr ""
+msgstr "Preparazione per la rimozione con la configurazione %s in corso"
 
 #: apt-pkg/deb/dpkgpm.cc:379
 #, c-format
 msgid "Removed with config %s"
-msgstr ""
+msgstr "Rimosso con la configurazione %s"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
@@ -2786,7 +2783,7 @@ msgstr "Connessione chiusa prematuramente"
 #~ msgstr "-> '"
 
 #~ msgid "Followed conf file from "
-#~ msgstr "Si ÃÅ¡ seguito il file di configurazione da "
+#~ msgstr "Si ÃÂÃÂ¡ seguito il file di configurazione da "
 
 #~ msgid " to "
 #~ msgstr " a "
@@ -2865,7 +2862,7 @@ msgstr "Connessione chiusa prematuramente"
 
 #~ msgid ""
 #~ "Unable to locate any package files, perhaps this is not a Debian Disc"
-#~ msgstr "Impossibile trovare file di pacchetti, forse questo non ÃÅ¡ un disco Debian"
+#~ msgstr "Impossibile trovare file di pacchetti, forse questo non ÃÂÃÂ¡ un disco Debian"
 
 #~ msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
 #~ msgstr "Si prega di dare un nome a questo disco, tipo 'Debian 2.1r1 Disk 1'"
@@ -2900,22 +2897,22 @@ msgstr "Connessione chiusa prematuramente"
 #~ msgstr ""
 #~ "Utilizzo: apt-cdrom [opzioni] comando\n"
 #~ "\n"
-#~ "apt-cdrom ÃÅ¡ un tool per aggiungere CD-ROM alla lista sorgenti di apt. Il\n"
+#~ "apt-cdrom ÃÂÃÂ¡ un tool per aggiungere CD-ROM alla lista sorgenti di apt. Il\n"
 #~ "mount point del CDROM e l'informazione della periferica sono presi da apt."
 #~ "conf\n"
 #~ "e /etc/fstab.\n"
 #~ "\n"
 #~ "Comandi:\n"
 #~ "   add - Aggiunge un CDROM\n"
-#~ "   ident - riporta l'identitÃÂ  di un CDROM\n"
+#~ "   ident - riporta l'identitÃÂÃÂ  di un CDROM\n"
 #~ "\n"
 #~ "Opzioni:\n"
 #~ "  -h   Questo help\n"
 #~ "  -d   Mount point del CDROM\n"
 #~ "  -r   Rinomina un CDROM riconosciuto\n"
 #~ "  -m   Nessun montaggio\n"
-#~ "  -f   ModalitÃÂ  veloce, non controlla i file dei pacchetti\n"
-#~ "  -a   Scansione in modalitÃÂ  accurata\n"
+#~ "  -f   ModalitÃÂÃÂ  veloce, non controlla i file dei pacchetti\n"
+#~ "  -a   Scansione in modalitÃÂÃÂ  accurata\n"
 #~ "  -c=? Legge come configurazione il file specificato\n"
 #~ "  -o=? Imposta un'opzione di configurazione, es -o dir::cache=/tmp\n"
 #~ "Vedere fstab(5)\n"
@@ -2979,7 +2976,7 @@ msgstr "Connessione chiusa prematuramente"
 #~ "  -s=? file override per i sorgenti.\n"
 #~ "  -q    silenzioso\n"
 #~ "  -d=? Seleziona il database opzionale per la cache\n"
-#~ "  -no-delink Abilita la modalitÃÂ  di debug per il delink\n"
+#~ "  -no-delink Abilita la modalitÃÂÃÂ  di debug per il delink\n"
 #~ "  -contents  Generazione file contents di controllo\n"
 #~ "  -c=? Legge come configurazione il file specificato\n"
 #~ "  -o=? Imposta un'opzione di configurazione\n"
@@ -3006,7 +3003,7 @@ msgstr "Connessione chiusa prematuramente"
 #~ msgstr " non "
 
 #~ msgid "DSC file '%s' is too large!"
-#~ msgstr "il file DSC '%s' ÃÅ¡ troppo largo!"
+#~ msgstr "il file DSC '%s' ÃÂÃÂ¡ troppo largo!"
 
 #~ msgid "Could not find a record in the DSC '%s'"
 #~ msgstr "Impossibile trovare un campo nel DSC '%s'"
