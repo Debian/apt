@@ -58,6 +58,7 @@ unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
 bool Debug = false;
 
+
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -95,7 +96,7 @@ bool CircleBuf::Read(int Fd)
       // Woops, buffer is full
       if (InP - OutP == Size)
 	 return true;
-      
+
       // Write the buffer segment
       int Res;
       Res = read(Fd,Buf + (InP%Size),LeftRead());

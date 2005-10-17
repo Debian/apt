@@ -82,6 +82,70 @@ class pkgAcquire::Item
    virtual ~Item();
 };
 
+// item for index diffs
+
+struct DiffInfo {
+   string file;
+   string sha1;
+   unsigned long size;
+};
+
+class pkgAcqDiffIndex : public pkgAcquire::Item
+{
+ protected:
+   bool Debug;
+   pkgAcquire::ItemDesc Desc;
+   string RealURI;
+   string ExpectedMD5;
+   string CurrentPackagesFile;
+   string Description;
+
+ public:
+   // Specialized action members
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual string DescURI() {return RealURI + "Index";};
+   virtual string Custom600Headers();
+
+   // helpers
+   bool ParseDiffIndex(string IndexDiffFile);
+   
+   pkgAcqDiffIndex(pkgAcquire *Owner,string URI,string URIDesc,
+		   string ShortDesct, string ExpectedMD5);
+};
+
+class pkgAcqIndexDiffs : public pkgAcquire::Item
+{
+   protected:
+   bool Debug;
+   pkgAcquire::ItemDesc Desc;
+   string RealURI;
+   string ExpectedMD5;
+
+   // this is the SHA-1 sum we expect after the patching
+   string Description;
+   vector<DiffInfo> available_patches;
+   enum {StateFetchIndex,StateFetchDiff,StateUnzipDiff,StateApplyDiff} State;
+
+   public:
+   
+   // Specialized action members
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual string DescURI() {return RealURI + "Index";};
+
+   // various helpers
+   bool QueueNextDiff();
+   bool ApplyDiff(string PatchFile);
+   void Finish(bool allDone=false);
+
+   pkgAcqIndexDiffs(pkgAcquire *Owner,string URI,string URIDesc,
+		    string ShortDesct, string ExpectedMD5,
+		    vector<DiffInfo> diffs=vector<DiffInfo>());
+};
+
 // Item class for index files
 class pkgAcqIndex : public pkgAcquire::Item
 {
