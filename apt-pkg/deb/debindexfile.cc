@@ -158,17 +158,6 @@ debPackagesIndex::debPackagesIndex(string URI,string Dist,string Section,bool Tr
 {
 }
 									/*}}}*/
-
-string debPackagesIndex::ArchiveURI(string File) const
-{
-   // FIXME: EVIL! Remove as soon as pdiff support is offical
-   string remap = _config->Find("APT::URL-Remap::"+URI,"");
-   if(!remap.empty())
-      return remap+File;
-
-   return URI + File;
-}
-
 // PackagesIndex::ArchiveInfo - Short version of the archive url	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a shorter version that is designed to be < 60 chars or so */
