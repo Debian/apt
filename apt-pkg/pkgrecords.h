@@ -39,6 +39,7 @@ class pkgRecords
 
    // Lookup function
    Parser &Lookup(pkgCache::VerFileIterator const &Ver);
+   Parser &Lookup(pkgCache::DescFileIterator const &Desc);
 
    // Construct destruct
    pkgRecords(pkgCache &Cache);
@@ -50,6 +51,7 @@ class pkgRecords::Parser
    protected:
    
    virtual bool Jump(pkgCache::VerFileIterator const &Ver) = 0;
+   virtual bool Jump(pkgCache::DescFileIterator const &Desc) = 0;
    
    public:
    friend class pkgRecords;

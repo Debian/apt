@@ -12,7 +12,9 @@
 #pragma implementation "apt-pkg/debrecords.h"
 #endif
 #include <apt-pkg/debrecords.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
+#include <langinfo.h>
 									/*}}}*/
 
 // RecordParser::debRecordParser - Constructor				/*{{{*/
@@ -30,6 +32,10 @@ debRecordParser::debRecordParser(string FileName,pkgCache &Cache) :
 bool debRecordParser::Jump(pkgCache::VerFileIterator const &Ver)
 {
    return Tags.Jump(Section,Ver->Offset);
+}
+bool debRecordParser::Jump(pkgCache::DescFileIterator const &Desc)
+{
+   return Tags.Jump(Section,Desc->Offset);
 }
 									/*}}}*/
 // RecordParser::FileName - Return the archive filename on the site	/*{{{*/
@@ -77,7 +83,7 @@ string debRecordParser::Maintainer()
 /* */
 string debRecordParser::ShortDesc()
 {
-   string Res = Section.FindS("Description");
+   string Res = LongDesc();
    string::size_type Pos = Res.find('\n');
    if (Pos == string::npos)
       return Res;
@@ -89,7 +95,20 @@ string debRecordParser::ShortDesc()
 /* */
 string debRecordParser::LongDesc()
 {
-   return Section.FindS("Description");
+  string orig, dest;
+  char *codeset = nl_langinfo(CODESET);
+
+  if (!Section.FindS("Description").empty())
+     orig = Section.FindS("Description").c_str();
+  else 
+     orig = Section.FindS(("Description-" + pkgIndexFile::LanguageCode()).c_str()).c_str();
+
+  if (strcmp(codeset,"UTF-8") != 0) {
+     UTF8ToCodeset(codeset, orig, &dest);
+     orig = dest;
+   }    
+  
+   return orig;
 }
 									/*}}}*/
 // RecordParser::SourcePkg - Return the source package name if any	/*{{{*/

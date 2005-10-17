@@ -101,6 +101,9 @@ bool pkgInitConfig(Configuration &Cnf)
       bindtextdomain(textdomain(0),Cnf.FindDir("Dir::Locale").c_str());
    }
 #endif
+
+   // Translation
+   Cnf.Set("APT::Acquire::Translation", "environment");
    
    return true;
 }
