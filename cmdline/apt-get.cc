@@ -1194,8 +1194,16 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    {
       VerTag = string(TmpSrc.begin() + Slash + 1,TmpSrc.end());
       TmpSrc = string(TmpSrc.begin(),TmpSrc.begin() + Slash);
+   } else if(_config->Find("APT::Default-Release") != "") {
+      // if we have a Default-Release (-t) we want a exact match
+      // FIXME: we won't support downgrades 
+      // (i.e. -t stable won't work on a unstable system
+      pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+      if(Pkg.end() == false) {
+	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);  
+	 VerTag = Ver.VerStr();
+      }
    }
-   
    /* Lookup the version of the package we would install if we were to
       install a version and determine the source package name, then look
       in the archive for a source package of the same name. In theory
