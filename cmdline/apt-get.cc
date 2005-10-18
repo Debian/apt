@@ -1190,35 +1190,62 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    string VerTag;
    string TmpSrc = Name;
    string::size_type Slash = TmpSrc.rfind('=');
+
+   // honor pining and default release
+   string DefRel = _config->Find("APT::Default-Release");
+
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+   pkgCache::VerIterator CandVer = Cache.GetCandidateVer(Pkg);  
+   if(Pkg.end() == false) 
+   {
+      VerTag = CandVer.VerStr();
+   }
+
    if (Slash != string::npos)
    {
       VerTag = string(TmpSrc.begin() + Slash + 1,TmpSrc.end());
       TmpSrc = string(TmpSrc.begin(),TmpSrc.begin() + Slash);
-   } else if(_config->Find("APT::Default-Release") != "") {
-      // if we have a Default-Release (-t) we want a exact match
-      // FIXME: we won't support downgrades 
-      // (i.e. -t stable won't work on a unstable system
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
-      if(Pkg.end() == false) {
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);  
-	 VerTag = Ver.VerStr();
+   } 
+   else  if(DefRel.empty() == false) 
+   {
+      // we have a default release, try to locate the pkg. we do it like
+      // this because GetCandidateVer() will not "downgrade", that means
+      // "apt-get source -t stable apt" won't work on a unstable system
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; 
+	   Ver++)
+      {
+	 for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false;
+	      VF++)
+	 {
+	    /* If this is the status file, and the current version is not the
+	       version in the status file (ie it is not installed, or somesuch)
+	       then it is not a candidate for installation, ever. This weeds
+	       out bogus entries that may be due to config-file states, or
+	       other. */
+	    if ((VF.File()->Flags & pkgCache::Flag::NotSource) == 
+		pkgCache::Flag::NotSource && Pkg.CurrentVer() != Ver)
+	    continue;
+	    
+	    //std::cout << VF.File().Archive() << std::endl;
+	    if(VF.File().Archive() == DefRel) 
+	    {
+	       VerTag = Ver.VerStr();
+	       break;
+	    }
+	 }
       }
    }
+
    /* Lookup the version of the package we would install if we were to
       install a version and determine the source package name, then look
-      in the archive for a source package of the same name. In theory
-      we could stash the version string as well and match that too but
-      today there aren't multi source versions in the archive. */
-   if (_config->FindB("APT::Get::Only-Source") == false && 
-       VerTag.empty() == true)
+      in the archive for a source package of the same name. */
+   if (_config->FindB("APT::Get::Only-Source") == false)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
       if (Pkg.end() == false)
       {
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);      
-	 if (Ver.end() == false)
+	 if (CandVer.end() == false)
 	 {
-	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
+	    pkgRecords::Parser &Parse = Recs.Lookup(CandVer.FileList());
 	    Src = Parse.SourcePkg();
 	 }
       }   
