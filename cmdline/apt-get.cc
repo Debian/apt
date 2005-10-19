@@ -1191,15 +1191,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    string TmpSrc = Name;
    string::size_type Slash = TmpSrc.rfind('=');
 
-   // honor pining and default release
+   // honor default release
    string DefRel = _config->Find("APT::Default-Release");
-
    pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
-   pkgCache::VerIterator CandVer = Cache.GetCandidateVer(Pkg);  
-   if(Pkg.end() == false) 
-   {
-      VerTag = CandVer.VerStr();
-   }
 
    if (Slash != string::npos)
    {
@@ -1243,9 +1237,10 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    {
       if (Pkg.end() == false)
       {
-	 if (CandVer.end() == false)
+	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+	 if (Ver.end() == false)
 	 {
-	    pkgRecords::Parser &Parse = Recs.Lookup(CandVer.FileList());
+	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
 	    Src = Parse.SourcePkg();
 	 }
       }   
@@ -1300,10 +1295,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       }      
    }
    
-   if (Last == 0)
-      return 0;
-   
-   if (Last->Jump(Offset) == false)
+   if (Last == 0 || Last->Jump(Offset) == false)
       return 0;
    
    return Last;
