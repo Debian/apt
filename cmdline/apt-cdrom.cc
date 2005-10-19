@@ -75,7 +75,7 @@ string pkgCdromTextStatus::PromptLine(const char *Text)
 
 bool pkgCdromTextStatus::AskCdromName(string &name) 
 {
-   cout << "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'" << flush;
+   cout << _("Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'") << flush;
    name = PromptLine("");
 	 
    return true;
@@ -90,7 +90,7 @@ void pkgCdromTextStatus::Update(string text, int current)
 
 bool pkgCdromTextStatus::ChangeCdrom() 
 {
-   Prompt("Please insert a Disc in the drive and press enter");
+   Prompt(_("Please insert a Disc in the drive and press enter"));
    return true;
 }
 
@@ -114,7 +114,7 @@ bool DoAdd(CommandLine &)
    pkgCdrom cdrom;
    res = cdrom.Add(&log);
    if(res)
-      cout << "Repeat this process for the rest of the CDs in your set." << endl;
+      cout << _("Repeat this process for the rest of the CDs in your set.") << endl;
    return res;
 }
 									/*}}}*/

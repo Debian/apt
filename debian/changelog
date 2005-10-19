@@ -1,17 +1,36 @@
-apt (0.6.41.1) unstable; urgency=low
+apt (0.6.42) unstable; urgency=low
 
   * apt-pkg/cdrom.cc:
     - unmount the cdrom when apt failed to locate any package files
   * allow cdrom failures and fallback to other sources in that case
     (closes: #44135)
   * better error text when dpkg-source fails 
-  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-104:
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-115:
     - patch-99: Added Galician translation
     - patch-100: Completed Danish translation (Closes: #325686)
     - patch-104: French translation completed
-  * applied frensh man-page update (thanks to Philippe Batailler)
+    - patch-109: Italian translation completed
+    - patch-112: Swedish translation update 
+    - patch-115: Basque translation completed (Closes: #333299)
+  * applied french man-page update (thanks to Philippe Batailler)
+    (closes: #316638, #327456)
+  * fix leak in the mmap code, thanks to Daniel Burrows for the
+    patch (closes: #250583)
+  * support for apt-get [build-dep|source] -t (closes: #152129)
+  * added "APT::Authentication::Trust-CDROM" option to make the life
+    for the installer people easier (closes: #334656)
+  * fix crash in apt-ftparchive (thanks to Bastian Blank for the patch)
+    (closes: #334671)
+  * apt-pkg/contrib/md5.cc:
+    - fix a alignment problem on sparc64 that gives random bus errors
+      (thanks to Fabbione for providing a test-case)
+  * init the default ScreenWidth to 79 columns by default 
+    (Closes: #324921)
+  * cmdline/apt-cdrom.cc: 
+    - fix some missing gettext() calls (closes: #334539)
+  * doc/apt-cache.8.xml: fix typo (closes: #334714)
   
- -- 
+ -- Michael Vogt <mvo@debian.org>  Wed, 19 Oct 2005 22:02:09 +0200
 
 apt (0.6.41) unstable; urgency=low
 
