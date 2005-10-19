@@ -1,3 +1,16 @@
+apt (0.6.41.0exp2) experimental; urgency=low
+
+  * support for apt-get source -t (and honor pining) (closes: #152129)
+  * added "APT::Authentication::Trust-CDROM" option to make the life
+    for the installer people easier (closes: #334656)
+  * fix crash in apt-ftparchive (thanks to Bastian Blank for the patch)
+    (closes: #334671)
+  * apt-pkg/contrib/md5.cc:
+    - fix a alignment problem on sparc64 that gives random bus errors
+      (thanks to Fabbione for providing a test-case)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 19 Oct 2005 16:19:49 +0200
+
 apt (0.6.41.0exp1) experimental; urgency=low
 
   * apt-pkg/cdrom.cc:
@@ -10,8 +23,8 @@ apt (0.6.41.0exp1) experimental; urgency=low
     - patch-100: Completed Danish translation (Closes: #325686)
     - patch-104: French translation completed
     - patch-109: Italian translation completed
-    - patch-112: Swedish translation update
-    - patch-115: Basque translation completed
+    - patch-112: Swedish translation update 
+    - patch-115: Basque translation completed (Closes: #333299)
   * applied french man-page update (thanks to Philippe Batailler)
     (closes: #316318, #327456)
   * fix leak in the mmap code, thanks to Daniel Burrows for the
