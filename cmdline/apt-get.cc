@@ -1227,7 +1227,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    continue;
 	    
 	    //std::cout << VF.File().Archive() << std::endl;
-	    if(VF.File().Archive() == DefRel) 
+	    if(VF.File().Archive() && (VF.File().Archive() == DefRel)) 
 	    {
 	       VerTag = Ver.VerStr();
 	       break;
