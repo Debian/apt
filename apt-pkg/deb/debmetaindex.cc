@@ -165,7 +165,7 @@ bool debReleaseIndex::IsTrusted() const
    string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
       URItoFileName(MetaIndexURI("Release")) + ".gpg";
    
-   if(_config->FindB("APT::Authentication::Trust-CDROM", false))
+   if(_config->FindB("APT::Authentication::TrustCDROM", false))
       if(URI.substr(0,strlen("cdrom:")) == "cdrom:")
 	 return true;
    
