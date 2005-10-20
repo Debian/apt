@@ -1229,7 +1229,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
    const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
 
    // Write all but Description
-   if (fwrite(Buffer,1,DescP - Buffer-1,stdout) < (size_t)(DescP - Buffer-1))
+   if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
    {
       delete [] Buffer;
       return false;
