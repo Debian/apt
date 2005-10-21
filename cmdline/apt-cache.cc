@@ -1237,13 +1237,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
 
    // Show the right description
    pkgRecords Recs(*GCache);
-   pkgCache::DescIterator DescDefault = V.DescriptionList();
-   pkgCache::DescIterator Desc = DescDefault;
-   for (; Desc.end() == false; Desc++)
-      if (pkgIndexFile::LanguageCode() == Desc.LanguageCode())
-	 break;
-   if (Desc.end() == true) Desc = DescDefault;
-
+   pkgCache::DescIterator Desc = V.TranslatedDescription();
    pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
    cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
 
