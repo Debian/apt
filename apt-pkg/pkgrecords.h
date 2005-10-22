@@ -33,7 +33,6 @@ class pkgRecords
    
    pkgCache &Cache;
    Parser **Files;
-   int PackageFileCount;
       
    public:
 
