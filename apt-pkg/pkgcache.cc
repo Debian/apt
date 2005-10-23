@@ -26,6 +26,7 @@
 #endif 
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
@@ -42,6 +43,7 @@
 									/*}}}*/
 
 using std::string;
+
 
 // Cache::Header::Header - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -607,4 +609,21 @@ string pkgCache::PkgFileIterator::RelStr()
       Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
    return Res;
 }
+									/*}}}*/
+// VerIterator::TranslatedDescription - Return the a DescIter for locale/*{{{*/
+// ---------------------------------------------------------------------
+/* return a DescIter for the current locale or the default if none is 
+ * found
+ */
+pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
+{
+   pkgCache::DescIterator DescDefault = DescriptionList();
+   pkgCache::DescIterator Desc = DescDefault;
+   for (; Desc.end() == false; Desc++)
+      if (pkgIndexFile::LanguageCode() == Desc.LanguageCode())
+	 break;
+   if (Desc.end() == true) Desc = DescDefault;
+   return Desc;
+};
+
 									/*}}}*/

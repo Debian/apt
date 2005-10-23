@@ -129,6 +129,7 @@ class pkgCache::VerIterator
    inline const char *Arch() const {return Ver->Arch == 0?0:Owner->StrP + Ver->Arch;};
    inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Ver->ParentPkg);};
    inline DescIterator DescriptionList() const;
+   DescIterator TranslatedDescription() const;
    inline DepIterator DependsList() const;
    inline PrvIterator ProvidesList() const;
    inline VerFileIterator FileList() const;

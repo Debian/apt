@@ -42,9 +42,6 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
       if (Files[I->ID] == 0)
 	 return;
    }   
-   // We store that to make sure that the destructor won't segfault,
-   // even if the Cache object was destructed before this instance.
-   PackageFileCount = Cache.HeaderP->PackageFileCount;
 }
 									/*}}}*/
 // Records::~pkgRecords - Destructor					/*{{{*/
@@ -52,7 +49,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 /* */
 pkgRecords::~pkgRecords()
 {
-   for (unsigned I = 0; I != PackageFileCount; I++)
+   for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
       delete Files[I];
    delete [] Files;
 }
