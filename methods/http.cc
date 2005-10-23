@@ -205,20 +205,15 @@ bool CircleBuf::WriteTillEl(string &Data,bool Single)
       if (Buf[I%Size] != '\n')
 	 continue;
       ++I;
-      if (I < InP  && Buf[I%Size] == '\r')
-         ++I;
       
       if (Single == false)
       {
-	 if (Buf[I%Size] != '\n')
-	    continue;
-         ++I;
          if (I < InP  && Buf[I%Size] == '\r')
             ++I;
+         if (I >= InP || Buf[I%Size] != '\n')
+            continue;
+         ++I;
       }
-      
-      if (I > InP)
-	 I = InP;
       
       Data = "";
       while (OutP < I)
@@ -226,7 +221,7 @@ bool CircleBuf::WriteTillEl(string &Data,bool Single)
 	 unsigned long Sz = LeftWrite();
 	 if (Sz == 0)
 	    return false;
-	 if (I - OutP < LeftWrite())
+	 if (I - OutP < Sz)
 	    Sz = I - OutP;
 	 Data += string((char *)(Buf + (OutP%Size)),Sz);
 	 OutP += Sz;
