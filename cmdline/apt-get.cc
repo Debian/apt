@@ -1200,7 +1200,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       VerTag = string(TmpSrc.begin() + Slash + 1,TmpSrc.end());
       TmpSrc = string(TmpSrc.begin(),TmpSrc.begin() + Slash);
    } 
-   else  if(DefRel.empty() == false) 
+   else  if(DefRel.empty() == false)
    {
       // we have a default release, try to locate the pkg. we do it like
       // this because GetCandidateVer() will not "downgrade", that means
@@ -1211,6 +1211,10 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false;
 	      VF++)
 	 {
+	    // extra paranioa
+	    if(VF.File() == NULL)
+	       continue;
+
 	    /* If this is the status file, and the current version is not the
 	       version in the status file (ie it is not installed, or somesuch)
 	       then it is not a candidate for installation, ever. This weeds
