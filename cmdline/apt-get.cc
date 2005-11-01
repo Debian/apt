@@ -1200,7 +1200,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       VerTag = string(TmpSrc.begin() + Slash + 1,TmpSrc.end());
       TmpSrc = string(TmpSrc.begin(),TmpSrc.begin() + Slash);
    } 
-   else  if(DefRel.empty() == false)
+   else  if(!Pkg.end() && DefRel.empty() == false)
    {
       // we have a default release, try to locate the pkg. we do it like
       // this because GetCandidateVer() will not "downgrade", that means
