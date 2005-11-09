@@ -65,7 +65,7 @@ $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 stats:
 	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
 
-binary: $(POTFILES) $(PACKAGE)-all.pot $(MOFILES)
+binary: $(POTFILES) $(PACKAGE)-all.pot $(MOFILES) update-po
 
 .PHONY: update-po
 update-po: $(PACKAGE)-all.pot

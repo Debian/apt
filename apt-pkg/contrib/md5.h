@@ -58,7 +58,7 @@ class MD5SumValue
 
 class MD5Summation
 {
-   unsigned char Buf[4*4];
+   uint32_t Buf[4];
    unsigned char Bytes[2*4];
    unsigned char In[16*4];
    bool Done;
