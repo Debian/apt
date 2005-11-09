@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-22 23:07+0200\n"
+"POT-Creation-Date: 2005-10-20 11:08+0200\n"
 "PO-Revision-Date: 2005-07-19 01:31+0200\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -150,7 +150,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2325 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2352 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s per a %s %s compilat el %s %s\n"
@@ -229,6 +229,22 @@ msgstr ""
 "  -o=? Estableix una opció de conf arbitrària, p.ex. -o dir::cache=/tmp\n"
 "Consulteu les pàgines del manual apt-cache(8) i apt.conf(5) per a més "
 "informació.\n"
+
+#: cmdline/apt-cdrom.cc:78
+msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc:93
+#, fuzzy
+msgid "Please insert a Disc in the drive and press enter"
+msgstr ""
+"El medi ha canviat: Si us plau, inseriu el disc amb l'etiqueta\n"
+" '%s'\n"
+"en la unitat de '%s' i premeu Intro\n"
+
+#: cmdline/apt-cdrom.cc:117
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr ""
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -513,12 +529,12 @@ msgstr "No es pot determinar l'estat de %s"
 msgid "Archive had no package field"
 msgstr "Arxiu sense el camp paquet"
 
-#: ftparchive/writer.cc:394 ftparchive/writer.cc:602
+#: ftparchive/writer.cc:394 ftparchive/writer.cc:603
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr " %s no té una entrada dominant\n"
 
-#: ftparchive/writer.cc:437 ftparchive/writer.cc:688
+#: ftparchive/writer.cc:437 ftparchive/writer.cc:689
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr " el mantenidor de %s és %s, no %s\n"
@@ -622,7 +638,7 @@ msgstr "No s'ha pogut canviar el nom de %s a %s"
 msgid "Y"
 msgstr "S"
 
-#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1486
+#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1513
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "S'ha produït un error de compilació de l'expressió regular - %s"
@@ -785,11 +801,11 @@ msgstr "Els paquets necessiten ser eliminats però Remove està inhabilitat."
 msgid "Internal error, Ordering didn't finish"
 msgstr "S'ha produït un error intern, l'ordenació no ha acabat"
 
-#: cmdline/apt-get.cc:789 cmdline/apt-get.cc:1780 cmdline/apt-get.cc:1813
+#: cmdline/apt-get.cc:789 cmdline/apt-get.cc:1807 cmdline/apt-get.cc:1840
 msgid "Unable to lock the download directory"
 msgstr "No és possible blocar el directori de descàrrega"
 
-#: cmdline/apt-get.cc:799 cmdline/apt-get.cc:1861 cmdline/apt-get.cc:2073
+#: cmdline/apt-get.cc:799 cmdline/apt-get.cc:1888 cmdline/apt-get.cc:2100
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "No s'ha pogut llegir la llista de les fonts."
@@ -819,7 +835,7 @@ msgstr "Després de desempaquetar s'usaran %sB d'espai en disc addicional.\n"
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Després de desempaquetar s'alliberaran %sB d'espai en disc.\n"
 
-#: cmdline/apt-get.cc:844 cmdline/apt-get.cc:1927
+#: cmdline/apt-get.cc:844 cmdline/apt-get.cc:1954
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "No s'ha pogut determinar l'espai lliure en %s"
@@ -856,7 +872,7 @@ msgstr "Avortat."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Voleu continuar [S/n]? "
 
-#: cmdline/apt-get.cc:959 cmdline/apt-get.cc:1336 cmdline/apt-get.cc:1970
+#: cmdline/apt-get.cc:959 cmdline/apt-get.cc:1363 cmdline/apt-get.cc:1997
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "No s'ha pogut obtenir %s  %s\n"
@@ -865,7 +881,7 @@ msgstr "No s'ha pogut obtenir %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Alguns fitxers no s'han pogut descarregar"
 
-#: cmdline/apt-get.cc:978 cmdline/apt-get.cc:1979
+#: cmdline/apt-get.cc:978 cmdline/apt-get.cc:2006
 msgid "Download complete and in download only mode"
 msgstr "Descàrrega completa i en mode de només descàrrega"
 
@@ -964,15 +980,15 @@ msgstr "No s'ha trobat la versió «%s» per a «%s»"
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Versió seleccionada %s (%s) per a %s\n"
 
-#: cmdline/apt-get.cc:1284
+#: cmdline/apt-get.cc:1311
 msgid "The update command takes no arguments"
 msgstr "L'ordre update no pren arguments"
 
-#: cmdline/apt-get.cc:1297 cmdline/apt-get.cc:1391
+#: cmdline/apt-get.cc:1324 cmdline/apt-get.cc:1418
 msgid "Unable to lock the list directory"
 msgstr "No es pot blocar el directori de la llista"
 
-#: cmdline/apt-get.cc:1355
+#: cmdline/apt-get.cc:1382
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -980,25 +996,25 @@ msgstr ""
 "No es poden descarregar alguns fitxers índex, s'han ignorat o en el seu lloc "
 "s'han usat els antics."
 
-#: cmdline/apt-get.cc:1374
+#: cmdline/apt-get.cc:1401
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Error intern, AllUpgrade ha trencat coses"
 
-#: cmdline/apt-get.cc:1473 cmdline/apt-get.cc:1509
+#: cmdline/apt-get.cc:1500 cmdline/apt-get.cc:1536
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "No s'ha pogut trobar el paquet %s"
 
-#: cmdline/apt-get.cc:1496
+#: cmdline/apt-get.cc:1523
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Nota: s'està seleccionant %s per a l'expressió regular '%s'\n"
 
-#: cmdline/apt-get.cc:1526
+#: cmdline/apt-get.cc:1553
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Potser voldreu executar `apt-get -f install' per a corregir-ho:"
 
-#: cmdline/apt-get.cc:1529
+#: cmdline/apt-get.cc:1556
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1006,7 +1022,7 @@ msgstr ""
 "Dependències insatisfetes. Intenteu 'apt-get -f install' sense paquets (o "
 "especifiqueu una solució)."
 
-#: cmdline/apt-get.cc:1541
+#: cmdline/apt-get.cc:1568
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1018,7 +1034,7 @@ msgstr ""
 "unstable i alguns paquets requerits encara no han estat creats o bé\n"
 "encara no els hi han afegit."
 
-#: cmdline/apt-get.cc:1549
+#: cmdline/apt-get.cc:1576
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -1028,119 +1044,119 @@ msgstr ""
 "probable que el paquet no sigui instal·lable i que s'hagi d'emetre\n"
 "un informe d'error en contra d'aquest per a arxivar-lo."
 
-#: cmdline/apt-get.cc:1554
+#: cmdline/apt-get.cc:1581
 msgid "The following information may help to resolve the situation:"
 msgstr "La següent informació pot ajudar-vos a resoldre la situació:"
 
-#: cmdline/apt-get.cc:1557
+#: cmdline/apt-get.cc:1584
 msgid "Broken packages"
 msgstr "Paquets trencats"
 
-#: cmdline/apt-get.cc:1583
+#: cmdline/apt-get.cc:1610
 msgid "The following extra packages will be installed:"
 msgstr "S'instal·laran els següents paquets extres:"
 
-#: cmdline/apt-get.cc:1654
+#: cmdline/apt-get.cc:1681
 msgid "Suggested packages:"
 msgstr "Paquets suggerits:"
 
-#: cmdline/apt-get.cc:1655
+#: cmdline/apt-get.cc:1682
 msgid "Recommended packages:"
 msgstr "Paquets recomanats:"
 
-#: cmdline/apt-get.cc:1675
+#: cmdline/apt-get.cc:1702
 msgid "Calculating upgrade... "
 msgstr "S'està calculant l'actualització... "
 
-#: cmdline/apt-get.cc:1678 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1705 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "Ha fallat"
 
-#: cmdline/apt-get.cc:1683
+#: cmdline/apt-get.cc:1710
 msgid "Done"
 msgstr "Fet"
 
-#: cmdline/apt-get.cc:1748 cmdline/apt-get.cc:1756
+#: cmdline/apt-get.cc:1775 cmdline/apt-get.cc:1783
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 "S'ha produït un error intern, el solucionador de problemes ha trencat coses"
 
-#: cmdline/apt-get.cc:1856
+#: cmdline/apt-get.cc:1883
 msgid "Must specify at least one package to fetch source for"
 msgstr "Haureu d'especificar un paquet de codi font per a descarregar"
 
-#: cmdline/apt-get.cc:1883 cmdline/apt-get.cc:2091
+#: cmdline/apt-get.cc:1910 cmdline/apt-get.cc:2118
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "No es pot trobar un paquet de fonts per a %s"
 
-#: cmdline/apt-get.cc:1930
+#: cmdline/apt-get.cc:1957
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "No teniu prou espai lliure en %s"
 
-#: cmdline/apt-get.cc:1935
+#: cmdline/apt-get.cc:1962
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Es necessita descarregar %sB/%sB d'arxius font.\n"
 
-#: cmdline/apt-get.cc:1938
+#: cmdline/apt-get.cc:1965
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Es necessita descarregar %sB d'arxius font.\n"
 
-#: cmdline/apt-get.cc:1944
+#: cmdline/apt-get.cc:1971
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Font descarregada %s\n"
 
-#: cmdline/apt-get.cc:1975
+#: cmdline/apt-get.cc:2002
 msgid "Failed to fetch some archives."
 msgstr "No s'ha pogut descarregar alguns arxius."
 
-#: cmdline/apt-get.cc:2003
+#: cmdline/apt-get.cc:2030
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 "S'està ometent el desempaquetament de les fonts que ja ho estan en %s\n"
 
-#: cmdline/apt-get.cc:2015
+#: cmdline/apt-get.cc:2042
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "L'ordre de desempaquetar «%s» ha fallat.\n"
 
-#: cmdline/apt-get.cc:2016
+#: cmdline/apt-get.cc:2043
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2033
+#: cmdline/apt-get.cc:2060
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "L'ordre de construir «%s» ha fallat.\n"
 
-#: cmdline/apt-get.cc:2052
+#: cmdline/apt-get.cc:2079
 msgid "Child process failed"
 msgstr "Ha fallat el procés fill"
 
-#: cmdline/apt-get.cc:2068
+#: cmdline/apt-get.cc:2095
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "S'ha d'especificar un paquet per a verificar les dependències de construcció "
 "per a"
 
-#: cmdline/apt-get.cc:2096
+#: cmdline/apt-get.cc:2123
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 "No es pot obtenir informació sobre les dependències de construcció per a %s"
 
-#: cmdline/apt-get.cc:2116
+#: cmdline/apt-get.cc:2143
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s no té dependències de construcció.\n"
 
-#: cmdline/apt-get.cc:2168
+#: cmdline/apt-get.cc:2195
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1149,7 +1165,7 @@ msgstr ""
 "La dependència %s en %s no es pot satisfer per que no es pot trobar el "
 "paquet %s"
 
-#: cmdline/apt-get.cc:2220
+#: cmdline/apt-get.cc:2247
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1158,32 +1174,32 @@ msgstr ""
 "La dependència %s per a %s no es pot satisfer per que cap versió del paquet %"
 "s pot satisfer els requeriments de versions"
 
-#: cmdline/apt-get.cc:2255
+#: cmdline/apt-get.cc:2282
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "No s'ha pogut satisfer la dependència %s per a %s: El paquet instal·lat %s "
 "és massa nou"
 
-#: cmdline/apt-get.cc:2280
+#: cmdline/apt-get.cc:2307
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "No s'ha pogut satisfer la dependència %s per a %s: %s"
 
-#: cmdline/apt-get.cc:2294
+#: cmdline/apt-get.cc:2321
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "No s'han pogut satisfer les dependències de construcció per a %s"
 
-#: cmdline/apt-get.cc:2298
+#: cmdline/apt-get.cc:2325
 msgid "Failed to process build dependencies"
 msgstr "No es poden processar les dependències de construcció"
 
-#: cmdline/apt-get.cc:2330
+#: cmdline/apt-get.cc:2357
 msgid "Supported modules:"
 msgstr "Mòduls suportats:"
 
-#: cmdline/apt-get.cc:2371
+#: cmdline/apt-get.cc:2398
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
