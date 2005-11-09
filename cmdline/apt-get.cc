@@ -1370,19 +1370,23 @@ bool DoAutomaticRemove(CacheFile &Cache)
       return _error->Error(_("We are not supposed to delete stuff, can't "
 			     "start AutoRemover"));
 
-   // do the actual work
-   pkgMarkUsed(Cache);
-
-   // look over the cache to see what can be removed
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
    {
-      if (Cache[Pkg].Garbage &&
-          (Pkg->CurrentVer != 0 && Cache[Pkg].Install() == false && 
-	   Cache[Pkg].Delete() == false))
-      {
-         fprintf(stdout,"We could delete %s\n", Pkg.Name());
-         Cache->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
-      }
+     pkgDepCache::ActionGroup group(*Cache);
+
+     // look over the cache to see what can be removed
+     for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+       {
+	 if (Cache[Pkg].Garbage)
+	   {
+	     if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
+	       fprintf(stdout,"We could delete %s\n", Pkg.Name());
+
+	     if(Pkg.CurrentVer() != 0 && Pkg->CurrentState != pkgCache::State::ConfigFiles)
+	       Cache->MarkDelete(Pkg, _config->FindB("APT::Get::Purge", false));
+	     else
+	       Cache->MarkKeep(Pkg, false, false);
+	   }
+       }
    }
 
    // Now see if we destroyed anything
@@ -1399,6 +1403,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
    }
    return true;
 }
+
 // DoUpgrade - Upgrade all packages					/*{{{*/
 // ---------------------------------------------------------------------
 /* Upgrade all packages without installing new packages or erasing old
@@ -1450,6 +1455,11 @@ bool DoInstall(CommandLine &CmdL)
    bool DefRemove = false;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       DefRemove = true;
+   else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
+     {
+       _config->Set("APT::Get::AutomaticRemove", "true");
+       DefRemove = true;
+     }
 
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
@@ -2533,6 +2543,7 @@ int main(int argc,const char *argv[])
                                    {"upgrade",&DoUpgrade},
                                    {"install",&DoInstall},
                                    {"remove",&DoInstall},
+				   {"autoremove",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
 				   {"build-dep",&DoBuildDep},

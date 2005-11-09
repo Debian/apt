@@ -106,7 +106,7 @@ bool pkgPackageManager::FixMissing()
    
       // Okay, this file is missing and we need it. Mark it for keep 
       Bad = true;
-      Cache.MarkKeep(I);
+      Cache.MarkKeep(I, false, false);
    }
  
    // We have to empty the list otherwise it will not have the new changes

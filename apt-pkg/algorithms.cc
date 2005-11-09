@@ -20,14 +20,12 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
 
     
 #include <apti18n.h>
 #include <sys/types.h>
-#include <regex.h>
 #include <iostream>
 									/*}}}*/
 using namespace std;
@@ -224,6 +222,8 @@ void pkgSimulate::ShortBreaks()
    the necessary calculations to deal with the problems. */
 bool pkgApplyStatus(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
       if (I->VersionList == 0)
@@ -234,13 +234,13 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	  I->InstState == pkgCache::State::HoldReInstReq)
       {
 	 if (I->CurrentVer != 0 && I.CurrentVer().Downloadable() == true)
-	    Cache.MarkKeep(I);
+	    Cache.MarkKeep(I, false, false);
 	 else
 	 {
 	    // Is this right? Will dpkg choke on an upgrade?
 	    if (Cache[I].CandidateVer != 0 &&
 		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
-	       Cache.MarkInstall(I);
+	       Cache.MarkInstall(I, false, 0, false);
 	    else
 	       return _error->Error(_("The package %s needs to be reinstalled, "
 				    "but I can't find an archive for it."),I.Name());
@@ -257,12 +257,12 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	 case pkgCache::State::HalfConfigured:
 	 if ((I->CurrentVer != 0 && I.CurrentVer().Downloadable() == true) ||
 	     I.State() != pkgCache::PkgIterator::NeedsUnpack)
-	    Cache.MarkKeep(I);
+	    Cache.MarkKeep(I, false, false);
 	 else
 	 {
 	    if (Cache[I].CandidateVer != 0 &&
 		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
-	       Cache.MarkInstall(I);
+	       Cache.MarkInstall(I, true, 0, false);
 	    else
 	       Cache.MarkDelete(I);
 	 }
@@ -288,10 +288,12 @@ bool pkgApplyStatus(pkgDepCache &Cache)
    on the result. */
 bool pkgFixBroken(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    // Auto upgrade all broken packages
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if (Cache[I].NowBroken() == true)
-	 Cache.MarkInstall(I,true);
+	 Cache.MarkInstall(I, true, 0, false);
    
    /* Fix packages that are in a NeedArchive state but don't have a
       downloadable install version */
@@ -304,7 +306,7 @@ bool pkgFixBroken(pkgDepCache &Cache)
       if (Cache[I].InstVerIter(Cache).Downloadable() == false)
 	 continue;
 
-      Cache.MarkInstall(I,true);      
+      Cache.MarkInstall(I, true, 0, false);
    }
    
    pkgProblemResolver Fix(&Cache);
@@ -321,23 +323,25 @@ bool pkgFixBroken(pkgDepCache &Cache)
  */
 bool pkgDistUpgrade(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    /* Auto upgrade all installed packages, this provides the basis 
       for the installation */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if (I->CurrentVer != 0)
-	 Cache.MarkInstall(I,true);
+	 Cache.MarkInstall(I, true, 0, false);
 
    /* Now, auto upgrade all essential packages - this ensures that
       the essential packages are present and working */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-	 Cache.MarkInstall(I,true);
+	 Cache.MarkInstall(I, true, 0, false);
    
    /* We do it again over all previously installed packages to force 
       conflict resolution on them all. */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if (I->CurrentVer != 0)
-	 Cache.MarkInstall(I,false);
+	 Cache.MarkInstall(I, false, 0, false);
 
    pkgProblemResolver Fix(&Cache);
 
@@ -349,7 +353,7 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
 	 if (I->SelectedState == pkgCache::State::Hold)
 	 {
 	    Fix.Protect(I);
-	    Cache.MarkKeep(I);
+	    Cache.MarkKeep(I, false, false);
 	 }
       }
    }
@@ -364,6 +368,8 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    to install packages not marked for install */
 bool pkgAllUpgrade(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    pkgProblemResolver Fix(&Cache);
 
    if (Cache.BrokenCount() != 0)
@@ -380,7 +386,7 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
 	    continue;
       
       if (I->CurrentVer != 0 && Cache[I].InstallVer != 0)
-	 Cache.MarkInstall(I,false);
+	 Cache.MarkInstall(I, false, 0, false);
    }
       
    return Fix.ResolveByKeep();
@@ -393,6 +399,8 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
    the package is restored. */
 bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 {   
+   pkgDepCache::ActionGroup group(Cache);
+
    if (Cache.BrokenCount() != 0)
       return false;
    
@@ -409,9 +417,9 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 	    continue;
 
 	 // Keep it and see if that is OK
-	 Cache.MarkKeep(I);
+	 Cache.MarkKeep(I, false, false);
 	 if (Cache.BrokenCount() != 0)
-	    Cache.MarkInstall(I,false);
+	    Cache.MarkInstall(I, false, 0, false);
 	 else
 	 {
 	    // If keep didnt actually do anything then there was no change..
@@ -569,6 +577,8 @@ void pkgProblemResolver::MakeScores()
    installable */
 bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    if ((Flags[Pkg->ID] & Upgradable) == 0 || Cache[Pkg].Upgradable() == false)
       return false;
    if ((Flags[Pkg->ID] & Protected) == Protected)
@@ -577,7 +587,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    Flags[Pkg->ID] &= ~Upgradable;
    
    bool WasKept = Cache[Pkg].Keep();
-   Cache.MarkInstall(Pkg,false);
+   Cache.MarkInstall(Pkg, false, 0, false);
 
    // This must be a virtual package or something like that.
    if (Cache[Pkg].InstVerIter(Cache).end() == true)
@@ -662,7 +672,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    if (Fail == true)
    {
       if (WasKept == true)
-	 Cache.MarkKeep(Pkg);
+	 Cache.MarkKeep(Pkg, false, false);
       else
 	 Cache.MarkDelete(Pkg);
       return false;
@@ -689,6 +699,8 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    upgrade packages to advoid problems. */
 bool pkgProblemResolver::Resolve(bool BrokenFix)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    unsigned long Size = Cache.Head().PackageCount;
 
    // Record which packages are marked for install
@@ -704,7 +716,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 {
 	    if (Cache[I].InstBroken() == true && BrokenFix == true)
 	    {
-	       Cache.MarkInstall(I,false);
+	       Cache.MarkInstall(I, false, 0, false);
 	       if (Cache[I].Install() == true)
 		  Again = true;
 	    }
@@ -770,14 +782,14 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    pkgCache::Version *OldVer = Cache[I].InstallVer;
 	    Flags[I->ID] &= ReInstateTried;
 	    
-	    Cache.MarkInstall(I,false);
+	    Cache.MarkInstall(I, false, 0, false);
 	    if (Cache[I].InstBroken() == true || 
 		OldBreaks < Cache.BrokenCount())
 	    {
 	       if (OldVer == 0)
 		  Cache.MarkDelete(I);
 	       else
-		  Cache.MarkKeep(I);
+		  Cache.MarkKeep(I, false, false);
 	    }	    
 	    else
 	       if (Debug == true)
@@ -822,7 +834,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  {
 		     if (Debug == true)
 			clog << "  Or group keep for " << I.Name() << endl;
-		     Cache.MarkKeep(I);
+		     Cache.MarkKeep(I, false, false);
 		     Change = true;
 		  }
 	       }
@@ -872,7 +884,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       }
 	       
 	       Change = true;
-	       Cache.MarkKeep(I);		  
+	       Cache.MarkKeep(I, false, false);
 	       break;
 	    }
 	    
@@ -909,7 +921,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  /* See if a keep will do, unless the package is protected,
 		     then installing it will be necessary */
 		  bool Installed = Cache[I].Install();
-		  Cache.MarkKeep(I);
+		  Cache.MarkKeep(I, false, false);
 		  if (Cache[I].InstBroken() == false)
 		  {
 		     // Unwind operation will be keep now
@@ -918,7 +930,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		     
 		     // Restore
 		     if (InOr == true && Installed == true)
-			Cache.MarkInstall(I,false);
+			Cache.MarkInstall(I, false, 0, false);
 		     
 		     if (Debug == true)
 			clog << "  Holding Back " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
@@ -990,7 +1002,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  
 		  // Restore
 		  if (InOr == true && Installed == true)
-		     Cache.MarkInstall(I,false);
+		     Cache.MarkInstall(I, false, 0, false);
 		  
 		  if (Debug == true)
 		     clog << "  Holding Back " << I.Name() << " because I can't find " << Start.TargetPkg().Name() << endl;
@@ -1035,7 +1047,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       {
 		  if (Debug == true)
 		     clog << "  Fixing " << I.Name() << " via keep of " << J->Pkg.Name() << endl;
-		  Cache.MarkKeep(J->Pkg);
+		  Cache.MarkKeep(J->Pkg, false, false);
 	       }
 
 	       if (Counter > 1)
@@ -1089,6 +1101,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    system was non-broken previously. */
 bool pkgProblemResolver::ResolveByKeep()
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    unsigned long Size = Cache.Head().PackageCount;
 
    if (Debug == true)      
@@ -1122,7 +1136,7 @@ bool pkgProblemResolver::ResolveByKeep()
       {
 	 if (Debug == true)
 	    clog << "Keeping package " << I.Name() << endl;
-	 Cache.MarkKeep(I);
+	 Cache.MarkKeep(I, false, false);
 	 if (Cache[I].InstBroken() == false)
 	 {
 	    K = PList - 1;
@@ -1170,7 +1184,7 @@ bool pkgProblemResolver::ResolveByKeep()
 	       {
 		  if (Debug == true)
 		     clog << "  Keeping Package " << Pkg.Name() << " due to dep" << endl;
-		  Cache.MarkKeep(Pkg);
+		  Cache.MarkKeep(Pkg, false, false);
 	       }
 	       
 	       if (Cache[I].InstBroken() == false)
@@ -1207,6 +1221,8 @@ bool pkgProblemResolver::ResolveByKeep()
 /* This is used to make sure protected packages are installed */
 void pkgProblemResolver::InstallProtect()
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
       if ((Flags[I->ID] & Protected) == Protected)
@@ -1214,7 +1230,7 @@ void pkgProblemResolver::InstallProtect()
 	 if ((Flags[I->ID] & ToRemove) == ToRemove)
 	    Cache.MarkDelete(I);
 	 else
-	    Cache.MarkInstall(I,false);
+	    Cache.MarkInstall(I, false, 0, false);
       }
    }   
 }
@@ -1251,247 +1267,3 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
 }
 									/*}}}*/
 
-
-// mark a single package in Mark-and-Sweep
-void pkgMarkPackage(pkgDepCache &Cache,
-		    const pkgCache::PkgIterator &pkg,
-		    const pkgCache::VerIterator &ver,
-		    bool follow_recommends,
-		    bool follow_suggests)
-{
-   pkgDepCache::StateCache &state=Cache[pkg];
-   pkgCache::VerIterator candver=state.CandidateVerIter(Cache);
-   pkgCache::VerIterator instver=state.InstVerIter(Cache);
-
-#if 0
-   // If a package was garbage-collected but is now being marked, we
-   // should re-select it 
-   // For cases when a pkg is set to upgrade and this trigger the
-   // removal of a no-longer used dependency.  if the pkg is set to
-   // keep again later it will result in broken deps
-   if(state.Delete() && state.RemoveReason=pkgDepCache::Unused) 
-   {
-      if(ver==candver)
-	 mark_install(pkg, false, false, NULL);
-      else if(ver==pkg.CurrentVer())
-	 MarkKeep(pkg);
-      
-      instver=state.InstVerIter(*this);
-   }
-#endif
-
-   // Ignore versions other than the InstVer, and ignore packages
-   // that are already going to be removed or just left uninstalled.
-   if(!(ver==instver && !instver.end()))
-      return;
-
-   // if we are marked already we are done
-   if(state.Marked)
-      return;
-
-   //std::cout << "Setting Marked for: " << pkg.Name() << std::endl;
-   state.Marked=true;
-
-   if(!ver.end())
-   {
-     for(pkgCache::DepIterator d=ver.DependsList(); !d.end(); ++d)
-     {
-	if(d->Type==pkgCache::Dep::Depends ||
-	   d->Type==pkgCache::Dep::PreDepends ||
-	   (follow_recommends &&
-	    d->Type==pkgCache::Dep::Recommends) ||
-	   (follow_suggests &&
-	    d->Type==pkgCache::Dep::Suggests))
-        {
-	   // Try all versions of this package.
-	   for(pkgCache::VerIterator V=d.TargetPkg().VersionList(); 
-	       !V.end(); ++V)
-	   {
-	      if(_system->VS->CheckDep(V.VerStr(),d->CompareOp, d.TargetVer()))
-	      {
-		 pkgMarkPackage(Cache, V.ParentPkg(), V, 
-				follow_recommends, follow_suggests);
-	      }
-	   }
-	   // Now try virtual packages
-	   for(pkgCache::PrvIterator prv=d.TargetPkg().ProvidesList(); 
-	       !prv.end(); ++prv)
-	   {
-	      if(_system->VS->CheckDep(prv.ProvideVersion(), d->CompareOp, 
-				       d.TargetVer()))
-	      {
-		 pkgMarkPackage(Cache, prv.OwnerPkg(), prv.OwnerVer(),
-				follow_recommends, follow_suggests);
-	      }
-	   }
-	}
-     }
-   }
-}
-
-
-// Helper for APT::NeverAutoRemove, always include the packages matching
-// this regexp into the root-set
-inline bool 
-pkgMarkAlwaysInclude(pkgCache::PkgIterator p, vector<regex_t*> alwaysMark)
-{
-   for(unsigned int i=0;i<alwaysMark.size();i++)
-      if (regexec(alwaysMark[i],p.Name(),0,0,0) == 0)
-	 return true;
-
-   return false;
-}
-
-bool pkgMarkUsed(pkgDepCache &Cache)
-{
-   InRootSetFunc f;
-   return pkgMarkUsed(Cache, f);
-}
-
-// the main mark algorithm
-bool pkgMarkUsed(pkgDepCache &Cache, InRootSetFunc &userFunc)
-{
-   bool follow_recommends;
-   bool follow_suggests;
-
-   // init the states
-   for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
-   {
-      Cache[p].Marked=false;
-      Cache[p].Garbage=false;
-
-      // debug output
-      if(_config->FindB("Debug::pkgAutoRemove",false) 
-	 && Cache[p].Flags & pkgCache::Flag::Auto)
-  	 std::clog << "AutoDep: " << p.Name() << std::endl;
-   }
-
-   // init vars
-   follow_recommends=_config->FindB("APT::AutoRemove::RecommendsImportant",false);
-   follow_suggests=_config->FindB("APT::AutoRemove::SuggestsImportant", false);
-
-
-   // init the "NeverAutoRemove" variable
-   vector<regex_t *> neverAutoRemoveRegexp;
-   Configuration::Item const *Opts;
-   Opts = _config->Tree("APT::NeverAutoRemove");
-   if (Opts != 0 && Opts->Child != 0)
-   {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
-      {
-	 if (Opts->Value.empty() == true)
-	    continue;
-
-	 regex_t *p = new regex_t;
-	 if(regcomp(p,Opts->Value.c_str(),
-		    REG_EXTENDED | REG_ICASE |  REG_NOSUB) != 0)
-	 {
-	    regfree(p);
-	    for(unsigned int i=0;i<neverAutoRemoveRegexp.size();i++)
-	       regfree(neverAutoRemoveRegexp[i]);
-	    return _error->Error("Regex compilation error for APT::NeverAutoRemove");
-	 }
-	 neverAutoRemoveRegexp.push_back(p);
-      }
-   }
-
-
-   // do the mark part, this is the core bit of the algorithm
-   for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
-   {
-      if( userFunc.InRootSet(p) ||
-	   pkgMarkAlwaysInclude(p, neverAutoRemoveRegexp) ||
-	 !(Cache[p].Flags & pkgCache::Flag::Auto) ||
-	  (p->Flags & pkgCache::Flag::Essential))
-          
-      {
-	 // the package is installed (and set to keep)
-	 if(Cache[p].Keep() && !p.CurrentVer().end())
-	    pkgMarkPackage(Cache, p, p.CurrentVer(),
-			   follow_recommends, follow_suggests);
-	 // the package is to be installed 
-	 else if(Cache[p].Install())
-	    pkgMarkPackage(Cache, p, Cache[p].InstVerIter(Cache),
-			   follow_recommends, follow_suggests);
-      }
-   }
-
-
-   // do the sweep
-   for(pkgCache::PkgIterator p=Cache.PkgBegin(); !p.end(); ++p)
-  {
-     pkgDepCache::StateCache &state=Cache[p];
-
-     // if it is not marked and it is installed, it's garbage 
-     if(!state.Marked && !p.CurrentVer().end())
-     {
-	state.Garbage=true;
-	if(_config->FindB("Debug::pkgAutoRemove",false))
-	   std::cout << "Garbage: " << p.Name() << std::endl;
-     
-#if 0   // mvo: the below bits still needs to be ported
-
-	// Be sure not to re-delete already deleted packages.
-	if(delete_unused && (!p.CurrentVer().end() || state.Install()) &&
-	   !state.Delete())
-	{
-	      bool do_delete=true;
-
-	      // If the package is being upgraded, check if we're
-	      // losing a versioned dep.  If the dependency matches
-	      // the previous version and not the new version, keep
-	      // the package back instead of removing it.
-	      if(!p.CurrentVer().end() && state.Install())
-		{
-		  const char *vs=p.CurrentVer().VerStr();
-
-		  // Check direct revdeps only.  THIS ASSUMES NO
-		  // VERSIONED PROVIDES, but Debian probably won't
-		  // have them for ages if ever.
-		  for(pkgCache::DepIterator revdep=p.RevDependsList();
-		      !revdep.end(); ++revdep)
-		    {
-		      pkgCache::PkgIterator depender=revdep.ParentPkg();
-		      // Find which version of the depending package
-		      // will be installed.
-		      pkgCache::VerIterator instver=(*this)[depender].InstVerIter(*this);
-
-		      // Only pay attention to strong positive
-		      // dependencies whose parents will be installed.
-		      if(revdep.ParentVer()==instver &&
-			 (revdep->Type==pkgCache::Dep::Depends ||
-			  revdep->Type==pkgCache::Dep::PreDepends ||
-			  (revdep->Type==pkgCache::Dep::Recommends &&
-			   follow_recommends)))
-			{
-			  // If the previous version matched, cancel the
-			  // deletion.  (note that I assume that the new
-			  // version does NOT match; otherwise it would
-			  // not be unused!)
-			  if(_system->VS->CheckDep(vs,
-						   revdep->CompareOp,
-						   revdep.TargetVer()))
-			    {
-			      mark_keep(p, false, false, undo);
-			      do_delete=false;
-			      break;
-			    }
-			}
-		    }
-		}
-
-	      if(do_delete)
-		mark_delete(p, false, true, undo);
-	    }
-#endif
-     }
-  }
-
-   // cleanup
-   for(unsigned int i=0;i<neverAutoRemoveRegexp.size();i++)
-      regfree(neverAutoRemoveRegexp[i]);
-   
-
-   return true;
-}
