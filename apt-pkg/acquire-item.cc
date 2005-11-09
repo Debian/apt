@@ -770,6 +770,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       }
    }
 
+   // "allow-unauthenticated" restores apts old fetching behaviour
+   // that means that e.g. unauthenticated file:// uris are higher
+   // priority than authenticated http:// uris
+   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+      Trusted = false;
+
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
       _error->Error(_("I wasn't able to locate file for the %s package. "
