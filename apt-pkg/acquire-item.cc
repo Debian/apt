@@ -362,7 +362,7 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
-		<< "Falling back to normal index file aquire" << std::endl;
+		<< "Falling back to normal index file acquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
 		   ExpectedMD5);
    Finish();

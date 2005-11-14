@@ -10,6 +10,13 @@
    
    ##################################################################### */
 									/*}}}*/
+
+/** \addtogroup acquire
+ *  @{
+ *
+ *  \file acquire-method.h
+ */
+
 #ifndef PKGLIB_ACQUIRE_METHOD_H
 #define PKGLIB_ACQUIRE_METHOD_H
 
@@ -85,5 +92,7 @@ class pkgAcqMethod
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~pkgAcqMethod() {};
 };
+
+/** @} */
 
 #endif

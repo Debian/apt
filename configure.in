@@ -175,11 +175,20 @@ dnl Check for debiandoc
 AC_PATH_PROG(DEBIANDOC_HTML,debiandoc2html)
 AC_PATH_PROG(DEBIANDOC_TEXT,debiandoc2text)
 
+dnl Check for doxygen
+AC_PATH_PROG(DOXYGEN, doxygen)
+
 dnl Check for the SGML tools needed to build man pages
 AC_PATH_PROG(DOCBOOK2MAN,docbook2man)
 
 dnl Check for the XML tools needed to build man pages
 AC_PATH_PROG(XMLTO,xmlto)
+
+dnl Check for graphviz
+AC_CHECK_PROG([HAVE_DOT], [dot], [YES], [NO])
+AC_PATH_PROG([DOT], [dot], [])
+DOTDIR=$(dirname $DOT)
+AC_SUBST(DOTDIR)
 
 dnl Check for YODL
 dnl AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
@@ -200,4 +209,4 @@ fi
 AC_SUBST(USE_NLS)
 AC_PATH_PROG(BASH, bash)
 
-AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in,make -s dirs)
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile,make -s dirs)
