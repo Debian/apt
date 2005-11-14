@@ -1,4 +1,4 @@
-apt (0.6.42.1exp1) experimental; urgency=low
+apt (0.6.42.3exp1) experimental; urgency=low
 
   * added support for package index diffs 
   * added support for i18n of the package descriptions
@@ -9,8 +9,37 @@ apt (0.6.42.1exp1) experimental; urgency=low
   * add patch to fix http download corruption problem (thanks to
     Petr Vandrovec, closes: #280844, #290694)
   
- -- Michael Vogt <mvo@debian.org>  Wed, 19 Oct 2005 22:12:13 +0200
+ -- Michael Vogt <mvo@debian.org>  Sun, 13 Nov 2005 13:33:57 +0100
 
+apt (0.6.42.3) unstable; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-129:
+    - patch-118: Russian translation update by Yuri Kozlov (closes: #335164)
+    - patch-119: add update-po as a pre-req for binary (closes: #329910)
+    - patch-121: Complete French translation
+    - patch-125: Fixed localization of y/n questions in German translation 
+                 (closes: #337078)
+    - patch-126: Swedish translation update (closes: #337163)
+    - patch-127: Complete Tagalog translation (closes: #337306)
+    - patch-128: Danish translation update (closes: #337949)
+    - patch-129: Basque translation update (closes: #338101)
+  * cmdline/apt-get.cc:
+    - bufix in FindSrc  (closes: #335213, #337910)
+  * added armeb to archtable (closes: #333599)
+  * with --allow-unauthenticated use the old fallback behaviour for
+    sources (closes: #335112)
+   
+ -- Michael Vogt <mvo@debian.org>  Wed,  9 Nov 2005 07:22:31 +0100
+
+apt (0.6.42.2) unstable; urgency=high
+
+  * NMU (approved by maintainer)
+  * Add AMD64 archive signing key to debian-archive.gpg (closes: #336500).
+  * Add big-endian arm (armeb) support (closes: #333599).
+  * Priority high to get the AMD key into testing ASAP.
+
+ -- Frans Pop <fjp@debian.org>  Sun, 30 Oct 2005 21:29:11 +0100
+ 
 apt (0.6.42.1) unstable; urgency=low
 
   * fix a incorrect example in the apt_prefrences man page
