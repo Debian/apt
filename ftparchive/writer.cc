@@ -581,8 +581,6 @@ bool SourcesWriter::DoPackage(string FileName)
 	 auto_ptr<Override::Item> Itm(BOver.GetItem(BinList[I]));
 	 if (Itm.get() == 0)
 	    continue;
-	 if (OverItem.get() == 0)
-	    OverItem = Itm;
 
 	 unsigned char NewPrioV = debListParser::GetPrio(Itm->Priority);
 	 if (NewPrioV < BestPrioV || BestPrio.empty() == true)
@@ -590,6 +588,9 @@ bool SourcesWriter::DoPackage(string FileName)
 	    BestPrioV = NewPrioV;
 	    BestPrio = Itm->Priority;
 	 }	 
+
+	 if (OverItem.get() == 0)
+	    OverItem = Itm;
       }
    }
    

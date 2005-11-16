@@ -166,8 +166,11 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	    }
 	    
 	    if (Res == EAI_AGAIN)
+	    {
+	       Owner->SetFailExtraMsg("\nFailReason: TmpResolveFailure");
 	       return _error->Error(_("Temporary failure resolving '%s'"),
 				    Host.c_str());
+	    }
 	    return _error->Error(_("Something wicked happened resolving '%s:%s' (%i)"),
 				 Host.c_str(),ServStr,Res);
 	 }

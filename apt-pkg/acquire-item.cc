@@ -142,20 +142,21 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 {
    Decompression = false;
    Erase = false;
-   
+
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
    if(comprExt.empty()) 
    {
-      // autoselect 
-      if(FileExists("/usr/bin/bzip2"))
-	 Desc.URI = URI + ".bz2"; 
-      else
-	 Desc.URI = URI + ".gz"; 
+      // autoselect the compression method
+      if(FileExists("/usr/bin/bzip2")) 
+	 CompressionExtension = ".bz2";
+      else 
+	 CompressionExtension = ".gz";
    } else {
-      Desc.URI = URI + comprExt; 
+      CompressionExtension = comprExt;
    }
+   Desc.URI = URI + CompressionExtension; 
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
@@ -401,7 +402,8 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    unlink(Final.c_str());
 
    // if we get a timeout if fail
-   if(LookupTag(Message,"FailReason") == "Timeout") {
+   if(LookupTag(Message,"FailReason") == "Timeout" || 
+      LookupTag(Message,"FailReason") == "TmpResolveFailure") {
       Item::Failed(Message,Cnf);
       return;
    }
@@ -768,6 +770,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       }
    }
 
+   // "allow-unauthenticated" restores apts old fetching behaviour
+   // that means that e.g. unauthenticated file:// uris are higher
+   // priority than authenticated http:// uris
+   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+      Trusted = false;
+
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
       _error->Error(_("I wasn't able to locate file for the %s package. "
@@ -904,7 +912,8 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
       {
 	 Status = StatError;
 	 ErrorText = _("MD5Sum mismatch");
-	 Rename(DestFile,DestFile + ".FAILED");
+	 if(FileExists(DestFile))
+	    Rename(DestFile,DestFile + ".FAILED");
 	 return;
       }
    }

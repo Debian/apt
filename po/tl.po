@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-02 11:19-0700\n"
+"POT-Creation-Date: 2005-11-16 17:15+0100\n"
 "PO-Revision-Date: 2005-02-09 16:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -151,8 +151,8 @@ msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:545
-#: cmdline/apt-get.cc:2322 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
+#: cmdline/apt-get.cc:2409 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s para sa %s %s kinompile noong %s %s\n"
@@ -234,6 +234,22 @@ msgstr ""
 "Basahin ang pahina ng manwal ng apt-cache(8) at apt.conf(5) para sa \n"
 "karagdagang impormasyon\n"
 
+#: cmdline/apt-cdrom.cc:78
+msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc:93
+#, fuzzy
+msgid "Please insert a Disc in the drive and press enter"
+msgstr ""
+"Pagpalit ng Media: Ikasa ang disk na may pangalang\n"
+" '%s'\n"
+"sa drive '%s' at pindutin ang enter\n"
+
+#: cmdline/apt-cdrom.cc:117
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr ""
+
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
 msgstr "Mga argumento ay hindi nakapares"
@@ -295,7 +311,7 @@ msgstr ""
 "  -c=? Basahin ang tipunang pagkaayos na ito\n"
 "  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:710
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:712
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Hindi makasulat sa %s"
@@ -304,31 +320,31 @@ msgstr "Hindi makasulat sa %s"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Hindi makuha ang bersyon ng debconf. Naka-instol ba ang debconf?"
 
-#: ftparchive/apt-ftparchive.cc:163 ftparchive/apt-ftparchive.cc:337
+#: ftparchive/apt-ftparchive.cc:167 ftparchive/apt-ftparchive.cc:341
 msgid "Package extension list is too long"
 msgstr "Mahaba masyado ang talaang extensyon ng mga pakete"
 
-#: ftparchive/apt-ftparchive.cc:165 ftparchive/apt-ftparchive.cc:179
-#: ftparchive/apt-ftparchive.cc:202 ftparchive/apt-ftparchive.cc:252
-#: ftparchive/apt-ftparchive.cc:266 ftparchive/apt-ftparchive.cc:288
+#: ftparchive/apt-ftparchive.cc:169 ftparchive/apt-ftparchive.cc:183
+#: ftparchive/apt-ftparchive.cc:206 ftparchive/apt-ftparchive.cc:256
+#: ftparchive/apt-ftparchive.cc:270 ftparchive/apt-ftparchive.cc:292
 #, c-format
 msgid "Error processing directory %s"
 msgstr "Error sa pagproseso ng directory %s"
 
-#: ftparchive/apt-ftparchive.cc:250
+#: ftparchive/apt-ftparchive.cc:254
 msgid "Source extension list is too long"
 msgstr "Mahaba masyado ang talaang extensyon ng pagkukunan (source)"
 
-#: ftparchive/apt-ftparchive.cc:367
+#: ftparchive/apt-ftparchive.cc:371
 msgid "Error writing header to contents file"
 msgstr "Error sa pagsulat ng header sa tipunang nilalaman (contents)"
 
-#: ftparchive/apt-ftparchive.cc:397
+#: ftparchive/apt-ftparchive.cc:401
 #, c-format
 msgid "Error processing contents %s"
 msgstr "Error sa pagproseso ng Contents %s"
 
-#: ftparchive/apt-ftparchive.cc:551
+#: ftparchive/apt-ftparchive.cc:556
 #, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
@@ -411,11 +427,11 @@ msgstr ""
 "  -c=?  Basahin itong tipunang pagkaayos\n"
 "  -o=?  Itakda ang isang option na pagkaayos"
 
-#: ftparchive/apt-ftparchive.cc:757
+#: ftparchive/apt-ftparchive.cc:762
 msgid "No selections matched"
 msgstr "Walang mga piniling nag-match"
 
-#: ftparchive/apt-ftparchive.cc:830
+#: ftparchive/apt-ftparchive.cc:835
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
 msgstr "May mga tipunang kulang sa grupong tipunang pakete `%s'"
@@ -448,83 +464,83 @@ msgstr "Walang control record ang arkibo"
 msgid "Unable to get a cursor"
 msgstr "Hindi makakuha ng cursor"
 
-#: ftparchive/writer.cc:79
+#: ftparchive/writer.cc:78
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "W: Hindi mabasa ang directory %s\n"
 
-#: ftparchive/writer.cc:84
+#: ftparchive/writer.cc:83
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "W: Hindi ma-stat %s\n"
 
-#: ftparchive/writer.cc:126
+#: ftparchive/writer.cc:125
 msgid "E: "
 msgstr "E: "
 
-#: ftparchive/writer.cc:128
+#: ftparchive/writer.cc:127
 msgid "W: "
 msgstr "W: "
 
-#: ftparchive/writer.cc:135
+#: ftparchive/writer.cc:134
 msgid "E: Errors apply to file "
 msgstr "E: Mga error ay tumutukoy sa tipunang "
 
-#: ftparchive/writer.cc:152 ftparchive/writer.cc:182
+#: ftparchive/writer.cc:151 ftparchive/writer.cc:181
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Sawi sa pag-resolba %s"
 
-#: ftparchive/writer.cc:164
+#: ftparchive/writer.cc:163
 msgid "Tree walking failed"
 msgstr "Sawi ang paglakad sa puno"
 
-#: ftparchive/writer.cc:189
+#: ftparchive/writer.cc:188
 #, c-format
 msgid "Failed to open %s"
 msgstr "Sawi ang pagbukas ng %s"
 
-#: ftparchive/writer.cc:246
+#: ftparchive/writer.cc:245
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:254
+#: ftparchive/writer.cc:253
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Sawi ang pagbasa ng link %s"
 
-#: ftparchive/writer.cc:258
+#: ftparchive/writer.cc:257
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "Sawi ang pag-unlink ng %s"
 
-#: ftparchive/writer.cc:265
+#: ftparchive/writer.cc:264
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Sawi ang pag-link ng %s sa %s"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:274
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " DeLink limit na %sB tinamaan.\n"
 
 #: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:256
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Sawi ang pag-stat ng %s"
 
-#: ftparchive/writer.cc:378
+#: ftparchive/writer.cc:386
 msgid "Archive had no package field"
 msgstr "Walang field ng pakete ang arkibo"
 
-#: ftparchive/writer.cc:386 ftparchive/writer.cc:595
+#: ftparchive/writer.cc:394 ftparchive/writer.cc:603
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s ay walang override entry\n"
 
-#: ftparchive/writer.cc:429 ftparchive/writer.cc:677
+#: ftparchive/writer.cc:437 ftparchive/writer.cc:689
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  Maintainer ng %s ay %s hindi %s\n"
@@ -624,79 +640,79 @@ msgstr "Problema sa pag-unlink ng %s"
 msgid "Failed to rename %s to %s"
 msgstr "Sawi ang pagpangalan muli ng %s tungong %s"
 
-#: cmdline/apt-get.cc:118
+#: cmdline/apt-get.cc:119
 msgid "Y"
 msgstr "O"
 
-#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1484
+#: cmdline/apt-get.cc:141 cmdline/apt-get.cc:1565
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Error sa pag-compile ng regex - %s"
 
-#: cmdline/apt-get.cc:235
+#: cmdline/apt-get.cc:236
 msgid "The following packages have unmet dependencies:"
 msgstr "Ang sumusunod na mga pakete ay may kulang na dependensiya:"
 
-#: cmdline/apt-get.cc:325
+#: cmdline/apt-get.cc:326
 #, c-format
 msgid "but %s is installed"
 msgstr "ngunit %s ay naka-instol"
 
-#: cmdline/apt-get.cc:327
+#: cmdline/apt-get.cc:328
 #, c-format
 msgid "but %s is to be installed"
 msgstr "ngunit %s ay iinstolahin"
 
-#: cmdline/apt-get.cc:334
+#: cmdline/apt-get.cc:335
 msgid "but it is not installable"
 msgstr "ngunit hindi ito maaaring instolahin"
 
-#: cmdline/apt-get.cc:336
+#: cmdline/apt-get.cc:337
 msgid "but it is a virtual package"
 msgstr "ngunit ito ay birtwal na pakete"
 
-#: cmdline/apt-get.cc:339
+#: cmdline/apt-get.cc:340
 msgid "but it is not installed"
 msgstr "ngunit ito ay hindi naka-instol"
 
-#: cmdline/apt-get.cc:339
+#: cmdline/apt-get.cc:340
 msgid "but it is not going to be installed"
 msgstr "ngunit ito ay hindi iinstolahin"
 
-#: cmdline/apt-get.cc:344
+#: cmdline/apt-get.cc:345
 msgid " or"
 msgstr " o"
 
-#: cmdline/apt-get.cc:373
+#: cmdline/apt-get.cc:374
 msgid "The following NEW packages will be installed:"
 msgstr "Ang sumusunod na BAGONG mga pakete ay iinstolahin:"
 
-#: cmdline/apt-get.cc:399
+#: cmdline/apt-get.cc:400
 msgid "The following packages will be REMOVED:"
 msgstr "Ang susunod na mga pakete ay TATANGGALIN:"
 
-#: cmdline/apt-get.cc:421
+#: cmdline/apt-get.cc:422
 msgid "The following packages have been kept back:"
 msgstr "Ang susunod na mga pakete ay hinayaang maiwanan:"
 
-#: cmdline/apt-get.cc:442
+#: cmdline/apt-get.cc:443
 msgid "The following packages will be upgraded:"
 msgstr "Ang susunod na mga pakete ay ia-apgreyd:"
 
-#: cmdline/apt-get.cc:463
+#: cmdline/apt-get.cc:464
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Ang susunod na mga pakete ay ida-DOWNGRADE:"
 
-#: cmdline/apt-get.cc:483
+#: cmdline/apt-get.cc:484
 msgid "The following held packages will be changed:"
 msgstr "Ang susunod na mga hinawakang mga pakete ay babaguhin:"
 
-#: cmdline/apt-get.cc:536
+#: cmdline/apt-get.cc:537
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (dahil sa %s) "
 
-#: cmdline/apt-get.cc:544
+#: cmdline/apt-get.cc:545
 #, fuzzy
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
@@ -705,124 +721,146 @@ msgstr ""
 "BABALA: Ang susunod na mga paketeng esensyal ay tatanggalin\n"
 "HINDI ito dapat gawin kung hindi niyo alam ng husto ang inyong ginagawa!"
 
-#: cmdline/apt-get.cc:575
+#: cmdline/apt-get.cc:576
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu nai-upgrade, %lu bagong instol, "
 
-#: cmdline/apt-get.cc:579
+#: cmdline/apt-get.cc:580
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu ininstol muli, "
 
-#: cmdline/apt-get.cc:581
+#: cmdline/apt-get.cc:582
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu nai-downgrade, "
 
-#: cmdline/apt-get.cc:583
+#: cmdline/apt-get.cc:584
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu na tatanggalin at %lu na di inapgreyd.\n"
 
-#: cmdline/apt-get.cc:587
+#: cmdline/apt-get.cc:588
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu na di lubos na na-instol o tinanggal.\n"
 
-#: cmdline/apt-get.cc:647
+#: cmdline/apt-get.cc:648
 msgid "Correcting dependencies..."
 msgstr "Inaayos ang mga dependensiya..."
 
-#: cmdline/apt-get.cc:650
+#: cmdline/apt-get.cc:651
 msgid " failed."
 msgstr " ay sawi."
 
-#: cmdline/apt-get.cc:653
+#: cmdline/apt-get.cc:654
 msgid "Unable to correct dependencies"
 msgstr "Hindi maayos ang mga dependensiya"
 
-#: cmdline/apt-get.cc:656
+#: cmdline/apt-get.cc:657
 msgid "Unable to minimize the upgrade set"
 msgstr "Hindi mai-minimize ang upgrade set"
 
-#: cmdline/apt-get.cc:658
+#: cmdline/apt-get.cc:659
 msgid " Done"
 msgstr " Tapos"
 
-#: cmdline/apt-get.cc:662
+#: cmdline/apt-get.cc:663
 msgid "You might want to run `apt-get -f install' to correct these."
 msgstr "Maaari ninyong patakbuhin ang `apt-get -f install' upang ayusin ito."
 
-#: cmdline/apt-get.cc:665
+#: cmdline/apt-get.cc:666
 msgid "Unmet dependencies. Try using -f."
 msgstr "May mga kulang na dependensiya. Subukan niyong gamitin ang -f."
 
-#: cmdline/apt-get.cc:687
+#: cmdline/apt-get.cc:688
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr ""
 "BABALA: Ang susunod na mga pakete ay hindi matiyak ang pagka-awtentiko!"
 
-#: cmdline/apt-get.cc:698
+#: cmdline/apt-get.cc:692
+msgid "Authentication warning overridden.\n"
+msgstr ""
+
+#: cmdline/apt-get.cc:699
 msgid "Install these packages without verification [y/N]? "
 msgstr "Instolahin ang mga paketeng ito na walang beripikasyon [o/H]? "
 
-#: cmdline/apt-get.cc:700
+#: cmdline/apt-get.cc:701
 msgid "Some packages could not be authenticated"
 msgstr "May mga paketeng hindi matiyak ang pagka-awtentiko"
 
-#: cmdline/apt-get.cc:709 cmdline/apt-get.cc:855
+#: cmdline/apt-get.cc:710 cmdline/apt-get.cc:857
 msgid "There are problems and -y was used without --force-yes"
 msgstr "May mga problema at -y ay ginamit na walang --force-yes"
 
-#: cmdline/apt-get.cc:762
+#: cmdline/apt-get.cc:754
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr ""
+
+#: cmdline/apt-get.cc:763
 msgid "Packages need to be removed but remove is disabled."
 msgstr ""
 "May mga paketeng kailangang tanggalin ngunit naka-disable ang Tanggal/Remove."
 
-#: cmdline/apt-get.cc:788 cmdline/apt-get.cc:1778 cmdline/apt-get.cc:1811
+#: cmdline/apt-get.cc:774
+#, fuzzy
+msgid "Internal error, Ordering didn't finish"
+msgstr "Internal error sa pagdagdag ng diversion"
+
+#: cmdline/apt-get.cc:790 cmdline/apt-get.cc:1864 cmdline/apt-get.cc:1897
 msgid "Unable to lock the download directory"
 msgstr "Di maaldaba ang directory ng download"
 
-#: cmdline/apt-get.cc:798 cmdline/apt-get.cc:1859 cmdline/apt-get.cc:2070
+#: cmdline/apt-get.cc:800 cmdline/apt-get.cc:1945 cmdline/apt-get.cc:2157
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Hindi mabasa ang talaan ng pagkukunan (sources)."
 
-#: cmdline/apt-get.cc:818
+#: cmdline/apt-get.cc:815
+msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
+msgstr ""
+
+#: cmdline/apt-get.cc:820
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Kailangang kumuha ng %sB/%sB ng arkibo.\n"
 
-#: cmdline/apt-get.cc:821
+#: cmdline/apt-get.cc:823
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Kailangang kumuha ng %sB ng arkibo.\n"
 
-#: cmdline/apt-get.cc:826
+#: cmdline/apt-get.cc:828
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr "Matapos magbuklat ay %sB ng karagdagang lugar sa disk ay magagamit.\n"
 
-#: cmdline/apt-get.cc:829
+#: cmdline/apt-get.cc:831
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Matapos magbuklat %sB ng lugar sa disk ay mapapalaya.\n"
 
-#: cmdline/apt-get.cc:846
+#: cmdline/apt-get.cc:845 cmdline/apt-get.cc:2011
+#, fuzzy, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "Kulang kayo ng libreng puwang sa %s"
+
+#: cmdline/apt-get.cc:848
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Kulang kayo ng libreng lugar sa %s."
 
-#: cmdline/apt-get.cc:861 cmdline/apt-get.cc:881
+#: cmdline/apt-get.cc:863 cmdline/apt-get.cc:883
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Tinakdang Trivial Only ngunit hindi ito operasyong trivial."
 
-#: cmdline/apt-get.cc:863
+#: cmdline/apt-get.cc:865
 msgid "Yes, do as I say!"
 msgstr "Oo, gawin ang sinasabi ko!"
 
-#: cmdline/apt-get.cc:865
+#: cmdline/apt-get.cc:867
 #, fuzzy, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -833,28 +871,28 @@ msgstr ""
 "Upang magpatuloy, ibigay ang pariralang '%s'\n"
 " ?] "
 
-#: cmdline/apt-get.cc:871 cmdline/apt-get.cc:890
+#: cmdline/apt-get.cc:873 cmdline/apt-get.cc:892
 msgid "Abort."
 msgstr "Abort."
 
-#: cmdline/apt-get.cc:886
+#: cmdline/apt-get.cc:888
 msgid "Do you want to continue [Y/n]? "
 msgstr "Nais niyo bang magpatuloy [O/h]? "
 
-#: cmdline/apt-get.cc:958 cmdline/apt-get.cc:1334 cmdline/apt-get.cc:1968
+#: cmdline/apt-get.cc:960 cmdline/apt-get.cc:1364 cmdline/apt-get.cc:2054
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Sawi sa pagkuha ng %s  %s\n"
 
-#: cmdline/apt-get.cc:976
+#: cmdline/apt-get.cc:978
 msgid "Some files failed to download"
 msgstr "May mga tipunang hindi nakuha"
 
-#: cmdline/apt-get.cc:977 cmdline/apt-get.cc:1977
+#: cmdline/apt-get.cc:979 cmdline/apt-get.cc:2063
 msgid "Download complete and in download only mode"
 msgstr "Kumpleto ang pagkakuha ng mga tipunan sa modong pagkuha lamang"
 
-#: cmdline/apt-get.cc:983
+#: cmdline/apt-get.cc:985
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -862,48 +900,48 @@ msgstr ""
 "Hindi nakuha ang ilang mga arkibo, maaaring patakbuhin ang apt-get update o "
 "subukang may --fix-missing?"
 
-#: cmdline/apt-get.cc:987
+#: cmdline/apt-get.cc:989
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing at pagpalit ng media ay kasalukuyang hindi suportado"
 
-#: cmdline/apt-get.cc:992
+#: cmdline/apt-get.cc:994
 msgid "Unable to correct missing packages."
 msgstr "Hindi maayos ang mga kulang na pakete."
 
-#: cmdline/apt-get.cc:993
+#: cmdline/apt-get.cc:995
 msgid "Aborting install."
 msgstr "Ina-abort ang pag-instol."
 
-#: cmdline/apt-get.cc:1026
+#: cmdline/apt-get.cc:1029
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Paunawa, pinili ang %s imbes na %s\n"
 
-#: cmdline/apt-get.cc:1036
+#: cmdline/apt-get.cc:1039
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "Linaktawan ang %s, ito'y naka-instol na at hindi nakatakda ang upgrade.\n"
 
-#: cmdline/apt-get.cc:1054
+#: cmdline/apt-get.cc:1057
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Hindi naka-instol ang paketeng %s, kaya't hindi ito tinanggal\n"
 
-#: cmdline/apt-get.cc:1065
+#: cmdline/apt-get.cc:1068
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Ang paketeng %s ay paketeng birtwal na bigay ng:\n"
 
-#: cmdline/apt-get.cc:1077
+#: cmdline/apt-get.cc:1080
 msgid " [Installed]"
 msgstr " [Naka-instol]"
 
-#: cmdline/apt-get.cc:1082
+#: cmdline/apt-get.cc:1085
 msgid "You should explicitly select one to install."
 msgstr "Dapat ninyong piliin ang isa na instolahin."
 
-#: cmdline/apt-get.cc:1087
+#: cmdline/apt-get.cc:1090
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -914,49 +952,49 @@ msgstr ""
 "Maaaring nawawala ang pakete, o ito'y laos na, o ito'y makukuha lamang\n"
 "sa ibang pinagmulan.\n"
 
-#: cmdline/apt-get.cc:1106
+#: cmdline/apt-get.cc:1109
 msgid "However the following packages replace it:"
 msgstr "Gayunpaman, ang sumusunod na mga pakete ay humahalili sa kanya:"
 
-#: cmdline/apt-get.cc:1109
+#: cmdline/apt-get.cc:1112
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Ang paketeng %s ay walang kandidatong maaaring instolahin"
 
-#: cmdline/apt-get.cc:1129
+#: cmdline/apt-get.cc:1132
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Ang pag-instol muli ng %s ay hindi maaari, hindi ito makuha.\n"
 
-#: cmdline/apt-get.cc:1137
+#: cmdline/apt-get.cc:1140
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s ay pinakabagong bersyon na.\n"
 
-#: cmdline/apt-get.cc:1164
+#: cmdline/apt-get.cc:1167
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Release '%s' para sa '%s' ay hindi nahanap"
 
-#: cmdline/apt-get.cc:1166
+#: cmdline/apt-get.cc:1169
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Bersyon '%s' para sa '%s' ay hindi nahanap"
 
-#: cmdline/apt-get.cc:1172
+#: cmdline/apt-get.cc:1175
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Ang napiling bersyon %s (%s) para sa %s\n"
 
-#: cmdline/apt-get.cc:1282
+#: cmdline/apt-get.cc:1312
 msgid "The update command takes no arguments"
 msgstr "Ang utos na update ay hindi tumatanggap ng mga argumento"
 
-#: cmdline/apt-get.cc:1295 cmdline/apt-get.cc:1389
+#: cmdline/apt-get.cc:1325 cmdline/apt-get.cc:1465
 msgid "Unable to lock the list directory"
 msgstr "Hindi maaldaba ang directory ng talaan"
 
-#: cmdline/apt-get.cc:1353
+#: cmdline/apt-get.cc:1383
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -964,26 +1002,46 @@ msgstr ""
 "May mga tipunang index na hindi nakuha, sila'y di pinansin, o ginamit ang "
 "mga luma na lamang."
 
-#: cmdline/apt-get.cc:1372
+#: cmdline/apt-get.cc:1397
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr ""
+
+#: cmdline/apt-get.cc:1422
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+
+#: cmdline/apt-get.cc:1425 cmdline/apt-get.cc:1633
+msgid "The following information may help to resolve the situation:"
+msgstr ""
+"Ang sumusunod na impormasyon ay maaaring makatulong sa pag-ayos ng problema:"
+
+#: cmdline/apt-get.cc:1429
+#, fuzzy
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "Internal error, nakasira ng bagay-bagay ang AllUpgrade"
+
+#: cmdline/apt-get.cc:1448
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Internal error, nakasira ng bagay-bagay ang AllUpgrade"
 
-#: cmdline/apt-get.cc:1471 cmdline/apt-get.cc:1507
+#: cmdline/apt-get.cc:1552 cmdline/apt-get.cc:1588
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Hindi mahanap ang paketeng %s"
 
-#: cmdline/apt-get.cc:1494
+#: cmdline/apt-get.cc:1575
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
 
-#: cmdline/apt-get.cc:1524
+#: cmdline/apt-get.cc:1605
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr ""
 "Maaaring patakbuhin niyo ang `apt-get -f install' upang ayusin ang mga ito:"
 
-#: cmdline/apt-get.cc:1527
+#: cmdline/apt-get.cc:1608
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -991,7 +1049,7 @@ msgstr ""
 "May mga dependensiyang kulang. Subukan ang 'apt-get -f install' na walang "
 "mga pakete (o magtakda ng solusyon)."
 
-#: cmdline/apt-get.cc:1539
+#: cmdline/apt-get.cc:1620
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1002,7 +1060,7 @@ msgstr ""
 "o kung kayo'y gumagamit ng pamudmod na unstable ay may ilang mga paketeng\n"
 "kailangan na hindi pa nalikha o linipat mula sa Incoming."
 
-#: cmdline/apt-get.cc:1547
+#: cmdline/apt-get.cc:1628
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -1012,106 +1070,111 @@ msgstr ""
 "hindi talaga ma-instol at kailangang magpadala ng bug report tungkol sa\n"
 "pakete na ito."
 
-#: cmdline/apt-get.cc:1552
-msgid "The following information may help to resolve the situation:"
-msgstr ""
-"Ang sumusunod na impormasyon ay maaaring makatulong sa pag-ayos ng problema:"
-
-#: cmdline/apt-get.cc:1555
+#: cmdline/apt-get.cc:1636
 msgid "Broken packages"
 msgstr "Sirang mga pakete"
 
-#: cmdline/apt-get.cc:1581
+#: cmdline/apt-get.cc:1667
 msgid "The following extra packages will be installed:"
 msgstr "Ang mga sumusunod na extra na pakete ay iinstolahin:"
 
-#: cmdline/apt-get.cc:1652
+#: cmdline/apt-get.cc:1738
 msgid "Suggested packages:"
 msgstr "Mga paketeng mungkahi:"
 
-#: cmdline/apt-get.cc:1653
+#: cmdline/apt-get.cc:1739
 msgid "Recommended packages:"
 msgstr "Mga paketeng rekomendado:"
 
-#: cmdline/apt-get.cc:1673
+#: cmdline/apt-get.cc:1759
 msgid "Calculating upgrade... "
 msgstr "Kinakalkula ang upgrade... "
 
-#: cmdline/apt-get.cc:1676 methods/ftp.cc:702 methods/connect.cc:99
+#: cmdline/apt-get.cc:1762 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "Sawi"
 
-#: cmdline/apt-get.cc:1681
+#: cmdline/apt-get.cc:1767
 msgid "Done"
 msgstr "Tapos"
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1832 cmdline/apt-get.cc:1840
+#, fuzzy
+msgid "Internal error, problem resolver broke stuff"
+msgstr "Internal error, nakasira ng bagay-bagay ang AllUpgrade"
+
+#: cmdline/apt-get.cc:1940
 msgid "Must specify at least one package to fetch source for"
 msgstr "Kailangang magtakda ng kahit isang pakete na kunan ng source"
 
-#: cmdline/apt-get.cc:1881 cmdline/apt-get.cc:2088
+#: cmdline/apt-get.cc:1967 cmdline/apt-get.cc:2175
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Hindi mahanap ang paketeng source para sa %s"
 
-#: cmdline/apt-get.cc:1928
+#: cmdline/apt-get.cc:2014
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Kulang kayo ng libreng puwang sa %s"
 
-#: cmdline/apt-get.cc:1933
+#: cmdline/apt-get.cc:2019
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Kailangang kumuha ng %sB/%sB ng arkibong source.\n"
 
-#: cmdline/apt-get.cc:1936
+#: cmdline/apt-get.cc:2022
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Kailangang kumuha ng %sB ng arkibong source.\n"
 
-#: cmdline/apt-get.cc:1942
+#: cmdline/apt-get.cc:2028
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Kunin ang Source %s\n"
 
-#: cmdline/apt-get.cc:1973
+#: cmdline/apt-get.cc:2059
 msgid "Failed to fetch some archives."
 msgstr "Sawi sa pagkuha ng ilang mga arkibo."
 
-#: cmdline/apt-get.cc:2001
+#: cmdline/apt-get.cc:2087
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Linaktawan ang pagbuklat ng nabuklat na na source sa %s\n"
 
-#: cmdline/apt-get.cc:2013
+#: cmdline/apt-get.cc:2099
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Sawi ang utos ng pagbuklat '%s'.\n"
 
-#: cmdline/apt-get.cc:2030
+#: cmdline/apt-get.cc:2100
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr ""
+
+#: cmdline/apt-get.cc:2117
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Utos na build '%s' ay sawi.\n"
 
-#: cmdline/apt-get.cc:2049
+#: cmdline/apt-get.cc:2136
 msgid "Child process failed"
 msgstr "Sawi ang prosesong anak"
 
-#: cmdline/apt-get.cc:2065
+#: cmdline/apt-get.cc:2152
 msgid "Must specify at least one package to check builddeps for"
 msgstr "Kailangang magtakda ng kahit isang pakete na susuriin ang builddeps"
 
-#: cmdline/apt-get.cc:2093
+#: cmdline/apt-get.cc:2180
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Hindi makuha ang impormasyong build-dependency para sa %s"
 
-#: cmdline/apt-get.cc:2113
+#: cmdline/apt-get.cc:2200
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "Walang build depends ang %s.\n"
 
-#: cmdline/apt-get.cc:2165
+#: cmdline/apt-get.cc:2252
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1120,7 +1183,7 @@ msgstr ""
 "Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
 "mahanap"
 
-#: cmdline/apt-get.cc:2217
+#: cmdline/apt-get.cc:2304
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1129,32 +1192,32 @@ msgstr ""
 "Dependensiyang %s para sa %s ay hindi mabuo dahil walang magamit na bersyon "
 "ng paketeng %s na tumutugon sa kinakailangang bersyon"
 
-#: cmdline/apt-get.cc:2252
+#: cmdline/apt-get.cc:2339
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Sawi sa pagbuo ng dependensiyang %s para sa %s: Ang naka-instol na paketeng %"
 "s ay bagong-bago pa lamang."
 
-#: cmdline/apt-get.cc:2277
+#: cmdline/apt-get.cc:2364
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Sawi sa pagbuo ng dependensiyang %s para sa %s: %s"
 
-#: cmdline/apt-get.cc:2291
+#: cmdline/apt-get.cc:2378
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Hindi mabuo ang build-dependencies para sa %s."
 
-#: cmdline/apt-get.cc:2295
+#: cmdline/apt-get.cc:2382
 msgid "Failed to process build dependencies"
 msgstr "Sawi sa pagproseso ng build dependencies"
 
-#: cmdline/apt-get.cc:2327
+#: cmdline/apt-get.cc:2414
 msgid "Supported modules:"
 msgstr "Suportadong mga Module:"
 
-#: cmdline/apt-get.cc:2368
+#: cmdline/apt-get.cc:2455
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1462,8 +1525,9 @@ msgstr "Patungan ng paketeng nag-match na walang bersion para sa %s"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Ang tipunang %s/%s ay pumapatong sa isang tipunan sa paketeng %s"
 
-#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:709
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:416 apt-pkg/clean.cc:38
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
+#: apt-pkg/acquire.cc:417 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Hindi mabasa ang %s"
@@ -1493,9 +1557,9 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "Ang info at temp directory ay kailangang nasa parehong filesystem"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
-#: apt-pkg/pkgcachegen.cc:712 apt-pkg/pkgcachegen.cc:717
-#: apt-pkg/pkgcachegen.cc:840
+#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:645
+#: apt-pkg/pkgcachegen.cc:714 apt-pkg/pkgcachegen.cc:719
+#: apt-pkg/pkgcachegen.cc:842
 msgid "Reading package lists"
 msgstr "Binabasa ang Listahan ng mga Pakete"
 
@@ -1603,12 +1667,12 @@ msgstr "Sawi sa paghanap ng tanggap na tipunang control"
 msgid "Unparsable control file"
 msgstr "Di maintindihang tipunang control"
 
-#: methods/cdrom.cc:113
+#: methods/cdrom.cc:114
 #, c-format
 msgid "Unable to read the cdrom database %s"
 msgstr "Hindi mabasa ang database ng cdrom %s"
 
-#: methods/cdrom.cc:122
+#: methods/cdrom.cc:123
 msgid ""
 "Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
 "cannot be used to add new CD-ROMs"
@@ -1616,28 +1680,34 @@ msgstr ""
 "Paki-gamit ang apt-cdrom upang makilala ng APT itong CD na ito. Hindi "
 "maaaring gamitin ang apt-get update upang magdagdag ng bagong mga CD"
 
-#: methods/cdrom.cc:130 methods/cdrom.cc:168
+#: methods/cdrom.cc:131
 msgid "Wrong CD-ROM"
 msgstr "Maling CD"
 
-#: methods/cdrom.cc:163
+#: methods/cdrom.cc:164
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "Hindi mai-unmount ang CD-ROM sa %s, maaaring ginagamit pa ito."
 
-#: methods/cdrom.cc:177 methods/file.cc:77 methods/rsh.cc:264
+#: methods/cdrom.cc:169
+#, fuzzy
+msgid "Disk not found."
+msgstr "Hindi Nahanap ang Tipunan"
+
+#: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "Hindi Nahanap ang Tipunan"
 
-#: methods/copy.cc:42 methods/gzip.cc:133 methods/gzip.cc:142
+#: methods/copy.cc:42 methods/gpgv.cc:265 methods/gzip.cc:133
+#: methods/gzip.cc:142
 msgid "Failed to stat"
 msgstr "Sawi ang pag-stat"
 
-#: methods/copy.cc:79 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:262 methods/gzip.cc:139
 msgid "Failed to set modification time"
 msgstr "Sawi ang pagtakda ng oras ng pagbago"
 
-#: methods/file.cc:42
+#: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Di tanggap na URI, mga lokal na URI ay di dapat mag-umpisa ng //"
 
@@ -1695,7 +1765,7 @@ msgstr "Lumipas ang koneksyon"
 msgid "Server closed the connection"
 msgstr "Sinarhan ng server ang koneksyon"
 
-#: methods/ftp.cc:338 methods/rsh.cc:190 apt-pkg/contrib/fileutl.cc:453
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:471 methods/rsh.cc:190
 msgid "Read error"
 msgstr "Error sa pagbasa"
 
@@ -1707,7 +1777,7 @@ msgstr "May sagot na bumubo sa buffer."
 msgid "Protocol corruption"
 msgstr "Sira ang protocol"
 
-#: methods/ftp.cc:446 methods/rsh.cc:232 apt-pkg/contrib/fileutl.cc:492
+#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:510 methods/rsh.cc:232
 msgid "Write error"
 msgstr "Error sa pagsulat"
 
@@ -1808,42 +1878,80 @@ msgstr "Hindi makalikha ng socket para sa %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Hindi maumpisahan ang koneksyon sa %s:%s (%s)."
 
-#: methods/connect.cc:92
+#: methods/connect.cc:93
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Hindi maka-konek sa %s:%s (%s), nag-timeout ang koneksyon"
 
-#: methods/connect.cc:104
+#: methods/connect.cc:106
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Hindi maka-konek sa %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:132 methods/rsh.cc:425
+#: methods/connect.cc:134 methods/rsh.cc:425
 #, c-format
 msgid "Connecting to %s"
 msgstr "Kumokonek sa %s"
 
-#: methods/connect.cc:163
+#: methods/connect.cc:165
 #, c-format
 msgid "Could not resolve '%s'"
 msgstr "Hindi maresolba ang '%s'"
 
-#: methods/connect.cc:167
+#: methods/connect.cc:171
 #, c-format
 msgid "Temporary failure resolving '%s'"
 msgstr "Pansamantalang kasawian sa pagresolba ng '%s'"
 
-#: methods/connect.cc:169
+#: methods/connect.cc:174
 #, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i)"
 msgstr "May naganap na kababalaghan sa pagresolba ng '%s:%s' (%i)"
 
-#: methods/connect.cc:216
+#: methods/connect.cc:221
 #, c-format
 msgid "Unable to connect to %s %s:"
 msgstr "Hindi maka-konek sa %s %s:"
+
+#: methods/gpgv.cc:92
+msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
+msgstr ""
+
+#: methods/gpgv.cc:191
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr ""
+
+#: methods/gpgv.cc:196
+msgid "At least one invalid signature was encountered."
+msgstr ""
+
+#. FIXME String concatenation considered harmful.
+#: methods/gpgv.cc:201
+#, fuzzy
+msgid "Could not execute "
+msgstr "hindi makuha ang aldaba %s"
+
+#: methods/gpgv.cc:202
+msgid " to verify signature (is gnupg installed?)"
+msgstr ""
+
+#: methods/gpgv.cc:206
+msgid "Unknown error executing gpgv"
+msgstr ""
+
+#: methods/gpgv.cc:237
+#, fuzzy
+msgid "The following signatures were invalid:\n"
+msgstr "Ang mga sumusunod na extra na pakete ay iinstolahin:"
+
+#: methods/gpgv.cc:244
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
 
 #: methods/gzip.cc:57
 #, c-format
@@ -1928,10 +2036,6 @@ msgstr "Sawi ang koneksyon"
 msgid "Internal error"
 msgstr "Internal na error"
 
-#: methods/rsh.cc:330
-msgid "Connection closed prematurely"
-msgstr "Nagsara ng maaga ang koneksyon"
-
 #: apt-pkg/contrib/mmap.cc:82
 msgid "Can't mmap an empty file"
 msgstr "Hindi mai-mmap ang tipunang walang laman"
@@ -1946,58 +2050,58 @@ msgstr "Hindi makagawa ng mmap ng %lu na byte"
 msgid "Selection %s not found"
 msgstr "Piniling %s ay hindi nahanap"
 
-#: apt-pkg/contrib/configuration.cc:395
+#: apt-pkg/contrib/configuration.cc:436
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Hindi kilalang katagang uri: '%c'"
 
-#: apt-pkg/contrib/configuration.cc:453
+#: apt-pkg/contrib/configuration.cc:494
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "Binubuksan ang tipunang pagsasaayos %s"
 
-#: apt-pkg/contrib/configuration.cc:471
+#: apt-pkg/contrib/configuration.cc:512
 #, c-format
 msgid "Line %d too long (max %d)"
 msgstr "Labis ang haba ng linyang %d (max %d)"
 
-#: apt-pkg/contrib/configuration.cc:567
+#: apt-pkg/contrib/configuration.cc:608
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Syntax error %s:%u: Nag-umpisa ang block na walang pangalan."
 
-#: apt-pkg/contrib/configuration.cc:586
+#: apt-pkg/contrib/configuration.cc:627
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "Syntax error %s:%u: Maling anyo ng Tag"
 
-#: apt-pkg/contrib/configuration.cc:603
+#: apt-pkg/contrib/configuration.cc:644
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Syntax error %s:%u: May basura matapos ng halaga"
 
-#: apt-pkg/contrib/configuration.cc:643
+#: apt-pkg/contrib/configuration.cc:684
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Syntax error %s:%u: Maaari lamang gawin ang mga direktiba sa tuktok na antas"
 
-#: apt-pkg/contrib/configuration.cc:650
+#: apt-pkg/contrib/configuration.cc:691
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Syntax error %s:%u: Labis ang pagkaka-nest ng mga include"
 
-#: apt-pkg/contrib/configuration.cc:654 apt-pkg/contrib/configuration.cc:659
+#: apt-pkg/contrib/configuration.cc:695 apt-pkg/contrib/configuration.cc:700
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Syntax error %s:%u: Sinama mula dito"
 
-#: apt-pkg/contrib/configuration.cc:663
+#: apt-pkg/contrib/configuration.cc:704
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Syntax error %s:%u: Di suportadong direktiba '%s'"
 
-#: apt-pkg/contrib/configuration.cc:697
+#: apt-pkg/contrib/configuration.cc:738
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Syntax error %s:%u: May basura sa dulo ng tipunan"
@@ -2065,7 +2169,7 @@ msgstr "Di tanggap na operasyon %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Di mai-stat ang mount point %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:422 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:423 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Di makalipat sa %s"
@@ -2074,72 +2178,72 @@ msgstr "Di makalipat sa %s"
 msgid "Failed to stat the cdrom"
 msgstr "Sawi sa pag-stat ng cdrom"
 
-#: apt-pkg/contrib/fileutl.cc:80
+#: apt-pkg/contrib/fileutl.cc:82
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 "Hindi ginagamit ang pagaldaba para sa basa-lamang na tipunang aldaba %s"
 
-#: apt-pkg/contrib/fileutl.cc:85
+#: apt-pkg/contrib/fileutl.cc:87
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "Hindi mabuksan ang tipunang aldaba %s"
 
-#: apt-pkg/contrib/fileutl.cc:103
+#: apt-pkg/contrib/fileutl.cc:105
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr ""
 "Hindi gumagamit ng pag-aldaba para sa tipunang aldaba %s na naka-mount sa nfs"
 
-#: apt-pkg/contrib/fileutl.cc:107
+#: apt-pkg/contrib/fileutl.cc:109
 #, c-format
 msgid "Could not get lock %s"
 msgstr "hindi makuha ang aldaba %s"
 
-#: apt-pkg/contrib/fileutl.cc:359
+#: apt-pkg/contrib/fileutl.cc:377
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Naghintay, para sa %s ngunit wala nito doon"
 
-#: apt-pkg/contrib/fileutl.cc:369
+#: apt-pkg/contrib/fileutl.cc:387
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Nakatanggap ang sub-process %s ng segmentation fault."
 
-#: apt-pkg/contrib/fileutl.cc:372
+#: apt-pkg/contrib/fileutl.cc:390
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Naghudyat ang sub-process %s ng error code (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:374
+#: apt-pkg/contrib/fileutl.cc:392
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Ang sub-process %s ay lumabas ng di inaasahan"
 
-#: apt-pkg/contrib/fileutl.cc:418
+#: apt-pkg/contrib/fileutl.cc:436
 #, c-format
 msgid "Could not open file %s"
 msgstr "Hindi mabuksan ang tipunang %s"
 
-#: apt-pkg/contrib/fileutl.cc:474
+#: apt-pkg/contrib/fileutl.cc:492
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "pagbasa, mayroong %lu na babasahin ngunit walang natira"
 
-#: apt-pkg/contrib/fileutl.cc:504
+#: apt-pkg/contrib/fileutl.cc:522
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "pagsulat, mayroon pang %lu na isusulat ngunit hindi makasulat"
 
-#: apt-pkg/contrib/fileutl.cc:579
+#: apt-pkg/contrib/fileutl.cc:597
 msgid "Problem closing the file"
 msgstr "Problema sa pagsara ng tipunan"
 
-#: apt-pkg/contrib/fileutl.cc:585
+#: apt-pkg/contrib/fileutl.cc:603
 msgid "Problem unlinking the file"
 msgstr "Problema sa pag-unlink ng tipunan"
 
-#: apt-pkg/contrib/fileutl.cc:596
+#: apt-pkg/contrib/fileutl.cc:614
 msgid "Problem syncing the file"
 msgstr "Problema sa pag-sync ng tipunan"
 
@@ -2212,17 +2316,27 @@ msgstr "optional"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
+#: apt-pkg/depcache.cc:99 apt-pkg/depcache.cc:128
 msgid "Building dependency tree"
 msgstr "Ginagawa ang puno ng mga dependensiya"
 
-#: apt-pkg/depcache.cc:61
+#: apt-pkg/depcache.cc:100
 msgid "Candidate versions"
 msgstr "Bersyong Kandidato"
 
-#: apt-pkg/depcache.cc:90
+#: apt-pkg/depcache.cc:129
 msgid "Dependency generation"
 msgstr "Pagbuo ng Dependensiya"
+
+#: apt-pkg/depcache.cc:150 apt-pkg/depcache.cc:169 apt-pkg/depcache.cc:173
+#, fuzzy
+msgid "Reading state information"
+msgstr "Pinagsasama ang magagamit na impormasyon"
+
+#: apt-pkg/depcache.cc:189
+#, fuzzy, c-format
+msgid "Failed to write StateFile %s"
+msgstr "Sawi sa pagsulat ng tipunang %s"
 
 #: apt-pkg/tagfile.cc:73
 #, c-format
@@ -2234,52 +2348,52 @@ msgstr "Hindi ma-parse ang tipunang pakete %s (1)"
 msgid "Unable to parse package file %s (2)"
 msgstr "Hindi ma-parse ang tipunang pakete %s (2)"
 
-#: apt-pkg/sourcelist.cc:87
+#: apt-pkg/sourcelist.cc:94
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (URI)"
 
-#: apt-pkg/sourcelist.cc:89
+#: apt-pkg/sourcelist.cc:96
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (dist)"
 
-#: apt-pkg/sourcelist.cc:92
+#: apt-pkg/sourcelist.cc:99
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (URI parse)"
 
-#: apt-pkg/sourcelist.cc:98
+#: apt-pkg/sourcelist.cc:105
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (absolute dist)"
 
-#: apt-pkg/sourcelist.cc:105
+#: apt-pkg/sourcelist.cc:112
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (dist parse)<"
 
-#: apt-pkg/sourcelist.cc:156
+#: apt-pkg/sourcelist.cc:203
 #, c-format
 msgid "Opening %s"
 msgstr "Binubuksan %s"
 
-#: apt-pkg/sourcelist.cc:170
+#: apt-pkg/sourcelist.cc:220 apt-pkg/cdrom.cc:426
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Labis ang haba ng linyang %u sa tipunang pagkukunan %s."
 
-#: apt-pkg/sourcelist.cc:187
+#: apt-pkg/sourcelist.cc:240
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Maling anyo ng linyang %u sa tipunang pagkukunan %s (uri)"
 
-#: apt-pkg/sourcelist.cc:191
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
+#: apt-pkg/sourcelist.cc:244
+#, fuzzy, c-format
+msgid "Type '%s' is not known in on line %u in source list %s"
 msgstr "Di kilalang uri '%s' sa linyang %u sa tipunang pagkukunan %s"
 
-#: apt-pkg/sourcelist.cc:199 apt-pkg/sourcelist.cc:202
+#: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "Maling anyo ng linyang %u sa tipunang pagkukunan %s (vendor id)"
@@ -2301,7 +2415,7 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "Hindi suportado ang uri ng tipunang index na '%s'"
 
-#: apt-pkg/algorithms.cc:241
+#: apt-pkg/algorithms.cc:245
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
@@ -2309,7 +2423,7 @@ msgstr ""
 "Kailangan ma-instol muli ang paketeng %s, ngunit hindi ko mahanap ang arkibo "
 "para dito."
 
-#: apt-pkg/algorithms.cc:1059
+#: apt-pkg/algorithms.cc:1075
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2317,37 +2431,50 @@ msgstr ""
 "Error, pkgProblemResolver::Resolve ay naghudyat ng mga break, maaaring dulot "
 "ito ng mga paketeng naka-hold."
 
-#: apt-pkg/algorithms.cc:1061
+#: apt-pkg/algorithms.cc:1077
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 "Hindi maayos ang mga problema, mayroon kayong sirang mga pakete na naka-hold."
 
-#: apt-pkg/acquire.cc:61
+#: apt-pkg/acquire.cc:62
 #, c-format
 msgid "Lists directory %spartial is missing."
 msgstr "Nawawala ang directory ng talaan %spartial."
 
-#: apt-pkg/acquire.cc:65
+#: apt-pkg/acquire.cc:66
 #, c-format
 msgid "Archive directory %spartial is missing."
 msgstr "Nawawala ang directory ng arkibo %spartial."
 
-#: apt-pkg/acquire-worker.cc:112
+#: apt-pkg/acquire.cc:817
+#, c-format
+msgid "Downloading file %li of %li (%s remaining)"
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc:113
 #, c-format
 msgid "The method driver %s could not be found."
 msgstr "Ang driver ng paraang %s ay hindi mahanap."
 
-#: apt-pkg/acquire-worker.cc:161
+#: apt-pkg/acquire-worker.cc:162
 #, c-format
 msgid "Method %s did not start correctly"
 msgstr "Hindi umandar ng tama ang paraang %s"
 
-#: apt-pkg/init.cc:119
+#: apt-pkg/acquire-worker.cc:377
+#, fuzzy, c-format
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgstr ""
+"Pagpalit ng Media: Ikasa ang disk na may pangalang\n"
+" '%s'\n"
+"sa drive '%s' at pindutin ang enter\n"
+
+#: apt-pkg/init.cc:120
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "Hindi suportado ang sistema ng paketeng '%s'"
 
-#: apt-pkg/init.cc:135
+#: apt-pkg/init.cc:136
 msgid "Unable to determine a suitable packaging system type"
 msgstr "Hindi matuklasan ang akmang uri ng sistema ng pakete "
 
@@ -2384,84 +2511,84 @@ msgstr "Hindi naintindihan ang uri ng pin %s"
 msgid "No priority (or zero) specified for pin"
 msgstr "Walang prioridad (o sero) na nakatakda para sa pin"
 
-#: apt-pkg/pkgcachegen.cc:74
+#: apt-pkg/pkgcachegen.cc:76
 msgid "Cache has an incompatible versioning system"
 msgstr "Hindi akma ang versioning system ng cache"
 
-#: apt-pkg/pkgcachegen.cc:117
+#: apt-pkg/pkgcachegen.cc:119
 #, c-format
 msgid "Error occurred while processing %s (NewPackage)"
 msgstr "May naganap na error habang prinoseso ang %s (NewPackage)"
 
-#: apt-pkg/pkgcachegen.cc:129
+#: apt-pkg/pkgcachegen.cc:131
 #, c-format
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "May naganap na error habang prinoseso ang %s (UsePackage1)"
 
-#: apt-pkg/pkgcachegen.cc:150
+#: apt-pkg/pkgcachegen.cc:152
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "May naganap na error habang prinoseso ang %s (UsePackage2)"
 
-#: apt-pkg/pkgcachegen.cc:154
+#: apt-pkg/pkgcachegen.cc:156
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "May naganap na error habang prinoseso ang %s (NewFileVer1)"
 
-#: apt-pkg/pkgcachegen.cc:184
+#: apt-pkg/pkgcachegen.cc:186
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "May naganap na error habang prinoseso ang %s (NewVersion1)"
 
-#: apt-pkg/pkgcachegen.cc:188
+#: apt-pkg/pkgcachegen.cc:190
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "May naganap na error habang prinoseso ang %s (UsePackage3)"
 
-#: apt-pkg/pkgcachegen.cc:192
+#: apt-pkg/pkgcachegen.cc:194
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "May naganap na error habang prinoseso ang %s (NewVersion2)"
 
-#: apt-pkg/pkgcachegen.cc:207
+#: apt-pkg/pkgcachegen.cc:209
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
 "Wow, nalagpasan niyo ang bilang ng pangalan ng pakete na kaya ng APT na ito."
 
-#: apt-pkg/pkgcachegen.cc:210
+#: apt-pkg/pkgcachegen.cc:212
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Wow, nalagpasan niyo ang bilang ng bersyon na kaya ng APT na ito."
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:215
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "Wow, nalagpasan niyo ang bilang ng dependensiya na kaya ng APT na ito."
 
-#: apt-pkg/pkgcachegen.cc:241
+#: apt-pkg/pkgcachegen.cc:243
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "May naganap na error habang prinoseso ang %s (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:256
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "May naganap na Error habang prinoseso ang %s (CollectFileProvides)"
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:262
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr ""
 "Hindi nahanap ang paketeng %s %s habang prinoseso ang mga dependensiya."
 
-#: apt-pkg/pkgcachegen.cc:574
+#: apt-pkg/pkgcachegen.cc:576
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Hindi ma-stat ang talaan ng pagkukunan ng pakete %s"
 
-#: apt-pkg/pkgcachegen.cc:658
+#: apt-pkg/pkgcachegen.cc:660
 msgid "Collecting File Provides"
 msgstr "Kinukuha ang Tipunang Provides"
 
-#: apt-pkg/pkgcachegen.cc:785 apt-pkg/pkgcachegen.cc:792
+#: apt-pkg/pkgcachegen.cc:787 apt-pkg/pkgcachegen.cc:794
 msgid "IO Error saving source cache"
 msgstr "IO Error sa pag-imbak ng source cache"
 
@@ -2470,11 +2597,11 @@ msgstr "IO Error sa pag-imbak ng source cache"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "pagpalit ng pangalan ay sawi, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:235 apt-pkg/acquire-item.cc:900
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:914
 msgid "MD5Sum mismatch"
 msgstr "Di tugmang MD5Sum"
 
-#: apt-pkg/acquire-item.cc:714
+#: apt-pkg/acquire-item.cc:722
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2483,7 +2610,7 @@ msgstr ""
 "Hindi ko mahanap ang tipunan para sa paketeng %s. Maaaring kailanganin "
 "niyong ayusin ng de kamay ang paketeng ito. (dahil sa walang arch)"
 
-#: apt-pkg/acquire-item.cc:767
+#: apt-pkg/acquire-item.cc:781
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2492,7 +2619,7 @@ msgstr ""
 "Hindi ko mahanap ang tipunan para sa paketeng %s. Maaaring kailanganin "
 "niyong ayusin ng de kamay ang paketeng ito."
 
-#: apt-pkg/acquire-item.cc:803
+#: apt-pkg/acquire-item.cc:817
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2500,7 +2627,7 @@ msgstr ""
 "Sira ang tipunang index ng mga pakete. Walang Filename: field para sa "
 "paketeng %s."
 
-#: apt-pkg/acquire-item.cc:890
+#: apt-pkg/acquire-item.cc:904
 msgid "Size mismatch"
 msgstr "Di tugmang laki"
 
@@ -2509,7 +2636,7 @@ msgstr "Di tugmang laki"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Block ng nagbebenta %s ay walang fingerprint"
 
-#: apt-pkg/cdrom.cc:504
+#: apt-pkg/cdrom.cc:507
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -2518,49 +2645,49 @@ msgstr ""
 "Ginagamit ang %s bilang mount point ng CD-ROM\n"
 "Sinasalang ang CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:513 apt-pkg/cdrom.cc:595
+#: apt-pkg/cdrom.cc:516 apt-pkg/cdrom.cc:598
 msgid "Identifying.. "
 msgstr "Kinikilala..."
 
-#: apt-pkg/cdrom.cc:538
+#: apt-pkg/cdrom.cc:541
 #, c-format
 msgid "Stored label: %s \n"
 msgstr "Naka-imbak na Label: %s \n"
 
-#: apt-pkg/cdrom.cc:558
+#: apt-pkg/cdrom.cc:561
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "Ginagamit ang %s bilang mount point ng CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:576
+#: apt-pkg/cdrom.cc:579
 msgid "Unmounting CD-ROM\n"
 msgstr "Ina-unmount ang CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:580
+#: apt-pkg/cdrom.cc:583
 msgid "Waiting for disc...\n"
 msgstr "Hinihintay ang disc...\n"
 
 #. Mount the new CDROM
-#: apt-pkg/cdrom.cc:588
+#: apt-pkg/cdrom.cc:591
 msgid "Mounting CD-ROM...\n"
 msgstr "Sinasalang ang CD-ROM...\n"
 
-#: apt-pkg/cdrom.cc:606
+#: apt-pkg/cdrom.cc:609
 msgid "Scanning disc for index files..\n"
 msgstr "Sinisiyasat ang Disc para sa tipunang index...\n"
 
-#: apt-pkg/cdrom.cc:644
+#: apt-pkg/cdrom.cc:647
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
 msgstr ""
 "Nakahanap ng %i na index ng mga pakete, %i na index ng source at %i na "
 "signature\n"
 
-#: apt-pkg/cdrom.cc:701
+#: apt-pkg/cdrom.cc:710
 msgid "That is not a valid name, try again.\n"
 msgstr "Hindi yan tanggap na pangalan, subukan muli.\n"
 
-#: apt-pkg/cdrom.cc:717
+#: apt-pkg/cdrom.cc:726
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -2569,19 +2696,19 @@ msgstr ""
 "Ang Disc na ito ay nagngangalang: \n"
 "'%s'\n"
 
-#: apt-pkg/cdrom.cc:721
+#: apt-pkg/cdrom.cc:730
 msgid "Copying package lists..."
 msgstr "Kinokopya ang Listahan ng mga Pakete"
 
-#: apt-pkg/cdrom.cc:745
+#: apt-pkg/cdrom.cc:754
 msgid "Writing new source list\n"
 msgstr "Sinusulat ang bagong listahan ng pagkukunan\n"
 
-#: apt-pkg/cdrom.cc:754
+#: apt-pkg/cdrom.cc:763
 msgid "Source list entries for this disc are:\n"
 msgstr "Mga nakatala sa Listahan ng Source para sa Disc na ito ay:\n"
 
-#: apt-pkg/cdrom.cc:788
+#: apt-pkg/cdrom.cc:803
 msgid "Unmounting CD-ROM..."
 msgstr "Ina-unmount ang CD-ROM..."
 
@@ -2606,6 +2733,60 @@ msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
 "Nagsulat ng %i na record na may %i na tipunang kulang at %i na tipunang "
 "mismatch\n"
+
+#: apt-pkg/deb/dpkgpm.cc:358
+#, fuzzy, c-format
+msgid "Preparing %s"
+msgstr "Binubuksan %s"
+
+#: apt-pkg/deb/dpkgpm.cc:359
+#, fuzzy, c-format
+msgid "Unpacking %s"
+msgstr "Binubuksan %s"
+
+#: apt-pkg/deb/dpkgpm.cc:364
+#, fuzzy, c-format
+msgid "Preparing to configure %s"
+msgstr "Binubuksan ang tipunang pagsasaayos %s"
+
+#: apt-pkg/deb/dpkgpm.cc:365
+#, c-format
+msgid "Configuring %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:366
+#, fuzzy, c-format
+msgid "Installed %s"
+msgstr "  Naka-instol: "
+
+#: apt-pkg/deb/dpkgpm.cc:371
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:372
+#, fuzzy, c-format
+msgid "Removing %s"
+msgstr "Binubuksan %s"
+
+#: apt-pkg/deb/dpkgpm.cc:373
+#, c-format
+msgid "Removed %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:378
+#, c-format
+msgid "Preparing for remove with config %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:379
+#, c-format
+msgid "Removed with config %s"
+msgstr ""
+
+#: methods/rsh.cc:330
+msgid "Connection closed prematurely"
+msgstr "Nagsara ng maaga ang koneksyon"
 
 #~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
 #~ msgstr "Di kilalang vendor ID '%s' sa linya %u ng tipunang pagkukunan %s"

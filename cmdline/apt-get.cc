@@ -67,7 +67,7 @@ ostream c0out(0);
 ostream c1out(0);
 ostream c2out(0);
 ofstream devnull("/dev/null");
-unsigned int ScreenWidth = 80;
+unsigned int ScreenWidth = 80 - 1; /* - 1 for the cursor */
 
 // class CacheFile - Cover class for some dependency cache functions	/*{{{*/
 // ---------------------------------------------------------------------
@@ -1191,24 +1191,54 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    string VerTag;
    string TmpSrc = Name;
    string::size_type Slash = TmpSrc.rfind('=');
+
+   // honor default release
+   string DefRel = _config->Find("APT::Default-Release");
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+
    if (Slash != string::npos)
    {
       VerTag = string(TmpSrc.begin() + Slash + 1,TmpSrc.end());
       TmpSrc = string(TmpSrc.begin(),TmpSrc.begin() + Slash);
+   } 
+   else  if(!Pkg.end() && DefRel.empty() == false)
+   {
+      // we have a default release, try to locate the pkg. we do it like
+      // this because GetCandidateVer() will not "downgrade", that means
+      // "apt-get source -t stable apt" won't work on a unstable system
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; 
+	   Ver++)
+      {
+	 for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false;
+	      VF++)
+	 {
+	    /* If this is the status file, and the current version is not the
+	       version in the status file (ie it is not installed, or somesuch)
+	       then it is not a candidate for installation, ever. This weeds
+	       out bogus entries that may be due to config-file states, or
+	       other. */
+	    if ((VF.File()->Flags & pkgCache::Flag::NotSource) == 
+		pkgCache::Flag::NotSource && Pkg.CurrentVer() != Ver)
+	    continue;
+	    
+	    //std::cout << VF.File().Archive() << std::endl;
+	    if(VF.File().Archive() && (VF.File().Archive() == DefRel)) 
+	    {
+	       VerTag = Ver.VerStr();
+	       break;
+	    }
+	 }
+      }
    }
-   
+
    /* Lookup the version of the package we would install if we were to
       install a version and determine the source package name, then look
-      in the archive for a source package of the same name. In theory
-      we could stash the version string as well and match that too but
-      today there aren't multi source versions in the archive. */
-   if (_config->FindB("APT::Get::Only-Source") == false && 
-       VerTag.empty() == true)
+      in the archive for a source package of the same name. */
+   if (_config->FindB("APT::Get::Only-Source") == false)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
       if (Pkg.end() == false)
       {
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);      
+	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
 	 if (Ver.end() == false)
 	 {
 	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
@@ -1266,10 +1296,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       }      
    }
    
-   if (Last == 0)
-      return 0;
-   
-   if (Last->Jump(Offset) == false)
+   if (Last == 0 || Last->Jump(Offset) == false)
       return 0;
    
    return Last;
@@ -1716,7 +1743,7 @@ bool DoInstall(CommandLine &CmdL)
    // See if we need to prompt
    if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
       return InstallPackages(Cache,false,false);
-   
+
    return InstallPackages(Cache,false);   
 }
 									/*}}}*/
@@ -2070,6 +2097,7 @@ bool DoSource(CommandLine &CmdL)
 	    if (system(S) != 0)
 	    {
 	       fprintf(stderr,_("Unpack command '%s' failed.\n"),S);
+	       fprintf(stderr,_("Check if the 'dpkg-dev' package is installed.\n"));
 	       _exit(1);
 	    }	    
 	 }

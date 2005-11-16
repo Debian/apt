@@ -636,6 +636,6 @@ pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
    if(DoInstallPreFork() == Failed)
       return Failed;
    
-   return DoInstallPostFork();
+   return DoInstallPostFork(statusFd);
 }
 									/*}}}*/

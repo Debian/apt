@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="iso-8859-15" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.fr">
+%aptent;
+
+]>
+
+<refentry lang="fr">
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-secure</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+
+<!-- NOTE: This manpage has been written based on the
+     Securing Debian Manual ("Debian Security
+     Infrastructure" chapter) and on documentation
+     available at the following sites:
+     http://wiki.debian.net/?apt06
+     http://www.syntaxpolice.org/apt-secure/
+     http://www.enyo.de/fw/software/apt-secure/
+-->
+<!-- TODO: write a more verbose example of how it works with 
+     a sample similar to 
+     http://www.debian-administration.org/articles/174
+     ?
+--> 
+
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-secure</refname>
+    <refpurpose>Certification d'archive avec APT</refpurpose>
+ </refnamediv>
+
+ <refsect1><title>Description</title>
+   <para>
+   Depuis sa version 0.6, <command>apt</command> sait vérifier 
+la signature du fichier Release de chaque archive. On s'assure ainsi que les
+paquets de cette archive ne peuvent pas être modifiés par quelqu'un qui ne 
+possède pas la clé de la signature du fichier Release.
+   </para>
+
+   <para>
+   Quand un paquet provient d'une archive sans signature ou d'une archive avec 
+une signature dont apt ne possède pas la clé, ce paquet n'est pas considéré 
+comme fiable et son installation provoquera un avertissement. Pour 
+l'instant, <command>apt-get</command> ne signale que les archives sans 
+signature&nbsp;; les prochaines versions pourraient rendre obligatoire la 
+vérification des sources avant tout téléchargement de paquet.
+   </para>
+
+   <para>
+   Les paquets &apt-get;, &aptitude; et &synaptic; possèdent cette nouvelle 
+fonction de certification. 
+
+   </para>
+</refsect1>
+
+ <refsect1><title>Archives fiables</title> 
+
+   <para> 
+   D'une archive apt jusqu'à l'utilisateur, la confiance se construit en 
+plusieurs étapes. <command>Apt-secure</command> est la dernière étape. Faire 
+confiance à une archive ne signifie pas que les paquets qu'elle contient 
+sont exempts de code malveillant, mais signifie que vous faites confiance au 
+responsable de l'archive. C'est ensuite au responsable de l'archive de faire 
+en sorte que l'archive soit fiable. 
+
+   </para>
+
+   <para><command>Apt-secure</command> n'examine pas la signature d'un 
+paquet. Certains programmes peuvent le faire comme 
+<command>debsig-verify</command> ou <command>debsign</command>, qu'on peut 
+trouver dans les paquets debsig-verify et devscripts.
+</para>
+
+   <para>
+   La fiabilisation dans Debian commence quand un responsable de paquet envoie 
+un nouveau paquet ou une nouvelle version d'un paquet dans l'archive. Cet 
+envoi, pour être effectif, doit être signé avec la clé d'un responsable qui 
+se trouve dans le trousseau des responsables Debian (disponible dans le 
+paquet debian-keyring). Les clés des responsables de paquet sont signées par 
+d'autres responsables, suivant des procédures préétablies pour s'assurer de 
+l'identité des propriétaires de la clé.
+
+   </para>
+
+   <para>
+   Une fois le paquet vérifié et archivé, la signature du responsable est 
+enlevée, une somme MD5 du paquet est calculée et mise dans le fichier 
+Packages. Une somme MD5 de tous les paquets est ensuite calculée et mise 
+dans le fichier Release. Ce fichier est signé par la clé de l'archive. Cette 
+clé qui est créée chaque année et distribuée par le serveur FTP se trouve 
+aussi dans le trousseau Debian.
+
+   </para>
+
+   <para>
+   Un utilisateur peut consulter la signature du fichier Release, extraire la 
+somme MD5 d'un paquet et la comparer avec la somme du paquet qu'il a 
+téléchargé. Avant la version 0.6, seule la somme du paquet téléchargé était 
+vérifiée. Maintenant on peut vérifier aussi la signature du fichier Release.
+
+   </para>
+
+   <para>Cette façon de faire est différente d'une vérification de la signature d'un 
+paquet. Elle vise à empêcher deux types d'attaque possibles&nbsp;: 
+
+   </para>
+
+    <itemizedlist>
+       <listitem><para>
+L'attaque de type <quote>homme au milieu</quote>. Sans vérification de 
+signature, quelqu'un de malveillant peut s'introduire au milieu du 
+processus de téléchargement et insérer du code soit en contrôlant un élément 
+du réseau, routeur, commutateur, etc. soit en détournant le trafic vers un 
+serveur fourbe (par usurpation d'adresses).
+</para></listitem>
+ 
+       <listitem><para>
+L'attaque par compromission d'un miroir sur le réseau.  Sans vérification de 
+signature, quelqu'un de malveillant peut compromettre un miroir et modifier 
+les fichiers. Ainsi tous ceux qui téléchargent les paquets de ce miroir 
+propagent du code malveillant.
+</para></listitem>
+    </itemizedlist>
+
+   <para>
+Cependant cette méthode ne garantit pas contre une compromission du serveur 
+Debian lui-même (qui signe les paquets) ni contre la compromission de la clé 
+qui sert à signer les fichiers Release. Mais elle peut compléter la 
+signature des paquets.
+</para>
+</refsect1>
+
+ <refsect1><title>Configuration</title>
+   <para>
+   Le programme qui gère la liste des clés utilisées par apt s'appelle 
+<command>apt-key</command>. Il peut ajouter ou supprimer des clés. Cette 
+version installe automatiquement les clés qui servent à signer l'archive 
+Debian et les différents répertoires de paquets. 
+
+   </para>
+   <para>
+   Pour ajouter une clé, vous devez d'abord la télécharger. Il vaut mieux 
+utiliser un canal fiable pour ce téléchargement. Ensuite vous l'ajoutez avec 
+la commande <command>apt-key</command> et vous lancez la commande 
+<command>apt-get update</command> pour télécharger et vérifier le fichier 
+<filename>Release.gpg</filename> de l'archive que vous avez configurée.
+
+   </para>
+</refsect1>
+
+<refsect1><title>Configuration d'une archive</title>
+   <para>
+   Si vous voulez signer les archives dont vous avez la responsabilité, vous 
+devez&nbsp;:
+
+   </para>
+
+     <itemizedlist>
+       <listitem><para>créer un fichier Release à la racine de l'archive, s'il n'existe pas 
+déjà. Vous pouvez le créer avec la commande <command>apt-ftparchive release</command> 
+(fournie dans le paquet apt-utils)&nbsp;;
+</para></listitem>
+   
+      <listitem><para>
+le signer, avec la commande <command>gpg -abs -o Release.gpg Release</command>&nbsp;;
+</para></listitem>
+
+      <listitem><para>
+publier l'empreinte de la clé. Ainsi les utilisateurs de votre archive 
+connaîtront la clé qu'ils doivent importer pour authentifier les fichiers de 
+l'archive.
+</para></listitem>
+
+    </itemizedlist>
+
+    <para>Chaque fois que le contenu de l'archive change, le responsable doit refaire 
+les deux premières étapes.
+</para>
+
+</refsect1>
+
+<refsect1><title>Voir aussi</title> 
+<para> 
+&apt-conf;, &apt-get;,&sources-list;, &apt-key;, &apt-archive;, &debsign;, 
+&debsig-verify;, &gpg;
+
+</para>
+
+<para>Pour des informations plus substantielles, vous pouvez consulter 
+<ulink url="http://www.debian.org/doc/manuals/securing-debian-howto/ch7.en.html">
+l'infrastructure debian pour la sécurité</ulink> un chapitre du manuel Debian sur la sécurité 
+(disponible dans le paquet harden-doc) et le 
+<ulink url="http://www.cryptnet.net/fdp/crypto/strong_distro.html">Strong Distribution HOWTO</ulink> par V. Alex Brennen.
+  </para>
+
+</refsect1>
+
+ &manbugs;
+ &manauthor;
+
+<refsect1><title>Auteurs</title> 
+
+<para>
+Cette page a été écrite à partir des travaux de Javier Fernández-Sanguino Peña, Isaac 
+Jones, Colin Walters, Florian Weimer et Michael Vogt.
+</para>
+  </refsect1>
+&traducteur;
+ 
+</refentry>

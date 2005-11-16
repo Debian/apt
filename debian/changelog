@@ -1,11 +1,118 @@
-apt (0.6.40.2) unstable; urgency=low
+apt (0.6.42.4) unstable; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-131:  
+    * zh_CN.po: Completed to 507 strings(Closes: #338267)
+    * gl.po: Completed to 510 strings (Closes: #338356)
+  * added support for "/etc/apt/sources.list.d" directory 
+    (closes: #66325)
+  
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 16 Nov 2005 17:13:05 +0100
+
+apt (0.6.42.3) unstable; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-129:
+    - patch-118: Russian translation update by Yuri Kozlov (closes: #335164)
+    - patch-119: add update-po as a pre-req for binary (closes: #329910)
+    - patch-121: Complete French translation
+    - patch-125: Fixed localization of y/n questions in German translation 
+                 (closes: #337078)
+    - patch-126: Swedish translation update (closes: #337163)
+    - patch-127: Complete Tagalog translation (closes: #337306)
+    - patch-128: Danish translation update (closes: #337949)
+    - patch-129: Basque translation update (closes: #338101)
+  * cmdline/apt-get.cc:
+    - bufix in FindSrc  (closes: #335213, #337910)
+  * added armeb to archtable (closes: #333599)
+  * with --allow-unauthenticated use the old fallback behaviour for
+    sources (closes: #335112)
+   
+ -- Michael Vogt <mvo@debian.org>  Wed,  9 Nov 2005 07:22:31 +0100
+
+apt (0.6.42.2) unstable; urgency=high
+
+  * NMU (approved by maintainer)
+  * Add AMD64 archive signing key to debian-archive.gpg (closes: #336500).
+  * Add big-endian arm (armeb) support (closes: #333599).
+  * Priority high to get the AMD key into testing ASAP.
+
+ -- Frans Pop <fjp@debian.org>  Sun, 30 Oct 2005 21:29:11 +0100
+ 
+apt (0.6.42.1) unstable; urgency=low
+
+  * fix a incorrect example in the apt_prefrences man page
+    (thanks to Filipus Klutiero, closes: #282918)
+  * apt-pkg/pkgrecords.cc:
+    - revert patch from last version, it causes trouble on alpha 
+      and ia64 (closes: #335102, #335103)
+  * cmdline/apt-get.cc:
+    - be extra carefull in FindSrc (closes: #335213)
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 22 Oct 2005 23:44:35 +0200
+
+apt (0.6.42) unstable; urgency=low
+
+  * apt-pkg/cdrom.cc:
+    - unmount the cdrom when apt failed to locate any package files
+  * allow cdrom failures and fallback to other sources in that case
+    (closes: #44135)
+  * better error text when dpkg-source fails 
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-115:
+    - patch-99: Added Galician translation
+    - patch-100: Completed Danish translation (Closes: #325686)
+    - patch-104: French translation completed
+    - patch-109: Italian translation completed
+    - patch-112: Swedish translation update 
+    - patch-115: Basque translation completed (Closes: #333299)
+  * applied french man-page update (thanks to Philippe Batailler)
+    (closes: #316638, #327456)
+  * fix leak in the mmap code, thanks to Daniel Burrows for the
+    patch (closes: #250583)
+  * support for apt-get [build-dep|source] -t (closes: #152129)
+  * added "APT::Authentication::TrustCDROM" option to make the life
+    for the installer people easier (closes: #334656)
+  * fix crash in apt-ftparchive (thanks to Bastian Blank for the patch)
+    (closes: #334671)
+  * apt-pkg/contrib/md5.cc:
+    - fix a alignment problem on sparc64 that gives random bus errors
+      (thanks to Fabbione for providing a test-case)
+  * init the default ScreenWidth to 79 columns by default 
+    (Closes: #324921)
+  * cmdline/apt-cdrom.cc: 
+    - fix some missing gettext() calls (closes: #334539)
+  * doc/apt-cache.8.xml: fix typo (closes: #334714)
+  
+ -- Michael Vogt <mvo@debian.org>  Wed, 19 Oct 2005 22:02:09 +0200
+
+apt (0.6.41) unstable; urgency=low
 
   * improved the support for "error" and "conffile" reporting from
     dpkg, added the format to README.progress-reporting
   * added README.progress-reporting to the apt-doc package
-  * automatic removal of unused dependencies
+  * improved the network timeout handling, if a index file from a 
+    sources.list times out or EAI_AGAIN is returned from getaddrinfo, 
+    don't try to get the other files from that entry
+  * Support architecture-specific extra overrides
+    (closes: #225947). Thanks to  Anthony Towns for idea and
+    the patch, thanks to Colin Watson for testing it.
+  * Javier Fernandez-Sanguino Pen~a:
+    - Added a first version of an apt-secure.8 manpage, and modified
+      apt-key and apt.end accordingly. Also added the 'update'
+      argument to apt-key which was previously not documented 
+      (Closes: #322120)
+  * Andreas Pakulat:
+    - added example apt-ftparchive.conf file to doc/examples 
+      (closes: #322483)
+  * Fix a incorrect example in the man-page (closes: #282918)
+  * Fix a bug for very long lines in the apt-cdrom code (closes: #280356)
+  * Fix a manual page bug (closes: #316314)
+  * Do md5sum checking for file and cdrom method (closes: #319142)
+  * Change pkgPolicy::Pin from private to protected to let subclasses
+    access it too (closes: #321799)
+  * add default constructor for PrvIterator (closes: #322267)
+  * Reread status configuration on debSystem::Initialize() 
+    (needed for apt-proxy, thanks to Otavio for this patch)
   
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 18 Aug 2005 11:09:25 +0200
+ -- Michael Vogt <mvo@debian.org>  Mon,  5 Sep 2005 22:59:03 +0200
 
 apt (0.6.40.1) unstable; urgency=low
 
