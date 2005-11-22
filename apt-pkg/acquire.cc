@@ -266,7 +266,11 @@ pkgAcquire::MethodConfig *pkgAcquire::GetConfig(string Access)
    Worker Work(Conf);
    if (Work.Start() == false)
       return 0;
-   
+
+   /* if a method uses DownloadLimit, we switch to SingleInstance mode */
+   if(_config->FindI("Acquire::"+Access+"::DlLimit",0) > 0)
+      Conf->SingleInstance = true;
+    
    return Conf;
 }
 									/*}}}*/
