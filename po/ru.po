@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-22 11:23+0100\n"
+"POT-Creation-Date: 2005-11-23 00:39+0100\n"
 "PO-Revision-Date: 2005-10-22 12:24+0400\n"
 "Last-Translator: Yuri Kozlov <kozlov.y@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -1528,7 +1528,7 @@ msgstr "Файл %s/%s переписывает файл в пакете %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
-#: apt-pkg/acquire.cc:417 apt-pkg/clean.cc:38
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Невозможно прочитать %s"
@@ -1833,7 +1833,7 @@ msgstr "Время установления соединения для соке
 msgid "Unable to accept connection"
 msgstr "Невозможно принять соединение"
 
-#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Проблема при хэшировании файла"
 
@@ -1969,76 +1969,76 @@ msgstr "Не удалось открыть канал для %s"
 msgid "Read error from %s process"
 msgstr "Ошибка чтения из процесса %s"
 
-#: methods/http.cc:344
+#: methods/http.cc:381
 msgid "Waiting for headers"
 msgstr "Ожидание заголовков"
 
-#: methods/http.cc:490
+#: methods/http.cc:527
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Получен заголовок длиннее %u символов"
 
-#: methods/http.cc:498
+#: methods/http.cc:535
 msgid "Bad header line"
 msgstr "Неверный заголовок"
 
-#: methods/http.cc:517 methods/http.cc:524
+#: methods/http.cc:554 methods/http.cc:561
 msgid "The HTTP server sent an invalid reply header"
 msgstr "Http-сервер послал неверный заголовок"
 
-#: methods/http.cc:553
+#: methods/http.cc:590
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "Http сервер послал неверный заголовок Content-Length"
 
-#: methods/http.cc:568
+#: methods/http.cc:605
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "Http-сервер послал неверный заголовок Content-Range"
 
-#: methods/http.cc:570
+#: methods/http.cc:607
 msgid "This HTTP server has broken range support"
 msgstr "Этот http-сервер не поддерживает загрузку фрагментов файлов"
 
-#: methods/http.cc:594
+#: methods/http.cc:631
 msgid "Unknown date format"
 msgstr "Неизвестный формат данных"
 
-#: methods/http.cc:741
+#: methods/http.cc:778
 msgid "Select failed"
 msgstr "Ошибка в select"
 
-#: methods/http.cc:746
+#: methods/http.cc:783
 msgid "Connection timed out"
 msgstr "Время ожидания для соединения истекло"
 
-#: methods/http.cc:769
+#: methods/http.cc:806
 msgid "Error writing to output file"
 msgstr "Ошибка записи в выходной файл"
 
-#: methods/http.cc:797
+#: methods/http.cc:834
 msgid "Error writing to file"
 msgstr "Ошибка записи в файл"
 
-#: methods/http.cc:822
+#: methods/http.cc:859
 msgid "Error writing to the file"
 msgstr "Ошибка записи в файл"
 
-#: methods/http.cc:836
+#: methods/http.cc:873
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Ошибка чтения, удалённый сервер прервал соединение"
 
-#: methods/http.cc:838
+#: methods/http.cc:875
 msgid "Error reading from server"
 msgstr "Ошибка чтения с сервера"
 
-#: methods/http.cc:1069
+#: methods/http.cc:1106
 msgid "Bad header data"
 msgstr "Неверный заголовок данных"
 
-#: methods/http.cc:1086
+#: methods/http.cc:1123
 msgid "Connection failed"
 msgstr "Соединение разорвано"
 
-#: methods/http.cc:1177
+#: methods/http.cc:1214
 msgid "Internal error"
 msgstr "Внутренняя ошибка"
 
@@ -2051,7 +2051,7 @@ msgstr "Невозможно отобразить в память пустой �
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Невозможно отобразить в память %lu байт"
 
-#: apt-pkg/contrib/strutl.cc:941
+#: apt-pkg/contrib/strutl.cc:938
 #, c-format
 msgid "Selection %s not found"
 msgstr "Не найдено: %s"
@@ -2174,7 +2174,7 @@ msgstr "Неверная операция %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Невозможно прочитать атрибуты точки монтирования %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:423 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Невозможно сменить текущий каталог на %s"
@@ -2443,7 +2443,7 @@ msgstr "Каталог %spartial отсутствует."
 msgid "Archive directory %spartial is missing."
 msgstr "Архивный каталог %spartial отсутствует."
 
-#: apt-pkg/acquire.cc:817
+#: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
 msgstr "Загружается файл %li из %li (%s осталось)"
@@ -2586,11 +2586,11 @@ msgstr "Ошибка ввода/вывода при попытке сохран�
 msgid "rename failed, %s (%s -> %s)."
 msgstr "переименовать не удалось, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:914
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum не совпадает"
 
-#: apt-pkg/acquire-item.cc:722
+#: apt-pkg/acquire-item.cc:719
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2599,7 +2599,7 @@ msgstr ""
 "Я не в состоянии обнаружить файл пакета %s. Это может означать, что Вам "
 "придётся вручную исправить этот пакет (возможно, пропущен arch)"
 
-#: apt-pkg/acquire-item.cc:781
+#: apt-pkg/acquire-item.cc:778
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2608,13 +2608,13 @@ msgstr ""
 "Я не в состоянии обнаружить файл пакета %s. Это может означать, что Вам "
 "придётся вручную исправить этот пакет."
 
-#: apt-pkg/acquire-item.cc:817
+#: apt-pkg/acquire-item.cc:814
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Некорректный перечень пакетов. Нет поля Filename: для пакета %s."
 
-#: apt-pkg/acquire-item.cc:904
+#: apt-pkg/acquire-item.cc:901
 msgid "Size mismatch"
 msgstr "Не совпадает размер"
 

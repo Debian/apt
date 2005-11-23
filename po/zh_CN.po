@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-22 11:23+0100\n"
+"POT-Creation-Date: 2005-11-23 00:39+0100\n"
 "PO-Revision-Date: 2005-11-15 00:05+0800\n"
 "Last-Translator: Tchaikov <tchaikov@sjtu.edu.cn>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
@@ -1478,7 +1478,7 @@ msgstr "文件 %s/%s 会覆盖属于软件包 %s 中的同名文件"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
-#: apt-pkg/acquire.cc:417 apt-pkg/clean.cc:38
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "无法读取 %s"
@@ -1778,7 +1778,7 @@ msgstr "数据套接字连接超时"
 msgid "Unable to accept connection"
 msgstr "无法接受连接"
 
-#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "把文件加入散列表时出错"
 
@@ -1908,76 +1908,76 @@ msgstr "无法为 %s 开启管道"
 msgid "Read error from %s process"
 msgstr "从 %s 进程读取数据出错"
 
-#: methods/http.cc:344
+#: methods/http.cc:381
 msgid "Waiting for headers"
 msgstr "正在等待报头"
 
-#: methods/http.cc:490
+#: methods/http.cc:527
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "受到了一行报头条目，它的长度超过了 %u 个字符"
 
-#: methods/http.cc:498
+#: methods/http.cc:535
 msgid "Bad header line"
 msgstr "错误的报头条目"
 
-#: methods/http.cc:517 methods/http.cc:524
+#: methods/http.cc:554 methods/http.cc:561
 msgid "The HTTP server sent an invalid reply header"
 msgstr "该 http 服务器发送了一个无效的应答报头"
 
-#: methods/http.cc:553
+#: methods/http.cc:590
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "该 http 服务器发送了一个无效的 Content-Length 报头"
 
-#: methods/http.cc:568
+#: methods/http.cc:605
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "该 http 服务器发送了一个无效的 Content-Range 报头"
 
-#: methods/http.cc:570
+#: methods/http.cc:607
 msgid "This HTTP server has broken range support"
 msgstr "该 http 服务器的 range 支持不正常"
 
-#: methods/http.cc:594
+#: methods/http.cc:631
 msgid "Unknown date format"
 msgstr "无法识别的日期格式"
 
-#: methods/http.cc:741
+#: methods/http.cc:778
 msgid "Select failed"
 msgstr "select 调用出错"
 
-#: methods/http.cc:746
+#: methods/http.cc:783
 msgid "Connection timed out"
 msgstr "连接服务器超时"
 
-#: methods/http.cc:769
+#: methods/http.cc:806
 msgid "Error writing to output file"
 msgstr "写输出文件时出错"
 
-#: methods/http.cc:797
+#: methods/http.cc:834
 msgid "Error writing to file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:822
+#: methods/http.cc:859
 msgid "Error writing to the file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:836
+#: methods/http.cc:873
 msgid "Error reading from server. Remote end closed connection"
 msgstr "从服务器读取数据时出错，对方关闭了连接"
 
-#: methods/http.cc:838
+#: methods/http.cc:875
 msgid "Error reading from server"
 msgstr "从服务器读取数据出错"
 
-#: methods/http.cc:1069
+#: methods/http.cc:1106
 msgid "Bad header data"
 msgstr "错误的报头数据"
 
-#: methods/http.cc:1086
+#: methods/http.cc:1123
 msgid "Connection failed"
 msgstr "连接失败"
 
-#: methods/http.cc:1177
+#: methods/http.cc:1214
 msgid "Internal error"
 msgstr "内部错误"
 
@@ -1990,7 +1990,7 @@ msgstr "无法 mmap 一个空文件"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "无法 mmap %lu 字节的数据"
 
-#: apt-pkg/contrib/strutl.cc:941
+#: apt-pkg/contrib/strutl.cc:938
 #, c-format
 msgid "Selection %s not found"
 msgstr "没有发现您的所选 %s"
@@ -2111,7 +2111,7 @@ msgstr "无效的操作 %s"
 msgid "Unable to stat the mount point %s"
 msgstr "无法读取文件系统挂载点 %s 的状态"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:423 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "无法切换工作目录到 %s"
@@ -2374,7 +2374,7 @@ msgstr "软件包列表的目录 %spartial 不见了。"
 msgid "Archive directory %spartial is missing."
 msgstr "找不到“%spartial”这个目录。"
 
-#: apt-pkg/acquire.cc:817
+#: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
 msgstr "正在下载第 %li 个文件(共 %li 个，尚需 %s)"
@@ -2517,11 +2517,11 @@ msgstr "无法写入来源缓存文件"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "无法重命名文件，%s (%s -> %s)。"
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:914
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
 msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
-#: apt-pkg/acquire-item.cc:722
+#: apt-pkg/acquire-item.cc:719
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2530,7 +2530,7 @@ msgstr ""
 "我无法找到一个对应 %s 软件包的文件。在这种情况下可能需要您手动修正这个软件"
 "包。(缘于架构缺失)"
 
-#: apt-pkg/acquire-item.cc:781
+#: apt-pkg/acquire-item.cc:778
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2538,13 +2538,13 @@ msgid ""
 msgstr ""
 "我无法找到对应 %s 软件包的文件。在这种情况下您可能需要手动修正这个软件包。"
 
-#: apt-pkg/acquire-item.cc:817
+#: apt-pkg/acquire-item.cc:814
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 Filename: 字段。"
 
-#: apt-pkg/acquire-item.cc:904
+#: apt-pkg/acquire-item.cc:901
 msgid "Size mismatch"
 msgstr "大小不符"
 

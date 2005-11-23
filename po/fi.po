@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-22 11:23+0100\n"
+"POT-Creation-Date: 2005-11-23 00:39+0100\n"
 "PO-Revision-Date: 2005-02-15 14:09+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -1501,7 +1501,7 @@ msgstr "Tiedosto %s/%s kirjoitetaan paketista %s tulleen päälle"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
-#: apt-pkg/acquire.cc:417 apt-pkg/clean.cc:38
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Tiedostoa %s ei voi lukea"
@@ -1804,7 +1804,7 @@ msgstr "Pistokkeen kytkeminen aikakatkaistiin"
 msgid "Unable to accept connection"
 msgstr "Yhteyttä ei voitu hyväksyä"
 
-#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Pulmia tiedoston hajautuksessa"
 
@@ -1936,76 +1936,76 @@ msgstr "Putkea %s ei voitu avata"
 msgid "Read error from %s process"
 msgstr "Prosessi %s ilmoitti lukuvirheestä"
 
-#: methods/http.cc:344
+#: methods/http.cc:381
 msgid "Waiting for headers"
 msgstr "Odotetaan otsikoita"
 
-#: methods/http.cc:490
+#: methods/http.cc:527
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Vastaanotettiin yksi otsikkorivi pituudeltaan yli %u merkkiä"
 
-#: methods/http.cc:498
+#: methods/http.cc:535
 msgid "Bad header line"
 msgstr "Virheellinen otsikkorivi"
 
-#: methods/http.cc:517 methods/http.cc:524
+#: methods/http.cc:554 methods/http.cc:561
 msgid "The HTTP server sent an invalid reply header"
 msgstr "HTTP-palvelin lähetti virheellisen vastausotsikon"
 
-#: methods/http.cc:553
+#: methods/http.cc:590
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "HTTP-palvelin lähetti virheellisen Content-Length-otsikon"
 
-#: methods/http.cc:568
+#: methods/http.cc:605
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "HTTP-palvelin lähetti virheellisen Content-Range-otsikon"
 
-#: methods/http.cc:570
+#: methods/http.cc:607
 msgid "This HTTP server has broken range support"
 msgstr "HTTP-palvelimen arvoaluetuki on rikki"
 
-#: methods/http.cc:594
+#: methods/http.cc:631
 msgid "Unknown date format"
 msgstr "Tuntematon päiväysmuoto"
 
-#: methods/http.cc:741
+#: methods/http.cc:778
 msgid "Select failed"
 msgstr "Select ei toiminut"
 
-#: methods/http.cc:746
+#: methods/http.cc:783
 msgid "Connection timed out"
 msgstr "Yhteys aikakatkaistiin"
 
-#: methods/http.cc:769
+#: methods/http.cc:806
 msgid "Error writing to output file"
 msgstr "Tapahtui virhe kirjoitettaessa tulostustiedostoon"
 
-#: methods/http.cc:797
+#: methods/http.cc:834
 msgid "Error writing to file"
 msgstr "Tapahtui virhe kirjoitettaessa tiedostoon"
 
-#: methods/http.cc:822
+#: methods/http.cc:859
 msgid "Error writing to the file"
 msgstr "Tapahtui virhe kirjoitettaessa tiedostoon"
 
-#: methods/http.cc:836
+#: methods/http.cc:873
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Tapahtui virhe luettaessa palvelimelta. Etäpää sulki yhteyden"
 
-#: methods/http.cc:838
+#: methods/http.cc:875
 msgid "Error reading from server"
 msgstr "Tapahtui virhe luettaessa palvelimelta"
 
-#: methods/http.cc:1069
+#: methods/http.cc:1106
 msgid "Bad header data"
 msgstr "Virheellinen otsikkotieto"
 
-#: methods/http.cc:1086
+#: methods/http.cc:1123
 msgid "Connection failed"
 msgstr "Yhteys ei toiminut"
 
-#: methods/http.cc:1177
+#: methods/http.cc:1214
 msgid "Internal error"
 msgstr "Sisäinen virhe"
 
@@ -2018,7 +2018,7 @@ msgstr "Tyhjälle tiedostolle ei voi tehdä mmap:ia"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Ei voitu tehdä %lu tavun mmap:ia"
 
-#: apt-pkg/contrib/strutl.cc:941
+#: apt-pkg/contrib/strutl.cc:938
 #, c-format
 msgid "Selection %s not found"
 msgstr "Valintaa %s ei löydy"
@@ -2139,7 +2139,7 @@ msgstr "Virheellinen toiminto %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Komento stat ei toiminut liitoskohdalle %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:423 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Kansioon %s vaihto ei onnistu"
@@ -2400,7 +2400,7 @@ msgstr "Luettelokansio %spartial puuttuu."
 msgid "Archive directory %spartial is missing."
 msgstr "Arkistokansio %spartial puuttuu."
 
-#: apt-pkg/acquire.cc:817
+#: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
 msgstr ""
@@ -2548,11 +2548,11 @@ msgstr "Syöttö/Tulostus -virhe tallennettaessa pakettivarastoa"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "nimen vaihto ei onnistunut, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:914
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum ei täsmää"
 
-#: apt-pkg/acquire-item.cc:722
+#: apt-pkg/acquire-item.cc:719
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2561,7 +2561,7 @@ msgstr ""
 "En löytänyt pakettia %s vastaavaa tiedostoa. Voit ehkä joutua korjaamaan "
 "tämän paketin itse (puuttuvan arkkitehtuurin vuoksi)"
 
-#: apt-pkg/acquire-item.cc:781
+#: apt-pkg/acquire-item.cc:778
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2570,7 +2570,7 @@ msgstr ""
 "Pakettia %s vastaavaa tiedostoa ei löytynyt. Voit ehkä joutua korjaamaan "
 "tämän paketin itse."
 
-#: apt-pkg/acquire-item.cc:817
+#: apt-pkg/acquire-item.cc:814
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2578,7 +2578,7 @@ msgstr ""
 "Pakettihakemistotiedostot ovat turmeltuneet. Paketille %s ei ole Filename-"
 "kenttää."
 
-#: apt-pkg/acquire-item.cc:904
+#: apt-pkg/acquire-item.cc:901
 msgid "Size mismatch"
 msgstr "Koko ei täsmää"
 

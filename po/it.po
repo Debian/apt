@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-22 11:23+0100\n"
+"POT-Creation-Date: 2005-11-23 00:39+0100\n"
 "PO-Revision-Date: 2005-10-05 17:38+0200\n"
 "Last-Translator: Samuele Giovanni Tonon <samu@debian.org>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -1515,7 +1515,7 @@ msgstr "Il file %s/%s sovrascrive quello nel pacchetto %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
 #: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
-#: apt-pkg/acquire.cc:417 apt-pkg/clean.cc:38
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Impossibile leggere %s"
@@ -1818,7 +1818,7 @@ msgstr "Tempo limite di connessione esaurito per il socket dati"
 msgid "Unable to accept connection"
 msgstr "Impossibile accettare connessioni"
 
-#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problemi nella creazione dell'hash del file"
 
@@ -1954,77 +1954,77 @@ msgstr "Impossibile aprire una pipe per %s"
 msgid "Read error from %s process"
 msgstr "Errore di lettura dal processo %s"
 
-#: methods/http.cc:344
+#: methods/http.cc:381
 msgid "Waiting for headers"
 msgstr "In attesa degli header"
 
-#: methods/http.cc:490
+#: methods/http.cc:527
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Si è ottenuto una singola linea di header su %u caratteri"
 
-#: methods/http.cc:498
+#: methods/http.cc:535
 msgid "Bad header line"
 msgstr "Linea nell'header non corretta"
 
-#: methods/http.cc:517 methods/http.cc:524
+#: methods/http.cc:554 methods/http.cc:561
 msgid "The HTTP server sent an invalid reply header"
 msgstr "Il server HTTP ha inviato un header di risposta non valido"
 
-#: methods/http.cc:553
+#: methods/http.cc:590
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "Il server HTTP ha inviato un Content-Length non valido"
 
-#: methods/http.cc:568
+#: methods/http.cc:605
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "Il server HTTP ha inviato un Content-Range non valido"
 
-#: methods/http.cc:570
+#: methods/http.cc:607
 msgid "This HTTP server has broken range support"
 msgstr "Questo server HTTP ha il supporto del range bacato"
 
-#: methods/http.cc:594
+#: methods/http.cc:631
 msgid "Unknown date format"
 msgstr "Formato della data sconosciuto"
 
-#: methods/http.cc:741
+#: methods/http.cc:778
 msgid "Select failed"
 msgstr "Select fallito"
 
-#: methods/http.cc:746
+#: methods/http.cc:783
 msgid "Connection timed out"
 msgstr "Tempo limite per la connessione esaurito"
 
-#: methods/http.cc:769
+#: methods/http.cc:806
 msgid "Error writing to output file"
 msgstr "Errore nella scrittura del file di output"
 
-#: methods/http.cc:797
+#: methods/http.cc:834
 msgid "Error writing to file"
 msgstr "Errore nella scrittura nel file"
 
-#: methods/http.cc:822
+#: methods/http.cc:859
 msgid "Error writing to the file"
 msgstr "Errore nella scrittura nel file"
 
-#: methods/http.cc:836
+#: methods/http.cc:873
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 "Errore nella lettura dal server. Il lato remoto ha chiuso la connessione"
 
-#: methods/http.cc:838
+#: methods/http.cc:875
 msgid "Error reading from server"
 msgstr "Errore nella lettura dal server"
 
-#: methods/http.cc:1069
+#: methods/http.cc:1106
 msgid "Bad header data"
 msgstr "Header dei dati malformato"
 
-#: methods/http.cc:1086
+#: methods/http.cc:1123
 msgid "Connection failed"
 msgstr "Connessione fallita"
 
-#: methods/http.cc:1177
+#: methods/http.cc:1214
 msgid "Internal error"
 msgstr "Errore interno"
 
@@ -2037,7 +2037,7 @@ msgstr "Impossibile eseguire mmap su un file vuoto"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Impossibile eseguire mmap di %lu byte"
 
-#: apt-pkg/contrib/strutl.cc:941
+#: apt-pkg/contrib/strutl.cc:938
 #, c-format
 msgid "Selection %s not found"
 msgstr "Selezione %s non trovata"
@@ -2162,7 +2162,7 @@ msgstr "Operazione non valida %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Impossibile accedere al mount point %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:423 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Impossibile raggiungere %s"
@@ -2426,7 +2426,7 @@ msgstr "Manca la directory di liste %spartial."
 msgid "Archive directory %spartial is missing."
 msgstr "Manca la directory di archivio %spartial."
 
-#: apt-pkg/acquire.cc:817
+#: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
 msgstr "Scaricamento del file %li di %li (%s rimanente)"
@@ -2579,11 +2579,11 @@ msgstr "Errore di I/O nel salvataggio del cache sorgente"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "rename() fallita: %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:914
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
 msgid "MD5Sum mismatch"
 msgstr "Somma MD5 non corrispondente"
 
-#: apt-pkg/acquire-item.cc:722
+#: apt-pkg/acquire-item.cc:719
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2593,7 +2593,7 @@ msgstr ""
 "che bisogna correggere manualmente l'errore. (a causa di un'architettura "
 "mancante)"
 
-#: apt-pkg/acquire-item.cc:781
+#: apt-pkg/acquire-item.cc:778
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2602,7 +2602,7 @@ msgstr ""
 "Non è stato possibile trovare file per il pacchetto %s. Questo significa che "
 "bisogna correggere manualmente l'errore."
 
-#: apt-pkg/acquire-item.cc:817
+#: apt-pkg/acquire-item.cc:814
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2610,7 +2610,7 @@ msgstr ""
 "I file indice dei pacchetti sono corrotti. Non c'è un campo Filename: per il "
 "pacchetto %s."
 
-#: apt-pkg/acquire-item.cc:904
+#: apt-pkg/acquire-item.cc:901
 msgid "Size mismatch"
 msgstr "Le Dimensioni non corrispondono"
 
