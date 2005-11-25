@@ -59,9 +59,9 @@ class OpProgress
    
    void Progress(unsigned long Current);
    void SubProgress(unsigned long SubTotal);
-   void SubProgress(unsigned long SubTotal,string Op);
+   void SubProgress(unsigned long SubTotal,const string &Op);
    void OverallProgress(unsigned long Current,unsigned long Total,
-			unsigned long Size,string Op);
+			unsigned long Size,const string &Op);
    virtual void Done() {};
    
    OpProgress();
