@@ -31,6 +31,11 @@ class CircleBuf
    unsigned long MaxGet;
    struct timeval Start;
    
+   static unsigned long BwReadLimit;
+   static unsigned long BwTickReadData;
+   static struct timeval BwReadTick;
+   static const unsigned int BW_HZ;
+
    unsigned long LeftRead()
    {
       unsigned long Sz = Size - (InP - OutP);

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-20 11:08+0200\n"
+"POT-Creation-Date: 2005-11-28 10:51+0100\n"
 "PO-Revision-Date: 2005-02-11 16:14+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <provoz@debian.cz>\n"
@@ -1436,7 +1436,7 @@ msgstr "Duplicitní konfigurační soubor %s/%s"
 msgid "Failed to write file %s"
 msgstr "Selhal zápis do souboru %s"
 
-#: apt-inst/dirstream.cc:80 apt-inst/dirstream.cc:88
+#: apt-inst/dirstream.cc:96 apt-inst/dirstream.cc:104
 #, c-format
 msgid "Failed to close file %s"
 msgstr "Selhalo zavření souboru %s"
@@ -1489,7 +1489,8 @@ msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Soubor %s/%s přepisuje ten z balíku %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:417 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nemohu číst %s"
@@ -1792,7 +1793,7 @@ msgstr "Spojení datového socketu vypršelo"
 msgid "Unable to accept connection"
 msgstr "Nemohu přijmout spojení"
 
-#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problém s hashováním souboru"
 
@@ -1924,76 +1925,76 @@ msgstr "Nemohu otevřít rouru pro %s"
 msgid "Read error from %s process"
 msgstr "Chyba čtení z procesu %s"
 
-#: methods/http.cc:344
+#: methods/http.cc:381
 msgid "Waiting for headers"
 msgstr "Čekám na hlavičky"
 
-#: methods/http.cc:490
+#: methods/http.cc:527
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Získal jsem jednu řádku hlavičky přes %u znaků"
 
-#: methods/http.cc:498
+#: methods/http.cc:535
 msgid "Bad header line"
 msgstr "Chybná hlavička"
 
-#: methods/http.cc:517 methods/http.cc:524
+#: methods/http.cc:554 methods/http.cc:561
 msgid "The HTTP server sent an invalid reply header"
 msgstr "Http server poslal neplatnou hlavičku odpovědi"
 
-#: methods/http.cc:553
+#: methods/http.cc:590
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "Http server poslal neplatnou hlavičku Content-Length"
 
-#: methods/http.cc:568
+#: methods/http.cc:605
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "Http server poslal neplatnou hlavičku Content-Range"
 
-#: methods/http.cc:570
+#: methods/http.cc:607
 msgid "This HTTP server has broken range support"
 msgstr "Tento HTTP server má porouchanou podporu rozsahů"
 
-#: methods/http.cc:594
+#: methods/http.cc:631
 msgid "Unknown date format"
 msgstr "Neznámý formát data"
 
-#: methods/http.cc:741
+#: methods/http.cc:778
 msgid "Select failed"
 msgstr "Výběr selhal"
 
-#: methods/http.cc:746
+#: methods/http.cc:783
 msgid "Connection timed out"
 msgstr "Čas spojení vypršel"
 
-#: methods/http.cc:769
+#: methods/http.cc:806
 msgid "Error writing to output file"
 msgstr "Chyba zápisu do výstupního souboru"
 
-#: methods/http.cc:797
+#: methods/http.cc:834
 msgid "Error writing to file"
 msgstr "Chyba zápisu do souboru"
 
-#: methods/http.cc:822
+#: methods/http.cc:859
 msgid "Error writing to the file"
 msgstr "Chyba zápisu do souboru"
 
-#: methods/http.cc:836
+#: methods/http.cc:873
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Chyba čtení ze serveru. Druhá strana zavřela spojení"
 
-#: methods/http.cc:838
+#: methods/http.cc:875
 msgid "Error reading from server"
 msgstr "Chyba čtení ze serveru"
 
-#: methods/http.cc:1069
+#: methods/http.cc:1106
 msgid "Bad header data"
 msgstr "Špatné datové záhlaví"
 
-#: methods/http.cc:1086
+#: methods/http.cc:1123
 msgid "Connection failed"
 msgstr "Spojení selhalo"
 
-#: methods/http.cc:1177
+#: methods/http.cc:1214
 msgid "Internal error"
 msgstr "Vnitřní chyba"
 
@@ -2006,7 +2007,7 @@ msgstr "Nemohu provést mmap prázdného souboru"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nešlo mmapovat %lu bajtů"
 
-#: apt-pkg/contrib/strutl.cc:941
+#: apt-pkg/contrib/strutl.cc:938
 #, c-format
 msgid "Selection %s not found"
 msgstr "Výběr %s nenalezen"
@@ -2128,7 +2129,7 @@ msgstr "Neplatná operace %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Nelze vyhodnotit přípojný bod %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:423 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nemohu přejít do %s"
@@ -2295,52 +2296,52 @@ msgstr "Nelze zpracovat soubor %s (1)"
 msgid "Unable to parse package file %s (2)"
 msgstr "Nelze zpracovat soubor %s (2)"
 
-#: apt-pkg/sourcelist.cc:87
+#: apt-pkg/sourcelist.cc:94
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (URI)"
 
-#: apt-pkg/sourcelist.cc:89
+#: apt-pkg/sourcelist.cc:96
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (dist)"
 
-#: apt-pkg/sourcelist.cc:92
+#: apt-pkg/sourcelist.cc:99
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování URI)"
 
-#: apt-pkg/sourcelist.cc:98
+#: apt-pkg/sourcelist.cc:105
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (Absolutní dist)"
 
-#: apt-pkg/sourcelist.cc:105
+#: apt-pkg/sourcelist.cc:112
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování dist)"
 
-#: apt-pkg/sourcelist.cc:156
+#: apt-pkg/sourcelist.cc:203
 #, c-format
 msgid "Opening %s"
 msgstr "Otevírám %s"
 
-#: apt-pkg/sourcelist.cc:170 apt-pkg/cdrom.cc:426
+#: apt-pkg/sourcelist.cc:220 apt-pkg/cdrom.cc:426
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Řádek %u v seznamu zdrojů %s je příliš dlouhý."
 
-#: apt-pkg/sourcelist.cc:187
+#: apt-pkg/sourcelist.cc:240
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
 
-#: apt-pkg/sourcelist.cc:191
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
+#: apt-pkg/sourcelist.cc:244
+#, fuzzy, c-format
+msgid "Type '%s' is not known in on line %u in source list %s"
 msgstr "Typ '%s' na řádce %u v seznamu zdrojů %s není známý"
 
-#: apt-pkg/sourcelist.cc:199 apt-pkg/sourcelist.cc:202
+#: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "Zkomolený řádek %u v seznamu zdrojů %s (id výrobce)"
@@ -2389,7 +2390,7 @@ msgstr "Adresář seznamů %spartial chybí."
 msgid "Archive directory %spartial is missing."
 msgstr "Archivní adresář %spartial chybí."
 
-#: apt-pkg/acquire.cc:817
+#: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
 msgstr ""
@@ -2412,12 +2413,12 @@ msgstr ""
 " '%s'\n"
 "do mechaniky '%s' a stiskněte enter\n"
 
-#: apt-pkg/init.cc:119
+#: apt-pkg/init.cc:120
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "Balíčkovací systém '%s' není podporován"
 
-#: apt-pkg/init.cc:135
+#: apt-pkg/init.cc:136
 msgid "Unable to determine a suitable packaging system type"
 msgstr "Nebylo možno určit vhodný typ balíčkovacího systému"
 
@@ -2538,11 +2539,11 @@ msgstr "Chyba IO při ukládání zdrojové cache"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "přejmenování selhalo, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:908
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
 msgid "MD5Sum mismatch"
 msgstr "Neshoda MD5 součtů"
 
-#: apt-pkg/acquire-item.cc:722
+#: apt-pkg/acquire-item.cc:719
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2551,7 +2552,7 @@ msgstr ""
 "Nebyl jsem schopen nalézt soubor s balíkem %s. To by mohlo znamenat, že "
 "tento balík je třeba opravit ručně (kvůli chybějící architektuře)"
 
-#: apt-pkg/acquire-item.cc:775
+#: apt-pkg/acquire-item.cc:778
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2560,14 +2561,14 @@ msgstr ""
 "Nebyl jsem schopen nalézt soubor s balíkem %s. Asi budete muset tento balík "
 "opravit ručně."
 
-#: apt-pkg/acquire-item.cc:811
+#: apt-pkg/acquire-item.cc:814
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 "Indexové soubory balíku jsou narušeny. Chybí pole Filename: u balíku %s."
 
-#: apt-pkg/acquire-item.cc:898
+#: apt-pkg/acquire-item.cc:901
 msgid "Size mismatch"
 msgstr "Velikosti nesouhlasí"
 

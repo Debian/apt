@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-20 11:08+0200\n"
+"POT-Creation-Date: 2005-11-28 10:51+0100\n"
 "PO-Revision-Date: 2005-06-16 10:24-0300\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
@@ -1453,7 +1453,7 @@ msgstr "Arquivo de confgiuração duplicado %s/%s"
 msgid "Failed to write file %s"
 msgstr "Falha ao gravar arquivo %s"
 
-#: apt-inst/dirstream.cc:80 apt-inst/dirstream.cc:88
+#: apt-inst/dirstream.cc:96 apt-inst/dirstream.cc:104
 #, c-format
 msgid "Failed to close file %s"
 msgstr "Falha ao fechar arquivo %s"
@@ -1506,7 +1506,8 @@ msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Arquivo %s/%s sobreescreve arquivo no pacote %s"
 
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
-#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/acquire.cc:417 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "Impossível ler %s"
@@ -1812,7 +1813,7 @@ msgstr "Conexão do socket de dados expirou"
 msgid "Unable to accept connection"
 msgstr "Impossível aceitar conexão"
 
-#: methods/ftp.cc:864 methods/http.cc:920 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problema fazendo o hash do arquivo"
 
@@ -1944,76 +1945,76 @@ msgstr "Não foi possível abrir pipe para %s"
 msgid "Read error from %s process"
 msgstr "Erro de leitura do processo %s"
 
-#: methods/http.cc:344
+#: methods/http.cc:381
 msgid "Waiting for headers"
 msgstr "Aguardando por cabeçalhos"
 
-#: methods/http.cc:490
+#: methods/http.cc:527
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Recebi uma única linha de cabeçalho acima de %u caracteres"
 
-#: methods/http.cc:498
+#: methods/http.cc:535
 msgid "Bad header line"
 msgstr "Linha de cabeçalho ruim"
 
-#: methods/http.cc:517 methods/http.cc:524
+#: methods/http.cc:554 methods/http.cc:561
 msgid "The HTTP server sent an invalid reply header"
 msgstr "O servidor http enviou um cabeçalho de resposta inválido"
 
-#: methods/http.cc:553
+#: methods/http.cc:590
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "O servidor http enviou um cabeçalho Conten-Length inválido"
 
-#: methods/http.cc:568
+#: methods/http.cc:605
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "O servidor http enviou um cabeçalho Conten-Range inválido"
 
-#: methods/http.cc:570
+#: methods/http.cc:607
 msgid "This HTTP server has broken range support"
 msgstr "Este servidor http possui suporte a range quebrado"
 
-#: methods/http.cc:594
+#: methods/http.cc:631
 msgid "Unknown date format"
 msgstr "Formato de data desconhecido"
 
-#: methods/http.cc:741
+#: methods/http.cc:778
 msgid "Select failed"
 msgstr "Seleção falhou."
 
-#: methods/http.cc:746
+#: methods/http.cc:783
 msgid "Connection timed out"
 msgstr "Conexão expirou"
 
-#: methods/http.cc:769
+#: methods/http.cc:806
 msgid "Error writing to output file"
 msgstr "Erro gravando para arquivo de saída"
 
-#: methods/http.cc:797
+#: methods/http.cc:834
 msgid "Error writing to file"
 msgstr "Erro gravando para arquivo"
 
-#: methods/http.cc:822
+#: methods/http.cc:859
 msgid "Error writing to the file"
 msgstr "Erro gravando para o arquivo"
 
-#: methods/http.cc:836
+#: methods/http.cc:873
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Erro lendo do servidor Ponto remoto fechou a conexão"
 
-#: methods/http.cc:838
+#: methods/http.cc:875
 msgid "Error reading from server"
 msgstr "Erro lendo do servidor"
 
-#: methods/http.cc:1069
+#: methods/http.cc:1106
 msgid "Bad header data"
 msgstr "Dados de cabeçalho ruins"
 
-#: methods/http.cc:1086
+#: methods/http.cc:1123
 msgid "Connection failed"
 msgstr "Conexão falhou."
 
-#: methods/http.cc:1177
+#: methods/http.cc:1214
 msgid "Internal error"
 msgstr "Erro interno"
 
@@ -2026,7 +2027,7 @@ msgstr "Não foi possível fazer mmap de arquivo vazio"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Impossível fazer mmap de %lu bytes"
 
-#: apt-pkg/contrib/strutl.cc:941
+#: apt-pkg/contrib/strutl.cc:938
 #, c-format
 msgid "Selection %s not found"
 msgstr "Seleção %s não encontrada"
@@ -2149,7 +2150,7 @@ msgstr "Operação %s inválida"
 msgid "Unable to stat the mount point %s"
 msgstr "Impossível checar o ponto de montagem %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:423 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Impossível mudar para %s"
@@ -2316,52 +2317,52 @@ msgstr "Impossível analizar arquivo de pacote %s (1)"
 msgid "Unable to parse package file %s (2)"
 msgstr "Impossível analizar arquivo de pacote %s (2)"
 
-#: apt-pkg/sourcelist.cc:87
+#: apt-pkg/sourcelist.cc:94
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "Linha malformada %lu no arquivo de fontes %s (URI)"
 
-#: apt-pkg/sourcelist.cc:89
+#: apt-pkg/sourcelist.cc:96
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "Linha malformada %lu no arquivo de fontes %s (distribuição)"
 
-#: apt-pkg/sourcelist.cc:92
+#: apt-pkg/sourcelist.cc:99
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "Linha malformada %lu no arquivo de fontes %s (análise de URI)"
 
-#: apt-pkg/sourcelist.cc:98
+#: apt-pkg/sourcelist.cc:105
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "Linha malformada %lu no arquivo de fontes %s (Distribuição absoluta)"
 
-#: apt-pkg/sourcelist.cc:105
+#: apt-pkg/sourcelist.cc:112
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Linha malformada %lu no arquivo de fontes %s (análise de distribuição)"
 
-#: apt-pkg/sourcelist.cc:156
+#: apt-pkg/sourcelist.cc:203
 #, c-format
 msgid "Opening %s"
 msgstr "Abrindo %s"
 
-#: apt-pkg/sourcelist.cc:170 apt-pkg/cdrom.cc:426
+#: apt-pkg/sourcelist.cc:220 apt-pkg/cdrom.cc:426
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Linha %u muito longa na sources.lits %s."
 
-#: apt-pkg/sourcelist.cc:187
+#: apt-pkg/sourcelist.cc:240
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Linha malformada %u no arquivo de fontes %s (tipo)"
 
-#: apt-pkg/sourcelist.cc:191
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
+#: apt-pkg/sourcelist.cc:244
+#, fuzzy, c-format
+msgid "Type '%s' is not known in on line %u in source list %s"
 msgstr "Tipo '%s' não é conhecido na linha %u na lista de fontes %s"
 
-#: apt-pkg/sourcelist.cc:199 apt-pkg/sourcelist.cc:202
+#: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "Linha malformada %u na lista de fontes %s (id de fornecedor)"
@@ -2413,7 +2414,7 @@ msgstr "Diretório de listas %spartial está faltando."
 msgid "Archive directory %spartial is missing."
 msgstr "Diretório de repositório %spartial está faltando."
 
-#: apt-pkg/acquire.cc:817
+#: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
 msgstr ""
@@ -2436,12 +2437,12 @@ msgstr ""
 " '%s'\n"
 "no drive '%s' e pressione enter\n"
 
-#: apt-pkg/init.cc:119
+#: apt-pkg/init.cc:120
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "Sistema de empacotamento '%s' não é suportado"
 
-#: apt-pkg/init.cc:135
+#: apt-pkg/init.cc:136
 msgid "Unable to determine a suitable packaging system type"
 msgstr ""
 "Não foi possível determinar um tipo de sistema de empacotamento aplicável."
@@ -2567,11 +2568,11 @@ msgstr "Erro de I/O ao gravar cache fonte"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "renomeação falhou, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:908
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum incorreto"
 
-#: apt-pkg/acquire-item.cc:722
+#: apt-pkg/acquire-item.cc:719
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2581,7 +2582,7 @@ msgstr ""
 "que você precisa consertar manualmente este pacote. (devido a arquitetura "
 "não especificada)."
 
-#: apt-pkg/acquire-item.cc:775
+#: apt-pkg/acquire-item.cc:778
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2590,7 +2591,7 @@ msgstr ""
 "Não foi possível localizar arquivo para o pacote %s. Isto pode significar "
 "que você precisa consertar manualmente este pacote."
 
-#: apt-pkg/acquire-item.cc:811
+#: apt-pkg/acquire-item.cc:814
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2598,7 +2599,7 @@ msgstr ""
 "Os arquivos de índice de pacotes estão corrompidos. Nenhum campo Filename: "
 "para o pacote %s."
 
-#: apt-pkg/acquire-item.cc:898
+#: apt-pkg/acquire-item.cc:901
 msgid "Size mismatch"
 msgstr "Tamanho incorreto"
 

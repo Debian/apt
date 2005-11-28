@@ -89,7 +89,7 @@ class pkgCache
    string CacheFile;
    MMap &Map;
 
-   unsigned long sHash(string S) const;
+   unsigned long sHash(const string &S) const;
    unsigned long sHash(const char *S) const;
    
    public:
@@ -111,14 +111,14 @@ class pkgCache
    inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();};
       
    // String hashing function (512 range)
-   inline unsigned long Hash(string S) const {return sHash(S);};
+   inline unsigned long Hash(const string &S) const {return sHash(S);};
    inline unsigned long Hash(const char *S) const {return sHash(S);};
 
    // Usefull transformation things
    const char *Priority(unsigned char Priority);
    
    // Accessors
-   PkgIterator FindPkg(string Name);
+   PkgIterator FindPkg(const string &Name);
    Header &Head() {return *HeaderP;};
    inline PkgIterator PkgBegin();
    inline PkgIterator PkgEnd();

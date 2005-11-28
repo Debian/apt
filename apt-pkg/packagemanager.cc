@@ -593,7 +593,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	  Pkg.State() == pkgCache::PkgIterator::NeedsNothing &&
 	  (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
       {
-	 _error->Error("Internal Error, trying to manipulate a kept package");
+	 _error->Error("Internal Error, trying to manipulate a kept package (%s)",Pkg.Name());
 	 return Failed;
       }
       
@@ -634,6 +634,8 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int status_fd)
 {
    OrderResult Res = OrderInstall();
+   if(Debug)
+      std::clog << "OrderInstall() returned: " << Res << std::endl;
    if (Res != Failed)
       if (Go(status_fd) == false)
 	 return Failed;
