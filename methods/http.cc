@@ -824,7 +824,10 @@ bool HttpMethod::Flush(ServerState *Srv)
 {
    if (File != 0)
    {
-      SetNonBlock(File->Fd(),false);
+      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
+      // can't be set
+      if (File->Name() != "/dev/null")
+	 SetNonBlock(File->Fd(),false);
       if (Srv->In.WriteSpace() == false)
 	 return true;
       
@@ -852,7 +855,10 @@ bool HttpMethod::ServerDie(ServerState *Srv)
    // Dump the buffer to the file
    if (Srv->State == ServerState::Data)
    {
-      SetNonBlock(File->Fd(),false);
+      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
+      // can't be set
+      if (File->Name() != "/dev/null")
+	 SetNonBlock(File->Fd(),false);
       while (Srv->In.WriteSpace() == true)
       {
 	 if (Srv->In.Write(File->Fd()) == false)
