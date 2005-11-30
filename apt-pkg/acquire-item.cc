@@ -165,11 +165,15 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
    CurrentPackagesFile = _config->FindDir("Dir::State::lists");
    CurrentPackagesFile += URItoFileName(RealURI);
 
+   // FIXME: this file:/ check is a hack to prevent fetching
+   //        from local sources. this is really silly, and
+   //        should be fixed cleanly as soon as possible
    if(!FileExists(CurrentPackagesFile) || 
+      Desc.URI.substr(0,strlen("file:/")) == "file:/" ||
       !_config->FindB("Acquire::Diffs",true)) {
       // we don't have a pkg file or we don't want to queue
       if(Debug)
-	 std::clog << "No index file or canceld by user" << std::endl;
+	 std::clog << "No index file, local or canceld by user" << std::endl;
       Failed("", NULL);
       return;
    }
