@@ -377,12 +377,12 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       const char *End = I;
       for (; End > Start && isspace(End[-1]); End--);
       
-      Ver = string(Start,End-Start);
+      Ver.assign(Start,End-Start);
       I++;
    }
    else
    {
-      Ver = string();
+      Ver.clear();
       Op = pkgCache::Dep::NoOp;
    }
    

@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.cc,v 1.25 2004/06/07 23:08:00 mdz Exp $
+// $Id: sourcelist.cc,v 1.3 2002/08/15 20:51:37 niemeyer Exp $
 /* ######################################################################
 
    List of Sources
@@ -21,6 +21,13 @@
 #include <apti18n.h>
 
 #include <fstream>
+
+// CNC:2003-03-03 - This is needed for ReadDir stuff.
+#include <algorithm>
+#include <stdio.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 									/*}}}*/
 
 using namespace std;
@@ -142,23 +149,66 @@ pkgSourceList::~pkgSourceList()
 /* */
 bool pkgSourceList::ReadMainList()
 {
-   return Read(_config->FindFile("Dir::Etc::sourcelist"));
+   // CNC:2003-03-03 - Multiple sources list support.
+   bool Res = true;
+#if 0
+   Res = ReadVendors();
+   if (Res == false)
+      return false;
+#endif
+
+   Reset();
+   // CNC:2003-11-28 - Entries in sources.list have priority over
+   //                  entries in sources.list.d.
+   string Main = _config->FindFile("Dir::Etc::sourcelist");
+   if (FileExists(Main) == true)
+      Res &= ReadAppend(Main);   
+
+   string Parts = _config->FindDir("Dir::Etc::sourceparts");
+   if (FileExists(Parts) == true)
+      Res &= ReadSourceDir(Parts);
+   
+   return Res;
 }
 									/*}}}*/
+// CNC:2003-03-03 - Needed to preserve backwards compatibility.
+// SourceList::Reset - Clear the sourcelist contents			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgSourceList::Reset()
+{
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+      delete *I;
+   SrcList.erase(SrcList.begin(),SrcList.end());
+}
+									/*}}}*/
+// CNC:2003-03-03 - Function moved to ReadAppend() and Reset().
 // SourceList::Read - Parse the sourcelist file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgSourceList::Read(string File)
+{
+   Reset();
+   return ReadAppend(File);
+}
+									/*}}}*/
+// SourceList::ReadAppend - Parse a sourcelist file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgSourceList::ReadAppend(string File)
 {
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
    
+#if 0 // Now Reset() does this.
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
       delete *I;
    SrcList.erase(SrcList.begin(),SrcList.end());
-   char Buffer[300];
+#endif
+   // CNC:2003-12-10 - 300 is too short.
+   char Buffer[1024];
 
    int CurLine = 0;
    while (F.eof() == false)
@@ -172,7 +222,10 @@ bool pkgSourceList::Read(string File)
 
       
       char *I;
-      for (I = Buffer; *I != 0 && *I != '#'; I++);
+      // CNC:2003-02-20 - Do not break if '#' is inside [].
+      for (I = Buffer; *I != 0 && *I != '#'; I++)
+         if (*I == '[')
+	    for (I++; *I != 0 && *I != ']'; I++);
       *I = 0;
       
       const char *C = _strstrip(Buffer);
@@ -259,3 +312,55 @@ bool pkgSourceList::GetIndexes(pkgAcquire *Owner, bool GetAll) const
    return true;
 }
 									/*}}}*/
+// CNC:2003-03-03 - By Anton V. Denisov <avd@altlinux.org>.
+// SourceList::ReadSourceDir - Read a directory with sources files
+// Based on ReadConfigDir()						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgSourceList::ReadSourceDir(string Dir)
+{
+   DIR *D = opendir(Dir.c_str());
+   if (D == 0)
+      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+
+   vector<string> List;
+   
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
+   {
+      if (Ent->d_name[0] == '.')
+	 continue;
+
+      // CNC:2003-12-02 Only accept .list files as valid sourceparts
+      if (flExtension(Ent->d_name) != "list")
+	 continue;
+      
+      // Skip bad file names ala run-parts
+      const char *C = Ent->d_name;
+      for (; *C != 0; C++)
+	 if (isalpha(*C) == 0 && isdigit(*C) == 0
+             && *C != '_' && *C != '-' && *C != '.')
+	    break;
+      if (*C != 0)
+	 continue;
+      
+      // Make sure it is a file and not something else
+      string File = flCombine(Dir,Ent->d_name);
+      struct stat St;
+      if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
+	 continue;
+      
+      List.push_back(File);      
+   }   
+   closedir(D);
+   
+   sort(List.begin(),List.end());
+
+   // Read the files
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+      if (ReadAppend(*I) == false)
+	 return false;
+   return true;
+
+}
+									/*}}}*/
+

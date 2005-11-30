@@ -184,7 +184,7 @@ string pkgAcqIndex::Custom600Headers()
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    // no .bz2 found, retry with .gz
-   if(Desc.URI.substr(Desc.URI.size()-3,Desc.URI.size()-1) == "bz2") {
+   if(Desc.URI.substr(Desc.URI.size()-3) == "bz2") {
       Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz"; 
 
       // retry with a gzip one 
@@ -290,7 +290,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    else
       Local = true;
    
-   string compExt = Desc.URI.substr(Desc.URI.size()-3,Desc.URI.size()-1);
+   string compExt = Desc.URI.substr(Desc.URI.size()-3);
    char *decompProg;
    if(compExt == "bz2") 
       decompProg = "bzip2";
@@ -315,10 +315,9 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
    Item(Owner), RealURI(URI), MetaIndexURI(MetaIndexURI),
-   MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc)
+   MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
+   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets)
 {
-   this->MetaIndexParser = MetaIndexParser;
-   this->IndexTargets = IndexTargets;
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
@@ -430,11 +429,9 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
 				 string SigFile,
 				 const vector<struct IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-  Item(Owner), RealURI(URI), SigFile(SigFile)
+   Item(Owner), RealURI(URI), SigFile(SigFile), AuthPass(false),
+   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets)
 {
-   this->AuthPass = false;
-   this->MetaIndexParser = MetaIndexParser;
-   this->IndexTargets = IndexTargets;
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
@@ -770,6 +767,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       }
    }
 
+   // "allow-unauthenticated" restores apts old fetching behaviour
+   // that means that e.g. unauthenticated file:// uris are higher
+   // priority than authenticated http:// uris
+   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+      Trusted = false;
+
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
       _error->Error(_("I wasn't able to locate file for the %s package. "
@@ -1002,13 +1005,19 @@ void pkgAcqArchive::Finished()
 // ---------------------------------------------------------------------
 /* The file is added to the queue */
 pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
-		       unsigned long Size,string Dsc,string ShortDesc) :
+		       unsigned long Size,string Dsc,string ShortDesc,
+		       const string &DestDir, const string &DestFilename) :
                        Item(Owner), Md5Hash(MD5)
 {
    Retries = _config->FindI("Acquire::Retries",0);
    
-   DestFile = flNotDir(URI);
-   
+   if(!DestFilename.empty())
+      DestFile = DestFilename;
+   else if(!DestDir.empty())
+      DestFile = DestDir + "/" + flNotDir(URI);
+   else
+      DestFile = flNotDir(URI);
+
    // Create the item
    Desc.URI = URI;
    Desc.Description = Dsc;

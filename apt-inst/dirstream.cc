@@ -61,6 +61,22 @@ bool pkgDirStream::DoItem(Item &Itm,int &Fd)
       case Item::CharDevice:
       case Item::BlockDevice:
       case Item::Directory:
+      {
+	 struct stat Buf;
+	 // check if the dir is already there, if so return true
+	 if (stat(Itm.Name,&Buf) == 0)
+	 {
+	    if(S_ISDIR(Buf.st_mode))
+	       return true;
+	    // something else is there already, return false
+	    return false;
+	 }
+	 // nothing here, create the dir
+	 if(mkdir(Itm.Name,Itm.Mode) < 0)
+	    return false;
+	 return true;
+	 break;
+      }
       case Item::FIFO:
       break;
    }

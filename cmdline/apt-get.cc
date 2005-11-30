@@ -1211,10 +1211,6 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false;
 	      VF++)
 	 {
-	    // extra paranioa
-	    if(VF.File() == NULL)
-	       continue;
-
 	    /* If this is the status file, and the current version is not the
 	       version in the status file (ie it is not installed, or somesuch)
 	       then it is not a candidate for installation, ever. This weeds

@@ -58,6 +58,12 @@ unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
 bool Debug = false;
 
+
+unsigned long CircleBuf::BwReadLimit=0;
+unsigned long CircleBuf::BwTickReadData=0;
+struct timeval CircleBuf::BwReadTick={0,0};
+const unsigned int CircleBuf::BW_HZ=10;
+  
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -65,6 +71,8 @@ CircleBuf::CircleBuf(unsigned long Size) : Size(Size), Hash(0)
 {
    Buf = new unsigned char[Size];
    Reset();
+
+   CircleBuf::BwReadLimit = _config->FindI("Acquire::http::Dl-Limit",0)*1024;
 }
 									/*}}}*/
 // CircleBuf::Reset - Reset to the default state			/*{{{*/
@@ -90,16 +98,45 @@ void CircleBuf::Reset()
    is non-blocking.. */
 bool CircleBuf::Read(int Fd)
 {
+   unsigned long BwReadMax;
+
    while (1)
    {
       // Woops, buffer is full
       if (InP - OutP == Size)
 	 return true;
-      
+
+      // what's left to read in this tick
+      BwReadMax = CircleBuf::BwReadLimit/BW_HZ;
+
+      if(CircleBuf::BwReadLimit) {
+	 struct timeval now;
+	 gettimeofday(&now,0);
+
+	 unsigned long d = (now.tv_sec-CircleBuf::BwReadTick.tv_sec)*1000000 +
+	    now.tv_usec-CircleBuf::BwReadTick.tv_usec;
+	 if(d > 1000000/BW_HZ) {
+	    CircleBuf::BwReadTick = now;
+	    CircleBuf::BwTickReadData = 0;
+	 } 
+	 
+	 if(CircleBuf::BwTickReadData >= BwReadMax) {
+	    usleep(1000000/BW_HZ);
+	    return true;
+	 }
+      }
+
       // Write the buffer segment
       int Res;
-      Res = read(Fd,Buf + (InP%Size),LeftRead());
+      if(CircleBuf::BwReadLimit) {
+	 Res = read(Fd,Buf + (InP%Size), 
+		    BwReadMax > LeftRead() ? LeftRead() : BwReadMax);
+      } else
+	 Res = read(Fd,Buf + (InP%Size),LeftRead());
       
+      if(Res > 0 && BwReadLimit > 0) 
+	 CircleBuf::BwTickReadData += Res;
+    
       if (Res == 0)
 	 return false;
       if (Res < 0)
@@ -787,7 +824,10 @@ bool HttpMethod::Flush(ServerState *Srv)
 {
    if (File != 0)
    {
-      SetNonBlock(File->Fd(),false);
+      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
+      // can't be set
+      if (File->Name() != "/dev/null")
+	 SetNonBlock(File->Fd(),false);
       if (Srv->In.WriteSpace() == false)
 	 return true;
       
@@ -815,7 +855,10 @@ bool HttpMethod::ServerDie(ServerState *Srv)
    // Dump the buffer to the file
    if (Srv->State == ServerState::Data)
    {
-      SetNonBlock(File->Fd(),false);
+      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
+      // can't be set
+      if (File->Name() != "/dev/null")
+	 SetNonBlock(File->Fd(),false);
       while (Srv->In.WriteSpace() == true)
       {
 	 if (Srv->In.Write(File->Fd()) == false)
