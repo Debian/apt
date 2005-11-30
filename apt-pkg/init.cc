@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: init.cc,v 1.21 2004/02/27 00:46:44 mdz Exp $
+// $Id: init.cc,v 1.20 2003/02/09 20:31:05 doogie Exp $
 /* ######################################################################
 
    Init - Initialize the package library
@@ -64,13 +64,14 @@ bool pkgInitConfig(Configuration &Cnf)
    // Configuration
    Cnf.Set("Dir::Etc","etc/apt/");
    Cnf.Set("Dir::Etc::sourcelist","sources.list");
+   Cnf.Set("Dir::Etc::sourceparts","sources.list.d");
    Cnf.Set("Dir::Etc::vendorlist","vendors.list");
    Cnf.Set("Dir::Etc::vendorparts","vendors.list.d");
    Cnf.Set("Dir::Etc::main","apt.conf");
    Cnf.Set("Dir::Etc::parts","apt.conf.d");
    Cnf.Set("Dir::Etc::preferences","preferences");
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
-	      
+   
    bool Res = true;
    
    // Read an alternate config file

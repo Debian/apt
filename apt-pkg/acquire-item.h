@@ -878,9 +878,21 @@ class pkgAcqFile : public pkgAcquire::Item
     *
     *  \param ShortDesc A brief description of the file being
     *  downloaded.
+    *
+    *  \param DestDir The directory the file should be downloaded into.
+    *
+    *  \param DestFilename The filename+path the file is downloaded to.
+    *
+    *
+    * If DestFilename is empty, download to DestDir/<basename> if
+    * DestDir is non-empty, $CWD/<basename> otherwise.  If
+    * DestFilename is NOT empty, DestDir is ignored and DestFilename
+    * is the absolute name to which the file should be downloaded.
     */
-   pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,unsigned long Size,
-		  string Desc,string ShortDesc);
+
+   pkgAcqFile(pkgAcquire *Owner, string URI, string MD5, unsigned long Size,
+	      string Desc, string ShortDesc,
+	      const string &DestDir="", const string &DestFilename="");
 };
 
 /** @} */

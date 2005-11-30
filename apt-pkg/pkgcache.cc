@@ -164,7 +164,7 @@ bool pkgCache::ReMap()
 /* This is used to generate the hash entries for the HashTable. With my
    package list from bo this function gets 94% table usage on a 512 item
    table (480 used items) */
-unsigned long pkgCache::sHash(string Str) const
+unsigned long pkgCache::sHash(const string &Str) const
 {
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
@@ -184,7 +184,7 @@ unsigned long pkgCache::sHash(const char *Str) const
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(string Name)
+pkgCache::PkgIterator pkgCache::FindPkg(const string &Name)
 {
    // Look at the hash bucket
    Package *Pkg = PkgP + HeaderP->HashTable[Hash(Name)];

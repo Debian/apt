@@ -1,4 +1,4 @@
-apt (0.6.42.3exp1) experimental; urgency=low
+apt (0.6.43exp1) experimental; urgency=low
 
   * added support for package index diffs 
   * added support for i18n of the package descriptions
@@ -8,8 +8,29 @@ apt (0.6.42.3exp1) experimental; urgency=low
   * fix bug in apt-cache when displaying the record (closes: #334887)
   * add patch to fix http download corruption problem (thanks to
     Petr Vandrovec, closes: #280844, #290694)
+  * changed abi version to 3.12
   
  -- Michael Vogt <mvo@debian.org>  Sun, 13 Nov 2005 13:33:57 +0100
+
+apt (0.6.43) unstable; urgency=medium
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-132:  
+    * zh_CN.po: Completed to 510 strings(Closes: #338267)
+    * gl.po: Completed to 510 strings (Closes: #338356)
+  * added support for "/etc/apt/sources.list.d" directory 
+    (closes: #66325)
+  * make pkgDirStream (a bit) more complete
+  * fix bug in pkgCache::VerIterator::end() (thanks to Daniel Burrows)
+    (closes: #339533)
+  * pkgAcqFile is more flexible now (closes: #57091)
+  * support a download rate limit for http (closes: #146877)
+  * included lots of the speedup changes from #319377
+  * add stdint.h to contrib/md5.h (closes: #340448)
+  * ABI change, library name changed (closes: #339147)
+  * Fix GNU/kFreeBSD crash on non-existing server file (closes: #317718)
+  * switch to libdb4.3 in build-depends
+  
+ -- Michael Vogt <mvo@debian.org>  Tue, 29 Nov 2005 00:17:07 +0100
 
 apt (0.6.42.3) unstable; urgency=low
 

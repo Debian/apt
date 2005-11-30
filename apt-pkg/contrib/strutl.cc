@@ -242,10 +242,10 @@ bool ParseCWord(const char *&String,string &Res)
 // QuoteString - Convert a string into quoted from			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string QuoteString(string Str,const char *Bad)
+string QuoteString(const string &Str, const char *Bad)
 {
    string Res;
-   for (string::iterator I = Str.begin(); I != Str.end(); I++)
+   for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
    {
       if (strchr(Bad,*I) != 0 || isprint(*I) == 0 || 
 	  *I <= 0x20 || *I >= 0x7F)
@@ -263,7 +263,7 @@ string QuoteString(string Str,const char *Bad)
 // DeQuoteString - Convert a string from quoted from                    /*{{{*/
 // ---------------------------------------------------------------------
 /* This undoes QuoteString */
-string DeQuoteString(string Str)
+string DeQuoteString(const string &Str)
 {
    string Res;
    for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
@@ -360,7 +360,7 @@ string TimeToStr(unsigned long Sec)
 // SubstVar - Substitute a string for another string			/*{{{*/
 // ---------------------------------------------------------------------
 /* This replaces all occurances of Subst with Contents in Str. */
-string SubstVar(string Str,string Subst,string Contents)
+string SubstVar(const string &Str,const string &Subst,const string &Contents)
 {
    string::size_type Pos = 0;
    string::size_type OldPos = 0;
@@ -391,21 +391,18 @@ string SubstVar(string Str,const struct SubstVar *Vars)
 /* This converts a URI into a safe filename. It quotes all unsafe characters
    and converts / to _ and removes the scheme identifier. The resulting
    file name should be unique and never occur again for a different file */
-string URItoFileName(string URI)
+string URItoFileName(const string &URI)
 {
    // Nuke 'sensitive' items
    ::URI U(URI);
-   U.User = string();
-   U.Password = string();
-   U.Access = "";
+   U.User.clear();
+   U.Password.clear();
+   U.Access.clear();
    
    // "\x00-\x20{}|\\\\^\\[\\]<>\"\x7F-\xFF";
-   URI = QuoteString(U,"\\|{}[]<>\"^~=!@#$%^&*");
-   string::iterator J = URI.begin();
-   for (; J != URI.end(); J++)
-      if (*J == '/') 
-	 *J = '_';
-   return URI;
+   string NewURI = QuoteString(U,"\\|{}[]<>\"^~_=!@#$%^&*");
+   replace(NewURI.begin(),NewURI.end(),'/','_');
+   return NewURI;
 }
 									/*}}}*/
 // Base64Encode - Base64 Encoding routine for short strings		/*{{{*/
@@ -414,7 +411,7 @@ string URItoFileName(string URI)
    from wget and then patched and bug fixed.
  
    This spec can be found in rfc2045 */
-string Base64Encode(string S)
+string Base64Encode(const string &S)
 {
    // Conversion table.
    static char tbl[64] = {'A','B','C','D','E','F','G','H',
@@ -583,17 +580,17 @@ int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
 // ---------------------------------------------------------------------
 /* The format is like those used in package files and the method 
    communication system */
-string LookupTag(string Message,const char *Tag,const char *Default)
+string LookupTag(const string &Message,const char *Tag,const char *Default)
 {
    // Look for a matching tag.
    int Length = strlen(Tag);
-   for (string::iterator I = Message.begin(); I + Length < Message.end(); I++)
+   for (string::const_iterator I = Message.begin(); I + Length < Message.end(); I++)
    {
       // Found the tag
       if (I[Length] == ':' && stringcasecmp(I,I+Length,Tag) == 0)
       {
 	 // Find the end of line and strip the leading/trailing spaces
-	 string::iterator J;
+	 string::const_iterator J;
 	 I += Length + 1;
 	 for (; isspace(*I) != 0 && I < Message.end(); I++);
 	 for (J = I; *J != '\n' && J < Message.end(); J++);
@@ -615,7 +612,7 @@ string LookupTag(string Message,const char *Tag,const char *Default)
 // ---------------------------------------------------------------------
 /* This inspects the string to see if it is true or if it is false and
    then returns the result. Several varients on true/false are checked. */
-int StringToBool(string Text,int Default)
+int StringToBool(const string &Text,int Default)
 {
    char *End;
    int Res = strtol(Text.c_str(),&End,0);   
@@ -781,7 +778,7 @@ static time_t timegm(struct tm *t)
    'timegm' to convert a struct tm in UTC to a time_t. For some bizzar
    reason the C library does not provide any such function :< This also
    handles the weird, but unambiguous FTP time format*/
-bool StrToTime(string Val,time_t &Result)
+bool StrToTime(const string &Val,time_t &Result)
 {
    struct tm Tm;
    char Month[10];
@@ -868,7 +865,7 @@ static int HexDigit(int c)
 // Hex2Num - Convert a long hex number into a buffer			/*{{{*/
 // ---------------------------------------------------------------------
 /* The length of the buffer must be exactly 1/2 the length of the string. */
-bool Hex2Num(string Str,unsigned char *Num,unsigned int Length)
+bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length)
 {
    if (Str.length() != Length*2)
       return false;
@@ -1029,7 +1026,7 @@ char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
 // ---------------------------------------------------------------------
 /* The domain list is a comma seperate list of domains that are suffix
    matched against the argument */
-bool CheckDomainList(string Host,string List)
+bool CheckDomainList(const string &Host,const string &List)
 {
    string::const_iterator Start = List.begin();
    for (string::const_iterator Cur = List.begin(); Cur <= List.end(); Cur++)
@@ -1052,7 +1049,7 @@ bool CheckDomainList(string Host,string List)
 // URI::CopyFrom - Copy from an object					/*{{{*/
 // ---------------------------------------------------------------------
 /* This parses the URI into all of its components */
-void URI::CopyFrom(string U)
+void URI::CopyFrom(const string &U)
 {
    string::const_iterator I = U.begin();
 
@@ -1081,9 +1078,9 @@ void URI::CopyFrom(string U)
       SingleSlash = U.end();
 
    // We can now write the access and path specifiers
-   Access = string(U,0,FirstColon - U.begin());
+   Access.assign(U.begin(),FirstColon);
    if (SingleSlash != U.end())
-      Path = string(U,SingleSlash - U.begin());
+      Path.assign(SingleSlash,U.end());
    if (Path.empty() == true)
       Path = "/";
 
@@ -1113,14 +1110,14 @@ void URI::CopyFrom(string U)
    if (At == SingleSlash)
    {
       if (FirstColon < SingleSlash)
-	 Host = string(U,FirstColon - U.begin(),SingleSlash - FirstColon);
+	 Host.assign(FirstColon,SingleSlash);
    }
    else
    {
-      Host = string(U,At - U.begin() + 1,SingleSlash - At - 1);
-      User = string(U,FirstColon - U.begin(),SecondColon - FirstColon);
+      Host.assign(At+1,SingleSlash);
+      User.assign(FirstColon,SecondColon);
       if (SecondColon < At)
-	 Password = string(U,SecondColon - U.begin() + 1,At - SecondColon - 1);
+	 Password.assign(SecondColon+1,At);
    }   
    
    // Now we parse the RFC 2732 [] hostnames.
@@ -1148,7 +1145,7 @@ void URI::CopyFrom(string U)
    // Tsk, weird.
    if (InBracket == true)
    {
-      Host = string();
+      Host.clear();
       return;
    }
    
@@ -1159,7 +1156,7 @@ void URI::CopyFrom(string U)
       return;
    
    Port = atoi(string(Host,Pos+1).c_str());
-   Host = string(Host,0,Pos);
+   Host.assign(Host,0,Pos);
 }
 									/*}}}*/
 // URI::operator string - Convert the URI to a string			/*{{{*/
@@ -1214,12 +1211,12 @@ URI::operator string()
 // URI::SiteOnly - Return the schema and site for the URI		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string URI::SiteOnly(string URI)
+string URI::SiteOnly(const string &URI)
 {
    ::URI U(URI);
-   U.User = string();
-   U.Password = string();
-   U.Path = string();
+   U.User.clear();
+   U.Password.clear();
+   U.Path.clear();
    U.Port = 0;
    return U;
 }
