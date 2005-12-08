@@ -593,7 +593,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	  Pkg.State() == pkgCache::PkgIterator::NeedsNothing &&
 	  (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
       {
-	 _error->Error("Internal Error, trying to manipulate a kept package");
+	 _error->Error("Internal Error, trying to manipulate a kept package (%s)",Pkg.Name());
 	 return Failed;
       }
       

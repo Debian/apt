@@ -69,30 +69,30 @@ class Configuration
    public:
 
    string Find(const char *Name,const char *Default = 0) const;
-   string Find(string Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
+   string Find(const string Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
    string FindFile(const char *Name,const char *Default = 0) const;
    string FindDir(const char *Name,const char *Default = 0) const;
    int FindI(const char *Name,int Default = 0) const;
-   int FindI(string Name,int Default = 0) const {return FindI(Name.c_str(),Default);};
+   int FindI(const string Name,int Default = 0) const {return FindI(Name.c_str(),Default);};
    bool FindB(const char *Name,bool Default = false) const;
-   bool FindB(string Name,bool Default = false) const {return FindB(Name.c_str(),Default);};
+   bool FindB(const string Name,bool Default = false) const {return FindB(Name.c_str(),Default);};
    string FindAny(const char *Name,const char *Default = 0) const;
 	      
-   inline void Set(string Name,string Value) {Set(Name.c_str(),Value);};
-   void CndSet(const char *Name,string Value);
-   void Set(const char *Name,string Value);
+   inline void Set(const string Name,string Value) {Set(Name.c_str(),Value);};
+   void CndSet(const char *Name,const string &Value);
+   void Set(const char *Name,const string &Value);
    void Set(const char *Name,int Value);   
    
-   inline bool Exists(string Name) const {return Exists(Name.c_str());};
+   inline bool Exists(const string Name) const {return Exists(Name.c_str());};
    bool Exists(const char *Name) const;
    bool ExistsAny(const char *Name) const;
 
    // clear a whole tree
-   void Clear(string Name);
+   void Clear(const string Name);
 
    // remove a certain value from a list (e.g. the list of "APT::Keep-Fds")
-   void Clear(string List, string Value);
-   void Clear(string List, int Value);
+   void Clear(const string List, string Value);
+   void Clear(const string List, int Value);
 
    inline const Item *Tree(const char *Name) const {return Lookup(Name);};
 
@@ -106,10 +106,12 @@ class Configuration
 
 extern Configuration *_config;
 
-bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional = false,
+bool ReadConfigFile(Configuration &Conf,const string &FName,
+		    bool AsSectional = false,
 		    unsigned Depth = 0);
 
-bool ReadConfigDir(Configuration &Conf,string Dir,bool AsSectional = false,
-		    unsigned Depth = 0);
+bool ReadConfigDir(Configuration &Conf,const string &Dir,
+		   bool AsSectional = false,
+		   unsigned Depth = 0);
 
 #endif
