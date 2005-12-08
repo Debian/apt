@@ -142,20 +142,21 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 {
    Decompression = false;
    Erase = false;
-   
+
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
    if(comprExt.empty()) 
    {
-      // autoselect 
-      if(FileExists("/usr/bin/bzip2"))
-	 Desc.URI = URI + ".bz2"; 
-      else
-	 Desc.URI = URI + ".gz"; 
+      // autoselect the compression method
+      if(FileExists("/usr/bin/bzip2")) 
+	 CompressionExtension = ".bz2";
+      else 
+	 CompressionExtension = ".gz";
    } else {
-      Desc.URI = URI + comprExt; 
+      CompressionExtension = comprExt;
    }
+   Desc.URI = URI + CompressionExtension; 
 
    Desc.Description = URIDesc;
    Desc.Owner = this;

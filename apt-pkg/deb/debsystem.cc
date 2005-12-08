@@ -164,7 +164,12 @@ bool debSystem::Initialize(Configuration &Cnf)
    Cnf.CndSet("Dir::State::userstatus","status.user"); // Defunct
    Cnf.CndSet("Dir::State::status","/var/lib/dpkg/status");
    Cnf.CndSet("Dir::Bin::dpkg","/usr/bin/dpkg");
-   
+
+   if (StatusFile) {
+     delete StatusFile;
+     StatusFile = 0;
+   }
+
    return true;
 }
 									/*}}}*/

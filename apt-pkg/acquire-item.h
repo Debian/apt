@@ -92,7 +92,8 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcquire::ItemDesc Desc;
    string RealURI;
    string ExpectedMD5;
-   
+   string CompressionExtension;
+
    public:
    
    // Specialized action members
@@ -100,7 +101,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
-   virtual string DescURI() {return RealURI + ".gz";};
+   virtual string DescURI() {return RealURI + CompressionExtension;};
 
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
 	       string ShortDesct, string ExpectedMD5, string compressExt="");
