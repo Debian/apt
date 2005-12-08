@@ -241,7 +241,7 @@ bool pkgSourceList::ReadAppend(string File)
 
       Type *Parse = Type::GetType(LineType.c_str());
       if (Parse == 0)
-	 return _error->Error(_("Type '%s' is not known in on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
+	 return _error->Error(_("Type '%s' is not known on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
       
       // Vendor name specified
       if (C[0] == '[')
