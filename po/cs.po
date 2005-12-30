@@ -1,15 +1,15 @@
 # Czech translation of APT
 # This file is put in the public domain.
-# Miroslav Kure <kurem@debian.cz>, 2004.
+# Miroslav Kure <kurem@debian.cz>, 2004-2005.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-30 08:37+0100\n"
-"PO-Revision-Date: 2005-02-11 16:14+0100\n"
+"PO-Revision-Date: 2005-12-30 15:44+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
-"Language-Team: Czech <provoz@debian.cz>\n"
+"Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -133,7 +133,7 @@ msgstr "  Kandidát: "
 
 #: cmdline/apt-cache.cc:1532
 msgid "  Package pin: "
-msgstr "  Vypíchnutý balík:"
+msgstr "  Vypíchnutý balík: "
 
 #. Show the priority tables
 #: cmdline/apt-cache.cc:1541
@@ -228,19 +228,15 @@ msgstr ""
 
 #: cmdline/apt-cdrom.cc:78
 msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
-msgstr ""
+msgstr "Zadejte prosím název tohoto média, např. 'Debian 2.1r1 Disk 1'"
 
 #: cmdline/apt-cdrom.cc:93
-#, fuzzy
 msgid "Please insert a Disc in the drive and press enter"
-msgstr ""
-"Výměna média: Vložte disk nazvaný\n"
-" '%s'\n"
-"do mechaniky '%s' a stiskněte enter\n"
+msgstr "Vložte prosím médium do mechaniky a stiskněte enter"
 
 #: cmdline/apt-cdrom.cc:117
 msgid "Repeat this process for the rest of the CDs in your set."
-msgstr ""
+msgstr "Tento proces opakujte pro všechna zbývající média."
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -336,7 +332,6 @@ msgid "Error processing contents %s"
 msgstr "Chyba při zpracovávání obsahu %s"
 
 #: ftparchive/apt-ftparchive.cc:556
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -385,11 +380,11 @@ msgstr ""
 "         generate konfiguračnísoubor [skupiny]\n"
 "         clean konfiguračnísoubor\n"
 "\n"
-"apt-ftparchive generuje indexové soubory debianích archívů. Podporuje\n"
+"apt-ftparchive generuje indexové soubory debianích archivů. Podporuje\n"
 "několik režimů vytváření - od plně automatického až po funkční ekvivalent\n"
 "příkazů dpkg-scanpackages a dpkg-scansources.\n"
 "\n"
-"apt-ftparchive ze stromu .deb souborů vygeneruje soubory Packages. Soubor\n"
+"apt-ftparchive vytvoří ze stromu .deb souborů soubory Packages. Soubor\n"
 "Packages obsahuje kromě všech kontrolních polí každého balíku také jeho\n"
 "velikost a MD5 součet. Podporován je také soubor override, kterým můžete \n"
 "vynutit hodnoty polí Priority a Section.\n"
@@ -447,7 +442,7 @@ msgstr "Datum souboru se změnil %s"
 
 #: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
-msgstr "Archív nemá kontrolní záznam"
+msgstr "Archiv nemá kontrolní záznam"
 
 #: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
@@ -522,7 +517,7 @@ msgstr "Nemohu vyhodnotit %s"
 
 #: ftparchive/writer.cc:386
 msgid "Archive had no package field"
-msgstr "Archív nemá pole Package"
+msgstr "Archiv nemá pole Package"
 
 #: ftparchive/writer.cc:394 ftparchive/writer.cc:603
 #, c-format
@@ -702,7 +697,6 @@ msgid "%s (due to %s) "
 msgstr "%s (kvůli %s) "
 
 #: cmdline/apt-get.cc:544
-#, fuzzy
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -769,7 +763,7 @@ msgstr "VAROVÁNÍ: Následující balíky nemohou být autentizovány!"
 
 #: cmdline/apt-get.cc:691
 msgid "Authentication warning overridden.\n"
-msgstr ""
+msgstr "Autentizační varování potlačeno.\n"
 
 #: cmdline/apt-get.cc:698
 msgid "Install these packages without verification [y/N]? "
@@ -785,16 +779,15 @@ msgstr "Vyskytly se problémy a -y bylo použito bez --force-yes"
 
 #: cmdline/apt-get.cc:753
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr ""
+msgstr "Vnitřní chyba, InstallPackages byl zavolán s porušenými balíky!"
 
 #: cmdline/apt-get.cc:762
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Balík je potřeba odstranit ale funkce Odstranit je vypnuta."
 
 #: cmdline/apt-get.cc:773
-#, fuzzy
 msgid "Internal error, Ordering didn't finish"
-msgstr "Vnitřní chyba při přidávání diverze"
+msgstr "Vnitřní chyba, třídění nedoběhlo do konce"
 
 #: cmdline/apt-get.cc:789 cmdline/apt-get.cc:1807 cmdline/apt-get.cc:1840
 msgid "Unable to lock the download directory"
@@ -808,16 +801,17 @@ msgstr "Nelze přečíst seznam zdrojů."
 #: cmdline/apt-get.cc:814
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
+"Jak podivné... velikosti nesouhlasí, ohlaste to na apt@packages.debian.org"
 
 #: cmdline/apt-get.cc:819
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Potřebuji stáhnout %sB/%sB archívů.\n"
+msgstr "Potřebuji stáhnout %sB/%sB archivů.\n"
 
 #: cmdline/apt-get.cc:822
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Potřebuji stáhnout %sB archívů.\n"
+msgstr "Potřebuji stáhnout %sB archivů.\n"
 
 #: cmdline/apt-get.cc:827
 #, c-format
@@ -830,14 +824,14 @@ msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Po rozbalení bude na disku uvolněno %sB.\n"
 
 #: cmdline/apt-get.cc:844 cmdline/apt-get.cc:1954
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't determine free space in %s"
-msgstr "Na %s nemáte dostatek volného místa"
+msgstr "Nemohu určit volné místo v %s"
 
 #: cmdline/apt-get.cc:847
 #, c-format
 msgid "You don't have enough free space in %s."
-msgstr "Na %s nemáte dostatek volného místa."
+msgstr "V %s nemáte dostatek volného místa."
 
 #: cmdline/apt-get.cc:862 cmdline/apt-get.cc:882
 msgid "Trivial Only specified but this is not a trivial operation."
@@ -848,15 +842,15 @@ msgid "Yes, do as I say!"
 msgstr "Ano, udělej to tak, jak říkám!"
 
 #: cmdline/apt-get.cc:866
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
-"Chystáte se vykonat něco potenciálně škodlivého\n"
+"Chystáte se vykonat něco potenciálně škodlivého.\n"
 "Pro pokračování opište frázi '%s'\n"
-" ?]"
+" ?] "
 
 #: cmdline/apt-get.cc:872 cmdline/apt-get.cc:891
 msgid "Abort."
@@ -884,7 +878,7 @@ msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"Nemohu stáhnout některé archívy. Možná spusťte apt-get update nebo zkuste --"
+"Nemohu stáhnout některé archivy. Možná spusťte apt-get update nebo zkuste --"
 "fix-missing?"
 
 #: cmdline/apt-get.cc:988
@@ -1011,7 +1005,7 @@ msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Nesplněné závislosti. Zkuste zpustit 'apt-get -f install' bez balíků (nebo "
+"Nesplněné závislosti. Zkuste spustit 'apt-get -f install' bez balíků (nebo "
 "navrhněte řešení)."
 
 #: cmdline/apt-get.cc:1568
@@ -1045,7 +1039,7 @@ msgstr "Poškozené balíky"
 
 #: cmdline/apt-get.cc:1610
 msgid "The following extra packages will be installed:"
-msgstr "Následujcící extra balíky budou instalovány:"
+msgstr "Následující extra balíky budou instalovány:"
 
 #: cmdline/apt-get.cc:1681
 msgid "Suggested packages:"
@@ -1057,7 +1051,7 @@ msgstr "Doporučované balíky:"
 
 #: cmdline/apt-get.cc:1702
 msgid "Calculating upgrade... "
-msgstr "Propočítávám aktualizaci..."
+msgstr "Propočítávám aktualizaci... "
 
 #: cmdline/apt-get.cc:1705 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
@@ -1068,9 +1062,8 @@ msgid "Done"
 msgstr "Hotovo"
 
 #: cmdline/apt-get.cc:1775 cmdline/apt-get.cc:1783
-#, fuzzy
 msgid "Internal error, problem resolver broke stuff"
-msgstr "Vnitřní chyba, AllUpgrade pokazil věci"
+msgstr "Vnitřní chyba, řešitel problémů pokazil věci"
 
 #: cmdline/apt-get.cc:1883
 msgid "Must specify at least one package to fetch source for"
@@ -1089,12 +1082,12 @@ msgstr "Na %s nemáte dostatek volného místa"
 #: cmdline/apt-get.cc:1962
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Potřebuji stáhnout %sB/%sB zdrojových archívů.\n"
+msgstr "Potřebuji stáhnout %sB/%sB zdrojových archivů.\n"
 
 #: cmdline/apt-get.cc:1965
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Potřebuji stáhnout %sB zdrojových archívů.\n"
+msgstr "Potřebuji stáhnout %sB zdrojových archivů.\n"
 
 #: cmdline/apt-get.cc:1971
 #, c-format
@@ -1103,7 +1096,7 @@ msgstr "Stáhnout zdroj %s\n"
 
 #: cmdline/apt-get.cc:2002
 msgid "Failed to fetch some archives."
-msgstr "Stažení některých archívů selhalo."
+msgstr "Stažení některých archivů selhalo."
 
 #: cmdline/apt-get.cc:2030
 #, c-format
@@ -1118,7 +1111,7 @@ msgstr "Příkaz pro rozbalení '%s' selhal.\n"
 #: cmdline/apt-get.cc:2043
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr ""
+msgstr "Zkontrolujte, zda je nainstalován balíček 'dpkg-dev'.\n"
 
 #: cmdline/apt-get.cc:2060
 #, c-format
@@ -1238,23 +1231,23 @@ msgstr ""
 "   upgrade         - Provede aktualizaci\n"
 "   install         - Instaluje nové balíky (balík je libc6, ne libc6.deb)\n"
 "   remove          - Odstraní balíky\n"
-"   source          - Stáhne zdrojové archívy\n"
-"   build-dep       - Configure build-dependencies for source packages\n"
+"   source          - Stáhne zdrojové archivy\n"
+"   build-dep       - Pro zdrojové balíky nastaví build-dependencies\n"
 "   dist-upgrade    - Aktualizace distribuce, viz apt-get(8)\n"
 "   dselect-upgrade - Řídí se podle výběru v dselectu\n"
-"   clean           - Smaže stažené archívy\n"
-"   autoclean       - Smaže staré stažené archívy\n"
+"   clean           - Smaže stažené archivy\n"
+"   autoclean       - Smaže staré stažené archivy\n"
 "   check           - Ověří, zda se nevyskytují poškozené závislosti\n"
 "\n"
 "Volby:\n"
 "  -h  Tato nápověda\n"
 "  -q  Nezobrazí indikátor postupu - pro záznam\n"
 "  -qq Nezobrazí nic než chyby\n"
-"  -d  Pouze stáhne - neinstaluje ani nerozbaluje archívy\n"
+"  -d  Pouze stáhne - neinstaluje ani nerozbaluje archivy\n"
 "  -s  Pouze simuluje prováděné akce\n"
 "  -y  Na všechny otázky odpovídá Ano\n"
 "  -f  Zkusí pokračovat, i když selže kontrola integrity\n"
-"  -m  Zkusí pokračovat, i když se nepodaří najít archívy\n"
+"  -m  Zkusí pokračovat, i když se nepodaří najít archivy\n"
 "  -u  Zobrazí také seznam aktualizovaných balíků\n"
 "  -b  Po stažení zdrojového balíku jej i zkompiluje\n"
 "  -V  Zobrazí čísla verzí\n"
@@ -1274,11 +1267,11 @@ msgstr "Mám:"
 
 #: cmdline/acqprogress.cc:110
 msgid "Ign "
-msgstr "Ign"
+msgstr "Ign "
 
 #: cmdline/acqprogress.cc:114
 msgid "Err "
-msgstr "Err"
+msgstr "Err "
 
 #: cmdline/acqprogress.cc:135
 #, c-format
@@ -1288,7 +1281,7 @@ msgstr "Staženo %sB za %s (%sB/s)\n"
 #: cmdline/acqprogress.cc:225
 #, c-format
 msgid " [Working]"
-msgstr "[Pracuji]"
+msgstr " [Pracuji]"
 
 #: cmdline/acqprogress.cc:271
 #, c-format
@@ -1369,11 +1362,11 @@ msgstr "Selhalo spuštění gzipu "
 
 #: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
 msgid "Corrupted archive"
-msgstr "Porušený archív"
+msgstr "Porušený archiv"
 
 #: apt-inst/contrib/extracttar.cc:195
 msgid "Tar checksum failed, archive corrupted"
-msgstr "Kontrolní součet taru selhal, archív je poškozený"
+msgstr "Kontrolní součet taru selhal, archiv je poškozený"
 
 #: apt-inst/contrib/extracttar.cc:298
 #, c-format
@@ -1382,23 +1375,23 @@ msgstr "Neznámá hlavička TARu typ %u, člen %s"
 
 #: apt-inst/contrib/arfile.cc:73
 msgid "Invalid archive signature"
-msgstr "Neplatný podpis archívu"
+msgstr "Neplatný podpis archivu"
 
 #: apt-inst/contrib/arfile.cc:81
 msgid "Error reading archive member header"
-msgstr "Chyba při čtení záhlaví prvku archívu"
+msgstr "Chyba při čtení záhlaví prvku archivu"
 
 #: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
 msgid "Invalid archive member header"
-msgstr "Neplatné záhlaví prvku archívu"
+msgstr "Neplatné záhlaví prvku archivu"
 
 #: apt-inst/contrib/arfile.cc:131
 msgid "Archive is too short"
-msgstr "Archív je příliš krátký"
+msgstr "Archiv je příliš krátký"
 
 #: apt-inst/contrib/arfile.cc:135
 msgid "Failed to read the archive headers"
-msgstr "Chyba při čtení hlaviček archívu"
+msgstr "Chyba při čtení hlaviček archivu"
 
 #: apt-inst/filelist.cc:384
 msgid "DropNode called on still linked node"
@@ -1432,9 +1425,9 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Duplicitní konfigurační soubor %s/%s"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write file %s"
-msgstr "Selhal zápis do souboru %s"
+msgstr "Selhal zápis souboru %s"
 
 #: apt-inst/dirstream.cc:96 apt-inst/dirstream.cc:104
 #, c-format
@@ -1605,12 +1598,12 @@ msgstr "Chyba při zpracování MD5. Offset %lu"
 #: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Toto není platný DEB archív, chybí část '%s'"
+msgstr "Toto není platný DEB archiv, chybí část '%s'"
 
 #: apt-inst/deb/debfile.cc:52
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Toto není platný DEB archív, neobsahuje část '%s' ani '%s'"
+msgstr "Toto není platný DEB archiv, neobsahuje část '%s' ani '%s'"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -1652,9 +1645,8 @@ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "Nemohu odpojit CD-ROM v %s - možná se stále používá."
 
 #: methods/cdrom.cc:169
-#, fuzzy
 msgid "Disk not found."
-msgstr "Soubor nebyl nalezen"
+msgstr "Disk nebyl nalezen."
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
@@ -1769,7 +1761,7 @@ msgstr "Nemohu naslouchat na socketu"
 
 #: methods/ftp.cc:747
 msgid "Could not determine the socket's name"
-msgstr "Nemohu určit jmého socketu"
+msgstr "Nemohu určit jméno socketu"
 
 #: methods/ftp.cc:779
 msgid "Unable to send PORT command"
@@ -1879,41 +1871,41 @@ msgstr "Nemohu se připojit k %s %s:"
 
 #: methods/gpgv.cc:92
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-msgstr ""
+msgstr "E: Seznam argumentů Acquire::gpgv::Options je příliš dlouhý. Končím."
 
 #: methods/gpgv.cc:191
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
+msgstr "Vnitřní chyba: Dobrý podpis, ale nemohu zjistit otisk klíče?!"
 
 #: methods/gpgv.cc:196
 msgid "At least one invalid signature was encountered."
-msgstr ""
+msgstr "Byl zaznamenán nejméně jeden neplatný podpis. "
 
 #. FIXME String concatenation considered harmful.
 #: methods/gpgv.cc:201
-#, fuzzy
 msgid "Could not execute "
-msgstr "Nemohu získat zámek %s"
+msgstr "Nemohu spustit "
 
 #: methods/gpgv.cc:202
 msgid " to verify signature (is gnupg installed?)"
-msgstr ""
+msgstr " pro ověření podpisu (je gnupg nainstalováno?)"
 
 #: methods/gpgv.cc:206
 msgid "Unknown error executing gpgv"
-msgstr ""
+msgstr "Neznámá chyba při spouštění gpgv"
 
 #: methods/gpgv.cc:237
-#, fuzzy
 msgid "The following signatures were invalid:\n"
-msgstr "Následujcící extra balíky budou instalovány:"
+msgstr "Následující podpisy jsou neplatné:\n"
 
 #: methods/gpgv.cc:244
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr ""
+"Následující podpisy nemohly být ověřeny, protože není dostupný veřejný "
+"klíč:\n"
 
 #: methods/gzip.cc:57
 #, c-format
@@ -2117,7 +2109,7 @@ msgstr "Volba '%s' je příliš dlouhá"
 #: apt-pkg/contrib/cmndline.cc:301
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "Nechápu význam %s, zkuste true nebo false. "
+msgstr "Nechápu význam %s, zkuste true nebo false."
 
 #: apt-pkg/contrib/cmndline.cc:351
 #, c-format
@@ -2337,7 +2329,7 @@ msgid "Malformed line %u in source list %s (type)"
 msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
 
 #: apt-pkg/sourcelist.cc:244
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typ '%s' na řádce %u v seznamu zdrojů %s není známý"
 
@@ -2366,7 +2358,7 @@ msgstr "Indexový typ souboru '%s' není podporován"
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr "Balík %s je potřeba přeinstalovat, ale nemohu pro něj nalézt archív."
+msgstr "Balík %s je potřeba přeinstalovat, ale nemohu pro něj nalézt archiv."
 
 #: apt-pkg/algorithms.cc:1059
 msgid ""
@@ -2393,7 +2385,7 @@ msgstr "Archivní adresář %spartial chybí."
 #: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
-msgstr ""
+msgstr "Stahuji soubor %li z %li (%s zbývá)"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2406,12 +2398,9 @@ msgid "Method %s did not start correctly"
 msgstr "Metoda %s nebyla spuštěna správně"
 
 #: apt-pkg/acquire-worker.cc:377
-#, fuzzy, c-format
+#, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr ""
-"Výměna média: Vložte disk nazvaný\n"
-" '%s'\n"
-"do mechaniky '%s' a stiskněte enter\n"
+msgstr "Vložte prosím disk nazvaný '%s' do mechaniky '%s' a stiskněte enter."
 
 #: apt-pkg/init.cc:120
 #, c-format
@@ -2673,54 +2662,54 @@ msgstr ""
 "Zapsal jsem %i záznamů s chybějícími (%i) a nesouhlasícími (%i) soubory.\n"
 
 #: apt-pkg/deb/dpkgpm.cc:358
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing %s"
-msgstr "Otevírám %s"
+msgstr "Připravuji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Unpacking %s"
-msgstr "Otevírám %s"
+msgstr "Rozbaluji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:364
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to configure %s"
-msgstr "Otevírám konfigurační soubor %s"
+msgstr "Připravuji nastavení %s"
 
 #: apt-pkg/deb/dpkgpm.cc:365
-#, fuzzy, c-format
+#, c-format
 msgid "Configuring %s"
-msgstr "Připojuji se k %s"
+msgstr "Nastavuji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:366
-#, fuzzy, c-format
+#, c-format
 msgid "Installed %s"
-msgstr "  Instalovaná verze: "
+msgstr "Nainstalován %s"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr ""
+msgstr "Připravuji odstranění %s"
 
 #: apt-pkg/deb/dpkgpm.cc:372
-#, fuzzy, c-format
+#, c-format
 msgid "Removing %s"
-msgstr "Otevírám %s"
+msgstr "Odstraňuji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:373
-#, fuzzy, c-format
+#, c-format
 msgid "Removed %s"
-msgstr "Doporučuje"
+msgstr "Odstraněn %s"
 
 #: apt-pkg/deb/dpkgpm.cc:378
 #, c-format
 msgid "Preparing for remove with config %s"
-msgstr ""
+msgstr "Připravuji odstranění %s včetně konfiguračních souborů"
 
 #: apt-pkg/deb/dpkgpm.cc:379
 #, c-format
 msgid "Removed with config %s"
-msgstr ""
+msgstr "Odstraněn %s včetně konfiguračního souboru"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
