@@ -1037,7 +1037,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
       else
 	 PartialSize = Buf.st_size;
    }
-   
+
    QueueURI(Desc);
 }
 									/*}}}*/
