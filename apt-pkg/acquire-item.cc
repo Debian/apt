@@ -430,7 +430,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
 				 const vector<struct IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
    Item(Owner), RealURI(URI), SigFile(SigFile), AuthPass(false),
-   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets)
+   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets), IMSHit(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
@@ -522,6 +522,9 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
       QueueURI(Desc);
       return;
    }
+
+   // see if the download was a IMSHit
+   IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
 
    Complete = true;
 
@@ -688,10 +691,30 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    if (AuthPass == true)
    {
-      // gpgv method failed
+      // if we fail the authentication but got the file via a IMS-Hit 
+      // this means that the file wasn't downloaded and that it might be
+      // just stale (server problem, proxy etc). we delete what we have
+      // queue it again without i-m-s 
+      // alternatively we could just unlink the file and let the user try again
+      if (IMSHit)
+      {
+	 Complete = false;
+	 Local = false;
+	 AuthPass = false;
+	 unlink(DestFile.c_str());
+
+	 DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+	 DestFile += URItoFileName(RealURI);
+	 Desc.URI = RealURI;
+	 QueueURI(Desc);
+	 return;
+      }
+
+      // gpgv method failed 
       _error->Warning("GPG error: %s: %s",
                       Desc.Description.c_str(),
                       LookupTag(Message,"Message").c_str());
+
    }
 
    // No Release file was present, or verification failed, so fall
