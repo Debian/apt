@@ -25,16 +25,15 @@
 
 <refnamediv>
 <refname>sources.list</refname>
-<refpurpose>Une liste, utilisée par APT, indiquant les ressources de paquets</refpurpose>
+<refpurpose>Liste des sources de paquets</refpurpose>
 </refnamediv>
 
 <refsect1><title>Description</title>
 <para>   
-La liste des ressources de paquets indique où trouver les archives
+La liste des sources de paquets indique où trouver les archives
 du système de distribution de paquets utilisé. Pour l'instant, cette page 
 de manuel ne documente que le système d'empaquetage utilisé par le système 
-Debian GNU/Linux. Ce fichier de contrôle est situé dans 
-<filename>/etc/apt/sources.list</filename>.
+Debian GNU/Linux. Ce fichier de contrôle est <filename>/etc/apt/sources.list</filename>.
    </para>
 <para>
 La liste des sources est conçue pour prendre en compte un nombre quelconque
@@ -49,17 +48,26 @@ ligne peut être un commentaire commençant par un caractère #.
  </para>
 </refsect1>
 
+<refsect1><title>sources.list.d</title>
+<para> Le répertoire <filename>/etc/apt/sources.list.d</filename> permet de
+lister des sources de paquets dans des fichiers distincts qui se terminent
+par <literal>.list</literal>. Leur format est le même que celui du fichier
+<filename>sources.list</filename>. 
+</para>
+  </refsect1>
+
 <refsect1><title>Les types deb et deb-src.</title>
 <para>   
 Le type <literal>deb</literal> décrit une archive Debian classique à deux niveaux,
 <filename>distribution/composant</filename>. <literal>distribution</literal> peut prendre
 l'une des valeurs suivantes&nbsp;: <literal>stable</literal>, <literal>unstable</literal>, ou 
-<literal>testing</literal>, et composant&nbsp;: <literal>main</literal>, <literal>contrib</literal>, 
-<literal>non-free</literal>, ou <literal>non-us</literal>. Le type <literal>deb-src</literal> 
-décrit le
+<literal>testing</literal>, et composant&nbsp;: <literal>main</literal>, 
+<literal>contrib</literal>, 
+<literal>non-free</literal>, ou <literal>non-us</literal>. 
+Le type <literal>deb-src</literal> décrit le
 code source pour une distribution Debian dans le même format que le type
 <literal>deb</literal>. Une ligne <literal>deb-src</literal> est nécessaire pour récupérer les
-index de sources.
+index des sources.
 </para>
 <para>
 Le format d'une entrée dans <filename>sources.list</filename> utilisant les types 
@@ -73,7 +81,7 @@ dans laquelle APT trouvera les informations dont il a besoin.
 doit omettre les composants et <literal>distribution</literal> doit se terminer par une
 barre oblique (/). C'est utile quand seule une sous-section particulière de
 l'archive décrite par cet URI est intéressante. Quand <literal>distribution</literal>
-n'indique pas un chemin exact, un <literal>component</literal> au moins doit être 
+n'indique pas un chemin exact, un <literal>composant</literal> au moins doit être 
 présent.
    </para>
 <para>
@@ -101,8 +109,8 @@ efficacement parti des sites à faible bande passante.
 <para>
 Il est important d'indiquer les sources par ordre de préférence,
 la source principale apparaissant en premier. Un tri est fait, de la plus
-rapide à la plus lente&nbsp;; par exemple, CD-ROM suivi par les hôtes d'un 
-réseau local, puis les hôtes Internet distants.
+rapide à la plus lente&nbsp;; par exemple, un cédérom suivi par les hôtes d'un 
+réseau local, puis les hôtes distants.
    </para>
 <para>Voici quelques exemples&nbsp;:
 </para>
@@ -127,9 +135,9 @@ montages NFS, les miroirs et les archives locaux.
 
 <varlistentry><term>cdrom</term>
 <listitem><para>
-Le procédé <literal>cdrom</literal> permet l'utilisation d'un lecteur de CDROM local 
+Le procédé <literal>cdrom</literal> permet l'utilisation d'un lecteur de cédérom 
 avec la possibilité de changer de media. Utilisez le programme &apt-cdrom; 
-pour créer des entrées dans la liste de sources.
+pour créer des entrées dans la liste des sources.
 </para>
 </listitem>
 </varlistentry>
@@ -149,8 +157,8 @@ méthode d'authentification peu sûre.
 <varlistentry><term>ftp</term>
 <listitem><para>
 Le procédé <literal>ftp</literal> indique un serveur FTP comme archive. Le 
-fonctionnement en mode ftp est grandement configurable&nbsp;; référez-vous 
-à la page de manuel de &apt-cdrom; pour davantage de renseignements. On 
+fonctionnement en mode ftp est largement configurable&nbsp;; référez-vous 
+à la page de manuel de &apt-cdrom; pour d'autres informations. On 
 remarquera qu'on peut indiquer un mandataire ftp avec la variable 
 d'environnement <envar>ftp_proxy</envar>. On peut aussi spécifier un mandataire http 
 (les serveurs mandataires http comprennent souvent les URL ftp) en utilisant 
