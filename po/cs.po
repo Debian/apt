@@ -1,15 +1,15 @@
 # Czech translation of APT
 # This file is put in the public domain.
-# Miroslav Kure <kurem@debian.cz>, 2004.
+# Miroslav Kure <kurem@debian.cz>, 2004-2005.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-28 23:02+0100\n"
-"PO-Revision-Date: 2005-02-11 16:14+0100\n"
+"POT-Creation-Date: 2006-01-04 18:51+0100\n"
+"PO-Revision-Date: 2005-12-30 15:44+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
-"Language-Team: Czech <provoz@debian.cz>\n"
+"Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -133,7 +133,7 @@ msgstr "  Kandidát: "
 
 #: cmdline/apt-cache.cc:1532
 msgid "  Package pin: "
-msgstr "  Vypíchnutý balík:"
+msgstr "  Vypíchnutý balík: "
 
 #. Show the priority tables
 #: cmdline/apt-cache.cc:1541
@@ -147,7 +147,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1651 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2352 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2378 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s pro %s %s zkompilován na %s %s\n"
@@ -228,19 +228,15 @@ msgstr ""
 
 #: cmdline/apt-cdrom.cc:78
 msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
-msgstr ""
+msgstr "Zadejte prosím název tohoto média, např. 'Debian 2.1r1 Disk 1'"
 
 #: cmdline/apt-cdrom.cc:93
-#, fuzzy
 msgid "Please insert a Disc in the drive and press enter"
-msgstr ""
-"Výměna média: Vložte disk nazvaný\n"
-" '%s'\n"
-"do mechaniky '%s' a stiskněte enter\n"
+msgstr "Vložte prosím médium do mechaniky a stiskněte enter"
 
 #: cmdline/apt-cdrom.cc:117
 msgid "Repeat this process for the rest of the CDs in your set."
-msgstr ""
+msgstr "Tento proces opakujte pro všechna zbývající média."
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -336,7 +332,6 @@ msgid "Error processing contents %s"
 msgstr "Chyba při zpracovávání obsahu %s"
 
 #: ftparchive/apt-ftparchive.cc:556
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -385,11 +380,11 @@ msgstr ""
 "         generate konfiguračnísoubor [skupiny]\n"
 "         clean konfiguračnísoubor\n"
 "\n"
-"apt-ftparchive generuje indexové soubory debianích archívů. Podporuje\n"
+"apt-ftparchive generuje indexové soubory debianích archivů. Podporuje\n"
 "několik režimů vytváření - od plně automatického až po funkční ekvivalent\n"
 "příkazů dpkg-scanpackages a dpkg-scansources.\n"
 "\n"
-"apt-ftparchive ze stromu .deb souborů vygeneruje soubory Packages. Soubor\n"
+"apt-ftparchive vytvoří ze stromu .deb souborů soubory Packages. Soubor\n"
 "Packages obsahuje kromě všech kontrolních polí každého balíku také jeho\n"
 "velikost a MD5 součet. Podporován je také soubor override, kterým můžete \n"
 "vynutit hodnoty polí Priority a Section.\n"
@@ -447,7 +442,7 @@ msgstr "Datum souboru se změnil %s"
 
 #: ftparchive/cachedb.cc:155
 msgid "Archive has no control record"
-msgstr "Archív nemá kontrolní záznam"
+msgstr "Archiv nemá kontrolní záznam"
 
 #: ftparchive/cachedb.cc:267
 msgid "Unable to get a cursor"
@@ -522,7 +517,7 @@ msgstr "Nemohu vyhodnotit %s"
 
 #: ftparchive/writer.cc:386
 msgid "Archive had no package field"
-msgstr "Archív nemá pole Package"
+msgstr "Archiv nemá pole Package"
 
 #: ftparchive/writer.cc:394 ftparchive/writer.cc:603
 #, c-format
@@ -629,80 +624,79 @@ msgstr "Problém s odlinkováním %s"
 msgid "Failed to rename %s to %s"
 msgstr "Selhalo přejmenování %s na %s"
 
-#: cmdline/apt-get.cc:118
+#: cmdline/apt-get.cc:120
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:140 cmdline/apt-get.cc:1513
+#: cmdline/apt-get.cc:142 cmdline/apt-get.cc:1515
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Chyba při kompilaci regulárního výrazu - %s"
 
-#: cmdline/apt-get.cc:235
+#: cmdline/apt-get.cc:237
 msgid "The following packages have unmet dependencies:"
 msgstr "Následující balíky mají nesplněné závislosti:"
 
-#: cmdline/apt-get.cc:325
+#: cmdline/apt-get.cc:327
 #, c-format
 msgid "but %s is installed"
 msgstr "ale %s je nainstalován"
 
-#: cmdline/apt-get.cc:327
+#: cmdline/apt-get.cc:329
 #, c-format
 msgid "but %s is to be installed"
 msgstr "ale %s se bude instalovat"
 
-#: cmdline/apt-get.cc:334
+#: cmdline/apt-get.cc:336
 msgid "but it is not installable"
 msgstr "ale nedá se nainstalovat"
 
-#: cmdline/apt-get.cc:336
+#: cmdline/apt-get.cc:338
 msgid "but it is a virtual package"
 msgstr "ale je to virtuální balík"
 
-#: cmdline/apt-get.cc:339
+#: cmdline/apt-get.cc:341
 msgid "but it is not installed"
 msgstr "ale není nainstalovaný"
 
-#: cmdline/apt-get.cc:339
+#: cmdline/apt-get.cc:341
 msgid "but it is not going to be installed"
 msgstr "ale nebude se instalovat"
 
-#: cmdline/apt-get.cc:344
+#: cmdline/apt-get.cc:346
 msgid " or"
 msgstr " nebo"
 
-#: cmdline/apt-get.cc:373
+#: cmdline/apt-get.cc:375
 msgid "The following NEW packages will be installed:"
 msgstr "Následující NOVÉ balíky budou nainstalovány:"
 
-#: cmdline/apt-get.cc:399
+#: cmdline/apt-get.cc:401
 msgid "The following packages will be REMOVED:"
 msgstr "Následující balíky budou ODSTRANĚNY:"
 
-#: cmdline/apt-get.cc:421
+#: cmdline/apt-get.cc:423
 msgid "The following packages have been kept back:"
 msgstr "Následující balíky jsou podrženy v aktuální verzi:"
 
-#: cmdline/apt-get.cc:442
+#: cmdline/apt-get.cc:444
 msgid "The following packages will be upgraded:"
 msgstr "Následující balíky budou aktualizovány:"
 
-#: cmdline/apt-get.cc:463
+#: cmdline/apt-get.cc:465
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Následující balíky budou DEGRADOVÁNY:"
 
-#: cmdline/apt-get.cc:483
+#: cmdline/apt-get.cc:485
 msgid "The following held packages will be changed:"
 msgstr "Následující podržené balíky budou změněny:"
 
-#: cmdline/apt-get.cc:536
+#: cmdline/apt-get.cc:538
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (kvůli %s) "
 
-#: cmdline/apt-get.cc:544
-#, fuzzy
+#: cmdline/apt-get.cc:546
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -710,224 +704,224 @@ msgstr ""
 "VAROVÁNÍ: Následující nezbytné balíky budou odstraněny.\n"
 "Pokud přesně nevíte, co děláte, NEDĚLEJTE to!"
 
-#: cmdline/apt-get.cc:575
+#: cmdline/apt-get.cc:577
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu aktualizováno, %lu nově instalováno, "
 
-#: cmdline/apt-get.cc:579
+#: cmdline/apt-get.cc:581
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu reinstalováno, "
 
-#: cmdline/apt-get.cc:581
+#: cmdline/apt-get.cc:583
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu degradováno, "
 
-#: cmdline/apt-get.cc:583
+#: cmdline/apt-get.cc:585
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu k odstranění a %lu neaktualizováno.\n"
 
-#: cmdline/apt-get.cc:587
+#: cmdline/apt-get.cc:589
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu instalováno nebo odstraněno pouze částečně.\n"
 
-#: cmdline/apt-get.cc:647
+#: cmdline/apt-get.cc:649
 msgid "Correcting dependencies..."
 msgstr "Opravuji závislosti..."
 
-#: cmdline/apt-get.cc:650
+#: cmdline/apt-get.cc:652
 msgid " failed."
 msgstr " selhalo."
 
-#: cmdline/apt-get.cc:653
+#: cmdline/apt-get.cc:655
 msgid "Unable to correct dependencies"
 msgstr "Nemohu opravit závislosti"
 
-#: cmdline/apt-get.cc:656
+#: cmdline/apt-get.cc:658
 msgid "Unable to minimize the upgrade set"
 msgstr "Nemohu minimalizovat sadu pro aktualizaci"
 
-#: cmdline/apt-get.cc:658
+#: cmdline/apt-get.cc:660
 msgid " Done"
 msgstr " Hotovo"
 
-#: cmdline/apt-get.cc:662
+#: cmdline/apt-get.cc:664
 msgid "You might want to run `apt-get -f install' to correct these."
 msgstr "Pro opravení můžete spustit `apt-get -f install'."
 
-#: cmdline/apt-get.cc:665
+#: cmdline/apt-get.cc:667
 msgid "Unmet dependencies. Try using -f."
 msgstr "Nesplněné závislosti. Zkuste použít -f."
 
-#: cmdline/apt-get.cc:687
+#: cmdline/apt-get.cc:689
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "VAROVÁNÍ: Následující balíky nemohou být autentizovány!"
 
-#: cmdline/apt-get.cc:691
+#: cmdline/apt-get.cc:693
 msgid "Authentication warning overridden.\n"
-msgstr ""
+msgstr "Autentizační varování potlačeno.\n"
 
-#: cmdline/apt-get.cc:698
+#: cmdline/apt-get.cc:700
 msgid "Install these packages without verification [y/N]? "
 msgstr "Instalovat tyto balíky bez ověření [y/N]? "
 
-#: cmdline/apt-get.cc:700
+#: cmdline/apt-get.cc:702
 msgid "Some packages could not be authenticated"
 msgstr "Některé balíky nemohly být autentizovány"
 
-#: cmdline/apt-get.cc:709 cmdline/apt-get.cc:856
+#: cmdline/apt-get.cc:711 cmdline/apt-get.cc:858
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Vyskytly se problémy a -y bylo použito bez --force-yes"
 
-#: cmdline/apt-get.cc:753
+#: cmdline/apt-get.cc:755
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr ""
+msgstr "Vnitřní chyba, InstallPackages byl zavolán s porušenými balíky!"
 
-#: cmdline/apt-get.cc:762
+#: cmdline/apt-get.cc:764
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Balík je potřeba odstranit ale funkce Odstranit je vypnuta."
 
-#: cmdline/apt-get.cc:773
-#, fuzzy
+#: cmdline/apt-get.cc:775
 msgid "Internal error, Ordering didn't finish"
-msgstr "Vnitřní chyba při přidávání diverze"
+msgstr "Vnitřní chyba, třídění nedoběhlo do konce"
 
-#: cmdline/apt-get.cc:789 cmdline/apt-get.cc:1807 cmdline/apt-get.cc:1840
+#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1809 cmdline/apt-get.cc:1842
 msgid "Unable to lock the download directory"
 msgstr "Nemohu zamknout adresář pro stahování"
 
-#: cmdline/apt-get.cc:799 cmdline/apt-get.cc:1888 cmdline/apt-get.cc:2100
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1890 cmdline/apt-get.cc:2126
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Nelze přečíst seznam zdrojů."
 
-#: cmdline/apt-get.cc:814
+#: cmdline/apt-get.cc:816
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
+"Jak podivné... velikosti nesouhlasí, ohlaste to na apt@packages.debian.org"
 
-#: cmdline/apt-get.cc:819
+#: cmdline/apt-get.cc:821
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Potřebuji stáhnout %sB/%sB archívů.\n"
+msgstr "Potřebuji stáhnout %sB/%sB archivů.\n"
 
-#: cmdline/apt-get.cc:822
+#: cmdline/apt-get.cc:824
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Potřebuji stáhnout %sB archívů.\n"
+msgstr "Potřebuji stáhnout %sB archivů.\n"
 
-#: cmdline/apt-get.cc:827
+#: cmdline/apt-get.cc:829
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr "Po rozbalení bude na disku použito dalších %sB.\n"
 
-#: cmdline/apt-get.cc:830
+#: cmdline/apt-get.cc:832
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Po rozbalení bude na disku uvolněno %sB.\n"
 
-#: cmdline/apt-get.cc:844 cmdline/apt-get.cc:1954
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1980
+#, c-format
 msgid "Couldn't determine free space in %s"
-msgstr "Na %s nemáte dostatek volného místa"
+msgstr "Nemohu určit volné místo v %s"
 
-#: cmdline/apt-get.cc:847
+#: cmdline/apt-get.cc:849
 #, c-format
 msgid "You don't have enough free space in %s."
-msgstr "Na %s nemáte dostatek volného místa."
+msgstr "V %s nemáte dostatek volného místa."
 
-#: cmdline/apt-get.cc:862 cmdline/apt-get.cc:882
+#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:884
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Udáno 'pouze triviální', ovšem toto není triviální operace."
 
-#: cmdline/apt-get.cc:864
+#: cmdline/apt-get.cc:866
 msgid "Yes, do as I say!"
 msgstr "Ano, udělej to tak, jak říkám!"
 
-#: cmdline/apt-get.cc:866
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:868
+#, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
-"Chystáte se vykonat něco potenciálně škodlivého\n"
+"Chystáte se vykonat něco potenciálně škodlivého.\n"
 "Pro pokračování opište frázi '%s'\n"
-" ?]"
+" ?] "
 
-#: cmdline/apt-get.cc:872 cmdline/apt-get.cc:891
+#: cmdline/apt-get.cc:874 cmdline/apt-get.cc:893
 msgid "Abort."
 msgstr "Přerušeno."
 
-#: cmdline/apt-get.cc:887
+#: cmdline/apt-get.cc:889
 msgid "Do you want to continue [Y/n]? "
 msgstr "Chcete pokračovat [Y/n]? "
 
-#: cmdline/apt-get.cc:959 cmdline/apt-get.cc:1363 cmdline/apt-get.cc:1997
+#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2023
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Selhalo stažení %s  %s\n"
 
-#: cmdline/apt-get.cc:977
+#: cmdline/apt-get.cc:979
 msgid "Some files failed to download"
 msgstr "Některé soubory nemohly být staženy"
 
-#: cmdline/apt-get.cc:978 cmdline/apt-get.cc:2006
+#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2032
 msgid "Download complete and in download only mode"
 msgstr "Stahování dokončeno v režimu pouze stáhnout"
 
-#: cmdline/apt-get.cc:984
+#: cmdline/apt-get.cc:986
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"Nemohu stáhnout některé archívy. Možná spusťte apt-get update nebo zkuste --"
+"Nemohu stáhnout některé archivy. Možná spusťte apt-get update nebo zkuste --"
 "fix-missing?"
 
-#: cmdline/apt-get.cc:988
+#: cmdline/apt-get.cc:990
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing a výměna média nejsou momentálně podporovány"
 
-#: cmdline/apt-get.cc:993
+#: cmdline/apt-get.cc:995
 msgid "Unable to correct missing packages."
 msgstr "Nemohu opravit chybějící balíky."
 
-#: cmdline/apt-get.cc:994
+#: cmdline/apt-get.cc:996
 msgid "Aborting install."
 msgstr "Přerušuji instalaci."
 
-#: cmdline/apt-get.cc:1028
+#: cmdline/apt-get.cc:1030
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Pozn: Vybírám %s místo %s\n"
 
-#: cmdline/apt-get.cc:1038
+#: cmdline/apt-get.cc:1040
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Přeskakuji %s, protože je již nainstalován.\n"
 
-#: cmdline/apt-get.cc:1056
+#: cmdline/apt-get.cc:1058
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Balík %s není nainstalován, nelze tedy odstranit\n"
 
-#: cmdline/apt-get.cc:1067
+#: cmdline/apt-get.cc:1069
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Balík %s je virtuální balík poskytovaný:\n"
 
-#: cmdline/apt-get.cc:1079
+#: cmdline/apt-get.cc:1081
 msgid " [Installed]"
 msgstr "[Instalovaný]"
 
-#: cmdline/apt-get.cc:1084
+#: cmdline/apt-get.cc:1086
 msgid "You should explicitly select one to install."
 msgstr "Měli byste explicitně vybrat jeden k instalaci."
 
-#: cmdline/apt-get.cc:1089
+#: cmdline/apt-get.cc:1091
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -938,49 +932,49 @@ msgstr ""
 "To může znamenat že balík chybí, byl zastarán, nebo je dostupný\n"
 "pouze z jiného zdroje\n"
 
-#: cmdline/apt-get.cc:1108
+#: cmdline/apt-get.cc:1110
 msgid "However the following packages replace it:"
 msgstr "Nicméně následující balíky jej nahrazují:"
 
-#: cmdline/apt-get.cc:1111
+#: cmdline/apt-get.cc:1113
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Balík %s nemá kandidáta pro instalaci"
 
-#: cmdline/apt-get.cc:1131
+#: cmdline/apt-get.cc:1133
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Reinstalace %s není možná, protože nelze stáhnout.\n"
 
-#: cmdline/apt-get.cc:1139
+#: cmdline/apt-get.cc:1141
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s je již nejnovější verze.\n"
 
-#: cmdline/apt-get.cc:1166
+#: cmdline/apt-get.cc:1168
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Vydání '%s' pro '%s' nebylo nalezeno"
 
-#: cmdline/apt-get.cc:1168
+#: cmdline/apt-get.cc:1170
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Verze '%s' pro '%s' nebyla nalezena"
 
-#: cmdline/apt-get.cc:1174
+#: cmdline/apt-get.cc:1176
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Vybraná verze %s (%s) pro %s\n"
 
-#: cmdline/apt-get.cc:1311
+#: cmdline/apt-get.cc:1313
 msgid "The update command takes no arguments"
 msgstr "Příkaz update neakceptuje žádné argumenty"
 
-#: cmdline/apt-get.cc:1324 cmdline/apt-get.cc:1418
+#: cmdline/apt-get.cc:1326 cmdline/apt-get.cc:1420
 msgid "Unable to lock the list directory"
 msgstr "Nemohu uzamknout list adresář"
 
-#: cmdline/apt-get.cc:1382
+#: cmdline/apt-get.cc:1384
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -988,33 +982,33 @@ msgstr ""
 "Některé indexové soubory se nepodařilo stáhnout, jsou ignorovány, nebo jsou "
 "použity starší verze."
 
-#: cmdline/apt-get.cc:1401
+#: cmdline/apt-get.cc:1403
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Vnitřní chyba, AllUpgrade pokazil věci"
 
-#: cmdline/apt-get.cc:1500 cmdline/apt-get.cc:1536
+#: cmdline/apt-get.cc:1502 cmdline/apt-get.cc:1538
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Nemohu najít balík %s"
 
-#: cmdline/apt-get.cc:1523
+#: cmdline/apt-get.cc:1525
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Pozn: vybírám %s pro regulární výraz '%s'\n"
 
-#: cmdline/apt-get.cc:1553
+#: cmdline/apt-get.cc:1555
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Pro opravení následujících můžete spustit `apt-get -f install':"
 
-#: cmdline/apt-get.cc:1556
+#: cmdline/apt-get.cc:1558
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Nesplněné závislosti. Zkuste zpustit 'apt-get -f install' bez balíků (nebo "
+"Nesplněné závislosti. Zkuste spustit 'apt-get -f install' bez balíků (nebo "
 "navrhněte řešení)."
 
-#: cmdline/apt-get.cc:1568
+#: cmdline/apt-get.cc:1570
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1025,7 +1019,7 @@ msgstr ""
 "nemožnou situaci, nebo, pokud používáte nestabilní distribuci, že\n"
 "vyžadované balíky ještě nebyly vytvořeny nebo přesunuty z Příchozí fronty."
 
-#: cmdline/apt-get.cc:1576
+#: cmdline/apt-get.cc:1578
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -1035,124 +1029,128 @@ msgstr ""
 "balík není instalovatelný a měl byste o tom zaslat hlášení o chybě\n"
 "(bug report)."
 
-#: cmdline/apt-get.cc:1581
+#: cmdline/apt-get.cc:1583
 msgid "The following information may help to resolve the situation:"
 msgstr "Následující informace vám mohou pomoci vyřešit tuto situaci:"
 
-#: cmdline/apt-get.cc:1584
+#: cmdline/apt-get.cc:1586
 msgid "Broken packages"
 msgstr "Poškozené balíky"
 
-#: cmdline/apt-get.cc:1610
+#: cmdline/apt-get.cc:1612
 msgid "The following extra packages will be installed:"
-msgstr "Následujcící extra balíky budou instalovány:"
+msgstr "Následující extra balíky budou instalovány:"
 
-#: cmdline/apt-get.cc:1681
+#: cmdline/apt-get.cc:1683
 msgid "Suggested packages:"
 msgstr "Navrhované balíky:"
 
-#: cmdline/apt-get.cc:1682
+#: cmdline/apt-get.cc:1684
 msgid "Recommended packages:"
 msgstr "Doporučované balíky:"
 
-#: cmdline/apt-get.cc:1702
+#: cmdline/apt-get.cc:1704
 msgid "Calculating upgrade... "
-msgstr "Propočítávám aktualizaci..."
+msgstr "Propočítávám aktualizaci... "
 
-#: cmdline/apt-get.cc:1705 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1707 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "Selhalo"
 
-#: cmdline/apt-get.cc:1710
+#: cmdline/apt-get.cc:1712
 msgid "Done"
 msgstr "Hotovo"
 
-#: cmdline/apt-get.cc:1775 cmdline/apt-get.cc:1783
-#, fuzzy
+#: cmdline/apt-get.cc:1777 cmdline/apt-get.cc:1785
 msgid "Internal error, problem resolver broke stuff"
-msgstr "Vnitřní chyba, AllUpgrade pokazil věci"
+msgstr "Vnitřní chyba, řešitel problémů pokazil věci"
 
-#: cmdline/apt-get.cc:1883
+#: cmdline/apt-get.cc:1885
 msgid "Must specify at least one package to fetch source for"
 msgstr "Musíte zadat aspoň jeden balík, pro který se stáhnou zdrojové texty"
 
-#: cmdline/apt-get.cc:1910 cmdline/apt-get.cc:2118
+#: cmdline/apt-get.cc:1915 cmdline/apt-get.cc:2144
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Nemohu najít zdrojový balík pro %s"
 
-#: cmdline/apt-get.cc:1957
+#: cmdline/apt-get.cc:1959
+#, fuzzy, c-format
+msgid "Skiping already downloaded file '%s'\n"
+msgstr "Přeskakuji rozbalení již rozbaleného zdroje v %s\n"
+
+#: cmdline/apt-get.cc:1983
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Na %s nemáte dostatek volného místa"
 
-#: cmdline/apt-get.cc:1962
+#: cmdline/apt-get.cc:1988
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Potřebuji stáhnout %sB/%sB zdrojových archívů.\n"
+msgstr "Potřebuji stáhnout %sB/%sB zdrojových archivů.\n"
 
-#: cmdline/apt-get.cc:1965
+#: cmdline/apt-get.cc:1991
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Potřebuji stáhnout %sB zdrojových archívů.\n"
+msgstr "Potřebuji stáhnout %sB zdrojových archivů.\n"
 
-#: cmdline/apt-get.cc:1971
+#: cmdline/apt-get.cc:1997
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Stáhnout zdroj %s\n"
 
-#: cmdline/apt-get.cc:2002
+#: cmdline/apt-get.cc:2028
 msgid "Failed to fetch some archives."
-msgstr "Stažení některých archívů selhalo."
+msgstr "Stažení některých archivů selhalo."
 
-#: cmdline/apt-get.cc:2030
+#: cmdline/apt-get.cc:2056
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Přeskakuji rozbalení již rozbaleného zdroje v %s\n"
 
-#: cmdline/apt-get.cc:2042
+#: cmdline/apt-get.cc:2068
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Příkaz pro rozbalení '%s' selhal.\n"
 
-#: cmdline/apt-get.cc:2043
+#: cmdline/apt-get.cc:2069
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr ""
+msgstr "Zkontrolujte, zda je nainstalován balíček 'dpkg-dev'.\n"
 
-#: cmdline/apt-get.cc:2060
+#: cmdline/apt-get.cc:2086
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Příkaz pro sestavení '%s' selhal.\n"
 
-#: cmdline/apt-get.cc:2079
+#: cmdline/apt-get.cc:2105
 msgid "Child process failed"
 msgstr "Synovský proces selhal"
 
-#: cmdline/apt-get.cc:2095
+#: cmdline/apt-get.cc:2121
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Musíte zadat alespoň jeden balík, pro který budou kontrolovány závislosti "
 "pro sestavení"
 
-#: cmdline/apt-get.cc:2123
+#: cmdline/apt-get.cc:2149
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Nemohu získat závislosti pro sestavení %s"
 
-#: cmdline/apt-get.cc:2143
+#: cmdline/apt-get.cc:2169
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s nemá žádné závislosti pro sestavení.\n"
 
-#: cmdline/apt-get.cc:2195
+#: cmdline/apt-get.cc:2221
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%s závislost pro %s nemůže být splněna, protože balík %s nebyl nalezen"
 
-#: cmdline/apt-get.cc:2247
+#: cmdline/apt-get.cc:2273
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1161,31 +1159,31 @@ msgstr ""
 "%s závislost pro %s nemůže být splněna protože není k dispozici verze balíku "
 "%s, která odpovídá požadavku na verzi"
 
-#: cmdline/apt-get.cc:2282
+#: cmdline/apt-get.cc:2308
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Selhalo splnění %s závislosti pro %s: Instalovaný balík %s je příliš nový"
 
-#: cmdline/apt-get.cc:2307
+#: cmdline/apt-get.cc:2333
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Selhalo splnění %s závislosti pro %s: %s"
 
-#: cmdline/apt-get.cc:2321
+#: cmdline/apt-get.cc:2347
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Závislosti pro sestavení %s nemohly být splněny."
 
-#: cmdline/apt-get.cc:2325
+#: cmdline/apt-get.cc:2351
 msgid "Failed to process build dependencies"
 msgstr "Chyba při zpracování závislostí pro sestavení"
 
-#: cmdline/apt-get.cc:2357
+#: cmdline/apt-get.cc:2383
 msgid "Supported modules:"
 msgstr "Podporované moduly:"
 
-#: cmdline/apt-get.cc:2398
+#: cmdline/apt-get.cc:2424
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1238,23 +1236,23 @@ msgstr ""
 "   upgrade         - Provede aktualizaci\n"
 "   install         - Instaluje nové balíky (balík je libc6, ne libc6.deb)\n"
 "   remove          - Odstraní balíky\n"
-"   source          - Stáhne zdrojové archívy\n"
-"   build-dep       - Configure build-dependencies for source packages\n"
+"   source          - Stáhne zdrojové archivy\n"
+"   build-dep       - Pro zdrojové balíky nastaví build-dependencies\n"
 "   dist-upgrade    - Aktualizace distribuce, viz apt-get(8)\n"
 "   dselect-upgrade - Řídí se podle výběru v dselectu\n"
-"   clean           - Smaže stažené archívy\n"
-"   autoclean       - Smaže staré stažené archívy\n"
+"   clean           - Smaže stažené archivy\n"
+"   autoclean       - Smaže staré stažené archivy\n"
 "   check           - Ověří, zda se nevyskytují poškozené závislosti\n"
 "\n"
 "Volby:\n"
 "  -h  Tato nápověda\n"
 "  -q  Nezobrazí indikátor postupu - pro záznam\n"
 "  -qq Nezobrazí nic než chyby\n"
-"  -d  Pouze stáhne - neinstaluje ani nerozbaluje archívy\n"
+"  -d  Pouze stáhne - neinstaluje ani nerozbaluje archivy\n"
 "  -s  Pouze simuluje prováděné akce\n"
 "  -y  Na všechny otázky odpovídá Ano\n"
 "  -f  Zkusí pokračovat, i když selže kontrola integrity\n"
-"  -m  Zkusí pokračovat, i když se nepodaří najít archívy\n"
+"  -m  Zkusí pokračovat, i když se nepodaří najít archivy\n"
 "  -u  Zobrazí také seznam aktualizovaných balíků\n"
 "  -b  Po stažení zdrojového balíku jej i zkompiluje\n"
 "  -V  Zobrazí čísla verzí\n"
@@ -1274,11 +1272,11 @@ msgstr "Mám:"
 
 #: cmdline/acqprogress.cc:110
 msgid "Ign "
-msgstr "Ign"
+msgstr "Ign "
 
 #: cmdline/acqprogress.cc:114
 msgid "Err "
-msgstr "Err"
+msgstr "Err "
 
 #: cmdline/acqprogress.cc:135
 #, c-format
@@ -1288,7 +1286,7 @@ msgstr "Staženo %sB za %s (%sB/s)\n"
 #: cmdline/acqprogress.cc:225
 #, c-format
 msgid " [Working]"
-msgstr "[Pracuji]"
+msgstr " [Pracuji]"
 
 #: cmdline/acqprogress.cc:271
 #, c-format
@@ -1369,11 +1367,11 @@ msgstr "Selhalo spuštění gzipu "
 
 #: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
 msgid "Corrupted archive"
-msgstr "Porušený archív"
+msgstr "Porušený archiv"
 
 #: apt-inst/contrib/extracttar.cc:195
 msgid "Tar checksum failed, archive corrupted"
-msgstr "Kontrolní součet taru selhal, archív je poškozený"
+msgstr "Kontrolní součet taru selhal, archiv je poškozený"
 
 #: apt-inst/contrib/extracttar.cc:298
 #, c-format
@@ -1382,23 +1380,23 @@ msgstr "Neznámá hlavička TARu typ %u, člen %s"
 
 #: apt-inst/contrib/arfile.cc:73
 msgid "Invalid archive signature"
-msgstr "Neplatný podpis archívu"
+msgstr "Neplatný podpis archivu"
 
 #: apt-inst/contrib/arfile.cc:81
 msgid "Error reading archive member header"
-msgstr "Chyba při čtení záhlaví prvku archívu"
+msgstr "Chyba při čtení záhlaví prvku archivu"
 
 #: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
 msgid "Invalid archive member header"
-msgstr "Neplatné záhlaví prvku archívu"
+msgstr "Neplatné záhlaví prvku archivu"
 
 #: apt-inst/contrib/arfile.cc:131
 msgid "Archive is too short"
-msgstr "Archív je příliš krátký"
+msgstr "Archiv je příliš krátký"
 
 #: apt-inst/contrib/arfile.cc:135
 msgid "Failed to read the archive headers"
-msgstr "Chyba při čtení hlaviček archívu"
+msgstr "Chyba při čtení hlaviček archivu"
 
 #: apt-inst/filelist.cc:384
 msgid "DropNode called on still linked node"
@@ -1432,9 +1430,9 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Duplicitní konfigurační soubor %s/%s"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write file %s"
-msgstr "Selhal zápis do souboru %s"
+msgstr "Selhal zápis souboru %s"
 
 #: apt-inst/dirstream.cc:96 apt-inst/dirstream.cc:104
 #, c-format
@@ -1605,12 +1603,12 @@ msgstr "Chyba při zpracování MD5. Offset %lu"
 #: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Toto není platný DEB archív, chybí část '%s'"
+msgstr "Toto není platný DEB archiv, chybí část '%s'"
 
 #: apt-inst/deb/debfile.cc:52
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Toto není platný DEB archív, neobsahuje část '%s' ani '%s'"
+msgstr "Toto není platný DEB archiv, neobsahuje část '%s' ani '%s'"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -1652,9 +1650,8 @@ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "Nemohu odpojit CD-ROM v %s - možná se stále používá."
 
 #: methods/cdrom.cc:169
-#, fuzzy
 msgid "Disk not found."
-msgstr "Soubor nebyl nalezen"
+msgstr "Disk nebyl nalezen."
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
@@ -1769,7 +1766,7 @@ msgstr "Nemohu naslouchat na socketu"
 
 #: methods/ftp.cc:747
 msgid "Could not determine the socket's name"
-msgstr "Nemohu určit jmého socketu"
+msgstr "Nemohu určit jméno socketu"
 
 #: methods/ftp.cc:779
 msgid "Unable to send PORT command"
@@ -1879,41 +1876,41 @@ msgstr "Nemohu se připojit k %s %s:"
 
 #: methods/gpgv.cc:92
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-msgstr ""
+msgstr "E: Seznam argumentů Acquire::gpgv::Options je příliš dlouhý. Končím."
 
 #: methods/gpgv.cc:191
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
+msgstr "Vnitřní chyba: Dobrý podpis, ale nemohu zjistit otisk klíče?!"
 
 #: methods/gpgv.cc:196
 msgid "At least one invalid signature was encountered."
-msgstr ""
+msgstr "Byl zaznamenán nejméně jeden neplatný podpis. "
 
 #. FIXME String concatenation considered harmful.
 #: methods/gpgv.cc:201
-#, fuzzy
 msgid "Could not execute "
-msgstr "Nemohu získat zámek %s"
+msgstr "Nemohu spustit "
 
 #: methods/gpgv.cc:202
 msgid " to verify signature (is gnupg installed?)"
-msgstr ""
+msgstr " pro ověření podpisu (je gnupg nainstalováno?)"
 
 #: methods/gpgv.cc:206
 msgid "Unknown error executing gpgv"
-msgstr ""
+msgstr "Neznámá chyba při spouštění gpgv"
 
 #: methods/gpgv.cc:237
-#, fuzzy
 msgid "The following signatures were invalid:\n"
-msgstr "Následujcící extra balíky budou instalovány:"
+msgstr "Následující podpisy jsou neplatné:\n"
 
 #: methods/gpgv.cc:244
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr ""
+"Následující podpisy nemohly být ověřeny, protože není dostupný veřejný "
+"klíč:\n"
 
 #: methods/gzip.cc:57
 #, c-format
@@ -2117,7 +2114,7 @@ msgstr "Volba '%s' je příliš dlouhá"
 #: apt-pkg/contrib/cmndline.cc:301
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "Nechápu význam %s, zkuste true nebo false. "
+msgstr "Nechápu význam %s, zkuste true nebo false."
 
 #: apt-pkg/contrib/cmndline.cc:351
 #, c-format
@@ -2337,8 +2334,8 @@ msgid "Malformed line %u in source list %s (type)"
 msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
 
 #: apt-pkg/sourcelist.cc:244
-#, fuzzy, c-format
-msgid "Type '%s' is not known in on line %u in source list %s"
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typ '%s' na řádce %u v seznamu zdrojů %s není známý"
 
 #: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
@@ -2366,7 +2363,7 @@ msgstr "Indexový typ souboru '%s' není podporován"
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr "Balík %s je potřeba přeinstalovat, ale nemohu pro něj nalézt archív."
+msgstr "Balík %s je potřeba přeinstalovat, ale nemohu pro něj nalézt archiv."
 
 #: apt-pkg/algorithms.cc:1059
 msgid ""
@@ -2393,7 +2390,7 @@ msgstr "Archivní adresář %spartial chybí."
 #: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
-msgstr ""
+msgstr "Stahuji soubor %li z %li (%s zbývá)"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2406,12 +2403,9 @@ msgid "Method %s did not start correctly"
 msgstr "Metoda %s nebyla spuštěna správně"
 
 #: apt-pkg/acquire-worker.cc:377
-#, fuzzy, c-format
+#, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr ""
-"Výměna média: Vložte disk nazvaný\n"
-" '%s'\n"
-"do mechaniky '%s' a stiskněte enter\n"
+msgstr "Vložte prosím disk nazvaný '%s' do mechaniky '%s' a stiskněte enter."
 
 #: apt-pkg/init.cc:120
 #, c-format
@@ -2673,54 +2667,54 @@ msgstr ""
 "Zapsal jsem %i záznamů s chybějícími (%i) a nesouhlasícími (%i) soubory.\n"
 
 #: apt-pkg/deb/dpkgpm.cc:358
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing %s"
-msgstr "Otevírám %s"
+msgstr "Připravuji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Unpacking %s"
-msgstr "Otevírám %s"
+msgstr "Rozbaluji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:364
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to configure %s"
-msgstr "Otevírám konfigurační soubor %s"
+msgstr "Připravuji nastavení %s"
 
 #: apt-pkg/deb/dpkgpm.cc:365
-#, fuzzy, c-format
+#, c-format
 msgid "Configuring %s"
-msgstr "Připojuji se k %s"
+msgstr "Nastavuji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:366
-#, fuzzy, c-format
+#, c-format
 msgid "Installed %s"
-msgstr "  Instalovaná verze: "
+msgstr "Nainstalován %s"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr ""
+msgstr "Připravuji odstranění %s"
 
 #: apt-pkg/deb/dpkgpm.cc:372
-#, fuzzy, c-format
+#, c-format
 msgid "Removing %s"
-msgstr "Otevírám %s"
+msgstr "Odstraňuji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:373
-#, fuzzy, c-format
+#, c-format
 msgid "Removed %s"
-msgstr "Doporučuje"
+msgstr "Odstraněn %s"
 
 #: apt-pkg/deb/dpkgpm.cc:378
 #, c-format
 msgid "Preparing for remove with config %s"
-msgstr ""
+msgstr "Připravuji odstranění %s včetně konfiguračních souborů"
 
 #: apt-pkg/deb/dpkgpm.cc:379
 #, c-format
 msgid "Removed with config %s"
-msgstr ""
+msgstr "Odstraněn %s včetně konfiguračního souboru"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
