@@ -38,6 +38,7 @@
 #include <apt-pkg/version.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
     
 #include <config.h>
@@ -45,6 +46,7 @@
 
 #include "acqprogress.h"
 
+#include <set>
 #include <locale.h>
 #include <langinfo.h>
 #include <fstream>
@@ -1899,6 +1901,9 @@ bool DoSource(CommandLine &CmdL)
 
    DscFile *Dsc = new DscFile[CmdL.FileSize()];
    
+   // insert all downloaded uris into this set to avoid downloading them
+   // twice
+   set<string> queued;
    // Load the requestd sources into the fetcher
    unsigned J = 0;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
@@ -1935,7 +1940,28 @@ bool DoSource(CommandLine &CmdL)
 	 if (_config->FindB("APT::Get::Tar-Only",false) == true &&
 	     I->Type != "tar")
 	    continue;
-	 
+
+	 // don't download the same uri twice (should this be moved to
+	 // the fetcher interface itself?)
+	 if(queued.find(Last->Index().ArchiveURI(I->Path)) != queued.end())
+	    continue;
+	 queued.insert(Last->Index().ArchiveURI(I->Path));
+	    
+	 // check if we have a file with that md5 sum already localy
+	 if(!I->MD5Hash.empty() && FileExists(flNotDir(I->Path)))  
+	 {
+	    FileFd Fd(flNotDir(I->Path), FileFd::ReadOnly);
+	    MD5Summation sum;
+	    sum.AddFD(Fd.Fd(), Fd.Size());
+	    Fd.Close();
+	    if((string)sum.Result() == I->MD5Hash) 
+	    {
+	       ioprintf(c1out,_("Skiping already downloaded file '%s'\n"),
+			flNotDir(I->Path).c_str());
+	       continue;
+	    }
+	 }
+
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
 			I->MD5Hash,I->Size,
 			Last->Index().SourceInfo(*Last,*I),Src);

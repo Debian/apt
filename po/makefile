@@ -66,7 +66,7 @@ binary: $(POTFILES) $(PACKAGE)-all.pot $(MOFILES) update-po
 
 .PHONY: update-po
 update-po: $(PACKAGE)-all.pot
-	for lang in ${LINGUAS}; do\
+	for lang in ${LINGUAS}; do \
 	echo "Updating $$lang.po"; \
 	$(MSGMERGE) $$lang.po $(PACKAGE)-all.pot -o $$lang.new.po; \
 	cmp $$lang.new.po $$lang.po || cp $$lang.new.po $$lang.po; \
