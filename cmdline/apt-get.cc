@@ -1956,7 +1956,7 @@ bool DoSource(CommandLine &CmdL)
 	    Fd.Close();
 	    if((string)sum.Result() == I->MD5Hash) 
 	    {
-	       ioprintf(c1out,_("Skiping already downloaded file '%s'\n"),
+	       ioprintf(c1out,_("Skipping already downloaded file '%s'\n"),
 			flNotDir(I->Path).c_str());
 	       continue;
 	    }

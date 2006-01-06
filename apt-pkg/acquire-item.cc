@@ -642,7 +642,7 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)
    // check for missing sigs (that where not fatal because otherwise we had
    // bombed earlier)
    string missingkeys;
-   string msg = _("There was no public key available for the "
+   string msg = _("There are no public key available for the "
 		  "following key IDs:\n");
    pos = Message.find("NO_PUBKEY ");
    if (pos != std::string::npos)
