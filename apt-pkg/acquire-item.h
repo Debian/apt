@@ -151,8 +151,10 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    const vector<struct IndexTarget*>* IndexTargets;
    indexRecords* MetaIndexParser;
    bool AuthPass;
+   // required to deal gracefully with problems caused by incorrect ims hits
+   bool IMSHit; 
 
-   bool VerifyVendor();
+   bool VerifyVendor(string Message);
    void RetrievalDone(string Message);
    void AuthDone(string Message);
    void QueueIndexes(bool verify);
