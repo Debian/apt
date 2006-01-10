@@ -62,7 +62,7 @@ $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 stats:
 	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
 
-binary: $(POTFILES) $(PACKAGE)-all.pot $(MOFILES) update-po
+binary: $(POTFILES) $(PACKAGE)-all.pot $(MOFILES)
 
 .PHONY: update-po
 update-po: $(PACKAGE)-all.pot
@@ -74,7 +74,7 @@ update-po: $(PACKAGE)-all.pot
 	done
 
 clean: clean/local
-clean/local:
+clean/local: update-po
 	rm -f $(MOFILES) $(LANG_POFILES) $(PO)/*.d
 
 # Include the dependencies that are available
