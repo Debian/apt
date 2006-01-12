@@ -862,7 +862,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
 				 const vector<struct IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
    Item(Owner), RealURI(URI), SigFile(SigFile), AuthPass(false),
-   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets)
+   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets), IMSHit(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
@@ -955,6 +955,9 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
       return;
    }
 
+   // see if the download was a IMSHit
+   IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
+
    Complete = true;
 
    string FinalFile = _config->FindDir("Dir::State::lists");
@@ -983,7 +986,7 @@ void pkgAcqMetaIndex::AuthDone(string Message)
       return;
    }
 
-   if (!VerifyVendor())
+   if (!VerifyVendor(Message))
    {
       return;
    }
@@ -1041,7 +1044,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
    }
 }
 
-bool pkgAcqMetaIndex::VerifyVendor()
+bool pkgAcqMetaIndex::VerifyVendor(string Message)
 {
 //    // Maybe this should be made available from above so we don't have
 //    // to read and parse it every time?
@@ -1066,6 +1069,22 @@ bool pkgAcqMetaIndex::VerifyVendor()
 //          break;
 //       }
 //    }
+   string::size_type pos;
+
+   // check for missing sigs (that where not fatal because otherwise we had
+   // bombed earlier)
+   string missingkeys;
+   string msg = _("There are no public key available for the "
+		  "following key IDs:\n");
+   pos = Message.find("NO_PUBKEY ");
+   if (pos != std::string::npos)
+   {
+      string::size_type start = pos+strlen("NO_PUBKEY ");
+      string Fingerprint = Message.substr(start, Message.find("\n")-start);
+      missingkeys += (Fingerprint);
+   }
+   if(!missingkeys.empty())
+      _error->Warning("%s", string(msg+missingkeys).c_str());
 
    string Transformed = MetaIndexParser->GetExpectedDist();
 
@@ -1074,7 +1093,7 @@ bool pkgAcqMetaIndex::VerifyVendor()
       Transformed = "experimental";
    }
 
-   string::size_type pos = Transformed.rfind('/');
+   pos = Transformed.rfind('/');
    if (pos != string::npos)
    {
       Transformed = Transformed.substr(0, pos);
@@ -1120,10 +1139,30 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    if (AuthPass == true)
    {
-      // gpgv method failed
+      // if we fail the authentication but got the file via a IMS-Hit 
+      // this means that the file wasn't downloaded and that it might be
+      // just stale (server problem, proxy etc). we delete what we have
+      // queue it again without i-m-s 
+      // alternatively we could just unlink the file and let the user try again
+      if (IMSHit)
+      {
+	 Complete = false;
+	 Local = false;
+	 AuthPass = false;
+	 unlink(DestFile.c_str());
+
+	 DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+	 DestFile += URItoFileName(RealURI);
+	 Desc.URI = RealURI;
+	 QueueURI(Desc);
+	 return;
+      }
+
+      // gpgv method failed 
       _error->Warning("GPG error: %s: %s",
                       Desc.Description.c_str(),
                       LookupTag(Message,"Message").c_str());
+
    }
 
    // No Release file was present, or verification failed, so fall
@@ -1469,7 +1508,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
       else
 	 PartialSize = Buf.st_size;
    }
-   
+
    QueueURI(Desc);
 }
 									/*}}}*/

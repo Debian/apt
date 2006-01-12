@@ -247,7 +247,11 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
                errmsg += (*I + "\n");
          }
       }
-      return _error->Error(errmsg.c_str());
+      // this is only fatal if we have no good sigs or if we have at
+      // least one bad signature. good signatures and NoPubKey signatures
+      // happen easily when a file is signed with multiple signatures
+      if(GoodSigners.empty() or !BadSigners.empty())
+      	 return _error->Error(errmsg.c_str());
    }
       
    // Transfer the modification times

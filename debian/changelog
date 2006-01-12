@@ -1,16 +1,51 @@
-apt (0.6.43exp1) experimental; urgency=low
+apt (0.6.43.2exp1) experimental; urgency=low
 
-  * added support for package index diffs 
+  * added support for package index diffs
   * added support for i18n of the package descriptions
   * synced with the apt--debian-sid--0 branch
   * build from mvo@debian.org--2005/apt--debian-experimental--0
     (from http://people.debian.org/~mvo/arch)
-  * fix bug in apt-cache when displaying the record (closes: #334887)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 12 Jan 2006 23:40:32 +0100
+
+apt (0.6.43.2) unstable; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-159:
+    - en_GB.po, de.po: fix spaces errors in "Ign " translations
+      Closes: #347258
+    - makefile: make update-po a pre-requisite of clean target so
+	        that POT and PO files are always up-to-date
+    - sv.po: Completed to 511t. Closes: #346450
+    - sk.po: Completed to 511t. Closes: #346369
+    - fr.po: Completed to 511t
+    - *.po: Updated from sources (511 strings)
   * add patch to fix http download corruption problem (thanks to
     Petr Vandrovec, closes: #280844, #290694)
-  * changed abi version to 3.12
-  
- -- Michael Vogt <mvo@debian.org>  Sun, 13 Nov 2005 13:33:57 +0100
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 10 Jan 2006 17:09:31 +0100
+
+apt (0.6.43.1) unstable; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-148:
+    * fr.po: Completed to 510 strings
+    * it.po: Completed to 510t
+    * en_GB.po: Completed to 510t
+    * cs.po: Completed to 510t
+    * zh_CN.po: Completed to 510t
+    * el.po: Updated to 510t
+    * vi.po: Updated to 383t93f34u
+    * tl.po: Completed to 510 strings (Closes: #344306)
+    * sv.po: Completed to 510 strings (Closes: #344056)
+    * LINGUAS: disabled Hebrew translation. (Closes: #313283)
+    * eu.po: Completed to 510 strings (Closes: #342091)
+  * apt-get source won't download already downloaded files again
+    (closes: #79277)
+  * share/debian-archive.gpg: new 2006 ftp-archive signing key added
+    (#345891)
+  * redownload the Release file if IMS-Hit and gpg failure
+  * deal with multiple signatures on a Release file
+
+ -- Michael Vogt <mvo@debian.org>  Fri,  6 Jan 2006 01:17:08 +0100
 
 apt (0.6.43) unstable; urgency=medium
 

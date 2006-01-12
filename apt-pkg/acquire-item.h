@@ -691,13 +691,15 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    /** \brief If \b true, the index's signature is currently being verified.
     */
    bool AuthPass;
+   // required to deal gracefully with problems caused by incorrect ims hits
+   bool IMSHit; 
 
    /** \brief Check that the release file is a release file for the
     *  correct distribution.
     *
     *  \return \b true if no fatal errors were encountered.
     */
-   bool VerifyVendor();
+   bool VerifyVendor(string Message);
 
    /** \brief Called when a file is finished being retrieved.
     *
