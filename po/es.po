@@ -6,10 +6,10 @@
 # Rubén Porras Campo <nahoo@inicia.es> 2004
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.5.24\n"
+"Project-Id-Version: apt 0.6.42.3exp1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-04 18:51+0100\n"
-"PO-Revision-Date: 2005-02-08 20:36+0100\n"
+"PO-Revision-Date: 2005-11-16 17:37+0100\n"
 "Last-Translator: Rubén Porras Campo <nahoo@inicia.es>\n"
 "Language-Team: Spanish <debian-l10n-spanish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -342,7 +342,6 @@ msgid "Error processing contents %s"
 msgstr "Error procesando contenidos %s"
 
 #: ftparchive/apt-ftparchive.cc:556
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -384,12 +383,12 @@ msgid ""
 "  -o=?  Set an arbitrary configuration option"
 msgstr ""
 "Uso: apt-ftparchive [opciones] orden\n"
-"Comandos: packages trayectoria-binaria [archivo-sobrepaso\n"
-"                                      [prefijo-trayectoria]]\n"
-"          sources trayectoria-fuente [archivo-sobrepaso \n"
-"                                     [prefijo-trayectoria]]\n"
-"          contents trayectoria\n"
-"          release trayectoria\n"
+"Comandos: packages ruta-binaria [archivo-predominio\n"
+"                                      [prefijo-ruta]]\n"
+"          sources ruta-fuente [archivo-predominio \n"
+"                                     [prefijo-ruta]]\n"
+"          contents ruta\n"
+"          release ruta\n"
 "          generate config [grupos]\n"
 "          clean config\n"
 "\n"
@@ -399,7 +398,7 @@ msgstr ""
 "\n"
 "apt-ftparchive genera ficheros Package de un árbol de .debs. El fichero\n"
 "Package contiene los contenidos de todos los campos de control de cada\n"
-"paquete al igual que la suma MD5 y el tamaño del archivo. Se soporta\n"
+"paquete al igual que la suma MD5 y el tamaño del archivo. Se puede usar\n"
 "un archivo de predominio para forzar el valor de Priority y\n"
 "Section.\n"
 "\n"
@@ -407,7 +406,7 @@ msgstr ""
 ".dscs. Se puede utilizar la opción --source-override para especificar un\n"
 "fichero de predominio de fuente.\n"
 "\n"
-"Las órdenes 'packages' y 'sources' deben ejecutarse en la raíz del\n"
+"Las órdenes «packages» y «sources» deben ejecutarse en la raíz del\n"
 "árbol. BinaryPath debe apuntar a la base de la búsqueda\n"
 "recursiva, y el archivo de predominio debe de contener banderas de\n"
 "predominio. Se añade Pathprefix a los campos de nombre de fichero\n"
@@ -423,7 +422,7 @@ msgstr ""
 "  -q    Silencioso\n"
 "  -d=?  Selecciona la base de datos de caché opcional \n"
 "  --no-delink Habilita modo de depuración delink\n"
-"  --contents  Generación del contenido del archivo 'Control'\n"
+"  --contents  Generación del contenido del archivo «Control»\n"
 "  -c=?  Lee este archivo de configuración\n"
 "  -o=?  Establece una opción de configuración arbitraria"
 
@@ -713,13 +712,12 @@ msgid "%s (due to %s) "
 msgstr "%s (por %s) "
 
 #: cmdline/apt-get.cc:546
-#, fuzzy
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
 msgstr ""
-"AVISO: Se van a eliminar los siguientes paquetes esenciales\n"
-"¡Esto NO debe hacerse a menos que sepa exactamente lo que está haciendo!"
+"AVISO: Se van a eliminar los siguientes paquetes esenciales.\n"
+"¡NO debe hacerse a menos que sepa exactamente lo que está haciendo!"
 
 #: cmdline/apt-get.cc:577
 #, c-format
@@ -780,7 +778,7 @@ msgstr "AVISO: ¡No se han podido autenticar los siguientes paquetes!"
 
 #: cmdline/apt-get.cc:693
 msgid "Authentication warning overridden.\n"
-msgstr ""
+msgstr "Aviso de autenticación ignorado.\n"
 
 #: cmdline/apt-get.cc:700
 msgid "Install these packages without verification [y/N]? "
@@ -861,14 +859,14 @@ msgid "Yes, do as I say!"
 msgstr "Sí, ¡haga lo que le digo!"
 
 #: cmdline/apt-get.cc:868
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
 "Está a punto de hacer algo potencialmente dañino\n"
-"Para continuar escriba la frase '%s'\n"
+"Para continuar escriba la frase «%s»\n"
 " ?] "
 
 #: cmdline/apt-get.cc:874 cmdline/apt-get.cc:893
@@ -1138,7 +1136,7 @@ msgstr "Falló la orden de desempaquetamiento '%s'.\n"
 #: cmdline/apt-get.cc:2069
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr ""
+msgstr "Compruebe que el paquete «dpkg-dev» esté instalado.\n"
 
 #: cmdline/apt-get.cc:2086
 #, c-format
@@ -1465,9 +1463,9 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Archivo de configuración duplicado %s/%s"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write file %s"
-msgstr "Falló el cierre del archivo %s"
+msgstr "Falló la escritura del archivo %s"
 
 #: apt-inst/dirstream.cc:96 apt-inst/dirstream.cc:104
 #, c-format
@@ -1686,9 +1684,8 @@ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "No pude desmontar el CD-ROM de %s, tal vez todavía este en uso."
 
 #: methods/cdrom.cc:169
-#, fuzzy
 msgid "Disk not found."
-msgstr "Fichero no encontrado"
+msgstr "Disco no encontrado."
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
@@ -1914,40 +1911,42 @@ msgstr "No pude conectarme a %s %s:"
 #: methods/gpgv.cc:92
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr ""
+"E: Lista de argumentos de Acquire::gpgv::Options demasiado larga. Terminando."
 
 #: methods/gpgv.cc:191
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
+"Error interno: Firma correcta, pero no se pudo determinar su huella digital?!"
 
 #: methods/gpgv.cc:196
 msgid "At least one invalid signature was encountered."
-msgstr ""
+msgstr "Se encontró al menos una firma inválida."
 
 #. FIXME String concatenation considered harmful.
 #: methods/gpgv.cc:201
-#, fuzzy
 msgid "Could not execute "
-msgstr "No se pudo bloquear %s"
+msgstr "No se pudo ejecutar "
 
 #: methods/gpgv.cc:202
 msgid " to verify signature (is gnupg installed?)"
-msgstr ""
+msgstr " para verificar la firma (¿está instalado gnupg?)"
 
 #: methods/gpgv.cc:206
 msgid "Unknown error executing gpgv"
-msgstr ""
+msgstr "Error desconocido ejecutando gpgv"
 
 #: methods/gpgv.cc:237
-#, fuzzy
 msgid "The following signatures were invalid:\n"
-msgstr "Se instalarán los siguientes paquetes extras:"
+msgstr "Las siguientes firms fueron inválidas:\n"
 
 #: methods/gpgv.cc:244
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr ""
+"Las firmas siguientes no se pudieron verificar porque su llave pública no "
+"está disponible:\n"
 
 #: methods/gzip.cc:57
 #, c-format
@@ -2374,7 +2373,7 @@ msgid "Malformed line %u in source list %s (type)"
 msgstr "Línea %u mal formada en lista de fuentes %s (tipo)"
 
 #: apt-pkg/sourcelist.cc:244
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Tipo '%s' desconocido en la línea %u de lista de fuentes %s"
 
@@ -2435,7 +2434,7 @@ msgstr "Falta el directorio de archivos %spartial."
 #: apt-pkg/acquire.cc:821
 #, c-format
 msgid "Downloading file %li of %li (%s remaining)"
-msgstr ""
+msgstr "Descargando fichero %li de %li (falta %s)"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2448,12 +2447,9 @@ msgid "Method %s did not start correctly"
 msgstr "El método %s no se inició correctamente"
 
 #: apt-pkg/acquire-worker.cc:377
-#, fuzzy, c-format
+#, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr ""
-"Cambio de medio: Por favor inserte el disco etiquetado\n"
-" '%s'\n"
-"en la unidad '%s' y presione Intro\n"
+msgstr "Por favor, inserte el disco «%s» en la unidad «%s» y presione Intro"
 
 #: apt-pkg/init.cc:120
 #, c-format
@@ -2722,54 +2718,54 @@ msgstr ""
 "%i registros escritos con %i fichero de menos y %i ficheros mal emparejados\n"
 
 #: apt-pkg/deb/dpkgpm.cc:358
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing %s"
-msgstr "Hay problemas abriendo %s"
+msgstr "Preparando %s"
 
 #: apt-pkg/deb/dpkgpm.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Unpacking %s"
-msgstr "Abriendo %s"
+msgstr "Desempaquetando %s"
 
 #: apt-pkg/deb/dpkgpm.cc:364
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to configure %s"
-msgstr "Abriendo fichero de configuración %s"
+msgstr "Preparándose para configurar %s"
 
 #: apt-pkg/deb/dpkgpm.cc:365
-#, fuzzy, c-format
+#, c-format
 msgid "Configuring %s"
-msgstr "Conectando a %s"
+msgstr "Configurando %s"
 
 #: apt-pkg/deb/dpkgpm.cc:366
-#, fuzzy, c-format
+#, c-format
 msgid "Installed %s"
-msgstr "  Instalados: "
+msgstr "%s instalado"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr ""
+msgstr "Preparándose para eliminar %s"
 
 #: apt-pkg/deb/dpkgpm.cc:372
-#, fuzzy, c-format
+#, c-format
 msgid "Removing %s"
-msgstr "Abriendo %s"
+msgstr "Eliminando %s"
 
 #: apt-pkg/deb/dpkgpm.cc:373
-#, fuzzy, c-format
+#, c-format
 msgid "Removed %s"
-msgstr "Recomienda"
+msgstr "%s eliminado"
 
 #: apt-pkg/deb/dpkgpm.cc:378
 #, c-format
 msgid "Preparing for remove with config %s"
-msgstr ""
+msgstr "Preparándose para eliminar con su configuración %s"
 
 #: apt-pkg/deb/dpkgpm.cc:379
 #, c-format
 msgid "Removed with config %s"
-msgstr ""
+msgstr "Eliminado con su configuración %s"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
