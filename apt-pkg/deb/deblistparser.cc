@@ -504,11 +504,12 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
       Start = ParseDepends(Start,Stop,Package,Version,Op);
       if (Start == 0)
 	 return _error->Error("Problem parsing Provides line");
-      if (Op != pkgCache::Dep::NoOp)
-	 return _error->Error("Malformed provides line");
-
-      if (NewProvides(Ver,Package,Version) == false)
-	 return false;
+      if (Op != pkgCache::Dep::NoOp) {
+	 _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+      } else {
+	 if (NewProvides(Ver,Package,Version) == false)
+	    return false;
+      }
 
       if (Start == Stop)
 	 break;
