@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-04 18:51+0100\n"
+"POT-Creation-Date: 2006-01-20 14:01+0100\n"
 "PO-Revision-Date: 2005-02-09 12:54+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -520,7 +520,7 @@ msgid " DeLink limit of %sB hit.\n"
 msgstr " リンクを外す制限の %sB に到達しました。\n"
 
 #: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:256
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:260
 #, c-format
 msgid "Failed to stat %s"
 msgstr "%s の stat に失敗しました"
@@ -1096,7 +1096,7 @@ msgstr "%s のソースパッケージが見つかりません"
 
 #: cmdline/apt-get.cc:1959
 #, fuzzy, c-format
-msgid "Skiping already downloaded file '%s'\n"
+msgid "Skipping already downloaded file '%s'\n"
 msgstr "すでに %s に展開されたソースがあるため、展開をスキップします\n"
 
 #: cmdline/apt-get.cc:1983
@@ -1686,12 +1686,12 @@ msgstr "ファイルがみつかりません"
 msgid "File not found"
 msgstr "ファイルがみつかりません"
 
-#: methods/copy.cc:42 methods/gpgv.cc:265 methods/gzip.cc:133
+#: methods/copy.cc:42 methods/gpgv.cc:269 methods/gzip.cc:133
 #: methods/gzip.cc:142
 msgid "Failed to stat"
 msgstr "stat に失敗しました"
 
-#: methods/copy.cc:79 methods/gpgv.cc:262 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:266 methods/gzip.cc:139
 msgid "Failed to set modification time"
 msgstr "変更時刻の設定に失敗しました"
 
@@ -1819,7 +1819,7 @@ msgstr "データソケット接続タイムアウト"
 msgid "Unable to accept connection"
 msgstr "接続を accept できません"
 
-#: methods/ftp.cc:864 methods/http.cc:963 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:958 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "ファイルのハッシュでの問題"
 
@@ -1951,76 +1951,76 @@ msgstr "%s に対してパイプを開けませんでした"
 msgid "Read error from %s process"
 msgstr "%s プロセスからの読み込みエラー"
 
-#: methods/http.cc:381
+#: methods/http.cc:376
 msgid "Waiting for headers"
 msgstr "ヘッダの待機中です"
 
-#: methods/http.cc:527
+#: methods/http.cc:522
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "%u 文字を越える 1 行のヘッダを取得しました"
 
-#: methods/http.cc:535
+#: methods/http.cc:530
 msgid "Bad header line"
 msgstr "不正なヘッダ行です"
 
-#: methods/http.cc:554 methods/http.cc:561
+#: methods/http.cc:549 methods/http.cc:556
 msgid "The HTTP server sent an invalid reply header"
 msgstr "http サーバが不正なリプライヘッダを送信してきました"
 
-#: methods/http.cc:590
+#: methods/http.cc:585
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "http サーバが不正な Content-Length ヘッダを送信してきました"
 
-#: methods/http.cc:605
+#: methods/http.cc:600
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "http サーバが不正な Content-Range ヘッダを送信してきました"
 
-#: methods/http.cc:607
+#: methods/http.cc:602
 msgid "This HTTP server has broken range support"
 msgstr "http サーバのレンジサポートが壊れています"
 
-#: methods/http.cc:631
+#: methods/http.cc:626
 msgid "Unknown date format"
 msgstr "不明な日付フォーマットです"
 
-#: methods/http.cc:778
+#: methods/http.cc:773
 msgid "Select failed"
 msgstr "select に失敗しました"
 
-#: methods/http.cc:783
+#: methods/http.cc:778
 msgid "Connection timed out"
 msgstr "接続タイムアウト"
 
-#: methods/http.cc:806
+#: methods/http.cc:801
 msgid "Error writing to output file"
 msgstr "出力ファイルへの書き込みでエラーが発生しました"
 
-#: methods/http.cc:837
+#: methods/http.cc:832
 msgid "Error writing to file"
 msgstr "ファイルへの書き込みでエラーが発生しました"
 
-#: methods/http.cc:865
+#: methods/http.cc:860
 msgid "Error writing to the file"
 msgstr "ファイルへの書き込みでエラーが発生しました"
 
-#: methods/http.cc:879
+#: methods/http.cc:874
 msgid "Error reading from server. Remote end closed connection"
 msgstr "リモート側で接続がクローズされてサーバからの読み込みに失敗しました"
 
-#: methods/http.cc:881
+#: methods/http.cc:876
 msgid "Error reading from server"
 msgstr "サーバからの読み込みに失敗しました"
 
-#: methods/http.cc:1112
+#: methods/http.cc:1107
 msgid "Bad header data"
 msgstr "不正なヘッダです"
 
-#: methods/http.cc:1129
+#: methods/http.cc:1124
 msgid "Connection failed"
 msgstr "接続失敗"
 
-#: methods/http.cc:1220
+#: methods/http.cc:1215
 msgid "Internal error"
 msgstr "内部エラー"
 
@@ -2569,11 +2569,15 @@ msgstr "ソースキャッシュの保存中に IO エラーが発生しました"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "リネームに失敗しました。%s (%s -> %s)"
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:950
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum が適合しません"
 
-#: apt-pkg/acquire-item.cc:719
+#: apt-pkg/acquire-item.cc:645
+msgid "There are no public key available for the following key IDs:\n"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:758
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2582,7 +2586,7 @@ msgstr ""
 "パッケージ %s のファイルの位置を特定できません。おそらくこのパッケージを手動"
 "で修正する必要があります (存在しないアーキテクチャのため)。"
 
-#: apt-pkg/acquire-item.cc:778
+#: apt-pkg/acquire-item.cc:817
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2591,7 +2595,7 @@ msgstr ""
 "パッケージ %s のファイルの位置を特定できません。おそらくこのパッケージを手動"
 "で修正する必要があります。"
 
-#: apt-pkg/acquire-item.cc:814
+#: apt-pkg/acquire-item.cc:853
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2599,7 +2603,7 @@ msgstr ""
 "パッケージインデックスファイルが壊れています。パッケージ %s に Filename: "
 "フィールドがありません。"
 
-#: apt-pkg/acquire-item.cc:901
+#: apt-pkg/acquire-item.cc:940
 msgid "Size mismatch"
 msgstr "サイズが適合しません"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-da\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-04 18:51+0100\n"
+"POT-Creation-Date: 2006-01-20 14:01+0100\n"
 "PO-Revision-Date: 2006-01-17 20:14+0100\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -517,7 +517,7 @@ msgid " DeLink limit of %sB hit.\n"
 msgstr " Nåede DeLink-begrænsningen på %sB.\n"
 
 #: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:256
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:260
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Kunne ikke finde %s"
@@ -1082,8 +1082,8 @@ msgid "Unable to find a source package for %s"
 msgstr "Kunne ikke finde kildetekstpakken for %s"
 
 #: cmdline/apt-get.cc:1959
-#, c-format
-msgid "Skiping already downloaded file '%s'\n"
+#, fuzzy, c-format
+msgid "Skipping already downloaded file '%s'\n"
 msgstr "Overspringer allerede hentet fil '%s'\n"
 
 #: cmdline/apt-get.cc:1983
@@ -1153,7 +1153,8 @@ msgstr "%s har ingen opbygningsafhængigheder.\n"
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr "%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
+msgstr ""
+"%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
 
 #: cmdline/apt-get.cc:2273
 #, c-format
@@ -1356,11 +1357,14 @@ msgstr "pakker, der blev installeret. Det kan give gentagne fejl"
 
 #: dselect/install:102
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
+msgstr ""
+"eller fejl, der skyldes manglende afhængigheder. Dette er o.k.  Det er kun"
 
 #: dselect/install:103
-msgid "above this message are important. Please fix them and run [I]nstall again"
-msgstr "fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+"fejlene over denne besked, der er vigtige. Ret dem og kør [I]nstallér igen"
 
 #: dselect/update:30
 msgid "Merging available information"
@@ -1617,7 +1621,8 @@ msgstr "Dette er ikke et gyldigt DEB-arkiv, mangler '%s'-elementet"
 #: apt-inst/deb/debfile.cc:52
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Dette er ikke et gyldigt DEB-arkiv, det har intet'%s- eller %s-elementet"
+msgstr ""
+"Dette er ikke et gyldigt DEB-arkiv, det har intet'%s- eller %s-elementet"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -1666,12 +1671,12 @@ msgstr "Disk blev ikke fundet."
 msgid "File not found"
 msgstr "Fil blev ikke fundet"
 
-#: methods/copy.cc:42 methods/gpgv.cc:265 methods/gzip.cc:133
+#: methods/copy.cc:42 methods/gpgv.cc:269 methods/gzip.cc:133
 #: methods/gzip.cc:142
 msgid "Failed to stat"
 msgstr "Kunne ikke finde"
 
-#: methods/copy.cc:79 methods/gpgv.cc:262 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:266 methods/gzip.cc:139
 msgid "Failed to set modification time"
 msgstr "Kunne ikke angive ændringstidspunkt"
 
@@ -1799,7 +1804,7 @@ msgstr "Tidsudløb på datasokkel-forbindelse"
 msgid "Unable to accept connection"
 msgstr "Kunne ikke acceptere forbindelse"
 
-#: methods/ftp.cc:864 methods/http.cc:963 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:958 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problem ved \"hashing\" af fil"
 
@@ -1888,8 +1893,10 @@ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr "F: Argumentlisten fra Acquire::gpgv::Options er for lang. Afslutter."
 
 #: methods/gpgv.cc:191
-msgid "Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr "Intern fejl: Gyldig signatur, men kunne ikke afgøre nøgle-fingeraftryk?!"
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr ""
+"Intern fejl: Gyldig signatur, men kunne ikke afgøre nøgle-fingeraftryk?!"
 
 #: methods/gpgv.cc:196
 msgid "At least one invalid signature was encountered."
@@ -1930,76 +1937,77 @@ msgstr "Kunne ikke åbne datarør for %s"
 msgid "Read error from %s process"
 msgstr "Læsefejl fra %s-process"
 
-#: methods/http.cc:381
+#: methods/http.cc:376
 msgid "Waiting for headers"
 msgstr "Afventer hoveder"
 
-#: methods/http.cc:527
+#: methods/http.cc:522
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Fandt en enkelt linje i hovedet på over %u tegn"
 
-#: methods/http.cc:535
+#: methods/http.cc:530
 msgid "Bad header line"
 msgstr "Ugyldig linje i hovedet"
 
-#: methods/http.cc:554 methods/http.cc:561
+#: methods/http.cc:549 methods/http.cc:556
 msgid "The HTTP server sent an invalid reply header"
 msgstr "http-serveren sendte et ugyldigt svarhovede"
 
-#: methods/http.cc:590
+#: methods/http.cc:585
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "http-serveren sendte et ugyldigt Content-Length-hovede"
 
-#: methods/http.cc:605
+#: methods/http.cc:600
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "http-serveren sendte et ugyldigt Content-Range-hovede"
 
-#: methods/http.cc:607
+#: methods/http.cc:602
 msgid "This HTTP server has broken range support"
-msgstr "Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
+msgstr ""
+"Denne http-servere har fejlagtig understøttelse af intervaller ('ranges')"
 
-#: methods/http.cc:631
+#: methods/http.cc:626
 msgid "Unknown date format"
 msgstr "Ukendt datoformat"
 
-#: methods/http.cc:778
+#: methods/http.cc:773
 msgid "Select failed"
 msgstr "Valg mislykkedes"
 
-#: methods/http.cc:783
+#: methods/http.cc:778
 msgid "Connection timed out"
 msgstr "Tidsudløb på forbindelsen"
 
-#: methods/http.cc:806
+#: methods/http.cc:801
 msgid "Error writing to output file"
 msgstr "Fejl ved skrivning af uddatafil"
 
-#: methods/http.cc:837
+#: methods/http.cc:832
 msgid "Error writing to file"
 msgstr "Fejl ved skrivning til fil"
 
-#: methods/http.cc:865
+#: methods/http.cc:860
 msgid "Error writing to the file"
 msgstr "Fejl ved skrivning til filen"
 
-#: methods/http.cc:879
+#: methods/http.cc:874
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Fejl ved læsning fra serveren. Den fjerne ende lukkede forbindelsen"
 
-#: methods/http.cc:881
+#: methods/http.cc:876
 msgid "Error reading from server"
 msgstr "Fejl ved læsning fra server"
 
-#: methods/http.cc:1112
+#: methods/http.cc:1107
 msgid "Bad header data"
 msgstr "Ugyldige hoved-data"
 
-#: methods/http.cc:1129
+#: methods/http.cc:1124
 msgid "Connection failed"
 msgstr "Forbindelsen mislykkedes"
 
-#: methods/http.cc:1220
+#: methods/http.cc:1215
 msgid "Internal error"
 msgstr "Intern fejl"
 
@@ -2369,8 +2377,10 @@ msgstr "Indeksfiler af typen '%s' understøttes ikke"
 
 #: apt-pkg/algorithms.cc:241
 #, c-format
-msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr "Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr ""
+"Pakken %s skal geninstalleres, men jeg kan ikke finde noget arkiv med den."
 
 #: apt-pkg/algorithms.cc:1059
 msgid ""
@@ -2382,7 +2392,8 @@ msgstr ""
 
 #: apt-pkg/algorithms.cc:1061
 msgid "Unable to correct problems, you have held broken packages."
-msgstr "Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
+msgstr ""
+"Kunne ikke korrigere problemerne, da du har tilbageholdt ødelagte pakker."
 
 #: apt-pkg/acquire.cc:62
 #, c-format
@@ -2494,7 +2505,8 @@ msgstr "Der skete en fejl under behandlingen af %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
+msgstr ""
+"Hold da op! Du nåede over det antal pakkenavne, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
@@ -2502,7 +2514,8 @@ msgstr "Hold da op! Du nåede over det antal versioner, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
+msgstr ""
+"Hold da op! Du nåede over det antal afhængigheder, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2537,11 +2550,15 @@ msgstr "IO-fejl ved gemning af kilde-mellemlageret"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "omdøbning mislykkedes, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:950
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum stemmer ikke"
 
-#: apt-pkg/acquire-item.cc:719
+#: apt-pkg/acquire-item.cc:645
+msgid "There are no public key available for the following key IDs:\n"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:758
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2550,7 +2567,7 @@ msgstr ""
 "Jeg kunne ikke lokalisere filen til %s-pakken. Det betyder muligvis at du er "
 "nødt til manuelt at reparere denne pakke. (grundet manglende arch)"
 
-#: apt-pkg/acquire-item.cc:778
+#: apt-pkg/acquire-item.cc:817
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2559,12 +2576,13 @@ msgstr ""
 "Jeg kunne ikke lokalisere filen til %s-pakken. Det betyder muligvis at du er "
 "nødt til manuelt at reparere denne pakke."
 
-#: apt-pkg/acquire-item.cc:814
+#: apt-pkg/acquire-item.cc:853
 #, c-format
-msgid "The package index files are corrupted. No Filename: field for package %s."
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
 msgstr "Pakkeindeksfilerne er i stykker. Intet 'Filename:'-felt for pakken %s."
 
-#: apt-pkg/acquire-item.cc:901
+#: apt-pkg/acquire-item.cc:940
 msgid "Size mismatch"
 msgstr "Størrelsen stemmer ikke"
 
@@ -2967,4 +2985,3 @@ msgstr "Forbindelsen lukkedes for hurtigt"
 
 #~ msgid "Errors apply to file '%s'"
 #~ msgstr "Fejlene vedrører filen '%s'"
-
