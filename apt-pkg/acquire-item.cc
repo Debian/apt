@@ -392,7 +392,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 
    // if we get a network error we fail gracefully
    if(LookupTag(Message,"FailReason") == "Timeout" || 
-      LookupTag(Message,"FailReason") == "TmpResolveFailure") ||
+      LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
       LookupTag(Message,"FailReason") == "ConnectionRefused") {
       Item::Failed(Message,Cnf);
       return;
