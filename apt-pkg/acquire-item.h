@@ -48,7 +48,8 @@ class pkgAcquire::Item
    public:
 
    // State of the item
-   enum {StatIdle, StatFetching, StatDone, StatError, StatAuthError} Status;
+   enum {StatIdle, StatFetching, StatDone, StatError, 
+	 StatAuthError, StatTransientNetworkError} Status;
    string ErrorText;
    unsigned long FileSize;
    unsigned long PartialSize;   
