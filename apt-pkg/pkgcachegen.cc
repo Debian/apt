@@ -571,8 +571,10 @@ static bool CheckValidity(const string &CacheFile, FileIterator Start,
     
       if ((*Start)->Exists() == false)
       {
+#if 0 // mvo: we no longer give a message here (Default Sources spec)
 	 _error->WarningE("stat",_("Couldn't stat source package list %s"),
 			  (*Start)->Describe().c_str());
+#endif
 	 continue;
       }
 
