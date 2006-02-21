@@ -321,8 +321,9 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
-   // remove any partial downloaded sig-file. it may confuse proxies
-   // and is too small to warrant a partial download anyway
+   // remove any partial downloaded sig-file in partial/. 
+   // it may confuse proxies and is too small to warrant a 
+   // partial download anyway
    unlink(DestFile.c_str());
 
    // Create the item
@@ -389,17 +390,20 @@ void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
 
    // if we get a network error we fail gracefully
    if(LookupTag(Message,"FailReason") == "Timeout" || 
       LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
       LookupTag(Message,"FailReason") == "ConnectionRefused") {
       Item::Failed(Message,Cnf);
+      // move the sigfile back on network failures (and re-authenticated?)
+      if(FileExists(DestFile))
+ 	 Rename(DestFile,Final);
       return;
    }
 
    // Delete any existing sigfile when the acquire failed
-   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    unlink(Final.c_str());
 
    // queue a pkgAcqMetaIndex with no sigfile

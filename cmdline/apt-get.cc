@@ -1381,7 +1381,7 @@ bool DoUpdate(CommandLine &CmdL)
       return false;
    
    if (Failed == true)
-      return _error->Warning(_("Some index files failed to download, they have been ignored, or old ones used instead."));
+      _error->Warning(_("Some index files failed to download, they have been ignored, or old ones used instead."));
    
    return true;
 }

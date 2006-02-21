@@ -1,4 +1,4 @@
-apt (0.6.43.3) unstable; urgency=low
+apt (0.6.43.2ubuntu1) dapper; urgency=low
 
   * Merge bubulle@debian.org--2005/apt--main--0 up to patch-182:
   * ca.po: Completed to 512t. Closes: #351592
@@ -26,8 +26,9 @@ apt (0.6.43.3) unstable; urgency=low
   * cmdline/apt-get.cc: only run the list-cleaner if a update was 
     successfull
   * apt-get update errors are only warnings nowdays
+  * be more careful with the signature file on network failures
 
- -- 
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 20 Feb 2006 22:27:48 +0100
 
 apt (0.6.43.2) unstable; urgency=low
 
@@ -53,6 +54,24 @@ apt (0.6.43.2) unstable; urgency=low
     "unattended-upgrade")
 
  -- Michael Vogt <mvo@debian.org>  Thu, 19 Jan 2006 00:06:33 +0100
+
+apt (0.6.43.1ubuntu1) dapper; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-159:
+    - en_GB.po, de.po: fix spaces errors in "Ign " translations
+      Closes: #347258
+    - makefile: make update-po a pre-requisite of clean target so
+	        that POT and PO files are always up-to-date
+    - sv.po: Completed to 511t. Closes: #346450
+    - sk.po: Completed to 511t. Closes: #346369
+    - fr.po: Completed to 511t
+    - *.po: Updated from sources (511 strings)
+  * add patch to fix http download corruption problem (thanks to
+    Petr Vandrovec, closes: #280844, #290694)
+  * added APT::Periodic::Unattended-Upgrade (requires the package
+    "unattended-upgrade")
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 10 Jan 2006 17:09:31 +0100
 
 apt (0.6.43.1) unstable; urgency=low
   
