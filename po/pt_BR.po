@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-04 18:51+0100\n"
+"POT-Creation-Date: 2006-01-20 14:01+0100\n"
 "PO-Revision-Date: 2005-06-16 10:24-0300\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
@@ -519,7 +519,7 @@ msgid " DeLink limit of %sB hit.\n"
 msgstr " Limite DeLink de %sB atingido.\n"
 
 #: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:256
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:260
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Falha ao checar %s"
@@ -1091,7 +1091,7 @@ msgstr "Impossível encontrar um pacote fonte para %s"
 
 #: cmdline/apt-get.cc:1959
 #, fuzzy, c-format
-msgid "Skiping already downloaded file '%s'\n"
+msgid "Skipping already downloaded file '%s'\n"
 msgstr "Pulando desempacotamento de pacote fonte já desempacotado em %s\n"
 
 #: cmdline/apt-get.cc:1983
@@ -1685,12 +1685,12 @@ msgstr "Arquivo não encontrado"
 msgid "File not found"
 msgstr "Arquivo não encontrado"
 
-#: methods/copy.cc:42 methods/gpgv.cc:265 methods/gzip.cc:133
+#: methods/copy.cc:42 methods/gpgv.cc:269 methods/gzip.cc:133
 #: methods/gzip.cc:142
 msgid "Failed to stat"
 msgstr "Falha ao checar"
 
-#: methods/copy.cc:79 methods/gpgv.cc:262 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:266 methods/gzip.cc:139
 msgid "Failed to set modification time"
 msgstr "Falha ao definir hora de modificação"
 
@@ -1818,7 +1818,7 @@ msgstr "Conexão do socket de dados expirou"
 msgid "Unable to accept connection"
 msgstr "Impossível aceitar conexão"
 
-#: methods/ftp.cc:864 methods/http.cc:963 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:958 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problema fazendo o hash do arquivo"
 
@@ -1950,76 +1950,76 @@ msgstr "Não foi possível abrir pipe para %s"
 msgid "Read error from %s process"
 msgstr "Erro de leitura do processo %s"
 
-#: methods/http.cc:381
+#: methods/http.cc:376
 msgid "Waiting for headers"
 msgstr "Aguardando por cabeçalhos"
 
-#: methods/http.cc:527
+#: methods/http.cc:522
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Recebi uma única linha de cabeçalho acima de %u caracteres"
 
-#: methods/http.cc:535
+#: methods/http.cc:530
 msgid "Bad header line"
 msgstr "Linha de cabeçalho ruim"
 
-#: methods/http.cc:554 methods/http.cc:561
+#: methods/http.cc:549 methods/http.cc:556
 msgid "The HTTP server sent an invalid reply header"
 msgstr "O servidor http enviou um cabeçalho de resposta inválido"
 
-#: methods/http.cc:590
+#: methods/http.cc:585
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "O servidor http enviou um cabeçalho Conten-Length inválido"
 
-#: methods/http.cc:605
+#: methods/http.cc:600
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "O servidor http enviou um cabeçalho Conten-Range inválido"
 
-#: methods/http.cc:607
+#: methods/http.cc:602
 msgid "This HTTP server has broken range support"
 msgstr "Este servidor http possui suporte a range quebrado"
 
-#: methods/http.cc:631
+#: methods/http.cc:626
 msgid "Unknown date format"
 msgstr "Formato de data desconhecido"
 
-#: methods/http.cc:778
+#: methods/http.cc:773
 msgid "Select failed"
 msgstr "Seleção falhou."
 
-#: methods/http.cc:783
+#: methods/http.cc:778
 msgid "Connection timed out"
 msgstr "Conexão expirou"
 
-#: methods/http.cc:806
+#: methods/http.cc:801
 msgid "Error writing to output file"
 msgstr "Erro gravando para arquivo de saída"
 
-#: methods/http.cc:837
+#: methods/http.cc:832
 msgid "Error writing to file"
 msgstr "Erro gravando para arquivo"
 
-#: methods/http.cc:865
+#: methods/http.cc:860
 msgid "Error writing to the file"
 msgstr "Erro gravando para o arquivo"
 
-#: methods/http.cc:879
+#: methods/http.cc:874
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Erro lendo do servidor Ponto remoto fechou a conexão"
 
-#: methods/http.cc:881
+#: methods/http.cc:876
 msgid "Error reading from server"
 msgstr "Erro lendo do servidor"
 
-#: methods/http.cc:1112
+#: methods/http.cc:1107
 msgid "Bad header data"
 msgstr "Dados de cabeçalho ruins"
 
-#: methods/http.cc:1129
+#: methods/http.cc:1124
 msgid "Connection failed"
 msgstr "Conexão falhou."
 
-#: methods/http.cc:1220
+#: methods/http.cc:1215
 msgid "Internal error"
 msgstr "Erro interno"
 
@@ -2573,11 +2573,15 @@ msgstr "Erro de I/O ao gravar cache fonte"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "renomeação falhou, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:950
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum incorreto"
 
-#: apt-pkg/acquire-item.cc:719
+#: apt-pkg/acquire-item.cc:645
+msgid "There are no public key available for the following key IDs:\n"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:758
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2587,7 +2591,7 @@ msgstr ""
 "que você precisa consertar manualmente este pacote. (devido a arquitetura "
 "não especificada)."
 
-#: apt-pkg/acquire-item.cc:778
+#: apt-pkg/acquire-item.cc:817
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2596,7 +2600,7 @@ msgstr ""
 "Não foi possível localizar arquivo para o pacote %s. Isto pode significar "
 "que você precisa consertar manualmente este pacote."
 
-#: apt-pkg/acquire-item.cc:814
+#: apt-pkg/acquire-item.cc:853
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2604,7 +2608,7 @@ msgstr ""
 "Os arquivos de índice de pacotes estão corrompidos. Nenhum campo Filename: "
 "para o pacote %s."
 
-#: apt-pkg/acquire-item.cc:901
+#: apt-pkg/acquire-item.cc:940
 msgid "Size mismatch"
 msgstr "Tamanho incorreto"
 

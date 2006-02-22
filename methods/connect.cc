@@ -103,6 +103,8 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    if (Err != 0)
    {
       errno = Err;
+      if(errno == ECONNREFUSED)
+         Owner->SetFailExtraMsg("\nFailReason: ConnectionRefused");
       return _error->Errno("connect",_("Could not connect to %s:%s (%s)."),Host.c_str(),
 			   Service,Name);
    }
