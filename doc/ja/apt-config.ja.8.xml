@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt-config</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-config</refname>
+<!--
+    <refpurpose>APT Configuration Query program</refpurpose>
+-->
+    <refpurpose>APT 設定取得プログラム</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-config</command>
+      <arg><option>-hv</option></arg>
+      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
+      <arg><option>-c=<replaceable>file</replaceable></option></arg>
+      <group choice="req">
+         <arg>shell</arg>
+         <arg>dump</arg>
+      </group>   
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+<!--
+ <refsect1><title>Description</title>
+-->
+ <refsect1><title>説明</title>
+<!--
+   <para><command>apt-config</command> is an internal program used by various
+   portions of the APT suite to provide consistent configurability. It accesses
+   the main configuration file <filename>/etc/apt/apt.conf</filename> in a
+   manner that is easy to use by scripted applications.</para>
+-->
+   <para><command>apt-config</command> は、
+   APT スイートの様々な所で一貫した設定を行うために使用する、内部ツールです。
+   スクリプトアプリケーションで使いやすい方法で、
+   メイン設定ファイル <filename>/etc/apt/apt.conf</filename> 
+   にアクセスします。</para>
+
+<!--
+   <para>Unless the <option>-h</option>, or <option>-\-help</option> option is
+   given one of the commands below must be present.
+   </para>
+-->
+   <para><option>-h</option> や <option>--help</option> オプションを除き、
+   以下に挙げるコマンドが必要です。</para>
+   
+   <variablelist>
+     <varlistentry><term>shell</term>
+     <listitem><para>
+<!--
+     shell is used to access the configuration information from a shell 
+     script. It is given pairs of arguments, the first being a shell 
+     variable and the second the configuration value to query. As output 
+     it lists a series of shell assignments commands for each present value. 
+     In a shell script it should be used like:
+-->
+     shell は、シェルスクリプトから設定情報にアクセスするのに使用します。
+     引数として、まずシェル変数、次に取得したい設定値をペアで与えます。
+     出力として、現在の値ごとにシェル代入コマンドの一覧を表示します。
+     シェルスクリプト内では、以下のようにしてください。
+     </para>
+
+<informalexample><programlisting>
+OPTS="-f"
+RES=`apt-config shell OPTS MyApp::options`
+eval $RES
+</programlisting></informalexample>
+
+<!--
+     <para>This will set the shell environment variable $OPTS to the value of
+     MyApp::options with a default of <option>-f</option>.</para>
+-->
+     <para>これは、MyApp::options の値をシェル環境変数 $OPTS にセットします。
+     デフォルト値は <option>-f</option> となります。</para>
+
+ <!--
+    <para>The configuration item may be postfixed with a /[fdbi]. f returns
+     file names, d returns directories, b returns true or false and i returns
+     an integer. Each of the returns is normalized and verified
+     internally.</para>
+-->
+     <para>設定項目は /[fdbi] を後ろに付けられます。
+     f はファイル名を、d はディレクトリを、b は true か false を、
+     i は整数を返します。
+     返り値ごとに内部で正規化と検証を行います。</para>
+
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>dump</term>
+     <listitem><para>
+<!--
+     Just show the contents of the configuration space.</para>
+-->
+     設定箇所の内容を表示するだけです。</para>
+     </listitem>
+     </varlistentry>
+
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>options</title>
+-->
+ <refsect1><title>オプション</title>
+   &apt-cmdblurb;
+   
+   <variablelist>
+   
+     &apt-commonoptions;
+     
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>See Also</title>
+-->
+ <refsect1><title>関連項目</title>
+   <para>&apt-conf;
+   </para>
+ </refsect1>
+
+<!--
+ <refsect1><title>Diagnostics</title>
+-->
+ <refsect1><title>診断メッセージ</title>
+<!--
+   <para><command>apt-config</command> returns zero on normal operation, decimal 100 on error.
+-->
+   <para><command>apt-config</command> は正常終了時に 0 を返します。
+   エラー時には十進の 100 を返します。
+   </para>
+ </refsect1>
+
+ &manbugs;
+ &translator;
+ 
+</refentry>
+
