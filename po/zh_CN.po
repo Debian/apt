@@ -1,15 +1,15 @@
 # Chinese/Simplified translation of apt.
 # This file is put in the public domain.
 # Tchaikov <tchaikov@sjtu.edu.cn>, 2005.
-# Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004.
+# Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004,2006
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-04 18:51+0100\n"
-"PO-Revision-Date: 2005-11-15 00:05+0800\n"
-"Last-Translator: Tchaikov <tchaikov@sjtu.edu.cn>\n"
+"POT-Creation-Date: 2006-01-20 14:06+0100\n"
+"PO-Revision-Date: 2006-02-22 14:20+1300\n"
+"Last-Translator: Carlos Z.F. Liu <carlosliu@users.sourceforge.net>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -512,7 +512,7 @@ msgid " DeLink limit of %sB hit.\n"
 msgstr " 达到了 DeLink 的上限 %sB。\n"
 
 #: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:256
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:260
 #, c-format
 msgid "Failed to stat %s"
 msgstr "无法读取 %s 的状态"
@@ -1074,9 +1074,9 @@ msgid "Unable to find a source package for %s"
 msgstr "无法找到与 %s 对应的源代码包"
 
 #: cmdline/apt-get.cc:1959
-#, fuzzy, c-format
-msgid "Skiping already downloaded file '%s'\n"
-msgstr "对于已经被解包到 %s 目录的源代码包就不再解开了\n"
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "忽略已下载过的文件“%s”\n"
 
 #: cmdline/apt-get.cc:1983
 #, c-format
@@ -1651,12 +1651,12 @@ msgstr "找不到光盘。"
 msgid "File not found"
 msgstr "无法找到该文件"
 
-#: methods/copy.cc:42 methods/gpgv.cc:265 methods/gzip.cc:133
+#: methods/copy.cc:42 methods/gpgv.cc:269 methods/gzip.cc:133
 #: methods/gzip.cc:142
 msgid "Failed to stat"
 msgstr "无法读取状态"
 
-#: methods/copy.cc:79 methods/gpgv.cc:262 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:266 methods/gzip.cc:139
 msgid "Failed to set modification time"
 msgstr "无法设置文件的修改日期"
 
@@ -1783,7 +1783,7 @@ msgstr "数据套接字连接超时"
 msgid "Unable to accept connection"
 msgstr "无法接受连接"
 
-#: methods/ftp.cc:864 methods/http.cc:963 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:958 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "把文件加入散列表时出错"
 
@@ -1913,76 +1913,76 @@ msgstr "无法为 %s 开启管道"
 msgid "Read error from %s process"
 msgstr "从 %s 进程读取数据出错"
 
-#: methods/http.cc:381
+#: methods/http.cc:376
 msgid "Waiting for headers"
 msgstr "正在等待报头"
 
-#: methods/http.cc:527
+#: methods/http.cc:522
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "受到了一行报头条目，它的长度超过了 %u 个字符"
 
-#: methods/http.cc:535
+#: methods/http.cc:530
 msgid "Bad header line"
 msgstr "错误的报头条目"
 
-#: methods/http.cc:554 methods/http.cc:561
+#: methods/http.cc:549 methods/http.cc:556
 msgid "The HTTP server sent an invalid reply header"
 msgstr "该 http 服务器发送了一个无效的应答报头"
 
-#: methods/http.cc:590
+#: methods/http.cc:585
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "该 http 服务器发送了一个无效的 Content-Length 报头"
 
-#: methods/http.cc:605
+#: methods/http.cc:600
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "该 http 服务器发送了一个无效的 Content-Range 报头"
 
-#: methods/http.cc:607
+#: methods/http.cc:602
 msgid "This HTTP server has broken range support"
 msgstr "该 http 服务器的 range 支持不正常"
 
-#: methods/http.cc:631
+#: methods/http.cc:626
 msgid "Unknown date format"
 msgstr "无法识别的日期格式"
 
-#: methods/http.cc:778
+#: methods/http.cc:773
 msgid "Select failed"
 msgstr "select 调用出错"
 
-#: methods/http.cc:783
+#: methods/http.cc:778
 msgid "Connection timed out"
 msgstr "连接服务器超时"
 
-#: methods/http.cc:806
+#: methods/http.cc:801
 msgid "Error writing to output file"
 msgstr "写输出文件时出错"
 
-#: methods/http.cc:837
+#: methods/http.cc:832
 msgid "Error writing to file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:865
+#: methods/http.cc:860
 msgid "Error writing to the file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:879
+#: methods/http.cc:874
 msgid "Error reading from server. Remote end closed connection"
 msgstr "从服务器读取数据时出错，对方关闭了连接"
 
-#: methods/http.cc:881
+#: methods/http.cc:876
 msgid "Error reading from server"
 msgstr "从服务器读取数据出错"
 
-#: methods/http.cc:1112
+#: methods/http.cc:1107
 msgid "Bad header data"
 msgstr "错误的报头数据"
 
-#: methods/http.cc:1129
+#: methods/http.cc:1124
 msgid "Connection failed"
 msgstr "连接失败"
 
-#: methods/http.cc:1220
+#: methods/http.cc:1215
 msgid "Internal error"
 msgstr "内部错误"
 
@@ -2522,11 +2522,15 @@ msgstr "无法写入来源缓存文件"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "无法重命名文件，%s (%s -> %s)。"
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:911
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:950
 msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
-#: apt-pkg/acquire-item.cc:719
+#: apt-pkg/acquire-item.cc:645
+msgid "There are no public key available for the following key IDs:\n"
+msgstr "以下 key ID 没有可用的公钥：\n"
+
+#: apt-pkg/acquire-item.cc:758
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2535,7 +2539,7 @@ msgstr ""
 "我无法找到一个对应 %s 软件包的文件。在这种情况下可能需要您手动修正这个软件"
 "包。(缘于架构缺失)"
 
-#: apt-pkg/acquire-item.cc:778
+#: apt-pkg/acquire-item.cc:817
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2543,13 +2547,13 @@ msgid ""
 msgstr ""
 "我无法找到对应 %s 软件包的文件。在这种情况下您可能需要手动修正这个软件包。"
 
-#: apt-pkg/acquire-item.cc:814
+#: apt-pkg/acquire-item.cc:853
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 Filename: 字段。"
 
-#: apt-pkg/acquire-item.cc:901
+#: apt-pkg/acquire-item.cc:940
 msgid "Size mismatch"
 msgstr "大小不符"
 

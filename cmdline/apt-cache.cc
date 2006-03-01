@@ -1630,10 +1630,11 @@ bool Madison(CommandLine &CmdL)
 
    pkgCache &Cache = *GCache;
 
-   // Create the text record parsers
+   // Create the src text record parsers and ignore errors about missing
+   // deb-src lines that are generated from pkgSrcRecords::pkgSrcRecords
    pkgSrcRecords SrcRecs(*SrcList);
    if (_error->PendingError() == true)
-      return false;
+      _error->Discard();
 
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {

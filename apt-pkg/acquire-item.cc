@@ -772,12 +772,6 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
       // File was already in place.  It needs to be re-verified
       // because Release might have changed, so Move it into partial
       Rename(Final,DestFile);
-      // unlink the file and do not try to use I-M-S and Last-Modified
-      // if the users proxy is broken
-      if(_config->FindB("Acquire::BrokenProxy", false) == true) {
-	 std::cerr << "forcing re-get of the signature file as requested" << std::endl;
-	 unlink(DestFile.c_str());
-      }
    }
 
    QueueURI(Desc);
@@ -827,17 +821,18 @@ void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   // Delete any existing sigfile, so that this source isn't
-   // mistakenly trusted
-   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   unlink(Final.c_str());
 
-   // if we get a timeout if fail
+   // if we get a network error we fail gracefully
    if(LookupTag(Message,"FailReason") == "Timeout" || 
-      LookupTag(Message,"FailReason") == "TmpResolveFailure") {
+      LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
+      LookupTag(Message,"FailReason") == "ConnectionRefused") {
       Item::Failed(Message,Cnf);
       return;
    }
+
+   // Delete any existing sigfile when the acquire failed
+   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   unlink(Final.c_str());
 
    // queue a pkgAcqMetaIndex with no sigfile
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+ &apt-docinfo;
+ 
+ <refmeta>
+   <refentrytitle>apt-key</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-key</refname>
+<!--
+    <refpurpose>APT key management utility</refpurpose>
+-->
+    <refpurpose>APT キー管理ユーティリティ</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-key</command>
+      <arg><replaceable>command</replaceable>/</arg>
+      <arg rep="repeat"><option><replaceable>arguments</replaceable></option></arg>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+
+<!--
+ <refsect1><title>Description</title>
+-->
+ <refsect1><title>説明</title>
+   <para>
+<!--
+   <command>apt-key</command> is used to manage the list of keys used
+   by apt to authenticate packages.  Packages which have been
+   authenticated using these keys will be considered trusted.
+-->
+   <command>apt-key</command> は、
+   apt が パッケージを認証するのに使用するキーの一覧を管理するのに使用します。
+   このキーで認証されたパッケージは、信頼するに足ると見なせるでしょう。
+   </para>
+</refsect1>
+
+<!--
+<refsect1><title>Commands</title>
+-->
+<refsect1><title>コマンド</title>
+   <variablelist>
+     <varlistentry><term>add <replaceable>filename</replaceable></term>
+     <listitem>
+     <para>
+
+<!--
+       Add a new key to the list of trusted keys.  The key is read
+       from <replaceable>filename</replaceable>, or standard input if
+       <replaceable>filename</replaceable> is <literal>-</literal>.
+-->
+       信頼キー一覧に新しいキーを追加します。
+       このキーは <replaceable>filename</replaceable> から読み込みますが、
+       <replaceable>filename</replaceable> を <literal>-</literal> とすると、
+       標準入力から読み込みます。
+     </para>
+
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>del <replaceable>keyid</replaceable></term>
+     <listitem>
+     <para>
+
+<!--
+       Remove a key from the list of trusted keys.
+-->
+       信頼キー一覧からキーを削除します。
+
+     </para>
+
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>list</term>
+     <listitem>
+     <para>
+
+<!--
+       List trusted keys.
+-->
+       信頼キーを一覧表示します。
+
+     </para>
+
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>update</term>
+     <listitem>
+     <para>
+
+<!--
+       Update the local keyring with the keyring of Debian archive
+       keys and removes from the keyring the archive keys which are no
+       longer valid.
+-->
+       Debian アーカイブキーで、ローカルキーリングを更新し、
+       もう有効でないキーをキーリングから削除します。
+
+     </para>
+
+     </listitem>
+     </varlistentry>
+   </variablelist>
+</refsect1>
+
+<!--
+ <refsect1><title>Files</title>
+-->
+ <refsect1><title>ファイル</title>
+   <variablelist>
+     <varlistentry><term><filename>/etc/apt/trusted.gpg</filename></term>
+<!--
+     <listitem><para>Keyring of local trusted keys, new keys will be added here.</para></listitem>
+-->
+     <listitem><para>ローカル信頼キーのキーリング。
+     新しいキーはここに追加されます。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/etc/apt/trustdb.gpg</filename></term>
+<!--
+     <listitem><para>Local trust database of archive keys.</para></listitem>
+-->
+     <listitem><para>アーカイブキーのローカル信頼データベース</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/usr/share/keyrings/debian-archive-keyring.gpg</filename></term>
+<!--
+     <listitem><para>Keyring of Debian archive trusted keys.</para></listitem>
+-->
+     <listitem><para>Debian アーカイブ信頼キーのキーリング</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename></term>
+<!--
+     <listitem><para>Keyring of Debian archive removed trusted keys.</para></listitem>
+-->
+     <listitem><para>削除された Debian アーカイブ信頼キーのキーリング</para></listitem>
+     </varlistentry>
+
+
+
+   </variablelist>
+
+</refsect1>
+
+<!--
+<refsect1><title>See Also</title>
+-->
+<refsect1><title>関連項目</title>
+<para>
+&apt-get;, &apt-secure;
+</para>
+</refsect1>
+
+ &manbugs;
+ &manauthor;
+ &translator;
+
+</refentry>
+
