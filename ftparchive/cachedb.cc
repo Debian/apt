@@ -19,6 +19,8 @@
 #include <apti18n.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/sha1.h>
+#include <apt-pkg/sha256.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
     
@@ -54,7 +56,7 @@ bool CacheDB::ReadyDB(string DB)
       return true;
 
    db_create(&Dbp, NULL, 0);
-   if ((err = Dbp->open(Dbp, NULL, DB.c_str(), NULL, DB_HASH,
+   if ((err = Dbp->open(Dbp, NULL, DB.c_str(), NULL, DB_BTREE,
                         (ReadOnly?DB_RDONLY:DB_CREATE),
                         0644)) != 0)
    {
@@ -79,48 +81,123 @@ bool CacheDB::ReadyDB(string DB)
    return true;
 }
 									/*}}}*/
-// CacheDB::SetFile - Select a file to be working with			/*{{{*/
+// CacheDB::OpenFile - Open the filei					/*{{{*/
 // ---------------------------------------------------------------------
-/* All future actions will be performed against this file */
-bool CacheDB::SetFile(string FileName,struct stat St,FileFd *Fd)
+/* */
+bool CacheDB::OpenFile()
 {
-   delete DebFile;
-   DebFile = 0;
-   this->FileName = FileName;
-   this->Fd = Fd;
-   this->FileStat = St;
-   FileStat = St;   
+	Fd = new FileFd(FileName,FileFd::ReadOnly);
+	if (_error->PendingError() == true)
+	{
+		delete Fd;
+		Fd = NULL;
+		return false;
+	}
+	return true;
+}
+									/*}}}*/
+// CacheDB::GetFileStat - Get stats from the file 			/*{{{*/
+// ---------------------------------------------------------------------
+/* This gets the size from the database if it's there.  If we need
+ * to look at the file, also get the mtime from the file. */
+bool CacheDB::GetFileStat()
+{
+	if ((CurStat.Flags & FlSize) == FlSize)
+	{
+		/* Already worked out the file size */
+	}
+	else
+	{
+		/* Get it from the file. */
+		if (Fd == NULL && OpenFile() == false)
+		{
+			return false;
+		}
+		// Stat the file
+		struct stat St;
+		if (fstat(Fd->Fd(),&St) != 0)
+		{
+			return _error->Errno("fstat",
+				_("Failed to stat %s"),FileName.c_str());
+		}
+		CurStat.FileSize = St.st_size;
+		CurStat.mtime = htonl(St.st_mtime);
+		CurStat.Flags |= FlSize;
+	}
+	return true;
+}
+									/*}}}*/
+// CacheDB::GetCurStat - Set the CurStat variable.			/*{{{*/
+// ---------------------------------------------------------------------
+/* Sets the CurStat variable.  Either to 0 if no database is used
+ * or to the value in the database if one is used */
+bool CacheDB::GetCurStat()
+{
    memset(&CurStat,0,sizeof(CurStat));
    
-   Stats.Bytes += St.st_size;
-   Stats.Packages++;
-   
-   if (DBLoaded == false)
-      return true;
+	if (DBLoaded)
+	{
+		/* First see if thre is anything about it
+		   in the database */
 
+		/* Get the flags (and mtime) */
    InitQuery("st");
-   
    // Ensure alignment of the returned structure
    Data.data = &CurStat;
    Data.ulen = sizeof(CurStat);
    Data.flags = DB_DBT_USERMEM;
-   // Lookup the stat info and confirm the file is unchanged
-   if (Get() == true)
-   {
-      if (CurStat.mtime != htonl(St.st_mtime))
+		if (Get() == false)
       {
-	 CurStat.mtime = htonl(St.st_mtime);
 	 CurStat.Flags = 0;
-	 _error->Warning(_("File date has changed %s"),FileName.c_str());
       }      
+		CurStat.Flags = ntohl(CurStat.Flags);
+		CurStat.FileSize = ntohl(CurStat.FileSize);
    }      
-   else
+	return true;
+}
+									/*}}}*/
+// CacheDB::GetFileInfo - Get all the info about the file		/*{{{*/
+// ---------------------------------------------------------------------
+bool CacheDB::GetFileInfo(string FileName, bool DoControl, bool DoContents,
+				bool GenContentsOnly, 
+				bool DoMD5, bool DoSHA1, bool DoSHA256)
+{
+	this->FileName = FileName;
+
+	if (GetCurStat() == false)
    {
-      CurStat.mtime = htonl(St.st_mtime);
-      CurStat.Flags = 0;
+		return false;
    }   
-   CurStat.Flags = ntohl(CurStat.Flags);
    OldStat = CurStat;
+	
+	if (GetFileStat() == false)
+	{
+		delete Fd;
+		Fd = NULL;
+		return false;	
+	}
+
+	Stats.Bytes += CurStat.FileSize;
+	Stats.Packages++;
+
+	if (DoControl && LoadControl() == false
+		|| DoContents && LoadContents(GenContentsOnly) == false
+		|| DoMD5 && GetMD5(false) == false
+		|| DoSHA1 && GetSHA1(false) == false
+		|| DoSHA256 && GetSHA256(false) == false)
+	{
+		delete Fd;
+		Fd = NULL;
+		delete DebFile;
+		DebFile = NULL;
+		return false;	
+	}
+
+	delete Fd;
+	Fd = NULL;
+	delete DebFile;
+	DebFile = NULL;
+
    return true;
 }
 									/*}}}*/
@@ -139,6 +216,10 @@ bool CacheDB::LoadControl()
       CurStat.Flags &= ~FlControl;
    }
    
+   if (Fd == NULL && OpenFile() == false)
+   {
+      return false;
+   }
    // Create a deb instance to read the archive
    if (DebFile == 0)
    {
@@ -183,6 +264,10 @@ bool CacheDB::LoadContents(bool GenOnly)
       CurStat.Flags &= ~FlContents;
    }
    
+   if (Fd == NULL && OpenFile() == false)
+   {
+      return false;
+   }
    // Create a deb instance to read the archive
    if (DebFile == 0)
    {
@@ -201,10 +286,37 @@ bool CacheDB::LoadContents(bool GenOnly)
    return true;
 }
 									/*}}}*/
+
+static string bytes2hex(uint8_t *bytes, size_t length) {
+   char space[65];
+   if (length * 2 > sizeof(space) - 1) length = (sizeof(space) - 1) / 2;
+   for (size_t i = 0; i < length; i++)
+      snprintf(&space[i*2], 3, "%02x", bytes[i]);
+   return string(space);
+}
+
+static inline unsigned char xdig2num(char dig) {
+   if (isdigit(dig)) return dig - '0';
+   if ('a' <= dig && dig <= 'f') return dig - 'a' + 10;
+   if ('A' <= dig && dig <= 'F') return dig - 'A' + 10;
+   return 0;
+}
+
+static void hex2bytes(uint8_t *bytes, const char *hex, int length) {
+   while (length-- > 0) {
+      *bytes = 0;
+      if (isxdigit(hex[0]) && isxdigit(hex[1])) {
+	  *bytes = xdig2num(hex[0]) * 16 + xdig2num(hex[1]);
+	  hex += 2;
+      }
+      bytes++;
+   } 
+}
+
 // CacheDB::GetMD5 - Get the MD5 hash					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool CacheDB::GetMD5(string &MD5Res,bool GenOnly)
+bool CacheDB::GetMD5(bool GenOnly)
 {
    // Try to read the control information out of the DB.
    if ((CurStat.Flags & FlMD5) == FlMD5)
@@ -212,25 +324,85 @@ bool CacheDB::GetMD5(string &MD5Res,bool GenOnly)
       if (GenOnly == true)
 	 return true;
       
-      InitQuery("m5");
-      if (Get() == true)
-      {
-	 MD5Res = string((char *)Data.data,Data.size);
+      MD5Res = bytes2hex(CurStat.MD5, sizeof(CurStat.MD5));
 	 return true;
       }
-      CurStat.Flags &= ~FlMD5;
-   }
    
-   Stats.MD5Bytes += FileStat.st_size;
+   Stats.MD5Bytes += CurStat.FileSize;
 	 
+   if (Fd == NULL && OpenFile() == false)
+   {
+      return false;
+   }
    MD5Summation MD5;
-   if (Fd->Seek(0) == false || MD5.AddFD(Fd->Fd(),FileStat.st_size) == false)
+   if (Fd->Seek(0) == false || MD5.AddFD(Fd->Fd(),CurStat.FileSize) == false)
       return false;
    
    MD5Res = MD5.Result();
-   InitQuery("m5");
-   if (Put(MD5Res.c_str(),MD5Res.length()) == true)
+   hex2bytes(CurStat.MD5, MD5Res.data(), sizeof(CurStat.MD5));
       CurStat.Flags |= FlMD5;
+   return true;
+}
+									/*}}}*/
+// CacheDB::GetSHA1 - Get the SHA1 hash					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool CacheDB::GetSHA1(bool GenOnly)
+{
+   // Try to read the control information out of the DB.
+   if ((CurStat.Flags & FlSHA1) == FlSHA1)
+   {
+      if (GenOnly == true)
+	 return true;
+
+      SHA1Res = bytes2hex(CurStat.SHA1, sizeof(CurStat.SHA1));
+      return true;
+   }
+   
+   Stats.SHA1Bytes += CurStat.FileSize;
+	 
+   if (Fd == NULL && OpenFile() == false)
+   {
+      return false;
+   }
+   SHA1Summation SHA1;
+   if (Fd->Seek(0) == false || SHA1.AddFD(Fd->Fd(),CurStat.FileSize) == false)
+      return false;
+   
+   SHA1Res = SHA1.Result();
+   hex2bytes(CurStat.SHA1, SHA1Res.data(), sizeof(CurStat.SHA1));
+   CurStat.Flags |= FlSHA1;
+   return true;
+}
+									/*}}}*/
+// CacheDB::GetSHA256 - Get the SHA256 hash				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool CacheDB::GetSHA256(bool GenOnly)
+{
+   // Try to read the control information out of the DB.
+   if ((CurStat.Flags & FlSHA256) == FlSHA256)
+   {
+      if (GenOnly == true)
+	 return true;
+
+      SHA256Res = bytes2hex(CurStat.SHA256, sizeof(CurStat.SHA256));
+      return true;
+   }
+   
+   Stats.SHA256Bytes += CurStat.FileSize;
+	 
+   if (Fd == NULL && OpenFile() == false)
+   {
+      return false;
+   }
+   SHA256Summation SHA256;
+   if (Fd->Seek(0) == false || SHA256.AddFD(Fd->Fd(),CurStat.FileSize) == false)
+      return false;
+   
+   SHA256Res = SHA256.Result();
+   hex2bytes(CurStat.SHA256, SHA256Res.data(), sizeof(CurStat.SHA256));
+   CurStat.Flags |= FlSHA256;
    return true;
 }
 									/*}}}*/
@@ -246,9 +418,12 @@ bool CacheDB::Finish()
    
    // Write the stat information
    CurStat.Flags = htonl(CurStat.Flags);
+   CurStat.FileSize = htonl(CurStat.FileSize);
    InitQuery("st");
    Put(&CurStat,sizeof(CurStat));
    CurStat.Flags = ntohl(CurStat.Flags);
+   CurStat.FileSize = ntohl(CurStat.FileSize);
+
    return true;
 }
 									/*}}}*/
@@ -278,7 +453,6 @@ bool CacheDB::Clean()
       {
 	 if (stringcmp((char *)Key.data,Colon,"st") == 0 ||
 	     stringcmp((char *)Key.data,Colon,"cn") == 0 ||
-	     stringcmp((char *)Key.data,Colon,"m5") == 0 ||
 	     stringcmp((char *)Key.data,Colon,"cl") == 0)
 	 {
 	    if (FileExists(string(Colon+1,(const char *)Key.data+Key.size)) == true)
