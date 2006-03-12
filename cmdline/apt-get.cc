@@ -1368,7 +1368,7 @@ bool DoUpdate(CommandLine &CmdL)
    }
    
    // Clean out any old list files
-   if (_config->FindB("APT::Get::List-Cleanup",true) == true)
+   if (!Failed && _config->FindB("APT::Get::List-Cleanup",true) == true)
    {
       if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
 	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
@@ -1411,15 +1411,6 @@ bool DoUpgrade(CommandLine &CmdL)
 /* Install named packages */
 bool DoInstall(CommandLine &CmdL)
 {
-   // Lock the list directory
-   FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false)
-   {
-      Lock.Fd(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
-      if (_error->PendingError() == true)
-        return _error->Error(_("Unable to lock the list directory"));
-   }
-   
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || 
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
