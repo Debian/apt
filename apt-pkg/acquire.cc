@@ -820,9 +820,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
       // only show the ETA if it makes sense
       if (ETA > 0 && ETA < 172800 /* two days */ )
-	 snprintf(msg,sizeof(msg), _("Downloading file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
+	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
       else
-	 snprintf(msg,sizeof(msg), _("Downloading file %li of %li"), i, TotalItems);
+	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
 	 
 
 
