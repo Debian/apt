@@ -1,0 +1,900 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+  
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt-get</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-get</refname>
+<!--
+    <refpurpose>APT package handling utility -\- command-line interface</refpurpose>
+-->
+    <refpurpose>APT package handling utility -- コマンドラインインターフェース</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-get</command>
+      <arg><option>-hvs</option></arg>
+      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
+      <arg><option>-c=<replaceable>file</replaceable></option></arg>
+      <group choice="req">
+         <arg>update</arg>
+         <arg>upgrade</arg>
+         <arg>dselect-upgrade</arg>
+         <arg>install <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>source <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>check</arg>
+         <arg>clean</arg>
+         <arg>autoclean</arg>
+      </group>   
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+<!--
+ <refsect1><title>Description</title>
+-->
+ <refsect1><title>説明</title>
+<!--
+   <para><command>apt-get</command> is the command-line tool for handling packages, and may be 
+   considered the user's "back-end" to other tools using the APT
+   library.  Several "front-end" interfaces exist, such as dselect(8),
+   aptitude, synaptic, gnome-apt and wajig.</para>
+-->
+   <para><command>apt-get</command> は、
+   パッケージを操作するコマンドラインツールで、
+   APT ライブラリを用いる他のツールのユーザ側「バックエンド」といえるものです。
+   「フロントエンド」インターフェースには、dselect(8),
+   aptitude, synaptic, gnome-apt, wajig などがあります。</para>
+
+<!--
+   <para>Unless the <option>-h</option>, or <option>-\-help</option> option is given, one of the
+   commands below must be present.</para>
+-->
+   <para><option>-h</option> オプションや <option>--help</option> オプションを除き、
+   以下に挙げるコマンドが必要です。</para>
+   
+   <variablelist>
+     <varlistentry><term>update</term>
+<!--
+     <listitem><para><literal>update</literal> is used to resynchronize the package index files from
+     their sources. The indexes of available packages are fetched from the
+     location(s) specified in <filename>/etc/apt/sources.list</filename>.
+     For example, when using a Debian archive, this command retrieves and
+     scans the <filename>Packages.gz</filename> files, so that information about new 
+     and updated packages is available. An <literal>update</literal> should always be 
+     performed before an <literal>upgrade</literal> or <literal>dist-upgrade</literal>. Please 
+     be aware that the overall progress meter will be incorrect as the size 
+     of the package files cannot be known in advance.</para></listitem>
+-->
+     <listitem><para><literal>update</literal>は、
+     取得元からパッケージインデックスファイルの再同期を行うのに使用します。
+     利用可能なパッケージのインデックスは、
+     <filename>/etc/apt/sources.list</filename> に記述した場所から取得します。
+     例えば Debian アーカイブを利用する際、
+     このコマンドが <filename>Packages.gz</filename> ファイルを検索することで、
+     新規または更新されたパッケージの情報が利用可能となります。
+     <literal>update</literal> は、<literal>upgrade</literal> や 
+     <literal>dist-upgrade</literal> を行う前に常に実行してください。
+     前もってパッケージファイルのサイズを知ることができないため、
+     全体の進捗メータは正しく表示されません。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>upgrade</term>
+<!--
+     <listitem><para><literal>upgrade</literal> is used to install the newest versions of all packages 
+     currently installed on the system from the sources enumerated in
+     <filename>/etc/apt/sources.list</filename>. Packages currently installed with 
+     new versions available are retrieved and upgraded; under no circumstances 
+     are currently installed packages removed, or packages not already installed 
+     retrieved and installed. New versions of currently installed packages that 
+     cannot be upgraded without changing the install status of another package 
+     will be left at their current version. An <literal>update</literal> must be 
+     performed first so that <command>apt-get</command> knows that new versions of packages are 
+     available.</para></listitem>
+-->
+     <listitem><para><literal>upgrade</literal> は、
+     現在システムにインストールされている全パッケージの最新バージョンを、
+     <filename>/etc/apt/sources.list</filename> 
+     に列挙した取得元からインストールするのに使用します。
+     現在インストール中のパッケージに新しいバージョンがあれば更新しますが、
+     いかなる時も現在インストール中のパッケージの削除は行いません。
+     対象のパッケージが、
+     他のパッケージのインストール状態を変更せずに更新できない場合は、
+     現在のバージョンのままとなります。
+     最初に <literal>update</literal> を実行しておき、
+     <command>apt-get</command> にパッケージの新しいバージョンがあることを
+     知らせる必要があります。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>dselect-upgrade</term>
+<!--
+     <listitem><para><literal>dselect-upgrade</literal>
+     is used in conjunction with the traditional Debian packaging
+     front-end, &dselect;. <literal>dselect-upgrade</literal>
+     follows the changes made by &dselect; to the <literal>Status</literal>
+     field of available packages, and performs the actions necessary to realize
+     that state (for instance, the removal of old and the installation of new
+     packages).</para></listitem>
+-->
+     <listitem><para><literal>dselect-upgrade</literal> は、
+     伝統的な Debian GNU/Linux パッケージ管理フロントエンドの &dselect; 
+     と共に使用されます。
+     <literal>dselect-upgrade</literal> は、
+     &dselect; で作られた利用可能パッケージの
+     <literal>Status</literal> フィールドの変更を追跡し、
+     その状態を反映させるのに必要なアクションを実行します。
+     (例えば、古いパッケージの削除や新しいパッケージのインストールなど) </para></listitem>
+
+     </varlistentry>
+
+     <varlistentry><term>dist-upgrade</term>
+<!--
+     <listitem><para><literal>dist-upgrade</literal> in addition to performing the function of 
+     <literal>upgrade</literal>, also intelligently handles changing dependencies 
+     with new versions of packages; <command>apt-get</command> has a "smart" conflict 
+     resolution system, and it will attempt to upgrade the most important 
+     packages at the expense of less important ones if necessary. 
+     The <filename>/etc/apt/sources.list</filename> file contains a list of locations 
+     from which to retrieve desired package files.
+     See also &apt-preferences; for a mechanism for
+     overriding the general settings for individual packages.</para></listitem>
+-->
+     <listitem><para><literal>dist-upgrade</literal> は、
+     <literal>upgrade</literal> の機能に加え、
+     新バージョンのパッケージに対する依存関係の変更を知的に操作します。
+     <command>apt-get</command> は「洗練された」競合解決システムを持ち、
+     必要とあらば比較的重要でないパッケージを犠牲にして、
+     最重要パッケージの更新を試みます。
+     <filename>/etc/apt/sources.list</filename> ファイルには、
+     必要なパッケージファイルを検索する場所のリストが含まれています。
+     特定のパッケージ向けに、一般的な設定を上書きする機構については、
+     &apt-preferences; をご覧ください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>install</term>
+<!--
+     <listitem><para><literal>install</literal> is followed by one or more packages desired for 
+     installation. Each package is a package name, not a fully qualified 
+     filename (for instance, in a Debian GNU/Linux system, libc6 would be the 
+     argument provided, not <literal>libc6_1.9.6-2.deb</literal>) All packages required 
+     by the package(s) specified for installation will also be retrieved and 
+     installed. The <filename>/etc/apt/sources.list</filename> file is used to locate 
+     the desired packages. If a hyphen is appended to the package name (with 
+     no intervening space), the identified package will be removed if it is 
+     installed. Similarly a plus sign can be used to designate a package to 
+     install. These latter features may be used to override decisions made by 
+     apt-get's conflict resolution system.</para>
+-->
+     <listitem><para><literal>install</literal> の後には、
+     インストールするパッケージを 1 つ以上指定します。
+     指定するパッケージは、完全なファイル名ではなくパッケージ名です。
+     (例えば Debian GNU/Linux システムでは、
+     <literal>libc6_1.9.6-2.deb</literal> ではなく libc6 を引数として与えます)
+     インストールするよう指定したすべてのパッケージに対し、
+     検索・インストールを行います。
+     <filename>/etc/apt/sources.list</filename> ファイルを、
+     要求するパッケージの場所を特定するのに使用します。
+     パッケージ名の後ろに (空白を含まず) ハイフンが追加されている場合、
+     そのパッケージがインストールされていれば削除します。
+     同様に、インストールするパッケージを明示するのにプラス記号も使用できます。
+     この記号は apt-get の競合解決システムの判断に利用されるかもしれません。</para>
+
+<!--
+     <para>A specific version of a package can be selected for installation by 
+     following the package name with an equals and the version of the package 
+     to select. This will cause that version to be located and selected for
+     install. Alternatively a specific distribution can be selected by 
+     following the package name with a slash and the version of the 
+     distribution or the Archive name (stable, testing, unstable).</para>
+-->
+     <para>パッケージにイコール記号とバージョンを続けることで、
+     選択したバージョンのパッケージをインストールすることができます。
+     つまり、指定のバージョンのパッケージをインストールするように選択する、
+     ということです。
+     別の方法としては、ディストリビューションを特定するのに、
+     パッケージ名に続けて、
+     スラッシュとディストリビューションのバージョンやアーカイブ名
+     (stable, testing, unstable) を記述できます。</para>
+
+<!--
+     <para>Both of the version selection mechanisms can downgrade packages and must
+     be used with care.</para>
+-->
+     <para>バージョン選択機構はダウングレード時にも使用できるため、
+     注意して使用しなければなりません。</para>
+
+<!--
+     <para>Finally, the &apt-preferences; mechanism allows you to
+     create an alternative installation policy for
+     individual packages.</para>
+-->
+     <para>最後に、&apt-preferences; 機構により、
+     特定のパッケージに対するインストールポリシーを作成できます。</para>
+
+<!--
+     <para>If no package matches the given expression and the expression contains one
+     of '.', '?' or '*' then it is assumed to be a POSIX regular expression,
+     and it is applied
+     to all package names in the database. Any matches are then installed (or
+     removed). Note that matching is done by substring so 'lo.*' matches 'how-lo'
+     and 'lowest'. If this is undesired, anchor the regular expression
+     with a '^' or '$' character, or create a more specific regular expression.</para></listitem>
+-->
+     <para>構文に '.', '?', '*' を含み、パッケージ名がマッチしなかった場合、
+     POSIX 正規表現であると見なし、
+     データベース内の全パッケージ名に対して適用します。
+     マッチしたパッケージすべてがインストール(もしくは削除)されます。
+     'lo.*' のような文字列は、
+     'how-lo' や 'lowest' にマッチすることに注意してください。
+     そうしたくなければ、'^' や '$' を付けるか、
+     もっと詳しい正規表現を指定してください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>remove</term>
+<!--
+     <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
+     removed instead of installed. If a plus sign is appended to the package 
+     name (with no intervening space), the identified package will be 
+     installed instead of removed.</para></listitem>
+-->
+     <listitem><para><literal>remove</literal> は、
+     パッケージが削除されることを除き、<literal>install</literal> と同様です。
+     プラス記号がパッケージ名に (間に空白を含まずに) 付加されると、
+     識別されたパッケージを、削除ではなくインストールします。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>source</term>
+<!--
+     <listitem><para><literal>source</literal> causes <command>apt-get</command> to fetch source packages. APT 
+     will examine the available packages to decide which source package to 
+     fetch. It will then find and download into the current directory the 
+     newest available version of that source package. Source packages are 
+     tracked separately from binary packages via <literal>deb-src</literal> type lines 
+     in the &sources-list; file. This probably will mean that you will not 
+     get the same source as the package you have installed or as you could 
+     install. If the -\-compile options is specified then the package will be 
+     compiled to a binary .deb using dpkg-buildpackage, if -\-download-only is 
+     specified then the source package will not be unpacked.</para>
+-->
+     <listitem><para><literal>source</literal> は、
+     ソースパッケージを取得するのに <command>apt-get</command> します。
+     APT はどのソースパッケージを取得するか決定するよう、
+     利用可能なパッケージを検討します。
+     その後、最新の利用可能なソースパッケージを見つけ、
+     カレントディレクトリへダウンロードします。
+     バイナリパッケージとは別に &sources-list; ファイルの
+     <literal>deb-src</literal> 行から、ソースパッケージを追跡します。
+     これは、インストールした (またはインストールできる) パッケージと、
+     取得元を変えることができることを示しています。
+     --compile オプションが指定された場合、dpkg-buildpackage を用いて
+     バイナリ .deb ファイルへコンパイルを行います。
+     --download-only の場合はソースパッケージを展開しません。</para>
+
+<!--
+     <para>A specific source version can be retrieved by postfixing the source name
+     with an equals and then the version to fetch, similar to the mechanism
+     used for the package files. This enables exact matching of the source 
+     package name and version, implicitly enabling the 
+     <literal>APT::Get::Only-Source</literal> option.</para>
+-->
+     <para>パッケージと同様に、
+     ソース名の後ろにイコールと取得したいバージョンを置くと、
+     指定したバージョンのソースを取得できます。
+     <literal>APT::Get::Only-Source</literal> 
+     オプションが暗黙のうちに有効になっているため、
+     ソースパッケージ名とバージョンに厳密に一致させています。</para>
+     
+<!--
+     <para>Note that source packages are not tracked like binary packages, they 
+     exist only in the current directory and are similar to downloading source
+     tar balls.</para></listitem>
+-->
+     <para>tar ball はカレントディレクトリにのみダウンロードされ、
+     カレントディレクトリに展開されることに注意してください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>build-dep</term>
+<!--
+     <listitem><para><literal>build-dep</literal> causes apt-get to install/remove packages in an 
+     attempt to satisfy the build dependencies for a source package.</para></listitem>
+-->
+     <listitem><para><literal>build-dep</literal> は、
+     ソースパッケージの構築依存関係を満たすように、
+     パッケージのインストール・削除を行います。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>check</term>
+<!--
+     <listitem><para><literal>check</literal> is a diagnostic tool; it updates the package cache and checks 
+     for broken dependencies.</para></listitem>
+-->
+     <listitem><para><literal>check</literal> は、
+     パッケージキャッシュの更新や壊れた依存関係をチェックする診断ツールです。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>clean</term>
+<!--
+     <listitem><para><literal>clean</literal> clears out the local repository of retrieved package 
+     files. It removes everything but the lock file from 
+     <filename>&cachedir;/archives/</filename> and 
+     <filename>&cachedir;/archives/partial/</filename>. When APT is used as a 
+     &dselect; method, <literal>clean</literal> is run automatically.
+     Those who do not use dselect will likely want to run <literal>apt-get clean</literal>
+     from time to time to free up disk space.</para></listitem>
+-->
+     <listitem><para><literal>clean</literal> は、
+     取得したパッケージのローカルリポジトリを掃除します。
+     <filename>&cachedir;/archives/</filename> と 
+     <filename>&cachedir;/archives/partial/</filename>
+     からロックファイル以外すべて削除します。
+     APT が &dselect; から呼ばれるときには、
+     自動的に <literal>clean</literal> が実行されます。
+     dselectを使用しない場合は、ディスクスペースを解放するため、時々 
+     <literal>apt-get clean</literal> を実行したくなるでしょう。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>autoclean</term>
+<!--
+     <listitem><para>Like <literal>clean</literal>, <literal>autoclean</literal> clears out the local 
+     repository of retrieved package files. The difference is that it only 
+     removes package files that can no longer be downloaded, and are largely 
+     useless. This allows a cache to be maintained over a long period without 
+     it growing out of control. The configuration option 
+     <literal>APT::Clean-Installed</literal> will prevent installed packages from being
+     erased if it is set to off.</para></listitem>
+-->
+     <listitem><para><literal>clean</literal> と同様に、
+     <literal>autoclean</literal> は取得したパッケージのローカルリポジトリを掃除します。
+     違いは、もうダウンロードされることがないパッケージファイルや、
+     ほとんど不要なパッケージファイルのみを削除することです。
+     このため、長い期間、キャッシュが管理できずに肥大化することなく、
+     維持することができます。
+     設定オプション <literal>APT::Clean-Installed</literal> に 
+     off をセットしていれば、
+     インストール済のパッケージファイルが削除されるのを防げます。</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>options</title>
+-->
+ <refsect1><title>オプション</title>
+   &apt-cmdblurb;
+
+   <variablelist>
+     <varlistentry><term><option>-d</option></term><term><option>--download-only</option></term>
+<!--
+     <listitem><para>Download only; package files are only retrieved, not unpacked or installed.
+     Configuration Item: <literal>APT::Get::Download-Only</literal>.</para></listitem>
+-->
+     <listitem><para>ダウンロードのみ - パッケージファイルの取得のみを行い、
+     展開・インストールを行いません。
+     設定項目 - <literal>APT::Get::Download-Only</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-f</option></term><term><option>--fix-broken</option></term>
+<!--
+     <listitem><para>Fix; attempt to correct a system with broken dependencies in            
+     place. This option, when used with install/remove, can omit any packages
+     to permit APT to deduce a likely solution. Any Package that are specified
+     must completely correct the problem. The option is sometimes necessary when 
+     running APT for the first time; APT itself does not allow broken package 
+     dependencies to exist on a system. It is possible that a system's 
+     dependency structure can be so corrupt as to require manual intervention 
+     (which usually means using &dselect; or <command>dpkg -\-remove</command> to eliminate some of 
+     the offending packages). Use of this option together with <option>-m</option> may produce an
+     error in some situations. 
+     Configuration Item: <literal>APT::Get::Fix-Broken</literal>.</para></listitem>
+-->
+     <listitem><para>修復 - 依存関係が壊れたシステムの修正を試みます。
+     このオプションを install や remove と一緒に使うときは、
+     パッケージを指定しなくてもかまいません。
+     どのパッケージを指定しても、完全に問題を解決します。APT 自体は、
+     システムに存在する壊れたパッケージ依存関係を許すことができないので、
+     初めて APT を実行する場合、このオプションが必要になることがあります。
+     システムの依存関係構造にかなり問題がある場合は、
+     手動で修正するよう要求することもあります。
+     (通常は、問題のあるパッケージを取り除くのに &dselect; や
+     <command>dpkg --remove</command> を使用します)
+     このオプションを <option>-m</option> オプションと同時に使用すると、
+     エラーになる状況があるかもしれません。
+     設定項目 - <literal>APT::Get::Fix-Broken</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-m</option></term><term><option>--ignore-missing</option></term>
+     <term><option>--fix-missing</option></term>
+<!--
+     <listitem><para>Ignore missing packages; If packages cannot be retrieved or fail the    
+     integrity check after retrieval (corrupted package files), hold back    
+     those packages and handle the result. Use of this option together with  
+     <option>-f</option> may produce an error in some situations. If a package is 
+     selected for installation (particularly if it is mentioned on the 
+     command line) and it could not be downloaded then it will be silently 
+     held back.
+     Configuration Item: <literal>APT::Get::Fix-Missing</literal>.</para></listitem>
+-->
+     <listitem><para>欠落パッケージの無視 - パッケージが取得できなかったり、
+     (パッケージの破損で) 取得した後の整合性チェックを通らなかった場合、
+     そのパッケージの処理を保留し最後まで処理を続けます。
+     このオプションを <option>-f</option> オプションと同時に使用すると、
+     エラーになる状況があるかもしれません。
+     パッケージをインストールするよう選択している場合 
+     (特にコマンドラインでの操作時) や、
+     ダウンロードできなかった場合に、なにも表示せず保留することになります。
+     設定項目 - <literal>APT::Get::Fix-Missing</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--no-download</option></term>
+<!--
+     <listitem><para>Disables downloading of packages. This is best used with 
+     <option>-\-ignore-missing</option> to force APT to use only the .debs it has 
+     already downloaded.
+     Configuration Item: <literal>APT::Get::Download</literal>.</para></listitem>
+-->
+     <listitem><para>パッケージのダウンロードを無効にします。
+     これはすでにダウンロードした .deb に対してのみ APT を行う場合に、
+     <option>--ignore-missing</option> と併せて使うのがよいでしょう。
+     設定項目 - <literal>APT::Get::Download</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-q</option></term><term><option>--quiet</option></term>
+<!--
+     <listitem><para>Quiet; produces output suitable for logging, omitting progress indicators.
+     More q's will produce more quiet up to a maximum of 2. You can also use
+     <option>-q=#</option> to set the quiet level, overriding the configuration file. 
+     Note that quiet level 2 implies <option>-y</option>, you should never use -qq 
+     without a no-action modifier such as -d, -\-print-uris or -s as APT may 
+     decided to do something you did not expect.
+     Configuration Item: <literal>quiet</literal>.</para></listitem>
+-->
+     <listitem><para>静粛 - 進捗表示を省略し、
+     ログをとるのに便利な出力を行います。
+     最大 2 つまで q を重ねることでより静粛にできます。
+     また、<option>-q=#</option> のように静粛レベルを指定して、
+     設定ファイルを上書きすることもできます。
+     静粛レベル 2 は <option>-y</option> を含んでいることに注意してください。
+     APT が意図しない決定を行うかもしれないので -d, --print-uris, -s のような
+     操作を行わないオプションをつけずに -qq を使用するべきではありません。
+     設定項目 - <literal>quiet</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-s</option></term>
+                   <term><option>--simulate</option></term>
+		   <term><option>--just-print</option></term>
+		   <term><option>--dry-run</option></term>
+		   <term><option>--recon</option></term>
+		   <term><option>--no-act</option></term>
+<!--
+     <listitem><para>No action; perform a simulation of events that would occur but do not
+     actually change the system. 
+     Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
+-->
+     <listitem><para>動作なし - なにが起こるのかのシミュレーションを行い、
+     実際にはシステムの変更を行いません。
+     設定項目 - <literal>APT::Get::Simulate</literal></para>
+
+<!--
+     <para>Simulate prints out
+     a series of lines each one representing a dpkg operation, Configure (Conf),
+     Remove (Remv), Unpack (Inst). Square brackets indicate broken packages with
+     and empty set of square brackets meaning breaks that are of no consequence
+     (rare).</para></listitem>
+-->
+     <para>シミュレートの結果、dpkg の動作を表す一連の行のそれぞれに、
+     設定 (Conf)、削除 (Remv)、展開 (Inst) を表示します。
+     角カッコは壊れたパッケージを表し、(まれに)
+     空の角カッコは大した問題ではないことを表します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-y</option></term><term><option>--yes</option></term>
+                   <term><option>--assume-yes</option></term>
+<!--
+     <listitem><para>Automatic yes to prompts; assume "yes" as answer to all prompts and run
+     non-interactively. If an undesirable situation, such as changing a held
+     package, trying to install a unauthenticated package or removing an essential package 
+     occurs then <literal>apt-get</literal> will abort. 
+     Configuration Item: <literal>APT::Get::Assume-Yes</literal>.</para></listitem>
+-->
+     <listitem><para>プロンプトへの自動承諾 - すべてのプロンプトに自動的に
+     "yes" と答え、非対話的に実行します。
+     保留したパッケージの状態を変更したり、
+     必須パッケージを削除するような不適切な状況の場合、
+     <literal>apt-get</literal> は処理を中断します。
+     設定項目 - <literal>APT::Get::Assume-Yes</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-u</option></term><term><option>--show-upgraded</option></term>
+<!--
+     <listitem><para>Show upgraded packages; Print out a list of all packages that are to be
+     upgraded. 
+     Configuration Item: <literal>APT::Get::Show-Upgraded</literal>.</para></listitem>
+-->
+     <listitem><para>更新パッケージ表示 -
+     更新される全パッケージを一覧表示します。
+     設定項目 - <literal>APT::Get::Show-Upgraded</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-V</option></term><term><option>--verbose-versions</option></term>
+<!--
+     <listitem><para>Show full versions for upgraded and installed packages.
+     Configuration Item: <literal>APT::Get::Show-Versions</literal>.</para></listitem>
+-->
+     <listitem><para>更新・インストールするパッケージのヴァージョンを、
+     すべて表示します。
+     設定項目 - <literal>APT::Get::Show-Versions</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-b</option></term><term><option>--compile</option></term>
+                   <term><option>--build</option></term>
+<!--
+     <listitem><para>Compile source packages after downloading them.
+     Configuration Item: <literal>APT::Get::Compile</literal>.</para></listitem>
+-->
+     <listitem><para>ソースパッケージをダウンロード後、コンパイルします。
+     設定項目 - <literal>APT::Get::Compile</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--ignore-hold</option></term>
+<!--
+     <listitem><para>Ignore package Holds; This causes <command>apt-get</command> to ignore a hold 
+     placed on a package. This may be useful in conjunction with 
+     <literal>dist-upgrade</literal> to override a large number of undesired holds. 
+     Configuration Item: <literal>APT::Ignore-Hold</literal>.</para></listitem>
+-->
+     <listitem><para>保留パッケージの無視 - パッケージの保留指示を無視して
+    <command>apt-get</command> を行います。
+    <literal>dist-upgrade</literal> と共に、
+    大量のパッケージを保留の解除をするのに使用すると便利です。
+    設定項目 - <literal>APT::Ignore-Hold</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--no-upgrade</option></term>
+<!--
+     <listitem><para>Do not upgrade packages; When used in conjunction with <literal>install</literal>,
+     <literal>no-upgrade</literal> will prevent packages on the command line
+     from being upgraded if they are already installed.
+     Configuration Item: <literal>APT::Get::Upgrade</literal>.</para></listitem>
+-->
+     <listitem><para>パッケージ更新なし -  <literal>install</literal> 
+     と同時に使用すると、<literal>no-upgrade</literal> は、
+     指定したパッケージがすでにインストールしてある場合に更新を行いません。
+     設定項目 - <literal>APT::Get::Upgrade</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--force-yes</option></term>
+<!--
+     <listitem><para>Force yes; This is a dangerous option that will cause apt to continue 
+     without prompting if it is doing something potentially harmful. It 
+     should not be used except in very special situations. Using 
+     <literal>force-yes</literal> can potentially destroy your system! 
+     Configuration Item: <literal>APT::Get::force-yes</literal>.</para></listitem>
+-->
+     <listitem><para>強制承諾 - 
+     APT が何か損傷を与えかねない動作をしようとした場合でも、
+     確認の入力なしで実行してしまう危険なオプションです。
+     よほどの状況でなければ、使用しない方がいいでしょう。
+     <literal>force-yes</literal> は、あなたのシステムを破壊しかねません!
+     設定項目 - <literal>APT::Get::force-yes</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--print-uris</option></term>
+<!--
+     <listitem><para>Instead of fetching the files to install their URIs are printed. Each
+     URI will have the path, the destination file name, the size and the expected
+     md5 hash. Note that the file name to write to will not always match
+     the file name on the remote site! This also works with the 
+     <literal>source</literal> and <literal>update</literal> commands. When used with the
+     <literal>update</literal> command the MD5 and size are not included, and it is
+     up to the user to decompress any compressed files.
+     Configuration Item: <literal>APT::Get::Print-URIs</literal>.</para></listitem>
+-->
+     <listitem><para>インストールするファイルを取得する代わりに、
+     その URI を表示します。
+     URI には、パス、対象ファイル名、ファイルサイズ、
+     予測される md5 ハッシュが含まれています。
+     出力したファイル名が、
+     常にリモートサイトのファイル名と一致するわけではない、
+     ということに注意してください!
+     これは <literal>source</literal> コマンド、
+     <literal>update</literal> コマンドでも動作します。
+     <literal>update</literal> で使用したときには、
+     MD5 やファイルサイズを含みません。
+     このとき、圧縮ファイルの展開はユーザの責任において行ってください。
+     設定項目 - <literal>APT::Get::Print-URIs</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--purge</option></term>
+<!--
+     <listitem><para>Use purge instead of remove for anything that would be removed.
+     An asterisk ("*") will be displayed next to packages which are
+     scheduled to be purged.
+     Configuration Item: <literal>APT::Get::Purge</literal>.</para></listitem>
+-->
+     <listitem><para>削除する際、「削除」ではなく「完全削除」を行います。
+     「完全削除」を行うと指示したパッケージ名の後には、
+     アスタリスク ("*") が付きます。
+     設定項目 - <literal>APT::Get::Purge</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--reinstall</option></term>
+<!--
+     <listitem><para>Re-Install packages that are already installed and at the newest version.
+     Configuration Item: <literal>APT::Get::ReInstall</literal>.</para></listitem>
+-->
+     <listitem><para>すでに最新版がインストールされていても、
+     パッケージを再インストールします。
+     設定項目 - <literal>APT::Get::ReInstall</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--list-cleanup</option></term>
+<!--
+     <listitem><para>This option defaults to on, use <literal>-\-no-list-cleanup</literal> to turn it 
+     off. When on <command>apt-get</command> will automatically manage the contents of 
+     <filename>&statedir;/lists</filename> to ensure that obsolete files are erased. 
+     The only  reason to turn it off is if you frequently change your source 
+     list. 
+     Configuration Item: <literal>APT::Get::List-Cleanup</literal>.</para></listitem>
+-->
+     <listitem><para>この機能はデフォルトで ON になっています。
+     OFF にするには <literal>--no-list-cleanup</literal> としてください。
+     ON の場合、
+     <command>apt-get</command> は古くなったファイルを確実に消去するため、
+     自動的に <filename>&statedir;/lists</filename> の中身を管理します。
+     これを OFF にするのは、取得元リストを頻繁に変更する時ぐらいでしょう。
+     設定項目 - <literal>APT::Get::List-Cleanup</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-t</option></term>
+                   <term><option>--target-release</option></term>
+                   <term><option>--default-release</option></term>
+<!--
+     <listitem><para>This option controls the default input to the policy engine, it creates
+     a default pin at priority 990 using the specified release string. The
+     preferences file may further override this setting. In short, this option
+     lets you have simple control over which distribution packages will be
+     retrieved from. Some common examples might be 
+     <option>-t '2.1*'</option> or <option>-t unstable</option>.
+     Configuration Item: <literal>APT::Default-Release</literal>;
+     see also the &apt-preferences; manual page.</para></listitem>
+-->
+     <listitem><para>このオプションは、
+     ポリシーエンジンへのデフォルト入力を制御します。
+     これは、指定されたリリース文字列を使用し、
+     デフォルト pin を優先度 990 で作成することです。
+     優先ファイルはこの設定を上書きします。
+     要するにこのオプションで、
+     どの配布パッケージを取得するかを簡単に管理します。
+     一般的な例としては、
+     <option>-t '2.1*'</option> や <option>-t unstable</option> でしょう。
+     設定項目 - <literal>APT::Default-Release</literal>
+     &apt-preferences; のマニュアルページもご覧ください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--trivial-only</option></term>
+<!--
+     <listitem><para>
+     Only perform operations that are 'trivial'. Logically this can be considered
+     related to <option>-\-assume-yes</option>, where <option>-\-assume-yes</option> will answer 
+     yes to any prompt, <option>-\-trivial-only</option> will answer no. 
+     Configuration Item: <literal>APT::Get::Trivial-Only</literal>.</para></listitem>
+-->
+     <listitem><para>
+     「重要でない」操作のみを行います。
+     これは論理的に <option>--assume-yes</option> の仲間と見なせます。
+     <option>--assume-yes</option> は質問にすべて yes と答えますが、
+     <option>--trivial-only</option> はすべて no と答えます。
+     設定項目 - <literal>APT::Get::Trivial-Only</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--no-remove</option></term>
+<!--
+     <listitem><para>If any packages are to be removed apt-get immediately aborts without
+     prompting. 
+     Configuration Item: <literal>APT::Get::Remove</literal>.</para></listitem>
+-->
+     <listitem><para>パッケージが削除される状況になったとき、
+     プロンプトを表示せず中断します。
+     設定項目 - <literal>APT::Get::Remove</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--only-source</option></term>
+ <!--
+    <listitem><para>Only has meaning for the
+     <literal>source</literal> and <literal>build-dep</literal>
+     commands.  Indicates that the given source names are not to be
+     mapped through the binary table.  This means that if this option
+     is specified, these commands will only accept source package
+     names as arguments, rather than accepting binary package names
+     and looking up the corresponding source package.  Configuration
+     Item: <literal>APT::Get::Only-Source</literal>.</para></listitem>
+-->
+    <listitem><para><literal>source</literal> コマンドと 
+     <literal>build-dep</literal> コマンドでのみ意味があります。
+     指定されたソース名がバイナリテーブルにマップされないようにします。
+     これは、このオプションを指定すると、
+     バイナリパッケージ名を受け付けて対応するソースパッケージを探すのではなく、
+     引数にソースパッケージ名しか受け付けなくなる、ということです。
+     設定項目 - <literal>APT::Get::Only-Source</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--diff-only</option></term><term><option>--tar-only</option></term>
+<!--
+     <listitem><para>Download only the diff or tar file of a source archive. 
+     Configuration Item: <literal>APT::Get::Diff-Only</literal> and 
+     <literal>APT::Get::Tar-Only</literal>.</para></listitem>
+-->
+     <listitem><para>ソースアーカイブの diff ファイルや 
+     tar ファイルのダウンロードのみを行います。
+     設定項目 - <literal>APT::Get::Diff-Only</literal>, 
+     <literal>APT::Get::Tar-Only</literal></para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><option>--arch-only</option></term>
+<!--
+     <listitem><para>Only process architecture-dependent build-dependencies.
+     Configuration Item: <literal>APT::Get::Arch-Only</literal>.</para></listitem>
+-->
+     <listitem><para>構築依存関係の解決を、
+     アーキテクチャに依存したもののみ行います。
+     設定項目 - <literal>APT::Get::Arch-Only</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--allow-unauthenticated</option></term>
+<!--
+     <listitem><para>Ignore if packages can't be authenticated and don't prompt about it.
+     This is usefull for tools like pbuilder.
+     Configuration Item: <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
+-->
+     <listitem><para>パッケージを確認できない場合に無視し、
+     それについて質問しません。
+     pbuilder のようなツールで便利です。
+     設定項目 - <literal>APT::Get::AllowUnauthenticated</literal></para></listitem>
+     </varlistentry>
+     
+
+     &apt-commonoptions;
+     
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>Files</title>
+-->
+ <refsect1><title>ファイル</title>
+   <variablelist>
+     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>
+<!--
+     <listitem><para>Locations to fetch packages from.
+     Configuration Item: <literal>Dir::Etc::SourceList</literal>.</para></listitem>
+-->
+     <listitem><para>パッケージの取得元。
+     設定項目 - <literal>Dir::Etc::SourceList</literal></para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><filename>/etc/apt/apt.conf</filename></term>
+<!--
+     <listitem><para>APT configuration file.
+     Configuration Item: <literal>Dir::Etc::Main</literal>.</para></listitem>
+-->
+     <listitem><para>APT 設定ファイル。
+     設定項目 - <literal>Dir::Etc::Main</literal></para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><filename>/etc/apt/apt.conf.d/</filename></term>
+<!--
+     <listitem><para>APT configuration file fragments
+     Configuration Item: <literal>Dir::Etc::Parts</literal>.</para></listitem>
+-->
+     <listitem><para>APT 設定ファイルの断片。
+     設定項目 - <literal>Dir::Etc::Parts</literal></para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><filename>/etc/apt/preferences</filename></term>
+<!--
+     <listitem><para>Version preferences file.
+     This is where you would specify "pinning",
+     i.e. a preference to get certain packages
+     from a separate source
+     or from a different version of a distribution.
+     Configuration Item: <literal>Dir::Etc::Preferences</literal>.</para></listitem>
+-->
+     <listitem><para>バージョン優先ファイル。
+     ここに "pin" の設定を行います。
+     つまり、別々の取得元や異なるディストリビューションのバージョンの、
+     どこからパッケージを取得するかを設定します。
+     設定項目 - <literal>Dir::Etc::Preferences</literal></para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><filename>&cachedir;/archives/</filename></term>
+<!--
+     <listitem><para>Storage area for retrieved package files.
+     Configuration Item: <literal>Dir::Cache::Archives</literal>.</para></listitem>
+-->
+     <listitem><para>取得済みパッケージファイル格納エリア。
+     設定項目 - <literal>Dir::Cache::Archives</literal></para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><filename>&cachedir;/archives/partial/</filename></term>
+<!--
+     <listitem><para>Storage area for package files in transit.
+     Configuration Item: <literal>Dir::Cache::Archives</literal> (implicit partial). </para></listitem>
+-->
+     <listitem><para>取得中パッケージファイル格納エリア。
+     設定項目 - <literal>Dir::Cache::Archives</literal> (必然的に不完全)</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><filename>&statedir;/lists/</filename></term>
+<!--
+     <listitem><para>Storage area for state information for each package resource specified in
+     &sources-list;
+     Configuration Item: <literal>Dir::State::Lists</literal>.</para></listitem>
+-->
+     <listitem><para>&sources-list; のパッケージリソース特有の状態情報格納エリア。
+     設定項目 - <literal>Dir::State::Lists</literal></para></listitem>
+     </varlistentry>
+  
+     <varlistentry><term><filename>&statedir;/lists/partial/</filename></term>
+<!--
+     <listitem><para> Storage area for state information in transit.
+     Configuration Item: <literal>Dir::State::Lists</literal> (implicit partial).</para></listitem>
+-->
+     <listitem><para>取得中の状態情報格納エリア。
+     設定項目 - <literal>Dir::State::Lists</literal> (必然的に不完全)</para></listitem>
+     </varlistentry>     
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>See Also</title>
+-->
+ <refsect1><title>関連項目</title>
+<!--
+   <para>&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;,
+   &apt-conf;, &apt-config;,
+   The APT User's guide in &docdir;, &apt-preferences;, the APT Howto.</para>
+-->
+   <para>&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;,
+   &apt-conf;, &apt-config;,
+   &docdir; の APT ユーザーズガイド, &apt-preferences;, APT Howto</para>
+ </refsect1>
+
+<!--
+ <refsect1><title>Diagnostics</title>
+-->
+ <refsect1><title>診断メッセージ</title>
+<!--
+   <para><command>apt-get</command> returns zero on normal operation, decimal 100 on error.</para>
+-->
+   <para><command>apt-get</command> は正常終了時に 0 を返します。
+   エラー時には十進の 100 を返します。</para>
+ </refsect1>
+
+ &manbugs;
+ &translator;
+
+</refentry>

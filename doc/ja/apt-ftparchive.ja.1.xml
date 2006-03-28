@@ -1,0 +1,1020 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt-ftparchive</refentrytitle>
+   <manvolnum>1</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-ftparchive</refname>
+<!--
+    <refpurpose>Utility to generate index files</refpurpose>
+-->
+    <refpurpose>インデックスファイル生成ユーティリティ</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-ftparchive</command>
+      <arg><option>-hvdsq</option></arg>
+      <arg><option>--md5</option></arg>
+      <arg><option>--delink</option></arg>
+      <arg><option>--readonly</option></arg>
+      <arg><option>--contents</option></arg>
+      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
+      <arg><option>-c=<replaceable>file</replaceable></option></arg>      
+      <group choice="req">
+         <arg>packages<arg choice="plain" rep="repeat"><replaceable>path</replaceable></arg><arg><replaceable>override</replaceable><arg><replaceable>pathprefix</replaceable></arg></arg></arg>
+         <arg>sources<arg choice="plain" rep="repeat"><replaceable>path</replaceable></arg><arg><replaceable>override</replaceable><arg><replaceable>pathprefix</replaceable></arg></arg></arg>
+         <arg>contents <arg choice="plain"><replaceable>path</replaceable></arg></arg>
+         <arg>release <arg choice="plain"><replaceable>path</replaceable></arg></arg>
+         <arg>generate <arg choice="plain"><replaceable>config-file</replaceable></arg> <arg choice="plain" rep="repeat"><replaceable>section</replaceable></arg></arg>
+         <arg>clean <arg choice="plain"><replaceable>config-file</replaceable></arg></arg>
+      </group>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+<!--
+ <refsect1><title>Description</title>
+-->
+ <refsect1><title>説明</title>
+<!--
+   <para><command>apt-ftparchive</command> is the command line tool that generates the index 
+   files that APT uses to access a distribution source. The index files should 
+   be generated on the origin site based on the content of that site.</para>
+-->
+   <para><command>apt-ftparchive</command> は、
+   APT が取得元にアクセスするのに必要な、
+   インデックスファイルを生成するコマンドラインツールです。
+   インデックスファイルは、元のサイトの内容に基づき生成されるべきです。</para>
+
+<!--
+   <para><command>apt-ftparchive</command> is a superset of the &dpkg-scanpackages; program,
+   incorporating its entire functionality via the <literal>packages</literal> command.
+   It also contains a contents file generator, <literal>contents</literal>, and an 
+   elaborate means to 'script' the generation process for a complete 
+   archive.</para>
+-->
+   <para><command>apt-ftparchive</command> は、
+   &dpkg-scanpackages; プログラムのスーパーセットで、
+   <literal>packages</literal> コマンド経由で機能全体を取り込んでいます。
+   また、contents ファイルジェネレータ <literal>contents</literal> と
+   完全なアーカイブの生成プロセス「スクリプト」である綿密な手段を含んでいます。</para>
+
+<!--
+   <para>Internally <command>apt-ftparchive</command> can make use of binary databases to 
+   cache the contents of a .deb file and it does not rely on any external 
+   programs aside from &gzip;. When doing a full generate it automatically 
+   performs file-change checks and builds the desired compressed output files.</para>
+-->
+   <para>本質的に <command>apt-ftparchive</command> は、
+   .deb ファイルの内容をキャッシュするのにバイナリデータベースを使用できます。
+   また、&gzip; 以外のいかなる外部プログラムにも依存しません。
+   すべて生成する際には、
+   ファイル変更点の検出と希望した圧縮出力ファイルの作成を自動的に実行します。</para>
+   
+<!--
+   <para>Unless the <option>-h</option>, or <option>-\-help</option> option is given one of the
+   commands below must be present.</para>
+-->
+   <para><option>-h</option> オプションや <option>--help</option> オプションを除き、
+   以下に挙げるコマンドが必要です。</para>
+   
+   <variablelist>
+     <varlistentry><term>packages</term>
+     <listitem><para>
+<!--
+     The packages command generates a package file from a directory tree. It
+     takes the given directory and recursively searches it for .deb files, 
+     emitting a package record to stdout for each. This command is 
+     approximately equivalent to &dpkg-scanpackages;.</para>
+-->
+     packages コマンドは、
+     ディレクトリツリーからパッケージファイルを生成します。
+     与えられたディレクトリから再帰検索し、.deb ファイルを取得します。
+     またパッケージレコードを標準出力にそれぞれ出力します。
+     このコマンドは、&dpkg-scanpackages; とほぼ同じです。</para>
+
+<!--
+     <para>The option <option>-\-db</option> can be used to specify a binary caching DB.</para></listitem>
+-->
+     <para><option>--db</option> オプションで、
+     キャッシュ DB を指定できます。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>sources</term>
+     <listitem><para>
+<!--
+     The <literal>sources</literal> command generates a source index file from a directory tree. 
+     It takes the given directory and recursively searches it for .dsc files,
+     emitting a source record to stdout for each. This command is approximately
+     equivalent to &dpkg-scansources;.</para>
+-->
+     <literal>sources</literal> コマンドは、
+     ディレクトリツリーからソースインデックスファイルを生成します。
+     与えられたディレクトリから再帰検索し、.dsc ファイルを取得します。
+     またソースレコードを標準出力にそれぞれ出力します。
+     このコマンドは、&dpkg-scansources; とほぼ同じです。</para>
+     <para>
+<!--
+     If an override file is specified then a source override file will be 
+     looked for with an extension of .src. The -\-source-override option can be 
+     used to change the source override file that will be used.</para></listitem>
+-->
+     override ファイルを指定した場合、
+     src 拡張子がついたソースオーバーライドファイルを探します。
+     使用するソースオーバーライドファイルを変更するのには、
+     --source-override オプションを使用します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>contents</term>
+     <listitem><para>
+<!--
+     The <literal>contents</literal> command generates a contents file from a directory tree. It
+     takes the given directory and recursively searches it for .deb files, 
+     and reads the file list from each file. It then sorts and writes to stdout
+     the list of files matched to packages. Directories are not written to 
+     the output. If multiple packages own the same file then each package is
+     separated by a comma in the output.</para>
+-->
+     <literal>contents</literal> コマンドは、
+     ディレクトリツリーからコンテンツファイルを生成します。
+     与えられたディレクトリから再帰検索し、.deb ファイルを取得します。
+     またファイルごとにファイル一覧を読み取ります。
+     その後、パッケージに対応するファイル一覧を標準出力にソートして出力します。
+     ディレクトリは出力に含まれません。
+     複数のパッケージが同じファイルを持つ場合、
+     パッケージ名をカンマ区切りで出力します。</para>
+     <para>
+<!--
+     The option <option>-\-db</option> can be used to specify a binary caching DB.</para></listitem>
+-->
+     <option>--db</option> オプションで、
+     キャッシュ DB を指定できます。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>release</term>
+     <listitem><para>
+<!--
+     The <literal>release</literal> command generates a Release file from a
+     directory tree. It recursively searches the given directory for
+     Packages, Packages.gz, Packages.bz2, Sources, Sources.gz,
+     Sources.bz2, Release and md5sum.txt files.  It then writes to
+     stdout a Release file containing an MD5 digest and SHA1 digest
+     for each file.</para>
+-->
+     <literal>release</literal> コマンドは、
+     ディレクトリツリーから Release ファイルを生成します。
+     与えられたディレクトリから、Packages, Packages.gz, Packages.bz2, Sources, 
+     Sources.gz, Sources.bz2, Release, md5sum.txt 
+     といったファイルを再帰検索します。
+     その後、ファイルごとの MD5 ダイジェストと SHA1 ダイジェストを含んだ
+     Release ファイルを、標準出力に書き出します。</para>
+     <para>
+<!--
+     Values for the additional metadata fields in the Release file are
+     taken from the corresponding variables under
+     <literal>APT::FTPArchive::Release</literal>,
+     e.g. <literal>APT::FTPArchive::Release::Origin</literal>.  The supported fields
+     are: <literal>Origin</literal>, <literal>Label</literal>, <literal>Suite</literal>,
+     <literal>Version</literal>, <literal>Codename</literal>, <literal>Date</literal>,
+     <literal>Architectures</literal>, <literal>Components</literal>, <literal>Description</literal>.</para></listitem>
+-->
+     Release ファイルの追加メタデータフィールドの値は、
+     <literal>APT::FTPArchive::Release</literal> 以下の相当する値 
+     (例: <literal>APT::FTPArchive::Release::Origin</literal>) をとります。
+     サポートするフィールドは、
+     <literal>Origin</literal>, <literal>Label</literal>, <literal>Suite</literal>,
+     <literal>Version</literal>, <literal>Codename</literal>, <literal>Date</literal>,
+     <literal>Architectures</literal>, <literal>Components</literal>, <literal>Description</literal> です。</para></listitem>
+
+     </varlistentry>
+
+     <varlistentry><term>generate</term>
+     <listitem><para>
+<!--
+     The <literal>generate</literal> command is designed to be runnable from a cron script and
+     builds indexes according to the given config file. The config language
+     provides a flexible means of specifying which index files are built from 
+     which directories, as well as providing a simple means of maintaining the
+     required settings.</para></listitem>
+-->
+     <literal>generate</literal> コマンドは、
+     cron スクリプトから実行できるよう設計されており、
+     与えられた設定ファイルに従ってインデックスを生成します。
+     設定言語は、必要な設定を維持する簡単な方法を提供すると共に、
+     インデックスファイルをどのディレクトリから作成するかを指定する、
+     柔軟な方法を提供します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>clean</term>
+     <listitem><para>
+<!--
+     The <literal>clean</literal> command tidies the databases used by the given 
+     configuration file by removing any records that are no longer necessary.</para></listitem>
+-->
+     <literal>clean</literal> コマンドは、
+     設定ファイルで与えられたデータベースを、
+     もう必要ないレコードを削除して整理します。</para></listitem>
+     </varlistentry>     
+   </variablelist>  
+ </refsect1>
+
+<!--
+ <refsect1><title>The Generate Configuration</title>
+-->
+ <refsect1><title>generate 設定</title>
+   <para>
+<!--
+   The <literal>generate</literal> command uses a configuration file to describe the 
+   archives that are going to be generated. It follows the typical ISC 
+   configuration format as seen in ISC tools like bind 8 and dhcpd. 
+   &apt-conf; contains a description of the syntax. Note that the generate 
+   configuration is parsed in sectional manner, but &apt-conf; is parsed in a
+   tree manner. This only effects how the scope tag is handled.</para>
+-->
+   <literal>generate</literal> コマンドは、
+   生成するアーカイブに関する記述をした設定ファイルを使用します。
+   設定ファイルは、bind 8 や dhcpd といった ISC ツールに見られるような、
+   ISC 設定フォーマットに従います。
+   &apt-conf; に、文法の説明があります。
+   generate 設定はセクション法で解析しますが、
+   &apt-conf; はツリー法で解析するのに注意してください。
+   これはスコープタグの扱い方に違いがあるだけです。</para>
+
+   <para>
+<!--
+   The generate configuration has 4 separate sections, each described below.</para>
+-->
+   generate 設定には 4 個の独立したセクションがあります。
+   以下それぞれ説明します。</para>
+
+<!--
+   <refsect2><title>Dir Section</title>
+-->
+   <refsect2><title>Dir セクション</title>
+     <para>
+<!--
+     The <literal>Dir</literal> section defines the standard directories needed to 
+     locate the files required during the generation process. These 
+     directories are prepended to certain relative paths defined in later 
+     sections to produce a complete an absolute path.</para>
+-->
+     <literal>Dir</literal> セクションは、
+     生成プロセスで必要なファイルを配置するための、
+     標準ディレクトリを定義します。
+     このディレクトリは、完全な絶対パスを生成するため、
+     後のセクションで定義される相対パスの前に結合します。</para>
+     <variablelist>     
+      <varlistentry><term>ArchiveDir</term>
+      <listitem><para>
+<!--
+      Specifies the root of the FTP archive, in a standard
+      Debian configuration this is the directory that contains the 
+      <filename>ls-LR</filename> and dist nodes.</para></listitem>
+-->
+      FTP アーカイブのルートを指定します。
+      標準的な Debian 設定では、このディレクトリには 
+      <filename>ls-LR</filename> と dist ノードがあります。</para></listitem>
+      </varlistentry>
+
+      <varlistentry><term>OverrideDir</term>
+      <listitem><para>
+<!--
+      Specifies the location of the override files.</para></listitem>
+-->
+      オーバーライドファイルの場所を指定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>CacheDir</term>
+      <listitem><para>
+<!--
+      Specifies the location of the cache files</para></listitem>
+-->
+      キャッシュファイルの場所を指定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>FileListDir</term>
+      <listitem><para>
+<!--
+      Specifies the location of the file list files, 
+      if the <literal>FileList</literal> setting is used below.</para></listitem>
+-->
+      <literal>FileList</literal> 設定が以下で使用されている場合、
+      ファイルリストファイルの場所を指定します。</para></listitem>
+      </varlistentry>
+     </variablelist>
+   </refsect2>
+   
+<!--
+   <refsect2><title>Default Section</title>
+-->
+   <refsect2><title>Default セクション</title>
+     <para>
+<!--
+     The <literal>Default</literal> section specifies default values, and settings 
+     that control the operation of the generator. Other sections may override 
+     these defaults with a per-section setting.</para>
+-->
+     <literal>Default</literal> セクションではデフォルト値を指定します。
+     また、生成器の動作を制御する設定も行います。
+     他のセクションでは、ここにあるデフォルト値を、
+     セクションごとの設定で上書きします。</para>
+     <variablelist>     
+      <varlistentry><term>Packages::Compress</term>
+      <listitem><para>
+<!--
+      Sets the default compression schemes to use 
+      for the Package index files. It is a string that contains a space 
+      separated list of at least one of: '.' (no compression), 'gzip' and 
+      'bzip2'. The default for all compression schemes is '. gzip'.</para></listitem>
+-->
+      Package インデックスファイルのデフォルトの圧縮方法を設定します。
+      少なくともひとつは '.' (圧縮なし), 'gzip', 'bzip2' が入る、
+      空白区切りの文字列です。
+      圧縮方法のデフォルトはすべて '. gzip' です。</para></listitem>
+      </varlistentry>
+
+      <varlistentry><term>Packages::Extensions</term>
+      <listitem><para>
+<!--
+      Sets the default list of file extensions that are package files.
+      This defaults to '.deb'.</para></listitem>
+-->
+      パッケージファイル拡張子のデフォルト値を列挙します。
+      このデフォルト値は '.deb' です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Sources::Compress</term>
+      <listitem><para>
+<!--
+      This is similar to <literal>Packages::Compress</literal> 
+      except that it controls the compression for the Sources files.</para></listitem>
+-->
+      <literal>Packages::Compress</literal> と同様に、
+      Sources ファイルの圧縮方法を指定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Sources::Extensions</term>
+      <listitem><para>
+<!--
+      Sets the default list of file extensions that are source files.
+      This defaults to '.dsc'.</para></listitem>
+-->
+      ソースファイル拡張子のデフォルト値を列挙します。
+      このデフォルト値は '.dsc' です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Contents::Compress</term>
+      <listitem><para>
+<!--
+      This is similar to <literal>Packages::Compress</literal> 
+      except that it controls the compression for the Contents files.</para></listitem>
+-->
+      <literal>Packages::Compress</literal> と同様に、
+      Contents ファイルの圧縮方法を指定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>DeLinkLimit</term>
+      <listitem><para>
+<!--
+      Specifies the number of kilobytes to delink (and 
+      replace with hard links) per run. This is used in conjunction with the 
+      per-section <literal>External-Links</literal> setting.</para></listitem>
+-->
+      実行するごとに delink (及びハードリンクの置き換え) する量を、
+      キロバイト単位で指定します。セクションごとの 
+      <literal>External-Links</literal> 設定と合わせて使います。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>FileMode</term>
+      <listitem><para>
+<!--
+      Specifies the mode of all created index files. It 
+      defaults to 0644. All index files are set to this mode with no regard 
+      to the umask.</para></listitem>
+-->
+      作成したインデックスファイルのモードを指定します。
+      デフォルトは 0644 です。全インデックスファイルは、
+      umask を無視してこのモードを使用します。</para></listitem>
+      </varlistentry>
+     </variablelist>
+   </refsect2>
+   
+<!--
+   <refsect2><title>TreeDefault Section</title>
+-->
+   <refsect2><title>TreeDefault セクション</title>
+     <para>
+<!--
+     Sets defaults specific to <literal>Tree</literal> sections. All of these
+     variables are substitution variables and have the strings $(DIST), 
+     $(SECTION) and $(ARCH) replaced with their respective values.</para>
+-->
+     特定の <literal>Tree</literal> セクションのデフォルトを設定します。
+     これらの変数はすべて置換変数であり、
+     文字列 $(DIST), $(SECTION), $(ARCH) をそれぞれの値に展開します。</para>
+
+     <variablelist>     
+      <varlistentry><term>MaxContentsChange</term>
+      <listitem><para>
+<!--
+      Sets  the number of kilobytes of contents 
+      files that are generated each day. The contents files are round-robined
+      so that over several days they will all be rebuilt.</para></listitem>
+-->
+      日毎に生成する contents ファイルをキロバイト単位で設定します。
+      contents ファイルをラウンドロビンし、数日経つとすべて再生成します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>ContentsAge</term>
+      <listitem><para>
+<!--
+      Controls the number of days a contents file is allowed
+      to be checked without changing. If this limit is passed the mtime of the 
+      contents file is updated. This case can occur if the package file is 
+      changed in such a way that does not result in a new contents file 
+      [override edit for instance]. A hold off is allowed in hopes that new 
+      .debs will be installed, requiring a new file anyhow. The default is 10, 
+      the units are in days.</para></listitem>
+-->
+      変更がない contents ファイルをチェックする日数を指定します。
+      この制限を越えた contents ファイルの mtime を、更新します。
+      パッケージファイルが変更されても、
+      [例えば上書き編集で] contents ファイルが更新されないような場合、
+      こういったことが発生します。
+      新しい .deb ファイルをインストールしたい場合、保留を解除でき、
+      少なくとも新しいファイルが必要です。
+      デフォルトは 10 で、単位は日です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Directory</term>
+      <listitem><para>
+<!--
+      Sets the top of the .deb directory tree. Defaults to
+      <filename>$(DIST)/$(SECTION)/binary-$(ARCH)/</filename></para></listitem>
+-->
+      .deb ディレクトリツリーの先頭を設定します。デフォルトは
+      <filename>$(DIST)/$(SECTION)/binary-$(ARCH)/</filename> です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>SrcDirectory</term>
+      <listitem><para>
+<!--
+      Sets the top of the source package directory tree. Defaults to
+      <filename>$(DIST)/$(SECTION)/source/</filename></para></listitem>
+-->
+      ソースパッケージディレクトリツリーの先頭を設定します。デフォルトは
+      <filename>$(DIST)/$(SECTION)/source/</filename> です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Packages</term>
+      <listitem><para>
+<!--
+      Sets the output Packages file. Defaults to 
+      <filename>$(DIST)/$(SECTION)/binary-$(ARCH)/Packages</filename></para></listitem>
+-->
+      Packages ファイルの出力先を設定します。デフォルトは
+      <filename>$(DIST)/$(SECTION)/binary-$(ARCH)/Packages</filename> です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Sources</term>
+      <listitem><para>
+<!--
+      Sets the output Packages file. Defaults to 
+      <filename>$(DIST)/$(SECTION)/source/Sources</filename></para></listitem>
+-->
+      Packages ファイルの出力先を設定します。デフォルトは
+      <filename>$(DIST)/$(SECTION)/source/Sources</filename> です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>InternalPrefix</term>
+      <listitem><para>
+<!--
+      Sets the path prefix that causes a symlink to be
+      considered an internal link instead of an external link. Defaults to
+      <filename>$(DIST)/$(SECTION)/</filename></para></listitem>
+-->
+      外部リンクではなく、内部リンクと見なす判断材料となる、
+      パスのプレフィックスを設定します。デフォルトは、
+      <filename>$(DIST)/$(SECTION)/</filename> です。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Contents</term>
+      <listitem><para>
+<!--
+      Sets the output Contents file. Defaults to
+      <filename>$(DIST)/Contents-$(ARCH)</filename>. If this setting causes multiple 
+      Packages files to map onto a single Contents file (such as the default) 
+      then <command>apt-ftparchive</command> will integrate those package files 
+      together automatically.</para></listitem>
+-->
+      Contents ファイルの出力先を設定します。デフォルトは、
+      <filename>$(DIST)/Contents-$(ARCH)</filename> です。
+      複数の Packages ファイルを ひとつの Contents ファイルにまとめられる設定 
+      (デフォルト) の場合、<command>apt-ftparchive</command> 
+      は自動でパッケージファイルをまとめます。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Contents::Header</term>
+      <listitem><para>
+<!--
+      Sets header file to prepend to the contents output.</para></listitem>
+-->
+      contents の出力に付けるヘッダファイルを設定します。</para></listitem>
+      </varlistentry>
+
+      <varlistentry><term>BinCacheDB</term>
+      <listitem><para>
+<!--
+      Sets the binary cache database to use for this 
+      section. Multiple sections can share the same database.</para></listitem>
+-->
+      このセクションで使用するバイナリキャッシュデータベースを設定します。
+      複数のセクションで同じデータベースを共有できます。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>FileList</term>
+      <listitem><para>
+<!--
+      Specifies that instead of walking the directory tree, 
+      <command>apt-ftparchive</command> should read the list of files from the given 
+      file. Relative files names are prefixed with the archive directory.</para></listitem>
+-->
+      ディレクトリツリーを走査する代わりに、<command>apt-ftparchive</command> 
+      が読み込むファイル一覧ファイルを指定します。
+      相対ファイル名は、アーカイブディレクトリが先頭につきます。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>SourceFileList</term>
+      <listitem><para>
+<!--
+      Specifies that instead of walking the directory tree, 
+      <command>apt-ftparchive</command> should read the list of files from the given 
+      file. Relative files names are prefixed with the archive directory. 
+      This is used when processing source indexs.</para></listitem>
+-->
+      ディレクトリツリーを走査する代わりに、<command>apt-ftparchive</command>
+      が読み込むファイル一覧ファイルを指定します。
+      相対ファイル名は、アーカイブディレクトリが先頭につきます。
+      ソースインデックスを処理する際に使用します。</para></listitem>
+      </varlistentry>
+     </variablelist>     
+   </refsect2>
+   
+<!--
+   <refsect2><title>Tree Section</title>
+-->
+   <refsect2><title>Tree セクション</title>
+     <para>
+<!--
+     The <literal>Tree</literal> section defines a standard Debian file tree which 
+     consists of a base directory, then multiple sections in that base 
+     directory and finally multiple Architectures in each section. The exact 
+     pathing used is defined by the <literal>Directory</literal> substitution variable.</para> 
+-->
+     <literal>Tree</literal> セクションでは、
+     ベースディレクトリからの標準 Debian ファイルツリー、
+     ベースディレクトリの複数のセクション、
+     最終的にはセクションごとの複数のアーキテクチャを定義します。
+     使用する正確なパスは、<literal>Directory</literal> 変数で定義されます。</para> 
+     <para>
+<!--
+     The <literal>Tree</literal> section takes a scope tag which sets the 
+     <literal>$(DIST)</literal> variable and defines the root of the tree 
+     (the path is prefixed by <literal>ArchiveDir</literal>).
+     Typically this is a setting such as <filename>dists/woody</filename>.</para>
+-->
+     <literal>Tree</literal> セクションは、
+     <literal>$(DIST)</literal> 変数で設定されているスコープタグをとり、
+     ツリーのルート (<literal>ArchiveDir</literal>が先頭につくパス) 
+     を定義します。
+     通常、この設定は <filename>dists/woody</filename> のようになります。</para>
+     <para>
+<!--
+     All of the settings defined in the <literal>TreeDefault</literal> section can be
+     use in a <literal>Tree</literal> section as well as three new variables.</para>
+-->
+     <literal>TreeDefault</literal> セクションで定義される設定はすべて、
+     3 個の新しい変数と同様に、
+     <literal>Tree</literal> セクションで使用できます。</para>
+     <para>
+<!--
+     When processing a <literal>Tree</literal> section <command>apt-ftparchive</command> 
+     performs an operation similar to:
+-->
+     <literal>Tree</literal> セクションを処理する際、
+     <command>apt-ftparchive</command> は以下のような操作を行います。
+<informalexample><programlisting>
+for i in Sections do 
+   for j in Architectures do
+      Generate for DIST=scope SECTION=i ARCH=j
+</programlisting></informalexample></para>
+
+     <variablelist>     
+      <varlistentry><term>Sections</term>
+      <listitem><para>
+<!--
+      This is a space separated list of sections which appear 
+      under the distribution, typically this is something like 
+      <literal>main contrib non-free</literal></para></listitem>
+-->
+      distribution 以下に現れるセクションを、空白区切りで指定したリストです。
+      通常、<literal>main contrib non-free</literal>のようになります。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Architectures</term>
+      <listitem><para>
+<!--
+      This is a space separated list of all the 
+      architectures that appear under search section. The special architecture 
+      'source' is used to indicate that this tree has a source archive.</para></listitem>
+-->
+      search セクション以下に現れるアーキテクチャを、
+      空白区切りで指定したリストです。
+      特殊アーキテクチャ 'source' は、
+      ソースアーカイブのツリーであることを示します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>BinOverride</term>
+      <listitem><para>
+<!--
+      Sets the binary override file. The override file 
+      contains section, priority and maintainer address information.</para></listitem>
+-->
+      バイナリオーバーライドファイルを設定します。
+      このオーバーライドファイルには、セクション、優先度、
+      メンテナのアドレスといった情報が含まれています。</para></listitem>
+      </varlistentry>
+
+      <varlistentry><term>SrcOverride</term>
+      <listitem><para>
+<!--
+      Sets the source override file. The override file 
+      contains section information.</para></listitem>
+-->
+      ソースオーバーライドファイルを設定します。
+      このオーバーライドファイルには、
+      セクションの情報が含まれています。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>ExtraOverride</term>
+      <listitem><para>
+<!--
+      Sets the binary extra override file.</para></listitem>
+-->
+      バイナリ特別オーバーライドファイルを設定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>SrcExtraOverride</term>
+      <listitem><para>
+<!--
+      Sets the source extra override file.</para></listitem> 
+-->
+      ソース特別オーバーライドファイルを設定します。</para></listitem> 
+      </varlistentry>
+     </variablelist>
+   </refsect2>
+   
+<!--
+   <refsect2><title>BinDirectory Section</title>
+-->
+   <refsect2><title>BinDirectory セクション</title>
+     <para>
+<!--
+     The <literal>bindirectory</literal> section defines a binary directory tree 
+     with no special structure. The scope tag specifies the location of 
+     the binary directory and the settings are similar to the <literal>Tree</literal> 
+     section with no substitution variables or
+     <literal>Section</literal><literal>Architecture</literal> settings.</para>
+-->
+     <literal>bindirectory</literal> セクションでは、
+     特殊な構造を持たないバイナリディレクトリツリーを定義します。
+     スコープタグはバイナリディレクトリの場所を指定し、
+     設定は、変数展開のない <literal>Tree</literal> セクションや 
+     <literal>Section</literal><literal>Architecture</literal> 設定に似ています。</para>
+     <variablelist>
+      <varlistentry><term>Packages</term>
+      <listitem><para>
+<!--
+      Sets the Packages file output.</para></listitem>
+-->
+      Packages ファイルの出力先を設定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>SrcPackages</term>
+      <listitem><para>
+<!--
+      Sets the Sources file output. At least one of
+      <literal>Packages</literal> or <literal>SrcPackages</literal> is required.</para></listitem>
+-->
+      Sources ファイルの出力先を設定します。
+      少なくとも <literal>Packages</literal> や <literal>SrcPackages</literal>
+      は設定されていなければなりません。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>Contents</term>
+      <listitem><para>
+<!--
+      Sets the Contents file output. (optional)</para></listitem>
+-->
+      Contents ファイルの出力先を設定します。(オプション)</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>BinOverride</term>
+      <listitem><para>
+<!--
+      Sets the binary override file.</para></listitem>
+-->
+      バイナリオーバーライドファイルを設定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>SrcOverride</term>
+      <listitem><para>
+<!--
+      Sets the source override file.</para></listitem>
+-->
+      ソースオーバーライドファイルを設定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>ExtraOverride</term>
+      <listitem><para>
+<!--
+      Sets the binary extra override file.</para></listitem>
+-->
+      バイナリ特別オーバーライドファイルを設定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>SrcExtraOverride</term>
+      <listitem><para>
+<!--
+      Sets the source extra override file.</para></listitem>
+-->
+      ソース特別オーバーライドファイルを設定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>BinCacheDB</term>
+      <listitem><para>
+<!--
+      Sets the cache DB.</para></listitem>
+-->
+      キャッシュ DB を設定します。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>PathPrefix</term>
+      <listitem><para>
+<!--
+      Appends a path to all the output paths.</para></listitem>
+-->
+      全出力パスに付加するパス。</para></listitem>
+      </varlistentry>
+      
+      <varlistentry><term>FileList, SourceFileList</term>
+      <listitem><para>
+<!--
+      Specifies the file list file.</para></listitem>
+-->
+      ファイル一覧ファイルを指定します。</para></listitem>
+      </varlistentry>
+     </variablelist>
+   </refsect2>
+ </refsect1>
+
+
+<!--
+ <refsect1><title>The Binary Override File</title>
+-->
+ <refsect1><title>バイナリオーバーライドファイル</title>
+<!--
+   <para>The binary override file is fully compatible with &dpkg-scanpackages;. It
+   contains 4 fields separated by spaces. The first field is the package name,
+   the second is the priority to force that package to, the third is the
+   the section to force that package to and the final field is the maintainer 
+   permutation field.</para>
+-->
+   <para>バイナリオーバーライドファイルは、
+   &dpkg-scanpackages; と完全に互換性があります。
+   ここには、空白区切りでフィールドが 4 個あります。
+   先頭のフィールドはパッケージ名、
+   2 番目のフィールドはパッケージに強制する優先度、
+   3 番目のフィールドはパッケージに強制するセクション、
+   最後のフィールドはメンテナ順列フィールドです。</para>
+<!--
+   <para>The general form of the maintainer field is:
+   <literallayout>old [// oldn]* => new</literallayout>
+   or simply,
+   <literallayout>new</literallayout>
+   The first form allows a double-slash separated list of old email addresses
+   to be specified. If any of those are found then new is substituted for the
+   maintainer field. The second form unconditionally substitutes the 
+   maintainer field.</para>
+-->
+   <para>メンテナフィールドは一般的には、
+   <literallayout>old [// oldn]* => new</literallayout>
+   という形式か、単純に
+   <literallayout>new</literallayout>
+   となります。
+   最初の形式は、// で区切られた古い email アドレスのリストを許可します。
+   この形式がある場合は、メンテナフィールドになるよう new に置換してください。
+   2 番目の形式は無条件にメンテナフィールドに置換します。</para>
+ </refsect1>
+
+ 
+<!--
+ <refsect1><title>The Source Override File</title>
+-->
+ <refsect1><title>ソースオーバーライドファイル</title>
+   <para>
+<!--
+   The source override file is fully compatible with &dpkg-scansources;. It
+   contains 2 fields separated by spaces. The first fields is the source 
+   package name, the second is the section to assign it.</para>
+-->
+   ソースオーバーライドファイルは、
+   &dpkg-scansources; と完全に互換性があります。
+   ここには、空白区切りでフィールドが 2 個あります。
+   先頭のフィールドはソースパッケージ名、
+   2 番目のフィールドは割り当てるセクションです。</para>
+ </refsect1>   
+
+<!--
+ <refsect1><title>The Extra Override File</title>
+-->
+ <refsect1><title>特別オーバーライドファイル</title>
+   <para>
+<!--
+   The extra override file allows any arbitrary tag to be added or replaced
+   in the output. It has 3 columns, the first is the package, the second is
+   the tag and the remainder of the line is the new value.</para>
+-->
+   特別オーバーライドファイルは、
+   出力中に任意のタグを追加・置換できるようにします。
+   3 列からなり、先頭はパッケージ、2番目はタグ、残りは新しい値です。</para>
+ </refsect1>   
+
+<!--
+ <refsect1><title>options</title>
+-->
+ <refsect1><title>オプション</title>
+   &apt-cmdblurb;
+   
+   <variablelist>
+     <varlistentry><term><option>--md5</option></term>
+     <listitem><para>
+<!--
+     Generate MD5 sums. This defaults to on, when turned off the generated 
+     index files will not have MD5Sum fields where possible.
+     Configuration Item: <literal>APT::FTPArchive::MD5</literal></para></listitem>
+-->
+     MD5 sum を生成します。デフォルトで on になっており、
+     off にすると生成したインデックスファイルに MD5Sum フィールドがありません。
+     設定項目 - <literal>APT::FTPArchive::MD5</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-d</option></term><term><option>--db</option></term>
+     <listitem><para>
+<!--
+     Use a binary caching DB. This has no effect on the generate command.
+     Configuration Item: <literal>APT::FTPArchive::DB</literal>.</para></listitem>
+-->
+     バイナリキャッシュ DB を使用します。
+     generate コマンドには影響しません。
+     設定項目 - <literal>APT::FTPArchive::DB</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-q</option></term><term><option>--quiet</option></term>
+     <listitem><para>
+<!--
+     Quiet; produces output suitable for logging, omitting progress indicators.
+     More q's will produce more quiet up to a maximum of 2. You can also use
+     <option>-q=#</option> to set the quiet level, overriding the configuration file. 
+     Configuration Item: <literal>quiet</literal>.</para></listitem>
+-->
+     静粛 - 進捗表示を省略し、ログをとるのに便利な出力を行います。
+     最大 2 つまで q を重ねることでより静粛にできます。
+     また、<option>-q=#</option> のように静粛レベルを指定して、
+     設定ファイルを上書きすることもできます。
+     設定項目 - <literal>quiet</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--delink</option></term>
+     <listitem><para>
+<!--
+     Perform Delinking. If the <literal>External-Links</literal> setting is used then 
+     this option actually enables delinking of the files. It defaults to on and 
+     can be turned off with <option>-\-no-delink</option>.
+     Configuration Item: <literal>APT::FTPArchive::DeLinkAct</literal>.</para></listitem>
+-->
+     Delink を実行します。
+     <literal>External-Links</literal> 設定を使用している場合、
+     このオプションはファイルの delink を有効にします。
+     デフォルトは on で、
+     off にするには <option>--no-delink</option> としてください。
+     設定項目 - <literal>APT::FTPArchive::DeLinkAct</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--contents</option></term>
+     <listitem><para>
+<!--
+     Perform contents generation. When this option is set and package indexes
+     are being generated with a cache DB then the file listing will also be
+     extracted and stored in the DB for later use. When using the generate 
+     command this option also allows the creation of any Contents files. The 
+     default is on.
+     Configuration Item: <literal>APT::FTPArchive::Contents</literal>.</para></listitem>
+-->
+     contents の生成を行います。このオプションを指定し、
+     パッケージインデックスをキャッシュ DB と共に生成する際、
+     ファイルリストを後で使用するように、抽出し DB に格納します。
+     generate コマンドを使用する際、
+     このオプションでいずれの Contents ファイルも作成できます。
+     デフォルトは on です。
+     設定項目 - <literal>APT::FTPArchive::Contents</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-s</option></term><term><option>--source-override</option></term>
+     <listitem><para>
+<!--
+     Select the source override file to use with the <literal>sources</literal> command.
+     Configuration Item: <literal>APT::FTPArchive::SourceOverride</literal>.</para></listitem>
+-->
+     <literal>sources</literal> コマンドで使用する、
+     ソースオーバーライドファイルを選択します。
+     設定項目 - <literal>APT::FTPArchive::SourceOverride</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--readonly</option></term>
+     <listitem><para>
+<!--
+     Make the caching databases read only. 
+     Configuration Item: <literal>APT::FTPArchive::ReadOnlyDB</literal>.</para></listitem>
+-->
+     キャッシュデータベースを読み取り専用にします。
+     設定項目 - <literal>APT::FTPArchive::ReadOnlyDB</literal></para></listitem>
+     </varlistentry>   
+   
+     &apt-commonoptions;
+     
+   </variablelist>
+ </refsect1>
+
+<!--
+<refsect1><title>Examples</title>
+-->
+<refsect1><title>サンプル</title>
+
+<!--
+<para>To create a compressed Packages file for a directory containing
+binary packages (.deb):
+-->
+<para>バイナリパッケージ (.deb) があるディレクトリの 
+Packages ファイルを生成するには、以下のようにします。
+
+<programlisting>
+<command>apt-ftparchive</command> packages <replaceable>directory</replaceable> | <command>gzip</command> > <filename>Packages.gz</filename>
+</programlisting></para>
+
+</refsect1>
+
+<!--
+ <refsect1><title>See Also</title>
+-->
+ <refsect1><title>関連項目</title>
+   <para>&apt-conf;</para>
+ </refsect1>
+
+<!--
+ <refsect1><title>Diagnostics</title>
+-->
+ <refsect1><title>診断メッセージ</title>
+<!--
+   <para><command>apt-ftparchive</command> returns zero on normal operation, decimal 100 on error.</para>
+-->
+   <para><command>apt-ftparchive</command> は正常終了時に 0 を返します。
+   エラー時には十進の 100 を返します。</para>
+ </refsect1>
+
+ &manbugs;
+ &translator;
+ 
+</refentry>

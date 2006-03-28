@@ -40,9 +40,6 @@ $(POTFILES) : $(PO)/%.pot :
 	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot
 	rm -f $(PO)/POTFILES_$*.in
 	$(MSGCOMM) --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
-	# copy into the domain dirs to make rosetta happy
-	rm -f $(PO)/domains/$*/*.pot
-	cp $@ $(PO)/domains/$*
 
 $(PACKAGE)-all.pot: $(POTFILES)
 	$(MSGCOMM) --more-than=0 $(POTFILES) --output=$@

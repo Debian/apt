@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt-cache</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-cache</refname>
+<!--
+    <refpurpose>APT package handling utility -\- cache manipulator</refpurpose>
+-->
+    <refpurpose>APT パッケージ操作ユーティリティ -- キャッシュ操作</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-cache</command>
+      <arg><option>-hvsn</option></arg>
+      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
+      <arg><option>-c=<replaceable>file</replaceable></option></arg>
+      <group choice="req">
+         <arg>add <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg></arg>
+         <arg>gencaches</arg>
+         <arg>showpkg <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>showsrc <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>stats</arg>
+         <arg>dump</arg>
+         <arg>dumpavail</arg>
+         <arg>unmet</arg>
+         <arg>search <arg choice="plain"><replaceable>regex</replaceable></arg></arg>
+         <arg>show <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>depends <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>rdepends <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>pkgnames <arg choice="plain"><replaceable>prefix</replaceable></arg></arg>
+         <arg>dotty <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>policy <arg choice="plain" rep="repeat"><replaceable>pkgs</replaceable></arg></arg>
+         <arg>madison <arg choice="plain" rep="repeat"><replaceable>pkgs</replaceable></arg></arg>
+      </group>   
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+<!--
+ <refsect1><title>Description</title>
+-->
+ <refsect1><title>説明</title>
+<!--
+   <para><command>apt-cache</command> performs a variety of operations on APT's package 
+   cache. <command>apt-cache</command> does not manipulate the state of the system 
+   but does provide operations to search and generate interesting output 
+   from the package metadata.</para>
+-->
+   <para><command>apt-cache</command> は APT のパッケージキャッシュに対して、
+   さまざまな操作を行います。
+   <command>apt-cache</command> は、システム状態の操作は行いませんが、
+   パッケージのメタデータより検索したり、
+   興味深い出力を生成するといった操作を提供します。</para>
+
+<!--
+   <para>Unless the <option>-h</option>, or <option>-\-help</option> option is given, one of the
+   commands below must be present.</para>
+-->
+   <para><option>-h</option> オプションや <option>--help</option> オプションを除き、
+   以下に挙げるコマンドが必要です。</para>
+
+   <variablelist>
+<!--
+     <varlistentry><term>add <replaceable>file(s)</replaceable></term>
+     <listitem><para><literal>add</literal> adds the named package index files to the package cache.
+     This is for debugging only.</para></listitem>
+-->
+     <varlistentry><term>add <replaceable>file(s)</replaceable></term>
+     <listitem><para><literal>add</literal> は、
+     パッケージキャッシュに指定したパッケージインデックスファイルを追加します。
+     デバッグ専用です。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>gencaches</term>
+<!--
+     <listitem><para><literal>gencaches</literal> performs the same operation as 
+     <command>apt-get check</command>. It builds the source and package caches from 
+     the sources in &sources-list; and from
+     <filename>/var/lib/dpkg/status</filename>.</para></listitem>
+-->
+     <listitem><para><literal>gencaches</literal> は、
+     <command>apt-get check</command> と同じ動作を提供します。
+     これは &sources-list; 内の取得元と 
+     <filename>/var/lib/dpkg/status</filename>から、
+     ソースとパッケージのキャッシュを構築します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>showpkg <replaceable>pkg(s)</replaceable></term>
+<!--
+     <listitem><para><literal>showpkg</literal> displays information about the packages listed on the 
+     command line. Remaining arguments are package names. The available 
+     versions and reverse dependencies of each package listed are listed, as 
+     well as forward dependencies for each version. Forward (normal) 
+     dependencies are those packages upon which the package in question 
+     depends; reverse dependencies are those packages that depend upon the 
+     package in question. Thus, forward dependencies must be satisfied for a 
+     package, but reverse dependencies need not be.
+     For instance, <command>apt-cache showpkg libreadline2</command> would produce 
+     output similar to the following:</para>
+-->
+     <listitem><para><literal>showpkg</literal> は、
+     コマンドライン上に列挙したパッケージの情報を表示します。
+     後に続く引数はパッケージ名となります。
+     各パッケージについて、有効なバージョンと被依存関係を列挙し、
+     さらにその各バージョンについて依存関係を表示します。
+     (通常の) 依存関係とは、対象のパッケージが依存しているパッケージを指します。
+     また、被依存関係とは、対象のパッケージに依存しているパッケージを指します。
+     従って、パッケージの依存関係は満たさなければなりませんが、
+     被依存関係は満たす必要はありません。
+     実例として、以下に <command>apt-cache showpkg libreadline2</command> の
+     出力を掲げます。</para>
+     
+<informalexample><programlisting>
+Package: libreadline2
+Versions: 2.1-12(/var/state/apt/lists/foo_Packages),
+Reverse Depends: 
+  libreadlineg2,libreadline2
+  libreadline2-altdev,libreadline2
+Dependencies:
+2.1-12 - libc5 (2 5.4.0-0) ncurses3.0 (0 (null))
+Provides:
+2.1-12 - 
+Reverse Provides: 
+</programlisting></informalexample>
+			    
+<!--
+     <para>Thus it may be seen that libreadline2, version 2.1-12, depends on
+     libc5 and ncurses3.0 which must be installed for libreadline2 to work. 
+     In turn, libreadlineg2 and libreadline2-altdev depend on libreadline2. If
+     libreadline2 is installed, libc5 and ncurses3.0 (and ldso) must also be
+     installed; libreadlineg2 and libreadline2-altdev do not have to be
+     installed. For the specific meaning of the remainder of the output it
+     is best to consult the apt source code.</para></listitem>
+     </varlistentry>
+-->
+     <para>つまり、libreadline2 の version 2.1-12 は、
+     libc5 と ncurses3.0 に依存していて、libreadline2 が動作するには、
+     これらをインストールする必要があるということが判ります。
+     一方、libreadlineg2 と libreadline2-altdev は libreadline2 に依存しています。
+     libreadline2 をインストールするためには、libc5, ncurses3.0, ldso を
+     すべてインストールしなければなりませんが、libreadlineg2 と 
+     libreadline2-altdev はインストールする必要はありません。
+     出力の残りの部分の意味については、
+     apt のソースコードを調べるのが最良でしょう。</para></listitem>
+     </varlistentry>
+
+<!--
+     <varlistentry><term>stats</term><listitem><para><literal>stats</literal> displays some statistics about the cache.
+     No further arguments are expected. Statistics reported are:
+-->
+     <varlistentry><term>stats</term><listitem><para><literal>stats</literal> 
+     はキャッシュについての統計情報を表示します。
+     それ以上、引数は必要ありません。以下の統計情報を表示します。
+     <itemizedlist>
+<!--
+       <listitem><para><literal>Total package names</literal> is the number of package names found 
+       in the cache.</para>
+       </listitem>
+-->
+       <listitem><para><literal>パッケージ名総数</literal>は、
+       キャッシュに存在するパッケージ数を表します。</para>
+       </listitem>
+       
+<!--
+       <listitem><para><literal>Normal packages</literal> is the number of regular, ordinary package 
+       names; these are packages that bear a one-to-one correspondence between 
+       their names and the names used by other packages for them in 
+       dependencies. The majority of packages fall into this category.</para>
+       </listitem>
+-->
+       <listitem><para><literal>通常パッケージ</literal>は、
+       公式の普通のパッケージ数を表します。
+       これは、他のパッケージの依存関係で使用された名称で、それが一対一に対応
+       するパッケージです。
+       大多数のパッケージはこのカテゴリに入ります。</para>
+       </listitem>
+
+<!--
+       <listitem><para><literal>Pure virtual packages</literal> is the number of packages that exist 
+       only as a virtual package name; that is, packages only "provide" the 
+       virtual package name, and no package actually uses the name. For 
+       instance, "mail-transport-agent" in the Debian GNU/Linux system is a 
+       pure virtual package; several packages provide "mail-transport-agent", 
+       but there is no package named "mail-transport-agent".</para>
+       </listitem>
+-->
+       <listitem><para><literal>純粋仮想パッケージ</literal>は、
+       仮想パッケージ名としてのみ存在するパッケージ
+       (仮想パッケージ名のみを「提供」し、
+       実際にはいかなるパッケージもその名称を持たない) の数を表します。
+       例えば、Debian GNU/Linux システムでは "mail-transport-agent"
+       は純粋仮想パッケージです。
+       "mail-transport-agent" を提供するパッケージはいくつもありますが、
+       "mail-transport-agent" という名称のパッケージはありません。</para>
+       </listitem>
+  
+<!--
+       <listitem><para><literal>Single virtual packages</literal> is the number of packages with only 
+       one package providing a particular virtual package. For example, in the
+       Debian GNU/Linux system, "X11-text-viewer" is a virtual package, but 
+       only one package, xless, provides "X11-text-viewer".</para>
+       </listitem>
+-->
+       <listitem><para><literal>単一仮想パッケージ</literal>は、
+       特定の仮想パッケージ名を提供するパッケージが、
+       ただ一つの場合の数を表します。
+       例えば、Debian GNU/Linux システムでは、"X11-text-viewer" 
+       は仮想パッケージですが、"X11-text-viewer" を提供するパッケージは、
+       xless パッケージのみということです。</para>
+       </listitem>
+
+<!--
+       <listitem><para><literal>Mixed virtual packages</literal> is the number of packages that either 
+       provide a particular virtual package or have the virtual package name 
+       as the package name. For instance, in the Debian GNU/Linux system, 
+       "debconf" is both an actual package, and provided by the debconf-tiny
+       package.</para>
+       </listitem>
+-->
+       <listitem><para><literal>複合仮想パッケージ</literal>は、
+       その仮想パッケージ名を提供するパッケージが複数あるか、
+       またパッケージ名と同じ仮想パッケージ名を持つパッケージ数を表します。
+       例えば、Debian GNU/Linux システムでは、
+       debconf は実際のパッケージ名でもありますが、
+       debconf-tiny によって提供もされています。</para>
+       </listitem>
+   
+<!--
+       <listitem><para><literal>Missing</literal> is the number of package names that were referenced in
+       a dependency but were not provided by any package. Missing packages may 
+       be in evidence if a full distribution is not accessed, or if a package
+       (real or virtual) has been dropped from the distribution. Usually they
+       are referenced from Conflicts statements.</para>
+       </listitem>
+-->
+       <listitem><para><literal>欠落</literal>は、依存関係中には存在するのに、
+       どのパッケージにも提供されていないパッケージ名の数を表します。
+       このパッケージがあるということは、
+       全ディストリビューションにアクセスできていないか、
+       (実ないし仮想) パッケージがディストリビューションからはずされてしまった可能性もあります。
+       通常では、構文が矛盾するとこのようになります。</para>
+       </listitem>
+
+<!--
+       <listitem><para><literal>Total distinct</literal> versions is the number of package versions 
+       found in the cache; this value is therefore at least equal to the 
+       number of total package names. If more than one distribution (both 
+       "stable" and "unstable", for instance), is being accessed, this value 
+       can be considerably larger than the number of total package names.</para>
+       </listitem>
+-->
+       <listitem><para><literal>個別バージョン総数</literal>は、
+       キャッシュに存在するパッケージのバージョンの数を表します。
+       そのため、この値は最小でもパッケージ名総数と一致します。
+       もし複数のディストリビューション (例 "stable" と "unstable" の両方)
+       を利用した場合、
+       この値はパッケージ名総数よりもかなり大きい数になります。</para>
+       </listitem>
+
+<!--
+       <listitem><para><literal>Total dependencies</literal> is the number of dependency relationships 
+       claimed by all of the packages in the cache.</para>
+       </listitem>
+-->
+       <listitem><para><literal>依存関係総数</literal>は、
+       キャッシュにあるすべてのパッケージで要求された依存関係の数です。</para>
+       </listitem>
+     </itemizedlist>
+     </para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>showsrc <replaceable>pkg(s)</replaceable></term>
+<!--
+     <listitem><para><literal>showsrc</literal> displays all the source package records that match
+     the given package names. All versions are shown, as well as all 
+     records that declare the name to be a Binary.</para></listitem>
+     </varlistentry>
+-->
+     <listitem><para><literal>showsrc</literal> は、
+     指定したパッケージ名に一致するソースパッケージを、すべて表示します。
+     バイナリになるときの名称を宣言したレコードと同様に、
+     すべてのバージョンについて表示します。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>dump</term>
+<!--
+     <listitem><para><literal>dump</literal> shows a short listing of every package in the cache. It is 
+     primarily for debugging.</para></listitem>
+     </varlistentry>
+-->
+     <listitem><para><literal>dump</literal> は、
+     キャッシュ内のパッケージそれぞれについて、短い一覧を表示します。
+     主にデバッグ用です。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>dumpavail</term>
+<!--
+     <listitem><para><literal>dumpavail</literal> prints out an available list to stdout. This is 
+     suitable for use with &dpkg; and is used by the &dselect; method.</para></listitem>
+-->
+     <listitem><para><literal>dumpavail</literal> は、
+     標準出力に利用可能なものの一覧を出力します。
+     &dpkg; と共に使用すると便利ですし、
+     &dselect; でも使用されます。</para></listitem>
+     </varlistentry>
+      
+     <varlistentry><term>unmet</term>
+<!--
+     <listitem><para><literal>unmet</literal> displays a summary of all unmet dependencies in the 
+     package cache.</para></listitem>
+     </varlistentry>
+-->
+     <listitem><para><literal>unmet</literal> は、
+     パッケージキャッシュ内にある、
+     不適当な依存関係の概要を表示します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>show <replaceable>pkg(s)</replaceable></term>
+<!--
+     <listitem><para><literal>show</literal> performs a function similar to 
+     <command>dpkg -\-print-avail</command>; it displays the package records for the 
+     named packages.</para></listitem>
+-->
+     <listitem><para><literal>show</literal> は、
+     <command>dpkg --print-avail</command> と同様の機能を実行します。
+     これは、指定したパッケージのパッケージレコードの表示です。</para>
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term>search <replaceable>regex [ regex ... ]</replaceable></term>
+<!--
+     <listitem><para><literal>search</literal> performs a full text search on all available package
+     lists for the regex pattern given. It searches the package names and the
+     descriptions for an occurrence of the regular expression and prints out
+     the package name and the short description. If <option>-\-full</option> is given
+     then output identical to <literal>show</literal> is produced for each matched
+     package, and if <option>-\-names-only</option> is given then the long description
+     is not searched, only the package name is.</para>
+-->
+     <listitem><para><literal>search</literal> は、与えられた正規表現によって、
+     すべての利用可能なパッケージに対して全文検索を行います。
+     パッケージ名と説明に対して検索を行い、
+     パッケージ名と短い説明文を表示します。
+     <option>--full</option> が与えられた場合、マッチしたパッケージに対し 
+     <literal>show</literal> と同じ情報を出力します。
+     <option>--names-only</option> が与えられた場合は、
+     説明文に対して検索を行わず、パッケージ名に対してのみ対象とします。</para>
+     <para>
+<!--
+     Separate arguments can be used to specify multiple search patterns that 
+     are and'ed together.</para></listitem>
+-->
+     空白で区切った引数で、
+     複数の検索パターンの and をとることができます。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>depends <replaceable>pkg(s)</replaceable></term>
+<!--
+     <listitem><para><literal>depends</literal> shows a listing of each dependency a package has 
+     and all the possible other packages that can fulfill that dependency.</para></listitem>
+-->
+     <listitem><para><literal>depends</literal> は、
+     パッケージが持っている依存関係と、
+     その依存関係を満たす他のパッケージの一覧を表示します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>rdepends <replaceable>pkg(s)</replaceable></term>
+<!--
+     <listitem><para><literal>rdepends</literal> shows a listing of each reverse dependency a
+      package has.</para></listitem>
+-->
+     <listitem><para><literal>rdepends</literal> は、
+     パッケージが持つ被依存関係を一覧表示します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>pkgnames <replaceable>[ prefix ]</replaceable></term>
+<!--
+     <listitem><para>This command prints the name of each package in the system. The optional
+     argument is a prefix match to filter the name list. The output is suitable
+     for use in a shell tab complete function and the output is generated 
+     extremely quickly. This command is best used with the 
+     <option>-\-generate</option> option.</para></listitem>
+-->
+     <listitem><para>このコマンドは、
+     システムでの各パッケージの名称を表示します。
+     オプションの引数により、取得する一覧より先頭一致で抽出することができます。
+     この出力はシェルのタブによる補完機能に使いやすく、
+     また非常に速く生成されます。
+     このコマンドは <option>--generate</option> オプションと共に使用すると、
+     非常に便利です。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>dotty <replaceable>pkg(s)</replaceable></term>
+<!--
+     <listitem><para><literal>dotty</literal> takes a list of packages on the command line and 
+     generates output suitable for use by dotty from the 
+     <ulink url="http://www.research.att.com/sw/tools/graphviz/">GraphViz</ulink>
+     package. The result will be a set of nodes and edges representing the 
+     relationships between the packages. By default the given packages will 
+     trace out all dependent packages; this can produce a very large graph. 
+     To limit the output to only the packages listed on the command line,
+     set the <literal>APT::Cache::GivenOnly</literal> option.</para>
+-->
+     <listitem><para><literal>dotty</literal> は、
+     コマンドライン上のパッケージ名から、
+     <ulink url="http://www.research.att.com/sw/tools/graphviz/">GraphViz</ulink> 
+     パッケージの dotty コマンドで利用するのに便利な出力を生成します。
+     結果はパッケージの関係を表わす、ノード・エッジのセットで表現されます。
+     デフォルトでは、すべての依存パッケージをトレースするので、
+     非常に大きい図が得られます。
+     これは、<literal>APT::Cache::GivenOnly</literal>
+     オプションを設定して解除できます。</para>
+
+<!--
+     <para>The resulting nodes will have several shapes; normal packages are boxes,
+     pure provides are triangles, mixed provides are diamonds, 
+     missing packages are hexagons. Orange boxes mean recursion was stopped 
+     [leaf packages], blue lines are pre-depends, green lines are conflicts.</para>
+-->
+     <para>結果のノードは数種の形状をとります。
+     通常パッケージは四角、純粋仮想パッケージは三角、複合仮想パッケージは菱形、
+     六角形は欠落パッケージをそれぞれ表します。
+     オレンジの四角は再帰が終了した「リーフパッケージ」、青い線は先行依存、
+     緑の線は競合を表します。</para>
+
+<!--
+     <para>Caution, dotty cannot graph larger sets of packages.</para></listitem>
+-->
+     <para>注意) dotty は、
+     パッケージのより大きなセットのグラフは描けません。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>policy <replaceable>[ pkg(s) ]</replaceable></term>
+<!--
+     <listitem><para><literal>policy</literal> is meant to help debug issues relating to the 
+     preferences file. With no arguments it will print out the 
+     priorities of each source. Otherwise it prints out detailed information
+     about the priority selection of the named package.</para></listitem>
+-->
+     <listitem><para><literal>policy</literal> は、
+     設定ファイル関係の問題について、デバッグを支援します。
+     引数を指定しなかった場合、取得元ごとの優先順位を表示します。
+     一方、パッケージ名を指定した場合、
+     優先順の詳細情報を表示します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>madison <replaceable>/[ pkg(s) ]</replaceable></term>
+<!--
+     <listitem><para><literal>apt-cache</literal>'s <literal>madison</literal> command attempts to mimic
+     the output format and a subset of the functionality of the Debian
+     archive management tool, <literal>madison</literal>.  It displays
+     available versions of a package in a tabular format.  Unlike the
+     original <literal>madison</literal>, it can only display information for
+     the architecture for which APT has retrieved package lists
+     (<literal>APT::Architecture</literal>).</para></listitem>
+-->
+     <listitem><para><literal>apt-cache</literal> の <literal>madison</literal>
+     コマンドは、Debian アーカイブ管理ツール <literal>madison</literal> 
+     の機能のサブセットで、出力フォーマットを真似ようとします。
+     パッケージの利用可能バージョンを表形式で表示します。
+     オリジナルの <literal>madison</literal> と違い、
+     APT がパッケージ一覧を検索したアーキテクチャ 
+     (<literal>APT::Architecture</literal>) 
+     の情報を表示するだけです。</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>options</title>
+-->
+ <refsect1><title>オプション</title>
+   &apt-cmdblurb;
+   
+   <variablelist>
+     <varlistentry><term><option>-p</option></term><term><option>--pkg-cache</option></term>
+<!--
+     <listitem><para>Select the file to store the package cache. The package cache is the 
+     primary cache used by all operations.
+     Configuration Item: <literal>Dir::Cache::pkgcache</literal>.</para></listitem>
+-->
+     <listitem><para>パッケージキャッシュを格納するファイルを選択します。
+     パッケージキャッシュは、すべての操作で使用される一次キャッシュです。
+     設定項目 - <literal>Dir::Cache::pkgcache</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-s</option></term><term><option>--src-cache</option></term>
+<!--
+     <listitem><para>Select the file to store the source cache. The source is used only by
+     <literal>gencaches</literal> and it stores a parsed version of the package 
+     information from remote sources. When building the package cache the 
+     source cache is used to advoid reparsing all of the package files.
+     Configuration Item: <literal>Dir::Cache::srcpkgcache</literal>.</para></listitem>
+-->
+     <listitem><para>ソースキャッシュを格納するファイルを選択します。
+     このソースキャッシュは <literal>gencaches</literal> でのみ使用され、
+     ここに解析された取得元のパッケージ情報が格納されています。
+     パッケージキャッシュを構築する際に、ソースキャッシュは、
+     全パッケージファイルを再解析を避ける上で便利です。
+     <!--advoid は avoid のミススペル？ -->
+     設定項目 - <literal>Dir::Cache::srcpkgcache</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-q</option></term><term><option>--quiet</option></term>
+<!--
+     <listitem><para>Quiet; produces output suitable for logging, omitting progress indicators.
+     More q's will produce more quietness up to a maximum of 2. You can also use
+     <option>-q=#</option> to set the quietness level, overriding the configuration file.
+     Configuration Item: <literal>quiet</literal>.</para></listitem>
+-->
+     <listitem><para>静粛 - 進捗表示を省略し、
+     ログをとるのに便利な出力を行います。
+     最大 2 つまで q を重ねることでさらに静粛にできます。
+     また、<option>-q=#</option> のように静粛レベルを指定して、
+     設定ファイルを上書きすることもできます。
+     設定項目 - <literal>quiet</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-i</option></term><term><option>--important</option></term>
+<!--
+     <listitem><para>Print only important dependencies; for use with unmet. Causes only Depends and 
+     Pre-Depends relations to be printed.
+     Configuration Item: <literal>APT::Cache::Important</literal>.</para></listitem>
+-->
+     <listitem><para>「重要」依存関係のみ表示 - unmet と共に使用します。
+     これは「依存」関係と「先行依存」関係のみを表示するためです。
+     設定項目 - <literal>APT::Cache::Important</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-f</option></term><term><option>--full</option></term>
+<!--
+     <listitem><para>Print full package records when searching. 
+     Configuration Item: <literal>APT::Cache::ShowFull</literal>.</para></listitem>
+-->
+     <listitem><para>search 時に全パッケージレコードを表示します。
+     設定項目 - <literal>APT::Cache::ShowFull</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-a</option></term><term><option>--all-versions</option></term>
+<!--
+     <listitem><para>Print full records for all available versions. This is the
+     default; to turn it off, use <option>-\-no-all-versions</option>.
+     If <option>-\-no-all-versions</option> is specified, only the candidate version
+     will displayed (the one which would be selected for installation).
+     This option is only applicable to  the <literal>show</literal> command.
+     Configuration Item: <literal>APT::Cache::AllVersions</literal>.</para></listitem>
+-->
+     <listitem><para>全利用可能バージョンのレコード全体を表示します。
+     これはデフォルトの動作で、
+     無効にするには <option>--no-all-versions</option> を使用してください。
+     <option>--no-all-versions</option> を指定すると、
+     候補バージョン (インストールの際に選択されるもの) だけ表示します。
+     このオプションは、show コマンドでのみ適用できます。
+     設定項目 - <literal>APT::Cache::AllVersions</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-g</option></term><term><option>--generate</option></term>
+<!--
+     <listitem><para>Perform automatic package cache regeneration, rather than use the cache 
+     as it is. This is the default; to turn it off, use <option>-\-no-generate</option>.
+     Configuration Item: <literal>APT::Cache::Generate</literal>.</para></listitem>
+-->
+     <listitem><para>そのままキャッシュを使用するのではなく、
+     自動的にパッケージキャッシュを再生成します。これはデフォルトの動作で、
+     無効にするには <option>--no-generate</option> を使用してください。
+     設定項目 - <literal>APT::Cache::Generate</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--names-only</option></term><term><option>-n</option></term>
+<!--
+     <listitem><para>Only search on the package names, not the long descriptions. 
+     Configuration Item: <literal>APT::Cache::NamesOnly</literal>.</para></listitem>
+-->
+     <listitem><para>説明文ではなく、パッケージ名からのみ検索します。
+     設定項目 - <literal>APT::Cache::NamesOnly</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--all-names</option></term>
+<!--
+     <listitem><para>Make <literal>pkgnames</literal> print all names, including virtual packages 
+     and missing dependencies. 
+     Configuration Item: <literal>APT::Cache::AllNames</literal>.</para></listitem>
+-->
+     <listitem><para><literal>pkgnames</literal> で、
+     仮想パッケージや欠落依存関係を含めた全名称を表示します。
+     設定項目 - <literal>APT::Cache::AllNames</literal></para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--recurse</option></term>
+<!--
+     <listitem><para>Make <literal>depends</literal> and <literal>rdepends</literal> recursive so
+     that all packages mentioned are printed once.
+     Configuration Item: <literal>APT::Cache::RecurseDepends</literal>.</para></listitem>
+-->
+     <listitem><para><literal>depends</literal> や <literal>rdepends</literal>
+     で、指定した全パッケージを再帰的に一度に表示します。
+     設定項目 - <literal>APT::Cache::RecurseDepends</literal></para></listitem>
+     </varlistentry>
+
+      <varlistentry><term><option>--installed</option></term>
+<!--
+      <listitem><para>
+      Limit the output of <literal>depends</literal> and <literal>rdepends</literal> to
+      packages which are currently installed.
+      Configuration Item: <literal>APT::Cache::Installed</literal>.</para></listitem>
+-->
+      <listitem><para>
+      <literal>depends</literal> や <literal>rdepends</literal> の出力を、
+      現在インストールされているパッケージに限定します。
+      設定項目 - <literal>APT::Cache::Installed</literal></para></listitem>
+      </varlistentry>
+ 
+     &apt-commonoptions;
+     
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>Files</title>
+-->
+ <refsect1><title>ファイル</title>
+   <variablelist>
+     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>
+<!--
+     <listitem><para>Locations to fetch packages from.
+     Configuration Item: <literal>Dir::Etc::SourceList</literal>.</para></listitem>
+-->
+     <listitem><para>パッケージの取得元。
+     設定項目 - <literal>Dir::Etc::SourceList</literal></para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><filename>&statedir;/lists/</filename></term>
+<!--
+     <listitem><para>Storage area for state information for each package resource specified in
+     &sources-list;
+     Configuration Item: <literal>Dir::State::Lists</literal>.</para></listitem>
+-->
+     <listitem><para>&sources-list; に指定した、
+     パッケージリソースごとの状態情報格納エリア。
+     設定項目 - <literal>Dir::State::Lists</literal></para></listitem>
+     </varlistentry>
+  
+     <varlistentry><term><filename>&statedir;/lists/partial/</filename></term>
+<!--
+     <listitem><para>Storage area for state information in transit.
+     Configuration Item: <literal>Dir::State::Lists</literal> (implicit partial).</para></listitem>
+-->
+     <listitem><para>取得中状態情報格納エリア。
+     設定項目 - <literal>Dir::State::Lists</literal> (必然的に不完全)</para></listitem>
+     </varlistentry>     
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>See Also</title>
+-->
+ <refsect1><title>関連項目</title>
+   <para>&apt-conf;, &sources-list;, &apt-get;
+   </para>
+ </refsect1>
+
+<!--
+ <refsect1><title>Diagnostics</title>
+-->
+ <refsect1><title>診断メッセージ</title>
+<!--
+   <para><command>apt-cache</command> returns zero on normal operation, decimal 100 on error.
+   </para>
+-->
+   <para><command>apt-cache</command> は正常終了時に 0 を返します。
+   エラー時には十進の 100 を返します。
+   </para>
+ </refsect1>
+
+ &manbugs;
+ &translator; 
+</refentry>

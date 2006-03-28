@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt-extracttemplates</refentrytitle>
+   <manvolnum>1</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-extracttemplates</refname>
+<!--
+    <refpurpose>Utility to extract DebConf config and templates from Debian packages</refpurpose>
+-->
+    <refpurpose>Debian パッケージから DebConf 設定とテンプレートを抽出するユーティリティ</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+  <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-extracttemplates</command>
+      <arg><option>-hv</option></arg>
+      <arg><option>-t=<replaceable>temporary directory</replaceable></option></arg>
+      <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+<!--
+ <refsect1><title>Description</title>
+-->
+ <refsect1><title>説明</title>
+<!--
+   <para><command>apt-extracttemplates</command> will take one or more Debian package files
+   as input and write out (to a temporary directory) all associated config
+   scripts and template files. For each passed in package that contains 
+   config scripts and templates, one line of output will be generated
+   in the format:</para>
+-->
+   <para><command>apt-extracttemplates</command> は、
+   入力に複数の Debian パッケージをとり、
+   関連する設定スクリプトとテンプレートファイルを 
+   (一時ディレクトリに) 出力します。
+   設定スクリプト・テンプレートファイルを持つ、
+   渡されたパッケージそれぞれに対し、以下の形式で 1 行ずつ出力します。</para>
+   <para>package version template-file config-script</para>
+<!--
+   <para>template-file and config-script are written to the temporary directory
+   specified by the -t or -\-tempdir (<literal>APT::ExtractTemplates::TempDir</literal>) 
+   directory, with filenames of the form <filename>package.template.XXXX</filename> and 
+   <filename>package.config.XXXX</filename></para>
+-->
+   <para>テンプレートファイルや、設定スクリプトは、
+   -t や --tempdir で指定した一時ディレクトリ 
+   (<literal>APT::ExtractTemplates::TempDir</literal>) に書き出され、
+   ファイル名は、<filename>package.template.XXXX</filename> や
+   <filename>package.config.XXXX</filename> と言った形になります。</para>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>options</title>
+-->
+ <refsect1><title>オプション</title>
+   &apt-cmdblurb;
+
+   <variablelist>
+     <varlistentry><term><option>-t</option></term><term><option>--tempdir</option></term>
+<!--
+     <listitem><para>
+     Temporary directory in which to write extracted debconf template files
+     and config scripts
+     Configuration Item: <literal>APT::ExtractTemplates::TempDir</literal></para></listitem>
+-->
+     <listitem><para>
+     抽出した debconf テンプレートファイルや設定スクリプトを書き出す、
+     一時ディレクトリ。
+     設定項目 - <literal>APT::ExtractTemplates::TempDir</literal></para></listitem>
+     </varlistentry>
+
+     &apt-commonoptions;
+     
+   </variablelist>
+     
+   
+ </refsect1>
+
+<!--
+ <refsect1><title>See Also</title>
+-->
+ <refsect1><title>関連項目</title>
+   <para>&apt-conf;</para>
+ </refsect1>
+
+<!--
+ <refsect1><title>Diagnostics</title>
+-->
+ <refsect1><title>診断メッセージ</title>
+   <para><command>apt-extracttemplates</command> は正常終了時に 0 を返します。
+   エラー時には十進の 100 を返します。</para>
+ </refsect1>
+
+ &manbugs;
+ &translator;
+ 
+</refentry>
