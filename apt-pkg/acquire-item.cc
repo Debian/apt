@@ -169,8 +169,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
    //        from local sources. this is really silly, and
    //        should be fixed cleanly as soon as possible
    if(!FileExists(CurrentPackagesFile) || 
-      Desc.URI.substr(0,strlen("file:/")) == "file:/" ||
-      !_config->FindB("Acquire::Diffs",true)) 
+      Desc.URI.substr(0,strlen("file:/")) == "file:/")
    {
       // we don't have a pkg file or we don't want to queue
       if(Debug)
@@ -1031,7 +1030,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 			     (*Target)->ShortDesc, ExpectedIndexMD5);
       else 
-	 new newPkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
+	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			    (*Target)->ShortDesc, ExpectedIndexMD5);
    }
 }
