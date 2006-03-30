@@ -170,7 +170,8 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
    //        should be fixed cleanly as soon as possible
    if(!FileExists(CurrentPackagesFile) || 
       Desc.URI.substr(0,strlen("file:/")) == "file:/" ||
-      !_config->FindB("Acquire::Diffs",true)) {
+      !_config->FindB("Acquire::Diffs",true)) 
+   {
       // we don't have a pkg file or we don't want to queue
       if(Debug)
 	 std::clog << "No index file, local or canceld by user" << std::endl;
@@ -178,11 +179,10 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
       return;
    }
 
-   if(Debug) {
+   if(Debug) 
       std::clog << "pkgAcqIndexDiffs::pkgAcqIndexDiffs(): " 
 		<< CurrentPackagesFile << std::endl;
-   }
-
+   
    QueueURI(Desc);
 
 }
@@ -237,26 +237,32 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       SHA1.AddFD(fd.Fd(), fd.Size());
       local_sha1 = string(SHA1.Result());
 
-      if(local_sha1 == ServerSha1) {
+      if(local_sha1 == ServerSha1) 
+      {
+	 // we have the same sha1 as the server
 	 if(Debug)
 	    std::clog << "Package file is up-to-date" << std::endl;
 	 // set found to true, this will queue a pkgAcqIndexDiffs with
 	 // a empty availabe_patches
 	 found = true;
-      } else {
+      } 
+      else 
+      {
 	 if(Debug)
 	    std::clog << "SHA1-Current: " << ServerSha1 << std::endl;
 
 	 // check the historie and see what patches we need
 	 string history = Tags.FindS("SHA1-History");     
 	 std::stringstream hist(history);
-	 while(hist >> d.sha1 >> size >> d.file) {
+	 while(hist >> d.sha1 >> size >> d.file) 
+	 {
 	    d.size = atoi(size.c_str());
 	    // read until the first match is found
 	    if(d.sha1 == local_sha1) 
 	       found=true;
 	    // from that point on, we probably need all diffs
-	    if(found) {
+	    if(found) 
+	    {
 	       if(Debug)
 		  std::clog << "Need to get diff: " << d.file << std::endl;
 	       available_patches.push_back(d);
@@ -265,12 +271,15 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       }
 
       // no information how to get the patches, bail out
-      if(!found) {
+      if(!found) 
+      {
 	 if(Debug)
 	    std::clog << "Can't find a patch in the index file" << std::endl;
 	 // Failed will queue a big package file
 	 Failed("", NULL);
-      } else {
+      } 
+      else 
+      {
 	 // queue the diffs
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
 			      ExpectedMD5, available_patches);
@@ -351,10 +360,13 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
 
-   if(available_patches.size() == 0) {
+   if(available_patches.size() == 0) 
+   {
       // we are done (yeah!)
       Finish(true);
-   } else {
+   }
+   else
+   {
       // get the next diff
       State = StateFetchDiff;
       QueueNextDiff();
@@ -378,7 +390,8 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 {
    // we restore the original name, this is required, otherwise
    // the file will be cleaned
-   if(allDone) {
+   if(allDone) 
+   {
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI);
 
@@ -435,14 +448,17 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
    // remove all patches until the next matching patch is found
    // this requires the Index file to be ordered
    for(vector<DiffInfo>::iterator I=available_patches.begin();
-       available_patches.size() > 0 && I != available_patches.end() 
-	  && (*I).sha1 != local_sha1; 
-       I++) {
+       available_patches.size() > 0 && 
+	  I != available_patches.end() &&
+	  (*I).sha1 != local_sha1; 
+       I++) 
+   {
       available_patches.erase(I);
    }
 
    // error checking and falling back if no patch was found
-   if(available_patches.size() == 0) { 
+   if(available_patches.size() == 0) 
+   { 
       Failed("", NULL);
       return false;
    }
@@ -1009,9 +1025,14 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
          }
       }
       
-      // Queue Packages file
-      new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
-			  (*Target)->ShortDesc, ExpectedIndexMD5);
+      // Queue Packages file (either diff or full packages files, depending
+      // on the users option)
+      if(_config->FindB("Acquire::PDiffs",false) == false) 
+	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
+			     (*Target)->ShortDesc, ExpectedIndexMD5);
+      else 
+	 new newPkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
+			    (*Target)->ShortDesc, ExpectedIndexMD5);
    }
 }
 
