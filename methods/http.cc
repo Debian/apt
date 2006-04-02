@@ -58,7 +58,6 @@ unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
 bool Debug = false;
 
-
 unsigned long CircleBuf::BwReadLimit=0;
 unsigned long CircleBuf::BwTickReadData=0;
 struct timeval CircleBuf::BwReadTick={0,0};

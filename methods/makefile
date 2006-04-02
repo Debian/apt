@@ -59,6 +59,13 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = ftp.cc rfc2553emu.cc connect.cc
 include $(PROGRAM_H)
 
+# The rred method
+PROGRAM=rred
+SLIBS = -lapt-pkg $(SOCKETLIBS)
+LIB_MAKES = apt-pkg/makefile
+SOURCE = rred.cc
+include $(PROGRAM_H)
+
 # The rsh method
 PROGRAM=rsh
 SLIBS = -lapt-pkg
