@@ -500,6 +500,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
 
       string FileName = LookupTag(Message,"Filename");
       State = StateUnzipDiff;
+      Local = true;
       Desc.URI = "gzip:" + FileName;
       DestFile += ".decomp";
       QueueURI(Desc);
@@ -518,6 +519,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
 	 std::clog << "Sending to rred method: " << FinalFile << std::endl;
 
       State = StateApplyDiff;
+      Local = true;
       Desc.URI = "rred:" + FinalFile;
       QueueURI(Desc);
       Mode = "rred";
