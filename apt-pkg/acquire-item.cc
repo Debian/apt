@@ -103,7 +103,8 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string,
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
-   if (Complete == false && FileName == DestFile)
+   // we only inform the Log class if it was actually not a local thing
+   if (Complete == false && !Local && FileName == DestFile)
    {
       if (Owner->Log != 0)
 	 Owner->Log->Fetched(Size,atoi(LookupTag(Message,"Resume-Point","0").c_str()));
