@@ -375,8 +375,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       },
       // Purge operation
       { 
-	 {"config-files", _("Preparing for remove with config %s")},
-	 {"not-installed", _("Removed with config %s")},
+	 {"config-files", _("Preparing to completely remove %s")},
+	 {"not-installed", _("Completely removed %s")},
 	 {NULL, NULL}
       },
    };
