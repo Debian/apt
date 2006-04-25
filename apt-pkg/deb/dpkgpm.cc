@@ -623,8 +623,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
 	    
 	 */
-	 char* list[4];
-	 TokSplitString(':', line, list, 5);
+	 char* list[5];
+	 TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
 	 char *pkg = list[1];
 	 char *action = _strstrip(list[2]);
 
