@@ -69,6 +69,12 @@ bool CacheDB::ReadyDB(string DB)
                             (ReadOnly?DB_RDONLY:DB_CREATE), 0644);
 
       }
+      // the database format has changed from DB_HASH to DB_BTREE in 
+      // apt 0.6.44
+      if (err == EINVAL)
+      {
+	 _error->Error(_("DB format is invalid. If you upgraded from a older version of apt, please remove and re-create the database."));
+      }
       if (err)
       {
           Dbp = 0;
