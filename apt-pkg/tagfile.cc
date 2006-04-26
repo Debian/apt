@@ -35,20 +35,20 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
      Fd(*pFd),
      Size(Size)
 {
-   if (Fd.IsOpen() == false)
+   if (Fd.IsOpen() == false || Fd.Size() == 0)
    {
       Buffer = 0;
       Start = End = Buffer = 0;
-      Done = true;
       iOffset = 0;
+      Map = NULL;
       return;
    }
    
-   Buffer = new char[Size];
-   Start = End = Buffer;
-   Done = false;
+   Map = new MMap (Fd, MMap::Public | MMap::ReadOnly);
+   Buffer = (char *) Map->Data ();
+   Start = Buffer;
+   End = Buffer + Map->Size ();
    iOffset = 0;
-   Fill();
 }
 									/*}}}*/
 // TagFile::~pkgTagFile - Destructor					/*{{{*/
@@ -56,7 +56,7 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
 /* */
 pkgTagFile::~pkgTagFile()
 {
-   delete [] Buffer;
+   delete Map;
 }
 									/*}}}*/
 // TagFile::Step - Advance to the next section				/*{{{*/
@@ -64,63 +64,18 @@ pkgTagFile::~pkgTagFile()
 /* If the Section Scanner fails we refill the buffer and try again. */
 bool pkgTagFile::Step(pkgTagSection &Tag)
 {
+   if (Start == End)
+      return false;
+
    if (Tag.Scan(Start,End - Start) == false)
    {
-      if (Fill() == false)
-	 return false;
-      
-      if (Tag.Scan(Start,End - Start) == false)
-	 return _error->Error(_("Unable to parse package file %s (1)"),
-			      Fd.Name().c_str());
+      return _error->Error(_("Unable to parse package file %s (1)"),
+	      Fd.Name().c_str());
    }
    Start += Tag.size();
    iOffset += Tag.size();
 
    Tag.Trim();
-   return true;
-}
-									/*}}}*/
-// TagFile::Fill - Top up the buffer					/*{{{*/
-// ---------------------------------------------------------------------
-/* This takes the bit at the end of the buffer and puts it at the start
-   then fills the rest from the file */
-bool pkgTagFile::Fill()
-{
-   unsigned long EndSize = End - Start;
-   unsigned long Actual = 0;
-   
-   memmove(Buffer,Start,EndSize);
-   Start = Buffer;
-   End = Buffer + EndSize;
-   
-   if (Done == false)
-   {
-      // See if only a bit of the file is left
-      if (Fd.Read(End,Size - (End - Buffer),&Actual) == false)
-	 return false;
-      if (Actual != Size - (End - Buffer))
-	 Done = true;
-      End += Actual;
-   }
-   
-   if (Done == true)
-   {
-      if (EndSize <= 3 && Actual == 0)
-	 return false;
-      if (Size - (End - Buffer) < 4)
-	 return true;
-      
-      // Append a double new line if one does not exist
-      unsigned int LineCount = 0;
-      for (const char *E = End - 1; E - End < 6 && (*E == '\n' || *E == '\r'); E--)
-	 if (*E == '\n')
-	    LineCount++;
-      for (; LineCount < 2; LineCount++)
-	 *End++ = '\n';
-      
-      return true;
-   }
-   
    return true;
 }
 									/*}}}*/
@@ -141,20 +96,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
 
    // Reposition and reload..
    iOffset = Offset;
-   Done = false;
-   if (Fd.Seek(Offset) == false)
-      return false;
-   End = Start = Buffer;
-   
-   if (Fill() == false)
-      return false;
-
-   if (Tag.Scan(Start,End - Start) == true)
-      return true;
-   
-   // This appends a double new line (for the real eof handling)
-   if (Fill() == false)
-      return false;
+   Start = Buffer + iOffset;
    
    if (Tag.Scan(Start,End - Start) == false)
       return _error->Error(_("Unable to parse package file %s (2)"),Fd.Name().c_str());
@@ -181,7 +123,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
    Stop = Section = Start;
    memset(AlphaIndexes,0,sizeof(AlphaIndexes));
 
-   if (Stop == 0)
+   if (Stop == 0 || MaxLength == 0)
       return false;
    
    TagCount = 0;
@@ -210,6 +152,12 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       }
       
       Stop++;
+   }
+
+   if ((Stop+1 >= End) && (End[-1] == '\n' || End[-1] == '\r'))
+   {
+       Indexes[TagCount] = (End - 1) - Section;
+       return true;
    }
 
    return false;
