@@ -40,7 +40,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 {
    // setup a (empty) stringstream for formating the return value
    std::stringstream ret;
-   res.str("");
+   ret.str("");
 
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
