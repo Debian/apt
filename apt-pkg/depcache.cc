@@ -16,7 +16,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/algorithms.h>
-    
+#include <apt-pkg/configuration.h>
 #include <apti18n.h>    
 									/*}}}*/
 
@@ -609,7 +609,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       installed */
    StateCache &P = PkgState[Pkg->ID];
    P.iFlags &= ~AutoKept;
-   if (P.InstBroken() == false && (P.Mode == ModeInstall ||
+   if ((P.InstPolicyBroken() == false && P.InstBroken() == false) && 
+       (P.Mode == ModeInstall ||
 	P.CandidateVer == (Version *)Pkg.CurrentVer()))
    {
       if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
@@ -620,11 +621,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    // See if there is even any possible instalation candidate
    if (P.CandidateVer == 0)
       return;
-   
    // We dont even try to install virtual packages..
    if (Pkg->VersionList == 0)
       return;
-   
    /* Target the candidate version and remove the autoflag. We reset the
       autoflag below if this was called recursively. Otherwise the user
       should have the ability to de-auto a package by changing its state */
@@ -864,6 +863,13 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
 /* */
 bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
 {
-   return Dep.IsCritical();
+   if(Dep.IsCritical())
+      return true;
+   else if(Dep->Type == pkgCache::Dep::Recommends)
+      return  _config->FindB("APT::Install-Recommends", false);
+   else if(Dep->Type == pkgCache::Dep::Suggests)
+     return _config->FindB("APT::Install-Suggests", false);
+
+   return false;
 }
 									/*}}}*/

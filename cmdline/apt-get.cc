@@ -1145,9 +1145,11 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    else
       ExpectedInst++;
    
-   // Install it with autoinstalling enabled.
-   if (State.InstBroken() == true && BrokenFix == false)
+   // Install it with autoinstalling enabled (if we not respect the minial
+   // required deps or the policy)
+   if ((State.InstBroken() == true || State.InstPolicyBroken() == true) && BrokenFix == false)
       Cache.MarkInstall(Pkg,true);
+
    return true;
 }
 									/*}}}*/
