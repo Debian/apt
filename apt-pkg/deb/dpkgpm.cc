@@ -375,8 +375,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       },
       // Purge operation
       { 
-	 {"config-files", _("Preparing for remove with config %s")},
-	 {"not-installed", _("Removed with config %s")},
+	 {"config-files", _("Preparing to completely remove %s")},
+	 {"not-installed", _("Completely removed %s")},
 	 {NULL, NULL}
       },
    };
@@ -623,8 +623,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
 	    
 	 */
-	 char* list[4];
-	 TokSplitString(':', line, list, 5);
+	 char* list[5];
+	 TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
 	 char *pkg = list[1];
 	 char *action = _strstrip(list[2]);
 
