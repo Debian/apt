@@ -1029,7 +1029,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
       
       // Queue Packages file (either diff or full packages files, depending
       // on the users option)
-      if(_config->FindB("Acquire::PDiffs",false) == false) 
+      if(_config->FindB("Acquire::PDiffs",true) == true) 
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 			     (*Target)->ShortDesc, ExpectedIndexMD5);
       else 
