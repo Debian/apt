@@ -1,12 +1,62 @@
-apt (0.6.43.3exp1) experimental; urgency=low
+apt (0.6.44.1exp1) experimental; urgency=low
 
-  * added support for package index diffs
   * added support for i18n of the package descriptions
-  * synced with the apt--debian-sid--0 branch
-  * build from mvo@debian.org--2005/apt--debian-experimental--0
-    (from http://people.debian.org/~mvo/arch)
-
+  * synced with the http://people.debian.org/~mvo/bzr/apt/debian-sid branch
+  * build from http://people.debian.org/~mvo/bzr/apt/debian-experimental
+  
  -- Michael Vogt <mvo@debian.org>  Wed,  1 Mar 2006 13:34:15 +0100
+
+apt (0.6.44.1) unstable; urgency=low
+
+  * apt-pkg/acquire-item.cc:
+    - fix reversed logic of the "Acquire::PDiffs" option
+  * merged from 
+    http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
+    - po/LINGUAS: added "bg" Closes: #360262
+    - po/gl.po: Galician translation update. Closes: #366849
+    - po/hu.po: Hungarian translation update. Closes: #365448
+    - po/cs.po: Czech translation updated. Closes: #367244
+  * apt-pkg/contrib/sha256.cc:
+    - applied patch to fix unaligned access problem. Closes: #367417
+      (thanks to David Mosberger)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 May 2006 21:51:16 +0200
+
+apt (0.6.44) unstable; urgency=low
+
+  * apt-pkg/acquire.cc: don't show ETA if it is 0 or absurdely large
+  * apt-pkg/contrib/sha256.{cc,h},hashes.{cc,h}: support for sha256 
+    (thanks to Anthony Towns)
+  * ftparchive/cachedb.{cc,h},writer.{cc,h}: optimizations 
+    (thanks to Anthony Towns)
+  * apt pdiff support from experimental merged
+  * apt-pkg/deb/dpkgpm.cc: wording fixes (thanks to Matt Zimmerman)
+  * apt-pkg/deb/dpkgpm.cc: 
+    - wording fixes (thanks to Matt Zimmerman)
+    - fix error in dpkg interaction (closes: #364513, thanks to Martin Dickopp)
+  * apt-pkg/tagfile.{cc,h}:
+    - use MMap to read the entries (thanks to Zephaniah E. Hull for the
+      patch) Closes: #350025
+  * Merge from http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
+  	* bg.po: Added, complete to 512t. Closes: #360262
+  * doc/apt-ftparchive.1.xml:
+    - fix documentation for "SrcPackages" -> "Sources" 
+      (thanks to Bart Martens for the patch, closes: #307756)
+  * debian/libapt-pkg-doc.doc-base.cache:
+    - remove broken charackter from description (closes: #361129)
+  * apt-inst/deb/dpkgdb.cc, methods/gpgv.cc: 
+    - i18n fixes (closes: #349298)
+  * debian/postinst: dont fail on not available
+    /usr/share/doc/apt/examples/sources.list (closes: #361130)
+  * methods/ftp.cc:
+    - unlink empty file in partial if the download failed because
+      the file is missing on the server (closes: #316337)
+  * apt-pkg/deb/debversion.cc:
+    - treats a version string with explicit zero epoch equal
+      than the same without epoch (Policy 5.6.12, closes: #363358)
+      Thanks to Lionel Elie Mamane for the patch
+  
+ -- Michael Vogt <mvo@debian.org>  Mon,  8 May 2006 22:28:53 +0200
 
 apt (0.6.43.3) unstable; urgency=low
 

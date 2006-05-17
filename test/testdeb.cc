@@ -23,7 +23,7 @@ bool Test(const char *File)
       return false;
       
    // Extract it.
-   ExtractTar Tar(Deb.GetFile(),Member->Size);
+   ExtractTar Tar(Deb.GetFile(),Member->Size, "gzip");
    NullStream Dir;
    if (Tar.Go(Dir) == false)
       return false;   
