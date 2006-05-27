@@ -16,7 +16,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/algorithms.h>
-    
+#include <apt-pkg/configuration.h>
+
 #include <apti18n.h>    
 									/*}}}*/
 
@@ -712,6 +713,10 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 
 	 if (InstPkg.end() == false)
 	 {
+	    if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
+	       std::clog << "Installing " << InstPkg.Name() 
+			 << " as dep of " << Pkg.Name() 
+			 << std::endl;
 	    MarkInstall(InstPkg,true,Depth + 1);
 
 	    // Set the autoflag, after MarkInstall because MarkInstall unsets it
