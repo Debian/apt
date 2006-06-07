@@ -35,7 +35,7 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
      Fd(*pFd),
      Size(Size)
 {
-   if (Fd.IsOpen() == false || Fd.Size())
+   if (Fd.IsOpen() == false || Fd.Size() == 0)
    {
       Buffer = 0;
       Start = End = Buffer = 0;
