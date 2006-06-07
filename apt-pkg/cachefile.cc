@@ -23,6 +23,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/acquire-item.h>
     
 #include <apti18n.h>
 									/*}}}*/
@@ -108,6 +109,51 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
       return false;
    
    return true;
+}
+									/*}}}*/
+
+// CacheFile::ListUpdate - update the cache files                    	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCacheFile::ListUpdate(pkgAcquireStatus &Stat, pkgSourceList &List)
+{
+   pkgAcquire Fetcher(&Stat);
+
+   // Populate it with the source selection
+   if (List.GetIndexes(&Fetcher) == false)
+	 return false;
+   
+   // Run it
+   if (Fetcher.Run() == pkgAcquire::Failed)
+      return false;
+
+   bool Failed = false;
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   {
+      if ((*I)->Status == pkgAcquire::Item::StatDone)
+	 continue;
+
+      (*I)->Finished();
+      
+      _error->Warning(_("Failed to fetch %s  %s\n"),
+		      (*I)->DescURI().c_str(),
+		      (*I)->ErrorText.c_str());
+      Failed = true;
+   }
+
+   // Clean out any old list files (if it was not a failure)
+   // Keep "APT::Get::List-Cleanup" name for compatibility, but
+   // this is really a global option for the APT library now
+   if (!Failed && (_config->FindB("APT::Get::List-Cleanup",true) == true ||
+		   _config->FindB("APT::List-Cleanup",true) == true))
+   {
+      if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
+	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
+	 return false;
+   }
+
+
+   return (Failed == false);
 }
 									/*}}}*/
 

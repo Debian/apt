@@ -1326,14 +1326,15 @@ bool DoUpdate(CommandLine &CmdL)
 	 return _error->Error(_("Unable to lock the list directory"));
    }
    
-   // Create the download object
+   // Create the progress
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
-   pkgAcquire Fetcher(&Stat);
-
-   
+      
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
+      // get a fetcher
+      pkgAcquire Fetcher(&Stat);
+
       // Populate it with the source selection and get all Indexes 
       // (GetAll=true)
       if (List.GetIndexes(&Fetcher,true) == false)
@@ -1346,41 +1347,15 @@ bool DoUpdate(CommandLine &CmdL)
       return true;
    }
 
-   // Populate it with the source selection
-   if (List.GetIndexes(&Fetcher) == false)
-	 return false;
-   
-   // Run it
-   if (Fetcher.Run() == pkgAcquire::Failed)
-      return false;
-
-   bool Failed = false;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
-   {
-      if ((*I)->Status == pkgAcquire::Item::StatDone)
-	 continue;
-
-      (*I)->Finished();
-      
-      fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
-	      (*I)->ErrorText.c_str());
-      Failed = true;
-   }
-   
-   // Clean out any old list files
-   if (!Failed && _config->FindB("APT::Get::List-Cleanup",true) == true)
-   {
-      if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
-	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
-	 return false;
-   }
-   
-   // Prepare the cache.   
+   // do the work
    CacheFile Cache;
+   bool res = Cache.ListUpdate(Stat, List);
+     
+   // Rebuild the cache.   
    if (Cache.BuildCaches() == false)
       return false;
    
-   if (Failed == true)
+   if (res == false)
       return _error->Error(_("Some index files failed to download, they have been ignored, or old ones used instead."));
    
    return true;

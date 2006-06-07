@@ -22,6 +22,8 @@
 #endif 
 
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/sourcelist.h>
 
 class pkgPolicy;
 class pkgCacheFile
@@ -48,6 +50,7 @@ class pkgCacheFile
 
    bool BuildCaches(OpProgress &Progress,bool WithLock = true);
    bool Open(OpProgress &Progress,bool WithLock = true);
+   bool ListUpdate(pkgAcquireStatus &progress, pkgSourceList &List);
    void Close();
    
    pkgCacheFile();
