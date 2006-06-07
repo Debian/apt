@@ -8,9 +8,12 @@
    CopyFile - Buffered copy of a single file
    GetLock - dpkg compatible lock file manipulation (fcntl)
    
-   This source is placed in the Public Domain, do with it what you will
+   Most of this source is placed in the Public Domain, do with it what 
+   you will
    It was originally written by Jason Gunthorpe <jgg@debian.org>.
    
+   The exception is RunScripts() it is under the GPLv2
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -37,6 +40,68 @@
 									/*}}}*/
 
 using namespace std;
+
+// RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool RunScripts(const char *Cnf)
+{
+   Configuration::Item const *Opts = _config->Tree(Cnf);
+   if (Opts == 0 || Opts->Child == 0)
+      return true;
+   Opts = Opts->Child;
+
+   // Fork for running the system calls
+   pid_t Child = ExecFork();
+   
+   // This is the child
+   if (Child == 0)
+   {
+      if (chdir("/tmp/") != 0)
+	 _exit(100);
+	 
+      unsigned int Count = 1;
+      for (; Opts != 0; Opts = Opts->Next, Count++)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 
+	 if (system(Opts->Value.c_str()) != 0)
+	    _exit(100+Count);
+      }
+      _exit(0);
+   }      
+
+   // Wait for the child
+   int Status = 0;
+   while (waitpid(Child,&Status,0) != Child)
+   {
+      if (errno == EINTR)
+	 continue;
+      return _error->Errno("waitpid","Couldn't wait for subprocess");
+   }
+
+   // Restore sig int/quit
+   signal(SIGQUIT,SIG_DFL);
+   signal(SIGINT,SIG_DFL);   
+
+   // Check for an error code.
+   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
+   {
+      unsigned int Count = WEXITSTATUS(Status);
+      if (Count > 100)
+      {
+	 Count -= 100;
+	 for (; Opts != 0 && Count != 1; Opts = Opts->Next, Count--);
+	 _error->Error("Problem executing scripts %s '%s'",Cnf,Opts->Value.c_str());
+      }
+      
+      return _error->Error("Sub-process returned an error code");
+   }
+   
+   return true;
+}
+									/*}}}*/
 
 // CopyFile - Buffered copy of a file					/*{{{*/
 // ---------------------------------------------------------------------

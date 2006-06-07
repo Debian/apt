@@ -24,6 +24,7 @@
 #include <apt-pkg/policy.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/fileutl.h>
     
 #include <apti18n.h>
 									/*}}}*/
@@ -123,6 +124,9 @@ bool pkgCacheFile::ListUpdate(pkgAcquireStatus &Stat, pkgSourceList &List)
    if (List.GetIndexes(&Fetcher) == false)
 	 return false;
    
+   // Run scripts
+   RunScripts("APT::Update::Pre-Invoke");
+
    // Run it
    if (Fetcher.Run() == pkgAcquire::Failed)
       return false;
@@ -152,6 +156,8 @@ bool pkgCacheFile::ListUpdate(pkgAcquireStatus &Stat, pkgSourceList &List)
 	 return false;
    }
 
+   // Run the scripts
+   RunScripts("APT::Update::Post-Invoke");
 
    return (Failed == false);
 }
