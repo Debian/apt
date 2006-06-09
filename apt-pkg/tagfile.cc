@@ -98,7 +98,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
    iOffset = Offset;
    Start = Buffer + iOffset;
    
-   if (Tag.Scan(Start,End - Start) == false)
+   if (Start != End && Tag.Scan(Start,End - Start) == false)
       return _error->Error(_("Unable to parse package file %s (2)"),Fd.Name().c_str());
    
    return true;
