@@ -540,6 +540,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
 		   << DestFile << " -> " << FinalFile << std::endl;
       }
       Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
 
       // see if there is more to download
       if(available_patches.size() > 0) {
@@ -958,6 +959,7 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
       // Move it into position
       Rename(DestFile,FinalFile);
    }
+   chmod(FinalFile.c_str(),0644);
    DestFile = FinalFile;
 }
 
