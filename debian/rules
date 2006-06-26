@@ -36,6 +36,7 @@ endif
 # Default rule
 build:
 
+PKG=apt
 DEB_BUILD_PROG:=debuild --preserve-envvar PATH --preserve-envvar CCACHE_DIR -us -uc $(DEB_BUILD_PROG_OPTS)
 APT_DEBVER=$(shell dpkg-parsechangelog |sed -n -e '/^Version:/s/^Version: //p')
 APT_CONFVER=$(shell sed -n -e 's/^AC_DEFINE_UNQUOTED(VERSION,"\(.*\)")/\1/p' configure.in)
@@ -335,6 +336,6 @@ cvs-mkul:
 arch-build:
 	rm -rf debian/arch-build
 	mkdir -p debian/arch-build/apt-$(APT_DEBVER)
-	baz inventory -s | xargs cp -a --parents --target=debian/arch-build/apt-$(APT_DEBVER)
+	tar -c --exclude=arch-build --no-recursion -f - `bzr inventory` | (cd debian/arch-build/$(PKG)-$(APT_DEBVER);tar xf -)
 	$(MAKE) -C debian/arch-build/apt-$(APT_DEBVER) startup doc
 	(cd debian/arch-build/apt-$(APT_DEBVER); $(DEB_BUILD_PROG); dpkg-genchanges -S > ../apt_$(APT_DEBVER)_source.changes)

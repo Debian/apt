@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <iostream>
+#include <sstream>
 
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
@@ -20,7 +21,7 @@
 class GPGVMethod : public pkgAcqMethod
 {
    private:
-   const char *VerifyGetSigners(const char *file, const char *outfile,
+   string VerifyGetSigners(const char *file, const char *outfile,
 				vector<string> &GoodSigners, vector<string> &BadSigners,
 				vector<string> &NoPubKeySigners);
    
@@ -32,11 +33,15 @@ class GPGVMethod : public pkgAcqMethod
    GPGVMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
 };
 
-const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
+string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<string> &GoodSigners,
 					 vector<string> &BadSigners,
 					 vector<string> &NoPubKeySigners)
 {
+   // setup a (empty) stringstream for formating the return value
+   std::stringstream ret;
+   ret.str("");
+
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
       std::cerr << "inside VerifyGetSigners" << std::endl;
@@ -54,9 +59,11 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       std::cerr << "Keyring path: " << pubringpath << std::endl;
    }
 
-   if (stat(pubringpath.c_str(), &buff) != 0)
-      return (string("Couldn't access keyring: ") + strerror(errno)).c_str();
-
+   if (stat(pubringpath.c_str(), &buff) != 0) 
+   {
+      ioprintf(ret, _("Couldn't access keyring: '%s'"), strerror(errno)); 
+      return ret.str();
+   }
    if (pipe(fd) < 0)
    {
       return "Couldn't create pipe";
@@ -65,7 +72,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    pid = fork();
    if (pid < 0)
    {
-      return (string("Couldn't spawn new process") + strerror(errno)).c_str();
+      return string("Couldn't spawn new process") + strerror(errno);
    }
    else if (pid == 0)
    {
@@ -189,7 +196,7 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    {
       if (GoodSigners.empty())
          return _("Internal error: Good signature, but could not determine key fingerprint?!");
-      return NULL;
+      return "";
    }
    else if (WEXITSTATUS(status) == 1)
    {
@@ -197,9 +204,8 @@ const char *GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    else if (WEXITSTATUS(status) == 111)
    {
-      // FIXME String concatenation considered harmful.
-      return (string(_("Could not execute ")) + gpgvpath +
-	      string(_(" to verify signature (is gnupg installed?)"))).c_str();
+      ioprintf(ret, _("Could not execute '%s' to verify signature (is gnupg installed?)"), gpgvpath.c_str());
+      return ret.str();
    }
    else
    {
@@ -221,8 +227,8 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
    URIStart(Res);
 
    // Run gpgv on file, extract contents and get the key ID of the signer
-   const char *msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(),
-				      GoodSigners, BadSigners, NoPubKeySigners);
+   string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(),
+			      GoodSigners, BadSigners, NoPubKeySigners);
    if (GoodSigners.empty() || !BadSigners.empty() || !NoPubKeySigners.empty())
    {
       string errmsg;
@@ -247,7 +253,11 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
                errmsg += (*I + "\n");
          }
       }
-      return _error->Error(errmsg.c_str());
+      // this is only fatal if we have no good sigs or if we have at
+      // least one bad signature. good signatures and NoPubKey signatures
+      // happen easily when a file is signed with multiple signatures
+      if(GoodSigners.empty() or !BadSigners.empty())
+      	 return _error->Error(errmsg.c_str());
    }
       
    // Transfer the modification times

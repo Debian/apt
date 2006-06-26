@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <sstream>    
+
 #include <apti18n.h>    
 
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :
@@ -837,9 +838,14 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    }
 	 }
 	 
-	 if (InstPkg.end() == false)
+	 if (InstPkg.end() == false) 
+	 {
+	    if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
+	       std::clog << "Installing " << InstPkg.Name() 
+			 << " as dep of " << Pkg.Name() 
+			 << std::endl;
 	   MarkInstall(InstPkg, true, Depth + 1, false);
-	 
+	 }
 	 continue;
       }
       

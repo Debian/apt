@@ -1,9 +1,145 @@
+apt (0.6.44.2) unstable; urgency=low
+
+  * apt-pkg/depcache.cc:
+    - added Debug::pkgDepCache::AutoInstall (thanks to infinity)
+  * merged from 
+    http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
+  	* sk.po: Completed to 512t
+	* eu.po: Completed to 512t
+	* fr.po: Completed to 512t
+	* sv.po: Completed to 512t
+	* Update all PO and the POT. Gives 506t6f for formerly
+	  complete translations
+
+ --
+
+apt (0.6.44.1-0.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Don't give an error when parsing empty Packages/Sources files.
+    (Closes: #366931, #367086, #370160)
+
+ -- Steinar H. Gunderson <sesse@debian.org>  Fri,  9 Jun 2006 00:52:21 +0200
+
+apt (0.6.44.1) unstable; urgency=low
+
+  * merged from 
+    http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
+    - po/LINGUAS: added "bg" Closes: #360262
+    - po/gl.po: Galician translation update. Closes: #366849
+    - po/hu.po: Hungarian translation update. Closes: #365448
+    - po/cs.po: Czech translation updated. Closes: #367244
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 May 2006 21:51:16 +0200
+
+apt (0.6.44) unstable; urgency=low
+
+  * apt-pkg/acquire.cc: don't show ETA if it is 0 or absurdely large
+  * apt-pkg/deb/dpkgpm.cc: 
+    - wording fixes (thanks to Matt Zimmerman)
+    - fix error in dpkg interaction (closes: #364513, 
+      thanks to Martin Dickopp)
+  * apt-pkg/tagfile.{cc,h}:
+    - use MMap to read the entries (thanks to Zephaniah E. Hull for the
+      patch) Closes: #350025
+  * Merge from http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
+  	* bg.po: Added, complete to 512t. Closes: #360262
+  * doc/apt-ftparchive.1.xml:
+    - fix documentation for "SrcPackages" -> "Sources" 
+      (thanks to Bart Martens for the patch, closes: #307756)
+  * debian/libapt-pkg-doc.doc-base.cache:
+    - remove broken charackter from description (closes: #361129)
+  * apt-inst/deb/dpkgdb.cc, methods/gpgv.cc: 
+    - i18n fixes (closes: #349298)
+  * debian/postinst: dont fail on not available
+    /usr/share/doc/apt/examples/sources.list (closes: #361130)
+  * methods/ftp.cc:
+    - unlink empty file in partial if the download failed because
+      the file is missing on the server (closes: #316337)
+  * apt-pkg/deb/debversion.cc:
+    - treats a version string with explicit zero epoch equal
+      than the same without epoch (Policy 5.6.12, closes: #363358)
+      Thanks to Lionel Elie Mamane for the patch
+  
+ -- Michael Vogt <mvo@debian.org>  Mon,  8 May 2006 22:28:53 +0200
+
+apt (0.6.43.3) unstable; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-186:
+    * ca.po: Completed to 512t. Closes: #351592
+    * eu.po: Completed to 512t. Closes: #350483
+    * ja.po: Completed to 512t. Closes: #349806
+    * pl.po: Completed to 512t. Closes: #349514
+    * sk.po: Completed to 512t. Closes: #349474
+    * gl.po: Completed to 512 strings Closes: #349407
+    * sv.po: Completed to 512 strings Closes: #349210
+    * ru.po: Completed to 512 strings Closes: #349154
+    * da.po: Completed to 512 strings Closes: #349084
+    * fr.po: Completed to 512 strings
+    * vi.po: Completed to 511 strings  Closes: #348968
+    * zh_CN.po: Completed to 512t. Closes: #353936
+    * it.po: Completed to 512t. Closes: #352803
+    * pt_BR.po: Completed to 512t. Closes: #352419
+    * LINGUAS: Add Welsh
+    * *.po: Updated from sources (512 strings)
+  * apt-pkg/deb/deblistparser.cc:
+    - don't explode on a DepCompareOp in a Provides line, but warn about
+      it and ignore it otherwise (thanks to James Troup for reporting it)
+  * cmdline/apt-get.cc:
+    - don't lock the lists directory in DoInstall, breaks --print-uri 
+      (thanks to James Troup for reporting it)
+  * debian/apt.dirs: create /etc/apt/sources.list.d 
+  * make apt-cache madison work without deb-src entries (#352583)
+  * cmdline/apt-get.cc: only run the list-cleaner if a update was 
+    successfull
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 22 Feb 2006 10:13:04 +0100
+
+apt (0.6.43.2) unstable; urgency=low
+
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-166:
+    - en_GB.po, de.po: fix spaces errors in "Ign " translations Closes: #347258
+    - makefile: make update-po a pre-requisite of clean target so
+    	        that POT and PO files are always up-to-date
+    - sv.po: Completed to 511t. Closes: #346450
+    - sk.po: Completed to 511t. Closes: #346369
+    - fr.po: Completed to 511t
+    - *.po: Updated from sources (511 strings)
+    - el.po: Completed to 511 strings Closes: #344642
+    - da.po: Completed to 511 strings Closes: #348574
+    - es.po: Updated to 510t1f Closes: #348158
+    - gl.po: Completed to 511 strings Closes: #347729
+    - it.po: Yet another update Closes: #347435
+  * added debian-archive-keyring to the Recommends (closes: #347970)
+  * fixed message in apt-key to install debian-archive-keyring 
+  * typos fixed in apt-cache.8 (closes: #348348, #347349)
+  * add patch to fix http download corruption problem (thanks to
+    Petr Vandrovec, closes: #280844, #290694)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 19 Jan 2006 00:06:33 +0100
+
 apt (0.6.43.1) unstable; urgency=low
 
-  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-133:
+  * Merge bubulle@debian.org--2005/apt--main--0 up to patch-148:
     * fr.po: Completed to 510 strings
+    * it.po: Completed to 510t
+    * en_GB.po: Completed to 510t
+    * cs.po: Completed to 510t
+    * zh_CN.po: Completed to 510t
+    * el.po: Updated to 510t
+    * vi.po: Updated to 383t93f34u
+    * tl.po: Completed to 510 strings (Closes: #344306)
+    * sv.po: Completed to 510 strings (Closes: #344056)
+    * LINGUAS: disabled Hebrew translation. (Closes: #313283)
+    * eu.po: Completed to 510 strings (Closes: #342091)
+  * apt-get source won't download already downloaded files again
+    (closes: #79277)
+  * share/debian-archive.gpg: new 2006 ftp-archive signing key added
+    (#345891)
+  * redownload the Release file if IMS-Hit and gpg failure
+  * deal with multiple signatures on a Release file
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 30 Nov 2005 10:14:02 +0100
+ -- Michael Vogt <mvo@debian.org>  Fri,  6 Jan 2006 01:17:08 +0100
 
 apt (0.6.43) unstable; urgency=medium
 

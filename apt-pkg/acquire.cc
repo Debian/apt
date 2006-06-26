@@ -818,7 +818,13 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       unsigned long ETA =
 	 (unsigned long)((TotalBytes - CurrentBytes) / CurrentCPS);
 
-      snprintf(msg,sizeof(msg), _("Downloading file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
+      // only show the ETA if it makes sense
+      if (ETA > 0 && ETA < 172800 /* two days */ )
+	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
+      else
+	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
+	 
+
 
       // build the status str
       status << "dlstatus:" << i
