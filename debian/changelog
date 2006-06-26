@@ -1,12 +1,21 @@
-apt (0.6.44.1exp1) experimental; urgency=low
+apt (0.6.44.2exp1) experimental; urgency=low
 
   * added support for i18n of the package descriptions
+  * added support for aptitude like auto-install tracking (a HUGE
+    HUGE thanks to Daniel Burrows who made this possible, if you meet
+    him, please give him a HUG and tell him how great he his!)
   * synced with the http://people.debian.org/~mvo/bzr/apt/debian-sid branch
   * build from http://people.debian.org/~mvo/bzr/apt/debian-experimental
-  * merged patch from Otavio (thanks!) to better support translations
-    that need the full language-code (like pt_BR)
   
  -- Michael Vogt <mvo@debian.org>  Tue,  6 Jun 2006 19:31:31 +0200
+
+apt (0.6.44.1-0.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Don't give an error when parsing empty Packages/Sources files.
+    (Closes: #366931, #367086, #370160)
+
+ -- Steinar H. Gunderson <sesse@debian.org>  Fri,  9 Jun 2006 00:52:21 +0200
 
 apt (0.6.44.1) unstable; urgency=low
 
@@ -330,6 +339,7 @@ apt (0.6.37) breezy; urgency=low
   * Add Welsh translation from Dafydd Harries
     (daf@muse.19inch.net--2005/apt--main--0--patch-1)
   * Change debian/bugscript to use #!/bin/bash (Closes: #313402)
+  * Fix a incorrect example in the man-page (closes: #282918)
 
  -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 24 May 2005 14:38:25 -0700
 

@@ -60,6 +60,7 @@
 #include <errno.h>
 #include <regex.h>
 #include <sys/wait.h>
+#include <sstream>
 									/*}}}*/
 
 using namespace std;
@@ -995,7 +996,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 cerr << _("Unable to correct missing packages.") << endl;
 	 return _error->Error(_("Aborting install."));
       }
-       	 
+
       _system->UnLock();
       int status_fd = _config->FindI("APT::Status-Fd",-1);
       pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
@@ -1386,6 +1387,52 @@ bool DoUpdate(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DoAutomaticRemove - Remove all automatic unused packages		/*{{{*/
+// ---------------------------------------------------------------------
+/* Remove unused automatic packages */
+bool DoAutomaticRemove(CacheFile &Cache)
+{
+   if(_config->FindI("Debug::pkgAutoRemove",false))
+      std::cout << "DoAutomaticRemove()" << std::endl;
+
+   if (_config->FindB("APT::Get::Remove",true) == false)
+      return _error->Error(_("We are not supposed to delete stuff, can't "
+			     "start AutoRemover"));
+
+   {
+     pkgDepCache::ActionGroup group(*Cache);
+
+     // look over the cache to see what can be removed
+     for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+       {
+	 if (Cache[Pkg].Garbage)
+	   {
+	     if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
+	       fprintf(stdout,"We could delete %s\n", Pkg.Name());
+
+	     if(Pkg.CurrentVer() != 0 && Pkg->CurrentState != pkgCache::State::ConfigFiles)
+	       Cache->MarkDelete(Pkg, _config->FindB("APT::Get::Purge", false));
+	     else
+	       Cache->MarkKeep(Pkg, false, false);
+	   }
+       }
+   }
+
+   // Now see if we destroyed anything
+   if (Cache->BrokenCount() != 0)
+   {
+      c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
+	         "shouldn't happen. Please file a bug report against apt.") << endl;
+      c1out << endl;
+      c1out << _("The following information may help to resolve the situation:") << endl;
+      c1out << endl;
+      ShowBroken(c1out,Cache,false);
+
+      return _error->Error(_("Internal Error, AutoRemover broke stuff"));
+   }
+   return true;
+}
+
 // DoUpgrade - Upgrade all packages					/*{{{*/
 // ---------------------------------------------------------------------
 /* Upgrade all packages without installing new packages or erasing old
@@ -1428,6 +1475,11 @@ bool DoInstall(CommandLine &CmdL)
    bool DefRemove = false;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       DefRemove = true;
+   else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
+     {
+       _config->Set("APT::Get::AutomaticRemove", "true");
+       DefRemove = true;
+     }
 
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
@@ -1577,6 +1629,11 @@ bool DoInstall(CommandLine &CmdL)
       return _error->Error(_("Broken packages"));
    }   
    
+   if (_config->FindB("APT::Get::AutomaticRemove")) {
+      if (!DoAutomaticRemove(Cache)) 
+	 return false;
+   }
+
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
    if (Cache->InstCount() != ExpectedInst)
@@ -1596,8 +1653,8 @@ bool DoInstall(CommandLine &CmdL)
 	 
 	 if (*J == 0) {
 	    List += string(I.Name()) + " ";
-        VersionsList += string(Cache[I].CandVersion) + "\n";
-     }
+	    VersionsList += string(Cache[I].CandVersion) + "\n";
+	 }
       }
       
       ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
@@ -2466,6 +2523,7 @@ void GetInitialize()
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
    _config->Set("APT::Get::List-Cleanup",true);
+   _config->Set("APT::Get::AutomaticRemove",false);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
@@ -2521,6 +2579,7 @@ int main(int argc,const char *argv[])
       {0,"remove","APT::Get::Remove",0},
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
+      {0,"auto-remove","APT::Get::AutomaticRemove",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
@@ -2529,6 +2588,7 @@ int main(int argc,const char *argv[])
                                    {"upgrade",&DoUpgrade},
                                    {"install",&DoInstall},
                                    {"remove",&DoInstall},
+				   {"autoremove",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
 				   {"build-dep",&DoBuildDep},
