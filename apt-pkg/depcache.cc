@@ -142,7 +142,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
 bool pkgDepCache::readStateFile(OpProgress *Prog)
 {
    FileFd state_file;
-   string state = _config->FindDir("Dir::State") + "pkgstates";
+   string state = _config->FindDir("Dir::State") + "extended_states";
    if(FileExists(state)) {
       state_file.Open(state, FileFd::ReadOnly);
       int file_size = state_file.Size();
@@ -181,7 +181,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 bool pkgDepCache::writeStateFile(OpProgress *prog)
 {
    FileFd StateFile;
-   string state = _config->FindDir("Dir::State") + "pkgstates";
+   string state = _config->FindDir("Dir::State") + "extended_states";
 
    if(_config->FindB("Debug::pkgAutoRemove",false))
       std::clog << "pkgDepCache::writeStateFile()" << std::endl;
