@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <sstream>    
+#include <set>
 
 #include <apti18n.h>    
 
@@ -180,28 +181,71 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 
 bool pkgDepCache::writeStateFile(OpProgress *prog)
 {
-   FileFd StateFile;
-   string state = _config->FindDir("Dir::State") + "extended_states";
-
    if(_config->FindB("Debug::pkgAutoRemove",false))
       std::clog << "pkgDepCache::writeStateFile()" << std::endl;
 
-   if(!StateFile.Open(state, FileFd::WriteEmpty))
-      return _error->Error(_("Failed to write StateFile %s"),
+   FileFd StateFile;
+   string state = _config->FindDir("Dir::State") + "extended_states";
+   if(!StateFile.Open(state, FileFd::ReadOnly))
+      return _error->Error(_("Failed to open StateFile %s"),
 			   state.c_str());
 
-   std::ostringstream ostr;
-   for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end();pkg++) {
+   FILE *OutFile;
+   string outfile = state + ".tmp";
+   if((OutFile = fopen(outfile.c_str(),"w")) == NULL)
+      return _error->Error(_("Failed to write temporary StateFile %s"),
+			   outfile.c_str());
 
-      if(PkgState[pkg->ID].Flags & Flag::Auto) {
+   // first merge with the existing sections
+   pkgTagFile tagfile(&StateFile);
+   pkgTagSection section;
+   std::set<string> pkgs_seen;
+   const char *nullreorderlist[] = {0};
+   while(tagfile.Step(section)) {
+	 string pkgname = section.FindS("Package");
+	 // Silently ignore unknown packages and packages with no actual
+	 // version.
+	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
+	 if(pkg.end() || pkg.VersionList().end()) 
+	    continue;
+	 bool oldAuto = section.FindI("Auto-Installed");
+	 bool newAuto = (PkgState[pkg->ID].Flags & Flag::Auto);
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
-	    std::clog << "AutoInstall: " << pkg.Name() << std::endl;
+	    std::clog << "Update exisiting AutoInstall info: " 
+		      << pkg.Name() << std::endl;
+	 TFRewriteData rewrite[2];
+	 rewrite[0].Tag = "Auto-Installed";
+	 rewrite[0].Rewrite = newAuto ? "1" : "0";
+	 rewrite[0].NewTag = 0;
+	 rewrite[1].Tag = 0;
+	 TFRewrite(OutFile, section, nullreorderlist, rewrite);
+	 fprintf(OutFile,"\n");
+	 pkgs_seen.insert(pkgname);
+   }
+   
+   // then write the ones we have not seen yet
+   std::ostringstream ostr;
+   for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end(); pkg++) {
+      if(PkgState[pkg->ID].Flags & Flag::Auto) {
+	 if (pkgs_seen.find(pkg.Name()) != pkgs_seen.end()) {
+	    if(_config->FindB("Debug::pkgAutoRemove",false))
+	       std::clog << "Skipping already written " << pkg.Name() << std::endl;
+	    continue;
+	 }
+	 if(_config->FindB("Debug::pkgAutoRemove",false))
+	    std::clog << "Writing new AutoInstall: " 
+		      << pkg.Name() << std::endl;
 	 ostr.str(string(""));
 	 ostr << "Package: " << pkg.Name() 
 	      << "\nAuto-Installed: 1\n\n";
-	 StateFile.Write(ostr.str().c_str(), ostr.str().size());
+	 fprintf(OutFile,ostr.str().c_str());
+	 fprintf(OutFile,"\n");
       }
    }
+
+   // move the outfile over the real file
+   rename(outfile.c_str(), state.c_str());
+
    return true;
 }
 
