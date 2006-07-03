@@ -174,11 +174,12 @@ ifeq ($(NUM_PROCS),1)
   PARALLEL_RUN=no
 endif
 
-ifndef PARALLEL_RUN
- PARALLEL_RUN=yes
- .EXPORT: PARALLEL_RUN
- # handle recursion
- ifneq ($(NUM_PROCS),)
-  MAKEFLAGS += -j $(NUM_PROCS)
- endif
-endif
+# mvo: commented out, lead to build failures in the arch-build target
+#ifndef PARALLEL_RUN
+# PARALLEL_RUN=yes
+# .EXPORT: PARALLEL_RUN
+# # handle recursion
+# ifneq ($(NUM_PROCS),)
+#  MAKEFLAGS += -j $(NUM_PROCS)
+# endif
+#endif
