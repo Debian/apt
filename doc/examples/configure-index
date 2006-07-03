@@ -24,11 +24,15 @@ APT
 {
   Architecture "i386";
   Build-Essential "build-essential";
-  
+
+  NeverAutoRemove  { "linux-kernel.*";  };  // packages that should never
+                                            // considered for autoRemove
+
   // Options for apt-get
   Get 
   {
      Arch-Only "false";
+     AutomaticRemove "false";       
      Download-Only "false";
      Simulate "false";
      Assume-Yes "false";
@@ -250,7 +254,8 @@ Debug
   pkgDPkgPM "false";
   pkgDPkgProgressReporting "false";
   pkgOrderList "false";
-  
+  pkgAutoRemove "false";   // show information about automatic removes
+
   pkgInitialize "false";   // This one will dump the configuration space
   NoLocking "false";
   Acquire::Ftp "false";    // Show ftp command traffic

@@ -1,6 +1,13 @@
 apt (0.6.44.2ubuntu1) edgy; urgency=low
 
   * merged with debian/unstable
+  * merged the "auto-mark" branch to support aptitude like
+    marking of automatically installed dependencies and added
+    "apt-get remove --auto-remove" to remove unused auto-installed
+    packages again
+  * changed library version from 3.11 to 3.50 to make it clearly 
+    different from the debian version (we are ABI incompatible because
+    of the auto-mark patch)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon,  3 Jul 2006 18:30:46 +0200
 
@@ -561,6 +568,7 @@ apt (0.6.37) breezy; urgency=low
   * Add Welsh translation from Dafydd Harries
     (daf@muse.19inch.net--2005/apt--main--0--patch-1)
   * Change debian/bugscript to use #!/bin/bash (Closes: #313402)
+  * Fix a incorrect example in the man-page (closes: #282918)
 
  -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 24 May 2005 14:38:25 -0700
 

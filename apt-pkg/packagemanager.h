@@ -28,7 +28,9 @@
 #endif
 
 #include <string>
+#include <iostream>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/depcache.h>
 
 using std::string;
 
@@ -70,13 +72,39 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
    virtual bool Go(int statusFd=-1) {return true;};
    virtual void Reset() {};
-   
+
+   // the result of the operation
+   OrderResult Res;
+
    public:
       
    // Main action members
    bool GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 		    pkgRecords *Recs);
-   OrderResult DoInstall(int statusFd=-1); 
+
+   // Do the installation 
+   OrderResult DoInstall(int statusFd=-1);
+
+   // stuff that needs to be done before the fork() of a library that
+   // uses apt
+   OrderResult DoInstallPreFork() {
+      Res = OrderInstall();
+      return Res;
+   };
+
+   // stuff that needs to be done after the fork
+   OrderResult DoInstallPostFork(int statusFd=-1) {
+      bool goResult = Go(statusFd);
+      if(goResult == false) 
+	 return Failed;
+
+      // if all was fine update the state file
+      if(Res == Completed) {
+	 Cache.writeStateFile(NULL);
+      }
+      return Res;
+   };
+
    bool FixMissing();
    
    pkgPackageManager(pkgDepCache *Cache);

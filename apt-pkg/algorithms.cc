@@ -20,10 +20,12 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
+
     
 #include <apti18n.h>
-    
+#include <sys/types.h>
 #include <iostream>
 									/*}}}*/
 using namespace std;
@@ -220,6 +222,8 @@ void pkgSimulate::ShortBreaks()
    the necessary calculations to deal with the problems. */
 bool pkgApplyStatus(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
       if (I->VersionList == 0)
@@ -230,13 +234,13 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	  I->InstState == pkgCache::State::HoldReInstReq)
       {
 	 if (I->CurrentVer != 0 && I.CurrentVer().Downloadable() == true)
-	    Cache.MarkKeep(I);
+	    Cache.MarkKeep(I, false, false);
 	 else
 	 {
 	    // Is this right? Will dpkg choke on an upgrade?
 	    if (Cache[I].CandidateVer != 0 &&
 		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
-	       Cache.MarkInstall(I);
+	       Cache.MarkInstall(I, false, 0, false);
 	    else
 	       return _error->Error(_("The package %s needs to be reinstalled, "
 				    "but I can't find an archive for it."),I.Name());
@@ -253,12 +257,12 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	 case pkgCache::State::HalfConfigured:
 	 if ((I->CurrentVer != 0 && I.CurrentVer().Downloadable() == true) ||
 	     I.State() != pkgCache::PkgIterator::NeedsUnpack)
-	    Cache.MarkKeep(I);
+	    Cache.MarkKeep(I, false, false);
 	 else
 	 {
 	    if (Cache[I].CandidateVer != 0 &&
 		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
-	       Cache.MarkInstall(I);
+	       Cache.MarkInstall(I, true, 0, false);
 	    else
 	       Cache.MarkDelete(I);
 	 }
@@ -284,10 +288,12 @@ bool pkgApplyStatus(pkgDepCache &Cache)
    on the result. */
 bool pkgFixBroken(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    // Auto upgrade all broken packages
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if (Cache[I].NowBroken() == true)
-	 Cache.MarkInstall(I,true);
+	 Cache.MarkInstall(I, true, 0, false);
    
    /* Fix packages that are in a NeedArchive state but don't have a
       downloadable install version */
@@ -300,7 +306,7 @@ bool pkgFixBroken(pkgDepCache &Cache)
       if (Cache[I].InstVerIter(Cache).Downloadable() == false)
 	 continue;
 
-      Cache.MarkInstall(I,true);      
+      Cache.MarkInstall(I, true, 0, false);
    }
    
    pkgProblemResolver Fix(&Cache);
@@ -317,23 +323,25 @@ bool pkgFixBroken(pkgDepCache &Cache)
  */
 bool pkgDistUpgrade(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    /* Auto upgrade all installed packages, this provides the basis 
       for the installation */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if (I->CurrentVer != 0)
-	 Cache.MarkInstall(I,true);
+	 Cache.MarkInstall(I, true, 0, false);
 
    /* Now, auto upgrade all essential packages - this ensures that
       the essential packages are present and working */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-	 Cache.MarkInstall(I,true);
+	 Cache.MarkInstall(I, true, 0, false);
    
    /* We do it again over all previously installed packages to force 
       conflict resolution on them all. */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       if (I->CurrentVer != 0)
-	 Cache.MarkInstall(I,false);
+	 Cache.MarkInstall(I, false, 0, false);
 
    pkgProblemResolver Fix(&Cache);
 
@@ -345,7 +353,7 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
 	 if (I->SelectedState == pkgCache::State::Hold)
 	 {
 	    Fix.Protect(I);
-	    Cache.MarkKeep(I);
+	    Cache.MarkKeep(I, false, false);
 	 }
       }
    }
@@ -360,6 +368,8 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    to install packages not marked for install */
 bool pkgAllUpgrade(pkgDepCache &Cache)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    pkgProblemResolver Fix(&Cache);
 
    if (Cache.BrokenCount() != 0)
@@ -376,7 +386,7 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
 	    continue;
       
       if (I->CurrentVer != 0 && Cache[I].InstallVer != 0)
-	 Cache.MarkInstall(I,false);
+	 Cache.MarkInstall(I, false, 0, false);
    }
       
    return Fix.ResolveByKeep();
@@ -389,6 +399,8 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
    the package is restored. */
 bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 {   
+   pkgDepCache::ActionGroup group(Cache);
+
    if (Cache.BrokenCount() != 0)
       return false;
    
@@ -405,9 +417,9 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 	    continue;
 
 	 // Keep it and see if that is OK
-	 Cache.MarkKeep(I);
+	 Cache.MarkKeep(I, false, false);
 	 if (Cache.BrokenCount() != 0)
-	    Cache.MarkInstall(I,false);
+	    Cache.MarkInstall(I, false, 0, false);
 	 else
 	 {
 	    // If keep didnt actually do anything then there was no change..
@@ -565,6 +577,8 @@ void pkgProblemResolver::MakeScores()
    installable */
 bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    if ((Flags[Pkg->ID] & Upgradable) == 0 || Cache[Pkg].Upgradable() == false)
       return false;
    if ((Flags[Pkg->ID] & Protected) == Protected)
@@ -573,7 +587,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    Flags[Pkg->ID] &= ~Upgradable;
    
    bool WasKept = Cache[Pkg].Keep();
-   Cache.MarkInstall(Pkg,false);
+   Cache.MarkInstall(Pkg, false, 0, false);
 
    // This must be a virtual package or something like that.
    if (Cache[Pkg].InstVerIter(Cache).end() == true)
@@ -658,7 +672,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    if (Fail == true)
    {
       if (WasKept == true)
-	 Cache.MarkKeep(Pkg);
+	 Cache.MarkKeep(Pkg, false, false);
       else
 	 Cache.MarkDelete(Pkg);
       return false;
@@ -685,6 +699,8 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    upgrade packages to advoid problems. */
 bool pkgProblemResolver::Resolve(bool BrokenFix)
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    unsigned long Size = Cache.Head().PackageCount;
 
    // Record which packages are marked for install
@@ -700,7 +716,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	 {
 	    if (Cache[I].InstBroken() == true && BrokenFix == true)
 	    {
-	       Cache.MarkInstall(I,false);
+	       Cache.MarkInstall(I, false, 0, false);
 	       if (Cache[I].Install() == true)
 		  Again = true;
 	    }
@@ -766,14 +782,14 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    pkgCache::Version *OldVer = Cache[I].InstallVer;
 	    Flags[I->ID] &= ReInstateTried;
 	    
-	    Cache.MarkInstall(I,false);
+	    Cache.MarkInstall(I, false, 0, false);
 	    if (Cache[I].InstBroken() == true || 
 		OldBreaks < Cache.BrokenCount())
 	    {
 	       if (OldVer == 0)
 		  Cache.MarkDelete(I);
 	       else
-		  Cache.MarkKeep(I);
+		  Cache.MarkKeep(I, false, false);
 	    }	    
 	    else
 	       if (Debug == true)
@@ -818,7 +834,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  {
 		     if (Debug == true)
 			clog << "  Or group keep for " << I.Name() << endl;
-		     Cache.MarkKeep(I);
+		     Cache.MarkKeep(I, false, false);
 		     Change = true;
 		  }
 	       }
@@ -868,7 +884,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       }
 	       
 	       Change = true;
-	       Cache.MarkKeep(I);		  
+	       Cache.MarkKeep(I, false, false);
 	       break;
 	    }
 	    
@@ -905,7 +921,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  /* See if a keep will do, unless the package is protected,
 		     then installing it will be necessary */
 		  bool Installed = Cache[I].Install();
-		  Cache.MarkKeep(I);
+		  Cache.MarkKeep(I, false, false);
 		  if (Cache[I].InstBroken() == false)
 		  {
 		     // Unwind operation will be keep now
@@ -914,7 +930,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		     
 		     // Restore
 		     if (InOr == true && Installed == true)
-			Cache.MarkInstall(I,false);
+			Cache.MarkInstall(I, false, 0, false);
 		     
 		     if (Debug == true)
 			clog << "  Holding Back " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
@@ -986,7 +1002,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  
 		  // Restore
 		  if (InOr == true && Installed == true)
-		     Cache.MarkInstall(I,false);
+		     Cache.MarkInstall(I, false, 0, false);
 		  
 		  if (Debug == true)
 		     clog << "  Holding Back " << I.Name() << " because I can't find " << Start.TargetPkg().Name() << endl;
@@ -1031,7 +1047,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       {
 		  if (Debug == true)
 		     clog << "  Fixing " << I.Name() << " via keep of " << J->Pkg.Name() << endl;
-		  Cache.MarkKeep(J->Pkg);
+		  Cache.MarkKeep(J->Pkg, false, false);
 	       }
 
 	       if (Counter > 1)
@@ -1061,6 +1077,20 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
       return _error->Error(_("Unable to correct problems, you have held broken packages."));
    }
    
+   // set the auto-flags (mvo: I'm not sure if we _really_ need this, but
+   // I didn't managed 
+   pkgCache::PkgIterator I = Cache.PkgBegin();
+   for (;I.end() != true; I++) {
+      if (Cache[I].NewInstall() && !(Flags[I->ID] & PreInstalled)) {
+	 if(_config->FindI("Debug::pkgAutoRemove",false)) {
+	    std::clog << "Resolve installed new pkg: " << I.Name() 
+		      << " (now marking it as auto)" << std::endl;
+	 }
+	 Cache[I].Flags |= pkgCache::Flag::Auto;
+      }
+   }
+
+
    return true;
 }
 									/*}}}*/
@@ -1071,6 +1101,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    system was non-broken previously. */
 bool pkgProblemResolver::ResolveByKeep()
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    unsigned long Size = Cache.Head().PackageCount;
 
    if (Debug == true)      
@@ -1104,7 +1136,7 @@ bool pkgProblemResolver::ResolveByKeep()
       {
 	 if (Debug == true)
 	    clog << "Keeping package " << I.Name() << endl;
-	 Cache.MarkKeep(I);
+	 Cache.MarkKeep(I, false, false);
 	 if (Cache[I].InstBroken() == false)
 	 {
 	    K = PList - 1;
@@ -1152,7 +1184,7 @@ bool pkgProblemResolver::ResolveByKeep()
 	       {
 		  if (Debug == true)
 		     clog << "  Keeping Package " << Pkg.Name() << " due to dep" << endl;
-		  Cache.MarkKeep(Pkg);
+		  Cache.MarkKeep(Pkg, false, false);
 	       }
 	       
 	       if (Cache[I].InstBroken() == false)
@@ -1189,6 +1221,8 @@ bool pkgProblemResolver::ResolveByKeep()
 /* This is used to make sure protected packages are installed */
 void pkgProblemResolver::InstallProtect()
 {
+   pkgDepCache::ActionGroup group(Cache);
+
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
       if ((Flags[I->ID] & Protected) == Protected)
@@ -1196,7 +1230,7 @@ void pkgProblemResolver::InstallProtect()
 	 if ((Flags[I->ID] & ToRemove) == ToRemove)
 	    Cache.MarkDelete(I);
 	 else
-	    Cache.MarkInstall(I,false);
+	    Cache.MarkInstall(I, false, 0, false);
       }
    }   
 }
@@ -1232,3 +1266,4 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    qsort(List,Count,sizeof(*List),PrioComp);
 }
 									/*}}}*/
+

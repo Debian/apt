@@ -26,6 +26,8 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/pkgsystem.h>
 
+#include <apt-pkg/tagfile.h>
+
 #include <apti18n.h>
 
 #include <vector>
