@@ -251,6 +251,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 	 fprintf(OutFile,"\n");
       }
    }
+   fclose(OutFile);
 
    // move the outfile over the real file
    rename(outfile.c_str(), state.c_str());
