@@ -343,7 +343,8 @@ static const char *iTFRewritePackageOrder[] = {
                           "Filename",
                           "Size",
                           "MD5Sum",
-                          "SHA1Sum",
+                          "SHA1",
+                          "SHA256",
                            "MSDOS-Filename",   // Obsolete
                           "Description",
                           0};
