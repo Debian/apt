@@ -453,15 +453,14 @@ bool CacheDB::Clean()
    memset(&Data,0,sizeof(Data));
    while ((errno = Cursor->c_get(Cursor,&Key,&Data,DB_NEXT)) == 0)
    {
-      const char *Colon = (char *)Key.data;
-      for (; Colon != (char *)Key.data+Key.size && *Colon != ':'; Colon++);
-      if ((char *)Key.data+Key.size - Colon > 2)
+      const char *Colon = (char*)memrchr(Key.data, ':', Key.size);
+      if (Colon)
       {
-	 if (stringcmp((char *)Key.data,Colon,"st") == 0 ||
-	     stringcmp((char *)Key.data,Colon,"cn") == 0 ||
-	     stringcmp((char *)Key.data,Colon,"cl") == 0)
+         if (stringcmp(Colon + 1, (char *)Key.data+Key.size,"st") == 0 ||
+             stringcmp(Colon + 1, (char *)Key.data+Key.size,"cl") == 0 ||
+             stringcmp(Colon + 1, (char *)Key.data+Key.size,"cn") == 0)
 	 {
-	    if (FileExists(string(Colon+1,(const char *)Key.data+Key.size)) == true)
+            if (FileExists(string((const char *)Key.data,Colon)) == true)
 		continue;	     
 	 }
       }
