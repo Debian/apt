@@ -161,6 +161,8 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool GetAll) const
    for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin(); 
 	I != SectionEntries.end(); I++) {
 
+      if((*I)->IsSrc)
+	 continue;
       debTranslationsIndex i = debTranslationsIndex(URI,Dist,(*I)->Section);
       i.GetIndexes(Owner);
    }
