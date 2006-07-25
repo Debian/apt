@@ -149,7 +149,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    if(comprExt.empty()) 
    {
       // autoselect the compression method
-      if(FileExists("/usr/bin/bzip2")) 
+      if(FileExists("/bin/bzip2")) 
 	 CompressionExtension = ".bz2";
       else 
 	 CompressionExtension = ".gz";
