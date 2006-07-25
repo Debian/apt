@@ -186,6 +186,15 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 
    FileFd StateFile;
    string state = _config->FindDir("Dir::State") + "extended_states";
+
+   // if it does not exist, create a empty one
+   if(!FileExists(state)) 
+   {
+      StateFile.Open(state, FileFd::WriteEmpty);
+      StateFile.Close();
+   }
+
+   // open it
    if(!StateFile.Open(state, FileFd::ReadOnly))
       return _error->Error(_("Failed to open StateFile %s"),
 			   state.c_str());
@@ -242,6 +251,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 	 fprintf(OutFile,"\n");
       }
    }
+   fclose(OutFile);
 
    // move the outfile over the real file
    rename(outfile.c_str(), state.c_str());

@@ -1771,6 +1771,8 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
    
+   pkgDepCache::ActionGroup group(Cache);
+
    // Install everything with the install flag set
    pkgCache::PkgIterator I = Cache->PkgBegin();
    for (;I.end() != true; I++)
