@@ -624,7 +624,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    
 	 */
 	 char* list[5];
-	 TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
+	 if(!TokSplitString(':', line, list, sizeof(list)/sizeof(list[0])))
+	    // FIXME: dpkg sends multiline error messages sometimes (see
+	    //        #374195 for a example. we should support this by
+	    //        either patching dpkg to not send multiline over the
+	    //        statusfd or by rewriting the code here to deal with
+	    //        it. for now we just ignore it and not crash
+	    continue;
 	 char *pkg = list[1];
 	 char *action = _strstrip(list[2]);
 

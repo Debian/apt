@@ -1,13 +1,14 @@
+# Sunjae Park <darehanl@gmail.com>, 2006.
 # Changwoo Ryu <cwryu@debian.org>, 2004-2005.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-16 07:33-0500\n"
-"PO-Revision-Date: 2005-02-10 21:56+0900\n"
-"Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
-"Language-Team: Korean <cwryu@debian.org>\n"
+"POT-Creation-Date: 2006-05-27 13:46+0200\n"
+"PO-Revision-Date: 2006-07-20 00:28+0900\n"
+"Last-Translator: Sunjae Park <darehanl@gmail.com>\n"
+"Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -226,19 +227,15 @@ msgstr ""
 
 #: cmdline/apt-cdrom.cc:78
 msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
-msgstr ""
+msgstr "이 디스크를 위해 'Debian 2.1r1 Disk 1'와 같은 이름을 지정해주십시오"
 
 #: cmdline/apt-cdrom.cc:93
-#, fuzzy
 msgid "Please insert a Disc in the drive and press enter"
-msgstr ""
-"미디어 바꾸기: '%2$s' 드라이브에 다음 레이블이 달린\n"
-"디스크를 넣고 enter를 누르십시오\n"
-" '%1$s'\n"
+msgstr "드라이브에 디스크를 넣고 엔터를 누르십시오"
 
 #: cmdline/apt-cdrom.cc:117
 msgid "Repeat this process for the rest of the CDs in your set."
-msgstr ""
+msgstr "현재 갖고 있는 다른 CD에도 이 과정을 반복하십시오."
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -335,7 +332,6 @@ msgid "Error processing contents %s"
 msgstr "%s 컨텐츠를 처리하는 데 오류가 발생했습니다"
 
 #: ftparchive/apt-ftparchive.cc:556
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -385,34 +381,34 @@ msgstr ""
 "      clean 설정\n"
 "\n"
 "apt-ftparchive는 데비안 아카이브용 인덱스 파일을 만듭니다. 이 프로그램은\n"
-"여러가지 종류의 인덱스 파일 만들기를 지원합니다 -- 완전 자동에서부터\n"
+"여러 종류의 인덱스 파일 만드는 작업을 지원합니다 -- 완전 자동화 작업부터\n"
 "dpkg-scanpackages와 dpkg-scansources의 기능을 대체하기도 합니다.\n"
 "\n"
 "apt-ftparchive는 .deb 파일의 트리에서부터 Package 파일을 만듭니다.\n"
-"Package 파일에는 각 꾸러미의 모든 컨트롤 필드는 물론 MD5 해시와 파일\n"
-"크기도 들어 있습니다. override 파일을 이용해 우선 순위와 섹션 값을 \n"
+"Package 파일에는 각 꾸러미의 모든 제어 필드는 물론 MD5 해시와 파일\n"
+"크기도 들어 있습니다. override 파일을 이용해 Priority와 Section의 값을 \n"
 "강제로 설정할 수 있습니다\n"
 "\n"
-"비슷하게 apt-ftparchive는 .dsc 파일의 트리에서부터 Sources 파일을\n"
+"이와 비슷하게 apt-ftparchive는 .dsc 파일의 트리에서 Sources 파일을\n"
 "만듭니다. --source-override 옵션을 이용해 소스 override 파일을\n"
 "지정할 수 있습니다.\n"
 "\n"
 "'packages'와 'sources' 명령은 해당 트리의 맨 위에서 실행해야 합니다.\n"
-"\"바이너리경로\"는 서치할 때 기준 위치를 가리켜야 하고 \"override파일\"은\n"
-"override 플래그들이 들어 있어야 합니다. \"경로앞부분\"은 각각의 파일 이름\n"
-"필드에 더해 집니다. 예를 들어 데비안 아카이브는 다음과 같이 사용합니다:\n"
+"\"바이너리경로\"는 검색할 때의 기준 위치를 가리키며 \"override파일\"에는\n"
+"override 플래그들을 담고 있습니다. \"경로앞부분\"은 각 파일 이름\n"
+"필드의 앞에 더해 집니다. 데비안 아카이브에 있는 예를 하나 들자면:\n"
 "\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
 "옵션:\n"
 "  -h    이 도움말\n"
-"  --md5 MD5 만들기를 컨트롤합니다\n"
+"  --md5 MD5 만들기 작업을 제어합니다\n"
 "  -s=?  소스 override 파일\n"
 "  -q    조용히\n"
 "  -d=?  캐시 데이터베이스를 직접 설정합니다\n"
 "  --no-delink 디버깅 모드 지우기를 사용합니다\n"
-"  --contents  컨텐츠 파일을 만들기를 컨트롤합니다\n"
+"  --contents  컨텐츠 파일을 만드는 적업을 제어합니다\n"
 "  -c=?  이 설정 파일을 읽습니다\n"
 "  -o=?  임의의 옵션을 설정합니다"
 
@@ -704,7 +700,6 @@ msgid "%s (due to %s) "
 msgstr "%s (%s때문에) "
 
 #: cmdline/apt-get.cc:546
-#, fuzzy
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -772,7 +767,7 @@ msgstr "경고: 다음 꾸러미를 인증할 수 없습니다!"
 
 #: cmdline/apt-get.cc:693
 msgid "Authentication warning overridden.\n"
-msgstr ""
+msgstr "인증 경고를 무시합니다.\n"
 
 #: cmdline/apt-get.cc:700
 msgid "Install these packages without verification [y/N]? "
@@ -788,16 +783,15 @@ msgstr "문제가 발생했고 -y 옵션이 --force-yes 옵션 없이 사용되�
 
 #: cmdline/apt-get.cc:755
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr ""
+msgstr "내부 오류. 망가진 꾸러미에서 InstallPackages를 호출했습니다!"
 
 #: cmdline/apt-get.cc:764
 msgid "Packages need to be removed but remove is disabled."
 msgstr "꾸러미를 지워야 하지만 지우기가 금지되어 있습니다."
 
 #: cmdline/apt-get.cc:775
-#, fuzzy
 msgid "Internal error, Ordering didn't finish"
-msgstr "diversion을 추가하는 데 내부 오류"
+msgstr "내부 오류. 순서변경작업이 끝나지 않았습니다"
 
 #: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1800 cmdline/apt-get.cc:1833
 msgid "Unable to lock the download directory"
@@ -811,6 +805,8 @@ msgstr "소스 목록을 읽을 수 없습니다."
 #: cmdline/apt-get.cc:816
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
+"이상하게도 크기가 서로 다릅니다. apt@packages.debian.org로 이메일을 보내주십"
+"시오."
 
 #: cmdline/apt-get.cc:821
 #, c-format
@@ -833,9 +829,9 @@ msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "압축을 풀면 %s바이트의 디스크 공간이 비워집니다.\n"
 
 #: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1971
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't determine free space in %s"
-msgstr "%s에 충분한 공간이 없습니다"
+msgstr "%s의 여유 공간의 크기를 파악할 수 없습니다"
 
 #: cmdline/apt-get.cc:849
 #, c-format
@@ -854,13 +850,13 @@ msgid "Yes, do as I say!"
 msgstr "Yes, do as I say!"
 
 #: cmdline/apt-get.cc:868
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
-"무언가 시스템에 해가 되는 작업을 하려고 합니다.\n"
+"시스템에 무언가 해가 되는 작업을 하려고 합니다.\n"
 "계속하시려면 다음 문구를 입력하십시오: '%s'\n"
 " ?] "
 
@@ -1075,9 +1071,8 @@ msgid "Done"
 msgstr "완료"
 
 #: cmdline/apt-get.cc:1768 cmdline/apt-get.cc:1776
-#, fuzzy
 msgid "Internal error, problem resolver broke stuff"
-msgstr "내부 오류, AllUpgrade때문에 망가졌습니다"
+msgstr "내부 오류, 문제 해결 프로그램이 사고쳤습니다"
 
 #: cmdline/apt-get.cc:1876
 msgid "Must specify at least one package to fetch source for"
@@ -1089,9 +1084,9 @@ msgid "Unable to find a source package for %s"
 msgstr "%s의 소스 꾸러미를 찾을 수 없습니다"
 
 #: cmdline/apt-get.cc:1950
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping already downloaded file '%s'\n"
-msgstr "%s에 이미 풀려 있는 소스의 압축을 풀지 않고 건너 뜁니다.\n"
+msgstr "이미 다운로드 받은 파일 '%s'은(는) 다시 받지 않고 건너 뜁니다.\n"
 
 #: cmdline/apt-get.cc:1974
 #, c-format
@@ -1130,7 +1125,7 @@ msgstr "압축 풀기 명령 '%s' 실패.\n"
 #: cmdline/apt-get.cc:2060
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr ""
+msgstr "'dpkg-dev' 꾸러미가 설치되었는지를 확인해주십시오.\n"
 
 #: cmdline/apt-get.cc:2077
 #, c-format
@@ -1447,7 +1442,7 @@ msgid "Duplicate conf file %s/%s"
 msgstr "%s/%s 설정 파일이 중복되었습니다"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write file %s"
 msgstr "%s 파일을 쓰는 데 실패했습니다"
 
@@ -1662,9 +1657,8 @@ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "%s 안의 CD-ROM을 마운트 해제할 수 없습니다. 사용 중일 것입니다."
 
 #: methods/cdrom.cc:169
-#, fuzzy
 msgid "Disk not found."
-msgstr "파일이 없습니다"
+msgstr "디스크가 없습니다"
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
@@ -1888,42 +1882,41 @@ msgid "Unable to connect to %s %s:"
 msgstr "%s %s에 연결할 수 없습니다:"
 
 #: methods/gpgv.cc:64
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't access keyring: '%s'"
-msgstr "'%s'의 주소를 알아낼 수 없습니다"
+msgstr "키링에 접근할 수 없습니다: '%s'"
 
 #: methods/gpgv.cc:99
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-msgstr ""
+msgstr "E: Acquire::gpgv::Options의 인자 목록이 너무 깁니다. 종료하는 중."
 
 #: methods/gpgv.cc:198
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
+msgstr "내부 오류: 서명은 올바르지만 키 지문을 확인할 수 없습니다!"
 
 #: methods/gpgv.cc:203
 msgid "At least one invalid signature was encountered."
-msgstr ""
+msgstr "최소한 하나 이상의 서명이 잘못되었습니다."
 
 #: methods/gpgv.cc:207
 #, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
-msgstr ""
+msgstr "서명을 인증하기 위한 '%s'를 실행할 수 없습니다(gnupg가 설치됐나요?)"
 
 #: methods/gpgv.cc:212
 msgid "Unknown error executing gpgv"
-msgstr ""
+msgstr "gpgv 실행 도중 알 수 없는 오류 발생"
 
 #: methods/gpgv.cc:243
-#, fuzzy
 msgid "The following signatures were invalid:\n"
-msgstr "다음 꾸러미를 더 설치할 것입니다:"
+msgstr "다음 서명이 올바르지 않습니다:\n"
 
 #: methods/gpgv.cc:250
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
-msgstr ""
+msgstr "다음 서명들은 공개키가 없기 때문에 인증할 수 없습니다:\n"
 
 #: methods/gzip.cc:57
 #, c-format
@@ -2283,15 +2276,15 @@ msgstr "옵션"
 msgid "extra"
 msgstr "별도"
 
-#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
+#: apt-pkg/depcache.cc:61 apt-pkg/depcache.cc:90
 msgid "Building dependency tree"
 msgstr "의존성 트리를 만드는 중입니다"
 
-#: apt-pkg/depcache.cc:61
+#: apt-pkg/depcache.cc:62
 msgid "Candidate versions"
 msgstr "후보 버전"
 
-#: apt-pkg/depcache.cc:90
+#: apt-pkg/depcache.cc:91
 msgid "Dependency generation"
 msgstr "의존성 만들기"
 
@@ -2346,9 +2339,9 @@ msgid "Malformed line %u in source list %s (type)"
 msgstr "소스 리스트 %2$s의 %1$u번 줄이 잘못되었습니다 (타입)"
 
 #: apt-pkg/sourcelist.cc:244
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "소스 리스트 %3$s의 %2$u번 줄의 '%1$s' 타입을 알 수 없습니다"
+msgstr "소스 목록 %3$s의 %2$u번 줄의 '%1$s' 타입을 알 수 없습니다"
 
 #: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
 #, c-format
@@ -2405,12 +2398,12 @@ msgstr "아카이브 디렉토리 %spartial이 빠졌습니다."
 #: apt-pkg/acquire.cc:823
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr ""
+msgstr "파일 받아오는 중: %2$li 중 %1$li (%3$s 남았음)"
 
 #: apt-pkg/acquire.cc:825
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li"
-msgstr "파일 목록을 읽는 중입니다"
+msgstr "파일 받아오는 중: %2$li 중 %1$li"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2423,12 +2416,10 @@ msgid "Method %s did not start correctly"
 msgstr "설치 방법 %s이(가) 올바르게 시작하지 않았습니다"
 
 #: apt-pkg/acquire-worker.cc:377
-#, fuzzy, c-format
+#, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
-"미디어 바꾸기: '%2$s' 드라이브에 다음 레이블이 달린\n"
-"디스크를 넣고 enter를 누르십시오\n"
-" '%1$s'\n"
+"'%2$s' 드라이브에 '%1$s'로 표기된 디스크를 삽입하고 엔터를 눌러주십시오."
 
 #: apt-pkg/init.cc:120
 #, c-format
@@ -2559,7 +2550,7 @@ msgstr "MD5Sum이 맞지 않습니다"
 
 #: apt-pkg/acquire-item.cc:640
 msgid "There are no public key available for the following key IDs:\n"
-msgstr ""
+msgstr "다음 키 ID의 공개키가 없습니다:\n"
 
 #: apt-pkg/acquire-item.cc:753
 #, c-format
@@ -2690,54 +2681,54 @@ msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "레코드 %i개를 파일 %i개가 빠지고 %i개가 맞지 않은 상태로 썼습니다\n"
 
 #: apt-pkg/deb/dpkgpm.cc:358
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing %s"
-msgstr "%s 파일을 여는 중입니다"
+msgstr "%s 준비 중"
 
 #: apt-pkg/deb/dpkgpm.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Unpacking %s"
-msgstr "%s 파일을 여는 중입니다"
+msgstr "%s을(를) 푸는 중입니다"
 
 #: apt-pkg/deb/dpkgpm.cc:364
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to configure %s"
-msgstr "설정 파일 %s 파일을 여는 중입니다"
+msgstr "%s을(를) 설정할 준비를 하는 중입니다"
 
 #: apt-pkg/deb/dpkgpm.cc:365
-#, fuzzy, c-format
+#, c-format
 msgid "Configuring %s"
-msgstr "%s에 연결하는 중입니다"
+msgstr "%s 설정 중"
 
 #: apt-pkg/deb/dpkgpm.cc:366
-#, fuzzy, c-format
+#, c-format
 msgid "Installed %s"
-msgstr "  설치: "
+msgstr "%s 설치했음"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr ""
+msgstr "%s을(를) 삭제할 준비 중"
 
 #: apt-pkg/deb/dpkgpm.cc:372
-#, fuzzy, c-format
+#, c-format
 msgid "Removing %s"
-msgstr "%s 파일을 여는 중입니다"
+msgstr "%s 지우는 중"
 
 #: apt-pkg/deb/dpkgpm.cc:373
-#, fuzzy, c-format
+#, c-format
 msgid "Removed %s"
-msgstr "추천"
+msgstr "%s 지움"
 
 #: apt-pkg/deb/dpkgpm.cc:378
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to completely remove %s"
-msgstr "설정 파일 %s 파일을 여는 중입니다"
+msgstr "%s을(를) 완전히 지울 준비를 하는 중입니다"
 
 #: apt-pkg/deb/dpkgpm.cc:379
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removed %s"
-msgstr "%s을(를) 지우는 데 실패했습니다"
+msgstr "%s을(를) 완전히 지웠습니다"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"

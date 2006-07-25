@@ -17,6 +17,7 @@
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
 #define GNUPGNOPUBKEY "[GNUPG:] NO_PUBKEY"
 #define GNUPGVALIDSIG "[GNUPG:] VALIDSIG"
+#define GNUPGNODATA "[GNUPG:] NODATA"
 
 class GPGVMethod : public pkgAcqMethod
 {
@@ -171,7 +172,12 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             std::cerr << "Got NO_PUBKEY " << std::endl;
          NoPubKeySigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
-
+      if (strncmp(buffer, GNUPGNODATA, sizeof(GNUPGBADSIG)-1) == 0)
+      {
+         if (_config->FindB("Debug::Acquire::gpgv", false))
+            std::cerr << "Got NODATA! " << std::endl;
+         BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
+      }
       if (strncmp(buffer, GNUPGVALIDSIG, sizeof(GNUPGVALIDSIG)-1) == 0)
       {
          char *sig = buffer + sizeof(GNUPGPREFIX);
