@@ -1055,9 +1055,12 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 	 UBuf.modtime = FailTime;
 	 utime(FailFile.c_str(),&UBuf);
 	 
-	 // If the file is missing we hard fail otherwise transient fail
-	 if (Missing == true)
+	 // If the file is missing we hard fail and delete the destfile
+	 // otherwise transient fail
+	 if (Missing == true) {
+	    unlink(FailFile.c_str());
 	    return false;
+	 }
 	 Fail(true);
 	 return true;
       }

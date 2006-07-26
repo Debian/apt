@@ -1,5 +1,6 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
+#include <apt-pkg/sha256.h>
 #include <apt-pkg/strutl.h>
 #include <iostream>
 
@@ -57,6 +58,12 @@ int main()
 		      "d174ab98d277d9f5a5611c2c9f419d9f");
    Test<MD5Summation>("12345678901234567890123456789012345678901234567890123456789012345678901234567890",
 		      "57edf4a22be3c955ac49da2e2107b67a");
+
+   // SHA-256, From FIPS 180-2
+   Test<SHA256Summation>("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", 
+			 "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
+   
+
    return 0; 
 }
 

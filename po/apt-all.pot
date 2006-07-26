@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-20 12:50+0200\n"
+"POT-Creation-Date: 2006-05-27 13:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -417,7 +417,7 @@ msgid " DeLink limit of %sB hit.\n"
 msgstr ""
 
 #: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:260
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:266
 #, c-format
 msgid "Failed to stat %s"
 msgstr ""
@@ -1365,7 +1365,7 @@ msgstr ""
 msgid "Internal error getting a package name"
 msgstr ""
 
-#: apt-inst/deb/dpkgdb.cc:205
+#: apt-inst/deb/dpkgdb.cc:205 apt-inst/deb/dpkgdb.cc:386
 msgid "Reading file listing"
 msgstr ""
 
@@ -1407,10 +1407,6 @@ msgstr ""
 
 #: apt-inst/deb/dpkgdb.cc:383
 msgid "The pkg cache must be initialized first"
-msgstr ""
-
-#: apt-inst/deb/dpkgdb.cc:386
-msgid "Reading file list"
 msgstr ""
 
 #: apt-inst/deb/dpkgdb.cc:443
@@ -1483,12 +1479,12 @@ msgstr ""
 msgid "File not found"
 msgstr ""
 
-#: methods/copy.cc:42 methods/gpgv.cc:269 methods/gzip.cc:133
+#: methods/copy.cc:42 methods/gpgv.cc:275 methods/gzip.cc:133
 #: methods/gzip.cc:142
 msgid "Failed to stat"
 msgstr ""
 
-#: methods/copy.cc:79 methods/gpgv.cc:266 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:272 methods/gzip.cc:139
 msgid "Failed to set modification time"
 msgstr ""
 
@@ -1637,7 +1633,7 @@ msgstr ""
 msgid "Query"
 msgstr ""
 
-#: methods/ftp.cc:1106
+#: methods/ftp.cc:1109
 msgid "Unable to invoke "
 msgstr ""
 
@@ -1698,37 +1694,38 @@ msgstr ""
 msgid "Unable to connect to %s %s:"
 msgstr ""
 
-#: methods/gpgv.cc:92
+#: methods/gpgv.cc:64
+#, c-format
+msgid "Couldn't access keyring: '%s'"
+msgstr ""
+
+#: methods/gpgv.cc:99
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr ""
 
-#: methods/gpgv.cc:191
+#: methods/gpgv.cc:198
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 
-#: methods/gpgv.cc:196
+#: methods/gpgv.cc:203
 msgid "At least one invalid signature was encountered."
 msgstr ""
 
-#. FIXME String concatenation considered harmful.
-#: methods/gpgv.cc:201
-msgid "Could not execute "
+#: methods/gpgv.cc:207
+#, c-format
+msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgstr ""
 
-#: methods/gpgv.cc:202
-msgid " to verify signature (is gnupg installed?)"
-msgstr ""
-
-#: methods/gpgv.cc:206
+#: methods/gpgv.cc:212
 msgid "Unknown error executing gpgv"
 msgstr ""
 
-#: methods/gpgv.cc:237
+#: methods/gpgv.cc:243
 msgid "The following signatures were invalid:\n"
 msgstr ""
 
-#: methods/gpgv.cc:244
+#: methods/gpgv.cc:250
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -2092,24 +2089,24 @@ msgstr ""
 msgid "extra"
 msgstr ""
 
-#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
+#: apt-pkg/depcache.cc:61 apt-pkg/depcache.cc:90
 msgid "Building dependency tree"
 msgstr ""
 
-#: apt-pkg/depcache.cc:61
+#: apt-pkg/depcache.cc:62
 msgid "Candidate versions"
 msgstr ""
 
-#: apt-pkg/depcache.cc:90
+#: apt-pkg/depcache.cc:91
 msgid "Dependency generation"
 msgstr ""
 
-#: apt-pkg/tagfile.cc:73
+#: apt-pkg/tagfile.cc:72
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr ""
 
-#: apt-pkg/tagfile.cc:160
+#: apt-pkg/tagfile.cc:102
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr ""

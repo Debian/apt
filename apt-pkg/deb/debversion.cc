@@ -59,7 +59,7 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
    }
 
    /* Iterate over the whole string
-      What this does is to spilt the whole string into groups of
+      What this does is to split the whole string into groups of
       numeric and non numeric portions. For instance:
          a67bhgs89
       Has 4 portions 'a', '67', 'bhgs', '89'. A more normal:
@@ -140,6 +140,27 @@ int debVersioningSystem::DoCmpVersion(const char *A,const char *AEnd,
    if (rhs == BEnd)
       rhs = B;
    
+   // Special case: a zero epoch is the same as no epoch,
+   // so remove it.
+   if (lhs != A)
+   {
+      for (; *A == '0'; ++A);
+      if (A == lhs)
+      {
+	 ++A;
+	 ++lhs;
+      }
+   }
+   if (rhs != B)
+   {
+      for (; *B == '0'; ++B);
+      if (B == rhs)
+      {
+	 ++B;
+	 ++rhs;
+      }
+   }
+
    // Compare the epoch
    int Res = CmpFragment(A,lhs,B,rhs);
    if (Res != 0)
