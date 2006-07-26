@@ -1487,159 +1487,162 @@ bool DoInstall(CommandLine &CmdL)
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       DefRemove = true;
    else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
-     {
-       _config->Set("APT::Get::AutomaticRemove", "true");
-       DefRemove = true;
-     }
-
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
-      // Duplicate the string
-      unsigned int Length = strlen(*I);
-      char S[300];
-      if (Length >= sizeof(S))
-	 continue;
-      strcpy(S,*I);
-      
-      // See if we are removing and special indicators..
-      bool Remove = DefRemove;
-      char *VerTag = 0;
-      bool VerIsRel = false;
-      while (Cache->FindPkg(S).end() == true)
-      {
-	 // Handle an optional end tag indicating what to do
-	 if (Length >= 1 && S[Length - 1] == '-')
-	 {
-	    Remove = true;
-	    S[--Length] = 0;
-	    continue;
-	 }
-	 
-	 if (Length >= 1 && S[Length - 1] == '+')
-	 {
-	    Remove = false;
-	    S[--Length] = 0;
-	    continue;
-	 }
-	 
-	 char *Slash = strchr(S,'=');
-	 if (Slash != 0)
-	 {
-	    VerIsRel = false;
-	    *Slash = 0;
-	    VerTag = Slash + 1;
-	 }
-	 
-	 Slash = strchr(S,'/');
-	 if (Slash != 0)
-	 {
-	    VerIsRel = true;
-	    *Slash = 0;
-	    VerTag = Slash + 1;
-	 }
-	 
-	 break;
-      }
-      
-      // Locate the package
-      pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
-      Packages++;
-      if (Pkg.end() == true)
-      {
-	 // Check if the name is a regex
-	 const char *I;
-	 for (I = S; *I != 0; I++)
-	    if (*I == '?' || *I == '*' || *I == '|' ||
-	        *I == '[' || *I == '^' || *I == '$')
-	       break;
-	 if (*I == 0)
-	    return _error->Error(_("Couldn't find package %s"),S);
+      _config->Set("APT::Get::AutomaticRemove", "true");
+      DefRemove = true;
+   }
 
-	 // Regexs must always be confirmed
-	 ExpectedInst += 1000;
-	 
-	 // Compile the regex pattern
-	 regex_t Pattern;
-	 int Res;
-	 if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
-		     REG_NOSUB)) != 0)
+   // new scope for the ActionGroup
+   {
+      pkgDepCache::ActionGroup group(Cache);
+      for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+      {
+	 // Duplicate the string
+	 unsigned int Length = strlen(*I);
+	 char S[300];
+	 if (Length >= sizeof(S))
+	    continue;
+	 strcpy(S,*I);
+      
+	 // See if we are removing and special indicators..
+	 bool Remove = DefRemove;
+	 char *VerTag = 0;
+	 bool VerIsRel = false;
+	 while (Cache->FindPkg(S).end() == true)
 	 {
-	    char Error[300];	    
-	    regerror(Res,&Pattern,Error,sizeof(Error));
-	    return _error->Error(_("Regex compilation error - %s"),Error);
-	 }
-	 
-	 // Run over the matches
-	 bool Hit = false;
-	 for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
-	 {
-	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+	    // Handle an optional end tag indicating what to do
+	    if (Length >= 1 && S[Length - 1] == '-')
+	    {
+	       Remove = true;
+	       S[--Length] = 0;
 	       continue;
+	    }
+	 
+	    if (Length >= 1 && S[Length - 1] == '+')
+	    {
+	       Remove = false;
+	       S[--Length] = 0;
+	       continue;
+	    }
+	 
+	    char *Slash = strchr(S,'=');
+	    if (Slash != 0)
+	    {
+	       VerIsRel = false;
+	       *Slash = 0;
+	       VerTag = Slash + 1;
+	    }
+	 
+	    Slash = strchr(S,'/');
+	    if (Slash != 0)
+	    {
+	       VerIsRel = true;
+	       *Slash = 0;
+	       VerTag = Slash + 1;
+	    }
+	 
+	    break;
+	 }
+      
+	 // Locate the package
+	 pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
+	 Packages++;
+	 if (Pkg.end() == true)
+	 {
+	    // Check if the name is a regex
+	    const char *I;
+	    for (I = S; *I != 0; I++)
+	       if (*I == '?' || *I == '*' || *I == '|' ||
+		   *I == '[' || *I == '^' || *I == '$')
+		  break;
+	    if (*I == 0)
+	       return _error->Error(_("Couldn't find package %s"),S);
+
+	    // Regexs must always be confirmed
+	    ExpectedInst += 1000;
+	 
+	    // Compile the regex pattern
+	    regex_t Pattern;
+	    int Res;
+	    if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
+			       REG_NOSUB)) != 0)
+	    {
+	       char Error[300];	    
+	       regerror(Res,&Pattern,Error,sizeof(Error));
+	       return _error->Error(_("Regex compilation error - %s"),Error);
+	    }
+	 
+	    // Run over the matches
+	    bool Hit = false;
+	    for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+	    {
+	       if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+		  continue;
 	    
-	    ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
-		     Pkg.Name(),S);
+	       ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
+			Pkg.Name(),S);
 	    
+	       if (VerTag != 0)
+		  if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
+		     return false;
+	    
+	       Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
+				   ExpectedInst,false);
+	    }
+	    regfree(&Pattern);
+	 
+	    if (Hit == false)
+	       return _error->Error(_("Couldn't find package %s"),S);
+	 }
+	 else
+	 {
 	    if (VerTag != 0)
 	       if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
 		  return false;
-	    
-	    Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
-				ExpectedInst,false);
-	 }
-	 regfree(&Pattern);
-	 
-	 if (Hit == false)
-	    return _error->Error(_("Couldn't find package %s"),S);
-      }
-      else
-      {
-	 if (VerTag != 0)
-	    if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
+	    if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
 	       return false;
-	 if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
-	    return false;
-      }      
-   }
-
-   /* If we are in the Broken fixing mode we do not attempt to fix the
-      problems. This is if the user invoked install without -f and gave
-      packages */
-   if (BrokenFix == true && Cache->BrokenCount() != 0)
-   {
-      c1out << _("You might want to run `apt-get -f install' to correct these:") << endl;
-      ShowBroken(c1out,Cache,false);
-
-      return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
-   }
-   
-   // Call the scored problem resolver
-   Fix.InstallProtect();
-   if (Fix.Resolve(true) == false)
-      _error->Discard();
-
-   // Now we check the state of the packages,
-   if (Cache->BrokenCount() != 0)
-   {
-      c1out << 
-       _("Some packages could not be installed. This may mean that you have\n" 
-	 "requested an impossible situation or if you are using the unstable\n" 
-	 "distribution that some required packages have not yet been created\n"
-	 "or been moved out of Incoming.") << endl;
-      if (Packages == 1)
-      {
-	 c1out << endl;
-	 c1out << 
-	  _("Since you only requested a single operation it is extremely likely that\n"
-	    "the package is simply not installable and a bug report against\n" 
-	    "that package should be filed.") << endl;
+	 }      
       }
 
-      c1out << _("The following information may help to resolve the situation:") << endl;
-      c1out << endl;
-      ShowBroken(c1out,Cache,false);
-      return _error->Error(_("Broken packages"));
-   }   
+      /* If we are in the Broken fixing mode we do not attempt to fix the
+	 problems. This is if the user invoked install without -f and gave
+	 packages */
+      if (BrokenFix == true && Cache->BrokenCount() != 0)
+      {
+	 c1out << _("You might want to run `apt-get -f install' to correct these:") << endl;
+	 ShowBroken(c1out,Cache,false);
+
+	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
+      }
    
+      // Call the scored problem resolver
+      Fix.InstallProtect();
+      if (Fix.Resolve(true) == false)
+	 _error->Discard();
+
+      // Now we check the state of the packages,
+      if (Cache->BrokenCount() != 0)
+      {
+	 c1out << 
+	    _("Some packages could not be installed. This may mean that you have\n" 
+	      "requested an impossible situation or if you are using the unstable\n" 
+	      "distribution that some required packages have not yet been created\n"
+	      "or been moved out of Incoming.") << endl;
+	 if (Packages == 1)
+	 {
+	    c1out << endl;
+	    c1out << 
+	       _("Since you only requested a single operation it is extremely likely that\n"
+		 "the package is simply not installable and a bug report against\n" 
+		 "that package should be filed.") << endl;
+	 }
+
+	 c1out << _("The following information may help to resolve the situation:") << endl;
+	 c1out << endl;
+	 ShowBroken(c1out,Cache,false);
+	 return _error->Error(_("Broken packages"));
+      }   
+   }
    if (_config->FindB("APT::Get::AutomaticRemove")) {
       if (!DoAutomaticRemove(Cache)) 
 	 return false;
