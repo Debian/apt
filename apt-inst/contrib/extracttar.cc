@@ -136,7 +136,8 @@ bool ExtractTar::StartGzip()
       
       const char *Args[3];
       string confvar = string("dir::bin::") + DecompressProg;
-      Args[0] = _config->Find(confvar.c_str(),DecompressProg.c_str()).c_str();
+      string argv0 = _config->Find(confvar.c_str(),DecompressProg.c_str());
+      Args[0] = argv0.c_str();
       Args[1] = "-d";
       Args[2] = 0;
       execvp(Args[0],(char **)Args);
