@@ -1,3 +1,48 @@
+apt (0.6.45ubuntu1) edgy; urgency=low
+
+  * merged with debian/unstable
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue,  1 Aug 2006 15:43:22 +0200
+
+apt (0.6.45) unstable; urgency=low
+
+  * apt-pkg/contrib/sha256.cc:
+    - fixed the sha256 generation (closes: #378183)
+  * ftparchive/cachedb.cc:
+    - applied patch from Anthony Towns to fix Clean() function
+      (closes: #379576)
+  * doc/apt-get.8.xml:
+    - fix path to the apt user build (Closes: #375640)
+  * doc/apt-cache.8.xml:
+    - typo (Closes: #376408)
+  * apt-pkg/deb/dpkgpm.cc:
+    - make progress reporting more robust against multiline error
+      messages (first half of a fix for #374195)
+  * doc/examples/configure-index:
+    - document Debug::pkgAcquire::Auth     
+  * methods/gpgv.cc:
+    - deal with gpg error "NODATA". Closes: #296103, Thanks to 
+      Luis Rodrigo Gallardo Cruz for the patch
+  * apt-inst/contrib/extracttar.cc:
+    - fix for string mangling, closes: #373864
+  * apt-pkg/acquire-item.cc:
+    - check for bzip2 in /bin (closes: #377391)
+  * apt-pkg/tagfile.cc:
+    - make it work on non-mapable files again, thanks 
+      to James Troup for confirming the fix (closes: #376777)
+  * Merged from Christian Perrier bzr branch:
+    * ko.po: Updated to 512t. Closes: #378901
+    * hu.po: Updated to 512t. Closes: #376330
+    * km.po: New Khmer translation: 506t6f. Closes: #375068
+    * ne.po: New Nepali translation: 512t. Closes: #373729
+    * vi.po: Updated to 512t. Closes: #368038
+    * zh_TW.po: Remove an extra %s in one string. Closes: #370551
+    * dz.po: New Dzongkha translation: 512t
+    * ro.po: Updated to 512t
+    * eu.po: Updated
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 27 Jul 2006 00:52:05 +0200
+
 apt (0.6.44.2ubuntu4) edgy; urgency=low
 
   * Make apt-get dselect-upgrade happy again

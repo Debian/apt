@@ -2,20 +2,22 @@
 # Hungarian messages
 # PASZTOR Gyorgy <pasztor@linux.gyakg.u-szeged.hu>, 2002.
 # Gabor Kelemen <kelemeng@gnome.hu>, 2004, 2005.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-16 07:33-0500\n"
-"PO-Revision-Date: 2006-04-30 06:14+0100\n"
+"POT-Creation-Date: 2006-05-27 13:46+0200\n"
+"PO-Revision-Date: 2006-07-02 07:34+0100\n"
 "Last-Translator: SZERVÑC Attila <sas@321.hu>\n"
-"Language-Team: Hungarian <gnome@gnome.hu>\n"
+"Language-Team: Hungarian <debian-l10-hungarian>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.3.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-Language: Hungarian\n"
+"X-Poedit-Country: HUNGARY\n"
 
 #: cmdline/apt-cache.cc:135
 #, c-format
@@ -337,7 +339,6 @@ msgid "Error processing contents %s"
 msgstr "Hiba %s tartalmának feldolgozásakor"
 
 #: ftparchive/apt-ftparchive.cc:556
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -390,13 +391,13 @@ msgstr ""
 "sok stílusát támogatja, a teljesen automatizálttól kezdve a\n"
 "dpkg-scanpackages és a dpkg-scansources funkcionális helyettesítéséig.\n"
 "\n"
-"Az apt-ftparchive 'Package' fájlokat generál a .deb-ek fájából. A Package\n"
+"Az apt-ftparchive Package fájlokat generál a .deb-ek fájából. A Package\n"
 "fájl minden vezérlő mezőt tartalmaz minden egyes csomagról úgy az MD5\n"
 "hasht mint a fájlméretet. Az override (felülbíráló) fájl támogatott a\n"
 "Prioritás és Szekció mezők értékének kényszerítésére.\n"
 "\n"
-"Hasonlóképpen az apt-ftparchive 'Sources' fájlokat generál .dsc-k fájából.\n"
-"A --source-override opció használható forrásfelülbíráló fájlok megadására\n"
+"Hasonlóképpen az apt-ftparchive Sources fájlokat generál .dsc-k fájából.\n"
+"A --source-override opció használható forrás-felülbíráló fájlok megadására\n"
 "\n"
 "A 'packages' és 'sources' parancsokat a fa gyökeréből kell futtatni.\n"
 "A BinaryPath-nak a rekurzív keresés kiindulópontjára kell mutatni és\n"
@@ -404,12 +405,12 @@ msgstr ""
 "előtag\n"
 "hozzáadódik a fájlnév mezőkhöz, ha meg van adva. Felhasználására egy példa "
 "a\n"
-"debian archívumból:\n"
+"Debian archívumból:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
 "Opciók:\n"
-"  -h    Ez a súgó szöveg\n"
+"  -h    E súgó szöveg\n"
 "  --md5 MD5 generálás vezérlése\n"
 "  -s=?  Forrás felülbíráló fájl\n"
 "  -q    Szűkszavú mód\n"
@@ -775,7 +776,7 @@ msgstr "A hitelesítési figyelmeztetést átléptem.\n"
 
 #: cmdline/apt-get.cc:700
 msgid "Install these packages without verification [y/N]? "
-msgstr "Valóban telepíted e csomagokat ellenőrzés nélkül (y/N)? "
+msgstr "Valóban telepíted e csomagokat ellenőrzés nélkül (i/N)? "
 
 #: cmdline/apt-get.cc:702
 msgid "Some packages could not be authenticated"
@@ -935,7 +936,7 @@ msgid ""
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"%s csomag nem elérhető, de egy másikhivatkozik rá\n"
+"%s csomag nem elérhető, de egy másik hivatkozik rá\n"
 ".A kért csomag tehát: hiányzik, elavult vagy csak más forrásból érhető el\n"
 
 #: cmdline/apt-get.cc:1110
@@ -1095,12 +1096,12 @@ msgstr "Nincs elég szabad hely itt: %s"
 #: cmdline/apt-get.cc:1979
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "%sB/%sB forrásarchívot kell letölteni.\n"
+msgstr "%sB/%sB forrás-archívumot kell letölteni.\n"
 
 #: cmdline/apt-get.cc:1982
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "%sB forrásarchívumot kell letölteni.\n"
+msgstr "%sB forrás-archívumot kell letölteni.\n"
 
 #: cmdline/apt-get.cc:1988
 #, c-format
@@ -1167,7 +1168,7 @@ msgid ""
 "package %s can satisfy version requirements"
 msgstr ""
 "%s függősége ennek: %s, ez nem elégíthető ki, mert a(z) %s csomagnak nincs a "
-"verziókövetelményt kielégítő elérhető verziója."
+"verzió-követelményt kielégítő elérhető verziója."
 
 #: cmdline/apt-get.cc:2299
 #, c-format
@@ -1526,7 +1527,7 @@ msgstr "%sinfo nem érhető el"
 
 #: apt-inst/deb/dpkgdb.cc:123
 msgid "The info and temp directories need to be on the same filesystem"
-msgstr "Az info és temp könyvtáraknak ugyanazon a fájlrendszeren kell lenniük"
+msgstr "Az info és temp könyvtáraknak egy fájlrendszeren kell lenniük"
 
 #. Build the status cache
 #: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
@@ -1590,7 +1591,7 @@ msgstr "Belső hiba egy eltérítés hozzáadásakor"
 
 #: apt-inst/deb/dpkgdb.cc:383
 msgid "The pkg cache must be initialized first"
-msgstr "A csomag gyorsítótárnak előbb kell inicializálva lennie"
+msgstr "A csomag gyorstárnak előbb kell inicializálva lennie"
 
 #: apt-inst/deb/dpkgdb.cc:443
 #, c-format
@@ -1782,7 +1783,7 @@ msgstr "Nem lehet PORT parancsot küldeni"
 #: methods/ftp.cc:789
 #, c-format
 msgid "Unknown address family %u (AF_*)"
-msgstr "Ismeretlen a(z) %u címcsalád (AF_*)"
+msgstr "Ismeretlen %u címcsalád (AF_*)"
 
 #: methods/ftp.cc:798
 #, c-format
@@ -1852,7 +1853,7 @@ msgstr "Időtúllépés miatt nem lehet kapcsolódni a következőhöz: %s: %s (
 #: methods/connect.cc:108
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
-msgstr "Nem lehet ehhez: %s: %s (%s)."
+msgstr "Nem tudtam kapcsolódni ehhez: %s: %s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -1882,9 +1883,9 @@ msgid "Unable to connect to %s %s:"
 msgstr "Sikertelen kapcsolódás ide: %s %s:"
 
 #: methods/gpgv.cc:64
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't access keyring: '%s'"
-msgstr "Nem lehet feloldani a következőt: '%s' "
+msgstr "%s kulcstartó nem érhető el"
 
 #: methods/gpgv.cc:99
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
@@ -1893,16 +1894,16 @@ msgstr "H: Az Acquire::gpgv::Options argumentum lista túl hosszú. Kilépek."
 #: methods/gpgv.cc:198
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
+msgstr "Belső hiba: Jó aláírás, de meghatározhatatlan kulcs ujjlenyomat?!"
 
 #: methods/gpgv.cc:203
 msgid "At least one invalid signature was encountered."
 msgstr "1 vagy több érvénytelen aláírást találtam."
 
 #: methods/gpgv.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
-msgstr " az aláírás igazolásához (a gnupg telepítve van?)"
+msgstr "'%s' nem futtatható az aláírás ellenőrzéséhez (a gnupg telepítve van?)"
 
 #: methods/gpgv.cc:212
 msgid "Unknown error executing gpgv"
@@ -1927,7 +1928,7 @@ msgstr "Nem lehet csövet nyitni ehhez: %s"
 #: methods/gzip.cc:102
 #, c-format
 msgid "Read error from %s process"
-msgstr "Olvasási hiba a(z) %s folyamattól"
+msgstr "Olvasási hiba %s folyamattól"
 
 #: methods/http.cc:376
 msgid "Waiting for headers"
@@ -2015,7 +2016,7 @@ msgstr "Nem sikerült %lu bájtot mmap-olni"
 #: apt-pkg/contrib/strutl.cc:938
 #, c-format
 msgid "Selection %s not found"
-msgstr "A(z) %s kiválasztás nem található"
+msgstr "%s kiválasztás nem található"
 
 #: apt-pkg/contrib/configuration.cc:436
 #, c-format
@@ -2065,7 +2066,7 @@ msgstr "Szintaktikai hiba %s: %u: ugyaninnen include-olva"
 #: apt-pkg/contrib/configuration.cc:704
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "Szintaktikai hiba %s: %u: '%s' nem támogatott előrás"
+msgstr "Szintaktikai hiba %s: %u: '%s' nem támogatott előírás"
 
 #: apt-pkg/contrib/configuration.cc:738
 #, c-format
@@ -2212,15 +2213,15 @@ msgstr "Hiba a fájl szinkronizálásakor"
 
 #: apt-pkg/pkgcache.cc:126
 msgid "Empty package cache"
-msgstr "Üres csomaggyorsítótár"
+msgstr "Üres csomag-gyorstár"
 
 #: apt-pkg/pkgcache.cc:132
 msgid "The package cache file is corrupted"
-msgstr "A csomaggyorsítótár-fájl megsérült"
+msgstr "A csomag-gyorstár fájl megsérült"
 
 #: apt-pkg/pkgcache.cc:137
 msgid "The package cache file is an incompatible version"
-msgstr "A csomaggyorsítótár-fájl inkompatibilis verziójú"
+msgstr "A csomag-gyorstár fájl inkompatibilis verziójú"
 
 #: apt-pkg/pkgcache.cc:142
 #, c-format
@@ -2229,7 +2230,7 @@ msgstr "Ez az APT nem támogatja a(z) '%s' verziórendszert"
 
 #: apt-pkg/pkgcache.cc:147
 msgid "The package cache was built for a different architecture"
-msgstr "A csomaggyorsítótár egy másik architektúrához készült"
+msgstr "A csomag-gyorstár egy másik architektúrához készült"
 
 #: apt-pkg/pkgcache.cc:218
 msgid "Depends"
@@ -2279,15 +2280,15 @@ msgstr "opcionális"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/depcache.cc:60 apt-pkg/depcache.cc:89
+#: apt-pkg/depcache.cc:61 apt-pkg/depcache.cc:90
 msgid "Building dependency tree"
 msgstr "Függőségi fa építése"
 
-#: apt-pkg/depcache.cc:61
+#: apt-pkg/depcache.cc:62
 msgid "Candidate versions"
 msgstr "Lehetséges verziók"
 
-#: apt-pkg/depcache.cc:90
+#: apt-pkg/depcache.cc:91
 msgid "Dependency generation"
 msgstr "Függőség-generálás"
 
@@ -2400,14 +2401,14 @@ msgstr "%spartial archívumkönyvtár hiányzik."
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:823
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Fájlletöltés: %li/%li (%s van hátra)"
+msgstr "%li/%li fájl letöltése (%s marad)"
 
 #: apt-pkg/acquire.cc:825
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li"
-msgstr "Fájllista olvasása"
+msgstr "%li/%li fájl letöltése"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2636,11 +2637,9 @@ msgid "Scanning disc for index files..\n"
 msgstr "Indexfájlok keresése a lemezen...\n"
 
 #: apt-pkg/cdrom.cc:647
-#, fuzzy, c-format
+#, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
-msgstr ""
-"%i csomagindexet, %i forrásindexet, %i fordításindexet és %i aláírást "
-"találtam\n"
+msgstr "%i csomagindexet, %i forrásindexet és %i aláírást találtam\n"
 
 #: apt-pkg/cdrom.cc:710
 msgid "That is not a valid name, try again.\n"
@@ -2732,14 +2731,14 @@ msgid "Removed %s"
 msgstr "Eltávolított %s"
 
 #: apt-pkg/deb/dpkgpm.cc:378
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to completely remove %s"
-msgstr "%s konfigurálásának előkészítése"
+msgstr "%s teljes eltávolítása előkészítése"
 
 #: apt-pkg/deb/dpkgpm.cc:379
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removed %s"
-msgstr "%s eltávolítása sikertelen"
+msgstr "%s teljesen eltávolítva"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
