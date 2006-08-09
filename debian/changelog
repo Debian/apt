@@ -2,6 +2,11 @@ apt (0.6.45.1) unstable; urgency=low
 
   * debian/control:
     - switched to libdb4.4 for building (closes: #381019)
+  * cmdline/apt-get.cc:
+    - show only the recommends/suggests for the candidate-version, not for all
+      versions of the package (closes: #257054)
+    - properly handle recommends/suggests or-groups when printing the list of
+      suggested/recommends packages (closes: #311619)
 
  --
 
