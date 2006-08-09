@@ -1623,6 +1623,8 @@ bool DoInstall(CommandLine &CmdL)
 	    pkgCache::DepIterator End;
 	    D.GlobOr(Start,End); // advances D
 
+	    // FIXME: we really should display a or-group as a or-group to the user
+	    //        the problem is that ShowList is incapable of doing this
 	    string RecommendsOrList,RecommendsOrVersions;
 	    string SuggestsOrList,SuggestsOrVersions;
 	    bool foundInstalledInOrGroup = false;
