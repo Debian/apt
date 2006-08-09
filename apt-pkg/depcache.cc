@@ -778,7 +778,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       installed */
    StateCache &P = PkgState[Pkg->ID];
    P.iFlags &= ~AutoKept;
-   if (P.InstBroken() == false && (P.Mode == ModeInstall ||
+   if ((P.InstPolicyBroken() == false && P.InstBroken() == false) && 
+       (P.Mode == ModeInstall ||
 	P.CandidateVer == (Version *)Pkg.CurrentVer()))
    {
       if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
@@ -789,11 +790,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    // See if there is even any possible instalation candidate
    if (P.CandidateVer == 0)
       return;
-   
    // We dont even try to install virtual packages..
    if (Pkg->VersionList == 0)
       return;
-   
    /* Target the candidate version and remove the autoflag. We reset the
       autoflag below if this was called recursively. Otherwise the user
       should have the ability to de-auto a package by changing its state */
@@ -850,7 +849,33 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 it will be installed. Otherwise we only worry about critical deps */
       if (IsImportantDep(Start) == false)
 	 continue;
-      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false)
+
+      /* check if any ImportantDep() (but not Critial) where added
+       * since we installed the thing
+       */
+      bool isNewImportantDep = false;
+      if(IsImportantDep(Start) && !Start.IsCritical())
+      {
+	 bool found=false;
+	 VerIterator instVer = Pkg.CurrentVer();
+	 for (DepIterator D = instVer.DependsList(); !D.end(); D++)
+	 {
+	    //FIXME: deal better with or-groups(?)
+	    DepIterator LocalStart = D;
+	    
+	    if(IsImportantDep(Dep) && Start.TargetPkg() == D.TargetPkg())
+	       found=true;
+	 }
+	 // this is a new dep if it was not found to be already
+	 // a important dep of the installed pacakge
+	 isNewImportantDep = !found;
+      }
+      if(isNewImportantDep)
+	 if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
+	    std::clog << "new important dependency: " 
+		      << Start.TargetPkg().Name() << std::endl;
+
+      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false && !isNewImportantDep)
 	 continue;
       
       /* If we are in an or group locate the first or that can 
@@ -1055,13 +1080,6 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
    return Last;
 }
 									/*}}}*/
-// Policy::IsImportantDep - True if the dependency is important		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
-{
-   return Dep.IsCritical();
-}
 									/*}}}*/
 
 pkgDepCache::DefaultRootSetFunc::DefaultRootSetFunc()
@@ -1276,3 +1294,19 @@ bool pkgDepCache::Sweep()
 
    return true;
 }
+
+// Policy::IsImportantDep - True if the dependency is important		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
+{
+   if(Dep.IsCritical())
+      return true;
+   else if(Dep->Type == pkgCache::Dep::Recommends)
+      return  _config->FindB("APT::Install-Recommends", false);
+   else if(Dep->Type == pkgCache::Dep::Suggests)
+     return _config->FindB("APT::Install-Suggests", false);
+
+   return false;
+}
+									/*}}}*/

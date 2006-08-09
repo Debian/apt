@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-27 13:46+0200\n"
+"POT-Creation-Date: 2006-08-09 23:46+0200\n"
 "PO-Revision-Date: 2006-03-31 22:05+0300\n"
 "Last-Translator: Yavor Doganov <yavor@doganov.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -150,7 +150,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1652 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2369 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2462 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s за %s %s, компилиран на %s %s\n"
@@ -306,7 +306,7 @@ msgstr ""
 "  -o=? Настройване на произволна конфигурационна опция, т.е. -o dir::cache=/"
 "tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:710
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:714
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Неуспех при записа на %s"
@@ -433,114 +433,125 @@ msgstr "Няма съвпадения на избора"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Липсват някои файлове от групата с файлови пакети „%s“"
 
-#: ftparchive/cachedb.cc:45
+#: ftparchive/cachedb.cc:47
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "БД е повредена, файлът е преименуван на %s.old"
 
-#: ftparchive/cachedb.cc:63
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "БД е стара, опит за актуализиране на %s"
 
-#: ftparchive/cachedb.cc:73
+#: ftparchive/cachedb.cc:76
+msgid ""
+"DB format is invalid. If you upgraded from a older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+
+#: ftparchive/cachedb.cc:81
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "Неуспех при отварянето на файл %s от БД: %s"
 
-#: ftparchive/cachedb.cc:114
-#, c-format
-msgid "File date has changed %s"
-msgstr "Датата на файла %s е променена"
-
-#: ftparchive/cachedb.cc:155
-msgid "Archive has no control record"
-msgstr "В архива няма поле „control“"
-
-#: ftparchive/cachedb.cc:267
-msgid "Unable to get a cursor"
-msgstr "Неуспех при получаването на курсор"
-
-#: ftparchive/writer.cc:78
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "W: Неуспех при четенето на директория %s\n"
-
-#: ftparchive/writer.cc:83
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "W: Неуспех при четенето на %s\n"
-
-#: ftparchive/writer.cc:125
-msgid "E: "
-msgstr "E: "
-
-#: ftparchive/writer.cc:127
-msgid "W: "
-msgstr "W: "
-
-#: ftparchive/writer.cc:134
-msgid "E: Errors apply to file "
-msgstr "E: Грешките се отнасят за файла "
-
-#: ftparchive/writer.cc:151 ftparchive/writer.cc:181
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Неуспех при превръщането на %s"
-
-#: ftparchive/writer.cc:163
-msgid "Tree walking failed"
-msgstr "Неуспех при обхода на дървото"
-
-#: ftparchive/writer.cc:188
-#, c-format
-msgid "Failed to open %s"
-msgstr "Неуспех при отварянето на %s"
-
-#: ftparchive/writer.cc:245
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr "DeLink %s [%s]\n"
-
-#: ftparchive/writer.cc:253
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "Неуспех при прочитането на връзка %s"
-
-#: ftparchive/writer.cc:257
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "Неуспех при премахването на връзка %s"
-
-#: ftparchive/writer.cc:264
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** Неуспех при създаването на връзка %s към %s"
-
-#: ftparchive/writer.cc:274
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr "Превишен лимит на DeLink от %sB.\n"
-
-#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:266
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:272
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Грешка при получаването на атрибути за %s"
 
-#: ftparchive/writer.cc:386
+#: ftparchive/cachedb.cc:242
+msgid "Archive has no control record"
+msgstr "В архива няма поле „control“"
+
+#: ftparchive/cachedb.cc:448
+msgid "Unable to get a cursor"
+msgstr "Неуспех при получаването на курсор"
+
+#: ftparchive/writer.cc:79
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: Неуспех при четенето на директория %s\n"
+
+#: ftparchive/writer.cc:84
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: Неуспех при четенето на %s\n"
+
+#: ftparchive/writer.cc:135
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc:137
+msgid "W: "
+msgstr "W: "
+
+#: ftparchive/writer.cc:144
+msgid "E: Errors apply to file "
+msgstr "E: Грешките се отнасят за файла "
+
+#: ftparchive/writer.cc:161 ftparchive/writer.cc:191
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Неуспех при превръщането на %s"
+
+#: ftparchive/writer.cc:173
+msgid "Tree walking failed"
+msgstr "Неуспех при обхода на дървото"
+
+#: ftparchive/writer.cc:198
+#, c-format
+msgid "Failed to open %s"
+msgstr "Неуспех при отварянето на %s"
+
+#: ftparchive/writer.cc:257
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr "DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc:265
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Неуспех при прочитането на връзка %s"
+
+#: ftparchive/writer.cc:269
+#, c-format
+msgid "Failed to unlink %s"
+msgstr "Неуспех при премахването на връзка %s"
+
+#: ftparchive/writer.cc:276
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Неуспех при създаването на връзка %s към %s"
+
+#: ftparchive/writer.cc:286
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr "Превишен лимит на DeLink от %sB.\n"
+
+#: ftparchive/writer.cc:390
 msgid "Archive had no package field"
 msgstr "Архивът няма поле „package“"
 
-#: ftparchive/writer.cc:394 ftparchive/writer.cc:603
+#: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s няма запис „override“\n"
 
-#: ftparchive/writer.cc:437 ftparchive/writer.cc:689
+#: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  поддържащия пакета %s е %s, а не %s\n"
+
+#: ftparchive/writer.cc:623
+#, fuzzy, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s няма запис „override“\n"
+
+#: ftparchive/writer.cc:627
+#, fuzzy, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s няма запис „override“\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -637,79 +648,79 @@ msgstr "Неуспех при премахването на връзка на %s
 msgid "Failed to rename %s to %s"
 msgstr "Неуспех при преименуването на %s на %s"
 
-#: cmdline/apt-get.cc:120
+#: cmdline/apt-get.cc:121
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:142 cmdline/apt-get.cc:1506
+#: cmdline/apt-get.cc:143 cmdline/apt-get.cc:1574
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Грешка при компилирането на регулярния израз - %s"
 
-#: cmdline/apt-get.cc:237
+#: cmdline/apt-get.cc:238
 msgid "The following packages have unmet dependencies:"
 msgstr "Следните пакети имат неудовлетворени зависимости:"
 
-#: cmdline/apt-get.cc:327
+#: cmdline/apt-get.cc:328
 #, c-format
 msgid "but %s is installed"
 msgstr "но е инсталиран %s"
 
-#: cmdline/apt-get.cc:329
+#: cmdline/apt-get.cc:330
 #, c-format
 msgid "but %s is to be installed"
 msgstr "но ще бъде инсталиран %s"
 
-#: cmdline/apt-get.cc:336
+#: cmdline/apt-get.cc:337
 msgid "but it is not installable"
 msgstr "но той не може да бъде инсталиран"
 
-#: cmdline/apt-get.cc:338
+#: cmdline/apt-get.cc:339
 msgid "but it is a virtual package"
 msgstr "но той е виртуален пакет"
 
-#: cmdline/apt-get.cc:341
+#: cmdline/apt-get.cc:342
 msgid "but it is not installed"
 msgstr "но той не е инсталиран"
 
-#: cmdline/apt-get.cc:341
+#: cmdline/apt-get.cc:342
 msgid "but it is not going to be installed"
 msgstr "но той няма да бъде инсталиран"
 
-#: cmdline/apt-get.cc:346
+#: cmdline/apt-get.cc:347
 msgid " or"
 msgstr " или"
 
-#: cmdline/apt-get.cc:375
+#: cmdline/apt-get.cc:376
 msgid "The following NEW packages will be installed:"
 msgstr "Следните НОВИ пакети ще бъдат инсталирани:"
 
-#: cmdline/apt-get.cc:401
+#: cmdline/apt-get.cc:402
 msgid "The following packages will be REMOVED:"
 msgstr "Следните пакети ще бъдат ПРЕМАХНАТИ:"
 
-#: cmdline/apt-get.cc:423
+#: cmdline/apt-get.cc:424
 msgid "The following packages have been kept back:"
 msgstr "Следните пакети няма да бъдат променени:"
 
-#: cmdline/apt-get.cc:444
+#: cmdline/apt-get.cc:445
 msgid "The following packages will be upgraded:"
 msgstr "Следните пакети ще бъдат актуализирани:"
 
-#: cmdline/apt-get.cc:465
+#: cmdline/apt-get.cc:466
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Следните пакети ще бъдат ВЪРНАТИ КЪМ ПО-СТАРА ВЕРСИЯ:"
 
-#: cmdline/apt-get.cc:485
+#: cmdline/apt-get.cc:486
 msgid "The following held packages will be changed:"
 msgstr "Следните задържани пакети ще бъдат променени:"
 
-#: cmdline/apt-get.cc:538
+#: cmdline/apt-get.cc:539
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (поради %s) "
 
-#: cmdline/apt-get.cc:546
+#: cmdline/apt-get.cc:547
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -717,146 +728,146 @@ msgstr ""
 "ПРЕДУПРЕЖДЕНИЕ: Следните необходими пакети ще бъдат премахнати.\n"
 "Това НЕ би трябвало да става освен ако знаете точно какво правите!"
 
-#: cmdline/apt-get.cc:577
+#: cmdline/apt-get.cc:578
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu актуализирани, %lu нови инсталирани, "
 
-#: cmdline/apt-get.cc:581
+#: cmdline/apt-get.cc:582
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu преинсталирани, "
 
-#: cmdline/apt-get.cc:583
+#: cmdline/apt-get.cc:584
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu върнати към по-стара версия, "
 
-#: cmdline/apt-get.cc:585
+#: cmdline/apt-get.cc:586
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu за премахване и %lu без промяна.\n"
 
-#: cmdline/apt-get.cc:589
+#: cmdline/apt-get.cc:590
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu не са напълно инсталирани или премахнати.\n"
 
-#: cmdline/apt-get.cc:649
+#: cmdline/apt-get.cc:650
 msgid "Correcting dependencies..."
 msgstr "Коригиране на зависимостите..."
 
-#: cmdline/apt-get.cc:652
+#: cmdline/apt-get.cc:653
 msgid " failed."
 msgstr " пропадна."
 
-#: cmdline/apt-get.cc:655
+#: cmdline/apt-get.cc:656
 msgid "Unable to correct dependencies"
 msgstr "Неуспех при коригирането на зависимостите"
 
-#: cmdline/apt-get.cc:658
+#: cmdline/apt-get.cc:659
 msgid "Unable to minimize the upgrade set"
 msgstr "Неуспех при минимизирането на набора актуализации"
 
-#: cmdline/apt-get.cc:660
+#: cmdline/apt-get.cc:661
 msgid " Done"
 msgstr " Готово"
 
-#: cmdline/apt-get.cc:664
+#: cmdline/apt-get.cc:665
 msgid "You might want to run `apt-get -f install' to correct these."
 msgstr ""
 "Възможно е да изпълните „apt-get -f install“, за да коригирате тези "
 "неизправности."
 
-#: cmdline/apt-get.cc:667
+#: cmdline/apt-get.cc:668
 msgid "Unmet dependencies. Try using -f."
 msgstr "Неудовлетворени зависимости. Опитайте с „-f“."
 
-#: cmdline/apt-get.cc:689
+#: cmdline/apt-get.cc:690
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "ПРЕДУПРЕЖДЕНИЕ: Следните пакети не могат да бъдат удостоверени!"
 
-#: cmdline/apt-get.cc:693
+#: cmdline/apt-get.cc:694
 msgid "Authentication warning overridden.\n"
 msgstr "Предупреждението за удостоверяването е пренебрегнато.\n"
 
-#: cmdline/apt-get.cc:700
+#: cmdline/apt-get.cc:701
 msgid "Install these packages without verification [y/N]? "
 msgstr "Инсталиране на тези пакети без проверка [y/N]?"
 
-#: cmdline/apt-get.cc:702
+#: cmdline/apt-get.cc:703
 msgid "Some packages could not be authenticated"
 msgstr "Някои пакети не можаха да бъдат удостоверени"
 
-#: cmdline/apt-get.cc:711 cmdline/apt-get.cc:858
+#: cmdline/apt-get.cc:712 cmdline/apt-get.cc:859
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Има проблеми и „-y“ е използвано без „--force-yes“"
 
-#: cmdline/apt-get.cc:755
+#: cmdline/apt-get.cc:756
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Вътрешна грешка, „InstallPackages“ е предизвикано при счупени пакети!"
 
-#: cmdline/apt-get.cc:764
+#: cmdline/apt-get.cc:765
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Трябва да бъдат премахнати пакети, но премахването е изключено."
 
-#: cmdline/apt-get.cc:775
+#: cmdline/apt-get.cc:776
 msgid "Internal error, Ordering didn't finish"
 msgstr "Вътрешна грешка, „Ordering“ не завърши"
 
-#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1800 cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:792 cmdline/apt-get.cc:1893 cmdline/apt-get.cc:1926
 msgid "Unable to lock the download directory"
 msgstr "Неуспех при заключването на директорията за изтегляне"
 
-#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1881 cmdline/apt-get.cc:2117
+#: cmdline/apt-get.cc:802 cmdline/apt-get.cc:1974 cmdline/apt-get.cc:2210
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Списъкът с източници не можа да бъде прочетен."
 
-#: cmdline/apt-get.cc:816
+#: cmdline/apt-get.cc:817
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Странно.. Размерите не съвпадат, изпратете е-поща на apt@packages.debian.org"
 
-#: cmdline/apt-get.cc:821
+#: cmdline/apt-get.cc:822
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Необходимо е да се изтеглят %sB/%sB архиви.\n"
 
-#: cmdline/apt-get.cc:824
+#: cmdline/apt-get.cc:825
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Необходимо е да се изтеглят %sB архиви.\n"
 
-#: cmdline/apt-get.cc:829
+#: cmdline/apt-get.cc:830
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
 msgstr "След разпакетирането ще бъде използвано %sB дисково пространство.\n"
 
-#: cmdline/apt-get.cc:832
+#: cmdline/apt-get.cc:833
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "След разпакетирането ще бъде освободено %sB дисково пространство.\n"
 
-#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1971
+#: cmdline/apt-get.cc:847 cmdline/apt-get.cc:2064
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Неуспех при определянето на свободното пространство в %s"
 
-#: cmdline/apt-get.cc:849
+#: cmdline/apt-get.cc:850
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Нямате достатъчно свободно пространство в %s."
 
-#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:865 cmdline/apt-get.cc:885
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Указано е „Trivial Only“, но това не е тривиална операция."
 
-#: cmdline/apt-get.cc:866
+#: cmdline/apt-get.cc:867
 msgid "Yes, do as I say!"
 msgstr "Да, прави каквото казвам!"
 
-#: cmdline/apt-get.cc:868
+#: cmdline/apt-get.cc:869
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -867,28 +878,28 @@ msgstr ""
 "За да продължите, въведете фразата „%s“\n"
 " ?] "
 
-#: cmdline/apt-get.cc:874 cmdline/apt-get.cc:893
+#: cmdline/apt-get.cc:875 cmdline/apt-get.cc:894
 msgid "Abort."
 msgstr "Прекъсване."
 
-#: cmdline/apt-get.cc:889
+#: cmdline/apt-get.cc:890
 msgid "Do you want to continue [Y/n]? "
 msgstr "Искате ли да продължите [Y/n]? "
 
-#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2014
+#: cmdline/apt-get.cc:962 cmdline/apt-get.cc:1369 cmdline/apt-get.cc:2107
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Неуспех при изтеглянето на %s  %s\n"
 
-#: cmdline/apt-get.cc:979
+#: cmdline/apt-get.cc:980
 msgid "Some files failed to download"
 msgstr "Някои файлове не можаха да бъдат изтеглени"
 
-#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:981 cmdline/apt-get.cc:2116
 msgid "Download complete and in download only mode"
 msgstr "Изтеглянето завърши в режим само на изтегляне"
 
-#: cmdline/apt-get.cc:986
+#: cmdline/apt-get.cc:987
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -896,47 +907,47 @@ msgstr ""
 "Неуспех при изтеглянето на някои архиви, може да изпълните „apt-get update“ "
 "или да опитате с „--fix-missing“?"
 
-#: cmdline/apt-get.cc:990
+#: cmdline/apt-get.cc:991
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "„--fix-missing“ и превключване на носители не се поддържа все още"
 
-#: cmdline/apt-get.cc:995
+#: cmdline/apt-get.cc:996
 msgid "Unable to correct missing packages."
 msgstr "Неуспех при коригирането на липсващите пакети."
 
-#: cmdline/apt-get.cc:996
+#: cmdline/apt-get.cc:997
 msgid "Aborting install."
 msgstr "Прекъсване на инсталирането."
 
-#: cmdline/apt-get.cc:1030
+#: cmdline/apt-get.cc:1031
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Забележете, избиране на %s вместо %s\n"
 
-#: cmdline/apt-get.cc:1040
+#: cmdline/apt-get.cc:1041
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Пропускане на %s, вече е инсталиран и не е маркиран за актуализация.\n"
 
-#: cmdline/apt-get.cc:1058
+#: cmdline/apt-get.cc:1059
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Пакетът %s не е инсталиран, така че не е премахнат\n"
 
-#: cmdline/apt-get.cc:1069
+#: cmdline/apt-get.cc:1070
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Пакетът %s е виртуален пакет, осигурен от:\n"
 
-#: cmdline/apt-get.cc:1081
+#: cmdline/apt-get.cc:1082
 msgid " [Installed]"
 msgstr " [Инсталиран]"
 
-#: cmdline/apt-get.cc:1086
+#: cmdline/apt-get.cc:1087
 msgid "You should explicitly select one to install."
 msgstr "Трябва изрично да изберете един за инсталиране."
 
-#: cmdline/apt-get.cc:1091
+#: cmdline/apt-get.cc:1092
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -947,49 +958,49 @@ msgstr ""
 "Това може да означава, че пакета липсва, остарял е, или е достъпен\n"
 "само от друг източник\n"
 
-#: cmdline/apt-get.cc:1110
+#: cmdline/apt-get.cc:1111
 msgid "However the following packages replace it:"
 msgstr "Обаче следните пакети го заместват:"
 
-#: cmdline/apt-get.cc:1113
+#: cmdline/apt-get.cc:1114
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Пакетът %s няма кандидат за инсталиране"
 
-#: cmdline/apt-get.cc:1133
+#: cmdline/apt-get.cc:1134
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Преинсталацията на %s не е възможна, не може да бъде изтеглен.\n"
 
-#: cmdline/apt-get.cc:1141
+#: cmdline/apt-get.cc:1142
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s вече е най-новата версия.\n"
 
-#: cmdline/apt-get.cc:1168
+#: cmdline/apt-get.cc:1171
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Не е намерено издание „%s“ на „%s“"
 
-#: cmdline/apt-get.cc:1170
+#: cmdline/apt-get.cc:1173
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Не е намерена версия „%s“ на „%s“"
 
-#: cmdline/apt-get.cc:1176
+#: cmdline/apt-get.cc:1179
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Избрана е версия %s (%s) за %s\n"
 
-#: cmdline/apt-get.cc:1313
+#: cmdline/apt-get.cc:1316
 msgid "The update command takes no arguments"
 msgstr "Командата „update“ не възприема аргументи"
 
-#: cmdline/apt-get.cc:1326
+#: cmdline/apt-get.cc:1329
 msgid "Unable to lock the list directory"
 msgstr "Неуспех при заключването на директорията със списъка на пакетите"
 
-#: cmdline/apt-get.cc:1384
+#: cmdline/apt-get.cc:1396 cmdline/apt-get.cc:1398
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -997,25 +1008,45 @@ msgstr ""
 "Някои индексни файлове не можаха да бъдат изтеглени, те са пренебрегнати или "
 "са използвани по-стари."
 
-#: cmdline/apt-get.cc:1403
+#: cmdline/apt-get.cc:1412
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr ""
+
+#: cmdline/apt-get.cc:1437
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+
+#: cmdline/apt-get.cc:1440 cmdline/apt-get.cc:1642
+msgid "The following information may help to resolve the situation:"
+msgstr ""
+"Следната информация може да помогне за намиране на изход от ситуацията:"
+
+#: cmdline/apt-get.cc:1444
+#, fuzzy
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "Вътрешна грешка, „problem resolver“ счупи нещо в системата"
+
+#: cmdline/apt-get.cc:1463
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Вътрешна грешка, „AllUpgrade“ счупи нещо в системата"
 
-#: cmdline/apt-get.cc:1493 cmdline/apt-get.cc:1529
+#: cmdline/apt-get.cc:1561 cmdline/apt-get.cc:1597
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Неуспех при намирането на пакет %s"
 
-#: cmdline/apt-get.cc:1516
+#: cmdline/apt-get.cc:1584
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Забележете, избиране на %s за регулярен израз „%s“\n"
 
-#: cmdline/apt-get.cc:1546
+#: cmdline/apt-get.cc:1614
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Възможно е да изпълните „apt-get -f install“, за да коригирате:"
 
-#: cmdline/apt-get.cc:1549
+#: cmdline/apt-get.cc:1617
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1023,7 +1054,7 @@ msgstr ""
 "Неудовлетворени зависимости. Опитайте „apt-get -f install“ без пакети (или "
 "укажете разрешение)."
 
-#: cmdline/apt-get.cc:1561
+#: cmdline/apt-get.cc:1629
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1035,7 +1066,7 @@ msgstr ""
 "дистрибуция, че някои необходими пакети още не са създадени или пък\n"
 "са били преместени от Incoming."
 
-#: cmdline/apt-get.cc:1569
+#: cmdline/apt-get.cc:1637
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -1045,123 +1076,118 @@ msgstr ""
 "да не може да бъде инсталиран; в такъв случай би трябвало да се подаде\n"
 "доклад за грешка за този пакет."
 
-#: cmdline/apt-get.cc:1574
-msgid "The following information may help to resolve the situation:"
-msgstr ""
-"Следната информация може да помогне за намиране на изход от ситуацията:"
-
-#: cmdline/apt-get.cc:1577
+#: cmdline/apt-get.cc:1645
 msgid "Broken packages"
 msgstr "Счупени пакети"
 
-#: cmdline/apt-get.cc:1603
+#: cmdline/apt-get.cc:1676
 msgid "The following extra packages will be installed:"
 msgstr "Следните допълнителни пакети ще бъдат инсталирани:"
 
-#: cmdline/apt-get.cc:1674
+#: cmdline/apt-get.cc:1765
 msgid "Suggested packages:"
 msgstr "Предложени пакети:"
 
-#: cmdline/apt-get.cc:1675
+#: cmdline/apt-get.cc:1766
 msgid "Recommended packages:"
 msgstr "Препоръчвани пакети:"
 
-#: cmdline/apt-get.cc:1695
+#: cmdline/apt-get.cc:1786
 msgid "Calculating upgrade... "
 msgstr "Изчисляване на актуализацията..."
 
-#: cmdline/apt-get.cc:1698 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1789 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "Неуспех"
 
-#: cmdline/apt-get.cc:1703
+#: cmdline/apt-get.cc:1794
 msgid "Done"
 msgstr "Готово"
 
-#: cmdline/apt-get.cc:1768 cmdline/apt-get.cc:1776
+#: cmdline/apt-get.cc:1861 cmdline/apt-get.cc:1869
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Вътрешна грешка, „problem resolver“ счупи нещо в системата"
 
-#: cmdline/apt-get.cc:1876
+#: cmdline/apt-get.cc:1969
 msgid "Must specify at least one package to fetch source for"
 msgstr "Трябва да укажете поне един пакет за изтегляне на изходния му код"
 
-#: cmdline/apt-get.cc:1906 cmdline/apt-get.cc:2135
+#: cmdline/apt-get.cc:1999 cmdline/apt-get.cc:2228
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Неуспех при намирането на изходен код на пакет %s"
 
-#: cmdline/apt-get.cc:1950
+#: cmdline/apt-get.cc:2043
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Пропускане на вече изтегления файл „%s“\n"
 
-#: cmdline/apt-get.cc:1974
+#: cmdline/apt-get.cc:2067
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Нямате достатъчно свободно пространство в %s"
 
-#: cmdline/apt-get.cc:1979
+#: cmdline/apt-get.cc:2072
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Необходимо е да се изтеглят %sB/%sB архиви изходен код.\n"
 
-#: cmdline/apt-get.cc:1982
+#: cmdline/apt-get.cc:2075
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Необходимо е да се изтеглят %sB архиви изходен код.\n"
 
-#: cmdline/apt-get.cc:1988
+#: cmdline/apt-get.cc:2081
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Изтегляне на изходен код %s\n"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2112
 msgid "Failed to fetch some archives."
 msgstr "Неуспех при изтеглянето на някои архиви."
 
-#: cmdline/apt-get.cc:2047
+#: cmdline/apt-get.cc:2140
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 "Пропускане на разпакетирането на вече разпакетирания изходен код в %s\n"
 
-#: cmdline/apt-get.cc:2059
+#: cmdline/apt-get.cc:2152
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Командата за разпакетиране „%s“ пропадна.\n"
 
-#: cmdline/apt-get.cc:2060
+#: cmdline/apt-get.cc:2153
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Проверете дали имате инсталиран пакета „dpkg-dev“.\n"
 
-#: cmdline/apt-get.cc:2077
+#: cmdline/apt-get.cc:2170
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Командата за компилиране „%s“ пропадна.\n"
 
-#: cmdline/apt-get.cc:2096
+#: cmdline/apt-get.cc:2189
 msgid "Child process failed"
 msgstr "Процесът-потомък пропадна"
 
-#: cmdline/apt-get.cc:2112
+#: cmdline/apt-get.cc:2205
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Трябва да укажете поне един пакет за проверка на зависимости за компилиране"
 
-#: cmdline/apt-get.cc:2140
+#: cmdline/apt-get.cc:2233
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 "Неуспех при получаването на информация за зависимостите за компилиране на %s"
 
-#: cmdline/apt-get.cc:2160
+#: cmdline/apt-get.cc:2253
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s няма зависимости за компилиране.\n"
 
-#: cmdline/apt-get.cc:2212
+#: cmdline/apt-get.cc:2305
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1170,7 +1196,7 @@ msgstr ""
 "Зависимост %s за пакета %s не може да бъде удовлетворена, понеже пакета %s "
 "не може да бъде намерен"
 
-#: cmdline/apt-get.cc:2264
+#: cmdline/apt-get.cc:2357
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1180,32 +1206,32 @@ msgstr ""
 "налични версии на пакета %s, които могат да удовлетворят изискването за "
 "версия"
 
-#: cmdline/apt-get.cc:2299
+#: cmdline/apt-get.cc:2392
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Неуспех при удовлетворяването на зависимост %s за пакета %s: Инсталираният "
 "пакет %s е твърде нов"
 
-#: cmdline/apt-get.cc:2324
+#: cmdline/apt-get.cc:2417
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Неуспех при удовлетворяването на зависимост %s за пакета %s: %s"
 
-#: cmdline/apt-get.cc:2338
+#: cmdline/apt-get.cc:2431
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Зависимостите за компилиране на %s не можаха да бъдат удовлетворени."
 
-#: cmdline/apt-get.cc:2342
+#: cmdline/apt-get.cc:2435
 msgid "Failed to process build dependencies"
 msgstr "Неуспех при обработката на зависимостите за компилиране"
 
-#: cmdline/apt-get.cc:2374
+#: cmdline/apt-get.cc:2467
 msgid "Supported modules:"
 msgstr "Поддържани модули:"
 
-#: cmdline/apt-get.cc:2415
+#: cmdline/apt-get.cc:2508
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1388,19 +1414,19 @@ msgstr "Смесване на наличната информация"
 msgid "Failed to create pipes"
 msgstr "Неуспех при създаването на програмни канали"
 
-#: apt-inst/contrib/extracttar.cc:143
+#: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
 msgstr "Неуспех при изпълнението на gzip"
 
-#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
+#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:207
 msgid "Corrupted archive"
 msgstr "Развален архив"
 
-#: apt-inst/contrib/extracttar.cc:195
+#: apt-inst/contrib/extracttar.cc:196
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Невярна контролна сума на tar, развален архив"
 
-#: apt-inst/contrib/extracttar.cc:298
+#: apt-inst/contrib/extracttar.cc:299
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Непозната заглавна част на TAR тип %u, елемент %s"
@@ -1546,9 +1572,9 @@ msgstr ""
 "Директориите info и temp трябва да бъдат на една и съща файлова система"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
-#: apt-pkg/pkgcachegen.cc:712 apt-pkg/pkgcachegen.cc:717
-#: apt-pkg/pkgcachegen.cc:840
+#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:647
+#: apt-pkg/pkgcachegen.cc:716 apt-pkg/pkgcachegen.cc:721
+#: apt-pkg/pkgcachegen.cc:844
 msgid "Reading package lists"
 msgstr "Четене на списъците с пакети"
 
@@ -1681,12 +1707,12 @@ msgstr "Дискът не е намерен."
 msgid "File not found"
 msgstr "Файлът не е намерен"
 
-#: methods/copy.cc:42 methods/gpgv.cc:275 methods/gzip.cc:133
+#: methods/copy.cc:42 methods/gpgv.cc:281 methods/gzip.cc:133
 #: methods/gzip.cc:142
 msgid "Failed to stat"
 msgstr "Неуспех при получаването на атрибути"
 
-#: methods/copy.cc:79 methods/gpgv.cc:272 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:278 methods/gzip.cc:139
 msgid "Failed to set modification time"
 msgstr "Неуспех при задаването на време на промяна"
 
@@ -1900,42 +1926,42 @@ msgstr "Нещо лошо се случи при намирането на IP а
 msgid "Unable to connect to %s %s:"
 msgstr "Неуспех при свързването с %s %s:"
 
-#: methods/gpgv.cc:64
+#: methods/gpgv.cc:65
 #, fuzzy, c-format
 msgid "Couldn't access keyring: '%s'"
 msgstr "Неуспех при намирането на IP адреса на „%s“"
 
-#: methods/gpgv.cc:99
+#: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr ""
 "E: Списъкът с аргументи от Acquire::gpgv::Options е твърде дълъг. Завършване "
 "на работа."
 
-#: methods/gpgv.cc:198
+#: methods/gpgv.cc:204
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Вътрешна грешка: Валиден подпис, но не може да се провери отпечатъка на "
 "ключа?!"
 
-#: methods/gpgv.cc:203
+#: methods/gpgv.cc:209
 msgid "At least one invalid signature was encountered."
 msgstr "Намерен е поне един невалиден подпис."
 
-#: methods/gpgv.cc:207
+#: methods/gpgv.cc:213
 #, fuzzy, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgstr " за проверка на подписа (инсталиран ли е gnupg?)"
 
-#: methods/gpgv.cc:212
+#: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
 msgstr "Неизвестна грешка при изпълнението на gpgv"
 
-#: methods/gpgv.cc:243
+#: methods/gpgv.cc:249
 msgid "The following signatures were invalid:\n"
 msgstr "Следните подписи са невалидни:\n"
 
-#: methods/gpgv.cc:250
+#: methods/gpgv.cc:256
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -2306,24 +2332,39 @@ msgstr "незадължителен"
 msgid "extra"
 msgstr "допълнителен"
 
-#: apt-pkg/depcache.cc:61 apt-pkg/depcache.cc:90
+#: apt-pkg/depcache.cc:101 apt-pkg/depcache.cc:130
 msgid "Building dependency tree"
 msgstr "Изграждане на дървото със зависимости"
 
-#: apt-pkg/depcache.cc:62
+#: apt-pkg/depcache.cc:102
 msgid "Candidate versions"
 msgstr "Версии кандидати"
 
-#: apt-pkg/depcache.cc:91
+#: apt-pkg/depcache.cc:131
 msgid "Dependency generation"
 msgstr "Генериране на зависимости"
 
-#: apt-pkg/tagfile.cc:72
+#: apt-pkg/depcache.cc:152 apt-pkg/depcache.cc:171 apt-pkg/depcache.cc:175
+#, fuzzy
+msgid "Reading state information"
+msgstr "Смесване на наличната информация"
+
+#: apt-pkg/depcache.cc:199
+#, fuzzy, c-format
+msgid "Failed to open StateFile %s"
+msgstr "Неуспех при отварянето на %s"
+
+#: apt-pkg/depcache.cc:205
+#, fuzzy, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "Неуспех при запис на файл %s"
+
+#: apt-pkg/tagfile.cc:85 apt-pkg/tagfile.cc:92
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Неуспех при анализирането на пакетен файл %s (1)"
 
-#: apt-pkg/tagfile.cc:102
+#: apt-pkg/tagfile.cc:186
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Неуспех при анализирането на пакетен файл %s (2)"
@@ -2399,7 +2440,7 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "Не се поддържа индексен файл от типа „%s“"
 
-#: apt-pkg/algorithms.cc:241
+#: apt-pkg/algorithms.cc:245
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
@@ -2407,7 +2448,7 @@ msgstr ""
 "Пакетът %s трябва да бъде преинсталиран, но не може да се намери архив за "
 "него."
 
-#: apt-pkg/algorithms.cc:1059
+#: apt-pkg/algorithms.cc:1075
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2415,7 +2456,7 @@ msgstr ""
 "Грешка, pkgProblemResolver::Resolve генерира повреди, това може да е "
 "причинено от задържани пакети."
 
-#: apt-pkg/algorithms.cc:1061
+#: apt-pkg/algorithms.cc:1077
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 "Неуспех при коригирането на проблемите, имате задържани счупени пакети."
@@ -2452,17 +2493,17 @@ msgstr "Неуспех при намирането на драйвер за ме
 msgid "Method %s did not start correctly"
 msgstr "Методът %s не стартира правилно"
 
-#: apt-pkg/acquire-worker.cc:377
+#: apt-pkg/acquire-worker.cc:384
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Сложете диска, озаглавен „%s“ в устройство „%s“ и натиснете „Enter“."
 
-#: apt-pkg/init.cc:120
+#: apt-pkg/init.cc:122
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "Пакетната система „%s“ не е поддържана"
 
-#: apt-pkg/init.cc:136
+#: apt-pkg/init.cc:138
 msgid "Unable to determine a suitable packaging system type"
 msgstr "Неуспех при определянето на подходяща пакетна система"
 
@@ -2499,86 +2540,86 @@ msgstr "Неизвестен тип за отбиване %s"
 msgid "No priority (or zero) specified for pin"
 msgstr "Няма указан приоритет (или е нула) на отбиването"
 
-#: apt-pkg/pkgcachegen.cc:74
+#: apt-pkg/pkgcachegen.cc:76
 msgid "Cache has an incompatible versioning system"
 msgstr "Кешът има несъвместима система за версии"
 
-#: apt-pkg/pkgcachegen.cc:117
+#: apt-pkg/pkgcachegen.cc:119
 #, c-format
 msgid "Error occurred while processing %s (NewPackage)"
 msgstr "Възникна грешка при обработката на %s (NewPackage)"
 
-#: apt-pkg/pkgcachegen.cc:129
+#: apt-pkg/pkgcachegen.cc:131
 #, c-format
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Възникна грешка при обработката на %s (UsePackage1)"
 
-#: apt-pkg/pkgcachegen.cc:150
+#: apt-pkg/pkgcachegen.cc:152
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "Възникна грешка при обработката на %s (UsePackage2)"
 
-#: apt-pkg/pkgcachegen.cc:154
+#: apt-pkg/pkgcachegen.cc:156
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "Възникна грешка при обработката на %s (NewFileVer1)"
 
-#: apt-pkg/pkgcachegen.cc:184
+#: apt-pkg/pkgcachegen.cc:186
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "Възникна грешка при обработката на %s (NewVersion1)"
 
-#: apt-pkg/pkgcachegen.cc:188
+#: apt-pkg/pkgcachegen.cc:190
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "Възникна грешка при обработката на %s (UsePackage3)"
 
-#: apt-pkg/pkgcachegen.cc:192
+#: apt-pkg/pkgcachegen.cc:194
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Възникна грешка при обработката на %s (NewVersion2)"
 
-#: apt-pkg/pkgcachegen.cc:207
+#: apt-pkg/pkgcachegen.cc:209
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
 "Еха, надхвърлихте броя имена на пакети, на който е способна тази версия на "
 "APT."
 
-#: apt-pkg/pkgcachegen.cc:210
+#: apt-pkg/pkgcachegen.cc:212
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Еха, надхвърлихте броя версии, на който е способна тази версия на APT."
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:215
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr ""
 "Еха, надхвърлихте броя зависимости, на който е способна тази версия на APT."
 
-#: apt-pkg/pkgcachegen.cc:241
+#: apt-pkg/pkgcachegen.cc:243
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "Възникна грешка при обработката на %s (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:256
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "Възникна грешка при обработката на %s (CollectFileProvides)"
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:262
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "Пакетът %s %s не беше открит при обработката на файла със зависимости"
 
-#: apt-pkg/pkgcachegen.cc:574
+#: apt-pkg/pkgcachegen.cc:577
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr ""
 "Неуспех при получаването на атрибути на списъка с пакети с изходен код %s"
 
-#: apt-pkg/pkgcachegen.cc:658
+#: apt-pkg/pkgcachegen.cc:662
 msgid "Collecting File Provides"
 msgstr "Събиране на информация за „Осигурява“"
 
-#: apt-pkg/pkgcachegen.cc:785 apt-pkg/pkgcachegen.cc:792
+#: apt-pkg/pkgcachegen.cc:789 apt-pkg/pkgcachegen.cc:796
 msgid "IO Error saving source cache"
 msgstr "Входно/изходна грешка при запазването на кеша на пакети с изходен код"
 
@@ -2587,15 +2628,15 @@ msgstr "Входно/изходна грешка при запазването �
 msgid "rename failed, %s (%s -> %s)."
 msgstr "преименуването се провали, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:945
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:951
 msgid "MD5Sum mismatch"
 msgstr "Несъответствие на контролна сума MD5"
 
-#: apt-pkg/acquire-item.cc:640
+#: apt-pkg/acquire-item.cc:646
 msgid "There are no public key available for the following key IDs:\n"
 msgstr "Няма налични публични ключове за следните идентификатори на ключове:\n"
 
-#: apt-pkg/acquire-item.cc:753
+#: apt-pkg/acquire-item.cc:759
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2604,7 +2645,7 @@ msgstr ""
 "Неуспех при намирането на файл за пакет %s. Това може да означава, че трябва "
 "ръчно да оправите този пакет (поради пропусната архитектура)."
 
-#: apt-pkg/acquire-item.cc:812
+#: apt-pkg/acquire-item.cc:818
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2613,14 +2654,14 @@ msgstr ""
 "Неуспех при намирането на файл за пакет %s. Това може да означава, че трябва "
 "ръчно да оправите този пакет."
 
-#: apt-pkg/acquire-item.cc:848
+#: apt-pkg/acquire-item.cc:854
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 "Индексните файлове на пакета са повредени. Няма поле Filename: за пакет %s."
 
-#: apt-pkg/acquire-item.cc:935
+#: apt-pkg/acquire-item.cc:941
 msgid "Size mismatch"
 msgstr "Несъответствие на размера"
 
@@ -2778,6 +2819,9 @@ msgstr "Неуспех при премахването на %s"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Връзката прекъсна преждевременно"
+
+#~ msgid "File date has changed %s"
+#~ msgstr "Датата на файла %s е променена"
 
 #~ msgid "Reading file list"
 #~ msgstr "Четене на списъка с файлове"

@@ -249,6 +249,7 @@ class pkgDepCache : protected pkgCache::Namespace
       inline bool Held() const {return Status != 0 && Keep();};
       inline bool NowBroken() const {return (DepState & DepNowMin) != DepNowMin;};
       inline bool InstBroken() const {return (DepState & DepInstMin) != DepInstMin;};
+      inline bool InstPolicyBroken() const {return (DepState & DepInstPolicy) != DepInstPolicy;};
       inline bool Install() const {return Mode == ModeInstall;};
       inline VerIterator InstVerIter(pkgCache &Cache)
                 {return VerIterator(Cache,InstallVer);};
