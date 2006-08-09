@@ -1611,68 +1611,86 @@ bool DoInstall(CommandLine &CmdL)
       string SuggestsVersions, RecommendsVersions;
       for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
       {
-	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
+	 pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
 
 	 /* Just look at the ones we want to install */
-	 if ((*Cache)[I].Install() == false)
+	 if ((*Cache)[Pkg].Install() == false)
 	   continue;
 
-	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
-         {
-	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; )
-             {
-		 pkgCache::DepIterator Start;
-		 pkgCache::DepIterator End;
-		 D.GlobOr(Start,End); // advances D
+	 // get the recommends/suggests for the candidate ver
+	 pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
+	 for (pkgCache::DepIterator D = CV.DependsList(); D.end() == false; )
+	 {
+	    pkgCache::DepIterator Start;
+	    pkgCache::DepIterator End;
+	    D.GlobOr(Start,End); // advances D
 
-		 /* 
-		  * If this is a virtual package, we need to check the list of
-		  * packages that provide it and see if any of those are
-		  * installed
-		  */
-		 
-		 bool providedBySomething = false;
-		 for (pkgCache::PrvIterator Prv = Start.TargetPkg().ProvidesList();
-                      Prv.end() != true;
-                      Prv++)
-		    if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
-                    {
-		       providedBySomething = true;
-		       break;
-		    }
+	    // FIXME: we really should display a or-group as a or-group to the user
+	    //        the problem is that ShowList is incapable of doing this
+	    string RecommendsOrList,RecommendsOrVersions;
+	    string SuggestsOrList,SuggestsOrVersions;
+	    bool foundInstalledInOrGroup = false;
+	    for(;;)
+	    {
+	       /* Skip if package is  installed already, or is about to be */
+	       string target = string(Start.TargetPkg().Name()) + " ";
+	       
+	       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
+		   || Cache[Start.TargetPkg()].Install())
+	       {
+		  foundInstalledInOrGroup=true;
+		  break;
+	       }
 
-		 if (providedBySomething) continue;
-            
-                 for(;;)
-                 {
-                     /* Skip if package is  installed already, or is about to be */
-                     string target = string(Start.TargetPkg().Name()) + " ";
+	       /* Skip if we already saw it */
+	       if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target)) != -1)
+	       {
+		  foundInstalledInOrGroup=true;
+		  break; 
+	       }
 
-                     if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
-                         || Cache[Start.TargetPkg()].Install())
-                       break;
+	       // this is a dep on a virtual pkg, check if any package that provides it
+	       // should be installed
+	       if(Start.TargetPkg().ProvidesList() != 0)
+	       {
+		  pkgCache::PrvIterator I = Start.TargetPkg().ProvidesList();
+		  for (; I.end() == false; I++)
+		  {
+		     pkgCache::PkgIterator Pkg = I.OwnerPkg();
+		     if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer() && 
+			 Pkg.CurrentVer() != 0)
+			foundInstalledInOrGroup=true;
+		  }
+	       }
 
-                     /* Skip if we already saw it */
-                     if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target)) != -1)
-                       break; 
+	       if (Start->Type == pkgCache::Dep::Suggests) 
+	       {
+		  SuggestsOrList += target;
+		  SuggestsOrVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
+	       }
+	       
+	       if (Start->Type == pkgCache::Dep::Recommends) 
+	       {
+		  RecommendsOrList += target;
+		  RecommendsOrVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
+	       }
 
-		     if (Start->Type == pkgCache::Dep::Suggests) {
-		       SuggestsList += target;
-		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
-		     }
-		     
-		     if (Start->Type == pkgCache::Dep::Recommends) {
-		       RecommendsList += target;
-		       RecommendsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
-		     }
-
-                     if (Start >= End)
-                        break;
-                     Start++;
-                 }
-             }
-         }
+	       if (Start >= End)
+		  break;
+	       Start++;
+	    }
+	    
+	    if(foundInstalledInOrGroup == false)
+	    {
+	       RecommendsList += RecommendsOrList;
+	       RecommendsVersions += RecommendsOrVersions;
+	       SuggestsList += SuggestsOrList;
+	       SuggestsVersions += SuggestsOrVersions;
+	    }
+	       
+	 }
       }
+
       ShowList(c1out,_("Suggested packages:"),SuggestsList,SuggestsVersions);
       ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
 
