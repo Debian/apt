@@ -667,7 +667,33 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 it will be installed. Otherwise we only worry about critical deps */
       if (IsImportantDep(Start) == false)
 	 continue;
-      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false)
+
+      /* check if any ImportantDep() (but not Critial) where added
+       * since we installed the thing
+       */
+      bool isNewImportantDep = false;
+      if(IsImportantDep(Start) && !Start.IsCritical())
+      {
+	 bool found=false;
+	 VerIterator instVer = Pkg.CurrentVer();
+	 for (DepIterator D = instVer.DependsList(); !D.end(); D++)
+	 {
+	    //FIXME: deal better with or-groups(?)
+	    DepIterator LocalStart = D;
+	    
+	    if(IsImportantDep(Dep) && Start.TargetPkg() == D.TargetPkg())
+	       found=true;
+	 }
+	 // this is a new dep if it was not found to be already
+	 // a important dep of the installed pacakge
+	 isNewImportantDep = !found;
+      }
+      if(isNewImportantDep)
+	 if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
+	    std::clog << "new important dependency: " 
+		      << Start.TargetPkg().Name() << std::endl;
+
+      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false && !isNewImportantDep)
 	 continue;
       
       /* If we are in an or group locate the first or that can 
