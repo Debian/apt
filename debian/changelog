@@ -1,9 +1,16 @@
+apt (0.6.45.1) unstable; urgency=low
+
+  * debian/control:
+    - switched to libdb4.4 for building
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed,  9 Aug 2006 14:27:54 +0200
+
 apt (0.6.45) unstable; urgency=low
 
   * apt-pkg/contrib/sha256.cc:
     - fixed the sha256 generation (closes: #378183)
   * ftparchive/cachedb.cc:
-    - applied patch from ajt to fix Clean() function
+    - applied patch from Anthony Towns to fix Clean() function
       (closes: #379576)
   * doc/apt-get.8.xml:
     - fix path to the apt user build (Closes: #375640)
@@ -21,6 +28,9 @@ apt (0.6.45) unstable; urgency=low
     - fix for string mangling, closes: #373864
   * apt-pkg/acquire-item.cc:
     - check for bzip2 in /bin (closes: #377391)
+  * apt-pkg/tagfile.cc:
+    - make it work on non-mapable files again, thanks 
+      to James Troup for confirming the fix (closes: #376777)
   * Merged from Christian Perrier bzr branch:
     * ko.po: Updated to 512t. Closes: #378901
     * hu.po: Updated to 512t. Closes: #376330
@@ -31,9 +41,8 @@ apt (0.6.45) unstable; urgency=low
     * dz.po: New Dzongkha translation: 512t
     * ro.po: Updated to 512t
     * eu.po: Updated
-    * eu.po: Updated
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 25 Jul 2006 11:55:22 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 27 Jul 2006 00:52:05 +0200
 
 apt  (0.6.44.2) unstable; urgency=low 
   
