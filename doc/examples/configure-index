@@ -90,6 +90,10 @@ APT
   Cache-Limit "4194304";
   Default-Release "";
 
+  // consider Recommends, Suggests as important dependencies that should
+  // be installed by default
+  APT::Install-Recommends "false";
+  APT::Install-Suggests "false";
 
   // Write progress messages on this fd (for stuff like base-config)
   Status-Fd "-1";

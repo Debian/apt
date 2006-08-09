@@ -2524,6 +2524,7 @@ int main(int argc,const char *argv[])
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
+      {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
