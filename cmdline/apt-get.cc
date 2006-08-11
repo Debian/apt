@@ -628,6 +628,8 @@ void CacheFile::Sort()
    and verifies that the system is OK. */
 bool CacheFile::CheckDeps(bool AllowBroken)
 {
+   bool FixBroken = _config->FindB("APT::Get::Fix-Broken",false);
+
    if (_error->PendingError() == true)
       return false;
 
@@ -639,12 +641,24 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    if (pkgApplyStatus(*DCache) == false)
       return false;
    
+   if (_config->FindB("APT::Get::Fix-Policy-Broken",false) == true)
+   {
+      FixBroken = true;
+      if ((DCache->PolicyBrokenCount() > 0))
+      {
+	 // upgrade all policy-broken packages with ForceImportantDeps=True
+	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); !I.end(); I++)
+	    if ((*DCache)[I].NowPolicyBroken() == true) 
+	       DCache->MarkInstall(I,true,0,true);
+      }
+   }
+
    // Nothing is broken
    if (DCache->BrokenCount() == 0 || AllowBroken == true)
       return true;
 
    // Attempt to fix broken things
-   if (_config->FindB("APT::Get::Fix-Broken",false) == true)
+   if (FixBroken == true)
    {
       c1out << _("Correcting dependencies...") << flush;
       if (pkgFixBroken(*DCache) == false || DCache->BrokenCount() != 0)
@@ -2543,6 +2557,7 @@ int main(int argc,const char *argv[])
       {0,"arch-only","APT::Get::Arch-Only",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
+      {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

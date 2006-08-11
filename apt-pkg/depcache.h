@@ -97,6 +97,7 @@ class pkgDepCache : protected pkgCache::Namespace
       inline bool Downgrade() const {return Status < 0 && Mode == ModeInstall;};
       inline bool Held() const {return Status != 0 && Keep();};
       inline bool NowBroken() const {return (DepState & DepNowMin) != DepNowMin;};
+      inline bool NowPolicyBroken() const {return (DepState & DepNowPolicy) != DepNowPolicy;};
       inline bool InstBroken() const {return (DepState & DepInstMin) != DepInstMin;};
       inline bool InstPolicyBroken() const {return (DepState & DepInstPolicy) != DepInstPolicy;};
       inline bool Install() const {return Mode == ModeInstall;};
@@ -134,6 +135,7 @@ class pkgDepCache : protected pkgCache::Namespace
    unsigned long iDelCount;
    unsigned long iKeepCount;
    unsigned long iBrokenCount;
+   unsigned long iPolicyBrokenCount;
    unsigned long iBadCount;
    
    Policy *delLocalPolicy;           // For memory clean up..
@@ -187,7 +189,7 @@ class pkgDepCache : protected pkgCache::Namespace
    void MarkKeep(PkgIterator const &Pkg,bool Soft = false);
    void MarkDelete(PkgIterator const &Pkg,bool Purge = false);
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
-		    unsigned long Depth = 0);
+		    unsigned long Depth = 0, bool ForceImportantDeps = false);
    void SetReInstall(PkgIterator const &Pkg,bool To);
    void SetCandidateVersion(VerIterator TargetVer);
    
@@ -201,6 +203,7 @@ class pkgDepCache : protected pkgCache::Namespace
    inline unsigned long KeepCount() {return iKeepCount;};
    inline unsigned long InstCount() {return iInstCount;};
    inline unsigned long BrokenCount() {return iBrokenCount;};
+   inline unsigned long PolicyBrokenCount() {return iPolicyBrokenCount;};
    inline unsigned long BadCount() {return iBadCount;};
 
    bool Init(OpProgress *Prog);
