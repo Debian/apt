@@ -9,8 +9,8 @@
    the Owner Acquire class. Derived classes will then call QueueURI to 
    register all the URI's they wish to fetch at the initial moment.   
    
-   Two item classes are provided to provide functionality for downloading
-   of Index files and downloading of Packages.
+   Three item classes are provided to provide functionality for
+   downloading of Index, Translation and Packages files.
    
    A Archive class is provided for downloading .deb files. It does Md5
    checking and source location as well as a retry algorithm.
@@ -106,6 +106,16 @@ class pkgAcqIndex : public pkgAcquire::Item
 
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
 	       string ShortDesct, string ExpectedMD5, string compressExt="");
+};
+
+// Item class for translated package index files
+class pkgAcqIndexTrans : public pkgAcqIndex
+{
+   public:
+  
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   pkgAcqIndexTrans(pkgAcquire *Owner,string URI,string URIDesc,
+		    string ShortDesct);
 };
 
 struct IndexTarget

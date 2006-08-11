@@ -38,24 +38,30 @@ class pkgCache
    struct Package;
    struct PackageFile;
    struct Version;
+   struct Description;
    struct Provides;
    struct Dependency;
    struct StringItem;
    struct VerFile;
+   struct DescFile;
    
    // Iterators
    class PkgIterator;
    class VerIterator;
+   class DescIterator;
    class DepIterator;
    class PrvIterator;
    class PkgFileIterator;
    class VerFileIterator;
+   class DescFileIterator;
    friend class PkgIterator;
    friend class VerIterator;
+   friend class DescInterator;
    friend class DepIterator;
    friend class PrvIterator;
    friend class PkgFileIterator;
    friend class VerFileIterator;
+   friend class DescFileIterator;
    
    class Namespace;
    
@@ -98,8 +104,10 @@ class pkgCache
    Header *HeaderP;
    Package *PkgP;
    VerFile *VerFileP;
+   DescFile *DescFileP;
    PackageFile *PkgFileP;
    Version *VerP;
+   Description *DescP;
    Provides *ProvideP;
    Dependency *DepP;
    StringItem *StringItemP;
@@ -151,16 +159,20 @@ struct pkgCache::Header
    unsigned short PackageSz;
    unsigned short PackageFileSz;
    unsigned short VersionSz;
+   unsigned short DescriptionSz;
    unsigned short DependencySz;
    unsigned short ProvidesSz;
    unsigned short VerFileSz;
+   unsigned short DescFileSz;
    
    // Structure counts
    unsigned long PackageCount;
    unsigned long VersionCount;
+   unsigned long DescriptionCount;
    unsigned long DependsCount;
    unsigned long PackageFileCount;
    unsigned long VerFileCount;
+   unsigned long DescFileCount;
    unsigned long ProvidesCount;
    
    // Offsets
@@ -169,10 +181,11 @@ struct pkgCache::Header
    map_ptrloc VerSysName;            // StringTable
    map_ptrloc Architecture;          // StringTable
    unsigned long MaxVerFileSize;
+   unsigned long MaxDescFileSize;
 
    /* Allocation pools, there should be one of these for each structure
       excluding the header */
-   DynamicMMap::Pool Pools[7];
+   DynamicMMap::Pool Pools[8];
    
    // Rapid package name lookup
    map_ptrloc HashTable[2*1048];
@@ -193,7 +206,7 @@ struct pkgCache::Package
    map_ptrloc NextPackage;       // Package
    map_ptrloc RevDepends;        // Dependency
    map_ptrloc ProvidesList;      // Provides
-   
+
    // Install/Remove/Purge etc
    unsigned char SelectedState;     // What
    unsigned char InstState;         // Flags
@@ -232,6 +245,14 @@ struct pkgCache::VerFile
    unsigned short Size;
 };
 
+struct pkgCache::DescFile
+{
+   map_ptrloc File;           // PackageFile
+   map_ptrloc NextFile;       // PkgVerFile
+   map_ptrloc Offset;         // File offset
+   unsigned short Size;
+};
+
 struct pkgCache::Version
 {
    map_ptrloc VerStr;            // Stringtable
@@ -241,6 +262,7 @@ struct pkgCache::Version
    // Lists
    map_ptrloc FileList;          // VerFile
    map_ptrloc NextVer;           // Version
+   map_ptrloc DescriptionList;   // Description
    map_ptrloc DependsList;       // Dependency
    map_ptrloc ParentPkg;         // Package
    map_ptrloc ProvidesList;      // Provides
@@ -250,6 +272,22 @@ struct pkgCache::Version
    unsigned short Hash;
    unsigned short ID;
    unsigned char Priority;
+};
+
+struct pkgCache::Description
+{
+   // Language Code store the description translation language code. If
+   // the value has a 0 lenght then this is readed using the Package
+   // file else the Translation-CODE are used.
+   map_ptrloc language_code;     // StringTable
+   map_ptrloc md5sum;            // StringTable
+
+   // Linked list 
+   map_ptrloc FileList;          // DescFile
+   map_ptrloc NextDesc;          // Description
+   map_ptrloc ParentPkg;         // Package
+
+   unsigned short ID;
 };
 
 struct pkgCache::Dependency
@@ -299,11 +337,13 @@ class pkgCache::Namespace
 
    typedef pkgCache::PkgIterator PkgIterator;
    typedef pkgCache::VerIterator VerIterator;
+   typedef pkgCache::DescIterator DescIterator;
    typedef pkgCache::DepIterator DepIterator;
    typedef pkgCache::PrvIterator PrvIterator;
    typedef pkgCache::PkgFileIterator PkgFileIterator;
    typedef pkgCache::VerFileIterator VerFileIterator;   
    typedef pkgCache::Version Version;
+   typedef pkgCache::Description Description;
    typedef pkgCache::Package Package;
    typedef pkgCache::Header Header;
    typedef pkgCache::Dep Dep;

@@ -5,10 +5,11 @@
 
    Index File - Abstraction for an index of archive/source file.
    
-   There are 3 primary sorts of index files, all represented by this 
+   There are 4 primary sorts of index files, all represented by this 
    class:
    
    Binary index files 
+   Binary translation files 
    Bianry index files decribing the local system
    Source index files
    
@@ -79,6 +80,10 @@ class pkgIndexFile
    virtual bool Merge(pkgCacheGenerator &/*Gen*/,OpProgress &/*Prog*/) const {return false;};
    virtual bool MergeFileProvides(pkgCacheGenerator &/*Gen*/,OpProgress &/*Prog*/) const {return true;};
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
+
+   static bool TranslationsAvailable();
+   static bool CheckLanguageCode(const char *Lang);
+   static string LanguageCode();
 
    bool IsTrusted() const { return Trusted; };
    

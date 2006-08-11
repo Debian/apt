@@ -71,6 +71,12 @@ void LocalitySort(pkgCache::VerFile **begin,
 {   
    qsort(begin,Count,Size,LocalityCompare);
 }
+
+void LocalitySort(pkgCache::DescFile **begin,
+		  unsigned long Count,size_t Size)
+{   
+   qsort(begin,Count,Size,LocalityCompare);
+}
 									/*}}}*/
 // UnMet - Show unmet dependencies					/*{{{*/
 // ---------------------------------------------------------------------
@@ -182,7 +188,14 @@ bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr();
 	 for (pkgCache::VerFileIterator Vf = Cur.FileList(); Vf.end() == false; Vf++)
-	    cout << "(" << Vf.File().FileName() << ")";
+	    cout << " (" << Vf.File().FileName() << ")";
+	 cout << endl;
+	 for (pkgCache::DescIterator D = Cur.DescriptionList(); D.end() == false; D++)
+	 {
+	    cout << " Description Language: " << D.LanguageCode() << endl
+		 << "                 File: " << D.FileList().File().FileName() << endl
+		 << "                  MD5: " << D.md5() << endl;
+	 }
 	 cout << endl;
       }
       
@@ -277,11 +290,15 @@ bool Stats(CommandLine &Cmd)
    
    cout << _("Total distinct versions: ") << Cache.Head().VersionCount << " (" <<
       SizeToStr(Cache.Head().VersionCount*Cache.Head().VersionSz) << ')' << endl;
+   cout << _("Total Distinct Descriptions: ") << Cache.Head().DescriptionCount << " (" <<
+      SizeToStr(Cache.Head().DescriptionCount*Cache.Head().DescriptionSz) << ')' << endl;
    cout << _("Total dependencies: ") << Cache.Head().DependsCount << " (" << 
       SizeToStr(Cache.Head().DependsCount*Cache.Head().DependencySz) << ')' << endl;
    
    cout << _("Total ver/file relations: ") << Cache.Head().VerFileCount << " (" <<
       SizeToStr(Cache.Head().VerFileCount*Cache.Head().VerFileSz) << ')' << endl;
+   cout << _("Total Desc/File relations: ") << Cache.Head().DescFileCount << " (" <<
+      SizeToStr(Cache.Head().DescFileCount*Cache.Head().DescFileSz) << ')' << endl;
    cout << _("Total Provides mappings: ") << Cache.Head().ProvidesCount << " (" <<
       SizeToStr(Cache.Head().ProvidesCount*Cache.Head().ProvidesSz) << ')' << endl;
    
@@ -344,6 +361,12 @@ bool Dump(CommandLine &Cmd)
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
 	    cout << "  Depends: " << D.TargetPkg().Name() << ' ' << 
 	                     DeNull(D.TargetVer()) << endl;
+	 for (pkgCache::DescIterator D = V.DescriptionList(); D.end() == false; D++)
+	 {
+	    cout << " Description Language: " << D.LanguageCode() << endl
+		 << "                 File: " << D.FileList().File().FileName() << endl
+		 << "                  MD5: " << D.md5() << endl;
+	 } 
       }      
    }
 
@@ -1192,17 +1215,50 @@ bool DisplayRecord(pkgCache::VerIterator V)
    if (_error->PendingError() == true)
       return false;
    
-   // Read the record and then write it out again.
+   // Read the record
    unsigned char *Buffer = new unsigned char[GCache->HeaderP->MaxVerFileSize+1];
    Buffer[V.FileList()->Size] = '\n';
    if (PkgF.Seek(V.FileList()->Offset) == false ||
-       PkgF.Read(Buffer,V.FileList()->Size) == false ||
-       fwrite(Buffer,1,V.FileList()->Size+1,stdout) < (size_t)(V.FileList()->Size+1))
+       PkgF.Read(Buffer,V.FileList()->Size) == false)
    {
       delete [] Buffer;
       return false;
    }
-   
+
+   // Get a pointer to start of Description field
+   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
+
+   // Write all but Description
+   if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
+   {
+      delete [] Buffer;
+      return false;
+   }
+
+   // Show the right description
+   pkgRecords Recs(*GCache);
+   pkgCache::DescIterator Desc = V.TranslatedDescription();
+   pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
+   cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
+
+   // Find the first field after the description (if there is any)
+   for(DescP++;DescP != &Buffer[V.FileList()->Size];DescP++) 
+   {
+      if(*DescP == '\n' && *(DescP+1) != ' ') 
+      {
+	 // write the rest of the buffer
+	 const unsigned char *end=&Buffer[V.FileList()->Size];
+	 if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP)) 
+	 {
+	    delete [] Buffer;
+	    return false;
+	 }
+
+	 break;
+      }
+   }
+   // write a final newline (after the description)
+   cout<<endl;
    delete [] Buffer;
 
    return true;
@@ -1211,9 +1267,9 @@ bool DisplayRecord(pkgCache::VerIterator V)
 // Search - Perform a search						/*{{{*/
 // ---------------------------------------------------------------------
 /* This searches the package names and pacakge descriptions for a pattern */
-struct ExVerFile
+struct ExDescFile
 {
-   pkgCache::VerFile *Vf;
+   pkgCache::DescFile *Df;
    bool NameMatch;
 };
 
@@ -1253,35 +1309,35 @@ bool Search(CommandLine &CmdL)
       return false;
    }
    
-   ExVerFile *VFList = new ExVerFile[Cache.HeaderP->PackageCount+1];
-   memset(VFList,0,sizeof(*VFList)*Cache.HeaderP->PackageCount+1);
+   ExDescFile *DFList = new ExDescFile[Cache.HeaderP->PackageCount+1];
+   memset(DFList,0,sizeof(*DFList)*Cache.HeaderP->PackageCount+1);
 
    // Map versions that we want to write out onto the VerList array.
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
-      VFList[P->ID].NameMatch = NumPatterns != 0;
+      DFList[P->ID].NameMatch = NumPatterns != 0;
       for (unsigned I = 0; I != NumPatterns; I++)
       {
 	 if (regexec(&Patterns[I],P.Name(),0,0,0) == 0)
-	    VFList[P->ID].NameMatch &= true;
+	    DFList[P->ID].NameMatch &= true;
 	 else
-	    VFList[P->ID].NameMatch = false;
+	    DFList[P->ID].NameMatch = false;
       }
         
       // Doing names only, drop any that dont match..
-      if (NamesOnly == true && VFList[P->ID].NameMatch == false)
+      if (NamesOnly == true && DFList[P->ID].NameMatch == false)
 	 continue;
 	 
       // Find the proper version to use. 
       pkgCache::VerIterator V = Plcy.GetCandidateVer(P);
       if (V.end() == false)
-	 VFList[P->ID].Vf = V.FileList();
+	 DFList[P->ID].Df = V.DescriptionList().FileList();
    }
       
    // Include all the packages that provide matching names too
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
-      if (VFList[P->ID].NameMatch == false)
+      if (DFList[P->ID].NameMatch == false)
 	 continue;
 
       for (pkgCache::PrvIterator Prv = P.ProvidesList() ; Prv.end() == false; Prv++)
@@ -1289,18 +1345,18 @@ bool Search(CommandLine &CmdL)
 	 pkgCache::VerIterator V = Plcy.GetCandidateVer(Prv.OwnerPkg());
 	 if (V.end() == false)
 	 {
-	    VFList[Prv.OwnerPkg()->ID].Vf = V.FileList();
-	    VFList[Prv.OwnerPkg()->ID].NameMatch = true;
+	    DFList[Prv.OwnerPkg()->ID].Df = V.DescriptionList().FileList();
+	    DFList[Prv.OwnerPkg()->ID].NameMatch = true;
 	 }
       }
    }
-
-   LocalitySort(&VFList->Vf,Cache.HeaderP->PackageCount,sizeof(*VFList));
+   
+   LocalitySort(&DFList->Df,Cache.HeaderP->PackageCount,sizeof(*DFList));
 
    // Iterate over all the version records and check them
-   for (ExVerFile *J = VFList; J->Vf != 0; J++)
+   for (ExDescFile *J = DFList; J->Df != 0; J++)
    {
-      pkgRecords::Parser &P = Recs.Lookup(pkgCache::VerFileIterator(Cache,J->Vf));
+      pkgRecords::Parser &P = Recs.Lookup(pkgCache::DescFileIterator(Cache,J->Df));
 
       bool Match = true;
       if (J->NameMatch == false)
@@ -1331,7 +1387,7 @@ bool Search(CommandLine &CmdL)
       }
    }
    
-   delete [] VFList;
+   delete [] DFList;
    for (unsigned I = 0; I != NumPatterns; I++)
       regfree(&Patterns[I]);
    if (ferror(stdout))
