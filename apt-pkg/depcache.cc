@@ -399,9 +399,11 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
 {
    StateCache &State = PkgState[Pkg->ID];
    
-   // The Package is broken
+   // The Package is broken (either minimal dep or policy dep)
    if ((State.DepState & DepInstMin) != DepInstMin)
       iBrokenCount += Add;
+   if ((State.DepState & DepInstPolicy) != DepInstPolicy)
+      iPolicyBrokenCount += Add;
    
    // Bad state
    if (Pkg.State() != PkgIterator::NeedsNothing)
@@ -763,7 +765,8 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge)
 // ---------------------------------------------------------------------
 /* */
 void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
-			      unsigned long Depth, bool FromUser)
+			      unsigned long Depth, bool FromUser,
+			      bool ForceImportantDeps)
 {
    if (Depth > 100)
       return;
@@ -846,24 +849,26 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
       /* Check if this dep should be consider for install. If it is a user
          defined important dep and we are installed a new package then 
-	 it will be installed. Otherwise we only worry about critical deps */
+	 it will be installed. Otherwise we only check for important
+         deps that have changed from the installed version
+      */
       if (IsImportantDep(Start) == false)
 	 continue;
-
+      
       /* check if any ImportantDep() (but not Critial) where added
-       * since we installed the thing
+       * since we installed the package
        */
       bool isNewImportantDep = false;
-      if(IsImportantDep(Start) && !Start.IsCritical())
+      if(!ForceImportantDeps && !Start.IsCritical())
       {
 	 bool found=false;
 	 VerIterator instVer = Pkg.CurrentVer();
-	 for (DepIterator D = instVer.DependsList(); !D.end(); D++)
+	 for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
 	 {
 	    //FIXME: deal better with or-groups(?)
 	    DepIterator LocalStart = D;
 	    
-	    if(IsImportantDep(Dep) && Start.TargetPkg() == D.TargetPkg())
+	    if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
 	       found=true;
 	 }
 	 // this is a new dep if it was not found to be already
@@ -875,7 +880,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    std::clog << "new important dependency: " 
 		      << Start.TargetPkg().Name() << std::endl;
 
-      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false && !isNewImportantDep)
+      // skip important deps if the package is already installed
+      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false 
+	  && !isNewImportantDep && !ForceImportantDeps)
 	 continue;
       
       /* If we are in an or group locate the first or that can 
@@ -923,7 +930,11 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       std::clog << "Installing " << InstPkg.Name() 
 			 << " as dep of " << Pkg.Name() 
 			 << std::endl;
-	   MarkInstall(InstPkg, true, Depth + 1, false);
+	    MarkInstall(InstPkg,true,Depth + 1, false, ForceImportantDeps);
+
+	    // Set the autoflag, after MarkInstall because MarkInstall unsets it
+	    if (P->CurrentVer == 0)
+	       PkgState[InstPkg->ID].Flags |= Flag::Auto;
 	 }
 	 continue;
       }
