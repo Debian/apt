@@ -680,14 +680,15 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       {
 	 bool found=false;
 	 VerIterator instVer = Pkg.CurrentVer();
-	 for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
-	 {
-	    //FIXME: deal better with or-groups(?)
-	    DepIterator LocalStart = D;
-	    
-	    if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
-	       found=true;
-	 }
+	 if(!instVer.end())
+	    for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
+	    {
+	       //FIXME: deal better with or-groups(?)
+	       DepIterator LocalStart = D;
+	       
+	       if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
+		  found=true;
+	    }
 	 // this is a new dep if it was not found to be already
 	 // a important dep of the installed pacakge
 	 isNewImportantDep = !found;
