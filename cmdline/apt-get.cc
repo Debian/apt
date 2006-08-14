@@ -650,7 +650,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
 	 // upgrade all policy-broken packages with ForceImportantDeps=True
 	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); !I.end(); I++)
 	    if ((*DCache)[I].NowPolicyBroken() == true) 
-	       DCache->MarkInstall(I,true,0,true);
+	       DCache->MarkInstall(I,true,0,false, true);
       }
    }
 
