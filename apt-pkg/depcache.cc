@@ -399,9 +399,11 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
 {
    StateCache &State = PkgState[Pkg->ID];
    
-   // The Package is broken
+   // The Package is broken (either minimal dep or policy dep)
    if ((State.DepState & DepInstMin) != DepInstMin)
       iBrokenCount += Add;
+   if ((State.DepState & DepInstPolicy) != DepInstPolicy)
+      iPolicyBrokenCount += Add;
    
    // Bad state
    if (Pkg.State() != PkgIterator::NeedsNothing)
@@ -763,7 +765,8 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge)
 // ---------------------------------------------------------------------
 /* */
 void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
-			      unsigned long Depth, bool FromUser)
+			      unsigned long Depth, bool FromUser,
+			      bool ForceImportantDeps)
 {
    if (Depth > 100)
       return;
@@ -778,7 +781,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       installed */
    StateCache &P = PkgState[Pkg->ID];
    P.iFlags &= ~AutoKept;
-   if (P.InstBroken() == false && (P.Mode == ModeInstall ||
+   if ((P.InstPolicyBroken() == false && P.InstBroken() == false) && 
+       (P.Mode == ModeInstall ||
 	P.CandidateVer == (Version *)Pkg.CurrentVer()))
    {
       if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
@@ -789,11 +793,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    // See if there is even any possible instalation candidate
    if (P.CandidateVer == 0)
       return;
-   
    // We dont even try to install virtual packages..
    if (Pkg->VersionList == 0)
       return;
-   
    /* Target the candidate version and remove the autoflag. We reset the
       autoflag below if this was called recursively. Otherwise the user
       should have the ability to de-auto a package by changing its state */
@@ -847,10 +849,41 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
       /* Check if this dep should be consider for install. If it is a user
          defined important dep and we are installed a new package then 
-	 it will be installed. Otherwise we only worry about critical deps */
+	 it will be installed. Otherwise we only check for important
+         deps that have changed from the installed version
+      */
       if (IsImportantDep(Start) == false)
 	 continue;
-      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false)
+      
+      /* check if any ImportantDep() (but not Critial) where added
+       * since we installed the package
+       */
+      bool isNewImportantDep = false;
+      if(!ForceImportantDeps && !Start.IsCritical())
+      {
+	 bool found=false;
+	 VerIterator instVer = Pkg.CurrentVer();
+	 if(!instVer.end())
+	    for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
+	    {
+	       //FIXME: deal better with or-groups(?)
+	       DepIterator LocalStart = D;
+	       
+	       if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
+		  found=true;
+	    }
+	 // this is a new dep if it was not found to be already
+	 // a important dep of the installed pacakge
+	 isNewImportantDep = !found;
+      }
+      if(isNewImportantDep)
+	 if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
+	    std::clog << "new important dependency: " 
+		      << Start.TargetPkg().Name() << std::endl;
+
+      // skip important deps if the package is already installed
+      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false 
+	  && !isNewImportantDep && !ForceImportantDeps)
 	 continue;
       
       /* If we are in an or group locate the first or that can 
@@ -898,7 +931,11 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       std::clog << "Installing " << InstPkg.Name() 
 			 << " as dep of " << Pkg.Name() 
 			 << std::endl;
-	   MarkInstall(InstPkg, true, Depth + 1, false);
+	   MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps);
+	    // Set the autoflag, after MarkInstall because MarkInstall 
+	    // unsets it
+	    if (P->CurrentVer == 0)
+	       PkgState[InstPkg->ID].Flags |= Flag::Auto;
 	 }
 	 continue;
       }
@@ -1060,7 +1097,14 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
 /* */
 bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
 {
-   return Dep.IsCritical();
+   if(Dep.IsCritical())
+      return true;
+   else if(Dep->Type == pkgCache::Dep::Recommends)
+      return  _config->FindB("APT::Install-Recommends", false);
+   else if(Dep->Type == pkgCache::Dep::Suggests)
+     return _config->FindB("APT::Install-Suggests", false);
+
+   return false;
 }
 									/*}}}*/
 

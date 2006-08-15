@@ -40,6 +40,8 @@ bool pkgInitConfig(Configuration &Cnf)
    else
       Cnf.Set("APT::Architecture",COMMON_OS "-" COMMON_CPU);
    Cnf.Set("APT::Build-Essential::", "build-essential");
+   Cnf.Set("APT::Install-Recommends", false);
+   Cnf.Set("APT::Install-Suggests", false);
    Cnf.Set("Dir","/");
    
    // State   
