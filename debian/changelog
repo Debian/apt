@@ -3,6 +3,11 @@ apt (0.6.45ubuntu5) edgy; urgency=low
   * apt-pkg/pkgcachegen.cc:
     - increase the APT::Cache-Limit to deal with the increased demand due
       to the translated descriptions
+  * apt-pkg/deb/dpkgpm.cc:
+    - pass "--auto-deconfigure" to dpkg on install to support the
+      new "breaks" in dpkg
+  * debian/control:
+    - depend on a dpkg with "breaks" support
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 15 Aug 2006 12:06:26 +0200
 

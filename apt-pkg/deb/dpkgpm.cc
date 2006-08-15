@@ -474,6 +474,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 case Item::Install:
 	 Args[n++] = "--unpack";
 	 Size += strlen(Args[n-1]);
+	 Args[n++] = "--auto-deconfigure";
+	 Size += strlen(Args[n-1]);
 	 break;
       }
       
