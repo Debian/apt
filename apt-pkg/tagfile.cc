@@ -33,21 +33,32 @@ using std::string;
 /* */
 pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
      Fd(*pFd),
-     Size(Size)
+     Size(Size),
+     Map(NULL),
+     Buffer(0)
 {
-   if (Fd.IsOpen() == false || Fd.Size() == 0)
+   if (Fd.IsOpen() == false)
    {
-      Buffer = 0;
       Start = End = Buffer = 0;
+      Done = true;
       iOffset = 0;
       Map = NULL;
       return;
    }
    
-   Map = new MMap (Fd, MMap::Public | MMap::ReadOnly);
-   Buffer = (char *) Map->Data ();
-   Start = Buffer;
-   End = Buffer + Map->Size ();
+   // check if we can MMap it
+   if(Fd.Size() == 0)
+   {
+      Buffer = new char[Size];
+      Start = End = Buffer;
+      Done = false;
+      Fill();
+   } else {
+      Map = new MMap (Fd, MMap::Public | MMap::ReadOnly);
+      Buffer = (char *) Map->Data ();
+      Start = Buffer;
+      End = Buffer + Map->Size ();
+   }
    iOffset = 0;
 }
 									/*}}}*/
@@ -56,6 +67,7 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
 /* */
 pkgTagFile::~pkgTagFile()
 {
+   if(!Map) delete [] Buffer;
    delete Map;
 }
 									/*}}}*/
@@ -64,18 +76,70 @@ pkgTagFile::~pkgTagFile()
 /* If the Section Scanner fails we refill the buffer and try again. */
 bool pkgTagFile::Step(pkgTagSection &Tag)
 {
-   if (Start == End)
+   if ((Map != NULL) && (Start == End))
       return false;
 
    if (Tag.Scan(Start,End - Start) == false)
    {
-      return _error->Error(_("Unable to parse package file %s (1)"),
-	      Fd.Name().c_str());
+      if (Map != NULL)
+	 return _error->Error(_("Unable to parse package file %s (1)"),
+			      Fd.Name().c_str());
+
+      if (Fill() == false)
+	 return false;
+      
+      if (Tag.Scan(Start,End - Start) == false)
+	 return _error->Error(_("Unable to parse package file %s (1)"),
+			      Fd.Name().c_str());
    }
    Start += Tag.size();
    iOffset += Tag.size();
 
    Tag.Trim();
+   return true;
+}
+									/*}}}*/
+// TagFile::Fill - Top up the buffer					/*{{{*/
+// ---------------------------------------------------------------------
+/* This takes the bit at the end of the buffer and puts it at the start
+   then fills the rest from the file */
+bool pkgTagFile::Fill()
+{
+   unsigned long EndSize = End - Start;
+   unsigned long Actual = 0;
+   
+   memmove(Buffer,Start,EndSize);
+   Start = Buffer;
+   End = Buffer + EndSize;
+   
+   if (Done == false)
+   {
+      // See if only a bit of the file is left
+      if (Fd.Read(End,Size - (End - Buffer),&Actual) == false)
+	 return false;
+      if (Actual != Size - (End - Buffer))
+	 Done = true;
+      End += Actual;
+   }
+   
+   if (Done == true)
+   {
+      if (EndSize <= 3 && Actual == 0)
+	 return false;
+      if (Size - (End - Buffer) < 4)
+	 return true;
+      
+      // Append a double new line if one does not exist
+      unsigned int LineCount = 0;
+      for (const char *E = End - 1; E - End < 6 && (*E == '\n' || *E == '\r'); E--)
+	 if (*E == '\n')
+	    LineCount++;
+      for (; LineCount < 2; LineCount++)
+	 *End++ = '\n';
+      
+      return true;
+   }
+   
    return true;
 }
 									/*}}}*/
@@ -94,12 +158,31 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
       return Step(Tag);
    }
 
-   // Reposition and reload..
    iOffset = Offset;
-   Start = Buffer + iOffset;
+   if (Map != NULL)
+   {
+      Start = Buffer + iOffset;
+   } 
+   else 
+   {
+      // Reposition and reload..
+      Done = false;
+      if (Fd.Seek(Offset) == false)
+	 return false;
+      End = Start = Buffer;
    
-   // Start != End is a special case to not fail on empty TagFiles
-   if (Start != End && Tag.Scan(Start,End - Start) == false)
+      if (Fill() == false)
+	 return false;
+
+      if (Tag.Scan(Start,End - Start) == true)
+	 return true;
+   
+      // This appends a double new line (for the real eof handling)
+      if (Fill() == false)
+	 return false;
+   }
+
+   if (Tag.Scan(Start,End - Start) == false)
       return _error->Error(_("Unable to parse package file %s (2)"),Fd.Name().c_str());
    
    return true;
@@ -157,8 +240,8 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
 
    if ((Stop+1 >= End) && (End[-1] == '\n' || End[-1] == '\r'))
    {
-       Indexes[TagCount] = (End - 1) - Section;
-       return true;
+      Indexes[TagCount] = (End - 1) - Section;
+      return true;
    }
 
    return false;
@@ -343,7 +426,8 @@ static const char *iTFRewritePackageOrder[] = {
                           "Filename",
                           "Size",
                           "MD5Sum",
-                          "SHA1Sum",
+                          "SHA1",
+                          "SHA256",
                            "MSDOS-Filename",   // Obsolete
                           "Description",
                           0};

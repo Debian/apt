@@ -45,10 +45,11 @@ class FTWScanner
    bool NoLinkAct;
    
    static FTWScanner *Owner;
-   static int Scanner(const char *File,const struct stat *sb,int Flag);
+   static int ScannerFTW(const char *File,const struct stat *sb,int Flag);
+   static int ScannerFile(const char *File, bool ReadLink);
 
    bool Delink(string &FileName,const char *OriginalPath,
-	       unsigned long &Bytes,struct stat &St);
+	       unsigned long &Bytes,off_t FileSize);
 
    inline void NewLine(unsigned Priority)
    {
@@ -84,6 +85,8 @@ class PackagesWriter : public FTWScanner
 
    // Some flags
    bool DoMD5;
+   bool DoSHA1;
+   bool DoSHA256;
    bool NoOverride;
    bool DoContents;
 
@@ -170,6 +173,7 @@ protected:
    {
       string MD5;
       string SHA1;
+      string SHA256;
       // Limited by FileFd::Size()
       unsigned long size;
       ~CheckSum() {};
