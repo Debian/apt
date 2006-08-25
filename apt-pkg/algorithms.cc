@@ -102,6 +102,7 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
 	 DepIterator End;
 	 D.GlobOr(Start,End);
 	 if (Start->Type == pkgCache::Dep::Conflicts ||
+	     Start->Type == pkgCache::Dep::DpkgBreaks ||
 	     Start->Type == pkgCache::Dep::Obsoletes ||
 	     End->Type == pkgCache::Dep::PreDepends)
          {
@@ -151,6 +152,8 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
 	    cout << " Obsoletes:" << D.TargetPkg().Name();
 	 else if (D->Type == pkgCache::Dep::Conflicts)
 	    cout << " Conflicts:" << D.TargetPkg().Name();
+	 else if (D->Type == pkgCache::Dep::DpkgBreaks)
+	    cout << " Breaks:" << D.TargetPkg().Name();
 	 else
 	    cout << " Depends:" << D.TargetPkg().Name();
       }	    
@@ -651,6 +654,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 	       /* We let the algorithm deal with conflicts on its next iteration,
 		it is much smarter than us */
 	       if (Start->Type == pkgCache::Dep::Conflicts || 
+		   Start->Type == pkgCache::Dep::DpkgBreaks || 
 		   Start->Type == pkgCache::Dep::Obsoletes)
 		   break;
 	       
@@ -873,6 +877,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    SPtrArray<pkgCache::Version *> VList = Start.AllTargets();
 	    if (*VList == 0 && (Flags[I->ID] & Protected) != Protected &&
 		Start->Type != pkgCache::Dep::Conflicts &&
+		Start->Type != pkgCache::Dep::DpkgBreaks &&
 		Start->Type != pkgCache::Dep::Obsoletes &&
 		Cache[I].NowBroken() == false)
 	    {	       
@@ -903,6 +908,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       if (Scores[I->ID] <= Scores[Pkg->ID] ||
 		   ((Cache[Start] & pkgDepCache::DepNow) == 0 &&
 		    End->Type != pkgCache::Dep::Conflicts &&
+		    End->Type != pkgCache::Dep::DpkgBreaks &&
 		    End->Type != pkgCache::Dep::Obsoletes))
 	       {
 		  // Try a little harder to fix protected packages..
@@ -968,7 +974,21 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		      (Start->Type == pkgCache::Dep::Conflicts ||
 		       Start->Type == pkgCache::Dep::Obsoletes))
 		     continue;
-		  
+
+		  if (Start->Type == pkgCache::Dep::DpkgBreaks)
+		  {
+		     /* Would it help if we upgraded? */
+		     if (Cache[End] & pkgDepCache::DepGCVer) {
+			if (Debug)
+			   clog << "  Upgrading " << Pkg.Name() << " due to Breaks field in " << I.Name() << endl;
+			Cache.MarkInstall(Pkg, false, 0, false);
+			continue;
+		     }
+		     if (Debug)
+			clog << "  Will not break " << Pkg.Name() << " as stated in Breaks field in " << I.Name() <<endl;
+		     continue;
+		  }
+
 		  // Skip adding to the kill list if it is protected
 		  if ((Flags[Pkg->ID] & Protected) != 0)
 		     continue;
@@ -989,6 +1009,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    // Hm, nothing can possibly satisify this dep. Nuke it.
 	    if (VList[0] == 0 && 
 		Start->Type != pkgCache::Dep::Conflicts &&
+		Start->Type != pkgCache::Dep::DpkgBreaks &&
 		Start->Type != pkgCache::Dep::Obsoletes &&
 		(Flags[I->ID] & Protected) != Protected)
 	    {

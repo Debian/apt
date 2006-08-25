@@ -105,6 +105,8 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
       return false;
    if (ParseDepends(Ver,"Conflicts",pkgCache::Dep::Conflicts) == false)
       return false;
+   if (ParseDepends(Ver,"Breaks",pkgCache::Dep::DpkgBreaks) == false)
+      return false;
    if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Replaces) == false)
       return false;
 
@@ -193,6 +195,7 @@ unsigned short debListParser::VersionHash()
 //                            "Suggests",
 //                            "Recommends",
                             "Conflicts",
+                            "Breaks",
                             "Replaces",0};
    unsigned long Result = INIT_FCS;
    char S[1024];
