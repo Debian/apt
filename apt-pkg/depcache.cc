@@ -273,7 +273,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
       we allow it anyhow because dpkg does. Technically it is a packaging
       bug. Conflicts may never self match */
    if (Dep.TargetPkg() != Dep.ParentPkg() || 
-       (Dep->Type != Dep::Conflicts && Dep->Type != Dep::Obsoletes))
+       (Dep->Type != Dep::Conflicts && Dep->Type != Dep::DpkgBreaks && Dep->Type != Dep::Obsoletes))
    {
       PkgIterator Pkg = Dep.TargetPkg();
       // Check the base package
@@ -303,7 +303,8 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    {
       /* Provides may never be applied against the same package if it is
          a conflicts. See the comment above. */
-      if (P.OwnerPkg() == Pkg && Dep->Type == Dep::Conflicts)
+      if (P.OwnerPkg() == Pkg &&
+	  (Dep->Type == Dep::Conflicts || Dep->Type == Dep::DpkgBreaks))
 	 continue;
       
       // Check if the provides is a hit
@@ -457,7 +458,9 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
 
       /* Invert for Conflicts. We have to do this twice to get the
          right sense for a conflicts group */
-      if (D->Type == Dep::Conflicts || D->Type == Dep::Obsoletes)
+      if (D->Type == Dep::Conflicts ||
+	  D->Type == Dep::DpkgBreaks ||
+	  D->Type == Dep::Obsoletes)
 	 State = ~State;
       
       // Add to the group if we are within an or..
@@ -468,7 +471,9 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
 	 Group = 0;
       
       // Invert for Conflicts
-      if (D->Type == Dep::Conflicts || D->Type == Dep::Obsoletes)
+      if (D->Type == Dep::Conflicts ||
+	  D->Type == Dep::DpkgBreaks ||
+	  D->Type == Dep::Obsoletes)
 	 State = ~State;
    }	 
 }
@@ -601,7 +606,9 @@ void pkgDepCache::Update(OpProgress *Prog)
 	       Group = 0;
 
 	    // Invert for Conflicts
-	    if (D->Type == Dep::Conflicts || D->Type == Dep::Obsoletes)
+	    if (D->Type == Dep::Conflicts ||
+		D->Type == Dep::DpkgBreaks ||
+		D->Type == Dep::Obsoletes)
 	       State = ~State;
 	 }	 
       }
@@ -631,7 +638,9 @@ void pkgDepCache::Update(DepIterator D)
       State = DependencyState(D);
     
       // Invert for Conflicts
-      if (D->Type == Dep::Conflicts || D->Type == Dep::Obsoletes)
+      if (D->Type == Dep::Conflicts ||
+	  D->Type == Dep::DpkgBreaks ||
+	  D->Type == Dep::Obsoletes)
 	 State = ~State;
 
       RemoveStates(D.ParentPkg());
@@ -894,7 +903,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       /* This bit is for processing the possibilty of an install/upgrade
          fixing the problem */
       SPtrArray<Version *> List = Start.AllTargets();
-      if ((DepState[Start->ID] & DepCVer) == DepCVer)
+      if (Start->Type != Dep::DpkgBreaks &&
+	  (DepState[Start->ID] & DepCVer) == DepCVer)
       {
 	 // Right, find the best version to install..
 	 Version **Cur = List;
@@ -939,17 +949,23 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 }
 	 continue;
       }
-      
+
       /* For conflicts we just de-install the package and mark as auto,
-         Conflicts may not have or groups */
-      if (Start->Type == Dep::Conflicts || Start->Type == Dep::Obsoletes)
+         Conflicts may not have or groups.  For dpkg's Breaks we try to
+         upgrade the package. */
+      if (Start->Type == Dep::Conflicts || Start->Type == Dep::Obsoletes ||
+	  Start->Type == Dep::DpkgBreaks)
       {
 	 for (Version **I = List; *I != 0; I++)
 	 {
 	    VerIterator Ver(*this,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();
-      
-	    MarkDelete(Pkg);
+
+	    if (Start->Type != Dep::DpkgBreaks)
+	       MarkDelete(Pkg);
+	    else
+	       if (PkgState[Pkg->ID].CandidateVer != *I)
+		  MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);
 	 }
 	 continue;
       }      

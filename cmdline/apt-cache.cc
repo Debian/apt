@@ -102,13 +102,15 @@ bool UnMet(CommandLine &CmdL)
 	    if (End->Type != pkgCache::Dep::PreDepends &&
 		End->Type != pkgCache::Dep::Depends && 
 		End->Type != pkgCache::Dep::Suggests &&
-		End->Type != pkgCache::Dep::Recommends)
+		End->Type != pkgCache::Dep::Recommends &&
+		End->Type != pkgCache::Dep::DpkgBreaks)
 	       continue;
 
 	    // Important deps only
 	    if (Important == true)
 	       if (End->Type != pkgCache::Dep::PreDepends &&
-		   End->Type != pkgCache::Dep::Depends)
+		   End->Type != pkgCache::Dep::Depends &&
+		   End->Type != pkgCache::Dep::DpkgBreaks)
 		  continue;
 	    
 	    // Verify the or group
@@ -869,6 +871,7 @@ bool XVcg(CommandLine &CmdL)
 		     then show the relation but do not recurse */
 		  if (Hit == false && 
 		      (D->Type == pkgCache::Dep::Conflicts ||
+		       D->Type == pkgCache::Dep::DpkgBreaks ||
 		       D->Type == pkgCache::Dep::Obsoletes))
 		  {
 		     if (Show[D.TargetPkg()->ID] == None && 
@@ -889,6 +892,9 @@ bool XVcg(CommandLine &CmdL)
 	       {
 		  case pkgCache::Dep::Conflicts:
 		    printf("label: \"conflicts\" color: lightgreen }\n");
+		    break;
+		  case pkgCache::Dep::DpkgBreaks:
+		    printf("label: \"breaks\" color: lightgreen }\n");
 		    break;
 		  case pkgCache::Dep::Obsoletes:
 		    printf("label: \"obsoletes\" color: lightgreen }\n");

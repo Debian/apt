@@ -1,13 +1,23 @@
 apt (0.6.45ubuntu6) edgy; urgency=low
 
+  [Michael Vogt]
   * cmdline/apt-get.cc:
     - always show auto-removable packages and give a hint how to remove 
       them
   * debian/apt.conf.autoremove:
     - exlucde linux-image and linux-restricted-modules from ever being 
       auto-removed
+  [Ian Jackson]
+  * Tests pass without code changes!  Except that we need this:
+  * Bump cache file major version to force rebuild so that Breaks
+    dependencies are included.
+  * Don't depend on or suggest any particular dpkg or dpkg-dev versions;
+    --auto-deconfigure is very very old and dpkg-dev's Breaks support
+    is more or less orthogonal.
+  * Initial draft of `Breaks' implementation.  Appears to compile,
+    but as yet *completely untested*.
 
- --
+ -- 
 
 apt (0.6.45ubuntu5) edgy; urgency=low
 

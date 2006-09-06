@@ -422,6 +422,7 @@ static const char *iTFRewritePackageOrder[] = {
                           "Recommends",
                           "Suggests",
                           "Conflicts",
+                          "Breaks",
                           "Conffiles",
                           "Filename",
                           "Size",
