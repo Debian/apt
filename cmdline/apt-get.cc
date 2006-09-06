@@ -1419,31 +1419,42 @@ bool DoUpdate(CommandLine &CmdL)
 /* Remove unused automatic packages */
 bool DoAutomaticRemove(CacheFile &Cache)
 {
-   if(_config->FindI("Debug::pkgAutoRemove",false))
+   bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
+   pkgDepCache::ActionGroup group(*Cache);
+
+   if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
 
    if (_config->FindB("APT::Get::Remove",true) == false)
       return _error->Error(_("We are not supposed to delete stuff, can't "
 			     "start AutoRemover"));
 
+   string autoremovelist, autoremoveversions;
+   // look over the cache to see what can be removed
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
    {
-     pkgDepCache::ActionGroup group(*Cache);
-
-     // look over the cache to see what can be removed
-     for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
-       {
-	 if (Cache[Pkg].Garbage)
-	   {
-	     if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
-	       fprintf(stdout,"We could delete %s\n", Pkg.Name());
-
-	     if(Pkg.CurrentVer() != 0 && Pkg->CurrentState != pkgCache::State::ConfigFiles)
+      if (Cache[Pkg].Garbage)
+      {
+	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
+	    if(Debug)
+	       std::cout << "We could delete %s" <<  Pkg.Name() << std::endl;
+	   
+	 autoremovelist += string(Pkg.Name()) + " ";
+	 autoremoveversions += string(Cache[Pkg].CandVersion) + " ";
+	 if (_config->FindB("APT::Get::AutomaticRemove")) 
+	 {
+	    if(Pkg.CurrentVer() != 0 && 
+	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
 	       Cache->MarkDelete(Pkg, _config->FindB("APT::Get::Purge", false));
-	     else
+	    else
 	       Cache->MarkKeep(Pkg, false, false);
-	   }
-       }
+	 }
+      }
    }
+   ShowList(c1out, _("The following packages where automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
+   if (!_config->FindB("APT::Get::AutomaticRemove") && 
+       autoremovelist.size() > 0)
+      c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
 
    // Now see if we destroyed anything
    if (Cache->BrokenCount() != 0)
@@ -1659,10 +1670,8 @@ bool DoInstall(CommandLine &CmdL)
 	 return _error->Error(_("Broken packages"));
       }   
    }
-   if (_config->FindB("APT::Get::AutomaticRemove")) {
-      if (!DoAutomaticRemove(Cache)) 
+   if (!DoAutomaticRemove(Cache)) 
 	 return false;
-   }
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
