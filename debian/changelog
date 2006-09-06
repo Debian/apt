@@ -1,10 +1,13 @@
-apt (0.6.45ubuntu6) unstable; urgency=low
+apt (0.6.45ubuntu6) edgy; urgency=low
 
   * Tests pass without code changes!  Except that we need this:
   * Bump cache file major version to force rebuild so that Breaks
     dependencies are included.
+  * Don't depend on or suggest any particular dpkg or dpkg-dev versions;
+    --auto-deconfigure is very very old and dpkg-dev's Breaks support
+    is more or less orthogonal.
 
- -- Ian Jackson <ian@davenant.greenend.org.uk>  Tue,  5 Sep 2006 19:50:02 +0100
+ -- Ian Jackson <iwj@ubuntu.com>  Tue,  5 Sep 2006 19:50:02 +0100
 
 apt (0.6.45ubuntu6~iwj) unstable; urgency=low
 
@@ -21,8 +24,6 @@ apt (0.6.45ubuntu5) edgy; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - pass "--auto-deconfigure" to dpkg on install to support the
       new "breaks" in dpkg
-  * debian/control:
-    - depend on a dpkg with "breaks" support
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 15 Aug 2006 12:06:26 +0200
 
