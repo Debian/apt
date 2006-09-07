@@ -873,6 +873,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 bool found=false;
 	 VerIterator instVer = Pkg.CurrentVer();
 	 if(!instVer.end())
+	 {
 	    for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
 	    {
 	       //FIXME: deal better with or-groups(?)
@@ -881,9 +882,10 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
 		  found=true;
 	    }
-	 // this is a new dep if it was not found to be already
-	 // a important dep of the installed pacakge
-	 isNewImportantDep = !found;
+	    // this is a new dep if it was not found to be already
+	    // a important dep of the installed pacakge
+	    isNewImportantDep = !found;
+	 }
       }
       if(isNewImportantDep)
 	 if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
@@ -1330,8 +1332,22 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
 {
    if(Dep.IsCritical())
       return true;
-   else if(Dep->Type == pkgCache::Dep::Recommends)
-      return  _config->FindB("APT::Install-Recommends", false);
+   else if(Dep->Type == pkgCache::Dep::Recommends) 
+   {
+      if ( _config->FindB("APT::Install-Recommends", false))
+	 return true;
+      // we suport a special mode to only install-recommends for certain
+      // sections
+      // FIXME: this is a meant as a temporarly solution until the 
+      //        recommends are cleaned up
+      string s = _config->Find("APT::Install-Recommends-Section","");
+      if(s.size() > 0) 
+      {
+	 const char *sec = Dep.TargetPkg().Section();
+	 if (sec && strcmp(sec, s.c_str()) == 0)
+	    return true;
+      }
+   }
    else if(Dep->Type == pkgCache::Dep::Suggests)
      return _config->FindB("APT::Install-Suggests", false);
 
