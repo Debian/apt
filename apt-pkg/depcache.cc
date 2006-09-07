@@ -1343,7 +1343,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
       string s = _config->Find("APT::Install-Recommends-Section","");
       if(s.size() > 0) 
       {
-	 const char *sec = Dep.TargetPkg().Section();
+	 const char *sec = Dep.ParentVer().Section();
 	 if (sec && strcmp(sec, s.c_str()) == 0)
 	    return true;
       }
