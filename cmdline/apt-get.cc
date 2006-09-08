@@ -1451,7 +1451,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
       }
    }
-   ShowList(c1out, _("The following packages where automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
+   ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
    if (!_config->FindB("APT::Get::AutomaticRemove") && 
        autoremovelist.size() > 0)
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;

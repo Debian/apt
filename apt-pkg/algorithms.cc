@@ -1250,8 +1250,13 @@ void pkgProblemResolver::InstallProtect()
       {
 	 if ((Flags[I->ID] & ToRemove) == ToRemove)
 	    Cache.MarkDelete(I);
-	 else
-	    Cache.MarkInstall(I, false, 0, false);
+	 else 
+	 {
+	    // preserver the information if the package was auto
+	    // or manual installed
+	    bool autoInst = (Cache[I].Flags & pkgCache::Flag::Auto);
+	    Cache.MarkInstall(I, false, 0, !autoInst);
+	 }
       }
    }   
 }
