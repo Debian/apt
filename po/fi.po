@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-05-27 13:46+0200\n"
-"PO-Revision-Date: 2005-02-15 14:09+0200\n"
+"PO-Revision-Date: 2006-08-14 13:27+0300\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -230,19 +230,15 @@ msgstr ""
 
 #: cmdline/apt-cdrom.cc:78
 msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
-msgstr ""
+msgstr "Kirjoita levylle nimi, kuten \"Debian 2.1r1 Levy 1\""
 
 #: cmdline/apt-cdrom.cc:93
-#, fuzzy
 msgid "Please insert a Disc in the drive and press enter"
-msgstr ""
-"Taltion vaihto: Pistä levy \n"
-"\"%s\"\n"
-"asemaan \"%s\" ja paina Enter\n"
+msgstr "Aseta levy asemaan ja paina Enter"
 
 #: cmdline/apt-cdrom.cc:117
 msgid "Repeat this process for the rest of the CDs in your set."
-msgstr ""
+msgstr "Toista tämä lopuille rompuille kasassasi."
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -340,7 +336,6 @@ msgid "Error processing contents %s"
 msgstr "Tapahtui virhe käsiteltäessä sisällysluetteloa %s"
 
 #: ftparchive/apt-ftparchive.cc:556
-#, fuzzy
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -389,31 +384,31 @@ msgstr ""
 "          generate asetukset [ryhmät]\n"
 "          clean asetukset\n"
 "\n"
-"apt-ftparchive tuottaa hakemiston Debianin arkistoista. Monta "
+"apt-ftparchive tuottaa hakemistoja Debianin arkistoista. Monta "
 "tuottamistapaa\n"
 "on tuettu alkaen täysin automaattisista toiminnallisesti samoihin kuin\n"
 "dpkg-scanpackages ja dpkg-scansources.\n"
 "\n"
-"apt-ftparchive tuottaa pakettitiedostoja deb-tiedostojen puusta.\n"
+"apt-ftparchive tuottaa pakettitiedostoja .deb-tiedostojen puusta.\n"
 "Pakettitiedostossa on kunkin paketin kaikkien ohjauskenttien\n"
-"sisältö sekä MD5 hajautustunnus ja tiedoston koko. Poikkeus-\n"
+"sisältö sekä MD5 tiiviste ja tiedoston koko. Poikkeus-\n"
 "tiedostolla voidaan arvot Priority ja Section pakottaa halutuiksi.\n"
 "\n"
 "Samaan tapaan apt-ftparchive tuottaa lähdetiedostoja\n"
-"dscs-tiedostojen puusta. Valitsimella --source-overrride voidaan\n"
+".dscs-tiedostojen puusta. Valitsimella --source-overrride voidaan\n"
 "määrittää lähteiden poikkeustiedosto.\n"
 "\n"
 "Komennot \"packages\" ja \"sources\" olisi suoritettava puun juuressa.\n"
-"Binääripolun olisi osoitettava rekursiivisen haun alkukohtaan ja \n"
+"Binääripolun olisi osoitettava rekursiivisen haun alkukohtaan ja\n"
 "poikkeustiedostossa olisi oltava poikkeusilmaisimet. Polun alku\n"
-"yhdistetään tiedoston nimen jos se on annettu. Esimerkki \n"
+"yhdistetään tiedoston nimeen jos se on annettu. Esimerkki\n"
 "käytöstä Debianin arkiston kanssa:\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
 "Valitsimet:\n"
 "  -h    Tämä ohje\n"
-"  --md5 Ohjauskentän MD5\n"
+"  --md5 MD5 luonti\n"
 "  -s=?  Lähteiden poikkeustdosto\n"
 "  -q    Ei tulostusta\n"
 "  -d=?  Valinnainen välimuistitietokanta\n"
@@ -708,12 +703,11 @@ msgid "%s (due to %s) "
 msgstr "%s (syynä %s) "
 
 #: cmdline/apt-get.cc:546
-#, fuzzy
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
 msgstr ""
-"VAROITUS: Seuraavat välttämättömät paketit on merkitty poistettaviksi\n"
+"VAROITUS: Seuraavat välttämättömät paketit poistetaan.\n"
 "Näin EI PITÄISI tehdä jos ei aivan tarkkaan tiedä mitä tekee!"
 
 #: cmdline/apt-get.cc:577
@@ -775,7 +769,7 @@ msgstr "VAROITUS: Seuraavian pakettien alkuperää ei voi varmistaa!"
 
 #: cmdline/apt-get.cc:693
 msgid "Authentication warning overridden.\n"
-msgstr ""
+msgstr "Varoitus varmistamisesta on ohitettu.\n"
 
 #: cmdline/apt-get.cc:700
 msgid "Install these packages without verification [y/N]? "
@@ -791,16 +785,15 @@ msgstr "Oli pulmia ja -y käytettiin ilman valitsinta --force-yes"
 
 #: cmdline/apt-get.cc:755
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr ""
+msgstr "Sisäinen virhe, InstallPackages kutsuttiin rikkinäisille paketeille!"
 
 #: cmdline/apt-get.cc:764
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Paketteja pitäisi poistaa mutta Remove ei ole käytössä."
 
 #: cmdline/apt-get.cc:775
-#, fuzzy
 msgid "Internal error, Ordering didn't finish"
-msgstr "Tapahtui sisäinen virhe lisättäessä korvautusta"
+msgstr "Tapahtui sisäinen virhe, järjestäminen keskeytyi"
 
 #: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1800 cmdline/apt-get.cc:1833
 msgid "Unable to lock the download directory"
@@ -814,6 +807,7 @@ msgstr "Lähteiden luetteloa ei pystynyt lukemaan."
 #: cmdline/apt-get.cc:816
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
+"No jo on... Koot eivät täsmää, sähköpostita email apt@packages.debian.org"
 
 #: cmdline/apt-get.cc:821
 #, c-format
@@ -836,9 +830,9 @@ msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Purkamisen jälkeen vapautuu %st levytilaa.\n"
 
 #: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1971
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't determine free space in %s"
-msgstr "Kansiossa %s ei ole riittävästi vapaata tilaa"
+msgstr "Kansion %s vapaan tilan määrä ei selvinnyt"
 
 #: cmdline/apt-get.cc:849
 #, c-format
@@ -855,13 +849,13 @@ msgid "Yes, do as I say!"
 msgstr "Kyllä, tee kuten käsketään!"
 
 #: cmdline/apt-get.cc:868
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
-"Olet aikeissa tehdä mahdollisesti vahingollisen toimenpiteen\n"
+"Olet aikeissa tehdä mahdollisesti vahingollisen toimenpiteen.\n"
 "Jatka kirjoittamalla \"%s\"\n"
 " ?] "
 
@@ -891,7 +885,7 @@ msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"Joidenkin arkistojen nouto ei onnistunut, ehkä \"apt-get update\"auttaa tai "
+"Joidenkin arkistojen nouto ei onnistunut, ehkä \"apt-get update\" auttaa tai "
 "kokeile --fix-missing?"
 
 #: cmdline/apt-get.cc:990
@@ -1075,9 +1069,8 @@ msgid "Done"
 msgstr "Valmis"
 
 #: cmdline/apt-get.cc:1768 cmdline/apt-get.cc:1776
-#, fuzzy
 msgid "Internal error, problem resolver broke stuff"
-msgstr "Sisäinen virhe, AllUpgrade rikkoi jotain"
+msgstr "Sisäinen virhe, resolver rikkoi jotain"
 
 #: cmdline/apt-get.cc:1876
 msgid "Must specify at least one package to fetch source for"
@@ -1089,9 +1082,9 @@ msgid "Unable to find a source package for %s"
 msgstr "Paketin %s lähdekoodipakettia ei löytynyt"
 
 #: cmdline/apt-get.cc:1950
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping already downloaded file '%s'\n"
-msgstr "Ohitetaan purku jo puretun lähdekoodin %s kohdalla\n"
+msgstr "Ohitetaan jo noudettu tiedosto \"%s\"\n"
 
 #: cmdline/apt-get.cc:1974
 #, c-format
@@ -1130,7 +1123,7 @@ msgstr "Purkukomento \"%s\" ei onnistunut.\n"
 #: cmdline/apt-get.cc:2060
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr ""
+msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
 
 #: cmdline/apt-get.cc:2077
 #, c-format
@@ -1448,7 +1441,7 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Asetustiedoston kaksoiskappale %s/%s"
 
 #: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write file %s"
 msgstr "Tiedoston %s kirjoittaminen ei onnistunut"
 
@@ -1664,9 +1657,8 @@ msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "Rompun %s irrottaminen ei onnistu, se on ehkä käytössä."
 
 #: methods/cdrom.cc:169
-#, fuzzy
 msgid "Disk not found."
-msgstr "Tiedostoa ei löydy"
+msgstr "Levyä ei löydy"
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
@@ -1890,42 +1882,46 @@ msgid "Unable to connect to %s %s:"
 msgstr "Ei ole mahdollista muodostaa yhteyttä %s %s:"
 
 #: methods/gpgv.cc:64
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't access keyring: '%s'"
-msgstr "Nimeä \"%s\" ei voitu selvittää"
+msgstr "Avainrengasta \"%s\" ei saatavilla"
 
 #: methods/gpgv.cc:99
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr ""
+"E: Parametrien luettelo Acquire::gpgv::Options liian pitkä. Lopetetaan."
 
 #: methods/gpgv.cc:198
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
+"Sisäinen virhe: Allekirjoitus kelpaa, mutta avaimen sormenjälki tuntematon?!"
 
 #: methods/gpgv.cc:203
 msgid "At least one invalid signature was encountered."
-msgstr ""
+msgstr "LÖytyi ainakin yksi kelvoton allekirjoitus."
 
 #: methods/gpgv.cc:207
 #, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgstr ""
+"Ei käynnistynyt \"%s\" allekirjoitusta tarkistamaan (onko gnupg asennettu?)"
 
 #: methods/gpgv.cc:212
 msgid "Unknown error executing gpgv"
-msgstr ""
+msgstr "Tapahtui tuntematon virhe suoritettaessa gpgv"
 
 #: methods/gpgv.cc:243
-#, fuzzy
 msgid "The following signatures were invalid:\n"
-msgstr "Seuraavat ylimääräiset paketit on merkitty asennettaviksi:"
+msgstr "Seuraavat allekirjoitukset eivät olleet kelvollisia:\n"
 
 #: methods/gpgv.cc:250
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr ""
+"Seuraavia allekirjoituksia ei voinut varmentaa koska julkista avainta ei ole "
+"saatavilla:\n"
 
 #: methods/gzip.cc:57
 #, c-format
@@ -2348,7 +2344,7 @@ msgid "Malformed line %u in source list %s (type)"
 msgstr "Rivi %u on väärän muotoinen lähdeluettelossa %s (tyyppi)"
 
 #: apt-pkg/sourcelist.cc:244
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Tyyppi \"%s\" on tuntematon rivillä %u lähdeluettelossa %s"
 
@@ -2406,12 +2402,12 @@ msgstr "Arkistokansio %spartial puuttuu."
 #: apt-pkg/acquire.cc:823
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr ""
+msgstr "Noudetaan tiedosto %li / %li (jäljellä %s)"
 
 #: apt-pkg/acquire.cc:825
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li"
-msgstr "Luetaan tiedostoluetteloa"
+msgstr "Noudetaan tiedosto %li / %li"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2424,12 +2420,9 @@ msgid "Method %s did not start correctly"
 msgstr "Menetelmä %s ei käynnistynyt oikein"
 
 #: apt-pkg/acquire-worker.cc:377
-#, fuzzy, c-format
+#, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr ""
-"Taltion vaihto: Pistä levy \n"
-"\"%s\"\n"
-"asemaan \"%s\" ja paina Enter\n"
+msgstr "Pistä levy nimeltään: \"%s\" asemaan \"%s\" ja paina Enter."
 
 #: apt-pkg/init.cc:120
 #, c-format
@@ -2562,7 +2555,7 @@ msgstr "MD5Sum ei täsmää"
 
 #: apt-pkg/acquire-item.cc:640
 msgid "There are no public key available for the following key IDs:\n"
-msgstr ""
+msgstr "Julkisia avaimia ei ole saatavilla, avainten ID:t ovat:\n"
 
 #: apt-pkg/acquire-item.cc:753
 #, c-format
@@ -2698,58 +2691,79 @@ msgstr ""
 "tiedostoa\n"
 
 #: apt-pkg/deb/dpkgpm.cc:358
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing %s"
-msgstr "Avataan %s"
+msgstr "Valmistellaan %s"
 
 #: apt-pkg/deb/dpkgpm.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Unpacking %s"
-msgstr "Avataan %s"
+msgstr "Puretaan %s"
 
 #: apt-pkg/deb/dpkgpm.cc:364
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to configure %s"
-msgstr "Avataan asetustiedosto %s"
+msgstr "Valmistaudutaan tekemään asetukset: %s"
 
 #: apt-pkg/deb/dpkgpm.cc:365
-#, fuzzy, c-format
+#, c-format
 msgid "Configuring %s"
-msgstr "Avataan yhteys %s"
+msgstr "Tehdään asetukset: %s"
 
 #: apt-pkg/deb/dpkgpm.cc:366
-#, fuzzy, c-format
+#, c-format
 msgid "Installed %s"
-msgstr "  Asennettu: "
+msgstr "%s asennettu"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr ""
+msgstr "Valmistaudutaan poistamaan %s"
 
 #: apt-pkg/deb/dpkgpm.cc:372
-#, fuzzy, c-format
+#, c-format
 msgid "Removing %s"
-msgstr "Avataan %s"
+msgstr "Poistetaan %s"
 
 #: apt-pkg/deb/dpkgpm.cc:373
-#, fuzzy, c-format
+#, c-format
 msgid "Removed %s"
-msgstr "Suosittelut"
+msgstr "%s poistettu"
 
 #: apt-pkg/deb/dpkgpm.cc:378
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to completely remove %s"
-msgstr "Avataan asetustiedosto %s"
+msgstr "Valmistaudutaan poistamaan %s kokonaan"
 
 #: apt-pkg/deb/dpkgpm.cc:379
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removed %s"
-msgstr "Tiedoston %s poistaminen ei onnistunut"
+msgstr "%s poistettiin kokonaan"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Yhteys katkesi ennenaikaisesti"
+
+#: ftparchive/cachedb.cc:76
+msgid ""
+"DB format is invalid. If you upgraded from a older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+
+#: ftparchive/writer.cc:623
+#, fuzzy, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s: ei poikkeustietuetta\n"
+
+#: ftparchive/writer.cc:627
+#, fuzzy, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s: ei poikkeustietuetta\n"
+
+#: methods/rred.cc:219
+#, fuzzy
+msgid "Could not patch file"
+msgstr "Tiedostoa %s ei voitu avata"
 
 #~ msgid "Reading file list"
 #~ msgstr "Luetaan tiedostoluetteloa"
