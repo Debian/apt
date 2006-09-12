@@ -111,6 +111,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       if (To.Write(Buffer,Count) == false)
       {
 	 Failed = true;
+	 FromGz.Close();
 	 break;
       }      
    }

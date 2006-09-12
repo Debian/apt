@@ -1,3 +1,30 @@
+apt (0.6.45.1) unstable; urgency=low
+
+  * debian/control:
+    - switched to libdb4.4 for building (closes: #381019)
+  * cmdline/apt-get.cc:
+    - show only the recommends/suggests for the candidate-version, not for all
+      versions of the package (closes: #257054)
+    - properly handle recommends/suggests or-groups when printing the list of
+      suggested/recommends packages (closes: #311619)
+  * methods/http.cc:
+    - check more careful for incorrect proxy settings (closes: #378868)
+  * methods/gzip.cc:
+    - don't hang when /var is full (closes: #341537), thanks to
+      Luis Rodrigo Gallardo Cruz for the patch
+  * doc/examples/sources.list:
+    - removed non-us.debian.org from the example (closes: #380030,#316196)
+  * Merged from Christian Perrier bzr branch:
+    * sk.po: Updated to 514t. Closes: #386851
+    * ja.po: Updated to 514t. Closes: #386537
+    * gl.po: Updated to 514t. Closes: #386397
+    * fr.po: Updated to 516t.
+    * fi.po: Updated to 512t. Closes: #382702
+  * share/archive-archive.gpg:
+    - removed the outdated amd64 and debian-2004 keys
+  
+ -- 
+
 apt (0.6.45) unstable; urgency=low
 
   * apt-pkg/contrib/sha256.cc:

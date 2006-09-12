@@ -656,7 +656,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       will glitch HTTP/1.0 proxies because they do not filter it out and 
       pass it on, HTTP/1.1 says the connection should default to keep alive
       and we expect the proxy to do this */
-   if (Proxy.empty() == true)
+   if (Proxy.empty() == true || Proxy.Host.empty())
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\nConnection: keep-alive\r\n",
 	      QuoteString(Uri.Path,"~").c_str(),ProperHost.c_str());
    else
