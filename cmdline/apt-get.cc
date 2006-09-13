@@ -1420,14 +1420,20 @@ bool DoUpdate(CommandLine &CmdL)
 bool DoAutomaticRemove(CacheFile &Cache)
 {
    bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
+   bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove");
    pkgDepCache::ActionGroup group(*Cache);
+   
 
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
 
-   if (_config->FindB("APT::Get::Remove",true) == false)
-      return _error->Error(_("We are not supposed to delete stuff, can't "
-			     "start AutoRemover"));
+   if (_config->FindB("APT::Get::Remove",true) == false &&
+       doAutoRemove == true)
+   {
+      c1out << _("We are not supposed to delete stuff, can't start "
+		 "AutoRemover") << std::endl;
+      doAutoRemove = false;
+   }
 
    string autoremovelist, autoremoveversions;
    // look over the cache to see what can be removed
@@ -1441,7 +1447,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	   
 	 autoremovelist += string(Pkg.Name()) + " ";
 	 autoremoveversions += string(Cache[Pkg].CandVersion) + " ";
-	 if (_config->FindB("APT::Get::AutomaticRemove")) 
+	 if (doAutoRemove)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
 	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
@@ -1452,8 +1458,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
       }
    }
    ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
-   if (!_config->FindB("APT::Get::AutomaticRemove") && 
-       autoremovelist.size() > 0)
+   if (!doAutoRemove && autoremovelist.size() > 0)
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
 
    // Now see if we destroyed anything
