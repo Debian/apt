@@ -1398,7 +1398,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
 
-   if (_config->FindB("APT::Get::Remove",true) == false)
+   if (_config->FindB("APT::Get::AutomaticRemove") &&
+       _config->FindB("APT::Get::Remove",true) == false)
       return _error->Error(_("We are not supposed to delete stuff, can't "
 			     "start AutoRemover"));
 
