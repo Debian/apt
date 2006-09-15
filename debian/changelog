@@ -25,8 +25,10 @@ apt (0.6.45.1) unstable; urgency=low
   * apt-pkg/tagfile.cc:
     - applied patch from Jeroen van Wolffelaar to make the tags
       caseinsensitive (closes: #384182)
+    - reverted MMap use in the tagfile because it does not work 
+      across pipes (closes: #383487) 
   
- -- 
+ --
 
 apt (0.6.45) unstable; urgency=low
 
