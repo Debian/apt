@@ -1,4 +1,4 @@
-apt (0.6.45.1) unstable; urgency=low
+apt (0.6.46) unstable; urgency=low
 
   * debian/control:
     - switched to libdb4.4 for building (closes: #381019)
@@ -7,6 +7,8 @@ apt (0.6.45.1) unstable; urgency=low
       versions of the package (closes: #257054)
     - properly handle recommends/suggests or-groups when printing the list of
       suggested/recommends packages (closes: #311619)
+    - fix the way multiple packages are installed so that the order of
+      packages on the commandline doesn't matter anymore
   * methods/http.cc:
     - check more careful for incorrect proxy settings (closes: #378868)
   * methods/gzip.cc:
