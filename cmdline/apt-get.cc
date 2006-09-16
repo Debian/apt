@@ -1144,7 +1144,10 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    }   
    else
       ExpectedInst++;
-
+   
+   // Install it with autoinstalling enabled.
+   if (State.InstBroken() == true && BrokenFix == false)
+      Cache.MarkInstall(Pkg,true);
    return true;
 }
 									/*}}}*/
@@ -1534,20 +1537,6 @@ bool DoInstall(CommandLine &CmdL)
 	    return false;
       }      
    }
-
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      if ((*Cache)[I].Install() == false)
-         continue;
-      
-      pkgDepCache::StateCache &State = Cache[I];
-      // Install it with autoinstalling enabled (if we not respect the minial
-      // required deps or the policy)
-      if (State.InstBroken() == true && BrokenFix == false)
-	  Cache->MarkInstall(I,true);
-   }
-
 
    /* If we are in the Broken fixing mode we do not attempt to fix the
       problems. This is if the user invoked install without -f and gave
