@@ -1423,14 +1423,12 @@ bool DoInstallTask(CommandLine &CmdL)
    pkgRecords Recs(Cache);
    
    unsigned int ExpectedInst = 0;
-   unsigned int Packages = 0;
    pkgProblemResolver Fix(Cache);
    char buf[64*1024];
 
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       regex_t Pattern;
-      int Res;
 
       // build regexp for the task
       char S[300];
@@ -1450,6 +1448,8 @@ bool DoInstallTask(CommandLine &CmdL)
 	    continue;
 	 TryToInstall(Pkg,Cache,Fix,false,true,ExpectedInst);
       }
+
+      regfree(&Pattern);
    }
 
    // Call the scored problem resolver
