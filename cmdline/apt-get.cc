@@ -1499,55 +1499,46 @@ bool DoUpgrade(CommandLine &CmdL)
 // DoInstallTask - Install task from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named task */
-bool DoInstallTask(CommandLine &CmdL)
+bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix, 
+		    bool BrokenFix,
+		    unsigned int& ExpectedInst, 
+		    const char *taskname)
 {
    const char *start, *end;
    pkgCache::PkgIterator Pkg;
-
-   CacheFile Cache;
-   if (Cache.OpenForInstall() == false || 
-       Cache.CheckDeps(CmdL.FileSize() != 1) == false)
-      return false;
-
-   // create the records parser
-   pkgRecords Recs(Cache);
-   
-   unsigned int ExpectedInst = 0;
-   pkgProblemResolver Fix(Cache);
    char buf[64*1024];
+   regex_t Pattern;
 
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      regex_t Pattern;
+   // get the records
+   pkgRecords Recs(Cache);
 
-      // build regexp for the task
-      char S[300];
-      snprintf(S, sizeof(S), "^Task:.*[^a-z]%s[^a-z].*\n", *I);
-      regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
-
-      for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
-      {
-	 pkgCache::VerIterator ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
-	 if(ver.end())
-	    continue;
-	 pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
-	 parser.GetRec(start,end);
-	 strncpy(buf, start, end-start);
-	 buf[end-start] = 0x0;
-	 if (regexec(&Pattern,buf,0,0,0) != 0)
-	    continue;
-	 TryToInstall(Pkg,Cache,Fix,false,true,ExpectedInst);
-      }
-
-      regfree(&Pattern);
-   }
-
-   // Call the scored problem resolver
-   Fix.InstallProtect();
-   Fix.Resolve(true);
+   // build regexp for the task
+   char S[300];
+   snprintf(S, sizeof(S), "^Task:.*[^a-z]%s[^a-z].*\n", taskname);
+   regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
    
-   // prompt for install
-   return InstallPackages(Cache,false,true);
+   bool found = false;
+   bool res = true;
+   for (Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   {
+      pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
+      if(ver.end())
+	 continue;
+      pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
+      parser.GetRec(start,end);
+      strncpy(buf, start, end-start);
+      buf[end-start] = 0x0;
+      if (regexec(&Pattern,buf,0,0,0) != 0)
+	 continue;
+      res &= TryToInstall(Pkg,Cache,Fix,false,BrokenFix,ExpectedInst);
+      found = true;
+   }
+   
+   if(!found)
+      _error->Error(_("Couldn't find task %s"),taskname);
+
+   regfree(&Pattern);
+   return res;
 }
 
 // DoInstall - Install packages from the command line			/*{{{*/
@@ -1572,6 +1563,7 @@ bool DoInstall(CommandLine &CmdL)
    bool DefRemove = false;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       DefRemove = true;
+
    else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
    {
       _config->Set("APT::Get::AutomaticRemove", "true");
@@ -1594,6 +1586,18 @@ bool DoInstall(CommandLine &CmdL)
 	 bool Remove = DefRemove;
 	 char *VerTag = 0;
 	 bool VerIsRel = false;
+
+	 // this is a task!
+	 if (Length >= 1 && S[Length - 1] == '^')
+	 {
+	    S[--Length] = 0;
+	    // tasks must always be confirmed
+	    ExpectedInst += 1000;
+	    // see if we can install it
+	    TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
+	    continue;
+	 }
+
 	 while (Cache->FindPkg(S).end() == true)
 	 {
 	    // Handle an optional end tag indicating what to do
@@ -1682,6 +1686,7 @@ bool DoInstall(CommandLine &CmdL)
 	 }
 	 else
 	 {
+
 	    if (VerTag != 0)
 	       if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
 		  return false;
@@ -2707,7 +2712,6 @@ int main(int argc,const char *argv[])
    CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
                                    {"upgrade",&DoUpgrade},
                                    {"install",&DoInstall},
-                                   {"installtask",&DoInstallTask},
                                    {"remove",&DoInstall},
 				   {"autoremove",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
