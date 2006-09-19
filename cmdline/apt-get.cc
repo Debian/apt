@@ -1434,7 +1434,7 @@ bool DoInstallTask(CommandLine &CmdL)
 
       // build regexp for the task
       char S[300];
-      snprintf(S, sizeof(S), "^Task:.*%s.*\n", *I);
+      snprintf(S, sizeof(S), "^Task:.*[^a-z]%s[^a-z].*\n", *I);
       regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
 
       for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
@@ -1448,14 +1448,13 @@ bool DoInstallTask(CommandLine &CmdL)
 	 buf[end-start] = 0x0;
 	 if (regexec(&Pattern,buf,0,0,0) != 0)
 	    continue;
-	 TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst);
+	 TryToInstall(Pkg,Cache,Fix,false,true,ExpectedInst);
       }
    }
 
    // Call the scored problem resolver
    Fix.InstallProtect();
-   if (Fix.Resolve(true) == false)
-      _error->Discard();
+   Fix.Resolve(true);
    
    // prompt for install
    return InstallPackages(Cache,false,true);
