@@ -1406,6 +1406,61 @@ bool DoUpgrade(CommandLine &CmdL)
    return InstallPackages(Cache,true);
 }
 									/*}}}*/
+// DoInstallTask - Install task from the command line			/*{{{*/
+// ---------------------------------------------------------------------
+/* Install named task */
+bool DoInstallTask(CommandLine &CmdL)
+{
+   const char *start, *end;
+   pkgCache::PkgIterator Pkg;
+
+   CacheFile Cache;
+   if (Cache.OpenForInstall() == false || 
+       Cache.CheckDeps(CmdL.FileSize() != 1) == false)
+      return false;
+
+   // create the records parser
+   pkgRecords Recs(Cache);
+   
+   unsigned int ExpectedInst = 0;
+   unsigned int Packages = 0;
+   pkgProblemResolver Fix(Cache);
+   char buf[64*1024];
+
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      regex_t Pattern;
+      int Res;
+
+      // build regexp for the task
+      char S[300];
+      snprintf(S, sizeof(S), "^Task:.*%s.*\n", *I);
+      regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
+
+      for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+      {
+	 pkgCache::VerIterator ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+	 if(ver.end())
+	    continue;
+	 pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
+	 parser.GetRec(start,end);
+	 strncpy(buf, start, end-start);
+	 buf[end-start] = 0x0;
+	 if (regexec(&Pattern,buf,0,0,0) != 0)
+	    continue;
+	 TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst);
+      }
+   }
+
+   // Call the scored problem resolver
+   Fix.InstallProtect();
+   if (Fix.Resolve(true) == false)
+      _error->Discard();
+   
+   // prompt for install
+   return InstallPackages(Cache,false,true);
+}
+
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -2546,6 +2601,7 @@ int main(int argc,const char *argv[])
    CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
                                    {"upgrade",&DoUpgrade},
                                    {"install",&DoInstall},
+                                   {"installtask",&DoInstallTask},
                                    {"remove",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
