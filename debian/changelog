@@ -1,3 +1,13 @@
+apt (0.6.45ubuntu12) edgy; urgency=low
+
+  * apt-pkg/depcache.cc:
+    - fix in the sweep() code, set garbage flag for packages scheduled 
+      for removal too
+    - do not change the autoFlag in MarkKeep(), this can lead to suprising
+      side effects
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 21 Sep 2006 00:58:24 +0200
+
 apt (0.6.45ubuntu11) edgy; urgency=low
 
   * removed "installtask" and change it so that tasknames can be given
