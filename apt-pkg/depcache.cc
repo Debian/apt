@@ -703,9 +703,17 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser)
    // We dont even try to keep virtual packages..
    if (Pkg->VersionList == 0)
       return;
-   
+#if 0 // reseting the autoflag here means we lose the 
+      // auto-mark information if a user selects a package for removal
+      // but changes  his mind then and sets it for keep again
+      // - this makes sense as default when all Garbage dependencies
+      //   are automatically marked for removal (as aptitude does).
+      //   setting a package for keep then makes it no longer autoinstalled
+      //   for all other use-case this action is rather suprising
    if(FromUser && !P.Marked)
      P.Flags &= ~Flag::Auto;
+#endif
+
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
 
@@ -934,10 +942,6 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 			 << " as dep of " << Pkg.Name() 
 			 << std::endl;
 	   MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps);
-	    // Set the autoflag, after MarkInstall because MarkInstall 
-	    // unsets it
-	    if (P->CurrentVer == 0)
-	       PkgState[InstPkg->ID].Flags |= Flag::Auto;
 	 }
 	 continue;
       }
@@ -1325,8 +1329,7 @@ bool pkgDepCache::Sweep()
      StateCache &state=PkgState[p->ID];
 
      // if it is not marked and it is installed, it's garbage 
-     if(!state.Marked && (!p.CurrentVer().end() || state.Install()) &&
-	!state.Delete())
+     if(!state.Marked && (!p.CurrentVer().end() || state.Install()))
      {
 	state.Garbage=true;
 	if(_config->FindB("Debug::pkgAutoRemove",false))
