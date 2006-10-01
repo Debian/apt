@@ -1,4 +1,4 @@
-apt (0.6.45exp2) experimental; urgency=low
+apt (0.6.46.1exp1) experimental; urgency=low
 
   * merged "install-recommends" branch (ABI break): 
     - new "--install-recommends"
@@ -9,11 +9,57 @@ apt (0.6.45exp2) experimental; urgency=low
       see what not-installed recommends are on the system)
     - fix of recommended packages display (only show CandidateVersion
       fix or-group handling)
-  (closes: #42266, #281534, #257054)
+  * methods/gzip.cc:
+    - deal with empty files 
+  * Applied patch from Daniel Schepler to make apt bin-NMU able.  
+  * rebuild against current g++ because of:
+    http://gcc.gnu.org/bugzilla/show_bug.cgi?id=29289
+  * fix broken i18n in the dpkg progress reporting, thanks to 
+    Frans Pop and Steinar Gunderson. (closes: #389261)
+  * Merged from Christian Perrier bzr branch:
+    * fi.po: Updated to 514t. Closes: #390149
+    * eu.po: Updated to 514t. Closes: #389725
+    * vi.po: Updated to 514t. Closes: #388555
+  
+ --
 
- -- Michael Vogt <mvo@debian.org>  Mon, 14 Aug 2006 17:47:25 +0200
+apt (0.6.46) unstable; urgency=low
 
-apt (0.6.45exp1) experimental; urgency=low
+  * debian/control:
+    - switched to libdb4.4 for building (closes: #381019)
+  * cmdline/apt-get.cc:
+    - show only the recommends/suggests for the candidate-version, not for all
+      versions of the package (closes: #257054)
+    - properly handle recommends/suggests or-groups when printing the list of
+      suggested/recommends packages (closes: #311619)
+  * methods/http.cc:
+    - check more careful for incorrect proxy settings (closes: #378868)
+  * methods/gzip.cc:
+    - don't hang when /var is full (closes: #341537), thanks to
+      Luis Rodrigo Gallardo Cruz for the patch
+  * doc/examples/sources.list:
+    - removed non-us.debian.org from the example (closes: #380030,#316196)
+  * Merged from Christian Perrier bzr branch:
+    * ro.po: Updated to 514t. Closes: #388402
+    * dz.po: Updated to 514t. Closes: #388184
+    * it.po: Fixed typos. Closes: #387812
+    * ku.po: New kurdish translation. Closes: #387766
+    * sk.po: Updated to 514t. Closes: #386851
+    * ja.po: Updated to 514t. Closes: #386537
+    * gl.po: Updated to 514t. Closes: #386397
+    * fr.po: Updated to 516t.
+    * fi.po: Updated to 512t. Closes: #382702
+  * share/archive-archive.gpg:
+    - removed the outdated amd64 and debian-2004 keys
+  * apt-pkg/tagfile.cc:
+    - applied patch from Jeroen van Wolffelaar to make the tags
+      caseinsensitive (closes: #384182)
+    - reverted MMap use in the tagfile because it does not work 
+      across pipes (closes: #383487) 
+  
+ -- Michael Vogt <mvo@debian.org>  Thu, 21 Sep 2006 10:25:03 +0200
+
+apt (0.6.45) unstable; urgency=low
 
   * apt-pkg/contrib/sha256.cc:
     - fixed the sha256 generation (closes: #378183)
