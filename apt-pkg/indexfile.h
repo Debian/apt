@@ -21,9 +21,6 @@
 #ifndef PKGLIB_INDEXFILE_H
 #define PKGLIB_INDEXFILE_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/indexfile.h"
-#endif
 
 #include <string>
 #include <apt-pkg/pkgcache.h>

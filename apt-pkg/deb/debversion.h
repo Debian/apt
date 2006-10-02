@@ -12,9 +12,7 @@
 #ifndef PKGLIB_DEBVERSION_H
 #define PKGLIB_DEBVERSION_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/debversion.h"
-#endif 
+
 
 #include <apt-pkg/version.h>
     

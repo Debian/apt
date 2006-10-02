@@ -26,7 +26,6 @@
 #define PKGLIB_DIRSTREAM_H
 
 #ifdef __GNUG__
-#pragma interface "apt-pkg/dirstream.h"
 #endif
 
 class pkgDirStream

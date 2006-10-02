@@ -22,7 +22,6 @@
 #define PKGLIB_PROGRESS_H
 
 #ifdef __GNUG__
-#pragma interface "apt-pkg/progress.h"
 #endif 
 
 #include <string>

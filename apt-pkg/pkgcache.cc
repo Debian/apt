@@ -20,11 +20,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/pkgcache.h"
-#pragma implementation "apt-pkg/cacheiterators.h"
-#endif 
-
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>

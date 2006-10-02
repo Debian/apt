@@ -14,10 +14,6 @@
 #ifndef PKGLIB_DEBRECORDS_H
 #define PKGLIB_DEBRECORDS_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/debrecords.h"
-#endif 
-
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/tagfile.h>
 

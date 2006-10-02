@@ -14,7 +14,6 @@
 #define APTPKG_HASHES_H
 
 #ifdef __GNUG__
-#pragma interface "apt-pkg/hashes.h"
 #endif 
 
 #include <apt-pkg/md5.h>

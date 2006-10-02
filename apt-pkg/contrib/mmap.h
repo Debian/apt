@@ -26,7 +26,6 @@
 #define PKGLIB_MMAP_H
 
 #ifdef __GNUG__
-#pragma interface "apt-pkg/mmap.h"
 #endif
 
 #include <string>

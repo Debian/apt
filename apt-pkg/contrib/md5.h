@@ -23,9 +23,6 @@
 #ifndef APTPKG_MD5_H
 #define APTPKG_MD5_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/md5.h"
-#endif 
 
 #include <string>
 #include <algorithm>

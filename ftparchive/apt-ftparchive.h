@@ -14,7 +14,6 @@
 #define APT_FTPARCHIVE_H
 
 #ifdef __GNUG__
-#pragma interface "apt-ftparchive.h"
 #endif
 
 #include <fstream>

@@ -14,7 +14,6 @@
 #define WRITER_H
 
 #ifdef __GNUG__
-#pragma interface "writer.h"
 #endif 
 
 #include <string>

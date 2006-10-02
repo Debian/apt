@@ -10,10 +10,6 @@
 #ifndef PKGLIB_DPKGPM_H
 #define PKGLIB_DPKGPM_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/dpkgpm.h"
-#endif
-
 #include <apt-pkg/packagemanager.h>
 #include <vector>
 #include <stdio.h>

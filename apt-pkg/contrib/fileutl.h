@@ -22,7 +22,6 @@
 #define PKGLIB_FILEUTL_H
 
 #ifdef __GNUG__
-#pragma interface "apt-pkg/fileutl.h"
 #endif 
 
 #include <string>

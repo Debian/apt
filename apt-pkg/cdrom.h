@@ -5,9 +5,6 @@
 #include<string>
 #include<vector>
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/cdrom.h"
-#endif
 
 using namespace std;
 
