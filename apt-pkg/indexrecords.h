@@ -5,8 +5,7 @@
 #ifndef PKGLIB_INDEXRECORDS_H
 #define PKGLIB_INDEXRECORDS_H
 
-#ifdef __GNUG__
-#endif 
+
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/fileutl.h>
 

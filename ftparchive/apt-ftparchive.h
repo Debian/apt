@@ -13,8 +13,6 @@
 #ifndef APT_FTPARCHIVE_H
 #define APT_FTPARCHIVE_H
 
-#ifdef __GNUG__
-#endif
 
 #include <fstream>
 

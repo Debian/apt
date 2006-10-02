@@ -25,8 +25,6 @@
 #ifndef PKGLIB_MMAP_H
 #define PKGLIB_MMAP_H
 
-#ifdef __GNUG__
-#endif
 
 #include <string>
 #include <apt-pkg/fileutl.h>

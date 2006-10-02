@@ -25,8 +25,6 @@
 #ifndef PKGLIB_DIRSTREAM_H
 #define PKGLIB_DIRSTREAM_H
 
-#ifdef __GNUG__
-#endif
 
 class pkgDirStream
 { 

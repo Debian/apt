@@ -13,8 +13,6 @@
 #ifndef APTPKG_HASHES_H
 #define APTPKG_HASHES_H
 
-#ifdef __GNUG__
-#endif 
 
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>

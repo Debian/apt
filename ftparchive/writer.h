@@ -13,8 +13,6 @@
 #ifndef WRITER_H
 #define WRITER_H
 
-#ifdef __GNUG__
-#endif 
 
 #include <string>
 #include <stdio.h>
