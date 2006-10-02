@@ -55,7 +55,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    // if the file is empty, just rename it and return
    if(From.Size() == 0) 
    {
-      Rename(Path, Itm->DestFile);
+      rename(Path.c_str(), Itm->DestFile.c_str());
       return true;
    }
 
