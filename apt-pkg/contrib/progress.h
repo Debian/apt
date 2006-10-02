@@ -21,8 +21,6 @@
 #ifndef PKGLIB_PROGRESS_H
 #define PKGLIB_PROGRESS_H
 
-#ifdef __GNUG__
-#endif 
 
 #include <string>
 #include <sys/time.h>

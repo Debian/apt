@@ -21,9 +21,6 @@
 #ifndef PKGLIB_DATABASE_H
 #define PKGLIB_DATABASE_H
 
-#ifdef __GNUG__
-#endif
-
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/pkgcachegen.h>
 
