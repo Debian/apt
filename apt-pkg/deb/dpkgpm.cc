@@ -355,28 +355,28 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    static const struct DpkgState DpkgStatesOpMap[][5] = {
       // Install operation
       { 
-	 {"half-installed", _("Preparing %s")}, 
-	 {"unpacked", _("Unpacking %s") }, 
+	 {"half-installed", N_("Preparing %s")}, 
+	 {"unpacked", N_("Unpacking %s") }, 
 	 {NULL, NULL}
       },
       // Configure operation
       { 
-	 {"unpacked",_("Preparing to configure %s") },
-	 {"half-configured", _("Configuring %s") },
-	 { "installed", _("Installed %s")},
+	 {"unpacked",N_("Preparing to configure %s") },
+	 {"half-configured", N_("Configuring %s") },
+	 { "installed", N_("Installed %s")},
 	 {NULL, NULL}
       },
       // Remove operation
       { 
-	 {"half-configured", _("Preparing for removal of %s")},
-	 {"half-installed", _("Removing %s")},
-	 {"config-files",  _("Removed %s")},
+	 {"half-configured", N_("Preparing for removal of %s")},
+	 {"half-installed", N_("Removing %s")},
+	 {"config-files",  N_("Removed %s")},
 	 {NULL, NULL}
       },
       // Purge operation
       { 
-	 {"config-files", _("Preparing to completely remove %s")},
-	 {"not-installed", _("Completely removed %s")},
+	 {"config-files", N_("Preparing to completely remove %s")},
+	 {"not-installed", N_("Completely removed %s")},
 	 {NULL, NULL}
       },
    };
@@ -672,7 +672,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 {
 	    // only read the translation if there is actually a next
 	    // action
-	    const char *translation = states[PackageOpsDone[pkg]].str;
+	    const char *translation = _(states[PackageOpsDone[pkg]].str);
 	    char s[200];
 	    snprintf(s, sizeof(s), translation, pkg);
 
