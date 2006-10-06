@@ -1,3 +1,23 @@
+apt (0.6.46.1) unstable; urgency=low
+
+  * methods/gzip.cc:
+    - deal with empty files 
+  * Applied patch from Daniel Schepler to make apt bin-NMU able.  
+    (closes: bug#359634)
+  * rebuild against current g++ because of:
+    http://gcc.gnu.org/bugzilla/show_bug.cgi?id=29289
+    (closes: #390189)
+  * fix broken i18n in the dpkg progress reporting, thanks to 
+    Frans Pop and Steinar Gunderson. (closes: #389261)
+  * Merged from Christian Perrier bzr branch:
+    * fi.po: Updated to 514t. Closes: #390149
+    * eu.po: Updated to 514t. Closes: #389725
+    * vi.po: Updated to 514t. Closes: #388555
+  * make the internal buffer in pkgTagFile grow dynamically
+    (closes: #388708)
+  
+ --
+
 apt (0.6.46) unstable; urgency=low
 
   * debian/control:
@@ -32,7 +52,7 @@ apt (0.6.46) unstable; urgency=low
     - reverted MMap use in the tagfile because it does not work 
       across pipes (closes: #383487) 
   
- --
+ -- Michael Vogt <mvo@debian.org>  Thu, 21 Sep 2006 10:25:03 +0200
 
 apt (0.6.45) unstable; urgency=low
 
