@@ -4,6 +4,6 @@
 
 <xsl:import href="/usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl" />
 
-<xsl:param name="chunker.output.encoding" select="'EUC-JP'" />
+<xsl:param name="man.output.encoding" select="'EUC-JP'" />
 
 </xsl:stylesheet>
