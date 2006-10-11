@@ -7,7 +7,7 @@ include ../../buildlib/defaults.mak
 
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 XSLTPROC=/usr/bin/xsltproc
-STYLESHEET=/usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl
+STYLESHEET=./style.fr.xsl
 
 
 # Man pages
