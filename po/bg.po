@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: apt 0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-10-11 20:19+0200\n"
-"PO-Revision-Date: 2006-03-31 22:05+0300\n"
+"PO-Revision-Date: 2006-10-12 20:14+0300\n"
 "Last-Translator: Yavor Doganov <yavor@doganov.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "MIME-Version: 1.0\n"
@@ -448,6 +448,8 @@ msgid ""
 "DB format is invalid. If you upgraded from a older version of apt, please "
 "remove and re-create the database."
 msgstr ""
+"Форматът на БД е невалиден.  Ако сте обновили от стара версия на apt, "
+"премахнете базата от данни и я създайте наново."
 
 #: ftparchive/cachedb.cc:81
 #, c-format
@@ -544,14 +546,14 @@ msgid "  %s maintainer is %s not %s\n"
 msgstr "  поддържащия пакета %s е %s, а не %s\n"
 
 #: ftparchive/writer.cc:623
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no source override entry\n"
-msgstr "  %s няма запис „override“\n"
+msgstr "  %s няма запис „source override“\n"
 
 #: ftparchive/writer.cc:627
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no binary override entry either\n"
-msgstr "  %s няма запис „override“\n"
+msgstr "  %s няма също и запис „binary override“\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -1912,9 +1914,9 @@ msgid "Unable to connect to %s %s:"
 msgstr "Неуспех при свързването с %s %s:"
 
 #: methods/gpgv.cc:65
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't access keyring: '%s'"
-msgstr "Неуспех при намирането на IP адреса на „%s“"
+msgstr "Неуспех при достъпа до набор на ключове: „%s“"
 
 #: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
@@ -1934,9 +1936,11 @@ msgid "At least one invalid signature was encountered."
 msgstr "Намерен е поне един невалиден подпис."
 
 #: methods/gpgv.cc:213
-#, fuzzy, c-format
+#, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
-msgstr " за проверка на подписа (инсталиран ли е gnupg?)"
+msgstr ""
+"Неуспех при изпълнението на „%s“ за проверка на подписа (инсталиран ли е "
+"gnupg?)"
 
 #: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
@@ -2444,14 +2448,14 @@ msgstr "Директорията за архиви %spartial липсва."
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:823
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "Изтегляне на файл %li от %li (остават %s)"
 
 #: apt-pkg/acquire.cc:825
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li"
-msgstr "Четене на списъка на файловете"
+msgstr "Изтегляне на файл %li от %li"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2777,34 +2781,15 @@ msgid "Removed %s"
 msgstr "%s е премахнат"
 
 #: apt-pkg/deb/dpkgpm.cc:378
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to completely remove %s"
-msgstr "Подготвяне на %s за конфигуриране"
+msgstr "Подготовка за пълно премахване на %s"
 
 #: apt-pkg/deb/dpkgpm.cc:379
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removed %s"
-msgstr "Неуспех при премахването на %s"
+msgstr "%s е напълно премахнат"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Връзката прекъсна преждевременно"
-
-#~ msgid "File date has changed %s"
-#~ msgstr "Датата на файла %s е променена"
-
-#, fuzzy
-#~ msgid "Could not patch file"
-#~ msgstr "Неуспех при отварянето на файла %s"
-
-#~ msgid "Reading file list"
-#~ msgstr "Четене на списъка с файлове"
-
-#~ msgid "Could not execute "
-#~ msgstr "Неуспех при изпълнението на "
-
-#~ msgid "Preparing for remove with config %s"
-#~ msgstr "Подготвяне на %s за премахване с конфигурационните файлове"
-
-#~ msgid "Removed with config %s"
-#~ msgstr "%s е премахнат с конфигурационните файлове"
