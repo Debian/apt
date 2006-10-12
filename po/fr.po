@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-27 13:46+0200\n"
+"POT-Creation-Date: 2006-10-11 20:19+0200\n"
 "PO-Revision-Date: 2006-09-02 09:59+0200\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -151,7 +151,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1652 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2369 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2387 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s pour %s %s est compilé le %s %s\n"
@@ -235,11 +235,13 @@ msgstr ""
 
 #: cmdline/apt-cdrom.cc:78
 msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
-msgstr "Veuillez indiquer le nom de ce disque, par exemple « Debian 2.1r1 Disk 1 »"
+msgstr ""
+"Veuillez indiquer le nom de ce disque, par exemple « Debian 2.1r1 Disk 1 »"
 
 #: cmdline/apt-cdrom.cc:93
 msgid "Please insert a Disc in the drive and press enter"
-msgstr "Veuillez insérer un disque dans le lecteur et appuyez sur la touche Entrée"
+msgstr ""
+"Veuillez insérer un disque dans le lecteur et appuyez sur la touche Entrée"
 
 #: cmdline/apt-cdrom.cc:117
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -315,7 +317,8 @@ msgstr "Impossible d'écrire sur %s"
 
 #: cmdline/apt-extracttemplates.cc:310
 msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Impossible d'obtenir la version de debconf. Est-ce que debconf est installé ?"
+msgstr ""
+"Impossible d'obtenir la version de debconf. Est-ce que debconf est installé ?"
 
 #: ftparchive/apt-ftparchive.cc:167 ftparchive/apt-ftparchive.cc:341
 msgid "Package extension list is too long"
@@ -431,116 +434,130 @@ msgstr "Aucune sélection ne correspond"
 #: ftparchive/apt-ftparchive.cc:835
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
-msgstr "Quelques fichiers sont manquants dans le groupe de fichiers de paquets « %s »"
+msgstr ""
+"Quelques fichiers sont manquants dans le groupe de fichiers de paquets « %s »"
 
-#: ftparchive/cachedb.cc:45
+#: ftparchive/cachedb.cc:47
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "Base de données corrompue, fichier renommé en %s.old"
 
-#: ftparchive/cachedb.cc:63
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "Base de données ancienne, tentative de mise à jour de %s\""
 
-#: ftparchive/cachedb.cc:73
+#: ftparchive/cachedb.cc:76
+msgid ""
+"DB format is invalid. If you upgraded from a older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"Le format de la base de données n'est pas valable. Si vous mettez APT à "
+"jour, veuillez supprimer puis recréer la base de données."
+
+#: ftparchive/cachedb.cc:81
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "Impossible d'ouvrir le fichier de base de données %s : %s"
 
-#: ftparchive/cachedb.cc:114
-#, c-format
-msgid "File date has changed %s"
-msgstr "La date du fichier a changé %s"
-
-#: ftparchive/cachedb.cc:155
-msgid "Archive has no control record"
-msgstr "L'archive n'a pas d'enregistrement de contrôle"
-
-#: ftparchive/cachedb.cc:267
-msgid "Unable to get a cursor"
-msgstr "Impossible d'obtenir un curseur"
-
-#: ftparchive/writer.cc:78
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "A : Impossible de lire le contenu du répertoire %s\n"
-
-#: ftparchive/writer.cc:83
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "A : Impossible de statuer %s\n"
-
-#: ftparchive/writer.cc:125
-msgid "E: "
-msgstr "E : "
-
-#: ftparchive/writer.cc:127
-msgid "W: "
-msgstr "A : "
-
-#: ftparchive/writer.cc:134
-msgid "E: Errors apply to file "
-msgstr "E : des erreurs sont survenues sur le fichier "
-
-#: ftparchive/writer.cc:151 ftparchive/writer.cc:181
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Impossible de résoudre %s"
-
-#: ftparchive/writer.cc:163
-msgid "Tree walking failed"
-msgstr "Échec du parcours de l'arbre"
-
-#: ftparchive/writer.cc:188
-#, c-format
-msgid "Failed to open %s"
-msgstr "Impossible d'ouvrir %s"
-
-#: ftparchive/writer.cc:245
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr " Délier %s [%s]\n"
-
-#: ftparchive/writer.cc:253
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "Impossible de lire le lien %s"
-
-#: ftparchive/writer.cc:257
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "Impossible de délier %s"
-
-#: ftparchive/writer.cc:264
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** Impossible de lier %s à %s"
-
-#: ftparchive/writer.cc:274
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " Seuil de delink de %so atteint.\n"
-
-#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:266
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:272
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Impossible de statuer %s"
 
-#: ftparchive/writer.cc:386
+#: ftparchive/cachedb.cc:242
+msgid "Archive has no control record"
+msgstr "L'archive n'a pas d'enregistrement de contrôle"
+
+#: ftparchive/cachedb.cc:448
+msgid "Unable to get a cursor"
+msgstr "Impossible d'obtenir un curseur"
+
+#: ftparchive/writer.cc:79
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "A : Impossible de lire le contenu du répertoire %s\n"
+
+#: ftparchive/writer.cc:84
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "A : Impossible de statuer %s\n"
+
+#: ftparchive/writer.cc:135
+msgid "E: "
+msgstr "E : "
+
+#: ftparchive/writer.cc:137
+msgid "W: "
+msgstr "A : "
+
+#: ftparchive/writer.cc:144
+msgid "E: Errors apply to file "
+msgstr "E : des erreurs sont survenues sur le fichier "
+
+#: ftparchive/writer.cc:161 ftparchive/writer.cc:191
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Impossible de résoudre %s"
+
+#: ftparchive/writer.cc:173
+msgid "Tree walking failed"
+msgstr "Échec du parcours de l'arbre"
+
+#: ftparchive/writer.cc:198
+#, c-format
+msgid "Failed to open %s"
+msgstr "Impossible d'ouvrir %s"
+
+#: ftparchive/writer.cc:257
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " Délier %s [%s]\n"
+
+#: ftparchive/writer.cc:265
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Impossible de lire le lien %s"
+
+#: ftparchive/writer.cc:269
+#, c-format
+msgid "Failed to unlink %s"
+msgstr "Impossible de délier %s"
+
+#: ftparchive/writer.cc:276
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Impossible de lier %s à %s"
+
+#: ftparchive/writer.cc:286
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " Seuil de delink de %so atteint.\n"
+
+#: ftparchive/writer.cc:390
 msgid "Archive had no package field"
 msgstr "L'archive ne possède pas de champ de paquet"
 
-#: ftparchive/writer.cc:394 ftparchive/writer.cc:603
+#: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "%s ne possède pas d'entrée « override »\n"
 
-#: ftparchive/writer.cc:437 ftparchive/writer.cc:689
+#: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr " le responsable de %s est %s et non %s\n"
+
+#: ftparchive/writer.cc:623
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s ne possède pas d'entrée « source override »\n"
+
+#: ftparchive/writer.cc:627
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s ne possède pas également pas d'entrée « binary override »\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -797,17 +814,18 @@ msgstr "Erreur interne, « InstallPackages » appelé avec des paquets cassés."
 
 #: cmdline/apt-get.cc:764
 msgid "Packages need to be removed but remove is disabled."
-msgstr "Les paquets doivent être enlevés mais la désinstallation est désactivée."
+msgstr ""
+"Les paquets doivent être enlevés mais la désinstallation est désactivée."
 
 #: cmdline/apt-get.cc:775
 msgid "Internal error, Ordering didn't finish"
 msgstr "Erreur interne. Le tri a été interrompu."
 
-#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1800 cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1851
 msgid "Unable to lock the download directory"
 msgstr "Impossible de verrouiller le répertoire de téléchargement"
 
-#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1881 cmdline/apt-get.cc:2117
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1899 cmdline/apt-get.cc:2135
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "La liste des sources ne peut être lue."
@@ -831,14 +849,15 @@ msgstr "Il est nécessaire de prendre %so dans les archives.\n"
 #: cmdline/apt-get.cc:829
 #, c-format
 msgid "After unpacking %sB of additional disk space will be used.\n"
-msgstr "Après dépaquetage, %so d'espace disque supplémentaires seront utilisés.\n"
+msgstr ""
+"Après dépaquetage, %so d'espace disque supplémentaires seront utilisés.\n"
 
 #: cmdline/apt-get.cc:832
 #, c-format
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Après dépaquetage, %so d'espace disque seront libérés.\n"
 
-#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1971
+#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1989
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Impossible de déterminer l'espace disponible sur %s"
@@ -879,7 +898,7 @@ msgstr "Annulation."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Souhaitez-vous continuer [O/n] ? "
 
-#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2014
+#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2032
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Impossible de récupérer %s  %s\n"
@@ -888,7 +907,7 @@ msgstr "Impossible de récupérer %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Certains fichiers n'ont pu être téléchargés."
 
-#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2041
 msgid "Download complete and in download only mode"
 msgstr "Téléchargement achevé et dans le mode téléchargement uniquement"
 
@@ -902,7 +921,8 @@ msgstr ""
 
 #: cmdline/apt-get.cc:990
 msgid "--fix-missing and media swapping is not currently supported"
-msgstr "l'option --fix-missing et l'échange de support ne sont pas encore reconnus."
+msgstr ""
+"l'option --fix-missing et l'échange de support ne sont pas encore reconnus."
 
 #: cmdline/apt-get.cc:995
 msgid "Unable to correct missing packages."
@@ -964,7 +984,8 @@ msgstr "Aucun paquet ne correspond au paquet %s"
 #: cmdline/apt-get.cc:1133
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "La réinstallation de %s est impossible, il ne peut pas être téléchargé.\n"
+msgstr ""
+"La réinstallation de %s est impossible, il ne peut pas être téléchargé.\n"
 
 #: cmdline/apt-get.cc:1141
 #, c-format
@@ -1018,7 +1039,8 @@ msgstr "Note, sélectionne %s pour l'expression rationnelle « %s »\n"
 
 #: cmdline/apt-get.cc:1546
 msgid "You might want to run `apt-get -f install' to correct these:"
-msgstr "Vous pouvez lancer « apt-get -f install » pour corriger ces problèmes :"
+msgstr ""
+"Vous pouvez lancer « apt-get -f install » pour corriger ces problèmes :"
 
 #: cmdline/apt-get.cc:1549
 msgid ""
@@ -1061,111 +1083,111 @@ msgstr "Paquets défectueux"
 msgid "The following extra packages will be installed:"
 msgstr "Les paquets supplémentaires suivants seront installés : "
 
-#: cmdline/apt-get.cc:1674
+#: cmdline/apt-get.cc:1692
 msgid "Suggested packages:"
 msgstr "Paquets suggérés :"
 
-#: cmdline/apt-get.cc:1675
+#: cmdline/apt-get.cc:1693
 msgid "Recommended packages:"
 msgstr "Paquets recommandés :"
 
-#: cmdline/apt-get.cc:1695
+#: cmdline/apt-get.cc:1713
 msgid "Calculating upgrade... "
 msgstr "Calcul de la mise à jour... "
 
-#: cmdline/apt-get.cc:1698 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1716 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "Échec"
 
-#: cmdline/apt-get.cc:1703
+#: cmdline/apt-get.cc:1721
 msgid "Done"
 msgstr "Fait"
 
-#: cmdline/apt-get.cc:1768 cmdline/apt-get.cc:1776
+#: cmdline/apt-get.cc:1786 cmdline/apt-get.cc:1794
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 "Erreur interne, la tentative de résolution du problème a cassé certaines "
 "parties"
 
-#: cmdline/apt-get.cc:1876
+#: cmdline/apt-get.cc:1894
 msgid "Must specify at least one package to fetch source for"
 msgstr "Vous devez spécifier au moins un paquet source"
 
-#: cmdline/apt-get.cc:1906 cmdline/apt-get.cc:2135
+#: cmdline/apt-get.cc:1924 cmdline/apt-get.cc:2153
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Impossible de trouver une source de paquet pour %s"
 
-#: cmdline/apt-get.cc:1950
+#: cmdline/apt-get.cc:1968
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Saut du téléchargement du fichier « %s », déjà téléchargé\n"
 
-#: cmdline/apt-get.cc:1974
+#: cmdline/apt-get.cc:1992
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Pas assez d'espace disponible sur %s"
 
-#: cmdline/apt-get.cc:1979
+#: cmdline/apt-get.cc:1997
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Nécessité de prendre %so/%so dans les sources.\n"
 
-#: cmdline/apt-get.cc:1982
+#: cmdline/apt-get.cc:2000
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Nécessité de prendre %so dans les sources.\n"
 
-#: cmdline/apt-get.cc:1988
+#: cmdline/apt-get.cc:2006
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Récupération des sources %s\n"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2037
 msgid "Failed to fetch some archives."
 msgstr "Échec lors de la récupération de quelques archives."
 
-#: cmdline/apt-get.cc:2047
+#: cmdline/apt-get.cc:2065
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Saut du décompactage des paquets sources déjà décompactés dans %s\n"
 
-#: cmdline/apt-get.cc:2059
+#: cmdline/apt-get.cc:2077
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "La commande de décompactage « %s » a échoué.\n"
 
-#: cmdline/apt-get.cc:2060
+#: cmdline/apt-get.cc:2078
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Veuillez vérifier si le paquet dpkg-dev est installé.\n"
 
-#: cmdline/apt-get.cc:2077
+#: cmdline/apt-get.cc:2095
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "La commande de construction « %s » a échoué.\n"
 
-#: cmdline/apt-get.cc:2096
+#: cmdline/apt-get.cc:2114
 msgid "Child process failed"
 msgstr "Échec du processus fils"
 
-#: cmdline/apt-get.cc:2112
+#: cmdline/apt-get.cc:2130
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Il faut spécifier au moins un paquet pour vérifier les dépendances de "
 "construction"
 
-#: cmdline/apt-get.cc:2140
+#: cmdline/apt-get.cc:2158
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Impossible d'obtenir les dépendances de construction pour %s"
 
-#: cmdline/apt-get.cc:2160
+#: cmdline/apt-get.cc:2178
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s n'a pas de dépendance de construction.\n"
 
-#: cmdline/apt-get.cc:2212
+#: cmdline/apt-get.cc:2230
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1174,7 +1196,7 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s ne "
 "peut être trouvé"
 
-#: cmdline/apt-get.cc:2264
+#: cmdline/apt-get.cc:2282
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1183,32 +1205,33 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car aucune version "
 "du paquet %s ne peut satisfaire à la version requise"
 
-#: cmdline/apt-get.cc:2299
+#: cmdline/apt-get.cc:2317
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Impossible de satisfaire la dépendance %s pour %s : le paquet installé %s "
 "est trop récent"
 
-#: cmdline/apt-get.cc:2324
+#: cmdline/apt-get.cc:2342
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Impossible de satisfaire les dépendances %s pour %s : %s"
 
-#: cmdline/apt-get.cc:2338
+#: cmdline/apt-get.cc:2356
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
+msgstr ""
+"Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
 
-#: cmdline/apt-get.cc:2342
+#: cmdline/apt-get.cc:2360
 msgid "Failed to process build dependencies"
 msgstr "Impossible d'activer les dépendances de construction"
 
-#: cmdline/apt-get.cc:2374
+#: cmdline/apt-get.cc:2392
 msgid "Supported modules:"
 msgstr "Modules reconnus :"
 
-#: cmdline/apt-get.cc:2415
+#: cmdline/apt-get.cc:2433
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1381,7 +1404,8 @@ msgstr ""
 "seules les erreurs"
 
 #: dselect/install:103
-msgid "above this message are important. Please fix them and run [I]nstall again"
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
 msgstr ""
 "précédant ce message sont importantes. Veuillez les corriger et\n"
 "démarrer l'[I]nstallation une nouvelle fois."
@@ -1394,19 +1418,19 @@ msgstr "Fusion des informations disponibles"
 msgid "Failed to create pipes"
 msgstr "Échec de création de tubes"
 
-#: apt-inst/contrib/extracttar.cc:143
+#: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
 msgstr "Impossible d'exécuter gzip "
 
-#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
+#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:207
 msgid "Corrupted archive"
 msgstr "Archive corrompue"
 
-#: apt-inst/contrib/extracttar.cc:195
+#: apt-inst/contrib/extracttar.cc:196
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Échec dans la somme de contrôle de tar, l'archive est corrompue"
 
-#: apt-inst/contrib/extracttar.cc:298
+#: apt-inst/contrib/extracttar.cc:299
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Type d'en-tête %u inconnu pour TAR, partie %s"
@@ -1639,7 +1663,8 @@ msgstr "Ce n'est pas une archive DEB valide,  partie « %s » manquante"
 #: apt-inst/deb/debfile.cc:52
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
-msgstr "Ce n'est pas une archive DEB valide, elle n'a pas de membre « %s » ou « %s »"
+msgstr ""
+"Ce n'est pas une archive DEB valide, elle n'a pas de membre « %s » ou « %s »"
 
 #: apt-inst/deb/debfile.cc:112
 #, c-format
@@ -1690,12 +1715,12 @@ msgstr "Disque non trouvé."
 msgid "File not found"
 msgstr "Fichier non trouvé"
 
-#: methods/copy.cc:42 methods/gpgv.cc:275 methods/gzip.cc:133
-#: methods/gzip.cc:142
+#: methods/copy.cc:42 methods/gpgv.cc:281 methods/gzip.cc:141
+#: methods/gzip.cc:150
 msgid "Failed to stat"
 msgstr "Impossible de statuer"
 
-#: methods/copy.cc:79 methods/gpgv.cc:272 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:278 methods/gzip.cc:147
 msgid "Failed to set modification time"
 msgstr "Impossible de modifier l'heure "
 
@@ -1742,7 +1767,8 @@ msgstr ""
 #: methods/ftp.cc:265
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
-msgstr "La commande « %s » du script de connexion a échoué, le serveur a répondu : %s"
+msgstr ""
+"La commande « %s » du script de connexion a échoué, le serveur a répondu : %s"
 
 #: methods/ftp.cc:291
 #, c-format
@@ -1779,7 +1805,8 @@ msgstr "Impossible de créer un connecteur"
 
 #: methods/ftp.cc:698
 msgid "Could not connect data socket, connection timed out"
-msgstr "Impossible de se connecter sur le port de données, délai de connexion dépassé"
+msgstr ""
+"Impossible de se connecter sur le port de données, délai de connexion dépassé"
 
 #: methods/ftp.cc:704
 msgid "Could not connect passive socket."
@@ -1909,41 +1936,43 @@ msgstr ""
 msgid "Unable to connect to %s %s:"
 msgstr "Impossible de se connecter à %s %s :"
 
-#: methods/gpgv.cc:64
+#: methods/gpgv.cc:65
 #, c-format
 msgid "Couldn't access keyring: '%s'"
 msgstr "Impossible d'accèder au porte-clés : « %s »"
 
-#: methods/gpgv.cc:99
+#: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-msgstr "E: liste de paramètres trop longue pour Acquire::gpgv::Options. Abandon."
+msgstr ""
+"E: liste de paramètres trop longue pour Acquire::gpgv::Options. Abandon."
 
-#: methods/gpgv.cc:198
-msgid "Internal error: Good signature, but could not determine key fingerprint?!"
+#: methods/gpgv.cc:204
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Erreur interne : signature correcte, mais il est impossible de déterminer "
 "l'empreinte de la clé."
 
-#: methods/gpgv.cc:203
+#: methods/gpgv.cc:209
 msgid "At least one invalid signature was encountered."
 msgstr "Au moins une signature non valable a été rencontrée."
 
-#: methods/gpgv.cc:207
+#: methods/gpgv.cc:213
 #, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgstr ""
 "Impossible d'exécuter « %s » pour contrôler la signature\n"
 "(veuillez vérifier si gnupg est installé)."
 
-#: methods/gpgv.cc:212
+#: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
 msgstr "Erreur inconnue à l'exécution de gpgv"
 
-#: methods/gpgv.cc:243
+#: methods/gpgv.cc:249
 msgid "The following signatures were invalid:\n"
 msgstr "Les signatures suivantes ne sont pas valables :\n"
 
-#: methods/gpgv.cc:250
+#: methods/gpgv.cc:256
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1951,12 +1980,12 @@ msgstr ""
 "Les signatures suivantes n'ont pas pu être vérifiées car la clé publique "
 "n'est pas disponible :\n"
 
-#: methods/gzip.cc:57
+#: methods/gzip.cc:64
 #, c-format
 msgid "Couldn't open pipe for %s"
 msgstr "Ne parvient pas à ouvrir le tube pour %s"
 
-#: methods/gzip.cc:102
+#: methods/gzip.cc:109
 #, c-format
 msgid "Read error from %s process"
 msgstr "Erreur de lecture du processus %s"
@@ -2323,12 +2352,12 @@ msgstr "Versions possibles"
 msgid "Dependency generation"
 msgstr "Génération des dépendances"
 
-#: apt-pkg/tagfile.cc:72
+#: apt-pkg/tagfile.cc:106
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Impossible de traiter le fichier %s (1)"
 
-#: apt-pkg/tagfile.cc:102
+#: apt-pkg/tagfile.cc:193
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Impossible de traiter le fichier %s (2)"
@@ -2351,12 +2380,14 @@ msgstr "Ligne %lu mal formée dans la liste des sources %s (analyse de l'URI)"
 #: apt-pkg/sourcelist.cc:105
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Ligne %lu mal formée dans la liste des sources %s (distribution absolue)"
+msgstr ""
+"Ligne %lu mal formée dans la liste des sources %s (distribution absolue)"
 
 #: apt-pkg/sourcelist.cc:112
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Ligne %lu mal formée dans la liste des sources %s (analyse de distribution)"
+msgstr ""
+"Ligne %lu mal formée dans la liste des sources %s (analyse de distribution)"
 
 #: apt-pkg/sourcelist.cc:203
 #, c-format
@@ -2376,12 +2407,14 @@ msgstr "Ligne %u mal formée dans la liste des sources %s (type)"
 #: apt-pkg/sourcelist.cc:244
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Le type « %s » est inconnu sur la ligne %u dans la liste des sources %s"
+msgstr ""
+"Le type « %s » est inconnu sur la ligne %u dans la liste des sources %s"
 
 #: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
-msgstr "Ligne %u mal formée dans la liste des sources %s (identifiant du fournisseur)"
+msgstr ""
+"Ligne %u mal formée dans la liste des sources %s (identifiant du fournisseur)"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
@@ -2402,7 +2435,8 @@ msgstr "Le type de fichier d'index « %s » n'est pas accepté"
 
 #: apt-pkg/algorithms.cc:241
 #, c-format
-msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "Le paquet %s doit être réinstallé, mais je ne parviens pas à trouver son "
 "archive."
@@ -2476,7 +2510,8 @@ msgstr "Impossible de localiser %s."
 
 #: apt-pkg/srcrecords.cc:48
 msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Vous devez insérer quelques adresses « sources » dans votre sources.list"
+msgstr ""
+"Vous devez insérer quelques adresses « sources » dans votre sources.list"
 
 #: apt-pkg/cachefile.cc:73
 msgid "The package lists or status file could not be parsed or opened."
@@ -2550,7 +2585,8 @@ msgstr ""
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "Vous avez dépassé le nombre de versions que cet APT est capable de traiter."
+msgstr ""
+"Vous avez dépassé le nombre de versions que cet APT est capable de traiter."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2586,7 +2622,8 @@ msgstr "Assemblage des fichiers listés dans les champs Provides"
 
 #: apt-pkg/pkgcachegen.cc:785 apt-pkg/pkgcachegen.cc:792
 msgid "IO Error saving source cache"
-msgstr "Erreur d'entrée/sortie lors de la sauvegarde du fichier de cache des sources"
+msgstr ""
+"Erreur d'entrée/sortie lors de la sauvegarde du fichier de cache des sources"
 
 #: apt-pkg/acquire-item.cc:126
 #, c-format
@@ -2599,7 +2636,8 @@ msgstr "Somme de contrôle MD5 incohérente"
 
 #: apt-pkg/acquire-item.cc:640
 msgid "There are no public key available for the following key IDs:\n"
-msgstr "Aucune clé publique n'est disponible pour la/les clé(s) suivante(s) :\n"
+msgstr ""
+"Aucune clé publique n'est disponible pour la/les clé(s) suivante(s) :\n"
 
 #: apt-pkg/acquire-item.cc:753
 #, c-format
@@ -2622,7 +2660,8 @@ msgstr ""
 
 #: apt-pkg/acquire-item.cc:848
 #, c-format
-msgid "The package index files are corrupted. No Filename: field for package %s."
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 "Les fichiers d'index des paquets sont corrompus. Aucun champ « Filename: » "
 "pour le paquet %s."
@@ -2786,23 +2825,8 @@ msgstr "%s complètement supprimé"
 msgid "Connection closed prematurely"
 msgstr "Connexion fermée prématurément"
 
-#: ftparchive/cachedb.cc:76
-msgid ""
-"DB format is invalid. If you upgraded from a older version of apt, please "
-"remove and re-create the database."
-msgstr "Le format de la base de données n'est pas valable. Si vous mettez APT à jour, veuillez supprimer puis recréer la base de données."
+#~ msgid "File date has changed %s"
+#~ msgstr "La date du fichier a changé %s"
 
-#: ftparchive/writer.cc:623
-#, c-format
-msgid "  %s has no source override entry\n"
-msgstr "  %s ne possède pas d'entrée « source override »\n"
-
-#: ftparchive/writer.cc:627
-#, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr "  %s ne possède pas également pas d'entrée « binary override »\n"
-
-#: methods/rred.cc:219
-msgid "Could not patch file"
-msgstr "Impossible de modifier (« patch ») %s"
-
+#~ msgid "Could not patch file"
+#~ msgstr "Impossible de modifier (« patch ») %s"
