@@ -441,6 +441,8 @@ msgid ""
 "DB format is invalid. If you upgraded from a older version of apt, please "
 "remove and re-create the database."
 msgstr ""
+"El format de la base de dades és invàlid. Si heu actualitzat des d'una versió "
+"més antiga de l'apt, eliminieu i torneu a crear la base de dades."
 
 #: ftparchive/cachedb.cc:81
 #, c-format
@@ -529,22 +531,22 @@ msgstr "Arxiu sense el camp paquet"
 #: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
-msgstr " %s no té una entrada dominant\n"
+msgstr "  %s no té una entrada dominant\n"
 
 #: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
-msgstr " el mantenidor de %s és %s, no %s\n"
+msgstr "  el mantenidor de %s és %s, no %s\n"
 
 #: ftparchive/writer.cc:623
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no source override entry\n"
-msgstr " %s no té una entrada dominant\n"
+msgstr "  %s no té una entrada dominant de font\n"
 
 #: ftparchive/writer.cc:627
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no binary override entry either\n"
-msgstr " %s no té una entrada dominant\n"
+msgstr "  %s no té una entrada dominant de binari\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -1901,7 +1903,7 @@ msgstr "S'ha produït un error temporal en resoldre '%s'"
 #: methods/connect.cc:176
 #, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i)"
-msgstr "Ha passat alguna cosa estranya en resoldre '%s:%s' (%i)"
+msgstr "Ha passat alguna cosa estranya en resoldre «%s:%s» (%i)"
 
 #: methods/connect.cc:223
 #, c-format
@@ -1909,9 +1911,9 @@ msgid "Unable to connect to %s %s:"
 msgstr "No es pot connectar amb %s %s:"
 
 #: methods/gpgv.cc:65
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't access keyring: '%s'"
-msgstr "No s'ha pogut resoldre '%s'"
+msgstr "No s'ha pogut accedir a l'anell de claus: «%s»"
 
 #: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
@@ -1931,9 +1933,9 @@ msgid "At least one invalid signature was encountered."
 msgstr "S'ha trobat almenys una signatura invàlida."
 
 #: methods/gpgv.cc:213
-#, fuzzy, c-format
+#, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
-msgstr " per a verificar la signatura (està instal·lat el gnupg?)"
+msgstr "No s'ha pogut executar «%s» per a verificar la signatura (està instal·lat el gnupg?)"
 
 #: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
@@ -2432,14 +2434,14 @@ msgstr "Falta el directori d'arxiu %spartial."
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:823
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "S'està baixant el fitxer %li de %li (falten %s)"
+msgstr "S'està obtenint el fitxer %li de %li (falten %s)"
 
 #: apt-pkg/acquire.cc:825
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li"
-msgstr "S'està llegint el llistat de fitxers"
+msgstr "S'està obtenint el fitxer %li de %li"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2728,7 +2730,7 @@ msgstr ""
 #: apt-pkg/deb/dpkgpm.cc:358
 #, c-format
 msgid "Preparing %s"
-msgstr "S'està preparant %s"
+msgstr "S'està preparant el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:359
 #, c-format
@@ -2738,42 +2740,42 @@ msgstr "S'està desempaquetant %s"
 #: apt-pkg/deb/dpkgpm.cc:364
 #, c-format
 msgid "Preparing to configure %s"
-msgstr "S'està preparant per a configurar %s"
+msgstr "S'està preparant per a configurar el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:365
 #, c-format
 msgid "Configuring %s"
-msgstr "S'està configurant %s"
+msgstr "S'està configurant el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:366
 #, c-format
 msgid "Installed %s"
-msgstr "S'ha instal·lat %s"
+msgstr "S'ha instal·lat el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:371
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr "S'està preparant per a l'eliminació de %s"
+msgstr "S'està preparant per a l'eliminació del paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:372
 #, c-format
 msgid "Removing %s"
-msgstr "S'està eliminant %s"
+msgstr "S'està eliminant el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:373
 #, c-format
 msgid "Removed %s"
-msgstr "S'ha eliminat %s"
+msgstr "S'ha eliminat el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:378
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to completely remove %s"
-msgstr "S'està preparant per a configurar %s"
+msgstr "S'està preparant per a eliminar completament el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:379
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removed %s"
-msgstr "No es pot eliminar %s"
+msgstr "S'ha eliminat completament el paquet %s"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
@@ -2781,10 +2783,6 @@ msgstr "La connexió s'ha tancat prematurament"
 
 #~ msgid "File date has changed %s"
 #~ msgstr "La data del fitxer ha canviat %s"
-
-#, fuzzy
-#~ msgid "Could not patch file"
-#~ msgstr "No s'ha pogut obrir el fitxer %s"
 
 #~ msgid "Reading file list"
 #~ msgstr "S'està llegint la llista de fitxers"
