@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-27 13:46+0200\n"
-"PO-Revision-Date: 2006-07-20 00:28+0900\n"
+"POT-Creation-Date: 2006-10-11 20:19+0200\n"
+"PO-Revision-Date: 2006-10-12 21:22-0400\n"
 "Last-Translator: Sunjae Park <darehanl@gmail.com>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -146,7 +146,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1652 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2369 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2387 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s (%s %s), 컴파일 시각 %s %s\n"
@@ -421,116 +421,129 @@ msgstr "맞는 꾸러미가 없습니다"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "`%s' 꾸러미 파일 그룹에 몇몇 파일이 빠졌습니다"
 
-#: ftparchive/cachedb.cc:45
+#: ftparchive/cachedb.cc:47
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "DB가 망가졌습니다. 파일 이름을 %s.old로 바꿉니다"
 
-#: ftparchive/cachedb.cc:63
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "DB가 오래되었습니다. %s의 업그레이드를 시도합니다"
 
-#: ftparchive/cachedb.cc:73
+#: ftparchive/cachedb.cc:76
+msgid ""
+"DB format is invalid. If you upgraded from a older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"DB 형식이 잘못되었습니다. apt 예전 버전에서 업그레이드했다면, 데이터베이스를 "
+"지우고 다시 만드십시오."
+
+#: ftparchive/cachedb.cc:81
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "DB 파일, %s 파일을 열 수 없습니다: %s"
 
-#: ftparchive/cachedb.cc:114
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:272
 #, c-format
-msgid "File date has changed %s"
-msgstr "%s 파일의 마지막 수정 시각이 바뀌엇습니다"
+msgid "Failed to stat %s"
+msgstr "%s의 정보를 읽는 데 실패했습니다"
 
-#: ftparchive/cachedb.cc:155
+#: ftparchive/cachedb.cc:242
 msgid "Archive has no control record"
 msgstr "아카이브에 컨트롤 기록이 없습니다"
 
 # FIXME: 왠 커서??
-#: ftparchive/cachedb.cc:267
+#: ftparchive/cachedb.cc:448
 msgid "Unable to get a cursor"
 msgstr "커서를 가져올 수 없습니다"
 
-#: ftparchive/writer.cc:78
+#: ftparchive/writer.cc:79
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "경고: %s 디렉토리를 읽을 수 없습니다\n"
 
-#: ftparchive/writer.cc:83
+#: ftparchive/writer.cc:84
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "경고: %s의 정보를 읽을 수 없습니다\n"
 
-#: ftparchive/writer.cc:125
+#: ftparchive/writer.cc:135
 msgid "E: "
 msgstr "오류: "
 
-#: ftparchive/writer.cc:127
+#: ftparchive/writer.cc:137
 msgid "W: "
 msgstr "경고: "
 
-#: ftparchive/writer.cc:134
+#: ftparchive/writer.cc:144
 msgid "E: Errors apply to file "
 msgstr "오류: 다음 파일에 적용하는 데 오류가 발생했습니다: "
 
-#: ftparchive/writer.cc:151 ftparchive/writer.cc:181
+#: ftparchive/writer.cc:161 ftparchive/writer.cc:191
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "%s의 경로를 알아내는 데 실패했습니다"
 
-#: ftparchive/writer.cc:163
+#: ftparchive/writer.cc:173
 msgid "Tree walking failed"
 msgstr "트리에서 이동이 실패했습니다"
 
-#: ftparchive/writer.cc:188
+#: ftparchive/writer.cc:198
 #, c-format
 msgid "Failed to open %s"
 msgstr "%s 파일을 여는 데 실패했습니다"
 
 # FIXME: ??
-#: ftparchive/writer.cc:245
+#: ftparchive/writer.cc:257
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " 링크 %s [%s] 없애기\n"
 
-#: ftparchive/writer.cc:253
+#: ftparchive/writer.cc:265
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s 파일에 readlink하는 데 실패했습니다"
 
-#: ftparchive/writer.cc:257
+#: ftparchive/writer.cc:269
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "%s 파일을 지우는 데 실패했습니다"
 
-#: ftparchive/writer.cc:264
+#: ftparchive/writer.cc:276
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** %s 파일을 %s(으)로 링크하는 데 실패했습니다"
 
-#: ftparchive/writer.cc:274
+#: ftparchive/writer.cc:286
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " DeLink 한계값 %s바이트에 도달했습니다.\n"
 
-#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:266
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s의 정보를 읽는 데 실패했습니다"
-
-#: ftparchive/writer.cc:386
+#: ftparchive/writer.cc:390
 msgid "Archive had no package field"
 msgstr "아카이브에 꾸러미 필드가 없습니다"
 
-#: ftparchive/writer.cc:394 ftparchive/writer.cc:603
+#: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s에는 override 항목이 없습니다\n"
 
-#: ftparchive/writer.cc:437 ftparchive/writer.cc:689
+#: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s 관리자가 %s입니다 (%s 아님)\n"
+
+#: ftparchive/writer.cc:623
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s에는 source override 항목이 없습니다\n"
+
+#: ftparchive/writer.cc:627
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s에는 binary override 항목이 없습니다\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -793,11 +806,11 @@ msgstr "꾸러미를 지워야 하지만 지우기가 금지되어 있습니다.
 msgid "Internal error, Ordering didn't finish"
 msgstr "내부 오류. 순서변경작업이 끝나지 않았습니다"
 
-#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1800 cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1851
 msgid "Unable to lock the download directory"
 msgstr "내려받기 디렉토리를 잠글 수 없습니다"
 
-#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1881 cmdline/apt-get.cc:2117
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1899 cmdline/apt-get.cc:2135
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "소스 목록을 읽을 수 없습니다."
@@ -828,7 +841,7 @@ msgstr "압축을 풀면 %s바이트의 디스크 공간을 더 사용하게 됩
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "압축을 풀면 %s바이트의 디스크 공간이 비워집니다.\n"
 
-#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1971
+#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1989
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "%s의 여유 공간의 크기를 파악할 수 없습니다"
@@ -868,7 +881,7 @@ msgstr "중단."
 msgid "Do you want to continue [Y/n]? "
 msgstr "계속 하시겠습니까 [Y/n]? "
 
-#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2014
+#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2032
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "%s 파일을 받는 데 실패했습니다  %s\n"
@@ -877,7 +890,7 @@ msgstr "%s 파일을 받는 데 실패했습니다  %s\n"
 msgid "Some files failed to download"
 msgstr "일부 파일을 받는 데 실패했습니다"
 
-#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2041
 msgid "Download complete and in download only mode"
 msgstr "내려받기를 마쳤고 내려받기 전용 모드입니다"
 
@@ -1050,107 +1063,107 @@ msgstr "망가진 꾸러미"
 msgid "The following extra packages will be installed:"
 msgstr "다음 꾸러미를 더 설치할 것입니다:"
 
-#: cmdline/apt-get.cc:1674
+#: cmdline/apt-get.cc:1692
 msgid "Suggested packages:"
 msgstr "제안하는 꾸러미:"
 
-#: cmdline/apt-get.cc:1675
+#: cmdline/apt-get.cc:1693
 msgid "Recommended packages:"
 msgstr "추천하는 꾸러미:"
 
-#: cmdline/apt-get.cc:1695
+#: cmdline/apt-get.cc:1713
 msgid "Calculating upgrade... "
 msgstr "업그레이드를 계산하는 중입니다... "
 
-#: cmdline/apt-get.cc:1698 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1716 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "실패"
 
-#: cmdline/apt-get.cc:1703
+#: cmdline/apt-get.cc:1721
 msgid "Done"
 msgstr "완료"
 
-#: cmdline/apt-get.cc:1768 cmdline/apt-get.cc:1776
+#: cmdline/apt-get.cc:1786 cmdline/apt-get.cc:1794
 msgid "Internal error, problem resolver broke stuff"
 msgstr "내부 오류, 문제 해결 프로그램이 사고쳤습니다"
 
-#: cmdline/apt-get.cc:1876
+#: cmdline/apt-get.cc:1894
 msgid "Must specify at least one package to fetch source for"
 msgstr "해당되는 소스 꾸러미를 가져올 꾸러미를 최소한 하나 지정해야 합니다"
 
-#: cmdline/apt-get.cc:1906 cmdline/apt-get.cc:2135
+#: cmdline/apt-get.cc:1924 cmdline/apt-get.cc:2153
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "%s의 소스 꾸러미를 찾을 수 없습니다"
 
-#: cmdline/apt-get.cc:1950
+#: cmdline/apt-get.cc:1968
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "이미 다운로드 받은 파일 '%s'은(는) 다시 받지 않고 건너 뜁니다.\n"
 
-#: cmdline/apt-get.cc:1974
+#: cmdline/apt-get.cc:1992
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "%s에 충분한 공간이 없습니다"
 
-#: cmdline/apt-get.cc:1979
+#: cmdline/apt-get.cc:1997
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "소스 아카이브를 %s바이트/%s바이트 받아야 합니다.\n"
 
-#: cmdline/apt-get.cc:1982
+#: cmdline/apt-get.cc:2000
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "소스 아카이브를 %s바이트 받아야 합니다.\n"
 
-#: cmdline/apt-get.cc:1988
+#: cmdline/apt-get.cc:2006
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "%s 소스를 가져옵니다\n"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2037
 msgid "Failed to fetch some archives."
 msgstr "일부 아카이브를 가져오는 데 실패했습니다."
 
-#: cmdline/apt-get.cc:2047
+#: cmdline/apt-get.cc:2065
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "%s에 이미 풀려 있는 소스의 압축을 풀지 않고 건너 뜁니다.\n"
 
-#: cmdline/apt-get.cc:2059
+#: cmdline/apt-get.cc:2077
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "압축 풀기 명령 '%s' 실패.\n"
 
-#: cmdline/apt-get.cc:2060
+#: cmdline/apt-get.cc:2078
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "'dpkg-dev' 꾸러미가 설치되었는지를 확인해주십시오.\n"
 
-#: cmdline/apt-get.cc:2077
+#: cmdline/apt-get.cc:2095
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "빌드 명령 '%s' 실패.\n"
 
-#: cmdline/apt-get.cc:2096
+#: cmdline/apt-get.cc:2114
 msgid "Child process failed"
 msgstr "하위 프로세스가 실패했습니다"
 
-#: cmdline/apt-get.cc:2112
+#: cmdline/apt-get.cc:2130
 msgid "Must specify at least one package to check builddeps for"
 msgstr "해당되는 빌드 의존성을 검사할 꾸러미를 최소한 하나 지정해야 합니다"
 
-#: cmdline/apt-get.cc:2140
+#: cmdline/apt-get.cc:2158
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "%s의 빌드 의존성 정보를 가져올 수 없습니다"
 
-#: cmdline/apt-get.cc:2160
+#: cmdline/apt-get.cc:2178
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s 꾸러미에 빌드 의존성이 없습니다.\n"
 
-#: cmdline/apt-get.cc:2212
+#: cmdline/apt-get.cc:2230
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1159,7 +1172,7 @@ msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 꾸러미를 찾을 수 없습니"
 "다"
 
-#: cmdline/apt-get.cc:2264
+#: cmdline/apt-get.cc:2282
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1168,32 +1181,32 @@ msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 꾸러미의 사용 가능한 버"
 "전 중에서는 이 버전 요구사항을 만족시킬 수 없습니다"
 
-#: cmdline/apt-get.cc:2299
+#: cmdline/apt-get.cc:2317
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시키는 데 실패했습니다: 설치한 %3$s 꾸러미가 너"
 "무 최근 버전입니다"
 
-#: cmdline/apt-get.cc:2324
+#: cmdline/apt-get.cc:2342
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "%2$s에 대한 %1$s 의존성을 만족시키는 데 실패했습니다: %3$s"
 
-#: cmdline/apt-get.cc:2338
+#: cmdline/apt-get.cc:2356
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "%s의 빌드 의존성을 만족시키지 못했습니다."
 
-#: cmdline/apt-get.cc:2342
+#: cmdline/apt-get.cc:2360
 msgid "Failed to process build dependencies"
 msgstr "빌드 의존성을 처리하는 데 실패했습니다"
 
-#: cmdline/apt-get.cc:2374
+#: cmdline/apt-get.cc:2392
 msgid "Supported modules:"
 msgstr "지원하는 모듈:"
 
-#: cmdline/apt-get.cc:2415
+#: cmdline/apt-get.cc:2433
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1373,19 +1386,19 @@ msgstr "이용 가능 꾸러미 정보를 합칩니다"
 msgid "Failed to create pipes"
 msgstr "파이프 만들기가 실패했습니다"
 
-#: apt-inst/contrib/extracttar.cc:143
+#: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
 msgstr "gzip 실행이 실패했습니다"
 
-#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
+#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:207
 msgid "Corrupted archive"
 msgstr "아카이브가 손상되었습니다"
 
-#: apt-inst/contrib/extracttar.cc:195
+#: apt-inst/contrib/extracttar.cc:196
 msgid "Tar checksum failed, archive corrupted"
 msgstr "tar 체크섬 실패, 아카이브가 손상되었습니다"
 
-#: apt-inst/contrib/extracttar.cc:298
+#: apt-inst/contrib/extracttar.cc:299
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "알 수 없는 TAR 헤더 타입 %u, 멤버 %s"
@@ -1658,18 +1671,18 @@ msgstr "%s 안의 CD-ROM을 마운트 해제할 수 없습니다. 사용 중일 
 
 #: methods/cdrom.cc:169
 msgid "Disk not found."
-msgstr "디스크가 없습니다"
+msgstr "디스크가 없습니다."
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "파일이 없습니다"
 
-#: methods/copy.cc:42 methods/gpgv.cc:275 methods/gzip.cc:133
-#: methods/gzip.cc:142
+#: methods/copy.cc:42 methods/gpgv.cc:281 methods/gzip.cc:141
+#: methods/gzip.cc:150
 msgid "Failed to stat"
 msgstr "파일 정보를 읽는 데 실패했습니다"
 
-#: methods/copy.cc:79 methods/gpgv.cc:272 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:278 methods/gzip.cc:147
 msgid "Failed to set modification time"
 msgstr "파일 변경 시각을 설정하는 데 실패했습니다"
 
@@ -1881,49 +1894,49 @@ msgstr "'%s:%s'의 주소를 알아내는 데 무언가 이상한 일이 발생�
 msgid "Unable to connect to %s %s:"
 msgstr "%s %s에 연결할 수 없습니다:"
 
-#: methods/gpgv.cc:64
+#: methods/gpgv.cc:65
 #, c-format
 msgid "Couldn't access keyring: '%s'"
 msgstr "키링에 접근할 수 없습니다: '%s'"
 
-#: methods/gpgv.cc:99
+#: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr "E: Acquire::gpgv::Options의 인자 목록이 너무 깁니다. 종료하는 중."
 
-#: methods/gpgv.cc:198
+#: methods/gpgv.cc:204
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr "내부 오류: 서명은 올바르지만 키 지문을 확인할 수 없습니다!"
 
-#: methods/gpgv.cc:203
+#: methods/gpgv.cc:209
 msgid "At least one invalid signature was encountered."
 msgstr "최소한 하나 이상의 서명이 잘못되었습니다."
 
-#: methods/gpgv.cc:207
+#: methods/gpgv.cc:213
 #, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
-msgstr "서명을 인증하기 위한 '%s'를 실행할 수 없습니다(gnupg가 설치됐나요?)"
+msgstr "서명을 인증하기 위한 '%s' 실행할 수 없습니다(gnupg가 설치됐나요?)"
 
-#: methods/gpgv.cc:212
+#: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
 msgstr "gpgv 실행 도중 알 수 없는 오류 발생"
 
-#: methods/gpgv.cc:243
+#: methods/gpgv.cc:249
 msgid "The following signatures were invalid:\n"
 msgstr "다음 서명이 올바르지 않습니다:\n"
 
-#: methods/gpgv.cc:250
+#: methods/gpgv.cc:256
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr "다음 서명들은 공개키가 없기 때문에 인증할 수 없습니다:\n"
 
-#: methods/gzip.cc:57
+#: methods/gzip.cc:64
 #, c-format
 msgid "Couldn't open pipe for %s"
 msgstr "%s에 대한 파이프를 열 수 없습니다"
 
-#: methods/gzip.cc:102
+#: methods/gzip.cc:109
 #, c-format
 msgid "Read error from %s process"
 msgstr "%s 프로세스에서 읽는 데 오류가 발생했습니다"
@@ -2288,12 +2301,12 @@ msgstr "후보 버전"
 msgid "Dependency generation"
 msgstr "의존성 만들기"
 
-#: apt-pkg/tagfile.cc:72
+#: apt-pkg/tagfile.cc:106
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "꾸러미 파일 %s 파일을 파싱할 수 없습니다 (1)"
 
-#: apt-pkg/tagfile.cc:102
+#: apt-pkg/tagfile.cc:193
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "꾸러미 파일 %s 파일을 파싱할 수 없습니다 (2)"
@@ -2419,7 +2432,7 @@ msgstr "설치 방법 %s이(가) 올바르게 시작하지 않았습니다"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
-"'%2$s' 드라이브에 '%1$s'로 표기된 디스크를 삽입하고 엔터를 눌러주십시오."
+"'%2$s' 드라이브에 '%1$s'(으)로 표기된 디스크를 삽입하고 엔터를 눌러주십시오."
 
 #: apt-pkg/init.cc:120
 #, c-format
@@ -2501,15 +2514,15 @@ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:207
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "와우, 이 APT가 처리할 수 있는 패키지 이름 개수를 넘어갔습니다."
+msgstr "우와, 이 APT가 처리할 수 있는 꾸러미 이름 개수를 넘어갔습니다."
 
 #: apt-pkg/pkgcachegen.cc:210
 msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "와우, 이 APT가 처리할 수 있는 버전 개수를 넘어갔습니다."
+msgstr "우와, 이 APT가 처리할 수 있는 버전 개수를 넘어갔습니다."
 
 #: apt-pkg/pkgcachegen.cc:213
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "와우, 이 APT가 처리할 수 있는 의존성 개수를 넘어갔습니다."
+msgstr "우와, 이 APT가 처리할 수 있는 의존성 개수를 넘어갔습니다."
 
 #: apt-pkg/pkgcachegen.cc:241
 #, c-format
@@ -2734,26 +2747,12 @@ msgstr "%s을(를) 완전히 지웠습니다"
 msgid "Connection closed prematurely"
 msgstr "연결이 너무 빨리 끊어졌습니다"
 
-#: ftparchive/cachedb.cc:76
-msgid ""
-"DB format is invalid. If you upgraded from a older version of apt, please "
-"remove and re-create the database."
-msgstr ""
+#~ msgid "File date has changed %s"
+#~ msgstr "%s 파일의 마지막 수정 시각이 바뀌엇습니다"
 
-#: ftparchive/writer.cc:623
-#, fuzzy, c-format
-msgid "  %s has no source override entry\n"
-msgstr "  %s에는 override 항목이 없습니다\n"
-
-#: ftparchive/writer.cc:627
-#, fuzzy, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr "  %s에는 override 항목이 없습니다\n"
-
-#: methods/rred.cc:219
 #, fuzzy
-msgid "Could not patch file"
-msgstr "%s 파일을 열 수 없습니다"
+#~ msgid "Could not patch file"
+#~ msgstr "%s 파일을 열 수 없습니다"
 
 #~ msgid "Reading file list"
 #~ msgstr "파일 목록을 읽는 중"
@@ -2761,4 +2760,3 @@ msgstr "%s 파일을 열 수 없습니다"
 #, fuzzy
 #~ msgid "Could not execute "
 #~ msgstr "%s 잠금 파일을 얻을 수 없습니다"
-
