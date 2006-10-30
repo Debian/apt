@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-27 13:46+0200\n"
+"POT-Creation-Date: 2006-10-11 20:19+0200\n"
 "PO-Revision-Date: 2006-08-18 15:45+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -149,7 +149,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1652 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2369 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2387 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s för %s %s kompilerad den %s %s\n"
@@ -424,112 +424,130 @@ msgstr "Inga val träffades"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Några filer saknas i paketfilsgruppen \"%s\""
 
-#: ftparchive/cachedb.cc:45
+#: ftparchive/cachedb.cc:47
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "DB var skadad, filen omdöpt till %s.old"
 
-#: ftparchive/cachedb.cc:63
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "DB är för gammal, försöker uppgradera %s"
 
-#: ftparchive/cachedb.cc:73
+#: ftparchive/cachedb.cc:76
+msgid ""
+"DB format is invalid. If you upgraded from a older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"DB-formatet är ogiltigt. Ta bort och återskapa databasen om du uppgraderar "
+"från en äldre version av apt."
+
+#: ftparchive/cachedb.cc:81
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "Kunde inte öppna DB-filen %s: %s"
 
-#: ftparchive/cachedb.cc:155
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:272
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Misslyckades med att ta status på %s"
+
+#: ftparchive/cachedb.cc:242
 msgid "Archive has no control record"
 msgstr "Arkivet har ingen styrpost"
 
-#: ftparchive/cachedb.cc:267
+#: ftparchive/cachedb.cc:448
 msgid "Unable to get a cursor"
 msgstr "Kunde inte få tag i någon markör"
 
-#: ftparchive/writer.cc:78
+#: ftparchive/writer.cc:79
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "V: Kunde inte läsa katalogen %s\n"
 
-#: ftparchive/writer.cc:83
+#: ftparchive/writer.cc:84
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "V: Kunde inte ta status på %s\n"
 
-#: ftparchive/writer.cc:125
+#: ftparchive/writer.cc:135
 msgid "E: "
 msgstr "F: "
 
-#: ftparchive/writer.cc:127
+#: ftparchive/writer.cc:137
 msgid "W: "
 msgstr "V: "
 
-#: ftparchive/writer.cc:134
+#: ftparchive/writer.cc:144
 msgid "E: Errors apply to file "
 msgstr "F: Felen gäller filen "
 
-#: ftparchive/writer.cc:151 ftparchive/writer.cc:181
+#: ftparchive/writer.cc:161 ftparchive/writer.cc:191
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Misslyckades med att slå upp %s"
 
 # ???
-#: ftparchive/writer.cc:163
+#: ftparchive/writer.cc:173
 msgid "Tree walking failed"
 msgstr "Trädvandring misslyckades"
 
-#: ftparchive/writer.cc:188
+#: ftparchive/writer.cc:198
 #, c-format
 msgid "Failed to open %s"
 msgstr "Misslyckades med att öppna %s"
 
-#: ftparchive/writer.cc:245
+#: ftparchive/writer.cc:257
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " Avlänka %s [%s]\n"
 
-#: ftparchive/writer.cc:253
+#: ftparchive/writer.cc:265
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Misslyckades med att läsa länk %s"
 
-#: ftparchive/writer.cc:257
+#: ftparchive/writer.cc:269
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "Misslyckades med att länka ut %s"
 
-#: ftparchive/writer.cc:264
+#: ftparchive/writer.cc:276
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Misslyckades med att länka %s till %s"
 
-#: ftparchive/writer.cc:274
+#: ftparchive/writer.cc:286
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Avlänkningsgräns på %sB nådd.\n"
 
-#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:266
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Misslyckades med att ta status på %s"
-
 # Fält vid namn "Package"
-#: ftparchive/writer.cc:386
+#: ftparchive/writer.cc:390
 msgid "Archive had no package field"
 msgstr "Arkivet har inget package-fält"
 
-#: ftparchive/writer.cc:394 ftparchive/writer.cc:603
+#: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s har ingen post i override-filen\n"
 
 # parametrar: paket, ny, gammal
-#: ftparchive/writer.cc:437 ftparchive/writer.cc:689
+#: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  ansvarig för %s är %s ej %s\n"
+
+#: ftparchive/writer.cc:623
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s har ingen källåsidosättningspost\n"
+
+#: ftparchive/writer.cc:627
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s har heller ingen binär åsidosättningspost\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -794,11 +812,11 @@ msgstr "Paket måste tas bort men \"Remove\" är inaktiverat."
 msgid "Internal error, Ordering didn't finish"
 msgstr "Internt fel. Sorteringen färdigställdes inte"
 
-#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1800 cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1851
 msgid "Unable to lock the download directory"
 msgstr "Kunde inte låsa hämtningskatalogen."
 
-#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1881 cmdline/apt-get.cc:2117
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1899 cmdline/apt-get.cc:2135
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "Listan över källor kunde inte läsas."
@@ -829,7 +847,7 @@ msgstr "Efter uppackning kommer %sB ytterligare diskutrymme att användas.\n"
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Efter uppackning kommer %sB frigöras på disken.\n"
 
-#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1971
+#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1989
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Kunde inte läsa av ledigt utrymme i %s"
@@ -867,7 +885,7 @@ msgstr "Avbryter."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Vill du fortsätta [J/n]? "
 
-#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2014
+#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2032
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Misslyckades med att hämta %s  %s\n"
@@ -876,7 +894,7 @@ msgstr "Misslyckades med att hämta %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Misslyckades med att hämta vissa filer"
 
-#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2041
 msgid "Download complete and in download only mode"
 msgstr "Hämtningen färdig i \"endast-hämta\"-läge"
 
@@ -1051,107 +1069,107 @@ msgstr "Trasiga paket"
 msgid "The following extra packages will be installed:"
 msgstr "Följande ytterligare paket kommer att installeras:"
 
-#: cmdline/apt-get.cc:1674
+#: cmdline/apt-get.cc:1692
 msgid "Suggested packages:"
 msgstr "Föreslagna paket:"
 
-#: cmdline/apt-get.cc:1675
+#: cmdline/apt-get.cc:1693
 msgid "Recommended packages:"
 msgstr "Rekommenderade paket:"
 
-#: cmdline/apt-get.cc:1695
+#: cmdline/apt-get.cc:1713
 msgid "Calculating upgrade... "
 msgstr "Beräknar uppgradering... "
 
-#: cmdline/apt-get.cc:1698 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1716 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "Misslyckades"
 
-#: cmdline/apt-get.cc:1703
+#: cmdline/apt-get.cc:1721
 msgid "Done"
 msgstr "Färdig"
 
-#: cmdline/apt-get.cc:1768 cmdline/apt-get.cc:1776
+#: cmdline/apt-get.cc:1786 cmdline/apt-get.cc:1794
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Internt fel, problemlösaren bröt sönder saker"
 
-#: cmdline/apt-get.cc:1876
+#: cmdline/apt-get.cc:1894
 msgid "Must specify at least one package to fetch source for"
 msgstr "Du måste ange åtminstone ett paket att hämta källkod för"
 
-#: cmdline/apt-get.cc:1906 cmdline/apt-get.cc:2135
+#: cmdline/apt-get.cc:1924 cmdline/apt-get.cc:2153
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Kunde inte hitta något källkodspaket för %s"
 
-#: cmdline/apt-get.cc:1950
+#: cmdline/apt-get.cc:1968
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Hoppar över redan hämtad fil \"%s\"\n"
 
-#: cmdline/apt-get.cc:1974
+#: cmdline/apt-get.cc:1992
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Du har inte tillräckligt ledigt utrymme i %s"
 
-#: cmdline/apt-get.cc:1979
+#: cmdline/apt-get.cc:1997
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Behöver hämta %sB/%sB källkodsarkiv.\n"
 
-#: cmdline/apt-get.cc:1982
+#: cmdline/apt-get.cc:2000
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Behöver hämta %sB källkodsarkiv.\n"
 
-#: cmdline/apt-get.cc:1988
+#: cmdline/apt-get.cc:2006
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Hämtar källkod %s\n"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2037
 msgid "Failed to fetch some archives."
 msgstr "Misslyckades med att hämta vissa arkiv."
 
-#: cmdline/apt-get.cc:2047
+#: cmdline/apt-get.cc:2065
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Packar inte upp redan redan uppackad källkod i %s\n"
 
-#: cmdline/apt-get.cc:2059
+#: cmdline/apt-get.cc:2077
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Uppackningskommandot \"%s\" misslyckades.\n"
 
-#: cmdline/apt-get.cc:2060
+#: cmdline/apt-get.cc:2078
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Kontrollera att paketet \"dpkg-dev\" är installerat.\n"
 
-#: cmdline/apt-get.cc:2077
+#: cmdline/apt-get.cc:2095
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Byggkommandot \"%s\" misslyckades.\n"
 
-#: cmdline/apt-get.cc:2096
+#: cmdline/apt-get.cc:2114
 msgid "Child process failed"
 msgstr "Barnprocessen misslyckades"
 
-#: cmdline/apt-get.cc:2112
+#: cmdline/apt-get.cc:2130
 msgid "Must specify at least one package to check builddeps for"
 msgstr "Du måste ange åtminstone ett paket att inhämta byggberoenden för"
 
-#: cmdline/apt-get.cc:2140
+#: cmdline/apt-get.cc:2158
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Kunde inte hämta byggberoendeinformation för %s"
 
-#: cmdline/apt-get.cc:2160
+#: cmdline/apt-get.cc:2178
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s har inga byggberoenden.\n"
 
-#: cmdline/apt-get.cc:2212
+#: cmdline/apt-get.cc:2230
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1159,7 +1177,7 @@ msgid ""
 msgstr ""
 "%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte hittas"
 
-#: cmdline/apt-get.cc:2264
+#: cmdline/apt-get.cc:2282
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1168,32 +1186,32 @@ msgstr ""
 "%s-beroendet på %s kan inte tillfredsställas eftersom inga tillgängliga "
 "versioner av paketet %s uppfyller versionskraven"
 
-#: cmdline/apt-get.cc:2299
+#: cmdline/apt-get.cc:2317
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Misslyckades med att uppfylla %s-beroendet för %s: Det installerade paketet %"
 "s är för nytt"
 
-#: cmdline/apt-get.cc:2324
+#: cmdline/apt-get.cc:2342
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Misslyckades med att uppfylla %s-beroendet för %s: %s"
 
-#: cmdline/apt-get.cc:2338
+#: cmdline/apt-get.cc:2356
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Byggberoenden för %s kunde inte uppfyllas."
 
-#: cmdline/apt-get.cc:2342
+#: cmdline/apt-get.cc:2360
 msgid "Failed to process build dependencies"
 msgstr "Kunde inte hantera byggberoenden"
 
-#: cmdline/apt-get.cc:2374
+#: cmdline/apt-get.cc:2392
 msgid "Supported modules:"
 msgstr "Moduler som stöds:"
 
-#: cmdline/apt-get.cc:2415
+#: cmdline/apt-get.cc:2433
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1379,19 +1397,19 @@ msgstr "Lägger in tillgänglighetsinformation"
 msgid "Failed to create pipes"
 msgstr "Misslyckades med att skapa rör"
 
-#: apt-inst/contrib/extracttar.cc:143
+#: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
 msgstr "Misslyckades med att köra gzip"
 
-#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
+#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:207
 msgid "Corrupted archive"
 msgstr "Fördärvat arkiv"
 
-#: apt-inst/contrib/extracttar.cc:195
+#: apt-inst/contrib/extracttar.cc:196
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar-kontrollsumma misslyckades, arkiv trasigt"
 
-#: apt-inst/contrib/extracttar.cc:298
+#: apt-inst/contrib/extracttar.cc:299
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Okänd TAR-huvudtyp %u, del %s"
@@ -1674,12 +1692,12 @@ msgstr "Disk ej funnen."
 msgid "File not found"
 msgstr "Filen ej funnen"
 
-#: methods/copy.cc:42 methods/gpgv.cc:275 methods/gzip.cc:133
-#: methods/gzip.cc:142
+#: methods/copy.cc:42 methods/gpgv.cc:281 methods/gzip.cc:141
+#: methods/gzip.cc:150
 msgid "Failed to stat"
 msgstr "Kunde inte ta status"
 
-#: methods/copy.cc:79 methods/gpgv.cc:272 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:278 methods/gzip.cc:147
 msgid "Failed to set modification time"
 msgstr "Misslyckades sätta modifieringstid"
 
@@ -1895,40 +1913,40 @@ msgstr "Något otäckt hände när \"%s:%s\" slogs upp (%i)"
 msgid "Unable to connect to %s %s:"
 msgstr "Kunde inte ansluta till %s %s:"
 
-#: methods/gpgv.cc:64
+#: methods/gpgv.cc:65
 #, c-format
 msgid "Couldn't access keyring: '%s'"
 msgstr "Kunde inte komma åt nyckelring: \"%s\""
 
-#: methods/gpgv.cc:99
+#: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr "E: Argumentslistan från Acquire::gpgv::Options för lång. Avslutar."
 
-#: methods/gpgv.cc:198
+#: methods/gpgv.cc:204
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Internt fel: Korrekt signatur men kunde inte hitta nyckelns fingeravtryck?!"
 
-#: methods/gpgv.cc:203
+#: methods/gpgv.cc:209
 msgid "At least one invalid signature was encountered."
 msgstr "Åtminstone en giltig signatur träffades på."
 
-#: methods/gpgv.cc:207
+#: methods/gpgv.cc:213
 #, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgstr ""
 "Kunde inte starta \"%s\" för att verifiera signatur (är gnupg installerad?)"
 
-#: methods/gpgv.cc:212
+#: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
 msgstr "Okänt fel vid exekvering av gpgv"
 
-#: methods/gpgv.cc:243
+#: methods/gpgv.cc:249
 msgid "The following signatures were invalid:\n"
 msgstr "Följande signaturer är ogiltiga:\n"
 
-#: methods/gpgv.cc:250
+#: methods/gpgv.cc:256
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1936,13 +1954,13 @@ msgstr ""
 "Följande signaturer kunde inte verifieras för att den publika nyckeln inte "
 "är tillgänglig:\n"
 
-#: methods/gzip.cc:57
+#: methods/gzip.cc:64
 #, c-format
 msgid "Couldn't open pipe for %s"
 msgstr "Kunde inte öppna rör för %s"
 
 # %s = programnamn
-#: methods/gzip.cc:102
+#: methods/gzip.cc:109
 #, c-format
 msgid "Read error from %s process"
 msgstr "Läsfel på %s-processen"
@@ -2311,12 +2329,12 @@ msgstr "Kandiderande versioner"
 msgid "Dependency generation"
 msgstr "Beroendegenerering"
 
-#: apt-pkg/tagfile.cc:72
+#: apt-pkg/tagfile.cc:106
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Kunde inte tolka paketfilen %s (1)"
 
-#: apt-pkg/tagfile.cc:102
+#: apt-pkg/tagfile.cc:193
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Kunde inte tolka paketfilen %s (2)"
@@ -2763,19 +2781,6 @@ msgstr "Förbindelsen stängdes i förtid"
 # Felmeddelande för misslyckad chdir
 #~ msgid "File date has changed %s"
 #~ msgstr "Fildatumet har ändrats %s"
-
-#~ msgid ""
-#~ "DB format is invalid. If you upgraded from a older version of apt, please "
-#~ "remove and re-create the database."
-#~ msgstr ""
-#~ "DB-formatet är ogiltigt. Ta bort och återskapa databasen om du "
-#~ "uppgraderar från en äldre version av apt."
-
-#~ msgid "  %s has no source override entry\n"
-#~ msgstr "  %s har ingen källåsidosättningspost\n"
-
-#~ msgid "  %s has no binary override entry either\n"
-#~ msgstr "  %s har heller ingen binär åsidosättningspost\n"
 
 #~ msgid "Could not patch file"
 #~ msgstr "Kunde inte lägga på programfix på filen"
