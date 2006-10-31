@@ -636,6 +636,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 {
 	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
 	       std::clog << "ignoring line: not enough ':'" << std::endl;
+	    // reset the line buffer
+	    line[0]=0;
 	    continue;
 	 }
 
