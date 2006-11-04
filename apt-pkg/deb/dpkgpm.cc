@@ -624,15 +624,22 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    
 	 */
 	 char* list[5];
-	 if(!TokSplitString(':', line, list, sizeof(list)/sizeof(list[0])))
-	    // FIXME: dpkg sends multiline error messages sometimes (see
-	    //        #374195 for a example. we should support this by
-	    //        either patching dpkg to not send multiline over the
-	    //        statusfd or by rewriting the code here to deal with
-	    //        it. for now we just ignore it and not crash
-	    continue;
+	 //        dpkg sends multiline error messages sometimes (see
+	 //        #374195 for a example. we should support this by
+	 //        either patching dpkg to not send multiline over the
+	 //        statusfd or by rewriting the code here to deal with
+	 //        it. for now we just ignore it and not crash
+	 TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
 	 char *pkg = list[1];
 	 char *action = _strstrip(list[2]);
+	 if( pkg == NULL || action == NULL) 
+	 {
+	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	       std::clog << "ignoring line: not enough ':'" << std::endl;
+	    // reset the line buffer
+	    line[0]=0;
+	    continue;
+	 }
 
 	 if(strncmp(action,"error",strlen("error")) == 0)
 	 {
