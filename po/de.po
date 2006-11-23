@@ -3,13 +3,12 @@
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003, 2004, 2006.
 # Rüdiger Kuhlmann <Uebersetzung@ruediger-kuhlmann.de>, 2002.
 # 
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.6.46\n"
+"Project-Id-Version: apt 0.6.46.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-10-11 20:19+0200\n"
-"PO-Revision-Date: 2006-10-12 15:04+0200\n"
+"PO-Revision-Date: 2006-10-24 11:45+0200\n"
 "Last-Translator: Michael Piefel <piefel@debian.org>\n"
 "Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -242,7 +241,7 @@ msgstr ""
 
 #: cmdline/apt-cdrom.cc:117
 msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "Wiederholen Sie dieses Prozedere für Ihre restlichen CDs diese Reihe."
+msgstr "Wiederholen Sie dieses Prozedere für die restlichen CDs in Ihres Satzes."
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -398,7 +397,7 @@ msgstr ""
 "\n"
 "apt-ftparchive generiert Package-Dateien aus einem Baum von .debs. Die "
 "Package-\n"
-"Datei enthält die Inhalt aller Kontrollfelder aus jedem Paket sowie einen "
+"Datei enthält den Inhalt aller Kontrollfelder aus jedem Paket sowie einen "
 "MD5-\n"
 "Hashwert und die Dateigröße. Eine Override-Datei wird unterstützt, um Werte "
 "für\n"
@@ -469,7 +468,7 @@ msgstr "Kann auf %s nicht zugreifen."
 
 #: ftparchive/cachedb.cc:242
 msgid "Archive has no control record"
-msgstr "Archiv ist keinen Steuerungs-Datensatz"
+msgstr "Archiv hat keinen Steuerungs-Datensatz"
 
 #: ftparchive/cachedb.cc:448
 msgid "Unable to get a cursor"
@@ -524,7 +523,7 @@ msgstr "Kann kein readlink auf %s durchführen"
 #: ftparchive/writer.cc:269
 #, c-format
 msgid "Failed to unlink %s"
-msgstr "Konnte %s entfernen (unlink)"
+msgstr "Konnte %s nicht entfernen (unlink)"
 
 #: ftparchive/writer.cc:276
 #, c-format
@@ -587,7 +586,7 @@ msgstr "Missgestaltetes Override %s Zeile %lu #2"
 #: ftparchive/override.cc:92 ftparchive/override.cc:195
 #, c-format
 msgid "Malformed override %s line %lu #3"
-msgstr "Missgestaltetes Override %s Zeile %lu #2"
+msgstr "Missgestaltetes Override %s Zeile %lu #3"
 
 #: ftparchive/override.cc:131 ftparchive/override.cc:205
 #, c-format
@@ -944,7 +943,7 @@ msgstr "Paket %s ist nicht installiert, wird also auch nicht entfernt\n"
 #: cmdline/apt-get.cc:1069
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
-msgstr "Pakete %s ist ein virtuelles Pakete, das bereitgestellt wird von:\n"
+msgstr "Paket %s ist ein virtuelles Paket, das bereitgestellt wird von:\n"
 
 #: cmdline/apt-get.cc:1081
 msgid " [Installed]"
@@ -1052,7 +1051,7 @@ msgid ""
 msgstr ""
 "Einige Pakete konnten nicht installiert werden. Das kann bedeuten, dass\n"
 "Sie eine unmögliche Situation angefordert haben oder dass, wenn Sie die\n"
-"instabile Distribution verwenden, einige erforderliche Pakete noch nicht\n"
+"Unstable-Distribution verwenden, einige erforderliche Pakete noch nicht\n"
 "kreiert oder aus Incoming herausbewegt wurden."
 
 #: cmdline/apt-get.cc:1569
@@ -1061,7 +1060,7 @@ msgid ""
 "the package is simply not installable and a bug report against\n"
 "that package should be filed."
 msgstr ""
-"Da Sie nur eine einzige Operation angefordert haben ist es sehr "
+"Da Sie nur eine einzige Operation angefordert haben, ist es sehr "
 "wahrscheinlich,\n"
 "dass das Paket einfach nicht installierbar ist und eine Fehlermeldung über\n"
 "dieses Paket erfolgen sollte."
@@ -1106,7 +1105,7 @@ msgstr "Interner Fehler, der Problem-Löser hat was kaputt gemacht"
 #: cmdline/apt-get.cc:1894
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
-"Es muss mindesten ein Paket angegeben werden, dessen Quellen geholt werden "
+"Es muss mindestens ein Paket angegeben werden, dessen Quellen geholt werden "
 "sollen"
 
 #: cmdline/apt-get.cc:1924 cmdline/apt-get.cc:2153
@@ -1216,11 +1215,11 @@ msgstr "Konnte die %s-Abhängigkeit für %s nicht erfüllen: %s"
 #: cmdline/apt-get.cc:2356
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Build-Abhängigkeit für %s konnte nicht erfüllt werden."
+msgstr "Build-Abhängigkeiten für %s konnten nicht erfüllt werden."
 
 #: cmdline/apt-get.cc:2360
 msgid "Failed to process build dependencies"
-msgstr "Verarbeitung der Build-Dependencies fehlgeschlagen"
+msgstr "Verarbeitung der Build-Abhängigkeiten fehlgeschlagen"
 
 #: cmdline/apt-get.cc:2392
 msgid "Supported modules:"
@@ -1277,12 +1276,12 @@ msgstr ""
 "\n"
 "Befehle:\n"
 "   update       – neue Liste von Paketen einlesen\n"
-"   upgrade      – ein Upgrade durchführen\n"
+"   upgrade      – eine Paketaktualisierung durchführen\n"
 "   install      – neue Pakete installieren (pkg ist libc6 und nicht libc6."
 "deb)\n"
 "   remove       – Pakete entfernen\n"
 "   source       – Quellarchive herunterladen\n"
-"   build-dep    – die „Build-Dependencies“ für Quellpakete konfigurieren\n"
+"   build-dep    – die Build-Abhängigkeiten für Quellpakete konfigurieren\n"
 "   dist-upgrade – „Distribution upgrade“, siehe apt-get(8)\n"
 "   dselect-upgrade – der Auswahl aus „dselect“ folgen\n"
 "   clean        – heruntergeladene Archive löschen\n"
@@ -1292,19 +1291,19 @@ msgstr ""
 "\n"
 "Optionen:\n"
 "  -h   dieser Hilfetext\n"
-"  -q   protokollierbare (logbare) Ausgabe – kein Fortschrittsindikator\n"
+"  -q   protokollierbare (logbare) Ausgabe – keine Fortschrittsanzeige\n"
 "  -qq  keine Ausgabe außer bei Fehlern\n"
 "  -d   nur herunterladen – Archive NICHT installieren oder entpacken\n"
 "  -s   nichts tun; nur eine Simulation der Vorgänge durchführen\n"
 "  -y   für alle Antworten „Ja“ annehmen und nicht nachfragen\n"
-"  -f   versuchen fortzufahren, wenn dir Integritätsüberprüfung fehlschlägt\n"
+"  -f   versuchen fortzufahren, wenn die Integritätsüberprüfung fehlschlägt\n"
 "  -m   versuchen fortzufahren, wenn Archive nicht auffindbar sind\n"
 "  -u   auch eine Liste der aktualisierten Pakete mit anzeigen\n"
 "  -b   ein Quellpaket nach dem Herunterladen übersetzen\n"
 "  -V   ausführliche Versionsnummern anzeigen\n"
 "  -c=? Diese Konfigurationsdatei benutzen\n"
 "  -o=? Beliebige Konfigurationsoptionen setzen, z. B. -o dir::cache=/tmp\n"
-"Siehe auch die Man-Seiten apt-get(8), sources.list(5) und apt.conf(5) für\n"
+"Siehe auch die Handbuch-Seiten apt-get(8), sources.list(5) und apt.conf(5) für\n"
 "weitergehende Informationen und Optionen.\n"
 "                       Dieses APT hat Super-Kuh-Kräfte.\n"
 
@@ -1341,13 +1340,13 @@ msgid ""
 " '%s'\n"
 "in the drive '%s' and press enter\n"
 msgstr ""
-"Medienwechsel: Bitte legen Sie Medium mit den Name\n"
+"Medienwechsel: Bitte legen Sie das Medium mit dem Namen\n"
 " „%s“\n"
 "in Laufwerk „%s“ und drücken Sie die Eingabetaste.\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
-msgstr "Unbekannter Paketeintrag"
+msgstr "Unbekannter Paketeintrag!"
 
 #: cmdline/apt-sortpkgs.cc:150
 msgid ""
@@ -1441,7 +1440,7 @@ msgstr "Fehler beim Lesen der Archivdateienkopfzeilen"
 
 #: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
 msgid "Invalid archive member header"
-msgstr "Ungültige Archivdateienkopfzeile"
+msgstr "Ungültige Archivdateikopfzeile"
 
 #: apt-inst/contrib/arfile.cc:131
 msgid "Archive is too short"
@@ -1449,7 +1448,7 @@ msgstr "Archiv ist zu kurz"
 
 #: apt-inst/contrib/arfile.cc:135
 msgid "Failed to read the archive headers"
-msgstr "Konnte Archiveköpfe nicht lesen."
+msgstr "Konnte Archivköpfe nicht lesen."
 
 #: apt-inst/filelist.cc:384
 msgid "DropNode called on still linked node"
@@ -1588,7 +1587,6 @@ msgstr "Kann nicht ins Administrationsverzeichnis %sinfo wechseln"
 msgid "Internal error getting a package name"
 msgstr "Interner Fehler beim Holen des Paket-Namens"
 
-# 
 #: apt-inst/deb/dpkgdb.cc:205 apt-inst/deb/dpkgdb.cc:386
 msgid "Reading file listing"
 msgstr "Paketlisten werden gelesen"
@@ -2171,10 +2169,11 @@ msgstr "Option %s erfordert ein Ganzzahl-Argument, nicht „%s“"
 msgid "Option '%s' is too long"
 msgstr "Option „%s“ ist zu lang"
 
+# Check for boolean; -1 is unspecified, 0 is yes 1 is no
 #: apt-pkg/contrib/cmndline.cc:301
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "Sense %s wird nicht verstanden, versuchen Sie „true“ oder „false“."
+msgstr "Der Sinn von „%s“ ist nicht klar, versuchen Sie „true“ oder „false“."
 
 #: apt-pkg/contrib/cmndline.cc:351
 #, c-format
@@ -2256,7 +2255,7 @@ msgstr "Beim Schließen der Datei trat ein Problem auf"
 
 #: apt-pkg/contrib/fileutl.cc:603
 msgid "Problem unlinking the file"
-msgstr "Beim Unlinking Datei trat ein Problem auf"
+msgstr "Beim Unlinking der Datei trat ein Problem auf"
 
 #: apt-pkg/contrib/fileutl.cc:614
 msgid "Problem syncing the file"
@@ -2272,7 +2271,7 @@ msgstr "Die Paketcachedatei ist korrumpiert"
 
 #: apt-pkg/pkgcache.cc:137
 msgid "The package cache file is an incompatible version"
-msgstr "Die Paketcachedatei ist in einer inkompatiblen Version"
+msgstr "Die Paketcachedatei liegt in einer inkompatiblen Version vor"
 
 #: apt-pkg/pkgcache.cc:142
 #, c-format
@@ -2457,7 +2456,6 @@ msgstr "Archivverzeichnis %spartial fehlt."
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "Hole Datei %li von %li (noch %s)"
 
-# 
 #: apt-pkg/acquire.cc:825
 #, c-format
 msgid "Retrieving file %li of %li"
@@ -2477,7 +2475,7 @@ msgstr "Methode %s hat nicht korrekt gestartet"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
-"Bitte legen Sie die Disc mit den Namen „%s“ in Laufwerk „%s“ und drücken Sie die Eingabetaste."
+"Bitte legen Sie das Medium mit dem Namen „%s“ in Laufwerk „%s“ und drücken Sie die Eingabetaste."
 
 #: apt-pkg/init.cc:120
 #, c-format
@@ -2617,7 +2615,7 @@ msgid "MD5Sum mismatch"
 msgstr "MD5-Summe stimmt nicht"
 
 #: apt-pkg/acquire-item.cc:640
-msgid "There are no public key available for the following key IDs:\n"
+msgid "There is no public key available for the following key IDs:\n"
 msgstr "Es gibt keine öffentlichen Schlüssel für die folgenden Schlüssel-IDs:\n"
 
 #: apt-pkg/acquire-item.cc:753
@@ -2661,7 +2659,7 @@ msgid ""
 "Mounting CD-ROM\n"
 msgstr ""
 "Benutze CD-ROM-Einhängpunkt %s\n"
-"Hänge CD ein\n"
+"Hänge CD-ROM ein\n"
 
 #: apt-pkg/cdrom.cc:516 apt-pkg/cdrom.cc:598
 msgid "Identifying.. "
@@ -2709,7 +2707,7 @@ msgid ""
 "This disc is called: \n"
 "'%s'\n"
 msgstr ""
-"Diese CD heißt jetzt: \n"
+"Diese CD heißt: \n"
 "„%s“\n"
 
 #: apt-pkg/cdrom.cc:730
