@@ -711,14 +711,23 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
       {
-	 RunScripts("DPkg::Post-Invoke");
-	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
-	    return _error->Error("Sub-process %s received a segmentation fault.",Args[0]);
-
-	 if (WIFEXITED(Status) != 0)
-	    return _error->Error("Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	 // if it was set to "keep-dpkg-runing" then we won't return
+	 // here but keep the loop going and just report it as a error
+	 // for later
+	 bool stopOnError = _config->FindB("Dpkg::StopOnError",true);
 	 
-	 return _error->Error("Sub-process %s exited unexpectedly",Args[0]);
+	 if(stopOnError)
+	    RunScripts("DPkg::Post-Invoke");
+
+	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
+	    _error->Error("Sub-process %s received a segmentation fault.",Args[0]);
+	 else if (WIFEXITED(Status) != 0)
+	    _error->Error("Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	 else 
+	    _error->Error("Sub-process %s exited unexpectedly",Args[0]);
+
+	 if(stopOnError)
+	    return false;
       }      
    }
 
