@@ -23,6 +23,7 @@ using std::endl;
 class MirrorMethod : public HttpMethod
 {
    FetchResult Res;
+   // we simply transform between BaseUri and Mirror
    string BaseUri;    // the original mirror://... url
    string Mirror;     // the selected mirror uri (http://...)
    string MirrorFile; // 
@@ -33,6 +34,8 @@ class MirrorMethod : public HttpMethod
  protected:
    bool GetMirrorFile(string uri);
    bool SelectMirror();
+   
+   // we need to overwrite those to transform the url back
    virtual void Fail(string Why, bool Transient = false);
    virtual void URIStart(FetchResult &Res);
    virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);

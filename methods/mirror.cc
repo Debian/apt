@@ -26,6 +26,14 @@ using namespace std;
 
 									/*}}}*/
 
+/* 
+ * TODO: 
+ * - support keeping the mirror file around (evil listclearer strikes again)
+ * - better method to download than having a pkgAcquire interface here
+ * - testing :)
+ * 
+ */
+
 MirrorMethod::MirrorMethod()
    : HttpMethod(), HasMirrorFile(false)
 {
