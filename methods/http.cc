@@ -38,7 +38,6 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-#include <iostream>
 #include <apti18n.h>
 
 // Internet stuff
@@ -57,7 +56,7 @@ time_t HttpMethod::FailTime = 0;
 unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
 bool Debug = false;
-
+URI Proxy;
 
 unsigned long CircleBuf::BwReadLimit=0;
 unsigned long CircleBuf::BwTickReadData=0;
@@ -990,7 +989,7 @@ void HttpMethod::SigTerm(int)
    depth. */
 bool HttpMethod::Fetch(FetchItem *)
 {
-   if (Server == 0)
+   if (Server == 0) 
       return true;
 
    // Queue the requests
@@ -1223,13 +1222,5 @@ int HttpMethod::Loop()
 }
 									/*}}}*/
 
-int main()
-{
-   setlocale(LC_ALL, "");
-
-   HttpMethod Mth;
-   
-   return Mth.Loop();
-}
 
 
