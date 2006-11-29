@@ -28,10 +28,11 @@ using namespace std;
 
 /* 
  * TODO: 
- * - support keeping the mirror file around (evil listclearer strikes again)
  * - better method to download than having a pkgAcquire interface here
+ * - support keeping the mirror file around (evil listclearer strikes again)
+ *   -> /var/lib/apt/mirrors dir? how to cleanup? by time?
+ * - provide some TTL time until the mirror file is get again (1h? 6h?)
  * - testing :)
- * 
  */
 
 MirrorMethod::MirrorMethod()
