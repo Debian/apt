@@ -63,9 +63,10 @@ class pkgAcqMethod
    // Outgoing messages
    void Fail(bool Transient = false);
    inline void Fail(const char *Why, bool Transient = false) {Fail(string(Why),Transient);};
-   void Fail(string Why, bool Transient = false);
-   void URIStart(FetchResult &Res);
-   void URIDone(FetchResult &Res,FetchResult *Alt = 0);
+   virtual void Fail(string Why, bool Transient = false);
+   virtual void URIStart(FetchResult &Res);
+   virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
+
    bool MediaFail(string Required,string Drive);
    virtual void Exit() {};
 

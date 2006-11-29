@@ -20,17 +20,24 @@ using std::endl;
 
 #include "http.h"
 
-class MirrorMethod : public pkgAcqMethod
+class MirrorMethod : public HttpMethod
 {
    FetchResult Res;
-   string Mirror;
-   string BaseUri;
-   string MirrorFile;
+   string BaseUri;    // the original mirror://... url
+   string Mirror;     // the selected mirror uri (http://...)
+   string MirrorFile; // 
    bool HasMirrorFile;
+
+   bool Debug;
 
  protected:
    bool GetMirrorFile(string uri);
    bool SelectMirror();
+   virtual void Fail(string Why, bool Transient = false);
+   virtual void URIStart(FetchResult &Res);
+   virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
+   virtual bool Configuration(string Message);
+
  public:
    MirrorMethod();
    virtual bool Fetch(FetchItem *Itm);
