@@ -32,6 +32,7 @@ using namespace std;
  * - support keeping the mirror file around (evil listclearer strikes again)
  *   -> /var/lib/apt/mirrors dir? how to cleanup? by time?
  * - provide some TTL time until the mirror file is get again (1h? 6h?)
+ * - deal with runing as non-root (we can't write to the lists dir then)
  * - testing :)
  */
 
@@ -109,8 +110,11 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
       SelectMirror();
    }
 
-   if(Queue->Uri.find("mirror://") != string::npos)
-      Queue->Uri.replace(0,BaseUri.size(),Mirror);
+   for (FetchItem *I = Queue; I != 0; I = I->Next)
+   {
+      if(I->Uri.find("mirror://") != string::npos)
+	 I->Uri.replace(0,BaseUri.size(),Mirror);
+   }
 
    // now run the real fetcher
    return HttpMethod::Fetch(Itm);
