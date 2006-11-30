@@ -24,9 +24,10 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    FileFd Fd;
    pkgTagFile Tags;
    pkgTagSection Sect;
-   char Buffer[10000];
    char *StaticBinList[400];
    unsigned long iOffset;
+   char *Buffer;
+   unsigned long BufSize;
    
    public:
 
@@ -49,10 +50,9 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    };
    virtual bool Files(vector<pkgSrcRecords::File> &F);
 
-   debSrcRecordParser(string File,pkgIndexFile const *Index) :
-                   Parser(Index),      
-                   Fd(File,FileFd::ReadOnly),
-                   Tags(&Fd,102400) {};
+   debSrcRecordParser(string File,pkgIndexFile const *Index) 
+      : Parser(Index), Fd(File,FileFd::ReadOnly), Tags(&Fd,102400), 
+        Buffer(0), BufSize(0) {}
 };
 
 #endif
