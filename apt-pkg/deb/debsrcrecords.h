@@ -27,7 +27,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    char *StaticBinList[400];
    unsigned long iOffset;
    char *Buffer;
-   unsigned long BufSize;
+   unsigned int BufSize;
    
    public:
 
