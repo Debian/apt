@@ -36,7 +36,7 @@ const char **debSrcRecordParser::Binaries()
    if (Bins.empty() == true || Bins.length() >= 102400)
       return 0;
    
-   if (Bins.length() > BufSize)
+   if (Bins.length() >= BufSize)
    {
       delete [] Buffer;
       // allocate new size based on buffer (but never smaller than 4000)
