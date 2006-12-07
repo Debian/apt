@@ -986,6 +986,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		     }
 		     if (Debug)
 			clog << "  Will not break " << Pkg.Name() << " as stated in Breaks field in " << I.Name() <<endl;
+		     Cache.MarkKeep(I, false, false);
 		     continue;
 		  }
 
