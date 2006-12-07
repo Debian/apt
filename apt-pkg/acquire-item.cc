@@ -270,15 +270,8 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
 	 }
       }
 
-      // no information how to get the patches, bail out
-      if(!found) 
-      {
-	 if(Debug)
-	    std::clog << "Can't find a patch in the index file" << std::endl;
-	 // Failed will queue a big package file
-	 Failed("", NULL);
-      } 
-      else 
+      // we have something, queue the next diff
+      if(found) 
       {
 	 // queue the diffs
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
@@ -290,6 +283,11 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       }
    }
 
+   // Nothing found, report and return false
+   // Failing here is ok, if we return false later, the full
+   // IndexFile is queued
+   if(Debug)
+      std::clog << "Can't find a patch in the index file" << std::endl;
    return false;
 }
 
