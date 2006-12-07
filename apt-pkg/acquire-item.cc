@@ -274,6 +274,9 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       if(found) 
       {
 	 // queue the diffs
+	int last_space = Description.rfind(" ");
+	if(last_space != string::npos)
+	  Description.erase(last_space, Description.size()-last_space);
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
 			      ExpectedMD5, available_patches);
 	 Complete = false;
@@ -354,7 +357,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   Desc.Description = URIDesc;
+   Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
 
@@ -463,7 +466,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
 
    // queue the right diff
    Desc.URI = string(RealURI) + ".diff/" + available_patches[0].file + ".gz";
-   Desc.Description = available_patches[0].file + string(".pdiff");
+   Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI + ".diff/" + available_patches[0].file);
