@@ -18,6 +18,12 @@
  * any later version.
  *
  */
+
+#ifdef __GNUG__
+#pragma implementation "apt-pkg/sha256.h"
+#endif
+
+
 #define SHA256_DIGEST_SIZE      32
 #define SHA256_HMAC_BLOCK_SIZE  64
 
