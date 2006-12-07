@@ -113,7 +113,7 @@ bool pkgVendorList::CreateList(Configuration& Cnf)
 
 const Vendor* pkgVendorList::LookupFingerprint(string Fingerprint)
 {
-   for (const_iterator I = begin(); I != end(); ++I)
+   for (const_iterator I = VendorList.begin(); I != VendorList.end(); ++I)
    {
       if ((*I)->LookupFingerprint(Fingerprint) != "")
          return *I;

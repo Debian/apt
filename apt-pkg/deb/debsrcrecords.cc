@@ -18,6 +18,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+
+using std::max;
 									/*}}}*/
 
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
@@ -34,31 +36,19 @@ const char **debSrcRecordParser::Binaries()
    if (Bins.empty() == true || Bins.length() >= 102400)
       return 0;
    
-   // Workaround for #236688.  Only allocate a new buffer if the field
-   // is large, to avoid a performance penalty
-   char *BigBuf = NULL;
-   char *Buf;
-   if (Bins.length() > sizeof(Buffer))
+   if (Bins.length() >= BufSize)
    {
-      BigBuf = new char[Bins.length()];
-      Buf = BigBuf;
-   }
-   else
-   {
-      Buf = Buffer;
+      delete [] Buffer;
+      // allocate new size based on buffer (but never smaller than 4000)
+      BufSize = max((unsigned long)4000, max((unsigned long)Bins.length()+1,2*BufSize));
+      Buffer = new char[BufSize];
    }
 
-   strcpy(Buf,Bins.c_str());
-   if (TokSplitString(',',Buf,StaticBinList,
+   strcpy(Buffer,Bins.c_str());
+   if (TokSplitString(',',Buffer,StaticBinList,
 		      sizeof(StaticBinList)/sizeof(StaticBinList[0])) == false)
-   {
-      if (BigBuf != NULL)
-         delete BigBuf;
       return 0;
-   }
 
-   if (BigBuf != NULL)
-      delete BigBuf;
    return (const char **)StaticBinList;
 }
 									/*}}}*/

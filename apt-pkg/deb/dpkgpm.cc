@@ -626,15 +626,22 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    
 	 */
 	 char* list[5];
-	 if(!TokSplitString(':', line, list, sizeof(list)/sizeof(list[0])))
-	    // FIXME: dpkg sends multiline error messages sometimes (see
-	    //        #374195 for a example. we should support this by
-	    //        either patching dpkg to not send multiline over the
-	    //        statusfd or by rewriting the code here to deal with
-	    //        it. for now we just ignore it and not crash
-	    continue;
+	 //        dpkg sends multiline error messages sometimes (see
+	 //        #374195 for a example. we should support this by
+	 //        either patching dpkg to not send multiline over the
+	 //        statusfd or by rewriting the code here to deal with
+	 //        it. for now we just ignore it and not crash
+	 TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
 	 char *pkg = list[1];
 	 char *action = _strstrip(list[2]);
+	 if( pkg == NULL || action == NULL) 
+	 {
+	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	       std::clog << "ignoring line: not enough ':'" << std::endl;
+	    // reset the line buffer
+	    line[0]=0;
+	    continue;
+	 }
 
 	 if(strncmp(action,"error",strlen("error")) == 0)
 	 {
@@ -706,14 +713,23 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
       {
-	 RunScripts("DPkg::Post-Invoke");
-	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
-	    return _error->Error("Sub-process %s received a segmentation fault.",Args[0]);
-
-	 if (WIFEXITED(Status) != 0)
-	    return _error->Error("Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	 // if it was set to "keep-dpkg-runing" then we won't return
+	 // here but keep the loop going and just report it as a error
+	 // for later
+	 bool stopOnError = _config->FindB("Dpkg::StopOnError",true);
 	 
-	 return _error->Error("Sub-process %s exited unexpectedly",Args[0]);
+	 if(stopOnError)
+	    RunScripts("DPkg::Post-Invoke");
+
+	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
+	    _error->Error("Sub-process %s received a segmentation fault.",Args[0]);
+	 else if (WIFEXITED(Status) != 0)
+	    _error->Error("Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	 else 
+	    _error->Error("Sub-process %s exited unexpectedly",Args[0]);
+
+	 if(stopOnError)
+	    return false;
       }      
    }
 

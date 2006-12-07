@@ -1,17 +1,120 @@
-apt (0.6.45ubuntu15) edgy; urgency=low
+apt (0.6.46.4ubuntu1) feisty; urgency=low
+
+  * 
+
+ --
+
+apt (0.6.46.4) unstable; urgency=high
+
+  * ack NMU (closes: #401017)
+  * added apt-secure.8 to "See also" section
+  * apt-pkg/deb/dpkgpm.cc:
+    - added "Dpkg::StopOnError" variable that controls if apt
+      will abort on errors from dpkg
+  * apt-pkg/deb/debsrcrecords.{cc,h}:
+    - make the Buffer grow dynmaically (closes: #400874)
+  * Merged from Christian Perrier bzr branch:
+    - uk.po: New Ukrainian translation: 483t28f3u
+    - el.po: Update to 503t9f2u
+    - de.po: Updates and corrections.
+  * apt-pkg/contrib/progress.cc:
+    - OpProgress::CheckChange optimized, thanks to Paul Brook
+      (closes: #398381)
+  * apt-pkg/contrib/sha256.cc:
+    - fix building with noopt
+
+ -- Michael Vogt <mvo@debian.org>  Thu,  7 Dec 2006 10:49:50 +0100
+
+apt  (0.6.46.3-0.2) unstable; urgency=high
+
+  * Non-maintainer upload with permission of Michael Vogt.
+  * Fix FTBFS on most arches (regression from the fix of #400874)
+
+ -- Andreas Barth <aba@not.so.argh.org>  Tue,  5 Dec 2006 15:51:22 +0000 
+  
+apt (0.6.46.3-0.1) unstable; urgency=high
+
+  * Non-maintainer upload with permission of Michael Vogt.
+  * Fix segfault at apt-get source. Closes: #400874
+  * Add apt-key update in postinst, so that debian-archive-keyring doesn't
+    need to depend on apt >= 0.6. Closes: #401114
+  * Don't double-queue pdiff files. Closes: #401017
+  
+ -- Andreas Barth <aba@not.so.argh.org>  Tue,  5 Dec 2006 10:34:56 +0000
+
+apt (0.6.46.3ubuntu1) feisty; urgency=low
 
   * doc/apt-get.8.xml:
-    - documented autoremove, thanks to Vladimír Lapáček 
+    - documented autoremove, thanks to Vladimír Lapá%GÄ%@ek 
       (lp: #62919)
   * fix broken i18n in the dpkg progress reporting, thanks to 
     Frans Pop and Steinar Gunderson. (closes: #389261)
   * po/en_GB.po:
     - typo (lp: #61270)
+  * add apt-secure.8 to "See also" section
 
- -- 
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 23 Nov 2006 07:24:12 +0100
 
-apt (0.6.45ubuntu14) edgy; urgency=low
+apt (0.6.46.3) unstable; urgency=low
 
+  * apt-pkg/deb/dpkgpm.cc:
+    - make progress reporting robust against multiline error
+      messages 
+
+  * Merged from Christian Perrier bzr branch:
+     - ca.po: Updated to 514t
+     - be.po: Updated to 514t
+     - it.po: Updated to 514t
+     - hu.po: Updated to 514t
+     - zh_TW.po: Updated to 514t
+     - ar.po: Updated to 293t221u.
+     - ru.po: Updated to 514t. Closes: #392466
+     - nb.po: Updated to 514t. Closes: #392466
+     - pt.po: Updated to 514t. Closes: #393199
+     - fr.po: One spelling error corrected: s/accÃ¨der/accÃ©der
+     - km.po: Updated to 514t.
+     - ko.po: Updated to 514t.
+     - bg.po: Updated to 514t.
+     - de.po: Updated to 514t.
+     - en_GB.po: Updated to 514t.
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 2 Nov 2006 11:37:58 +0100 
+
+apt (0.6.46.2) unstable; urgency=low
+
+  * Merged from Christian Perrier bzr branch:
+    - es.po: Updated to 514t. Closes: #391661
+    - da.po: Updated to 514t. Closes: #391424
+    - cs.po: Updated. Closes: #391064
+    - es.po: Updated to 514t. Closes: #391661
+    - da.po: Updated to 514t. Closes: #391424
+  
+ -- Michael Vogt <mvo@debian.org>  Wed, 11 Oct 2006 09:03:15 +0200
+
+apt (0.6.46.1) unstable; urgency=low
+
+  * methods/gzip.cc:
+    - deal with empty files 
+  * Applied patch from Daniel Schepler to make apt bin-NMU able.  
+    (closes: bug#359634)
+  * rebuild against current g++ because of:
+    http://gcc.gnu.org/bugzilla/show_bug.cgi?id=29289
+    (closes: #390189)
+  * fix broken i18n in the dpkg progress reporting, thanks to 
+    Frans Pop and Steinar Gunderson. (closes: #389261)
+  * Merged from Christian Perrier bzr branch:
+    * fi.po: Updated to 514t. Closes: #390149
+    * eu.po: Updated to 514t. Closes: #389725
+    * vi.po: Updated to 514t. Closes: #388555
+  * make the internal buffer in pkgTagFile grow dynamically
+    (closes: #388708)
+  
+ -- Michael Vogt <mvo@debian.org>  Mon,  2 Oct 2006 20:42:20 +0200
+
+apt (0.6.46) unstable; urgency=low
+
+  * debian/control:
+    - switched to libdb4.4 for building (closes: #381019)
   * cmdline/apt-get.cc:
     - fix in the TryInstallTask() code to make sure that all package
       there are marked manual install (lp: #61684)
@@ -53,6 +156,10 @@ apt (0.6.45ubuntu10) edgy; urgency=low
   * doc/examples/sources.list:
     - removed non-us.debian.org from the example (closes: #380030,#316196)
   * Merged from Christian Perrier bzr branch:
+    * ro.po: Updated to 514t. Closes: #388402
+    * dz.po: Updated to 514t. Closes: #388184
+    * it.po: Fixed typos. Closes: #387812
+    * ku.po: New kurdish translation. Closes: #387766
     * sk.po: Updated to 514t. Closes: #386851
     * ja.po: Updated to 514t. Closes: #386537
     * gl.po: Updated to 514t. Closes: #386397

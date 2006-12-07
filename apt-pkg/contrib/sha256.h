@@ -20,7 +20,6 @@
 
 #include <string>
 #include <algorithm>
-#include <stdint.h>
 
 using std::string;
 using std::min;
