@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt.conf</refentrytitle>
+   <manvolnum>5</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt.conf</refname>
+<!--
+    <refpurpose>Configuration file for APT</refpurpose>
+-->
+    <refpurpose>APT 設定ファイル</refpurpose>
+ </refnamediv>
+ 
+<!--
+ <refsect1><title>Description</title>
+-->
+ <refsect1><title>説明</title>
+<!--
+   <para><filename>apt.conf</filename> is the main configuration file for the APT suite of
+   tools, all tools make use of the configuration file and a common command line
+   parser to provide a uniform environment. When an APT tool starts up it will
+   read the configuration specified by the <envar>APT_CONFIG</envar> environment 
+   variable (if any) and then read the files in <literal>Dir::Etc::Parts</literal> 
+   then read the main configuration file specified by 
+   <literal>Dir::Etc::main</literal> then finally apply the
+   command line options to override the configuration directives, possibly 
+   loading even more config files.</para>
+-->
+   <para><filename>apt.conf</filename> は、
+   APT ツール集のメイン設定ファイルです。
+   この設定ファイルと共通のコマンドラインパーサを使って、
+   すべてのツールを統一環境で使用できます。
+   APT ツールの起動時には、<envar>APT_CONFIG</envar> 環境変数に指定した設定を
+   (存在すれば) 読み込みます。
+   次に <literal>Dir::Etc::Parts</literal> のファイルを読み込みます。
+   次に <literal>Dir::Etc::main</literal> で指定した主設定ファイルを読み込み、
+   最後にコマンドラインオプションで、
+   設定ファイルより取得した値を上書きします。</para>
+
+<!--
+   <para>The configuration file is organized in a tree with options organized into
+   functional groups. option specification is given with a double colon
+   notation, for instance <literal>APT::Get::Assume-Yes</literal> is an option within 
+   the APT tool group, for the Get tool. options do not inherit from their 
+   parent groups.</para> 
+-->
+   <para>設定ファイルは、
+   機能グループごとに系統立てられたオプションを木構造で表します。
+   オプションの内容は、2 つのコロンで区切ります。
+   例えば <literal>APT::Get::Assume-Yes</literal> は、
+   APT ツールグループの、Get ツール用オプションです。
+   オプションは、親グループから継承しません。</para> 
+
+<!--
+   <para>Syntacticly the configuration language is modeled after what the ISC tools
+   such as bind and dhcp use.  Lines starting with
+   <literal>//</literal> are treated as comments (ignored).
+   Each line is of the form
+   <literal>APT::Get::Assume-Yes "true";</literal> The trailing 
+   semicolon is required and the quotes are optional. A new scope can be
+   opened with curly braces, like:</para>
+    -->
+   <para>設定言語の文法は、
+   bind や dhcp のような ISC ツールをモデルにしています。
+   <literal>//</literal> で始まる行はコメントとして扱われます (無視)。
+   いずれの行も、<literallayout>APT::Get::Assume-Yes "true";</literallayout> の
+   ような形式です。
+   行末のセミコロンは必要ですが、ダブルクォートは使わなくてもかまいません。
+   以下のように中カッコを使うと、新しいスコープを開くことができます。</para>
+
+<informalexample><programlisting>   
+APT {
+  Get {
+    Assume-Yes "true";
+    Fix-Broken "true";
+  };
+};
+</programlisting></informalexample>
+
+<!--
+   <para>with newlines placed to make it more readable. Lists can be created by 
+   opening a scope and including a single word enclosed in quotes followed by a 
+   semicolon. Multiple entries can be included, each separated by a semicolon.</para>
+-->
+   <para>また適宜改行することで、より読みやすくなります。
+   リストは、開いたスコープ、クォートで囲まれた単語、
+   そしてセミコロンと続けることで作成できます。
+   セミコロンで区切ることで、複数のエントリを表すことができます。</para>
+
+<informalexample><programlisting>   
+DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
+</programlisting></informalexample>
+
+<!--
+   <para>In general the sample configuration file in 
+   <filename>&docdir;examples/apt.conf</filename> &configureindex;
+   is a good guide for how it should look.</para>
+-->
+   <para><filename>&docdir;examples/apt.conf</filename> &configureindex; 
+   は一般的な設定ファイルのサンプルです。
+   どのように設定するか参考になるでしょう。</para>
+
+<!--
+   <para>Two specials are allowed, <literal>#include</literal> and <literal>#clear</literal> 
+   <literal>#include</literal> will include the given file, unless the filename
+   ends in a slash, then the whole directory is included.  
+   <literal>#clear</literal> is used to erase a list of names.</para>
+-->
+   <para><literal>#include</literal> と <literal>#clear</literal> の 
+   2 つの特別な記法があります。
+   <literal>#include</literal> は指定したファイルを取り込みます。
+   ファイル名がスラッシュで終わった場合には、
+   そのディレクトリをすべて取り込みます。
+   <literal>#clear</literal> は名前のリストを削除するのに便利です。</para>
+
+<!--
+   <para>All of the APT tools take a -o option which allows an arbitrary configuration 
+   directive to be specified on the command line. The syntax is a full option
+   name (<literal>APT::Get::Assume-Yes</literal> for instance) followed by an equals
+   sign then the new value of the option. Lists can be appended too by adding 
+   a trailing :: to the list name.</para>
+-->
+   <para>すべての APT ツールで、
+   コマンドラインで任意の設定を行う -o オプションが使用できます。
+   文法は、完全なオプション名 (例: <literal>APT::Get::Assume-Yes</literal>)、
+   等号、続いてオプションの新しい値となります。
+   リスト名に続き::を加えることで、リストを追加することができます。</para>
+ </refsect1>
+
+<!--
+ <refsect1><title>The APT Group</title>
+-->
+ <refsect1><title>APT グループ</title>
+<!--
+   <para>This group of options controls general APT behavior as well as holding the
+   options for all of the tools.</para>
+-->
+   <para>このオプショングループは、ツール全体に影響のある、
+   一般的な APT の振る舞いを制御します。</para>
+
+   <variablelist>
+     <varlistentry><term>Architecture</term>
+<!--
+     <listitem><para>System Architecture; sets the architecture to use when fetching files and
+     parsing package lists. The internal default is the architecture apt was 
+     compiled for.</para></listitem>
+-->
+     <listitem><para>システムアーキテクチャ - ファイルを取得したり、
+     パッケージリストを解析するときに使用するアーキテクチャをセットします。
+     内部でのデフォルトは、
+     apt をコンパイルしたアーキテクチャです。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>Ignore-Hold</term>
+<!--
+     <listitem><para>Ignore Held packages; This global option causes the problem resolver to
+     ignore held packages in its decision making.</para></listitem>
+-->
+     <listitem><para>保留パッケージの無視 - このグローバルオプションは、
+     問題解決器に保留と指定したパッケージを無視します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Clean-Installed</term>
+<!--
+     <listitem><para>Defaults to on. When turned on the autoclean feature will remove any packages
+     which can no longer be downloaded from the cache. If turned off then
+     packages that are locally installed are also excluded from cleaning - but
+     note that APT provides no direct means to reinstall them.</para></listitem>
+-->
+     <listitem><para>デフォルトで有効です。autoclean 機能が on の時、
+     ダウンロードできなくなったパッケージをキャッシュから削除します。
+     off の場合、ローカルにインストールされているパッケージは、
+     削除対象から外します。
+     しかし、 APT はキャッシュから削除したパッケージの再インストール方法を、
+     直接提供するわけではないことに注意してください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Immediate-Configure</term>
+<!--
+     <listitem><para>Disable Immediate Configuration; This dangerous option disables some
+     of APT's ordering code to cause it to make fewer dpkg calls. Doing
+     so may be necessary on some extremely slow single user systems but 
+     is very dangerous and may cause package install scripts to fail or worse.
+     Use at your own risk.</para></listitem>
+-->
+     <listitem><para>即時設定無効 - この危険なオプションは、
+     APT の要求コードを無効にして dpkg の呼び出しをほとんどしないようにします。
+     これは、非常に遅いシングルユーザシステムでは必要かもしれませんが、
+     非常に危険で、パッケージのインストールスクリプトが失敗したり、
+     もしくはもっと悪いことがおきるかもしれません。
+     自己責任で使用してください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Force-LoopBreak</term>
+<!--
+     <listitem><para>Never Enable this option unless you -really- know what you are doing. It
+     permits APT to temporarily remove an essential package to break a
+     Conflicts/Conflicts or Conflicts/Pre-Depend loop between two essential
+     packages. SUCH A LOOP SHOULD NEVER EXIST AND IS A GRAVE BUG. This option 
+     will work if the essential packages are not tar, gzip, libc, dpkg, bash or
+     anything that those packages depend on.</para></listitem>
+-->
+     <listitem><para>何をしようとしているのか「本当に」判っているのでなければ、
+     絶対にこのオプションを有効にしないでください。
+     不可欠 (essential) パッケージ同士で、
+     競合 (Conflicts) /競合や競合/事前依存 (Pre-Depend) 
+     のループに落ち込んだときに、
+     不可欠パッケージを一時的に削除してループを抜けられるようにします。
+     <emphasis>そんなループはあり得ないはずで、
+     あるとすれば重大なバグです。</emphasis>
+     このオプションは、tar, gzip, libc, dpkg, bash とそれらが依存している
+     パッケージ以外の不可欠パッケージで動作します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Cache-Limit</term>
+<!--
+     <listitem><para>APT uses a fixed size memory mapped cache file to store the 'available'
+     information. This sets the size of that cache (in bytes).</para></listitem>
+-->
+     <listitem><para>APT は「利用可能」情報を格納するために、
+     固定サイズのメモリマップキャッシュファイルを使用します。
+     このオプションは、そのキャッシュサイズを指定します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Build-Essential</term>
+<!--
+     <listitem><para>Defines which package(s) are considered essential build dependencies.</para></listitem>
+-->
+     <listitem><para>構築依存関係で不可欠なパッケージを定義します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Get</term>
+<!--
+     <listitem><para>The Get subsection controls the &apt-get; tool, please see its
+     documentation for more information about the options here.</para></listitem>
+-->
+     <listitem><para>サブセクション Get は &apt-get; ツールを制御します。
+     このオプションの詳細は &apt-get; の文書を参照してください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Cache</term>
+<!--
+     <listitem><para>The Cache subsection controls the &apt-cache; tool, please see its
+     documentation for more information about the options here.</para></listitem>
+-->
+     <listitem><para>サブセクション Cache は &apt-cache; ツールを制御します。
+     このオプションの詳細は &apt-cache; の文書を参照してください。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>CDROM</term>
+<!--
+     <listitem><para>The CDROM subsection controls the &apt-cdrom; tool, please see its
+     documentation for more information about the options here.</para></listitem>
+-->
+     <listitem><para>サブセクション CDROM は &apt-cdrom; ツールを制御します。
+     このオプションの詳細は &apt-cdrom; の文書を参照してください。</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>The Acquire Group</title>
+-->
+ <refsect1><title>Acquire グループ</title>
+<!--
+   <para>The <literal>Acquire</literal> group of options controls the download of packages 
+   and the URI handlers. 
+-->
+   <para><literal>Acquire</literal> オプショングループは、
+   パッケージのダウンロードや URI ハンドラの制御を行います。
+   <variablelist>
+     <varlistentry><term>Queue-Mode</term>
+<!--
+     <listitem><para>Queuing mode; <literal>Queue-Mode</literal> can be one of <literal>host</literal> or 
+     <literal>access</literal> which determines how  APT parallelizes outgoing 
+     connections. <literal>host</literal> means that one connection per target host 
+     will be opened, <literal>access</literal> means that one connection per URI type 
+     will be opened.</para></listitem>
+-->
+     <listitem><para>キューモード - <literal>Queue-Mode</literal> は、
+     APT がどのように並列接続を行うか、
+     <literal>host</literal> か <literal>access</literal> で指定できます。
+     <literal>host</literal> は、ターゲットホストごとに 1 接続を開きます。
+     <literal>access</literal> は、
+     URI タイプごとに 1 接続を開きます。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Retries</term>
+<!--
+     <listitem><para>Number of retries to perform. If this is non-zero APT will retry failed 
+     files the given number of times.</para></listitem>
+-->
+     <listitem><para>リトライの回数を設定します。
+     0 でない場合、APT は失敗したファイルに対して、
+     与えられた回数だけリトライを行います。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Source-Symlinks</term>
+<!--
+     <listitem><para>Use symlinks for source archives. If set to true then source archives will
+     be symlinked when possible instead of copying. True is the default.</para></listitem>
+-->
+     <listitem><para>ソースアーカイブのシンボリックリンクを使用します。
+     true がセットされているとき、可能ならコピーの代わりにシンボリックリンクが
+     張られます。true がデフォルトです。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>http</term>
+<!--
+     <listitem><para>HTTP URIs; http::Proxy is the default http proxy to use. It is in the 
+     standard form of <literal>http://[[user][:pass]@]host[:port]/</literal>. Per 
+     host proxies can also be specified by using the form 
+     <literal>http::Proxy::&lt;host&gt;</literal> with the special keyword <literal>DIRECT</literal> 
+     meaning to use no proxies. The <envar>http_proxy</envar> environment variable
+     will override all settings.</para>
+-->
+     <listitem><para>HTTP URI - http::Proxy は、
+     デフォルトで使用する http プロキシです。
+     <literal>http://[[user][:pass]@]host[:port]/</literal> 
+     という標準形で表します。ホストごとのプロキシの場合は、
+     <literal>http::Proxy::&lt;host&gt;</literal> という形と、
+     プロキシを使用しないという意味の特殊キーワード <literal>DIRECT</literal> 
+     を使用して指定することもできます。すべての設定は、
+     環境変数 <envar>http_proxy</envar> で上書きされます。</para>
+
+<!--
+     <para>Three settings are provided for cache control with HTTP/1.1 compliant 
+     proxy caches. <literal>No-Cache</literal> tells the proxy to not use its cached 
+     response under any circumstances, <literal>Max-Age</literal> is sent only for 
+     index files and tells the cache to refresh its object if it is older than 
+     the given number of seconds. Debian updates its index files daily so the 
+     default is 1 day. <literal>No-Store</literal> specifies that the cache should never 
+     store this request, it is only set for archive files. This may be useful 
+     to prevent polluting a proxy cache with very large .deb files. Note: 
+     Squid 2.0.2 does not support any of these options.</para>
+-->
+     <para>HTTP/1.1 準拠のプロキシキャッシュの制御について、
+     3 種類の設定があります。<literal>No-Cache</literal> はプロキシに対して、
+     いかなる時もキャッシュを使用しないと伝えます。
+     <literal>Max-Age</literal> は、インデックスファイル用のときだけ送信し、
+     得られた時間よりも古かった場合に、
+     オブジェクトをリフレッシュするようキャッシュに指示します。
+     デフォルトでは 1 日となっているため、
+     Debian は日毎にそのインデックスファイルを更新します。
+     <literal>No-Store</literal> は、キャッシュがこのリクエストを格納せず、
+     アーカイブファイルのみ設定するよう指定します。
+     これは、非常に大きな .deb ファイルでプロキシキャッシュが汚れるのを、
+     防ぐのに便利かもしれません。
+     注) Squid 2.0.2 では、これらのオプションをサポートしていません。</para>
+
+<!--
+     <para>The option <literal>timeout</literal> sets the timeout timer used by the method, 
+     this applies to all things including connection timeout and data timeout.</para>
+-->
+     <para><literal>timeout</literal> オプションは、
+     この方法でのタイムアウトまでの時間を設定します。
+     これには、接続のタイムアウトとデータのタイムアウトが含まれています。</para>
+
+<!--
+     <para>One setting is provided to control the pipeline depth in cases where the
+     remote server is not RFC conforming or buggy (such as Squid 2.0.2)
+     <literal>Acquire::http::Pipeline-Depth</literal> can be a value from 0 to 5 
+     indicating how many outstanding requests APT should send. A value of
+     zero MUST be specified if the remote host does not properly linger
+     on TCP connections - otherwise data corruption will occur. Hosts which
+     require this are in violation of RFC 2068.</para></listitem>
+-->
+     <para>リモートサーバが RFC 準拠でなかったり、
+     (Squid 2.0.2 のように) バグがあったりしたときのために、
+     パイプラインの深さの制御を設定します。
+     <literal>Acquire::http::Pipeline-Depth</literal> により、
+     APT が送信できるリクエストの回数を 0 から 5 の値で設定できます。
+     リモートサーバが適切でなく、TCP 接続に時間がかかるときは、
+     <emphasis>必ず</emphasis> 0 の値を設定しなければなりません。
+     そうでなければデータが破損してしまいます。
+     これが必要なホストは RFC 2068 に違反しています。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>ftp</term>
+<!--
+     <listitem><para>FTP URIs; ftp::Proxy is the default proxy server to use. It is in the 
+     standard form of <literal>ftp://[[user][:pass]@]host[:port]/</literal> and is 
+     overridden by the <envar>ftp_proxy</envar> environment variable. To use a ftp 
+     proxy you will have to set the <literal>ftp::ProxyLogin</literal> script in the 
+     configuration file. This entry specifies the commands to send to tell 
+     the proxy server what to connect to. Please see 
+     &configureindex; for an example of 
+     how to do this. The subsitution variables available are 
+     <literal>$(PROXY_USER)</literal> <literal>$(PROXY_PASS)</literal> <literal>$(SITE_USER)</literal>
+     <literal>$(SITE_PASS)</literal> <literal>$(SITE)</literal> and <literal>$(SITE_PORT)</literal>
+     Each is taken from it's respective URI component.</para>
+-->
+     <listitem><para>FTP URI - ftp::Proxy は、デフォルトで使用するプロキシサーバです。
+     <literal>ftp://[[user][:pass]@]host[:port]/</literal> という標準形で表しますが、
+     環境変数 <envar>ftp_proxy</envar> で上書きされます。
+     ftp プロキシを使用するには、設定ファイルに <literal>ftp::ProxyLogin</literal>
+     スクリプトを設定する必要があります。
+     プロキシサーバに送信する接続コマンドを、このエントリに設定します。
+     どのようにするのかは &configureindex; の例を参照してください。
+     その他にも、<literal>$(PROXY_USER)</literal> 
+     <literal>$(PROXY_PASS)</literal> <literal>$(SITE_USER)</literal>
+     <literal>$(SITE_PASS)</literal> <literal>$(SITE)</literal> 
+     <literal>$(SITE_PORT)</literal> が利用可能です。
+     いずれも、それぞれ URI を構成するトークンです。</para>
+
+<!--
+     <para>The option <literal>timeout</literal> sets the timeout timer used by the method, 
+     this applies to all things including connection timeout and data timeout.</para>
+-->
+     <para><literal>timeout</literal> オプションは、
+     この方法でのタイムアウトまでの時間を設定します。
+     これには、接続のタイムアウトとデータのタイムアウトが含まれています。</para>
+
+<!--
+     <para>Several settings are provided to control passive mode. Generally it is 
+     safe to leave passive mode on, it works in nearly every environment. 
+     However some situations require that passive mode be disabled and port 
+     mode ftp used instead. This can be done globally, for connections that 
+     go through a proxy or for a specific host (See the sample config file 
+     for examples).</para>
+-->
+     <para>設定のいくつかは、パッシブモードを制御するものです。
+     一般的に、パッシブモードのままにしておく方が安全で、
+     ほぼどんな環境でも動作します。
+     しかしある状況下では、パッシブモードが無効のため、
+     代わりにポートモード ftp を使用する必要があります。
+     この設定は、プロキシを通る接続や特定のホストへの接続全般に有効です。
+     (設定例はサンプル設定ファイルを参照してください)</para>
+
+<!--
+     <para>It is possible to proxy FTP over HTTP by setting the <envar>ftp_proxy</envar>
+     environment variable to a http url - see the discussion of the http method
+     above for syntax. You cannot set this in the configuration file and it is
+     not recommended to use FTP over HTTP due to its low efficiency.</para>
+-->
+     <para>環境変数 <envar>ftp_proxy</envar> の http url により 
+     FTP over HTTP のプロキシが利用可能になります。
+     文法は上の http についての説明を参照してください。
+     設定ファイルの中でこれをセットすることはできません。
+     また、効率が悪いため FTP over HTTP を使用するのは推奨しません。</para>
+
+<!--
+     <para>The setting <literal>ForceExtended</literal> controls the use of RFC2428 
+     <literal>EPSV</literal> and <literal>EPRT</literal> commands. The defaut is false, which means
+     these commands are only used if the control connection is IPv6. Setting this
+     to true forces their use even on IPv4 connections. Note that most FTP servers
+     do not support RFC2428.</para></listitem>
+-->
+     <para><literal>ForceExtended</literal> の設定は RFC2428 の
+     <literal>EPSV</literal> コマンドと <literal>EPRT</literal> 
+     コマンドの使用を制御します。デフォルトでは false です。
+     これは、コントロールコネクションが IPv6 の時にのみ、
+     このコマンドを使用するということです。
+     これを true にセットすると、IPv4 コネクションでも強制的に、
+     このコマンドを使用します。
+     注) ほとんどの FTP サーバは RFC2428 をサポートしていません。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>cdrom</term>
+<!--
+     <listitem><para>CDROM URIs; the only setting for CDROM URIs is the mount point, 
+     <literal>cdrom::Mount</literal> which must be the mount point for the CDROM drive 
+     as specified in <filename>/etc/fstab</filename>. It is possible to provide 
+     alternate mount and unmount commands if your mount point cannot be listed 
+     in the fstab (such as an SMB mount and old mount packages). The syntax 
+     is to put <literallayout>"/cdrom/"::Mount "foo";</literallayout> within 
+     the cdrom block. It is important to have the trailing slash. Unmount 
+     commands can be specified using UMount.</para></listitem>
+-->
+     <listitem><para>CDROM URI - マウントポイントの設定のみを行います。
+     <filename>/etc/fstab</filename> で設定されているように、
+     CDROM ドライブのマウントポイントを 
+     <literal>cdrom::Mount</literal> に設定しなければなりません。
+     (SMB マウントや古い mount パッケージなど) マウントポイントが fstab 
+     に記述できない場合、かわりにマウント・アンマウントコマンドも使用できます。
+     文法は、cdrom ブロックを 
+     <literallayout>"/cdrom/"::Mount "foo";</literallayout> の形で記述します。
+     スラッシュを後につけるのは重要です。
+     アンマウントコマンドは UMount で指定することができます。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>gpgv</term>
+<!--
+     <listitem><para>GPGV URIs; the only option for GPGV URIs is the option to pass additional parameters to gpgv.
+     <literal>gpgv::Options</literal> Additional options passed to gpgv.
+     </para></listitem>
+-->
+     <listitem><para>GPGV URI - GPGV URI 用の唯一のオプションは、
+     gpgv に渡す追加パラメータのオプションです。
+     <literal>gpgv::Options</literal> gpgv に渡す追加オプション。
+     </para></listitem>
+     </varlistentry>
+
+   </variablelist>
+  </para>
+ </refsect1>
+
+<!--
+ <refsect1><title>Directories</title>
+-->
+ <refsect1><title>ディレクトリ</title>
+
+<!--
+   <para>The <literal>Dir::State</literal> section has directories that pertain to local 
+   state information. <literal>lists</literal> is the directory to place downloaded 
+   package lists in and <literal>status</literal> is the name of the dpkg status file.
+   <literal>preferences</literal> is the name of the APT preferences file.
+   <literal>Dir::State</literal> contains the default directory to prefix on all sub 
+   items if they do not start with <filename>/</filename> or <filename>./</filename>.</para>
+-->
+   <para><literal>Dir::State</literal> セクションは、
+   ローカル状態情報に関するディレクトリを保持します。
+   <literal>lists</literal> は、
+   ダウンロードしたパッケージ一覧を格納するディレクトリで、
+   <literal>status</literal> は dpkg の状態ファイルの名前を表します。
+   <literal>preferences</literal> は APT の 設定ファイルの名前です。
+   <literal>Dir::State</literal> には、
+   <filename>/</filename> や <filename>./</filename> で始まらない
+   全サブアイテムに付加する、デフォルトディレクトリを含んでいます。</para>
+
+<!--
+   <para><literal>Dir::Cache</literal> contains locations pertaining to local cache 
+   information, such as the two package caches <literal>srcpkgcache</literal> and 
+   <literal>pkgcache</literal> as well as the location to place downloaded archives, 
+   <literal>Dir::Cache::archives</literal>. Generation of caches can be turned off
+   by setting their names to be blank. This will slow down startup but
+   save disk space. It is probably prefered to turn off the pkgcache rather
+   than the srcpkgcache. Like <literal>Dir::State</literal> the default
+   directory is contained in <literal>Dir::Cache</literal></para>
+-->
+   <para><literal>Dir::Cache</literal> は、
+   ローカルキャッシュ情報に関する場所を格納しています。これは、
+   ダウンロード済アーカイブの場所を示す <literal>Dir::Cache::archives</literal>
+   と同様に、<literal>srcpkgcache</literal> と <literal>pkgcache</literal> 
+   のパッケージキャッシュの場所となります。
+   それぞれを空にセットすることで、キャッシュの生成を無効にできます。
+   おそらく、srcpkgcache よりも pkgcache を無効にすることが多いと思います。
+   <literal>Dir::State</literal> と同様、<literal>Dir::Cache</literal>
+   はデフォルトディレクトリを含んでいます。</para>
+
+<!--
+   <para><literal>Dir::Etc</literal> contains the location of configuration files, 
+   <literal>sourcelist</literal> gives the location of the sourcelist and 
+   <literal>main</literal> is the default configuration file (setting has no effect,
+   unless it is done from the config file specified by 
+   <envar>APT_CONFIG</envar>).</para>
+-->
+   <para><literal>Dir::Etc</literal> は設定ファイルの場所を格納しています。
+   <literal>sourcelist</literal> はソースリストの場所を示し、
+   <literal>main</literal> はデフォルトの設定ファイルです。
+   (<envar>APT_CONFIG</envar> で設定ファイルを指定された場合のみ、
+   この設定の効果があります)</para>
+
+<!--
+   <para>The <literal>Dir::Parts</literal> setting reads in all the config fragments in 
+   lexical order from the directory specified. After this is done then the
+   main config file is loaded.</para>
+-->
+   <para><literal>Dir::Parts</literal> 設定は、指定されたディレクトリから、
+   字句単位の全ての設定断片を読みこみます。
+   これを設定した後に、メイン設定ファイルをロードします。</para>
+
+<!--
+   <para>Binary programs are pointed to by <literal>Dir::Bin</literal>. <literal>Dir::Bin::Methods</literal> 
+   specifies the location of the method handlers and <literal>gzip</literal>, 
+   <literal>dpkg</literal>, <literal>apt-get</literal> <literal>dpkg-source</literal> 
+   <literal>dpkg-buildpackage</literal> and <literal>apt-cache</literal> specify the location
+   of the respective programs.</para>
+-->
+   <para>バイナリプログラムは <literal>Dir::Bin</literal> で指定します。
+   <literal>Dir::Bin::Methods</literal> はメソッドハンドラの場所を指定し、
+   <literal>gzip</literal>, <literal>dpkg</literal>,
+   <literal>apt-get</literal>, <literal>dpkg-source</literal>, 
+   <literal>dpkg-buildpackage</literal>, <literal>apt-cache</literal> 
+   はそれぞれプログラムの場所を指定します。</para>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>APT in DSelect</title>
+-->
+ <refsect1><title>DSelect での APT</title>
+<!--
+   <para>   
+   When APT is used as a &dselect; method several configuration directives
+   control the default behaviour. These are in the <literal>DSelect</literal> section.</para>
+-->
+   <para>   
+   &dselect; 上で APT を使用する際、
+   <literal>DSelect</literal> セクション以下の設定項目で、
+   デフォルトの動作を制御します。</para>
+   <variablelist>
+     <varlistentry><term>Clean</term>
+<!--
+     <listitem><para>Cache Clean mode; this value may be one of always, prompt, auto,
+     pre-auto and never.  always and prompt will remove all packages from
+     the cache after upgrading, prompt (the default) does so conditionally. 
+     auto removes only those packages which are no longer downloadable
+     (replaced with a new version for instance).  pre-auto performs this
+     action before downloading new packages.</para></listitem>
+-->
+     <listitem><para>キャッシュクリーンモード - 
+     この値は always, prompt, auto, pre-auto, never のうちひとつを取ります。
+     always と prompt は更新後、全パッケージをキャッシュから削除します。
+     (デフォルトの) prompt では条件付きで削除します。
+     auto はダウンロード不能パッケージ (例えば新バージョンで置き換えられたもの)
+     を削除します。pre-auto はこの動作を、
+     新パッケージをダウンロードする直前に行います。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>options</term>
+<!--
+     <listitem><para>The contents of this variable is passed to &apt-get; as command line
+     options when it is run for the install phase.</para></listitem>
+-->
+     <listitem><para>この変数の内容は、
+     install 時のコマンドラインオプションと同様に &apt-get; に渡されます。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Updateoptions</term>
+<!--
+     <listitem><para>The contents of this variable is passed to &apt-get; as command line
+     options when it is run for the update phase.</para></listitem>
+-->
+     <listitem><para>この変数の内容は、
+     update 時のコマンドラインオプションと同様に &apt-get; に渡されます。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>PromptAfterUpdate</term>
+<!--
+     <listitem><para>If true the [U]pdate operation in &dselect; will always prompt to continue. 
+     The default is to prompt only on error.</para></listitem>
+-->
+     <listitem><para>true の場合、
+     &dselect; の [U]pdate 実行時に、続行のためのプロンプトを毎回表示します。
+     デフォルトはエラーが発生した場合のみです。</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>How APT calls dpkg</title>
+-->
+ <refsect1><title>APT が dpkg を呼ぶ方法</title>
+<!--
+   <para>Several configuration directives control how APT invokes &dpkg;. These are 
+   in the <literal>DPkg</literal> section.</para>
+-->
+   <para>数種の設定項目で APT がどのように &dpkg; を呼び出すかを制御できます。
+   <literal>DPkg</literal> セクションにあります。</para>
+
+   <variablelist>
+     <varlistentry><term>options</term>
+<!--
+     <listitem><para>This is a list of options to pass to dpkg. The options must be specified
+     using the list notation and each list item is passed as a single argument
+     to &dpkg;.</para></listitem>
+-->
+     <listitem><para>dpkg に渡すオプションのリストです。
+     オプションは、リスト記法を使用して指定しなければなりません。
+     また、各リストは単一の引数として &dpkg; に渡されます。</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>Pre-Invoke</term><term>Post-Invoke</term>
+<!--
+     <listitem><para>This is a list of shell commands to run before/after invoking &dpkg;. 
+     Like <literal>options</literal> this must be specified in list notation. The 
+     commands are invoked in order using <filename>/bin/sh</filename>, should any 
+     fail APT will abort.</para></listitem>
+-->
+     <listitem><para>&dpkg; を呼び出す前後で実行するシェルコマンドのリストです。
+     <literal>options</literal> のようにリスト記法で指定しなければなりません。
+     コマンドは <filename>/bin/sh</filename> を使用して呼び出され、
+     何か問題があれば、APT は異常終了します。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Pre-Install-Pkgs</term>
+<!--
+     <listitem><para>This is a list of shell commands to run before invoking dpkg. Like
+     <literal>options</literal> this must be specified in list notation. The commands
+     are invoked in order using <filename>/bin/sh</filename>, should any fail APT 
+     will abort. APT will pass to the commands on standard input the 
+     filenames of all .deb files it is going to install, one per line.</para>
+-->
+     <listitem><para>&dpkg; を呼び出す前に実行するシェルコマンドのリストです。
+     <literal>options</literal> のようにリスト記法で指定しなければなりません。
+     コマンドは <filename>/bin/sh</filename> を通して呼び出され、
+     何か問題があれば、APT は異常終了します。
+     APT はインストールしようとする全 .deb ファイルのファイル名を、
+     ひとつずつコマンドの標準入力に送ります。</para>
+
+<!--
+     <para>Version 2 of this protocol dumps more information, including the 
+     protocol version, the APT configuration space and the packages, files
+     and versions being changed. Version 2 is enabled by setting 
+     <literal>DPkg::Tools::options::cmd::Version</literal> to 2. <literal>cmd</literal> is a
+     command given to <literal>Pre-Install-Pkgs</literal>.</para></listitem>
+-->
+     <para>このプロトコルのバージョン 2 では、(プロトコルのバージョンや 
+     APT 設定スペース、パッケージを含む) 詳細情報やファイル、
+     変更されているバージョンを出力します。
+     <literal>DPkg::Tools::options::cmd::Version</literal> に 2 を設定すると、
+     バージョン 2 を有効にできます。
+     <literal>cmd</literal> は <literal>Pre-Install-Pkgs</literal> 
+     で与えられるコマンドです。</para></listitem>
+          </varlistentry>
+
+     <varlistentry><term>Run-Directory</term>
+<!--
+     <listitem><para>APT chdirs to this directory before invoking dpkg, the default is 
+     <filename>/</filename>.</para></listitem>
+-->
+     <listitem><para>APT は dpkg を呼び出す前にこのディレクトリに移動します。
+     デフォルトは <filename>/</filename> です。</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Build-options</term>
+<!--
+     <listitem><para>These options are passed to &dpkg-buildpackage; when compiling packages,
+     the default is to disable signing and produce all binaries.</para></listitem>
+-->
+     <listitem><para>これらのオプションは、
+     パッケージのコンパイル時に &dpkg-buildpackage; に渡されます。
+     デフォルトでは、署名を無効にし、全バイナリを生成します。</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+
+<!--
+ <refsect1><title>Debug options</title>
+-->
+ <refsect1><title>デバッグオプション</title>
+<!--
+   <para>Most of the options in the <literal>debug</literal> section are not interesting to 
+   the normal user, however <literal>Debug::pkgProblemResolver</literal> shows 
+   interesting output about the decisions dist-upgrade makes. 
+   <literal>Debug::NoLocking</literal> disables file locking so APT can do some 
+   operations as non-root and <literal>Debug::pkgDPkgPM</literal> will print out the 
+   command line for each dpkg invokation. <literal>Debug::IdentCdrom</literal> will 
+   disable the inclusion of statfs data in CDROM IDs.
+   <literal>Debug::Acquire::gpgv</literal> Debugging of the gpgv method.
+   </para>
+-->
+   <para><literal>debug</literal> の多くのオプションは、
+   普通のユーザにとって興味を引くものではありません。
+   しかし <literal>Debug::pkgProblemResolver</literal> で、
+   dist-upgrade の判断についての興味深い出力が得られます。
+   <literal>Debug::NoLocking</literal>は、
+   APT が非 root で操作できるようにファイルのロックを無効にしますし、
+   <literal>Debug::pkgDPkgPM</literal>は、
+   dpkg を呼ぶ際のコマンドラインを出力します。
+   <literal>Debug::IdentCdrom</literal> は、
+   CDROM ID の状態データの包含を無効にします。
+   <literal>Debug::Acquire::gpgv</literal> gpgv 法のデバッグです。
+   </para>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>Examples</title>
+-->
+ <refsect1><title>例</title>
+<!--
+   <para>&configureindex; is a 
+   configuration file showing example values for all possible 
+   options.</para>
+-->
+   <para>&configureindex; に、全利用可能オプションのデフォルト値を参照できる、
+   設定ファイルのサンプルがあります。</para>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>Files</title>
+-->
+ <refsect1><title>ファイル</title>
+   <para><filename>/etc/apt/apt.conf</filename></para>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>See Also</title>
+-->
+ <refsect1><title>関連項目</title>
+   <para>&apt-cache;, &apt-config;<!-- ? reading apt.conf -->, &apt-preferences;.</para>
+ </refsect1>
+
+ &manbugs;
+ &translator;
+ 
+</refentry>
+

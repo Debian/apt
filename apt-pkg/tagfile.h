@@ -75,9 +75,10 @@ class pkgTagFile
    bool Done;
    unsigned long iOffset;
    unsigned long Size;
-   
+
    bool Fill();
-   
+   bool Resize();
+
    public:
 
    bool Step(pkgTagSection &Section);

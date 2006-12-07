@@ -12,7 +12,10 @@ set -e
 
 create_apt_conf ()
 {
- cp /usr/share/doc/apt/examples/sources.list /etc/apt/sources.list
+ EXAMPLE_SOURCE=/usr/share/doc/apt/examples/sources.list
+ if [ -f $EXAMPLE_SOURCE ]; then
+     cp $EXAMPLE_SOURCE /etc/apt/sources.list
+ fi
 }
  
 check_apt_conf ()

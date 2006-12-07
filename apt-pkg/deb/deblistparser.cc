@@ -377,12 +377,12 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       const char *End = I;
       for (; End > Start && isspace(End[-1]); End--);
       
-      Ver = string(Start,End-Start);
+      Ver.assign(Start,End-Start);
       I++;
    }
    else
    {
-      Ver = string();
+      Ver.clear();
       Op = pkgCache::Dep::NoOp;
    }
    
@@ -504,11 +504,12 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
       Start = ParseDepends(Start,Stop,Package,Version,Op);
       if (Start == 0)
 	 return _error->Error("Problem parsing Provides line");
-      if (Op != pkgCache::Dep::NoOp)
-	 return _error->Error("Malformed provides line");
-
-      if (NewProvides(Ver,Package,Version) == false)
-	 return false;
+      if (Op != pkgCache::Dep::NoOp) {
+	 _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+      } else {
+	 if (NewProvides(Ver,Package,Version) == false)
+	    return false;
+      }
 
       if (Start == Stop)
 	 break;

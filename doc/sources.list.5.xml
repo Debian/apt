@@ -46,6 +46,13 @@
    by using a #.</para>
  </refsect1>
  
+ <refsect1><title>sources.list.d</title>
+   <para>The <filename>/etc/apt/sources.list.d</filename> directory provides
+   a way to add sources.list entries in seperate files that end with 
+   <literal>.list</literal>. The format is the same as for the regular
+   <filename>sources.list</filename> file. </para>
+ </refsect1>
+
  <refsect1><title>The deb and deb-src types</title>
    <para>The <literal>deb</literal> type describes a typical two-level Debian
    archive, <filename>distribution/component</filename>. Typically,
@@ -197,7 +204,7 @@ deb http://http.us.debian.org/debian dists/stable-updates/
 
    <para>Uses HTTP to access the archive at nonus.debian.org, under the
    debian-non-US directory, and uses only files found under
-   <filename>unstable/binary-i3866</filename> on i386 machines, 
+   <filename>unstable/binary-i386</filename> on i386 machines, 
    <filename>unstable/binary-m68k</filename> on m68k, and so
    forth for other supported architectures. [Note this example only 
    illustrates how to use the substitution variable; non-us is no longer 

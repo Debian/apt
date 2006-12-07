@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent.ja">
+%aptent;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>29 February 2004</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>sources.list</refentrytitle>
+   <manvolnum>5</manvolnum>
+ </refmeta>
+ 
+  <!-- Man page title -->
+ <refnamediv>
+    <refname>sources.list</refname>
+<!--
+    <refpurpose>Package resource list for APT</refpurpose>
+-->
+    <refpurpose>APT 用パッケージリソースリスト</refpurpose>
+ </refnamediv>
+ 
+<!--
+ <refsect1><title>Description</title>
+  -->
+ <refsect1><title>説明</title>
+<!--
+   <para>The package resource list is used to locate archives of the package
+   distribution system in use on the system. At this time, this manual page
+   documents only the packaging system used by the Debian GNU/Linux system.
+   This control file is located in <filename>/etc/apt/sources.list</filename></para>
+-->
+   <para>このパッケージリソースリストは、
+   システムで使用するパッケージの保管場所を特定するのに使用されます。
+   今回このマニュアルページには、
+   Debian GNU/Linux システムで使用するパッケージシステムについてのみ記述します。
+   この制御ファイルは、<filename>/etc/apt/sources.list</filename> にあります。</para>
+
+<!--
+   <para>The source list is designed to support any number of active sources and a
+   variety of source media. The file lists one source per line, with the
+   most preferred source listed first. The format of each line is:
+   <literal>type uri args</literal> The first item, <literal>type</literal>
+   determines the format for <literal>args</literal> <literal>uri</literal> is
+   a Universal Resource Identifier 
+   (URI), which is a superset of the more specific and well-known Universal
+   Resource Locator, or URL. The rest of the line can be marked as a comment 
+   by using a #.</para>
+-->
+   <para>ソースリストは複数の有効な取得元と、
+   様々な取得メディアをサポートしています。
+   ファイルには 1 行ごと取得元を列挙し、上の方にあるものから使用します。
+   行のフォーマットは、<literal>タイプ uri 引数</literal> となります。
+   先頭の <literal>タイプ</literal> で、
+   <literal>引数</literal> のフォーマットを決定します。
+   <literal>uri</literal> は Universal Resource Identifier (URI) で、
+   よく知られた URL のスーパーセットです。
+   行の残りに # を付けて、コメントにできます。</para>
+ </refsect1>
+ 
+ <refsect1><title>sources.list.d</title>
+<!--
+   <para>The <filename>/etc/apt/sources.list.d</filename> directory provides
+   a way to add sources.list entries in seperate files that end with 
+   <literal>.list</literal>. The format is the same as for the regular
+   <filename>sources.list</filename> file. </para>
+-->
+   <para><filename>/etc/apt/sources.list.d</filename> ディレクトリに
+   ファイル名が <literal>.list</literal> で終わる個別ファイルを置いておくと、
+   sources.list エントリに追加できます。フォーマットは、
+   通常の <filename>sources.list</filename> ファイルと同じです。</para>
+ </refsect1>
+
+<!--
+ <refsect1><title>The deb and deb-src types</title>
+-->
+ <refsect1><title>deb タイプと deb-src タイプ</title>
+<!--
+   <para>The <literal>deb</literal> type describes a typical two-level Debian
+   archive, <filename>distribution/component</filename>. Typically,
+   <literal>distribution</literal> is generally one of
+   <literal>stable</literal> <literal>unstable</literal> or 
+   <literal>testing</literal> while component is one of <literal>main</literal> 
+   <literal>contrib</literal> <literal>non-free</literal> or
+   <literal>non-us</literal> The 
+   <literal>deb-src</literal> type describes a debian distribution's source
+   code in the same form as the <literal>deb</literal> type.
+   A <literal>deb-src</literal> line is required to fetch source indexes.</para>
+-->
+   <para><literal>deb</literal> タイプでは典型的な 2 段階の Debian アーカイブ 
+   (<filename>distribution/component</filename>) を記述します。
+   よくあるケースでは、<literal>distribution</literal> は通常 
+   <literal>stable</literal> <literal>unstable</literal> 
+   <literal>testing</literal> のどれか、
+   component は、<literal>main</literal> <literal>contrib</literal> 
+   <literal>non-free</literal> <literal>non-us</literal> のどれかです。
+   <literal>deb-src</literal> タイプでは、
+   Debian ディストリビューションのソースコードを、
+   <literal>deb</literal> タイプと同じ形式で記述します。
+   <literal>deb-src</literal> 行は、
+   ソースインデックスを取得するのに必要です。</para>
+
+<!--
+   <para>The format for a <filename>sources.list</filename> entry using the
+   <literal>deb</literal> and <literal>deb-src</literal> types are:</para>
+-->
+   <para><literal>deb</literal> タイプと <literal>deb-src</literal> 
+   タイプで使用する <filename>sources.list</filename> 
+   エントリのフォーマットは、以下になります。</para>
+
+   <literallayout>deb uri distribution [component1] [component2] [...]</literallayout>
+
+<!--
+   <para>The URI for the <literal>deb</literal> type must specify the base of the
+   Debian distribution, from which APT will find the information it needs. 
+   <literal>distribution</literal> can specify an exact path, in which case the 
+   components must be omitted and <literal>distribution</literal> must end with
+   a slash (/). This is useful for when only a particular sub-section of the 
+   archive denoted by the URI is of interest.
+   If <literal>distribution</literal> does not specify an exact path, at least
+   one <literal>component</literal> must be present.</para>
+-->
+   <para><literal>deb</literal> タイプの URI は、
+   APT が情報を見つけられるように、
+   Debian ディストリビューションの基底を指定しなければなりません。
+   <literal>distribution</literal> には正確なパスを指定できます。
+   その場合 component を省略し、<literal>distribution</literal> 
+   はスラッシュ (/) で終わらなくてはなりません。
+   これは URL で指定されたアーカイブの、
+   特定のサブセクションのみに関心があるときに役に立ちます。
+   <literal>distribution</literal> に正確なパスを指定しないのなら、
+   少なくともひとつは <literal>component</literal> を指定しなければなりません。</para>
+
+<!--
+   <para><literal>distribution</literal> may also contain a variable, 
+   <literal>$(ARCH)</literal>
+   which expands to the Debian architecture (i386, m68k, powerpc, ...)
+   used on the system. This permits architecture-independent
+   <filename>sources.list</filename> files to be used. In general this is only
+   of interest when specifying an exact path, <literal>APT</literal> will
+   automatically generate a URI with the current architecture otherwise.</para>
+-->
+   <para><literal>distribution</literal> は、
+   <literal>$(ARCH)</literal> 変数を含む場合があります。
+   <literal>$(ARCH)</literal> 変数は、システムで使用している 
+   Debian アーキテクチャ (i386, m68k, powerpc, ...) に展開されます。
+   これにより、アーキテクチャに依存しない <filename>sources.list</filename> 
+   ファイルを使用できます。
+   一般的に、これは正しいパスを指定するときに気にするだけです。
+   そうでない場合は、<literal>APT</literal> は現在のアーキテクチャで URI 
+   を自動的に生成します。</para>
+
+<!--
+   <para>Since only one distribution can be specified per line it may be necessary
+   to have multiple lines for the same URI, if a subset of all available
+   distributions or components at that location is desired.
+   APT will sort the URI list after it has generated a complete set 
+   internally, and will collapse multiple references to the same Internet 
+   host, for instance, into a single connection, so that it does not 
+   inefficiently establish an FTP connection, close it, do something else, 
+   and then re-establish a connection to that same host. This feature is 
+   useful for accessing busy FTP sites with limits on the number of 
+   simultaneous anonymous users. APT also parallelizes connections to 
+   different hosts to more effectively deal with sites with low bandwidth.</para>
+-->
+   <para>有効な全 distribution, component の場所から、
+   一部が必要な場合、1 行につき 1 distribution しか指定できないため、
+   同じ URI の行を複数記述することになるでしょう。
+   APT は内部で URI リストを生成してから、並べ替えます。
+   そして、同じインターネットホストに対しては複数の参照をまとめます。
+   例えば FTP 接続後、切断してからまた同じホストに再接続するといった、
+   効率の悪いことをせずに、1 接続にまとめます。
+   この機能は、同時接続匿名ユーザ数を制限している、
+   混んでいる FTP サイトにアクセスするのに便利です。
+   APT は、帯域の狭いサイトを効率よく扱うのに、
+   異なるホストへは、接続を並行して行うようにもしています。</para>
+
+<!--
+   <para>It is important to list sources in order of preference, with the most
+   preferred source listed first. Typically this will result in sorting
+   by speed from fastest to slowest (CD-ROM followed by hosts on a local
+   network, followed by distant Internet hosts, for example).</para>
+-->
+   <para>最優先する取得元を最初に記述するというように、
+   優先順に取得元を記述するのは重要です。
+   一般的には、スピードの速い順に並べることになる 
+   (例えば、CD-ROM に続いてローカルネットワークのホスト、
+    さらに続いて彼方のインターネットホスト) でしょう。</para>
+
+<!--
+   <para>Some examples:</para>
+-->
+   <para>例:</para>
+   <literallayout>
+deb http://http.us.debian.org/debian stable main contrib non-free
+deb http://http.us.debian.org/debian dists/stable-updates/
+   </literallayout>
+
+ </refsect1>
+
+<!--
+ <refsect1><title>URI specification</title>
+-->
+ <refsect1><title>URI の仕様</title>
+
+<!--
+   <para>The currently recognized URI types are cdrom, file, http, and ftp.
+-->
+   <para>現在認識する URI 対応は、cdrom, file, http, ftp です。
+   <variablelist>
+    <varlistentry><term>file</term>
+<!--
+    <listitem><para>
+    The file scheme allows an arbitrary directory in the file system to be
+    considered an archive. This is useful for NFS mounts and local mirrors or
+    archives.</para></listitem>
+-->
+    <listitem><para>
+    file スキームは、システム内の任意のディレクトリを、
+    アーカイブとして扱えるようにします。
+    これは NFS マウントやローカルミラーで便利です。</para></listitem>
+    </varlistentry>
+    
+    <varlistentry><term>cdrom</term>
+<!--
+    <listitem><para>
+    The cdrom scheme allows APT to use a local CDROM drive with media
+    swapping. Use the &apt-cdrom; program to create cdrom entries in the
+    source list.</para></listitem>
+-->
+    <listitem><para>
+    cdrom スキームは、APT がローカル CD-ROM ドライブを、
+    メディア交換しながら使えるようにします。
+    取得元リストに cdrom エントリを追加するには、
+    &apt-cdrom; プログラムを使用してください。</para></listitem>
+    </varlistentry>
+
+    <varlistentry><term>http</term>
+<!--
+    <listitem><para>
+    The http scheme specifies an HTTP server for the archive. If an environment
+    variable <envar>http_proxy</envar> is set with the format 
+    http://server:port/, the proxy server specified in
+    <envar>http_proxy</envar> will be used. Users of authenticated
+    HTTP/1.1 proxies may use a string of the format
+    http://user:pass@server:port/
+    Note that this is an insecure method of authentication.</para></listitem>
+-->
+    <listitem><para>
+    http スキームはアーカイブとして、HTTP サーバを指定します。
+    環境変数 <envar>http_proxy</envar> が、
+    http://server:port/ と言った形で指定されていれば、
+    <envar>http_proxy</envar> で指定した プロキシサーバを使用します。
+    ユーザ認証が必要な HTTP/1.1 プロキシの場合、
+    http://user:pass@server:port/ と言う形で指定してください。
+    この認証方法は安全ではないことに注意してください。</para></listitem>
+    </varlistentry>
+
+    <varlistentry><term>ftp</term>
+<!--
+    <listitem><para>
+    The ftp scheme specifies an FTP server for the archive. APT's FTP behavior
+    is highly configurable; for more information see the
+    &apt-conf; manual page. Please note that a ftp proxy can be specified
+    by using the <envar>ftp_proxy</envar> environment variable. It is possible
+    to specify a http proxy (http proxy servers often understand ftp urls)
+    using this method and ONLY this method. ftp proxies using http specified in
+    the configuration file will be ignored.</para></listitem>
+-->
+    <listitem><para>
+    ftp スキームは、アーカイブに FTP サーバを指定します。
+    APT の FTP の振る舞いは、高度に設定できます。
+    詳細は、&apt-conf; のマニュアルページをご覧ください。
+    ftp プロキシは、
+    <envar>ftp_proxy</envar> 環境変数で指定することにご注意ください。
+    この方法用に、さらにこの方法でしか使用しないのに、
+    http プロキシを使用することができます 
+    (http プロキシサーバは大抵 ftp urlも理解できます)。
+    設定ファイルで http を使用する際に、
+    ftp プロキシを使用するよう設定してあっても無視されます。</para></listitem>
+    </varlistentry>
+
+    <varlistentry><term>copy</term>
+<!--
+    <listitem><para>
+    The copy scheme is identical to the file scheme except that packages are
+    copied into the cache directory instead of used directly at their location.
+    This is useful for people using a zip disk to copy files around with APT.</para></listitem>
+-->
+    <listitem><para>
+    copy スキームは、file スキームと同様ですが、パッケージをその場で使用せず、
+    キャッシュディレクトリにコピーするところが違います。
+    zip ディスクを使用していて、APT でコピーを行う場合に便利です。</para></listitem>
+    </varlistentry>
+    
+    <varlistentry><term>rsh</term><term>ssh</term>
+<!--
+    <listitem><para>
+    The rsh/ssh method invokes rsh/ssh to connect to a remote host
+    as a given user and access the files. No password authentication is 
+    possible, prior arrangements with RSA keys or rhosts must have been made.
+    Access to files on the remote uses standard <command>find</command> and
+    <command>dd</command> 
+    commands to perform the file transfers from the remote.</para></listitem>
+-->
+    <listitem><para>
+    rsh/ssh メソッドは、与えられたユーザでリモートホストに接続し、
+    ファイルにアクセスするのに rsh/ssh を使用します。
+    あらかじめ RSA キーや rhosts の配置が必要ですが、
+    パスワードなし認証が可能です。
+    リモートホストのファイルへのアクセスの際、
+    ファイル転送に標準の <command>find</command> コマンドや 
+    <command>dd</command> コマンドを使用します。</para></listitem>
+    </varlistentry>
+  </variablelist>
+ </para>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>Examples</title>
+-->
+ <refsect1><title>サンプル</title>
+<!--
+   <para>Uses the archive stored locally (or NFS mounted) at /home/jason/debian
+   for stable/main, stable/contrib, and stable/non-free.</para>
+-->
+   <para> /home/jason/debian に格納されている stable/main, stable/contrib, 
+   stable/non-free 用のローカル (または NFS) アーカイブを使用します。</para>
+   <literallayout>deb file:/home/jason/debian stable main contrib non-free</literallayout>
+
+<!--
+   <para>As above, except this uses the unstable (development) distribution.</para>
+-->
+   <para>上記同様ですが、不安定版を使用します。</para>
+   <literallayout>deb file:/home/jason/debian unstable main contrib non-free</literallayout>
+
+<!--
+   <para>Source line for the above</para>
+-->
+   <para>上記のソース行</para>
+   <literallayout>deb-src file:/home/jason/debian unstable main contrib non-free</literallayout>
+
+<!--
+   <para>Uses HTTP to access the archive at archive.debian.org, and uses only
+   the hamm/main area.</para>
+-->
+   <para>archive.debian.org のアーカイブに HTTP アクセスし、
+   hamm/main のみを使用します。</para>
+   <literallayout>deb http://archive.debian.org/debian-archive hamm main</literallayout>
+
+<!--
+   <para>Uses FTP to access the archive at ftp.debian.org, under the debian
+   directory, and uses only the stable/contrib area.</para>
+-->
+   <para>ftp.debian.org のアーカイブに FTP アクセスし、
+   debian ディレクトリ以下の stable/contrib のみを使用します。</para>
+   <literallayout>deb ftp://ftp.debian.org/debian stable contrib</literallayout>
+
+<!--
+   <para>Uses FTP to access the archive at ftp.debian.org, under the debian
+   directory, and uses only the unstable/contrib area. If this line appears as
+   well as the one in the previous example in <filename>sources.list</filename>.
+   a single FTP session will be used for both resource lines.</para>
+-->
+   <para>ftp.debian.org のアーカイブに FTP アクセスし、
+   debian ディレクトリ以下の unstable/contrib を使用します。
+   <filename>sources.list</filename> に上記サンプルと一緒に指定された場合、
+   両方のリソース行に対応する FTP セッションはひとつだけになります。</para>
+   <literallayout>deb ftp://ftp.debian.org/debian unstable contrib</literallayout>
+
+<!--
+   <para>Uses HTTP to access the archive at nonus.debian.org, under the
+    debian-non-US directory.</para>
+-->
+   <para>nonus.debian.org のアーカイブに HTTP アクセスし、
+   debian-non-US ディレクトリ以下を使用します。</para>
+   <literallayout>deb http://nonus.debian.org/debian-non-US stable/non-US main contrib non-free</literallayout>
+
+<!--
+   <para>Uses HTTP to access the archive at nonus.debian.org, under the
+   debian-non-US directory, and uses only files found under
+   <filename>unstable/binary-i386</filename> on i386 machines, 
+   <filename>unstable/binary-m68k</filename> on m68k, and so
+   forth for other supported architectures. [Note this example only 
+   illustrates how to use the substitution variable; non-us is no longer 
+   structured like this] 
+   <literallayout>deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/</literallayout>
+   </para>
+-->
+   <para>nonus.debian.org のアーカイブに HTTP アクセスし、
+   debian-non-US ディレクトリ以下を使用します。
+   また、i386 マシンでは <filename>unstable/binary-i386</filename> 
+   以下にあるファイル、
+   m68k マシンでは <filename>unstable/binary-m68k</filename> 
+   以下にあるファイル、
+   その他サポートするアーキテクチャごとのファイルのみ使用します。
+   [このサンプルは変数展開の使用法の説明でしかないことに注意してください。
+   non-us はこのような構造になっていません]
+   <literallayout>deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/</literallayout>
+   </para>
+ </refsect1>
+ 
+<!--
+ <refsect1><title>See Also</title>
+-->
+ <refsect1><title>関連項目</title>
+   <para>&apt-cache; &apt-conf;
+   </para>
+ </refsect1>
+
+ &manbugs;
+ &translator;
+ 
+</refentry>
+

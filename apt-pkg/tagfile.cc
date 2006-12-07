@@ -59,19 +59,52 @@ pkgTagFile::~pkgTagFile()
    delete [] Buffer;
 }
 									/*}}}*/
+// TagFile::Resize - Resize the internal buffer				/*{{{*/
+// ---------------------------------------------------------------------
+/* Resize the internal buffer (double it in size). Fail if a maximum size
+ * size is reached.
+ */
+bool pkgTagFile::Resize()
+{
+   char *tmp;
+   unsigned long EndSize = End - Start;
+
+   // fail is the buffer grows too big
+   if(Size > 1024*1024+1)
+      return false;
+
+   // get new buffer and use it
+   tmp = new char[2*Size];
+   memcpy(tmp, Buffer, Size);
+   Size = Size*2;
+   delete [] Buffer;
+   Buffer = tmp;
+
+   // update the start/end pointers to the new buffer
+   Start = Buffer;
+   End = Start + EndSize;
+   return true;
+}
+
 // TagFile::Step - Advance to the next section				/*{{{*/
 // ---------------------------------------------------------------------
-/* If the Section Scanner fails we refill the buffer and try again. */
+/* If the Section Scanner fails we refill the buffer and try again. 
+ * If that fails too, double the buffer size and try again until a
+ * maximum buffer is reached.
+ */
 bool pkgTagFile::Step(pkgTagSection &Tag)
 {
-   if (Tag.Scan(Start,End - Start) == false)
+   while (Tag.Scan(Start,End - Start) == false)
    {
       if (Fill() == false)
 	 return false;
       
-      if (Tag.Scan(Start,End - Start) == false)
+      if(Tag.Scan(Start,End - Start))
+	 break;
+
+      if (Resize() == false)
 	 return _error->Error(_("Unable to parse package file %s (1)"),
-			      Fd.Name().c_str());
+				 Fd.Name().c_str());
    }
    Start += Tag.size();
    iOffset += Tag.size();
@@ -166,12 +199,12 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
 // ---------------------------------------------------------------------
 /* This looks for the first double new line in the data stream. It also
    indexes the tags in the section. This very simple hash function for the
-   first 3 letters gives very good performance on the debian package files */
+   last 8 letters gives very good performance on the debian package files */
 inline static unsigned long AlphaHash(const char *Text, const char *End = 0)
 {
    unsigned long Res = 0;
    for (; Text != End && *Text != ':' && *Text != 0; Text++)
-      Res = (unsigned long)(*Text) ^ (Res << 2);
+      Res = ((unsigned long)(*Text) & 0xDF) ^ (Res << 1);
    return Res & 0xFF;
 }
 
@@ -394,7 +427,8 @@ static const char *iTFRewritePackageOrder[] = {
                           "Filename",
                           "Size",
                           "MD5Sum",
-                          "SHA1Sum",
+                          "SHA1",
+                          "SHA256",
                            "MSDOS-Filename",   // Obsolete
                           "Description",
                           0};

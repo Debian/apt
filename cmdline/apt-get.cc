@@ -38,6 +38,7 @@
 #include <apt-pkg/version.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
     
 #include <config.h>
@@ -45,6 +46,7 @@
 
 #include "acqprogress.h"
 
+#include <set>
 #include <locale.h>
 #include <langinfo.h>
 #include <fstream>
@@ -66,7 +68,7 @@ ostream c0out(0);
 ostream c1out(0);
 ostream c2out(0);
 ofstream devnull("/dev/null");
-unsigned int ScreenWidth = 80;
+unsigned int ScreenWidth = 80 - 1; /* - 1 for the cursor */
 
 // class CacheFile - Cover class for some dependency cache functions	/*{{{*/
 // ---------------------------------------------------------------------
@@ -1190,24 +1192,54 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    string VerTag;
    string TmpSrc = Name;
    string::size_type Slash = TmpSrc.rfind('=');
+
+   // honor default release
+   string DefRel = _config->Find("APT::Default-Release");
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+
    if (Slash != string::npos)
    {
       VerTag = string(TmpSrc.begin() + Slash + 1,TmpSrc.end());
       TmpSrc = string(TmpSrc.begin(),TmpSrc.begin() + Slash);
+   } 
+   else  if(!Pkg.end() && DefRel.empty() == false)
+   {
+      // we have a default release, try to locate the pkg. we do it like
+      // this because GetCandidateVer() will not "downgrade", that means
+      // "apt-get source -t stable apt" won't work on a unstable system
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; 
+	   Ver++)
+      {
+	 for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false;
+	      VF++)
+	 {
+	    /* If this is the status file, and the current version is not the
+	       version in the status file (ie it is not installed, or somesuch)
+	       then it is not a candidate for installation, ever. This weeds
+	       out bogus entries that may be due to config-file states, or
+	       other. */
+	    if ((VF.File()->Flags & pkgCache::Flag::NotSource) == 
+		pkgCache::Flag::NotSource && Pkg.CurrentVer() != Ver)
+	    continue;
+	    
+	    //std::cout << VF.File().Archive() << std::endl;
+	    if(VF.File().Archive() && (VF.File().Archive() == DefRel)) 
+	    {
+	       VerTag = Ver.VerStr();
+	       break;
+	    }
+	 }
+      }
    }
-   
+
    /* Lookup the version of the package we would install if we were to
       install a version and determine the source package name, then look
-      in the archive for a source package of the same name. In theory
-      we could stash the version string as well and match that too but
-      today there aren't multi source versions in the archive. */
-   if (_config->FindB("APT::Get::Only-Source") == false && 
-       VerTag.empty() == true)
+      in the archive for a source package of the same name. */
+   if (_config->FindB("APT::Get::Only-Source") == false)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
       if (Pkg.end() == false)
       {
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);      
+	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
 	 if (Ver.end() == false)
 	 {
 	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
@@ -1265,10 +1297,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       }      
    }
    
-   if (Last == 0)
-      return 0;
-   
-   if (Last->Jump(Offset) == false)
+   if (Last == 0 || Last->Jump(Offset) == false)
       return 0;
    
    return Last;
@@ -1339,7 +1368,7 @@ bool DoUpdate(CommandLine &CmdL)
    }
    
    // Clean out any old list files
-   if (_config->FindB("APT::Get::List-Cleanup",true) == true)
+   if (!Failed && _config->FindB("APT::Get::List-Cleanup",true) == true)
    {
       if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
 	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
@@ -1382,15 +1411,6 @@ bool DoUpgrade(CommandLine &CmdL)
 /* Install named packages */
 bool DoInstall(CommandLine &CmdL)
 {
-   // Lock the list directory
-   FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false)
-   {
-      Lock.Fd(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
-      if (_error->PendingError() == true)
-        return _error->Error(_("Unable to lock the list directory"));
-   }
-   
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || 
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
@@ -1589,68 +1609,86 @@ bool DoInstall(CommandLine &CmdL)
       string SuggestsVersions, RecommendsVersions;
       for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
       {
-	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
+	 pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
 
 	 /* Just look at the ones we want to install */
-	 if ((*Cache)[I].Install() == false)
+	 if ((*Cache)[Pkg].Install() == false)
 	   continue;
 
-	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
-         {
-	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; )
-             {
-		 pkgCache::DepIterator Start;
-		 pkgCache::DepIterator End;
-		 D.GlobOr(Start,End); // advances D
+	 // get the recommends/suggests for the candidate ver
+	 pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
+	 for (pkgCache::DepIterator D = CV.DependsList(); D.end() == false; )
+	 {
+	    pkgCache::DepIterator Start;
+	    pkgCache::DepIterator End;
+	    D.GlobOr(Start,End); // advances D
 
-		 /* 
-		  * If this is a virtual package, we need to check the list of
-		  * packages that provide it and see if any of those are
-		  * installed
-		  */
-		 
-		 bool providedBySomething = false;
-		 for (pkgCache::PrvIterator Prv = Start.TargetPkg().ProvidesList();
-                      Prv.end() != true;
-                      Prv++)
-		    if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
-                    {
-		       providedBySomething = true;
-		       break;
-		    }
+	    // FIXME: we really should display a or-group as a or-group to the user
+	    //        the problem is that ShowList is incapable of doing this
+	    string RecommendsOrList,RecommendsOrVersions;
+	    string SuggestsOrList,SuggestsOrVersions;
+	    bool foundInstalledInOrGroup = false;
+	    for(;;)
+	    {
+	       /* Skip if package is  installed already, or is about to be */
+	       string target = string(Start.TargetPkg().Name()) + " ";
+	       
+	       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
+		   || Cache[Start.TargetPkg()].Install())
+	       {
+		  foundInstalledInOrGroup=true;
+		  break;
+	       }
 
-		 if (providedBySomething) continue;
-            
-                 for(;;)
-                 {
-                     /* Skip if package is  installed already, or is about to be */
-                     string target = string(Start.TargetPkg().Name()) + " ";
+	       /* Skip if we already saw it */
+	       if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target)) != -1)
+	       {
+		  foundInstalledInOrGroup=true;
+		  break; 
+	       }
 
-                     if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
-                         || Cache[Start.TargetPkg()].Install())
-                       break;
+	       // this is a dep on a virtual pkg, check if any package that provides it
+	       // should be installed
+	       if(Start.TargetPkg().ProvidesList() != 0)
+	       {
+		  pkgCache::PrvIterator I = Start.TargetPkg().ProvidesList();
+		  for (; I.end() == false; I++)
+		  {
+		     pkgCache::PkgIterator Pkg = I.OwnerPkg();
+		     if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer() && 
+			 Pkg.CurrentVer() != 0)
+			foundInstalledInOrGroup=true;
+		  }
+	       }
 
-                     /* Skip if we already saw it */
-                     if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target)) != -1)
-                       break; 
+	       if (Start->Type == pkgCache::Dep::Suggests) 
+	       {
+		  SuggestsOrList += target;
+		  SuggestsOrVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
+	       }
+	       
+	       if (Start->Type == pkgCache::Dep::Recommends) 
+	       {
+		  RecommendsOrList += target;
+		  RecommendsOrVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
+	       }
 
-		     if (Start->Type == pkgCache::Dep::Suggests) {
-		       SuggestsList += target;
-		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
-		     }
-		     
-		     if (Start->Type == pkgCache::Dep::Recommends) {
-		       RecommendsList += target;
-		       RecommendsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
-		     }
-
-                     if (Start >= End)
-                        break;
-                     Start++;
-                 }
-             }
-         }
+	       if (Start >= End)
+		  break;
+	       Start++;
+	    }
+	    
+	    if(foundInstalledInOrGroup == false)
+	    {
+	       RecommendsList += RecommendsOrList;
+	       RecommendsVersions += RecommendsOrVersions;
+	       SuggestsList += SuggestsOrList;
+	       SuggestsVersions += SuggestsOrVersions;
+	    }
+	       
+	 }
       }
+
       ShowList(c1out,_("Suggested packages:"),SuggestsList,SuggestsVersions);
       ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
 
@@ -1872,6 +1910,9 @@ bool DoSource(CommandLine &CmdL)
 
    DscFile *Dsc = new DscFile[CmdL.FileSize()];
    
+   // insert all downloaded uris into this set to avoid downloading them
+   // twice
+   set<string> queued;
    // Load the requestd sources into the fetcher
    unsigned J = 0;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
@@ -1908,7 +1949,28 @@ bool DoSource(CommandLine &CmdL)
 	 if (_config->FindB("APT::Get::Tar-Only",false) == true &&
 	     I->Type != "tar")
 	    continue;
-	 
+
+	 // don't download the same uri twice (should this be moved to
+	 // the fetcher interface itself?)
+	 if(queued.find(Last->Index().ArchiveURI(I->Path)) != queued.end())
+	    continue;
+	 queued.insert(Last->Index().ArchiveURI(I->Path));
+	    
+	 // check if we have a file with that md5 sum already localy
+	 if(!I->MD5Hash.empty() && FileExists(flNotDir(I->Path)))  
+	 {
+	    FileFd Fd(flNotDir(I->Path), FileFd::ReadOnly);
+	    MD5Summation sum;
+	    sum.AddFD(Fd.Fd(), Fd.Size());
+	    Fd.Close();
+	    if((string)sum.Result() == I->MD5Hash) 
+	    {
+	       ioprintf(c1out,_("Skipping already downloaded file '%s'\n"),
+			flNotDir(I->Path).c_str());
+	       continue;
+	    }
+	 }
+
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
 			I->MD5Hash,I->Size,
 			Last->Index().SourceInfo(*Last,*I),Src);
@@ -2013,6 +2075,7 @@ bool DoSource(CommandLine &CmdL)
 	    if (system(S) != 0)
 	    {
 	       fprintf(stderr,_("Unpack command '%s' failed.\n"),S);
+	       fprintf(stderr,_("Check if the 'dpkg-dev' package is installed.\n"));
 	       _exit(1);
 	    }	    
 	 }

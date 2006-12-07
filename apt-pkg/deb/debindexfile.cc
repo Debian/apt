@@ -305,7 +305,7 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
    pkgCache::PkgFileIterator File = Cache.FileBegin();
    for (; File.end() == false; File++)
    {
-      if (FileName != File.FileName())
+       if (File.FileName() == NULL || FileName != File.FileName())
 	 continue;
       
       struct stat St;

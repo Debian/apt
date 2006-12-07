@@ -110,7 +110,7 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
       return 0;
    
    I = new Item;
-   I->Tag = string(S,Len);
+   I->Tag.assign(S,Len);
    I->Next = *Last;
    I->Parent = Head;
    *Last = I;
@@ -161,7 +161,7 @@ string Configuration::Find(const char *Name,const char *Default) const
    if (Itm == 0 || Itm->Value.empty() == true)
    {
       if (Default == 0)
-	 return string();
+	 return "";
       else
 	 return Default;
    }
@@ -180,7 +180,7 @@ string Configuration::FindFile(const char *Name,const char *Default) const
    if (Itm == 0 || Itm->Value.empty() == true)
    {
       if (Default == 0)
-	 return string();
+	 return "";
       else
 	 return Default;
    }
@@ -294,7 +294,7 @@ string Configuration::FindAny(const char *Name,const char *Default) const
 // Configuration::CndSet - Conditinal Set a value			/*{{{*/
 // ---------------------------------------------------------------------
 /* This will not overwrite */
-void Configuration::CndSet(const char *Name,string Value)
+void Configuration::CndSet(const char *Name,const string &Value)
 {
    Item *Itm = Lookup(Name,true);
    if (Itm == 0)
@@ -306,7 +306,7 @@ void Configuration::CndSet(const char *Name,string Value)
 // Configuration::Set - Set a value					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Set(const char *Name,string Value)
+void Configuration::Set(const char *Name,const string &Value)
 {
    Item *Itm = Lookup(Name,true);
    if (Itm == 0)
@@ -330,7 +330,7 @@ void Configuration::Set(const char *Name,int Value)
 // Configuration::Clear - Clear an single value from a list	        /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Clear(string Name, int Value)
+void Configuration::Clear(const string Name, int Value)
 {
    char S[300];
    snprintf(S,sizeof(S),"%i",Value);
@@ -340,7 +340,7 @@ void Configuration::Clear(string Name, int Value)
 // Configuration::Clear - Clear an single value from a list	        /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Clear(string Name, string Value)
+void Configuration::Clear(const string Name, string Value)
 {
    Item *Top = Lookup(Name.c_str(),false);
    if (Top == 0 || Top->Child == 0)
@@ -377,7 +377,7 @@ void Configuration::Clear(string Name)
    if (Top == 0) 
       return;
 
-   Top->Value = string();
+   Top->Value.clear();
    Item *Stop = Top;
    Top = Top->Child;
    Stop->Child = 0;
@@ -485,7 +485,7 @@ string Configuration::Item::FullTag(const Item *Stop) const
    sections like 'zone "foo.org" { .. };' This causes each section to be
    added in with a tag like "zone::foo.org" instead of being split 
    tag/value. AsSectional enables Sectional parsing.*/
-bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
+bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 		    unsigned Depth)
 {   
    // Open the stream for reading
@@ -711,13 +711,13 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 	    }
 	    
 	    // Empty the buffer
-	    LineBuffer = string();
+	    LineBuffer.clear();
 	    
 	    // Move up a tag, but only if there is no bit to parse
 	    if (TermChar == '}')
 	    {
 	       if (StackPos == 0)
-		  ParentTag = string();
+		  ParentTag.clear();
 	       else
 		  ParentTag = Stack[--StackPos];
 	    }
@@ -742,8 +742,8 @@ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional,
 // ReadConfigDir - Read a directory of config files			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ReadConfigDir(Configuration &Conf,string Dir,bool AsSectional,
-		    unsigned Depth)
+bool ReadConfigDir(Configuration &Conf,const string &Dir,bool AsSectional,
+		   unsigned Depth)
 {   
    DIR *D = opendir(Dir.c_str());
    if (D == 0)

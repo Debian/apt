@@ -277,7 +277,7 @@ bool pkgAcqMethod::MediaFail(string Required,string Drive)
 	    MyMessages.erase(MyMessages.begin());
 	 }
 
-	 return !StringToBool(LookupTag(Message,"Fail"),false);
+	 return !StringToBool(LookupTag(Message,"Failed"),false);
       }
       
       Messages.push_back(Message);

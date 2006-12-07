@@ -72,6 +72,11 @@ APT
      NoAct "false";
   };
 
+  Authentication
+  {
+     TrustCDROM "false";            // consider the CDROM always trusted
+  };
+
   GPGV
   {
      TrustedKeyring "/etc/apt/trusted.gpg";
@@ -114,6 +119,7 @@ Acquire
     No-Cache "false";
     Max-Age "86400";     // 1 Day age on index files
     No-Store "false";    // Prevent the cache from storing archives    
+    Dl-Limit "7";        // 7Kb/sec maximum download rate
   };
 
   ftp
@@ -233,6 +239,10 @@ DPkg
    // Control the size of the command line passed to dpkg.
    MaxBytes 1024;
    MaxArgs 350;
+
+   // controls if apt will apport on the first dpkg error or if it 
+   // tries to install as many packages as possible
+   StopOnError "true";
 }
 
 /* Options you can set to see some debugging text They correspond to names
@@ -240,11 +250,14 @@ DPkg
 Debug 
 {
   pkgProblemResolver "false";
+  pkgDepCache::AutoInstall "false"; // what packages apt install to satify dependencies
   pkgAcquire "false";
   pkgAcquire::Worker "false";
+  pkgAcquire::Auth "false";
   pkgDPkgPM "false";
   pkgDPkgProgressReporting "false";
   pkgOrderList "false";
+  BuildDeps "false";
   
   pkgInitialize "false";   // This one will dump the configuration space
   NoLocking "false";

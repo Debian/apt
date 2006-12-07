@@ -23,6 +23,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
+#include <apt-pkg/sha256.h>
 #include <apt-pkg/deblistparser.h>
 
 #include <sys/types.h>
@@ -70,7 +71,7 @@ FTWScanner::FTWScanner()
 // ---------------------------------------------------------------------
 /* This is the FTW scanner, it processes each directory element in the 
    directory tree. */
-int FTWScanner::Scanner(const char *File,const struct stat *sb,int Flag)
+int FTWScanner::ScannerFTW(const char *File,const struct stat *sb,int Flag)
 {
    if (Flag == FTW_DNR)
    {
@@ -85,6 +86,14 @@ int FTWScanner::Scanner(const char *File,const struct stat *sb,int Flag)
    if (Flag != FTW_F)
       return 0;
 
+   return ScannerFile(File, true);
+}
+									/*}}}*/
+// FTWScanner::ScannerFile - File Scanner				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+int FTWScanner::ScannerFile(const char *File, bool ReadLink)
+{
    const char *LastComponent = strrchr(File, '/');
    if (LastComponent == NULL)
       LastComponent = File;
@@ -105,7 +114,8 @@ int FTWScanner::Scanner(const char *File,const struct stat *sb,int Flag)
       given are not links themselves. */
    char Jnk[2];
    Owner->OriginalPath = File;
-   if (Owner->RealPath != 0 && readlink(File,Jnk,sizeof(Jnk)) != -1 &&
+   if (ReadLink && Owner->RealPath != 0 &&
+       readlink(File,Jnk,sizeof(Jnk)) != -1 &&
        realpath(File,Owner->RealPath) != 0)
       Owner->DoPackage(Owner->RealPath);
    else
@@ -154,7 +164,7 @@ bool FTWScanner::RecursiveScan(string Dir)
    
    // Do recursive directory searching
    Owner = this;
-   int Res = ftw(Dir.c_str(),Scanner,30);
+   int Res = ftw(Dir.c_str(),ScannerFTW,30);
    
    // Error treewalking?
    if (Res != 0)
@@ -209,12 +219,14 @@ bool FTWScanner::LoadFileList(string Dir,string File)
 	 FileName = Line;
       }
       
+#if 0
       struct stat St;
       int Flag = FTW_F;
       if (stat(FileName,&St) != 0)
 	 Flag = FTW_NS;
+#endif
 
-      if (Scanner(FileName,&St,Flag) != 0)
+      if (ScannerFile(FileName, false) != 0)
 	 break;
    }
   
@@ -227,7 +239,7 @@ bool FTWScanner::LoadFileList(string Dir,string File)
 /* */
 bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 			unsigned long &DeLinkBytes,
-			struct stat &St)
+			off_t FileSize)
 {
    // See if this isn't an internaly prefix'd file name.
    if (InternalPrefix.empty() == false &&
@@ -243,7 +255,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 	 
 	 NewLine(1);
 	 ioprintf(c1out, _(" DeLink %s [%s]\n"), (OriginalPath + InternalPrefix.length()),
-		    SizeToStr(St.st_size).c_str());
+		    SizeToStr(FileSize).c_str());
 	 c1out << flush;
 	 
 	 if (NoLinkAct == false)
@@ -269,7 +281,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 	    }	    
 	 }
 	 
-	 DeLinkBytes += St.st_size;
+	 DeLinkBytes += FileSize;
 	 if (DeLinkBytes/1024 >= DeLinkLimit)
 	    ioprintf(c1out, _(" DeLink limit of %sB hit.\n"), SizeToStr(DeLinkBytes).c_str());      
       }
@@ -295,6 +307,8 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
    
    // Process the command line options
    DoMD5 = _config->FindB("APT::FTPArchive::MD5",true);
+   DoSHA1 = _config->FindB("APT::FTPArchive::SHA1",true);
+   DoSHA256 = _config->FindB("APT::FTPArchive::SHA256",true);
    DoContents = _config->FindB("APT::FTPArchive::Contents",true);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
 
@@ -343,29 +357,19 @@ bool FTWScanner::SetExts(string Vals)
 // PackagesWriter::DoPackage - Process a single package			/*{{{*/
 // ---------------------------------------------------------------------
 /* This method takes a package and gets its control information and 
-   MD5 then writes out a control record with the proper fields rewritten
-   and the path/size/hash appended. */
+   MD5, SHA1 and SHA256 then writes out a control record with the proper fields 
+   rewritten and the path/size/hash appended. */
 bool PackagesWriter::DoPackage(string FileName)
 {      
-   // Open the archive
-   FileFd F(FileName,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   // Stat the file for later
-   struct stat St;
-   if (fstat(F.Fd(),&St) != 0)
-      return _error->Errno("fstat",_("Failed to stat %s"),FileName.c_str());
-
    // Pull all the data we need form the DB
-   string MD5Res;
-   if (Db.SetFile(FileName,St,&F) == false ||
-       Db.LoadControl() == false ||
-       (DoContents == true && Db.LoadContents(true) == false) ||
-       (DoMD5 == true && Db.GetMD5(MD5Res,false) == false))
+   if (Db.GetFileInfo(FileName, true, DoContents, true, DoMD5, DoSHA1, DoSHA256) 
+		  == false)
+   {
       return false;
+   }
 
-   if (Delink(FileName,OriginalPath,Stats.DeLinkBytes,St) == false)
+   off_t FileSize = Db.GetFileSize();
+   if (Delink(FileName,OriginalPath,Stats.DeLinkBytes,FileSize) == false)
       return false;
    
    // Lookup the overide information
@@ -400,7 +404,7 @@ bool PackagesWriter::DoPackage(string FileName)
    }
 
    char Size[40];
-   sprintf(Size,"%lu",St.st_size);
+   sprintf(Size,"%lu", (unsigned long) FileSize);
    
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -420,7 +424,9 @@ bool PackagesWriter::DoPackage(string FileName)
 
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++], "Size", Size);
-   SetTFRewriteData(Changes[End++], "MD5sum", MD5Res.c_str());
+   SetTFRewriteData(Changes[End++], "MD5sum", Db.MD5Res.c_str());
+   SetTFRewriteData(Changes[End++], "SHA1", Db.SHA1Res.c_str());
+   SetTFRewriteData(Changes[End++], "SHA256", Db.SHA256Res.c_str());
    SetTFRewriteData(Changes[End++], "Filename", NewFileName.c_str());
    SetTFRewriteData(Changes[End++], "Priority", OverItem->Priority.c_str());
    SetTFRewriteData(Changes[End++], "Status", 0);
@@ -490,6 +496,10 @@ SourcesWriter::SourcesWriter(string BOverrides,string SOverrides,
       return;
    else
       NoOverride = true;
+
+   // WTF?? The logic above: if we can't read binary overrides, don't even try
+   // reading source overrides. if we can read binary overrides, then say there
+   // are no overrides. THIS MAKES NO SENSE! -- ajt@d.o, 2006/02/28
 
    if (ExtOverrides.empty() == false)
       SOver.ReadExtraOverride(ExtOverrides);
@@ -581,8 +591,6 @@ bool SourcesWriter::DoPackage(string FileName)
 	 auto_ptr<Override::Item> Itm(BOver.GetItem(BinList[I]));
 	 if (Itm.get() == 0)
 	    continue;
-	 if (OverItem.get() == 0)
-	    OverItem = Itm;
 
 	 unsigned char NewPrioV = debListParser::GetPrio(Itm->Priority);
 	 if (NewPrioV < BestPrioV || BestPrio.empty() == true)
@@ -590,6 +598,9 @@ bool SourcesWriter::DoPackage(string FileName)
 	    BestPrioV = NewPrioV;
 	    BestPrio = Itm->Priority;
 	 }	 
+
+	 if (OverItem.get() == 0)
+	    OverItem = Itm;
       }
    }
    
@@ -606,12 +617,14 @@ bool SourcesWriter::DoPackage(string FileName)
    }
    
    auto_ptr<Override::Item> SOverItem(SOver.GetItem(Tags.FindS("Source")));
-   const auto_ptr<Override::Item> autoSOverItem(SOverItem);
+   // const auto_ptr<Override::Item> autoSOverItem(SOverItem);
    if (SOverItem.get() == 0)
    {
+      ioprintf(c1out, _("  %s has no source override entry\n"), Tags.FindS("Source").c_str());
       SOverItem = auto_ptr<Override::Item>(BOver.GetItem(Tags.FindS("Source")));
       if (SOverItem.get() == 0)
       {
+        ioprintf(c1out, _("  %s has no binary override entry either\n"), Tags.FindS("Source").c_str());
 	 SOverItem = auto_ptr<Override::Item>(new Override::Item);
 	 *SOverItem = *OverItem;
       }
@@ -656,7 +669,7 @@ bool SourcesWriter::DoPackage(string FileName)
 	  realpath(OriginalPath.c_str(),RealPath) != 0)
       {
 	 string RP = RealPath;
-	 if (Delink(RP,OriginalPath.c_str(),Stats.DeLinkBytes,St) == false)
+	 if (Delink(RP,OriginalPath.c_str(),Stats.DeLinkBytes,St.st_size) == false)
 	    return false;
       }
    }
@@ -726,26 +739,14 @@ ContentsWriter::ContentsWriter(string DB) :
    determine what the package name is. */
 bool ContentsWriter::DoPackage(string FileName,string Package)
 {
-   // Open the archive
-   FileFd F(FileName,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
+   if (!Db.GetFileInfo(FileName, Package.empty(), true, false, false, false, false))
+   {
       return false;
-   
-   // Stat the file for later
-   struct stat St;
-   if (fstat(F.Fd(),&St) != 0)
-      return _error->Errno("fstat","Failed too stat %s",FileName.c_str());
-
-   // Ready the DB
-   if (Db.SetFile(FileName,St,&F) == false || 
-       Db.LoadContents(false) == false)
-      return false;
+   }
 
    // Parse the package name
    if (Package.empty() == true)
    {
-      if (Db.LoadControl() == false)
-	 return false;
       Package = Db.Control.Section.FindS("Package");
    }
 
@@ -895,6 +896,11 @@ bool ReleaseWriter::DoPackage(string FileName)
    SHA1.AddFD(fd.Fd(), fd.Size());
    CheckSums[NewFileName].SHA1 = SHA1.Result();
 
+   fd.Seek(0);
+   SHA256Summation SHA256;
+   SHA256.AddFD(fd.Fd(), fd.Size());
+   CheckSums[NewFileName].SHA256 = SHA256.Result();
+
    fd.Close();
    
    return true;
@@ -923,6 +929,17 @@ void ReleaseWriter::Finish()
    {
       fprintf(Output, " %s %16ld %s\n",
               (*I).second.SHA1.c_str(),
+              (*I).second.size,
+              (*I).first.c_str());
+   }
+
+   fprintf(Output, "SHA256:\n");
+   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+       I != CheckSums.end();
+       ++I)
+   {
+      fprintf(Output, " %s %16ld %s\n",
+              (*I).second.SHA256.c_str(),
               (*I).second.size,
               (*I).first.c_str());
    }

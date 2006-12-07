@@ -569,7 +569,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    if(comprExt.empty()) 
    {
       // autoselect the compression method
-      if(FileExists("/usr/bin/bzip2")) 
+      if(FileExists("/bin/bzip2")) 
 	 CompressionExtension = ".bz2";
       else 
 	 CompressionExtension = ".gz";
@@ -604,7 +604,7 @@ string pkgAcqIndex::Custom600Headers()
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    // no .bz2 found, retry with .gz
-   if(Desc.URI.substr(Desc.URI.size()-3,Desc.URI.size()-1) == "bz2") {
+   if(Desc.URI.substr(Desc.URI.size()-3) == "bz2") {
       Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz"; 
 
       // retry with a gzip one 
@@ -710,7 +710,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    else
       Local = true;
    
-   string compExt = Desc.URI.substr(Desc.URI.size()-3,Desc.URI.size()-1);
+   string compExt = Desc.URI.substr(Desc.URI.size()-3);
    char *decompProg;
    if(compExt == "bz2") 
       decompProg = "bzip2";
@@ -735,10 +735,9 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
    Item(Owner), RealURI(URI), MetaIndexURI(MetaIndexURI),
-   MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc)
+   MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
+   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets)
 {
-   this->MetaIndexParser = MetaIndexParser;
-   this->IndexTargets = IndexTargets;
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
@@ -761,12 +760,6 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
       // File was already in place.  It needs to be re-verified
       // because Release might have changed, so Move it into partial
       Rename(Final,DestFile);
-      // unlink the file and do not try to use I-M-S and Last-Modified
-      // if the users proxy is broken
-      if(_config->FindB("Acquire::BrokenProxy", false) == true) {
-	 std::cerr << "forcing re-get of the signature file as requested" << std::endl;
-	 unlink(DestFile.c_str());
-      }
    }
 
    QueueURI(Desc);
@@ -816,17 +809,18 @@ void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   // Delete any existing sigfile, so that this source isn't
-   // mistakenly trusted
-   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   unlink(Final.c_str());
 
-   // if we get a timeout if fail
+   // if we get a network error we fail gracefully
    if(LookupTag(Message,"FailReason") == "Timeout" || 
-      LookupTag(Message,"FailReason") == "TmpResolveFailure") {
+      LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
+      LookupTag(Message,"FailReason") == "ConnectionRefused") {
       Item::Failed(Message,Cnf);
       return;
    }
+
+   // Delete any existing sigfile when the acquire failed
+   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   unlink(Final.c_str());
 
    // queue a pkgAcqMetaIndex with no sigfile
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
@@ -850,11 +844,9 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
 				 string SigFile,
 				 const vector<struct IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-  Item(Owner), RealURI(URI), SigFile(SigFile)
+   Item(Owner), RealURI(URI), SigFile(SigFile), AuthPass(false),
+   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets), IMSHit(false)
 {
-   this->AuthPass = false;
-   this->MetaIndexParser = MetaIndexParser;
-   this->IndexTargets = IndexTargets;
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
@@ -946,6 +938,9 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
       return;
    }
 
+   // see if the download was a IMSHit
+   IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
+
    Complete = true;
 
    string FinalFile = _config->FindDir("Dir::State::lists");
@@ -975,7 +970,7 @@ void pkgAcqMetaIndex::AuthDone(string Message)
       return;
    }
 
-   if (!VerifyVendor())
+   if (!VerifyVendor(Message))
    {
       return;
    }
@@ -1038,7 +1033,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
    }
 }
 
-bool pkgAcqMetaIndex::VerifyVendor()
+bool pkgAcqMetaIndex::VerifyVendor(string Message)
 {
 //    // Maybe this should be made available from above so we don't have
 //    // to read and parse it every time?
@@ -1063,6 +1058,22 @@ bool pkgAcqMetaIndex::VerifyVendor()
 //          break;
 //       }
 //    }
+   string::size_type pos;
+
+   // check for missing sigs (that where not fatal because otherwise we had
+   // bombed earlier)
+   string missingkeys;
+   string msg = _("There is no public key available for the "
+		  "following key IDs:\n");
+   pos = Message.find("NO_PUBKEY ");
+   if (pos != std::string::npos)
+   {
+      string::size_type start = pos+strlen("NO_PUBKEY ");
+      string Fingerprint = Message.substr(start, Message.find("\n")-start);
+      missingkeys += (Fingerprint);
+   }
+   if(!missingkeys.empty())
+      _error->Warning("%s", string(msg+missingkeys).c_str());
 
    string Transformed = MetaIndexParser->GetExpectedDist();
 
@@ -1071,7 +1082,7 @@ bool pkgAcqMetaIndex::VerifyVendor()
       Transformed = "experimental";
    }
 
-   string::size_type pos = Transformed.rfind('/');
+   pos = Transformed.rfind('/');
    if (pos != string::npos)
    {
       Transformed = Transformed.substr(0, pos);
@@ -1117,10 +1128,30 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    if (AuthPass == true)
    {
-      // gpgv method failed
+      // if we fail the authentication but got the file via a IMS-Hit 
+      // this means that the file wasn't downloaded and that it might be
+      // just stale (server problem, proxy etc). we delete what we have
+      // queue it again without i-m-s 
+      // alternatively we could just unlink the file and let the user try again
+      if (IMSHit)
+      {
+	 Complete = false;
+	 Local = false;
+	 AuthPass = false;
+	 unlink(DestFile.c_str());
+
+	 DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+	 DestFile += URItoFileName(RealURI);
+	 Desc.URI = RealURI;
+	 QueueURI(Desc);
+	 return;
+      }
+
+      // gpgv method failed 
       _error->Warning("GPG error: %s: %s",
                       Desc.Description.c_str(),
                       LookupTag(Message,"Message").c_str());
+
    }
 
    // No Release file was present, or verification failed, so fall
@@ -1195,6 +1226,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 	 break;
       }
    }
+
+   // "allow-unauthenticated" restores apts old fetching behaviour
+   // that means that e.g. unauthenticated file:// uris are higher
+   // priority than authenticated http:// uris
+   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+      Trusted = false;
 
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
@@ -1428,13 +1465,19 @@ void pkgAcqArchive::Finished()
 // ---------------------------------------------------------------------
 /* The file is added to the queue */
 pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
-		       unsigned long Size,string Dsc,string ShortDesc) :
+		       unsigned long Size,string Dsc,string ShortDesc,
+		       const string &DestDir, const string &DestFilename) :
                        Item(Owner), Md5Hash(MD5)
 {
    Retries = _config->FindI("Acquire::Retries",0);
    
-   DestFile = flNotDir(URI);
-   
+   if(!DestFilename.empty())
+      DestFile = DestFilename;
+   else if(!DestDir.empty())
+      DestFile = DestDir + "/" + flNotDir(URI);
+   else
+      DestFile = flNotDir(URI);
+
    // Create the item
    Desc.URI = URI;
    Desc.Description = Dsc;
@@ -1454,7 +1497,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
       else
 	 PartialSize = Buf.st_size;
    }
-   
+
    QueueURI(Desc);
 }
 									/*}}}*/

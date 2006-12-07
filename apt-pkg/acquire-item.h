@@ -215,8 +215,10 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    const vector<struct IndexTarget*>* IndexTargets;
    indexRecords* MetaIndexParser;
    bool AuthPass;
+   // required to deal gracefully with problems caused by incorrect ims hits
+   bool IMSHit; 
 
-   bool VerifyVendor();
+   bool VerifyVendor(string Message);
    void RetrievalDone(string Message);
    void AuthDone(string Message);
    void QueueIndexes(bool verify);
@@ -288,9 +290,14 @@ class pkgAcqFile : public pkgAcquire::Item
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string MD5Sum() {return Md5Hash;};
    virtual string DescURI() {return Desc.URI;};
-   
-   pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,unsigned long Size,
-		  string Desc,string ShortDesc);
+
+   // If DestFilename is empty, download to DestDir/<basename> if
+   // DestDir is non-empty, $CWD/<basename> otherwise.  If
+   // DestFilename is NOT empty, DestDir is ignored and DestFilename
+   // is the absolute name to which the file should be downloaded.
+   pkgAcqFile(pkgAcquire *Owner, string URI, string MD5, unsigned long Size,
+	      string Desc, string ShortDesc,
+	      const string &DestDir="", const string &DestFilename="");
 };
 
 #endif

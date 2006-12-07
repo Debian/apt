@@ -18,7 +18,7 @@
  <!-- Man page title -->
  <refnamediv>
     <refname>apt-key</refname>
-    <refpurpose>APT key management utility</refpurpose>
+    <refpurpose>Utilitaire de gestion des clés</refpurpose>
  </refnamediv>
 
  <!-- Arguments -->
@@ -34,7 +34,7 @@
    <para>
    <command>apt-key</command> gère les clés dont se sert apt pour
 authentifier les paquets. Les paquets authentifiés par ces clés seront
-réputés 
+réputés fiables. 
    </para>
 </refsect1>
 
@@ -73,13 +73,47 @@ Afficher la liste des clés fiables.
 
      </listitem>
      </varlistentry>
+
+     <varlistentry><term>update</term>
+     <listitem>
+     <para>
+Mettre à jour le trousseau de clés local avec le trousseau de clés de l'archive
+Debian et supprimer les clés qui sont périmées.
+</para>
+	</listitem>
+      </varlistentry>
+
    </variablelist>
 </refsect1>
 
-<!--  <refsect1><title>See Also</title> -->
-<!--    <para> -->
-<!--    &apt-conf;, &apt-get;, &sources-list; -->
-<!--  </refsect1> -->
+ <refsect1><title>Fichiers</title>
+   <variablelist>
+     <varlistentry><term><filename>/etc/apt/trusted.gpg</filename></term>
+<listitem><para>Trousseau de clés locales fiables, les nouvelles clés sont ajoutées ici.</para>
+</listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/etc/apt/trustdb.gpg</filename></term>
+     <listitem><para>Base de données locale fiable des clés de l'archive.</para></listitem>
+     </varlistentry>
+
+   <varlistentry><term><filename>/usr/share/keyrings/debian-archive-keyring.gpg</filename></term>
+     <listitem><para>Trousseau des clés fiables de l'archive Debian.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>
+</term>
+    <listitem><para>Trousseau des clés fiables supprimées de l'archive Debian.</para></listitem>
+     </varlistentry>
+
+   </variablelist>
+  </refsect1>
+
+<refsect1><title>Voir aussi</title>
+<para>
+&apt-get;, &apt-secure;
+</para>
+</refsect1>
 
  &manbugs;
  &manauthor;
