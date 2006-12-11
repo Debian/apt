@@ -40,7 +40,7 @@ const char **debSrcRecordParser::Binaries()
    {
       delete [] Buffer;
       // allocate new size based on buffer (but never smaller than 4000)
-      BufSize = max((unsigned long)4000, max(Bins.length()+1,2*BufSize));
+      BufSize = max((unsigned long)4000, max((unsigned long)Bins.length()+1,2*BufSize));
       Buffer = new char[BufSize];
    }
 

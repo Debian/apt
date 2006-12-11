@@ -1,5 +1,6 @@
-apt (0.6.46.4) unstable; urgency=low
+apt (0.6.46.4) unstable; urgency=high
 
+  * ack NMU (closes: #401017)
   * added apt-secure.8 to "See also" section
   * apt-pkg/deb/dpkgpm.cc:
     - added "Dpkg::StopOnError" variable that controls if apt
@@ -10,8 +11,30 @@ apt (0.6.46.4) unstable; urgency=low
     - uk.po: New Ukrainian translation: 483t28f3u
     - el.po: Update to 503t9f2u
     - de.po: Updates and corrections.
+  * apt-pkg/contrib/progress.cc:
+    - OpProgress::CheckChange optimized, thanks to Paul Brook
+      (closes: #398381)
+  * apt-pkg/contrib/sha256.cc:
+    - fix building with noopt
 
- --
+ -- Michael Vogt <mvo@debian.org>  Thu,  7 Dec 2006 10:49:50 +0100
+
+apt (0.6.46.3-0.2) unstable; urgency=high
+
+  * Non-maintainer upload with permission of Michael Vogt.
+  * Fix FTBFS on most arches (regression from the fix of #400874)
+
+ -- Andreas Barth <aba@not.so.argh.org>  Tue,  5 Dec 2006 15:51:22 +0000 
+  
+apt (0.6.46.3-0.1) unstable; urgency=high
+
+  * Non-maintainer upload with permission of Michael Vogt.
+  * Fix segfault at apt-get source. Closes: #400874
+  * Add apt-key update in postinst, so that debian-archive-keyring doesn't
+    need to depend on apt >= 0.6. Closes: #401114
+  * Don't double-queue pdiff files. Closes: #401017
+  
+ -- Andreas Barth <aba@not.so.argh.org>  Tue,  5 Dec 2006 10:34:56 +0000
 
 apt (0.6.46.3) unstable; urgency=low
 
