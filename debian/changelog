@@ -1,4 +1,58 @@
-apt (0.6.46.1exp1) experimental; urgency=low
+apt (0.6.46.4) unstable; urgency=low
+
+  * added apt-secure.8 to "See also" section
+  * apt-pkg/deb/dpkgpm.cc:
+    - added "Dpkg::StopOnError" variable that controls if apt
+      will abort on errors from dpkg
+  * apt-pkg/deb/debsrcrecords.{cc,h}:
+    - make the Buffer grow dynmaically (closes: #400874)
+  * Merged from Christian Perrier bzr branch:
+    - uk.po: New Ukrainian translation: 483t28f3u
+    - el.po: Update to 503t9f2u
+    - de.po: Updates and corrections.
+
+ --
+
+apt (0.6.46.3) unstable; urgency=low
+
+  * apt-pkg/deb/dpkgpm.cc:
+    - make progress reporting robust against multiline error
+      messages 
+
+  * Merged from Christian Perrier bzr branch:
+    - ca.po: Updated to 514t
+    - be.po: Updated to 514t
+    - it.po: Updated to 514t
+    - hu.po: Updated to 514t
+    - zh_TW.po: Updated to 514t
+    - ar.po: Updated to 293t221u.
+    - ru.po: Updated to 514t. Closes: #392466
+    - nb.po: Updated to 514t. Closes: #392466
+    - pt.po: Updated to 514t. Closes: #393199
+    - fr.po: One spelling error corrected: s/accÃ¨der/accÃ©der
+    - km.po: Updated to 514t.
+    - ko.po: Updated to 514t.
+    - bg.po: Updated to 514t.
+    - de.po: Updated to 514t.
+    - en_GB.po: Updated to 514t.
+
+ -- Michael Vogt <mvo@debian.org>  Thu,  2 Nov 2006 11:37:58 +0100
+
+apt (0.6.46.2) unstable; urgency=low
+
+  * debian/control:
+    - depend on debian-archive-keyring to offer clean upgrade path 
+      (closes: #386800)
+  * Merged from Christian Perrier bzr branch:
+    - es.po: Updated to 514t. Closes: #391661
+    - da.po: Updated to 514t. Closes: #391424
+    - cs.po: Updated. Closes: #391064
+    - es.po: Updated to 514t. Closes: #391661
+    - da.po: Updated to 514t. Closes: #391424
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 11 Oct 2006 09:03:15 +0200
+
+apt (0.6.46.1) unstable; urgency=low
 
   * merged "install-recommends" branch (ABI break): 
     - new "--install-recommends"
@@ -24,7 +78,7 @@ apt (0.6.46.1exp1) experimental; urgency=low
   * make the internal buffer in pkgTagFile grow dynamically
     (closes: #388708)
   
- -- Michael Vogt <mvo@debian.org>  Mon,  2 Oct 2006 01:12:49 +0200
+ -- Michael Vogt <mvo@debian.org>  Mon,  2 Oct 2006 20:42:20 +0200
 
 apt (0.6.46) unstable; urgency=low
 
