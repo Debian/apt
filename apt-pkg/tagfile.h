@@ -25,7 +25,6 @@
 #endif 
 
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/mmap.h>
 #include <stdio.h>
     
 class pkgTagSection
@@ -70,23 +69,23 @@ class pkgTagSection
 class pkgTagFile
 {
    FileFd &Fd;
-   MMap *Map;
    char *Buffer;
    char *Start;
    char *End;
    bool Done;
    unsigned long iOffset;
    unsigned long Size;
-   
+
    bool Fill();
-   
+   bool Resize();
+
    public:
 
    bool Step(pkgTagSection &Section);
    inline unsigned long Offset() {return iOffset;};
    bool Jump(pkgTagSection &Tag,unsigned long Offset);
 
-   pkgTagFile(FileFd *F,unsigned long Size = 64*1024);
+   pkgTagFile(FileFd *F,unsigned long Size = 32*1024);
    ~pkgTagFile();
 };
 

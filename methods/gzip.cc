@@ -52,6 +52,13 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    // Open the source and destination files
    FileFd From(Path,FileFd::ReadOnly);
 
+   // if the file is empty, just rename it and return
+   if(From.Size() == 0) 
+   {
+      rename(Path.c_str(), Itm->DestFile.c_str());
+      return true;
+   }
+
    int GzOut[2];   
    if (pipe(GzOut) < 0)
       return _error->Errno("pipe",_("Couldn't open pipe for %s"),Prog);
@@ -111,6 +118,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       if (To.Write(Buffer,Count) == false)
       {
 	 Failed = true;
+	 FromGz.Close();
 	 break;
       }      
    }

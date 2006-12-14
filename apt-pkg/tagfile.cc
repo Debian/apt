@@ -33,33 +33,22 @@ using std::string;
 /* */
 pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
      Fd(*pFd),
-     Size(Size),
-     Map(NULL),
-     Buffer(0)
+     Size(Size)
 {
    if (Fd.IsOpen() == false)
    {
+      Buffer = 0;
       Start = End = Buffer = 0;
       Done = true;
       iOffset = 0;
-      Map = NULL;
       return;
    }
    
-   // check if we can MMap it
-   if(Fd.Size() == 0)
-   {
-      Buffer = new char[Size];
-      Start = End = Buffer;
-      Done = false;
-      Fill();
-   } else {
-      Map = new MMap (Fd, MMap::Public | MMap::ReadOnly);
-      Buffer = (char *) Map->Data ();
-      Start = Buffer;
-      End = Buffer + Map->Size ();
-   }
+   Buffer = new char[Size];
+   Start = End = Buffer;
+   Done = false;
    iOffset = 0;
+   Fill();
 }
 									/*}}}*/
 // TagFile::~pkgTagFile - Destructor					/*{{{*/
@@ -67,30 +56,55 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
 /* */
 pkgTagFile::~pkgTagFile()
 {
-   if(!Map) delete [] Buffer;
-   delete Map;
+   delete [] Buffer;
 }
 									/*}}}*/
-// TagFile::Step - Advance to the next section				/*{{{*/
+// TagFile::Resize - Resize the internal buffer				/*{{{*/
 // ---------------------------------------------------------------------
-/* If the Section Scanner fails we refill the buffer and try again. */
-bool pkgTagFile::Step(pkgTagSection &Tag)
+/* Resize the internal buffer (double it in size). Fail if a maximum size
+ * size is reached.
+ */
+bool pkgTagFile::Resize()
 {
-   if ((Map != NULL) && (Start == End))
+   char *tmp;
+   unsigned long EndSize = End - Start;
+
+   // fail is the buffer grows too big
+   if(Size > 1024*1024+1)
       return false;
 
-   if (Tag.Scan(Start,End - Start) == false)
-   {
-      if (Map != NULL)
-	 return _error->Error(_("Unable to parse package file %s (1)"),
-			      Fd.Name().c_str());
+   // get new buffer and use it
+   tmp = new char[2*Size];
+   memcpy(tmp, Buffer, Size);
+   Size = Size*2;
+   delete [] Buffer;
+   Buffer = tmp;
 
+   // update the start/end pointers to the new buffer
+   Start = Buffer;
+   End = Start + EndSize;
+   return true;
+}
+
+// TagFile::Step - Advance to the next section				/*{{{*/
+// ---------------------------------------------------------------------
+/* If the Section Scanner fails we refill the buffer and try again. 
+ * If that fails too, double the buffer size and try again until a
+ * maximum buffer is reached.
+ */
+bool pkgTagFile::Step(pkgTagSection &Tag)
+{
+   while (Tag.Scan(Start,End - Start) == false)
+   {
       if (Fill() == false)
 	 return false;
       
-      if (Tag.Scan(Start,End - Start) == false)
+      if(Tag.Scan(Start,End - Start))
+	 break;
+
+      if (Resize() == false)
 	 return _error->Error(_("Unable to parse package file %s (1)"),
-			      Fd.Name().c_str());
+				 Fd.Name().c_str());
    }
    Start += Tag.size();
    iOffset += Tag.size();
@@ -158,30 +172,23 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
       return Step(Tag);
    }
 
+   // Reposition and reload..
    iOffset = Offset;
-   if (Map != NULL)
-   {
-      Start = Buffer + iOffset;
-   } 
-   else 
-   {
-      // Reposition and reload..
-      Done = false;
-      if (Fd.Seek(Offset) == false)
-	 return false;
-      End = Start = Buffer;
+   Done = false;
+   if (Fd.Seek(Offset) == false)
+      return false;
+   End = Start = Buffer;
    
-      if (Fill() == false)
-	 return false;
+   if (Fill() == false)
+      return false;
 
-      if (Tag.Scan(Start,End - Start) == true)
-	 return true;
+   if (Tag.Scan(Start,End - Start) == true)
+      return true;
    
-      // This appends a double new line (for the real eof handling)
-      if (Fill() == false)
-	 return false;
-   }
-
+   // This appends a double new line (for the real eof handling)
+   if (Fill() == false)
+      return false;
+   
    if (Tag.Scan(Start,End - Start) == false)
       return _error->Error(_("Unable to parse package file %s (2)"),Fd.Name().c_str());
    
@@ -192,12 +199,12 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
 // ---------------------------------------------------------------------
 /* This looks for the first double new line in the data stream. It also
    indexes the tags in the section. This very simple hash function for the
-   first 3 letters gives very good performance on the debian package files */
+   last 8 letters gives very good performance on the debian package files */
 inline static unsigned long AlphaHash(const char *Text, const char *End = 0)
 {
    unsigned long Res = 0;
    for (; Text != End && *Text != ':' && *Text != 0; Text++)
-      Res = (unsigned long)(*Text) ^ (Res << 2);
+      Res = ((unsigned long)(*Text) & 0xDF) ^ (Res << 1);
    return Res & 0xFF;
 }
 
@@ -207,7 +214,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
    Stop = Section = Start;
    memset(AlphaIndexes,0,sizeof(AlphaIndexes));
 
-   if (Stop == 0 || MaxLength == 0)
+   if (Stop == 0)
       return false;
    
    TagCount = 0;
@@ -236,12 +243,6 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       }
       
       Stop++;
-   }
-
-   if ((Stop+1 >= End) && (End[-1] == '\n' || End[-1] == '\r'))
-   {
-      Indexes[TagCount] = (End - 1) - Section;
-      return true;
    }
 
    return false;

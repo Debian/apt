@@ -1,58 +1,75 @@
-apt (0.6.46.3ubuntu2) feisty; urgency=low
+apt (0.6.46.4) unstable; urgency=low
 
-  * apt-pkg/algorithms.cc: add missing call to MarkKeep
-    so that dist-upgrade isn't broken by unsatisfiable Breaks.
-
- -- Ian Jackson <iwj@ubuntu.com>  Thu,  7 Dec 2006 15:46:52 +0000
-
-apt (0.6.45ubuntu6) edgy; urgency=low
-
-  * Tests pass without code changes!  Except that we need this:
-  * Bump cache file major version to force rebuild so that Breaks
-    dependencies are included.
-  * Don't depend on or suggest any particular dpkg or dpkg-dev versions;
-    --auto-deconfigure is very very old and dpkg-dev's Breaks support
-    is more or less orthogonal.
-
- -- Ian Jackson <iwj@ubuntu.com>  Tue,  5 Sep 2006 19:50:02 +0100
-
-apt (0.6.45ubuntu6~iwj) unstable; urgency=low
-
-  * Initial draft of `Breaks' implementation.  Appears to compile,
-    but as yet *completely untested*.
-
- -- Ian Jackson <ian@davenant.greenend.org.uk>  Fri, 25 Aug 2006 15:39:07 +0100
-
-apt (0.6.45ubuntu5) edgy; urgency=low
-
-  * apt-pkg/pkgcachegen.cc:
-    - increase the APT::Cache-Limit to deal with the increased demand due
-      to the translated descriptions
+  * added apt-secure.8 to "See also" section
   * apt-pkg/deb/dpkgpm.cc:
-    - pass "--auto-deconfigure" to dpkg on install to support the
-      new "breaks" in dpkg
+    - added "Dpkg::StopOnError" variable that controls if apt
+      will abort on errors from dpkg
+  * apt-pkg/deb/debsrcrecords.{cc,h}:
+    - make the Buffer grow dynmaically (closes: #400874)
+  * Merged from Christian Perrier bzr branch:
+    - uk.po: New Ukrainian translation: 483t28f3u
+    - el.po: Update to 503t9f2u
+    - de.po: Updates and corrections.
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 15 Aug 2006 12:06:26 +0200
+ --
 
-apt (0.6.45ubuntu4) edgy; urgency=low
+apt (0.6.46.3) unstable; urgency=low
 
-  * cmdline/apt-get.cc:
-    - fix in the new --fix-polciy code
+  * apt-pkg/deb/dpkgpm.cc:
+    - make progress reporting robust against multiline error
+      messages 
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 14 Aug 2006 21:08:11 +0200
+  * Merged from Christian Perrier bzr branch:
+     - ca.po: Updated to 514t
+     - be.po: Updated to 514t
+     - it.po: Updated to 514t
+     - hu.po: Updated to 514t
+     - zh_TW.po: Updated to 514t
+     - ar.po: Updated to 293t221u.
+     - ru.po: Updated to 514t. Closes: #392466
+     - nb.po: Updated to 514t. Closes: #392466
+     - pt.po: Updated to 514t. Closes: #393199
+     - fr.po: One spelling error corrected: s/accÃ¨der/accÃ©der
+     - km.po: Updated to 514t.
+     - ko.po: Updated to 514t.
+     - bg.po: Updated to 514t.
+     - de.po: Updated to 514t.
+     - en_GB.po: Updated to 514t.
 
-apt (0.6.45ubuntu3) edgy; urgency=low
+ -- Michael Vogt <mvo@debian.org>  Thu, 2 Nov 2006 11:37:58 +0100 
 
-  * ABI break
-  * merged latest apt--install-recommends (closes: #559000)
-  * added "--fix-policy" option to can be used as "--fix-broken" and
-    will install missing weak depends (recommends, and/or suggests 
-    depending on the settings)
-  * merged the apt--ddtp branch
+apt (0.6.46.2) unstable; urgency=low
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 11 Aug 2006 12:53:23 +0200
+  * Merged from Christian Perrier bzr branch:
+    - es.po: Updated to 514t. Closes: #391661
+    - da.po: Updated to 514t. Closes: #391424
+    - cs.po: Updated. Closes: #391064
+    - es.po: Updated to 514t. Closes: #391661
+    - da.po: Updated to 514t. Closes: #391424
+  
+ -- Michael Vogt <mvo@debian.org>  Wed, 11 Oct 2006 09:03:15 +0200
 
-apt (0.6.45ubuntu2) edgy; urgency=low
+apt (0.6.46.1) unstable; urgency=low
+
+  * methods/gzip.cc:
+    - deal with empty files 
+  * Applied patch from Daniel Schepler to make apt bin-NMU able.  
+    (closes: bug#359634)
+  * rebuild against current g++ because of:
+    http://gcc.gnu.org/bugzilla/show_bug.cgi?id=29289
+    (closes: #390189)
+  * fix broken i18n in the dpkg progress reporting, thanks to 
+    Frans Pop and Steinar Gunderson. (closes: #389261)
+  * Merged from Christian Perrier bzr branch:
+    * fi.po: Updated to 514t. Closes: #390149
+    * eu.po: Updated to 514t. Closes: #389725
+    * vi.po: Updated to 514t. Closes: #388555
+  * make the internal buffer in pkgTagFile grow dynamically
+    (closes: #388708)
+  
+ -- Michael Vogt <mvo@debian.org>  Mon,  2 Oct 2006 20:42:20 +0200
+
+apt (0.6.46) unstable; urgency=low
 
   * debian/control:
     - switched to libdb4.4 for building (closes: #381019)
@@ -61,18 +78,32 @@ apt (0.6.45ubuntu2) edgy; urgency=low
       versions of the package (closes: #257054)
     - properly handle recommends/suggests or-groups when printing the list of
       suggested/recommends packages (closes: #311619)
-  * merged "apt--install-recommends" branch:
-    - added "{no-}install-recommends" commandline option
-    - added APT::Install-{Recommends,Suggests} option
-    - currently Install-Recommends defaults to "False" 
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed,  9 Aug 2006 23:38:46 +0200
-
-apt (0.6.45ubuntu1) edgy; urgency=low
-
-  * merged with debian/unstable
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue,  1 Aug 2006 15:43:22 +0200
+  * methods/http.cc:
+    - check more careful for incorrect proxy settings (closes: #378868)
+  * methods/gzip.cc:
+    - don't hang when /var is full (closes: #341537), thanks to
+      Luis Rodrigo Gallardo Cruz for the patch
+  * doc/examples/sources.list:
+    - removed non-us.debian.org from the example (closes: #380030,#316196)
+  * Merged from Christian Perrier bzr branch:
+    * ro.po: Updated to 514t. Closes: #388402
+    * dz.po: Updated to 514t. Closes: #388184
+    * it.po: Fixed typos. Closes: #387812
+    * ku.po: New kurdish translation. Closes: #387766
+    * sk.po: Updated to 514t. Closes: #386851
+    * ja.po: Updated to 514t. Closes: #386537
+    * gl.po: Updated to 514t. Closes: #386397
+    * fr.po: Updated to 516t.
+    * fi.po: Updated to 512t. Closes: #382702
+  * share/archive-archive.gpg:
+    - removed the outdated amd64 and debian-2004 keys
+  * apt-pkg/tagfile.cc:
+    - applied patch from Jeroen van Wolffelaar to make the tags
+      caseinsensitive (closes: #384182)
+    - reverted MMap use in the tagfile because it does not work 
+      across pipes (closes: #383487) 
+  
+ -- Michael Vogt <mvo@debian.org>  Thu, 21 Sep 2006 10:25:03 +0200
 
 apt (0.6.45) unstable; urgency=low
 
