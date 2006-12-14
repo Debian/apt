@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-11 20:19+0200\n"
+"POT-Creation-Date: 2006-10-11 20:34+0200\n"
 "PO-Revision-Date: 2006-10-21 16:58+0800\n"
 "Last-Translator: Asho Yeh <asho@debian.org.tw>\n"
 "Language-Team: Chinese/Traditional <zh-l10n@linux.org.tw>\n"
@@ -21,12 +21,8 @@ msgstr ""
 msgid "Package %s version %s has an unmet dep:\n"
 msgstr "套件 %s 版本 %s 有未解決的相依問題:\n"
 
-#: cmdline/apt-cache.cc:175
-#: cmdline/apt-cache.cc:527
-#: cmdline/apt-cache.cc:615
-#: cmdline/apt-cache.cc:771
-#: cmdline/apt-cache.cc:989
-#: cmdline/apt-cache.cc:1357
+#: cmdline/apt-cache.cc:175 cmdline/apt-cache.cc:527 cmdline/apt-cache.cc:615
+#: cmdline/apt-cache.cc:771 cmdline/apt-cache.cc:989 cmdline/apt-cache.cc:1357
 #: cmdline/apt-cache.cc:1508
 #, c-format
 msgid "Unable to locate package %s"
@@ -88,8 +84,7 @@ msgstr "Slack 空間共計:"
 msgid "Total space accounted for: "
 msgstr "所有統計後的空間:"
 
-#: cmdline/apt-cache.cc:446
-#: cmdline/apt-cache.cc:1189
+#: cmdline/apt-cache.cc:446 cmdline/apt-cache.cc:1189
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "套件檔案 %s 已失去同步。"
@@ -106,8 +101,7 @@ msgstr "未找到套件"
 msgid "Package files:"
 msgstr "套件檔案:"
 
-#: cmdline/apt-cache.cc:1469
-#: cmdline/apt-cache.cc:1555
+#: cmdline/apt-cache.cc:1469 cmdline/apt-cache.cc:1555
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr "快取資料同步過時,無法 x-ref 套件檔案"
 
@@ -121,8 +115,7 @@ msgstr "%4i %s\n"
 msgid "Pinned packages:"
 msgstr "鎖定的套件:"
 
-#: cmdline/apt-cache.cc:1494
-#: cmdline/apt-cache.cc:1535
+#: cmdline/apt-cache.cc:1494 cmdline/apt-cache.cc:1535
 msgid "(not found)"
 msgstr "(未找到)"
 
@@ -131,8 +124,7 @@ msgstr "(未找到)"
 msgid "  Installed: "
 msgstr "已安裝:"
 
-#: cmdline/apt-cache.cc:1517
-#: cmdline/apt-cache.cc:1525
+#: cmdline/apt-cache.cc:1517 cmdline/apt-cache.cc:1525
 msgid "(none)"
 msgstr "(沒有)"
 
@@ -155,13 +147,9 @@ msgstr "  版本表格:"
 msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
-#: cmdline/apt-cache.cc:1652
-#: cmdline/apt-cdrom.cc:138
-#: cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225
-#: ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2387
-#: cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-cache.cc:1652 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
+#: cmdline/apt-get.cc:2387 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s 是針對於 %s %s 並編譯在 %s %s\n"
@@ -313,8 +301,7 @@ msgstr ""
 "  -c=? 讀取指定的設定檔案\n"
 "  -o=? 設定任意指定的設定選項,例如:-o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267
-#: apt-pkg/pkgcachegen.cc:710
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:710
 #, c-format
 msgid "Unable to write to %s"
 msgstr "無法寫入『%s』。"
@@ -323,17 +310,13 @@ msgstr "無法寫入『%s』。"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "無法取得 debconf 版本。debconf 是否安裝?"
 
-#: ftparchive/apt-ftparchive.cc:167
-#: ftparchive/apt-ftparchive.cc:341
+#: ftparchive/apt-ftparchive.cc:167 ftparchive/apt-ftparchive.cc:341
 msgid "Package extension list is too long"
 msgstr "套件延伸列表過長"
 
-#: ftparchive/apt-ftparchive.cc:169
-#: ftparchive/apt-ftparchive.cc:183
-#: ftparchive/apt-ftparchive.cc:206
-#: ftparchive/apt-ftparchive.cc:256
-#: ftparchive/apt-ftparchive.cc:270
-#: ftparchive/apt-ftparchive.cc:292
+#: ftparchive/apt-ftparchive.cc:169 ftparchive/apt-ftparchive.cc:183
+#: ftparchive/apt-ftparchive.cc:206 ftparchive/apt-ftparchive.cc:256
+#: ftparchive/apt-ftparchive.cc:270 ftparchive/apt-ftparchive.cc:292
 #, c-format
 msgid "Error processing directory %s"
 msgstr "處理目錄 %s 時錯誤"
@@ -451,7 +434,9 @@ msgid "DB is old, attempting to upgrade %s"
 msgstr "DB 過舊,嘗試更新 %s"
 
 #: ftparchive/cachedb.cc:76
-msgid "DB format is invalid. If you upgraded from a older version of apt, please remove and re-create the database."
+msgid ""
+"DB format is invalid. If you upgraded from a older version of apt, please "
+"remove and re-create the database."
 msgstr "資料庫格式錯誤。如果您升級舊版的 apt，請移除並重建資料庫。"
 
 #: ftparchive/cachedb.cc:81
@@ -459,12 +444,8 @@ msgstr "資料庫格式錯誤。如果您升級舊版的 apt，請移除並重�
 msgid "Unable to open DB file %s: %s"
 msgstr "無法開啟 DB 檔案 %s:%s"
 
-#: ftparchive/cachedb.cc:127
-#: apt-inst/extract.cc:181
-#: apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210
-#: apt-inst/deb/dpkgdb.cc:121
-#: methods/gpgv.cc:272
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:272
 #, c-format
 msgid "Failed to stat %s"
 msgstr "無法取得 %s 的狀態"
@@ -499,8 +480,7 @@ msgstr "警告："
 msgid "E: Errors apply to file "
 msgstr "E:套用到檔案時出錯"
 
-#: ftparchive/writer.cc:161
-#: ftparchive/writer.cc:191
+#: ftparchive/writer.cc:161 ftparchive/writer.cc:191
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "無法解析路徑 %s"
@@ -543,14 +523,12 @@ msgstr " 達到了 DeLink 的上限 %sB。\n"
 msgid "Archive had no package field"
 msgstr "檔案無套件字符"
 
-#: ftparchive/writer.cc:398
-#: ftparchive/writer.cc:613
+#: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s 無 override 項目\n"
 
-#: ftparchive/writer.cc:443
-#: ftparchive/writer.cc:701
+#: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s 套件維護者是 %s 非 %s\n"
@@ -570,37 +548,31 @@ msgstr "  %s 無二元碼 override 項目\n"
 msgid "Internal error, could not locate member %s"
 msgstr "內部錯誤：無法找到成員 %s"
 
-#: ftparchive/contents.cc:353
-#: ftparchive/contents.cc:384
+#: ftparchive/contents.cc:353 ftparchive/contents.cc:384
 msgid "realloc - Failed to allocate memory"
 msgstr "realloc - 無法配置記憶體空間"
 
-#: ftparchive/override.cc:38
-#: ftparchive/override.cc:146
+#: ftparchive/override.cc:38 ftparchive/override.cc:146
 #, c-format
 msgid "Unable to open %s"
 msgstr "無法開啟 %s"
 
-#: ftparchive/override.cc:64
-#: ftparchive/override.cc:170
+#: ftparchive/override.cc:64 ftparchive/override.cc:170
 #, c-format
 msgid "Malformed override %s line %lu #1"
 msgstr "override 文件 %s 第 %lu 行的格式有誤 #1"
 
-#: ftparchive/override.cc:78
-#: ftparchive/override.cc:182
+#: ftparchive/override.cc:78 ftparchive/override.cc:182
 #, c-format
 msgid "Malformed override %s line %lu #2"
 msgstr "override 文件 %s 第 %lu 行的格式有誤 #2"
 
-#: ftparchive/override.cc:92
-#: ftparchive/override.cc:195
+#: ftparchive/override.cc:92 ftparchive/override.cc:195
 #, c-format
 msgid "Malformed override %s line %lu #3"
 msgstr "override 文件 %s 第 %lu 行的格式有誤 #3"
 
-#: ftparchive/override.cc:131
-#: ftparchive/override.cc:205
+#: ftparchive/override.cc:131 ftparchive/override.cc:205
 #, c-format
 msgid "Failed to read the override file %s"
 msgstr "無法讀取 override 檔案 %s"
@@ -615,8 +587,7 @@ msgstr "未知的壓縮演算法 '%s'"
 msgid "Compressed output %s needs a compression set"
 msgstr "壓縮輸出 %s 需要一壓縮檔案集合"
 
-#: ftparchive/multicompress.cc:172
-#: methods/rsh.cc:91
+#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "無法建立 IPC 管線到子程序"
 
@@ -662,8 +633,7 @@ msgstr "在計算 MD5 時無法讀取資料"
 msgid "Problem unlinking %s"
 msgstr "在 unlink %s 時出錯"
 
-#: ftparchive/multicompress.cc:490
-#: apt-inst/extract.cc:188
+#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "無法將 %s 更名為 %s"
@@ -672,8 +642,7 @@ msgstr "無法將 %s 更名為 %s"
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:142
-#: cmdline/apt-get.cc:1506
+#: cmdline/apt-get.cc:142 cmdline/apt-get.cc:1506
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "編譯正規表示法出錯 - %s"
@@ -818,8 +787,7 @@ msgstr "不驗證這些套件就直接安裝？[y/N]"
 msgid "Some packages could not be authenticated"
 msgstr "部份套件無法驗證"
 
-#: cmdline/apt-get.cc:711
-#: cmdline/apt-get.cc:858
+#: cmdline/apt-get.cc:711 cmdline/apt-get.cc:858
 msgid "There are problems and -y was used without --force-yes"
 msgstr "出現一些問題,您使用了 -y 選項但是沒有用 --force-yes"
 
@@ -835,15 +803,11 @@ msgstr "有套件需要被移除,但移除動作被禁止。"
 msgid "Internal error, Ordering didn't finish"
 msgstr "內部錯誤，Ordering didn't finish"
 
-#: cmdline/apt-get.cc:791
-#: cmdline/apt-get.cc:1818
-#: cmdline/apt-get.cc:1851
+#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1851
 msgid "Unable to lock the download directory"
 msgstr "無法鎖定下載的目錄"
 
-#: cmdline/apt-get.cc:801
-#: cmdline/apt-get.cc:1899
-#: cmdline/apt-get.cc:2135
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1899 cmdline/apt-get.cc:2135
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "無法讀取來源單。"
@@ -872,8 +836,7 @@ msgstr "解壓縮後將消耗 %sB 的空間。\n"
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "解壓縮後將空出 %sB 的空間。\n"
 
-#: cmdline/apt-get.cc:846
-#: cmdline/apt-get.cc:1989
+#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1989
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "%s 無法足夠的空間。"
@@ -883,8 +846,7 @@ msgstr "%s 無法足夠的空間。"
 msgid "You don't have enough free space in %s."
 msgstr "『%s』內沒有足夠的空間。"
 
-#: cmdline/apt-get.cc:864
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:884
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "雖然您指定了 Trivial Only,但這不是個顯而易懂的(trivial)操作。"
 
@@ -903,8 +865,7 @@ msgstr ""
 "若要繼續的話,就輸入下面的句子“%s”\n"
 " ?] "
 
-#: cmdline/apt-get.cc:874
-#: cmdline/apt-get.cc:893
+#: cmdline/apt-get.cc:874 cmdline/apt-get.cc:893
 msgid "Abort."
 msgstr "放棄執行。"
 
@@ -912,9 +873,7 @@ msgstr "放棄執行。"
 msgid "Do you want to continue [Y/n]? "
 msgstr "繼續執行嗎？ 是按 [Y] 鍵，否按 [n] 鍵 "
 
-#: cmdline/apt-get.cc:961
-#: cmdline/apt-get.cc:1365
-#: cmdline/apt-get.cc:2032
+#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2032
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "無法下載『%s』檔案。%s\n"
@@ -923,13 +882,14 @@ msgstr "無法下載『%s』檔案。%s\n"
 msgid "Some files failed to download"
 msgstr "部份檔案無法下載"
 
-#: cmdline/apt-get.cc:980
-#: cmdline/apt-get.cc:2041
+#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2041
 msgid "Download complete and in download only mode"
 msgstr "下載完畢,目前是“僅下載”模式"
 
 #: cmdline/apt-get.cc:986
-msgid "Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?"
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
 msgstr ""
 "有幾個檔案無法下載,您可以執行 apt-get update 或者嘗試加上--fix-missing \n"
 "選項?"
@@ -1028,15 +988,16 @@ msgid "Unable to lock the list directory"
 msgstr "無法鎖定列表目錄"
 
 #: cmdline/apt-get.cc:1384
-msgid "Some index files failed to download, they have been ignored, or old ones used instead."
+msgid ""
+"Some index files failed to download, they have been ignored, or old ones "
+"used instead."
 msgstr "有一些索引檔案不能下載,它們可能被忽略了,也可能轉而使用了舊的索引檔案。"
 
 #: cmdline/apt-get.cc:1403
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "內部錯誤,AllUpgrade 造成錯誤"
 
-#: cmdline/apt-get.cc:1493
-#: cmdline/apt-get.cc:1529
+#: cmdline/apt-get.cc:1493 cmdline/apt-get.cc:1529
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "無法找到 %s 套件。"
@@ -1051,7 +1012,9 @@ msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "用『apt-get -f install』指令或許能修正這些問題。"
 
 #: cmdline/apt-get.cc:1549
-msgid "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
 msgstr ""
 "無法滿足的相依關係。請嘗試不指定套件明成來執行“apt-get -f install”(或指>\n"
 "定一個解決辦法)。"
@@ -1101,9 +1064,7 @@ msgstr "推薦(Recommended)的套件:"
 msgid "Calculating upgrade... "
 msgstr "籌畫升級套件中..."
 
-#: cmdline/apt-get.cc:1716
-#: methods/ftp.cc:702
-#: methods/connect.cc:101
+#: cmdline/apt-get.cc:1716 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "失敗"
 
@@ -1111,8 +1072,7 @@ msgstr "失敗"
 msgid "Done"
 msgstr "完成"
 
-#: cmdline/apt-get.cc:1786
-#: cmdline/apt-get.cc:1794
+#: cmdline/apt-get.cc:1786 cmdline/apt-get.cc:1794
 msgid "Internal error, problem resolver broke stuff"
 msgstr "內部錯誤，problem resolver 處理失敗"
 
@@ -1120,8 +1080,7 @@ msgstr "內部錯誤，problem resolver 處理失敗"
 msgid "Must specify at least one package to fetch source for"
 msgstr "必須指定至少一個對應的套件才能下載源碼"
 
-#: cmdline/apt-get.cc:1924
-#: cmdline/apt-get.cc:2153
+#: cmdline/apt-get.cc:1924 cmdline/apt-get.cc:2153
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "無法找到 %s 套件的源碼"
@@ -1195,13 +1154,19 @@ msgstr "%s 無建立相依關係訊息。\n"
 
 #: cmdline/apt-get.cc:2230
 #, c-format
-msgid "%s dependency for %s cannot be satisfied because the package %s cannot be found"
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
 msgstr "由於無法找到套件 %3$s ,因此不能滿足 %2$s 所要求的 %1$s 相依關係"
 
 #: cmdline/apt-get.cc:2282
 #, c-format
-msgid "%s dependency for %s cannot be satisfied because no available versions of package %s can satisfy version requirements"
-msgstr "由於無法找到符合要求的套件 %3$s 的可用版本,因此不能滿足 %2$s 所要求的 %1$s 的相依關係"
+msgid ""
+"%s dependency for %s cannot be satisfied because no available versions of "
+"package %s can satisfy version requirements"
+msgstr ""
+"由於無法找到符合要求的套件 %3$s 的可用版本,因此不能滿足 %2$s 所要求的 %1$s 的"
+"相依關係"
 
 #: cmdline/apt-get.cc:2317
 #, c-format
@@ -1281,7 +1246,8 @@ msgstr ""
 "   remove - 移除套件\n"
 "   source - 下載源碼檔案\n"
 "   build-dep - 為源碼配置所需的建構相依關係\n"
-"   dist-upgrade - 發布版本升級,見 apt-get(8)   dselect-upgrade - 根據 dselect \n"
+"   dist-upgrade - 發布版本升級,見 apt-get(8)   dselect-upgrade - 根據 "
+"dselect \n"
 "的選擇來進行升級\n"
 "   clean - 刪除所有已下載的套件檔案\n"
 "   auto-clean - 刪除已下載的套件檔案較舊的版本\n"
@@ -1374,12 +1340,8 @@ msgstr ""
 msgid "Bad default setting!"
 msgstr "錯誤的預設設定!"
 
-#: dselect/install:51
-#: dselect/install:83
-#: dselect/install:87
-#: dselect/install:93
-#: dselect/install:104
-#: dselect/update:45
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:93
+#: dselect/install:104 dselect/update:45
 msgid "Press enter to continue."
 msgstr "請按 [Enter] 鍵繼續。"
 
@@ -1396,7 +1358,8 @@ msgid "or errors caused by missing dependencies. This is OK, only the errors"
 msgstr "或因為失去相依關係所造成的錯誤。只有該錯誤可被容忍"
 
 #: dselect/install:103
-msgid "above this message are important. Please fix them and run [I]nstall again"
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
 msgstr "以上的訊息相當重要。請修正它們並重新執行安裝[I]"
 
 #: dselect/update:30
@@ -1411,8 +1374,7 @@ msgstr "無法建立管線"
 msgid "Failed to exec gzip "
 msgstr "無法執行 gzip"
 
-#: apt-inst/contrib/extracttar.cc:181
-#: apt-inst/contrib/extracttar.cc:207
+#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:207
 msgid "Corrupted archive"
 msgstr "損毀的檔案"
 
@@ -1433,8 +1395,7 @@ msgstr "無效的檔案籤章"
 msgid "Error reading archive member header"
 msgstr "讀取檔案 member 標頭訊息時出錯"
 
-#: apt-inst/contrib/arfile.cc:93
-#: apt-inst/contrib/arfile.cc:105
+#: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
 msgid "Invalid archive member header"
 msgstr "無效的檔案 member 標頭"
 
@@ -1477,21 +1438,17 @@ msgstr "重複加入轉移(diversion) %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "重複的設定檔 %s/%s"
 
-#: apt-inst/dirstream.cc:45
-#: apt-inst/dirstream.cc:50
-#: apt-inst/dirstream.cc:53
+#: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
 #, c-format
 msgid "Failed to write file %s"
 msgstr "寫入檔案 %s 失敗"
 
-#: apt-inst/dirstream.cc:96
-#: apt-inst/dirstream.cc:104
+#: apt-inst/dirstream.cc:96 apt-inst/dirstream.cc:104
 #, c-format
 msgid "Failed to close file %s"
 msgstr "關閉檔案 %s 失敗"
 
-#: apt-inst/extract.cc:96
-#: apt-inst/extract.cc:167
+#: apt-inst/extract.cc:96 apt-inst/extract.cc:167
 #, c-format
 msgid "The path %s is too long"
 msgstr "路徑 %s 過長"
@@ -1511,8 +1468,7 @@ msgstr "路徑 %s 已被轉向(diverted)"
 msgid "The package is trying to write to the diversion target %s/%s"
 msgstr "此套件試圖寫入改變過的目標 %s/%s"
 
-#: apt-inst/extract.cc:157
-#: apt-inst/extract.cc:300
+#: apt-inst/extract.cc:157 apt-inst/extract.cc:300
 msgid "The diversion path is too long"
 msgstr "轉移(diversion)路徑過長"
 
@@ -1539,12 +1495,9 @@ msgstr "複寫套件 %s 無符合版本"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "檔案 %s/%s 複寫套件 %s 中的相同檔案"
 
-#: apt-inst/extract.cc:467
-#: apt-pkg/contrib/configuration.cc:750
-#: apt-pkg/contrib/cdromutl.cc:153
-#: apt-pkg/sourcelist.cc:324
-#: apt-pkg/acquire.cc:421
-#: apt-pkg/clean.cc:38
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
 #, c-format
 msgid "Unable to read %s"
 msgstr "無法讀取『%s』。"
@@ -1554,14 +1507,12 @@ msgstr "無法讀取『%s』。"
 msgid "Unable to stat %s"
 msgstr "無法讀取 %s 的資料"
 
-#: apt-inst/deb/dpkgdb.cc:55
-#: apt-inst/deb/dpkgdb.cc:61
+#: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
 #, c-format
 msgid "Failed to remove %s"
 msgstr "無法移除 %s"
 
-#: apt-inst/deb/dpkgdb.cc:110
-#: apt-inst/deb/dpkgdb.cc:112
+#: apt-inst/deb/dpkgdb.cc:110 apt-inst/deb/dpkgdb.cc:112
 #, c-format
 msgid "Unable to create %s"
 msgstr "無法創造 %s"
@@ -1576,10 +1527,8 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "資料目錄與暫存目錄需在同一檔案系統"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:139
-#: apt-pkg/pkgcachegen.cc:643
-#: apt-pkg/pkgcachegen.cc:712
-#: apt-pkg/pkgcachegen.cc:717
+#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:643
+#: apt-pkg/pkgcachegen.cc:712 apt-pkg/pkgcachegen.cc:717
 #: apt-pkg/pkgcachegen.cc:840
 msgid "Reading package lists"
 msgstr "讀取套件清單中"
@@ -1589,26 +1538,26 @@ msgstr "讀取套件清單中"
 msgid "Failed to change to the admin dir %sinfo"
 msgstr "無法變換 admin 目錄至 %sinfo"
 
-#: apt-inst/deb/dpkgdb.cc:201
-#: apt-inst/deb/dpkgdb.cc:355
+#: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:355
 #: apt-inst/deb/dpkgdb.cc:448
 msgid "Internal error getting a package name"
 msgstr "內部錯誤，無法取得套件名稱"
 
-#: apt-inst/deb/dpkgdb.cc:205
-#: apt-inst/deb/dpkgdb.cc:386
+#: apt-inst/deb/dpkgdb.cc:205 apt-inst/deb/dpkgdb.cc:386
 msgid "Reading file listing"
 msgstr "讀取軟件表中"
 
 #: apt-inst/deb/dpkgdb.cc:216
 #, c-format
-msgid "Failed to open the list file '%sinfo/%s'. If you cannot restore this file then make it empty and immediately re-install the same version of the package!"
+msgid ""
+"Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
+"then make it empty and immediately re-install the same version of the "
+"package!"
 msgstr ""
 "讀取清單檔案「%sinfo/%s」失敗。如果您無法還原此檔案\n"
 "請使檔案空白並馬上重新安裝相同版本的套件。"
 
-#: apt-inst/deb/dpkgdb.cc:229
-#: apt-inst/deb/dpkgdb.cc:242
+#: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
 #, c-format
 msgid "Failed reading the list file %sinfo/%s"
 msgstr "讀取清單檔案「%sinfo/%s」失敗"
@@ -1626,8 +1575,7 @@ msgstr "讀取轉移檔案 %sdiversions 失敗"
 msgid "The diversion file is corrupted"
 msgstr "套件轉移檔損壞"
 
-#: apt-inst/deb/dpkgdb.cc:331
-#: apt-inst/deb/dpkgdb.cc:336
+#: apt-inst/deb/dpkgdb.cc:331 apt-inst/deb/dpkgdb.cc:336
 #: apt-inst/deb/dpkgdb.cc:341
 #, c-format
 msgid "Invalid line in the diversion file: %s"
@@ -1656,8 +1604,7 @@ msgstr "壞的 ConfFile 區段於 status 檔案。位移(offset) %lu"
 msgid "Error parsing MD5. Offset %lu"
 msgstr "解析 MD5 錯誤。位移(offset) %lu"
 
-#: apt-inst/deb/debfile.cc:42
-#: apt-inst/deb/debfile.cc:47
+#: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "無效的 DEB 檔案，遺失 %s 成員"
@@ -1690,8 +1637,12 @@ msgid "Unable to read the cdrom database %s"
 msgstr "無法讀取碟片資料庫『%s』。"
 
 #: methods/cdrom.cc:123
-msgid "Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update cannot be used to add new CD-ROMs"
-msgstr "要讓本程式辨認此碟片，請用『apt-cdrom』工具。『apt-get update』不能用來製造新的碟片。"
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"要讓本程式辨認此碟片，請用『apt-cdrom』工具。『apt-get update』不能用來製造新"
+"的碟片。"
 
 #: methods/cdrom.cc:131
 msgid "Wrong CD-ROM"
@@ -1706,22 +1657,16 @@ msgstr "無法下駕『%s』內的碟片，或許它仍在使用中。"
 msgid "Disk not found."
 msgstr "找不到磁碟"
 
-#: methods/cdrom.cc:177
-#: methods/file.cc:79
-#: methods/rsh.cc:264
+#: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "找不到檔案"
 
-#: methods/copy.cc:42
-#: methods/gpgv.cc:281
-#: methods/gzip.cc:141
+#: methods/copy.cc:42 methods/gpgv.cc:281 methods/gzip.cc:141
 #: methods/gzip.cc:150
 msgid "Failed to stat"
 msgstr "無法讀取資料"
 
-#: methods/copy.cc:79
-#: methods/gpgv.cc:278
-#: methods/gzip.cc:147
+#: methods/copy.cc:79 methods/gpgv.cc:278 methods/gzip.cc:147
 msgid "Failed to set modification time"
 msgstr "日期更新失敗"
 
@@ -1742,8 +1687,7 @@ msgstr "無法解析對方主機名稱。"
 msgid "Unable to determine the local name"
 msgstr "無法解析本機名稱。"
 
-#: methods/ftp.cc:204
-#: methods/ftp.cc:232
+#: methods/ftp.cc:204 methods/ftp.cc:232
 #, c-format
 msgid "The server refused the connection and said: %s"
 msgstr "伺服器因『%s』不受理。"
@@ -1759,7 +1703,9 @@ msgid "PASS failed, server said: %s"
 msgstr "『PASS』指令因『%s』失敗。"
 
 #: methods/ftp.cc:237
-msgid "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin is empty."
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
 msgstr "媒介伺服器設定應包括登入稿。"
 
 #: methods/ftp.cc:265
@@ -1772,10 +1718,7 @@ msgstr "登入稿『%s』因『%s』失敗。"
 msgid "TYPE failed, server said: %s"
 msgstr "『TYPE』指令因『%s』失敗。"
 
-#: methods/ftp.cc:329
-#: methods/ftp.cc:440
-#: methods/rsh.cc:183
-#: methods/rsh.cc:226
+#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
 msgid "Connection timeout"
 msgstr "連線逾時"
 
@@ -1783,31 +1726,23 @@ msgstr "連線逾時"
 msgid "Server closed the connection"
 msgstr "伺服器關閉聯線。"
 
-#: methods/ftp.cc:338
-#: apt-pkg/contrib/fileutl.cc:471
-#: methods/rsh.cc:190
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:471 methods/rsh.cc:190
 msgid "Read error"
 msgstr "讀取失敗。"
 
-#: methods/ftp.cc:345
-#: methods/rsh.cc:197
+#: methods/ftp.cc:345 methods/rsh.cc:197
 msgid "A response overflowed the buffer."
 msgstr "答覆超過緩衝區長度。"
 
-#: methods/ftp.cc:362
-#: methods/ftp.cc:374
+#: methods/ftp.cc:362 methods/ftp.cc:374
 msgid "Protocol corruption"
 msgstr "協定失敗。"
 
-#: methods/ftp.cc:446
-#: apt-pkg/contrib/fileutl.cc:510
-#: methods/rsh.cc:232
+#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:510 methods/rsh.cc:232
 msgid "Write error"
 msgstr "寫入失敗。"
 
-#: methods/ftp.cc:687
-#: methods/ftp.cc:693
-#: methods/ftp.cc:729
+#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
 msgid "Could not create a socket"
 msgstr "無法建立 Socket"
 
@@ -1857,9 +1792,7 @@ msgstr "Data socket 連線逾時"
 msgid "Unable to accept connection"
 msgstr "無法允許連線"
 
-#: methods/ftp.cc:864
-#: methods/http.cc:958
-#: methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:958 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "問題雜湊表"
 
@@ -1868,8 +1801,7 @@ msgstr "問題雜湊表"
 msgid "Unable to fetch file, server said '%s'"
 msgstr "無法取得檔案，伺服器回應：%s"
 
-#: methods/ftp.cc:892
-#: methods/rsh.cc:322
+#: methods/ftp.cc:892 methods/rsh.cc:322
 msgid "Data socket timed out"
 msgstr "Data socket 連線逾時"
 
@@ -1919,8 +1851,7 @@ msgstr "無法聯絡到主機『%s:%s (%s)』。"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:136
-#: methods/rsh.cc:425
+#: methods/connect.cc:136 methods/rsh.cc:425
 #, c-format
 msgid "Connecting to %s"
 msgstr "聯絡主機『%s』中"
@@ -1955,7 +1886,8 @@ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr "錯誤：Acquire::gpgv::Options 的參數列表超長。結束執行。"
 
 #: methods/gpgv.cc:204
-msgid "Internal error: Good signature, but could not determine key fingerprint?!"
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr "內部錯誤：簽名正確無誤，但是無法確認密鑰的指紋(key fingerprint)？！"
 
 #: methods/gpgv.cc:209
@@ -1976,7 +1908,9 @@ msgid "The following signatures were invalid:\n"
 msgstr "下列的簽名皆不合法：\n"
 
 #: methods/gpgv.cc:256
-msgid "The following signatures couldn't be verified because the public key is not available:\n"
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
 msgstr "由於沒有公鑰，下列簽名無法進行驗證：\n"
 
 #: methods/gzip.cc:64
@@ -2002,8 +1936,7 @@ msgstr "取得一個單行超過 %u 字元的標頭"
 msgid "Bad header line"
 msgstr "壞的標頭"
 
-#: methods/http.cc:549
-#: methods/http.cc:556
+#: methods/http.cc:549 methods/http.cc:556
 msgid "The HTTP server sent an invalid reply header"
 msgstr "http 伺服器傳送一個無效的回覆標頭"
 
@@ -2117,8 +2050,7 @@ msgstr "語法錯誤： %s:%u： 指令只能於最高層級執行"
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "語法錯誤 %s:%u: 太多重複引入檔案"
 
-#: apt-pkg/contrib/configuration.cc:695
-#: apt-pkg/contrib/configuration.cc:700
+#: apt-pkg/contrib/configuration.cc:695 apt-pkg/contrib/configuration.cc:700
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "語法錯誤 %s:%u: 從此引入"
@@ -2148,8 +2080,7 @@ msgstr "%c%s... 完成"
 msgid "Command line option '%c' [from %s] is not known."
 msgstr "未知的命令列選項「%c」從 %s"
 
-#: apt-pkg/contrib/cmndline.cc:106
-#: apt-pkg/contrib/cmndline.cc:114
+#: apt-pkg/contrib/cmndline.cc:106 apt-pkg/contrib/cmndline.cc:114
 #: apt-pkg/contrib/cmndline.cc:122
 #, c-format
 msgid "Command line option %s is not understood"
@@ -2160,14 +2091,12 @@ msgstr "無法理解的命令列選項 %s"
 msgid "Command line option %s is not boolean"
 msgstr "命令列選項 %s 不是布林(boolean)變數"
 
-#: apt-pkg/contrib/cmndline.cc:166
-#: apt-pkg/contrib/cmndline.cc:187
+#: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
 #, c-format
 msgid "Option %s requires an argument."
 msgstr "選項 %s 需要更多的參數"
 
-#: apt-pkg/contrib/cmndline.cc:201
-#: apt-pkg/contrib/cmndline.cc:207
+#: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "選項 %s： 組態元件描述應該有 =<val>"
@@ -2197,9 +2126,7 @@ msgstr "無效的操作：%s"
 msgid "Unable to stat the mount point %s"
 msgstr "無法讀取掛載點 %s"
 
-#: apt-pkg/contrib/cdromutl.cc:149
-#: apt-pkg/acquire.cc:427
-#: apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
 #, c-format
 msgid "Unable to change to %s"
 msgstr "無法進入『%s』目錄。"
@@ -2344,8 +2271,7 @@ msgstr "次要"
 msgid "extra"
 msgstr "添加"
 
-#: apt-pkg/depcache.cc:61
-#: apt-pkg/depcache.cc:90
+#: apt-pkg/depcache.cc:61 apt-pkg/depcache.cc:90
 msgid "Building dependency tree"
 msgstr "了解套件依存關係中"
 
@@ -2397,8 +2323,7 @@ msgstr "來源檔『%2$s』第 %1$lu 行有錯誤 (版本分辨)。"
 msgid "Opening %s"
 msgstr "開啟『%s』中"
 
-#: apt-pkg/sourcelist.cc:220
-#: apt-pkg/cdrom.cc:426
+#: apt-pkg/sourcelist.cc:220 apt-pkg/cdrom.cc:426
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "來源檔『%2$s』第 %1$u 行太長。"
@@ -2413,16 +2338,20 @@ msgstr "來源檔『%2$s』第 %1$u 行有錯誤 (類別)。"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "未知的類別 %1$s 於來源檔 %3$s 第 %2$u 行"
 
-#: apt-pkg/sourcelist.cc:252
-#: apt-pkg/sourcelist.cc:255
+#: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "來源檔『%2$s』第 %1$u 行有錯誤 (商家名稱)。"
 
 #: apt-pkg/packagemanager.cc:402
 #, c-format
-msgid "This installation run will require temporarily removing the essential package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr "此安裝因衝突或特別依存關係，需暫時刪除『%s』這個重要套件。這種情形通常有問題，但您確定的話請啟動『APT::Force-LoopBreak』選項。"
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"此安裝因衝突或特別依存關係，需暫時刪除『%s』這個重要套件。這種情形通常有問"
+"題，但您確定的話請啟動『APT::Force-LoopBreak』選項。"
 
 #: apt-pkg/pkgrecords.cc:37
 #, c-format
@@ -2431,11 +2360,14 @@ msgstr "本軟體不支持『%s』型的索引檔。"
 
 #: apt-pkg/algorithms.cc:241
 #, c-format
-msgid "The package %s needs to be reinstalled, but I can't find an archive for it."
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "套件『%s』需要重新安裝，但找不到軟件檔案。"
 
 #: apt-pkg/algorithms.cc:1059
-msgid "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages."
+msgid ""
+"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
+"held packages."
 msgstr "無法解決依存關係。可能原因是某些套件被押後。"
 
 #: apt-pkg/algorithms.cc:1061
@@ -2593,8 +2525,7 @@ msgstr "無法讀取來源檔『%s』的目錄資料。"
 msgid "Collecting File Provides"
 msgstr "收集檔案供應"
 
-#: apt-pkg/pkgcachegen.cc:785
-#: apt-pkg/pkgcachegen.cc:792
+#: apt-pkg/pkgcachegen.cc:785 apt-pkg/pkgcachegen.cc:792
 msgid "IO Error saving source cache"
 msgstr "無法寫入來源暫存檔。"
 
@@ -2603,28 +2534,33 @@ msgstr "無法寫入來源暫存檔。"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "檔名因『%s』更換失敗 (%s → %s)。"
 
-#: apt-pkg/acquire-item.cc:236
-#: apt-pkg/acquire-item.cc:945
+#: apt-pkg/acquire-item.cc:236 apt-pkg/acquire-item.cc:945
 msgid "MD5Sum mismatch"
 msgstr "MD5 檢查碼不符合。"
 
 #: apt-pkg/acquire-item.cc:640
-msgid "There is no public key available for the following key IDs:\n"
+#, fuzzy
+msgid "There are no public key available for the following key IDs:\n"
 msgstr "以下 key ID 沒有可用的公鑰：\n"
 
 #: apt-pkg/acquire-item.cc:753
 #, c-format
-msgid "I wasn't able to locate a file for the %s package. This might mean you need to manually fix this package. (due to missing arch)"
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
 msgstr "找不到套件『%s』需要的某檔案。請您修理這個套件再試試。"
 
 #: apt-pkg/acquire-item.cc:812
 #, c-format
-msgid "I wasn't able to locate file for the %s package. This might mean you need to manually fix this package."
+msgid ""
+"I wasn't able to locate file for the %s package. This might mean you need to "
+"manually fix this package."
 msgstr "找不到套件『%s』需要的某檔案。請您修理這個套件再試試。"
 
 #: apt-pkg/acquire-item.cc:848
 #, c-format
-msgid "The package index files are corrupted. No Filename: field for package %s."
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
 msgstr "套件『%s』索引檔損壞—缺少『Filename:』欄。"
 
 #: apt-pkg/acquire-item.cc:935
@@ -2645,8 +2581,7 @@ msgstr ""
 "使用光碟機掛載點 %s\n"
 "掛載光碟機中\n"
 
-#: apt-pkg/cdrom.cc:516
-#: apt-pkg/cdrom.cc:598
+#: apt-pkg/cdrom.cc:516 apt-pkg/cdrom.cc:598
 msgid "Identifying.. "
 msgstr "標識中.."
 
@@ -2791,10 +2726,10 @@ msgstr "連線不預期的結束"
 #, fuzzy
 #~ msgid "Could not patch file"
 #~ msgstr "無法開啟『%s』檔案。"
+
 #~ msgid "Reading file list"
 #~ msgstr "讀取軟件表中"
 
 #, fuzzy
 #~ msgid "Could not execute "
 #~ msgstr "無法取得『%s』鎖。"
-

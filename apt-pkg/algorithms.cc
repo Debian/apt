@@ -784,7 +784,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    continue;
 	 
 	 if (Debug == true)
-	    cout << "Investigating " << I.Name() << endl;
+	    clog << "Investigating " << I.Name() << endl;
 	 
 	 // Isolate the problem dependency
 	 PackageKill KillList[100];
