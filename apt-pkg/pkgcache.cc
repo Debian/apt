@@ -49,7 +49,7 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 5;
+   MajorVersion = 6;
    MinorVersion = 0;
    Dirty = false;
    
@@ -223,8 +223,8 @@ const char *pkgCache::DepType(unsigned char Type)
 {
    const char *Types[] = {"",_("Depends"),_("PreDepends"),_("Suggests"),
                           _("Recommends"),_("Conflicts"),_("Replaces"),
-                          _("Obsoletes")};
-   if (Type < 8)
+                          _("Obsoletes"),_("Breaks")};
+   if (Type < sizeof(Types)/sizeof(*Types))
       return Types[Type];
    return "";
 }
@@ -287,10 +287,11 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 // DepIterator::IsCritical - Returns true if the dep is important	/*{{{*/
 // ---------------------------------------------------------------------
 /* Currently critical deps are defined as depends, predepends and
-   conflicts. */
+   conflicts (including dpkg's Breaks fields). */
 bool pkgCache::DepIterator::IsCritical()
 {
    if (Dep->Type == pkgCache::Dep::Conflicts ||
+       Dep->Type == pkgCache::Dep::DpkgBreaks ||
        Dep->Type == pkgCache::Dep::Obsoletes ||
        Dep->Type == pkgCache::Dep::Depends ||
        Dep->Type == pkgCache::Dep::PreDepends)
@@ -376,6 +377,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	    continue;
 
 	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
+	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
 	      Dep->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.ParentPkg())
 	    continue;
@@ -392,6 +394,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	    continue;
 	 
 	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
+	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
 	      Dep->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.OwnerPkg())
 	    continue;

@@ -678,8 +678,10 @@ static bool CheckValidity(const string &CacheFile, FileIterator Start,
     
       if ((*Start)->Exists() == false)
       {
+#if 0 // mvo: we no longer give a message here (Default Sources spec)
 	 _error->WarningE("stat",_("Couldn't stat source package list %s"),
 			  (*Start)->Describe().c_str());
+#endif
 	 continue;
       }
 
@@ -783,7 +785,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap,bool AllowMem)
 {
-   unsigned long MapSize = _config->FindI("APT::Cache-Limit",12*1024*1024);
+   unsigned long MapSize = _config->FindI("APT::Cache-Limit",16*1024*1024);
    
    vector<pkgIndexFile *> Files;
    for (vector<metaIndex *>::const_iterator i = List.begin();
@@ -930,7 +932,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 /* */
 bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
 {
-   unsigned long MapSize = _config->FindI("APT::Cache-Limit",8*1024*1024);
+   unsigned long MapSize = _config->FindI("APT::Cache-Limit",12*1024*1024);
    vector<pkgIndexFile *> Files;
    unsigned long EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)

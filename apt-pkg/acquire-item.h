@@ -97,7 +97,12 @@ class pkgAcquire::Item
        /** \brief The item was downloaded but its authenticity could
 	*  not be verified.
 	*/
-       StatAuthError
+       StatAuthError,
+
+       /** \brief The item was could not be downloaded because of 
+	*  a transient network error (e.g. network down)
+	*/
+       StatTransientNetworkError
      } Status;
 
    /** \brief Contains a textual description of the error encountered

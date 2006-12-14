@@ -1372,20 +1372,29 @@ bool DoUpdate(CommandLine &CmdL)
       return false;
 
    bool Failed = false;
+   bool TransientNetworkFailure = false;
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
    {
       if ((*I)->Status == pkgAcquire::Item::StatDone)
 	 continue;
 
       (*I)->Finished();
-      
+
       fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
 	      (*I)->ErrorText.c_str());
+
+      if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError) 
+      {
+	 TransientNetworkFailure = true;
+	 continue;
+      }
+
       Failed = true;
    }
    
    // Clean out any old list files
-   if (!Failed && _config->FindB("APT::Get::List-Cleanup",true) == true)
+   if (!TransientNetworkFailure &&
+       _config->FindB("APT::Get::List-Cleanup",true) == true)
    {
       if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
 	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
@@ -1397,9 +1406,11 @@ bool DoUpdate(CommandLine &CmdL)
    if (Cache.BuildCaches() == false)
       return false;
    
-   if (Failed == true)
+   if (TransientNetworkFailure == true)
+      _error->Warning(_("Some index files failed to download, they have been ignored, or old ones used instead."));
+   else if (Failed == true)
       return _error->Error(_("Some index files failed to download, they have been ignored, or old ones used instead."));
-   
+
    return true;
 }
 									/*}}}*/
@@ -1709,8 +1720,10 @@ bool DoInstall(CommandLine &CmdL)
 	 return _error->Error(_("Broken packages"));
       }   
    }
-   if (!DoAutomaticRemove(Cache)) 
+   if (_config->FindB("APT::Get::AutomaticRemove")) {
+      if (!DoAutomaticRemove(Cache)) 
 	 return false;
+   }
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
@@ -2621,6 +2634,7 @@ void GetInitialize()
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
    _config->Set("APT::Get::List-Cleanup",true);
+   _config->Set("APT::Get::AutomaticRemove",false);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/

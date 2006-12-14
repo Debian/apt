@@ -491,11 +491,13 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 	 continue;
       
       if (D->Type != pkgCache::Dep::Conflicts &&
+	  D->Type != pkgCache::Dep::DpkgBreaks &&
 	  D->Type != pkgCache::Dep::Obsoletes &&
 	  Cache[Pkg].InstallVer != *I)
 	 continue;
       
       if ((D->Type == pkgCache::Dep::Conflicts ||
+	   D->Type == pkgCache::Dep::DpkgBreaks ||
 	   D->Type == pkgCache::Dep::Obsoletes) &&
 	  (Version *)Pkg.CurrentVer() != *I)
 	 continue;
@@ -630,6 +632,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
 	 /* Forward critical dependencies MUST be correct before the 
 	    package can be unpacked. */
 	 if (D->Type != pkgCache::Dep::Conflicts &&
+	     D->Type != pkgCache::Dep::DpkgBreaks &&
 	     D->Type != pkgCache::Dep::Obsoletes &&
 	     D->Type != pkgCache::Dep::PreDepends)
 	    continue;
@@ -668,7 +671,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
    }   
    return true;
 }
-									/*}}}*/
+
 // OrderList::DepUnPackPreD - Critical UnPacking ordering with depends	/*{{{*/
 // ---------------------------------------------------------------------
 /* Critical PreDepends (also configure immediate and essential) strives to
@@ -803,9 +806,20 @@ bool pkgOrderList::DepUnPackDep(DepIterator D)
 	       return false;
 	 }
 	 else
+	 {
 	    if (D->Type == pkgCache::Dep::Depends)
 	       if (VisitProvides(D,false) == false)
 		  return false;
+
+	    if (D->Type == pkgCache::Dep::DpkgBreaks)
+	    {
+	       if (CheckDep(D) == true)
+		 continue;
+
+	       if (VisitNode(D.TargetPkg()) == false)
+		 return false;
+	    }
+	 }
       }
    return true;
 }
@@ -953,6 +967,7 @@ bool pkgOrderList::CheckDep(DepIterator D)
       /* Conflicts requires that all versions are not present, depends
          just needs one */
       if (D->Type != pkgCache::Dep::Conflicts && 
+	  D->Type != pkgCache::Dep::DpkgBreaks && 
 	  D->Type != pkgCache::Dep::Obsoletes)
       {
 	 /* Try to find something that does not have the after flag set
