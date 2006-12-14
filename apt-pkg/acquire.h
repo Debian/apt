@@ -72,9 +72,6 @@
 using std::vector;
 using std::string;
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/acquire.h"
-#endif 
 
 #include <sys/time.h>
 #include <unistd.h>

@@ -35,9 +35,6 @@
 using std::string;
 using std::vector;
     
-#ifdef __GNUG__
-#pragma interface "apt-pkg/sourcelist.h"
-#endif
 
 class pkgAquire;
 class pkgSourceList

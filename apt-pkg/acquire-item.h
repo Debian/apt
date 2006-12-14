@@ -27,9 +27,6 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexrecords.h>
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/acquire-item.h"
-#endif 
 
 /** \addtogroup acquire
  *  @{

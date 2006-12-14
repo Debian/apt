@@ -8,9 +8,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/depcache.h"
-#endif
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>

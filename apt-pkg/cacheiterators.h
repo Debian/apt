@@ -31,9 +31,6 @@
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/cacheiterators.h"
-#endif 
 
 // Package Iterator
 class pkgCache::PkgIterator

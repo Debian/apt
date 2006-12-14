@@ -19,9 +19,6 @@
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/pkgcache.h"
-#endif 
 
 #include <string>
 #include <time.h>

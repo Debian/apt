@@ -21,9 +21,6 @@
 #ifndef PKGLIB_PROGRESS_H
 #define PKGLIB_PROGRESS_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/progress.h"
-#endif 
 
 #include <string>
 #include <sys/time.h>

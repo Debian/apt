@@ -16,9 +16,7 @@
 #ifndef MULTICOMPRESS_H
 #define MULTICOMPRESS_H
 
-#ifdef __GNUG__
-#pragma interface "multicompress.h"
-#endif 
+
 
 #include <string>
 #include <apt-pkg/fileutl.h>

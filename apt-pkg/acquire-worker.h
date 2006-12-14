@@ -21,9 +21,6 @@
 
 #include <apt-pkg/acquire.h>
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/acquire-worker.h"
-#endif 
 
 /** \brief A fetch subprocess.
  *
