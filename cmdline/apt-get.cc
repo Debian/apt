@@ -1409,7 +1409,7 @@ bool DoUpdate(CommandLine &CmdL)
 bool DoAutomaticRemove(CacheFile &Cache)
 {
    bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
-   bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove");
+   bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
    pkgDepCache::ActionGroup group(*Cache);
    
 
@@ -2621,7 +2621,6 @@ void GetInitialize()
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
    _config->Set("APT::Get::List-Cleanup",true);
-   _config->Set("APT::Get::AutomaticRemove",false);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
