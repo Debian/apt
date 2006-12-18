@@ -1324,6 +1324,11 @@ bool pkgDepCache::Sweep()
   {
      StateCache &state=PkgState[p->ID];
 
+     // skip required packages
+     if (!p.CurrentVer().end() && 
+	 (p.CurrentVer()->Priority == pkgCache::State::Required))
+	continue;
+
      // if it is not marked and it is installed, it's garbage 
      if(!state.Marked && (!p.CurrentVer().end() || state.Install()))
      {
