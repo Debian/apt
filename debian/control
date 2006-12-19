@@ -4,7 +4,7 @@ Priority: important
 Maintainer: APT Development Team <deity@lists.debian.org>
 Uploaders: Jason Gunthorpe <jgg@debian.org>, Adam Heath <doogie@debian.org>, Matt Zimmerman <mdz@debian.org>, Michael Vogt <mvo@debian.org>
 Standards-Version: 3.6.2.2
-Build-Depends: debhelper (>= 5.0), libdb4.4-dev, gettext (>= 0.12)
+Build-Depends: debhelper (>= 5.0), libdb4.4-dev, gettext (>= 0.12), libcurl3-gnutls-dev
 Build-Depends-Indep: debiandoc-sgml, docbook-utils (>= 0.6.12-1)
 
 Package: apt
@@ -64,3 +64,12 @@ Description: APT utility programs
  apt-extracttemplates is used by debconf to prompt for configuration 
  questions before installation. apt-ftparchive is used to create Package
  and other index files. apt-sortpkgs is a Package/Source file normalizer.
+
+Package: apt-transport-https
+Architecture: any
+Depends: ${shlibs:Depends}
+Priority: optional
+Section: admin
+Description: APT https transport
+ This package contains a APT https transport. It makes it possible to
+ use 'deb https://foo distro main' lines in the sources.list.
