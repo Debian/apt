@@ -107,6 +107,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    stringstream ss;
    struct stat SBuf;
    struct curl_slist *headers=NULL;  
+   char curl_errorstr[CURL_ERROR_SIZE];
 
    // TODO:
    //       - http::Timeout
@@ -126,7 +127,22 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
 
    // FIXME: https: offer various options of verification
-   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+   bool peer_verify = _config->FindB("Acquire::https::Verify-Peer", false);
+   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, peer_verify);
+
+   // sslcert file
+   string pem = _config->Find("Acquire::https::SslCert","");
+   if(pem != "")
+      curl_easy_setopt(curl, CURLOPT_SSLCERT, pem.c_str());
+   
+   // CA-Dir
+   string certdir = _config->Find("Acquire::https::CaPath","");
+   if(certdir != "")
+      curl_easy_setopt(curl, CURLOPT_CAPATH, certdir.c_str());
+   
+   // Server-verify 
+   int verify = _config->FindI("Acquire::https::Verify-Host",2);
+   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verify);
 
    // cache-control
    if(_config->FindB("Acquire::http::No-Cache",false) == false)
@@ -156,8 +172,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_USERAGENT,"Debian APT-CURL/1.0 ("VERSION")");
 
    // debug
-   if(_config->FindB("Debug::Acquire::http", false))
+   if(_config->FindB("Debug::Acquire::https", false))
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+
+   // error handling
+   curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_errorstr);
 
    // In this case we send an if-range query with a range header
   if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
@@ -176,6 +195,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // cleanup
    if(success != 0) {
+      _error->Error(curl_errorstr);
       Fail();
       return true;
    }
@@ -191,8 +211,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Res.Filename = File->Name();
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
-      if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
+      if (Itm->LastModified != 0 && Buf.st_mtime >= Itm->LastModified)
+      {
 	 Res.IMSHit = true;
+	 Res.LastModified = Itm->LastModified;
+      }
    }
 
    // take hashes
