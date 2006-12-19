@@ -841,7 +841,12 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       OldEnd = LEnd;
 	    }
 	    else
+            {
 	       Start++;
+	       // We only worry about critical deps.
+	       if (Start.IsCritical() != true)
+                  continue;
+            }
 
 	    // Dep is ok
 	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
