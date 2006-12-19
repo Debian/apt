@@ -128,6 +128,18 @@ Acquire
     Dl-Limit "7";        // 7Kb/sec maximum download rate
   };
 
+  // HTTPS method configuration:
+  // - uses the http proxy config 
+  // - uses the http cache-control values
+  // - uses the http Dl-Limit values
+  https 
+  {
+	Verify-Peer "false";
+	SslCert "/etc/apt/some.pem";
+        CaPath  "/etc/ssl/certs";
+        Verify-Host" "2";
+  };
+
   ftp
   {
     Proxy "ftp://127.0.0.1/";
@@ -269,6 +281,7 @@ Debug
   NoLocking "false";
   Acquire::Ftp "false";    // Show ftp command traffic
   Acquire::Http "false";   // Show http command traffic
+  Acquire::Https "false";   // Show https debug
   Acquire::gpgv "false";   // Show the gpgv traffic
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";
