@@ -185,7 +185,7 @@ apt-doc: build-doc
 
 # Build architecture-dependent files here.
 
-binary-arch: apt libapt-pkg-dev apt-utils 
+binary-arch: apt-transport-https apt libapt-pkg-dev apt-utils
 apt: build debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
@@ -283,6 +283,32 @@ apt-utils: build debian/shlibs.local
 	dh_installdeb -p$@
 	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt-utils
 	dh_gencontrol -p$@ -u -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
+apt-transport-https: build debian/shlibs.local
+	dh_testdir -p$@
+	dh_testroot -p$@
+	dh_clean -p$@ -k
+	dh_installdirs -p$@
+
+	# install the method
+	mkdir -p debian/$@/usr/lib/apt/methods
+	mv $(BLD)/bin/methods/https debian/$@/usr/lib/apt/methods
+
+	dh_installdocs -p$@
+	dh_installexamples -p$@
+
+	# Install the man pages..
+	dh_installman -p$@
+
+	dh_installchangelogs -p$@
+	dh_strip -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_installdeb -p$@
+	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib 
+	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
