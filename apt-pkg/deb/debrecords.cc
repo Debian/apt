@@ -67,7 +67,7 @@ string debRecordParser::MD5Hash()
 /* */
 string debRecordParser::SHA1Hash()
 {
-   return Section.FindS("SHA1Sum");
+   return Section.FindS("SHA1");
 }
 									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/
