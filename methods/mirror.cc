@@ -19,12 +19,14 @@
 #include <iostream>
 #include <stdarg.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 using namespace std;
 
 #include "mirror.h"
 #include "http.h"
-
+#include "apti18n.h"
 									/*}}}*/
 
 /* 
@@ -67,9 +69,54 @@ bool MirrorMethod::Configuration(string Message)
 									/*}}}*/
 
 // clean the mirrors dir based on ttl information
-bool MirrorMethod::Clean(string dir)
+bool MirrorMethod::Clean(string Dir)
 {
+   // FIXME: it would better to have a global idea of the mirrors
+   //        in the sources.list and use this instead of this time
+   //        based approach. currently apt does not support this :/
+
+   DIR *D = opendir(Dir.c_str());   
+   if (D == 0)
+      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
    
+   string StartDir = SafeGetCWD();
+   if (chdir(Dir.c_str()) != 0)
+   {
+      closedir(D);
+      return _error->Errno("chdir",_("Unable to change to %s"),Dir.c_str());
+   }
+   
+   for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
+   {
+      // Skip some files..
+      if (strcmp(Dir->d_name,"lock") == 0 ||
+	  strcmp(Dir->d_name,"partial") == 0 ||
+	  strcmp(Dir->d_name,".") == 0 ||
+	  strcmp(Dir->d_name,"..") == 0)
+	 continue;
+      
+      // Del everything not touched for MaxAge days
+      time_t t,now,max;
+      struct stat buf;
+      if(stat(Dir->d_name, &buf) != 0) 
+      {
+	 cerr << "Can't stat '" << Dir->d_name << "'" << endl;
+	 continue;
+      }
+      t = std::max(buf.st_mtime, buf.st_ctime);
+      now = time(NULL);
+      max = 24*60*60*_config->FindI("Acquire::Mirror::MaxAge",90);
+      if(t + max < now)
+      {
+	 if(Debug)
+	    clog << "Mirror file is older than MaxAge days, deleting" << endl;
+	 unlink(Dir->d_name);
+      }
+   };
+   
+   chdir(StartDir.c_str());
+   closedir(D);
+   return true;   
 }
 
 
@@ -81,6 +128,7 @@ bool MirrorMethod::GetMirrorFile(string uri)
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
+   // get new file
    MirrorFile = _config->FindDir("Dir::State::mirrors") + URItoFileName(BaseUri);
 
    if(Debug) 
@@ -108,7 +156,7 @@ bool MirrorMethod::GetMirrorFile(string uri)
 	 return true;
       }
       if(Debug)
-	 clog << "Mirror file " << MirrorFile << " older than " << refresh << ", re-download it" << endl;
+	 clog << "Mirror file " << MirrorFile << " older than " << refresh << "min, re-download it" << endl;
    }
 
    // not that great to use pkgAcquire here, but we do not have 
@@ -142,6 +190,7 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
    // select mirror only once per session
    if(!HasMirrorFile)
    {
+      Clean(_config->FindDir("Dir::State::mirrors"));
       GetMirrorFile(Itm->Uri);
       SelectMirror();
    }
