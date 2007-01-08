@@ -160,6 +160,11 @@ Acquire
   {
    Options {"--ignore-time-conflict";}	// not very usefull on a normal system
   };
+
+  mirror
+  {
+   RefreshInterval "360"; // refresh interval in minutes
+  };
 };
 
 // Directory layout
@@ -258,9 +263,9 @@ Debug
   Acquire::Ftp "false";    // Show ftp command traffic
   Acquire::Http "false";   // Show http command traffic
   Acquire::gpgv "false";   // Show the gpgv traffic
+  Acquire::Mirror "false"; // Show debugging of the mirror method
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";
-  
 }
 
 /* Whatever you do, do not use this configuration file!! Take out ONLY

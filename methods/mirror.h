@@ -34,6 +34,7 @@ class MirrorMethod : public HttpMethod
  protected:
    bool GetMirrorFile(string uri);
    bool SelectMirror();
+   bool Clean(string dir);
    
    // we need to overwrite those to transform the url back
    virtual void Fail(string Why, bool Transient = false);

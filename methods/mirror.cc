@@ -18,6 +18,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdarg.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -28,11 +29,16 @@ using namespace std;
 
 /* 
  * TODO: 
+ * - send expected checksum to the mirror method so that 
+     some checking/falling back can be done here already
+ * - keep the mirror file around in /var/lib/apt/mirrors
+     * can't be put into lists/ because of the listclearer
+     * cleanup by time (mtime relative to the other mtimes)
+ * - use a TTL time the mirror file is fetched again (6h?)
+ * - deal with runing as non-root because we can't write to the lists 
+     dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
- * - support keeping the mirror file around (evil listclearer strikes again)
- *   -> /var/lib/apt/mirrors dir? how to cleanup? by time?
- * - provide some TTL time until the mirror file is get again (1h? 6h?)
- * - deal with runing as non-root (we can't write to the lists dir then)
+ * - magicmarker is (a bit) evil
  * - testing :)
  */
 
@@ -60,6 +66,12 @@ bool MirrorMethod::Configuration(string Message)
 }
 									/*}}}*/
 
+// clean the mirrors dir based on ttl information
+bool MirrorMethod::Clean(string dir)
+{
+   
+}
+
 
 bool MirrorMethod::GetMirrorFile(string uri)
 {
@@ -69,7 +81,7 @@ bool MirrorMethod::GetMirrorFile(string uri)
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
-   MirrorFile = _config->FindDir("Dir::State::lists") + URItoFileName(BaseUri);
+   MirrorFile = _config->FindDir("Dir::State::mirrors") + URItoFileName(BaseUri);
 
    if(Debug) 
    {
@@ -77,19 +89,43 @@ bool MirrorMethod::GetMirrorFile(string uri)
       cerr << "mirror-file: " << MirrorFile << endl;
    }
 
-   // FIXME: fetch it with curl
+   // check the file, if it is not older than RefreshInterval just use it
+   // otherwise try to get a new one
+   if(FileExists(MirrorFile)) 
+   {
+      struct stat buf;
+      time_t t,now,refresh;
+      if(stat(MirrorFile.c_str(), &buf) != 0)
+	 return false;
+      t = std::max(buf.st_mtime, buf.st_ctime);
+      now = time(NULL);
+      refresh = 60*_config->FindI("Acquire::Mirror::RefreshInterval",360);
+      if(t + refresh > now)
+      {
+	 if(Debug)
+	    clog << "Mirror file is in RefreshInterval" << endl;
+	 HasMirrorFile = true;
+	 return true;
+      }
+      if(Debug)
+	 clog << "Mirror file " << MirrorFile << " older than " << refresh << ", re-download it" << endl;
+   }
+
+   // not that great to use pkgAcquire here, but we do not have 
+   // any other way right now
    pkgAcquire Fetcher;
    new pkgAcqFile(&Fetcher, fetch, "", 0, "", "", "", MirrorFile);
    bool res = (Fetcher.Run() == pkgAcquire::Continue);
-   
-   if(res) 
+   if(res)
       HasMirrorFile = true;
    Fetcher.Shutdown();
-   return true;
+   return res;
 }
 
 bool MirrorMethod::SelectMirror()
 {
+   // FIXME: make the mirror selection more clever, do not 
+   //        just use the first one!
    ifstream in(MirrorFile.c_str());
    getline(in, Mirror);
    if(Debug)
@@ -103,7 +139,7 @@ bool MirrorMethod::SelectMirror()
    depth. */
 bool MirrorMethod::Fetch(FetchItem *Itm)
 {
-   // get mirror information
+   // select mirror only once per session
    if(!HasMirrorFile)
    {
       GetMirrorFile(Itm->Uri);
