@@ -34,14 +34,18 @@ using namespace std;
  * TODO: 
  * - send expected checksum to the mirror method so that 
      some checking/falling back can be done here already
- * - keep the mirror file around in /var/lib/apt/mirrors
-     * can't be put into lists/ because of the listclearer
-     * cleanup by time (mtime relative to the other mtimes)
- * - use a TTL time the mirror file is fetched again (6h?)
+     use pkgAcquire::Custom600Header() for this? what about gpgv 
+     failures?
+   #OR#
+ * - implement it at the pkgAcquire::Item::Failed() level but then
+     we need to send back what uri exactly was failing
+
  * - deal with runing as non-root because we can't write to the lists 
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
- * - magicmarker is (a bit) evil
+ * - magicmarker is (a bit) evil, maybe just use a similar approach as in
+     clean and read the sources.list and use the GetURI() method to find
+     the prefix?
  * - testing :)
  */
 
