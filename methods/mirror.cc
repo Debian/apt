@@ -14,6 +14,7 @@
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/sourcelist.h>
 
 #include <fstream>
 #include <iostream>
@@ -71,9 +72,14 @@ bool MirrorMethod::Configuration(string Message)
 // clean the mirrors dir based on ttl information
 bool MirrorMethod::Clean(string Dir)
 {
-   // FIXME: it would better to have a global idea of the mirrors
-   //        in the sources.list and use this instead of this time
-   //        based approach. currently apt does not support this :/
+   vector<metaIndex *>::const_iterator I;
+
+   if(Debug)
+      clog << "MirrorMethod::Clean(): " << Dir << endl;
+
+   // read sources.list
+   pkgSourceList list;
+   list.ReadMainList();
 
    DIR *D = opendir(Dir.c_str());   
    if (D == 0)
@@ -94,24 +100,21 @@ bool MirrorMethod::Clean(string Dir)
 	  strcmp(Dir->d_name,".") == 0 ||
 	  strcmp(Dir->d_name,"..") == 0)
 	 continue;
-      
-      // Del everything not touched for MaxAge days
-      time_t t,now,max;
-      struct stat buf;
-      if(stat(Dir->d_name, &buf) != 0) 
+
+      // see if we have that uri
+      for(I=list.begin(); I != list.end(); I++)
       {
-	 cerr << "Can't stat '" << Dir->d_name << "'" << endl;
-	 continue;
+	 string uri = (*I)->GetURI();
+	 if(uri.substr(0,strlen("mirror://")) != string("mirror://"))
+	    continue;
+	 string Marker = _config->Find("Acquire::Mirror::MagicMarker","///");
+	 string BaseUri = uri.substr(0,uri.find(Marker));
+	 if (URItoFileName(BaseUri) == Dir->d_name)
+	    break;
       }
-      t = std::max(buf.st_mtime, buf.st_ctime);
-      now = time(NULL);
-      max = 24*60*60*_config->FindI("Acquire::Mirror::MaxAge",90);
-      if(t + max < now)
-      {
-	 if(Debug)
-	    clog << "Mirror file is older than MaxAge days, deleting" << endl;
+      // nothing found, nuke it
+      if (I == list.end())
 	 unlink(Dir->d_name);
-      }
    };
    
    chdir(StartDir.c_str());
