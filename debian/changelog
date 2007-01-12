@@ -22,6 +22,12 @@ apt (0.6.46.5) UNRELEASED; urgency=low
     - use clog for all debugging
     - only increase the score of installed applications if they 
       are not obsolete 
+    - fix resolver bug on removal triggered by weak-dependencies 
+      with or-groups
+  * methods/http.cc:
+    - send apt version in User-Agent
+  * apt-pkg/deb/debrecords.cc:
+    - fix SHA1Hash() return value
 
  -- Michael Vogt <mvo@debian.org>  Thu, 14 Dec 2006 11:31:41 +0100
 
