@@ -33,6 +33,7 @@ class pkgAcqMethod
       string DestFile;
       time_t LastModified;
       bool IndexFile;
+      string ExpectedMD5;
    };
    
    struct FetchResult

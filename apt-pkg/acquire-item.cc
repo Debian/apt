@@ -176,7 +176,8 @@ string pkgAcqIndex::Custom600Headers()
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
-   
+   if(ExpectedMD5 != "")
+      return "\nExpectedMD5: " + ExpectedMD5;
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
@@ -1015,6 +1016,13 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }
 }
 									/*}}}*/
+// ---------------------------------------------------------------------
+string pkgAcqArchive::Custom600Headers()
+{
+   if(MD5 != "")
+      return "\nExpectedMD5: " + MD5;
+   return "";
+}
 // AcqArchive::IsTrusted - Determine whether this archive comes from a
 // trusted source							/*{{{*/
 // ---------------------------------------------------------------------

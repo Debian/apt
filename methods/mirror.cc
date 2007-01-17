@@ -32,14 +32,14 @@ using namespace std;
 
 /* 
  * TODO: 
- * - send expected checksum to the mirror method so that 
-     some checking/falling back can be done here already
-     use pkgAcquire::Custom600Header() for this? what about gpgv 
-     failures?
+ * - what about gpgv  failures? better standard format for errors
+     to send back to LP
    #OR#
  * - implement it at the pkgAcquire::Item::Failed() level but then
-     we need to send back what uri exactly was failing
-
+     we need to send back what uri exactly was failing 
+     [mvo: the problem with this approach is ::Failed() is not really
+           called for all failures :/ e.g. md5sum mismatch in a archive
+           is not]
  * - deal with runing as non-root because we can't write to the lists 
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
@@ -214,6 +214,9 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 
 void MirrorMethod::Fail(string Err,bool Transient)
 {
+   // FIXME: queue next mirror?
+   ReportMirrorFailure(Err);
+
    if(Queue->Uri.find("http://") != string::npos)
       Queue->Uri.replace(0,Mirror.size(), BaseUri);
    pkgAcqMethod::Fail(Err, Transient);
@@ -228,11 +231,23 @@ void MirrorMethod::URIStart(FetchResult &Res)
 
 void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
 {
+   // FIXME: queue next mirror?
+   if(Queue->ExpectedMD5 != "" && Res.MD5Sum != Queue->ExpectedMD5)
+      ReportMirrorFailure("499 Hash mismatch");
+
    if(Queue->Uri.find("http://") != string::npos)
       Queue->Uri.replace(0,Mirror.size(), BaseUri);
    pkgAcqMethod::URIDone(Res, Alt);
 }
 
+void MirrorMethod::ReportMirrorFailure(string FailCode)
+{
+   // report that Queue->Uri failed
+   std::cerr << "\nReportMirrorFailure: " 
+	     << Queue->Uri
+	     << " FailCode: " 
+	     << FailCode << std::endl;
+}
 
 int main()
 {

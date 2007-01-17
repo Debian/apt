@@ -205,6 +205,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual string ShortDesc() {return Desc.ShortDesc;};
    virtual void Finished();
    virtual bool IsTrusted();
+   virtual string Custom600Headers();
    
    pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 		 pkgRecords *Recs,pkgCache::VerIterator const &Version,
