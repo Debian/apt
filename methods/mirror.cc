@@ -247,6 +247,12 @@ void MirrorMethod::ReportMirrorFailure(string FailCode)
 	     << Queue->Uri
 	     << " FailCode: " 
 	     << FailCode << std::endl;
+#if 0 // FIXME: do not use system, make sure to properly encode
+      //        URI/FailCode, do not hardcode the submit url
+   system("curl -d url=" + Queue->Uri + 
+	  " -d FailureCode=" + FailCode + 
+	  " http://localhost:8000/ &");
+#endif
 }
 
 int main()
