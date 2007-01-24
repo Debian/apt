@@ -30,13 +30,18 @@ using namespace std;
 #include "apti18n.h"
 									/*}}}*/
 
-/* 
+/* Done:
+ * - works with http only
+ * - always picks the first mirror from the list
+ * - call out to problem reporting script
+ * - supports "deb mirror://host/path/to/mirror-list/// dist component"
+ * 
  * TODO: 
- * - what about gpgv  failures? better standard format for errors
-     to send back to LP
-   #OR#
- * - implement it at the pkgAcquire::Item::Failed() level but then
-     we need to send back what uri exactly was failing 
+ * what about gpgv  failures? this should call-out to the problem reporting
+   script, but we need to know what mirror was used
+ * better standard format for errors to send back 
+ * - implement failure reporting  at the pkgAcquire::Item::Failed() level 
+     but then we need to send back what uri exactly was failing 
      [mvo: the problem with this approach is ::Failed() is not really
            called for all failures :/ e.g. md5sum mismatch in a archive
            is not]
@@ -46,6 +51,7 @@ using namespace std;
  * - magicmarker is (a bit) evil, maybe just use a similar approach as in
      clean and read the sources.list and use the GetURI() method to find
      the prefix?
+ * support more than http
  * - testing :)
  */
 
@@ -243,16 +249,34 @@ void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
 void MirrorMethod::ReportMirrorFailure(string FailCode)
 {
    // report that Queue->Uri failed
+#if 0
    std::cerr << "\nReportMirrorFailure: " 
 	     << Queue->Uri
 	     << " FailCode: " 
 	     << FailCode << std::endl;
-#if 0 // FIXME: do not use system, make sure to properly encode
-      //        URI/FailCode, do not hardcode the submit url
-   system("curl -d url=" + Queue->Uri + 
-	  " -d FailureCode=" + FailCode + 
-	  " http://localhost:8000/ &");
 #endif
+   const char *Args[40];
+   unsigned int i = 0;
+   string report = _config->Find("Methods::Mirror::ProblemReporting", 
+				 "/usr/lib/apt/report-mirror-failure");
+   Args[i++] = report.c_str();
+   Args[i++] = Queue->Uri.c_str();
+   Args[i++] = FailCode.c_str();
+   pid_t pid = ExecFork();
+   if(pid < 0) 
+   {
+      _error->Error("ReportMirrorFailure Fork failed");
+      return;
+   }
+   else if(pid == 0) 
+   {
+      execvp(report.c_str(), (char**)Args);
+   }
+   if(!ExecWait(pid, "report-mirror-failure")) 
+   {
+      _error->Warning("Couldn't report problem to '%s'",
+		      _config->Find("Acquire::Mirror::ReportFailures").c_str());
+   }
 }
 
 int main()
