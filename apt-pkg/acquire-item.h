@@ -56,6 +56,7 @@ class pkgAcquire::Item
    unsigned long ID;
    bool Complete;
    bool Local;
+   string UsedMirror;
 
    // Number of queues we are inserted into
    unsigned int QueueCounter;
@@ -78,6 +79,9 @@ class pkgAcquire::Item
    pkgAcquire *GetOwner() {return Owner;};
    virtual bool IsTrusted() {return false;};
    
+   // report mirror problems
+   void ReportMirrorFailure(string FailCode);
+
    Item(pkgAcquire *Owner);
    virtual ~Item();
 };
@@ -205,7 +209,6 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual string ShortDesc() {return Desc.ShortDesc;};
    virtual void Finished();
    virtual bool IsTrusted();
-   virtual string Custom600Headers();
    
    pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 		 pkgRecords *Recs,pkgCache::VerIterator const &Version,

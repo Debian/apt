@@ -55,7 +55,9 @@ class pkgAcqMethod
    vector<string> Messages;
    FetchItem *Queue;
    FetchItem *QueueBack;
-   string FailExtra;
+   string FailReason;
+   string UsedMirror;
+   string IP;
    
    // Handlers for messages
    virtual bool Configuration(string Message);
@@ -72,7 +74,6 @@ class pkgAcqMethod
    virtual void Exit() {};
 
    public:
-
    enum CnfFlags {SingleInstance = (1<<0),
                   Pipeline = (1<<1), SendConfig = (1<<2),
                   LocalOnly = (1<<3), NeedsCleanup = (1<<4), 
@@ -82,7 +83,8 @@ class pkgAcqMethod
    void Status(const char *Format,...);
    
    int Run(bool Single = false);
-   inline void SetFailExtraMsg(string Msg) {FailExtra = Msg;};
+   inline void SetFailReason(string Msg) {FailReason = Msg;};
+   inline void SetIP(string aIP) {IP = aIP;};
    
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~pkgAcqMethod() {};

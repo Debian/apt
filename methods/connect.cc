@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <sstream>
 
 // Internet stuff
 #include <netinet/in.h>
@@ -67,12 +68,10 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
       wrong this will get tacked onto the end of the error message */
    if (LastHostAddr->ai_next != 0)
    {
-      char Name2[NI_MAXHOST + NI_MAXSERV + 10];
-      snprintf(Name2,sizeof(Name2),_("[IP: %s %s]"),Name,Service);
-      Owner->SetFailExtraMsg(string(Name2));
-   }   
-   else
-      Owner->SetFailExtraMsg("");
+      std::stringstream ss;
+      ioprintf(ss, _("[IP: %s %s]"),Name,Service);
+      Owner->SetIP(ss.str());
+   }
       
    // Get a socket
    if ((Fd = socket(Addr->ai_family,Addr->ai_socktype,
@@ -89,7 +88,7 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    /* This implements a timeout for connect by opening the connection
       nonblocking */
    if (WaitFd(Fd,true,TimeOut) == false) {
-      Owner->SetFailExtraMsg("\nFailReason: Timeout");
+      Owner->SetFailReason("Timeout");
       return _error->Error(_("Could not connect to %s:%s (%s), "
 			   "connection timed out"),Host.c_str(),Service,Name);
    }
@@ -104,7 +103,7 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    {
       errno = Err;
       if(errno == ECONNREFUSED)
-         Owner->SetFailExtraMsg("\nFailReason: ConnectionRefused");
+         Owner->SetFailReason("ConnectionRefused");
       return _error->Errno("connect",_("Could not connect to %s:%s (%s)."),Host.c_str(),
 			   Service,Name);
    }
@@ -169,7 +168,7 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	    
 	    if (Res == EAI_AGAIN)
 	    {
-	       Owner->SetFailExtraMsg("\nFailReason: TmpResolveFailure");
+	       Owner->SetFailReason("TmpResolveFailure");
 	       return _error->Error(_("Temporary failure resolving '%s'"),
 				    Host.c_str());
 	    }

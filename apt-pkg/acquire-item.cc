@@ -79,6 +79,10 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       Status = StatError;
       Dequeue();
    }   
+   
+   // report mirror failure back to LP if we actually use a mirror
+   if(!UsedMirror.empty())
+      ReportMirrorFailure(ErrorText);
 }
 									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
@@ -100,6 +104,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string,
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
+   UsedMirror =  LookupTag(Message,"UsedMirror");
    if (Complete == false && FileName == DestFile)
    {
       if (Owner->Log != 0)
@@ -108,7 +113,6 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string,
 
    if (FileSize == 0)
       FileSize= Size;
-   
    Status = StatDone;
    ErrorText = string();
    Owner->Dequeue(this);
@@ -130,6 +134,42 @@ void pkgAcquire::Item::Rename(string From,string To)
    }   
 }
 									/*}}}*/
+
+void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
+{
+   // report that Queue->Uri failed
+#if 0
+   std::cerr << "\nReportMirrorFailure: " 
+	     << UsedMirror
+	     << " FailCode: " 
+	     << FailCode << std::endl;
+#endif
+   const char *Args[40];
+   unsigned int i = 0;
+   string report = _config->Find("Methods::Mirror::ProblemReporting", 
+				 "/usr/bin/apt-report-mirror-failure");
+   if(!FileExists(report))
+      return;
+   Args[i++] = report.c_str();
+   Args[i++] = UsedMirror.c_str();
+   Args[i++] = FailCode.c_str();
+   pid_t pid = ExecFork();
+   if(pid < 0) 
+   {
+      _error->Error("ReportMirrorFailure Fork failed");
+      return;
+   }
+   else if(pid == 0) 
+   {
+      execvp(report.c_str(), (char**)Args);
+   }
+   if(!ExecWait(pid, "report-mirror-failure")) 
+   {
+      _error->Warning("Couldn't report problem to '%s'",
+		      _config->Find("Acquire::Mirror::ReportFailures").c_str());
+   }
+}
+
 
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -176,8 +216,6 @@ string pkgAcqIndex::Custom600Headers()
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
-   if(ExpectedMD5 != "")
-      return "\nExpectedMD5: " + ExpectedMD5;
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
@@ -1016,13 +1054,6 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }
 }
 									/*}}}*/
-// ---------------------------------------------------------------------
-string pkgAcqArchive::Custom600Headers()
-{
-   if(MD5 != "")
-      return "\nExpectedMD5: " + MD5;
-   return "";
-}
 // AcqArchive::IsTrusted - Determine whether this archive comes from a
 // trusted source							/*{{{*/
 // ---------------------------------------------------------------------

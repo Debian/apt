@@ -99,12 +99,11 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    }
    
    char S[1024];
+   char *End = S;
    if (Queue != 0)
    {
-      snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: %s\n"
-	       "Message: %s %s\n",Queue->Uri.c_str(),Err.c_str(),
-	       FailExtra.c_str());
-
+      End += snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: %s\n"
+		      "Message: %s %s\n",Queue->Uri.c_str(), Err.c_str(), IP.c_str());
       // Dequeue
       FetchItem *Tmp = Queue;
       Queue = Queue->Next;
@@ -113,10 +112,14 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
 	 QueueBack = Queue;
    }
    else
-      snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: <UNKNOWN>\n"
-	       "Message: %s %s\n",Err.c_str(),
-	       FailExtra.c_str());
-      
+   {
+      End += snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: <UNKNOWN>\n"
+		      "Message: %s\n",Err.c_str());
+   }
+   if(FailReason.empty() == false)
+      End += snprintf(End,sizeof(S)-50 - (End - S),"FailReason: %s\n",FailReason.c_str());
+   if (UsedMirror.empty() == false)
+      End += snprintf(End,sizeof(S)-50 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
    // Set the transient flag 
    if (Transient == true)
       strcat(S,"Transient-Failure: true\n\n");
@@ -182,6 +185,8 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       End += snprintf(End,sizeof(S)-50 - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
    if (Res.SHA1Sum.empty() == false)
       End += snprintf(End,sizeof(S)-50 - (End - S),"SHA1-Hash: %s\n",Res.SHA1Sum.c_str());
+   if (UsedMirror.empty() == false)
+      End += snprintf(End,sizeof(S)-50 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
    if (Res.GPGVOutput.size() > 0)
       End += snprintf(End,sizeof(S)-50 - (End - S),"GPGVOutput:\n");     
    for (vector<string>::iterator I = Res.GPGVOutput.begin();
