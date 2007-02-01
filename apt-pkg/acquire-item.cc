@@ -63,6 +63,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    Status = StatIdle;
    ErrorText = LookupTag(Message,"Message");
+   UsedMirror =  LookupTag(Message,"UsedMirror");
    if (QueueCounter <= 1)
    {
       /* This indicates that the file is not available right now but might
@@ -153,6 +154,7 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
    Args[i++] = report.c_str();
    Args[i++] = UsedMirror.c_str();
    Args[i++] = FailCode.c_str();
+   Args[i++] = NULL;
    pid_t pid = ExecFork();
    if(pid < 0) 
    {
@@ -161,12 +163,14 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
    }
    else if(pid == 0) 
    {
-      execvp(report.c_str(), (char**)Args);
+      execvp(Args[0], (char**)Args);
+      std::cerr << "Could not exec " << Args[0] << std::endl;
+      _exit(100);
    }
    if(!ExecWait(pid, "report-mirror-failure")) 
    {
       _error->Warning("Couldn't report problem to '%s'",
-		      _config->Find("Acquire::Mirror::ReportFailures").c_str());
+		      _config->Find("Methods::Mirror::ProblemReporting").c_str());
    }
 }
 
