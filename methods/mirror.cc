@@ -42,22 +42,13 @@ using namespace std;
  * - deal with runing as non-root because we can't write to the lists 
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
- * - magicmarker is evil, maybe just use a similar approach as in
-     clean and read the sources.list and use the GetURI() method to find
-     the prefix?
- * support more than http
+ * - support more than http
  * - testing :)
  */
 
 MirrorMethod::MirrorMethod()
    : HttpMethod(), HasMirrorFile(false)
 {
-#if 0
-   HasMirrorFile=true;
-   BaseUri="mirror://people.ubuntu.com/~mvo/mirror/mirrors";
-   MirrorFile="/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_mirror_mirrors";
-   Mirror="http://de.archive.ubuntu.com/ubuntu/";
-#endif
 };
 
 // HttpMethod::Configuration - Handle a configuration message		/*{{{*/
@@ -111,8 +102,7 @@ bool MirrorMethod::Clean(string Dir)
 	 string uri = (*I)->GetURI();
 	 if(uri.substr(0,strlen("mirror://")) != string("mirror://"))
 	    continue;
-	 string Marker = _config->Find("Acquire::Mirror::MagicMarker","///");
-	 string BaseUri = uri.substr(0,uri.find(Marker));
+	 string BaseUri = uri.substr(0,uri.size()-1);
 	 if (URItoFileName(BaseUri) == Dir->d_name)
 	    break;
       }
@@ -127,11 +117,51 @@ bool MirrorMethod::Clean(string Dir)
 }
 
 
-bool MirrorMethod::GetMirrorFile(string uri)
+bool MirrorMethod::GetMirrorFile(string mirror_uri_str)
 {
-   string Marker = _config->Find("Acquire::Mirror::MagicMarker","///");
-   BaseUri = uri.substr(0,uri.find(Marker));
+   /* 
+    - a mirror_uri_str looks like this:
+    mirror://people.ubuntu.com/~mvo/apt/mirror/mirrors/dists/feisty/Release.gpg
+   
+    - the matching source.list entry
+    deb mirror://people.ubuntu.com/~mvo/apt/mirror/mirrors feisty main
+   
+    - we actually want to go after:
+    http://people.ubuntu.com/~mvo/apt/mirror/mirrors
 
+    And we need to save the BaseUri for later:
+    - mirror://people.ubuntu.com/~mvo/apt/mirror/mirrors
+
+   FIXME: what if we have two similar prefixes?
+     mirror://people.ubuntu.com/~mvo/mirror
+     mirror://people.ubuntu.com/~mvo/mirror2
+   then mirror_uri_str looks like:
+     mirror://people.ubuntu.com/~mvo/apt/mirror/dists/feisty/Release.gpg
+     mirror://people.ubuntu.com/~mvo/apt/mirror2/dists/feisty/Release.gpg
+   we search sources.list and find:
+     mirror://people.ubuntu.com/~mvo/apt/mirror
+   in both cases! So we need to apply some domain knowledge here :( and
+   check for /dists/ or /Release.gpg as suffixes
+   */
+   std::cerr << "GetMirrorFile: " << mirror_uri_str << std::endl;
+
+   // read sources.list and find match
+   vector<metaIndex *>::const_iterator I;
+   pkgSourceList list;
+   list.ReadMainList();
+   for(I=list.begin(); I != list.end(); I++)
+   {
+      string uristr = (*I)->GetURI();
+      std::cerr << "Checking: " << uristr << std::endl;
+      if(uristr.substr(0,strlen("mirror://")) != string("mirror://"))
+	 continue;
+      // find matching uri in sources.list
+      if(mirror_uri_str.substr(0,uristr.size()) == uristr)
+      {
+	 std::cerr << "found BaseURI: " << uristr << std::endl;
+	 BaseUri = uristr.substr(0,uristr.size()-1);
+      }
+   }
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
