@@ -14,8 +14,9 @@ if not url:
 print "Reporting mirror failure to '%s'" % url
 
 data = {}
-data['url'] = sys.argv[1]
-data['error'] = sys.argv[2]
+data['mirror'] = sys.argv[1]
+data['failurl'] = sys.argv[2]
+data['error'] = sys.argv[3]
 f = urllib.urlopen(url, urllib.urlencode(data))
 f.read()
 f.close()

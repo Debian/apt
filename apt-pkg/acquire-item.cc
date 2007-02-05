@@ -82,7 +82,11 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }   
    
    // report mirror failure back to LP if we actually use a mirror
-   ReportMirrorFailure(ErrorText);
+   string FailReason = LookupTag(Message, "FailReason");
+   if(FailReason.size() != 0)
+      ReportMirrorFailure(FailReason);
+   else
+      ReportMirrorFailure(ErrorText);
 }
 									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
@@ -155,6 +159,7 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
       return;
    Args[i++] = report.c_str();
    Args[i++] = UsedMirror.c_str();
+   Args[i++] = DescURI().c_str();
    Args[i++] = FailCode.c_str();
    Args[i++] = NULL;
    pid_t pid = ExecFork();

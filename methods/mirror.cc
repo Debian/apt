@@ -143,7 +143,8 @@ bool MirrorMethod::GetMirrorFile(string mirror_uri_str)
    in both cases! So we need to apply some domain knowledge here :( and
    check for /dists/ or /Release.gpg as suffixes
    */
-   std::cerr << "GetMirrorFile: " << mirror_uri_str << std::endl;
+   if(Debug)
+      std::cerr << "GetMirrorFile: " << mirror_uri_str << std::endl;
 
    // read sources.list and find match
    vector<metaIndex *>::const_iterator I;
@@ -152,13 +153,15 @@ bool MirrorMethod::GetMirrorFile(string mirror_uri_str)
    for(I=list.begin(); I != list.end(); I++)
    {
       string uristr = (*I)->GetURI();
-      std::cerr << "Checking: " << uristr << std::endl;
+      if(Debug)
+	 std::cerr << "Checking: " << uristr << std::endl;
       if(uristr.substr(0,strlen("mirror://")) != string("mirror://"))
 	 continue;
       // find matching uri in sources.list
       if(mirror_uri_str.substr(0,uristr.size()) == uristr)
       {
-	 std::cerr << "found BaseURI: " << uristr << std::endl;
+	 if(Debug)
+	    std::cerr << "found BaseURI: " << uristr << std::endl;
 	 BaseUri = uristr.substr(0,uristr.size()-1);
       }
    }
