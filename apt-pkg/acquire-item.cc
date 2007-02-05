@@ -82,8 +82,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }   
    
    // report mirror failure back to LP if we actually use a mirror
-   if(!UsedMirror.empty())
-      ReportMirrorFailure(ErrorText);
+   ReportMirrorFailure(ErrorText);
 }
 									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
@@ -138,10 +137,13 @@ void pkgAcquire::Item::Rename(string From,string To)
 
 void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
 {
-   // report that Queue->Uri failed
+   // we only act if a mirror was used at all
+   if(UsedMirror.empty())
+      return;
 #if 0
    std::cerr << "\nReportMirrorFailure: " 
 	     << UsedMirror
+	     << " Uri: " << DescURI()
 	     << " FailCode: " 
 	     << FailCode << std::endl;
 #endif
@@ -278,6 +280,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
          Status = StatAuthError;
          ErrorText = _("MD5Sum mismatch");
          Rename(DestFile,DestFile + ".FAILED");
+	 ReportMirrorFailure("HashChecksumFailure");
          return;
       }
       // Done, move it into position
@@ -765,6 +768,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       }
 
       // gpgv method failed 
+      ReportMirrorFailure("GPGFailure");
       _error->Warning("GPG error: %s: %s",
                       Desc.Description.c_str(),
                       LookupTag(Message,"Message").c_str());

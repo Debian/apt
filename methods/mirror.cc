@@ -31,20 +31,14 @@ using namespace std;
 									/*}}}*/
 
 /* Done:
- * - works with http only
+ * - works with http (only!)
  * - always picks the first mirror from the list
  * - call out to problem reporting script
  * - supports "deb mirror://host/path/to/mirror-list/// dist component"
+ * - use pkgAcqMethod::FailReason() to have a string representation
+ *   of the failure that is also send to LP
  * 
  * TODO: 
- * what about gpgv  failures? this should call-out to the problem reporting
-   script, but we need to know what mirror was used -> just run pkgAcquire::Item::ReportMirrorFailure()
- * better standard format for errors to send back 
- * - implement failure reporting  at the pkgAcquire::Item::Failed() level 
-     but then we need to send back what uri exactly was failing 
-     [mvo: the problem with this approach is ::Failed() is not really
-           called for all failures :/ e.g. md5sum mismatch in a archive
-           is not]
  * - deal with runing as non-root because we can't write to the lists 
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here

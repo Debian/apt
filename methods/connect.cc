@@ -163,6 +163,7 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 		  DefPort = 0;
 		  continue;
 	       }
+	       Owner->SetFailReason("ResolveFailure");
 	       return _error->Error(_("Could not resolve '%s'"),Host.c_str());
 	    }
 	    
