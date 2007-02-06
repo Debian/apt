@@ -42,6 +42,7 @@ using namespace std;
  * - deal with runing as non-root because we can't write to the lists 
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
+ *   and better error handling there!
  * - support more than http
  * - testing :)
  */

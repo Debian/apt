@@ -55,6 +55,6 @@ include $(COPY_H)
 
 # The apt-key program
 SOURCE=apt-report-mirror-failure
-TO=$(LIB)
+TO=$(BIN)
 TARGET=program
 include $(COPY_H)

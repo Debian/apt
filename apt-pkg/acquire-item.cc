@@ -154,7 +154,7 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
    const char *Args[40];
    unsigned int i = 0;
    string report = _config->Find("Methods::Mirror::ProblemReporting", 
-				 "/usr/bin/apt-report-mirror-failure");
+				 "/usr/lib/apt/apt-report-mirror-failure");
    if(!FileExists(report))
       return;
    Args[i++] = report.c_str();
