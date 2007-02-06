@@ -373,7 +373,6 @@ int pkgAcqMethod::Run(bool Single)
 	    
 	    Tmp->Uri = LookupTag(Message,"URI");
 	    Tmp->DestFile = LookupTag(Message,"FileName");
-	    Tmp->ExpectedMD5 = LookupTag(Message,"ExpectedMD5");
 	    if (StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified) == false)
 	       Tmp->LastModified = 0;
 	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
