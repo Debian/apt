@@ -180,6 +180,17 @@ Acquire
   {
    Options {"--ignore-time-conflict";}	// not very usefull on a normal system
   };
+
+  mirror
+  {
+   RefreshInterval "360"; // refresh interval in minutes
+   MaxAge "90";           // max age for a mirror file in days before 
+                          // it gets deleted
+   // mirror failure reporting script
+   ProblemReporting "/usr/lib/apt/apt-report-mirror-failure"; 
+   // mirror failure reporting url
+   ReportFailures "http://example.com/mirror-failure"; 
+  };
 };
 
 // Directory layout
@@ -193,6 +204,7 @@ Dir "/"
      userstatus "status.user";
      status "/var/lib/dpkg/status";
      cdroms "cdroms.list";
+     mirrors "mirrors/";
   };
   
   // Location of the cache dir
@@ -283,9 +295,9 @@ Debug
   Acquire::Http "false";   // Show http command traffic
   Acquire::Https "false";   // Show https debug
   Acquire::gpgv "false";   // Show the gpgv traffic
+  Acquire::Mirror "false"; // Show debugging of the mirror method
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";
-  
 }
 
 /* Whatever you do, do not use this configuration file!! Take out ONLY

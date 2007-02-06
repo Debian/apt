@@ -63,6 +63,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    Status = StatIdle;
    ErrorText = LookupTag(Message,"Message");
+   UsedMirror =  LookupTag(Message,"UsedMirror");
    if (QueueCounter <= 1)
    {
       /* This indicates that the file is not available right now but might
@@ -79,6 +80,13 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       Status = StatError;
       Dequeue();
    }   
+   
+   // report mirror failure back to LP if we actually use a mirror
+   string FailReason = LookupTag(Message, "FailReason");
+   if(FailReason.size() != 0)
+      ReportMirrorFailure(FailReason);
+   else
+      ReportMirrorFailure(ErrorText);
 }
 									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
@@ -100,6 +108,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string,
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
+   UsedMirror =  LookupTag(Message,"UsedMirror");
    if (Complete == false && FileName == DestFile)
    {
       if (Owner->Log != 0)
@@ -108,7 +117,6 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string,
 
    if (FileSize == 0)
       FileSize= Size;
-   
    Status = StatDone;
    ErrorText = string();
    Owner->Dequeue(this);
@@ -130,6 +138,49 @@ void pkgAcquire::Item::Rename(string From,string To)
    }   
 }
 									/*}}}*/
+
+void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
+{
+   // we only act if a mirror was used at all
+   if(UsedMirror.empty())
+      return;
+#if 0
+   std::cerr << "\nReportMirrorFailure: " 
+	     << UsedMirror
+	     << " Uri: " << DescURI()
+	     << " FailCode: " 
+	     << FailCode << std::endl;
+#endif
+   const char *Args[40];
+   unsigned int i = 0;
+   string report = _config->Find("Methods::Mirror::ProblemReporting", 
+				 "/usr/lib/apt/apt-report-mirror-failure");
+   if(!FileExists(report))
+      return;
+   Args[i++] = report.c_str();
+   Args[i++] = UsedMirror.c_str();
+   Args[i++] = DescURI().c_str();
+   Args[i++] = FailCode.c_str();
+   Args[i++] = NULL;
+   pid_t pid = ExecFork();
+   if(pid < 0) 
+   {
+      _error->Error("ReportMirrorFailure Fork failed");
+      return;
+   }
+   else if(pid == 0) 
+   {
+      execvp(Args[0], (char**)Args);
+      std::cerr << "Could not exec " << Args[0] << std::endl;
+      _exit(100);
+   }
+   if(!ExecWait(pid, "report-mirror-failure")) 
+   {
+      _error->Warning("Couldn't report problem to '%s'",
+		      _config->Find("Methods::Mirror::ProblemReporting").c_str());
+   }
+}
+
 
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -176,7 +227,6 @@ string pkgAcqIndex::Custom600Headers()
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
-   
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
@@ -235,6 +285,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
          Status = StatAuthError;
          ErrorText = _("MD5Sum mismatch");
          Rename(DestFile,DestFile + ".FAILED");
+	 ReportMirrorFailure("HashChecksumFailure");
          return;
       }
       // Done, move it into position
@@ -757,6 +808,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       }
 
       // gpgv method failed 
+      ReportMirrorFailure("GPGFailure");
       _error->Warning("GPG error: %s: %s",
                       Desc.Description.c_str(),
                       LookupTag(Message,"Message").c_str());

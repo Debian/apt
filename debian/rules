@@ -219,6 +219,10 @@ apt: build debian/shlibs.local
 	rm -f build/po/*.pot
 	rm -f po/*.pot
 
+	# move the mirror failure script in place
+	mv debian/$@/usr/bin/apt-report-mirror-failure \
+	   debian/$@/usr/lib/apt/apt-report-mirror-failure \
+
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
 	dh_installman -p$@ 
 	dh_installcron -p$@

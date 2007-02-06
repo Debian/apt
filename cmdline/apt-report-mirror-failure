@@ -1,0 +1,24 @@
+#!/usr/bin/python
+
+import sys
+import urllib
+import apt_pkg
+
+apt_pkg.init()
+url = apt_pkg.Config.Find("Acquire::Mirror::ReportFailures", None)
+                          #"http://people.ubuntu.com:9000/mirror-failure")
+                          #"http://localhost:9000/mirror-failure")
+if not url:
+    sys.exit(0)
+
+print "Reporting mirror failure to '%s'" % url
+
+data = {}
+data['mirror'] = sys.argv[1]
+data['failurl'] = sys.argv[2]
+data['error'] = sys.argv[3]
+f = urllib.urlopen(url, urllib.urlencode(data))
+f.read()
+f.close()
+
+

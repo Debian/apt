@@ -38,7 +38,6 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-#include <iostream>
 #include <apti18n.h>
 
 // Internet stuff
@@ -58,7 +57,7 @@ time_t HttpMethod::FailTime = 0;
 unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
 bool Debug = false;
-
+URI Proxy;
 
 unsigned long CircleBuf::BwReadLimit=0;
 unsigned long CircleBuf::BwTickReadData=0;
@@ -916,6 +915,9 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       failure */
    if (Srv->Result < 200 || Srv->Result >= 300)
    {
+      char err[255];
+      snprintf(err,sizeof(err)-1,"HttpError%i",Srv->Result);
+      SetFailReason(err);
       _error->Error("%u %s",Srv->Result,Srv->Code);
       if (Srv->HaveContent == true)
 	 return 4;
@@ -991,7 +993,7 @@ void HttpMethod::SigTerm(int)
    depth. */
 bool HttpMethod::Fetch(FetchItem *)
 {
-   if (Server == 0)
+   if (Server == 0) 
       return true;
 
    // Queue the requests
@@ -1224,13 +1226,5 @@ int HttpMethod::Loop()
 }
 									/*}}}*/
 
-int main()
-{
-   setlocale(LC_ALL, "");
-
-   HttpMethod Mth;
-   
-   return Mth.Loop();
-}
 
 
