@@ -23,6 +23,7 @@
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/fileutl.h>
+#include <vector>
 
 class pkgRecords
 {
@@ -32,8 +33,8 @@ class pkgRecords
    private:
    
    pkgCache &Cache;
-   Parser **Files;
-      
+   std::vector<Parser *>Files;
+
    public:
 
    // Lookup function

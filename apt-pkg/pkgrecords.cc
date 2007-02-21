@@ -23,11 +23,9 @@
 // Records::pkgRecords - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create the necessary structures to access the status files */
-pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
+pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
+  Files(Cache.HeaderP->PackageFileCount)
 {
-   Files = new Parser *[Cache.HeaderP->PackageFileCount];
-   memset(Files,0,sizeof(*Files)*Cache.HeaderP->PackageFileCount);
-   
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); 
 	I.end() == false; I++)
    {
@@ -49,9 +47,13 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 /* */
 pkgRecords::~pkgRecords()
 {
-   for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
-      delete Files[I];
-   delete [] Files;
+   for ( vector<Parser*>::iterator it = Files.begin();
+     it != Files.end();
+     ++it)
+   {
+      delete *it;
+   }
+
 }
 									/*}}}*/
 // Records::Lookup - Get a parser for the package version file		/*{{{*/
