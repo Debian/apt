@@ -57,7 +57,7 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
 /* */
 void CDROMMethod::Exit()
 {
-   if (Mounted == true)
+   if (Mounted == true && _config->FindB("APT::CDROM::NoMount",false) == false)
       UnmountCdrom(CDROM);
 }
 									/*}}}*/
@@ -160,7 +160,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 	 break;
 	 
       // I suppose this should prompt somehow?
-      if (UnmountCdrom(CDROM) == false)
+      if (_config->FindB("APT::CDROM::NoMount",false) == false &&
+	  UnmountCdrom(CDROM) == false)
 	 return _error->Error(_("Unable to unmount the CD-ROM in %s, it may still be in use."),
 			      CDROM.c_str());
       if (MediaFail(Get.Host,CDROM) == false)
