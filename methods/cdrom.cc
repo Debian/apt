@@ -57,7 +57,8 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
 /* */
 void CDROMMethod::Exit()
 {
-   if (Mounted == true && _config->FindB("APT::CDROM::NoMount",false) == false)
+   if (Mounted == true && 
+       _config->FindB("APT::CDROM::UnMountOnFinish",true) == true)
       UnmountCdrom(CDROM);
 }
 									/*}}}*/
