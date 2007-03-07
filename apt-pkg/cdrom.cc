@@ -508,10 +508,8 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
 		      CDROM.c_str());
       log->Update(msg.str());
    }
-
-   if (_config->FindB("APT::CDROM::NoMount",false) == false)
-      if (MountCdrom(CDROM) == false)
-	 return _error->Error("Failed to mount the cdrom.");
+   if (MountCdrom(CDROM) == false)
+      return _error->Error("Failed to mount the cdrom.");
 
    // Hash the CD to get an ID
    if(log) 
@@ -805,8 +803,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    
 
    // Unmount and finish
-   if (_config->FindB("APT::CDROM::NoMount",false) == false &&
-       _config->FindB("APT::CDROM::UnMountOnFinish",true) == true) {
+   if (_config->FindB("APT::CDROM::NoMount",false) == false) {
       log->Update(_("Unmounting CD-ROM..."), STEP_LAST);
       UnmountCdrom(CDROM);
    }

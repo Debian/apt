@@ -30,7 +30,7 @@ class CDROMMethod : public pkgAcqMethod
    ::Configuration Database;
    string CurrentID;
    string CDROM;
-   bool Mounted;
+   bool MountedByApt;
    
    virtual bool Fetch(FetchItem *Itm);
    string GetID(string Name);
@@ -48,7 +48,7 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
 					  SendConfig | NeedsCleanup |
 					  Removable), 
                                           DatabaseLoaded(false), 
-                                          Mounted(false)
+                                          MountedByApt(false)
 {
 };
 									/*}}}*/
@@ -57,8 +57,7 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
 /* */
 void CDROMMethod::Exit()
 {
-   if (Mounted == true && 
-       _config->FindB("APT::CDROM::UnMountOnFinish",true) == true)
+   if (MountedByApt == true)
       UnmountCdrom(CDROM);
 }
 									/*}}}*/
@@ -140,7 +139,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    while (CurrentID.empty() == true)
    {
       bool Hit = false;
-      Mounted = MountCdrom(CDROM);
+      if(!IsMounted(CDROM))
+	 MountedByApt = MountCdrom(CDROM);
       for (unsigned int Version = 2; Version != 0; Version--)
       {
 	 if (IdentCdrom(CDROM,NewID,Version) == false)
