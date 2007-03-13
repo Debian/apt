@@ -1446,7 +1446,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	       std::cout << "We could delete %s" <<  Pkg.Name() << std::endl;
 	   
 	 autoremovelist += string(Pkg.Name()) + " ";
-	 autoremoveversions += string(Cache[Pkg].CandVersion) + " ";
+	 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
 	 if (doAutoRemove)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
