@@ -106,9 +106,6 @@ bool pkgInitConfig(Configuration &Cnf)
    }
 #endif
 
-   // Translation
-   Cnf.Set("APT::Acquire::Translation", "environment");
-   
    return true;
 }
 									/*}}}*/
