@@ -95,9 +95,10 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
    be downloaded. */
 bool pkgPackageManager::FixMissing()
 {   
+   pkgDepCache::ActionGroup group(Cache);
    pkgProblemResolver Resolve(&Cache);
    List->SetFileList(FileNames);
-   
+
    bool Bad = false;
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
