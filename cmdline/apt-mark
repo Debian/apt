@@ -60,5 +60,5 @@ if __name__ == "__main__":
             else:
                 outfile.write(str(tagfile.Section)+"\n")
         # all done, rename the tmpfile
-        os.rename(outfile.name, STATE_FILE)
         os.chmod(outfile.name, 0644)
+        os.rename(outfile.name, STATE_FILE)
