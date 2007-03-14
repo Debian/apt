@@ -26,6 +26,8 @@
 #include <sstream>    
 #include <set>
 
+#include <sys/stat.h>
+
 #include <apti18n.h>    
 
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :
@@ -253,8 +255,9 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
    }
    fclose(OutFile);
 
-   // move the outfile over the real file
+   // move the outfile over the real file and set permissions
    rename(outfile.c_str(), state.c_str());
+   chmod(state.c_str(), 0644);
 
    return true;
 }
