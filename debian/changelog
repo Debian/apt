@@ -2,13 +2,14 @@ apt (0.6.46.4ubuntu10) feisty; urgency=low
 
   * apt-pkg/depcache.cc:
     - added "APT::Never-MarkAuto-Section" and consider dependencies 
-      of packages in this section manual
+      of packages in this section manual (LP#59893)
   * debian/apt.conf.ubuntu:
-    - added APT::Never-MarkAuto-Section "metapackages";
+    - added APT::Never-MarkAuto-Section "metapackages" (LP#59893)
   * cmdline/apt-get.cc:
     - "apt-get install foo" on a already installed package foo will
-      clean the automatic installed flag
+      clean the automatic installed flag (LP#72007)
     - do not show packages already marked for removal as auto-installed
+      (LP#64493)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 14 Mar 2007 13:32:32 +0100
 
