@@ -1444,9 +1444,13 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
 	    if(Debug)
 	       std::cout << "We could delete %s" <<  Pkg.Name() << std::endl;
-	   
-	 autoremovelist += string(Pkg.Name()) + " ";
-	 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+	  
+	 // only show stuff in the list that is not yet marked for removal
+	 if(Cache[Pkg].Delete() == false) 
+	 {
+	    autoremovelist += string(Pkg.Name()) + " ";
+	    autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+	 }
 	 if (doAutoRemove)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
@@ -1697,7 +1701,8 @@ bool DoInstall(CommandLine &CmdL)
 	    // see if we need to fix the auto-mark flag 
 	    // e.g. apt-get install foo 
 	    // where foo is marked automatic
-	    if(Cache[Pkg].Install() == false && 
+	    if(!Remove && 
+	       Cache[Pkg].Install() == false && 
 	       (Cache[Pkg].Flags & pkgCache::Flag::Auto))
 	    {
 	       ioprintf(c1out,_("%s set to manual installed.\n"),
