@@ -96,8 +96,14 @@ APT
 
   // consider Recommends, Suggests as important dependencies that should
   // be installed by default
-  APT::Install-Recommends "false";
-  APT::Install-Suggests "false";
+  Install-Recommends "false";
+  Install-Suggests "false";
+
+  // install recommends automatically for packages in this section
+  Install-Recommends-Section "metapackages";
+  
+  // consider dependencies of packages in this section manual
+  Never-MarkAuto-Section "metapackages";
 
   // Write progress messages on this fd (for stuff like base-config)
   Status-Fd "-1";

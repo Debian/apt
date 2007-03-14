@@ -1,3 +1,13 @@
+apt (0.6.46.4ubuntu10) feisty; urgency=low
+
+  * apt-pkg/depcache.cc:
+    - added "APT::Never-MarkAuto-Section" and consider dependencies 
+      of packages in this section manual
+  * debian/apt.conf.ubuntu:
+    - added APT::Never-MarkAuto-Section "metapackages";
+
+ --
+
 apt (0.6.46.4ubuntu9) feisty; urgency=low
 
   * debian/control:
@@ -5,7 +15,6 @@ apt (0.6.46.4ubuntu9) feisty; urgency=low
     - Set Ubuntu maintainer address
   * apt-pkg/cdrom.cc:
     - only unmount if APT::CDROM::NoMount is false
-  * methods/cdrom.cc:  
     - only umount if it was mounted by the method before
   * cmdline/apt-get.cc:
     - fix version output in autoremove list (LP#68941)
@@ -16,7 +25,7 @@ apt (0.6.46.4ubuntu9) feisty; urgency=low
   * doc/examples/configure-index:
     - document APT::Acquire::Translation
   
- -- 
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 13 Mar 2007 15:24:39 +0100
 
 apt (0.6.46.4ubuntu8) feisty; urgency=low
 
