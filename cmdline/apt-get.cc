@@ -1421,8 +1421,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 {
    bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
    bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
+   bool hideAutoRemove = _config->FindB("APT::Get::HideAutoRemove");
    pkgDepCache::ActionGroup group(*Cache);
-   
 
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
@@ -1461,8 +1461,9 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
       }
    }
-   ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
-   if (!doAutoRemove && autoremovelist.size() > 0)
+   if (!hideAutoRemove) 
+      ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
+   if (!doAutoRemove && !hideAutoRemove && autoremovelist.size() > 0)
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
 
    // Now see if we destroyed anything
