@@ -8,7 +8,7 @@
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_CDROMUTL_H
-#define PKGLIB_ACQUIRE_METHOD_H
+#define PKGLIB_CDROMUTL_H
 
 #include <string>
 
@@ -21,5 +21,6 @@ using std::string;
 bool MountCdrom(string Path);
 bool UnmountCdrom(string Path);
 bool IdentCdrom(string CD,string &Res,unsigned int Version = 2);
+bool IsMounted(string &Path);
 
 #endif
