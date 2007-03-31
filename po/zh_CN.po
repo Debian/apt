@@ -1,15 +1,15 @@
 # Chinese/Simplified translation of apt.
 # This file is put in the public domain.
-# Tchaikov <tchaikov@sjtu.edu.cn>, 2005.
+# Tchaikov <tchaikov@sjtu.org>, 2005,2007.
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004,2006
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-11 20:34+0200\n"
-"PO-Revision-Date: 2006-02-22 14:20+1300\n"
-"Last-Translator: Carlos Z.F. Liu <carlosliu@users.sourceforge.net>\n"
+"POT-Creation-Date: 2006-12-19 11:37+0100\n"
+"PO-Revision-Date: 2007-03-29 17:14+0800\n"
+"Last-Translator: Kov Chai <tchaikov@sjtu.org>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -437,6 +437,7 @@ msgid ""
 "DB format is invalid. If you upgraded from a older version of apt, please "
 "remove and re-create the database."
 msgstr ""
+"DB 格式是无效的。如果你是从一个老版本的 apt 升级而来，请删除数据库并重建它。"
 
 #: ftparchive/cachedb.cc:81
 #, c-format
@@ -533,14 +534,14 @@ msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s 的维护者 %s 并非 %s\n"
 
 #: ftparchive/writer.cc:623
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no source override entry\n"
-msgstr "  %s 中没有 override 项\n"
+msgstr "  %s 没有源代码的 override 项\n"
 
 #: ftparchive/writer.cc:627
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no binary override entry either\n"
-msgstr "  %s 中没有 override 项\n"
+msgstr "  %s 中没有二进制文件的 override 项\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -800,7 +801,7 @@ msgstr "有软件包需要被卸载，但是卸载动作被程序设置所禁止
 
 #: cmdline/apt-get.cc:775
 msgid "Internal error, Ordering didn't finish"
-msgstr "内部错误，Ordering 没有完成"
+msgstr "内部错误，Ordering 未能完成"
 
 #: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1851
 msgid "Unable to lock the download directory"
@@ -1628,12 +1629,12 @@ msgstr "无法在打包文件中找到有效的主控文件"
 msgid "Unparsable control file"
 msgstr "不能解析的主控文件"
 
-#: methods/cdrom.cc:114
+#: methods/cdrom.cc:115
 #, c-format
 msgid "Unable to read the cdrom database %s"
 msgstr "无法读取光盘数据库 %s"
 
-#: methods/cdrom.cc:123
+#: methods/cdrom.cc:124
 msgid ""
 "Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
 "cannot be used to add new CD-ROMs"
@@ -1641,20 +1642,20 @@ msgstr ""
 "请使用 apt-cdrom，通过它就可以让 APT 能识别该光盘。apt-get upgdate 不能被用来"
 "加入新的光盘。"
 
-#: methods/cdrom.cc:131
+#: methods/cdrom.cc:132
 msgid "Wrong CD-ROM"
 msgstr "错误的光盘"
 
-#: methods/cdrom.cc:164
+#: methods/cdrom.cc:166
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr "无法卸载现在挂载于 %s 的 CD-ROM，它可能正在使用中。"
 
-#: methods/cdrom.cc:169
+#: methods/cdrom.cc:171
 msgid "Disk not found."
 msgstr "找不到光盘。"
 
-#: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
+#: methods/cdrom.cc:179 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "无法找到该文件"
 
@@ -1790,7 +1791,7 @@ msgstr "数据套接字连接超时"
 msgid "Unable to accept connection"
 msgstr "无法接受连接"
 
-#: methods/ftp.cc:864 methods/http.cc:958 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "把文件加入散列表时出错"
 
@@ -1875,9 +1876,9 @@ msgid "Unable to connect to %s %s:"
 msgstr "不能连接上 %s %s："
 
 #: methods/gpgv.cc:65
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't access keyring: '%s'"
-msgstr "无法解析域名“%s”"
+msgstr "无法访问密匙：“%s”"
 
 #: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
@@ -1893,9 +1894,9 @@ msgid "At least one invalid signature was encountered."
 msgstr "至少发现一个无效的签名。"
 
 #: methods/gpgv.cc:213
-#, fuzzy, c-format
+#, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
-msgstr "用于验证签名(您安装了 gnupg 么？)"
+msgstr "无法运行\"%s\"以便验证签名(您安装了 gnupg 么？)"
 
 #: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
@@ -1921,76 +1922,76 @@ msgstr "无法为 %s 开启管道"
 msgid "Read error from %s process"
 msgstr "从 %s 进程读取数据出错"
 
-#: methods/http.cc:376
+#: methods/http.cc:377
 msgid "Waiting for headers"
 msgstr "正在等待报头"
 
-#: methods/http.cc:522
+#: methods/http.cc:523
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "受到了一行报头条目，它的长度超过了 %u 个字符"
 
-#: methods/http.cc:530
+#: methods/http.cc:531
 msgid "Bad header line"
 msgstr "错误的报头条目"
 
-#: methods/http.cc:549 methods/http.cc:556
+#: methods/http.cc:550 methods/http.cc:557
 msgid "The HTTP server sent an invalid reply header"
 msgstr "该 http 服务器发送了一个无效的应答报头"
 
-#: methods/http.cc:585
+#: methods/http.cc:586
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "该 http 服务器发送了一个无效的 Content-Length 报头"
 
-#: methods/http.cc:600
+#: methods/http.cc:601
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "该 http 服务器发送了一个无效的 Content-Range 报头"
 
-#: methods/http.cc:602
+#: methods/http.cc:603
 msgid "This HTTP server has broken range support"
 msgstr "该 http 服务器的 range 支持不正常"
 
-#: methods/http.cc:626
+#: methods/http.cc:627
 msgid "Unknown date format"
 msgstr "无法识别的日期格式"
 
-#: methods/http.cc:773
+#: methods/http.cc:774
 msgid "Select failed"
 msgstr "select 调用出错"
 
-#: methods/http.cc:778
+#: methods/http.cc:779
 msgid "Connection timed out"
 msgstr "连接服务器超时"
 
-#: methods/http.cc:801
+#: methods/http.cc:802
 msgid "Error writing to output file"
 msgstr "写输出文件时出错"
 
-#: methods/http.cc:832
+#: methods/http.cc:833
 msgid "Error writing to file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:860
+#: methods/http.cc:861
 msgid "Error writing to the file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:874
+#: methods/http.cc:875
 msgid "Error reading from server. Remote end closed connection"
 msgstr "从服务器读取数据时出错，对方关闭了连接"
 
-#: methods/http.cc:876
+#: methods/http.cc:877
 msgid "Error reading from server"
 msgstr "从服务器读取数据出错"
 
-#: methods/http.cc:1107
+#: methods/http.cc:1108
 msgid "Bad header data"
 msgstr "错误的报头数据"
 
-#: methods/http.cc:1124
+#: methods/http.cc:1125
 msgid "Connection failed"
 msgstr "连接失败"
 
-#: methods/http.cc:1215
+#: methods/http.cc:1216
 msgid "Internal error"
 msgstr "内部错误"
 
@@ -2063,12 +2064,12 @@ msgstr "语法错误 %s:%u: 不支持的指令“%s”"
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "语法错误 %s:%u: 文件尾部有多余的无意义的数据"
 
-#: apt-pkg/contrib/progress.cc:154
+#: apt-pkg/contrib/progress.cc:155
 #, c-format
 msgid "%c%s... Error!"
 msgstr "%c%s... 有错误!"
 
-#: apt-pkg/contrib/progress.cc:156
+#: apt-pkg/contrib/progress.cc:157
 #, c-format
 msgid "%c%s... Done"
 msgstr "%c%s... 完成"
@@ -2363,7 +2364,7 @@ msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "软件包 %s 需要重新安装，但是我无法找到相应的安装文件。"
 
-#: apt-pkg/algorithms.cc:1059
+#: apt-pkg/algorithms.cc:1066
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2371,7 +2372,7 @@ msgstr ""
 "错误，pkgProblemResolver::Resolve 发生故障，这可能是有软件包被要求保持现状的"
 "缘故。"
 
-#: apt-pkg/algorithms.cc:1061
+#: apt-pkg/algorithms.cc:1068
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 "无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关"
@@ -2390,14 +2391,14 @@ msgstr "找不到“%spartial”这个目录。"
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:823
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "正在下载第 %li 个文件(共 %li 个，尚需 %s)"
+msgstr "正在下载 %li 个文件中的第 %li 个(还有 %s 个)"
 
 #: apt-pkg/acquire.cc:825
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving file %li of %li"
-msgstr "正在读取文件列表"
+msgstr "正在下载 %2$li 个文件中的 %1$li 个"
 
 #: apt-pkg/acquire-worker.cc:113
 #, c-format
@@ -2542,7 +2543,6 @@ msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
 #: apt-pkg/acquire-item.cc:640
-#, fuzzy
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "以下 key ID 没有可用的公钥：\n"
 
@@ -2587,47 +2587,47 @@ msgstr ""
 "现把 %s 作为了 CD-ROM 的挂载点\n"
 "正在挂载 CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:516 apt-pkg/cdrom.cc:598
+#: apt-pkg/cdrom.cc:518 apt-pkg/cdrom.cc:600
 msgid "Identifying.. "
 msgstr "正在鉴别.. "
 
-#: apt-pkg/cdrom.cc:541
+#: apt-pkg/cdrom.cc:543
 #, c-format
 msgid "Stored label: %s \n"
 msgstr "存档标签：%s \n"
 
-#: apt-pkg/cdrom.cc:561
+#: apt-pkg/cdrom.cc:563
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "现把 %s 作为了 CD-ROM 的挂载点\n"
 
-#: apt-pkg/cdrom.cc:579
+#: apt-pkg/cdrom.cc:581
 msgid "Unmounting CD-ROM\n"
 msgstr "正在卸载 CD-ROM 文件系统\n"
 
-#: apt-pkg/cdrom.cc:583
+#: apt-pkg/cdrom.cc:585
 msgid "Waiting for disc...\n"
 msgstr "等待插入盘片……\n"
 
 #. Mount the new CDROM
-#: apt-pkg/cdrom.cc:591
+#: apt-pkg/cdrom.cc:593
 msgid "Mounting CD-ROM...\n"
 msgstr "正在挂载 CD-ROM 文件系统……\n"
 
-#: apt-pkg/cdrom.cc:609
+#: apt-pkg/cdrom.cc:611
 msgid "Scanning disc for index files..\n"
 msgstr "正在光盘中查找索引文件..\n"
 
-#: apt-pkg/cdrom.cc:647
+#: apt-pkg/cdrom.cc:649
 #, c-format
 msgid "Found %i package indexes, %i source indexes and %i signatures\n"
 msgstr "找到了 %i 个软件包索引、%i 个源代码包索引，和 %i 个数字签名\n"
 
-#: apt-pkg/cdrom.cc:710
+#: apt-pkg/cdrom.cc:714
 msgid "That is not a valid name, try again.\n"
 msgstr "这不是一个有效的名字，请再次命名。\n"
 
-#: apt-pkg/cdrom.cc:726
+#: apt-pkg/cdrom.cc:730
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -2636,19 +2636,19 @@ msgstr ""
 "这张光盘现在的名字是：\n"
 "“%s”\n"
 
-#: apt-pkg/cdrom.cc:730
+#: apt-pkg/cdrom.cc:734
 msgid "Copying package lists..."
 msgstr "正在复制软件包列表……"
 
-#: apt-pkg/cdrom.cc:754
+#: apt-pkg/cdrom.cc:758
 msgid "Writing new source list\n"
 msgstr "正在写入新的软件包源列表\n"
 
-#: apt-pkg/cdrom.cc:763
+#: apt-pkg/cdrom.cc:767
 msgid "Source list entries for this disc are:\n"
 msgstr "对应于该光盘的软件包源设置项是：\n"
 
-#: apt-pkg/cdrom.cc:803
+#: apt-pkg/cdrom.cc:810
 msgid "Unmounting CD-ROM..."
 msgstr "正在卸载 CD-ROM 文件系统……"
 
@@ -2713,25 +2713,24 @@ msgid "Removed %s"
 msgstr "已删除 %s"
 
 #: apt-pkg/deb/dpkgpm.cc:378
-#, fuzzy, c-format
+#, c-format
 msgid "Preparing to completely remove %s"
-msgstr "正在准备配置 %s"
+msgstr "正在准备完全删除 %s"
 
 #: apt-pkg/deb/dpkgpm.cc:379
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removed %s"
-msgstr "无法删除 %s"
+msgstr "完全删除了 %s"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "连接被永久关闭"
 
+#~ msgid "Could not patch file"
+#~ msgstr "无法打开补丁文件"
+
 #~ msgid "File date has changed %s"
 #~ msgstr "文件 %s 的时间已被改动"
-
-#, fuzzy
-#~ msgid "Could not patch file"
-#~ msgstr "无法打开文件 %s"
 
 #~ msgid "Reading file list"
 #~ msgstr "正在读取文件列表"
