@@ -1,10 +1,16 @@
-apt (0.6.46.4ubuntu11) feisty; urgency=low
+apt (0.6.46.4ubuntu11) UNRELEASED; urgency=low
 
   * po/gl.po:
     - fix error in translation that causes trouble to lsb_release 
       (LP#79165)
+  * apt-pkg/acquire-item.cc:
+    - if decompression of a index fails, delete the index (LP#68202)
+  * [internal-ABI] apt-pkg/acquire.{cc,h}:
+    - deal better with duplicated sources.list entries (avoid
+      double queuing of  URLs) - this fixes hangs in bzip/gzip
+      (LP#102511)
 
- --
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 17 Apr 2007 15:53:37 +0200
 
 apt (0.6.46.4ubuntu10) feisty; urgency=low
 
