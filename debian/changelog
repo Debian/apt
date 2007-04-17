@@ -18,6 +18,9 @@ apt (0.6.47) UNRELEASED; urgency=low
     - fix error translation that causes trouble to lsb_release
   * apt-pkg/acquire-item.cc:
     - if decompression of a index fails, delete the index 
+  * [ABI] apt-pkg/acquire.{cc,h}:
+    - deal better with duplicated sources.list entries (avoid
+      double queuing of  URLs) - this fixes hangs in bzip/gzip
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 18 Dec 2006 19:39:05 +0100
 
