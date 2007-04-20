@@ -494,8 +494,10 @@ void pkgProblemResolver::MakeScores()
 	 Score += PrioMap[Cache[I].InstVerIter(Cache)->Priority];
       
       /* This helps to fix oddball problems with conflicting packages
-         on the same level. We enhance the score of installed packages */
-      if (I->CurrentVer != 0)
+         on the same level. We enhance the score of installed packages 
+	 if those are not obsolete
+      */
+      if (I->CurrentVer != 0 && Cache[I].CandidateVer != 0 && Cache[I].CandidateVerIter(Cache).Downloadable())
 	 Score += 1;
    }
 
@@ -839,7 +841,12 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       OldEnd = LEnd;
 	    }
 	    else
+            {
 	       Start++;
+	       // We only worry about critical deps.
+	       if (Start.IsCritical() != true)
+                  continue;
+            }
 
 	    // Dep is ok
 	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)

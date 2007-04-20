@@ -193,9 +193,9 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
    Item.Owner->Status = Item::StatIdle;
    
    // Queue it into the named queue
-   I->Enqueue(Item);
-   ToFetch++;
-         
+   if(I->Enqueue(Item)) 
+      ToFetch++;
+            
    // Some trace stuff
    if (Debug == true)
    {
@@ -549,11 +549,17 @@ pkgAcquire::Queue::~Queue()
 // Queue::Enqueue - Queue an item to the queue				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Queue::Enqueue(ItemDesc &Item)
+bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 {
    QItem **I = &Items;
-   for (; *I != 0; I = &(*I)->Next);
-   
+   // move to the end of the queue and check for duplicates here
+   for (; *I != 0; I = &(*I)->Next)
+      if (Item.URI == (*I)->URI) 
+      {
+	 Item.Owner->Status = Item::StatDone;
+	 return false;
+      }
+
    // Create a new item
    QItem *Itm = new QItem;
    *Itm = Item;
@@ -563,6 +569,7 @@ void pkgAcquire::Queue::Enqueue(ItemDesc &Item)
    Item.Owner->QueueCounter++;   
    if (Items->Next == 0)
       Cycle();
+   return true;
 }
 									/*}}}*/
 // Queue::Dequeue - Remove an item from the queue			/*{{{*/
