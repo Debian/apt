@@ -1,4 +1,4 @@
-apt (0.6.46.5) UNRELEASED; urgency=low
+apt (0.6.47) UNRELEASED; urgency=low
 
   * apt-pkg/algorithm.cc:
     - use clog for all debugging
@@ -16,7 +16,26 @@ apt (0.6.46.5) UNRELEASED; urgency=low
     - only umount if it was mounted by the method before
   * po/gl.po:
     - fix error translation that causes trouble to lsb_release
-
+  * apt-pkg/acquire-item.cc:
+    - if decompression of a index fails, delete the index 
+  * [ABI] apt-pkg/acquire.{cc,h}:
+    - deal better with duplicated sources.list entries (avoid
+      double queuing of  URLs) - this fixes hangs in bzip/gzip
+  * apt-pkg/policy.cc:
+    - allow multiple packages (thanks to David Foerster)
+  * merged from Christian Perrier:
+  	* mr.po: New Marathi translation  Closes: #416806
+	* zh_CN.po: Updated by Eric Pareja  Closes: #416822
+	* tl.po: Updated by Eric Pareja   Closes: #416638
+	* gl.po: Updated by Jacobo Tarrio
+	         Closes: #412828
+	* da.po: Updated by Claus Hindsgaul
+	         Closes: #409483
+	* fr.po: Remove a non-breakable space for usability
+	         issues. Closes: #408877
+	* ru.po: Updated Russian translation. Closes: #405476
+	* *.po: Unfuzzy after upstream typo corrections
+  
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 18 Dec 2006 19:39:05 +0100
 
 apt (0.6.46.4) unstable; urgency=high

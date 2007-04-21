@@ -183,6 +183,7 @@ string pkgAcqIndex::Custom600Headers()
 
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+
    // no .bz2 found, retry with .gz
    if(Desc.URI.substr(Desc.URI.size()-3) == "bz2") {
       Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz"; 
@@ -194,9 +195,15 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       Complete = false;
       Dequeue();
       return;
+   } 
+   
+   // on decompression failure, remove bad versions in partial/
+   if(Decompression && Erase) {
+      string s = _config->FindDir("Dir::State::lists") + "partial/";
+      s += URItoFileName(RealURI);
+      unlink(s.c_str());
    }
 
-   
    Item::Failed(Message,Cnf);
 }
 

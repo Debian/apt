@@ -173,7 +173,7 @@ class pkgAcquire::Queue
    public:
    
    // Put an item into this queue
-   void Enqueue(ItemDesc &Item);
+   bool Enqueue(ItemDesc &Item);
    bool Dequeue(Item *Owner);
 
    // Find a Queued item
