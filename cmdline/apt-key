@@ -24,9 +24,9 @@ update() {
     $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --ignore-time-conflict --import
 
     # remove no-longer used keys
-    keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys|awk '/^pub/{FS=":";print $5}'`
+    keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5`
     for key in $keys; do
-	if $GPG --list-keys --with-colons | awk '/^pub/{FS=":";print $5}'|grep -q $key; then
+	if $GPG --list-keys --with-colons | grep ^pub | cut -d: -f5 | grep -q $key; then
 	    $GPG --quiet --batch --delete-key --yes ${key}
 	fi
     done

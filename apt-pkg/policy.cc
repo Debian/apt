@@ -36,6 +36,7 @@
 #include <apti18n.h>
 
 #include <iostream>
+#include <sstream>
 									/*}}}*/
 
 using namespace std;
@@ -300,7 +301,13 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
          continue;
       }
 
-      Plcy.CreatePin(Type,Name,string(Word,End),priority);
+      istringstream s(Name);
+      string pkg;
+      while(!s.eof())
+      {
+	 s >> pkg;
+         Plcy.CreatePin(Type, pkg, string(Word,End),priority);
+      };
    }
 
    Plcy.InitDefaults();
