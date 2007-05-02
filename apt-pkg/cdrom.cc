@@ -679,7 +679,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
 
    if (List.size() == 0 && SourceList.size() == 0) 
    {
-      UnmountCdrom(CDROM);
+      if (_config->FindB("APT::CDROM::NoMount",false) == false) 
+	 UnmountCdrom(CDROM);
       return _error->Error("Unable to locate any package files, perhaps this is not a Debian Disc");
    }
 
@@ -718,7 +719,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
       {
 	 if(!log) 
          {
-	    UnmountCdrom(CDROM);
+	    if (_config->FindB("APT::CDROM::NoMount",false) == false) 
+	       UnmountCdrom(CDROM);
 	    return _error->Error("No disc name found and no way to ask for it");
 	 }
 
@@ -796,7 +798,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
       {
-	 UnmountCdrom(CDROM);
+	 if (_config->FindB("APT::CDROM::NoMount",false) == false) 
+	    UnmountCdrom(CDROM);
 	 return _error->Error("Internal error");
       }
 
@@ -813,7 +816,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
       {
-	 UnmountCdrom(CDROM);
+	 if (_config->FindB("APT::CDROM::NoMount",false) == false) 
+	    UnmountCdrom(CDROM);
 	 return _error->Error("Internal error");
       }
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-27 13:46+0200\n"
+"POT-Creation-Date: 2006-10-11 20:34+0200\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -149,7 +149,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1652 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
-#: cmdline/apt-get.cc:2369 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2387 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s को लागि %s %s, %s %s मा कम्पाएल गरिएको छ\n"
@@ -427,114 +427,125 @@ msgstr "कुनै चयनहरू मेल खाएन"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "केही फाइलहरू प्याकेज फाइल समूह `%s' मा हराइरहेको छ"
 
-#: ftparchive/cachedb.cc:45
+#: ftparchive/cachedb.cc:47
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "DB दूषित थियो, फाइल %s.पुरानो मा पुन:नामकरण गर्नुहोस्"
 
-#: ftparchive/cachedb.cc:63
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "DB पुरानो छ, %s स्तरवृद्धि गर्न प्रयास गरिदैछ"
 
-#: ftparchive/cachedb.cc:73
+#: ftparchive/cachedb.cc:76
+msgid ""
+"DB format is invalid. If you upgraded from a older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+
+#: ftparchive/cachedb.cc:81
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "DB फाइल %s असक्षम भयो: %s"
 
-#: ftparchive/cachedb.cc:114
-#, c-format
-msgid "File date has changed %s"
-msgstr "फाइल डेटाले %s परिवर्तन गर्यो"
-
-#: ftparchive/cachedb.cc:155
-msgid "Archive has no control record"
-msgstr "संग्रह संग नियन्त्रण रेकर्ड छैन"
-
-#: ftparchive/cachedb.cc:267
-msgid "Unable to get a cursor"
-msgstr "कर्सर प्राप्त गर्न असक्षम भयो"
-
-#: ftparchive/writer.cc:78
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "W: डाइरेक्ट्री %s पढ्न असक्षम\n"
-
-#: ftparchive/writer.cc:83
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "W: %s स्थिर गर्न असक्षम\n"
-
-#: ftparchive/writer.cc:125
-msgid "E: "
-msgstr "E: "
-
-#: ftparchive/writer.cc:127
-msgid "W: "
-msgstr "W: "
-
-#: ftparchive/writer.cc:134
-msgid "E: Errors apply to file "
-msgstr "E: फाइलमा त्रुटिहरू लागू गर्नुहोस्"
-
-#: ftparchive/writer.cc:151 ftparchive/writer.cc:181
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "%s हल गर्न असफल भयो"
-
-#: ftparchive/writer.cc:163
-msgid "Tree walking failed"
-msgstr "ट्री हिडाईँ असफल भयो"
-
-#: ftparchive/writer.cc:188
-#, c-format
-msgid "Failed to open %s"
-msgstr "%s खोल्न असफल"
-
-#: ftparchive/writer.cc:245
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr " DeLink %s [%s]\n"
-
-#: ftparchive/writer.cc:253
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "लिङ्क पढ्न असफल %s"
-
-#: ftparchive/writer.cc:257
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "अनलिङ्क गर्न असफल %s"
-
-#: ftparchive/writer.cc:264
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** %s मा %s लिङ्क असफल भयो"
-
-#: ftparchive/writer.cc:274
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr "यस %sB हिटको डि लिङ्क सिमा।\n"
-
-#: ftparchive/writer.cc:358 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:266
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:272
 #, c-format
 msgid "Failed to stat %s"
 msgstr " %s स्थिर गर्न असफल"
 
-#: ftparchive/writer.cc:386
+#: ftparchive/cachedb.cc:242
+msgid "Archive has no control record"
+msgstr "संग्रह संग नियन्त्रण रेकर्ड छैन"
+
+#: ftparchive/cachedb.cc:448
+msgid "Unable to get a cursor"
+msgstr "कर्सर प्राप्त गर्न असक्षम भयो"
+
+#: ftparchive/writer.cc:79
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: डाइरेक्ट्री %s पढ्न असक्षम\n"
+
+#: ftparchive/writer.cc:84
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: %s स्थिर गर्न असक्षम\n"
+
+#: ftparchive/writer.cc:135
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc:137
+msgid "W: "
+msgstr "W: "
+
+#: ftparchive/writer.cc:144
+msgid "E: Errors apply to file "
+msgstr "E: फाइलमा त्रुटिहरू लागू गर्नुहोस्"
+
+#: ftparchive/writer.cc:161 ftparchive/writer.cc:191
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "%s हल गर्न असफल भयो"
+
+#: ftparchive/writer.cc:173
+msgid "Tree walking failed"
+msgstr "ट्री हिडाईँ असफल भयो"
+
+#: ftparchive/writer.cc:198
+#, c-format
+msgid "Failed to open %s"
+msgstr "%s खोल्न असफल"
+
+#: ftparchive/writer.cc:257
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc:265
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "लिङ्क पढ्न असफल %s"
+
+#: ftparchive/writer.cc:269
+#, c-format
+msgid "Failed to unlink %s"
+msgstr "अनलिङ्क गर्न असफल %s"
+
+#: ftparchive/writer.cc:276
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** %s मा %s लिङ्क असफल भयो"
+
+#: ftparchive/writer.cc:286
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr "यस %sB हिटको डि लिङ्क सिमा।\n"
+
+#: ftparchive/writer.cc:390
 msgid "Archive had no package field"
 msgstr "संग्रह संग कुनै प्याकेज फाँट छैन"
 
-#: ftparchive/writer.cc:394 ftparchive/writer.cc:603
+#: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "   %s संग कुनै अधिलेखन प्रविष्टि छैन\n"
 
-#: ftparchive/writer.cc:437 ftparchive/writer.cc:689
+#: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s संभारकर्ता %s हो %s होइन\n"
+
+#: ftparchive/writer.cc:623
+#, fuzzy, c-format
+msgid "  %s has no source override entry\n"
+msgstr "   %s संग कुनै अधिलेखन प्रविष्टि छैन\n"
+
+#: ftparchive/writer.cc:627
+#, fuzzy, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "   %s संग कुनै अधिलेखन प्रविष्टि छैन\n"
 
 #: ftparchive/contents.cc:317
 #, c-format
@@ -796,11 +807,11 @@ msgstr "प्याकेजहरू हट्न चाहदैछन् त
 msgid "Internal error, Ordering didn't finish"
 msgstr "आन्तरिक त्रुटि, आदेश समाप्त भएको छैन"
 
-#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1800 cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:791 cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1851
 msgid "Unable to lock the download directory"
 msgstr "डाउनलोड डाइरेक्ट्री ताल्चा मार्न असक्षम"
 
-#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1881 cmdline/apt-get.cc:2117
+#: cmdline/apt-get.cc:801 cmdline/apt-get.cc:1899 cmdline/apt-get.cc:2135
 #: apt-pkg/cachefile.cc:67
 msgid "The list of sources could not be read."
 msgstr "स्रोतहरुको सूचि पढ्न सकिएन ।"
@@ -829,7 +840,7 @@ msgstr "अनप्याक गरिसके पछि थप डिस्�
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "%sB अनप्याक गरिसके पछि डिस्क खाली ठाउँ खाली हुनेछ ।\n"
 
-#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1971
+#: cmdline/apt-get.cc:846 cmdline/apt-get.cc:1989
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr " %s मा खाली ठाऊँ निर्धारण गर्न सकिएन"
@@ -866,7 +877,7 @@ msgstr "परित्याग गर्नुहोस् ।"
 msgid "Do you want to continue [Y/n]? "
 msgstr "के तपाईँ निरन्तरता दिन चाहनुहुन्छ [Y/n]? "
 
-#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2014
+#: cmdline/apt-get.cc:961 cmdline/apt-get.cc:1365 cmdline/apt-get.cc:2032
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "%s  %s तान्न असफल भयो\n"
@@ -875,7 +886,7 @@ msgstr "%s  %s तान्न असफल भयो\n"
 msgid "Some files failed to download"
 msgstr "केही फाइलहरू डाउनलोड गर्न असफल भयो"
 
-#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:980 cmdline/apt-get.cc:2041
 msgid "Download complete and in download only mode"
 msgstr "डाउनलोड समाप्त भयो र डाउनलोडमा मोड मात्रै छ"
 
@@ -1049,114 +1060,114 @@ msgstr "भाँचिएका प्याकेजहरू"
 msgid "The following extra packages will be installed:"
 msgstr "निम्न अतिरिक्त प्याकेजहरू स्थापना हुनेछन्:"
 
-#: cmdline/apt-get.cc:1674
+#: cmdline/apt-get.cc:1692
 msgid "Suggested packages:"
 msgstr "सुझाव दिएका प्याकेजहरू:"
 
-#: cmdline/apt-get.cc:1675
+#: cmdline/apt-get.cc:1693
 msgid "Recommended packages:"
 msgstr "सिफारिस गरिएका प्याकेजहरू:"
 
-#: cmdline/apt-get.cc:1695
+#: cmdline/apt-get.cc:1713
 msgid "Calculating upgrade... "
 msgstr "स्तर वृद्धि गणना गरिदैछ..."
 
-#: cmdline/apt-get.cc:1698 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1716 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "असफल भयो"
 
-#: cmdline/apt-get.cc:1703
+#: cmdline/apt-get.cc:1721
 msgid "Done"
 msgstr "काम भयो"
 
-#: cmdline/apt-get.cc:1768 cmdline/apt-get.cc:1776
+#: cmdline/apt-get.cc:1786 cmdline/apt-get.cc:1794
 msgid "Internal error, problem resolver broke stuff"
 msgstr "आन्तरिक त्रुटि,समस्या हलकर्ताले उत्तम गुण भाँच्यो "
 
-#: cmdline/apt-get.cc:1876
+#: cmdline/apt-get.cc:1894
 msgid "Must specify at least one package to fetch source for"
 msgstr "को लागि स्रोत तान्न कम्तिमा एउटा प्याकेज निर्दिष्ट गर्नुपर्छ"
 
-#: cmdline/apt-get.cc:1906 cmdline/apt-get.cc:2135
+#: cmdline/apt-get.cc:1924 cmdline/apt-get.cc:2153
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "%s को लागि स्रोत प्याकेज फेला पार्न असफल भयो"
 
-#: cmdline/apt-get.cc:1950
+#: cmdline/apt-get.cc:1968
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "पहिल्यै डाउनलोड भएका फाइलहरु फड्काइदैछ '%s'\n"
 
-#: cmdline/apt-get.cc:1974
+#: cmdline/apt-get.cc:1992
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "तपाईँ संग %s मा पर्याप्त खाली ठाऊँ छैन"
 
-#: cmdline/apt-get.cc:1979
+#: cmdline/apt-get.cc:1997
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "स्रोत संग्रहहरुको %sB/%sB प्राप्त गर्न आवश्यक छ ।\n"
 
-#: cmdline/apt-get.cc:1982
+#: cmdline/apt-get.cc:2000
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "स्रोत संग्रहहरुको %sB प्राप्त गर्न आवश्यक छ ।\n"
 
-#: cmdline/apt-get.cc:1988
+#: cmdline/apt-get.cc:2006
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "स्रोत फड्काउनुहोस् %s\n"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2037
 msgid "Failed to fetch some archives."
 msgstr "केही संग्रह फड्काउन असफल भयो ।"
 
-#: cmdline/apt-get.cc:2047
+#: cmdline/apt-get.cc:2065
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr " %s मा पहिल्यै अनप्याक गरिएका स्रोतको अनप्याक फड्काइदैछ\n"
 
-#: cmdline/apt-get.cc:2059
+#: cmdline/apt-get.cc:2077
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "अनप्याक आदेश '%s' असफल भयो ।\n"
 
-#: cmdline/apt-get.cc:2060
+#: cmdline/apt-get.cc:2078
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "जाँच्नुहोस् यदि 'dpkg-dev' प्याकेज स्थापना भयो ।\n"
 
-#: cmdline/apt-get.cc:2077
+#: cmdline/apt-get.cc:2095
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "निर्माण आदेश '%s' असफल भयो ।\n"
 
-#: cmdline/apt-get.cc:2096
+#: cmdline/apt-get.cc:2114
 msgid "Child process failed"
 msgstr "शाखा प्रक्रिया असफल भयो"
 
-#: cmdline/apt-get.cc:2112
+#: cmdline/apt-get.cc:2130
 msgid "Must specify at least one package to check builddeps for"
 msgstr "को लागि builddeps जाँच्न कम्तिमा एउटा प्याकेज निर्दष्ट गर्नुपर्छ"
 
-#: cmdline/apt-get.cc:2140
+#: cmdline/apt-get.cc:2158
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "%s को लागि निर्माण-निर्भरता सूचना प्राप्त गर्न असक्षम भयो"
 
-#: cmdline/apt-get.cc:2160
+#: cmdline/apt-get.cc:2178
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s कुनै निर्माणमा आधारित हुदैन ।\n"
 
-#: cmdline/apt-get.cc:2212
+#: cmdline/apt-get.cc:2230
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%s को लागि %s निर्भरता सन्तुष्ट हुन सकेन किनभने प्याकेज %s फेला पार्न सकिएन"
 
-#: cmdline/apt-get.cc:2264
+#: cmdline/apt-get.cc:2282
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1165,30 +1176,30 @@ msgstr ""
 "%sको लागि %s निर्भरता सन्तुष्ट हुन सकेन किन भने प्याकेज %s को कुनै उपलब्ध संस्करणले संस्करण "
 "आवश्यकताहरुलाई सन्तुष्ट पार्न सकेन "
 
-#: cmdline/apt-get.cc:2299
+#: cmdline/apt-get.cc:2317
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr "%s को लागि %s निर्भरता सन्तुष्ट पार्न असफल भयो: स्थापित प्याकेज %s अति नयाँ छ"
 
-#: cmdline/apt-get.cc:2324
+#: cmdline/apt-get.cc:2342
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "%s को लागि %s निर्भरता सन्तुष्ट गर्न असफल: %s"
 
-#: cmdline/apt-get.cc:2338
+#: cmdline/apt-get.cc:2356
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "%s को लागि निर्माण निर्भरताहरू सन्तुष्ट गर्न सकिएन । "
 
-#: cmdline/apt-get.cc:2342
+#: cmdline/apt-get.cc:2360
 msgid "Failed to process build dependencies"
 msgstr "निर्माण निर्भरताहरू प्रक्रिया गर्न असफल"
 
-#: cmdline/apt-get.cc:2374
+#: cmdline/apt-get.cc:2392
 msgid "Supported modules:"
 msgstr "समर्थित मोड्युलहरू:"
 
-#: cmdline/apt-get.cc:2415
+#: cmdline/apt-get.cc:2433
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1369,19 +1380,19 @@ msgstr "उपलब्ध सूचना गाँभिदैछ"
 msgid "Failed to create pipes"
 msgstr "पाइपहरू सिर्जना गर्न असफल"
 
-#: apt-inst/contrib/extracttar.cc:143
+#: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
 msgstr "gzip कार्यन्वयन गर्न असफल"
 
-#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:206
+#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:207
 msgid "Corrupted archive"
 msgstr "संग्रह दूषित भयो"
 
-#: apt-inst/contrib/extracttar.cc:195
+#: apt-inst/contrib/extracttar.cc:196
 msgid "Tar checksum failed, archive corrupted"
 msgstr "टार चेकसम असफल भयो, संग्रह दूषित भयो"
 
-#: apt-inst/contrib/extracttar.cc:298
+#: apt-inst/contrib/extracttar.cc:299
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "अज्ञात टार हेडर प्रकार %u, सदस्य %s"
@@ -1660,12 +1671,12 @@ msgstr "डिस्क फेला परेन ।"
 msgid "File not found"
 msgstr "फाइल फेला परेन "
 
-#: methods/copy.cc:42 methods/gpgv.cc:275 methods/gzip.cc:133
-#: methods/gzip.cc:142
+#: methods/copy.cc:42 methods/gpgv.cc:281 methods/gzip.cc:141
+#: methods/gzip.cc:150
 msgid "Failed to stat"
 msgstr "स्थिर गर्न असफल भयो"
 
-#: methods/copy.cc:79 methods/gpgv.cc:272 methods/gzip.cc:139
+#: methods/copy.cc:79 methods/gpgv.cc:278 methods/gzip.cc:147
 msgid "Failed to set modification time"
 msgstr "परिमार्जन समय सेट असफल भयो"
 
@@ -1877,49 +1888,49 @@ msgstr " '%s:%s' (%i) हल गर्दा केही दुष्ट घट
 msgid "Unable to connect to %s %s:"
 msgstr "%s %s मा जडान गर्न असफल भयो:"
 
-#: methods/gpgv.cc:64
+#: methods/gpgv.cc:65
 #, c-format
 msgid "Couldn't access keyring: '%s'"
 msgstr "कुञ्जी घण्टी पहुँच गर्न सकिएन: '%s'"
 
-#: methods/gpgv.cc:99
+#: methods/gpgv.cc:100
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr "E: प्राप्त गर्नेबाट तर्क सूचि::gpgv::अति लामो विकल्पहरू अवस्थित छ ।"
 
-#: methods/gpgv.cc:198
+#: methods/gpgv.cc:204
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr "आन्तरिक त्रुटि: असल हस्ताक्षर, तर कुञ्जी औठाछाप निर्धारण गर्न सकिएन?!"
 
-#: methods/gpgv.cc:203
+#: methods/gpgv.cc:209
 msgid "At least one invalid signature was encountered."
 msgstr "कम्तिमा एउटा अवैध हस्ताक्षर विरोध भयो ।"
 
-#: methods/gpgv.cc:207
+#: methods/gpgv.cc:213
 #, c-format
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgstr "हस्ताक्षर रूजू गर्न '%s' कार्यन्वयन गर्न सकिएन (के gnupg स्थापना भयो?)"
 
-#: methods/gpgv.cc:212
+#: methods/gpgv.cc:218
 msgid "Unknown error executing gpgv"
 msgstr "gpgv कार्यन्वयन गर्दा अज्ञात त्रुटि"
 
-#: methods/gpgv.cc:243
+#: methods/gpgv.cc:249
 msgid "The following signatures were invalid:\n"
 msgstr "निम्न हस्ताक्षरहरू अवैध छन्:\n"
 
-#: methods/gpgv.cc:250
+#: methods/gpgv.cc:256
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr "निम्न हस्ताक्षरहरू रूजू हुन सक्दैन किन भने सार्वजनिक कुञ्जी उपलब्ध छैन:\n"
 
-#: methods/gzip.cc:57
+#: methods/gzip.cc:64
 #, c-format
 msgid "Couldn't open pipe for %s"
 msgstr "%s को लागि पाइप खोल्न सकिएन"
 
-#: methods/gzip.cc:102
+#: methods/gzip.cc:109
 #, c-format
 msgid "Read error from %s process"
 msgstr "%s प्रक्रियाबाट त्रुटि पढ्नुहोस् "
@@ -2284,12 +2295,12 @@ msgstr "उमेद्वार संस्करणहरू"
 msgid "Dependency generation"
 msgstr "निर्भरता सिर्जना"
 
-#: apt-pkg/tagfile.cc:72
+#: apt-pkg/tagfile.cc:106
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "प्याकेज फाइल पद वर्णन गर्न असक्षम %s (१)"
 
-#: apt-pkg/tagfile.cc:102
+#: apt-pkg/tagfile.cc:193
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "प्याकेज फाइल पद वर्णन गर्न असक्षम %s (२)"
@@ -2726,3 +2737,6 @@ msgstr " %s पूर्ण रुपले हट्यो"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "जडान असमायिक बन्द भयो"
+
+#~ msgid "File date has changed %s"
+#~ msgstr "फाइल डेटाले %s परिवर्तन गर्यो"

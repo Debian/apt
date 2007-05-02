@@ -252,6 +252,7 @@ msgid ""
 msgstr ""
 
 #: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:817
+#: apt-pkg/pkgcachegen.cc:819
 #, c-format
 msgid "Unable to write to %s"
 msgstr ""
@@ -1384,7 +1385,9 @@ msgstr ""
 #. Build the status cache
 #: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:750
 #: apt-pkg/pkgcachegen.cc:819 apt-pkg/pkgcachegen.cc:824
-#: apt-pkg/pkgcachegen.cc:947
+#: apt-pkg/pkgcachegen.cc:947 apt-pkg/pkgcachegen.cc:752
+#: apt-pkg/pkgcachegen.cc:821 apt-pkg/pkgcachegen.cc:826
+#: apt-pkg/pkgcachegen.cc:949
 msgid "Reading package lists"
 msgstr ""
 
@@ -1499,16 +1502,17 @@ msgstr ""
 msgid "Wrong CD-ROM"
 msgstr ""
 
-#: methods/cdrom.cc:164
+#: methods/cdrom.cc:164 methods/cdrom.cc:166
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
 msgstr ""
 
-#: methods/cdrom.cc:169
+#: methods/cdrom.cc:169 methods/cdrom.cc:171
 msgid "Disk not found."
 msgstr ""
 
 #: methods/cdrom.cc:177 methods/file.cc:79 methods/rsh.cc:264
+#: methods/cdrom.cc:179
 msgid "File not found"
 msgstr ""
 
@@ -1646,6 +1650,7 @@ msgid "Unable to accept connection"
 msgstr ""
 
 #: methods/ftp.cc:864 methods/http.cc:957 methods/rsh.cc:303
+#: methods/http.cc:958
 msgid "Problem hashing file"
 msgstr ""
 
@@ -1776,76 +1781,77 @@ msgstr ""
 msgid "Read error from %s process"
 msgstr ""
 
-#: methods/http.cc:375
+#: methods/http.cc:375 methods/http.cc:376
 msgid "Waiting for headers"
 msgstr ""
 
-#: methods/http.cc:521
+#: methods/http.cc:521 methods/http.cc:522
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr ""
 
-#: methods/http.cc:529
+#: methods/http.cc:529 methods/http.cc:530
 msgid "Bad header line"
 msgstr ""
 
-#: methods/http.cc:548 methods/http.cc:555
+#: methods/http.cc:548 methods/http.cc:555 methods/http.cc:549
+#: methods/http.cc:556
 msgid "The HTTP server sent an invalid reply header"
 msgstr ""
 
-#: methods/http.cc:584
+#: methods/http.cc:584 methods/http.cc:585
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr ""
 
-#: methods/http.cc:599
+#: methods/http.cc:599 methods/http.cc:600
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr ""
 
-#: methods/http.cc:601
+#: methods/http.cc:601 methods/http.cc:602
 msgid "This HTTP server has broken range support"
 msgstr ""
 
-#: methods/http.cc:625
+#: methods/http.cc:625 methods/http.cc:626
 msgid "Unknown date format"
 msgstr ""
 
-#: methods/http.cc:772
+#: methods/http.cc:772 methods/http.cc:773
 msgid "Select failed"
 msgstr ""
 
-#: methods/http.cc:777
+#: methods/http.cc:777 methods/http.cc:778
 msgid "Connection timed out"
 msgstr ""
 
-#: methods/http.cc:800
+#: methods/http.cc:800 methods/http.cc:801
 msgid "Error writing to output file"
 msgstr ""
 
-#: methods/http.cc:831
+#: methods/http.cc:831 methods/http.cc:832
 msgid "Error writing to file"
 msgstr ""
 
-#: methods/http.cc:859
+#: methods/http.cc:859 methods/http.cc:860
 msgid "Error writing to the file"
 msgstr ""
 
-#: methods/http.cc:873
+#: methods/http.cc:873 methods/http.cc:874
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 
-#: methods/http.cc:875
+#: methods/http.cc:875 methods/http.cc:876
 msgid "Error reading from server"
 msgstr ""
 
-#: methods/http.cc:1106
+#: methods/http.cc:1106 methods/http.cc:1107
 msgid "Bad header data"
 msgstr ""
 
-#: methods/http.cc:1123
+#: methods/http.cc:1123 methods/http.cc:1124
 msgid "Connection failed"
 msgstr ""
 
-#: methods/http.cc:1214
+#: methods/http.cc:1214 methods/http.cc:1215
 msgid "Internal error"
 msgstr ""
 
@@ -2225,19 +2231,19 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/algorithms.cc:245
+#: apt-pkg/algorithms.cc:245 apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 
-#: apt-pkg/algorithms.cc:1075
+#: apt-pkg/algorithms.cc:1075 apt-pkg/algorithms.cc:1104
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
 msgstr ""
 
-#: apt-pkg/algorithms.cc:1077
+#: apt-pkg/algorithms.cc:1077 apt-pkg/algorithms.cc:1106
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 
@@ -2253,12 +2259,12 @@ msgstr ""
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:823
+#: apt-pkg/acquire.cc:823 apt-pkg/acquire.cc:830
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr ""
 
-#: apt-pkg/acquire.cc:825
+#: apt-pkg/acquire.cc:825 apt-pkg/acquire.cc:832
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr ""
@@ -2273,7 +2279,7 @@ msgstr ""
 msgid "Method %s did not start correctly"
 msgstr ""
 
-#: apt-pkg/acquire-worker.cc:377
+#: apt-pkg/acquire-worker.cc:377 apt-pkg/acquire-worker.cc:384
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
@@ -2304,16 +2310,16 @@ msgstr ""
 msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
 
-#: apt-pkg/policy.cc:269
+#: apt-pkg/policy.cc:269 apt-pkg/policy.cc:270
 msgid "Invalid record in the preferences file, no Package header"
 msgstr ""
 
-#: apt-pkg/policy.cc:291
+#: apt-pkg/policy.cc:291 apt-pkg/policy.cc:292
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr ""
 
-#: apt-pkg/policy.cc:299
+#: apt-pkg/policy.cc:299 apt-pkg/policy.cc:300
 msgid "No priority (or zero) specified for pin"
 msgstr ""
 
@@ -2397,16 +2403,17 @@ msgstr ""
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:681
+#: apt-pkg/pkgcachegen.cc:681 apt-pkg/pkgcachegen.cc:682
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:765
+#: apt-pkg/pkgcachegen.cc:765 apt-pkg/pkgcachegen.cc:767
 msgid "Collecting File Provides"
 msgstr ""
 
 #: apt-pkg/pkgcachegen.cc:892 apt-pkg/pkgcachegen.cc:899
+#: apt-pkg/pkgcachegen.cc:894 apt-pkg/pkgcachegen.cc:901
 msgid "IO Error saving source cache"
 msgstr ""
 
@@ -2416,7 +2423,8 @@ msgid "rename failed, %s (%s -> %s)."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc:408 apt-pkg/acquire-item.cc:658
-#: apt-pkg/acquire-item.cc:1402
+#: apt-pkg/acquire-item.cc:1402 apt-pkg/acquire-item.cc:409
+#: apt-pkg/acquire-item.cc:666 apt-pkg/acquire-item.cc:1416
 msgid "MD5Sum mismatch"
 msgstr ""
 
@@ -2424,27 +2432,27 @@ msgstr ""
 msgid "There are no public key available for the following key IDs:\n"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1210
+#: apt-pkg/acquire-item.cc:1210 apt-pkg/acquire-item.cc:1224
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1269
+#: apt-pkg/acquire-item.cc:1269 apt-pkg/acquire-item.cc:1283
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
 "manually fix this package."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1305
+#: apt-pkg/acquire-item.cc:1305 apt-pkg/acquire-item.cc:1319
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1392
+#: apt-pkg/acquire-item.cc:1392 apt-pkg/acquire-item.cc:1406
 msgid "Size mismatch"
 msgstr ""
 
@@ -2498,30 +2506,30 @@ msgid ""
 "signatures\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:737
+#: apt-pkg/cdrom.cc:737 apt-pkg/cdrom.cc:739
 msgid "That is not a valid name, try again.\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:753
+#: apt-pkg/cdrom.cc:753 apt-pkg/cdrom.cc:755
 #, c-format
 msgid ""
 "This disc is called: \n"
 "'%s'\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:757
+#: apt-pkg/cdrom.cc:757 apt-pkg/cdrom.cc:759
 msgid "Copying package lists..."
 msgstr ""
 
-#: apt-pkg/cdrom.cc:783
+#: apt-pkg/cdrom.cc:783 apt-pkg/cdrom.cc:785
 msgid "Writing new source list\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:792
+#: apt-pkg/cdrom.cc:792 apt-pkg/cdrom.cc:794
 msgid "Source list entries for this disc are:\n"
 msgstr ""
 
-#: apt-pkg/cdrom.cc:832
+#: apt-pkg/cdrom.cc:832 apt-pkg/cdrom.cc:836
 msgid "Unmounting CD-ROM..."
 msgstr ""
 
@@ -2603,6 +2611,10 @@ msgstr ""
 msgid "Connection closed prematurely"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1097
+#: apt-pkg/acquire-item.cc:1097 apt-pkg/acquire-item.cc:1111
 msgid "There is no public key available for the following key IDs:\n"
+msgstr ""
+
+#: apt-pkg/pkgcache.cc:226
+msgid "Breaks"
 msgstr ""

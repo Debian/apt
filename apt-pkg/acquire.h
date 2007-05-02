@@ -437,8 +437,12 @@ class pkgAcquire::Queue
    
    public:
    
-   /** \brief Insert the given fetch request into this queue. */
-   void Enqueue(ItemDesc &Item);
+   /** \brief Insert the given fetch request into this queue. 
+    *
+    *  \return \b true if the queuing was successful. May return
+    *  \b false if the Item is already in the queue
+    */
+   bool Enqueue(ItemDesc &Item);
 
    /** \brief Remove all fetch requests for the given item from this queue.
     *

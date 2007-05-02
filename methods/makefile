@@ -7,7 +7,7 @@ include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
 # FIXME..
-LIB_APT_PKG_MAJOR = 4.3
+LIB_APT_PKG_MAJOR = 4.4
 APT_DOMAIN := libapt-pkg$(LIB_APT_PKG_MAJOR)
 
 # The file method

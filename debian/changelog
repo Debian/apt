@@ -1,3 +1,43 @@
+apt (0.7.1) experimental; urgency=low
+
+  * apt-pkg/algorithm.cc:
+    - use clog for all debugging
+    - only increase the score of installed applications if they 
+      are not obsolete 
+    - fix resolver bug on removal triggered by weak-dependencies 
+      with or-groups
+  * methods/http.cc:
+    - send apt version in User-Agent
+  * apt-pkg/deb/debrecords.cc:
+    - fix SHA1Hash() return value
+  * apt-pkg/cdrom.cc:
+    - only unmount if APT::CDROM::NoMount is false
+  * methods/cdrom.cc:  
+    - only umount if it was mounted by the method before
+  * po/gl.po:
+    - fix error translation that causes trouble to lsb_release
+  * apt-pkg/acquire-item.cc:
+    - if decompression of a index fails, delete the index 
+  * apt-pkg/acquire.{cc,h}:
+    - deal better with duplicated sources.list entries (avoid
+      double queuing of  URLs) - this fixes hangs in bzip/gzip
+  * merged from Christian Perrier:
+    * mr.po: New Marathi translation  Closes: #416806
+    * zh_CN.po: Updated by Eric Pareja  Closes: #416822
+    * tl.po: Updated by Eric Pareja   Closes: #416638
+    * gl.po: Updated by Jacobo Tarrio
+             Closes: #412828
+    * da.po: Updated by Claus Hindsgaul
+             Closes: #409483
+    * fr.po: Remove a non-breakable space for usability
+             issues. Closes: #408877
+    * ru.po: Updated Russian translation. Closes: #405476
+    * *.po: Unfuzzy after upstream typo corrections
+  * apt-pkg/policy.cc:
+    - allow multiple packages (thanks to David Foerster)
+
+ -- Michael Vogt <mvo@debian.org>  Wed,  2 May 2007 13:43:44 +0200
+
 apt (0.7.0) experimental; urgency=low
 
   * Package that contains tall the new features
@@ -15,20 +55,13 @@ apt (0.7.0) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Fri, 12 Jan 2007 20:48:07 +0100
 
-apt (0.6.46.5) UNRELEASED; urgency=low
+apt (0.6.46.4-0.1) unstable; urgency=emergency
+  
+  * NMU
+  * Fix broken use of awk in apt-key that caused removal of the wrong keys
+    from the keyring. Closes: #412572
 
-  * apt-pkg/algorithm.cc:
-    - use clog for all debugging
-    - only increase the score of installed applications if they 
-      are not obsolete 
-    - fix resolver bug on removal triggered by weak-dependencies 
-      with or-groups
-  * methods/http.cc:
-    - send apt version in User-Agent
-  * apt-pkg/deb/debrecords.cc:
-    - fix SHA1Hash() return value
-
- -- Michael Vogt <mvo@debian.org>  Thu, 14 Dec 2006 11:31:41 +0100
+ -- Joey Hess <joeyh@debian.org>  Mon, 26 Feb 2007 16:00:22 -0500
 
 apt (0.6.46.4) unstable; urgency=high
 
