@@ -33,6 +33,7 @@ APT
   {
      Arch-Only "false";
      AutomaticRemove "false";       
+     HideAutoRemove "false";
      Download-Only "false";
      Simulate "false";
      Assume-Yes "false";
@@ -98,6 +99,9 @@ APT
   // be installed by default
   APT::Install-Recommends "false";
   APT::Install-Suggests "false";
+
+  // consider dependencies of packages in this section manual
+  Never-MarkAuto-Section "metapackages";
 
   // Write progress messages on this fd (for stuff like base-config)
   Status-Fd "-1";

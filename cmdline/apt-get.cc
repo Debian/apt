@@ -1421,8 +1421,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 {
    bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
    bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
+   bool hideAutoRemove = _config->FindB("APT::Get::HideAutoRemove");
    pkgDepCache::ActionGroup group(*Cache);
-   
 
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
@@ -1444,9 +1444,13 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
 	    if(Debug)
 	       std::cout << "We could delete %s" <<  Pkg.Name() << std::endl;
-	   
-	 autoremovelist += string(Pkg.Name()) + " ";
-	 autoremoveversions += string(Cache[Pkg].CandVersion) + " ";
+	  
+	 // only show stuff in the list that is not yet marked for removal
+	 if(Cache[Pkg].Delete() == false) 
+	 {
+	    autoremovelist += string(Pkg.Name()) + " ";
+	    autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+	 }
 	 if (doAutoRemove)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
@@ -1457,8 +1461,9 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
       }
    }
-   ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
-   if (!doAutoRemove && autoremovelist.size() > 0)
+   if (!hideAutoRemove) 
+      ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
+   if (!doAutoRemove && !hideAutoRemove && autoremovelist.size() > 0)
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
 
    // Now see if we destroyed anything
@@ -1556,6 +1561,7 @@ bool DoInstall(CommandLine &CmdL)
    if (Cache->BrokenCount() != 0)
       BrokenFix = true;
    
+   unsigned int AutoMarkChanged = 0;
    unsigned int ExpectedInst = 0;
    unsigned int Packages = 0;
    pkgProblemResolver Fix(Cache);
@@ -1678,6 +1684,19 @@ bool DoInstall(CommandLine &CmdL)
 		  return false;
 	    if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
 	       return false;
+
+	    // see if we need to fix the auto-mark flag 
+	    // e.g. apt-get install foo 
+	    // where foo is marked automatic
+	    if(!Remove && 
+	       Cache[Pkg].Install() == false && 
+	       (Cache[Pkg].Flags & pkgCache::Flag::Auto))
+	    {
+	       ioprintf(c1out,_("%s set to manual installed.\n"),
+			Pkg.Name());
+	       Cache->MarkAuto(Pkg,false);
+	       AutoMarkChanged++;
+	    }
 	 }      
       }
 
@@ -1841,6 +1860,14 @@ bool DoInstall(CommandLine &CmdL)
       ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
 
    }
+
+   // if nothing changed in the cache, but only the automark information
+   // we write the StateFile here, otherwise it will be written in 
+   // cache.commit()
+   if (AutoMarkChanged > 0 &&
+       Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
+       Cache->BadCount() == 0)
+      Cache->writeStateFile(NULL);
 
    // See if we need to prompt
    if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
