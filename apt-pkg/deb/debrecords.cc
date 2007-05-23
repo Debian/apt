@@ -92,16 +92,42 @@ string debRecordParser::LongDesc()
    return Section.FindS("Description");
 }
 									/*}}}*/
+
+static const char *SourceVerSeparators = " ()";
+
 // RecordParser::SourcePkg - Return the source package name if any	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 string debRecordParser::SourcePkg()
 {
    string Res = Section.FindS("Source");
-   string::size_type Pos = Res.find(' ');
+   string::size_type Pos = Res.find_first_of(SourceVerSeparators);
    if (Pos == string::npos)
       return Res;
    return string(Res,0,Pos);
+}
+									/*}}}*/
+// RecordParser::SourceVer - Return the source version number if present	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::SourceVer()
+{
+   string Pkg = Section.FindS("Source");
+   string::size_type Pos = Pkg.find_first_of(SourceVerSeparators);
+   if (Pos == string::npos)
+      return "";
+
+   string::size_type VerStart = Pkg.find_first_not_of(SourceVerSeparators, Pos);
+   if(VerStart == string::npos)
+     return "";
+
+   string::size_type VerEnd = Pkg.find_first_of(SourceVerSeparators, VerStart);
+   if(VerEnd == string::npos)
+     // Corresponds to the case of, e.g., "foo (1.2" without a closing
+     // paren.  Be liberal and guess what it means.
+     return string(Pkg, VerStart);
+   else
+     return string(Pkg, VerStart, VerEnd - VerStart);
 }
 									/*}}}*/
 // RecordParser::GetRec - Return the whole record			/*{{{*/
