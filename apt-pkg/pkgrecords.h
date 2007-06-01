@@ -58,6 +58,7 @@ class pkgRecords::Parser
    virtual string MD5Hash() {return string();};
    virtual string SHA1Hash() {return string();};
    virtual string SourcePkg() {return string();};
+   virtual string SourceVer() {return string();};
 
    // These are some general stats about the package
    virtual string Maintainer() {return string();};
