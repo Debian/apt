@@ -23,6 +23,7 @@ using std::vector;
 class pkgDPkgPM : public pkgPackageManager
 {
    protected:
+   int pkgFailures;
 
    // used for progress reporting
    struct DpkgState 
@@ -47,6 +48,9 @@ class pkgDPkgPM : public pkgPackageManager
    bool RunScripts(const char *Cnf);
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
+
+   // apport integration
+   void WriteApportReport(const char *pkgpath, const char *errormsg);
 
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);

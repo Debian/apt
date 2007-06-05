@@ -15,6 +15,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
 
 #include <unistd.h>
@@ -37,7 +38,8 @@ using namespace std;
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) : pkgPackageManager(Cache)
+pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
+   : pkgPackageManager(Cache), pkgFailures(0)
 {
 }
 									/*}}}*/
@@ -654,6 +656,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    line[0]=0;
 	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
 	       std::clog << "send: '" << status.str() << "'" << endl;
+	    pkgFailures++;
+	    WriteApportReport(list[1], list[3]);
 	    continue;
 	 }
 	 if(strncmp(action,"conffile",strlen("conffile")) == 0)
@@ -744,5 +748,96 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 void pkgDPkgPM::Reset() 
 {
    List.erase(List.begin(),List.end());
+}
+									/*}}}*/
+// pkgDpkgPM::WriteApportReport - write out error report pkg failure	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg) 
+{
+   string pkgname, reportfile, srcpkgname, pkgver, arch;
+   string::size_type pos;
+   FILE *report;
+
+   if (_config->FindB("Dpkg::ApportFailureReport",true) == false)
+      return;
+
+   // only report the first error if we are in StopOnError=false mode
+   // to prevent bogus reports
+   if((_config->FindB("Dpkg::StopOnError",true) == false) && pkgFailures > 1)
+      return;
+
+   // get the pkgname and reportfile
+   pkgname = flNotDir(pkgpath);
+   pos = pkgname.rfind('_');
+   if(pos != string::npos)
+      pkgname = string(pkgname, 0, pos);
+
+   // find the package versin and source package name
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
+   if (Pkg.end() == true)
+      return;
+   pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+   pkgver = Ver.VerStr();
+   if (Ver.end() == true)
+      return;
+   pkgRecords Recs(Cache);
+   pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
+   srcpkgname = Parse.SourcePkg();
+   if(srcpkgname.empty())
+      srcpkgname = pkgname;
+
+   // if the file exists already, we check:
+   // - if it was reported already (touched by apport). 
+   //   If not, we do nothing, otherwise
+   //    we overwrite it. This is the same behaviour as apport
+   // - if we have a report with the same pkgversion already
+   //   then we skip it
+   reportfile = flCombine("/var/crash",pkgname+".0.crash");
+   if(FileExists(reportfile))
+   {
+      struct stat buf;
+      char strbuf[255];
+
+      // check atime/mtime
+      stat(reportfile.c_str(), &buf);
+      if(buf.st_mtime > buf.st_atime)
+	 return;
+
+      // check if the existing report is the same version
+      report = fopen(reportfile.c_str(),"r");
+      while(fgets(strbuf, sizeof(strbuf), report) != NULL)
+      {
+	 if(strstr(strbuf,"Package:") == strbuf)
+	 {
+	    char pkgname[255], version[255];
+	    if(sscanf(strbuf, "Package: %s %s", pkgname, version) == 2)
+	       if(strcmp(pkgver.c_str(), version) == 0)
+	       {
+		  fclose(report);
+		  return;
+	       }
+	 }
+      }
+      fclose(report);
+   }
+
+   // now write the report
+   arch = _config->Find("APT::Architecture");
+   report = fopen(reportfile.c_str(),"w");
+   if(report == NULL)
+      return;
+   if(_config->FindB("DPkgPM::InitialReportOnly",false) == true)
+      chmod(reportfile.c_str(), 0);
+   else
+      chmod(reportfile.c_str(), 0600);
+   fprintf(report, "ProblemType: Package\n");
+   fprintf(report, "Architecture: %s\n", arch.c_str());
+   time_t now = time(NULL);
+   fprintf(report, "Date: %s" , ctime(&now));
+   fprintf(report, "Package: %s %s\n", pkgname.c_str(), pkgver.c_str());
+   fprintf(report, "SourcePackage: %s\n", srcpkgname.c_str());
+   fprintf(report, "ErrorMessage:\n %s\n", errormsg);
+   fclose(report);
 }
 									/*}}}*/
