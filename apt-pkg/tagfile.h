@@ -20,9 +20,6 @@
 #ifndef PKGLIB_TAGFILE_H
 #define PKGLIB_TAGFILE_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/tagfile.h"
-#endif 
 
 #include <apt-pkg/fileutl.h>
 #include <stdio.h>

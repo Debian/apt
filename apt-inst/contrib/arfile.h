@@ -15,9 +15,6 @@
 #ifndef PKGLIB_ARFILE_H
 #define PKGLIB_ARFILE_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/arfile.h"
-#endif
 
 #include <string>
 #include <apt-pkg/fileutl.h>

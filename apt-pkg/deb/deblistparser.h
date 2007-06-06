@@ -12,6 +12,7 @@
 #define PKGLIB_DEBLISTPARSER_H
 
 #include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
 
 class debListParser : public pkgCacheGenerator::ListParser
@@ -47,6 +48,9 @@ class debListParser : public pkgCacheGenerator::ListParser
    virtual string Package();
    virtual string Version();
    virtual bool NewVersion(pkgCache::VerIterator Ver);
+   virtual string Description();
+   virtual string DescriptionLanguage();
+   virtual MD5SumValue Description_md5();
    virtual unsigned short VersionHash();
    virtual bool UsePackage(pkgCache::PkgIterator Pkg,
 			   pkgCache::VerIterator Ver);

@@ -7,7 +7,7 @@ include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
 # FIXME..
-LIB_APT_PKG_MAJOR = 3.11
+LIB_APT_PKG_MAJOR = 4.4
 APT_DOMAIN := libapt-pkg$(LIB_APT_PKG_MAJOR)
 
 # The file method
@@ -50,6 +50,13 @@ PROGRAM=http
 SLIBS = -lapt-pkg $(SOCKETLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = http.cc rfc2553emu.cc connect.cc
+include $(PROGRAM_H)
+
+# The https method
+PROGRAM=https
+SLIBS = -lapt-pkg -lcurl
+LIB_MAKES = apt-pkg/makefile
+SOURCE = https.cc
 include $(PROGRAM_H)
 
 # The ftp method

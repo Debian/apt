@@ -28,9 +28,7 @@
 #ifndef PKGLIB_FILELIST_H
 #define PKGLIB_FILELIST_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/filelist.h"
-#endif
+
 
 #include <apt-pkg/mmap.h>
 

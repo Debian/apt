@@ -63,3 +63,12 @@ pkgRecords::Parser &pkgRecords::Lookup(pkgCache::VerFileIterator const &Ver)
    return *Files[Ver.File()->ID];
 }
 									/*}}}*/
+// Records::Lookup - Get a parser for the package description file	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgRecords::Parser &pkgRecords::Lookup(pkgCache::DescFileIterator const &Desc)
+{
+   Files[Desc.File()->ID]->Jump(Desc);
+   return *Files[Desc.File()->ID];
+}
+									/*}}}*/

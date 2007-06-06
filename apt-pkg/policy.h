@@ -33,9 +33,6 @@
 #ifndef PKGLIB_POLICY_H
 #define PKGLIB_POLICY_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/policy.h"
-#endif
 
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/versionmatch.h>

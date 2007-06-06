@@ -95,9 +95,10 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
    be downloaded. */
 bool pkgPackageManager::FixMissing()
 {   
+   pkgDepCache::ActionGroup group(Cache);
    pkgProblemResolver Resolve(&Cache);
    List->SetFileList(FileNames);
-   
+
    bool Bad = false;
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
    {
@@ -106,7 +107,7 @@ bool pkgPackageManager::FixMissing()
    
       // Okay, this file is missing and we need it. Mark it for keep 
       Bad = true;
-      Cache.MarkKeep(I);
+      Cache.MarkKeep(I, false, false);
    }
  
    // We have to empty the list otherwise it will not have the new changes
@@ -631,14 +632,11 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
-pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int status_fd)
+pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
 {
-   OrderResult Res = OrderInstall();
-   if(Debug)
-      std::clog << "OrderInstall() returned: " << Res << std::endl;
-   if (Res != Failed)
-      if (Go(status_fd) == false)
-	 return Failed;
-   return Res;
+   if(DoInstallPreFork() == Failed)
+      return Failed;
+   
+   return DoInstallPostFork(statusFd);
 }
 									/*}}}*/

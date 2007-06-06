@@ -26,7 +26,7 @@ maintainer-clean dist-clean distclean pristine sanity: veryclean
 
 # The startup target builds the necessary configure scripts. It should
 # be used after a CVS checkout.
-CONVERTED=environment.mak include/config.h include/apti18n.h makefile
+CONVERTED=environment.mak include/config.h include/apti18n.h build/doc/Doxyfile makefile
 include buildlib/configure.mak
 $(BUILDDIR)/include/config.h: buildlib/config.h.in
 $(BUILDDIR)/include/apti18n.h: buildlib/apti18n.h.in

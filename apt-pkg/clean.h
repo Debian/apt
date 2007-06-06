@@ -10,9 +10,6 @@
 #ifndef APTPKG_CLEAN_H
 #define APTPKG_CLEAN_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/clean.h"
-#endif 
 
 #include <apt-pkg/pkgcache.h>
 

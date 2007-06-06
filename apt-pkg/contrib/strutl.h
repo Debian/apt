@@ -16,9 +16,7 @@
 #ifndef STRUTL_H
 #define STRUTL_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/strutl.h"
-#endif 
+
 
 #include <stdlib.h>
 #include <string>
@@ -38,7 +36,8 @@ using std::ostream;
 #define APT_FORMAT2
 #define APT_FORMAT3
 #endif    
-    
+
+bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest);
 char *_strstrip(char *String);
 char *_strtabexpand(char *String,size_t Len);
 bool ParseQuoteWord(const char *&String,string &Res);

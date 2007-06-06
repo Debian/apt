@@ -30,12 +30,16 @@ using namespace std;
    search that short circuits when it his a package file in the dir.
    This speeds it up greatly as the majority of the size is in the
    binary-* sub dirs. */
-bool pkgCdrom::FindPackages(string CD,vector<string> &List,
-			    vector<string> &SList, vector<string> &SigList,
+bool pkgCdrom::FindPackages(string CD,
+			    vector<string> &List,
+			    vector<string> &SList, 
+			    vector<string> &SigList,
+			    vector<string> &TransList,
 			    string &InfoDir, pkgCdromStatus *log,
 			    unsigned int Depth)
 {
    static ino_t Inodes[9];
+   DIR *D;
 
    // if we have a look we "pulse" now
    if(log)
@@ -90,8 +94,28 @@ bool pkgCdrom::FindPackages(string CD,vector<string> &List,
       if (_config->FindB("APT::CDROM::Thorough",false) == false)
 	 return true;
    }
+
+   // see if we find translatin indexes
+   if (stat("i18n",&Buf) == 0)
+   {
+      D = opendir("i18n");
+      for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
+      {
+	 if(strstr(Dir->d_name,"Translation") != NULL) 
+	 {
+	    if (_config->FindB("Debug::aptcdrom",false) == true)
+	       std::clog << "found translations: " << Dir->d_name << "\n";
+	    string file = Dir->d_name;
+	    if(file.substr(file.size()-3,file.size()) == ".gz")
+	       file = file.substr(0,file.size()-3);
+	    TransList.push_back(CD+"i18n/"+ file);
+	 }
+      }
+      closedir(D);
+   }
+
    
-   DIR *D = opendir(".");
+   D = opendir(".");
    if (D == 0)
       return _error->Errno("opendir","Unable to read %s",CD.c_str());
    
@@ -127,7 +151,7 @@ bool pkgCdrom::FindPackages(string CD,vector<string> &List,
       Inodes[Depth] = Buf.st_ino;
 
       // Descend
-      if (FindPackages(CD + Dir->d_name,List,SList,SigList,InfoDir,log,Depth+1) == false)
+      if (FindPackages(CD + Dir->d_name,List,SList,SigList,TransList,InfoDir,log,Depth+1) == false)
 	 break;
 
       if (chdir(CD.c_str()) != 0)
@@ -612,9 +636,10 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    vector<string> List;
    vector<string> SourceList;
    vector<string> SigList;
+   vector<string> TransList;
    string StartDir = SafeGetCWD();
    string InfoDir;
-   if (FindPackages(CDROM,List,SourceList, SigList,InfoDir,log) == false)
+   if (FindPackages(CDROM,List,SourceList, SigList,TransList,InfoDir,log) == false)
    {
       log->Update("\n");
       return false;
@@ -642,11 +667,13 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    DropRepeats(List,"Packages");
    DropRepeats(SourceList,"Sources");
    DropRepeats(SigList,"Release.gpg");
+   DropRepeats(TransList,"");
    if(log) {
       msg.str("");
-      ioprintf(msg, _("Found %i package indexes, %i source indexes and "
-		      "%i signatures\n"), 
-	       List.size(), SourceList.size(), SigList.size());
+      ioprintf(msg, _("Found %i package indexes, %i source indexes, "
+		      "%i translation indexes and %i signatures\n"), 
+	       List.size(), SourceList.size(), TransList.size(),
+	       SigList.size());
       log->Update(msg.str(), STEP_SCAN);
    }
 
@@ -738,8 +765,10 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    // Copy the package files to the state directory
    PackageCopy Copy;
    SourceCopy SrcCopy;
+   TranslationsCopy TransCopy;
    if (Copy.CopyPackages(CDROM,Name,List, log) == false ||
-       SrcCopy.CopyPackages(CDROM,Name,SourceList, log) == false)
+       SrcCopy.CopyPackages(CDROM,Name,SourceList, log) == false ||
+       TransCopy.CopyTranslations(CDROM,Name,TransList, log) == false)
       return false;
 
    // reduce the List so that it takes less space in sources.list

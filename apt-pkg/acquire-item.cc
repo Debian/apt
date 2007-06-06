@@ -13,9 +13,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/acquire-item.h"
-#endif
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sourcelist.h>
@@ -737,6 +734,35 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    Mode = decompProg;
 }
 
+// AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* The Translation file is added to the queue */
+pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
+			    string URI,string URIDesc,string ShortDesc) :
+                      pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, "", "")
+{
+}
+
+									/*}}}*/
+// AcqIndexTrans::Failed - Silence failure messages for missing files	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   if (Cnf->LocalOnly == true || 
+       StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
+   {      
+      // Ignore this
+      Status = StatDone;
+      Complete = false;
+      Dequeue();
+      return;
+   }
+   
+   Item::Failed(Message,Cnf);
+}
+									/*}}}*/
+
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
 			     string URI,string URIDesc,string ShortDesc,
 			     string MetaIndexURI, string MetaIndexURIDesc,
@@ -750,8 +776,9 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
-   // remove any partial downloaded sig-file. it may confuse proxies
-   // and is too small to warrant a partial download anyway
+   // remove any partial downloaded sig-file in partial/. 
+   // it may confuse proxies and is too small to warrant a 
+   // partial download anyway
    unlink(DestFile.c_str());
 
    // Create the item
@@ -818,17 +845,22 @@ void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
 
    // if we get a network error we fail gracefully
-   if(LookupTag(Message,"FailReason") == "Timeout" || 
-      LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
-      LookupTag(Message,"FailReason") == "ConnectionRefused") {
+   if(Status == StatTransientNetworkError)
+   {
       Item::Failed(Message,Cnf);
+      // move the sigfile back on transient network failures 
+      if(FileExists(DestFile))
+ 	 Rename(DestFile,Final);
+
+      // set the status back to , Item::Failed likes to reset it
+      Status = pkgAcquire::Item::StatTransientNetworkError;
       return;
    }
 
    // Delete any existing sigfile when the acquire failed
-   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    unlink(Final.c_str());
 
    // queue a pkgAcqMetaIndex with no sigfile

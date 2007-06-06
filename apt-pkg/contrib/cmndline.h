@@ -44,9 +44,7 @@
 #ifndef PKGLIB_CMNDLINE_H
 #define PKGLIB_CMNDLINE_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/cmndline.h"
-#endif 
+
 
 #include <apt-pkg/configuration.h>
 

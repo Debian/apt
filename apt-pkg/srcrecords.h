@@ -13,9 +13,6 @@
 #ifndef PKGLIB_SRCRECORDS_H
 #define PKGLIB_SRCRECORDS_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/srcrecords.h"
-#endif 
 
 #include <string>
 #include <vector>    

@@ -14,10 +14,6 @@
 
 using std::string;
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/cdromutl.h"
-#endif 
-
 bool MountCdrom(string Path);
 bool UnmountCdrom(string Path);
 bool IdentCdrom(string CD,string &Res,unsigned int Version = 2);

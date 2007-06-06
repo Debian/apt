@@ -30,9 +30,6 @@
 #ifndef PKGLIB_ALGORITHMS_H
 #define PKGLIB_ALGORITHMS_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/algorithms.h"
-#endif 
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
