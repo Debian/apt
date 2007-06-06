@@ -680,7 +680,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
 	    
 	    if(log) {
 	       msg.str("");
-	       ioprintf(msg, "Found label '%s'\n", Name.c_str());
+	       ioprintf(msg, _("Found label '%s'\n"), Name.c_str());
 	       log->Update(msg.str());
 	    }
 	    Database.Set("CD::" + ID + "::Label",Name);
@@ -804,7 +804,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
 
    // Unmount and finish
    if (_config->FindB("APT::CDROM::NoMount",false) == false) {
-      log->Update(_("Unmounting CD-ROM..."), STEP_LAST);
+      log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
       UnmountCdrom(CDROM);
    }
 
