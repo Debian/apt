@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.6.46.5")
+AC_DEFINE_UNQUOTED(VERSION,"0.6.47")
 PACKAGE="apt"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_SUBST(PACKAGE)
@@ -78,10 +78,15 @@ AC_SUBST(BDBLIB)
 
 dnl Converts the ARCH to be something singular for this general CPU family
 dnl This is often the dpkg architecture string.
+dnl First check against the full canonical canoncial-system-type in $target
+dnl and if that fails, just look for the cpu
 AC_MSG_CHECKING(system architecture)
-archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target_cpu\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/archtable`"
+archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/systemtable`"
 if test "x$archset" = "x"; then
+ archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target_cpu\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/archtable`"
+ if test "x$archset" = "x"; then
   AC_MSG_ERROR(failed: use --host= or check buildlib/archtable)
+ fi
 fi
 AC_MSG_RESULT($archset)
 AC_DEFINE_UNQUOTED(COMMON_CPU,"$archset")
