@@ -1428,7 +1428,11 @@ bool DoInstall(CommandLine &CmdL)
    bool DefRemove = false;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       DefRemove = true;
-
+   else if (strcasecmp(CmdL.FileList[0], "purge") == 0)
+   {
+      _config->Set("APT::Get::Purge", true);
+      DefRemove = true;
+   }
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       // Duplicate the string
@@ -2443,6 +2447,7 @@ bool ShowHelp(CommandLine &CmdL)
       "   upgrade - Perform an upgrade\n"
       "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
       "   remove - Remove packages\n"
+      "   purge - Remove and purge packages\n"
       "   source - Download source archives\n"
       "   build-dep - Configure build-dependencies for source packages\n"
       "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
