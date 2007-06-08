@@ -14,6 +14,7 @@
 
 #include <apti18n.h>
 #include <config.h>
+#include <cstdlib>
 #include <sys/stat.h>
 									/*}}}*/
 

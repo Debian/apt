@@ -24,6 +24,8 @@
     
 #include <apti18n.h>
     
+#include <cstdlib>
+#include <algorithm>
 #include <iostream>
 									/*}}}*/
 using namespace std;

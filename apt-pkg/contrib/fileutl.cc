@@ -24,6 +24,7 @@
 
 #include <apti18n.h>
 
+#include <cstdlib>
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>

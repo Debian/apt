@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <algorithm>
 #include <unistd.h>
 #include <regex.h>
 #include <errno.h>
