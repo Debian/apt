@@ -403,7 +403,7 @@ class pkgDepCache : protected pkgCache::Namespace
 
    // read persistent states
    bool readStateFile(OpProgress *prog);
-   bool writeStateFile(OpProgress *prog);
+   bool writeStateFile(OpProgress *prog, bool InstalledOnly=false);
    
    // Size queries
    inline double UsrSize() {return iUsrSize;};

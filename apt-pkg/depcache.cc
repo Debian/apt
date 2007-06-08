@@ -23,6 +23,8 @@
 #include <sstream>    
 #include <set>
 
+#include <sys/stat.h>
+
 #include <apti18n.h>    
 
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :
@@ -176,7 +178,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
    return true;
 }
 
-bool pkgDepCache::writeStateFile(OpProgress *prog)
+bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 {
    if(_config->FindB("Debug::pkgAutoRemove",false))
       std::clog << "pkgDepCache::writeStateFile()" << std::endl;
@@ -238,6 +240,9 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
 	       std::clog << "Skipping already written " << pkg.Name() << std::endl;
 	    continue;
 	 }
+         // skip not installed ones if requested
+         if(InstalledOnly && pkg->CurrentVer == 0)
+            continue;
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Writing new AutoInstall: " 
 		      << pkg.Name() << std::endl;
@@ -250,8 +255,9 @@ bool pkgDepCache::writeStateFile(OpProgress *prog)
    }
    fclose(OutFile);
 
-   // move the outfile over the real file
+   // move the outfile over the real file and set permissions
    rename(outfile.c_str(), state.c_str());
+   chmod(state.c_str(), 0644);
 
    return true;
 }
