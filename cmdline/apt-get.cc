@@ -1596,6 +1596,18 @@ bool DoInstall(CommandLine &CmdL)
 	 bool Remove = DefRemove;
 	 char *VerTag = 0;
 	 bool VerIsRel = false;
+
+         // this is a task!
+         if (Length >= 1 && S[Length - 1] == '^')
+         {
+            S[--Length] = 0;
+            // tasks must always be confirmed
+            ExpectedInst += 1000;
+            // see if we can install it
+            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
+            continue;
+         }
+
 	 while (Cache->FindPkg(S).end() == true)
 	 {
 	    // Handle an optional end tag indicating what to do
@@ -1744,10 +1756,8 @@ bool DoInstall(CommandLine &CmdL)
 	 return _error->Error(_("Broken packages"));
       }   
    }
-   if (_config->FindB("APT::Get::AutomaticRemove")) {
-      if (!DoAutomaticRemove(Cache)) 
-	 return false;
-   }
+   if (!DoAutomaticRemove(Cache)) 
+      return false;
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
