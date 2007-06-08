@@ -1,9 +1,5 @@
 // ijones, walters
 
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/debmetaindex.h"
-#endif
-
 #include <apt-pkg/debmetaindex.h>
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/strutl.h>

@@ -13,10 +13,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/dpkgdb.h"
-#endif
-
 #include <apt-pkg/dpkgdb.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
