@@ -35,10 +35,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/md5.h"
-#endif
-
 #include <apt-pkg/md5.h>
 #include <apt-pkg/strutl.h>
 

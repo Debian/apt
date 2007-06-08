@@ -11,9 +11,6 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #define APT_COMPATIBILITY 986
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/debversion.h"
-#endif
 
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/pkgcache.h>

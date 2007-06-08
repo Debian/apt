@@ -14,10 +14,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/error.h"
-#endif 
-
 #include <apt-pkg/error.h>
 
 #include <iostream>

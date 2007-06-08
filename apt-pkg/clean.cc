@@ -8,10 +8,6 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/clean.h"
-#endif
-
 #include <apt-pkg/clean.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
