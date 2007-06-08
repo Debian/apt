@@ -13,9 +13,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/acquire-item.h"
-#endif
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sourcelist.h>

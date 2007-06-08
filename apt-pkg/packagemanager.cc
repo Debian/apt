@@ -13,10 +13,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/packagemanager.h"
-#endif
-
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>

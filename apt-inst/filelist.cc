@@ -32,10 +32,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/filelist.h"
-#endif
-
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>

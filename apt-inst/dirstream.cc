@@ -11,10 +11,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/dirstream.h"
-#endif
-
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
 

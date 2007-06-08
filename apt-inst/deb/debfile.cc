@@ -16,10 +16,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/debfile.h"
-#endif
-
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>

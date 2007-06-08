@@ -10,10 +10,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "override.h"
-#endif
-
 #include "override.h"
     
 #include <apti18n.h>

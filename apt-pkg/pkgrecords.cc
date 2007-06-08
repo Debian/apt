@@ -9,9 +9,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/pkgrecords.h"
-#endif
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>

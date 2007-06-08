@@ -8,9 +8,6 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/dpkgpm.h"
-#endif
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>

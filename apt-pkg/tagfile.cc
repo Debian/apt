@@ -11,10 +11,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/tagfile.h"
-#endif
-
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>

@@ -10,10 +10,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-ftparchive.h"
-#endif
-
 #include "apt-ftparchive.h"
     
 #include <apt-pkg/error.h>
