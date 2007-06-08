@@ -55,9 +55,10 @@ using namespace std;
 string HttpMethod::FailFile;
 int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
-unsigned long PipelineDepth = 8;
+unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
 bool Debug = false;
+URI Proxy;
 
 unsigned long CircleBuf::BwReadLimit=0;
 unsigned long CircleBuf::BwTickReadData=0;
