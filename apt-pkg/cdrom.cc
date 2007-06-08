@@ -18,6 +18,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <algorithm>
 
 
 #include "indexcopy.h"

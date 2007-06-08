@@ -2131,6 +2131,11 @@ bool DoSource(CommandLine &CmdL)
 	     I->Type != "tar")
 	    continue;
 
+	 // Dsc only mode only fetches .dsc files
+	 if (_config->FindB("APT::Get::Dsc-Only",false) == true &&
+	     I->Type != "dsc")
+	    continue;
+
 	 // don't download the same uri twice (should this be moved to
 	 // the fetcher interface itself?)
 	 if(queued.find(Last->Index().ArchiveURI(I->Path)) != queued.end())
@@ -2714,7 +2719,8 @@ int main(int argc,const char *argv[])
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
       {0,"diff-only","APT::Get::Diff-Only",0},
-      {0,"tar-only","APT::Get::tar-Only",0},
+      {0,"tar-only","APT::Get::Tar-Only",0},
+      {0,"dsc-only","APT::Get::Dsc-Only",0},
       {0,"purge","APT::Get::Purge",0},
       {0,"list-cleanup","APT::Get::List-Cleanup",0},
       {0,"reinstall","APT::Get::ReInstall",0},

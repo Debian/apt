@@ -24,6 +24,7 @@
 #include <apti18n.h>
 #include <algorithm>
 
+#include <climits>
 #include <sys/time.h>
 #include <regex.h>
 
