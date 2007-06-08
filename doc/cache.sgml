@@ -492,7 +492,7 @@ This is the parsed priority value of the package.
 Dependency contains the information for a single dependency record. The records
 are split up like this to ease processing by the client. The base of list
 linked list is Version.DependsList. All forms of dependencies are recorded
-here including Conflicts, Suggests and Recommends.
+here including Conflicts, Breaks, Suggests and Recommends.
 
 <p>
 Multiple depends on the same package must be grouped together in 
@@ -671,6 +671,7 @@ of them.
 #define pkgDEP_Recommends 4
 #define pkgDEP_Conflicts 5
 #define pkgDEP_Replaces 6
+#define pkgDEP_Breaks 8
 </example>
 </sect1>
 

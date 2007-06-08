@@ -52,3 +52,9 @@ SOURCE=apt-key
 TO=$(BIN)
 TARGET=program
 include $(COPY_H)
+
+# The apt-mark program
+SOURCE=apt-mark
+TO=$(BIN)
+TARGET=program
+include $(COPY_H)

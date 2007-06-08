@@ -19,9 +19,6 @@
 #ifndef PKGLIB_DPKGDB_H
 #define PKGLIB_DPKGDB_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/dpkgdb.h"
-#endif
 
 #include <apt-pkg/database.h>
 

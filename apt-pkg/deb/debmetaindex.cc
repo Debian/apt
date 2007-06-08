@@ -157,6 +157,16 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 		     ComputeIndexTargets(),
 		     new indexRecords (Dist));
 
+   // Queue the translations
+   for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin(); 
+	I != SectionEntries.end(); I++) {
+
+      if((*I)->IsSrc)
+	 continue;
+      debTranslationsIndex i = debTranslationsIndex(URI,Dist,(*I)->Section);
+      i.GetIndexes(Owner);
+   }
+
    return true;
 }
 
@@ -181,11 +191,16 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
 
    Indexes = new vector <pkgIndexFile*>;
    for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin(); 
-	I != SectionEntries.end(); I++)
+	I != SectionEntries.end(); I++) {
       if ((*I)->IsSrc)
          Indexes->push_back(new debSourcesIndex (URI, Dist, (*I)->Section, IsTrusted()));
       else 
+      {
          Indexes->push_back(new debPackagesIndex (URI, Dist, (*I)->Section, IsTrusted()));
+	 Indexes->push_back(new debTranslationsIndex(URI, Dist, (*I)->Section));
+      }
+   }
+
    return Indexes;
 }
 

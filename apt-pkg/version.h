@@ -20,9 +20,6 @@
 #ifndef PKGLIB_VERSION_H
 #define PKGLIB_VERSION_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/version.h"
-#endif 
 
 #include <apt-pkg/strutl.h>    
 #include <string>

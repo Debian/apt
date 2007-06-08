@@ -12,9 +12,7 @@
 #ifndef OVERRIDE_H
 #define OVERRIDE_H
 
-#ifdef __GNUG__
-#pragma interface "override.h"
-#endif
+
 
 #include <map>
 #include <string>

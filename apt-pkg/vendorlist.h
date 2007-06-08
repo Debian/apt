@@ -21,9 +21,6 @@
 using std::string;
 using std::vector;
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/vendorlist.h"
-#endif
 
 class pkgVendorList
 {

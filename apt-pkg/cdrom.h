@@ -5,9 +5,6 @@
 #include<string>
 #include<vector>
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/cdrom.h"
-#endif
 
 using namespace std;
 
@@ -50,8 +47,11 @@ class pkgCdrom
    };
 
 
-   bool FindPackages(string CD,vector<string> &List,
-		     vector<string> &SList, vector<string> &SigList,
+   bool FindPackages(string CD,
+		     vector<string> &List,
+		     vector<string> &SList, 
+		     vector<string> &SigList,
+		     vector<string> &TransList,
 		     string &InfoDir, pkgCdromStatus *log,
 		     unsigned int Depth = 0);
    bool DropBinaryArch(vector<string> &List);

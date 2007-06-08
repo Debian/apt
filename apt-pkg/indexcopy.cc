@@ -32,6 +32,8 @@
 
 using namespace std;
 
+
+
 // IndexCopy::CopyPackages - Copy the package files from the CD		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -512,10 +514,10 @@ bool SourceCopy::RewriteEntry(FILE *Target,string File)
    fputc('\n',Target);
    return true;
 }
-
-
 									/*}}}*/
-
+// SigVerify::Verify - Verify a files md5sum against its metaindex     	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
 {
    const indexRecords::checkSum *Record = MetaIndex->Lookup(file);
@@ -667,6 +669,181 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
       CopyMetaIndex(CDROM, Name, prefix, "Release");
       CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
    }   
+
+   return true;
+}
+
+
+bool TranslationsCopy::CopyTranslations(string CDROM,string Name,vector<string> &List,
+			     pkgCdromStatus *log)
+{
+   OpProgress *Progress = NULL;
+   if (List.size() == 0)
+      return true;
+   
+   if(log) 
+      Progress = log->GetOpProgress();
+   
+   bool Debug = _config->FindB("Debug::aptcdrom",false);
+   
+   // Prepare the progress indicator
+   unsigned long TotalSize = 0;
+   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   {
+      struct stat Buf;
+      if (stat(string(*I).c_str(),&Buf) != 0 &&
+	  stat(string(*I + ".gz").c_str(),&Buf) != 0)
+	 return _error->Errno("stat","Stat failed for %s",
+			      string(*I).c_str());
+      TotalSize += Buf.st_size;
+   }	
+
+   unsigned long CurrentSize = 0;
+   unsigned int NotFound = 0;
+   unsigned int WrongSize = 0;
+   unsigned int Packages = 0;
+   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   {      
+      string OrigPath = string(*I,CDROM.length());
+      unsigned long FileSize = 0;
+      
+      // Open the package file
+      FileFd Pkg;
+      if (FileExists(*I) == true)
+      {
+	 Pkg.Open(*I,FileFd::ReadOnly);
+	 FileSize = Pkg.Size();
+      }      
+      else
+      {
+	 FileFd From(*I + ".gz",FileFd::ReadOnly);
+	 if (_error->PendingError() == true)
+	    return false;
+	 FileSize = From.Size();
+	 
+	 // Get a temp file
+	 FILE *tmp = tmpfile();
+	 if (tmp == 0)
+	    return _error->Errno("tmpfile","Unable to create a tmp file");
+	 Pkg.Fd(dup(fileno(tmp)));
+	 fclose(tmp);
+	 
+	 // Fork gzip
+	 pid_t Process = fork();
+	 if (Process < 0)
+	    return _error->Errno("fork","Couldn't fork gzip");
+	 
+	 // The child
+	 if (Process == 0)
+	 {	    
+	    dup2(From.Fd(),STDIN_FILENO);
+	    dup2(Pkg.Fd(),STDOUT_FILENO);
+	    SetCloseExec(STDIN_FILENO,false);
+	    SetCloseExec(STDOUT_FILENO,false);
+	    
+	    const char *Args[3];
+	    string Tmp =  _config->Find("Dir::bin::gzip","gzip");
+	    Args[0] = Tmp.c_str();
+	    Args[1] = "-d";
+	    Args[2] = 0;
+	    execvp(Args[0],(char **)Args);
+	    exit(100);
+	 }
+	 
+	 // Wait for gzip to finish
+	 if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
+	    return _error->Error("gzip failed, perhaps the disk is full.");
+	 
+	 Pkg.Seek(0);
+      }
+      pkgTagFile Parser(&Pkg);
+      if (_error->PendingError() == true)
+	 return false;
+      
+      // Open the output file
+      char S[400];
+      snprintf(S,sizeof(S),"cdrom:[%s]/%s",Name.c_str(),
+	       (*I).c_str() + CDROM.length());
+      string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
+      TargetF += URItoFileName(S);
+      if (_config->FindB("APT::CDROM::NoAct",false) == true)
+	 TargetF = "/dev/null";
+      FileFd Target(TargetF,FileFd::WriteEmpty);
+      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
+      if (_error->PendingError() == true)
+	 return false;
+      if (TargetFl == 0)
+	 return _error->Errno("fdopen","Failed to reopen fd");
+      
+      // Setup the progress meter
+      if(Progress)
+	 Progress->OverallProgress(CurrentSize,TotalSize,FileSize,
+				   string("Reading Translation Indexes"));
+
+      // Parse
+      if(Progress)
+	 Progress->SubProgress(Pkg.Size());
+      pkgTagSection Section;
+      this->Section = &Section;
+      string Prefix;
+      unsigned long Hits = 0;
+      unsigned long Chop = 0;
+      while (Parser.Step(Section) == true)
+      {
+	 if(Progress)
+	    Progress->Progress(Parser.Offset());
+
+	 const char *Start;
+	 const char *Stop;
+	 Section.GetSection(Start,Stop);
+	 fwrite(Start,Stop-Start, 1, TargetFl);
+	 fputc('\n',TargetFl);
+
+	 Packages++;
+	 Hits++;
+      }
+      fclose(TargetFl);
+
+      if (Debug == true)
+	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << Chop << endl;
+	 
+      if (_config->FindB("APT::CDROM::NoAct",false) == false)
+      {
+	 // Move out of the partial directory
+	 Target.Close();
+	 string FinalF = _config->FindDir("Dir::State::lists");
+	 FinalF += URItoFileName(S);
+	 if (rename(TargetF.c_str(),FinalF.c_str()) != 0)
+	    return _error->Errno("rename","Failed to rename");
+      }
+      
+      
+      CurrentSize += FileSize;
+   }   
+   if(Progress)
+      Progress->Done();
+   
+   // Some stats
+   if(log) {
+      stringstream msg;
+      if(NotFound == 0 && WrongSize == 0)
+	 ioprintf(msg, _("Wrote %i records.\n"), Packages);
+      else if (NotFound != 0 && WrongSize == 0)
+	 ioprintf(msg, _("Wrote %i records with %i missing files.\n"), 
+		  Packages, NotFound);
+      else if (NotFound == 0 && WrongSize != 0)
+	 ioprintf(msg, _("Wrote %i records with %i mismatched files\n"), 
+		  Packages, WrongSize);
+      if (NotFound != 0 && WrongSize != 0)
+	 ioprintf(msg, _("Wrote %i records with %i missing files and %i mismatched files\n"), Packages, NotFound, WrongSize);
+   }
+   
+   if (Packages == 0)
+      _error->Warning("No valid records were found.");
+
+   if (NotFound + WrongSize > 10)
+      _error->Warning("Alot of entries were discarded, something may be wrong.\n");
+   
 
    return true;
 }

@@ -42,3 +42,24 @@ doc.ja: %.ja:
 
 doc.pl: %.pl:
 	$(MAKE) -C pl $*
+
+ifdef DOXYGEN
+DOXYGEN_SOURCES = $(shell find $(BASE)/apt-pkg -not -name .\\\#* -and \( -name \*.cc -or -name \*.h \) )
+
+clean: doxygen-clean
+
+doxygen-clean:
+	rm -fr $(BUILD)/doc/doxygen
+	rm -f $(BUILD)/doc/doxygen-stamp
+
+$(BUILD)/doc/Doxyfile: Doxyfile.in
+	(cd $(BUILD) && ./config.status doc/Doxyfile)
+
+$(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
+	rm -fr $(BUILD)/doc/doxygen
+	$(DOXYGEN) $(BUILD)/doc/Doxyfile
+	touch $(BUILD)/doc/doxygen-stamp
+
+doc: $(BUILD)/doc/doxygen-stamp
+
+endif

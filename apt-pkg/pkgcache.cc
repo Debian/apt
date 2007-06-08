@@ -20,12 +20,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/pkgcache.h"
-#pragma implementation "apt-pkg/cacheiterators.h"
-#endif 
-
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
@@ -43,6 +39,7 @@
 
 using std::string;
 
+
 // Cache::Header::Header - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* Simply initialize the header */
@@ -52,7 +49,7 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 4;
+   MajorVersion = 6;
    MinorVersion = 0;
    Dirty = false;
    
@@ -60,17 +57,22 @@ pkgCache::Header::Header()
    PackageSz = sizeof(pkgCache::Package);
    PackageFileSz = sizeof(pkgCache::PackageFile);
    VersionSz = sizeof(pkgCache::Version);
+   DescriptionSz = sizeof(pkgCache::Description);
    DependencySz = sizeof(pkgCache::Dependency);
    ProvidesSz = sizeof(pkgCache::Provides);
    VerFileSz = sizeof(pkgCache::VerFile);
+   DescFileSz = sizeof(pkgCache::DescFile);
    
    PackageCount = 0;
    VersionCount = 0;
+   DescriptionCount = 0;
    DependsCount = 0;
    PackageFileCount = 0;
    VerFileCount = 0;
+   DescFileCount = 0;
    ProvidesCount = 0;
    MaxVerFileSize = 0;
+   MaxDescFileSize = 0;
    
    FileList = 0;
    StringList = 0;
@@ -89,8 +91,10 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
        PackageSz == Against.PackageSz &&
        PackageFileSz == Against.PackageFileSz &&
        VersionSz == Against.VersionSz &&
+       DescriptionSz == Against.DescriptionSz &&
        DependencySz == Against.DependencySz &&
        VerFileSz == Against.VerFileSz &&
+       DescFileSz == Against.DescFileSz &&
        ProvidesSz == Against.ProvidesSz)
       return true;
    return false;
@@ -115,8 +119,10 @@ bool pkgCache::ReMap()
    HeaderP = (Header *)Map.Data();
    PkgP = (Package *)Map.Data();
    VerFileP = (VerFile *)Map.Data();
+   DescFileP = (DescFile *)Map.Data();
    PkgFileP = (PackageFile *)Map.Data();
    VerP = (Version *)Map.Data();
+   DescP = (Description *)Map.Data();
    ProvideP = (Provides *)Map.Data();
    DepP = (Dependency *)Map.Data();
    StringItemP = (StringItem *)Map.Data();
@@ -217,8 +223,8 @@ const char *pkgCache::DepType(unsigned char Type)
 {
    const char *Types[] = {"",_("Depends"),_("PreDepends"),_("Suggests"),
                           _("Recommends"),_("Conflicts"),_("Replaces"),
-                          _("Obsoletes")};
-   if (Type < 8)
+                          _("Obsoletes"),_("Breaks")};
+   if (Type < sizeof(Types)/sizeof(*Types))
       return Types[Type];
    return "";
 }
@@ -235,11 +241,11 @@ const char *pkgCache::Priority(unsigned char Prio)
    return 0;
 }
 									/*}}}*/
-
 // Bases for iterator classes						/*{{{*/
 void pkgCache::VerIterator::_dummy() {}
 void pkgCache::DepIterator::_dummy() {}
 void pkgCache::PrvIterator::_dummy() {}
+void pkgCache::DescIterator::_dummy() {}
 									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
@@ -281,10 +287,11 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 // DepIterator::IsCritical - Returns true if the dep is important	/*{{{*/
 // ---------------------------------------------------------------------
 /* Currently critical deps are defined as depends, predepends and
-   conflicts. */
+   conflicts (including dpkg's Breaks fields). */
 bool pkgCache::DepIterator::IsCritical()
 {
    if (Dep->Type == pkgCache::Dep::Conflicts ||
+       Dep->Type == pkgCache::Dep::DpkgBreaks ||
        Dep->Type == pkgCache::Dep::Obsoletes ||
        Dep->Type == pkgCache::Dep::Depends ||
        Dep->Type == pkgCache::Dep::PreDepends)
@@ -370,6 +377,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	    continue;
 
 	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
+	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
 	      Dep->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.ParentPkg())
 	    continue;
@@ -386,6 +394,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
 	    continue;
 	 
 	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
+	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
 	      Dep->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.OwnerPkg())
 	    continue;
@@ -598,4 +607,21 @@ string pkgCache::PkgFileIterator::RelStr()
       Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
    return Res;
 }
+									/*}}}*/
+// VerIterator::TranslatedDescription - Return the a DescIter for locale/*{{{*/
+// ---------------------------------------------------------------------
+/* return a DescIter for the current locale or the default if none is 
+ * found
+ */
+pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
+{
+   pkgCache::DescIterator DescDefault = DescriptionList();
+   pkgCache::DescIterator Desc = DescDefault;
+   for (; Desc.end() == false; Desc++)
+      if (pkgIndexFile::LanguageCode() == Desc.LanguageCode())
+	 break;
+   if (Desc.end() == true) Desc = DescDefault;
+   return Desc;
+};
+
 									/*}}}*/

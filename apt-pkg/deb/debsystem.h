@@ -10,10 +10,6 @@
 #ifndef PKGLIB_DEBSYSTEM_H
 #define PKGLIB_DEBSYSTEM_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/debsystem.h"
-#endif
-
 #include <apt-pkg/pkgsystem.h>
 
 class debStatusIndex;

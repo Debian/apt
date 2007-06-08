@@ -48,6 +48,7 @@
          <arg>check</arg>
          <arg>clean</arg>
          <arg>autoclean</arg>
+         <arg>autoremove</arg>
       </group>   
    </cmdsynopsis>
  </refsynopsisdiv>
@@ -208,6 +209,11 @@
      it growing out of control. The configuration option 
      <literal>APT::Clean-Installed</literal> will prevent installed packages from being
      erased if it is set to off.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>autoremove</term>
+     <listitem><para><literal>autoremove</literal> is used to remove packages that were automatically
+     installed to satisfy dependencies for some package and that are no more needed.</para></listitem>
      </varlistentry>
    </variablelist>
  </refsect1>
@@ -386,6 +392,13 @@
      <listitem><para>If any packages are to be removed apt-get immediately aborts without
      prompting. 
      Configuration Item: <literal>APT::Get::Remove</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--auto-remove</option></term>
+     <listitem><para>If the command is either <literal>install</literal> or <literal>remove</literal>,
+     then this option acts like running <literal>autoremove</literal> command, removing the unused
+     dependency packages. Configuration Item: <literal>APT::Get::AutomaticRemove</literal>.
+     </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--only-source</option></term>

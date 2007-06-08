@@ -4,9 +4,6 @@
 #include <vector>
 #include <map>
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/vendor.h"
-#endif
 
 using std::string;
 
