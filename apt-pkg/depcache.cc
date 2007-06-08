@@ -178,7 +178,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
    return true;
 }
 
-bool pkgDepCache::writeStateFile(OpProgress *prog)
+bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 {
    if(_config->FindB("Debug::pkgAutoRemove",false))
       std::clog << "pkgDepCache::writeStateFile()" << std::endl;
