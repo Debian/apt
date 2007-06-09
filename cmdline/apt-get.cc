@@ -1579,7 +1579,6 @@ bool DoInstall(CommandLine &CmdL)
       _config->Set("APT::Get::AutomaticRemove", "true");
       DefRemove = true;
    }
-
    // new scope for the ActionGroup
    {
       pkgDepCache::ActionGroup group(Cache);

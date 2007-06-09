@@ -267,17 +267,13 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
 	 }
       }
 
-      // no information how to get the patches, bail out
-      if(!found) 
-      {
-	 if(Debug)
-	    std::clog << "Can't find a patch in the index file" << std::endl;
-	 // Failed will queue a big package file
-	 Failed("", NULL);
-      } 
-      else 
+      // we have something, queue the next diff
+      if(found) 
       {
 	 // queue the diffs
+	 int last_space = Description.rfind(" ");
+	 if(last_space != string::npos)
+	    Description.erase(last_space, Description.size()-last_space);
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
 			      ExpectedMD5, available_patches);
 	 Complete = false;
@@ -286,7 +282,12 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
 	 return true;
       }
    }
-
+   
+   // Nothing found, report and return false
+   // Failing here is ok, if we return false later, the full
+   // IndexFile is queued
+   if(Debug)
+      std::clog << "Can't find a patch in the index file" << std::endl;
    return false;
 }
 
@@ -353,7 +354,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   Desc.Description = URIDesc;
+   Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
 
@@ -462,8 +463,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
 
    // queue the right diff
    Desc.URI = string(RealURI) + ".diff/" + available_patches[0].file + ".gz";
-   Desc.Description = available_patches[0].file + string(".pdiff");
-
+   Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI + ".diff/" + available_patches[0].file);
 
@@ -602,7 +602,6 @@ string pkgAcqIndex::Custom600Headers()
 
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-
    // no .bz2 found, retry with .gz
    if(Desc.URI.substr(Desc.URI.size()-3) == "bz2") {
       Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz"; 
