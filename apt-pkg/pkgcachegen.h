@@ -19,9 +19,6 @@
 #ifndef PKGLIB_PKGCACHEGEN_H
 #define PKGLIB_PKGCACHEGEN_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/pkgcachegen.h"
-#endif 
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>

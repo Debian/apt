@@ -8,10 +8,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/database.h"
-#endif
-
 #include <apt-pkg/database.h>
 									/*}}}*/
 

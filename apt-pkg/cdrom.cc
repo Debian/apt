@@ -1,9 +1,6 @@
 /*
  */
 
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/cdrom.h"
-#endif
 #include<apt-pkg/init.h>
 #include<apt-pkg/error.h>
 #include<apt-pkg/cdromutl.h>

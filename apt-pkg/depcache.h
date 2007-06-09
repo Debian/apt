@@ -38,9 +38,6 @@
 #ifndef PKGLIB_DEPCACHE_H
 #define PKGLIB_DEPCACHE_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/depcache.h"
-#endif
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/progress.h>

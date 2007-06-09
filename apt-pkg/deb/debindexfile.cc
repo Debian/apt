@@ -9,10 +9,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/debindexfile.h"
-#endif
-
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/deblistparser.h>

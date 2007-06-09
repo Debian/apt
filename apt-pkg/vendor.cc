@@ -1,7 +1,3 @@
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/vendor.h"
-#endif
-
 #include <iostream>
 #include <apt-pkg/error.h>
 #include <apt-pkg/vendor.h>

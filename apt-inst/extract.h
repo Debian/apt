@@ -17,9 +17,7 @@
 #ifndef PKGLIB_EXTRACT_H
 #define PKGLIB_EXTRACT_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/extract.h"
-#endif
+
 
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/filelist.h>

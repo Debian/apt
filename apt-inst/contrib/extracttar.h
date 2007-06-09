@@ -14,10 +14,6 @@
 #ifndef PKGLIB_EXTRACTTAR_H
 #define PKGLIB_EXTRACTTAR_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/extracttar.h"
-#endif
-
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/dirstream.h>
 

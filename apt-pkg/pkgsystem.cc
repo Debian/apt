@@ -10,10 +10,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/pkgsystem.h"
-#endif
-
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/policy.h>
 #include <cassert>

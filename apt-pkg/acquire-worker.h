@@ -14,9 +14,6 @@
 
 #include <apt-pkg/acquire.h>
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/acquire-worker.h"
-#endif 
 
 // Interfacing to the method process
 class pkgAcquire::Worker

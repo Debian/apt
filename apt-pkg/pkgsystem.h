@@ -37,9 +37,6 @@
 #ifndef PKGLIB_PKGSYSTEM_H
 #define PKGLIB_PKGSYSTEM_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/pkgsystem.h"
-#endif
 
 #include <apt-pkg/depcache.h>
 #include <vector>

@@ -16,9 +16,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/extracttar.h"
-#endif
 #include <apt-pkg/extracttar.h>
 
 #include <apt-pkg/error.h>

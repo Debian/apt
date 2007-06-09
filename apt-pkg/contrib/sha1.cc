@@ -29,10 +29,6 @@
  */
 									/*}}} */
 // Include Files                                                        /*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/sha1.h"
-#endif
-
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/strutl.h>
 

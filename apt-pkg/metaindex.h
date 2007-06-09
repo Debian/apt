@@ -1,9 +1,6 @@
 #ifndef PKGLIB_METAINDEX_H
 #define PKGLIB_METAINDEX_H
 
-/* #ifdef __GNUG__ */
-/* #pragma interface "apt-pkg/metaindex.h" */
-/* #endif */
 
 #include <string>
 #include <apt-pkg/pkgcache.h>

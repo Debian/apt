@@ -3,9 +3,6 @@
 // $Id: indexrecords.cc,v 1.1.2.4 2003/12/30 02:11:43 mdz Exp $
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/indexrecords.h"
-#endif
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>

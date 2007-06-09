@@ -11,10 +11,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/hashes.h"
-#endif
-
 #include <apt-pkg/hashes.h>
     
 #include <unistd.h>    

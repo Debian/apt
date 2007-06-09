@@ -40,9 +40,7 @@
 #ifndef PKGLIB_ERROR_H
 #define PKGLIB_ERROR_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/error.h"
-#endif 
+
 
 #ifdef __GNUG__
 // Methods have a hidden this parameter that is visible to this attribute
