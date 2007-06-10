@@ -20,25 +20,23 @@
 // Records::pkgRecords - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create the necessary structures to access the status files */
-pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
+pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), 
+  Files(Cache.HeaderP->PackageFileCount)
 {
-   Files = new Parser *[Cache.HeaderP->PackageFileCount];
-   memset(Files,0,sizeof(*Files)*Cache.HeaderP->PackageFileCount);
-   
-   for (pkgCache::PkgFileIterator I = Cache.FileBegin(); 
-	I.end() == false; I++)
+   for (pkgCache::PkgFileIterator I = Cache.FileBegin();
+        I.end() == false; I++)
    {
       const pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(I.IndexType());
       if (Type == 0)
       {
-	 _error->Error(_("Index file type '%s' is not supported"),I.IndexType());
-	 return;
+         _error->Error(_("Index file type '%s' is not supported"),I.IndexType());
+         return;
       }
 
       Files[I->ID] = Type->CreatePkgParser(I);
       if (Files[I->ID] == 0)
-	 return;
-   }   
+         return;
+   }
 }
 									/*}}}*/
 // Records::~pkgRecords - Destructor					/*{{{*/
@@ -46,9 +44,12 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), Files(0)
 /* */
 pkgRecords::~pkgRecords()
 {
-   for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
-      delete Files[I];
-   delete [] Files;
+   for ( vector<Parser*>::iterator it = Files.begin();
+     it != Files.end();
+     ++it)
+   {
+      delete *it;
+   }
 }
 									/*}}}*/
 // Records::Lookup - Get a parser for the package version file		/*{{{*/
