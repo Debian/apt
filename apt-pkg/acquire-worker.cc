@@ -12,9 +12,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/acquire-worker.h"
-#endif
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
@@ -307,6 +304,13 @@ bool pkgAcquire::Worker::RunMessages()
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
 	    OwnerQ->ItemDone(Itm);
+
+	    // set some status
+	    if(LookupTag(Message,"FailReason") == "Timeout" || 
+	       LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
+	       LookupTag(Message,"FailReason") == "ConnectionRefused") 
+	       Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+
 	    Owner->Failed(Message,Config);
 	    ItemDone();
 

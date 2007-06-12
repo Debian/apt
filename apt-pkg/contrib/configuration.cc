@@ -15,9 +15,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/configuration.h"
-#endif
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>

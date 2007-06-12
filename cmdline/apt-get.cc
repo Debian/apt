@@ -60,6 +60,7 @@
 #include <errno.h>
 #include <regex.h>
 #include <sys/wait.h>
+#include <sstream>
 									/*}}}*/
 
 using namespace std;
@@ -628,6 +629,8 @@ void CacheFile::Sort()
    and verifies that the system is OK. */
 bool CacheFile::CheckDeps(bool AllowBroken)
 {
+   bool FixBroken = _config->FindB("APT::Get::Fix-Broken",false);
+
    if (_error->PendingError() == true)
       return false;
 
@@ -639,12 +642,24 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    if (pkgApplyStatus(*DCache) == false)
       return false;
    
+   if (_config->FindB("APT::Get::Fix-Policy-Broken",false) == true)
+   {
+      FixBroken = true;
+      if ((DCache->PolicyBrokenCount() > 0))
+      {
+	 // upgrade all policy-broken packages with ForceImportantDeps=True
+	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); !I.end(); I++)
+	    if ((*DCache)[I].NowPolicyBroken() == true) 
+	       DCache->MarkInstall(I,true,0, false, true);
+      }
+   }
+
    // Nothing is broken
    if (DCache->BrokenCount() == 0 || AllowBroken == true)
       return true;
 
    // Attempt to fix broken things
-   if (_config->FindB("APT::Get::Fix-Broken",false) == true)
+   if (FixBroken == true)
    {
       c1out << _("Correcting dependencies...") << flush;
       if (pkgFixBroken(*DCache) == false || DCache->BrokenCount() != 0)
@@ -995,7 +1010,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 cerr << _("Unable to correct missing packages.") << endl;
 	 return _error->Error(_("Aborting install."));
       }
-       	 
+
       _system->UnLock();
       int status_fd = _config->FindI("APT::Status-Fd",-1);
       pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
@@ -1145,9 +1160,11 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    else
       ExpectedInst++;
    
-   // Install it with autoinstalling enabled.
-   if (State.InstBroken() == true && BrokenFix == false)
+   // Install it with autoinstalling enabled (if we not respect the minial
+   // required deps or the policy)
+   if ((State.InstBroken() == true || State.InstPolicyBroken() == true) && BrokenFix == false)
       Cache.MarkInstall(Pkg,true);
+
    return true;
 }
 									/*}}}*/
@@ -1355,20 +1372,29 @@ bool DoUpdate(CommandLine &CmdL)
       return false;
 
    bool Failed = false;
+   bool TransientNetworkFailure = false;
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
    {
       if ((*I)->Status == pkgAcquire::Item::StatDone)
 	 continue;
 
       (*I)->Finished();
-      
+
       fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
 	      (*I)->ErrorText.c_str());
+
+      if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError) 
+      {
+	 TransientNetworkFailure = true;
+	 continue;
+      }
+
       Failed = true;
    }
    
    // Clean out any old list files
-   if (!Failed && _config->FindB("APT::Get::List-Cleanup",true) == true)
+   if (!TransientNetworkFailure &&
+       _config->FindB("APT::Get::List-Cleanup",true) == true)
    {
       if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
 	  Fetcher.Clean(_config->FindDir("Dir::State::lists") + "partial/") == false)
@@ -1380,12 +1406,81 @@ bool DoUpdate(CommandLine &CmdL)
    if (Cache.BuildCaches() == false)
       return false;
    
-   if (Failed == true)
+   if (TransientNetworkFailure == true)
+      _error->Warning(_("Some index files failed to download, they have been ignored, or old ones used instead."));
+   else if (Failed == true)
       return _error->Error(_("Some index files failed to download, they have been ignored, or old ones used instead."));
-   
+
    return true;
 }
 									/*}}}*/
+// DoAutomaticRemove - Remove all automatic unused packages		/*{{{*/
+// ---------------------------------------------------------------------
+/* Remove unused automatic packages */
+bool DoAutomaticRemove(CacheFile &Cache)
+{
+   bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
+   bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
+   bool hideAutoRemove = _config->FindB("APT::Get::HideAutoRemove");
+   pkgDepCache::ActionGroup group(*Cache);
+
+   if(Debug)
+      std::cout << "DoAutomaticRemove()" << std::endl;
+
+   if (_config->FindB("APT::Get::Remove",true) == false &&
+       doAutoRemove == true)
+   {
+      c1out << _("We are not supposed to delete stuff, can't start "
+		 "AutoRemover") << std::endl;
+      doAutoRemove = false;
+   }
+
+   string autoremovelist, autoremoveversions;
+   // look over the cache to see what can be removed
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+   {
+      if (Cache[Pkg].Garbage)
+      {
+	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
+	    if(Debug)
+	       std::cout << "We could delete %s" <<  Pkg.Name() << std::endl;
+	  
+	 // only show stuff in the list that is not yet marked for removal
+	 if(Cache[Pkg].Delete() == false) 
+	 {
+	    autoremovelist += string(Pkg.Name()) + " ";
+	    autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+	 }
+	 if (doAutoRemove)
+	 {
+	    if(Pkg.CurrentVer() != 0 && 
+	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
+	       Cache->MarkDelete(Pkg, _config->FindB("APT::Get::Purge", false));
+	    else
+	       Cache->MarkKeep(Pkg, false, false);
+	 }
+      }
+   }
+   if (!hideAutoRemove) 
+      ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
+   if (!doAutoRemove && !hideAutoRemove && autoremovelist.size() > 0)
+      c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
+
+   // Now see if we destroyed anything
+   if (Cache->BrokenCount() != 0)
+   {
+      c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
+	         "shouldn't happen. Please file a bug report against apt.") << endl;
+      c1out << endl;
+      c1out << _("The following information may help to resolve the situation:") << endl;
+      c1out << endl;
+      ShowBroken(c1out,Cache,false);
+
+      return _error->Error(_("Internal Error, AutoRemover broke stuff"));
+   }
+   return true;
+}
+
 // DoUpgrade - Upgrade all packages					/*{{{*/
 // ---------------------------------------------------------------------
 /* Upgrade all packages without installing new packages or erasing old
@@ -1406,6 +1501,51 @@ bool DoUpgrade(CommandLine &CmdL)
    return InstallPackages(Cache,true);
 }
 									/*}}}*/
+// DoInstallTask - Install task from the command line			/*{{{*/
+// ---------------------------------------------------------------------
+/* Install named task */
+bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix, 
+		    bool BrokenFix,
+		    unsigned int& ExpectedInst, 
+		    const char *taskname)
+{
+   const char *start, *end;
+   pkgCache::PkgIterator Pkg;
+   char buf[64*1024];
+   regex_t Pattern;
+
+   // get the records
+   pkgRecords Recs(Cache);
+
+   // build regexp for the task
+   char S[300];
+   snprintf(S, sizeof(S), "^Task:.*[^a-z]%s[^a-z].*\n", taskname);
+   regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
+   
+   bool found = false;
+   bool res = true;
+   for (Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   {
+      pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
+      if(ver.end())
+	 continue;
+      pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
+      parser.GetRec(start,end);
+      strncpy(buf, start, end-start);
+      buf[end-start] = 0x0;
+      if (regexec(&Pattern,buf,0,0,0) != 0)
+	 continue;
+      res &= TryToInstall(Pkg,Cache,Fix,false,true,ExpectedInst);
+      found = true;
+   }
+   
+   if(!found)
+      _error->Error(_("Couldn't find task %s"),taskname);
+
+   regfree(&Pattern);
+   return res;
+}
+
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -1421,6 +1561,7 @@ bool DoInstall(CommandLine &CmdL)
    if (Cache->BrokenCount() != 0)
       BrokenFix = true;
    
+   unsigned int AutoMarkChanged = 0;
    unsigned int ExpectedInst = 0;
    unsigned int Packages = 0;
    pkgProblemResolver Fix(Cache);
@@ -1428,155 +1569,195 @@ bool DoInstall(CommandLine &CmdL)
    bool DefRemove = false;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       DefRemove = true;
-
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   else if (strcasecmp(CmdL.FileList[0], "purge") == 0)
    {
-      // Duplicate the string
-      unsigned int Length = strlen(*I);
-      char S[300];
-      if (Length >= sizeof(S))
-	 continue;
-      strcpy(S,*I);
-      
-      // See if we are removing and special indicators..
-      bool Remove = DefRemove;
-      char *VerTag = 0;
-      bool VerIsRel = false;
-      while (Cache->FindPkg(S).end() == true)
+      _config->Set("APT::Get::Purge", true);
+      DefRemove = true;
+   }
+   else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
+   {
+      _config->Set("APT::Get::AutomaticRemove", "true");
+      DefRemove = true;
+   }
+   // new scope for the ActionGroup
+   {
+      pkgDepCache::ActionGroup group(Cache);
+      for (const char **I = CmdL.FileList + 1; *I != 0; I++)
       {
-	 // Handle an optional end tag indicating what to do
-	 if (Length >= 1 && S[Length - 1] == '-')
-	 {
-	    Remove = true;
-	    S[--Length] = 0;
+	 // Duplicate the string
+	 unsigned int Length = strlen(*I);
+	 char S[300];
+	 if (Length >= sizeof(S))
 	    continue;
-	 }
-	 
-	 if (Length >= 1 && S[Length - 1] == '+')
-	 {
-	    Remove = false;
-	    S[--Length] = 0;
-	    continue;
-	 }
-	 
-	 char *Slash = strchr(S,'=');
-	 if (Slash != 0)
-	 {
-	    VerIsRel = false;
-	    *Slash = 0;
-	    VerTag = Slash + 1;
-	 }
-	 
-	 Slash = strchr(S,'/');
-	 if (Slash != 0)
-	 {
-	    VerIsRel = true;
-	    *Slash = 0;
-	    VerTag = Slash + 1;
-	 }
-	 
-	 break;
-      }
+	 strcpy(S,*I);
       
-      // Locate the package
-      pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
-      Packages++;
-      if (Pkg.end() == true)
-      {
-	 // Check if the name is a regex
-	 const char *I;
-	 for (I = S; *I != 0; I++)
-	    if (*I == '?' || *I == '*' || *I == '|' ||
-	        *I == '[' || *I == '^' || *I == '$')
-	       break;
-	 if (*I == 0)
-	    return _error->Error(_("Couldn't find package %s"),S);
+	 // See if we are removing and special indicators..
+	 bool Remove = DefRemove;
+	 char *VerTag = 0;
+	 bool VerIsRel = false;
 
-	 // Regexs must always be confirmed
-	 ExpectedInst += 1000;
-	 
-	 // Compile the regex pattern
-	 regex_t Pattern;
-	 int Res;
-	 if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
-		     REG_NOSUB)) != 0)
+         // this is a task!
+         if (Length >= 1 && S[Length - 1] == '^')
+         {
+            S[--Length] = 0;
+            // tasks must always be confirmed
+            ExpectedInst += 1000;
+            // see if we can install it
+            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
+            continue;
+         }
+
+	 while (Cache->FindPkg(S).end() == true)
 	 {
-	    char Error[300];	    
-	    regerror(Res,&Pattern,Error,sizeof(Error));
-	    return _error->Error(_("Regex compilation error - %s"),Error);
-	 }
-	 
-	 // Run over the matches
-	 bool Hit = false;
-	 for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
-	 {
-	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+	    // Handle an optional end tag indicating what to do
+	    if (Length >= 1 && S[Length - 1] == '-')
+	    {
+	       Remove = true;
+	       S[--Length] = 0;
 	       continue;
+	    }
+	 
+	    if (Length >= 1 && S[Length - 1] == '+')
+	    {
+	       Remove = false;
+	       S[--Length] = 0;
+	       continue;
+	    }
+	 
+	    char *Slash = strchr(S,'=');
+	    if (Slash != 0)
+	    {
+	       VerIsRel = false;
+	       *Slash = 0;
+	       VerTag = Slash + 1;
+	    }
+	 
+	    Slash = strchr(S,'/');
+	    if (Slash != 0)
+	    {
+	       VerIsRel = true;
+	       *Slash = 0;
+	       VerTag = Slash + 1;
+	    }
+	 
+	    break;
+	 }
+      
+	 // Locate the package
+	 pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
+	 Packages++;
+	 if (Pkg.end() == true)
+	 {
+	    // Check if the name is a regex
+	    const char *I;
+	    for (I = S; *I != 0; I++)
+	       if (*I == '?' || *I == '*' || *I == '|' ||
+		   *I == '[' || *I == '^' || *I == '$')
+		  break;
+	    if (*I == 0)
+	       return _error->Error(_("Couldn't find package %s"),S);
+
+	    // Regexs must always be confirmed
+	    ExpectedInst += 1000;
+	 
+	    // Compile the regex pattern
+	    regex_t Pattern;
+	    int Res;
+	    if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
+			       REG_NOSUB)) != 0)
+	    {
+	       char Error[300];	    
+	       regerror(Res,&Pattern,Error,sizeof(Error));
+	       return _error->Error(_("Regex compilation error - %s"),Error);
+	    }
+	 
+	    // Run over the matches
+	    bool Hit = false;
+	    for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+	    {
+	       if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+		  continue;
 	    
-	    ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
-		     Pkg.Name(),S);
+	       ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
+			Pkg.Name(),S);
 	    
+	       if (VerTag != 0)
+		  if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
+		     return false;
+	    
+	       Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
+				   ExpectedInst,false);
+	    }
+	    regfree(&Pattern);
+	 
+	    if (Hit == false)
+	       return _error->Error(_("Couldn't find package %s"),S);
+	 }
+	 else
+	 {
 	    if (VerTag != 0)
 	       if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
 		  return false;
-	    
-	    Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
-				ExpectedInst,false);
-	 }
-	 regfree(&Pattern);
-	 
-	 if (Hit == false)
-	    return _error->Error(_("Couldn't find package %s"),S);
-      }
-      else
-      {
-	 if (VerTag != 0)
-	    if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
+	    if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
 	       return false;
-	 if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
-	    return false;
-      }      
-   }
 
-   /* If we are in the Broken fixing mode we do not attempt to fix the
-      problems. This is if the user invoked install without -f and gave
-      packages */
-   if (BrokenFix == true && Cache->BrokenCount() != 0)
-   {
-      c1out << _("You might want to run `apt-get -f install' to correct these:") << endl;
-      ShowBroken(c1out,Cache,false);
-
-      return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
-   }
-   
-   // Call the scored problem resolver
-   Fix.InstallProtect();
-   if (Fix.Resolve(true) == false)
-      _error->Discard();
-
-   // Now we check the state of the packages,
-   if (Cache->BrokenCount() != 0)
-   {
-      c1out << 
-       _("Some packages could not be installed. This may mean that you have\n" 
-	 "requested an impossible situation or if you are using the unstable\n" 
-	 "distribution that some required packages have not yet been created\n"
-	 "or been moved out of Incoming.") << endl;
-      if (Packages == 1)
-      {
-	 c1out << endl;
-	 c1out << 
-	  _("Since you only requested a single operation it is extremely likely that\n"
-	    "the package is simply not installable and a bug report against\n" 
-	    "that package should be filed.") << endl;
+	    // see if we need to fix the auto-mark flag 
+	    // e.g. apt-get install foo 
+	    // where foo is marked automatic
+	    if(!Remove && 
+	       Cache[Pkg].Install() == false && 
+	       (Cache[Pkg].Flags & pkgCache::Flag::Auto))
+	    {
+	       ioprintf(c1out,_("%s set to manual installed.\n"),
+			Pkg.Name());
+	       Cache->MarkAuto(Pkg,false);
+	       AutoMarkChanged++;
+	    }
+	 }      
       }
 
-      c1out << _("The following information may help to resolve the situation:") << endl;
-      c1out << endl;
-      ShowBroken(c1out,Cache,false);
-      return _error->Error(_("Broken packages"));
-   }   
+      /* If we are in the Broken fixing mode we do not attempt to fix the
+	 problems. This is if the user invoked install without -f and gave
+	 packages */
+      if (BrokenFix == true && Cache->BrokenCount() != 0)
+      {
+	 c1out << _("You might want to run `apt-get -f install' to correct these:") << endl;
+	 ShowBroken(c1out,Cache,false);
+
+	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
+      }
    
+      // Call the scored problem resolver
+      Fix.InstallProtect();
+      if (Fix.Resolve(true) == false)
+	 _error->Discard();
+
+      // Now we check the state of the packages,
+      if (Cache->BrokenCount() != 0)
+      {
+	 c1out << 
+	    _("Some packages could not be installed. This may mean that you have\n" 
+	      "requested an impossible situation or if you are using the unstable\n" 
+	      "distribution that some required packages have not yet been created\n"
+	      "or been moved out of Incoming.") << endl;
+	 if (Packages == 1)
+	 {
+	    c1out << endl;
+	    c1out << 
+	       _("Since you only requested a single operation it is extremely likely that\n"
+		 "the package is simply not installable and a bug report against\n" 
+		 "that package should be filed.") << endl;
+	 }
+
+	 c1out << _("The following information may help to resolve the situation:") << endl;
+	 c1out << endl;
+	 ShowBroken(c1out,Cache,false);
+	 return _error->Error(_("Broken packages"));
+      }   
+   }
+   if (!DoAutomaticRemove(Cache)) 
+      return false;
+
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
    if (Cache->InstCount() != ExpectedInst)
@@ -1596,8 +1777,8 @@ bool DoInstall(CommandLine &CmdL)
 	 
 	 if (*J == 0) {
 	    List += string(I.Name()) + " ";
-        VersionsList += string(Cache[I].CandVersion) + "\n";
-     }
+	    VersionsList += string(Cache[I].CandVersion) + "\n";
+	 }
       }
       
       ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
@@ -1694,6 +1875,14 @@ bool DoInstall(CommandLine &CmdL)
 
    }
 
+   // if nothing changed in the cache, but only the automark information
+   // we write the StateFile here, otherwise it will be written in 
+   // cache.commit()
+   if (AutoMarkChanged > 0 &&
+       Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
+       Cache->BadCount() == 0)
+      Cache->writeStateFile(NULL);
+
    // See if we need to prompt
    if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
       return InstallPackages(Cache,false,false);
@@ -1732,6 +1921,8 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
    
+   pkgDepCache::ActionGroup group(Cache);
+
    // Install everything with the install flag set
    pkgCache::PkgIterator I = Cache->PkgBegin();
    for (;I.end() != true; I++)
@@ -1948,6 +2139,11 @@ bool DoSource(CommandLine &CmdL)
 	 // Tar only mode only fetches .tar files
 	 if (_config->FindB("APT::Get::Tar-Only",false) == true &&
 	     I->Type != "tar")
+	    continue;
+
+	 // Dsc only mode only fetches .dsc files
+	 if (_config->FindB("APT::Get::Dsc-Only",false) == true &&
+	     I->Type != "dsc")
 	    continue;
 
 	 // don't download the same uri twice (should this be moved to
@@ -2443,6 +2639,7 @@ bool ShowHelp(CommandLine &CmdL)
       "   upgrade - Perform an upgrade\n"
       "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
       "   remove - Remove packages\n"
+      "   purge - Remove and purge packages\n"
       "   source - Download source archives\n"
       "   build-dep - Configure build-dependencies for source packages\n"
       "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
@@ -2484,6 +2681,7 @@ void GetInitialize()
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
    _config->Set("APT::Get::List-Cleanup",true);
+   _config->Set("APT::Get::AutomaticRemove",false);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
@@ -2531,7 +2729,8 @@ int main(int argc,const char *argv[])
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
       {0,"diff-only","APT::Get::Diff-Only",0},
-      {0,"tar-only","APT::Get::tar-Only",0},
+      {0,"tar-only","APT::Get::Tar-Only",0},
+      {0,"dsc-only","APT::Get::Dsc-Only",0},
       {0,"purge","APT::Get::Purge",0},
       {0,"list-cleanup","APT::Get::List-Cleanup",0},
       {0,"reinstall","APT::Get::ReInstall",0},
@@ -2539,7 +2738,10 @@ int main(int argc,const char *argv[])
       {0,"remove","APT::Get::Remove",0},
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
+      {0,"auto-remove","APT::Get::AutomaticRemove",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
+      {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
+      {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
@@ -2547,6 +2749,7 @@ int main(int argc,const char *argv[])
                                    {"upgrade",&DoUpgrade},
                                    {"install",&DoInstall},
                                    {"remove",&DoInstall},
+				   {"autoremove",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
 				   {"build-dep",&DoBuildDep},

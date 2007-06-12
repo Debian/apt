@@ -3,18 +3,18 @@ Section: admin
 Priority: important
 Maintainer: APT Development Team <deity@lists.debian.org>
 Uploaders: Jason Gunthorpe <jgg@debian.org>, Adam Heath <doogie@debian.org>, Matt Zimmerman <mdz@debian.org>, Michael Vogt <mvo@debian.org>
-Standards-Version: 3.6.2.2
-Build-Depends: debhelper (>= 5.0), libdb4.4-dev, gettext (>= 0.12)
+Standards-Version: 3.7.2.2
+Build-Depends: debhelper (>= 5.0), libdb4.4-dev, gettext (>= 0.12), libcurl3-gnutls-dev (>= 7.15.5)
 Build-Depends-Indep: debiandoc-sgml, docbook-utils (>= 0.6.12-1)
+XS-Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
 
 Package: apt
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, debian-archive-keyring
 Priority: important
 Replaces: libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
 Provides: ${libapt-pkg:provides}
-Recommends: debian-archive-keyring
-Suggests: aptitude | synaptic | gnome-apt | wajig, dpkg-dev, apt-doc, bzip2, gnupg
+Suggests: aptitude | synaptic | gnome-apt | wajig, dpkg-dev, apt-doc, bzip2
 Section: admin
 Description: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
@@ -65,3 +65,12 @@ Description: APT utility programs
  apt-extracttemplates is used by debconf to prompt for configuration 
  questions before installation. apt-ftparchive is used to create Package
  and other index files. apt-sortpkgs is a Package/Source file normalizer.
+
+Package: apt-transport-https
+Architecture: any
+Depends: ${shlibs:Depends}
+Priority: optional
+Section: admin
+Description: APT https transport
+ This package contains a APT https transport. It makes it possible to
+ use 'deb https://foo distro main' lines in the sources.list.

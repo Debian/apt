@@ -16,9 +16,6 @@
 #ifndef PKGLIB_ORDERLIST_H
 #define PKGLIB_ORDERLIST_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/orderlist.h"
-#endif 
 
 #include <apt-pkg/pkgcache.h>
 

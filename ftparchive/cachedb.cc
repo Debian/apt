@@ -10,10 +10,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "cachedb.h"
-#endif
-
 #include "cachedb.h"
 
 #include <apti18n.h>

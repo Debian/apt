@@ -11,9 +11,6 @@
 #ifndef PKGLIB_DEBSRCRECORDS_H
 #define PKGLIB_DEBSRCRECORDS_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/debsrcrecords.h"
-#endif 
 
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/tagfile.h>
@@ -27,7 +24,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    char *StaticBinList[400];
    unsigned long iOffset;
    char *Buffer;
-   unsigned long BufSize;
+   unsigned int BufSize;
    
    public:
 

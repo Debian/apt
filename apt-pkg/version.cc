@@ -8,10 +8,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/version.h"
-#endif 
-
 #include <apt-pkg/version.h>
 #include <apt-pkg/pkgcache.h>
 

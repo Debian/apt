@@ -23,9 +23,6 @@
 #ifndef PKGLIB_DEBFILE_H
 #define PKGLIB_DEBFILE_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/debfile.h"
-#endif
 
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/database.h>

@@ -14,10 +14,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "multicompress.h"
-#endif
-
 #include "multicompress.h"
     
 #include <apti18n.h>

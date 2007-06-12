@@ -15,10 +15,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/crc-16.h"
-#endif
-
 #include <apt-pkg/crc-16.h>
 									/*}}}*/
 

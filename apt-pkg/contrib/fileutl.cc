@@ -14,9 +14,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/fileutl.h"
-#endif 
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
@@ -24,6 +21,7 @@
 
 #include <apti18n.h>
 
+#include <cstdlib>
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>

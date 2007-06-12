@@ -24,11 +24,16 @@ APT
 {
   Architecture "i386";
   Build-Essential "build-essential";
-  
+
+  NeverAutoRemove  { "linux-kernel.*";  };  // packages that should never
+                                            // considered for autoRemove
+
   // Options for apt-get
   Get 
   {
      Arch-Only "false";
+     AutomaticRemove "false";       
+     HideAutoRemove "false";
      Download-Only "false";
      Simulate "false";
      Assume-Yes "false";
@@ -90,6 +95,13 @@ APT
   Cache-Limit "4194304";
   Default-Release "";
 
+  // consider Recommends, Suggests as important dependencies that should
+  // be installed by default
+  APT::Install-Recommends "false";
+  APT::Install-Suggests "false";
+
+  // consider dependencies of packages in this section manual
+  Never-MarkAuto-Section "metapackages";
 
   // Write progress messages on this fd (for stuff like base-config)
   Status-Fd "-1";
@@ -104,6 +116,8 @@ Acquire
   Queue-Mode "host";       // host|access
   Retries "0";
   Source-Symlinks "true";
+
+  PDiffs "true";     // try to get the IndexFile diffs
   
   // HTTP method configuration
   http 
@@ -118,6 +132,18 @@ Acquire
     Max-Age "86400";     // 1 Day age on index files
     No-Store "false";    // Prevent the cache from storing archives    
     Dl-Limit "7";        // 7Kb/sec maximum download rate
+  };
+
+  // HTTPS method configuration:
+  // - uses the http proxy config 
+  // - uses the http cache-control values
+  // - uses the http Dl-Limit values
+  https 
+  {
+	Verify-Peer "false";
+	SslCert "/etc/apt/some.pem";
+        CaPath  "/etc/ssl/certs";
+        Verify-Host" "2";
   };
 
   ftp
@@ -255,12 +281,13 @@ Debug
   pkgDPkgPM "false";
   pkgDPkgProgressReporting "false";
   pkgOrderList "false";
+  pkgAutoRemove "false";   // show information about automatic removes
   BuildDeps "false";
-  
   pkgInitialize "false";   // This one will dump the configuration space
   NoLocking "false";
   Acquire::Ftp "false";    // Show ftp command traffic
   Acquire::Http "false";   // Show http command traffic
+  Acquire::Https "false";   // Show https debug
   Acquire::gpgv "false";   // Show the gpgv traffic
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";

@@ -11,10 +11,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/srcrecords.h"
-#endif 
-
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>

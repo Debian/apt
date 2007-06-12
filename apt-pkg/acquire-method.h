@@ -10,15 +10,19 @@
    
    ##################################################################### */
 									/*}}}*/
+
+/** \addtogroup acquire
+ *  @{
+ *
+ *  \file acquire-method.h
+ */
+
 #ifndef PKGLIB_ACQUIRE_METHOD_H
 #define PKGLIB_ACQUIRE_METHOD_H
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/acquire-method.h"
-#endif 
 
 class Hashes;
 class pkgAcqMethod
@@ -85,5 +89,7 @@ class pkgAcqMethod
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~pkgAcqMethod() {};
 };
+
+/** @} */
 
 #endif

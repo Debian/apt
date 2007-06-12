@@ -9,10 +9,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/debsrcrecords.h"
-#endif 
-
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/error.h>
@@ -40,7 +36,7 @@ const char **debSrcRecordParser::Binaries()
    {
       delete [] Buffer;
       // allocate new size based on buffer (but never smaller than 4000)
-      BufSize = max((unsigned long)4000, max((unsigned long)Bins.length()+1,2*BufSize));
+      BufSize = max((unsigned int)4000, max((unsigned int)Bins.length()+1,2*BufSize));
       Buffer = new char[BufSize];
    }
 

@@ -14,6 +14,12 @@
 #  "APT::Periodic::AutocleanInterval"
 #  - Do "apt-get autoclean" every n-days (0=disable)
 #
+#  "APT::Periodic::Unattended-Upgrade"
+#  - Run the "unattended-upgrade" security upgrade script 
+#    every n-days (0=disabled)
+#    Requires the package "unattended-upgrades" and will write
+#    a log in /var/log/unattended-upgrades
+# 
 #  "APT::Archives::MaxAge",
 #  - Set maximum allowed age of a cache package file. If a cache 
 #    package file is older it is deleted (0=disable)
@@ -146,7 +152,11 @@ UpdateInterval=0
 DownloadUpgradeableInterval=0
 eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
 AutocleanInterval=$DownloadUpgradeableInterval
-eval $(apt-config shell AutocleanInterval APT::Periodic::Autoclean)
+eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
+
+UnattendedUpgradeInterval=0
+eval $(apt-config shell UnattendedUpgradeInterval APT::Periodic::Unattended-Upgrade)
+
 
 # laptop check, on_ac_power returns:
 #       0 (true)    System is on mains power
@@ -180,6 +190,12 @@ AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
 if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
     apt-get -qq autoclean
     update_stamp $AUTOCLEAN_STAMP
+fi
+
+UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
+if check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
+    unattended-upgrade
+    update_stamp $UPGRADE_STAMP
 fi
 
 # check cache size 

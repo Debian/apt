@@ -2,10 +2,6 @@
 #ifndef PKGLIB_DEBMETAINDEX_H
 #define PKGLIB_DEBMETAINDEX_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/debmetaindex.h"
-#endif
-
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/sourcelist.h>
 

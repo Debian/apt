@@ -10,9 +10,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/cdromutl.h"
-#endif
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>

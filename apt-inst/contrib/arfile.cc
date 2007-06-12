@@ -14,9 +14,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/arfile.h"
-#endif
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>

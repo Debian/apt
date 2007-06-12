@@ -15,10 +15,6 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/strutl.h"
-#endif
-
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
@@ -28,16 +24,60 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <algorithm>
 #include <unistd.h>
 #include <regex.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <iconv.h>
 
 #include "config.h"
 
 using namespace std;
 									/*}}}*/
 
+// UTF8ToCodeset - Convert some UTF-8 string for some codeset   	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is handy to use before display some information for enduser  */
+bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest)
+{
+  iconv_t cd;
+  const char *inbuf;
+  char *inptr, *outbuf, *outptr;
+  size_t insize, outsize;
+  
+  cd = iconv_open(codeset, "UTF-8");
+  if (cd == (iconv_t)(-1)) {
+     // Something went wrong
+     if (errno == EINVAL)
+	_error->Error("conversion from 'UTF-8' to '%s' not available",
+               codeset);
+     else
+	perror("iconv_open");
+     
+     // Clean the destination string
+     *dest = "";
+     
+     return false;
+  }
+
+  insize = outsize = orig.size();
+  inbuf = orig.data();
+  inptr = (char *)inbuf;
+  outbuf = new char[insize+1];
+  outptr = outbuf;
+
+  iconv(cd, &inptr, &insize, &outptr, &outsize);
+  *outptr = '\0';
+
+  *dest = outbuf;
+  delete[] outbuf;
+  
+  iconv_close(cd);
+
+  return true;
+}
+									/*}}}*/
 // strstrip - Remove white space from the front and back of a string	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is handy to use when parsing a file. It also removes \n's left 

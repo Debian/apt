@@ -9,9 +9,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/pkgrecords.h"
-#endif
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
@@ -61,5 +58,14 @@ pkgRecords::Parser &pkgRecords::Lookup(pkgCache::VerFileIterator const &Ver)
 {
    Files[Ver.File()->ID]->Jump(Ver);
    return *Files[Ver.File()->ID];
+}
+									/*}}}*/
+// Records::Lookup - Get a parser for the package description file	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgRecords::Parser &pkgRecords::Lookup(pkgCache::DescFileIterator const &Desc)
+{
+   Files[Desc.File()->ID]->Jump(Desc);
+   return *Files[Desc.File()->ID];
 }
 									/*}}}*/

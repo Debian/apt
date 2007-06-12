@@ -8,9 +8,6 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "apt-pkg/dpkgpm.h"
-#endif
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -473,6 +470,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 
 	 case Item::Install:
 	 Args[n++] = "--unpack";
+	 Size += strlen(Args[n-1]);
+	 Args[n++] = "--auto-deconfigure";
 	 Size += strlen(Args[n-1]);
 	 break;
       }

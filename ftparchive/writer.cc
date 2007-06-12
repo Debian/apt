@@ -11,10 +11,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#ifdef __GNUG__
-#pragma implementation "writer.h"
-#endif
-
 #include "writer.h"
     
 #include <apti18n.h>

@@ -19,11 +19,9 @@
 #ifndef PKGLIB_PKGCACHEGEN_H
 #define PKGLIB_PKGCACHEGEN_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/pkgcachegen.h"
-#endif 
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/md5.h>
 
 class pkgSourceList;
 class OpProgress;
@@ -55,7 +53,9 @@ class pkgCacheGenerator
    
    bool NewPackage(pkgCache::PkgIterator &Pkg,const string &Pkg);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
+   bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const string &VerStr,unsigned long Next);
+   map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
 
    public:
 
@@ -108,6 +108,9 @@ class pkgCacheGenerator::ListParser
    virtual string Package() = 0;
    virtual string Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator Ver) = 0;
+   virtual string Description() = 0;
+   virtual string DescriptionLanguage() = 0;
+   virtual MD5SumValue Description_md5() = 0;
    virtual unsigned short VersionHash() = 0;
    virtual bool UsePackage(pkgCache::PkgIterator Pkg,
 			   pkgCache::VerIterator Ver) = 0;

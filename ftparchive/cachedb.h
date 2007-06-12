@@ -12,9 +12,7 @@
 #ifndef CACHEDB_H
 #define CACHEDB_H
 
-#ifdef __GNUG__
-#pragma interface "cachedb.h"
-#endif 
+
 
 #include <db.h>
 #include <string>

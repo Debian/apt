@@ -14,10 +14,6 @@
 #ifndef APTPKG_SHA256_H
 #define APTPKG_SHA256_H
 
-#ifdef __GNUG__
-#pragma interface "apt-pkg/sha256.h"
-#endif 
-
 #include <string>
 #include <algorithm>
 
