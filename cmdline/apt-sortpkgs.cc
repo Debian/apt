@@ -162,7 +162,7 @@ int ShowHelp()
 }
 									/*}}}*/
 
-int main(unsigned int argc,const char *argv[])
+int main(int argc,const char *argv[])
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},

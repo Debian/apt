@@ -42,6 +42,7 @@
          <arg>dselect-upgrade</arg>
          <arg>install <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>source <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>check</arg>
@@ -150,6 +151,11 @@
      removed instead of installed. If a plus sign is appended to the package 
      name (with no intervening space), the identified package will be 
      installed instead of removed.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>purge</term>
+     <listitem><para><literal>purge</literal> is identical to <literal>remove</literal> except that packages are 
+     removed and purged.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>source</term>
@@ -406,9 +412,9 @@
      Item: <literal>APT::Get::Only-Source</literal>.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>--diff-only</option></term><term><option>--tar-only</option></term>
-     <listitem><para>Download only the diff or tar file of a source archive. 
-     Configuration Item: <literal>APT::Get::Diff-Only</literal> and 
+     <varlistentry><term><option>--diff-only</option></term><term><option>--dsc-only</option></term><term><option>--tar-only</option></term>
+     <listitem><para>Download only the diff, dsc, or tar file of a source archive. 
+     Configuration Item: <literal>APT::Get::Diff-Only</literal>, <literal>APT::Get::Dsc-Only</literal>, and 
      <literal>APT::Get::Tar-Only</literal>.</para></listitem>
      </varlistentry>
      

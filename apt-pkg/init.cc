@@ -14,6 +14,7 @@
 
 #include <apti18n.h>
 #include <config.h>
+#include <cstdlib>
 #include <sys/stat.h>
 									/*}}}*/
 
@@ -105,7 +106,9 @@ bool pkgInitConfig(Configuration &Cnf)
       bindtextdomain(textdomain(0),Cnf.FindDir("Dir::Locale").c_str());
    }
 #endif
-
+   // Translation
+   Cnf.Set("APT::Acquire::Translation", "environment");
+   
    return true;
 }
 									/*}}}*/

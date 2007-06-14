@@ -71,7 +71,7 @@ string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &Record,
 /* */
 bool pkgIndexFile::TranslationsAvailable()
 {
-  const string Translation = _config->Find("APT::Acquire::Translation", "environment");
+  const string Translation = _config->Find("APT::Acquire::Translation");
   
   if (Translation.compare("none") != 0)
     return CheckLanguageCode(LanguageCode().c_str());
@@ -103,7 +103,7 @@ bool pkgIndexFile::CheckLanguageCode(const char *Lang)
 /* return the language code */
 string pkgIndexFile::LanguageCode()
 {
-  const string Translation = _config->Find("APT::Acquire::Translation", "environment");
+  const string Translation = _config->Find("APT::Acquire::Translation");
 
   if (Translation.compare("environment") == 0) 
   {

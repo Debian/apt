@@ -36,6 +36,7 @@ class debRecordParser : public pkgRecords::Parser
    virtual string MD5Hash();
    virtual string SHA1Hash();
    virtual string SourcePkg();
+   virtual string SourceVer();
    
    // These are some general stats about the package
    virtual string Maintainer();

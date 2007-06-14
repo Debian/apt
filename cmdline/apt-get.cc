@@ -650,7 +650,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
 	 // upgrade all policy-broken packages with ForceImportantDeps=True
 	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); !I.end(); I++)
 	    if ((*DCache)[I].NowPolicyBroken() == true) 
-	       DCache->MarkInstall(I,true,0,false, true);
+	       DCache->MarkInstall(I,true,0, false, true);
       }
    }
 
@@ -1569,13 +1569,16 @@ bool DoInstall(CommandLine &CmdL)
    bool DefRemove = false;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       DefRemove = true;
-
+   else if (strcasecmp(CmdL.FileList[0], "purge") == 0)
+   {
+      _config->Set("APT::Get::Purge", true);
+      DefRemove = true;
+   }
    else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
    {
       _config->Set("APT::Get::AutomaticRemove", "true");
       DefRemove = true;
    }
-
    // new scope for the ActionGroup
    {
       pkgDepCache::ActionGroup group(Cache);
@@ -1593,16 +1596,16 @@ bool DoInstall(CommandLine &CmdL)
 	 char *VerTag = 0;
 	 bool VerIsRel = false;
 
-	 // this is a task!
-	 if (Length >= 1 && S[Length - 1] == '^')
-	 {
-	    S[--Length] = 0;
-	    // tasks must always be confirmed
-	    ExpectedInst += 1000;
-	    // see if we can install it
-	    TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
-	    continue;
-	 }
+         // this is a task!
+         if (Length >= 1 && S[Length - 1] == '^')
+         {
+            S[--Length] = 0;
+            // tasks must always be confirmed
+            ExpectedInst += 1000;
+            // see if we can install it
+            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
+            continue;
+         }
 
 	 while (Cache->FindPkg(S).end() == true)
 	 {
@@ -1692,7 +1695,6 @@ bool DoInstall(CommandLine &CmdL)
 	 }
 	 else
 	 {
-
 	    if (VerTag != 0)
 	       if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
 		  return false;
@@ -1754,7 +1756,7 @@ bool DoInstall(CommandLine &CmdL)
       }   
    }
    if (!DoAutomaticRemove(Cache)) 
-	 return false;
+      return false;
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
@@ -2137,6 +2139,11 @@ bool DoSource(CommandLine &CmdL)
 	 // Tar only mode only fetches .tar files
 	 if (_config->FindB("APT::Get::Tar-Only",false) == true &&
 	     I->Type != "tar")
+	    continue;
+
+	 // Dsc only mode only fetches .dsc files
+	 if (_config->FindB("APT::Get::Dsc-Only",false) == true &&
+	     I->Type != "dsc")
 	    continue;
 
 	 // don't download the same uri twice (should this be moved to
@@ -2632,6 +2639,7 @@ bool ShowHelp(CommandLine &CmdL)
       "   upgrade - Perform an upgrade\n"
       "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
       "   remove - Remove packages\n"
+      "   purge - Remove and purge packages\n"
       "   source - Download source archives\n"
       "   build-dep - Configure build-dependencies for source packages\n"
       "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
@@ -2673,6 +2681,7 @@ void GetInitialize()
    _config->Set("APT::Get::Fix-Broken",false);
    _config->Set("APT::Get::Force-Yes",false);
    _config->Set("APT::Get::List-Cleanup",true);
+   _config->Set("APT::Get::AutomaticRemove",false);
 }
 									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
@@ -2720,7 +2729,8 @@ int main(int argc,const char *argv[])
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
       {0,"diff-only","APT::Get::Diff-Only",0},
-      {0,"tar-only","APT::Get::tar-Only",0},
+      {0,"tar-only","APT::Get::Tar-Only",0},
+      {0,"dsc-only","APT::Get::Dsc-Only",0},
       {0,"purge","APT::Get::Purge",0},
       {0,"list-cleanup","APT::Get::List-Cleanup",0},
       {0,"reinstall","APT::Get::ReInstall",0},

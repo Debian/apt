@@ -152,7 +152,11 @@ UpdateInterval=0
 DownloadUpgradeableInterval=0
 eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
 AutocleanInterval=$DownloadUpgradeableInterval
-eval $(apt-config shell AutocleanInterval APT::Periodic::Autoclean)
+eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
+
+UnattendedUpgradeInterval=0
+eval $(apt-config shell UnattendedUpgradeInterval APT::Periodic::Unattended-Upgrade)
+
 
 UnattendedUpgradeInterval=0
 eval $(apt-config shell UnattendedUpgradeInterval APT::Periodic::Unattended-Upgrade)

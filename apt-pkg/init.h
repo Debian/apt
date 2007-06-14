@@ -17,8 +17,8 @@
 #include <apt-pkg/pkgsystem.h>
 
 // See the makefile
-#define APT_PKG_MAJOR 3
-#define APT_PKG_MINOR 53
+#define APT_PKG_MAJOR 4
+#define APT_PKG_MINOR 4
 #define APT_PKG_RELEASE 0
     
 extern const char *pkgVersion;

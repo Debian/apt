@@ -160,5 +160,4 @@ class HttpMethod : public pkgAcqMethod
    };
 };
 
-
 #endif

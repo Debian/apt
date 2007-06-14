@@ -240,9 +240,9 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 	       std::clog << "Skipping already written " << pkg.Name() << std::endl;
 	    continue;
 	 }
-	 // skip not installed ones if requested
-	 if(InstalledOnly && pkg->CurrentVer == 0)
-	    continue;
+         // skip not installed ones if requested
+         if(InstalledOnly && pkg->CurrentVer == 0)
+            continue;
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Writing new AutoInstall: " 
 		      << pkg.Name() << std::endl;
@@ -715,7 +715,6 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser)
    // We dont even try to keep virtual packages..
    if (Pkg->VersionList == 0)
       return;
-
 #if 0 // reseting the autoflag here means we lose the 
       // auto-mark information if a user selects a package for removal
       // but changes  his mind then and sets it for keep again
@@ -955,23 +954,22 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       std::clog << "Installing " << InstPkg.Name() 
 			 << " as dep of " << Pkg.Name() 
 			 << std::endl;
-
-	    // now check if we should consider it a automatic dependency or not
-	    string sec = _config->Find("APT::Never-MarkAuto-Section","");
-	    if(Pkg.Section() && (string(Pkg.Section()) ==  sec))
-	    {
-	       if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
-		  std::clog << "Setting NOT as auto-installed because its a direct dep of a package in section " << sec << std::endl;
-	       MarkInstall(InstPkg,true,Depth + 1, true, ForceImportantDeps);
-	    }
-	    else 
-	    {
-	       // mark automatic dependency
-	       MarkInstall(InstPkg,true,Depth + 1, false, ForceImportantDeps);
-	       // Set the autoflag, after MarkInstall because MarkInstall unsets it
-	       if (P->CurrentVer == 0)
-		  PkgState[InstPkg->ID].Flags |= Flag::Auto;
-	    }
+ 	    // now check if we should consider it a automatic dependency or not
+ 	    string sec = _config->Find("APT::Never-MarkAuto-Section","");
+ 	    if(Pkg.Section() && (string(Pkg.Section()) ==  sec))
+ 	    {
+ 	       if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
+ 		  std::clog << "Setting NOT as auto-installed because its a direct dep of a package in section " << sec << std::endl;
+ 	       MarkInstall(InstPkg,true,Depth + 1, true);
+ 	    }
+ 	    else 
+ 	    {
+ 	       // mark automatic dependency
+ 	       MarkInstall(InstPkg,true,Depth + 1, false, ForceImportantDeps);
+ 	       // Set the autoflag, after MarkInstall because MarkInstall unsets it
+ 	       if (P->CurrentVer == 0)
+ 		  PkgState[InstPkg->ID].Flags |= Flag::Auto;
+ 	    }
 	 }
 	 continue;
       }
@@ -1382,3 +1380,4 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
    return false;
 }
 									/*}}}*/
+

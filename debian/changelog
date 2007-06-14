@@ -1,10 +1,76 @@
-apt (0.6.46.4ubuntu11) UNRELEASED; urgency=low
+apt (0.7.2ubuntu1) gutsy; urgency=low
 
+  * apt-pkg/deb/dpkgpm.cc:
+    - apport integration added, this means that a apport
+      report is written on dpkg failures
+  * merged from debian/unstable, remaining changes:
+    - maintainer field changed
+
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 14 Jun 2007 10:38:36 +0200
+
+apt (0.7.2) unstable; urgency=low
+  
+  * merged the debian/experimental changes back
+    into the debian/sid branch
+  * merged from Christian Perrier:
+    * mr.po: New Marathi translation  Closes: #416806
+    * zh_CN.po: Updated by Eric Pareja  Closes: #416822
+    * tl.po: Updated by Eric Pareja   Closes: #416638
+    * gl.po: Updated by Jacobo Tarrio
+	     Closes: #412828
+    * da.po: Updated by Claus Hindsgaul
+	     Closes: #409483
+    * fr.po: Remove a non-breakable space for usability
+	     issues. Closes: #408877
+    * ru.po: Updated Russian translation. Closes: #405476
+    * *.po: Unfuzzy after upstream typo corrections
+  * buildlib/archtable:
+    - added support for sh3/sh4 (closes: #424870)
+    - added support for m32r (closes: #394096)
+  * buildlib/systemtable:
+    - added support for lpia
+  * configure.in:
+    - check systemtable for architecture mapping too
+  * fix error in AutocleanInterval, closes: #319339
+    (thanks to Israel G. Lugo for the patch)
+  * add "purge" commandline argument, closes: #133421)
+    (thanks to Julien Danjou for the patch)
+  * add "purge" commandline argument, closes: #133421)
+    (thanks to Julien Danjou for the patch)
+  * fix FTBFS with gcc 4.3, closes: #417090
+    (thanks to Martin Michlmayr for the patch)
+  * add --dsc-only option, thanks to K. Richard Pixley
+  * Removed the more leftover #pragma interface/implementation
+    closes: #306937 (thanks to Andreas Henriksson for the patch)
+  
+ -- Michael Vogt <mvo@debian.org>  Wed, 06 Jun 2007 23:19:50 +0200
+
+apt (0.7.1) experimental; urgency=low
+
+  * ABI library name change because its build against
+    new glibc
+  * implement SourceVer() in pkgRecords 
+     (thanks to Daniel Burrows for the patch!)
+  * apt-pkg/algorithm.cc:
+    - use clog for all debugging
+    - only increase the score of installed applications if they 
+      are not obsolete 
+    - fix resolver bug on removal triggered by weak-dependencies 
+      with or-groups
+  * methods/http.cc:
+    - send apt version in User-Agent
+  * apt-pkg/deb/debrecords.cc:
+    - fix SHA1Hash() return value
+  * apt-pkg/cdrom.cc:
+    - only unmount if APT::CDROM::NoMount is false
+  * methods/cdrom.cc:  
+    - only umount if it was mounted by the method before
   * po/gl.po:
     - fix error in translation that causes trouble to lsb_release 
       (LP#79165)
   * apt-pkg/acquire-item.cc:
-    - if decompression of a index fails, delete the index (LP#68202)
+    - if decompression of a index fails, delete the index 
   * apt-pkg/acquire.{cc,h}:
     - deal better with duplicated sources.list entries (avoid
       double queuing of  URLs) - this fixes hangs in bzip/gzip
@@ -23,11 +89,14 @@ apt (0.6.46.4ubuntu11) UNRELEASED; urgency=low
              issues. Closes: #408877
     * ru.po: Updated Russian translation. Closes: #405476
     * *.po: Unfuzzy after upstream typo corrections
+    * vi.po: Updated to 515t. Closes: #426976
+    * eu.po: Updated to 515t. Closes: #423766
+    * pt.po: 515t. Closes: #423111
+    * fr.po: Updated by Christian Perrier
+    * Update all PO and the POT. Gives 513t2f for formerly
+      complete translations
   * apt-pkg/policy.cc:
     - allow multiple packages (thanks to David Foerster)
-  * apt-pkg/deb/dpkgpm.cc:
-    - apport integration added, this means that a apport
-      report is written on dpkg failures
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 17 Apr 2007 15:53:37 +0200
 
@@ -117,6 +186,23 @@ apt (0.6.46.4ubuntu4) feisty; urgency=low
       are not obsolete 
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 18 Dec 2006 19:39:05 +0100
+
+apt (0.7.0) experimental; urgency=low
+
+  * Package that contains tall the new features
+  * Removed all #pragma interface/implementation
+  * Branch that contains tall the new features:
+  * translated package descriptions
+  * task install support
+  * automatic dependency removal (thanks to Daniel Burrows)
+  * merged support for the new dpkg "Breaks" field 
+    (thanks to Ian Jackson)
+  * handle network failures more gracefully on "update"
+  * support for unattended-upgrades (via unattended-upgrades
+    package)
+  * added apt-transport-https method
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 12 Jan 2007 20:48:07 +0100
 
 apt (0.6.46.4ubuntu3) feisty; urgency=low
 
@@ -214,40 +300,53 @@ apt (0.6.46.3) unstable; urgency=low
       messages 
 
   * Merged from Christian Perrier bzr branch:
-     - ca.po: Updated to 514t
-     - be.po: Updated to 514t
-     - it.po: Updated to 514t
-     - hu.po: Updated to 514t
-     - zh_TW.po: Updated to 514t
-     - ar.po: Updated to 293t221u.
-     - ru.po: Updated to 514t. Closes: #392466
-     - nb.po: Updated to 514t. Closes: #392466
-     - pt.po: Updated to 514t. Closes: #393199
-     - fr.po: One spelling error corrected: s/accÃ¨der/accÃ©der
-     - km.po: Updated to 514t.
-     - ko.po: Updated to 514t.
-     - bg.po: Updated to 514t.
-     - de.po: Updated to 514t.
-     - en_GB.po: Updated to 514t.
+    - ca.po: Updated to 514t
+    - be.po: Updated to 514t
+    - it.po: Updated to 514t
+    - hu.po: Updated to 514t
+    - zh_TW.po: Updated to 514t
+    - ar.po: Updated to 293t221u.
+    - ru.po: Updated to 514t. Closes: #392466
+    - nb.po: Updated to 514t. Closes: #392466
+    - pt.po: Updated to 514t. Closes: #393199
+    - fr.po: One spelling error corrected: s/accÃ¨der/accÃ©der
+    - km.po: Updated to 514t.
+    - ko.po: Updated to 514t.
+    - bg.po: Updated to 514t.
+    - de.po: Updated to 514t.
+    - en_GB.po: Updated to 514t.
 
- -- Michael Vogt <mvo@debian.org>  Thu, 2 Nov 2006 11:37:58 +0100 
+ -- Michael Vogt <mvo@debian.org>  Thu,  2 Nov 2006 11:37:58 +0100
 
 apt (0.6.46.2) unstable; urgency=low
 
+  * debian/control:
+    - depend on debian-archive-keyring to offer clean upgrade path 
+      (closes: #386800)
   * Merged from Christian Perrier bzr branch:
     - es.po: Updated to 514t. Closes: #391661
     - da.po: Updated to 514t. Closes: #391424
     - cs.po: Updated. Closes: #391064
     - es.po: Updated to 514t. Closes: #391661
     - da.po: Updated to 514t. Closes: #391424
-  
+
  -- Michael Vogt <mvo@debian.org>  Wed, 11 Oct 2006 09:03:15 +0200
 
 apt (0.6.46.1) unstable; urgency=low
 
+  * merged "install-recommends" branch (ABI break): 
+    - new "--install-recommends"
+    - install new recommends on "upgrade" if --install-recommends is 
+      given
+    - new "--fix-policy" option to install all packages with unmet
+      important dependencies (usefull with --install-recommends to
+      see what not-installed recommends are on the system)
+    - fix of recommended packages display (only show CandidateVersion
+      fix or-group handling)
+  * merged "install-task" branch (use with "apt-get install taskname^")
   * methods/gzip.cc:
     - deal with empty files 
-  * Applied patch from Daniel Schepler to make apt bin-NMU able.  
+  * Applied patch from Daniel Schepler to make apt bin-NMU able.
     (closes: bug#359634)
   * rebuild against current g++ because of:
     http://gcc.gnu.org/bugzilla/show_bug.cgi?id=29289
@@ -538,22 +637,32 @@ apt (0.6.44.1-0.1) unstable; urgency=low
 
 apt (0.6.44.1) unstable; urgency=low
 
+  * apt-pkg/acquire-item.cc:
+    - fix reversed logic of the "Acquire::PDiffs" option
   * merged from 
     http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
     - po/LINGUAS: added "bg" Closes: #360262
     - po/gl.po: Galician translation update. Closes: #366849
     - po/hu.po: Hungarian translation update. Closes: #365448
     - po/cs.po: Czech translation updated. Closes: #367244
+  * apt-pkg/contrib/sha256.cc:
+    - applied patch to fix unaligned access problem. Closes: #367417
+      (thanks to David Mosberger)
 
  -- Michael Vogt <mvo@debian.org>  Tue, 16 May 2006 21:51:16 +0200
 
 apt (0.6.44) unstable; urgency=low
 
   * apt-pkg/acquire.cc: don't show ETA if it is 0 or absurdely large
+  * apt-pkg/contrib/sha256.{cc,h},hashes.{cc,h}: support for sha256 
+    (thanks to Anthony Towns)
+  * ftparchive/cachedb.{cc,h},writer.{cc,h}: optimizations 
+    (thanks to Anthony Towns)
+  * apt pdiff support from experimental merged
+  * apt-pkg/deb/dpkgpm.cc: wording fixes (thanks to Matt Zimmerman)
   * apt-pkg/deb/dpkgpm.cc: 
     - wording fixes (thanks to Matt Zimmerman)
-    - fix error in dpkg interaction (closes: #364513, 
-      thanks to Martin Dickopp)
+    - fix error in dpkg interaction (closes: #364513, thanks to Martin Dickopp)
   * apt-pkg/tagfile.{cc,h}:
     - use MMap to read the entries (thanks to Zephaniah E. Hull for the
       patch) Closes: #350025
