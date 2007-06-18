@@ -1132,6 +1132,34 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
    return Last;
 }
 									/*}}}*/
+// Policy::IsImportantDep - True if the dependency is important		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
+{
+   if(Dep.IsCritical())
+      return true;
+   else if(Dep->Type == pkgCache::Dep::Recommends) 
+   {
+      if ( _config->FindB("APT::Install-Recommends", false))
+	 return true;
+      // we suport a special mode to only install-recommends for certain
+      // sections
+      // FIXME: this is a meant as a temporarly solution until the 
+      //        recommends are cleaned up
+      string s = _config->Find("APT::Install-Recommends-Section","");
+      if(s.size() > 0) 
+      {
+	 const char *sec = Dep.ParentVer().Section();
+	 if (sec && strcmp(sec, s.c_str()) == 0)
+	    return true;
+      }
+   }
+   else if(Dep->Type == pkgCache::Dep::Suggests)
+     return _config->FindB("APT::Install-Suggests", false);
+
+   return false;
+}
 									/*}}}*/
 
 pkgDepCache::DefaultRootSetFunc::DefaultRootSetFunc()
@@ -1350,34 +1378,4 @@ bool pkgDepCache::Sweep()
 
    return true;
 }
-
-// Policy::IsImportantDep - True if the dependency is important		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
-{
-   if(Dep.IsCritical())
-      return true;
-   else if(Dep->Type == pkgCache::Dep::Recommends) 
-   {
-      if ( _config->FindB("APT::Install-Recommends", false))
-	 return true;
-      // we suport a special mode to only install-recommends for certain
-      // sections
-      // FIXME: this is a meant as a temporarly solution until the 
-      //        recommends are cleaned up
-      string s = _config->Find("APT::Install-Recommends-Section","");
-      if(s.size() > 0) 
-      {
-	 const char *sec = Dep.ParentVer().Section();
-	 if (sec && strcmp(sec, s.c_str()) == 0)
-	    return true;
-      }
-   }
-   else if(Dep->Type == pkgCache::Dep::Suggests)
-     return _config->FindB("APT::Install-Suggests", false);
-
-   return false;
-}
-									/*}}}*/
 
