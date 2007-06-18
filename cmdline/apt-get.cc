@@ -2114,6 +2114,28 @@ bool DoSource(CommandLine &CmdL)
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       
+      string srec = Last->AsStr();
+      string::size_type pos = srec.find("\nVcs-");
+      if (pos != string::npos )
+      {
+	 pos += strlen("\nVcs-");
+	 string vcs = srec.substr(pos,srec.find(":",pos)-pos);
+	 pos += vcs.length()+2;
+	 string::size_type epos = srec.find("\n", pos);
+	 string uri = srec.substr(pos,epos-pos).c_str();
+	 ioprintf(c1out, _("WARNING: '%s' is maintained in "
+			   "the '%s' version control system at:\n"
+			   "'%s'\n"),
+		  Src.c_str(), vcs.c_str(), uri.c_str());
+	 if(vcs == "Bzr") 
+	    ioprintf(c1out,_("Please use: 'bzr get %s'\n"
+			     "to modify the package.\n"),
+		     uri.c_str());
+	 ioprintf(c1out, "Are you sure you want to continue [yN]? ");
+	 if(!YnPrompt(false))
+	    return _error->Error(_("Abort."));
+      }
+
       // Back track
       vector<pkgSrcRecords::File> Lst;
       if (Last->Files(Lst) == false)
