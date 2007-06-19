@@ -216,7 +216,6 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
 	 if(pkg.end() || pkg.VersionList().end()) 
 	    continue;
-	 bool oldAuto = section.FindI("Auto-Installed");
 	 bool newAuto = (PkgState[pkg->ID].Flags & Flag::Auto);
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Update exisiting AutoInstall info: " 
