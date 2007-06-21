@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: apt 0.6.42.3exp1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-06-12 21:41+0200\n"
-"PO-Revision-Date: 2006-10-08 00:23+0200\n"
+"PO-Revision-Date: 2007-06-21 13:06+0200\n"
 "Last-Translator: Javier Fernandez-Sanguino <jfs@debian.org>\n"
 "Language-Team: Debian Spanish <debian-l10n-spanish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -59,9 +59,8 @@ msgid "Total distinct versions: "
 msgstr "Versiones diferentes totales: "
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total Distinct Descriptions: "
-msgstr "Versiones diferentes totales: "
+msgstr "Descipciones diferentes totales: "
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -72,9 +71,8 @@ msgid "Total ver/file relations: "
 msgstr "Relaciones versión/archivo totales: "
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "Relaciones versión/archivo totales: "
+msgstr "Relaciones descripción/archivo totales: "
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
@@ -1026,44 +1024,40 @@ msgstr ""
 
 #: cmdline/apt-get.cc:1433
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
+msgstr "Se supone que no vamos a eliminar cosas, no se pudo iniciar «AutoRemover»"
 
 #: cmdline/apt-get.cc:1465
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "Se instalarán los siguientes paquetes NUEVOS:"
+msgstr "Se instalaron de forma automática los siguientes paquetes y ya no son necesarios."
 
 #: cmdline/apt-get.cc:1467
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "Utilice «apt-get autoremove» para eliminarlos."
 
 #: cmdline/apt-get.cc:1472
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
-msgstr ""
+msgstr "Hmmm. Parece que «AutoRemover» destruyó algo y eso no debería haber pasado. Por favor, envíe un informe de fallo al programa apt."
 
 #: cmdline/apt-get.cc:1475 cmdline/apt-get.cc:1752
 msgid "The following information may help to resolve the situation:"
 msgstr "La siguiente información puede ayudar a resolver la situación:"
 
 #: cmdline/apt-get.cc:1479
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr ""
-"Error interno, el sistema de solución de problemas rompió\n"
-"algunas cosas"
+msgstr "Error interno, «AutoRemover» rompió cosas"
 
 #: cmdline/apt-get.cc:1498
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Error Interno, AllUpgrade rompió cosas"
 
 #: cmdline/apt-get.cc:1543
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "No se pudo encontrar el paquete %s"
+msgstr "No se pudo encontrar la tarea %s"
 
 #: cmdline/apt-get.cc:1658 cmdline/apt-get.cc:1694
 #, c-format
@@ -1076,9 +1070,9 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Nota, seleccionando %s para la expresión regular '%s'\n"
 
 #: cmdline/apt-get.cc:1711
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manual installed.\n"
-msgstr "pero %s va a ser instalado"
+msgstr "fijado %s como instalado manualmente.\n"
 
 #: cmdline/apt-get.cc:1724
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1270,7 +1264,6 @@ msgid "Supported modules:"
 msgstr "Módulos soportados:"
 
 #: cmdline/apt-get.cc:2629
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1324,9 +1317,9 @@ msgstr ""
 "   upgrade - Realiza una actualización\n"
 "   install - Instala nuevos paquetes (paquete es libc6 y no libc6.deb)\n"
 "   remove - Elimina paquetes\n"
+"   purge  - Elimina y purga paquetes\n"
 "   source - Descarga archivos fuente\n"
-"   build-dep - Configura las dependencias de construcción para paquetes "
-"fuente\n"
+"   build-dep - Configura las dependencias de construcción para paquetes fuente\n"
 "   dist-upgrade - Actualiza la distribución, vea apt-get(8)\n"
 "   dselect-upgrade - Sigue las selecciones de dselect\n"
 "   clean - Elimina los archivos descargados\n"
@@ -1348,8 +1341,7 @@ msgstr ""
 "  -c=? Lee este archivo de configuración\n"
 "  -o=? Establece una opción de configuración arbitraria, p. ej. \n"
 "       -o dir::cache=/tmp\n"
-"Consulte las páginas del manual de apt-get(8), sources.list(5) y apt.conf"
-"(5)\n"
+"Consulte las páginas del manual de apt-get(8), sources.list(5) y apt.conf(5)\n"
 "para más información y opciones.\n"
 "                       Este APT tiene poderes de Super Vaca.\n"
 
@@ -2356,7 +2348,7 @@ msgstr "Hace obsoleto"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Rompe"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2391,19 +2383,18 @@ msgid "Dependency generation"
 msgstr "Generación de dependencias"
 
 #: apt-pkg/depcache.cc:151 apt-pkg/depcache.cc:170 apt-pkg/depcache.cc:174
-#, fuzzy
 msgid "Reading state information"
-msgstr "Fusionando información disponible"
+msgstr "Leyendo la información de estado"
 
 #: apt-pkg/depcache.cc:198
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "No se pudo abrir %s"
+msgstr "No se pudo abrir el fichero de estado %s"
 
 #: apt-pkg/depcache.cc:204
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "Falló la escritura del archivo %s"
+msgstr "Falló la escritura del fichero de estado temporal %s"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2598,9 +2589,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Ocurrió un error mientras se procesaba %s (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occured while processing %s (NewFileDesc1)"
-msgstr "Ocurrió un error mientras se procesaba %s (NewFileVer1)"
+msgstr "Ocurrió un error mientras se procesaba %s (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2628,9 +2619,9 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Ocurrió un error mientras se procesaba %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occured while processing %s (NewFileDesc2)"
-msgstr "Ocurrió un error mientras se procesaba %s (NewFileVer1)"
+msgstr "Ocurrió un error mientras se procesaba %s (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2643,9 +2634,8 @@ msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Vaya, excedió el número de versiones que este APT es capaz de manejar."
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Vaya, excedió el número de versiones que este APT es capaz de manejar."
+msgstr "Vaya, excedió el número de descripciones que este APT es capaz de manejar."
 
 #: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2775,16 +2765,16 @@ msgid "Scanning disc for index files..\n"
 msgstr "Buscando en el disco archivos de índices...\n"
 
 #: apt-pkg/cdrom.cc:671
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %i package indexes, %i source indexes, %i translation indexes and %i "
 "signatures\n"
-msgstr "Se encontraron %i índices de paquetes, %i de fuentes y %i firmas\n"
+msgstr "Se encontraron %i índices de paquetes, %i índices de fuentes, %i índices de traducción y %i firmas\n"
 
 #: apt-pkg/cdrom.cc:708
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "Etiqueta guardada: %s \n"
+msgstr "Se encontró la etiqueta: '%s'\n"
 
 #: apt-pkg/cdrom.cc:737
 msgid "That is not a valid name, try again.\n"
@@ -2812,9 +2802,8 @@ msgid "Source list entries for this disc are:\n"
 msgstr "Las entradas de la lista de fuentes para este disco son:\n"
 
 #: apt-pkg/cdrom.cc:834
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "Desmontando CD-ROM..."
+msgstr "Desmontando el CD-ROM...\n"
 
 #: apt-pkg/indexcopy.cc:263 apt-pkg/indexcopy.cc:830
 #, c-format
