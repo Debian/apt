@@ -216,7 +216,6 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
 	 if(pkg.end() || pkg.VersionList().end()) 
 	    continue;
-	 bool oldAuto = section.FindI("Auto-Installed");
 	 bool newAuto = (PkgState[pkg->ID].Flags & Flag::Auto);
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Update exisiting AutoInstall info: " 
@@ -1150,7 +1149,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
       string s = _config->Find("APT::Install-Recommends-Section","");
       if(s.size() > 0) 
       {
-	 const char *sec = Dep.TargetPkg().Section();
+	 const char *sec = Dep.ParentVer().Section();
 	 if (sec && strcmp(sec, s.c_str()) == 0)
 	    return true;
       }
