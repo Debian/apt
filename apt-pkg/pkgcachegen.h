@@ -51,7 +51,7 @@ class pkgCacheGenerator
    // Flag file dependencies
    bool FoundFileDeps;
    
-   bool NewPackage(pkgCache::PkgIterator &Pkg,const string &Pkg);
+   bool NewPackage(pkgCache::PkgIterator &Pkg,const string &PkgName);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const string &VerStr,unsigned long Next);

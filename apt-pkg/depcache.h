@@ -45,6 +45,7 @@
 #include <regex.h>
 
 #include <vector>
+#include <memory>
 
 class pkgDepCache : protected pkgCache::Namespace
 {
