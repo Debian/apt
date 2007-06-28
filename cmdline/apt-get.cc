@@ -2125,10 +2125,11 @@ bool DoSource(CommandLine &CmdL)
 	 string uri = srec.substr(pos,epos-pos).c_str();
 	 ioprintf(c1out, _("WARNING: '%s' is maintained in "
 			   "the '%s' version control system at:\n"
-			   "'%s'\n"),
+			   "%s\n"),
 		  Src.c_str(), vcs.c_str(), uri.c_str());
 	 if(vcs == "Bzr") 
-	    ioprintf(c1out,_("Please use: 'bzr get %s'\n"
+	    ioprintf(c1out,_("Please use:\n"
+			     "bzr get %s\n"
 			     "to modify the package.\n"),
 		     uri.c_str());
 	 ioprintf(c1out, "Are you sure you want to continue [yN]? ");
