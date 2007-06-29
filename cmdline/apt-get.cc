@@ -2116,10 +2116,15 @@ bool DoSource(CommandLine &CmdL)
       
       string srec = Last->AsStr();
       string::size_type pos = srec.find("\nVcs-");
-      if (pos != string::npos )
+      while (pos != string::npos)
       {
 	 pos += strlen("\nVcs-");
 	 string vcs = srec.substr(pos,srec.find(":",pos)-pos);
+	 if(vcs == "Browser") 
+	 {
+	    pos = srec.find("\nVcs-", pos);
+	    continue;
+	 }
 	 pos += vcs.length()+2;
 	 string::size_type epos = srec.find("\n", pos);
 	 string uri = srec.substr(pos,epos-pos).c_str();
@@ -2135,6 +2140,8 @@ bool DoSource(CommandLine &CmdL)
 	 ioprintf(c1out, "Are you sure you want to continue [yN]? ");
 	 if(!YnPrompt(false))
 	    return _error->Error(_("Abort."));
+	 else 
+	    break;
       }
 
       // Back track
