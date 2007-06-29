@@ -1285,6 +1285,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 			      bool follow_suggests)
 {
    pkgDepCache::StateCache &state = PkgState[pkg->ID];
+   VerIterator currver            = pkg.CurrentVer();
    VerIterator candver            = state.CandidateVerIter(*this);
    VerIterator instver            = state.InstVerIter(*this);
 
@@ -1305,9 +1306,11 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
    }
 #endif
 
-   // Ignore versions other than the InstVer, and ignore packages
-   // that are already going to be removed or just left uninstalled.
-   if(!(ver == instver && !instver.end()))
+   // For packages that are not going to be removed, ignore versions
+   // other than the InstVer.  For packages that are going to be
+   // removed, ignore versions other than the current version.
+   if(!(ver == instver && !instver.end()) &&
+      !(ver == currver && instver.end() && !ver.end()))
       return;
 
    // if we are marked already we are done
