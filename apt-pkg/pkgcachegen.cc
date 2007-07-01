@@ -150,7 +150,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  		  Desc->ParentPkg = Pkg.Index();
 		  
  		  if (NewFileDesc(Desc,List) == false)
- 		     return _error->Error(_("Error occured while processing %s (NewFileDesc1)"),PackageName.c_str());
+ 		     return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"),PackageName.c_str());
  		  break;
  	       }
 	    }
@@ -242,7 +242,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       Desc->ParentPkg = Pkg.Index();
 
       if (NewFileDesc(Desc,List) == false)
-	 return _error->Error(_("Error occured while processing %s (NewFileDesc2)"),PackageName.c_str());
+	 return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),PackageName.c_str());
    }
 
    FoundFileDeps |= List.HasFileDeps();

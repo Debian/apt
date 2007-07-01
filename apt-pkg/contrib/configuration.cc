@@ -422,6 +422,7 @@ bool Configuration::ExistsAny(const char *Name) const
    string key = Name;
 
    if (key.size() > 2 && key.end()[-2] == '/')
+   {
       if (key.find_first_of("fdbi",key.size()-1) < key.size())
       {
          key.resize(key.size() - 2);
@@ -432,7 +433,7 @@ bool Configuration::ExistsAny(const char *Name) const
       {
          _error->Warning(_("Unrecognized type abbreviation: '%c'"), key.end()[-3]);
       }
-
+   }
    return Exists(Name);
 }
 									/*}}}*/
@@ -506,7 +507,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
       CurLine++;
       // This should be made to work instead, but this is better than looping
       if (F.fail() && !F.eof())
-         return _error->Error(_("Line %d too long (max %d)"), CurLine, sizeof(Buffer));
+         return _error->Error(_("Line %d too long (max %lu)"), CurLine, sizeof(Buffer));
 
       _strtabexpand(Buffer,sizeof(Buffer));
       _strstrip(Buffer);
