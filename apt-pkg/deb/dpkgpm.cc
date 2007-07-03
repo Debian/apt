@@ -25,6 +25,11 @@
 #include <sstream>
 #include <map>
 
+#include <termios.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <pty.h>
+
 #include <config.h>
 #include <apti18n.h>
 									/*}}}*/
@@ -516,7 +521,24 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 it doesn't die but we do! So we must also ignore it */
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
       sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
-	
+
+      struct	termios tt;
+      struct	winsize win;
+      int	master;
+      int	slave;
+
+      tcgetattr(0, &tt);
+      ioctl(0, TIOCGWINSZ, (char *)&win);
+      if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
+	 fprintf(stderr, _("openpty failed\n"));
+      }
+
+      struct termios rtt;
+      rtt = tt;
+      cfmakeraw(&rtt);
+      rtt.c_lflag &= ~ECHO;
+      tcsetattr(0, TCSAFLUSH, &rtt);
+
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
@@ -525,8 +547,16 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // This is the child
       if (Child == 0)
       {
+	 setsid();
+	 ioctl(slave, TIOCSCTTY, 0);
+	 close(master);
+	 dup2(slave, 0);
+	 dup2(slave, 1);
+	 dup2(slave, 2);
+	 close(slave);
+
 	 close(fd[0]); // close the read end of the pipe
-	 
+
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
 	 
@@ -545,7 +575,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
 	       _exit(100);
 	 }
-	 
+
+
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 putenv("DPKG_NO_TSTP=yes");
@@ -567,11 +598,19 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // the read buffers for the communication with dpkg
       char line[1024] = {0,};
+      
       char buf[2] = {0,0};
+      char term_buf[2] = {0,0};
+      char input_buf[2] = {0,0};
       
       // the result of the waitpid call
       int res;
-
+      close(slave);
+      fcntl(0, F_SETFL, O_NONBLOCK);
+      fcntl(master, F_SETFL, O_NONBLOCK);
+      FILE *term_out = fopen("/var/log/dpkg-out.log","a");
+      chmod("/var/log/dpkg-out.log", 0600);
+      
       while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
 	 if(res < 0) {
 	    // FIXME: move this to a function or something, looks ugly here
@@ -585,18 +624,41 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    signal(SIGINT,old_SIGINT);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
+
+	 // wait for input or output here
+	 
+	 // FIXME: use select() instead of the rubish below
 	 
 	 // read a single char, make sure that the read can't block 
 	 // (otherwise we may leave zombies)
+         int term_len = read(master, term_buf, 1);
+	 int input_len = read(0, input_buf, 1);
          int len = read(_dpkgin, buf, 1);
 
-	 // nothing to read, wait a bit for more
+	 // see if we have any input that needs to go to the 
+	 // master pty
+	 if(input_len > 0) 
+	    write(master, input_buf, 1);
+
+	 // see if we have any output that needs to be echoed
+	 // and written to the log
+	 if(term_len > 0) 
+	 {
+	    do
+	    {
+	       fwrite(term_buf, 1, 1, term_out);
+	       write(1, term_buf, 1);
+	    } while(read(master, term_buf, 1) > 0);
+	    term_buf[0] = 0;
+	 }
+
+	 // nothing to read from dpkg , wait a bit for more
 	 if(len <= 0)
 	 {
 	    usleep(1000);
 	    continue;
 	 }
-	 
+
 	 // sanity check (should never happen)
 	 if(strlen(line) >= sizeof(line)-10)
 	 {
@@ -702,10 +764,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 line[0]=0;
       }
       close(_dpkgin);
+      fclose(term_out);
 
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+
+      tcsetattr(0, TCSAFLUSH, &tt);
        
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
