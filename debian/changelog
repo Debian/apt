@@ -1,5 +1,6 @@
-apt (0.7.2ubuntu4) unstable; urgency=low
+apt (0.7.2ubuntu5) UNRELEASED; urgency=low
 
+  [ Michael Vogt]
   * cmdline/apt-get.cc:
     - make the XS-Vcs-$foo warning more copy'n'paste
       friendly (thanks to Matt Zimmerman)
@@ -7,7 +8,21 @@ apt (0.7.2ubuntu4) unstable; urgency=low
   * debian/apt.conf.autoremove:
     - added "linux-ubuntu-modules" to APT::NeverAutoRemove
 
- --
+  [ Sarah Hobbs ]
+  * Change metapackages to *metapackages in Install-Recommends-Section
+    and Never-MarkAuto-Section of debian/apt.conf.autoremove, so that
+    the Recommends of metapackages in universe and multiverse will get
+    installed.
+  * Also make this change in doc/examples/configure-index.
+  * Added a Build Dependancies of autoconf, xsltproc, docbook-xsl to fix FTBFS
+
+ -- Sarah Hobbs <hobbsee@ubuntu.com>  Fri, 06 Jul 2007 17:44:45 +1000
+
+apt (0.7.2ubuntu4) gutsy; urgency=low
+
+  * Rebuild for the libcurl4 -> libcurl3 transition mess.
+
+ -- Steve Kowalik <stevenk@ubuntu.com>  Fri,  6 Jul 2007 12:44:05 +1000
 
 apt (0.7.2ubuntu3) gutsy; urgency=low
 
