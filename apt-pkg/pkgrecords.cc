@@ -20,7 +20,7 @@
 // Records::pkgRecords - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create the necessary structures to access the status files */
-pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
+pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), 
   Files(Cache.HeaderP->PackageFileCount)
 {
    for (pkgCache::PkgFileIterator I = Cache.FileBegin(); 
@@ -29,14 +29,14 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
       const pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(I.IndexType());
       if (Type == 0)
       {
-	 _error->Error(_("Index file type '%s' is not supported"),I.IndexType());
-	 return;
+         _error->Error(_("Index file type '%s' is not supported"),I.IndexType());
+         return;
       }
 
       Files[I->ID] = Type->CreatePkgParser(I);
       if (Files[I->ID] == 0)
-	 return;
-   }   
+         return;
+   }
 }
 									/*}}}*/
 // Records::~pkgRecords - Destructor					/*{{{*/
@@ -50,7 +50,6 @@ pkgRecords::~pkgRecords()
    {
       delete *it;
    }
-
 }
 									/*}}}*/
 // Records::Lookup - Get a parser for the package version file		/*{{{*/

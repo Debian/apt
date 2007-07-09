@@ -216,7 +216,6 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
 	 if(pkg.end() || pkg.VersionList().end()) 
 	    continue;
-	 bool oldAuto = section.FindI("Auto-Installed");
 	 bool newAuto = (PkgState[pkg->ID].Flags & Flag::Auto);
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Update exisiting AutoInstall info: " 
@@ -1286,6 +1285,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 			      bool follow_suggests)
 {
    pkgDepCache::StateCache &state = PkgState[pkg->ID];
+   VerIterator currver            = pkg.CurrentVer();
    VerIterator candver            = state.CandidateVerIter(*this);
    VerIterator instver            = state.InstVerIter(*this);
 
@@ -1306,9 +1306,11 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
    }
 #endif
 
-   // Ignore versions other than the InstVer, and ignore packages
-   // that are already going to be removed or just left uninstalled.
-   if(!(ver == instver && !instver.end()))
+   // For packages that are not going to be removed, ignore versions
+   // other than the InstVer.  For packages that are going to be
+   // removed, ignore versions other than the current version.
+   if(!(ver == instver && !instver.end()) &&
+      !(ver == currver && instver.end() && !ver.end()))
       return;
 
    // if we are marked already we are done

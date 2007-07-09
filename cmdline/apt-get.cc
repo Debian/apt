@@ -1519,6 +1519,7 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
 
    // build regexp for the task
    char S[300];
+   // better: "^Task:.*[^a-z]lamp-server([^a-z]|\n)" ?
    snprintf(S, sizeof(S), "^Task:.*[^a-z]%s[^a-z].*$", taskname);
    regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
    
