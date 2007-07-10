@@ -3,7 +3,7 @@
 // $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   HTTPS Aquire Method - This is the HTTPS aquire method for APT.
+   HTTPS Acquire Method - This is the HTTPS aquire method for APT.
    
    It uses libcurl
 

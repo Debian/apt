@@ -3,7 +3,7 @@
 // $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   HTTP Aquire Method - This is the HTTP aquire method for APT.
+   HTTP Acquire Method - This is the HTTP aquire method for APT.
    
    It uses HTTP/1.1 and many of the fancy options there-in, such as
    pipelining, range, if-range and so on. 
