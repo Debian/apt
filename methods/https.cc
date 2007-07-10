@@ -50,13 +50,13 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
 {
    HttpsMethod *me = (HttpsMethod *)clientp;
    if(dltotal > 0 && me->Res.Size == 0) {
-      me->Res.Size = dltotal;
+      me->Res.Size = (unsigned long)dltotal;
       me->URIStart(me->Res);
    }
    return 0;
 }
 
-bool HttpsMethod::SetupProxy()
+void HttpsMethod::SetupProxy()
 {
    URI ServerName = Queue->Uri;
 
@@ -84,7 +84,6 @@ bool HttpsMethod::SetupProxy()
    }
    
    // Determine what host and port to use based on the proxy settings
-   int Port = 0;
    string Host;   
    if (Proxy.empty() == true || Proxy.Host.empty() == true)
    {
