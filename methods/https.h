@@ -3,7 +3,7 @@
 // $Id: http.h,v 1.12 2002/04/18 05:09:38 jgg Exp $
 /* ######################################################################
 
-   HTTP Aquire Method - This is the HTTP aquire method for APT.
+   HTTP Acquire Method - This is the HTTP aquire method for APT.
 
    ##################################################################### */
 									/*}}}*/
@@ -29,7 +29,7 @@ class HttpsMethod : public pkgAcqMethod
    static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
    static int progress_callback(void *clientp, double dltotal, double dlnow, 
 				double ultotal, double ulnow);
-   bool SetupProxy();
+   void SetupProxy();
    CURL *curl;
    FetchResult Res;
 

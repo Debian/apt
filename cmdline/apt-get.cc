@@ -1519,8 +1519,9 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
 
    // build regexp for the task
    char S[300];
-   snprintf(S, sizeof(S), "^Task:.*[^a-z]%s([^a-z]|\n|$)", taskname);
-   regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
+   snprintf(S, sizeof(S), "^Task:.*[, ]%s([, ]|$)", taskname);
+   if(regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE) != 0)
+      return _error->Error("Failed to compile task regexp");
    
    bool found = false;
    bool res = true;
