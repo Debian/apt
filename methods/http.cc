@@ -998,7 +998,6 @@ bool HttpMethod::Fetch(FetchItem *)
 
    // Queue the requests
    int Depth = -1;
-   bool Tail = false;
    for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; 
 	I = I->Next, Depth++)
    {
@@ -1010,8 +1009,6 @@ bool HttpMethod::Fetch(FetchItem *)
       if (Server->Comp(I->Uri) == false)
 	 break;
       if (QueueBack == I)
-	 Tail = true;
-      if (Tail == true)
       {
 	 QueueBack = I->Next;
 	 SendReq(I,Server->Out);
@@ -1073,7 +1070,6 @@ int HttpMethod::Loop()
 	 delete Server;
 	 Server = new ServerState(Queue->Uri,this);
       }
-      
       /* If the server has explicitly said this is the last connection
          then we pre-emptively shut down the pipeline and tear down 
 	 the connection. This will speed up HTTP/1.0 servers a tad
@@ -1170,8 +1166,24 @@ int HttpMethod::Loop()
 	       URIDone(Res);
 	    }
 	    else
-	       Fail(true);
-	    
+	    {
+	       if (Server->ServerFd == -1)
+	       {
+		  FailCounter++;
+		  _error->Discard();
+		  Server->Close();
+		  
+		  if (FailCounter >= 2)
+		  {
+		     Fail(_("Connection failed"),true);
+		     FailCounter = 0;
+		  }
+		  
+		  QueueBack = Queue;
+	       }
+	       else
+		  Fail(true);
+	    }
 	    break;
 	 }
 	 
