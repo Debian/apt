@@ -3,7 +3,7 @@
 // $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   HTTP Aquire Method - This is the HTTP aquire method for APT.
+   HTTP Acquire Method - This is the HTTP aquire method for APT.
    
    It uses HTTP/1.1 and many of the fancy options there-in, such as
    pipelining, range, if-range and so on. 
@@ -996,7 +996,6 @@ bool HttpMethod::Fetch(FetchItem *)
 
    // Queue the requests
    int Depth = -1;
-   bool Tail = false;
    for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; 
 	I = I->Next, Depth++)
    {
@@ -1008,8 +1007,6 @@ bool HttpMethod::Fetch(FetchItem *)
       if (Server->Comp(I->Uri) == false)
 	 break;
       if (QueueBack == I)
-	 Tail = true;
-      if (Tail == true)
       {
 	 QueueBack = I->Next;
 	 SendReq(I,Server->Out);
@@ -1071,7 +1068,6 @@ int HttpMethod::Loop()
 	 delete Server;
 	 Server = new ServerState(Queue->Uri,this);
       }
-      
       /* If the server has explicitly said this is the last connection
          then we pre-emptively shut down the pipeline and tear down 
 	 the connection. This will speed up HTTP/1.0 servers a tad
@@ -1168,8 +1164,25 @@ int HttpMethod::Loop()
 	       URIDone(Res);
 	    }
 	    else
-	       Fail(true);
+		{
+		  if (Server->ServerFd == -1)
+		  {
+			  FailCounter++;
+			  _error->Discard();
+			  Server->Close();
 	    
+			  if (FailCounter >= 2)
+			  {
+				  Fail(_("Connection failed"),true);
+				  FailCounter = 0;
+			  }
+	    
+			  QueueBack = Queue;
+		  }
+		  else
+			  Fail(true);
+		}
+
 	    break;
 	 }
 	 
