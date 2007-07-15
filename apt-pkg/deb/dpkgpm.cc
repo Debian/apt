@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/select.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
@@ -529,7 +530,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       tcgetattr(0, &tt);
       ioctl(0, TIOCGWINSZ, (char *)&win);
-      if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
+      if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+      {
 	 fprintf(stderr, _("openpty failed\n"));
       }
 
@@ -608,9 +610,17 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       close(slave);
       fcntl(0, F_SETFL, O_NONBLOCK);
       fcntl(master, F_SETFL, O_NONBLOCK);
+      // FIXME: make this a apt config option and add a logrotate file
       FILE *term_out = fopen("/var/log/dpkg-out.log","a");
       chmod("/var/log/dpkg-out.log", 0600);
-      
+
+      fd_set rfds;
+      struct timeval tv;
+      int select_ret;
+      FD_ZERO(&rfds);
+      FD_SET(0, &rfds); 
+      FD_SET(_dpkgin, &rfds);
+      FD_SET(master, &rfds);
       while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
 	 if(res < 0) {
 	    // FIXME: move this to a function or something, looks ugly here
@@ -626,9 +636,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 }
 
 	 // wait for input or output here
-	 
-	 // FIXME: use select() instead of the rubish below
-	 
+	 tv.tv_sec = 1;
+	 tv.tv_usec = 0;
+	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, &rfds, &tv);
+	 if (select_ret < 0)
+	    std::cerr << "Error in select()" << std::endl;
+	 else if (select_ret == 0)
+	    continue;
+
 	 // read a single char, make sure that the read can't block 
 	 // (otherwise we may leave zombies)
          int term_len = read(master, term_buf, 1);
