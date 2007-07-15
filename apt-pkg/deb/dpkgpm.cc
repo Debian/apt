@@ -590,7 +590,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 dup2(slave, 1);
 	 dup2(slave, 2);
 	 close(slave);
-
 	 close(fd[0]); // close the read end of the pipe
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
@@ -641,10 +640,20 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       close(slave);
       fcntl(0, F_SETFL, O_NONBLOCK);
       fcntl(master, F_SETFL, O_NONBLOCK);
+
       // FIXME: make this a apt config option and add a logrotate file
       FILE *term_out = fopen("/var/log/dpkg-out.log","a");
       chmod("/var/log/dpkg-out.log", 0600);
+      // output current time
+      char outstr[200];
+      time_t t = time(NULL);
+      struct tm *tmp = localtime(&t);
+      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+      fprintf(term_out, "Log started: ");
+      fprintf(term_out, outstr);
+      fprintf(term_out, "\n");
 
+      // setups fds
       fd_set rfds;
       struct timeval tv;
       int select_ret;
@@ -677,8 +686,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 DoStdin(master);
 	 DoTerminalPty(master, term_out);
-	 //DoDpkgStatusFd();
 
+	 // FIXME: move this into its own function too
+	 //DoDpkgStatusFd();
 	 while(true)
 	 {
 	    if(read(_dpkgin, buf, 1) <= 0)
