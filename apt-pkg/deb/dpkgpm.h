@@ -44,6 +44,11 @@ class pkgDPkgPM : public pkgPackageManager
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
 
+   // input processing
+   void DoStdin(int master);
+   void DoTerminalPty(int master, FILE *out);
+   //   void DoDpkgStatusFd();
+
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);
    virtual bool Configure(PkgIterator Pkg);

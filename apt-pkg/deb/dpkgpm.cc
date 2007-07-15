@@ -329,7 +329,40 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 
    return true;
 }
+
 									/*}}}*/
+// DPkgPM::DoStdin - Read stdin and pass to slave pty			/*{{{*/
+// ---------------------------------------------------------------------
+/*
+*/
+void pkgDPkgPM::DoStdin(int master)
+{
+   char input_buf[2] = {0,0}; 
+  while(read(0, input_buf, 1) > 0)
+      write(master, input_buf, 1);
+}
+									/*}}}*/
+// DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
+// ---------------------------------------------------------------------
+/*
+ * read the terminal pty and write log
+ */
+void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
+{
+   char term_buf[2] = {0,0};
+
+   // read a single char, make sure that the read can't block 
+   // (otherwise we may leave zombies)
+   do
+   {
+      fwrite(term_buf, 1, 1, term_out);
+      write(1, term_buf, 1);
+   } while(read(master, term_buf, 1) > 0);
+}
+									/*}}}*/
+
+
+
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
@@ -528,6 +561,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       int	master;
       int	slave;
 
+      // FIXME: setup sensible signal handling (*ick*)
       tcgetattr(0, &tt);
       ioctl(0, TIOCGWINSZ, (char *)&win);
       if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
@@ -602,8 +636,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       char line[1024] = {0,};
       
       char buf[2] = {0,0};
-      char term_buf[2] = {0,0};
-      char input_buf[2] = {0,0};
       
       // the result of the waitpid call
       int res;
@@ -644,28 +676,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 else if (select_ret == 0)
 	    continue;
 
-	 // read a single char, make sure that the read can't block 
-	 // (otherwise we may leave zombies)
-         int term_len = read(master, term_buf, 1);
-	 int input_len = read(0, input_buf, 1);
-         int len = read(_dpkgin, buf, 1);
+	 DoStdin(master);
+	 DoTerminalPty(master, term_out);
+	 //DoDpkgStatusFd();
 
-	 // see if we have any input that needs to go to the 
-	 // master pty
-	 if(input_len > 0) 
-	    write(master, input_buf, 1);
-
-	 // see if we have any output that needs to be echoed
-	 // and written to the log
-	 if(term_len > 0) 
-	 {
-	    do
-	    {
-	       fwrite(term_buf, 1, 1, term_out);
-	       write(1, term_buf, 1);
-	    } while(read(master, term_buf, 1) > 0);
-	    term_buf[0] = 0;
-	 }
+	 int len = read(_dpkgin, buf, 1);
 
 	 // nothing to read from dpkg , wait a bit for more
 	 if(len <= 0)
