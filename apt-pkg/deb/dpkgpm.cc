@@ -338,7 +338,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 void pkgDPkgPM::DoStdin(int master)
 {
    char input_buf[2] = {0,0}; 
-  while(read(0, input_buf, 1) > 0)
+   while(read(0, input_buf, 1) > 0)
       write(master, input_buf, 1);
 }
 									/*}}}*/
@@ -353,11 +353,11 @@ void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
 
    // read a single char, make sure that the read can't block 
    // (otherwise we may leave zombies)
-   do
+   while(read(master, term_buf, 1) > 0)
    {
       fwrite(term_buf, 1, 1, term_out);
       write(1, term_buf, 1);
-   } while(read(master, term_buf, 1) > 0);
+   } 
 }
 									/*}}}*/
 
@@ -634,7 +634,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // the read buffers for the communication with dpkg
       char line[1024] = {0,};
-      
       char buf[2] = {0,0};
       
       // the result of the waitpid call
@@ -670,7 +669,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 // wait for input or output here
 	 tv.tv_sec = 1;
 	 tv.tv_usec = 0;
-	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, &rfds, &tv);
+	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, NULL, &tv);
 	 if (select_ret < 0)
 	    std::cerr << "Error in select()" << std::endl;
 	 else if (select_ret == 0)
@@ -680,118 +679,116 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 DoTerminalPty(master, term_out);
 	 //DoDpkgStatusFd();
 
-	 int len = read(_dpkgin, buf, 1);
-
-	 // nothing to read from dpkg , wait a bit for more
-	 if(len <= 0)
+	 while(true)
 	 {
-	    usleep(1000);
-	    continue;
-	 }
+	    if(read(_dpkgin, buf, 1) <= 0)
+	       break;
 
-	 // sanity check (should never happen)
-	 if(strlen(line) >= sizeof(line)-10)
-	 {
-	    _error->Error("got a overlong line from dpkg: '%s'",line);
-	    line[0]=0;
-	 }
-	 // append to line, check if we got a complete line
-	 strcat(line, buf);
-	 if(buf[0] != '\n')
-	    continue;
+	    // sanity check (should never happen)
+	    if(strlen(line) >= sizeof(line)-10)
+	    {
+	       _error->Error("got a overlong line from dpkg: '%s'",line);
+	       line[0]=0;
+	       continue;
+	    }
+	    // append to line, check if we got a complete line
+	    strcat(line, buf);
+	    if(buf[0] != '\n')
+	       continue;
 
-	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	    std::clog << "got from dpkg '" << line << "'" << std::endl;
-
-	 // the status we output
-	 ostringstream status;
-
-	 /* dpkg sends strings like this:
-	    'status:   <pkg>:  <pkg  qstate>'
-	    errors look like this:
-	    'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
-	    and conffile-prompt like this
-	    'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
-	    
-	 */
-	 char* list[5];
-	 //        dpkg sends multiline error messages sometimes (see
-	 //        #374195 for a example. we should support this by
-	 //        either patching dpkg to not send multiline over the
-	 //        statusfd or by rewriting the code here to deal with
-	 //        it. for now we just ignore it and not crash
-	 TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
-	 char *pkg = list[1];
-	 char *action = _strstrip(list[2]);
-	 if( pkg == NULL || action == NULL) 
-	 {
 	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "ignoring line: not enough ':'" << std::endl;
+	       std::clog << "got from dpkg '" << line << "'" << std::endl;
+
+	    // the status we output
+	    ostringstream status;
+
+	    /* dpkg sends strings like this:
+	       'status:   <pkg>:  <pkg  qstate>'
+	       errors look like this:
+	       'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
+	       and conffile-prompt like this
+	       'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+	    
+	    */
+	    char* list[5];
+	    //        dpkg sends multiline error messages sometimes (see
+	    //        #374195 for a example. we should support this by
+	    //        either patching dpkg to not send multiline over the
+	    //        statusfd or by rewriting the code here to deal with
+	    //        it. for now we just ignore it and not crash
+	    TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
+	    char *pkg = list[1];
+	    char *action = _strstrip(list[2]);
+	    if( pkg == NULL || action == NULL) 
+	    {
+	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+		  std::clog << "ignoring line: not enough ':'" << std::endl;
+	       // reset the line buffer
+	       line[0]=0;
+	       continue;
+	    }
+
+	    if(strncmp(action,"error",strlen("error")) == 0)
+	    {
+	       status << "pmerror:" << list[1]
+		      << ":"  << (Done/float(Total)*100.0) 
+		      << ":" << list[3]
+		      << endl;
+	       if(OutStatusFd > 0)
+		  write(OutStatusFd, status.str().c_str(), status.str().size());
+	       line[0]=0;
+	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+		  std::clog << "send: '" << status.str() << "'" << endl;
+	       continue;
+	    }
+	    if(strncmp(action,"conffile",strlen("conffile")) == 0)
+	    {
+	       status << "pmconffile:" << list[1]
+		      << ":"  << (Done/float(Total)*100.0) 
+		      << ":" << list[3]
+		      << endl;
+	       if(OutStatusFd > 0)
+		  write(OutStatusFd, status.str().c_str(), status.str().size());
+	       line[0]=0;
+	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+		  std::clog << "send: '" << status.str() << "'" << endl;
+	       continue;
+	    }
+
+	    vector<struct DpkgState> &states = PackageOps[pkg];
+	    const char *next_action = NULL;
+	    if(PackageOpsDone[pkg] < states.size())
+	       next_action = states[PackageOpsDone[pkg]].state;
+	    // check if the package moved to the next dpkg state
+	    if(next_action && (strcmp(action, next_action) == 0)) 
+	    {
+	       // only read the translation if there is actually a next
+	       // action
+	       const char *translation = _(states[PackageOpsDone[pkg]].str);
+	       char s[200];
+	       snprintf(s, sizeof(s), translation, pkg);
+
+	       // we moved from one dpkg state to a new one, report that
+	       PackageOpsDone[pkg]++;
+	       Done++;
+	       // build the status str
+	       status << "pmstatus:" << pkg 
+		      << ":"  << (Done/float(Total)*100.0) 
+		      << ":" << s
+		      << endl;
+	       if(OutStatusFd > 0)
+		  write(OutStatusFd, status.str().c_str(), status.str().size());
+	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+		  std::clog << "send: '" << status.str() << "'" << endl;
+
+	    }
+	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
+	       std::clog << "(parsed from dpkg) pkg: " << pkg 
+			 << " action: " << action << endl;
+
 	    // reset the line buffer
 	    line[0]=0;
-	    continue;
 	 }
-
-	 if(strncmp(action,"error",strlen("error")) == 0)
-	 {
-	    status << "pmerror:" << list[1]
-		   << ":"  << (Done/float(Total)*100.0) 
-		   << ":" << list[3]
-		   << endl;
-	    if(OutStatusFd > 0)
-	       write(OutStatusFd, status.str().c_str(), status.str().size());
-	    line[0]=0;
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "send: '" << status.str() << "'" << endl;
-	    continue;
-	 }
-	 if(strncmp(action,"conffile",strlen("conffile")) == 0)
-	 {
-	    status << "pmconffile:" << list[1]
-		   << ":"  << (Done/float(Total)*100.0) 
-		   << ":" << list[3]
-		   << endl;
-	    if(OutStatusFd > 0)
-	       write(OutStatusFd, status.str().c_str(), status.str().size());
-	    line[0]=0;
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "send: '" << status.str() << "'" << endl;
-	    continue;
-	 }
-
-	 vector<struct DpkgState> &states = PackageOps[pkg];
-	 const char *next_action = NULL;
-	 if(PackageOpsDone[pkg] < states.size())
-	    next_action = states[PackageOpsDone[pkg]].state;
-	 // check if the package moved to the next dpkg state
-	 if(next_action && (strcmp(action, next_action) == 0)) 
-	 {
-	    // only read the translation if there is actually a next
-	    // action
-	    const char *translation = _(states[PackageOpsDone[pkg]].str);
-	    char s[200];
-	    snprintf(s, sizeof(s), translation, pkg);
-
-	    // we moved from one dpkg state to a new one, report that
-	    PackageOpsDone[pkg]++;
-	    Done++;
-	    // build the status str
-	    status << "pmstatus:" << pkg 
-		   << ":"  << (Done/float(Total)*100.0) 
-		   << ":" << s
-		   << endl;
-	    if(OutStatusFd > 0)
-	       write(OutStatusFd, status.str().c_str(), status.str().size());
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "send: '" << status.str() << "'" << endl;
-
-	 }
-	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
-	    std::clog << "(parsed from dpkg) pkg: " << pkg 
-		      << " action: " << action << endl;
-
-	 // reset the line buffer
-	 line[0]=0;
       }
       close(_dpkgin);
       fclose(term_out);
