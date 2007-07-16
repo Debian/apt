@@ -337,9 +337,9 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 */
 void pkgDPkgPM::DoStdin(int master)
 {
-   char input_buf[2] = {0,0}; 
-   while(read(0, input_buf, 1) > 0)
-      write(master, input_buf, 1);
+   char input_buf[256] = {0,}; 
+   int len = read(0, input_buf, sizeof(input_buf));
+   write(master, input_buf, len);
 }
 									/*}}}*/
 // DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
@@ -349,15 +349,13 @@ void pkgDPkgPM::DoStdin(int master)
  */
 void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
 {
-   char term_buf[2] = {0,0};
+   char term_buf[1024] = {0,};
 
-   // read a single char, make sure that the read can't block 
-   // (otherwise we may leave zombies)
-   while(read(master, term_buf, 1) > 0)
-   {
-      fwrite(term_buf, 1, 1, term_out);
-      write(1, term_buf, 1);
-   } 
+   int len=read(master, term_buf, sizeof(term_buf));
+   if(len <= 0)
+      return;
+   fwrite(term_buf, len, sizeof(char), term_out);
+   write(1, term_buf, len);
 }
 									/*}}}*/
 
@@ -638,9 +636,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // the result of the waitpid call
       int res;
       close(slave);
+#if 0
       fcntl(0, F_SETFL, O_NONBLOCK);
       fcntl(master, F_SETFL, O_NONBLOCK);
-
+#endif
       // FIXME: make this a apt config option and add a logrotate file
       FILE *term_out = fopen("/var/log/dpkg-out.log","a");
       chmod("/var/log/dpkg-out.log", 0600);
@@ -657,10 +656,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       fd_set rfds;
       struct timeval tv;
       int select_ret;
-      FD_ZERO(&rfds);
-      FD_SET(0, &rfds); 
-      FD_SET(_dpkgin, &rfds);
-      FD_SET(master, &rfds);
       while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
 	 if(res < 0) {
 	    // FIXME: move this to a function or something, looks ugly here
@@ -676,6 +671,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 }
 
 	 // wait for input or output here
+	 FD_ZERO(&rfds);
+	 FD_SET(0, &rfds); 
+	 FD_SET(_dpkgin, &rfds);
+	 FD_SET(master, &rfds);
 	 tv.tv_sec = 1;
 	 tv.tv_usec = 0;
 	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, NULL, &tv);
@@ -684,11 +683,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 else if (select_ret == 0)
 	    continue;
 
-	 DoStdin(master);
-	 DoTerminalPty(master, term_out);
+	 if(FD_ISSET(master, &rfds))
+	    DoTerminalPty(master, term_out);
+	 if(FD_ISSET(0, &rfds))
+	    DoStdin(master);
 
 	 // FIXME: move this into its own function too
 	 //DoDpkgStatusFd();
+	 if(FD_ISSET(_dpkgin, &rfds))
 	 while(true)
 	 {
 	    if(read(_dpkgin, buf, 1) <= 0)
