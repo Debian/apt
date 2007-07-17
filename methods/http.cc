@@ -1164,25 +1164,24 @@ int HttpMethod::Loop()
 	       URIDone(Res);
 	    }
 	    else
-		{
-		  if (Server->ServerFd == -1)
+	    {
+	       if (Server->ServerFd == -1)
+	       {
+		  FailCounter++;
+		  _error->Discard();
+		  Server->Close();
+		  
+		  if (FailCounter >= 2)
 		  {
-			  FailCounter++;
-			  _error->Discard();
-			  Server->Close();
-	    
-			  if (FailCounter >= 2)
-			  {
-				  Fail(_("Connection failed"),true);
-				  FailCounter = 0;
-			  }
-	    
-			  QueueBack = Queue;
+		     Fail(_("Connection failed"),true);
+		     FailCounter = 0;
 		  }
-		  else
-			  Fail(true);
-		}
-
+		  
+		  QueueBack = Queue;
+	       }
+	       else
+		  Fail(true);
+	    }
 	    break;
 	 }
 	 
