@@ -1507,7 +1507,8 @@ bool DoUpgrade(CommandLine &CmdL)
 bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix, 
 		    bool BrokenFix,
 		    unsigned int& ExpectedInst, 
-		    const char *taskname)
+		    const char *taskname,
+		    bool Remove)
 {
    const char *start, *end;
    pkgCache::PkgIterator Pkg;
@@ -1536,7 +1537,7 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
       buf[end-start] = 0x0;
       if (regexec(&Pattern,buf,0,0,0) != 0)
 	 continue;
-      res &= TryToInstall(Pkg,Cache,Fix,false,true,ExpectedInst);
+      res &= TryToInstall(Pkg,Cache,Fix,Remove,true,ExpectedInst);
       found = true;
    }
    
@@ -1604,7 +1605,7 @@ bool DoInstall(CommandLine &CmdL)
             // tasks must always be confirmed
             ExpectedInst += 1000;
             // see if we can install it
-            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
+            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S, Remove);
             continue;
          }
 
