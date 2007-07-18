@@ -40,7 +40,7 @@ using namespace std;
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) : pkgPackageManager(Cache)
+pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) : pkgPackageManager(Cache), dpkgbuf_pos(0)
 {
 }
 									/*}}}*/
@@ -358,7 +358,52 @@ void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
    write(1, term_buf, len);
 }
 									/*}}}*/
+// DPkgPM::ProcessDpkgStatusBuf                                        	/*{{{*/
+// ---------------------------------------------------------------------
+/*
+ */
+void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
+{
+   std::cerr << "got line: '" << line << "'" << std::endl;
+}
 
+// DPkgPM::DoDpkgStatusFd                                           	/*{{{*/
+// ---------------------------------------------------------------------
+/*
+ */
+void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
+{
+   char *p, *q;
+   int len;
+
+   len=read(statusfd, &dpkgbuf[dpkgbuf_pos], sizeof(dpkgbuf)-dpkgbuf_pos);
+   dpkgbuf_pos += len;
+   if(len <= 0)
+      return;
+
+   // process line by line if we have a buffer
+   p = q = dpkgbuf;
+   while((q=(char*)memchr(p, '\n', dpkgbuf+dpkgbuf_pos-p)) != NULL)
+   {
+      *q = 0;
+      ProcessDpkgStatusLine(p);
+      p=q+1; // continue with next line
+   }
+
+   // now move the unprocessed bits (after the final \n that is now a 0x0) 
+   // to the start and update dpkgbuf_pos
+   p = (char*)memrchr(dpkgbuf, 0, dpkgbuf_pos);
+   if(p == NULL)
+      return;
+
+   // we are interessted in the first char *after* 0x0
+   p++;
+
+   // move the unprocessed tail to the start and update pos
+   memmove(dpkgbuf, p, p-dpkgbuf);
+   dpkgbuf_pos = dpkgbuf+dpkgbuf_pos-p;
+}
+									/*}}}*/
 
 
 // DPkgPM::Go - Run the sequence					/*{{{*/
@@ -626,20 +671,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // we read from dpkg here
       int _dpkgin = fd[0];
-      fcntl(_dpkgin, F_SETFL, O_NONBLOCK);
       close(fd[1]);                        // close the write end of the pipe
 
       // the read buffers for the communication with dpkg
-      char line[1024] = {0,};
       char buf[2] = {0,0};
       
       // the result of the waitpid call
       int res;
       close(slave);
-#if 0
-      fcntl(0, F_SETFL, O_NONBLOCK);
-      fcntl(master, F_SETFL, O_NONBLOCK);
-#endif
+
       // FIXME: make this a apt config option and add a logrotate file
       FILE *term_out = fopen("/var/log/dpkg-out.log","a");
       chmod("/var/log/dpkg-out.log", 0600);
@@ -688,12 +728,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 if(FD_ISSET(0, &rfds))
 	    DoStdin(master);
 
-	 // FIXME: move this into its own function too
-	 // FIXME2: do not use non-blocking read here, 
-	 //         read/process as much data as possible 
-	 //         Yin one run
-	 //DoDpkgStatusFd();
 	 if(FD_ISSET(_dpkgin, &rfds))
+	    DoDpkgStatusFd(_dpkgin);
+#if 0
 	 while(true)
 	 {
 	    if(read(_dpkgin, buf, 1) <= 0)
@@ -804,6 +841,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // reset the line buffer
 	    line[0]=0;
 	 }
+#endif
       }
       close(_dpkgin);
       fclose(term_out);

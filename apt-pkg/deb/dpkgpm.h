@@ -18,6 +18,10 @@ using std::vector;
 
 class pkgDPkgPM : public pkgPackageManager
 {
+   private:
+   int dpkgbuf_pos;
+   char dpkgbuf[1024];
+
    protected:
 
    // used for progress reporting
@@ -47,7 +51,9 @@ class pkgDPkgPM : public pkgPackageManager
    // input processing
    void DoStdin(int master);
    void DoTerminalPty(int master, FILE *out);
-   //   void DoDpkgStatusFd();
+   void DoDpkgStatusFd(int statusfd);
+   void ProcessDpkgStatusLine(char *line);
+
 
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);
