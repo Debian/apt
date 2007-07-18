@@ -37,10 +37,13 @@
 
 using namespace std;
 
+
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) : pkgPackageManager(Cache), dpkgbuf_pos(0)
+pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
+   : pkgPackageManager(Cache), dpkgbuf_pos(0), Total(0), Done(0)
 {
 }
 									/*}}}*/
@@ -362,16 +365,100 @@ void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
 // ---------------------------------------------------------------------
 /*
  */
-void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
+void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 {
-   std::cerr << "got line: '" << line << "'" << std::endl;
+   // the status we output
+   ostringstream status;
+
+   if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+      std::clog << "got from dpkg '" << line << "'" << std::endl;
+
+
+   /* dpkg sends strings like this:
+      'status:   <pkg>:  <pkg  qstate>'
+      errors look like this:
+      'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
+      and conffile-prompt like this
+      'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+	    
+   */
+   char* list[5];
+   //        dpkg sends multiline error messages sometimes (see
+   //        #374195 for a example. we should support this by
+   //        either patching dpkg to not send multiline over the
+   //        statusfd or by rewriting the code here to deal with
+   //        it. for now we just ignore it and not crash
+   TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
+   char *pkg = list[1];
+   char *action = _strstrip(list[2]);
+   if( pkg == NULL || action == NULL) 
+   {
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "ignoring line: not enough ':'" << std::endl;
+      return;
+   }
+
+   if(strncmp(action,"error",strlen("error")) == 0)
+   {
+      status << "pmerror:" << list[1]
+	     << ":"  << (Done/float(Total)*100.0) 
+	     << ":" << list[3]
+	     << endl;
+      if(OutStatusFd > 0)
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+      return;
+   }
+   if(strncmp(action,"conffile",strlen("conffile")) == 0)
+   {
+      status << "pmconffile:" << list[1]
+	     << ":"  << (Done/float(Total)*100.0) 
+	     << ":" << list[3]
+	     << endl;
+      if(OutStatusFd > 0)
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+      return;
+   }
+
+   vector<struct DpkgState> &states = PackageOps[pkg];
+   const char *next_action = NULL;
+   if(PackageOpsDone[pkg] < states.size())
+      next_action = states[PackageOpsDone[pkg]].state;
+   // check if the package moved to the next dpkg state
+   if(next_action && (strcmp(action, next_action) == 0)) 
+   {
+      // only read the translation if there is actually a next
+      // action
+      const char *translation = _(states[PackageOpsDone[pkg]].str);
+      char s[200];
+      snprintf(s, sizeof(s), translation, pkg);
+
+      // we moved from one dpkg state to a new one, report that
+      PackageOpsDone[pkg]++;
+      Done++;
+      // build the status str
+      status << "pmstatus:" << pkg 
+	     << ":"  << (Done/float(Total)*100.0) 
+	     << ":" << s
+	     << endl;
+      if(OutStatusFd > 0)
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+   }
+   if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
+      std::clog << "(parsed from dpkg) pkg: " << pkg 
+		<< " action: " << action << endl;
 }
 
 // DPkgPM::DoDpkgStatusFd                                           	/*{{{*/
 // ---------------------------------------------------------------------
 /*
  */
-void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
+void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
 {
    char *p, *q;
    int len;
@@ -386,7 +473,7 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
    while((q=(char*)memchr(p, '\n', dpkgbuf+dpkgbuf_pos-p)) != NULL)
    {
       *q = 0;
-      ProcessDpkgStatusLine(p);
+      ProcessDpkgStatusLine(OutStatusFd, p);
       p=q+1; // continue with next line
    }
 
@@ -426,9 +513,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    if (RunScriptsWithPkgs("DPkg::Pre-Install-Pkgs") == false)
       return false;
    
-   // prepare the progress reporting 
-   int Done = 0;
-   int Total = 0;
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
    static const struct DpkgState DpkgStatesOpMap[][5] = {
@@ -459,15 +543,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 {NULL, NULL}
       },
    };
-
-   // the dpkg states that the pkg will run through, the string is 
-   // the package, the vector contains the dpkg states that the package
-   // will go through
-   map<string,vector<struct DpkgState> > PackageOps;
-   // the dpkg states that are already done; the string is the package
-   // the int is the state that is already done (e.g. a package that is
-   // going to be install is already in state "half-installed")
-   map<string,int> PackageOpsDone;
 
    // init the PackageOps map, go over the list of packages that
    // that will be [installed|configured|removed|purged] and add
@@ -727,121 +802,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    DoTerminalPty(master, term_out);
 	 if(FD_ISSET(0, &rfds))
 	    DoStdin(master);
-
 	 if(FD_ISSET(_dpkgin, &rfds))
-	    DoDpkgStatusFd(_dpkgin);
-#if 0
-	 while(true)
-	 {
-	    if(read(_dpkgin, buf, 1) <= 0)
-	       break;
-
-	    // sanity check (should never happen)
-	    if(strlen(line) >= sizeof(line)-10)
-	    {
-	       _error->Error("got a overlong line from dpkg: '%s'",line);
-	       line[0]=0;
-	       continue;
-	    }
-	    // append to line, check if we got a complete line
-	    strcat(line, buf);
-	    if(buf[0] != '\n')
-	       continue;
-
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "got from dpkg '" << line << "'" << std::endl;
-
-	    // the status we output
-	    ostringstream status;
-
-	    /* dpkg sends strings like this:
-	       'status:   <pkg>:  <pkg  qstate>'
-	       errors look like this:
-	       'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
-	       and conffile-prompt like this
-	       'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
-	    
-	    */
-	    char* list[5];
-	    //        dpkg sends multiline error messages sometimes (see
-	    //        #374195 for a example. we should support this by
-	    //        either patching dpkg to not send multiline over the
-	    //        statusfd or by rewriting the code here to deal with
-	    //        it. for now we just ignore it and not crash
-	    TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
-	    char *pkg = list[1];
-	    char *action = _strstrip(list[2]);
-	    if( pkg == NULL || action == NULL) 
-	    {
-	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-		  std::clog << "ignoring line: not enough ':'" << std::endl;
-	       // reset the line buffer
-	       line[0]=0;
-	       continue;
-	    }
-
-	    if(strncmp(action,"error",strlen("error")) == 0)
-	    {
-	       status << "pmerror:" << list[1]
-		      << ":"  << (Done/float(Total)*100.0) 
-		      << ":" << list[3]
-		      << endl;
-	       if(OutStatusFd > 0)
-		  write(OutStatusFd, status.str().c_str(), status.str().size());
-	       line[0]=0;
-	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-		  std::clog << "send: '" << status.str() << "'" << endl;
-	       continue;
-	    }
-	    if(strncmp(action,"conffile",strlen("conffile")) == 0)
-	    {
-	       status << "pmconffile:" << list[1]
-		      << ":"  << (Done/float(Total)*100.0) 
-		      << ":" << list[3]
-		      << endl;
-	       if(OutStatusFd > 0)
-		  write(OutStatusFd, status.str().c_str(), status.str().size());
-	       line[0]=0;
-	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-		  std::clog << "send: '" << status.str() << "'" << endl;
-	       continue;
-	    }
-
-	    vector<struct DpkgState> &states = PackageOps[pkg];
-	    const char *next_action = NULL;
-	    if(PackageOpsDone[pkg] < states.size())
-	       next_action = states[PackageOpsDone[pkg]].state;
-	    // check if the package moved to the next dpkg state
-	    if(next_action && (strcmp(action, next_action) == 0)) 
-	    {
-	       // only read the translation if there is actually a next
-	       // action
-	       const char *translation = _(states[PackageOpsDone[pkg]].str);
-	       char s[200];
-	       snprintf(s, sizeof(s), translation, pkg);
-
-	       // we moved from one dpkg state to a new one, report that
-	       PackageOpsDone[pkg]++;
-	       Done++;
-	       // build the status str
-	       status << "pmstatus:" << pkg 
-		      << ":"  << (Done/float(Total)*100.0) 
-		      << ":" << s
-		      << endl;
-	       if(OutStatusFd > 0)
-		  write(OutStatusFd, status.str().c_str(), status.str().size());
-	       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-		  std::clog << "send: '" << status.str() << "'" << endl;
-
-	    }
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
-	       std::clog << "(parsed from dpkg) pkg: " << pkg 
-			 << " action: " << action << endl;
-
-	    // reset the line buffer
-	    line[0]=0;
-	 }
-#endif
+	    DoDpkgStatusFd(_dpkgin, OutStatusFd);
       }
       close(_dpkgin);
       fclose(term_out);
