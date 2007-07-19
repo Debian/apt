@@ -27,6 +27,8 @@ class pkgDPkgPM : public pkgPackageManager
    char dpkgbuf[1024];
    int dpkgbuf_pos;
 
+   protected:
+
    // progress reporting
    struct DpkgState 
    {
@@ -43,10 +45,8 @@ class pkgDPkgPM : public pkgPackageManager
    // going to be install is already in state "half-installed")
    map<string,int> PackageOpsDone;
    // progress reporting
-   int Done;
-   int Total;
-
-   protected:
+   int PackagesDone;
+   int PackagesTotal;
   
    struct Item
    {
@@ -70,7 +70,6 @@ class pkgDPkgPM : public pkgPackageManager
    void DoTerminalPty(int master, FILE *out);
    void DoDpkgStatusFd(int statusfd, int OutStatusFd);
    void ProcessDpkgStatusLine(int OutStatusFd, char *line);
-
 
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);

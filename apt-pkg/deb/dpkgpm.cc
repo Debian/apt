@@ -43,7 +43,7 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0), Total(0), Done(0)
+   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesTotal(0), PackagesDone(0)
 {
 }
 									/*}}}*/
@@ -401,7 +401,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    if(strncmp(action,"error",strlen("error")) == 0)
    {
       status << "pmerror:" << list[1]
-	     << ":"  << (Done/float(Total)*100.0) 
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
@@ -413,7 +413,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    if(strncmp(action,"conffile",strlen("conffile")) == 0)
    {
       status << "pmconffile:" << list[1]
-	     << ":"  << (Done/float(Total)*100.0) 
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
@@ -438,10 +438,10 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 
       // we moved from one dpkg state to a new one, report that
       PackageOpsDone[pkg]++;
-      Done++;
+      PackagesDone++;
       // build the status str
       status << "pmstatus:" << pkg 
-	     << ":"  << (Done/float(Total)*100.0) 
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
@@ -555,9 +555,26 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL;  i++) 
       {
 	 PackageOps[name].push_back(DpkgStatesOpMap[(*I).Op][i]);
-	 Total++;
+	 PackagesTotal++;
       }
    }   
+
+   // create log
+   string logdir = _config->FindDir("Dir::Log");
+   if(not FileExists(logdir))
+      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
+   string logfile_name = flCombine(logdir,
+				   _config->Find("Dir::Log::Name"));
+   FILE *term_out = fopen(logfile_name.c_str(),"a");
+   chmod(logfile_name.c_str(), 0600);
+   // output current time
+   char outstr[200];
+   time_t t = time(NULL);
+   struct tm *tmp = localtime(&t);
+   strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+   fprintf(term_out, "Log started: ");
+   fprintf(term_out, outstr);
+   fprintf(term_out, "\n");
 
    // this loop is runs once per operation
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
@@ -755,18 +772,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       int res;
       close(slave);
 
-      // FIXME: make this a apt config option and add a logrotate file
-      FILE *term_out = fopen("/var/log/dpkg-out.log","a");
-      chmod("/var/log/dpkg-out.log", 0600);
-      // output current time
-      char outstr[200];
-      time_t t = time(NULL);
-      struct tm *tmp = localtime(&t);
-      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-      fprintf(term_out, "Log started: ");
-      fprintf(term_out, outstr);
-      fprintf(term_out, "\n");
-
       // setups fds
       fd_set rfds;
       struct timeval tv;
@@ -806,7 +811,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    DoDpkgStatusFd(_dpkgin, OutStatusFd);
       }
       close(_dpkgin);
-      fclose(term_out);
 
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
@@ -832,10 +836,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 else 
 	    _error->Error("Sub-process %s exited unexpectedly",Args[0]);
 
-	 if(stopOnError)
+	 if(stopOnError) 
+	 {
+	    fclose(term_out);
 	    return false;
+	 }
       }      
    }
+   fclose(term_out);
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
