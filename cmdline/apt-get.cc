@@ -1507,7 +1507,8 @@ bool DoUpgrade(CommandLine &CmdL)
 bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix, 
 		    bool BrokenFix,
 		    unsigned int& ExpectedInst, 
-		    const char *taskname)
+		    const char *taskname,
+		    bool Remove)
 {
    const char *start, *end;
    pkgCache::PkgIterator Pkg;
@@ -1519,9 +1520,9 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
 
    // build regexp for the task
    char S[300];
-   // better: "^Task:.*[^a-z]lamp-server([^a-z]|\n)" ?
-   snprintf(S, sizeof(S), "^Task:.*[^a-z]%s[^a-z].*$", taskname);
-   regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
+   snprintf(S, sizeof(S), "^Task:.*[, ]%s([, ]|$)", taskname);
+   if(regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE) != 0)
+      return _error->Error("Failed to compile task regexp");
    
    bool found = false;
    bool res = true;
@@ -1536,7 +1537,7 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
       buf[end-start] = 0x0;
       if (regexec(&Pattern,buf,0,0,0) != 0)
 	 continue;
-      res &= TryToInstall(Pkg,Cache,Fix,false,true,ExpectedInst);
+      res &= TryToInstall(Pkg,Cache,Fix,Remove,true,ExpectedInst);
       found = true;
    }
    
@@ -1604,7 +1605,7 @@ bool DoInstall(CommandLine &CmdL)
             // tasks must always be confirmed
             ExpectedInst += 1000;
             // see if we can install it
-            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
+            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S, Remove);
             continue;
          }
 

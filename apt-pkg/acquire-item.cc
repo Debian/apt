@@ -271,7 +271,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       if(found) 
       {
 	 // queue the diffs
-	 int last_space = Description.rfind(" ");
+	 unsigned int last_space = Description.rfind(" ");
 	 if(last_space != string::npos)
 	    Description.erase(last_space, Description.size()-last_space);
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
@@ -884,8 +884,8 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
 				 string SigFile,
 				 const vector<struct IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-   Item(Owner), RealURI(URI), SigFile(SigFile), AuthPass(false),
-   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets), IMSHit(false)
+   Item(Owner), RealURI(URI), SigFile(SigFile), IndexTargets(IndexTargets),
+   MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);

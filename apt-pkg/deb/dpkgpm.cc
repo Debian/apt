@@ -385,7 +385,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // the dpkg states that are already done; the string is the package
    // the int is the state that is already done (e.g. a package that is
    // going to be install is already in state "half-installed")
-   map<string,int> PackageOpsDone;
+   map<string,unsigned int> PackageOpsDone;
 
    // init the PackageOps map, go over the list of packages that
    // that will be [installed|configured|removed|purged] and add
