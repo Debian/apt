@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-07-12 16:50+0100\n"
+"POT-Creation-Date: 2007-07-06 06:51+0200\n"
 "PO-Revision-Date: 2007-03-29 17:14+0800\n"
 "Last-Translator: Kov Chai <tchaikov@sjtu.org>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
@@ -158,7 +158,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2614 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2584 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s for %s %s ，编译于 %s %s\n"
@@ -817,7 +817,7 @@ msgstr "内部错误，Ordering 未能完成"
 msgid "Unable to lock the download directory"
 msgstr "无法对下载目录加锁"
 
-#: cmdline/apt-get.cc:816 cmdline/apt-get.cc:2091 cmdline/apt-get.cc:2362
+#: cmdline/apt-get.cc:816 cmdline/apt-get.cc:2091 cmdline/apt-get.cc:2332
 #: apt-pkg/cachefile.cc:63
 msgid "The list of sources could not be read."
 msgstr "无法读取安装源列表。"
@@ -846,7 +846,7 @@ msgstr "解压缩后会消耗掉 %sB 的额外空间。\n"
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "解压缩后将会空出 %sB 的空间。\n"
 
-#: cmdline/apt-get.cc:861 cmdline/apt-get.cc:2216
+#: cmdline/apt-get.cc:861 cmdline/apt-get.cc:2186
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "无法获知您在 %s 上的空余空间"
@@ -875,7 +875,7 @@ msgstr ""
 "若还想继续的话，就输入下面的短句“%s”\n"
 " ?] "
 
-#: cmdline/apt-get.cc:889 cmdline/apt-get.cc:908 cmdline/apt-get.cc:2143
+#: cmdline/apt-get.cc:889 cmdline/apt-get.cc:908
 msgid "Abort."
 msgstr "中止执行。"
 
@@ -883,7 +883,7 @@ msgstr "中止执行。"
 msgid "Do you want to continue [Y/n]? "
 msgstr "您希望继续执行吗？[Y/n]"
 
-#: cmdline/apt-get.cc:976 cmdline/apt-get.cc:1383 cmdline/apt-get.cc:2259
+#: cmdline/apt-get.cc:976 cmdline/apt-get.cc:1383 cmdline/apt-get.cc:2229
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "无法下载 %s  %s\n"
@@ -892,7 +892,7 @@ msgstr "无法下载 %s  %s\n"
 msgid "Some files failed to download"
 msgstr "有一些文件下载失败"
 
-#: cmdline/apt-get.cc:995 cmdline/apt-get.cc:2268
+#: cmdline/apt-get.cc:995 cmdline/apt-get.cc:2238
 msgid "Download complete and in download only mode"
 msgstr "下载完毕，目前是“仅下载”模式"
 
@@ -1110,7 +1110,7 @@ msgstr "推荐安装的软件包："
 msgid "Calculating upgrade... "
 msgstr "正在筹划升级... "
 
-#: cmdline/apt-get.cc:1906 methods/ftp.cc:702 methods/connect.cc:100
+#: cmdline/apt-get.cc:1906 methods/ftp.cc:702 methods/connect.cc:101
 msgid "Failed"
 msgstr "失败"
 
@@ -1126,101 +1126,86 @@ msgstr "内部错误，problem resolver 坏事了"
 msgid "Must specify at least one package to fetch source for"
 msgstr "要下载源代码，必须指定至少一个对应的软件包"
 
-#: cmdline/apt-get.cc:2116 cmdline/apt-get.cc:2380
+#: cmdline/apt-get.cc:2116 cmdline/apt-get.cc:2350
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "无法找到与 %s 对应的源代码包"
 
-#: cmdline/apt-get.cc:2132
-#, c-format
-msgid ""
-"WARNING: '%s' is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: cmdline/apt-get.cc:2137
-#, c-format
-msgid ""
-"Please use:\n"
-"bzr get %s\n"
-"to modify the package.\n"
-msgstr ""
-
-#: cmdline/apt-get.cc:2195
+#: cmdline/apt-get.cc:2165
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "忽略已下载过的文件“%s”\n"
 
-#: cmdline/apt-get.cc:2219
+#: cmdline/apt-get.cc:2189
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "您在 %s 上没有足够的空余空间"
 
-#: cmdline/apt-get.cc:2224
+#: cmdline/apt-get.cc:2194
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "需要下载 %sB/%sB 的源代码包。\n"
 
-#: cmdline/apt-get.cc:2227
+#: cmdline/apt-get.cc:2197
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "需要下载 %sB 的源代码包。\n"
 
-#: cmdline/apt-get.cc:2233
+#: cmdline/apt-get.cc:2203
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "下载源代码 %s\n"
 
-#: cmdline/apt-get.cc:2264
+#: cmdline/apt-get.cc:2234
 msgid "Failed to fetch some archives."
 msgstr "有一些包文件无法下载。"
 
-#: cmdline/apt-get.cc:2292
+#: cmdline/apt-get.cc:2262
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "对于已经被解包到 %s 目录的源代码包就不再解开了\n"
 
-#: cmdline/apt-get.cc:2304
+#: cmdline/apt-get.cc:2274
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "运行解包的命令“%s”出错。\n"
 
-#: cmdline/apt-get.cc:2305
+#: cmdline/apt-get.cc:2275
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "请检查是否安装了“dpkg-dev”软件包。\n"
 
-#: cmdline/apt-get.cc:2322
+#: cmdline/apt-get.cc:2292
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "执行构造软件包命令“%s”失败。\n"
 
-#: cmdline/apt-get.cc:2341
+#: cmdline/apt-get.cc:2311
 msgid "Child process failed"
 msgstr "子进程出错"
 
-#: cmdline/apt-get.cc:2357
+#: cmdline/apt-get.cc:2327
 msgid "Must specify at least one package to check builddeps for"
 msgstr "要检查生成软件包的构建依赖关系(builddeps)，必须指定至少一个软件包"
 
-#: cmdline/apt-get.cc:2385
+#: cmdline/apt-get.cc:2355
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "无法获得 %s 的构建依赖关系(build-dependency)信息"
 
-#: cmdline/apt-get.cc:2405
+#: cmdline/apt-get.cc:2375
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr " %s 没有构建依赖关系信息。\n"
 
-#: cmdline/apt-get.cc:2457
+#: cmdline/apt-get.cc:2427
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
 
-#: cmdline/apt-get.cc:2509
+#: cmdline/apt-get.cc:2479
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1229,30 +1214,30 @@ msgstr ""
 "由于无法找到符合要求的软件包 %3$s 的可用版本，因此不能满足 %2$s 所要求的 %1"
 "$s 依赖关系"
 
-#: cmdline/apt-get.cc:2544
+#: cmdline/apt-get.cc:2514
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新了"
 
-#: cmdline/apt-get.cc:2569
+#: cmdline/apt-get.cc:2539
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
 
-#: cmdline/apt-get.cc:2583
+#: cmdline/apt-get.cc:2553
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "不能满足软件包 %s 所要求的构建依赖关系。"
 
-#: cmdline/apt-get.cc:2587
+#: cmdline/apt-get.cc:2557
 msgid "Failed to process build dependencies"
 msgstr "无法处理构建依赖关系"
 
-#: cmdline/apt-get.cc:2619
+#: cmdline/apt-get.cc:2589
 msgid "Supported modules:"
 msgstr "被支持模块："
 
-#: cmdline/apt-get.cc:2660
+#: cmdline/apt-get.cc:2630
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1558,7 +1543,7 @@ msgstr "文件 %s/%s 会覆盖属于软件包 %s 中的同名文件"
 
 #: apt-inst/extract.cc:464 apt-pkg/contrib/configuration.cc:748
 #: apt-pkg/contrib/cdromutl.cc:150 apt-pkg/sourcelist.cc:320
-#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:34 methods/mirror.cc:82
+#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:34
 #, c-format
 msgid "Unable to read %s"
 msgstr "无法读取 %s"
@@ -1855,7 +1840,7 @@ msgstr "数据套接字连接超时"
 msgid "Unable to accept connection"
 msgstr "无法接受连接"
 
-#: methods/ftp.cc:864 methods/http.cc:961 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "把文件加入散列表时出错"
 
@@ -1882,39 +1867,39 @@ msgstr "查询"
 msgid "Unable to invoke "
 msgstr "无法调用 "
 
-#: methods/connect.cc:65
+#: methods/connect.cc:64
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "正在连接 %s (%s)"
 
-#: methods/connect.cc:72
+#: methods/connect.cc:71
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
-#: methods/connect.cc:79
+#: methods/connect.cc:80
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
 msgstr "无法为 %s 创建套接字(f=%u t=%u p=%u)"
 
-#: methods/connect.cc:85
+#: methods/connect.cc:86
 #, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "无法发起与 %s:%s (%s) 的连接"
 
-#: methods/connect.cc:92
+#: methods/connect.cc:93
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "无法连接上 %s:%s (%s)，连接超时"
 
-#: methods/connect.cc:107
+#: methods/connect.cc:108
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "无法连接上 %s:%s (%s)。"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:135 methods/rsh.cc:425
+#: methods/connect.cc:136 methods/rsh.cc:425
 #, c-format
 msgid "Connecting to %s"
 msgstr "正在连接 %s"
@@ -1986,76 +1971,76 @@ msgstr "无法为 %s 开启管道"
 msgid "Read error from %s process"
 msgstr "从 %s 进程读取数据出错"
 
-#: methods/http.cc:376
+#: methods/http.cc:377
 msgid "Waiting for headers"
 msgstr "正在等待报头"
 
-#: methods/http.cc:522
+#: methods/http.cc:523
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "受到了一行报头条目，它的长度超过了 %u 个字符"
 
-#: methods/http.cc:530
+#: methods/http.cc:531
 msgid "Bad header line"
 msgstr "错误的报头条目"
 
-#: methods/http.cc:549 methods/http.cc:556
+#: methods/http.cc:550 methods/http.cc:557
 msgid "The HTTP server sent an invalid reply header"
 msgstr "该 http 服务器发送了一个无效的应答报头"
 
-#: methods/http.cc:585
+#: methods/http.cc:586
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "该 http 服务器发送了一个无效的 Content-Length 报头"
 
-#: methods/http.cc:600
+#: methods/http.cc:601
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "该 http 服务器发送了一个无效的 Content-Range 报头"
 
-#: methods/http.cc:602
+#: methods/http.cc:603
 msgid "This HTTP server has broken range support"
 msgstr "该 http 服务器的 range 支持不正常"
 
-#: methods/http.cc:626
+#: methods/http.cc:627
 msgid "Unknown date format"
 msgstr "无法识别的日期格式"
 
-#: methods/http.cc:773
+#: methods/http.cc:774
 msgid "Select failed"
 msgstr "select 调用出错"
 
-#: methods/http.cc:778
+#: methods/http.cc:779
 msgid "Connection timed out"
 msgstr "连接服务器超时"
 
-#: methods/http.cc:801
+#: methods/http.cc:802
 msgid "Error writing to output file"
 msgstr "写输出文件时出错"
 
-#: methods/http.cc:832
+#: methods/http.cc:833
 msgid "Error writing to file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:860
+#: methods/http.cc:861
 msgid "Error writing to the file"
 msgstr "写文件时出错"
 
-#: methods/http.cc:874
+#: methods/http.cc:875
 msgid "Error reading from server. Remote end closed connection"
 msgstr "从服务器读取数据时出错，对方关闭了连接"
 
-#: methods/http.cc:876
+#: methods/http.cc:877
 msgid "Error reading from server"
 msgstr "从服务器读取数据出错"
 
-#: methods/http.cc:1110
+#: methods/http.cc:1108
 msgid "Bad header data"
 msgstr "错误的报头数据"
 
-#: methods/http.cc:1127
+#: methods/http.cc:1125
 msgid "Connection failed"
 msgstr "连接失败"
 
-#: methods/http.cc:1218
+#: methods/http.cc:1216
 msgid "Internal error"
 msgstr "内部错误"
 
@@ -2085,7 +2070,7 @@ msgstr "正在打开配置文件 %s"
 
 #: apt-pkg/contrib/configuration.cc:510
 #, fuzzy, c-format
-msgid "Line %d too long (max %u)"
+msgid "Line %d too long (max %lu)"
 msgstr "软件包来源档的第 %d 行超长了(长度限制为 %d)。"
 
 #: apt-pkg/contrib/configuration.cc:606
@@ -2190,7 +2175,6 @@ msgid "Unable to stat the mount point %s"
 msgstr "无法读取文件系统挂载点 %s 的状态"
 
 #: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
-#: methods/mirror.cc:88
 #, c-format
 msgid "Unable to change to %s"
 msgstr "无法切换工作目录到 %s"
@@ -2632,21 +2616,21 @@ msgstr "正在收集文件所提供的软件包"
 msgid "IO Error saving source cache"
 msgstr "无法写入来源缓存文件"
 
-#: apt-pkg/acquire-item.cc:134
+#: apt-pkg/acquire-item.cc:127
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "无法重命名文件，%s (%s -> %s)。"
 
-#: apt-pkg/acquire-item.cc:456 apt-pkg/acquire-item.cc:710
-#: apt-pkg/acquire-item.cc:1462
+#: apt-pkg/acquire-item.cc:406 apt-pkg/acquire-item.cc:661
+#: apt-pkg/acquire-item.cc:1411
 msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
-#: apt-pkg/acquire-item.cc:1156
+#: apt-pkg/acquire-item.cc:1106
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "以下 key ID 没有可用的公钥：\n"
 
-#: apt-pkg/acquire-item.cc:1270
+#: apt-pkg/acquire-item.cc:1219
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2655,7 +2639,7 @@ msgstr ""
 "我无法找到一个对应 %s 软件包的文件。在这种情况下可能需要您手动修正这个软件"
 "包。(缘于架构缺失)"
 
-#: apt-pkg/acquire-item.cc:1329
+#: apt-pkg/acquire-item.cc:1278
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2663,13 +2647,13 @@ msgid ""
 msgstr ""
 "我无法找到对应 %s 软件包的文件。在这种情况下您可能需要手动修正这个软件包。"
 
-#: apt-pkg/acquire-item.cc:1365
+#: apt-pkg/acquire-item.cc:1314
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 Filename: 字段。"
 
-#: apt-pkg/acquire-item.cc:1452
+#: apt-pkg/acquire-item.cc:1401
 msgid "Size mismatch"
 msgstr "大小不符"
 
@@ -2780,52 +2764,52 @@ msgstr "已写入 %i 条记录，并有 %i 个文件不吻合\n"
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "已写入 %i 条记录，并有 %i 个缺失，以及 %i 个文件不吻合\n"
 
-#: apt-pkg/deb/dpkgpm.cc:357
+#: apt-pkg/deb/dpkgpm.cc:355
 #, c-format
 msgid "Preparing %s"
 msgstr "正在准备 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:358
+#: apt-pkg/deb/dpkgpm.cc:356
 #, c-format
 msgid "Unpacking %s"
 msgstr "正在解压缩 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:363
+#: apt-pkg/deb/dpkgpm.cc:361
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "正在准备配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:364
+#: apt-pkg/deb/dpkgpm.cc:362
 #, c-format
 msgid "Configuring %s"
 msgstr "正在配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:365
+#: apt-pkg/deb/dpkgpm.cc:363
 #, c-format
 msgid "Installed %s"
 msgstr "已安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:370
+#: apt-pkg/deb/dpkgpm.cc:368
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "正在准备 %s 的删除操作"
 
-#: apt-pkg/deb/dpkgpm.cc:371
+#: apt-pkg/deb/dpkgpm.cc:369
 #, c-format
 msgid "Removing %s"
 msgstr "正在删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:372
+#: apt-pkg/deb/dpkgpm.cc:370
 #, c-format
 msgid "Removed %s"
 msgstr "已删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:377
+#: apt-pkg/deb/dpkgpm.cc:375
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "正在准备完全删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:378
+#: apt-pkg/deb/dpkgpm.cc:376
 #, c-format
 msgid "Completely removed %s"
 msgstr "完全删除了 %s"
