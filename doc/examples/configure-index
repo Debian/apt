@@ -101,7 +101,7 @@ APT
   Install-Suggests "false";
 
   // install recommends automatically for packages in this section
-  Install-Recommends-Section "*metapackages";
+  Install-Recommends-Section { "metapackages"; "universe/metapackages"; };
   
   // consider dependencies of packages in this section manual
   Never-MarkAuto-Sections {"metapackages"; "universe/metapackages"; };

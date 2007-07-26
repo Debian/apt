@@ -7,6 +7,11 @@ APT
 	"^linux-ubuntu-modules-.*";
   };
 
-  Install-Recommends-Section "*metapackages";
-  Never-MarkAuto-Section "*metapackages";
+  Never-MarkAuto-Sections
+  { 
+	"metapackages";
+        "restricted/metapackages";
+        "universe/metapackages";
+        "multiverse/metapackages";
+  };
 };
