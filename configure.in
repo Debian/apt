@@ -81,12 +81,9 @@ dnl This is often the dpkg architecture string.
 dnl First check against the full canonical canoncial-system-type in $target
 dnl and if that fails, just look for the cpu
 AC_MSG_CHECKING(system architecture)
-archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/systemtable`"
+archset="`dpkg-architecture -qDEB_HOST_ARCH`"
 if test "x$archset" = "x"; then
- archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target_cpu\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/archtable`"
- if test "x$archset" = "x"; then
-  AC_MSG_ERROR(failed: use --host= or check buildlib/archtable)
- fi
+   AC_MSG_ERROR([failed: use --host= or output from dpkg-architecture])
 fi
 AC_MSG_RESULT($archset)
 AC_DEFINE_UNQUOTED(COMMON_CPU,"$archset")
@@ -94,7 +91,7 @@ AC_DEFINE_UNQUOTED(COMMON_CPU,"$archset")
 dnl Get a common name for the host OS - this is primarily only for HURD and is
 dnl non fatal if it fails
 AC_MSG_CHECKING(system OS)
-osset="`awk \" ! /^#|^\\\$/ {if (match(\\\"$target_vendor-$target_os\\\",\\\$1)) {print \\\$2; exit}}\" $srcdir/buildlib/ostable`"
+osset="`dpkg-architecture -qDEB_HOST_ARCH_OS`"
 AC_MSG_RESULT($osset)
 AC_DEFINE_UNQUOTED(COMMON_OS,"$osset")
 

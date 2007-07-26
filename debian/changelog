@@ -1,13 +1,18 @@
 apt (0.7.5) UNRELEASED; urgency=low
 
+  [ Otavio Salvador ]
+  * Applied patch from Guillem Jover <guillem.jover@nokia.com> to use
+    dpkg-architecture to get the host architecture (closes: #407187)
+
+  [ Michael Vogt ]
   * apt-pkg/depcache.cc:
     - support a list of sections for:
       APT::Install-Recommends-Sections
       APT::Never-MarkAuto-Sections
 
- --
+ -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 25 Jul 2007 20:16:46 -0300
 
-apt (0.7.4) UNRELEASED; urgency=low
+apt (0.7.4) unstable; urgency=low
 
   [ Michael Vogt ]
   * cmdline/apt-get.cc:
@@ -33,7 +38,7 @@ apt (0.7.4) UNRELEASED; urgency=low
   * Fix example for Install-{Recommends,Suggests} options on
     configure-index example file. Thanks to Peter Eisentraut
     <peter_e@gmx.net> by the patch (closes: #432223)
-  
+
   [ Christian Perrier ]
   * Basque translation update. Closes: ##423766
   * Unfuzzy formerly complete translations
@@ -42,7 +47,7 @@ apt (0.7.4) UNRELEASED; urgency=low
   * Spanish translation update
   * Swedish translation update
 
- -- Otavio Salvador <otavio@ossystems.com.br>  Sat, 14 Jul 2007 15:52:15 -0300
+ -- Otavio Salvador <otavio@debian.org>  Tue, 24 Jul 2007 09:55:50 -0300
 
 apt (0.7.3) unstable; urgency=low
 
@@ -56,9 +61,9 @@ apt (0.7.3) unstable; urgency=low
     - fix InstallTask code when a pkgRecord ends 
       with a single '\n' (thanks to Soren Hansen for reporting)
   * merged from Christian Perrier:
-	* vi.po: completed to 532t, again. Closes: #429899
-	* gl.po: completed to 532t. Closes: #429506
-	* vi.po: completed to 532t. Closes: #428672
+        * vi.po: completed to 532t, again. Closes: #429899
+        * gl.po: completed to 532t. Closes: #429506
+        * vi.po: completed to 532t. Closes: #428672
         * Update all PO and the POT. Gives 514t14f4u for formerly
           complete translations
         * fr.po: completed to 532t
