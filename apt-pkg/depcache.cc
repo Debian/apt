@@ -27,6 +27,27 @@
 
 #include <apti18n.h>    
 
+// helper for Install-Recommends-Sections and Never-MarkAuto-Sections
+static bool 
+ConfigValueInSubTree(const char* SubTree, const char *needle)
+{
+   Configuration::Item const *Opts;
+   Opts = _config->Tree(SubTree);
+   if (Opts != 0 && Opts->Child != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 if (strcmp(needle, Opts->Value.c_str()) == 0)
+	    return true;
+      }
+   }
+   return false;
+}
+
+
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :
   cache(cache), released(false)
 {
@@ -954,11 +975,10 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 			 << " as dep of " << Pkg.Name() 
 			 << std::endl;
  	    // now check if we should consider it a automatic dependency or not
- 	    string sec = _config->Find("APT::Never-MarkAuto-Section","");
- 	    if(Pkg.Section() && (string(Pkg.Section()) ==  sec))
+ 	    if(Pkg.Section() && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
  	    {
  	       if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
- 		  std::clog << "Setting NOT as auto-installed because its a direct dep of a package in section " << sec << std::endl;
+ 		  std::clog << "Setting NOT as auto-installed (direct dep of pkg in APT::Never-MarkAuto-Section)" << std::endl;
  	       MarkInstall(InstPkg,true,Depth + 1, true);
  	    }
  	    else 
@@ -1131,6 +1151,7 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
    return Last;
 }
 									/*}}}*/
+
 // Policy::IsImportantDep - True if the dependency is important		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1146,13 +1167,9 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
       // sections
       // FIXME: this is a meant as a temporarly solution until the 
       //        recommends are cleaned up
-      string s = _config->Find("APT::Install-Recommends-Section","");
-      if(s.size() > 0) 
-      {
-	 const char *sec = Dep.ParentVer().Section();
-	 if (sec && strcmp(sec, s.c_str()) == 0)
-	    return true;
-      }
+      const char *sec = Dep.ParentVer().Section();
+      if (sec && ConfigValueInSubTree("APT::Install-Recommends-Sections", sec))
+	 return true;
    }
    else if(Dep->Type == pkgCache::Dep::Suggests)
      return _config->FindB("APT::Install-Suggests", false);
