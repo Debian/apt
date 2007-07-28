@@ -44,8 +44,10 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
       return;
    }
 
-   if (!CheckMember("data.tar.gz") && !CheckMember("data.tar.bz2")) {
-      _error->Error(_("This is not a valid DEB archive, it has no '%s' or '%s' member"), "data.tar.gz", "data.tar.bz2");
+   if (!CheckMember("data.tar.gz") &&
+       !CheckMember("data.tar.bz2") &&
+       !CheckMember("data.tar.lzma")) {
+      _error->Error(_("This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"), "data.tar.gz", "data.tar.bz2", "data.tar.lzma");
       return;
    }
 }
@@ -129,6 +131,10 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
    if (Member == 0) {
       Member = AR.FindMember("data.tar.bz2");
       Compressor = "bzip2";
+   }
+   if (Member == 0) {
+      Member = AR.FindMember("data.tar.lzma");
+      Compressor = "lzma";
    }
    if (Member == 0)
       return _error->Error(_("Internal error, could not locate member"));   
