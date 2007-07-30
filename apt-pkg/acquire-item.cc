@@ -644,7 +644,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       if (!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
       {
          Status = StatAuthError;
-         ErrorText = _("MD5Sum mismatch");
+         ErrorText = _("Hash Sum mismatch");
          Rename(DestFile,DestFile + ".FAILED");
          return;
       }
@@ -1397,7 +1397,7 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string CalcHash,
    if(!hash.VerifyFile(DestFile))
    {
       Status = StatError;
-      ErrorText = _("MD5Sum mismatch");
+      ErrorText = _("Hash Sum mismatch");
       if(FileExists(DestFile))
 	 Rename(DestFile,DestFile + ".FAILED");
       return;
@@ -1541,7 +1541,7 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string CalcHash,
    if(!hash.VerifyFile(DestFile))
    {
       Status = StatError;
-      ErrorText = "MD5Sum mismatch";
+      ErrorText = "Hash Sum mismatch";
       Rename(DestFile,DestFile + ".FAILED");
       return;
    }
