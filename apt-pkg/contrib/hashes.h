@@ -38,6 +38,9 @@ class HashString
    HashString(string StringedHashString);  // init from str as "type:hash"
    HashString();
 
+   // get hash type used
+   string HashType() { return Type; };
+
    // verify the given filename against the currently loaded hash
    bool VerifyFile(string filename) const;
 

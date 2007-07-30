@@ -44,7 +44,7 @@ HashString::HashString(string StringedHash)
       return;
    }
    string::size_type pos = StringedHash.find(":");
-   Type = StringedHash.substr(0,pos-1);
+   Type = StringedHash.substr(0,pos);
    Hash = StringedHash.substr(pos+1, StringedHash.size() - pos);
 
    if(_config->FindB("Debug::Hashes",false) == true)

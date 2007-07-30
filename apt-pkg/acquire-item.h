@@ -523,6 +523,7 @@ class pkgAcqIndex : public pkgAcquire::Item
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
    virtual string DescURI() {return RealURI + CompressionExtension;};
+   virtual string HashSum() {return ExpectedHash.toStr(); };
 
    /** \brief Create a pkgAcqIndex.
     *
@@ -777,7 +778,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    pkgRecords *Recs;
 
    /** \brief The hashsum of this package. */
-   HashString hash;
+   HashString ExpectedHash;
 
    /** \brief A location in which the actual filename of the package
     *  should be stored.
@@ -810,7 +811,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual string DescURI() {return Desc.URI;};
    virtual string ShortDesc() {return Desc.ShortDesc;};
    virtual void Finished();
-   virtual string HashSum() {return hash.toStr(); };
+   virtual string HashSum() {return ExpectedHash.toStr(); };
    virtual bool IsTrusted();
    
    /** \brief Create a new pkgAcqArchive.
@@ -848,7 +849,7 @@ class pkgAcqFile : public pkgAcquire::Item
    pkgAcquire::ItemDesc Desc;
 
    /** \brief The hashsum of the file to download, if it is known. */
-   HashString hash;
+   HashString ExpectedHash;
 
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.
@@ -861,8 +862,8 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(string Message,unsigned long Size,string CalcHash,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual string HashSum() {return hash.toStr(); };
    virtual string DescURI() {return Desc.URI;};
+   virtual string HashSum() {return ExpectedHash.toStr(); };
 
    /** \brief Create a new pkgAcqFile object.
     *

@@ -641,7 +641,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
          std::cerr << "  Expected Hash: " << ExpectedHash.toStr() << std::endl;
       }
 
-      if (!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
+      if (!ExpectedHash.empty() && ExpectedHash.toStr() != Hash)
       {
          Status = StatAuthError;
          ErrorText = _("Hash Sum mismatch");
@@ -1296,11 +1296,11 @@ bool pkgAcqArchive::QueueNext()
       
       string PkgFile = Parse.FileName();
       if(Parse.SHA256Hash() != "")
-	 hash = HashString("SHA256", Parse.SHA256Hash());
+	 ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
       else if (Parse.SHA1Hash() != "")
-	 hash = HashString("SHA1", Parse.SHA1Hash());
+	 ExpectedHash = HashString("SHA1", Parse.SHA1Hash());
       else 
-	 hash = HashString("MD5Sum", Parse.MD5Hash());
+	 ExpectedHash = HashString("MD5Sum", Parse.MD5Hash());
       if (PkgFile.empty() == true)
 	 return _error->Error(_("The package index files are corrupted. No Filename: "
 			      "field for package %s."),
@@ -1394,7 +1394,7 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string CalcHash,
    }
    
    // Check the hash
-   if(!hash.VerifyFile(DestFile))
+   if(ExpectedHash.toStr() != CalcHash)
    {
       Status = StatError;
       ErrorText = _("Hash Sum mismatch");
@@ -1492,10 +1492,10 @@ void pkgAcqArchive::Finished()
 // AcqFile::pkgAcqFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The file is added to the queue */
-pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
+pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
 		       unsigned long Size,string Dsc,string ShortDesc,
 		       const string &DestDir, const string &DestFilename) :
-                       Item(Owner), hash(MD5)
+                       Item(Owner), ExpectedHash(Hash)
 {
    Retries = _config->FindI("Acquire::Retries",0);
    
@@ -1537,8 +1537,8 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string CalcHash,
 {
    Item::Done(Message,Size,CalcHash,Cnf);
 
-   // Check the md5
-   if(!hash.VerifyFile(DestFile))
+   // Check the hash
+   if(ExpectedHash.toStr() != CalcHash)
    {
       Status = StatError;
       ErrorText = "Hash Sum mismatch";

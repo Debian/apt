@@ -176,7 +176,10 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 		      TimeRFC1123(Res.LastModified).c_str());
 
    if (Res.MD5Sum.empty() == false)
+   {
       End += snprintf(End,sizeof(S)-50 - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
+      End += snprintf(End,sizeof(S)-50 - (End - S),"MD5Sum-Hash: %s\n",Res.MD5Sum.c_str());
+   }
    if (Res.SHA1Sum.empty() == false)
       End += snprintf(End,sizeof(S)-50 - (End - S),"SHA1-Hash: %s\n",Res.SHA1Sum.c_str());
    if (Res.SHA256Sum.empty() == false)
