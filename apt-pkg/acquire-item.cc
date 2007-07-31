@@ -1538,7 +1538,7 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string CalcHash,
    Item::Done(Message,Size,CalcHash,Cnf);
 
    // Check the hash
-   if(ExpectedHash.toStr() != CalcHash)
+   if(!ExpectedHash.empty() && ExpectedHash.toStr() != CalcHash)
    {
       Status = StatError;
       ErrorText = "Hash Sum mismatch";
