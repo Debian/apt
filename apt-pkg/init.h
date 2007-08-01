@@ -23,8 +23,6 @@
     
 extern const char *pkgVersion;
 extern const char *pkgLibVersion;
-extern const char *pkgOS;
-extern const char *pkgCPU;
 
 bool pkgInitConfig(Configuration &Cnf);
 bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys);

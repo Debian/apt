@@ -67,8 +67,8 @@ bool DoDump(CommandLine &CmdL)
 /* */
 int ShowHelp()
 {
-   ioprintf(cout,_("%s %s for %s %s compiled on %s %s\n"),PACKAGE,VERSION,
-	    COMMON_OS,COMMON_CPU,__DATE__,__TIME__);
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
       return 0;
    
