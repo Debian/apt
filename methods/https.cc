@@ -108,6 +108,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    struct stat SBuf;
    struct curl_slist *headers=NULL;  
    char curl_errorstr[CURL_ERROR_SIZE];
+   long curl_responsecode;
 
    // TODO:
    //       - http::Timeout
@@ -160,8 +161,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
    // set time values
-   curl_easy_setopt(curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
-   curl_easy_setopt(curl, CURLOPT_TIMEVALUE, Itm->LastModified);
+   if(Itm->LastModified > 0)
+   {
+      curl_easy_setopt(curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+      curl_easy_setopt(curl, CURLOPT_TIMEVALUE, Itm->LastModified);
+   }
 
    // speed limit
    int dlLimit = _config->FindI("Acquire::http::Dl-Limit",0)*1024;
@@ -179,8 +183,14 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_errorstr);
 
    // In this case we send an if-range query with a range header
-  if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
-     curl_easy_setopt(curl, CURLOPT_RESUME_FROM, (long)SBuf.st_size);
+   if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
+   {
+      char Buf[1000];
+      sprintf(Buf,"Range: bytes=%li-\r\nIf-Range: %s\r\n",
+	      (long)SBuf.st_size - 1,
+	      TimeRFC1123(SBuf.st_mtime).c_str());
+      headers = curl_slist_append(headers, Buf);
+   }
 
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
@@ -191,14 +201,17 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // get it!
    CURLcode success = curl_easy_perform(curl);
-
+   curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &curl_responsecode);
 
    // cleanup
-   if(success != 0) {
+   if(success != 0) 
+   {
+      unlink(File->Name().c_str());
       _error->Error(curl_errorstr);
       Fail();
       return true;
    }
+   File->Close();
 
    if (Res.Size == 0)
       Res.Size = File->Size();
@@ -211,7 +224,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Res.Filename = File->Name();
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
-      if (Itm->LastModified != 0 && Buf.st_mtime >= Itm->LastModified)
+      if (curl_responsecode == 304)
       {
 	 Res.IMSHit = true;
 	 Res.LastModified = Itm->LastModified;
@@ -228,7 +241,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    URIDone(Res);
 
    // cleanup
-   File->Close();
    Res.Size = 0;
    delete File;
    curl_slist_free_all(headers);
