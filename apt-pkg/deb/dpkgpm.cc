@@ -843,12 +843,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 if(stopOnError) 
 	 {
-	    fclose(term_out);
+	    if(term_out)
+	       fclose(term_out);
 	    return false;
 	 }
       }      
    }
-   fclose(term_out);
+   if(term_out)
+      fclose(term_out);
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;

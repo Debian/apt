@@ -71,7 +71,7 @@ bool pkgInitConfig(Configuration &Cnf)
 
    // State   
    Cnf.Set("Dir::Log","var/log/apt");
-   Cnf.Set("Dir::Log::Name","term.log");
+   Cnf.Set("Dir::Log::Terminal","term.log");
    
    bool Res = true;
    
