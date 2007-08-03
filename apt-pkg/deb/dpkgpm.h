@@ -26,7 +26,8 @@ class pkgDPkgPM : public pkgPackageManager
    // the buffer we use for the dpkg status-fd reading
    char dpkgbuf[1024];
    int dpkgbuf_pos;
-
+   FILE *term_out;
+   
    protected:
    int pkgFailures;
 
@@ -71,7 +72,7 @@ class pkgDPkgPM : public pkgPackageManager
 
    // input processing
    void DoStdin(int master);
-   void DoTerminalPty(int master, FILE *out);
+   void DoTerminalPty(int master);
    void DoDpkgStatusFd(int statusfd, int OutStatusFd);
    void ProcessDpkgStatusLine(int OutStatusFd, char *line);
 

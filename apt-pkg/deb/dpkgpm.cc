@@ -44,7 +44,8 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesTotal(0), PackagesDone(0)
+   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesTotal(0), 
+     PackagesDone(0), term_out(NULL)
 {
 }
 									/*}}}*/
@@ -351,7 +352,7 @@ void pkgDPkgPM::DoStdin(int master)
 /*
  * read the terminal pty and write log
  */
-void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
+void pkgDPkgPM::DoTerminalPty(int master)
 {
    char term_buf[1024] = {0,};
 
@@ -569,7 +570,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
    string logfile_name = flCombine(logdir,
 				   _config->Find("Dir::Log::Terminal"));
-   FILE *term_out = NULL;
    if (!logfile_name.empty())
    {
       term_out = fopen(logfile_name.c_str(),"a");
@@ -812,7 +812,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    continue;
 
 	 if(FD_ISSET(master, &rfds))
-	    DoTerminalPty(master, term_out);
+	    DoTerminalPty(master);
 	 if(FD_ISSET(0, &rfds))
 	    DoStdin(master);
 	 if(FD_ISSET(_dpkgin, &rfds))
@@ -956,6 +956,27 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    fprintf(report, "Package: %s %s\n", pkgname.c_str(), pkgver.c_str());
    fprintf(report, "SourcePackage: %s\n", srcpkgname.c_str());
    fprintf(report, "ErrorMessage:\n %s\n", errormsg);
+
+   // ensure that the log is flushed
+   if(term_out)
+      fflush(term_out);
+
+   // attach terminal log it if we have it
+   string logfile_name = _config->FindFile("Dir::Log::Terminal");
+   if (!logfile_name.empty())
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "DpkgTerminalLog:\n");
+      log = fopen(logfile_name.c_str(),"r");
+      if(log != NULL)
+      {
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+	 fclose(log);
+      }
+   }
    fclose(report);
 }
 									/*}}}*/
