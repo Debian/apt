@@ -1,3 +1,31 @@
+apt (0.7.7) UNRELEASED; urgency=low
+
+  * apt-inst/contrib/extracttar.cc:
+    - fix fd leak for zero size files (thanks to Bill Broadley for
+      reporting this bug)
+  * apt-pkg/acquire-item.cc:
+    - remove zero size files on I-M-S hit
+  * methods/https.cc:
+    - only send LastModified if we actually have one
+    - send range request with if-range 
+    - delete failed downloads
+  * apt-pkg/deb/dpkgpm.{cc,h}:
+    - merged dpkg-log branch, this lets you specify a 
+      Dir::Log::Terminal file to log dpkg output to
+      (ABI break)
+  * merged apt--sha256 branch to fully support the new
+    sha256 checksums in the Packages and Release files
+    (ABI break)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Aug 2007 11:55:54 +0200
+
+apt (0.7.6) unstable; urgency=low
+
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
+    directory downloading on non-linux architectures (closes: #435597)
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
+
 apt (0.7.6) unstable; urgency=low
 
   * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
@@ -391,7 +419,7 @@ apt (0.6.45) unstable; urgency=low
   * apt-pkg/tagfile.cc:
     - support not-mmapable files again
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 25 Jul 2006 11:55:22 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 27 Jul 2006 00:52:05 +0200
 
 apt (0.6.44.2exp1) experimental; urgency=low
 
