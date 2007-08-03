@@ -68,6 +68,10 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::parts","apt.conf.d");
    Cnf.Set("Dir::Etc::preferences","preferences");
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
+
+   // State   
+   Cnf.Set("Dir::Log","var/log/apt");
+   Cnf.Set("Dir::Log::Name","term.log");
    
    bool Res = true;
    

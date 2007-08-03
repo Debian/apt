@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/select.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
@@ -25,16 +26,24 @@
 #include <sstream>
 #include <map>
 
+#include <termios.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <pty.h>
+
 #include <config.h>
 #include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
 
+
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) : pkgPackageManager(Cache)
+pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
+   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesTotal(0), PackagesDone(0)
 {
 }
 									/*}}}*/
@@ -323,7 +332,167 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 
    return true;
 }
+
 									/*}}}*/
+// DPkgPM::DoStdin - Read stdin and pass to slave pty			/*{{{*/
+// ---------------------------------------------------------------------
+/*
+*/
+void pkgDPkgPM::DoStdin(int master)
+{
+   char input_buf[256] = {0,}; 
+   int len = read(0, input_buf, sizeof(input_buf));
+   write(master, input_buf, len);
+}
+									/*}}}*/
+// DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
+// ---------------------------------------------------------------------
+/*
+ * read the terminal pty and write log
+ */
+void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
+{
+   char term_buf[1024] = {0,};
+
+   int len=read(master, term_buf, sizeof(term_buf));
+   if(len <= 0)
+      return;
+   fwrite(term_buf, len, sizeof(char), term_out);
+   write(1, term_buf, len);
+}
+									/*}}}*/
+// DPkgPM::ProcessDpkgStatusBuf                                        	/*{{{*/
+// ---------------------------------------------------------------------
+/*
+ */
+void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
+{
+   // the status we output
+   ostringstream status;
+
+   if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+      std::clog << "got from dpkg '" << line << "'" << std::endl;
+
+
+   /* dpkg sends strings like this:
+      'status:   <pkg>:  <pkg  qstate>'
+      errors look like this:
+      'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
+      and conffile-prompt like this
+      'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+	    
+   */
+   char* list[5];
+   //        dpkg sends multiline error messages sometimes (see
+   //        #374195 for a example. we should support this by
+   //        either patching dpkg to not send multiline over the
+   //        statusfd or by rewriting the code here to deal with
+   //        it. for now we just ignore it and not crash
+   TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
+   char *pkg = list[1];
+   char *action = _strstrip(list[2]);
+   if( pkg == NULL || action == NULL) 
+   {
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "ignoring line: not enough ':'" << std::endl;
+      return;
+   }
+
+   if(strncmp(action,"error",strlen("error")) == 0)
+   {
+      status << "pmerror:" << list[1]
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+	     << ":" << list[3]
+	     << endl;
+      if(OutStatusFd > 0)
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+      return;
+   }
+   if(strncmp(action,"conffile",strlen("conffile")) == 0)
+   {
+      status << "pmconffile:" << list[1]
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+	     << ":" << list[3]
+	     << endl;
+      if(OutStatusFd > 0)
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+      return;
+   }
+
+   vector<struct DpkgState> &states = PackageOps[pkg];
+   const char *next_action = NULL;
+   if(PackageOpsDone[pkg] < states.size())
+      next_action = states[PackageOpsDone[pkg]].state;
+   // check if the package moved to the next dpkg state
+   if(next_action && (strcmp(action, next_action) == 0)) 
+   {
+      // only read the translation if there is actually a next
+      // action
+      const char *translation = _(states[PackageOpsDone[pkg]].str);
+      char s[200];
+      snprintf(s, sizeof(s), translation, pkg);
+
+      // we moved from one dpkg state to a new one, report that
+      PackageOpsDone[pkg]++;
+      PackagesDone++;
+      // build the status str
+      status << "pmstatus:" << pkg 
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+	     << ":" << s
+	     << endl;
+      if(OutStatusFd > 0)
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+   }
+   if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
+      std::clog << "(parsed from dpkg) pkg: " << pkg 
+		<< " action: " << action << endl;
+}
+
+// DPkgPM::DoDpkgStatusFd                                           	/*{{{*/
+// ---------------------------------------------------------------------
+/*
+ */
+void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
+{
+   char *p, *q;
+   int len;
+
+   len=read(statusfd, &dpkgbuf[dpkgbuf_pos], sizeof(dpkgbuf)-dpkgbuf_pos);
+   dpkgbuf_pos += len;
+   if(len <= 0)
+      return;
+
+   // process line by line if we have a buffer
+   p = q = dpkgbuf;
+   while((q=(char*)memchr(p, '\n', dpkgbuf+dpkgbuf_pos-p)) != NULL)
+   {
+      *q = 0;
+      ProcessDpkgStatusLine(OutStatusFd, p);
+      p=q+1; // continue with next line
+   }
+
+   // now move the unprocessed bits (after the final \n that is now a 0x0) 
+   // to the start and update dpkgbuf_pos
+   p = (char*)memrchr(dpkgbuf, 0, dpkgbuf_pos);
+   if(p == NULL)
+      return;
+
+   // we are interessted in the first char *after* 0x0
+   p++;
+
+   // move the unprocessed tail to the start and update pos
+   memmove(dpkgbuf, p, p-dpkgbuf);
+   dpkgbuf_pos = dpkgbuf+dpkgbuf_pos-p;
+}
+									/*}}}*/
+
+
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
@@ -344,9 +513,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    if (RunScriptsWithPkgs("DPkg::Pre-Install-Pkgs") == false)
       return false;
    
-   // prepare the progress reporting 
-   int Done = 0;
-   int Total = 0;
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
    static const struct DpkgState DpkgStatesOpMap[][5] = {
@@ -378,15 +544,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       },
    };
 
-   // the dpkg states that the pkg will run through, the string is 
-   // the package, the vector contains the dpkg states that the package
-   // will go through
-   map<string,vector<struct DpkgState> > PackageOps;
-   // the dpkg states that are already done; the string is the package
-   // the int is the state that is already done (e.g. a package that is
-   // going to be install is already in state "half-installed")
-   map<string,unsigned int> PackageOpsDone;
-
    // init the PackageOps map, go over the list of packages that
    // that will be [installed|configured|removed|purged] and add
    // them to the PackageOps map (the dpkg states it goes through)
@@ -398,9 +555,26 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL;  i++) 
       {
 	 PackageOps[name].push_back(DpkgStatesOpMap[(*I).Op][i]);
-	 Total++;
+	 PackagesTotal++;
       }
    }   
+
+   // create log
+   string logdir = _config->FindDir("Dir::Log");
+   if(not FileExists(logdir))
+      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
+   string logfile_name = flCombine(logdir,
+				   _config->Find("Dir::Log::Name"));
+   FILE *term_out = fopen(logfile_name.c_str(),"a");
+   chmod(logfile_name.c_str(), 0600);
+   // output current time
+   char outstr[200];
+   time_t t = time(NULL);
+   struct tm *tmp = localtime(&t);
+   strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+   fprintf(term_out, "Log started: ");
+   fprintf(term_out, outstr);
+   fprintf(term_out, "\n");
 
    // this loop is runs once per operation
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
@@ -516,7 +690,26 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 it doesn't die but we do! So we must also ignore it */
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
       sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
-	
+
+      struct	termios tt;
+      struct	winsize win;
+      int	master;
+      int	slave;
+
+      // FIXME: setup sensible signal handling (*ick*)
+      tcgetattr(0, &tt);
+      ioctl(0, TIOCGWINSZ, (char *)&win);
+      if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+      {
+	 fprintf(stderr, _("openpty failed\n"));
+      }
+
+      struct termios rtt;
+      rtt = tt;
+      cfmakeraw(&rtt);
+      rtt.c_lflag &= ~ECHO;
+      tcsetattr(0, TCSAFLUSH, &rtt);
+
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
@@ -525,8 +718,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // This is the child
       if (Child == 0)
       {
+	 setsid();
+	 ioctl(slave, TIOCSCTTY, 0);
+	 close(master);
+	 dup2(slave, 0);
+	 dup2(slave, 1);
+	 dup2(slave, 2);
+	 close(slave);
 	 close(fd[0]); // close the read end of the pipe
-	 
+
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
 	 
@@ -545,7 +745,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
 	       _exit(100);
 	 }
-	 
+
+
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 putenv("DPKG_NO_TSTP=yes");
@@ -562,16 +763,19 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // we read from dpkg here
       int _dpkgin = fd[0];
-      fcntl(_dpkgin, F_SETFL, O_NONBLOCK);
       close(fd[1]);                        // close the write end of the pipe
 
       // the read buffers for the communication with dpkg
-      char line[1024] = {0,};
       char buf[2] = {0,0};
       
       // the result of the waitpid call
       int res;
+      close(slave);
 
+      // setups fds
+      fd_set rfds;
+      struct timeval tv;
+      int select_ret;
       while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
 	 if(res < 0) {
 	    // FIXME: move this to a function or something, looks ugly here
@@ -585,127 +789,34 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    signal(SIGINT,old_SIGINT);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
-	 
-	 // read a single char, make sure that the read can't block 
-	 // (otherwise we may leave zombies)
-         int len = read(_dpkgin, buf, 1);
 
-	 // nothing to read, wait a bit for more
-	 if(len <= 0)
-	 {
-	    usleep(1000);
-	    continue;
-	 }
-	 
-	 // sanity check (should never happen)
-	 if(strlen(line) >= sizeof(line)-10)
-	 {
-	    _error->Error("got a overlong line from dpkg: '%s'",line);
-	    line[0]=0;
-	 }
-	 // append to line, check if we got a complete line
-	 strcat(line, buf);
-	 if(buf[0] != '\n')
+	 // wait for input or output here
+	 FD_ZERO(&rfds);
+	 FD_SET(0, &rfds); 
+	 FD_SET(_dpkgin, &rfds);
+	 FD_SET(master, &rfds);
+	 tv.tv_sec = 1;
+	 tv.tv_usec = 0;
+	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, NULL, &tv);
+	 if (select_ret < 0)
+	    std::cerr << "Error in select()" << std::endl;
+	 else if (select_ret == 0)
 	    continue;
 
-	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	    std::clog << "got from dpkg '" << line << "'" << std::endl;
-
-	 // the status we output
-	 ostringstream status;
-
-	 /* dpkg sends strings like this:
-	    'status:   <pkg>:  <pkg  qstate>'
-	    errors look like this:
-	    'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
-	    and conffile-prompt like this
-	    'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
-	    
-	 */
-	 char* list[5];
-	 //        dpkg sends multiline error messages sometimes (see
-	 //        #374195 for a example. we should support this by
-	 //        either patching dpkg to not send multiline over the
-	 //        statusfd or by rewriting the code here to deal with
-	 //        it. for now we just ignore it and not crash
-	 TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
-	 char *pkg = list[1];
-	 char *action = _strstrip(list[2]);
-	 if( pkg == NULL || action == NULL) 
-	 {
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "ignoring line: not enough ':'" << std::endl;
-	    // reset the line buffer
-	    line[0]=0;
-	    continue;
-	 }
-
-	 if(strncmp(action,"error",strlen("error")) == 0)
-	 {
-	    status << "pmerror:" << list[1]
-		   << ":"  << (Done/float(Total)*100.0) 
-		   << ":" << list[3]
-		   << endl;
-	    if(OutStatusFd > 0)
-	       write(OutStatusFd, status.str().c_str(), status.str().size());
-	    line[0]=0;
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "send: '" << status.str() << "'" << endl;
-	    continue;
-	 }
-	 if(strncmp(action,"conffile",strlen("conffile")) == 0)
-	 {
-	    status << "pmconffile:" << list[1]
-		   << ":"  << (Done/float(Total)*100.0) 
-		   << ":" << list[3]
-		   << endl;
-	    if(OutStatusFd > 0)
-	       write(OutStatusFd, status.str().c_str(), status.str().size());
-	    line[0]=0;
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "send: '" << status.str() << "'" << endl;
-	    continue;
-	 }
-
-	 vector<struct DpkgState> &states = PackageOps[pkg];
-	 const char *next_action = NULL;
-	 if(PackageOpsDone[pkg] < states.size())
-	    next_action = states[PackageOpsDone[pkg]].state;
-	 // check if the package moved to the next dpkg state
-	 if(next_action && (strcmp(action, next_action) == 0)) 
-	 {
-	    // only read the translation if there is actually a next
-	    // action
-	    const char *translation = _(states[PackageOpsDone[pkg]].str);
-	    char s[200];
-	    snprintf(s, sizeof(s), translation, pkg);
-
-	    // we moved from one dpkg state to a new one, report that
-	    PackageOpsDone[pkg]++;
-	    Done++;
-	    // build the status str
-	    status << "pmstatus:" << pkg 
-		   << ":"  << (Done/float(Total)*100.0) 
-		   << ":" << s
-		   << endl;
-	    if(OutStatusFd > 0)
-	       write(OutStatusFd, status.str().c_str(), status.str().size());
-	    if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	       std::clog << "send: '" << status.str() << "'" << endl;
-
-	 }
-	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
-	    std::clog << "(parsed from dpkg) pkg: " << pkg 
-		      << " action: " << action << endl;
-
-	 // reset the line buffer
-	 line[0]=0;
+	 if(FD_ISSET(master, &rfds))
+	    DoTerminalPty(master, term_out);
+	 if(FD_ISSET(0, &rfds))
+	    DoStdin(master);
+	 if(FD_ISSET(_dpkgin, &rfds))
+	    DoDpkgStatusFd(_dpkgin, OutStatusFd);
       }
       close(_dpkgin);
 
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+
+      tcsetattr(0, TCSAFLUSH, &tt);
        
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
@@ -725,10 +836,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 else 
 	    _error->Error("Sub-process %s exited unexpectedly",Args[0]);
 
-	 if(stopOnError)
+	 if(stopOnError) 
+	 {
+	    fclose(term_out);
 	    return false;
+	 }
       }      
    }
+   fclose(term_out);
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
