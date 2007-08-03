@@ -357,8 +357,9 @@ void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
    int len=read(master, term_buf, sizeof(term_buf));
    if(len <= 0)
       return;
-   fwrite(term_buf, len, sizeof(char), term_out);
    write(1, term_buf, len);
+   if(term_out)
+      fwrite(term_buf, len, sizeof(char), term_out);
 }
 									/*}}}*/
 // DPkgPM::ProcessDpkgStatusBuf                                        	/*{{{*/
@@ -564,17 +565,21 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    if(not FileExists(logdir))
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
    string logfile_name = flCombine(logdir,
-				   _config->Find("Dir::Log::Name"));
-   FILE *term_out = fopen(logfile_name.c_str(),"a");
-   chmod(logfile_name.c_str(), 0600);
-   // output current time
-   char outstr[200];
-   time_t t = time(NULL);
-   struct tm *tmp = localtime(&t);
-   strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-   fprintf(term_out, "Log started: ");
-   fprintf(term_out, outstr);
-   fprintf(term_out, "\n");
+				   _config->Find("Dir::Log::Terminal"));
+   FILE *term_out = NULL;
+   if (!logfile_name.empty())
+   {
+      term_out = fopen(logfile_name.c_str(),"a");
+      chmod(logfile_name.c_str(), 0600);
+      // output current time
+      char outstr[200];
+      time_t t = time(NULL);
+      struct tm *tmp = localtime(&t);
+      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+      fprintf(term_out, "\nLog started: ");
+      fprintf(term_out, outstr);
+      fprintf(term_out, "\n");
+   }
 
    // this loop is runs once per operation
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
