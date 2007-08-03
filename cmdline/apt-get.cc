@@ -918,7 +918,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
-	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
 
@@ -1359,7 +1359,7 @@ bool DoUpdate(CommandLine &CmdL)
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
-	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
 
@@ -2241,7 +2241,7 @@ bool DoSource(CommandLine &CmdL)
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
-	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
    
@@ -2612,8 +2612,8 @@ bool DoMoo(CommandLine &CmdL)
 /* */
 bool ShowHelp(CommandLine &CmdL)
 {
-   ioprintf(cout,_("%s %s for %s %s compiled on %s %s\n"),PACKAGE,VERSION,
-	    COMMON_OS,COMMON_CPU,__DATE__,__TIME__);
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+	    COMMON_ARCH,__DATE__,__TIME__);
 	    
    if (_config->FindB("version") == true)
    {

@@ -267,8 +267,23 @@ bool pkgAcquire::Worker::RunMessages()
 	       _error->Warning("Bizarre Error - File size is not what the server reported %s %lu",
 			       LookupTag(Message,"Size","0").c_str(),TotalSize);
 
+	    // see if there is a hash to verify
+	    string RecivedHash;
+	    HashString expectedHash(Owner->HashSum());
+	    if(!expectedHash.empty()) 
+	    {
+	       string hashTag = expectedHash.HashType()+"-Hash";
+	       RecivedHash = expectedHash.HashType() + ":" + LookupTag(Message, hashTag.c_str());
+	       if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
+	       {
+		  clog << "201 URI Done: " << Owner->DescURI() << endl
+		       << "RecivedHash: " << RecivedHash << endl
+		       << "ExpectedHash: " << expectedHash.toStr() 
+		       << endl << endl;
+	       }
+	    }
 	    Owner->Done(Message,atoi(LookupTag(Message,"Size","0").c_str()),
-			LookupTag(Message,"MD5-Hash"),Config);
+			RecivedHash.c_str(), Config);
 	    ItemDone();
 	    
 	    // Log that we are done

@@ -24,8 +24,6 @@ const char *pkgVersion = VERSION;
 const char *pkgLibVersion = Stringfy(APT_PKG_MAJOR) "."
                             Stringfy(APT_PKG_MINOR) "." 
                             Stringfy(APT_PKG_RELEASE);
-const char *pkgCPU = COMMON_CPU;
-const char *pkgOS = COMMON_OS;
     
 // pkgInitConfig - Initialize the configuration class			/*{{{*/
 // ---------------------------------------------------------------------
@@ -35,11 +33,7 @@ const char *pkgOS = COMMON_OS;
 bool pkgInitConfig(Configuration &Cnf)
 {
    // General APT things
-   if (strcmp(COMMON_OS,"linux") == 0 ||
-       strcmp(COMMON_OS,"unknown") == 0)
-      Cnf.Set("APT::Architecture",COMMON_CPU);
-   else
-      Cnf.Set("APT::Architecture",COMMON_OS "-" COMMON_CPU);
+   Cnf.Set("APT::Architecture", COMMON_ARCH);
    Cnf.Set("APT::Build-Essential::", "build-essential");
    Cnf.Set("APT::Install-Recommends", false);
    Cnf.Set("APT::Install-Suggests", false);
@@ -75,6 +69,10 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::parts","apt.conf.d");
    Cnf.Set("Dir::Etc::preferences","preferences");
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
+
+   // State   
+   Cnf.Set("Dir::Log","var/log/apt");
+   Cnf.Set("Dir::Log::Name","term.log");
    
    bool Res = true;
    

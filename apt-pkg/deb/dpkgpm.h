@@ -12,22 +12,43 @@
 
 #include <apt-pkg/packagemanager.h>
 #include <vector>
+#include <map>
 #include <stdio.h>
 
 using std::vector;
+using std::map;
+
 
 class pkgDPkgPM : public pkgPackageManager
 {
+   private:
+
+   // the buffer we use for the dpkg status-fd reading
+   char dpkgbuf[1024];
+   int dpkgbuf_pos;
+
    protected:
    int pkgFailures;
 
-   // used for progress reporting
+   // progress reporting
    struct DpkgState 
    {
       const char *state;     // the dpkg state (e.g. "unpack")
       const char *str;       // the human readable translation of the state
    };
-   
+
+   // the dpkg states that the pkg will run through, the string is 
+   // the package, the vector contains the dpkg states that the package
+   // will go through
+   map<string,vector<struct DpkgState> > PackageOps;
+   // the dpkg states that are already done; the string is the package
+   // the int is the state that is already done (e.g. a package that is
+   // going to be install is already in state "half-installed")
+   map<string,int> PackageOpsDone;
+   // progress reporting
+   int PackagesDone;
+   int PackagesTotal;
+  
    struct Item
    {
       enum Ops {Install, Configure, Remove, Purge} Op;
@@ -47,6 +68,12 @@ class pkgDPkgPM : public pkgPackageManager
 
    // apport integration
    void WriteApportReport(const char *pkgpath, const char *errormsg);
+
+   // input processing
+   void DoStdin(int master);
+   void DoTerminalPty(int master, FILE *out);
+   void DoDpkgStatusFd(int statusfd, int OutStatusFd);
+   void ProcessDpkgStatusLine(int OutStatusFd, char *line);
 
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);

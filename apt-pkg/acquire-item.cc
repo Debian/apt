@@ -103,7 +103,7 @@ void pkgAcquire::Item::Start(string /*Message*/,unsigned long Size)
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Item::Done(string Message,unsigned long Size,string,
+void pkgAcquire::Item::Done(string Message,unsigned long Size,string Hash,
 			    pkgAcquire::MethodConfig *Cnf)
 {
    // We just downloaded something..
@@ -192,8 +192,9 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
  */
 pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 				 string URI,string URIDesc,string ShortDesc,
-				 string ExpectedMD5)
-   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), Description(URIDesc)
+				 HashString ExpectedHash)
+   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash),
+     Description(URIDesc)
 {
    
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
@@ -321,11 +322,11 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       if(found) 
       {
 	 // queue the diffs
-	 unsigned int last_space = Description.rfind(" ");
+	 string::size_type last_space = Description.rfind(" ");
 	 if(last_space != string::npos)
 	    Description.erase(last_space, Description.size()-last_space);
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedMD5, available_patches);
+			      ExpectedHash, available_patches);
 	 Complete = false;
 	 Status = StatDone;
 	 Dequeue();
@@ -348,7 +349,7 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 		<< "Falling back to normal index file aquire" << std::endl;
 
    new pkgAcqIndex(Owner, RealURI, Description, Desc.ShortDesc, 
-		   ExpectedMD5);
+		   ExpectedHash);
 
    Complete = false;
    Status = StatDone;
@@ -394,8 +395,9 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long Size,string Md5Hash,
  */
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 				   string URI,string URIDesc,string ShortDesc,
-				   string ExpectedMD5, vector<DiffInfo> diffs)
-   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5), 
+				   HashString ExpectedMD5, 
+				   vector<DiffInfo> diffs)
+   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), 
      available_patches(diffs)
 {
    
@@ -428,7 +430,7 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
 		<< "Falling back to normal index file aquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
-		   ExpectedMD5);
+		   ExpectedHash);
    Finish();
 }
 
@@ -443,14 +445,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI);
 
-      // do the final md5sum checking
-      MD5Summation sum;
-      FileFd Fd(DestFile, FileFd::ReadOnly);
-      sum.AddFD(Fd.Fd(), Fd.Size());
-      Fd.Close();
-      string MD5 = (string)sum.Result();
-
-      if (!ExpectedMD5.empty() && MD5 != ExpectedMD5)
+      if(!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
       {
 	 Status = StatAuthError;
 	 ErrorText = _("MD5Sum mismatch");
@@ -592,7 +587,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
       // see if there is more to download
       if(available_patches.size() > 0) {
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedMD5, available_patches);
+			      ExpectedHash, available_patches);
 	 return Finish();
       } else 
 	 return Finish(true);
@@ -606,8 +601,8 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
    instantiated to fetch the revision file */   
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
-			 string ExpectedMD5, string comprExt)
-   : Item(Owner), RealURI(URI), ExpectedMD5(ExpectedMD5)
+			 HashString ExpectedHash, string comprExt)
+   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash)
 {
    Decompression = false;
    Erase = false;
@@ -657,7 +652,7 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 
       // retry with a gzip one 
       new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc, 
-		      ExpectedMD5, string(".gz"));
+		      ExpectedHash, string(".gz"));
       Status = StatDone;
       Complete = false;
       Dequeue();
@@ -682,32 +677,23 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    to the uncompressed version of the file. If this is so the file
    is copied into the partial directory. In all other cases the file
    is decompressed with a gzip uri. */
-void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
+void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 		       pkgAcquire::MethodConfig *Cfg)
 {
-   Item::Done(Message,Size,MD5,Cfg);
+   Item::Done(Message,Size,Hash,Cfg);
 
    if (Decompression == true)
    {
       if (_config->FindB("Debug::pkgAcquire::Auth", false))
       {
-         std::cerr << std::endl << RealURI << ": Computed MD5: " << MD5;
-         std::cerr << "  Expected MD5: " << ExpectedMD5 << std::endl;
+         std::cerr << std::endl << RealURI << ": Computed Hash: " << Hash;
+         std::cerr << "  Expected Hash: " << ExpectedHash.toStr() << std::endl;
       }
 
-      if (MD5.empty())
-      {
-         MD5Summation sum;
-         FileFd Fd(DestFile, FileFd::ReadOnly);
-         sum.AddFD(Fd.Fd(), Fd.Size());
-         Fd.Close();
-         MD5 = (string)sum.Result();
-      }
-
-      if (!ExpectedMD5.empty() && MD5 != ExpectedMD5)
+      if (!ExpectedHash.empty() && ExpectedHash.toStr() != Hash)
       {
          Status = StatAuthError;
-         ErrorText = _("MD5Sum mismatch");
+         ErrorText = _("Hash Sum mismatch");
          Rename(DestFile,DestFile + ".FAILED");
 	 ReportMirrorFailure("HashChecksumFailure");
          return;
@@ -738,8 +724,10 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    {
       // The files timestamp matches
       if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
+      {
+	 unlink(FileName.c_str());
 	 return;
-
+      }
       Decompression = true;
       Local = true;
       DestFile += ".decomp";
@@ -758,7 +746,10 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   {
+      unlink(FileName.c_str());
       return;
+   }
 
    if (FileName == DestFile)
       Erase = true;
@@ -787,8 +778,8 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
 // ---------------------------------------------------------------------
 /* The Translation file is added to the queue */
 pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
-			    string URI,string URIDesc,string ShortDesc) :
-                      pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, "", "")
+			    string URI,string URIDesc,string ShortDesc) 
+  : pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, HashString(), "")
 {
 }
 
@@ -965,10 +956,10 @@ string pkgAcqMetaIndex::Custom600Headers()
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 
-void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string MD5,
+void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,
 			   pkgAcquire::MethodConfig *Cfg)
 {
-   Item::Done(Message,Size,MD5,Cfg);
+   Item::Done(Message,Size,Hash,Cfg);
 
    // MetaIndexes are done in two passes: one to download the
    // metaindex with an appropriate method, and a second to verify it
@@ -1030,18 +1021,18 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
 
    // see if the download was a IMSHit
    IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
-
    Complete = true;
 
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
 
-   // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == false)
-   {
-      // Move it into position
+   // If we get a IMS hit we can remove the empty file in partial
+   // othersie we move the file in place
+   if (IMSHit)
+      unlink(DestFile.c_str());
+   else
       Rename(DestFile,FinalFile);
-   }
+
    chmod(FinalFile.c_str(),0644);
    DestFile = FinalFile;
 }
@@ -1086,7 +1077,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
         Target != IndexTargets->end();
         Target++)
    {
-      string ExpectedIndexMD5;
+      HashString ExpectedIndexHash;
       if (verify)
       {
          const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
@@ -1097,16 +1088,16 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
                + (*Target)->MetaKey + " in Meta-index file (malformed Release file?)";
             return;
          }
-         ExpectedIndexMD5 = Record->MD5Hash;
+         ExpectedIndexHash = Record->Hash;
          if (_config->FindB("Debug::pkgAcquire::Auth", false))
          {
             std::cerr << "Queueing: " << (*Target)->URI << std::endl;
-            std::cerr << "Expected MD5: " << ExpectedIndexMD5 << std::endl;
+            std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
          }
-         if (ExpectedIndexMD5.empty())
+         if (ExpectedIndexHash.empty())
          {
             Status = StatAuthError;
-            ErrorText = "Unable to find MD5 sum for "
+            ErrorText = "Unable to find hash sum for "
                + (*Target)->MetaKey + " in Meta-index file";
             return;
          }
@@ -1116,10 +1107,10 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
       // on the users option)
       if(_config->FindB("Acquire::PDiffs",false) == true) 
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
-			     (*Target)->ShortDesc, ExpectedIndexMD5);
+			     (*Target)->ShortDesc, ExpectedIndexHash);
       else 
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
-			    (*Target)->ShortDesc, ExpectedIndexMD5);
+			    (*Target)->ShortDesc, ExpectedIndexHash);
    }
 }
 
@@ -1360,7 +1351,12 @@ bool pkgAcqArchive::QueueNext()
 	 return false;
       
       string PkgFile = Parse.FileName();
-      MD5 = Parse.MD5Hash();
+      if(Parse.SHA256Hash() != "")
+	 ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
+      else if (Parse.SHA1Hash() != "")
+	 ExpectedHash = HashString("SHA1", Parse.SHA1Hash());
+      else 
+	 ExpectedHash = HashString("MD5Sum", Parse.MD5Hash());
       if (PkgFile.empty() == true)
 	 return _error->Error(_("The package index files are corrupted. No Filename: "
 			      "field for package %s."),
@@ -1440,10 +1436,10 @@ bool pkgAcqArchive::QueueNext()
 // AcqArchive::Done - Finished fetching					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
+void pkgAcqArchive::Done(string Message,unsigned long Size,string CalcHash,
 			 pkgAcquire::MethodConfig *Cfg)
 {
-   Item::Done(Message,Size,Md5Hash,Cfg);
+   Item::Done(Message,Size,CalcHash,Cfg);
    
    // Check the size
    if (Size != Version->Size)
@@ -1453,17 +1449,14 @@ void pkgAcqArchive::Done(string Message,unsigned long Size,string Md5Hash,
       return;
    }
    
-   // Check the md5
-   if (Md5Hash.empty() == false && MD5.empty() == false)
+   // Check the hash
+   if(ExpectedHash.toStr() != CalcHash)
    {
-      if (Md5Hash != MD5)
-      {
-	 Status = StatError;
-	 ErrorText = _("MD5Sum mismatch");
-	 if(FileExists(DestFile))
-	    Rename(DestFile,DestFile + ".FAILED");
-	 return;
-      }
+      Status = StatError;
+      ErrorText = _("Hash Sum mismatch");
+      if(FileExists(DestFile))
+	 Rename(DestFile,DestFile + ".FAILED");
+      return;
    }
 
    // Grab the output filename
@@ -1555,10 +1548,10 @@ void pkgAcqArchive::Finished()
 // AcqFile::pkgAcqFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The file is added to the queue */
-pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
+pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
 		       unsigned long Size,string Dsc,string ShortDesc,
 		       const string &DestDir, const string &DestFilename) :
-                       Item(Owner), Md5Hash(MD5)
+                       Item(Owner), ExpectedHash(Hash)
 {
    Retries = _config->FindI("Acquire::Retries",0);
    
@@ -1595,23 +1588,20 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string MD5,
 // AcqFile::Done - Item downloaded OK					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqFile::Done(string Message,unsigned long Size,string MD5,
+void pkgAcqFile::Done(string Message,unsigned long Size,string CalcHash,
 		      pkgAcquire::MethodConfig *Cnf)
 {
-   // Check the md5
-   if (Md5Hash.empty() == false && MD5.empty() == false)
+   Item::Done(Message,Size,CalcHash,Cnf);
+
+   // Check the hash
+   if(!ExpectedHash.empty() && ExpectedHash.toStr() != CalcHash)
    {
-      if (Md5Hash != MD5)
-      {
-	 Status = StatError;
-	 ErrorText = "MD5Sum mismatch";
-	 Rename(DestFile,DestFile + ".FAILED");
-	 return;
-      }
+      Status = StatError;
+      ErrorText = "Hash Sum mismatch";
+      Rename(DestFile,DestFile + ".FAILED");
+      return;
    }
    
-   Item::Done(Message,Size,MD5,Cnf);
-
    string FileName = LookupTag(Message,"Filename");
    if (FileName.empty() == true)
    {

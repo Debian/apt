@@ -12,7 +12,7 @@
    Three item classes are provided to provide functionality for
    downloading of Index, Translation and Packages files.
    
-   A Archive class is provided for downloading .deb files. It does Md5
+   A Archive class is provided for downloading .deb files. It does Hash
    checking and source location as well as a retry algorithm.
    
    ##################################################################### */
@@ -26,7 +26,7 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexrecords.h>
-
+#include <apt-pkg/hashes.h>
 
 /** \addtogroup acquire
  *  @{
@@ -188,12 +188,12 @@ class pkgAcquire::Item
     *  \param Message Data from the acquire method.  Use LookupTag()
     *  to parse it.
     *  \param Size The size of the object that was fetched.
-    *  \param Md5Hash The MD5Sum of the object that was fetched.
+    *  \param Hash The HashSum of the object that was fetched.
     *  \param Cnf The method via which the object was fetched.
     *
     *  \sa pkgAcqMethod
     */
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long Size,string Hash,
 		     pkgAcquire::MethodConfig *Cnf);
 
    /** \brief Invoked when the worker starts to fetch this object.
@@ -231,12 +231,12 @@ class pkgAcquire::Item
    /** \brief Invoked by the worker when the download is completely done. */
    virtual void Finished() {};
    
-   /** \brief MD5Sum.
+   /** \brief HashSum 
     *
-    *  \return the MD5Sum of this object, if applicable; otherwise, an
+    *  \return the HashSum of this object, if applicable; otherwise, an
     *  empty string.
     */
-   virtual string MD5Sum() {return string();};
+   virtual string HashSum() {return string();};
 
    /** \return the acquire process with which this item is associated. */
    pkgAcquire *GetOwner() {return Owner;};
@@ -309,10 +309,10 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     */
    string RealURI;
 
-   /** \brief The MD5Sum that the real index file should have after
+   /** \brief The Hash that the real index file should have after
     *  all patches have been applied.
     */
-   string ExpectedMD5;
+   HashString ExpectedHash;
 
    /** \brief The index file which will be patched to generate the new
     *  file.
@@ -355,10 +355,10 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     *
     *  \param ShortDesc A short description of the list file to download.
     *
-    *  \param ExpectedMD5 The list file's MD5 signature.
+    *  \param ExpectedHash The list file's MD5 signature.
     */
    pkgAcqDiffIndex(pkgAcquire *Owner,string URI,string URIDesc,
-		   string ShortDesc, string ExpectedMD5);
+		   string ShortDesc, HashString ExpectedHash);
 };
 
 /** \brief An item that is responsible for fetching all the patches
@@ -391,7 +391,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *  finishes downloading.
     *
     *  Dequeues the item and checks the resulting file's md5sum
-    *  against ExpectedMD5 after the last patch was applied.
+    *  against ExpectedHash after the last patch was applied.
     *  There is no need to check the md5/sha1 after a "normal" 
     *  patch because QueueNextDiff() will check the sha1 later.
     *
@@ -417,10 +417,10 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     */
    string RealURI;
 
-   /** \brief The MD5Sum of the package index file that is being
+   /** \brief The HashSum of the package index file that is being
     *  reconstructed.
     */
-   string ExpectedMD5;
+   HashString ExpectedHash;
 
    /** A description of the file being downloaded. */
    string Description;
@@ -477,7 +477,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *
     *  \param ShortDesc A brief description of this item.
     *
-    *  \param ExpectedMD5 The expected md5sum of the completely
+    *  \param ExpectedHash The expected md5sum of the completely
     *  reconstructed package index file; the index file will be tested
     *  against this value when it is entirely reconstructed.
     *
@@ -486,7 +486,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *  that depends on it.
     */
    pkgAcqIndexDiffs(pkgAcquire *Owner,string URI,string URIDesc,
-		    string ShortDesc, string ExpectedMD5,
+		    string ShortDesc, HashString ExpectedHash,
 		    vector<DiffInfo> diffs=vector<DiffInfo>());
 };
 
@@ -519,8 +519,8 @@ class pkgAcqIndex : public pkgAcquire::Item
     */
    string RealURI;
 
-   /** \brief The expected md5sum of the decompressed index file. */
-   string ExpectedMD5;
+   /** \brief The expected hashsum of the decompressed index file. */
+   HashString ExpectedHash;
 
    /** \brief The compression-related file extension that is being
     *  added to the downloaded file (e.g., ".gz" or ".bz2").
@@ -535,6 +535,7 @@ class pkgAcqIndex : public pkgAcquire::Item
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
    virtual string DescURI() {return RealURI + CompressionExtension;};
+   virtual string HashSum() {return ExpectedHash.toStr(); };
 
    /** \brief Create a pkgAcqIndex.
     *
@@ -547,14 +548,15 @@ class pkgAcqIndex : public pkgAcquire::Item
     *
     *  \param ShortDesc A brief description of this index file.
     *
-    *  \param ExpectedMD5 The expected md5sum of this index file.
+    *  \param ExpectedHash The expected hashsum of this index file.
     *
     *  \param compressExt The compression-related extension with which
     *  this index file should be downloaded, or "" to autodetect
     *  (".bz2" is used if bzip2 is installed, ".gz" otherwise).
     */
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
-	       string ShortDesct, string ExpectedMD5, string compressExt="");
+	       string ShortDesc, HashString ExpectedHash, 
+	       string compressExt="");
 };
 
 /** \brief An acquire item that is responsible for fetching a
@@ -581,7 +583,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
     *
     *  \param ShortDesc A brief description of this index file.
     *
-    *  \param ExpectedMD5 The expected md5sum of this index file.
+    *  \param ExpectedHash The expected hashsum of this index file.
     *
     *  \param compressExt The compression-related extension with which
     *  this index file should be downloaded, or "" to autodetect
@@ -673,9 +675,9 @@ class pkgAcqMetaSig : public pkgAcquire::Item
  *
  *  Once the download and verification are complete, the downloads of
  *  the individual index files are queued up using pkgAcqDiffIndex.
- *  If the meta-index file had a valid signature, the expected md5sums
+ *  If the meta-index file had a valid signature, the expected hashsums
  *  of the index files will be the md5sums listed in the meta-index;
- *  otherwise, the expected md5sums will be "" (causing the
+ *  otherwise, the expected hashsums will be "" (causing the
  *  authentication of the index files to be bypassed).
  */
 class pkgAcqMetaIndex : public pkgAcquire::Item
@@ -739,11 +741,11 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
 
    /** \brief Starts downloading the individual index files.
     *
-    *  \param verify If \b true, only indices whose expected md5sum
+    *  \param verify If \b true, only indices whose expected hashsum
     *  can be determined from the meta-index will be downloaded, and
-    *  the md5sums of indices will be checked (reporting
+    *  the hashsums of indices will be checked (reporting
     *  #StatAuthError if there is a mismatch).  If verify is \b false,
-    *  no md5sum checking will be performed.
+    *  no hashsum checking will be performed.
     */
    void QueueIndexes(bool verify);
    
@@ -751,7 +753,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long Size, string Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
    virtual string DescURI() {return RealURI; };
@@ -788,8 +790,8 @@ class pkgAcqArchive : public pkgAcquire::Item
     */
    pkgRecords *Recs;
 
-   /** \brief The md5sum of this package. */
-   string MD5;
+   /** \brief The hashsum of this package. */
+   HashString ExpectedHash;
 
    /** \brief A location in which the actual filename of the package
     *  should be stored.
@@ -817,13 +819,12 @@ class pkgAcqArchive : public pkgAcquire::Item
    public:
    
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long Size,string Hash,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual string MD5Sum() {return MD5;};
    virtual string DescURI() {return Desc.URI;};
    virtual string ShortDesc() {return Desc.ShortDesc;};
    virtual void Finished();
-
+   virtual string HashSum() {return ExpectedHash.toStr(); };
    virtual bool IsTrusted();
    
    /** \brief Create a new pkgAcqArchive.
@@ -860,8 +861,8 @@ class pkgAcqFile : public pkgAcquire::Item
    /** \brief The currently active download process. */
    pkgAcquire::ItemDesc Desc;
 
-   /** \brief The md5sum of the file to download, if it is known. */
-   string Md5Hash;
+   /** \brief The hashsum of the file to download, if it is known. */
+   HashString ExpectedHash;
 
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.
@@ -872,10 +873,10 @@ class pkgAcqFile : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long Size,string CalcHash,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual string MD5Sum() {return Md5Hash;};
    virtual string DescURI() {return Desc.URI;};
+   virtual string HashSum() {return ExpectedHash.toStr(); };
 
    /** \brief Create a new pkgAcqFile object.
     *
@@ -884,7 +885,7 @@ class pkgAcqFile : public pkgAcquire::Item
     *
     *  \param URI The URI to download.
     *
-    *  \param MD5 The md5sum of the file to download, if it is known;
+    *  \param Hash The hashsum of the file to download, if it is known;
     *  otherwise "".
     *
     *  \param Size The size of the file to download, if it is known;
@@ -906,7 +907,7 @@ class pkgAcqFile : public pkgAcquire::Item
     * is the absolute name to which the file should be downloaded.
     */
 
-   pkgAcqFile(pkgAcquire *Owner, string URI, string MD5, unsigned long Size,
+   pkgAcqFile(pkgAcquire *Owner, string URI, string Hash, unsigned long Size,
 	      string Desc, string ShortDesc,
 	      const string &DestDir="", const string &DestFilename="");
 };

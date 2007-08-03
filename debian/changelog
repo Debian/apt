@@ -1,14 +1,53 @@
-apt (0.7.4ubuntu1) gutsy; urgency=low
+apt (0.7.6ubuntu1) gutsy; urgency=low
+
+  * apt-inst/contrib/extracttar.cc:
+    - fix fd leak for zero size files (thanks to Bill Broadley for
+      reporting this bug)
+  * apt-pkg/acquire-item.cc:
+    - remove zero size files on I-M-S hit
+  * methods/https.cc:
+    - only send LastModified if we actually have one
+    - send range request with if-range 
+    - delete failed downloads
+  * apt-pkg/deb/dpkgpm.{cc,h}:
+    - merged dpkg-log branch, this lets you specify a 
+      Dir::Log::Terminal file to log dpkg output to
+      (ABI break)
+  * merged apt--sha256 branch to fully support the new
+    sha256 checksums in the Packages and Release files
+    (ABI break)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Aug 2007 11:55:54 +0200
+
+apt (0.7.6) unstable; urgency=low
+
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
+    directory downloading on non-linux architectures (closes: #435597)
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
+
+apt (0.7.5) unstable; urgency=low
 
   [ Otavio Salvador ]
-  * Applied patch from Guillem Jover <guillem.jover@nokia.com> to use
+  * Applied patch from Guillem Jover <guillem@debian.org> to use
     dpkg-architecture to get the host architecture (closes: #407187)
+  * Applied patch from Guillem Jover <guillem@debian.org> to add
+    support to add lzma support (closes: #408201)
 
   [ Michael Vogt ]
   * apt-pkg/depcache.cc:
     - support a list of sections for:
       APT::Install-Recommends-Sections
       APT::Never-MarkAuto-Sections
+  * methods/makefile:
+    - install lzma symlink method (for full lzma support)
+  * debian/control:
+    - suggest "lzma"
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 25 Jul 2007 20:16:46 -0300
+
+apt (0.7.4ubuntu1) gutsy; urgency=low
+
   * debian/apt.conf.ubuntu, apt.conf.autoremove:
     - Change metapackages to {restricted,universe,multiverse}/metapackages 
       in Install-Recommends-Sections and Never-MarkAuto-Sections
@@ -34,6 +73,13 @@ apt (0.7.4) unstable; urgency=low
       - type conversion;
       - unused variable;
       - changed SetupProxy() method to void;
+  * Simplified HttpMethod::Fetch on http.cc removing Tail variable;
+  * Fix pipeline handling on http.cc (closes: #413324)
+  * Fix building to properly support binNMUs. Thanks to Daniel Schepler
+    <schepler@math.unipd.it> by the patch (closes: #359634)
+  * Fix example for Install-{Recommends,Suggests} options on
+    configure-index example file. Thanks to Peter Eisentraut
+    <peter_e@gmx.net> by the patch (closes: #432223)
 
   [ Christian Perrier ]
   * Basque translation update. Closes: ##423766
@@ -45,6 +91,29 @@ apt (0.7.4) unstable; urgency=low
 
  -- Otavio Salvador <otavio@debian.org>  Tue, 24 Jul 2007 09:55:50 -0300
 
+apt (0.7.3) unstable; urgency=low
+
+  * fixed compile errors with g++ 4.3 (thanks to 
+    Daniel Burrows, closes: #429378)
+  * fixes in the auto-mark code (thanks to Daniel
+    Burrows)
+  * fix FTFBFS by changing build-depends to
+    libcurl4-gnutls-dev (closes: #428363)
+  * cmdline/apt-get.cc:
+    - fix InstallTask code when a pkgRecord ends 
+      with a single '\n' (thanks to Soren Hansen for reporting)
+  * merged from Christian Perrier:
+        * vi.po: completed to 532t, again. Closes: #429899
+        * gl.po: completed to 532t. Closes: #429506
+        * vi.po: completed to 532t. Closes: #428672
+        * Update all PO and the POT. Gives 514t14f4u for formerly
+          complete translations
+        * fr.po: completed to 532t
+        * ku.po, uk.po, LINGUAS: reintegrate those translations
+          which disappeared from the BZR repositories
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 01 Jul 2007 12:31:29 +0200
+  
 apt (0.7.2ubuntu7) gutsy; urgency=low
 
   * fix build-dependencies 
@@ -226,7 +295,7 @@ apt (0.7.1) experimental; urgency=low
   * apt-pkg/policy.cc:
     - allow multiple packages (thanks to David Foerster)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 17 Apr 2007 15:53:37 +0200
+ -- Michael Vogt <mvo@debian.org>  Wed,  2 May 2007 13:43:44 +0200
 
 apt (0.6.46.4ubuntu10) feisty; urgency=low
 

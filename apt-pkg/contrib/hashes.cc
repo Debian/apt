@@ -12,10 +12,94 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/configuration.h>
     
 #include <unistd.h>    
 #include <system.h>    
+#include <string>
+#include <iostream>
 									/*}}}*/
+
+const char* HashString::_SupportedHashes[] = 
+{
+   "SHA256", "SHA1", "MD5Sum", NULL
+};
+
+HashString::HashString()
+{
+}
+
+HashString::HashString(string Type, string Hash) : Type(Type), Hash(Hash)
+{
+}
+
+HashString::HashString(string StringedHash)
+{
+   // legacy: md5sum without "MD5Sum:" prefix
+   if (StringedHash.find(":") == string::npos && StringedHash.size() == 32)
+   {
+      Type = "MD5Sum";
+      Hash = StringedHash;
+      return;
+   }
+   string::size_type pos = StringedHash.find(":");
+   Type = StringedHash.substr(0,pos);
+   Hash = StringedHash.substr(pos+1, StringedHash.size() - pos);
+
+   if(_config->FindB("Debug::Hashes",false) == true)
+      std::clog << "HashString(string): " << Type << " : " << Hash << std::endl;
+}
+
+
+bool HashString::VerifyFile(string filename) const
+{
+   FileFd fd;
+   MD5Summation MD5;
+   SHA1Summation SHA1;
+   SHA256Summation SHA256;
+   string fileHash;
+
+   FileFd Fd(filename, FileFd::ReadOnly);
+   if(Type == "MD5Sum") 
+   {
+      MD5.AddFD(Fd.Fd(), Fd.Size());
+      fileHash = (string)MD5.Result();
+   } 
+   else if (Type == "SHA1")
+   {
+      SHA1.AddFD(Fd.Fd(), Fd.Size());
+      fileHash = (string)SHA1.Result();
+   } 
+   else if (Type == "SHA256") 
+   {
+      SHA256.AddFD(Fd.Fd(), Fd.Size());
+      fileHash = (string)SHA256.Result();
+   }
+   Fd.Close();
+
+   if(_config->FindB("Debug::Hashes",false) == true)
+      std::clog << "HashString::VerifyFile: got: " << fileHash << " expected: " << toStr() << std::endl;
+
+   return (fileHash == Hash);
+}
+
+const char** HashString::SupportedHashes()
+{
+   return _SupportedHashes;
+}
+
+bool HashString::empty() const
+{
+   return (Type.empty() || Hash.empty());
+}
+
+
+string HashString::toStr() const
+{
+   return Type+string(":")+Hash;
+}
+
 
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
 // ---------------------------------------------------------------------

@@ -528,23 +528,16 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
       return false;
    }
 
-   MD5Summation sum;
-   FileFd Fd(prefix+file, FileFd::ReadOnly);
-   sum.AddFD(Fd.Fd(), Fd.Size());
-   Fd.Close();
-   string MD5 = (string)sum.Result();
-   
-   if (Record->MD5Hash != MD5)
+   if (!Record->Hash.VerifyFile(prefix+file))
    {
-      _error->Warning("MD5 mismatch for: %s",file.c_str());
+      _error->Warning("Hash mismatch for: %s",file.c_str());
       return false;
    }
 
    if(_config->FindB("Debug::aptcdrom",false)) 
    {
       cout << "File: " << prefix+file << endl;
-      cout << "Expected MD5sum: " << Record->MD5Hash << endl;
-      cout << "got: " << MD5 << endl << endl;
+      cout << "Expected Hash " << Record->Hash.toStr() << endl;
    }
 
    return true;

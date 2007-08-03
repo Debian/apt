@@ -8,6 +8,7 @@
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
 
 #include <map>
 #include <vector>
@@ -45,7 +46,7 @@ class indexRecords
 struct indexRecords::checkSum
 {
    string MetaKeyFilename;
-   string MD5Hash;
+   HashString Hash;
    size_t Size;      
 };
 
