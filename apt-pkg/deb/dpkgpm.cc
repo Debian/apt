@@ -43,7 +43,7 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesTotal(0), PackagesDone(0)
+   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesDone(0), PackagesTotal(0)
 {
 }
 									/*}}}*/
@@ -770,9 +770,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       int _dpkgin = fd[0];
       close(fd[1]);                        // close the write end of the pipe
 
-      // the read buffers for the communication with dpkg
-      char buf[2] = {0,0};
-      
       // the result of the waitpid call
       int res;
       close(slave);

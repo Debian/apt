@@ -43,10 +43,10 @@ class pkgDPkgPM : public pkgPackageManager
    // the dpkg states that are already done; the string is the package
    // the int is the state that is already done (e.g. a package that is
    // going to be install is already in state "half-installed")
-   map<string,int> PackageOpsDone;
+   map<string,unsigned int> PackageOpsDone;
    // progress reporting
-   int PackagesDone;
-   int PackagesTotal;
+   unsigned int PackagesDone;
+   unsigned int PackagesTotal;
   
    struct Item
    {

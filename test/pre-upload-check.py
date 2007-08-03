@@ -110,6 +110,7 @@ class testAptInstall(unittest.TestCase):
                      "installing %s failed (got %s)" % (self.pkg, res))
 
 if __name__ == "__main__":
+    print "Runing simple testsuit on current apt-get and libapt"
     if len(sys.argv) > 1 and sys.argv[1] == "-v":
         stdout = sys.stdout
         stderr = sys.stderr
