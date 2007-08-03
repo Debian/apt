@@ -3,6 +3,12 @@ apt (0.7.7) UNRELEASED; urgency=low
   * apt-inst/contrib/extracttar.cc:
     - fix fd leak for zero size files (thanks to Bill Broadley for
       reporting this bug)
+  * apt-pkg/acquire-item.cc:
+    - remove zero size files on I-M-S hit
+  * methods/https.cc:
+    - only send LastModified if we actually have one
+    - send range request with if-range 
+    - delete failed downloads
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Aug 2007 11:55:54 +0200
 

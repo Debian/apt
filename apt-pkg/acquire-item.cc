@@ -688,8 +688,10 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    {
       // The files timestamp matches
       if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
+      {
+	 unlink(FileName.c_str());
 	 return;
-
+      }
       Decompression = true;
       Local = true;
       DestFile += ".decomp";
@@ -708,7 +710,10 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string MD5,
    
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   {
+      unlink(FileName.c_str());
       return;
+   }
 
    if (FileName == DestFile)
       Erase = true;
@@ -980,18 +985,18 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
 
    // see if the download was a IMSHit
    IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
-
    Complete = true;
 
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
 
-   // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == false)
-   {
-      // Move it into position
+   // If we get a IMS hit we can remove the empty file in partial
+   // othersie we move the file in place
+   if (IMSHit)
+      unlink(DestFile.c_str());
+   else
       Rename(DestFile,FinalFile);
-   }
+
    chmod(FinalFile.c_str(),0644);
    DestFile = FinalFile;
 }
