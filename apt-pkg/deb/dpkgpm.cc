@@ -45,8 +45,8 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0), 
-     PackagesTotal(0), PackagesDone(0), term_out(NULL)
+   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesDone(0), 
+     PackagesTotal(0), term_out(NULL)
 {
 }
 									/*}}}*/
@@ -819,7 +819,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    continue;
 
 	 if(master >= 0 && FD_ISSET(master, &rfds))
-	    DoTerminalPty(master, term_out);
+	    DoTerminalPty(master);
 	 if(master >= 0 && FD_ISSET(0, &rfds))
 	    DoStdin(master);
 	 if(FD_ISSET(_dpkgin, &rfds))
