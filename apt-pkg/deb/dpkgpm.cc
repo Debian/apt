@@ -895,9 +895,9 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 
    // get the pkgname and reportfile
    pkgname = flNotDir(pkgpath);
-   pos = pkgname.rfind('_');
+   pos = pkgname.find('_');
    if(pos != string::npos)
-      pkgname = string(pkgname, 0, pos);
+      pkgname = pkgname.substr(0, pos);
 
    // find the package versin and source package name
    pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
