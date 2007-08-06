@@ -44,7 +44,8 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesDone(0), PackagesTotal(0)
+   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesDone(0), 
+     PackagesTotal(0), term_out(NULL)
 {
 }
 									/*}}}*/
@@ -351,7 +352,7 @@ void pkgDPkgPM::DoStdin(int master)
 /*
  * read the terminal pty and write log
  */
-void pkgDPkgPM::DoTerminalPty(int master, FILE *term_out)
+void pkgDPkgPM::DoTerminalPty(int master)
 {
    char term_buf[1024] = {0,};
 
@@ -567,7 +568,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
    string logfile_name = flCombine(logdir,
 				   _config->Find("Dir::Log::Terminal"));
-   FILE *term_out = NULL;
    if (!logfile_name.empty())
    {
       term_out = fopen(logfile_name.c_str(),"a");
@@ -816,7 +816,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    continue;
 
 	 if(master >= 0 && FD_ISSET(master, &rfds))
-	    DoTerminalPty(master, term_out);
+	    DoTerminalPty(master);
 	 if(master >= 0 && FD_ISSET(0, &rfds))
 	    DoStdin(master);
 	 if(FD_ISSET(_dpkgin, &rfds))
