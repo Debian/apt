@@ -2130,20 +2130,17 @@ bool DoSource(CommandLine &CmdL)
 	 pos += vcs.length()+2;
 	 string::size_type epos = srec.find("\n", pos);
 	 string uri = srec.substr(pos,epos-pos).c_str();
-	 ioprintf(c1out, _("WARNING: '%s' is maintained in "
+	 ioprintf(c1out, _("NOTICE: '%s' packaging is maintained in "
 			   "the '%s' version control system at:\n"
 			   "%s\n"),
 		  Src.c_str(), vcs.c_str(), uri.c_str());
 	 if(vcs == "Bzr") 
 	    ioprintf(c1out,_("Please use:\n"
 			     "bzr get %s\n"
-			     "to modify the package.\n"),
+			     "to retrieve the latest (possible unreleased) "
+			     "updates to the package.\n"),
 		     uri.c_str());
-	 ioprintf(c1out, "Are you sure you want to continue [yN]? ");
-	 if(!YnPrompt(false))
-	    return _error->Error(_("Abort."));
-	 else 
-	    break;
+	 break;
       }
 
       // Back track
