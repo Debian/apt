@@ -12,6 +12,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/fileutl.h>
 
 #include <sys/stat.h>
 #include <utime.h>
@@ -78,7 +80,11 @@ bool CopyMethod::Fetch(FetchItem *Itm)
       To.OpFail();
       return _error->Errno("utime",_("Failed to set modification time"));
    }
-   
+
+   Hashes Hash;
+   FileFd Fd(Res.Filename, FileFd::ReadOnly);
+   Hash.AddFD(Fd.Fd(), Fd.Size());
+   Res.TakeHashes(Hash);
    URIDone(Res);
    return true;
 }

@@ -3,8 +3,12 @@ apt (0.7.6ubuntu4) gutsy; urgency=low
   * cmdline/apt-get.cc:
     - remove YnPrompt when a XS-Vcs- tag is found, improve the
       notice (LP: #129575)
+  * methods/copy.cc:
+    - take hashes here too
+  * apt-pkg/acquire-worker.cc:
+    - only pass on computed hash if we recived one from the method
 
- --
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 08 Aug 2007 19:30:29 +0200
 
 apt (0.7.6ubuntu3) gutsy; urgency=low
 
