@@ -1,3 +1,12 @@
+apt (0.7.6ubuntu5) UNRELEASED; urgency=low
+
+  * apt-pkg/acquire-item.cc:
+    - fix file removal on local repo i-m-s hit (LP: #131166)
+  * tests/local-repo:
+    - added regression test for this bug
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 09 Aug 2007 12:34:07 +0200
+
 apt (0.7.6ubuntu4) gutsy; urgency=low
 
   * cmdline/apt-get.cc:
@@ -49,6 +58,10 @@ apt (0.7.6ubuntu1) gutsy; urgency=low
   * merged apt--sha256 branch to fully support the new
     sha256 checksums in the Packages and Release files
     (ABI break)
+  * apt-pkg/pkgcachegen.cc:
+    - increase default mmap size
+  * tests/local-repo:
+    - added local repository testcase
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Aug 2007 11:55:54 +0200
 

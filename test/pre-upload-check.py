@@ -11,11 +11,13 @@ import unittest
 stdout = os.open("/dev/null",0) #sys.stdout
 stderr = os.open("/dev/null",0) # sys.stderr
 
+apt_args = []  # ["-o","Debug::pkgAcquire::Auth=true"]
+
+
 class testAuthentication(unittest.TestCase):
 
     # some class wide data
     apt = "apt-get"
-    args = []  # ["-q", "-q", "-o","Debug::pkgAcquire::Auth=true"]
     pkg = "libglib2.0-data"
     pkgver = "2.13.6-1ubuntu1"
     pkgpath = "/var/cache/apt/archives/libglib2.0-data_2.13.6-1ubuntu1_all.deb"
@@ -44,13 +46,13 @@ class testAuthentication(unittest.TestCase):
             expected_res = self._expectedRes(result)
             # update first
             call([self.apt,"update",
-                  "-o","Dir::Etc::sourcelist=./%s" % f]+self.args,
+                  "-o","Dir::Etc::sourcelist=./%s" % f]+apt_args,
                  stdout=stdout, stderr=stderr)
             # then get the pkg
             cmd = ["install", "-y", "-d", "--reinstall",
                    "%s=%s" % (self.pkg, self.pkgver),
                    "-o","Dir::state::Status=./fake-status"]
-            res = call([self.apt, "-o","Dir::Etc::sourcelist=./%s" % f]+cmd+self.args,
+            res = call([self.apt, "-o","Dir::Etc::sourcelist=./%s" % f]+cmd+apt_args,
                        stdout=stdout, stderr=stderr)
             self.assert_(res == expected_res,
                          "test '%s' failed (got %s expected %s" % (f,res,expected_res))
@@ -63,14 +65,14 @@ class testAuthentication(unittest.TestCase):
             expected_res = self._expectedRes(result)
             # update first
             call([self.apt,"update",
-                  "-o","Dir::Etc::sourcelist=./%s" % f]+self.args,
+                  "-o","Dir::Etc::sourcelist=./%s" % f]+apt_args,
                  stdout=stdout, stderr=stderr)
             # then get the pkg
             cmd = ["install", "-y", "-d", "--reinstall",
                    "%s=%s" % (self.pkg, self.pkgver),
                    "-o","Dir::state::Status=./fake-status"]
             res = call([self.apt, "-o","Dir::Etc::sourcelist=./%s" % f]+
-                       cmd+self.args,
+                       cmd+apt_args,
                        stdout=stdout, stderr=stderr)
             self.assert_(res == expected_res,
                          "test '%s' failed (got %s expected %s" % (f,res,expected_res))
@@ -81,33 +83,60 @@ class testAuthentication(unittest.TestCase):
             (prefix, testtype, result) = f.split("-")
             expected_res = self._expectedRes(result)
             cmd = ["update"]
-            res = call([self.apt,"-o","Dir::Etc::sourcelist=./%s" % f]+cmd+self.args,
+            res = call([self.apt,"-o","Dir::Etc::sourcelist=./%s" % f]+cmd+apt_args,
                        stdout=stdout, stderr=stderr)
             self.assert_(res == expected_res,
                          "test '%s' failed (got %s expected %s" % (f,res,expected_res))
 
 
-class testPythonApt(unittest.TestCase):
-    " test if python-apt is still working and if we not accidently broke the ABI "
-    
-    def testPythonApt(self):
-        import apt
+
+class testLocalRepositories(unittest.TestCase):
+    " test local repository regressions "
+
+    repo_dir = "local-repo"
+    apt = "apt-get"
+    pkg = "gdebi-test4"
+
+    def setUp(self):
+        self.repo = os.path.abspath(os.path.join(os.getcwd(), self.repo_dir))
+        self.sources = os.path.join(self.repo, "sources.list")
+        s = open(self.sources,"w")
+        s.write("deb file://%s/ /\n" % self.repo)
+        s.close()
+
+    def testLocalRepoAuth(self):
+        # two times to get at least one i-m-s hit
+        for i in range(2):
+            self.assert_(os.path.exists(self.sources))
+            cmd = [self.apt,"update","-o", "Dir::Etc::sourcelist=%s" % self.sources]+apt_args
+            res = call(cmd, stdout=stdout, stderr=stderr)
+            self.assertEqual(res, 0, "local repo test failed")
+            self.assert_(os.path.exists(os.path.join(self.repo,"Packages.gz")),
+                         "Packages.gz vanished from local repo")
+
+    def testInstallFromLocalRepo(self):
+        apt = [self.apt,"-o", "Dir::Etc::sourcelist=%s"% self.sources]+apt_args
+        cmd = apt+["update"]
+        res = call(cmd, stdout=stdout, stderr=stderr)
+        self.assertEqual(res, 0)
+        res = call(apt+["-y","install","--reinstall",self.pkg],
+                   stdout=stdout, stderr=stderr)
+        self.assert_(res == 0,
+                     "installing %s failed (got %s)" % (self.pkg, res))
+        res = call(apt+["-y","remove",self.pkg],
+                   stdout=stdout, stderr=stderr)
+        self.assert_(res == 0,
+                     "removing %s failed (got %s)" % (self.pkg, res))
+
+    def testPythonAptInLocalRepo(self):
+        import apt, apt_pkg
+        apt_pkg.Config.Set("Dir::Etc::sourcelist",self.sources)
         cache = apt.Cache()
         cache.update()
         pkg = cache["apt"]
         self.assert_(pkg.name == 'apt')
+        
 
-class testAptInstall(unittest.TestCase):
-    " test if installing still works "
-
-    apt = "apt-get"
-    pkg = "coreutils"
-
-    def testInstall(self):
-        res = call([self.apt,"-y","install","--reinstall",self.pkg],
-                   stdout=stdout, stderr=stderr)
-        self.assert_(res == 0,
-                     "installing %s failed (got %s)" % (self.pkg, res))
 
 if __name__ == "__main__":
     print "Runing simple testsuit on current apt-get and libapt"
