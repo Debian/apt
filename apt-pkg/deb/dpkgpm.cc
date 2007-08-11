@@ -13,6 +13,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/strutl.h>
+#include <apti18n.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -706,14 +707,18 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       ioctl(0, TIOCGWINSZ, (char *)&win);
       if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
       {
-	 fprintf(stderr, _("openpty failed\n"));
+	 const char *s = _("Can not write log, openpty() "
+			   "failed (/dev/pts not mounted?)\n");
+	 fprintf(stderr, "%s",s);
+	 fprintf(term_out, "%s",s);
+	 master = slave = -1;
+      }  else {
+	 struct termios rtt;
+	 rtt = tt;
+	 cfmakeraw(&rtt);
+	 rtt.c_lflag &= ~ECHO;
+	 tcsetattr(0, TCSAFLUSH, &rtt);
       }
-
-      struct termios rtt;
-      rtt = tt;
-      cfmakeraw(&rtt);
-      rtt.c_lflag &= ~ECHO;
-      tcsetattr(0, TCSAFLUSH, &rtt);
 
        // Fork dpkg
       pid_t Child;
@@ -723,13 +728,16 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // This is the child
       if (Child == 0)
       {
-	 setsid();
-	 ioctl(slave, TIOCSCTTY, 0);
-	 close(master);
-	 dup2(slave, 0);
-	 dup2(slave, 1);
-	 dup2(slave, 2);
-	 close(slave);
+	 if(slave >= 0 && master >= 0) 
+	 {
+	    setsid();
+	    ioctl(slave, TIOCSCTTY, 0);
+	    close(master);
+	    dup2(slave, 0);
+	    dup2(slave, 1);
+	    dup2(slave, 2);
+	    close(slave);
+	 }
 	 close(fd[0]); // close the read end of the pipe
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
@@ -775,7 +783,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       
       // the result of the waitpid call
       int res;
-      close(slave);
+      if(slave > 0)
+	 close(slave);
 
       // setups fds
       fd_set rfds;
@@ -799,7 +808,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 FD_ZERO(&rfds);
 	 FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
-	 FD_SET(master, &rfds);
+	 if(master >= 0)
+	    FD_SET(master, &rfds);
 	 tv.tv_sec = 1;
 	 tv.tv_usec = 0;
 	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, NULL, &tv);
@@ -808,9 +818,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 else if (select_ret == 0)
 	    continue;
 
-	 if(FD_ISSET(master, &rfds))
+	 if(master >= 0 && FD_ISSET(master, &rfds))
 	    DoTerminalPty(master, term_out);
-	 if(FD_ISSET(0, &rfds))
+	 if(master >= 0 && FD_ISSET(0, &rfds))
 	    DoStdin(master);
 	 if(FD_ISSET(_dpkgin, &rfds))
 	    DoDpkgStatusFd(_dpkgin, OutStatusFd);
@@ -821,7 +831,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
 
-      tcsetattr(0, TCSAFLUSH, &tt);
+      if(master >= 0 && slave >= 0)
+	 tcsetattr(0, TCSAFLUSH, &tt);
        
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
@@ -843,12 +854,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 if(stopOnError) 
 	 {
-	    fclose(term_out);
+	    if(term_out)
+	       fclose(term_out);
 	    return false;
 	 }
       }      
    }
-   fclose(term_out);
+   if(term_out)
+      fclose(term_out);
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
