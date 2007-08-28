@@ -26,7 +26,8 @@ class pkgDPkgPM : public pkgPackageManager
    // the buffer we use for the dpkg status-fd reading
    char dpkgbuf[1024];
    int dpkgbuf_pos;
-
+   FILE *term_out;
+   
    protected:
 
    // progress reporting
@@ -43,10 +44,10 @@ class pkgDPkgPM : public pkgPackageManager
    // the dpkg states that are already done; the string is the package
    // the int is the state that is already done (e.g. a package that is
    // going to be install is already in state "half-installed")
-   map<string,int> PackageOpsDone;
+   map<string,unsigned int> PackageOpsDone;
    // progress reporting
-   int PackagesDone;
-   int PackagesTotal;
+   unsigned int PackagesDone;
+   unsigned int PackagesTotal;
   
    struct Item
    {
@@ -67,7 +68,7 @@ class pkgDPkgPM : public pkgPackageManager
 
    // input processing
    void DoStdin(int master);
-   void DoTerminalPty(int master, FILE *out);
+   void DoTerminalPty(int master);
    void DoDpkgStatusFd(int statusfd, int OutStatusFd);
    void ProcessDpkgStatusLine(int OutStatusFd, char *line);
 

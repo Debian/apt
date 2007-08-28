@@ -674,10 +674,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    {
       // The files timestamp matches
       if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
-      {
-	 unlink(FileName.c_str());
 	 return;
-      }
       Decompression = true;
       Local = true;
       DestFile += ".decomp";
