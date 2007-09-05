@@ -70,6 +70,10 @@ class pkgDPkgPM : public pkgPackageManager
    // apport integration
    void WriteApportReport(const char *pkgpath, const char *errormsg);
 
+   // dpkg log
+   bool OpenLog();
+   bool CloseLog();
+   
    // input processing
    void DoStdin(int master);
    void DoTerminalPty(int master);
