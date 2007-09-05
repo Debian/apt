@@ -526,7 +526,7 @@ bool pkgDPkgPM::CloseLog()
       time_t t = time(NULL);
       struct tm *tmp = localtime(&t);
       strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-      fprintf(term_out, "\nLog ended: ");
+      fprintf(term_out, "Log ended: ");
       fprintf(term_out, outstr);
       fprintf(term_out, "\n");
       fclose(term_out);
