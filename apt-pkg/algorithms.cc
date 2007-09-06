@@ -257,6 +257,8 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	    re-unpacked (probably) */
 	 case pkgCache::State::UnPacked:
 	 case pkgCache::State::HalfConfigured:
+	 case pkgCache::State::TriggersAwaited:
+	 case pkgCache::State::TriggersPending:
 	 if ((I->CurrentVer != 0 && I.CurrentVer().Downloadable() == true) ||
 	     I.State() != pkgCache::PkgIterator::NeedsUnpack)
 	    Cache.MarkKeep(I, false, false);

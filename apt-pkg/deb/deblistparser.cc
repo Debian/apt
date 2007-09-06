@@ -293,6 +293,8 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
                             {"installed",pkgCache::State::Installed},
                             {"half-installed",pkgCache::State::HalfInstalled},
                             {"config-files",pkgCache::State::ConfigFiles},
+                            {"triggers-awaited",pkgCache::State::TriggersAwaited},
+                            {"triggers-pending",pkgCache::State::TriggersPending},
                             {"post-inst-failed",pkgCache::State::HalfConfigured},
                             {"removal-failed",pkgCache::State::HalfInstalled},
                             {}};

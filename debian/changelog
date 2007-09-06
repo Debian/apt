@@ -1,5 +1,6 @@
 apt (0.7.7) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * apt-inst/contrib/extracttar.cc:
     - fix fd leak for zero size files (thanks to Bill Broadley for
       reporting this bug)
@@ -23,6 +24,9 @@ apt (0.7.7) UNRELEASED; urgency=low
   * apt-pkg/acquire.cc:
     - increase MaxPipeDepth for the internal worker<->method
       communication to 1000 for the debtorrent backend
+
+  [ Ian Jackson ]
+  * dpkg-triggers: Deal properly with new package states.
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Aug 2007 11:55:54 +0200
 
