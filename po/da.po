@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-da\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-04 09:09+0200\n"
-"PO-Revision-Date: 2007-02-03 15:50+0100\n"
+"POT-Creation-Date: 2007-08-04 12:41+0200\n"
+"PO-Revision-Date: 2007-09-06 21:40+0200\n"
 "Last-Translator: Claus Hindsgaul <claus.hindsgaul@gmail.com>\n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:143
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Pakken %s version %s har en uopfyldt afhængighed:\n"
+msgstr "<Pakken %s version %s har en uopfyldt afhængighed:\n"
 
 #: cmdline/apt-cache.cc:183 cmdline/apt-cache.cc:552 cmdline/apt-cache.cc:640
 #: cmdline/apt-cache.cc:796 cmdline/apt-cache.cc:1018
@@ -60,26 +60,24 @@ msgid "Total distinct versions: "
 msgstr "Totale forskellige versioner: "
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total Distinct Descriptions: "
-msgstr "Totale forskellige versioner: "
+msgstr "Sammenlagt forskellige beskrivelser: "
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
-msgstr "Totale afhængigheder: "
+msgstr "Sammenlagt afhængigheder: "
 
 #: cmdline/apt-cache.cc:300
 msgid "Total ver/file relations: "
-msgstr "Totale version/fil-relationer: "
+msgstr "Sammenlagt version/fil-relationer: "
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "Totale version/fil-relationer: "
+msgstr "Sammenlagt version/fil-relationer: "
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
-msgstr "Totale 'tilbyder'-markeringer: "
+msgstr "Sammenlagt 'Tilbyder'-markeringer: "
 
 #: cmdline/apt-cache.cc:316
 msgid "Total globbed strings: "
@@ -165,9 +163,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2585 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s for %s %s oversat på %s %s\n"
+msgstr "%s %s for %s oversat %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -791,7 +789,7 @@ msgstr "Uopfyldte afhængigheder. Prøv med -f."
 
 #: cmdline/apt-get.cc:704
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "ADVARSEL: Følgende pakkers autensitet kunne ikke verificeres!"
+msgstr "ADVARSEL: Følgende pakkers autenticitet kunne ikke verificeres!"
 
 #: cmdline/apt-get.cc:708
 msgid "Authentication warning overridden.\n"
@@ -1018,41 +1016,43 @@ msgstr ""
 #: cmdline/apt-get.cc:1433
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
+"Det er ikke meningen, at vi skal slette ting og sager, kan ikke starte "
+"AutoRemover"
 
 #: cmdline/apt-get.cc:1465
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "Følgende NYE pakker vil blive installeret:"
+msgstr "Følgende pakker blev installeret automatisk, og behøves ikke længere:"
 
 #: cmdline/apt-get.cc:1467
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "Brug 'apt-get autoremove' til at fjerne dem."
 
 #: cmdline/apt-get.cc:1472
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"Hmm, det lader til at AutoRemover smadrede noget, der virkelig ikke\n"
+"burde kunne ske. Indsend venligst en fejlrapport om apt."
 
 #: cmdline/apt-get.cc:1475 cmdline/apt-get.cc:1754
 msgid "The following information may help to resolve the situation:"
 msgstr "Følgende oplysninger kan hjælpe dig med at klare situationen:"
 
 #: cmdline/apt-get.cc:1479
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Intern fejl. Problemløseren ødelagde noget"
+msgstr "Intern fejl. AutoRemover ødelagde noget"
 
 #: cmdline/apt-get.cc:1498
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Intern fejl, AllUpgrade ødelagde noget"
 
 #: cmdline/apt-get.cc:1545
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "Kunne ikke finde pakken %s"
+msgstr "Kunne ikke finde opgaven %s"
 
 #: cmdline/apt-get.cc:1660 cmdline/apt-get.cc:1696
 #, c-format
@@ -1065,9 +1065,9 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Bemærk, vælger %s som regulært udtryk '%s'\n"
 
 #: cmdline/apt-get.cc:1713
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manual installed.\n"
-msgstr "men %s forventes installeret"
+msgstr "%s sat til manuelt installeret.\n"
 
 #: cmdline/apt-get.cc:1726
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1252,7 +1252,6 @@ msgid "Supported modules:"
 msgstr "Understøttede moduler:"
 
 #: cmdline/apt-get.cc:2631
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1307,6 +1306,7 @@ msgstr ""
 "   upgrade - Udfør en opgradering\n"
 "   install - Installér nye pakker (pakke er libc6, ikke libc6.deb)\n"
 "   remove - Afinstallér pakker\n"
+"   purge - Fjern og udrens pakker\n"
 "   source - Hent kildetekstarkiver\n"
 "   build-dep - Sæt opbygningsafhængigheder op for kildetekstpakker\n"
 "   dist-upgrade - Distributionsopgradering, se apt-get(8)\n"
@@ -1678,10 +1678,11 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Dette er ikke et gyldigt DEB-arkiv, mangler '%s'-elementet"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr ""
-"Dette er ikke et gyldigt DEB-arkiv, det har intet'%s- eller %s-elementet"
+"Dette er ikke et gyldigt DEB-arkiv, det har intet''%s', '%s' eller '%s'-"
+"elementet"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2098,9 +2099,9 @@ msgid "Opening configuration file %s"
 msgstr "Åbner konfigurationsfilen %s"
 
 #: apt-pkg/contrib/configuration.cc:510
-#, fuzzy, c-format
+#, c-format
 msgid "Line %d too long (max %u)"
-msgstr "Linjen %d er for lang (må højst være %d)"
+msgstr "Linjen %d er for lang (maks %u)"
 
 #: apt-pkg/contrib/configuration.cc:606
 #, c-format
@@ -2330,7 +2331,7 @@ msgstr "Overflødiggør"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Ødelægger"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2365,19 +2366,18 @@ msgid "Dependency generation"
 msgstr "Afhængighedsgenerering"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "Sammenfletter tilgængelighedsoplysninger"
+msgstr "Læser tilstandsoplysninger"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "Kunne ikke åbne %s"
+msgstr "Kunne ikke åbne StateFile %s"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "Kunne ikke skrive filen %s"
+msgstr "Kunne ikke skrive den midlertidige StateFile %s"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2567,9 +2567,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Der skete en fejl under behandlingen af %s (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Der skete en fejl under behandlingen af %s (NewFileVer1)"
+msgstr "Der skete en fejl under behandlingen af %s (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2597,9 +2597,9 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Der skete en fejl under behandlingen af %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Der skete en fejl under behandlingen af %s (NewFileVer1)"
+msgstr "Der skete en fejl under behandlingen af %s (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2611,7 +2611,6 @@ msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Hold da op! Du nåede over det antal versioner, denne APT kan håndtere."
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr "Hold da op! Du nåede over det antal versioner, denne APT kan håndtere."
 
@@ -2659,6 +2658,7 @@ msgstr "MD5Sum stemmer ikke"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1405
 #, fuzzy
+#| msgid "MD5Sum mismatch"
 msgid "Hash Sum mismatch"
 msgstr "MD5Sum stemmer ikke"
 
@@ -2741,16 +2741,18 @@ msgid "Scanning disc for index files..\n"
 msgstr "Skanner disken for indeksfiler..\n"
 
 #: apt-pkg/cdrom.cc:671
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %i package indexes, %i source indexes, %i translation indexes and %i "
 "signatures\n"
-msgstr "Fandt %i pakkeindekser, %i kildeindekser og %i signaturer\n"
+msgstr ""
+"Fandt %i pakkeindekser, %i kildeindekser, %i oversættelsesindekser og %i "
+"signaturer\n"
 
 #: apt-pkg/cdrom.cc:708
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "Gemt mærkat: %s \n"
+msgstr "Fandt mærkatet '%s'\n"
 
 #: apt-pkg/cdrom.cc:737
 msgid "That is not a valid name, try again.\n"
@@ -2778,9 +2780,8 @@ msgid "Source list entries for this disc are:\n"
 msgstr "Denne disk har følgende kildeliste-indgange:\n"
 
 #: apt-pkg/cdrom.cc:834
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "Afmonterer cdrom..."
+msgstr "Afmonterer cdrom...\n"
 
 #: apt-pkg/indexcopy.cc:263 apt-pkg/indexcopy.cc:823
 #, c-format
@@ -2854,11 +2855,13 @@ msgstr "Fjernede %s helt"
 
 #: apt-pkg/deb/dpkgpm.cc:566
 #, fuzzy, c-format
+#| msgid "Lists directory %spartial is missing."
 msgid "Directory '%s' missing"
 msgstr "Listemappen %spartial mangler."
 
 #: apt-pkg/deb/dpkgpm.cc:709
 #, fuzzy, c-format
+#| msgid "Select failed"
 msgid "openpty failed\n"
 msgstr "Valg mislykkedes"
 
