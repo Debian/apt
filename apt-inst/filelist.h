@@ -29,7 +29,7 @@
 #define PKGLIB_FILELIST_H
 
 
-
+#include <cstring>
 #include <apt-pkg/mmap.h>
 
 class pkgFLCache
