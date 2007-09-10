@@ -818,12 +818,16 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 tv.tv_sec = 1;
 	 tv.tv_usec = 0;
 	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, NULL, &tv);
-	 if (select_ret < 0) {
-	    std::cerr << "Error in select()" << std::endl;
-	    continue;
-	 } else if (select_ret == 0)
-	    continue;
-
+	 if (select_ret == 0) 
+  	    continue;
+  	 else if (select_ret < 0 && errno == EINTR)
+  	    continue;
+  	 else if (select_ret < 0) 
+ 	 {
+  	    perror("select() returned error");
+  	    continue;
+  	 } 
+	 
 	 if(master >= 0 && FD_ISSET(master, &rfds))
 	    DoTerminalPty(master);
 	 if(master >= 0 && FD_ISSET(0, &rfds))
