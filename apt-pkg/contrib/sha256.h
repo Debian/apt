@@ -15,6 +15,7 @@
 #define APTPKG_SHA256_H
 
 #include <string>
+#include <cstring>
 #include <algorithm>
 
 using std::string;

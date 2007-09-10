@@ -13,6 +13,7 @@
 #include <apt-pkg/error.h>
 
 #include <clocale>
+#include <cstring>
 									/*}}}*/
 
 // Global list of Item supported

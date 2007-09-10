@@ -28,6 +28,7 @@
 #include <ftw.h>
 #include <fnmatch.h>
 #include <iostream>
+#include <memory>
     
 #include "cachedb.h"
 #include "apt-ftparchive.h"
