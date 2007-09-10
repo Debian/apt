@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <cstring>
 
 using std::min;
 using std::vector;
