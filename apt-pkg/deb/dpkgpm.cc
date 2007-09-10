@@ -572,17 +572,20 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       { 
 	 {"unpacked",N_("Preparing to configure %s") },
 	 {"half-configured", N_("Configuring %s") },
+#if 0
 	 {"triggers-awaited", N_("Processing triggers for %s") },
 	 {"triggers-pending", N_("Processing triggers for %s") },
-	 {"half-configured", N_("Configuring %s") },
+#endif
 	 { "installed", N_("Installed %s")},
 	 {NULL, NULL}
       },
       // Remove operation
       { 
 	 {"half-configured", N_("Preparing for removal of %s")},
+#if 0
 	 {"triggers-awaited", N_("Preparing for removal of %s")},
 	 {"triggers-pending", N_("Preparing for removal of %s")},
+#endif
 	 {"half-installed", N_("Removing %s")},
 	 {"config-files",  N_("Removed %s")},
 	 {NULL, NULL}
