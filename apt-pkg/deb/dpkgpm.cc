@@ -518,7 +518,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
-   static const struct DpkgState DpkgStatesOpMap[][5] = {
+   static const struct DpkgState DpkgStatesOpMap[][7] = {
       // Install operation
       { 
 	 {"half-installed", N_("Preparing %s")}, 
@@ -529,12 +529,20 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       { 
 	 {"unpacked",N_("Preparing to configure %s") },
 	 {"half-configured", N_("Configuring %s") },
+#if 0
+	 {"triggers-awaited", N_("Processing triggers for %s") },
+	 {"triggers-pending", N_("Processing triggers for %s") },
+#endif
 	 { "installed", N_("Installed %s")},
 	 {NULL, NULL}
       },
       // Remove operation
       { 
 	 {"half-configured", N_("Preparing for removal of %s")},
+#if 0
+	 {"triggers-awaited", N_("Preparing for removal of %s")},
+	 {"triggers-pending", N_("Preparing for removal of %s")},
+#endif
 	 {"half-installed", N_("Removing %s")},
 	 {"config-files",  N_("Removed %s")},
 	 {NULL, NULL}

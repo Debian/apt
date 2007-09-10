@@ -49,7 +49,7 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 6;
+   MajorVersion = 7;
    MinorVersion = 0;
    Dirty = false;
    
@@ -274,7 +274,9 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
       return NeedsUnpack;
    
    if (Pkg->CurrentState == pkgCache::State::UnPacked ||
-       Pkg->CurrentState == pkgCache::State::HalfConfigured)
+       Pkg->CurrentState == pkgCache::State::HalfConfigured ||
+       Pkg->CurrentState == pkgCache::State::TriggersPending ||
+       Pkg->CurrentState == pkgCache::State::TriggersAwaited)
       return NeedsConfigure;
    
    if (Pkg->CurrentState == pkgCache::State::HalfInstalled ||
