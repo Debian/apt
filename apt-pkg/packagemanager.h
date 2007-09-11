@@ -91,6 +91,8 @@ class pkgPackageManager : protected pkgCache::Namespace
 
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(int statusFd=-1) {
+      if(statusFd > 0)
+	 SetCloseExec(statusFd, true);
       bool goResult = Go(statusFd);
       if(goResult == false) 
 	 return Failed;
