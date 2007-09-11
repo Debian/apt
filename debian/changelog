@@ -2,6 +2,10 @@ apt (0.7.6ubuntu9) gutsy; urgency=low
 
   * apt-pkg/deb/dpkgpm.cc:
     - fix progress reporting precent calculation (LP: #137798)
+  * apt-pkg/acquire.cc:
+    - increase MaxPipeDepth for the internal worker<->method
+      communication to 1000 for the debtorrent backend
+  * make apt build with g++ 4.3
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 10 Sep 2007 14:57:53 +0200
 
@@ -67,6 +71,7 @@ apt (0.7.6ubuntu2) gutsy; urgency=low
 
 apt (0.7.6ubuntu1) gutsy; urgency=low
 
+  [ Michael Vogt ]
   * apt-inst/contrib/extracttar.cc:
     - fix fd leak for zero size files (thanks to Bill Broadley for
       reporting this bug)
@@ -90,6 +95,13 @@ apt (0.7.6ubuntu1) gutsy; urgency=low
     - increase default mmap size
   * tests/local-repo:
     - added local repository testcase
+  * apt-pkg/acquire.cc:
+    - increase MaxPipeDepth for the internal worker<->method
+      communication to 1000 for the debtorrent backend
+  * make apt build with g++ 4.3
+
+  [ Ian Jackson ]
+  * dpkg-triggers: Deal properly with new package states.
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Aug 2007 11:55:54 +0200
 

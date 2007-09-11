@@ -44,6 +44,7 @@
 #include <inttypes.h>
 #include <config.h>
 #include <system.h>
+
 									/*}}}*/
 
 // byteSwap - Swap bytes in a buffer					/*{{{*/

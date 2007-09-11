@@ -19,9 +19,11 @@
 #include <iostream>
 #include <errno.h>
 #include <stdio.h>
-#include <string>
 #include <stdarg.h>
 #include <unistd.h>
+
+#include <string>
+#include <cstring>
 
 #include "config.h"
    									/*}}}*/
