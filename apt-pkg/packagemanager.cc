@@ -25,7 +25,7 @@
     
 #include <apti18n.h>    
 #include <iostream>
-									/*}}}*/
+#include <fcntl.h> 
 
 using namespace std;
 
@@ -624,6 +624,26 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    return Completed;
 }
 									/*}}}*/
+// PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
+// ---------------------------------------------------------------------
+pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstallPostFork(int statusFd)
+{
+      if(statusFd > 0)
+         // FIXME: use SetCloseExec here once it taught about throwing
+	 //        exceptions instead of doing _exit(100) on failure
+	 fcntl(statusFd,F_SETFD,FD_CLOEXEC); 
+      bool goResult = Go(statusFd);
+      if(goResult == false) 
+	 return Failed;
+
+      // if all was fine update the state file
+      if(Res == Completed) {
+	 Cache.writeStateFile(NULL);
+      }
+      return Res;
+};
+
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
