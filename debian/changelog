@@ -5,6 +5,10 @@ apt (0.7.6ubuntu9) gutsy; urgency=low
   * make apt build with g++ 4.3
   * fix missing SetExecClose() call when the status-fd is used
     (LP: #136767)
+  * debian/apt.cron.daily:
+    - move unattended-upgrade before apt-get autoclean
+  * fix "purge" commandline argument, closes LP: #125733
+    (thanks to Julien Danjou for the patch)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 11 Sep 2007 20:55:00 +0200
 
@@ -95,6 +99,11 @@ apt (0.7.6ubuntu1) gutsy; urgency=low
   * tests/local-repo:
     - added local repository testcase
   * make apt build with g++ 4.3
+  * fix missing SetExecClose() call when the status-fd is used
+  * debian/apt.cron.daily:
+    - move unattended-upgrade before apt-get autoclean
+  * fix "purge" commandline argument, closes: #133421
+    (thanks to Julien Danjou for the patch)
 
   [ Ian Jackson ]
   * dpkg-triggers: Deal properly with new package states.
