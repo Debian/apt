@@ -9,7 +9,10 @@ apt (0.7.6ubuntu9) gutsy; urgency=low
     - move unattended-upgrade before apt-get autoclean
   * fix "purge" commandline argument, closes LP: #125733
     (thanks to Julien Danjou for the patch)
-
+  * cmdline/apt-get.cc:
+    - do not change the auto-installed information if a package
+      is reinstalled (LP: #139448)
+  
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 11 Sep 2007 20:55:00 +0200
 
 apt (0.7.6ubuntu8) gutsy; urgency=low
@@ -104,6 +107,9 @@ apt (0.7.6ubuntu1) gutsy; urgency=low
     - move unattended-upgrade before apt-get autoclean
   * fix "purge" commandline argument, closes: #133421
     (thanks to Julien Danjou for the patch)
+  * cmdline/apt-get.cc:
+    - do not change the auto-installed information if a package
+      is reinstalled
 
   [ Ian Jackson ]
   * dpkg-triggers: Deal properly with new package states.
