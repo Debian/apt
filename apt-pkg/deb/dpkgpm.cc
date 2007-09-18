@@ -398,7 +398,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
       return;
    }
-   char *action = list[0];
    char *pkg = list[1];
    char *action = _strstrip(list[2]);
 
