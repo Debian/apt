@@ -345,7 +345,7 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long Size,string Md5Hash,
  */
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 				   string URI,string URIDesc,string ShortDesc,
-				   HashString ExpectedMD5, 
+				   HashString ExpecteHash, 
 				   vector<DiffInfo> diffs)
    : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), 
      available_patches(diffs)
