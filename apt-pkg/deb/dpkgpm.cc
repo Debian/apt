@@ -44,8 +44,8 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesDone(0), 
-     PackagesTotal(0), term_out(NULL)
+   : pkgPackageManager(Cache), dpkgbuf_pos(0),
+     term_out(NULL), PackagesDone(0), PackagesTotal(0)
 {
 }
 									/*}}}*/
@@ -770,7 +770,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
-	 putenv("DPKG_NO_TSTP=yes");
+	 putenv((char *)"DPKG_NO_TSTP=yes");
 	 execvp(Args[0],(char **)Args);
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
