@@ -14,6 +14,7 @@ apt (0.7.7) UNRELEASED; urgency=low
     - merged dpkg-log branch, this lets you specify a 
       Dir::Log::Terminal file to log dpkg output to
       (ABI break)
+    - fix parse error when dpkg sends unexpected data
   * merged apt--sha256 branch to fully support the new
     sha256 checksums in the Packages and Release files
     (ABI break)
@@ -25,6 +26,19 @@ apt (0.7.7) UNRELEASED; urgency=low
     - increase MaxPipeDepth for the internal worker<->method
       communication to 1000 for the debtorrent backend
   * make apt build with g++ 4.3
+  * fix missing SetExecClose() call when the status-fd is used
+  * debian/apt.cron.daily:
+    - move unattended-upgrade before apt-get autoclean
+  * fix "purge" commandline argument, closes: #133421
+    (thanks to Julien Danjou for the patch)
+  * cmdline/apt-get.cc:
+    - do not change the auto-installed information if a package
+      is reinstalled
+  * apt-pkg/acquire-item.cc:
+    - fix crash in diff acquire code
+  * cmdline/apt-mark:
+    - Fix chmoding after have renamed the extended-states file (LP: #140019)
+      (thanks to Laurent Bigonville)
   
   [ Program translations ]
     - French updated
@@ -46,6 +60,10 @@ apt (0.7.7) UNRELEASED; urgency=low
   [ Ian Jackson ]
   * dpkg-triggers: Deal properly with new package states.
 
+  [ Colin Watson ]
+  * apt-pkg/contrib/mmap.cc:
+    - don't fail if msync() returns > 0
+ 
  -- Otavio Salvador <otavio@debian.org>  Mon, 06 Aug 2007 10:44:53 -0300
 
 apt (0.7.6) unstable; urgency=low

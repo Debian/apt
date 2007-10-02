@@ -40,7 +40,7 @@ if __name__ == "__main__":
     if not options.filename:
         STATE_FILE = apt_pkg.Config.FindDir("Dir::State") + "extended_states"
     else:
-        STATE_FILE=options.state_file
+        STATE_FILE=options.filename
 
     # open the statefile
     if os.path.exists(STATE_FILE):
@@ -62,4 +62,4 @@ if __name__ == "__main__":
         # all done, rename the tmpfile
         os.chmod(outfile.name, 0644)
         os.rename(outfile.name, STATE_FILE)
-        os.chmod(outfile.name, 0644)
+        os.chmod(STATE_FILE, 0644)

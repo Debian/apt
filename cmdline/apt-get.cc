@@ -1708,7 +1708,8 @@ bool DoInstall(CommandLine &CmdL)
 	    // where foo is marked automatic
 	    if(!Remove && 
 	       Cache[Pkg].Install() == false && 
-	       (Cache[Pkg].Flags & pkgCache::Flag::Auto))
+	       (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
+	       _config->FindB("APT::Get::ReInstall",false) == false)
 	    {
 	       ioprintf(c1out,_("%s set to manual installed.\n"),
 			Pkg.Name());
@@ -2471,6 +2472,7 @@ bool DoBuildDep(CommandLine &CmdL)
                            break;
                  }
                  if (CV.end() == true)
+		 {
 		   if (hasAlternatives)
 		   {
 		      continue;
@@ -2483,6 +2485,7 @@ bool DoBuildDep(CommandLine &CmdL)
                                            Last->BuildDepType((*D).Type),Src.c_str(),
                                            (*D).Package.c_str());
 		   }
+		 }
             }
             else
             {
@@ -2752,6 +2755,7 @@ int main(int argc,const char *argv[])
                                    {"install",&DoInstall},
                                    {"remove",&DoInstall},
 				   {"autoremove",&DoInstall},
+				   {"purge",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
 				   {"build-dep",&DoBuildDep},

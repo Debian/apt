@@ -392,14 +392,14 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    //        statusfd or by rewriting the code here to deal with
    //        it. for now we just ignore it and not crash
    TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
-   char *pkg = list[1];
-   char *action = _strstrip(list[2]);
-   if( pkg == NULL || action == NULL) 
+   if( list[0] == NULL || list[1] == NULL || list[2] == NULL) 
    {
       if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
       return;
    }
+   char *pkg = list[1];
+   char *action = _strstrip(list[2]);
 
    if(strncmp(action,"error",strlen("error")) == 0)
    {

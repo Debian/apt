@@ -186,16 +186,16 @@ if check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
     update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
 fi
 
-AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
-if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
-    apt-get -qq autoclean
-    update_stamp $AUTOCLEAN_STAMP
-fi
-
 UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
 if check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
     unattended-upgrade
     update_stamp $UPGRADE_STAMP
+fi
+
+AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
+if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
+    apt-get -qq autoclean
+    update_stamp $AUTOCLEAN_STAMP
 fi
 
 # check cache size 

@@ -90,18 +90,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    };
 
    // stuff that needs to be done after the fork
-   OrderResult DoInstallPostFork(int statusFd=-1) {
-      bool goResult = Go(statusFd);
-      if(goResult == false) 
-	 return Failed;
-
-      // if all was fine update the state file
-      if(Res == Completed) {
-	 Cache.writeStateFile(NULL);
-      }
-      return Res;
-   };
-
+   OrderResult DoInstallPostFork(int statusFd=-1);
    bool FixMissing();
    
    pkgPackageManager(pkgDepCache *Cache);
