@@ -249,7 +249,7 @@ string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
-        char *tempdir = NULL;
+	const char *tempdir = NULL;
 
         tempdir = getenv("TMPDIR");
         if (tempdir == NULL)

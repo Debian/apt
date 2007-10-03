@@ -121,9 +121,9 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       // Redirect the pipe to the status fd (3)
       dup2(fd[1], 3);
 
-      putenv("LANG=");
-      putenv("LC_ALL=");
-      putenv("LC_MESSAGES=");
+      putenv((char *)"LANG=");
+      putenv((char *)"LC_ALL=");
+      putenv((char *)"LC_MESSAGES=");
       execvp(gpgvpath.c_str(), (char **)Args);
              
       exit(111);

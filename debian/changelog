@@ -39,6 +39,35 @@ apt (0.7.7) UNRELEASED; urgency=low
   * cmdline/apt-mark:
     - Fix chmoding after have renamed the extended-states file (LP: #140019)
       (thanks to Laurent Bigonville)
+  
+  [ Program translations ]
+    - French updated
+    - Basque updated. Closes: #436425
+    - Fix the zh_CN translator's name in debian/changelog for 0.7.2
+      Closes: #423272
+    - Vietnamese updated. Closes: #440611
+    - Danish updated. Closes: #441102
+    - Thai added. Closes: #442833
+
+  [ Otavio Salvador ]
+  * Add hash support to copy method. Thanks Anders Kaseorg by the patch
+    (closes: #436055)
+  * Reset curl options and timestamp between downloaded files. Thanks to
+    Ryan Murray <rmurray@debian.org> for the patch (closes: #437150)
+  * Add support to apt-key to export keys to stdout. Thanks to "Dwayne
+    C. Litzenberger" <dlitz@dlitz.net> for the patch (closes: #441942)
+  * Fix compilation warnings:
+    - apt-pkg/indexfile.cc: conversion from string constant to 'char*';
+    - apt-pkg/acquire-item.cc: likewise;
+    - apt-pkg/cdrom.cc: '%lu' expects 'long unsigned int', but argument
+      has type 'size_t';
+    - apt-pkg/deb/dpkgpm.cc: initialization order and conversion from
+      string constant to 'char*';
+    - methods/gpgv.cc: conversion from string constant to 'char*';
+    - methods/ftp.cc: likewise;
+    - cmdline/apt-extracttemplates.cc: likewise;
+    - apt-pkg/deb/debmetaindex.cc: comparison with string literal results
+      in unspecified behaviour;
 
   [ Ian Jackson ]
   * dpkg-triggers: Deal properly with new package states.
@@ -47,7 +76,14 @@ apt (0.7.7) UNRELEASED; urgency=low
   * apt-pkg/contrib/mmap.cc:
     - don't fail if msync() returns > 0
  
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Aug 2007 11:55:54 +0200
+ -- Otavio Salvador <otavio@debian.org>  Mon, 06 Aug 2007 10:44:53 -0300
+
+apt (0.7.6) unstable; urgency=low
+
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
+    directory downloading on non-linux architectures (closes: #435597)
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
 
 apt (0.7.6) unstable; urgency=low
 
@@ -150,7 +186,7 @@ apt (0.7.2) unstable; urgency=low
     into the debian/sid branch
   * merged from Christian Perrier:
     * mr.po: New Marathi translation  Closes: #416806
-    * zh_CN.po: Updated by Eric Pareja  Closes: #416822
+    * zh_CN.po: Updated by Kov Chai  Closes: #416822
     * tl.po: Updated by Eric Pareja   Closes: #416638
     * gl.po: Updated by Jacobo Tarrio
 	     Closes: #412828
@@ -442,7 +478,7 @@ apt (0.6.45) unstable; urgency=low
   * apt-pkg/tagfile.cc:
     - support not-mmapable files again
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 25 Jul 2006 11:55:22 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 27 Jul 2006 00:52:05 +0200
 
 apt (0.6.44.2exp1) experimental; urgency=low
 

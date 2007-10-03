@@ -273,7 +273,9 @@ bool pkgAcquire::Worker::RunMessages()
 	    if(!expectedHash.empty()) 
 	    {
 	       string hashTag = expectedHash.HashType()+"-Hash";
-	       RecivedHash = expectedHash.HashType() + ":" + LookupTag(Message, hashTag.c_str());
+	       string hashSum = LookupTag(Message, hashTag.c_str());
+	       if(!hashSum.empty())
+		  RecivedHash = expectedHash.HashType() + ":" + hashSum;
 	       if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
 	       {
 		  clog << "201 URI Done: " << Owner->DescURI() << endl

@@ -704,7 +704,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       Local = true;
    
    string compExt = Desc.URI.substr(Desc.URI.size()-3);
-   char *decompProg;
+   const char *decompProg;
    if(compExt == "bz2") 
       decompProg = "bzip2";
    else if(compExt == ".gz") 

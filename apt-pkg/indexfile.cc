@@ -113,8 +113,8 @@ string pkgIndexFile::LanguageCode()
      // we have a mapping of the language codes that contains all the language
      // codes that need the country code as well 
      // (like pt_BR, pt_PT, sv_SE, zh_*, en_*)
-     char *need_full_langcode[] = { "pt","sv","zh","en", NULL };
-     for(char **s = need_full_langcode;*s != NULL; s++)
+     const char *need_full_langcode[] = { "pt","sv","zh","en", NULL };
+     for(const char **s = need_full_langcode;*s != NULL; s++)
 	if(lang.find(*s) == 0)
 	   return lang.substr(0,5);
      
