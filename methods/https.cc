@@ -115,6 +115,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    //       - error checking/reporting
    //       - more debug options? (CURLOPT_DEBUGFUNCTION?)
 
+   curl_easy_reset(curl);
    SetupProxy();
 
    // callbacks
@@ -125,6 +126,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
    curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
+   curl_easy_setopt(curl, CURLOPT_FILETIME, true);
 
    // FIXME: https: offer various options of verification
    bool peer_verify = _config->FindB("Acquire::https::Verify-Peer", false);
@@ -202,6 +204,9 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    CURLcode success = curl_easy_perform(curl);
    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &curl_responsecode);
 
+   long curl_servdate;
+   curl_easy_getinfo(curl, CURLINFO_FILETIME, &curl_servdate);
+
    // cleanup
    if(success != 0) 
    {
@@ -214,6 +219,14 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    if (Res.Size == 0)
       Res.Size = File->Size();
+
+   // Timestamp
+   struct utimbuf UBuf;
+   if (curl_servdate != -1) {
+       UBuf.actime = curl_servdate;
+       UBuf.modtime = curl_servdate;
+       utime(File->Name().c_str(),&UBuf);
+   }
 
    // check the downloaded result
    struct stat Buf;
