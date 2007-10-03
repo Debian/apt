@@ -495,6 +495,46 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
 }
 									/*}}}*/
 
+bool pkgDPkgPM::OpenLog()
+{
+   string logdir = _config->FindDir("Dir::Log");
+   if(not FileExists(logdir))
+      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
+   string logfile_name = flCombine(logdir,
+				   _config->Find("Dir::Log::Terminal"));
+   if (!logfile_name.empty())
+   {
+      term_out = fopen(logfile_name.c_str(),"a");
+      chmod(logfile_name.c_str(), 0600);
+      // output current time
+      char outstr[200];
+      time_t t = time(NULL);
+      struct tm *tmp = localtime(&t);
+      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+      fprintf(term_out, "\nLog started: ");
+      fprintf(term_out, outstr);
+      fprintf(term_out, "\n");
+   }
+   return true;
+}
+
+bool pkgDPkgPM::CloseLog()
+{
+   if(term_out)
+   {
+      char outstr[200];
+      time_t t = time(NULL);
+      struct tm *tmp = localtime(&t);
+      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+      fprintf(term_out, "Log ended: ");
+      fprintf(term_out, outstr);
+      fprintf(term_out, "\n");
+      fclose(term_out);
+   }
+   term_out = NULL;
+   return true;
+}
+
 
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
@@ -571,24 +611,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    }   
 
    // create log
-   string logdir = _config->FindDir("Dir::Log");
-   if(not FileExists(logdir))
-      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
-   string logfile_name = flCombine(logdir,
-				   _config->Find("Dir::Log::Terminal"));
-   if (!logfile_name.empty())
-   {
-      term_out = fopen(logfile_name.c_str(),"a");
-      chmod(logfile_name.c_str(), 0600);
-      // output current time
-      char outstr[200];
-      time_t t = time(NULL);
-      struct tm *tmp = localtime(&t);
-      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-      fprintf(term_out, "\nLog started: ");
-      fprintf(term_out, outstr);
-      fprintf(term_out, "\n");
-   }
+   OpenLog();
 
    // this loop is runs once per operation
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
@@ -818,16 +841,16 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 tv.tv_sec = 1;
 	 tv.tv_usec = 0;
 	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, NULL, &tv);
-	 if (select_ret == 0) 
-  	    continue;
-  	 else if (select_ret < 0 && errno == EINTR)
-  	    continue;
-  	 else if (select_ret < 0) 
- 	 {
-  	    perror("select() returned error");
-  	    continue;
-  	 } 
-	 
+ 	 if (select_ret == 0) 
+ 	    continue;
+ 	 else if (select_ret < 0 && errno == EINTR)
+ 	    continue;
+ 	 else if (select_ret < 0) 
+	 {
+ 	    perror("select() returned error");
+ 	    continue;
+ 	 } 
+
 	 if(master >= 0 && FD_ISSET(master, &rfds))
 	    DoTerminalPty(master);
 	 if(master >= 0 && FD_ISSET(0, &rfds))
@@ -864,14 +887,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 if(stopOnError) 
 	 {
-	    if(term_out)
-	       fclose(term_out);
+	    CloseLog();
 	    return false;
 	 }
       }      
    }
-   if(term_out)
-      fclose(term_out);
+   CloseLog();
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;

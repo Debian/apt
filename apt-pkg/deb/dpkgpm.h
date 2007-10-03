@@ -66,6 +66,10 @@ class pkgDPkgPM : public pkgPackageManager
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
 
+   // dpkg log
+   bool OpenLog();
+   bool CloseLog();
+   
    // input processing
    void DoStdin(int master);
    void DoTerminalPty(int master);
