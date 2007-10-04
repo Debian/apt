@@ -938,9 +938,9 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    if (Pkg.end() == true)
       return;
    pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
-   pkgver = Ver.VerStr();
    if (Ver.end() == true)
       return;
+   pkgver = Ver.VerStr() == NULL ? "unknown" : Ver.VerStr();
    pkgRecords Recs(Cache);
    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
    srcpkgname = Parse.SourcePkg();
