@@ -4,6 +4,9 @@ apt (0.7.6ubuntu13) gutsy; urgency=low
     - fix crash in WriteApportReport (LP: #144537)
   * apt-pkg/acquire-item.cc
     - fix disappearing local Packages.gz file (LP: #131166)
+  * methods/https.cc:
+    - fix off-by-one error I-M-S handling
+    - cleanup after I-M-S hit
 
  --
 
@@ -124,10 +127,11 @@ apt (0.7.6ubuntu1) gutsy; urgency=low
   * apt-pkg/acquire-item.cc:
     - remove zero size files on I-M-S hit
   * methods/https.cc:
-    - only send LastModified if we actually have one
+    - only send LastModified if we actually have a file
     - send range request with if-range 
     - delete failed downloads
     (thanks to Thom May for his help here)
+    - delete zero size I-M-S hits
   * apt-pkg/deb/dpkgpm.{cc,h}:
     - merged dpkg-log branch, this lets you specify a 
       Dir::Log::Terminal file to log dpkg output to
