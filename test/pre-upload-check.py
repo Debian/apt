@@ -72,7 +72,6 @@ class testAuthentication(unittest.TestCase):
             call([self.apt,"update",
                   "-o","Dir::Etc::sourcelist=./%s" % f]+apt_args,
                  stdout=stdout, stderr=stderr)
-            # then get the pkg
             cmd = ["install", "-y", "-d", "--reinstall",
                    "%s=%s" % (self.pkg, self.pkgver),
                    "-o","Dir::state::Status=./fake-status"]
@@ -92,7 +91,9 @@ class testAuthentication(unittest.TestCase):
                        stdout=stdout, stderr=stderr)
             self.assert_(res == expected_res,
                          "test '%s' failed (got %s expected %s" % (f,res,expected_res))
-
+            if expected_res == 0:
+                self.assert_(len(glob.glob("/var/lib/apt/lists/partial/*")) == 0,
+                             "partial/ dir has leftover files: %s" % glob.glob("/var/lib/apt/lists/partial/*"))
 
 
 class testLocalRepositories(unittest.TestCase):
@@ -117,6 +118,22 @@ class testLocalRepositories(unittest.TestCase):
             res = call(cmd, stdout=stdout, stderr=stderr)
             self.assertEqual(res, 0, "local repo test failed")
             self.assert_(os.path.exists(os.path.join(self.repo,"Packages.gz")),
+                         "Packages.gz vanished from local repo")
+
+    def testLocalRepo2(self):
+        repo = os.path.abspath(os.path.join(os.getcwd(), self.repo_dir+"2"))
+        sources = os.path.join(self.repo, "sources.list")
+        s = open(sources,"w")
+        s.write("deb file://%s/ /\n" % repo)
+        s.close()
+
+        # two times to get at least one i-m-s hit
+        for i in range(2):
+            self.assert_(os.path.exists(sources))
+            cmd = [self.apt,"update","-o", "Dir::Etc::sourcelist=%s" % sources]+apt_args
+            res = call(cmd, stdout=stdout, stderr=stderr)
+            self.assertEqual(res, 0, "local repo2 test failed")
+            self.assert_(os.path.exists(os.path.join(repo,"Packages.gz")),
                          "Packages.gz vanished from local repo")
 
     def testInstallFromLocalRepo(self):

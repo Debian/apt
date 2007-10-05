@@ -161,13 +161,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    }
    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-   // set time values
-   if(Itm->LastModified > 0)
-   {
-      curl_easy_setopt(curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
-      curl_easy_setopt(curl, CURLOPT_TIMEVALUE, Itm->LastModified);
-   }
-
    // speed limit
    int dlLimit = _config->FindI("Acquire::http::Dl-Limit",0)*1024;
    if (dlLimit > 0)
@@ -183,7 +176,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // error handling
    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_errorstr);
 
-   // In this case we send an if-range query with a range header
+   // if we have the file send an if-range query with a range header
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       char Buf[1000];
@@ -191,11 +184,17 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 	      (long)SBuf.st_size - 1,
 	      TimeRFC1123(SBuf.st_mtime).c_str());
       headers = curl_slist_append(headers, Buf);
+   } 
+   else if(Itm->LastModified > 0)
+   {
+      curl_easy_setopt(curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+      curl_easy_setopt(curl, CURLOPT_TIMEVALUE, Itm->LastModified);
    }
 
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   File->Seek(File->Size());
+   if (File->Size() > 0)
+      File->Seek(File->Size() - 1);
    
    // keep apt updated
    Res.Filename = Itm->DestFile;
@@ -217,9 +216,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    }
    File->Close();
 
-   if (Res.Size == 0)
-      Res.Size = File->Size();
-
    // Timestamp
    struct utimbuf UBuf;
    if (curl_servdate != -1) {
@@ -232,15 +228,19 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    struct stat Buf;
    if (stat(File->Name().c_str(),&Buf) == 0)
    {
-      Res.Size = Buf.st_size;
       Res.Filename = File->Name();
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
       if (curl_responsecode == 304)
       {
+	 unlink(File->Name().c_str());
 	 Res.IMSHit = true;
 	 Res.LastModified = Itm->LastModified;
+	 Res.Size = 0;
+	 URIDone(Res);
+	 return true;
       }
+      Res.Size = Buf.st_size;
    }
 
    // take hashes
