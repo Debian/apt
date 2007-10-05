@@ -743,10 +743,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-   {
-      unlink(FileName.c_str());
       return;
-   }
 
    if (FileName == DestFile)
       Erase = true;
