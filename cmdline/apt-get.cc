@@ -2755,6 +2755,7 @@ int main(int argc,const char *argv[])
                                    {"upgrade",&DoUpgrade},
                                    {"install",&DoInstall},
                                    {"remove",&DoInstall},
+                                   {"purge",&DoInstall},
 				   {"autoremove",&DoInstall},
 				   {"purge",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
