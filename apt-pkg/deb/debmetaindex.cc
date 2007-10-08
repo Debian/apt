@@ -144,7 +144,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool GetAll) const
       vector <struct IndexTarget *> *targets = ComputeIndexTargets();
       for (vector <struct IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); Target++) {
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
-			 (*Target)->ShortDesc, "");
+			 (*Target)->ShortDesc, HashString());
       }
    }
    new pkgAcqMetaSig(Owner, MetaIndexURI("Release.gpg"),
@@ -224,7 +224,7 @@ class debSLTypeDebian : public pkgSourceList::Type
 	 // This check insures that there will be only one Release file
 	 // queued for all the Packages files and Sources files it
 	 // corresponds to.
-	 if ((*I)->GetType() == "deb")
+		if (strcmp((*I)->GetType(), "deb") == 0)
 	 {
 	    debReleaseIndex *Deb = (debReleaseIndex *) (*I);
 	    // This check insures that there will be only one Release file

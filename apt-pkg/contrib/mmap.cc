@@ -31,6 +31,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include <cstring>
    									/*}}}*/
 
 // MMap::MMap - Constructor						/*{{{*/
@@ -115,7 +117,7 @@ bool MMap::Sync()
    
 #ifdef _POSIX_SYNCHRONIZED_IO   
    if ((Flags & ReadOnly) != ReadOnly)
-      if (msync((char *)Base,iSize,MS_SYNC) != 0)
+      if (msync((char *)Base,iSize,MS_SYNC) < 0)
 	 return _error->Errno("msync","Unable to write mmap");
 #endif   
    return true;
@@ -132,7 +134,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 #ifdef _POSIX_SYNCHRONIZED_IO
    unsigned long PSize = sysconf(_SC_PAGESIZE);
    if ((Flags & ReadOnly) != ReadOnly)
-      if (msync((char *)Base+(int)(Start/PSize)*PSize,Stop - Start,MS_SYNC) != 0)
+      if (msync((char *)Base+(int)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
 	 return _error->Errno("msync","Unable to write mmap");
 #endif   
    return true;

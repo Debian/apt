@@ -7,7 +7,7 @@ include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
 # FIXME..
-LIB_APT_PKG_MAJOR = 4.4
+LIB_APT_PKG_MAJOR = 4.5
 APT_DOMAIN := libapt-pkg$(LIB_APT_PKG_MAJOR)
 
 # The file method
@@ -80,9 +80,9 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = rsh.cc
 include $(PROGRAM_H)
 
-# SSH and vzip2 method symlink
-binary: $(BIN)/ssh $(BIN)/bzip2
-veryclean: clean-$(BIN)/ssh clean-$(BIN)/bzip2
+# SSH and bzip2 method symlink
+binary: $(BIN)/ssh $(BIN)/bzip2 $(BIN)/lzma
+veryclean: clean-$(BIN)/ssh clean-$(BIN)/bzip2 clean-$(BIN)/lzma
 $(BIN)/ssh:
 	echo "Installing ssh method link"
 	ln -fs rsh $(BIN)/ssh
@@ -92,5 +92,10 @@ clean-$(BIN)/ssh:
 $(BIN)/bzip2:
 	echo "Installing bzip2 method link"
 	ln -fs gzip $(BIN)/bzip2
+$(BIN)/lzma:
+	echo "Installing lzma method link"
+	ln -fs gzip $(BIN)/lzma
 clean-$(BIN)/bzip2:
 	-rm $(BIN)/bzip2
+clean-$(BIN)/lzma:
+	-rm $(BIN)/lzma

@@ -1,11 +1,132 @@
-apt (0.7.4) UNRELEASED; urgency=low
+apt (0.7.7) UNRELEASED; urgency=low
 
-  [Michael Vogt]
+  [ Michael Vogt ]
+  * apt-inst/contrib/extracttar.cc:
+    - fix fd leak for zero size files (thanks to Bill Broadley for
+      reporting this bug)
+  * apt-pkg/acquire-item.cc:
+    - remove zero size files on I-M-S hit
+  * methods/https.cc:
+    - only send LastModified if we actually have a file
+    - send range request with if-range 
+    - delete failed downloads
+    - delete zero size I-M-S hits
+  * apt-pkg/deb/dpkgpm.{cc,h}:
+    - merged dpkg-log branch, this lets you specify a 
+      Dir::Log::Terminal file to log dpkg output to
+      (ABI break)
+    - fix parse error when dpkg sends unexpected data
+  * merged apt--sha256 branch to fully support the new
+    sha256 checksums in the Packages and Release files
+    (ABI break)
+  * apt-pkg/pkgcachegen.cc:
+    - increase default mmap size
+  * tests/local-repo:
+    - added local repository testcase
+  * apt-pkg/acquire.cc:
+    - increase MaxPipeDepth for the internal worker<->method
+      communication to 1000 for the debtorrent backend
+  * make apt build with g++ 4.3
+  * fix missing SetExecClose() call when the status-fd is used
+  * debian/apt.cron.daily:
+    - move unattended-upgrade before apt-get autoclean
+  * fix "purge" commandline argument, closes: #133421
+    (thanks to Julien Danjou for the patch)
+  * cmdline/apt-get.cc:
+    - do not change the auto-installed information if a package
+      is reinstalled
+  * apt-pkg/acquire-item.cc:
+    - fix crash in diff acquire code
+  * cmdline/apt-mark:
+    - Fix chmoding after have renamed the extended-states file (LP: #140019)
+      (thanks to Laurent Bigonville)
+  
+  [ Program translations ]
+    - French updated
+    - Basque updated. Closes: #436425
+    - Fix the zh_CN translator's name in debian/changelog for 0.7.2
+      Closes: #423272
+    - Vietnamese updated. Closes: #440611
+    - Danish updated. Closes: #441102
+    - Thai added. Closes: #442833
+
+  [ Otavio Salvador ]
+  * Add hash support to copy method. Thanks Anders Kaseorg by the patch
+    (closes: #436055)
+  * Reset curl options and timestamp between downloaded files. Thanks to
+    Ryan Murray <rmurray@debian.org> for the patch (closes: #437150)
+  * Add support to apt-key to export keys to stdout. Thanks to "Dwayne
+    C. Litzenberger" <dlitz@dlitz.net> for the patch (closes: #441942)
+  * Fix compilation warnings:
+    - apt-pkg/indexfile.cc: conversion from string constant to 'char*';
+    - apt-pkg/acquire-item.cc: likewise;
+    - apt-pkg/cdrom.cc: '%lu' expects 'long unsigned int', but argument
+      has type 'size_t';
+    - apt-pkg/deb/dpkgpm.cc: initialization order and conversion from
+      string constant to 'char*';
+    - methods/gpgv.cc: conversion from string constant to 'char*';
+    - methods/ftp.cc: likewise;
+    - cmdline/apt-extracttemplates.cc: likewise;
+    - apt-pkg/deb/debmetaindex.cc: comparison with string literal results
+      in unspecified behaviour;
+  * cmdline/apt-get.cc: adds 'autoremove' as a valid comment to usage
+    statement of apt-get (closes: #445468).
+  * cmdline/apt-get.cc: really applies Julien Danjou <acid@debian.org>
+    patch to add 'purge' command line argument (closes: #133421).
+
+  [ Ian Jackson ]
+  * dpkg-triggers: Deal properly with new package states.
+
+  [ Colin Watson ]
+  * apt-pkg/contrib/mmap.cc:
+    - don't fail if msync() returns > 0
+ 
+ -- Otavio Salvador <otavio@debian.org>  Sat, 06 Oct 2007 18:23:42 -0300
+
+apt (0.7.6) unstable; urgency=low
+
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
+    directory downloading on non-linux architectures (closes: #435597)
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
+
+apt (0.7.6) unstable; urgency=low
+
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
+    directory downloading on non-linux architectures (closes: #435597)
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
+
+apt (0.7.5) unstable; urgency=low
+
+  [ Otavio Salvador ]
+  * Applied patch from Guillem Jover <guillem@debian.org> to use
+    dpkg-architecture to get the host architecture (closes: #407187)
+  * Applied patch from Guillem Jover <guillem@debian.org> to add
+    support to add lzma support (closes: #408201)
+
+  [ Michael Vogt ]
+  * apt-pkg/depcache.cc:
+    - support a list of sections for:
+      APT::Install-Recommends-Sections
+      APT::Never-MarkAuto-Sections
+  * methods/makefile:
+    - install lzma symlink method (for full lzma support)
+  * debian/control:
+    - suggest "lzma"
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 25 Jul 2007 20:16:46 -0300
+
+apt (0.7.4) unstable; urgency=low
+
+  [ Michael Vogt ]
   * cmdline/apt-get.cc:
     - fix in the task-install code regexp (thanks to Adam Conrad and
       Colin Watson)
+    - support task removal too: apt-get remove taskname^
+      (thanks to Matt Zimmerman reporting this problem)
 
-  [Otavio Salvador]
+  [ Otavio Salvador ]
   * Fix a typo on 0.7.3 changelog entry about g++ (7.3 to 4.3)
   * Fix compilation warnings:
     - apt-pkg/contrib/configuration.cc: wrong argument type;
@@ -23,7 +144,15 @@ apt (0.7.4) UNRELEASED; urgency=low
     configure-index example file. Thanks to Peter Eisentraut
     <peter_e@gmx.net> by the patch (closes: #432223)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 11 Jul 2007 23:20:15 +0100
+  [ Christian Perrier ]
+  * Basque translation update. Closes: ##423766
+  * Unfuzzy formerly complete translations
+  * French translation update
+  * Re-generate PO(T) files
+  * Spanish translation update
+  * Swedish translation update
+
+ -- Otavio Salvador <otavio@debian.org>  Tue, 24 Jul 2007 09:55:50 -0300
 
 apt (0.7.3) unstable; urgency=low
 
@@ -37,9 +166,9 @@ apt (0.7.3) unstable; urgency=low
     - fix InstallTask code when a pkgRecord ends 
       with a single '\n' (thanks to Soren Hansen for reporting)
   * merged from Christian Perrier:
-	* vi.po: completed to 532t, again. Closes: #429899
-	* gl.po: completed to 532t. Closes: #429506
-	* vi.po: completed to 532t. Closes: #428672
+        * vi.po: completed to 532t, again. Closes: #429899
+        * gl.po: completed to 532t. Closes: #429506
+        * vi.po: completed to 532t. Closes: #428672
         * Update all PO and the POT. Gives 514t14f4u for formerly
           complete translations
         * fr.po: completed to 532t
@@ -62,7 +191,7 @@ apt (0.7.2) unstable; urgency=low
     into the debian/sid branch
   * merged from Christian Perrier:
     * mr.po: New Marathi translation  Closes: #416806
-    * zh_CN.po: Updated by Eric Pareja  Closes: #416822
+    * zh_CN.po: Updated by Kov Chai  Closes: #416822
     * tl.po: Updated by Eric Pareja   Closes: #416638
     * gl.po: Updated by Jacobo Tarrio
 	     Closes: #412828
@@ -354,7 +483,7 @@ apt (0.6.45) unstable; urgency=low
   * apt-pkg/tagfile.cc:
     - support not-mmapable files again
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 25 Jul 2006 11:55:22 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 27 Jul 2006 00:52:05 +0200
 
 apt (0.6.44.2exp1) experimental; urgency=low
 
@@ -2562,4 +2691,3 @@ apt (0.0.1) unstable; urgency=low
   * Initial Release.
 
  -- Scott K. Ellis <scott@debian.org>  Tue, 31 Mar 1998 12:49:28 -0500
-

@@ -918,7 +918,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
-	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
 
@@ -1359,7 +1359,7 @@ bool DoUpdate(CommandLine &CmdL)
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
-	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
 
@@ -1507,7 +1507,8 @@ bool DoUpgrade(CommandLine &CmdL)
 bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix, 
 		    bool BrokenFix,
 		    unsigned int& ExpectedInst, 
-		    const char *taskname)
+		    const char *taskname,
+		    bool Remove)
 {
    const char *start, *end;
    pkgCache::PkgIterator Pkg;
@@ -1536,7 +1537,7 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
       buf[end-start] = 0x0;
       if (regexec(&Pattern,buf,0,0,0) != 0)
 	 continue;
-      res &= TryToInstall(Pkg,Cache,Fix,false,true,ExpectedInst);
+      res &= TryToInstall(Pkg,Cache,Fix,Remove,true,ExpectedInst);
       found = true;
    }
    
@@ -1604,7 +1605,7 @@ bool DoInstall(CommandLine &CmdL)
             // tasks must always be confirmed
             ExpectedInst += 1000;
             // see if we can install it
-            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S);
+            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S, Remove);
             continue;
          }
 
@@ -1707,7 +1708,8 @@ bool DoInstall(CommandLine &CmdL)
 	    // where foo is marked automatic
 	    if(!Remove && 
 	       Cache[Pkg].Install() == false && 
-	       (Cache[Pkg].Flags & pkgCache::Flag::Auto))
+	       (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
+	       _config->FindB("APT::Get::ReInstall",false) == false)
 	    {
 	       ioprintf(c1out,_("%s set to manual installed.\n"),
 			Pkg.Name());
@@ -2210,7 +2212,7 @@ bool DoSource(CommandLine &CmdL)
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
-	       I->Owner->FileSize << ' ' << I->Owner->MD5Sum() << endl;
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
    
@@ -2470,6 +2472,7 @@ bool DoBuildDep(CommandLine &CmdL)
                            break;
                  }
                  if (CV.end() == true)
+		 {
 		   if (hasAlternatives)
 		   {
 		      continue;
@@ -2482,6 +2485,7 @@ bool DoBuildDep(CommandLine &CmdL)
                                            Last->BuildDepType((*D).Type),Src.c_str(),
                                            (*D).Package.c_str());
 		   }
+		 }
             }
             else
             {
@@ -2581,8 +2585,8 @@ bool DoMoo(CommandLine &CmdL)
 /* */
 bool ShowHelp(CommandLine &CmdL)
 {
-   ioprintf(cout,_("%s %s for %s %s compiled on %s %s\n"),PACKAGE,VERSION,
-	    COMMON_OS,COMMON_CPU,__DATE__,__TIME__);
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+	    COMMON_ARCH,__DATE__,__TIME__);
 	    
    if (_config->FindB("version") == true)
    {
@@ -2640,6 +2644,7 @@ bool ShowHelp(CommandLine &CmdL)
       "   upgrade - Perform an upgrade\n"
       "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
       "   remove - Remove packages\n"
+      "   autoremove - Remove all automatic unused packages\n"
       "   purge - Remove and purge packages\n"
       "   source - Download source archives\n"
       "   build-dep - Configure build-dependencies for source packages\n"
@@ -2750,7 +2755,9 @@ int main(int argc,const char *argv[])
                                    {"upgrade",&DoUpgrade},
                                    {"install",&DoInstall},
                                    {"remove",&DoInstall},
+                                   {"purge",&DoInstall},
 				   {"autoremove",&DoInstall},
+				   {"purge",&DoInstall},
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
 				   {"build-dep",&DoBuildDep},

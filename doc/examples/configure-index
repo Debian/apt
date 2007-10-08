@@ -101,7 +101,7 @@ APT
   Install-Suggests "false";
 
   // consider dependencies of packages in this section manual
-  Never-MarkAuto-Section "metapackages";
+  Never-MarkAuto-Sections {"metapackages"; "universe/metapackages"; };
 
   // Write progress messages on this fd (for stuff like base-config)
   Status-Fd "-1";
@@ -226,6 +226,11 @@ Dir "/"
      dpkg-buildpackage "/usr/bin/dpkg-buildpackage";
      apt-get "/usr/bin/apt-get";
      apt-cache "/usr/bin/apt-cache";
+  };
+
+  // Location of the logfile
+  Log "var/log/apt" {
+	Terminal "term.log";
   };
 };
 

@@ -67,6 +67,14 @@ string debRecordParser::SHA1Hash()
    return Section.FindS("SHA1");
 }
 									/*}}}*/
+// RecordParser::SHA1Hash - Return the archive hash			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::SHA256Hash()
+{
+   return Section.FindS("SHA256");
+}
+									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

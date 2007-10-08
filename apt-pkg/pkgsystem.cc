@@ -13,6 +13,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/policy.h>
 #include <cassert>
+#include <cstring>
 									/*}}}*/
 
 pkgSystem *_system = 0;

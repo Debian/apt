@@ -50,32 +50,38 @@ bool indexRecords::Load(const string Filename)
 
    const char *Start, *End;
    Section.Get (Start, End, 0);
+
    Suite = Section.FindS("Suite");
    Dist = Section.FindS("Codename");
-//    if (Dist.empty())
-//    {
-//       ErrorText = _(("No Codename entry in Release file " + Filename).c_str());
-//       return false;
-//    }
-   if (!Section.Find("MD5Sum", Start, End))
+
+   int i;
+   for (i=0;HashString::SupportedHashes()[i] != NULL; i++)
    {
-      ErrorText = _(("No MD5Sum entry in Release file " + Filename).c_str());
+      if (!Section.Find(HashString::SupportedHashes()[i], Start, End))
+	 continue;
+
+      string Name;
+      string Hash;
+      size_t Size;
+      while (Start < End)
+      {
+	 if (!parseSumData(Start, End, Name, Hash, Size))
+	    return false;
+	 indexRecords::checkSum *Sum = new indexRecords::checkSum;
+	 Sum->MetaKeyFilename = Name;
+	 Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);
+	 Sum->Size = Size;
+	 Entries[Name] = Sum;
+      }
+      break;
+   }
+
+   if(HashString::SupportedHashes()[i] == NULL)
+   {
+      ErrorText = _(("No Hash entry in Release file " + Filename).c_str());
       return false;
-   }
-   string Name;
-   string MD5Hash;
-   size_t Size;
-   while (Start < End)
-   {
-      if (!parseSumData(Start, End, Name, MD5Hash, Size))
-	 return false;
-      indexRecords::checkSum *Sum = new indexRecords::checkSum;
-      Sum->MetaKeyFilename = Name;
-      Sum->MD5Hash = MD5Hash;
-      Sum->Size = Size;
-      Entries[Name] = Sum;
-   }
-   
+   }  
+
    string Strdate = Section.FindS("Date"); // FIXME: verify this somehow?
    return true;
 }

@@ -30,8 +30,8 @@ class pkgTagSection
    const char *Stop;
    
    // We have a limit of 256 tags per section.
-   unsigned short Indexes[256];
-   unsigned short AlphaIndexes[0x100];
+   unsigned int Indexes[256];
+   unsigned int AlphaIndexes[0x100];
    
    unsigned int TagCount;
      

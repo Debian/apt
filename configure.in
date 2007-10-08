@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.7.4")
+AC_DEFINE_UNQUOTED(VERSION,"0.7.7")
 PACKAGE="apt"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_SUBST(PACKAGE)
@@ -80,23 +80,13 @@ dnl Converts the ARCH to be something singular for this general CPU family
 dnl This is often the dpkg architecture string.
 dnl First check against the full canonical canoncial-system-type in $target
 dnl and if that fails, just look for the cpu
-AC_MSG_CHECKING(system architecture)
-archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/systemtable`"
+AC_MSG_CHECKING(debian architecture)
+archset="`dpkg-architecture -qDEB_HOST_ARCH`"
 if test "x$archset" = "x"; then
- archset="`awk \" ! /^#|^\\\$/ { if(match(\\\"$target_cpu\\\",\\\"^\\\"\\\$1\\\"\\\$\\\")) {print \\\$2; exit}}\" $srcdir/buildlib/archtable`"
- if test "x$archset" = "x"; then
-  AC_MSG_ERROR(failed: use --host= or check buildlib/archtable)
- fi
+   AC_MSG_ERROR([failed: use --host= or output from dpkg-architecture])
 fi
 AC_MSG_RESULT($archset)
-AC_DEFINE_UNQUOTED(COMMON_CPU,"$archset")
-
-dnl Get a common name for the host OS - this is primarily only for HURD and is
-dnl non fatal if it fails
-AC_MSG_CHECKING(system OS)
-osset="`awk \" ! /^#|^\\\$/ {if (match(\\\"$target_vendor-$target_os\\\",\\\$1)) {print \\\$2; exit}}\" $srcdir/buildlib/ostable`"
-AC_MSG_RESULT($osset)
-AC_DEFINE_UNQUOTED(COMMON_OS,"$osset")
+AC_DEFINE_UNQUOTED(COMMON_ARCH,"$archset")
 
 dnl We use C99 types if at all possible
 AC_CACHE_CHECK([for C99 integer types],c9x_ints,[
@@ -206,7 +196,7 @@ ah_GCC3DEP
 dnl It used to be that the user could select translations and that could get
 dnl passed to the makefiles, but now that can only work if you use special
 dnl gettext approved makefiles, so this feature is unsupported by this.
-ALL_LINGUAS="bg bs ca cs cy da de dz el en_GB es eu fi fr gl hu it ja ko ku nb nl nn pl pt_BR pt ro ru sk sl sv tl uk vi zn_CN zh_TW"
+ALL_LINGUAS="bg bs ca cs cy da de dz el en_GB es eu fi fr gl hu it ja ko ku nb nl nn pl pt_BR pt ro ru sk sl sv th tl uk vi zn_CN zh_TW"
 AM_GNU_GETTEXT(external)
 if test x"$USE_NLS" = "xyes"; then
    AC_DEFINE(USE_NLS)

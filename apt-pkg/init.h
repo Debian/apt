@@ -18,13 +18,11 @@
 
 // See the makefile
 #define APT_PKG_MAJOR 4
-#define APT_PKG_MINOR 4
+#define APT_PKG_MINOR 5
 #define APT_PKG_RELEASE 0
     
 extern const char *pkgVersion;
 extern const char *pkgLibVersion;
-extern const char *pkgOS;
-extern const char *pkgCPU;
 
 bool pkgInitConfig(Configuration &Cnf);
 bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys);

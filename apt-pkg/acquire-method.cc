@@ -176,9 +176,14 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 		      TimeRFC1123(Res.LastModified).c_str());
 
    if (Res.MD5Sum.empty() == false)
+   {
       End += snprintf(End,sizeof(S)-50 - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
+      End += snprintf(End,sizeof(S)-50 - (End - S),"MD5Sum-Hash: %s\n",Res.MD5Sum.c_str());
+   }
    if (Res.SHA1Sum.empty() == false)
       End += snprintf(End,sizeof(S)-50 - (End - S),"SHA1-Hash: %s\n",Res.SHA1Sum.c_str());
+   if (Res.SHA256Sum.empty() == false)
+      End += snprintf(End,sizeof(S)-50 - (End - S),"SHA256-Hash: %s\n",Res.SHA256Sum.c_str());
    if (Res.GPGVOutput.size() > 0)
       End += snprintf(End,sizeof(S)-50 - (End - S),"GPGVOutput:\n");     
    for (vector<string>::iterator I = Res.GPGVOutput.begin();
@@ -211,6 +216,9 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       if (Alt->SHA1Sum.empty() == false)
 	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-SHA1-Hash: %s\n",
 			 Alt->SHA1Sum.c_str());
+      if (Alt->SHA256Sum.empty() == false)
+	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-SHA256-Hash: %s\n",
+			 Alt->SHA256Sum.c_str());
       
       if (Alt->IMSHit == true)
 	 strcat(End,"Alt-IMS-Hit: true\n");
@@ -455,5 +463,6 @@ void pkgAcqMethod::FetchResult::TakeHashes(Hashes &Hash)
 {
    MD5Sum = Hash.MD5.Result();
    SHA1Sum = Hash.SHA1.Result();
+   SHA256Sum = Hash.SHA256.Result();
 }
 									/*}}}*/
