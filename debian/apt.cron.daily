@@ -170,6 +170,12 @@ if which on_ac_power >/dev/null; then
     fi
 fi
 
+# check if we can lock the cache and if the cache is clean
+if ! apt-get check -q -q 2>/dev/null; then
+    exit 1
+fi
+
+
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
     if apt-get -qq update 2>/dev/null; then

@@ -864,8 +864,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
 
-      if(master >= 0 && slave >= 0)
+      if(master >= 0) 
+      {
 	 tcsetattr(0, TCSAFLUSH, &tt);
+	 close(master);
+      }
        
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
