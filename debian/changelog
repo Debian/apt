@@ -1,9 +1,17 @@
 apt (0.7.6ubuntu14.1) gutsy-proposed; urgency=low
 
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.{cc,h}:
+    - give up timeslice on EIO error in read from master terminal
   * debian/apt.cron.daily:
     - only run the cron job if apt-get check succeeds (LP: #131719)
+
+  [ Martin Emrich ]  
+  * apt-pkg/deb/dpkgpm.{cc,h}:
+    - rewrite dpkgpm.cc to use pselect() instead of select()
+      to block signals during select() (LP: #134858)
  
- -- Michael Vogt <michael.vogt@ubuntu.com>  Mo, 15 Oct 2007 22:56:22 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Sat, 20 Oct 2007 07:51:12 +0200
 
 apt (0.7.6ubuntu14) gutsy; urgency=low
 

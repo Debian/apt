@@ -358,7 +358,15 @@ void pkgDPkgPM::DoTerminalPty(int master)
    char term_buf[1024] = {0,};
 
    int len=read(master, term_buf, sizeof(term_buf));
-   if(len <= 0)
+   if(len == -1 && errno == EIO)
+   {
+      // this happens when the child is about to exit, we
+      // give it time to actually exit, otherwise we run
+      // into a race
+      usleep(500000);
+      return;
+   }  
+   if(len <= 0) 
       return;
    write(1, term_buf, len);
    if(term_out)
@@ -819,7 +827,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // setups fds
       fd_set rfds;
-      struct timeval tv;
+      struct timespec tv;
+      sigset_t sigmask;
+      sigset_t original_sigmask;
+      sigemptyset(&sigmask);
+      sigprocmask(SIG_BLOCK,&sigmask,&original_sigmask);
+
       int select_ret;
       while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
 	 if(res < 0) {
@@ -842,8 +855,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 if(master >= 0)
 	    FD_SET(master, &rfds);
 	 tv.tv_sec = 1;
-	 tv.tv_usec = 0;
-	 select_ret = select(max(master, _dpkgin)+1, &rfds, NULL, NULL, &tv);
+	 tv.tv_nsec = 0;
+	 select_ret = pselect(max(master, _dpkgin)+1, &rfds, NULL, NULL, 
+			      &tv, &original_sigmask);
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)
