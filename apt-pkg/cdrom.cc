@@ -560,8 +560,8 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
    }
    if(log) {
       msg.str("");
-      ioprintf(msg, _("Stored label: %s \n"),
-	       Database.Find("CD::"+ident).c_str());
+      ioprintf(msg, _("Stored label: %s\n"),
+      Database.Find("CD::"+ident).c_str());
       log->Update(msg.str());
    }
    return true;
