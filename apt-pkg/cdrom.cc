@@ -564,6 +564,13 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
       Database.Find("CD::"+ident).c_str());
       log->Update(msg.str());
    }
+
+   // Unmount and finish
+   if (_config->FindB("APT::CDROM::NoMount",false) == false) {
+      log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
+      UnmountCdrom(CDROM);
+   }
+
    return true;
 }
 
