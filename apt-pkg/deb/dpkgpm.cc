@@ -543,6 +543,27 @@ bool pkgDPkgPM::CloseLog()
    return true;
 }
 
+/*{{{*/
+// This implements a racy version of pselect for those architectures
+// that don't have a working implementation.
+// FIXME: Probably can be removed on Lenny+1
+static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
+   fd_set *exceptfds, const struct timespec *timeout,
+   const sigset_t *sigmask)
+{
+   sigset_t origmask;
+   struct timeval tv;
+   int retval;
+
+   tv.tv_sec = timeout->tv.tv_sec;
+   tv.tv_usec = timeout->tv.tv_nsec/1000;
+
+   sigprocmask(SIG_SETMASK, &sigmask, &origmask);
+   retval = select(nfds, readfds, writefds, exceptfds, &tv);
+   sigprocmask(SIG_SETMASK, &origmask, 0);
+   return retval;
+}
+/*}}}*/
 
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
@@ -855,6 +876,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 tv.tv_nsec = 0;
 	 select_ret = pselect(max(master, _dpkgin)+1, &rfds, NULL, NULL, 
 			      &tv, &original_sigmask);
+	 if (select_ret < 0 && (errno == EINVAL || errno == ENOSYS))
+	    select_ret = racy_pselect(max(master, _dpkgin)+1, &rfds, NULL,
+				      NULL, &tv, &original_sigmask);
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)
