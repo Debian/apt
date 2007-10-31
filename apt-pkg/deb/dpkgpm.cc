@@ -555,10 +555,10 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
    struct timeval tv;
    int retval;
 
-   tv.tv_sec = timeout->tv.tv_sec;
-   tv.tv_usec = timeout->tv.tv_nsec/1000;
+   tv.tv_sec = timeout->tv_sec;
+   tv.tv_usec = timeout->tv_nsec/1000;
 
-   sigprocmask(SIG_SETMASK, &sigmask, &origmask);
+   sigprocmask(SIG_SETMASK, sigmask, &origmask);
    retval = select(nfds, readfds, writefds, exceptfds, &tv);
    sigprocmask(SIG_SETMASK, &origmask, 0);
    return retval;
