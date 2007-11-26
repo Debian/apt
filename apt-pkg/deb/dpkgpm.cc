@@ -344,7 +344,10 @@ void pkgDPkgPM::DoStdin(int master)
 {
    char input_buf[256] = {0,}; 
    int len = read(0, input_buf, sizeof(input_buf));
-   write(master, input_buf, len);
+   if (len)
+      write(master, input_buf, len);
+   else
+      stdin_is_dev_null = true;
 }
 									/*}}}*/
 // DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
@@ -639,6 +642,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }
    }   
 
+   stdin_is_dev_null = false;
+
    // create log
    OpenLog();
 
@@ -868,7 +873,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 FD_SET(0, &rfds); 
+	 if (!stdin_is_dev_null)
+	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
 	    FD_SET(master, &rfds);
