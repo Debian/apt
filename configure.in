@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.7.7")
+AC_DEFINE_UNQUOTED(VERSION,"0.7.9")
 PACKAGE="apt"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_SUBST(PACKAGE)
@@ -73,6 +73,13 @@ AC_CHECK_HEADER(db.h,
 )
 
 LIBS="$saveLIBS"
+
+AC_CHECK_LIB(curl, curl_easy_init,
+     [AC_CHECK_HEADER(curl/curl.h,
+        curl_ok=yes,
+        curl_ok=no)],
+     AC_MSG_ERROR([failed: I need CURL due https support]),
+)
 
 AC_SUBST(BDBLIB)
 

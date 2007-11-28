@@ -44,6 +44,7 @@ class debRecordParser : public pkgRecords::Parser
    virtual string ShortDesc();
    virtual string LongDesc();
    virtual string Name();
+   virtual string Homepage();
 
    virtual void GetRec(const char *&Start,const char *&Stop);
    

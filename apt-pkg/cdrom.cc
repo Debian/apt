@@ -560,10 +560,17 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
    }
    if(log) {
       msg.str("");
-      ioprintf(msg, _("Stored label: %s \n"),
-	       Database.Find("CD::"+ident).c_str());
+      ioprintf(msg, _("Stored label: %s\n"),
+      Database.Find("CD::"+ident).c_str());
       log->Update(msg.str());
    }
+
+   // Unmount and finish
+   if (_config->FindB("APT::CDROM::NoMount",false) == false) {
+      log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
+      UnmountCdrom(CDROM);
+   }
+
    return true;
 }
 

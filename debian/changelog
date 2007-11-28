@@ -1,4 +1,56 @@
-apt (0.7.7) UNRELEASED; urgency=low
+apt (0.7.10) UNRELEASED; urgency=low
+
+  * Applied patch from Mike O'Connor <stew@vireo.org> to add a manpage to
+    apt-mark, closes: #430207.
+  * Applied patch from Andrei Popescu <andreimpopescu@gmail.com> to add a
+    note about some frontends in apt.8 manpage, closes: #438545.
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to avoid CPU
+    getting crazy when /dev/null is redirected to stdin (which breaks
+    buildds), closes: #452858.
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix building
+    with newest dpkg-shlibdeps changing the packaging building order,
+    closes: #452862.
+
+  [ Program translations ]
+    - Basque updated. Closes: #453088
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Mon, 26 Nov 2007 15:46:33 -0200
+
+apt (0.7.9) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Add several languages to LINGUAS and, therefore, really ship the relevant
+    translation:
+    Arabic, Dzongkha, Khmer, Marathi, Nepali, Thai
+    Thanks to Theppitak Karoonboonyanan for checking this out. Closes: #448321
+
+  [ Program translations ]
+    - Korean updated. Closes: #448430
+    - Galician updated. Closes: #448497
+    - Swedish updated.
+
+  [ Otavio Salvador ]
+  * Fix configure script to check for CURL library and headers presense.
+  * Applied patch from Brian M. Carlson <sandals@crustytoothpaste.ath.cx>
+    to add backward support for arches that lacks pselect support,
+    closes: #448406.
+  * Umount CD-ROM when calling apt-cdrom ident, except when called with
+    -m, closes: #448521.
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 31 Oct 2007 13:37:26 -0200
+
+apt (0.7.8) unstable; urgency=low
+
+  * Applied patch from Daniel Leidert <daniel.leidert@wgdd.de> to fix
+    APT::Acquire::Translation "none" support, closes: #437523.
+  * Applied patch from Daniel Burrows <dburrows@debian.org> to add support
+    for the Homepage field (ABI break), closes: #447970.
+  * Applied patch from Frans Pop <elendil@planet.nl> to fix a trailing
+    space after cd label, closes: #448187.
+
+ -- Otavio Salvador <otavio@debian.org>  Fri, 26 Oct 2007 18:20:13 -0200
+
+apt (0.7.7) unstable; urgency=low
 
   [ Michael Vogt ]
   * apt-inst/contrib/extracttar.cc:
@@ -40,6 +92,8 @@ apt (0.7.7) UNRELEASED; urgency=low
   * cmdline/apt-mark:
     - Fix chmoding after have renamed the extended-states file (LP: #140019)
       (thanks to Laurent Bigonville)
+  * apt-pkg/depcache.cc:
+    - set "APT::Install-Recommends" to true by default (OMG!)
   * debian/apt.cron.daily:
     - only run the cron job if apt-get check succeeds (LP: #131719)
   
@@ -51,6 +105,8 @@ apt (0.7.7) UNRELEASED; urgency=low
     - Vietnamese updated. Closes: #440611
     - Danish updated. Closes: #441102
     - Thai added. Closes: #442833
+    - Swedish updated.
+    - Galician updated. Closes: #446626
 
   [ Otavio Salvador ]
   * Add hash support to copy method. Thanks Anders Kaseorg by the patch
@@ -71,6 +127,10 @@ apt (0.7.7) UNRELEASED; urgency=low
     - cmdline/apt-extracttemplates.cc: likewise;
     - apt-pkg/deb/debmetaindex.cc: comparison with string literal results
       in unspecified behaviour;
+  * cmdline/apt-get.cc: adds 'autoremove' as a valid comment to usage
+    statement of apt-get (closes: #445468).
+  * cmdline/apt-get.cc: really applies Julien Danjou <acid@debian.org>
+    patch to add 'purge' command line argument (closes: #133421).
 
   [ Ian Jackson ]
   * dpkg-triggers: Deal properly with new package states.
@@ -79,7 +139,7 @@ apt (0.7.7) UNRELEASED; urgency=low
   * apt-pkg/contrib/mmap.cc:
     - don't fail if msync() returns > 0
  
- -- Otavio Salvador <otavio@debian.org>  Mon, 06 Aug 2007 10:44:53 -0300
+ -- Michael Vogt <mvo@debian.org>  Tue, 23 Oct 2007 14:58:03 +0200
 
 apt (0.7.6) unstable; urgency=low
 

@@ -344,7 +344,10 @@ void pkgDPkgPM::DoStdin(int master)
 {
    char input_buf[256] = {0,}; 
    int len = read(0, input_buf, sizeof(input_buf));
-   write(master, input_buf, len);
+   if (len)
+      write(master, input_buf, len);
+   else
+      stdin_is_dev_null = true;
 }
 									/*}}}*/
 // DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
@@ -503,6 +506,67 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
 }
 									/*}}}*/
 
+bool pkgDPkgPM::OpenLog()
+{
+   string logdir = _config->FindDir("Dir::Log");
+   if(not FileExists(logdir))
+      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
+   string logfile_name = flCombine(logdir,
+				   _config->Find("Dir::Log::Terminal"));
+   if (!logfile_name.empty())
+   {
+      term_out = fopen(logfile_name.c_str(),"a");
+      chmod(logfile_name.c_str(), 0600);
+      // output current time
+      char outstr[200];
+      time_t t = time(NULL);
+      struct tm *tmp = localtime(&t);
+      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+      fprintf(term_out, "\nLog started: ");
+      fprintf(term_out, outstr);
+      fprintf(term_out, "\n");
+   }
+   return true;
+}
+
+bool pkgDPkgPM::CloseLog()
+{
+   if(term_out)
+   {
+      char outstr[200];
+      time_t t = time(NULL);
+      struct tm *tmp = localtime(&t);
+      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
+      fprintf(term_out, "Log ended: ");
+      fprintf(term_out, outstr);
+      fprintf(term_out, "\n");
+      fclose(term_out);
+   }
+   term_out = NULL;
+   return true;
+}
+
+/*{{{*/
+// This implements a racy version of pselect for those architectures
+// that don't have a working implementation.
+// FIXME: Probably can be removed on Lenny+1
+static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
+   fd_set *exceptfds, const struct timespec *timeout,
+   const sigset_t *sigmask)
+{
+   sigset_t origmask;
+   struct timeval tv;
+   int retval;
+
+   tv.tv_sec = timeout->tv_sec;
+   tv.tv_usec = timeout->tv_nsec/1000;
+
+   sigprocmask(SIG_SETMASK, sigmask, &origmask);
+   retval = select(nfds, readfds, writefds, exceptfds, &tv);
+   sigprocmask(SIG_SETMASK, &origmask, 0);
+   return retval;
+}
+/*}}}*/
 
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
@@ -578,25 +642,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }
    }   
 
+   stdin_is_dev_null = false;
+
    // create log
-   string logdir = _config->FindDir("Dir::Log");
-   if(not FileExists(logdir))
-      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
-   string logfile_name = flCombine(logdir,
-				   _config->Find("Dir::Log::Terminal"));
-   if (!logfile_name.empty())
-   {
-      term_out = fopen(logfile_name.c_str(),"a");
-      chmod(logfile_name.c_str(), 0600);
-      // output current time
-      char outstr[200];
-      time_t t = time(NULL);
-      struct tm *tmp = localtime(&t);
-      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-      fprintf(term_out, "\nLog started: ");
-      fprintf(term_out, outstr);
-      fprintf(term_out, "\n");
-   }
+   OpenLog();
 
    // this loop is runs once per operation
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
@@ -824,7 +873,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 FD_SET(0, &rfds); 
+	 if (!stdin_is_dev_null)
+	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
 	    FD_SET(master, &rfds);
@@ -832,6 +882,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 tv.tv_nsec = 0;
 	 select_ret = pselect(max(master, _dpkgin)+1, &rfds, NULL, NULL, 
 			      &tv, &original_sigmask);
+	 if (select_ret < 0 && (errno == EINVAL || errno == ENOSYS))
+	    select_ret = racy_pselect(max(master, _dpkgin)+1, &rfds, NULL,
+				      NULL, &tv, &original_sigmask);
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)
@@ -881,14 +934,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 if(stopOnError) 
 	 {
-	    if(term_out)
-	       fclose(term_out);
+	    CloseLog();
 	    return false;
 	 }
       }      
    }
-   if(term_out)
-      fclose(term_out);
+   CloseLog();
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;

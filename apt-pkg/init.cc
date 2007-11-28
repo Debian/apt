@@ -35,7 +35,7 @@ bool pkgInitConfig(Configuration &Cnf)
    // General APT things
    Cnf.Set("APT::Architecture", COMMON_ARCH);
    Cnf.Set("APT::Build-Essential::", "build-essential");
-   Cnf.Set("APT::Install-Recommends", false);
+   Cnf.Set("APT::Install-Recommends", true);
    Cnf.Set("APT::Install-Suggests", false);
    Cnf.Set("Dir","/");
    
@@ -72,7 +72,10 @@ bool pkgInitConfig(Configuration &Cnf)
    // State   
    Cnf.Set("Dir::Log","var/log/apt");
    Cnf.Set("Dir::Log::Terminal","term.log");
-   
+
+   // Translation
+   Cnf.Set("APT::Acquire::Translation", "environment");
+
    bool Res = true;
    
    // Read an alternate config file
@@ -104,9 +107,6 @@ bool pkgInitConfig(Configuration &Cnf)
    }
 #endif
 
-   // Translation
-   Cnf.Set("APT::Acquire::Translation", "environment");
-   
    return true;
 }
 									/*}}}*/
