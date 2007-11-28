@@ -26,13 +26,14 @@ class MirrorMethod : public HttpMethod
    // we simply transform between BaseUri and Mirror
    string BaseUri;    // the original mirror://... url
    string Mirror;     // the selected mirror uri (http://...)
-   string MirrorFile; // 
-   bool HasMirrorFile;
+   string MirrorFile; // the file that contains the list of mirrors
+   bool DownloadedMirrorFile; // already downloaded this session
 
    bool Debug;
 
  protected:
-   bool GetMirrorFile(string uri);
+   bool DownloadMirrorFile(string uri);
+   string GetMirrorFileName(string uri);
    bool SelectMirror();
    bool Clean(string dir);
    
