@@ -48,7 +48,7 @@ using namespace std;
  */
 
 MirrorMethod::MirrorMethod()
-   : HttpMethod(), HasMirrorFile(false)
+   : HttpMethod(), DownloadedMirrorFile(false)
 {
 };
 
@@ -72,6 +72,9 @@ bool MirrorMethod::Clean(string Dir)
 
    if(Debug)
       clog << "MirrorMethod::Clean(): " << Dir << endl;
+
+   if(Dir == "/")
+      return _error->Error("will not clean: '/'");
 
    // read sources.list
    pkgSourceList list;
@@ -118,7 +121,71 @@ bool MirrorMethod::Clean(string Dir)
 }
 
 
-bool MirrorMethod::GetMirrorFile(string mirror_uri_str)
+bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
+{
+
+   // check the file, if it is not older than RefreshInterval just use it
+   // otherwise try to get a new one
+   if(FileExists(MirrorFile)) 
+   {
+      struct stat buf;
+      time_t t,now,refresh;
+      if(stat(MirrorFile.c_str(), &buf) != 0)
+	 return false;
+      t = std::max(buf.st_mtime, buf.st_ctime);
+      now = time(NULL);
+      refresh = 60*_config->FindI("Acquire::Mirror::RefreshInterval",360);
+      if(t + refresh > now)
+      {
+	 if(Debug)
+	    clog << "Mirror file is in RefreshInterval" << endl;
+	 DownloadedMirrorFile = true;
+	 return true;
+      }
+      if(Debug)
+	 clog << "Mirror file " << MirrorFile << " older than " << refresh << "min, re-download it" << endl;
+   }
+
+   // not that great to use pkgAcquire here, but we do not have 
+   // any other way right now
+   string fetch = BaseUri;
+   fetch.replace(0,strlen("mirror://"),"http://");
+
+   pkgAcquire Fetcher;
+   new pkgAcqFile(&Fetcher, fetch, "", 0, "", "", "", MirrorFile);
+   bool res = (Fetcher.Run() == pkgAcquire::Continue);
+   if(res)
+      DownloadedMirrorFile = true;
+   Fetcher.Shutdown();
+   return res;
+}
+
+bool MirrorMethod::SelectMirror()
+{
+   // if we do not have a MirrorFile, fallback
+   if(!FileExists(MirrorFile))
+   {
+      // FIXME: fallback to a default mirror here instead 
+      //        and provide a config option to define that default
+      return _error->Error(_("No mirror file '%s' found "), MirrorFile.c_str());
+   }
+
+   // FIXME: make the mirror selection more clever, do not 
+   //        just use the first one!
+   // BUT: we can not make this random, the mirror has to be
+   //      stable accross session, because otherwise we can
+   //      get into sync issues (got indexfiles from mirror A,
+   //      but packages from mirror B - one might be out of date etc)
+   ifstream in(MirrorFile.c_str());
+   getline(in, Mirror);
+   if(Debug)
+      cerr << "Using mirror: " << Mirror << endl;
+
+   UsedMirror = Mirror;
+   return true;
+}
+
+string MirrorMethod::GetMirrorFileName(string mirror_uri_str)
 {
    /* 
     - a mirror_uri_str looks like this:
@@ -144,8 +211,9 @@ bool MirrorMethod::GetMirrorFile(string mirror_uri_str)
    in both cases! So we need to apply some domain knowledge here :( and
    check for /dists/ or /Release.gpg as suffixes
    */
+   string name;
    if(Debug)
-      std::cerr << "GetMirrorFile: " << mirror_uri_str << std::endl;
+      std::cerr << "GetMirrorFileName: " << mirror_uri_str << std::endl;
 
    // read sources.list and find match
    vector<metaIndex *>::const_iterator I;
@@ -166,62 +234,15 @@ bool MirrorMethod::GetMirrorFile(string mirror_uri_str)
 	 BaseUri = uristr.substr(0,uristr.size()-1);
       }
    }
-   string fetch = BaseUri;
-   fetch.replace(0,strlen("mirror://"),"http://");
-
    // get new file
-   MirrorFile = _config->FindDir("Dir::State::mirrors") + URItoFileName(BaseUri);
+   name = _config->FindDir("Dir::State::mirrors") + URItoFileName(BaseUri);
 
    if(Debug) 
    {
       cerr << "base-uri: " << BaseUri << endl;
-      cerr << "mirror-file: " << MirrorFile << endl;
+      cerr << "mirror-file: " << name << endl;
    }
-
-   // check the file, if it is not older than RefreshInterval just use it
-   // otherwise try to get a new one
-   if(FileExists(MirrorFile)) 
-   {
-      struct stat buf;
-      time_t t,now,refresh;
-      if(stat(MirrorFile.c_str(), &buf) != 0)
-	 return false;
-      t = std::max(buf.st_mtime, buf.st_ctime);
-      now = time(NULL);
-      refresh = 60*_config->FindI("Acquire::Mirror::RefreshInterval",360);
-      if(t + refresh > now)
-      {
-	 if(Debug)
-	    clog << "Mirror file is in RefreshInterval" << endl;
-	 HasMirrorFile = true;
-	 return true;
-      }
-      if(Debug)
-	 clog << "Mirror file " << MirrorFile << " older than " << refresh << "min, re-download it" << endl;
-   }
-
-   // not that great to use pkgAcquire here, but we do not have 
-   // any other way right now
-   pkgAcquire Fetcher;
-   new pkgAcqFile(&Fetcher, fetch, "", 0, "", "", "", MirrorFile);
-   bool res = (Fetcher.Run() == pkgAcquire::Continue);
-   if(res)
-      HasMirrorFile = true;
-   Fetcher.Shutdown();
-   return res;
-}
-
-bool MirrorMethod::SelectMirror()
-{
-   // FIXME: make the mirror selection more clever, do not 
-   //        just use the first one!
-   ifstream in(MirrorFile.c_str());
-   getline(in, Mirror);
-   if(Debug)
-      cerr << "Using mirror: " << Mirror << endl;
-
-   UsedMirror = Mirror;
-   return true;
+   return name;
 }
 
 // MirrorMethod::Fetch - Fetch an item					/*{{{*/
@@ -230,20 +251,33 @@ bool MirrorMethod::SelectMirror()
    depth. */
 bool MirrorMethod::Fetch(FetchItem *Itm)
 {
-   // select mirror only once per session
-   if(!HasMirrorFile)
+   // the http method uses Fetch(0) as a way to update the pipeline,
+   // just let it do its work in this case - Fetch() with a valid
+   // Itm will always run before the first Fetch(0)
+   if(Itm == NULL) 
+      return HttpMethod::Fetch(Itm);
+
+   // if we don't have the name of the mirror file on disk yet,
+   // calculate it now (can be derived from the uri)
+   if(MirrorFile.empty())
+      MirrorFile = GetMirrorFileName(Itm->Uri);
+
+  // download mirror file once (if we are after index files)
+   if(Itm->IndexFile && !DownloadedMirrorFile)
    {
       Clean(_config->FindDir("Dir::State::mirrors"));
-      GetMirrorFile(Itm->Uri);
-      SelectMirror();
+      DownloadMirrorFile(Itm->Uri);
    }
+
+   if(Mirror.empty())
+      SelectMirror();
 
    for (FetchItem *I = Queue; I != 0; I = I->Next)
    {
       if(I->Uri.find("mirror://") != string::npos)
-	 I->Uri.replace(0,BaseUri.size(),Mirror);
+	 I->Uri.replace(0,BaseUri.size(), Mirror);
    }
-
+   
    // now run the real fetcher
    return HttpMethod::Fetch(Itm);
 };
