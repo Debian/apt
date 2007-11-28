@@ -45,8 +45,8 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0), PackagesDone(0), 
-     PackagesTotal(0), term_out(NULL)
+   : pkgPackageManager(Cache), dpkgbuf_pos(0),
+     term_out(NULL), PackagesDone(0), PackagesTotal(0)
 {
 }
 									/*}}}*/
@@ -335,7 +335,6 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 
    return true;
 }
-
 									/*}}}*/
 // DPkgPM::DoStdin - Read stdin and pass to slave pty			/*{{{*/
 // ---------------------------------------------------------------------
@@ -345,7 +344,10 @@ void pkgDPkgPM::DoStdin(int master)
 {
    char input_buf[256] = {0,}; 
    int len = read(0, input_buf, sizeof(input_buf));
-   write(master, input_buf, len);
+   if (len)
+      write(master, input_buf, len);
+   else
+      stdin_is_dev_null = true;
 }
 									/*}}}*/
 // DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
@@ -546,6 +548,27 @@ bool pkgDPkgPM::CloseLog()
    return true;
 }
 
+/*{{{*/
+// This implements a racy version of pselect for those architectures
+// that don't have a working implementation.
+// FIXME: Probably can be removed on Lenny+1
+static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
+   fd_set *exceptfds, const struct timespec *timeout,
+   const sigset_t *sigmask)
+{
+   sigset_t origmask;
+   struct timeval tv;
+   int retval;
+
+   tv.tv_sec = timeout->tv_sec;
+   tv.tv_usec = timeout->tv_nsec/1000;
+
+   sigprocmask(SIG_SETMASK, sigmask, &origmask);
+   retval = select(nfds, readfds, writefds, exceptfds, &tv);
+   sigprocmask(SIG_SETMASK, &origmask, 0);
+   return retval;
+}
+/*}}}*/
 
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
@@ -620,6 +643,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 PackagesTotal++;
       }
    }   
+
+   stdin_is_dev_null = false;
 
    // create log
    OpenLog();
@@ -804,7 +829,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
-	 putenv("DPKG_NO_TSTP=yes");
+	 putenv((char *)"DPKG_NO_TSTP=yes");
 	 execvp(Args[0],(char **)Args);
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
@@ -847,10 +872,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    signal(SIGINT,old_SIGINT);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
-
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 FD_SET(0, &rfds); 
+	 if (!stdin_is_dev_null)
+	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
 	    FD_SET(master, &rfds);
@@ -858,6 +883,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 tv.tv_nsec = 0;
 	 select_ret = pselect(max(master, _dpkgin)+1, &rfds, NULL, NULL, 
 			      &tv, &original_sigmask);
+	 if (select_ret < 0 && (errno == EINVAL || errno == ENOSYS))
+	    select_ret = racy_pselect(max(master, _dpkgin)+1, &rfds, NULL,
+				      NULL, &tv, &original_sigmask);
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.moconnor;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>2 November 2007</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt-mark</refentrytitle>
+   <manvolnum>8</manvolnum>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-mark</refname>
+    <refpurpose>Utility to sort package index files</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-mark</command>
+      <arg><option>-hv</option></arg>
+      <arg><option>-f=<replaceable>FILENAME</replaceable></option></arg>
+      <group choice="req"><arg>markauto</arg><arg>unmarkauto</arg></group>
+      <arg choice="plain" rep="repeat"><replaceable>package</replaceable></arg>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+ 
+ <refsect1><title>Description</title>
+   <para><command>apt-mark</command> will change whether a package has
+   been marked as being automatically installed.
+   </para>
+   <para>
+     When you request that a package is installed, and as a result
+     other packages are installed to satisfy its dependencies, the
+     depedencies are marked as being automatically installed.  Once
+     these automatically installed packages are no longer depended on
+     by any manually installed packages, they will be removed.
+   </para>
+     <variablelist>
+       <varlistentry><term>markauto</term>
+	 <listitem><para><literal>markauto</literal> is used to mark a
+     package as being automatically installed, which will cause the
+     package to be removed when no more manually installed packages
+     depend on this package.
+       </para></listitem>
+       </varlistentry>
+
+       <varlistentry><term>unmarkauto</term>
+	 <listitem><para><literal>unmarkauto</literal> is used to mark a
+     package as being manually installed, which will prevent the
+     package from being automatically removed if no other packages
+     depend on it.
+       </para></listitem>
+       </varlistentry>
+     </variablelist>
+ </refsect1>
+ 
+ <refsect1><title>options</title>
+   
+   <variablelist>
+     <varlistentry><term><option>-f=<filename>FILENAME</filename></option></term><term><option>--file=<filename>FILENAME</filename></option></term>
+     <listitem><para>
+      
+     Read/Write package stats from <filename>FILENAME</filename>
+     instead of the default location, which
+     is <filename>extended_status</filename> in the directory defined
+     by the Configuration Item: <literal>Dir::State</literal>.</para></listitem>
+     </varlistentry>
+   
+     <varlistentry><term><option>-h</option></term>
+     <term><option>--help</option></term>
+     <listitem><para>Show a short usage summary.
+     </para>
+     </listitem>
+     </varlistentry>
+     
+     <varlistentry>
+      <term><option>-v</option></term>
+      <term><option>--version</option></term>
+      <listitem><para>Show the program version.
+     </para>
+     </listitem>
+     </varlistentry>
+
+     
+   </variablelist>
+ </refsect1>
+
+ <refsect1><title>See Also</title>
+   <para>&apt-conf;</para>
+ </refsect1>
+
+ <refsect1><title>Diagnostics</title>
+   <para><command>apt-mark</command> returns zero on normal operation, non-zero on error.</para>
+ </refsect1>
+
+ &manbugs;
+ 
+</refentry>

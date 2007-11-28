@@ -224,7 +224,7 @@ class debSLTypeDebian : public pkgSourceList::Type
 	 // This check insures that there will be only one Release file
 	 // queued for all the Packages files and Sources files it
 	 // corresponds to.
-	 if (strcmp((*I)->GetType(), "deb") == 0)
+		if (strcmp((*I)->GetType(), "deb") == 0)
 	 {
 	    debReleaseIndex *Deb = (debReleaseIndex *) (*I);
 	    // This check insures that there will be only one Release file

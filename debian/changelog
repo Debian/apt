@@ -1,9 +1,159 @@
-apt (0.7.6ubuntu15) hardy; urgency=low
+apt (0.7.10ubuntu1) hardy; urgency=low
 
   * methods/mirror.{cc,h}:
     - only update mirror list on IndexFile updates 
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 28 Nov 2007 15:57:18 +0100
+
+apt (0.7.10) UNRELEASED; urgency=low
+
+  * Applied patch from Mike O'Connor <stew@vireo.org> to add a manpage to
+    apt-mark, closes: #430207.
+  * Applied patch from Andrei Popescu <andreimpopescu@gmail.com> to add a
+    note about some frontends in apt.8 manpage, closes: #438545.
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to avoid CPU
+    getting crazy when /dev/null is redirected to stdin (which breaks
+    buildds), closes: #452858.
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix building
+    with newest dpkg-shlibdeps changing the packaging building order,
+    closes: #452862.
+
+  [ Program translations ]
+    - Basque updated. Closes: #453088
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Mon, 26 Nov 2007 15:46:33 -0200
+
+apt (0.7.9) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Add several languages to LINGUAS and, therefore, really ship the relevant
+    translation:
+    Arabic, Dzongkha, Khmer, Marathi, Nepali, Thai
+    Thanks to Theppitak Karoonboonyanan for checking this out. Closes: #448321
+
+  [ Program translations ]
+    - Korean updated. Closes: #448430
+    - Galician updated. Closes: #448497
+    - Swedish updated.
+
+  [ Otavio Salvador ]
+  * Fix configure script to check for CURL library and headers presense.
+  * Applied patch from Brian M. Carlson <sandals@crustytoothpaste.ath.cx>
+    to add backward support for arches that lacks pselect support,
+    closes: #448406.
+  * Umount CD-ROM when calling apt-cdrom ident, except when called with
+    -m, closes: #448521.
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 31 Oct 2007 13:37:26 -0200
+
+apt (0.7.8) unstable; urgency=low
+
+  * Applied patch from Daniel Leidert <daniel.leidert@wgdd.de> to fix
+    APT::Acquire::Translation "none" support, closes: #437523.
+  * Applied patch from Daniel Burrows <dburrows@debian.org> to add support
+    for the Homepage field (ABI break), closes: #447970.
+  * Applied patch from Frans Pop <elendil@planet.nl> to fix a trailing
+    space after cd label, closes: #448187.
+
+ -- Otavio Salvador <otavio@debian.org>  Fri, 26 Oct 2007 18:20:13 -0200
+
+apt (0.7.7) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * apt-inst/contrib/extracttar.cc:
+    - fix fd leak for zero size files (thanks to Bill Broadley for
+      reporting this bug)
+  * apt-pkg/acquire-item.cc:
+    - remove zero size files on I-M-S hit
+  * methods/https.cc:
+    - only send LastModified if we actually have a file
+    - send range request with if-range 
+    - delete failed downloads
+    - delete zero size I-M-S hits
+  * apt-pkg/deb/dpkgpm.{cc,h}:
+    - merged dpkg-log branch, this lets you specify a 
+      Dir::Log::Terminal file to log dpkg output to
+      (ABI break)
+    - fix parse error when dpkg sends unexpected data
+  * merged apt--sha256 branch to fully support the new
+    sha256 checksums in the Packages and Release files
+    (ABI break)
+  * apt-pkg/pkgcachegen.cc:
+    - increase default mmap size
+  * tests/local-repo:
+    - added local repository testcase
+  * apt-pkg/acquire.cc:
+    - increase MaxPipeDepth for the internal worker<->method
+      communication to 1000 for the debtorrent backend
+  * make apt build with g++ 4.3
+  * fix missing SetExecClose() call when the status-fd is used
+  * debian/apt.cron.daily:
+    - move unattended-upgrade before apt-get autoclean
+  * fix "purge" commandline argument, closes: #133421
+    (thanks to Julien Danjou for the patch)
+  * cmdline/apt-get.cc:
+    - do not change the auto-installed information if a package
+      is reinstalled
+  * apt-pkg/acquire-item.cc:
+    - fix crash in diff acquire code
+  * cmdline/apt-mark:
+    - Fix chmoding after have renamed the extended-states file (LP: #140019)
+      (thanks to Laurent Bigonville)
+  * apt-pkg/depcache.cc:
+    - set "APT::Install-Recommends" to true by default (OMG!)
+  * debian/apt.cron.daily:
+    - only run the cron job if apt-get check succeeds (LP: #131719)
+  
+  [ Program translations ]
+    - French updated
+    - Basque updated. Closes: #436425
+    - Fix the zh_CN translator's name in debian/changelog for 0.7.2
+      Closes: #423272
+    - Vietnamese updated. Closes: #440611
+    - Danish updated. Closes: #441102
+    - Thai added. Closes: #442833
+    - Swedish updated.
+    - Galician updated. Closes: #446626
+
+  [ Otavio Salvador ]
+  * Add hash support to copy method. Thanks Anders Kaseorg by the patch
+    (closes: #436055)
+  * Reset curl options and timestamp between downloaded files. Thanks to
+    Ryan Murray <rmurray@debian.org> for the patch (closes: #437150)
+  * Add support to apt-key to export keys to stdout. Thanks to "Dwayne
+    C. Litzenberger" <dlitz@dlitz.net> for the patch (closes: #441942)
+  * Fix compilation warnings:
+    - apt-pkg/indexfile.cc: conversion from string constant to 'char*';
+    - apt-pkg/acquire-item.cc: likewise;
+    - apt-pkg/cdrom.cc: '%lu' expects 'long unsigned int', but argument
+      has type 'size_t';
+    - apt-pkg/deb/dpkgpm.cc: initialization order and conversion from
+      string constant to 'char*';
+    - methods/gpgv.cc: conversion from string constant to 'char*';
+    - methods/ftp.cc: likewise;
+    - cmdline/apt-extracttemplates.cc: likewise;
+    - apt-pkg/deb/debmetaindex.cc: comparison with string literal results
+      in unspecified behaviour;
+  * cmdline/apt-get.cc: adds 'autoremove' as a valid comment to usage
+    statement of apt-get (closes: #445468).
+  * cmdline/apt-get.cc: really applies Julien Danjou <acid@debian.org>
+    patch to add 'purge' command line argument (closes: #133421).
+
+  [ Ian Jackson ]
+  * dpkg-triggers: Deal properly with new package states.
+
+  [ Colin Watson ]
+  * apt-pkg/contrib/mmap.cc:
+    - don't fail if msync() returns > 0
+ 
+ -- Michael Vogt <mvo@debian.org>  Tue, 23 Oct 2007 14:58:03 +0200
+
+apt (0.7.6) unstable; urgency=low
+
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
+    directory downloading on non-linux architectures (closes: #435597)
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
 
 apt (0.7.6ubuntu14.1) gutsy-proposed; urgency=low
 
@@ -385,7 +535,7 @@ apt (0.7.2) unstable; urgency=low
     into the debian/sid branch
   * merged from Christian Perrier:
     * mr.po: New Marathi translation  Closes: #416806
-    * zh_CN.po: Updated by Eric Pareja  Closes: #416822
+    * zh_CN.po: Updated by Kov Chai  Closes: #416822
     * tl.po: Updated by Eric Pareja   Closes: #416638
     * gl.po: Updated by Jacobo Tarrio
 	     Closes: #412828

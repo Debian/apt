@@ -51,6 +51,14 @@ string debRecordParser::Name()
    return Section.FindS("Package");
 }
 									/*}}}*/
+// RecordParser::Homepage - Return the package homepage		       	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::Homepage()
+{
+   return Section.FindS("Homepage");
+}
+									/*}}}*/
 // RecordParser::MD5Hash - Return the archive hash			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

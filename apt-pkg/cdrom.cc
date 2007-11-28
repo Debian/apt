@@ -560,10 +560,17 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
    }
    if(log) {
       msg.str("");
-      ioprintf(msg, _("Stored label: %s \n"),
-	       Database.Find("CD::"+ident).c_str());
+      ioprintf(msg, _("Stored label: %s\n"),
+      Database.Find("CD::"+ident).c_str());
       log->Update(msg.str());
    }
+
+   // Unmount and finish
+   if (_config->FindB("APT::CDROM::NoMount",false) == false) {
+      log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
+      UnmountCdrom(CDROM);
+   }
+
    return true;
 }
 
@@ -668,8 +675,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    DropRepeats(TransList,"");
    if(log) {
       msg.str("");
-      ioprintf(msg, _("Found %lu package indexes, %lu source indexes, "
-		      "%lu translation indexes and %lu signatures\n"), 
+      ioprintf(msg, _("Found %u package indexes, %u source indexes, "
+		      "%u translation indexes and %u signatures\n"), 
 	       List.size(), SourceList.size(), TransList.size(),
 	       SigList.size());
       log->Update(msg.str(), STEP_SCAN);

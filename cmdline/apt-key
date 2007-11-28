@@ -39,6 +39,8 @@ usage() {
     echo
     echo "  apt-key add <file>          - add the key contained in <file> ('-' for stdin)"
     echo "  apt-key del <keyid>         - remove the key <keyid>"
+    echo "  apt-key export <keyid>      - output the key <keyid>"
+    echo "  apt-key exportall           - output all trusted keys"
     echo "  apt-key update              - update keys using the keyring package"
     echo "  apt-key list                - list keys"
     echo
@@ -74,6 +76,12 @@ case "$command" in
         ;;
     finger*)
         $GPG --batch --fingerprint
+        ;;
+    export)
+        $GPG --armor --export "$1"
+        ;;
+    exportall)
+        $GPG --armor --export
         ;;
     adv*)
         echo "Executing: $GPG $*"
