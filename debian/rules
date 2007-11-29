@@ -204,6 +204,8 @@ apt: build debian/shlibs.local
 	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
 
 	cp $(BLD)/bin/methods/* debian/$@/usr/lib/apt/methods/
+	# https has its own package
+	rm debian/$@/usr/lib/apt/methods/https
 
 	cp $(BLD)/scripts/dselect/* debian/$@/usr/lib/dpkg/methods/apt/
 	cp -r $(BLD)/locale debian/$@/usr/share/
@@ -305,7 +307,7 @@ apt-transport-https: build debian/shlibs.local
 
 	# install the method
 	mkdir -p debian/$@/usr/lib/apt/methods
-	mv $(BLD)/bin/methods/https debian/$@/usr/lib/apt/methods
+	cp $(BLD)/bin/methods/https debian/$@/usr/lib/apt/methods
 
 	dh_installdocs -p$@
 	dh_installexamples -p$@
