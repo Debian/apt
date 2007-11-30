@@ -34,6 +34,7 @@ const MultiCompress::CompType MultiCompress::Compressors[] =
       {{".","",0,0,0,1},
        {"gzip",".gz","gzip","-9n","-d",2},
        {"bzip2",".bz2","bzip2","-9","-d",3},
+       {"lzma",".lzma","lzma","-9","-d",4},
        {}};
 
 // MultiCompress::MultiCompress - Constructor				/*{{{*/
