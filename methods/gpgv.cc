@@ -266,23 +266,6 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
       	 return _error->Error(errmsg.c_str());
    }
       
-   // Transfer the modification times
-   struct stat Buf;
-   if (stat(Path.c_str(),&Buf) != 0)
-      return _error->Errno("stat",_("Failed to stat %s"), Path.c_str());
-
-   struct utimbuf TimeBuf;
-   TimeBuf.actime = Buf.st_atime;
-   TimeBuf.modtime = Buf.st_mtime;
-   if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
-      return _error->Errno("utime",_("Failed to set modification time"));
-
-   if (stat(Itm->DestFile.c_str(),&Buf) != 0)
-      return _error->Errno("stat",_("Failed to stat"));
-   
-   // Return a Done response
-   Res.LastModified = Buf.st_mtime;
-   Res.Size = Buf.st_size;
    // Just pass the raw output up, because passing it as a real data
    // structure is too difficult with the method stuff.  We keep it
    // as three separate vectors for future extensibility.

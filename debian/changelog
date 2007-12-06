@@ -1,11 +1,4 @@
-apt (0.7.10ubuntu1) hardy; urgency=low
-
-  * methods/mirror.{cc,h}:
-    - only update mirror list on IndexFile updates 
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 28 Nov 2007 15:57:18 +0100
-
-apt (0.7.10) unstable; urgency=low
+apt (0.7.9ubuntu1) hardy; urgency=low
 
   [ Otavio Salvador ]
   * Applied patch from Mike O'Connor <stew@vireo.org> to add a manpage to
@@ -25,8 +18,20 @@ apt (0.7.10) unstable; urgency=low
   [ Michael Vogt ]
   * debian/rules
     - fix https install location
+  * methods/gpgv.cc:
+    - remove cruft code that caused timestamp/I-M-S issues
+  * ftparchive/contents.cc:
+    - fix error output
+  * methods/mirror.{cc,h}:
+    - only update mirror list on IndexFile updates 
 
- -- Michael Vogt <mvo@debian.org>  Wed, 28 Nov 2007 17:10:49 +0100
+  [ Chris Cheney ]
+  * ftparchive/contents.cc:
+    - support lzma data members
+  * ftparchive/multicompress.cc:
+    - support lzma output
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 06 Dec 2007 19:32:07 +0100
 
 apt (0.7.9) unstable; urgency=low
 
@@ -152,13 +157,6 @@ apt (0.7.7) unstable; urgency=low
     - don't fail if msync() returns > 0
  
  -- Michael Vogt <mvo@debian.org>  Tue, 23 Oct 2007 14:58:03 +0200
-
-apt (0.7.6) unstable; urgency=low
-
-  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
-    directory downloading on non-linux architectures (closes: #435597)
-
- -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
 
 apt (0.7.6ubuntu14.1) gutsy-proposed; urgency=low
 
