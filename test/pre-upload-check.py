@@ -120,22 +120,6 @@ class testLocalRepositories(unittest.TestCase):
             self.assert_(os.path.exists(os.path.join(self.repo,"Packages.gz")),
                          "Packages.gz vanished from local repo")
 
-    def testLocalRepo2(self):
-        repo = os.path.abspath(os.path.join(os.getcwd(), self.repo_dir+"2"))
-        sources = os.path.join(self.repo, "sources.list")
-        s = open(sources,"w")
-        s.write("deb file://%s/ /\n" % repo)
-        s.close()
-
-        # two times to get at least one i-m-s hit
-        for i in range(2):
-            self.assert_(os.path.exists(sources))
-            cmd = [self.apt,"update","-o", "Dir::Etc::sourcelist=%s" % sources]+apt_args
-            res = call(cmd, stdout=stdout, stderr=stderr)
-            self.assertEqual(res, 0, "local repo2 test failed")
-            self.assert_(os.path.exists(os.path.join(repo,"Packages.gz")),
-                         "Packages.gz vanished from local repo")
-
     def testInstallFromLocalRepo(self):
         apt = [self.apt,"-o", "Dir::Etc::sourcelist=%s"% self.sources]+apt_args
         cmd = apt+["update"]
