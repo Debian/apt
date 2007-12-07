@@ -13,7 +13,7 @@ include ../buildlib/defaults.mak
 # methods/makefile - FIXME
 LIBRARY=apt-pkg
 LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
-MAJOR=4.5
+MAJOR=4.6
 MINOR=0
 SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil
 APT_DOMAIN:=libapt-pkg$(MAJOR)
