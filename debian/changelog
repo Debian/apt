@@ -1,5 +1,21 @@
 apt (0.7.9ubuntu1) hardy; urgency=low
 
+  * merged from http://bzr.debian.org/apt/apt/debian-sid/, remaining
+    changes:
+    - mirror download method (pending merge with debian)
+    - no pdiff download by default (unsuitable for ubuntu)
+    - no recommends-by-default yet
+    - add "Original-Maintainer" field to tagfile
+    - show warning on apt-get source if the package is maintained
+      in a VCS (pedinging merge with debian)
+    - use ubuntu-archive keyring instead of debians one
+    - support metapackages section for autoremoval
+    - debian maintainer field change
+    - send ubuntu string in user-agent
+  
+  * Changes from the debian-sid bzr branch (but not uploaded to debian
+    yet):
+  
   [ Otavio Salvador ]
   * Applied patch from Mike O'Connor <stew@vireo.org> to add a manpage to
     apt-mark, closes: #430207.
@@ -34,7 +50,7 @@ apt (0.7.9ubuntu1) hardy; urgency=low
   * ftparchive/multicompress.cc:
     - support lzma output
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 06 Dec 2007 19:32:07 +0100
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 13 Dec 2007 14:46:27 +0100
 
 apt (0.7.9) unstable; urgency=low
 
