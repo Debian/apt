@@ -331,19 +331,19 @@ string TimeToStr(unsigned long Sec)
    {
       if (Sec > 60*60*24)
       {
-	 sprintf(S,"%lid %lih%lim%lis",Sec/60/60/24,(Sec/60/60) % 24,(Sec/60) % 60,Sec % 60);
+	 sprintf(S,"%lid %lih%limin%lis",Sec/60/60/24,(Sec/60/60) % 24,(Sec/60) % 60,Sec % 60);
 	 break;
       }
       
       if (Sec > 60*60)
       {
-	 sprintf(S,"%lih%lim%lis",Sec/60/60,(Sec/60) % 60,Sec % 60);
+	 sprintf(S,"%lih%limin%lis",Sec/60/60,(Sec/60) % 60,Sec % 60);
 	 break;
       }
       
       if (Sec > 60)
       {
-	 sprintf(S,"%lim%lis",Sec/60,Sec % 60);
+	 sprintf(S,"%limin%lis",Sec/60,Sec % 60);
 	 break;
       }
       

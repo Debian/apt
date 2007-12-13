@@ -1,4 +1,4 @@
-apt (0.7.10) unstable; urgency=low
+apt (0.7.10) UNRELEASED; urgency=low
 
   [ Otavio Salvador ]
   * Applied patch from Mike O'Connor <stew@vireo.org> to add a manpage to
@@ -9,15 +9,21 @@ apt (0.7.10) unstable; urgency=low
     getting crazy when /dev/null is redirected to stdin (which breaks
     buildds), closes: #452858.
   * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix building
-    with newest dpkg-shlibdeps changing the packaging building order,
+    with newest dpkg-shlibdeps changing the packaging building order and a
+    patch from Robert Millan <rmh@aybabtu.com> to fix parallel building,
     closes: #452862.
+  * Applied patch from Alexander Winston <alexander.winston@comcast.net>
+    to use 'min' as symbol for minute, closes: #219034.
 
   [ Program translations ]
     - Basque updated. Closes: #453088
-  
+
   [ Michael Vogt ]
   * debian/rules
     - fix https install location
+  * debian/apt.conf.daily:
+    - print warning if the cache can not be locked (closes: #454561),
+      thanks to Bastian Kleineidam
   * methods/gpgv.cc:
     - remove cruft code that caused timestamp/I-M-S issues
   * ftparchive/contents.cc:
@@ -32,7 +38,7 @@ apt (0.7.10) unstable; urgency=low
   * ftparchive/multicompress.cc:
     - support lzma output
 
- -- Michael Vogt <mvo@debian.org>  Wed, 28 Nov 2007 17:10:49 +0100
+ -- Otavio Salvador <otavio@ossystems.com.br>  Sat, 08 Dec 2007 12:13:58 -0200
 
 apt (0.7.9) unstable; urgency=low
 
