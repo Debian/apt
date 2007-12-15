@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-26 07:15+0200\n"
+"POT-Creation-Date: 2007-06-07 00:57+0200\n"
 "PO-Revision-Date: 2006-09-29 16:06+0300\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -16,1475 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-
-#: methods/cdrom.cc:114
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "Rompputietokantaa %s ei voi lukea"
-
-#: methods/cdrom.cc:123
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"Käytä komentoa apt-cdrom jotta APT tunnistaa tämän rompun, apt-get update ei "
-"osaa lisätä uusia romppuja"
-
-#: methods/cdrom.cc:131
-msgid "Wrong CD-ROM"
-msgstr "Väärä romppu"
-
-#: methods/cdrom.cc:166
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "Rompun %s irrottaminen ei onnistu, se on ehkä käytössä."
-
-#: methods/cdrom.cc:171
-msgid "Disk not found."
-msgstr "Levyä ei löydy"
-
-#: methods/cdrom.cc:179 methods/file.cc:79 methods/rsh.cc:264
-msgid "File not found"
-msgstr "Tiedostoa ei löydy"
-
-#: methods/copy.cc:43 methods/gpgv.cc:281 methods/gzip.cc:141
-#: methods/gzip.cc:150 methods/rred.cc:234 methods/rred.cc:243
-msgid "Failed to stat"
-msgstr "Komento stat ei toiminut"
-
-#: methods/copy.cc:80 methods/gpgv.cc:278 methods/gzip.cc:147
-#: methods/rred.cc:240
-msgid "Failed to set modification time"
-msgstr "Tiedoston muutospäivämäärää ei saatu vaihdettua"
-
-#: methods/file.cc:44
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "URI on kelvoton, paikallinen URI ei saa alkaa //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc:162
-msgid "Logging in"
-msgstr "Kirjaudutaan sisään"
-
-#: methods/ftp.cc:168
-msgid "Unable to determine the peer name"
-msgstr "Vastapään nimeä ei saa selville"
-
-#: methods/ftp.cc:173
-msgid "Unable to determine the local name"
-msgstr "Paikallista nimeä ei saa selville"
-
-#: methods/ftp.cc:204 methods/ftp.cc:232
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Palvelin ei huolinut yhteyttä ilmoituksella: %s"
-
-#: methods/ftp.cc:210
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER ei onnistunut, palvelimen ilmoitus: %s"
-
-#: methods/ftp.cc:217
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS ei onnistunut, palvelimen ilmoitus: %s"
-
-#: methods/ftp.cc:237
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Määritettiin välipalvelin mutta ei komentotiedostoa kirjautumiseen, Acquire::"
-"ftp::ProxyLogin on tyhjä."
-
-#: methods/ftp.cc:265
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Komentotiedoston rivi \"%s\" ei toiminut, palvelin ilmoitti: %s"
-
-#: methods/ftp.cc:291
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE ei toiminut, palvelin ilmoitti: %s"
-
-#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
-msgid "Connection timeout"
-msgstr "Yhteys aikakatkaistiin"
-
-#: methods/ftp.cc:335
-msgid "Server closed the connection"
-msgstr "Palvelin sulki yhteyden"
-
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:471 methods/rsh.cc:190
-msgid "Read error"
-msgstr "Lukuvirhe"
-
-#: methods/ftp.cc:345 methods/rsh.cc:197
-msgid "A response overflowed the buffer."
-msgstr "Vastaus aiheutti puskurin ylivuodon."
-
-#: methods/ftp.cc:362 methods/ftp.cc:374
-msgid "Protocol corruption"
-msgstr "Yhteyskäytäntö on turmeltunut"
-
-#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:510 methods/rsh.cc:232
-msgid "Write error"
-msgstr "Virhe kirjoitettaessa"
-
-#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
-msgid "Could not create a socket"
-msgstr "Pistoketta ei voitu luoda"
-
-#: methods/ftp.cc:698
-msgid "Could not connect data socket, connection timed out"
-msgstr "Pistoketta ei voitu kytkeä, yhteys aikakatkaistiin"
-
-#: methods/ftp.cc:702 methods/connect.cc:101
-msgid "Failed"
-msgstr "Ei onnistunut"
-
-#: methods/ftp.cc:704
-msgid "Could not connect passive socket."
-msgstr "Passiivista pistoketta ei voitu kytkeä."
-
-#: methods/ftp.cc:722
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo ei saanut kuuntelupistoketta"
-
-#: methods/ftp.cc:736
-msgid "Could not bind a socket"
-msgstr "Pistoketta ei voitu nimetä"
-
-#: methods/ftp.cc:740
-msgid "Could not listen on the socket"
-msgstr "Pistoketta ei voitu kuunnella"
-
-#: methods/ftp.cc:747
-msgid "Could not determine the socket's name"
-msgstr "Pistokkeen nimeä ei saatu selville"
-
-#: methods/ftp.cc:779
-msgid "Unable to send PORT command"
-msgstr "Komennon PORT lähetys ei onnistu"
-
-#: methods/ftp.cc:789
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Tuntematon osoiteperhe %u (AF_*)"
-
-#: methods/ftp.cc:798
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT ei onnistunut, palvelin ilmoitti: %s"
-
-#: methods/ftp.cc:818
-msgid "Data socket connect timed out"
-msgstr "Pistokkeen kytkeminen aikakatkaistiin"
-
-#: methods/ftp.cc:825
-msgid "Unable to accept connection"
-msgstr "Yhteyttä ei voitu hyväksyä"
-
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
-msgid "Problem hashing file"
-msgstr "Pulmia tiedoston hajautuksessa"
-
-#: methods/ftp.cc:877
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Tiedostoa ei saatu noudettua, palvelin ilmoitti \"%s\""
-
-#: methods/ftp.cc:892 methods/rsh.cc:322
-msgid "Data socket timed out"
-msgstr "Pistoke aikakatkaistiin"
-
-#: methods/ftp.cc:922
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Tiedonsiirto ei onnistunut, palvelin ilmoitti \"%s\""
-
-#. Get the files information
-#: methods/ftp.cc:997
-msgid "Query"
-msgstr "Kysely"
-
-#: methods/ftp.cc:1109
-msgid "Unable to invoke "
-msgstr "Käynnistys ei onnistu"
-
-#: methods/connect.cc:64
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Avataan yhteys %s (%s)"
-
-#: methods/connect.cc:71
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc:80
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Pistokeen luonti ei onnistu %s (f=%u t=%u p=%u)"
-
-#: methods/connect.cc:86
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Yhteyden %s avaus ei onnistu: %s (%s)."
-
-#: methods/connect.cc:93
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Yhteyttä %s ei voitu muodostaa: %s (%s), yhteys aikakatkaistiin"
-
-#: methods/connect.cc:108
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "Yhteyttä %s ei voitu muodostaa: %s (%s)"
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc:136 methods/rsh.cc:425
-#, c-format
-msgid "Connecting to %s"
-msgstr "Avataan yhteys %s"
-
-#: methods/connect.cc:167
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "Nimeä \"%s\" ei voitu selvittää"
-
-#: methods/connect.cc:173
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "Tilapäinen häiriö selvitettäessä \"%s\""
-
-#: methods/connect.cc:176
-#, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i)"
-msgstr "Jotain kenkkua tapahtui selvitettäessä \"%s: %s\" (%i)"
-
-#: methods/connect.cc:223
-#, c-format
-msgid "Unable to connect to %s %s:"
-msgstr "Ei ole mahdollista muodostaa yhteyttä %s %s:"
-
-#: methods/gpgv.cc:65
-#, c-format
-msgid "Couldn't access keyring: '%s'"
-msgstr "Avainrengasta \"%s\" ei saatavilla"
-
-#: methods/gpgv.cc:100
-msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-msgstr ""
-"E: Parametrien luettelo Acquire::gpgv::Options liian pitkä. Lopetetaan."
-
-#: methods/gpgv.cc:204
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
-"Sisäinen virhe: Allekirjoitus kelpaa, mutta avaimen sormenjälki tuntematon?!"
-
-#: methods/gpgv.cc:209
-msgid "At least one invalid signature was encountered."
-msgstr "LÖytyi ainakin yksi kelvoton allekirjoitus."
-
-#: methods/gpgv.cc:213
-#, c-format
-msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
-msgstr ""
-"Ei käynnistynyt \"%s\" allekirjoitusta tarkistamaan (onko gnupg asennettu?)"
-
-#: methods/gpgv.cc:218
-msgid "Unknown error executing gpgv"
-msgstr "Tapahtui tuntematon virhe suoritettaessa gpgv"
-
-#: methods/gpgv.cc:249
-msgid "The following signatures were invalid:\n"
-msgstr "Seuraavat allekirjoitukset eivät olleet kelvollisia:\n"
-
-#: methods/gpgv.cc:256
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr ""
-"Seuraavia allekirjoituksia ei voinut varmentaa koska julkista avainta ei ole "
-"saatavilla:\n"
-
-#: methods/gpgv.cc:272
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Tiedostolle %s ei toimi stat"
-
-#: methods/gzip.cc:64
-#, c-format
-msgid "Couldn't open pipe for %s"
-msgstr "Putkea %s ei voitu avata"
-
-#: methods/gzip.cc:109
-#, c-format
-msgid "Read error from %s process"
-msgstr "Prosessi %s ilmoitti lukuvirheestä"
-
-#: methods/http.cc:377
-msgid "Waiting for headers"
-msgstr "Odotetaan otsikoita"
-
-#: methods/http.cc:523
-#, c-format
-msgid "Got a single header line over %u chars"
-msgstr "Vastaanotettiin yksi otsikkorivi pituudeltaan yli %u merkkiä"
-
-#: methods/http.cc:531
-msgid "Bad header line"
-msgstr "Virheellinen otsikkorivi"
-
-#: methods/http.cc:550 methods/http.cc:557
-msgid "The HTTP server sent an invalid reply header"
-msgstr "HTTP-palvelin lähetti virheellisen vastausotsikon"
-
-#: methods/http.cc:586
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "HTTP-palvelin lähetti virheellisen Content-Length-otsikon"
-
-#: methods/http.cc:601
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "HTTP-palvelin lähetti virheellisen Content-Range-otsikon"
-
-#: methods/http.cc:603
-msgid "This HTTP server has broken range support"
-msgstr "HTTP-palvelimen arvoaluetuki on rikki"
-
-#: methods/http.cc:627
-msgid "Unknown date format"
-msgstr "Tuntematon päiväysmuoto"
-
-#: methods/http.cc:774
-msgid "Select failed"
-msgstr "Select ei toiminut"
-
-#: methods/http.cc:779
-msgid "Connection timed out"
-msgstr "Yhteys aikakatkaistiin"
-
-#: methods/http.cc:802
-msgid "Error writing to output file"
-msgstr "Tapahtui virhe kirjoitettaessa tulostustiedostoon"
-
-#: methods/http.cc:833
-msgid "Error writing to file"
-msgstr "Tapahtui virhe kirjoitettaessa tiedostoon"
-
-#: methods/http.cc:861
-msgid "Error writing to the file"
-msgstr "Tapahtui virhe kirjoitettaessa tiedostoon"
-
-#: methods/http.cc:875
-msgid "Error reading from server. Remote end closed connection"
-msgstr "Tapahtui virhe luettaessa palvelimelta. Etäpää sulki yhteyden"
-
-#: methods/http.cc:877
-msgid "Error reading from server"
-msgstr "Tapahtui virhe luettaessa palvelimelta"
-
-#: methods/http.cc:1104
-msgid "Bad header data"
-msgstr "Virheellinen otsikkotieto"
-
-#: methods/http.cc:1121 methods/http.cc:1176
-msgid "Connection failed"
-msgstr "Yhteys ei toiminut"
-
-#: methods/http.cc:1228
-msgid "Internal error"
-msgstr "Sisäinen virhe"
-
-#: apt-pkg/contrib/mmap.cc:80
-msgid "Can't mmap an empty file"
-msgstr "Tyhjälle tiedostolle ei voi tehdä mmap:ia"
-
-#: apt-pkg/contrib/mmap.cc:85
-#, c-format
-msgid "Couldn't make mmap of %lu bytes"
-msgstr "Ei voitu tehdä %lu tavun mmap:ia"
-
-#: apt-pkg/contrib/strutl.cc:978
-#, c-format
-msgid "Selection %s not found"
-msgstr "Valintaa %s ei löydy"
-
-#: apt-pkg/contrib/configuration.cc:434
-#, c-format
-msgid "Unrecognized type abbreviation: '%c'"
-msgstr "Tuntematon tyypin lyhenne: \"%c\""
-
-#: apt-pkg/contrib/configuration.cc:492
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Avataan asetustiedosto %s"
-
-#: apt-pkg/contrib/configuration.cc:510
-#, fuzzy, c-format
-msgid "Line %d too long (max %u)"
-msgstr "Rivi %d on liian pitkä (enintään %d)"
-
-#: apt-pkg/contrib/configuration.cc:606
-#, c-format
-msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "Syntaksivirhe %s: %u: Lohko alkaa ilman nimeä."
-
-#: apt-pkg/contrib/configuration.cc:625
-#, c-format
-msgid "Syntax error %s:%u: Malformed tag"
-msgstr "Syntaksivirhe %s: %u: väärän muotoinen nimikenttä"
-
-#: apt-pkg/contrib/configuration.cc:642
-#, c-format
-msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "Syntaksivirhe %s: %u: Arvon jälkeen ylimääräistä roskaa"
-
-#: apt-pkg/contrib/configuration.cc:682
-#, c-format
-msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "Syntaksivirhe %s: %u: Direktiivejä voi olla vain ylimmällä tasolla"
-
-#: apt-pkg/contrib/configuration.cc:689
-#, c-format
-msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "Syntaksivirhe %s: %u: Liian monta sisäkkäistä includea"
-
-#: apt-pkg/contrib/configuration.cc:693 apt-pkg/contrib/configuration.cc:698
-#, c-format
-msgid "Syntax error %s:%u: Included from here"
-msgstr "Syntaksivirhe %s: %u: Sisällytetty tästä"
-
-#: apt-pkg/contrib/configuration.cc:702
-#, c-format
-msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "Syntaksivirhe %s: %u: Tätä direktiiviä ei tueta \"%s\""
-
-#: apt-pkg/contrib/configuration.cc:736
-#, c-format
-msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "Syntaksivirhe %s: %u: Ylimääräistä roskaa tiedoston lopussa"
-
-#: apt-pkg/contrib/configuration.cc:748 apt-pkg/contrib/cdromutl.cc:150
-#: apt-pkg/sourcelist.cc:320 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:34
-#, c-format
-msgid "Unable to read %s"
-msgstr "Tiedostoa %s ei voi lukea"
-
-#: apt-pkg/contrib/progress.cc:153
-#, c-format
-msgid "%c%s... Error!"
-msgstr "%c%s... Virhe!"
-
-#: apt-pkg/contrib/progress.cc:155
-#, c-format
-msgid "%c%s... Done"
-msgstr "%c%s... Valmis"
-
-#: apt-pkg/contrib/cmndline.cc:77
-#, c-format
-msgid "Command line option '%c' [from %s] is not known."
-msgstr "Komentorivin valitsin \"%c\" [%s] on tuntematon."
-
-#: apt-pkg/contrib/cmndline.cc:103 apt-pkg/contrib/cmndline.cc:111
-#: apt-pkg/contrib/cmndline.cc:119
-#, c-format
-msgid "Command line option %s is not understood"
-msgstr "Komentorivin valitsin %s on tuntematon"
-
-#: apt-pkg/contrib/cmndline.cc:124
-#, c-format
-msgid "Command line option %s is not boolean"
-msgstr "Komentorivin valitsin %s ei ole totuusarvoinen"
-
-#: apt-pkg/contrib/cmndline.cc:163 apt-pkg/contrib/cmndline.cc:184
-#, c-format
-msgid "Option %s requires an argument."
-msgstr "Valitsin %s tarvitsee parametrin"
-
-#: apt-pkg/contrib/cmndline.cc:198 apt-pkg/contrib/cmndline.cc:204
-#, c-format
-msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "Valitsin %s: Asetusarvon määrityksessä on oltava =<arvo>."
-
-#: apt-pkg/contrib/cmndline.cc:234
-#, c-format
-msgid "Option %s requires an integer argument, not '%s'"
-msgstr "Valitsin %s tarvitsee kokonaislukuparametrin, ei \"%s\""
-
-#: apt-pkg/contrib/cmndline.cc:265
-#, c-format
-msgid "Option '%s' is too long"
-msgstr "Valitsin \"%s\" on liian pitkä"
-
-#: apt-pkg/contrib/cmndline.cc:298
-#, c-format
-msgid "Sense %s is not understood, try true or false."
-msgstr "Arvo %s on tuntematon, yritä tosi tai epätosi."
-
-#: apt-pkg/contrib/cmndline.cc:348
-#, c-format
-msgid "Invalid operation %s"
-msgstr "Virheellinen toiminto %s"
-
-#: apt-pkg/contrib/cdromutl.cc:52
-#, c-format
-msgid "Unable to stat the mount point %s"
-msgstr "Komento stat ei toiminut liitoskohdalle %s"
-
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Kansioon %s vaihto ei onnistu"
-
-#: apt-pkg/contrib/cdromutl.cc:187
-msgid "Failed to stat the cdrom"
-msgstr "Komento stat ei toiminut rompulle"
-
-#: apt-pkg/contrib/fileutl.cc:82
-#, c-format
-msgid "Not using locking for read only lock file %s"
-msgstr "Lukkoa ei käytetä kirjoitussuojatulle tiedostolle %s"
-
-#: apt-pkg/contrib/fileutl.cc:87
-#, c-format
-msgid "Could not open lock file %s"
-msgstr "Lukkotiedostoa %s ei voitu avata"
-
-#: apt-pkg/contrib/fileutl.cc:105
-#, c-format
-msgid "Not using locking for nfs mounted lock file %s"
-msgstr "Lukitusta ei käytetä NFS-liitetylle tiedostolle %s"
-
-#: apt-pkg/contrib/fileutl.cc:109
-#, c-format
-msgid "Could not get lock %s"
-msgstr "Lukkoa %s ei saada"
-
-#: apt-pkg/contrib/fileutl.cc:377
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Odotettiin %s, mutta sitä ei ollut"
-
-#: apt-pkg/contrib/fileutl.cc:387
-#, c-format
-msgid "Sub-process %s received a segmentation fault."
-msgstr "Aliprosessi %s aiheutti suojausvirheen."
-
-#: apt-pkg/contrib/fileutl.cc:390
-#, c-format
-msgid "Sub-process %s returned an error code (%u)"
-msgstr "Aliprosessi %s palautti virhekoodin (%u)"
-
-#: apt-pkg/contrib/fileutl.cc:392
-#, c-format
-msgid "Sub-process %s exited unexpectedly"
-msgstr "Aliprosessi %s lopetti odottamatta"
-
-#: apt-pkg/contrib/fileutl.cc:436
-#, c-format
-msgid "Could not open file %s"
-msgstr "Tiedostoa %s ei voitu avata"
-
-#: apt-pkg/contrib/fileutl.cc:492
-#, c-format
-msgid "read, still have %lu to read but none left"
-msgstr "read, vielä %lu lukematta mutta tiedosto loppui"
-
-#: apt-pkg/contrib/fileutl.cc:522
-#, c-format
-msgid "write, still have %lu to write but couldn't"
-msgstr "write, vielä %lu kirjoittamatta mutta epäonnistui"
-
-#: apt-pkg/contrib/fileutl.cc:597
-msgid "Problem closing the file"
-msgstr "Pulmia tiedoston sulkemisessa"
-
-#: apt-pkg/contrib/fileutl.cc:603
-msgid "Problem unlinking the file"
-msgstr "Pulmia tehtäessä tiedostolle unlink"
-
-#: apt-pkg/contrib/fileutl.cc:614
-msgid "Problem syncing the file"
-msgstr "Pulmia tehtäessä tiedostolle sync"
-
-#: apt-pkg/pkgcache.cc:132
-msgid "Empty package cache"
-msgstr "Pakettivarasto on tyhjä"
-
-#: apt-pkg/pkgcache.cc:138
-msgid "The package cache file is corrupted"
-msgstr "Pakettivarasto on turmeltunut"
-
-#: apt-pkg/pkgcache.cc:143
-msgid "The package cache file is an incompatible version"
-msgstr "Pakettivaraston versio on yhteensopimaton"
-
-#: apt-pkg/pkgcache.cc:148
-#, c-format
-msgid "This APT does not support the versioning system '%s'"
-msgstr "Tämä APT ei tue versionhallintajärjestelmää \"%s\""
-
-#: apt-pkg/pkgcache.cc:153
-msgid "The package cache was built for a different architecture"
-msgstr "Pakettivarasto on tehty muulle arkkitehtuurille"
-
-#: apt-pkg/pkgcache.cc:224
-msgid "Depends"
-msgstr "Riippuvuudet"
-
-#: apt-pkg/pkgcache.cc:224
-msgid "PreDepends"
-msgstr "Esiriippuvuudet"
-
-#: apt-pkg/pkgcache.cc:224
-msgid "Suggests"
-msgstr "Ehdotukset"
-
-#: apt-pkg/pkgcache.cc:225
-msgid "Recommends"
-msgstr "Suosittelut"
-
-#: apt-pkg/pkgcache.cc:225
-msgid "Conflicts"
-msgstr "Ristiriidat"
-
-#: apt-pkg/pkgcache.cc:225
-msgid "Replaces"
-msgstr "Korvaavuudet"
-
-#: apt-pkg/pkgcache.cc:226
-msgid "Obsoletes"
-msgstr "Täydet korvaavuudet"
-
-#: apt-pkg/pkgcache.cc:226
-msgid "Breaks"
-msgstr ""
-
-#: apt-pkg/pkgcache.cc:237
-msgid "important"
-msgstr "tärkeä"
-
-#: apt-pkg/pkgcache.cc:237
-msgid "required"
-msgstr "välttämätön"
-
-#: apt-pkg/pkgcache.cc:237
-msgid "standard"
-msgstr "perus"
-
-#: apt-pkg/pkgcache.cc:238
-msgid "optional"
-msgstr "valinnainen"
-
-#: apt-pkg/pkgcache.cc:238
-msgid "extra"
-msgstr "ylimääräinen"
-
-#: apt-pkg/depcache.cc:121 apt-pkg/depcache.cc:150
-msgid "Building dependency tree"
-msgstr "Muodostetaan riippuvuussuhteiden puu"
-
-#: apt-pkg/depcache.cc:122
-msgid "Candidate versions"
-msgstr "Mahdolliset versiot"
-
-#: apt-pkg/depcache.cc:151
-msgid "Dependency generation"
-msgstr "Luodaan riippuvuudet"
-
-#: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
-msgid "Reading state information"
-msgstr "Yhdistetään saatavuustiedot"
-
-#: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
-msgid "Failed to open StateFile %s"
-msgstr "Tiedoston %s avaaminen ei onnistunut"
-
-#: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "Tiedoston %s kirjoittaminen ei onnistunut"
-
-#: apt-pkg/tagfile.cc:102
-#, c-format
-msgid "Unable to parse package file %s (1)"
-msgstr "Pakettitiedostoa %s (1) ei voi jäsentää"
-
-#: apt-pkg/tagfile.cc:189
-#, c-format
-msgid "Unable to parse package file %s (2)"
-msgstr "Pakettitiedostoa %s (2) ei voi jäsentää"
-
-#: apt-pkg/sourcelist.cc:90
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (URI)"
-
-#: apt-pkg/sourcelist.cc:92
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (dist)"
-
-#: apt-pkg/sourcelist.cc:95
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (URI-jäsennys)"
-
-#: apt-pkg/sourcelist.cc:101
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (Absoluuttinen dist)"
-
-#: apt-pkg/sourcelist.cc:108
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (dist-jäsennys)"
-
-#: apt-pkg/sourcelist.cc:199
-#, c-format
-msgid "Opening %s"
-msgstr "Avataan %s"
-
-#: apt-pkg/sourcelist.cc:216 apt-pkg/cdrom.cc:448
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Rivi %u on liian pitkä lähdeluettelossa %s."
-
-#: apt-pkg/sourcelist.cc:236
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Rivi %u on väärän muotoinen lähdeluettelossa %s (tyyppi)"
-
-#: apt-pkg/sourcelist.cc:240
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Tyyppi \"%s\" on tuntematon rivillä %u lähdeluettelossa %s"
-
-#: apt-pkg/sourcelist.cc:248 apt-pkg/sourcelist.cc:251
-#, c-format
-msgid "Malformed line %u in source list %s (vendor id)"
-msgstr "Rivi %u on väärän muotoinen lähdeluettelossa%s (toimittajan tunniste)"
-
-#: apt-pkg/packagemanager.cc:399
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"Tämän asennusajo vaatii tilapäisesti poistettavaksi välttämättömän paketin %"
-"s Conflicts/Pre-Depends -kehämäärittelyn takia. Tämä on usein pahasta, mutta "
-"jos varmasti haluat tehdä niin, käytä APT::Force-LoopBreak -valitsinta."
-
-#: apt-pkg/pkgrecords.cc:32
-#, c-format
-msgid "Index file type '%s' is not supported"
-msgstr "Hakemistotiedoston tyyppi \"%s\" ei ole tuettu"
-
-#: apt-pkg/algorithms.cc:247
-#, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr "Paketti %s olisi asennettava uudelleen, mutta sen arkistoa ei löydy."
-
-#: apt-pkg/algorithms.cc:1105
-msgid ""
-"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
-"held packages."
-msgstr ""
-"Virhe, pkgProblemResolver::Resolve tuotti katkoja, syynä voi olla pysytetyt "
-"paketit."
-
-#: apt-pkg/algorithms.cc:1107
-msgid "Unable to correct problems, you have held broken packages."
-msgstr "Pulmia ei voi korjata, rikkinäisiä paketteja on pysytetty."
-
-#: apt-pkg/acquire.cc:59
-#, c-format
-msgid "Lists directory %spartial is missing."
-msgstr "Luettelokansio %spartial puuttuu."
-
-#: apt-pkg/acquire.cc:63
-#, c-format
-msgid "Archive directory %spartial is missing."
-msgstr "Arkistokansio %spartial puuttuu."
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc:827
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Noudetaan tiedosto %li / %li (jäljellä %s)"
-
-#: apt-pkg/acquire.cc:829
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Noudetaan tiedosto %li / %li"
-
-#: apt-pkg/acquire-worker.cc:110
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "Menetelmän ajuria %s ei löytynyt"
-
-#: apt-pkg/acquire-worker.cc:159
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "Menetelmä %s ei käynnistynyt oikein"
-
-#: apt-pkg/acquire-worker.cc:398
-#, c-format
-msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr "Pistä levy nimeltään: \"%s\" asemaan \"%s\" ja paina Enter."
-
-#: apt-pkg/init.cc:124
-#, c-format
-msgid "Packaging system '%s' is not supported"
-msgstr "Paketointijärjestelmä \"%s\" ei ole tuettu"
-
-#: apt-pkg/init.cc:140
-msgid "Unable to determine a suitable packaging system type"
-msgstr "Sopivaa paketointijärjestelmän tyyppiä ei saa selvitettyä"
-
-#: apt-pkg/clean.cc:57
-#, c-format
-msgid "Unable to stat %s."
-msgstr "stat %s ei onnistu."
-
-#: apt-pkg/srcrecords.cc:44
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Tiedostossa sources.list on oltava rivejä joissa \"lähde\"-URI"
-
-#: apt-pkg/cachefile.cc:63
-msgid "The list of sources could not be read."
-msgstr "Lähteiden luetteloa ei pystynyt lukemaan."
-
-#: apt-pkg/cachefile.cc:69
-msgid "The package lists or status file could not be parsed or opened."
-msgstr ""
-"Pakettiluettelonn tai tilatiedoston avaaminen tai jäsennys epäonnistui."
-
-#: apt-pkg/cachefile.cc:73
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "Voit haluta suorittaa apt-get update näiden pulmien korjaamiseksi"
-
-#: apt-pkg/policy.cc:267
-msgid "Invalid record in the preferences file, no Package header"
-msgstr "Asetustiedostossa on virheellinen tietue, Package-otsikko puuttuu"
-
-#: apt-pkg/policy.cc:289
-#, c-format
-msgid "Did not understand pin type %s"
-msgstr "Tunnistetyyppi %s on tuntematon"
-
-#: apt-pkg/policy.cc:297
-msgid "No priority (or zero) specified for pin"
-msgstr "Tärkeysjärjestystä ei määritetty tunnisteelle (tai se on nolla)"
-
-#: apt-pkg/pkgcachegen.cc:72
-msgid "Cache has an incompatible versioning system"
-msgstr "Pakettivaraston versionhallintajärjestelmä ei ole yhteensopiva"
-
-#: apt-pkg/pkgcachegen.cc:115
-#, c-format
-msgid "Error occurred while processing %s (NewPackage)"
-msgstr "Tapahtui virhe käsiteltäessä %s (NewPackage)"
-
-#: apt-pkg/pkgcachegen.cc:130
-#, c-format
-msgid "Error occurred while processing %s (UsePackage1)"
-msgstr "Tapahtui virhe käsiteltäessä %s (UsePackage1)"
-
-#: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
-msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
-
-#: apt-pkg/pkgcachegen.cc:178
-#, c-format
-msgid "Error occurred while processing %s (UsePackage2)"
-msgstr "Tapahtui virhe käsiteltäessä %s (UsePackage2)"
-
-#: apt-pkg/pkgcachegen.cc:182
-#, c-format
-msgid "Error occurred while processing %s (NewFileVer1)"
-msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
-
-#: apt-pkg/pkgcachegen.cc:213
-#, c-format
-msgid "Error occurred while processing %s (NewVersion1)"
-msgstr "Tapahtui virhe käsiteltäessä %s (NewVersion1)"
-
-#: apt-pkg/pkgcachegen.cc:217
-#, c-format
-msgid "Error occurred while processing %s (UsePackage3)"
-msgstr "Tapahtui virhe käsiteltäessä %s (UsePackage3)"
-
-#: apt-pkg/pkgcachegen.cc:221
-#, c-format
-msgid "Error occurred while processing %s (NewVersion2)"
-msgstr "Tapahtui virhe käsiteltäessä %s (NewVersion2)"
-
-#: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
-msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
-
-#: apt-pkg/pkgcachegen.cc:251
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"Jummijammi, annoit enemmän pakettien nimiä kuin tämä APT osaa käsitellä."
-
-#: apt-pkg/pkgcachegen.cc:254
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "Jummijammi, annoit enemmän versioita kuin tämä APT osaa käsitellä."
-
-#: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
-msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Jummijammi, annoit enemmän versioita kuin tämä APT osaa käsitellä."
-
-#: apt-pkg/pkgcachegen.cc:260
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "Jummijammi, annoit enemmän riippuvuuksia kuin tämä APT osaa käsitellä."
-
-#: apt-pkg/pkgcachegen.cc:288
-#, c-format
-msgid "Error occurred while processing %s (FindPkg)"
-msgstr "Tapahtui virhe käsiteltäessä %s (FindPkg)"
-
-#: apt-pkg/pkgcachegen.cc:301
-#, c-format
-msgid "Error occurred while processing %s (CollectFileProvides)"
-msgstr "Tapahtui virhe käsiteltäessä %s (CollectFileProvides)"
-
-#: apt-pkg/pkgcachegen.cc:307
-#, c-format
-msgid "Package %s %s was not found while processing file dependencies"
-msgstr "Pakettia %s %s ei löytynyt käsiteltäessä tiedostojen riippuvuuksia."
-
-#: apt-pkg/pkgcachegen.cc:678
-#, c-format
-msgid "Couldn't stat source package list %s"
-msgstr "stat ei toiminut lähdepakettiluettelolle %s"
-
-#. Build the status cache
-#: apt-pkg/pkgcachegen.cc:748 apt-pkg/pkgcachegen.cc:817
-#: apt-pkg/pkgcachegen.cc:822 apt-pkg/pkgcachegen.cc:945
-msgid "Reading package lists"
-msgstr "Luetaan pakettiluetteloita"
-
-#: apt-pkg/pkgcachegen.cc:763
-msgid "Collecting File Provides"
-msgstr "Kootaan tiedostojen tarjoamistietoja"
-
-#: apt-pkg/pkgcachegen.cc:815
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Tiedostoon %s kirjoittaminen ei onnistu"
-
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
-msgid "IO Error saving source cache"
-msgstr "Syöttö/Tulostus -virhe tallennettaessa pakettivarastoa"
-
-#: apt-pkg/acquire-item.cc:127
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "nimen vaihto ei onnistunut, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc:401
-msgid "MD5Sum mismatch"
-msgstr "MD5Sum ei täsmää"
-
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1399
-#, fuzzy
-msgid "Hash Sum mismatch"
-msgstr "MD5Sum ei täsmää"
-
-#: apt-pkg/acquire-item.cc:1091
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Julkisia avaimia ei ole saatavilla, avainten ID:t ovat:\n"
-
-#: apt-pkg/acquire-item.cc:1204
-#, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
-msgstr ""
-"En löytänyt pakettia %s vastaavaa tiedostoa. Voit ehkä joutua korjaamaan "
-"tämän paketin itse (puuttuvan arkkitehtuurin vuoksi)"
-
-#: apt-pkg/acquire-item.cc:1263
-#, c-format
-msgid ""
-"I wasn't able to locate file for the %s package. This might mean you need to "
-"manually fix this package."
-msgstr ""
-"Pakettia %s vastaavaa tiedostoa ei löytynyt. Voit ehkä joutua korjaamaan "
-"tämän paketin itse."
-
-#: apt-pkg/acquire-item.cc:1304
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Pakettihakemistotiedostot ovat turmeltuneet. Paketille %s ei ole Filename-"
-"kenttää."
-
-#: apt-pkg/acquire-item.cc:1391
-msgid "Size mismatch"
-msgstr "Koko ei täsmää"
-
-#: apt-pkg/vendorlist.cc:66
-#, c-format
-msgid "Vendor block %s contains no fingerprint"
-msgstr "Toimittajan lohkosta %s puuttuu sormenjälki"
-
-#: apt-pkg/cdrom.cc:529
-#, c-format
-msgid ""
-"Using CD-ROM mount point %s\n"
-"Mounting CD-ROM\n"
-msgstr ""
-"Käytetään rompun liitoskohtaa %s\n"
-"Liitetään romppu\n"
-
-#: apt-pkg/cdrom.cc:538 apt-pkg/cdrom.cc:620
-msgid "Identifying.. "
-msgstr "Tunnistetaan... "
-
-#: apt-pkg/cdrom.cc:563
-#, c-format
-msgid "Stored label: %s\n"
-msgstr "Tallennettu nimio: %s \n"
-
-#: apt-pkg/cdrom.cc:583
-#, c-format
-msgid "Using CD-ROM mount point %s\n"
-msgstr "Käytetään rompun liitoskohtaa %s\n"
-
-#: apt-pkg/cdrom.cc:601
-msgid "Unmounting CD-ROM\n"
-msgstr "Irrotetaan romppu\n"
-
-#: apt-pkg/cdrom.cc:605
-msgid "Waiting for disc...\n"
-msgstr "Odotetaan levyä...\n"
-
-#. Mount the new CDROM
-#: apt-pkg/cdrom.cc:613
-msgid "Mounting CD-ROM...\n"
-msgstr "Liitetään romppu...\n"
-
-#: apt-pkg/cdrom.cc:631
-msgid "Scanning disc for index files..\n"
-msgstr "Etsitään levyltä hakemistotiedostoja...\n"
-
-#: apt-pkg/cdrom.cc:671
-#, fuzzy, c-format
-msgid ""
-"Found %u package indexes, %u source indexes, %u translation indexes and %u "
-"signatures\n"
-msgstr ""
-"Asennuspakettien hakemistoja löytyi %i, lähdekoodipakettien hakemistoja %i "
-"ja allekirjoituksia %i\n"
-
-#: apt-pkg/cdrom.cc:708
-#, fuzzy, c-format
-msgid "Found label '%s'\n"
-msgstr "Tallennettu nimio: %s \n"
-
-#: apt-pkg/cdrom.cc:737
-msgid "That is not a valid name, try again.\n"
-msgstr "Tuo ei kelpaa nimeksi, yritä uudelleen.\n"
-
-#: apt-pkg/cdrom.cc:753
-#, c-format
-msgid ""
-"This disc is called: \n"
-"'%s'\n"
-msgstr ""
-"Tämä levy on: \n"
-"\"%s\"\n"
-
-#: apt-pkg/cdrom.cc:757
-msgid "Copying package lists..."
-msgstr "Kopioidaan pakettiluetteloita..."
-
-#: apt-pkg/cdrom.cc:783
-msgid "Writing new source list\n"
-msgstr "Kirjoitetaan uusi lähdeluettelo\n"
-
-#: apt-pkg/cdrom.cc:792
-msgid "Source list entries for this disc are:\n"
-msgstr "Tämän levyn lähdekoodipakettien luettelon tietueita ovat:\n"
-
-#: apt-pkg/cdrom.cc:834
-#, fuzzy
-msgid "Unmounting CD-ROM...\n"
-msgstr "Irrotetaan romppu..."
-
-#: apt-pkg/indexcopy.cc:263 apt-pkg/indexcopy.cc:823
-#, c-format
-msgid "Wrote %i records.\n"
-msgstr "Kirjoitettiin %i tietuetta.\n"
-
-#: apt-pkg/indexcopy.cc:265 apt-pkg/indexcopy.cc:825
-#, c-format
-msgid "Wrote %i records with %i missing files.\n"
-msgstr "Kirjoitettiin %i tietuetta joissa oli %i puuttuvaa tiedostoa.\n"
-
-#: apt-pkg/indexcopy.cc:268 apt-pkg/indexcopy.cc:828
-#, c-format
-msgid "Wrote %i records with %i mismatched files\n"
-msgstr "Kirjoitettiin %i tietuetta joissa oli %i paritonta tiedostoa\n"
-
-#: apt-pkg/indexcopy.cc:271 apt-pkg/indexcopy.cc:831
-#, c-format
-msgid "Wrote %i records with %i missing files and %i mismatched files\n"
-msgstr ""
-"Kirjoitettiin %i tietuetta joissa oli %i puuttuvaa ja %i paritonta "
-"tiedostoa\n"
-
-#: apt-pkg/deb/dpkgpm.cc:510
-#, fuzzy, c-format
-msgid "Directory '%s' missing"
-msgstr "Luettelokansio %spartial puuttuu."
-
-#: apt-pkg/deb/dpkgpm.cc:572
-#, c-format
-msgid "Preparing %s"
-msgstr "Valmistellaan %s"
-
-#: apt-pkg/deb/dpkgpm.cc:573
-#, c-format
-msgid "Unpacking %s"
-msgstr "Puretaan %s"
-
-#: apt-pkg/deb/dpkgpm.cc:578
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Valmistaudutaan tekemään asetukset: %s"
-
-#: apt-pkg/deb/dpkgpm.cc:579
-#, c-format
-msgid "Configuring %s"
-msgstr "Tehdään asetukset: %s"
-
-#: apt-pkg/deb/dpkgpm.cc:581 apt-pkg/deb/dpkgpm.cc:582
-#, fuzzy, c-format
-#| msgid "Error processing directory %s"
-msgid "Processing triggers for %s"
-msgstr "Tapahtui virhe käsiteltäessa kansiota %s"
-
-#: apt-pkg/deb/dpkgpm.cc:584
-#, c-format
-msgid "Installed %s"
-msgstr "%s asennettu"
-
-#: apt-pkg/deb/dpkgpm.cc:589 apt-pkg/deb/dpkgpm.cc:591
-#: apt-pkg/deb/dpkgpm.cc:592
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Valmistaudutaan poistamaan %s"
-
-#: apt-pkg/deb/dpkgpm.cc:594
-#, c-format
-msgid "Removing %s"
-msgstr "Poistetaan %s"
-
-#: apt-pkg/deb/dpkgpm.cc:595
-#, c-format
-msgid "Removed %s"
-msgstr "%s poistettu"
-
-#: apt-pkg/deb/dpkgpm.cc:600
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Valmistaudutaan poistamaan %s kokonaan"
-
-#: apt-pkg/deb/dpkgpm.cc:601
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s poistettiin kokonaan"
-
-#: apt-pkg/deb/dpkgpm.cc:749
-msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
-msgstr ""
-
-#: methods/rred.cc:219
-msgid "Could not patch file"
-msgstr "Tiedostoa %s ei voitu avata"
-
-#: methods/rsh.cc:91
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "IPC-putken luominen aliprosessiin ei onnistunut"
-
-#: methods/rsh.cc:330
-msgid "Connection closed prematurely"
-msgstr "Yhteys katkesi ennenaikaisesti"
-
-#: apt-inst/contrib/extracttar.cc:114
-msgid "Failed to create pipes"
-msgstr "Putkien luonti ei onnistunut"
-
-#: apt-inst/contrib/extracttar.cc:141
-msgid "Failed to exec gzip "
-msgstr "exec gzip ei onnistunut"
-
-#: apt-inst/contrib/extracttar.cc:178 apt-inst/contrib/extracttar.cc:204
-msgid "Corrupted archive"
-msgstr "Arkisto on turmeltunut"
-
-#: apt-inst/contrib/extracttar.cc:193
-msgid "Tar checksum failed, archive corrupted"
-msgstr "Tar-ohjelman laskema tarkistussumma ei täsmää, arkisto on turmeltunut"
-
-#: apt-inst/contrib/extracttar.cc:296
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
-msgstr "Tuntematon TAR-otsikon tyyppi %u, tiedosto %s"
-
-#: apt-inst/contrib/arfile.cc:70
-msgid "Invalid archive signature"
-msgstr "Arkiston tarkistussumma on virheellinen"
-
-#: apt-inst/contrib/arfile.cc:78
-msgid "Error reading archive member header"
-msgstr "Tapahtui virhe luettaessa arkiston tiedoston otsikkoa"
-
-#: apt-inst/contrib/arfile.cc:90 apt-inst/contrib/arfile.cc:102
-msgid "Invalid archive member header"
-msgstr "Arkiston tiedoston otsikko on virheellinen"
-
-#: apt-inst/contrib/arfile.cc:128
-msgid "Archive is too short"
-msgstr "Arkisto on pienempi kuin pitäisi"
-
-#: apt-inst/contrib/arfile.cc:132
-msgid "Failed to read the archive headers"
-msgstr "Arkiston otsikoiden luku ei onnistunut"
-
-#: apt-inst/filelist.cc:380
-msgid "DropNode called on still linked node"
-msgstr "Kutsuttiin DropNode mutta tiedostoon on vielä linkki"
-
-#: apt-inst/filelist.cc:412
-msgid "Failed to locate the hash element!"
-msgstr "Hajautusalkiota ei löytynyt!"
-
-#: apt-inst/filelist.cc:459
-msgid "Failed to allocate diversion"
-msgstr "Korvautuksen varaus ei onnistunut"
-
-#: apt-inst/filelist.cc:464
-msgid "Internal error in AddDiversion"
-msgstr "AddDiversion: sisäinen virhe"
-
-#: apt-inst/filelist.cc:477
-#, c-format
-msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
-msgstr "Yritetään kirjoittaa korvautuksen päälle, %s -> %s ja %s/%s"
-
-#: apt-inst/filelist.cc:506
-#, c-format
-msgid "Double add of diversion %s -> %s"
-msgstr "Korvautuksen kaksoislisäys %s -> %s"
-
-#: apt-inst/filelist.cc:549
-#, c-format
-msgid "Duplicate conf file %s/%s"
-msgstr "Asetustiedoston kaksoiskappale %s/%s"
-
-#: apt-inst/dirstream.cc:41 apt-inst/dirstream.cc:46 apt-inst/dirstream.cc:49
-#, c-format
-msgid "Failed to write file %s"
-msgstr "Tiedoston %s kirjoittaminen ei onnistunut"
-
-#: apt-inst/dirstream.cc:92 apt-inst/dirstream.cc:100
-#, c-format
-msgid "Failed to close file %s"
-msgstr "Tiedoston %s sulkeminen ei onnistunut"
-
-#: apt-inst/extract.cc:93 apt-inst/extract.cc:164
-#, c-format
-msgid "The path %s is too long"
-msgstr "Polku %s on liian pitkä"
-
-#: apt-inst/extract.cc:124
-#, c-format
-msgid "Unpacking %s more than once"
-msgstr "Purettiin %s useammin kuin kerran"
-
-#: apt-inst/extract.cc:134
-#, c-format
-msgid "The directory %s is diverted"
-msgstr "Kansio %s on korvautunut"
-
-#: apt-inst/extract.cc:144
-#, c-format
-msgid "The package is trying to write to the diversion target %s/%s"
-msgstr "Paketti yrittää kirjoittaa korvautuksen kohteeseen %s/%s"
-
-#: apt-inst/extract.cc:154 apt-inst/extract.cc:297
-msgid "The diversion path is too long"
-msgstr "Korvautuspolku on liian pitkä"
-
-#: apt-inst/extract.cc:185
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Nimen muuttaminen %s -> %s ei onnistunut"
-
-#: apt-inst/extract.cc:240
-#, c-format
-msgid "The directory %s is being replaced by a non-directory"
-msgstr "Kansiota %s ollaan korvaamassa muulla kuin kansiolla"
-
-#: apt-inst/extract.cc:280
-msgid "Failed to locate node in its hash bucket"
-msgstr "Solmua ei löytynyt sen hajautuslokerosta"
-
-#: apt-inst/extract.cc:284
-msgid "The path is too long"
-msgstr "Polku on liian pitkä"
-
-#: apt-inst/extract.cc:414
-#, c-format
-msgid "Overwrite package match with no version for %s"
-msgstr "Päälle kirjoitettava paketti täsmää mutta paketille %s ei ole versiota"
-
-#: apt-inst/extract.cc:431
-#, c-format
-msgid "File %s/%s overwrites the one in the package %s"
-msgstr "Tiedosto %s/%s kirjoitetaan paketista %s tulleen päälle"
-
-#: apt-inst/extract.cc:491
-#, c-format
-msgid "Unable to stat %s"
-msgstr "Tiedostolle %s ei toimi stat"
-
-#: apt-inst/deb/dpkgdb.cc:51 apt-inst/deb/dpkgdb.cc:57
-#, c-format
-msgid "Failed to remove %s"
-msgstr "Tiedoston %s poistaminen ei onnistunut"
-
-#: apt-inst/deb/dpkgdb.cc:106 apt-inst/deb/dpkgdb.cc:108
-#, c-format
-msgid "Unable to create %s"
-msgstr "Tiedostoa %s ei voi luoda"
-
-#: apt-inst/deb/dpkgdb.cc:114
-#, c-format
-msgid "Failed to stat %sinfo"
-msgstr "stat ei toimi: %sinfo"
-
-#: apt-inst/deb/dpkgdb.cc:119
-msgid "The info and temp directories need to be on the same filesystem"
-msgstr "Kansioiden info ja temp pitää olla samassa tiedostojärjestelmässä"
-
-#: apt-inst/deb/dpkgdb.cc:176
-#, c-format
-msgid "Failed to change to the admin dir %sinfo"
-msgstr "Ylläpitokansioon %sinfo vaihtaminen ei onnistunut"
-
-#: apt-inst/deb/dpkgdb.cc:197 apt-inst/deb/dpkgdb.cc:351
-#: apt-inst/deb/dpkgdb.cc:444
-msgid "Internal error getting a package name"
-msgstr "Tapahtui sisäinen virhe haettaessa paketin nimeä"
-
-#: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:382
-msgid "Reading file listing"
-msgstr "Luetaan tiedostoluetteloa"
-
-#: apt-inst/deb/dpkgdb.cc:212
-#, c-format
-msgid ""
-"Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
-"then make it empty and immediately re-install the same version of the "
-"package!"
-msgstr ""
-"Luettelotiedoston \"%sinfo/%s\" avaaminen ei onnistunut. Jos tätä tiedostoa "
-"ei voi palauttaa, tyhjennä tiedosto ja asenna välittömästi paketin sama "
-"versio uudelleen!"
-
-#: apt-inst/deb/dpkgdb.cc:225 apt-inst/deb/dpkgdb.cc:238
-#, c-format
-msgid "Failed reading the list file %sinfo/%s"
-msgstr "Tapahtui virhe luettelotiedostoa %sinfo/%s luettaessa"
-
-#: apt-inst/deb/dpkgdb.cc:262
-msgid "Internal error getting a node"
-msgstr "Tapahtui sisäinen virhe varattaessa tiedostosolmua"
-
-#: apt-inst/deb/dpkgdb.cc:305
-#, c-format
-msgid "Failed to open the diversions file %sdiversions"
-msgstr "Tapahtui virhe avattaessa korvautustiedostoa %sdiversions"
-
-#: apt-inst/deb/dpkgdb.cc:320
-msgid "The diversion file is corrupted"
-msgstr "Korvautustiedosto on turmeltunut"
-
-#: apt-inst/deb/dpkgdb.cc:327 apt-inst/deb/dpkgdb.cc:332
-#: apt-inst/deb/dpkgdb.cc:337
-#, c-format
-msgid "Invalid line in the diversion file: %s"
-msgstr "Virheellinen rivi korvautustiedostossa: %s"
-
-#: apt-inst/deb/dpkgdb.cc:358
-msgid "Internal error adding a diversion"
-msgstr "Tapahtui sisäinen virhe lisättäessä korvautusta"
-
-#: apt-inst/deb/dpkgdb.cc:379
-msgid "The pkg cache must be initialized first"
-msgstr "Pakettivarasto on ensin alustettava"
-
-#: apt-inst/deb/dpkgdb.cc:439
-#, c-format
-msgid "Failed to find a Package: header, offset %lu"
-msgstr "Paketin otsikkoa ei löydy, kohta %lu"
-
-#: apt-inst/deb/dpkgdb.cc:461
-#, c-format
-msgid "Bad ConfFile section in the status file. Offset %lu"
-msgstr "Virheellinen ConfFile-lohko tilatiedostossa. Kohta %lu"
-
-#: apt-inst/deb/dpkgdb.cc:466
-#, c-format
-msgid "Error parsing MD5. Offset %lu"
-msgstr "Tapahtui virhe jäsennettäessä MD5:ttä. Kohta %lu"
-
-#: apt-inst/deb/debfile.cc:38 apt-inst/deb/debfile.cc:43
-#, c-format
-msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Tämä ei ole kelvollinen DEB-arkisto, puuttuu tiedosto \"%s\""
-
-#: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
-msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "Tämä ei ole kelvollinen DEB-arkisto, puuttuu osat \"%s\" ja \"%s\"."
-
-#: apt-inst/deb/debfile.cc:110
-#, c-format
-msgid "Couldn't change to %s"
-msgstr "Kansioon %s vaihto ei onnistunut"
-
-#: apt-inst/deb/debfile.cc:140
-msgid "Internal error, could not locate member"
-msgstr "Tapahtui sisäinen virhe, tiedostoa ei löydy"
-
-#: apt-inst/deb/debfile.cc:173
-msgid "Failed to locate a valid control file"
-msgstr "Kelvollista ohjaustiedostoa ei löydy"
-
-#: apt-inst/deb/debfile.cc:258
-msgid "Unparsable control file"
-msgstr "Ohjaustiedosto ei jäsenny"
 
 #: cmdline/apt-cache.cc:143
 #, c-format
@@ -1628,10 +159,10 @@ msgid "       %4i %s\n"
 msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
-#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2588 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:550
+#: cmdline/apt-get.cc:2564 cmdline/apt-sortpkgs.cc:144
 #, fuzzy, c-format
-msgid "%s %s for %s compiled on %s %s\n"
+msgid "%s %s for %s %s compiled on %s %s\n"
 msgstr "%s %s laitealustalle %s %s käännöksen päiväys %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
@@ -1780,36 +311,42 @@ msgstr ""
 "  -c=? Lue tämä asetustiedosto\n"
 "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
 
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:819
+#: apt-pkg/pkgcachegen.cc:815
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Tiedostoon %s kirjoittaminen ei onnistu"
+
 #: cmdline/apt-extracttemplates.cc:310
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Ohjelman debconf versiota ei saa selvitettyä. Onko debconf asennettu?"
 
-#: ftparchive/apt-ftparchive.cc:164 ftparchive/apt-ftparchive.cc:338
+#: ftparchive/apt-ftparchive.cc:167 ftparchive/apt-ftparchive.cc:341
 msgid "Package extension list is too long"
 msgstr "Paketin laajennuslista on liian pitkä"
 
-#: ftparchive/apt-ftparchive.cc:166 ftparchive/apt-ftparchive.cc:180
-#: ftparchive/apt-ftparchive.cc:203 ftparchive/apt-ftparchive.cc:253
-#: ftparchive/apt-ftparchive.cc:267 ftparchive/apt-ftparchive.cc:289
+#: ftparchive/apt-ftparchive.cc:169 ftparchive/apt-ftparchive.cc:183
+#: ftparchive/apt-ftparchive.cc:206 ftparchive/apt-ftparchive.cc:256
+#: ftparchive/apt-ftparchive.cc:270 ftparchive/apt-ftparchive.cc:292
 #, c-format
 msgid "Error processing directory %s"
 msgstr "Tapahtui virhe käsiteltäessa kansiota %s"
 
-#: ftparchive/apt-ftparchive.cc:251
+#: ftparchive/apt-ftparchive.cc:254
 msgid "Source extension list is too long"
 msgstr "Lähteiden laajennuslista on liian pitkä"
 
-#: ftparchive/apt-ftparchive.cc:368
+#: ftparchive/apt-ftparchive.cc:371
 msgid "Error writing header to contents file"
 msgstr ""
 "Tapahtui virhe kirjoitettaessa otsikkotietoa sisällysluettelotiedostoon"
 
-#: ftparchive/apt-ftparchive.cc:398
+#: ftparchive/apt-ftparchive.cc:401
 #, c-format
 msgid "Error processing contents %s"
 msgstr "Tapahtui virhe käsiteltäessä sisällysluetteloa %s"
 
-#: ftparchive/apt-ftparchive.cc:553
+#: ftparchive/apt-ftparchive.cc:556
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -1891,26 +428,26 @@ msgstr ""
 "  -c=?  Lue tämä asetustiedosto\n"
 "  -o=?  Aseta mikä asetusvalitsin tahansa"
 
-#: ftparchive/apt-ftparchive.cc:759
+#: ftparchive/apt-ftparchive.cc:762
 msgid "No selections matched"
 msgstr "Mitkään valinnat eivät täsmänneet"
 
-#: ftparchive/apt-ftparchive.cc:832
+#: ftparchive/apt-ftparchive.cc:835
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Pakettitiedostojen ryhmästä \"%s\" puuttuu joitain tiedostoja"
 
-#: ftparchive/cachedb.cc:43
+#: ftparchive/cachedb.cc:47
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "Tietokanta on turmeltunut, tiedosto nimetty %s.old"
 
-#: ftparchive/cachedb.cc:61
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "Tietokanta on vanha, yritetään päivittää %s"
 
-#: ftparchive/cachedb.cc:72
+#: ftparchive/cachedb.cc:76
 msgid ""
 "DB format is invalid. If you upgraded from a older version of apt, please "
 "remove and re-create the database."
@@ -1918,100 +455,106 @@ msgstr ""
 "Tietokannan muoto ei kelpaa. Jos tehtiin päivitys vanhasta apt:n versiosta, "
 "on tietokanta poistettava ja luotava uudelleen."
 
-#: ftparchive/cachedb.cc:77
+#: ftparchive/cachedb.cc:81
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "Tietokantatiedostoa %s ei saatu avattua: %s"
 
-#: ftparchive/cachedb.cc:238
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121 methods/gpgv.cc:272
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Tiedostolle %s ei toimi stat"
+
+#: ftparchive/cachedb.cc:242
 msgid "Archive has no control record"
 msgstr "Arkistolla ei ole ohjaustietuetta"
 
-#: ftparchive/cachedb.cc:444
+#: ftparchive/cachedb.cc:448
 msgid "Unable to get a cursor"
 msgstr "Kohdistinta ei saada"
 
-#: ftparchive/writer.cc:76
+#: ftparchive/writer.cc:79
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "W: Kansiota %s ei voi lukea\n"
 
-#: ftparchive/writer.cc:81
+#: ftparchive/writer.cc:84
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "W: Tdstolle %s ei toimi stat\n"
 
-#: ftparchive/writer.cc:132
+#: ftparchive/writer.cc:135
 msgid "E: "
 msgstr "E: "
 
-#: ftparchive/writer.cc:134
+#: ftparchive/writer.cc:137
 msgid "W: "
 msgstr "W: "
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:144
 msgid "E: Errors apply to file "
 msgstr "E: Tiedostossa virheitä "
 
-#: ftparchive/writer.cc:158 ftparchive/writer.cc:188
+#: ftparchive/writer.cc:161 ftparchive/writer.cc:191
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Osoitteen %s selvitys ei onnistunut"
 
-#: ftparchive/writer.cc:170
+#: ftparchive/writer.cc:173
 msgid "Tree walking failed"
 msgstr "Puun läpikäynti ei onnistunut"
 
-#: ftparchive/writer.cc:195
+#: ftparchive/writer.cc:198
 #, c-format
 msgid "Failed to open %s"
 msgstr "Tiedoston %s avaaminen ei onnistunut"
 
-#: ftparchive/writer.cc:254
+#: ftparchive/writer.cc:257
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:262
+#: ftparchive/writer.cc:265
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "readlink %s ei onnistunut"
 
-#: ftparchive/writer.cc:266
+#: ftparchive/writer.cc:269
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "unlink %s ei onnistunut"
 
-#: ftparchive/writer.cc:273
+#: ftparchive/writer.cc:276
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Linkin %s -> %s luonti ei onnistunut"
 
-#: ftparchive/writer.cc:283
+#: ftparchive/writer.cc:286
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " DeLinkin yläraja %st saavutettu.\n"
 
-#: ftparchive/writer.cc:387
+#: ftparchive/writer.cc:390
 msgid "Archive had no package field"
 msgstr "Arkistossa ei ollut pakettikenttää"
 
-#: ftparchive/writer.cc:395 ftparchive/writer.cc:610
+#: ftparchive/writer.cc:398 ftparchive/writer.cc:613
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s:llä ei ole poikkeustietuetta\n"
 
-#: ftparchive/writer.cc:440 ftparchive/writer.cc:698
+#: ftparchive/writer.cc:443 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s ylläpitäjä on %s eikä %s\n"
 
-#: ftparchive/writer.cc:620
+#: ftparchive/writer.cc:623
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s:llä ei ole poikkeustietuetta\n"
 
-#: ftparchive/writer.cc:624
+#: ftparchive/writer.cc:627
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s:llä ei  ole binääristäkään poikkeustietuetta\n"
@@ -2025,88 +568,97 @@ msgstr "Tapahtui sisäinen virhe, tiedostoa %s ei löydy"
 msgid "realloc - Failed to allocate memory"
 msgstr "realloc - Muistin varaaminen ei onnistunut"
 
-#: ftparchive/override.cc:34 ftparchive/override.cc:142
+#: ftparchive/override.cc:38 ftparchive/override.cc:146
 #, c-format
 msgid "Unable to open %s"
 msgstr "Tiedoston %s avaaminen ei onnistunut"
 
-#: ftparchive/override.cc:60 ftparchive/override.cc:166
+#: ftparchive/override.cc:64 ftparchive/override.cc:170
 #, c-format
 msgid "Malformed override %s line %lu #1"
 msgstr "Väärän muotoinen poikkeus %s rivi %lu n:ro 1"
 
-#: ftparchive/override.cc:74 ftparchive/override.cc:178
+#: ftparchive/override.cc:78 ftparchive/override.cc:182
 #, c-format
 msgid "Malformed override %s line %lu #2"
 msgstr "Väärän muotoinen poikkeus %s rivi %lu n:ro 2"
 
-#: ftparchive/override.cc:88 ftparchive/override.cc:191
+#: ftparchive/override.cc:92 ftparchive/override.cc:195
 #, c-format
 msgid "Malformed override %s line %lu #3"
 msgstr "Väärän muotoinen poikkeus %s rivi %lu n:ro 3"
 
-#: ftparchive/override.cc:127 ftparchive/override.cc:201
+#: ftparchive/override.cc:131 ftparchive/override.cc:205
 #, c-format
 msgid "Failed to read the override file %s"
 msgstr "Poikkeustiedoston %s lukeminen ei onnistunut"
 
-#: ftparchive/multicompress.cc:71
+#: ftparchive/multicompress.cc:75
 #, c-format
 msgid "Unknown compression algorithm '%s'"
 msgstr "Tuntematon pakkausalgoritmi \"%s\""
 
-#: ftparchive/multicompress.cc:101
+#: ftparchive/multicompress.cc:105
 #, c-format
 msgid "Compressed output %s needs a compression set"
 msgstr "Pakattu tulostus %s tarvitsee pakkausjoukon"
 
-#: ftparchive/multicompress.cc:194
+#: ftparchive/multicompress.cc:172 methods/rsh.cc:91
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "IPC-putken luominen aliprosessiin ei onnistunut"
+
+#: ftparchive/multicompress.cc:198
 msgid "Failed to create FILE*"
 msgstr "FILE* luominen ei onnistunut"
 
-#: ftparchive/multicompress.cc:197
+#: ftparchive/multicompress.cc:201
 msgid "Failed to fork"
 msgstr "fork ei onnistunut"
 
-#: ftparchive/multicompress.cc:211
+#: ftparchive/multicompress.cc:215
 msgid "Compress child"
 msgstr "Compress-lapsiprosessi"
 
-#: ftparchive/multicompress.cc:234
+#: ftparchive/multicompress.cc:238
 #, c-format
 msgid "Internal error, failed to create %s"
 msgstr "Sisäinen virhe, prosessin %s luominen ei onnistunut"
 
-#: ftparchive/multicompress.cc:285
+#: ftparchive/multicompress.cc:289
 msgid "Failed to create subprocess IPC"
 msgstr "Prosessien välistä kommunikaatiota aliprosessiin ei saatu luotua"
 
-#: ftparchive/multicompress.cc:320
+#: ftparchive/multicompress.cc:324
 msgid "Failed to exec compressor "
 msgstr "Pakkaajan käynnistäminen ei onnistunut"
 
-#: ftparchive/multicompress.cc:359
+#: ftparchive/multicompress.cc:363
 msgid "decompressor"
 msgstr "purkaja"
 
-#: ftparchive/multicompress.cc:402
+#: ftparchive/multicompress.cc:406
 msgid "IO to subprocess/file failed"
 msgstr "Syöttö/tulostus aliprosessiin/tiedostoon ei onnistunut"
 
-#: ftparchive/multicompress.cc:454
+#: ftparchive/multicompress.cc:458
 msgid "Failed to read while computing MD5"
 msgstr "Lukeminen ei onnistunut laskettaessa MD5:ttä"
 
-#: ftparchive/multicompress.cc:471
+#: ftparchive/multicompress.cc:475
 #, c-format
 msgid "Problem unlinking %s"
 msgstr "Ilmeni pulmia poistettaessa tiedosto %s"
+
+#: ftparchive/multicompress.cc:490 apt-inst/extract.cc:188
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Nimen muuttaminen %s -> %s ei onnistunut"
 
 #: cmdline/apt-get.cc:121
 msgid "Y"
 msgstr "K"
 
-#: cmdline/apt-get.cc:143 cmdline/apt-get.cc:1673
+#: cmdline/apt-get.cc:143 cmdline/apt-get.cc:1655
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Käännösvirhe lausekkeessa - %s"
@@ -2267,9 +819,14 @@ msgstr "Paketteja pitäisi poistaa mutta Remove ei ole käytössä."
 msgid "Internal error, Ordering didn't finish"
 msgstr "Tapahtui sisäinen virhe, järjestäminen keskeytyi"
 
-#: cmdline/apt-get.cc:806 cmdline/apt-get.cc:2012 cmdline/apt-get.cc:2045
+#: cmdline/apt-get.cc:806 cmdline/apt-get.cc:1995 cmdline/apt-get.cc:2028
 msgid "Unable to lock the download directory"
 msgstr "Noutokansiota ei saatu lukittua"
+
+#: cmdline/apt-get.cc:816 cmdline/apt-get.cc:2076 cmdline/apt-get.cc:2312
+#: apt-pkg/cachefile.cc:67 apt-pkg/cachefile.cc:63
+msgid "The list of sources could not be read."
+msgstr "Lähteiden luetteloa ei pystynyt lukemaan."
 
 #: cmdline/apt-get.cc:831
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
@@ -2296,7 +853,7 @@ msgstr "Purkamisen jälkeen käytetään %st lisää levytilaa.\n"
 msgid "After unpacking %sB disk space will be freed.\n"
 msgstr "Purkamisen jälkeen vapautuu %st levytilaa.\n"
 
-#: cmdline/apt-get.cc:861 cmdline/apt-get.cc:2188
+#: cmdline/apt-get.cc:861 cmdline/apt-get.cc:2166
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Kansion %s vapaan tilan määrä ei selvinnyt"
@@ -2334,7 +891,7 @@ msgstr "Keskeytä."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Haluatko jatkaa [K/e]? "
 
-#: cmdline/apt-get.cc:976 cmdline/apt-get.cc:1383 cmdline/apt-get.cc:2231
+#: cmdline/apt-get.cc:976 cmdline/apt-get.cc:1383 cmdline/apt-get.cc:2209
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Tiedoston %s nouto ei onnistunut  %s\n"
@@ -2343,7 +900,7 @@ msgstr "Tiedoston %s nouto ei onnistunut  %s\n"
 msgid "Some files failed to download"
 msgstr "Joidenkin tiedostojen nouto ei onnistunut"
 
-#: cmdline/apt-get.cc:995 cmdline/apt-get.cc:2240
+#: cmdline/apt-get.cc:995 cmdline/apt-get.cc:2218
 msgid "Download complete and in download only mode"
 msgstr "Nouto on valmis ja määrätty vain nouto"
 
@@ -2477,7 +1034,7 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 
-#: cmdline/apt-get.cc:1475 cmdline/apt-get.cc:1755
+#: cmdline/apt-get.cc:1475 cmdline/apt-get.cc:1736
 msgid "The following information may help to resolve the situation:"
 msgstr "Seuraavista tiedoista voi olla hyötyä selvitettäessä tilannetta:"
 
@@ -2490,31 +1047,31 @@ msgstr "Sisäinen virhe, resolver rikkoi jotain"
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Sisäinen virhe, AllUpgrade rikkoi jotain"
 
-#: cmdline/apt-get.cc:1545
+#: cmdline/apt-get.cc:1543
 #, fuzzy, c-format
 msgid "Couldn't find task %s"
 msgstr "Pakettia %s ei löytynyt"
 
-#: cmdline/apt-get.cc:1660 cmdline/apt-get.cc:1696
+#: cmdline/apt-get.cc:1642 cmdline/apt-get.cc:1678
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Pakettia %s ei löytynyt"
 
-#: cmdline/apt-get.cc:1683
+#: cmdline/apt-get.cc:1665
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Huomautus, valitaan %s lausekkeella \"%s\"\n"
 
-#: cmdline/apt-get.cc:1714
+#: cmdline/apt-get.cc:1695
 #, fuzzy, c-format
 msgid "%s set to manual installed.\n"
 msgstr "mutta %s on merkitty asennettavaksi"
 
-#: cmdline/apt-get.cc:1727
+#: cmdline/apt-get.cc:1708
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Saatat haluta suorittaa \"apt-get -f install\" korjaamaan nämä:"
 
-#: cmdline/apt-get.cc:1730
+#: cmdline/apt-get.cc:1711
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -2522,7 +1079,7 @@ msgstr ""
 "Kaikkia riippuvuuksia ei ole tyydytetty. Kokeile \"apt-get -f install\" "
 "ilmanpaketteja (tai ratkaise itse)."
 
-#: cmdline/apt-get.cc:1742
+#: cmdline/apt-get.cc:1723
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -2533,7 +1090,7 @@ msgstr ""
 "jos käytetään epävakaata jakelua, joitain vaadittuja paketteja ei ole\n"
 "vielä luotu tai siirretty Incoming-kansiosta."
 
-#: cmdline/apt-get.cc:1750
+#: cmdline/apt-get.cc:1731
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
@@ -2543,112 +1100,116 @@ msgstr ""
 "paketti ei lainkaan ole asennettavissa ja olisi tehtävä vikailmoitus\n"
 "tuosta paketista."
 
-#: cmdline/apt-get.cc:1758
+#: cmdline/apt-get.cc:1739
 msgid "Broken packages"
 msgstr "Rikkinäiset paketit"
 
-#: cmdline/apt-get.cc:1787
+#: cmdline/apt-get.cc:1770
 msgid "The following extra packages will be installed:"
 msgstr "Seuraavat ylimääräiset paketit on merkitty asennettaviksi:"
 
-#: cmdline/apt-get.cc:1876
+#: cmdline/apt-get.cc:1859
 msgid "Suggested packages:"
 msgstr "Ehdotetut paketit:"
 
-#: cmdline/apt-get.cc:1877
+#: cmdline/apt-get.cc:1860
 msgid "Recommended packages:"
 msgstr "Suositellut paketit:"
 
-#: cmdline/apt-get.cc:1905
+#: cmdline/apt-get.cc:1888
 msgid "Calculating upgrade... "
 msgstr "Käsitellään päivitystä ... "
 
-#: cmdline/apt-get.cc:1913
+#: cmdline/apt-get.cc:1891 methods/ftp.cc:702 methods/connect.cc:101
+msgid "Failed"
+msgstr "Ei onnistunut"
+
+#: cmdline/apt-get.cc:1896
 msgid "Done"
 msgstr "Valmis"
 
-#: cmdline/apt-get.cc:1980 cmdline/apt-get.cc:1988
+#: cmdline/apt-get.cc:1963 cmdline/apt-get.cc:1971
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Sisäinen virhe, resolver rikkoi jotain"
 
-#: cmdline/apt-get.cc:2088
+#: cmdline/apt-get.cc:2071
 msgid "Must specify at least one package to fetch source for"
 msgstr "On annettava ainakin yksi paketti jonka lähdekoodi noudetaan"
 
-#: cmdline/apt-get.cc:2118 cmdline/apt-get.cc:2352
+#: cmdline/apt-get.cc:2101 cmdline/apt-get.cc:2330
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Paketin %s lähdekoodipakettia ei löytynyt"
 
-#: cmdline/apt-get.cc:2167
+#: cmdline/apt-get.cc:2145
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Ohitetaan jo noudettu tiedosto \"%s\"\n"
 
-#: cmdline/apt-get.cc:2191
+#: cmdline/apt-get.cc:2169
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Kansiossa %s ei ole riittävästi vapaata tilaa"
 
-#: cmdline/apt-get.cc:2196
+#: cmdline/apt-get.cc:2174
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "On noudettava %st/%st lähdekoodiarkistoja.\n"
 
-#: cmdline/apt-get.cc:2199
+#: cmdline/apt-get.cc:2177
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "On noudettava %st lähdekoodiarkistoja.\n"
 
-#: cmdline/apt-get.cc:2205
+#: cmdline/apt-get.cc:2183
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Nouda lähdekoodi %s\n"
 
-#: cmdline/apt-get.cc:2236
+#: cmdline/apt-get.cc:2214
 msgid "Failed to fetch some archives."
 msgstr "Joidenkin arkistojen noutaminen ei onnistunut."
 
-#: cmdline/apt-get.cc:2264
+#: cmdline/apt-get.cc:2242
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Ohitetaan purku jo puretun lähdekoodin %s kohdalla\n"
 
-#: cmdline/apt-get.cc:2276
+#: cmdline/apt-get.cc:2254
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Purkukomento \"%s\" ei onnistunut.\n"
 
-#: cmdline/apt-get.cc:2277
+#: cmdline/apt-get.cc:2255
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
 
-#: cmdline/apt-get.cc:2294
+#: cmdline/apt-get.cc:2272
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Paketointikomento \"%s\" ei onnistunut.\n"
 
-#: cmdline/apt-get.cc:2313
+#: cmdline/apt-get.cc:2291
 msgid "Child process failed"
 msgstr "Lapsiprosessi kaatui"
 
-#: cmdline/apt-get.cc:2329
+#: cmdline/apt-get.cc:2307
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "On annettava ainakin yksi paketti jonka paketointiriippuvuudet tarkistetaan"
 
-#: cmdline/apt-get.cc:2357
+#: cmdline/apt-get.cc:2335
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Paketille %s ei ole saatavilla riippuvuustietoja"
 
-#: cmdline/apt-get.cc:2377
+#: cmdline/apt-get.cc:2355
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "Paketille %s ei ole määritetty paketointiriippuvuuksia.\n"
 
-#: cmdline/apt-get.cc:2429
+#: cmdline/apt-get.cc:2407
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -2656,7 +1217,7 @@ msgid ""
 msgstr ""
 "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
 
-#: cmdline/apt-get.cc:2482
+#: cmdline/apt-get.cc:2459
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -2665,32 +1226,32 @@ msgstr ""
 "%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s versio "
 "ei vastaa versioriippuvuuksia"
 
-#: cmdline/apt-get.cc:2518
+#: cmdline/apt-get.cc:2494
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on liian "
 "uusi"
 
-#: cmdline/apt-get.cc:2543
+#: cmdline/apt-get.cc:2519
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Riippuvuutta %s paketille %s ei voi tyydyttää: %s"
 
-#: cmdline/apt-get.cc:2557
+#: cmdline/apt-get.cc:2533
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Paketointiriippuvuuksia paketille %s ei voi tyydyttää."
 
-#: cmdline/apt-get.cc:2561
+#: cmdline/apt-get.cc:2537
 msgid "Failed to process build dependencies"
 msgstr "Paketointiriippuvuuksien käsittely ei onnistunut"
 
-#: cmdline/apt-get.cc:2593
+#: cmdline/apt-get.cc:2569
 msgid "Supported modules:"
 msgstr "Tuetut moduulit:"
 
-#: cmdline/apt-get.cc:2634
+#: cmdline/apt-get.cc:2610
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -2706,8 +1267,6 @@ msgid ""
 "   upgrade - Perform an upgrade\n"
 "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
 "   remove - Remove packages\n"
-"   autoremove - Remove all automatic unused packages\n"
-"   purge - Remove and purge packages\n"
 "   source - Download source archives\n"
 "   build-dep - Configure build-dependencies for source packages\n"
 "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
@@ -2870,9 +1429,1527 @@ msgstr ""
 msgid "Merging available information"
 msgstr "Yhdistetään saatavuustiedot"
 
+#: apt-inst/contrib/extracttar.cc:117
+msgid "Failed to create pipes"
+msgstr "Putkien luonti ei onnistunut"
+
+#: apt-inst/contrib/extracttar.cc:144
+msgid "Failed to exec gzip "
+msgstr "exec gzip ei onnistunut"
+
+#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:207
+msgid "Corrupted archive"
+msgstr "Arkisto on turmeltunut"
+
+#: apt-inst/contrib/extracttar.cc:196
+msgid "Tar checksum failed, archive corrupted"
+msgstr "Tar-ohjelman laskema tarkistussumma ei täsmää, arkisto on turmeltunut"
+
+#: apt-inst/contrib/extracttar.cc:299
+#, c-format
+msgid "Unknown TAR header type %u, member %s"
+msgstr "Tuntematon TAR-otsikon tyyppi %u, tiedosto %s"
+
+#: apt-inst/contrib/arfile.cc:73
+msgid "Invalid archive signature"
+msgstr "Arkiston tarkistussumma on virheellinen"
+
+#: apt-inst/contrib/arfile.cc:81
+msgid "Error reading archive member header"
+msgstr "Tapahtui virhe luettaessa arkiston tiedoston otsikkoa"
+
+#: apt-inst/contrib/arfile.cc:93 apt-inst/contrib/arfile.cc:105
+msgid "Invalid archive member header"
+msgstr "Arkiston tiedoston otsikko on virheellinen"
+
+#: apt-inst/contrib/arfile.cc:131
+msgid "Archive is too short"
+msgstr "Arkisto on pienempi kuin pitäisi"
+
+#: apt-inst/contrib/arfile.cc:135
+msgid "Failed to read the archive headers"
+msgstr "Arkiston otsikoiden luku ei onnistunut"
+
+#: apt-inst/filelist.cc:384
+msgid "DropNode called on still linked node"
+msgstr "Kutsuttiin DropNode mutta tiedostoon on vielä linkki"
+
+#: apt-inst/filelist.cc:416
+msgid "Failed to locate the hash element!"
+msgstr "Hajautusalkiota ei löytynyt!"
+
+#: apt-inst/filelist.cc:463
+msgid "Failed to allocate diversion"
+msgstr "Korvautuksen varaus ei onnistunut"
+
+#: apt-inst/filelist.cc:468
+msgid "Internal error in AddDiversion"
+msgstr "AddDiversion: sisäinen virhe"
+
+#: apt-inst/filelist.cc:481
+#, c-format
+msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
+msgstr "Yritetään kirjoittaa korvautuksen päälle, %s -> %s ja %s/%s"
+
+#: apt-inst/filelist.cc:510
+#, c-format
+msgid "Double add of diversion %s -> %s"
+msgstr "Korvautuksen kaksoislisäys %s -> %s"
+
+#: apt-inst/filelist.cc:553
+#, c-format
+msgid "Duplicate conf file %s/%s"
+msgstr "Asetustiedoston kaksoiskappale %s/%s"
+
+#: apt-inst/dirstream.cc:45 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:53
+#, c-format
+msgid "Failed to write file %s"
+msgstr "Tiedoston %s kirjoittaminen ei onnistunut"
+
+#: apt-inst/dirstream.cc:96 apt-inst/dirstream.cc:104
+#, c-format
+msgid "Failed to close file %s"
+msgstr "Tiedoston %s sulkeminen ei onnistunut"
+
+#: apt-inst/extract.cc:96 apt-inst/extract.cc:167
+#, c-format
+msgid "The path %s is too long"
+msgstr "Polku %s on liian pitkä"
+
+#: apt-inst/extract.cc:127
+#, c-format
+msgid "Unpacking %s more than once"
+msgstr "Purettiin %s useammin kuin kerran"
+
+#: apt-inst/extract.cc:137
+#, c-format
+msgid "The directory %s is diverted"
+msgstr "Kansio %s on korvautunut"
+
+#: apt-inst/extract.cc:147
+#, c-format
+msgid "The package is trying to write to the diversion target %s/%s"
+msgstr "Paketti yrittää kirjoittaa korvautuksen kohteeseen %s/%s"
+
+#: apt-inst/extract.cc:157 apt-inst/extract.cc:300
+msgid "The diversion path is too long"
+msgstr "Korvautuspolku on liian pitkä"
+
+#: apt-inst/extract.cc:243
+#, c-format
+msgid "The directory %s is being replaced by a non-directory"
+msgstr "Kansiota %s ollaan korvaamassa muulla kuin kansiolla"
+
+#: apt-inst/extract.cc:283
+msgid "Failed to locate node in its hash bucket"
+msgstr "Solmua ei löytynyt sen hajautuslokerosta"
+
+#: apt-inst/extract.cc:287
+msgid "The path is too long"
+msgstr "Polku on liian pitkä"
+
+#: apt-inst/extract.cc:417
+#, c-format
+msgid "Overwrite package match with no version for %s"
+msgstr "Päälle kirjoitettava paketti täsmää mutta paketille %s ei ole versiota"
+
+#: apt-inst/extract.cc:434
+#, c-format
+msgid "File %s/%s overwrites the one in the package %s"
+msgstr "Tiedosto %s/%s kirjoitetaan paketista %s tulleen päälle"
+
+#: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:750
+#: apt-pkg/contrib/cdromutl.cc:153 apt-pkg/sourcelist.cc:324
+#: apt-pkg/acquire.cc:421 apt-pkg/clean.cc:38
+#: apt-pkg/contrib/configuration.cc:748 apt-pkg/contrib/cdromutl.cc:150
+#: apt-pkg/sourcelist.cc:320 apt-pkg/acquire.cc:418 apt-pkg/clean.cc:34
+#, c-format
+msgid "Unable to read %s"
+msgstr "Tiedostoa %s ei voi lukea"
+
+#: apt-inst/extract.cc:494
+#, c-format
+msgid "Unable to stat %s"
+msgstr "Tiedostolle %s ei toimi stat"
+
+#: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
+#, c-format
+msgid "Failed to remove %s"
+msgstr "Tiedoston %s poistaminen ei onnistunut"
+
+#: apt-inst/deb/dpkgdb.cc:110 apt-inst/deb/dpkgdb.cc:112
+#, c-format
+msgid "Unable to create %s"
+msgstr "Tiedostoa %s ei voi luoda"
+
+#: apt-inst/deb/dpkgdb.cc:118
+#, c-format
+msgid "Failed to stat %sinfo"
+msgstr "stat ei toimi: %sinfo"
+
+#: apt-inst/deb/dpkgdb.cc:123
+msgid "The info and temp directories need to be on the same filesystem"
+msgstr "Kansioiden info ja temp pitää olla samassa tiedostojärjestelmässä"
+
+#. Build the status cache
+#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:752
+#: apt-pkg/pkgcachegen.cc:821 apt-pkg/pkgcachegen.cc:826
+#: apt-pkg/pkgcachegen.cc:949 apt-pkg/pkgcachegen.cc:748
+#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
+#: apt-pkg/pkgcachegen.cc:945
+msgid "Reading package lists"
+msgstr "Luetaan pakettiluetteloita"
+
+#: apt-inst/deb/dpkgdb.cc:180
+#, c-format
+msgid "Failed to change to the admin dir %sinfo"
+msgstr "Ylläpitokansioon %sinfo vaihtaminen ei onnistunut"
+
+#: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:355
+#: apt-inst/deb/dpkgdb.cc:448
+msgid "Internal error getting a package name"
+msgstr "Tapahtui sisäinen virhe haettaessa paketin nimeä"
+
+#: apt-inst/deb/dpkgdb.cc:205 apt-inst/deb/dpkgdb.cc:386
+msgid "Reading file listing"
+msgstr "Luetaan tiedostoluetteloa"
+
+#: apt-inst/deb/dpkgdb.cc:216
+#, c-format
+msgid ""
+"Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
+"then make it empty and immediately re-install the same version of the "
+"package!"
+msgstr ""
+"Luettelotiedoston \"%sinfo/%s\" avaaminen ei onnistunut. Jos tätä tiedostoa "
+"ei voi palauttaa, tyhjennä tiedosto ja asenna välittömästi paketin sama "
+"versio uudelleen!"
+
+#: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
+#, c-format
+msgid "Failed reading the list file %sinfo/%s"
+msgstr "Tapahtui virhe luettelotiedostoa %sinfo/%s luettaessa"
+
+#: apt-inst/deb/dpkgdb.cc:266
+msgid "Internal error getting a node"
+msgstr "Tapahtui sisäinen virhe varattaessa tiedostosolmua"
+
+#: apt-inst/deb/dpkgdb.cc:309
+#, c-format
+msgid "Failed to open the diversions file %sdiversions"
+msgstr "Tapahtui virhe avattaessa korvautustiedostoa %sdiversions"
+
+#: apt-inst/deb/dpkgdb.cc:324
+msgid "The diversion file is corrupted"
+msgstr "Korvautustiedosto on turmeltunut"
+
+#: apt-inst/deb/dpkgdb.cc:331 apt-inst/deb/dpkgdb.cc:336
+#: apt-inst/deb/dpkgdb.cc:341
+#, c-format
+msgid "Invalid line in the diversion file: %s"
+msgstr "Virheellinen rivi korvautustiedostossa: %s"
+
+#: apt-inst/deb/dpkgdb.cc:362
+msgid "Internal error adding a diversion"
+msgstr "Tapahtui sisäinen virhe lisättäessä korvautusta"
+
+#: apt-inst/deb/dpkgdb.cc:383
+msgid "The pkg cache must be initialized first"
+msgstr "Pakettivarasto on ensin alustettava"
+
+#: apt-inst/deb/dpkgdb.cc:443
+#, c-format
+msgid "Failed to find a Package: header, offset %lu"
+msgstr "Paketin otsikkoa ei löydy, kohta %lu"
+
+#: apt-inst/deb/dpkgdb.cc:465
+#, c-format
+msgid "Bad ConfFile section in the status file. Offset %lu"
+msgstr "Virheellinen ConfFile-lohko tilatiedostossa. Kohta %lu"
+
+#: apt-inst/deb/dpkgdb.cc:470
+#, c-format
+msgid "Error parsing MD5. Offset %lu"
+msgstr "Tapahtui virhe jäsennettäessä MD5:ttä. Kohta %lu"
+
+#: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
+#, c-format
+msgid "This is not a valid DEB archive, missing '%s' member"
+msgstr "Tämä ei ole kelvollinen DEB-arkisto, puuttuu tiedosto \"%s\""
+
+#: apt-inst/deb/debfile.cc:52
+#, fuzzy, c-format
+msgid "This is not a valid DEB archive, it has no '%s' or '%s' member"
+msgstr "Tämä ei ole kelvollinen DEB-arkisto, puuttuu osat \"%s\" ja \"%s\"."
+
+#: apt-inst/deb/debfile.cc:112
+#, c-format
+msgid "Couldn't change to %s"
+msgstr "Kansioon %s vaihto ei onnistunut"
+
+#: apt-inst/deb/debfile.cc:138
+msgid "Internal error, could not locate member"
+msgstr "Tapahtui sisäinen virhe, tiedostoa ei löydy"
+
+#: apt-inst/deb/debfile.cc:171
+msgid "Failed to locate a valid control file"
+msgstr "Kelvollista ohjaustiedostoa ei löydy"
+
+#: apt-inst/deb/debfile.cc:256
+msgid "Unparsable control file"
+msgstr "Ohjaustiedosto ei jäsenny"
+
+#: methods/cdrom.cc:114
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "Rompputietokantaa %s ei voi lukea"
+
+#: methods/cdrom.cc:123
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"Käytä komentoa apt-cdrom jotta APT tunnistaa tämän rompun, apt-get update ei "
+"osaa lisätä uusia romppuja"
+
+#: methods/cdrom.cc:131
+msgid "Wrong CD-ROM"
+msgstr "Väärä romppu"
+
+#: methods/cdrom.cc:166
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "Rompun %s irrottaminen ei onnistu, se on ehkä käytössä."
+
+#: methods/cdrom.cc:171
+msgid "Disk not found."
+msgstr "Levyä ei löydy"
+
+#: methods/cdrom.cc:179 methods/file.cc:79 methods/rsh.cc:264
+msgid "File not found"
+msgstr "Tiedostoa ei löydy"
+
+#: methods/copy.cc:42 methods/gpgv.cc:281 methods/gzip.cc:141
+#: methods/gzip.cc:150 methods/rred.cc:234 methods/rred.cc:243
+#: methods/copy.cc:43
+msgid "Failed to stat"
+msgstr "Komento stat ei toiminut"
+
+#: methods/copy.cc:79 methods/gpgv.cc:278 methods/gzip.cc:147
+#: methods/rred.cc:240 methods/copy.cc:80
+msgid "Failed to set modification time"
+msgstr "Tiedoston muutospäivämäärää ei saatu vaihdettua"
+
+#: methods/file.cc:44
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "URI on kelvoton, paikallinen URI ei saa alkaa //"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc:162
+msgid "Logging in"
+msgstr "Kirjaudutaan sisään"
+
+#: methods/ftp.cc:168
+msgid "Unable to determine the peer name"
+msgstr "Vastapään nimeä ei saa selville"
+
+#: methods/ftp.cc:173
+msgid "Unable to determine the local name"
+msgstr "Paikallista nimeä ei saa selville"
+
+#: methods/ftp.cc:204 methods/ftp.cc:232
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "Palvelin ei huolinut yhteyttä ilmoituksella: %s"
+
+#: methods/ftp.cc:210
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "USER ei onnistunut, palvelimen ilmoitus: %s"
+
+#: methods/ftp.cc:217
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "PASS ei onnistunut, palvelimen ilmoitus: %s"
+
+#: methods/ftp.cc:237
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"Määritettiin välipalvelin mutta ei komentotiedostoa kirjautumiseen, Acquire::"
+"ftp::ProxyLogin on tyhjä."
+
+#: methods/ftp.cc:265
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "Komentotiedoston rivi \"%s\" ei toiminut, palvelin ilmoitti: %s"
+
+#: methods/ftp.cc:291
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "TYPE ei toiminut, palvelin ilmoitti: %s"
+
+#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
+msgid "Connection timeout"
+msgstr "Yhteys aikakatkaistiin"
+
+#: methods/ftp.cc:335
+msgid "Server closed the connection"
+msgstr "Palvelin sulki yhteyden"
+
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:471 methods/rsh.cc:190
+#: apt-pkg/contrib/fileutl.cc:469
+msgid "Read error"
+msgstr "Lukuvirhe"
+
+#: methods/ftp.cc:345 methods/rsh.cc:197
+msgid "A response overflowed the buffer."
+msgstr "Vastaus aiheutti puskurin ylivuodon."
+
+#: methods/ftp.cc:362 methods/ftp.cc:374
+msgid "Protocol corruption"
+msgstr "Yhteyskäytäntö on turmeltunut"
+
+#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:510 methods/rsh.cc:232
+#: apt-pkg/contrib/fileutl.cc:508
+msgid "Write error"
+msgstr "Virhe kirjoitettaessa"
+
+#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
+msgid "Could not create a socket"
+msgstr "Pistoketta ei voitu luoda"
+
+#: methods/ftp.cc:698
+msgid "Could not connect data socket, connection timed out"
+msgstr "Pistoketta ei voitu kytkeä, yhteys aikakatkaistiin"
+
+#: methods/ftp.cc:704
+msgid "Could not connect passive socket."
+msgstr "Passiivista pistoketta ei voitu kytkeä."
+
+#: methods/ftp.cc:722
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "getaddrinfo ei saanut kuuntelupistoketta"
+
+#: methods/ftp.cc:736
+msgid "Could not bind a socket"
+msgstr "Pistoketta ei voitu nimetä"
+
+#: methods/ftp.cc:740
+msgid "Could not listen on the socket"
+msgstr "Pistoketta ei voitu kuunnella"
+
+#: methods/ftp.cc:747
+msgid "Could not determine the socket's name"
+msgstr "Pistokkeen nimeä ei saatu selville"
+
+#: methods/ftp.cc:779
+msgid "Unable to send PORT command"
+msgstr "Komennon PORT lähetys ei onnistu"
+
+#: methods/ftp.cc:789
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Tuntematon osoiteperhe %u (AF_*)"
+
+#: methods/ftp.cc:798
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "EPRT ei onnistunut, palvelin ilmoitti: %s"
+
+#: methods/ftp.cc:818
+msgid "Data socket connect timed out"
+msgstr "Pistokkeen kytkeminen aikakatkaistiin"
+
+#: methods/ftp.cc:825
+msgid "Unable to accept connection"
+msgstr "Yhteyttä ei voitu hyväksyä"
+
+#: methods/ftp.cc:864 methods/http.cc:958 methods/rsh.cc:303
+#: methods/http.cc:959
+msgid "Problem hashing file"
+msgstr "Pulmia tiedoston hajautuksessa"
+
+#: methods/ftp.cc:877
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Tiedostoa ei saatu noudettua, palvelin ilmoitti \"%s\""
+
+#: methods/ftp.cc:892 methods/rsh.cc:322
+msgid "Data socket timed out"
+msgstr "Pistoke aikakatkaistiin"
+
+#: methods/ftp.cc:922
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Tiedonsiirto ei onnistunut, palvelin ilmoitti \"%s\""
+
+#. Get the files information
+#: methods/ftp.cc:997
+msgid "Query"
+msgstr "Kysely"
+
+#: methods/ftp.cc:1109
+msgid "Unable to invoke "
+msgstr "Käynnistys ei onnistu"
+
+#: methods/connect.cc:64
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Avataan yhteys %s (%s)"
+
+#: methods/connect.cc:71
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc:80
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Pistokeen luonti ei onnistu %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc:86
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Yhteyden %s avaus ei onnistu: %s (%s)."
+
+#: methods/connect.cc:93
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Yhteyttä %s ei voitu muodostaa: %s (%s), yhteys aikakatkaistiin"
+
+#: methods/connect.cc:108
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "Yhteyttä %s ei voitu muodostaa: %s (%s)"
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc:136 methods/rsh.cc:425
+#, c-format
+msgid "Connecting to %s"
+msgstr "Avataan yhteys %s"
+
+#: methods/connect.cc:167
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "Nimeä \"%s\" ei voitu selvittää"
+
+#: methods/connect.cc:173
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "Tilapäinen häiriö selvitettäessä \"%s\""
+
+#: methods/connect.cc:176
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i)"
+msgstr "Jotain kenkkua tapahtui selvitettäessä \"%s: %s\" (%i)"
+
+#: methods/connect.cc:223
+#, c-format
+msgid "Unable to connect to %s %s:"
+msgstr "Ei ole mahdollista muodostaa yhteyttä %s %s:"
+
+#: methods/gpgv.cc:65
+#, c-format
+msgid "Couldn't access keyring: '%s'"
+msgstr "Avainrengasta \"%s\" ei saatavilla"
+
+#: methods/gpgv.cc:100
+msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
+msgstr ""
+"E: Parametrien luettelo Acquire::gpgv::Options liian pitkä. Lopetetaan."
+
+#: methods/gpgv.cc:204
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr ""
+"Sisäinen virhe: Allekirjoitus kelpaa, mutta avaimen sormenjälki tuntematon?!"
+
+#: methods/gpgv.cc:209
+msgid "At least one invalid signature was encountered."
+msgstr "LÖytyi ainakin yksi kelvoton allekirjoitus."
+
+#: methods/gpgv.cc:213
+#, c-format
+msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
+msgstr ""
+"Ei käynnistynyt \"%s\" allekirjoitusta tarkistamaan (onko gnupg asennettu?)"
+
+#: methods/gpgv.cc:218
+msgid "Unknown error executing gpgv"
+msgstr "Tapahtui tuntematon virhe suoritettaessa gpgv"
+
+#: methods/gpgv.cc:249
+msgid "The following signatures were invalid:\n"
+msgstr "Seuraavat allekirjoitukset eivät olleet kelvollisia:\n"
+
+#: methods/gpgv.cc:256
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
+"Seuraavia allekirjoituksia ei voinut varmentaa koska julkista avainta ei ole "
+"saatavilla:\n"
+
+#: methods/gzip.cc:64
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Putkea %s ei voitu avata"
+
+#: methods/gzip.cc:109
+#, c-format
+msgid "Read error from %s process"
+msgstr "Prosessi %s ilmoitti lukuvirheestä"
+
+#: methods/http.cc:376 methods/http.cc:377
+msgid "Waiting for headers"
+msgstr "Odotetaan otsikoita"
+
+#: methods/http.cc:522 methods/http.cc:523
+#, c-format
+msgid "Got a single header line over %u chars"
+msgstr "Vastaanotettiin yksi otsikkorivi pituudeltaan yli %u merkkiä"
+
+#: methods/http.cc:530 methods/http.cc:531
+msgid "Bad header line"
+msgstr "Virheellinen otsikkorivi"
+
+#: methods/http.cc:549 methods/http.cc:556 methods/http.cc:550
+#: methods/http.cc:557
+msgid "The HTTP server sent an invalid reply header"
+msgstr "HTTP-palvelin lähetti virheellisen vastausotsikon"
+
+#: methods/http.cc:585 methods/http.cc:586
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "HTTP-palvelin lähetti virheellisen Content-Length-otsikon"
+
+#: methods/http.cc:600 methods/http.cc:601
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "HTTP-palvelin lähetti virheellisen Content-Range-otsikon"
+
+#: methods/http.cc:602 methods/http.cc:603
+msgid "This HTTP server has broken range support"
+msgstr "HTTP-palvelimen arvoaluetuki on rikki"
+
+#: methods/http.cc:626 methods/http.cc:627
+msgid "Unknown date format"
+msgstr "Tuntematon päiväysmuoto"
+
+#: methods/http.cc:773 methods/http.cc:774
+msgid "Select failed"
+msgstr "Select ei toiminut"
+
+#: methods/http.cc:778 methods/http.cc:779
+msgid "Connection timed out"
+msgstr "Yhteys aikakatkaistiin"
+
+#: methods/http.cc:801 methods/http.cc:802
+msgid "Error writing to output file"
+msgstr "Tapahtui virhe kirjoitettaessa tulostustiedostoon"
+
+#: methods/http.cc:832 methods/http.cc:833
+msgid "Error writing to file"
+msgstr "Tapahtui virhe kirjoitettaessa tiedostoon"
+
+#: methods/http.cc:860 methods/http.cc:861
+msgid "Error writing to the file"
+msgstr "Tapahtui virhe kirjoitettaessa tiedostoon"
+
+#: methods/http.cc:874 methods/http.cc:875
+msgid "Error reading from server. Remote end closed connection"
+msgstr "Tapahtui virhe luettaessa palvelimelta. Etäpää sulki yhteyden"
+
+#: methods/http.cc:876 methods/http.cc:877
+msgid "Error reading from server"
+msgstr "Tapahtui virhe luettaessa palvelimelta"
+
+#: methods/http.cc:1107 methods/http.cc:1104
+msgid "Bad header data"
+msgstr "Virheellinen otsikkotieto"
+
+#: methods/http.cc:1124 methods/http.cc:1121 methods/http.cc:1176
+msgid "Connection failed"
+msgstr "Yhteys ei toiminut"
+
+#: methods/http.cc:1215 methods/http.cc:1228
+msgid "Internal error"
+msgstr "Sisäinen virhe"
+
+#: apt-pkg/contrib/mmap.cc:82 apt-pkg/contrib/mmap.cc:78
+#: apt-pkg/contrib/mmap.cc:80
+msgid "Can't mmap an empty file"
+msgstr "Tyhjälle tiedostolle ei voi tehdä mmap:ia"
+
+#: apt-pkg/contrib/mmap.cc:87 apt-pkg/contrib/mmap.cc:83
+#: apt-pkg/contrib/mmap.cc:85
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "Ei voitu tehdä %lu tavun mmap:ia"
+
+#: apt-pkg/contrib/strutl.cc:981 apt-pkg/contrib/strutl.cc:978
+#, c-format
+msgid "Selection %s not found"
+msgstr "Valintaa %s ei löydy"
+
+#: apt-pkg/contrib/configuration.cc:436 apt-pkg/contrib/configuration.cc:434
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "Tuntematon tyypin lyhenne: \"%c\""
+
+#: apt-pkg/contrib/configuration.cc:494 apt-pkg/contrib/configuration.cc:492
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "Avataan asetustiedosto %s"
+
+#: apt-pkg/contrib/configuration.cc:512
+#, fuzzy, c-format
+msgid "Line %d too long (max %d)"
+msgstr "Rivi %d on liian pitkä (enintään %d)"
+
+#: apt-pkg/contrib/configuration.cc:608 apt-pkg/contrib/configuration.cc:606
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "Syntaksivirhe %s: %u: Lohko alkaa ilman nimeä."
+
+#: apt-pkg/contrib/configuration.cc:627 apt-pkg/contrib/configuration.cc:625
+#, c-format
+msgid "Syntax error %s:%u: Malformed tag"
+msgstr "Syntaksivirhe %s: %u: väärän muotoinen nimikenttä"
+
+#: apt-pkg/contrib/configuration.cc:644 apt-pkg/contrib/configuration.cc:642
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "Syntaksivirhe %s: %u: Arvon jälkeen ylimääräistä roskaa"
+
+#: apt-pkg/contrib/configuration.cc:684 apt-pkg/contrib/configuration.cc:682
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr "Syntaksivirhe %s: %u: Direktiivejä voi olla vain ylimmällä tasolla"
+
+#: apt-pkg/contrib/configuration.cc:691 apt-pkg/contrib/configuration.cc:689
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "Syntaksivirhe %s: %u: Liian monta sisäkkäistä includea"
+
+#: apt-pkg/contrib/configuration.cc:695 apt-pkg/contrib/configuration.cc:700
+#: apt-pkg/contrib/configuration.cc:693 apt-pkg/contrib/configuration.cc:698
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "Syntaksivirhe %s: %u: Sisällytetty tästä"
+
+#: apt-pkg/contrib/configuration.cc:704 apt-pkg/contrib/configuration.cc:702
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "Syntaksivirhe %s: %u: Tätä direktiiviä ei tueta \"%s\""
+
+#: apt-pkg/contrib/configuration.cc:738 apt-pkg/contrib/configuration.cc:736
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "Syntaksivirhe %s: %u: Ylimääräistä roskaa tiedoston lopussa"
+
+#: apt-pkg/contrib/progress.cc:155 apt-pkg/contrib/progress.cc:152
+#: apt-pkg/contrib/progress.cc:153
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s... Virhe!"
+
+#: apt-pkg/contrib/progress.cc:157 apt-pkg/contrib/progress.cc:154
+#: apt-pkg/contrib/progress.cc:155
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s... Valmis"
+
+#: apt-pkg/contrib/cmndline.cc:80 apt-pkg/contrib/cmndline.cc:77
+#, c-format
+msgid "Command line option '%c' [from %s] is not known."
+msgstr "Komentorivin valitsin \"%c\" [%s] on tuntematon."
+
+#: apt-pkg/contrib/cmndline.cc:106 apt-pkg/contrib/cmndline.cc:114
+#: apt-pkg/contrib/cmndline.cc:122 apt-pkg/contrib/cmndline.cc:103
+#: apt-pkg/contrib/cmndline.cc:111 apt-pkg/contrib/cmndline.cc:119
+#, c-format
+msgid "Command line option %s is not understood"
+msgstr "Komentorivin valitsin %s on tuntematon"
+
+#: apt-pkg/contrib/cmndline.cc:127 apt-pkg/contrib/cmndline.cc:124
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "Komentorivin valitsin %s ei ole totuusarvoinen"
+
+#: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
+#: apt-pkg/contrib/cmndline.cc:163 apt-pkg/contrib/cmndline.cc:184
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "Valitsin %s tarvitsee parametrin"
+
+#: apt-pkg/contrib/cmndline.cc:201 apt-pkg/contrib/cmndline.cc:207
+#: apt-pkg/contrib/cmndline.cc:198 apt-pkg/contrib/cmndline.cc:204
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr "Valitsin %s: Asetusarvon määrityksessä on oltava =<arvo>."
+
+#: apt-pkg/contrib/cmndline.cc:237 apt-pkg/contrib/cmndline.cc:234
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "Valitsin %s tarvitsee kokonaislukuparametrin, ei \"%s\""
+
+#: apt-pkg/contrib/cmndline.cc:268 apt-pkg/contrib/cmndline.cc:265
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "Valitsin \"%s\" on liian pitkä"
+
+#: apt-pkg/contrib/cmndline.cc:301 apt-pkg/contrib/cmndline.cc:298
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "Arvo %s on tuntematon, yritä tosi tai epätosi."
+
+#: apt-pkg/contrib/cmndline.cc:351 apt-pkg/contrib/cmndline.cc:348
+#, c-format
+msgid "Invalid operation %s"
+msgstr "Virheellinen toiminto %s"
+
+#: apt-pkg/contrib/cdromutl.cc:55 apt-pkg/contrib/cdromutl.cc:52
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "Komento stat ei toiminut liitoskohdalle %s"
+
+#: apt-pkg/contrib/cdromutl.cc:149 apt-pkg/acquire.cc:427 apt-pkg/clean.cc:44
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Kansioon %s vaihto ei onnistu"
+
+#: apt-pkg/contrib/cdromutl.cc:190 apt-pkg/contrib/cdromutl.cc:187
+msgid "Failed to stat the cdrom"
+msgstr "Komento stat ei toiminut rompulle"
+
+#: apt-pkg/contrib/fileutl.cc:82 apt-pkg/contrib/fileutl.cc:80
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr "Lukkoa ei käytetä kirjoitussuojatulle tiedostolle %s"
+
+#: apt-pkg/contrib/fileutl.cc:87 apt-pkg/contrib/fileutl.cc:85
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "Lukkotiedostoa %s ei voitu avata"
+
+#: apt-pkg/contrib/fileutl.cc:105 apt-pkg/contrib/fileutl.cc:103
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr "Lukitusta ei käytetä NFS-liitetylle tiedostolle %s"
+
+#: apt-pkg/contrib/fileutl.cc:109 apt-pkg/contrib/fileutl.cc:107
+#, c-format
+msgid "Could not get lock %s"
+msgstr "Lukkoa %s ei saada"
+
+#: apt-pkg/contrib/fileutl.cc:377 apt-pkg/contrib/fileutl.cc:375
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Odotettiin %s, mutta sitä ei ollut"
+
+#: apt-pkg/contrib/fileutl.cc:387 apt-pkg/contrib/fileutl.cc:385
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr "Aliprosessi %s aiheutti suojausvirheen."
+
+#: apt-pkg/contrib/fileutl.cc:390 apt-pkg/contrib/fileutl.cc:388
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "Aliprosessi %s palautti virhekoodin (%u)"
+
+#: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:390
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "Aliprosessi %s lopetti odottamatta"
+
+#: apt-pkg/contrib/fileutl.cc:436 apt-pkg/contrib/fileutl.cc:434
+#, c-format
+msgid "Could not open file %s"
+msgstr "Tiedostoa %s ei voitu avata"
+
+#: apt-pkg/contrib/fileutl.cc:492 apt-pkg/contrib/fileutl.cc:490
+#, c-format
+msgid "read, still have %lu to read but none left"
+msgstr "read, vielä %lu lukematta mutta tiedosto loppui"
+
+#: apt-pkg/contrib/fileutl.cc:522 apt-pkg/contrib/fileutl.cc:520
+#, c-format
+msgid "write, still have %lu to write but couldn't"
+msgstr "write, vielä %lu kirjoittamatta mutta epäonnistui"
+
+#: apt-pkg/contrib/fileutl.cc:597 apt-pkg/contrib/fileutl.cc:595
+msgid "Problem closing the file"
+msgstr "Pulmia tiedoston sulkemisessa"
+
+#: apt-pkg/contrib/fileutl.cc:603 apt-pkg/contrib/fileutl.cc:601
+msgid "Problem unlinking the file"
+msgstr "Pulmia tehtäessä tiedostolle unlink"
+
+#: apt-pkg/contrib/fileutl.cc:614 apt-pkg/contrib/fileutl.cc:612
+msgid "Problem syncing the file"
+msgstr "Pulmia tehtäessä tiedostolle sync"
+
+#: apt-pkg/pkgcache.cc:132
+msgid "Empty package cache"
+msgstr "Pakettivarasto on tyhjä"
+
+#: apt-pkg/pkgcache.cc:138
+msgid "The package cache file is corrupted"
+msgstr "Pakettivarasto on turmeltunut"
+
+#: apt-pkg/pkgcache.cc:143
+msgid "The package cache file is an incompatible version"
+msgstr "Pakettivaraston versio on yhteensopimaton"
+
+#: apt-pkg/pkgcache.cc:148
+#, c-format
+msgid "This APT does not support the versioning system '%s'"
+msgstr "Tämä APT ei tue versionhallintajärjestelmää \"%s\""
+
+#: apt-pkg/pkgcache.cc:153
+msgid "The package cache was built for a different architecture"
+msgstr "Pakettivarasto on tehty muulle arkkitehtuurille"
+
+#: apt-pkg/pkgcache.cc:224
+msgid "Depends"
+msgstr "Riippuvuudet"
+
+#: apt-pkg/pkgcache.cc:224
+msgid "PreDepends"
+msgstr "Esiriippuvuudet"
+
+#: apt-pkg/pkgcache.cc:224
+msgid "Suggests"
+msgstr "Ehdotukset"
+
+#: apt-pkg/pkgcache.cc:225
+msgid "Recommends"
+msgstr "Suosittelut"
+
+#: apt-pkg/pkgcache.cc:225
+msgid "Conflicts"
+msgstr "Ristiriidat"
+
+#: apt-pkg/pkgcache.cc:225
+msgid "Replaces"
+msgstr "Korvaavuudet"
+
+#: apt-pkg/pkgcache.cc:226
+msgid "Obsoletes"
+msgstr "Täydet korvaavuudet"
+
+#: apt-pkg/pkgcache.cc:226
+msgid "Breaks"
+msgstr ""
+
+#: apt-pkg/pkgcache.cc:237
+msgid "important"
+msgstr "tärkeä"
+
+#: apt-pkg/pkgcache.cc:237
+msgid "required"
+msgstr "välttämätön"
+
+#: apt-pkg/pkgcache.cc:237
+msgid "standard"
+msgstr "perus"
+
+#: apt-pkg/pkgcache.cc:238
+msgid "optional"
+msgstr "valinnainen"
+
+#: apt-pkg/pkgcache.cc:238
+msgid "extra"
+msgstr "ylimääräinen"
+
+#: apt-pkg/depcache.cc:98 apt-pkg/depcache.cc:127 apt-pkg/depcache.cc:121
+#: apt-pkg/depcache.cc:150
+msgid "Building dependency tree"
+msgstr "Muodostetaan riippuvuussuhteiden puu"
+
+#: apt-pkg/depcache.cc:99 apt-pkg/depcache.cc:122
+msgid "Candidate versions"
+msgstr "Mahdolliset versiot"
+
+#: apt-pkg/depcache.cc:128 apt-pkg/depcache.cc:151
+msgid "Dependency generation"
+msgstr "Luodaan riippuvuudet"
+
+#: apt-pkg/depcache.cc:149 apt-pkg/depcache.cc:168 apt-pkg/depcache.cc:172
+#: apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
 #, fuzzy
-#~ msgid "openpty failed\n"
-#~ msgstr "Select ei toiminut"
+msgid "Reading state information"
+msgstr "Yhdistetään saatavuustiedot"
+
+#: apt-pkg/depcache.cc:196 apt-pkg/depcache.cc:219
+#, fuzzy, c-format
+msgid "Failed to open StateFile %s"
+msgstr "Tiedoston %s avaaminen ei onnistunut"
+
+#: apt-pkg/depcache.cc:202 apt-pkg/depcache.cc:225
+#, fuzzy, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "Tiedoston %s kirjoittaminen ei onnistunut"
+
+#: apt-pkg/tagfile.cc:106 apt-pkg/tagfile.cc:102
+#, c-format
+msgid "Unable to parse package file %s (1)"
+msgstr "Pakettitiedostoa %s (1) ei voi jäsentää"
+
+#: apt-pkg/tagfile.cc:193 apt-pkg/tagfile.cc:189
+#, c-format
+msgid "Unable to parse package file %s (2)"
+msgstr "Pakettitiedostoa %s (2) ei voi jäsentää"
+
+#: apt-pkg/sourcelist.cc:94 apt-pkg/sourcelist.cc:90
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (URI)"
+
+#: apt-pkg/sourcelist.cc:96 apt-pkg/sourcelist.cc:92
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (dist)"
+
+#: apt-pkg/sourcelist.cc:99 apt-pkg/sourcelist.cc:95
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (URI-jäsennys)"
+
+#: apt-pkg/sourcelist.cc:105 apt-pkg/sourcelist.cc:101
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (Absoluuttinen dist)"
+
+#: apt-pkg/sourcelist.cc:112 apt-pkg/sourcelist.cc:108
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Väärän muotoinen rivi %lu lähdeluettelossa %s (dist-jäsennys)"
+
+#: apt-pkg/sourcelist.cc:203 apt-pkg/sourcelist.cc:199
+#, c-format
+msgid "Opening %s"
+msgstr "Avataan %s"
+
+#: apt-pkg/sourcelist.cc:220 apt-pkg/cdrom.cc:450 apt-pkg/sourcelist.cc:216
+#: apt-pkg/cdrom.cc:448
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Rivi %u on liian pitkä lähdeluettelossa %s."
+
+#: apt-pkg/sourcelist.cc:240 apt-pkg/sourcelist.cc:236
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Rivi %u on väärän muotoinen lähdeluettelossa %s (tyyppi)"
+
+#: apt-pkg/sourcelist.cc:244 apt-pkg/sourcelist.cc:240
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Tyyppi \"%s\" on tuntematon rivillä %u lähdeluettelossa %s"
+
+#: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
+#: apt-pkg/sourcelist.cc:248 apt-pkg/sourcelist.cc:251
+#, c-format
+msgid "Malformed line %u in source list %s (vendor id)"
+msgstr "Rivi %u on väärän muotoinen lähdeluettelossa%s (toimittajan tunniste)"
+
+#: apt-pkg/packagemanager.cc:403 apt-pkg/packagemanager.cc:399
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"Tämän asennusajo vaatii tilapäisesti poistettavaksi välttämättömän paketin %"
+"s Conflicts/Pre-Depends -kehämäärittelyn takia. Tämä on usein pahasta, mutta "
+"jos varmasti haluat tehdä niin, käytä APT::Force-LoopBreak -valitsinta."
+
+#: apt-pkg/pkgrecords.cc:37 apt-pkg/pkgrecords.cc:32
+#, c-format
+msgid "Index file type '%s' is not supported"
+msgstr "Hakemistotiedoston tyyppi \"%s\" ei ole tuettu"
+
+#: apt-pkg/algorithms.cc:248 apt-pkg/algorithms.cc:247
+#, c-format
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr "Paketti %s olisi asennettava uudelleen, mutta sen arkistoa ei löydy."
+
+#: apt-pkg/algorithms.cc:1104 apt-pkg/algorithms.cc:1103
+#: apt-pkg/algorithms.cc:1105
+msgid ""
+"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
+"held packages."
+msgstr ""
+"Virhe, pkgProblemResolver::Resolve tuotti katkoja, syynä voi olla pysytetyt "
+"paketit."
+
+#: apt-pkg/algorithms.cc:1106 apt-pkg/algorithms.cc:1105
+#: apt-pkg/algorithms.cc:1107
+msgid "Unable to correct problems, you have held broken packages."
+msgstr "Pulmia ei voi korjata, rikkinäisiä paketteja on pysytetty."
+
+#: apt-pkg/acquire.cc:62 apt-pkg/acquire.cc:59
+#, c-format
+msgid "Lists directory %spartial is missing."
+msgstr "Luettelokansio %spartial puuttuu."
+
+#: apt-pkg/acquire.cc:66 apt-pkg/acquire.cc:63
+#, c-format
+msgid "Archive directory %spartial is missing."
+msgstr "Arkistokansio %spartial puuttuu."
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc:830 apt-pkg/acquire.cc:827
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Noudetaan tiedosto %li / %li (jäljellä %s)"
+
+#: apt-pkg/acquire.cc:832 apt-pkg/acquire.cc:829
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Noudetaan tiedosto %li / %li"
+
+#: apt-pkg/acquire-worker.cc:113 apt-pkg/acquire-worker.cc:110
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "Menetelmän ajuria %s ei löytynyt"
+
+#: apt-pkg/acquire-worker.cc:162 apt-pkg/acquire-worker.cc:159
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "Menetelmä %s ei käynnistynyt oikein"
+
+#: apt-pkg/acquire-worker.cc:384 apt-pkg/acquire-worker.cc:396
+#: apt-pkg/acquire-worker.cc:398
+#, c-format
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgstr "Pistä levy nimeltään: \"%s\" asemaan \"%s\" ja paina Enter."
+
+#: apt-pkg/init.cc:125 apt-pkg/init.cc:124
+#, c-format
+msgid "Packaging system '%s' is not supported"
+msgstr "Paketointijärjestelmä \"%s\" ei ole tuettu"
+
+#: apt-pkg/init.cc:141 apt-pkg/init.cc:140
+msgid "Unable to determine a suitable packaging system type"
+msgstr "Sopivaa paketointijärjestelmän tyyppiä ei saa selvitettyä"
+
+#: apt-pkg/clean.cc:61 apt-pkg/clean.cc:57
+#, c-format
+msgid "Unable to stat %s."
+msgstr "stat %s ei onnistu."
+
+#: apt-pkg/srcrecords.cc:48 apt-pkg/srcrecords.cc:44
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "Tiedostossa sources.list on oltava rivejä joissa \"lähde\"-URI"
+
+#: apt-pkg/cachefile.cc:73 apt-pkg/cachefile.cc:69
+msgid "The package lists or status file could not be parsed or opened."
+msgstr ""
+"Pakettiluettelonn tai tilatiedoston avaaminen tai jäsennys epäonnistui."
+
+#: apt-pkg/cachefile.cc:77 apt-pkg/cachefile.cc:73
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "Voit haluta suorittaa apt-get update näiden pulmien korjaamiseksi"
+
+#: apt-pkg/policy.cc:270 apt-pkg/policy.cc:267
+msgid "Invalid record in the preferences file, no Package header"
+msgstr "Asetustiedostossa on virheellinen tietue, Package-otsikko puuttuu"
+
+#: apt-pkg/policy.cc:292 apt-pkg/policy.cc:289
+#, c-format
+msgid "Did not understand pin type %s"
+msgstr "Tunnistetyyppi %s on tuntematon"
+
+#: apt-pkg/policy.cc:300 apt-pkg/policy.cc:297
+msgid "No priority (or zero) specified for pin"
+msgstr "Tärkeysjärjestystä ei määritetty tunnisteelle (tai se on nolla)"
+
+#: apt-pkg/pkgcachegen.cc:76 apt-pkg/pkgcachegen.cc:72
+msgid "Cache has an incompatible versioning system"
+msgstr "Pakettivaraston versionhallintajärjestelmä ei ole yhteensopiva"
+
+#: apt-pkg/pkgcachegen.cc:119 apt-pkg/pkgcachegen.cc:115
+#, c-format
+msgid "Error occurred while processing %s (NewPackage)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewPackage)"
+
+#: apt-pkg/pkgcachegen.cc:134 apt-pkg/pkgcachegen.cc:130
+#, c-format
+msgid "Error occurred while processing %s (UsePackage1)"
+msgstr "Tapahtui virhe käsiteltäessä %s (UsePackage1)"
+
+#: apt-pkg/pkgcachegen.cc:157
+#, fuzzy, c-format
+msgid "Error occured while processing %s (NewFileDesc1)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
+
+#: apt-pkg/pkgcachegen.cc:182 apt-pkg/pkgcachegen.cc:178
+#, c-format
+msgid "Error occurred while processing %s (UsePackage2)"
+msgstr "Tapahtui virhe käsiteltäessä %s (UsePackage2)"
+
+#: apt-pkg/pkgcachegen.cc:186 apt-pkg/pkgcachegen.cc:182
+#, c-format
+msgid "Error occurred while processing %s (NewFileVer1)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
+
+#: apt-pkg/pkgcachegen.cc:217 apt-pkg/pkgcachegen.cc:213
+#, c-format
+msgid "Error occurred while processing %s (NewVersion1)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewVersion1)"
+
+#: apt-pkg/pkgcachegen.cc:221 apt-pkg/pkgcachegen.cc:217
+#, c-format
+msgid "Error occurred while processing %s (UsePackage3)"
+msgstr "Tapahtui virhe käsiteltäessä %s (UsePackage3)"
+
+#: apt-pkg/pkgcachegen.cc:225 apt-pkg/pkgcachegen.cc:221
+#, c-format
+msgid "Error occurred while processing %s (NewVersion2)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewVersion2)"
+
+#: apt-pkg/pkgcachegen.cc:249
+#, fuzzy, c-format
+msgid "Error occured while processing %s (NewFileDesc2)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
+
+#: apt-pkg/pkgcachegen.cc:255 apt-pkg/pkgcachegen.cc:251
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr ""
+"Jummijammi, annoit enemmän pakettien nimiä kuin tämä APT osaa käsitellä."
+
+#: apt-pkg/pkgcachegen.cc:258 apt-pkg/pkgcachegen.cc:254
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr "Jummijammi, annoit enemmän versioita kuin tämä APT osaa käsitellä."
+
+#: apt-pkg/pkgcachegen.cc:261 apt-pkg/pkgcachegen.cc:257
+#, fuzzy
+msgid "Wow, you exceeded the number of descriptions this APT is capable of."
+msgstr "Jummijammi, annoit enemmän versioita kuin tämä APT osaa käsitellä."
+
+#: apt-pkg/pkgcachegen.cc:264 apt-pkg/pkgcachegen.cc:260
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr "Jummijammi, annoit enemmän riippuvuuksia kuin tämä APT osaa käsitellä."
+
+#: apt-pkg/pkgcachegen.cc:292 apt-pkg/pkgcachegen.cc:288
+#, c-format
+msgid "Error occurred while processing %s (FindPkg)"
+msgstr "Tapahtui virhe käsiteltäessä %s (FindPkg)"
+
+#: apt-pkg/pkgcachegen.cc:305 apt-pkg/pkgcachegen.cc:301
+#, c-format
+msgid "Error occurred while processing %s (CollectFileProvides)"
+msgstr "Tapahtui virhe käsiteltäessä %s (CollectFileProvides)"
+
+#: apt-pkg/pkgcachegen.cc:311 apt-pkg/pkgcachegen.cc:307
+#, c-format
+msgid "Package %s %s was not found while processing file dependencies"
+msgstr "Pakettia %s %s ei löytynyt käsiteltäessä tiedostojen riippuvuuksia."
+
+#: apt-pkg/pkgcachegen.cc:682 apt-pkg/pkgcachegen.cc:678
+#, c-format
+msgid "Couldn't stat source package list %s"
+msgstr "stat ei toiminut lähdepakettiluettelolle %s"
+
+#: apt-pkg/pkgcachegen.cc:767 apt-pkg/pkgcachegen.cc:763
+msgid "Collecting File Provides"
+msgstr "Kootaan tiedostojen tarjoamistietoja"
+
+#: apt-pkg/pkgcachegen.cc:894 apt-pkg/pkgcachegen.cc:901
+#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+msgid "IO Error saving source cache"
+msgstr "Syöttö/Tulostus -virhe tallennettaessa pakettivarastoa"
+
+#: apt-pkg/acquire-item.cc:127
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "nimen vaihto ei onnistunut, %s (%s -> %s)."
+
+#: apt-pkg/acquire-item.cc:405 apt-pkg/acquire-item.cc:662
+#: apt-pkg/acquire-item.cc:1412 apt-pkg/acquire-item.cc:401
+msgid "MD5Sum mismatch"
+msgstr "MD5Sum ei täsmää"
+
+#: apt-pkg/acquire-item.cc:1107 apt-pkg/acquire-item.cc:1097
+#: apt-pkg/acquire-item.cc:1100
+msgid "There is no public key available for the following key IDs:\n"
+msgstr "Julkisia avaimia ei ole saatavilla, avainten ID:t ovat:\n"
+
+#: apt-pkg/acquire-item.cc:1220 apt-pkg/acquire-item.cc:1210
+#: apt-pkg/acquire-item.cc:1213
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+"En löytänyt pakettia %s vastaavaa tiedostoa. Voit ehkä joutua korjaamaan "
+"tämän paketin itse (puuttuvan arkkitehtuurin vuoksi)"
+
+#: apt-pkg/acquire-item.cc:1279 apt-pkg/acquire-item.cc:1269
+#: apt-pkg/acquire-item.cc:1272
+#, c-format
+msgid ""
+"I wasn't able to locate file for the %s package. This might mean you need to "
+"manually fix this package."
+msgstr ""
+"Pakettia %s vastaavaa tiedostoa ei löytynyt. Voit ehkä joutua korjaamaan "
+"tämän paketin itse."
+
+#: apt-pkg/acquire-item.cc:1315 apt-pkg/acquire-item.cc:1310
+#: apt-pkg/acquire-item.cc:1313
+#, c-format
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"Pakettihakemistotiedostot ovat turmeltuneet. Paketille %s ei ole Filename-"
+"kenttää."
+
+#: apt-pkg/acquire-item.cc:1402 apt-pkg/acquire-item.cc:1397
+#: apt-pkg/acquire-item.cc:1400
+msgid "Size mismatch"
+msgstr "Koko ei täsmää"
+
+#: apt-pkg/vendorlist.cc:66
+#, c-format
+msgid "Vendor block %s contains no fingerprint"
+msgstr "Toimittajan lohkosta %s puuttuu sormenjälki"
+
+#: apt-pkg/cdrom.cc:531 apt-pkg/cdrom.cc:529
+#, c-format
+msgid ""
+"Using CD-ROM mount point %s\n"
+"Mounting CD-ROM\n"
+msgstr ""
+"Käytetään rompun liitoskohtaa %s\n"
+"Liitetään romppu\n"
+
+#: apt-pkg/cdrom.cc:540 apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:538
+#: apt-pkg/cdrom.cc:620 apt-pkg/cdrom.cc:627
+msgid "Identifying.. "
+msgstr "Tunnistetaan... "
+
+#: apt-pkg/cdrom.cc:565 apt-pkg/cdrom.cc:563
+#, fuzzy, c-format
+msgid "Stored label: %s \n"
+msgstr "Tallennettu nimio: %s \n"
+
+#: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:583 apt-pkg/cdrom.cc:590
+#, c-format
+msgid "Using CD-ROM mount point %s\n"
+msgstr "Käytetään rompun liitoskohtaa %s\n"
+
+#: apt-pkg/cdrom.cc:603 apt-pkg/cdrom.cc:601 apt-pkg/cdrom.cc:608
+msgid "Unmounting CD-ROM\n"
+msgstr "Irrotetaan romppu\n"
+
+#: apt-pkg/cdrom.cc:607 apt-pkg/cdrom.cc:605 apt-pkg/cdrom.cc:612
+msgid "Waiting for disc...\n"
+msgstr "Odotetaan levyä...\n"
+
+#. Mount the new CDROM
+#: apt-pkg/cdrom.cc:615 apt-pkg/cdrom.cc:613 apt-pkg/cdrom.cc:620
+msgid "Mounting CD-ROM...\n"
+msgstr "Liitetään romppu...\n"
+
+#: apt-pkg/cdrom.cc:633 apt-pkg/cdrom.cc:631 apt-pkg/cdrom.cc:638
+msgid "Scanning disc for index files..\n"
+msgstr "Etsitään levyltä hakemistotiedostoja...\n"
+
+#: apt-pkg/cdrom.cc:673 apt-pkg/cdrom.cc:671
+#, fuzzy, c-format
+msgid ""
+"Found %i package indexes, %i source indexes, %i translation indexes and %i "
+"signatures\n"
+msgstr ""
+"Asennuspakettien hakemistoja löytyi %i, lähdekoodipakettien hakemistoja %i "
+"ja allekirjoituksia %i\n"
+
+#: apt-pkg/cdrom.cc:710 apt-pkg/cdrom.cc:708 apt-pkg/cdrom.cc:715
+#, fuzzy, c-format
+msgid "Found label '%s'\n"
+msgstr "Tallennettu nimio: %s \n"
+
+#: apt-pkg/cdrom.cc:739 apt-pkg/cdrom.cc:737 apt-pkg/cdrom.cc:744
+msgid "That is not a valid name, try again.\n"
+msgstr "Tuo ei kelpaa nimeksi, yritä uudelleen.\n"
+
+#: apt-pkg/cdrom.cc:755 apt-pkg/cdrom.cc:753 apt-pkg/cdrom.cc:760
+#, c-format
+msgid ""
+"This disc is called: \n"
+"'%s'\n"
+msgstr ""
+"Tämä levy on: \n"
+"\"%s\"\n"
+
+#: apt-pkg/cdrom.cc:759 apt-pkg/cdrom.cc:757 apt-pkg/cdrom.cc:764
+msgid "Copying package lists..."
+msgstr "Kopioidaan pakettiluetteloita..."
+
+#: apt-pkg/cdrom.cc:785 apt-pkg/cdrom.cc:783 apt-pkg/cdrom.cc:790
+msgid "Writing new source list\n"
+msgstr "Kirjoitetaan uusi lähdeluettelo\n"
+
+#: apt-pkg/cdrom.cc:794 apt-pkg/cdrom.cc:792 apt-pkg/cdrom.cc:799
+msgid "Source list entries for this disc are:\n"
+msgstr "Tämän levyn lähdekoodipakettien luettelon tietueita ovat:\n"
+
+#: apt-pkg/cdrom.cc:836 apt-pkg/cdrom.cc:834 apt-pkg/cdrom.cc:570
+#: apt-pkg/cdrom.cc:841
+#, fuzzy
+msgid "Unmounting CD-ROM...\n"
+msgstr "Irrotetaan romppu..."
+
+#: apt-pkg/indexcopy.cc:263 apt-pkg/indexcopy.cc:830 apt-pkg/indexcopy.cc:823
+#, c-format
+msgid "Wrote %i records.\n"
+msgstr "Kirjoitettiin %i tietuetta.\n"
+
+#: apt-pkg/indexcopy.cc:265 apt-pkg/indexcopy.cc:832 apt-pkg/indexcopy.cc:825
+#, c-format
+msgid "Wrote %i records with %i missing files.\n"
+msgstr "Kirjoitettiin %i tietuetta joissa oli %i puuttuvaa tiedostoa.\n"
+
+#: apt-pkg/indexcopy.cc:268 apt-pkg/indexcopy.cc:835 apt-pkg/indexcopy.cc:828
+#, c-format
+msgid "Wrote %i records with %i mismatched files\n"
+msgstr "Kirjoitettiin %i tietuetta joissa oli %i paritonta tiedostoa\n"
+
+#: apt-pkg/indexcopy.cc:271 apt-pkg/indexcopy.cc:838 apt-pkg/indexcopy.cc:831
+#, c-format
+msgid "Wrote %i records with %i missing files and %i mismatched files\n"
+msgstr ""
+"Kirjoitettiin %i tietuetta joissa oli %i puuttuvaa ja %i paritonta "
+"tiedostoa\n"
+
+#: apt-pkg/deb/dpkgpm.cc:358 apt-pkg/deb/dpkgpm.cc:522
+#: apt-pkg/deb/dpkgpm.cc:596
+#, c-format
+msgid "Preparing %s"
+msgstr "Valmistellaan %s"
+
+#: apt-pkg/deb/dpkgpm.cc:359 apt-pkg/deb/dpkgpm.cc:523
+#: apt-pkg/deb/dpkgpm.cc:597
+#, c-format
+msgid "Unpacking %s"
+msgstr "Puretaan %s"
+
+#: apt-pkg/deb/dpkgpm.cc:364 apt-pkg/deb/dpkgpm.cc:528
+#: apt-pkg/deb/dpkgpm.cc:602
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Valmistaudutaan tekemään asetukset: %s"
+
+#: apt-pkg/deb/dpkgpm.cc:365 apt-pkg/deb/dpkgpm.cc:529
+#: apt-pkg/deb/dpkgpm.cc:603
+#, c-format
+msgid "Configuring %s"
+msgstr "Tehdään asetukset: %s"
+
+#: apt-pkg/deb/dpkgpm.cc:366 apt-pkg/deb/dpkgpm.cc:530
+#: apt-pkg/deb/dpkgpm.cc:608
+#, c-format
+msgid "Installed %s"
+msgstr "%s asennettu"
+
+#: apt-pkg/deb/dpkgpm.cc:371 apt-pkg/deb/dpkgpm.cc:535
+#: apt-pkg/deb/dpkgpm.cc:613 apt-pkg/deb/dpkgpm.cc:615
+#: apt-pkg/deb/dpkgpm.cc:616
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Valmistaudutaan poistamaan %s"
+
+#: apt-pkg/deb/dpkgpm.cc:372 apt-pkg/deb/dpkgpm.cc:536
+#: apt-pkg/deb/dpkgpm.cc:618
+#, c-format
+msgid "Removing %s"
+msgstr "Poistetaan %s"
+
+#: apt-pkg/deb/dpkgpm.cc:373 apt-pkg/deb/dpkgpm.cc:537
+#: apt-pkg/deb/dpkgpm.cc:619
+#, c-format
+msgid "Removed %s"
+msgstr "%s poistettu"
+
+#: apt-pkg/deb/dpkgpm.cc:378 apt-pkg/deb/dpkgpm.cc:542
+#: apt-pkg/deb/dpkgpm.cc:624
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Valmistaudutaan poistamaan %s kokonaan"
+
+#: apt-pkg/deb/dpkgpm.cc:379 apt-pkg/deb/dpkgpm.cc:543
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s poistettiin kokonaan"
+
+#: methods/rsh.cc:330
+msgid "Connection closed prematurely"
+msgstr "Yhteys katkesi ennenaikaisesti"
+
+#: methods/rred.cc:219
+msgid "Could not patch file"
+msgstr "Tiedostoa %s ei voitu avata"
+
+#: apt-pkg/contrib/configuration.cc:510
+#, fuzzy, c-format
+msgid "Line %d too long (max %u)"
+msgstr "Rivi %d on liian pitkä (enintään %d)"
+
+#: apt-pkg/pkgcachegen.cc:153
+#, fuzzy, c-format
+msgid "Error occurred while processing %s (NewFileDesc1)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
+
+#: apt-pkg/pkgcachegen.cc:245
+#, fuzzy, c-format
+msgid "Error occurred while processing %s (NewFileDesc2)"
+msgstr "Tapahtui virhe käsiteltäessä %s (NewFileVer1)"
+
+#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1405
+#: apt-pkg/acquire-item.cc:1408
+#, fuzzy
+msgid "Hash Sum mismatch"
+msgstr "MD5Sum ei täsmää"
+
+#: apt-pkg/deb/dpkgpm.cc:566 apt-pkg/deb/dpkgpm.cc:513
+#, fuzzy, c-format
+msgid "Directory '%s' missing"
+msgstr "Luettelokansio %spartial puuttuu."
+
+#: apt-pkg/deb/dpkgpm.cc:709
+#, fuzzy, c-format
+msgid "openpty failed\n"
+msgstr "Select ei toiminut"
+
+#: apt-pkg/cdrom.cc:563
+#, c-format
+msgid "Stored label: %s\n"
+msgstr "Tallennettu nimio: %s \n"
+
+#: apt-pkg/cdrom.cc:678
+#, fuzzy, c-format
+msgid ""
+"Found %u package indexes, %u source indexes, %u translation indexes and %u "
+"signatures\n"
+msgstr ""
+"Asennuspakettien hakemistoja löytyi %i, lähdekoodipakettien hakemistoja %i "
+"ja allekirjoituksia %i\n"
+
+#: apt-pkg/deb/dpkgpm.cc:605 apt-pkg/deb/dpkgpm.cc:606
+#, fuzzy, c-format
+msgid "Processing triggers for %s"
+msgstr "Tapahtui virhe käsiteltäessa kansiota %s"
+
+#: apt-pkg/deb/dpkgpm.cc:775
+msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
+msgstr ""
 
 #~ msgid "File date has changed %s"
 #~ msgstr "Tiedoston uusi päiväys %s"
