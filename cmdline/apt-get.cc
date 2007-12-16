@@ -1719,7 +1719,7 @@ bool DoInstall(CommandLine &CmdL)
 	       (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
 	       _config->FindB("APT::Get::ReInstall",false) == false)
 	    {
-	       ioprintf(c1out,_("%s set to manual installed.\n"),
+	       ioprintf(c1out,_("%s set to manually installed.\n"),
 			Pkg.Name());
 	       Cache->MarkAuto(Pkg,false);
 	       AutoMarkChanged++;
