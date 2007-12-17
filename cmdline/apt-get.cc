@@ -838,16 +838,16 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (DebBytes != FetchBytes)
       ioprintf(c1out,_("Need to get %sB/%sB of archives.\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
-   else
+   else if (DebBytes != 0)
       ioprintf(c1out,_("Need to get %sB of archives.\n"),
 	       SizeToStr(DebBytes).c_str());
 
    // Size delta
    if (Cache->UsrSize() >= 0)
-      ioprintf(c1out,_("After unpacking %sB of additional disk space will be used.\n"),
+      ioprintf(c1out,_("After this operation, %sB of additional disk space will be used.\n"),
 	       SizeToStr(Cache->UsrSize()).c_str());
    else
-      ioprintf(c1out,_("After unpacking %sB disk space will be freed.\n"),
+      ioprintf(c1out,_("After this operation, %sB disk space will be freed.\n"),
 	       SizeToStr(-1*Cache->UsrSize()).c_str());
 
    if (_error->PendingError() == true)
