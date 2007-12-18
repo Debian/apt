@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-12-17 05:49+0100\n"
-"PO-Revision-Date: 2006-09-08 19:57+0900\n"
+"PO-Revision-Date: 2007-12-18 21:13+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -57,9 +57,8 @@ msgid "Total distinct versions: "
 msgstr "個別バージョン総数: "
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total Distinct Descriptions: "
-msgstr "個別バージョン総数: "
+msgstr "個別説明総数: "
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -70,9 +69,8 @@ msgid "Total ver/file relations: "
 msgstr "バージョン/ファイル関係総数: "
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "バージョン/ファイル関係総数: "
+msgstr "説明/ファイル関係総数: "
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
@@ -160,9 +158,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2601 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s for %s %s コンパイル日時: %s %s\n"
+msgstr "%s %s for %s コンパイル日時: %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -845,14 +843,14 @@ msgid "Need to get %sB of archives.\n"
 msgstr "%sB のアーカイブを取得する必要があります。\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "展開後に追加で %sB のディスク容量が消費されます。\n"
+msgstr "この操作後に追加で %sB のディスク容量が消費されます。\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "展開後に %sB のディスク容量が解放されます。\n"
+msgstr "この操作後に %sB のディスク容量が解放されます。\n"
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2196
 #, c-format
@@ -1018,41 +1016,43 @@ msgstr ""
 #: cmdline/apt-get.cc:1441
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
+"一連のものを削除するようになっていないので、AutoRemover を開始できません"
 
 #: cmdline/apt-get.cc:1473
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "以下のパッケージが新たにインストールされます:"
+msgstr ""
+"以下のパッケージが自動でインストールされましたが、もう必要とされていません:"
 
 #: cmdline/apt-get.cc:1475
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "これらを削除するには 'apt-get autoremove' を利用してください。"
 
 #: cmdline/apt-get.cc:1480
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"AutoRemover が、本来起きるべきでない何かを壊したようです。\n"
+"apt にバグ報告を送ってください。"
 
 #: cmdline/apt-get.cc:1483 cmdline/apt-get.cc:1763
 msgid "The following information may help to resolve the situation:"
 msgstr "以下の情報がこの問題を解決するために役立つかもしれません:"
 
 #: cmdline/apt-get.cc:1487
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "内部エラー、問題リゾルバが何かを破壊しました"
+msgstr "内部エラー、AutoRemover が何かを破壊しました"
 
 #: cmdline/apt-get.cc:1506
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "内部エラー、AllUpgrade が何かを破壊しました"
 
 #: cmdline/apt-get.cc:1553
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "パッケージ %s が見つかりません"
+msgstr "タスク %s が見つかりません"
 
 #: cmdline/apt-get.cc:1668 cmdline/apt-get.cc:1704
 #, c-format
@@ -1065,9 +1065,9 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "注意: 正規表現 '%2$s' に対して %1$s を選択しました\n"
 
 #: cmdline/apt-get.cc:1722
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
-msgstr "しかし、%s はインストールされようとしています"
+msgstr "%s は手動でインストールしたと設定されました。\n"
 
 #: cmdline/apt-get.cc:1735
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1260,7 +1260,6 @@ msgid "Supported modules:"
 msgstr "サポートされているモジュール:"
 
 #: cmdline/apt-get.cc:2647
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1318,6 +1317,8 @@ msgstr ""
 "   install - 新規パッケージをインストールします\n"
 "             (pkg は libc6.deb ではなく libc6 のように指定します)\n"
 "   remove - パッケージを削除します\n"
+"   autoremove - 自動インストールされ使われていないすべてのパッケージを削除し"
+"ます\n"
 "   source - ソースアーカイブをダウンロードします\n"
 "   build-dep - ソースパッケージの構築依存関係を設定します\n"
 "   dist-upgrade - ディストリビューションをアップグレードします\n"
@@ -1686,11 +1687,11 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "'%s' メンバーがないため、正しい DEB アーカイブではありません"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr ""
-"'%s' または '%s' メンバーがないため、これは正しい DEB アーカイブではありませ"
-"ん"
+"これは正しい DEB アーカイブではありません。'%s'、'%s'、'%s' のいずれのメン"
+"バーもありません"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2103,9 +2104,9 @@ msgid "Opening configuration file %s"
 msgstr "設定ファイル %s をオープンできませんでした"
 
 #: apt-pkg/contrib/configuration.cc:515
-#, fuzzy, c-format
+#, c-format
 msgid "Line %d too long (max %u)"
-msgstr "%d 行目が長すぎます (最大 %d)"
+msgstr "%d 行目が長すぎます (最大 %u)"
 
 #: apt-pkg/contrib/configuration.cc:611
 #, c-format
@@ -2335,7 +2336,7 @@ msgstr "廃止"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "破壊"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2370,19 +2371,18 @@ msgid "Dependency generation"
 msgstr "依存関係の生成"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "入手可能情報をマージしています"
+msgstr "状態情報を読み取っています"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "%s のオープンに失敗しました"
+msgstr "状態ファイル %s のオープンに失敗しました"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "ファイル %s の書き込みに失敗しました"
+msgstr "一時状態ファイル %s の書き込みに失敗しました"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2579,9 +2579,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "%s を処理中にエラーが発生しました (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "%s を処理中にエラーが発生しました (NewFileVer1)"
+msgstr "%s を処理中にエラーが発生しました (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2609,9 +2609,9 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "%s を処理中にエラーが発生しました (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "%s を処理中にエラーが発生しました (NewFileVer1)"
+msgstr "%s を処理中にエラーが発生しました (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2622,9 +2622,8 @@ msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "この APT が対応している以上の数のバージョンが要求されました。"
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "この APT が対応している以上の数のバージョンが要求されました。"
+msgstr "この APT が対応している以上の数の説明が要求されました。"
 
 #: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2668,9 +2667,8 @@ msgid "MD5Sum mismatch"
 msgstr "MD5Sum が適合しません"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr "MD5Sum が適合しません"
+msgstr "ハッシュサムが適合しません"
 
 #: apt-pkg/acquire-item.cc:1100
 msgid "There is no public key available for the following key IDs:\n"
@@ -2730,9 +2728,8 @@ msgid "Stored label: %s\n"
 msgstr "格納されたラベル: %s \n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "CD-ROM をアンマウントしています ..."
+msgstr "CD-ROM をアンマウントしています ...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2757,18 +2754,18 @@ msgid "Scanning disc for index files..\n"
 msgstr "ディスクのインデックスファイルを走査しています ..\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %u package indexes, %u source indexes, %u translation indexes and %u "
 "signatures\n"
 msgstr ""
-"%i のパッケージインデックス、%i のソースインデックス、%i の署名を見つけまし"
-"た\n"
+"%u のパッケージインデックス、%u のソースインデックス、%u の翻訳インデック"
+"ス、%u の署名を見つけました\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "格納されたラベル: %s \n"
+msgstr "ラベル '%s' を見つけました\n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2818,9 +2815,9 @@ msgstr ""
 "ファイルがあります。\n"
 
 #: apt-pkg/deb/dpkgpm.cc:513
-#, fuzzy, c-format
+#, c-format
 msgid "Directory '%s' missing"
-msgstr "リストディレクトリ %spartial が見つかりません。"
+msgstr "ディレクトリ '%s' が見つかりません"
 
 #: apt-pkg/deb/dpkgpm.cc:596
 #, c-format
@@ -2843,9 +2840,9 @@ msgid "Configuring %s"
 msgstr "%s を設定しています"
 
 #: apt-pkg/deb/dpkgpm.cc:605 apt-pkg/deb/dpkgpm.cc:606
-#, fuzzy, c-format
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "ディレクトリ %s の処理中にエラーが発生しました"
+msgstr "%s のトリガーを処理しています"
 
 #: apt-pkg/deb/dpkgpm.cc:608
 #, c-format
@@ -2881,6 +2878,8 @@ msgstr "%s を完全に削除しました"
 #: apt-pkg/deb/dpkgpm.cc:775
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
+"ログに書き込めません。openpty() に失敗しました (/dev/pts がマウントされていな"
+"い?)\n"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
@@ -2889,46 +2888,3 @@ msgstr "ファイルにパッチできませんでした"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "途中で接続がクローズされました"
-
-#, fuzzy
-#~ msgid "Line %d too long (max %d)"
-#~ msgstr "%d 行目が長すぎます (最大 %d)"
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc1)"
-#~ msgstr "%s を処理中にエラーが発生しました (NewFileVer1)"
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc2)"
-#~ msgstr "%s を処理中にエラーが発生しました (NewFileVer1)"
-
-#, fuzzy
-#~ msgid "Stored label: %s \n"
-#~ msgstr "格納されたラベル: %s \n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Found %i package indexes, %i source indexes, %i translation indexes and %"
-#~ "i signatures\n"
-#~ msgstr ""
-#~ "%i のパッケージインデックス、%i のソースインデックス、%i の署名を見つけま"
-#~ "した\n"
-
-#, fuzzy
-#~ msgid "openpty failed\n"
-#~ msgstr "select に失敗しました"
-
-#~ msgid "File date has changed %s"
-#~ msgstr "ファイル %s の日付が変更されています"
-
-#~ msgid "Reading file list"
-#~ msgstr "ファイルリストを読み込んでいます"
-
-#~ msgid "Could not execute "
-#~ msgstr "実行できませんでした:"
-
-#~ msgid "Preparing for remove with config %s"
-#~ msgstr "設定 %s の削除を準備しています"
-
-#~ msgid "Removed with config %s"
-#~ msgstr "設定 %s を削除しました"
