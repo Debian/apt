@@ -53,6 +53,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/statfs.h>
 #include <sys/statvfs.h>
 #include <signal.h>
 #include <unistd.h>
@@ -62,6 +63,8 @@
 #include <sys/wait.h>
 #include <sstream>
 									/*}}}*/
+
+#define RAMFS_MAGIC     0x858458f6
 
 using namespace std;
 
@@ -835,16 +838,16 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (DebBytes != FetchBytes)
       ioprintf(c1out,_("Need to get %sB/%sB of archives.\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
-   else
+   else if (DebBytes != 0)
       ioprintf(c1out,_("Need to get %sB of archives.\n"),
 	       SizeToStr(DebBytes).c_str());
 
    // Size delta
    if (Cache->UsrSize() >= 0)
-      ioprintf(c1out,_("After unpacking %sB of additional disk space will be used.\n"),
+      ioprintf(c1out,_("After this operation, %sB of additional disk space will be used.\n"),
 	       SizeToStr(Cache->UsrSize()).c_str());
    else
-      ioprintf(c1out,_("After unpacking %sB disk space will be freed.\n"),
+      ioprintf(c1out,_("After this operation, %sB disk space will be freed.\n"),
 	       SizeToStr(-1*Cache->UsrSize()).c_str());
 
    if (_error->PendingError() == true)
@@ -861,8 +864,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
 			      OutputDir.c_str());
       if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-	 return _error->Error(_("You don't have enough free space in %s."),
-			      OutputDir.c_str());
+      {
+         struct statfs Stat;
+         if (statfs(OutputDir.c_str(),&Stat) != 0 ||
+			 unsigned(Stat.f_type) != RAMFS_MAGIC)
+            return _error->Error(_("You don't have enough free space in %s."),
+                OutputDir.c_str());
+      }
    }
    
    // Fail safe check
@@ -1711,7 +1719,7 @@ bool DoInstall(CommandLine &CmdL)
 	       (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
 	       _config->FindB("APT::Get::ReInstall",false) == false)
 	    {
-	       ioprintf(c1out,_("%s set to manual installed.\n"),
+	       ioprintf(c1out,_("%s set to manually installed.\n"),
 			Pkg.Name());
 	       Cache->MarkAuto(Pkg,false);
 	       AutoMarkChanged++;
@@ -2188,8 +2196,13 @@ bool DoSource(CommandLine &CmdL)
       return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
 			   OutputDir.c_str());
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-      return _error->Error(_("You don't have enough free space in %s"),
-			   OutputDir.c_str());
+     {
+       struct statfs Stat;
+       if (statfs(OutputDir.c_str(),&Stat) != 0 || 
+           unsigned(Stat.f_type) != RAMFS_MAGIC) 
+          return _error->Error(_("You don't have enough free space in %s"),
+              OutputDir.c_str());
+      }
    
    // Number of bytes
    if (DebBytes != FetchBytes)

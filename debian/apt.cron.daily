@@ -147,6 +147,9 @@ check_size_constraints()
     fi
 }
 
+if ! which apt-config >/dev/null; then
+	exit 0
+fi
 
 UpdateInterval=0
 DownloadUpgradeableInterval=0

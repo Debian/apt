@@ -173,6 +173,11 @@ string Configuration::Find(const char *Name,const char *Default) const
  */
 string Configuration::FindFile(const char *Name,const char *Default) const
 {
+   const Item *RootItem = Lookup("RootDir");
+   std::string rootDir =  (RootItem == 0) ? "" : RootItem->Value;
+   if(rootDir.size() > 0 && rootDir[rootDir.size() - 1] != '/')
+     rootDir.push_back('/');
+
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
    {
@@ -204,7 +209,7 @@ string Configuration::FindFile(const char *Name,const char *Default) const
       Itm = Itm->Parent;
    }
 
-   return val;
+   return rootDir + val;
 }
 									/*}}}*/
 // Configuration::FindDir - Find a directory name			/*{{{*/

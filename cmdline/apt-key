@@ -5,7 +5,7 @@ set -e
 # We don't use a secret keyring, of course, but gpg panics and
 # implodes if there isn't one available
 
-GPG_CMD="gpg --no-options --no-default-keyring --secret-keyring /etc/apt/secring.gpg --trustdb-name /etc/apt/trustdb.gpg"
+GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring /etc/apt/secring.gpg --trustdb-name /etc/apt/trustdb.gpg"
 GPG="$GPG_CMD --keyring /etc/apt/trusted.gpg"
 
 
@@ -21,7 +21,7 @@ update() {
     fi
 
     # add new keys
-    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --ignore-time-conflict --import
+    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
 
     # remove no-longer used keys
     keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5`

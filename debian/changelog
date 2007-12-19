@@ -14,9 +14,21 @@ apt (0.7.10) UNRELEASED; urgency=low
     closes: #452862.
   * Applied patch from Alexander Winston <alexander.winston@comcast.net>
     to use 'min' as symbol for minute, closes: #219034.
+  * Applied patch from Amos Waterland <apw@us.ibm.com> to allow apt to
+    work properly in initramfs, closes: #448316.
+  * Applied patch from Robert Millan <rmh@aybabtu.com> to make apt-key and
+    apt-get to ignore time conflicts, closes: #451328.
+  * Applied patch from Peter Eisentraut <peter_e@gmx.net> to fix a
+    grammatical error ("manual installed" -> "manually installed"),
+    closes: #438136.
+  * Fix cron.daily job to not call fail if apt isn't installed, closes:
+    #443286.
 
   [ Program translations ]
     - Basque updated. Closes: #453088
+    - Vietnamese updated. Closes: #453774
+    - Japanese updated. Closes: #456909
+    - French updated.
 
   [ Michael Vogt ]
   * debian/rules
@@ -37,8 +49,17 @@ apt (0.7.10) UNRELEASED; urgency=low
     - support lzma data members
   * ftparchive/multicompress.cc:
     - support lzma output
+  
+  [ Daniel Burrows ]
+  * apt-pkg/contrib/configuration.cc:
+    - if RootDir is set, then FindFile and FindDir will return paths
+      relative to the directory stored in RootDir, closes: #456457.
 
- -- Otavio Salvador <otavio@ossystems.com.br>  Sat, 08 Dec 2007 12:13:58 -0200
+  [ Christian Perrier ]
+  * Fix wording for "After unpacking...". Thans to Michael Gilbert
+    for the patch. Closes: #260825
+
+ -- Christian Perrier <bubulle@debian.org>  Mon, 17 Dec 2007 10:10:17 +0530
 
 apt (0.7.9) unstable; urgency=low
 

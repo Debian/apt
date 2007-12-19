@@ -295,6 +295,19 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <literal>dpkg</literal>, <literal>apt-get</literal> <literal>dpkg-source</literal> 
    <literal>dpkg-buildpackage</literal> and <literal>apt-cache</literal> specify the location
    of the respective programs.</para>
+
+   <para>
+     The configuration item <literal>RootDir</literal> has a special
+     meaning.  If set, all paths in <literal>Dir::</literal> will be
+     relative to <literal>RootDir</literal>, <emphasis>even paths that
+     are specified absolutely</emphasis>.  So, for instance, if
+     <literal>RootDir</literal> is set to
+     <filename>/tmp/staging</filename> and
+     <literal>Dir::State::status</literal> is set to
+     <filename>/var/lib/dpkg/status</filename>, then the status file
+     will be looked up in
+     <filename>/tmp/staging/var/lib/dpkg/status</filename>.
+   </para>
  </refsect1>
  
  <refsect1><title>APT in DSelect</title>
