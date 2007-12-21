@@ -83,6 +83,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       Args[i++] = gpgvpath.c_str();
       Args[i++] = "--status-fd";
       Args[i++] = "3";
+      Args[i++] = "--ignore-time-conflict";
       Args[i++] = "--keyring";
       Args[i++] = pubringpath.c_str();
 

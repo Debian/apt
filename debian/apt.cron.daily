@@ -147,6 +147,9 @@ check_size_constraints()
     fi
 }
 
+if ! which apt-config >/dev/null; then
+	exit 0
+fi
 
 UpdateInterval=0
 DownloadUpgradeableInterval=0
@@ -172,6 +175,7 @@ fi
 
 # check if we can lock the cache and if the cache is clean
 if ! apt-get check -q -q 2>/dev/null; then
+    echo "$0: could not lock the APT cache"
     exit 1
 fi
 

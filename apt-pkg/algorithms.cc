@@ -1261,8 +1261,8 @@ void pkgProblemResolver::InstallProtect()
 	    Cache.MarkDelete(I);
 	 else 
 	 {
-	    // preserver the information if the package was auto
-	    // or manual installed
+	    // preserve the information whether the package was auto
+	    // or manually installed
 	    bool autoInst = (Cache[I].Flags & pkgCache::Flag::Auto);
 	    Cache.MarkInstall(I, false, 0, !autoInst);
 	 }

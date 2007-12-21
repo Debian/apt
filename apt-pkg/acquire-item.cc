@@ -770,16 +770,19 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
    Desc.URI = URI;
-   
       
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) == 0)
    {
-      // File was already in place.  It needs to be re-verified
-      // because Release might have changed, so Move it into partial
-      Rename(Final,DestFile);
+      // File was already in place.  It needs to be re-downloaded/verified
+      // because Release might have changed, we do give it a differnt
+      // name than DestFile because otherwise the http method will
+      // send If-Range requests and there are too many broken servers
+      // out there that do not understand them
+      LastGoodSig = DestFile+".reverify";
+      Rename(Final,LastGoodSig);
    }
 
    QueueURI(Desc);
@@ -791,7 +794,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
 string pkgAcqMetaSig::Custom600Headers()
 {
    struct stat Buf;
-   if (stat(DestFile.c_str(),&Buf) != 0)
+   if (stat(LastGoodSig.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
 
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
@@ -821,6 +824,12 @@ void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
 
    Complete = true;
 
+   // put the last known good file back on i-m-s hit (it will
+   // be re-verified again)
+   // Else do nothing, we have the new file in DestFile then
+   if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      Rename(LastGoodSig, DestFile);
+
    // queue a pkgAcqMetaIndex to be verified against the sig we just retrieved
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
 		       DestFile, IndexTargets, MetaIndexParser);
@@ -837,7 +846,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       Item::Failed(Message,Cnf);
       // move the sigfile back on transient network failures 
       if(FileExists(DestFile))
- 	 Rename(DestFile,Final);
+ 	 Rename(LastGoodSig,Final);
 
       // set the status back to , Item::Failed likes to reset it
       Status = pkgAcquire::Item::StatTransientNetworkError;
