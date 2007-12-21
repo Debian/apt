@@ -612,7 +612,6 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    /** \brief The last good signature file */
    string LastGoodSig;
 
-
    /** \brief The fetch request that is currently being processed. */
    pkgAcquire::ItemDesc Desc;
 
