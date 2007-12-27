@@ -675,8 +675,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    DropRepeats(TransList,"");
    if(log) {
       msg.str("");
-      ioprintf(msg, _("Found %u package indexes, %u source indexes, "
-		      "%u translation indexes and %u signatures\n"), 
+      ioprintf(msg, _("Found %zu package indexes, %zu source indexes, "
+		      "%zu translation indexes and %zu signatures\n"), 
 	       List.size(), SourceList.size(), TransList.size(),
 	       SigList.size());
       log->Update(msg.str(), STEP_SCAN);
