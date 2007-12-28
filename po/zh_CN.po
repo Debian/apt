@@ -1,5 +1,6 @@
 # Chinese/Simplified translation of apt.
 # This file is put in the public domain.
+# Deng Xiyue <manphiz-guest@users.alioth.debian.org>, 2007
 # Tchaikov <tchaikov@sjtu.org>, 2005,2007.
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004,2006
 #
@@ -8,8 +9,8 @@ msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-12-17 10:36+0530\n"
-"PO-Revision-Date: 2007-03-29 17:14+0800\n"
-"Last-Translator: Kov Chai <tchaikov@sjtu.org>\n"
+"PO-Revision-Date: 2007-12-28 12:54+0800\n"
+"Last-Translator: Deng Xiyue <manphiz-guest@users.alioth.debian.org>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -56,9 +57,8 @@ msgid "Total distinct versions: "
 msgstr "按版本共计："
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total Distinct Descriptions: "
-msgstr "按版本共计："
+msgstr "按说明共计："
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -69,9 +69,8 @@ msgid "Total ver/file relations: "
 msgstr "按版本/文件关系共计："
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "按版本/文件关系共计："
+msgstr "按说明/文件关系共计："
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
@@ -159,9 +158,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2601 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s for %s %s ，编译于 %s %s\n"
+msgstr "%s %s for %s 编译于 %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -919,7 +918,7 @@ msgstr "放弃安装。"
 #: cmdline/apt-get.cc:1053
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
-msgstr "注意，我选了 %s 而非 %s\n"
+msgstr "注意，选取 %s 而非 %s\n"
 
 #: cmdline/apt-get.cc:1063
 #, c-format
@@ -1006,42 +1005,40 @@ msgstr ""
 
 #: cmdline/apt-get.cc:1441
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
+msgstr "我们不应该进行删除，无法启动自动删除器"
 
 #: cmdline/apt-get.cc:1473
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "下列【新】软件包将被安装："
+msgstr "下列软件包是自动安装的并且现在不再被使用了："
 
 #: cmdline/apt-get.cc:1475
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "使用'apt-get autoremove'来删除它们"
 
 #: cmdline/apt-get.cc:1480
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
-msgstr ""
+msgstr "似乎自动删除器毁掉了一些软件，这不应该发生。请向 apt 提交错误报告。"
 
 #: cmdline/apt-get.cc:1483 cmdline/apt-get.cc:1763
 msgid "The following information may help to resolve the situation:"
 msgstr "下列的信息可能会对解决问题有所帮助："
 
 #: cmdline/apt-get.cc:1487
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "内部错误，problem resolver 坏事了"
+msgstr "内部错误，自动删除器坏事了"
 
 #: cmdline/apt-get.cc:1506
 msgid "Internal error, AllUpgrade broke stuff"
-msgstr "内部错误，AllUpgrade 坏事了"
+msgstr "内部错误，全部升级坏事了"
 
 #: cmdline/apt-get.cc:1553
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "无法找到软件包 %s"
+msgstr "无法找到任务 %s"
 
 #: cmdline/apt-get.cc:1668 cmdline/apt-get.cc:1704
 #, c-format
@@ -1120,7 +1117,7 @@ msgstr "完成"
 
 #: cmdline/apt-get.cc:1988 cmdline/apt-get.cc:1996
 msgid "Internal error, problem resolver broke stuff"
-msgstr "内部错误，problem resolver 坏事了"
+msgstr "内部错误，问题解决器坏事了"
 
 #: cmdline/apt-get.cc:2096
 msgid "Must specify at least one package to fetch source for"
@@ -1238,7 +1235,6 @@ msgid "Supported modules:"
 msgstr "被支持模块："
 
 #: cmdline/apt-get.cc:2647
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1282,17 +1278,19 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 "用法： apt-get [选项] 命令\n"
-"       apt-get [选项] install|remove 包甲 [包乙 ...]\n"
-"       apt-get [选项] source 包甲 [包乙 ...]\n"
+"       apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
+"       apt-get [选项] source 软件包1 [软件包2 ...]\n"
 "\n"
 "apt-get 提供了一个用于下载和安装软件包的简易命令行界面。\n"
 "最常用命令是 update 和 install。\n"
 "\n"
 "命令：\n"
-"   update - 下载更新软件包列表信息\n"
+"   update - 取回更新的软件包列表信息\n"
 "   upgrade - 进行一次升级\n"
 "   install - 安装新的软件包(注：包名是 libc6 而非 libc6.deb)\n"
 "   remove - 卸载软件包\n"
+"   autoremove - 卸载所有自动安装且不再使用的软件包\n"
+"   purge - 卸载并清除软件包的配置\n"
 "   source - 下载源码包文件\n"
 "   build-dep - 为源码包配置所需的构建依赖关系\n"
 "   dist-upgrade - 发布版升级，见 apt-get(8)\n"
@@ -1300,6 +1298,7 @@ msgstr ""
 "   clean - 删除所有已下载的包文件\n"
 "   autoclean - 删除老版本的已下载的包文件\n"
 "   check - 核对以确认系统的依赖关系的完整性\n"
+"\n"
 "选项：\n"
 "  -h  本帮助文档。\n"
 "  -q  让输出可作为日志 - 不显示进度\n"
@@ -1657,9 +1656,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”或者“%s”"
+msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”，“%s”或者“%s”"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2069,9 +2068,9 @@ msgid "Opening configuration file %s"
 msgstr "正在打开配置文件 %s"
 
 #: apt-pkg/contrib/configuration.cc:515
-#, fuzzy, c-format
+#, c-format
 msgid "Line %d too long (max %u)"
-msgstr "软件包来源档的第 %d 行超长了(长度限制为 %d)。"
+msgstr "第 %d 行超长了(长度限制为 %u)。"
 
 #: apt-pkg/contrib/configuration.cc:611
 #, c-format
@@ -2301,7 +2300,7 @@ msgstr "废弃"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "破坏"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2336,19 +2335,18 @@ msgid "Dependency generation"
 msgstr "生成依赖关系"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "正在合并现有信息"
+msgstr "正在读取状态信息"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "无法打开 %s"
+msgstr "无法打开状态文件 %s"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "无法写入文件 %s"
+msgstr "无法写入临时状态文件 %s"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2537,9 +2535,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "处理 %s (UsePackage1)时出错"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "处理 %s (NewFileVer1)时出错"
+msgstr "处理 %s (NewFileDesc1)时出错"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2567,9 +2565,9 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "处理 %s (NewVersion2)时出错"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "处理 %s (NewFileVer1)时出错"
+msgstr "处理 %s (NewFileDesc2)时出错"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2580,9 +2578,8 @@ msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "糟了，软件包版本的数量了超出本程序的处理能力。"
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "糟了，软件包版本的数量了超出本程序的处理能力。"
+msgstr "糟了，软件包说明的数量了超出本程序的处理能力。"
 
 #: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2626,9 +2623,8 @@ msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr "MD5 校验和不符"
+msgstr "Hash 校验和不符"
 
 #: apt-pkg/acquire-item.cc:1100
 msgid "There is no public key available for the following key IDs:\n"
@@ -2682,12 +2678,11 @@ msgstr "正在鉴别.. "
 #: apt-pkg/cdrom.cc:563
 #, c-format
 msgid "Stored label: %s\n"
-msgstr "存档标签：%s \n"
+msgstr "已存档的标签：%s\n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "正在卸载 CD-ROM 文件系统……"
+msgstr "正在卸载 CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2712,16 +2707,17 @@ msgid "Scanning disc for index files..\n"
 msgstr "正在光盘中查找索引文件..\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %u package indexes, %u source indexes, %u translation indexes and %u "
 "signatures\n"
-msgstr "找到了 %i 个软件包索引、%i 个源代码包索引，和 %i 个数字签名\n"
+msgstr ""
+"找到了 %u 个软件包索引、%u 个源代码包索引、%u 个翻译索引和 %u 个数字签名\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "存档标签：%s \n"
+msgstr "找到标签 '%s'\n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2769,9 +2765,9 @@ msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "已写入 %i 条记录，并有 %i 个缺失，以及 %i 个文件不吻合\n"
 
 #: apt-pkg/deb/dpkgpm.cc:513
-#, fuzzy, c-format
+#, c-format
 msgid "Directory '%s' missing"
-msgstr "软件包列表的目录 %spartial 不见了。"
+msgstr "目录 %s 不见了"
 
 #: apt-pkg/deb/dpkgpm.cc:596
 #, c-format
@@ -2794,9 +2790,9 @@ msgid "Configuring %s"
 msgstr "正在配置 %s"
 
 #: apt-pkg/deb/dpkgpm.cc:605 apt-pkg/deb/dpkgpm.cc:606
-#, fuzzy, c-format
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "处理目录 %s 时出错"
+msgstr "启动对 %s 的处理"
 
 #: apt-pkg/deb/dpkgpm.cc:608
 #, c-format
@@ -2831,7 +2827,7 @@ msgstr "完全删除了 %s"
 
 #: apt-pkg/deb/dpkgpm.cc:775
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
-msgstr ""
+msgstr "无法写入日志。 openpty() 失败 (/dev/pts 没有 mount 上？)\n"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
@@ -2840,6 +2836,15 @@ msgstr "无法打开补丁文件"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "连接被永久关闭"
+
+#~ msgid "After unpacking %sB of additional disk space will be used.\n"
+#~ msgstr "解压缩后会消耗掉 %sB 的额外空间。\n"
+
+#~ msgid "After unpacking %sB disk space will be freed.\n"
+#~ msgstr "解压缩后将会空出 %sB 的空间。\n"
+
+#~ msgid "%s set to manual installed.\n"
+#~ msgstr "%s 已设置为手动安装。\n"
 
 #, fuzzy
 #~ msgid "Line %d too long (max %d)"
