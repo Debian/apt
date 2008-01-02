@@ -935,6 +935,9 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,
    else
    {
       RetrievalDone(Message);
+      if (!Complete)
+         // Still more retrieving to do
+         return;
 
       if (SigFile == "")
       {
@@ -987,6 +990,7 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
       FinalFile += URItoFileName(RealURI);
       DestFile = FinalFile;
    }
+   Complete = true;
 }
 
 void pkgAcqMetaIndex::AuthDone(string Message)
@@ -1172,7 +1176,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	 _error->Warning(_("A error occurred during the signature "
 			   "verification. The repository is not updated "
 			   "and the previous index files will be used."
-			   "GPG error: %s: %s\n"
+			   "GPG error: %s: %s\n"),
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());
 	 return;
