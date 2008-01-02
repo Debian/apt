@@ -935,6 +935,9 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,
    else
    {
       RetrievalDone(Message);
+      if (!Complete)
+         // Still more retrieving to do
+         return;
 
       if (SigFile == "")
       {
@@ -987,6 +990,7 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
       FinalFile += URItoFileName(RealURI);
       DestFile = FinalFile;
    }
+   Complete = true;
 }
 
 void pkgAcqMetaIndex::AuthDone(string Message)

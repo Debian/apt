@@ -21,7 +21,8 @@ class testAptAuthenticationReliability(unittest.TestCase):
     test if the spec https://wiki.ubuntu.com/AptAuthenticationReliability 
     is properly implemented
     """
-    apt = "../bin/apt-get"
+    #apt = "../bin/apt-get"
+    apt = "apt-get"
 
     def setUp(self):
         pass
@@ -68,7 +69,7 @@ class testAptAuthenticationReliability(unittest.TestCase):
                    ] + apt_args,
                    stdout=stdout, stderr=stderr)
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Release.gpg"),
-                     "The gpg file disappeared, this should not happen")
+                     "The gpg file disappeared after a regular download, this should not happen")
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Packages"),
                      "The Packages file disappeared, this should not happen")
         # test good is still good after non I-M-S hit and a previous files in lists/
@@ -82,7 +83,7 @@ class testAptAuthenticationReliability(unittest.TestCase):
                    ] + apt_args,
                    stdout=stdout, stderr=stderr)
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Release.gpg"),
-                     "The gpg file disappeared, this should not happen")
+                     "The gpg file disappeared after a I-M-S hit, this should not happen")
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Packages"),
                      "The Packages file disappeared, this should not happen")
         # test good is still good after I-M-S hit
