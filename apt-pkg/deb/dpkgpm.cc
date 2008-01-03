@@ -342,8 +342,8 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 */
 void pkgDPkgPM::DoStdin(int master)
 {
-   char input_buf[256] = {0,}; 
-   int len = read(0, input_buf, sizeof(input_buf));
+   unsigned char input_buf[256] = {0,}; 
+   ssize_t len = read(0, input_buf, sizeof(input_buf));
    if (len)
       write(master, input_buf, len);
    else
@@ -357,9 +357,9 @@ void pkgDPkgPM::DoStdin(int master)
  */
 void pkgDPkgPM::DoTerminalPty(int master)
 {
-   char term_buf[1024] = {0,};
+   unsigned char term_buf[1024] = {0,0, };
 
-   int len=read(master, term_buf, sizeof(term_buf));
+   ssize_t len=read(master, term_buf, sizeof(term_buf));
    if(len == -1 && errno == EIO)
    {
       // this happens when the child is about to exit, we

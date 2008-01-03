@@ -299,7 +299,7 @@ apt-utils: build debian/shlibs.local
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-apt-transport-https: build debian/shlibs.local
+apt-transport-https: build debian/shlibs.local libapt-pkg-dev
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_clean -p$@ -k

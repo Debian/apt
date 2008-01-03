@@ -1,3 +1,47 @@
+apt (0.7.9ubuntu2) hardy; urgency=low
+
+  [ Otavio Salvador ]
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix building
+    with newest dpkg-shlibdeps changing the packaging building order and a
+    patch from Robert Millan <rmh@aybabtu.com> to fix parallel building,
+    closes: #452862.
+  * Applied patch from Alexander Winston <alexander.winston@comcast.net>
+    to use 'min' as symbol for minute, closes: #219034.
+  * Applied patch from Amos Waterland <apw@us.ibm.com> to allow apt to
+    work properly in initramfs, closes: #448316.
+  * Applied patch from Robert Millan <rmh@aybabtu.com> to make apt-key and
+    apt-get to ignore time conflicts, closes: #451328.
+  * Applied patch from Peter Eisentraut <peter_e@gmx.net> to fix a
+    grammatical error ("manual installed" -> "manually installed"),
+    closes: #438136.
+  * Fix cron.daily job to not call fail if apt isn't installed, closes:
+    #443286.
+  
+  [ Daniel Burrows ]
+  * apt-pkg/contrib/configuration.cc:
+    - if RootDir is set, then FindFile and FindDir will return paths
+      relative to the directory stored in RootDir, closes: #456457.
+
+  [ Christian Perrier ]
+  * Fix wording for "After unpacking...". Thans to Michael Gilbert
+    for the patch. Closes: #260825
+
+  [ Program translations ]
+    - Vietnamese updated. Closes: #453774
+    - Japanese updated. Closes: #456909
+    - French updated.
+
+  [ Michael Vogt ]
+  * apt-pkg/packagemanager.{cc,h}:
+    - propergate the Immediate flag to make hitting the 
+      "E: Internal Error, Could not perform immediate configuration (2)"
+      harder. (LP: #179247)
+  * debian/apt.conf.daily:
+    - print warning if the cache can not be locked (closes: #454561),
+      thanks to Bastian Kleineidam
+  
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 03 Jan 2008 11:31:45 +0100
+  
 apt (0.7.9ubuntu1) hardy; urgency=low
 
   * merged from http://bzr.debian.org/apt/apt/debian-sid/, remaining
@@ -24,13 +68,10 @@ apt (0.7.9ubuntu1) hardy; urgency=low
   * Applied patch from Aurelien Jarno <aurel32@debian.org> to avoid CPU
     getting crazy when /dev/null is redirected to stdin (which breaks
     buildds), closes: #452858.
-  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix building
-    with newest dpkg-shlibdeps changing the packaging building order,
-    closes: #452862.
 
   [ Program translations ]
     - Basque updated. Closes: #453088
-  
+
   [ Michael Vogt ]
   * debian/rules
     - fix https install location
