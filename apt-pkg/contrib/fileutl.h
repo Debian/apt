@@ -77,6 +77,7 @@ class FileFd
    virtual ~FileFd();
 };
 
+bool RunScripts(const char *Cnf);
 bool CopyFile(FileFd &From,FileFd &To);
 int GetLock(string File,bool Errors = true);
 bool FileExists(string File);
