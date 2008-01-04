@@ -114,8 +114,11 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
 /* This is a simple wrapper to update the cache. it will fetch stuff
  * from the network (or any other sources defined in sources.list)
  */
-bool pkgCacheFile::ListUpdate(pkgAcquireStatus &Stat, pkgSourceList &List)
+bool pkgCacheFile::ListUpdate(pkgAcquireStatus &Stat, 
+			      pkgSourceList &List, 
+			      int PulseInterval)
 {
+   pkgAcquire::RunResult res;
    pkgAcquire Fetcher(&Stat);
 
    // Populate it with the source selection
@@ -125,8 +128,13 @@ bool pkgCacheFile::ListUpdate(pkgAcquireStatus &Stat, pkgSourceList &List)
    // Run scripts
    RunScripts("APT::Update::Pre-Invoke");
    
-   // Run it
-   if (Fetcher.Run() == pkgAcquire::Failed)
+   // check arguments
+   if(PulseInterval>0)
+      res = Fetcher.Run(PulseInterval);
+   else
+      res = Fetcher.Run();
+
+   if (res == pkgAcquire::Failed)
       return false;
 
    bool Failed = false;
