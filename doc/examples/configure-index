@@ -77,6 +77,12 @@ APT
      NoAct "false";
   };
 
+  Update
+  {
+     Pre-Invoke {"touch /var/lib/apt/pre-update-stamp"; };
+     Post-Invoke {"touch /var/lib/apt/post-update-stamp"; };
+  };
+
   Authentication
   {
      TrustCDROM "false";            // consider the CDROM always trusted
