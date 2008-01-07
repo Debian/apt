@@ -325,6 +325,7 @@ bool pkgAcquire::Worker::RunMessages()
 	    // set some status
 	    if(LookupTag(Message,"FailReason") == "Timeout" || 
 	       LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
+	       LookupTag(Message,"FailReason") == "ResolveFailure" ||
 	       LookupTag(Message,"FailReason") == "ConnectionRefused") 
 	       Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
 

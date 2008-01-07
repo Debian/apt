@@ -19,6 +19,8 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/acquire-item.h>
+#include <apt-pkg/fileutl.h>
     
 #include <apti18n.h>
 									/*}}}*/
@@ -106,6 +108,7 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
    return true;
 }
 									/*}}}*/
+
 
 // CacheFile::Close - close the cache files				/*{{{*/
 // ---------------------------------------------------------------------

@@ -14,6 +14,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/strutl.h>
 #include <apti18n.h>
+#include <apt-pkg/fileutl.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -95,68 +96,6 @@ bool pkgDPkgPM::Remove(PkgIterator Pkg,bool Purge)
    return true;
 }
 									/*}}}*/
-// DPkgPM::RunScripts - Run a set of scripts				/*{{{*/
-// ---------------------------------------------------------------------
-/* This looks for a list of script sto run from the configuration file,
-   each one is run with system from a forked child. */
-bool pkgDPkgPM::RunScripts(const char *Cnf)
-{
-   Configuration::Item const *Opts = _config->Tree(Cnf);
-   if (Opts == 0 || Opts->Child == 0)
-      return true;
-   Opts = Opts->Child;
-
-   // Fork for running the system calls
-   pid_t Child = ExecFork();
-   
-   // This is the child
-   if (Child == 0)
-   {
-      if (chdir("/tmp/") != 0)
-	 _exit(100);
-	 
-      unsigned int Count = 1;
-      for (; Opts != 0; Opts = Opts->Next, Count++)
-      {
-	 if (Opts->Value.empty() == true)
-	    continue;
-	 
-	 if (system(Opts->Value.c_str()) != 0)
-	    _exit(100+Count);
-      }
-      _exit(0);
-   }      
-
-   // Wait for the child
-   int Status = 0;
-   while (waitpid(Child,&Status,0) != Child)
-   {
-      if (errno == EINTR)
-	 continue;
-      return _error->Errno("waitpid","Couldn't wait for subprocess");
-   }
-
-   // Restore sig int/quit
-   signal(SIGQUIT,SIG_DFL);
-   signal(SIGINT,SIG_DFL);   
-
-   // Check for an error code.
-   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
-   {
-      unsigned int Count = WEXITSTATUS(Status);
-      if (Count > 100)
-      {
-	 Count -= 100;
-	 for (; Opts != 0 && Count != 1; Opts = Opts->Next, Count--);
-	 _error->Error("Problem executing scripts %s '%s'",Cnf,Opts->Value.c_str());
-      }
-      
-      return _error->Error("Sub-process returned an error code");
-   }
-   
-   return true;
-}
-                                                                        /*}}}*/
 // DPkgPM::SendV2Pkgs - Send version 2 package info			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is part of the helper script communication interface, it sends
@@ -342,8 +281,8 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 */
 void pkgDPkgPM::DoStdin(int master)
 {
-   char input_buf[256] = {0,}; 
-   int len = read(0, input_buf, sizeof(input_buf));
+   unsigned char input_buf[256] = {0,}; 
+   ssize_t len = read(0, input_buf, sizeof(input_buf));
    if (len)
       write(master, input_buf, len);
    else
@@ -357,9 +296,9 @@ void pkgDPkgPM::DoStdin(int master)
  */
 void pkgDPkgPM::DoTerminalPty(int master)
 {
-   char term_buf[1024] = {0,};
+   unsigned char term_buf[1024] = {0,0, };
 
-   int len=read(master, term_buf, sizeof(term_buf));
+   ssize_t len=read(master, term_buf, sizeof(term_buf));
    if(len == -1 && errno == EIO)
    {
       // this happens when the child is about to exit, we
