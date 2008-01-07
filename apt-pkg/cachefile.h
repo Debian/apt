@@ -47,7 +47,6 @@ class pkgCacheFile
 
    bool BuildCaches(OpProgress &Progress,bool WithLock = true);
    bool Open(OpProgress &Progress,bool WithLock = true);
-   bool ListUpdate(pkgAcquireStatus &progress, pkgSourceList &List, int PulseInterval=0);
    void Close();
    
    pkgCacheFile();

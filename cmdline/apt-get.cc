@@ -1374,7 +1374,7 @@ bool DoUpdate(CommandLine &CmdL)
 
    // do the work
    CacheFile Cache;
-   bool res = Cache.ListUpdate(Stat, List);
+   bool res = ListUpdate(Stat, List);
      
    // Rebuild the cache.   
    if (Cache.BuildCaches() == false)
