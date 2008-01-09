@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.25\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-17 05:49+0100\n"
+"POT-Creation-Date: 2008-01-07 19:11+0100\n"
 "PO-Revision-Date: 2004-06-10 19:58+0300\n"
 "Last-Translator: Lior Kaplan <webmaster@guides.co.il>\n"
 "Language-Team: Hebrew\n"
@@ -156,7 +156,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2601 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2589 cmdline/apt-sortpkgs.cc:144
 #, fuzzy, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s בשביל %s %s קומפל על %s %s\n"
@@ -554,7 +554,7 @@ msgstr "כשלון בשינוי השם %s ל-%s"
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:146 cmdline/apt-get.cc:1681
+#: cmdline/apt-get.cc:146 cmdline/apt-get.cc:1642
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr ""
@@ -717,12 +717,12 @@ msgstr ""
 msgid "Internal error, Ordering didn't finish"
 msgstr ""
 
-#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:2020 cmdline/apt-get.cc:2053
+#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:1981 cmdline/apt-get.cc:2014
 msgid "Unable to lock the download directory"
 msgstr "לא מצליח לנעול את ספרית ההורדה."
 
-#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2101 cmdline/apt-get.cc:2347
-#: apt-pkg/cachefile.cc:63
+#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2062 cmdline/apt-get.cc:2335
+#: apt-pkg/cachefile.cc:65
 msgid "The list of sources could not be read."
 msgstr "רשימת המקורות לא ניתנת לקריאה."
 
@@ -750,7 +750,7 @@ msgstr "אחרי פריסה %sB נוספים יהיו בשימוש.\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "אחרי פריסה %sB נוספים ישוחררו.\n"
 
-#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2196
+#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2184
 #, fuzzy, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "אין לך מספיק מקום פנוי ב-%s."
@@ -785,7 +785,7 @@ msgstr "בטל."
 msgid "Do you want to continue [Y/n]? "
 msgstr "האם אתה רוצה להמשיך? [Y/n]"
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:1391 cmdline/apt-get.cc:2244
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2232 apt-pkg/algorithms.cc:1343
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "כשלון בהבאת %s  %s\n"
@@ -794,7 +794,7 @@ msgstr "כשלון בהבאת %s  %s\n"
 msgid "Some files failed to download"
 msgstr "כשלון בהורדת חלק מהקבצים"
 
-#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2253
+#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2241
 msgid "Download complete and in download only mode"
 msgstr "ההורדה הסתיימה במסגרת מצב הורדה בלבד."
 
@@ -894,77 +894,71 @@ msgstr ""
 msgid "Unable to lock the list directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:1418 cmdline/apt-get.cc:1420
-msgid ""
-"Some index files failed to download, they have been ignored, or old ones "
-"used instead."
-msgstr ""
-
-#: cmdline/apt-get.cc:1441
+#: cmdline/apt-get.cc:1402
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: cmdline/apt-get.cc:1473
+#: cmdline/apt-get.cc:1434
 #, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr "החבילות החדשות הבאות הולכות להיות מותקנות:"
 
-#: cmdline/apt-get.cc:1475
+#: cmdline/apt-get.cc:1436
 msgid "Use 'apt-get autoremove' to remove them."
 msgstr ""
 
-#: cmdline/apt-get.cc:1480
+#: cmdline/apt-get.cc:1441
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 
-#: cmdline/apt-get.cc:1483 cmdline/apt-get.cc:1763
+#: cmdline/apt-get.cc:1444 cmdline/apt-get.cc:1724
 msgid "The following information may help to resolve the situation:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1487
+#: cmdline/apt-get.cc:1448
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "שגיאה פנימית, כלשון ביצירת %s"
 
-#: cmdline/apt-get.cc:1506
+#: cmdline/apt-get.cc:1467
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:1553
+#: cmdline/apt-get.cc:1514
 #, c-format
 msgid "Couldn't find task %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1668 cmdline/apt-get.cc:1704
+#: cmdline/apt-get.cc:1629 cmdline/apt-get.cc:1665
 #, c-format
 msgid "Couldn't find package %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1691
+#: cmdline/apt-get.cc:1652
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1722
+#: cmdline/apt-get.cc:1683
 #, fuzzy, c-format
 msgid "%s set to manually installed.\n"
 msgstr "אבל %s הולכת להיות מותקנת"
 
-#: cmdline/apt-get.cc:1735
+#: cmdline/apt-get.cc:1696
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1738
+#: cmdline/apt-get.cc:1699
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
 
-#: cmdline/apt-get.cc:1750
+#: cmdline/apt-get.cc:1711
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -972,160 +966,175 @@ msgid ""
 "or been moved out of Incoming."
 msgstr ""
 
-#: cmdline/apt-get.cc:1758
+#: cmdline/apt-get.cc:1719
 msgid ""
 "Since you only requested a single operation it is extremely likely that\n"
 "the package is simply not installable and a bug report against\n"
 "that package should be filed."
 msgstr ""
 
-#: cmdline/apt-get.cc:1766
+#: cmdline/apt-get.cc:1727
 msgid "Broken packages"
 msgstr ""
 
-#: cmdline/apt-get.cc:1795
+#: cmdline/apt-get.cc:1756
 msgid "The following extra packages will be installed:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1884
+#: cmdline/apt-get.cc:1845
 msgid "Suggested packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1885
+#: cmdline/apt-get.cc:1846
 msgid "Recommended packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1913
+#: cmdline/apt-get.cc:1874
 msgid "Calculating upgrade... "
 msgstr ""
 
-#: cmdline/apt-get.cc:1916 methods/ftp.cc:702 methods/connect.cc:101
+#: cmdline/apt-get.cc:1877 methods/ftp.cc:702 methods/connect.cc:100
 msgid "Failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:1921
+#: cmdline/apt-get.cc:1882
 msgid "Done"
 msgstr ""
 
-#: cmdline/apt-get.cc:1988 cmdline/apt-get.cc:1996
+#: cmdline/apt-get.cc:1949 cmdline/apt-get.cc:1957
 #, fuzzy
 msgid "Internal error, problem resolver broke stuff"
 msgstr "שגיאה פנימית, כלשון ביצירת %s"
 
-#: cmdline/apt-get.cc:2096
+#: cmdline/apt-get.cc:2057
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2126 cmdline/apt-get.cc:2365
+#: cmdline/apt-get.cc:2087 cmdline/apt-get.cc:2353
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2175
+#: cmdline/apt-get.cc:2103
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: cmdline/apt-get.cc:2108
+#, c-format
+msgid ""
+"Please use:\n"
+"bzr get %s\n"
+"to retrieve the latest (possible unreleased) updates to the package.\n"
+msgstr ""
+
+#: cmdline/apt-get.cc:2163
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2203
+#: cmdline/apt-get.cc:2191
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2209
+#: cmdline/apt-get.cc:2197
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2212
+#: cmdline/apt-get.cc:2200
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2218
+#: cmdline/apt-get.cc:2206
 #, c-format
 msgid "Fetch source %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2249
+#: cmdline/apt-get.cc:2237
 msgid "Failed to fetch some archives."
 msgstr ""
 
-#: cmdline/apt-get.cc:2277
+#: cmdline/apt-get.cc:2265
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2289
+#: cmdline/apt-get.cc:2277
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2290
+#: cmdline/apt-get.cc:2278
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2307
+#: cmdline/apt-get.cc:2295
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2326
+#: cmdline/apt-get.cc:2314
 msgid "Child process failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:2342
+#: cmdline/apt-get.cc:2330
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2370
+#: cmdline/apt-get.cc:2358
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2390
+#: cmdline/apt-get.cc:2378
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2442
+#: cmdline/apt-get.cc:2430
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
 
-#: cmdline/apt-get.cc:2495
+#: cmdline/apt-get.cc:2483
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
 
-#: cmdline/apt-get.cc:2531
+#: cmdline/apt-get.cc:2519
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 
-#: cmdline/apt-get.cc:2556
+#: cmdline/apt-get.cc:2544
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2570
+#: cmdline/apt-get.cc:2558
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr ""
 
-#: cmdline/apt-get.cc:2574
+#: cmdline/apt-get.cc:2562
 msgid "Failed to process build dependencies"
 msgstr ""
 
-#: cmdline/apt-get.cc:2606
+#: cmdline/apt-get.cc:2594
 msgid "Supported modules:"
 msgstr ""
 
-#: cmdline/apt-get.cc:2647
+#: cmdline/apt-get.cc:2635
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1382,7 +1391,7 @@ msgstr ""
 
 #: apt-inst/extract.cc:464 apt-pkg/contrib/configuration.cc:753
 #: apt-pkg/contrib/cdromutl.cc:150 apt-pkg/sourcelist.cc:320
-#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:34
+#: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:34 methods/mirror.cc:85
 #, c-format
 msgid "Unable to read %s"
 msgstr ""
@@ -1608,7 +1617,7 @@ msgstr ""
 msgid "Server closed the connection"
 msgstr ""
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:471 methods/rsh.cc:190
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:536 methods/rsh.cc:190
 msgid "Read error"
 msgstr ""
 
@@ -1620,7 +1629,7 @@ msgstr ""
 msgid "Protocol corruption"
 msgstr ""
 
-#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:510 methods/rsh.cc:232
+#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:575 methods/rsh.cc:232
 msgid "Write error"
 msgstr ""
 
@@ -1674,7 +1683,7 @@ msgstr ""
 msgid "Unable to accept connection"
 msgstr ""
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:961 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr ""
 
@@ -1701,39 +1710,39 @@ msgstr ""
 msgid "Unable to invoke "
 msgstr ""
 
-#: methods/connect.cc:64
+#: methods/connect.cc:65
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr ""
 
-#: methods/connect.cc:71
+#: methods/connect.cc:72
 #, c-format
 msgid "[IP: %s %s]"
 msgstr ""
 
-#: methods/connect.cc:80
+#: methods/connect.cc:79
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
 msgstr ""
 
-#: methods/connect.cc:86
+#: methods/connect.cc:85
 #, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr ""
 
-#: methods/connect.cc:93
+#: methods/connect.cc:92
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
 
-#: methods/connect.cc:108
+#: methods/connect.cc:107
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr ""
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:136 methods/rsh.cc:425
+#: methods/connect.cc:135 methods/rsh.cc:425
 #, c-format
 msgid "Connecting to %s"
 msgstr ""
@@ -1806,76 +1815,76 @@ msgstr ""
 msgid "Read error from %s process"
 msgstr ""
 
-#: methods/http.cc:377
+#: methods/http.cc:376
 msgid "Waiting for headers"
 msgstr ""
 
-#: methods/http.cc:523
+#: methods/http.cc:522
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr ""
 
-#: methods/http.cc:531
+#: methods/http.cc:530
 msgid "Bad header line"
 msgstr ""
 
-#: methods/http.cc:550 methods/http.cc:557
+#: methods/http.cc:549 methods/http.cc:556
 msgid "The HTTP server sent an invalid reply header"
 msgstr ""
 
-#: methods/http.cc:586
+#: methods/http.cc:585
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr ""
 
-#: methods/http.cc:601
+#: methods/http.cc:600
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr ""
 
-#: methods/http.cc:603
+#: methods/http.cc:602
 msgid "This HTTP server has broken range support"
 msgstr ""
 
-#: methods/http.cc:627
+#: methods/http.cc:626
 msgid "Unknown date format"
 msgstr ""
 
-#: methods/http.cc:774
+#: methods/http.cc:773
 msgid "Select failed"
 msgstr ""
 
-#: methods/http.cc:779
+#: methods/http.cc:778
 msgid "Connection timed out"
 msgstr ""
 
-#: methods/http.cc:802
+#: methods/http.cc:801
 msgid "Error writing to output file"
 msgstr ""
 
-#: methods/http.cc:833
+#: methods/http.cc:832
 msgid "Error writing to file"
 msgstr ""
 
-#: methods/http.cc:861
+#: methods/http.cc:860
 msgid "Error writing to the file"
 msgstr ""
 
-#: methods/http.cc:875
+#: methods/http.cc:874
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 
-#: methods/http.cc:877
+#: methods/http.cc:876
 msgid "Error reading from server"
 msgstr ""
 
-#: methods/http.cc:1104
+#: methods/http.cc:1106
 msgid "Bad header data"
 msgstr ""
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1123 methods/http.cc:1178
 msgid "Connection failed"
 msgstr ""
 
-#: methods/http.cc:1228
+#: methods/http.cc:1230
 msgid "Internal error"
 msgstr ""
 
@@ -2010,6 +2019,7 @@ msgid "Unable to stat the mount point %s"
 msgstr ""
 
 #: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: methods/mirror.cc:91
 #, c-format
 msgid "Unable to change to %s"
 msgstr ""
@@ -2018,70 +2028,70 @@ msgstr ""
 msgid "Failed to stat the cdrom"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:82
+#: apt-pkg/contrib/fileutl.cc:147
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:87
+#: apt-pkg/contrib/fileutl.cc:152
 #, c-format
 msgid "Could not open lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:105
+#: apt-pkg/contrib/fileutl.cc:170
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:109
+#: apt-pkg/contrib/fileutl.cc:174
 #, c-format
 msgid "Could not get lock %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:377
+#: apt-pkg/contrib/fileutl.cc:442
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:387
+#: apt-pkg/contrib/fileutl.cc:452
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:390
+#: apt-pkg/contrib/fileutl.cc:455
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:392
+#: apt-pkg/contrib/fileutl.cc:457
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:436
+#: apt-pkg/contrib/fileutl.cc:501
 #, c-format
 msgid "Could not open file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:492
+#: apt-pkg/contrib/fileutl.cc:557
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:522
+#: apt-pkg/contrib/fileutl.cc:587
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:597
+#: apt-pkg/contrib/fileutl.cc:662
 msgid "Problem closing the file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:603
+#: apt-pkg/contrib/fileutl.cc:668
 msgid "Problem unlinking the file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:614
+#: apt-pkg/contrib/fileutl.cc:679
 msgid "Problem syncing the file"
 msgstr ""
 
@@ -2244,7 +2254,7 @@ msgstr ""
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:399
+#: apt-pkg/packagemanager.cc:428
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2271,6 +2281,12 @@ msgstr ""
 
 #: apt-pkg/algorithms.cc:1107
 msgid "Unable to correct problems, you have held broken packages."
+msgstr ""
+
+#: apt-pkg/algorithms.cc:1369 apt-pkg/algorithms.cc:1371
+msgid ""
+"Some index files failed to download, they have been ignored, or old ones "
+"used instead."
 msgstr ""
 
 #: apt-pkg/acquire.cc:59
@@ -2305,17 +2321,17 @@ msgstr ""
 msgid "Method %s did not start correctly"
 msgstr ""
 
-#: apt-pkg/acquire-worker.cc:398
+#: apt-pkg/acquire-worker.cc:399
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 
-#: apt-pkg/init.cc:124
+#: apt-pkg/init.cc:125
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/init.cc:140
+#: apt-pkg/init.cc:141
 msgid "Unable to determine a suitable packaging system type"
 msgstr ""
 
@@ -2328,11 +2344,11 @@ msgstr ""
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr ""
 
-#: apt-pkg/cachefile.cc:69
+#: apt-pkg/cachefile.cc:71
 msgid "The package lists or status file could not be parsed or opened."
 msgstr ""
 
-#: apt-pkg/cachefile.cc:73
+#: apt-pkg/cachefile.cc:75
 msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
 
@@ -2442,44 +2458,44 @@ msgstr ""
 msgid "IO Error saving source cache"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:127
+#: apt-pkg/acquire-item.cc:134
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:401
+#: apt-pkg/acquire-item.cc:451
 msgid "MD5Sum mismatch"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:696 apt-pkg/acquire-item.cc:1459
 msgid "Hash Sum mismatch"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1150
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1264
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1323
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
 "manually fix this package."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1364
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1451
 msgid "Size mismatch"
 msgstr ""
 
@@ -2585,69 +2601,76 @@ msgstr ""
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:513
+#: apt-pkg/deb/dpkgpm.cc:454
 #, c-format
 msgid "Directory '%s' missing"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:596
+#: apt-pkg/deb/dpkgpm.cc:537
 #, c-format
 msgid "Preparing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:597
+#: apt-pkg/deb/dpkgpm.cc:538
 #, c-format
 msgid "Unpacking %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:602
+#: apt-pkg/deb/dpkgpm.cc:543
 #, c-format
 msgid "Preparing to configure %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:603
+#: apt-pkg/deb/dpkgpm.cc:544
 #, c-format
 msgid "Configuring %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:605 apt-pkg/deb/dpkgpm.cc:606
+#: apt-pkg/deb/dpkgpm.cc:546 apt-pkg/deb/dpkgpm.cc:547
 #, fuzzy, c-format
 msgid "Processing triggers for %s"
 msgstr "שגיאה בעיבוד ספריה %s"
 
-#: apt-pkg/deb/dpkgpm.cc:608
+#: apt-pkg/deb/dpkgpm.cc:549
 #, fuzzy, c-format
 msgid "Installed %s"
 msgstr "מותקן:"
 
-#: apt-pkg/deb/dpkgpm.cc:613 apt-pkg/deb/dpkgpm.cc:615
-#: apt-pkg/deb/dpkgpm.cc:616
+#: apt-pkg/deb/dpkgpm.cc:554 apt-pkg/deb/dpkgpm.cc:556
+#: apt-pkg/deb/dpkgpm.cc:557
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:618
+#: apt-pkg/deb/dpkgpm.cc:559
 #, c-format
 msgid "Removing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:619
+#: apt-pkg/deb/dpkgpm.cc:560
 #, c-format
 msgid "Removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:565
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:625
+#: apt-pkg/deb/dpkgpm.cc:566
 #, c-format
 msgid "Completely removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:775
+#: apt-pkg/deb/dpkgpm.cc:716
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
+msgstr ""
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:170
+#, c-format
+msgid "No mirror file '%s' found "
 msgstr ""
 
 #: methods/rred.cc:219
