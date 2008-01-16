@@ -15,20 +15,32 @@ ARCHIVE_KEYRING=/usr/share/keyrings/debian-archive-keyring.gpg
 REMOVED_KEYS=/usr/share/keyrings/debian-archive-removed-keys.gpg
 
 add_keys_with_verify_against_master_keyring() {
-        # when adding new keys, make sure that the archive-master-keyring
-        # is honored. so:
-        #   all keys that are exported and have the name
-        #   "Ubuntu Archive Automatic Signing Key" must have a valid signature
-        #   from a key in the ubuntu-master-keyring
-	add_keys=`$GPG_CMD --keyring $ARCHIVE_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
-	master_keys=`$GPG_CMD --keyring $MASTER_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
-	for add_key in $add_keys; do
-	    for master_key in $master_keys; do
-		if $GPG --list-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
-		    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export $add_key | $GPG --import
-		fi
-	    done
+    ADD_KEYRING=$1
+    MASTER=$2
+    
+    if [ ! -f "$ADD_KEYRING" ]; then
+	echo "ERROR: '$ADD_KEYRING' not found"
+	return
+    fi 
+    if [ ! -f "$MASTER" ]; then
+	echo "ERROR: '$MASTER' not found"
+	return
+    fi
+
+    # when adding new keys, make sure that the archive-master-keyring
+    # is honored. so:
+    #   all keys that are exported and have the name
+    #   "Ubuntu Archive Automatic Signing Key" must have a valid signature
+    #   from a key in the ubuntu-master-keyring
+    add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
+    master_keys=`$GPG_CMD --keyring $MASTER --with-colons --list-keys | grep ^pub | cut -d: -f5`
+    for add_key in $add_keys; do
+	for master_key in $master_keys; do
+	    if $GPG --list-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
+		$GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export $add_key | $GPG --import
+	    fi
 	done
+    done
 }
 
 update() {
@@ -43,7 +55,7 @@ update() {
     if [ -z "$MASTER_KEYRING" ]; then
 	$GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
     else
-	add_keys_with_verify_against_master_keyring
+	add_keys_with_verify_against_master_keyring $ARCHIVE_KEYRING $MASTER_KEYRING
     fi
 
     # remove no-longer supported/used keys
