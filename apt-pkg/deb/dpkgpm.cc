@@ -906,9 +906,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    if (_config->FindB("Dpkg::ApportFailureReport",true) == false)
       return;
 
-   // only report the first error if we are in StopOnError=false mode
-   // to prevent bogus reports
-   if((_config->FindB("Dpkg::StopOnError",true) == false) && pkgFailures > 1)
+   // only report the first error
+   if(pkgFailures > _config->FindI("APT::Apport::MaxReports", 3))
       return;
 
    // get the pkgname and reportfile
