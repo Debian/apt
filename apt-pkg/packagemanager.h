@@ -49,6 +49,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool Debug;
          
    bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
+   void ImmediateAdd(PkgIterator P, bool UseInstallVer);
    virtual OrderResult OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
    bool CreateOrderList();

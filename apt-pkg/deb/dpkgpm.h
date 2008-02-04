@@ -64,7 +64,6 @@ class pkgDPkgPM : public pkgPackageManager
    vector<Item> List;
 
    // Helpers
-   bool RunScripts(const char *Cnf);
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
 

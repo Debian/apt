@@ -19,6 +19,8 @@
 
 
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/sourcelist.h>
 
 class pkgPolicy;
 class pkgCacheFile

@@ -33,6 +33,7 @@
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/acquire.h>
 
 #include <iostream>
 
@@ -130,5 +131,7 @@ bool pkgAllUpgrade(pkgDepCache &Cache);
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
+
+bool ListUpdate(pkgAcquireStatus &progress, pkgSourceList &List, int PulseInterval=0);
 		     
 #endif

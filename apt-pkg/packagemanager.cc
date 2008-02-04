@@ -118,6 +118,41 @@ bool pkgPackageManager::FixMissing()
 }
 									/*}}}*/
 
+// PM::ImmediateAdd - Add the immediate flag recursivly			/*{{{*/
+// ---------------------------------------------------------------------
+/* This adds the immediate flag to the pkg and recursively to the
+   dependendies 
+ */
+void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer)
+{
+   DepIterator D;
+   
+   if(UseInstallVer)
+   {
+      if(Cache[I].InstallVer == 0)
+	 return;
+      D = Cache[I].InstVerIter(Cache).DependsList(); 
+   } else {
+      if (I->CurrentVer == 0)
+	 return;
+      D = I.CurrentVer().DependsList(); 
+   }
+
+   for ( /* nothing */  ; D.end() == false; D++)
+      if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
+      {
+	 if(!List->IsFlag(D.TargetPkg(), pkgOrderList::Immediate))
+	 {
+	    if(Debug)
+	       clog << "ImmediateAdd(): Adding Immediate flag to " << I.Name() << endl;
+	    List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
+	    ImmediateAdd(D.TargetPkg(), UseInstallVer);
+	 }
+      }
+   return;
+}
+									/*}}}*/
+
 // PM::CreateOrderList - Create the ordering class			/*{{{*/
 // ---------------------------------------------------------------------
 /* This populates the ordering list with all the packages that are
@@ -144,21 +179,15 @@ bool pkgPackageManager::CreateOrderList()
 	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&
 	  NoImmConfigure == false)
       {
+	 if(Debug)
+	    clog << "CreateOrderList(): Adding Immediate flag for " << I.Name() << endl;
 	 List->Flag(I,pkgOrderList::Immediate);
-	 
-	 // Look for other packages to make immediate configurea
-	 if (Cache[I].InstallVer != 0)
-	    for (DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); 
-		 D.end() == false; D++)
-	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
+
+	 // Look for other install packages to make immediate configurea
+	 ImmediateAdd(I, true);
 	 
 	 // And again with the current version.
-	 if (I->CurrentVer != 0)
-	    for (DepIterator D = I.CurrentVer().DependsList(); 
-		 D.end() == false; D++)
-	       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-		  List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
+	 ImmediateAdd(I, false);
       }
       
       // Not interesting
