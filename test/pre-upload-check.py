@@ -25,7 +25,8 @@ class testAptAuthenticationReliability(unittest.TestCase):
     apt = "apt-get"
 
     def setUp(self):
-        pass
+        if os.path.exists("/tmp/autFailure"):
+            os.unlink("/tmp/authFailure");
     def testRepositorySigFailure(self):
         """
         test if a repository that used to be authenticated and fails on
@@ -39,26 +40,33 @@ class testAptAuthenticationReliability(unittest.TestCase):
             os.utime("/var/lib/apt/lists/%s" % os.path.basename(f), (0,0))
         res = call([self.apt,
                     "update",
-                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.failure"
+                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.failure", 
+                    "-o",'APT::Update::Auth-Failure::=touch /tmp/authFailure',
                    ] + apt_args,
                    stdout=stdout, stderr=stderr)
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Release.gpg"),
                      "The gpg file disappeared, this should not happen")
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Packages"),
                      "The Packages file disappeared, this should not happen")
+        self.assert_(os.path.exists("/tmp/authFailure"),
+                     "The APT::Update::Auth-Failure script did not run")
+        os.unlink("/tmp/authFailure");
         # the same with i-m-s hit this time
         for f in glob.glob("./authReliability/lists/*"):
             shutil.copy(f,"/var/lib/apt/lists")
             os.utime("/var/lib/apt/lists/%s" % os.path.basename(f), (time.time(),time.time()))
         res = call([self.apt,
                     "update",
-                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.failure"
+                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.failure",
+                    "-o",'APT::Update::Auth-Failure::=touch /tmp/authFailure',
                    ] + apt_args,
                    stdout=stdout, stderr=stderr)
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Release.gpg"),
                      "The gpg file disappeared, this should not happen")
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Packages"),
                      "The Packages file disappeared, this should not happen")
+        self.assert_(os.path.exists("/tmp/authFailure"),
+                     "The APT::Update::Auth-Failure script did not run")
     def testRepositorySigGood(self):
         """
         test that a regular repository with good data stays good
@@ -239,5 +247,5 @@ if __name__ == "__main__":
         stderr = sys.stderr
     
     # run only one for now
-    #unittest.main(defaultTest="testAptAuthenticationReliability")
-    unittest.main()
+    unittest.main(defaultTest="testAptAuthenticationReliability")
+    #unittest.main()
