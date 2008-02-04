@@ -1229,6 +1229,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 			   "GPG error: %s: %s\n"),
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());
+	 RunScripts("APT::Update::Auth-Failure");
 	 return;
       } else {
 	 _error->Warning(_("GPG error: %s: %s"),

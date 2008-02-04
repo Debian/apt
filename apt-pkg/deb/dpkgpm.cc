@@ -704,14 +704,16 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
 
       struct	termios tt;
+      struct	termios tt_out;
       struct	winsize win;
       int	master;
       int	slave;
 
       // FIXME: setup sensible signal handling (*ick*)
       tcgetattr(0, &tt);
+      tcgetattr(1, &tt_out);
       ioctl(0, TIOCGWINSZ, (char *)&win);
-      if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+      if (openpty(&master, &slave, NULL, &tt_out, &win) < 0) 
       {
 	 const char *s = _("Can not write log, openpty() "
 			   "failed (/dev/pts not mounted?)\n");

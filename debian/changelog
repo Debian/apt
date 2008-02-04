@@ -1,10 +1,20 @@
 apt (0.7.9ubuntu6) hardy; urgency=low
 
+  [ Michael Vogt ]
+  * cmdline/apt-key:
+    - add support for a master-keyring that contains signing keys
+      that can be used to sign the archive signing keys. This should
+      make key-rollover easier.
+  * apt-pkg/deb/dpkgpm.cc:
+    - merged patch from Kees Cook to fix anoying upper-case display
+      on amd64 in sbuild
+  * apt-pkg/algorithms.cc: 
+    - add APT::Update::Post-Invoke-Success script slot
   * apt-pkg/deb/dpkgpm.cc:
     - add APT::Apport::MaxReports to limit the maximum number
       of reports generated in a single run (default to 3)
 
- --
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 04 Feb 2008 14:28:02 +0100
 
 apt (0.7.9ubuntu5) hardy; urgency=low
 
