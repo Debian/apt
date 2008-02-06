@@ -18,6 +18,8 @@ apt (0.7.11) UNRELEASED; urgency=low
       on amd64 in sbuild
   * apt-pkg/algorithms.cc: 
     - add APT::Update::Post-Invoke-Success script slot
+    - Make the breaks handling use the kill list. This means, that a
+      Breaks: Pkg (<< version) may put Pkg onto the remove list.
   * apt-pkg/deb/debmetaindex.cc:
     - add missing "Release" file uri when apt-get update --print-uris
       is run

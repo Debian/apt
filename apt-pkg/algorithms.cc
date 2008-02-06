@@ -985,17 +985,17 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 
 		  if (Start->Type == pkgCache::Dep::DpkgBreaks)
 		  {
-		     /* Would it help if we upgraded? */
-		     if (Cache[End] & pkgDepCache::DepGCVer) {
+		     // first, try upgradring the package, if that
+		     // does not help, the breaks goes onto the
+		     // kill list
+		     // FIXME: use DoUpgrade(Pkg) instead?
+		     if (Cache[End] & pkgDepCache::DepGCVer) 
+		     {
 			if (Debug)
 			   clog << "  Upgrading " << Pkg.Name() << " due to Breaks field in " << I.Name() << endl;
 			Cache.MarkInstall(Pkg, false, 0, false);
 			continue;
 		     }
-		     if (Debug)
-			clog << "  Will not break " << Pkg.Name() << " as stated in Breaks field in " << I.Name() <<endl;
-		     Cache.MarkKeep(I, false, false);
-		     continue;
 		  }
 
 		  // Skip adding to the kill list if it is protected
@@ -1066,6 +1066,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
 	       {
 		  if (J->Dep->Type == pkgCache::Dep::Conflicts || 
+		      J->Dep->Type == pkgCache::Dep::DpkgBreaks ||
 		      J->Dep->Type == pkgCache::Dep::Obsoletes)
 		  {
 		     if (Debug == true)
