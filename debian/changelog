@@ -1,6 +1,5 @@
 apt (0.7.9ubuntu6) hardy; urgency=low
 
-  [ Michael Vogt ]
   * cmdline/apt-key:
     - add support for a master-keyring that contains signing keys
       that can be used to sign the archive signing keys. This should
@@ -10,9 +9,14 @@ apt (0.7.9ubuntu6) hardy; urgency=low
       on amd64 in sbuild
   * apt-pkg/algorithms.cc: 
     - add APT::Update::Post-Invoke-Success script slot
+    - Make the breaks handling use the kill list. This means, that a
+      Breaks: Pkg (<< version) may put Pkg onto the remove list.
   * apt-pkg/deb/dpkgpm.cc:
     - add APT::Apport::MaxReports to limit the maximum number
       of reports generated in a single run (default to 3)
+  * apt-pkg/deb/debmetaindex.cc:
+    - add missing "Release" file uri when apt-get update --print-uris
+      is run
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 04 Feb 2008 14:28:02 +0100
 
