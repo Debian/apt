@@ -27,6 +27,8 @@ class testAptAuthenticationReliability(unittest.TestCase):
     def setUp(self):
         if os.path.exists("/tmp/autFailure"):
             os.unlink("/tmp/authFailure");
+        if os.path.exists("/tmp/autFailure2"):
+            os.unlink("/tmp/authFailure2");
     def testRepositorySigFailure(self):
         """
         test if a repository that used to be authenticated and fails on
@@ -49,8 +51,7 @@ class testAptAuthenticationReliability(unittest.TestCase):
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Packages"),
                      "The Packages file disappeared, this should not happen")
         self.assert_(os.path.exists("/tmp/authFailure"),
-                     "The APT::Update::Auth-Failure script did not run")
-        os.unlink("/tmp/authFailure");
+                     "The APT::Update::Auth-Failure script did not run (1)")
         # the same with i-m-s hit this time
         for f in glob.glob("./authReliability/lists/*"):
             shutil.copy(f,"/var/lib/apt/lists")
@@ -58,15 +59,15 @@ class testAptAuthenticationReliability(unittest.TestCase):
         res = call([self.apt,
                     "update",
                     "-o","Dir::Etc::sourcelist=./authReliability/sources.list.failure",
-                    "-o",'APT::Update::Auth-Failure::=touch /tmp/authFailure',
+                    "-o",'APT::Update::Auth-Failure::=touch /tmp/authFailure2',
                    ] + apt_args,
                    stdout=stdout, stderr=stderr)
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Release.gpg"),
                      "The gpg file disappeared, this should not happen")
         self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Packages"),
                      "The Packages file disappeared, this should not happen")
-        self.assert_(os.path.exists("/tmp/authFailure"),
-                     "The APT::Update::Auth-Failure script did not run")
+        self.assert_(os.path.exists("/tmp/authFailure2"),
+                     "The APT::Update::Auth-Failure script did not run (2)")
     def testRepositorySigGood(self):
         """
         test that a regular repository with good data stays good
