@@ -20,6 +20,9 @@
 #include <unistd.h>
 #include <sstream>
 
+#include<set>
+#include<string>
+
 // Internet stuff
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -34,6 +37,9 @@ static string LastHost;
 static int LastPort = 0;
 static struct addrinfo *LastHostAddr = 0;
 static struct addrinfo *LastUsed = 0;
+
+// Set of IP/hostnames that we timed out before or couldn't resolve
+static std::set<string> bad_addr;
 
 // RotateDNS - Select a new server from a DNS rotation			/*{{{*/
 // ---------------------------------------------------------------------
@@ -64,6 +70,10 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
 	       NI_NUMERICHOST|NI_NUMERICSERV);
    Owner->Status(_("Connecting to %s (%s)"),Host.c_str(),Name);
 
+   // if that addr did timeout before, we do not try it again
+   if(bad_addr.find(string(Name)) != bad_addr.end())
+      return false;
+
    /* If this is an IP rotation store the IP we are using.. If something goes
       wrong this will get tacked onto the end of the error message */
    if (LastHostAddr->ai_next != 0)
@@ -88,6 +98,7 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    /* This implements a timeout for connect by opening the connection
       nonblocking */
    if (WaitFd(Fd,true,TimeOut) == false) {
+      bad_addr.insert(bad_addr.begin(), string(Name));
       Owner->SetFailReason("Timeout");
       return _error->Error(_("Could not connect to %s:%s (%s), "
 			   "connection timed out"),Host.c_str(),Service,Name);
@@ -148,6 +159,10 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
       Hints.ai_socktype = SOCK_STREAM;
       Hints.ai_protocol = 0;
       
+      // if we couldn't resolve the host before, we don't try now
+      if(bad_addr.find(Host) != bad_addr.end()) 
+	 return _error->Error(_("Could not resolve '%s'"),Host.c_str());
+
       // Resolve both the host and service simultaneously
       while (1)
       {
@@ -163,6 +178,7 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 		  DefPort = 0;
 		  continue;
 	       }
+	       bad_addr.insert(bad_addr.begin(), Host);
 	       Owner->SetFailReason("ResolveFailure");
 	       return _error->Error(_("Could not resolve '%s'"),Host.c_str());
 	    }
