@@ -34,11 +34,16 @@ add_keys_with_verify_against_master_keyring() {
     add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
     master_keys=`$GPG_CMD --keyring $MASTER --with-colons --list-keys | grep ^pub | cut -d: -f5`
     for add_key in $add_keys; do
+	ADDED=0
 	for master_key in $master_keys; do
-	    if $GPG --list-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
+	    if $GPG_CMD --keyring $ADD_KEYRING --list-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
 		$GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export $add_key | $GPG --import
+		ADDED=1
 	    fi
 	done
+	if [ $ADDED = 0 ]; then
+	    echo >&2 "Key '$add_key' not added. It is not signed with a master key"
+	fi
     done
 }
 
