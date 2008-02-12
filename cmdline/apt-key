@@ -12,6 +12,7 @@ GPG="$GPG_CMD --keyring /etc/apt/trusted.gpg"
 MASTER_KEYRING=/usr/share/keyrings/ubuntu-master-keyring.gpg
 ARCHIVE_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
 REMOVED_KEYS=/usr/share/keyrings/ubuntu-archive-removed-keys.gpg
+ARCHIVE_KEYRING_URI=http://archive.ubuntu.com/ubuntu/ubuntu-archive-keyring.gpg
 
 add_keys_with_verify_against_master_keyring() {
     ADD_KEYRING=$1
@@ -45,6 +46,20 @@ add_keys_with_verify_against_master_keyring() {
 	    echo >&2 "Key '$add_key' not added. It is not signed with a master key"
 	fi
     done
+}
+
+# update the current archive signing keyring from a network URI
+# the archive-keyring keys needs to be signed with the master key
+# (otherwise it does not make sense from a security POV)
+net_update() {
+    if [ -z "$ARCHIVE_KEYRING_URI" ]; then
+	echo "ERROR: no location for the archive-keyring given" 
+    fi
+    if [ ! -d /var/lib/apt/keyrings ]; then
+	mkdir -p /var/lib/apt/keyrings
+    fi
+    (cd  /var/lib/apt/keyrings; wget -q -N $ARCHIVE_KEYRING_URI)
+    add_keys_with_verify_against_master_keyring /var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING) $MASTER_KEYRING
 }
 
 update() {
@@ -82,6 +97,7 @@ usage() {
     echo "  apt-key export <keyid>      - output the key <keyid>"
     echo "  apt-key exportall           - output all trusted keys"
     echo "  apt-key update              - update keys using the keyring package"
+    echo "  apt-key net-update          - update keys using the network"
     echo "  apt-key list                - list keys"
     echo
 }
@@ -110,6 +126,9 @@ case "$command" in
         ;;
     update)
 	update
+	;;
+    net-update)
+	net_update
 	;;
     list)
         $GPG --batch --list-keys
