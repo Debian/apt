@@ -10,7 +10,10 @@ GPG="$GPG_CMD --keyring /etc/apt/trusted.gpg"
 
 
 MASTER_KEYRING=""
+ARCHIVE_KEYRING_URI=""
 #MASTER_KEYRING=/usr/share/keyrings/debian-master-keyring.gpg
+#ARCHIVE_KEYRING_URI=http://ftp.debian.org/debian/debian-archive-keyring.gpg
+
 ARCHIVE_KEYRING=/usr/share/keyrings/debian-archive-keyring.gpg
 REMOVED_KEYS=/usr/share/keyrings/debian-archive-removed-keys.gpg
 
@@ -48,6 +51,20 @@ add_keys_with_verify_against_master_keyring() {
     done
 }
 
+# update the current archive signing keyring from a network URI
+# the archive-keyring keys needs to be signed with the master key
+# (otherwise it does not make sense from a security POV)
+net_update() {
+    if [ -z "$ARCHIVE_KEYRING_URI" ]; then
+	echo "ERROR: no location for the archive-keyring given" 
+    fi
+    if [ ! -d /var/lib/apt/keyrings ]; then
+	mkdir -p /var/lib/apt/keyrings
+    fi
+    (cd  /var/lib/apt/keyrings; wget -q -N $ARCHIVE_KEYRING_URI)
+    add_keys_with_verify_against_master_keyring /var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING) $MASTER_KEYRING
+}
+
 update() {
     if [ ! -f $ARCHIVE_KEYRING ]; then
 	echo >&2 "ERROR: Can't find the archive-keyring"
@@ -83,6 +100,7 @@ usage() {
     echo "  apt-key export <keyid>      - output the key <keyid>"
     echo "  apt-key exportall           - output all trusted keys"
     echo "  apt-key update              - update keys using the keyring package"
+    echo "  apt-key net-update          - update keys using the network"
     echo "  apt-key list                - list keys"
     echo
 }
@@ -111,6 +129,9 @@ case "$command" in
         ;;
     update)
 	update
+	;;
+    net-update)
+	net_update
 	;;
     list)
         $GPG --batch --list-keys
