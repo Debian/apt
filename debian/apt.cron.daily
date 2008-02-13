@@ -182,6 +182,9 @@ fi
 
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
+    # check for a new archive signing key (against the master keyring)
+    apt-key net-update
+    # now run the update
     if apt-get -qq update -o APT::Update::Auth-Failure::="cp /usr/share/apt/apt-auth-failure.note /var/lib/update-notifier/user.d/" 2>/dev/null; then 
 	# Could possible test access to '/var/run/dbus/system_bus_socket' has well,
 	# but I'm not sure how stable the internal pipe location is defined as
