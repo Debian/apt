@@ -72,6 +72,7 @@ net_update() {
     fi
     new_mtime=$(stat -c %Y $keyring)
     if [ $new_mtime -ne $old_mtime ]; then
+	echo "Checking for new archive signing keys now"
 	add_keys_with_verify_against_master_keyring $keyring $MASTER_KEYRING
     fi
 }
