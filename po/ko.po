@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-12 16:56+0100\n"
+"POT-Creation-Date: 2008-01-12 17:00+0100\n"
 "PO-Revision-Date: 2007-10-29 13:10-0400\n"
 "Last-Translator: Sunjae Park <darehanl@gmail.com>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -155,7 +155,7 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2601 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s(%s), 컴파일 시각 %s %s\n"
 
@@ -841,11 +841,13 @@ msgstr "%s바이트 아카이브를 받아야 합니다.\n"
 
 #: cmdline/apt-get.cc:847
 #, fuzzy, c-format
+#| msgid "After unpacking %sB of additional disk space will be used.\n"
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "압축을 풀면 %s바이트의 디스크 공간을 더 사용하게 됩니다.\n"
 
 #: cmdline/apt-get.cc:850
 #, fuzzy, c-format
+#| msgid "After unpacking %sB disk space will be freed.\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "압축을 풀면 %s바이트의 디스크 공간이 비워집니다.\n"
 
@@ -1065,6 +1067,7 @@ msgstr "주의, 정규식 '%2$s'에 대하여 %1$s을(를) 선택합니다\n"
 
 #: cmdline/apt-get.cc:1722
 #, fuzzy, c-format
+#| msgid "%s set to manual installed.\n"
 msgid "%s set to manually installed.\n"
 msgstr "%s 꾸러미 수동설치로 지정합니다.\n"
 
@@ -1253,7 +1256,6 @@ msgid "Supported modules:"
 msgstr "지원하는 모듈:"
 
 #: cmdline/apt-get.cc:2647
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1677,7 +1679,7 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "올바른 DEB 아카이브가 아닙니다. '%s' 멤버가 없습니다"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr "올바른 DEB 아카이브가 아닙니다. '%s'나 '%s' 혹은 '%s' 멤버가 없습니다"
 
@@ -1964,9 +1966,10 @@ msgid "At least one invalid signature was encountered."
 msgstr "최소한 하나 이상의 서명이 잘못되었습니다."
 
 #: methods/gpgv.cc:214
-#, c-format
+#, fuzzy, c-format
+#| msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgid "Could not execute '%s' to verify signature (is gpgv installed?)"
-msgstr "서명을 인증하기 위한 '%s' 실행할 수 없습니다(gpgv가 설치됐나요?)"
+msgstr "서명을 인증하기 위한 '%s' 실행할 수 없습니다(gnupg가 설치됐나요?)"
 
 #: methods/gpgv.cc:219
 msgid "Unknown error executing gpgv"
@@ -2091,6 +2094,7 @@ msgstr "설정 파일 %s 파일을 여는 중입니다"
 
 #: apt-pkg/contrib/configuration.cc:515
 #, fuzzy, c-format
+#| msgid "Line %d too long (max %u)"
 msgid "Line %d too long (max %lu)"
 msgstr "%d번 줄이 너무 깁니다 (최대 %u)"
 
@@ -2700,7 +2704,8 @@ msgid "Identifying.. "
 msgstr "알아보는 중입니다.. "
 
 #: apt-pkg/cdrom.cc:563
-#, c-format
+#, fuzzy, c-format
+#| msgid "Stored label: %s \n"
 msgid "Stored label: %s\n"
 msgstr "저장된 레이블: %s \n"
 
@@ -2732,6 +2737,9 @@ msgstr "디스크에서 색인 파일을 찾는 중입니다...\n"
 
 #: apt-pkg/cdrom.cc:678
 #, fuzzy, c-format
+#| msgid ""
+#| "Found %u package indexes, %u source indexes, %u translation indexes and %"
+#| "u signatures\n"
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
@@ -2860,28 +2868,6 @@ msgstr "%s 파일을 열 수 없습니다"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "연결이 너무 빨리 끊어졌습니다"
-
-#, fuzzy
-#~ msgid "Line %d too long (max %d)"
-#~ msgstr "%d번 줄이 너무 깁니다 (최대 %u)"
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc1)"
-#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewFileDesc1)"
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc2)"
-#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewFileDesc1)"
-
-#, fuzzy
-#~ msgid "Stored label: %s \n"
-#~ msgstr "저장된 레이블: %s \n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Found %i package indexes, %i source indexes, %i translation indexes and %"
-#~ "i signatures\n"
-#~ msgstr "꾸러미 색인 %u개, 소스 색인 %u개, 번역 색인 %u개, 서명 %u개 발견\n"
 
 #~ msgid "openpty failed\n"
 #~ msgstr "openpty가 실패했습니다\n"
