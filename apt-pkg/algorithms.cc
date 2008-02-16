@@ -1356,7 +1356,7 @@ bool ListUpdate(pkgAcquireStatus &Stat,
    // Keep "APT::Get::List-Cleanup" name for compatibility, but
    // this is really a global option for the APT library now
    if (!TransientNetworkFailure && !Failed &&
-       (_config->FindB("APT::Get::List-Cleanup",true) == true ||
+       (_config->FindB("APT::Get::List-Cleanup",true) == true &&
 	_config->FindB("APT::List-Cleanup",true) == true))
    {
       if (Fetcher.Clean(_config->FindDir("Dir::State::lists")) == false ||
