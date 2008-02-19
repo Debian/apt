@@ -46,7 +46,7 @@
    the APT tool group, for the Get tool. options do not inherit from their 
    parent groups.</para> 
 
-   <para>Syntacticly the configuration language is modeled after what the ISC tools
+   <para>Syntactically the configuration language is modeled after what the ISC tools
    such as bind and dhcp use.  Lines starting with
    <literal>//</literal> are treated as comments (ignored).
    Each line is of the form
@@ -214,7 +214,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      configuration file. This entry specifies the commands to send to tell 
      the proxy server what to connect to. Please see 
      &configureindex; for an example of 
-     how to do this. The subsitution variables available are 
+     how to do this. The substitution variables available are 
      <literal>$(PROXY_USER)</literal> <literal>$(PROXY_PASS)</literal> <literal>$(SITE_USER)</literal>
      <literal>$(SITE_PASS)</literal> <literal>$(SITE)</literal> and <literal>$(SITE_PORT)</literal>
      Each is taken from it's respective URI component.</para>
@@ -235,7 +235,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      not recommended to use FTP over HTTP due to its low efficiency.</para>
 
      <para>The setting <literal>ForceExtended</literal> controls the use of RFC2428 
-     <literal>EPSV</literal> and <literal>EPRT</literal> commands. The defaut is false, which means
+     <literal>EPSV</literal> and <literal>EPRT</literal> commands. The default is false, which means
      these commands are only used if the control connection is IPv6. Setting this
      to true forces their use even on IPv4 connections. Note that most FTP servers
      do not support RFC2428.</para></listitem>
@@ -276,7 +276,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <literal>pkgcache</literal> as well as the location to place downloaded archives, 
    <literal>Dir::Cache::archives</literal>. Generation of caches can be turned off
    by setting their names to be blank. This will slow down startup but
-   save disk space. It is probably prefered to turn off the pkgcache rather
+   save disk space. It is probably preferred to turn off the pkgcache rather
    than the srcpkgcache. Like <literal>Dir::State</literal> the default
    directory is contained in <literal>Dir::Cache</literal></para>
 
