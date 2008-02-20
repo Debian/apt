@@ -179,6 +179,16 @@ if ! apt-get check -q -q 2>/dev/null; then
     exit 1
 fi
 
+# set the proxy based on the admin users gconf settings
+admin_user=$(getent group admin|cut -d: -f4|cut -d, -f1)
+if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ]; then
+	use=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/use_http_proxy)
+	host=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/host)
+	port=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/port)
+	if [ "$use" = "true" ] && [ -n "$host" ] && [ -n "$port" ]; then
+		export http_proxy="http://$host:$port/"
+	fi
+fi
 
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
