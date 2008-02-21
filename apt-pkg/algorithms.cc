@@ -1371,7 +1371,11 @@ bool ListUpdate(pkgAcquireStatus &Stat,
       return _error->Error(_("Some index files failed to download, they have been ignored, or old ones used instead."));
 
 
-   // Run the scripts if all was fine
+   // Run the success scripts if all was fine
+   if(!TransientNetworkFailure && !Failed)
+      RunScripts("APT::Update::Post-Invoke-Success");
+
+   // Run the other scripts
    RunScripts("APT::Update::Post-Invoke");
    return true;
 }
