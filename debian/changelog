@@ -1,10 +1,28 @@
 apt (0.7.12) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
+  * cmdline/apt-key:
+    - add support for a master-keyring that contains signing keys
+      that can be used to sign the archive signing keys. This should
+      make key-rollover easier.
+  * apt-pkg/deb/dpkgpm.cc:
+    - merged patch from Kees Cook to fix anoying upper-case display
+      on amd64 in sbuild
+  * apt-pkg/algorithms.cc: 
+    - add APT::Update::Post-Invoke-Success script slot
+    - Make the breaks handling use the kill list. This means, that a
+      Breaks: Pkg (<< version) may put Pkg onto the remove list.
+  * apt-pkg/deb/debmetaindex.cc:
+    - add missing "Release" file uri when apt-get update --print-uris
+      is run
+  * methods/connect.cc:
+    - remember hosts with Resolve failures or connect Timeouts
+
   [ Christian Perrier ]
   * Fix typos in manpages. Thanks to Daniel Leidert for the fixes
     Closes: #444922
 
- -- Christian Perrier <bubulle@debian.org>  Tue, 19 Feb 2008 20:34:02 +0100
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jan 2008 12:06:12 +0100
 
 apt (0.7.11) unstable; urgency=critical
   
