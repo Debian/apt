@@ -1,5 +1,6 @@
 # German messages for the apt suite.
 # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
+# Jens Seidel <jensseidel@users.sf.net>, 2008.
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003, 2004, 2006.
 # Rüdiger Kuhlmann <Uebersetzung@ruediger-kuhlmann.de>, 2002.
 #
@@ -7,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.6.46.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-12 16:56+0100\n"
-"PO-Revision-Date: 2006-10-24 11:45+0200\n"
-"Last-Translator: Michael Piefel <piefel@debian.org>\n"
+"POT-Creation-Date: 2008-01-12 17:00+0100\n"
+"PO-Revision-Date: 2008-02-21 12:38+0100\n"
+"Last-Translator: Jens Seidel <jensseidel@users.sf.net>\n"
 "Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,7 +19,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:143
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Paket %s Version %s hat eine nichterfüllte Abhängigkeit:\n"
+msgstr "Paket %s Version %s hat eine nicht erfüllte Abhängigkeit:\n"
 
 #: cmdline/apt-cache.cc:183 cmdline/apt-cache.cc:552 cmdline/apt-cache.cc:640
 #: cmdline/apt-cache.cc:796 cmdline/apt-cache.cc:1018
@@ -56,9 +57,8 @@ msgid "Total distinct versions: "
 msgstr "Gesamtzahl an unterschiedlichen Versionen: "
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total Distinct Descriptions: "
-msgstr "Gesamtzahl an unterschiedlichen Versionen: "
+msgstr "Gesamtzahl an unterschiedlichen Beschreibungen: "
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -69,9 +69,8 @@ msgid "Total ver/file relations: "
 msgstr "Gesamtzahl an Version/Datei-Beziehungen: "
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "Gesamtzahl an Version/Datei-Beziehungen: "
+msgstr "Gesamtzahl an Beschreibung/Datei-Beziehungen: "
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
@@ -159,9 +158,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2601 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s für %s %s kompiliert am %s %s\n"
+msgstr "%s %s für %s kompiliert am %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -706,7 +705,7 @@ msgstr "soll aber nicht installiert werden"
 
 #: cmdline/apt-get.cc:350
 msgid " or"
-msgstr " oder "
+msgstr " oder"
 
 #: cmdline/apt-get.cc:379
 msgid "The following NEW packages will be installed:"
@@ -856,14 +855,15 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Es müssen %sB Archive geholt werden.\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Nach dem Auspacken werden %sB Plattenplatz zusätzlich benutzt.\n"
+msgstr "Nach dieser Operation werden %sB Plattenplatz zusätzlich benutzt.\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Nach dem Auspacken werden %sB Plattenplatz freigegeben worden sein.\n"
+msgstr ""
+"Nach dieser Operation werden %sB Plattenplatz freigegeben worden sein.\n"
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2196
 #, c-format
@@ -1029,24 +1029,28 @@ msgstr ""
 
 #: cmdline/apt-get.cc:1441
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
+msgstr "Wir sollen nichts löschen, kann AutoRemover nicht starten"
 
 #: cmdline/apt-get.cc:1473
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "Die folgenden NEUEN Pakete werden installiert:"
+msgstr ""
+"Die folgenden Pakete wurden automatisch installiert und werden nicht länger "
+"benötigt:"
 
 #: cmdline/apt-get.cc:1475
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "Verwenden Sie „apt-get autoremove“, um sie zu entfernen."
 
 #: cmdline/apt-get.cc:1480
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"Hmm, es sieht so aus, als ob der AutoRemover etwas zerstört hat, was\n"
+"wirklich nicht geschehen sollte. Bitte erstellen Sie einen Fehlerbericht\n"
+"gegen apt."
 
 #: cmdline/apt-get.cc:1483 cmdline/apt-get.cc:1763
 msgid "The following information may help to resolve the situation:"
@@ -1054,18 +1058,17 @@ msgstr ""
 "Die folgenden Informationen helfen Ihnen vielleicht, die Situation zu lösen:"
 
 #: cmdline/apt-get.cc:1487
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Interner Fehler, der Problem-Löser hat was kaputt gemacht"
+msgstr "Interner Fehler, AutoRemover hat was kaputt gemacht"
 
 #: cmdline/apt-get.cc:1506
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Interner Fehler, AllUpgrade hat was kaputt gemacht"
 
 #: cmdline/apt-get.cc:1553
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "Konnte Paket %s nicht finden"
+msgstr "Konnte Task %s nicht finden"
 
 #: cmdline/apt-get.cc:1668 cmdline/apt-get.cc:1704
 #, c-format
@@ -1078,9 +1081,9 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Achtung, wähle %s für reg. Ausdruck „%s“\n"
 
 #: cmdline/apt-get.cc:1722
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
-msgstr "aber %s soll installiert werden"
+msgstr "%s wurde als manuell installiert festgelegt.\n"
 
 #: cmdline/apt-get.cc:1735
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1273,7 +1276,6 @@ msgid "Supported modules:"
 msgstr "Unterstützte Module:"
 
 #: cmdline/apt-get.cc:2647
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1330,6 +1332,8 @@ msgstr ""
 "   install      – neue Pakete installieren (pkg ist libc6 und nicht libc6."
 "deb)\n"
 "   remove       – Pakete entfernen\n"
+"   autoremove   – alle nicht mehr verwendeten Pakete automatisch entfernen\n"
+"   purge        – entferne Pakete restlos\n"
 "   source       – Quellarchive herunterladen\n"
 "   build-dep    – die Build-Abhängigkeiten für Quellpakete konfigurieren\n"
 "   dist-upgrade – „Distribution upgrade“, siehe apt-get(8)\n"
@@ -1352,7 +1356,7 @@ msgstr ""
 "  -b   ein Quellpaket nach dem Herunterladen übersetzen\n"
 "  -V   ausführliche Versionsnummern anzeigen\n"
 "  -c=? Diese Konfigurationsdatei benutzen\n"
-"  -o=? Beliebige Konfigurationsoptionen setzen, z. B. -o dir::cache=/tmp\n"
+"  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
 "Siehe auch die Handbuch-Seiten apt-get(8), sources.list(5) und apt.conf(5) "
 "für\n"
 "weitergehende Informationen und Optionen.\n"
@@ -1706,9 +1710,10 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Dies ist kein gültiges DEB-Archiv, da es „%s“ nicht enthält"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "Dies ist kein gültiges DEB-Archiv, da es weder „%s“ noch „%s“ enthält"
+msgstr ""
+"Dies ist kein gültiges DEB-Archiv, da es weder „%s“, „%s“ noch „%s“ enthält"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2133,9 +2138,9 @@ msgid "Opening configuration file %s"
 msgstr "Öffne Konfigurationsdatei %s"
 
 #: apt-pkg/contrib/configuration.cc:515
-#, fuzzy, c-format
+#, c-format
 msgid "Line %d too long (max %lu)"
-msgstr "Zeile %d zu lang (maximal %d)"
+msgstr "Zeile %d zu lang (maximal %lu)"
 
 #: apt-pkg/contrib/configuration.cc:611
 #, c-format
@@ -2367,7 +2372,7 @@ msgstr "Veraltet"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Stört"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2402,19 +2407,18 @@ msgid "Dependency generation"
 msgstr "Abhängigkeits-Generierung"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "Führe Information zur Verfügbarkeit zusammen"
+msgstr "Lese Status-Informationen ein"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "Konnte %s nicht öffnen"
+msgstr "Konnte Statusdatei %s nicht öffnen"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "Konnte Datei %s nicht schreiben"
+msgstr "Konnte temporäre Statusdatei %s nicht schreiben"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2610,9 +2614,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Ein Fehler trat beim Bearbeiten von %s auf (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Ein Fehler trat beim Bearbeiten von %s auf (NewFileVer1)"
+msgstr "Ein Fehler trat beim Bearbeiten von %s auf (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2640,9 +2644,9 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Ein Fehler trat beim Bearbeiten von %s auf (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Ein Fehler trat beim Bearbeiten von %s auf (NewFileVer1)"
+msgstr "Ein Fehler trat beim Bearbeiten von %s auf (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2656,11 +2660,10 @@ msgstr ""
 "kann."
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr ""
-"Toll, Sie haben die Anzahl an Versionen überschritten, die APT handhaben "
-"kann."
+"Toll, Sie haben die Anzahl an Beschreibungen überschritten, die APT "
+"handhaben kann."
 
 #: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2707,9 +2710,8 @@ msgid "MD5Sum mismatch"
 msgstr "MD5-Summe stimmt nicht"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr "MD5-Summe stimmt nicht"
+msgstr "Hash-Summe stimmt nicht"
 
 #: apt-pkg/acquire-item.cc:1100
 msgid "There is no public key available for the following key IDs:\n"
@@ -2766,12 +2768,11 @@ msgstr "Identifiziere... "
 #: apt-pkg/cdrom.cc:563
 #, c-format
 msgid "Stored label: %s\n"
-msgstr "Gespeicherte Kennzeichnung: %s \n"
+msgstr "Gespeicherte Kennzeichnung: %s\n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "Hänge CD-ROM aus..."
+msgstr "Hänge CD-ROM aus...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2796,16 +2797,18 @@ msgid "Scanning disc for index files..\n"
 msgstr "Suche auf CD nach Index-Dateien...\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
-msgstr "Fand %i Paketindexe, %i Quellenindexe und %i Signaturen\n"
+msgstr ""
+"Fand %zu Paketindizes, %zu Quellindizes, %zu Übersetzungsindizes und %zu "
+"Signaturen\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "Gespeicherte Kennzeichnung: %s \n"
+msgstr "Fand Kennzeichnung „%s“\n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2855,9 +2858,9 @@ msgstr ""
 "geschrieben.\n"
 
 #: apt-pkg/deb/dpkgpm.cc:513
-#, fuzzy, c-format
+#, c-format
 msgid "Directory '%s' missing"
-msgstr "Listenverzeichnis %spartial fehlt."
+msgstr "Verzeichnis „%s“ fehlt"
 
 #: apt-pkg/deb/dpkgpm.cc:596
 #, c-format
@@ -2880,9 +2883,9 @@ msgid "Configuring %s"
 msgstr "Konfiguriere %s"
 
 #: apt-pkg/deb/dpkgpm.cc:605 apt-pkg/deb/dpkgpm.cc:606
-#, fuzzy, c-format
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "Fehler beim Verarbeiten von Verzeichnis %s"
+msgstr "Verarbeite Auslöser für %s"
 
 #: apt-pkg/deb/dpkgpm.cc:608
 #, c-format
@@ -2918,11 +2921,12 @@ msgstr "%s komplett entfernt"
 #: apt-pkg/deb/dpkgpm.cc:775
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
+"Kann Protokoll nicht schreiben, openpty() schlug fehl (/dev/pts nicht "
+"eingehangen?)\n"
 
 #: methods/rred.cc:219
-#, fuzzy
 msgid "Could not patch file"
-msgstr "Konnte Datei %s nicht öffnen"
+msgstr "Konnte Datei nicht patchen"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
