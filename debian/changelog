@@ -1,13 +1,5 @@
-apt (0.7.11) UNRELEASED; urgency=low
+apt (0.7.12) UNRELEASED; urgency=low
 
-  [ Colin Watson ]
-  * apt-pkg/algorithms.cc:
-    - Since APT::Get::List-Cleanup and APT::List-Cleanup both default to
-      true, the effect of the compatibility code was to require both of them
-      to be set to false in order to disable list cleanup; this broke the
-      installer. Instead, disable list cleanup if either of them is set to
-      false.
-  
   [ Michael Vogt ]
   * cmdline/apt-key:
     - add support for a master-keyring that contains signing keys
@@ -26,7 +18,32 @@ apt (0.7.11) UNRELEASED; urgency=low
   * methods/connect.cc:
     - remember hosts with Resolve failures or connect Timeouts
 
+  [ Christian Perrier ]
+  * Fix typos in manpages. Thanks to Daniel Leidert for the fixes
+    Closes: #444922
+
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Jan 2008 12:06:12 +0100
+
+apt (0.7.11) unstable; urgency=critical
+  
+  [ Raise urgency to critical since it fixes a critical but for Debian
+    Installer Lenny Beta1 release ]
+
+  [ Program translations ]
+    - Vietnamese updated. Closes: #460825
+    - Basque updated. Closes: #461166
+    - Galician updated. Closes: #461468
+    - Portuguese updated. Closes: #464575
+    - Korean updated. Closes: #448430
+    - Simplified Chinese updated. Closes: #465866
+
+  [ Otavio Salvador ]
+  * Applied patch from Robert Millan <rmh@aybabtu.com> to fix the error
+    message when gpgv isn't installed, closes: #452640.
+  * Fix regression about APT::Get::List-Cleanup setting being ignored,
+    closes: #466052.
+
+ -- Otavio Salvador <otavio@debian.org>  Thu, 17 Jan 2008 22:36:46 -0200
 
 apt (0.7.10) unstable; urgency=low
 
@@ -53,12 +70,18 @@ apt (0.7.10) unstable; urgency=low
     closes: #438136.
   * Fix cron.daily job to not call fail if apt isn't installed, closes:
     #443286.
+  * Fix compilation warnings in apt-pkg/cdrom.cc and
+    apt-pkg/contrib/configuration.cc.
+  * Fix typo in debian/copyright file ("licened" instead of "licensed"),
+    closes: #458966.
 
   [ Program translations ]
     - Basque updated. Closes: #453088
-    - Vietnamese updated. Closes: #453774
+    - Vietnamese updated. Closes: #453774, #459013
     - Japanese updated. Closes: #456909
+    - Simplified Chinese updated. Closes: #458039
     - French updated.
+    - Norwegian Bokmål updated. Closes: #457917
 
   [ Michael Vogt ]
   * debian/rules
@@ -95,7 +118,7 @@ apt (0.7.10) unstable; urgency=low
       relative to the directory stored in RootDir, closes: #456457.
 
   [ Christian Perrier ]
-  * Fix wording for "After unpacking...". Thans to Michael Gilbert
+  * Fix wording for "After unpacking...". Thanks to Michael Gilbert
     for the patch. Closes: #260825
 
  -- Michael Vogt <mvo@debian.org>  Mon, 07 Jan 2008 21:40:47 +0100
