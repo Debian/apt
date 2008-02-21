@@ -1506,7 +1506,7 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
       buf[end-start] = 0x0;
       if (regexec(&Pattern,buf,0,0,0) != 0)
 	 continue;
-      res &= TryToInstall(Pkg,Cache,Fix,Remove,true,ExpectedInst);
+      res &= TryToInstall(Pkg,Cache,Fix,Remove,false,ExpectedInst);
       found = true;
    }
    
