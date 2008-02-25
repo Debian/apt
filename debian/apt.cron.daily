@@ -147,6 +147,25 @@ check_size_constraints()
     fi
 }
 
+# sleep for a random intervall of time (default 30min)
+# (some code taken from cron-apt, thanks)
+random_sleep()
+{
+    RandomSleep=1800
+    eval $(apt-config shell RandomSleep APT::Periodic::RandomSleep)
+    if [ $RandomSleep -eq 0 ]; then
+	return
+    fi
+    if [ -z "$RANDOM" ] ; then
+        # A fix for shells that do not have this bash feature.
+	RANDOM=$(dd if=/dev/urandom count=1 2> /dev/null | cksum | cut -c"1-5")
+    fi
+    TIME=$(($RANDOM % $RandomSleep))
+    sleep $TIME
+}
+
+# main
+
 if ! which apt-config >/dev/null; then
 	exit 0
 fi
@@ -179,6 +198,13 @@ if ! apt-get check -q -q 2>/dev/null; then
     exit 1
 fi
 
+# sleep random amount of time
+random_sleep
+
+# check again if we can access the cache
+if ! apt-get check -q -q 2>/dev/null; then
+    exit 1
+fi
 
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
