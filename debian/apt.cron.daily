@@ -200,7 +200,7 @@ fi
 
 # set the proxy based on the admin users gconf settings
 admin_user=$(getent group admin|cut -d: -f4|cut -d, -f1)
-if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ]; then
+if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ] && [ -x /usr/bin/gconftool ]; then
 	use=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/use_http_proxy)
 	host=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/host)
 	port=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/port)
