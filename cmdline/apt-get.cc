@@ -1506,10 +1506,13 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
       buf[end-start] = 0x0;
       if (regexec(&Pattern,buf,0,0,0) != 0)
 	 continue;
-      res &= TryToInstall(Pkg,Cache,Fix,Remove,false,ExpectedInst);
+      res &= TryToInstall(Pkg,Cache,Fix,Remove,true,ExpectedInst);
       found = true;
    }
    
+   // now let the problem resolver deal with any issues
+   Fix.Resolve(true);
+
    if(!found)
       _error->Error(_("Couldn't find task %s"),taskname);
 
