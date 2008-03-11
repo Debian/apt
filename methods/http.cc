@@ -367,8 +367,8 @@ bool ServerState::Close()
 									/*}}}*/
 // ServerState::RunHeaders - Get the headers before the data		/*{{{*/
 // ---------------------------------------------------------------------
-/* Returns 0 if things are OK, 1 if an IO error occursed and 2 if a header
-   parse error occured */
+/* Returns 0 if things are OK, 1 if an IO error occurred and 2 if a header
+   parse error occurred */
 int ServerState::RunHeaders()
 {
    State = Header;
