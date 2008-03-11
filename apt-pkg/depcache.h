@@ -92,7 +92,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *  \param rootFunc A callback that can be used to add extra
     *  packages to the root set.
     *
-    *  \return \b false if an error occured.
+    *  \return \b false if an error occurred.
     */
    bool MarkRequired(InRootSetFunc &rootFunc);
 
@@ -103,7 +103,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *  are tested to see whether they are actually garbage.  If so,
     *  they are marked as such.
     *
-    *  \return \b false if an error occured.
+    *  \return \b false if an error occurred.
     */
    bool Sweep();
 
