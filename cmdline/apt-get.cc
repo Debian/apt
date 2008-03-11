@@ -2635,7 +2635,7 @@ bool ShowHelp(CommandLine &CmdL)
       "  -d  Download only - do NOT install or unpack archives\n"
       "  -s  No-act. Perform ordering simulation\n"
       "  -y  Assume Yes to all queries and do not prompt\n"
-      "  -f  Attempt to continue if the integrity check fails\n"
+      "  -f  Attempt to correct a system with broken dependencies in place\n"
       "  -m  Attempt to continue if archives are unlocatable\n"
       "  -u  Show a list of upgraded packages as well\n"
       "  -b  Build the source package after fetching it\n"
