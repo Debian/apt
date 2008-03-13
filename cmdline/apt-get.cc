@@ -1495,19 +1495,24 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
    
    bool found = false;
    bool res = true;
-   for (Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+
+   // two runs, first ignore dependencies, second install any missing
+   for(int IgnoreBroken=1; IgnoreBroken >= 0; IgnoreBroken--)
    {
-      pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
-      if(ver.end())
-	 continue;
-      pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
-      parser.GetRec(start,end);
-      strncpy(buf, start, end-start);
-      buf[end-start] = 0x0;
-      if (regexec(&Pattern,buf,0,0,0) != 0)
-	 continue;
-      res &= TryToInstall(Pkg,Cache,Fix,Remove,true,ExpectedInst);
-      found = true;
+      for (Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+      {
+	 pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
+	 if(ver.end())
+	    continue;
+	 pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
+	 parser.GetRec(start,end);
+	 strncpy(buf, start, end-start);
+	 buf[end-start] = 0x0;
+	 if (regexec(&Pattern,buf,0,0,0) != 0)
+	    continue;
+	 res &= TryToInstall(Pkg,Cache,Fix,Remove,IgnoreBroken,ExpectedInst);
+	 found = true;
+      }
    }
    
    // now let the problem resolver deal with any issues
