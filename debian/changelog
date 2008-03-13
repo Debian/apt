@@ -1,3 +1,14 @@
+apt (0.7.9ubuntu15) hardy; urgency=low
+
+  * cmdline/apt-get.cc:
+    - do two passes when installing tasks, first ignoring dependencies,
+      then resolving them and run the problemResolver at the end
+      so that it can correct any missing dependencies. This should
+      fix livecd building for kubuntu (thanks to Jonathan Riddell 
+      for reporting the problem)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 13 Mar 2008 23:25:45 +0100
+
 apt (0.7.9ubuntu14) hardy; urgency=low
 
   * cmdline/apt-get.cc:
