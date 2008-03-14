@@ -17,6 +17,16 @@ apt (0.7.12) UNRELEASED; urgency=low
       is run
   * methods/connect.cc:
     - remember hosts with Resolve failures or connect Timeouts
+  * cmdline/apt-get.cc:
+    - fix incorrect help output for -f (LP: #57487)
+    - do two passes when installing tasks, first ignoring dependencies,
+      then resolving them and run the problemResolver at the end
+      so that it can correct any missing dependencies
+  * debian/apt.cron.daily:
+    - sleep random amount of time (default within 0-30min) before
+      starting the upate to hit the mirrors less hard
+  * doc/apt_preferences.5.xml:
+    - fix typo
 
   [ Christian Perrier ]
   * Fix typos in manpages. Thanks to Daniel Leidert for the fixes

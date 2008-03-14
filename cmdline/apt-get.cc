@@ -1495,21 +1495,29 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
    
    bool found = false;
    bool res = true;
-   for (Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+
+   // two runs, first ignore dependencies, second install any missing
+   for(int IgnoreBroken=1; IgnoreBroken >= 0; IgnoreBroken--)
    {
-      pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
-      if(ver.end())
-	 continue;
-      pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
-      parser.GetRec(start,end);
-      strncpy(buf, start, end-start);
-      buf[end-start] = 0x0;
-      if (regexec(&Pattern,buf,0,0,0) != 0)
-	 continue;
-      res &= TryToInstall(Pkg,Cache,Fix,Remove,false,ExpectedInst);
-      found = true;
+      for (Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+      {
+	 pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
+	 if(ver.end())
+	    continue;
+	 pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
+	 parser.GetRec(start,end);
+	 strncpy(buf, start, end-start);
+	 buf[end-start] = 0x0;
+	 if (regexec(&Pattern,buf,0,0,0) != 0)
+	    continue;
+	 res &= TryToInstall(Pkg,Cache,Fix,Remove,IgnoreBroken,ExpectedInst);
+	 found = true;
+      }
    }
    
+   // now let the problem resolver deal with any issues
+   Fix.Resolve(true);
+
    if(!found)
       _error->Error(_("Couldn't find task %s"),taskname);
 
@@ -2635,7 +2643,7 @@ bool ShowHelp(CommandLine &CmdL)
       "  -d  Download only - do NOT install or unpack archives\n"
       "  -s  No-act. Perform ordering simulation\n"
       "  -y  Assume Yes to all queries and do not prompt\n"
-      "  -f  Attempt to continue if the integrity check fails\n"
+      "  -f  Attempt to correct a system with broken dependencies in place\n"
       "  -m  Attempt to continue if archives are unlocatable\n"
       "  -u  Show a list of upgraded packages as well\n"
       "  -b  Build the source package after fetching it\n"
