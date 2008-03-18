@@ -895,24 +895,41 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       if (IsImportantDep(Start) == false)
 	 continue;
       
-      /* check if any ImportantDep() (but not Critial) where added
-       * since we installed the package
+      /* Check if any ImportantDep() (but not Critical) were added
+       * since we installed the package.  Also check for deps that
+       * were satisfied in the past: for instance, if a version
+       * restriction in a Recommends was tightened, upgrading the
+       * package should follow that Recommends rather than causing the
+       * dependency to be removed. (bug #470115)
        */
       bool isNewImportantDep = false;
+      bool isPreviouslySatisfiedImportantDep = false;
       if(!ForceImportantDeps && !Start.IsCritical())
       {
 	 bool found=false;
 	 VerIterator instVer = Pkg.CurrentVer();
 	 if(!instVer.end())
 	 {
-	    for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
-	    {
+	   for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
+	     {
 	       //FIXME: deal better with or-groups(?)
 	       DepIterator LocalStart = D;
 	       
 	       if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
-		  found=true;
-	    }
+		 {
+		   if(!isPreviouslySatisfiedImportantDep)
+		     {
+		       DepIterator D2 = D;
+		       while((D2->CompareOp & Dep::Or) != 0)
+			 ++D2;
+
+		       isPreviouslySatisfiedImportantDep =
+			 (((*this)[D2] & DepGNow) != 0);
+		     }
+
+		   found=true;
+		 }
+	     }
 	    // this is a new dep if it was not found to be already
 	    // a important dep of the installed pacakge
 	    isNewImportantDep = !found;
@@ -922,10 +939,15 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
 	    std::clog << "new important dependency: " 
 		      << Start.TargetPkg().Name() << std::endl;
+      if(isPreviouslySatisfiedImportantDep)
+	if(_config->FindB("Debug::pkgDepCache::AutoInstall", false) == true)
+	  std::clog << "previously satisfied important dependency on "
+		    << Start.TargetPkg().Name() << std::endl;
 
       // skip important deps if the package is already installed
       if (Pkg->CurrentVer != 0 && Start.IsCritical() == false 
-	  && !isNewImportantDep && !ForceImportantDeps)
+	  && !isNewImportantDep && !isPreviouslySatisfiedImportantDep
+	  && !ForceImportantDeps)
 	 continue;
       
       /* If we are in an or group locate the first or that can 
