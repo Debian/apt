@@ -512,7 +512,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
       CurLine++;
       // This should be made to work instead, but this is better than looping
       if (F.fail() && !F.eof())
-         return _error->Error(_("Line %d too long (max %lu)"), CurLine, sizeof(Buffer));
+         return _error->Error(_("%s: Line %d too long (max %lu)"),
+			      FName.c_str(), CurLine, sizeof(Buffer));
 
       _strtabexpand(Buffer,sizeof(Buffer));
       _strstrip(Buffer);
