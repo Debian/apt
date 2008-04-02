@@ -635,11 +635,6 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
       for (std::string::const_iterator I = Start;
 	   I != End; ++I)
       {
-	 if(Start > End)
-	   {
-	     _error->Error("Why is Start > End?");
-	   }
-
 	 if (*I == '"')
 	    InQuote = !InQuote;
 	 
