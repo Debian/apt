@@ -641,15 +641,15 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	 if (InQuote == false && (*I == '{' || *I == ';' || *I == '}'))
 	 {
 	    // Put the last fragment into the buffer
-	    std::string::const_iterator FirstNonWhitespace = Start;
-	    std::string::const_iterator LastNonWhitespace = I;
-	    for (; FirstNonWhitespace != I && isspace(*FirstNonWhitespace) != 0; FirstNonWhitespace++)
+	    std::string::const_iterator NonWhitespaceStart = Start;
+	    std::string::const_iterator NonWhitespaceStop = I;
+	    for (; NonWhitespaceStart != I && isspace(*NonWhitespaceStart) != 0; NonWhitespaceStart++)
 	      ;
-	    for (; LastNonWhitespace != FirstNonWhitespace && isspace(LastNonWhitespace[-1]) != 0; LastNonWhitespace--)
+	    for (; NonWhitespaceStop != NonWhitespaceStart && isspace(NonWhitespaceStop[-1]) != 0; NonWhitespaceStop--)
 	      ;
-	    if (LineBuffer.empty() == false && LastNonWhitespace - FirstNonWhitespace != 0)
+	    if (LineBuffer.empty() == false && NonWhitespaceStop - NonWhitespaceStart != 0)
 	       LineBuffer += ' ';
-	    LineBuffer += string(FirstNonWhitespace, LastNonWhitespace);
+	    LineBuffer += string(NonWhitespaceStart, NonWhitespaceStop);
 
 	    // Drop this from the input string, saving the character
 	    // that terminated the construct we just closed. (i.e., a
