@@ -511,6 +511,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
       std::string Input;
       // The input line with comments stripped.
       std::string Fragment;
+
+      // Grab the next line of F and place it in Input.
       do
 	{
 	  char *Buffer = new char[1024];
@@ -522,9 +524,9 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	}
       while (F.fail() && !F.eof());
 
+      // Expand tabs in the input line and remove leading and trailing
+      // whitespace.
       {
-	// Allocate enough space to expand an entire line of tabs
-	// below.
 	const int BufferSize = Input.size() * 8 + 1;
 	char *Buffer = new char[BufferSize];
 	try
@@ -543,6 +545,9 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	delete[] Buffer;
       }
       CurLine++;
+
+      // Now strip comments; if the whole line is contained in a
+      // comment, skip this line.
 
       // The first meaningful character in the current fragment; will
       // be adjusted below as we remove bytes from the front.
@@ -623,8 +628,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
       if (Fragment.empty())
 	 continue;
       
-      // We now have a valid line fragment.  Walk down it and
-      // interpret it.
+      // The line has actual content; interpret what it means.
       InQuote = false;
       Start = Fragment.begin();
       End = Fragment.end();
