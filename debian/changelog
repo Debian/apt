@@ -43,6 +43,18 @@ apt (0.7.12) UNRELEASED; urgency=low
     - Swedish updated.
     - Polish updated. Closes: #469581
     - Slovak updated. Closes: #471341
+  
+  [ Daniel Burrows ]
+  * apt-pkg/depcache.cc:
+    - Patch MarkInstall to follow currently satisfied Recommends even
+      if they aren't "new", so that we automatically force upgrades
+      when the version of a Recommends has been tightened.  (Closes: #470115)
+  * apt-pkg/contrib/configuration.cc
+    - Lift the 1024-byte limit on lines in configuration files.
+      (Closes: #473710, #473874)
+  * apt-pkg/contrib/strutl.cc:
+    - Lift the 64000-byte limit on individual messages parsed by ReadMessages.
+      (Closes: #474065)
 
  -- Michael Vogt <mvo@debian.org>  Thu, 10 Jan 2008 12:06:12 +0100
 
