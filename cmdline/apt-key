@@ -29,9 +29,8 @@ add_keys_with_verify_against_master_keyring() {
 
     # when adding new keys, make sure that the archive-master-keyring
     # is honored. so:
-    #   all keys that are exported and have the name
-    #   "Ubuntu Archive Automatic Signing Key" must have a valid signature
-    #   from a key in the ubuntu-master-keyring
+    #   all keys that are exported must have a valid signature
+    #   from a key in the $distro-master-keyring
     add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
     master_keys=`$GPG_CMD --keyring $MASTER --with-colons --list-keys | grep ^pub | cut -d: -f5`
     for add_key in $add_keys; do
@@ -81,13 +80,14 @@ update() {
 	exit 1
     fi
 
-    # add new keys, if no MASTER_KEYRING is used, use the traditional
-    # way
-    if [ -z "$MASTER_KEYRING" ]; then
-	$GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
-    else
-	add_keys_with_verify_against_master_keyring $ARCHIVE_KEYRING $MASTER_KEYRING
-    fi
+    # add new keys from the package;
+
+    # we do not use add_keys_with_verify_against_master_keyring here,
+    # because we "update" is run on regular package updates.  A
+    # attacker might as well replace the master-archive-keyring file
+    # in the package and add his own keys. so this check wouldn't
+    # add any security. we *need* this check on net-update though
+    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
 
     # remove no-longer supported/used keys
     keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5`
