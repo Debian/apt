@@ -896,7 +896,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    {
       Item::Failed(Message,Cnf);
       // move the sigfile back on transient network failures 
-      if(FileExists(DestFile))
+      if(FileExists(LastGoodSig))
  	 Rename(LastGoodSig,Final);
 
       // set the status back to , Item::Failed likes to reset it
