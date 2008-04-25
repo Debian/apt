@@ -244,7 +244,7 @@ bool DumpPackage(CommandLine &CmdL)
 bool Stats(CommandLine &Cmd)
 {
    pkgCache &Cache = *GCache;
-   cout << _("Total package names : ") << Cache.Head().PackageCount << " (" <<
+   cout << _("Total package names: ") << Cache.Head().PackageCount << " (" <<
       SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
 
    int Normal = 0;
@@ -292,7 +292,7 @@ bool Stats(CommandLine &Cmd)
    
    cout << _("Total distinct versions: ") << Cache.Head().VersionCount << " (" <<
       SizeToStr(Cache.Head().VersionCount*Cache.Head().VersionSz) << ')' << endl;
-   cout << _("Total Distinct Descriptions: ") << Cache.Head().DescriptionCount << " (" <<
+   cout << _("Total distinct descriptions: ") << Cache.Head().DescriptionCount << " (" <<
       SizeToStr(Cache.Head().DescriptionCount*Cache.Head().DescriptionSz) << ')' << endl;
    cout << _("Total dependencies: ") << Cache.Head().DependsCount << " (" << 
       SizeToStr(Cache.Head().DependsCount*Cache.Head().DependencySz) << ')' << endl;

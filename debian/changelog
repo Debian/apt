@@ -31,8 +31,35 @@ apt (0.7.12) UNRELEASED; urgency=low
   [ Christian Perrier ]
   * Fix typos in manpages. Thanks to Daniel Leidert for the fixes
     Closes: #444922
+  * Fix syntax/copitalisation in some messages. Thanks to Jens Seidel
+    for pointing this and providing the patch.
+    Closes: #466845
+  * Fix Polish offline translation. Thanks to Robert Luberda for the patch
+    and apologies for applying it very lately. Closes: #337758
+  * Fix typo in offline.sgml. Closes: #412900
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Jan 2008 12:06:12 +0100
+  [ Program translations ]
+    - German updated. Closes: #466842
+    - Swedish updated.
+    - Polish updated. Closes: #469581
+    - Slovak updated. Closes: #471341
+    - French updated.
+    - Bulgarian updated. Closes: #448492
+    - Galician updated. Closes: #476839
+  
+  [ Daniel Burrows ]
+  * apt-pkg/depcache.cc:
+    - Patch MarkInstall to follow currently satisfied Recommends even
+      if they aren't "new", so that we automatically force upgrades
+      when the version of a Recommends has been tightened.  (Closes: #470115)
+  * apt-pkg/contrib/configuration.cc
+    - Lift the 1024-byte limit on lines in configuration files.
+      (Closes: #473710, #473874)
+  * apt-pkg/contrib/strutl.cc:
+    - Lift the 64000-byte limit on individual messages parsed by ReadMessages.
+      (Closes: #474065)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jan 2008 12:06:12 +0100
 
 apt (0.7.11) unstable; urgency=critical
   
