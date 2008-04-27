@@ -1305,7 +1305,7 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
       {
 	 // the package is installed (and set to keep)
 	 if(PkgState[p->ID].Keep() && !p.CurrentVer().end())
-	    MarkPackage(p, p.CurrentVer(),
+ 	    MarkPackage(p, p.CurrentVer(),
 			follow_recommends, follow_suggests);
 	 // the package is to be installed 
 	 else if(PkgState[p->ID].Install())
@@ -1356,7 +1356,18 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
    if(state.Marked)
       return;
 
-   //std::cout << "Setting Marked for: " << pkg.Name() << std::endl;
+   if(_config->FindB("Debug::pkgAutoRemove",false))
+     {
+       std::clog << "Marking: " << pkg.Name();
+       if(!ver.end())
+	 std::clog << " " << ver.VerStr();
+       if(!currver.end())
+	 std::clog << ", Curr=" << currver.VerStr();
+       if(!instver.end())
+	 std::clog << ", Inst=" << instver.VerStr();
+       std::clog << std::endl;
+     }
+
    state.Marked=true;
 
    if(!ver.end())
@@ -1376,6 +1387,19 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	   {
 	      if(_system->VS->CheckDep(V.VerStr(), d->CompareOp, d.TargetVer()))
 	      {
+		if(_config->FindB("Debug::pkgAutoRemove",false))
+		  {
+		    std::clog << "Following dep: " << d.ParentPkg().Name()
+			      << " " << d.ParentVer().VerStr() << " "
+			      << d.DepType() << " "
+			      << d.TargetPkg().Name();
+		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
+		      {
+			std::clog << " (" << d.CompType() << " "
+				  << d.TargetVer() << ")";
+		      }
+		    std::clog << std::endl;
+		  }
 		 MarkPackage(V.ParentPkg(), V, 
 			     follow_recommends, follow_suggests);
 	      }
@@ -1387,6 +1411,23 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	      if(_system->VS->CheckDep(prv.ProvideVersion(), d->CompareOp, 
 				       d.TargetVer()))
 	      {
+		if(_config->FindB("Debug::pkgAutoRemove",false))
+		  {
+		    std::clog << "Following dep: " << d.ParentPkg().Name()
+			      << " " << d.ParentVer().VerStr() << " "
+			      << d.DepType() << " "
+			      << d.TargetPkg().Name();
+		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
+		      {
+			std::clog << " (" << d.CompType() << " "
+				  << d.TargetVer() << ")";
+		      }
+		    std::clog << ", provided by "
+			      << prv.OwnerPkg().Name() << " "
+			      << prv.OwnerVer().VerStr()
+			      << std::endl;
+		  }
+
 		 MarkPackage(prv.OwnerPkg(), prv.OwnerVer(),
 			     follow_recommends, follow_suggests);
 	      }
