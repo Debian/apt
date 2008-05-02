@@ -1374,8 +1374,9 @@ bool DoUpdate(CommandLine &CmdL)
 
    // do the work
    CacheFile Cache;
-   bool res = ListUpdate(Stat, List);
-     
+   if (_config->FindB("APT::Get::Download",true) == true)
+       ListUpdate(Stat, List);
+
    // Rebuild the cache.   
    if (Cache.BuildCaches() == false)
       return false;
