@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-05-02 13:59-0300\n"
-"PO-Revision-Date: 2008-02-15 21:01+0800\n"
+"PO-Revision-Date: 2008-04-18 21:53+0800\n"
 "Last-Translator: Deng Xiyue <manphiz-guest@users.alioth.debian.org>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "未发现软件包 %s"
 
 #: cmdline/apt-cache.cc:247
 msgid "Total package names: "
-msgstr "软件包总数(按名称计)："
+msgstr "软件包名称总数："
 
 #: cmdline/apt-cache.cc:287
 msgid "  Normal packages: "
@@ -58,7 +58,7 @@ msgstr "按版本共计："
 
 #: cmdline/apt-cache.cc:295
 msgid "Total distinct descriptions: "
-msgstr "按说明共计："
+msgstr "按不同的说明共计："
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -1228,7 +1228,6 @@ msgid "Supported modules:"
 msgstr "被支持模块："
 
 #: cmdline/apt-get.cc:2617
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1288,7 +1287,7 @@ msgstr ""
 "   source - 下载源码包文件\n"
 "   build-dep - 为源码包配置所需的构建依赖关系\n"
 "   dist-upgrade - 发布版升级，见 apt-get(8)\n"
-"   dselect-upgrade - 根据 dselect的选择来进行升级\n"
+"   dselect-upgrade - 根据 dselect 的选择来进行升级\n"
 "   clean - 删除所有已下载的包文件\n"
 "   autoclean - 删除老版本的已下载的包文件\n"
 "   check - 核对以确认系统的依赖关系的完整性\n"
@@ -1299,8 +1298,8 @@ msgstr ""
 "  -qq 除了错误外，什么都不输出\n"
 "  -d  仅仅下载 - 【不】安装或解开包文件\n"
 "  -s  不作实际操作。只是依次模拟执行命令\n"
-"  -y  对所有询问都作肯定的回答，同时不作任何提示\n"
-"  -f  当没有通过完整性测试时，程序仍试图继续执行\n"
+"  -y  对所有询问都回答是(Yes)，同时不作任何提示\n"
+"  -f  当出现破损的依赖关系时，程序将试图修正系统\n"
 "  -m  当有包文件无法找到时，程序仍试图继续执行\n"
 "  -u  显示已升级的软件包列表\n"
 "  -b  在下载完源码包后，编译生成相应的软件包\n"
@@ -2455,12 +2454,12 @@ msgstr "找不到“%spartial”这个目录。"
 #: apt-pkg/acquire.cc:827
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "正在下载 %li 个文件中的第 %li 个(还有 %s 个)"
+msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
 
 #: apt-pkg/acquire.cc:829
 #, c-format
 msgid "Retrieving file %li of %li"
-msgstr "正在下载 %2$li 个文件中的 %1$li 个"
+msgstr "正在下载第 %li 个文件，共 %li 个"
 
 #: apt-pkg/acquire-worker.cc:110
 #, c-format
