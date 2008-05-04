@@ -1,14 +1,14 @@
 # Thai translation of apt.
-# Copyright (C) 2007 Free Software Foundation, Inc.
+# Copyright (C) 2007-2008 Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
-# Theppiak Karoonboonyanan <thep@linux.thai.net>, 2007.
+# Theppiak Karoonboonyanan <thep@linux.thai.net>, 2007-2008.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2007-09-17 16:07+0700\n"
+"PO-Revision-Date: 2008-05-04 15:53+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@linux.thai.net>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -157,7 +157,7 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2571 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s สำหรับ %s คอมไพล์เมื่อ %s %s\n"
 
@@ -275,7 +275,8 @@ msgstr ""
 "   dump - แสดงค่าตั้ง\n"
 "\n"
 "ตัวเลือก:\n"
-"  -h   ข้อความช่วยเหลือนี้  -c=? อ่านแฟ้มค่าตั้งนี้\n"
+"  -h   ข้อความช่วยเหลือนี้\n"
+"  -c=? อ่านแฟ้มค่าตั้งที่กำหนด\n"
 "  -o=? กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
 #: cmdline/apt-extracttemplates.cc:98
@@ -830,14 +831,14 @@ msgid "Need to get %sB of archives.\n"
 msgstr "ต้องดาวน์โหลดแพกเกจ %sB\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "หลังจากแตกแพกเกจแล้ว ต้องใช้เนื้อที่บนดิสก์อีก %s\n"
+msgstr "หลังจากการกระทำนี้ ต้องใช้เนื้อที่บนดิสก์อีก %sB\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "หลังจากแตกแพกเกจแล้ว เนื้อที่บนดิสก์จะว่างเพิ่มอีก %s\n"
+msgstr "หลังจากการกระทำนี้ เนื้อที่บนดิสก์จะว่างเพิ่มอีก %sB\n"
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2166
 #, c-format
@@ -1039,7 +1040,7 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "หมายเหตุ: จะเลือก %s สำหรับนิพจน์เรกิวลาร์ '%s'\n"
 
 #: cmdline/apt-get.cc:1692
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
 msgstr "กำหนด %s ให้เป็นการติดตั้งแบบเลือกเองแล้ว\n"
 
@@ -1223,7 +1224,6 @@ msgid "Supported modules:"
 msgstr "มอดูลที่รองรับ:"
 
 #: cmdline/apt-get.cc:2617
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1278,6 +1278,7 @@ msgstr ""
 "   upgrade - ปรับรุ่นแพกเกจต่างๆ ขึ้น\n"
 "   install - ติดตั้งแพกเกจใหม่ (pkg อยู่ในรูปเช่น libc6 ไม่ใช่ libc6.deb)\n"
 "   remove - ถอดถอนแพกเกจ\n"
+"   autoremove - ถอดถอนแพกเกจที่ไม่ใช้แล้วโดยอัตโนมัติ\n"
 "   purge - ถอดถอนแพกเกจพร้อมลบค่าตั้งทั้งหมด\n"
 "   source - ดาวน์โหลดซอร์สโค้ดของแพกเกจ\n"
 "   build-dep - ติดตั้งสิ่งที่จำเป็นสำหรับการ build ของแพกเกจซอร์สโค้ด\n"
@@ -1294,7 +1295,7 @@ msgstr ""
 "  -d  ดาวน์โหลดอย่างเดียว - *ไม่ต้อง* ติดตั้งหรือแตกแพกเกจ\n"
 "  -s  ไม่ต้องทำจริง เพียงจำลองลำดับการทำงานเท่านั้น\n"
 "  -y  ตอบ Yes สำหรับทุกคำถามโดยไม่ต้องถาม\n"
-"  -f  พยายามดำเนินการต่อถ้าพบความผิดปกติของฐานข้อมูลแพกเกจ\n"
+"  -f  พยายามแก้ไขระบบในกรณีที่มีปัญหาความขึ้นต่อกันระหว่างแพกเกจ\n"
 "  -m  พยายามดำเนินการต่อถ้าหาแฟ้มแพกเกจไม่พบ\n"
 "  -u  แสดงรายชื่อของแพกเกจที่จะปรับรุ่นทั้งหมดด้วย\n"
 "  -b  build แพกเกจซอร์สหลังจากดาวน์โหลดมาแล้วด้วย\n"
@@ -1381,7 +1382,7 @@ msgstr "กด enter เพื่อดำเนินการต่อ"
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
+msgstr "คุณต้องการจะลบแฟ้ม .deb ต่างๆ ที่ดาวน์โหลดมาด้วยหรือไม่?"
 
 #: dselect/install:101
 msgid "Some errors occurred while unpacking. I'm going to configure the"
@@ -1648,9 +1649,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "แฟ้มนี้ไม่ใช่แพกเกจ DEB ที่ใช้การได้ ขาดสมาชิก '%s'"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "แฟ้มนี้ไม่ใช่แพกเกจ DEB ที่ใช้การได้ ขาดสมาชิก '%s', '%s' หรือ '%s'"
+msgstr "แฟ้มนี้ไม่ใช่แพกเกจ DEB ที่ใช้การได้ ขาดข้อมูล '%s', '%s' หรือ '%s'"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2694,13 +2695,13 @@ msgid "Scanning disc for index files..\n"
 msgstr "กำลังสำรวจข้อมูลในแผ่นเพื่อหาแฟ้มดัชนี...\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
 msgstr ""
-"พบดัชนีแพกเกจ %i รายการ, ดัชนีซอร์ส %i รายการ, ดัชนีคำแปล %i รายการ และลายเซ็น %i "
-"รายการ\n"
+"พบดัชนีแพกเกจ %zu รายการ, ดัชนีซอร์ส %zu รายการ, ดัชนีคำแปล %zu รายการ และลายเซ็น %"
+"zu รายการ\n"
 
 #: apt-pkg/cdrom.cc:715
 #, c-format
@@ -2778,9 +2779,9 @@ msgid "Configuring %s"
 msgstr "กำลังตั้งค่า %s"
 
 #: apt-pkg/deb/dpkgpm.cc:544 apt-pkg/deb/dpkgpm.cc:545
-#, fuzzy, c-format
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "เกิดข้อผิดพลาดขณะประมวลผลไดเรกทอรี %s"
+msgstr "กำลังประมวลผลการสะกิดสำหรับ %s"
 
 #: apt-pkg/deb/dpkgpm.cc:547
 #, c-format
@@ -2816,6 +2817,8 @@ msgstr "ถอดถอน %s อย่างสมบูรณ์แล้ว"
 #: apt-pkg/deb/dpkgpm.cc:716
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
+"ไม่สามารถเขียนบันทึกปฏิบัติการ เนื่องจาก openpty() ล้มเหลว (ไม่ได้เมานท์ /dev/pts "
+"หรือเปล่า?)\n"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
