@@ -35,7 +35,7 @@ bool pkgInitConfig(Configuration &Cnf)
    // General APT things
    Cnf.Set("APT::Architecture", COMMON_ARCH);
    Cnf.Set("APT::Build-Essential::", "build-essential");
-   Cnf.Set("APT::Install-Recommends", false);
+   Cnf.Set("APT::Install-Recommends", true);
    Cnf.Set("APT::Install-Suggests", false);
    Cnf.Set("Dir","/");
    

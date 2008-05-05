@@ -1,7 +1,15 @@
 apt (0.7.14ubuntu1) intrepid; urgency=low
 
   [ Michael Vogt ]
-  * merged from debian/sid
+  * enable installation of recommends by default
+  * debian/apt.conf.ubuntu:
+    - remove APT::Install-Recommends-Sections (no longer needed)
+  * merged from debian/sid, remaining changes:
+    - authentication-reliable branch (to be merged into debian soon)
+    - mirror:// uri branch (breaks ABI in debian, not merged yet)
+    - apport failure reporting
+    - show warning on apt-get source with 'Vcs-' header
+    - proxy detection from gconf in apt.cron
   
   [ Christian Perrier ]
   * Mark a message from dselect backend as translatable
