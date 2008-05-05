@@ -1374,8 +1374,9 @@ bool DoUpdate(CommandLine &CmdL)
 
    // do the work
    CacheFile Cache;
-   bool res = ListUpdate(Stat, List);
-     
+   if (_config->FindB("APT::Get::Download",true) == true)
+       ListUpdate(Stat, List);
+
    // Rebuild the cache.   
    if (Cache.BuildCaches() == false)
       return false;
@@ -2653,7 +2654,7 @@ bool ShowHelp(CommandLine &CmdL)
       "   upgrade - Perform an upgrade\n"
       "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
       "   remove - Remove packages\n"
-      "   autoremove - Remove all automatic unused packages\n"
+      "   autoremove - Remove automatically all unused packages\n"
       "   purge - Remove and purge packages\n"
       "   source - Download source archives\n"
       "   build-dep - Configure build-dependencies for source packages\n"

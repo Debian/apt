@@ -1,3 +1,212 @@
+apt (0.7.14ubuntu1) intrepid; urgency=low
+
+  [ Michael Vogt ]
+  * merged from debian/sid
+  
+  [ Christian Perrier ]
+  * Mark a message from dselect backend as translatable
+    Thanks to Frédéric Bothamy for the patch
+    Closes: #322470
+
+  [ Program translations ]
+  * Simplified Chinese updated. Closes: #473360
+  * Catalan fixes. Closes: #387141
+  * Typo fix in Greek translation. Closes: #479122
+  * French updated.
+  * Thai updated. Closes: #479313
+  * Italian updated. Closes: #479326
+  * Polish updated. Closes: #479342
+  * Bulgarian updated. Closes: #479379
+  * Finnish updated. Closes: #479403
+  * Korean updated. Closes: #479426
+  * Basque updated. Closes: #479452
+
+ -- Christian Perrier <bubulle@debian.org>  Sun, 04 May 2008 08:31:06 +0200
+
+apt (0.7.13) unstable; urgency=low
+
+  [ Otavio Salvador ]
+  * Add missing build-depends back from build-depends-indep field.
+    Closes: #478231
+  * Make cron script quiet if cache is locked. Thanks to Ted Percival
+    <ted@midg3t.net> for the patch. Closes: #459344
+  * Add timeout support for https. Thanks to Andrew Martens
+    <andrew.martens@strangeloopnetworks.com> for the patch.
+
+  [ Goswin von Brederlow ]
+  * Add support for --no-download on apt-get update. Closes: #478517
+  
+  [ Program translations ]
+    - Vietnamese updated. Closes: #479008
+    
+ -- Otavio Salvador <otavio@debian.org>  Fri, 02 May 2008 14:46:00 -0300
+
+apt (0.7.12) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * cmdline/apt-key:
+    - add support for a master-keyring that contains signing keys
+      that can be used to sign the archive signing keys. This should
+      make key-rollover easier.
+  * apt-pkg/deb/dpkgpm.cc:
+    - merged patch from Kees Cook to fix anoying upper-case display
+      on amd64 in sbuild
+  * apt-pkg/algorithms.cc:
+    - add APT::Update::Post-Invoke-Success script slot
+    - Make the breaks handling use the kill list. This means, that a
+      Breaks: Pkg (<< version) may put Pkg onto the remove list.
+  * apt-pkg/deb/debmetaindex.cc:
+    - add missing "Release" file uri when apt-get update --print-uris
+      is run
+  * methods/connect.cc:
+    - remember hosts with Resolve failures or connect Timeouts
+  * cmdline/apt-get.cc:
+    - fix incorrect help output for -f (LP: #57487)
+    - do two passes when installing tasks, first ignoring dependencies,
+      then resolving them and run the problemResolver at the end
+      so that it can correct any missing dependencies
+  * debian/apt.cron.daily:
+    - sleep random amount of time (default within 0-30min) before
+      starting the upate to hit the mirrors less hard
+  * doc/apt_preferences.5.xml:
+    - fix typo
+  * added debian/README.source
+
+  [ Christian Perrier ]
+  * Fix typos in manpages. Thanks to Daniel Leidert for the fixes
+    Closes: #444922
+  * Fix syntax/copitalisation in some messages. Thanks to Jens Seidel
+    for pointing this and providing the patch.
+    Closes: #466845
+  * Fix Polish offline translation. Thanks to Robert Luberda for the patch
+    and apologies for applying it very lately. Closes: #337758
+  * Fix typo in offline.sgml. Closes: #412900
+
+  [ Program translations ]
+    - German updated. Closes: #466842
+    - Swedish updated.
+    - Polish updated. Closes: #469581
+    - Slovak updated. Closes: #471341
+    - French updated.
+    - Bulgarian updated. Closes: #448492
+    - Galician updated. Closes: #476839
+
+  [ Daniel Burrows ]
+  * apt-pkg/depcache.cc:
+    - Patch MarkInstall to follow currently satisfied Recommends even
+      if they aren't "new", so that we automatically force upgrades
+      when the version of a Recommends has been tightened.  (Closes: #470115)
+    - Enable more complete debugging information when Debug::pkgAutoRemove
+      is set.
+  * apt-pkg/contrib/configuration.cc
+    - Lift the 1024-byte limit on lines in configuration files.
+      (Closes: #473710, #473874)
+  * apt-pkg/contrib/strutl.cc:
+    - Lift the 64000-byte limit on individual messages parsed by ReadMessages.
+      (Closes: #474065)
+  * debian/rules:
+    - Add missing Build-Depends-Indep on xsltproc, docbook-xsl, and xmlto.
+
+ -- Daniel Burrows <dburrows@debian.org>  Sat, 26 Apr 2008 12:24:35 -0700
+  
+apt (0.7.11) unstable; urgency=critical
+  
+  [ Raise urgency to critical since it fixes a critical but for Debian
+    Installer Lenny Beta1 release ]
+
+  [ Program translations ]
+    - Vietnamese updated. Closes: #460825
+    - Basque updated. Closes: #461166
+    - Galician updated. Closes: #461468
+    - Portuguese updated. Closes: #464575
+    - Korean updated. Closes: #448430
+    - Simplified Chinese updated. Closes: #465866
+
+  [ Otavio Salvador ]
+  * Applied patch from Robert Millan <rmh@aybabtu.com> to fix the error
+    message when gpgv isn't installed, closes: #452640.
+  * Fix regression about APT::Get::List-Cleanup setting being ignored,
+    closes: #466052.
+
+ -- Otavio Salvador <otavio@debian.org>  Thu, 17 Jan 2008 22:36:46 -0200
+
+apt (0.7.10) unstable; urgency=low
+
+  [ Otavio Salvador ]
+  * Applied patch from Mike O'Connor <stew@vireo.org> to add a manpage to
+    apt-mark, closes: #430207.
+  * Applied patch from Andrei Popescu <andreimpopescu@gmail.com> to add a
+    note about some frontends in apt.8 manpage, closes: #438545.
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to avoid CPU
+    getting crazy when /dev/null is redirected to stdin (which breaks
+    buildds), closes: #452858.
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix building
+    with newest dpkg-shlibdeps changing the packaging building order and a
+    patch from Robert Millan <rmh@aybabtu.com> to fix parallel building,
+    closes: #452862.
+  * Applied patch from Alexander Winston <alexander.winston@comcast.net>
+    to use 'min' as symbol for minute, closes: #219034.
+  * Applied patch from Amos Waterland <apw@us.ibm.com> to allow apt to
+    work properly in initramfs, closes: #448316.
+  * Applied patch from Robert Millan <rmh@aybabtu.com> to make apt-key and
+    apt-get to ignore time conflicts, closes: #451328.
+  * Applied patch from Peter Eisentraut <peter_e@gmx.net> to fix a
+    grammatical error ("manual installed" -> "manually installed"),
+    closes: #438136.
+  * Fix cron.daily job to not call fail if apt isn't installed, closes:
+    #443286.
+  * Fix compilation warnings in apt-pkg/cdrom.cc and
+    apt-pkg/contrib/configuration.cc.
+  * Fix typo in debian/copyright file ("licened" instead of "licensed"),
+    closes: #458966.
+
+  [ Program translations ]
+    - Basque updated. Closes: #453088
+    - Vietnamese updated. Closes: #453774, #459013
+    - Japanese updated. Closes: #456909
+    - Simplified Chinese updated. Closes: #458039
+    - French updated.
+    - Norwegian Bokmål updated. Closes: #457917
+  [ Michael Vogt ]
+  * debian/rules
+    - fix https install location
+  * debian/apt.conf.daily:
+    - print warning if the cache can not be locked (closes: #454561),
+      thanks to Bastian Kleineidam
+  * methods/gpgv.cc:
+    - remove cruft code that caused timestamp/I-M-S issues
+  * ftparchive/contents.cc:
+    - fix error output
+  * apt-pkg/acquire-item.{cc,h}:
+    - make the authentication download code more robust against
+      servers/proxies with broken If-Range implementations
+  * apt-pkg/packagemanager.{cc,h}:
+    - propergate the Immediate flag to make hitting the
+      "E: Internal Error, Could not perform immediate configuration (2)"
+      harder
+  * debian/control:
+    - build against libdb-dev (instead of libdb4.4-dev)
+  * merged the apt--DoListUpdate branch, this provides a common interface
+    for "apt-get update" like operations for the frontends and also provides
+    hooks to run stuff in APT::Update::{Pre,Post}-Invoke
+
+  [ Chris Cheney ]
+  * ftparchive/contents.cc:
+    - support lzma data members
+  * ftparchive/multicompress.cc:
+    - support lzma output
+
+  [ Daniel Burrows ]
+  * apt-pkg/contrib/configuration.cc:
+    - if RootDir is set, then FindFile and FindDir will return paths
+      relative to the directory stored in RootDir, closes: #456457.
+
+  [ Christian Perrier ]
+  * Fix wording for "After unpacking...". Thanks to Michael Gilbert
+    for the patch. Closes: #260825
+  
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 03 Jan 2008 11:31:45 +0100
+
 apt (0.7.9ubuntu17) hardy-proposed; urgency=low
 
   * apt-pkg/acquire-item.cc:
@@ -201,9 +410,9 @@ apt (0.7.9ubuntu2) hardy; urgency=low
       thanks to Bastian Kleineidam
   * debian/control:
     - build against libdb-dev (instead of libdb4.4-dev)
-  
+
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 03 Jan 2008 11:31:45 +0100
-  
+
 apt (0.7.9ubuntu1) hardy; urgency=low
 
   * merged from http://bzr.debian.org/apt/apt/debian-sid/, remaining

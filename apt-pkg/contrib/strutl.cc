@@ -658,11 +658,24 @@ string TimeRFC1123(time_t Date)
 // ---------------------------------------------------------------------
 /* This pulls full messages from the input FD into the message buffer. 
    It assumes that messages will not pause during transit so no
-   fancy buffering is used. */
+   fancy buffering is used.
+
+   In particular: this reads blocks from the input until it believes
+   that it's run out of input text.  Each block is terminated by a
+   double newline ('\n' followed by '\n').  As noted below, there is a
+   bug in this code: it assumes that all the blocks have been read if
+   it doesn't see additional text in the buffer after the last one is
+   parsed, which will cause it to lose blocks if the last block
+   coincides with the end of the buffer.
+ */
 bool ReadMessages(int Fd, vector<string> &List)
 {
    char Buffer[64000];
    char *End = Buffer;
+   // Represents any left-over from the previous iteration of the
+   // parse loop.  (i.e., if a message is split across the end
+   // of the buffer, it goes here)
+   string PartialMessage;
    
    while (1)
    {
@@ -690,6 +703,7 @@ bool ReadMessages(int Fd, vector<string> &List)
 	 
 	 // Pull the message out
 	 string Message(Buffer,I-Buffer);
+	 PartialMessage += Message;
 
 	 // Fix up the buffer
 	 for (; I < End && *I == '\n'; I++);
@@ -697,10 +711,32 @@ bool ReadMessages(int Fd, vector<string> &List)
 	 memmove(Buffer,I,End-Buffer);
 	 I = Buffer;
 	 
-	 List.push_back(Message);
+	 List.push_back(PartialMessage);
+	 PartialMessage.clear();
       }
-      if (End == Buffer)
-	 return true;
+      if (End != Buffer)
+	{
+	  // If there's text left in the buffer, store it
+	  // in PartialMessage and throw the rest of the buffer
+	  // away.  This allows us to handle messages that
+	  // are longer than the static buffer size.
+	  PartialMessage += string(Buffer, End);
+	  End = Buffer;
+	}
+      else
+	{
+	  // BUG ALERT: if a message block happens to end at a
+	  // multiple of 64000 characters, this will cause it to
+	  // terminate early, leading to a badly formed block and
+	  // probably crashing the method.  However, this is the only
+	  // way we have to find the end of the message block.  I have
+	  // an idea of how to fix this, but it will require changes
+	  // to the protocol (essentially to mark the beginning and
+	  // end of the block).
+	  //
+	  //  -- dburrows 2008-04-02
+	  return true;
+	}
 
       if (WaitFd(Fd) == false)
 	 return false;

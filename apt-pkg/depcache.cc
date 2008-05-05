@@ -895,24 +895,41 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       if (IsImportantDep(Start) == false)
 	 continue;
       
-      /* check if any ImportantDep() (but not Critial) where added
-       * since we installed the package
+      /* Check if any ImportantDep() (but not Critical) were added
+       * since we installed the package.  Also check for deps that
+       * were satisfied in the past: for instance, if a version
+       * restriction in a Recommends was tightened, upgrading the
+       * package should follow that Recommends rather than causing the
+       * dependency to be removed. (bug #470115)
        */
       bool isNewImportantDep = false;
+      bool isPreviouslySatisfiedImportantDep = false;
       if(!ForceImportantDeps && !Start.IsCritical())
       {
 	 bool found=false;
 	 VerIterator instVer = Pkg.CurrentVer();
 	 if(!instVer.end())
 	 {
-	    for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
-	    {
+	   for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
+	     {
 	       //FIXME: deal better with or-groups(?)
 	       DepIterator LocalStart = D;
 	       
 	       if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
-		  found=true;
-	    }
+		 {
+		   if(!isPreviouslySatisfiedImportantDep)
+		     {
+		       DepIterator D2 = D;
+		       while((D2->CompareOp & Dep::Or) != 0)
+			 ++D2;
+
+		       isPreviouslySatisfiedImportantDep =
+			 (((*this)[D2] & DepGNow) != 0);
+		     }
+
+		   found=true;
+		 }
+	     }
 	    // this is a new dep if it was not found to be already
 	    // a important dep of the installed pacakge
 	    isNewImportantDep = !found;
@@ -922,10 +939,15 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
 	    std::clog << "new important dependency: " 
 		      << Start.TargetPkg().Name() << std::endl;
+      if(isPreviouslySatisfiedImportantDep)
+	if(_config->FindB("Debug::pkgDepCache::AutoInstall", false) == true)
+	  std::clog << "previously satisfied important dependency on "
+		    << Start.TargetPkg().Name() << std::endl;
 
       // skip important deps if the package is already installed
       if (Pkg->CurrentVer != 0 && Start.IsCritical() == false 
-	  && !isNewImportantDep && !ForceImportantDeps)
+	  && !isNewImportantDep && !isPreviouslySatisfiedImportantDep
+	  && !ForceImportantDeps)
 	 continue;
       
       /* If we are in an or group locate the first or that can 
@@ -1283,7 +1305,7 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
       {
 	 // the package is installed (and set to keep)
 	 if(PkgState[p->ID].Keep() && !p.CurrentVer().end())
-	    MarkPackage(p, p.CurrentVer(),
+ 	    MarkPackage(p, p.CurrentVer(),
 			follow_recommends, follow_suggests);
 	 // the package is to be installed 
 	 else if(PkgState[p->ID].Install())
@@ -1334,7 +1356,18 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
    if(state.Marked)
       return;
 
-   //std::cout << "Setting Marked for: " << pkg.Name() << std::endl;
+   if(_config->FindB("Debug::pkgAutoRemove",false))
+     {
+       std::clog << "Marking: " << pkg.Name();
+       if(!ver.end())
+	 std::clog << " " << ver.VerStr();
+       if(!currver.end())
+	 std::clog << ", Curr=" << currver.VerStr();
+       if(!instver.end())
+	 std::clog << ", Inst=" << instver.VerStr();
+       std::clog << std::endl;
+     }
+
    state.Marked=true;
 
    if(!ver.end())
@@ -1354,6 +1387,19 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	   {
 	      if(_system->VS->CheckDep(V.VerStr(), d->CompareOp, d.TargetVer()))
 	      {
+		if(_config->FindB("Debug::pkgAutoRemove",false))
+		  {
+		    std::clog << "Following dep: " << d.ParentPkg().Name()
+			      << " " << d.ParentVer().VerStr() << " "
+			      << d.DepType() << " "
+			      << d.TargetPkg().Name();
+		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
+		      {
+			std::clog << " (" << d.CompType() << " "
+				  << d.TargetVer() << ")";
+		      }
+		    std::clog << std::endl;
+		  }
 		 MarkPackage(V.ParentPkg(), V, 
 			     follow_recommends, follow_suggests);
 	      }
@@ -1365,6 +1411,23 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	      if(_system->VS->CheckDep(prv.ProvideVersion(), d->CompareOp, 
 				       d.TargetVer()))
 	      {
+		if(_config->FindB("Debug::pkgAutoRemove",false))
+		  {
+		    std::clog << "Following dep: " << d.ParentPkg().Name()
+			      << " " << d.ParentVer().VerStr() << " "
+			      << d.DepType() << " "
+			      << d.TargetPkg().Name();
+		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
+		      {
+			std::clog << " (" << d.CompType() << " "
+				  << d.TargetVer() << ")";
+		      }
+		    std::clog << ", provided by "
+			      << prv.OwnerPkg().Name() << " "
+			      << prv.OwnerVer().VerStr()
+			      << std::endl;
+		  }
+
 		 MarkPackage(prv.OwnerPkg(), prv.OwnerVer(),
 			     follow_recommends, follow_suggests);
 	      }

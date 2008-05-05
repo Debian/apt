@@ -495,8 +495,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
    ifstream F(FName.c_str(),ios::in); 
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
-   
-   char Buffer[1024];
+
    string LineBuffer;
    string Stack[100];
    unsigned int StackPos = 0;
@@ -508,23 +507,63 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
    bool InComment = false;
    while (F.eof() == false)
    {
-      F.getline(Buffer,sizeof(Buffer));
-      CurLine++;
-      // This should be made to work instead, but this is better than looping
-      if (F.fail() && !F.eof())
-         return _error->Error(_("Line %d too long (max %u)"), CurLine, sizeof(Buffer));
+      // The raw input line.
+      std::string Input;
+      // The input line with comments stripped.
+      std::string Fragment;
 
-      _strtabexpand(Buffer,sizeof(Buffer));
-      _strstrip(Buffer);
+      // Grab the next line of F and place it in Input.
+      do
+	{
+	  char *Buffer = new char[1024];
+
+	  F.clear();
+	  F.getline(Buffer,sizeof(Buffer) / 2);
+
+	  Input += Buffer;
+	}
+      while (F.fail() && !F.eof());
+
+      // Expand tabs in the input line and remove leading and trailing
+      // whitespace.
+      {
+	const int BufferSize = Input.size() * 8 + 1;
+	char *Buffer = new char[BufferSize];
+	try
+	  {
+	    memcpy(Buffer, Input.c_str(), Input.size() + 1);
+
+	    _strtabexpand(Buffer, BufferSize);
+	    _strstrip(Buffer);
+	    Input = Buffer;
+	  }
+	catch(...)
+	  {
+	    delete[] Buffer;
+	    throw;
+	  }
+	delete[] Buffer;
+      }
+      CurLine++;
+
+      // Now strip comments; if the whole line is contained in a
+      // comment, skip this line.
+
+      // The first meaningful character in the current fragment; will
+      // be adjusted below as we remove bytes from the front.
+      std::string::const_iterator Start = Input.begin();
+      // The last meaningful character in the current fragment.
+      std::string::const_iterator End = Input.end();
 
       // Multi line comment
       if (InComment == true)
       {
-	 for (const char *I = Buffer; *I != 0; I++)
+	for (std::string::const_iterator I = Start;
+	     I != End; ++I)
 	 {
-	    if (*I == '*' && I[1] == '/')
+	    if (*I == '*' && I + 1 != End && I[1] == '/')
 	    {
-	       memmove(Buffer,I+2,strlen(I+2) + 1);
+	       Start = I + 2;
 	       InComment = false;
 	       break;
 	    }	    
@@ -535,57 +574,66 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
       
       // Discard single line comments
       bool InQuote = false;
-      for (char *I = Buffer; *I != 0; I++)
+      for (std::string::const_iterator I = Start;
+	   I != End; ++I)
       {
 	 if (*I == '"')
 	    InQuote = !InQuote;
 	 if (InQuote == true)
 	    continue;
 	 
-	 if (*I == '/' && I[1] == '/')
+	 if (*I == '/' && I + 1 != End && I[1] == '/')
          {
-	    *I = 0;
+	    End = I;
 	    break;
 	 }
       }
 
-      // Look for multi line comments
+      // Look for multi line comments and build up the
+      // fragment.
+      Fragment.reserve(End - Start);
       InQuote = false;
-      for (char *I = Buffer; *I != 0; I++)
+      for (std::string::const_iterator I = Start;
+	   I != End; ++I)
       {
 	 if (*I == '"')
 	    InQuote = !InQuote;
 	 if (InQuote == true)
-	    continue;
-	 
-	 if (*I == '/' && I[1] == '*')
+	   Fragment.push_back(*I);
+	 else if (*I == '/' && I + 1 != End && I[1] == '*')
          {
 	    InComment = true;
-	    for (char *J = Buffer; *J != 0; J++)
+	    for (std::string::const_iterator J = I;
+		 J != End; ++J)
 	    {
-	       if (*J == '*' && J[1] == '/')
+	       if (*J == '*' && J + 1 != End && J[1] == '/')
 	       {
-		  memmove(I,J+2,strlen(J+2) + 1);
+		  // Pretend we just finished walking over the
+		  // comment, and don't add anything to the output
+		  // fragment.
+		  I = J + 1;
 		  InComment = false;
 		  break;
 	       }	       
 	    }
 	    
 	    if (InComment == true)
-	    {
-	       *I = 0;
-	       break;
-	    }	    
+	      break;
 	 }
+	 else
+	   Fragment.push_back(*I);
       }
-      
-      // Blank
-      if (Buffer[0] == 0)
+
+      // Skip blank lines.
+      if (Fragment.empty())
 	 continue;
       
-      // We now have a valid line fragment
+      // The line has actual content; interpret what it means.
       InQuote = false;
-      for (char *I = Buffer; *I != 0;)
+      Start = Fragment.begin();
+      End = Fragment.end();
+      for (std::string::const_iterator I = Start;
+	   I != End; ++I)
       {
 	 if (*I == '"')
 	    InQuote = !InQuote;
@@ -593,18 +641,21 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	 if (InQuote == false && (*I == '{' || *I == ';' || *I == '}'))
 	 {
 	    // Put the last fragment into the buffer
-	    char *Start = Buffer;
-	    char *Stop = I;
-	    for (; Start != I && isspace(*Start) != 0; Start++);
-	    for (; Stop != Start && isspace(Stop[-1]) != 0; Stop--);
-	    if (LineBuffer.empty() == false && Stop - Start != 0)
+	    std::string::const_iterator NonWhitespaceStart = Start;
+	    std::string::const_iterator NonWhitespaceStop = I;
+	    for (; NonWhitespaceStart != I && isspace(*NonWhitespaceStart) != 0; NonWhitespaceStart++)
+	      ;
+	    for (; NonWhitespaceStop != NonWhitespaceStart && isspace(NonWhitespaceStop[-1]) != 0; NonWhitespaceStop--)
+	      ;
+	    if (LineBuffer.empty() == false && NonWhitespaceStop - NonWhitespaceStart != 0)
 	       LineBuffer += ' ';
-	    LineBuffer += string(Start,Stop - Start);
-	    
-	    // Remove the fragment
+	    LineBuffer += string(NonWhitespaceStart, NonWhitespaceStop);
+
+	    // Drop this from the input string, saving the character
+	    // that terminated the construct we just closed. (i.e., a
+	    // brace or a semicolon)
 	    char TermChar = *I;
-	    memmove(Buffer,I + 1,strlen(I + 1) + 1);
-	    I = Buffer;
+	    Start = I + 1;
 	    
 	    // Syntax Error
 	    if (TermChar == '{' && LineBuffer.empty() == true)
@@ -726,15 +777,32 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	    }
 	    
 	 }
-	 else
-	    I++;
       }
 
-      // Store the fragment
-      const char *Stripd = _strstrip(Buffer);
-      if (*Stripd != 0 && LineBuffer.empty() == false)
-	 LineBuffer += " ";
-      LineBuffer += Stripd;
+      // Store the remaining text, if any, in the current line buffer.
+
+      // NB: could change this to use string-based operations; I'm
+      // using strstrip now to ensure backwards compatibility.
+      //   -- dburrows 2008-04-01
+      {
+	char *Buffer = new char[End - Start + 1];
+	try
+	  {
+	    std::copy(Start, End, Buffer);
+	    Buffer[End - Start] = '\0';
+
+	    const char *Stripd = _strstrip(Buffer);
+	    if (*Stripd != 0 && LineBuffer.empty() == false)
+	      LineBuffer += " ";
+	    LineBuffer += Stripd;
+	  }
+	catch(...)
+	  {
+	    delete[] Buffer;
+	    throw;
+	  }
+	delete[] Buffer;
+      }
    }
 
    if (LineBuffer.empty() == false)

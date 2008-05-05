@@ -193,8 +193,17 @@ if which on_ac_power >/dev/null; then
 fi
 
 # check if we can lock the cache and if the cache is clean
+# There's a reasonable chance that someone is already running an apt
+# frontend that has locked the cache, so exit quietly if it is locked.
 if ! apt-get check -q -q 2>/dev/null; then
-    echo "$0: could not lock the APT cache"
+    exit 0
+fi
+
+# sleep random amount of time
+random_sleep
+
+# check again if we can access the cache
+if ! apt-get check -q -q 2>/dev/null; then
     exit 1
 fi
 

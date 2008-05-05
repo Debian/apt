@@ -211,7 +211,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    else if (WEXITSTATUS(status) == 111)
    {
-      ioprintf(ret, _("Could not execute '%s' to verify signature (is gnupg installed?)"), gpgvpath.c_str());
+      ioprintf(ret, _("Could not execute '%s' to verify signature (is gpgv installed?)"), gpgvpath.c_str());
       return ret.str();
    }
    else
