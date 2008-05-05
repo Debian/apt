@@ -1,4 +1,44 @@
-apt (0.7.12) UNRELEASED; urgency=low
+apt (0.7.14) UNRELEASED; urgency=low
+
+  [ Christian Perrier ]
+  * Mark a message from dselect backend as translatable
+    Thanks to Frédéric Bothamy for the patch
+    Closes: #322470
+
+  [ Program translations ]
+  * Simplified Chinese updated. Closes: #473360
+  * Catalan fixes. Closes: #387141
+  * Typo fix in Greek translation. Closes: #479122
+  * French updated.
+  * Thai updated. Closes: #479313
+  * Italian updated. Closes: #479326
+  * Polish updated. Closes: #479342
+  * Bulgarian updated. Closes: #479379
+  * Finnish updated. Closes: #479403
+  * Korean updated. Closes: #479426
+  * Basque updated. Closes: #479452
+
+ -- Christian Perrier <bubulle@debian.org>  Sun, 04 May 2008 08:31:06 +0200
+
+apt (0.7.13) unstable; urgency=low
+
+  [ Otavio Salvador ]
+  * Add missing build-depends back from build-depends-indep field.
+    Closes: #478231
+  * Make cron script quiet if cache is locked. Thanks to Ted Percival
+    <ted@midg3t.net> for the patch. Closes: #459344
+  * Add timeout support for https. Thanks to Andrew Martens
+    <andrew.martens@strangeloopnetworks.com> for the patch.
+
+  [ Goswin von Brederlow ]
+  * Add support for --no-download on apt-get update. Closes: #478517
+  
+  [ Program translations ]
+    - Vietnamese updated. Closes: #479008
+    
+ -- Otavio Salvador <otavio@debian.org>  Fri, 02 May 2008 14:46:00 -0300
+
+apt (0.7.12) unstable; urgency=low
 
   [ Michael Vogt ]
   * cmdline/apt-key:
@@ -53,14 +93,18 @@ apt (0.7.12) UNRELEASED; urgency=low
     - Patch MarkInstall to follow currently satisfied Recommends even
       if they aren't "new", so that we automatically force upgrades
       when the version of a Recommends has been tightened.  (Closes: #470115)
+    - Enable more complete debugging information when Debug::pkgAutoRemove
+      is set.
   * apt-pkg/contrib/configuration.cc
     - Lift the 1024-byte limit on lines in configuration files.
       (Closes: #473710, #473874)
   * apt-pkg/contrib/strutl.cc:
     - Lift the 64000-byte limit on individual messages parsed by ReadMessages.
       (Closes: #474065)
+  * debian/rules:
+    - Add missing Build-Depends-Indep on xsltproc, docbook-xsl, and xmlto.
 
- -- Michael Vogt <mvo@debian.org>  Thu, 10 Jan 2008 12:06:12 +0100
+ -- Daniel Burrows <dburrows@debian.org>  Sat, 26 Apr 2008 12:24:35 -0700
 
 apt (0.7.11) unstable; urgency=critical
   

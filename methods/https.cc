@@ -110,7 +110,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    long curl_responsecode;
 
    // TODO:
-   //       - http::Timeout
    //       - http::Pipeline-Depth
    //       - error checking/reporting
    //       - more debug options? (CURLOPT_DEBUGFUNCTION?)
@@ -168,6 +167,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // set header
    curl_easy_setopt(curl, CURLOPT_USERAGENT,"Debian APT-CURL/1.0 ("VERSION")");
+
+   // set timeout
+   int timeout = _config->FindI("Acquire::http::Timeout",120);
+   curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+   curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
 
    // debug
    if(_config->FindB("Debug::Acquire::https", false))

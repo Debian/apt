@@ -88,7 +88,8 @@ if [ $RES -eq 0 ]; then
        ;;
      prompt)
        exec 3>&1
-       if [ `yesno $"Do you want to erase any previously downloaded .deb files?" y` = y ]; then
+       echo -n $"Do you want to erase any previously downloaded .deb files?"
+       if [ `yesno "" y` = y ]; then
           $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
 	    echo $"Press enter to continue." && read RES && exit 0;
        fi
