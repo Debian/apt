@@ -1183,7 +1183,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
       return true;
    else if(Dep->Type == pkgCache::Dep::Recommends) 
    {
-      if ( _config->FindB("APT::Install-Recommends", false))
+      if ( _config->FindB("APT::Install-Recommends", true))
 	 return true;
       // we suport a special mode to only install-recommends for certain
       // sections
