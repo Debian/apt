@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2006-10-21 11:04+0100\n"
+"PO-Revision-Date: 2008-05-11 14:49+0100\n"
 "Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <debian-l10n-hungarian>\n"
 "MIME-Version: 1.0\n"
@@ -162,9 +162,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2571 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s ehhez: %s %s fordítás ideje: %s %s\n"
+msgstr "%s %s erre: %s ekkor fordult: %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -843,14 +843,14 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Letöltés az archívumokból: %sB\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Kicsomagolás után %sB lemezterületet használok fel\n"
+msgstr "E művelet után további %sB lemez-területetet használok fel.\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Kicsomagolás után %sB lemezterület szabadul fel.\n"
+msgstr "E művelet után %sB lemez-terület szabadul fel.\n"
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2166
 #, c-format
@@ -1004,42 +1004,42 @@ msgstr "Nem tudom a listakönyvtárat zárolni"
 
 #: cmdline/apt-get.cc:1403
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
+msgstr "Nincs törölnivaló, az AutoRemover nem indítható"
 
 #: cmdline/apt-get.cc:1435
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "Az alábbi ÚJ csomagok lesznek telepítve:"
+msgstr "Az alábbi csomagok automatikusan települtek, de már nem kellenek:"
 
 #: cmdline/apt-get.cc:1437
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "Töröld az 'apt-get autoremove' paranccsal!"
 
 #: cmdline/apt-get.cc:1442
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"Hm, az AutoRemover hibát okozott, ez nagy gáz!\n"
+"Kérjük, küldj hiba-jegyet az apt csomagra!"
 
 #: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1733
 msgid "The following information may help to resolve the situation:"
 msgstr "Az alábbi információ segíthet megoldani a helyzetet:"
 
 #: cmdline/apt-get.cc:1449
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Belső hiba, hibafeloldó gond"
+msgstr "Belső hiba, az AutoRemover sérült"
 
 #: cmdline/apt-get.cc:1468
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Belső hiba, AllUpgrade megsértett valamit"
 
 #: cmdline/apt-get.cc:1523
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "Az alábbi csomag nem található: %s"
+msgstr "Hiányzó %s feladat"
 
 #: cmdline/apt-get.cc:1638 cmdline/apt-get.cc:1674
 #, c-format
@@ -1052,9 +1052,9 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Megjegyzés: %s kiválasztása %s reguláris kifejezéshez\n"
 
 #: cmdline/apt-get.cc:1692
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
-msgstr "de csak %s telepíthető"
+msgstr "%s kézi telepítésre állított.\n"
 
 #: cmdline/apt-get.cc:1705
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1245,7 +1245,6 @@ msgid "Supported modules:"
 msgstr "Támogatott modulok:"
 
 #: cmdline/apt-get.cc:2617
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1301,6 +1300,8 @@ msgstr ""
 "   upgrade - Végrehajt egy frissítést\n"
 "   install - Új csomagokat telepít (csomag a libc6 és nem a libc6.deb)\n"
 "   remove - Csomagokat távolít el\n"
+"   autoremove - Automatikusan eltávolítja a nem-használt csomagokat\n"
+"   purge - Eltávolít és teljesen töröl csomagokat\n"
 "   source - Forrás archívumokat tölt le\n"
 "   build-dep - Forráscsomagok építési-függőségét konfigurálja\n"
 "   dist-upgrade - Disztribúció frissítés, lásd apt-get(8)\n"
@@ -1320,9 +1321,10 @@ msgstr ""
 "  -m  Próbáld folytatni, akkor is ha egyes archívumok nem találhatók\n"
 "  -u  Mutat egy listát a frissített csomagokról is\n"
 "  -b  Megépíti a forráscsomagot miután letöltötte\n"
+"  -V  Bőbeszédű verzió számok\n"
 "  -c=? Ezt a konfigurációs fájlt olvassa be\n"
 "  -o=? Beállít egy tetszőleges konfigurációs opciót, pl -o dir::cache=/tmp\n"
-"Lásd még az apt-get(8), sources.list(5) és apt.conf(5) kézikönyvlapokat\n"
+"Lásd még az apt-get(8), sources.list(5) és apt.conf(5) kézikönyv-lapokat\n"
 "további információkért és opciókért.\n"
 "                   Ez az APT a SzuperTehén Hatalmával rendelkezik.\n"
 
@@ -1402,7 +1404,7 @@ msgstr "Üss entert a folytatáshoz."
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
+msgstr "Törlöd a korábban letöltött .deb fájlokat?"
 
 #: dselect/install:101
 msgid "Some errors occurred while unpacking. I'm going to configure the"
@@ -1670,9 +1672,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Ez nem egy érvényes DEB archív, hiányzik a '%s' tag"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "Ez nem egy érvényes DEB archív, nincs \"%s\" vagy \"%s\" tagja"
+msgstr "Érvénytelen DEB archívum, nincs '%s', '%s' vagy '%s' tagja"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2313,7 +2315,7 @@ msgstr "Elavulttá teszi"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Töri"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2348,19 +2350,18 @@ msgid "Dependency generation"
 msgstr "Függőség-generálás"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "Elérhető információk egyesítése"
+msgstr "Állapot adatok olvasása"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "%s megnyitása sikertelen"
+msgstr "%s állapot-fájl megnyitása sikertelen"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "%s fájl írása sikertelen"
+msgstr "%s átmeneti állapot-fájl írása sikertelen"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2558,7 +2559,7 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Hiba történt %s feldolgozásakor (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr "Hiba történt %s feldolgozásakor (NewFileDesc1)"
 
@@ -2588,7 +2589,7 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Hiba történt %s feldolgozásakor (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr "Hiba történt %s feldolgozásakor (NewFileDesc2)"
 
@@ -2652,9 +2653,8 @@ msgid "MD5Sum mismatch"
 msgstr "Az MD5Sum nem megfelelő"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr "Az MD5Sum nem megfelelő"
+msgstr "A Hash Sum nem megfelelő"
 
 #: apt-pkg/acquire-item.cc:1100
 msgid "There is no public key available for the following key IDs:\n"
@@ -2713,9 +2713,8 @@ msgid "Stored label: %s\n"
 msgstr "Tárolt címke: %s \n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "CD-ROM leválasztása..."
+msgstr "CD-ROM leválasztása...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2740,16 +2739,18 @@ msgid "Scanning disc for index files..\n"
 msgstr "Indexfájlok keresése a lemezen...\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
-msgstr "%i csomagindexet, %i forrásindexet és %i aláírást találtam\n"
+msgstr ""
+"%zu csomag-indexet, %zu forrás-indexet, %zu fordítás-indexet és %zu aláírást "
+"találtam\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "Tárolt címke: %s \n"
+msgstr "Talált címke: '%s'\n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2797,9 +2798,9 @@ msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "%i rekord kiírva %i hiányzó és %i hibásan párosított fájllal\n"
 
 #: apt-pkg/deb/dpkgpm.cc:452
-#, fuzzy, c-format
+#, c-format
 msgid "Directory '%s' missing"
-msgstr "%spartial listakönyvtár hiányzik."
+msgstr "Hiányzik ez a könyvtár: %s"
 
 #: apt-pkg/deb/dpkgpm.cc:535
 #, c-format
@@ -2822,9 +2823,9 @@ msgid "Configuring %s"
 msgstr "%s konfigurálása"
 
 #: apt-pkg/deb/dpkgpm.cc:544 apt-pkg/deb/dpkgpm.cc:545
-#, fuzzy, c-format
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "Hiba a(z) %s könyvtár feldolgozásakor"
+msgstr "Indítók feldolgozása ehhez: %s"
 
 #: apt-pkg/deb/dpkgpm.cc:547
 #, c-format
@@ -2859,7 +2860,7 @@ msgstr "%s teljesen eltávolítva"
 
 #: apt-pkg/deb/dpkgpm.cc:716
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
-msgstr ""
+msgstr "Naplózási hiba, sikertelen openpty() (a /dev/pts nincs csatolva?)\n"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
