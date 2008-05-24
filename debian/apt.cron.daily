@@ -210,9 +210,9 @@ fi
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
     if apt-get -qq update 2>/dev/null; then
-	if which dbus-send >/dev/null; then
-	    dbus-send --system / app.apt.dbus.updated boolean:true
-	fi
+        if pidof dbus-daemon >/dev/null; then
+            dbus-send --system / app.apt.dbus.updated boolean:true
+        fi
         update_stamp $UPDATE_STAMP
     fi
 fi
