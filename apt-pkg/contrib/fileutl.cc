@@ -138,7 +138,9 @@ bool CopyFile(FileFd &From,FileFd &To)
    close at some time. */
 int GetLock(string File,bool Errors)
 {
-   int FD = open(File.c_str(),O_RDWR | O_CREAT | O_TRUNC,0640);
+   // GetLock() is used in aptitude on directories with public-write access
+   // Use O_NOFOLLOW here to prevent symlink traversal attacks
+   int FD = open(File.c_str(),O_RDWR | O_CREAT | O_NOFOLLOW,0640);
    if (FD < 0)
    {
       // Read only .. cant have locking problems there.

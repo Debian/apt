@@ -3,13 +3,13 @@
 # Project Vine, Daisuke SUZUKI <daisuke@linux.or.jp>, 2001-2002
 # Debian Project, Masato Taruishi <taru@debian.org>, 2002
 # Debian Project, Keita Maehara <maehara@debian.org>, 2003
-# Debian Project, Kenshi Muto <kmuto@debian.org>, 2004
+# Debian Project, Kenshi Muto <kmuto@debian.org>, 2004-2008
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.6\n"
+"Project-Id-Version: apt 0.7\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2007-12-18 21:13+0900\n"
+"PO-Revision-Date: 2008-05-06 11:11+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -1252,7 +1252,6 @@ msgid "Supported modules:"
 msgstr "サポートされているモジュール:"
 
 #: cmdline/apt-get.cc:2617
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1312,6 +1311,7 @@ msgstr ""
 "   remove - パッケージを削除します\n"
 "   autoremove - 自動インストールされ使われていないすべてのパッケージを削除し"
 "ます\n"
+"   purge - 設定ファイルまで含めてパッケージを削除します\n"
 "   source - ソースアーカイブをダウンロードします\n"
 "   build-dep - ソースパッケージの構築依存関係を設定します\n"
 "   dist-upgrade - ディストリビューションをアップグレードします\n"
@@ -1324,7 +1324,7 @@ msgstr ""
 "オプション:\n"
 "  -h  このヘルプを表示する\n"
 "  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
-"  -qq  エラー以外は表示しない\n"
+"  -qq エラー以外は表示しない\n"
 "  -d  ダウンロードのみ行う - アーカイブのインストールや展開は行わない\n"
 "  -s  実際には実行しない。実行シミュレーションのみ行う\n"
 "  -y  すべての問い合わせに Yes で答え、プロンプトは返さない\n"
@@ -1415,7 +1415,7 @@ msgstr "enter を押すと続行します。"
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
+msgstr "過去にダウンロードした .deb ファイルを削除しますか?"
 
 #: dselect/install:101
 msgid "Some errors occurred while unpacking. I'm going to configure the"
@@ -1961,7 +1961,8 @@ msgstr "キーリングにアクセスできませんでした: '%s'"
 
 #: methods/gpgv.cc:101
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-msgstr "E: Acquire::gpgv::Options の引数リストが長すぎます。終了しています。"
+msgstr ""
+"エラー: Acquire::gpgv::Options の引数リストが長すぎます。終了しています。"
 
 #: methods/gpgv.cc:205
 msgid ""
@@ -2707,7 +2708,7 @@ msgstr "サイズが適合しません"
 #: apt-pkg/vendorlist.cc:66
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
-msgstr "ベンダブロック %s はフィンガープリントを含んでいません"
+msgstr "ベンダブロック %s は鍵指紋を含んでいません"
 
 #: apt-pkg/cdrom.cc:529
 #, c-format
@@ -2888,6 +2889,3 @@ msgstr "ファイルにパッチできませんでした"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "途中で接続がクローズされました"
-
-#~ msgid "Line %d too long (max %lu)"
-#~ msgstr "%d 行目が長すぎます (最大 %lu)"
