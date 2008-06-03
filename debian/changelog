@@ -1,7 +1,20 @@
 apt (0.7.15) UNRELEASED; urgency=low
 
+  [ Osamu Aoki ]
+  * Updated cron script to support backups by hardlinks and 
+    verbose levels.  All features turned off by default. 
+  * Added more error handlings.  Closes: #438803, #462734, #454989, 
+  * Refactored condition structure to make download and upgrade performed 
+    if only previous steps succeeded. Closes: #341970
+  * Documented all cron script related configuration items in 
+    configure-index.
+
   [ Michael Vogt ]
-  * improve apt progress reporting, display trigger actions
+  * apt-pkg/deb/dpkgpm.cc:
+    - improve apt progress reporting, display trigger actions
+  * apt-pkg/depcache.cc:
+    - when checking for new important deps, skip critical ones
+      (LP: #236360)
 
  --
 
@@ -11,15 +24,6 @@ apt (0.7.14) unstable; urgency=low
   * Mark a message from dselect backend as translatable
     Thanks to Frédéric Bothamy for the patch
     Closes: #322470
-
-  [ Osamu Aoki ]
-  * Updated cron script to support backups by hardlinks and 
-    verbose levels.  All features turned off by default. 
-  * Added more error handlings.  Closes: #438803, #462734, #454989, 
-  * Refactored condition structure to make download and upgrade performed 
-    if only previous steps succeeded. Closes: #341970
-  * Documented all cron script related configuration items in 
-    configure-index.
 
   [ Program translations ]
   * Simplified Chinese updated. Closes: #473360
