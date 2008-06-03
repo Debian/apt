@@ -1,4 +1,4 @@
-# translation of apt_0.6.46.4_ru.po to Russian
+# translation of ru.po to Russian
 # Russian messages for the apt suite.
 #
 # Vadim Kutchin <amadis@chemi.komisc.ru>, 2002.
@@ -7,13 +7,13 @@
 # Nikolai Prokoschenko <nikolai@prokoschenko.de>, 2004.
 # Dmitry Astapov <adept@umc.com.ua>, 2004.
 # Dmitry Astapov <adept@despammed.com>, 2004.
-# Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007.
+# Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007, 2008.
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.6.46.4\n"
+"Project-Id-Version: apt 0.7.14\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2007-01-03 23:33+0300\n"
+"PO-Revision-Date: 2008-05-06 20:30+0400\n"
 "Last-Translator: Yuri Kozlov <kozlov.y@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -42,11 +42,11 @@ msgstr "Всего имён пакетов : "
 
 #: cmdline/apt-cache.cc:287
 msgid "  Normal packages: "
-msgstr "  Нормальных пакетов: "
+msgstr "  Обычных пакетов: "
 
 #: cmdline/apt-cache.cc:288
 msgid "  Pure virtual packages: "
-msgstr "  Чисто виртуальных пакетов: "
+msgstr "  Полностью виртуальных пакетов: "
 
 #: cmdline/apt-cache.cc:289
 msgid "  Single virtual packages: "
@@ -58,16 +58,15 @@ msgstr "  Смешанных виртуальных пакетов: "
 
 #: cmdline/apt-cache.cc:291
 msgid "  Missing: "
-msgstr "  Пропущено: "
+msgstr "  Отсутствует: "
 
 #: cmdline/apt-cache.cc:293
 msgid "Total distinct versions: "
 msgstr "Всего уникальных версий: "
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total distinct descriptions: "
-msgstr "Всего уникальных версий: "
+msgstr "Всего уникальных описаний: "
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -78,9 +77,8 @@ msgid "Total ver/file relations: "
 msgstr "Всего отношений Версия/Файл: "
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "Всего отношений Версия/Файл: "
+msgstr "Всего отношений Описание/Файл: "
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
@@ -100,7 +98,7 @@ msgstr "Пустого места в кеше: "
 
 #: cmdline/apt-cache.cc:343
 msgid "Total space accounted for: "
-msgstr "Общее пространство посчитанное для: "
+msgstr "Полное учтённое пространство: "
 
 #: cmdline/apt-cache.cc:471 cmdline/apt-cache.cc:1218
 #, c-format
@@ -168,9 +166,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2571 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s для %s %s скомпилирован %s %s\n"
+msgstr "%s %s для %s скомпилирован %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -810,7 +808,7 @@ msgstr "ВНИМАНИЕ: Следующие пакеты невозможно �
 
 #: cmdline/apt-get.cc:711
 msgid "Authentication warning overridden.\n"
-msgstr "Аутентификационное предупреждение не принято в внимание.\n"
+msgstr "Предупреждение об аутентификации не принято в внимание.\n"
 
 #: cmdline/apt-get.cc:718
 msgid "Install these packages without verification [y/N]? "
@@ -862,16 +860,18 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Необходимо скачать %sБ архивов.\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
-"После распаковки объем занятого дискового пространства возрастёт на %sB.\n"
+"После данной операции, объём занятого дискового пространства возрастёт на %"
+"sB.\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr ""
-"После распаковки объем занятого дискового пространства уменьшится на %sB.\n"
+"После данной операции, объём занятого дискового пространства уменьшится на %"
+"sB.\n"
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2166
 #, c-format
@@ -1029,42 +1029,42 @@ msgstr "Невозможно заблокировать каталог со сп
 
 #: cmdline/apt-get.cc:1403
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
+msgstr "Не предполагалось удалять stuff, невозможно запустить AutoRemover"
 
 #: cmdline/apt-get.cc:1435
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "НОВЫЕ пакеты, которые будут установлены:"
+msgstr "Следующие пакеты устанавливались автоматически и больше не требуются:"
 
 #: cmdline/apt-get.cc:1437
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "Для их удаления используйте 'apt-get autoremove'."
 
 #: cmdline/apt-get.cc:1442
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"Хм, кажется, что AutoRemover был как-то удалён, чего не должно\n"
+"было случиться. Пожалуйста, отправьте сообщение об ошибке в пакете apt."
 
 #: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1733
 msgid "The following information may help to resolve the situation:"
 msgstr "Следующая информация, возможно, поможет вам:"
 
 #: cmdline/apt-get.cc:1449
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Внутренняя ошибка, решатель проблем всё поломал"
+msgstr "Внутренняя ошибка, AutoRemover всё поломал"
 
 #: cmdline/apt-get.cc:1468
 msgid "Internal error, AllUpgrade broke stuff"
-msgstr "Внутренняя ошибка, AllUpgrade все поломал"
+msgstr "Внутренняя ошибка, AllUpgrade всё поломал"
 
 #: cmdline/apt-get.cc:1523
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "Не удалось найти пакет %s"
+msgstr "Не удалось найти задачу %s"
 
 #: cmdline/apt-get.cc:1638 cmdline/apt-get.cc:1674
 #, c-format
@@ -1074,12 +1074,12 @@ msgstr "Не удалось найти пакет %s"
 #: cmdline/apt-get.cc:1661
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
-msgstr "Заметьте, регулярное выражение %2$s приводит к выбору %1$s\n"
+msgstr "Заметьте, выбирается %s из-за регулярного выражения %s\n"
 
 #: cmdline/apt-get.cc:1692
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
-msgstr "но %s будет установлен"
+msgstr "%s установлен вручную.\n"
 
 #: cmdline/apt-get.cc:1705
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1274,7 +1274,6 @@ msgid "Supported modules:"
 msgstr "Поддерживаемые модули:"
 
 #: cmdline/apt-get.cc:2617
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1317,46 +1316,49 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Использование: apt-get [options] command\n"
-"               apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"               apt-get [options] source pkg1 [pkg2 ...]\n"
+"Использование: apt-get [параметры] команда\n"
+"               apt-get [параметры] install|remove pkg1 [pkg2 ...]\n"
+"               apt-get [параметры] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get - простой интерфейс командной строки для загрузки и\n"
-"установки пакетов. Наиболее часто используемые команды - update \n"
+"apt-get -- простой интерфейс командной строки для загрузки и\n"
+"установки пакетов. Наиболее часто используемые команды -- update \n"
 "и install.\n"
 "\n"
 "Команды:\n"
-"   update - загрузить новые списки пакетов\n"
-"   upgrade - выполнить обновление пакетов\n"
+"   update - получить новые списки пакетов\n"
+"   upgrade - выполнить обновление\n"
 "   install - установить новые пакеты (имя пакета указывается\n"
 "             как libc6, а не libc6.deb)\n"
 "   remove - удалить пакеты\n"
+"   autoremove - автоматически удалить все неиспользуемые пакеты\n"
+"   purge - удалить и вычистить пакеты\n"
 "   source - загрузить архивы с исходными текстами\n"
-"   build-dep - загрузить все необходимое для сборки указанного\n"
+"   build-dep - загрузить всё необходимое для сборки указанного\n"
 "               пакета из исходных текстов\n"
-"   dist-upgrade - обновить всю систему, подробнее - в apt-get(8)\n"
+"   dist-upgrade - обновить всю систему, подробнее в apt-get(8)\n"
 "   dselect-upgrade - руководствоваться выбором, сделанным в dselect'е\n"
-"   clean - удалить загруженные архивы\n"
-"   autoclean - удалить старые загруженные архивы\n"
+"   clean - удалить загруженные файлы архивов\n"
+"   autoclean - удалить старые загруженные файлы архивов\n"
 "   check - проверить наличие нарушенных зависимостей\n"
 "\n"
-"Опции:\n"
-"  -h  Этот текст.\n"
-"  -q  Выводить сообщения, пригодные для записи в файл журнала.\n"
-"      Не выводить индикатор прогресса\n"
-"  -qq Выводить только сообщения об ошибках\n"
-"  -d  только загрузить - не устанавливать и не распаковывать архивы\n"
-"  -s  Не выполнять действия на самом деле. Имитация работы\n"
-"  -y  Отвечать \"Да\" на все вопросы. Сами вопросы при этом не выводятся\n"
+"Параметры:\n"
+"  -h  этот текст\n"
+"  -q  выводить сообщения, пригодные для записи в файл журнала,\n"
+"      не выводить индикатор хода работы\n"
+"  -qq выводить только сообщения об ошибках\n"
+"  -d  только загрузить - НЕ устанавливать и не распаковывать архивы\n"
+"  -s  не выполнять действия на самом деле, только имитация работы\n"
+"  -y  отвечать \"Да\" на все вопросы, cами вопросы при этом не выводятся\n"
 "  -f  продолжать, даже если проверка целостности не прошла\n"
 "  -m  продолжать, даже если местоположение архивов неизвестно\n"
-"  -u  показывать список обновляемых пакетов\n"
-"  -b  компилировать пакет из исходных текстов после их загрузки\n"
-"  -c=? читать указанный файл конфигурации\n"
-"  -o=? установить произвольную опцию, например, -o dir::cache=/tmp\n"
+"  -u  показывать также список обновляемых пакетов\n"
+"  -b  собрать пакет из исходных текстов после получения\n"
+"  -V  показать полные номера версий\n"
+"  -c=? читать указанный файл настройки\n"
+"  -o=? задать произвольный параметр настройки, например, -o dir::cache=/tmp\n"
 "Страницы руководства apt-get(8), sources.list(5) и apt.conf(5)\n"
-"содержат больше информации.\n"
-"                       This APT has Super Cow Powers.\n"
+"содержат подробную информацию и описание параметров.\n"
+"                       В APT есть коровья СУПЕРСИЛА.\n"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1368,21 +1370,21 @@ msgstr "Получено:"
 
 #: cmdline/acqprogress.cc:110
 msgid "Ign "
-msgstr "Ign "
+msgstr "Игн "
 
 #: cmdline/acqprogress.cc:114
 msgid "Err "
-msgstr "Err "
+msgstr "Ош  "
 
 #: cmdline/acqprogress.cc:135
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Получено %sB за %s (%sB/c)\n"
+msgstr "Получено %sБ за %s (%sБ/c)\n"
 
 #: cmdline/acqprogress.cc:225
 #, c-format
 msgid " [Working]"
-msgstr " [Ожидание]"
+msgstr " [Обработка]"
 
 #: cmdline/acqprogress.cc:271
 #, c-format
@@ -1391,8 +1393,9 @@ msgid ""
 " '%s'\n"
 "in the drive '%s' and press enter\n"
 msgstr ""
-"Смена носителя: вставьте диск с меткой '%s' в устройство '%s' и нажмите "
-"ввод\n"
+"Смена носителя: вставьте диск с меткой\n"
+" '%s'\n"
+"в устройство '%s' и нажмите ввод\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1411,12 +1414,12 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Использование: apt-sortpkgs [options] file1 [file2 ...]\n"
+"Использование: apt-sortpkgs [параметры] file1 [file2 ...]\n"
 "\n"
 "apt-sortpkgs - простой инструмент для сортировки списков пакетов. Опция -s\n"
 "используется, чтобы указать тип списка.\n"
 "\n"
-"Опции:\n"
+"Параметры:\n"
 "  -h   этот текст\n"
 "  -s   сортировать список файлов с исходными текстами\n"
 "  -c=? читать указанный файл конфигурации\n"
@@ -1433,7 +1436,7 @@ msgstr "Для продолжения нажмите ввод."
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
+msgstr "Удалить все ранее скачанные .deb файлы?"
 
 #: dselect/install:101
 msgid "Some errors occurred while unpacking. I'm going to configure the"
@@ -1704,9 +1707,10 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Это неправильный DEB-архив - отсутствует составная часть '%s'"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "Это неправильный DEB-архив - отсутствует составная часть '%s' или '%s'"
+msgstr ""
+"Это неправильный DEB-архив - отсутствует составная часть '%s', '%s' или '%s'"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2017,7 +2021,8 @@ msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr ""
-"Следующие подписи не могут быть проверены, так как недоступен общий ключ:\n"
+"Следующие подписи не могут быть проверены, так как недоступен открытый "
+"ключ:\n"
 
 #: methods/gzip.cc:64
 #, c-format
@@ -2362,7 +2367,7 @@ msgstr "Замещает"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Ломает"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2397,29 +2402,28 @@ msgid "Dependency generation"
 msgstr "Генерирование зависимостей"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "Объединение информации о доступных пакетах"
+msgstr "Чтение информации о состоянии"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "Не удалось открыть %s"
+msgstr "Не удалось открыть StateFile %s"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "Не удалось записать в файл %s"
+msgstr "Не удалось записать временный StateFile %s"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
 msgid "Unable to parse package file %s (1)"
-msgstr "Невозможно прочесть содержимое пакета %s (1)"
+msgstr "Невозможно разобрать содержимое пакета %s (1)"
 
 #: apt-pkg/tagfile.cc:189
 #, c-format
 msgid "Unable to parse package file %s (2)"
-msgstr "Невозможно прочесть содержимое пакета %s (2)"
+msgstr "Невозможно разобрать содержимое пакета %s (2)"
 
 #: apt-pkg/sourcelist.cc:90
 #, c-format
@@ -2607,9 +2611,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Произошла ошибка во время обработки %s (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Произошла ошибка во время обработки %s (NewFileVer1)"
+msgstr "Произошла ошибка во время обработки %s (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2637,9 +2641,9 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Произошла ошибка во время обработки %s (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Произошла ошибка во время обработки %s (NewFileVer1)"
+msgstr "Произошла ошибка во время обработки %s (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2650,9 +2654,9 @@ msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Превышено допустимое количество версий."
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Превышено допустимое количество версий."
+msgstr ""
+"Вах, превышено допустимое количество описаний, с которым может работать APT."
 
 #: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2696,13 +2700,12 @@ msgid "MD5Sum mismatch"
 msgstr "MD5Sum не совпадает"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr "MD5Sum не совпадает"
+msgstr "Хеш сумма не совпадает"
 
 #: apt-pkg/acquire-item.cc:1100
 msgid "There is no public key available for the following key IDs:\n"
-msgstr "Недоступен общий ключ для следующих ID ключей:\n"
+msgstr "Недоступен открытый ключ для следующих ID ключей:\n"
 
 #: apt-pkg/acquire-item.cc:1213
 #, c-format
@@ -2756,9 +2759,8 @@ msgid "Stored label: %s\n"
 msgstr "Найдена метка: %s \n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "Размонтирование CD-ROM..."
+msgstr "Размонтирование CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2783,18 +2785,18 @@ msgid "Scanning disc for index files..\n"
 msgstr "Поиск на диске индексных файлов..\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
 msgstr ""
-"Найдено индексов: %i для пакетов, %i для пакетов c исходными текстами\n"
-"и %i для сигнатур\n"
+"Найдено индексов: %zu для пакетов, %zu для пакетов c исходными текстами, %zu "
+"для переводов и %zu для сигнатур\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "Найдена метка: %s \n"
+msgstr "Найдена метка %s\n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2844,9 +2846,9 @@ msgstr ""
 "файлами\n"
 
 #: apt-pkg/deb/dpkgpm.cc:452
-#, fuzzy, c-format
+#, c-format
 msgid "Directory '%s' missing"
-msgstr "Каталог %spartial отсутствует."
+msgstr "Каталог %s отсутствует"
 
 #: apt-pkg/deb/dpkgpm.cc:535
 #, c-format
@@ -2869,9 +2871,9 @@ msgid "Configuring %s"
 msgstr "Настройка %s"
 
 #: apt-pkg/deb/dpkgpm.cc:544 apt-pkg/deb/dpkgpm.cc:545
-#, fuzzy, c-format
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "Ошибка обработки каталога %s"
+msgstr "Обрабатываются триггеры для %s"
 
 #: apt-pkg/deb/dpkgpm.cc:547
 #, c-format
@@ -2907,6 +2909,8 @@ msgstr "%s полностью удалён"
 #: apt-pkg/deb/dpkgpm.cc:716
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
+"Не удалось записать в журнал, неудачное выполнение openpty() (/dev/pts не "
+"смонтирован?)\n"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
@@ -2915,35 +2919,3 @@ msgstr "Не удалось пропатчить файл"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Соединение закрыто преждевременно"
-
-#, fuzzy
-#~ msgid "Line %d too long (max %lu)"
-#~ msgstr "Строка %d слишком длинна (максимум %d)."
-
-#, fuzzy
-#~ msgid "Line %d too long (max %d)"
-#~ msgstr "Строка %d слишком длинна (максимум %d)."
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc1)"
-#~ msgstr "Произошла ошибка во время обработки %s (NewFileVer1)"
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc2)"
-#~ msgstr "Произошла ошибка во время обработки %s (NewFileVer1)"
-
-#, fuzzy
-#~ msgid "Stored label: %s \n"
-#~ msgstr "Найдена метка: %s \n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Found %i package indexes, %i source indexes, %i translation indexes and %"
-#~ "i signatures\n"
-#~ msgstr ""
-#~ "Найдено индексов: %i для пакетов, %i для пакетов c исходными текстами\n"
-#~ "и %i для сигнатур\n"
-
-#, fuzzy
-#~ msgid "openpty failed\n"
-#~ msgstr "Ошибка в select"

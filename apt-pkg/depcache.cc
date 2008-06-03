@@ -914,8 +914,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	     {
 	       //FIXME: deal better with or-groups(?)
 	       DepIterator LocalStart = D;
-	       
-	       if(IsImportantDep(D) && Start.TargetPkg() == D.TargetPkg())
+
+	       if(IsImportantDep(D) && !D.IsCritical() &&
+		  Start.TargetPkg() == D.TargetPkg())
 		 {
 		   if(!isPreviouslySatisfiedImportantDep)
 		     {

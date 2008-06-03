@@ -1,3 +1,19 @@
+apt (0.7.14ubuntu3) intrepid; urgency=low
+
+  [ Otavio Salvador ]
+  * Apply patch to avoid truncating of arbitrary files. Thanks to Bryan
+    Donlan <bdonlan@fushizen.net> for the patch. Closes: #482476
+  * Avoid using dbus if dbus-daemon isn't running. Closes: #438803
+
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - improve apt progress reporting, display trigger actions
+  * apt-pkg/depcache.cc:
+    - when checking for new important deps, skip critical ones
+      (LP: #236360)
+  
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 03 Jun 2008 17:27:07 +0200
+
 apt (0.7.14ubuntu2) intrepid; urgency=low
 
   * debian/control:
@@ -35,8 +51,27 @@ apt (0.7.14ubuntu1) intrepid; urgency=low
   * Finnish updated. Closes: #479403
   * Korean updated. Closes: #479426
   * Basque updated. Closes: #479452
+  * Vietnamese updated. Closes: #479748
+  * Russian updated. Closes: #479777
+  * Galician updated. Closes: #479792
+  * Portuguese updated. Closes: #479847
+  * Swedish updated. Closes: #479871
+  * Dutch updated. Closes: #480125
+  * Kurdish added. Closes: #480150
+  * Brazilian Portuguese updated. Closes: #480561
+  * Hungarian updated. Closes: #480662
 
- -- Christian Perrier <bubulle@debian.org>  Sun, 04 May 2008 08:31:06 +0200
+  [ Otavio Salvador ]
+  * Apply patch to avoid truncating of arbitrary files. Thanks to Bryan
+    Donlan <bdonlan@fushizen.net> for the patch. Closes: #482476
+  * Avoid using dbus if dbus-daemon isn't running. Closes: #438803
+  
+  [ Michael Vogt ]
+  * debian/apt.cron.daily:
+    - apply patch based on the ideas of Francesco Poli for better 
+      behavior when the cache can not be locked (closes: #459344)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 28 May 2008 15:19:12 +0200
 
 apt (0.7.13) unstable; urgency=low
 

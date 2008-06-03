@@ -1,6 +1,6 @@
 # Czech translation of APT
 # This file is put in the public domain.
-# Miroslav Kure <kurem@debian.cz>, 2004-2006.
+# Miroslav Kure <kurem@debian.cz>, 2004-2008.
 #
 #
 msgid ""
@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2006-10-04 18:53+0200\n"
+"PO-Revision-Date: 2008-05-05 21:29+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -56,9 +56,8 @@ msgid "Total distinct versions: "
 msgstr "Celkem různých verzí: "
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total distinct descriptions: "
-msgstr "Celkem různých verzí: "
+msgstr "Celkem různých popisů: "
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -69,9 +68,8 @@ msgid "Total ver/file relations: "
 msgstr "Celkem vztahů ver/soubor: "
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "Celkem vztahů ver/soubor: "
+msgstr "Celkem vztahů popis/soubor: "
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
@@ -159,9 +157,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2571 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s pro %s %s zkompilován na %s %s\n"
+msgstr "%s %s pro %s zkompilován na %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -838,14 +836,14 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Potřebuji stáhnout %sB archivů.\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Po rozbalení bude na disku použito dalších %sB.\n"
+msgstr "Po této operaci bude na disku použito dalších %sB.\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Po rozbalení bude na disku uvolněno %sB.\n"
+msgstr "Po této operaci bude na disku uvolněno %sB.\n"
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2166
 #, c-format
@@ -1000,42 +998,43 @@ msgstr "Nemohu uzamknout list adresář"
 
 #: cmdline/apt-get.cc:1403
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
+msgstr "Neměli bychom mazat věci, nemůžu spustit AutoRemover"
 
 #: cmdline/apt-get.cc:1435
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "Následující NOVÉ balíky budou nainstalovány:"
+msgstr ""
+"Následující balíky byly nainstalovány automaticky a již nejsou potřeba:"
 
 #: cmdline/apt-get.cc:1437
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "Pro jejich odstranění použijte 'apt-get autoremove'."
 
 #: cmdline/apt-get.cc:1442
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"Hmm, zdá se, že AutoRemover zničil něco, co neměl.\n"
+"Nahlaste prosím chybu v apt."
 
 #: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1733
 msgid "The following information may help to resolve the situation:"
 msgstr "Následující informace vám mohou pomoci vyřešit tuto situaci:"
 
 #: cmdline/apt-get.cc:1449
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Vnitřní chyba, řešitel problémů pokazil věci"
+msgstr "Vnitřní chyba, AutoRemover pokazil věci"
 
 #: cmdline/apt-get.cc:1468
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Vnitřní chyba, AllUpgrade pokazil věci"
 
 #: cmdline/apt-get.cc:1523
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "Nemohu najít balík %s"
+msgstr "Nemohu najít úlohu %s"
 
 #: cmdline/apt-get.cc:1638 cmdline/apt-get.cc:1674
 #, c-format
@@ -1048,9 +1047,9 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Pozn: vybírám %s pro regulární výraz '%s'\n"
 
 #: cmdline/apt-get.cc:1692
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
-msgstr "ale %s se bude instalovat"
+msgstr "%s nastaven jako instalovaný ručně.\n"
 
 #: cmdline/apt-get.cc:1705
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1236,7 +1235,6 @@ msgid "Supported modules:"
 msgstr "Podporované moduly:"
 
 #: cmdline/apt-get.cc:2617
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1291,6 +1289,8 @@ msgstr ""
 "   upgrade         - Provede aktualizaci\n"
 "   install         - Instaluje nové balíky (balík je libc6, ne libc6.deb)\n"
 "   remove          - Odstraní balíky\n"
+"   autoremove      - Automaticky odstraní nepoužívané balíky\n"
+"   purge           - Odstraní balíky vč. konfiguračních souborů\n"
 "   source          - Stáhne zdrojové archivy\n"
 "   build-dep       - Pro zdrojové balíky nastaví build-dependencies\n"
 "   dist-upgrade    - Aktualizace distribuce, viz apt-get(8)\n"
@@ -1300,17 +1300,17 @@ msgstr ""
 "   check           - Ověří, zda se nevyskytují poškozené závislosti\n"
 "\n"
 "Volby:\n"
-"  -h  Tato nápověda\n"
-"  -q  Nezobrazí indikátor postupu - pro záznam\n"
-"  -qq Nezobrazí nic než chyby\n"
-"  -d  Pouze stáhne - neinstaluje ani nerozbaluje archivy\n"
-"  -s  Pouze simuluje prováděné akce\n"
-"  -y  Na všechny otázky odpovídá Ano\n"
-"  -f  Zkusí pokračovat, i když selže kontrola integrity\n"
-"  -m  Zkusí pokračovat, i když se nepodaří najít archivy\n"
-"  -u  Zobrazí také seznam aktualizovaných balíků\n"
-"  -b  Po stažení zdrojového balíku jej i zkompiluje\n"
-"  -V  Zobrazí čísla verzí\n"
+"  -h   Tato nápověda\n"
+"  -q   Nezobrazí indikátor postupu - pro záznam\n"
+"  -qq  Nezobrazí nic než chyby\n"
+"  -d   Pouze stáhne - neinstaluje ani nerozbaluje archivy\n"
+"  -s   Pouze simuluje prováděné akce\n"
+"  -y   Na všechny otázky odpovídá Ano\n"
+"  -f   Zkusí opravit systém s porušenými závislostmi\n"
+"  -m   Zkusí pokračovat, i když se nepodaří najít archivy\n"
+"  -u   Zobrazí také seznam aktualizovaných balíků\n"
+"  -b   Po stažení zdrojového balíku jej i zkompiluje\n"
+"  -V   Zobrazí čísla verzí\n"
 "  -c=? Načte tento konfigurační soubor\n"
 "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 "Více voleb naleznete v manuálových stránkách apt-get(8), sources.list(5)\n"
@@ -1393,7 +1393,7 @@ msgstr "Pro pokračování stiskněte enter."
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
+msgstr "Chcete smazat všechny dříve stažené .deb soubory?"
 
 #: dselect/install:101
 msgid "Some errors occurred while unpacking. I'm going to configure the"
@@ -1661,9 +1661,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Toto není platný DEB archiv, chybí část '%s'"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "Toto není platný DEB archiv, neobsahuje část '%s' ani '%s'"
+msgstr "Toto není platný DEB archiv, neobsahuje část '%s', '%s' ani '%s'"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -2305,7 +2305,7 @@ msgstr "Zastarává"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Porušuje"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2340,19 +2340,18 @@ msgid "Dependency generation"
 msgstr "Generování závislostí"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "Slučuji dostupné informace"
+msgstr "Čtu stavové informace"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "Nelze otevřít %s"
+msgstr "Nelze otevřít stavový soubor %s"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "Selhal zápis souboru %s"
+msgstr "Nelze zapsat dočasný stavový soubor %s"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2548,9 +2547,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Při zpracování %s se objevila chyba (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Při zpracování %s se objevila chyba (NewFileVer1)"
+msgstr "Při zpracování %s se objevila chyba (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2578,28 +2577,25 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Při zpracování %s se objevila chyba (NewVersion2)"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Při zpracování %s se objevila chyba (NewFileVer1)"
+msgstr "Při zpracování %s se objevila chyba (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"Wow, překročili jste počet jmen balíků, které tato APT zvládá zpracovat."
+msgstr "Wow, překročili jste počet jmen balíků, které tato APT umí zpracovat."
 
 #: apt-pkg/pkgcachegen.cc:254
 msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "Wow, překročili jste počet verzí, které tato APT zvládá zpracovat."
+msgstr "Wow, překročili jste počet verzí, které tato APT umí zpracovat."
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Wow, překročili jste počet verzí, které tato APT zvládá zpracovat."
+msgstr "Wow, překročili jste počet popisů, které tato APT umí zpracovat."
 
 #: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"Wow, překročili jste počet závislostí, které tato APT zvládá zpracovat."
+msgstr "Wow, překročili jste počet závislostí, které tato APT umí zpracovat."
 
 #: apt-pkg/pkgcachegen.cc:288
 #, c-format
@@ -2639,9 +2635,8 @@ msgid "MD5Sum mismatch"
 msgstr "Neshoda MD5 součtů"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr "Neshoda MD5 součtů"
+msgstr "Neshoda kontrolních součtů"
 
 #: apt-pkg/acquire-item.cc:1100
 msgid "There is no public key available for the following key IDs:\n"
@@ -2700,9 +2695,8 @@ msgid "Stored label: %s\n"
 msgstr "Uložený název: %s \n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "Odpojuji CD-ROM..."
+msgstr "Odpojuji CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2727,16 +2721,18 @@ msgid "Scanning disc for index files..\n"
 msgstr "Hledám na disku indexové soubory...\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
-msgstr "Nalezl jsem indexy balíků (%i), indexy zdrojů (%i) a podpisy (%i)\n"
+msgstr ""
+"Nalezl jsem indexy balíků (%zu), indexy zdrojů (%zu), indexy popisů (%zu) a "
+"podpisy (%zu)\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "Uložený název: %s \n"
+msgstr "Nalezený název: „%s“\n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2749,7 +2745,7 @@ msgid ""
 "'%s'\n"
 msgstr ""
 "Tento disk se nazývá: \n"
-"'%s'\n"
+"„%s“\n"
 
 #: apt-pkg/cdrom.cc:764
 msgid "Copying package lists..."
@@ -2785,9 +2781,9 @@ msgstr ""
 "Zapsal jsem %i záznamů s chybějícími (%i) a nesouhlasícími (%i) soubory.\n"
 
 #: apt-pkg/deb/dpkgpm.cc:452
-#, fuzzy, c-format
+#, c-format
 msgid "Directory '%s' missing"
-msgstr "Adresář seznamů %spartial chybí."
+msgstr "Adresář '%s' chybí"
 
 #: apt-pkg/deb/dpkgpm.cc:535
 #, c-format
@@ -2810,9 +2806,9 @@ msgid "Configuring %s"
 msgstr "Nastavuji %s"
 
 #: apt-pkg/deb/dpkgpm.cc:544 apt-pkg/deb/dpkgpm.cc:545
-#, fuzzy, c-format
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "Chyba zpracování adresáře %s"
+msgstr "Zpracovávám spouštěče pro %s"
 
 #: apt-pkg/deb/dpkgpm.cc:547
 #, c-format
@@ -2847,46 +2843,37 @@ msgstr "Kompletně odstraněn %s"
 
 #: apt-pkg/deb/dpkgpm.cc:716
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
-msgstr ""
+msgstr "Nelze zapsat log, volání openpty() selhalo (/dev/pts není připojen?)\n"
 
 #: methods/rred.cc:219
-#, fuzzy
 msgid "Could not patch file"
-msgstr "Nemohu otevřít soubor %s"
+msgstr "Nemohu záplatovat soubor"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Spojení bylo předčasně ukončeno"
 
-#, fuzzy
 #~ msgid "Line %d too long (max %lu)"
-#~ msgstr "Řádek %d je příliš dlouhý (max %d)"
+#~ msgstr "Řádek %d je příliš dlouhý (max %lu)"
 
-#, fuzzy
 #~ msgid "Line %d too long (max %d)"
 #~ msgstr "Řádek %d je příliš dlouhý (max %d)"
 
-#, fuzzy
 #~ msgid "Error occured while processing %s (NewFileDesc1)"
-#~ msgstr "Při zpracování %s se objevila chyba (NewFileVer1)"
+#~ msgstr "Při zpracování %s se objevila chyba (NewFileDesc1)"
 
-#, fuzzy
 #~ msgid "Error occured while processing %s (NewFileDesc2)"
-#~ msgstr "Při zpracování %s se objevila chyba (NewFileVer1)"
+#~ msgstr "Při zpracování %s se objevila chyba (NewFileDesc2)"
 
-#, fuzzy
 #~ msgid "Stored label: %s \n"
 #~ msgstr "Uložený název: %s \n"
 
-#, fuzzy
 #~ msgid ""
 #~ "Found %i package indexes, %i source indexes, %i translation indexes and %"
 #~ "i signatures\n"
-#~ msgstr "Nalezl jsem indexy balíků (%i), indexy zdrojů (%i) a podpisy (%i)\n"
-
-#, fuzzy
-#~ msgid "openpty failed\n"
-#~ msgstr "Výběr selhal"
+#~ msgstr ""
+#~ "Nalezl jsem indexy balíků (%i), indexy zdrojů (%i), indexy překladů (%i) "
+#~ "a podpisy (%i)\n"
 
 #~ msgid "File date has changed %s"
 #~ msgstr "Datum souboru se změnil %s"

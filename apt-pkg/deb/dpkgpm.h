@@ -48,6 +48,8 @@ class pkgDPkgPM : public pkgPackageManager
    // the int is the state that is already done (e.g. a package that is
    // going to be install is already in state "half-installed")
    map<string,unsigned int> PackageOpsDone;
+   // map the dpkg "processing" info to human readable names
+   map<string,string> PackageProcessingOps;
    // progress reporting
    unsigned int PackagesDone;
    unsigned int PackagesTotal;
