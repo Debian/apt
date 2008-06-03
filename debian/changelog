@@ -1,4 +1,11 @@
-apt (0.7.14) UNRELEASED; urgency=low
+apt (0.7.15) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * improve apt progress reporting, display trigger actions
+
+ --
+
+apt (0.7.14) unstable; urgency=low
 
   [ Christian Perrier ]
   * Mark a message from dselect backend as translatable
@@ -14,9 +21,6 @@ apt (0.7.14) UNRELEASED; urgency=low
   * Documented all cron script related configuration items in 
     configure-index.
 
-  [ Michael Vogt ]
-  * improve apt progress reporting, display trigger actions
-  
   [ Program translations ]
   * Simplified Chinese updated. Closes: #473360
   * Catalan fixes. Closes: #387141
@@ -43,8 +47,13 @@ apt (0.7.14) UNRELEASED; urgency=low
   * Apply patch to avoid truncating of arbitrary files. Thanks to Bryan
     Donlan <bdonlan@fushizen.net> for the patch. Closes: #482476
   * Avoid using dbus if dbus-daemon isn't running. Closes: #438803
+  
+  [ Michael Vogt ]
+  * debian/apt.cron.daily:
+    - apply patch based on the ideas of Francesco Poli for better 
+      behavior when the cache can not be locked (closes: #459344)
 
- -- Christian Perrier <bubulle@debian.org>  Sun, 04 May 2008 08:31:06 +0200
+ -- Michael Vogt <mvo@debian.org>  Wed, 28 May 2008 15:19:12 +0200
 
 apt (0.7.13) unstable; urgency=low
 

@@ -136,6 +136,7 @@ if [ "$VERBOSE" -ge 3 ]; then
     # trace output
     set -x
 fi
+
 # laptop check, on_ac_power returns:
 #       0 (true)    System is on main power
 #       1 (false)   System is not on main power
@@ -232,6 +233,16 @@ BackX="${Back}${CacheArchive}/"
 for x in $(seq 0 1 $((${BackupLevel}-1))); do 
     eval "Back${x}=${Back}${x}/"
 done
+
+# check if we actually have to do anything
+if [ $UpdateInterval -eq 0 ] &&
+   [ $DownloadUpgradeableInterval -eq 0 ] &&
+   [ $UnattendedUpgradeInterval -eq 0 ] &&
+   [ $BackupArchiveInterval -eq 0 ] &&
+   [ $AutocleanInterval -eq 0 ]; then
+    exit 0
+fi
+
 
 # backup after n-days if archive contents changed.
 # (This uses hardlink to save disk space)
