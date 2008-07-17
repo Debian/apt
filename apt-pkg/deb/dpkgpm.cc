@@ -604,7 +604,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    PackageProcessingOps.insert( make_pair("install",N_("Installing %s")) );
    PackageProcessingOps.insert( make_pair("configure",N_("Configuring %s")) );
    PackageProcessingOps.insert( make_pair("remove",N_("Removing %s")) );
-   PackageProcessingOps.insert( make_pair("trigproc",N_("Triggering %s")) );
+   PackageProcessingOps.insert( make_pair("trigproc",N_("Running post-installation trigger %s")) );
    
    // init the PackageOps map, go over the list of packages that
    // that will be [installed|configured|removed|purged] and add
