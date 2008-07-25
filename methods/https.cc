@@ -108,6 +108,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    struct curl_slist *headers=NULL;  
    char curl_errorstr[CURL_ERROR_SIZE];
    long curl_responsecode;
+   URI Uri = Itm->Uri;
+   string remotehost = Uri.Host;
 
    // TODO:
    //       - http::Pipeline-Depth
@@ -127,23 +129,56 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
 
-   // FIXME: https: offer various options of verification
-   bool peer_verify = _config->FindB("Acquire::https::Verify-Peer", false);
+   // SSL parameters are set by default to the common (non mirror-specific) value
+   // if available (or a default one) and gets overload by mirror-specific ones.
+
+   // File containing the list of trusted CA.
+   string cainfo = _config->Find("Acquire::https::CaInfo","");
+   string knob = "Acquire::https::"+remotehost+"::CaInfo";
+   cainfo = _config->Find(knob.c_str(),cainfo.c_str());
+   if(cainfo != "")
+      curl_easy_setopt(curl, CURLOPT_CAINFO,cainfo.c_str());
+
+   // Check server certificate against previous CA list ...
+   bool peer_verify = _config->FindB("Acquire::https::Verify-Peer",true);
+   knob = "Acquire::https::" + remotehost + "::Verify-Peer";
+   peer_verify = _config->FindB(knob.c_str(), peer_verify);
    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, peer_verify);
 
-   // sslcert file
+   // ... and hostname against cert CN or subjectAltName
+   int default_verify = 2;
+   bool verify = _config->FindB("Acquire::https::Verify-Host",true);
+   knob = "Acquire::https::"+remotehost+"::Verify-Host";
+   verify = _config->FindB(knob.c_str(),verify);
+   if (!verify)
+      default_verify = 0;
+   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verify);
+
+   // For client authentication, certificate file ...
    string pem = _config->Find("Acquire::https::SslCert","");
+   knob = "Acquire::https::"+remotehost+"::SslCert";
+   pem = _config->Find(knob.c_str(),pem.c_str());
    if(pem != "")
       curl_easy_setopt(curl, CURLOPT_SSLCERT, pem.c_str());
-   
-   // CA-Dir
-   string certdir = _config->Find("Acquire::https::CaPath","");
-   if(certdir != "")
-      curl_easy_setopt(curl, CURLOPT_CAPATH, certdir.c_str());
-   
-   // Server-verify 
-   int verify = _config->FindI("Acquire::https::Verify-Host",2);
-   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verify);
+
+   // ... and associated key.
+   string key = _config->Find("Acquire::https::SslKey","");
+   knob = "Acquire::https::"+remotehost+"::SslKey";
+   key = _config->Find(knob.c_str(),key.c_str());
+   if(key != "")
+      curl_easy_setopt(curl, CURLOPT_SSLKEY, key.c_str());
+
+   // Allow forcing SSL version to SSLv3 or TLSv1 (SSLv2 is not
+   // supported by GnuTLS).
+   long final_version = CURL_SSLVERSION_DEFAULT;
+   string sslversion = _config->Find("Acquire::https::SslForceVersion","");
+   knob = "Acquire::https::"+remotehost+"::SslForceVersion";
+   sslversion = _config->Find(knob.c_str(),sslversion.c_str());
+   if(sslversion == "TLSv1")
+     final_version = CURL_SSLVERSION_TLSv1;
+   else if(sslversion == "SSLv3")
+     final_version = CURL_SSLVERSION_SSLv3;
+   curl_easy_setopt(curl, CURLOPT_SSLVERSION, final_version);
 
    // cache-control
    if(_config->FindB("Acquire::http::No-Cache",false) == false)
