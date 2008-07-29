@@ -102,15 +102,13 @@ bool UnMet(CommandLine &CmdL)
 	    if (End->Type != pkgCache::Dep::PreDepends &&
 		End->Type != pkgCache::Dep::Depends && 
 		End->Type != pkgCache::Dep::Suggests &&
-		End->Type != pkgCache::Dep::Recommends &&
-		End->Type != pkgCache::Dep::DpkgBreaks)
+	        End->Type != pkgCache::Dep::Recommends)
 	       continue;
 
 	    // Important deps only
 	    if (Important == true)
 	       if (End->Type != pkgCache::Dep::PreDepends &&
-		   End->Type != pkgCache::Dep::Depends &&
-		   End->Type != pkgCache::Dep::DpkgBreaks)
+	           End->Type != pkgCache::Dep::Depends)
 		  continue;
 	    
 	    // Verify the or group
