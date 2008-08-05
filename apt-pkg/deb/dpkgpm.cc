@@ -47,7 +47,7 @@ using namespace std;
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
    : pkgPackageManager(Cache), dpkgbuf_pos(0),
-     term_out(NULL), PackagesDone(0), PackagesTotal(0)
+     term_out(NULL), PackagesDone(0), PackagesTotal(0), pkgFailures(0)
 {
 }
 									/*}}}*/
@@ -946,11 +946,17 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    FILE *report;
 
    if (_config->FindB("Dpkg::ApportFailureReport",true) == false)
+   {
+      std::clog << "configured to not write apport reports" << std::endl;
       return;
+   }
 
    // only report the first error
    if(pkgFailures > _config->FindI("APT::Apport::MaxReports", 3))
+   {
+      std::clog << _("No apport report written because MaxReports is reached already") << std::endl;
       return;
+   }
 
    // get the pkgname and reportfile
    pkgname = flNotDir(pkgpath);
