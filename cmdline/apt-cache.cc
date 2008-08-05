@@ -1276,7 +1276,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
 									/*}}}*/
 // Search - Perform a search						/*{{{*/
 // ---------------------------------------------------------------------
-/* This searches the package names and pacakge descriptions for a pattern */
+/* This searches the package names and package descriptions for a pattern */
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
