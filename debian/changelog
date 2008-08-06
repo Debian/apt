@@ -27,7 +27,11 @@ apt (0.7.15) UNRELEASED; urgency=low
   * document --install-recommends and --no-install-recommends
     (thanks to Dereck Wonnacott, LP: #126180)
   * fix various -Wall warnings
-
+  * make "apt-get build-dep" installed packages marked automatic
+    by default. This can be changed by setting the value of
+    APT::Get::Build-Dep-Automatic to false (thanks to Aaron 
+    Haviland, closes: #44874, LP: #248268)
+  
   [ Dereck Wonnacott ]
   * apt-ftparchive might write corrupt Release files (LP: #46439)
   * Apply --important option to apt-cache depends (LP: #16947) 
