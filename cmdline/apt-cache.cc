@@ -102,15 +102,13 @@ bool UnMet(CommandLine &CmdL)
 	    if (End->Type != pkgCache::Dep::PreDepends &&
 		End->Type != pkgCache::Dep::Depends && 
 		End->Type != pkgCache::Dep::Suggests &&
-		End->Type != pkgCache::Dep::Recommends &&
-		End->Type != pkgCache::Dep::DpkgBreaks)
+	        End->Type != pkgCache::Dep::Recommends)
 	       continue;
 
 	    // Important deps only
 	    if (Important == true)
 	       if (End->Type != pkgCache::Dep::PreDepends &&
-		   End->Type != pkgCache::Dep::Depends &&
-		   End->Type != pkgCache::Dep::DpkgBreaks)
+	           End->Type != pkgCache::Dep::Depends)
 		  continue;
 	    
 	    // Verify the or group
@@ -557,6 +555,7 @@ bool Depends(CommandLine &CmdL)
    
    bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
    bool Installed = _config->FindB("APT::Cache::Installed",false);
+   bool Important = _config->FindB("APT::Cache::Important",false);
    bool DidSomething;
    do
    {
@@ -579,7 +578,12 @@ bool Depends(CommandLine &CmdL)
 	 
 	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
 	 {
-
+	    // Important deps only
+	    if (Important == true)
+	       if (D->Type != pkgCache::Dep::PreDepends &&
+		   D->Type != pkgCache::Dep::Depends)
+		  continue;
+		  
 	    pkgCache::PkgIterator Trg = D.TargetPkg();
 
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)

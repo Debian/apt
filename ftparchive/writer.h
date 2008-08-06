@@ -52,7 +52,7 @@ class FTWScanner
    {
       if (ErrorPrinted == false && Quiet <= Priority)
       {
-	 cout << endl;
+	 c1out << endl;
 	 ErrorPrinted = true;
       }	 
    }

@@ -1,10 +1,26 @@
 apt (0.7.14ubuntu4) intrepid; urgency=low
 
+  [ Michael Vogt ]
   * apt-pkg/deb/dpkgpm.cc:
     - fix uninitialized variable that caused no apport reports
       to be written sometimes (thanks to Matt Zimmerman)
+  * merge patch that enforces stricter https server certificate
+    checking (thanks to Arnaud Ebalard, closes: #485960)
+  * allow per-mirror specific https settings
+    (thanks to Arnaud Ebalard, closes: #485965)
+  * add doc/examples/apt-https-method-example.cof
+    (thanks to Arnaud Ebalard, closes: #485964)
+  * add DPkg::NoTriggers option so that applications that call
+    apt/aptitude (like the installer) defer trigger processing
+    (thanks to Joey Hess) 
+  * document --install-recommends and --no-install-recommends
+    (thanks to Dereck Wonnacott, LP: #126180)
 
- --
+  [ Dereck Wonnacott ]
+  * apt-ftparchive might write corrupt Release files (LP: #46439)
+  * Apply --important option to apt-cache depends (LP: #16947) 
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 05 Aug 2008 10:10:49 +0200
 
 apt (0.7.14ubuntu3) intrepid; urgency=low
 

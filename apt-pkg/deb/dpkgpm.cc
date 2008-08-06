@@ -556,6 +556,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 {
    unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);   
    unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
+   bool NoTriggers = _config->FindB("DPkg::NoTriggers",false);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
@@ -606,7 +607,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    PackageProcessingOps.insert( make_pair("install",N_("Installing %s")) );
    PackageProcessingOps.insert( make_pair("configure",N_("Configuring %s")) );
    PackageProcessingOps.insert( make_pair("remove",N_("Removing %s")) );
-   PackageProcessingOps.insert( make_pair("trigproc",N_("Triggering %s")) );
+   PackageProcessingOps.insert( make_pair("trigproc",N_("Running post-installation trigger %s")) );
    
    // init the PackageOps map, go over the list of packages that
    // that will be [installed|configured|removed|purged] and add
@@ -691,6 +692,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 
 	 case Item::Configure:
 	 Args[n++] = "--configure";
+	 if (NoTriggers)
+	    Args[n++] = "--no-triggers";
 	 Size += strlen(Args[n-1]);
 	 break;
 	 
