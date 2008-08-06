@@ -1,3 +1,13 @@
+apt (0.7.14ubuntu5) intrepid; urgency=low
+
+  * fix various -Wall warnings
+  * make "apt-get build-dep" installed packages marked automatic
+    by default. This can be changed by setting the value of
+    APT::Get::Build-Dep-Automatic to false (thanks to Aaron 
+    Haviland, closes: #44874, LP: #248268)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 06 Aug 2008 14:00:51 +0200
+
 apt (0.7.14ubuntu4) intrepid; urgency=low
 
   [ Michael Vogt ]
@@ -15,7 +25,7 @@ apt (0.7.14ubuntu4) intrepid; urgency=low
     (thanks to Joey Hess) 
   * document --install-recommends and --no-install-recommends
     (thanks to Dereck Wonnacott, LP: #126180)
-
+  
   [ Dereck Wonnacott ]
   * apt-ftparchive might write corrupt Release files (LP: #46439)
   * Apply --important option to apt-cache depends (LP: #16947) 

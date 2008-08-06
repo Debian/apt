@@ -2540,6 +2540,8 @@ bool DoBuildDep(CommandLine &CmdL)
             {
                // We successfully installed something; skip remaining alternatives
                skipAlternatives = hasAlternatives;
+	       if(_config->FindB("APT::Get::Build-Dep-Automatic", true) == true)
+		  Cache->MarkAuto(Pkg, true);
                continue;
             }
             else if (hasAlternatives)
