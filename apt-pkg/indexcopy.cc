@@ -522,6 +522,15 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
 {
    const indexRecords::checkSum *Record = MetaIndex->Lookup(file);
 
+   // we skip non-existing files in the verifcation to support a cdrom
+   // with no Packages file (just a Package.gz), see LP: #255545
+   // (non-existing files are not considered a error)
+   if(!FileExists(prefix+file))
+   {
+      _error->Warning("Skipping non-exisiting file %s", string(prefix+file).c_str());
+      return true;
+   }
+
    if (!Record) 
    {
       _error->Warning("Can't find authentication record for: %s",file.c_str());

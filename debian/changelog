@@ -31,6 +31,10 @@ apt (0.7.15) UNRELEASED; urgency=low
     by default. This can be changed by setting the value of
     APT::Get::Build-Dep-Automatic to false (thanks to Aaron 
     Haviland, closes: #44874, LP: #248268)
+  * apt-pkg/indexcopy.cc:
+    - support having CDs with no Packages file (just a Packages.gz)
+      by not forcing a verification on non-existing files
+     (LP: #255545)
   
   [ Dereck Wonnacott ]
   * apt-ftparchive might write corrupt Release files (LP: #46439)
