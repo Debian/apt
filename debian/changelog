@@ -4,6 +4,10 @@ apt (0.7.14ubuntu6) UNRELEASED; urgency=low
     - remove "linux-image" (and friends) from the auto-remove
       blacklist. we have the kernel fallback infrastructure now
       in intrepid (thanks to BenC)
+  * apt-pkg/indexcopy.cc:
+    - support having CDs with no Packages file (just a Packages.gz)
+      by not forcing a verification on non-existing files
+     (LP: #255545)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 07 Aug 2008 16:28:05 +0200
 
