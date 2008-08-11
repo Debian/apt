@@ -387,6 +387,14 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 
    if(strncmp(action,"error",strlen("error")) == 0)
    {
+      // urgs, sometime has ":" in its error string so that we
+      // end up with the error message split between list[3]
+      // and list[4], e.g. the message: 
+      // failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ...
+      // concat them again
+      if( list[4] != NULL)
+	 list[4][-1] = ':';
+
       status << "pmerror:" << list[1]
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << list[3]
@@ -954,10 +962,17 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       return;
    }
 
-   // only report the first error
+   // only report the first errors
    if(pkgFailures > _config->FindI("APT::Apport::MaxReports", 3))
    {
       std::clog << _("No apport report written because MaxReports is reached already") << std::endl;
+      return;
+   }
+
+   // check if its not a follow up error 
+   const char *needle = dgettext("dpkg", "dependency problems - leaving unconfigured");
+   if(strstr(errormsg, needle) != NULL) {
+      std::clog << _("No apport report written because the error message indicates its a followup error from a previous failure.") << std::endl;
       return;
    }
 
