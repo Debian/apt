@@ -341,7 +341,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: trigproc: trigger'
 	    
    */
-   char* list[5];
+   char* list[6];
    //        dpkg sends multiline error messages sometimes (see
    //        #374195 for a example. we should support this by
    //        either patching dpkg to not send multiline over the
@@ -390,10 +390,10 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       // urgs, sometime has ":" in its error string so that we
       // end up with the error message split between list[3]
       // and list[4], e.g. the message: 
-      // failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ...
+      // "failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ..."
       // concat them again
-      if( list[4] != NULL)
-	 list[4][-1] = ':';
+      if( list[4] != NULL )
+	 list[3][strlen(list[3])] = ':';
 
       status << "pmerror:" << list[1]
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
