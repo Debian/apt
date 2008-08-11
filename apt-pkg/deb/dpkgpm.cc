@@ -25,6 +25,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
+#include <string.h>
 #include <stdio.h>
 #include <sstream>
 #include <map>
@@ -973,6 +974,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    const char *needle = dgettext("dpkg", "dependency problems - leaving unconfigured");
    if(strstr(errormsg, needle) != NULL) {
       std::clog << _("No apport report written because the error message indicates its a followup error from a previous failure.") << std::endl;
+      return;
+   }
+
+   // do not report disk-full failures 
+   if(strstr(errormsg, strerror(ENOSPC)) != NULL) {
+      std::clog << _("No apport report written because the error message indicates a disk full error") << std::endl;
       return;
    }
 
