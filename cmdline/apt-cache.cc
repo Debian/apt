@@ -1533,7 +1533,8 @@ bool Policy(CommandLine &CmdL)
 	 if (SrcList->FindIndex(F,Indx) == false &&
 	     _system->FindIndex(F,Indx) == false)
 	    return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
-	 printf(_("%4i %s\n"),
+	 
+	 printf("%4i %s\n",
 		Plcy.GetPriority(F),Indx->Describe(true).c_str());
 	 
 	 // Print the reference information for the package
