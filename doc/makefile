@@ -20,7 +20,7 @@ INCLUDES = apt.ent
 include $(XML_MANPAGE_H)
 
 # Examples
-SOURCE = examples/apt.conf examples/sources.list examples/configure-index 
+SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf
 TO = $(DOC)
 TARGET = binary
 include $(COPY_H)
