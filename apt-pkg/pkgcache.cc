@@ -622,7 +622,8 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    for (; Desc.end() == false; Desc++)
       if (pkgIndexFile::LanguageCode() == Desc.LanguageCode())
 	 break;
-   if (Desc.end() == true) Desc = DescDefault;
+   if (Desc.end() == true) 
+      Desc = DescDefault;
    return Desc;
 };
 
