@@ -139,10 +139,21 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  	 {
  	    pkgCache::DescIterator Desc = Ver.DescriptionList();
  	    map_ptrloc *LastDesc = &Ver->DescriptionList;
+	    bool duplicate=false;
 
- 	    for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++)
+	    // don't add a new description if we have one for the given
+	    // md5 && language
+ 	    for ( ; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++)
+	       if (MD5SumValue(Desc.md5()) == CurMd5 && 
+	           Desc.LanguageCode() == List.DescriptionLanguage())
+		  duplicate=true;
+	    if(duplicate)
+	       continue;
+	    
+ 	    for (Desc = Ver.DescriptionList();
+		 Desc.end() == false; 
+		 LastDesc = &Desc->NextDesc, Desc++)
 	    {
-
  	       if (MD5SumValue(Desc.md5()) == CurMd5) 
                {
  		  // Add new description
@@ -434,7 +445,8 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 // ---------------------------------------------------------------------
 /* This puts a description structure in the linked list */
 map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
-					    const string &Lang, const MD5SumValue &md5sum,
+					    const string &Lang, 
+                                            const MD5SumValue &md5sum,
 					    map_ptrloc Next)
 {
    // Get a structure
