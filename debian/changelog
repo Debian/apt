@@ -1,3 +1,15 @@
+apt (UNRELEASED) experimental; urgency=low
+
+  [Daniel Burrows]
+  * apt-pkg/deb/dpkgpm.cc:
+    - Store the trigger state descriptions in a way that does not break
+      the ABI.  The approach taken makes the search for a string O(n) rather
+      than O(lg(n)), but since n == 4, I do not consider this a major
+      concern.  If it becomes a concern, we can sort the static array and
+      use std::equal_range().  (Closes: #499322)
+
+ --
+
 apt (0.7.15~exp2) experimental; urgency=low
 
   [ Michael Vogt ]
