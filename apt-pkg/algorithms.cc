@@ -37,7 +37,8 @@ pkgProblemResolver *pkgProblemResolver::This = 0;
    this is not necessary since the pkgCaches are fully shared now. */
 pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
 		            iPolicy(Cache),
-                            Sim(&Cache->GetCache(),&iPolicy)
+			    Sim(&Cache->GetCache(),&iPolicy),
+			    group(Sim)
 {
    Sim.Init(0);
    Flags = new unsigned char[Cache->Head().PackageCount];

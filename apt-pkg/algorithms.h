@@ -60,6 +60,7 @@ class pkgSimulate : public pkgPackageManager
    
    Policy iPolicy;
    pkgDepCache Sim;
+   pkgDepCache::ActionGroup group;
    
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,string File);

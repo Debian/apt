@@ -666,10 +666,6 @@ pkgPackageManager::DoInstallPostFork(int statusFd)
       if(goResult == false) 
 	 return Failed;
 
-      // if all was fine update the state file
-      if(Res == Completed) {
-	 Cache.writeStateFile(NULL);
-      }
       return Res;
 };
 
