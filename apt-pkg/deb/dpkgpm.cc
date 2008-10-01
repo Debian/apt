@@ -927,6 +927,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
+
+   Cache.writeStateFile(NULL);
    return true;
 }
 									/*}}}*/
