@@ -497,7 +497,7 @@ void pkgProblemResolver::MakeScores()
       
       signed short &Score = Scores[I->ID];
       
-      /* This is arbitary, it should be high enough to elevate an
+      /* This is arbitrary, it should be high enough to elevate an
          essantial package above most other packages but low enough
 	 to allow an obsolete essential packages to be removed by
 	 a conflicts on a powerfull normal package (ie libc6) */

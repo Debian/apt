@@ -461,7 +461,7 @@ string Base64Encode(const string &S)
 									/*}}}*/
 // stringcmp - Arbitary string compare					/*{{{*/
 // ---------------------------------------------------------------------
-/* This safely compares two non-null terminated strings of arbitary 
+/* This safely compares two non-null terminated strings of arbitrary 
    length */
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
 {

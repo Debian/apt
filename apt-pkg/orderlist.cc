@@ -39,7 +39,7 @@
          ordering.  
    
    Each of the features can be enabled in the sorting routine at an 
-   arbitary priority to give quite abit of control over the final unpacking
+   arbitrary priority to give quite abit of control over the final unpacking
    order.
 
    The rules listed above may never be violated and are called Critical.
