@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2006-10-21 16:58+0800\n"
+"POT-Creation-Date: 2008-05-28 14:25+0200\n"
+"PO-Revision-Date: 2008-06-29 21:41+0800\n"
 "Last-Translator: Asho Yeh <asho@debian.org.tw>\n"
 "Language-Team: Chinese/Traditional <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
@@ -57,9 +57,8 @@ msgid "Total distinct versions: "
 msgstr "所有不同版本"
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total distinct descriptions: "
-msgstr "所有不同版本"
+msgstr "所有不同版本的描述："
 
 #: cmdline/apt-cache.cc:297
 msgid "Total dependencies: "
@@ -70,9 +69,8 @@ msgid "Total ver/file relations: "
 msgstr "所有版本/檔案關聯："
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr "所有版本/檔案關聯："
+msgstr "所有版本/檔案關聯： "
 
 #: cmdline/apt-cache.cc:304
 msgid "Total Provides mappings: "
@@ -160,9 +158,9 @@ msgstr "       %4i %s\n"
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
 #: cmdline/apt-get.cc:2571 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s 是針對於 %s %s 並編譯在 %s %s\n"
+msgstr "%s %s 是針對 %s 並在 %s %s 所編譯的\n"
 
 #: cmdline/apt-cache.cc:1721
 msgid ""
@@ -837,14 +835,14 @@ msgid "Need to get %sB of archives.\n"
 msgstr "需要下載 %sB 的檔案。\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "解壓縮後將消耗 %sB 的空間。\n"
+msgstr "經過該處置後將消耗 %sB 的空間。\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "解壓縮後將空出 %sB 的空間。\n"
+msgstr "經過該處置後將空出 %sB 的空間。\n"
 
 #: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2166
 #, c-format
@@ -999,42 +997,41 @@ msgstr "無法鎖定列表目錄"
 
 #: cmdline/apt-get.cc:1403
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
+msgstr "我們將不刪除任何東西，無法啟動AutoRemover"
 
 #: cmdline/apt-get.cc:1435
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "下列的【新】套件都將被安裝："
+msgstr "下列的套件都將自動安裝："
 
 #: cmdline/apt-get.cc:1437
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "使用 'apt-get autoremove' 來移除這些"
 
 #: cmdline/apt-get.cc:1442
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"恩，看起來AutoRemover損毀了某個東西，這不該發生的。請針對該 apt 發佈臭蟲。"
 
 #: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1733
 msgid "The following information may help to resolve the situation:"
 msgstr "底下的資訊有助於解決現在的情況:"
 
 #: cmdline/apt-get.cc:1449
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "內部錯誤，problem resolver 處理失敗"
+msgstr "內部錯誤，AutoRemover 處理失敗"
 
 #: cmdline/apt-get.cc:1468
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "內部錯誤,AllUpgrade 造成錯誤"
 
 #: cmdline/apt-get.cc:1523
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "無法找到 %s 套件。"
+msgstr "無法找到 %s 作業。"
 
 #: cmdline/apt-get.cc:1638 cmdline/apt-get.cc:1674
 #, c-format
@@ -1047,9 +1044,9 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "注意,根據正規表示法“%2$s”選擇了 %1$s\n"
 
 #: cmdline/apt-get.cc:1692
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
-msgstr "但是『%s』卻將被安裝。"
+msgstr "%s 被設定為手動安裝。\n"
 
 #: cmdline/apt-get.cc:1705
 msgid "You might want to run `apt-get -f install' to correct these:"
@@ -1232,7 +1229,6 @@ msgid "Supported modules:"
 msgstr "支援模組:"
 
 #: cmdline/apt-get.cc:2617
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1283,36 +1279,37 @@ msgstr ""
 "最常用命令是 update 和 install。\n"
 "\n"
 "命令:\n"
-"   update - 下載更新套件列表訊息\n"
+"   update - 取得套件的更新列表\n"
 "   upgrade - 進行一次升級\n"
 "   install - 安裝新的套件(注:套件名稱是 libc6 而非 libc6.deb)\n"
-"   remove - 移除套件\n"
-"   source - 下載源碼檔案\n"
-"   build-dep - 為源碼配置所需的建構相依關係\n"
-"   dist-upgrade - 發布版本升級,見 apt-get(8)   dselect-upgrade - 根據 "
-"dselect \n"
-"的選擇來進行升級\n"
+"   remove - 移除套件(保留設定檔)\n"
+"   autoremove·-·自動移除未使用到的套件\n"
+"   purge·-·完整移除套件(刪除設定檔)\n"
+"   source - 下載套件原始碼\n"
+"   build-dep - 為原始碼套件設定建構的相依關係\n"
+"   dist-upgrade - 發行版本升級,參閱 apt-get(8)\n"
+"   dselect-upgrade·-·採用 dselect·的選項升級\n"
 "   clean - 刪除所有已下載的套件檔案\n"
 "   auto-clean - 刪除已下載的套件檔案較舊的版本\n"
 "   check - 核對以確認系統的相依關係的完整性\n"
 "\n"
 "選項:\n"
-"  -h  本幫助訊息。\n"
+"  -h  本求助訊息。\n"
 "  -q  讓輸出作為記錄檔 - 不顯示進度\n"
-"  -qq 除了錯誤外,什麼都不輸出\n"
+"  -qq 除了錯誤外,皆不產生任何訊息\n"
 "  -d  僅下載 - 『不』安裝或解開套件檔案\n"
 "  -s  不作實際操作。只是模擬執行命令\n"
 "  -y  對所有詢問都作肯定的回答,同時不作任何提示\n"
-"  -f  當沒有通過完整性測試時,仍嘗試繼續執行\n"
+"  -f  嘗試修正系統損毀的套件相依關係\n"
 "  -m  當有套件檔案無法找到時,仍嘗試繼續執行\n"
 "  -u  顯示已升級的套件列表\n"
-"  -b  在下載完源碼後,編譯生成相應的套件\n"
-"  -V  顯示詳盡的版本號\n"
+"  -b  在下載完套件原始碼後,編譯產生對應的套件\n"
+"  -V  顯示詳盡的版本號碼\n"
 "  -c=? 讀取指定的設定檔案\n"
 "  -o=? 設定任意指定的設定選項,例如:-o dir::cache=/tmp\n"
-"請查閱 apt-get(8)、sources.list(5) 和 apt.conf(5)的參考手冊\n"
+"請參閱 apt-get(8)、sources.list(5) 和 apt.conf(5)的使用手冊\n"
 "以取得更多訊息和選項。\n"
-"                       本 APT 有著超級牛力。\n"
+"                        該 APT 有著超級牛力。\n"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1390,7 +1387,7 @@ msgstr "請按 [Enter] 鍵繼續。"
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
+msgstr "您想移除任何先前下載的 deb 檔案嗎？"
 
 #: dselect/install:101
 msgid "Some errors occurred while unpacking. I'm going to configure the"
@@ -1657,9 +1654,9 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "無效的 DEB 檔案，遺失 %s 成員"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "無效的 DEB 檔案，遺失 '%s' 或 '%s' 成員"
+msgstr "無效的 DEB 檔案，遺失 '%s', '%s' 或 '%s' 成員"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -1773,7 +1770,7 @@ msgstr "連線逾時"
 msgid "Server closed the connection"
 msgstr "伺服器關閉聯線。"
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:536 methods/rsh.cc:190
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:538 methods/rsh.cc:190
 msgid "Read error"
 msgstr "讀取失敗。"
 
@@ -1785,7 +1782,7 @@ msgstr "答覆超過緩衝區長度。"
 msgid "Protocol corruption"
 msgstr "協定失敗。"
 
-#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:575 methods/rsh.cc:232
+#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:577 methods/rsh.cc:232
 msgid "Write error"
 msgstr "寫入失敗。"
 
@@ -2177,70 +2174,70 @@ msgstr "無法進入『%s』目錄。"
 msgid "Failed to stat the cdrom"
 msgstr "CD-ROM 狀況讀取失敗"
 
-#: apt-pkg/contrib/fileutl.cc:147
+#: apt-pkg/contrib/fileutl.cc:149
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "不使用檔案鎖定於唯獨檔案 %s"
 
-#: apt-pkg/contrib/fileutl.cc:152
+#: apt-pkg/contrib/fileutl.cc:154
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "無法開啟『%s』鎖定檔。"
 
-#: apt-pkg/contrib/fileutl.cc:170
+#: apt-pkg/contrib/fileutl.cc:172
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "不使用檔案鎖定於 nfs 掛載點上得檔案 %s"
 
-#: apt-pkg/contrib/fileutl.cc:174
+#: apt-pkg/contrib/fileutl.cc:176
 #, c-format
 msgid "Could not get lock %s"
 msgstr "無法取得『%s』鎖。"
 
-#: apt-pkg/contrib/fileutl.cc:442
+#: apt-pkg/contrib/fileutl.cc:444
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "等待 %s 但是它不存在"
 
-#: apt-pkg/contrib/fileutl.cc:452
+#: apt-pkg/contrib/fileutl.cc:454
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "子程序 %s 收到一個記憶體錯誤"
 
-#: apt-pkg/contrib/fileutl.cc:455
+#: apt-pkg/contrib/fileutl.cc:457
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "子程序 %s 回傳錯誤碼(%u)"
 
-#: apt-pkg/contrib/fileutl.cc:457
+#: apt-pkg/contrib/fileutl.cc:459
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子程序 %s 不預期的結束"
 
-#: apt-pkg/contrib/fileutl.cc:501
+#: apt-pkg/contrib/fileutl.cc:503
 #, c-format
 msgid "Could not open file %s"
 msgstr "無法開啟『%s』檔案。"
 
-#: apt-pkg/contrib/fileutl.cc:557
+#: apt-pkg/contrib/fileutl.cc:559
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "讀取，仍有 %lu 未讀"
 
-#: apt-pkg/contrib/fileutl.cc:587
+#: apt-pkg/contrib/fileutl.cc:589
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "寫入，仍有 %lu 待寫入但無法寫入"
 
-#: apt-pkg/contrib/fileutl.cc:662
+#: apt-pkg/contrib/fileutl.cc:664
 msgid "Problem closing the file"
 msgstr "程式關閉檔案"
 
-#: apt-pkg/contrib/fileutl.cc:668
+#: apt-pkg/contrib/fileutl.cc:670
 msgid "Problem unlinking the file"
 msgstr "程式刪除檔案"
 
-#: apt-pkg/contrib/fileutl.cc:679
+#: apt-pkg/contrib/fileutl.cc:681
 msgid "Problem syncing the file"
 msgstr "程式同步檔案"
 
@@ -2295,7 +2292,7 @@ msgstr "淘汰"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Breaks"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2330,19 +2327,18 @@ msgid "Dependency generation"
 msgstr "產生套件依存關係"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "結合現有資料中"
+msgstr "讀取狀態資料中"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "無法開啟 %s"
+msgstr "無法開啟狀態檔案%s"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "寫入檔案 %s 失敗"
+msgstr "寫入暫存的狀態檔案 %s 失敗"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2532,9 +2528,9 @@ msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "處理『%s』時發生錯誤 (UsePackage1)。"
 
 #: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "處理『%s』時發生錯誤 (NewFileVer1)。"
+msgstr "處理『%s』時發生錯誤 (NewFileDesc1)。"
 
 #: apt-pkg/pkgcachegen.cc:178
 #, c-format
@@ -2562,9 +2558,9 @@ msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "處理『%s』時發生錯誤 (NewVersion2)。"
 
 #: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "處理『%s』時發生錯誤 (NewFileVer1)。"
+msgstr "處理『%s』時發生錯誤 (NewFileDesc2)。"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2575,9 +2571,8 @@ msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "套件版本數量超過本程式的能力。"
 
 #: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "套件版本數量超過本程式的能力。"
+msgstr "哇，套件版本數量超過該 APT 的能力。"
 
 #: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2621,9 +2616,8 @@ msgid "MD5Sum mismatch"
 msgstr "MD5 檢查碼不符合。"
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr "MD5 檢查碼不符合。"
+msgstr "檢查碼不符合。"
 
 #: apt-pkg/acquire-item.cc:1100
 msgid "There is no public key available for the following key IDs:\n"
@@ -2677,9 +2671,8 @@ msgid "Stored label: %s\n"
 msgstr "保存標誌：%s \n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "卸載光碟機中..."
+msgstr "卸載光碟機中...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2704,16 +2697,16 @@ msgid "Scanning disc for index files..\n"
 msgstr "掃描碟片中的索引檔案..\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
-msgstr "找到 %i 個套件索引，%i 源碼索引和 %i 簽名\n"
+msgstr "找到 %zu 個套件索引，%zu 原始碼索引，%zu 翻譯索引和%zu 簽名\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "保存標誌：%s \n"
+msgstr "發現標誌 %s \n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2760,70 +2753,81 @@ msgstr "寫入 %i 筆 %i 個不匹配檔案的紀錄。\n"
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "寫入 %i 筆遺失 %i 個檔案和 %i 個不匹配檔案的紀錄。\n"
 
-#: apt-pkg/deb/dpkgpm.cc:452
-#, fuzzy, c-format
+#: apt-pkg/deb/dpkgpm.cc:486
+#, c-format
 msgid "Directory '%s' missing"
-msgstr "找不到『%spartial』清單目錄。"
+msgstr "找不到 '%s' 目錄"
 
-#: apt-pkg/deb/dpkgpm.cc:535
+#: apt-pkg/deb/dpkgpm.cc:569
 #, c-format
 msgid "Preparing %s"
 msgstr "準備配置%s中"
 
-#: apt-pkg/deb/dpkgpm.cc:536
+#: apt-pkg/deb/dpkgpm.cc:570
 #, c-format
 msgid "Unpacking %s"
 msgstr "解開%s中"
 
-#: apt-pkg/deb/dpkgpm.cc:541
+#: apt-pkg/deb/dpkgpm.cc:575
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "準備設定%s檔"
 
-#: apt-pkg/deb/dpkgpm.cc:542
+#: apt-pkg/deb/dpkgpm.cc:576 apt-pkg/deb/dpkgpm.cc:605
 #, c-format
 msgid "Configuring %s"
 msgstr "設定%s中"
 
-#: apt-pkg/deb/dpkgpm.cc:544 apt-pkg/deb/dpkgpm.cc:545
-#, fuzzy, c-format
+#: apt-pkg/deb/dpkgpm.cc:578 apt-pkg/deb/dpkgpm.cc:579
+#, c-format
 msgid "Processing triggers for %s"
-msgstr "處理目錄 %s 時錯誤"
+msgstr "處理 %s 的啟動器"
 
-#: apt-pkg/deb/dpkgpm.cc:547
+#: apt-pkg/deb/dpkgpm.cc:581
 #, c-format
 msgid "Installed %s"
 msgstr "已安裝%s"
 
-#: apt-pkg/deb/dpkgpm.cc:552 apt-pkg/deb/dpkgpm.cc:554
-#: apt-pkg/deb/dpkgpm.cc:555
+#: apt-pkg/deb/dpkgpm.cc:586 apt-pkg/deb/dpkgpm.cc:588
+#: apt-pkg/deb/dpkgpm.cc:589
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "正在準備 %s 的刪除操作"
 
-#: apt-pkg/deb/dpkgpm.cc:557
+#: apt-pkg/deb/dpkgpm.cc:591 apt-pkg/deb/dpkgpm.cc:606
 #, c-format
 msgid "Removing %s"
 msgstr "移除%s中"
 
-#: apt-pkg/deb/dpkgpm.cc:558
+#: apt-pkg/deb/dpkgpm.cc:592
 #, c-format
 msgid "Removed %s"
 msgstr "已移除%s"
 
-#: apt-pkg/deb/dpkgpm.cc:563
+#: apt-pkg/deb/dpkgpm.cc:597
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "準備完整移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:564
+#: apt-pkg/deb/dpkgpm.cc:598
 #, c-format
 msgid "Completely removed %s"
 msgstr "已完整移除%s"
 
-#: apt-pkg/deb/dpkgpm.cc:716
-msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
+#. populate the "processing" map
+#: apt-pkg/deb/dpkgpm.cc:604
+#, fuzzy, c-format
+msgid "Installing %s"
+msgstr "已安裝%s"
+
+#: apt-pkg/deb/dpkgpm.cc:607
+#, c-format
+msgid "Running post-installation trigger %s"
 msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:756
+msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
+msgstr "無法寫入記錄檔，openpty()失敗(/dev/pts有掛載嗎？)\n"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"

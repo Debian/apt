@@ -1,3 +1,91 @@
+apt (0.7.15) unstable; urgency=low
+
+  * Upload to unstable
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 05 Oct 2008 13:23:47 +0200
+
+apt (0.7.15~exp3) experimental; urgency=low
+
+  [Daniel Burrows]
+  * apt-pkg/deb/dpkgpm.cc:
+    - Store the trigger state descriptions in a way that does not break
+      the ABI.  The approach taken makes the search for a string O(n) rather
+      than O(lg(n)), but since n == 4, I do not consider this a major
+      concern.  If it becomes a concern, we can sort the static array and
+      use std::equal_range().  (Closes: #499322)
+
+  [ Michael Vogt ]
+  * apt-pkg/packagemanager.cc, apt-pkg/deb/dpkgpm.cc:
+    - move the state file writting into the Go() implementation
+      of dpkgpm (closes: #498799)
+  * apt-pkg/algorithms.cc:
+    - fix simulation performance drop (thanks to Ferenc Wagner
+      for reporting the issue)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 01 Oct 2008 18:09:49 +0200
+
+apt (0.7.15~exp2) experimental; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/pkgcachegen.cc:
+    - do not add multiple identical descriptions for the same 
+      language (closes: #400768)
+
+  [ Program translations ]
+  * Catalan updated. Closes: #499462
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 23 Sep 2008 07:29:59 +0200
+
+apt (0.7.15~exp1) experimental; urgency=low
+
+  [ Christian Perrier ]
+  * Fix typo in cron.daily script. Closes: #486179
+
+  [ Program translations ]
+  * Traditional Chinese updated. Closes: #488526
+  * German corrected and completed. Closes: #490532, #480002, #498018
+  * French completed
+  * Bulgarian updated. Closes: #492473
+  * Slovak updated. Closes: #492475
+  * Galician updated. Closes: #492794
+  * Japanese updated. Closes: #492975
+  * Fix missing space in Greek translation. Closes: #493922
+  * Greek updated.
+  * Brazilian Portuguese updated.
+  * Basque updated. Closes: #496754
+  * Romanian updated. Closes: #492773, #488361
+  * Portuguese updated. Closes: #491790
+  * Simplified Chinese updated. Closes: #489344
+  * Norwegian Bokmål updated. Closes: #480022
+  * Czech updated. Closes: #479628, #497277
+  * Korean updated. Closes: #464515
+  * Spanish updated. Closes: #457706
+  * Lithuanian added. Closes: #493328
+  * Swedish updated. Closes: #497496
+  * Vietnamese updated. Closes: #497893
+  * Portuguese updated. Closes: #498411
+  * Greek updated. Closes: #498687
+  * Polish updated.
+
+  [ Michael Vogt ]
+  * merge patch that enforces stricter https server certificate
+    checking (thanks to Arnaud Ebalard, closes: #485960)
+  * allow per-mirror specific https settings
+    (thanks to Arnaud Ebalard, closes: #485965)
+  * add doc/examples/apt-https-method-example.cof
+    (thanks to Arnaud Ebalard, closes: #485964)
+  * apt-pkg/depcache.cc:
+    - when checking for new important deps, skip critical ones
+      (closes: #485943)
+  * improve apt progress reporting, display trigger actions
+  * add DPkg::NoTriggers option so that applications that call
+    apt/aptitude (like the installer) defer trigger processing
+    (thanks to Joey Hess)
+  * doc/makefile:
+    - add examples/apt-https-method-example.conf
+  
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 Sep 2008 21:27:03 +0200
+
 apt (0.7.14) unstable; urgency=low
 
   [ Christian Perrier ]
@@ -18,7 +106,7 @@ apt (0.7.14) unstable; urgency=low
   * Korean updated. Closes: #479426
   * Basque updated. Closes: #479452
   * Vietnamese updated. Closes: #479748
-  * Russian updated. Closes: #479777
+  * Russian updated. Closes: #479777, #499029
   * Galician updated. Closes: #479792
   * Portuguese updated. Closes: #479847
   * Swedish updated. Closes: #479871

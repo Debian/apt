@@ -25,6 +25,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
+#include <algorithm>
 #include <sstream>
 #include <map>
 
@@ -39,7 +41,38 @@
 
 using namespace std;
 
+namespace
+{
+  // Maps the dpkg "processing" info to human readable names.  Entry 0
+  // of each array is the key, entry 1 is the value.
+  const std::pair<const char *, const char *> PackageProcessingOps[] = {
+    std::make_pair("install",   N_("Installing %s")),
+    std::make_pair("configure", N_("Configuring %s")),
+    std::make_pair("remove",    N_("Removing %s")),
+    std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
+  };
 
+  const std::pair<const char *, const char *> * const PackageProcessingOpsBegin = PackageProcessingOps;
+  const std::pair<const char *, const char *> * const PackageProcessingOpsEnd   = PackageProcessingOps + sizeof(PackageProcessingOps) / sizeof(PackageProcessingOps[0]);
+
+  // Predicate to test whether an entry in the PackageProcessingOps
+  // array matches a string.
+  class MatchProcessingOp
+  {
+    const char *target;
+
+  public:
+    MatchProcessingOp(const char *the_target)
+      : target(the_target)
+    {
+    }
+
+    bool operator()(const std::pair<const char *, const char *> &pair) const
+    {
+      return strcmp(pair.first, target) == 0;
+    }
+  };
+}
 
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -333,6 +366,12 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
       and conffile-prompt like this
       'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+      
+      Newer versions of dpkg sent also:
+      'processing: install: pkg'
+      'processing: configure: pkg'
+      'processing: remove: pkg'
+      'processing: trigproc: trigger'
 	    
    */
    char* list[5];
@@ -350,6 +389,36 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    }
    char *pkg = list[1];
    char *action = _strstrip(list[2]);
+
+   // 'processing' from dpkg looks like
+   // 'processing: action: pkg'
+   if(strncmp(list[0], "processing", strlen("processing")) == 0)
+   {
+      char s[200];
+      char *pkg_or_trigger = _strstrip(list[2]);
+      action =_strstrip( list[1]);
+      const std::pair<const char *, const char *> * const iter =
+	std::find_if(PackageProcessingOpsBegin,
+		     PackageProcessingOpsEnd,
+		     MatchProcessingOp(action));
+      if(iter == PackageProcessingOpsEnd)
+      {
+	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	    std::clog << "ignoring unknwon action: " << action << std::endl;
+	 return;
+      }
+      snprintf(s, sizeof(s), _(iter->second), pkg_or_trigger);
+
+      status << "pmstatus:" << pkg_or_trigger
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+	     << ":" << s
+	     << endl;
+      if(OutStatusFd > 0)
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+      return;
+   }
 
    if(strncmp(action,"error",strlen("error")) == 0)
    {
@@ -520,13 +589,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 {
    unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);   
    unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
+   bool NoTriggers = _config->FindB("DPkg::NoTriggers",false);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
 
    if (RunScriptsWithPkgs("DPkg::Pre-Install-Pkgs") == false)
       return false;
-   
+
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
    static const struct DpkgState DpkgStatesOpMap[][7] = {
@@ -649,6 +719,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 
 	 case Item::Configure:
 	 Args[n++] = "--configure";
+	 if (NoTriggers)
+	    Args[n++] = "--no-triggers";
 	 Size += strlen(Args[n-1]);
 	 break;
 	 
@@ -884,6 +956,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
+
+   Cache.writeStateFile(NULL);
    return true;
 }
 									/*}}}*/
