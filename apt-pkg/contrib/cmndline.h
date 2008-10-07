@@ -34,7 +34,7 @@
      ConfigFile - Means this flag should be interprited as the name of 
                   a config file to read in at this point in option processing.
                   Implies HasArg.
-     ArbItem    - Means the item is an arbitary configuration string of
+     ArbItem    - Means the item is an arbitrary configuration string of
                   the form item=value, where item is passed directly
                   to the configuration class.
    The default, if the flags are 0 is to use Boolean

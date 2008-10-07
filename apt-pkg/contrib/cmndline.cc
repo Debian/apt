@@ -189,7 +189,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       if ((A->Flags & ConfigFile) == ConfigFile)
 	 return ReadConfigFile(*Conf,Argument);
 
-      // Arbitary item specification
+      // Arbitrary item specification
       if ((A->Flags & ArbItem) == ArbItem)
       {
 	 const char *J;

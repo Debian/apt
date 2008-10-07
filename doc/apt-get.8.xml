@@ -371,8 +371,10 @@
                    <term><option>--target-release</option></term>
                    <term><option>--default-release</option></term>
      <listitem><para>This option controls the default input to the policy engine, it creates
-     a default pin at priority 990 using the specified release string. The
-     preferences file may further override this setting. In short, this option
+     a default pin at priority 990 using the specified release string.
+     This overrides the general settings in <filename>/etc/apt/preferences</filename>.
+     Specifically pinned packages are not affected by the value
+     of this option. In short, this option
      lets you have simple control over which distribution packages will be
      retrieved from. Some common examples might be 
      <option>-t '2.1*'</option> or <option>-t unstable</option>.

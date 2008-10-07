@@ -36,12 +36,12 @@ cd into it to edit your source code!
 
 The make system also performs dependency generation on the fly as the
 compiler runs. This is extremely fast and accurate. There is however
-one failure condition that occures when a header file is erased. In
+one failure condition that occurs when a header file is erased. In
 this case you should run make clean to purge the .o and .d files to
 rebuild.
 
-The final significant deviation from normal make practicies is 
-in how the build directory is managed. It is not mearly a mirror of
+The final significant deviation from normal make practices is 
+in how the build directory is managed. It is not nearly a mirror of
 the source directory but is logically divided in the following manner
    bin/
      methods/
@@ -51,12 +51,12 @@ the source directory but is logically divided in the following manner
      apt-pkg/
    obj/
      apt-pkg/
-     cmndline/
+     cmdline/
      [...]
 Only .o and .d files are placed in the obj/ subdirectory. The final compiled
 binaries are placed in bin, published headers for inter-component linking
 are placed in include/ and documentation is generated into doc/. This means
-all runnable programs are within the bin/ directory, a huge benifit for
+all runnable programs are within the bin/ directory, a huge benefit for
 debugging inter-program relationships. The .so files are also placed in
 bin/ for simplicity.
 
@@ -87,9 +87,9 @@ Autoconf
 ~~~~~~~~
 Straight out of CVS you have to initialize autoconf. This requires 
 automake (I really don't know why) and autoconf and requires doing 
-  aclocal -I buidlib
+  aclocal -I buildlib
   autoconf
-[Altertatively you can run make startup in the top level build dir]
+[Alternatively you can run make startup in the top level build dir]
 
 Autoconf is configured to do some basic system probes for optional and 
 required functionality and generate an environment.mak and include/config.h 
@@ -103,7 +103,7 @@ build include/ dir and perhaps writing some replacement code and
 linking it in. To the fullest extent possible the source code should conform
 to standards and not cater to broken systems.
 
-Autoconf will also wite a makefile into the top level of the build dir, 
+Autoconf will also write a makefile into the top level of the build dir, 
 this simply acts as a wrapper to the main top level make in the source tree.
 There is one big warning, you can't use both this make file and the
 ones in the top level tree. Make is not able to resolve rules that 

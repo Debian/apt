@@ -1,3 +1,24 @@
+apt (0.7.16~exp1) UNRELEASED; urgency=low
+
+  [Luca Bruno]
+  * doc/apt-cache.8.xml:
+    - search command uses POSIX regex, and searches for virtual packages too
+      (closes: #277536)
+  * doc/offline.sgml: clarify remote and target hosts
+    (thanks to Nikolaus Schulz, closes: #175940)
+  * Fix several typos in docs, translations and debian/changelog
+    (thanks to timeless, Nicolas Bonifas and Josh Triplett,
+    closes: #368665, #298821, #411532, #431636, #461458)
+  * Document apt-key finger and adv commands
+    (thanks to Stefan Schmidt, closes: #350575)
+  * Better documentation for apt-get --option
+    (thanks to Tomas Pospisek, closes: #386579)
+  * Retitle the apt-mark.8 manpage (thanks to Justin Pryzby, closes: #471276)
+  * Better documentation on using both APT::Default-Release and
+    /etc/apt/preferences (thanks to Ingo Saitz, closes: #145575)
+
+ -- Luca Bruno <lethalman88@gmail.com>  Fri, 03 Oct 2008 20:00:18 +0200
+
 apt (0.7.15) unstable; urgency=low
 
   * Upload to unstable
@@ -514,7 +535,7 @@ apt (0.7.3) unstable; urgency=low
     Daniel Burrows, closes: #429378)
   * fixes in the auto-mark code (thanks to Daniel
     Burrows)
-  * fix FTFBFS by changing build-depends to
+  * fix FTBFS by changing build-depends to
     libcurl4-gnutls-dev (closes: #428363)
   * cmdline/apt-get.cc:
     - fix InstallTask code when a pkgRecord ends 
@@ -578,7 +599,7 @@ apt (0.7.2) unstable; urgency=low
 
 apt (0.7.1) experimental; urgency=low
 
-  * ABI library name change because its build against
+  * ABI library name change because it's built against
     new glibc
   * implement SourceVer() in pkgRecords 
      (thanks to Daniel Burrows for the patch!)
@@ -628,9 +649,9 @@ apt (0.7.1) experimental; urgency=low
 
 apt (0.7.0) experimental; urgency=low
 
-  * Package that contains tall the new features
+  * Package that contains all the new features
   * Removed all #pragma interface/implementation
-  * Branch that contains tall the new features:
+  * Branch that contains all the new features:
   * translated package descriptions
   * task install support
   * automatic dependency removal (thanks to Daniel Burrows)
