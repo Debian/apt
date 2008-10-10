@@ -1,6 +1,6 @@
 # -*- make -*-
 
-# This installs arbitary files into a directory
+# This installs arbitrary files into a directory
 
 # Input
 # $(SOURCE) - The documents to use

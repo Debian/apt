@@ -9,14 +9,14 @@ To compile this you need a couple things
     g++ 2.8 works OK and newer egcs work well also. Nobody has tried it
     on other compilers :< You will need a properly working STL as well.
   - A C library with the usual POSIX functions and a BSD socket layer. 
-    If you OS conforms to the Single Unix Spec then you are fine:
+    If your OS conforms to the Single Unix Spec then you are fine:
       http://www.opengroup.org/onlinepubs/7908799/index.html      
   - Refer to the Build-Depends information in debian/control for
     additional requirements (some of which are Debian-specific)
 
 ** NOTICE **
 The C++ global constructors do not link correctly when using non-shared
-libaries. This is probably the correct behavior of the linker, but I have
+libraries. This is probably the correct behavior of the linker, but I have
 not yet had time to devise a work around for it. The correct thing to 
 do is add a reference to debSystem in apt-pkg/init.cc, 
 assert(&debSystem == 0) would be fine for instance.
@@ -29,7 +29,7 @@ I don't really care if your not-SUS OS doesn't work. It is simply too
 much work to maintain patches for dysfunctional OSs. I highly suggest you
 contact your vendor and express intrest in a conforming C library.
 
-That said, there are lots of finniky problems that must be delt with even
+That said, there are lots of finicky problems that must be dealt with even
 between the supported OS's. Primarily the path I choose to take is to put
 a shim header file in build/include that transparently adds the required 
 functionality. Patches to make autoconf detect these cases and generate the 
@@ -39,12 +39,12 @@ Current shims:
   * C99 integer types 'inttypes.h' 
   * sys/statvfs.h to convert from BSD/old-glibc statfs to SUS statvfs
   * rfc2553 hostname resolution (methods/rfc*), shims to normal gethostbyname.
-    The more adventerous could steal the KAME IPv6 enabled resolvers for those
+    The more adventurous could steal the KAME IPv6 enabled resolvers for those
     OS's with IPv6 support but no rfc2553 (why?)
   * define _XOPEN_EXTENDED_SOURCE to bring in h_errno on HP-UX
   * socklen_t shim in netdb.h if the OS does not have socklen_t
   
-The only completely non-shimed OS is Linux with glibc2.1, glibc2.0 requires
+The only completely non-shimmed OS is Linux with glibc2.1, glibc2.0 requires
 the first three shims.
 
 Platform Notes
@@ -77,7 +77,7 @@ OpenBSD
 HP-UX
   HP-UX nyquist B.10.20 C 9000/780 2016574337 32-user license
   - Evil OS, does not conform very well to SUS
-     1) snprintf exists but is not prototyped, ignore spurios warnings
+     1) snprintf exists but is not prototyped, ignore spurious warnings
      2) No socklen_t
      3) Requires -D_XOPEN_SOURCE_EXTENDED for h_errno
     configure should fix the last two (see above)
