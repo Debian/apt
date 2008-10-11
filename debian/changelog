@@ -4,6 +4,15 @@ apt (0.7.17~exp1) UNRELEASED; urgency=low
   * Fix compilation warnings:
     - apt-pkg/acquire.cc
     - apt-pkg/versionmatch.cc
+  * Compilation fixes and portability improvement for compiling APT against non-GNU libc
+    (thanks to Martin Koeppe, closes: #392063):
+    - buildlib/apti18n.h.in:
+      + textdomain() and bindtextdomain() must not be visible when --disable-nls
+    - buildlib/inttypes.h.in: undefine standard int*_t types
+    - Append INTLLIBS to SLIBS:
+      + cmdline/makefile
+      + ftparchive/makefile
+      + methods/makefile
 
  -- Luca Bruno <lethalman88@gmail.com>  Sat, 11 Oct 2008 09:17:46 +0200
 

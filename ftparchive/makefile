@@ -8,7 +8,7 @@ include ../buildlib/defaults.mak
 # The apt-ftparchive program
 ifdef BDBLIB
 PROGRAM=apt-ftparchive
-SLIBS = -lapt-pkg -lapt-inst $(BDBLIB)
+SLIBS = -lapt-pkg -lapt-inst $(BDBLIB) $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile apt-inst/makefile
 SOURCE = apt-ftparchive.cc cachedb.cc writer.cc contents.cc override.cc \
          multicompress.cc
