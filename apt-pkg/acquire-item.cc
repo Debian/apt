@@ -568,9 +568,9 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
       else 
 	 CompressionExtension = ".gz";
    } else {
-      CompressionExtension = comprExt;
+      CompressionExtension = (comprExt == "plain" ? "" : comprExt);
    }
-   Desc.URI = URI + (CompressionExtension == "plain" ? "" : CompressionExtension); 
+   Desc.URI = URI + CompressionExtension;
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
