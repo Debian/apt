@@ -1348,8 +1348,8 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 	  regex_t userPassRegex;
 	  regcomp(&userPassRegex, "\\://(\\w+)\\:(\\w+)@", REG_EXTENDED);
 	  regmatch_t userPassMatch;
-	  regexec(&userPassRegex, descUri.c_str(), 1, &userPassMatch, 0);
-	  if (userPassMatch.rm_so != -1) // regexp matched
+	  int regMatchResult = regexec(&userPassRegex, descUri.c_str(), 1, &userPassMatch, 0);
+	  if (regMatchResult == 0 && userPassMatch.rm_so != -1) // regexp matched
 	  {
          // really stripping
 		 size_t stripStart = userPassMatch.rm_so + 3;
@@ -1357,6 +1357,7 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 		 descUri = descUri.substr(0, stripStart) +
             descUri.substr(stripEnd, string::npos);
       }
+      regfree(&userPassRegex);
 
       _error->Warning(_("Failed to fetch %s  %s\n"), descUri.c_str(),
 	      (*I)->ErrorText.c_str());
