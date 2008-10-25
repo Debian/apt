@@ -124,7 +124,7 @@ bool pkgVersionMatch::MatchVer(const char *A,string B,bool Prefix)
    const char *Ae = Ab + strlen(A);
    
    // Strings are not a compatible size.
-   if ((unsigned)(Ae - Ab) != B.length() && Prefix == false ||
+   if (((unsigned)(Ae - Ab) != B.length() && Prefix == false) ||
        (unsigned)(Ae - Ab) < B.length())
       return false;
    
