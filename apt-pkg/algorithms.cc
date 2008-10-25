@@ -23,6 +23,7 @@
     
 #include <apti18n.h>
 #include <sys/types.h>
+#include <regex.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
@@ -1342,7 +1343,22 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
       (*I)->Finished();
 
-      _error->Warning(_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
+	  // stripping username/password from URI if present
+	  string descUri = (*I)->DescURI();
+	  regex_t userPassRegex;
+	  regcomp(&userPassRegex, "\\://(\\w+)\\:(\\w+)@", REG_EXTENDED);
+	  regmatch_t userPassMatch;
+	  regexec(&userPassRegex, descUri.c_str(), 1, &userPassMatch, 0);
+	  if (userPassMatch.rm_so != -1) // regexp matched
+	  {
+         // really stripping
+		 size_t stripStart = userPassMatch.rm_so + 3;
+		 size_t stripEnd = userPassMatch.rm_eo;
+		 descUri = descUri.substr(0, stripStart) +
+            descUri.substr(stripEnd, string::npos);
+      }
+
+      _error->Warning(_("Failed to fetch %s  %s\n"), descUri.c_str(),
 	      (*I)->ErrorText.c_str());
 
       if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError) 
