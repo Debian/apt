@@ -1343,21 +1343,10 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
       (*I)->Finished();
 
-	  // stripping username/password from URI if present
-	  string descUri = (*I)->DescURI();
-	  regex_t userPassRegex;
-	  regcomp(&userPassRegex, "\\://(\\w+)\\:(\\w+)@", REG_EXTENDED);
-	  regmatch_t userPassMatch;
-	  int regMatchResult = regexec(&userPassRegex, descUri.c_str(), 1, &userPassMatch, 0);
-	  if (regMatchResult == 0 && userPassMatch.rm_so != -1) // regexp matched
-	  {
-         // really stripping
-		 size_t stripStart = userPassMatch.rm_so + 3;
-		 size_t stripEnd = userPassMatch.rm_eo;
-		 descUri = descUri.substr(0, stripStart) +
-            descUri.substr(stripEnd, string::npos);
-      }
-      regfree(&userPassRegex);
+	  ::URI uri((*I)->DescURI());
+	  uri.User.clear();
+	  uri.Password.clear();
+	  string descUri = string(uri);
 
       _error->Warning(_("Failed to fetch %s  %s\n"), descUri.c_str(),
 	      (*I)->ErrorText.c_str());
