@@ -23,7 +23,6 @@
     
 #include <apti18n.h>
 #include <sys/types.h>
-#include <regex.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
