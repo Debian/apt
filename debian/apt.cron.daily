@@ -102,6 +102,96 @@ update_stamp()
     touch $stamp
 }
 
+# we check here if autoclean was enough sizewise
+check_size_constraints()
+{
+    # min-age in days
+    MaxAge=0
+    MinAge=2
+    MaxSize=0
+    CacheDir="var/cache/apt"
+    CacheArchive="archives/"
+    eval $(apt-config shell MaxAge APT::Archives::MaxAge)
+    eval $(apt-config shell MinAge APT::Archives::MinAge)
+    eval $(apt-config shell MaxSize APT::Archives::MaxSize)
+    eval $(apt-config shell Dir Dir)
+    eval $(apt-config shell CacheDir Dir::Cache)
+    eval $(apt-config shell CacheArchive Dir::Cache::archives)
+
+    # sanity check
+    if [ -z "$CacheDir" -o -z "$CacheArchive" ]; then
+	echo "empty Dir::Cache or Dir::Cache::archives, exiting"
+	exit
+    fi
+    
+    Cache="${Dir%/}/${CacheDir%/}/${CacheArchive%/}/"
+
+    # check age
+    if [ ! $MaxAge -eq 0 ] && [ ! $MinAge -eq 0 ]; then
+	find $Cache -name "*.deb"  \( -mtime +$MaxAge -and -ctime +$MaxAge \) -and -not \( -mtime -$MinAge -or -ctime -$MinAge \) -print0 | xargs -r -0 rm -f
+    elif [ ! $MaxAge -eq 0 ]; then
+	find $Cache -name "*.deb"  -ctime +$MaxAge -and -mtime +$MaxAge -print0 | xargs -r -0 rm -f
+    fi
+    
+    # check size
+    if [ ! $MaxSize -eq 0 ]; then
+	# maxSize is in MB
+	MaxSize=$(($MaxSize*1024))
+
+	#get current time
+	now=$(date --date=$(date --iso-8601) +%s)
+	MinAge=$(($MinAge*24*60*60))
+
+	# reverse-sort by mtime
+	for file in $(ls -rt $Cache/*.deb 2>/dev/null); do 
+	    du=$(du -s $Cache)
+	    size=${du%%/*}
+	    # check if the cache is small enough
+	    if [ $size -lt $MaxSize ]; then
+		break
+	    fi
+
+	    # check for MinAge of the file
+	    if [ ! $MinAge -eq 0 ]; then 
+		# check both ctime and mtime 
+		mtime=$(stat -c %Y $file)
+		ctime=$(stat -c %Z $file)
+		if [ $mtime -gt $ctime ]; then
+		    delta=$(($now-$mtime))
+		else
+		    delta=$(($now-$ctime))
+		fi
+		#echo "$file ($delta), $MinAge"
+		if [ $delta -le $MinAge ]; then
+		    #echo "Skiping $file (delta=$delta)"
+		    break
+		fi
+	    fi
+
+	    # delete oldest file
+	    rm -f $file
+	done
+    fi
+}
+
+# sleep for a random interval of time (default 30min)
+# (some code taken from cron-apt, thanks)
+random_sleep()
+{
+    RandomSleep=1800
+    eval $(apt-config shell RandomSleep APT::Periodic::RandomSleep)
+    if [ $RandomSleep -eq 0 ]; then
+	return
+    fi
+    if [ -z "$RANDOM" ] ; then
+        # A fix for shells that do not have this bash feature.
+	RANDOM=$(dd if=/dev/urandom count=1 2> /dev/null | cksum | cut -c"1-5")
+    fi
+    TIME=$(($RANDOM % $RandomSleep))
+    sleep $TIME
+}
+
+
 debug_echo()
 {
     # Display message if $VERBOSE >= 1
@@ -109,6 +199,8 @@ debug_echo()
 	echo $1 1>&2
     fi
 }
+
+# main
 
 # check apt-config exstance
 if ! which apt-config >/dev/null ; then

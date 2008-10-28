@@ -44,7 +44,9 @@ archive but can easily fit a subset large enough for most users. The idea
 is to use APT to generate a list of packages that are required and then fetch
 them onto the disc using another machine with good connectivity. It is 
 even possible to use another Debian machine with APT or to use a completely 
-different OS and a download tool like wget.
+different OS and a download tool like wget. Let <em>remote host</em> mean the
+machine downloading the packages, and <em>target host</em> the one with bad or
+no connection.
 
 <p>
 This is achieved by creatively manipulating the APT configuration file. The
@@ -87,9 +89,9 @@ download. The disk directory structure should look like:
 The configuration file should tell APT to store its files on the disc and
 to use the configuration files on the disc as well. The sources.list should
 contain the proper sites that you wish to use from the remote machine, and
-the status file should be a copy of <em>/var/lib/dpkg/status</em>. Please note,
-if you are using a local archive you must use copy URIs, the syntax is identical
-to file URIs.
+the status file should be a copy of <em>/var/lib/dpkg/status</em> from the
+<em>target host</em>. Please note, if you are using a local archive you must use
+copy URIs, the syntax is identical to file URIs.
 
 <p>
 <em>apt.conf</em> must contain the necessary information to make APT use the 
@@ -99,7 +101,7 @@ disc:
  APT
  {
    /* This is not necessary if the two machines are the same arch, it tells
-      the remote APT what architecture the Debian machine is */
+      the remote APT what architecture the target machine is */
    Architecture "i386";
    
    Get::Download-Only "true";
@@ -125,7 +127,7 @@ More details can be seen by examining the apt.conf man page and the sample
 configuration file in <em>/usr/share/doc/apt/examples/apt.conf</em>.
 
 <p>
-On the remote Debian machine the first thing to do is mount the disc and copy 
+On the target machine the first thing to do is mount the disc and copy 
 <em>/var/lib/dpkg/status</em> to it. You will also need to create the directories
 outlined in the Overview, <em>archives/partial/</em> and <em>lists/partial/</em>
 Then take the disc to the remote machine and configure the sources.list. 
@@ -136,7 +138,7 @@ On the remote machine execute the following:
  # apt-get update
  [ APT fetches the package files ]
  # apt-get dist-upgrade
- [ APT fetches all the packages needed to upgrade your machine ]
+ [ APT fetches all the packages needed to upgrade the target machine ]
 </example>
 
 The dist-upgrade command can be replaced with any-other standard APT commands,
@@ -146,7 +148,7 @@ selections back to the local computer.
 
 <p>
 Now the disc contains all of the index files and archives needed to upgrade
-the Debian machine. Take the disc back and run:
+the target machine. Take the disc back and run:
 
 <example>
   # export APT_CONFIG="/disc/apt.conf"

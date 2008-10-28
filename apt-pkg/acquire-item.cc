@@ -568,9 +568,9 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
       else 
 	 CompressionExtension = ".gz";
    } else {
-      CompressionExtension = comprExt;
+      CompressionExtension = (comprExt == "plain" ? "" : comprExt);
    }
-   Desc.URI = URI + CompressionExtension; 
+   Desc.URI = URI + CompressionExtension;
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
@@ -597,19 +597,30 @@ string pkgAcqIndex::Custom600Headers()
 
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+   bool descChanged = false;
    // no .bz2 found, retry with .gz
    if(Desc.URI.substr(Desc.URI.size()-3) == "bz2") {
-      Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz"; 
+      Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz";
 
-      // retry with a gzip one 
-      new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc, 
+      new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc,
 		      ExpectedHash, string(".gz"));
+	  descChanged = true;
+   }
+   // no .gz found, retry with uncompressed
+   else if(Desc.URI.substr(Desc.URI.size()-2) == "gz") {
+      Desc.URI = Desc.URI.substr(0,Desc.URI.size()-2);
+
+      new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc,
+		      ExpectedHash, string("plain"));
+	  descChanged = true;
+   }
+   if (descChanged) {
       Status = StatDone;
       Complete = false;
       Dequeue();
       return;
-   } 
-   
+   }
+
    // on decompression failure, remove bad versions in partial/
    if(Decompression && Erase) {
       string s = _config->FindDir("Dir::State::lists") + "partial/";
@@ -700,12 +711,14 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    else
       Local = true;
    
-   string compExt = Desc.URI.substr(Desc.URI.size()-3);
+   string compExt = flExtension(URI(Desc.URI).Path);
    const char *decompProg;
    if(compExt == "bz2") 
       decompProg = "bzip2";
    else if(compExt == ".gz") 
       decompProg = "gzip";
+   else if(compExt == "")
+      decompProg = "copy";
    else {
       _error->Error("Unsupported extension: %s", compExt.c_str());
       return;

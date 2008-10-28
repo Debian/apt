@@ -459,9 +459,9 @@ string Base64Encode(const string &S)
    return Final;
 }
 									/*}}}*/
-// stringcmp - Arbitary string compare					/*{{{*/
+// stringcmp - Arbitrary string compare					/*{{{*/
 // ---------------------------------------------------------------------
-/* This safely compares two non-null terminated strings of arbitary 
+/* This safely compares two non-null terminated strings of arbitrary 
    length */
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
 {
@@ -517,7 +517,7 @@ int stringcmp(string::const_iterator A,string::const_iterator AEnd,
 }
 #endif
 									/*}}}*/
-// stringcasecmp - Arbitary case insensitive string compare		/*{{{*/
+// stringcasecmp - Arbitrary case insensitive string compare		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
