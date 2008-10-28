@@ -686,7 +686,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    {
       if (_config->FindB("APT::CDROM::NoMount",false) == false) 
 	 UnmountCdrom(CDROM);
-      return _error->Error("Unable to locate any package files, perhaps this is not a Debian Disc");
+      return _error->Error(_("Unable to locate any package files, perhaps this is not a Debian Disc or the wrong architecture?"));
    }
 
    // Check if the CD is in the database
