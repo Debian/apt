@@ -660,6 +660,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 	 if(!Verify(prefix,*I, MetaIndex)) {
 	    // something went wrong, don't copy the Release.gpg
 	    // FIXME: delete any existing gpg file?
+	    _error->Discard();
 	    continue;	 
 	 }
       }
