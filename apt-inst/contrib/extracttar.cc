@@ -208,14 +208,14 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 Itm.Name = (char *)LastLongName.c_str();
       else
       {
-	 Tar->Name[sizeof(Tar->Name)] = 0;
+	 Tar->Name[sizeof(Tar->Name)-1] = 0;
 	 Itm.Name = Tar->Name;
       }      
       if (Itm.Name[0] == '.' && Itm.Name[1] == '/' && Itm.Name[2] != 0)
 	 Itm.Name += 2;
       
       // Grab the link target
-      Tar->Name[sizeof(Tar->LinkName)] = 0;
+      Tar->Name[sizeof(Tar->LinkName)-1] = 0;
       Itm.LinkTarget = Tar->LinkName;
 
       if (LastLongLink.empty() == false)
