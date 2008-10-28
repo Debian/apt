@@ -1342,7 +1342,11 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
       (*I)->Finished();
 
-      _error->Warning(_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
+      ::URI uri((*I)->DescURI());
+      uri.User.clear();
+      uri.Password.clear();
+      string descUri = string(uri);
+      _error->Warning(_("Failed to fetch %s  %s\n"), descUri.c_str(),
 	      (*I)->ErrorText.c_str());
 
       if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError) 
