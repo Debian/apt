@@ -587,6 +587,11 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
 */
 bool pkgDPkgPM::Go(int OutStatusFd)
 {
+   fd_set rfds;
+   struct timespec tv;
+   sigset_t sigmask;
+   sigset_t original_sigmask;
+
    unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);   
    unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
    bool NoTriggers = _config->FindB("DPkg::NoTriggers",false);
@@ -795,7 +800,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 rtt = tt;
 	 cfmakeraw(&rtt);
 	 rtt.c_lflag &= ~ECHO;
+	 // block SIGTTOU during tcsetattr to prevent a hang if
+	 // the process is a member of the background process group
+	 // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
+	 sigemptyset(&sigmask);
+	 sigaddset(&sigmask, SIGTTOU);
+	 sigprocmask(SIG_BLOCK,&sigmask, &original_sigmask);
 	 tcsetattr(0, TCSAFLUSH, &rtt);
+	 sigprocmask(SIG_SETMASK, &original_sigmask, 0);
       }
 
        // Fork dpkg
@@ -862,10 +874,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 close(slave);
 
       // setups fds
-      fd_set rfds;
-      struct timespec tv;
-      sigset_t sigmask;
-      sigset_t original_sigmask;
       sigemptyset(&sigmask);
       sigprocmask(SIG_BLOCK,&sigmask,&original_sigmask);
 
