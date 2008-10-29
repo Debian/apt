@@ -711,13 +711,13 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    else
       Local = true;
    
-   string compExt = flExtension(URI(Desc.URI).Path);
+   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
    const char *decompProg;
    if(compExt == "bz2") 
       decompProg = "bzip2";
-   else if(compExt == ".gz") 
+   else if(compExt == "gz") 
       decompProg = "gzip";
-   else if(compExt == "")
+   else if(compExt == "Packages" || compExt == "Sources")
       decompProg = "copy";
    else {
       _error->Error("Unsupported extension: %s", compExt.c_str());
