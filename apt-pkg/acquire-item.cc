@@ -717,7 +717,8 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       decompProg = "bzip2";
    else if(compExt == "gz") 
       decompProg = "gzip";
-   else if(compExt == "Packages" || compExt == "Sources")
+   // flExtensions returns the full name if no extension is found
+   else if(compExt == flNotDir(URI(Desc.URI).Path))
       decompProg = "copy";
    else {
       _error->Error("Unsupported extension: %s", compExt.c_str());
