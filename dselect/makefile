@@ -11,7 +11,7 @@ TO = $(BUILD)/scripts/dselect
 TARGET = program
 include $(COPY_H)
 
-LOCAL = dselect
+# LOCAL = dselect
 SOURCE = install update
 TYPE = sh
 include $(PODOMAIN_H)
