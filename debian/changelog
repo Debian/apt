@@ -22,6 +22,10 @@ apt (0.7.17) unstable; urgency=low
       'maintainer-script-ignores-error'.
   * dselect/makefile:
     - Removed unneeded 'LOCAL' entry. This allows cleaning rule to run smoothly.
+  * share/lintian-overrides:
+    - Added with override of 'apt must depend on python'. Script 'apt-mark'
+      needs apt-python for working and checks this on fly. We don't want
+      python in most cases.
 
  -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Fri, 24 Oct 2008 23:45:17 +0300
 
