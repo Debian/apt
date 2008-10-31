@@ -7,6 +7,29 @@ apt (0.7.17) unstable; urgency=low
   * apt-pkg/algorithm.cc:
     - Strip username and password from source URL in error message.
       (Closes: #425150)
+  * debian/rules:
+    - Fixed lintian warnings "debian/rules ignores make errors".
+  * debian/control:
+    - Substituted outdated "Source-Version" fields with "binary:Version".
+    - Added 'python-apt' to Suggests, as apt-mark need it for work.
+    - Drop Debian revision from 'doc-base' build dependency, this fixes
+      appropriate lintian warning.
+  * debian/libapt-pkg-doc.doc-base.*:
+    - Changed section: from old 'Devel' to 'Debian'. This fixes appropriate
+      lintian warnings.
+  * debian/{postrm,prerm,preinst}:
+    - Added 'set -e', fixes lintian warnings
+      'maintainer-script-ignores-error'.
+  * dselect/makefile:
+    - Removed unneeded 'LOCAL' entry. This allows cleaning rule to run smoothly.
+  * share/lintian-overrides:
+    - Added with override of 'apt must depend on python'. Script 'apt-mark'
+      needs apt-python for working and checks this on fly. We don't want
+      python in most cases.
+  * cmdline/apt-key:
+    - Added 'unset GREP_OPTIONS' to the script. This prevents 'apt-key update'
+      failure when GREP_OPTIONS contains options that modify grep output.
+      (Closes: #428752)
 
  -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Fri, 24 Oct 2008 23:45:17 +0300
 
