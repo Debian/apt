@@ -15,7 +15,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>28 October 2008</date>
  </refentryinfo>
  
  <refmeta>
@@ -40,10 +40,30 @@
          <arg>update</arg>
          <arg>upgrade</arg>
          <arg>dselect-upgrade</arg>
-         <arg>install <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>install 
+		 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
+			<group choice='opt'>
+				<arg>
+					=<replaceable>pkg_version_number</replaceable>
+				</arg>
+				<arg>
+					/<replaceable>target_release_name</replaceable>
+				</arg>
+			</group>
+		 </arg>
+	 </arg>
          <arg>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>source <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+	 </arg>
+         <arg>source 
+		 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
+			 <group choice='opt'>
+				 <arg>
+					 =<replaceable>pkg_version_number</replaceable>
+				 </arg>
+			 </group>
+		 </arg>
+	 </arg>
          <arg>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>check</arg>
          <arg>clean</arg>
@@ -495,7 +515,14 @@
  <refsect1><title>Diagnostics</title>
    <para><command>apt-get</command> returns zero on normal operation, decimal 100 on error.</para>
  </refsect1>
-
+ <refsect1>
+	 <title>ORIGINAL AUTHORS</title>
+	 &apt-author.jgunthorpe;
+ </refsect1>
+ <refsect2>
+	 <title>CURRENT AUTHORS</title>
+	 &apt-author.team;
+	 &apt-qapage;
+ </refsect2>
  &manbugs;
- 
 </refentry>
