@@ -51,6 +51,7 @@
          <arg>rdepends <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>pkgnames <arg choice="plain"><replaceable>prefix</replaceable></arg></arg>
          <arg>dotty <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>xvcg <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>policy <arg choice="plain" rep="repeat"><replaceable>pkgs</replaceable></arg></arg>
          <arg>madison <arg choice="plain" rep="repeat"><replaceable>pkgs</replaceable></arg></arg>
       </group>   
@@ -240,6 +241,11 @@ Reverse Provides:
      trace out all dependent packages; this can produce a very large graph. 
      To limit the output to only the packages listed on the command line,
      set the <literal>APT::Cache::GivenOnly</literal> option.</para>
+
+     <varlistentry><term>xvcg <replaceable>pkg(s)</replaceable></term>
+	 <listitem><para>The same as <literal>dotty</literal>, only for xvcg from the
+	 <ulink url="http://rw4.cs.uni-sb.de/users/sander/html/gsvcg1.html">VCG tool</ulink>.
+	 </para>
 
      <para>The resulting nodes will have several shapes; normal packages are boxes,
      pure provides are triangles, mixed provides are diamonds, 

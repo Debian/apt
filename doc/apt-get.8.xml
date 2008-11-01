@@ -15,7 +15,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>28 October 2008</date>
+   <date>30 October 2008</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,9 +33,37 @@
  <refsynopsisdiv>
    <cmdsynopsis>
       <command>apt-get</command>
-      <arg><option>-hvs</option></arg>
-      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
-      <arg><option>-c=<replaceable>file</replaceable></option></arg>
+      <arg><option>-hvsqdyfmubV</option></arg>
+      <arg>
+	      <option>-o=
+		      <group choice='opt'>
+			      <arg>
+				      <replaceable>config_string</replaceable>
+			      </arg>
+			      <arg>
+				      <replaceable>config string</replaceable>
+			      </arg>
+		      </group>
+	      </option>
+      </arg>
+      <arg>
+	      <option>-c=
+		      <replaceable>config_file</replaceable>
+	      </option>
+      </arg>
+      <arg>
+	      <option>-t=
+		      <group choice='opt'>
+			      <arg>
+				      <replaceable>target_release_name</replaceable>
+			      </arg>
+			      <arg>
+				      <replaceable>target_release_number_expression</replaceable>
+			      </arg>
+		      </group>
+	      </option>
+      </arg>
+
       <group choice="req">
          <arg>update</arg>
          <arg>upgrade</arg>
