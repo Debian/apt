@@ -159,17 +159,25 @@
      </varlistentry>
 
      <varlistentry><term>install</term>
-     <listitem><para><literal>install</literal> is followed by one or more packages desired for 
-     installation. Each package is a package name, not a fully qualified 
-     filename (for instance, in a Debian GNU/Linux system, libc6 would be the 
-     argument provided, not <literal>libc6_1.9.6-2.deb</literal>) All packages required 
-     by the package(s) specified for installation will also be retrieved and 
-     installed. The <filename>/etc/apt/sources.list</filename> file is used to locate 
-     the desired packages. If a hyphen is appended to the package name (with 
-     no intervening space), the identified package will be removed if it is 
-     installed. Similarly a plus sign can be used to designate a package to 
-     install. These latter features may be used to override decisions made by 
-     apt-get's conflict resolution system.</para>
+     <listitem>
+	     <para>
+		     <literal>install</literal> is followed by one or more 
+		     packages desired for installation or upgrading. 
+		     Each package is a package name, not a fully qualified 
+		     filename (for instance, in a Debian GNU/Linux system, 
+		     libc6 would be the argument provided, not 
+		     <literal>libc6_1.9.6-2.deb</literal>). All packages required 
+		     by the package(s) specified for installation will also 
+		     be retrieved and installed. 
+		     The <filename>/etc/apt/sources.list</filename> file is 
+		     used to locate the desired packages. If a hyphen is 
+		     appended to the package name (with no intervening space), 
+		     the identified package will be removed if it is installed. 
+		     Similarly a plus sign can be used to designate a 
+		     package to install. These latter features may be used 
+		     to override decisions made by apt-get's conflict 
+		     resolution system.
+	     </para>
 
      <para>A specific version of a package can be selected for installation by 
      following the package name with an equals and the version of the package 
@@ -180,6 +188,17 @@
 
      <para>Both of the version selection mechanisms can downgrade packages and must
      be used with care.</para>
+
+	<para>This is also the target to use if you want to upgrade one or 
+		more already-installed packages without upgrading every package 
+		you have on your system. Unlike the "upgrade" target, which 
+		installs the newest version of all currently installed packages, 
+		"install" will install the newest version of only the package(s) 
+		specified. Simply provide the name of the package(s) you wish 
+		to upgrade, and if a newer version is available, it (and its 
+		dependencies, as described above) will be downloaded and 
+		installed.
+	</para>
 
      <para>Finally, the &apt-preferences; mechanism allows you to
      create an alternative installation policy for
