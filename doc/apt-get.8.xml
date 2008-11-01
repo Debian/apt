@@ -36,14 +36,7 @@
       <arg><option>-hvsqdyfmubV</option></arg>
       <arg>
 	      <option>-o=
-		      <group choice='opt'>
-			      <arg>
-				      <replaceable>config_string</replaceable>
-			      </arg>
-			      <arg>
-				      <replaceable>config string</replaceable>
-			      </arg>
-		      </group>
+			  <replaceable>config_string</replaceable>
 	      </option>
       </arg>
       <arg>
@@ -52,16 +45,15 @@
 	      </option>
       </arg>
       <arg>
-	      <option>-t=
-		      <group choice='opt'>
-			      <arg>
-				      <replaceable>target_release_name</replaceable>
-			      </arg>
-			      <arg>
-				      <replaceable>target_release_number_expression</replaceable>
-			      </arg>
-		      </group>
-	      </option>
+		  <option>-t=</option>
+		  <group choice='req'>
+			  <arg choice='plain'>
+				  target_release_name
+			  </arg>
+			  <arg choice='plain'>
+				  target_release_number_expression
+			  </arg>
+		  </group>
       </arg>
 
       <group choice="req">
@@ -563,12 +555,14 @@
  </refsect1>
  <refsect1>
 	 <title>ORIGINAL AUTHORS</title>
-	 &apt-author.jgunthorpe;
+	 <para>&apt-author.jgunthorpe;</para>
  </refsect1>
- <refsect2>
+ <refsect1>
 	 <title>CURRENT AUTHORS</title>
-	 &apt-author.team;
-	 &apt-qapage;
- </refsect2>
+	 <para>
+		 &apt-author.team;
+		 &apt-qapage;
+	 </para>
+ </refsect1>
  &manbugs;
 </refentry>
