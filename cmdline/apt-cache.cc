@@ -1740,7 +1740,7 @@ bool ShowHelp(CommandLine &Cmd)
       "   depends - Show raw dependency information for a package\n"
       "   rdepends - Show reverse dependency information for a package\n"
       "   pkgnames - List the names of all packages in the system\n"
-      "   dotty - Generate package graphs for GraphVis\n"
+      "   dotty - Generate package graphs for GraphViz\n"
       "   xvcg - Generate package graphs for xvcg\n"
       "   policy - Show policy settings\n"
       "\n"
