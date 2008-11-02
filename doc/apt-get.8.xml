@@ -33,7 +33,7 @@
  <refsynopsisdiv>
    <cmdsynopsis>
       <command>apt-get</command>
-      <arg><option>-hvsqdyfmubV</option></arg>
+      <arg><option>-vsqdyfmubV</option></arg>
       <arg>
 	      <option>-o=
 			  <replaceable>config_string</replaceable>
@@ -57,10 +57,10 @@
       </arg>
 
       <group choice="req">
-         <arg>update</arg>
-         <arg>upgrade</arg>
-         <arg>dselect-upgrade</arg>
-         <arg>install 
+         <arg choice='plain'>update</arg>
+         <arg choice='plain'>upgrade</arg>
+         <arg choice='plain'>dselect-upgrade</arg>
+         <arg choice='plain'>install 
 			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
 				<arg>
 					<group choice='req'>
@@ -74,20 +74,26 @@
 				</arg>
 			 </arg>
 	     </arg>
-         <arg>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>source 
+         <arg choice='plain'>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg choice='plain'>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg choice='plain'>source 
 			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
 				 <arg>
 					 =<replaceable>pkg_version_number</replaceable>
 				 </arg>
 			 </arg>
 	     </arg>
-         <arg>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>check</arg>
-         <arg>clean</arg>
-         <arg>autoclean</arg>
-         <arg>autoremove</arg>
+         <arg choice='plain'>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg choice='plain'>check</arg>
+         <arg choice='plain'>clean</arg>
+         <arg choice='plain'>autoclean</arg>
+         <arg choice='plain'>autoremove</arg>
+		 <arg choice='plain'>
+			 <group choice='req'>
+				<arg choice='plain'>-h</arg>
+				<arg choice='plain'>--help</arg>
+			 </group>
+		 </arg>
       </group>   
    </cmdsynopsis>
  </refsynopsisdiv>
