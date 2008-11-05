@@ -269,7 +269,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 	 ostr.str(string(""));
 	 ostr << "Package: " << pkg.Name() 
 	      << "\nAuto-Installed: 1\n\n";
-	 fprintf(OutFile,ostr.str().c_str());
+	 fprintf(OutFile,"%s",ostr.str().c_str());
 	 fprintf(OutFile,"\n");
       }
    }

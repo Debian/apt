@@ -531,7 +531,7 @@ bool pkgDPkgPM::OpenLog()
       struct tm *tmp = localtime(&t);
       strftime(outstr, sizeof(outstr), "%F  %T", tmp);
       fprintf(term_out, "\nLog started: ");
-      fprintf(term_out, outstr);
+      fprintf(term_out, "%s", outstr);
       fprintf(term_out, "\n");
    }
    return true;
@@ -546,7 +546,7 @@ bool pkgDPkgPM::CloseLog()
       struct tm *tmp = localtime(&t);
       strftime(outstr, sizeof(outstr), "%F  %T", tmp);
       fprintf(term_out, "Log ended: ");
-      fprintf(term_out, outstr);
+      fprintf(term_out, "%s", outstr);
       fprintf(term_out, "\n");
       fclose(term_out);
    }

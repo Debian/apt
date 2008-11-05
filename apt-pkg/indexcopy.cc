@@ -639,7 +639,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
       // Open the Release file and add it to the MetaIndex
       if(!MetaIndex->Load(*I+"Release"))
       {
-	 _error->Error(MetaIndex->ErrorText.c_str());
+	 _error->Error("%s",MetaIndex->ErrorText.c_str());
 	 return false;
       }
       
