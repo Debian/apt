@@ -1001,7 +1001,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
  	    if(Pkg.Section() && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
  	    {
  	       if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
- 		  std::clog << "Setting NOT as auto-installed (direct dep of pkg in APT::Never-MarkAuto-Section)" << std::endl;
+ 		  std::clog << "Setting NOT as auto-installed (direct dep of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
  	       MarkInstall(InstPkg,true,Depth + 1, true);
  	    }
  	    else 
