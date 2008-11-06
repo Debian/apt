@@ -213,14 +213,15 @@
 
      <varlistentry><term>remove</term>
      <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
-     removed instead of installed. If a plus sign is appended to the package 
+	 removed instead of installed. Note the removing a package leaves its
+	 configuration files in system. If a plus sign is appended to the package 
      name (with no intervening space), the identified package will be 
      installed instead of removed.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>purge</term>
      <listitem><para><literal>purge</literal> is identical to <literal>remove</literal> except that packages are 
-     removed and purged.</para></listitem>
+     removed and purged (any configuration files are deleted too).</para></listitem>
      </varlistentry>
 
      <varlistentry><term>source</term>
@@ -419,7 +420,8 @@
      <varlistentry><term><option>--purge</option></term>
      <listitem><para>Use purge instead of remove for anything that would be removed.
      An asterisk ("*") will be displayed next to packages which are
-     scheduled to be purged.
+	 scheduled to be purged. <option>remove --purge</option> is equivalent for
+	 <option>purge</option> command.
      Configuration Item: <literal>APT::Get::Purge</literal>.</para></listitem>
      </varlistentry>
 
