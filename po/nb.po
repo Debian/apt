@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-28 14:25+0200\n"
+"POT-Creation-Date: 2008-10-28 18:12+0100\n"
 "PO-Revision-Date: 2008-08-31 21:01+0200\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
 "Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.ui.no>\n"
@@ -318,7 +318,7 @@ msgstr ""
 "  -c=? Les denne innstillingsfila.\n"
 "  -o=? Sett en vilkårlig innstilling, f.eks. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Kan ikke skrive til %s"
@@ -896,7 +896,7 @@ msgstr "Avbryter."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Vil du fortsette [Y/n]? "
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1344
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1349
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Klarte ikke å skaffe %s  %s\n"
@@ -1596,9 +1596,9 @@ msgstr ""
 "Infokatalogen og den midlertidige katalogen må være på det samme filsystemet"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:748
-#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr "Leser pakkelister"
 
@@ -1868,7 +1868,7 @@ msgstr "Tidsavbrudd på tilkoblingen til datasokkelen"
 msgid "Unable to accept connection"
 msgstr "Klarte ikke å godta tilkoblingen"
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problem ved oppretting av nøkkel for fil"
 
@@ -2063,15 +2063,20 @@ msgstr "Feil ved lesing fra tjeneren. Forbindelsen ble lukket i andre enden"
 msgid "Error reading from server"
 msgstr "Feil ved lesing fra tjeneren"
 
-#: methods/http.cc:1104
+#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "Klarte ikke å skrive fila %s"
+
+#: methods/http.cc:1105
 msgid "Bad header data"
 msgstr "Ødelagte hodedata"
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1122 methods/http.cc:1177
 msgid "Connection failed"
 msgstr "Forbindelsen mislykkes"
 
-#: methods/http.cc:1228
+#: methods/http.cc:1229
 msgid "Internal error"
 msgstr "Intern feil"
 
@@ -2083,6 +2088,10 @@ msgstr "Kan ikke utføre mmap på en tom fil"
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Kunne ikke lage mmap av %lu bytes"
+
+#: apt-pkg/contrib/mmap.cc:213
+msgid "Dynamic MMap ran out of room"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2200,12 +2209,13 @@ msgstr "Ugyldig operasjon %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Klarer ikke å fastsette monteringspunktet %s"
 
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/acquire.cc:424 apt-pkg/acquire.cc:449 apt-pkg/clean.cc:40
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Klarer ikke å endre %s"
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr "Klarer ikke å få statusen på CD-spilleren"
 
@@ -2451,14 +2461,14 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "Oversiktsfil av typen «%s» støttes ikke"
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "Pakka %s trenger å installeres på nytt, men jeg finner ikke lageret for den."
 
-#: apt-pkg/algorithms.cc:1106
+#: apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2466,11 +2476,11 @@ msgstr ""
 "Feil, pkgProblemResolver::Resolve skapte et brudd, det kan skyldes pakker "
 "som holdes tilbake."
 
-#: apt-pkg/algorithms.cc:1108
+#: apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Klarer ikke å rette problemene, noen ødelagte pakker er holdt tilbake."
 
-#: apt-pkg/algorithms.cc:1370 apt-pkg/algorithms.cc:1372
+#: apt-pkg/algorithms.cc:1375 apt-pkg/algorithms.cc:1377
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -2490,12 +2500,12 @@ msgstr "Arkivmappa %spartial mangler."
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
+#: apt-pkg/acquire.cc:828
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "Henter fil %li av %li (%s gjenværende)"
 
-#: apt-pkg/acquire.cc:829
+#: apt-pkg/acquire.cc:830
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Henter fil %li av %li"
@@ -2570,82 +2580,82 @@ msgstr "Feil oppsto under behandling av %s (NewPackage)"
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Feil oppsto under behandling av %s (UsePackage1)"
 
-#: apt-pkg/pkgcachegen.cc:153
+#: apt-pkg/pkgcachegen.cc:164
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr "Feil oppsto under behandling av %s (NewFileDesc1)"
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "Feil oppsto under behandling av %s (UsePackage2)"
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "Feil oppsto under behandling av %s (NewFileVer1)"
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "Feil oppsto under behandling av %s (NewVersion1)"
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "Feil oppsto under behandling av %s (UsePackage3)"
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Feil oppsto under behandling av %s (NewVersion2)"
 
-#: apt-pkg/pkgcachegen.cc:245
+#: apt-pkg/pkgcachegen.cc:256
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr "Feil oppsto under behandling av %s (NewFileDesc2)"
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr "Jøss, du har overgått antallet pakkenavn denne APT klarer."
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Jøss, du har overgått antallet versjoner denne APT klarer."
 
-#: apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:268
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr "Jøss, du har overgått antallet beskrivelser denne APT klarer."
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "Jøss, du har overgått antallet avhengighetsforhold denne APT klarer."
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "Feil oppsto under behandling av %s (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "Feil oppsto under behandling av %s (CollectFileProvides)"
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "Fant ikke pakken %s %s ved behandling av filkrav"
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Kunne ikke finne informasjon om %s - lista over kildekodepakker"
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr "Samler inn filtilbud"
 
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr "IO-feil ved lagring av kildekode-lager"
 
@@ -2658,16 +2668,16 @@ msgstr "klarte ikke å endre navnet, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "Feil MD5sum"
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:658 apt-pkg/acquire-item.cc:1421
 msgid "Hash Sum mismatch"
 msgstr "Hashsummen stemmer ikke"
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1113
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 "Det er ingen offentlig nøkkel tilgjengelig for de følgende nøkkel-ID-ene:\n"
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1226
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2676,7 +2686,7 @@ msgstr ""
 "Klarte ikke å finne en fil for pakken %s. Det kan bety at du må ordne pakken "
 "selv (fordi arkitekturen mangler)."
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1285
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2685,13 +2695,13 @@ msgstr ""
 "Klarte ikke å finne en fil for pakken %s. Det kan bety at du må ordne denne "
 "pakken selv."
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1326
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Oversiktsfilene er ødelagte. Feltet «Filename:» mangler for pakken %s."
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1413
 msgid "Size mismatch"
 msgstr "Feil størrelse"
 
@@ -2803,79 +2813,78 @@ msgstr "Skrev %i poster med %i feile filer.\n"
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Skrev %i poster med %i manglende filer og %i feile filer.\n"
 
-#: apt-pkg/deb/dpkgpm.cc:486
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Mappa «%s» mangler"
-
-#: apt-pkg/deb/dpkgpm.cc:569
-#, c-format
-msgid "Preparing %s"
-msgstr "Forbereder %s"
-
-#: apt-pkg/deb/dpkgpm.cc:570
-#, c-format
-msgid "Unpacking %s"
-msgstr "Pakker ut %s"
-
-#: apt-pkg/deb/dpkgpm.cc:575
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Forbereder oppsett av %s"
-
-#: apt-pkg/deb/dpkgpm.cc:576 apt-pkg/deb/dpkgpm.cc:605
-#, c-format
-msgid "Configuring %s"
-msgstr "Setter opp %s"
-
-#: apt-pkg/deb/dpkgpm.cc:578 apt-pkg/deb/dpkgpm.cc:579
-#, c-format
-msgid "Processing triggers for %s"
-msgstr "Behandler utløsere for %s"
-
-#: apt-pkg/deb/dpkgpm.cc:581
-#, c-format
-msgid "Installed %s"
-msgstr "Installerte %s"
-
-#: apt-pkg/deb/dpkgpm.cc:586 apt-pkg/deb/dpkgpm.cc:588
-#: apt-pkg/deb/dpkgpm.cc:589
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Forbereder fjerning av %s"
-
-#: apt-pkg/deb/dpkgpm.cc:591 apt-pkg/deb/dpkgpm.cc:606
-#, c-format
-msgid "Removing %s"
-msgstr "Fjerner %s"
-
-#: apt-pkg/deb/dpkgpm.cc:592
-#, c-format
-msgid "Removed %s"
-msgstr "Fjernet %s"
-
-#: apt-pkg/deb/dpkgpm.cc:597
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Forbereder å fullstendig slette %s"
-
-#: apt-pkg/deb/dpkgpm.cc:598
-#, c-format
-msgid "Completely removed %s"
-msgstr "Fjernet %s fullstendig"
-
-#. populate the "processing" map
-#: apt-pkg/deb/dpkgpm.cc:604
+#: apt-pkg/deb/dpkgpm.cc:49
 #, c-format
 msgid "Installing %s"
 msgstr "Installerer %s"
 
-#: apt-pkg/deb/dpkgpm.cc:607
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
+#, c-format
+msgid "Configuring %s"
+msgstr "Setter opp %s"
+
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:627
+#, c-format
+msgid "Removing %s"
+msgstr "Fjerner %s"
+
+#: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Kjører etter-installasjonsutløser %s"
 
-#: apt-pkg/deb/dpkgpm.cc:756
+#: apt-pkg/deb/dpkgpm.cc:521
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Mappa «%s» mangler"
+
+#: apt-pkg/deb/dpkgpm.cc:605
+#, c-format
+msgid "Preparing %s"
+msgstr "Forbereder %s"
+
+#: apt-pkg/deb/dpkgpm.cc:606
+#, c-format
+msgid "Unpacking %s"
+msgstr "Pakker ut %s"
+
+#: apt-pkg/deb/dpkgpm.cc:611
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Forbereder oppsett av %s"
+
+#: apt-pkg/deb/dpkgpm.cc:614 apt-pkg/deb/dpkgpm.cc:615
+#, c-format
+msgid "Processing triggers for %s"
+msgstr "Behandler utløsere for %s"
+
+#: apt-pkg/deb/dpkgpm.cc:617
+#, c-format
+msgid "Installed %s"
+msgstr "Installerte %s"
+
+#: apt-pkg/deb/dpkgpm.cc:622 apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Forbereder fjerning av %s"
+
+#: apt-pkg/deb/dpkgpm.cc:628
+#, c-format
+msgid "Removed %s"
+msgstr "Fjernet %s"
+
+#: apt-pkg/deb/dpkgpm.cc:633
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Forbereder å fullstendig slette %s"
+
+#: apt-pkg/deb/dpkgpm.cc:634
+#, c-format
+msgid "Completely removed %s"
+msgstr "Fjernet %s fullstendig"
+
+#: apt-pkg/deb/dpkgpm.cc:788
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr "Klarte ikke skrive logg, openpty() feilet (/dev/pts ikke montert?)\n"
 

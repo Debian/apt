@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-28 14:25+0200\n"
+"POT-Creation-Date: 2008-10-28 18:12+0100\n"
 "PO-Revision-Date: 2008-09-09 19:16+0400\n"
 "Last-Translator: Yuri Kozlov <kozlov.y@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -316,7 +316,7 @@ msgstr ""
 "  -c=? Читать указанный конфигурационный файл\n"
 "  -o=? Указать произвольную опцию, к примеру, -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Невозможно записать в %s"
@@ -912,7 +912,7 @@ msgstr "Аварийное завершение."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Хотите продолжить [Д/н]? "
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1344
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1349
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Не удалось загрузить %s  %s\n"
@@ -1623,9 +1623,9 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "Каталоги info и temp должны находиться на одной файловой системе"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:748
-#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr "Чтение списков пакетов"
 
@@ -1896,7 +1896,7 @@ msgstr "Время установления соединения для соке
 msgid "Unable to accept connection"
 msgstr "Невозможно принять соединение"
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Проблема при хешировании файла"
 
@@ -2095,15 +2095,20 @@ msgstr "Ошибка чтения, удалённый сервер прерва�
 msgid "Error reading from server"
 msgstr "Ошибка чтения с сервера"
 
-#: methods/http.cc:1104
+#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "Не удалось записать в файл %s"
+
+#: methods/http.cc:1105
 msgid "Bad header data"
 msgstr "Неверный заголовок данных"
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1122 methods/http.cc:1177
 msgid "Connection failed"
 msgstr "Соединение разорвано"
 
-#: methods/http.cc:1228
+#: methods/http.cc:1229
 msgid "Internal error"
 msgstr "Внутренняя ошибка"
 
@@ -2115,6 +2120,10 @@ msgstr "Невозможно отобразить в память пустой �
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Невозможно отобразить в память %lu байт"
+
+#: apt-pkg/contrib/mmap.cc:213
+msgid "Dynamic MMap ran out of room"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2234,12 +2243,13 @@ msgstr "Неверная операция %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Невозможно прочитать атрибуты точки монтирования %s"
 
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/acquire.cc:424 apt-pkg/acquire.cc:449 apt-pkg/clean.cc:40
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Невозможно сменить текущий каталог на %s"
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr "Невозможно получить атрибуты cdrom"
 
@@ -2493,14 +2503,14 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "Не поддерживается индексный файл типа '%s'"
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "Пакет %s нуждается в переустановке, но найти архив для него не удалось."
 
-#: apt-pkg/algorithms.cc:1106
+#: apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2508,11 +2518,11 @@ msgstr ""
 "Ошибка, pkgProblemResolver::Resolve сгенерировал повреждённые пакеты. Это "
 "может быть вызвано отложенными (held) пакетами."
 
-#: apt-pkg/algorithms.cc:1108
+#: apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Невозможно исправить ошибки, у вас отложены (held) битые пакеты."
 
-#: apt-pkg/algorithms.cc:1370 apt-pkg/algorithms.cc:1372
+#: apt-pkg/algorithms.cc:1375 apt-pkg/algorithms.cc:1377
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -2532,12 +2542,12 @@ msgstr "Архивный каталог %spartial отсутствует."
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
+#: apt-pkg/acquire.cc:828
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "Загружается файл %li из %li (%s осталось)"
 
-#: apt-pkg/acquire.cc:829
+#: apt-pkg/acquire.cc:830
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Загружается файл %li из %li"
@@ -2610,83 +2620,83 @@ msgstr "Произошла ошибка во время обработки %s (N
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Произошла ошибка во время обработки %s (UsePackage1)"
 
-#: apt-pkg/pkgcachegen.cc:153
+#: apt-pkg/pkgcachegen.cc:164
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr "Произошла ошибка во время обработки %s (NewFileDesc1)"
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "Произошла ошибка во время обработки %s (UsePackage2)"
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "Произошла ошибка во время обработки %s (NewFileVer1)"
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "Произошла ошибка во время обработки %s (NewVersion1)"
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "Произошла ошибка во время обработки %s (UsePackage3)"
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Произошла ошибка во время обработки %s (NewVersion2)"
 
-#: apt-pkg/pkgcachegen.cc:245
+#: apt-pkg/pkgcachegen.cc:256
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr "Произошла ошибка во время обработки %s (NewFileDesc2)"
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr "Превышено допустимое количество имён пакетов."
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Превышено допустимое количество версий."
 
-#: apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:268
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr ""
 "Вах, превышено допустимое количество описаний, с которым может работать APT."
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "Превышено допустимое количество зависимостей."
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "Произошла ошибка во время обработки %s (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "Произошла ошибка во время обработки %s (CollectFileProvides)"
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "Во время обработки файла зависимостей не найден пакет %s %s"
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Не удалось получить атрибуты списка пакетов с исходными текстами %s"
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr "Сбор информации о Provides"
 
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr "Ошибка ввода/вывода при попытке сохранить кеш исходных текстов"
 
@@ -2699,15 +2709,15 @@ msgstr "переименовать не удалось, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum не совпадает"
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:658 apt-pkg/acquire-item.cc:1421
 msgid "Hash Sum mismatch"
 msgstr "Хеш сумма не совпадает"
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1113
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Недоступен открытый ключ для следующих ID ключей:\n"
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1226
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2716,7 +2726,7 @@ msgstr ""
 "Не удалось обнаружить файл пакета %s. Это может означать, что вам придётся "
 "вручную исправить этот пакет (возможно, пропущен arch)"
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1285
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2725,13 +2735,13 @@ msgstr ""
 "Не удалось обнаружить файл пакета %s. Это может означать, что вам придётся "
 "вручную исправить этот пакет."
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1326
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Некорректный перечень пакетов. Нет поля Filename: для пакета %s."
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1413
 msgid "Size mismatch"
 msgstr "Не совпадает размер"
 
@@ -2845,79 +2855,78 @@ msgstr ""
 "Сохранено %i записей с %i отсутствующими файлами и с %i несовпадающими "
 "файлами\n"
 
-#: apt-pkg/deb/dpkgpm.cc:486
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Каталог %s отсутствует"
-
-#: apt-pkg/deb/dpkgpm.cc:569
-#, c-format
-msgid "Preparing %s"
-msgstr "Подготавливается %s"
-
-#: apt-pkg/deb/dpkgpm.cc:570
-#, c-format
-msgid "Unpacking %s"
-msgstr "Распаковывается %s"
-
-#: apt-pkg/deb/dpkgpm.cc:575
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Подготавливается для конфигурации %s"
-
-#: apt-pkg/deb/dpkgpm.cc:576 apt-pkg/deb/dpkgpm.cc:605
-#, c-format
-msgid "Configuring %s"
-msgstr "Настройка %s"
-
-#: apt-pkg/deb/dpkgpm.cc:578 apt-pkg/deb/dpkgpm.cc:579
-#, c-format
-msgid "Processing triggers for %s"
-msgstr "Обрабатываются триггеры для %s"
-
-#: apt-pkg/deb/dpkgpm.cc:581
-#, c-format
-msgid "Installed %s"
-msgstr "Установлен %s"
-
-#: apt-pkg/deb/dpkgpm.cc:586 apt-pkg/deb/dpkgpm.cc:588
-#: apt-pkg/deb/dpkgpm.cc:589
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Подготавливается для удаления %s"
-
-#: apt-pkg/deb/dpkgpm.cc:591 apt-pkg/deb/dpkgpm.cc:606
-#, c-format
-msgid "Removing %s"
-msgstr "Удаление %s"
-
-#: apt-pkg/deb/dpkgpm.cc:592
-#, c-format
-msgid "Removed %s"
-msgstr "Удалён %s"
-
-#: apt-pkg/deb/dpkgpm.cc:597
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Подготовка к полному удалению %s"
-
-#: apt-pkg/deb/dpkgpm.cc:598
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s полностью удалён"
-
-#. populate the "processing" map
-#: apt-pkg/deb/dpkgpm.cc:604
+#: apt-pkg/deb/dpkgpm.cc:49
 #, c-format
 msgid "Installing %s"
 msgstr "Устанавливается %s"
 
-#: apt-pkg/deb/dpkgpm.cc:607
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
+#, c-format
+msgid "Configuring %s"
+msgstr "Настройка %s"
+
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:627
+#, c-format
+msgid "Removing %s"
+msgstr "Удаление %s"
+
+#: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Выполняется послеустановочный триггер %s"
 
-#: apt-pkg/deb/dpkgpm.cc:756
+#: apt-pkg/deb/dpkgpm.cc:521
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Каталог %s отсутствует"
+
+#: apt-pkg/deb/dpkgpm.cc:605
+#, c-format
+msgid "Preparing %s"
+msgstr "Подготавливается %s"
+
+#: apt-pkg/deb/dpkgpm.cc:606
+#, c-format
+msgid "Unpacking %s"
+msgstr "Распаковывается %s"
+
+#: apt-pkg/deb/dpkgpm.cc:611
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Подготавливается для конфигурации %s"
+
+#: apt-pkg/deb/dpkgpm.cc:614 apt-pkg/deb/dpkgpm.cc:615
+#, c-format
+msgid "Processing triggers for %s"
+msgstr "Обрабатываются триггеры для %s"
+
+#: apt-pkg/deb/dpkgpm.cc:617
+#, c-format
+msgid "Installed %s"
+msgstr "Установлен %s"
+
+#: apt-pkg/deb/dpkgpm.cc:622 apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Подготавливается для удаления %s"
+
+#: apt-pkg/deb/dpkgpm.cc:628
+#, c-format
+msgid "Removed %s"
+msgstr "Удалён %s"
+
+#: apt-pkg/deb/dpkgpm.cc:633
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Подготовка к полному удалению %s"
+
+#: apt-pkg/deb/dpkgpm.cc:634
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s полностью удалён"
+
+#: apt-pkg/deb/dpkgpm.cc:788
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 "Не удалось записать в журнал, неудачное выполнение openpty() (/dev/pts не "
