@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-28 14:25+0200\n"
+"POT-Creation-Date: 2008-10-28 18:12+0100\n"
 "PO-Revision-Date: 2008-08-17 23:45+0800\n"
 "Last-Translator: Deng Xiyue <manphiz-guest@users.alioth.debian.org>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
@@ -309,7 +309,7 @@ msgstr ""
 "  -c=? 读指定的配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr "无法写入 %s"
@@ -882,7 +882,7 @@ msgstr "中止执行。"
 msgid "Do you want to continue [Y/n]? "
 msgstr "您希望继续执行吗？[Y/n]"
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1344
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1349
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "无法下载 %s  %s\n"
@@ -1570,9 +1570,9 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "info 和 temp 目录要求处于同一文件系统之下"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:748
-#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr "正在读取软件包列表"
 
@@ -1836,7 +1836,7 @@ msgstr "数据套接字连接超时"
 msgid "Unable to accept connection"
 msgstr "无法接受连接"
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "把文件加入散列表时出错"
 
@@ -2028,15 +2028,20 @@ msgstr "从服务器读取数据时出错，对方关闭了连接"
 msgid "Error reading from server"
 msgstr "从服务器读取数据出错"
 
-#: methods/http.cc:1104
+#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "无法写入文件 %s"
+
+#: methods/http.cc:1105
 msgid "Bad header data"
 msgstr "错误的报头数据"
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1122 methods/http.cc:1177
 msgid "Connection failed"
 msgstr "连接失败"
 
-#: methods/http.cc:1228
+#: methods/http.cc:1229
 msgid "Internal error"
 msgstr "内部错误"
 
@@ -2048,6 +2053,10 @@ msgstr "无法 mmap 一个空文件"
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "无法 mmap %lu 字节的数据"
+
+#: apt-pkg/contrib/mmap.cc:213
+msgid "Dynamic MMap ran out of room"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2165,12 +2174,13 @@ msgstr "无效的操作 %s"
 msgid "Unable to stat the mount point %s"
 msgstr "无法读取文件系统挂载点 %s 的状态"
 
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/acquire.cc:424 apt-pkg/acquire.cc:449 apt-pkg/clean.cc:40
 #, c-format
 msgid "Unable to change to %s"
 msgstr "无法切换工作目录到 %s"
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr "无法读取光盘的状态"
 
@@ -2416,13 +2426,13 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "不支持索引文件类型“%s”"
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "软件包 %s 需要重新安装，但是我无法找到相应的安装文件。"
 
-#: apt-pkg/algorithms.cc:1106
+#: apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2430,13 +2440,13 @@ msgstr ""
 "错误，pkgProblemResolver::Resolve 发生故障，这可能是有软件包被要求保持现状的"
 "缘故。"
 
-#: apt-pkg/algorithms.cc:1108
+#: apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 "无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关"
 "系。"
 
-#: apt-pkg/algorithms.cc:1370 apt-pkg/algorithms.cc:1372
+#: apt-pkg/algorithms.cc:1375 apt-pkg/algorithms.cc:1377
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -2455,12 +2465,12 @@ msgstr "找不到“%spartial”这个目录。"
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
+#: apt-pkg/acquire.cc:828
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
 
-#: apt-pkg/acquire.cc:829
+#: apt-pkg/acquire.cc:830
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "正在下载第 %li 个文件，共 %li 个"
@@ -2533,82 +2543,82 @@ msgstr "处理 %s (NewPackage)时出错"
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "处理 %s (UsePackage1)时出错"
 
-#: apt-pkg/pkgcachegen.cc:153
+#: apt-pkg/pkgcachegen.cc:164
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr "处理 %s (NewFileDesc1)时出错"
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "处理 %s (UsePackage2)时出错"
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "处理 %s (NewFileVer1)时出错"
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "处理 %s (NewVersion1)时出错"
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "处理 %s (UsePackage3)时出错"
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "处理 %s (NewVersion2)时出错"
 
-#: apt-pkg/pkgcachegen.cc:245
+#: apt-pkg/pkgcachegen.cc:256
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr "处理 %s (NewFileDesc2)时出错"
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr "糟了，软件包的数量了超出本程序的处理能力。"
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "糟了，软件包版本的数量了超出本程序的处理能力。"
 
-#: apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:268
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr "糟了，软件包说明的数量了超出本程序的处理能力。"
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "糟了，依赖关系的数量超出了本程序的处理能力。"
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "处理 %s (FindPkg)时出错"
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "处理 %s (CollectFileProvides)时出错"
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "当处理文件依赖关系时，无法找到软件包 %s %s"
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "无法获取源软件包列表 %s 的状态"
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr "正在收集文件所提供的软件包"
 
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr "无法写入来源缓存文件"
 
@@ -2621,15 +2631,15 @@ msgstr "无法重命名文件，%s (%s -> %s)。"
 msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:658 apt-pkg/acquire-item.cc:1421
 msgid "Hash Sum mismatch"
 msgstr "Hash 校验和不符"
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1113
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "以下 key ID 没有可用的公钥：\n"
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1226
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2638,7 +2648,7 @@ msgstr ""
 "我无法找到一个对应 %s 软件包的文件。在这种情况下可能需要您手动修正这个软件"
 "包。(缘于架构缺失)"
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1285
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2646,13 +2656,13 @@ msgid ""
 msgstr ""
 "我无法找到对应 %s 软件包的文件。在这种情况下您可能需要手动修正这个软件包。"
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1326
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 Filename: 字段。"
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1413
 msgid "Size mismatch"
 msgstr "大小不符"
 
@@ -2764,79 +2774,78 @@ msgstr "已写入 %i 条记录，并有 %i 个文件不吻合\n"
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "已写入 %i 条记录，并有 %i 个缺失，以及 %i 个文件不吻合\n"
 
-#: apt-pkg/deb/dpkgpm.cc:486
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "目录 %s 不见了"
-
-#: apt-pkg/deb/dpkgpm.cc:569
-#, c-format
-msgid "Preparing %s"
-msgstr "正在准备 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:570
-#, c-format
-msgid "Unpacking %s"
-msgstr "正在解压缩 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:575
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "正在准备配置 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:576 apt-pkg/deb/dpkgpm.cc:605
-#, c-format
-msgid "Configuring %s"
-msgstr "正在配置 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:578 apt-pkg/deb/dpkgpm.cc:579
-#, c-format
-msgid "Processing triggers for %s"
-msgstr "启动对 %s 的处理"
-
-#: apt-pkg/deb/dpkgpm.cc:581
-#, c-format
-msgid "Installed %s"
-msgstr "已安装 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:586 apt-pkg/deb/dpkgpm.cc:588
-#: apt-pkg/deb/dpkgpm.cc:589
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "正在准备 %s 的删除操作"
-
-#: apt-pkg/deb/dpkgpm.cc:591 apt-pkg/deb/dpkgpm.cc:606
-#, c-format
-msgid "Removing %s"
-msgstr "正在删除 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:592
-#, c-format
-msgid "Removed %s"
-msgstr "已删除 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:597
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "正在准备完全删除 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:598
-#, c-format
-msgid "Completely removed %s"
-msgstr "完全删除了 %s"
-
-#. populate the "processing" map
-#: apt-pkg/deb/dpkgpm.cc:604
+#: apt-pkg/deb/dpkgpm.cc:49
 #, c-format
 msgid "Installing %s"
 msgstr "正在安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:607
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
+#, c-format
+msgid "Configuring %s"
+msgstr "正在配置 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:627
+#, c-format
+msgid "Removing %s"
+msgstr "正在删除 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "执行安装后执行的触发器 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:756
+#: apt-pkg/deb/dpkgpm.cc:521
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "目录 %s 不见了"
+
+#: apt-pkg/deb/dpkgpm.cc:605
+#, c-format
+msgid "Preparing %s"
+msgstr "正在准备 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:606
+#, c-format
+msgid "Unpacking %s"
+msgstr "正在解压缩 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:611
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "正在准备配置 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:614 apt-pkg/deb/dpkgpm.cc:615
+#, c-format
+msgid "Processing triggers for %s"
+msgstr "启动对 %s 的处理"
+
+#: apt-pkg/deb/dpkgpm.cc:617
+#, c-format
+msgid "Installed %s"
+msgstr "已安装 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:622 apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "正在准备 %s 的删除操作"
+
+#: apt-pkg/deb/dpkgpm.cc:628
+#, c-format
+msgid "Removed %s"
+msgstr "已删除 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:633
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "正在准备完全删除 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:634
+#, c-format
+msgid "Completely removed %s"
+msgstr "完全删除了 %s"
+
+#: apt-pkg/deb/dpkgpm.cc:788
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr "无法写入日志。 openpty() 失败 (/dev/pts 没有 mount 上？)\n"
 

@@ -444,8 +444,9 @@ bool pkgAcquire::Clean(string Dir)
 	 unlink(Dir->d_name);
    };
    
-   chdir(StartDir.c_str());
    closedir(D);
+   if (chdir(StartDir.c_str()) != 0)
+      return _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
    return true;   
 }
 									/*}}}*/

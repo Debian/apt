@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_km\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-28 14:25+0200\n"
+"POT-Creation-Date: 2008-10-28 18:12+0100\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -314,7 +314,7 @@ msgstr ""
 "  -c=? អាន​ឯកសារ​ការ​កំណត់​រចនាស្ព័ន្ធ​នេះ\n"
 "  -o=? កំណត់​ជម្រើស​ការ​កំណត់​រចនា​សម្ព័ន្ធ​តាម​ចិត្ត ឧ. eg -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr "មិន​អាច​សរសេរ​ទៅ %s"
@@ -889,7 +889,7 @@ msgstr "បោះបង់ ។"
 msgid "Do you want to continue [Y/n]? "
 msgstr "តើ​អ្នក​ចង់​បន្តឬ​ [បាទ ចាស/ទេ​] ? "
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1344
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1349
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "បរាជ័យ​ក្នុង​ការ​ទៅ​ប្រមូល​យក​ %s  %s\n"
@@ -1580,9 +1580,9 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "ថតព័ត៌មាន​ និង ពុម្ព ត្រូវការនៅលើ​ប្រព័ន្ធឯកសារ​ដូចគ្នា​"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:748
-#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr "កំពុង​អាន​បញ្ជី​កញ្ចប់"
 
@@ -1846,7 +1846,7 @@ msgstr "ការតភ្ជាប់​រន្ធ​​ទិន្នន័
 msgid "Unable to accept connection"
 msgstr "មិនអាច​ទទួលយក​ការតភ្ជាប់​បានឡើយ"
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "បញ្ហា​ធ្វើឲ្យខូច​ឯកសារ"
 
@@ -2038,15 +2038,20 @@ msgstr "កំហុស​ក្នុងការ​អាន​ពី​ម៉
 msgid "Error reading from server"
 msgstr "កំហុស​ក្នុងការអាន​ពី​ម៉ាស៊ីន​បម្រើ"
 
-#: methods/http.cc:1104
+#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "បរាជ័យ​ក្នុងការ​សរសេរ​ឯកសារ %s"
+
+#: methods/http.cc:1105
 msgid "Bad header data"
 msgstr "ទិន្នន័យ​បឋមកថា​ខូច"
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1122 methods/http.cc:1177
 msgid "Connection failed"
 msgstr "ការតភ្ជាប់​បាន​បរាជ័យ​"
 
-#: methods/http.cc:1228
+#: methods/http.cc:1229
 msgid "Internal error"
 msgstr "កំហុស​ខាង​ក្នុង​"
 
@@ -2058,6 +2063,10 @@ msgstr "មិនអាច mmap ឯកសារទទេ​បានឡើយ"
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "មិន​អាច​បង្កើត​ mmap នៃ​ %lu បៃបានឡើយ"
+
+#: apt-pkg/contrib/mmap.cc:213
+msgid "Dynamic MMap ran out of room"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2175,12 +2184,13 @@ msgstr "ប្រតិបត្តិការ​មិន​ត្រឹមត
 msgid "Unable to stat the mount point %s"
 msgstr "មិនអាច​ថ្លែង ចំណុចម៉ោន %s បានឡើយ"
 
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/acquire.cc:424 apt-pkg/acquire.cc:449 apt-pkg/clean.cc:40
 #, c-format
 msgid "Unable to change to %s"
 msgstr "មិនអាច​ប្ដូរទៅ %s បានឡើយ"
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr "បរាជ័យក្នុងការ​ថ្លែង ស៊ីឌីរ៉ូម"
 
@@ -2427,13 +2437,13 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "ប្រភេទ​ឯកសារ​លិបិក្រម​ '%s' មិនត្រូវ​បាន​គាំទ្រ​"
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "កញ្ចប់ %s ត្រូវការឲ្យដំឡើង ប៉ុន្តែ​ ខ្ញុំ​មិន​អាច​រក​ប័ណ្ណសារ​សម្រាប់​វា​បាន​ទេ​ ។"
 
-#: apt-pkg/algorithms.cc:1106
+#: apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2441,11 +2451,11 @@ msgstr ""
 "កំហុស pkgProblemResolver::ដោះស្រាយ​សញ្ញាបញ្ឈប់​ដែលបានបង្កើត នេះ​ប្រហែលជា បង្កដោយកញ្ចប់​"
 "ដែលបាន​ទុក ។"
 
-#: apt-pkg/algorithms.cc:1108
+#: apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "មិន​អាច​កែ​បញ្ហាបានទេេ អ្កបានទុក​កញ្ចប់​ដែល​ខូច ។។"
 
-#: apt-pkg/algorithms.cc:1370 apt-pkg/algorithms.cc:1372
+#: apt-pkg/algorithms.cc:1375 apt-pkg/algorithms.cc:1377
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -2464,12 +2474,12 @@ msgstr "ថត​ប័ណ្ណសារ​ %spartial គឺ​បាត់ប�
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
+#: apt-pkg/acquire.cc:828
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "កំពុង​ទៅ​យក​ឯកសារ %li នៃ %li (នៅសល់ %s)"
 
-#: apt-pkg/acquire.cc:829
+#: apt-pkg/acquire.cc:830
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "កំពុង​ទៅយក​ឯកសារ %li នៃ %li"
@@ -2542,83 +2552,83 @@ msgstr "កំហុស​បាន​កើត​ឡើង​​ ខណៈ​�
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "កំហុស​បាន​កើតឡើង​ ខណៈពេល​កំពុង​ដំណើរការ​ %s (ប្រើ​កញ្ចប់​១​)"
 
-#: apt-pkg/pkgcachegen.cc:153
+#: apt-pkg/pkgcachegen.cc:164
 #, fuzzy, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr "កំហុស​បានកើតឡើង​ ខណៈពេល​កំពុង​ដំណើរការ​ %s (កំណែ​​​ឯកសារ​ថ្មី​១)"
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "កំហុស​បាន​កើតឡើង​ ខណៈពេល​កំពុង​ដំណើរការ​ %s (ប្រើកញ្ចប់២)"
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "កំហុស​បានកើតឡើង​ ខណៈពេល​កំពុង​ដំណើរការ​ %s (កំណែ​​​ឯកសារ​ថ្មី​១)"
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "កំហុស​បានកើត​ឡើង​ ខណៈពេល​កំពុង​ដំណើរការ​ %s (កំណែ១ថ្មី​)"
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "កំហុស​បាន​កើតឡើង​ ខណៈពេល​កំពុង​ដំណើរការ​ %s (ប្រើកញ្ចប់​៣)"
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "កំហុស​បាន​កើត​ឡើង​ខណៈ​ពេល​កំពុង​ដំណើរការ​ %s (កំណែ២​ថ្មី​)"
 
-#: apt-pkg/pkgcachegen.cc:245
+#: apt-pkg/pkgcachegen.cc:256
 #, fuzzy, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr "កំហុស​បានកើតឡើង​ ខណៈពេល​កំពុង​ដំណើរការ​ %s (កំណែ​​​ឯកសារ​ថ្មី​១)"
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr "អស្ចារ្យ អ្នក​មាន​ឈ្មោះ​កញ្ចប់​លើស​ចំនួន​  APT នេះ​ឆបគ្នា​​  ។"
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "អស្ចារ្យ អ្នក​មាន​កំណែ​លើស​ចំនួន​   APT នេះ​ឆបគ្នា​ ។"
 
-#: apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:268
 #, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr "អស្ចារ្យ អ្នក​មាន​កំណែ​លើស​ចំនួន​   APT នេះ​ឆបគ្នា​ ។"
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "អស្ចារ្យ​, អ្នក​មាន​ភាពអាស្រ័យ​លើស​ចំនួន​ APT នេះ​ឆបគ្នា​ ។"
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "កំហុស​បានកើតឡើង​ខណៈពេល​កំពុង​ដំណើរការ​ %s (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "កំហុស​បានកើតឡើង​ខណៈពេល​កំពុង​ដំណើរការ​%s (ផ្តល់​ឯកសារ​ប្រមូល​ផ្តុំ)"
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "កញ្ចប់​ %s %s រក​មិន​ឃើញ​ខណៈ​ពេល​កំពុង​ដំណើរការ​ភាពអាស្រ័យ​​ឯកសារ"
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "មិនអាចថ្លែង បញ្ជី​កញ្ចប់​ប្រភពចប់​ បានឡើយ %s"
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr "ការផ្ដល់​ឯកសារ​ប្រមូលផ្ដុំ"
 
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr "IO កំហុសក្នុងការររក្សាទុក​ឃ្លាំង​សម្ងាត់​ប្រភព​"
 
@@ -2631,16 +2641,16 @@ msgstr "ប្តូរ​ឈ្មោះ​បានបរាជ័យ​, %s (
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum មិន​ផ្គួផ្គង​"
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:658 apt-pkg/acquire-item.cc:1421
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "MD5Sum មិន​ផ្គួផ្គង​"
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1113
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "គ្មាន​កូនសោ​សាធារណៈ​អាច​រក​បាន​ក្នុងកូនសោ IDs ខាងក្រោម​នេះទេ ៖\n"
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1226
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2649,7 +2659,7 @@ msgstr ""
 "ខ្ញុំ​មិន​អាច​រកទីតាំង​ឯកសារ​សម្រាប់​កញ្ចប់ %s បាន​ទេ ។ ​មាន​ន័យ​ថា​អ្នក​ត្រូវការ​ជួសជុល​កញ្ចប់​នេះ​ដោយ​ដៃ ។ "
 "(ដោយសារ​​បាត់​ស្ថាបត្យកម្ម)"
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1285
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2657,13 +2667,13 @@ msgid ""
 msgstr ""
 "ខ្ញុំ​មិន​អាច​រកទីតាំង​ឯកសារ​សម្រាប់​កញ្ចប់ %s បានទេ ។ ​មាន​ន័យ​ថា​អ្នក​ត្រូវការ​ជួសជុល​កញ្ចប់​នេះ​ដោយ​ដៃ ។"
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1326
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "កញ្ចប់​ឯកសារ​លិបិក្រម​ត្រូវ​បាន​ខូច ។ គ្មាន​ឈ្មោះ​ឯកសារ ៖ វាល​សម្រាប់​កញ្ចប់នេះ​ទេ​ %s ។"
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1413
 msgid "Size mismatch"
 msgstr "ទំហំ​មិនបាន​ផ្គួផ្គង​"
 
@@ -2774,79 +2784,78 @@ msgstr "បានសរសេរ​ %i កំណត់ត្រា​ជាម�
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "បានសរសេរ %i កំណត់ត្រា​ជាមួយ​ %i ឯកសារ​ដែល​បាត់បង់​ និង​ %i ឯកសារ​ដែល​មិន​បាន​ផ្គួផ្គង​ ​\n"
 
-#: apt-pkg/deb/dpkgpm.cc:486
-#, fuzzy, c-format
-msgid "Directory '%s' missing"
-msgstr "រាយបញ្ជី​ថត​ %spartial គឺ​បាត់បង់​ ។"
-
-#: apt-pkg/deb/dpkgpm.cc:569
-#, c-format
-msgid "Preparing %s"
-msgstr "កំពុងរៀបចំ​ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:570
-#, c-format
-msgid "Unpacking %s"
-msgstr "កំពុង​ស្រាយ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:575
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "កំពុងរៀបចំ​កំណត់រចនាសម្ព័ន្ធ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:576 apt-pkg/deb/dpkgpm.cc:605
-#, c-format
-msgid "Configuring %s"
-msgstr "កំពុង​កំណត់​រចនា​សម្ព័ន្ធ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:578 apt-pkg/deb/dpkgpm.cc:579
-#, fuzzy, c-format
-msgid "Processing triggers for %s"
-msgstr "​កំហុស​ដំណើរការ​ថត​ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:581
-#, c-format
-msgid "Installed %s"
-msgstr "បាន​ដំឡើង %s"
-
-#: apt-pkg/deb/dpkgpm.cc:586 apt-pkg/deb/dpkgpm.cc:588
-#: apt-pkg/deb/dpkgpm.cc:589
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "កំពុងរៀបចំដើម្បី​ការយក​ចេញ​នៃ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:591 apt-pkg/deb/dpkgpm.cc:606
-#, c-format
-msgid "Removing %s"
-msgstr "កំពុង​យក %s ចេញ"
-
-#: apt-pkg/deb/dpkgpm.cc:592
-#, c-format
-msgid "Removed %s"
-msgstr "បាន​យក %s ចេញ"
-
-#: apt-pkg/deb/dpkgpm.cc:597
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "កំពុង​រៀបចំ​យក %s ចេញ​ទាំង​ស្រុង"
-
-#: apt-pkg/deb/dpkgpm.cc:598
-#, c-format
-msgid "Completely removed %s"
-msgstr "បាន​យក %s ចេញ​ទាំង​ស្រុង"
-
-#. populate the "processing" map
-#: apt-pkg/deb/dpkgpm.cc:604
+#: apt-pkg/deb/dpkgpm.cc:49
 #, fuzzy, c-format
 msgid "Installing %s"
 msgstr "បាន​ដំឡើង %s"
 
-#: apt-pkg/deb/dpkgpm.cc:607
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
+#, c-format
+msgid "Configuring %s"
+msgstr "កំពុង​កំណត់​រចនា​សម្ព័ន្ធ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:627
+#, c-format
+msgid "Removing %s"
+msgstr "កំពុង​យក %s ចេញ"
+
+#: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:756
+#: apt-pkg/deb/dpkgpm.cc:521
+#, fuzzy, c-format
+msgid "Directory '%s' missing"
+msgstr "រាយបញ្ជី​ថត​ %spartial គឺ​បាត់បង់​ ។"
+
+#: apt-pkg/deb/dpkgpm.cc:605
+#, c-format
+msgid "Preparing %s"
+msgstr "កំពុងរៀបចំ​ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:606
+#, c-format
+msgid "Unpacking %s"
+msgstr "កំពុង​ស្រាយ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:611
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "កំពុងរៀបចំ​កំណត់រចនាសម្ព័ន្ធ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:614 apt-pkg/deb/dpkgpm.cc:615
+#, fuzzy, c-format
+msgid "Processing triggers for %s"
+msgstr "​កំហុស​ដំណើរការ​ថត​ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:617
+#, c-format
+msgid "Installed %s"
+msgstr "បាន​ដំឡើង %s"
+
+#: apt-pkg/deb/dpkgpm.cc:622 apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "កំពុងរៀបចំដើម្បី​ការយក​ចេញ​នៃ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:628
+#, c-format
+msgid "Removed %s"
+msgstr "បាន​យក %s ចេញ"
+
+#: apt-pkg/deb/dpkgpm.cc:633
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "កំពុង​រៀបចំ​យក %s ចេញ​ទាំង​ស្រុង"
+
+#: apt-pkg/deb/dpkgpm.cc:634
+#, c-format
+msgid "Completely removed %s"
+msgstr "បាន​យក %s ចេញ​ទាំង​ស្រុង"
+
+#: apt-pkg/deb/dpkgpm.cc:788
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 

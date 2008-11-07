@@ -1,5 +1,10 @@
 apt (0.7.18) unstable; urgency=low
 
+  [ Christian Perrier ]
+  * Translations:
+    - French updated
+
+  [ Eugene V. Lyubimkin ]
   * doc/examples/configure-index:
     - Removed obsoleted header line. (Closes: #417638)
     - Changed 'linux-kernel' to 'linux-image'.
@@ -13,40 +18,14 @@ apt (0.7.18) unstable; urgency=low
     - Target 'apt' need to depend on 'build-doc'. Thanks for Peter Green.
       Fixes FTBFS. (Closes: #504181)
 
- -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Thu, 06 Nov 2008 22:18:15 +0200
+  [ Michael Vogt ]
+  * fix depend on libdb4.4 (closes: #501253)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 07 Nov 2008 22:13:39 +0100
 
 apt (0.7.17) unstable; urgency=low
 
   [ Eugene V. Lyubimkin ]
-  * apt-pkg/acquire-item.cc:
-    - Added fallback to uncompressed 'Packages' if neither 'bz2' nor 'gz'
-      available. (Closes: #409284)
-  * apt-pkg/algorithm.cc:
-    - Strip username and password from source URL in error message.
-      (Closes: #425150)
-  * debian/rules:
-    - Fixed lintian warnings "debian/rules ignores make errors".
-  * debian/control:
-    - Substituted outdated "Source-Version" fields with "binary:Version".
-    - Added 'python-apt' to Suggests, as apt-mark need it for work.
-    - Drop Debian revision from 'doc-base' build dependency, this fixes
-      appropriate lintian warning.
-  * debian/libapt-pkg-doc.doc-base.*:
-    - Changed section: from old 'Devel' to 'Debian'. This fixes appropriate
-      lintian warnings.
-  * debian/{postrm,prerm,preinst}:
-    - Added 'set -e', fixes lintian warnings
-      'maintainer-script-ignores-error'.
-  * dselect/makefile:
-    - Removed unneeded 'LOCAL' entry. This allows cleaning rule to run smoothly.
-  * share/lintian-overrides:
-    - Added with override of 'apt must depend on python'. Script 'apt-mark'
-      needs apt-python for working and checks this on fly. We don't want
-      python in most cases.
-  * cmdline/apt-key:
-    - Added 'unset GREP_OPTIONS' to the script. This prevents 'apt-key update'
-      failure when GREP_OPTIONS contains options that modify grep output.
-      (Closes: #428752)
   * debian/control:
     - 'Vcs-Bzr' field is official, used it.
     - Bumped 'Standards-Version' to 3.8.0, no changes needed.
@@ -76,6 +55,65 @@ apt (0.7.17) unstable; urgency=low
       sources.list manpage, as they are already described under in the manpage.
     - Removed notice that ssh/rsh access cannot use password authentication
       from sources.list manpage. Thanks to Steffen Joeris. (Closes: #434894)
+    - Added '(x)' to some referrings to manpages in apt-get manpage. Patch by
+      Andre Felipe Machado. (Closes: #309893)
+    - Added 'dist-upgrade' apt-get synopsis in apt-get manpage.
+      (Closes: #323866)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 05 Nov 2008 13:14:56 +0100
+
+apt (0.7.17~exp4) experimental; urgency=low
+
+  * debian/rules:
+    - Fixed lintian warnings "debian/rules ignores make errors".
+  * debian/control:
+    - Substituted outdated "Source-Version" fields with "binary:Version".
+    - Added 'python-apt' to Suggests, as apt-mark need it for work.
+    - Drop Debian revision from 'doc-base' build dependency, this fixes
+      appropriate lintian warning.
+  * debian/libapt-pkg-doc.doc-base.*:
+    - Changed section: from old 'Devel' to 'Debian'. This fixes appropriate
+      lintian warnings.
+  * debian/{postrm,prerm,preinst}:
+    - Added 'set -e', fixes lintian warnings
+      'maintainer-script-ignores-error'.
+  * dselect/makefile:
+    - Removed unneeded 'LOCAL' entry. This allows cleaning rule to run smoothly.
+  * share/lintian-overrides:
+    - Added with override of 'apt must depend on python'. Script 'apt-mark'
+      needs apt-python for working and checks this on fly. We don't want
+      python in most cases.
+  * cmdline/apt-key:
+    - Added 'unset GREP_OPTIONS' to the script. This prevents 'apt-key update'
+      failure when GREP_OPTIONS contains options that modify grep output.
+      (Closes: #428752)
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Fri, 24 Oct 2008 23:45:17 +0300
+
+apt (0.7.17~exp3) experimental; urgency=low
+
+  * apt-pkg/acquire-item.cc:
+    - fix a merge mistake that prevents the fallback to the 
+      uncompressed 'Packages' to work correctly (closes: #409284)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 29 Oct 2008 09:36:24 +0100
+
+apt (0.7.17~exp2) experimental; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * apt-pkg/acquire-item.cc:
+    - Added fallback to uncompressed 'Packages' if neither 'bz2' nor 'gz'
+      available. (Closes: #409284)
+  * apt-pkg/algorithm.cc:
+    - Strip username and password from source URL in error message.
+      (Closes: #425150)
+  
+  [ Michael Vogt ]
+  * fix various -Wall warnings
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 28 Oct 2008 18:06:38 +0100
+
+apt (0.7.17~exp1) experimental; urgency=low
 
   [ Luca Bruno ]
   * Fix typos:
@@ -96,14 +134,7 @@ apt (0.7.17) unstable; urgency=low
     - clarify whether configuration items of apt.conf are case-sensitive
       (thanks to Vincent McIntyre, closes: #345901)
 
-  [ Eugene V. Lyubimkin ]
-  * doc/:
-    - Added '(x)' to some referrings to manpages in apt-get manpage. Patch by
-      Andre Felipe Machado. (Closes: #309893)
-    - Added 'dist-upgrade' apt-get synopsis in apt-get manpage.
-      (Closes: #323866)
-
- -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Wed, 05 Nov 2008 23:16:33 +0200
+ -- Luca Bruno <lethalman88@gmail.com>  Sat, 11 Oct 2008 09:17:46 +0200
 
 apt (0.7.16) unstable; urgency=low
 

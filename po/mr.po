@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-28 14:25+0200\n"
+"POT-Creation-Date: 2008-10-28 18:12+0100\n"
 "PO-Revision-Date: 2006-08-09 16:17+0200\n"
 "Last-Translator: Priti Patil <prithisd@gmail.com>\n"
 "Language-Team:  Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -310,7 +310,7 @@ msgstr ""
 "  -c=?  ही संरचना संचिका वाचा \n"
 " -o=?  एखादा अहेतुक संरचना पर्याय निर्धारित करा जसे-  -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s मध्ये लिहिण्यास असमर्थ "
@@ -886,7 +886,7 @@ msgstr "व्यत्यय/बंद करा."
 msgid "Do you want to continue [Y/n]? "
 msgstr "तुम्हाला पुढे जायचे आहे [Y/n]? "
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1344
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1349
 #, fuzzy, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "%s घेण्यासाठी नाकाम\n"
@@ -1583,9 +1583,9 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "info आणि temp संचिका सारख्याच फाईलप्रणालीत असणे आवश्यक आहे"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:748
-#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr "पॅकेज याद्या वाचत आहोत"
 
@@ -1850,7 +1850,7 @@ msgstr "डेटा सॉकेट जोडणी वेळेअभावी
 msgid "Unable to accept connection"
 msgstr "जोडणी स्विकारण्यास असमर्थ"
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "फाईल हॅश करण्यात त्रुटी"
 
@@ -2044,15 +2044,20 @@ msgstr "सर्व्हर मधून वाचण्यात चूक. �
 msgid "Error reading from server"
 msgstr "सर्व्हर मधून वाचण्यात चूक"
 
-#: methods/http.cc:1104
+#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "%s फाईल मध्ये लिहिण्यास असमर्थ"
+
+#: methods/http.cc:1105
 msgid "Bad header data"
 msgstr "चुकीचा शीर्षक डाटा"
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1122 methods/http.cc:1177
 msgid "Connection failed"
 msgstr "जोडणी अयशस्वी"
 
-#: methods/http.cc:1228
+#: methods/http.cc:1229
 msgid "Internal error"
 msgstr "अंतर्गत त्रुटी"
 
@@ -2064,6 +2069,10 @@ msgstr "रिकामी फाईल mmap करता येणार ना
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "mmap चे %lu बाईटस् करता येणार नाहीत"
+
+#: apt-pkg/contrib/mmap.cc:213
+msgid "Dynamic MMap ran out of room"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2181,12 +2190,13 @@ msgstr "%s अवैध क्रिया"
 msgid "Unable to stat the mount point %s"
 msgstr "%s माऊंट पॉईंट स्टॅट करण्यास असमर्थ"
 
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/acquire.cc:424 apt-pkg/acquire.cc:449 apt-pkg/clean.cc:40
 #, c-format
 msgid "Unable to change to %s"
 msgstr "%s मध्ये बदलण्यास असमर्थ"
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr "सीडी-रॉम स्टॅट करण्यास असमर्थ"
 
@@ -2433,14 +2443,14 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "'%s' प्रकारची निर्देशक संचिका सहाय्यकारी नाही"
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "%s पॅकेज पुनः:अधिष्ठापित करण्याची गरज आहे, परंतु मला त्यासाठी ऑर्काइव्ह सापडू शकले नाही."
 
-#: apt-pkg/algorithms.cc:1106
+#: apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2448,11 +2458,11 @@ msgstr ""
 "दोष,पॅकेज समस्या निवारक::निवारण  करतांना अडथळा निर्माण झाला, ह्याचे कारण स्थगित  "
 "पॅकेजेस असू शकते."
 
-#: apt-pkg/algorithms.cc:1108
+#: apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "अडचणी दूर करण्यास असमर्थ, तुम्ही तुटलेले पॅकेज घेतलेले आहे."
 
-#: apt-pkg/algorithms.cc:1370 apt-pkg/algorithms.cc:1372
+#: apt-pkg/algorithms.cc:1375 apt-pkg/algorithms.cc:1377
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -2472,12 +2482,12 @@ msgstr "ऑर्काइव्ह संचयिकेत %s पार्श�
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
+#: apt-pkg/acquire.cc:828
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "%li ची %li(%s राहिलेले) संचिका पुन:प्राप्त करीत आहे"
 
-#: apt-pkg/acquire.cc:829
+#: apt-pkg/acquire.cc:830
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "%li ची %li संचिका पुन:प्राप्त करीत आहे"
@@ -2550,89 +2560,89 @@ msgstr "%s (नविन पॅकेज) प्रक्रिया करी�
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "%s (वापरातील पॅकेज१) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:153
+#: apt-pkg/pkgcachegen.cc:164
 #, fuzzy, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr "%s(नविन संचिका आवृती१) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "%s प्रक्रिया करीत असतांना दोष आढळून आला(वापरातील पॅकेज२)"
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "%s(नविन संचिका आवृती१) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "%s (नविन आवृत्ती १) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "%s(वापरातील पॅकेज३) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "%s(नविन आवृती२) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:245
+#: apt-pkg/pkgcachegen.cc:256
 #, fuzzy, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr "%s(नविन संचिका आवृती१) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
 "अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही पॅकेज नांवांच्या संख्येची मर्यादा ओलांडली "
 "आहे."
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr ""
 "अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही आवृत्त्या संख्येची मर्यादा ओलांडली आहे."
 
-#: apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:268
 #, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr ""
 "अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही आवृत्त्या संख्येची मर्यादा ओलांडली आहे."
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr ""
 "अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही अवलंबित/विसंबून असलेल्या संख्येची मर्यादा "
 "ओलांडली आहे."
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "%s (पॅकेज शोधतांना) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "%s (तरतूद/पुरवलेल्या संचिका जमा) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "अवलंबित/विसंबून असणाऱ्या संचिकांची प्रक्रिया करीत असतांना पॅकेज %s %s सापडले नाही "
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "%s उगम पॅकेज यादी सुरू करता येत नाही"
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr "तरतूद/पुरवलेल्या संचिका संग्रहित करीत आहे"
 
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr "IO त्रुटी उगम निवडक संचयस्थानात संग्रहित होत आहे"
 
@@ -2645,17 +2655,17 @@ msgstr "पुनर्नामांकन अयशस्वी, %s (%s -> %s
 msgid "MD5Sum mismatch"
 msgstr "एमडी५ बेरीज/MD5Sum जुळत नाही"
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:658 apt-pkg/acquire-item.cc:1421
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "एमडी५ बेरीज/MD5Sum जुळत नाही"
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1113
 #, fuzzy
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "पुढील कळ ओळखचिन्हासाठी सामायिक कळ उपलब्ध नाही:\n"
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1226
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2664,7 +2674,7 @@ msgstr ""
 "मी %s पॅकेजकरीता संचिका शोधण्यास  समर्थ नव्हतो. याचा अर्थ असाकी तुम्हाला हे पॅकेज स्वहस्ते "
 "स्थिर/निश्चित करण्याची गरज आहे(हरवलेल्या आर्चमुळे) "
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1285
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2673,7 +2683,7 @@ msgstr ""
 "मी %s पॅकेजकरीता संचिका शोधण्यास  समर्थ नव्हतो. याचा अर्थ असाकी तुम्हालाहे पॅकेज स्वहस्ते "
 "स्थिर/निश्चित करण्याची गरज आहे."
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1326
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2681,7 +2691,7 @@ msgstr ""
 "पॅकेज यादीची/सुचीची संचिका दूषित/खराब झालेली आहे. संचिका नाव नाही: पॅकेजकरीता क्षेत्र/"
 "ठिकाण %s."
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1413
 msgid "Size mismatch"
 msgstr "आकार जुळतनाही"
 
@@ -2793,79 +2803,78 @@ msgstr "%i विजोड संचिकांबरोबर %i माहि�
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "%i गहाळ संचिकाबरोबर आणि %i विजोड संचिकाबरोबर %i माहिती संच लिहिले\n"
 
-#: apt-pkg/deb/dpkgpm.cc:486
-#, fuzzy, c-format
-msgid "Directory '%s' missing"
-msgstr "संचयिका यादीत %s पार्शल हरवले आहे."
-
-#: apt-pkg/deb/dpkgpm.cc:569
-#, c-format
-msgid "Preparing %s"
-msgstr "%s तयार करित आहे"
-
-#: apt-pkg/deb/dpkgpm.cc:570
-#, c-format
-msgid "Unpacking %s"
-msgstr "%s सुटे/मोकळे करीत आहे "
-
-#: apt-pkg/deb/dpkgpm.cc:575
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "%s संरचने साठी तयार करत आहे"
-
-#: apt-pkg/deb/dpkgpm.cc:576 apt-pkg/deb/dpkgpm.cc:605
-#, c-format
-msgid "Configuring %s"
-msgstr "%s संरचित होत आहे"
-
-#: apt-pkg/deb/dpkgpm.cc:578 apt-pkg/deb/dpkgpm.cc:579
-#, fuzzy, c-format
-msgid "Processing triggers for %s"
-msgstr "त्रुटी प्रक्रिया मार्गदर्शिका%s "
-
-#: apt-pkg/deb/dpkgpm.cc:581
-#, c-format
-msgid "Installed %s"
-msgstr "%s संस्थापित झाले"
-
-#: apt-pkg/deb/dpkgpm.cc:586 apt-pkg/deb/dpkgpm.cc:588
-#: apt-pkg/deb/dpkgpm.cc:589
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "%s ला काढून टाकण्यासाठी तयारी करत आहे"
-
-#: apt-pkg/deb/dpkgpm.cc:591 apt-pkg/deb/dpkgpm.cc:606
-#, c-format
-msgid "Removing %s"
-msgstr "%s काढून टाकत आहे"
-
-#: apt-pkg/deb/dpkgpm.cc:592
-#, c-format
-msgid "Removed %s"
-msgstr "%s काढून टाकले"
-
-#: apt-pkg/deb/dpkgpm.cc:597
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "%s संपूर्ण काढून टाकण्याची तयारी करत आहे"
-
-#: apt-pkg/deb/dpkgpm.cc:598
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s संपूर्ण काढून टाकले"
-
-#. populate the "processing" map
-#: apt-pkg/deb/dpkgpm.cc:604
+#: apt-pkg/deb/dpkgpm.cc:49
 #, fuzzy, c-format
 msgid "Installing %s"
 msgstr "%s संस्थापित झाले"
 
-#: apt-pkg/deb/dpkgpm.cc:607
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
+#, c-format
+msgid "Configuring %s"
+msgstr "%s संरचित होत आहे"
+
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:627
+#, c-format
+msgid "Removing %s"
+msgstr "%s काढून टाकत आहे"
+
+#: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:756
+#: apt-pkg/deb/dpkgpm.cc:521
+#, fuzzy, c-format
+msgid "Directory '%s' missing"
+msgstr "संचयिका यादीत %s पार्शल हरवले आहे."
+
+#: apt-pkg/deb/dpkgpm.cc:605
+#, c-format
+msgid "Preparing %s"
+msgstr "%s तयार करित आहे"
+
+#: apt-pkg/deb/dpkgpm.cc:606
+#, c-format
+msgid "Unpacking %s"
+msgstr "%s सुटे/मोकळे करीत आहे "
+
+#: apt-pkg/deb/dpkgpm.cc:611
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "%s संरचने साठी तयार करत आहे"
+
+#: apt-pkg/deb/dpkgpm.cc:614 apt-pkg/deb/dpkgpm.cc:615
+#, fuzzy, c-format
+msgid "Processing triggers for %s"
+msgstr "त्रुटी प्रक्रिया मार्गदर्शिका%s "
+
+#: apt-pkg/deb/dpkgpm.cc:617
+#, c-format
+msgid "Installed %s"
+msgstr "%s संस्थापित झाले"
+
+#: apt-pkg/deb/dpkgpm.cc:622 apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "%s ला काढून टाकण्यासाठी तयारी करत आहे"
+
+#: apt-pkg/deb/dpkgpm.cc:628
+#, c-format
+msgid "Removed %s"
+msgstr "%s काढून टाकले"
+
+#: apt-pkg/deb/dpkgpm.cc:633
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "%s संपूर्ण काढून टाकण्याची तयारी करत आहे"
+
+#: apt-pkg/deb/dpkgpm.cc:634
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s संपूर्ण काढून टाकले"
+
+#: apt-pkg/deb/dpkgpm.cc:788
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 
