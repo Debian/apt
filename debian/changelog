@@ -1,9 +1,24 @@
-apt (0.7.18) UNRELEASED; urgency=low
+apt (0.7.18) unstable; urgency=low
 
+  [ Christian Perrier ]
   * Translations:
     - French updated
 
- -- Christian Perrier <bubulle@debian.org>  Thu, 06 Nov 2008 19:41:51 +0100
+  [ Eugene V. Lyubimkin ]
+  * doc/examples/configure-index:
+    - Removed obsoleted header line. (Closes: #417638)
+    - Changed 'linux-kernel' to 'linux-image'.
+  * doc/sources.list.5.xml:
+    - Fixed typo and grammar in 'sources.list.d' section. Thanks to
+      Timothy G Abbott <tabbott@MIT.EDU>. (Closes: #478098)
+  * doc/apt-get.8.xml:
+    - Advanced descriptions for 'remove' and 'purge' options.
+      (Closes: #274283)
+  * debian/rules:
+    - Target 'apt' need to depend on 'build-doc'. Thanks for Peter Green.
+      Fixes FTBFS. (Closes: #504181)
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Thu, 06 Nov 2008 22:18:15 +0200
 
 apt (0.7.17) unstable; urgency=low
 

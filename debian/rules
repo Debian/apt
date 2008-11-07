@@ -186,7 +186,7 @@ apt-doc: build-doc
 # Build architecture-dependent files here.
 
 binary-arch: apt libapt-pkg-dev apt-utils apt-transport-https
-apt: build debian/shlibs.local
+apt: build build-doc debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_clean -p$@ -k
