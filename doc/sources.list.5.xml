@@ -48,9 +48,12 @@
  
  <refsect1><title>sources.list.d</title>
    <para>The <filename>/etc/apt/sources.list.d</filename> directory provides
-   a way to add sources.list entries in separate files whose names end with 
-   <literal>.list</literal>. The format is the same as for the regular
-   <filename>sources.list</filename> file. </para>
+   a way to add sources.list entries in separate files.
+   The format is the same as for the regular <filename>sources.list</filename> file.
+   File names need to end with
+   <filename>.list</filename> and may only contain letters (a-z and A-Z),
+   digits (0-9), underscore (_), hyphen (-) and period (.) characters.
+   Otherwise they will be silently ignored.</para>
  </refsect1>
 
  <refsect1><title>The deb and deb-src types</title>
