@@ -932,7 +932,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
-      signal(SIGINT,old_SIGHUP);
+      signal(SIGHUP,old_SIGHUP);
 
       if(master >= 0) 
       {
