@@ -773,6 +773,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
       sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
 
+      // ignore SIGHUP as well (debian #463030)
+      sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
+
       struct	termios tt;
       struct	termios tt_out;
       struct	winsize win;
@@ -881,6 +884,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // Restore sig int/quit
 	    signal(SIGQUIT,old_SIGQUIT);
 	    signal(SIGINT,old_SIGINT);
+	    signal(SIGINT,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
 
@@ -920,6 +924,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+      signal(SIGINT,old_SIGHUP);
 
       if(master >= 0) 
       {
