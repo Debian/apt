@@ -884,7 +884,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // Restore sig int/quit
 	    signal(SIGQUIT,old_SIGQUIT);
 	    signal(SIGINT,old_SIGINT);
-	    signal(SIGINT,old_SIGHUP);
+	    signal(SIGHUP,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
 
