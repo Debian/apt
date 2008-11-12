@@ -15,7 +15,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>05 November 2008</date>
+   <date>08 November 2008</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,7 +33,7 @@
  <refsynopsisdiv>
    <cmdsynopsis>
       <command>apt-get</command>
-      <arg><option>-vsqdyfmubV</option></arg>
+      <arg><option>-sqdyfmubV</option></arg>
       <arg>
 	      <option>-o=
 			  <replaceable>config_string</replaceable>
@@ -89,6 +89,12 @@
          <arg choice='plain'>clean</arg>
          <arg choice='plain'>autoclean</arg>
          <arg choice='plain'>autoremove</arg>
+		 <arg choice='plain'>
+			 <group choice='req'>
+				<arg choice='plain'>-v</arg>
+				<arg choice='plain'>--version</arg>
+			 </group>
+		 </arg>
 		 <arg choice='plain'>
 			 <group choice='req'>
 				<arg choice='plain'>-h</arg>
@@ -158,24 +164,23 @@
 
      <varlistentry><term>install</term>
      <listitem>
-	     <para>
-		     <literal>install</literal> is followed by one or more 
-		     packages desired for installation or upgrading. 
-		     Each package is a package name, not a fully qualified 
-		     filename (for instance, in a Debian GNU/Linux system, 
-		     libc6 would be the argument provided, not 
-		     <literal>libc6_1.9.6-2.deb</literal>). All packages required 
-		     by the package(s) specified for installation will also 
-		     be retrieved and installed. 
-		     The <filename>/etc/apt/sources.list</filename> file is 
-		     used to locate the desired packages. If a hyphen is 
-		     appended to the package name (with no intervening space), 
-		     the identified package will be removed if it is installed. 
-		     Similarly a plus sign can be used to designate a 
-		     package to install. These latter features may be used 
-		     to override decisions made by apt-get's conflict 
-		     resolution system.
-	     </para>
+	 <para><literal>install</literal> is followed by one or more 
+	 packages desired for installation or upgrading. 
+	 Each package is a package name, not a fully qualified 
+	 filename (for instance, in a Debian GNU/Linux system, 
+	 libc6 would be the argument provided, not 
+	 <literal>libc6_1.9.6-2.deb</literal>). All packages required 
+	 by the package(s) specified for installation will also 
+	 be retrieved and installed. 
+	 The <filename>/etc/apt/sources.list</filename> file is 
+	 used to locate the desired packages. If a hyphen is 
+	 appended to the package name (with no intervening space), 
+	 the identified package will be removed if it is installed. 
+	 Similarly a plus sign can be used to designate a 
+	 package to install. These latter features may be used 
+	 to override decisions made by apt-get's conflict 
+	 resolution system.
+	 </para>
 
      <para>A specific version of a package can be selected for installation by 
      following the package name with an equals and the version of the package 
