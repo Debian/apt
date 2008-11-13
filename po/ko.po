@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-12 22:07+0100\n"
-"PO-Revision-Date: 2008-07-19 19:14+0900\n"
+"PO-Revision-Date: 2008-11-13 07:14+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -160,43 +160,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s(%s), 컴파일 시각 %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
-#, fuzzy
-#| msgid ""
-#| "Usage: apt-cache [options] command\n"
-#| "       apt-cache [options] add file1 [file2 ...]\n"
-#| "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-#| "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
-#| "\n"
-#| "apt-cache is a low-level tool used to manipulate APT's binary\n"
-#| "cache files, and query information from them\n"
-#| "\n"
-#| "Commands:\n"
-#| "   add - Add a package file to the source cache\n"
-#| "   gencaches - Build both the package and source cache\n"
-#| "   showpkg - Show some general information for a single package\n"
-#| "   showsrc - Show source records\n"
-#| "   stats - Show some basic statistics\n"
-#| "   dump - Show the entire file in a terse form\n"
-#| "   dumpavail - Print an available file to stdout\n"
-#| "   unmet - Show unmet dependencies\n"
-#| "   search - Search the package list for a regex pattern\n"
-#| "   show - Show a readable record for the package\n"
-#| "   depends - Show raw dependency information for a package\n"
-#| "   rdepends - Show reverse dependency information for a package\n"
-#| "   pkgnames - List the names of all packages\n"
-#| "   dotty - Generate package graphs for GraphViz\n"
-#| "   xvcg - Generate package graphs for xvcg\n"
-#| "   policy - Show policy settings\n"
-#| "\n"
-#| "Options:\n"
-#| "  -h   This help text.\n"
-#| "  -p=? The package cache.\n"
-#| "  -s=? The source cache.\n"
-#| "  -q   Disable progress indicator.\n"
-#| "  -i   Show only important deps for the unmet command.\n"
-#| "  -c=? Read this configuration file\n"
-#| "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#| "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -243,7 +206,7 @@ msgstr ""
 "정보를 질의하는 저수준 도구입니다.\n"
 "\n"
 "명령:\n"
-"   add - 소스 캐시에 패키지 파일을 더합니다\n"
+"   add - 소스 캐시에 패키지 파일을 추가합니다\n"
 "   gencaches - 패키지 캐시 및 소스 캐시를 만듭니다\n"
 "   showpkg - 한 개의 패키지에 대한 일반적인 정보를 봅니다\n"
 "   showsrc - 소스 기록을 봅니다\n"
@@ -255,7 +218,7 @@ msgstr ""
 "   show - 패키지에 대해 읽을 수 있는 기록을 봅니다\n"
 "   depends - 패키지에 대해 의존성 정보를 그대로 봅니다\n"
 "   rdepends - 패키지의 역 의존성 정보를 봅니다\n"
-"   pkgnames - 모든 패키지의 이름을 봅니다\n"
+"   pkgnames - 시스템에 들어 있는 패키지의 이름을 모두 봅니다\n"
 "   dotty - GraphViz용 패키지 그래프를 만듭니다\n"
 "   xvcg - xvcg용 패키지 그래프를 만듭니다\n"
 "   policy - 정책 설정을 봅니다\n"
@@ -1043,9 +1006,7 @@ msgstr "목록 디렉토리를 잠글 수 없습니다"
 
 #: cmdline/apt-get.cc:1403
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
-"이 프로그램은 이것저것 지우지 못하게 되어 있으므로 AutoRemover 실행하지 못합"
-"니다"
+msgstr "삭제를 할 수 없으므로 AutoRemover를 실행하지 못합니다"
 
 #: cmdline/apt-get.cc:1435
 msgid ""
@@ -1063,7 +1024,7 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 "AutoRemover가 뭔가를 망가뜨린 것으로 보입니다. 이 문제는 실제 일어나서는\n"
-"안 됩니다. apt에 버그 보고를 하십시오."
+"안 됩니다. apt에 대해 버그 보고를 하십시오."
 
 #.
 #. if (Packages == 1)
@@ -2089,9 +2050,8 @@ msgid "Error reading from server"
 msgstr "서버에서 읽는 데 오류가 발생했습니다"
 
 #: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
-#, fuzzy
 msgid "Failed to truncate file"
-msgstr "%s 파일을 쓰는 데 실패했습니다"
+msgstr "파일을 자르는 데 실패했습니다"
 
 #: methods/http.cc:1105
 msgid "Bad header data"
@@ -2107,16 +2067,16 @@ msgstr "내부 오류"
 
 #: apt-pkg/contrib/mmap.cc:80
 msgid "Can't mmap an empty file"
-msgstr "빈 파일에 mmap할 수 없습니다"
+msgstr "빈 파일에 메모리 매핑할 수 없습니다"
 
 #: apt-pkg/contrib/mmap.cc:85
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
-msgstr "%lu바이트를 mmap할 수 없습니다"
+msgstr "%lu바이트를 메모리 매핑할 수 없습니다"
 
 #: apt-pkg/contrib/mmap.cc:213
 msgid "Dynamic MMap ran out of room"
-msgstr ""
+msgstr "동적 메모리 매핑이 범위를 벗어났습니다"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2836,9 +2796,9 @@ msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "레코드 %i개를 파일 %i개가 빠지고 %i개가 맞지 않은 상태로 썼습니다\n"
 
 #: apt-pkg/deb/dpkgpm.cc:49
-#, fuzzy, c-format
+#, c-format
 msgid "Installing %s"
-msgstr "%s 설치"
+msgstr "%s 설치하는 중입니다"
 
 #: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
 #, c-format
@@ -2853,7 +2813,7 @@ msgstr "%s 패키지를 지우는 중입니다"
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
-msgstr ""
+msgstr "설치 후 트리거 %s 실행하는 중입니다"
 
 #: apt-pkg/deb/dpkgpm.cc:521
 #, c-format
