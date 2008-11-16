@@ -2,16 +2,15 @@
 # Copyright (C) 2002 Free Software Foundation, Inc.
 # Rafael Sepulveda <drs@gnulinux.org.mx>, 2002.
 # Asier Llano Palacios <asierllano@infonegocio.com>
-# Javier Fernandez-Sanguino Pena <jfs@debian.org> 2003
 # Ruben Porras Campo <nahoo@inicia.es> 2004
-# Javier Fernandez-Sanguino <jfs@debian.org> 2006
+# Javier Fernandez-Sanguino <jfs@debian.org> 2003, 2006-2008
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7.14\n"
+"Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-12 22:07+0100\n"
-"PO-Revision-Date: 2008-11-14 23:58+0100\n"
+"PO-Revision-Date: 2008-11-15 21:52+0100\n"
 "Last-Translator: Javier Fernandez-Sanguino <jfs@debian.org>\n"
 "Language-Team: Debian Spanish <debian-l10n-spanish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -167,43 +166,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s para %s compilado en %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
-#, fuzzy
-#| msgid ""
-#| "Usage: apt-cache [options] command\n"
-#| "       apt-cache [options] add file1 [file2 ...]\n"
-#| "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-#| "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
-#| "\n"
-#| "apt-cache is a low-level tool used to manipulate APT's binary\n"
-#| "cache files, and query information from them\n"
-#| "\n"
-#| "Commands:\n"
-#| "   add - Add a package file to the source cache\n"
-#| "   gencaches - Build both the package and source cache\n"
-#| "   showpkg - Show some general information for a single package\n"
-#| "   showsrc - Show source records\n"
-#| "   stats - Show some basic statistics\n"
-#| "   dump - Show the entire file in a terse form\n"
-#| "   dumpavail - Print an available file to stdout\n"
-#| "   unmet - Show unmet dependencies\n"
-#| "   search - Search the package list for a regex pattern\n"
-#| "   show - Show a readable record for the package\n"
-#| "   depends - Show raw dependency information for a package\n"
-#| "   rdepends - Show reverse dependency information for a package\n"
-#| "   pkgnames - List the names of all packages\n"
-#| "   dotty - Generate package graphs for GraphVis\n"
-#| "   xvcg - Generate package graphs for xvcg\n"
-#| "   policy - Show policy settings\n"
-#| "\n"
-#| "Options:\n"
-#| "  -h   This help text.\n"
-#| "  -p=? The package cache.\n"
-#| "  -s=? The source cache.\n"
-#| "  -q   Disable progress indicator.\n"
-#| "  -i   Show only important deps for the unmet command.\n"
-#| "  -c=? Read this configuration file\n"
-#| "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#| "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -264,8 +226,8 @@ msgstr ""
 "   depends - Muestra la información de dependencias en bruto para el "
 "paquete\n"
 "   rdepends - Muestra la información de dependencias inversas del paquete\n"
-"   pkgnames - Lista los nombres de todos los paquetes\n"
-"   dotty - Genera gráficas del paquete para GraphVis\n"
+"   pkgnames - Lista los nombres de todos los paquetes en el sistema\n"
+"   dotty - Genera gráficas del paquete para GraphViz\n"
 "   xvcg - Genera gráficas del paquete para xvcg\n"
 "   policy - Muestra parámetros de las normas\n"
 "\n"
@@ -2117,10 +2079,8 @@ msgid "Error reading from server"
 msgstr "Error leyendo del servidor"
 
 #: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
-#, fuzzy
-#| msgid "Failed to write file %s"
 msgid "Failed to truncate file"
-msgstr "Falló la escritura del archivo %s"
+msgstr "Falló al truncar el archivo"
 
 #: methods/http.cc:1105
 msgid "Bad header data"
@@ -2145,7 +2105,7 @@ msgstr "No pude hacer mmap de %lu bytes"
 
 #: apt-pkg/contrib/mmap.cc:213
 msgid "Dynamic MMap ran out of room"
-msgstr ""
+msgstr "La función «Dynamic MMap» se quedó sin espacio"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2888,10 +2848,9 @@ msgstr ""
 "%i registros escritos con %i fichero de menos y %i ficheros mal emparejados\n"
 
 #: apt-pkg/deb/dpkgpm.cc:49
-#, fuzzy, c-format
-#| msgid "Installed %s"
+#, c-format
 msgid "Installing %s"
-msgstr "%s instalado"
+msgstr "Instalando %s"
 
 #: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
 #, c-format
@@ -2906,7 +2865,7 @@ msgstr "Eliminando %s"
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
-msgstr ""
+msgstr "Ejecutando disparador post-instalación %s"
 
 #: apt-pkg/deb/dpkgpm.cc:521
 #, c-format
