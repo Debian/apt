@@ -15,7 +15,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>08 November 2008</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,22 +33,74 @@
  <refsynopsisdiv>
    <cmdsynopsis>
       <command>apt-get</command>
-      <arg><option>-hvs</option></arg>
-      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
-      <arg><option>-c=<replaceable>file</replaceable></option></arg>
+      <arg><option>-sqdyfmubV</option></arg>
+      <arg>
+	      <option>-o=
+			  <replaceable>config_string</replaceable>
+	      </option>
+      </arg>
+      <arg>
+	      <option>-c=
+		      <replaceable>config_file</replaceable>
+	      </option>
+      </arg>
+      <arg>
+		  <option>-t=</option>
+		  <group choice='req'>
+			  <arg choice='plain'>
+				  <replaceable>target_release_name</replaceable>
+			  </arg>
+			  <arg choice='plain'>
+				  <replaceable>target_release_number_expression</replaceable>
+			  </arg>
+		  </group>
+      </arg>
+
       <group choice="req">
-         <arg>update</arg>
-         <arg>upgrade</arg>
-         <arg>dselect-upgrade</arg>
-         <arg>install <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>source <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg>check</arg>
-         <arg>clean</arg>
-         <arg>autoclean</arg>
-         <arg>autoremove</arg>
+         <arg choice='plain'>update</arg>
+         <arg choice='plain'>upgrade</arg>
+         <arg choice='plain'>dselect-upgrade</arg>
+         <arg choice='plain'>dist-upgrade</arg>
+         <arg choice='plain'>install 
+			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
+				<arg>
+					<group choice='req'>
+						<arg choice='plain'>
+							=<replaceable>pkg_version_number</replaceable>
+						</arg>
+						<arg choice='plain'>
+							/<replaceable>target_release_name</replaceable>
+						</arg>
+					</group>
+				</arg>
+			 </arg>
+	     </arg>
+         <arg choice='plain'>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg choice='plain'>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg choice='plain'>source 
+			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
+				 <arg>
+					 =<replaceable>pkg_version_number</replaceable>
+				 </arg>
+			 </arg>
+	     </arg>
+         <arg choice='plain'>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg choice='plain'>check</arg>
+         <arg choice='plain'>clean</arg>
+         <arg choice='plain'>autoclean</arg>
+         <arg choice='plain'>autoremove</arg>
+		 <arg choice='plain'>
+			 <group choice='req'>
+				<arg choice='plain'>-v</arg>
+				<arg choice='plain'>--version</arg>
+			 </group>
+		 </arg>
+		 <arg choice='plain'>
+			 <group choice='req'>
+				<arg choice='plain'>-h</arg>
+				<arg choice='plain'>--help</arg>
+			 </group>
+		 </arg>
       </group>   
    </cmdsynopsis>
  </refsynopsisdiv>
@@ -56,8 +108,8 @@
  <refsect1><title>Description</title>
    <para><command>apt-get</command> is the command-line tool for handling packages, and may be 
    considered the user's "back-end" to other tools using the APT
-   library.  Several "front-end" interfaces exist, such as dselect(8),
-   aptitude, synaptic, gnome-apt and wajig.</para>
+   library.  Several "front-end" interfaces exist, such as &dselect;,
+   &aptitude;, &synaptic;, &gnome-apt; and &wajig;.</para>
 
    <para>Unless the <option>-h</option>, or <option>--help</option> option is given, one of the
    commands below must be present.</para>
@@ -104,6 +156,7 @@
      with new versions of packages; <command>apt-get</command> has a "smart" conflict 
      resolution system, and it will attempt to upgrade the most important 
      packages at the expense of less important ones if necessary. 
+	 So, <literal>dist-upgrade</literal> command may remove some packages.
      The <filename>/etc/apt/sources.list</filename> file contains a list of locations 
      from which to retrieve desired package files.
      See also &apt-preferences; for a mechanism for
@@ -111,17 +164,24 @@
      </varlistentry>
 
      <varlistentry><term>install</term>
-     <listitem><para><literal>install</literal> is followed by one or more packages desired for 
-     installation. Each package is a package name, not a fully qualified 
-     filename (for instance, in a Debian GNU/Linux system, libc6 would be the 
-     argument provided, not <literal>libc6_1.9.6-2.deb</literal>) All packages required 
-     by the package(s) specified for installation will also be retrieved and 
-     installed. The <filename>/etc/apt/sources.list</filename> file is used to locate 
-     the desired packages. If a hyphen is appended to the package name (with 
-     no intervening space), the identified package will be removed if it is 
-     installed. Similarly a plus sign can be used to designate a package to 
-     install. These latter features may be used to override decisions made by 
-     apt-get's conflict resolution system.</para>
+     <listitem>
+	 <para><literal>install</literal> is followed by one or more 
+	 packages desired for installation or upgrading. 
+	 Each package is a package name, not a fully qualified 
+	 filename (for instance, in a Debian GNU/Linux system, 
+	 libc6 would be the argument provided, not 
+	 <literal>libc6_1.9.6-2.deb</literal>). All packages required 
+	 by the package(s) specified for installation will also 
+	 be retrieved and installed. 
+	 The <filename>/etc/apt/sources.list</filename> file is 
+	 used to locate the desired packages. If a hyphen is 
+	 appended to the package name (with no intervening space), 
+	 the identified package will be removed if it is installed. 
+	 Similarly a plus sign can be used to designate a 
+	 package to install. These latter features may be used 
+	 to override decisions made by apt-get's conflict 
+	 resolution system.
+	 </para>
 
      <para>A specific version of a package can be selected for installation by 
      following the package name with an equals and the version of the package 
@@ -132,6 +192,17 @@
 
      <para>Both of the version selection mechanisms can downgrade packages and must
      be used with care.</para>
+
+	<para>This is also the target to use if you want to upgrade one or 
+		more already-installed packages without upgrading every package 
+		you have on your system. Unlike the "upgrade" target, which 
+		installs the newest version of all currently installed packages, 
+		"install" will install the newest version of only the package(s) 
+		specified. Simply provide the name of the package(s) you wish 
+		to upgrade, and if a newer version is available, it (and its 
+		dependencies, as described above) will be downloaded and 
+		installed.
+	</para>
 
      <para>Finally, the &apt-preferences; mechanism allows you to
      create an alternative installation policy for
@@ -148,14 +219,15 @@
 
      <varlistentry><term>remove</term>
      <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
-     removed instead of installed. If a plus sign is appended to the package 
+	 removed instead of installed. Note the removing a package leaves its
+	 configuration files in system. If a plus sign is appended to the package 
      name (with no intervening space), the identified package will be 
      installed instead of removed.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>purge</term>
      <listitem><para><literal>purge</literal> is identical to <literal>remove</literal> except that packages are 
-     removed and purged.</para></listitem>
+     removed and purged (any configuration files are deleted too).</para></listitem>
      </varlistentry>
 
      <varlistentry><term>source</term>
@@ -222,6 +294,11 @@
    &apt-cmdblurb;
 
    <variablelist>
+     <varlistentry><term><option>--no-install-recommends</option></term>
+     <listitem><para>Do not consider recommended packages as a dependency for installing.
+     Configuration Item: <literal>APT::Install-Recommends</literal>.</para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>-d</option></term><term><option>--download-only</option></term>
      <listitem><para>Download only; package files are only retrieved, not unpacked or installed.
      Configuration Item: <literal>APT::Get::Download-Only</literal>.</para></listitem>
@@ -357,7 +434,8 @@
      <varlistentry><term><option>--purge</option></term>
      <listitem><para>Use purge instead of remove for anything that would be removed.
      An asterisk ("*") will be displayed next to packages which are
-     scheduled to be purged.
+	 scheduled to be purged. <option>remove --purge</option> is equivalent for
+	 <option>purge</option> command.
      Configuration Item: <literal>APT::Get::Purge</literal>.</para></listitem>
      </varlistentry>
 
@@ -379,8 +457,10 @@
                    <term><option>--target-release</option></term>
                    <term><option>--default-release</option></term>
      <listitem><para>This option controls the default input to the policy engine, it creates
-     a default pin at priority 990 using the specified release string. The
-     preferences file may further override this setting. In short, this option
+     a default pin at priority 990 using the specified release string.
+     This overrides the general settings in <filename>/etc/apt/preferences</filename>.
+     Specifically pinned packages are not affected by the value
+     of this option. In short, this option
      lets you have simple control over which distribution packages will be
      retrieved from. Some common examples might be 
      <option>-t '2.1*'</option> or <option>-t unstable</option>.
@@ -456,7 +536,7 @@
      </varlistentry>
      
      <varlistentry><term><filename>/etc/apt/apt.conf.d/</filename></term>
-     <listitem><para>APT configuration file fragments
+     <listitem><para>APT configuration file fragments.
      Configuration Item: <literal>Dir::Etc::Parts</literal>.</para></listitem>
      </varlistentry>
      
@@ -501,7 +581,16 @@
  <refsect1><title>Diagnostics</title>
    <para><command>apt-get</command> returns zero on normal operation, decimal 100 on error.</para>
  </refsect1>
-
+ <refsect1>
+	 <title>ORIGINAL AUTHORS</title>
+	 <para>&apt-author.jgunthorpe;</para>
+ </refsect1>
+ <refsect1>
+	 <title>CURRENT AUTHORS</title>
+	 <para>
+		 &apt-author.team;
+		 &apt-qapage;
+	 </para>
+ </refsect1>
  &manbugs;
- 
 </refentry>

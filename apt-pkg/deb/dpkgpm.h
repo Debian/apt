@@ -48,8 +48,12 @@ class pkgDPkgPM : public pkgPackageManager
    // the int is the state that is already done (e.g. a package that is
    // going to be install is already in state "half-installed")
    map<string,unsigned int> PackageOpsDone;
-   // map the dpkg "processing" info to human readable names
+
+
+#if 1 // FIXME: BINARY COMPATIBILITY ONLY, remove on next ABI break
    map<string,string> PackageProcessingOps;
+#endif
+
    // progress reporting
    unsigned int PackagesDone;
    unsigned int PackagesTotal;

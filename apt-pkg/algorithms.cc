@@ -37,7 +37,8 @@ pkgProblemResolver *pkgProblemResolver::This = 0;
    this is not necessary since the pkgCaches are fully shared now. */
 pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
 		            iPolicy(Cache),
-                            Sim(&Cache->GetCache(),&iPolicy)
+			    Sim(&Cache->GetCache(),&iPolicy),
+			    group(Sim)
 {
    Sim.Init(0);
    Flags = new unsigned char[Cache->Head().PackageCount];
@@ -496,7 +497,7 @@ void pkgProblemResolver::MakeScores()
       
       signed short &Score = Scores[I->ID];
       
-      /* This is arbitary, it should be high enough to elevate an
+      /* This is arbitrary, it should be high enough to elevate an
          essantial package above most other packages but low enough
 	 to allow an obsolete essential packages to be removed by
 	 a conflicts on a powerfull normal package (ie libc6) */
@@ -1340,7 +1341,11 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
       (*I)->Finished();
 
-      _error->Warning(_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
+      ::URI uri((*I)->DescURI());
+      uri.User.clear();
+      uri.Password.clear();
+      string descUri = string(uri);
+      _error->Warning(_("Failed to fetch %s  %s\n"), descUri.c_str(),
 	      (*I)->ErrorText.c_str());
 
       if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError) 

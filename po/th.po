@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2008-05-06 12:52+0700\n"
+"POT-Creation-Date: 2008-11-12 22:07+0100\n"
+"PO-Revision-Date: 2008-11-06 15:54+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@linux.thai.net>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -157,12 +157,49 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2571 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2573 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s สำหรับ %s คอมไพล์เมื่อ %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
+#, fuzzy
+#| msgid ""
+#| "Usage: apt-cache [options] command\n"
+#| "       apt-cache [options] add file1 [file2 ...]\n"
+#| "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
+#| "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+#| "\n"
+#| "apt-cache is a low-level tool used to manipulate APT's binary\n"
+#| "cache files, and query information from them\n"
+#| "\n"
+#| "Commands:\n"
+#| "   add - Add a package file to the source cache\n"
+#| "   gencaches - Build both the package and source cache\n"
+#| "   showpkg - Show some general information for a single package\n"
+#| "   showsrc - Show source records\n"
+#| "   stats - Show some basic statistics\n"
+#| "   dump - Show the entire file in a terse form\n"
+#| "   dumpavail - Print an available file to stdout\n"
+#| "   unmet - Show unmet dependencies\n"
+#| "   search - Search the package list for a regex pattern\n"
+#| "   show - Show a readable record for the package\n"
+#| "   depends - Show raw dependency information for a package\n"
+#| "   rdepends - Show reverse dependency information for a package\n"
+#| "   pkgnames - List the names of all packages\n"
+#| "   dotty - Generate package graphs for GraphViz\n"
+#| "   xvcg - Generate package graphs for xvcg\n"
+#| "   policy - Show policy settings\n"
+#| "\n"
+#| "Options:\n"
+#| "  -h   This help text.\n"
+#| "  -p=? The package cache.\n"
+#| "  -s=? The source cache.\n"
+#| "  -q   Disable progress indicator.\n"
+#| "  -i   Show only important deps for the unmet command.\n"
+#| "  -c=? Read this configuration file\n"
+#| "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#| "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -185,8 +222,8 @@ msgid ""
 "   show - Show a readable record for the package\n"
 "   depends - Show raw dependency information for a package\n"
 "   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages\n"
-"   dotty - Generate package graphs for GraphVis\n"
+"   pkgnames - List the names of all packages in the system\n"
+"   dotty - Generate package graphs for GraphViz\n"
 "   xvcg - Generate package graphs for xvcg\n"
 "   policy - Show policy settings\n"
 "\n"
@@ -222,7 +259,7 @@ msgstr ""
 "   depends - แสดงข้อมูลแพกเกจที่ต้องใช้สำหรับแพกเกจที่กำหนด\n"
 "   rdepends - แสดงข้อมูลแพกเกจอื่นที่ต้องใช้แพกเกจที่กำหนด\n"
 "   pkgnames - แสดงรายชื่อแพกเกจทั้งหมด\n"
-"   dotty - สร้างกราฟความเชื่อมโยงของแพกเกจในรูป GraphVis\n"
+"   dotty - สร้างกราฟความเชื่อมโยงของแพกเกจในรูป GraphViz\n"
 "   xvcg - สร้างกราฟความเชื่อมโยงของแพกเกจในรูป xvcg\n"
 "   policy - แสดงค่าตั้งนโยบาย\n"
 "\n"
@@ -309,7 +346,7 @@ msgstr ""
 "  -c=?  อ่านแฟ้มค่าตั้งนี้\n"
 "  -o=?  กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr "ไม่สามารถเขียนลงแฟ้ม %s"
@@ -808,11 +845,11 @@ msgstr "มีแพกเกจที่จำเป็นต้องถอด
 msgid "Internal error, Ordering didn't finish"
 msgstr "ข้อผิดพลาดภายใน: การเรียงลำดับไม่เสร็จสิ้น"
 
-#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:1990 cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:1992 cmdline/apt-get.cc:2025
 msgid "Unable to lock the download directory"
 msgstr "ไม่สามารถล็อคไดเรกทอรีดาวน์โหลด"
 
-#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2071 cmdline/apt-get.cc:2317
+#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2073 cmdline/apt-get.cc:2319
 #: apt-pkg/cachefile.cc:65
 msgid "The list of sources could not be read."
 msgstr "ไม่สามารถอ่านรายชื่อแหล่งแพกเกจได้"
@@ -841,7 +878,7 @@ msgstr "หลังจากการกระทำนี้ ต้องใ�
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "หลังจากการกระทำนี้ เนื้อที่บนดิสก์จะว่างเพิ่มอีก %sB\n"
 
-#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2166
+#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2168
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "ไม่สามารถคำนวณพื้นที่ว่างใน %s"
@@ -878,7 +915,7 @@ msgstr "เลิกทำ"
 msgid "Do you want to continue [Y/n]? "
 msgstr "คุณต้องการจะดำเนินการต่อไปหรือไม่ [Y/n]?"
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1344
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2216 apt-pkg/algorithms.cc:1349
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "ไม่สามารถดาวน์โหลด %s  %s\n"
@@ -887,7 +924,7 @@ msgstr "ไม่สามารถดาวน์โหลด %s  %s\n"
 msgid "Some files failed to download"
 msgstr "ดาวน์โหลดบางแฟ้มไม่สำเร็จ"
 
-#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2223
+#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2225
 msgid "Download complete and in download only mode"
 msgstr "ดาวน์โหลดสำเร็จแล้ว และอยู่ในโหมดดาวน์โหลดอย่างเดียว"
 
@@ -1013,7 +1050,17 @@ msgstr ""
 "ดูเหมือนการถอดถอนอัตโนมัติได้สร้างความเสียหายบางอย่าง ซึ่งไม่ควรเกิดขึ้น\n"
 "กรุณารายงานบั๊กนี้ของแพกเกจ apt"
 
-#: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1733
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << endl;
+#. }
+#.
+#: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1735
 msgid "The following information may help to resolve the situation:"
 msgstr "ข้อมูลต่อไปนี้อาจช่วยแก้ปัญหาได้:"
 
@@ -1068,131 +1115,122 @@ msgstr ""
 "หรือถ้าคุณกำลังใช้รุ่น unstable ก็เป็นไปได้ว่าแพกเกจที่จำเป็นบางรายการ\n"
 "ยังไม่ถูกสร้างขึ้น หรือถูกย้ายออกจาก Incoming"
 
-#: cmdline/apt-get.cc:1728
-msgid ""
-"Since you only requested a single operation it is extremely likely that\n"
-"the package is simply not installable and a bug report against\n"
-"that package should be filed."
-msgstr ""
-"และเนื่องจากคุณได้สั่งดำเนินการเพียงรายการเดียวเท่านั้น ก็เป็นไปได้สูงว่าแพกเกจนี้เสีย\n"
-"คุณควรจะรายงานบั๊กสำหรับแพกเกจนี้"
-
-#: cmdline/apt-get.cc:1736
+#: cmdline/apt-get.cc:1738
 msgid "Broken packages"
 msgstr "แพกเกจมีปัญหา"
 
-#: cmdline/apt-get.cc:1765
+#: cmdline/apt-get.cc:1767
 msgid "The following extra packages will be installed:"
 msgstr "จะติดตั้งแพกเกจเพิ่มเติมต่อไปนี้:"
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1856
 msgid "Suggested packages:"
 msgstr "แพกเกจที่แนะนำ:"
 
-#: cmdline/apt-get.cc:1855
+#: cmdline/apt-get.cc:1857
 msgid "Recommended packages:"
 msgstr "แพกเกจที่ควรใช้ร่วมกัน:"
 
-#: cmdline/apt-get.cc:1883
+#: cmdline/apt-get.cc:1885
 msgid "Calculating upgrade... "
 msgstr "กำลังคำนวณการปรับรุ่น... "
 
-#: cmdline/apt-get.cc:1886 methods/ftp.cc:702 methods/connect.cc:112
+#: cmdline/apt-get.cc:1888 methods/ftp.cc:702 methods/connect.cc:112
 msgid "Failed"
 msgstr "ล้มเหลว"
 
-#: cmdline/apt-get.cc:1891
+#: cmdline/apt-get.cc:1893
 msgid "Done"
 msgstr "เสร็จแล้ว"
 
-#: cmdline/apt-get.cc:1958 cmdline/apt-get.cc:1966
+#: cmdline/apt-get.cc:1960 cmdline/apt-get.cc:1968
 msgid "Internal error, problem resolver broke stuff"
 msgstr "เกิดข้อผิดพลาดภายใน: กลไกการแก้ปัญหาทำความเสียหาย"
 
-#: cmdline/apt-get.cc:2066
+#: cmdline/apt-get.cc:2068
 msgid "Must specify at least one package to fetch source for"
 msgstr "ต้องระบุแพกเกจอย่างน้อยหนึ่งแพกเกจที่จะดาวน์โหลดซอร์สโค้ด"
 
-#: cmdline/apt-get.cc:2096 cmdline/apt-get.cc:2335
+#: cmdline/apt-get.cc:2098 cmdline/apt-get.cc:2337
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "ไม่พบแพกเกจซอร์สโค้ดสำหรับ %s"
 
-#: cmdline/apt-get.cc:2145
+#: cmdline/apt-get.cc:2147
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "จะข้ามแฟ้ม '%s' ที่ดาวน์โหลดไว้แล้ว\n"
 
-#: cmdline/apt-get.cc:2173
+#: cmdline/apt-get.cc:2175
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "คุณมีพื้นที่ว่างเหลือไม่พอใน %s"
 
-#: cmdline/apt-get.cc:2179
+#: cmdline/apt-get.cc:2181
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "ต้องดาวน์โหลดซอร์สโค้ด %sB/%sB\n"
 
-#: cmdline/apt-get.cc:2182
+#: cmdline/apt-get.cc:2184
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "ต้องดาวน์โหลดซอร์สโค้ด %sB\n"
 
-#: cmdline/apt-get.cc:2188
+#: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "ดาวน์โหลดซอร์ส %s\n"
 
-#: cmdline/apt-get.cc:2219
+#: cmdline/apt-get.cc:2221
 msgid "Failed to fetch some archives."
 msgstr "ไม่สามารถดาวน์โหลดบางแฟ้ม"
 
-#: cmdline/apt-get.cc:2247
+#: cmdline/apt-get.cc:2249
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "จะข้ามการแตกซอร์สของซอร์สที่แตกไว้แล้วใน %s\n"
 
-#: cmdline/apt-get.cc:2259
+#: cmdline/apt-get.cc:2261
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "คำสั่งแตกแฟ้ม '%s' ล้มเหลว\n"
 
-#: cmdline/apt-get.cc:2260
+#: cmdline/apt-get.cc:2262
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "กรุณาตรวจสอบว่าได้ติดตั้งแพกเกจ 'dpkg-dev' แล้ว\n"
 
-#: cmdline/apt-get.cc:2277
+#: cmdline/apt-get.cc:2279
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "คำสั่ง build '%s' ล้มเหลว\n"
 
-#: cmdline/apt-get.cc:2296
+#: cmdline/apt-get.cc:2298
 msgid "Child process failed"
 msgstr "โพรเซสลูกล้มเหลว"
 
-#: cmdline/apt-get.cc:2312
+#: cmdline/apt-get.cc:2314
 msgid "Must specify at least one package to check builddeps for"
 msgstr "ต้องระบุแพกเกจอย่างน้อยหนึ่งแพกเกจที่จะตรวจสอบสิ่งที่ต้องการสำหรับการ build"
 
-#: cmdline/apt-get.cc:2340
+#: cmdline/apt-get.cc:2342
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "ไม่สามารถอ่านข้อมูลสิ่งที่ต้องการสำหรับการ build ของ %s"
 
-#: cmdline/apt-get.cc:2360
+#: cmdline/apt-get.cc:2362
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s ไม่ต้องการสิ่งใดสำหรับ build\n"
 
-#: cmdline/apt-get.cc:2412
+#: cmdline/apt-get.cc:2414
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่พบแพกเกจ %s"
 
-#: cmdline/apt-get.cc:2465
+#: cmdline/apt-get.cc:2467
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1201,30 +1239,30 @@ msgstr ""
 "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่มีแพกเกจ %s "
 "รุ่นที่จะสอดคล้องกับความต้องการรุ่นของแพกเกจได้"
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2503
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้: แพกเกจ %s ที่ติดตั้งไว้ใหม่เกินไป"
 
-#: cmdline/apt-get.cc:2526
+#: cmdline/apt-get.cc:2528
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้: %s"
 
-#: cmdline/apt-get.cc:2540
+#: cmdline/apt-get.cc:2542
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "ไม่สามารถติดตั้งสิ่งที่จำเป็นสำหรับการ build ของ %s ได้"
 
-#: cmdline/apt-get.cc:2544
+#: cmdline/apt-get.cc:2546
 msgid "Failed to process build dependencies"
 msgstr "ติดตั้งสิ่งที่จำเป็นสำหรับการ build ไม่สำเร็จ"
 
-#: cmdline/apt-get.cc:2576
+#: cmdline/apt-get.cc:2578
 msgid "Supported modules:"
 msgstr "มอดูลที่รองรับ:"
 
-#: cmdline/apt-get.cc:2617
+#: cmdline/apt-get.cc:2619
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1567,9 +1605,9 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "ไดเรกทอรี info และ temp ต้องอยู่ในระบบแฟ้มเดียวกัน"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:748
-#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr "กำลังอ่านรายชื่อแพกเกจ"
 
@@ -1765,7 +1803,7 @@ msgstr "หมดเวลารอเชื่อมต่อ"
 msgid "Server closed the connection"
 msgstr "เซิร์ฟเวอร์ปิดการเชื่อมต่อ"
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:536 methods/rsh.cc:190
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:538 methods/rsh.cc:190
 msgid "Read error"
 msgstr "การอ่านข้อมูลผิดพลาด"
 
@@ -1777,7 +1815,7 @@ msgstr "คำตอบท่วมบัฟเฟอร์"
 msgid "Protocol corruption"
 msgstr "มีความเสียหายของโพรโทคอล"
 
-#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:575 methods/rsh.cc:232
+#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:577 methods/rsh.cc:232
 msgid "Write error"
 msgstr "การเขียนข้อมูลผิดพลาด"
 
@@ -1831,7 +1869,7 @@ msgstr "หมดเวลารอเชื่อมต่อซ็อกเก
 msgid "Unable to accept connection"
 msgstr "ไม่สามารถรับการเชื่อมต่อ"
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "เกิดปัญหาขณะคำนวณค่าแฮชของแฟ้ม"
 
@@ -2023,15 +2061,19 @@ msgstr "เกิดข้อผิดพลาดขณะอ่านข้อ
 msgid "Error reading from server"
 msgstr "เกิดข้อผิดพลาดขณะอ่านข้อมูลจากเซิร์ฟเวอร์"
 
-#: methods/http.cc:1104
+#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+msgid "Failed to truncate file"
+msgstr "ไม่สามารถตัดท้ายแฟ้ม"
+
+#: methods/http.cc:1105
 msgid "Bad header data"
 msgstr "ข้อมูลส่วนหัวผิดพลาด"
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1122 methods/http.cc:1177
 msgid "Connection failed"
 msgstr "เชื่อมต่อไม่สำเร็จ"
 
-#: methods/http.cc:1228
+#: methods/http.cc:1229
 msgid "Internal error"
 msgstr "ข้อผิดพลาดภายใน"
 
@@ -2043,6 +2085,10 @@ msgstr "ไม่สามารถ mmap แฟ้มเปล่า"
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "ไม่สามารถสร้าง mmap ขนาด %lu ไบต์"
+
+#: apt-pkg/contrib/mmap.cc:213
+msgid "Dynamic MMap ran out of room"
+msgstr "เนื้อที่สำหรับทำ MMap แบบพลวัตเต็มแล้ว"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2160,79 +2206,80 @@ msgstr "ไม่รู้จักคำสั่ง %s"
 msgid "Unable to stat the mount point %s"
 msgstr "ไม่สามารถ stat จุดเมานท์ %s"
 
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/acquire.cc:424 apt-pkg/acquire.cc:449 apt-pkg/clean.cc:40
 #, c-format
 msgid "Unable to change to %s"
 msgstr "ไม่สามารถเปลี่ยนไดเรกทอรีไปยัง %s"
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr "ไม่สามารถ stat ซีดีรอม"
 
-#: apt-pkg/contrib/fileutl.cc:147
+#: apt-pkg/contrib/fileutl.cc:149
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "จะไม่ใช้การล็อคกับแฟ้มล็อค %s ที่อ่านได้อย่างเดียว"
 
-#: apt-pkg/contrib/fileutl.cc:152
+#: apt-pkg/contrib/fileutl.cc:154
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "ไม่สามารถเปิดแฟ้มล็อค %s"
 
-#: apt-pkg/contrib/fileutl.cc:170
+#: apt-pkg/contrib/fileutl.cc:172
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "จะไม่ใช้การล็อคกับแฟ้มล็อค %s ที่เมานท์ผ่าน nfs"
 
-#: apt-pkg/contrib/fileutl.cc:174
+#: apt-pkg/contrib/fileutl.cc:176
 #, c-format
 msgid "Could not get lock %s"
 msgstr "ไม่สามารถล็อค %s"
 
-#: apt-pkg/contrib/fileutl.cc:442
+#: apt-pkg/contrib/fileutl.cc:444
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "รอโพรเซส %s แต่ตัวโพรเซสไม่อยู่"
 
-#: apt-pkg/contrib/fileutl.cc:452
+#: apt-pkg/contrib/fileutl.cc:454
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "โพรเซสย่อย %s เกิดข้อผิดพลาดของการใช้ย่านหน่วยความจำ (segmentation fault)"
 
-#: apt-pkg/contrib/fileutl.cc:455
+#: apt-pkg/contrib/fileutl.cc:457
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "โพรเซสย่อย %s คืนค่าข้อผิดพลาด (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:457
+#: apt-pkg/contrib/fileutl.cc:459
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "โพรเซสย่อย %s จบการทำงานกระทันหัน"
 
-#: apt-pkg/contrib/fileutl.cc:501
+#: apt-pkg/contrib/fileutl.cc:503
 #, c-format
 msgid "Could not open file %s"
 msgstr "ไม่สามารถเปิดแฟ้ม %s"
 
-#: apt-pkg/contrib/fileutl.cc:557
+#: apt-pkg/contrib/fileutl.cc:559
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "read: ยังเหลือ %lu ที่ยังไม่ได้อ่าน แต่ข้อมูลหมดแล้ว"
 
-#: apt-pkg/contrib/fileutl.cc:587
+#: apt-pkg/contrib/fileutl.cc:589
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "write: ยังเหลือ %lu ที่ยังไม่ได้เขียน แต่ไม่สามารถเขียนได้"
 
-#: apt-pkg/contrib/fileutl.cc:662
+#: apt-pkg/contrib/fileutl.cc:664
 msgid "Problem closing the file"
 msgstr "เกิดปัญหาขณะปิดแฟ้ม"
 
-#: apt-pkg/contrib/fileutl.cc:668
+#: apt-pkg/contrib/fileutl.cc:670
 msgid "Problem unlinking the file"
 msgstr "เกิดปัญหาขณะลบแฟ้ม"
 
-#: apt-pkg/contrib/fileutl.cc:679
+#: apt-pkg/contrib/fileutl.cc:681
 msgid "Problem syncing the file"
 msgstr "เกิดปัญหาขณะ sync แฟ้ม"
 
@@ -2412,13 +2459,13 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "ไม่รองรับแฟ้มดัชนีชนิด '%s'"
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "จำเป็นต้องติดตั้งแพกเกจ %s ซ้ำ แต่หาตัวแพกเกจไม่พบ"
 
-#: apt-pkg/algorithms.cc:1106
+#: apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2426,11 +2473,11 @@ msgstr ""
 "ข้อผิดพลาด: pkgProblemResolver::Resolve สร้างคำตอบที่ทำให้เกิดแพกเกจเสีย "
 "อาจเกิดจากแพกเกจที่ถูกกำหนดให้คงรุ่นไว้"
 
-#: apt-pkg/algorithms.cc:1108
+#: apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "ไม่สามารถแก้ปัญหาได้ คุณได้คงรุ่นแพกเกจที่เสียอยู่ไว้"
 
-#: apt-pkg/algorithms.cc:1370 apt-pkg/algorithms.cc:1372
+#: apt-pkg/algorithms.cc:1375 apt-pkg/algorithms.cc:1377
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -2448,12 +2495,12 @@ msgstr "ไม่มีไดเรกทอรีแพกเกจ %spartial"
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
+#: apt-pkg/acquire.cc:828
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li (เหลืออีก %s)"
 
-#: apt-pkg/acquire.cc:829
+#: apt-pkg/acquire.cc:830
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li"
@@ -2526,82 +2573,82 @@ msgstr "เกิดข้อผิดพลาดขณะประมวลผ
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (UsePackage1)"
 
-#: apt-pkg/pkgcachegen.cc:153
+#: apt-pkg/pkgcachegen.cc:164
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (NewFileDesc1)"
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (UsePackage2)"
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (NewFileVer1)"
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (NewVersion1)"
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (UsePackage3)"
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (NewVersion2)"
 
-#: apt-pkg/pkgcachegen.cc:245
+#: apt-pkg/pkgcachegen.cc:256
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (NewFileDesc2)"
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr "โอ้ คุณมาถึงขีดจำกัดจำนวนชื่อแพกเกจที่ APT สามารถรองรับได้แล้ว"
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "โอ้ คุณมาถึงขีดจำกัดจำนวนรุ่นแพกเกจที่ APT สามารถรองรับได้แล้ว"
 
-#: apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:268
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr "โอ้ คุณมาถึงขีดจำกัดจำนวนคำบรรยายแพกเกจที่ APT สามารถรองรับได้แล้ว"
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "โอ้ คุณมาถึงขีดจำกัดจำนวนความสัมพันธ์ระหว่างแพกเกจที่ APT สามารถรองรับได้แล้ว"
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "เกิดข้อผิดพลาดขณะประมวลผล %s (CollectFileProvides)"
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "ไม่พบแพกเกจ %s %s ขณะประมวลผลความขึ้นต่อแฟ้ม"
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "ไม่สามารถ stat รายการแพกเกจซอร์ส %s"
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr "กำลังเก็บข้อมูลแฟ้มที่ตระเตรียมให้"
 
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr "เกิดข้อผิดพลาด IO ขณะบันทึกแคชของซอร์ส"
 
@@ -2614,35 +2661,35 @@ msgstr "เปลี่ยนชื่อไม่สำเร็จ: %s (%s -> 
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum ไม่ตรงกัน"
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:658 apt-pkg/acquire-item.cc:1426
 msgid "Hash Sum mismatch"
 msgstr "ผลรวมแฮชไม่ตรงกัน"
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1118
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "ไม่มีกุญแจสาธารณะสำหรับกุญแจหมายเลขต่อไปนี้:\n"
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1231
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr "ไม่พบแฟ้มสำหรับแพกเกจ %s คุณอาจต้องแก้ปัญหาแพกเกจนี้เอง (ไม่มี arch)"
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1290
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
 "manually fix this package."
 msgstr "ไม่พบแฟ้มสำหรับแพกเกจ %s คุณอาจต้องแก้ปัญหาแพกเกจนี้เอง"
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1331
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "แฟ้มดัชนีแพกเกจเสียหาย ไม่มีข้อมูล Filename: (ชื่อแฟ้ม) สำหรับแพกเกจ %s"
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1418
 msgid "Size mismatch"
 msgstr "ขนาดไม่ตรงกัน"
 
@@ -2754,68 +2801,78 @@ msgstr "เขียนแล้ว %i ระเบียน โดยมีแ�
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "เขียนแล้ว %i ระเบียน โดยมีแฟ้มขาดหาย %i แฟ้ม และแฟ้มผิดขนาด %i แฟ้ม\n"
 
-#: apt-pkg/deb/dpkgpm.cc:452
+#: apt-pkg/deb/dpkgpm.cc:49
 #, c-format
-msgid "Directory '%s' missing"
-msgstr "ไม่มีไดเรกทอรี '%s'"
+msgid "Installing %s"
+msgstr "กำลังติดตั้ง %s"
 
-#: apt-pkg/deb/dpkgpm.cc:535
-#, c-format
-msgid "Preparing %s"
-msgstr "กำลังเตรียม %s"
-
-#: apt-pkg/deb/dpkgpm.cc:536
-#, c-format
-msgid "Unpacking %s"
-msgstr "กำลังแตกแพกเกจ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:541
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "กำลังเตรียมตั้งค่า %s"
-
-#: apt-pkg/deb/dpkgpm.cc:542
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
 #, c-format
 msgid "Configuring %s"
 msgstr "กำลังตั้งค่า %s"
 
-#: apt-pkg/deb/dpkgpm.cc:544 apt-pkg/deb/dpkgpm.cc:545
-#, c-format
-msgid "Processing triggers for %s"
-msgstr "กำลังประมวลผลการสะกิดสำหรับ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:547
-#, c-format
-msgid "Installed %s"
-msgstr "ติดตั้ง %s แล้ว"
-
-#: apt-pkg/deb/dpkgpm.cc:552 apt-pkg/deb/dpkgpm.cc:554
-#: apt-pkg/deb/dpkgpm.cc:555
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "กำลังเตรียมถอดถอน %s"
-
-#: apt-pkg/deb/dpkgpm.cc:557
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:627
 #, c-format
 msgid "Removing %s"
 msgstr "กำลังถอดถอน %s"
 
-#: apt-pkg/deb/dpkgpm.cc:558
+#: apt-pkg/deb/dpkgpm.cc:52
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "กำลังเรียกการสะกิด %s หลังการติดตั้ง"
+
+#: apt-pkg/deb/dpkgpm.cc:521
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "ไม่มีไดเรกทอรี '%s'"
+
+#: apt-pkg/deb/dpkgpm.cc:605
+#, c-format
+msgid "Preparing %s"
+msgstr "กำลังเตรียม %s"
+
+#: apt-pkg/deb/dpkgpm.cc:606
+#, c-format
+msgid "Unpacking %s"
+msgstr "กำลังแตกแพกเกจ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:611
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "กำลังเตรียมตั้งค่า %s"
+
+#: apt-pkg/deb/dpkgpm.cc:614 apt-pkg/deb/dpkgpm.cc:615
+#, c-format
+msgid "Processing triggers for %s"
+msgstr "กำลังประมวลผลการสะกิดสำหรับ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:617
+#, c-format
+msgid "Installed %s"
+msgstr "ติดตั้ง %s แล้ว"
+
+#: apt-pkg/deb/dpkgpm.cc:622 apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "กำลังเตรียมถอดถอน %s"
+
+#: apt-pkg/deb/dpkgpm.cc:628
 #, c-format
 msgid "Removed %s"
 msgstr "ถอดถอน %s แล้ว"
 
-#: apt-pkg/deb/dpkgpm.cc:563
+#: apt-pkg/deb/dpkgpm.cc:633
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "กำลังเตรียมถอดถอน %s อย่างสมบูรณ์"
 
-#: apt-pkg/deb/dpkgpm.cc:564
+#: apt-pkg/deb/dpkgpm.cc:634
 #, c-format
 msgid "Completely removed %s"
 msgstr "ถอดถอน %s อย่างสมบูรณ์แล้ว"
 
-#: apt-pkg/deb/dpkgpm.cc:716
+#: apt-pkg/deb/dpkgpm.cc:791
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 "ไม่สามารถเขียนบันทึกปฏิบัติการ เนื่องจาก openpty() ล้มเหลว (ไม่ได้เมานท์ /dev/pts "
@@ -2828,6 +2885,14 @@ msgstr "ไม่สามารถแพตช์แฟ้ม"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "การเชื่อมต่อถูกปิดก่อนเวลาอันควร"
+
+#~ msgid ""
+#~ "Since you only requested a single operation it is extremely likely that\n"
+#~ "the package is simply not installable and a bug report against\n"
+#~ "that package should be filed."
+#~ msgstr ""
+#~ "และเนื่องจากคุณได้สั่งดำเนินการเพียงรายการเดียวเท่านั้น ก็เป็นไปได้สูงว่าแพกเกจนี้เสีย\n"
+#~ "คุณควรจะรายงานบั๊กสำหรับแพกเกจนี้"
 
 #, fuzzy
 #~ msgid "Line %d too long (max %lu)"

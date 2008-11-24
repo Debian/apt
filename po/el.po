@@ -1,38 +1,35 @@
-# translation of apt_po_el_new.po to Greek
-# translation of apt_po_el.po to
 # translation of apt_po_el.po to Greek
 # translation of apt_po_el.po to
-# translation of apt_po_el.po to
-# translation of el.po to Greek
-# translation of apt.el.po to Hellenic
 # Greek Translation of APT.
 # This file is put in the public domain.
+#
 # Fanis Dokianakis <madf@hellug.gr>, 2003.
 # Konstantinos Margaritis <markos@debian.org>, 2003, 2004, 2006.
 # George Papamichelakis <george@step.gr>, 2004.
 # George Papamichalakis <george@step.gr>, 2004.
 # Greek Translation Team <debian-l10n-greek@lists.debian.org>, 2005.
 # quad-nrg.net <galaxico@quad-nrg.net>, 2005.
-#
+# Serafeim Zanikolas <serzan@hellug.gr>, 2008.
+# quad-nrg.net <yodesy@quad-nrg.net>, 2008.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt_po_el_new\n"
+"Project-Id-Version: apt_po_el\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-04 09:18+0200\n"
-"PO-Revision-Date: 2006-01-18 15:16+0200\n"
-"Last-Translator: Konstantinos Margaritis <markos@debian.org>\n"
+"POT-Creation-Date: 2008-11-12 22:07+0100\n"
+"PO-Revision-Date: 2008-08-26 18:25+0300\n"
+"Last-Translator: quad-nrg.net <yodesy@quad-nrg.net>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "org>\n"
-"X-Generator: KBabel 1.10.2\n"
+"X-Generator: KBabel 1.11.4\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: cmdline/apt-cache.cc:143
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Το πακέτο %s με έκδοση %s έχει ανεπίλυτες εξαρτήσεις:\n"
+msgstr "Το πακέτο %s με έκδοση %s έχει ανικανοποίητες εξαρτήσεις:\n"
 
 #: cmdline/apt-cache.cc:183 cmdline/apt-cache.cc:552 cmdline/apt-cache.cc:640
 #: cmdline/apt-cache.cc:796 cmdline/apt-cache.cc:1018
@@ -70,7 +67,6 @@ msgid "Total distinct versions: "
 msgstr "Σύνολο Διαφορετικών Εκδόσεων: "
 
 #: cmdline/apt-cache.cc:295
-#, fuzzy
 msgid "Total distinct descriptions: "
 msgstr "Σύνολο Διαφορετικών Εκδόσεων: "
 
@@ -83,7 +79,6 @@ msgid "Total ver/file relations: "
 msgstr "Σύνολο σχέσεων Εκδ/Αρχείων: "
 
 #: cmdline/apt-cache.cc:302
-#, fuzzy
 msgid "Total Desc/File relations: "
 msgstr "Σύνολο σχέσεων Εκδ/Αρχείων: "
 
@@ -173,12 +168,49 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2571 cmdline/apt-sortpkgs.cc:144
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2573 cmdline/apt-sortpkgs.cc:144
+#, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s για %s %s είναι μεταγλωττισμένο σε %s %s\n"
+msgstr "%s %s για %s είναι μεταγλωττισμένο σε %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
+#, fuzzy
+#| msgid ""
+#| "Usage: apt-cache [options] command\n"
+#| "       apt-cache [options] add file1 [file2 ...]\n"
+#| "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
+#| "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+#| "\n"
+#| "apt-cache is a low-level tool used to manipulate APT's binary\n"
+#| "cache files, and query information from them\n"
+#| "\n"
+#| "Commands:\n"
+#| "   add - Add a package file to the source cache\n"
+#| "   gencaches - Build both the package and source cache\n"
+#| "   showpkg - Show some general information for a single package\n"
+#| "   showsrc - Show source records\n"
+#| "   stats - Show some basic statistics\n"
+#| "   dump - Show the entire file in a terse form\n"
+#| "   dumpavail - Print an available file to stdout\n"
+#| "   unmet - Show unmet dependencies\n"
+#| "   search - Search the package list for a regex pattern\n"
+#| "   show - Show a readable record for the package\n"
+#| "   depends - Show raw dependency information for a package\n"
+#| "   rdepends - Show reverse dependency information for a package\n"
+#| "   pkgnames - List the names of all packages\n"
+#| "   dotty - Generate package graphs for GraphViz\n"
+#| "   xvcg - Generate package graphs for xvcg\n"
+#| "   policy - Show policy settings\n"
+#| "\n"
+#| "Options:\n"
+#| "  -h   This help text.\n"
+#| "  -p=? The package cache.\n"
+#| "  -s=? The source cache.\n"
+#| "  -q   Disable progress indicator.\n"
+#| "  -i   Show only important deps for the unmet command.\n"
+#| "  -c=? Read this configuration file\n"
+#| "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#| "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -201,8 +233,8 @@ msgid ""
 "   show - Show a readable record for the package\n"
 "   depends - Show raw dependency information for a package\n"
 "   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages\n"
-"   dotty - Generate package graphs for GraphVis\n"
+"   pkgnames - List the names of all packages in the system\n"
+"   dotty - Generate package graphs for GraphViz\n"
 "   xvcg - Generate package graphs for xvcg\n"
 "   policy - Show policy settings\n"
 "\n"
@@ -229,17 +261,18 @@ msgstr ""
 "   add - Προσθέτει ένα αρχείο πακέτου στη cache πηγών\n"
 "   gencaches - Κατασκευή της cache των πακέτων και των πηγών\n"
 "   showpkg - Εμφάνιση μερικών γενικών πληροφοριών για ένα πακέτο\n"
-"   showsrc - Εμφάνιση των πηγαίων πακέτων\n"
+"   showsrc - Εμφάνιση εγγραφών για πηγαίο πακέτο\n"
 "   stats - Εμφάνιση μερικών βασικών στατιστικών\n"
 "   dump - Εμφάνιση όλου του αρχείου σε περιληπτική μορφή.\n"
-"   dumpavail - Εκτύπωση της λίστας των διαθέσιμων πακέτων στην έξοδο stdout\n"
+"   dumpavail - Εκτύπωση της λίστας των διαθέσιμων πακέτων στην κανονική "
+"έξοδο\n"
 "   unmet - Εμφάνιση μη ικανοποιούμενων εξαρτήσεων\n"
 "   search - Αναζήτηση στη λίστα πακέτων για αυτή τη κανονική παράσταση\n"
 "   show - Εμφάνιση μιας αναγνώσιμης εγγραφής για το πακέτο\n"
-"   depends - Εμφάνιση μη επεξεργασμένων εξαρτήσεων ενός πακέτου\n"
+"   depends - Εμφάνιση των εξαρτήσεων ενός πακέτου\n"
 "   rdepends - Εμφάνιση αντίστροφων εξαρτήσεων ενός πακέτου\n"
 "   pkgnames - Εμφάνιση λίστας με τα ονόματα όλων των πακέτων\n"
-"   dotty - Παραγωγή γραφημάτων πακέτων για το GraphVis\n"
+"   dotty - Παραγωγή γραφημάτων πακέτων για το GraphViz\n"
 "   xvcg - Παραγωγή γραφημάτων πακέτων για το xvcg\n"
 "   policy - Εμφάνιση προτεραιοτήτων πηγών\n"
 "\n"
@@ -328,7 +361,7 @@ msgstr ""
 "  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
 "  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Αδύνατη η εγγραφή στο %s"
@@ -469,6 +502,8 @@ msgid ""
 "DB format is invalid. If you upgraded from a older version of apt, please "
 "remove and re-create the database."
 msgstr ""
+"Το φορμά της βάσης δεν είναι έγκυρο. Εάν αναβαθμίσατε το apt σε νεότερη "
+"έκδοση, παρακαλώ αφαιρέστε και δημιουργήστε τη βάση εκ νέου."
 
 #: ftparchive/cachedb.cc:77
 #, c-format
@@ -565,14 +600,14 @@ msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s συντηρητής είναι ο %s όχι ο %s\n"
 
 #: ftparchive/writer.cc:620
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no source override entry\n"
-msgstr "  %s δεν περιέχει εγγραφή παράκαμψης\n"
+msgstr "  %s δεν έχει εγγραφή πηγαίας παράκαμψης\n"
 
 #: ftparchive/writer.cc:624
-#, fuzzy, c-format
+#, c-format
 msgid "  %s has no binary override entry either\n"
-msgstr "  %s δεν περιέχει εγγραφή παράκαμψης\n"
+msgstr "  %s δεν έχει ούτε εγγραφή δυαδικής παράκαμψης\n"
 
 #: ftparchive/contents.cc:321
 #, c-format
@@ -837,11 +872,11 @@ msgstr ""
 msgid "Internal error, Ordering didn't finish"
 msgstr "Εσωτερικό Σφάλμα, η Ταξινόμηση δεν ολοκληρώθηκε"
 
-#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:1990 cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:1992 cmdline/apt-get.cc:2025
 msgid "Unable to lock the download directory"
 msgstr "Αδύνατο το κλείδωμα του καταλόγου μεταφόρτωσης"
 
-#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2071 cmdline/apt-get.cc:2317
+#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2073 cmdline/apt-get.cc:2319
 #: apt-pkg/cachefile.cc:65
 msgid "The list of sources could not be read."
 msgstr "Αδύνατη η ανάγνωση της λίστας πηγών."
@@ -863,16 +898,17 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB από αρχεία.\n"
 
 #: cmdline/apt-get.cc:847
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Μετά την αποσυμπίεση θα χρησιμοποιηθούν %sB χώρου από το δίσκο.\n"
+msgstr ""
+"Μετά από αυτή τη λειτουργία, θα χρησιμοποιηθούν %sB χώρου από το δίσκο.\n"
 
 #: cmdline/apt-get.cc:850
-#, fuzzy, c-format
+#, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Μετά την αποσυμπίεση θα ελευθερωθούν %sB χώρου από το δίσκο.\n"
+msgstr "Μετά από αυτή τη λειτουργία, θα ελευθερωθούν %sB χώρου από το δίσκο.\n"
 
-#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2166
+#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2168
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Δεν μπόρεσα να προσδιορίσω τον ελεύθερο χώρο στο %s"
@@ -909,7 +945,7 @@ msgstr "Εγκατάλειψη."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Θέλετε να συνεχίσετε [Ν/ο]; "
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2214 apt-pkg/algorithms.cc:1344
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2216 apt-pkg/algorithms.cc:1349
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Αποτυχία ανάκτησης του %s   %s\n"
@@ -918,7 +954,7 @@ msgstr "Αποτυχία ανάκτησης του %s   %s\n"
 msgid "Some files failed to download"
 msgstr "Για μερικά αρχεία απέτυχε η μεταφόρτωση"
 
-#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2223
+#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2225
 msgid "Download complete and in download only mode"
 msgstr "Ολοκληρώθηκε η μεταφόρτωση μόνο"
 
@@ -1008,7 +1044,7 @@ msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
 #: cmdline/apt-get.cc:1193
 #, c-format
 msgid "Release '%s' for '%s' was not found"
-msgstr "Η έκδοση %s για το%s δεν βρέθηκε"
+msgstr "Η έκδοση %s για το %s δεν βρέθηκε"
 
 #: cmdline/apt-get.cc:1195
 #, c-format
@@ -1031,43 +1067,52 @@ msgstr "Αδύνατο το κλείδωμα του καταλόγου"
 #: cmdline/apt-get.cc:1403
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
+"Δεν επιτρέπεται οποιαδήποτε διαγραφή· αδυναμία εκκίνησης του AutoRemover"
 
 #: cmdline/apt-get.cc:1435
-#, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr "Τα ακόλουθα ΝΕΑ πακέτα θα εγκατασταθούν:"
+msgstr "Τα ακόλουθα πακέτα εγκαταστάθηκαν αυτόματα και δεν χρειάζονται πλέον:"
 
 #: cmdline/apt-get.cc:1437
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr ""
+msgstr "Χρησιμοποιήστε 'apt-get autoremove' για να τα διαγράψετε."
 
 #: cmdline/apt-get.cc:1442
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
+"Φαίνεται πως το AutoRemover κατέστρεψε κάτι ενώ δεν θα έπρεπε. Παρακαλείστε "
+"να υποβάλλετε αναφορά σφάλματος για το apt."
 
-#: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1733
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << endl;
+#. }
+#.
+#: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1735
 msgid "The following information may help to resolve the situation:"
 msgstr "Οι ακόλουθες πληροφορίες ίσως βοηθήσουν στην επίλυση του προβλήματος:"
 
 #: cmdline/apt-get.cc:1449
-#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr ""
-"Εσωτερικό Σφάλμα, η προσπάθεια επίλυσης του προβλήματος \"έσπασε\" κάποιο "
-"υλικό"
+msgstr "Εσωτερικό Σφάλμα, το AutoRemover δημιούργησε κάποιο πρόβλημα"
 
 #: cmdline/apt-get.cc:1468
 msgid "Internal error, AllUpgrade broke stuff"
-msgstr "Εσωτερικό Σφάλμα, Η διαδικασία αναβάθμισης χάλασε"
+msgstr "Εσωτερικό Σφάλμα, η διαδικασία αναβάθμισης χάλασε"
 
 #: cmdline/apt-get.cc:1523
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task %s"
-msgstr "Αδύνατη η εύρεση του πακέτου %s"
+msgstr "Αδύνατη η εύρεση του συνόλου πακέτων %s"
 
 #: cmdline/apt-get.cc:1638 cmdline/apt-get.cc:1674
 #, c-format
@@ -1080,13 +1125,13 @@ msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Σημείωση, επιλέχτηκε το %s στη θέση του '%s'\n"
 
 #: cmdline/apt-get.cc:1692
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to manually installed.\n"
-msgstr "αλλά το %s πρόκειται να εγκατασταθεί"
+msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
 
 #: cmdline/apt-get.cc:1705
 msgid "You might want to run `apt-get -f install' to correct these:"
-msgstr "Aν τρέξετε 'apt-get f install' ίσως να διορθώσετε αυτά τα προβλήματα:"
+msgstr "Aν τρέξετε 'apt-get -f install' ίσως να διορθώσετε αυτά τα προβλήματα:"
 
 #: cmdline/apt-get.cc:1708
 msgid ""
@@ -1108,130 +1153,120 @@ msgstr ""
 "διανομή, ότι μερικά από τα πακέτα δεν έχουν ακόμα δημιουργηθεί ή έχουν\n"
 "μετακινηθεί από τα εισερχόμενα."
 
-#: cmdline/apt-get.cc:1728
-msgid ""
-"Since you only requested a single operation it is extremely likely that\n"
-"the package is simply not installable and a bug report against\n"
-"that package should be filed."
-msgstr ""
-"Εφόσον ζητήσατε μια και μόνη λειτουργία, είναι πολύ πιθανόν ότι\n"
-"το πακέτο αυτό δεν είναι εγκαταστάσιμο και θα πρέπει να κάνετε μια\n"
-"αναφορά σφάλματος για αυτό το πακέτο."
-
-#: cmdline/apt-get.cc:1736
+#: cmdline/apt-get.cc:1738
 msgid "Broken packages"
 msgstr "Χαλασμένα πακέτα"
 
-#: cmdline/apt-get.cc:1765
+#: cmdline/apt-get.cc:1767
 msgid "The following extra packages will be installed:"
 msgstr "Τα ακόλουθα επιπλέον πακέτα θα εγκατασταθούν:"
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1856
 msgid "Suggested packages:"
 msgstr "Προτεινόμενα πακέτα:"
 
-#: cmdline/apt-get.cc:1855
+#: cmdline/apt-get.cc:1857
 msgid "Recommended packages:"
 msgstr "Συνιστώμενα πακέτα:"
 
-#: cmdline/apt-get.cc:1883
+#: cmdline/apt-get.cc:1885
 msgid "Calculating upgrade... "
 msgstr "Υπολογισμός της αναβάθμισης... "
 
-#: cmdline/apt-get.cc:1886 methods/ftp.cc:702 methods/connect.cc:112
+#: cmdline/apt-get.cc:1888 methods/ftp.cc:702 methods/connect.cc:112
 msgid "Failed"
 msgstr "Απέτυχε"
 
-#: cmdline/apt-get.cc:1891
+#: cmdline/apt-get.cc:1893
 msgid "Done"
 msgstr "Ετοιμο"
 
-#: cmdline/apt-get.cc:1958 cmdline/apt-get.cc:1966
+#: cmdline/apt-get.cc:1960 cmdline/apt-get.cc:1968
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 "Εσωτερικό Σφάλμα, η προσπάθεια επίλυσης του προβλήματος \"έσπασε\" κάποιο "
 "υλικό"
 
-#: cmdline/apt-get.cc:2066
+#: cmdline/apt-get.cc:2068
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για να μεταφορτώσετε τον "
 "κωδικάτου"
 
-#: cmdline/apt-get.cc:2096 cmdline/apt-get.cc:2335
+#: cmdline/apt-get.cc:2098 cmdline/apt-get.cc:2337
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Αδυναμία εντοπισμού του κώδικά του πακέτου %s"
 
-#: cmdline/apt-get.cc:2145
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2147
+#, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Παράκαμψη του ήδη μεταφορτωμένου αρχείου `%s`\n"
 
-#: cmdline/apt-get.cc:2173
+#: cmdline/apt-get.cc:2175
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Δεν διαθέτετε αρκετό ελεύθερο χώρο στο %s"
 
-#: cmdline/apt-get.cc:2179
+#: cmdline/apt-get.cc:2181
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB πηγαίου κώδικα.\n"
 
-#: cmdline/apt-get.cc:2182
+#: cmdline/apt-get.cc:2184
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB πηγαίου κώδικα.\n"
 
-#: cmdline/apt-get.cc:2188
+#: cmdline/apt-get.cc:2190
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Μεταφόρτωση Κωδικα %s\n"
 
-#: cmdline/apt-get.cc:2219
+#: cmdline/apt-get.cc:2221
 msgid "Failed to fetch some archives."
 msgstr "Αποτυχία μεταφόρτωσης μερικών αρχειοθηκών."
 
-#: cmdline/apt-get.cc:2247
+#: cmdline/apt-get.cc:2249
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Παράκαμψη της αποσυμπίεσης ήδη μεταφορτωμένου κώδικα στο %s\n"
 
-#: cmdline/apt-get.cc:2259
+#: cmdline/apt-get.cc:2261
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή αποσυμπίεσης %s\n"
 
-#: cmdline/apt-get.cc:2260
+#: cmdline/apt-get.cc:2262
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Ελέγξτε αν είναι εγκαταστημένο το πακέτο 'dpkg-dev'.\n"
 
-#: cmdline/apt-get.cc:2277
+#: cmdline/apt-get.cc:2279
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή χτισίματος %s.\n"
 
-#: cmdline/apt-get.cc:2296
+#: cmdline/apt-get.cc:2298
 msgid "Child process failed"
 msgstr "Η απογονική διεργασία απέτυχε"
 
-#: cmdline/apt-get.cc:2312
+#: cmdline/apt-get.cc:2314
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για έλεγχο των εξαρτήσεων του"
 
-#: cmdline/apt-get.cc:2340
+#: cmdline/apt-get.cc:2342
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Αδύνατη η εύρεση πληροφοριών χτισίματος για το %s"
 
-#: cmdline/apt-get.cc:2360
+#: cmdline/apt-get.cc:2362
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "το %s δεν έχει εξαρτήσεις χτισίματος.\n"
 
-#: cmdline/apt-get.cc:2412
+#: cmdline/apt-get.cc:2414
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1239,7 +1274,7 @@ msgid ""
 msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή το πακέτο %s δεν βρέθηκε"
 
-#: cmdline/apt-get.cc:2465
+#: cmdline/apt-get.cc:2467
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1248,33 +1283,32 @@ msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή δεν υπάρχουν διαθέσιμες "
 "εκδόσεις του πακέτου %s που να ικανοποιούν τις απαιτήσεις έκδοσης"
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2503
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Αποτυχία ικανοποίησης %s εξαρτήσεων για το %s: Το εγκατεστημένο πακέτο %s "
 "είναι νεώτερο"
 
-#: cmdline/apt-get.cc:2526
+#: cmdline/apt-get.cc:2528
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Αποτυχία ικανοποίησης %s εξάρτησης για το %s: %s"
 
-#: cmdline/apt-get.cc:2540
+#: cmdline/apt-get.cc:2542
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Οι εξαρτήσεις χτισίματος για το %s δεν ικανοποιούνται."
 
-#: cmdline/apt-get.cc:2544
+#: cmdline/apt-get.cc:2546
 msgid "Failed to process build dependencies"
 msgstr "Αποτυχία επεξεργασίας εξαρτήσεων χτισίματος"
 
-#: cmdline/apt-get.cc:2576
+#: cmdline/apt-get.cc:2578
 msgid "Supported modules:"
 msgstr "Υποστηριζόμενοι Οδηγοί:"
 
-#: cmdline/apt-get.cc:2617
-#, fuzzy
+#: cmdline/apt-get.cc:2619
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1340,10 +1374,10 @@ msgstr ""
 "\n"
 "Παράμετροι:\n"
 "  -h  Αυτό το βοηθητικό κείμενο.\n"
-"  -q  Loggable output - no progress indicator\n"
+"  -q  Χωρίς αναλυτική ένδειξη προόδου (κατάλληλο για αποθήκευση της εξόδου)\n"
 "  -qq Χωρίς λεπτομέρειες εκτός από τα λάθη\n"
 "  -d  Μεταφόρτωση μόνο - ΜΗΝ αποσυμπιέσεις ή εγκαταστήσεις αρχεία\n"
-"  -s  Χωρίς ενέργεια. Perform ordering simulation\n"
+"  -s  Χωρίς ενέργεια. Διενέργεια προσομοίωσης βημάτων εγκατάστασης\n"
 "  -y  Υπόθεσε Ναι για όλες τις ερωτήσεις και μην περιμένεις απάντηση\n"
 "  -f  Προσπάθησε να συνεχίσεις αν αποτύχει ο έλεγχος ακεραιότητας\n"
 "  -m  Προσπάθησε να συνεχίσεις αν υπάρχουν άγνωστα πακέτα\n"
@@ -1433,7 +1467,7 @@ msgstr "Πιέστε enter για συνέχεια."
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
+msgstr "Επιθυμείτε τη διαγραφή ήδη μεταφορτωμένων αρχείων .deb;"
 
 #: dselect/install:101
 msgid "Some errors occurred while unpacking. I'm going to configure the"
@@ -1621,9 +1655,9 @@ msgid "The info and temp directories need to be on the same filesystem"
 msgstr "Οι φάκελοι info και temp πρέπει να βρίσκονται στο ίδιο σύστημα αρχείων"
 
 #. Build the status cache
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:748
-#: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr "Ανάγνωση Λιστών Πακέτων"
 
@@ -1705,9 +1739,10 @@ msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο DEB, αγνοείται το μέλος '%s'"
 
 #: apt-inst/deb/debfile.cc:50
-#, fuzzy, c-format
+#, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "Μη έγκυρο αρχείο DEB, δεν περιέχει το μέλος %s' or '%s' "
+msgstr ""
+"Αυτό δεν είναι ένα έγκυρο αρχείο DEB, δεν περιέχει το μέλος '%s', '%s' ή '%s'"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
@@ -1823,7 +1858,7 @@ msgstr "Λήξη χρόνου σύνδεσης"
 msgid "Server closed the connection"
 msgstr "Ο διακομιστής έκλεισε την σύνδεση"
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:536 methods/rsh.cc:190
+#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:538 methods/rsh.cc:190
 msgid "Read error"
 msgstr "Σφάλμα ανάγνωσης"
 
@@ -1835,7 +1870,7 @@ msgstr "Το μήνυμα απάντησης υπερχείλισε την εν�
 msgid "Protocol corruption"
 msgstr "Αλλοίωση του πρωτοκόλλου"
 
-#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:575 methods/rsh.cc:232
+#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:577 methods/rsh.cc:232
 msgid "Write error"
 msgstr "Σφάλμα εγγραφής"
 
@@ -1889,7 +1924,7 @@ msgstr "Λήξη χρόνου σύνδεσης στην υποδοχή δεδο�
 msgid "Unable to accept connection"
 msgstr "Αδύνατη η αποδοχή συνδέσεων"
 
-#: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Πρόβλημα κατά το hashing του αρχείου"
 
@@ -1974,9 +2009,9 @@ msgid "Unable to connect to %s %s:"
 msgstr "Αδύνατη η σύνδεση στο %s %s:"
 
 #: methods/gpgv.cc:65
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't access keyring: '%s'"
-msgstr "Αδύνατη η εύρεση του '%s'"
+msgstr "Αδύνατη η εύρεση του συνόλου κλειδιών '%s'"
 
 #: methods/gpgv.cc:101
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
@@ -1994,9 +2029,11 @@ msgid "At least one invalid signature was encountered."
 msgstr "Βρέθηκε τουλάχιστον μια μη έγκυρη υπογραφή."
 
 #: methods/gpgv.cc:214
-#, fuzzy, c-format
+#, c-format
 msgid "Could not execute '%s' to verify signature (is gpgv installed?)"
-msgstr " για την επαλήθευση της υπογραφής (είναι εγκατεστημένο το gpgv?)"
+msgstr ""
+"Αδυναμία εκτέλεσης του '%s' για την επαλήθευση της υπογραφής (είναι "
+"εγκατεστημένο το gpgv;)"
 
 #: methods/gpgv.cc:219
 msgid "Unknown error executing gpgv"
@@ -2086,26 +2123,35 @@ msgstr ""
 msgid "Error reading from server"
 msgstr "Σφάλμα στην ανάγνωση από το διακομιστή"
 
-#: methods/http.cc:1104
+#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "Αποτυχία εγγραφής του αρχείου %s"
+
+#: methods/http.cc:1105
 msgid "Bad header data"
 msgstr "Ελαττωματικά δεδομένα επικεφαλίδας"
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1122 methods/http.cc:1177
 msgid "Connection failed"
 msgstr "Η σύνδεση απέτυχε"
 
-#: methods/http.cc:1228
+#: methods/http.cc:1229
 msgid "Internal error"
 msgstr "Εσωτερικό Σφάλμα"
 
 #: apt-pkg/contrib/mmap.cc:80
 msgid "Can't mmap an empty file"
-msgstr "Αδύνατο η απεικόνιση mmap ενός άδειου αρχείου"
+msgstr "Αδύνατη η απεικόνιση mmap ενός άδειου αρχείου"
 
 #: apt-pkg/contrib/mmap.cc:85
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Αδύνατη η απεικόνιση μέσω mmap %lu bytes"
+
+#: apt-pkg/contrib/mmap.cc:213
+msgid "Dynamic MMap ran out of room"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2225,82 +2271,83 @@ msgstr "Μη έγκυρη λειτουργία %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Αδύνατη η εύρεση της κατάστασης του σημείου επαφής %s"
 
-#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/acquire.cc:424 apt-pkg/acquire.cc:449 apt-pkg/clean.cc:40
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Αδύνατη η αλλαγή σε %s"
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr "Αδύνατη η εύρεση της κατάστασης του cdrom"
 
-#: apt-pkg/contrib/fileutl.cc:147
+#: apt-pkg/contrib/fileutl.cc:149
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 "Δε θα χρησιμοποιηθεί κλείδωμα για το ανάγνωσης μόνο αρχείο κλειδώματος %s"
 
-#: apt-pkg/contrib/fileutl.cc:152
+#: apt-pkg/contrib/fileutl.cc:154
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "Αδύνατο το άνοιγμα του αρχείου κλειδώματος %s"
 
-#: apt-pkg/contrib/fileutl.cc:170
+#: apt-pkg/contrib/fileutl.cc:172
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr ""
 "Δε θα χρησιμοποιηθεί κλείδωμα για το συναρμοσμένο από nfs αρχείο κλειδώματος "
 "%s"
 
-#: apt-pkg/contrib/fileutl.cc:174
+#: apt-pkg/contrib/fileutl.cc:176
 #, c-format
 msgid "Could not get lock %s"
 msgstr "Αδύνατο το κλείδωμα %s"
 
-#: apt-pkg/contrib/fileutl.cc:442
+#: apt-pkg/contrib/fileutl.cc:444
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Αναμονή του %s, αλλά δε βρισκόταν εκεί"
 
-#: apt-pkg/contrib/fileutl.cc:452
+#: apt-pkg/contrib/fileutl.cc:454
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Η υποδιεργασία %s έλαβε ένα σφάλμα καταμερισμού (segfault)"
 
-#: apt-pkg/contrib/fileutl.cc:455
+#: apt-pkg/contrib/fileutl.cc:457
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Η υποδιεργασία %s επέστρεψε ένα κωδικός σφάλματος (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:457
+#: apt-pkg/contrib/fileutl.cc:459
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Η υποδιεργασία %s εγκατέλειψε απρόσμενα"
 
-#: apt-pkg/contrib/fileutl.cc:501
+#: apt-pkg/contrib/fileutl.cc:503
 #, c-format
 msgid "Could not open file %s"
 msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
 
-#: apt-pkg/contrib/fileutl.cc:557
+#: apt-pkg/contrib/fileutl.cc:559
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "αναγνώστηκαν, απομένουν ακόμη %lu για ανάγνωση αλλά δεν απομένουν άλλα"
 
-#: apt-pkg/contrib/fileutl.cc:587
+#: apt-pkg/contrib/fileutl.cc:589
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "γράφτηκαν, απομένουν %lu για εγγραφή αλλά χωρίς επιτυχία"
 
-#: apt-pkg/contrib/fileutl.cc:662
+#: apt-pkg/contrib/fileutl.cc:664
 msgid "Problem closing the file"
 msgstr "Πρόβλημα κατά το κλείσιμο του αρχείου"
 
-#: apt-pkg/contrib/fileutl.cc:668
+#: apt-pkg/contrib/fileutl.cc:670
 msgid "Problem unlinking the file"
 msgstr "Πρόβλημα κατά την διαγραφή του αρχείου"
 
-#: apt-pkg/contrib/fileutl.cc:679
+#: apt-pkg/contrib/fileutl.cc:681
 msgid "Problem syncing the file"
 msgstr "Πρόβλημα κατά τον συγχρονισμό του αρχείου"
 
@@ -2355,7 +2402,7 @@ msgstr "Απαρχαιώνει"
 
 #: apt-pkg/pkgcache.cc:226
 msgid "Breaks"
-msgstr ""
+msgstr "Χαλάει"
 
 #: apt-pkg/pkgcache.cc:237
 msgid "important"
@@ -2390,19 +2437,18 @@ msgid "Dependency generation"
 msgstr "Παραγωγή Εξαρτήσεων"
 
 #: apt-pkg/depcache.cc:172 apt-pkg/depcache.cc:191 apt-pkg/depcache.cc:195
-#, fuzzy
 msgid "Reading state information"
-msgstr "Σύμπτυξη Διαθέσιμων Πληροφοριών"
+msgstr "Ανάγνωση περιγραφής της τρέχουσας κατάσταση"
 
 #: apt-pkg/depcache.cc:219
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open StateFile %s"
-msgstr "Αποτυχία ανοίγματος του %s"
+msgstr "Αποτυχία ανοίγματος του αρχείου κατάστασης %s"
 
 #: apt-pkg/depcache.cc:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "Αποτυχία εγγραφής του αρχείου %s"
+msgstr "Αποτυχία εγγραφής του αρχείου κατάστασης %s"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2481,7 +2527,7 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "Ο τύπος αρχείου ευρετηρίου '%s' δεν υποστηρίζεται"
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
@@ -2489,7 +2535,7 @@ msgstr ""
 "Το πακέτο '%s' χρειάζεται να επανεγκατασταθεί, αλλά είναι αδύνατη η εύρεση "
 "κάποιας κατάλληλης αρχείοθήκης."
 
-#: apt-pkg/algorithms.cc:1106
+#: apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2497,11 +2543,11 @@ msgstr ""
 "Σφάλμα, το pkgProblemResolver::Resolve παρήγαγε διακοπές, αυτό ίσως "
 "προκλήθηκε από κρατούμενα πακέτα."
 
-#: apt-pkg/algorithms.cc:1108
+#: apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Αδύνατη η διόρθωση προβλημάτων, έχετε κρατούμενα ελαττωματικά πακέτα."
 
-#: apt-pkg/algorithms.cc:1370 apt-pkg/algorithms.cc:1372
+#: apt-pkg/algorithms.cc:1375 apt-pkg/algorithms.cc:1377
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -2521,15 +2567,15 @@ msgstr "Ο φάκελος αρχειοθηκών %spartial αγνοείται."
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
-#, fuzzy, c-format
+#: apt-pkg/acquire.cc:828
+#, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "Κατέβασμα του αρχείου %li του %li (απομένουν %s)"
 
-#: apt-pkg/acquire.cc:829
-#, fuzzy, c-format
+#: apt-pkg/acquire.cc:830
+#, c-format
 msgid "Retrieving file %li of %li"
-msgstr "Ανάγνωση Λίστας Πακέτων"
+msgstr "Λήψη αρχείου %li του %li"
 
 #: apt-pkg/acquire-worker.cc:110
 #, c-format
@@ -2604,86 +2650,86 @@ msgstr "Προέκυψε σφάλμα κατά την επεξεργασία τ�
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr "Προέκυψε σφάλμα κατά την επεξεργασία του %s (UsePackage1)"
 
-#: apt-pkg/pkgcachegen.cc:153
-#, fuzzy, c-format
+#: apt-pkg/pkgcachegen.cc:164
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Προέκευψε σφάλμα κατά την επεξεργασία του %s (NewFileVer1)"
+msgstr "Προέκευψε σφάλμα κατά την επεξεργασία του %s (NewFileDesc1)"
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr "Προέκυψε σφάλμα κατά την επεξεργασία του %s (UsePackage2)"
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr "Προέκευψε σφάλμα κατά την επεξεργασία του %s (NewFileVer1)"
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr "Προέκυψε σφάλμα κατά την επεξεργασία του %s (NewVersion1)"
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr "Προέκυψε σφάλμα κατά την επεξεργασία του %s (UsePackage3)"
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr "Προέκυψε σφάλμα κατά την επεξεργασία του %s (NewVersion2)"
 
-#: apt-pkg/pkgcachegen.cc:245
-#, fuzzy, c-format
+#: apt-pkg/pkgcachegen.cc:256
+#, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Προέκευψε σφάλμα κατά την επεξεργασία του %s (NewFileVer1)"
+msgstr "Προέκευψε σφάλμα κατά την επεξεργασία του %s (NewFileDesc2)"
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
 "Εκπληκτικό, υπερβήκατε τον αριθμό των ονομάτων πακέτων που υποστηρίζει το "
 "APT."
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Εκπληκτικό, υπερβήκατε τον αριθμό των εκδόσεων που υποστηρίζει το APT."
 
-#: apt-pkg/pkgcachegen.cc:257
-#, fuzzy
+#: apt-pkg/pkgcachegen.cc:268
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Εκπληκτικό, υπερβήκατε τον αριθμό των εκδόσεων που υποστηρίζει το APT."
+msgstr ""
+"Εκπληκτικό, υπερβήκατε τον αριθμό των περιγραφών που υποστηρίζει το APT."
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr ""
 "Εκπληκτικό, υπερβήκατε τον αριθμό των εξαρτήσεων που υποστηρίζει το APT."
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr "Προέκυψε σφάλμα κατά την επεξεργασία του %s (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr "Προέκυψε σφάλμα κατά την επεξεργασία του %s (CollectFileProvides)"
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "Το πακέτο %s %s δε βρέθηκε κατά την επεξεργασία εξαρτήσεων του αρχείου"
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Αδύνατη η εύρεση της κατάστασης της λίστας πηγαίων πακέτων %s"
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr "Συλλογή Παροχών Αρχείου"
 
-#: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr "Σφάλμα IO κατά την αποθήκευση της cache πηγών"
 
@@ -2696,16 +2742,15 @@ msgstr "απέτυχε η μετονομασία, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "Ανόμοιο MD5Sum"
 
-#: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
-#, fuzzy
+#: apt-pkg/acquire-item.cc:658 apt-pkg/acquire-item.cc:1426
 msgid "Hash Sum mismatch"
 msgstr "Ανόμοιο MD5Sum"
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1118
 msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
+msgstr "Δεν υπάρχει διαθέσιμο δημόσιο κλειδί για τα ακολουθα κλειδιά:\n"
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1231
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2714,7 +2759,7 @@ msgstr ""
 "Αδύνατος ο εντοπισμός ενός αρχείου για το πακέτο %s. Αυτό ίσως σημαίνει ότι "
 "χρειάζεται να διορθώσετε χειροκίνητα το πακέτο. (λόγω χαμένου αρχείου)"
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1290
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
@@ -2723,7 +2768,7 @@ msgstr ""
 "Αδύνατος ο εντοπισμός ενός αρχείου για το πακέτο %s. Αυτό ίσως σημαίνει ότι "
 "χρειάζεται να διορθώσετε χειροκίνητα το πακέτο."
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1331
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2731,7 +2776,7 @@ msgstr ""
 "Κατεστραμμένα αρχεία ευρετηρίου πακέτων. Δεν υπάρχει πεδίο Filename: στο "
 "πακέτο %s."
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1418
 msgid "Size mismatch"
 msgstr "Ανόμοιο μέγεθος"
 
@@ -2759,9 +2804,8 @@ msgid "Stored label: %s\n"
 msgstr "Αποθήκευση Ετικέτας: %s \n"
 
 #: apt-pkg/cdrom.cc:570 apt-pkg/cdrom.cc:841
-#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr "Αποπροσάρτηση του CD-ROM..."
+msgstr "Αποπροσάρτηση του CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:590
 #, c-format
@@ -2786,16 +2830,18 @@ msgid "Scanning disc for index files..\n"
 msgstr "Σάρωση του δίσκου για περιεχόμενα...\n"
 
 #: apt-pkg/cdrom.cc:678
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
 "zu signatures\n"
-msgstr "Βρέθηκαν %i κατάλογοι πακέτων, %i κατάλογοι πηγαίων και %i υπογραφές\n"
+msgstr ""
+"Βρέθηκαν %zu κατάλογοι πακέτων, %zu κατάλογοι πηγαίων, %zu κατάλογοι "
+"μεταφράσεων και %zu υπογραφές\n"
 
 #: apt-pkg/cdrom.cc:715
-#, fuzzy, c-format
+#, c-format
 msgid "Found label '%s'\n"
-msgstr "Αποθήκευση Ετικέτας: %s \n"
+msgstr "Εύρεση ετικέτας: %s \n"
 
 #: apt-pkg/cdrom.cc:744
 msgid "That is not a valid name, try again.\n"
@@ -2842,122 +2888,96 @@ msgstr "Εγιναν %i εγγραφές με %i ασύμβατα αρχεία.\
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Εγιναν %i εγγραφές με %i απώντα αρχεία και %i ασύμβατα αρχεία\n"
 
-#: apt-pkg/deb/dpkgpm.cc:452
-#, fuzzy, c-format
-msgid "Directory '%s' missing"
-msgstr "Ο φάκελος λιστών %spartial αγνοείται."
-
-#: apt-pkg/deb/dpkgpm.cc:535
+#: apt-pkg/deb/dpkgpm.cc:49
 #, c-format
-msgid "Preparing %s"
-msgstr "Προετοιμασία του %s"
+msgid "Installing %s"
+msgstr "Εγκατάσταση του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:536
-#, c-format
-msgid "Unpacking %s"
-msgstr "Ξεπακετάρισμα του %s"
-
-#: apt-pkg/deb/dpkgpm.cc:541
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Προετοιμασία ρύθμισης του %s"
-
-#: apt-pkg/deb/dpkgpm.cc:542
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
 #, c-format
 msgid "Configuring %s"
 msgstr "Ρύθμιση του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:544 apt-pkg/deb/dpkgpm.cc:545
-#, fuzzy, c-format
-msgid "Processing triggers for %s"
-msgstr "Σφάλμα επεξεργασίας του καταλόγου %s"
-
-#: apt-pkg/deb/dpkgpm.cc:547
-#, c-format
-msgid "Installed %s"
-msgstr "Εγκατέστησα το %s"
-
-#: apt-pkg/deb/dpkgpm.cc:552 apt-pkg/deb/dpkgpm.cc:554
-#: apt-pkg/deb/dpkgpm.cc:555
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Προετοιμασία για την αφαίρεση του %s"
-
-#: apt-pkg/deb/dpkgpm.cc:557
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:627
 #, c-format
 msgid "Removing %s"
 msgstr "Αφαιρώ το %s"
 
-#: apt-pkg/deb/dpkgpm.cc:558
+#: apt-pkg/deb/dpkgpm.cc:52
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Εκτέλεση του post-installation trigger %s"
+
+#: apt-pkg/deb/dpkgpm.cc:521
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Ο φάκελος %s αγνοείται."
+
+#: apt-pkg/deb/dpkgpm.cc:605
+#, c-format
+msgid "Preparing %s"
+msgstr "Προετοιμασία του %s"
+
+#: apt-pkg/deb/dpkgpm.cc:606
+#, c-format
+msgid "Unpacking %s"
+msgstr "Ξεπακετάρισμα του %s"
+
+#: apt-pkg/deb/dpkgpm.cc:611
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Προετοιμασία ρύθμισης του %s"
+
+#: apt-pkg/deb/dpkgpm.cc:614 apt-pkg/deb/dpkgpm.cc:615
+#, c-format
+msgid "Processing triggers for %s"
+msgstr "Επεξεργασία triggers για το %s"
+
+#: apt-pkg/deb/dpkgpm.cc:617
+#, c-format
+msgid "Installed %s"
+msgstr "Έγινε εγκατάσταση του %s"
+
+#: apt-pkg/deb/dpkgpm.cc:622 apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:625
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Προετοιμασία για την αφαίρεση του %s"
+
+#: apt-pkg/deb/dpkgpm.cc:628
 #, c-format
 msgid "Removed %s"
 msgstr "Αφαίρεσα το %s"
 
-#: apt-pkg/deb/dpkgpm.cc:563
-#, fuzzy, c-format
+#: apt-pkg/deb/dpkgpm.cc:633
+#, c-format
 msgid "Preparing to completely remove %s"
-msgstr "Προετοιμασία ρύθμισης του %s"
+msgstr "Προετοιμασία πλήρης αφαίρεσης του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:564
-#, fuzzy, c-format
+#: apt-pkg/deb/dpkgpm.cc:634
+#, c-format
 msgid "Completely removed %s"
-msgstr "Αποτυχία διαγραφής του %s"
+msgstr "Το %s διαγράφηκε πλήρως"
 
-#: apt-pkg/deb/dpkgpm.cc:716
+#: apt-pkg/deb/dpkgpm.cc:791
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
+"Αδυναμία εγγραφής στο αρχείο γεγονότων, λόγω αποτυχίας του openpyt() (είναι "
+"προσαρτημένο το /dev/pts;)\n"
 
 #: methods/rred.cc:219
-#, fuzzy
 msgid "Could not patch file"
-msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
+msgstr "Αδύνατη η διόρθωση του αρχείου"
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Η σύνδεση έκλεισε πρόωρα"
 
-#, fuzzy
-#~ msgid "Line %d too long (max %lu)"
-#~ msgstr "Η γραμμή %d έχει υπερβολικό μήκος (μέγιστο %d)"
-
-#, fuzzy
-#~ msgid "Line %d too long (max %d)"
-#~ msgstr "Η γραμμή %d έχει υπερβολικό μήκος (μέγιστο %d)"
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc1)"
-#~ msgstr "Προέκευψε σφάλμα κατά την επεξεργασία του %s (NewFileVer1)"
-
-#, fuzzy
-#~ msgid "Error occured while processing %s (NewFileDesc2)"
-#~ msgstr "Προέκευψε σφάλμα κατά την επεξεργασία του %s (NewFileVer1)"
-
-#, fuzzy
-#~ msgid "Stored label: %s \n"
-#~ msgstr "Αποθήκευση Ετικέτας: %s \n"
-
-#, fuzzy
 #~ msgid ""
-#~ "Found %i package indexes, %i source indexes, %i translation indexes and %"
-#~ "i signatures\n"
+#~ "Since you only requested a single operation it is extremely likely that\n"
+#~ "the package is simply not installable and a bug report against\n"
+#~ "that package should be filed."
 #~ msgstr ""
-#~ "Βρέθηκαν %i κατάλογοι πακέτων, %i κατάλογοι πηγαίων και %i υπογραφές\n"
-
-#, fuzzy
-#~ msgid "openpty failed\n"
-#~ msgstr "Η επιλογή απέτυχε"
-
-#~ msgid "File date has changed %s"
-#~ msgstr "Η ημερομηνία του αρχείου %s έχει αλλάξει"
-
-#~ msgid "Reading file list"
-#~ msgstr "Ανάγνωση Λιστών Αρχείων"
-
-#~ msgid "Could not execute "
-#~ msgstr "Αδύνατη η εκτέλεση "
-
-#~ msgid "Preparing for remove with config %s"
-#~ msgstr "Προετοιμασία για αφαίρεση με ρύθμιση του %s"
-
-#~ msgid "Removed with config %s"
-#~ msgstr "Αφαίρεσα με ρύθμιση το %s"
+#~ "Εφόσον ζητήσατε μια και μόνη λειτουργία, είναι πολύ πιθανόν ότι\n"
+#~ "το πακέτο αυτό δεν είναι εγκαταστάσιμο και θα πρέπει να κάνετε μια\n"
+#~ "αναφορά σφάλματος για αυτό το πακέτο."

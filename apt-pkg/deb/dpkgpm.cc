@@ -27,6 +27,8 @@
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <algorithm>
 #include <sstream>
 #include <map>
 
@@ -41,7 +43,38 @@
 
 using namespace std;
 
+namespace
+{
+  // Maps the dpkg "processing" info to human readable names.  Entry 0
+  // of each array is the key, entry 1 is the value.
+  const std::pair<const char *, const char *> PackageProcessingOps[] = {
+    std::make_pair("install",   N_("Installing %s")),
+    std::make_pair("configure", N_("Configuring %s")),
+    std::make_pair("remove",    N_("Removing %s")),
+    std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
+  };
 
+  const std::pair<const char *, const char *> * const PackageProcessingOpsBegin = PackageProcessingOps;
+  const std::pair<const char *, const char *> * const PackageProcessingOpsEnd   = PackageProcessingOps + sizeof(PackageProcessingOps) / sizeof(PackageProcessingOps[0]);
+
+  // Predicate to test whether an entry in the PackageProcessingOps
+  // array matches a string.
+  class MatchProcessingOp
+  {
+    const char *target;
+
+  public:
+    MatchProcessingOp(const char *the_target)
+      : target(the_target)
+    {
+    }
+
+    bool operator()(const std::pair<const char *, const char *> &pair) const
+    {
+      return strcmp(pair.first, target) == 0;
+    }
+  };
+}
 
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -363,17 +396,19 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    if(strncmp(list[0], "processing", strlen("processing")) == 0)
    {
       char s[200];
-      map<string,string>::iterator iter;
       char *pkg_or_trigger = _strstrip(list[2]);
       action =_strstrip( list[1]);
-      iter = PackageProcessingOps.find(action);
-      if(iter == PackageProcessingOps.end())
+      const std::pair<const char *, const char *> * const iter =
+	std::find_if(PackageProcessingOpsBegin,
+		     PackageProcessingOpsEnd,
+		     MatchProcessingOp(action));
+      if(iter == PackageProcessingOpsEnd)
       {
 	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
 	    std::clog << "ignoring unknwon action: " << action << std::endl;
 	 return;
       }
-      snprintf(s, sizeof(s), _(iter->second.c_str()), pkg_or_trigger);
+      snprintf(s, sizeof(s), _(iter->second), pkg_or_trigger);
 
       status << "pmstatus:" << pkg_or_trigger
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
@@ -617,12 +652,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       },
    };
 
-   // populate the "processing" map
-   PackageProcessingOps.insert( make_pair("install",N_("Installing %s")) );
-   PackageProcessingOps.insert( make_pair("configure",N_("Configuring %s")) );
-   PackageProcessingOps.insert( make_pair("remove",N_("Removing %s")) );
-   PackageProcessingOps.insert( make_pair("trigproc",N_("Running post-installation trigger %s")) );
-   
    // init the PackageOps map, go over the list of packages that
    // that will be [installed|configured|removed|purged] and add
    // them to the PackageOps map (the dpkg states it goes through)
@@ -760,6 +789,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
       sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
 
+      // ignore SIGHUP as well (debian #463030)
+      sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
+
       struct	termios tt;
       struct	termios tt_out;
       struct	winsize win;
@@ -871,6 +903,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // Restore sig int/quit
 	    signal(SIGQUIT,old_SIGQUIT);
 	    signal(SIGINT,old_SIGINT);
+	    signal(SIGHUP,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
 	 // wait for input or output here
@@ -909,6 +942,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+      signal(SIGHUP,old_SIGHUP);
 
       if(master >= 0) 
       {
@@ -945,6 +979,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
+
+   Cache.writeStateFile(NULL);
    return true;
 }
 									/*}}}*/

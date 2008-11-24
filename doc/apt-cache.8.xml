@@ -51,6 +51,7 @@
          <arg>rdepends <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>pkgnames <arg choice="plain"><replaceable>prefix</replaceable></arg></arg>
          <arg>dotty <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
+         <arg>xvcg <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>policy <arg choice="plain" rep="repeat"><replaceable>pkgs</replaceable></arg></arg>
          <arg>madison <arg choice="plain" rep="repeat"><replaceable>pkgs</replaceable></arg></arg>
       </group>   
@@ -197,9 +198,14 @@ Reverse Provides:
 
      <varlistentry><term>search <replaceable>regex [ regex ... ]</replaceable></term>
      <listitem><para><literal>search</literal> performs a full text search on all available package
-     lists for the regex pattern given. It searches the package names and the
+     lists for the POSIX regex pattern given, see 
+     <citerefentry><refentrytitle><command>regex</command></refentrytitle>
+     <manvolnum>7</manvolnum></citerefentry>.
+     It searches the package names and the
      descriptions for an occurrence of the regular expression and prints out
-     the package name and the short description. If <option>--full</option> is given
+     the package name and the short description, including virtual package
+     names.
+     If <option>--full</option> is given
      then output identical to <literal>show</literal> is produced for each matched
      package, and if <option>--names-only</option> is given then the long description
      is not searched, only the package name is.</para>
@@ -244,6 +250,11 @@ Reverse Provides:
      <para>Caution, dotty cannot graph larger sets of packages.</para></listitem>
      </varlistentry>
      
+     <varlistentry><term>xvcg <replaceable>pkg(s)</replaceable></term>
+	 <listitem><para>The same as <literal>dotty</literal>, only for xvcg from the
+	 <ulink url="http://rw4.cs.uni-sb.de/users/sander/html/gsvcg1.html">VCG tool</ulink>.
+	 </para></listitem></varlistentry>
+
      <varlistentry><term>policy <replaceable>[ pkg(s) ]</replaceable></term>
      <listitem><para><literal>policy</literal> is meant to help debug issues relating to the 
      preferences file. With no arguments it will print out the 

@@ -1,3 +1,308 @@
+apt (0.7.19ubuntu1) jaunty; urgency=low
+
+  * merge from debian
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 24 Nov 2008 10:52:20 +0100
+
+apt (0.7.19) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * doc/sources.list.5.xml:
+    - Mentioned allowed characters in file names in /etc/apt/sources.list.d.
+      Thanks to Matthias Urlichs. (Closes: #426913)
+  * doc/apt-get.8.xml:
+    - Explicitly say that 'dist-upgrade' command may remove packages.
+    - Included '-v'/'--version' as a command to synopsis.
+  * cmdline/apt-cache.cc:
+    - Advanced built-in help. Patch by Andre Felipe Machado. (Closes: #286061)
+    - Fixed typo 'GraphVis' -> 'GraphViz'. (Closes: #349038)
+    - Removed asking to file a release-critical bug against a package if there
+      is a request to install only one package and it is not installable.
+      (Closes: #419521)
+
+
+  [ Michael Vogt ]
+    - fix SIGHUP handling (closes: #463030)
+
+  [ Christian Perrier ]
+  * Translations:
+    - French updated
+    - Bulgarian updated. Closes: #505476
+    - Slovak updated. Closes: #505483
+    - Swedish updated. Closes: #505491
+    - Japanese updated. Closes: #505495
+    - Korean updated. Closes: #505506
+    - Catalan updated. Closes: #505513
+    - British English updated. Closes: #505539
+    - Italian updated. Closes: #505518, #505683
+    - Polish updated. Closes: #505569
+    - German updated. Closes: #505614
+    - Spanish updated. Closes: #505757
+    - Romanian updated. Closes: #505762
+    - Simplified Chinese updated. Closes: #505727
+    - Portuguese updated. Closes: #505902
+    - Czech updated. Closes: #505909
+    - Norwegian Bokmål updated. Closes: #505934
+    - Brazilian Portuguese updated. Closes: #505949
+    - Basque updated. Closes: #506085
+    - Russian updated. Closes: #506452 
+    - Marathi updated. 
+    - Ukrainian updated. Closes: #506545 
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 24 Nov 2008 10:33:54 +0100
+
+apt (0.7.18) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Translations:
+    - French updated
+    - Thai updated. Closes: #505067
+
+  [ Eugene V. Lyubimkin ]
+  * doc/examples/configure-index:
+    - Removed obsoleted header line. (Closes: #417638)
+    - Changed 'linux-kernel' to 'linux-image'.
+  * doc/sources.list.5.xml:
+    - Fixed typo and grammar in 'sources.list.d' section. Thanks to
+      Timothy G Abbott <tabbott@MIT.EDU>. (Closes: #478098)
+  * doc/apt-get.8.xml:
+    - Advanced descriptions for 'remove' and 'purge' options.
+      (Closes: #274283)
+  * debian/rules:
+    - Target 'apt' need to depend on 'build-doc'. Thanks for Peter Green.
+      Fixes FTBFS. (Closes: #504181)
+
+  [ Michael Vogt ]
+  * fix depend on libdb4.4 (closes: #501253)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 07 Nov 2008 22:13:39 +0100
+
+apt (0.7.17) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * debian/control:
+    - 'Vcs-Bzr' field is official, used it.
+    - Bumped 'Standards-Version' to 3.8.0, no changes needed.
+    - Actualized 'Uploaders' field.
+  * doc/:
+    - Substituded 'apt-archive' with 'apt-ftparchive' in docs.
+      Patch based on work of Andre Felipe Machado. (Closes: #350865)
+    - Mentioned '/<release>' and '=<version>' for 'apt-get install' and
+      '=<version>' for 'apt-get source' in apt-get manpage. Patch based on
+      work of Andre Felipe Machado. (Closes: #399673)
+    - Mentioned more short options in the apt-get manpage. Documented 'xvcg'
+      option in the apt-cache manpage. The part of patch by Andre Felipe
+      Machado. (Closes: #176106, #355945)
+    - Documented that 'apt-get install' command should be used for upgrading
+      some of installed packages. Based on patch by Nori Heikkinen and
+      Andre Felipe Machado. (Closes: #267087)
+    - Mentioned 'apt_preferences(5)' in apt manpage. (Closes: #274295)
+    - Documented 'APT::Default-Release' in apt.conf manpage. (Closes: #430399)
+    - APT::Install-Recommends is now true by default, mentioned this in
+      configure-index example. (Closes: #463268)
+    - Added 'APT::Get::AllowUnauthenticated' to configure-index example.
+      (Closes: #320225)
+    - Documented '--no-install-recommends' option in apt-get manpage.
+      (Closes: #462962)
+    - Documented 'Acquire::PDiffs' in apt.conf manpage. (Closes: #376029)
+    - Added 'copy', 'rsh', 'ssh' to the list of recognized URI schemes in
+      sources.list manpage, as they are already described under in the manpage.
+    - Removed notice that ssh/rsh access cannot use password authentication
+      from sources.list manpage. Thanks to Steffen Joeris. (Closes: #434894)
+    - Added '(x)' to some referrings to manpages in apt-get manpage. Patch by
+      Andre Felipe Machado. (Closes: #309893)
+    - Added 'dist-upgrade' apt-get synopsis in apt-get manpage.
+      (Closes: #323866)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 05 Nov 2008 13:14:56 +0100
+
+apt (0.7.17~exp4) experimental; urgency=low
+
+  * debian/rules:
+    - Fixed lintian warnings "debian/rules ignores make errors".
+  * debian/control:
+    - Substituted outdated "Source-Version" fields with "binary:Version".
+    - Added 'python-apt' to Suggests, as apt-mark need it for work.
+    - Drop Debian revision from 'doc-base' build dependency, this fixes
+      appropriate lintian warning.
+  * debian/libapt-pkg-doc.doc-base.*:
+    - Changed section: from old 'Devel' to 'Debian'. This fixes appropriate
+      lintian warnings.
+  * debian/{postrm,prerm,preinst}:
+    - Added 'set -e', fixes lintian warnings
+      'maintainer-script-ignores-error'.
+  * dselect/makefile:
+    - Removed unneeded 'LOCAL' entry. This allows cleaning rule to run smoothly.
+  * share/lintian-overrides:
+    - Added with override of 'apt must depend on python'. Script 'apt-mark'
+      needs apt-python for working and checks this on fly. We don't want
+      python in most cases.
+  * cmdline/apt-key:
+    - Added 'unset GREP_OPTIONS' to the script. This prevents 'apt-key update'
+      failure when GREP_OPTIONS contains options that modify grep output.
+      (Closes: #428752)
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Fri, 31 Oct 2008 23:45:17 +0300
+
+apt (0.7.17~exp3) experimental; urgency=low
+
+  * apt-pkg/acquire-item.cc:
+    - fix a merge mistake that prevents the fallback to the 
+      uncompressed 'Packages' to work correctly (closes: #409284)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 29 Oct 2008 09:36:24 +0100
+
+apt (0.7.17~exp2) experimental; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * apt-pkg/acquire-item.cc:
+    - Added fallback to uncompressed 'Packages' if neither 'bz2' nor 'gz'
+      available. (Closes: #409284)
+  * apt-pkg/algorithm.cc:
+    - Strip username and password from source URL in error message.
+      (Closes: #425150)
+  
+  [ Michael Vogt ]
+  * fix various -Wall warnings
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 28 Oct 2008 18:06:38 +0100
+
+apt (0.7.17~exp1) experimental; urgency=low
+
+  [ Luca Bruno ]
+  * Fix typos:
+    - apt-pkg/depcache.cc
+  * Fix compilation warnings:
+    - apt-pkg/acquire.cc
+    - apt-pkg/versionmatch.cc
+  * Compilation fixes and portability improvement for compiling APT against non-GNU libc
+    (thanks to Martin Koeppe, closes: #392063):
+    - buildlib/apti18n.h.in:
+      + textdomain() and bindtextdomain() must not be visible when --disable-nls
+    - buildlib/inttypes.h.in: undefine standard int*_t types
+    - Append INTLLIBS to SLIBS:
+      + cmdline/makefile
+      + ftparchive/makefile
+      + methods/makefile
+  * doc/apt.conf.5.xml:
+    - clarify whether configuration items of apt.conf are case-sensitive
+      (thanks to Vincent McIntyre, closes: #345901)
+
+ -- Luca Bruno <lethalman88@gmail.com>  Sat, 11 Oct 2008 09:17:46 +0200
+
+apt (0.7.16) unstable; urgency=low
+
+  [ Luca Bruno ]
+  * doc/apt-cache.8.xml:
+    - search command uses POSIX regex, and searches for virtual packages too
+      (closes: #277536)
+  * doc/offline.sgml: clarify remote and target hosts
+    (thanks to Nikolaus Schulz, closes: #175940)
+  * Fix several typos in docs, translations and debian/changelog
+    (thanks to timeless, Nicolas Bonifas and Josh Triplett,
+    closes: #368665, #298821, #411532, #431636, #461458)
+  * Document apt-key finger and adv commands
+    (thanks to Stefan Schmidt, closes: #350575)
+  * Better documentation for apt-get --option
+    (thanks to Tomas Pospisek, closes: #386579)
+  * Retitle the apt-mark.8 manpage (thanks to Justin Pryzby, closes: #471276)
+  * Better documentation on using both APT::Default-Release and
+    /etc/apt/preferences (thanks to Ingo Saitz, closes: #145575)
+  
+  [ Michael Vogt ]
+  * doc/apt-cache.8.xml:
+    - add missing citerefentry
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 10 Oct 2008 23:44:50 +0200
+
+apt (0.7.15) unstable; urgency=low
+
+  * Upload to unstable
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 05 Oct 2008 13:23:47 +0200
+
+apt (0.7.15~exp3) experimental; urgency=low
+
+  [Daniel Burrows]
+  * apt-pkg/deb/dpkgpm.cc:
+    - Store the trigger state descriptions in a way that does not break
+      the ABI.  The approach taken makes the search for a string O(n) rather
+      than O(lg(n)), but since n == 4, I do not consider this a major
+      concern.  If it becomes a concern, we can sort the static array and
+      use std::equal_range().  (Closes: #499322)
+
+  [ Michael Vogt ]
+  * apt-pkg/packagemanager.cc, apt-pkg/deb/dpkgpm.cc:
+    - move the state file writting into the Go() implementation
+      of dpkgpm (closes: #498799)
+  * apt-pkg/algorithms.cc:
+    - fix simulation performance drop (thanks to Ferenc Wagner
+      for reporting the issue)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 01 Oct 2008 18:09:49 +0200
+
+apt (0.7.15~exp2) experimental; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/pkgcachegen.cc:
+    - do not add multiple identical descriptions for the same 
+      language (closes: #400768)
+
+  [ Program translations ]
+  * Catalan updated. Closes: #499462
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 23 Sep 2008 07:29:59 +0200
+
+apt (0.7.15~exp1) experimental; urgency=low
+
+  [ Christian Perrier ]
+  * Fix typo in cron.daily script. Closes: #486179
+
+  [ Program translations ]
+  * Traditional Chinese updated. Closes: #488526
+  * German corrected and completed. Closes: #490532, #480002, #498018
+  * French completed
+  * Bulgarian updated. Closes: #492473
+  * Slovak updated. Closes: #492475
+  * Galician updated. Closes: #492794
+  * Japanese updated. Closes: #492975
+  * Fix missing space in Greek translation. Closes: #493922
+  * Greek updated.
+  * Brazilian Portuguese updated.
+  * Basque updated. Closes: #496754
+  * Romanian updated. Closes: #492773, #488361
+  * Portuguese updated. Closes: #491790
+  * Simplified Chinese updated. Closes: #489344
+  * Norwegian Bokmål updated. Closes: #480022
+  * Czech updated. Closes: #479628, #497277
+  * Korean updated. Closes: #464515
+  * Spanish updated. Closes: #457706
+  * Lithuanian added. Closes: #493328
+  * Swedish updated. Closes: #497496
+  * Vietnamese updated. Closes: #497893
+  * Portuguese updated. Closes: #498411
+  * Greek updated. Closes: #498687
+  * Polish updated.
+
+  [ Michael Vogt ]
+  * merge patch that enforces stricter https server certificate
+    checking (thanks to Arnaud Ebalard, closes: #485960)
+  * allow per-mirror specific https settings
+    (thanks to Arnaud Ebalard, closes: #485965)
+  * add doc/examples/apt-https-method-example.cof
+    (thanks to Arnaud Ebalard, closes: #485964)
+  * apt-pkg/depcache.cc:
+    - when checking for new important deps, skip critical ones
+      (closes: #485943)
+  * improve apt progress reporting, display trigger actions
+  * add DPkg::NoTriggers option so that applications that call
+    apt/aptitude (like the installer) defer trigger processing
+    (thanks to Joey Hess)
+  * doc/makefile:
+    - add examples/apt-https-method-example.conf
+  
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 Sep 2008 21:27:03 +0200
+
 apt (0.7.14ubuntu7) jaunty; urgency=low
 
   * cmdline/apt-cache.cc:
@@ -95,6 +400,8 @@ apt (0.7.14ubuntu1) intrepid; urgency=low
     - show warning on apt-get source with 'Vcs-' header
     - proxy detection from gconf in apt.cron
   
+apt (0.7.14) unstable; urgency=low
+
   [ Christian Perrier ]
   * Mark a message from dselect backend as translatable
     Thanks to Frédéric Bothamy for the patch
@@ -113,7 +420,7 @@ apt (0.7.14ubuntu1) intrepid; urgency=low
   * Korean updated. Closes: #479426
   * Basque updated. Closes: #479452
   * Vietnamese updated. Closes: #479748
-  * Russian updated. Closes: #479777
+  * Russian updated. Closes: #479777, #499029
   * Galician updated. Closes: #479792
   * Portuguese updated. Closes: #479847
   * Swedish updated. Closes: #479871
@@ -970,7 +1277,7 @@ apt (0.7.3) unstable; urgency=low
     Daniel Burrows, closes: #429378)
   * fixes in the auto-mark code (thanks to Daniel
     Burrows)
-  * fix FTFBFS by changing build-depends to
+  * fix FTBFS by changing build-depends to
     libcurl4-gnutls-dev (closes: #428363)
   * cmdline/apt-get.cc:
     - fix InstallTask code when a pkgRecord ends 
@@ -1118,7 +1425,7 @@ apt (0.7.2) unstable; urgency=low
 
 apt (0.7.1) experimental; urgency=low
 
-  * ABI library name change because its build against
+  * ABI library name change because it's built against
     new glibc
   * implement SourceVer() in pkgRecords 
      (thanks to Daniel Burrows for the patch!)
@@ -1259,9 +1566,9 @@ apt (0.6.46.4ubuntu4) feisty; urgency=low
 
 apt (0.7.0) experimental; urgency=low
 
-  * Package that contains tall the new features
+  * Package that contains all the new features
   * Removed all #pragma interface/implementation
-  * Branch that contains tall the new features:
+  * Branch that contains all the new features:
   * translated package descriptions
   * task install support
   * automatic dependency removal (thanks to Daniel Burrows)

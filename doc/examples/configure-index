@@ -1,4 +1,3 @@
-// $Id: configure-index,v 1.10 2004/07/17 19:37:16 mdz Exp $
 /* This file is an index of all APT configuration directives. It should
    NOT actually be used as a real config file, though it is (except for the
    last line) a completely valid file. Most of the options have sane default
@@ -25,13 +24,14 @@ APT
   Architecture "i386";
   Build-Essential "build-essential";
 
-  NeverAutoRemove  { "linux-kernel.*";  };  // packages that should never
+  NeverAutoRemove  { "linux-image.*";  };  // packages that should never
                                             // considered for autoRemove
 
   // Options for apt-get
   Get 
   {
      Arch-Only "false";
+     AllowUnauthenticated "false";
      AutomaticRemove "false";       
      HideAutoRemove "false";
      Download-Only "false";
@@ -104,7 +104,7 @@ APT
 
   // consider Recommends, Suggests as important dependencies that should
   // be installed by default
-  Install-Recommends "false";
+  Install-Recommends "true";
   Install-Suggests "false";
 
   // install recommends automatically for packages in this section

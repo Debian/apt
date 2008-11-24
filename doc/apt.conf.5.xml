@@ -75,6 +75,9 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <filename>&docdir;examples/apt.conf</filename> &configureindex;
    is a good guide for how it should look.</para>
 
+   <para>The names of the configuration items are not case-sensitive. So in the previous example
+   you could use <literal>dpkg::pre-install-pkgs</literal>.</para>
+
    <para>Two specials are allowed, <literal>#include</literal> and <literal>#clear</literal> 
    <literal>#include</literal> will include the given file, unless the filename
    ends in a slash, then the whole directory is included.  
@@ -96,6 +99,11 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <listitem><para>System Architecture; sets the architecture to use when fetching files and
      parsing package lists. The internal default is the architecture apt was 
      compiled for.</para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term>Default-Release</term>
+	 <listitem><para>Default release to install packages from if more than one
+	 version available. Contains release name or release version. Examples: 'stable', 'testing', 'unstable', '4.0', '5.0*'. Release codenames ('etch', 'lenny' etc.) are not allowed now. See also &apt-preferences;.</para></listitem>
      </varlistentry>
      
      <varlistentry><term>Ignore-Hold</term>
@@ -158,6 +166,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    and the URI handlers. 
 
    <variablelist>
+     <varlistentry><term>PDiffs</term>
+	 <listitem><para>Try do download deltas called <literal>PDiffs</literal> for
+	 Packages or Sources files instead of downloading whole ones. True
+	 by default.</para></listitem>
+     </varlistentry>
+
      <varlistentry><term>Queue-Mode</term>
      <listitem><para>Queuing mode; <literal>Queue-Mode</literal> can be one of <literal>host</literal> or 
      <literal>access</literal> which determines how  APT parallelizes outgoing 

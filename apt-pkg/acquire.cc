@@ -797,7 +797,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    // Compute the CPS
    struct timeval NewTime;
    gettimeofday(&NewTime,0);
-   if (NewTime.tv_sec - Time.tv_sec == 6 && NewTime.tv_usec > Time.tv_usec ||
+   if ((NewTime.tv_sec - Time.tv_sec == 6 && NewTime.tv_usec > Time.tv_usec) ||
        NewTime.tv_sec - Time.tv_sec > 6)
    {    
       double Delta = NewTime.tv_sec - Time.tv_sec + 
