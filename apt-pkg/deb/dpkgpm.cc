@@ -1027,6 +1027,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       return;
    }
 
+   // do not report out-of-memory failures 
+   if(strstr(errormsg, strerror(ENOMEM)) != NULL) {
+      std::clog << _("No apport report written because the error message indicates a out of memory error") << std::endl;
+      return;
+   }
+
    // get the pkgname and reportfile
    pkgname = flNotDir(pkgpath);
    pos = pkgname.find('_');
