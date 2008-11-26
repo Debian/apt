@@ -79,7 +79,7 @@ bool debSystem::Lock()
       close(LockFD);
       LockFD = -1;
       return _error->Error("dpkg was interrupted, you must manually "
-			   "run 'dpkg --configure -a' to correct the problem. ");
+			   "run 'sudo dpkg --configure -a' to correct the problem. ");
    }
 
 	 LockCount++;
