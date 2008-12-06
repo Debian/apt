@@ -220,6 +220,29 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      require this are in violation of RFC 2068.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term>https</term>
+	 <listitem><para>HTTPS URIs. Cache-control and proxy options are the same as for
+	 <literal>http</literal> method.
+	 <literal>Pipeline-Depth</literal> option is not supported yet.</para>
+
+	 <para><literal>CaInfo</literal> suboption specifies place of file that
+	 holds info about trusted certificates.
+	 <literal>&lt;host&gt;::CaInfo</literal> is corresponding per-host option.
+	 <literal>Verify-Peer</literal> boolean suboption determines whether verify
+	 server's host certificate against trusted certificates or not.
+	 <literal>&lt;host&gt;::Verify-Peer</literal> is corresponding per-host option.
+	 <literal>Verify-Host</literal> boolean suboption determines whether verify
+	 server's hostname or not.
+	 <literal>&lt;host&gt;::Verify-Host</literal> is corresponding per-host option.
+	 <literal>SslCert</literal> determines what certificate to use for client
+	 authentication. <literal>&lt;host&gt;::SslCert</literal> is corresponding per-host option.
+	 <literal>SslKey</literal> determines what private key to use for client
+	 authentication. <literal>&lt;host&gt;::SslKey</literal> is corresponding per-host option.
+	 <literal>SslForceVersion</literal> overrides default SSL version to use.
+	 Can contain 'TLSv1' or 'SSLv3' string.
+	 <literal>&lt;host&gt;::SslForceVersion</literal> is corresponding per-host option.
+	 </para></listitem></varlistentry>
+
      <varlistentry><term>ftp</term>
      <listitem><para>FTP URIs; ftp::Proxy is the default proxy server to use. It is in the 
      standard form of <literal>ftp://[[user][:pass]@]host[:port]/</literal> and is 

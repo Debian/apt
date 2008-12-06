@@ -307,7 +307,7 @@ apt-transport-https: build debian/shlibs.local libapt-pkg-dev
 	mkdir -p debian/$@/usr/lib/apt/methods
 	cp $(BLD)/bin/methods/https debian/$@/usr/lib/apt/methods
 
-	dh_installdocs -p$@
+	dh_installdocs -p$@ debian/apt-transport-https.README
 	dh_installexamples -p$@
 
 	# Install the man pages..
