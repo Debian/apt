@@ -3,6 +3,9 @@ apt (0.7.19ubuntu2) jaunty; urgency=low
   [ Michael Vogt ]
   * apt-pkg/deb/dpkgpm.cc:
     - filter "ENOMEM" errors when creating apport reports 
+  * cmdline/apt-get.cc:
+    - fix "apt-get source pkg=ver" if binary name != source name
+      (LP: #202219)
 
   [ Ian Weisser ]
   * /apt-pkg/deb/debsystem.cc:
@@ -35,6 +38,8 @@ apt (0.7.19) unstable; urgency=low
 
 
   [ Michael Vogt ]
+  * doc/makefile:
+    - add examples/apt-https-method-example.conf
     - fix SIGHUP handling (closes: #463030)
 
   [ Christian Perrier ]
