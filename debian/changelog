@@ -1,3 +1,20 @@
+apt (0.7.20) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * debian/changelog:
+    - Fixed place of 'merged install-recommends and install-task branches'
+      from 0.6.46.1 to 0.7.0. (Closes: #439866)
+  * buildlib/config.{sub,guess}:
+    - Renewed. This fixes lintian errors.
+  * doc/apt.conf.5.xml, debian/apt-transport-https:
+    - Documented briefly 'APT::https' group of options. (Closes: #507398)
+    - Applied patch from Daniel Burrows to document 'Debug' group of options.
+      (Closes: #457265)
+    - Mentioned 'APT::Periodic' and 'APT::Archives' groups of options.
+      (Closes: #438559)
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Sat, 06 Dec 2008 20:57:00 +0200
+
 apt (0.7.20~exp3) unstable; urgency=low
 
   [ Michael Vogt ]
@@ -5,6 +22,8 @@ apt (0.7.20~exp3) unstable; urgency=low
     by default. This can be changed by setting the value of
     APT::Get::Build-Dep-Automatic to false (thanks to Aaron 
     Haviland, closes: #44874, LP: #248268)
+
+apt (0.7.20~exp2) unstable; urgency=low
 
   [ Eugene V. Lyubimkin ]
   * doc/examples/sources.list:
@@ -873,6 +892,16 @@ apt (0.7.0) experimental; urgency=low
   * support for unattended-upgrades (via unattended-upgrades
     package)
   * added apt-transport-https method
+  * merged "install-recommends" branch (ABI break): 
+    - new "--install-recommends"
+    - install new recommends on "upgrade" if --install-recommends is 
+      given
+    - new "--fix-policy" option to install all packages with unmet
+      important dependencies (usefull with --install-recommends to
+      see what not-installed recommends are on the system)
+    - fix of recommended packages display (only show CandidateVersion
+      fix or-group handling)
+  * merged "install-task" branch (use with "apt-get install taskname^")
 
  -- Michael Vogt <mvo@debian.org>  Fri, 12 Jan 2007 20:48:07 +0100
 
@@ -963,16 +992,6 @@ apt (0.6.46.2) unstable; urgency=low
 
 apt (0.6.46.1) unstable; urgency=low
 
-  * merged "install-recommends" branch (ABI break): 
-    - new "--install-recommends"
-    - install new recommends on "upgrade" if --install-recommends is 
-      given
-    - new "--fix-policy" option to install all packages with unmet
-      important dependencies (usefull with --install-recommends to
-      see what not-installed recommends are on the system)
-    - fix of recommended packages display (only show CandidateVersion
-      fix or-group handling)
-  * merged "install-task" branch (use with "apt-get install taskname^")
   * methods/gzip.cc:
     - deal with empty files 
   * Applied patch from Daniel Schepler to make apt bin-NMU able.
