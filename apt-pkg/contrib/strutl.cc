@@ -1032,6 +1032,21 @@ void ioprintf(ostream &out,const char *format,...)
    out << S;
 }
 									/*}}}*/
+// strprintf - C format string outputter to C++ strings 		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used to make the internationalization strings easier to translate
+   and to allow reordering of parameters */
+void strprintf(string &out,const char *format,...) 
+{
+   va_list args;
+   va_start(args,format);
+   
+   // sprintf the description
+   char S[1024];
+   vsnprintf(S,sizeof(S),format,args);
+   out = string(S);
+}
+									/*}}}*/
 // safe_snprintf - Safer snprintf					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a snprintf that will never (ever) go past 'End' and returns a

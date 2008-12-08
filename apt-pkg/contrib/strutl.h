@@ -59,6 +59,7 @@ bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length);
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 void ioprintf(ostream &out,const char *format,...) APT_FORMAT2;
+void strprintf(string &out,const char *format,...) APT_FORMAT2;
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_FORMAT3;
 bool CheckDomainList(const string &Host, const string &List);
 
