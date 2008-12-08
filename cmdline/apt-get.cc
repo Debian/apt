@@ -1295,9 +1295,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    {
       string Ver = Parse->Version();
       
-      // Skip name mismatches
-      if (IsMatch == true && Parse->Package() != Src)
-	 continue;
+      // show name mismatches
+      if (IsMatch == true && Parse->Package() != Src) 
+	 ioprintf(c1out,  _("No source package '%s' picking '%s' instead"), Parse->Package(), Src);
       
       if (VerTag.empty() == false)
       {

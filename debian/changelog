@@ -26,6 +26,10 @@ apt (0.7.17) UNRELEASED; urgency=low
   * cmdline/apt-cache.cc:
     - remove the gettext from a string that consists entirely 
       of variables (LP: #56792)
+    - fix "apt-get source pkg=ver" if binary name != source name
+      (LP: #202219)
+  * doc/makefile:
+    - add examples/apt-https-method-example.conf
   * apt-pkg/cacheiterators.h:
     - add missing checks for Owner == 0 in end()
   * apt-pkg/deb/dpkgpm.cc:
