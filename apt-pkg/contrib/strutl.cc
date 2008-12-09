@@ -1027,7 +1027,7 @@ void ioprintf(ostream &out,const char *format,...)
    va_start(args,format);
    
    // sprintf the description
-   char S[400];
+   char S[4096];
    vsnprintf(S,sizeof(S),format,args);
    out << S;
 }
@@ -1042,7 +1042,7 @@ void strprintf(string &out,const char *format,...)
    va_start(args,format);
    
    // sprintf the description
-   char S[1024];
+   char S[4096];
    vsnprintf(S,sizeof(S),format,args);
    out = string(S);
 }
