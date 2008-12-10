@@ -1,4 +1,4 @@
-apt (0.7.17) UNRELEASED; urgency=low
+apt (0.7.21) UNRELEASED; urgency=low
 
   [ Osamu Aoki ]
   * Updated cron script to support backups by hardlinks and 
@@ -10,20 +10,10 @@ apt (0.7.17) UNRELEASED; urgency=low
     configure-index.
 
   [ Michael Vogt ]
-  * apt-pkg/depcache.cc:
-    - when checking for new important deps, skip critical ones
-      (LP: #236360)
-  * document --install-recommends and --no-install-recommends
-    (thanks to Dereck Wonnacott, LP: #126180)
-  * make "apt-get build-dep" installed packages marked automatic
-    by default. This can be changed by setting the value of
-    APT::Get::Build-Dep-Automatic to false (thanks to Aaron 
-    Haviland, closes: #44874, LP: #248268)
   * apt-pkg/indexcopy.cc:
     - support having CDs with no Packages file (just a Packages.gz)
       by not forcing a verification on non-existing files
      (LP: #255545)
-  * cmdline/apt-cache.cc:
     - remove the gettext from a string that consists entirely 
       of variables (LP: #56792)
   * doc/makefile:
@@ -32,7 +22,6 @@ apt (0.7.17) UNRELEASED; urgency=low
     - add missing checks for Owner == 0 in end()
   * apt-pkg/deb/dpkgpm.cc:
     - fix potential hang when in a backgroud process group
-    - fix SIGHUP handling (closes: #463030)
   * apt-pkg/indexrecords.cc:
     - fix some i18n issues
   * apt-pkg/contrib/strutl.h:
@@ -51,6 +40,198 @@ apt (0.7.17) UNRELEASED; urgency=low
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 12 Sep 2008 11:34:24 +0200
 
+apt (0.7.20) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * debian/changelog:
+    - Fixed place of 'merged install-recommends and install-task branches'
+      from 0.6.46.1 to 0.7.0. (Closes: #439866)
+  * buildlib/config.{sub,guess}:
+    - Renewed. This fixes lintian errors.
+  * doc/apt.conf.5.xml, debian/apt-transport-https:
+    - Documented briefly 'APT::https' group of options. (Closes: #507398)
+    - Applied patch from Daniel Burrows to document 'Debug' group of options.
+      (Closes: #457265)
+    - Mentioned 'APT::Periodic' and 'APT::Archives' groups of options.
+      (Closes: #438559)
+
+  [ Michael Vogt ]
+  * apt-pkg/depcache.cc:
+    - when checking for new important deps, skip critical ones
+      (LP: #236360)
+  * document --install-recommends and --no-install-recommends
+    (thanks to Dereck Wonnacott, LP: #126180)
+  * make "apt-get build-dep" installed packages marked automatic
+    by default. This can be changed by setting the value of
+    APT::Get::Build-Dep-Automatic to false (thanks to Aaron 
+    Haviland, closes: #44874, LP: #248268)
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Sat, 06 Dec 2008 20:57:00 +0200
+
+apt (0.7.20~exp2) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * doc/examples/sources.list:
+    - Removed obsolete commented non-us deb-src entry, replaced it with
+      'deb-src security.debian.org' one. (Closes: #411298)
+  * apt-pkg/contrib/mmap.cc:
+    - Added instruction how to work around MMap error in MMap error message.
+      (Closes: #385674, 436028)
+
+  [ Christian Perrier ]
+  * Translations:
+    - French corrected (remove awful use of first person) 
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 02 Dec 2008 20:30:14 +0100
+
+apt (0.7.19) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * doc/sources.list.5.xml:
+    - Mentioned allowed characters in file names in /etc/apt/sources.list.d.
+      Thanks to Matthias Urlichs. (Closes: #426913)
+  * doc/apt-get.8.xml:
+    - Explicitly say that 'dist-upgrade' command may remove packages.
+    - Included '-v'/'--version' as a command to synopsis.
+  * cmdline/apt-cache.cc:
+    - Advanced built-in help. Patch by Andre Felipe Machado. (Closes: #286061)
+    - Fixed typo 'GraphVis' -> 'GraphViz'. (Closes: #349038)
+    - Removed asking to file a release-critical bug against a package if there
+      is a request to install only one package and it is not installable.
+      (Closes: #419521)
+
+
+  [ Michael Vogt ]
+    - fix SIGHUP handling (closes: #463030)
+
+  [ Christian Perrier ]
+  * Translations:
+    - French updated
+    - Bulgarian updated. Closes: #505476
+    - Slovak updated. Closes: #505483
+    - Swedish updated. Closes: #505491
+    - Japanese updated. Closes: #505495
+    - Korean updated. Closes: #505506
+    - Catalan updated. Closes: #505513
+    - British English updated. Closes: #505539
+    - Italian updated. Closes: #505518, #505683
+    - Polish updated. Closes: #505569
+    - German updated. Closes: #505614
+    - Spanish updated. Closes: #505757
+    - Romanian updated. Closes: #505762
+    - Simplified Chinese updated. Closes: #505727
+    - Portuguese updated. Closes: #505902
+    - Czech updated. Closes: #505909
+    - Norwegian Bokmål updated. Closes: #505934
+    - Brazilian Portuguese updated. Closes: #505949
+    - Basque updated. Closes: #506085
+    - Russian updated. Closes: #506452 
+    - Marathi updated. 
+    - Ukrainian updated. Closes: #506545 
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 24 Nov 2008 10:33:54 +0100
+
+apt (0.7.18) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Translations:
+    - French updated
+    - Thai updated. Closes: #505067
+
+  [ Eugene V. Lyubimkin ]
+  * doc/examples/configure-index:
+    - Removed obsoleted header line. (Closes: #417638)
+    - Changed 'linux-kernel' to 'linux-image'.
+  * doc/sources.list.5.xml:
+    - Fixed typo and grammar in 'sources.list.d' section. Thanks to
+      Timothy G Abbott <tabbott@MIT.EDU>. (Closes: #478098)
+  * doc/apt-get.8.xml:
+    - Advanced descriptions for 'remove' and 'purge' options.
+      (Closes: #274283)
+  * debian/rules:
+    - Target 'apt' need to depend on 'build-doc'. Thanks for Peter Green.
+      Fixes FTBFS. (Closes: #504181)
+
+  [ Michael Vogt ]
+  * fix depend on libdb4.4 (closes: #501253)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 07 Nov 2008 22:13:39 +0100
+
+apt (0.7.17) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * debian/control:
+    - 'Vcs-Bzr' field is official, used it.
+    - Bumped 'Standards-Version' to 3.8.0, no changes needed.
+    - Actualized 'Uploaders' field.
+  * doc/:
+    - Substituded 'apt-archive' with 'apt-ftparchive' in docs.
+      Patch based on work of Andre Felipe Machado. (Closes: #350865)
+    - Mentioned '/<release>' and '=<version>' for 'apt-get install' and
+      '=<version>' for 'apt-get source' in apt-get manpage. Patch based on
+      work of Andre Felipe Machado. (Closes: #399673)
+    - Mentioned more short options in the apt-get manpage. Documented 'xvcg'
+      option in the apt-cache manpage. The part of patch by Andre Felipe
+      Machado. (Closes: #176106, #355945)
+    - Documented that 'apt-get install' command should be used for upgrading
+      some of installed packages. Based on patch by Nori Heikkinen and
+      Andre Felipe Machado. (Closes: #267087)
+    - Mentioned 'apt_preferences(5)' in apt manpage. (Closes: #274295)
+    - Documented 'APT::Default-Release' in apt.conf manpage. (Closes: #430399)
+    - APT::Install-Recommends is now true by default, mentioned this in
+      configure-index example. (Closes: #463268)
+    - Added 'APT::Get::AllowUnauthenticated' to configure-index example.
+      (Closes: #320225)
+    - Documented '--no-install-recommends' option in apt-get manpage.
+      (Closes: #462962)
+    - Documented 'Acquire::PDiffs' in apt.conf manpage. (Closes: #376029)
+    - Added 'copy', 'rsh', 'ssh' to the list of recognized URI schemes in
+      sources.list manpage, as they are already described under in the manpage.
+    - Removed notice that ssh/rsh access cannot use password authentication
+      from sources.list manpage. Thanks to Steffen Joeris. (Closes: #434894)
+    - Added '(x)' to some referrings to manpages in apt-get manpage. Patch by
+      Andre Felipe Machado. (Closes: #309893)
+    - Added 'dist-upgrade' apt-get synopsis in apt-get manpage.
+      (Closes: #323866)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 05 Nov 2008 13:14:56 +0100
+
+apt (0.7.17~exp4) experimental; urgency=low
+
+  * debian/rules:
+    - Fixed lintian warnings "debian/rules ignores make errors".
+  * debian/control:
+    - Substituted outdated "Source-Version" fields with "binary:Version".
+    - Added 'python-apt' to Suggests, as apt-mark need it for work.
+    - Drop Debian revision from 'doc-base' build dependency, this fixes
+      appropriate lintian warning.
+  * debian/libapt-pkg-doc.doc-base.*:
+    - Changed section: from old 'Devel' to 'Debian'. This fixes appropriate
+      lintian warnings.
+  * debian/{postrm,prerm,preinst}:
+    - Added 'set -e', fixes lintian warnings
+      'maintainer-script-ignores-error'.
+  * dselect/makefile:
+    - Removed unneeded 'LOCAL' entry. This allows cleaning rule to run smoothly.
+  * share/lintian-overrides:
+    - Added with override of 'apt must depend on python'. Script 'apt-mark'
+      needs apt-python for working and checks this on fly. We don't want
+      python in most cases.
+  * cmdline/apt-key:
+    - Added 'unset GREP_OPTIONS' to the script. This prevents 'apt-key update'
+      failure when GREP_OPTIONS contains options that modify grep output.
+      (Closes: #428752)
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Fri, 31 Oct 2008 23:45:17 +0300
+
+apt (0.7.17~exp3) experimental; urgency=low
+
+  * apt-pkg/acquire-item.cc:
+    - fix a merge mistake that prevents the fallback to the 
+      uncompressed 'Packages' to work correctly (closes: #409284)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 29 Oct 2008 09:36:24 +0100
+
 apt (0.7.17~exp2) experimental; urgency=low
 
   [ Eugene V. Lyubimkin ]
@@ -60,9 +241,11 @@ apt (0.7.17~exp2) experimental; urgency=low
   * apt-pkg/algorithm.cc:
     - Strip username and password from source URL in error message.
       (Closes: #425150)
+  
+  [ Michael Vogt ]
+  * fix various -Wall warnings
 
- -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Fri, 24 Oct 2008 23:45:17 +0300
-
+ -- Michael Vogt <mvo@debian.org>  Tue, 28 Oct 2008 18:06:38 +0100
 
 apt (0.7.17~exp1) experimental; urgency=low
 
@@ -754,6 +937,16 @@ apt (0.7.0) experimental; urgency=low
   * support for unattended-upgrades (via unattended-upgrades
     package)
   * added apt-transport-https method
+  * merged "install-recommends" branch (ABI break): 
+    - new "--install-recommends"
+    - install new recommends on "upgrade" if --install-recommends is 
+      given
+    - new "--fix-policy" option to install all packages with unmet
+      important dependencies (usefull with --install-recommends to
+      see what not-installed recommends are on the system)
+    - fix of recommended packages display (only show CandidateVersion
+      fix or-group handling)
+  * merged "install-task" branch (use with "apt-get install taskname^")
 
  -- Michael Vogt <mvo@debian.org>  Fri, 12 Jan 2007 20:48:07 +0100
 
@@ -844,16 +1037,6 @@ apt (0.6.46.2) unstable; urgency=low
 
 apt (0.6.46.1) unstable; urgency=low
 
-  * merged "install-recommends" branch (ABI break): 
-    - new "--install-recommends"
-    - install new recommends on "upgrade" if --install-recommends is 
-      given
-    - new "--fix-policy" option to install all packages with unmet
-      important dependencies (usefull with --install-recommends to
-      see what not-installed recommends are on the system)
-    - fix of recommended packages display (only show CandidateVersion
-      fix or-group handling)
-  * merged "install-task" branch (use with "apt-get install taskname^")
   * methods/gzip.cc:
     - deal with empty files 
   * Applied patch from Daniel Schepler to make apt bin-NMU able.

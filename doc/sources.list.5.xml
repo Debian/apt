@@ -48,9 +48,12 @@
  
  <refsect1><title>sources.list.d</title>
    <para>The <filename>/etc/apt/sources.list.d</filename> directory provides
-   a way to add sources.list entries in seperate files that end with 
-   <literal>.list</literal>. The format is the same as for the regular
-   <filename>sources.list</filename> file. </para>
+   a way to add sources.list entries in separate files.
+   The format is the same as for the regular <filename>sources.list</filename> file.
+   File names need to end with
+   <filename>.list</filename> and may only contain letters (a-z and A-Z),
+   digits (0-9), underscore (_), hyphen (-) and period (.) characters.
+   Otherwise they will be silently ignored.</para>
  </refsect1>
 
  <refsect1><title>The deb and deb-src types</title>
@@ -115,7 +118,8 @@ deb http://http.us.debian.org/debian dists/stable-updates/
 
  <refsect1><title>URI specification</title>
 
-   <para>The currently recognized URI types are cdrom, file, http, and ftp.
+   <para>The currently recognized URI types are cdrom, file, http, ftp, copy,
+   ssh, rsh.
    <variablelist>
     <varlistentry><term>file</term>
     <listitem><para>
@@ -163,8 +167,8 @@ deb http://http.us.debian.org/debian dists/stable-updates/
     <varlistentry><term>rsh</term><term>ssh</term>
     <listitem><para>
     The rsh/ssh method invokes rsh/ssh to connect to a remote host
-    as a given user and access the files. No password authentication is 
-    possible, prior arrangements with RSA keys or rhosts must have been made.
+	as a given user and access the files. It is a good idea to do prior
+	arrangements with RSA keys or rhosts.
     Access to files on the remote uses standard <command>find</command> and
     <command>dd</command> 
     commands to perform the file transfers from the remote.</para></listitem>

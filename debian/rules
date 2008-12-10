@@ -125,8 +125,8 @@ build/build-doc-stamp: build/configure-stamp
 clean:
 	dh_testdir
 #	dh_testroot
-	-$(MAKE) clean
-	-$(MAKE) distclean
+	[ -f Makefile ] && $(MAKE) clean
+	[ -f Makefile ] && $(MAKE) distclean
 
 	rm -rf build
 
@@ -186,7 +186,7 @@ apt-doc: build-doc
 # Build architecture-dependent files here.
 
 binary-arch: apt libapt-pkg-dev apt-utils apt-transport-https
-apt: build debian/shlibs.local
+apt: build build-doc debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_clean -p$@ -k
@@ -216,6 +216,9 @@ apt: build debian/shlibs.local
 	cp share/debian-archive.gpg debian/$@/usr/share/$@
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
 #	head -n 500 ChangeLog > debian/ChangeLog
+
+	# copy lintian override
+	cp share/lintian-overrides debian/$@/usr/share/lintian/overrides/apt
 
 	# make rosetta happy and remove pot files in po/ (but leave stuff
 	# in po/domains/* untouched) and cp *.po into each domain dir
@@ -304,7 +307,7 @@ apt-transport-https: build debian/shlibs.local libapt-pkg-dev
 	mkdir -p debian/$@/usr/lib/apt/methods
 	cp $(BLD)/bin/methods/https debian/$@/usr/lib/apt/methods
 
-	dh_installdocs -p$@
+	dh_installdocs -p$@ debian/apt-transport-https.README
 	dh_installexamples -p$@
 
 	# Install the man pages..

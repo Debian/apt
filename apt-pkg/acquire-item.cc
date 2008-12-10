@@ -711,13 +711,18 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    else
       Local = true;
    
-   string compExt = flExtension(URI(Desc.URI).Path);
+   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
    const char *decompProg;
    if(compExt == "bz2") 
       decompProg = "bzip2";
-   else if(compExt == ".gz") 
+   else if(compExt == "gz") 
       decompProg = "gzip";
-   else if(compExt == "")
+   // flExtensions returns the full name if no extension is found
+   // this is why we have this complicated compare operation here
+   // FIMXE: add a new flJustExtension() that return "" if no
+   //        extension is found and use that above so that it can
+   //        be tested against ""
+   else if(compExt == flNotDir(URI(Desc.URI).Path))
       decompProg = "copy";
    else {
       _error->Error("Unsupported extension: %s", compExt.c_str());

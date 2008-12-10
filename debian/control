@@ -2,10 +2,12 @@ Source: apt
 Section: admin
 Priority: important
 Maintainer: APT Development Team <deity@lists.debian.org>
-Uploaders: Jason Gunthorpe <jgg@debian.org>, Adam Heath <doogie@debian.org>, Matt Zimmerman <mdz@debian.org>, Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>
-Standards-Version: 3.7.2.2
-Build-Depends: debhelper (>= 5.0), libdb-dev, gettext (>= 0.12), libcurl4-gnutls-dev | libcurl3-gnutls-dev (>= 7.15.5), debiandoc-sgml, docbook-utils (>= 0.6.12-1), xsltproc, docbook-xsl, xmlto
-XS-Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
+Uploaders: Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>,
+ Christian Perrier <bubulle@debian.org>, Daniel Burrows <dburrows@debian.org>,
+ Luca Bruno <lethalman88@gmail.com>, Eugene V. Lyubimkin <jackyf.devel@gmail.com>
+Standards-Version: 3.8.0
+Build-Depends: debhelper (>= 5.0), libdb-dev, gettext (>= 0.12), libcurl4-gnutls-dev | libcurl3-gnutls-dev (>= 7.15.5), debiandoc-sgml, docbook-utils (>= 0.6.12), xsltproc, docbook-xsl, xmlto
+Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
 
 Package: apt
 Architecture: any
@@ -13,7 +15,7 @@ Depends: ${shlibs:Depends}, debian-archive-keyring
 Priority: important
 Replaces: libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
 Provides: ${libapt-pkg:provides}
-Suggests: aptitude | synaptic | gnome-apt | wajig, dpkg-dev, apt-doc, bzip2, lzma
+Suggests: aptitude | synaptic | gnome-apt | wajig, dpkg-dev, apt-doc, bzip2, lzma, python-apt
 Section: admin
 Description: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
@@ -35,7 +37,7 @@ Description: Documentation for APT
 Package: libapt-pkg-dev
 Architecture: any
 Priority: optional
-Depends: apt (= ${Source-Version}), apt-utils (= ${Source-Version}), ${libapt-pkg:provides}, ${libapt-inst:provides}
+Depends: apt (= ${binary:Version}), apt-utils (= ${binary:Version}), ${libapt-pkg:provides}, ${libapt-inst:provides}
 Section: libdevel
 Description: Development files for APT's libapt-pkg and libapt-inst
  This package contains the header files and libraries for

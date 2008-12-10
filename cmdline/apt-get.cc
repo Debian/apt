@@ -1721,6 +1721,7 @@ bool DoInstall(CommandLine &CmdL)
 	      "requested an impossible situation or if you are using the unstable\n" 
 	      "distribution that some required packages have not yet been created\n"
 	      "or been moved out of Incoming.") << endl;
+	 /*
 	 if (Packages == 1)
 	 {
 	    c1out << endl;
@@ -1729,6 +1730,7 @@ bool DoInstall(CommandLine &CmdL)
 		 "the package is simply not installable and a bug report against\n" 
 		 "that package should be filed.") << endl;
 	 }
+	 */
 
 	 c1out << _("The following information may help to resolve the situation:") << endl;
 	 c1out << endl;
@@ -2730,6 +2732,7 @@ int main(int argc,const char *argv[])
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
       {0,"auto-remove","APT::Get::AutomaticRemove",0},
+      {0,"build-dep-automatic","APT::Get::Build-Dep-Automatic",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
       {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
