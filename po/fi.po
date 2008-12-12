@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-12 22:07+0100\n"
-"PO-Revision-Date: 2008-05-04 19:30+0300\n"
+"PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -164,43 +164,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s laitealustalle %s käännöksen päiväys %s %s\n"
 
 #: cmdline/apt-cache.cc:1721
-#, fuzzy
-#| msgid ""
-#| "Usage: apt-cache [options] command\n"
-#| "       apt-cache [options] add file1 [file2 ...]\n"
-#| "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-#| "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
-#| "\n"
-#| "apt-cache is a low-level tool used to manipulate APT's binary\n"
-#| "cache files, and query information from them\n"
-#| "\n"
-#| "Commands:\n"
-#| "   add - Add a package file to the source cache\n"
-#| "   gencaches - Build both the package and source cache\n"
-#| "   showpkg - Show some general information for a single package\n"
-#| "   showsrc - Show source records\n"
-#| "   stats - Show some basic statistics\n"
-#| "   dump - Show the entire file in a terse form\n"
-#| "   dumpavail - Print an available file to stdout\n"
-#| "   unmet - Show unmet dependencies\n"
-#| "   search - Search the package list for a regex pattern\n"
-#| "   show - Show a readable record for the package\n"
-#| "   depends - Show raw dependency information for a package\n"
-#| "   rdepends - Show reverse dependency information for a package\n"
-#| "   pkgnames - List the names of all packages\n"
-#| "   dotty - Generate package graphs for GraphViz\n"
-#| "   xvcg - Generate package graphs for xvcg\n"
-#| "   policy - Show policy settings\n"
-#| "\n"
-#| "Options:\n"
-#| "  -h   This help text.\n"
-#| "  -p=? The package cache.\n"
-#| "  -s=? The source cache.\n"
-#| "  -q   Disable progress indicator.\n"
-#| "  -i   Show only important deps for the unmet command.\n"
-#| "  -c=? Read this configuration file\n"
-#| "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#| "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -258,7 +221,7 @@ msgstr ""
 "   show - Näytä paketin tietue luettavassa muodossa\n"
 "   depends - Näytä paketin riippuvuustiedot käsittelemättömässä muodossa\n"
 "   rdepends - Näytä paketin käänteiset riippuvuudet\n"
-"   pkgnames - Luettele kaikkien pakettien nimet\n"
+"   pkgnames - Luettele järjestelmän kaikkien pakettien nimet\n"
 "   dotty - Tee paketeista graafit GraphViz-muodossa\n"
 "   xvcg - Tee paketeista graafit xvcg-muodossa\n"
 "   policy - Näytä mistä asennuspaketteja haetaan\n"
@@ -2094,9 +2057,8 @@ msgid "Error reading from server"
 msgstr "Tapahtui virhe luettaessa palvelimelta"
 
 #: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
-#, fuzzy
 msgid "Failed to truncate file"
-msgstr "Tiedoston %s kirjoittaminen ei onnistunut"
+msgstr "Tiedoston typistäminen ei onnistunut"
 
 #: methods/http.cc:1105
 msgid "Bad header data"
@@ -2121,7 +2083,7 @@ msgstr "Ei voitu tehdä %lu tavun mmap:ia"
 
 #: apt-pkg/contrib/mmap.cc:213
 msgid "Dynamic MMap ran out of room"
-msgstr ""
+msgstr "Tila loppui kesken dynaamiselta MMap:lta"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2846,9 +2808,9 @@ msgstr ""
 "tiedostoa\n"
 
 #: apt-pkg/deb/dpkgpm.cc:49
-#, fuzzy, c-format
+#, c-format
 msgid "Installing %s"
-msgstr "%s asennettu"
+msgstr "Asennetaan %s"
 
 #: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:612
 #, c-format
@@ -2863,7 +2825,7 @@ msgstr "Poistetaan %s"
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Running post-installation trigger %s"
-msgstr ""
+msgstr "Suoritetaan jälkiasennusliipaisin %s"
 
 #: apt-pkg/deb/dpkgpm.cc:521
 #, c-format
@@ -2929,12 +2891,3 @@ msgstr "Tiedostoa %s ei voitu avata"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Yhteys katkesi ennenaikaisesti"
-
-#~ msgid ""
-#~ "Since you only requested a single operation it is extremely likely that\n"
-#~ "the package is simply not installable and a bug report against\n"
-#~ "that package should be filed."
-#~ msgstr ""
-#~ "Koska komennettiin vain yksi toimenpide, erittäin todennäköisesti\n"
-#~ "paketti ei lainkaan ole asennettavissa ja olisi tehtävä vikailmoitus\n"
-#~ "tuosta paketista."
