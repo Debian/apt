@@ -2515,6 +2515,8 @@ bool DoBuildDep(CommandLine &CmdL)
             {
                // We successfully installed something; skip remaining alternatives
                skipAlternatives = hasAlternatives;
+	       if(_config->FindB("APT::Get::Build-Dep-Automatic", false) == true)
+		  Cache->MarkAuto(Pkg, true);
                continue;
             }
             else if (hasAlternatives)
@@ -2730,6 +2732,7 @@ int main(int argc,const char *argv[])
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
       {0,"auto-remove","APT::Get::AutomaticRemove",0},
+      {0,"build-dep-automatic","APT::Get::Build-Dep-Automatic",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
       {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
