@@ -309,22 +309,27 @@ bool ServerState::Open()
    Persistent = true;
    
    // Determine the proxy setting
-   if (getenv("http_proxy") == 0)
+   string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
+   if (!SpecificProxy.empty())
    {
-      string DefProxy = _config->Find("Acquire::http::Proxy");
-      string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
-      if (SpecificProxy.empty() == false)
-      {
-	 if (SpecificProxy == "DIRECT")
-	    Proxy = "";
-	 else
-	    Proxy = SpecificProxy;
-      }   
-      else
-	 Proxy = DefProxy;
+	   if (SpecificProxy == "DIRECT")
+		   Proxy = "";
+	   else
+		   Proxy = SpecificProxy;
    }
    else
-      Proxy = getenv("http_proxy");
+   {
+	   string DefProxy = _config->Find("Acquire::http::Proxy");
+	   if (!DefProxy.empty())
+	   {
+		   Proxy = DefProxy;
+	   }
+	   else
+	   {
+		   char* result = getenv("http_proxy");
+		   Proxy = result ? result : "";
+	   }
+   }
    
    // Parse no_proxy, a , separated list of domains
    if (getenv("no_proxy") != 0)
