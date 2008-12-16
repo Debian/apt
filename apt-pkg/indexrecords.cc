@@ -37,14 +37,14 @@ bool indexRecords::Load(const string Filename)
    pkgTagFile TagFile(&Fd, Fd.Size() + 256); // XXX
    if (_error->PendingError() == true)
    {
-      ErrorText = _(("Unable to parse Release file " + Filename).c_str());
+      strprintf(ErrorText, _("Unable to parse Release file %s"),Filename.c_str());
       return false;
    }
 
    pkgTagSection Section;
    if (TagFile.Step(Section) == false)
    {
-      ErrorText = _(("No sections in Release file " + Filename).c_str());
+      strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
       return false;
    }
 
@@ -78,7 +78,7 @@ bool indexRecords::Load(const string Filename)
 
    if(HashString::SupportedHashes()[i] == NULL)
    {
-      ErrorText = _(("No Hash entry in Release file " + Filename).c_str());
+      strprintf(ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
       return false;
    }  
 

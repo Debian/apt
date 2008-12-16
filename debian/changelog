@@ -6,13 +6,19 @@ apt (0.7.19ubuntu2) jaunty; urgency=low
   * cmdline/apt-get.cc:
     - fix "apt-get source pkg=ver" if binary name != source name
       (LP: #202219)
+  * apt-pkg/indexrecords.cc:
+    - fix some i18n issues
+  * apt-pkg/contrib/strutl.h:
+    - add new strprintf() function to make i18n strings easier
+  * apt-pkg/dev/debsystem.cc:
+    - add missing apti18n.h header
 
   [ Ian Weisser ]
   * /apt-pkg/deb/debsystem.cc:
     - add 'sudo' to the error message to "run 'dpkg --configure -a'"
       (LP: #52697)
 
- --
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 16 Dec 2008 06:59:17 +0100
 
 apt (0.7.19ubuntu1) jaunty; urgency=low
 
