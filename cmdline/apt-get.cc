@@ -2659,7 +2659,7 @@ bool ShowHelp(CommandLine &CmdL)
       "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
       "   remove - Remove packages\n"
       "   autoremove - Remove automatically all unused packages\n"
-      "   purge - Remove and purge packages\n"
+      "   purge - Remove packages and config files\n"
       "   source - Download source archives\n"
       "   build-dep - Configure build-dependencies for source packages\n"
       "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
