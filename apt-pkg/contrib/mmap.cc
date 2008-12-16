@@ -210,7 +210,8 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
    // Just in case error check
    if (Result + Size > WorkSpace)
    {
-      _error->Error(_("Dynamic MMap ran out of room"));
+	  _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
+				  "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
       return 0;
    }
 
@@ -272,7 +273,8 @@ unsigned long DynamicMMap::WriteString(const char *String,
    // Just in case error check
    if (Result + Len > WorkSpace)
    {
-      _error->Error("Dynamic MMap ran out of room");
+	  _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
+				  "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
       return 0;
    }   
    

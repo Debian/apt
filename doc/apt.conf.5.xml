@@ -12,10 +12,16 @@
  <refentryinfo>
    &apt-author.jgunthorpe;
    &apt-author.team;
+   <author>
+     <firstname>Daniel</firstname>
+     <surname>Burrows</surname>
+     <contrib>Initial documentation of Debug::*.</contrib>
+     <email>dburrows@debian.org</email>
+   </author>
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>10 December 2008</date>
  </refentryinfo>
  
  <refmeta>
@@ -47,8 +53,9 @@
    parent groups.</para> 
 
    <para>Syntactically the configuration language is modeled after what the ISC tools
-   such as bind and dhcp use.  Lines starting with
-   <literal>//</literal> are treated as comments (ignored).
+   such as bind and dhcp use. Lines starting with
+   <literal>//</literal> are treated as comments (ignored), as well as all text
+   between <literal>/*</literal> and <literal>*/</literal>, just like C/C++ comments.
    Each line is of the form
    <literal>APT::Get::Assume-Yes "true";</literal> The trailing 
    semicolon is required and the quotes are optional. A new scope can be
@@ -219,6 +226,29 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      on TCP connections - otherwise data corruption will occur. Hosts which
      require this are in violation of RFC 2068.</para></listitem>
      </varlistentry>
+
+     <varlistentry><term>https</term>
+	 <listitem><para>HTTPS URIs. Cache-control and proxy options are the same as for
+	 <literal>http</literal> method.
+	 <literal>Pipeline-Depth</literal> option is not supported yet.</para>
+
+	 <para><literal>CaInfo</literal> suboption specifies place of file that
+	 holds info about trusted certificates.
+	 <literal>&lt;host&gt;::CaInfo</literal> is corresponding per-host option.
+	 <literal>Verify-Peer</literal> boolean suboption determines whether verify
+	 server's host certificate against trusted certificates or not.
+	 <literal>&lt;host&gt;::Verify-Peer</literal> is corresponding per-host option.
+	 <literal>Verify-Host</literal> boolean suboption determines whether verify
+	 server's hostname or not.
+	 <literal>&lt;host&gt;::Verify-Host</literal> is corresponding per-host option.
+	 <literal>SslCert</literal> determines what certificate to use for client
+	 authentication. <literal>&lt;host&gt;::SslCert</literal> is corresponding per-host option.
+	 <literal>SslKey</literal> determines what private key to use for client
+	 authentication. <literal>&lt;host&gt;::SslKey</literal> is corresponding per-host option.
+	 <literal>SslForceVersion</literal> overrides default SSL version to use.
+	 Can contain 'TLSv1' or 'SSLv3' string.
+	 <literal>&lt;host&gt;::SslForceVersion</literal> is corresponding per-host option.
+	 </para></listitem></varlistentry>
 
      <varlistentry><term>ftp</term>
      <listitem><para>FTP URIs; ftp::Proxy is the default proxy server to use. It is in the 
@@ -400,16 +430,353 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    </variablelist>
  </refsect1>
 
- <refsect1><title>Debug options</title>
-   <para>Most of the options in the <literal>debug</literal> section are not interesting to 
-   the normal user, however <literal>Debug::pkgProblemResolver</literal> shows 
-   interesting output about the decisions dist-upgrade makes. 
-   <literal>Debug::NoLocking</literal> disables file locking so APT can do some 
-   operations as non-root and <literal>Debug::pkgDPkgPM</literal> will print out the 
-   command line for each dpkg invokation. <literal>Debug::IdentCdrom</literal> will 
-   disable the inclusion of statfs data in CDROM IDs.
-   <literal>Debug::Acquire::gpgv</literal> Debugging of the gpgv method.
+ <refsect1>
+   <title>Periodic and Archives options</title>
+   <para><literal>APT::Periodic</literal> and <literal>APT::Archives</literal>
+   groups of options configure behavior of apt periodic updates, which is
+   done by <literal>/etc/cron.daily/apt</literal> script. See header of
+   this script for the brief documentation of these options.
    </para>
+ </refsect1>
+
+ <refsect1>
+   <title>Debug options</title>
+   <para>
+     Enabling options in the <literal>Debug::</literal> section will
+     cause debugging information to be sent to the standard error
+     stream of the program utilizing the <literal>apt</literal>
+     libraries, or enable special program modes that are primarily
+     useful for debugging the behavior of <literal>apt</literal>.
+     Most of these options are not interesting to a normal user, but a
+     few may be:
+
+     <itemizedlist>
+       <listitem>
+	 <para>
+	   <literal>Debug::pkgProblemResolver</literal> enables output
+	   about the decisions made by
+	   <literal>dist-upgrade, upgrade, install, remove, purge</literal>.
+	 </para>
+       </listitem>
+
+       <listitem>
+	 <para>
+	   <literal>Debug::NoLocking</literal> disables all file
+	   locking.  This can be used to run some operations (for
+	   instance, <literal>apt-get -s install</literal>) as a
+	   non-root user.
+	 </para>
+       </listitem>
+
+       <listitem>
+	 <para>
+	   <literal>Debug::pkgDPkgPM</literal> prints out the actual
+	   command line each time that <literal>apt</literal> invokes
+	   &dpkg;.
+	 </para>
+       </listitem>
+
+       <listitem>
+	 <para>
+	   <literal>Debug::IdentCdrom</literal> disables the inclusion
+	   of statfs data in CDROM IDs.  <!-- TODO: provide a
+	   motivating example, except I haven't a clue why you'd want
+	   to do this. -->
+	 </para>
+       </listitem>
+     </itemizedlist>
+   </para>
+
+   <para>
+     A full list of debugging options to apt follows.
+   </para>
+
+   <variablelist>
+     <varlistentry>
+       <term><literal>Debug::Acquire::cdrom</literal></term>
+
+       <listitem>
+	 <para>
+	   Print information related to accessing
+	   <literal>cdrom://</literal> sources.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::Acquire::ftp</literal></term>
+
+       <listitem>
+	 <para>
+	   Print information related to downloading packages using
+	   FTP.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::Acquire::http</literal></term>
+
+       <listitem>
+	 <para>
+	   Print information related to downloading packages using
+	   HTTP.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::Acquire::https</literal></term>
+
+       <listitem>
+	 <para>
+	   Print information related to downloading packages using
+	   HTTPS.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::Acquire::gpgv</literal></term>
+
+       <listitem>
+	 <para>
+	   Print information related to verifying cryptographic
+	   signatures using <literal>gpg</literal>.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::aptcdrom</literal></term>
+
+       <listitem>
+	 <para>
+	   Output information about the process of accessing
+	   collections of packages stored on CD-ROMs.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::BuildDeps</literal></term>
+       <listitem>
+	 <para>
+	   Describes the process of resolving build-dependencies in
+	   &apt-get;.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::Hashes</literal></term>
+       <listitem>
+	 <para>
+	   Output each cryptographic hash that is generated by the
+	   <literal>apt</literal> libraries.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::IdentCDROM</literal></term>
+       <listitem>
+	 <para>
+	   Do not include information from <literal>statfs</literal>,
+	   namely the number of used and free blocks on the CD-ROM
+	   filesystem, when generating an ID for a CD-ROM.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::NoLocking</literal></term>
+       <listitem>
+	 <para>
+	   Disable all file locking.  For instance, this will allow
+	   two instances of <quote><literal>apt-get
+	   update</literal></quote> to run at the same time.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgAcquire</literal></term>
+
+       <listitem>
+	 <para>
+	   Log when items are added to or removed from the global
+	   download queue.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgAcquire::Auth</literal></term>
+       <listitem>
+	 <para>
+	   Output status messages and errors related to verifying
+	   checksums and cryptographic signatures of downloaded files.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgAcquire::Diffs</literal></term>
+       <listitem>
+	 <para>
+	   Output information about downloading and applying package
+	   index list diffs, and errors relating to package index list
+	   diffs.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgAcquire::RRed</literal></term>
+
+       <listitem>
+	 <para>
+	   Output information related to patching apt package lists
+	   when downloading index diffs instead of full indices.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgAcquire::Worker</literal></term>
+
+       <listitem>
+	 <para>
+	   Log all interactions with the sub-processes that actually
+	   perform downloads.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgAutoRemove</literal></term>
+
+       <listitem>
+	 <para>
+	   Log events related to the automatically-installed status of
+	   packages and to the removal of unused packages.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgDepCache::AutoInstall</literal></term>
+       <listitem>
+	 <para>
+	   Generate debug messages describing which packages are being
+	   automatically installed to resolve dependencies.  This
+	   corresponds to the initial auto-install pass performed in,
+	   e.g., <literal>apt-get install</literal>, and not to the
+	   full <literal>apt</literal> dependency resolver; see
+	   <literal>Debug::pkgProblemResolver</literal> for that.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <!-- Question: why doesn't this do anything?  The code says it should. -->
+     <varlistentry>
+       <term><literal>Debug::pkgInitConfig</literal></term>
+       <listitem>
+	 <para>
+	   Dump the default configuration to standard output on
+	   startup.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgDPkgPM</literal></term>
+       <listitem>
+	 <para>
+	   When invoking &dpkg;, output the precise command line with
+	   which it is being invoked, with arguments separated by a
+	   single space character.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgDPkgProgressReporting</literal></term>
+       <listitem>
+	 <para>
+	   Output all the data received from &dpkg; on the status file
+	   descriptor and any errors encountered while parsing it.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgOrderList</literal></term>
+
+       <listitem>
+	 <para>
+	   Generate a trace of the algorithm that decides the order in
+	   which <literal>apt</literal> should pass packages to
+	   &dpkg;.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgPackageManager</literal></term>
+
+       <listitem>
+	 <para>
+	   Output status messages tracing the steps performed when
+	   invoking &dpkg;.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgPolicy</literal></term>
+
+       <listitem>
+	 <para>
+	   Output the priority of each package list on startup.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgProblemResolver</literal></term>
+
+       <listitem>
+	 <para>
+	   Trace the execution of the dependency resolver (this
+	   applies only to what happens when a complex dependency
+	   problem is encountered).
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::sourceList</literal></term>
+
+       <listitem>
+	 <para>
+	   Print information about the vendors read from
+	   <filename>/etc/apt/vendors.list</filename>.
+	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::Vendor</literal></term>
+
+       <listitem>
+	 <para>
+	   Print information about each vendor.
+	 </para>
+       </listitem>
+     </varlistentry>
+   </variablelist>
  </refsect1>
  
  <refsect1><title>Examples</title>

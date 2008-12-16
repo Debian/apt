@@ -13,6 +13,29 @@ apt (0.7.19ubuntu2) jaunty; urgency=low
   * apt-pkg/dev/debsystem.cc:
     - add missing apti18n.h header
 
+  [ Christian Perrier ]
+  * Translations:
+    - French corrected (remove awful use of first person) 
+    - Finnish updated. Closes: #508449 
+
+  [ Eugene V. Lyubimkin ]
+  * doc/examples/sources.list:
+    - Removed obsolete commented non-us deb-src entry, replaced it with
+      'deb-src security.debian.org' one. (Closes: #411298)
+  * apt-pkg/contrib/mmap.cc:
+    - Added instruction how to work around MMap error in MMap error message.
+      (Closes: #385674, 436028)
+  * buildlib/config.{sub,guess}:
+    - Renewed. This fixes lintian errors.
+  * doc/apt.conf.5.xml, debian/apt-transport-https:
+    - Documented briefly 'APT::https' group of options. (Closes: #507398)
+    - Applied patch from Daniel Burrows to document 'Debug' group of options.
+      (Closes: #457265)
+    - Mentioned 'APT::Periodic' and 'APT::Archives' groups of options.
+      (Closes: #438559)
+    - Mentioned '/* ... */' comments. (Closes: #507601)
+
+
   [ Ian Weisser ]
   * /apt-pkg/deb/debsystem.cc:
     - add 'sudo' to the error message to "run 'dpkg --configure -a'"
@@ -1602,6 +1625,16 @@ apt (0.7.0) experimental; urgency=low
   * support for unattended-upgrades (via unattended-upgrades
     package)
   * added apt-transport-https method
+  * merged "install-recommends" branch (ABI break): 
+    - new "--install-recommends"
+    - install new recommends on "upgrade" if --install-recommends is 
+      given
+    - new "--fix-policy" option to install all packages with unmet
+      important dependencies (usefull with --install-recommends to
+      see what not-installed recommends are on the system)
+    - fix of recommended packages display (only show CandidateVersion
+      fix or-group handling)
+  * merged "install-task" branch (use with "apt-get install taskname^")
 
  -- Michael Vogt <mvo@debian.org>  Fri, 12 Jan 2007 20:48:07 +0100
 
@@ -1735,16 +1768,6 @@ apt (0.6.46.2) unstable; urgency=low
 
 apt (0.6.46.1) unstable; urgency=low
 
-  * merged "install-recommends" branch (ABI break): 
-    - new "--install-recommends"
-    - install new recommends on "upgrade" if --install-recommends is 
-      given
-    - new "--fix-policy" option to install all packages with unmet
-      important dependencies (usefull with --install-recommends to
-      see what not-installed recommends are on the system)
-    - fix of recommended packages display (only show CandidateVersion
-      fix or-group handling)
-  * merged "install-task" branch (use with "apt-get install taskname^")
   * methods/gzip.cc:
     - deal with empty files 
   * Applied patch from Daniel Schepler to make apt bin-NMU able.
