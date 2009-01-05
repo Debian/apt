@@ -1,4 +1,4 @@
-apt (0.7.20) UNRELEASED; urgency=low
+apt (0.7.20) unstable; urgency=low
 
   [ Eugene V. Lyubimkin ]
   * debian/changelog:
@@ -13,6 +13,12 @@ apt (0.7.20) UNRELEASED; urgency=low
     - Mentioned 'APT::Periodic' and 'APT::Archives' groups of options.
       (Closes: #438559)
     - Mentioned '/* ... */' comments. (Closes: #507601)
+  * doc/examples/sources.list:
+    - Removed obsolete commented non-us deb-src entry, replaced it with
+      'deb-src security.debian.org' one. (Closes: #411298)
+  * apt-pkg/contrib/mmap.cc:
+    - Added instruction how to work around MMap error in MMap error message.
+      (Closes: #385674, 436028)
 
   [ Michael Vogt ]
   * add option to "apt-get build-dep" to mark the needed 
@@ -31,24 +37,9 @@ apt (0.7.20) UNRELEASED; urgency=low
     - Catalan updated. Closes: #509375
     - Vietnamese updated. Closes: #509422
     - Traditional Chinese added. Closes: #510664
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 05 Jan 2009 08:59:20 +0100
-
-apt (0.7.20~exp2) unstable; urgency=low
-
-  [ Eugene V. Lyubimkin ]
-  * doc/examples/sources.list:
-    - Removed obsolete commented non-us deb-src entry, replaced it with
-      'deb-src security.debian.org' one. (Closes: #411298)
-  * apt-pkg/contrib/mmap.cc:
-    - Added instruction how to work around MMap error in MMap error message.
-      (Closes: #385674, 436028)
-
-  [ Christian Perrier ]
-  * Translations:
     - French corrected (remove awful use of first person) 
 
- -- Michael Vogt <mvo@debian.org>  Tue, 02 Dec 2008 20:30:14 +0100
+ -- Michael Vogt <mvo@debian.org>  Mon, 05 Jan 2009 08:59:20 +0100
 
 apt (0.7.19) unstable; urgency=low
 
@@ -65,7 +56,6 @@ apt (0.7.19) unstable; urgency=low
     - Removed asking to file a release-critical bug against a package if there
       is a request to install only one package and it is not installable.
       (Closes: #419521)
-
 
   [ Michael Vogt ]
     - fix SIGHUP handling (closes: #463030)
