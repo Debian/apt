@@ -111,7 +111,7 @@ bool ARArchive::LoadHeaders()
       else
       {
 	 unsigned int I = sizeof(Head.Name) - 1;
-	 for (; Head.Name[I] == ' '; I--);
+	 for (; Head.Name[I] == ' ' || Head.Name[I] == '/'; I--);
 	 Memb->Name = string(Head.Name,I+1);
       }
 

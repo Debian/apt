@@ -1,9 +1,25 @@
 apt (0.7.19ubuntu3) jaunty; urgency=low
 
+  [ Michael Vogt ]
   * apt-pkg/contrib/strutl.cc:
     - fix TimeToStr i18n (LP: #289807)
+  * apt-inst/contrib/arfile.cc:
+    - support members ending with '/' as well (thanks to Michal Cihr,
+      closes: #500988)
 
- --
+  [ Christian Perrier ]
+  * Translations:
+    - Galician updated. Closes: #509151
+    - Catalan updated. Closes: #509375
+    - Vietnamese updated. Closes: #509422
+    - Traditional Chinese added. Closes: #510664
+
+  [ Eugene V. Lyubimkin ]  
+  * COPYING:
+    - Actualized. Removed obsolete Qt section, added GPLv2 clause.
+      (Closes: #440049, #509337)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 05 Jan 2009 08:59:20 +0100
 
 apt (0.7.19ubuntu2) jaunty; urgency=low
 
@@ -45,7 +61,6 @@ apt (0.7.19ubuntu2) jaunty; urgency=low
       (Closes: #438559)
     - Mentioned '/* ... */' comments. (Closes: #507601)
 
-
   [ Ian Weisser ]
   * /apt-pkg/deb/debsystem.cc:
     - add 'sudo' to the error message to "run 'dpkg --configure -a'"
@@ -74,7 +89,6 @@ apt (0.7.19) unstable; urgency=low
     - Removed asking to file a release-critical bug against a package if there
       is a request to install only one package and it is not installable.
       (Closes: #419521)
-
 
   [ Michael Vogt ]
   * doc/makefile:
