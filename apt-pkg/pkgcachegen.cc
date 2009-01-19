@@ -143,7 +143,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
 	    // don't add a new description if we have one for the given
 	    // md5 && language
- 	    for ( ; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++)
+ 	    for ( ; Desc.end() == false; Desc++)
 	       if (MD5SumValue(Desc.md5()) == CurMd5 && 
 	           Desc.LanguageCode() == List.DescriptionLanguage())
 		  duplicate=true;
