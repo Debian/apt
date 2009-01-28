@@ -18,7 +18,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apti18n.h>
-    
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -67,11 +67,11 @@ bool debSystem::Lock()
    if (LockFD == -1)
    {
       if (errno == EACCES || errno == EAGAIN)
-	 return _error->Error("Unable to lock the administration directory (%s), "
-			      "is another process using it?",AdminDir.c_str());
+	 return _error->Error(_("Unable to lock the administration directory (%s), "
+	                        "is another process using it?"),AdminDir.c_str());
       else
-	 return _error->Error("Unable to lock the administration directory (%s), "
-			      "are you root?",AdminDir.c_str());
+	 return _error->Error(_("Unable to lock the administration directory (%s), "
+	                        "are you root?"),AdminDir.c_str());
    }
    
    // See if we need to abort with a dirty journal

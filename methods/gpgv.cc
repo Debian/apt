@@ -264,7 +264,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
       // least one bad signature. good signatures and NoPubKey signatures
       // happen easily when a file is signed with multiple signatures
       if(GoodSigners.empty() or !BadSigners.empty())
-      	 return _error->Error(errmsg.c_str());
+      	 return _error->Error("%s", errmsg.c_str());
    }
       
    // Just pass the raw output up, because passing it as a real data
