@@ -214,7 +214,7 @@ struct pkgCache::Package
    unsigned char InstState;         // Flags
    unsigned char CurrentState;      // State
    
-   unsigned short ID;
+   unsigned int ID;
    unsigned long Flags;
 };
 
@@ -235,7 +235,7 @@ struct pkgCache::PackageFile
    
    // Linked list
    map_ptrloc NextFile;        // PackageFile
-   unsigned short ID;
+   unsigned int ID;
    time_t mtime;                  // Modification time for the file
 };
 
@@ -272,7 +272,7 @@ struct pkgCache::Version
    map_ptrloc Size;              // These are the .deb size
    map_ptrloc InstalledSize;
    unsigned short Hash;
-   unsigned short ID;
+   unsigned int ID;
    unsigned char Priority;
 };
 
@@ -289,7 +289,7 @@ struct pkgCache::Description
    map_ptrloc NextDesc;          // Description
    map_ptrloc ParentPkg;         // Package
 
-   unsigned short ID;
+   unsigned int ID;
 };
 
 struct pkgCache::Dependency
