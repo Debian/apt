@@ -452,6 +452,38 @@ void pkgAcqMethod::Status(const char *Format,...)
 }
 									/*}}}*/
 
+// AcqMethod::Redirect - Send a redirect message                       /*{{{*/
+// ---------------------------------------------------------------------
+/* This method sends the redirect message and also manipulates the queue
+   to keep the pipeline synchronized. */
+void pkgAcqMethod::Redirect(const string &NewURI)
+{
+   string CurrentURI = "<UNKNOWN>";
+   if (Queue != 0)
+      CurrentURI = Queue->Uri;
+ 
+   char S[1024];
+   snprintf(S, sizeof(S)-50, "103 Redirect\nURI: %s\nNew-URI: %s\n\n",
+         CurrentURI.c_str(), NewURI.c_str());
+
+   if (write(STDOUT_FILENO,S,strlen(S)) != (ssize_t)strlen(S))
+      exit(100);
+
+   // Change the URI for the request.
+   Queue->Uri = NewURI;
+
+   /* To keep the pipeline synchronized, move the current request to
+      the end of the queue, past the end of the current pipeline. */
+   FetchItem *I;
+   for (I = Queue; I->Next != 0; I = I->Next) ;
+   I->Next = Queue;
+   Queue = Queue->Next;
+   I->Next->Next = 0;
+   if (QueueBack == 0)
+      QueueBack = I->Next;
+}
+                                                                        /*}}}*/
+
 // AcqMethod::FetchResult::FetchResult - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

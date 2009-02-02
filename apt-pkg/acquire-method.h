@@ -86,6 +86,8 @@ class pkgAcqMethod
    void Log(const char *Format,...);
    void Status(const char *Format,...);
    
+   void Redirect(const string &NewURI);
+ 
    int Run(bool Single = false);
    inline void SetFailReason(string Msg) {FailReason = Msg;};
    inline void SetIP(string aIP) {IP = aIP;};

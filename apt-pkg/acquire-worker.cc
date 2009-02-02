@@ -220,6 +220,20 @@ bool pkgAcquire::Worker::RunMessages()
 	 Status = LookupTag(Message,"Message");
 	 break;
 	    
+         // 103 Redirect
+         case 103:
+         {
+            if (Itm == 0)
+            {
+               _error->Error("Method gave invalid 103 Redirect message");
+               break;
+            }
+ 
+            string NewURI = LookupTag(Message,"New-URI",URI.c_str());
+            Itm->URI = NewURI;
+            break;
+         }
+   
 	 // 200 URI Start
 	 case 200:
 	 {

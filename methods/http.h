@@ -99,6 +99,7 @@ struct ServerState
    enum {Chunked,Stream,Closes} Encoding;
    enum {Header, Data} State;
    bool Persistent;
+   string Location;
    
    // This is a Persistent attribute of the server itself.
    bool Pipeline;
@@ -144,6 +145,8 @@ class HttpMethod : public pkgAcqMethod
 
    protected:
    virtual bool Fetch(FetchItem *);
+   
+   string NextURI;
    
    public:
    friend class ServerState;
