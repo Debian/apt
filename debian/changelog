@@ -38,6 +38,9 @@ apt (0.7.21) UNRELEASED; urgency=low
   * [ABI break] merge support for http redirects, thanks to
     Jeff Licquia and Anthony Towns
   * [ABI break] use int for the package IDs (thanks to Steve Cotton)
+  * apt-pkg/pkgcache.cc:
+    - do not run "dpkg --configure pkg" if pkg is in trigger-awaited
+      state (LP: #322955)
 
   [ Dereck Wonnacott ]
   * apt-ftparchive might write corrupt Release files (LP: #46439)

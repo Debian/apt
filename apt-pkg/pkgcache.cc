@@ -274,9 +274,13 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
       return NeedsUnpack;
    
    if (Pkg->CurrentState == pkgCache::State::UnPacked ||
-       Pkg->CurrentState == pkgCache::State::HalfConfigured ||
-       Pkg->CurrentState == pkgCache::State::TriggersPending ||
-       Pkg->CurrentState == pkgCache::State::TriggersAwaited)
+       Pkg->CurrentState == pkgCache::State::HalfConfigured) ||
+      //we don't need to care for triggers awaiting packages
+      //dpkg will deal with them automatically when the 
+      //trigger pending action is run (those packages are usually
+      //in half-configured or triggers-pending state)
+      //Pkg->CurrentState == pkgCache::State::TriggersAwaited
+       Pkg->CurrentState == pkgCache::State::TriggersPending)
       return NeedsConfigure;
    
    if (Pkg->CurrentState == pkgCache::State::HalfInstalled ||
