@@ -136,7 +136,8 @@ Acquire
     Proxy::http.us.debian.org "DIRECT";  // Specific per-host setting
     Timeout "120";
     Pipeline-Depth "5";
-    
+    AllowRedirect  "true";
+
     // Cache Control. Note these do not work with Squid 2.0.2
     No-Cache "false";
     Max-Age "86400";     // 1 Day age on index files
@@ -153,7 +154,8 @@ Acquire
 	Verify-Peer "false";
 	SslCert "/etc/apt/some.pem";
         CaPath  "/etc/ssl/certs";
-        Verify-Host" "2";
+        Verify-Host" "true";
+        AllowRedirect  "true";
   };
 
   ftp
