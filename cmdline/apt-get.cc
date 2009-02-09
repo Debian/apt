@@ -2542,7 +2542,7 @@ bool DoBuildDep(CommandLine &CmdL)
             {
                // We successfully installed something; skip remaining alternatives
                skipAlternatives = hasAlternatives;
-	       if(_config->FindB("APT::Get::Build-Dep-Automatic", true) == true)
+	       if(_config->FindB("APT::Get::Build-Dep-Automatic", false) == true)
 		  Cache->MarkAuto(Pkg, true);
                continue;
             }
