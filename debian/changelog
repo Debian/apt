@@ -32,8 +32,12 @@ apt (0.7.20.2ubuntu1) jaunty; urgency=low
   * cmdline/apt-get.cc:
     - default to "false" for the "APT::Get::Build-Dep-Automatic"
       option (follow debian here)
+  * apt-pkg/pkgcache.cc:
+    - do not run "dpkg --configure pkg" if pkg is in trigger-awaited
+      state (LP: #322955)
   * methods/https.cc:
     - add Acquire::https::AllowRedirect support
+    - do not unlink files in partial/ (thanks to robbiew)
 
   [ Dereck Wonnacott ]
   * Clarify the --help for 'purge' (LP: #243948)
