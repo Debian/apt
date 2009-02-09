@@ -1,11 +1,18 @@
-apt (0.7.19ubuntu3) jaunty; urgency=low
+apt (0.7.20.2ubuntu1) jaunty; urgency=low
 
+  [ Christian Perrier ]
+  * Translations:
+    - bg.po. Closes: #513211
+    - zh_TW.po. Closes: #513311
+    - nb.po. Closes: #513843
+  
   [ Michael Vogt ]
+  * merged from the debian-sid branch
+  * [ABI break] merge support for http redirects, thanks to
+    Jeff Licquia and Anthony Towns
+  * [ABI break] use int for the package IDs (thanks to Steve Cotton)
   * apt-pkg/contrib/strutl.cc:
     - fix TimeToStr i18n (LP: #289807)
-  * apt-inst/contrib/arfile.cc:
-    - support members ending with '/' as well (thanks to Michal Cihr,
-      closes: #500988)
   * debian/apt.conf.autoremove:
     - readd "linux-image" (and friends) to the auto-remove
      blacklist
@@ -22,34 +29,48 @@ apt (0.7.19ubuntu3) jaunty; urgency=low
     - add new strprintf() function to make i18n strings easier
   * apt-pkg/dev/debsystem.cc:
     - add missing apti18n.h header
-  * [ABI break] merge support for http redirects, thanks to
-    Jeff Licquia and Anthony Towns
-  * [ABI break] use int for the package IDs (thanks to Steve Cotton)
-
-  [ Christian Perrier ]
-  * Translations:
-    - Galician updated. Closes: #509151
-    - Catalan updated. Closes: #509375
-    - Vietnamese updated. Closes: #509422
-    - Traditional Chinese added. Closes: #510664
-    - French corrected (remove awful use of first person) 
-    - Finnish updated. Closes: #508449 
-
-  [ Eugene V. Lyubimkin ]  
-  * COPYING:
-    - Actualized. Removed obsolete Qt section, added GPLv2 clause.
-      (Closes: #440049, #509337)
 
   [ Dereck Wonnacott ]
   * Clarify the --help for 'purge' (LP: #243948)
 
+  [ Ian Weisser ]
+  * /apt-pkg/deb/debsystem.cc:
+    - add 'sudo' to the error message to "run 'dpkg --configure -a'"
+      (LP: #52697)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 16 Dec 2008 06:59:17 +0100
+
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 09 Feb 2009 14:21:05 +0100
+
+apt (0.7.20.2) unstable; urgency=medium
+
   [ Eugene V. Lyubimkin ]
-  * doc/examples/sources.list:
-    - Removed obsolete commented non-us deb-src entry, replaced it with
-      'deb-src security.debian.org' one. (Closes: #411298)
-  * apt-pkg/contrib/mmap.cc:
-    - Added instruction how to work around MMap error in MMap error message.
-      (Closes: #385674, 436028)
+  * Urgency set to medium due to RC bug fix.
+  * doc/apt.ent, apt-get.8.xml:
+    - Fix invalid XML entities. (Closes: #514402)
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Sat, 07 Feb 2009 16:48:21 +0200
+
+apt (0.7.20.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/pkgcachegen.cc:
+    - fix apt-cache search for localized description 
+      (closes: #512110)
+  
+  [ Christian Perrier ]
+  * Translations:
+    - fr.po: fix spelling error to "défectueux". Thanks to Thomas Péteul.
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 20 Jan 2009 09:35:05 +0100
+
+apt (0.7.20) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * debian/changelog:
+    - Fixed place of 'merged install-recommends and install-task branches'
+      from 0.6.46.1 to 0.7.0. (Closes: #439866)
   * buildlib/config.{sub,guess}:
     - Renewed. This fixes lintian errors.
   * doc/apt.conf.5.xml, debian/apt-transport-https:
@@ -59,13 +80,36 @@ apt (0.7.19ubuntu3) jaunty; urgency=low
     - Mentioned 'APT::Periodic' and 'APT::Archives' groups of options.
       (Closes: #438559)
     - Mentioned '/* ... */' comments. (Closes: #507601)
+  * doc/examples/sources.list:
+    - Removed obsolete commented non-us deb-src entry, replaced it with
+      'deb-src security.debian.org' one. (Closes: #411298)
+  * apt-pkg/contrib/mmap.cc:
+    - Added instruction how to work around MMap error in MMap error message.
+      (Closes: #385674, 436028)
+  * COPYING:
+    - Actualized. Removed obsolete Qt section, added GPLv2 clause.
+      (Closes: #440049, #509337)
 
-  [ Ian Weisser ]
-  * /apt-pkg/deb/debsystem.cc:
-    - add 'sudo' to the error message to "run 'dpkg --configure -a'"
-      (LP: #52697)
+  [ Michael Vogt ]
+  * add option to "apt-get build-dep" to mark the needed
+    build-dep packages as automatic installed.
+    This is controlled via the value of
+    APT::Get::Build-Dep-Automatic and is set "false" by default.
+    Thanks to Aaron Haviland, closes: #448743
+  * apt-inst/contrib/arfile.cc:
+    - support members ending with '/' as well (thanks to Michal Cihr,
+      closes: #500988)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 16 Dec 2008 06:59:17 +0100
+  [ Christian Perrier ]
+  * Translations:
+    - Finnish updated. Closes: #508449
+    - Galician updated. Closes: #509151
+    - Catalan updated. Closes: #509375
+    - Vietnamese updated. Closes: #509422
+    - Traditional Chinese added. Closes: #510664
+    - French corrected (remove awful use of first person)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 05 Jan 2009 08:59:20 +0100
 
 apt (0.7.19ubuntu1) jaunty; urgency=low
 
