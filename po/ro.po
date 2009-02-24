@@ -2109,9 +2109,12 @@ msgstr "Nu s-a putut executa „mmap” cu un fișier gol"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nu s-a putut face mmap cu %lu octeți"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "MMap-ul dinamic a rămas fără spațiu"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2932,6 +2935,9 @@ msgstr "Nu s-a putut peteci fișierul"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Conexiune închisă prematur"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "MMap-ul dinamic a rămas fără spațiu"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"

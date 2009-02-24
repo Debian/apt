@@ -2120,9 +2120,12 @@ msgstr "Невозможно отобразить в память пустой �
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Невозможно отобразить в память %lu байт"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "Выход за границы диапазона при работе MMap"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2938,3 +2941,6 @@ msgstr "Не удалось пропатчить файл"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Соединение закрыто преждевременно"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "Выход за границы диапазона при работе MMap"

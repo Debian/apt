@@ -2081,9 +2081,12 @@ msgstr "Tyhjälle tiedostolle ei voi tehdä mmap:ia"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Ei voitu tehdä %lu tavun mmap:ia"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "Tila loppui kesken dynaamiselta MMap:lta"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2891,3 +2894,6 @@ msgstr "Tiedostoa %s ei voitu avata"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Yhteys katkesi ennenaikaisesti"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "Tila loppui kesken dynaamiselta MMap:lta"

@@ -2103,9 +2103,12 @@ msgstr "No puedo hacer mmap de un fichero vacío"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "No pude hacer mmap de %lu bytes"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "La función «Dynamic MMap» se quedó sin espacio"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2931,6 +2934,9 @@ msgstr "No pude parchear el fichero"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "La conexión se cerró prematuramente"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "La función «Dynamic MMap» se quedó sin espacio"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"

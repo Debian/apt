@@ -2090,9 +2090,12 @@ msgstr "空のファイルを mmap できません"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "%lu バイトの mmap ができませんでした"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "動的 MMap が制限を越えました"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2908,3 +2911,6 @@ msgstr "ファイルにパッチできませんでした"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "途中で接続がクローズされました"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "動的 MMap が制限を越えました"

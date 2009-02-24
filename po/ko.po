@@ -2074,9 +2074,12 @@ msgstr "빈 파일에 메모리 매핑할 수 없습니다"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "%lu바이트를 메모리 매핑할 수 없습니다"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "동적 메모리 매핑이 범위를 벗어났습니다"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2878,6 +2881,9 @@ msgstr "%s 파일을 열 수 없습니다"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "연결이 너무 빨리 끊어졌습니다"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "동적 메모리 매핑이 범위를 벗어났습니다"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"

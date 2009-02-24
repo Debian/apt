@@ -2100,9 +2100,12 @@ msgstr "Nie można wykonać mmap na pustym pliku"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nie udało się wykonać mmap %lu bajtów"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "Brak miejsca dla dynamicznego MMap"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2911,6 +2914,9 @@ msgstr "Nie udało się nałożyć łatki na plik"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Połączenie zostało zamknięte przedwcześnie"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "Brak miejsca dla dynamicznego MMap"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"

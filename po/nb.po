@@ -2088,9 +2088,14 @@ msgstr "Kan ikke utføre mmap på en tom fil"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Kunne ikke lage mmap av %lu bytes"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "Dynamisk MMap gikk tom for minne"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+"Dynamisk MMap gikk tom for minne. Øk størrelsen på APT::Cache-Limit. "
+"Nåværende verdi: %lu. (man 5 apt.conf)"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2895,12 +2900,8 @@ msgstr "Kunne ikke åpne fila %s"
 msgid "Connection closed prematurely"
 msgstr "Forbindelsen ble uventet stengt"
 
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "Dynamisk MMap gikk tom for minne. Øk størrelsen på APT::Cache-Limit. "
-#~ "Nåværende verdi: %lu. (man 5 apt.conf)"
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "Dynamisk MMap gikk tom for minne"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"

@@ -2100,9 +2100,14 @@ msgstr "No es pot transferir un fitxer buit a memòria"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "No s'ha pogut crear un mapa de memòria de %lu octets"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "L'MMap dinàmic s'ha quedat sense espai"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+"No hi ha espai per al «Dynamic MMap». Incrementeu la mida d'APT::Cache-Limit. "
+"Valor actual: %lu. (man 5 apt.conf)"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2925,12 +2930,8 @@ msgstr "No s'ha pogut aplicar el pedaç al fitxer"
 msgid "Connection closed prematurely"
 msgstr "La connexió s'ha tancat prematurament"
 
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "No hi ha espai per al «Dynamic MMap». Incrementeu la mida d'APT::Cache-"
-#~ "Limit. Valor actual: %lu. (man 5 apt.conf)"
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "L'MMap dinàmic s'ha quedat sense espai"
 
 #~ msgid "Release file expired, ignoring %s (valid until %s)"
 #~ msgstr "El fitxer Release ha caducat, s'està ignorant %s (vàlid fins a %s)"

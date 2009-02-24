@@ -2104,9 +2104,12 @@ msgstr "Невъзможно е да се прехвърли в паметта �
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Неуспех при прехвърлянето в паметта на %lu байта"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "Недостатъчен ресурс при налагане на файл в паметта"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2930,3 +2933,6 @@ msgstr "Неуспех при закърпване на файла"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Връзката прекъсна преждевременно"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "Недостатъчен ресурс при налагане на файл в паметта"

@@ -2050,9 +2050,14 @@ msgstr "不能 mmap 空白檔案"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "無法 mmap 到 %lu 位元組"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
 msgstr ""
+"動態 MMap 已用完所有空間。請增加 APT::Cache-Limit 的大小。目前大小為：%lu。"
+"(man 5 apt.conf)"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2845,13 +2850,6 @@ msgstr "無法修補檔案"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "連線突然終止"
-
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "動態 MMap 已用完所有空間。請增加 APT::Cache-Limit 的大小。目前大小為：%"
-#~ "lu。(man 5 apt.conf)"
 
 #~ msgid "Release file expired, ignoring %s (valid until %s)"
 #~ msgstr "Release 檔已過期，略過 %s（有效期限 %s）"

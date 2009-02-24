@@ -2065,9 +2065,12 @@ msgstr "Nemohu provést mmap prázdného souboru"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nešlo mmapovat %lu bajtů"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "Dynamickému MMapu došlo místo"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2871,6 +2874,9 @@ msgstr "Nemohu záplatovat soubor"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Spojení bylo předčasně ukončeno"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "Dynamickému MMapu došlo místo"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"

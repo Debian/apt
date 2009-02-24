@@ -2054,9 +2054,12 @@ msgstr "无法 mmap 一个空文件"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "无法 mmap %lu 字节的数据"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "动态内存映射(Dynamic MMap)空间不足"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2856,6 +2859,9 @@ msgstr "无法打开补丁文件"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "连接被永久关闭"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "动态内存映射(Dynamic MMap)空间不足"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"
