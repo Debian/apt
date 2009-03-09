@@ -1298,7 +1298,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       binary packages in the search */
    pkgSrcRecords::Parser *Parse;
    SrcRecs.Restart();
-   while ((Parse = SrcRecs.Find(Src.c_str(), MarchSrcOnly)) != 0)
+   while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0)
    {
       string Ver = Parse->Version();
       
