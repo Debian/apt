@@ -1,9 +1,13 @@
-apt (0.7.20.2ubuntu2) UNRELEASED; urgency=low
+apt (0.7.20.2ubuntu2) jaunty; urgency=low
 
   * apt-pkg/deb/dpkgpm.cc:
     - revert termios patch (LP: #338514)
+  * cmdline/apt-get.cc
+    - fix "apt-get source pkg" if there is a binary package and
+      a source package of the same name but from different 
+      packages (LP: #330103)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 06 Mar 2009 10:15:15 +0100
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 09 Mar 2009 16:33:28 +0100
 
 apt (0.7.20.2ubuntu1) jaunty; urgency=low
 
