@@ -31,6 +31,9 @@ apt (0.7.21) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - fix "apt-get source pkg=ver" if binary name != source name
       and show a message (LP: #202219)
+    - fix "apt-get source pkg" if there is a binary package and
+      a source package of the same name but from different 
+      packages (LP: #330103)
   * apt-pkg/deb/debsystem.cc:
     - make strings i18n able 
   * apt-pkg/contrib/strutl.cc:
