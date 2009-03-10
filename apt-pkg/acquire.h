@@ -539,7 +539,7 @@ class pkgAcquire::UriIterator
    
    public:
    
-   inline void operator ++() {operator ++();};
+   inline void operator ++() {operator ++(0);};
 
    void operator ++(int)
    {
