@@ -123,6 +123,8 @@ bool MirrorMethod::Clean(string Dir)
 
 bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
 {
+   if(Debug)
+      clog << "MirrorMethod::DownloadMirrorFile(): " << endl;
 
    // check the file, if it is not older than RefreshInterval just use it
    // otherwise try to get a new one
@@ -251,6 +253,9 @@ string MirrorMethod::GetMirrorFileName(string mirror_uri_str)
    depth. */
 bool MirrorMethod::Fetch(FetchItem *Itm)
 {
+   if(Debug)
+      clog << "MirrorMethod::Fetch()" << endl;
+
    // the http method uses Fetch(0) as a way to update the pipeline,
    // just let it do its work in this case - Fetch() with a valid
    // Itm will always run before the first Fetch(0)
@@ -269,8 +274,17 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
       DownloadMirrorFile(Itm->Uri);
    }
 
-   if(Mirror.empty())
-      SelectMirror();
+   if(Mirror.empty()) {
+      if(!SelectMirror()) {
+	 // no valid mirror selected, something went wrong downloading
+	 // from the master mirror site most likely and there is
+	 // no old mirror file availalbe
+	 return false;
+      }
+   }
+   if(Debug)
+      clog << "selected mirror: " << Mirror << endl;
+
 
    for (FetchItem *I = Queue; I != 0; I = I->Next)
    {

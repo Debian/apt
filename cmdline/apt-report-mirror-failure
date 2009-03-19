@@ -5,7 +5,7 @@ import urllib
 import apt_pkg
 
 apt_pkg.init()
-url = apt_pkg.Config.Find("Acquire::Mirror::ReportFailures", None)
+url = apt_pkg.Config.Find("Acquire::Mirror::ReportFailures", "")
                           #"http://people.ubuntu.com:9000/mirror-failure")
                           #"http://localhost:9000/mirror-failure")
 if not url:
