@@ -145,10 +145,10 @@ void AcqTextStatus::Stop()
    bandwidth and ETA indicator. */
 bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 {
+   pkgAcquireStatus::Pulse(Owner);
+   
    if (Quiet > 0)
       return true;
-   
-   pkgAcquireStatus::Pulse(Owner);
    
    enum {Long = 0,Medium,Short} Mode = Long;
    

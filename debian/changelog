@@ -52,6 +52,12 @@ apt (0.7.21) UNRELEASED; urgency=low
   * Apply --important option to apt-cache depends (LP: #16947) 
   * Clarify the --help for 'purge' (LP: #243948)
 
+
+  [ Colin Watson ]
+  * cmdline/acqprogress.cc:
+    - Call pkgAcquireStatus::Pulse even if quiet, so that we still get
+      dlstatus messages on the status-fd (LP: #290234).
+
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 12 Sep 2008 11:34:24 +0200
 
 apt (0.7.20) unstable; urgency=low
