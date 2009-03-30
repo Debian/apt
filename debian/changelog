@@ -1,10 +1,16 @@
-apt (0.7.20.2ubuntu5) UNRELEASED; urgency=low
+apt (0.7.20.2ubuntu5) jaunty; urgency=low
 
+  [ Colin Watson ]
   * cmdline/acqprogress.cc:
     - Call pkgAcquireStatus::Pulse even if quiet, so that we still get
       dlstatus messages on the status-fd (LP: #290234).
+  
+  [ Michael Vogt ]
+  * debian/apt.cron.daily:
+    - do not clutter cron mail with bogus gconftool messages 
+      (LP: #223502)
 
- -- Colin Watson <cjwatson@ubuntu.com>  Thu, 26 Mar 2009 23:50:56 +0000
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 30 Mar 2009 13:22:28 +0200
 
 apt (0.7.20.2ubuntu4) jaunty; urgency=low
 
