@@ -175,10 +175,16 @@ DownloadUpgradeableInterval=0
 eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
 AutocleanInterval=$DownloadUpgradeableInterval
 eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
-
 UnattendedUpgradeInterval=0
 eval $(apt-config shell UnattendedUpgradeInterval APT::Periodic::Unattended-Upgrade)
 
+# check if we actually have to do anything
+if [ $UpdateInterval -eq 0 ] &&
+   [ $DownloadUpgradeableInterval -eq 0 ] &&
+   [ $UnattendedUpgradeInterval -eq 0 ] &&
+   [ $AutocleanInterval -eq 0 ]; then
+    exit 0
+fi
 
 # laptop check, on_ac_power returns:
 #       0 (true)    System is on mains power
@@ -192,19 +198,20 @@ if which on_ac_power >/dev/null; then
     fi
 fi
 
-# check if we can lock the cache and if the cache is clean
-# There's a reasonable chance that someone is already running an apt
-# frontend that has locked the cache, so exit quietly if it is locked.
-if ! apt-get check -q -q 2>/dev/null; then
-    exit 0
-fi
-
-# sleep random amount of time
+# sleep random amount of time to avoid hitting the 
+# mirrors at the same time
 random_sleep
 
-# check again if we can access the cache
+# check if we can access the cache
 if ! apt-get check -q -q 2>/dev/null; then
-    exit 1
+    # wait random amount of time before retrying
+    random_sleep
+    # check again
+    if ! apt-get check -q -q 2>/dev/null; then
+       echo "$0: could not lock the APT cache while performing daily cron job. "
+       echo "Is another package manager working?"
+       exit 1
+    fi
 fi
 
 # set the proxy based on the admin users gconf settings
@@ -216,14 +223,6 @@ if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ] && [ -x 
 	if [ "$use" = "true" ] && [ -n "$host" ] && [ -n "$port" ]; then
 		export http_proxy="http://$host:$port/"
 	fi
-fi
-
-# sleep random amount of time
-random_sleep
-
-# check again if we can access the cache
-if ! apt-get check -q -q 2>/dev/null; then
-    exit 1
 fi
 
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
