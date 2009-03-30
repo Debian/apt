@@ -237,6 +237,11 @@ if check_stamp $UPDATE_STAMP $UpdateInterval; then
 	if which dbus-send >/dev/null; then
 	    dbus-send --system / app.apt.dbus.updated boolean:true 2>/dev/null || true
 	fi
+	# now run apt-xapian-index if it is installed to ensure the index
+	# is up-to-date
+	if [ -x /usr/sbin/update-apt-xapian-index ]; then
+	    ionice -c3 update-apt-xapian-index -q
+	fi
         update_stamp $UPDATE_STAMP
     fi
 fi
