@@ -17,13 +17,18 @@
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
 #define GNUPGNOPUBKEY "[GNUPG:] NO_PUBKEY"
 #define GNUPGVALIDSIG "[GNUPG:] VALIDSIG"
+#define GNUPGGOODSIG "[GNUPG:] GOODSIG"
+#define GNUPGKEYEXPIRED "[GNUPG:] KEYEXPIRED"
+#define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
 
 class GPGVMethod : public pkgAcqMethod
 {
    private:
    string VerifyGetSigners(const char *file, const char *outfile,
-				vector<string> &GoodSigners, vector<string> &BadSigners,
+				vector<string> &GoodSigners, 
+                                vector<string> &BadSigners,
+                                vector<string> &WorthlessSigners,
 				vector<string> &NoPubKeySigners);
    
    protected:
@@ -37,6 +42,7 @@ class GPGVMethod : public pkgAcqMethod
 string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<string> &GoodSigners,
 					 vector<string> &BadSigners,
+					 vector<string> &WorthlessSigners,
 					 vector<string> &NoPubKeySigners)
 {
    // setup a (empty) stringstream for formating the return value
@@ -179,15 +185,27 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             std::cerr << "Got NODATA! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
-      if (strncmp(buffer, GNUPGVALIDSIG, sizeof(GNUPGVALIDSIG)-1) == 0)
+      if (strncmp(buffer, GNUPGKEYEXPIRED, sizeof(GNUPGKEYEXPIRED)-1) == 0)
+      {
+         if (_config->FindB("Debug::Acquire::gpgv", false))
+            std::cerr << "Got KEYEXPIRED! " << std::endl;
+         WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
+      }
+      if (strncmp(buffer, GNUPGREVKEYSIG, sizeof(GNUPGREVKEYSIG)-1) == 0)
+      {
+         if (_config->FindB("Debug::Acquire::gpgv", false))
+            std::cerr << "Got REVKEYSIG! " << std::endl;
+         WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
+      }
+      if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
       {
          char *sig = buffer + sizeof(GNUPGPREFIX);
-         char *p = sig + sizeof("VALIDSIG");
+         char *p = sig + sizeof("GOODSIG");
          while (*p && isxdigit(*p)) 
             p++;
          *p = 0;
          if (_config->FindB("Debug::Acquire::gpgv", false))
-            std::cerr << "Got VALIDSIG, key ID:" << sig << std::endl;
+            std::cerr << "Got GOODSIG, key ID:" << sig << std::endl;
          GoodSigners.push_back(string(sig));
       }
    }
@@ -227,6 +245,8 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
    string keyID;
    vector<string> GoodSigners;
    vector<string> BadSigners;
+   // a worthless signature is a expired or revoked one
+   vector<string> WorthlessSigners;
    vector<string> NoPubKeySigners;
    
    FetchResult Res;
@@ -235,13 +255,14 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 
    // Run gpgv on file, extract contents and get the key ID of the signer
    string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(),
-			      GoodSigners, BadSigners, NoPubKeySigners);
+                                 GoodSigners, BadSigners, WorthlessSigners,
+                                 NoPubKeySigners);
    if (GoodSigners.empty() || !BadSigners.empty() || !NoPubKeySigners.empty())
    {
       string errmsg;
       // In this case, something bad probably happened, so we just go
       // with what the other method gave us for an error message.
-      if (BadSigners.empty() && NoPubKeySigners.empty())
+      if (BadSigners.empty() && WorthlessSigners.empty() && NoPubKeySigners.empty())
          errmsg = msg;
       else
       {
@@ -250,6 +271,13 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
             errmsg += _("The following signatures were invalid:\n");
             for (vector<string>::iterator I = BadSigners.begin();
 		 I != BadSigners.end(); I++)
+               errmsg += (*I + "\n");
+         }
+         if (!WorthlessSigners.empty())
+         {
+            errmsg += _("The following signatures were invalid:\n");
+            for (vector<string>::iterator I = WorthlessSigners.begin();
+		 I != WorthlessSigners.end(); I++)
                errmsg += (*I + "\n");
          }
          if (!NoPubKeySigners.empty())
