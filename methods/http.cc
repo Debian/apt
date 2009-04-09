@@ -39,6 +39,7 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
+#include <map>
 #include <apti18n.h>
 
 // Internet stuff
@@ -57,6 +58,7 @@ int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
 unsigned long PipelineDepth = 10;
 unsigned long TimeOut = 120;
+bool AllowRedirect = false;
 bool Debug = false;
 URI Proxy;
 
@@ -628,6 +630,12 @@ bool ServerState::HeaderLine(string Line)
       return true;
    }
 
+   if (stringcasecmp(Tag,"Location:") == 0)
+   {
+      Location = Val;
+      return true;
+   }
+
    return true;
 }
 									/*}}}*/
@@ -900,7 +908,9 @@ bool HttpMethod::ServerDie(ServerState *Srv)
      1 - IMS hit
      3 - Unrecoverable error 
      4 - Error with error content page
-     5 - Unrecoverable non-server error (close the connection) */
+     5 - Unrecoverable non-server error (close the connection) 
+     6 - Try again with a new or changed URI
+ */
 int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
 {
    // Not Modified
@@ -912,6 +922,27 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       return 1;
    }
    
+   /* Redirect
+    *
+    * Note that it is only OK for us to treat all redirection the same
+    * because we *always* use GET, not other HTTP methods.  There are
+    * three redirection codes for which it is not appropriate that we
+    * redirect.  Pass on those codes so the error handling kicks in.
+    */
+   if (AllowRedirect
+       && (Srv->Result > 300 && Srv->Result < 400)
+       && (Srv->Result != 300       // Multiple Choices
+           && Srv->Result != 304    // Not Modified
+           && Srv->Result != 306))  // (Not part of HTTP/1.1, reserved)
+   {
+      if (!Srv->Location.empty())
+      {
+         NextURI = Srv->Location;
+         return 6;
+      }
+      /* else pass through for error message */
+   }
+ 
    /* We have a reply we dont handle. This should indicate a perm server
       failure */
    if (Srv->Result < 200 || Srv->Result >= 300)
@@ -1026,6 +1057,7 @@ bool HttpMethod::Configuration(string Message)
    if (pkgAcqMethod::Configuration(Message) == false)
       return false;
    
+   AllowRedirect = _config->FindB("Acquire::http::AllowRedirect",true);
    TimeOut = _config->FindI("Acquire::http::Timeout",TimeOut);
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
 				  PipelineDepth);
@@ -1039,6 +1071,10 @@ bool HttpMethod::Configuration(string Message)
 /* */
 int HttpMethod::Loop()
 {
+   typedef vector<string> StringVector;
+   typedef vector<string>::iterator StringVectorIterator;
+   map<string, StringVector> Redirected;
+
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
    
@@ -1225,6 +1261,46 @@ int HttpMethod::Loop()
 	    break;
 	 }
 	 
+         // Try again with a new URL
+         case 6:
+         {
+            // Clear rest of response if there is content
+            if (Server->HaveContent)
+            {
+               File = new FileFd("/dev/null",FileFd::WriteExists);
+               Server->RunData();
+               delete File;
+               File = 0;
+            }
+
+            /* Detect redirect loops.  No more redirects are allowed
+               after the same URI is seen twice in a queue item. */
+            StringVector &R = Redirected[Queue->DestFile];
+            bool StopRedirects = false;
+            if (R.size() == 0)
+               R.push_back(Queue->Uri);
+            else if (R[0] == "STOP" || R.size() > 10)
+               StopRedirects = true;
+            else
+            {
+               for (StringVectorIterator I = R.begin(); I != R.end(); I++)
+                  if (Queue->Uri == *I)
+                  {
+                     R[0] = "STOP";
+                     break;
+                  }
+ 
+               R.push_back(Queue->Uri);
+            }
+ 
+            if (StopRedirects == false)
+               Redirect(NextURI);
+            else
+               Fail();
+ 
+            break;
+         }
+
 	 default:
 	 Fail(_("Internal error"));
 	 break;

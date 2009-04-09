@@ -463,6 +463,7 @@ bool CacheDB::Clean()
       
       Cursor->c_del(Cursor,0);
    }
+   Dbp->compact(Dbp, NULL, NULL, NULL, NULL, DB_FREE_SPACE, NULL);
 
    return true;
 }

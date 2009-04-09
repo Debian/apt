@@ -208,6 +208,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
 
+   // set redirect options and default to 10 redirects
+   bool AllowRedirect = _config->FindI("Acquire::https::AllowRedirect", true);
+   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, AllowRedirect);
+   curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
+
    // debug
    if(_config->FindB("Debug::Acquire::https", false))
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
@@ -248,7 +253,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // cleanup
    if(success != 0) 
    {
-      unlink(File->Name().c_str());
       _error->Error("%s", curl_errorstr);
       Fail();
       return true;

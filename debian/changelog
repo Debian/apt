@@ -18,6 +18,26 @@ apt (0.7.20.3) UNRELEASED; urgency=low
   [ Michael Vogt ]
   * methods/gpgv.cc:
     - properly check for expired and revoked keys (closes: #433091)
+  * apt-pkg/contrib/strutl.cc:
+    - fix TimeToStr i18n (LP: #289807)
+  * [ABI break] merge support for http redirects, thanks to
+    Jeff Licquia and Anthony Towns
+  * [ABI break] use int for the package IDs (thanks to Steve Cotton)
+  * apt-pkg/pkgcache.cc:
+    - do not run "dpkg --configure pkg" if pkg is in trigger-awaited
+      state (LP: #322955)
+  * methods/https.cc:
+    - add Acquire::https::AllowRedirect support
+  * Clarify the --help for 'purge' (LP: #243948)
+  * cmdline/apt-get.cc
+    - fix "apt-get source pkg" if there is a binary package and
+      a source package of the same name but from different 
+      packages (LP: #330103)
+
+  [ Colin Watson ]
+  * cmdline/acqprogress.cc:
+    - Call pkgAcquireStatus::Pulse even if quiet, so that we still get
+      dlstatus messages on the status-fd (LP: #290234).
 
  -- Michael Vogt <mvo@debian.org>  Wed, 08 Apr 2009 22:37:01 +0200
 

@@ -1272,16 +1272,23 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 }
       }   
    }
-   
-   // No source package name..
-   if (Src.empty() == true)
-      Src = TmpSrc;
-   
+
    // The best hit
    pkgSrcRecords::Parser *Last = 0;
    unsigned long Offset = 0;
    string Version;
    bool IsMatch = false;
+   bool MatchSrcOnly = false;
+
+   // No source package name..
+   if (Src.empty() == true)
+      Src = TmpSrc;
+   else 
+      // if we have a source pkg name, make sure to only search
+      // for srcpkg names, otherwise apt gets confused if there
+      // is a binary package "pkg1" and a source package "pkg1"
+      // with the same name but that comes from different packages
+      MatchSrcOnly = true;
    
    // If we are matching by version then we need exact matches to be happy
    if (VerTag.empty() == false)
@@ -1291,13 +1298,11 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       binary packages in the search */
    pkgSrcRecords::Parser *Parse;
    SrcRecs.Restart();
-   while ((Parse = SrcRecs.Find(Src.c_str(),false)) != 0)
+   while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0)
    {
       string Ver = Parse->Version();
       
-      // Skip name mismatches
-      if (IsMatch == true && Parse->Package() != Src)
-	 continue;
+	 ioprintf(c1out,  _("No source package '%s' picking '%s' instead\n"), Parse->Package().c_str(), Src.c_str());
       
       if (VerTag.empty() == false)
       {
@@ -2632,7 +2637,7 @@ bool ShowHelp(CommandLine &CmdL)
       "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
       "   remove - Remove packages\n"
       "   autoremove - Remove automatically all unused packages\n"
-      "   purge - Remove and purge packages\n"
+      "   purge - Remove packages and config files\n"
       "   source - Download source archives\n"
       "   build-dep - Configure build-dependencies for source packages\n"
       "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"

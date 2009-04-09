@@ -96,7 +96,7 @@ bool debSystem::UnLock(bool NoErrors)
       return false;
    
    if (LockCount < 1)
-      return _error->Error("Not locked");
+      return _error->Error(_("Not locked"));
    if (--LockCount == 0)
    {
       close(LockFD);
