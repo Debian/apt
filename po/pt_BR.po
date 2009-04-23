@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-12 22:07+0100\n"
+"POT-Creation-Date: 2009-04-22 12:25+0200\n"
 "PO-Revision-Date: 2008-11-17 02:33-0200\n"
 "Last-Translator: Felipe Augusto van de Wiel (faw) <faw@debian.org>\n"
 "Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
@@ -159,7 +159,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:138 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2573 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2582 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s para %s compilado em %s %s\n"
@@ -662,7 +662,7 @@ msgstr "Falhou ao renomear %s para %s"
 msgid "Y"
 msgstr "S"
 
-#: cmdline/apt-get.cc:146 cmdline/apt-get.cc:1651
+#: cmdline/apt-get.cc:146 cmdline/apt-get.cc:1658
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Erro de compilação de regex - %s"
@@ -824,11 +824,11 @@ msgstr "Pacotes precisam ser removidos mas a remoção está desabilitada."
 msgid "Internal error, Ordering didn't finish"
 msgstr "Erro interno, Ordenação não finalizou"
 
-#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:1992 cmdline/apt-get.cc:2025
+#: cmdline/apt-get.cc:809 cmdline/apt-get.cc:1999 cmdline/apt-get.cc:2032
 msgid "Unable to lock the download directory"
 msgstr "Impossível criar trava no diretório de download"
 
-#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2073 cmdline/apt-get.cc:2319
+#: cmdline/apt-get.cc:819 cmdline/apt-get.cc:2080 cmdline/apt-get.cc:2326
 #: apt-pkg/cachefile.cc:65
 msgid "The list of sources could not be read."
 msgstr "A lista de fontes não pode ser lida."
@@ -860,7 +860,7 @@ msgstr ""
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Depois desta operação, %sB de espaço em disco serão liberados.\n"
 
-#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2168
+#: cmdline/apt-get.cc:864 cmdline/apt-get.cc:2175
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Não foi possível determinar o espaço livre em %s"
@@ -897,7 +897,7 @@ msgstr "Abortar."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Você quer continuar [S/n]? "
 
-#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2216 apt-pkg/algorithms.cc:1349
+#: cmdline/apt-get.cc:984 cmdline/apt-get.cc:2223 apt-pkg/algorithms.cc:1349
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Falhou ao buscar %s  %s\n"
@@ -906,7 +906,7 @@ msgstr "Falhou ao buscar %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Alguns arquivos falharam ao baixar"
 
-#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2225
+#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:2232
 msgid "Download complete and in download only mode"
 msgstr "Baixar completo e no modo somente baixar (\"download only\")"
 
@@ -1003,19 +1003,24 @@ msgstr "Versão '%s' para '%s' não foi encontrada"
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Versão selecionada %s (%s) para %s\n"
 
-#: cmdline/apt-get.cc:1338
+#: cmdline/apt-get.cc:1307
+#, c-format
+msgid "No source package '%s' picking '%s' instead\n"
+msgstr ""
+
+#: cmdline/apt-get.cc:1345
 msgid "The update command takes no arguments"
 msgstr "O comando update não leva argumentos"
 
-#: cmdline/apt-get.cc:1351
+#: cmdline/apt-get.cc:1358
 msgid "Unable to lock the list directory"
 msgstr "Impossível criar trava no diretório de listas"
 
-#: cmdline/apt-get.cc:1403
+#: cmdline/apt-get.cc:1410
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "Nós não deveríamos apagar coisas, impossível iniciar AutoRemover"
 
-#: cmdline/apt-get.cc:1435
+#: cmdline/apt-get.cc:1442
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
@@ -1023,11 +1028,11 @@ msgstr ""
 "Os seguintes pacotes foram automaticamente instalados e não são mais "
 "requeridos:"
 
-#: cmdline/apt-get.cc:1437
+#: cmdline/apt-get.cc:1444
 msgid "Use 'apt-get autoremove' to remove them."
 msgstr "Use 'apt-get autoremove' para removê-los."
 
-#: cmdline/apt-get.cc:1442
+#: cmdline/apt-get.cc:1449
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1045,43 +1050,43 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1445 cmdline/apt-get.cc:1735
+#: cmdline/apt-get.cc:1452 cmdline/apt-get.cc:1742
 msgid "The following information may help to resolve the situation:"
 msgstr "A informação a seguir pode ajudar a resolver a situação:"
 
-#: cmdline/apt-get.cc:1449
+#: cmdline/apt-get.cc:1456
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Erro Interno, o AutoRemover quebrou coisas"
 
-#: cmdline/apt-get.cc:1468
+#: cmdline/apt-get.cc:1475
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Erro interno, AllUpgrade quebrou coisas"
 
-#: cmdline/apt-get.cc:1523
+#: cmdline/apt-get.cc:1530
 #, c-format
 msgid "Couldn't find task %s"
 msgstr "Impossível achar tarefa %s"
 
-#: cmdline/apt-get.cc:1638 cmdline/apt-get.cc:1674
+#: cmdline/apt-get.cc:1645 cmdline/apt-get.cc:1681
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Impossível achar pacote %s"
 
-#: cmdline/apt-get.cc:1661
+#: cmdline/apt-get.cc:1668
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Nota, selecionando %s para expressão regular '%s'\n"
 
-#: cmdline/apt-get.cc:1692
+#: cmdline/apt-get.cc:1699
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s configurado para instalar manualmente.\n"
 
-#: cmdline/apt-get.cc:1705
+#: cmdline/apt-get.cc:1712
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Você deve querer executar 'apt-get -f install' para corrigí-los:"
 
-#: cmdline/apt-get.cc:1708
+#: cmdline/apt-get.cc:1715
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1089,7 +1094,7 @@ msgstr ""
 "Dependências desencontradas. Tente 'apt-get -f install' sem nenhum pacote "
 "(ou especifique uma solução)."
 
-#: cmdline/apt-get.cc:1720
+#: cmdline/apt-get.cc:1727
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1101,117 +1106,117 @@ msgstr ""
 "distribuição instável, que alguns pacotes requeridos não foram\n"
 "criados ainda ou foram retirados da \"Incoming\"."
 
-#: cmdline/apt-get.cc:1738
+#: cmdline/apt-get.cc:1745
 msgid "Broken packages"
 msgstr "Pacotes quebrados"
 
-#: cmdline/apt-get.cc:1767
+#: cmdline/apt-get.cc:1774
 msgid "The following extra packages will be installed:"
 msgstr "Os pacotes extra a seguir serão instalados:"
 
-#: cmdline/apt-get.cc:1856
+#: cmdline/apt-get.cc:1863
 msgid "Suggested packages:"
 msgstr "Pacotes sugeridos:"
 
-#: cmdline/apt-get.cc:1857
+#: cmdline/apt-get.cc:1864
 msgid "Recommended packages:"
 msgstr "Pacotes recomendados:"
 
-#: cmdline/apt-get.cc:1885
+#: cmdline/apt-get.cc:1892
 msgid "Calculating upgrade... "
 msgstr "Calculando atualização... "
 
-#: cmdline/apt-get.cc:1888 methods/ftp.cc:702 methods/connect.cc:112
+#: cmdline/apt-get.cc:1895 methods/ftp.cc:702 methods/connect.cc:112
 msgid "Failed"
 msgstr "Falhou"
 
-#: cmdline/apt-get.cc:1893
+#: cmdline/apt-get.cc:1900
 msgid "Done"
 msgstr "Pronto"
 
-#: cmdline/apt-get.cc:1960 cmdline/apt-get.cc:1968
+#: cmdline/apt-get.cc:1967 cmdline/apt-get.cc:1975
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Erro interno, o solucionador de problemas quebrou coisas"
 
-#: cmdline/apt-get.cc:2068
+#: cmdline/apt-get.cc:2075
 msgid "Must specify at least one package to fetch source for"
 msgstr "Deve-se especificar pelo menos um pacote para que se busque o fonte"
 
-#: cmdline/apt-get.cc:2098 cmdline/apt-get.cc:2337
+#: cmdline/apt-get.cc:2105 cmdline/apt-get.cc:2344
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Impossível encontrar um pacote fonte para %s"
 
-#: cmdline/apt-get.cc:2147
+#: cmdline/apt-get.cc:2154
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Pulando arquivo já baixado '%s'\n"
 
-#: cmdline/apt-get.cc:2175
+#: cmdline/apt-get.cc:2182
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Você não possui espaço livre suficiente em %s"
 
-#: cmdline/apt-get.cc:2181
+#: cmdline/apt-get.cc:2188
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Preciso obter %sB/%sB de arquivos fonte.\n"
 
-#: cmdline/apt-get.cc:2184
+#: cmdline/apt-get.cc:2191
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Preciso obter %sB de arquivos fonte.\n"
 
-#: cmdline/apt-get.cc:2190
+#: cmdline/apt-get.cc:2197
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Obter fonte %s\n"
 
-#: cmdline/apt-get.cc:2221
+#: cmdline/apt-get.cc:2228
 msgid "Failed to fetch some archives."
 msgstr "Falhou ao buscar alguns arquivos."
 
-#: cmdline/apt-get.cc:2249
+#: cmdline/apt-get.cc:2256
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Pulando o desempacotamento de fontes já desempacotados em %s\n"
 
-#: cmdline/apt-get.cc:2261
+#: cmdline/apt-get.cc:2268
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Comando de desempacotamento '%s' falhou.\n"
 
-#: cmdline/apt-get.cc:2262
+#: cmdline/apt-get.cc:2269
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Confira se o pacote 'dpkg-dev' está instalado.\n"
 
-#: cmdline/apt-get.cc:2279
+#: cmdline/apt-get.cc:2286
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Comando de construção '%s' falhou.\n"
 
-#: cmdline/apt-get.cc:2298
+#: cmdline/apt-get.cc:2305
 msgid "Child process failed"
 msgstr "Processo filho falhou"
 
-#: cmdline/apt-get.cc:2314
+#: cmdline/apt-get.cc:2321
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Deve-se especificar pelo menos um pacote para que se cheque as dependências "
 "de construção"
 
-#: cmdline/apt-get.cc:2342
+#: cmdline/apt-get.cc:2349
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Impossível conseguir informações de dependência de construção para %s"
 
-#: cmdline/apt-get.cc:2362
+#: cmdline/apt-get.cc:2369
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s não tem dependências de construção.\n"
 
-#: cmdline/apt-get.cc:2414
+#: cmdline/apt-get.cc:2421
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1220,7 +1225,7 @@ msgstr ""
 "a dependência de %s por %s não pode ser satisfeita porque o pacote %s não "
 "pode ser encontrado"
 
-#: cmdline/apt-get.cc:2467
+#: cmdline/apt-get.cc:2474
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1229,32 +1234,33 @@ msgstr ""
 "a dependência de %s por %s não pode ser satisfeita porque nenhuma versão "
 "disponível do pacote %s pode satisfazer os requerimentos de versão"
 
-#: cmdline/apt-get.cc:2503
+#: cmdline/apt-get.cc:2510
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Falhou ao satisfazer a dependência de %s por %s: Pacote instalado %s é muito "
 "novo"
 
-#: cmdline/apt-get.cc:2528
+#: cmdline/apt-get.cc:2537
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Falhou ao satisfazer a dependência de %s por %s: %s"
 
-#: cmdline/apt-get.cc:2542
+#: cmdline/apt-get.cc:2551
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Não foi possível satisfazer as dependências de compilação para %s."
 
-#: cmdline/apt-get.cc:2546
+#: cmdline/apt-get.cc:2555
 msgid "Failed to process build dependencies"
 msgstr "Falhou ao processar as dependências de construção"
 
-#: cmdline/apt-get.cc:2578
+#: cmdline/apt-get.cc:2587
 msgid "Supported modules:"
 msgstr "Módulos para os quais há suporte:"
 
-#: cmdline/apt-get.cc:2619
+#: cmdline/apt-get.cc:2628
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1270,7 +1276,7 @@ msgid ""
 "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
 "   remove - Remove packages\n"
 "   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove and purge packages\n"
+"   purge - Remove packages and config files\n"
 "   source - Download source archives\n"
 "   build-dep - Configure build-dependencies for source packages\n"
 "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
@@ -1875,7 +1881,7 @@ msgstr "Conexão do socket de dados expirou"
 msgid "Unable to accept connection"
 msgstr "Impossível aceitar conexão"
 
-#: methods/ftp.cc:864 methods/http.cc:960 methods/rsh.cc:303
+#: methods/ftp.cc:864 methods/http.cc:991 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr "Problema criando o hash do arquivo"
 
@@ -1959,43 +1965,43 @@ msgstr "Algo estranho aconteceu resolvendo '%s:%s' (%i)"
 msgid "Unable to connect to %s %s:"
 msgstr "Impossível conectar em %s %s:"
 
-#: methods/gpgv.cc:65
+#: methods/gpgv.cc:71
 #, c-format
 msgid "Couldn't access keyring: '%s'"
 msgstr "Não foi possível acessar o chaveiro: '%s'"
 
-#: methods/gpgv.cc:101
+#: methods/gpgv.cc:107
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr ""
 "E: Lista de argumentos de Acquire::gpgv::Options muito extensa. Saindo."
 
-#: methods/gpgv.cc:205
+#: methods/gpgv.cc:223
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Erro interno: Assinatura boa, mas não foi possível determinar a impressão "
 "digital da chave?!"
 
-#: methods/gpgv.cc:210
+#: methods/gpgv.cc:228
 msgid "At least one invalid signature was encountered."
 msgstr "Ao menos uma assinatura inválida foi encontrada."
 
-#: methods/gpgv.cc:214
+#: methods/gpgv.cc:232
 #, c-format
 msgid "Could not execute '%s' to verify signature (is gpgv installed?)"
 msgstr ""
 "Não foi possível executar '%s' para verificar a assinatura (o gpgv está "
 "instalado?)"
 
-#: methods/gpgv.cc:219
+#: methods/gpgv.cc:237
 msgid "Unknown error executing gpgv"
 msgstr "Erro desconhecido executando gpgv"
 
-#: methods/gpgv.cc:250
+#: methods/gpgv.cc:271 methods/gpgv.cc:278
 msgid "The following signatures were invalid:\n"
 msgstr "As seguintes assinaturas eram inválidas:\n"
 
-#: methods/gpgv.cc:257
+#: methods/gpgv.cc:285
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -2013,80 +2019,80 @@ msgstr "Não foi possível abrir \"pipe\" para %s"
 msgid "Read error from %s process"
 msgstr "Erro de leitura do processo %s"
 
-#: methods/http.cc:377
+#: methods/http.cc:379
 msgid "Waiting for headers"
 msgstr "Aguardando por cabeçalhos"
 
-#: methods/http.cc:523
+#: methods/http.cc:525
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr "Recebi uma única linha de cabeçalho acima de %u caracteres"
 
-#: methods/http.cc:531
+#: methods/http.cc:533
 msgid "Bad header line"
 msgstr "Linha de cabeçalho ruim"
 
-#: methods/http.cc:550 methods/http.cc:557
+#: methods/http.cc:552 methods/http.cc:559
 msgid "The HTTP server sent an invalid reply header"
 msgstr "O servidor HTTP enviou um cabeçalho de resposta inválido"
 
-#: methods/http.cc:586
+#: methods/http.cc:588
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "O servidor HTTP enviou um cabeçalho \"Content-Length\" inválido"
 
-#: methods/http.cc:601
+#: methods/http.cc:603
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "O servidor HTTP enviou um cabeçalho \"Content-Range\" inválido"
 
-#: methods/http.cc:603
+#: methods/http.cc:605
 msgid "This HTTP server has broken range support"
 msgstr "Este servidor HTTP possui suporte a \"range\" quebrado"
 
-#: methods/http.cc:627
+#: methods/http.cc:629
 msgid "Unknown date format"
 msgstr "Formato de data desconhecido"
 
-#: methods/http.cc:774
+#: methods/http.cc:782
 msgid "Select failed"
 msgstr "Seleção falhou"
 
-#: methods/http.cc:779
+#: methods/http.cc:787
 msgid "Connection timed out"
 msgstr "Conexão expirou"
 
-#: methods/http.cc:802
+#: methods/http.cc:810
 msgid "Error writing to output file"
 msgstr "Erro escrevendo para arquivo de saída"
 
-#: methods/http.cc:833
+#: methods/http.cc:841
 msgid "Error writing to file"
 msgstr "Erro escrevendo para arquivo"
 
-#: methods/http.cc:861
+#: methods/http.cc:869
 msgid "Error writing to the file"
 msgstr "Erro escrevendo para o arquivo"
 
-#: methods/http.cc:875
+#: methods/http.cc:883
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Erro lendo do servidor. Ponto remoto fechou a conexão"
 
-#: methods/http.cc:877
+#: methods/http.cc:885
 msgid "Error reading from server"
 msgstr "Erro lendo do servidor"
 
-#: methods/http.cc:945 apt-pkg/contrib/mmap.cc:196
+#: methods/http.cc:976 apt-pkg/contrib/mmap.cc:196
 msgid "Failed to truncate file"
 msgstr "Falhou ao truncar arquivo"
 
-#: methods/http.cc:1105
+#: methods/http.cc:1141
 msgid "Bad header data"
 msgstr "Dados de cabeçalho ruins"
 
-#: methods/http.cc:1122 methods/http.cc:1177
+#: methods/http.cc:1158 methods/http.cc:1213
 msgid "Connection failed"
 msgstr "Conexão falhou"
 
-#: methods/http.cc:1229
+#: methods/http.cc:1305
 msgid "Internal error"
 msgstr "Erro interno"
 
@@ -2106,7 +2112,31 @@ msgid ""
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1014
+#. d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:335
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr ""
+
+#. h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:342
+#, c-format
+msgid "%lih %limin %lis"
+msgstr ""
+
+#. min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:349
+#, c-format
+msgid "%limin %lis"
+msgstr ""
+
+#. s means seconds
+#: apt-pkg/contrib/strutl.cc:354
+#, c-format
+msgid "%lis"
+msgstr ""
+
+#: apt-pkg/contrib/strutl.cc:1018
 #, c-format
 msgid "Selection %s not found"
 msgstr "Seleção %s não encontrada"
@@ -2538,7 +2568,7 @@ msgstr "O driver do método %s não pode ser encontrado."
 msgid "Method %s did not start correctly"
 msgstr "Método %s não iniciou corretamente"
 
-#: apt-pkg/acquire-worker.cc:399
+#: apt-pkg/acquire-worker.cc:413
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
@@ -2913,9 +2943,13 @@ msgstr "Preparando para remover completamente %s"
 msgid "Completely removed %s"
 msgstr "%s completamente removido"
 
-#: apt-pkg/deb/dpkgpm.cc:791
+#: apt-pkg/deb/dpkgpm.cc:789
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr "Impossível escrever log, openpty() falhou (/dev/pts não montado?)\n"
+
+#: apt-pkg/deb/debsystem.cc:100
+msgid "Not locked"
+msgstr ""
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
