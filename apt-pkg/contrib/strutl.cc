@@ -1074,6 +1074,17 @@ char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
 }
 									/*}}}*/
 
+// tolower_ascii - tolower() function that ignores the locale		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+int tolower_ascii(int c)
+{
+   if (c >= 'A' and c <= 'Z')
+      return c + 32;
+   return c;
+}
+									/*}}}*/
+
 // CheckDomainList - See if Host is in a , seperate list		/*{{{*/
 // ---------------------------------------------------------------------
 /* The domain list is a comma seperate list of domains that are suffix

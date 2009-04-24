@@ -252,6 +252,7 @@ msgid ""
 msgstr ""
 
 #: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:815
+#: apt-pkg/pkgcachegen.cc:827
 #, c-format
 msgid "Unable to write to %s"
 msgstr ""
@@ -718,7 +719,7 @@ msgid "Unable to lock the download directory"
 msgstr ""
 
 #: cmdline/apt-get.cc:816 cmdline/apt-get.cc:2076 cmdline/apt-get.cc:2312
-#: apt-pkg/cachefile.cc:63
+#: apt-pkg/cachefile.cc:63 apt-pkg/cachefile.cc:65
 msgid "The list of sources could not be read."
 msgstr ""
 
@@ -781,6 +782,7 @@ msgid "Do you want to continue [Y/n]? "
 msgstr ""
 
 #: cmdline/apt-get.cc:976 cmdline/apt-get.cc:1383 cmdline/apt-get.cc:2209
+#: apt-pkg/algorithms.cc:1348
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr ""
@@ -889,7 +891,8 @@ msgstr ""
 msgid "Unable to lock the list directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:1410 cmdline/apt-get.cc:1412
+#: cmdline/apt-get.cc:1410 cmdline/apt-get.cc:1412 apt-pkg/algorithms.cc:1374
+#: apt-pkg/algorithms.cc:1376
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -993,6 +996,7 @@ msgid "Calculating upgrade... "
 msgstr ""
 
 #: cmdline/apt-get.cc:1891 methods/ftp.cc:702 methods/connect.cc:101
+#: methods/connect.cc:111
 msgid "Failed"
 msgstr ""
 
@@ -1373,6 +1377,8 @@ msgstr ""
 #: apt-inst/extract.cc:467 apt-pkg/contrib/configuration.cc:753
 #: apt-pkg/contrib/cdromutl.cc:150 apt-pkg/sourcelist.cc:320
 #: apt-pkg/acquire.cc:418 apt-pkg/clean.cc:34
+#: apt-pkg/contrib/configuration.cc:821 apt-pkg/acquire.cc:419
+#: methods/mirror.cc:85
 #, c-format
 msgid "Unable to read %s"
 msgstr ""
@@ -1404,7 +1410,9 @@ msgstr ""
 #. Build the status cache
 #: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:748
 #: apt-pkg/pkgcachegen.cc:817 apt-pkg/pkgcachegen.cc:822
-#: apt-pkg/pkgcachegen.cc:945
+#: apt-pkg/pkgcachegen.cc:945 apt-pkg/pkgcachegen.cc:760
+#: apt-pkg/pkgcachegen.cc:829 apt-pkg/pkgcachegen.cc:834
+#: apt-pkg/pkgcachegen.cc:957
 msgid "Reading package lists"
 msgstr ""
 
@@ -1598,6 +1606,7 @@ msgid "Server closed the connection"
 msgstr ""
 
 #: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:471 methods/rsh.cc:190
+#: apt-pkg/contrib/fileutl.cc:538
 msgid "Read error"
 msgstr ""
 
@@ -1610,6 +1619,7 @@ msgid "Protocol corruption"
 msgstr ""
 
 #: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:510 methods/rsh.cc:232
+#: apt-pkg/contrib/fileutl.cc:577
 msgid "Write error"
 msgstr ""
 
@@ -1664,6 +1674,7 @@ msgid "Unable to accept connection"
 msgstr ""
 
 #: methods/ftp.cc:864 methods/http.cc:959 methods/rsh.cc:303
+#: methods/http.cc:993
 msgid "Problem hashing file"
 msgstr ""
 
@@ -1690,78 +1701,78 @@ msgstr ""
 msgid "Unable to invoke "
 msgstr ""
 
-#: methods/connect.cc:64
+#: methods/connect.cc:64 methods/connect.cc:71
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr ""
 
-#: methods/connect.cc:71
+#: methods/connect.cc:71 methods/connect.cc:82
 #, c-format
 msgid "[IP: %s %s]"
 msgstr ""
 
-#: methods/connect.cc:80
+#: methods/connect.cc:80 methods/connect.cc:89
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
 msgstr ""
 
-#: methods/connect.cc:86
+#: methods/connect.cc:86 methods/connect.cc:95
 #, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr ""
 
-#: methods/connect.cc:93
+#: methods/connect.cc:93 methods/connect.cc:103
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
 
-#: methods/connect.cc:108
+#: methods/connect.cc:108 methods/connect.cc:118
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr ""
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:136 methods/rsh.cc:425
+#: methods/connect.cc:136 methods/rsh.cc:425 methods/connect.cc:146
 #, c-format
 msgid "Connecting to %s"
 msgstr ""
 
-#: methods/connect.cc:167
+#: methods/connect.cc:167 methods/connect.cc:164 methods/connect.cc:183
 #, c-format
 msgid "Could not resolve '%s'"
 msgstr ""
 
-#: methods/connect.cc:173
+#: methods/connect.cc:173 methods/connect.cc:189
 #, c-format
 msgid "Temporary failure resolving '%s'"
 msgstr ""
 
-#: methods/connect.cc:176
+#: methods/connect.cc:176 methods/connect.cc:192
 #, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i)"
 msgstr ""
 
-#: methods/connect.cc:223
+#: methods/connect.cc:223 methods/connect.cc:239
 #, c-format
 msgid "Unable to connect to %s %s:"
 msgstr ""
 
-#: methods/gpgv.cc:65
+#: methods/gpgv.cc:65 methods/gpgv.cc:71
 #, c-format
 msgid "Couldn't access keyring: '%s'"
 msgstr ""
 
-#: methods/gpgv.cc:101
+#: methods/gpgv.cc:101 methods/gpgv.cc:107
 msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 msgstr ""
 
-#: methods/gpgv.cc:205
+#: methods/gpgv.cc:205 methods/gpgv.cc:223
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 
-#: methods/gpgv.cc:210
+#: methods/gpgv.cc:210 methods/gpgv.cc:228
 msgid "At least one invalid signature was encountered."
 msgstr ""
 
@@ -1770,15 +1781,15 @@ msgstr ""
 msgid "Could not execute '%s' to verify signature (is gnupg installed?)"
 msgstr ""
 
-#: methods/gpgv.cc:219
+#: methods/gpgv.cc:219 methods/gpgv.cc:237
 msgid "Unknown error executing gpgv"
 msgstr ""
 
-#: methods/gpgv.cc:250
+#: methods/gpgv.cc:250 methods/gpgv.cc:271 methods/gpgv.cc:278
 msgid "The following signatures were invalid:\n"
 msgstr ""
 
-#: methods/gpgv.cc:257
+#: methods/gpgv.cc:257 methods/gpgv.cc:285
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1794,76 +1805,78 @@ msgstr ""
 msgid "Read error from %s process"
 msgstr ""
 
-#: methods/http.cc:377
+#: methods/http.cc:377 methods/http.cc:378
 msgid "Waiting for headers"
 msgstr ""
 
-#: methods/http.cc:523
+#: methods/http.cc:523 methods/http.cc:524
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr ""
 
-#: methods/http.cc:531
+#: methods/http.cc:531 methods/http.cc:532
 msgid "Bad header line"
 msgstr ""
 
-#: methods/http.cc:550 methods/http.cc:557
+#: methods/http.cc:550 methods/http.cc:557 methods/http.cc:551
+#: methods/http.cc:558
 msgid "The HTTP server sent an invalid reply header"
 msgstr ""
 
-#: methods/http.cc:586
+#: methods/http.cc:586 methods/http.cc:587
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr ""
 
-#: methods/http.cc:601
+#: methods/http.cc:601 methods/http.cc:602
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr ""
 
-#: methods/http.cc:603
+#: methods/http.cc:603 methods/http.cc:604
 msgid "This HTTP server has broken range support"
 msgstr ""
 
-#: methods/http.cc:627
+#: methods/http.cc:627 methods/http.cc:628
 msgid "Unknown date format"
 msgstr ""
 
-#: methods/http.cc:774
+#: methods/http.cc:774 methods/http.cc:781
 msgid "Select failed"
 msgstr ""
 
-#: methods/http.cc:779
+#: methods/http.cc:779 methods/http.cc:786
 msgid "Connection timed out"
 msgstr ""
 
-#: methods/http.cc:802
+#: methods/http.cc:802 methods/http.cc:809
 msgid "Error writing to output file"
 msgstr ""
 
-#: methods/http.cc:833
+#: methods/http.cc:833 methods/http.cc:840
 msgid "Error writing to file"
 msgstr ""
 
-#: methods/http.cc:861
+#: methods/http.cc:861 methods/http.cc:868
 msgid "Error writing to the file"
 msgstr ""
 
-#: methods/http.cc:875
+#: methods/http.cc:875 methods/http.cc:882
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 
-#: methods/http.cc:877
+#: methods/http.cc:877 methods/http.cc:884
 msgid "Error reading from server"
 msgstr ""
 
-#: methods/http.cc:1104
+#: methods/http.cc:1104 methods/http.cc:1143
 msgid "Bad header data"
 msgstr ""
 
-#: methods/http.cc:1121 methods/http.cc:1176
+#: methods/http.cc:1121 methods/http.cc:1176 methods/http.cc:1160
+#: methods/http.cc:1215
 msgid "Connection failed"
 msgstr ""
 
-#: methods/http.cc:1228
+#: methods/http.cc:1228 methods/http.cc:1307
 msgid "Internal error"
 msgstr ""
 
@@ -1876,7 +1889,7 @@ msgstr ""
 msgid "Couldn't make mmap of %lu bytes"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:978
+#: apt-pkg/contrib/strutl.cc:978 apt-pkg/contrib/strutl.cc:1018
 #, c-format
 msgid "Selection %s not found"
 msgstr ""
@@ -1896,42 +1909,43 @@ msgstr ""
 msgid "Line %d too long (max %u)"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:611
+#: apt-pkg/contrib/configuration.cc:611 apt-pkg/contrib/configuration.cc:662
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:630
+#: apt-pkg/contrib/configuration.cc:630 apt-pkg/contrib/configuration.cc:681
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:647
+#: apt-pkg/contrib/configuration.cc:647 apt-pkg/contrib/configuration.cc:698
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:687
+#: apt-pkg/contrib/configuration.cc:687 apt-pkg/contrib/configuration.cc:738
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:694
+#: apt-pkg/contrib/configuration.cc:694 apt-pkg/contrib/configuration.cc:745
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr ""
 
 #: apt-pkg/contrib/configuration.cc:698 apt-pkg/contrib/configuration.cc:703
+#: apt-pkg/contrib/configuration.cc:749 apt-pkg/contrib/configuration.cc:754
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:707
+#: apt-pkg/contrib/configuration.cc:707 apt-pkg/contrib/configuration.cc:758
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:741
+#: apt-pkg/contrib/configuration.cc:741 apt-pkg/contrib/configuration.cc:809
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr ""
@@ -1998,78 +2012,80 @@ msgid "Unable to stat the mount point %s"
 msgstr ""
 
 #: apt-pkg/contrib/cdromutl.cc:146 apt-pkg/acquire.cc:424 apt-pkg/clean.cc:40
+#: apt-pkg/contrib/cdromutl.cc:180 apt-pkg/acquire.cc:425
+#: apt-pkg/acquire.cc:450 methods/mirror.cc:91
 #, c-format
 msgid "Unable to change to %s"
 msgstr ""
 
-#: apt-pkg/contrib/cdromutl.cc:187
+#: apt-pkg/contrib/cdromutl.cc:187 apt-pkg/contrib/cdromutl.cc:188
 msgid "Failed to stat the cdrom"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:82
+#: apt-pkg/contrib/fileutl.cc:82 apt-pkg/contrib/fileutl.cc:149
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:87
+#: apt-pkg/contrib/fileutl.cc:87 apt-pkg/contrib/fileutl.cc:154
 #, c-format
 msgid "Could not open lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:105
+#: apt-pkg/contrib/fileutl.cc:105 apt-pkg/contrib/fileutl.cc:172
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:109
+#: apt-pkg/contrib/fileutl.cc:109 apt-pkg/contrib/fileutl.cc:176
 #, c-format
 msgid "Could not get lock %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:377
+#: apt-pkg/contrib/fileutl.cc:377 apt-pkg/contrib/fileutl.cc:444
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:387
+#: apt-pkg/contrib/fileutl.cc:387 apt-pkg/contrib/fileutl.cc:454
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:390
+#: apt-pkg/contrib/fileutl.cc:390 apt-pkg/contrib/fileutl.cc:457
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:392
+#: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:459
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:436
+#: apt-pkg/contrib/fileutl.cc:436 apt-pkg/contrib/fileutl.cc:503
 #, c-format
 msgid "Could not open file %s"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:492
+#: apt-pkg/contrib/fileutl.cc:492 apt-pkg/contrib/fileutl.cc:559
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:522
+#: apt-pkg/contrib/fileutl.cc:522 apt-pkg/contrib/fileutl.cc:589
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:597
+#: apt-pkg/contrib/fileutl.cc:597 apt-pkg/contrib/fileutl.cc:664
 msgid "Problem closing the file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:603
+#: apt-pkg/contrib/fileutl.cc:603 apt-pkg/contrib/fileutl.cc:670
 msgid "Problem unlinking the file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:614
+#: apt-pkg/contrib/fileutl.cc:614 apt-pkg/contrib/fileutl.cc:681
 msgid "Problem syncing the file"
 msgstr ""
 
@@ -2245,40 +2261,40 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:247 apt-pkg/algorithms.cc:248
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 
-#: apt-pkg/algorithms.cc:1105
+#: apt-pkg/algorithms.cc:1105 apt-pkg/algorithms.cc:1107
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
 msgstr ""
 
-#: apt-pkg/algorithms.cc:1107
+#: apt-pkg/algorithms.cc:1107 apt-pkg/algorithms.cc:1109
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 
-#: apt-pkg/acquire.cc:59
+#: apt-pkg/acquire.cc:59 apt-pkg/acquire.cc:60
 #, c-format
 msgid "Lists directory %spartial is missing."
 msgstr ""
 
-#: apt-pkg/acquire.cc:63
+#: apt-pkg/acquire.cc:63 apt-pkg/acquire.cc:64
 #, c-format
 msgid "Archive directory %spartial is missing."
 msgstr ""
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:827
+#: apt-pkg/acquire.cc:827 apt-pkg/acquire.cc:829
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr ""
 
-#: apt-pkg/acquire.cc:829
+#: apt-pkg/acquire.cc:829 apt-pkg/acquire.cc:831
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr ""
@@ -2293,17 +2309,17 @@ msgstr ""
 msgid "Method %s did not start correctly"
 msgstr ""
 
-#: apt-pkg/acquire-worker.cc:398
+#: apt-pkg/acquire-worker.cc:398 apt-pkg/acquire-worker.cc:413
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 
-#: apt-pkg/init.cc:124
+#: apt-pkg/init.cc:124 apt-pkg/init.cc:125
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/init.cc:140
+#: apt-pkg/init.cc:140 apt-pkg/init.cc:141
 msgid "Unable to determine a suitable packaging system type"
 msgstr ""
 
@@ -2316,11 +2332,11 @@ msgstr ""
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr ""
 
-#: apt-pkg/cachefile.cc:69
+#: apt-pkg/cachefile.cc:69 apt-pkg/cachefile.cc:71
 msgid "The package lists or status file could not be parsed or opened."
 msgstr ""
 
-#: apt-pkg/cachefile.cc:73
+#: apt-pkg/cachefile.cc:73 apt-pkg/cachefile.cc:75
 msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
 
@@ -2351,123 +2367,125 @@ msgstr ""
 msgid "Error occurred while processing %s (UsePackage1)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:153
+#: apt-pkg/pkgcachegen.cc:153 apt-pkg/pkgcachegen.cc:164
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:178
+#: apt-pkg/pkgcachegen.cc:178 apt-pkg/pkgcachegen.cc:189
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:182
+#: apt-pkg/pkgcachegen.cc:182 apt-pkg/pkgcachegen.cc:193
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:213
+#: apt-pkg/pkgcachegen.cc:213 apt-pkg/pkgcachegen.cc:224
 #, c-format
 msgid "Error occurred while processing %s (NewVersion1)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:217
+#: apt-pkg/pkgcachegen.cc:217 apt-pkg/pkgcachegen.cc:228
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:221
+#: apt-pkg/pkgcachegen.cc:221 apt-pkg/pkgcachegen.cc:232
 #, c-format
 msgid "Error occurred while processing %s (NewVersion2)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:245
+#: apt-pkg/pkgcachegen.cc:245 apt-pkg/pkgcachegen.cc:256
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:251
+#: apt-pkg/pkgcachegen.cc:251 apt-pkg/pkgcachegen.cc:262
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:254
+#: apt-pkg/pkgcachegen.cc:254 apt-pkg/pkgcachegen.cc:265
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:257 apt-pkg/pkgcachegen.cc:268
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:260
+#: apt-pkg/pkgcachegen.cc:260 apt-pkg/pkgcachegen.cc:271
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:288
+#: apt-pkg/pkgcachegen.cc:288 apt-pkg/pkgcachegen.cc:299
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:301
+#: apt-pkg/pkgcachegen.cc:301 apt-pkg/pkgcachegen.cc:312
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:307
+#: apt-pkg/pkgcachegen.cc:307 apt-pkg/pkgcachegen.cc:318
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:678
+#: apt-pkg/pkgcachegen.cc:678 apt-pkg/pkgcachegen.cc:690
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:763
+#: apt-pkg/pkgcachegen.cc:763 apt-pkg/pkgcachegen.cc:775
 msgid "Collecting File Provides"
 msgstr ""
 
 #: apt-pkg/pkgcachegen.cc:890 apt-pkg/pkgcachegen.cc:897
+#: apt-pkg/pkgcachegen.cc:902 apt-pkg/pkgcachegen.cc:909
 msgid "IO Error saving source cache"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:127
+#: apt-pkg/acquire-item.cc:127 apt-pkg/acquire-item.cc:134
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:401
+#: apt-pkg/acquire-item.cc:401 apt-pkg/acquire-item.cc:451
 msgid "MD5Sum mismatch"
 msgstr ""
 
 #: apt-pkg/acquire-item.cc:647 apt-pkg/acquire-item.cc:1408
+#: apt-pkg/acquire-item.cc:707 apt-pkg/acquire-item.cc:1478
 msgid "Hash Sum mismatch"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1100
+#: apt-pkg/acquire-item.cc:1100 apt-pkg/acquire-item.cc:1170
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1213
+#: apt-pkg/acquire-item.cc:1213 apt-pkg/acquire-item.cc:1283
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1272
+#: apt-pkg/acquire-item.cc:1272 apt-pkg/acquire-item.cc:1342
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
 "manually fix this package."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1313
+#: apt-pkg/acquire-item.cc:1313 apt-pkg/acquire-item.cc:1383
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1400
+#: apt-pkg/acquire-item.cc:1400 apt-pkg/acquire-item.cc:1470
 msgid "Size mismatch"
 msgstr ""
 
@@ -2553,88 +2571,92 @@ msgstr ""
 msgid "Source list entries for this disc are:\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:263 apt-pkg/indexcopy.cc:823
+#: apt-pkg/indexcopy.cc:263 apt-pkg/indexcopy.cc:823 apt-pkg/indexcopy.cc:832
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:265 apt-pkg/indexcopy.cc:825
+#: apt-pkg/indexcopy.cc:265 apt-pkg/indexcopy.cc:825 apt-pkg/indexcopy.cc:834
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:268 apt-pkg/indexcopy.cc:828
+#: apt-pkg/indexcopy.cc:268 apt-pkg/indexcopy.cc:828 apt-pkg/indexcopy.cc:837
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:271 apt-pkg/indexcopy.cc:831
+#: apt-pkg/indexcopy.cc:271 apt-pkg/indexcopy.cc:831 apt-pkg/indexcopy.cc:840
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:513
+#: apt-pkg/deb/dpkgpm.cc:513 apt-pkg/deb/dpkgpm.cc:532
 #, c-format
 msgid "Directory '%s' missing"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:596
+#: apt-pkg/deb/dpkgpm.cc:596 apt-pkg/deb/dpkgpm.cc:621
 #, c-format
 msgid "Preparing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:597
+#: apt-pkg/deb/dpkgpm.cc:597 apt-pkg/deb/dpkgpm.cc:622
 #, c-format
 msgid "Unpacking %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:602
+#: apt-pkg/deb/dpkgpm.cc:602 apt-pkg/deb/dpkgpm.cc:627
 #, c-format
 msgid "Preparing to configure %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:603
+#: apt-pkg/deb/dpkgpm.cc:603 apt-pkg/deb/dpkgpm.cc:52
+#: apt-pkg/deb/dpkgpm.cc:628
 #, c-format
 msgid "Configuring %s"
 msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:605 apt-pkg/deb/dpkgpm.cc:606
+#: apt-pkg/deb/dpkgpm.cc:630 apt-pkg/deb/dpkgpm.cc:631
 #, c-format
 msgid "Processing triggers for %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:608
+#: apt-pkg/deb/dpkgpm.cc:608 apt-pkg/deb/dpkgpm.cc:633
 #, c-format
 msgid "Installed %s"
 msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:613 apt-pkg/deb/dpkgpm.cc:615
-#: apt-pkg/deb/dpkgpm.cc:616
+#: apt-pkg/deb/dpkgpm.cc:616 apt-pkg/deb/dpkgpm.cc:638
+#: apt-pkg/deb/dpkgpm.cc:640 apt-pkg/deb/dpkgpm.cc:641
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:618
+#: apt-pkg/deb/dpkgpm.cc:618 apt-pkg/deb/dpkgpm.cc:53
+#: apt-pkg/deb/dpkgpm.cc:643
 #, c-format
 msgid "Removing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:619
+#: apt-pkg/deb/dpkgpm.cc:619 apt-pkg/deb/dpkgpm.cc:644
 #, c-format
 msgid "Removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:624
+#: apt-pkg/deb/dpkgpm.cc:624 apt-pkg/deb/dpkgpm.cc:649
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:625
+#: apt-pkg/deb/dpkgpm.cc:625 apt-pkg/deb/dpkgpm.cc:650
 #, c-format
 msgid "Completely removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:775
+#: apt-pkg/deb/dpkgpm.cc:775 apt-pkg/deb/dpkgpm.cc:805
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 
@@ -2644,4 +2666,144 @@ msgstr ""
 
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
+msgstr ""
+
+#: methods/gpgv.cc:232
+#, c-format
+msgid "Could not execute '%s' to verify signature (is gpgv installed?)"
+msgstr ""
+
+#: methods/http.cc:978 apt-pkg/contrib/mmap.cc:196
+msgid "Failed to truncate file"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+
+#. d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:335
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr ""
+
+#. h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:342
+#, c-format
+msgid "%lih %limin %lis"
+msgstr ""
+
+#. min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:349
+#, c-format
+msgid "%limin %lis"
+msgstr ""
+
+#. s means seconds
+#: apt-pkg/contrib/strutl.cc:354
+#, c-format
+msgid "%lis"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:1244
+#, c-format
+msgid ""
+"A error occurred during the signature verification. The repository is not "
+"updated and the previous index files will be used.GPG error: %s: %s\n"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:1253
+#, c-format
+msgid "GPG error: %s: %s"
+msgstr ""
+
+#: apt-pkg/indexrecords.cc:40
+#, c-format
+msgid "Unable to parse Release file %s"
+msgstr ""
+
+#: apt-pkg/indexrecords.cc:47
+#, c-format
+msgid "No sections in Release file %s"
+msgstr ""
+
+#: apt-pkg/indexrecords.cc:81
+#, c-format
+msgid "No Hash entry in Release file %s"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:678
+#, c-format
+msgid ""
+"Found %zu package indexes, %zu source indexes, %zu translation indexes and %"
+"zu signatures\n"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:51
+#, c-format
+msgid "Installing %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:54
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1011
+msgid "No apport report written because MaxReports is reached already"
+msgstr ""
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1016
+msgid "dependency problems - leaving unconfigured"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1018
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:70
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:73
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:82
+msgid ""
+"dpkg was interrupted, you must manually run 'sudo dpkg --configure -a' to "
+"correct the problem. "
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:100
+msgid "Not locked"
+msgstr ""
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:172
+#, c-format
+msgid "No mirror file '%s' found "
 msgstr ""

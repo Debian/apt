@@ -24,7 +24,8 @@
 
 #include <iostream>
 #include <sstream>
-    
+#include <stdio.h>
+
 #include <dirent.h>
 #include <sys/time.h>
 #include <errno.h>

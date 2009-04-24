@@ -1123,6 +1123,23 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 	 fclose(log);
       }
    }
+
+   // attach dmesg log (to learn about segfaults)
+   if (FileExists("/bin/dmesg"))
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "Dmesg:\n");
+      log = popen("/bin/dmesg","r");
+      if(log != NULL)
+      {
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+	 fclose(log);
+      }
+   }
    fclose(report);
+
 }
 									/*}}}*/
