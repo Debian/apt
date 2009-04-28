@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-04-22 12:25+0200\n"
-"PO-Revision-Date: 2009-04-08 16:08+0100\n"
+"PO-Revision-Date: 2009-04-27 16:43+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -996,7 +996,7 @@ msgstr "Zvolená verzia %s (%s) pre %s\n"
 #: cmdline/apt-get.cc:1307
 #, c-format
 msgid "No source package '%s' picking '%s' instead\n"
-msgstr ""
+msgstr "Zdrojový balík „%s“ neexistuje, namiesto neho sa použije „%s“\n"
 
 #: cmdline/apt-get.cc:1345
 msgid "The update command takes no arguments"
@@ -1246,7 +1246,6 @@ msgid "Supported modules:"
 msgstr "Podporované moduly:"
 
 #: cmdline/apt-get.cc:2628
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1303,7 +1302,7 @@ msgstr ""
 "deb)\n"
 "   remove          - Odstráni balíky\n"
 "   autoremove      - Automaticky odstráni všetky nepoužité balíky\n"
-"   purge           - Odstráni a vyčistí balíky\n"
+"   purge           - Odstráni a balíky a ich konfiguračné súbory\n"
 "   source          - Stiahne zdrojové archívy\n"
 "   build-dep       - Nastaví závislosti kompilácie pre zdrojové balíky\n"
 "   dist-upgrade    - Aktualizácia distribúcie, viď apt-get(8)\n"
@@ -2093,25 +2092,25 @@ msgstr ""
 #: apt-pkg/contrib/strutl.cc:335
 #, c-format
 msgid "%lid %lih %limin %lis"
-msgstr ""
+msgstr "%li d %li h %li min %li s"
 
 #. h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:342
 #, c-format
 msgid "%lih %limin %lis"
-msgstr ""
+msgstr "%li h %li min %li s"
 
 #. min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:349
 #, c-format
 msgid "%limin %lis"
-msgstr ""
+msgstr "%li min %li s"
 
 #. s means seconds
 #: apt-pkg/contrib/strutl.cc:354
 #, c-format
 msgid "%lis"
-msgstr ""
+msgstr "%li s"
 
 #: apt-pkg/contrib/strutl.cc:1018
 #, c-format
@@ -2253,7 +2252,7 @@ msgstr "Súbor zámku %s sa nedá otvoriť"
 #: apt-pkg/contrib/fileutl.cc:172
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
-msgstr "Zamykanie pre súbor zámku %s pripojený cez nfs sa nepoužíva"
+msgstr "Zamykanie pre súbor zámku %s pripojený cez NFS sa nepoužíva"
 
 #: apt-pkg/contrib/fileutl.cc:176
 #, c-format
@@ -2911,7 +2910,7 @@ msgstr ""
 
 #: apt-pkg/deb/debsystem.cc:100
 msgid "Not locked"
-msgstr ""
+msgstr "Nie je zamknuté"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
