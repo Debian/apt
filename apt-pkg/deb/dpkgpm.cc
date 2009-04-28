@@ -1124,6 +1124,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       }
    }
 
+   // log the ordering 
+   const char *ops_str[] = {"Install", "Configure","Remove","Purge"};
+   fprintf(report, "AptOrdering:\n");
+   for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
+      fprintf(report, " %s: %s\n", (*I).Pkg.Name(), ops_str[(*I).Op]);
+
    // attach dmesg log (to learn about segfaults)
    if (FileExists("/bin/dmesg"))
    {
