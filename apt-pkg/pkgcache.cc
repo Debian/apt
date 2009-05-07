@@ -607,6 +607,8 @@ string pkgCache::PkgFileIterator::RelStr()
       Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
    if (Archive() != 0)
       Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
+   if (Codename() != 0)
+      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
    if (Label() != 0)
       Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
    if (Component() != 0)

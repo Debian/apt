@@ -3,29 +3,32 @@
 // $Id: versionmatch.h,v 1.4 2001/05/29 03:07:12 jgg Exp $
 /* ######################################################################
 
-   Version Matching 
-   
+   Version Matching
+
    This module takes a matching string and a type and locates the version
    record that satisfies the constraint described by the matching string.
 
      Version: 1.2*
      Release: o=Debian,v=2.1*,c=main
      Release: v=2.1*
+     Release: a=testing
+     Release: n=squeeze
      Release: *
      Origin: ftp.debian.org
-   
+
    Release may be a complex type that can specify matches for any of:
       Version (v= with prefix)
       Origin (o=)
-      Archive (a=)
+      Archive (a=) eg, unstable, testing, stable
+      Codename (n=) e.g. etch, lenny, squeeze, sid
       Label (l=)
       Component (c=)
    If there are no equals signs in the string then it is scanned in short
-   form - if it starts with a number it is Version otherwise it is an 
-   Archive.
-   
+   form - if it starts with a number it is Version otherwise it is an
+   Archive or a Codename.
+
    Release may be a '*' to match all releases.
-   
+
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_VERSIONMATCH_H
@@ -47,6 +50,8 @@ class pkgVersionMatch
    string RelVerStr;
    bool RelVerPrefixMatch;
    string RelOrigin;
+   string RelRelease;
+   string RelCodename;
    string RelArchive;
    string RelLabel;
    string RelComponent;

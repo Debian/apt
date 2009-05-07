@@ -223,6 +223,7 @@ struct pkgCache::PackageFile
    // Names
    map_ptrloc FileName;        // Stringtable
    map_ptrloc Archive;         // Stringtable
+   map_ptrloc Codename;        // Stringtable
    map_ptrloc Component;       // Stringtable
    map_ptrloc Version;         // Stringtable
    map_ptrloc Origin;          // Stringtable
