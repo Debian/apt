@@ -621,7 +621,7 @@ bool pkgAcquire::Queue::Startup()
          added other source retry to have cycle maintain a pipeline depth
          on its own. */
       if (Cnf->Pipeline == true)
-	 MaxPipeDepth = 1000;
+	 MaxPipeDepth = _config->FindI("Acquire::Max-Pipeline-Depth",1000);
       else
 	 MaxPipeDepth = 1;
    }
