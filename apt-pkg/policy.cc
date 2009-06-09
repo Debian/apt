@@ -239,7 +239,21 @@ signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
    return 0;
 }
 									/*}}}*/
-
+// PreferenceSection class - Overriding the default TrimRecord method	/*{{{*/
+// ---------------------------------------------------------------------
+/* The preference file is a user generated file so the parser should
+   therefore be a bit more friendly by allowing comments and new lines
+   all over the place rather than forcing a special format */
+class PreferenceSection : public pkgTagSection
+{
+   void TrimRecord(bool BeforeRecord, const char* &End)
+   {
+      for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
+	 if (Stop[0] == '#')
+	    Stop = (const char*) memchr(Stop,'\n',End-Stop);
+   }
+};
+									/*}}}*/
 // ReadPinFile - Load the pin file into a Policy			/*{{{*/
 // ---------------------------------------------------------------------
 /* I'd like to see the preferences file store more than just pin information
@@ -259,7 +273,7 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    if (_error->PendingError() == true)
       return false;
    
-   pkgTagSection Tags;
+   PreferenceSection Tags;
    while (TF.Step(Tags) == true)
    {
       string Name = Tags.FindS("Package");
