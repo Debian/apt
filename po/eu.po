@@ -2,13 +2,13 @@
 # This file is put in the public domain.
 #
 # Hizkuntza Politikarako Sailburuordetza <hizkpol@ej-gv.es>, 2005.
-# Piarres Beobide <pi@beobide.net>, 2005, 2006, 2007, 2008.
+# Piarres Beobide <pi@beobide.net>, 2005, 2006, 2007, 2008, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_eu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-12 22:07+0100\n"
-"PO-Revision-Date: 2008-11-18 10:32+0100\n"
+"PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -83,7 +83,7 @@ msgstr "Guztira bateratutako kateak: "
 
 #: cmdline/apt-cache.cc:330
 msgid "Total dependency version space: "
-msgstr "Guztira bertsio dependentzi lekua: "
+msgstr "Guztira bertsio dependentzia lekua: "
 
 #: cmdline/apt-cache.cc:335
 msgid "Total slack space: "
@@ -1299,7 +1299,7 @@ msgstr ""
 "   upgrade - Egin bertsio berritzea\n"
 "   install - Instalatu pakete berriak (paketea libc6 da, eta ez libc6.deb)\n"
 "   remove - Kendu paketeak\n"
-"  autoremove - Automatikoki kendu erabiltzen ez diren paketeak\n"
+"   autoremove - Automatikoki kendu erabiltzen ez diren paketeak\n"
 "   purge - Paketeak kendu eta garbitu\n"
 "   source - Deskargatu iturburu artxiboak\n"
 "   build-dep - Konfiguratu iturburu paketeen eraikitze dependentziak\n"
@@ -2082,9 +2082,14 @@ msgstr "Ezin da fitxategi huts baten mmap egin"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Ezin izan da %lu byteren mmap egin"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "MMap dinamiko funtzioa leku gabe geratzen ari da"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+"MMAP dinamikoa memoriaz kanpo. Mesedez handitu APT::Cache-Limit muga. Uneko "
+"balioa: %lu. (man 5 apt.conf)"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format

@@ -1301,9 +1301,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0)
    {
       string Ver = Parse->Version();
-      
       // show name mismatches
-      if (IsMatch == true && Parse->Package() != Src) 
+      if (IsMatch == true && Parse->Package() != Src)       
 	 ioprintf(c1out,  _("No source package '%s' picking '%s' instead\n"), Parse->Package().c_str(), Src.c_str());
       
       if (VerTag.empty() == false)

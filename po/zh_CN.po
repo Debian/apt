@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-12 22:07+0100\n"
-"PO-Revision-Date: 2008-11-15 00:49+0800\n"
+"PO-Revision-Date: 2009-06-01 15:54+0800\n"
 "Last-Translator: Deng Xiyue <manphiz-guest@users.alioth.debian.org>\n"
 "Language-Team: Debian Chinese [GB] <debian-chinese-gb@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -2054,9 +2054,14 @@ msgstr "无法 mmap 一个空文件"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "无法 mmap %lu 字节的数据"
 
-#: apt-pkg/contrib/mmap.cc:213
-msgid "Dynamic MMap ran out of room"
-msgstr "动态内存映射(Dynamic MMap)空间不足"
+#: apt-pkg/contrib/mmap.cc:213 apt-pkg/contrib/mmap.cc:276
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+"动态 MMap 没有空间了。请增大 APT::Cache-Limit 的大侠。当前值：%lu。(man 5 "
+"apt.conf)"
 
 #: apt-pkg/contrib/strutl.cc:1014
 #, c-format
@@ -2856,6 +2861,9 @@ msgstr "无法打开补丁文件"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "连接被永久关闭"
+
+#~ msgid "Dynamic MMap ran out of room"
+#~ msgstr "动态内存映射(Dynamic MMap)空间不足"
 
 #~ msgid ""
 #~ "Since you only requested a single operation it is extremely likely that\n"

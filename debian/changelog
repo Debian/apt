@@ -1,10 +1,73 @@
-apt (0.7.20.2ubuntu8) UNRELEASEDkarmic; urgency=low
+apt (0.7.21ubuntu1) karmic; urgency=low
 
+  * merged from the debian-sid bzr branch
+  
+  [ Christian Perrier ]
+  * Documentation translations:
+    - Fix a typo in apt-get(8) French translation. Closes: #525043
+      Thanks to Guillaume Delacour for spotting it.
+  * Translations:
+    - fr.po
+    - sk.po. Closes: #525857
+    - ru.po. Closes: #526816
+    - eu.po. Closes: #528985
+    - zh_CN.po. Closes: #531390
+    - fr.po
+    - it.po. Closes: #531758
+    - ca.po. Closes: #531921
+  * Added translations
+    - ast.po (Asturian by Marcos Alvareez Costales).
+      Closes: #529007, #529730
+
+  [ Michael Vogt ]
   * apt-pkg/acquire.cc:
     - make the max pipeline depth of the acquire queue configurable
       via Acquire::Max-Pipeline-Depth
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 28 May 2009 17:51:42 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 09 Jun 2009 15:49:07 +0200
+
+apt (0.7.21) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Translations:
+    - bg.po. Closes: #513211
+    - zh_TW.po. Closes: #513311
+    - nb.po. Closes: #513843
+    - fr.po. Closes: #520430
+    - sv.po. Closes: #518070
+    - sk.po. Closes: #520403
+    - it.po. Closes: #522222
+    - sk.po. Closes: #520403
+
+  [ Jamie Strandboge ]
+  * apt.cron.daily: catch invalid dates due to DST time changes
+    in the stamp files
+
+  [ Michael Vogt ]
+  * methods/gpgv.cc:
+    - properly check for expired and revoked keys (closes: #433091)
+  * apt-pkg/contrib/strutl.cc:
+    - fix TimeToStr i18n (LP: #289807)
+  * [ABI break] merge support for http redirects, thanks to
+    Jeff Licquia and Anthony Towns
+  * [ABI break] use int for the package IDs (thanks to Steve Cotton)
+  * apt-pkg/pkgcache.cc:
+    - do not run "dpkg --configure pkg" if pkg is in trigger-awaited
+      state (LP: #322955)
+  * methods/https.cc:
+    - add Acquire::https::AllowRedirect support
+  * Clarify the --help for 'purge' (LP: #243948)
+  * cmdline/apt-get.cc
+    - fix "apt-get source pkg" if there is a binary package and
+      a source package of the same name but from different
+      packages (LP: #330103)
+
+  [ Colin Watson ]
+  * cmdline/acqprogress.cc:
+    - Call pkgAcquireStatus::Pulse even if quiet, so that we still get
+      dlstatus messages on the status-fd (LP: #290234).
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 14 Apr 2009 14:12:51 +0200
 
 apt (0.7.20.2ubuntu7) karmic; urgency=low
 

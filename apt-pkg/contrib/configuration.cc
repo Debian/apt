@@ -182,9 +182,9 @@ string Configuration::FindFile(const char *Name,const char *Default) const
    if (Itm == 0 || Itm->Value.empty() == true)
    {
       if (Default == 0)
-	 return "";
+	 return rootDir;
       else
-	 return Default;
+	 return rootDir + Default;
    }
    
    string val = Itm->Value;

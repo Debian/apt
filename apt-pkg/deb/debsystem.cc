@@ -18,7 +18,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apti18n.h>
-
 #include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
