@@ -521,6 +521,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	  F.getline(Buffer,sizeof(Buffer) / 2);
 
 	  Input += Buffer;
+	  delete[] Buffer;
 	}
       while (F.fail() && !F.eof());
 
