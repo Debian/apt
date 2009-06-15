@@ -49,7 +49,7 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 7;
+   MajorVersion = 8;
    MinorVersion = 0;
    Dirty = false;
    
@@ -223,7 +223,7 @@ const char *pkgCache::DepType(unsigned char Type)
 {
    const char *Types[] = {"",_("Depends"),_("PreDepends"),_("Suggests"),
                           _("Recommends"),_("Conflicts"),_("Replaces"),
-                          _("Obsoletes"),_("Breaks")};
+                          _("Obsoletes"),_("Breaks"), _("Enhances")};
    if (Type < sizeof(Types)/sizeof(*Types))
       return Types[Type];
    return "";

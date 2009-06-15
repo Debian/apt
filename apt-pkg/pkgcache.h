@@ -70,7 +70,7 @@ class pkgCache
    struct Dep
    {
       enum DepType {Depends=1,PreDepends=2,Suggests=3,Recommends=4,
-	 Conflicts=5,Replaces=6,Obsoletes=7,DpkgBreaks=8};
+	 Conflicts=5,Replaces=6,Obsoletes=7,DpkgBreaks=8,Enhances=9};
       enum DepCompareOp {Or=0x10,NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
 	 Greater=0x4,Equals=0x5,NotEquals=0x6};
    };

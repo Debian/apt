@@ -109,6 +109,8 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
       return false;
    if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Replaces) == false)
       return false;
+   if (ParseDepends(Ver,"Enhances",pkgCache::Dep::Enhances) == false)
+      return false;
 
    // Obsolete.
    if (ParseDepends(Ver,"Optional",pkgCache::Dep::Suggests) == false)
