@@ -74,6 +74,31 @@ namespace
   };
 }
 
+/* helper function to ionice the given PID 
+
+ there is no C header for ionice yet - just the syscall interface
+ so we use the binary from util-linux
+*/
+static bool
+ionice(int PID)
+{
+   if (!FileExists("/usr/bin/ionice"))
+      return false;
+   pid_t Process = ExecFork();      
+   if (Process == 0)
+   {
+      char buf[32];
+      snprintf(buf, sizeof(buf), "-p%d", PID);
+      const char *Args[4];
+      Args[0] = "/usr/bin/ionice";
+      Args[1] = "-c3";
+      Args[2] = buf;
+      Args[3] = 0;
+      execv(Args[0], (char **)Args);
+   }
+   return ExecWait(Process, "ionice");
+}
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -850,7 +875,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       _exit(100);
 	 }
 
-
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 putenv((char *)"DPKG_NO_TSTP=yes");
@@ -858,6 +882,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
       }      
+
+      // apply ionice
+      if (_config->FindB("DPkg::UseIoNice", false) == true)
+	 ionice(Child);
 
       // clear the Keep-Fd again
       _config->Clear("APT::Keep-Fds",fd[1]);
