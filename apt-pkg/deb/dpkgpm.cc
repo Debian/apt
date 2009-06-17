@@ -839,6 +839,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
+      // send status information that we are about to fork dpkg
+      if(OutStatusFd > 0) {
+	 ostringstream status;
+	 status << "pmstatus:dpkg-exec:" 
+		<< (PackagesDone/float(PackagesTotal)*100.0) 
+		<< ":" << _("Running dpkg")
+		<< endl;
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      }
       Child = ExecFork();
             
       // This is the child
