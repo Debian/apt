@@ -526,7 +526,9 @@ void pkgProblemResolver::MakeScores()
       
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; D++)
       {
-	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
+	 if (D->Type == pkgCache::Dep::Depends || 
+	     D->Type == pkgCache::Dep::PreDepends || 
+	     D->Type == pkgCache::Dep::Recommends) 
 	    Scores[D.TargetPkg()->ID]++;
       }
    }   
@@ -547,7 +549,9 @@ void pkgProblemResolver::MakeScores()
       {
 	 // Only do it for the install version
 	 if ((pkgCache::Version *)D.ParentVer() != Cache[D.ParentPkg()].InstallVer ||
-	     (D->Type != pkgCache::Dep::Depends && D->Type != pkgCache::Dep::PreDepends))
+	     (D->Type != pkgCache::Dep::Depends && 
+	      D->Type != pkgCache::Dep::PreDepends &&
+	      D->Type != pkgCache::Dep::Recommends))
 	    continue;	 
 	 
 	 Scores[I->ID] += abs(OldScores[D.ParentPkg()->ID]);
