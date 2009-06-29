@@ -363,6 +363,11 @@
      actually change the system. 
      Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
 
+     <para>Simulation run as user will deactivate locking (<literal>Debug::NoLocking</literal>)
+     automatical and display a notice indicating that this is only a simulation.
+     Neigther NoLocking nor the notice will be triggered if run as root (root should know what
+     he is doing without further warnings by <literal>apt-get</literal>).</para>
+
      <para>Simulate prints out
      a series of lines each one representing a dpkg operation, Configure (Conf),
      Remove (Remv), Unpack (Inst). Square brackets indicate broken packages with

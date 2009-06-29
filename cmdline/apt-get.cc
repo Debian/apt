@@ -2788,7 +2788,18 @@ int main(int argc,const char *argv[])
       ShowHelp(CmdL);
       return 0;
    }
-   
+
+   // simulate user-friendly if apt-get has no root privileges
+   if (getuid() != 0 && _config->FindB("APT::Get::Simulate") == true)
+   {
+      cout << _("NOTE: This is only a simulation!\n"
+        "      apt-get needs root privileges for real execution.\n"
+        "      Keep also in mind that locking is deactivated,\n"
+        "      so don't depend on the relevance to the real current situation!"
+        ) << std::endl;
+      _config->Set("Debug::NoLocking",true);
+   }
+
    // Deal with stdout not being a tty
    if (!isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
       _config->Set("quiet","1");
