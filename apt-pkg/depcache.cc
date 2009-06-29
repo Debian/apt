@@ -15,6 +15,7 @@
 #include <apt-pkg/algorithms.h>
 
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/tagfile.h>
@@ -45,14 +46,6 @@ ConfigValueInSubTree(const char* SubTree, const char *needle)
       }
    }
    return false;
-}
-
-std::string OutputInDepth(const unsigned long Depth)
-{
-   std::string output = "";
-   for(unsigned long d=Depth; d > 0; d--)
-      output += "  ";
-   return output;
 }
 
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :

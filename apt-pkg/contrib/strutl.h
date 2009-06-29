@@ -48,6 +48,7 @@ string DeQuoteString(const string &Str);
 string SizeToStr(double Bytes);
 string TimeToStr(unsigned long Sec);
 string Base64Encode(const string &Str);
+string OutputInDepth(const unsigned long Depth, const char* Separator="  ");
 string URItoFileName(const string &URI);
 string TimeRFC1123(time_t Date);
 bool StrToTime(const string &Val,time_t &Result);
