@@ -1870,7 +1870,8 @@ bool DoInstall(CommandLine &CmdL)
    // cache.commit()
    if (AutoMarkChanged > 0 &&
        Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
-       Cache->BadCount() == 0)
+       Cache->BadCount() == 0 &&
+       _config->FindB("APT::Get::Simulate",false) == false)
       Cache->writeStateFile(NULL);
 
    // See if we need to prompt
