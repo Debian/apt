@@ -1069,7 +1069,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    library can override this method to control the MarkInstall behaviour */
 bool pkgDepCache::IsAutoInstallOk(const PkgIterator &Pkg, unsigned long Depth)
 {
-   return true;
+   return (Pkg->SelectedState != pkgCache::State::Hold);
 }
 									/*}}}*/
 // DepCache::SetReInstall - Set the reinstallation flag			/*{{{*/
