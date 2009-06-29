@@ -63,8 +63,8 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 	 if (isdigit(Data[0]))
 	    RelVerStr = Data;
 	 else
-	    RelArchive = Data;
-	 
+	    RelRelease = Data;
+
 	 if (RelVerStr.length() > 0 && RelVerStr.end()[-1] == '*')
 	 {
 	    RelVerPrefixMatch = true;
@@ -87,19 +87,21 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
       {
 	 if (strlen(Fragments[J]) < 3)
 	    continue;
-	    
+
 	 if (stringcasecmp(Fragments[J],Fragments[J]+2,"v=") == 0)
 	    RelVerStr = Fragments[J]+2;
 	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"o=") == 0)
 	    RelOrigin = Fragments[J]+2;
 	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"a=") == 0)
 	    RelArchive = Fragments[J]+2;
+	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"n=") == 0)
+	    RelCodename = Fragments[J]+2;
 	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"l=") == 0)
 	    RelLabel = Fragments[J]+2;
 	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"c=") == 0)
 	    RelComponent = Fragments[J]+2;
       }
-      
+
       if (RelVerStr.end()[-1] == '*')
       {
 	 RelVerPrefixMatch = true;
@@ -169,15 +171,16 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
    {
       if (MatchAll == true)
 	 return true;
-      
+
 /*      cout << RelVerStr << ',' << RelOrigin << ',' << RelArchive << ',' << RelLabel << endl;
       cout << File.Version() << ',' << File.Origin() << ',' << File.Archive() << ',' << File.Label() << endl;*/
-      
+
       if (RelVerStr.empty() == true && RelOrigin.empty() == true &&
 	  RelArchive.empty() == true && RelLabel.empty() == true &&
+	  RelRelease.empty() == true && RelCodename.empty() == true &&
 	  RelComponent.empty() == true)
 	 return false;
-      
+
       if (RelVerStr.empty() == false)
 	 if (File->Version == 0 ||
 	     MatchVer(File.Version(),RelVerStr,RelVerPrefixMatch) == false)
@@ -187,11 +190,19 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
 	     stringcasecmp(RelOrigin,File.Origin()) != 0)
 	    return false;
       if (RelArchive.empty() == false)
-      {
-	 if (File->Archive == 0 || 
+	 if (File->Archive == 0 ||
 	     stringcasecmp(RelArchive,File.Archive()) != 0)
-	    return false;
-      }      
+            return false;
+      if (RelCodename.empty() == false)
+	 if (File->Codename == 0 ||
+	     stringcasecmp(RelCodename,File.Codename()) != 0)
+            return false;
+      if (RelRelease.empty() == false)
+	 if ((File->Archive == 0 ||
+	     stringcasecmp(RelRelease,File.Archive()) != 0) &&
+             (File->Codename == 0 ||
+	      stringcasecmp(RelRelease,File.Codename()) != 0))
+	       return false;
       if (RelLabel.empty() == false)
 	 if (File->Label == 0 ||
 	     stringcasecmp(RelLabel,File.Label()) != 0)
@@ -202,7 +213,7 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
 	    return false;
       return true;
    }
-   
+
    if (Type == Origin)
    {
       if (OrSite.empty() == false) {
@@ -213,7 +224,7 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
 	    return false;
       return (OrSite == File.Site());		/* both strings match */
    }
-   
+
    return false;
 }
 									/*}}}*/

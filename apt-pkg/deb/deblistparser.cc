@@ -639,6 +639,8 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
       FileI->Version = WriteUniqString(Start,Stop - Start);
    if (Section.Find("Origin",Start,Stop) == true)
       FileI->Origin = WriteUniqString(Start,Stop - Start);
+   if (Section.Find("Codename",Start,Stop) == true)
+      FileI->Codename = WriteUniqString(Start,Stop - Start);
    if (Section.Find("Label",Start,Stop) == true)
       FileI->Label = WriteUniqString(Start,Stop - Start);
    if (Section.Find("Architecture",Start,Stop) == true)

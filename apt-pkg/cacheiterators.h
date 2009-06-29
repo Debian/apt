@@ -333,6 +333,7 @@ class pkgCache::PkgFileIterator
    inline const char *Component() const {return File->Component == 0?0:Owner->StrP + File->Component;};
    inline const char *Version() const {return File->Version == 0?0:Owner->StrP + File->Version;};
    inline const char *Origin() const {return File->Origin == 0?0:Owner->StrP + File->Origin;};
+   inline const char *Codename() const {return File->Codename ==0?0:Owner->StrP + File->Codename;};
    inline const char *Label() const {return File->Label == 0?0:Owner->StrP + File->Label;};
    inline const char *Site() const {return File->Site == 0?0:Owner->StrP + File->Site;};
    inline const char *Architecture() const {return File->Architecture == 0?0:Owner->StrP + File->Architecture;};
