@@ -679,6 +679,27 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
        </listitem>
      </varlistentry>
 
+     <varlistentry>
+       <term><literal>Debug::pkgDepCache::Marker</literal></term>
+       <listitem>
+        <para>
+           Generate debug messages describing which package is marked
+          as keep/install/remove while the ProblemResolver does his work.
+          Each addition or deletion may trigger additional actions;
+          they are shown indented two additional space under the original entry.
+          The format for each line is <literal>MarkKeep</literal>,
+          <literal>MarkDelete</literal> or <literal>MarkInstall</literal> followed by
+          <literal>package-name &lt;a.b.c -&gt; d.e.f | x.y.z&gt; (section)</literal>
+          where <literal>a.b.c</literal> is the current version of the package,
+          <literal>d.e.f</literal> is the version considered for installation and
+          <literal>x.y.z</literal> is a newer version, but not considered for installation
+          (because of a low pin score). The later two can be omitted if there is none or if
+          it is the same version as the installed.
+          <literal>section</literal> is the name of the section the package appears in.
+        </para>
+       </listitem>
+     </varlistentry>
+
      <!-- Question: why doesn't this do anything?  The code says it should. -->
      <varlistentry>
        <term><literal>Debug::pkgInitConfig</literal></term>

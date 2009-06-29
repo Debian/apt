@@ -294,7 +294,10 @@ class pkgDepCache : protected pkgCache::Namespace
    unsigned long iBrokenCount;
    unsigned long iPolicyBrokenCount;
    unsigned long iBadCount;
-   
+
+   bool DebugMarker;
+   bool DebugAutoInstall;
+
    Policy *delLocalPolicy;           // For memory clean up..
    Policy *LocalPolicy;
    
@@ -387,8 +390,9 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    // @{
    void MarkKeep(PkgIterator const &Pkg, bool Soft = false,
-		 bool FromUser = true);
-   void MarkDelete(PkgIterator const &Pkg,bool Purge = false);
+		 bool FromUser = true, unsigned long Depth = 0);
+   void MarkDelete(PkgIterator const &Pkg, bool Purge = false,
+                   unsigned long Depth = 0);
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
 		    bool ForceImportantDeps = false);

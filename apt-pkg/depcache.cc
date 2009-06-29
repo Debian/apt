@@ -47,6 +47,13 @@ ConfigValueInSubTree(const char* SubTree, const char *needle)
    return false;
 }
 
+std::string OutputInDepth(const unsigned long Depth)
+{
+   std::string output = "";
+   for(unsigned long d=Depth; d > 0; d--)
+      output += "  ";
+   return output;
+}
 
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :
   cache(cache), released(false)
@@ -83,6 +90,8 @@ pkgDepCache::ActionGroup::~ActionGroup()
 pkgDepCache::pkgDepCache(pkgCache *pCache,Policy *Plcy) :
   group_level(0), Cache(pCache), PkgState(0), DepState(0)
 {
+   DebugMarker = _config->FindB("Debug::pkgDepCache::Marker", false);
+   DebugAutoInstall = _config->FindB("Debug::pkgDepCache::AutoInstall", false);
    delLocalPolicy = 0;
    LocalPolicy = Plcy;
    if (LocalPolicy == 0)
@@ -705,7 +714,8 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
 // DepCache::MarkKeep - Put the package in the keep state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser)
+void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
+                           unsigned long Depth)
 {
    // Simplifies other routines.
    if (Pkg.end() == true)
@@ -746,6 +756,9 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser)
      P.Flags &= ~Flag::Auto;
 #endif
 
+   if (DebugMarker == true)
+      std::clog << OutputInDepth(Depth) << "MarkKeep " << Pkg << std::endl;
+
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
 
@@ -765,7 +778,8 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser)
 // DepCache::MarkDelete - Put the package in the delete state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge)
+void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
+                             unsigned long Depth)
 {
    // Simplifies other routines.
    if (Pkg.end() == true)
@@ -786,6 +800,9 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge)
    // We dont even try to delete virtual packages..
    if (Pkg->VersionList == 0)
       return;
+
+   if (DebugMarker == true)
+      std::clog << OutputInDepth(Depth) << "MarkDelete " << Pkg << std::endl;
 
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -826,7 +843,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	P.CandidateVer == (Version *)Pkg.CurrentVer()))
    {
       if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
-	 MarkKeep(Pkg, false, FromUser);
+	 MarkKeep(Pkg, false, FromUser, Depth+1);
       return;
    }
 
@@ -867,6 +884,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    
    if (AutoInst == false)
       return;
+
+   if (DebugMarker == true)
+      std::clog << OutputInDepth(Depth) << "MarkInstall " << Pkg << std::endl;
 
    DepIterator Dep = P.InstVerIter(*this).DependsList();
    for (; Dep.end() != true;)
@@ -937,12 +957,12 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 }
       }
       if(isNewImportantDep)
-	 if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
-	    std::clog << "new important dependency: " 
+	 if(DebugAutoInstall == true)
+	    std::clog << OutputInDepth(Depth) << "new important dependency: "
 		      << Start.TargetPkg().Name() << std::endl;
       if(isPreviouslySatisfiedImportantDep)
-	if(_config->FindB("Debug::pkgDepCache::AutoInstall", false) == true)
-	  std::clog << "previously satisfied important dependency on "
+	if(DebugAutoInstall == true)
+	  std::clog << OutputInDepth(Depth) << "previously satisfied important dependency on "
 		    << Start.TargetPkg().Name() << std::endl;
 
       // skip important deps if the package is already installed
@@ -993,15 +1013,16 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 
 	 if (InstPkg.end() == false) 
 	 {
-	    if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
-	       std::clog << "Installing " << InstPkg.Name() 
-			 << " as dep of " << Pkg.Name() 
+	    if(DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
+			 << " as " << Start.DepType() << " of " << Pkg.Name()
 			 << std::endl;
  	    // now check if we should consider it a automatic dependency or not
  	    if(Pkg.Section() && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
  	    {
- 	       if(_config->FindB("Debug::pkgDepCache::AutoInstall",false) == true)
- 		  std::clog << "Setting NOT as auto-installed (direct dep of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
+	       if(DebugAutoInstall == true)
+		  std::clog << OutputInDepth(Depth) << "Setting NOT as auto-installed (direct "
+                            << Start.DepType() << " of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
  	       MarkInstall(InstPkg,true,Depth + 1, true);
  	    }
  	    else 
@@ -1028,7 +1049,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    PkgIterator Pkg = Ver.ParentPkg();
 
 	    if (Start->Type != Dep::DpkgBreaks)
-	       MarkDelete(Pkg);
+	       MarkDelete(Pkg,false,Depth + 1);
 	    else
 	       if (PkgState[Pkg->ID].CandidateVer != *I)
 		  MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);

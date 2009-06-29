@@ -21,6 +21,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/policy.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
@@ -288,6 +289,56 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
       return NeedsUnpack;
       
    return NeedsNothing;
+}
+									/*}}}*/
+// PkgIterator::CandVersion - Returns the candidate version string	/*{{{*/
+// ---------------------------------------------------------------------
+/* Return string representing of the candidate version. */
+const char *
+pkgCache::PkgIterator::CandVersion() const 
+{
+  //TargetVer is empty, so don't use it.
+  VerIterator version = pkgPolicy::pkgPolicy(Owner).GetCandidateVer(*this);
+  if (version.IsGood())
+    return version.VerStr();
+  return 0;
+};
+									/*}}}*/
+// PkgIterator::CurVersion - Returns the current version string		/*{{{*/
+// ---------------------------------------------------------------------
+/* Return string representing of the current version. */
+const char *
+pkgCache::PkgIterator::CurVersion() const 
+{
+  VerIterator version = CurrentVer();
+  if (version.IsGood())
+    return CurrentVer().VerStr();
+  return 0;
+};
+									/*}}}*/
+// ostream operator to handle string representation of a package	/*{{{*/
+// ---------------------------------------------------------------------
+/* Output name < cur.rent.version -> candid.ate.version | new.est.version > (section)
+   Note that the characters <|>() are all literal above. Versions will be ommited
+   if they provide no new information (e.g. there is no newer version than candidate)
+   If no version and/or section can be found "none" is used. */
+std::ostream& 
+operator<<(ostream& out, pkgCache::PkgIterator Pkg) 
+{
+   if (Pkg.end() == true)
+      return out << "invalid package";
+
+   string current = string(Pkg.CurVersion() == 0 ? "none" : Pkg.CurVersion());
+   string candidate = string(Pkg.CandVersion() == 0 ? "none" : Pkg.CandVersion());
+   string newest = string(Pkg.VersionList().end() ? "none" : Pkg.VersionList().VerStr());
+
+   out << Pkg.Name() << " < " << current;
+   if (current != candidate)
+      out << " -> " << candidate;
+   if ( newest != "none" && candidate != newest)
+      out << " | " << newest;
+   out << " > ( " << string(Pkg.Section()==0?"none":Pkg.Section()) << " )";
+   return out;
 }
 									/*}}}*/
 // DepIterator::IsCritical - Returns true if the dep is important	/*{{{*/

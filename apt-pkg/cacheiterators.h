@@ -80,7 +80,13 @@ class pkgCache::PkgIterator
    inline PrvIterator ProvidesList() const;
    inline unsigned long Index() const {return Pkg - Owner->PkgP;};
    OkState State() const;
-   
+
+   //Nice printable representation
+   friend std::ostream& operator<<(std::ostream& out, pkgCache::PkgIterator Pkg);
+
+   const char *CandVersion() const;
+   const char *CurVersion() const;
+
    // Constructors
    inline PkgIterator(pkgCache &Owner,Package *Trg) : Pkg(Trg), Owner(&Owner),
           HashIndex(0) 
@@ -111,7 +117,10 @@ class pkgCache::VerIterator
    inline bool operator ==(const VerIterator &B) const {return Ver == B.Ver;};
    inline bool operator !=(const VerIterator &B) const {return Ver != B.Ver;};
    int CompareVer(const VerIterator &B) const;
-   
+
+   // Testing
+   inline bool IsGood() const { return Ver && Owner && ! end();};
+
    // Accessors
    inline Version *operator ->() {return Ver;};
    inline Version const *operator ->() const {return Ver;};
