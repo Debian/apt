@@ -115,6 +115,13 @@ debReleaseIndex::debReleaseIndex(string URI,string Dist)
    this->Type = "deb";
 }
 
+debReleaseIndex::~debReleaseIndex()
+{
+   for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin();
+	I != SectionEntries.end(); I++)
+      delete *I;
+}
+
 vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
 {
    vector <struct IndexTarget *>* IndexTargets = new vector <IndexTarget *>;

@@ -50,6 +50,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    debSrcRecordParser(string File,pkgIndexFile const *Index) 
       : Parser(Index), Fd(File,FileFd::ReadOnly), Tags(&Fd,102400), 
         Buffer(0), BufSize(0) {}
+   ~debSrcRecordParser();
 };
 
 #endif

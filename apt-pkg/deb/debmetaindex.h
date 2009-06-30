@@ -22,6 +22,7 @@ class debReleaseIndex : public metaIndex {
    public:
 
    debReleaseIndex(string URI, string Dist);
+   ~debReleaseIndex();
 
    virtual string ArchiveURI(string File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool GetAll=false) const;

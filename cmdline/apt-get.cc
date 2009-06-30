@@ -111,6 +111,9 @@ class CacheFile : public pkgCacheFile
 	 return Open(true);
    }
    CacheFile() : List(0) {};
+   ~CacheFile() {
+      delete[] List;
+   }
 };
 									/*}}}*/
 
