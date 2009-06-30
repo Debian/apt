@@ -29,14 +29,13 @@ apt (0.7.22) UNRELEASED; urgency=low
   * add Debug::pkgProblemResolver::ShowScores and make the scores
     adjustable
   * do not write state file in simulate mode (closes: #433007)
-  * add hook for auto-install (closes: #470035)
-  * support IsAutoInstallOk in the resolver too
+  * add hook for MarkInstall and MarkDelete (closes: #470035)
   * fix typo in apt-pkg/acquire.cc which prevents Dl-Limit to work
     correctly when downloading from multiple sites (Closes: #534752)
   * add the various foldmarkers in apt-pkg & cmdline (no code change)
 
   [ Michael Vogt ]
-  * honor the dpkg hold state in AutoInstOk (closes: #64141)
+  * honor the dpkg hold state in new Marker hooks (closes: #64141)
   
   [ Julian Andres Klode ]
   * apt-pkg/contrib/configuration.cc: Fix a small memory leak in

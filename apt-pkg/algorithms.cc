@@ -984,26 +984,11 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			// Consider other options
 			if (InOr == false)
 			{
-			   if (Cache.AutoInstOk(I, Cache[I].CandidateVerIter(Cache),Start) == true)
-			   {
-			      if (Debug == true)
-			         clog << "  Removing " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
-			      Cache.MarkDelete(I);
-			      if (Counter > 1)
-			      {
-				 if (Scores[Pkg->ID] > Scores[I->ID])
-				    Scores[I->ID] = Scores[Pkg->ID];
-			      }
-			   } else {
-			      /* The dependency of the TargetPkg would be satisfiable with I but it is
-				 forbidden to install I automatical, so anything we can do is hold
-				 back the TargetPkg.
-			      */
-			      if (Debug == true)
-				 clog << "  Hold back " << Start.TargetPkg().Name() <<
-					" rather than change denied AutoInstall " << I.Name() << endl;
-			      Cache.MarkKeep(Start.TargetPkg());
-			   }
+			   if (Debug == true)
+			      clog << "  Removing " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
+			   Cache.MarkDelete(I);
+			   if (Counter > 1 && Scores[Pkg->ID] > Scores[I->ID])
+			      Scores[I->ID] = Scores[Pkg->ID];
 			}
 		     }
 		  }

@@ -769,7 +769,7 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
 // ---------------------------------------------------------------------
 /* */
 void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
-                             unsigned long Depth)
+                             unsigned long Depth, bool FromUser)
 {
    // Simplifies other routines.
    if (Pkg.end() == true)
@@ -791,6 +791,13 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    if (Pkg->VersionList == 0)
       return;
 
+   // check if we are allowed to install the package
+   if (IsDeleteOk(Pkg,rPurge,Depth,FromUser) == false)
+   {
+      MarkKeep(Pkg,false,FromUser,Depth+1);
+      return;
+   }
+
    if (DebugMarker == true)
       std::clog << OutputInDepth(Depth) << "MarkDelete " << Pkg << std::endl;
 
@@ -806,6 +813,23 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    AddStates(Pkg);   
    Update(Pkg);
    AddSizes(Pkg);
+}
+									/*}}}*/
+// DepCache::IsDeleteOk - check if it is ok to remove this package	/*{{{*/
+// ---------------------------------------------------------------------
+/* The default implementation just honors dpkg hold
+   But an application using this library can override this method
+   to control the MarkDelete behaviour */
+bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
+			      unsigned long Depth, bool FromUser)
+{
+   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold)
+   {
+      if (DebugMarker == true)
+	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkDelete of " << Pkg << std::endl;
+      return false;
+   }
+   return true;
 }
 									/*}}}*/
 // DepCache::MarkInstall - Put the package in the install state		/*{{{*/
@@ -843,6 +867,14 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    // We dont even try to install virtual packages..
    if (Pkg->VersionList == 0)
       return;
+
+   // check if we are allowed to install the package
+   if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
+   {
+      MarkKeep(Pkg,false,FromUser,Depth+1);
+      return;
+   }
+
    /* Target the candidate version and remove the autoflag. We reset the
       autoflag below if this was called recursively. Otherwise the user
       should have the ability to de-auto a package by changing its state */
@@ -871,7 +903,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    AddStates(Pkg);
    Update(Pkg);
    AddSizes(Pkg);
-   
+
    if (AutoInst == false)
       return;
 
@@ -1001,8 +1033,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    }
 	 }
 	 
-	 if (InstPkg.end() == false &&
-	     AutoInstOk(InstPkg, (*this)[InstPkg].CandidateVerIter(*this), Start))
+	 if (InstPkg.end() == false)
 	 {
 	    if(DebugAutoInstall == true)
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
@@ -1040,30 +1071,30 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    PkgIterator Pkg = Ver.ParentPkg();
 
 	    if (Start->Type != Dep::DpkgBreaks)
-	    {
-	       if(AutoInstOk(Pkg, VerIterator(*this), Start))
-		  MarkDelete(Pkg);
-	    }
-	    else
-	       if (PkgState[Pkg->ID].CandidateVer != *I &&
-		   AutoInstOk(Pkg, VerIterator(*this, PkgState[Pkg->ID].CandidateVer), Start))
-		  MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);
+	       MarkDelete(Pkg,false,Depth + 1, false);
+	    else if (PkgState[Pkg->ID].CandidateVer != *I)
+	       MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);
 	 }
 	 continue;
       }      
    }
 }
 									/*}}}*/
-// DepCache::AutoInstOk - check if it is to install this package	/*{{{*/
+// DepCache::IsInstallOk - check if it is ok to install this package	/*{{{*/
 // ---------------------------------------------------------------------
 /* The default implementation just honors dpkg hold
-   But an application using this  library can override this method
+   But an application using this library can override this method
    to control the MarkInstall behaviour */
-bool pkgDepCache::AutoInstOk(const PkgIterator &Pkg, 
-                             const VerIterator &v,
-                             const DepIterator &d)
+bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
+			      unsigned long Depth, bool FromUser)
 {
-   return (Pkg->SelectedState != pkgCache::State::Hold);
+   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold)
+   {
+      if (DebugMarker == true)
+	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkInstall of " << Pkg << std::endl;
+      return false;
+   }
+   return true;
 }
 									/*}}}*/
 // DepCache::SetReInstall - Set the reinstallation flag			/*{{{*/
