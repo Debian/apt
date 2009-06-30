@@ -27,8 +27,8 @@
 #include <sys/stat.h>
 
 #include <apti18n.h>    
-
-// helper for Install-Recommends-Sections and Never-MarkAuto-Sections
+									/*}}}*/
+// helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
 static bool 
 ConfigValueInSubTree(const char* SubTree, const char *needle)
 {
@@ -47,8 +47,8 @@ ConfigValueInSubTree(const char* SubTree, const char *needle)
    }
    return false;
 }
-
-pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :
+									/*}}}*/
+pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :		/*{{{*/
   cache(cache), released(false)
 {
   ++cache.group_level;
@@ -76,7 +76,7 @@ pkgDepCache::ActionGroup::~ActionGroup()
 {
   release();
 }
-
+									/*}}}*/
 // DepCache::pkgDepCache - Constructors					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -161,8 +161,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
    return true;
 } 
 									/*}}}*/
-
-bool pkgDepCache::readStateFile(OpProgress *Prog)
+bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 {
    FileFd state_file;
    string state = _config->FindDir("Dir::State") + "extended_states";
@@ -200,8 +199,8 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)
 
    return true;
 }
-
-bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
+									/*}}}*/
+bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
 {
    if(_config->FindB("Debug::pkgAutoRemove",false))
       std::clog << "pkgDepCache::writeStateFile()" << std::endl;
@@ -283,7 +282,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)
 
    return true;
 }
-
+									/*}}}*/
 // DepCache::CheckDep - Checks a single dependency			/*{{{*/
 // ---------------------------------------------------------------------
 /* This first checks the dependency against the main target package and
@@ -701,9 +700,7 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
 	   P.end() != true; P++)
 	 Update(P.ParentPkg().RevDependsList());
 }
-
 									/*}}}*/
-
 // DepCache::MarkKeep - Put the package in the keep state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1056,7 +1053,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       }      
    }
 }
-
+									/*}}}*/
 // DepCache::AutoInstOk - check if it is to install this package	/*{{{*/
 // ---------------------------------------------------------------------
 /* The default implementation just honors dpkg hold
@@ -1168,7 +1165,6 @@ const char *pkgDepCache::StateCache::StripEpoch(const char *Ver)
    return Ver;
 }
 									/*}}}*/
-
 // Policy::GetCandidateVer - Returns the Candidate install version	/*{{{*/
 // ---------------------------------------------------------------------
 /* The default just returns the highest available version that is not
@@ -1205,7 +1201,6 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
    return Last;
 }
 									/*}}}*/
-
 // Policy::IsImportantDep - True if the dependency is important		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1231,8 +1226,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
    return false;
 }
 									/*}}}*/
-
-pkgDepCache::DefaultRootSetFunc::DefaultRootSetFunc()
+pkgDepCache::DefaultRootSetFunc::DefaultRootSetFunc()			/*{{{*/
   : constructedSuccessfully(false)
 {
   Configuration::Item const *Opts;
@@ -1261,8 +1255,8 @@ pkgDepCache::DefaultRootSetFunc::DefaultRootSetFunc()
 
   constructedSuccessfully = true;
 }
-
-pkgDepCache::DefaultRootSetFunc::~DefaultRootSetFunc()
+									/*}}}*/
+pkgDepCache::DefaultRootSetFunc::~DefaultRootSetFunc()			/*{{{*/
 {
   for(unsigned int i = 0; i < rootSetRegexp.size(); i++)
     {
@@ -1270,9 +1264,8 @@ pkgDepCache::DefaultRootSetFunc::~DefaultRootSetFunc()
       delete rootSetRegexp[i];
     }
 }
-
-
-bool pkgDepCache::DefaultRootSetFunc::InRootSet(const pkgCache::PkgIterator &pkg)
+									/*}}}*/
+bool pkgDepCache::DefaultRootSetFunc::InRootSet(const pkgCache::PkgIterator &pkg) /*{{{*/
 {
    for(unsigned int i = 0; i < rootSetRegexp.size(); i++)
       if (regexec(rootSetRegexp[i], pkg.Name(), 0, 0, 0) == 0)
@@ -1280,8 +1273,8 @@ bool pkgDepCache::DefaultRootSetFunc::InRootSet(const pkgCache::PkgIterator &pkg
 
    return false;
 }
-
-pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()
+									/*}}}*/
+pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
 {
   DefaultRootSetFunc *f = new DefaultRootSetFunc;
   if(f->wasConstructedSuccessfully())
@@ -1292,7 +1285,7 @@ pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()
       return NULL;
     }
 }
-
+									/*}}}*/
 bool pkgDepCache::MarkFollowsRecommends()
 {
   return _config->FindB("APT::AutoRemove::RecommendsImportant", true);
@@ -1303,7 +1296,7 @@ bool pkgDepCache::MarkFollowsSuggests()
   return _config->FindB("APT::AutoRemove::SuggestsImportant", false);
 }
 
-// the main mark algorithm
+// pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
 bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 {
    bool follow_recommends;
@@ -1348,8 +1341,8 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 
    return true;
 }
-
-// mark a single package in Mark-and-Sweep
+									/*}}}*/
+// MarkPackage - mark a single package in Mark-and-Sweep		/*{{{*/
 void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 			      const pkgCache::VerIterator &ver,
 			      bool follow_recommends,
@@ -1468,8 +1461,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
      }
    }
 }
-
-bool pkgDepCache::Sweep()
+									/*}}}*/
+bool pkgDepCache::Sweep()						/*{{{*/
 {
    // do the sweep
    for(PkgIterator p=PkgBegin(); !p.end(); ++p)
@@ -1492,3 +1485,4 @@ bool pkgDepCache::Sweep()
 
    return true;
 }
+									/*}}}*/

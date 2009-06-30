@@ -1,5 +1,5 @@
 /*
- * Cryptographic API.
+ * Cryptographic API.							{{{
  *
  * SHA-256, as specified in
  * http://csrc.nist.gov/cryptval/shs/sha256-384-512.pdf
@@ -17,7 +17,7 @@
  * Software Foundation; either version 2 of the License, or (at your option) 
  * any later version.
  *
- */
+ */									/*}}}*/
 
 #ifdef __GNUG__
 #pragma implementation "apt-pkg/sha256.h"
@@ -65,20 +65,20 @@ static inline u32 Maj(u32 x, u32 y, u32 z)
 #define H6         0x1f83d9ab
 #define H7         0x5be0cd19
 
-static inline void LOAD_OP(int I, u32 *W, const u8 *input)
+static inline void LOAD_OP(int I, u32 *W, const u8 *input)		/*{{{*/
 {
 	W[I] = (  ((u32) input[I * 4 + 0] << 24)
 		| ((u32) input[I * 4 + 1] << 16)
 		| ((u32) input[I * 4 + 2] << 8)
 		| ((u32) input[I * 4 + 3]));
 }
-
+									/*}}}*/
 static inline void BLEND_OP(int I, u32 *W)
 {
         W[I] = s1(W[I-2]) + W[I-7] + s0(W[I-15]) + W[I-16];
 }
 
-static void sha256_transform(u32 *state, const u8 *input)
+static void sha256_transform(u32 *state, const u8 *input)		/*{{{*/
 {
         u32 a, b, c, d, e, f, g, h, t1, t2;
         u32 W[64];
@@ -240,8 +240,8 @@ static void sha256_transform(u32 *state, const u8 *input)
         a = b = c = d = e = f = g = h = t1 = t2 = 0;
         memset(W, 0, 64 * sizeof(u32));
 }
-
-SHA256Summation::SHA256Summation()
+									/*}}}*/
+SHA256Summation::SHA256Summation()					/*{{{*/
 {
         Sum.state[0] = H0;
         Sum.state[1] = H1;
@@ -255,8 +255,8 @@ SHA256Summation::SHA256Summation()
         memset(Sum.buf, 0, sizeof(Sum.buf));
         Done = false;
 }
-
-bool SHA256Summation::Add(const u8 *data, unsigned long len)
+									/*}}}*/
+bool SHA256Summation::Add(const u8 *data, unsigned long len)		/*{{{*/
 {
         struct sha256_ctx *sctx = &Sum;
         unsigned int i, index, part_len;
@@ -291,8 +291,8 @@ bool SHA256Summation::Add(const u8 *data, unsigned long len)
 
         return true;
 }
-
-SHA256SumValue SHA256Summation::Result()
+									/*}}}*/
+SHA256SumValue SHA256Summation::Result()				/*{{{*/
 {
    struct sha256_ctx *sctx = &Sum;
    if (!Done) {
@@ -340,7 +340,7 @@ SHA256SumValue SHA256Summation::Result()
 
    return res;
 }
-
+									/*}}}*/
 // SHA256SumValue::SHA256SumValue - Constructs the sum from a string   /*{{{*/
 // ---------------------------------------------------------------------
 /* The string form of a SHA256 is a 64 character hex number */
@@ -349,7 +349,6 @@ SHA256SumValue::SHA256SumValue(string Str)
    memset(Sum,0,sizeof(Sum));
    Set(Str);
 }
-
                                                                        /*}}}*/
 // SHA256SumValue::SHA256SumValue - Default constructor                /*{{{*/
 // ---------------------------------------------------------------------
@@ -358,7 +357,6 @@ SHA256SumValue::SHA256SumValue()
 {
    memset(Sum,0,sizeof(Sum));
 }
-
                                                                        /*}}}*/
 // SHA256SumValue::Set - Set the sum from a string                     /*{{{*/
 // ---------------------------------------------------------------------
@@ -391,9 +389,7 @@ string SHA256SumValue::Value() const
 
    return string(Result);
 }
-
-
-
+									/*}}}*/
 // SHA256SumValue::operator == - Comparator                            /*{{{*/
 // ---------------------------------------------------------------------
 /* Call memcmp on the buffer */
@@ -402,8 +398,6 @@ bool SHA256SumValue::operator == (const SHA256SumValue & rhs) const
    return memcmp(Sum,rhs.Sum,sizeof(Sum)) == 0;
 }
                                                                        /*}}}*/
-
-
 // SHA256Summation::AddFD - Add content of file into the checksum      /*{{{*/
 // ---------------------------------------------------------------------
 /* */

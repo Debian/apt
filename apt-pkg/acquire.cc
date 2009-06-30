@@ -484,7 +484,7 @@ double pkgAcquire::PartialPresent()
 	 Total += (*I)->PartialSize;
    return Total;
 }
-
+									/*}}}*/
 // Acquire::UriBegin - Start iterator for the uri list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -501,7 +501,6 @@ pkgAcquire::UriIterator pkgAcquire::UriEnd()
    return UriIterator(0);
 }
 									/*}}}*/
-
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -515,7 +514,6 @@ pkgAcquire::MethodConfig::MethodConfig()
    Next = 0;
 }
 									/*}}}*/
-
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -727,7 +725,6 @@ void pkgAcquire::Queue::Bump()
    Cycle();
 }
 									/*}}}*/
-
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

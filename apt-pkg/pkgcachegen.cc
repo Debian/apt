@@ -652,7 +652,6 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    return ItemP->String;
 }
 									/*}}}*/
-
 // CheckValidity - Check that a cache is up-to-date			/*{{{*/
 // ---------------------------------------------------------------------
 /* This just verifies that each file in the list of index files exists,

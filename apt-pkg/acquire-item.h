@@ -34,7 +34,7 @@
  *  \file acquire-item.h
  */
 
-/** \brief Represents the process by which a pkgAcquire object should
+/** \brief Represents the process by which a pkgAcquire object should	{{{
  *  retrieve a file or a collection of files.
  *
  *  By convention, Item subclasses should insert themselves into the
@@ -261,8 +261,8 @@ class pkgAcquire::Item
     */
    virtual ~Item();
 };
-
-/** \brief Information about an index patch (aka diff). */
+									/*}}}*/
+/** \brief Information about an index patch (aka diff). */		/*{{{*/
 struct DiffInfo {
    /** The filename of the diff. */
    string file;
@@ -273,8 +273,8 @@ struct DiffInfo {
    /** The size of the diff. */
    unsigned long size;
 };
-
-/** \brief An item that is responsible for fetching an index file of
+									/*}}}*/
+/** \brief An item that is responsible for fetching an index file of	{{{
  *  package list diffs and starting the package list's download.
  *
  *  This item downloads the Index file and parses it, then enqueues
@@ -348,8 +348,8 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
    pkgAcqDiffIndex(pkgAcquire *Owner,string URI,string URIDesc,
 		   string ShortDesc, HashString ExpectedHash);
 };
-
-/** \brief An item that is responsible for fetching all the patches
+									/*}}}*/
+/** \brief An item that is responsible for fetching all the patches	{{{
  *  that need to be applied to a given package index file.
  *
  *  After downloading and applying a single patch, this item will
@@ -477,8 +477,8 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
 		    string ShortDesc, HashString ExpectedHash,
 		    vector<DiffInfo> diffs=vector<DiffInfo>());
 };
-
-/** \brief An acquire item that is responsible for fetching an index
+									/*}}}*/
+/** \brief An acquire item that is responsible for fetching an index	{{{
  *  file (e.g., Packages or Sources).
  *
  *  \sa pkgAcqDiffIndex, pkgAcqIndexDiffs, pkgAcqIndexTrans
@@ -545,8 +545,8 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
 	       string ShortDesc, HashString ExpectedHash, string compressExt="");
 };
-
-/** \brief An acquire item that is responsible for fetching a
+									/*}}}*/
+/** \brief An acquire item that is responsible for fetching a		{{{
  *  translated index file.
  *
  *  The only difference from pkgAcqIndex is that transient failures
@@ -579,8 +579,8 @@ class pkgAcqIndexTrans : public pkgAcqIndex
    pkgAcqIndexTrans(pkgAcquire *Owner,string URI,string URIDesc,
 		    string ShortDesc);
 };
-
-/** \brief Information about an index file. */
+									/*}}}*/
+/** \brief Information about an index file. */				/*{{{*/
 struct IndexTarget
 {
    /** \brief A URI from which the index file can be downloaded. */
@@ -597,8 +597,8 @@ struct IndexTarget
     */
    string MetaKey;
 };
-
-/** \brief An acquire item that downloads the detached signature
+									/*}}}*/
+/** \brief An acquire item that downloads the detached signature	{{{
  *  of a meta-index (Release) file, then queues up the release
  *  file itself.
  *
@@ -660,8 +660,8 @@ class pkgAcqMetaSig : public pkgAcquire::Item
 		 const vector<struct IndexTarget*>* IndexTargets,
 		 indexRecords* MetaIndexParser);
 };
-
-/** \brief An item that is responsible for downloading the meta-index
+									/*}}}*/
+/** \brief An item that is responsible for downloading the meta-index	{{{
  *  file (i.e., Release) itself and verifying its signature.
  *
  *  Once the download and verification are complete, the downloads of
@@ -756,8 +756,8 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
 		   const vector<struct IndexTarget*>* IndexTargets,
 		   indexRecords* MetaIndexParser);
 };
-
-/** \brief An item that is responsible for fetching a package file.
+									/*}}}*/
+/** \brief An item that is responsible for fetching a package file.	{{{
  *
  *  If the package file already exists in the cache, nothing will be
  *  done.
@@ -840,8 +840,8 @@ class pkgAcqArchive : public pkgAcquire::Item
 		 pkgRecords *Recs,pkgCache::VerIterator const &Version,
 		 string &StoreFilename);
 };
-
-/** \brief Retrieve an arbitrary file to the current directory.
+									/*}}}*/
+/** \brief Retrieve an arbitrary file to the current directory.		{{{
  *
  *  The file is retrieved even if it is accessed via a URL type that
  *  normally is a NOP, such as "file".  If the download fails, the
@@ -902,7 +902,7 @@ class pkgAcqFile : public pkgAcquire::Item
 	      string Desc, string ShortDesc,
 	      const string &DestDir="", const string &DestFilename="");
 };
-
+									/*}}}*/
 /** @} */
 
 #endif

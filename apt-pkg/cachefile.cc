@@ -24,7 +24,6 @@
     
 #include <apti18n.h>
 									/*}}}*/
-
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -108,8 +107,6 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
    return true;
 }
 									/*}}}*/
-
-
 // CacheFile::Close - close the cache files				/*{{{*/
 // ---------------------------------------------------------------------
 /* */

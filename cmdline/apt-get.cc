@@ -597,7 +597,6 @@ void Stats(ostream &out,pkgDepCache &Dep)
 	       Dep.BadCount());
 }
 									/*}}}*/
-
 // CacheFile::NameComp - QSort compare by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -690,7 +689,10 @@ bool CacheFile::CheckDeps(bool AllowBroken)
       
    return true;
 }
-
+									/*}}}*/
+// CheckAuth - check if each download comes form a trusted source	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 static bool CheckAuth(pkgAcquire& Fetcher)
 {
    string UntrustedList;
@@ -731,10 +733,7 @@ static bool CheckAuth(pkgAcquire& Fetcher)
 
    return _error->Error(_("There are problems and -y was used without --force-yes"));
 }
-
-
 									/*}}}*/
-
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
@@ -1338,7 +1337,6 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    return Last;
 }
 									/*}}}*/
-
 // DoUpdate - Update the package lists					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1460,7 +1458,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
    }
    return true;
 }
-
+									/*}}}*/
 // DoUpgrade - Upgrade all packages					/*{{{*/
 // ---------------------------------------------------------------------
 /* Upgrade all packages without installing new packages or erasing old
@@ -1535,7 +1533,7 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
    regfree(&Pattern);
    return res;
 }
-
+									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -2702,8 +2700,7 @@ void SigWinch(int)
 #endif
 }
 									/*}}}*/
-
-int main(int argc,const char *argv[])
+int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
@@ -2835,3 +2832,4 @@ int main(int argc,const char *argv[])
    
    return 0;   
 }
+									/*}}}*/

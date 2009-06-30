@@ -442,7 +442,6 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
    return true;
 }
 									/*}}}*/
-
 // ProblemResolver::pkgProblemResolver - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1323,7 +1322,6 @@ void pkgProblemResolver::InstallProtect()
    }   
 }
 									/*}}}*/
-
 // PrioSortList - Sort a list of versions by priority			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is ment to be used in conjunction with AllTargets to get a list 
@@ -1354,7 +1352,6 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    qsort(List,Count,sizeof(*List),PrioComp);
 }
 									/*}}}*/
-
 // CacheFile::ListUpdate - update the cache files                    	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple wrapper to update the cache. it will fetch stuff
