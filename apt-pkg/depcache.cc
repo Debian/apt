@@ -846,17 +846,6 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    // We dont even try to install virtual packages..
    if (Pkg->VersionList == 0)
       return;
-
-   /* if the user doesn't request directly the install we have to check
-      if this install will conflict with any rule a application
-      like apt-get or aptitude might has set (for the user)
-      e.g. forbidden versions, holds or other magic stuff */
-   if(FromUser == false && !IsAutoInstallOk(Pkg, Depth))
-   {
-      MarkKeep(Pkg, false, FromUser, Depth);
-      return;
-   }
-
    /* Target the candidate version and remove the autoflag. We reset the
       autoflag below if this was called recursively. Otherwise the user
       should have the ability to de-auto a package by changing its state */
@@ -1015,7 +1004,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    }
 	 }
 	 
-	 if (InstPkg.end() == false) 
+	 if (InstPkg.end() == false &&
+	     AutoInstOk(InstPkg, (*this)[InstPkg].CandidateVerIter(*this), Start))
 	 {
 	    if(DebugAutoInstall == true)
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
@@ -1053,21 +1043,28 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    PkgIterator Pkg = Ver.ParentPkg();
 
 	    if (Start->Type != Dep::DpkgBreaks)
-	       MarkDelete(Pkg,false,Depth + 1);
+	    {
+	       if(AutoInstOk(Pkg, VerIterator(*this), Start))
+		  MarkDelete(Pkg);
+	    }
 	    else
-	       if (PkgState[Pkg->ID].CandidateVer != *I)
+	       if (PkgState[Pkg->ID].CandidateVer != *I &&
+		   AutoInstOk(Pkg, VerIterator(*this, PkgState[Pkg->ID].CandidateVer), Start))
 		  MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);
 	 }
 	 continue;
       }      
    }
 }
-									/*}}}*/
-// DepCache::IsAutoInstallOk - check if it is to install this package	/*{{{*/
+
+// DepCache::AutoInstOk - check if it is to install this package	/*{{{*/
 // ---------------------------------------------------------------------
-/* The default implementation is useless, but an application using this
-   library can override this method to control the MarkInstall behaviour */
-bool pkgDepCache::IsAutoInstallOk(const PkgIterator &Pkg, unsigned long Depth)
+/* The default implementation just honors dpkg hold
+   But an application using this  library can override this method
+   to control the MarkInstall behaviour */
+bool pkgDepCache::AutoInstOk(const PkgIterator &Pkg, 
+                             const VerIterator &v,
+                             const DepIterator &d)
 {
    return (Pkg->SelectedState != pkgCache::State::Hold);
 }

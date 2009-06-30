@@ -363,6 +363,20 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    virtual bool MarkFollowsSuggests();
 
+   /** \return \b true if it's OK for MarkInstall to recursively
+    *  install the given version of the given package.
+    *
+    *  \param p  the package that MarkInstall wants to install.
+    *  \param v  the version being installed, or an end iterator
+    *            if p is being removed.
+    *  \param d  the dependency being fixed.
+    *
+    *  The default implementation unconditionally returns \b true.
+    */
+   virtual bool AutoInstOk(const PkgIterator &p,
+			   const VerIterator &v,
+			   const DepIterator &d);
+
    /** \brief Update the Marked and Garbage fields of all packages.
     *
     *  This routine is implicitly invoked after all state manipulators
@@ -396,18 +410,6 @@ class pkgDepCache : protected pkgCache::Namespace
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
 		    bool ForceImportantDeps = false);
-
-   /** \return \b true if it's OK for MarkInstall to recursively
-    *  install the given package automatically.
-    *
-    *  \param Pkg  the package that MarkInstall wants to install.
-    *
-    *  \param Depth  output depth used for the debugging messages
-    *
-    *  The default implementation unconditionally returns \b true.
-    */
-   virtual bool IsAutoInstallOk(const PkgIterator &Pkg,
-				unsigned long Depth = 0);
 
    void SetReInstall(PkgIterator const &Pkg,bool To);
    void SetCandidateVersion(VerIterator TargetVer);

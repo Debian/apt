@@ -985,7 +985,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			// Consider other options
 			if (InOr == false)
 			{
-			   if (Cache.IsAutoInstallOk(I) == true)
+			   if (Cache.AutoInstOk(I, Cache[I].CandidateVerIter(Cache),Start) == true)
 			   {
 			      if (Debug == true)
 			         clog << "  Removing " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
