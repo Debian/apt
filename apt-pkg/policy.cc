@@ -120,6 +120,14 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
 
+   // no package = no candidate version
+   if (Pkg.end() == true)
+      return Pref;
+
+   // packages with a pin lower than 0 have no newer candidate than the current version
+   if (Max < 0)
+      return Pkg.CurrentVer();
+
    /* Falling through to the default version.. Setting Max to zero
       effectively excludes everything <= 0 which are the non-automatic
       priorities.. The status file is given a prio of 100 which will exclude
