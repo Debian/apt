@@ -20,6 +20,13 @@ apt (0.7.21) UNRELEASED; urgency=low
   * apt-pkg/algorithms.cc:
     - consider recommends when making the scores for the problem 
       resolver
+  * apt-pkg/acquire-worker.cc:
+    - show error details of failed methods
+  * apt-pkg/contrib/fileutl.cc:
+    - if a process aborts with signal, show signal number
+  * methods/http.cc:
+    - ignore SIGPIPE, we deal with EPIPE from write in 
+      HttpMethod::ServerDie() (LP: #385144)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 28 May 2009 17:51:42 +0200
 

@@ -527,10 +527,6 @@ bool pkgAcquire::Worker::OutFdReady()
    
    if (Res <= 0)
       return MethodFailure();
-
-   // Hmm.. this should never happen.
-   if (Res < 0)
-      return true;
    
    OutQueue.erase(0,Res);
    if (OutQueue.empty() == true)
@@ -558,7 +554,8 @@ bool pkgAcquire::Worker::MethodFailure()
 {
    _error->Error("Method %s has died unexpectedly!",Access.c_str());
    
-   ExecWait(Process,Access.c_str(),true);
+   // do not reap the child here to show meaningfull error to the user
+   ExecWait(Process,Access.c_str(),false);
    Process = -1;
    close(InFd);
    close(OutFd);
