@@ -92,7 +92,7 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
    Policy = new pkgPolicy(Cache);
    if (_error->PendingError() == true)
       return false;
-   if (ReadPinFile(*Policy) == false)
+   if (ReadPinFile(*Policy) == false || ReadPinDir(*Policy) == false)
       return false;
    
    // Create the dependency cache

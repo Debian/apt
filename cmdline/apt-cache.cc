@@ -401,7 +401,7 @@ bool DumpAvail(CommandLine &Cmd)
    pkgCache &Cache = *GCache;
 
    pkgPolicy Plcy(&Cache);
-   if (ReadPinFile(Plcy) == false)
+   if (ReadPinFile(Plcy) == false || ReadPinDir(Plcy) == false)
       return false;
    
    unsigned long Count = Cache.HeaderP->PackageCount+1;
@@ -1515,7 +1515,7 @@ bool Policy(CommandLine &CmdL)
    
    pkgCache &Cache = *GCache;
    pkgPolicy Plcy(&Cache);
-   if (ReadPinFile(Plcy) == false)
+   if (ReadPinFile(Plcy) == false || ReadPinDir(Plcy) == false)
       return false;
    
    // Print out all of the package files
