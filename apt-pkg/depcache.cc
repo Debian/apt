@@ -747,7 +747,7 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
 #endif
 
    if (DebugMarker == true)
-      std::clog << OutputInDepth(Depth) << "MarkKeep " << Pkg << std::endl;
+      std::clog << OutputInDepth(Depth) << "MarkKeep " << Pkg << " FU=" << FromUser << std::endl;
 
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -793,13 +793,10 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
 
    // check if we are allowed to install the package
    if (IsDeleteOk(Pkg,rPurge,Depth,FromUser) == false)
-   {
-      MarkKeep(Pkg,false,FromUser,Depth+1);
       return;
-   }
 
    if (DebugMarker == true)
-      std::clog << OutputInDepth(Depth) << "MarkDelete " << Pkg << std::endl;
+      std::clog << OutputInDepth(Depth) << "MarkDelete " << Pkg << " FU=" << FromUser << std::endl;
 
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -826,7 +823,7 @@ bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
    if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold)
    {
       if (DebugMarker == true)
-	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkDelete of " << Pkg << std::endl;
+	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkDelete of " << Pkg << " FU=" << FromUser << std::endl;
       return false;
    }
    return true;
@@ -870,10 +867,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
    // check if we are allowed to install the package
    if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
-   {
-      MarkKeep(Pkg,false,FromUser,Depth+1);
       return;
-   }
 
    /* Target the candidate version and remove the autoflag. We reset the
       autoflag below if this was called recursively. Otherwise the user
@@ -908,7 +902,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       return;
 
    if (DebugMarker == true)
-      std::clog << OutputInDepth(Depth) << "MarkInstall " << Pkg << std::endl;
+      std::clog << OutputInDepth(Depth) << "MarkInstall " << Pkg << " FU=" << FromUser << std::endl;
 
    DepIterator Dep = P.InstVerIter(*this).DependsList();
    for (; Dep.end() != true;)
@@ -1091,7 +1085,7 @@ bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
    if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold)
    {
       if (DebugMarker == true)
-	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkInstall of " << Pkg << std::endl;
+	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkInstall of " << Pkg << " FU=" << FromUser << std::endl;
       return false;
    }
    return true;

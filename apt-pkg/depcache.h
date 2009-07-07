@@ -407,6 +407,14 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \return \b true if it's OK for MarkInstall to install
     *  the given package.
     *
+    *  See the default implementation for a simple example how this
+    *  method can be used.
+    *  Overriding implementations should use the hold-state-flag to cache
+    *  results from previous checks of this package - also it should
+    *  be used if the default resolver implementation is also used to
+    *  ensure that these packages are handled like "normal" dpkg holds.
+    *
+    *  The parameters are the same as in the calling MarkInstall:
     *  \param Pkg       the package that MarkInstall wants to install.
     *  \param AutoInst  needs a previous MarkInstall this package?
     *  \param Depth     recursive deep of this Marker call
@@ -418,6 +426,14 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \return \b true if it's OK for MarkDelete to remove
     *  the given package.
     *
+    *  See the default implementation for a simple example how this
+    *  method can be used.
+    *  Overriding implementations should use the hold-state-flag to cache
+    *  results from previous checks of this package - also it should
+    *  be used if the default resolver implementation is also used to
+    *  ensure that these packages are handled like "normal" dpkg holds.
+    *
+    *  The parameters are the same as in the calling MarkDelete:
     *  \param Pkg       the package that MarkDelete wants to remove.
     *  \param Purge     should we purge instead of "only" remove?
     *  \param Depth     recursive deep of this Marker call
