@@ -36,6 +36,8 @@ apt (0.7.22) UNRELEASED; urgency=low
   * versions with a pin of -1 shouldn't be a candidate (Closes: #355237)
   * prefer mmap as memory allocator in MMap instead of a static char
     array which can (at least in theory) grow dynamic
+  * add a segfault handler to MMap to show the Cache-Limit message, which
+    can be deactivated with MMap::SegfaultHandler=false (Closes: 535218)
 
   [ Michael Vogt ]
   * honor the dpkg hold state in new Marker hooks (closes: #64141)

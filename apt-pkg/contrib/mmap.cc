@@ -19,6 +19,7 @@
 #define _BSD_SOURCE
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
 
 #include <apti18n.h>
 
@@ -26,6 +27,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <signal.h>
 
 #include <cstring>
    									/*}}}*/
@@ -136,6 +139,20 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 }
 									/*}}}*/
 
+// DynamicMMapSegfaultHandler						/*{{{*/
+// ---------------------------------------------------------------------
+/* In theory, the mmap should never segfault because we check the available
+   size of our mmap before we use it, but there are a few reports out there
+   which state that the mmap segfaults without further notice. So this handler
+   will take care of all these segfaults which should never happen... */
+void DynamicMMapSegfaultHandler(int)
+{
+   _error->Error(_("Dynamic MMap segfaults, most likely because it ran out of room. "
+		   "Please increase the size of APT::Cache-Limit. (man 5 apt.conf)"));
+   _error->DumpErrors();
+   exit(EXIT_FAILURE);
+}
+									/*}}}*/
 // DynamicMMap::DynamicMMap - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -169,6 +186,13 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long WorkSpace) :
 {
    if (_error->PendingError() == true)
       return;
+
+   if (_config->FindB("MMap::SegfaultHandler",true) == true)
+   {
+      struct sigaction sa;
+      sa.sa_handler = DynamicMMapSegfaultHandler;
+      sigaction(SIGSEGV, &sa, NULL);
+   }
 
 #ifdef _POSIX_MAPPED_FILES
    // use anonymous mmap() to get the memory
