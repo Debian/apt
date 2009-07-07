@@ -2793,11 +2793,12 @@ int main(int argc,const char *argv[])					/*{{{*/
    // simulate user-friendly if apt-get has no root privileges
    if (getuid() != 0 && _config->FindB("APT::Get::Simulate") == true)
    {
-      cout << _("NOTE: This is only a simulation!\n"
-        "      apt-get needs root privileges for real execution.\n"
-        "      Keep also in mind that locking is deactivated,\n"
-        "      so don't depend on the relevance to the real current situation!"
-        ) << std::endl;
+      if (_config->FindB("APT::Get::Show-User-Simulation-Note",true) == true)
+	 cout << _("NOTE: This is only a simulation!\n"
+	    "      apt-get needs root privileges for real execution.\n"
+	    "      Keep also in mind that locking is deactivated,\n"
+	    "      so don't depend on the relevance to the real current situation!"
+	 ) << std::endl;
       _config->Set("Debug::NoLocking",true);
    }
 
