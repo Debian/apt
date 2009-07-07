@@ -84,6 +84,8 @@ class DynamicMMap : public MMap
    unsigned long WorkSpace;
    Pool *Pools;
    unsigned int PoolCount;
+
+   bool Grow();
    
    public:
 

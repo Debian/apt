@@ -13,11 +13,6 @@
    libc6 generates warnings -- which should be errors, g++ isn't properly
    strict.
    
-   The configure test notes that some OS's have broken private mmap's
-   so on those OS's we can't use mmap. This means we have to use
-   configure to test mmap and can't rely on the POSIX
-   _POSIX_MAPPED_FILES test.
-   
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -166,13 +161,23 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) 
 									/*}}}*/
 // DynamicMMap::DynamicMMap - Constructor for a non-file backed map	/*{{{*/
 // ---------------------------------------------------------------------
-/* This is just a fancy malloc really.. */
+/* We try here to use mmap to reserve some space - this is much more
+   cooler than the fallback solution to simply allocate a char array
+   and could come in handy later than we are able to grow such an mmap */
 DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long WorkSpace) :
              MMap(Flags | NoImmMap | UnMapped), Fd(0), WorkSpace(WorkSpace)
 {
    if (_error->PendingError() == true)
       return;
-   
+
+#ifdef _POSIX_MAPPED_FILES
+   // use anonymous mmap() to get the memory
+   Base = (unsigned char*) mmap(0, WorkSpace, PROT_READ|PROT_WRITE,
+			MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+   if(Base != MAP_FAILED)
+      return;
+#endif
+   // fallback to a static allocated space
    Base = new unsigned char[WorkSpace];
    memset(Base,0,WorkSpace);
    iSize = 0;
@@ -185,7 +190,11 @@ DynamicMMap::~DynamicMMap()
 {
    if (Fd == 0)
    {
+#ifdef _POSIX_MAPPED_FILES
+      munmap(Base, WorkSpace);
+#else
       delete [] (unsigned char *)Base;
+#endif
       return;
    }
    
@@ -207,14 +216,16 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
    
    iSize = Result + Size;
    
-   // Just in case error check
-   if (Result + Size > WorkSpace)
+   // try to grow the buffer
+   while(Result + Size > WorkSpace)
    {
-	  _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
-				  "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
-      return 0;
+      if(!Grow())
+      {
+	 _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
+			 "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
+	 return 0;
+      }
    }
-
    return Result;
 }
 									/*}}}*/
@@ -234,7 +245,6 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
       if (I->ItemSize == ItemSize)
 	 break;
    }
-
    // No pool is allocated, use an unallocated one
    if (I == Pools + PoolCount)
    {
@@ -270,19 +280,51 @@ unsigned long DynamicMMap::WriteString(const char *String,
 				       unsigned long Len)
 {
    unsigned long Result = iSize;
-   // Just in case error check
-   if (Result + Len > WorkSpace)
+   // try to grow the buffer
+   while(Result + Len > WorkSpace)
    {
-	  _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
-				  "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
-      return 0;
-   }   
-   
+      if(!Grow())
+      {
+	 _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
+			 "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
+	 return 0;
+      }
+   }
+
    if (Len == (unsigned long)-1)
       Len = strlen(String);
    iSize += Len + 1;
    memcpy((char *)Base + Result,String,Len);
    ((char *)Base)[Result + Len] = 0;
    return Result;
+}
+									/*}}}*/
+// DynamicMMap::Grow - Grow the mmap					/*{{{*/
+// ---------------------------------------------------------------------
+/* This method will try to grow the mmap we currently use. This doesn't
+   work most of the time because we can't move the mmap around in the
+   memory for now as this would require to adjust quite a lot of pointers
+   but why we should not at least try to grow it before we give up? */
+bool DynamicMMap::Grow()
+{
+#ifdef _POSIX_MAPPED_FILES
+   unsigned long newSize = WorkSpace + 1024*1024;
+
+   if(Fd != 0)
+   {
+      Fd->Seek(newSize - 1);
+      char C = 0;
+      Fd->Write(&C,sizeof(C));
+   }
+
+   Base = mremap(Base, WorkSpace, newSize, 0);
+   if(Base == MAP_FAILED)
+      return false;
+
+   WorkSpace = newSize;
+   return true;
+#else
+   return false;
+#endif
 }
 									/*}}}*/
