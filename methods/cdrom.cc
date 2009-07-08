@@ -17,12 +17,30 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
+#include <dlfcn.h>
 
 #include <iostream>
 #include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
+
+struct udev;
+struct udev_list_entry;
+
+// libudev dlopen stucture
+struct udev_p {
+      struct udev* (*udev_new)(void);
+      int (*udev_enumerate_add_match_property)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
+      int (*udev_enumerate_scan_devices)(struct udev_enumerate *udev_enumerate);
+      struct udev_list_entry *(*udev_enumerate_get_list_entry)(struct udev_enumerate *udev_enumerate);
+      struct udev_device *(*udev_device_new_from_syspath)(struct udev *udev, const char *syspath);
+      struct udev *(*udev_enumerate_get_udev)(struct udev_enumerate *udev_enumerate);
+      const char *(*udev_list_entry_get_name)(struct udev_list_entry *list_entry);
+      const char *(*udev_device_get_devnode)(struct udev_device *udev_device);
+      struct udev_enumerate *(*udev_enumerate_new) (struct udev *udev);
+      struct udev_list_entry *(*udev_list_entry_get_next)(struct udev_list_entry *list_entry);
+};
 
 class CDROMMethod : public pkgAcqMethod
 {
@@ -31,11 +49,12 @@ class CDROMMethod : public pkgAcqMethod
    string CurrentID;
    string CDROM;
    bool MountedByApt;
-   
+   vector<string> CdromDevices;
+ 
    virtual bool Fetch(FetchItem *Itm);
    string GetID(string Name);
    virtual void Exit();
-   
+      
    public:
    
    CDROMMethod();
@@ -50,14 +69,52 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
                                           DatabaseLoaded(false), 
                                           MountedByApt(false)
 {
+   // see if we can get libudev
+   void *h = dlopen("libudev.so.0", RTLD_LAZY);
+   if (h) {
+      // the pointers for the udev struct
+      struct udev_p p;
+      p.udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
+      p.udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
+      p.udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
+      p.udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
+      p.udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
+      p.udev_enumerate_get_udev = (udev* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_udev");
+      p.udev_list_entry_get_name = (const char* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_name");
+      p.udev_device_get_devnode = (const char* (*)(udev_device*))dlsym(h, "udev_device_get_devnode");
+      p.udev_enumerate_new = (udev_enumerate* (*)(udev*))dlsym(h, "udev_enumerate_new");
+      p.udev_list_entry_get_next = (udev_list_entry* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_next");
+      struct udev_enumerate *enumerate;
+      struct udev_list_entry *l, *devices;
+      struct udev *udev_ctx;
+
+      udev_ctx = p.udev_new();
+      enumerate = p.udev_enumerate_new (udev_ctx);
+      p.udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
+
+      p.udev_enumerate_scan_devices (enumerate);
+      devices = p.udev_enumerate_get_list_entry (enumerate);
+      for (l = devices; l != NULL; l = p.udev_list_entry_get_next (l))
+      {
+	 struct udev_device *udevice;
+	 udevice = p.udev_device_new_from_syspath (p.udev_enumerate_get_udev (enumerate), p.udev_list_entry_get_name (l));
+	 if (udevice == NULL)
+	    continue;
+	 const char* devnode = p.udev_device_get_devnode(udevice);
+	 //std::cerr << devnode  << std::endl;
+	 CdromDevices.push_back(string(devnode));
+      } 
+   }
+
+
 };
 									/*}}}*/
 // CDROMMethod::Exit - Unmount the disc if necessary			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void CDROMMethod::Exit()
-{
-   if (MountedByApt == true)
+{ 
+  if (MountedByApt == true)
       UnmountCdrom(CDROM);
 }
 									/*}}}*/
