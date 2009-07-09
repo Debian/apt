@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <algorithm>
-
+#include <dlfcn.h>
 
 #include "indexcopy.h"
 
@@ -843,4 +843,83 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    }
 
    return true;
+}
+
+
+pkgUdevCdromDevices::pkgUdevCdromDevices() 
+  : libudev_handle(NULL)
+{
+
+}
+
+bool
+pkgUdevCdromDevices::Dlopen()
+{
+   // see if we can get libudev
+   void *h = ::dlopen("libudev.so.0", RTLD_LAZY);
+   if(h == NULL)
+      return false;
+
+   // get the pointers to the udev structs
+   libudev_handle = h;
+   udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
+   udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
+   udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
+   udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
+   udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
+   udev_enumerate_get_udev = (udev* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_udev");
+   udev_list_entry_get_name = (const char* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_name");
+   udev_device_get_devnode = (const char* (*)(udev_device*))dlsym(h, "udev_device_get_devnode");
+   udev_enumerate_new = (udev_enumerate* (*)(udev*))dlsym(h, "udev_enumerate_new");
+   udev_list_entry_get_next = (udev_list_entry* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_next");
+   udev_device_get_property_value = (const char* (*)(udev_device *, const char *))dlsym(h, "udev_device_get_property_value");
+
+   return true;
+}
+
+vector<CdromDevice>
+pkgUdevCdromDevices::Scan()
+{
+   vector<CdromDevice> cdrom_devices;
+   struct udev_enumerate *enumerate;
+   struct udev_list_entry *l, *devices;
+   struct udev *udev_ctx;
+
+   if(libudev_handle == NULL)
+      return cdrom_devices;
+
+   udev_ctx = udev_new();
+   enumerate = udev_enumerate_new (udev_ctx);
+   udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
+
+   udev_enumerate_scan_devices (enumerate);
+   devices = udev_enumerate_get_list_entry (enumerate);
+   for (l = devices; l != NULL; l = udev_list_entry_get_next (l))
+   {
+      CdromDevice cdrom;
+      struct udev_device *udevice;
+      udevice = udev_device_new_from_syspath (udev_enumerate_get_udev (enumerate), udev_list_entry_get_name (l));
+      if (udevice == NULL)
+	 continue;
+      const char* devnode = udev_device_get_devnode(udevice);
+      const char* mountpath = udev_device_get_property_value(udevice, "FSTAB_DIR");
+
+      // fill in the struct
+      cdrom.DeviceName = string(devnode);
+      if (mountpath) {
+	 cdrom.MountPath = mountpath;
+	 cdrom.Mounted = true;
+      } else {
+	 cdrom.Mounted = false;
+	 cdrom.MountPath = "";
+      }
+      cdrom_devices.push_back(cdrom);
+   } 
+   return cdrom_devices;
+}
+
+
+pkgUdevCdromDevices::~pkgUdevCdromDevices()
+{ 
+   dlclose(libudev_handle);
 }
