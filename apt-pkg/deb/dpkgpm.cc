@@ -640,20 +640,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       { 
 	 {"unpacked",N_("Preparing to configure %s") },
 	 {"half-configured", N_("Configuring %s") },
-#if 0
-	 {"triggers-awaited", N_("Processing triggers for %s") },
-	 {"triggers-pending", N_("Processing triggers for %s") },
-#endif
 	 { "installed", N_("Installed %s")},
 	 {NULL, NULL}
       },
       // Remove operation
       { 
 	 {"half-configured", N_("Preparing for removal of %s")},
-#if 0
-	 {"triggers-awaited", N_("Preparing for removal of %s")},
-	 {"triggers-pending", N_("Preparing for removal of %s")},
-#endif
 	 {"half-installed", N_("Removing %s")},
 	 {"config-files",  N_("Removed %s")},
 	 {NULL, NULL}
@@ -690,10 +682,19 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
    {
       vector<Item>::iterator J = I;
-      for (; J != List.end() && J->Op == I->Op; J++);
+      for (; J != List.end() && J->Op == I->Op; J++)
+	 /* nothing */;
 
       // Generate the argument list
       const char *Args[MaxArgs + 50];
+      
+      // Now check if we are within the MaxArgs limit
+      //
+      // this code below is problematic, because it may happen that
+      // the argument list is split in a way that A depends on B
+      // and they are in the same "--configure A B" run
+      // - with the split they may now be configured in different
+      //   runs 
       if (J - I > (signed)MaxArgs)
 	 J = I + MaxArgs;
       
