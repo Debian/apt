@@ -1,3 +1,15 @@
+apt (0.7.21ubuntu2~ppa1) karmic; urgency=low
+
+  * apt-pkg/acquire-worker.cc:
+    - show error details of failed methods
+  * apt-pkg/contrib/fileutl.cc:
+    - if a process aborts with signal, show signal number
+  * methods/http.cc:
+    - ignore SIGPIPE, we deal with EPIPE from write in 
+      HttpMethod::ServerDie() (LP: #385144)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Jul 2009 14:11:35 +0200
+
 apt (0.7.21ubuntu1) karmic; urgency=low
 
   * merged from the debian-sid bzr branch
