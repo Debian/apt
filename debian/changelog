@@ -7,6 +7,10 @@ apt (0.7.21ubuntu2~ppa1) karmic; urgency=low
   * methods/http.cc:
     - ignore SIGPIPE, we deal with EPIPE from write in 
       HttpMethod::ServerDie() (LP: #385144)
+  * debian/apt.cron.daily:
+    - if the timestamp is too far in the future, delete it 
+      (LP: #135262)
+
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Jul 2009 14:11:35 +0200
 

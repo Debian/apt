@@ -76,6 +76,13 @@ check_stamp()
     #echo "stampfile: $1"
     #echo "interval=$interval, now=$now, stamp=$stamp, delta=$delta"
 
+    # remove timestamps a day (or more) in the future and force re-check
+    if [ $stamp -gt $(($now+86400)) ]; then
+         echo "WARNING: file $stamp_file has a timestamp in the future: $stamp"
+         rm -f "$stamp_file"
+         return 0
+    fi
+
     if [ $delta -ge $interval ]; then
         return 0
     fi
