@@ -13,9 +13,10 @@ apt (0.7.22) UNRELEASED; urgency=low
     - fr.po
     - it.po. Closes: #531758
     - ca.po. Closes: #531921
+    - de.po. Closes: #536430
   * Added translations
     - ast.po (Asturian by Marcos Alvareez Costales).
-      Closes: #529007, #529730
+      Closes: #529007, #529730, #535328
   
   [ David Kalnischkies ]
   * [ABI break] support '#' in apt.conf and /etc/apt/preferences
@@ -41,13 +42,19 @@ apt (0.7.22) UNRELEASED; urgency=low
 
   [ Michael Vogt ]
   * honor the dpkg hold state in new Marker hooks (closes: #64141)
-  
+  * debian/apt.cron.daily:
+    - if the timestamp is too far in the future, delete it
+
   [ Julian Andres Klode ]
   * apt-pkg/contrib/configuration.cc: Fix a small memory leak in
     ReadConfigFile.
   * Introduce support for the Enhances field. (Closes: #137583) 
+  * Support /etc/apt/preferences.d, by adding ReadPinDir() (Closes: #535512)
+  * configure-index: document Dir::Etc::SourceParts and some other options
+    (Closes: #459605)
+  * Remove Eugene V. Lyubimkin from uploaders as requested.
 
- -- Christian Perrier <bubulle@debian.org>  Wed, 22 Apr 2009 10:13:54 +0200
+ -- Julian Andres Klode <jak@debian.org>  Fri, 03 Jul 2009 08:27:35 +0200
 
 apt (0.7.21) unstable; urgency=low
 

@@ -220,10 +220,14 @@ Dir "/"
   
   // Config files
   Etc "etc/apt/" {
-     SourceList "sources.list";
      Main "apt.conf";
-     Preferences "preferences";     
      Parts "apt.conf.d/";
+     Preferences "preferences";
+     PreferencesParts "preferences.d";
+     SourceList "sources.list";
+     SourceParts "sources.list.d";
+     VendorList "vendors.list";
+     VendorParts "vendors.list.d";
   };
   
   // Locations of binaries
