@@ -267,11 +267,20 @@ class PreferenceSection : public pkgTagSection
 									/*}}}*/
 // ReadPinDir - Load the pin files from this dir into a Policy		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* This will load each pin file in the given dir into a Policy. If the
+   given dir is empty the dir set in Dir::Etc::PreferencesParts is used.
+   Note also that this method will issue a warning if the dir does not
+   exists but it will return true in this case! */
 bool ReadPinDir(pkgPolicy &Plcy,string Dir)
 {
    if (Dir.empty() == true)
       Dir = _config->FindDir("Dir::Etc::PreferencesParts");
+
+   if (FileExists(Dir) == false)
+   {
+      _error->WarningE("FileExists",_("Unable to read %s"),Dir.c_str());
+      return true;
+   }
 
    DIR *D = opendir(Dir.c_str());
    if (D == 0)

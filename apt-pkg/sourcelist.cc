@@ -158,12 +158,16 @@ bool pkgSourceList::ReadMainList()
    //                  entries in sources.list.d.
    string Main = _config->FindFile("Dir::Etc::sourcelist");
    if (FileExists(Main) == true)
-      Res &= ReadAppend(Main);   
+      Res &= ReadAppend(Main);
+   else
+      _error->WarningE("FileExists",_("Unable to read %s"),Main.c_str());
 
    string Parts = _config->FindDir("Dir::Etc::sourceparts");
    if (FileExists(Parts) == true)
       Res &= ReadSourceDir(Parts);
-   
+   else
+      _error->WarningE("FileExists",_("Unable to read %s"),Parts.c_str());
+
    return Res;
 }
 									/*}}}*/
