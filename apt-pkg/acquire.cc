@@ -24,7 +24,8 @@
 
 #include <iostream>
 #include <sstream>
-    
+#include <stdio.h>
+
 #include <dirent.h>
 #include <sys/time.h>
 #include <errno.h>
@@ -620,7 +621,7 @@ bool pkgAcquire::Queue::Startup()
          added other source retry to have cycle maintain a pipeline depth
          on its own. */
       if (Cnf->Pipeline == true)
-	 MaxPipeDepth = 1000;
+	 MaxPipeDepth = _config->FindI("Acquire::Max-Pipeline-Depth",10);
       else
 	 MaxPipeDepth = 1;
    }

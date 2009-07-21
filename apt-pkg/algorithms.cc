@@ -501,6 +501,7 @@ void pkgProblemResolver::MakeScores()
    signed short PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
    signed short PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
    signed short PrioDepends = _config->FindI("pkgProblemResolver::Scores::Depends",1);
+   signed short PrioRecommends = _config->FindI("pkgProblemResolver::Scores::Recommends",1);
    signed short AddProtected = _config->FindI("pkgProblemResolver::Scores::AddProtected",10000);
    signed short AddEssential = _config->FindI("pkgProblemResolver::Scores::AddEssential",5000);
 
@@ -514,6 +515,7 @@ void pkgProblemResolver::MakeScores()
          << "  Essentials => " << PrioEssentials << endl
          << "  InstalledAndNotObsolete => " << PrioInstalledAndNotObsolete << endl
          << "  Depends => " << PrioDepends << endl
+         << "  Recommends => " << PrioRecommends << endl
          << "  AddProtected => " << AddProtected << endl
          << "  AddEssential => " << AddEssential << endl;
 
@@ -552,8 +554,11 @@ void pkgProblemResolver::MakeScores()
       
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; D++)
       {
-	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-	    Scores[D.TargetPkg()->ID]+= PrioDepends;
+	 if (D->Type == pkgCache::Dep::Depends || 
+	     D->Type == pkgCache::Dep::PreDepends)
+	    Scores[D.TargetPkg()->ID] += PrioDepends;
+	 else if (D->Type == pkgCache::Dep::Recommends)
+	    Scores[D.TargetPkg()->ID] += PrioRecommends;
       }
    }   
    
@@ -573,7 +578,9 @@ void pkgProblemResolver::MakeScores()
       {
 	 // Only do it for the install version
 	 if ((pkgCache::Version *)D.ParentVer() != Cache[D.ParentPkg()].InstallVer ||
-	     (D->Type != pkgCache::Dep::Depends && D->Type != pkgCache::Dep::PreDepends))
+	     (D->Type != pkgCache::Dep::Depends && 
+	      D->Type != pkgCache::Dep::PreDepends &&
+	      D->Type != pkgCache::Dep::Recommends))
 	    continue;	 
 	 
 	 Scores[I->ID] += abs(OldScores[D.ParentPkg()->ID]);

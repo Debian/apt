@@ -110,7 +110,7 @@ class pkgCache::VerIterator
    // Iteration
    void operator ++(int) {if (Ver != Owner->VerP) Ver = Owner->VerP + Ver->NextVer;};
    inline void operator ++() {operator ++(0);};
-   inline bool end() const {return Owner == NULL || (Ver == Owner->VerP?true:false);};
+   inline bool end() const {return Owner == 0 || (Ver == Owner->VerP?true:false);};
    inline void operator =(const VerIterator &B) {Ver = B.Ver; Owner = B.Owner;};
    
    // Comparison
@@ -169,7 +169,7 @@ class pkgCache::DescIterator
    // Iteration
    void operator ++(int) {if (Desc != Owner->DescP) Desc = Owner->DescP + Desc->NextDesc;};
    inline void operator ++() {operator ++(0);};
-   inline bool end() const {return Desc == Owner->DescP?true:false;};
+   inline bool end() const {return Owner == 0 || Desc == Owner->DescP?true:false;};
    inline void operator =(const DescIterator &B) {Desc = B.Desc; Owner = B.Owner;};
    
    // Comparison
@@ -323,7 +323,7 @@ class pkgCache::PkgFileIterator
    // Iteration
    void operator ++(int) {if (File!= Owner->PkgFileP) File = Owner->PkgFileP + File->NextFile;};
    inline void operator ++() {operator ++(0);};
-   inline bool end() const {return File == Owner->PkgFileP?true:false;};
+   inline bool end() const {return Owner == 0 || File == Owner->PkgFileP?true:false;};
 
    // Comparison
    inline bool operator ==(const PkgFileIterator &B) const {return File == B.File;};
@@ -370,7 +370,7 @@ class pkgCache::VerFileIterator
    // Iteration
    void operator ++(int) {if (FileP != Owner->VerFileP) FileP = Owner->VerFileP + FileP->NextFile;};
    inline void operator ++() {operator ++(0);};
-   inline bool end() const {return FileP == Owner->VerFileP?true:false;};
+   inline bool end() const {return Owner == 0 || FileP == Owner->VerFileP?true:false;};
 
    // Comparison
    inline bool operator ==(const VerFileIterator &B) const {return FileP == B.FileP;};
@@ -402,7 +402,7 @@ class pkgCache::DescFileIterator
    // Iteration
    void operator ++(int) {if (FileP != Owner->DescFileP) FileP = Owner->DescFileP + FileP->NextFile;};
    inline void operator ++() {operator ++(0);};
-   inline bool end() const {return FileP == Owner->DescFileP?true:false;};
+   inline bool end() const {return Owner == 0 ||  FileP == Owner->DescFileP?true:false;};
 
    // Comparison
    inline bool operator ==(const DescFileIterator &B) const {return FileP == B.FileP;};

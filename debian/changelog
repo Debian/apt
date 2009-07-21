@@ -41,6 +41,48 @@ apt (0.7.22) UNRELEASED; urgency=low
   * honor the dpkg hold state in AutoInstOk (closes: #64141)
   * debian/apt.cron.daily:
     - if the timestamp is too far in the future, delete it
+  * apt-pkg/acquire.cc:
+    - make the max pipeline depth of the acquire queue configurable
+      via Acquire::Max-Pipeline-Depth
+  * apt-pkg/deb/dpkgpm.cc:
+    - add Dpkg::UseIoNice boolean option to run dpkg with ionice -c3
+      (off by default)
+    - send "dpkg-exec" message on the status fd when dpkg is run
+    - provide DPkg::Chroot-Directory config option (useful for testing)
+    - fix potential hang when in a backgroud process group
+  * apt-pkg/algorithms.cc:
+    - consider recommends when making the scores for the problem 
+      resolver
+  * apt-pkg/acquire-worker.cc:
+    - show error details of failed methods
+  * apt-pkg/contrib/fileutl.cc:
+    - if a process aborts with signal, show signal number
+  * methods/http.cc:
+    - ignore SIGPIPE, we deal with EPIPE from write in 
+      HttpMethod::ServerDie() (LP: #385144)
+  * apt-pkg/indexcopy.cc:
+    - support having CDs with no Packages file (just a Packages.gz)
+      by not forcing a verification on non-existing files
+     (LP: #255545)
+    - remove the gettext from a string that consists entirely 
+      of variables (LP: #56792)
+  * apt-pkg/cacheiterators.h:
+    - add missing checks for Owner == 0 in end()
+  * apt-pkg/indexrecords.cc:
+    - fix some i18n issues
+  * apt-pkg/contrib/strutl.h:
+    - add new strprintf() function to make i18n strings easier
+    - fix compiler warning
+  * apt-pkg/deb/debsystem.cc:
+    - make strings i18n able 
+  * fix problematic use of tolower() when calculating the version 
+    hash by using locale independant tolower_ascii() function. 
+    Thanks to M. Vefa Bicakci (LP: #80248)
+  * build fixes for g++-4.4
+  * cmdline/apt-mark:
+    - add "showauto" option to show automatically installed packages
+  * document --install-recommends and --no-install-recommends
+    (thanks to Dereck Wonnacott, LP: #126180)
   
   [ Julian Andres Klode ]
   * apt-pkg/contrib/configuration.cc: Fix a small memory leak in
@@ -53,6 +95,21 @@ apt (0.7.22) UNRELEASED; urgency=low
   * apt-pkg/contrib/hashes.cc, apt-pkg/contrib/md5.cc:
     - Support reading until EOF if Size=0 to match behaviour of
       SHA1Summation and SHA256Summation
+
+  [ Osamu Aoki ]
+  * Updated cron script to support backups by hardlinks and 
+    verbose levels.  All features turned off by default. 
+  * Added more error handlings.  Closes: #438803, #462734, #454989, 
+  * Refactored condition structure to make download and upgrade performed 
+    if only previous steps succeeded. Closes: #341970
+  * Documented all cron script related configuration items in 
+    configure-index.
+
+  [ Dereck Wonnacott ]
+  * apt-ftparchive might write corrupt Release files (LP: #46439)
+  * Apply --important option to apt-cache depends (LP: #16947) 
+
+
 
  -- Julian Andres Klode <jak@debian.org>  Fri, 03 Jul 2009 08:27:35 +0200
 

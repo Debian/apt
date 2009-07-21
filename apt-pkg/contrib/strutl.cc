@@ -1042,9 +1042,24 @@ void ioprintf(ostream &out,const char *format,...)
    va_start(args,format);
    
    // sprintf the description
-   char S[400];
+   char S[4096];
    vsnprintf(S,sizeof(S),format,args);
    out << S;
+}
+									/*}}}*/
+// strprintf - C format string outputter to C++ strings 		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used to make the internationalization strings easier to translate
+   and to allow reordering of parameters */
+void strprintf(string &out,const char *format,...) 
+{
+   va_list args;
+   va_start(args,format);
+   
+   // sprintf the description
+   char S[4096];
+   vsnprintf(S,sizeof(S),format,args);
+   out = string(S);
 }
 									/*}}}*/
 // safe_snprintf - Safer snprintf					/*{{{*/
@@ -1067,6 +1082,17 @@ char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
    if (Did < 0 || Buffer + Did > End)
       return End;
    return Buffer + Did;
+}
+									/*}}}*/
+
+// tolower_ascii - tolower() function that ignores the locale		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+int tolower_ascii(int c)
+{
+   if (c >= 'A' and c <= 'Z')
+      return c + 32;
+   return c;
 }
 									/*}}}*/
 

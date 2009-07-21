@@ -215,7 +215,7 @@ unsigned short debListParser::VersionHash()
       for (; Start != End; Start++)
       {
 	 if (isspace(*Start) == 0)
-	    *I++ = tolower(*Start);
+	    *I++ = tolower_ascii(*Start);
 	 if (*Start == '<' && Start[1] != '<' && Start[1] != '=')
 	    *I++ = '=';
 	 if (*Start == '>' && Start[1] != '>' && Start[1] != '=')

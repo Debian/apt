@@ -74,6 +74,31 @@ namespace
   };
 }
 
+/* helper function to ionice the given PID 
+
+ there is no C header for ionice yet - just the syscall interface
+ so we use the binary from util-linux
+*/
+static bool
+ionice(int PID)
+{
+   if (!FileExists("/usr/bin/ionice"))
+      return false;
+   pid_t Process = ExecFork();      
+   if (Process == 0)
+   {
+      char buf[32];
+      snprintf(buf, sizeof(buf), "-p%d", PID);
+      const char *Args[4];
+      Args[0] = "/usr/bin/ionice";
+      Args[1] = "-c3";
+      Args[2] = buf;
+      Args[3] = 0;
+      execv(Args[0], (char **)Args);
+   }
+   return ExecWait(Process, "ionice");
+}
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -587,6 +612,11 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
 */
 bool pkgDPkgPM::Go(int OutStatusFd)
 {
+   fd_set rfds;
+   struct timespec tv;
+   sigset_t sigmask;
+   sigset_t original_sigmask;
+
    unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);   
    unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
    bool NoTriggers = _config->FindB("DPkg::NoTriggers",false);
@@ -610,20 +640,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       { 
 	 {"unpacked",N_("Preparing to configure %s") },
 	 {"half-configured", N_("Configuring %s") },
-#if 0
-	 {"triggers-awaited", N_("Processing triggers for %s") },
-	 {"triggers-pending", N_("Processing triggers for %s") },
-#endif
 	 { "installed", N_("Installed %s")},
 	 {NULL, NULL}
       },
       // Remove operation
       { 
 	 {"half-configured", N_("Preparing for removal of %s")},
-#if 0
-	 {"triggers-awaited", N_("Preparing for removal of %s")},
-	 {"triggers-pending", N_("Preparing for removal of %s")},
-#endif
 	 {"half-installed", N_("Removing %s")},
 	 {"config-files",  N_("Removed %s")},
 	 {NULL, NULL}
@@ -660,10 +682,19 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    for (vector<Item>::iterator I = List.begin(); I != List.end();)
    {
       vector<Item>::iterator J = I;
-      for (; J != List.end() && J->Op == I->Op; J++);
+      for (; J != List.end() && J->Op == I->Op; J++)
+	 /* nothing */;
 
       // Generate the argument list
       const char *Args[MaxArgs + 50];
+      
+      // Now check if we are within the MaxArgs limit
+      //
+      // this code below is problematic, because it may happen that
+      // the argument list is split in a way that A depends on B
+      // and they are in the same "--configure A B" run
+      // - with the split they may now be configured in different
+      //   runs 
       if (J - I > (signed)MaxArgs)
 	 J = I + MaxArgs;
       
@@ -796,12 +827,28 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 rtt = tt;
 	 cfmakeraw(&rtt);
 	 rtt.c_lflag &= ~ECHO;
+	 // block SIGTTOU during tcsetattr to prevent a hang if
+	 // the process is a member of the background process group
+	 // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
+	 sigemptyset(&sigmask);
+	 sigaddset(&sigmask, SIGTTOU);
+	 sigprocmask(SIG_BLOCK,&sigmask, &original_sigmask);
 	 tcsetattr(0, TCSAFLUSH, &rtt);
+	 sigprocmask(SIG_SETMASK, &original_sigmask, 0);
       }
 
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
+      // send status information that we are about to fork dpkg
+      if(OutStatusFd > 0) {
+	 ostringstream status;
+	 status << "pmstatus:dpkg-exec:" 
+		<< (PackagesDone/float(PackagesTotal)*100.0) 
+		<< ":" << _("Running dpkg")
+		<< endl;
+	 write(OutStatusFd, status.str().c_str(), status.str().size());
+      }
       Child = ExecFork();
             
       // This is the child
@@ -818,6 +865,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    close(slave);
 	 }
 	 close(fd[0]); // close the read end of the pipe
+
+	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
+	 {
+	    std::cerr << "Chrooting into " 
+		      << _config->FindDir("DPkg::Chroot-Directory") 
+		      << std::endl;
+	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
+	       _exit(100);
+	 }
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
@@ -838,7 +894,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       _exit(100);
 	 }
 
-
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 putenv((char *)"DPKG_NO_TSTP=yes");
@@ -846,6 +901,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
       }      
+
+      // apply ionice
+      if (_config->FindB("DPkg::UseIoNice", false) == true)
+	 ionice(Child);
 
       // clear the Keep-Fd again
       _config->Clear("APT::Keep-Fds",fd[1]);
@@ -863,10 +922,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 close(slave);
 
       // setups fds
-      fd_set rfds;
-      struct timespec tv;
-      sigset_t sigmask;
-      sigset_t original_sigmask;
       sigemptyset(&sigmask);
       sigprocmask(SIG_BLOCK,&sigmask,&original_sigmask);
 

@@ -164,7 +164,7 @@ unsigned long pkgCache::sHash(const string &Str) const
 {
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
-      Hash = 5*Hash + tolower(*I);
+      Hash = 5*Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->HashTable);
 }
 
@@ -172,7 +172,7 @@ unsigned long pkgCache::sHash(const char *Str) const
 {
    unsigned long Hash = 0;
    for (const char *I = Str; *I != 0; I++)
-      Hash = 5*Hash + tolower(*I);
+      Hash = 5*Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->HashTable);
 }
 

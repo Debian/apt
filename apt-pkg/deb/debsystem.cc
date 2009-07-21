@@ -67,11 +67,11 @@ bool debSystem::Lock()
    if (LockFD == -1)
    {
       if (errno == EACCES || errno == EAGAIN)
-	 return _error->Error("Unable to lock the administration directory (%s), "
-			      "is another process using it?",AdminDir.c_str());
+	 return _error->Error(_("Unable to lock the administration directory (%s), "
+	                        "is another process using it?"),AdminDir.c_str());
       else
-	 return _error->Error("Unable to lock the administration directory (%s), "
-			      "are you root?",AdminDir.c_str());
+	 return _error->Error(_("Unable to lock the administration directory (%s), "
+	                        "are you root?"),AdminDir.c_str());
    }
    
    // See if we need to abort with a dirty journal
@@ -79,8 +79,8 @@ bool debSystem::Lock()
    {
       close(LockFD);
       LockFD = -1;
-      return _error->Error("dpkg was interrupted, you must manually "
-			   "run 'dpkg --configure -a' to correct the problem. ");
+      return _error->Error(_("dpkg was interrupted, you must manually "
+                             "run 'dpkg --configure -a' to correct the problem. "));
    }
 
 	 LockCount++;
