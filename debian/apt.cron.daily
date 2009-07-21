@@ -360,7 +360,7 @@ if which on_ac_power >/dev/null; then
 fi
 
 # check if we can lock the cache and if the cache is clean
-if which apt-get >/dev/null && ! apt-get check $XAPTOPT $XSTDERR ; then
+if which apt-get >/dev/null && ! eval apt-get check -f $XAPTOPT $XSTDERR ; then
     debug_echo "error encountered in cron job with \"apt-get check\"."
     exit 0
 fi
@@ -403,6 +403,7 @@ do_cache_backup $BackupArchiveInterval
 random_sleep
 
 # update package lists
+UPDATED=0
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
     if eval apt-get $XAPTOPT -y update $XSTDERR; then
@@ -417,6 +418,7 @@ if check_stamp $UPDATE_STAMP $UpdateInterval; then
 	    debug_echo "dbus signal not send (command not available)"
 	fi
 	update_stamp $UPDATE_STAMP
+	UPDATED=1
     else
 	debug_echo "download updated metadata (error)"
     fi
@@ -426,7 +428,7 @@ fi
 	
 # download all upgradeable packages (if it is requested)
 DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
-if check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
+if [ $UPDATED -eq 1 ] && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
     if  eval apt-get $XAPTOPT -y -d dist-upgrade $XSTDERR; then
 	update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
 	debug_echo "download upgradable (success)"
@@ -439,7 +441,7 @@ fi
 
 # auto upgrade all upgradeable packages
 UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
-if which unattended-upgrade >/dev/null && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
+if [ $UPDATED -eq 1 ] && which unattended-upgrade >/dev/null && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
     if unattended-upgrade $XUUPOPT; then
 	update_stamp $UPGRADE_STAMP
 	debug_echo "unattended-upgrade (success)"

@@ -68,6 +68,8 @@ apt (0.7.22) UNRELEASED; urgency=low
   * methods/http.cc:
     - ignore SIGPIPE, we deal with EPIPE from write in 
       HttpMethod::ServerDie() (LP: #385144)
+  * Only run Download-Upgradable and Unattended-Upgrades if the initial
+    update was successful Closes: #341970
   * apt-pkg/indexcopy.cc:
     - support having CDs with no Packages file (just a Packages.gz)
       by not forcing a verification on non-existing files
@@ -108,8 +110,6 @@ apt (0.7.22) UNRELEASED; urgency=low
   * Updated cron script to support backups by hardlinks and 
     verbose levels.  All features turned off by default. 
   * Added more error handlings.  Closes: #438803, #462734, #454989, 
-  * Refactored condition structure to make download and upgrade performed 
-    if only previous steps succeeded. Closes: #341970
   * Documented all cron script related configuration items in 
     configure-index.
 
