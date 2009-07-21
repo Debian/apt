@@ -137,7 +137,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  	 pkgCache::VerIterator Ver = Pkg.VersionList();
  	 map_ptrloc *LastVer = &Pkg->VersionList;
 
-	 for (; Ver != 0 && Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
+	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
  	 {
  	    pkgCache::DescIterator Desc = Ver.DescriptionList();
  	    map_ptrloc *LastDesc = &Ver->DescriptionList;
@@ -145,7 +145,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
 	    // don't add a new description if we have one for the given
 	    // md5 && language
-	    for ( ; Desc != 0 && Desc.end() == false; Desc++)
+	    for ( ; Desc.end() == false; Desc++)
 	       if (MD5SumValue(Desc.md5()) == CurMd5 && 
 	           Desc.LanguageCode() == List.DescriptionLanguage())
 		  duplicate=true;
@@ -153,7 +153,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	       continue;
 	    
  	    for (Desc = Ver.DescriptionList();
-		 Desc != 0 && Desc.end() == false;
+		 Desc.end() == false;
 		 LastDesc = &Desc->NextDesc, Desc++)
 	    {
  	       if (MD5SumValue(Desc.md5()) == CurMd5) 
@@ -175,7 +175,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       pkgCache::VerIterator Ver = Pkg.VersionList();
       map_ptrloc *LastVer = &Pkg->VersionList;
       int Res = 1;
-      for (; Ver != 0 && Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
+      for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
       {
 	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	 if (Res >= 0)
@@ -209,7 +209,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       // Skip to the end of the same version set.
       if (Res == 0)
       {
-	 for (; Ver != 0 && Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
+	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
 	 {
 	    Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	    if (Res != 0)
@@ -248,7 +248,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       map_ptrloc *LastDesc = &Ver->DescriptionList;
       
       // Skip to the end of description set
-      for (; Desc != 0 && Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++);
+      for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++);
 
       // Add new description
       *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
@@ -306,7 +306,7 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
 
       unsigned long Hash = List.VersionHash();
       pkgCache::VerIterator Ver = Pkg.VersionList();
-      for (; Ver != 0 && Ver.end() == false; Ver++)
+      for (; Ver.end() == false; Ver++)
       {
 	 if (Ver->Hash == Hash && Version.c_str() == Ver.VerStr())
 	 {
