@@ -53,14 +53,16 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
    {
       // Setup the map interface..
       Cache.HeaderP = (pkgCache::Header *)Map.Data();
-      Map.RawAllocate(sizeof(pkgCache::Header));
+      if (Map.RawAllocate(sizeof(pkgCache::Header)) == 0 && _error->PendingError() == true)
+	 return;
+
       Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
-      
+
       // Starting header
       *Cache.HeaderP = pkgCache::Header();
       Cache.HeaderP->VerSysName = Map.WriteString(_system->VS->Label);
       Cache.HeaderP->Architecture = Map.WriteString(_config->Find("APT::Architecture"));
-      Cache.ReMap(); 
+      Cache.ReMap();
    }
    else
    {
@@ -135,7 +137,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  	 pkgCache::VerIterator Ver = Pkg.VersionList();
  	 map_ptrloc *LastVer = &Pkg->VersionList;
 
-  	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++) 
+	 for (; Ver != 0 && Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
  	 {
  	    pkgCache::DescIterator Desc = Ver.DescriptionList();
  	    map_ptrloc *LastDesc = &Ver->DescriptionList;
@@ -143,7 +145,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
 	    // don't add a new description if we have one for the given
 	    // md5 && language
- 	    for ( ; Desc.end() == false; Desc++)
+	    for ( ; Desc != 0 && Desc.end() == false; Desc++)
 	       if (MD5SumValue(Desc.md5()) == CurMd5 && 
 	           Desc.LanguageCode() == List.DescriptionLanguage())
 		  duplicate=true;
@@ -151,7 +153,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	       continue;
 	    
  	    for (Desc = Ver.DescriptionList();
-		 Desc.end() == false; 
+		 Desc != 0 && Desc.end() == false;
 		 LastDesc = &Desc->NextDesc, Desc++)
 	    {
  	       if (MD5SumValue(Desc.md5()) == CurMd5) 
@@ -160,7 +162,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  		  *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
  		  Desc->ParentPkg = Pkg.Index();
 		  
- 		  if (NewFileDesc(Desc,List) == false)
+		  if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
  		     return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"),PackageName.c_str());
  		  break;
  	       }
@@ -173,7 +175,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       pkgCache::VerIterator Ver = Pkg.VersionList();
       map_ptrloc *LastVer = &Pkg->VersionList;
       int Res = 1;
-      for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
+      for (; Ver != 0 && Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
       {
 	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	 if (Res >= 0)
@@ -207,7 +209,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       // Skip to the end of the same version set.
       if (Res == 0)
       {
-	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
+	 for (; Ver != 0 && Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
 	 {
 	    Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	    if (Res != 0)
@@ -220,7 +222,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       Ver->ParentPkg = Pkg.Index();
       Ver->Hash = Hash;
 
-      if (List.NewVersion(Ver) == false)
+      if ((*LastVer == 0 && _error->PendingError()) || List.NewVersion(Ver) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewVersion1)"),
 			      PackageName.c_str());
 
@@ -246,13 +248,13 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       map_ptrloc *LastDesc = &Ver->DescriptionList;
       
       // Skip to the end of description set
-      for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++);
+      for (; Desc != 0 && Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++);
 
       // Add new description
       *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
       Desc->ParentPkg = Pkg.Index();
 
-      if (NewFileDesc(Desc,List) == false)
+      if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),PackageName.c_str());
    }
 
@@ -304,7 +306,7 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
 
       unsigned long Hash = List.VersionHash();
       pkgCache::VerIterator Ver = Pkg.VersionList();
-      for (; Ver.end() == false; Ver++)
+      for (; Ver != 0 && Ver.end() == false; Ver++)
       {
 	 if (Ver->Hash == Hash && Version.c_str() == Ver.VerStr())
 	 {
@@ -370,7 +372,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    
    // Link it to the end of the list
    map_ptrloc *Last = &Ver->FileList;
-   for (pkgCache::VerFileIterator V = Ver.FileList(); V.end() == false; V++)
+   for (pkgCache::VerFileIterator V = Ver.FileList(); V != 0 && V.end() == false; V++)
       Last = &V->NextFile;
    VF->NextFile = *Last;
    *Last = VF.Index();
@@ -419,14 +421,14 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
    // Get a structure
    unsigned long DescFile = Map.Allocate(sizeof(pkgCache::DescFile));
    if (DescFile == 0)
-      return 0;
+      return false;
 
    pkgCache::DescFileIterator DF(Cache,Cache.DescFileP + DescFile);
    DF->File = CurrentFile - Cache.PkgFileP;
 
    // Link it to the end of the list
    map_ptrloc *Last = &Desc->FileList;
-   for (pkgCache::DescFileIterator D = Desc.FileList(); D.end() == false; D++)
+   for (pkgCache::DescFileIterator D = Desc.FileList(); D != 0 && D.end() == false; D++)
       Last = &D->NextFile;
 
    DF->NextFile = *Last;
@@ -460,6 +462,8 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    Desc->ID = Cache.HeaderP->DescriptionCount++;
    Desc->language_code = Map.WriteString(Lang);
    Desc->md5sum = Map.WriteString(md5sum.Value());
+   if (Desc->language_code == 0 || Desc->md5sum == 0)
+      return 0;
 
    return Description;
 }
@@ -514,7 +518,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    if (OldDepVer != Ver)
    {
       OldDepLast = &Ver->DependsList;
-      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+      for (pkgCache::DepIterator D = Ver.DependsList(); D != 0 && D.end() == false; D++)
 	 OldDepLast = &D->NextDepends;
       OldDepVer = Ver;
    }
@@ -809,7 +813,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    unsigned long EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;
-   
+
    // Decide if we can write to the files..
    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
    string SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
@@ -861,8 +865,9 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    {
       // Preload the map with the source cache
       FileFd SCacheF(SrcCacheFile,FileFd::ReadOnly);
-      if (SCacheF.Read((unsigned char *)Map->Data() + Map->RawAllocate(SCacheF.Size()),
-		       SCacheF.Size()) == false)
+      unsigned long alloc = Map->RawAllocate(SCacheF.Size());
+      if (alloc == 0 || SCacheF.Read((unsigned char *)Map->Data() + alloc,
+				     SCacheF.Size()) == false)
 	 return false;
 
       TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());

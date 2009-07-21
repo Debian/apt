@@ -19,7 +19,6 @@
 #define _BSD_SOURCE
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/configuration.h>
 
 #include <apti18n.h>
 
@@ -28,7 +27,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include <signal.h>
 
 #include <cstring>
    									/*}}}*/
@@ -139,24 +137,11 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 }
 									/*}}}*/
 
-// DynamicMMapSegfaultHandler						/*{{{*/
-// ---------------------------------------------------------------------
-/* In theory, the mmap should never segfault because we check the available
-   size of our mmap before we use it, but there are a few reports out there
-   which state that the mmap segfaults without further notice. So this handler
-   will take care of all these segfaults which should never happen... */
-void DynamicMMapSegfaultHandler(int)
-{
-   _error->Error(_("Dynamic MMap segfaults, most likely because it ran out of room. "
-		   "Please increase the size of APT::Cache-Limit. (man 5 apt.conf)"));
-   _error->DumpErrors();
-   exit(EXIT_FAILURE);
-}
 									/*}}}*/
 // DynamicMMap::DynamicMMap - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) : 
+DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) :
              MMap(F,Flags | NoImmMap), Fd(&F), WorkSpace(WorkSpace)
 {
    if (_error->PendingError() == true)
@@ -186,13 +171,6 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long WorkSpace) :
 {
    if (_error->PendingError() == true)
       return;
-
-   if (_config->FindB("MMap::SegfaultHandler",true) == true)
-   {
-      struct sigaction sa;
-      sa.sa_handler = DynamicMMapSegfaultHandler;
-      sigaction(SIGSEGV, &sa, NULL);
-   }
 
 #ifdef _POSIX_MAPPED_FILES
    // use anonymous mmap() to get the memory
@@ -237,9 +215,9 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
    unsigned long Result = iSize;
    if (Aln != 0)
       Result += Aln - (iSize%Aln);
-   
+
    iSize = Result + Size;
-   
+
    // try to grow the buffer
    while(Result + Size > WorkSpace)
    {
@@ -258,7 +236,7 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
 /* This allocates an Item of size ItemSize so that it is aligned to its
    size in the file. */
 unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
-{   
+{
    // Look for a matching pool entry
    Pool *I;
    Pool *Empty = 0;
@@ -283,17 +261,24 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
       I->ItemSize = ItemSize;
       I->Count = 0;
    }
-   
+
+   unsigned long Result = 0;
    // Out of space, allocate some more
    if (I->Count == 0)
    {
-      I->Count = 20*1024/ItemSize;
-      I->Start = RawAllocate(I->Count*ItemSize,ItemSize);
-   }   
+      const unsigned long size = 20*1024;
+      I->Count = size/ItemSize;
+      Result = RawAllocate(size,ItemSize);
+      // Does the allocation failed ?
+      if (Result == 0 && _error->PendingError())
+	 return 0;
+      I->Start = Result;
+   }
+   else
+      Result = I->Start;
 
    I->Count--;
-   unsigned long Result = I->Start;
-   I->Start += ItemSize;  
+   I->Start += ItemSize;
    return Result/ItemSize;
 }
 									/*}}}*/
@@ -303,21 +288,14 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
 unsigned long DynamicMMap::WriteString(const char *String,
 				       unsigned long Len)
 {
-   unsigned long Result = iSize;
-   // try to grow the buffer
-   while(Result + Len > WorkSpace)
-   {
-      if(!Grow())
-      {
-	 _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
-			 "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
-	 return 0;
-      }
-   }
-
    if (Len == (unsigned long)-1)
       Len = strlen(String);
-   iSize += Len + 1;
+
+   unsigned long Result = RawAllocate(Len+1,0);
+
+   if (Result == 0 && _error->PendingError())
+      return 0;
+
    memcpy((char *)Base + Result,String,Len);
    ((char *)Base)[Result + Len] = 0;
    return Result;
