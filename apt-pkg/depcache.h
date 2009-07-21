@@ -363,20 +363,6 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    virtual bool MarkFollowsSuggests();
 
-   /** \return \b true if it's OK for MarkInstall to recursively
-    *  install the given version of the given package.
-    *
-    *  \param p  the package that MarkInstall wants to install.
-    *  \param v  the version being installed, or an end iterator
-    *            if p is being removed.
-    *  \param d  the dependency being fixed.
-    *
-    *  The default implementation unconditionally returns \b true.
-    */
-   virtual bool AutoInstOk(const PkgIterator &p,
-			   const VerIterator &v,
-			   const DepIterator &d);
-
    /** \brief Update the Marked and Garbage fields of all packages.
     *
     *  This routine is implicitly invoked after all state manipulators
@@ -406,7 +392,7 @@ class pkgDepCache : protected pkgCache::Namespace
    void MarkKeep(PkgIterator const &Pkg, bool Soft = false,
 		 bool FromUser = true, unsigned long Depth = 0);
    void MarkDelete(PkgIterator const &Pkg, bool Purge = false,
-                   unsigned long Depth = 0);
+                   unsigned long Depth = 0, bool FromUser = true);
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
 		    bool ForceImportantDeps = false);
@@ -417,7 +403,45 @@ class pkgDepCache : protected pkgCache::Namespace
    /** Set the "is automatically installed" flag of Pkg. */
    void MarkAuto(const PkgIterator &Pkg, bool Auto);
    // @}
-   
+
+   /** \return \b true if it's OK for MarkInstall to install
+    *  the given package.
+    *
+    *  See the default implementation for a simple example how this
+    *  method can be used.
+    *  Overriding implementations should use the hold-state-flag to cache
+    *  results from previous checks of this package - also it should
+    *  be used if the default resolver implementation is also used to
+    *  ensure that these packages are handled like "normal" dpkg holds.
+    *
+    *  The parameters are the same as in the calling MarkInstall:
+    *  \param Pkg       the package that MarkInstall wants to install.
+    *  \param AutoInst  needs a previous MarkInstall this package?
+    *  \param Depth     recursive deep of this Marker call
+    *  \param FromUser  was the install requested by the user?
+    */
+   virtual bool IsInstallOk(const PkgIterator &Pkg,bool AutoInst = true,
+			    unsigned long Depth = 0, bool FromUser = true);
+
+   /** \return \b true if it's OK for MarkDelete to remove
+    *  the given package.
+    *
+    *  See the default implementation for a simple example how this
+    *  method can be used.
+    *  Overriding implementations should use the hold-state-flag to cache
+    *  results from previous checks of this package - also it should
+    *  be used if the default resolver implementation is also used to
+    *  ensure that these packages are handled like "normal" dpkg holds.
+    *
+    *  The parameters are the same as in the calling MarkDelete:
+    *  \param Pkg       the package that MarkDelete wants to remove.
+    *  \param Purge     should we purge instead of "only" remove?
+    *  \param Depth     recursive deep of this Marker call
+    *  \param FromUser  was the remove requested by the user?
+    */
+   virtual bool IsDeleteOk(const PkgIterator &Pkg,bool Purge = false,
+			    unsigned long Depth = 0, bool FromUser = true);
+
    // This is for debuging
    void Update(OpProgress *Prog = 0);
 

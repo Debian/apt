@@ -1,5 +1,7 @@
 apt (0.7.22) UNRELEASED; urgency=low
 
+  The 'not dead yet' release
+  
   [ Christian Perrier ]
   * Documentation translations:
     - Fix a typo in apt-get(8) French translation. Closes: #525043
@@ -32,13 +34,19 @@ apt (0.7.22) UNRELEASED; urgency=low
   * add Debug::pkgProblemResolver::ShowScores and make the scores
     adjustable
   * do not write state file in simulate mode (closes: #433007)
-  * add hook for auto-install (closes: #470035)
-  * support IsAutoInstallOk in the resolver too
+  * add hook for MarkInstall and MarkDelete (closes: #470035)
   * fix typo in apt-pkg/acquire.cc which prevents Dl-Limit to work
     correctly when downloading from multiple sites (Closes: #534752)
+  * add the various foldmarkers in apt-pkg & cmdline (no code change)
+  * versions with a pin of -1 shouldn't be a candidate (Closes: #355237)
+  * prefer mmap as memory allocator in MMap instead of a static char
+    array which can (at least in theory) grow dynamic
+  * eliminate (hopefully all) segfaults in pkgcachegen.cc and mmap.cc
+    which can arise if cache doesn't fit into the mmap (Closes: #535218)
+  * display warnings instead of errors if the parts dirs doesn't exist
 
   [ Michael Vogt ]
-  * honor the dpkg hold state in AutoInstOk (closes: #64141)
+  * honor the dpkg hold state in new Marker hooks (closes: #64141)
   * debian/apt.cron.daily:
     - if the timestamp is too far in the future, delete it
   * apt-pkg/acquire.cc:
@@ -108,8 +116,6 @@ apt (0.7.22) UNRELEASED; urgency=low
   [ Dereck Wonnacott ]
   * apt-ftparchive might write corrupt Release files (LP: #46439)
   * Apply --important option to apt-cache depends (LP: #16947) 
-
-
 
  -- Julian Andres Klode <jak@debian.org>  Fri, 03 Jul 2009 08:27:35 +0200
 

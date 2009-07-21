@@ -34,7 +34,7 @@ HashString::HashString(string Type, string Hash) : Type(Type), Hash(Hash)
 {
 }
 
-HashString::HashString(string StringedHash)
+HashString::HashString(string StringedHash)				/*{{{*/
 {
    // legacy: md5sum without "MD5Sum:" prefix
    if (StringedHash.find(":") == string::npos && StringedHash.size() == 32)
@@ -50,9 +50,8 @@ HashString::HashString(string StringedHash)
    if(_config->FindB("Debug::Hashes",false) == true)
       std::clog << "HashString(string): " << Type << " : " << Hash << std::endl;
 }
-
-
-bool HashString::VerifyFile(string filename) const
+									/*}}}*/
+bool HashString::VerifyFile(string filename) const			/*{{{*/
 {
    FileFd fd;
    MD5Summation MD5;
@@ -83,7 +82,7 @@ bool HashString::VerifyFile(string filename) const
 
    return (fileHash == Hash);
 }
-
+									/*}}}*/
 const char** HashString::SupportedHashes()
 {
    return _SupportedHashes;
@@ -94,12 +93,10 @@ bool HashString::empty() const
    return (Type.empty() || Hash.empty());
 }
 
-
 string HashString::toStr() const
 {
    return Type+string(":")+Hash;
 }
-
 
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
 // ---------------------------------------------------------------------

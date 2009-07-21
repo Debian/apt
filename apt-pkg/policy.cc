@@ -123,6 +123,14 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
 
+   // no package = no candidate version
+   if (Pkg.end() == true)
+      return Pref;
+
+   // packages with a pin lower than 0 have no newer candidate than the current version
+   if (Max < 0)
+      return Pkg.CurrentVer();
+
    /* Falling through to the default version.. Setting Max to zero
       effectively excludes everything <= 0 which are the non-automatic
       priorities.. The status file is given a prio of 100 which will exclude
@@ -256,24 +264,35 @@ class PreferenceSection : public pkgTagSection
 	    Stop = (const char*) memchr(Stop,'\n',End-Stop);
    }
 };
-
-
+									/*}}}*/
+// ReadPinDir - Load the pin files from this dir into a Policy		/*{{{*/
+// ---------------------------------------------------------------------
+/* This will load each pin file in the given dir into a Policy. If the
+   given dir is empty the dir set in Dir::Etc::PreferencesParts is used.
+   Note also that this method will issue a warning if the dir does not
+   exists but it will return true in this case! */
 bool ReadPinDir(pkgPolicy &Plcy,string Dir)
 {
    if (Dir.empty() == true)
       Dir = _config->FindDir("Dir::Etc::PreferencesParts");
+
+   if (FileExists(Dir) == false)
+   {
+      _error->WarningE("FileExists",_("Unable to read %s"),Dir.c_str());
+      return true;
+   }
 
    DIR *D = opendir(Dir.c_str());
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
 
    vector<string> List;
-   
+
    for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
    {
       if (Ent->d_name[0] == '.')
 	 continue;
-      
+
       // Skip bad file names ala run-parts
       const char *C = Ent->d_name;
       for (; *C != 0; C++)
@@ -281,17 +300,17 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
 	    break;
       if (*C != 0)
 	 continue;
-      
+
       // Make sure it is a file and not something else
       string File = flCombine(Dir,Ent->d_name);
       struct stat St;
       if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
 	 continue;
-      
-      List.push_back(File);      
-   }   
+
+      List.push_back(File);
+   }
    closedir(D);
-   
+
    sort(List.begin(),List.end());
 
    // Read the files
@@ -300,7 +319,6 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
 	 return false;
    return true;
 }
-   
 									/*}}}*/
 // ReadPinFile - Load the pin file into a Policy			/*{{{*/
 // ---------------------------------------------------------------------

@@ -84,17 +84,17 @@ bool GlobalError::Errno(const char *Function,const char *Description,...)
    char S[400];
    vsnprintf(S,sizeof(S),Description,args);
    snprintf(S + strlen(S),sizeof(S) - strlen(S),
-	    " - %s (%i %s)",Function,errno,strerror(errno));
+	    " - %s (%i: %s)",Function,errno,strerror(errno));
 
    // Put it on the list
    Item *Itm = new Item;
    Itm->Text = S;
    Itm->Error = true;
    Insert(Itm);
-   
+
    PendingFlag = true;
 
-   return false;   
+   return false;
 }
 									/*}}}*/
 // GlobalError::WarningE - Get part of the warn string from errno	/*{{{*/
@@ -112,15 +112,16 @@ bool GlobalError::WarningE(const char *Function,const char *Description,...)
    // sprintf the description
    char S[400];
    vsnprintf(S,sizeof(S),Description,args);
-   snprintf(S + strlen(S),sizeof(S) - strlen(S)," - %s (%i %s)",Function,errno,strerror(errno));
+   snprintf(S + strlen(S),sizeof(S) - strlen(S),
+	    " - %s (%i: %s)",Function,errno,strerror(errno));
 
    // Put it on the list
    Item *Itm = new Item;
    Itm->Text = S;
    Itm->Error = false;
    Insert(Itm);
-   
-   return false;   
+
+   return false;
 }
 									/*}}}*/
 // GlobalError::Error - Add an error to the list			/*{{{*/

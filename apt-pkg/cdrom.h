@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class pkgCdromStatus
+class pkgCdromStatus							/*{{{*/
 {
  protected:
    int totalSteps;
@@ -29,8 +29,8 @@ class pkgCdromStatus
    // Progress indicator for the Index rewriter
    virtual OpProgress* GetOpProgress() {return NULL; };
 };
-
-class pkgCdrom 
+									/*}}}*/
+class pkgCdrom								/*{{{*/
 {
  protected:
    enum {
@@ -65,7 +65,6 @@ class pkgCdrom
    bool Ident(string &ident, pkgCdromStatus *log);
    bool Add(pkgCdromStatus *log);
 };
-
-
+									/*}}}*/
 
 #endif

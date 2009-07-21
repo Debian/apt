@@ -9,7 +9,7 @@
 #include <apt-pkg/strutl.h>
 #include <apti18n.h>
 #include <sys/stat.h>
-
+									/*}}}*/
 string indexRecords::GetDist() const
 {
    return this->Dist;
@@ -31,7 +31,7 @@ const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
    return Entries[MetaKey];
 }
 
-bool indexRecords::Load(const string Filename)
+bool indexRecords::Load(const string Filename)				/*{{{*/
 {
    FileFd Fd(Filename, FileFd::ReadOnly);
    pkgTagFile TagFile(&Fd, Fd.Size() + 256); // XXX
@@ -85,8 +85,8 @@ bool indexRecords::Load(const string Filename)
    string Strdate = Section.FindS("Date"); // FIXME: verify this somehow?
    return true;
 }
-
-vector<string> indexRecords::MetaKeys()
+									/*}}}*/
+vector<string> indexRecords::MetaKeys()					/*{{{*/
 {
    std::vector<std::string> keys;
    std::map<string,checkSum *>::iterator I = Entries.begin();
@@ -96,8 +96,8 @@ vector<string> indexRecords::MetaKeys()
    }
    return keys;
 }
-
-bool indexRecords::parseSumData(const char *&Start, const char *End,
+									/*}}}*/
+bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
 				   string &Name, string &Hash, size_t &Size)
 {
    Name = "";
@@ -154,7 +154,7 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,
    Start = EntryEnd; //prepare for the next round
    return true;
 }
-
+									/*}}}*/
 indexRecords::indexRecords()
 {
 }

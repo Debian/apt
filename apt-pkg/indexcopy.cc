@@ -551,8 +551,8 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
 
    return true;
 }
-
-bool SigVerify::CopyMetaIndex(string CDROM, string CDName, 
+									/*}}}*/
+bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 			      string prefix, string file)
 {
       char S[400];
@@ -572,8 +572,8 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,
    
       return true;
 }
-
-bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
+									/*}}}*/
+bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	/*{{{*/
 			      vector<string> PkgList,vector<string> SrcList)
 {
    if (SigList.size() == 0)
@@ -675,10 +675,9 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 
    return true;
 }
-
-
-bool TranslationsCopy::CopyTranslations(string CDROM,string Name,vector<string> &List,
-			     pkgCdromStatus *log)
+									/*}}}*/
+bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
+				vector<string> &List, pkgCdromStatus *log)
 {
    OpProgress *Progress = NULL;
    if (List.size() == 0)
@@ -850,3 +849,4 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,vector<string> 
 
    return true;
 }
+									/*}}}*/

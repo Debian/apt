@@ -32,7 +32,7 @@
 #define PKGLIB_CACHEITERATORS_H
 
 
-// Package Iterator
+// Package Iterator							/*{{{*/
 class pkgCache::PkgIterator
 {
    friend class pkgCache;
@@ -96,8 +96,8 @@ class pkgCache::PkgIterator
    };
    inline PkgIterator() : Pkg(0), Owner(0), HashIndex(0) {};
 };
-
-// Version Iterator
+									/*}}}*/
+// Version Iterator							/*{{{*/
 class pkgCache::VerIterator
 {
    Version *Ver;
@@ -155,8 +155,8 @@ class pkgCache::VerIterator
 	 Ver = Owner.VerP;
    };
 };
-
-// Description Iterator
+									/*}}}*/
+// Description Iterator							/*{{{*/
 class pkgCache::DescIterator
 {
    Description *Desc;
@@ -199,8 +199,8 @@ class pkgCache::DescIterator
 	 Desc = Owner.DescP;
    };
 };
-
-// Dependency iterator
+									/*}}}*/
+// Dependency iterator							/*{{{*/
 class pkgCache::DepIterator
 {
    Dependency *Dep;
@@ -258,8 +258,8 @@ class pkgCache::DepIterator
    };
    inline DepIterator() : Dep(0), Type(DepVer), Owner(0) {};
 };
-
-// Provides iterator
+									/*}}}*/
+// Provides iterator							/*{{{*/
 class pkgCache::PrvIterator
 {
    Provides *Prv;
@@ -311,8 +311,8 @@ class pkgCache::PrvIterator
 	 Prv = Owner.ProvideP;
    };
 };
-
-// Package file 
+									/*}}}*/
+// Package file								/*{{{*/
 class pkgCache::PkgFileIterator
 {
    pkgCache *Owner;
@@ -358,8 +358,8 @@ class pkgCache::PkgFileIterator
    inline PkgFileIterator(pkgCache &Owner) : Owner(&Owner), File(Owner.PkgFileP) {};
    inline PkgFileIterator(pkgCache &Owner,PackageFile *Trg) : Owner(&Owner), File(Trg) {};
 };
-
-// Version File 
+									/*}}}*/
+// Version File								/*{{{*/
 class pkgCache::VerFileIterator
 {
    pkgCache *Owner;
@@ -390,8 +390,8 @@ class pkgCache::VerFileIterator
    inline VerFileIterator() : Owner(0), FileP(0) {};
    inline VerFileIterator(pkgCache &Owner,VerFile *Trg) : Owner(&Owner), FileP(Trg) {};
 };
-
-// Description File 
+									/*}}}*/
+// Description File							/*{{{*/
 class pkgCache::DescFileIterator
 {
    pkgCache *Owner;
@@ -422,8 +422,8 @@ class pkgCache::DescFileIterator
    inline DescFileIterator() : Owner(0), FileP(0) {};
    inline DescFileIterator(pkgCache &Owner,DescFile *Trg) : Owner(&Owner), FileP(Trg) {};
 };
-
-// Inlined Begin functions cant be in the class because of order problems
+									/*}}}*/
+// Inlined Begin functions cant be in the class because of order problems /*{{{*/
 inline pkgCache::VerIterator pkgCache::PkgIterator::VersionList() const
        {return VerIterator(*Owner,Owner->VerP + Pkg->VersionList);};
 inline pkgCache::VerIterator pkgCache::PkgIterator::CurrentVer() const
@@ -442,5 +442,5 @@ inline pkgCache::VerFileIterator pkgCache::VerIterator::FileList() const
        {return VerFileIterator(*Owner,Owner->VerFileP + Ver->FileList);};
 inline pkgCache::DescFileIterator pkgCache::DescIterator::FileList() const
        {return DescFileIterator(*Owner,Owner->DescFileP + Desc->FileList);};
-
+									/*}}}*/
 #endif

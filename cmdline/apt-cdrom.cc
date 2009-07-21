@@ -40,8 +40,7 @@
 
 using namespace std;
 
-                                                                        /*{{{*/
-class pkgCdromTextStatus : public pkgCdromStatus
+class pkgCdromTextStatus : public pkgCdromStatus			/*{{{*/
 {
 protected:
    OpTextProgress Progress;
@@ -98,9 +97,7 @@ OpProgress* pkgCdromTextStatus::GetOpProgress()
 { 
    return &Progress; 
 };
-
 									/*}}}*/
-
 // DoAdd - Add a new CDROM						/*{{{*/
 // ---------------------------------------------------------------------
 /* This does the main add bit.. We show some status and things. The
@@ -129,7 +126,6 @@ bool DoIdent(CommandLine &)
    return cdrom.Ident(ident, &log);
 }
 									/*}}}*/
-
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -164,8 +160,7 @@ int ShowHelp()
    return 0;
 }
 									/*}}}*/
-
-int main(int argc,const char *argv[])
+int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
@@ -222,3 +217,4 @@ int main(int argc,const char *argv[])
    
    return 0;
 }
+									/*}}}*/
