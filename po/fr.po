@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-07-21 15:49+0200\n"
-"PO-Revision-Date: 2009-07-01 22:48+0200\n"
+"PO-Revision-Date: 2009-07-21 23:33+0200\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -1261,8 +1261,7 @@ msgstr "Impossible de satisfaire les dépendances %s pour %s : %s"
 #: cmdline/apt-get.cc:2555
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
-"Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
+msgstr "Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
 
 #: cmdline/apt-get.cc:2559
 msgid "Failed to process build dependencies"
@@ -2332,11 +2331,10 @@ msgstr "A attendu %s mais il n'était pas présent"
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Le sous-processus %s a commis une violation d'accès mémoire"
 
-#: apt-pkg/contrib/fileutl.cc:457
-#, fuzzy, c-format
+#: apt-pkg/contrib/fileutl.cc:457, c-format
 #| msgid "Sub-process %s received a segmentation fault."
 msgid "Sub-process %s received signal %u."
-msgstr "Le sous-processus %s a commis une violation d'accès mémoire"
+msgstr "Le sous-processus %s a reçu le signal %u"
 
 #: apt-pkg/contrib/fileutl.cc:460
 #, c-format
@@ -2656,12 +2654,11 @@ msgstr ""
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Vous pouvez lancer « apt-get update » pour corriger ces problèmes."
 
-#: apt-pkg/policy.cc:329
-#, fuzzy, c-format
+#: apt-pkg/policy.cc:329, c-format
 #| msgid "Invalid record in the preferences file, no Package header"
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr ""
-"Enregistrement invalide dans votre fichier « préférences », aucune entrée "
+"Enregistrement non valable dans le fichier de préférences %s, aucune entrée "
 "« Package »."
 
 #: apt-pkg/policy.cc:351
@@ -2792,8 +2789,7 @@ msgstr "Somme de contrôle de hachage incohérente"
 
 #: apt-pkg/acquire-item.cc:1118
 msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
-"Aucune clé publique n'est disponible pour la/les clé(s) suivante(s) :\n"
+msgstr "Aucune clé publique n'est disponible pour la/les clé(s) suivante(s) :\n"
 
 #: apt-pkg/acquire-item.cc:1231
 #, c-format
@@ -2825,22 +2821,20 @@ msgstr ""
 msgid "Size mismatch"
 msgstr "Taille incohérente"
 
-#: apt-pkg/indexrecords.cc:40
-#, fuzzy, c-format
+#: apt-pkg/indexrecords.cc:40, c-format
 #| msgid "Unable to parse package file %s (1)"
 msgid "Unable to parse Release file %s"
-msgstr "Impossible de traiter le fichier %s (1)"
+msgstr "Impossible d'analyser le fichier Release %s"
 
-#: apt-pkg/indexrecords.cc:47
-#, fuzzy, c-format
+#: apt-pkg/indexrecords.cc:47, c-format
 #| msgid "Note, selecting %s instead of %s\n"
 msgid "No sections in Release file %s"
-msgstr "Note, sélection de %s au lieu de %s\n"
+msgstr "Pas de sections dans le fichier Release %s"
 
 #: apt-pkg/indexrecords.cc:81
 #, c-format
 msgid "No Hash entry in Release file %s"
-msgstr ""
+msgstr "Pas d'entrée de hachage dans le fichier Release %s"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -2905,6 +2899,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
+"Aucun fichier de paquets trouvé. Ceci n'est peut-être pas un disque Debian ou "
+"bien l'architecture est-elle incorrecte."
 
 #: apt-pkg/cdrom.cc:715
 #, c-format
@@ -3031,7 +3027,7 @@ msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:848
 msgid "Running dpkg"
-msgstr ""
+msgstr "Exécution de dpkg"
 
 #: apt-pkg/deb/debsystem.cc:70
 #, c-format
@@ -3039,18 +3035,23 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
+"Impossible de verrouiller le répertoire d'administration (%s). Il est "
+"possible qu'un autre processus l'utilise."
 
-#: apt-pkg/deb/debsystem.cc:73
-#, fuzzy, c-format
+#: apt-pkg/deb/debsystem.cc:73, c-format
 #| msgid "Unable to lock the list directory"
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Impossible de verrouiller le répertoire de liste"
+msgstr ""
+"Impossible de verrouiller le répertoire d'administration (%s). Avez-vous les "
+"privilèges du superutilisateur ?"
 
 #: apt-pkg/deb/debsystem.cc:82
 msgid ""
 "dpkg was interrupted, you must manually run 'dpkg --configure -a' to correct "
 "the problem. "
 msgstr ""
+"dpkg a été interrompu. Il est nécessaire d'utiliser « dpkg --configure -a » "
+"pour corriger le problème."
 
 #: apt-pkg/deb/debsystem.cc:100
 msgid "Not locked"
