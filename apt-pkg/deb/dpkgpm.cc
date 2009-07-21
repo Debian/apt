@@ -866,6 +866,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 }
 	 close(fd[0]); // close the read end of the pipe
 
+	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
+	 {
+	    std::cerr << "Chrooting into " 
+		      << _config->FindDir("DPkg::Chroot-Directory") 
+		      << std::endl;
+	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
+	       _exit(100);
+	 }
+
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
 	 
