@@ -908,7 +908,8 @@ pkgUdevCdromDevices::Scan()
       cdrom.DeviceName = string(devnode);
       if (mountpath) {
 	 cdrom.MountPath = mountpath;
-	 cdrom.Mounted = true;
+	 string s = string(mountpath);
+	 cdrom.Mounted = IsMounted(s);
       } else {
 	 cdrom.Mounted = false;
 	 cdrom.MountPath = "";
