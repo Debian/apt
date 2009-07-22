@@ -29,10 +29,6 @@ apt (0.7.21) UNRELEASED; urgency=low
     - provide DPkg::Chroot-Directory config option (useful for testing)
   * Only run Download-Upgradable and Unattended-Upgrades if the initial
     update was successful Closes: #341970
-  
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 28 May 2009 17:51:42 +0200
-
-  [ Michael Vogt ]
   * apt-pkg/indexcopy.cc:
     - support having CDs with no Packages file (just a Packages.gz)
       by not forcing a verification on non-existing files
@@ -77,6 +73,9 @@ apt (0.7.21) UNRELEASED; urgency=low
   * build fixes for g++-4.4
   * cmdline/apt-mark:
     - add "showauto" option to show automatically installed packages
+  * doc/apt.conf.5.xml:
+    - merged patch from Aurélien Couderc to improve the text
+      (thanks!)
 
   [ Dereck Wonnacott ]
   * apt-ftparchive might write corrupt Release files (LP: #46439)
