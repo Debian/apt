@@ -9,6 +9,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/acquire-method.h>
+#include <apt-pkg/cdrom.h>
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -33,6 +34,7 @@ class CDROMMethod : public pkgAcqMethod
    string CDROM;
    bool MountedByApt;
  
+   bool IsCorrectCD(URI want, string MountPath);
    virtual bool Fetch(FetchItem *Itm);
    string GetID(string Name);
    virtual void Exit();
@@ -82,6 +84,31 @@ string CDROMMethod::GetID(string Name)
       Top = Top->Next;
    }
    return string();
+}
+									/*}}}*/
+
+// CDROMMethod::IsCorrectCD                                             /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool CDROMMethod::IsCorrectCD(URI want, string MountPath)
+{
+   bool Debug = _config->FindB("Debug::Acquire::cdrom",false);
+   string NewID;
+
+   for (unsigned int Version = 2; Version != 0; Version--)
+   {
+      if (IdentCdrom(MountPath,NewID,Version) == false)
+	 return false;
+      
+      if (Debug == true)
+	 clog << "ID " << Version << " " << NewID << endl;
+      
+      // A hit
+      if (Database.Find("CD::" + NewID) == want.Host)
+	 return true;
+   }
+   
+   return false;
 }
 									/*}}}*/
 // CDROMMethod::Fetch - Fetch a file					/*{{{*/
@@ -134,8 +161,44 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       Fail(_("Wrong CD-ROM"),true);
       return true;
    }
-   
+
    CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+
+   // auto-detect mode
+   if (CDROM == "apt-udev-auto/") 
+   {
+      pkgUdevCdromDevices udev;
+      if(udev.Dlopen())
+      {
+	 vector<struct CdromDevice> v = udev.Scan();
+	 for (unsigned int i=0; i < v.size(); i++)
+	 {
+	    if (!v[i].Mounted) 
+	    {
+	       if (!FileExists("/media/apt"))
+		  mkdir("/media/apt", 0755);
+	       if(MountCdrom("/media/apt", v[i].DeviceName)) 
+	       {
+		  if (IsCorrectCD(Get, "/media/apt"))
+		  {
+		     MountedByApt = true;
+		     CDROM = "/media/apt";
+		     break;
+		  } else {
+		     UnmountCdrom("/media/apt");
+		  }
+	       }
+	    } else {
+	       if (IsCorrectCD(Get, v[i].MountPath))
+	       {
+		  CDROM = v[i].MountPath;
+		  break;
+	       }
+	    }
+	 }
+      }
+   }
+
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
    string NewID;
@@ -144,23 +207,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       bool Hit = false;
       if(!IsMounted(CDROM))
 	 MountedByApt = MountCdrom(CDROM);
-      for (unsigned int Version = 2; Version != 0; Version--)
-      {
-	 if (IdentCdrom(CDROM,NewID,Version) == false)
-	    return false;
-	 
-	 if (Debug == true)
-	    clog << "ID " << Version << " " << NewID << endl;
       
-	 // A hit
-	 if (Database.Find("CD::" + NewID) == Get.Host)
-	 {
-	    Hit = true;
-	    break;
-	 }	 
-      }
-
-      if (Hit == true)
+      if (IsCorrectCD(Get, CDROM))
 	 break;
 	 
       // I suppose this should prompt somehow?
