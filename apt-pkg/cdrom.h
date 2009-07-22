@@ -77,6 +77,8 @@ struct CdromDevice
 
 class pkgUdevCdromDevices
 {
+ private:
+   bool Dlopened;
  protected:
    // libudev dlopen stucture
    void *libudev_handle;

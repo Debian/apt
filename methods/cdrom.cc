@@ -121,6 +121,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    FetchResult Res;
 
    bool Debug = _config->FindB("Debug::Acquire::cdrom",false);
+   if (Debug)
+      clog << "CDROMMethod::Fetch " << Itm->Uri << endl;
 
    /* All IMS queries are returned as a hit, CDROMs are readonly so 
       time stamps never change */
@@ -156,54 +158,63 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    }
 
    // We already have a CD inserted, but it is the wrong one
-   if (CurrentID.empty() == false && Database.Find("CD::" + CurrentID) != Get.Host)
+   if (CurrentID.empty() == false && 
+       CurrentID != "FAIL" &&
+       Database.Find("CD::" + CurrentID) != Get.Host)
    {
       Fail(_("Wrong CD-ROM"),true);
       return true;
    }
 
    CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
-
-   // auto-detect mode
-   if (CDROM == "apt-udev-auto/") 
-   {
-      pkgUdevCdromDevices udev;
-      if(udev.Dlopen())
-      {
-	 vector<struct CdromDevice> v = udev.Scan();
-	 for (unsigned int i=0; i < v.size(); i++)
-	 {
-	    if (!v[i].Mounted) 
-	    {
-	       if (!FileExists("/media/apt"))
-		  mkdir("/media/apt", 0755);
-	       if(MountCdrom("/media/apt", v[i].DeviceName)) 
-	       {
-		  if (IsCorrectCD(Get, "/media/apt"))
-		  {
-		     MountedByApt = true;
-		     CDROM = "/media/apt";
-		     break;
-		  } else {
-		     UnmountCdrom("/media/apt");
-		  }
-	       }
-	    } else {
-	       if (IsCorrectCD(Get, v[i].MountPath))
-	       {
-		  CDROM = v[i].MountPath;
-		  break;
-	       }
-	    }
-	 }
-      }
-   }
+   if (Debug)
+      clog << "Looking for CDROM at " << CDROM << endl;
 
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
    string NewID;
+   pkgUdevCdromDevices udev;
+
    while (CurrentID.empty() == true)
    {
+      // hrm, ugly the loop here
+      if (CDROM == "apt-udev-auto/") 
+      {
+	 if(udev.Dlopen())
+	 {
+	    vector<struct CdromDevice> v = udev.Scan();
+	    for (unsigned int i=0; i < v.size(); i++)
+	    {
+	       if (Debug)
+		  clog << "Have cdrom device " << v[i].DeviceName << endl;
+	       if (!v[i].Mounted) 
+	       {
+		  if (!FileExists("/media/apt"))
+		     mkdir("/media/apt", 0755);
+		  if(MountCdrom("/media/apt", v[i].DeviceName)) 
+		  {
+		     if (IsCorrectCD(Get, "/media/apt"))
+		     {
+			MountedByApt = true;
+			CDROM = "/media/apt";
+			break;
+		     } else {
+			UnmountCdrom("/media/apt");
+		     }
+		  }
+	       } else {
+		  if (IsCorrectCD(Get, v[i].MountPath))
+		  {
+		     CDROM = v[i].MountPath;
+		     break;
+		  }
+	       }
+	    }
+	 } else {
+	    _error->WarningE("udev.Dlopen() failed","foo");
+	 }
+      }
+
       bool Hit = false;
       if(!IsMounted(CDROM))
 	 MountedByApt = MountCdrom(CDROM);
