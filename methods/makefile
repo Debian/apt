@@ -40,7 +40,7 @@ include $(PROGRAM_H)
 
 # The cdrom method
 PROGRAM=cdrom
-SLIBS = -lapt-pkg $(INTLLIBS)
+SLIBS = -lapt-pkg -ldl $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = cdrom.cc
 include $(PROGRAM_H)

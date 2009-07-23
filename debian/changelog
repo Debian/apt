@@ -96,6 +96,9 @@ apt (0.7.22) UNRELEASED; urgency=low
   * doc/apt.conf.5.xml:
     - merged patch from Aurélien Couderc to improve the text
       (thanks!)
+  * [ABI] merged the libudev-dlopen branch, this allows to pass
+    "apt-udev-auto" to Acquire::Cdrom::mount and the cdrom method will  
+    dynamically find/mount the cdrom device (if libhal is available)
 
   [ Julian Andres Klode ]
   * apt-pkg/contrib/configuration.cc: Fix a small memory leak in
