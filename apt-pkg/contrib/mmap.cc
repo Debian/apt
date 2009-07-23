@@ -137,7 +137,6 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 }
 									/*}}}*/
 
-									/*}}}*/
 // DynamicMMap::DynamicMMap - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -173,15 +172,24 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long WorkSpace) :
       return;
 
 #ifdef _POSIX_MAPPED_FILES
+   // Set the permissions.
+   int Prot = PROT_READ;
+   int Map = MAP_PRIVATE | MAP_ANONYMOUS;
+   if ((Flags & ReadOnly) != ReadOnly)
+      Prot |= PROT_WRITE;
+   if ((Flags & Public) == Public)
+      Map = MAP_SHARED | MAP_ANONYMOUS;
+
    // use anonymous mmap() to get the memory
-   Base = (unsigned char*) mmap(0, WorkSpace, PROT_READ|PROT_WRITE,
-			MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
-   if(Base != MAP_FAILED)
-      return;
-#endif
+   Base = (unsigned char*) mmap(0, WorkSpace, Prot, Map, -1, 0);
+
+   if(Base == MAP_FAILED)
+      _error->Errno("DynamicMMap",_("Couldn't make mmap of %lu bytes"),WorkSpace);
+#else
    // fallback to a static allocated space
    Base = new unsigned char[WorkSpace];
    memset(Base,0,WorkSpace);
+#endif
    iSize = 0;
 }
 									/*}}}*/
