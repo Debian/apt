@@ -847,7 +847,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
 
 
 pkgUdevCdromDevices::pkgUdevCdromDevices() 
-   : libudev_handle(NULL), Dlopened(false)
+   : libudev_handle(NULL)
 {
 
 }
@@ -856,7 +856,7 @@ bool
 pkgUdevCdromDevices::Dlopen()
 {
    // alread open
-   if(Dlopened)
+   if(libudev_handle != NULL)
       return true;
 
    // see if we can get libudev
@@ -878,7 +878,6 @@ pkgUdevCdromDevices::Dlopen()
    udev_list_entry_get_next = (udev_list_entry* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_next");
    udev_device_get_property_value = (const char* (*)(udev_device *, const char *))dlsym(h, "udev_device_get_property_value");
 
-   Dlopened = true;
    return true;
 }
 

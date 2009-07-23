@@ -29,12 +29,16 @@ using namespace std;
 class CDROMMethod : public pkgAcqMethod
 {
    bool DatabaseLoaded;
+   bool Debug;
+
    ::Configuration Database;
    string CurrentID;
    string CDROM;
    bool MountedByApt;
+   pkgUdevCdromDevices UdevCdroms;
  
    bool IsCorrectCD(URI want, string MountPath);
+   bool AutoDetectAndMount(URI);
    virtual bool Fetch(FetchItem *Itm);
    string GetID(string Name);
    virtual void Exit();
@@ -53,8 +57,7 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
                                           DatabaseLoaded(false), 
                                           MountedByApt(false)
 {
-
-
+   UdevCdroms.Dlopen();
 };
 									/*}}}*/
 // CDROMMethod::Exit - Unmount the disc if necessary			/*{{{*/
@@ -86,13 +89,63 @@ string CDROMMethod::GetID(string Name)
    return string();
 }
 									/*}}}*/
+// CDROMMethod::AutoDetectAndMount                                      /*{{{*/
+// ---------------------------------------------------------------------
+/* Modifies class varaiable CDROM to the mountpoint */
+bool CDROMMethod::AutoDetectAndMount(URI Get)
+{
+   vector<struct CdromDevice> v = UdevCdroms.Scan();
 
+   // first check if its mounted somewhere already
+   for (unsigned int i=0; i < v.size(); i++)
+   {
+      if (v[i].Mounted)
+      {
+	 if (Debug)
+	    clog << "Checking mounted cdrom device " << v[i].DeviceName << endl;
+	 if (IsCorrectCD(Get, v[i].MountPath))
+	 {
+	    CDROM = v[i].MountPath;
+	    return true;
+	 }
+      }
+   }
+
+   // we are not supposed to mount, exit
+   if (_config->FindB("APT::CDROM::NoMount",false) == true)
+      return false;
+
+   // check if we have the mount point
+   if (!FileExists("/media/apt"))
+      mkdir("/media/apt", 0755);
+
+   // now try mounting
+   for (unsigned int i=0; i < v.size(); i++)
+   {
+      if (!v[i].Mounted)
+      {
+	 if(MountCdrom("/media/apt", v[i].DeviceName)) 
+	 {
+	    if (IsCorrectCD(Get, "/media/apt"))
+	    {
+	       MountedByApt = true;
+	       CDROM = "/media/apt";
+	       return true;
+	    } else {
+	       UnmountCdrom("/media/apt");
+	    }
+	 }
+      }
+   }
+
+   return false;
+}
+									/*}}}*/
 // CDROMMethod::IsCorrectCD                                             /*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool CDROMMethod::IsCorrectCD(URI want, string MountPath)
 {
-   bool Debug = _config->FindB("Debug::Acquire::cdrom",false);
    string NewID;
 
    for (unsigned int Version = 2; Version != 0; Version--)
@@ -100,7 +153,7 @@ bool CDROMMethod::IsCorrectCD(URI want, string MountPath)
       if (IdentCdrom(MountPath,NewID,Version) == false)
 	 return false;
       
-      if (Debug == true)
+      if (Debug)
 	 clog << "ID " << Version << " " << NewID << endl;
       
       // A hit
@@ -116,11 +169,12 @@ bool CDROMMethod::IsCorrectCD(URI want, string MountPath)
 /* */
 bool CDROMMethod::Fetch(FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
-   string File = Get.Path;
    FetchResult Res;
 
-   bool Debug = _config->FindB("Debug::Acquire::cdrom",false);
+   URI Get = Itm->Uri;
+   string File = Get.Path;
+   Debug = _config->FindB("Debug::Acquire::cdrom", false);
+
    if (Debug)
       clog << "CDROMMethod::Fetch " << Itm->Uri << endl;
 
@@ -173,49 +227,12 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
    string NewID;
-   pkgUdevCdromDevices udev;
 
    while (CurrentID.empty() == true)
    {
-      // hrm, ugly the loop here
       if (CDROM == "apt-udev-auto/") 
-      {
-	 if(udev.Dlopen())
-	 {
-	    vector<struct CdromDevice> v = udev.Scan();
-	    for (unsigned int i=0; i < v.size(); i++)
-	    {
-	       if (Debug)
-		  clog << "Have cdrom device " << v[i].DeviceName << endl;
-	       if (!v[i].Mounted) 
-	       {
-		  if (!FileExists("/media/apt"))
-		     mkdir("/media/apt", 0755);
-		  if(MountCdrom("/media/apt", v[i].DeviceName)) 
-		  {
-		     if (IsCorrectCD(Get, "/media/apt"))
-		     {
-			MountedByApt = true;
-			CDROM = "/media/apt";
-			break;
-		     } else {
-			UnmountCdrom("/media/apt");
-		     }
-		  }
-	       } else {
-		  if (IsCorrectCD(Get, v[i].MountPath))
-		  {
-		     CDROM = v[i].MountPath;
-		     break;
-		  }
-	       }
-	    }
-	 } else {
-	    _error->WarningE("udev.Dlopen() failed","foo");
-	 }
-      }
+	 AutoDetectAndMount(Get);
 
-      bool Hit = false;
       if(!IsMounted(CDROM))
 	 MountedByApt = MountCdrom(CDROM);
       
