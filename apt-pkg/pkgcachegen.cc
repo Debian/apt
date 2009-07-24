@@ -372,7 +372,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    
    // Link it to the end of the list
    map_ptrloc *Last = &Ver->FileList;
-   for (pkgCache::VerFileIterator V = Ver.FileList(); V != 0 && V.end() == false; V++)
+   for (pkgCache::VerFileIterator V = Ver.FileList(); V.end() == false; V++)
       Last = &V->NextFile;
    VF->NextFile = *Last;
    *Last = VF.Index();
@@ -428,7 +428,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 
    // Link it to the end of the list
    map_ptrloc *Last = &Desc->FileList;
-   for (pkgCache::DescFileIterator D = Desc.FileList(); D != 0 && D.end() == false; D++)
+   for (pkgCache::DescFileIterator D = Desc.FileList(); D.end() == false; D++)
       Last = &D->NextFile;
 
    DF->NextFile = *Last;
@@ -518,7 +518,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    if (OldDepVer != Ver)
    {
       OldDepLast = &Ver->DependsList;
-      for (pkgCache::DepIterator D = Ver.DependsList(); D != 0 && D.end() == false; D++)
+      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
 	 OldDepLast = &D->NextDepends;
       OldDepVer = Ver;
    }
@@ -670,7 +670,7 @@ static bool CheckValidity(const string &CacheFile, FileIterator Start,
    
    // Map it
    FileFd CacheF(CacheFile,FileFd::ReadOnly);
-   SPtr<MMap> Map = new MMap(CacheF,MMap::Public | MMap::ReadOnly);
+   SPtr<MMap> Map = new MMap(CacheF,0);
    pkgCache Cache(Map);
    if (_error->PendingError() == true || Map->Size() == 0)
    {
@@ -854,7 +854,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    else
    {
       // Just build it in memory..
-      Map = new DynamicMMap(MMap::Public,MapSize);
+      Map = new DynamicMMap(0,MapSize);
    }
    
    // Lets try the source cache.
@@ -866,8 +866,9 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       // Preload the map with the source cache
       FileFd SCacheF(SrcCacheFile,FileFd::ReadOnly);
       unsigned long alloc = Map->RawAllocate(SCacheF.Size());
-      if (alloc == 0 || SCacheF.Read((unsigned char *)Map->Data() + alloc,
-				     SCacheF.Size()) == false)
+      if ((alloc == 0 && _error->PendingError())
+		|| SCacheF.Read((unsigned char *)Map->Data() + alloc,
+				SCacheF.Size()) == false)
 	 return false;
 
       TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
@@ -928,7 +929,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       if (CacheF != 0)
       {
 	 delete Map.UnGuard();
-	 *OutMap = new MMap(*CacheF,MMap::Public | MMap::ReadOnly);
+	 *OutMap = new MMap(*CacheF,0);
       }
       else
       {
@@ -950,8 +951,7 @@ bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
    if (_system->AddStatusFiles(Files) == false)
       return false;
    
-   SPtr<DynamicMMap> Map;   
-   Map = new DynamicMMap(MMap::Public,MapSize);
+   SPtr<DynamicMMap> Map = new DynamicMMap(0,MapSize);
    unsigned long CurrentSize = 0;
    unsigned long TotalSize = 0;
    
