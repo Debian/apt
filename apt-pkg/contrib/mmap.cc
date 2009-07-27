@@ -201,7 +201,7 @@ DynamicMMap::~DynamicMMap()
    if (Fd == 0)
    {
 #ifdef _POSIX_MAPPED_FILES
-      if(munmap(Base, WorkSpace) < 0)
+      munmap(Base, WorkSpace);
 #else
       delete [] (unsigned char *)Base;
 #endif
