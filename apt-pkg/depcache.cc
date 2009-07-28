@@ -127,12 +127,9 @@ bool pkgDepCache::Init(OpProgress *Prog)
    /* Set the current state of everything. In this state all of the
       packages are kept exactly as is. See AllUpgrade */
    int Done = 0;
-   int Update_interval = Head().PackageCount/100;
-   if (Update_interval == 0)
-      Update_interval = 1;
    for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
    {
-      if (Prog != 0 && Done%Update_interval == 0)
+      if (Prog != 0 && Done%20 == 0)
 	 Prog->Progress(Done);
       
       // Find the proper cache slot
@@ -615,12 +612,9 @@ void pkgDepCache::Update(OpProgress *Prog)
    
    // Perform the depends pass
    int Done = 0;
-   int Update_interval = Head().PackageCount;
-   if (Update_interval == 0)
-      Update_interval = 1;
    for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
    {
-      if (Prog != 0 && Done%Update_interval == 0)
+      if (Prog != 0 && Done%20 == 0)
 	 Prog->Progress(Done);
       for (VerIterator V = I.VersionList(); V.end() != true; V++)
       {
