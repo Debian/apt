@@ -49,11 +49,6 @@ class pkgDPkgPM : public pkgPackageManager
    // going to be install is already in state "half-installed")
    map<string,unsigned int> PackageOpsDone;
 
-
-#if 1 // FIXME: BINARY COMPATIBILITY ONLY, remove on next ABI break
-   map<string,string> PackageProcessingOps;
-#endif
-
    // progress reporting
    unsigned int PackagesDone;
    unsigned int PackagesTotal;

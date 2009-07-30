@@ -26,7 +26,7 @@
 #include <apti18n.h>    
 #include <iostream>
 #include <fcntl.h> 
-
+									/*}}}*/
 using namespace std;
 
 // PM::PackageManager - Constructor					/*{{{*/
@@ -117,7 +117,6 @@ bool pkgPackageManager::FixMissing()
    return Resolve.ResolveByKeep() == true && Cache.BrokenCount() == 0;   
 }
 									/*}}}*/
-
 // PM::ImmediateAdd - Add the immediate flag recursivly			/*{{{*/
 // ---------------------------------------------------------------------
 /* This adds the immediate flag to the pkg and recursively to the
@@ -152,7 +151,6 @@ void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer)
    return;
 }
 									/*}}}*/
-
 // PM::CreateOrderList - Create the ordering class			/*{{{*/
 // ---------------------------------------------------------------------
 /* This populates the ordering list with all the packages that are

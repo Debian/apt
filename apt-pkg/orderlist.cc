@@ -129,7 +129,6 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
    return true;
 }
 									/*}}}*/
-
 // OrderList::DoRun - Does an order run					/*{{{*/
 // ---------------------------------------------------------------------
 /* The caller is expeted to have setup the desired probe state */
@@ -282,7 +281,6 @@ bool pkgOrderList::OrderConfigure()
    return DoRun();
 }
 									/*}}}*/
-
 // OrderList::Score - Score the package for sorting			/*{{{*/
 // ---------------------------------------------------------------------
 /* Higher scores order earlier */
@@ -433,7 +431,6 @@ int pkgOrderList::OrderCompareB(const void *a, const void *b)
    return strcmp(A.Name(),B.Name());
 }
 									/*}}}*/
-
 // OrderList::VisitDeps - Visit forward install dependencies		/*{{{*/
 // ---------------------------------------------------------------------
 /* This calls the dependency function for the normal forwards dependencies
@@ -590,7 +587,6 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    return true;
 }
 									/*}}}*/
-
 // OrderList::DepUnPackCrit - Critical UnPacking ordering		/*{{{*/
 // ---------------------------------------------------------------------
 /* Critical unpacking ordering strives to satisfy Conflicts: and 
@@ -668,13 +664,12 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
    }   
    return true;
 }
-
+									/*}}}*/
 // OrderList::DepUnPackPreD - Critical UnPacking ordering with depends	/*{{{*/
 // ---------------------------------------------------------------------
 /* Critical PreDepends (also configure immediate and essential) strives to
    ensure not only that all conflicts+predepends are met but that this
-   package will be immediately configurable when it is unpacked. 
-
+   package will be immediately configurable when it is unpacked.
    Loops are preprocessed and logged. */
 bool pkgOrderList::DepUnPackPreD(DepIterator D)
 {
@@ -892,7 +887,6 @@ bool pkgOrderList::DepRemove(DepIterator D)
    return true;
 }
 									/*}}}*/
-
 // OrderList::AddLoop - Add a loop to the loop list			/*{{{*/
 // ---------------------------------------------------------------------
 /* We record the loops. This is a relic since loop breaking is done 

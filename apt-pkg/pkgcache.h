@@ -27,7 +27,7 @@
 using std::string;
     
 class pkgVersioningSystem;
-class pkgCache
+class pkgCache								/*{{{*/
 {
    public:
    // Cache element predeclarations
@@ -70,7 +70,7 @@ class pkgCache
    struct Dep
    {
       enum DepType {Depends=1,PreDepends=2,Suggests=3,Recommends=4,
-	 Conflicts=5,Replaces=6,Obsoletes=7,DpkgBreaks=8};
+	 Conflicts=5,Replaces=6,Obsoletes=7,DpkgBreaks=8,Enhances=9};
       enum DepCompareOp {Or=0x10,NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
 	 Greater=0x4,Equals=0x5,NotEquals=0x6};
    };
@@ -146,8 +146,8 @@ class pkgCache
    pkgCache(MMap *Map,bool DoMap = true);
    virtual ~pkgCache() {};
 };
-
-// Header structure
+									/*}}}*/
+// Header structure							/*{{{*/
 struct pkgCache::Header
 {
    // Signature information
@@ -195,8 +195,8 @@ struct pkgCache::Header
    bool CheckSizes(Header &Against) const;
    Header();
 };
-
-struct pkgCache::Package
+									/*}}}*/
+struct pkgCache::Package						/*{{{*/
 {
    // Pointers
    map_ptrloc Name;              // Stringtable
@@ -217,12 +217,13 @@ struct pkgCache::Package
    unsigned int ID;
    unsigned long Flags;
 };
-
-struct pkgCache::PackageFile
+									/*}}}*/
+struct pkgCache::PackageFile						/*{{{*/
 {
    // Names
    map_ptrloc FileName;        // Stringtable
    map_ptrloc Archive;         // Stringtable
+   map_ptrloc Codename;        // Stringtable
    map_ptrloc Component;       // Stringtable
    map_ptrloc Version;         // Stringtable
    map_ptrloc Origin;          // Stringtable
@@ -238,24 +239,24 @@ struct pkgCache::PackageFile
    unsigned int ID;
    time_t mtime;                  // Modification time for the file
 };
-
-struct pkgCache::VerFile
+									/*}}}*/
+struct pkgCache::VerFile						/*{{{*/
 {
    map_ptrloc File;           // PackageFile
    map_ptrloc NextFile;       // PkgVerFile
    map_ptrloc Offset;         // File offset
    unsigned short Size;
 };
-
-struct pkgCache::DescFile
+									/*}}}*/
+struct pkgCache::DescFile						/*{{{*/
 {
    map_ptrloc File;           // PackageFile
    map_ptrloc NextFile;       // PkgVerFile
    map_ptrloc Offset;         // File offset
    unsigned short Size;
 };
-
-struct pkgCache::Version
+									/*}}}*/
+struct pkgCache::Version						/*{{{*/
 {
    map_ptrloc VerStr;            // Stringtable
    map_ptrloc Section;           // StringTable (StringItem)
@@ -275,8 +276,8 @@ struct pkgCache::Version
    unsigned int ID;
    unsigned char Priority;
 };
-
-struct pkgCache::Description
+									/*}}}*/
+struct pkgCache::Description						/*{{{*/
 {
    // Language Code store the description translation language code. If
    // the value has a 0 lenght then this is readed using the Package
@@ -291,8 +292,8 @@ struct pkgCache::Description
 
    unsigned int ID;
 };
-
-struct pkgCache::Dependency
+									/*}}}*/
+struct pkgCache::Dependency						/*{{{*/
 {
    map_ptrloc Version;         // Stringtable
    map_ptrloc Package;         // Package
@@ -305,8 +306,8 @@ struct pkgCache::Dependency
    unsigned char Type;
    unsigned char CompareOp;
 };
-
-struct pkgCache::Provides
+									/*}}}*/
+struct pkgCache::Provides						/*{{{*/
 {
    map_ptrloc ParentPkg;        // Pacakge
    map_ptrloc Version;          // Version
@@ -314,13 +315,13 @@ struct pkgCache::Provides
    map_ptrloc NextProvides;     // Provides
    map_ptrloc NextPkgProv;      // Provides
 };
-
-struct pkgCache::StringItem
+									/*}}}*/
+struct pkgCache::StringItem						/*{{{*/
 {
    map_ptrloc String;        // Stringtable
    map_ptrloc NextItem;      // StringItem
 };
-
+									/*}}}*/
 #include <apt-pkg/cacheiterators.h>
 
 inline pkgCache::PkgIterator pkgCache::PkgBegin() 
@@ -333,7 +334,7 @@ inline pkgCache::PkgFileIterator pkgCache::FileEnd()
        {return PkgFileIterator(*this,PkgFileP);};
 
 // Oh I wish for Real Name Space Support
-class pkgCache::Namespace
+class pkgCache::Namespace						/*{{{*/
 {   
    public:
 
@@ -351,5 +352,5 @@ class pkgCache::Namespace
    typedef pkgCache::Dep Dep;
    typedef pkgCache::Flag Flag;
 };
-
+									/*}}}*/
 #endif

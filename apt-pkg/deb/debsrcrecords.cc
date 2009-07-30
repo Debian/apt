@@ -152,3 +152,11 @@ bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
    return true;
 }
 									/*}}}*/
+// SrcRecordParser::~SrcRecordParser - Destructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+debSrcRecordParser::~debSrcRecordParser()
+{
+   delete[] Buffer;
+}
+									/*}}}*/

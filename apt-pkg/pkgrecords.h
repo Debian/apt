@@ -22,7 +22,7 @@
 #include <apt-pkg/fileutl.h>
 #include <vector>
 
-class pkgRecords
+class pkgRecords							/*{{{*/
 {
    public:
    class Parser;
@@ -42,8 +42,8 @@ class pkgRecords
    pkgRecords(pkgCache &Cache);
    ~pkgRecords();
 };
-
-class pkgRecords::Parser
+									/*}}}*/
+class pkgRecords::Parser						/*{{{*/
 {
    protected:
    
@@ -73,5 +73,5 @@ class pkgRecords::Parser
    
    virtual ~Parser() {};
 };
-
+									/*}}}*/
 #endif

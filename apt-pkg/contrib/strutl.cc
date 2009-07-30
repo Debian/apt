@@ -387,6 +387,17 @@ string SubstVar(string Str,const struct SubstVar *Vars)
    return Str;
 }
 									/*}}}*/
+// OutputInDepth - return a string with separator multiplied with depth /*{{{*/
+// ---------------------------------------------------------------------
+/* Returns a string with the supplied separator depth + 1 times in it */
+std::string OutputInDepth(const unsigned long Depth, const char* Separator)
+{
+   std::string output = "";
+   for(unsigned long d=Depth+1; d > 0; d--)
+      output.append(Separator);
+   return output;
+}
+									/*}}}*/
 // URItoFileName - Convert the uri into a unique file name		/*{{{*/
 // ---------------------------------------------------------------------
 /* This converts a URI into a safe filename. It quotes all unsafe characters
@@ -1031,7 +1042,7 @@ void ioprintf(ostream &out,const char *format,...)
    va_start(args,format);
    
    // sprintf the description
-   char S[400];
+   char S[4096];
    vsnprintf(S,sizeof(S),format,args);
    out << S;
 }
@@ -1046,7 +1057,7 @@ void strprintf(string &out,const char *format,...)
    va_start(args,format);
    
    // sprintf the description
-   char S[1024];
+   char S[4096];
    vsnprintf(S,sizeof(S),format,args);
    out = string(S);
 }

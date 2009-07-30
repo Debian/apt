@@ -84,5 +84,6 @@ class pkgPolicy : public pkgDepCache::Policy
 };
 
 bool ReadPinFile(pkgPolicy &Plcy,string File = "");
+bool ReadPinDir(pkgPolicy &Plcy,string Dir = "");
 
 #endif

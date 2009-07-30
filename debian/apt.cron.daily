@@ -42,10 +42,14 @@ check_stamp()
     interval="$2"
 
     if [ $interval -eq 0 ]; then
+	debug_echo "check_stamp: interval=0"
+	# treat as no time has passed
         return 1
     fi
 
     if [ ! -f $stamp ]; then
+	debug_echo "check_stamp: missing time stamp file: $stamp."
+	# treat as enough time has passed
         return 0
     fi
 
@@ -83,6 +87,13 @@ check_stamp()
          return 0
     fi
 
+    # remove timestamps a day (or more) in the future and force re-check
+    if [ $stamp -gt $(($now+86400)) ]; then
+         echo "WARNING: file $stamp_file has a timestamp in the future: $stamp"
+         rm -f "$stamp_file"
+         return 0
+    fi
+
     if [ $delta -ge $interval ]; then
         return 0
     fi
@@ -97,23 +108,28 @@ update_stamp()
     touch $stamp
 }
 
-
-
 # we check here if autoclean was enough sizewise
 check_size_constraints()
 {
-    # min-age in days
     MaxAge=0
-    MinAge=2
-    MaxSize=0
-    CacheDir="var/cache/apt"
-    CacheArchive="archives/"
     eval $(apt-config shell MaxAge APT::Archives::MaxAge)
+    eval $(apt-config shell MaxAge APT::Periodic::MaxAge)
+
+    MinAge=2
     eval $(apt-config shell MinAge APT::Archives::MinAge)
+    eval $(apt-config shell MinAge APT::Periodic::MinAge)
+
+    MaxSize=0
     eval $(apt-config shell MaxSize APT::Archives::MaxSize)
-    eval $(apt-config shell Dir Dir)
+    eval $(apt-config shell MaxSize APT::Periodic::MaxSize)
+
+    CacheDir="var/cache/apt/"
     eval $(apt-config shell CacheDir Dir::Cache)
+    CacheDir=${CacheDir%/}
+
+    CacheArchive="archives/"
     eval $(apt-config shell CacheArchive Dir::Cache::archives)
+    CacheArchive=${CacheArchive%/}
 
     # sanity check
     if [ -z "$CacheDir" -o -z "$CacheArchive" ]; then
@@ -125,9 +141,13 @@ check_size_constraints()
 
     # check age
     if [ ! $MaxAge -eq 0 ] && [ ! $MinAge -eq 0 ]; then
+	debug_echo "aged: ctime <$MaxAge and mtime <$MaxAge and ctime>$MinAge and mtime>$MinAge"
 	find $Cache -name "*.deb"  \( -mtime +$MaxAge -and -ctime +$MaxAge \) -and -not \( -mtime -$MinAge -or -ctime -$MinAge \) -print0 | xargs -r -0 rm -f
     elif [ ! $MaxAge -eq 0 ]; then
+	debug_echo "aged: ctime <$MaxAge and mtime <$MaxAge only"
 	find $Cache -name "*.deb"  -ctime +$MaxAge -and -mtime +$MaxAge -print0 | xargs -r -0 rm -f
+    else
+	debug_echo "skip aging since MaxAge is 0"
     fi
     
     # check size
@@ -145,11 +165,12 @@ check_size_constraints()
 	    size=${du%%/*}
 	    # check if the cache is small enough
 	    if [ $size -lt $MaxSize ]; then
+		debug_echo "end remove by archive size:  size=$size < $MaxSize"
 		break
 	    fi
 
 	    # check for MinAge of the file
-	    if [ ! $MinAge -eq 0 ]; then 
+	    if [ $MinAge -ne 0 ]; then 
 		# check both ctime and mtime 
 		mtime=$(stat -c %Y $file)
 		ctime=$(stat -c %Z $file)
@@ -158,16 +179,91 @@ check_size_constraints()
 		else
 		    delta=$(($now-$ctime))
 		fi
-		#echo "$file ($delta), $MinAge"
 		if [ $delta -le $MinAge ]; then
-		    #echo "Skiping $file (delta=$delta)"
+		    debug_echo "skip remove by archive size:  $file, delta=$delta < $MinAgeSec"
 		    break
+		else
+		    # delete oldest file
+		    debug_echo "remove by archive size: $file, delta=$delta >= $MinAgeSec (sec), size=$size >= $MaxSize"
+		    rm -f $file
 		fi
 	    fi
-
-	    # delete oldest file
-	    rm -f $file
 	done
+    fi
+}
+
+# deal with the Apt::Periodic::BackupArchiveInterval
+do_cache_backup()
+{
+    BackupArchiveInterval="$1"
+    if [ $BackupArchiveInterval -eq 0 ]; then
+	return
+    fi
+
+    # Set default values and normalize
+    Dir="/"
+    eval $(apt-config shell Dir Dir)
+    Dir=${Dir%/}
+
+    CacheDir="var/cache/apt/"
+    eval $(apt-config shell CacheDir Dir::Cache)
+    CacheDir=${CacheDir%/}
+    if [ -z "$CacheDir" ]; then
+	debug_echo "practically empty Dir::Cache, exiting"
+	return 0
+    fi
+
+    CacheArchive="archives/"
+    eval $(apt-config shell CacheArchive Dir::Cache::Archives)
+    CacheArchive=${CacheArchive%/}
+    if [ -z "$CacheArchive" ]; then
+	debug_echo "practically empty Dir::Cache::archives, exiting"
+	return 0
+    fi
+
+    BackupLevel=3
+    eval $(apt-config shell BackupLevel APT::Periodic::BackupLevel)
+    if [ $BackupLevel -le 1 ]; then 
+	BackupLevel=2 ; 
+    fi
+    
+    CacheBackup="backup/"
+    eval $(apt-config shell CacheBackup Dir::Cache::Backup)
+    CacheBackup=${CacheBackup%/}
+    if [ -z "$CacheBackup" ]; then
+	echo "practically empty Dir::Cache::Backup, exiting" 1>&2
+	return
+    fi
+
+    Cache="${Dir}/${CacheDir}/${CacheArchive}/"
+    Back="${Dir}/${CacheDir}/${CacheBackup}/"
+    BackX="${Back}${CacheArchive}/"
+    for x in $(seq 0 1 $((${BackupLevel}-1))); do 
+	eval "Back${x}=${Back}${x}/"
+    done
+    
+    # backup after n-days if archive contents changed.
+    # (This uses hardlink to save disk space)
+    BACKUP_ARCHIVE_STAMP=/var/lib/apt/periodic/backup-archive-stamp
+    if check_stamp $BACKUP_ARCHIVE_STAMP $BackupArchiveInterval; then
+	if [ $({(cd $Cache 2>/dev/null; find . -name "*.deb"); (cd $Back0 2>/dev/null;find . -name "*.deb") ;}| sort|uniq -u|wc -l) -ne 0 ]; then
+	    mkdir -p $Back
+	    rm -rf $Back$((${BackupLevel}-1))
+	    for y in $(seq $((${BackupLevel}-1)) -1 1); do 
+		eval BackY=${Back}$y
+		eval BackZ=${Back}$(($y-1))
+		if [ -e $BackZ ]; then 
+		    mv -f $BackZ $BackY ; 
+		fi
+	    done
+	    cp -la $Cache $Back ; mv -f $BackX $Back0
+	    update_stamp $BACKUP_ARCHIVE_STAMP
+	    debug_echo "backup with hardlinks. (success)"
+	else
+	    debug_echo "skip backup since same content."
+	fi
+    else
+	debug_echo "skip backup since too new."
     fi
 }
 
@@ -185,14 +281,77 @@ random_sleep()
 	RANDOM=$(dd if=/dev/urandom count=1 2> /dev/null | cksum | cut -c"1-5")
     fi
     TIME=$(($RANDOM % $RandomSleep))
+    debug_echo "sleeping for $TIME seconds"
     sleep $TIME
 }
 
-# main
 
-if ! which apt-config >/dev/null; then
+debug_echo()
+{
+    # Display message if $VERBOSE >= 1
+    if [ "$VERBOSE" -ge 1 ]; then
+	echo $1 1>&2
+    fi
+}
+
+# ------------------------ main ----------------------------
+
+# check apt-config exstance
+if ! which apt-config >/dev/null ; then
 	exit 0
 fi
+
+# Set VERBOSE mode from  apt-config (or inherit from environment)
+eval $(apt-config shell VERBOSE APT::Periodic::Verbose)
+debug_echo "verbose level $VERBOSE"
+if [ -z "$VERBOSE" ]; then
+    VERBOSE="0"
+fi
+if [ "$VERBOSE" -le 2 ]; then
+    # quiet for 0,1,2
+    XSTDOUT=">/dev/null"
+    XSTDERR="2>/dev/null"
+    XAPTOPT="-qq"
+    XUUPOPT=""
+else
+    XSTDOUT=""
+    XSTDERR=""
+    XAPTOPT=""
+    XUUPOPT="-d"
+fi
+if [ "$VERBOSE" -ge 3 ]; then
+    # trace output
+    set -x
+fi
+
+# laptop check, on_ac_power returns:
+#       0 (true)    System is on main power
+#       1 (false)   System is not on main power
+#       255 (false) Power status could not be determined
+# Desktop systems always return 255 it seems
+if which on_ac_power >/dev/null; then
+    on_ac_power
+    POWER=$?
+    if [ $POWER -eq 1 ]; then
+	debug_echo "exit: system NOT on main power"
+	exit 0
+    elif [ $POWER -ne 0 ]; then
+	debug_echo "power status ($POWER) undetermined, continuing"
+    fi
+    debug_echo "system is on main power."
+fi
+
+# check if we can lock the cache and if the cache is clean
+if which apt-get >/dev/null && ! eval apt-get check -f $XAPTOPT $XSTDERR ; then
+    debug_echo "error encountered in cron job with \"apt-get check\"."
+    exit 0
+fi
+
+# Global current time in seconds since 1970-01-01 00:00:00 UTC
+now=$(date +%s)
+
+# Support old Archive for compatibility.
+# Document only Periodic for all controling parameters of this script.
 
 UpdateInterval=0
 DownloadUpgradeableInterval=0
@@ -202,6 +361,12 @@ eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
 UnattendedUpgradeInterval=0
 eval $(apt-config shell UnattendedUpgradeInterval APT::Periodic::Unattended-Upgrade)
 
+AutocleanInterval=0
+eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
+
+BackupArchiveInterval=0
+eval $(apt-config shell BackupArchiveInterval APT::Periodic::BackupArchiveInterval)
+
 # check if we actually have to do anything
 if [ $UpdateInterval -eq 0 ] &&
    [ $DownloadUpgradeableInterval -eq 0 ] &&
@@ -210,83 +375,103 @@ if [ $UpdateInterval -eq 0 ] &&
     exit 0
 fi
 
-# laptop check, on_ac_power returns:
-#       0 (true)    System is on mains power
-#       1 (false)   System is not on mains power
-#       255 (false) Power status could not be determined
-# Desktop systems always return 255 it seems
-if which on_ac_power >/dev/null; then
-    on_ac_power
-    if [ $? -eq 1 ]; then
-	exit 0
-    fi
+# set the proxy based on the admin users gconf settings
+admin_user=$(getent group admin|cut -d: -f4|cut -d, -f1)
+if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ] && [ -x /usr/bin/gconftool ]; then
+       use=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/use_http_proxy 2>/dev/null)
+       host=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/host 2>/dev/null)
+       port=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/port 2>/dev/null)
+       if [ "$use" = "true" ] && [ -n "$host" ] && [ -n "$port" ]; then
+               export http_proxy="http://$host:$port/"
+       fi
 fi
+
+
+# deal with BackupArchiveInterval
+do_cache_backup $BackupArchiveInterval
 
 # sleep random amount of time to avoid hitting the 
 # mirrors at the same time
 random_sleep
 
-# check if we can access the cache
-if ! apt-get check -q -q 2>/dev/null; then
-    # wait random amount of time before retrying
-    random_sleep
-    # check again
-    if ! apt-get check -q -q 2>/dev/null; then
-       echo "$0: could not lock the APT cache while performing daily cron job. "
-       echo "Is another package manager working?"
-       exit 1
-    fi
-fi
-
-# set the proxy based on the admin users gconf settings
-admin_user=$(getent group admin|cut -d: -f4|cut -d, -f1)
-if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ] && [ -x /usr/bin/gconftool ]; then
-	use=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/use_http_proxy 2>/dev/null)
-	host=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/host 2>/dev/null)
-	port=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/port 2>/dev/null)
-	if [ "$use" = "true" ] && [ -n "$host" ] && [ -n "$port" ]; then
-		export http_proxy="http://$host:$port/"
-	fi
-fi
-
+# update package lists
+UPDATED=0
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
     # check for a new archive signing key (against the master keyring)
-    apt-key net-update
-    # now run the update
-    if apt-get -qq update -o APT::Update::Auth-Failure::="cp /usr/share/apt/apt-auth-failure.note /var/lib/update-notifier/user.d/" 2>/dev/null; then 
-	# Could possible test access to '/var/run/dbus/system_bus_socket' has well,
-	# but I'm not sure how stable the internal pipe location is defined as
-	# being;  so for the moment just 2>/dev/null . --sladen 2007-09-27
-	if which dbus-send >/dev/null; then
-	    dbus-send --system / app.apt.dbus.updated boolean:true 2>/dev/null || true
+    if eval apt-key net-update $XSTDERR; then
+	debug_echo "apt-key net-update (success)"
+    else
+	debug_echo "apt-key net-update (failure)"
+    fi
+    if eval apt-get $XAPTOPT -y update -o APT::Update::Auth-Failure::="cp /usr/share/apt/apt-auth-failure.note /var/lib/update-notifier/user.d/" $XSTDERR; then
+	debug_echo "download updated metadata (success)."
+	if which dbus-send >/dev/null && pidof dbus-daemon >/dev/null; then
+	    if dbus-send --system / app.apt.dbus.updated boolean:true ; then
+		debug_echo "send dbus signal (success)"
+	    else
+		debug_echo "send dbus signal (error)"
+	    fi
+	else
+	    debug_echo "dbus signal not send (command not available)"
 	fi
+	update_stamp $UPDATE_STAMP
+	UPDATED=1
 	# now run apt-xapian-index if it is installed to ensure the index
 	# is up-to-date
 	if [ -x /usr/sbin/update-apt-xapian-index ]; then
 	    ionice -c3 update-apt-xapian-index -q
 	fi
-        update_stamp $UPDATE_STAMP
+    else
+	debug_echo "download updated metadata (error)"
     fi
+else
+    debug_echo "download updated metadata (not run)."
 fi
-
+	
+# download all upgradeable packages (if it is requested)
 DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
-if check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
-    apt-get -qq -d dist-upgrade 2>/dev/null
-    update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
+if [ $UPDATED -eq 1 ] && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
+    if  eval apt-get $XAPTOPT -y -d dist-upgrade $XSTDERR; then
+	update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
+	debug_echo "download upgradable (success)"
+    else
+	debug_echo "download upgradable (error)"
+    fi
+else
+    debug_echo "download upgradable (not run)"
 fi
 
+# auto upgrade all upgradeable packages
 UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
-if check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
-    unattended-upgrade
-    update_stamp $UPGRADE_STAMP
+if [ $UPDATED -eq 1 ] && which unattended-upgrade >/dev/null && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
+    if unattended-upgrade $XUUPOPT; then
+	update_stamp $UPGRADE_STAMP
+	debug_echo "unattended-upgrade (success)"
+    else
+	debug_echo "unattended-upgrade (error)"
+    fi
+else
+    debug_echo "unattended-upgrade (not run)"
 fi
 
+# autoclean package archive
 AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
 if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
-    apt-get -qq autoclean
-    update_stamp $AUTOCLEAN_STAMP
+    if  eval apt-get $XAPTOPT -y autoclean $XSTDERR; then
+	debug_echo "autoclean (success)."
+	update_stamp $AUTOCLEAN_STAMP
+    else
+	debug_echo "autoclean (error)"
+    fi
+else
+    debug_echo "autoclean (not run)"
 fi
 
 # check cache size 
 check_size_constraints
+
+#
+#     vim: set sts=4 ai :
+#
+

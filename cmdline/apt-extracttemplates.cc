@@ -348,8 +348,7 @@ bool Go(CommandLine &CmdL)
 	return !_error->PendingError();
 }
 									/*}}}*/
-
-int main(int argc, const char **argv)
+int main(int argc, const char **argv)					/*{{{*/
 {
 	CommandLine::Args Args[] = {
 		{'h',"help","help",0},
@@ -391,3 +390,4 @@ int main(int argc, const char **argv)
 	
 	return 0;
 }
+									/*}}}*/

@@ -22,7 +22,7 @@ class FileFd;
 class indexRecords;
 class pkgCdromStatus;
 
-class IndexCopy
+class IndexCopy								/*{{{*/
 {
    protected:
    
@@ -45,8 +45,8 @@ class IndexCopy
 		     pkgCdromStatus *log);
    virtual ~IndexCopy() {};
 };
-
-class PackageCopy : public IndexCopy
+									/*}}}*/
+class PackageCopy : public IndexCopy					/*{{{*/
 {
    protected:
    
@@ -57,8 +57,8 @@ class PackageCopy : public IndexCopy
    
    public:
 };
-
-class SourceCopy : public IndexCopy
+									/*}}}*/
+class SourceCopy : public IndexCopy					/*{{{*/
 {
    protected:
    
@@ -69,8 +69,8 @@ class SourceCopy : public IndexCopy
    
    public:
 };
-
-class TranslationsCopy
+									/*}}}*/
+class TranslationsCopy							/*{{{*/
 {
    protected:
    pkgTagSection *Section;
@@ -79,9 +79,8 @@ class TranslationsCopy
    bool CopyTranslations(string CDROM,string Name,vector<string> &List,
 			 pkgCdromStatus *log);
 };
-
-
-class SigVerify 
+									/*}}}*/
+class SigVerify								/*{{{*/
 {
    bool Verify(string prefix,string file, indexRecords *records);
    bool CopyMetaIndex(string CDROM, string CDName, 
@@ -91,7 +90,6 @@ class SigVerify
    bool CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 		      vector<string> PkgList,vector<string> SrcList);
 };
-
-
+									/*}}}*/
 
 #endif

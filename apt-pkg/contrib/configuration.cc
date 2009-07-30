@@ -521,6 +521,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	  F.getline(Buffer,sizeof(Buffer) / 2);
 
 	  Input += Buffer;
+	  delete[] Buffer;
 	}
       while (F.fail() && !F.eof());
 
@@ -582,7 +583,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	 if (InQuote == true)
 	    continue;
 	 
-	 if (*I == '/' && I + 1 != End && I[1] == '/')
+	 if ((*I == '/' && I + 1 != End && I[1] == '/') || *I == '#')
          {
 	    End = I;
 	    break;

@@ -10,7 +10,7 @@ pkgVendorList::~pkgVendorList()
       delete *I;
 }
 
-// pkgVendorList::ReadMainList - Read list of known package vendors		/*{{{*/
+// pkgVendorList::ReadMainList - Read list of known package vendors	/*{{{*/
 // ---------------------------------------------------------------------
 /* This also scans a directory of vendor files similar to apt.conf.d 
    which can contain the usual suspects of distribution provided data.
@@ -31,8 +31,8 @@ bool pkgVendorList::ReadMainList()
 
    return CreateList(Cnf);
 }
-
-bool pkgVendorList::Read(string File)
+									/*}}}*/
+bool pkgVendorList::Read(string File)					/*{{{*/
 {
    Configuration Cnf;
    if (ReadConfigFile(Cnf,File,true) == false)
@@ -40,8 +40,8 @@ bool pkgVendorList::Read(string File)
 
    return CreateList(Cnf);
 }
-
-bool pkgVendorList::CreateList(Configuration& Cnf)
+									/*}}}*/
+bool pkgVendorList::CreateList(Configuration& Cnf)			/*{{{*/
 {
    for (vector<const Vendor *>::const_iterator I = VendorList.begin(); 
 	I != VendorList.end(); I++)
@@ -110,8 +110,8 @@ bool pkgVendorList::CreateList(Configuration& Cnf)
    
    return !_error->PendingError();
 }
-
-const Vendor* pkgVendorList::LookupFingerprint(string Fingerprint)
+									/*}}}*/
+const Vendor* pkgVendorList::LookupFingerprint(string Fingerprint)	/*{{{*/
 {
    for (const_iterator I = VendorList.begin(); I != VendorList.end(); ++I)
    {
@@ -121,8 +121,8 @@ const Vendor* pkgVendorList::LookupFingerprint(string Fingerprint)
 
    return NULL;
 }
-
-const Vendor* pkgVendorList::FindVendor(const std::vector<string> GPGVOutput)
+									/*}}}*/
+const Vendor* pkgVendorList::FindVendor(const std::vector<string> GPGVOutput)	/*{{{*/
 {
    for (std::vector<string>::const_iterator I = GPGVOutput.begin(); I != GPGVOutput.end(); I++)
    {
@@ -142,3 +142,4 @@ const Vendor* pkgVendorList::FindVendor(const std::vector<string> GPGVOutput)
 
    return NULL;
 }
+									/*}}}*/

@@ -24,7 +24,6 @@
     
 #include <apti18n.h>
 									/*}}}*/
-
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -49,6 +48,7 @@ pkgCacheFile::~pkgCacheFile()
 /* */
 bool pkgCacheFile::BuildCaches(OpProgress &Progress,bool WithLock)
 {
+   const bool ErrorWasEmpty = _error->empty();
    if (WithLock == true)
       if (_system->Lock() == false)
 	 return false;
@@ -71,7 +71,7 @@ bool pkgCacheFile::BuildCaches(OpProgress &Progress,bool WithLock)
       return _error->Error(_("The package lists or status file could not be parsed or opened."));
 
    /* This sux, remove it someday */
-   if (_error->empty() == false)
+   if (ErrorWasEmpty == true && _error->empty() == false)
       _error->Warning(_("You may want to run apt-get update to correct these problems"));
 
    Cache = new pkgCache(Map);
@@ -92,7 +92,8 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
    Policy = new pkgPolicy(Cache);
    if (_error->PendingError() == true)
       return false;
-   if (ReadPinFile(*Policy) == false)
+
+   if (ReadPinFile(*Policy) == false || ReadPinDir(*Policy) == false)
       return false;
    
    // Create the dependency cache
@@ -108,8 +109,6 @@ bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
    return true;
 }
 									/*}}}*/
-
-
 // CacheFile::Close - close the cache files				/*{{{*/
 // ---------------------------------------------------------------------
 /* */

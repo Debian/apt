@@ -21,6 +21,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/policy.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
@@ -49,7 +50,7 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 7;
+   MajorVersion = 8;
    MinorVersion = 0;
    Dirty = false;
    
@@ -223,7 +224,7 @@ const char *pkgCache::DepType(unsigned char Type)
 {
    const char *Types[] = {"",_("Depends"),_("PreDepends"),_("Suggests"),
                           _("Recommends"),_("Conflicts"),_("Replaces"),
-                          _("Obsoletes"),_("Breaks")};
+                          _("Obsoletes"),_("Breaks"), _("Enhances")};
    if (Type < sizeof(Types)/sizeof(*Types))
       return Types[Type];
    return "";
@@ -288,6 +289,56 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
       return NeedsUnpack;
       
    return NeedsNothing;
+}
+									/*}}}*/
+// PkgIterator::CandVersion - Returns the candidate version string	/*{{{*/
+// ---------------------------------------------------------------------
+/* Return string representing of the candidate version. */
+const char *
+pkgCache::PkgIterator::CandVersion() const 
+{
+  //TargetVer is empty, so don't use it.
+  VerIterator version = pkgPolicy::pkgPolicy(Owner).GetCandidateVer(*this);
+  if (version.IsGood())
+    return version.VerStr();
+  return 0;
+};
+									/*}}}*/
+// PkgIterator::CurVersion - Returns the current version string		/*{{{*/
+// ---------------------------------------------------------------------
+/* Return string representing of the current version. */
+const char *
+pkgCache::PkgIterator::CurVersion() const 
+{
+  VerIterator version = CurrentVer();
+  if (version.IsGood())
+    return CurrentVer().VerStr();
+  return 0;
+};
+									/*}}}*/
+// ostream operator to handle string representation of a package	/*{{{*/
+// ---------------------------------------------------------------------
+/* Output name < cur.rent.version -> candid.ate.version | new.est.version > (section)
+   Note that the characters <|>() are all literal above. Versions will be ommited
+   if they provide no new information (e.g. there is no newer version than candidate)
+   If no version and/or section can be found "none" is used. */
+std::ostream& 
+operator<<(ostream& out, pkgCache::PkgIterator Pkg) 
+{
+   if (Pkg.end() == true)
+      return out << "invalid package";
+
+   string current = string(Pkg.CurVersion() == 0 ? "none" : Pkg.CurVersion());
+   string candidate = string(Pkg.CandVersion() == 0 ? "none" : Pkg.CandVersion());
+   string newest = string(Pkg.VersionList().end() ? "none" : Pkg.VersionList().VerStr());
+
+   out << Pkg.Name() << " < " << current;
+   if (current != candidate)
+      out << " -> " << candidate;
+   if ( newest != "none" && candidate != newest)
+      out << " | " << newest;
+   out << " > ( " << string(Pkg.Section()==0?"none":Pkg.Section()) << " )";
+   return out;
 }
 									/*}}}*/
 // DepIterator::IsCritical - Returns true if the dep is important	/*{{{*/
@@ -607,6 +658,8 @@ string pkgCache::PkgFileIterator::RelStr()
       Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
    if (Archive() != 0)
       Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
+   if (Codename() != 0)
+      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
    if (Label() != 0)
       Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
    if (Component() != 0)

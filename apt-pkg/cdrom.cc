@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <algorithm>
-
+#include <dlfcn.h>
 
 #include "indexcopy.h"
 
@@ -160,7 +160,7 @@ bool pkgCdrom::FindPackages(string CD,
    
    return !_error->PendingError();
 }
-
+									/*}}}*/
 // Score - We compute a 'score' for a path				/*{{{*/
 // ---------------------------------------------------------------------
 /* Paths are scored based on how close they come to what I consider
@@ -210,7 +210,6 @@ int pkgCdrom::Score(string Path)
 
    return Res;
 }
-
 									/*}}}*/
 // DropBinaryArch - Dump dirs with a string like /binary-<foo>/		/*{{{*/
 // ---------------------------------------------------------------------
@@ -248,8 +247,7 @@ bool pkgCdrom::DropBinaryArch(vector<string> &List)
    
    return true;
 }
-
-
+									/*}}}*/
 // DropRepeats - Drop repeated files resulting from symlinks		/*{{{*/
 // ---------------------------------------------------------------------
 /* Here we go and stat every file that we found and strip dup inodes. */
@@ -304,7 +302,6 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
    return true;
 }
 									/*}}}*/
-
 // ReduceSourceList - Takes the path list and reduces it		/*{{{*/
 // ---------------------------------------------------------------------
 /* This takes the list of source list expressed entires and collects
@@ -513,9 +510,8 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    
    return true;
 }
-
-
-bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
+									/*}}}*/
+bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
 {
    stringstream msg;
 
@@ -573,9 +569,8 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)
 
    return true;
 }
-
-
-bool pkgCdrom::Add(pkgCdromStatus *log)
+									/*}}}*/
+bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 {
    stringstream msg;
 
@@ -686,7 +681,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
    {
       if (_config->FindB("APT::CDROM::NoMount",false) == false) 
 	 UnmountCdrom(CDROM);
-      return _error->Error("Unable to locate any package files, perhaps this is not a Debian Disc");
+      return _error->Error(_("Unable to locate any package files, perhaps this is not a Debian Disc or the wrong architecture?"));
    }
 
    // Check if the CD is in the database
@@ -844,3 +839,88 @@ bool pkgCdrom::Add(pkgCdromStatus *log)
 
    return true;
 }
+									/*}}}*/
+pkgUdevCdromDevices::pkgUdevCdromDevices()                     		/*{{{*/
+   : libudev_handle(NULL)
+{
+
+}
+									/*}}}*/
+
+bool
+pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
+{
+   // alread open
+   if(libudev_handle != NULL)
+      return true;
+
+   // see if we can get libudev
+   void *h = ::dlopen("libudev.so.0", RTLD_LAZY);
+   if(h == NULL)
+      return false;
+
+   // get the pointers to the udev structs
+   libudev_handle = h;
+   udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
+   udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
+   udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
+   udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
+   udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
+   udev_enumerate_get_udev = (udev* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_udev");
+   udev_list_entry_get_name = (const char* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_name");
+   udev_device_get_devnode = (const char* (*)(udev_device*))dlsym(h, "udev_device_get_devnode");
+   udev_enumerate_new = (udev_enumerate* (*)(udev*))dlsym(h, "udev_enumerate_new");
+   udev_list_entry_get_next = (udev_list_entry* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_next");
+   udev_device_get_property_value = (const char* (*)(udev_device *, const char *))dlsym(h, "udev_device_get_property_value");
+
+   return true;
+}
+									/*}}}*/
+vector<CdromDevice>
+pkgUdevCdromDevices::Scan()                                             /*{{{*/
+{
+   vector<CdromDevice> cdrom_devices;
+   struct udev_enumerate *enumerate;
+   struct udev_list_entry *l, *devices;
+   struct udev *udev_ctx;
+
+   if(libudev_handle == NULL)
+      return cdrom_devices;
+
+   udev_ctx = udev_new();
+   enumerate = udev_enumerate_new (udev_ctx);
+   udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
+
+   udev_enumerate_scan_devices (enumerate);
+   devices = udev_enumerate_get_list_entry (enumerate);
+   for (l = devices; l != NULL; l = udev_list_entry_get_next (l))
+   {
+      CdromDevice cdrom;
+      struct udev_device *udevice;
+      udevice = udev_device_new_from_syspath (udev_enumerate_get_udev (enumerate), udev_list_entry_get_name (l));
+      if (udevice == NULL)
+	 continue;
+      const char* devnode = udev_device_get_devnode(udevice);
+      const char* mountpath = udev_device_get_property_value(udevice, "FSTAB_DIR");
+
+      // fill in the struct
+      cdrom.DeviceName = string(devnode);
+      if (mountpath) {
+	 cdrom.MountPath = mountpath;
+	 string s = string(mountpath);
+	 cdrom.Mounted = IsMounted(s);
+      } else {
+	 cdrom.Mounted = false;
+	 cdrom.MountPath = "";
+      }
+      cdrom_devices.push_back(cdrom);
+   } 
+   return cdrom_devices;
+}
+									/*}}}*/
+
+pkgUdevCdromDevices::~pkgUdevCdromDevices()                             /*{{{*/
+{ 
+   dlclose(libudev_handle);
+}
+									/*}}}*/

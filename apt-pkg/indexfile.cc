@@ -41,7 +41,6 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
    return 0;
 }
 									/*}}}*/
-    
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */

@@ -1,5 +1,76 @@
-apt (0.7.21ubuntu2~ppa1) karmic; urgency=low
+apt (0.7.23ubuntu1) karmic; urgency=low
 
+  * merged from the debian-sid bzr branch
+
+  * cmdline/apt-get.cc:
+    - honor APT::Get::Only-Source properly in FindSrc() (thanks to
+      Martin Pitt for reporting the problem)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 30 Jul 2009 15:27:30 +0200
+
+apt (0.7.22) unstable; urgency=low
+
+
+  [ Christian Perrier ]
+  * Documentation translations:
+    - Fix a typo in apt-get(8) French translation. Closes: #525043
+      Thanks to Guillaume Delacour for spotting it.
+    - Updated apt.conf(5) manpgae French translation.
+      Thanks to Aurélien Couderc.
+  * Translations:
+    - fr.po
+    - sk.po. Closes: #525857
+    - ru.po. Closes: #526816
+    - eu.po. Closes: #528985
+    - zh_CN.po. Closes: #531390
+    - fr.po
+    - it.po. Closes: #531758
+    - ca.po. Closes: #531921
+    - de.po. Closes: #536430
+  * Added translations
+    - ast.po (Asturian by Marcos Alvareez Costales).
+      Closes: #529007, #529730, #535328
+  
+  [ David Kalnischkies ]
+  * [ABI break] support '#' in apt.conf and /etc/apt/preferences
+    (closes: #189866)
+  * [ABI break] Allow pinning by codename (closes: #97564)
+  * support running "--simulate" as user
+  * add depth information to the debug output and show what depends
+    type triggers a autoinst (closes: #458389)
+  * add Debug::pkgDepCache::Marker with more detailed debug output 
+    (closes: #87520)
+  * add Debug::pkgProblemResolver::ShowScores and make the scores
+    adjustable
+  * do not write state file in simulate mode (closes: #433007)
+  * add hook for MarkInstall and MarkDelete (closes: #470035)
+  * fix typo in apt-pkg/acquire.cc which prevents Dl-Limit to work
+    correctly when downloading from multiple sites (Closes: #534752)
+  * add the various foldmarkers in apt-pkg & cmdline (no code change)
+  * versions with a pin of -1 shouldn't be a candidate (Closes: #355237)
+  * prefer mmap as memory allocator in MMap instead of a static char
+    array which can (at least in theory) grow dynamic
+  * eliminate (hopefully all) segfaults in pkgcachegen.cc and mmap.cc
+    which can arise if cache doesn't fit into the mmap (Closes: #535218)
+  * display warnings instead of errors if the parts dirs doesn't exist
+
+
+  [ Michael Vogt ]
+  * honor the dpkg hold state in new Marker hooks (closes: #64141)
+  * debian/apt.cron.daily:
+    - if the timestamp is too far in the future, delete it
+  * apt-pkg/acquire.cc:
+    - make the max pipeline depth of the acquire queue configurable
+      via Acquire::Max-Pipeline-Depth
+  * apt-pkg/deb/dpkgpm.cc:
+    - add Dpkg::UseIoNice boolean option to run dpkg with ionice -c3
+      (off by default)
+    - send "dpkg-exec" message on the status fd when dpkg is run
+    - provide DPkg::Chroot-Directory config option (useful for testing)
+    - fix potential hang when in a backgroud process group
+  * apt-pkg/algorithms.cc:
+    - consider recommends when making the scores for the problem 
+      resolver
   * apt-pkg/acquire-worker.cc:
     - show error details of failed methods
   * apt-pkg/contrib/fileutl.cc:
@@ -7,12 +78,69 @@ apt (0.7.21ubuntu2~ppa1) karmic; urgency=low
   * methods/http.cc:
     - ignore SIGPIPE, we deal with EPIPE from write in 
       HttpMethod::ServerDie() (LP: #385144)
-  * debian/apt.cron.daily:
-    - if the timestamp is too far in the future, delete it 
-      (LP: #135262)
+  * Only run Download-Upgradable and Unattended-Upgrades if the initial
+    update was successful Closes: #341970
+  * apt-pkg/indexcopy.cc:
+    - support having CDs with no Packages file (just a Packages.gz)
+      by not forcing a verification on non-existing files
+     (LP: #255545)
+    - remove the gettext from a string that consists entirely 
+      of variables (LP: #56792)
+  * apt-pkg/cacheiterators.h:
+    - add missing checks for Owner == 0 in end()
+  * apt-pkg/indexrecords.cc:
+    - fix some i18n issues
+  * apt-pkg/contrib/strutl.h:
+    - add new strprintf() function to make i18n strings easier
+    - fix compiler warning
+  * apt-pkg/deb/debsystem.cc:
+    - make strings i18n able 
+  * fix problematic use of tolower() when calculating the version 
+    hash by using locale independant tolower_ascii() function. 
+    Thanks to M. Vefa Bicakci (LP: #80248)
+  * build fixes for g++-4.4
+  * cmdline/apt-mark:
+    - add "showauto" option to show automatically installed packages
+  * document --install-recommends and --no-install-recommends
+    (thanks to Dereck Wonnacott, LP: #126180)
+  * doc/apt.conf.5.xml:
+    - merged patch from Aurélien Couderc to improve the text
+      (thanks!)
+  * [ABI] merged the libudev-dlopen branch, this allows to pass
+    "apt-udev-auto" to Acquire::Cdrom::mount and the cdrom method will  
+    dynamically find/mount the cdrom device (if libhal is available)
 
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/configuration.cc: Fix a small memory leak in
+    ReadConfigFile.
+  * Introduce support for the Enhances field. (Closes: #137583) 
+  * Support /etc/apt/preferences.d, by adding ReadPinDir() (Closes: #535512)
+  * configure-index: document Dir::Etc::SourceParts and some other options
+    (Closes: #459605)
+  * Remove Eugene V. Lyubimkin from uploaders as requested.
+  * apt-pkg/contrib/hashes.cc, apt-pkg/contrib/md5.cc:
+    - Support reading until EOF if Size=0 to match behaviour of
+      SHA1Summation and SHA256Summation
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 02 Jul 2009 14:11:35 +0200
+  [ Osamu Aoki ]
+  * Updated cron script to support backups by hardlinks and 
+    verbose levels.  All features turned off by default. 
+  * Added more error handlings.  Closes: #438803, #462734, #454989, 
+  * Documented all cron script related configuration items in 
+    configure-index.
+
+  [ Dereck Wonnacott ]
+  * apt-ftparchive might write corrupt Release files (LP: #46439)
+  * Apply --important option to apt-cache depends (LP: #16947) 
+
+  [ Otavio Salvador ]
+  * Apply patch from Sami Liedes <sliedes@cc.hut.fi> to reduce the
+    number of times we call progress bar updating and debugging
+    configuration settings.
+  * Apply patch from Sami Liedes <sliedes@cc.hut.fi> to avoid unecessary
+    temporary allocations.
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 29 Jul 2009 19:16:22 +0200
 
 apt (0.7.21ubuntu1) karmic; urgency=low
 

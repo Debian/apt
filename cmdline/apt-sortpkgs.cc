@@ -31,7 +31,7 @@
 
 using namespace std;
 
-struct PkgName
+struct PkgName								/*{{{*/
 {
    string Name;
    string Ver;
@@ -55,7 +55,7 @@ struct PkgName
    bool operator >(const PkgName &x) const {return Compare3(x) > 0;};
    bool operator ==(const PkgName &x) const {return Compare3(x) == 0;};
 };
-
+									/*}}}*/
 // DoIt - Sort a single file						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -161,8 +161,7 @@ int ShowHelp()
    return 0;
 }
 									/*}}}*/
-
-int main(int argc,const char *argv[])
+int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
@@ -206,3 +205,4 @@ int main(int argc,const char *argv[])
    
    return 0;   
 }
+									/*}}}*/

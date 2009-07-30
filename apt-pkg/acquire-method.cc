@@ -451,7 +451,6 @@ void pkgAcqMethod::Status(const char *Format,...)
       exit(100);
 }
 									/*}}}*/
-
 // AcqMethod::Redirect - Send a redirect message                       /*{{{*/
 // ---------------------------------------------------------------------
 /* This method sends the redirect message and also manipulates the queue
@@ -483,7 +482,6 @@ void pkgAcqMethod::Redirect(const string &NewURI)
       QueueBack = I->Next;
 }
                                                                         /*}}}*/
-
 // AcqMethod::FetchResult::FetchResult - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

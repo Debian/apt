@@ -181,9 +181,7 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
    }
 }
 
-
-
-// AcqDiffIndex::AcqDiffIndex - Constructor			
+// AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Get the DiffIndex file first and see if there are patches availabe 
  * If so, create a pkgAcqIndexDiffs fetcher that will get and apply the
@@ -234,7 +232,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
    QueueURI(Desc);
 
 }
-
+									/*}}}*/
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
@@ -252,9 +250,8 @@ string pkgAcqDiffIndex::Custom600Headers()
    
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
-
-
-bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
+									/*}}}*/
+bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 {
    if(Debug)
       std::clog << "pkgAcqIndexDiffs::ParseIndexDiff() " << IndexDiffFile 
@@ -341,8 +338,8 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)
       std::clog << "Can't find a patch in the index file" << std::endl;
    return false;
 }
-
-void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+									/*}}}*/
+void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 {
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << std::endl
@@ -355,8 +352,8 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    Status = StatDone;
    Dequeue();
 }
-
-void pkgAcqDiffIndex::Done(string Message,unsigned long Size,string Md5Hash,
+									/*}}}*/
+void pkgAcqDiffIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{{*/
 			   pkgAcquire::MethodConfig *Cnf)
 {
    if(Debug)
@@ -385,10 +382,8 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long Size,string Md5Hash,
    Dequeue();
    return;
 }
-
-
-
-// AcqIndexDiffs::AcqIndexDiffs - Constructor			
+									/*}}}*/
+// AcqIndexDiffs::AcqIndexDiffs - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* The package diff is added to the queue. one object is constructed
  * for each diff and the index
@@ -422,9 +417,8 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
       QueueNextDiff();
    }
 }
-
-
-void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+									/*}}}*/
+void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 {
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
@@ -433,9 +427,8 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 		   ExpectedHash);
    Finish();
 }
-
-
-// helper that cleans the item out of the fetcher queue
+									/*}}}*/
+// Finish - helper that cleans the item out of the fetcher queue	/*{{{*/
 void pkgAcqIndexDiffs::Finish(bool allDone)
 {
    // we restore the original name, this is required, otherwise
@@ -470,10 +463,8 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
    Dequeue();
    return;
 }
-
-
-
-bool pkgAcqIndexDiffs::QueueNextDiff()
+									/*}}}*/
+bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 {
 
    // calc sha1 of the just patched file
@@ -519,10 +510,8 @@ bool pkgAcqIndexDiffs::QueueNextDiff()
 
    return true;
 }
-
-
-
-void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
+									/*}}}*/
+void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*{{{*/
 			    pkgAcquire::MethodConfig *Cnf)
 {
    if(Debug)
@@ -593,8 +582,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,
 	 return Finish(true);
    }
 }
-
-
+									/*}}}*/
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The package file is added to the queue and a second class is 
@@ -643,8 +631,7 @@ string pkgAcqIndex::Custom600Headers()
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-
-void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 {
    bool descChanged = false;
    // no .bz2 found, retry with .gz
@@ -679,8 +666,7 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 
    Item::Failed(Message,Cnf);
 }
-
-
+									/*}}}*/
 // AcqIndex::Done - Finished a fetch					/*{{{*/
 // ---------------------------------------------------------------------
 /* This goes through a number of states.. On the initial fetch the
@@ -785,7 +771,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    QueueURI(Desc);
    Mode = decompProg;
 }
-
+									/*}}}*/
 // AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* The Translation file is added to the queue */
@@ -794,7 +780,6 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
   : pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, HashString(), "")
 {
 }
-
 									/*}}}*/
 // AcqIndexTrans::Failed - Silence failure messages for missing files	/*{{{*/
 // ---------------------------------------------------------------------
@@ -814,8 +799,7 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
-
-pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
+pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
 			     string URI,string URIDesc,string ShortDesc,
 			     string MetaIndexURI, string MetaIndexURIDesc,
 			     string MetaIndexShortDesc,
@@ -905,7 +889,7 @@ void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
 
 }
 									/*}}}*/
-void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
 
@@ -941,8 +925,8 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    
    Item::Failed(Message,Cnf);
 }
-
-pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
+									/*}}}*/
+pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
 				 string URI,string URIDesc,string ShortDesc,
 				 string SigFile,
 				 const vector<struct IndexTarget*>* IndexTargets,
@@ -961,7 +945,6 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,
 
    QueueURI(Desc);
 }
-
 									/*}}}*/
 // pkgAcqMetaIndex::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
@@ -977,8 +960,8 @@ string pkgAcqMetaIndex::Custom600Headers()
    
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
-
-void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,
+									/*}}}*/
+void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*/
 			   pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hash,Cfg);
@@ -1028,8 +1011,8 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,
       }
    }
 }
-
-void pkgAcqMetaIndex::RetrievalDone(string Message)
+									/*}}}*/
+void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
 {
    // We have just finished downloading a Release file (it is not
    // verified yet)
@@ -1060,8 +1043,8 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)
    }
    Complete = true;
 }
-
-void pkgAcqMetaIndex::AuthDone(string Message)
+									/*}}}*/
+void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 {
    // At this point, the gpgv method has succeeded, so there is a
    // valid signature from a key in the trusted keyring.  We
@@ -1093,8 +1076,8 @@ void pkgAcqMetaIndex::AuthDone(string Message)
    Rename(SigFile,VerifiedSigFile);
    chmod(VerifiedSigFile.c_str(),0644);
 }
-
-void pkgAcqMetaIndex::QueueIndexes(bool verify)
+									/*}}}*/
+void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 {
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
@@ -1136,8 +1119,8 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)
 			    (*Target)->ShortDesc, ExpectedIndexHash);
    }
 }
-
-bool pkgAcqMetaIndex::VerifyVendor(string Message)
+									/*}}}*/
+bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 {
 //    // Maybe this should be made available from above so we don't have
 //    // to read and parse it every time?
@@ -1223,9 +1206,8 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)
 
    return true;
 }
-       								/*}}}*/
-// pkgAcqMetaIndex::Failed - no Release file present or no signature
-//      file present	                                        /*{{{*/
+									/*}}}*/
+// pkgAcqMetaIndex::Failed - no Release file present or no signature file present	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
@@ -1262,9 +1244,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    // back to queueing Packages files without verification
    QueueIndexes(false);
 }
-
 									/*}}}*/
-
 // AcqArchive::AcqArchive - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* This just sets up the initial fetch environment and queues the first
@@ -1547,14 +1527,13 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }
 }
 									/*}}}*/
-// AcqArchive::IsTrusted - Determine whether this archive comes from a
-// trusted source							/*{{{*/
+// AcqArchive::IsTrusted - Determine whether this archive comes from a trusted source /*{{{*/
 // ---------------------------------------------------------------------
 bool pkgAcqArchive::IsTrusted()
 {
    return Trusted;
 }
-
+									/*}}}*/
 // AcqArchive::Finished - Fetching has finished, tidy up		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1566,7 +1545,6 @@ void pkgAcqArchive::Finished()
    StoreFilename = string();
 }
 									/*}}}*/
-
 // AcqFile::pkgAcqFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The file is added to the queue */

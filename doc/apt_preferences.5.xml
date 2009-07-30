@@ -14,7 +14,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>04 May 2009</date>
  </refentryinfo>
 
  <refmeta>
@@ -191,6 +191,15 @@ Pin-Priority: 50
 </programlisting>
 
 <simpara>The following record assigns a high priority to all package versions
+belonging to any distribution whose Codename is "<literal>squeeze</literal>".</simpara>
+
+<programlisting>
+Package: *
+Pin: release n=squeeze
+Pin-Priority: 900
+</programlisting>
+
+<simpara>The following record assigns a high priority to all package versions
 belonging to any release whose Archive name is "<literal>stable</literal>"
 and whose release Version number is "<literal>3.0</literal>".</simpara>
 
@@ -327,10 +336,11 @@ file are relevant for setting APT priorities:
 
 <variablelist>
 <varlistentry>
-<term>the <literal>Archive:</literal> line</term>
+<term>the <literal>Archive:</literal> or <literal>Suite:</literal> line</term>
 <listitem><simpara>names the archive to which all the packages
 in the directory tree belong.  For example, the line
-"Archive: stable"
+"Archive: stable" or
+"Suite: stable"
 specifies that all of the packages in the directory
 tree below the parent of the <filename>Release</filename> file are in a
 <literal>stable</literal> archive.  Specifying this value in the APT preferences file
@@ -338,6 +348,22 @@ would require the line:
 </simpara>
 <programlisting>
 Pin: release a=stable
+</programlisting>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>the <literal>Codename:</literal> line</term>
+<listitem><simpara>names the codename to which all the packages
+in the directory tree belong.  For example, the line
+"Codename: squeeze"
+specifies that all of the packages in the directory
+tree below the parent of the <filename>Release</filename> file belong to a version named
+<literal>squeeze</literal>.  Specifying this value in the APT preferences file
+would require the line:
+</simpara>
+<programlisting>
+Pin: release n=squeeze
 </programlisting>
 </listitem>
 </varlistentry>
@@ -522,7 +548,64 @@ version.
 apt-get install <replaceable>package</replaceable>/unstable
 </programlisting>
 </para>
+</refsect2>
 
+
+<refsect2>
+<title>Tracking the evolution of a codename release</title>
+
+<para>The following APT preferences file will cause APT to assign a
+priority higher than the default (500) to all package versions belonging
+to a specified codename of a distribution and a prohibitively low priority to
+package versions belonging to other <literal>Debian</literal> distributions,
+codenames and archives.
+Note that with this APT preference APT will follow the migration of a release
+from the archive <literal>testing</literal> to <literal>stable</literal> and
+later <literal>oldstable</literal>. If you want to follow for example the progress
+in <literal>testing</literal> notwithstanding the codename changes you should use
+the example configurations above.
+
+<programlisting>
+Explanation: Uninstall or do not install any Debian-originated package versions
+Explanation: other than those in the distribution codenamed with squeeze or sid
+Package: *
+Pin: release n=squeeze
+Pin-Priority: 900
+
+Explanation: Debian unstable is always codenamed with sid
+Package: *
+Pin: release a=sid
+Pin-Priority: 800
+
+Package: *
+Pin: release o=Debian
+Pin-Priority: -10
+</programlisting>
+</para>
+
+<para>With a suitable &sources-list; file and the above preferences file,
+any of the following commands will cause APT to upgrade to the
+latest version(s) in the release codenamed with <literal>squeeze</literal>.
+
+<programlisting>
+apt-get install <replaceable>package-name</replaceable>
+apt-get upgrade
+apt-get dist-upgrade
+</programlisting>
+</para>
+
+<para>The following command will cause APT to upgrade the specified
+package to the latest version from the <literal>sid</literal> distribution.
+Thereafter, <command>apt-get upgrade</command> will upgrade
+the package to the most recent <literal>squeeze</literal> version if that is
+more recent than the installed version, otherwise, to the most recent
+<literal>sid</literal> version if that is more recent than the installed
+version.
+
+<programlisting>
+apt-get install <replaceable>package</replaceable>/sid
+</programlisting>
+</para>
 </refsect2>
 </refsect1>
 
@@ -535,4 +618,3 @@ apt-get install <replaceable>package</replaceable>/unstable
  &manbugs;
 
 </refentry>
-

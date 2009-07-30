@@ -53,6 +53,9 @@
 			  <arg choice='plain'>
 				  <replaceable>target_release_number_expression</replaceable>
 			  </arg>
+			  <arg choice='plain'>
+				  <replaceable>target_release_codename</replaceable>
+			  </arg>
 		  </group>
       </arg>
 
@@ -70,6 +73,9 @@
 						</arg>
 						<arg choice='plain'>
 							/<replaceable>target_release_name</replaceable>
+						</arg>
+						<arg choice='plain'>
+							/<replaceable>target_release_codename</replaceable>
 						</arg>
 					</group>
 				</arg>
@@ -357,6 +363,12 @@
      actually change the system. 
      Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
 
+     <para>Simulation run as user will deactivate locking (<literal>Debug::NoLocking</literal>)
+     automatical. Also a notice will be displayed indicating that this is only a simulation,
+     if the option <literal>APT::Get::Show-User-Simulation-Note</literal> is set (Default: true)
+     Neigther NoLocking nor the notice will be triggered if run as root (root should know what
+     he is doing without further warnings by <literal>apt-get</literal>).</para>
+
      <para>Simulate prints out
      a series of lines each one representing a dpkg operation, Configure (Conf),
      Remove (Remv), Unpack (Inst). Square brackets indicate broken packages with
@@ -463,7 +475,8 @@
      of this option. In short, this option
      lets you have simple control over which distribution packages will be
      retrieved from. Some common examples might be 
-     <option>-t '2.1*'</option> or <option>-t unstable</option>.
+     <option>-t '2.1*'</option>, <option>-t unstable</option>
+     or <option>-t sid</option>.
      Configuration Item: <literal>APT::Default-Release</literal>;
      see also the &apt-preferences; manual page.</para></listitem>
      </varlistentry>
