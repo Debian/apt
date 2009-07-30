@@ -1260,7 +1260,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    /* Lookup the version of the package we would install if we were to
       install a version and determine the source package name, then look
       in the archive for a source package of the same name. */
-   if (_config->FindB("APT::Get::Only-Source") == false)
+   bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
+   if (MatchSrcOnly == false)
    {
       if (Pkg.end() == false)
       {
@@ -1278,7 +1279,6 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    unsigned long Offset = 0;
    string Version;
    bool IsMatch = false;
-   bool MatchSrcOnly = false;
 
    // No source package name..
    if (Src.empty() == true)
