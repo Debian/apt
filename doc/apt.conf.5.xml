@@ -21,7 +21,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>06 December 2008</date>
+   <date>10 December 2008</date>
  </refentryinfo>
  
  <refmeta>
@@ -53,8 +53,9 @@
    parent groups.</para> 
 
    <para>Syntactically the configuration language is modeled after what the ISC tools
-   such as bind and dhcp use.  Lines starting with
-   <literal>//</literal> are treated as comments (ignored).
+   such as bind and dhcp use. Lines starting with
+   <literal>//</literal> are treated as comments (ignored), as well as all text
+   between <literal>/*</literal> and <literal>*/</literal>, just like C/C++ comments.
    Each line is of the form
    <literal>APT::Get::Assume-Yes "true";</literal> The trailing 
    semicolon is required and the quotes are optional. A new scope can be
@@ -110,7 +111,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      
      <varlistentry><term>Default-Release</term>
 	 <listitem><para>Default release to install packages from if more than one
-	 version available. Contains release name or release version. Examples: 'stable', 'testing', 'unstable', '4.0', '5.0*'. Release codenames ('etch', 'lenny' etc.) are not allowed now. See also &apt-preferences;.</para></listitem>
+	 version available. Contains release name, codename or release version. Examples: 'stable', 'testing', 'unstable', 'lenny', 'squeeze', '4.0', '5.0*'. See also &apt-preferences;.</para></listitem>
      </varlistentry>
      
      <varlistentry><term>Ignore-Hold</term>
@@ -679,6 +680,27 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
        </listitem>
      </varlistentry>
 
+     <varlistentry>
+       <term><literal>Debug::pkgDepCache::Marker</literal></term>
+       <listitem>
+        <para>
+           Generate debug messages describing which package is marked
+          as keep/install/remove while the ProblemResolver does his work.
+          Each addition or deletion may trigger additional actions;
+          they are shown indented two additional space under the original entry.
+          The format for each line is <literal>MarkKeep</literal>,
+          <literal>MarkDelete</literal> or <literal>MarkInstall</literal> followed by
+          <literal>package-name &lt;a.b.c -&gt; d.e.f | x.y.z&gt; (section)</literal>
+          where <literal>a.b.c</literal> is the current version of the package,
+          <literal>d.e.f</literal> is the version considered for installation and
+          <literal>x.y.z</literal> is a newer version, but not considered for installation
+          (because of a low pin score). The later two can be omitted if there is none or if
+          it is the same version as the installed.
+          <literal>section</literal> is the name of the section the package appears in.
+        </para>
+       </listitem>
+     </varlistentry>
+
      <!-- Question: why doesn't this do anything?  The code says it should. -->
      <varlistentry>
        <term><literal>Debug::pkgInitConfig</literal></term>
@@ -753,6 +775,17 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	   applies only to what happens when a complex dependency
 	   problem is encountered).
 	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><literal>Debug::pkgProblemResolver::ShowScores</literal></term>
+       <listitem>
+        <para>
+          Display a list of all installed packages with their calculated score
+          used by the pkgProblemResolver. The description of the package
+          is the same as described in <literal>Debug::pkgDepCache::Marker</literal>
+        </para>
        </listitem>
      </varlistentry>
 

@@ -81,7 +81,7 @@ bool pkgTagFile::Resize()
    End = Start + EndSize;
    return true;
 }
-
+									/*}}}*/
 // TagFile::Step - Advance to the next section				/*{{{*/
 // ---------------------------------------------------------------------
 /* If the Section Scanner fails we refill the buffer and try again. 
@@ -212,10 +212,12 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
 
    if (Stop == 0)
       return false;
-   
+
    TagCount = 0;
    while (TagCount+1 < sizeof(Indexes)/sizeof(Indexes[0]) && Stop < End)
    {
+       TrimRecord(true,End);
+
       // Start a new index and add it to the hash
       if (isspace(Stop[0]) == 0)
       {
@@ -227,14 +229,14 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       
       if (Stop == 0)
 	 return false;
-      
+
       for (; Stop+1 < End && Stop[1] == '\r'; Stop++);
 
       // Double newline marks the end of the record
       if (Stop+1 < End && Stop[1] == '\n')
       {
 	 Indexes[TagCount] = Stop - Section;
-	 for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r'); Stop++);
+	 TrimRecord(false,End);
 	 return true;
       }
       
@@ -242,6 +244,16 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
    }
 
    return false;
+}
+									/*}}}*/
+// TagSection::TrimRecord - Trim off any garbage before/after a record	/*{{{*/
+// ---------------------------------------------------------------------
+/* There should be exactly 2 newline at the end of the record, no more. */
+void pkgTagSection::TrimRecord(bool BeforeRecord, const char*& End)
+{
+   if (BeforeRecord == true)
+      return;
+   for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r'); Stop++);
 }
 									/*}}}*/
 // TagSection::Trim - Trim off any trailing garbage			/*{{{*/
@@ -390,7 +402,6 @@ bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
    return true;
 }
 									/*}}}*/
-
 // TFRewrite - Rewrite a control record					/*{{{*/
 // ---------------------------------------------------------------------
 /* This writes the control record to stdout rewriting it as necessary. The

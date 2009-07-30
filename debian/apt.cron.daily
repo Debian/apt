@@ -69,7 +69,7 @@ check_stamp()
     interval="$2"
 
     if [ $interval -eq 0 ]; then
-	debug_echo "check_stamp: interval=0."
+	debug_echo "check_stamp: interval=0"
 	# treat as no time has passed
         return 1
     fi
@@ -81,12 +81,37 @@ check_stamp()
     fi
 
     # compare midnight today to midnight the day the stamp was updated
-    stamp=$(date -r $stamp '+%s')
+    stamp_file="$stamp"
+    stamp=$(date --date=$(date -r $stamp_file --iso-8601) +%s 2>/dev/null)
+    if [ "$?" != "0" ]; then
+        # Due to some timezones returning 'invalid date' for midnight on
+        # certain dates (eg America/Sao_Paulo), if date returns with error
+        # remove the stamp file and return 0. See coreutils bug:
+        # http://lists.gnu.org/archive/html/bug-coreutils/2007-09/msg00176.html
+        rm -f "$stamp_file"
+        return 0
+    fi
+
+    now=$(date --date=$(date --iso-8601) +%s 2>/dev/null)
+    if [ "$?" != "0" ]; then
+        # As above, due to some timezones returning 'invalid date' for midnight
+        # on certain dates (eg America/Sao_Paulo), if date returns with error
+        # return 0.
+        return 0
+    fi
+
     delta=$(($now-$stamp))
 
     # intervall is in days, convert to sec.
     interval=$(($interval*60*60*24))
     debug_echo "check_stamp: interval=$interval, now=$now, stamp=$stamp, delta=$delta (sec)"
+
+    # remove timestamps a day (or more) in the future and force re-check
+    if [ $stamp -gt $(($now+86400)) ]; then
+         echo "WARNING: file $stamp_file has a timestamp in the future: $stamp"
+         rm -f "$stamp_file"
+         return 0
+    fi
 
     if [ $delta -ge $interval ]; then
         return 0

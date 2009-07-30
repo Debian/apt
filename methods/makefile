@@ -7,7 +7,7 @@ include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
 # FIXME..
-LIB_APT_PKG_MAJOR = 4.7
+LIB_APT_PKG_MAJOR = 4.8
 APT_DOMAIN := libapt-pkg$(LIB_APT_PKG_MAJOR)
 
 # The file method
@@ -40,7 +40,7 @@ include $(PROGRAM_H)
 
 # The cdrom method
 PROGRAM=cdrom
-SLIBS = -lapt-pkg $(INTLLIBS)
+SLIBS = -lapt-pkg -ldl $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = cdrom.cc
 include $(PROGRAM_H)

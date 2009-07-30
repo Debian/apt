@@ -98,7 +98,7 @@ bool UnmountCdrom(string Path)
 // MountCdrom - Mount a cdrom						/*{{{*/
 // ---------------------------------------------------------------------
 /* We fork mount and drop all messages */
-bool MountCdrom(string Path)
+bool MountCdrom(string Path, string DeviceName)
 {
    if (IsMounted(Path) == true)
       return true;
@@ -122,8 +122,15 @@ bool MountCdrom(string Path)
       {
 	 const char *Args[10];
 	 Args[0] = "mount";
-	 Args[1] = Path.c_str();
-	 Args[2] = 0;
+	 if (DeviceName == "") 
+	 {
+	    Args[1] = Path.c_str();
+	    Args[2] = 0;
+	 } else {
+	    Args[1] = DeviceName.c_str();
+	    Args[2] = Path.c_str();
+	    Args[3] = 0;
+	 }
 	 execvp(Args[0],(char **)Args);      
 	 _exit(100);
       }      

@@ -68,6 +68,12 @@ SLIBS = -lapt-pkg
 SOURCE = hash.cc
 include $(PROGRAM_H)
 
+# Program for testing udevcdrom
+PROGRAM=test_udevcdrom
+SLIBS = -lapt-pkg 
+SOURCE = test_udevcdrom.cc
+include $(PROGRAM_H)
+
 # Program for checking rpm versions
 PROGRAM=rpmver
 SLIBS = -lapt-pkg -lrpm

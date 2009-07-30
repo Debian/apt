@@ -111,6 +111,9 @@ class CacheFile : public pkgCacheFile
 	 return Open(true);
    }
    CacheFile() : List(0) {};
+   ~CacheFile() {
+      delete[] List;
+   }
 };
 									/*}}}*/
 
@@ -594,7 +597,6 @@ void Stats(ostream &out,pkgDepCache &Dep)
 	       Dep.BadCount());
 }
 									/*}}}*/
-
 // CacheFile::NameComp - QSort compare by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -687,7 +689,10 @@ bool CacheFile::CheckDeps(bool AllowBroken)
       
    return true;
 }
-
+									/*}}}*/
+// CheckAuth - check if each download comes form a trusted source	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 static bool CheckAuth(pkgAcquire& Fetcher)
 {
    string UntrustedList;
@@ -728,10 +733,7 @@ static bool CheckAuth(pkgAcquire& Fetcher)
 
    return _error->Error(_("There are problems and -y was used without --force-yes"));
 }
-
-
 									/*}}}*/
-
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
@@ -1301,9 +1303,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0)
    {
       string Ver = Parse->Version();
-      
+
       // show name mismatches
-      if (IsMatch == true && Parse->Package() != Src) 
+      if (IsMatch == true && Parse->Package() != Src)       
 	 ioprintf(c1out,  _("No source package '%s' picking '%s' instead\n"), Parse->Package().c_str(), Src.c_str());
       
       if (VerTag.empty() == false)
@@ -1335,7 +1337,6 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    return Last;
 }
 									/*}}}*/
-
 // DoUpdate - Update the package lists					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1457,7 +1458,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
    }
    return true;
 }
-
+									/*}}}*/
 // DoUpgrade - Upgrade all packages					/*{{{*/
 // ---------------------------------------------------------------------
 /* Upgrade all packages without installing new packages or erasing old
@@ -1532,7 +1533,7 @@ bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix,
    regfree(&Pattern);
    return res;
 }
-
+									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -1870,7 +1871,8 @@ bool DoInstall(CommandLine &CmdL)
    // cache.commit()
    if (AutoMarkChanged > 0 &&
        Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
-       Cache->BadCount() == 0)
+       Cache->BadCount() == 0 &&
+       _config->FindB("APT::Get::Simulate",false) == false)
       Cache->writeStateFile(NULL);
 
    // See if we need to prompt
@@ -2522,7 +2524,7 @@ bool DoBuildDep(CommandLine &CmdL)
             {
                // We successfully installed something; skip remaining alternatives
                skipAlternatives = hasAlternatives;
-	       if(_config->FindB("APT::Get::Build-Dep-Automatic", true) == true)
+	       if(_config->FindB("APT::Get::Build-Dep-Automatic", false) == true)
 		  Cache->MarkAuto(Pkg, true);
                continue;
             }
@@ -2698,8 +2700,7 @@ void SigWinch(int)
 #endif
 }
 									/*}}}*/
-
-int main(int argc,const char *argv[])
+int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
@@ -2739,7 +2740,6 @@ int main(int argc,const char *argv[])
       {0,"only-source","APT::Get::Only-Source",0},
       {0,"arch-only","APT::Get::Arch-Only",0},
       {0,"auto-remove","APT::Get::AutomaticRemove",0},
-      {0,"build-dep-automatic","APT::Get::Build-Dep-Automatic",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
       {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
@@ -2789,7 +2789,19 @@ int main(int argc,const char *argv[])
       ShowHelp(CmdL);
       return 0;
    }
-   
+
+   // simulate user-friendly if apt-get has no root privileges
+   if (getuid() != 0 && _config->FindB("APT::Get::Simulate") == true)
+   {
+      if (_config->FindB("APT::Get::Show-User-Simulation-Note",true) == true)
+	 cout << _("NOTE: This is only a simulation!\n"
+	    "      apt-get needs root privileges for real execution.\n"
+	    "      Keep also in mind that locking is deactivated,\n"
+	    "      so don't depend on the relevance to the real current situation!"
+	 ) << std::endl;
+      _config->Set("Debug::NoLocking",true);
+   }
+
    // Deal with stdout not being a tty
    if (!isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
       _config->Set("quiet","1");
@@ -2821,3 +2833,4 @@ int main(int argc,const char *argv[])
    
    return 0;   
 }
+									/*}}}*/

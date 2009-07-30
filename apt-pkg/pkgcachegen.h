@@ -28,7 +28,7 @@ class OpProgress;
 class MMap;
 class pkgIndexFile;
 
-class pkgCacheGenerator
+class pkgCacheGenerator							/*{{{*/
 {
    private:
    
@@ -76,8 +76,8 @@ class pkgCacheGenerator
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
 };
-
-// This is the abstract package list parser class.
+									/*}}}*/
+// This is the abstract package list parser class.			/*{{{*/
 class pkgCacheGenerator::ListParser
 {
    pkgCacheGenerator *Owner;
@@ -126,7 +126,7 @@ class pkgCacheGenerator::ListParser
    ListParser() : FoundFileDeps(false) {};
    virtual ~ListParser() {};
 };
-
+									/*}}}*/
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
 bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap);

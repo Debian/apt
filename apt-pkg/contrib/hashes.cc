@@ -34,7 +34,7 @@ HashString::HashString(string Type, string Hash) : Type(Type), Hash(Hash)
 {
 }
 
-HashString::HashString(string StringedHash)
+HashString::HashString(string StringedHash)				/*{{{*/
 {
    // legacy: md5sum without "MD5Sum:" prefix
    if (StringedHash.find(":") == string::npos && StringedHash.size() == 32)
@@ -50,9 +50,8 @@ HashString::HashString(string StringedHash)
    if(_config->FindB("Debug::Hashes",false) == true)
       std::clog << "HashString(string): " << Type << " : " << Hash << std::endl;
 }
-
-
-bool HashString::VerifyFile(string filename) const
+									/*}}}*/
+bool HashString::VerifyFile(string filename) const			/*{{{*/
 {
    FileFd fd;
    MD5Summation MD5;
@@ -83,7 +82,7 @@ bool HashString::VerifyFile(string filename) const
 
    return (fileHash == Hash);
 }
-
+									/*}}}*/
 const char** HashString::SupportedHashes()
 {
    return _SupportedHashes;
@@ -94,12 +93,10 @@ bool HashString::empty() const
    return (Type.empty() || Hash.empty());
 }
 
-
 string HashString::toStr() const
 {
    return Type+string(":")+Hash;
 }
-
 
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
 // ---------------------------------------------------------------------
@@ -108,11 +105,16 @@ bool Hashes::AddFD(int Fd,unsigned long Size)
 {
    unsigned char Buf[64*64];
    int Res = 0;
-   while (Size != 0)
+   int ToEOF = (Size == 0);
+   while (Size != 0 || ToEOF)
    {
-      Res = read(Fd,Buf,min(Size,(unsigned long)sizeof(Buf)));
-      if (Res < 0 || (unsigned)Res != min(Size,(unsigned long)sizeof(Buf)))
-	 return false;
+      unsigned n = sizeof(Buf);
+      if (!ToEOF) n = min(Size,(unsigned long)n);
+      Res = read(Fd,Buf,n);
+      if (Res < 0 || (!ToEOF && (unsigned) Res != n)) // error, or short read
+         return false;
+      if (ToEOF && Res == 0) // EOF
+         break;
       Size -= Res;
       MD5.Add(Buf,Res);
       SHA1.Add(Buf,Res);

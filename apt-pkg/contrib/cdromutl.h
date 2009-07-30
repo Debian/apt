@@ -14,7 +14,8 @@
 
 using std::string;
 
-bool MountCdrom(string Path);
+// mount cdrom, DeviceName (e.g. /dev/sr0) is optional
+bool MountCdrom(string Path, string DeviceName="");
 bool UnmountCdrom(string Path);
 bool IdentCdrom(string CD,string &Res,unsigned int Version = 2);
 bool IsMounted(string &Path);

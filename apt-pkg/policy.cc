@@ -32,6 +32,9 @@
     
 #include <apti18n.h>
 
+#include <dirent.h>
+#include <sys/stat.h>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 									/*}}}*/
@@ -119,6 +122,14 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
    // Look for a package pin and evaluate it.
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
+
+   // no package = no candidate version
+   if (Pkg.end() == true)
+      return Pref;
+
+   // packages with a pin lower than 0 have no newer candidate than the current version
+   if (Max < 0)
+      return Pkg.CurrentVer();
 
    /* Falling through to the default version.. Setting Max to zero
       effectively excludes everything <= 0 which are the non-automatic
@@ -239,7 +250,76 @@ signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
    return 0;
 }
 									/*}}}*/
+// PreferenceSection class - Overriding the default TrimRecord method	/*{{{*/
+// ---------------------------------------------------------------------
+/* The preference file is a user generated file so the parser should
+   therefore be a bit more friendly by allowing comments and new lines
+   all over the place rather than forcing a special format */
+class PreferenceSection : public pkgTagSection
+{
+   void TrimRecord(bool BeforeRecord, const char* &End)
+   {
+      for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
+	 if (Stop[0] == '#')
+	    Stop = (const char*) memchr(Stop,'\n',End-Stop);
+   }
+};
+									/*}}}*/
+// ReadPinDir - Load the pin files from this dir into a Policy		/*{{{*/
+// ---------------------------------------------------------------------
+/* This will load each pin file in the given dir into a Policy. If the
+   given dir is empty the dir set in Dir::Etc::PreferencesParts is used.
+   Note also that this method will issue a warning if the dir does not
+   exists but it will return true in this case! */
+bool ReadPinDir(pkgPolicy &Plcy,string Dir)
+{
+   if (Dir.empty() == true)
+      Dir = _config->FindDir("Dir::Etc::PreferencesParts");
 
+   if (FileExists(Dir) == false)
+   {
+      _error->WarningE("FileExists",_("Unable to read %s"),Dir.c_str());
+      return true;
+   }
+
+   DIR *D = opendir(Dir.c_str());
+   if (D == 0)
+      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+
+   vector<string> List;
+
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
+   {
+      if (Ent->d_name[0] == '.')
+	 continue;
+
+      // Skip bad file names ala run-parts
+      const char *C = Ent->d_name;
+      for (; *C != 0; C++)
+	 if (isalpha(*C) == 0 && isdigit(*C) == 0 && *C != '_' && *C != '-')
+	    break;
+      if (*C != 0)
+	 continue;
+
+      // Make sure it is a file and not something else
+      string File = flCombine(Dir,Ent->d_name);
+      struct stat St;
+      if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
+	 continue;
+
+      List.push_back(File);
+   }
+   closedir(D);
+
+   sort(List.begin(),List.end());
+
+   // Read the files
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+      if (ReadPinFile(Plcy, *I) == false)
+	 return false;
+   return true;
+}
+									/*}}}*/
 // ReadPinFile - Load the pin file into a Policy			/*{{{*/
 // ---------------------------------------------------------------------
 /* I'd like to see the preferences file store more than just pin information
@@ -259,12 +339,12 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    if (_error->PendingError() == true)
       return false;
    
-   pkgTagSection Tags;
+   PreferenceSection Tags;
    while (TF.Step(Tags) == true)
    {
       string Name = Tags.FindS("Package");
       if (Name.empty() == true)
-	 return _error->Error(_("Invalid record in the preferences file, no Package header"));
+	 return _error->Error(_("Invalid record in the preferences file %s, no Package header"), File.c_str());
       if (Name == "*")
 	 Name = string();
       

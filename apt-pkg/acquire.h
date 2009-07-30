@@ -30,7 +30,7 @@
    ##################################################################### */
 									/*}}}*/
 
-/** \defgroup acquire Acquire system
+/** \defgroup acquire Acquire system					{{{
  *
  *  \brief The Acquire system is responsible for retrieving files from
  *  local or remote URIs and postprocessing them (for instance,
@@ -54,7 +54,7 @@
  *  once, but it is not clear what its behavior in this case is, and
  *  no subclass of pkgAcquire::Item seems to actually use this
  *  capability.
- */
+ */									/*}}}*/
 
 /** \addtogroup acquire
  *
@@ -78,7 +78,7 @@ using std::string;
 
 class pkgAcquireStatus;
 
-/** \brief The core download scheduler.
+/** \brief The core download scheduler.					{{{
  *
  *  This class represents an ongoing download.  It manages the lists
  *  of active and pending downloads and handles setting up and tearing
@@ -366,8 +366,8 @@ struct pkgAcquire::ItemDesc
    /** brief The underlying item which is to be downloaded. */
    Item *Owner;
 };
-
-/** \brief A single download queue in a pkgAcquire object.
+									/*}}}*/
+/** \brief A single download queue in a pkgAcquire object.		{{{
  *
  *  \todo Why so many protected values?
  */
@@ -528,8 +528,8 @@ class pkgAcquire::Queue
     */
    ~Queue();
 };
-
-/** \brief Iterates over all the URIs being fetched by a pkgAcquire object. */
+									/*}}}*/
+/** \brief Iterates over all the URIs being fetched by a pkgAcquire object.	{{{*/
 class pkgAcquire::UriIterator
 {
    /** The next queue to iterate over. */
@@ -539,7 +539,7 @@ class pkgAcquire::UriIterator
    
    public:
    
-   inline void operator ++() {operator ++();};
+   inline void operator ++() {operator ++(0);};
 
    void operator ++(int)
    {
@@ -568,8 +568,8 @@ class pkgAcquire::UriIterator
       }
    }   
 };
-
-/** \brief Information about the properties of a single acquire method. */
+									/*}}}*/
+/** \brief Information about the properties of a single acquire method.	{{{*/
 struct pkgAcquire::MethodConfig
 {
    /** \brief The next link on the acquire method list.
@@ -621,8 +621,8 @@ struct pkgAcquire::MethodConfig
     */
    MethodConfig();
 };
-
-/** \brief A monitor object for downloads controlled by the pkgAcquire class.
+									/*}}}*/
+/** \brief A monitor object for downloads controlled by the pkgAcquire class.	{{{
  *
  *  \todo Why protected members?
  *
@@ -762,7 +762,7 @@ class pkgAcquireStatus
    pkgAcquireStatus();
    virtual ~pkgAcquireStatus() {};
 };
-
+									/*}}}*/
 /** @} */
 
 #endif

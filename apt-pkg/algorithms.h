@@ -39,7 +39,7 @@
 
 using std::ostream;
 
-class pkgSimulate : public pkgPackageManager
+class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
    protected:
 
@@ -75,8 +75,8 @@ private:
 
    pkgSimulate(pkgDepCache *Cache);
 };
-
-class pkgProblemResolver
+									/*}}}*/
+class pkgProblemResolver						/*{{{*/
 {
    pkgDepCache &Cache;
    typedef pkgCache::PkgIterator PkgIterator;
@@ -124,7 +124,7 @@ class pkgProblemResolver
    pkgProblemResolver(pkgDepCache *Cache);
    ~pkgProblemResolver();
 };
-
+									/*}}}*/
 bool pkgDistUpgrade(pkgDepCache &Cache);
 bool pkgApplyStatus(pkgDepCache &Cache);
 bool pkgFixBroken(pkgDepCache &Cache);

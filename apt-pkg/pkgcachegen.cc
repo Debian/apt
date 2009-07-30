@@ -53,14 +53,16 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
    {
       // Setup the map interface..
       Cache.HeaderP = (pkgCache::Header *)Map.Data();
-      Map.RawAllocate(sizeof(pkgCache::Header));
+      if (Map.RawAllocate(sizeof(pkgCache::Header)) == 0 && _error->PendingError() == true)
+	 return;
+
       Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
-      
+
       // Starting header
       *Cache.HeaderP = pkgCache::Header();
       Cache.HeaderP->VerSysName = Map.WriteString(_system->VS->Label);
       Cache.HeaderP->Architecture = Map.WriteString(_config->Find("APT::Architecture"));
-      Cache.ReMap(); 
+      Cache.ReMap();
    }
    else
    {
@@ -135,7 +137,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  	 pkgCache::VerIterator Ver = Pkg.VersionList();
  	 map_ptrloc *LastVer = &Pkg->VersionList;
 
-  	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++) 
+	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
  	 {
  	    pkgCache::DescIterator Desc = Ver.DescriptionList();
  	    map_ptrloc *LastDesc = &Ver->DescriptionList;
@@ -143,7 +145,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
 	    // don't add a new description if we have one for the given
 	    // md5 && language
- 	    for ( ; Desc.end() == false; Desc++)
+	    for ( ; Desc.end() == false; Desc++)
 	       if (MD5SumValue(Desc.md5()) == CurMd5 && 
 	           Desc.LanguageCode() == List.DescriptionLanguage())
 		  duplicate=true;
@@ -151,7 +153,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	       continue;
 	    
  	    for (Desc = Ver.DescriptionList();
-		 Desc.end() == false; 
+		 Desc.end() == false;
 		 LastDesc = &Desc->NextDesc, Desc++)
 	    {
  	       if (MD5SumValue(Desc.md5()) == CurMd5) 
@@ -160,7 +162,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  		  *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
  		  Desc->ParentPkg = Pkg.Index();
 		  
- 		  if (NewFileDesc(Desc,List) == false)
+		  if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
  		     return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"),PackageName.c_str());
  		  break;
  	       }
@@ -220,7 +222,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       Ver->ParentPkg = Pkg.Index();
       Ver->Hash = Hash;
 
-      if (List.NewVersion(Ver) == false)
+      if ((*LastVer == 0 && _error->PendingError()) || List.NewVersion(Ver) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewVersion1)"),
 			      PackageName.c_str());
 
@@ -252,7 +254,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
       Desc->ParentPkg = Pkg.Index();
 
-      if (NewFileDesc(Desc,List) == false)
+      if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),PackageName.c_str());
    }
 
@@ -419,7 +421,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
    // Get a structure
    unsigned long DescFile = Map.Allocate(sizeof(pkgCache::DescFile));
    if (DescFile == 0)
-      return 0;
+      return false;
 
    pkgCache::DescFileIterator DF(Cache,Cache.DescFileP + DescFile);
    DF->File = CurrentFile - Cache.PkgFileP;
@@ -460,6 +462,8 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    Desc->ID = Cache.HeaderP->DescriptionCount++;
    Desc->language_code = Map.WriteString(Lang);
    Desc->md5sum = Map.WriteString(md5sum.Value());
+   if (Desc->language_code == 0 || Desc->md5sum == 0)
+      return 0;
 
    return Description;
 }
@@ -652,7 +656,6 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    return ItemP->String;
 }
 									/*}}}*/
-
 // CheckValidity - Check that a cache is up-to-date			/*{{{*/
 // ---------------------------------------------------------------------
 /* This just verifies that each file in the list of index files exists,
@@ -667,7 +670,7 @@ static bool CheckValidity(const string &CacheFile, FileIterator Start,
    
    // Map it
    FileFd CacheF(CacheFile,FileFd::ReadOnly);
-   SPtr<MMap> Map = new MMap(CacheF,MMap::Public | MMap::ReadOnly);
+   SPtr<MMap> Map = new MMap(CacheF,0);
    pkgCache Cache(Map);
    if (_error->PendingError() == true || Map->Size() == 0)
    {
@@ -810,7 +813,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    unsigned long EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;
-   
+
    // Decide if we can write to the files..
    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
    string SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
@@ -851,7 +854,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    else
    {
       // Just build it in memory..
-      Map = new DynamicMMap(MMap::Public,MapSize);
+      Map = new DynamicMMap(0,MapSize);
    }
    
    // Lets try the source cache.
@@ -862,8 +865,10 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    {
       // Preload the map with the source cache
       FileFd SCacheF(SrcCacheFile,FileFd::ReadOnly);
-      if (SCacheF.Read((unsigned char *)Map->Data() + Map->RawAllocate(SCacheF.Size()),
-		       SCacheF.Size()) == false)
+      unsigned long alloc = Map->RawAllocate(SCacheF.Size());
+      if ((alloc == 0 && _error->PendingError())
+		|| SCacheF.Read((unsigned char *)Map->Data() + alloc,
+				SCacheF.Size()) == false)
 	 return false;
 
       TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
@@ -924,7 +929,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       if (CacheF != 0)
       {
 	 delete Map.UnGuard();
-	 *OutMap = new MMap(*CacheF,MMap::Public | MMap::ReadOnly);
+	 *OutMap = new MMap(*CacheF,0);
       }
       else
       {
@@ -946,8 +951,7 @@ bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
    if (_system->AddStatusFiles(Files) == false)
       return false;
    
-   SPtr<DynamicMMap> Map;   
-   Map = new DynamicMMap(MMap::Public,MapSize);
+   SPtr<DynamicMMap> Map = new DynamicMMap(0,MapSize);
    unsigned long CurrentSize = 0;
    unsigned long TotalSize = 0;
    
