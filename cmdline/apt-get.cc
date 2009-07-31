@@ -2572,7 +2572,10 @@ bool DoBuildDep(CommandLine &CmdL)
       
       // Now we check the state of the packages,
       if (Cache->BrokenCount() != 0)
-         return _error->Error(_("Build-dependencies for %s could not be satisfied."),*I);
+      {
+	 ShowBroken(cout, Cache, false);
+	 return _error->Error(_("Build-dependencies for %s could not be satisfied."),*I);
+      }
    }
   
    if (InstallPackages(Cache, false, true) == false)
