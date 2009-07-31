@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-26 01:10+0200\n"
+"POT-Creation-Date: 2009-07-31 18:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -151,7 +151,7 @@ msgstr ""
 
 #: cmdline/apt-cache.cc:1714 cmdline/apt-cdrom.cc:134 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2584 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2606 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr ""
@@ -549,7 +549,7 @@ msgstr ""
 msgid "Y"
 msgstr ""
 
-#: cmdline/apt-get.cc:149 cmdline/apt-get.cc:1659
+#: cmdline/apt-get.cc:149 cmdline/apt-get.cc:1681
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr ""
@@ -708,11 +708,11 @@ msgstr ""
 msgid "Internal error, Ordering didn't finish"
 msgstr ""
 
-#: cmdline/apt-get.cc:811 cmdline/apt-get.cc:2001 cmdline/apt-get.cc:2034
+#: cmdline/apt-get.cc:811 cmdline/apt-get.cc:2023 cmdline/apt-get.cc:2056
 msgid "Unable to lock the download directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:821 cmdline/apt-get.cc:2082 cmdline/apt-get.cc:2328
+#: cmdline/apt-get.cc:821 cmdline/apt-get.cc:2104 cmdline/apt-get.cc:2350
 #: apt-pkg/cachefile.cc:65
 msgid "The list of sources could not be read."
 msgstr ""
@@ -741,7 +741,7 @@ msgstr ""
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:866 cmdline/apt-get.cc:2177
+#: cmdline/apt-get.cc:866 cmdline/apt-get.cc:2199
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr ""
@@ -775,7 +775,7 @@ msgstr ""
 msgid "Do you want to continue [Y/n]? "
 msgstr ""
 
-#: cmdline/apt-get.cc:986 cmdline/apt-get.cc:2225 apt-pkg/algorithms.cc:1389
+#: cmdline/apt-get.cc:986 cmdline/apt-get.cc:2247 apt-pkg/algorithms.cc:1389
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr ""
@@ -784,7 +784,7 @@ msgstr ""
 msgid "Some files failed to download"
 msgstr ""
 
-#: cmdline/apt-get.cc:1005 cmdline/apt-get.cc:2234
+#: cmdline/apt-get.cc:1005 cmdline/apt-get.cc:2256
 msgid "Download complete and in download only mode"
 msgstr ""
 
@@ -889,21 +889,26 @@ msgstr ""
 msgid "Unable to lock the list directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:1411
+#: cmdline/apt-get.cc:1415
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: cmdline/apt-get.cc:1443
+#: cmdline/apt-get.cc:1464
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1445
+#: cmdline/apt-get.cc:1466
+#, c-format
+msgid "%lu packages were automatically installed and are no longer required.\n"
+msgstr ""
+
+#: cmdline/apt-get.cc:1467
 msgid "Use 'apt-get autoremove' to remove them."
 msgstr ""
 
-#: cmdline/apt-get.cc:1450
+#: cmdline/apt-get.cc:1472
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -919,49 +924,49 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1453 cmdline/apt-get.cc:1743
+#: cmdline/apt-get.cc:1475 cmdline/apt-get.cc:1765
 msgid "The following information may help to resolve the situation:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1457
+#: cmdline/apt-get.cc:1479
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:1476
+#: cmdline/apt-get.cc:1498
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:1531
+#: cmdline/apt-get.cc:1553
 #, c-format
 msgid "Couldn't find task %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1646 cmdline/apt-get.cc:1682
+#: cmdline/apt-get.cc:1668 cmdline/apt-get.cc:1704
 #, c-format
 msgid "Couldn't find package %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:1669
+#: cmdline/apt-get.cc:1691
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1700
+#: cmdline/apt-get.cc:1722
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1713
+#: cmdline/apt-get.cc:1735
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1716
+#: cmdline/apt-get.cc:1738
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
 
-#: cmdline/apt-get.cc:1728
+#: cmdline/apt-get.cc:1750
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -969,152 +974,152 @@ msgid ""
 "or been moved out of Incoming."
 msgstr ""
 
-#: cmdline/apt-get.cc:1746
+#: cmdline/apt-get.cc:1768
 msgid "Broken packages"
 msgstr ""
 
-#: cmdline/apt-get.cc:1775
+#: cmdline/apt-get.cc:1797
 msgid "The following extra packages will be installed:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1864
+#: cmdline/apt-get.cc:1886
 msgid "Suggested packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1865
+#: cmdline/apt-get.cc:1887
 msgid "Recommended packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1894
+#: cmdline/apt-get.cc:1916
 msgid "Calculating upgrade... "
 msgstr ""
 
-#: cmdline/apt-get.cc:1897 methods/ftp.cc:702 methods/connect.cc:112
+#: cmdline/apt-get.cc:1919 methods/ftp.cc:702 methods/connect.cc:112
 msgid "Failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:1902
+#: cmdline/apt-get.cc:1924
 msgid "Done"
 msgstr ""
 
-#: cmdline/apt-get.cc:1969 cmdline/apt-get.cc:1977
+#: cmdline/apt-get.cc:1991 cmdline/apt-get.cc:1999
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:2077
+#: cmdline/apt-get.cc:2099
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2107 cmdline/apt-get.cc:2346
+#: cmdline/apt-get.cc:2129 cmdline/apt-get.cc:2368
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2156
+#: cmdline/apt-get.cc:2178
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2184
+#: cmdline/apt-get.cc:2206
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2190
+#: cmdline/apt-get.cc:2212
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2193
+#: cmdline/apt-get.cc:2215
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2199
+#: cmdline/apt-get.cc:2221
 #, c-format
 msgid "Fetch source %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2230
+#: cmdline/apt-get.cc:2252
 msgid "Failed to fetch some archives."
 msgstr ""
 
-#: cmdline/apt-get.cc:2258
+#: cmdline/apt-get.cc:2280
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2270
+#: cmdline/apt-get.cc:2292
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2271
+#: cmdline/apt-get.cc:2293
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2288
+#: cmdline/apt-get.cc:2310
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2307
+#: cmdline/apt-get.cc:2329
 msgid "Child process failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:2323
+#: cmdline/apt-get.cc:2345
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2351
+#: cmdline/apt-get.cc:2373
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2371
+#: cmdline/apt-get.cc:2393
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2423
+#: cmdline/apt-get.cc:2445
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
 
-#: cmdline/apt-get.cc:2476
+#: cmdline/apt-get.cc:2498
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
 
-#: cmdline/apt-get.cc:2512
+#: cmdline/apt-get.cc:2534
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 
-#: cmdline/apt-get.cc:2539
+#: cmdline/apt-get.cc:2561
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2553
+#: cmdline/apt-get.cc:2575
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr ""
 
-#: cmdline/apt-get.cc:2557
+#: cmdline/apt-get.cc:2579
 msgid "Failed to process build dependencies"
 msgstr ""
 
-#: cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2611
 msgid "Supported modules:"
 msgstr ""
 
-#: cmdline/apt-get.cc:2630
+#: cmdline/apt-get.cc:2652
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1158,7 +1163,7 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2797
+#: cmdline/apt-get.cc:2819
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1381,9 +1386,10 @@ msgstr ""
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr ""
 
+#. only print the warning if we can't load a valid sourcefile in the end
 #: apt-inst/extract.cc:464 apt-pkg/contrib/configuration.cc:822
-#: apt-pkg/contrib/cdromutl.cc:157 apt-pkg/sourcelist.cc:163
-#: apt-pkg/sourcelist.cc:169 apt-pkg/sourcelist.cc:324 apt-pkg/acquire.cc:419
+#: apt-pkg/contrib/cdromutl.cc:157 apt-pkg/sourcelist.cc:166
+#: apt-pkg/sourcelist.cc:174 apt-pkg/sourcelist.cc:332 apt-pkg/acquire.cc:419
 #: apt-pkg/init.cc:89 apt-pkg/init.cc:97 apt-pkg/clean.cc:33
 #: apt-pkg/policy.cc:281 apt-pkg/policy.cc:287
 #, c-format
@@ -2211,16 +2217,16 @@ msgstr ""
 msgid "Dependency generation"
 msgstr ""
 
-#: apt-pkg/depcache.cc:173 apt-pkg/depcache.cc:192 apt-pkg/depcache.cc:196
+#: apt-pkg/depcache.cc:173 apt-pkg/depcache.cc:193 apt-pkg/depcache.cc:197
 msgid "Reading state information"
 msgstr ""
 
-#: apt-pkg/depcache.cc:220
+#: apt-pkg/depcache.cc:223
 #, c-format
 msgid "Failed to open StateFile %s"
 msgstr ""
 
-#: apt-pkg/depcache.cc:226
+#: apt-pkg/depcache.cc:229
 #, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr ""
@@ -2260,27 +2266,27 @@ msgstr ""
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:203
+#: apt-pkg/sourcelist.cc:211
 #, c-format
 msgid "Opening %s"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:220 apt-pkg/cdrom.cc:445
+#: apt-pkg/sourcelist.cc:228 apt-pkg/cdrom.cc:445
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:240
+#: apt-pkg/sourcelist.cc:248
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:244
+#: apt-pkg/sourcelist.cc:252
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
+#: apt-pkg/sourcelist.cc:260 apt-pkg/sourcelist.cc:263
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr ""

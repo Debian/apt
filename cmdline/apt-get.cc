@@ -1400,20 +1400,29 @@ bool DoAutomaticRemove(CacheFile &Cache)
    bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
    bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
    bool hideAutoRemove = _config->FindB("APT::Get::HideAutoRemove");
-   pkgDepCache::ActionGroup group(*Cache);
 
+   pkgDepCache::ActionGroup group(*Cache);
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
 
-   if (_config->FindB("APT::Get::Remove",true) == false &&
-       doAutoRemove == true)
+   // we don't want to autoremove and we don't want to see it, so why calculating?
+   if (doAutoRemove == false && hideAutoRemove == true)
+      return true;
+
+   if (doAutoRemove == true &&
+	_config->FindB("APT::Get::Remove",true) == false)
    {
       c1out << _("We are not supposed to delete stuff, can't start "
 		 "AutoRemover") << std::endl;
-      doAutoRemove = false;
+      return false;
    }
 
+   bool purgePkgs = _config->FindB("APT::Get::Purge", false);
+   bool smallList = (hideAutoRemove == false &&
+	strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
+
    string autoremovelist, autoremoveversions;
+   unsigned long autoRemoveCount = 0;
    // look over the cache to see what can be removed
    for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
    {
@@ -1422,30 +1431,43 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
 	    if(Debug)
 	       std::cout << "We could delete %s" <<  Pkg.Name() << std::endl;
-	  
-	 // only show stuff in the list that is not yet marked for removal
-	 if(Cache[Pkg].Delete() == false) 
-	 {
-	    autoremovelist += string(Pkg.Name()) + " ";
-	    autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
-	 }
+
 	 if (doAutoRemove)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
 	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
-	       Cache->MarkDelete(Pkg, _config->FindB("APT::Get::Purge", false));
+	       Cache->MarkDelete(Pkg, purgePkgs);
 	    else
 	       Cache->MarkKeep(Pkg, false, false);
 	 }
+	 else
+	 {
+	    // only show stuff in the list that is not yet marked for removal
+	    if(Cache[Pkg].Delete() == false) 
+	    {
+	       // we don't need to fill the strings if we don't need them
+	       if (smallList == true)
+		  ++autoRemoveCount;
+	       else
+	       {
+		 autoremovelist += string(Pkg.Name()) + " ";
+		 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+	       }
+	    }
+	 }
       }
    }
-   if (!hideAutoRemove) 
-      ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
-   if (!doAutoRemove && !hideAutoRemove && autoremovelist.size() > 0)
+   // if we don't remove them, we should show them!
+   if (doAutoRemove == false && (autoremovelist.empty() == false || autoRemoveCount != 0))
+   {
+      if (smallList == false)
+	 ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
+      else
+	 ioprintf(c1out, _("%lu packages were automatically installed and are no longer required.\n"), autoRemoveCount);
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
-
-   // Now see if we destroyed anything
-   if (Cache->BrokenCount() != 0)
+   }
+   // Now see if we had destroyed anything (if we had done anything)
+   else if (Cache->BrokenCount() != 0)
    {
       c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
 	         "shouldn't happen. Please file a bug report against apt.") << endl;
