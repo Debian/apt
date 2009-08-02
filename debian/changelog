@@ -1,10 +1,16 @@
 apt (0.7.23) unstable; urgency=low
 
+  [ Michael Vogt ]
   * cmdline/apt-get.cc:
     - honor APT::Get::Only-Source properly in FindSrc() (thanks to
       Martin Pitt for reporting the problem)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 30 Jul 2009 15:27:30 +0200
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/mmap.cc:
+    - Fix FTBFS on GNU/kFreeBSD by disabling DynamicMMap::Grow() on
+      non-Linux architectures (as it uses mremap).
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 02 Aug 2009 19:35:23 +0200
 
 apt (0.7.22) unstable; urgency=low
 
