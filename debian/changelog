@@ -8,7 +8,7 @@ apt (0.7.22.1) unstable; urgency=low
   [ Julian Andres Klode ]
   * apt-pkg/contrib/mmap.cc:
     - Fix FTBFS on GNU/kFreeBSD by disabling DynamicMMap::Grow() on
-      non-Linux architectures (as it uses mremap).
+      non-Linux architectures as it uses mremap (Closes: #539742).
   * apt-pkg/sourcelist.cc:
     - Only warn about missing sources.list if there is no sources.list.d
       and vice versa as only one of them is needed (Closes: #539731).
