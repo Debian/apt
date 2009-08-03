@@ -451,10 +451,12 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
       if (Reap == true)
 	 return false;
       if (WIFSIGNALED(Status) != 0)
+      {
 	 if( WTERMSIG(Status) == SIGSEGV)
 	    return _error->Error(_("Sub-process %s received a segmentation fault."),Name);
 	 else 
 	    return _error->Error(_("Sub-process %s received signal %u."),Name, WTERMSIG(Status));
+      }
 
       if (WIFEXITED(Status) != 0)
 	 return _error->Error(_("Sub-process %s returned an error code (%u)"),Name,WEXITSTATUS(Status));
