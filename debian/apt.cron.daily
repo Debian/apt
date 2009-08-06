@@ -329,7 +329,7 @@ fi
 AutoAptEnable=1  # default is yes
 eval $(apt-config shell AutoAptEnable APT::Periodic::Enable)
 
-if [ AutoAptEnable -eq 0 ]; then
+if [ $AutoAptEnable -eq 0 ]; then
     exit 0
 fi
 
