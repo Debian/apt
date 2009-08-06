@@ -49,7 +49,10 @@
 #    
 #  APT::Periodic::Download-Upgradeable-Packages "0";
 #  - Do "apt-get upgrade --download-only" every n-days (0=disable)
-# 
+#
+#  APT::Periodic::Download-Upgradeable-Packages-Debdelta "1";
+#  - Use debdelta-upgrade to download updates if available (0=disable)
+#
 #  APT::Periodic::Unattended-Upgrade "0";
 #  - Run the "unattended-upgrade" security upgrade script 
 #    every n-days (0=disabled)
@@ -395,6 +398,9 @@ eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
 BackupArchiveInterval=0
 eval $(apt-config shell BackupArchiveInterval APT::Periodic::BackupArchiveInterval)
 
+Debdelta=1
+eval $(apt-config shell Debdelta APT::Periodic::Download-Upgradeable-Packages-Debdelta)
+
 # check if we actually have to do anything
 if [ $UpdateInterval -eq 0 ] &&
    [ $DownloadUpgradeableInterval -eq 0 ] &&
@@ -438,6 +444,9 @@ fi
 # download all upgradeable packages (if it is requested)
 DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
 if [ $UPDATED -eq 1 ] && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
+    if [ $Debdelta -eq 1 ]; then
+        debdelta-upgrade >/dev/null 2>&1 || true
+    fi
     if  eval apt-get $XAPTOPT -y -d dist-upgrade $XSTDERR; then
 	update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
 	debug_echo "download upgradable (success)"
