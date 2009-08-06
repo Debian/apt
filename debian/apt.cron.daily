@@ -14,6 +14,9 @@
 #  Dir::Cache::Archive "archives/";
 #  - Set package archive directory
 #
+#  APT::Periodic::Enable "1";
+#  - Enable the update/upgrade script (0=disable)
+#
 #  APT::Periodic::BackupArchiveInterval "0";
 #  - Backup after n-days if archive contents changed.(0=disable)
 #
@@ -317,6 +320,14 @@ debug_echo()
 # check apt-config exstance
 if ! which apt-config >/dev/null ; then
 	exit 0
+fi
+
+# check if the user really wants to do something
+AutoAptEnable=1  # default is yes
+eval $(apt-config shell AutoAptEnable APT::Periodic::Enable)
+
+if [ AutoAptEnable -eq 0 ]; then
+    exit 0
 fi
 
 # Set VERBOSE mode from  apt-config (or inherit from environment)
