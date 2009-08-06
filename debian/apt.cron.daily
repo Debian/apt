@@ -320,11 +320,9 @@ if ! which apt-config >/dev/null ; then
 fi
 
 # Set VERBOSE mode from  apt-config (or inherit from environment)
+VERBOSE=0
 eval $(apt-config shell VERBOSE APT::Periodic::Verbose)
 debug_echo "verbose level $VERBOSE"
-if [ -z "$VERBOSE" ]; then
-    VERBOSE="0"
-fi
 if [ "$VERBOSE" -le 2 ]; then
     # quiet for 0,1,2
     XSTDOUT=">/dev/null"
