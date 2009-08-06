@@ -1,12 +1,18 @@
 apt (0.7.23ubuntu1) karmic; urgency=low
 
+  [ Michael Vogt ]
   * merged from the debian-sid bzr branch
 
   * cmdline/apt-get.cc:
     - honor APT::Get::Only-Source properly in FindSrc() (thanks to
       Martin Pitt for reporting the problem)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 30 Jul 2009 15:27:30 +0200
+  [ Matt Zimmerman ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - Suppress apport reports on dpkg short reads (these I/O errors are not 
+      generally indicative of a bug in the packaging)
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Thu, 06 Aug 2009 16:37:04 +0100
 
 apt (0.7.22) unstable; urgency=low
 

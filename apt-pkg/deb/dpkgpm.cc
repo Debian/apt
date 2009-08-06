@@ -1078,6 +1078,13 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       return;
    }
 
+   // do not report dpkg I/O errors
+   // XXX - this message is localized, but this only matches the English version.  This is better than nothing.
+   if(strstr(errormsg, "short read in buffer_copy (")) {
+      std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
+      return;
+   }
+
    // get the pkgname and reportfile
    pkgname = flNotDir(pkgpath);
    pos = pkgname.find('_');
