@@ -1,9 +1,4 @@
-apt (0.7.23) unstable; urgency=low
-
-  [ Michael Vogt ]
-  * cmdline/apt-get.cc:
-    - honor APT::Get::Only-Source properly in FindSrc() (thanks to
-      Martin Pitt for reporting the problem) (Closes: #535362)
+apt (0.7.22.3) unstable; urgency=low
 
   [ David Kalnischkies ]
   * cmdline/apt-get.cc:
@@ -13,11 +8,37 @@ apt (0.7.23) unstable; urgency=low
   * apt-pkg/contrib/strutl.cc:
     - enable thousand separator according to the current locale
       (by Luca Bruno, Closes: #223712)
-  * apt-pkg/sourcelist.cc:
-    - only show warning about missing sources.list file if no we have
-      no valid sourceentry (Closes: #539731)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 30 Jul 2009 15:27:30 +0200
+ -- David Kalnischkies <david@kalnischkies.com>  Sat, 08 Aug 2009 09:40:08 +0200
+
+apt (0.7.22.2) unstable; urgency=low
+
+  * debian/apt.cron.daily:
+    - Make sure that VERBOSE is always set (Closes: #539366)
+    - Script can be disabled by APT::Periodic::Enable=0 (Closes: #485476)
+    - Support using debdelta to download packages (Closes: #532079)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 06 Aug 2009 12:17:19 +0200
+
+apt (0.7.22.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * cmdline/apt-get.cc:
+    - honor APT::Get::Only-Source properly in FindSrc() (thanks to
+      Martin Pitt for reporting the problem), also Closes: #535362.
+
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/mmap.cc:
+    - Fix FTBFS on GNU/kFreeBSD by disabling DynamicMMap::Grow() on
+      non-Linux architectures as it uses mremap (Closes: #539742).
+  * apt-pkg/sourcelist.cc:
+    - Only warn about missing sources.list if there is no sources.list.d
+      and vice versa as only one of them is needed (Closes: #539731).
+  * debian/control:
+    - Add myself to Uploaders.
+    - Increase Standards-Version to 3.8.2.0.
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 03 Aug 2009 12:48:31 +0200
 
 apt (0.7.22) unstable; urgency=low
 

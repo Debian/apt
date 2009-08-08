@@ -157,24 +157,19 @@ bool pkgSourceList::ReadMainList()
    // CNC:2003-11-28 - Entries in sources.list have priority over
    //                  entries in sources.list.d.
    string Main = _config->FindFile("Dir::Etc::sourcelist");
-   string noSourceMsg;
+   string Parts = _config->FindDir("Dir::Etc::sourceparts");
+   
    if (FileExists(Main) == true)
       Res &= ReadAppend(Main);
-   else
-   {
-      // only print the warning if we can't load a valid sourcefile in the end
+   else if (FileExists(Parts) == false)
+      // Only warn if there are no sources.list.d.
       _error->WarningE("FileExists",_("Unable to read %s"),Main.c_str());
-      _error->PopMessage(noSourceMsg);
-   }
 
-   string Parts = _config->FindDir("Dir::Etc::sourceparts");
    if (FileExists(Parts) == true)
       Res &= ReadSourceDir(Parts);
-   else
+   else if (FileExists(Main) == false)
+      // Only warn if there is no sources.list file.
       _error->WarningE("FileExists",_("Unable to read %s"),Parts.c_str());
-
-   if (SrcList.empty() == true && noSourceMsg.empty() == false)
-      _error->Warning(noSourceMsg.c_str());
 
    return Res;
 }
