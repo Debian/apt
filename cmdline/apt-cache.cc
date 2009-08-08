@@ -929,7 +929,11 @@ bool XVcg(CommandLine &CmdL)
 		Shapes[ShapeMap[Pkg->ID]]);
       
    }
-   
+
+   delete[] Show;
+   delete[] Flags;
+   delete[] ShapeMap;
+
    printf("}\n");
    return true;
 }
