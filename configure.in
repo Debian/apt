@@ -112,6 +112,10 @@ if test x"$HAVE_STATVFS" != x"yes"; then
    ])
 fi
 
+AC_CHECK_MEMBERS([struct statfs.f_type],,,
+    [$ac_includes_default
+     #include <sys/vfs.h>])
+
 dnl We should use the real timegm function if we have it.
 AC_CHECK_FUNC(timegm,AC_DEFINE(HAVE_TIMEGM))
 AC_SUBST(HAVE_TIMEGM)

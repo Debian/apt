@@ -868,8 +868,11 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
       {
          struct statfs Stat;
-         if (statfs(OutputDir.c_str(),&Stat) != 0 ||
-			 unsigned(Stat.f_type) != RAMFS_MAGIC)
+         if (statfs(OutputDir.c_str(),&Stat) != 0
+#if HAVE_STRUCT_STATFS_F_TYPE
+             || unsigned(Stat.f_type) != RAMFS_MAGIC
+#endif
+             )
             return _error->Error(_("You don't have enough free space in %s."),
                 OutputDir.c_str());
       }
@@ -2201,8 +2204,11 @@ bool DoSource(CommandLine &CmdL)
    if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
      {
        struct statfs Stat;
-       if (statfs(OutputDir.c_str(),&Stat) != 0 || 
-           unsigned(Stat.f_type) != RAMFS_MAGIC) 
+       if (statfs(OutputDir.c_str(),&Stat) != 0
+#if HAVE_STRUCT_STATFS_F_TYPE
+           || unsigned(Stat.f_type) != RAMFS_MAGIC
+#endif
+           ) 
           return _error->Error(_("You don't have enough free space in %s"),
               OutputDir.c_str());
       }
