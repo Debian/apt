@@ -1309,7 +1309,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
       // show name mismatches
       if (IsMatch == true && Parse->Package() != Src)       
-	 ioprintf(c1out,  _("No source package '%s' picking '%s' instead\n"), Parse->Package().c_str(), Src.c_str());
+	 ioprintf(c1out,  _("No source package '%s' picking '%s' instead\n"), Src.c_str(), Parse->Package().c_str());
       
       if (VerTag.empty() == false)
       {
