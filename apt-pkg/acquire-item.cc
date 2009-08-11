@@ -551,13 +551,24 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    if(comprExt.empty()) 
    {
       // autoselect the compression method
-      if(FileExists("/bin/bzip2")) 
-	 CompressionExtension = ".bz2";
-      else 
-	 CompressionExtension = ".gz";
-   } else {
-      CompressionExtension = (comprExt == "plain" ? "" : comprExt);
+      Configuration::Item const *Opts = _config->Tree("Acquire::CompressionTypes");
+      if (Opts != 0)
+	 Opts = Opts->Child;
+
+      const char dirBin[] = "Dir::Bin::";
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Tag.empty() == true || Opts->Value.empty() == true)
+	    continue;
+	 const string bin = _config->FindFile(string(dirBin).append(Opts->Value).c_str(),"");
+	 if (bin != "" && !FileExists(bin))
+	    continue;
+	 comprExt = '.' + Opts->Tag;
+	 break;
+      }
    }
+   CompressionExtension = ((comprExt == "plain" || comprExt == ".") ? "" : comprExt);
+
    Desc.URI = URI + CompressionExtension;
 
    Desc.Description = URIDesc;
@@ -584,24 +595,32 @@ string pkgAcqIndex::Custom600Headers()
 									/*}}}*/
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 {
-   bool descChanged = false;
-   // no .bz2 found, retry with .gz
-   if(Desc.URI.substr(Desc.URI.size()-3) == "bz2") {
-      Desc.URI = Desc.URI.substr(0,Desc.URI.size()-3) + "gz";
+   Configuration::Item const *Opts = _config->Tree("Acquire::CompressionTypes");
+   if (Opts != 0)
+      Opts = Opts->Child;
 
-      new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc,
-		      ExpectedHash, string(".gz"));
-	  descChanged = true;
-   }
-   // no .gz found, retry with uncompressed
-   else if(Desc.URI.substr(Desc.URI.size()-2) == "gz") {
-      Desc.URI = Desc.URI.substr(0,Desc.URI.size()-2);
+   const char dirBin[] = "Dir::Bin::";
+   for (; Opts != 0; Opts = Opts->Next)
+   {
+      if (Opts->Tag.empty() == true || Opts->Value.empty() == true)
+	 continue;
 
-      new pkgAcqIndex(Owner, RealURI, Desc.Description,Desc.ShortDesc,
-		      ExpectedHash, string("plain"));
-	  descChanged = true;
-   }
-   if (descChanged) {
+      // jump over all already checked compression types
+      const unsigned int nameLen = Desc.URI.size() - Opts->Tag.size();
+      if(Desc.URI.substr(nameLen) != Opts->Tag || Opts->Next == 0)
+	 continue;
+
+      // check if we need an external binary for this compression type
+      const string bin = _config->FindFile(string(dirBin).append(Opts->Next->Value).c_str(),"");
+      if (bin != "" && !FileExists(bin))
+	 continue;
+
+      // retry with the next extension
+      Desc.URI = Desc.URI.substr(0, nameLen) + Opts->Next->Tag;
+
+      new pkgAcqIndex(Owner, RealURI, Desc.Description, Desc.ShortDesc,
+			ExpectedHash, string(".").append(Opts->Next->Tag));
+
       Status = StatDone;
       Complete = false;
       Dequeue();
@@ -698,11 +717,11 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       Local = true;
    
    string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
-   const char *decompProg;
-   if(compExt == "bz2") 
-      decompProg = "bzip2";
-   else if(compExt == "gz") 
-      decompProg = "gzip";
+   string decompProg;
+
+   // get the binary name for your used compression type
+   decompProg = _config->Find(string("Acquire::CompressionTypes::").append(compExt),"");
+   if(decompProg.empty() == false);
    // flExtensions returns the full name if no extension is found
    // this is why we have this complicated compare operation here
    // FIMXE: add a new flJustExtension() that return "" if no
@@ -717,9 +736,9 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 
    Decompression = true;
    DestFile += ".decomp";
-   Desc.URI = string(decompProg) + ":" + FileName;
+   Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
-   Mode = decompProg;
+   Mode = decompProg.c_str();
 }
 									/*}}}*/
 // AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/

@@ -16,6 +16,15 @@ apt (0.7.22.3) unstable; urgency=low
     - use sizeof instead strlen (by Marius Vollmer, Closes: #504325)
   * doc/apt-mark.8.xml:
     - improve manpage based on patch by Carl Chenet (Closes: #510286)
+  * apt-pkg/acquire-item.cc:
+    - use configsettings for dynamic compression type use and order.
+      Based on a patch by Jyrki Muukkonen, thanks! (LP: #71746)
+  * apt-pkg/init.cc:
+    - add default configuration for compression types and add lzma
+      support. Order is now bzip2, lzma, gzip, none (Closes: #510526)
+  * ftparchive/writer.cc:
+    - add lzma support also here, patch for this (and inspiration for
+      the one above) by Robert Millan, thanks!
 
   [ George Danchev ]
   * cmdline/apt-cache.cc:

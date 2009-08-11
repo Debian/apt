@@ -103,7 +103,29 @@ bool pkgInitConfig(Configuration &Cnf)
 
    if (Res == false)
       return false;
-   
+
+   // we load all config files, now check the configs and setup post-defaults:
+   // * check for CompressionTypes setup
+   {
+      Configuration::Item const *Opts = _config->Tree("Acquire::CompressionTypes");
+      if (Opts != 0)
+	 Opts = Opts->Child;
+      bool foundLzma=false, foundBzip2=false, foundGzip=false;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value == "lzma") foundLzma = true;
+	 else if (Opts->Value == "bz2") foundBzip2 = true;
+	 else if (Opts->Value == "gz") foundGzip = true;
+      }
+      if (!foundBzip2) Cnf.Set("Acquire::CompressionTypes::bz2","bzip2");
+      if (!foundLzma) Cnf.Set("Acquire::CompressionTypes::lzma","lzma");
+      if (!foundGzip) Cnf.Set("Acquire::CompressionTypes::gz","gzip");
+      Cnf.CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
+      Cnf.CndSet("Dir::Bin::bzip2", "/bin/bzip2");
+   }
+
+
+
    if (Cnf.FindB("Debug::pkgInitConfig",false) == true)
       Cnf.Dump();
    
