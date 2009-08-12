@@ -1220,17 +1220,25 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 {
    // We want to pull the version off the package specification..
    string VerTag;
+   string DefRel;
    string TmpSrc = Name;
-   string::size_type Slash = TmpSrc.rfind('=');
+   const size_t found = TmpSrc.find_last_of("/=");
 
    // honor default release
-   string DefRel = _config->Find("APT::Default-Release");
+   if (found != string::npos && TmpSrc[found] == '/')
+   {
+      DefRel = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
+   }
+   else
+      DefRel = _config->Find("APT::Default-Release");
+
    pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
 
-   if (Slash != string::npos)
+   if (found != string::npos && TmpSrc[found] == '=')
    {
-      VerTag = string(TmpSrc.begin() + Slash + 1,TmpSrc.end());
-      TmpSrc = string(TmpSrc.begin(),TmpSrc.begin() + Slash);
+      VerTag = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
    } 
    else  if(!Pkg.end() && DefRel.empty() == false)
    {
@@ -1252,8 +1260,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		pkgCache::Flag::NotSource && Pkg.CurrentVer() != Ver)
 	    continue;
 	    
-	    //std::cout << VF.File().Archive() << std::endl;
-	    if(VF.File().Archive() && (VF.File().Archive() == DefRel)) 
+	    if((VF.File().Archive() != 0 && VF.File().Archive() == DefRel) ||
+		(VF.File().Codename() != 0 && VF.File().Codename() == DefRel))
 	    {
 	       pkgRecords::Parser &Parse = Recs.Lookup(VF);
 	       VerTag = Parse.SourceVer();
