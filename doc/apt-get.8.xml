@@ -85,9 +85,19 @@
          <arg choice='plain'>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg choice='plain'>source 
 			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
-				 <arg>
-					 =<replaceable>pkg_version_number</replaceable>
-				 </arg>
+				<arg>
+					<group choice='req'>
+						<arg choice='plain'>
+							=<replaceable>pkg_version_number</replaceable>
+						</arg>
+						<arg choice='plain'>
+							/<replaceable>target_release_name</replaceable>
+						</arg>
+						<arg choice='plain'>
+							/<replaceable>target_release_codename</replaceable>
+						</arg>
+					</group>
+				</arg>
 			 </arg>
 	     </arg>
          <arg choice='plain'>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
@@ -240,13 +250,22 @@
      <listitem><para><literal>source</literal> causes <command>apt-get</command> to fetch source packages. APT 
      will examine the available packages to decide which source package to 
      fetch. It will then find and download into the current directory the 
-     newest available version of that source package. Source packages are 
-     tracked separately from binary packages via <literal>deb-src</literal> type lines 
-     in the &sources-list; file. This probably will mean that you will not 
-     get the same source as the package you have installed or as you could 
-     install. If the --compile options is specified then the package will be 
-     compiled to a binary .deb using dpkg-buildpackage, if --download-only is 
-     specified then the source package will not be unpacked.</para>
+     newest available version of that source package while respect the
+     default release, set with the option <literal>APT::Default-Release</literal>,
+     the <option>-t</option> option or per package with with the
+     <literal>pkg/release</literal> syntax, if possible.</para>
+
+     <para>Source packages are tracked separately
+     from binary packages via <literal>deb-src</literal> type lines 
+     in the &sources-list; file. This means that you will need to add such a line
+     for each repository you want to get sources from. If you don't do this
+     you will properly get another (newer, older or none) source version than
+     the one you have installed or could install.</para>
+
+     <para>If the <option>--compile</option> options is specified
+     then the package will be compiled to a binary .deb using
+     <command>dpkg-buildpackage</command>, if <option>--download-only</option>
+     is specified then the source package will not be unpacked.</para>
 
      <para>A specific source version can be retrieved by postfixing the source name
      with an equals and then the version to fetch, similar to the mechanism
