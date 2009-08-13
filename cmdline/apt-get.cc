@@ -2127,7 +2127,7 @@ bool DoSource(CommandLine &CmdL)
 	 if(vcs == "Bzr") 
 	    ioprintf(c1out,_("Please use:\n"
 			     "bzr get %s\n"
-			     "to retrieve the latest (possible unreleased) "
+			     "to retrieve the latest (possibly unreleased) "
 			     "updates to the package.\n"),
 		     uri.c_str());
 	 break;
