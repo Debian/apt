@@ -547,7 +547,7 @@ bool ServerState::HeaderLine(string Line)
       // Evil servers return no version
       if (Line[4] == '/')
       {
-	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u %[^\n]",&Major,&Minor,
+	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,
 		    &Result,Code) != 4)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
@@ -555,7 +555,7 @@ bool ServerState::HeaderLine(string Line)
       {
 	 Major = 0;
 	 Minor = 9;
-	 if (sscanf(Line.c_str(),"HTTP %u %[^\n]",&Result,Code) != 2)
+	 if (sscanf(Line.c_str(),"HTTP %u%[^\n]",&Result,Code) != 2)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
 
