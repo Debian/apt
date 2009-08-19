@@ -317,7 +317,7 @@ unsigned long DynamicMMap::WriteString(const char *String,
    but why we should not at least try to grow it before we give up? */
 bool DynamicMMap::Grow()
 {
-#ifdef _POSIX_MAPPED_FILES
+#if defined(_POSIX_MAPPED_FILES) && defined(__linux__)
    unsigned long newSize = WorkSpace + 1024*1024;
 
    if(Fd != 0)
