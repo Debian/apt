@@ -203,8 +203,9 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      standard form of <literal>http://[[user][:pass]@]host[:port]/</literal>. Per 
      host proxies can also be specified by using the form 
      <literal>http::Proxy::&lt;host&gt;</literal> with the special keyword <literal>DIRECT</literal> 
-     meaning to use no proxies. The <envar>http_proxy</envar> environment variable
-     will override all settings.</para>
+	 meaning to use no proxies. If no one of the above settings is specified,
+	 <envar>http_proxy</envar> environment variable
+	 will be used.</para>
 
      <para>Three settings are provided for cache control with HTTP/1.1 compliant 
      proxy caches. <literal>No-Cache</literal> tells the proxy to not use its cached 
@@ -252,9 +253,13 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem></varlistentry>
 
      <varlistentry><term>ftp</term>
-     <listitem><para>FTP URIs; ftp::Proxy is the default proxy server to use. It is in the 
-     standard form of <literal>ftp://[[user][:pass]@]host[:port]/</literal> and is 
-     overridden by the <envar>ftp_proxy</envar> environment variable. To use a ftp 
+     <listitem><para>FTP URIs; ftp::Proxy is the default ftp proxy to use. It is in the 
+     standard form of <literal>ftp://[[user][:pass]@]host[:port]/</literal>. Per 
+     host proxies can also be specified by using the form 
+     <literal>ftp::Proxy::&lt;host&gt;</literal> with the special keyword <literal>DIRECT</literal> 
+	 meaning to use no proxies. If no one of the above settings is specified,
+	 <envar>ftp_proxy</envar> environment variable
+	 will be used. To use a ftp 
      proxy you will have to set the <literal>ftp::ProxyLogin</literal> script in the 
      configuration file. This entry specifies the commands to send to tell 
      the proxy server what to connect to. Please see 
