@@ -1,3 +1,15 @@
+apt (0.7.22.3) UNRELEASED; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * methods/{http,https,ftp}, doc/apt.conf.5.xml:
+    - Changed and unified the code that determines which proxy to use. Now
+      'Acquire::{http,ftp}::Proxy[::<host>]' options have the highest priority,
+      and '{http,ftp}_proxy' environment variables are used only if options
+      mentioned above are not specified.
+      (Closes: #445985, #157759, #320184, #365880, #479617)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 19 Aug 2009 11:14:15 +0200
+
 apt (0.7.22.2) unstable; urgency=low
 
   * debian/apt.cron.daily:
@@ -233,7 +245,7 @@ apt (0.7.20) unstable; urgency=low
   * buildlib/config.{sub,guess}:
     - Renewed. This fixes lintian errors.
   * doc/apt.conf.5.xml, debian/apt-transport-https:
-    - Documented briefly 'APT::https' group of options. (Closes: #507398)
+    - Documented briefly 'Acquire::https' group of options. (Closes: #507398)
     - Applied patch from Daniel Burrows to document 'Debug' group of options.
       (Closes: #457265)
     - Mentioned 'APT::Periodic' and 'APT::Archives' groups of options.

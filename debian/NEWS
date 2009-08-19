@@ -1,3 +1,12 @@
+apt (0.7.22.3) unstable; urgency=low
+
+  * Code that determines which proxy to use was changed. Now
+    'Acquire::{http,ftp}::Proxy[::<host>]' options have the highest priority,
+    and '{http,ftp}_proxy' environment variables are used only if options
+    mentioned above are not specified.
+
+ -- Eugene V. Lyubimkin <jackyf.devel@gmail.com>  Thu, 19 Aug 2009 11:26:16 +0200
+
 apt (0.6.44) unstable; urgency=low
 
   * apt-ftparchive --db now uses Berkeley DB_BTREE instead of DB_HASH. 
