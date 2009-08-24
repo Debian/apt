@@ -7,6 +7,13 @@ apt (0.7.22.3) UNRELEASED; urgency=low
       and '{http,ftp}_proxy' environment variables are used only if options
       mentioned above are not specified.
       (Closes: #445985, #157759, #320184, #365880, #479617)
+  
+  [ Michael Vogt ]
+  * apt-pkg/pkgcache.cc:
+    - do not set internel "needs-configure" state for packages in 
+      triggers-pending state. dpkg will deal with the trigger and
+      it if does it before we trigger it, dpkg will error out
+      (LP: #414631)
 
  -- Michael Vogt <mvo@debian.org>  Wed, 19 Aug 2009 11:14:15 +0200
 
