@@ -1,11 +1,19 @@
-apt (0.7.23ubuntu1) karmic; urgency=low
+apt (0.7.22.3) UNRELEASED; urgency=low
 
+  [ Eugene V. Lyubimkin ]
+  * methods/{http,https,ftp}, doc/apt.conf.5.xml:
+    - Changed and unified the code that determines which proxy to use. Now
+      'Acquire::{http,ftp}::Proxy[::<host>]' options have the highest priority,
+      and '{http,ftp}_proxy' environment variables are used only if options
+      mentioned above are not specified.
+      (Closes: #445985, #157759, #320184, #365880, #479617)
+  
   [ Michael Vogt ]
-  * merged from the debian-sid bzr branch
-
-  * cmdline/apt-get.cc:
-    - honor APT::Get::Only-Source properly in FindSrc() (thanks to
-      Martin Pitt for reporting the problem)
+  * apt-pkg/pkgcache.cc:
+    - do not set internel "needs-configure" state for packages in 
+      triggers-pending state. dpkg will deal with the trigger and
+      it if does it before we trigger it, dpkg will error out
+      (LP: #414631)
 
   [ Matt Zimmerman ]
   * apt-pkg/deb/dpkgpm.cc:
@@ -16,7 +24,36 @@ apt (0.7.23ubuntu1) karmic; urgency=low
   * cmdline/apt-get.cc:
     - typo fix (LP: #370094)
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Thu, 06 Aug 2009 16:37:04 +0100
+ -- Michael Vogt <mvo@debian.org>  Wed, 19 Aug 2009 11:14:15 +0200
+
+apt (0.7.22.2) unstable; urgency=low
+
+  * debian/apt.cron.daily:
+    - Make sure that VERBOSE is always set (Closes: #539366)
+    - Script can be disabled by APT::Periodic::Enable=0 (Closes: #485476)
+    - Support using debdelta to download packages (Closes: #532079)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 06 Aug 2009 12:17:19 +0200
+
+apt (0.7.22.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * cmdline/apt-get.cc:
+    - honor APT::Get::Only-Source properly in FindSrc() (thanks to
+      Martin Pitt for reporting the problem), also Closes: #535362.
+
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/mmap.cc:
+    - Fix FTBFS on GNU/kFreeBSD by disabling DynamicMMap::Grow() on
+      non-Linux architectures as it uses mremap (Closes: #539742).
+  * apt-pkg/sourcelist.cc:
+    - Only warn about missing sources.list if there is no sources.list.d
+      and vice versa as only one of them is needed (Closes: #539731).
+  * debian/control:
+    - Add myself to Uploaders.
+    - Increase Standards-Version to 3.8.2.0.
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 03 Aug 2009 12:48:31 +0200
 
 apt (0.7.22) unstable; urgency=low
 
@@ -135,7 +172,7 @@ apt (0.7.22) unstable; urgency=low
   [ Osamu Aoki ]
   * Updated cron script to support backups by hardlinks and 
     verbose levels.  All features turned off by default. 
-  * Added more error handlings.  Closes: #438803, #462734, #454989, 
+  * Added more error handlings.  Closes: #438803, #462734, #454989
   * Documented all cron script related configuration items in 
     configure-index.
 
@@ -373,7 +410,7 @@ apt (0.7.20) unstable; urgency=low
   * buildlib/config.{sub,guess}:
     - Renewed. This fixes lintian errors.
   * doc/apt.conf.5.xml, debian/apt-transport-https:
-    - Documented briefly 'APT::https' group of options. (Closes: #507398)
+    - Documented briefly 'Acquire::https' group of options. (Closes: #507398)
     - Applied patch from Daniel Burrows to document 'Debug' group of options.
       (Closes: #457265)
     - Mentioned 'APT::Periodic' and 'APT::Archives' groups of options.
