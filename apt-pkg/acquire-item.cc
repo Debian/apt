@@ -15,6 +15,7 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/vendorlist.h>
 #include <apt-pkg/error.h>
@@ -551,21 +552,11 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    if(comprExt.empty()) 
    {
       // autoselect the compression method
-      Configuration::Item const *Opts = _config->Tree("Acquire::CompressionTypes");
-      if (Opts != 0)
-	 Opts = Opts->Child;
-
-      const char dirBin[] = "Dir::Bin::";
-      for (; Opts != 0; Opts = Opts->Next)
-      {
-	 if (Opts->Tag.empty() == true || Opts->Value.empty() == true)
-	    continue;
-	 const string bin = _config->FindFile(string(dirBin).append(Opts->Value).c_str(),"");
-	 if (bin != "" && !FileExists(bin))
-	    continue;
-	 comprExt = '.' + Opts->Tag;
-	 break;
-      }
+      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+      if (types.empty() == true)
+	 comprExt = "plain";
+      else
+	 comprExt = "." + types[0];
    }
    CompressionExtension = ((comprExt == "plain" || comprExt == ".") ? "" : comprExt);
 
@@ -595,36 +586,31 @@ string pkgAcqIndex::Custom600Headers()
 									/*}}}*/
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 {
-   Configuration::Item const *Opts = _config->Tree("Acquire::CompressionTypes");
-   if (Opts != 0)
-      Opts = Opts->Child;
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
 
-   const char dirBin[] = "Dir::Bin::";
-   for (; Opts != 0; Opts = Opts->Next)
+   for (std::vector<std::string>::const_iterator t = types.begin();
+	t != types.end(); t++)
    {
-      if (Opts->Tag.empty() == true || Opts->Value.empty() == true)
+      // jump over all already tried compression types
+      const unsigned int nameLen = Desc.URI.size() - (*t).size();
+      if(Desc.URI.substr(nameLen) != *t)
 	 continue;
 
-      // jump over all already checked compression types
-      const unsigned int nameLen = Desc.URI.size() - Opts->Tag.size();
-      if(Desc.URI.substr(nameLen) != Opts->Tag || Opts->Next == 0)
-	 continue;
+      // we want to try it with the next extension
+      t++;
 
-      // check if we need an external binary for this compression type
-      const string bin = _config->FindFile(string(dirBin).append(Opts->Next->Value).c_str(),"");
-      if (bin != "" && !FileExists(bin))
-	 continue;
+      if (t != types.end())
+      {
+	 Desc.URI = Desc.URI.substr(0, nameLen) + *t;
 
-      // retry with the next extension
-      Desc.URI = Desc.URI.substr(0, nameLen) + Opts->Next->Tag;
+	 new pkgAcqIndex(Owner, RealURI, Desc.Description, Desc.ShortDesc,
+			 ExpectedHash, string(".").append(*t));
 
-      new pkgAcqIndex(Owner, RealURI, Desc.Description, Desc.ShortDesc,
-			ExpectedHash, string(".").append(Opts->Next->Tag));
-
-      Status = StatDone;
-      Complete = false;
-      Dequeue();
-      return;
+	 Status = StatDone;
+	 Complete = false;
+	 Dequeue();
+	 return;
+      }
    }
 
    // on decompression failure, remove bad versions in partial/
