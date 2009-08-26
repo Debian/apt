@@ -26,22 +26,27 @@ TARGET = binary
 include $(COPY_H)
 
 #.PHONY: headers library clean veryclean all binary program doc doc.pt_BR doc.fr
-doc: doc.fr doc.ja doc.pl doc.pt_BR doc.es
+doc: po4a
+	for dir in $(SUBDIRS); do\
+		$(MAKE) -C $$dir $@; \
+	done
 
-doc.fr: %.fr:
-	$(MAKE) -C fr $*
+.PHONY: update-po po4a
+update-po:
+	po4a --previous --no-backups --force --no-translations po4a.conf
 
-doc.pt_BR: %.pt_BR:
-	$(MAKE) -C pt_BR $*
+clean: po4a-clean clean-subdirs
 
-doc.es: %.es:
-	$(MAKE) -C es $*
+clean-subdirs:
+	for dir in $(SUBDIRS); do\
+		$(MAKE) -C $$dir $@; \
+	done
 
-doc.ja: %.ja:
-	$(MAKE) -C ja $*
+po4a-clean:
+	po4a --previous --rm-backups --rm-translations po4a.conf
 
-doc.pl: %.pl:
-	$(MAKE) -C pl $*
+po4a:
+	po4a --previous --no-backups po4a.conf
 
 ifdef DOXYGEN
 DOXYGEN_SOURCES = $(shell find $(BASE)/apt-pkg -not -name .\\\#* -and \( -name \*.cc -or -name \*.h \) )
