@@ -8,7 +8,50 @@ apt (0.7.22.3) UNRELEASED; urgency=low
       mentioned above are not specified.
       (Closes: #445985, #157759, #320184, #365880, #479617)
 
- -- Michael Vogt <mvo@debian.org>  Wed, 19 Aug 2009 11:14:15 +0200
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - add APT::Get::HideAutoRemove=small to display only a short line
+      instead of the full package list. (Closes: #537450)
+    - ShowBroken() in build-dep (by Mike O'Connor, Closes: #145916)
+    - check for statfs.f_type (by Robert Millan, Closes: #509313)
+    - correct the order of picked package binary vs source in source
+    - use SourceVersion instead of the BinaryVersion to get the source
+      Patch by Matt Kraai, thanks! (Closes: #382826)
+    - add pkg/archive and codename in source (Closes: #414105, #441178)
+  * apt-pkg/contrib/strutl.cc:
+    - enable thousand separator according to the current locale
+      (by Luca Bruno, Closes: #223712)
+  * doc/apt.conf.5.xml:
+    - mention the apt.conf.d dir (by Vincent McIntyre, Closes: #520831)
+  * apt-inst/contrib/arfile.cc:
+    - use sizeof instead strlen (by Marius Vollmer, Closes: #504325)
+  * doc/apt-mark.8.xml:
+    - improve manpage based on patch by Carl Chenet (Closes: #510286)
+  * apt-pkg/acquire-item.cc:
+    - use configsettings for dynamic compression type use and order.
+      Based on a patch by Jyrki Muukkonen, thanks! (LP: #71746)
+  * apt-pkg/aptconfiguration.cc:
+    - add default configuration for compression types and add lzma
+      support. Order is now bzip2, lzma, gzip, none (Closes: #510526)
+  * ftparchive/writer.cc:
+    - add lzma support also here, patch for this (and inspiration for
+      the one above) by Robert Millan, thanks!
+  * apt-pkg/depcache.cc:
+    - restore the --ignore-hold effect in the Is{Delete,Install}Ok hooks
+  * doc/apt-get.8.xml:
+    - update the source description to reflect what it actually does
+      and how it can be used. (Closes: #413021)
+  * methods/http.cc:
+    - allow empty Reason-Phase in Status-Line to please squid,
+      thanks Modestas Vainius for noticing! (Closes: #531157, LP: #411435)
+
+  [ George Danchev ]
+  * cmdline/apt-cache.cc:
+    - fix a memory leak in the xvcg method (Closes: #511557)
+  * apt-pkg/indexcopy.cc:
+    - fix a memory leak then the Release file not exists (Closes: #511556)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 27 Aug 2009 14:15:39 +0200
 
 apt (0.7.22.2) unstable; urgency=low
 
@@ -96,7 +139,7 @@ apt (0.7.22) unstable; urgency=low
       (off by default)
     - send "dpkg-exec" message on the status fd when dpkg is run
     - provide DPkg::Chroot-Directory config option (useful for testing)
-    - fix potential hang when in a backgroud process group
+    - fix potential hang when in a background process group
   * apt-pkg/algorithms.cc:
     - consider recommends when making the scores for the problem 
       resolver
@@ -125,7 +168,7 @@ apt (0.7.22) unstable; urgency=low
   * apt-pkg/deb/debsystem.cc:
     - make strings i18n able 
   * fix problematic use of tolower() when calculating the version 
-    hash by using locale independant tolower_ascii() function. 
+    hash by using locale independent tolower_ascii() function. 
     Thanks to M. Vefa Bicakci (LP: #80248)
   * build fixes for g++-4.4
   * cmdline/apt-mark:

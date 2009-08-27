@@ -815,9 +815,11 @@ ReleaseWriter::ReleaseWriter(string DB)
    AddPattern("Packages");
    AddPattern("Packages.gz");
    AddPattern("Packages.bz2");
+   AddPattern("Packages.lzma");
    AddPattern("Sources");
    AddPattern("Sources.gz");
    AddPattern("Sources.bz2");
+   AddPattern("Sources.lzma");
    AddPattern("Release");
    AddPattern("md5sum.txt");
 

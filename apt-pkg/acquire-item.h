@@ -540,7 +540,9 @@ class pkgAcqIndex : public pkgAcquire::Item
     *
     *  \param compressExt The compression-related extension with which
     *  this index file should be downloaded, or "" to autodetect
-    *  (".bz2" is used if bzip2 is installed, ".gz" otherwise).
+    *  Compression types can be set with config Acquire::CompressionTypes,
+    *  default is ".lzma" or ".bz2" (if the needed binaries are present)
+    *  fallback is ".gz" or none.
     */
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
 	       string ShortDesc, HashString ExpectedHash, string compressExt="");
@@ -569,12 +571,6 @@ class pkgAcqIndexTrans : public pkgAcqIndex
     *  \param URIDesc A "URI-style" description of this index file.
     *
     *  \param ShortDesc A brief description of this index file.
-    *
-    *  \param ExpectedHash The expected hashsum of this index file.
-    *
-    *  \param compressExt The compression-related extension with which
-    *  this index file should be downloaded, or "" to autodetect
-    *  (".bz2" is used if bzip2 is installed, ".gz" otherwise).
     */
    pkgAcqIndexTrans(pkgAcquire *Owner,string URI,string URIDesc,
 		    string ShortDesc);

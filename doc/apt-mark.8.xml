@@ -15,7 +15,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2 November 2007</date>
+   <date>9 August 2009</date>
  </refentryinfo>
  
  <refmeta>
@@ -32,11 +32,19 @@
  <!-- Arguments -->
  <refsynopsisdiv>
    <cmdsynopsis>
-      <command>apt-mark</command>
-      <arg><option>-hv</option></arg>
-      <arg><option>-f=<replaceable>FILENAME</replaceable></option></arg>
-      <group choice="req"><arg>markauto</arg><arg>unmarkauto</arg></group>
-      <arg choice="plain" rep="repeat"><replaceable>package</replaceable></arg>
+	<command>apt-mark</command>
+	<arg><option>-hv</option></arg>
+	<arg><option>-f=<replaceable>FILENAME</replaceable></option></arg>
+	<group choice="plain">
+		<arg choice="plain">
+			<group choice="req">
+				<arg choice="plain">markauto</arg>
+				<arg choice="plain">unmarkauto</arg>
+			</group>
+			<arg choice="plain" rep="repeat"><replaceable>package</replaceable></arg>
+		</arg>
+		<arg choice="plain">showauto</arg>
+	</group>
    </cmdsynopsis>
  </refsynopsisdiv>
  
@@ -49,7 +57,8 @@
      other packages are installed to satisfy its dependencies, the
      dependencies are marked as being automatically installed.  Once
      these automatically installed packages are no longer depended on
-     by any manually installed packages, they will be removed.
+     by any manually installed packages, they will be removed by e.g.
+     <command>apt-get</command> or <command>aptitude</command>.
    </para>
      <variablelist>
        <varlistentry><term>markauto</term>
@@ -67,16 +76,24 @@
      depend on it.
        </para></listitem>
        </varlistentry>
+
+       <varlistentry><term>showauto</term>
+	 <listitem><para><literal>showauto</literal> is used to print a
+     list of manually installed packages with each package on a new line.
+       </para></listitem>
+       </varlistentry>
      </variablelist>
  </refsect1>
  
  <refsect1><title>options</title>
    
    <variablelist>
-     <varlistentry><term><option>-f=<filename>FILENAME</filename></option></term><term><option>--file=<filename>FILENAME</filename></option></term>
+	<varlistentry>
+		<term><option>-f=<filename><replaceable>FILENAME</replaceable></filename></option></term>
+		<term><option>--file=<filename><replaceable>FILENAME</replaceable></filename></option></term>
      <listitem><para>
       
-     Read/Write package stats from <filename>FILENAME</filename>
+     Read/Write package stats from <filename><replaceable>FILENAME</replaceable></filename>
      instead of the default location, which
      is <filename>extended_status</filename> in the directory defined
      by the Configuration Item: <literal>Dir::State</literal>.</para></listitem>
@@ -101,8 +118,19 @@
    </variablelist>
  </refsect1>
 
+ <refsect1><title>Files</title>
+   <variablelist>
+      <varlistentry><term><filename>/var/lib/apt/extended_states</filename></term>
+      <listitem><para>Status list of auto-installed packages.
+		      Configuration Item: <literal>Dir::State</literal>
+		      sets the path to the <filename>extended_states</filename> file.
+      </para></listitem>
+      </varlistentry>
+   </variablelist>
+ </refsect1>
+
  <refsect1><title>See Also</title>
-   <para>&apt-conf;</para>
+   <para>&apt-get;,&aptitude;,&apt-conf;</para>
  </refsect1>
 
  <refsect1><title>Diagnostics</title>
