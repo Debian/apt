@@ -14,7 +14,7 @@ include ../buildlib/defaults.mak
 LIBRARY=apt-pkg
 LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=4.8
-MINOR=0
+MINOR=1
 SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl
 APT_DOMAIN:=libapt-pkg$(MAJOR)
 
