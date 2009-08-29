@@ -596,21 +596,21 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
       if(Desc.URI.substr(nameLen) != *t)
 	 continue;
 
-      // we want to try it with the next extension
+      // we want to try it with the next extension (and make sure to 
+      // not skip over the end)
       t++;
+      if (t == types.end())
+	 break;
 
-      if (t != types.end())
-      {
-	 Desc.URI = Desc.URI.substr(0, nameLen) + *t;
-
-	 new pkgAcqIndex(Owner, RealURI, Desc.Description, Desc.ShortDesc,
-			 ExpectedHash, string(".").append(*t));
-
-	 Status = StatDone;
-	 Complete = false;
-	 Dequeue();
-	 return;
-      }
+      // queue new download
+      Desc.URI = Desc.URI.substr(0, nameLen) + *t;
+      new pkgAcqIndex(Owner, RealURI, Desc.Description, Desc.ShortDesc,
+      ExpectedHash, string(".").append(*t));
+      
+      Status = StatDone;
+      Complete = false;
+      Dequeue();
+      return;
    }
 
    // on decompression failure, remove bad versions in partial/
