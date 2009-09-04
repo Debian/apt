@@ -186,6 +186,7 @@ apt-doc: build-doc
 # Build architecture-dependent files here.
 
 binary-arch: apt libapt-pkg-dev apt-utils apt-transport-https
+apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
 apt: build build-doc debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
@@ -226,7 +227,7 @@ apt: build build-doc debian/shlibs.local
 	rm -f po/*.pot
 
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
-	dh_installman -p$@ 
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
 	dh_installcron -p$@
 	dh_installdocs -p$@
 	dh_installchangelogs -p$@
@@ -269,6 +270,7 @@ libapt-pkg-dev: build debian/shlibs.local
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
+apt-utils_MANPAGES = apt-sortpkgs apt-ftparchive apt-extracttemplates
 apt-utils: build debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
@@ -284,7 +286,7 @@ apt-utils: build debian/shlibs.local
 	dh_installexamples -p$@
 
 	# Install the man pages..
-	dh_installman -p$@
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt-utils_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt-utils_MANPAGES)))
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@

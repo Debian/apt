@@ -1,3 +1,26 @@
+apt (0.7.24) UNRELEASED; urgency=low
+
+  [ Nicolas François ]
+  * Cleaned up the first patch draft from KURASAWA Nozomu to finally
+    get po4a support for translating the man pages.
+    Many thanks to both for this excellent work! (Closes: #441608)
+  * doc/ja/*, doc/po/ja.po:
+    - remove the old ja man page translation and replace it with
+      the new po4a-powered translation by KURASAWA Nozomu.
+  * doc/*.?.xml (manpages):
+    - add contrib to author tags and also add refmiscinfo to fix warnings
+  * doc/style.txt, buildlib/defaults.mak, buildlib/manpage.mak:
+    - fix a few typos in the comments of this files
+
+  [ David Kalnischkies ]
+  * doc/Doxyfile.in:
+    - update file with doxygen 1.6.1 (current unstable)
+    - activate DOT_MULTI_TARGETS, it is default on since doxygen 1.5.9
+  * buildlib/po4a_manpage.mak, doc/makefile, configure:
+    - simplify the makefiles needed for po4a manpages
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Aug 2009 09:40:08 +0200
+
 apt (0.7.23.1) unstable; urgency=low
 
   [ Michael Vogt ]
