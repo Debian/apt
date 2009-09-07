@@ -601,9 +601,11 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	    InQuote = !InQuote;
 	 if (InQuote == true)
 	    continue;
-	 
-	 if ((*I == '/' && I + 1 != End && I[1] == '/') || *I == '#')
-         {
+
+	 if ((*I == '/' && I + 1 != End && I[1] == '/') ||
+	     (*I == '#' && strcmp(string(I,I+6).c_str(),"#clear") != 0 &&
+	      strcmp(string(I,I+8).c_str(),"#include") != 0))
+	 {
 	    End = I;
 	    break;
 	 }
