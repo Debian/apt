@@ -246,6 +246,15 @@ Acquire
   {
    Options {"--ignore-time-conflict";}	// not very useful on a normal system
   };
+
+  CompressionTypes
+  {
+    bz2 "bzip2";
+    lzma "lzma";
+    gz "gzip";
+
+    Order { "gz"; "lzma"; "bz2"; };
+  };
 };
 
 // Directory layout
