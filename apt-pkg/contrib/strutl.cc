@@ -67,9 +67,20 @@ bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest)
   outbuf = new char[insize+1];
   outptr = outbuf;
 
-  iconv(cd, &inptr, &insize, &outptr, &outsize);
-  *outptr = '\0';
+  while (insize != 0)
+  {
+     size_t const err = iconv(cd, &inptr, &insize, &outptr, &outsize);
+     if (err == (size_t)(-1))
+     {
+	insize--;
+	outsize++;
+	inptr++;
+	*outptr = '?';
+	outptr++;
+     }
+  }
 
+  *outptr = '\0';
   *dest = outbuf;
   delete[] outbuf;
   
