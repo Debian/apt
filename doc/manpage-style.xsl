@@ -4,6 +4,6 @@
 
 <xsl:import href="/usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl" />
 
-<xsl:param name="man.output.encoding" select="'ISO-8859-15'" />
+<xsl:param name="man.output.encoding" select="'UTF-8'" />
 
 </xsl:stylesheet>
