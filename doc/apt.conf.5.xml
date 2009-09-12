@@ -464,6 +464,52 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      the default is to disable signing and produce all binaries.</para></listitem>
      </varlistentry>
    </variablelist>
+
+   <refsect2><title>dpkg trigger usage</title>
+     <para>APT can call dpkg in a way so it can make aggressive use of triggers over
+     multiply calls of dpkg. Without further options dpkg will use triggers only in between his
+     own run. Activating these options can therefore descrease the time needed to perform the
+     install / upgrade. Note that it is intended to activate these options per default in the
+     future, but as it changes the way apt calling dpkg drastical it needs a lot more testing.
+     <emphasis>These options are therefore currently experimental and should not be used in
+     productive environments.</emphasis> Also it breaks the progress reporting so all frontends will
+     currently stay around half (or more) of the time in the 100% state while it actually configures
+     all packages.</para>
+     <para>If you have understand the current risks and problems with these options, but want
+     to help testing them create a new configuration file with the following three options activated.
+     Please report any bugs and problems you encounter and make sure to note that you have used
+     these options in the reports. Asking dpkg for help could also be useful for debugging proposes,
+     see e.g. <command>dpkg --audit</command>.
+<literallayout>DPkg::NoTriggers "true";
+DPkg::NoConfigure "true";
+DPkg::ConfigurePending "true";</literallayout>
+     </para>
+
+     <variablelist>
+       <varlistentry><term>NoTriggers</term>
+       <listitem><para>Add the no triggers flag to all dpkg calls (expect the ConfigurePending call).
+       See &dpkg; if you are interested in what this actually means. In short: dpkg will not run the
+       triggers then this flag is present unless it is explicit called to do so in an extra call.
+       Note that this option exists (undocumented) also in older apt versions with a slightly different
+       meaning: Previously these option only append --no-triggers to the configure calls to dpkg -
+       now apt will add these flag also to the unpack and remove calls.</para></listitem>
+       </varlistentry>
+       <varlistentry><term>NoConfigure</term>
+       <listitem><para>Set this option to true will prevent apt to call explicit the configuration
+       for all packages. The packages will only be called to unpack (or remove), so dpkg can handle the
+       configuration process. Activating this option will implicit activate also the next option per
+       default as otherwise the system could end in an unconfigured status which could be unbootable!
+       </para></listitem>
+       </varlistentry>
+       <varlistentry><term>ConfigurePending</term>
+       <listitem><para>If this option is set apt will call <command>dpkg --configure --pending</command>
+       to let dpkg handle all required configurations and triggers. This option is activated automatic
+       per default if <literal>NoConfigure</literal> is set, but deactivating could be useful
+       if you want to run APT multiple times in a row - e.g. in an installer. In this sceneries you should
+       deactivate this option in all but the last run.</para></listitem>
+       </varlistentry>
+     </variablelist>
+   </refsect2>
  </refsect1>
 
  <refsect1>
