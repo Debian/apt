@@ -135,9 +135,12 @@ bool pkgDPkgPM::Configure(PkgIterator Pkg)
    if (Pkg.end() == true)
       return false;
 
-   bool static const NoConfigure = _config->FindB("DPkg::NoConfigure",false);
-   if (NoConfigure == false)
-      List.push_back(Item(Item::Configure,Pkg));
+   List.push_back(Item(Item::Configure, Pkg));
+
+   // Use triggers for config calls if we configure "smart"
+   // as otherwise Pre-Depends will not be satisfied, see #526774
+   if (_config->FindB("DPkg::TriggersPending", false) == true)
+      List.push_back(Item(Item::TriggersPending, PkgIterator()));
 
    return true;
 }
@@ -627,7 +630,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);
    unsigned int const MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
-   bool const NoTriggers = _config->FindB("DPkg::NoTriggers",false);
+   bool const NoTriggers = _config->FindB("DPkg::NoTriggers", false);
+   bool const NoConfTriggers = _config->FindB("DPkg::NoConfTriggers", NoTriggers);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
@@ -637,8 +641,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    // support subpressing of triggers processing for special
    // cases like d-i that runs the triggers handling manually
-   if(_config->FindB("DPkg::ConfigurePending",_config->FindB("DPkg::NoConfigure",false)) == true)
-      List.push_back(Item(Item::ConfigurePending,PkgIterator()));
+   bool const SmartConf = (_config->Find("PackageManager::Configure", "all") != "all");
+   if (_config->FindB("DPkg::ConfigurePending", SmartConf) == true)
+      List.push_back(Item(Item::ConfigurePending, PkgIterator()));
 
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
@@ -776,6 +781,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 Size += strlen(Args[n-1]);
 	 break;
 
+	 case Item::TriggersPending:
+	 Args[n++] = "--triggers-only";
+	 Size += strlen(Args[n-1]);
+	 Args[n++] = "--pending";
+	 Size += strlen(Args[n-1]);
+	 break;
+
 	 case Item::Install:
 	 Args[n++] = "--unpack";
 	 Size += strlen(Args[n-1]);
@@ -784,7 +796,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 break;
       }
 
-      if (NoTriggers == true && I->Op != Item::ConfigurePending)
+      if (NoTriggers == true && I->Op != Item::TriggersPending &&
+	  I->Op != Item::ConfigurePending &&
+	  (I->Op != Item::Configure || NoConfTriggers == true))
       {
 	 Args[n++] = "--no-triggers";
 	 Size += strlen(Args[n-1]);

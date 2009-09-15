@@ -53,7 +53,7 @@ class pkgDPkgPM : public pkgPackageManager
   
    struct Item
    {
-      enum Ops {Install, Configure, Remove, Purge, ConfigurePending} Op;
+      enum Ops {Install, Configure, Remove, Purge, ConfigurePending, TriggersPending} Op;
       string File;
       PkgIterator Pkg;
       Item(Ops Op,PkgIterator Pkg,string File = "") : Op(Op),

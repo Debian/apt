@@ -57,7 +57,10 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
    if (CreateOrderList() == false)
       return false;
    
-   if (List->OrderUnpack() == false)
+   bool const ordering =
+	_config->FindB("PackageManager::UnpackAll",true) ?
+		List->OrderUnpack() : List->OrderCritical();
+   if (ordering == false)
       return _error->Error("Internal ordering error");
 
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
@@ -163,7 +166,7 @@ bool pkgPackageManager::CreateOrderList()
    delete List;
    List = new pkgOrderList(&Cache);
    
-   bool NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+   static bool const NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
    
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
@@ -266,13 +269,16 @@ bool pkgPackageManager::ConfigureAll()
    
    if (OList.OrderConfigure() == false)
       return false;
-   
+
+   std::string const conf = _config->Find("PackageManager::Configure","all");
+   bool const ConfigurePkgs = (conf == "all");
+
    // Perform the configuring
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (Configure(Pkg) == false)
+      if (ConfigurePkgs == true && Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -291,16 +297,20 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 
    if (DepAdd(OList,Pkg) == false)
       return false;
-   
-   if (OList.OrderConfigure() == false)
-      return false;
-   
+
+   static std::string const conf = _config->Find("PackageManager::Configure","all");
+   static bool const ConfigurePkgs = (conf == "all" || conf == "smart");
+
+   if (ConfigurePkgs == true)
+      if (OList.OrderConfigure() == false)
+	 return false;
+
    // Perform the configuring
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (Configure(Pkg) == false)
+      if (ConfigurePkgs == true && Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -577,9 +587,12 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    Reset();
    
    if (Debug == true)
-      clog << "Begining to order" << endl;
+      clog << "Beginning to order" << endl;
 
-   if (List->OrderUnpack(FileNames) == false)
+   bool const ordering =
+	_config->FindB("PackageManager::UnpackAll",true) ?
+		List->OrderUnpack(FileNames) : List->OrderCritical();
+   if (ordering == false)
    {
       _error->Error("Internal ordering error");
       return Failed;
@@ -632,7 +645,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	    return Failed;
       DoneSomething = true;
    }
-   
+
    // Final run through the configure phase
    if (ConfigureAll() == false)
       return Failed;
