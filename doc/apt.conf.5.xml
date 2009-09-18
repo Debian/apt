@@ -21,7 +21,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>10 December 2008</date>
+   <date>18 September 2009</date>
  </refentryinfo>
  
  <refmeta>
@@ -484,8 +484,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 <literallayout>DPkg::NoTriggers "true";
 PackageManager::Configure "smart";
 DPkg::ConfigurePending "true";
-DPkg::TriggersPending "true";
-OrderList::Score::Immediate 100;</literallayout></para>
+DPkg::TriggersPending "true";</literallayout></para>
 
      <variablelist>
        <varlistentry><term>DPkg::NoTriggers</term>
@@ -519,13 +518,6 @@ OrderList::Score::Immediate 100;</literallayout></para>
        triggers is not considered as <literal>installed</literal> and dpkg treats them as <literal>unpacked</literal>
        currently which is a dealbreaker for Pre-Dependencies (see debbugs #526774). Note that this will
        process all triggers, not only the triggers needed to configure this package.</para></listitem>
-       </varlistentry>
-       <varlistentry><term>Dpkg::NoConfTriggers</term>
-       <listitem><para>DPkg currently will ignore the --triggers or --no-triggers flag if the trigger
-       is already pending. This option therefore has no real effect as long as dpkg doesn't change
-       his behavior. The option is automatical activated if <literal>DPkg::NoTriggers</literal> is
-       activated. You should use <literal>DPkg::TriggersPending</literal> to take care of these pending
-       triggers.</para></listitem>
        </varlistentry>
        <varlistentry><term>PackageManager::UnpackAll</term>
        <listitem><para>As the configuration can be deferred to be done at the end by dpkg it can be

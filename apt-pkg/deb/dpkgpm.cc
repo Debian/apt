@@ -631,7 +631,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);
    unsigned int const MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
    bool const NoTriggers = _config->FindB("DPkg::NoTriggers", false);
-   bool const NoConfTriggers = _config->FindB("DPkg::NoConfTriggers", NoTriggers);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
@@ -797,8 +796,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }
 
       if (NoTriggers == true && I->Op != Item::TriggersPending &&
-	  I->Op != Item::ConfigurePending &&
-	  (I->Op != Item::Configure || NoConfTriggers == true))
+	  I->Op != Item::ConfigurePending)
       {
 	 Args[n++] = "--no-triggers";
 	 Size += strlen(Args[n-1]);
