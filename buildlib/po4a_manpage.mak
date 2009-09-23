@@ -16,7 +16,7 @@ INCLUDES = apt.ent
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 ifdef XSLTPROC
 
-STYLESHEET=./style.$(LC).xsl
+STYLESHEET=../manpage-style.xsl
 
 LOCAL := po4a-manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(SOURCE)

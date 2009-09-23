@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 									/*}}}*/
 namespace APT {
 // getCompressionTypes - Return Vector of usbale compressiontypes	/*{{{*/
@@ -29,41 +30,52 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 			types.clear();
 	}
 
+	// setup the defaults for the compressiontypes => method mapping
+	_config->CndSet("Acquire::CompressionTypes::bz2","bzip2");
+	_config->CndSet("Acquire::CompressionTypes::lzma","lzma");
+	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
+
 	// Set default application paths to check for optional compression types
 	_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
 
-	::Configuration::Item const *Opts = _config->Tree("Acquire::CompressionTypes");
-	if (Opts != 0)
-		Opts = Opts->Child;
+	// accept non-list order as override setting for config settings on commandline
+	std::string const overrideOrder = _config->Find("Acquire::CompressionTypes::Order","");
+	if (overrideOrder.empty() == false)
+		types.push_back(overrideOrder);
 
-	// at first, move over the options to setup at least the default options
-	bool foundLzma=false, foundBzip2=false, foundGzip=false;
-	for (; Opts != 0; Opts = Opts->Next) {
-		if (Opts->Value == "lzma")
-			foundLzma = true;
-		else if (Opts->Value == "bz2")
-			foundBzip2 = true;
-		else if (Opts->Value == "gz")
-			foundGzip = true;
+	// load the order setting into our vector
+	std::vector<std::string> const order = _config->FindVector("Acquire::CompressionTypes::Order");
+	for (std::vector<std::string>::const_iterator o = order.begin();
+	     o != order.end(); o++) {
+		if ((*o).empty() == true)
+			continue;
+		// ignore types we have no method ready to use
+		if (_config->Exists(string("Acquire::CompressionTypes::").append(*o)) == false)
+			continue;
+		// ignore types we have no app ready to use
+		string const appsetting = string("Dir::Bin::").append(*o);
+		if (_config->Exists(appsetting) == true) {
+			std::string const app = _config->FindFile(appsetting.c_str(), "");
+			if (app.empty() == false && FileExists(app) == false)
+				continue;
+		}
+		types.push_back(*o);
 	}
 
-	// setup the defaults now
-	if (!foundBzip2)
-		_config->Set("Acquire::CompressionTypes::bz2","bzip2");
-	if (!foundLzma)
-		_config->Set("Acquire::CompressionTypes::lzma","lzma");
-	if (!foundGzip)
-		_config->Set("Acquire::CompressionTypes::gz","gzip");
-
-	// move again over the option tree to finially calculate our result
+	// move again over the option tree to add all missing compression types
 	::Configuration::Item const *Types = _config->Tree("Acquire::CompressionTypes");
 	if (Types != 0)
 		Types = Types->Child;
 
 	for (; Types != 0; Types = Types->Next) {
+		if (Types->Tag == "Order" || Types->Tag.empty() == true)
+			continue;
+		// ignore types we already have in the vector
+		if (std::find(types.begin(),types.end(),Types->Tag) != types.end())
+			continue;
+		// ignore types we have no app ready to use
 		string const appsetting = string("Dir::Bin::").append(Types->Value);
-		// ignore compression types we have no app ready to use
 		if (appsetting.empty() == false && _config->Exists(appsetting) == true) {
 			std::string const app = _config->FindFile(appsetting.c_str(), "");
 			if (app.empty() == false && FileExists(app) == false)

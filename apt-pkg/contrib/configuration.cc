@@ -223,6 +223,25 @@ string Configuration::FindDir(const char *Name,const char *Default) const
    return Res;
 }
 									/*}}}*/
+// Configuration::FindVector - Find a vector of values			/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns a vector of config values under the given item */
+vector<string> Configuration::FindVector(const char *Name) const
+{
+   vector<string> Vec;
+   const Item *Top = Lookup(Name);
+   if (Top == NULL)
+      return Vec;
+
+   Item *I = Top->Child;
+   while(I != NULL)
+   {
+      Vec.push_back(I->Value);
+      I = I->Next;
+   }
+   return Vec;
+}
+									/*}}}*/
 // Configuration::FindI - Find an integer value				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -582,9 +601,11 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 	    InQuote = !InQuote;
 	 if (InQuote == true)
 	    continue;
-	 
-	 if ((*I == '/' && I + 1 != End && I[1] == '/') || *I == '#')
-         {
+
+	 if ((*I == '/' && I + 1 != End && I[1] == '/') ||
+	     (*I == '#' && strcmp(string(I,I+6).c_str(),"#clear") != 0 &&
+	      strcmp(string(I,I+8).c_str(),"#include") != 0))
+	 {
 	    End = I;
 	    break;
 	 }
