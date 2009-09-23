@@ -21,12 +21,13 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>10 December 2008</date>
+   <date>18 September 2009</date>
  </refentryinfo>
  
  <refmeta>
    <refentrytitle>apt.conf</refentrytitle>
    <manvolnum>5</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
  </refmeta>
  
  <!-- Man page title -->
@@ -89,7 +90,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <literal>#include</literal> will include the given file, unless the filename
    ends in a slash, then the whole directory is included.  
    <literal>#clear</literal> is used to erase a part of the configuration tree. The
-   specified element and all its descendents are erased.</para>
+   specified element and all its descendants are erased.</para>
 
    <para>All of the APT tools take a -o option which allows an arbitrary configuration 
    directive to be specified on the command line. The syntax is a full option
@@ -308,6 +309,34 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term>CompressionTypes</term>
+     <listitem><para>List of compression types which are understood by the acquire methods.
+     Files like <filename>Packages</filename> can be available in various compression formats.
+     Per default the acquire methods can decompress <command>bzip2</command>, <command>lzma</command>
+     and <command>gzip</command> compressed files, with this setting more formats can be added
+     on the fly or the used method can be changed. The syntax for this is:
+     <synopsis>Acquire::CompressionTypes::<replaceable>FileExtension</replaceable> "<replaceable>Methodname</replaceable>";</synopsis>
+     </para><para>Also the <literal>Order</literal> subgroup can be used to define in which order
+     the acquire system will try to download the compressed files. The acquire system will try the first
+     and proceed with the next compression type in this list on error, so to prefer one over the other type
+     simple add the preferred type at first - not already added default types will be added at run time
+     to the end of the list, so e.g. <synopsis>Acquire::CompressionTypes::Order:: "gz";</synopsis> can
+     be used to prefer <command>gzip</command> compressed files over <command>bzip2</command> and <command>lzma</command>.
+     If <command>lzma</command> should be preferred over <command>gzip</command> and <command>bzip2</command> the
+     configure setting should look like this <synopsis>Acquire::CompressionTypes::Order { "lzma"; "gz"; };</synopsis>
+     It is not needed to add <literal>bz2</literal> explicit to the list as it will be added automatic.</para>
+     <para>Note that at run time the <literal>Dir::Bin::<replaceable>Methodname</replaceable></literal> will
+     be checked: If this setting exists the method will only be used if this file exists, e.g. for
+     the bzip2 method (the inbuilt) setting is <literallayout>Dir::Bin::bzip2 "/bin/bzip2";</literallayout>
+     Note also that list entries specified on the commandline will be added at the end of the list
+     specified in the configuration files, but before the default entries. To prefer a type in this case
+     over the ones specified in in the configuration files you can set the option direct - not in list style.
+     This will not override the defined list, it will only prefix the list with this type.</para>
+     <para>While it is possible to add an empty compression type to the order list, but APT in its current
+     version doesn't understand it correctly and will display many warnings about not downloaded files -
+     these warnings are most of the time false negatives. Future versions will maybe include a way to
+     really prefer uncompressed files to support the usage of local mirrors.</para></listitem>
+     </varlistentry>
    </variablelist>
   </para>
  </refsect1>
@@ -342,6 +371,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
    <para>Binary programs are pointed to by <literal>Dir::Bin</literal>. <literal>Dir::Bin::Methods</literal> 
    specifies the location of the method handlers and <literal>gzip</literal>, 
+   <literal>bzip2</literal>, <literal>lzma</literal>,
    <literal>dpkg</literal>, <literal>apt-get</literal> <literal>dpkg-source</literal> 
    <literal>dpkg-buildpackage</literal> and <literal>apt-cache</literal> specify the location
    of the respective programs.</para>
@@ -434,6 +464,87 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      the default is to disable signing and produce all binaries.</para></listitem>
      </varlistentry>
    </variablelist>
+
+   <refsect2><title>dpkg trigger usage (and related options)</title>
+     <para>APT can call dpkg in a way so it can make aggressive use of triggers over
+     multiply calls of dpkg. Without further options dpkg will use triggers only in between his
+     own run. Activating these options can therefore decrease the time needed to perform the
+     install / upgrade. Note that it is intended to activate these options per default in the
+     future, but as it changes the way APT calling dpkg drastical it needs a lot more testing.
+     <emphasis>These options are therefore currently experimental and should not be used in
+     productive environments.</emphasis> Also it breaks the progress reporting so all frontends will
+     currently stay around half (or more) of the time in the 100% state while it actually configures
+     all packages.</para>
+     <para>Note that it is not garanteed that APT will support these options or that these options will
+     not cause (big) trouble in the future. If you have understand the current risks and problems with
+     these options, but are brave enough to help testing them create a new configuration file and test a
+     combination of options. Please report any bugs, problems and improvements you encounter and make sure
+     to note which options you have used in your reports. Asking dpkg for help could also be useful for
+     debugging proposes, see e.g. <command>dpkg --audit</command>. A defensive option combination would be
+<literallayout>DPkg::NoTriggers "true";
+PackageManager::Configure "smart";
+DPkg::ConfigurePending "true";
+DPkg::TriggersPending "true";</literallayout></para>
+
+     <variablelist>
+       <varlistentry><term>DPkg::NoTriggers</term>
+       <listitem><para>Add the no triggers flag to all dpkg calls (expect the ConfigurePending call).
+       See &dpkg; if you are interested in what this actually means. In short: dpkg will not run the
+       triggers then this flag is present unless it is explicit called to do so in an extra call.
+       Note that this option exists (undocumented) also in older apt versions with a slightly different
+       meaning: Previously these option only append --no-triggers to the configure calls to dpkg -
+       now apt will add these flag also to the unpack and remove calls.</para></listitem>
+       </varlistentry>
+       <varlistentry><term>PackageManager::Configure</term>
+       <listitem><para>Valid values are "<literal>all</literal>", "<literal>smart</literal>" and "<literal>no</literal>".
+       "<literal>all</literal>" is the default value and causes APT to configure all packages explicit.
+       The "<literal>smart</literal>" way is it to configure only packages which need to be configured before
+       another package can be unpacked (Pre-Depends) and let the rest configure by dpkg with a call generated
+       by the next option. "<literal>no</literal>" on the other hand will not configure anything and totally
+       relay on dpkg for configuration (which will at the moment fail if a Pre-Depends is encountered).
+       Setting this option to another than the all value will implicit activate also the next option per
+       default as otherwise the system could end in an unconfigured status which could be unbootable!
+       </para></listitem>
+       </varlistentry>
+       <varlistentry><term>DPkg::ConfigurePending</term>
+       <listitem><para>If this option is set apt will call <command>dpkg --configure --pending</command>
+       to let dpkg handle all required configurations and triggers. This option is activated automatic
+       per default if the previous option is not set to <literal>all</literal>, but deactivating could be useful
+       if you want to run APT multiple times in a row - e.g. in an installer. In this sceneries you could
+       deactivate this option in all but the last run.</para></listitem>
+       </varlistentry>
+       <varlistentry><term>DPkg::TriggersPending</term>
+       <listitem><para>Useful for <literal>smart</literal> configuration as a package which has pending
+       triggers is not considered as <literal>installed</literal> and dpkg treats them as <literal>unpacked</literal>
+       currently which is a dealbreaker for Pre-Dependencies (see debbugs #526774). Note that this will
+       process all triggers, not only the triggers needed to configure this package.</para></listitem>
+       </varlistentry>
+       <varlistentry><term>PackageManager::UnpackAll</term>
+       <listitem><para>As the configuration can be deferred to be done at the end by dpkg it can be
+       tried to order the unpack series only by critical needs, e.g. by Pre-Depends. Default is true
+       and therefore the "old" method of ordering in verious steps by everything. While both method
+       were present in earlier APT versions the <literal>OrderCritical</literal> method was unused, so
+       this method is very experimental and needs further improvements before becoming really useful.
+       </para></listitem>
+       </varlistentry>
+       <varlistentry><term>OrderList::Score::Immediate</term>
+       <listitem><para>Essential packages (and there dependencies) should be configured immediately
+       after unpacking. It will be a good idea to do this quite early in the upgrade process as these
+       these configure calls require currently also <literal>DPkg::TriggersPending</literal> which
+       will run quite a few triggers (which maybe not needed). Essentials get per default a high score
+       but the immediate flag is relativly low (a package which has a Pre-Depends is higher rated).
+       These option and the others in the same group can be used to change the scoring. The following
+       example shows the settings with there default values.
+       <literallayout>OrderList::Score {
+	Delete 500;
+	Essential 200;
+	Immediate 10;
+	PreDepends 50;
+};</literallayout>
+       </para></listitem>
+       </varlistentry>
+     </variablelist>
+   </refsect2>
  </refsect1>
 
  <refsect1>
@@ -827,7 +938,9 @@ is commented.
  </refsect1>
  
  <refsect1><title>Files</title>
-   <para><filename>/etc/apt/apt.conf</filename></para>
+   <variablelist>
+      &file-aptconf;
+   </variablelist>
  </refsect1>
  
  <refsect1><title>See Also</title>

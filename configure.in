@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.7.22.3")
+AC_DEFINE_UNQUOTED(VERSION,"0.7.23.1")
 PACKAGE="apt"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_SUBST(PACKAGE)
@@ -112,6 +112,10 @@ if test x"$HAVE_STATVFS" != x"yes"; then
    ])
 fi
 
+AC_CHECK_MEMBERS([struct statfs.f_type],,,
+    [$ac_includes_default
+     #include <sys/vfs.h>])
+
 dnl We should use the real timegm function if we have it.
 AC_CHECK_FUNC(timegm,AC_DEFINE(HAVE_TIMEGM))
 AC_SUBST(HAVE_TIMEGM)
@@ -185,6 +189,12 @@ AC_PATH_PROG(DOCBOOK2MAN,docbook2man)
 
 dnl Check for the XML tools needed to build man pages
 AC_PATH_PROG(XMLTO,xmlto)
+
+dnl Check for the XSLTProc tool needed to build man pages together with po4a
+AC_PATH_PROG(XSLTPROC,xsltproc)
+
+dnl Check for the po4a tool needed to build man pages
+AC_PATH_PROG(PO4A,po4a)
 
 dnl Check for graphviz
 AC_CHECK_PROG([HAVE_DOT], [dot], [YES], [NO])

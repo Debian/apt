@@ -174,7 +174,7 @@ int RredMethod::ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file,
          hash);
    
    /* read the rest from infile */
-   if (result > 0) {
+   if (result >= 0) {
       while (fgets(buffer, BUF_SIZE, in_file) != NULL) {
          written = fwrite(buffer, 1, strlen(buffer), out_file);
          hash->Add((unsigned char*)buffer, written);

@@ -96,7 +96,7 @@ bool ARArchive::LoadHeaders()
 	 char S[300];
 	 unsigned long Len;
 	 if (StrToNum(Head.Name+3,Len,sizeof(Head.Size)-3) == false ||
-	     Len >= strlen(S))
+	     Len >= sizeof(S))
 	 {
 	    delete Memb;
 	    return _error->Error(_("Invalid archive member header"));

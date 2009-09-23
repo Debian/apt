@@ -104,7 +104,7 @@ bool pkgInitConfig(Configuration &Cnf)
 
    if (Res == false)
       return false;
-   
+
    if (Cnf.FindB("Debug::pkgInitConfig",false) == true)
       Cnf.Dump();
    

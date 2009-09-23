@@ -259,7 +259,16 @@ Acquire
    ProblemReporting "/usr/lib/apt/apt-report-mirror-failure"; 
    // mirror failure reporting url
    ReportFailures "http://example.com/mirror-failure"; 
+   };
+
+  CompressionTypes
+  {
+    bz2 "bzip2";
+    lzma "lzma";
+    gz "gzip";
   };
+  
+  Order { "gz"; "lzma"; "bz2"; };
 
   // translations can be set here to "none", "environment" or "$locale"
   Translation "none";
@@ -328,18 +337,25 @@ DSelect
    CheckDir "no";
 }
 
-DPkg 
+DPkg
 {
+   // let apt aggressivly use dpkg triggers
+   NoTriggers "true";
+   NoConfigure "true";
+   ConfigurePending "true";
+
    // Probably don't want to use force-downgrade..
    Options {"--force-overwrite";"--force-downgrade";}
-   
+
    // Auto re-mounting of a readonly /usr
    Pre-Invoke {"mount -o remount,rw /usr";};
    Post-Invoke {"mount -o remount,ro /usr";};
-   
+
+   Chroot-Directory "/";
+
    // Prevents daemons from getting cwd as something mountable (default)
    Run-Directory "/";
-   
+
    // Build options for apt-get source --compile
    Build-Options "-b -uc";
 

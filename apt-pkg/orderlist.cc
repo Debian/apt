@@ -174,22 +174,35 @@ bool pkgOrderList::DoRun()
 bool pkgOrderList::OrderCritical()
 {
    FileList = 0;
-   
-   Primary = &pkgOrderList::DepUnPackPre;
+
+   Primary = &pkgOrderList::DepUnPackPreD;
    Secondary = 0;
    RevDepends = 0;
    Remove = 0;
    LoopCount = 0;
-   
+
    // Sort
    Me = this;
-   qsort(List,End - List,sizeof(*List),&OrderCompareB);   
-   
+   qsort(List,End - List,sizeof(*List),&OrderCompareB);
+
    if (DoRun() == false)
       return false;
-   
+
    if (LoopCount != 0)
       return _error->Error("Fatal, predepends looping detected");
+
+   if (Debug == true)
+   {
+      clog << "** Critical Unpack ordering done" << endl;
+
+      for (iterator I = List; I != End; I++)
+      {
+	 PkgIterator P(Cache,*I);
+	 if (IsNow(P) == true)
+	    clog << "  " << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
+      }
+   }
+
    return true;
 }
 									/*}}}*/
@@ -205,7 +218,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    if (FileList != 0)
    {
       WipeFlags(After);
-      
+
       // Set the inlist flag
       for (iterator I = List; I != End; I++)
       {
@@ -214,7 +227,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
 	     Flag(*I,After);
       }
    }
-   
+
    Primary = &pkgOrderList::DepUnPackCrit;
    Secondary = &pkgOrderList::DepConfigure;
    RevDepends = &pkgOrderList::DepUnPackDep;
@@ -229,7 +242,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
       clog << "** Pass A" << endl;
    if (DoRun() == false)
       return false;
-   
+
    if (Debug == true)
       clog << "** Pass B" << endl;
    Secondary = 0;
@@ -243,7 +256,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    Remove = 0;             // Otherwise the libreadline remove problem occures
    if (DoRun() == false)
       return false;
-      
+
    if (Debug == true)
       clog << "** Pass D" << endl;
    LoopCount = 0;
@@ -259,9 +272,9 @@ bool pkgOrderList::OrderUnpack(string *FileList)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsNow(P) == true)
-	    clog << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
+	    clog << "  " << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
       }
-   }   
+   }
 
    return true;
 }
@@ -286,29 +299,35 @@ bool pkgOrderList::OrderConfigure()
 /* Higher scores order earlier */
 int pkgOrderList::Score(PkgIterator Pkg)
 {
+   static int const ScoreDelete = _config->FindI("OrderList::Score::Delete", 500);
+
    // Removal is always done first
    if (Cache[Pkg].Delete() == true)
-      return 200;
-   
+      return ScoreDelete;
+
    // This should never happen..
    if (Cache[Pkg].InstVerIter(Cache).end() == true)
       return -1;
-   
+
+   static int const ScoreEssential = _config->FindI("OrderList::Score::Essential", 200);
+   static int const ScoreImmediate = _config->FindI("OrderList::Score::Immediate", 10);
+   static int const ScorePreDepends = _config->FindI("OrderList::Score::PreDepends", 50);
+
    int Score = 0;
    if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-      Score += 100;
+      Score += ScoreEssential;
 
    if (IsFlag(Pkg,Immediate) == true)
-      Score += 10;
-   
-   for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); 
+      Score += ScoreImmediate;
+
+   for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList();
 	D.end() == false; D++)
       if (D->Type == pkgCache::Dep::PreDepends)
       {
-	 Score += 50;
+	 Score += ScorePreDepends;
 	 break;
       }
-      
+
    // Important Required Standard Optional Extra
    signed short PrioMap[] = {0,5,4,3,1,0};
    if (Cache[Pkg].InstVerIter(Cache)->Priority <= 5)
@@ -386,6 +405,7 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
    
    int ScoreA = Me->Score(A);
    int ScoreB = Me->Score(B);
+
    if (ScoreA > ScoreB)
       return -1;
    
@@ -422,6 +442,7 @@ int pkgOrderList::OrderCompareB(const void *a, const void *b)
    
    int ScoreA = Me->Score(A);
    int ScoreB = Me->Score(B);
+
    if (ScoreA > ScoreB)
       return -1;
    

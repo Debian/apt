@@ -1,13 +1,5 @@
-apt (0.7.22.3) UNRELEASED; urgency=low
+apt (0.7.24ubuntu1) UNRELEASED; urgency=low
 
-  [ Eugene V. Lyubimkin ]
-  * methods/{http,https,ftp}, doc/apt.conf.5.xml:
-    - Changed and unified the code that determines which proxy to use. Now
-      'Acquire::{http,ftp}::Proxy[::<host>]' options have the highest priority,
-      and '{http,ftp}_proxy' environment variables are used only if options
-      mentioned above are not specified.
-      (Closes: #445985, #157759, #320184, #365880, #479617)
-  
   [ Michael Vogt ]
   * apt-pkg/pkgcache.cc:
     - do not set internel "needs-configure" state for packages in 
@@ -29,7 +21,130 @@ apt (0.7.22.3) UNRELEASED; urgency=low
     - Emit a warning if removed keys keyring is missing and skip associated
       checks (LP: #218971)
 
- -- Michael Vogt <mvo@debian.org>  Wed, 19 Aug 2009 11:14:15 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 23 Sep 2009 17:24:20 +0200
+
+apt (0.7.24) UNRELEASED; urgency=low
+
+  [ Nicolas François ]
+  * Cleaned up the first patch draft from KURASAWA Nozomu to finally
+    get po4a support for translating the man pages.
+    Many thanks to both for this excellent work! (Closes: #441608)
+  * doc/ja/*, doc/po/ja.po:
+    - remove the old ja man page translation and replace it with
+      the new po4a-powered translation by KURASAWA Nozomu.
+  * doc/*.?.xml (manpages):
+    - add contrib to author tags and also add refmiscinfo to fix warnings
+  * doc/style.txt, buildlib/defaults.mak, buildlib/manpage.mak:
+    - fix a few typos in the comments of this files
+
+  [ David Kalnischkies ]
+  * doc/Doxyfile.in:
+    - update file with doxygen 1.6.1 (current unstable)
+    - activate DOT_MULTI_TARGETS, it is default on since doxygen 1.5.9
+  * buildlib/po4a_manpage.mak, doc/makefile, configure:
+    - simplify the makefiles needed for po4a manpages
+  * apt-pkg/contrib/configuration.cc:
+    - add a helper to easily get a vector of strings from the config
+  * apt-pkg/contrib/strutl.cc:
+    - replace unknown multibytes with ? in UTF8ToCharset (Closes: #545208)
+  * doc/apt-get.8.xml:
+    - fix two little typos in the --simulate description.
+  * apt-pkg/aptconfiguration.cc, doc/apt.conf.5.xml:
+    - add an order subgroup to the compression types to simplify reordering
+      a bit and improve the documentation for this option group.
+  * doc/apt.ent, all man pages:
+    - move the description of files to globally usable entities
+  * doc/apt_preferences.5.xml:
+    - document the new preferences.d folder (Closes: #544017)
+  * methods/rred.cc:
+    - add at the top without failing (by Bernhard R. Link, Closes: #545694)
+  * buildlib/sizetable:
+    - add amd64 for cross building (by Mikhail Gusarov, Closes: #513058)
+  * debian/prerm:
+    - remove file as nobody will upgrade from 0.4.10 anymore
+  * debian/control:
+    - remove gnome-apt suggestion as it was removed from debian
+  * apt-pkg/deb/dpkgpm.cc, apt-pkg/packagemanager.cc, apt-pkg/orderlist.cc:
+    - add and document _experimental_ options to make (aggressive)
+      use of dpkg's trigger and configuration handling (Closes: #473461)
+
+  [ Christian Perrier ]
+  * doc/fr/*, doc/po/fr.po:
+    - remove the old fr man page translation and replace it with
+      the new po4a-powered translation
+  * doc/pl, doc/de: dropped (pl translation is useless as the translated
+    document is not provideed anymore and the de translation is too
+    incomplete to be used)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Aug 2009 09:40:08 +0200
+
+apt (0.7.23.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/pkgcache.cc:
+    - do not set internel "needs-configure" state for packages in 
+      triggers-pending state. dpkg will deal with the trigger and
+      it if does it before we trigger it, dpkg will error out
+      (LP: #414631)
+  * apt-pkg/acquire-item.cc:
+    - do not segfault on invalid items (closes: #544080)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 28 Aug 2009 21:53:20 +0200
+
+apt (0.7.23) unstable; urgency=low
+
+  [ Eugene V. Lyubimkin ]
+  * methods/{http,https,ftp}, doc/apt.conf.5.xml:
+    - Changed and unified the code that determines which proxy to use. Now
+      'Acquire::{http,ftp}::Proxy[::<host>]' options have the highest priority,
+      and '{http,ftp}_proxy' environment variables are used only if options
+      mentioned above are not specified.
+      (Closes: #445985, #157759, #320184, #365880, #479617)
+  
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - add APT::Get::HideAutoRemove=small to display only a short line
+      instead of the full package list. (Closes: #537450)
+    - ShowBroken() in build-dep (by Mike O'Connor, Closes: #145916)
+    - check for statfs.f_type (by Robert Millan, Closes: #509313)
+    - correct the order of picked package binary vs source in source
+    - use SourceVersion instead of the BinaryVersion to get the source
+      Patch by Matt Kraai, thanks! (Closes: #382826)
+    - add pkg/archive and codename in source (Closes: #414105, #441178)
+  * apt-pkg/contrib/strutl.cc:
+    - enable thousand separator according to the current locale
+      (by Luca Bruno, Closes: #223712)
+  * doc/apt.conf.5.xml:
+    - mention the apt.conf.d dir (by Vincent McIntyre, Closes: #520831)
+  * apt-inst/contrib/arfile.cc:
+    - use sizeof instead strlen (by Marius Vollmer, Closes: #504325)
+  * doc/apt-mark.8.xml:
+    - improve manpage based on patch by Carl Chenet (Closes: #510286)
+  * apt-pkg/acquire-item.cc:
+    - use configsettings for dynamic compression type use and order.
+      Based on a patch by Jyrki Muukkonen, thanks! (LP: #71746)
+  * apt-pkg/aptconfiguration.cc:
+    - add default configuration for compression types and add lzma
+      support. Order is now bzip2, lzma, gzip, none (Closes: #510526)
+  * ftparchive/writer.cc:
+    - add lzma support also here, patch for this (and inspiration for
+      the one above) by Robert Millan, thanks!
+  * apt-pkg/depcache.cc:
+    - restore the --ignore-hold effect in the Is{Delete,Install}Ok hooks
+  * doc/apt-get.8.xml:
+    - update the source description to reflect what it actually does
+      and how it can be used. (Closes: #413021)
+  * methods/http.cc:
+    - allow empty Reason-Phase in Status-Line to please squid,
+      thanks Modestas Vainius for noticing! (Closes: #531157, LP: #411435)
+
+  [ George Danchev ]
+  * cmdline/apt-cache.cc:
+    - fix a memory leak in the xvcg method (Closes: #511557)
+  * apt-pkg/indexcopy.cc:
+    - fix a memory leak then the Release file not exists (Closes: #511556)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 27 Aug 2009 14:44:39 +0200
 
 apt (0.7.22.2) unstable; urgency=low
 
@@ -119,7 +234,7 @@ apt (0.7.22) unstable; urgency=low
       (off by default)
     - send "dpkg-exec" message on the status fd when dpkg is run
     - provide DPkg::Chroot-Directory config option (useful for testing)
-    - fix potential hang when in a backgroud process group
+    - fix potential hang when in a background process group
   * apt-pkg/algorithms.cc:
     - consider recommends when making the scores for the problem 
       resolver
@@ -148,7 +263,7 @@ apt (0.7.22) unstable; urgency=low
   * apt-pkg/deb/debsystem.cc:
     - make strings i18n able 
   * fix problematic use of tolower() when calculating the version 
-    hash by using locale independant tolower_ascii() function. 
+    hash by using locale independent tolower_ascii() function. 
     Thanks to M. Vefa Bicakci (LP: #80248)
   * build fixes for g++-4.4
   * cmdline/apt-mark:

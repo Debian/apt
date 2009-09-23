@@ -21,6 +21,7 @@
  <refmeta>
    <refentrytitle>apt-cache</refentrytitle>
    <manvolnum>8</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
  </refmeta>
  
  <!-- Man page title -->
@@ -356,21 +357,8 @@ Reverse Provides:
 
  <refsect1><title>Files</title>
    <variablelist>
-     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>
-     <listitem><para>Locations to fetch packages from.
-     Configuration Item: <literal>Dir::Etc::SourceList</literal>.</para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>&statedir;/lists/</filename></term>
-     <listitem><para>Storage area for state information for each package resource specified in
-     &sources-list;
-     Configuration Item: <literal>Dir::State::Lists</literal>.</para></listitem>
-     </varlistentry>
-  
-     <varlistentry><term><filename>&statedir;/lists/partial/</filename></term>
-     <listitem><para>Storage area for state information in transit.
-     Configuration Item: <literal>Dir::State::Lists</literal> (implicit partial).</para></listitem>
-     </varlistentry>     
+     &file-sourceslist;
+     &file-statelists;
    </variablelist>
  </refsect1>
 

@@ -21,6 +21,7 @@
  <refmeta>
    <refentrytitle>apt-get</refentrytitle>
    <manvolnum>8</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
  </refmeta>
  
  <!-- Man page title -->
@@ -85,9 +86,19 @@
          <arg choice='plain'>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg choice='plain'>source 
 			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
-				 <arg>
-					 =<replaceable>pkg_version_number</replaceable>
-				 </arg>
+				<arg>
+					<group choice='req'>
+						<arg choice='plain'>
+							=<replaceable>pkg_version_number</replaceable>
+						</arg>
+						<arg choice='plain'>
+							/<replaceable>target_release_name</replaceable>
+						</arg>
+						<arg choice='plain'>
+							/<replaceable>target_release_codename</replaceable>
+						</arg>
+					</group>
+				</arg>
 			 </arg>
 	     </arg>
          <arg choice='plain'>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
@@ -240,13 +251,22 @@
      <listitem><para><literal>source</literal> causes <command>apt-get</command> to fetch source packages. APT 
      will examine the available packages to decide which source package to 
      fetch. It will then find and download into the current directory the 
-     newest available version of that source package. Source packages are 
-     tracked separately from binary packages via <literal>deb-src</literal> type lines 
-     in the &sources-list; file. This probably will mean that you will not 
-     get the same source as the package you have installed or as you could 
-     install. If the --compile options is specified then the package will be 
-     compiled to a binary .deb using dpkg-buildpackage, if --download-only is 
-     specified then the source package will not be unpacked.</para>
+     newest available version of that source package while respect the
+     default release, set with the option <literal>APT::Default-Release</literal>,
+     the <option>-t</option> option or per package with with the
+     <literal>pkg/release</literal> syntax, if possible.</para>
+
+     <para>Source packages are tracked separately
+     from binary packages via <literal>deb-src</literal> type lines 
+     in the &sources-list; file. This means that you will need to add such a line
+     for each repository you want to get sources from. If you don't do this
+     you will properly get another (newer, older or none) source version than
+     the one you have installed or could install.</para>
+
+     <para>If the <option>--compile</option> options is specified
+     then the package will be compiled to a binary .deb using
+     <command>dpkg-buildpackage</command>, if <option>--download-only</option>
+     is specified then the source package will not be unpacked.</para>
 
      <para>A specific source version can be retrieved by postfixing the source name
      with an equals and then the version to fetch, similar to the mechanism
@@ -364,9 +384,9 @@
      Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
 
      <para>Simulation run as user will deactivate locking (<literal>Debug::NoLocking</literal>)
-     automatical. Also a notice will be displayed indicating that this is only a simulation,
-     if the option <literal>APT::Get::Show-User-Simulation-Note</literal> is set (Default: true)
-     Neigther NoLocking nor the notice will be triggered if run as root (root should know what
+     automatic. Also a notice will be displayed indicating that this is only a simulation,
+     if the option <literal>APT::Get::Show-User-Simulation-Note</literal> is set (Default: true).
+     Neither NoLocking nor the notice will be triggered if run as root (root should know what
      he is doing without further warnings by <literal>apt-get</literal>).</para>
 
      <para>Simulate prints out
@@ -538,50 +558,11 @@
 
  <refsect1><title>Files</title>
    <variablelist>
-     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>
-     <listitem><para>Locations to fetch packages from.
-     Configuration Item: <literal>Dir::Etc::SourceList</literal>.</para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>/etc/apt/apt.conf</filename></term>
-     <listitem><para>APT configuration file.
-     Configuration Item: <literal>Dir::Etc::Main</literal>.</para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>/etc/apt/apt.conf.d/</filename></term>
-     <listitem><para>APT configuration file fragments.
-     Configuration Item: <literal>Dir::Etc::Parts</literal>.</para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>/etc/apt/preferences</filename></term>
-     <listitem><para>Version preferences file.
-     This is where you would specify "pinning",
-     i.e. a preference to get certain packages
-     from a separate source
-     or from a different version of a distribution.
-     Configuration Item: <literal>Dir::Etc::Preferences</literal>.</para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>&cachedir;/archives/</filename></term>
-     <listitem><para>Storage area for retrieved package files.
-     Configuration Item: <literal>Dir::Cache::Archives</literal>.</para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>&cachedir;/archives/partial/</filename></term>
-     <listitem><para>Storage area for package files in transit.
-     Configuration Item: <literal>Dir::Cache::Archives</literal> (implicit partial). </para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>&statedir;/lists/</filename></term>
-     <listitem><para>Storage area for state information for each package resource specified in
-     &sources-list;
-     Configuration Item: <literal>Dir::State::Lists</literal>.</para></listitem>
-     </varlistentry>
-  
-     <varlistentry><term><filename>&statedir;/lists/partial/</filename></term>
-     <listitem><para> Storage area for state information in transit.
-     Configuration Item: <literal>Dir::State::Lists</literal> (implicit partial).</para></listitem>
-     </varlistentry>     
+     &file-sourceslist;
+     &file-aptconf;
+     &file-preferences;
+     &file-cachearchives;
+     &file-statelists;
    </variablelist>
  </refsect1>
 

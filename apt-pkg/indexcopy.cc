@@ -592,7 +592,10 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 
       // a Release.gpg without a Release should never happen
       if(!FileExists(*I+"Release"))
+      {
+	 delete MetaIndex;
 	 continue;
+      }
 
 
       // verify the gpg signature of "Release"
