@@ -30,10 +30,15 @@ apt (0.7.24) UNRELEASED; urgency=low
   * apt-pkg/contrib/strutl.cc:
     - replace unknown multibytes with ? in UTF8ToCharset (Closes: #545208)
   * doc/apt-get.8.xml:
-    - fix two little typos in the --simulate description.
+    - fix two little typos in the --simulate description. (Closes: #545059)
   * apt-pkg/aptconfiguration.cc, doc/apt.conf.5.xml:
     - add an order subgroup to the compression types to simplify reordering
       a bit and improve the documentation for this option group.
+  * doc/apt.conf.5.xml:
+    - document the Acquire::http::Dl-Limit option
+    - try to be cristal clear about the usage of :: and {} (Closes: #503481)
+  * doc/apt-cache.8.xml:
+    - clarify the note for the pkgnames command (Closes: #547599)
   * doc/apt.ent, all man pages:
     - move the description of files to globally usable entities
   * doc/apt_preferences.5.xml:
@@ -49,14 +54,16 @@ apt (0.7.24) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc, apt-pkg/packagemanager.cc, apt-pkg/orderlist.cc:
     - add and document _experimental_ options to make (aggressive)
       use of dpkg's trigger and configuration handling (Closes: #473461)
+  * cmdline/apt-get.cc:
+    - ignore versions that are not candidates when selecting a package
+      instead of a virtual one (by Marius Vollmer, Closes: #547788)
 
   [ Christian Perrier ]
   * doc/fr/*, doc/po/fr.po:
     - remove the old fr man page translation and replace it with
       the new po4a-powered translation
-  * doc/pl, doc/de: dropped (pl translation is useless as the translated
-    document is not provideed anymore and the de translation is too
-    incomplete to be used)
+  * doc/de: dropped (translation is too incomplete to be useful in
+      the transition to the po4a-powered translations)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Aug 2009 09:40:08 +0200
 

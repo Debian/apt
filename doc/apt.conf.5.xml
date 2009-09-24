@@ -86,17 +86,40 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <para>The names of the configuration items are not case-sensitive. So in the previous example
    you could use <literal>dpkg::pre-install-pkgs</literal>.</para>
 
-   <para>Two specials are allowed, <literal>#include</literal> and <literal>#clear</literal> 
+   <para>Names for the configuration items are optional if a list is defined as it can be see in
+   the <literal>DPkg::Pre-Install-Pkgs</literal> example above. If you don't specify a name a
+   new entry will simply add a new option to the list. If you specify a name you can override
+   the option as every other option by reassigning a new value to the option.</para>
+
+   <para>Two specials are allowed, <literal>#include</literal> and <literal>#clear</literal>:
    <literal>#include</literal> will include the given file, unless the filename
    ends in a slash, then the whole directory is included.  
    <literal>#clear</literal> is used to erase a part of the configuration tree. The
-   specified element and all its descendants are erased.</para>
+   specified element and all its descendants are erased.
+   (Note that these lines also need to end with a semicolon.)</para>
+
+   <para>The #clear command is the only way to delete a list or a complete scope.
+   Reopening a scope or the ::-style described below will <emphasis>not</emphasis>
+   override previewsly written entries. Only options can be overridden by adressing a new
+   value to it - lists and scopes can't be overridden, only cleared.</para>
 
    <para>All of the APT tools take a -o option which allows an arbitrary configuration 
    directive to be specified on the command line. The syntax is a full option
    name (<literal>APT::Get::Assume-Yes</literal> for instance) followed by an equals
    sign then the new value of the option. Lists can be appended too by adding 
-   a trailing :: to the list name.</para>
+   a trailing :: to the list name. (As you might suspect: The scope syntax can't be used
+   on the commandline.)</para>
+
+   <para>Note that you can use :: only for appending one item per line to a list and
+   that you should not use it in combination with the scope syntax.
+   (The scope syntax implicit insert ::) Using both syntaxes together will trigger a bug
+   which some users unfortunately relay on: An option with the unusual name "<literal>::</literal>"
+   which acts like every other option with a name. These introduces many problems
+   including that a user who writes multiple lines in this <emphasis>wrong</emphasis> syntax in
+   the hope to append to a list will gain the opposite as only the last assignment for this option
+   "<literal>::</literal>" will be used. Upcoming APT versions will raise errors and
+   will stop working if they encounter this misuse, so please correct such statements now
+   as long as APT doesn't complain explicit about them.</para>
  </refsect1>
 
  <refsect1><title>The APT Group</title>
@@ -227,7 +250,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      indicating how many outstanding requests APT should send. A value of
      zero MUST be specified if the remote host does not properly linger
      on TCP connections - otherwise data corruption will occur. Hosts which
-     require this are in violation of RFC 2068.</para></listitem>
+     require this are in violation of RFC 2068.</para>
+
+     <para>The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</literal>
+     which accepts integer values in kilobyte. The default value is 0 which deactivates
+     the limit and tries uses as much as possible of the bandwith (Note that this option implicit
+     deactivates the download from multiple servers at the same time.)</para></listitem>
      </varlistentry>
 
      <varlistentry><term>https</term>

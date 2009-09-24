@@ -641,6 +641,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // support subpressing of triggers processing for special
    // cases like d-i that runs the triggers handling manually
    bool const SmartConf = (_config->Find("PackageManager::Configure", "all") != "all");
+   bool const TriggersPending = _config->FindB("DPkg::TriggersPending", false);
    if (_config->FindB("DPkg::ConfigurePending", SmartConf) == true)
       List.push_back(Item(Item::ConfigurePending, PkgIterator()));
 
@@ -701,9 +702,23 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // this loop is runs once per operation
    for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
    {
+      // Do all actions with the same Op in one run
       vector<Item>::const_iterator J = I;
-      for (; J != List.end() && J->Op == I->Op; J++)
-	 /* nothing */;
+      if (TriggersPending == true)
+	 for (; J != List.end(); J++)
+	 {
+	    if (J->Op == I->Op)
+	       continue;
+	    if (J->Op != Item::TriggersPending)
+	       break;
+	    vector<Item>::const_iterator T = J + 1;
+	    if (T != List.end() && T->Op == I->Op)
+	       continue;
+	    break;
+	 }
+      else
+	 for (; J != List.end() && J->Op == I->Op; J++)
+	    /* nothing */;
 
       // Generate the argument list
       const char *Args[MaxArgs + 50];

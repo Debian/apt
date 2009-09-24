@@ -1049,17 +1049,42 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
 		  unsigned int &ExpectedInst,bool AllowFail = true)
 {
-   /* This is a pure virtual package and there is a single available 
-      provides */
-   if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0 &&
-       Pkg.ProvidesList()->NextProvides == 0)
+   /* This is a pure virtual package and there is a single available
+      candidate providing it. */
+   if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0)
    {
-      pkgCache::PkgIterator Tmp = Pkg.ProvidesList().OwnerPkg();
-      ioprintf(c1out,_("Note, selecting %s instead of %s\n"),
-	       Tmp.Name(),Pkg.Name());
-      Pkg = Tmp;
+      pkgCache::PkgIterator Prov;
+      bool found_one = false;
+
+      for (pkgCache::PrvIterator P = Pkg.ProvidesList(); P; P++)
+      {
+	 pkgCache::VerIterator const PVer = P.OwnerVer();
+	 pkgCache::PkgIterator const PPkg = PVer.ParentPkg();
+
+	 /* Ignore versions that are not a candidate. */
+	 if (Cache[PPkg].CandidateVer != PVer)
+	     continue;
+
+	 if (found_one == false)
+	 {
+	    Prov = PPkg;
+	    found_one = true;
+	 }
+	 else if (PPkg != Prov)
+	 {
+	    found_one = false; // we found at least two
+	    break;
+	 }
+      }
+
+      if (found_one == true)
+      {
+	 ioprintf(c1out,_("Note, selecting %s instead of %s\n"),
+		  Prov.Name(),Pkg.Name());
+	 Pkg = Prov;
+      }
    }
-   
+
    // Handle the no-upgrade case
    if (_config->FindB("APT::Get::upgrade",true) == false &&
        Pkg->CurrentVer != 0)
