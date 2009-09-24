@@ -1,10 +1,16 @@
 apt (0.7.22.4) unstable; urgency=low
 
+  [ Michael Vogt ]
   * apt-pkg/deb/dpkgpm.cc:
     - when tcgetattr() returns non-zero skip all pty magic 
       (thanks to Simon Richter, closes: #509866)
   * apt-inst/contrib/arfile.cc:
     - show propper error message for Invalid archive members
+
+  [ Loïc Minier ]
+  * cmdline/apt-key:
+    - Emit a warning if removed keys keyring is missing and skip associated
+      checks (LP: #218971)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 31 Aug 2009 11:08:03 +0200
 
