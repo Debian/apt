@@ -227,7 +227,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      indicating how many outstanding requests APT should send. A value of
      zero MUST be specified if the remote host does not properly linger
      on TCP connections - otherwise data corruption will occur. Hosts which
-     require this are in violation of RFC 2068.</para></listitem>
+     require this are in violation of RFC 2068.</para>
+
+     <para>The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</literal>
+     which accepts integer values in kilobyte. The default value is 0 which deactivates
+     the limit and tries uses as much as possible of the bandwith (Note that this option implicit
+     deactivates the download from multiple servers at the same time.)</para></listitem>
      </varlistentry>
 
      <varlistentry><term>https</term>
