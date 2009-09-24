@@ -861,32 +861,35 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       struct	termios tt;
       struct	winsize win;
-      int	master;
-      int	slave;
+      int	master = -1;
+      int	slave = -1;
 
-      // FIXME: setup sensible signal handling (*ick*)
-      tcgetattr(0, &tt);
-      ioctl(0, TIOCGWINSZ, (char *)&win);
-      if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+      // if tcgetattr does not return zero there was a error
+      // and we do not do any pty magic
+      if (tcgetattr(0, &tt) == 0)
       {
-	 const char *s = _("Can not write log, openpty() "
-			   "failed (/dev/pts not mounted?)\n");
-	 fprintf(stderr, "%s",s);
-	 fprintf(term_out, "%s",s);
-	 master = slave = -1;
-      }  else {
-	 struct termios rtt;
-	 rtt = tt;
-	 cfmakeraw(&rtt);
-	 rtt.c_lflag &= ~ECHO;
-	 // block SIGTTOU during tcsetattr to prevent a hang if
-	 // the process is a member of the background process group
-	 // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
-	 sigemptyset(&sigmask);
-	 sigaddset(&sigmask, SIGTTOU);
-	 sigprocmask(SIG_BLOCK,&sigmask, &original_sigmask);
-	 tcsetattr(0, TCSAFLUSH, &rtt);
-	 sigprocmask(SIG_SETMASK, &original_sigmask, 0);
+	 ioctl(0, TIOCGWINSZ, (char *)&win);
+	 if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+	 {
+	    const char *s = _("Can not write log, openpty() "
+	                      "failed (/dev/pts not mounted?)\n");
+	    fprintf(stderr, "%s",s);
+	    fprintf(term_out, "%s",s);
+	    master = slave = -1;
+	 }  else {
+	    struct termios rtt;
+	    rtt = tt;
+	    cfmakeraw(&rtt);
+	    rtt.c_lflag &= ~ECHO;
+	    // block SIGTTOU during tcsetattr to prevent a hang if
+	    // the process is a member of the background process group
+	    // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
+	    sigemptyset(&sigmask);
+	    sigaddset(&sigmask, SIGTTOU);
+	    sigprocmask(SIG_BLOCK,&sigmask, &original_sigmask);
+	    tcsetattr(0, TCSAFLUSH, &rtt);
+	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
+	 }
       }
 
        // Fork dpkg

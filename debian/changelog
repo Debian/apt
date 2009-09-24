@@ -37,6 +37,13 @@ apt (0.7.24) UNRELEASED; urgency=low
   * doc/style.txt, buildlib/defaults.mak, buildlib/manpage.mak:
     - fix a few typos in the comments of this files
 
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - when tcgetattr() returns non-zero skip all pty magic 
+      (thanks to Simon Richter, closes: #509866)
+  * apt-inst/contrib/arfile.cc:
+    - show propper error message for Invalid archive members
+  
   [ David Kalnischkies ]
   * doc/Doxyfile.in:
     - update file with doxygen 1.6.1 (current unstable)

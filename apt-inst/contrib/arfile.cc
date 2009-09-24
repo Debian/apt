@@ -87,7 +87,7 @@ bool ARArchive::LoadHeaders()
 	  StrToNum(Head.Size,Memb->Size,sizeof(Head.Size)) == false)
       {
 	 delete Memb;
-	 return _error->Error(_("Invalid archive member header"));
+	 return _error->Error(_("Invalid archive member header %s"), Head.Name);
       }
 	 
       // Check for an extra long name string
