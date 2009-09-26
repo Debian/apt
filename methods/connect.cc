@@ -237,6 +237,6 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 
    if (_error->PendingError() == true)
       return false;   
-   return _error->Error(_("Unable to connect to %s %s:"),Host.c_str(),ServStr);
+   return _error->Error(_("Unable to connect to %s:%s:"),Host.c_str(),ServStr);
 }
 									/*}}}*/
