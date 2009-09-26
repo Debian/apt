@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-27 19:43+0200\n"
+"POT-Creation-Date: 2009-09-26 11:38+0200\n"
 "PO-Revision-Date: 2005-02-16 22:18+0100\n"
 "Last-Translator: Jure Cuhalev <gandalf@owca.info>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -150,7 +150,7 @@ msgstr "       %4i %s\n"
 
 #: cmdline/apt-cache.cc:1718 cmdline/apt-cdrom.cc:134 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:547
-#: cmdline/apt-get.cc:2626 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2651 cmdline/apt-sortpkgs.cc:144
 #, fuzzy, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s za %s %s preveden na %s %s\n"
@@ -649,7 +649,7 @@ msgstr "Ni mogoèe preimenovati %s v %s"
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:149 cmdline/apt-get.cc:1695
+#: cmdline/apt-get.cc:149 cmdline/apt-get.cc:1720
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Napaka pri prevajanju regex - %s"
@@ -812,11 +812,11 @@ msgstr "Odstraniti je potrebno pakete, a je Odstranjevanje onemogoèeno."
 msgid "Internal error, Ordering didn't finish"
 msgstr "Notranja napaka pri dodajanju odklona"
 
-#: cmdline/apt-get.cc:811 cmdline/apt-get.cc:2037 cmdline/apt-get.cc:2070
+#: cmdline/apt-get.cc:811 cmdline/apt-get.cc:2062 cmdline/apt-get.cc:2095
 msgid "Unable to lock the download directory"
 msgstr "Ni mogoèe zakleniti imenika za prenose"
 
-#: cmdline/apt-get.cc:821 cmdline/apt-get.cc:2118 cmdline/apt-get.cc:2367
+#: cmdline/apt-get.cc:821 cmdline/apt-get.cc:2143 cmdline/apt-get.cc:2392
 #: apt-pkg/cachefile.cc:65
 msgid "The list of sources could not be read."
 msgstr "Seznama virov ni mogoèe brati."
@@ -845,7 +845,7 @@ msgstr "Po odpakiranju bo uporabljenega %sB dodatnega prostora na disku.\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Po odpakiranju bo spro¹èenega %sB prostora na disku.\n"
 
-#: cmdline/apt-get.cc:866 cmdline/apt-get.cc:2213
+#: cmdline/apt-get.cc:866 cmdline/apt-get.cc:2238
 #, fuzzy, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Nimate dovolj prostora na %s"
@@ -882,7 +882,7 @@ msgstr "Prekini."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Ali ¾elite nadaljevati [Y/n]? "
 
-#: cmdline/apt-get.cc:989 cmdline/apt-get.cc:2264 apt-pkg/algorithms.cc:1389
+#: cmdline/apt-get.cc:989 cmdline/apt-get.cc:2289 apt-pkg/algorithms.cc:1389
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Ni mogoèe dobiti %s  %s\n"
@@ -891,7 +891,7 @@ msgstr "Ni mogoèe dobiti %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Prenos nekaterih datotek ni uspel"
 
-#: cmdline/apt-get.cc:1008 cmdline/apt-get.cc:2273
+#: cmdline/apt-get.cc:1008 cmdline/apt-get.cc:2298
 msgid "Download complete and in download only mode"
 msgstr "Prenos dokonèan in uporabljen naèin samo prenos"
 
@@ -915,35 +915,35 @@ msgstr "Ni mogoèe popraviti manjkajoèih paketov."
 msgid "Aborting install."
 msgstr "Prekinjanje namestitve."
 
-#: cmdline/apt-get.cc:1058
+#: cmdline/apt-get.cc:1082
 #, c-format
 msgid "Note, selecting %s instead of %s\n"
 msgstr "Opomba: izbran %s namesto %s \n"
 
-#: cmdline/apt-get.cc:1068
+#: cmdline/apt-get.cc:1093
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "%s preskoèen, ker je ¾e name¹èen in ne potrebuje nadgradnje.\n"
 
-#: cmdline/apt-get.cc:1086
+#: cmdline/apt-get.cc:1111
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Paket %s ni name¹èen, zato ni odstranjen\n"
 
-#: cmdline/apt-get.cc:1097
+#: cmdline/apt-get.cc:1122
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Paket %s je navidezen in ga je priskrbel:\n"
 
-#: cmdline/apt-get.cc:1109
+#: cmdline/apt-get.cc:1134
 msgid " [Installed]"
 msgstr " [Name¹èeno]"
 
-#: cmdline/apt-get.cc:1114
+#: cmdline/apt-get.cc:1139
 msgid "You should explicitly select one to install."
 msgstr "Sami izberite paket, ki ga ¾elite namestiti."
 
-#: cmdline/apt-get.cc:1119
+#: cmdline/apt-get.cc:1144
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -954,74 +954,74 @@ msgstr ""
 "To ponavadi pomeni, da paket manjka, je zastaran ali\n"
 "pa je na voljo samo iz drugega vira.\n"
 
-#: cmdline/apt-get.cc:1138
+#: cmdline/apt-get.cc:1163
 msgid "However the following packages replace it:"
 msgstr "Kakorkoli, naslednji paketi ga nadomestijo:"
 
-#: cmdline/apt-get.cc:1141
+#: cmdline/apt-get.cc:1166
 #, c-format
 msgid "Package %s has no installation candidate"
 msgstr "Paket %s nima kandidata za namestitev"
 
-#: cmdline/apt-get.cc:1161
+#: cmdline/apt-get.cc:1186
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Ponovna namestitev %s ni mo¾na, ker ni mo¾en prenos.\n"
 
-#: cmdline/apt-get.cc:1169
+#: cmdline/apt-get.cc:1194
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "Najnovej¹a razlièica %s je ¾e name¹èena.\n"
 
-#: cmdline/apt-get.cc:1198
+#: cmdline/apt-get.cc:1223
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Izdaje '%s' za '%s' ni mogoèe najti"
 
-#: cmdline/apt-get.cc:1200
+#: cmdline/apt-get.cc:1225
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Razlièice '%s' za '%s' ni mogoèe najti"
 
-#: cmdline/apt-get.cc:1206
+#: cmdline/apt-get.cc:1231
 #, c-format
 msgid "Selected version %s (%s) for %s\n"
 msgstr "Izbrana razlièica %s (%s) za %s\n"
 
-#: cmdline/apt-get.cc:1323
+#: cmdline/apt-get.cc:1348
 #, c-format
 msgid "No source package '%s' picking '%s' instead\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1360
+#: cmdline/apt-get.cc:1385
 msgid "The update command takes no arguments"
 msgstr "Ukaz update ne potrebuje argumentov"
 
-#: cmdline/apt-get.cc:1373
+#: cmdline/apt-get.cc:1398
 msgid "Unable to lock the list directory"
 msgstr "Imenika seznamov ni mogoèe zakleniti"
 
-#: cmdline/apt-get.cc:1429
+#: cmdline/apt-get.cc:1454
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: cmdline/apt-get.cc:1478
+#: cmdline/apt-get.cc:1503
 #, fuzzy
 msgid ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr "Naslednji NOVI paketi bodo name¹èeni:"
 
-#: cmdline/apt-get.cc:1480
+#: cmdline/apt-get.cc:1505
 #, fuzzy, c-format
 msgid "%lu packages were automatically installed and are no longer required.\n"
 msgstr "Naslednji NOVI paketi bodo name¹èeni:"
 
-#: cmdline/apt-get.cc:1481
+#: cmdline/apt-get.cc:1506
 msgid "Use 'apt-get autoremove' to remove them."
 msgstr ""
 
-#: cmdline/apt-get.cc:1486
+#: cmdline/apt-get.cc:1511
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1037,44 +1037,44 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1489 cmdline/apt-get.cc:1779
+#: cmdline/apt-get.cc:1514 cmdline/apt-get.cc:1804
 msgid "The following information may help to resolve the situation:"
 msgstr "Naslednji podatki vam bodo morda pomagali re¹iti te¾avo:"
 
-#: cmdline/apt-get.cc:1493
+#: cmdline/apt-get.cc:1518
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Notranja napaka zaradi AllUpgrade."
 
-#: cmdline/apt-get.cc:1512
+#: cmdline/apt-get.cc:1537
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Notranja napaka zaradi AllUpgrade."
 
-#: cmdline/apt-get.cc:1567
+#: cmdline/apt-get.cc:1592
 #, fuzzy, c-format
 msgid "Couldn't find task %s"
 msgstr "Ni mogoèe najti paketa %s"
 
-#: cmdline/apt-get.cc:1682 cmdline/apt-get.cc:1718
+#: cmdline/apt-get.cc:1707 cmdline/apt-get.cc:1743
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Ni mogoèe najti paketa %s"
 
-#: cmdline/apt-get.cc:1705
+#: cmdline/apt-get.cc:1730
 #, c-format
 msgid "Note, selecting %s for regex '%s'\n"
 msgstr "Opomba: izbran %s namesto regex '%s'\n"
 
-#: cmdline/apt-get.cc:1736
+#: cmdline/apt-get.cc:1761
 #, fuzzy, c-format
 msgid "%s set to manually installed.\n"
 msgstr "vendar bo paket %s name¹èen"
 
-#: cmdline/apt-get.cc:1749
+#: cmdline/apt-get.cc:1774
 msgid "You might want to run `apt-get -f install' to correct these:"
 msgstr "Poskusite zagnati 'apt-get -f install', èe ¾elite popraviti:"
 
-#: cmdline/apt-get.cc:1752
+#: cmdline/apt-get.cc:1777
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1082,7 +1082,7 @@ msgstr ""
 "Nere¹ene odvisnosti. Poskusite 'apt-get -f install' brez paketov (ali "
 "podajte re¹itev)."
 
-#: cmdline/apt-get.cc:1764
+#: cmdline/apt-get.cc:1789
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1093,126 +1093,126 @@ msgstr ""
 "nemogoè polo¾aj, èe uporabljate nestabilno izdajo pa, da nekateri zahtevani "
 "paketi ¹e niso ustvarjeni ali prene¹eni iz Prihajajoèe."
 
-#: cmdline/apt-get.cc:1782
+#: cmdline/apt-get.cc:1807
 msgid "Broken packages"
 msgstr "Pokvarjeni paketi"
 
-#: cmdline/apt-get.cc:1811
+#: cmdline/apt-get.cc:1836
 msgid "The following extra packages will be installed:"
 msgstr "Naslednji dodatni paketi bodo name¹èeni:"
 
-#: cmdline/apt-get.cc:1900
+#: cmdline/apt-get.cc:1925
 msgid "Suggested packages:"
 msgstr "Predlagani paketi:"
 
-#: cmdline/apt-get.cc:1901
+#: cmdline/apt-get.cc:1926
 msgid "Recommended packages:"
 msgstr "Priporoèeni paketi:"
 
-#: cmdline/apt-get.cc:1930
+#: cmdline/apt-get.cc:1955
 msgid "Calculating upgrade... "
 msgstr "Preraèunavanje nadgradnje ... "
 
-#: cmdline/apt-get.cc:1933 methods/ftp.cc:707 methods/connect.cc:112
+#: cmdline/apt-get.cc:1958 methods/ftp.cc:707 methods/connect.cc:112
 msgid "Failed"
 msgstr "Spodletelo"
 
-#: cmdline/apt-get.cc:1938
+#: cmdline/apt-get.cc:1963
 msgid "Done"
 msgstr "Opravljeno"
 
-#: cmdline/apt-get.cc:2005 cmdline/apt-get.cc:2013
+#: cmdline/apt-get.cc:2030 cmdline/apt-get.cc:2038
 #, fuzzy
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Notranja napaka zaradi AllUpgrade."
 
-#: cmdline/apt-get.cc:2113
+#: cmdline/apt-get.cc:2138
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Potrebno je navesti vsaj en paket, za katerega ¾elite dobiti izorno kodo"
 
-#: cmdline/apt-get.cc:2143 cmdline/apt-get.cc:2385
+#: cmdline/apt-get.cc:2168 cmdline/apt-get.cc:2410
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Izvornega paketa za %s ni mogoèe najti"
 
-#: cmdline/apt-get.cc:2192
+#: cmdline/apt-get.cc:2217
 #, fuzzy, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Odpakiranje ¾e odpakiranih izvornih paketov v %s preskoèeno\n"
 
-#: cmdline/apt-get.cc:2223
+#: cmdline/apt-get.cc:2248
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Nimate dovolj prostora na %s"
 
-#: cmdline/apt-get.cc:2229
+#: cmdline/apt-get.cc:2254
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Potrebno je dobiti %sB/%sB izvornih arhivov.\n"
 
-#: cmdline/apt-get.cc:2232
+#: cmdline/apt-get.cc:2257
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Potrebno je dobiti %sB izvornih arhivov.\n"
 
-#: cmdline/apt-get.cc:2238
+#: cmdline/apt-get.cc:2263
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Dobi vir %s\n"
 
-#: cmdline/apt-get.cc:2269
+#: cmdline/apt-get.cc:2294
 msgid "Failed to fetch some archives."
 msgstr "Nekaterih arhivov ni mogoèe dobiti."
 
-#: cmdline/apt-get.cc:2297
+#: cmdline/apt-get.cc:2322
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Odpakiranje ¾e odpakiranih izvornih paketov v %s preskoèeno\n"
 
-#: cmdline/apt-get.cc:2309
+#: cmdline/apt-get.cc:2334
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Ukaz odpakiranja '%s' ni uspel.\n"
 
-#: cmdline/apt-get.cc:2310
+#: cmdline/apt-get.cc:2335
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2327
+#: cmdline/apt-get.cc:2352
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Ukaz gradnje '%s' ni uspel.\n"
 
-#: cmdline/apt-get.cc:2346
+#: cmdline/apt-get.cc:2371
 msgid "Child process failed"
 msgstr "Otro¹ki proces ni uspel"
 
-#: cmdline/apt-get.cc:2362
+#: cmdline/apt-get.cc:2387
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Potrebno je navesti vsaj en paket, za katerega ¾elite preveriti odvisnosti "
 "za gradnjo"
 
-#: cmdline/apt-get.cc:2390
+#: cmdline/apt-get.cc:2415
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Ni mogoèe dobiti informacij o odvisnostih za gradnjo za %s"
 
-#: cmdline/apt-get.cc:2410
+#: cmdline/apt-get.cc:2435
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s nima odvisnosti za gradnjo.\n"
 
-#: cmdline/apt-get.cc:2462
+#: cmdline/apt-get.cc:2487
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%s odvisnosti za %s ni mogoèe zadostiti, ker ni mogoèe najti paketa %s"
 
-#: cmdline/apt-get.cc:2515
+#: cmdline/apt-get.cc:2540
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1221,31 +1221,31 @@ msgstr ""
 "%s odvisnosti za %s ni mogoèe zadostiti, ker nobena razlièica paketa %s ne "
 "more zadostiti zahtevi po razlièici"
 
-#: cmdline/apt-get.cc:2551
+#: cmdline/apt-get.cc:2576
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Ni mogoèe zadostiti %s odvisnosti za %s. Name¹èen paket %s je preveè nov"
 
-#: cmdline/apt-get.cc:2578
+#: cmdline/apt-get.cc:2603
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Ni mogoèe zadostiti %s odvisnosti za %s. %s"
 
-#: cmdline/apt-get.cc:2594
+#: cmdline/apt-get.cc:2619
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Odvisnostim za gradnjo %s ni mogoèe zadostiti."
 
-#: cmdline/apt-get.cc:2599
+#: cmdline/apt-get.cc:2624
 msgid "Failed to process build dependencies"
 msgstr "Obdelava odvisnosti za gradnjo ni uspela"
 
-#: cmdline/apt-get.cc:2631
+#: cmdline/apt-get.cc:2656
 msgid "Supported modules:"
 msgstr "Podprti moduli:"
 
-#: cmdline/apt-get.cc:2672
+#: cmdline/apt-get.cc:2697
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1328,7 +1328,7 @@ msgstr ""
 "sources.list(5) in apt.conf(5).\n"
 "                       APT ima moè Super Krave.\n"
 
-#: cmdline/apt-get.cc:2839
+#: cmdline/apt-get.cc:2864
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1467,7 +1467,12 @@ msgstr "Napaèen podpis arhiva"
 msgid "Error reading archive member header"
 msgstr "Napaka pri branju glave èlana arhiva"
 
-#: apt-inst/contrib/arfile.cc:90 apt-inst/contrib/arfile.cc:102
+#: apt-inst/contrib/arfile.cc:90
+#, fuzzy, c-format
+msgid "Invalid archive member header %s"
+msgstr "Napaèna glava èlana arhiva"
+
+#: apt-inst/contrib/arfile.cc:102
 msgid "Invalid archive member header"
 msgstr "Napaèna glava èlana arhiva"
 
@@ -1569,7 +1574,7 @@ msgstr "Datoteka %s/%s prepisuje datoteko v paketu %s"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: apt-inst/extract.cc:464 apt-pkg/contrib/configuration.cc:822
+#: apt-inst/extract.cc:464 apt-pkg/contrib/configuration.cc:843
 #: apt-pkg/contrib/cdromutl.cc:157 apt-pkg/sourcelist.cc:166
 #: apt-pkg/sourcelist.cc:172 apt-pkg/sourcelist.cc:327 apt-pkg/acquire.cc:419
 #: apt-pkg/init.cc:89 apt-pkg/init.cc:97 apt-pkg/clean.cc:33
@@ -2098,81 +2103,81 @@ msgid ""
 msgstr ""
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:335
+#: apt-pkg/contrib/strutl.cc:346
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr ""
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:342
+#: apt-pkg/contrib/strutl.cc:353
 #, c-format
 msgid "%lih %limin %lis"
 msgstr ""
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:349
+#: apt-pkg/contrib/strutl.cc:360
 #, c-format
 msgid "%limin %lis"
 msgstr ""
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:354
+#: apt-pkg/contrib/strutl.cc:365
 #, c-format
 msgid "%lis"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1029
+#: apt-pkg/contrib/strutl.cc:1040
 #, c-format
 msgid "Selection %s not found"
 msgstr "Izbira %s ni mogoèe najti"
 
-#: apt-pkg/contrib/configuration.cc:439
+#: apt-pkg/contrib/configuration.cc:458
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Ne-prepoznan tip okraj¹ave: '%c'"
 
-#: apt-pkg/contrib/configuration.cc:497
+#: apt-pkg/contrib/configuration.cc:516
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "Odpiranje nastavitvene datoteke %s"
 
-#: apt-pkg/contrib/configuration.cc:663
+#: apt-pkg/contrib/configuration.cc:684
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Skladenjska napaka %s:%u: Blok se zaène brez imena."
 
-#: apt-pkg/contrib/configuration.cc:682
+#: apt-pkg/contrib/configuration.cc:703
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "Skladenjska napaka %s:%u: Nepravilna znaèka."
 
-#: apt-pkg/contrib/configuration.cc:699
+#: apt-pkg/contrib/configuration.cc:720
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Skladenjska napaka %s:%u: Dodatno smetje za vrednostjo."
 
-#: apt-pkg/contrib/configuration.cc:739
+#: apt-pkg/contrib/configuration.cc:760
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Skladenjska napaka %s:%u: Napotki se lahko izvedejo le na vrhnjem nivoju."
 
-#: apt-pkg/contrib/configuration.cc:746
+#: apt-pkg/contrib/configuration.cc:767
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Skladenjska napaka %s:%u: Preveè ugnezdenih vkljuèitev."
 
-#: apt-pkg/contrib/configuration.cc:750 apt-pkg/contrib/configuration.cc:755
+#: apt-pkg/contrib/configuration.cc:771 apt-pkg/contrib/configuration.cc:776
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Skladenjska napaka %s:%u: Vkljuèen od tu."
 
-#: apt-pkg/contrib/configuration.cc:759
+#: apt-pkg/contrib/configuration.cc:780
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Skladenjska napaka %s:%u: Nepodprt napotek '%s'"
 
-#: apt-pkg/contrib/configuration.cc:810
+#: apt-pkg/contrib/configuration.cc:831
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Skladenjska napaka %s:%u: Dodatno smetje na koncu datoteke"
@@ -2484,7 +2489,7 @@ msgstr "Vrsta '%s' v vrstici %u v seznamu virov %s ni znana"
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr "Napaèna vrstica %u v seznamu virov %s (ID ponudnika)"
 
-#: apt-pkg/packagemanager.cc:426
+#: apt-pkg/packagemanager.cc:436
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2884,12 +2889,12 @@ msgstr ""
 msgid "Installing %s"
 msgstr "  Name¹èen: "
 
-#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:642
+#: apt-pkg/deb/dpkgpm.cc:50 apt-pkg/deb/dpkgpm.cc:660
 #, fuzzy, c-format
 msgid "Configuring %s"
 msgstr "Povezujem se z %s"
 
-#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:649
+#: apt-pkg/deb/dpkgpm.cc:51 apt-pkg/deb/dpkgpm.cc:667
 #, fuzzy, c-format
 msgid "Removing %s"
 msgstr "Odpiram %s"
@@ -2899,56 +2904,56 @@ msgstr "Odpiram %s"
 msgid "Running post-installation trigger %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:546
+#: apt-pkg/deb/dpkgpm.cc:557
 #, fuzzy, c-format
 msgid "Directory '%s' missing"
 msgstr "Manjka imenik s seznami %spartial."
 
-#: apt-pkg/deb/dpkgpm.cc:635
+#: apt-pkg/deb/dpkgpm.cc:653
 #, fuzzy, c-format
 msgid "Preparing %s"
 msgstr "Odpiram %s"
 
-#: apt-pkg/deb/dpkgpm.cc:636
+#: apt-pkg/deb/dpkgpm.cc:654
 #, fuzzy, c-format
 msgid "Unpacking %s"
 msgstr "Odpiram %s"
 
-#: apt-pkg/deb/dpkgpm.cc:641
+#: apt-pkg/deb/dpkgpm.cc:659
 #, fuzzy, c-format
 msgid "Preparing to configure %s"
 msgstr "Odpiranje nastavitvene datoteke %s"
 
-#: apt-pkg/deb/dpkgpm.cc:643
+#: apt-pkg/deb/dpkgpm.cc:661
 #, fuzzy, c-format
 msgid "Installed %s"
 msgstr "  Name¹èen: "
 
-#: apt-pkg/deb/dpkgpm.cc:648
+#: apt-pkg/deb/dpkgpm.cc:666
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:650
+#: apt-pkg/deb/dpkgpm.cc:668
 #, fuzzy, c-format
 msgid "Removed %s"
 msgstr "Priporoèa"
 
-#: apt-pkg/deb/dpkgpm.cc:655
+#: apt-pkg/deb/dpkgpm.cc:673
 #, fuzzy, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Odpiranje nastavitvene datoteke %s"
 
-#: apt-pkg/deb/dpkgpm.cc:656
+#: apt-pkg/deb/dpkgpm.cc:674
 #, fuzzy, c-format
 msgid "Completely removed %s"
 msgstr "Odstranitev %s ni uspela"
 
-#: apt-pkg/deb/dpkgpm.cc:820
+#: apt-pkg/deb/dpkgpm.cc:878
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:848
+#: apt-pkg/deb/dpkgpm.cc:907
 msgid "Running dpkg"
 msgstr ""
 
