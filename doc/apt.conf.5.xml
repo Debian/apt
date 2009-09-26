@@ -59,8 +59,11 @@
    between <literal>/*</literal> and <literal>*/</literal>, just like C/C++ comments.
    Each line is of the form
    <literal>APT::Get::Assume-Yes "true";</literal> The trailing 
-   semicolon is required and the quotes are optional. A new scope can be
-   opened with curly braces, like:</para>
+   semicolon and the quotes are required. The value must be on one line, and
+   there is no kind of string concatenation. It must not include inside quotes.
+   The behavior of the backslash "\" and escaped characters inside a value is
+   undefined and it should not be used. A new scope can be opened with curly
+   braces, like:</para>
 
 <informalexample><programlisting>   
 APT {
