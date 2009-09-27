@@ -2,16 +2,16 @@
 # Polish translation by:
 # Marcin Owsiany <porridge@debian.org>, 2002, 2003, 2004.
 # Bartosz Fenski <fenio@debian.org>, 2005, 2006
-# Wiktor Wandachowicz <siryes@gmail.com>, 2008
+# Wiktor Wandachowicz <siryes@gmail.com>, 2008, 2009
 #
 # Nazewnictwo i spójność tłumaczeń programów apt, aptitude, synaptic i innych:
 # http://wiki.debian.org/PolishL10N/PackageInstallers
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7.14\n"
+"Project-Id-Version: apt 0.7.23.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-26 11:38+0200\n"
-"PO-Revision-Date: 2008-11-13 17:10+0100\n"
+"POT-Creation-Date: 2009-09-26 13:54+0200\n"
+"PO-Revision-Date: 2009-09-27 03:42+0100\n"
 "Last-Translator: Wiktor Wandachowicz <siryes@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -1000,7 +1000,7 @@ msgstr "Wybrano wersję %s (%s) dla %s\n"
 #: cmdline/apt-get.cc:1348
 #, c-format
 msgid "No source package '%s' picking '%s' instead\n"
-msgstr ""
+msgstr "Brak pakietu źródłowego \"%s\", wybieranie \"%s\" zamiast niego\n"
 
 #: cmdline/apt-get.cc:1385
 msgid "The update command takes no arguments"
@@ -1023,11 +1023,11 @@ msgstr ""
 "wymagane:"
 
 #: cmdline/apt-get.cc:1505
-#, fuzzy, c-format
+#, c-format
 msgid "%lu packages were automatically installed and are no longer required.\n"
 msgstr ""
-"Następujące pakiety zostały zainstalowane automatycznie i nie są już więcej "
-"wymagane:"
+"%lu pakiety(ów) zostały zainstalowane automatycznie i nie są już więcej "
+"wymagane.\n"
 
 #: cmdline/apt-get.cc:1506
 msgid "Use 'apt-get autoremove' to remove them."
@@ -1207,18 +1207,17 @@ msgstr "Proces potomny zawiódł"
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Należy podać przynajmniej jeden pakiet, dla którego mają zostać sprawdzone "
-"zależności na czas budowania"
+"zależności dla budowania"
 
 #: cmdline/apt-get.cc:2415
 #, c-format
 msgid "Unable to get build-dependency information for %s"
-msgstr ""
-"Nie udało się pobrać informacji o zależnościach na czas budowania dla %s"
+msgstr "Nie udało się pobrać informacji o zależnościach dla budowania %s"
 
 #: cmdline/apt-get.cc:2435
 #, c-format
 msgid "%s has no build depends.\n"
-msgstr "%s nie ma zależności czasu budowania.\n"
+msgstr "%s nie ma zależności dla budowania.\n"
 
 #: cmdline/apt-get.cc:2487
 #, c-format
@@ -1253,18 +1252,17 @@ msgstr "Nie udało się spełnić zależności %s od %s: %s"
 #: cmdline/apt-get.cc:2619
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Nie udało się spełnić zależności na czas budowania od %s."
+msgstr "Nie udało się spełnić zależności dla budowania %s."
 
 #: cmdline/apt-get.cc:2624
 msgid "Failed to process build dependencies"
-msgstr "Nie udało się przetworzyć zależności na czas budowania"
+msgstr "Nie udało się przetworzyć zależności dla budowania"
 
 #: cmdline/apt-get.cc:2656
 msgid "Supported modules:"
 msgstr "Obsługiwane moduły:"
 
 #: cmdline/apt-get.cc:2697
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1322,8 +1320,7 @@ msgstr ""
 "  autoremove - Usuwa automatycznie wszystkie nieużywane pakiety\n"
 "  purge - Usuwa i czyści pakiety\n"
 "  source - Pobiera archiwa źródłowe\n"
-"  build-dep - Konfiguruje zależności na czas budowania dla pakietów "
-"źródłowych\n"
+"  build-dep - Konfiguruje zależności dla budowania pakietów źródłowych\n"
 "  dist-upgrade - Aktualizacja dystrybucji, patrz apt-get(8)\n"
 "  dselect-upgrade - Instaluje według wyborów dselect\n"
 "  clean - Usuwa pobrane pliki archiwów\n"
@@ -1344,7 +1341,7 @@ msgstr ""
 "  -b   Buduje pakiet po pobraniu archiwum źródłowego\n"
 "  -V   Pokazuje pełną informację na temat wersji\n"
 "  -c=? Czyta wskazany plik konfiguracyjny.\n"
-"  -o=? Ustawie dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
+"  -o=? Ustawia dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
 "Więcej informacji i opcji można znaleźć na stronach podręcznika\n"
 "apt-get(8), sources.list(5) i apt.conf(5).\n"
 "                         Ten APT ma moce Super Krowy.\n"
@@ -1356,6 +1353,10 @@ msgid ""
 "      Keep also in mind that locking is deactivated,\n"
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
+"UWAGA: To jest tylko symulacja!\n"
+"      apt-get wymaga normalnie praw administracyjnych dla działania.\n"
+"      Aktualnie blokowanie jest wyłączone, więc nie należy polegać\n"
+"      na związku z rzeczywistą sytuacją!"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1491,6 +1492,7 @@ msgstr "Błąd przy czytaniu nagłówka składnika archiwum"
 
 #: apt-inst/contrib/arfile.cc:90
 #, fuzzy, c-format
+#| msgid "Invalid archive member header"
 msgid "Invalid archive member header %s"
 msgstr "Nieprawidłowy nagłówek składnika archiwum"
 
@@ -2131,30 +2133,32 @@ msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
+"Brak miejsca dla dynamicznego MMap. Proszę zwiększyć rozmiar APT::Cache-"
+"Limit. Aktualna wartość: %lu. (man 5 apt.conf)"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:346
 #, c-format
 msgid "%lid %lih %limin %lis"
-msgstr ""
+msgstr "%lidni %lih %limin %lis"
 
 #. h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:353
 #, c-format
 msgid "%lih %limin %lis"
-msgstr ""
+msgstr "%lih %limin %lis"
 
 #. min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:360
 #, c-format
 msgid "%limin %lis"
-msgstr ""
+msgstr "%limin %lis"
 
 #. s means seconds
 #: apt-pkg/contrib/strutl.cc:365
 #, c-format
 msgid "%lis"
-msgstr ""
+msgstr "%lis"
 
 #: apt-pkg/contrib/strutl.cc:1040
 #, c-format
@@ -2314,9 +2318,9 @@ msgid "Sub-process %s received a segmentation fault."
 msgstr "Podproces %s spowodował naruszenie segmentacji."
 
 #: apt-pkg/contrib/fileutl.cc:458
-#, fuzzy, c-format
+#, c-format
 msgid "Sub-process %s received signal %u."
-msgstr "Podproces %s spowodował naruszenie segmentacji."
+msgstr "Podproces %s dostał sygnał %u."
 
 #: apt-pkg/contrib/fileutl.cc:462
 #, c-format
@@ -2410,7 +2414,7 @@ msgstr "Psuje"
 
 #: apt-pkg/pkgcache.cc:227
 msgid "Enhances"
-msgstr ""
+msgstr "Rozszerza"
 
 #: apt-pkg/pkgcache.cc:238
 msgid "important"
@@ -2626,9 +2630,9 @@ msgid "You may want to run apt-get update to correct these problems"
 msgstr "Należy uruchomić apt-get update aby naprawić te problemy."
 
 #: apt-pkg/policy.cc:347
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
-msgstr "Nieprawidłowe informacje w pliku ustawień, brak nagłówka Package"
+msgstr "Nieprawidłowe informacje w pliku ustawień %s, brak nagłówka Package"
 
 #: apt-pkg/policy.cc:369
 #, c-format
@@ -2782,19 +2786,19 @@ msgid "Size mismatch"
 msgstr "Błędny rozmiar"
 
 #: apt-pkg/indexrecords.cc:40
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse Release file %s"
-msgstr "Nie udało się zanalizować pliku pakietu %s (1)"
+msgstr "Nie udało się zanalizować pliku Release %s"
 
 #: apt-pkg/indexrecords.cc:47
-#, fuzzy, c-format
+#, c-format
 msgid "No sections in Release file %s"
-msgstr "Uwaga, wybieranie %s zamiast %s\n"
+msgstr "Brak sekcji w pliku Release %s"
 
 #: apt-pkg/indexrecords.cc:81
 #, c-format
 msgid "No Hash entry in Release file %s"
-msgstr ""
+msgstr "Brak wpisu Hash w pliku Release %s"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -2859,6 +2863,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
+"Nie można odnaleźć żadnych plików pakietów, być może nie jest to dysk "
+"Debiana lub inna architektura?"
 
 #: apt-pkg/cdrom.cc:710
 #, c-format
@@ -2983,7 +2989,7 @@ msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:907
 msgid "Running dpkg"
-msgstr ""
+msgstr "Uruchamianie dpkg"
 
 #: apt-pkg/deb/debsystem.cc:70
 #, c-format
@@ -2991,21 +2997,26 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
+"Nie udało się zablokować katalogu administracyjnego (%s), czy inny proces go "
+"używa?"
 
 #: apt-pkg/deb/debsystem.cc:73
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Nie udało się zablokować katalogu list"
+msgstr ""
+"Nie udało się zablokować katalogu administracyjnego (%s), czy jesteś rootem?"
 
 #: apt-pkg/deb/debsystem.cc:82
 msgid ""
 "dpkg was interrupted, you must manually run 'dpkg --configure -a' to correct "
 "the problem. "
 msgstr ""
+"dpkg został przerwany, należy ręcznie uruchomić \"dpkg --configure -a\" aby "
+"naprawić problem."
 
 #: apt-pkg/deb/debsystem.cc:100
 msgid "Not locked"
-msgstr ""
+msgstr "Nie zablokowany"
 
 #: methods/rred.cc:219
 msgid "Could not patch file"
