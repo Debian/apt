@@ -7,7 +7,7 @@ SUBDIRS= $(dir $(wildcard */makefile))
 include ../buildlib/defaults.mak
 
 # Debian Doc SGML Documents
-SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml guide.it.sgml \
+SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml \
          cache.sgml method.sgml offline.sgml
 include $(DEBIANDOC_H)
 
