@@ -7,8 +7,8 @@ SUBDIRS= $(dir $(wildcard */makefile))
 include ../buildlib/defaults.mak
 
 # Debian Doc SGML Documents
-SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml \
-         cache.sgml method.sgml offline.sgml
+SOURCE = $(wildcard *.sgml)
+DEBIANDOC_HTML_OPTIONS=-l en
 include $(DEBIANDOC_H)
 
 # XML man pages
