@@ -143,10 +143,6 @@ void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer, unsigned
    for ( /* nothing */  ; D.end() == false; D++)
       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
       {
-	 // ignore dependencies if no instal/upgrade/remove is going to happen
-	 if (D.TargetPkg() == 0 || Cache[D.TargetPkg()].Keep())
-	      continue;
-
 	 if(!List->IsFlag(D.TargetPkg(), pkgOrderList::Immediate))
 	 {
 	    if(Debug)
