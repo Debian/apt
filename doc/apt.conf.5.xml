@@ -151,11 +151,22 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </varlistentry>
 
      <varlistentry><term>Immediate-Configure</term>
-     <listitem><para>Disable Immediate Configuration; This dangerous option disables some
-     of APT's ordering code to cause it to make fewer dpkg calls. Doing
-     so may be necessary on some extremely slow single user systems but 
-     is very dangerous and may cause package install scripts to fail or worse.
-     Use at your own risk.</para></listitem>
+     <listitem><para>Defaults to on which will cause APT to install essential and important packages
+     as fast as possible in the install/upgrade operation. This is done to limit the effect of a failing
+     &dpkg; call: If this option is disabled APT doesn't treat an important package in the same way as
+     an extra package: Between the unpacking of the important package A and his configuration can then
+     be many other unpack or configuration calls, e.g. for package B which has no relation to A, but
+     causes the dpkg call to fail (e.g. because maintainer script of package B generates an error) which results
+     in a system state in which package A is unpacked but unconfigured - each package depending on A is now no
+     longer guaranteed to work as their dependency on A is not longer satisfied. The immediate configuration marker
+     is also applied to all dependencies which can generate a problem if the dependencies e.g. form a circle
+     as a dependency with the immediate flag is comparable with a Pre-Dependency. So in theory it is possible
+     that APT encounters a situation in which it is unable to perform immediate configuration, error out and
+     refers to this option so the user can deactivate the immediate configuration temporary to be able to perform
+     an install/upgrade again. Note the use of the word "theory" here as this problem was only encountered by now
+     in real world a few times in non-stable distribution versions and caused by wrong dependencies of the package
+     in question, so you should not blindly disable this option as the mentioned scenario above is not the only
+     problem immediate configuration can help to prevent in the first place.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>Force-LoopBreak</term>
