@@ -454,7 +454,7 @@ if check_stamp $UPDATE_STAMP $UpdateInterval; then
     else
 	debug_echo "apt-key net-update (failure)"
     fi
-    if eval apt-get $XAPTOPT -y update -o APT::Update::Auth-Failure::="cp /usr/share/apt/apt-auth-failure.note /var/lib/update-notifier/user.d/" $XSTDERR; then
+    if eval apt-get $XAPTOPT -y update -o APT::Update::Auth-Failure::=\"cp /usr/share/apt/apt-auth-failure.note /var/lib/update-notifier/user.d/\" $XSTDERR; then
 	debug_echo "download updated metadata (success)."
 	if which dbus-send >/dev/null && pidof dbus-daemon >/dev/null; then
 	    if dbus-send --system / app.apt.dbus.updated boolean:true ; then
