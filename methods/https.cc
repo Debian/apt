@@ -135,6 +135,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
    curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
+   curl_easy_setopt(curl, CURLOPT_NETRC, CURL_NETRC_OPTIONAL);
 
    // SSL parameters are set by default to the common (non mirror-specific) value
    // if available (or a default one) and gets overload by mirror-specific ones.

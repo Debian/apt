@@ -59,8 +59,12 @@
    between <literal>/*</literal> and <literal>*/</literal>, just like C/C++ comments.
    Each line is of the form
    <literal>APT::Get::Assume-Yes "true";</literal> The trailing 
-   semicolon is required and the quotes are optional. A new scope can be
-   opened with curly braces, like:</para>
+   semicolon and the quotes are required. The value must be on one line, and
+   there is no kind of string concatenation. It must not include inside quotes.
+   The behavior of the backslash "\" and escaped characters inside a value is
+   undefined and it should not be used. An option name may include
+   alphanumerical characters and the "/-:._+" characters. A new scope can
+   be opened with curly braces, like:</para>
 
 <informalexample><programlisting>   
 APT {
@@ -91,7 +95,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    new entry will simply add a new option to the list. If you specify a name you can override
    the option as every other option by reassigning a new value to the option.</para>
 
-   <para>Two specials are allowed, <literal>#include</literal> and <literal>#clear</literal>:
+   <para>Two specials are allowed, <literal>#include</literal> (which is deprecated
+   and not supported by alternative implementations) and <literal>#clear</literal>:
    <literal>#include</literal> will include the given file, unless the filename
    ends in a slash, then the whole directory is included.  
    <literal>#clear</literal> is used to erase a part of the configuration tree. The
@@ -337,7 +342,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      as specified in <filename>/etc/fstab</filename>. It is possible to provide 
      alternate mount and unmount commands if your mount point cannot be listed 
      in the fstab (such as an SMB mount and old mount packages). The syntax 
-     is to put <literallayout>"/cdrom/"::Mount "foo";</literallayout> within 
+     is to put <literallayout>/cdrom/::Mount "foo";</literallayout> within 
      the cdrom block. It is important to have the trailing slash. Unmount 
      commands can be specified using UMount.</para></listitem>
      </varlistentry>
