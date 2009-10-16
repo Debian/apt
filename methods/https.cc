@@ -127,7 +127,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_reset(curl);
    SetupProxy();
 
-   maybe_add_auth (Uri, _config->FindFile("Dir::ETc::netrc"));
+   maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
 
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, Itm->Uri.c_str());

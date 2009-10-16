@@ -725,9 +725,9 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       Req += string("Proxy-Authorization: Basic ") + 
           Base64Encode(Proxy.User + ":" + Proxy.Password) + "\r\n";
 
+   maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
    if (Uri.User.empty() == false || Uri.Password.empty() == false)
    {
-      maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
       Req += string("Authorization: Basic ") + 
           Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
    }

@@ -982,7 +982,9 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    FetchResult Res;
    Res.Filename = Itm->DestFile;
    Res.IMSHit = false;
-   
+
+   maybe_add_auth (Get, _config->FindFile("Dir::Etc::netrc"));
+
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false)
    {
