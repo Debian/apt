@@ -12,6 +12,7 @@
    ##################################################################### */
 									/*}}}*/
 
+#include <apt-pkg/configuration.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -146,7 +147,9 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
 
 void maybe_add_auth (URI &Uri, string NetRCFile)
 {
-  if (Uri.Password.empty () == true && Uri.User.empty () == true)
+  if (_config->FindB("Debug::Acquire::netrc", false) == true)
+     std::clog << "maybe_add_auth: " << NetRCFile << std::endl;
+  if (Uri.Password.empty () == true || Uri.User.empty () == true)
   {
     if (NetRCFile.empty () == false)
     {
