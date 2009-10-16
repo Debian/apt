@@ -28,6 +28,7 @@ veryclean: veryclean/$(LOCAL)
 $($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
 	echo Creating man page $@
 	$(XSLTPROC) -o $@ $(STYLESHEET) $< # why xsltproc doesn't respect the -o flag here???
+	test -f $(subst .$(LC),,$@) || echo FIXME: xsltproc respect the -o flag now, workaround can be removed
 	mv -f $(subst .$(LC),,$@) $@
 
 # Clean rule
