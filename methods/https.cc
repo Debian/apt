@@ -14,6 +14,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/netrc.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -125,6 +126,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    curl_easy_reset(curl);
    SetupProxy();
+
+   maybe_add_auth (Uri, _config->FindFile("Dir::ETc::netrc"));
 
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, Itm->Uri.c_str());

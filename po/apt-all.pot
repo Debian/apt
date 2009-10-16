@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-26 01:10+0200\n"
+"POT-Creation-Date: 2009-10-16 15:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -989,7 +989,7 @@ msgstr ""
 msgid "Calculating upgrade... "
 msgstr ""
 
-#: cmdline/apt-get.cc:1897 methods/ftp.cc:702 methods/connect.cc:112
+#: cmdline/apt-get.cc:1897 methods/ftp.cc:707 methods/connect.cc:112
 msgid "Failed"
 msgstr ""
 
@@ -1281,7 +1281,12 @@ msgstr ""
 msgid "Error reading archive member header"
 msgstr ""
 
-#: apt-inst/contrib/arfile.cc:90 apt-inst/contrib/arfile.cc:102
+#: apt-inst/contrib/arfile.cc:90
+#, c-format
+msgid "Invalid archive member header %s"
+msgstr ""
+
+#: apt-inst/contrib/arfile.cc:102
 msgid "Invalid archive member header"
 msgstr ""
 
@@ -1381,10 +1386,12 @@ msgstr ""
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr ""
 
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc:464 apt-pkg/contrib/configuration.cc:822
-#: apt-pkg/contrib/cdromutl.cc:157 apt-pkg/sourcelist.cc:163
-#: apt-pkg/sourcelist.cc:169 apt-pkg/sourcelist.cc:324 apt-pkg/acquire.cc:419
-#: apt-pkg/init.cc:89 apt-pkg/init.cc:97 apt-pkg/clean.cc:33
+#: apt-pkg/contrib/cdromutl.cc:157 apt-pkg/sourcelist.cc:166
+#: apt-pkg/sourcelist.cc:172 apt-pkg/sourcelist.cc:327 apt-pkg/acquire.cc:419
+#: apt-pkg/init.cc:90 apt-pkg/init.cc:98 apt-pkg/clean.cc:33
 #: apt-pkg/policy.cc:281 apt-pkg/policy.cc:287
 #, c-format
 msgid "Unable to read %s"
@@ -1559,147 +1566,147 @@ msgid "Invalid URI, local URIS must not start with //"
 msgstr ""
 
 #. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc:162
+#: methods/ftp.cc:167
 msgid "Logging in"
 msgstr ""
 
-#: methods/ftp.cc:168
+#: methods/ftp.cc:173
 msgid "Unable to determine the peer name"
 msgstr ""
 
-#: methods/ftp.cc:173
+#: methods/ftp.cc:178
 msgid "Unable to determine the local name"
 msgstr ""
 
-#: methods/ftp.cc:204 methods/ftp.cc:232
+#: methods/ftp.cc:209 methods/ftp.cc:237
 #, c-format
 msgid "The server refused the connection and said: %s"
 msgstr ""
 
-#: methods/ftp.cc:210
+#: methods/ftp.cc:215
 #, c-format
 msgid "USER failed, server said: %s"
 msgstr ""
 
-#: methods/ftp.cc:217
+#: methods/ftp.cc:222
 #, c-format
 msgid "PASS failed, server said: %s"
 msgstr ""
 
-#: methods/ftp.cc:237
+#: methods/ftp.cc:242
 msgid ""
 "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
 "is empty."
 msgstr ""
 
-#: methods/ftp.cc:265
+#: methods/ftp.cc:270
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
 msgstr ""
 
-#: methods/ftp.cc:291
+#: methods/ftp.cc:296
 #, c-format
 msgid "TYPE failed, server said: %s"
 msgstr ""
 
-#: methods/ftp.cc:329 methods/ftp.cc:440 methods/rsh.cc:183 methods/rsh.cc:226
+#: methods/ftp.cc:334 methods/ftp.cc:445 methods/rsh.cc:183 methods/rsh.cc:226
 msgid "Connection timeout"
 msgstr ""
 
-#: methods/ftp.cc:335
+#: methods/ftp.cc:340
 msgid "Server closed the connection"
 msgstr ""
 
-#: methods/ftp.cc:338 apt-pkg/contrib/fileutl.cc:541 methods/rsh.cc:190
+#: methods/ftp.cc:343 apt-pkg/contrib/fileutl.cc:541 methods/rsh.cc:190
 msgid "Read error"
 msgstr ""
 
-#: methods/ftp.cc:345 methods/rsh.cc:197
+#: methods/ftp.cc:350 methods/rsh.cc:197
 msgid "A response overflowed the buffer."
 msgstr ""
 
-#: methods/ftp.cc:362 methods/ftp.cc:374
+#: methods/ftp.cc:367 methods/ftp.cc:379
 msgid "Protocol corruption"
 msgstr ""
 
-#: methods/ftp.cc:446 apt-pkg/contrib/fileutl.cc:580 methods/rsh.cc:232
+#: methods/ftp.cc:451 apt-pkg/contrib/fileutl.cc:580 methods/rsh.cc:232
 msgid "Write error"
 msgstr ""
 
-#: methods/ftp.cc:687 methods/ftp.cc:693 methods/ftp.cc:729
+#: methods/ftp.cc:692 methods/ftp.cc:698 methods/ftp.cc:734
 msgid "Could not create a socket"
 msgstr ""
 
-#: methods/ftp.cc:698
+#: methods/ftp.cc:703
 msgid "Could not connect data socket, connection timed out"
 msgstr ""
 
-#: methods/ftp.cc:704
+#: methods/ftp.cc:709
 msgid "Could not connect passive socket."
 msgstr ""
 
-#: methods/ftp.cc:722
+#: methods/ftp.cc:727
 msgid "getaddrinfo was unable to get a listening socket"
 msgstr ""
 
-#: methods/ftp.cc:736
+#: methods/ftp.cc:741
 msgid "Could not bind a socket"
 msgstr ""
 
-#: methods/ftp.cc:740
+#: methods/ftp.cc:745
 msgid "Could not listen on the socket"
 msgstr ""
 
-#: methods/ftp.cc:747
+#: methods/ftp.cc:752
 msgid "Could not determine the socket's name"
 msgstr ""
 
-#: methods/ftp.cc:779
+#: methods/ftp.cc:784
 msgid "Unable to send PORT command"
 msgstr ""
 
-#: methods/ftp.cc:789
+#: methods/ftp.cc:794
 #, c-format
 msgid "Unknown address family %u (AF_*)"
 msgstr ""
 
-#: methods/ftp.cc:798
+#: methods/ftp.cc:803
 #, c-format
 msgid "EPRT failed, server said: %s"
 msgstr ""
 
-#: methods/ftp.cc:818
+#: methods/ftp.cc:823
 msgid "Data socket connect timed out"
 msgstr ""
 
-#: methods/ftp.cc:825
+#: methods/ftp.cc:830
 msgid "Unable to accept connection"
 msgstr ""
 
-#: methods/ftp.cc:864 methods/http.cc:991 methods/rsh.cc:303
+#: methods/ftp.cc:869 methods/http.cc:999 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr ""
 
-#: methods/ftp.cc:877
+#: methods/ftp.cc:882
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
 msgstr ""
 
-#: methods/ftp.cc:892 methods/rsh.cc:322
+#: methods/ftp.cc:897 methods/rsh.cc:322
 msgid "Data socket timed out"
 msgstr ""
 
-#: methods/ftp.cc:922
+#: methods/ftp.cc:927
 #, c-format
 msgid "Data transfer failed, server said '%s'"
 msgstr ""
 
 #. Get the files information
-#: methods/ftp.cc:997
+#: methods/ftp.cc:1002
 msgid "Query"
 msgstr ""
 
-#: methods/ftp.cc:1109
+#: methods/ftp.cc:1114
 msgid "Unable to invoke "
 msgstr ""
 
@@ -1807,80 +1814,80 @@ msgstr ""
 msgid "Read error from %s process"
 msgstr ""
 
-#: methods/http.cc:379
+#: methods/http.cc:385
 msgid "Waiting for headers"
 msgstr ""
 
-#: methods/http.cc:525
+#: methods/http.cc:531
 #, c-format
 msgid "Got a single header line over %u chars"
 msgstr ""
 
-#: methods/http.cc:533
+#: methods/http.cc:539
 msgid "Bad header line"
 msgstr ""
 
-#: methods/http.cc:552 methods/http.cc:559
+#: methods/http.cc:558 methods/http.cc:565
 msgid "The HTTP server sent an invalid reply header"
 msgstr ""
 
-#: methods/http.cc:588
+#: methods/http.cc:594
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr ""
 
-#: methods/http.cc:603
+#: methods/http.cc:609
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr ""
 
-#: methods/http.cc:605
+#: methods/http.cc:611
 msgid "This HTTP server has broken range support"
 msgstr ""
 
-#: methods/http.cc:629
+#: methods/http.cc:635
 msgid "Unknown date format"
 msgstr ""
 
-#: methods/http.cc:782
+#: methods/http.cc:790
 msgid "Select failed"
 msgstr ""
 
-#: methods/http.cc:787
+#: methods/http.cc:795
 msgid "Connection timed out"
 msgstr ""
 
-#: methods/http.cc:810
+#: methods/http.cc:818
 msgid "Error writing to output file"
 msgstr ""
 
-#: methods/http.cc:841
+#: methods/http.cc:849
 msgid "Error writing to file"
 msgstr ""
 
-#: methods/http.cc:869
+#: methods/http.cc:877
 msgid "Error writing to the file"
 msgstr ""
 
-#: methods/http.cc:883
+#: methods/http.cc:891
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 
-#: methods/http.cc:885
+#: methods/http.cc:893
 msgid "Error reading from server"
 msgstr ""
 
-#: methods/http.cc:976 apt-pkg/contrib/mmap.cc:215
+#: methods/http.cc:984 apt-pkg/contrib/mmap.cc:215
 msgid "Failed to truncate file"
 msgstr ""
 
-#: methods/http.cc:1141
+#: methods/http.cc:1149
 msgid "Bad header data"
 msgstr ""
 
-#: methods/http.cc:1158 methods/http.cc:1213
+#: methods/http.cc:1166 methods/http.cc:1221
 msgid "Connection failed"
 msgstr ""
 
-#: methods/http.cc:1305
+#: methods/http.cc:1313
 msgid "Internal error"
 msgstr ""
 
@@ -2211,16 +2218,16 @@ msgstr ""
 msgid "Dependency generation"
 msgstr ""
 
-#: apt-pkg/depcache.cc:173 apt-pkg/depcache.cc:192 apt-pkg/depcache.cc:196
+#: apt-pkg/depcache.cc:173 apt-pkg/depcache.cc:193 apt-pkg/depcache.cc:197
 msgid "Reading state information"
 msgstr ""
 
-#: apt-pkg/depcache.cc:220
+#: apt-pkg/depcache.cc:223
 #, c-format
 msgid "Failed to open StateFile %s"
 msgstr ""
 
-#: apt-pkg/depcache.cc:226
+#: apt-pkg/depcache.cc:229
 #, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr ""
@@ -2260,27 +2267,27 @@ msgstr ""
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:203
+#: apt-pkg/sourcelist.cc:206
 #, c-format
 msgid "Opening %s"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:220 apt-pkg/cdrom.cc:445
+#: apt-pkg/sourcelist.cc:223 apt-pkg/cdrom.cc:445
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:240
+#: apt-pkg/sourcelist.cc:243
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:244
+#: apt-pkg/sourcelist.cc:247
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr ""
 
-#: apt-pkg/sourcelist.cc:252 apt-pkg/sourcelist.cc:255
+#: apt-pkg/sourcelist.cc:255 apt-pkg/sourcelist.cc:258
 #, c-format
 msgid "Malformed line %u in source list %s (vendor id)"
 msgstr ""
@@ -2357,12 +2364,12 @@ msgstr ""
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 
-#: apt-pkg/init.cc:132
+#: apt-pkg/init.cc:133
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/init.cc:148
+#: apt-pkg/init.cc:149
 msgid "Unable to determine a suitable packaging system type"
 msgstr ""
 
@@ -2719,11 +2726,11 @@ msgstr ""
 msgid "Completely removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:820
+#: apt-pkg/deb/dpkgpm.cc:822
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:848
+#: apt-pkg/deb/dpkgpm.cc:851
 msgid "Running dpkg"
 msgstr ""
 
