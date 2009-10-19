@@ -1243,137 +1243,131 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       pkgDepCache &Cache)
 {
-   // We want to pull the version off the package specification..
-   string VerTag;
-   string DefRel;
-   string TmpSrc = Name;
-   const size_t found = TmpSrc.find_last_of("/=");
+	string VerTag;
+	string DefRel = _config->Find("APT::Default-Release");
+	string TmpSrc = Name;
+	const size_t found = TmpSrc.find_last_of("/=");
 
-   // honor default release
-   if (found != string::npos && TmpSrc[found] == '/')
-   {
-      DefRel = TmpSrc.substr(found+1);
-      TmpSrc = TmpSrc.substr(0,found);
-   }
-   else
-      DefRel = _config->Find("APT::Default-Release");
+	// extract the version/release from the pkgname
+	if (found != string::npos) {
+		if (TmpSrc[found] == '/')
+			DefRel = TmpSrc.substr(found+1);
+		else
+			VerTag = TmpSrc.substr(found+1);
+		TmpSrc = TmpSrc.substr(0,found);
+	}
 
-   pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+	/* Lookup the version of the package we would install if we were to
+	   install a version and determine the source package name, then look
+	   in the archive for a source package of the same name. */
+	bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
+	const pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+	if (MatchSrcOnly == false && Pkg.end() == false) {
+		if(VerTag.empty() == false || DefRel.empty() == false) {
+			// we have a default release, try to locate the pkg. we do it like
+			// this because GetCandidateVer() will not "downgrade", that means
+			// "apt-get source -t stable apt" won't work on a unstable system
+			for (pkgCache::VerIterator Ver = Pkg.VersionList();
+			     Ver.end() == false; Ver++) {
+				for (pkgCache::VerFileIterator VF = Ver.FileList();
+				     VF.end() == false; VF++) {
+					/* If this is the status file, and the current version is not the
+					   version in the status file (ie it is not installed, or somesuch)
+					   then it is not a candidate for installation, ever. This weeds
+					   out bogus entries that may be due to config-file states, or
+					   other. */
+					if ((VF.File()->Flags & pkgCache::Flag::NotSource) ==
+					    pkgCache::Flag::NotSource && Pkg.CurrentVer() != Ver)
+						continue;
 
-   if (found != string::npos && TmpSrc[found] == '=')
-   {
-      VerTag = TmpSrc.substr(found+1);
-      TmpSrc = TmpSrc.substr(0,found);
-   } 
-   else  if(!Pkg.end() && DefRel.empty() == false)
-   {
-      // we have a default release, try to locate the pkg. we do it like
-      // this because GetCandidateVer() will not "downgrade", that means
-      // "apt-get source -t stable apt" won't work on a unstable system
-      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; 
-	   Ver++)
-      {
-	 for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false;
-	      VF++)
-	 {
-	    /* If this is the status file, and the current version is not the
-	       version in the status file (ie it is not installed, or somesuch)
-	       then it is not a candidate for installation, ever. This weeds
-	       out bogus entries that may be due to config-file states, or
-	       other. */
-	    if ((VF.File()->Flags & pkgCache::Flag::NotSource) == 
-		pkgCache::Flag::NotSource && Pkg.CurrentVer() != Ver)
-	    continue;
-	    
-	    if((VF.File().Archive() != 0 && VF.File().Archive() == DefRel) ||
-		(VF.File().Codename() != 0 && VF.File().Codename() == DefRel))
-	    {
-	       pkgRecords::Parser &Parse = Recs.Lookup(VF);
-	       VerTag = Parse.SourceVer();
-	       if (VerTag.empty())
-		  VerTag = Ver.VerStr();
-	       break;
-	    }
-	 }
-      }
-   }
+					// We match against a concrete version (or a part of this version)
+					if (VerTag.empty() == false && strncmp(VerTag.c_str(), Ver.VerStr(), VerTag.size()) != 0)
+						continue;
 
-   /* Lookup the version of the package we would install if we were to
-      install a version and determine the source package name, then look
-      in the archive for a source package of the same name. */
-   bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
-   if (MatchSrcOnly == false)
-   {
-      if (Pkg.end() == false)
-      {
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
-	 if (Ver.end() == false)
-	 {
-	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-	    Src = Parse.SourcePkg();
-	 }
-      }   
-   }
+					// or we match against a release
+					if(VerTag.empty() == false ||
+					   (VF.File().Archive() != 0 && VF.File().Archive() == DefRel) ||
+					   (VF.File().Codename() != 0 && VF.File().Codename() == DefRel)) {
+						pkgRecords::Parser &Parse = Recs.Lookup(VF);
+						Src = Parse.SourcePkg();
+						if (VerTag.empty() == true)
+							VerTag = Parse.SourceVer();
+						break;
+					}
+				}
+			}
+			if (Src.empty() == true) {
+				if (VerTag.empty() == false)
+					_error->Warning(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
+				else
+					_error->Warning(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
+				VerTag.clear();
+				DefRel.clear();
+			}
+		}
+		if (VerTag.empty() == true && DefRel.empty() == true) {
+			// if we don't have a version or default release, use the CandidateVer to find the Source
+			pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+			if (Ver.end() == false) {
+				pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
+				Src = Parse.SourcePkg();
+				VerTag = Parse.SourceVer();
+			}
+		}
+	}
 
-   // The best hit
-   pkgSrcRecords::Parser *Last = 0;
-   unsigned long Offset = 0;
-   string Version;
-   bool IsMatch = false;
+	if (Src.empty() == true)
+		Src = TmpSrc;
+	else {
+		/* if we have a source pkg name, make sure to only search
+		   for srcpkg names, otherwise apt gets confused if there
+		   is a binary package "pkg1" and a source package "pkg1"
+		   with the same name but that comes from different packages */
+		MatchSrcOnly = true;
+		if (Src != TmpSrc) {
+			ioprintf(c1out, _("Picking '%s' as source package instead of '%s'\n"), Src.c_str(), TmpSrc.c_str());
+		}
+	}
 
-   // No source package name..
-   if (Src.empty() == true)
-      Src = TmpSrc;
-   else 
-      // if we have a source pkg name, make sure to only search
-      // for srcpkg names, otherwise apt gets confused if there
-      // is a binary package "pkg1" and a source package "pkg1"
-      // with the same name but that comes from different packages
-      MatchSrcOnly = true;
-   
-   // If we are matching by version then we need exact matches to be happy
-   if (VerTag.empty() == false)
-      IsMatch = true;
-   
-   /* Iterate over all of the hits, which includes the resulting
-      binary packages in the search */
-   pkgSrcRecords::Parser *Parse;
-   SrcRecs.Restart();
-   while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0)
-   {
-      string Ver = Parse->Version();
+	// The best hit
+	pkgSrcRecords::Parser *Last = 0;
+	unsigned long Offset = 0;
+	string Version;
 
-      // show name mismatches
-      if (IsMatch == true && Parse->Package() != Src)       
-	 ioprintf(c1out,  _("No source package '%s' picking '%s' instead\n"), Src.c_str(), Parse->Package().c_str());
-      
-      if (VerTag.empty() == false)
-      {
-	 /* Don't want to fall through because we are doing exact version 
-	    matching. */
-	 if (Cache.VS().CmpVersion(VerTag,Ver) != 0)
-	    continue;
-	 
-	 Last = Parse;
-	 Offset = Parse->Offset();
-	 break;
-      }
-				  
-      // Newer version or an exact match
-      if (Last == 0 || Cache.VS().CmpVersion(Version,Ver) < 0 || 
-	  (Parse->Package() == Src && IsMatch == false))
-      {
-	 IsMatch = Parse->Package() == Src;
-	 Last = Parse;
-	 Offset = Parse->Offset();
-	 Version = Ver;
-      }      
-   }
-   
-   if (Last == 0 || Last->Jump(Offset) == false)
-      return 0;
-   
-   return Last;
+	/* Iterate over all of the hits, which includes the resulting
+	   binary packages in the search */
+	pkgSrcRecords::Parser *Parse;
+	while (true) {
+		SrcRecs.Restart();
+		while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0) {
+			const string Ver = Parse->Version();
+
+			// Ignore all versions which doesn't fit
+			if (VerTag.empty() == false && strncmp(VerTag.c_str(), Ver.c_str(), VerTag.size()) != 0)
+				continue;
+
+			// Newer version or an exact match? Save the hit
+			if (Last == 0 || Cache.VS().CmpVersion(Version,Ver) < 0) {
+				Last = Parse;
+				Offset = Parse->Offset();
+				Version = Ver;
+			}
+
+			// was the version check above an exact match? If so, we don't need to look further
+			if (VerTag.empty() == false && VerTag.size() == Ver.size())
+				break;
+		}
+		if (Last != 0 || VerTag.empty() == true)
+			break;
+		//if (VerTag.empty() == false && Last == 0)
+		_error->Warning(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
+		VerTag.clear();
+	}
+
+	if (Last == 0 || Last->Jump(Offset) == false)
+		return 0;
+
+	return Last;
 }
 									/*}}}*/
 // DoUpdate - Update the package lists					/*{{{*/
