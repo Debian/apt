@@ -318,8 +318,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 
    // Sanity Check
    if (List->IsFlag(Pkg,pkgOrderList::Configured) == false)
-      return _error->Error("Internal error, could not immediate configure %s",Pkg.Name());
-   
+      return _error->Error(_("Could not perform immediate configuration on '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),1);
+
    return true;
 }
 									/*}}}*/
@@ -471,7 +472,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
       if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)
-	    return _error->Error(_("Could not perform immediate configuration for on already unpacked %s."
+	    return _error->Error(_("Could not perform immediate configuration on already unpacked '%s'."
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
       return true;
    }
@@ -572,8 +573,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    // Perform immedate configuration of the package.
    if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
       if (SmartConfigure(Pkg) == false)
-	 return _error->Error(_("Could not perform immediate configuration on %s."
-			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
+	 return _error->Error(_("Could not perform immediate configuration on '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),2);
    
    return true;
 }

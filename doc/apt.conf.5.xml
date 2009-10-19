@@ -158,7 +158,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <varlistentry><term>Immediate-Configure</term>
      <listitem><para>Defaults to on which will cause APT to install essential and important packages
      as fast as possible in the install/upgrade operation. This is done to limit the effect of a failing
-     &dpkg; call: If this option is disabled APT doesn't treat an important package in the same way as
+     &dpkg; call: If this option is disabled APT does treat an important package in the same way as
      an extra package: Between the unpacking of the important package A and his configuration can then
      be many other unpack or configuration calls, e.g. for package B which has no relation to A, but
      causes the dpkg call to fail (e.g. because maintainer script of package B generates an error) which results
@@ -170,8 +170,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      refers to this option so the user can deactivate the immediate configuration temporary to be able to perform
      an install/upgrade again. Note the use of the word "theory" here as this problem was only encountered by now
      in real world a few times in non-stable distribution versions and caused by wrong dependencies of the package
-     in question, so you should not blindly disable this option as the mentioned scenario above is not the only
-     problem immediate configuration can help to prevent in the first place.</para></listitem>
+     in question or by a system in an already broken state, so you should not blindly disable this option as
+     the mentioned scenario above is not the only problem immediate configuration can help to prevent in the first place.
+     Before a big operation like <literal>dist-upgrade</literal> is run with this option disabled it should be tried to
+     explicitly <literal>install</literal> the package APT is unable to configure immediately, but please make sure to
+     report your problem also to your distribution and to the APT team with the buglink below so they can work on
+     improving or correcting the upgrade process.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>Force-LoopBreak</term>
