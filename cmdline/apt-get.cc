@@ -862,10 +862,14 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    {
       struct statvfs Buf;
       string OutputDir = _config->FindDir("Dir::Cache::Archives");
-      if (statvfs(OutputDir.c_str(),&Buf) != 0)
-	 return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
-			      OutputDir.c_str());
-      if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
+      if (statvfs(OutputDir.c_str(),&Buf) != 0) {
+	 if (errno == EOVERFLOW)
+	    return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
+				 OutputDir.c_str());
+	 else
+	    return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
+				 OutputDir.c_str());
+      } else if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
       {
          struct statfs Stat;
          if (statfs(OutputDir.c_str(),&Stat) != 0
@@ -2228,10 +2232,14 @@ bool DoSource(CommandLine &CmdL)
    // Check for enough free space
    struct statvfs Buf;
    string OutputDir = ".";
-   if (statvfs(OutputDir.c_str(),&Buf) != 0)
-      return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
-			   OutputDir.c_str());
-   if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
+   if (statvfs(OutputDir.c_str(),&Buf) != 0) {
+      if (errno == EOVERFLOW)
+	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
+				OutputDir.c_str());
+      else
+	 return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
+				OutputDir.c_str());
+   } else if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
      {
        struct statfs Stat;
        if (statfs(OutputDir.c_str(),&Stat) != 0
