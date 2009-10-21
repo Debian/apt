@@ -477,6 +477,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       
       while (End->Type == pkgCache::Dep::PreDepends)
       {
+	 if (Debug == true)
+	    clog << "PreDepends order for " << Pkg.Name() << std::endl;
+
 	 // Look for possible ok targets.
 	 SPtrArray<Version *> VList = Start.AllTargets();
 	 bool Bad = true;
@@ -490,6 +493,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 		Pkg.State() == PkgIterator::NeedsNothing)
 	    {
 	       Bad = false;
+	       if (Debug == true)
+		  clog << "Found ok package " << Pkg.Name() << endl;
 	       continue;
 	    }
 	 }
@@ -505,6 +510,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
 	       continue;
 
+	    if (Debug == true)
+	       clog << "Trying to SmartConfigure " << Pkg.Name() << endl;
 	    Bad = !SmartConfigure(Pkg);
 	 }
 
