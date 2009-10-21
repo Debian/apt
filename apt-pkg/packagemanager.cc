@@ -287,6 +287,9 @@ bool pkgPackageManager::ConfigureAll()
    of it's dependents. */
 bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 {
+   if (Debug == true)
+      clog << "SmartConfigure " << Pkg.Name() << endl;
+
    pkgOrderList OList(&Cache);
 
    if (DepAdd(OList,Pkg) == false)
@@ -300,6 +303,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    {
       PkgIterator Pkg(Cache,*I);
       
+      if (Debug == true)
+	 clog << "  SmartConfigure on" << Pkg.Name() << endl;
+
       if (Configure(Pkg) == false)
 	 return false;
       
