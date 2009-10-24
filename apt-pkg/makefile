@@ -12,9 +12,8 @@ include ../buildlib/defaults.mak
 # The library name, don't forget to update init.h and the copy in 
 # methods/makefile - FIXME
 LIBRARY=apt-pkg
-LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
-MAJOR=4.8
-MINOR=1
+MAJOR=4.9
+MINOR=0
 SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl
 APT_DOMAIN:=libapt-pkg$(MAJOR)
 

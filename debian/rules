@@ -79,21 +79,21 @@ export LIBAPTPKG_MAJOR:=$(shell egrep '^MAJOR=' apt-pkg/makefile |cut -d '=' -f 
 export LIBAPTINST_MAJOR:=$(shell egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)
 
 # Determine which package we should provide in the control files
-LIBAPTPKG_PROVIDE=libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER)-$(LIBAPTPKG_MAJOR)
-LIBAPTINST_PROVIDE=libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER)-$(LIBAPTINST_MAJOR)
+LIBAPTPKG_PROVIDE=libapt-pkg-$(LIBAPTPKG_MAJOR)
+LIBAPTINST_PROVIDE=libapt-inst-$(LIBAPTINST_MAJOR)
 
 debian/shlibs.local: apt-pkg/makefile
 	# We have 3 shlibs.local files.. One for 'apt', one for 'apt-utils' and
 	# one for the rest of the packages. This ensures that each package gets
 	# the right overrides.. 
 	rm -rf $@ $@.apt $@.apt-utils
-	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR)" > $@.apt
+	echo "libapt-pkg $(LIBAPTPKG_MAJOR)" > $@.apt
 
-	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@.apt-utils
-	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR)" >> $@.apt-utils
+	echo "libapt-pkg $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@.apt-utils
+	echo "libapt-inst $(LIBAPTINST_MAJOR)" >> $@.apt-utils
 
-	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@
-	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
+	echo "libapt-pkg $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@
+	echo "libapt-inst $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
 
 build: build/build-stamp	
 build-doc: build/build-doc-stamp	
