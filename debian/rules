@@ -75,8 +75,7 @@ APT_UTILS=ftparchive sortpkgs extracttemplates
 #export DH_VERBOSE=1
 
 # Find the libapt-pkg major version for use in other control files
-export LIBAPTPKG_MAJOR:=$(shell egrep '^MAJOR=' apt-pkg/makefile |cut -d '=' -f 2)
-export LIBAPTINST_MAJOR:=$(shell egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)
+include buildlib/libversion.mak
 
 # Determine which package we should provide in the control files
 LIBAPTPKG_PROVIDE=libapt-pkg-$(LIBAPTPKG_MAJOR)

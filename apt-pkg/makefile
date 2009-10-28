@@ -9,13 +9,13 @@ HEADER_TARGETDIRS = apt-pkg
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-# The library name, don't forget to update init.h and the copy in 
-# methods/makefile - FIXME
+# The library name and version (indirectly used from init.h)
+include ../buildlib/libversion.mak
 LIBRARY=apt-pkg
-MAJOR=4.9
-MINOR=0
+MAJOR=$(LIBAPTPKG_MAJOR)
+MINOR=$(LIBAPTPKG_RELEASE)
 SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl
-APT_DOMAIN:=libapt-pkg$(MAJOR)
+APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
