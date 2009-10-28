@@ -16,6 +16,10 @@ BUILDDIR=build
 startup: configure $(BUILDDIR)/config.status $(addprefix $(BUILDDIR)/,$(CONVERTED))
 
 configure: aclocal.m4 configure.in
+	# use the files provided from the system instead of carry around
+	# and use (most of the time outdated) copycats
+	ln -sf /usr/share/misc/config.sub buildlib/config.sub
+	ln -sf /usr/share/misc/config.guess buildlib/config.guess
 	autoconf
 
 aclocal.m4: $(wildcard buildlib/*.m4)
