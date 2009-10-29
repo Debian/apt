@@ -43,6 +43,14 @@ veryclean-subdirs:
 	for dir in $(SUBDIRS); do\
 		$(MAKE) -C $$dir veryclean; \
 	done
+	# FIXME remove created sgml files, but preserve all
+	# which are "left over" from older systems.
+	# After completing the transition this should be handled
+	# in the po4a-manpage makefile for all translations
+	for dir in $(subst /addendum/,, $(dir $(wildcard */addendum/debiandoc*))); do\
+		rm -f $$dir/offline.$$dir.sgml; \
+		rm -f $$dir/guide.$$dir.sgml; \
+	done
 
 ifdef PO4A
 doc: po4a
