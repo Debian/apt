@@ -47,7 +47,7 @@ veryclean-subdirs:
 	# which are "left over" from older systems.
 	# After completing the transition this should be handled
 	# in the po4a-manpage makefile for all translations
-	for dir in $(subst /addendum/,, $(dir $(wildcard */addendum/debiandoc*))); do\
+	for dir in $(subst /addendum/,, $(dir $(wildcard */addendum/*))); do\
 		rm -f $$dir/offline.$$dir.sgml; \
 		rm -f $$dir/guide.$$dir.sgml; \
 	done
