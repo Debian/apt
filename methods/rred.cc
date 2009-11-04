@@ -37,6 +37,8 @@ class RredMethod : public pkgAcqMethod
       char *buffer, unsigned int bufsize, Hashes *hash);
    // apply a patch file
    int ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file, Hashes *hash);
+
+protected:
    // the methods main method
    virtual bool Fetch(FetchItem *Itm);
    
@@ -186,17 +188,19 @@ int RredMethod::ed_file(FILE *ed_cmds, FILE *in_file, FILE *out_file,
    return ED_OK;
 }
 
-
 bool RredMethod::Fetch(FetchItem *Itm)
 {
-   Debug = _config->FindB("Debug::pkgAcquire::RRed",false);
+   Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
    URI Get = Itm->Uri;
    string Path = Get.Host + Get.Path; // To account for relative paths
-   // Path contains the filename to patch
+
    FetchResult Res;
    Res.Filename = Itm->DestFile;
-   URIStart(Res);
-   // Res.Filename the destination filename
+   if (Itm->Uri.empty() == true) {
+      Path = Itm->DestFile;
+      Itm->DestFile.append(".result");
+   } else
+      URIStart(Res);
 
    if (Debug == true) 
       std::clog << "Patching " << Path << " with " << Path 
@@ -243,20 +247,58 @@ bool RredMethod::Fetch(FetchItem *Itm)
       return _error->Errno("stat",_("Failed to stat"));
 
    // return done
-   Res.LastModified = Buf.st_mtime;
-   Res.Size = Buf.st_size;
-   Res.TakeHashes(Hash);
-   URIDone(Res);
+   if (Itm->Uri.empty() == true) {
+      Res.LastModified = Buf.st_mtime;
+      Res.Size = Buf.st_size;
+      Res.TakeHashes(Hash);
+      URIDone(Res);
+   }
 
    return true;
 }
 
-int main(int argc, char *argv[])
-{
-   RredMethod Mth;
+/**
+ * \brief Wrapper class for testing rred
+ */
+class TestRredMethod : public RredMethod {
+public:
+	/** \brief Run rred in debug test mode
+	 *
+	 *  This method can be used to run the rred method outside
+	 *  of the "normal" acquire environment for easier testing.
+	 *
+	 *  \param base basename of all files involved in this rred test
+	 */
+	bool Run(char const *base) {
+		_config->CndSet("Debug::pkgAcquire::RRed", "true");
+		FetchItem *test = new FetchItem;
+		test->DestFile = base;
+		return Fetch(test);
+	}
+};
 
-   Prog = strrchr(argv[0],'/');
-   Prog++;
-   
-   return Mth.Run();
+/**
+ *  \brief Starter for the rred method (or its test method)
+ *
+ *  Used without parameters is the normal behavior for methods for
+ *  the APT acquire system. While this works great for the acquire system
+ *  it is very hard to test the method and therefore the method also
+ *  accepts one parameter which will switch it directly to debug test mode:
+ *  The test mode expects that if "Testfile" is given as parameter
+ *  the file "Testfile" should be ed-style patched with "Testfile.ed"
+ *  and will write the result to "Testfile.result".
+ */
+int main(int argc, char *argv[]) {
+	Prog = strrchr(argv[0],'/');
+	Prog++;
+
+	if (argc == 0) {
+		RredMethod Mth;
+		return Mth.Run();
+	} else {
+		TestRredMethod Mth;
+		bool result = Mth.Run(argv[1]);
+		_error->DumpErrors();
+		return result;
+	}
 }
