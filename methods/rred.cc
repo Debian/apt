@@ -34,7 +34,7 @@ class RredMethod : public pkgAcqMethod {
 	State applyFile(FILE *ed_cmds, FILE *in_file, FILE *out_file,
 	             unsigned long &line, char *buffer, Hashes *hash) const;
 	void ignoreLineInFile(FILE *fin, char *buffer) const;
-	void copyLineFromFileToFile(FILE *fin, FILE *fout,
+	void copyLinesFromFileToFile(FILE *fin, FILE *fout, unsigned int lines,
 	                            Hashes *hash, char *buffer) const;
 
 	State patchFile(FILE *ed_cmds, FILE *in_file, FILE *out_file, Hashes *hash) const;
@@ -123,10 +123,14 @@ RredMethod::State RredMethod::applyFile(FILE *ed_cmds, FILE *in_file, FILE *out_
 	unsigned const long pos = ftell(ed_cmds);
 
 	// if this is add or change then go to the next full stop
+	unsigned int data_length = 0;
 	if (mode == MODE_CHANGED || mode == MODE_ADDED) {
-		do
+		do {
 			ignoreLineInFile(ed_cmds, buffer);
+			data_length++;
+		}
 		while (strncmp(buffer, ".", 1) != 0);
+		data_length--; // the dot should not be copied
 	}
 
 	// do the recursive call - the last command is the one we need to execute at first
@@ -140,10 +144,9 @@ RredMethod::State RredMethod::applyFile(FILE *ed_cmds, FILE *in_file, FILE *out_
 		line++;
 
 	// first wind to the current position and copy over all unchanged lines
-	while (line < startline) {
-		fgets(buffer, BUF_SIZE, in_file);
-		copyLineFromFileToFile(in_file, out_file, hash, buffer);
-		line++;
+	if (line < startline) {
+		copyLinesFromFileToFile(in_file, out_file, (startline - line), hash, buffer);
+		line = startline;
 	}
 
 	if (mode != MODE_ADDED)
@@ -152,12 +155,7 @@ RredMethod::State RredMethod::applyFile(FILE *ed_cmds, FILE *in_file, FILE *out_
 	// include data from ed script
 	if (mode == MODE_CHANGED || mode == MODE_ADDED) {
 		fseek(ed_cmds, pos, SEEK_SET);
-		while(fgets(buffer, BUF_SIZE, ed_cmds) != NULL) {
-			if (strncmp(buffer, ".", 1) != 0)
-				copyLineFromFileToFile(ed_cmds, out_file, hash, buffer);
-			else
-				break;
-		}
+		copyLinesFromFileToFile(ed_cmds, out_file, data_length, hash, buffer);
 	}
 
 	// ignore the corresponding number of lines from input
@@ -170,15 +168,15 @@ RredMethod::State RredMethod::applyFile(FILE *ed_cmds, FILE *in_file, FILE *out_
 	return ED_OK;
 }
 										/*}}}*/
-void RredMethod::copyLineFromFileToFile(FILE *fin, FILE *fout,			/*{{{*/
+void RredMethod::copyLinesFromFileToFile(FILE *fin, FILE *fout, unsigned int lines,/*{{{*/
 					Hashes *hash, char *buffer) const {
-	size_t written = fwrite(buffer, 1, strlen(buffer), fout);
-	hash->Add((unsigned char*)buffer, written);
-	while (strlen(buffer) == (BUF_SIZE - 1) &&
-	       buffer[BUF_SIZE - 2] != '\n') {
-		fgets(buffer, BUF_SIZE, fin);
-		written = fwrite(buffer, 1, strlen(buffer), fout);
-		hash->Add((unsigned char*)buffer, written);
+	while (0 < lines--) {
+		do {
+			fgets(buffer, BUF_SIZE, fin);
+			size_t const written = fwrite(buffer, 1, strlen(buffer), fout);
+			hash->Add((unsigned char*)buffer, written);
+		} while (strlen(buffer) == (BUF_SIZE - 1) &&
+		       buffer[BUF_SIZE - 2] != '\n');
 	}
 }
 										/*}}}*/
