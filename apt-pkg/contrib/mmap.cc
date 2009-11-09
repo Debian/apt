@@ -140,8 +140,10 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 // DynamicMMap::DynamicMMap - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) :
-             MMap(F,Flags | NoImmMap), Fd(&F), WorkSpace(WorkSpace)
+DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &Workspace,
+			 unsigned long const &Grow, unsigned long const &Limit) :
+		MMap(F,Flags | NoImmMap), Fd(&F), WorkSpace(Workspace),
+		GrowFactor(Grow), Limit(Limit)
 {
    if (_error->PendingError() == true)
       return;
@@ -165,32 +167,48 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) 
 /* We try here to use mmap to reserve some space - this is much more
    cooler than the fallback solution to simply allocate a char array
    and could come in handy later than we are able to grow such an mmap */
-DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long WorkSpace) :
-             MMap(Flags | NoImmMap | UnMapped), Fd(0), WorkSpace(WorkSpace)
+DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long const &WorkSpace,
+			 unsigned long const &Grow, unsigned long const &Limit) :
+		MMap(Flags | NoImmMap | UnMapped), Fd(0), WorkSpace(WorkSpace),
+		GrowFactor(Grow), Limit(Limit)
 {
-   if (_error->PendingError() == true)
-      return;
+	if (_error->PendingError() == true)
+		return;
+
+	// disable Moveable if we don't grow
+	if (Grow == 0)
+		Flags &= ~Moveable;
+
+#ifndef __linux__
+	// kfreebsd doesn't have mremap, so we use the fallback
+	if ((Flags & Moveable) == Moveable)
+		Flags |= Fallback;
+#endif
 
 #ifdef _POSIX_MAPPED_FILES
-   // Set the permissions.
-   int Prot = PROT_READ;
-   int Map = MAP_PRIVATE | MAP_ANONYMOUS;
-   if ((Flags & ReadOnly) != ReadOnly)
-      Prot |= PROT_WRITE;
-   if ((Flags & Public) == Public)
-      Map = MAP_SHARED | MAP_ANONYMOUS;
+	if ((Flags & Fallback) != Fallback) {
+		// Set the permissions.
+		int Prot = PROT_READ;
+		int Map = MAP_PRIVATE | MAP_ANONYMOUS;
+		if ((Flags & ReadOnly) != ReadOnly)
+			Prot |= PROT_WRITE;
+		if ((Flags & Public) == Public)
+			Map = MAP_SHARED | MAP_ANONYMOUS;
 
-   // use anonymous mmap() to get the memory
-   Base = (unsigned char*) mmap(0, WorkSpace, Prot, Map, -1, 0);
+		// use anonymous mmap() to get the memory
+		Base = (unsigned char*) mmap(0, WorkSpace, Prot, Map, -1, 0);
 
-   if(Base == MAP_FAILED)
-      _error->Errno("DynamicMMap",_("Couldn't make mmap of %lu bytes"),WorkSpace);
-#else
-   // fallback to a static allocated space
-   Base = new unsigned char[WorkSpace];
-   memset(Base,0,WorkSpace);
+		if(Base == MAP_FAILED)
+			_error->Errno("DynamicMMap",_("Couldn't make mmap of %lu bytes"),WorkSpace);
+
+		iSize = 0;
+		return;
+	}
 #endif
-   iSize = 0;
+	// fallback to a static allocated space
+	Base = new unsigned char[WorkSpace];
+	memset(Base,0,WorkSpace);
+	iSize = 0;
 }
 									/*}}}*/
 // DynamicMMap::~DynamicMMap - Destructor				/*{{{*/
@@ -311,30 +329,55 @@ unsigned long DynamicMMap::WriteString(const char *String,
 									/*}}}*/
 // DynamicMMap::Grow - Grow the mmap					/*{{{*/
 // ---------------------------------------------------------------------
-/* This method will try to grow the mmap we currently use. This doesn't
-   work most of the time because we can't move the mmap around in the
-   memory for now as this would require to adjust quite a lot of pointers
-   but why we should not at least try to grow it before we give up? */
-bool DynamicMMap::Grow()
-{
+/* This method is a wrapper around different methods to (try to) grow
+   a mmap (or our char[]-fallback). Encounterable environments:
+   1. Moveable + !Fallback + linux -> mremap with MREMAP_MAYMOVE
+   2. Moveable + !Fallback + !linux -> not possible (forbidden by constructor)
+   3. Moveable + Fallback -> realloc
+   4. !Moveable + !Fallback + linux -> mremap alone - which will fail in 99,9%
+   5. !Moveable + !Fallback + !linux -> not possible (forbidden by constructor)
+   6. !Moveable + Fallback -> not possible
+   [ While Moveable and Fallback stands for the equally named flags and
+     "linux" indicates a linux kernel instead of a freebsd kernel. ]
+   So what you can see here is, that a MMAP which want to be growable need
+   to be moveable to have a real chance but that this method will at least try
+   the nearly impossible 4 to grow it before it finally give up: Never say never. */
+bool DynamicMMap::Grow() {
+	if (Limit != 0 && WorkSpace >= Limit)
+		return _error->Error(_("The size of a MMap has already reached the defined limit of %lu bytes,"
+		                       "abort the try to grow the MMap."), Limit);
+
+	unsigned long const newSize = WorkSpace + 1024*1024;
+
+	if(Fd != 0) {
+		Fd->Seek(newSize - 1);
+		char C = 0;
+		Fd->Write(&C,sizeof(C));
+	}
+	if ((Flags & Fallback) != Fallback) {
 #if defined(_POSIX_MAPPED_FILES) && defined(__linux__)
-   unsigned long newSize = WorkSpace + 1024*1024;
+   #ifdef MREMAP_MAYMOVE
+		if ((Flags & Moveable) == Moveable)
+			Base = mremap(Base, WorkSpace, newSize, MREMAP_MAYMOVE);
+		else
+   #endif
+			Base = mremap(Base, WorkSpace, newSize, 0);
 
-   if(Fd != 0)
-   {
-      Fd->Seek(newSize - 1);
-      char C = 0;
-      Fd->Write(&C,sizeof(C));
-   }
-
-   Base = mremap(Base, WorkSpace, newSize, 0);
-   if(Base == MAP_FAILED)
-      return false;
-
-   WorkSpace = newSize;
-   return true;
+		if(Base == MAP_FAILED)
+			return false;
 #else
-   return false;
+		return false;
 #endif
+	} else {
+		if ((Flags & Moveable) != Moveable)
+			return false;
+
+		Base = realloc(Base, newSize);
+		if (Base == NULL)
+			return false;
+	}
+
+	WorkSpace = newSize;
+	return true;
 }
 									/*}}}*/
