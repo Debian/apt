@@ -2,14 +2,14 @@
 # Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
 # Samuele Giovanni Tonon <samu@debian.org>, 2002.
-# Milo Casagrande <milo@ubuntu.com>, 2009
 #
+# Milo Casagrande <milo@ubuntu.com>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7.20\n"
+"Project-Id-Version: apt 0.7.23.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-09-27 17:32+0200\n"
-"PO-Revision-Date: 2009-06-04 13:23+0200\n"
+"PO-Revision-Date: 2009-11-11 19:29+0100\n"
 "Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -237,6 +237,7 @@ msgstr ""
 
 #: cmdline/apt-cdrom.cc:77
 #, fuzzy
+#| msgid "Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'"
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Dare un nome a questo disco, tipo \"Debian 5.0 Disco 1\""
 
@@ -1031,11 +1032,11 @@ msgstr ""
 "richiesti:"
 
 #: cmdline/apt-get.cc:1505
-#, fuzzy, c-format
+#, c-format
 msgid "%lu packages were automatically installed and are no longer required.\n"
 msgstr ""
-"I seguenti pacchetti sono stati installati automaticamente e non sono più "
-"richiesti:"
+"%lu pacchetti sono stati installati automaticamente e non sono più "
+"richiesti.\n"
 
 #: cmdline/apt-get.cc:1506
 msgid "Use 'apt-get autoremove' to remove them."
@@ -1271,7 +1272,6 @@ msgid "Supported modules:"
 msgstr "Moduli supportati:"
 
 #: cmdline/apt-get.cc:2697
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1364,6 +1364,10 @@ msgid ""
 "      Keep also in mind that locking is deactivated,\n"
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
+"Nota: questa è solo una simulazione.\n"
+"      apt-get necessita dei privilegi di root per la normale esecuzione.\n"
+"      Inoltre, il meccanismo di blocco non è attivato e non è quindi\n"
+"      utile dare importanza a tutto ciò per una situazione reale."
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1449,6 +1453,7 @@ msgstr "Eliminare tutti i file .deb precedentemente scaricati?"
 # at only 80 characters per line, if possible.
 #: dselect/install:101
 #, fuzzy
+#| msgid "Some errors occurred while unpacking. I'm going to configure the"
 msgid "Some errors occurred while unpacking. Packages that were installed"
 msgstr ""
 "Si sono verificati alcuni errori nell'estrazione. Verrà tentato di "
@@ -1456,6 +1461,7 @@ msgstr ""
 
 #: dselect/install:102
 #, fuzzy
+#| msgid "packages that were installed. This may result in duplicate errors"
 msgid "will be configured. This may result in duplicate errors"
 msgstr ""
 "i pacchetti che sono stati installati. Questo potrebbe generare molteplici "
@@ -1507,6 +1513,7 @@ msgstr "Errore nel leggere l'intestazione member dell'archivio"
 
 #: apt-inst/contrib/arfile.cc:90
 #, fuzzy, c-format
+#| msgid "Invalid archive member header"
 msgid "Invalid archive member header %s"
 msgstr "Intestazione member dell'archivio non valida"
 
@@ -1999,6 +2006,7 @@ msgstr ""
 
 #: methods/connect.cc:240
 #, fuzzy, c-format
+#| msgid "Unable to connect to %s %s:"
 msgid "Unable to connect to %s:%s:"
 msgstr "Impossibile connettersi a %s %s:"
 
@@ -2335,9 +2343,9 @@ msgid "Sub-process %s received a segmentation fault."
 msgstr "Il sottoprocesso %s ha ricevuto un segmentation fault."
 
 #: apt-pkg/contrib/fileutl.cc:458
-#, fuzzy, c-format
+#, c-format
 msgid "Sub-process %s received signal %u."
-msgstr "Il sottoprocesso %s ha ricevuto un segmentation fault."
+msgstr "Il sottoprocesso %s ha ricevuto il segnale %u."
 
 #: apt-pkg/contrib/fileutl.cc:462
 #, c-format
@@ -2432,7 +2440,7 @@ msgstr "Rompe"
 
 #: apt-pkg/pkgcache.cc:227
 msgid "Enhances"
-msgstr ""
+msgstr "Migliora"
 
 #: apt-pkg/pkgcache.cc:238
 msgid "important"
@@ -2653,9 +2661,11 @@ msgstr ""
 "È consigliato eseguire \"apt-get update\" per correggere questi problemi"
 
 #: apt-pkg/policy.cc:347
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
-msgstr "Campo non valido nel file delle preferenze: manca l'header \"Package\""
+msgstr ""
+"Campo non valido nel file delle preferenze %s, manca l'intestazione \"Package"
+"\""
 
 #: apt-pkg/policy.cc:369
 #, c-format
@@ -2813,19 +2823,19 @@ msgid "Size mismatch"
 msgstr "Le dimensioni non corrispondono"
 
 #: apt-pkg/indexrecords.cc:40
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse Release file %s"
-msgstr "Impossibile analizzare il file di pacchetto %s (1)"
+msgstr "Impossibile analizzare il file Release %s"
 
 #: apt-pkg/indexrecords.cc:47
-#, fuzzy, c-format
+#, c-format
 msgid "No sections in Release file %s"
-msgstr "Nota, viene selezionato %s al posto di %s\n"
+msgstr "Nessuna sezione nel file Release %s"
 
 #: apt-pkg/indexrecords.cc:81
 #, c-format
 msgid "No Hash entry in Release file %s"
-msgstr ""
+msgstr "Nessuna voce Hash nel file Release %s"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -2890,6 +2900,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
+"Impossibile trovare alcun file di pacchetto. Questo potrebbe non essere un "
+"disco Debian o potrebbe essere l'architettura errata."
 
 #: apt-pkg/cdrom.cc:710
 #, c-format
@@ -3015,7 +3027,7 @@ msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:907
 msgid "Running dpkg"
-msgstr ""
+msgstr "Esecuzione di dpkg"
 
 #: apt-pkg/deb/debsystem.cc:70
 #, c-format
@@ -3023,17 +3035,23 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
+"Impossibile acquisire il blocco sulla directory di amministrazione (%s). Un "
+"altro processo potrebbe tenerla occupata."
 
 #: apt-pkg/deb/debsystem.cc:73
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Impossibile bloccare la directory"
+msgstr ""
+"Impossibile acquisire il blocco sulla directory di amministrazione (%s). È "
+"necessario essere root."
 
 #: apt-pkg/deb/debsystem.cc:82
 msgid ""
 "dpkg was interrupted, you must manually run 'dpkg --configure -a' to correct "
 "the problem. "
 msgstr ""
+"dpkg è stato interrotto. È necessario eseguire \"dpkg --configure -a\" per "
+"correggere il problema. "
 
 #: apt-pkg/deb/debsystem.cc:100
 msgid "Not locked"
@@ -3046,9 +3064,3 @@ msgstr "Impossibile applicare la patch al file"
 #: methods/rsh.cc:330
 msgid "Connection closed prematurely"
 msgstr "Connessione chiusa prematuramente"
-
-#~ msgid "%4i %s\n"
-#~ msgstr "%4i %s\n"
-
-#~ msgid "Processing triggers for %s"
-#~ msgstr "Elaborazione opzioni addizionali per %s"
