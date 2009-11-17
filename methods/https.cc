@@ -214,8 +214,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    int timeout = _config->FindI("Acquire::http::Timeout",120);
    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
    //set really low lowspeed timeout (see #497983)
-   int dlMin = 1;
-   curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, dlMin);
+   curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, DL_MIN_SPEED);
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
 
    // set redirect options and default to 10 redirects
