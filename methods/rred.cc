@@ -530,7 +530,7 @@ public:
  *  and will write the result to "Testfile.result".
  */
 int main(int argc, char *argv[]) {
-	if (argc == 0) {
+	if (argc <= 1) {
 		RredMethod Mth;
 		return Mth.Run();
 	} else {
