@@ -6,6 +6,8 @@
 APT_PKG  = $(shell sed -nr 's/set\(MAJOR ([^)]*).*/\1/p' apt-pkg/CMakeLists.txt)
 APT_INST = $(shell sed -nr 's/set\(MAJOR.([^)]*).*/\1/p' apt-inst/CMakeLists.txt)
 export LDFLAGS = -Wl,--as-needed
+# There are no checks, and it would just break.
+export DEB_BUILD_OPTIONS += nocheck
 
 
 %:
