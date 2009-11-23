@@ -20,14 +20,15 @@ include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckSymbolExists)
 include(CheckCXXSourceCompiles)
+include(TestBigEndian)
 include(buildlib/translations.cmake)
 find_package(Threads)
 
 
 check_include_files(db.h HAVE_BDB)
-check_include_files(sys/vfs.h HAVE_VFS_H)
-check_include_files(sys/mount.h HAVE_MOUNT_H)
+check_include_files(curl/curl.h HAVE_CURL)
 check_function_exists(timegm HAVE_TIMEGM)
+TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 if (CMAKE_USE_PTHREADS_INIT)
 	set(HAVE_PTHREAD	 1)
@@ -46,7 +47,6 @@ function(check_type_exists type files variable)
   add_cxx_include(includes "${files}")
   CHECK_CXX_SOURCE_COMPILES("${includes} ${type} typeVar; int main() {}" ${variable})
 endfunction()
-
 
 check_type_exists(socklen_t sys/socket.h HAVE_SOCKLEN_T)
 
