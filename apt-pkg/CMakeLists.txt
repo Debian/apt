@@ -20,13 +20,8 @@ set_target_properties(apt-pkg PROPERTIES VERSION ${MAJOR}.${MINOR})
 set_target_properties(apt-pkg PROPERTIES SOVERSION ${MAJOR})
 add_definitions(-DAPT_DOMAIN="libapt-pkg${MAJOR}")
 
-# Link against util and dl
-target_link_libraries(apt-pkg util dl)
-
-# Threading support
-if (CMAKE_USE_PTHREADS_INIT)
-	target_link_libraries(apt-pkg ${CMAKE_THREAD_LIBS_INIT})
-endif(CMAKE_USE_PTHREADS_INIT)
+# Link against util and dl, and the threading library
+target_link_libraries(apt-pkg -lutil -ldl ${CMAKE_THREAD_LIBS_INIT})
 
 # Install the library and the header files
 install(TARGETS apt-pkg LIBRARY DESTINATION lib)

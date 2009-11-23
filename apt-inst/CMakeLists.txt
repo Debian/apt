@@ -16,23 +16,15 @@ file(GLOB_RECURSE headers "*.h")
 
 # Create a library using the C++ files
 add_library(apt-inst SHARED ${core} ${deb} ${contrib})
-# Link against apt-pkg
-link_directories(${PROJECT_BINARY_DIR}/apt-pkg)
-target_link_libraries(apt-inst apt-pkg)
 
-# Add the SONAME to the library
+# Link the library and set the SONAME
+target_link_libraries(apt-inst apt-pkg ${CMAKE_THREAD_LIBS_INIT})
 set_target_properties(apt-inst PROPERTIES VERSION ${MAJOR}.${MINOR})
 set_target_properties(apt-inst PROPERTIES SOVERSION ${MAJOR})
 
 # Install the library
 install(TARGETS apt-inst LIBRARY DESTINATION lib)
 install(FILES ${headers} DESTINATION include/apt-pkg)
-
-# Threading support
-find_package(Threads)
-if (CMAKE_USE_PTHREADS_INIT)
-	target_link_libraries(apt-inst ${CMAKE_THREAD_LIBS_INIT})
-endif(CMAKE_USE_PTHREADS_INIT)
 
 # Flatten our header structure
 foreach(header ${headers})
