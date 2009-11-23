@@ -53,6 +53,9 @@ execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
 configure_file(CMake/config.h.in ${PROJECT_BINARY_DIR}/include/config.h)
 configure_file(CMake/apti18n.h.in ${PROJECT_BINARY_DIR}/include/apti18n.h)
 
+# Generic header locations
+include_directories(${PROJECT_BINARY_DIR}/include)
+
 # Add our subdirectories
 add_subdirectory(apt-pkg)
 add_subdirectory(apt-inst)

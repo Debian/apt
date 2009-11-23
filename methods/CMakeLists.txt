@@ -1,5 +1,3 @@
-# Include directories.
-include_directories(${PROJECT_BINARY_DIR}/include)
 # APT_PKG_MAJOR set globally in ../apt-pkg/CMakeLists.txt, translations are
 # built there.
 add_definitions(-DAPT_DOMAIN="libapt-pkg${APT_PKG_MAJOR}")

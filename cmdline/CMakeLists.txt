@@ -1,6 +1,3 @@
-# Include directories.
-include_directories(${PROJECT_BINARY_DIR}/include)
-
 # Create the executable tasks
 add_executable(apt-cache apt-cache.cc)
 add_executable(apt-get apt-get.cc acqprogress.cc)

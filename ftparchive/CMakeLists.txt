@@ -1,8 +1,3 @@
-# Include directories.
-include_directories(${PROJECT_BINARY_DIR}/include)
-link_directories(${PROJECT_BINARY_DIR}/apt-pkg ${PROJECT_BINARY_DIR}/apt-inst)
-
-add_definitions(-DAPT_DOMAIN="apt-ftparchive")
 # Create the executable tasks
 add_executable(apt-ftparchive apt-ftparchive.cc cachedb.cc writer.cc
                               contents.cc override.cc multicompress.cc)
@@ -13,6 +8,6 @@ target_link_libraries(apt-ftparchive apt-inst apt-pkg db)
 # Install the executables
 install(TARGETS apt-ftparchive RUNTIME DESTINATION bin)
 
-
-FILE(GLOB programs "*.cc")
-apt_add_translation_domain(apt-ftparchive "${programs}")
+# Translation support
+apt_add_translation_domain(apt-ftparchive "apt-ftparchive.cc;cachedb.cc;"
+                          "writer.cc;contents.cc;override.cc;multicompress.cc")

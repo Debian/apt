@@ -1,11 +1,9 @@
 # Include directories.
-include_directories(${PROJECT_BINARY_DIR}/include)
 include_directories(${PROJECT_BINARY_DIR}/include/apt-pkg)
 
 # Set the version of the library
 set(MAJOR 1.1)
 set(MINOR 0)
-add_definitions(-DAPT_DOMAIN="libapt-inst${MAJOR}")
 
 # Definition of C++ files
 file(GLOB core "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
@@ -29,5 +27,5 @@ install(FILES ${headers} DESTINATION include/apt-pkg)
 # Flatten our header structure
 flatify(${PROJECT_BINARY_DIR}/include/apt-pkg/ "${headers}")
 
-# Add the translations for libapt-inst
+# Add the translations for libapt-inst, and set the translation domain.
 apt_add_translation_domain(libapt-inst${MAJOR} "${core};${contrib};${deb}")

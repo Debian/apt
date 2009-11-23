@@ -29,9 +29,5 @@ macro(apt_add_translation_domain domain files)
 	endforeach(file ${translations})
 	
 	add_custom_target(nls-${domain} ALL DEPENDS ${mofiles})
-	
-	foreach(file ${files})
-		file(RELATIVE_PATH relfile ${PROJECT_SOURCE_DIR} ${file})
-		set(PROJECT_I18N ${PROJECT_I18N} ${relfile} PARENT_SCOPE)
-	endforeach(file ${files})
+	add_definitions(-DAPT_DOMAIN="${domain}")
 endmacro(apt_add_translation_domain domain files)
