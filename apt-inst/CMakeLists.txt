@@ -27,12 +27,7 @@ install(TARGETS apt-inst LIBRARY DESTINATION lib)
 install(FILES ${headers} DESTINATION include/apt-pkg)
 
 # Flatten our header structure
-foreach(header ${headers})
-	get_filename_component(tgt ${header} NAME)
-	configure_file(${header} ${PROJECT_BINARY_DIR}/include/apt-pkg/${tgt} @ONLY)
-endforeach(header)
-
+flatify(${PROJECT_BINARY_DIR}/include/apt-pkg/ "${headers}")
 
 # Add the translations for libapt-inst
-set(files ${core} ${contrib} ${deb})
-apt_add_translation_domain(libapt-inst${MAJOR} "${files}")
+apt_add_translation_domain(libapt-inst${MAJOR} "${core};${contrib};${deb}")

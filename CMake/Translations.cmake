@@ -1,9 +1,7 @@
 # translations.cmake - Translations using APT's translation system.
 # Copyright (C) 2009 Julian Andres Klode <jak@debian.org>
-#
-#
 
-macro(apt_add_translation_domain domain files)
+macro(apt_add_translation_domain domain files)	
 	# Create the template for this specific sub-domain
 	add_custom_command (
 		OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot

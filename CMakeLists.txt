@@ -1,9 +1,5 @@
-# Copyright (C) 2009 Julian Andres Klode <jak@debian.org>
-#
-# Copying and distribution of this file, with or without modification,
-# are permitted in any medium without royalty provided the copyright
-# notice and this notice are preserved.  This file is offered as-is,
-# without any warranty.
+# Copyright (C) 2009 Julian Andres Klode <jak@debian.org>.
+# Licensed under the same terms as APT; i.e. GPL 2 or later.
 
 # set minimum version
 project(apt)
@@ -17,6 +13,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # Configuring the project
+include(Misc)
 include(Translations)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
