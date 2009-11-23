@@ -36,7 +36,7 @@ endif (NOT HAVE_CURL)
 
 # Other checks
 check_function_exists(timegm HAVE_TIMEGM)
-TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
+test_big_endian(WORDS_BIGENDIAN)
 
 if (CMAKE_USE_PTHREADS_INIT)
 	set(HAVE_PTHREAD 1)
