@@ -57,7 +57,13 @@ endif(NOT HAVE_SOCKLEN_T)
 
 # Configure some variables like package, version and architecture.
 set(PACKAGE "apt")
-set(VERSION "0.7.90")
+
+execute_process(COMMAND dpkg-parsechangelog -l${PROJECT_SOURCE_DIR}/debian/changelog
+                COMMAND sed -nr "s/Version: (.*)/\\1/p"
+                OUTPUT_VARIABLE VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+                
+message(STATUS "Building Advanced Package Tool, version ${VERSION}")
+                
 execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
                 OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
 
