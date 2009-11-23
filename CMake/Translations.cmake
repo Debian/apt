@@ -7,6 +7,7 @@ macro(apt_add_translation_domain domain files)
 		OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot
 		COMMAND xgettext --add-comments --foreign -k_ -kN_
 		                 -o ${PROJECT_BINARY_DIR}/${domain}.pot ${files}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 	)
 	
 	file(GLOB translations "${PROJECT_SOURCE_DIR}/po/*.po")
