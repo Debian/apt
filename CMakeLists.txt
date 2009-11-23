@@ -9,21 +9,18 @@
 project(apt)
 cmake_minimum_required(VERSION 2.6.0)
 
+
+option(WITH_DOC "Build documentation." ON)
+option(USE_NLS "Localisation support." ON)
+
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-
-# Add our subdirectories
-add_subdirectory(apt-pkg)
-add_subdirectory(apt-inst)
-add_subdirectory(cmdline)
-add_subdirectory(ftparchive)
-add_subdirectory(methods)
-
 
 # Configuring the project
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckSymbolExists)
 include(CheckCXXSourceCompiles)
+include(buildlib/translations.cmake)
 find_package(Threads)
 
 
@@ -58,7 +55,6 @@ if (NOT HAVE_SOCKLEN_T)
 endif(NOT HAVE_SOCKLEN_T)
 
 
-option(USE_NLS "Localisation support." ON)
 # Configure some variables like package, version and architecture.
 set(PACKAGE "apt")
 set(VERSION "0.7.90")
@@ -68,3 +64,11 @@ execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
 # Configure our configuration headers (config.h and apti18n.h)
 configure_file(buildlib/config.h.cmake ${PROJECT_BINARY_DIR}/include/config.h)
 configure_file(buildlib/apti18n.h.cmake ${PROJECT_BINARY_DIR}/include/apti18n.h)
+
+
+# Add our subdirectories
+add_subdirectory(apt-pkg)
+add_subdirectory(apt-inst)
+add_subdirectory(cmdline)
+add_subdirectory(ftparchive)
+add_subdirectory(methods)

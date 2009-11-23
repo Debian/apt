@@ -1,7 +1,8 @@
 # Include directories.
 include_directories(${PROJECT_BINARY_DIR}/include)
-# Set the translation domain (should be shared with apt-pkg)
-add_definitions(-DAPT_DOMAIN="${libapt-pkg4.8}")
+# APT_PKG_MAJOR set globally in ../apt-pkg/CMakeLists.txt, translations are
+# built there.
+add_definitions(-DAPT_DOMAIN="libapt-pkg${APT_PKG_MAJOR}")
 
 # Create the executable targets
 add_executable(file file.cc)

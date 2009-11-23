@@ -24,3 +24,7 @@ install(TARGETS apt-cache apt-get apt-config apt-cdrom apt-sortpkgs
 
 # Install the not-to-be-compiled programs
 INSTALL(PROGRAMS apt-key apt-mark DESTINATION bin)
+
+# Build the translations
+FILE(GLOB programs "*.cc")
+apt_add_translation_domain(apt "${programs}")
