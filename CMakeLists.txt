@@ -13,10 +13,11 @@ cmake_minimum_required(VERSION 2.6.0)
 option(WITH_DOC "Build documentation." ON)
 option(USE_NLS "Localisation support." ON)
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # Configuring the project
-include(buildlib/translations.cmake)
+include(Translations)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(TestBigEndian)
@@ -24,7 +25,7 @@ find_package(Threads)
 
 
 # Check some include files
-check_include_files(dxb.h HAVE_BDB)
+check_include_files(db.h HAVE_BDB)
 if (NOT HAVE_BDB)
 	message(FATAL_ERROR "Berkeley DB is missing (db.h)")
 endif (NOT HAVE_BDB)
@@ -52,9 +53,8 @@ execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
                 OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 # Configure our configuration headers (config.h and apti18n.h)
-configure_file(buildlib/config.h.cmake ${PROJECT_BINARY_DIR}/include/config.h)
-configure_file(buildlib/apti18n.h.cmake ${PROJECT_BINARY_DIR}/include/apti18n.h)
-
+configure_file(CMake/config.h.in ${PROJECT_BINARY_DIR}/include/config.h)
+configure_file(CMake/apti18n.h.in ${PROJECT_BINARY_DIR}/include/apti18n.h)
 
 # Add our subdirectories
 add_subdirectory(apt-pkg)
