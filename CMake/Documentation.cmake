@@ -25,7 +25,7 @@ endmacro(add_debiandoc target sourcefiles installdest)
 
 
 # Macro for XML man pages.
-macro(add_xml_manpages target manpages)
+macro(add_xml_manpages target manpages translations entities)
 	foreach(manpage ${manpages})
 		string(LENGTH ${manpage} manpage_length)
 		math(EXPR manpage_length ${manpage_length}-1)
@@ -36,11 +36,48 @@ macro(add_xml_manpages target manpages)
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${manpage}.xml
 		)
+		
+       
 		set(commands ${commands} ${CMAKE_CURRENT_BINARY_DIR}/${manpage})
 		
 		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${manpage}
 				DESTINATION share/man/man${section})
+				
+		# Add the translations for the manpage.
+		foreach(translation ${translations})
+			set(entities)
+			# transdir = shortcut to the output directory for translations.
+			set(transdir ${CMAKE_CURRENT_BINARY_DIR}/${translation})
+			
+			foreach(entity ${entities})				
+				add_custom_command(OUTPUT ${transdir}/${entity}
+					WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${transdir}
+					COMMAND ${CMAKE_COMMAND} -E copy ${entity} ${transdir})
+				set(ent_cmds ${ent_cmds} ${transdir}/${entity})
+			endforeach(entity ${entities})
+		
+			add_custom_command(OUTPUT ${transdir}/${manpage}.xml			
+				COMMAND po4a-translate --keep 0 -f docbook -m ${manpage}.xml
+				           -p ${CMAKE_CURRENT_SOURCE_DIR}/po/${translation}.po
+				           -l ${transdir}/${manpage}.xml
+				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+				DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${manpage}.xml ${ent_cmds})
+			
+			add_custom_command(OUTPUT ${transdir}/${manpage}
+				COMMAND xmlto -o ${transdir} man ${transdir}/${manpage}.xml
+				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+				DEPENDS ${transdir}/${manpage}.xml)
+			
+			set(nls-cmd ${nls-cmd} ${transdir}/${manpage})
+			install(FILES ${transdir}/${manpage}
+				    DESTINATION share/man/${translation}/man${section})
+			
+		endforeach(translation ${translations})
 	endforeach(manpage ${manpages})
 	
 	add_custom_target(${target} ALL DEPENDS ${commands})
+	# Sort the list of the translations.
+	list(SORT nls-cmd)
+	add_custom_target(nls-${target} ALL DEPENDS ${nls-cmd})
 endmacro(add_xml_manpages manpages)
