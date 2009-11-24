@@ -1,6 +1,5 @@
 # Copyright (C) 2009 Julian Andres Klode <jak@debian.org>.
 # Licensed under the same terms as APT; i.e. GPL 2 or later.
-# TODO: Integrate PO4A translations
 
 macro(add_debiandoc target sourcefiles installdest)
 	foreach(file ${sourcefiles})
