@@ -898,6 +898,7 @@ bool Clean(CommandLine &CmdL)
 
 int main(int argc, const char *argv[])
 {
+   setlocale(LC_ALL, "");
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
       {0,"md5","APT::FTPArchive::MD5",0},

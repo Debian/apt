@@ -24,6 +24,7 @@ apt (0.7.25) UNRELEASED; urgency=low
       (thanks to David Kalnischkies)
 
   [ Julian Andres Klode ]
+  * Switch our buildsystem to CMake and rework the packaging using dh7.
   * doc/apt.conf.5.xml:
     - Deprecate unquoted values, string concatenation and explain what should
       not be written inside a value (quotes,backslash).
@@ -33,7 +34,8 @@ apt (0.7.25) UNRELEASED; urgency=low
   * methods/https.cc:
     - Add support for authentication using netrc (Closes: #518473), patch
       by Jussi Hakala <jussi.hakala@hut.fi>.
-  * Switch our buildsystem to CMake and rework the packaging using dh7.
+  * ftparchive/apt-ftparchive.cc:
+    - Call setlocale() so translations are actually used.
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 29 Sep 2009 15:51:34 +0200
 
