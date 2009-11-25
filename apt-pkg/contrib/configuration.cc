@@ -85,7 +85,7 @@ Configuration::~Configuration()
 /* This will lookup a single item by name below another item. It is a 
    helper function for the main lookup function */
 Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
-					   unsigned long Len,bool Create)
+					   unsigned long const &Len,bool const &Create)
 {
    int Res = 1;
    Item *I = Head->Child;
@@ -118,7 +118,7 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
 // ---------------------------------------------------------------------
 /* This performs a fully scoped lookup of a given name, possibly creating
    new items */
-Configuration::Item *Configuration::Lookup(const char *Name,bool Create)
+Configuration::Item *Configuration::Lookup(const char *Name,bool const &Create)
 {
    if (Name == 0)
       return Root->Child;
@@ -245,7 +245,7 @@ vector<string> Configuration::FindVector(const char *Name) const
 // Configuration::FindI - Find an integer value				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int Configuration::FindI(const char *Name,int Default) const
+int Configuration::FindI(const char *Name,int const &Default) const
 {
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
@@ -262,7 +262,7 @@ int Configuration::FindI(const char *Name,int Default) const
 // Configuration::FindB - Find a boolean type				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Configuration::FindB(const char *Name,bool Default) const
+bool Configuration::FindB(const char *Name,bool const &Default) const
 {
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
@@ -338,7 +338,7 @@ void Configuration::Set(const char *Name,const string &Value)
 // Configuration::Set - Set an integer value				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Set(const char *Name,int Value)
+void Configuration::Set(const char *Name,int const &Value)
 {
    Item *Itm = Lookup(Name,true);
    if (Itm == 0)
@@ -351,7 +351,7 @@ void Configuration::Set(const char *Name,int Value)
 // Configuration::Clear - Clear an single value from a list	        /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Clear(const string Name, int Value)
+void Configuration::Clear(string const &Name, int const &Value)
 {
    char S[300];
    snprintf(S,sizeof(S),"%i",Value);
@@ -361,7 +361,7 @@ void Configuration::Clear(const string Name, int Value)
 // Configuration::Clear - Clear an single value from a list	        /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Clear(const string Name, string Value)
+void Configuration::Clear(string const &Name, string const &Value)
 {
    Item *Top = Lookup(Name.c_str(),false);
    if (Top == 0 || Top->Child == 0)
@@ -392,7 +392,7 @@ void Configuration::Clear(const string Name, string Value)
 // Configuration::Clear - Clear an entire tree				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Clear(string Name)
+void Configuration::Clear(string const &Name)
 {
    Item *Top = Lookup(Name.c_str(),false);
    if (Top == 0) 
@@ -507,8 +507,8 @@ string Configuration::Item::FullTag(const Item *Stop) const
    sections like 'zone "foo.org" { .. };' This causes each section to be
    added in with a tag like "zone::foo.org" instead of being split 
    tag/value. AsSectional enables Sectional parsing.*/
-bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
-		    unsigned Depth)
+bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectional,
+		    unsigned const &Depth)
 {   
    // Open the stream for reading
    ifstream F(FName.c_str(),ios::in); 
@@ -835,8 +835,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 // ReadConfigDir - Read a directory of config files			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ReadConfigDir(Configuration &Conf,const string &Dir,bool AsSectional,
-		   unsigned Depth)
+bool ReadConfigDir(Configuration &Conf,const string &Dir,bool const &AsSectional,
+		   unsigned const &Depth)
 {   
    DIR *D = opendir(Dir.c_str());
    if (D == 0)
