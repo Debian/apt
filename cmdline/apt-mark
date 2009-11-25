@@ -2,13 +2,14 @@
 
 from optparse import OptionParser
 
+import sys
+import os.path
+    
 try:
     import apt_pkg
 except ImportError:
     print "Error importing apt_pkg, is python-apt installed?"
-    
-import sys
-import os.path
+    sys.exit(1)
     
 actions = { "markauto" : 1,
             "unmarkauto": 0
