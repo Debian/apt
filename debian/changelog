@@ -48,6 +48,12 @@ apt (0.7.25) UNRELEASED; urgency=low
     - bump policy to 3.8.3 as we have no outdated manpages anymore
   * debian/NEWS:
     - fix a typo in 0.7.24: Allready -> Already (Closes: #557674)
+  * methods/rred.cc:
+    - rewrite to be able to handle even big patch files
+    - adopt optional mmap+iovec patch from Morten Hustveit
+      (Closes: #463354) which should speed up a bit. Thanks!
+  * apt-pkg/contrib/mmap.{cc,h}:
+    - extend it to have a growable flag - unused now but maybe...
 
   [ Chris Leick ]
   * doc/ various manpages:
