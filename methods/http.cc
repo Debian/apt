@@ -728,7 +728,8 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       Req += string("Authorization: Basic ") + 
           Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
    
-   Req += "User-Agent: Debian APT-HTTP/1.3 ("VERSION")\r\n\r\n";
+   Req += "User-Agent: " + _config->Find("Acquire::http::User-Agent",
+		"Debian APT-HTTP/1.3 ("VERSION")") + "\r\n\r\n";
    
    if (Debug == true)
       cerr << Req << endl;
