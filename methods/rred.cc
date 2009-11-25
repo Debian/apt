@@ -229,7 +229,6 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 #ifdef _POSIX_MAPPED_FILES
 	MMap ed_cmds(Patch, MMap::ReadOnly);
 	MMap in_file(From, MMap::ReadOnly);
-	FILE* fTo = fdopen(out_file.Fd(), "w");
 
 	if (ed_cmds.Size() == 0 || in_file.Size() == 0)
 		return MMAP_FAILED;
@@ -420,8 +419,6 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 	delete [] iov;
 	free(commands);
 
-	fflush(fTo);
-
 	return ED_OK;
 #else
 	return MMAP_FAILED;
@@ -465,10 +462,14 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
       if (_error->PendingError() == true)
          return false;
       if (patchFile(Patch, From, To, &Hash) != ED_OK) {
-	 return _error->Errno("rred", _("Could not patch file %s"), Path.append(" (1)").c_str());
+	 return _error->WarningE("rred", _("Could not patch %s with mmap and with file operation usage - the patch seems to be corrupt."), Path.c_str());
+      } else if (Debug == true) {
+	 std::clog << "rred: finished file patching of " << Path  << " after mmap failed." << std::endl;
       }
    } else if (result != ED_OK) {
-      return _error->Errno("rred", _("Could not patch file %s"), Path.append(" (2)").c_str());
+      return _error->Errno("rred", _("Could not patch %s with mmap (but no mmap specific fail) - the patch seems to be corrupt."), Path.c_str());
+   } else if (Debug == true) {
+      std::clog << "rred: finished mmap patching of " << Path << std::endl;
    }
 
    // write out the result
@@ -491,12 +492,10 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
       return _error->Errno("stat",_("Failed to stat"));
 
    // return done
-   if (Itm->Uri.empty() == true) {
-      Res.LastModified = Buf.st_mtime;
-      Res.Size = Buf.st_size;
-      Res.TakeHashes(Hash);
-      URIDone(Res);
-   }
+   Res.LastModified = Buf.st_mtime;
+   Res.Size = Buf.st_size;
+   Res.TakeHashes(Hash);
+   URIDone(Res);
 
    return true;
 }
