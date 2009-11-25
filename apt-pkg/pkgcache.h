@@ -245,7 +245,7 @@ struct pkgCache::VerFile						/*{{{*/
    map_ptrloc File;           // PackageFile
    map_ptrloc NextFile;       // PkgVerFile
    map_ptrloc Offset;         // File offset
-   unsigned short Size;
+   unsigned long Size;
 };
 									/*}}}*/
 struct pkgCache::DescFile						/*{{{*/
@@ -253,7 +253,7 @@ struct pkgCache::DescFile						/*{{{*/
    map_ptrloc File;           // PackageFile
    map_ptrloc NextFile;       // PkgVerFile
    map_ptrloc Offset;         // File offset
-   unsigned short Size;
+   unsigned long Size;
 };
 									/*}}}*/
 struct pkgCache::Version						/*{{{*/
