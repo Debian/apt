@@ -200,7 +200,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_USERAGENT,
 	_config->Find("Acquire::https::User-Agent",
 		_config->Find("Acquire::http::User-Agent",
-			"Debian APT-CURL/1.0 ("VERSION")")));
+			"Debian APT-CURL/1.0 ("VERSION")")).c_str());
 
    // set timeout
    int timeout = _config->FindI("Acquire::https::Timeout",

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 08:28+0200\n"
+"POT-Creation-Date: 2009-11-27 00:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -426,26 +426,26 @@ msgstr ""
 msgid " DeLink limit of %sB hit.\n"
 msgstr ""
 
-#: ftparchive/writer.cc:387
+#: ftparchive/writer.cc:388
 msgid "Archive had no package field"
 msgstr ""
 
-#: ftparchive/writer.cc:395 ftparchive/writer.cc:610
+#: ftparchive/writer.cc:396 ftparchive/writer.cc:627
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr ""
 
-#: ftparchive/writer.cc:440 ftparchive/writer.cc:698
+#: ftparchive/writer.cc:457 ftparchive/writer.cc:715
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr ""
 
-#: ftparchive/writer.cc:620
+#: ftparchive/writer.cc:637
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr ""
 
-#: ftparchive/writer.cc:624
+#: ftparchive/writer.cc:641
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr ""
@@ -1570,11 +1570,11 @@ msgid "File not found"
 msgstr ""
 
 #: methods/copy.cc:43 methods/gzip.cc:141 methods/gzip.cc:150
-#: methods/rred.cc:234 methods/rred.cc:243
+#: methods/rred.cc:483 methods/rred.cc:492
 msgid "Failed to stat"
 msgstr ""
 
-#: methods/copy.cc:80 methods/gzip.cc:147 methods/rred.cc:240
+#: methods/copy.cc:80 methods/gzip.cc:147 methods/rred.cc:489
 msgid "Failed to set modification time"
 msgstr ""
 
@@ -1700,7 +1700,7 @@ msgstr ""
 msgid "Unable to accept connection"
 msgstr ""
 
-#: methods/ftp.cc:869 methods/http.cc:996 methods/rsh.cc:303
+#: methods/ftp.cc:869 methods/http.cc:997 methods/rsh.cc:303
 msgid "Problem hashing file"
 msgstr ""
 
@@ -1776,7 +1776,7 @@ msgstr ""
 
 #: methods/connect.cc:193
 #, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i)"
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
 msgstr ""
 
 #: methods/connect.cc:240
@@ -1864,47 +1864,47 @@ msgstr ""
 msgid "Unknown date format"
 msgstr ""
 
-#: methods/http.cc:787
+#: methods/http.cc:788
 msgid "Select failed"
 msgstr ""
 
-#: methods/http.cc:792
+#: methods/http.cc:793
 msgid "Connection timed out"
 msgstr ""
 
-#: methods/http.cc:815
+#: methods/http.cc:816
 msgid "Error writing to output file"
 msgstr ""
 
-#: methods/http.cc:846
+#: methods/http.cc:847
 msgid "Error writing to file"
 msgstr ""
 
-#: methods/http.cc:874
+#: methods/http.cc:875
 msgid "Error writing to the file"
 msgstr ""
 
-#: methods/http.cc:888
+#: methods/http.cc:889
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 
-#: methods/http.cc:890
+#: methods/http.cc:891
 msgid "Error reading from server"
 msgstr ""
 
-#: methods/http.cc:981 apt-pkg/contrib/mmap.cc:215
+#: methods/http.cc:982 apt-pkg/contrib/mmap.cc:233
 msgid "Failed to truncate file"
 msgstr ""
 
-#: methods/http.cc:1146
+#: methods/http.cc:1147
 msgid "Bad header data"
 msgstr ""
 
-#: methods/http.cc:1163 methods/http.cc:1218
+#: methods/http.cc:1164 methods/http.cc:1219
 msgid "Connection failed"
 msgstr ""
 
-#: methods/http.cc:1310
+#: methods/http.cc:1311
 msgid "Internal error"
 msgstr ""
 
@@ -1912,16 +1912,23 @@ msgstr ""
 msgid "Can't mmap an empty file"
 msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:81 apt-pkg/contrib/mmap.cc:187
+#: apt-pkg/contrib/mmap.cc:81 apt-pkg/contrib/mmap.cc:202
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:234
+#: apt-pkg/contrib/mmap.cc:252
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
 "Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:347
+#, c-format
+msgid ""
+"The size of a MMap has already reached the defined limit of %lu bytes,abort "
+"the try to grow the MMap."
 msgstr ""
 
 #. d means days, h means hours, min means minutes, s means seconds
@@ -2533,39 +2540,39 @@ msgstr ""
 msgid "rename failed, %s (%s -> %s)."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:395
+#: apt-pkg/acquire-item.cc:396
 msgid "MD5Sum mismatch"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:649 apt-pkg/acquire-item.cc:1411
+#: apt-pkg/acquire-item.cc:657 apt-pkg/acquire-item.cc:1419
 msgid "Hash Sum mismatch"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1106
+#: apt-pkg/acquire-item.cc:1114
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1216
+#: apt-pkg/acquire-item.cc:1224
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1275
+#: apt-pkg/acquire-item.cc:1283
 #, c-format
 msgid ""
 "I wasn't able to locate file for the %s package. This might mean you need to "
 "manually fix this package."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1316
+#: apt-pkg/acquire-item.cc:1324
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1403
+#: apt-pkg/acquire-item.cc:1411
 msgid "Size mismatch"
 msgstr ""
 
@@ -2787,8 +2794,18 @@ msgstr ""
 msgid "Not locked"
 msgstr ""
 
-#: methods/rred.cc:219
-msgid "Could not patch file"
+#: methods/rred.cc:465
+#, c-format
+msgid ""
+"Could not patch %s with mmap and with file operation usage - the patch seems "
+"to be corrupt."
+msgstr ""
+
+#: methods/rred.cc:470
+#, c-format
+msgid ""
+"Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
+"to be corrupt."
 msgstr ""
 
 #: methods/rsh.cc:330
