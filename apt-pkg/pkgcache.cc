@@ -22,11 +22,11 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 
 #include <apti18n.h>
     
@@ -674,14 +674,22 @@ string pkgCache::PkgFileIterator::RelStr()
  */
 pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
 {
-   pkgCache::DescIterator DescDefault = DescriptionList();
-   pkgCache::DescIterator Desc = DescDefault;
-   for (; Desc.end() == false; Desc++)
-      if (pkgIndexFile::LanguageCode() == Desc.LanguageCode())
-	 break;
-   if (Desc.end() == true) 
-      Desc = DescDefault;
-   return Desc;
+   std::vector<string> const lang = APT::Configuration::getLanguages();
+   for (std::vector<string>::const_iterator l = lang.begin();
+	l != lang.end(); l++)
+   {
+      pkgCache::DescIterator DescDefault = DescriptionList();
+      pkgCache::DescIterator Desc = DescDefault;
+
+      for (; Desc.end() == false; Desc++)
+	 if (*l == Desc.LanguageCode())
+	    break;
+      if (Desc.end() == true) 
+	 Desc = DescDefault;
+      return Desc;
+   }
+
+   return DescriptionList();
 };
 
 									/*}}}*/

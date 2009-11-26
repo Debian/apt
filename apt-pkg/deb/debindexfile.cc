@@ -319,10 +319,11 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 // TranslationsIndex::debTranslationsIndex - Contructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section) : 
-                  pkgIndexFile(true), URI(URI), Dist(Dist), Section(Section)
-{
-}
+debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section,
+						char const * const Translation) :
+			pkgIndexFile(true), URI(URI), Dist(Dist), Section(Section),
+				Language(Translation)
+{}
 									/*}}}*/
 // TranslationIndex::Trans* - Return the URI to the translation files	/*{{{*/
 // ---------------------------------------------------------------------
@@ -355,8 +356,8 @@ string debTranslationsIndex::IndexURI(const char *Type) const
 bool debTranslationsIndex::GetIndexes(pkgAcquire *Owner) const
 {
    if (TranslationsAvailable()) {
-     string TranslationFile = "Translation-" + LanguageCode();
-     new pkgAcqIndexTrans(Owner, IndexURI(LanguageCode().c_str()),
+     string const TranslationFile = string("Translation-").append(Language);
+     new pkgAcqIndexTrans(Owner, IndexURI(Language),
 			  Info(TranslationFile.c_str()),
 			  TranslationFile);
    }
@@ -375,7 +376,7 @@ string debTranslationsIndex::Describe(bool Short) const
       snprintf(S,sizeof(S),"%s",Info(TranslationFile().c_str()).c_str());
    else
       snprintf(S,sizeof(S),"%s (%s)",Info(TranslationFile().c_str()).c_str(),
-	       IndexFile(LanguageCode().c_str()).c_str());
+	       IndexFile(Language).c_str());
    return S;
 }
 									/*}}}*/
@@ -397,20 +398,20 @@ string debTranslationsIndex::Info(const char *Type) const
    return Info;
 }
 									/*}}}*/
-bool debTranslationsIndex::HasPackages() const
+bool debTranslationsIndex::HasPackages() const				/*{{{*/
 {
    if(!TranslationsAvailable())
       return false;
    
-   return FileExists(IndexFile(LanguageCode().c_str()));
+   return FileExists(IndexFile(Language));
 }
-
+									/*}}}*/
 // TranslationsIndex::Exists - Check if the index is available		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool debTranslationsIndex::Exists() const
 {
-   return FileExists(IndexFile(LanguageCode().c_str()));
+   return FileExists(IndexFile(Language));
 }
 									/*}}}*/
 // TranslationsIndex::Size - Return the size of the index		/*{{{*/
@@ -419,7 +420,7 @@ bool debTranslationsIndex::Exists() const
 unsigned long debTranslationsIndex::Size() const
 {
    struct stat S;
-   if (stat(IndexFile(LanguageCode().c_str()).c_str(),&S) != 0)
+   if (stat(IndexFile(Language).c_str(),&S) != 0)
       return 0;
    return S.st_size;
 }
@@ -430,7 +431,7 @@ unsigned long debTranslationsIndex::Size() const
 bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 {
    // Check the translation file, if in use
-   string TranslationFile = IndexFile(LanguageCode().c_str());
+   string TranslationFile = IndexFile(Language);
    if (TranslationsAvailable() && FileExists(TranslationFile))
    {
      FileFd Trans(TranslationFile,FileFd::ReadOnly);
@@ -462,7 +463,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 /* */
 pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) const
 {
-   string FileName = IndexFile(LanguageCode().c_str());
+   string FileName = IndexFile(Language);
    
    pkgCache::PkgFileIterator File = Cache.FileBegin();
    for (; File.end() == false; File++)

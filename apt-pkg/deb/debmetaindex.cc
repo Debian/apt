@@ -5,6 +5,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
 
 using namespace std;
@@ -170,13 +171,19 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 		     new indexRecords (Dist));
 
    // Queue the translations
+   std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
    for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin(); 
 	I != SectionEntries.end(); I++) {
 
       if((*I)->IsSrc)
 	 continue;
-      debTranslationsIndex i = debTranslationsIndex(URI,Dist,(*I)->Section);
-      i.GetIndexes(Owner);
+
+      for (vector<string>::const_iterator l = lang.begin();
+		l != lang.end(); l++)
+      {
+	debTranslationsIndex i = debTranslationsIndex(URI,Dist,(*I)->Section,(*l).c_str());
+	i.GetIndexes(Owner);
+      }
    }
 
    return true;
@@ -202,6 +209,7 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
       return Indexes;
 
    Indexes = new vector <pkgIndexFile*>;
+   std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
    for (vector<const debSectionEntry *>::const_iterator I = SectionEntries.begin(); 
 	I != SectionEntries.end(); I++) {
       if ((*I)->IsSrc)
@@ -209,7 +217,10 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
       else 
       {
          Indexes->push_back(new debPackagesIndex (URI, Dist, (*I)->Section, IsTrusted()));
-	 Indexes->push_back(new debTranslationsIndex(URI, Dist, (*I)->Section));
+
+	 for (vector<string>::const_iterator l = lang.begin();
+		l != lang.end(); l++)
+	    Indexes->push_back(new debTranslationsIndex(URI,Dist,(*I)->Section,(*l).c_str()));
       }
    }
 

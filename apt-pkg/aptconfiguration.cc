@@ -87,4 +87,140 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	return types;
 }
 									/*}}}*/
+// GetLanguages - Return Vector of Language Codes			/*{{{*/
+// ---------------------------------------------------------------------
+/* return a vector of language codes in the prefered order.
+   the special word "environment" will be replaced with the long and the short
+   code of the local settings and it will be insured that this will not add
+   duplicates. So in an german local the setting "environment, de_DE, en, de"
+   will result in "de_DE, de, en".
+   The special word "none" is the stopcode for the not-All code vector */
+std::vector<std::string> const Configuration::getLanguages(bool const &All,
+				bool const &Cached, char const * const Locale) {
+	using std::string;
+
+	// The detection is boring and has a lot of cornercases,
+	// so we cache the results to calculated it only once.
+	std::vector<string> static allCodes;
+	std::vector<string> static codes;
+
+	// we have something in the cache
+	if (codes.empty() == false || allCodes.empty() == false) {
+		if (Cached == true) {
+			if(All == true && allCodes.empty() == false)
+				return allCodes;
+			else
+				return codes;
+		} else {
+			allCodes.clear();
+			codes.clear();
+		}
+	}
+
+	// get the environment language code
+	// we extract both, a long and a short code and then we will
+	// check if we actually need both (rare) or if the short is enough
+	string const envMsg = string(Locale == 0 ? std::setlocale(LC_MESSAGES, NULL) : Locale);
+	size_t const lenShort = (envMsg.find('_') != string::npos) ? envMsg.find('_') : 2;
+	size_t const lenLong = (envMsg.find('.') != string::npos) ? envMsg.find('.') : (lenShort + 3);
+
+	string envLong = envMsg.substr(0,lenLong);
+	string const envShort = envLong.substr(0,lenShort);
+	bool envLongIncluded = true, envShortIncluded = false;
+
+	// first cornercase: LANG=C, so we use only "en" Translation
+	if (envLong == "C") {
+		codes.push_back("en");
+		return codes;
+	}
+
+	if (envLong != envShort) {
+		// to save the servers from unneeded queries, we only try also long codes
+		// for languages it is realistic to have a long code translation file...
+		char const *needLong[] = { "cs", "en", "pt", "sv", "zh", NULL };
+		for (char const **l = needLong; *l != NULL; l++)
+			if (envShort.compare(*l) == 0) {
+				envLongIncluded = false;
+				break;
+			}
+	}
+
+	// we don't add the long code, but we allow the user to do so
+	if (envLongIncluded == true)
+		envLong.clear();
+
+	// FIXME: Remove support for the old APT::Acquire::Translation
+	// it was undocumented and so it should be not very widthly used
+	string const oldAcquire = _config->Find("APT::Acquire::Translation","");
+	if (oldAcquire.empty() == false && oldAcquire != "environment") {
+		if (oldAcquire != "none")
+			codes.push_back(oldAcquire);
+		return codes;
+	}
+
+	// Support settings like Acquire::Translation=none on the command line to
+	// override the configuration settings vector of languages.
+	string const forceLang = _config->Find("Acquire::Languages","");
+	if (forceLang.empty() == false) {
+		if (forceLang == "environment") {
+			if (envLongIncluded == false)
+				codes.push_back(envLong);
+			if (envShortIncluded == false)
+				codes.push_back(envShort);
+			return codes;
+		} else if (forceLang != "none")
+			codes.push_back(forceLang);
+		return codes;
+	}
+
+	std::vector<string> const lang = _config->FindVector("Acquire::Languages");
+	// the default setting -> "environment, en"
+	if (lang.empty() == true) {
+		if (envLongIncluded == false)
+			codes.push_back(envLong);
+		if (envShortIncluded == false)
+			codes.push_back(envShort);
+		if (envShort != "en")
+			codes.push_back("en");
+		return codes;
+	}
+
+	// the configs define the order, so add the environment
+	// then needed and ensure the codes are not listed twice.
+	bool noneSeen = false;
+	for (std::vector<string>::const_iterator l = lang.begin();
+	     l != lang.end(); l++) {
+		if (*l == "environment") {
+			if (envLongIncluded == true && envShortIncluded == true)
+				continue;
+			if (envLongIncluded == false) {
+				envLongIncluded = true;
+				if (noneSeen == false)
+					codes.push_back(envLong);
+				allCodes.push_back(envLong);
+			}
+			if (envShortIncluded == false) {
+				envShortIncluded = true;
+				if (noneSeen == false)
+					codes.push_back(envShort);
+				allCodes.push_back(envShort);
+			}
+			continue;
+		} else if (*l == "none") {
+			noneSeen = true;
+			continue;
+		} else if ((envLongIncluded == true && *l == envLong) ||
+		         (envShortIncluded == true && *l == envShort))
+			continue;
+
+		if (noneSeen == false)
+			codes.push_back(*l);
+		allCodes.push_back(*l);
+	}
+	if (All == true)
+		return allCodes;
+	else
+		return codes;
+}
+									/*}}}*/
 }

@@ -77,12 +77,13 @@ class debTranslationsIndex : public pkgIndexFile
    string URI;
    string Dist;
    string Section;
+   const char * const Language;
    
    string Info(const char *Type) const;
    string IndexFile(const char *Type) const;
    string IndexURI(const char *Type) const;
 
-   inline string TranslationFile() const {return "Translation-" + LanguageCode();};
+   inline string TranslationFile() const {return string("Translation-").append(Language);};
 
    public:
    
@@ -99,7 +100,7 @@ class debTranslationsIndex : public pkgIndexFile
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   debTranslationsIndex(string URI,string Dist,string Section);
+   debTranslationsIndex(string URI,string Dist,string Section, char const * const Language);
 };
 
 class debSourcesIndex : public pkgIndexFile
