@@ -158,6 +158,7 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
       struct addrinfo Hints;
       memset(&Hints,0,sizeof(Hints));
       Hints.ai_socktype = SOCK_STREAM;
+      Hints.ai_flags = AI_ADDRCONFIG;
       Hints.ai_protocol = 0;
       
       // if we couldn't resolve the host before, we don't try now
