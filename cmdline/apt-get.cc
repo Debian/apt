@@ -2799,6 +2799,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
       {0,"diff-only","APT::Get::Diff-Only",0},
+      {0,"debian-only","APT::Get::Diff-Only",0},
       {0,"tar-only","APT::Get::Tar-Only",0},
       {0,"dsc-only","APT::Get::Dsc-Only",0},
       {0,"purge","APT::Get::Purge",0},
