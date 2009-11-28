@@ -102,9 +102,9 @@ bool CacheDB::OpenFile()
 // ---------------------------------------------------------------------
 /* This gets the size from the database if it's there.  If we need
  * to look at the file, also get the mtime from the file. */
-bool CacheDB::GetFileStat()
+bool CacheDB::GetFileStat(bool const &doStat)
 {
-	if ((CurStat.Flags & FlSize) == FlSize)
+	if ((CurStat.Flags & FlSize) == FlSize && doStat == false)
 	{
 		/* Already worked out the file size */
 	}
@@ -162,7 +162,7 @@ bool CacheDB::GetCurStat()
 // ---------------------------------------------------------------------
 bool CacheDB::GetFileInfo(string FileName, bool DoControl, bool DoContents,
 				bool GenContentsOnly, 
-				bool DoMD5, bool DoSHA1, bool DoSHA256)
+				bool DoMD5, bool DoSHA1, bool DoSHA256, bool const &checkMtime)
 {
 	this->FileName = FileName;
 
@@ -171,13 +171,17 @@ bool CacheDB::GetFileInfo(string FileName, bool DoControl, bool DoContents,
 		return false;
    }   
    OldStat = CurStat;
-	
-	if (GetFileStat() == false)
+
+	if (GetFileStat(checkMtime) == false)
 	{
 		delete Fd;
 		Fd = NULL;
 		return false;	
 	}
+
+    /* if mtime changed, update CurStat from disk */
+    if (checkMtime == true && OldStat.mtime != CurStat.mtime)
+        CurStat.Flags = FlSize;
 
 	Stats.Bytes += CurStat.FileSize;
 	Stats.Packages++;

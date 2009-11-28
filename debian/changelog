@@ -80,6 +80,9 @@ apt (0.7.25) UNRELEASED; urgency=low
     - add https options which default to http ones (Closes: #557085)
   * ftparchive/writer.{cc,h}:
     - add APT::FTPArchive::LongDescription to be able to disable them
+    - add APT::FTPArchive::AlwaysStat to disable the too aggressive
+      caching if versions are build multiply times (not recommend)
+      Patch by Christoph Goehre, thanks! (Closes: #463260)
   * apt-pkg/deb/debsrcrecords.cc:
     - use "diff" filetype for .debian.tar.* files (Closes: #554898)
 

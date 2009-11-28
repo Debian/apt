@@ -84,6 +84,7 @@ class PackagesWriter : public FTWScanner
    bool DoMD5;
    bool DoSHA1;
    bool DoSHA256;
+   bool DoAlwaysStat;
    bool NoOverride;
    bool DoContents;
    bool LongDescription;

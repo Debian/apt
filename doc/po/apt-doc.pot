@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2009-11-27 00:18+0100\n"
+"POT-Creation-Date: 2009-11-28 02:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1411,7 +1411,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist>
-#: apt-cache.8.xml:356 apt-cdrom.8.xml:150 apt-config.8.xml:98 apt-extracttemplates.1.xml:67 apt-ftparchive.1.xml:556 apt-get.8.xml:554 apt-sortpkgs.1.xml:64
+#: apt-cache.8.xml:356 apt-cdrom.8.xml:150 apt-config.8.xml:98 apt-extracttemplates.1.xml:67 apt-ftparchive.1.xml:568 apt-get.8.xml:554 apt-sortpkgs.1.xml:64
 msgid "&apt-commonoptions;"
 msgstr ""
 
@@ -1426,7 +1426,7 @@ msgid "&file-sourceslist; &file-statelists;"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:368 apt-cdrom.8.xml:155 apt-config.8.xml:103 apt-extracttemplates.1.xml:74 apt-ftparchive.1.xml:572 apt-get.8.xml:569 apt-key.8.xml:162 apt-mark.8.xml:133 apt-secure.8.xml:181 apt-sortpkgs.1.xml:69 apt.conf.5.xml:1023 apt_preferences.5.xml:622 sources.list.5.xml:233
+#: apt-cache.8.xml:368 apt-cdrom.8.xml:155 apt-config.8.xml:103 apt-extracttemplates.1.xml:74 apt-ftparchive.1.xml:584 apt-get.8.xml:569 apt-key.8.xml:162 apt-mark.8.xml:133 apt-secure.8.xml:181 apt-sortpkgs.1.xml:69 apt.conf.5.xml:1023 apt_preferences.5.xml:622 sources.list.5.xml:233
 msgid "See Also"
 msgstr ""
 
@@ -1436,7 +1436,7 @@ msgid "&apt-conf;, &sources-list;, &apt-get;"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:373 apt-cdrom.8.xml:160 apt-config.8.xml:108 apt-extracttemplates.1.xml:78 apt-ftparchive.1.xml:576 apt-get.8.xml:575 apt-mark.8.xml:137 apt-sortpkgs.1.xml:73
+#: apt-cache.8.xml:373 apt-cdrom.8.xml:160 apt-config.8.xml:108 apt-extracttemplates.1.xml:78 apt-ftparchive.1.xml:588 apt-get.8.xml:575 apt-mark.8.xml:137 apt-sortpkgs.1.xml:73
 msgid "Diagnostics"
 msgstr ""
 
@@ -1735,7 +1735,7 @@ msgid "Just show the contents of the configuration space."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-config.8.xml:104 apt-extracttemplates.1.xml:75 apt-ftparchive.1.xml:573 apt-sortpkgs.1.xml:70
+#: apt-config.8.xml:104 apt-extracttemplates.1.xml:75 apt-ftparchive.1.xml:585 apt-sortpkgs.1.xml:70
 msgid "&apt-conf;"
 msgstr ""
 
@@ -2690,11 +2690,30 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:547
-msgid "<option>APT::FTPArchive::LongDescription</option>"
+msgid "<option>APT::FTPArchive::AlwaysStat</option>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:549
+msgid ""
+"&apt-ftparchive; caches as much as possible of metadata in it is cachedb. If "
+"packages are recompiled and/or republished with the same version again, this "
+"will lead to problems as the now outdated cached metadata like size and "
+"checksums will be used. With this option enabled this will no longer happen "
+"as it will be checked if the file was changed.  Note that this option is set "
+"to \"<literal>false</literal>\" by default as it is not recommend to upload "
+"multiply versions/builds of a package with the same versionnumber, so in "
+"theory nobody will have these problems and therefore all these extra checks "
+"are useless."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-ftparchive.1.xml:559
+msgid "<option>APT::FTPArchive::LongDescription</option>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-ftparchive.1.xml:561
 msgid ""
 "This configuration option defaults to \"<literal>true</literal>\" and should "
 "only be set to <literal>\"false\"</literal> if the Archive generated with "
@@ -2704,12 +2723,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-ftparchive.1.xml:561 apt.conf.5.xml:1011 apt_preferences.5.xml:462 sources.list.5.xml:193
+#: apt-ftparchive.1.xml:573 apt.conf.5.xml:1011 apt_preferences.5.xml:462 sources.list.5.xml:193
 msgid "Examples"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><programlisting>
-#: apt-ftparchive.1.xml:567
+#: apt-ftparchive.1.xml:579
 #, no-wrap
 msgid ""
 "<command>apt-ftparchive</command> packages "
@@ -2718,14 +2737,14 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-ftparchive.1.xml:563
+#: apt-ftparchive.1.xml:575
 msgid ""
 "To create a compressed Packages file for a directory containing binary "
 "packages (.deb): <placeholder type=\"programlisting\" id=\"0\"/>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-ftparchive.1.xml:577
+#: apt-ftparchive.1.xml:589
 msgid ""
 "<command>apt-ftparchive</command> returns zero on normal operation, decimal "
 "100 on error."

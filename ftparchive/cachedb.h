@@ -63,7 +63,7 @@ class CacheDB
       return true;
    }
    bool OpenFile();
-   bool GetFileStat();
+   bool GetFileStat(bool const &doStat = false);
    bool GetCurStat();
    bool LoadControl();
    bool LoadContents(bool GenOnly);
@@ -125,7 +125,7 @@ class CacheDB
    
    bool SetFile(string FileName,struct stat St,FileFd *Fd);
    bool GetFileInfo(string FileName, bool DoControl, bool DoContents,
-		   bool GenContentsOnly, bool DoMD5, bool DoSHA1, bool DoSHA256);
+		   bool GenContentsOnly, bool DoMD5, bool DoSHA1, bool DoSHA256, bool const &checkMtime = false);
    bool Finish();   
    
    bool Clean();

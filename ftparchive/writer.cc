@@ -306,6 +306,7 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
    DoMD5 = _config->FindB("APT::FTPArchive::MD5",true);
    DoSHA1 = _config->FindB("APT::FTPArchive::SHA1",true);
    DoSHA256 = _config->FindB("APT::FTPArchive::SHA256",true);
+   DoAlwaysStat = _config->FindB("APT::FTPArchive::AlwaysStat", false);
    DoContents = _config->FindB("APT::FTPArchive::Contents",true);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
    LongDescription = _config->FindB("APT::FTPArchive::LongDescription",true);
@@ -360,7 +361,7 @@ bool FTWScanner::SetExts(string Vals)
 bool PackagesWriter::DoPackage(string FileName)
 {      
    // Pull all the data we need form the DB
-   if (Db.GetFileInfo(FileName, true, DoContents, true, DoMD5, DoSHA1, DoSHA256) 
+   if (Db.GetFileInfo(FileName, true, DoContents, true, DoMD5, DoSHA1, DoSHA256, DoAlwaysStat)
 		  == false)
    {
       return false;
@@ -753,7 +754,7 @@ ContentsWriter::ContentsWriter(string DB) :
    determine what the package name is. */
 bool ContentsWriter::DoPackage(string FileName,string Package)
 {
-   if (!Db.GetFileInfo(FileName, Package.empty(), true, false, false, false, false))
+   if (!Db.GetFileInfo(FileName, Package.empty(), true, false, false, false, false, false))
    {
       return false;
    }
