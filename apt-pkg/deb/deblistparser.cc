@@ -395,7 +395,8 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
    bit by bit. */
 const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					string &Package,string &Ver,
-					unsigned int &Op, bool ParseArchFlags)
+					unsigned int &Op, bool const &ParseArchFlags,
+					bool const &StripMultiArch)
 {
    // Strip off leading space
    for (;Start != Stop && isspace(*Start) != 0; Start++);
@@ -414,7 +415,14 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    
    // Stash the package name
    Package.assign(Start,I - Start);
-   
+
+   // We don't want to confuse library users which can't handle MultiArch
+   if (StripMultiArch == true) {
+      size_t const found = Package.rfind(':');
+      if (found != string::npos)
+	 Package = Package.substr(0,found);
+   }
+
    // Skip white space to the '('
    for (;I != Stop && isspace(*I) != 0 ; I++);
    

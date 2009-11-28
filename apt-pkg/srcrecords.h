@@ -59,7 +59,7 @@ class pkgSrcRecords
       
       virtual bool Restart() = 0;
       virtual bool Step() = 0;
-      virtual bool Jump(unsigned long Off) = 0;
+      virtual bool Jump(unsigned long const &Off) = 0;
       virtual unsigned long Offset() = 0;
       virtual string AsStr() = 0;
       
@@ -69,8 +69,8 @@ class pkgSrcRecords
       virtual string Section() const = 0;
       virtual const char **Binaries() = 0;   // Ownership does not transfer
 
-      virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool ArchOnly) = 0;
-      static const char *BuildDepType(unsigned char Type);
+      virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) = 0;
+      static const char *BuildDepType(unsigned char const &Type);
 
       virtual bool Files(vector<pkgSrcRecords::File> &F) = 0;
       
@@ -90,7 +90,7 @@ class pkgSrcRecords
    bool Restart();
 
    // Locate a package by name
-   Parser *Find(const char *Package,bool SrcOnly = false);
+   Parser *Find(const char *Package,bool const &SrcOnly = false);
    
    pkgSrcRecords(pkgSourceList &List);
    ~pkgSrcRecords();

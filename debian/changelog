@@ -19,9 +19,11 @@ apt (0.7.25) UNRELEASED; urgency=low
     Closes: #555797
 
   [ David Kalnischkies ]
-   * [BREAK] add possibility to download and use multiply
-     Translation files, configurable with Acquire::Translation
-     (Closes: #444222, #448216, #550564)
+  * [BREAK] add possibility to download and use multiply
+    Translation files, configurable with Acquire::Translation
+    (Closes: #444222, #448216, #550564)
+  * Ignore :qualifiers after package name in build dependencies
+    for now as long we don't understand them (Closes: #558103)
   * apt-pkg/packagemanager.cc:
     - better debug output for ImmediateAdd with depth and why
     - improve the message shown for failing immediate configuration

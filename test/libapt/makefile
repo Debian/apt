@@ -11,3 +11,9 @@ PROGRAM = getLanguages${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = getlanguages_test.cc
 include $(PROGRAM_H)
+
+# Program for testing ParseDepends
+PROGRAM = ParseDepends${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = parsedepends_test.cc
+include $(PROGRAM_H)
