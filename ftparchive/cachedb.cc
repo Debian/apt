@@ -26,7 +26,7 @@
 // CacheDB::ReadyDB - Ready the DB2					/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens the DB2 file for caching package information */
-bool CacheDB::ReadyDB(string DB)
+bool CacheDB::ReadyDB(string const &DB)
 {
    int err;
 
@@ -160,9 +160,9 @@ bool CacheDB::GetCurStat()
 									/*}}}*/
 // CacheDB::GetFileInfo - Get all the info about the file		/*{{{*/
 // ---------------------------------------------------------------------
-bool CacheDB::GetFileInfo(string FileName, bool DoControl, bool DoContents,
-				bool GenContentsOnly, 
-				bool DoMD5, bool DoSHA1, bool DoSHA256, bool const &checkMtime)
+bool CacheDB::GetFileInfo(string const &FileName, bool const &DoControl, bool const &DoContents,
+				bool const &GenContentsOnly, bool const &DoMD5, bool const &DoSHA1,
+				bool const &DoSHA256, bool const &checkMtime)
 {
 	this->FileName = FileName;
 
@@ -251,7 +251,7 @@ bool CacheDB::LoadControl()
 // CacheDB::LoadContents - Load the File Listing			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool CacheDB::LoadContents(bool GenOnly)
+bool CacheDB::LoadContents(bool const &GenOnly)
 {
    // Try to read the control information out of the DB.
    if ((CurStat.Flags & FlContents) == FlContents)
@@ -301,7 +301,7 @@ static string bytes2hex(uint8_t *bytes, size_t length) {
    return string(space);
 }
 
-static inline unsigned char xdig2num(char dig) {
+static inline unsigned char xdig2num(char const &dig) {
    if (isdigit(dig)) return dig - '0';
    if ('a' <= dig && dig <= 'f') return dig - 'a' + 10;
    if ('A' <= dig && dig <= 'F') return dig - 'A' + 10;
@@ -322,7 +322,7 @@ static void hex2bytes(uint8_t *bytes, const char *hex, int length) {
 // CacheDB::GetMD5 - Get the MD5 hash					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool CacheDB::GetMD5(bool GenOnly)
+bool CacheDB::GetMD5(bool const &GenOnly)
 {
    // Try to read the control information out of the DB.
    if ((CurStat.Flags & FlMD5) == FlMD5)
@@ -353,7 +353,7 @@ bool CacheDB::GetMD5(bool GenOnly)
 // CacheDB::GetSHA1 - Get the SHA1 hash					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool CacheDB::GetSHA1(bool GenOnly)
+bool CacheDB::GetSHA1(bool const &GenOnly)
 {
    // Try to read the control information out of the DB.
    if ((CurStat.Flags & FlSHA1) == FlSHA1)
@@ -384,7 +384,7 @@ bool CacheDB::GetSHA1(bool GenOnly)
 // CacheDB::GetSHA256 - Get the SHA256 hash				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool CacheDB::GetSHA256(bool GenOnly)
+bool CacheDB::GetSHA256(bool const &GenOnly)
 {
    // Try to read the control information out of the DB.
    if ((CurStat.Flags & FlSHA256) == FlSHA256)

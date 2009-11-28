@@ -89,7 +89,7 @@ int FTWScanner::ScannerFTW(const char *File,const struct stat *sb,int Flag)
 // FTWScanner::ScannerFile - File Scanner				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int FTWScanner::ScannerFile(const char *File, bool ReadLink)
+int FTWScanner::ScannerFile(const char *File, bool const &ReadLink)
 {
    const char *LastComponent = strrchr(File, '/');
    if (LastComponent == NULL)
@@ -97,7 +97,7 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
    else
       LastComponent++;
 
-   vector<string>::iterator I;
+   vector<string>::const_iterator I;
    for(I = Owner->Patterns.begin(); I != Owner->Patterns.end(); ++I)
    {
       if (fnmatch((*I).c_str(), LastComponent, 0) == 0)
@@ -127,7 +127,7 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
       {
 	 Owner->NewLine(1);
 	 
-	 bool Type = _error->PopMessage(Err);
+	 bool const Type = _error->PopMessage(Err);
 	 if (Type == true)
 	    cerr << _("E: ") << Err << endl;
 	 else
@@ -148,7 +148,7 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
 // FTWScanner::RecursiveScan - Just scan a directory tree		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FTWScanner::RecursiveScan(string Dir)
+bool FTWScanner::RecursiveScan(string const &Dir)
 {
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
@@ -161,7 +161,7 @@ bool FTWScanner::RecursiveScan(string Dir)
    
    // Do recursive directory searching
    Owner = this;
-   int Res = ftw(Dir.c_str(),ScannerFTW,30);
+   int const Res = ftw(Dir.c_str(),ScannerFTW,30);
    
    // Error treewalking?
    if (Res != 0)
@@ -178,7 +178,7 @@ bool FTWScanner::RecursiveScan(string Dir)
 // ---------------------------------------------------------------------
 /* This is an alternative to using FTW to locate files, it reads the list
    of files from another file. */
-bool FTWScanner::LoadFileList(string Dir,string File)
+bool FTWScanner::LoadFileList(string const &Dir, string const &File)
 {
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
@@ -236,7 +236,7 @@ bool FTWScanner::LoadFileList(string Dir,string File)
 /* */
 bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 			unsigned long &DeLinkBytes,
-			off_t FileSize)
+			off_t const &FileSize)
 {
    // See if this isn't an internaly prefix'd file name.
    if (InternalPrefix.empty() == false &&
@@ -293,8 +293,8 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
-			       string aArch) :
+PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides,
+			       string const &aArch) :
    Db(DB),Stats(Db.Stats), Arch(aArch)
 {
    Output = stdout;
@@ -329,7 +329,7 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
 // FTWScanner::SetExts - Set extensions to support                      /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FTWScanner::SetExts(string Vals)
+bool FTWScanner::SetExts(string const &Vals)
 {
    ClearPatterns();
    string::size_type Start = 0;
@@ -476,7 +476,7 @@ bool PackagesWriter::DoPackage(string FileName)
       SetTFRewriteData(Changes[End++], "Suggests", OptionalStr.c_str());
    }
 
-   for (map<string,string>::iterator I = OverItem->FieldOverride.begin(); 
+   for (map<string,string>::const_iterator I = OverItem->FieldOverride.begin(); 
         I != OverItem->FieldOverride.end(); I++) 
       SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
 
@@ -494,8 +494,8 @@ bool PackagesWriter::DoPackage(string FileName)
 // SourcesWriter::SourcesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-SourcesWriter::SourcesWriter(string BOverrides,string SOverrides,
-			     string ExtOverrides)
+SourcesWriter::SourcesWriter(string const &BOverrides,string const &SOverrides,
+			     string const &ExtOverrides)
 {
    Output = stdout;
    AddPattern("*.dsc");
@@ -720,7 +720,7 @@ bool SourcesWriter::DoPackage(string FileName)
    if (NewMaint.empty() == false)
       SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
    
-   for (map<string,string>::iterator I = SOverItem->FieldOverride.begin(); 
+   for (map<string,string>::const_iterator I = SOverItem->FieldOverride.begin(); 
         I != SOverItem->FieldOverride.end(); I++) 
       SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
 
@@ -740,7 +740,7 @@ bool SourcesWriter::DoPackage(string FileName)
 // ContentsWriter::ContentsWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ContentsWriter::ContentsWriter(string DB) : 
+ContentsWriter::ContentsWriter(string const &DB) : 
 		    Db(DB), Stats(Db.Stats)
 
 {
@@ -752,7 +752,7 @@ ContentsWriter::ContentsWriter(string DB) :
 // ---------------------------------------------------------------------
 /* If Package is the empty string the control record will be parsed to
    determine what the package name is. */
-bool ContentsWriter::DoPackage(string FileName,string Package)
+bool ContentsWriter::DoPackage(string FileName, string Package)
 {
    if (!Db.GetFileInfo(FileName, Package.empty(), true, false, false, false, false, false))
    {
@@ -773,7 +773,7 @@ bool ContentsWriter::DoPackage(string FileName,string Package)
 // ContentsWriter::ReadFromPkgs - Read from a packages file		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ContentsWriter::ReadFromPkgs(string PkgFile,string PkgCompress)
+bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompress)
 {
    MultiCompress Pkgs(PkgFile,PkgCompress,0,false);
    if (_error->PendingError() == true)
@@ -828,7 +828,7 @@ bool ContentsWriter::ReadFromPkgs(string PkgFile,string PkgCompress)
 // ReleaseWriter::ReleaseWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ReleaseWriter::ReleaseWriter(string DB)
+ReleaseWriter::ReleaseWriter(string const &DB)
 {
    AddPattern("Packages");
    AddPattern("Packages.gz");
@@ -842,7 +842,7 @@ ReleaseWriter::ReleaseWriter(string DB)
    AddPattern("md5sum.txt");
 
    Output = stdout;
-   time_t now = time(NULL);
+   time_t const now = time(NULL);
    char datestr[128];
    if (strftime(datestr, sizeof(datestr), "%a, %d %b %Y %H:%M:%S UTC",
                 gmtime(&now)) == 0)
@@ -929,7 +929,7 @@ bool ReleaseWriter::DoPackage(string FileName)
 void ReleaseWriter::Finish()
 {
    fprintf(Output, "MD5Sum:\n");
-   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
        I != CheckSums.end();
        ++I)
    {
@@ -940,7 +940,7 @@ void ReleaseWriter::Finish()
    }
 
    fprintf(Output, "SHA1:\n");
-   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
        I != CheckSums.end();
        ++I)
    {
@@ -951,7 +951,7 @@ void ReleaseWriter::Finish()
    }
 
    fprintf(Output, "SHA256:\n");
-   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
        I != CheckSums.end();
        ++I)
    {
