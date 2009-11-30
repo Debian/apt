@@ -13,7 +13,7 @@
    removing the massive sort time overhead.
    
    By breaking all the pathnames into components and storing them 
-   separately a space savings is realized by not duplicating the string
+   separately a space saving is realized by not duplicating the string
    over and over again. Ultimately this saving is sacrificed to storage of
    the tree structure itself but the tree structure yields a speed gain
    in the sorting and processing. Ultimately it takes about 5 seconds to

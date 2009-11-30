@@ -365,7 +365,7 @@ bool MultiCompress::CloseOld(int Fd,pid_t Proc)
 // MultiCompress::Child - The writer child				/*{{{*/
 // ---------------------------------------------------------------------
 /* The child process forks a bunch of compression children and takes 
-   input on FD and passes it to all the compressor childer. On the way it
+   input on FD and passes it to all the compressor child. On the way it
    computes the MD5 of the raw data. After this the raw data in the 
    original files is compared to see if this data is new. If the data
    is new then the temp files are renamed, otherwise they are erased. */
