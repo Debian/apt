@@ -15,3 +15,5 @@ add_debiandoc(debiandoc-libapt "${debiandoc-libapt}" share/doc/libapt-pkg-doc)
 
 # Build the manpages, and add translations (ja only for now, others broken)
 add_xml_manpages(doc-man "${manpages}" "ja" "apt.ent")
+
+add_manpages(doc-rawman apt.8 "de;fr;ja")

@@ -23,6 +23,15 @@ macro(add_debiandoc target sourcefiles installdest)
 endmacro(add_debiandoc target sourcefiles installdest)
 
 
+macro(add_po4a type master po target deps)
+	add_custom_command(OUTPUT ${target}
+		COMMAND po4a-translate --keep 0 -f docbook -m ${master}
+		                       -p ${po} -l ${target}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		DEPENDS ${deps} ${master} ${po})
+endmacro(add_po4a type master po target deps)
+
+
 # Macro for XML man pages.
 macro(add_xml_manpages target manpages translations entities)
 	foreach(manpage ${manpages})
@@ -56,12 +65,11 @@ macro(add_xml_manpages target manpages translations entities)
 				set(ent_cmds ${ent_cmds} ${transdir}/${entity})
 			endforeach(entity ${entities})
 		
-			add_custom_command(OUTPUT ${transdir}/${manpage}.xml			
-				COMMAND po4a-translate --keep 0 -f docbook -m ${manpage}.xml
-				           -p ${CMAKE_CURRENT_SOURCE_DIR}/po/${translation}.po
-				           -l ${transdir}/${manpage}.xml
-				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-				DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${manpage}.xml ${ent_cmds})
+		
+		
+			add_po4a(docbook ${manpage}.xml po/${translation}.po
+			                 ${transdir}/${manpage}.xml "${ent_cmds}")
+
 			
 			add_custom_command(OUTPUT ${transdir}/${manpage}
 				COMMAND xmlto -o ${transdir} man ${transdir}/${manpage}.xml
@@ -80,3 +88,24 @@ macro(add_xml_manpages target manpages translations entities)
 	list(SORT nls-cmd)
 	add_custom_target(nls-${target} ALL DEPENDS ${nls-cmd})
 endmacro(add_xml_manpages manpages)
+
+
+macro(add_manpages target manpages translations)
+	foreach(man ${manpages})
+		string(LENGTH ${man} manpage_length)
+		math(EXPR manpage_length ${manpage_length}-1)
+		string(SUBSTRING ${man} ${manpage_length} 1 section)	
+		install(FILES ${man} DESTINATION share/man/man${section})
+		
+		if (USE_NLS)
+			foreach(translation ${translations})
+				set(transdir ${CMAKE_CURRENT_BINARY_DIR}/${translation})
+				add_po4a(man ${man} po/${translation}.po ${transdir}/${man} "")
+				install(FILES ${transdir}/${man}
+						DESTINATION share/man/${translation}/man${section})
+				set(files ${files} ${transdir}/${man})
+			endforeach(translation ${translations})
+		endif(USE_NLS)
+	endforeach(man ${manpages})
+	add_custom_target(${target} ALL DEPENDS ${files})
+endmacro(add_manpages target manpages translations)
