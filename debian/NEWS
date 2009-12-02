@@ -1,4 +1,20 @@
-apt (0.7.22.3) unstable; urgency=low
+apt (0.7.24) unstable; urgency=low
+
+  * Allready included in the last version but now with better documentation
+    is the possibility to add/prefer different compression types while
+    downloading archive informations, which can decrease the time needed for
+    update on slow machines. See apt.conf (5) manpage for details.
+  * APT manages his manpage translations now with po4a, thanks to Nicolas
+    François and Kurasawa Nozomu, who also provide the ja translation.
+    Thanks to Christian Perrier we have already a fr translation and
+    a few more are hopefully added in the near future.
+  * This version also introduces some _experimental_ configuration options
+    to make more aggressive use of dpkg's triggers. If you want to help
+    testing these _experimental_ options see apt.conf (5) manpage.
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 24 Sep 2009 15:13:16 +0200
+
+apt (0.7.23) unstable; urgency=low
 
   * Code that determines which proxy to use was changed. Now
     'Acquire::{http,ftp}::Proxy[::<host>]' options have the highest priority,

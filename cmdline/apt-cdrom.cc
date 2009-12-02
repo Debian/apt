@@ -74,7 +74,7 @@ string pkgCdromTextStatus::PromptLine(const char *Text)
 
 bool pkgCdromTextStatus::AskCdromName(string &name) 
 {
-   cout << _("Please provide a name for this Disc, such as 'Debian 2.1r1 Disk 1'") << flush;
+   cout << _("Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'") << flush;
    name = PromptLine("");
 	 
    return true;

@@ -823,7 +823,7 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
 bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
 			      unsigned long Depth, bool FromUser)
 {
-   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold)
+   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold && _config->FindB("APT::Ignore-Hold",false) == false)
    {
       if (DebugMarker == true)
 	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkDelete of " << Pkg << " FU=" << FromUser << std::endl;
@@ -1085,7 +1085,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
 			      unsigned long Depth, bool FromUser)
 {
-   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold)
+   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold && _config->FindB("APT::Ignore-Hold",false) == false)
    {
       if (DebugMarker == true)
 	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkInstall of " << Pkg << " FU=" << FromUser << std::endl;

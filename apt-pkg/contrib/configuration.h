@@ -31,6 +31,7 @@
 
 
 #include <string>
+#include <vector>
 #include <iostream>
 
 using std::string;
@@ -70,6 +71,8 @@ class Configuration
    string Find(const string Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
    string FindFile(const char *Name,const char *Default = 0) const;
    string FindDir(const char *Name,const char *Default = 0) const;
+   std::vector<string> FindVector(const string &Name) const;
+   std::vector<string> FindVector(const char *Name) const;
    int FindI(const char *Name,int Default = 0) const;
    int FindI(const string Name,int Default = 0) const {return FindI(Name.c_str(),Default);};
    bool FindB(const char *Name,bool Default = false) const;

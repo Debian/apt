@@ -246,6 +246,15 @@ Acquire
   {
    Options {"--ignore-time-conflict";}	// not very useful on a normal system
   };
+
+  CompressionTypes
+  {
+    bz2 "bzip2";
+    lzma "lzma";
+    gz "gzip";
+
+    Order { "gz"; "lzma"; "bz2"; };
+  };
 };
 
 // Directory layout
@@ -310,18 +319,25 @@ DSelect
    CheckDir "no";
 }
 
-DPkg 
+DPkg
 {
+   // let apt aggressivly use dpkg triggers
+   NoTriggers "true";
+   NoConfigure "true";
+   ConfigurePending "true";
+
    // Probably don't want to use force-downgrade..
    Options {"--force-overwrite";"--force-downgrade";}
-   
+
    // Auto re-mounting of a readonly /usr
    Pre-Invoke {"mount -o remount,rw /usr";};
    Post-Invoke {"mount -o remount,ro /usr";};
-   
+
+   Chroot-Directory "/";
+
    // Prevents daemons from getting cwd as something mountable (default)
    Run-Directory "/";
-   
+
    // Build options for apt-get source --compile
    Build-Options "-b -uc";
 
