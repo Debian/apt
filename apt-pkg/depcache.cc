@@ -243,7 +243,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
 	    continue;
 	 bool newAuto = (PkgState[pkg->ID].Flags & Flag::Auto);
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
-	    std::clog << "Update exisiting AutoInstall info: " 
+	    std::clog << "Update existing AutoInstall info: " 
 		      << pkg.Name() << std::endl;
 	 TFRewriteData rewrite[2];
 	 rewrite[0].Tag = "Auto-Installed";

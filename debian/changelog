@@ -24,6 +24,21 @@ apt (0.7.25) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - fix overly aggressive immediate config propergation
       (thanks to David Kalnischkies)
+  * apt-pkg/packagemanager.cc:
+    - add output about pre-depends configuring when debug::pkgPackageManager
+      is used
+  * methods/https.cc:
+    - fix incorrect use of CURLOPT_TIMEOUT, closes: #497983, LP: #354972
+      thanks to Brian Thomason for the patch
+
+  [ Brian Murray ]
+  * apt-pkg/depcache.cc, apt-pkg/indexcopy.cc:
+    - typo fix (LP: #462328)
+  
+  [ Loïc Minier ]
+  * cmdline/apt-key:
+    - Emit a warning if removed keys keyring is missing and skip associated
+      checks (LP: #218971)
 
   [ Julian Andres Klode ]
   * doc/apt.conf.5.xml:
