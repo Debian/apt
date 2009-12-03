@@ -10,27 +10,9 @@ apt (0.7.24ubuntu1) UNRELEASED; urgency=low
     - include df -l output in the apport log as well (thanks to
       tjaalton)
 
-  [ Matt Zimmerman ]
-  * apt-pkg/deb/dpkgpm.cc:
-    - Suppress apport reports on dpkg short reads (these I/O errors are not 
-      generally indicative of a bug in the packaging)
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 03 Dec 2009 17:42:36 +0100
 
-  [ Brian Murray ]
-  * cmdline/apt-get.cc:
-    - typo fix (LP: #370094)
-
-  [ Loïc Minier ]
-  * cmdline/apt-key:
-    - Emit a warning if removed keys keyring is missing and skip associated
-      checks (LP: #218971)
-
-  [ Kees Cook ]
-  * debian/apt.cron.daily:
-    - fix quotes for use with "eval", thanks to Lars Ljung (LP: #449535).
-
- -- Kees Cook <kees@ubuntu.com>  Wed, 14 Oct 2009 15:27:56 -0700
-
-apt (0.7.24) UNRELEASED; urgency=low
+apt (0.7.24) unstable; urgency=low
 
   [ Nicolas François ]
   * Cleaned up the first patch draft from KURASAWA Nozomu to finally
@@ -50,7 +32,7 @@ apt (0.7.24) UNRELEASED; urgency=low
       (thanks to Simon Richter, closes: #509866)
   * apt-inst/contrib/arfile.cc:
     - show propper error message for Invalid archive members
-  
+
   [ David Kalnischkies ]
   * doc/Doxyfile.in:
     - update file with doxygen 1.6.1 (current unstable)
@@ -62,10 +44,15 @@ apt (0.7.24) UNRELEASED; urgency=low
   * apt-pkg/contrib/strutl.cc:
     - replace unknown multibytes with ? in UTF8ToCharset (Closes: #545208)
   * doc/apt-get.8.xml:
-    - fix two little typos in the --simulate description.
+    - fix two little typos in the --simulate description. (Closes: #545059)
   * apt-pkg/aptconfiguration.cc, doc/apt.conf.5.xml:
     - add an order subgroup to the compression types to simplify reordering
       a bit and improve the documentation for this option group.
+  * doc/apt.conf.5.xml:
+    - document the Acquire::http::Dl-Limit option
+    - try to be crystal clear about the usage of :: and {} (Closes: #503481)
+  * doc/apt-cache.8.xml:
+    - clarify the note for the pkgnames command (Closes: #547599)
   * doc/apt.ent, all man pages:
     - move the description of files to globally usable entities
   * doc/apt_preferences.5.xml:
@@ -81,16 +68,71 @@ apt (0.7.24) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc, apt-pkg/packagemanager.cc, apt-pkg/orderlist.cc:
     - add and document _experimental_ options to make (aggressive)
       use of dpkg's trigger and configuration handling (Closes: #473461)
+  * cmdline/apt-get.cc:
+    - ignore versions that are not candidates when selecting a package
+      instead of a virtual one (by Marius Vollmer, Closes: #547788)
 
   [ Christian Perrier ]
   * doc/fr/*, doc/po/fr.po:
     - remove the old fr man page translation and replace it with
       the new po4a-powered translation
-  * doc/pl, doc/de: dropped (pl translation is useless as the translated
-    document is not provideed anymore and the de translation is too
-    incomplete to be used)
+  * doc/de: dropped (translation is too incomplete to be useful in
+      the transition to the po4a-powered translations)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Aug 2009 09:40:08 +0200
+ -- Michael Vogt <mvo@debian.org>  Fri, 25 Sep 2009 19:57:25 +0200
+
+apt (0.7.23.1ubuntu2) karmic; urgency=low
+
+  [ Michael Vogt ]
+  * debian/control:
+    - fix Vcr-Bzr header
+
+  [ Kees Cook ]
+  * debian/apt.cron.daily:
+    - fix quotes for use with "eval", thanks to Lars Ljung (LP: #449535).
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 15 Oct 2009 19:05:19 +0200
+
+apt (0.7.23.1ubuntu1) karmic; urgency=low
+
+  [ Matt Zimmerman ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - Suppress apport reports on dpkg short reads (these I/O errors are not 
+      generally indicative of a bug in the packaging)
+
+  [ Loïc Minier ]
+  * cmdline/apt-key:
+    - Emit a warning if removed keys keyring is missing and skip associated
+      checks (LP: #218971)
+
+  [ Brian Murray ]
+  * cmdline/apt-get.cc:
+    - typo fix (LP: #370094)
+
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - when tcgetattr() returns non-zero skip all pty magic 
+      (thanks to Simon Richter, closes: #509866)
+  * apt-inst/contrib/arfile.cc:
+    - show propper error message for Invalid archive members
+  * apt-pkg/acquire-worker.cc:
+    - show error details of failed methods
+  * apt-pkg/contrib/fileutl.cc:
+    - if a process aborts with signal, show signal number
+  * methods/http.cc:
+    - ignore SIGPIPE, we deal with EPIPE from write in 
+      HttpMethod::ServerDie() (LP: #385144)
+  * debian/apt.cron.daily:
+    - if the timestamp is too far in the future, delete it 
+      (LP: #135262)
+  
+  [ Merge ]
+  * merged from debian, reverted the libdlopen-udev branch
+    because its too late in the release process for this now
+  * not merged the proxy behaviour change from 0.7.23 (that will
+    be part of lucid)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 23 Sep 2009 18:15:10 +0200
 
 apt (0.7.23.1) unstable; urgency=low
 

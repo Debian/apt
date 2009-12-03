@@ -226,11 +226,14 @@ Reverse Provides:
      </varlistentry>
 
      <varlistentry><term>pkgnames <replaceable>[ prefix ]</replaceable></term>
-     <listitem><para>This command prints the name of each package in the system. The optional
+     <listitem><para>This command prints the name of each package APT knows. The optional
      argument is a prefix match to filter the name list. The output is suitable
      for use in a shell tab complete function and the output is generated 
      extremely quickly. This command is best used with the 
-     <option>--generate</option> option.</para></listitem>
+     <option>--generate</option> option.</para>
+     <para>Note that a package which APT knows of is not nessasarily available to download,
+     installable or installed, e.g. virtual packages are also listed in the generated list.
+     </para></listitem>
      </varlistentry>
      
      <varlistentry><term>dotty <replaceable>pkg(s)</replaceable></term>
