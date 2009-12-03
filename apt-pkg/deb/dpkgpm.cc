@@ -1243,6 +1243,23 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 	 fclose(log);
       }
    }
+
+   // attach df -l log (to learn about filesystem status)
+   if (FileExists("/bin/df"))
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "Df:\n");
+      log = popen("/bin/df -l","r");
+      if(log != NULL)
+      {
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+	 fclose(log);
+      }
+   }
+
    fclose(report);
 
 }
