@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-09-27 17:32+0200\n"
-"PO-Revision-Date: 2009-07-21 12:45+0100\n"
+"PO-Revision-Date: 2009-12-03 09:20+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -235,9 +235,8 @@ msgstr ""
 "Viac informácií nájdete v manuálových stránkach apt-cache(8) a apt.conf(5).\n"
 
 #: cmdline/apt-cdrom.cc:77
-#, fuzzy
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "Zadajte názov tohto disku, napríklad „Debian 2.1r1 Disk 1“"
+msgstr "Prosím, zadajte názov tohto disku, napríklad „Debian 5.0.3 Disk 1“"
 
 #: cmdline/apt-cdrom.cc:92
 msgid "Please insert a Disc in the drive and press enter"
@@ -1014,10 +1013,10 @@ msgstr ""
 "Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
 
 #: cmdline/apt-get.cc:1505
-#, fuzzy, c-format
+#, c-format
 msgid "%lu packages were automatically installed and are no longer required.\n"
 msgstr ""
-"Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
+"%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
 
 #: cmdline/apt-get.cc:1506
 msgid "Use 'apt-get autoremove' to remove them."
@@ -1422,14 +1421,13 @@ msgid "Do you want to erase any previously downloaded .deb files?"
 msgstr "Chcete odstrániť všetky doteraz stiahnuté .deb súbory?"
 
 #: dselect/install:101
-#, fuzzy
 msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "Pri rozbaľovaní došlo k nejakým chybám. Teraz sa nastavia"
+msgstr ""
+"Pri rozbaľovaní došlo k nejakým chybám. Balíky, ktoré boli nainštalované"
 
 #: dselect/install:102
-#, fuzzy
 msgid "will be configured. This may result in duplicate errors"
-msgstr "balíky, ktoré sa nainštalovali. Môže to spôsobiť chybové správy"
+msgstr "budú nakonfigurované. Môže to spôsobiť opakované chybové správy"
 
 #: dselect/install:103
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
@@ -1475,9 +1473,9 @@ msgid "Error reading archive member header"
 msgstr "Chyba pri čítaní záhlavia prvku archívu"
 
 #: apt-inst/contrib/arfile.cc:90
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid archive member header %s"
-msgstr "Neplatné záhlavie prvku archívu"
+msgstr "Neplatná hlavička prvku archívu %s"
 
 #: apt-inst/contrib/arfile.cc:102
 msgid "Invalid archive member header"
@@ -1963,9 +1961,9 @@ msgid "Something wicked happened resolving '%s:%s' (%i)"
 msgstr "Niečo veľmi zlé sa prihodilo pri preklade „%s:%s“ (%i)"
 
 #: methods/connect.cc:240
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to %s:%s:"
-msgstr "Nedá sa pripojiť k %s %s:"
+msgstr "Nedá sa pripojiť k %s:%s:"
 
 #: methods/gpgv.cc:71
 #, c-format
@@ -2295,9 +2293,9 @@ msgid "Sub-process %s received a segmentation fault."
 msgstr "Podproces %s obdržal chybu segmentácie."
 
 #: apt-pkg/contrib/fileutl.cc:458
-#, fuzzy, c-format
+#, c-format
 msgid "Sub-process %s received signal %u."
-msgstr "Podproces %s obdržal chybu segmentácie."
+msgstr "Podproces %s dostal signál %u."
 
 #: apt-pkg/contrib/fileutl.cc:462
 #, c-format
@@ -2605,9 +2603,9 @@ msgid "You may want to run apt-get update to correct these problems"
 msgstr "Na opravu týchto problémov môžete skúsiť spustiť apt-get update"
 
 #: apt-pkg/policy.cc:347
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
-msgstr "Neplatný záznam v súbore „preferences“, žiadne záhlavie balíka"
+msgstr "Neplatný záznam v súbore nastavení %s, chýba hlavička Package"
 
 #: apt-pkg/policy.cc:369
 #, c-format
@@ -2759,19 +2757,19 @@ msgid "Size mismatch"
 msgstr "Veľkosti sa nezhodujú"
 
 #: apt-pkg/indexrecords.cc:40
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse Release file %s"
-msgstr "Súbor %s sa nedá spracovať (1)"
+msgstr "Nedá spracovať súbor Release %s"
 
 #: apt-pkg/indexrecords.cc:47
-#, fuzzy, c-format
+#, c-format
 msgid "No sections in Release file %s"
-msgstr "Poznámka: %s sa vyberá namiesto %s\n"
+msgstr "Žiadne sekcie v Release súbore %s"
 
 #: apt-pkg/indexrecords.cc:81
 #, c-format
 msgid "No Hash entry in Release file %s"
-msgstr ""
+msgstr "Chýba položka Hash v súbore Release %s"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -2836,6 +2834,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
+"Nepodarilo sa nájsť žiadne súbory balíkov, možno toto nie je disk s Debianom "
+"alebo je pre nesprávnu architektúru?"
 
 #: apt-pkg/cdrom.cc:710
 #, c-format
@@ -2960,25 +2960,27 @@ msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:907
 msgid "Running dpkg"
-msgstr ""
+msgstr "Spúšťa sa dpkg"
 
 #: apt-pkg/deb/debsystem.cc:70
 #, c-format
 msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
-msgstr ""
+msgstr "Nedá sa zamknúť adresár na správu (%s), používa ho iný proces?"
 
 #: apt-pkg/deb/debsystem.cc:73
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Adresár zoznamov sa nedá zamknúť"
+msgstr "Nedá sa zamknúť adresár na správu (%s), ste root?"
 
 #: apt-pkg/deb/debsystem.cc:82
 msgid ""
 "dpkg was interrupted, you must manually run 'dpkg --configure -a' to correct "
 "the problem. "
 msgstr ""
+"dpkg bol prerušený, musíte ručne opraviť problém spustením „dpkg --configure "
+"-a“. "
 
 #: apt-pkg/deb/debsystem.cc:100
 msgid "Not locked"
