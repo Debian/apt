@@ -13,6 +13,7 @@
 									/*}}}*/
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -148,25 +149,44 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
 void maybe_add_auth (URI &Uri, string NetRCFile)
 {
   if (_config->FindB("Debug::Acquire::netrc", false) == true)
-     std::clog << "maybe_add_auth: " << NetRCFile << std::endl;
+     std::clog << "maybe_add_auth: " << (string)Uri 
+	       << " " << NetRCFile << std::endl;
   if (Uri.Password.empty () == true || Uri.User.empty () == true)
   {
     if (NetRCFile.empty () == false)
     {
       char login[64] = "";
       char password[64] = "";
-      char *netrcfile = strdup (NetRCFile.c_str ());
-      char *host = strdup (Uri.Host.c_str ());
+      char *netrcfile = strdupa (NetRCFile.c_str ());
 
-      if (host && 0 == parsenetrc (host, login, password, netrcfile))
+      // first check for a generic host based netrc entry
+      char *host = strdupa (Uri.Host.c_str ());
+      if (host && parsenetrc (host, login, password, netrcfile) == 0)
       {
+	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
+	    std::clog << "host: " << host 
+		      << " user: " << login
+		      << " pass-size: " << strlen(password)
+		      << std::endl;
         Uri.User = string (login);
         Uri.Password = string (password);
+	return;
       }
 
-      if (host)
-        free (host);
-      free (netrcfile);
+      // if host did not work, try Host+Path next
+      // FIXME: with host+path we need to match url.startswith(host+path)
+      char *hostpath = strdupa (flNotFile(Uri.Host+Uri.Path).c_str ());
+      if (hostpath && parsenetrc (hostpath, login, password, netrcfile) == 0)
+      {
+	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
+	    std::clog << "hostpath: " << hostpath
+		      << " user: " << login
+		      << " pass-size: " << strlen(password)
+		      << std::endl;
+	 Uri.User = string (login);
+	 Uri.Password = string (password);
+	 return;
+      }
     }
   }
 }
