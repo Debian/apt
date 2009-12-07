@@ -100,7 +100,10 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
           }
           break;
         case HOSTFOUND:
-          if (!strcasecmp (host, tok)) {
+	   /* extended definition of a "machine" if we have a "/"
+	      we match the start of the string (host.startswith(token) */
+	  if ((strchr(host, '/') && strstr(host, tok) == host) ||
+	      (!strcasecmp (host, tok))) {
             /* and yes, this is our host! */
             state = HOSTVALID;
             retcode = 0; /* we did find our host */
@@ -173,9 +176,10 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
 	return;
       }
 
-      // if host did not work, try Host+Path next
-      // FIXME: with host+path we need to match url.startswith(host+path)
-      char *hostpath = strdupa (flNotFile(Uri.Host+Uri.Path).c_str ());
+      // if host did not work, try Host+Path next, this will trigger
+      // a lookup uri.startswith(host) in the netrc file parser (because
+      // of the "/"
+      char *hostpath = strdupa (string(Uri.Host+Uri.Path).c_str ());
       if (hostpath && parsenetrc (hostpath, login, password, netrcfile) == 0)
       {
 	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
