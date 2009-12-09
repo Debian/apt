@@ -9,8 +9,22 @@ apt (0.7.24ubuntu1) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - include df -l output in the apport log as well (thanks to
       tjaalton)
+  * apt-pkg/packagemanager.cc:
+    - add output about pre-depends configuring when debug::pkgPackageManager
+      is used
+  * methods/https.cc:
+    - fix incorrect use of CURLOPT_TIMEOUT, closes: #497983, LP: #354972
+      thanks to Brian Thomason for the patch
+  * merge lp:~mvo/apt/netrc branch, this adds support for a
+    /etc/apt/auth.conf that can be used to store username/passwords
+    in a "netrc" style file (with the extension that it supports "/"
+    in a machine definition). Based on the maemo git branch.
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 03 Dec 2009 17:42:36 +0100
+  [ Brian Murray ]
+  * apt-pkg/depcache.cc, apt-pkg/indexcopy.cc:
+    - typo fix (LP: #462328)
+  
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 09 Dec 2009 09:56:03 +0100
 
 apt (0.7.24) unstable; urgency=low
 

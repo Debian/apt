@@ -300,6 +300,7 @@ Dir "/"
   // Config files
   Etc "etc/apt/" {
      Main "apt.conf";
+     Netrc "auth.conf";
      Parts "apt.conf.d/";
      Preferences "preferences";
      PreferencesParts "preferences.d";
@@ -399,6 +400,7 @@ Debug
   Acquire::Mirror "false"; // Show debugging of the mirror method
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";
+  acquire::netrc "false";  // netrc parser
 }
 
 /* Whatever you do, do not use this configuration file!! Take out ONLY

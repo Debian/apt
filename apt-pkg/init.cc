@@ -66,6 +66,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::vendorlist","vendors.list");
    Cnf.Set("Dir::Etc::vendorparts","vendors.list.d");
    Cnf.Set("Dir::Etc::main","apt.conf");
+   Cnf.Set("Dir::ETc::netrc", "auth.conf");
    Cnf.Set("Dir::Etc::parts","apt.conf.d");
    Cnf.Set("Dir::Etc::preferences","preferences");
    Cnf.Set("Dir::Etc::preferencesparts","preferences.d");

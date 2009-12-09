@@ -527,19 +527,19 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
    // (non-existing files are not considered a error)
    if(!FileExists(prefix+file))
    {
-      _error->Warning("Skipping non-exisiting file %s", string(prefix+file).c_str());
+      _error->Warning(_("Skipping nonexistent file %s"), string(prefix+file).c_str());
       return true;
    }
 
    if (!Record) 
    {
-      _error->Warning("Can't find authentication record for: %s",file.c_str());
+      _error->Warning(_("Can't find authentication record for: %s"), file.c_str());
       return false;
    }
 
    if (!Record->Hash.VerifyFile(prefix+file))
    {
-      _error->Warning("Hash mismatch for: %s",file.c_str());
+      _error->Warning(_("Hash mismatch for: %s"),file.c_str());
       return false;
    }
 

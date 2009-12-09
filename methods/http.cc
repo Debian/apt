@@ -29,6 +29,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/netrc.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -42,6 +43,7 @@
 #include <map>
 #include <apti18n.h>
 
+
 // Internet stuff
 #include <netdb.h>
 
@@ -49,7 +51,6 @@
 #include "connect.h"
 #include "rfc2553emu.h"
 #include "http.h"
-
 									/*}}}*/
 using namespace std;
 
@@ -724,10 +725,12 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       Req += string("Proxy-Authorization: Basic ") + 
           Base64Encode(Proxy.User + ":" + Proxy.Password) + "\r\n";
 
+   maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
    if (Uri.User.empty() == false || Uri.Password.empty() == false)
+   {
       Req += string("Authorization: Basic ") + 
           Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
-   
+   }
    Req += "User-Agent: Ubuntu APT-HTTP/1.3 ("VERSION")\r\n\r\n";
    
    if (Debug == true)
