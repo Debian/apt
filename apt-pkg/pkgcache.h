@@ -43,6 +43,7 @@ class pkgCache								/*{{{*/
    struct DescFile;
    
    // Iterators
+   template<typename Str, typename Itr> class Iterator;
    class PkgIterator;
    class VerIterator;
    class DescIterator;
@@ -51,14 +52,6 @@ class pkgCache								/*{{{*/
    class PkgFileIterator;
    class VerFileIterator;
    class DescFileIterator;
-   friend class PkgIterator;
-   friend class VerIterator;
-   friend class DescInterator;
-   friend class DepIterator;
-   friend class PrvIterator;
-   friend class PkgFileIterator;
-   friend class VerFileIterator;
-   friend class DescFileIterator;
    
    class Namespace;
    

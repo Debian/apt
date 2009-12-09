@@ -242,26 +242,20 @@ const char *pkgCache::Priority(unsigned char Prio)
    return 0;
 }
 									/*}}}*/
-// Bases for iterator classes						/*{{{*/
-void pkgCache::VerIterator::_dummy() {}
-void pkgCache::DepIterator::_dummy() {}
-void pkgCache::PrvIterator::_dummy() {}
-void pkgCache::DescIterator::_dummy() {}
-									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
 void pkgCache::PkgIterator::operator ++(int) 
 {
    // Follow the current links
-   if (Pkg != Owner->PkgP)
-      Pkg = Owner->PkgP + Pkg->NextPackage;
+   if (S != Owner->PkgP)
+      S = Owner->PkgP + S->NextPackage;
 
    // Follow the hash table
-   while (Pkg == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->HashTable))
+   while (S == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->HashTable))
    {
       HashIndex++;
-      Pkg = Owner->PkgP + Owner->HeaderP->HashTable[HashIndex];
+      S = Owner->PkgP + Owner->HeaderP->HashTable[HashIndex];
    }
 };
 									/*}}}*/
@@ -270,12 +264,12 @@ void pkgCache::PkgIterator::operator ++(int)
 /* By this we mean if it is either cleanly installed or cleanly removed. */
 pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 {  
-   if (Pkg->InstState == pkgCache::State::ReInstReq ||
-       Pkg->InstState == pkgCache::State::HoldReInstReq)
+   if (S->InstState == pkgCache::State::ReInstReq ||
+       S->InstState == pkgCache::State::HoldReInstReq)
       return NeedsUnpack;
    
-   if (Pkg->CurrentState == pkgCache::State::UnPacked ||
-       Pkg->CurrentState == pkgCache::State::HalfConfigured)
+   if (S->CurrentState == pkgCache::State::UnPacked ||
+       S->CurrentState == pkgCache::State::HalfConfigured)
       // we leave triggers alone complettely. dpkg deals with
       // them in a hard-to-predict manner and if they get 
       // resolved by dpkg before apt run dpkg --configure on 
@@ -284,8 +278,8 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
       //Pkg->CurrentState == pkgCache::State::TriggersPending)
       return NeedsConfigure;
    
-   if (Pkg->CurrentState == pkgCache::State::HalfInstalled ||
-       Pkg->InstState != pkgCache::State::Ok)
+   if (S->CurrentState == pkgCache::State::HalfInstalled ||
+       S->InstState != pkgCache::State::Ok)
       return NeedsUnpack;
       
    return NeedsNothing;
@@ -347,11 +341,11 @@ operator<<(ostream& out, pkgCache::PkgIterator Pkg)
    conflicts (including dpkg's Breaks fields). */
 bool pkgCache::DepIterator::IsCritical()
 {
-   if (Dep->Type == pkgCache::Dep::Conflicts ||
-       Dep->Type == pkgCache::Dep::DpkgBreaks ||
-       Dep->Type == pkgCache::Dep::Obsoletes ||
-       Dep->Type == pkgCache::Dep::Depends ||
-       Dep->Type == pkgCache::Dep::PreDepends)
+   if (S->Type == pkgCache::Dep::Conflicts ||
+       S->Type == pkgCache::Dep::DpkgBreaks ||
+       S->Type == pkgCache::Dep::Obsoletes ||
+       S->Type == pkgCache::Dep::Depends ||
+       S->Type == pkgCache::Dep::PreDepends)
       return true;
    return false;
 }
@@ -430,12 +424,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
       // Walk along the actual package providing versions
       for (VerIterator I = DPkg.VersionList(); I.end() == false; I++)
       {
-	 if (Owner->VS->CheckDep(I.VerStr(),Dep->CompareOp,TargetVer()) == false)
+	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
 
-	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
-	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
-	      Dep->Type == pkgCache::Dep::Obsoletes) &&
+	 if ((S->Type == pkgCache::Dep::Conflicts ||
+	      S->Type == pkgCache::Dep::DpkgBreaks ||
+	      S->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.ParentPkg())
 	    continue;
 	 
@@ -447,12 +441,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
       // Follow all provides
       for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; I++)
       {
-	 if (Owner->VS->CheckDep(I.ProvideVersion(),Dep->CompareOp,TargetVer()) == false)
+	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
 	 
-	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
-	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
-	      Dep->Type == pkgCache::Dep::Obsoletes) &&
+	 if ((S->Type == pkgCache::Dep::Conflicts ||
+	      S->Type == pkgCache::Dep::DpkgBreaks ||
+	      S->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.OwnerPkg())
 	    continue;
 	 
@@ -490,7 +484,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    End = *this;
    for (bool LastOR = true; end() == false && LastOR == true;)
    {
-      LastOR = (Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+      LastOR = (S->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
       (*this)++;
       if (LastOR == true)
 	 End = (*this);
@@ -640,7 +634,7 @@ bool pkgCache::PkgFileIterator::IsOk()
    if (stat(FileName(),&Buf) != 0)
       return false;
 
-   if (Buf.st_size != (signed)File->Size || Buf.st_mtime != File->mtime)
+   if (Buf.st_size != (signed)S->Size || Buf.st_mtime != S->mtime)
       return false;
 
    return true;
