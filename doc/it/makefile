@@ -1,11 +1,11 @@
 # -*- make -*-
 BASE=../..
-SUBDIR=doc/pl
+SUBDIR=doc/it
 
 # Bring in the default rules
 include ../../buildlib/defaults.mak
 
 # Language Code of this translation
-LC=pl
+LC=it
 
 include $(PO4A_MANPAGE_H)

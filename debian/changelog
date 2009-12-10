@@ -24,9 +24,6 @@ apt (0.7.25) UNRELEASED; urgency=low
   
   [ Michael Vogt ]
   * apt-pkg/packagemanager.cc:
-    - fix overly aggressive immediate config propergation
-      (thanks to David Kalnischkies)
-  * apt-pkg/packagemanager.cc:
     - add output about pre-depends configuring when debug::pkgPackageManager
       is used
   * methods/https.cc:
@@ -35,7 +32,8 @@ apt (0.7.25) UNRELEASED; urgency=low
   * merge lp:~mvo/apt/netrc branch, this adds support for a
     /etc/apt/auth.conf that can be used to store username/passwords
     in a "netrc" style file (with the extension that it supports "/"
-    in a machine definition). Based on the maemo git branch.
+    in a machine definition). Based on the maemo git branch (Closes: #518473)
+    (thanks also to Jussi Hakala and Julian Andres Klode)
   * apt-pkg/deb/dpkgpm.cc:
     - add "purge" to list of known actions
 
@@ -48,6 +46,19 @@ apt (0.7.25) UNRELEASED; urgency=low
     - Emit a warning if removed keys keyring is missing and skip associated
       checks (LP: #218971)
 
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc:
+    - better debug output for ImmediateAdd with depth and why
+    - improve the message shown for failing immediate configuration
+  * doc/guide.it.sgml: moved to doc/it/guide.it.sgml
+  * doc/po4a.conf: activate translation of guide.sgml and offline.sgml
+  * doc/apt.conf.5.xml:
+    - provide a few more details about APT::Immediate-Configure
+  * doc/sources.list.5.xml:
+    - add note about additional apt-transport-methods
+  * doc/apt-mark.8.xml:
+    - correct showauto synopsis, thanks Andrew Schulman (Closes: #551440)
+
   [ Julian Andres Klode ]
   * doc/apt.conf.5.xml:
     - Deprecate unquoted values, string concatenation and explain what should
@@ -55,9 +66,6 @@ apt (0.7.25) UNRELEASED; urgency=low
     - Restrict option names to alphanumerical characters and "/-:._+".
     - Deprecate #include, we have apt.conf.d nowadays which should be
       sufficient.
-  * methods/https.cc:
-    - Add support for authentication using netrc (Closes: #518473), patch
-      by Jussi Hakala <jussi.hakala@hut.fi>.
   * ftparchive/apt-ftparchive.cc:
     - Call setlocale() so translations are actually used.
   * debian/apt.conf.autoremove:

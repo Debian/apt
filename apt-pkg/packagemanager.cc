@@ -143,10 +143,6 @@ void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer, unsigned
    for ( /* nothing */  ; D.end() == false; D++)
       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
       {
-	 // ignore dependencies if no instal/upgrade/remove is going to happen
-	 if (D.TargetPkg() == 0 || Cache[D.TargetPkg()].Keep())
-	      continue;
-
 	 if(!List->IsFlag(D.TargetPkg(), pkgOrderList::Immediate))
 	 {
 	    if(Debug)
@@ -478,7 +474,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
       if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)
-	    return _error->Error("Internal Error, Could not perform immediate configuration (1) on %s",Pkg.Name());
+	    return _error->Error(_("Could not perform immediate configuration for on already unpacked %s."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
       return true;
    }
 
@@ -585,7 +582,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    // Perform immedate configuration of the package.
    if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
       if (SmartConfigure(Pkg) == false)
-	 return _error->Error("Internal Error, Could not perform immediate configuration (2) on %s",Pkg.Name());
+	 return _error->Error(_("Could not perform immediate configuration on %s."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
    
    return true;
 }

@@ -182,11 +182,11 @@ bool CacheDB::GetFileInfo(string FileName, bool DoControl, bool DoContents,
 	Stats.Bytes += CurStat.FileSize;
 	Stats.Packages++;
 
-	if (DoControl && LoadControl() == false
-		|| DoContents && LoadContents(GenContentsOnly) == false
-		|| DoMD5 && GetMD5(false) == false
-		|| DoSHA1 && GetSHA1(false) == false
-		|| DoSHA256 && GetSHA256(false) == false)
+	if ((DoControl && LoadControl() == false)
+		|| (DoContents && LoadContents(GenContentsOnly) == false)
+		|| (DoMD5 && GetMD5(false) == false)
+		|| (DoSHA1 && GetSHA1(false) == false)
+		|| (DoSHA256 && GetSHA256(false) == false))
 	{
 		delete Fd;
 		Fd = NULL;

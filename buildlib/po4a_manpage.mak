@@ -28,6 +28,7 @@ veryclean: veryclean/$(LOCAL)
 $($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
 	echo Creating man page $@
 	$(XSLTPROC) -o $@ $(STYLESHEET) $< # why xsltproc doesn't respect the -o flag here???
+	test -f $(subst .$(LC),,$@) || echo FIXME: xsltproc respect the -o flag now, workaround can be removed
 	mv -f $(subst .$(LC),,$@) $@
 
 # Clean rule
@@ -40,7 +41,7 @@ HAVE_PO4A=yes
 endif
 
 # take care of the rest
-SOURCE := $(SOURCE) apt.$(LC).8
+SOURCE := $(SOURCE) $(wildcard apt.$(LC).8)
 INCLUDES :=
 
 ifndef HAVE_PO4A
@@ -52,3 +53,8 @@ endif
 ifneq ($(words $(SOURCE)),0)
 include $(MANPAGE_H)
 endif
+
+# Debian Doc SGML Documents
+SOURCE := $(wildcard *.$(LC).sgml)
+DEBIANDOC_HTML_OPTIONS=-l $(LC)
+include $(DEBIANDOC_H)
