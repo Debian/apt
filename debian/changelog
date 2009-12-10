@@ -90,6 +90,10 @@ apt (0.7.25) UNRELEASED; urgency=low
     - add APT::FTPArchive::LongDescription to be able to disable them
   * apt-pkg/deb/debsrcrecords.cc:
     - use "diff" filetype for .debian.tar.* files (Closes: #554898)
+  * methods/rred.cc:
+    - rewrite to be able to handle even big patch files
+    - adopt optional mmap+iovec patch from Morten Hustveit
+      (Closes: #463354) which should speed up a bit. Thanks!
 
   [ Chris Leick ]
   * doc/ various manpages:
