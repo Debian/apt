@@ -62,6 +62,24 @@ apt (0.7.25) UNRELEASED; urgency=low
     - source should displays his final pkg pick (Closes: #249383, #550952)
     - source doesn't need the complete version for match (Closes: #245250)
     - source ignores versions/releases if not available (Closes: #377424)
+    - only warn if (free) space overflows (Closes: #522238)
+  * methods/connect.cc:
+    - display also strerror of "wicked" getaddrinfo errors
+  * buildlib/configure.mak, buildlib/config.{sub,guess}:
+    - remove (outdated) config.{sub,guess} and use the ones provided
+      by the new added build-dependency autotools-dev instead
+
+  [ Chris Leick ]
+  * doc/ various manpages:
+    - correct various errors, typos and oddities (Closes: #552535)
+  * doc/apt-secure.8.xml:
+    - replace literal with emphasis tags in Archive configuration
+
+  [ Eugene V. Lyubimkin ]
+  * apt-pkg/contib/strutl.h
+    - Avoid extra inner copy in APT_MKSTRCMP and APT_MKSTRCMP2.
+  * build infrastructure:
+    - Bumped libapt version, excluded eglibc from SONAME. (Closes: #448249)
 
   [ Julian Andres Klode ]
   * doc/apt.conf.5.xml:

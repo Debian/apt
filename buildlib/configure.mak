@@ -15,7 +15,13 @@ BUILDDIR=build
 .PHONY: startup
 startup: configure $(BUILDDIR)/config.status $(addprefix $(BUILDDIR)/,$(CONVERTED))
 
-configure: aclocal.m4 configure.in
+# use the files provided from the system instead of carry around
+# and use (most of the time outdated) copycats
+buildlib/config.sub:
+	ln -sf /usr/share/misc/config.sub buildlib/config.sub
+buildlib/config.guess:
+	ln -sf /usr/share/misc/config.guess buildlib/config.guess	
+configure: aclocal.m4 configure.in buildlib/config.guess buildlib/config.sub
 	autoconf
 
 aclocal.m4: $(wildcard buildlib/*.m4)

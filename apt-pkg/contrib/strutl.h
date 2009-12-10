@@ -68,15 +68,15 @@ int tolower_ascii(int c);
 #define APT_MKSTRCMP(name,func) \
 inline int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));}; \
 inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
-inline int name(string A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));}; \
-inline int name(string A,string B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());}; \
-inline int name(string A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);}; 
+inline int name(const string& A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));}; \
+inline int name(const string& A,const string& B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());}; \
+inline int name(const string& A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);};
 
 #define APT_MKSTRCMP2(name,func) \
 inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
-inline int name(string A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));}; \
-inline int name(string A,string B) {return func(A.begin(),A.end(),B.begin(),B.end());}; \
-inline int name(string A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}; 
+inline int name(const string& A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));}; \
+inline int name(const string& A,const string& B) {return func(A.begin(),A.end(),B.begin(),B.end());}; \
+inline int name(const string& A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);};
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
