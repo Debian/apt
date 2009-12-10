@@ -211,7 +211,10 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, dlLimit);
 
    // set header
-   curl_easy_setopt(curl, CURLOPT_USERAGENT,"Debian APT-CURL/1.0 ("VERSION")");
+   curl_easy_setopt(curl, CURLOPT_USERAGENT,
+	_config->Find("Acquire::https::User-Agent",
+		_config->Find("Acquire::http::User-Agent",
+			"Debian APT-CURL/1.0 ("VERSION")")));
 
    // set timeout
    int timeout = _config->FindI("Acquire::http::Timeout",120);
