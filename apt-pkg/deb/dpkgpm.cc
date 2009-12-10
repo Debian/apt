@@ -49,6 +49,7 @@ namespace
     std::make_pair("install",   N_("Installing %s")),
     std::make_pair("configure", N_("Configuring %s")),
     std::make_pair("remove",    N_("Removing %s")),
+    std::make_pair("purge",    N_("Completely removing %s")),
     std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
   };
 
