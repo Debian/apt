@@ -2,13 +2,14 @@
 
 from optparse import OptionParser
 
+import sys
+import os.path
+    
 try:
     import apt_pkg
 except ImportError:
     print "Error importing apt_pkg, is python-apt installed?"
-    
-import sys
-import os.path
+    sys.exit(1)
     
 actions = { "markauto" : 1,
             "unmarkauto": 0
@@ -31,8 +32,12 @@ def mark_unmark_automatic(filename, action, pkgs):
     " mark or unmark automatic flag"
     # open the statefile
     if os.path.exists(STATE_FILE):
-        tagfile = apt_pkg.ParseTagFile(open(STATE_FILE))
-        outfile = open(STATE_FILE+".tmp","w")
+        try:
+            tagfile = apt_pkg.ParseTagFile(open(STATE_FILE))
+            outfile = open(STATE_FILE+".tmp","w")
+        except IOError, msg:
+            print "%s, are you root?" % (msg)
+            sys.exit(1)
         while tagfile.Step():
             pkgname = tagfile.Section.get("Package")
             autoInst = tagfile.Section.get("Auto-Installed")

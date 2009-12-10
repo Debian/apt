@@ -184,12 +184,6 @@ AC_PATH_PROG(DEBIANDOC_TEXT,debiandoc2text)
 dnl Check for doxygen
 AC_PATH_PROG(DOXYGEN, doxygen)
 
-dnl Check for the SGML tools needed to build man pages
-AC_PATH_PROG(DOCBOOK2MAN,docbook2man)
-
-dnl Check for the XML tools needed to build man pages
-AC_PATH_PROG(XMLTO,xmlto)
-
 dnl Check for the XSLTProc tool needed to build man pages together with po4a
 AC_PATH_PROG(XSLTPROC,xsltproc)
 
@@ -202,12 +196,7 @@ AC_PATH_PROG([DOT], [dot], [])
 DOTDIR=$(dirname $DOT)
 AC_SUBST(DOTDIR)
 
-dnl Check for YODL
-dnl AC_CHECK_PROG(YODL_MAN,yodl2man,"yes","")
-
 ah_NUM_PROCS
-rc_GLIBC_VER
-rc_LIBSTDCPP_VER
 ah_GCC3DEP
 
 dnl It used to be that the user could select translations and that could get

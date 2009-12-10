@@ -48,9 +48,9 @@
    loading even more config files.</para>
 
    <para>The configuration file is organized in a tree with options organized into
-   functional groups. option specification is given with a double colon
+   functional groups. Option specification is given with a double colon
    notation, for instance <literal>APT::Get::Assume-Yes</literal> is an option within 
-   the APT tool group, for the Get tool. options do not inherit from their 
+   the APT tool group, for the Get tool. Options do not inherit from their 
    parent groups.</para> 
 
    <para>Syntactically the configuration language is modeled after what the ISC tools
@@ -58,7 +58,7 @@
    <literal>//</literal> are treated as comments (ignored), as well as all text
    between <literal>/*</literal> and <literal>*/</literal>, just like C/C++ comments.
    Each line is of the form
-   <literal>APT::Get::Assume-Yes "true";</literal> The trailing 
+   <literal>APT::Get::Assume-Yes "true";</literal>. The trailing 
    semicolon and the quotes are required. The value must be on one line, and
    there is no kind of string concatenation. It must not include inside quotes.
    The behavior of the backslash "\" and escaped characters inside a value is
@@ -156,11 +156,26 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </varlistentry>
 
      <varlistentry><term>Immediate-Configure</term>
-     <listitem><para>Disable Immediate Configuration; This dangerous option disables some
-     of APT's ordering code to cause it to make fewer dpkg calls. Doing
-     so may be necessary on some extremely slow single user systems but 
-     is very dangerous and may cause package install scripts to fail or worse.
-     Use at your own risk.</para></listitem>
+     <listitem><para>Defaults to on which will cause APT to install essential and important packages
+     as fast as possible in the install/upgrade operation. This is done to limit the effect of a failing
+     &dpkg; call: If this option is disabled APT does treat an important package in the same way as
+     an extra package: Between the unpacking of the important package A and his configuration can then
+     be many other unpack or configuration calls, e.g. for package B which has no relation to A, but
+     causes the dpkg call to fail (e.g. because maintainer script of package B generates an error) which results
+     in a system state in which package A is unpacked but unconfigured - each package depending on A is now no
+     longer guaranteed to work as their dependency on A is not longer satisfied. The immediate configuration marker
+     is also applied to all dependencies which can generate a problem if the dependencies e.g. form a circle
+     as a dependency with the immediate flag is comparable with a Pre-Dependency. So in theory it is possible
+     that APT encounters a situation in which it is unable to perform immediate configuration, error out and
+     refers to this option so the user can deactivate the immediate configuration temporary to be able to perform
+     an install/upgrade again. Note the use of the word "theory" here as this problem was only encountered by now
+     in real world a few times in non-stable distribution versions and caused by wrong dependencies of the package
+     in question or by a system in an already broken state, so you should not blindly disable this option as
+     the mentioned scenario above is not the only problem immediate configuration can help to prevent in the first place.
+     Before a big operation like <literal>dist-upgrade</literal> is run with this option disabled it should be tried to
+     explicitly <literal>install</literal> the package APT is unable to configure immediately, but please make sure to
+     report your problem also to your distribution and to the APT team with the buglink below so they can work on
+     improving or correcting the upgrade process.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>Force-LoopBreak</term>
@@ -250,7 +265,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      this applies to all things including connection timeout and data timeout.</para>
 
      <para>One setting is provided to control the pipeline depth in cases where the
-     remote server is not RFC conforming or buggy (such as Squid 2.0.2)
+     remote server is not RFC conforming or buggy (such as Squid 2.0.2).
      <literal>Acquire::http::Pipeline-Depth</literal> can be a value from 0 to 5 
      indicating how many outstanding requests APT should send. A value of
      zero MUST be specified if the remote host does not properly linger
@@ -521,9 +536,9 @@ DPkg::TriggersPending "true";</literallayout></para>
 
      <variablelist>
        <varlistentry><term>DPkg::NoTriggers</term>
-       <listitem><para>Add the no triggers flag to all dpkg calls (expect the ConfigurePending call).
+       <listitem><para>Add the no triggers flag to all dpkg calls (except the ConfigurePending call).
        See &dpkg; if you are interested in what this actually means. In short: dpkg will not run the
-       triggers then this flag is present unless it is explicit called to do so in an extra call.
+       triggers when this flag is present unless it is explicitly called to do so in an extra call.
        Note that this option exists (undocumented) also in older apt versions with a slightly different
        meaning: Previously these option only append --no-triggers to the configure calls to dpkg -
        now apt will add these flag also to the unpack and remove calls.</para></listitem>
@@ -534,8 +549,8 @@ DPkg::TriggersPending "true";</literallayout></para>
        The "<literal>smart</literal>" way is it to configure only packages which need to be configured before
        another package can be unpacked (Pre-Depends) and let the rest configure by dpkg with a call generated
        by the next option. "<literal>no</literal>" on the other hand will not configure anything and totally
-       relay on dpkg for configuration (which will at the moment fail if a Pre-Depends is encountered).
-       Setting this option to another than the all value will implicit activate also the next option per
+       rely on dpkg for configuration (which will at the moment fail if a Pre-Depends is encountered).
+       Setting this option to another than the all value will implicitly activate also the next option per
        default as otherwise the system could end in an unconfigured status which could be unbootable!
        </para></listitem>
        </varlistentry>
@@ -543,7 +558,7 @@ DPkg::TriggersPending "true";</literallayout></para>
        <listitem><para>If this option is set apt will call <command>dpkg --configure --pending</command>
        to let dpkg handle all required configurations and triggers. This option is activated automatic
        per default if the previous option is not set to <literal>all</literal>, but deactivating could be useful
-       if you want to run APT multiple times in a row - e.g. in an installer. In this sceneries you could
+       if you want to run APT multiple times in a row - e.g. in an installer. In these sceneries you could
        deactivate this option in all but the last run.</para></listitem>
        </varlistentry>
        <varlistentry><term>DPkg::TriggersPending</term>

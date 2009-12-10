@@ -135,9 +135,15 @@ bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
 	 string::size_type Tmp = F.Path.rfind('.',Pos);
 	 if (Tmp == string::npos)
 	    break;
+	 if (F.Type == "tar") {
+	    // source v3 has extension 'debian.tar.*' instead of 'diff.*'
+	    if (string(F.Path, Tmp+1, Pos-Tmp) == "debian")
+	       F.Type = "diff";
+	    break;
+	 }
 	 F.Type = string(F.Path,Tmp+1,Pos-Tmp);
 	 
-	 if (F.Type == "gz" || F.Type == "bz2" || F.Type == "lzma")
+	 if (F.Type == "gz" || F.Type == "bz2" || F.Type == "lzma" || F.Type == "tar")
 	 {
 	    Pos = Tmp-1;
 	    continue;
