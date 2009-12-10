@@ -1,3 +1,45 @@
+apt (0.7.26) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * [BREAK] add possibility to download and use multiply
+    Translation files, configurable with Acquire::Translation
+    (Closes: #444222, #448216, #550564)
+  * Ignore :qualifiers after package name in build dependencies
+    for now as long we don't understand them (Closes: #558103)
+  * doc/apt.conf.5.xml:
+    - briefly document the behaviour of the new https options
+  * methods/connect.cc:
+    - add AI_ADDRCONFIG to ai_flags as suggested by Aurelien Jarno
+      in response to Bernhard R. Link, thanks! (Closes: #505020)
+  * methods/rred.cc:
+    - rewrite to be able to handle even big patch files
+    - adopt optional mmap+iovec patch from Morten Hustveit
+      (Closes: #463354) which should speed up a bit. Thanks!
+  * apt-pkg/contrib/mmap.{cc,h}:
+    - extend it to have a growable flag - unused now but maybe...
+  * apt-pkg/pkgcache.h:
+    - use long instead of short for {Ver,Desc}File size,
+      patch from Víctor Manuel Jáquez Leal, thanks! (Closes: #538917)
+  * apt-pkg/acquire-item.cc:
+    - allow also to skip the last patch if target is reached,
+      thanks Bernhard R. Link! (Closes: #545699)
+  * methods/http{,s}.cc
+    - add config setting for User-Agent to the Acquire group,
+      thanks Timothy J. Miller! (Closes: #355782)
+    - add https options which default to http ones (Closes: #557085)
+  * ftparchive/writer.{cc,h}:
+    - add APT::FTPArchive::AlwaysStat to disable the too aggressive
+      caching if versions are build multiply times (not recommend)
+      Patch by Christoph Goehre, thanks! (Closes: #463260)
+  * ftparchive/*:
+    - fix a few typos in strings, comments and manpage,
+      thanks Karl Goetz! (Closes: #558757)
+  * debian/apt.cron.daily:
+    - check cache size even if we do nothing else otherwise, thanks
+      Francesco Poli for patch(s) and patience! (Closes: #459344)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Dec 2009 22:02:38 +0100
+
 apt (0.7.25) UNRELEASED; urgency=low
 
   [ Christian Perrier ]
@@ -17,13 +59,36 @@ apt (0.7.25) UNRELEASED; urgency=low
     Closes: #552606
   * Italian translation update by Milo Casagrande
     Closes: #555797
+  * Simplified Chinese translation update by Aron Xu 
+    Closes: #558737
+  * Slovak translation update by Ivan Masár
+    Closes: #559277
+  
+  [ Michael Vogt ]
+  * apt-pkg/packagemanager.cc:
+    - add output about pre-depends configuring when debug::pkgPackageManager
+      is used
+  * methods/https.cc:
+    - fix incorrect use of CURLOPT_TIMEOUT, closes: #497983, LP: #354972
+      thanks to Brian Thomason for the patch
+  * merge lp:~mvo/apt/netrc branch, this adds support for a
+    /etc/apt/auth.conf that can be used to store username/passwords
+    in a "netrc" style file (with the extension that it supports "/"
+    in a machine definition). Based on the maemo git branch (Closes: #518473)
+    (thanks also to Jussi Hakala and Julian Andres Klode)
+  * apt-pkg/deb/dpkgpm.cc:
+    - add "purge" to list of known actions
+
+  [ Brian Murray ]
+  * apt-pkg/depcache.cc, apt-pkg/indexcopy.cc:
+    - typo fix (LP: #462328)
+  
+  [ Loïc Minier ]
+  * cmdline/apt-key:
+    - Emit a warning if removed keys keyring is missing and skip associated
+      checks (LP: #218971)
 
   [ David Kalnischkies ]
-  * [BREAK] add possibility to download and use multiply
-    Translation files, configurable with Acquire::Translation
-    (Closes: #444222, #448216, #550564)
-  * Ignore :qualifiers after package name in build dependencies
-    for now as long we don't understand them (Closes: #558103)
   * apt-pkg/packagemanager.cc:
     - better debug output for ImmediateAdd with depth and why
     - improve the message shown for failing immediate configuration
@@ -31,7 +96,6 @@ apt (0.7.25) UNRELEASED; urgency=low
   * doc/po4a.conf: activate translation of guide.sgml and offline.sgml
   * doc/apt.conf.5.xml:
     - provide a few more details about APT::Immediate-Configure
-    - briefly document the behaviour of the new https options
   * doc/sources.list.5.xml:
     - add note about additional apt-transport-methods
   * doc/apt-mark.8.xml:
@@ -44,8 +108,6 @@ apt (0.7.25) UNRELEASED; urgency=low
     - add --debian-only as alias for --diff-only
   * methods/connect.cc:
     - display also strerror of "wicked" getaddrinfo errors
-    - add AI_ADDRCONFIG to ai_flags as suggested by Aurelien Jarno
-      in response to Bernhard R. Link, thanks! (Closes: #505020)
   * buildlib/configure.mak, buildlib/config.{sub,guess}:
     - remove (outdated) config.{sub,guess} and use the ones provided
       by the new added build-dependency autotools-dev instead
@@ -59,40 +121,15 @@ apt (0.7.25) UNRELEASED; urgency=low
     - bump policy to 3.8.3 as we have no outdated manpages anymore
   * debian/NEWS:
     - fix a typo in 0.7.24: Allready -> Already (Closes: #557674)
-  * methods/rred.cc:
-    - rewrite to be able to handle even big patch files
-    - adopt optional mmap+iovec patch from Morten Hustveit
-      (Closes: #463354) which should speed up a bit. Thanks!
-  * apt-pkg/contrib/mmap.{cc,h}:
-    - extend it to have a growable flag - unused now but maybe...
-  * apt-pkg/pkgcache.h:
-    - use long instead of short for {Ver,Desc}File size,
-      patch from Víctor Manuel Jáquez Leal, thanks! (Closes: #538917)
-  * apt-pkg/acquire-item.cc:
-    - allow also to skip the last patch if target is reached,
-      thanks Bernhard R. Link! (Closes: #545699)
   * cmdline/apt-mark:
     - print an error if a new state file can't be created,
       thanks Carl Chenet! (Closes: #521289)
     - print an error and exit if python-apt is not installed,
       thanks Carl Chenet! (Closes: #521284)
-  * methods/http{,s}.cc
-    - add config setting for User-Agent to the Acquire group,
-      thanks Timothy J. Miller! (Closes: #355782)
-    - add https options which default to http ones (Closes: #557085)
   * ftparchive/writer.{cc,h}:
     - add APT::FTPArchive::LongDescription to be able to disable them
-    - add APT::FTPArchive::AlwaysStat to disable the too aggressive
-      caching if versions are build multiply times (not recommend)
-      Patch by Christoph Goehre, thanks! (Closes: #463260)
-  * ftparchive/*:
-    - fix a few typos in strings, comments and manpage,
-      thanks Karl Goetz! (Closes: #558757)
   * apt-pkg/deb/debsrcrecords.cc:
     - use "diff" filetype for .debian.tar.* files (Closes: #554898)
-  * debian/apt.cron.daily:
-    - check cache size even if we do nothing else otherwise, thanks
-      Francesco Poli for patch(s) and patience! (Closes: #459344)
 
   [ Chris Leick ]
   * doc/ various manpages:
@@ -113,13 +150,12 @@ apt (0.7.25) UNRELEASED; urgency=low
     - Restrict option names to alphanumerical characters and "/-:._+".
     - Deprecate #include, we have apt.conf.d nowadays which should be
       sufficient.
-  * methods/https.cc:
-    - Add support for authentication using netrc (Closes: #518473), patch
-      by Jussi Hakala <jussi.hakala@hut.fi>.
   * ftparchive/apt-ftparchive.cc:
     - Call setlocale() so translations are actually used.
+  * debian/apt.conf.autoremove:
+    - Add kfreebsd-image-* to the list (Closes: #558803)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 29 Sep 2009 15:51:34 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Dec 2009 22:02:38 +0100
 
 apt (0.7.24) unstable; urgency=low
 

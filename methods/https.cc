@@ -14,6 +14,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/netrc.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -110,8 +111,10 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_reset(curl);
    SetupProxy();
 
+   maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+
    // callbacks
-   curl_easy_setopt(curl, CURLOPT_URL, Itm->Uri.c_str());
+   curl_easy_setopt(curl, CURLOPT_URL, static_cast<string>(Uri).c_str());
    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
@@ -119,7 +122,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
    curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
-   curl_easy_setopt(curl, CURLOPT_NETRC, CURL_NETRC_OPTIONAL);
 
    // SSL parameters are set by default to the common (non mirror-specific) value
    // if available (or a default one) and gets overload by mirror-specific ones.
@@ -207,6 +209,9 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 		_config->FindI("Acquire::http::Timeout",120));
    curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
+   //set really low lowspeed timeout (see #497983)
+   curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, DL_MIN_SPEED);
+   curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
 
    // set redirect options and default to 10 redirects
    bool AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",

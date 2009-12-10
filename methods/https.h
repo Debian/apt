@@ -24,6 +24,8 @@ class HttpsMethod;
 
 class HttpsMethod : public pkgAcqMethod
 {
+   // minimum speed in bytes/se that triggers download timeout handling
+   static const int DL_MIN_SPEED = 10;
 
    virtual bool Fetch(FetchItem *);
    static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);

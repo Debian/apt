@@ -309,6 +309,7 @@ Dir "/"
   // Config files
   Etc "etc/apt/" {
      Main "apt.conf";
+     Netrc "auth.conf";
      Parts "apt.conf.d/";
      Preferences "preferences";
      PreferencesParts "preferences.d";
@@ -407,6 +408,7 @@ Debug
   Acquire::gpgv "false";   // Show the gpgv traffic
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";
+  acquire::netrc "false";  // netrc parser
   
 }
 
