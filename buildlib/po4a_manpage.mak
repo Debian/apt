@@ -35,7 +35,8 @@ $($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
 .PHONY: veryclean/$(LOCAL)
 veryclean/$(LOCAL):
 	-rm -rf $($(@F)-LIST) apt.ent apt.$(LC).8 \
-		$(addsuffix .xml,$($(@F)-LIST))
+		$(addsuffix .xml,$($(@F)-LIST)) \
+		offline.$(LC).sgml guide.$(LC).sgml
 
 HAVE_PO4A=yes
 endif

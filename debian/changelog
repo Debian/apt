@@ -68,6 +68,16 @@ apt (0.7.25) UNRELEASED; urgency=low
   * buildlib/configure.mak, buildlib/config.{sub,guess}:
     - remove (outdated) config.{sub,guess} and use the ones provided
       by the new added build-dependency autotools-dev instead
+  * configure.in, buildlib/{xml,yodl,sgml}_manpage.mak:
+    - remove the now obsolete manpage buildsystems
+  * doc/{pl,pt_BR,es,it}/*.{sgml,xml}:
+    - convert all remaining translation to the po4a system
+  * debian/control:
+    - drop build-dependency on docbook-utils and xmlto
+    - add build-dependency on autotools-dev
+    - bump policy to 3.8.3 as we have no outdated manpages anymore
+  * debian/NEWS:
+    - fix a typo in 0.7.24: Allready -> Already (Closes: #557674)
 
   [ Chris Leick ]
   * doc/ various manpages:

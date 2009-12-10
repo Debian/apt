@@ -11,13 +11,34 @@ SOURCE = $(wildcard *.sgml)
 DEBIANDOC_HTML_OPTIONS=-l en
 include $(DEBIANDOC_H)
 
-# XML man pages
-SOURCE = apt-cache.8 apt-get.8 apt-cdrom.8 apt.conf.5 sources.list.5 \
-         apt-config.8 apt_preferences.5  \
-         apt-sortpkgs.1 apt-ftparchive.1 apt-extracttemplates.1 \
-	 apt-key.8 apt-secure.8 apt-mark.8
-INCLUDES = apt.ent	 
-include $(XML_MANPAGE_H)
+# Do not use XMLTO, build the manpages directly with XSLTPROC
+ifdef XSLTPROC
+# generate a list of accepted man page translations
+SOURCE = $(patsubst %.xml,%,$(wildcard *.?.xml))
+INCLUDES = apt.ent
+STYLESHEET=manpage-style.xsl
+
+LOCAL := manpage-$(firstword $(SOURCE))
+$(LOCAL)-LIST := $(SOURCE)
+
+# Install generation hooks
+doc: $($(LOCAL)-LIST)
+veryclean: veryclean/$(LOCAL)
+
+$($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
+	echo Creating man page $@
+	$(XSLTPROC) -o $@ $(STYLESHEET) $<
+
+# Clean rule
+.PHONY: veryclean/$(LOCAL)
+veryclean/$(LOCAL):
+	-rm -rf $($(@F)-LIST)
+
+endif
+
+# Chain to the manpage rule
+SOURCE = apt.8
+include $(MANPAGE_H)
 
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf
@@ -42,14 +63,6 @@ clean-subdirs:
 veryclean-subdirs:
 	for dir in $(SUBDIRS); do\
 		$(MAKE) -C $$dir veryclean; \
-	done
-	# FIXME remove created sgml files, but preserve all
-	# which are "left over" from older systems.
-	# After completing the transition this should be handled
-	# in the po4a-manpage makefile for all translations
-	for dir in $(subst /addendum/,, $(dir $(wildcard */addendum/debiandoc*))); do\
-		rm -f $$dir/offline.$$dir.sgml; \
-		rm -f $$dir/guide.$$dir.sgml; \
 	done
 
 ifdef PO4A
@@ -86,5 +99,4 @@ $(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
 	touch $(BUILD)/doc/doxygen-stamp
 
 doc: $(BUILD)/doc/doxygen-stamp
-
 endif
