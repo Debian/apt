@@ -284,9 +284,11 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </varlistentry>
 
      <varlistentry><term>https</term>
-	 <listitem><para>HTTPS URIs. Cache-control and proxy options are the same as for
-	 <literal>http</literal> method.
-	 <literal>Pipeline-Depth</literal> option is not supported yet.</para>
+	 <listitem><para>HTTPS URIs. Cache-control, Timeout, AllowRedirect, Dl-Limit and
+	 proxy options are the same as for <literal>http</literal> method and will also
+	 default to the options from the <literal>http</literal> method if they are not
+	 explicitly set for https. <literal>Pipeline-Depth</literal> option is not
+	 supported yet.</para>
 
 	 <para><literal>CaInfo</literal> suboption specifies place of file that
 	 holds info about trusted certificates.
