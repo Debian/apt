@@ -21,7 +21,9 @@
 // reverse-dependencies of libapt-pkg against the new SONAME.
 // Non-ABI-Breaks should only increase RELEASE number.
 // See also buildlib/libversion.mak
-#define APT_PKG_MAJOR 4
+// FIXME: this needs to be changed to "4" (without quotes) on the next
+//        ABI break
+#define APT_PKG_MAJOR libc6.9-6-4
 #define APT_PKG_MINOR 8
 #define APT_PKG_RELEASE 0
     
