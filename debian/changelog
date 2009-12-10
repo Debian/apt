@@ -69,6 +69,8 @@ apt (0.7.25) UNRELEASED; urgency=low
     - add --debian-only as alias for --diff-only
   * methods/connect.cc:
     - display also strerror of "wicked" getaddrinfo errors
+    - add AI_ADDRCONFIG to ai_flags as suggested by Aurelien Jarno
+      in response to Bernhard R. Link, thanks! (Closes: #505020)
   * buildlib/configure.mak, buildlib/config.{sub,guess}:
     - remove (outdated) config.{sub,guess} and use the ones provided
       by the new added build-dependency autotools-dev instead
