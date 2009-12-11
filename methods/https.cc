@@ -62,10 +62,10 @@ void HttpsMethod::SetupProxy() {					/*{{{*/
 
 	// Determine the proxy setting - try https first, fallback to http and use env at last
 	string UseProxy = _config->Find("Acquire::https::Proxy::" + ServerName.Host,
-				_config->Find("Acquire::http::Proxy::" + ServerName.Host));
+				_config->Find("Acquire::http::Proxy::" + ServerName.Host).c_str());
 
 	if (UseProxy.empty() == true)
-		UseProxy = _config->Find("Acquire::https::Proxy", _config->Find("Acquire::http::Proxy"));
+		UseProxy = _config->Find("Acquire::https::Proxy", _config->Find("Acquire::http::Proxy").c_str());
 
 	// User want to use NO proxy, so nothing to setup
 	if (UseProxy == "DIRECT")
@@ -202,7 +202,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_USERAGENT,
 	_config->Find("Acquire::https::User-Agent",
 		_config->Find("Acquire::http::User-Agent",
-			"Debian APT-CURL/1.0 ("VERSION")")));
+			"Debian APT-CURL/1.0 ("VERSION")").c_str()).c_str());
 
    // set timeout
    int timeout = _config->FindI("Acquire::https::Timeout",
