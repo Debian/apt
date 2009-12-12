@@ -23,7 +23,7 @@
 // See also buildlib/libversion.mak
 // FIXME: this needs to be changed to "4" (without quotes) on the next
 //        ABI break
-#define APT_PKG_MAJOR libc6.10-6-4
+#define APT_PKG_MAJOR 4
 #define APT_PKG_MINOR 8
 #define APT_PKG_RELEASE 0
     
