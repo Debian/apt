@@ -275,13 +275,20 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <para>The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</literal>
      which accepts integer values in kilobyte. The default value is 0 which deactivates
      the limit and tries uses as much as possible of the bandwidth (Note that this option implicit
-     deactivates the download from multiple servers at the same time.)</para></listitem>
+     deactivates the download from multiple servers at the same time.)</para>
+
+     <para><literal>Acquire::http::User-Agent</literal> can be used to set a different
+     User-Agent for the http download method as some proxies allow access for clients
+     only if the client uses a known identifier.</para>
+     </listitem>
      </varlistentry>
 
      <varlistentry><term>https</term>
-	 <listitem><para>HTTPS URIs. Cache-control and proxy options are the same as for
-	 <literal>http</literal> method.
-	 <literal>Pipeline-Depth</literal> option is not supported yet.</para>
+	 <listitem><para>HTTPS URIs. Cache-control, Timeout, AllowRedirect, Dl-Limit and
+	 proxy options are the same as for <literal>http</literal> method and will also
+	 default to the options from the <literal>http</literal> method if they are not
+	 explicitly set for https. <literal>Pipeline-Depth</literal> option is not
+	 supported yet.</para>
 
 	 <para><literal>CaInfo</literal> suboption specifies place of file that
 	 holds info about trusted certificates.

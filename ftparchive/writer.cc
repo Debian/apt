@@ -463,7 +463,7 @@ bool PackagesWriter::DoPackage(string FileName)
       SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
    
    /* Get rid of the Optional tag. This is an ugly, ugly, ugly hack that
-      dpkg-scanpackages does.. Well sort of. dpkg-scanpackages just does renaming
+      dpkg-scanpackages does. Well sort of. dpkg-scanpackages just does renaming
       but dpkg does this append bit. So we do the append bit, at least that way the
       status file and package file will remain similar. There are other transforms
       but optional is the only legacy one still in use for some lazy reason. */
