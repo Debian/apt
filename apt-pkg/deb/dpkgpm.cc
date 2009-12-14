@@ -879,7 +879,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    const char *s = _("Can not write log, openpty() "
 	                      "failed (/dev/pts not mounted?)\n");
 	    fprintf(stderr, "%s",s);
-	    fprintf(term_out, "%s",s);
+            if(term_out)
+              fprintf(term_out, "%s",s);
 	    master = slave = -1;
 	 }  else {
 	    struct termios rtt;
