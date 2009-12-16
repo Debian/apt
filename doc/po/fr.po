@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2009-12-01 19:13+0100\n"
-"PO-Revision-Date: 2009-12-12 14:46+0100\n"
+"PO-Revision-Date: 2009-12-16 07:51+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -358,7 +358,7 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent:84
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "<!ENTITY dpkg \"<citerefentry>\n"
 #| "    <refentrytitle><command>dpkg</command></refentrytitle>\n"
@@ -374,7 +374,7 @@ msgid ""
 msgstr ""
 "<!ENTITY dpkg \"<citerefentry>\n"
 "    <refentrytitle><command>dpkg</command></refentrytitle>\n"
-"    <manvolnum>8</manvolnum>\n"
+"    <manvolnum>1</manvolnum>\n"
 "  </citerefentry>\"\n"
 ">\n"
 
@@ -412,7 +412,7 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent:102
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "<!ENTITY dpkg-scanpackages \"<citerefentry>\n"
 #| "    <refentrytitle><command>dpkg-scanpackages</command></refentrytitle>\n"
@@ -428,13 +428,13 @@ msgid ""
 msgstr ""
 "<!ENTITY dpkg-scanpackages \"<citerefentry>\n"
 "    <refentrytitle><command>dpkg-scanpackages</command></refentrytitle>\n"
-"    <manvolnum>8</manvolnum>\n"
+"    <manvolnum>1</manvolnum>\n"
 "  </citerefentry>\"\n"
 ">\n"
 
 #. type: Plain text
 #: apt.ent:108
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "<!ENTITY dpkg-scansources \"<citerefentry>\n"
 #| "    <refentrytitle><command>dpkg-scansources</command></refentrytitle>\n"
@@ -450,13 +450,13 @@ msgid ""
 msgstr ""
 "<!ENTITY dpkg-scansources \"<citerefentry>\n"
 "    <refentrytitle><command>dpkg-scansources</command></refentrytitle>\n"
-"    <manvolnum>8</manvolnum>\n"
+"    <manvolnum>1</manvolnum>\n"
 "  </citerefentry>\"\n"
 ">\n"
 
 #. type: Plain text
 #: apt.ent:114
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "<!ENTITY dselect \"<citerefentry>\n"
 #| "    <refentrytitle><command>dselect</command></refentrytitle>\n"
@@ -472,7 +472,7 @@ msgid ""
 msgstr ""
 "<!ENTITY dselect \"<citerefentry>\n"
 "    <refentrytitle><command>dselect</command></refentrytitle>\n"
-"    <manvolnum>8</manvolnum>\n"
+"    <manvolnum>1</manvolnum>\n"
 "  </citerefentry>\"\n"
 ">\n"
 
@@ -1379,7 +1379,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #: apt-cache.8.xml:152
-#, fuzzy
 #| msgid ""
 #| "<literal>Missing</literal> is the number of package names that were "
 #| "referenced in a dependency but were not provided by any package. Missing "
@@ -1397,7 +1396,7 @@ msgstr ""
 "dépendance mais qui ne sont fournis par aucun paquet. Les paquets manquants "
 "peuvent être mis en évidence quand on n'accède pas à une distribution "
 "complète ou si un paquet (réel ou virtuel) a été sorti d'une distribution. "
-"Habituellement on les trouve dans les champs « Conflicts »."
+"Habituellement on les trouve dans les champs « Conflicts » ou « Breaks »."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #: apt-cache.8.xml:159
@@ -1585,7 +1584,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:234
-#, fuzzy
 #| msgid ""
 #| "Note that a package which APT knows of is not nessasarily available to "
 #| "download, installable or installed, e.g. virtual packages are also listed "
@@ -1597,7 +1595,7 @@ msgid ""
 msgstr ""
 "Veuillez noter qu'un paquet connu par APT n'est pas forcément disponible, "
 "installable ou installé. Par exemple, les paquets virtuels sont également "
-"affichés dans la liste."
+"affichés dans la liste créée."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:239
@@ -2450,7 +2448,6 @@ msgstr "<option>--tempdir</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-extracttemplates.1.xml:62
-#, fuzzy
 #| msgid ""
 #| "Temporary directory in which to write extracted debconf template files "
 #| "and config scripts Configuration Item: <literal>APT::ExtractTemplates::"
@@ -2460,8 +2457,7 @@ msgid ""
 "config scripts.  Configuration Item: <literal>APT::ExtractTemplates::"
 "TempDir</literal>"
 msgstr ""
-"Répertoire temporaire dans lequel écrire les scripts et guides de "
-"configuration pour Debconf. Élément de configuration : <literal>APT::"
+"Répertoire temporaire dans lequel écrire les scripts de configuration et modèles d'écrans pour Debconf. Élément de configuration : <literal>APT::"
 "ExtractTemplates::TempDir</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
@@ -2473,19 +2469,16 @@ msgstr ""
 "<command>apt-extracttemplates</command> retourne zéro si tout se passe bien, "
 "le nombre 100 en cas d'erreur."
 
-#.  The last update date 
+#.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt-ftparchive.1.xml:13
-#, fuzzy
 #| msgid ""
 #| "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product; <date>2 "
 #| "November 2007</date>"
 msgid ""
 "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; <date>17 "
 "August 2009</date>"
-msgstr ""
-"&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product; <date>2 "
-"Novembre 2007</date>"
+msgstr "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product; <date>17 août 2009</date>"
 
 #. type: Content of: <refentry><refnamediv><refname>
 #: apt-ftparchive.1.xml:22 apt-ftparchive.1.xml:29
@@ -2766,7 +2759,6 @@ msgstr "La section Dir"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:159
-#, fuzzy
 #| msgid ""
 #| "The <literal>Dir</literal> section defines the standard directories "
 #| "needed to locate the files required during the generation process. These "
@@ -3578,10 +3570,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:547
-#, fuzzy
 #| msgid "<option>--version</option>"
 msgid "<option>APT::FTPArchive::LongDescription</option>"
-msgstr "<option>--version</option>"
+msgstr "<option>APT::FTPArchive::LongDescription</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:549
@@ -3592,6 +3583,10 @@ msgid ""
 "that it is currently not possible to create these files with <command>apt-"
 "ftparchive</command>."
 msgstr ""
+"Cette option de configuration a « <literal>true</literal> » comme valeur par défaut et ne devrait être placée sur « <literal>false</literal> » que si l'archive créée avec "
+"&apt-ftparchive; fournit également des fichiers <filename>Translation</filename>. Veuillez noter qu'il n'est actuellement pas possible de créer ces fichiers avec <command>"
+"apt-"
+"ftparchive</command>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-ftparchive.1.xml:561 apt.conf.5.xml:1011 apt_preferences.5.xml:462
@@ -3989,7 +3984,6 @@ msgstr "source"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:251
-#, fuzzy
 #| msgid ""
 #| "<literal>source</literal> causes <command>apt-get</command> to fetch "
 #| "source packages. APT will examine the available packages to decide which "
@@ -4309,7 +4303,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:386
-#, fuzzy
 #| msgid ""
 #| "Simulation run as user will deactivate locking (<literal>Debug::"
 #| "NoLocking</literal>)  automatical. Also a notice will be displayed "
@@ -4337,7 +4330,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:392
-#, fuzzy
 #| msgid ""
 #| "Simulate prints out a series of lines each one representing a dpkg "
 #| "operation, Configure (Conf), Remove (Remv), Unpack (Inst). Square "
@@ -4992,7 +4984,6 @@ msgstr "&apt-get;, &apt-secure;"
 #.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt-mark.8.xml:13
-#, fuzzy
 #| msgid ""
 #| "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product; <date>2 "
 #| "November 2007</date>"
@@ -5015,7 +5006,6 @@ msgstr "marquer/démarquer un paquet comme ayant été installé automatiquement
 
 #. type: Content of: <refentry><refsynopsisdiv><cmdsynopsis>
 #: apt-mark.8.xml:36
-#, fuzzy
 #| msgid ""
 #| "<command>apt-mark</command> <arg><option>-hv</option></arg> <arg><option>-"
 #| "f=<replaceable>FILENAME</replaceable></option></arg> <group choice=\"req"
@@ -5047,7 +5037,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml:57
-#, fuzzy
 #| msgid ""
 #| "When you request that a package is installed, and as a result other "
 #| "packages are installed to satisfy its dependencies, the dependencies are "
@@ -5105,7 +5094,6 @@ msgstr "showauto"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml:82
-#, fuzzy
 #| msgid ""
 #| "<literal>autoremove</literal> is used to remove packages that were "
 #| "automatically installed to satisfy dependencies for some package and that "
@@ -5122,7 +5110,6 @@ msgstr ""
 msgid "<option>-f=<filename><replaceable>FILENAME</replaceable></filename></option>"
 msgstr "<option>-f=<filename><replaceable>FICHIER</replaceable></filename></option>"
 
-
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-mark.8.xml:94
 msgid ""
@@ -5134,7 +5121,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml:97
-#, fuzzy
 #| msgid ""
 #| "Read/Write package stats from <filename>FILENAME</filename> instead of "
 #| "the default location, which is <filename>extended_status</filename> in "
@@ -5149,7 +5135,7 @@ msgstr ""
 "Lire/écrire les statistiques sur les paquets depuis <filename><replaceable>FICHIER</replaceable></"
 "filename> au lieu de l'emplacement par défaut (<filename>extended_status</"
 "filename> dans le répertoire défini par l'option de configuration "
-"<literal>Dir::State</literal>."
+"<literal>Dir::State</literal>)."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-mark.8.xml:103
@@ -5183,7 +5169,6 @@ msgstr "Afficher la version du programme."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-mark.8.xml:124
-#, fuzzy
 #| msgid "<filename>/etc/apt/preferences</filename>"
 msgid "<filename>/var/lib/apt/extended_states</filename>"
 msgstr "<filename>/var/lib/apt/extended_states</filename>"
@@ -5200,7 +5185,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml:134
-#, fuzzy
 #| msgid "&apt-cache; &apt-conf;"
 msgid "&apt-get;,&aptitude;,&apt-conf;"
 msgstr "&apt-get;,&aptitude;,&apt-conf;"
@@ -5269,7 +5253,6 @@ msgstr "Trusted archives"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml:67
-#, fuzzy
 #| msgid ""
 #| "The chain of trust from an apt archive to the end user is made up of "
 #| "different steps. <command>apt-secure</command> is the last step in this "
@@ -5325,7 +5308,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml:92
-#, fuzzy
 #| msgid ""
 #| "Once the uploaded package is verified and included in the archive, the "
 #| "maintainer signature is stripped off, an MD5 sum of the package is "
@@ -5342,11 +5324,11 @@ msgid ""
 "by the archive key (which is created once a year) and distributed through "
 "the FTP server. This key is also on the Debian keyring."
 msgstr ""
-"Une fois le paquet vérifié et archivé, la signature du responsable est "
+"Une fois que le paquet envoyé a été vérifié et inclus dans l'archive, la signature du responsable est "
 "enlevée, une somme MD5 du paquet est calculée et mise dans le fichier "
 "Packages. Une somme MD5 de tous les paquets est ensuite calculée et mise "
 "dans le fichier Release. Ce fichier est signé par la clé de l'archive. Cette "
-"clé qui est créée chaque année et distribuée par le serveur FTP se trouve "
+"clé, qui est recréée chaque année, est distribuée par le serveur FTP. Elle se trouve "
 "aussi dans le trousseau Debian."
 
 #. type: Content of: <refentry><refsect1><para>
@@ -5462,7 +5444,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-secure.8.xml:160
-#, fuzzy
 #| msgid ""
 #| "<literal>Create a toplevel Release file</literal>.  if it does not exist "
 #| "already. You can do this by running <command>apt-ftparchive release</"
@@ -5472,13 +5453,12 @@ msgid ""
 "already. You can do this by running <command>apt-ftparchive release</"
 "command> (provided in apt-utils)."
 msgstr ""
-"<literal>créer un fichier Release à la racine de l'archive</literal>, s'il "
+"<emphasis>créer un fichier Release à la racine de l'archive</emphasis>, s'il "
 "n'existe pas déjà. Vous pouvez le créer avec la commande <command>apt-"
-"ftparchive release</command> (fournie dans le paquet apt-utils) ;"
+"ftparchive release</command> (fournie dans le paquet apt-utils)."
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-secure.8.xml:165
-#, fuzzy
 #| msgid ""
 #| "<literal>Sign it</literal>. You can do this by running <command>gpg -abs -"
 #| "o Release.gpg Release</command>."
@@ -5486,12 +5466,11 @@ msgid ""
 "<emphasis>Sign it</emphasis>. You can do this by running <command>gpg -abs -"
 "o Release.gpg Release</command>."
 msgstr ""
-"<literal>le signer</literal>, avec la commande <command>gpg -abs -o Release."
-"gpg Release</command> ;"
+"<emphasis>le signer</emphasis>, avec la commande <command>gpg -abs -o Release."
+"gpg Release</command>."
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-secure.8.xml:168
-#, fuzzy
 #| msgid ""
 #| "<literal>Publish the key fingerprint</literal>, that way your users will "
 #| "know what key they need to import in order to authenticate the files in "
@@ -5501,7 +5480,7 @@ msgid ""
 "know what key they need to import in order to authenticate the files in the "
 "archive."
 msgstr ""
-"<literal>publier l'empreinte de la clé</literal>. Ainsi les utilisateurs de "
+"<emphasis>publier l'empreinte de la clé</emphasis>. Ainsi les utilisateurs de "
 "votre archive connaîtront la clé qu'ils doivent importer pour authentifier "
 "les fichiers de l'archive."
 
@@ -5624,7 +5603,6 @@ msgstr ""
 #.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt.conf.5.xml:13
-#, fuzzy
 #| msgid ""
 #| "&apt-author.jgunthorpe; &apt-author.team; <author> <firstname>Daniel</"
 #| "firstname> <surname>Burrows</surname> <contrib>Initial documentation of "
@@ -5683,7 +5661,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:50
-#, fuzzy
 #| msgid ""
 #| "The configuration file is organized in a tree with options organized into "
 #| "functional groups. option specification is given with a double colon "
@@ -5705,7 +5682,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:56
-#, fuzzy
 #| msgid ""
 #| "Syntactically the configuration language is modeled after what the ISC "
 #| "tools such as bind and dhcp use. Lines starting with <literal>//</"
@@ -5803,6 +5779,9 @@ msgid ""
 "list. If you specify a name you can override the option as every other "
 "option by reassigning a new value to the option."
 msgstr ""
+"Les noms des éléments de configuration sont optionnels si une liste est définie, comme cela peut se voir avec l'exemple <literal>DPkg::Pre-Install-Pkgs</literal> précédent."
+" Si vous n'indiquez pas de nom, une nouvelle entrée ajoutera une nouvelle option à la liste. Dans le cas contraire, l'option correspondante peut être remplacée, comme "
+"toute autre option, en lui réaffectant une valeur."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:98
@@ -7198,8 +7177,7 @@ msgstr "<literal>Debug::Acquire::cdrom</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:693
-msgid ""
-"Print information related to accessing <literal>cdrom://</literal> sources."
+msgid "Print information related to accessing <literal>cdrom://</literal> sources."
 msgstr ""
 "Affiche les informations concernant les sources de type <literal>cdrom://</"
 "literal>"
@@ -7383,8 +7361,7 @@ msgstr "<literal>Debug::pkgAcquire::Worker</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:844
-msgid ""
-"Log all interactions with the sub-processes that actually perform downloads."
+msgid "Log all interactions with the sub-processes that actually perform downloads."
 msgstr ""
 "Affiche toutes les interactions avec les processus enfants qui se chargent "
 "effectivement des téléchargements."
@@ -7525,8 +7502,7 @@ msgstr "<literal>Debug::pkgPackageManager</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:945
-msgid ""
-"Output status messages tracing the steps performed when invoking &dpkg;."
+msgid "Output status messages tracing the steps performed when invoking &dpkg;."
 msgstr "Affiche le détail des opérations liées à l'invocation de &dpkg;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
@@ -9361,8 +9337,7 @@ msgstr ""
 
 #. type: <abstract></abstract>
 #: guide.sgml:11
-msgid ""
-"This document provides an overview of how to use the the APT package manager."
+msgid "This document provides an overview of how to use the the APT package manager."
 msgstr ""
 
 #. type: <copyrightsummary></copyrightsummary>
@@ -9966,8 +9941,7 @@ msgstr ""
 
 #. type: <p></p>
 #: guide.sgml:447
-msgid ""
-"Finally, APT will print out a summary of all the changes that will occur."
+msgid "Finally, APT will print out a summary of all the changes that will occur."
 msgstr ""
 
 #. type: <example></example>
