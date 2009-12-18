@@ -1,4 +1,4 @@
-apt (0.7.25) UNRELEASED; urgency=low
+apt (0.7.25) unstable; urgency=low
 
   [ Christian Perrier ]
   * Fix apt-ftparchive(1) wrt description of the "-o" option.
@@ -13,8 +13,6 @@ apt (0.7.25) UNRELEASED; urgency=low
     Closes: #548571
   * German translation update by Holger Wansing
     Closes: #551534
-  * German translation of manpages by Chris Leick
-    Closes: #552606
   * Italian translation update by Milo Casagrande
     Closes: #555797
   * Simplified Chinese translation update by Aron Xu 
@@ -36,6 +34,10 @@ apt (0.7.25) UNRELEASED; urgency=low
     (thanks also to Jussi Hakala and Julian Andres Klode)
   * apt-pkg/deb/dpkgpm.cc:
     - add "purge" to list of known actions
+  * apt-pkg/init.h:
+    - add compatibility with old ABI name until the next ABI break
+  * merge segfault fix from Mario Sanchez Prada, many thanks
+    (closes: #561109)
 
   [ Brian Murray ]
   * apt-pkg/depcache.cc, apt-pkg/indexcopy.cc:
@@ -54,18 +56,21 @@ apt (0.7.25) UNRELEASED; urgency=low
   * doc/po4a.conf: activate translation of guide.sgml and offline.sgml
   * doc/apt.conf.5.xml:
     - provide a few more details about APT::Immediate-Configure
+    - briefly document the behaviour of the new https options
   * doc/sources.list.5.xml:
     - add note about additional apt-transport-methods
   * doc/apt-mark.8.xml:
     - correct showauto synopsis, thanks Andrew Schulman (Closes: #551440)
   * cmdline/apt-get.cc:
-    - source should displays his final pkg pick (Closes: #249383, #550952)
+    - source should display his final pkg pick (Closes: #249383, #550952)
     - source doesn't need the complete version for match (Closes: #245250)
     - source ignores versions/releases if not available (Closes: #377424)
     - only warn if (free) space overflows (Closes: #522238)
     - add --debian-only as alias for --diff-only
   * methods/connect.cc:
     - display also strerror of "wicked" getaddrinfo errors
+    - add AI_ADDRCONFIG to ai_flags as suggested by Aurelien Jarno
+      in response to Bernhard R. Link, thanks! (Closes: #505020)
   * buildlib/configure.mak, buildlib/config.{sub,guess}:
     - remove (outdated) config.{sub,guess} and use the ones provided
       by the new added build-dependency autotools-dev instead
@@ -79,21 +84,42 @@ apt (0.7.25) UNRELEASED; urgency=low
     - bump policy to 3.8.3 as we have no outdated manpages anymore
   * debian/NEWS:
     - fix a typo in 0.7.24: Allready -> Already (Closes: #557674)
-  * cmdline/apt-mark:
-    - print an error if a new state file can't be created,
-      thanks Carl Chenet! (Closes: #521289)
-    - print an error and exit if python-apt is not installed,
-      thanks Carl Chenet! (Closes: #521284)
   * ftparchive/writer.{cc,h}:
     - add APT::FTPArchive::LongDescription to be able to disable them
   * apt-pkg/deb/debsrcrecords.cc:
     - use "diff" filetype for .debian.tar.* files (Closes: #554898)
+  * methods/rred.cc:
+    - rewrite to be able to handle even big patch files
+    - adopt optional mmap+iovec patch from Morten Hustveit
+      (Closes: #463354) which should speed up a bit. Thanks!
+  * methods/http{,s}.cc
+    - add config setting for User-Agent to the Acquire group,
+      thanks Timothy J. Miller! (Closes: #355782)
+    - add https options which default to http ones (Closes: #557085)
+  * debian/apt.cron.daily:
+    - check cache size even if we do nothing else otherwise, thanks
+      Francesco Poli for patch(s) and patience! (Closes: #459344)
+  * ftparchive/*:
+    - fix a few typos in strings, comments and manpage,
+      thanks Karl Goetz! (Closes: #558757)
+
+  [ Carl Chenet ]
+  * cmdline/apt-mark:
+    - print an error if a new state file can't be created
+      (Closes: #521289) and
+    - exit nicely if python-apt is not installed (Closes: #521284)
 
   [ Chris Leick ]
+  * doc/de: German translation of manpages (Closes: #552606)
   * doc/ various manpages:
     - correct various errors, typos and oddities (Closes: #552535)
   * doc/apt-secure.8.xml:
     - replace literal with emphasis tags in Archive configuration
+  * doc/apt-ftparchive.1.xml:
+    - remove informalexample tag which hides the programlisting
+  * doc/apt-get.8.xml:
+    - change equivalent "for" to "to the" (purge command)
+    - clarify --fix-broken sentence about specifying packages
 
   [ Eugene V. Lyubimkin ]
   * apt-pkg/contib/strutl.h
@@ -113,7 +139,7 @@ apt (0.7.25) UNRELEASED; urgency=low
   * debian/apt.conf.autoremove:
     - Add kfreebsd-image-* to the list (Closes: #558803)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 29 Sep 2009 15:51:34 +0200
+ -- Michael Vogt <mvo@debian.org>  Tue, 15 Dec 2009 09:21:55 +0100
 
 apt (0.7.24) unstable; urgency=low
 

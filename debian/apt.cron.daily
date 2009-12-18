@@ -401,12 +401,16 @@ eval $(apt-config shell BackupArchiveInterval APT::Periodic::BackupArchiveInterv
 Debdelta=1
 eval $(apt-config shell Debdelta APT::Periodic::Download-Upgradeable-Packages-Debdelta)
 
-# check if we actually have to do anything
+# check if we actually have to do anything that requires locking the cache
 if [ $UpdateInterval -eq 0 ] &&
    [ $DownloadUpgradeableInterval -eq 0 ] &&
    [ $UnattendedUpgradeInterval -eq 0 ] &&
    [ $BackupArchiveInterval -eq 0 ] &&
    [ $AutocleanInterval -eq 0 ]; then
+
+    # check cache size
+    check_size_constraints
+
     exit 0
 fi
 
