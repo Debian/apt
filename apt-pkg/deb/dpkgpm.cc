@@ -610,6 +610,7 @@ bool pkgDPkgPM::OpenLog()
 	 fprintf(history_out, "Remove: %s\n", remove.c_str());
       if (purge.size() > 0)
 	 fprintf(history_out, "Purge: %s\n", purge.c_str());
+      fflush(history_out);
    }
    
    return true;
