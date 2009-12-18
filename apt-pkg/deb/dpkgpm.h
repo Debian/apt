@@ -29,7 +29,9 @@ class pkgDPkgPM : public pkgPackageManager
    char dpkgbuf[1024];
    int dpkgbuf_pos;
    FILE *term_out;
-   
+   FILE *history_out;
+   string dpkg_error;
+
    protected:
 
    // progress reporting

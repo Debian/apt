@@ -74,6 +74,7 @@ bool pkgInitConfig(Configuration &Cnf)
    // State   
    Cnf.Set("Dir::Log","var/log/apt");
    Cnf.Set("Dir::Log::Terminal","term.log");
+   Cnf.Set("Dir::Log::History","history.log");
 
    // Translation
    Cnf.Set("APT::Acquire::Translation", "environment");
