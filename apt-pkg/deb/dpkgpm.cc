@@ -586,7 +586,11 @@ bool pkgDPkgPM::OpenLog()
       string remove, purge, install, upgrade, downgrade;
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
-	 if (Cache[I].Install())
+	 if (Cache[I].Upgrade())
+	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string(") ");
+	 else if (Cache[I].Downgrade())
+	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string(") ");
+	 else if (Cache[I].Install())
 	    install += I.Name() + string(" (") + Cache[I].CandVersion + string(") ");
 	 else if (Cache[I].Delete())
 	 {
@@ -595,10 +599,6 @@ bool pkgDPkgPM::OpenLog()
 	    else
 	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string(") ");	    
 	 }
-	 else if (Cache[I].Upgrade())
-	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string(") ");
-	 else if (Cache[I].Downgrade())
-	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string(") ");
       }
       if (install.size() > 0)
 	 fprintf(history_out, "Install: %s\n", install.c_str());
