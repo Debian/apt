@@ -308,6 +308,7 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
    DoSHA256 = _config->FindB("APT::FTPArchive::SHA256",true);
    DoContents = _config->FindB("APT::FTPArchive::Contents",true);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
+   LongDescription = _config->FindB("APT::FTPArchive::LongDescription",true);
 
    if (Db.Loaded() == false)
       DoContents = false;
@@ -414,10 +415,18 @@ bool PackagesWriter::DoPackage(string FileName)
       NewFileName = FileName;
    if (PathPrefix.empty() == false)
       NewFileName = flCombine(PathPrefix,NewFileName);
-          
+
+   /* Configuration says we don't want to include the long Description
+      in the package file - instead we want to ship a separated file */
+   string desc;
+   if (LongDescription == false) {
+      desc = Tags.FindS("Description").append("\n");
+      OverItem->FieldOverride["Description"] = desc.substr(0, desc.find('\n')).c_str();
+   }
+
    // This lists all the changes to the fields we are going to make.
    // (7 hardcoded + maintainer + suggests + end marker)
-   TFRewriteData Changes[6+2+OverItem->FieldOverride.size()+1];
+   TFRewriteData Changes[6+2+OverItem->FieldOverride.size()+1+1];
 
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++], "Size", Size);
@@ -428,6 +437,14 @@ bool PackagesWriter::DoPackage(string FileName)
    SetTFRewriteData(Changes[End++], "Priority", OverItem->Priority.c_str());
    SetTFRewriteData(Changes[End++], "Status", 0);
    SetTFRewriteData(Changes[End++], "Optional", 0);
+
+   string DescriptionMd5;
+   if (LongDescription == false) {
+      MD5Summation descmd5;
+      descmd5.Add(desc.c_str());
+      DescriptionMd5 = descmd5.Result().Value();
+      SetTFRewriteData(Changes[End++], "Description-md5", DescriptionMd5.c_str());
+   }
 
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
@@ -446,7 +463,7 @@ bool PackagesWriter::DoPackage(string FileName)
       SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
    
    /* Get rid of the Optional tag. This is an ugly, ugly, ugly hack that
-      dpkg-scanpackages does.. Well sort of. dpkg-scanpackages just does renaming
+      dpkg-scanpackages does. Well sort of. dpkg-scanpackages just does renaming
       but dpkg does this append bit. So we do the append bit, at least that way the
       status file and package file will remain similar. There are other transforms
       but optional is the only legacy one still in use for some lazy reason. */

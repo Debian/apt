@@ -86,6 +86,7 @@ class PackagesWriter : public FTWScanner
    bool DoSHA256;
    bool NoOverride;
    bool DoContents;
+   bool LongDescription;
 
    // General options
    string PathPrefix;

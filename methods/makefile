@@ -6,9 +6,8 @@ SUBDIR=methods
 include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
-# FIXME..
-LIB_APT_PKG_MAJOR = 4.8
-APT_DOMAIN := libapt-pkg$(LIB_APT_PKG_MAJOR)
+include ../buildlib/libversion.mak
+APT_DOMAIN := libapt-pkg$(LIBAPTPKG_MAJOR)
 
 # The file method
 PROGRAM=file

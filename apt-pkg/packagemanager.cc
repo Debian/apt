@@ -125,7 +125,7 @@ bool pkgPackageManager::FixMissing()
 /* This adds the immediate flag to the pkg and recursively to the
    dependendies 
  */
-void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer)
+void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer, unsigned const int &Depth)
 {
    DepIterator D;
    
@@ -146,9 +146,9 @@ void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer)
 	 if(!List->IsFlag(D.TargetPkg(), pkgOrderList::Immediate))
 	 {
 	    if(Debug)
-	       clog << "ImmediateAdd(): Adding Immediate flag to " << I.Name() << endl;
+	       clog << OutputInDepth(Depth) << "ImmediateAdd(): Adding Immediate flag to " << D.TargetPkg() << " cause of " << D.DepType() << " " << I.Name() << endl;
 	    List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
-	    ImmediateAdd(D.TargetPkg(), UseInstallVer);
+	    ImmediateAdd(D.TargetPkg(), UseInstallVer, Depth + 1);
 	 }
       }
    return;
@@ -321,8 +321,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 
    // Sanity Check
    if (List->IsFlag(Pkg,pkgOrderList::Configured) == false)
-      return _error->Error("Internal error, could not immediate configure %s",Pkg.Name());
-   
+      return _error->Error(_("Could not perform immediate configuration on '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),1);
+
    return true;
 }
 									/*}}}*/
@@ -474,7 +475,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
       if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)
-	    return _error->Error("Internal Error, Could not perform immediate configuration (1) on %s",Pkg.Name());
+	    return _error->Error(_("Could not perform immediate configuration on already unpacked '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
       return true;
    }
 
@@ -581,7 +583,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    // Perform immedate configuration of the package.
    if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
       if (SmartConfigure(Pkg) == false)
-	 return _error->Error("Internal Error, Could not perform immediate configuration (2) on %s",Pkg.Name());
+	 return _error->Error(_("Could not perform immediate configuration on '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),2);
    
    return true;
 }

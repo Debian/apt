@@ -81,10 +81,7 @@ MANPAGE_H = $(BASE)/buildlib/manpage.mak
 PROGRAM_H = $(BASE)/buildlib/program.mak
 PYTHON_H = $(BASE)/buildlib/python.mak
 COPY_H = $(BASE)/buildlib/copy.mak
-YODL_MANPAGE_H = $(BASE)/buildlib/yodl_manpage.mak
-SGML_MANPAGE_H = $(BASE)/buildlib/sgml_manpage.mak
 PO4A_MANPAGE_H = $(BASE)/buildlib/po4a_manpage.mak
-XML_MANPAGE_H = $(BASE)/buildlib/xml_manpage.mak
 FAIL_H = $(BASE)/buildlib/fail.mak
 PODOMAIN_H = $(BASE)/buildlib/podomain.mak
 

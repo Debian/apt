@@ -157,6 +157,7 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
       struct addrinfo Hints;
       memset(&Hints,0,sizeof(Hints));
       Hints.ai_socktype = SOCK_STREAM;
+      Hints.ai_flags = AI_ADDRCONFIG;
       Hints.ai_protocol = 0;
       
       // if we couldn't resolve the host before, we don't try now
@@ -189,8 +190,8 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 	       return _error->Error(_("Temporary failure resolving '%s'"),
 				    Host.c_str());
 	    }
-	    return _error->Error(_("Something wicked happened resolving '%s:%s' (%i)"),
-				 Host.c_str(),ServStr,Res);
+	    return _error->Error(_("Something wicked happened resolving '%s:%s' (%i - %s)"),
+				 Host.c_str(),ServStr,Res,gai_strerror(Res));
 	 }
 	 break;
       }
@@ -236,6 +237,6 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 
    if (_error->PendingError() == true)
       return false;   
-   return _error->Error(_("Unable to connect to %s %s:"),Host.c_str(),ServStr);
+   return _error->Error(_("Unable to connect to %s:%s:"),Host.c_str(),ServStr);
 }
 									/*}}}*/

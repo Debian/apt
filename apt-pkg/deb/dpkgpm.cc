@@ -51,6 +51,7 @@ namespace
     std::make_pair("install",   N_("Installing %s")),
     std::make_pair("configure", N_("Configuring %s")),
     std::make_pair("remove",    N_("Removing %s")),
+    std::make_pair("purge",    N_("Completely removing %s")),
     std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
   };
 
@@ -560,45 +561,103 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    dpkgbuf_pos = dpkgbuf+dpkgbuf_pos-p;
 }
 									/*}}}*/
+// DPkgPM::WriteHistoryTag						/*{{{*/
+void pkgDPkgPM::WriteHistoryTag(string tag, string value)
+{
+   if (value.size() > 0)
+   {
+      // poor mans rstrip(", ")
+      if (value[value.size()-2] == ',' && value[value.size()-1] == ' ')
+	 value.erase(value.size() - 2, 2);
+      fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
+   }
+}									/*}}}*/
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
 {
    string logdir = _config->FindDir("Dir::Log");
    if(not FileExists(logdir))
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
+
+   // get current time
+   char timestr[200];
+   time_t t = time(NULL);
+   struct tm *tmp = localtime(&t);
+   strftime(timestr, sizeof(timestr), "%F  %T", tmp);
+
+   // open terminal log
    string logfile_name = flCombine(logdir,
 				   _config->Find("Dir::Log::Terminal"));
    if (!logfile_name.empty())
    {
       term_out = fopen(logfile_name.c_str(),"a");
       chmod(logfile_name.c_str(), 0600);
-      // output current time
-      char outstr[200];
-      time_t t = time(NULL);
-      struct tm *tmp = localtime(&t);
-      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-      fprintf(term_out, "\nLog started: ");
-      fprintf(term_out, "%s", outstr);
+      fprintf(term_out, "\n\nLog started: ");
+      fprintf(term_out, "%s", timestr);
       fprintf(term_out, "\n");
    }
+
+   // write 
+   string history_name = flCombine(logdir,
+				   _config->Find("Dir::Log::History"));
+   if (!history_name.empty())
+   {
+      history_out = fopen(history_name.c_str(),"a");
+      chmod(history_name.c_str(), 0644);
+      fprintf(history_out, "\nStart-Date: %s\n", timestr);
+      string remove, purge, install, upgrade, downgrade;
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+      {
+	 if (Cache[I].NewInstall())
+	    install += I.Name() + string(" (") + Cache[I].CandVersion + string("), ");
+	 else if (Cache[I].Upgrade())
+	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	 else if (Cache[I].Downgrade())
+	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	 else if (Cache[I].Delete())
+	 {
+	    if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
+	       purge += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	    else
+	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	 }
+      }
+      WriteHistoryTag("Install", install);
+      WriteHistoryTag("Upgrade", upgrade);
+      WriteHistoryTag("Downgrade",downgrade);
+      WriteHistoryTag("Remove",remove);
+      WriteHistoryTag("Purge",purge);
+      fflush(history_out);
+   }
+   
    return true;
 }
 									/*}}}*/
 // DPkg::CloseLog							/*{{{*/
 bool pkgDPkgPM::CloseLog()
 {
+   char timestr[200];
+   time_t t = time(NULL);
+   struct tm *tmp = localtime(&t);
+   strftime(timestr, sizeof(timestr), "%F  %T", tmp);
+
    if(term_out)
    {
-      char outstr[200];
-      time_t t = time(NULL);
-      struct tm *tmp = localtime(&t);
-      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
       fprintf(term_out, "Log ended: ");
-      fprintf(term_out, "%s", outstr);
+      fprintf(term_out, "%s", timestr);
       fprintf(term_out, "\n");
       fclose(term_out);
    }
    term_out = NULL;
+
+   if(history_out)
+   {
+      if (dpkg_error.size() > 0)
+	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
+      fprintf(history_out, "End-Date: %s\n", timestr);
+      fclose(history_out);
+   }
+
    return true;
 }
 									/*}}}*/
@@ -889,7 +948,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    const char *s = _("Can not write log, openpty() "
 	                      "failed (/dev/pts not mounted?)\n");
 	    fprintf(stderr, "%s",s);
-	    fprintf(term_out, "%s",s);
+            if(term_out)
+              fprintf(term_out, "%s",s);
 	    master = slave = -1;
 	 }  else {
 	    struct termios rtt;
@@ -1066,11 +1126,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    RunScripts("DPkg::Post-Invoke");
 
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
-	    _error->Error("Sub-process %s received a segmentation fault.",Args[0]);
+	    strprintf(dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
 	 else if (WIFEXITED(Status) != 0)
-	    _error->Error("Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	    strprintf(dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
 	 else 
-	    _error->Error("Sub-process %s exited unexpectedly",Args[0]);
+	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
+
+	 if(dpkg_error.size() > 0)
+	    _error->Error(dpkg_error.c_str());
 
 	 if(stopOnError) 
 	 {

@@ -253,7 +253,7 @@
      fetch. It will then find and download into the current directory the 
      newest available version of that source package while respect the
      default release, set with the option <literal>APT::Default-Release</literal>,
-     the <option>-t</option> option or per package with with the
+     the <option>-t</option> option or per package with the
      <literal>pkg/release</literal> syntax, if possible.</para>
 
      <para>Source packages are tracked separately
@@ -263,7 +263,7 @@
      you will properly get another (newer, older or none) source version than
      the one you have installed or could install.</para>
 
-     <para>If the <option>--compile</option> options is specified
+     <para>If the <option>--compile</option> option is specified
      then the package will be compiled to a binary .deb using
      <command>dpkg-buildpackage</command>, if <option>--download-only</option>
      is specified then the source package will not be unpacked.</para>
@@ -333,8 +333,8 @@
      <varlistentry><term><option>-f</option></term><term><option>--fix-broken</option></term>
      <listitem><para>Fix; attempt to correct a system with broken dependencies in            
      place. This option, when used with install/remove, can omit any packages
-     to permit APT to deduce a likely solution. Any Package that are specified
-     must completely correct the problem. The option is sometimes necessary when 
+     to permit APT to deduce a likely solution. If packages are specified,
+     these have to completely correct the problem. The option is sometimes necessary when 
      running APT for the first time; APT itself does not allow broken package 
      dependencies to exist on a system. It is possible that a system's 
      dependency structure can be so corrupt as to require manual intervention 
@@ -391,7 +391,7 @@
 
      <para>Simulate prints out
      a series of lines each one representing a dpkg operation, Configure (Conf),
-     Remove (Remv), Unpack (Inst). Square brackets indicate broken packages with
+     Remove (Remv), Unpack (Inst). Square brackets indicate broken packages
      and empty set of square brackets meaning breaks that are of no consequence
      (rare).</para></listitem>
      </varlistentry>
@@ -466,7 +466,7 @@
      <varlistentry><term><option>--purge</option></term>
      <listitem><para>Use purge instead of remove for anything that would be removed.
      An asterisk ("*") will be displayed next to packages which are
-	 scheduled to be purged. <option>remove --purge</option> is equivalent for
+	 scheduled to be purged. <option>remove --purge</option> is equivalent to the
 	 <option>purge</option> command.
      Configuration Item: <literal>APT::Get::Purge</literal>.</para></listitem>
      </varlistentry>

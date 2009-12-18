@@ -1,3 +1,153 @@
+apt (0.7.25ubuntu1) UNRELEASED; urgency=low
+
+  * Merged from the mvo branch
+  * merged from the lp:~mvo/apt/history branch
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 18 Dec 2009 17:01:25 +0100
+
+apt (0.7.25) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Fix apt-ftparchive(1) wrt description of the "-o" option.
+    Thanks to Dann Frazier for the patch. Closes: #273100
+  * po/LINGUAS. Re-disable Hebrew. Closes: #534992
+  * po/LINGUAS. Enable Asturian and Lithuanian
+  * Fix typo in apt-cache.8.xml: nessasarily
+  * Fix "with with" in apt-get.8.xml
+  * Fix some of the typos mentioned by the german team
+    Closes: #479997
+  * Polish translation update by Wiktor Wandachowicz
+    Closes: #548571
+  * German translation update by Holger Wansing
+    Closes: #551534
+  * Italian translation update by Milo Casagrande
+    Closes: #555797
+  * Simplified Chinese translation update by Aron Xu 
+    Closes: #558737
+  * Slovak translation update by Ivan Masár
+    Closes: #559277
+  
+  [ Michael Vogt ]
+  * apt-pkg/packagemanager.cc:
+    - add output about pre-depends configuring when debug::pkgPackageManager
+      is used
+  * methods/https.cc:
+    - fix incorrect use of CURLOPT_TIMEOUT, closes: #497983, LP: #354972
+      thanks to Brian Thomason for the patch
+  * merge lp:~mvo/apt/netrc branch, this adds support for a
+    /etc/apt/auth.conf that can be used to store username/passwords
+    in a "netrc" style file (with the extension that it supports "/"
+    in a machine definition). Based on the maemo git branch (Closes: #518473)
+    (thanks also to Jussi Hakala and Julian Andres Klode)
+  * apt-pkg/deb/dpkgpm.cc:
+    - add "purge" to list of known actions
+  * apt-pkg/init.h:
+    - add compatibility with old ABI name until the next ABI break
+  * merge segfault fix from Mario Sanchez Prada, many thanks
+    (closes: #561109)
+
+  [ Brian Murray ]
+  * apt-pkg/depcache.cc, apt-pkg/indexcopy.cc:
+    - typo fix (LP: #462328)
+  
+  [ Loïc Minier ]
+  * cmdline/apt-key:
+    - Emit a warning if removed keys keyring is missing and skip associated
+      checks (LP: #218971)
+
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc:
+    - better debug output for ImmediateAdd with depth and why
+    - improve the message shown for failing immediate configuration
+  * doc/guide.it.sgml: moved to doc/it/guide.it.sgml
+  * doc/po4a.conf: activate translation of guide.sgml and offline.sgml
+  * doc/apt.conf.5.xml:
+    - provide a few more details about APT::Immediate-Configure
+    - briefly document the behaviour of the new https options
+  * doc/sources.list.5.xml:
+    - add note about additional apt-transport-methods
+  * doc/apt-mark.8.xml:
+    - correct showauto synopsis, thanks Andrew Schulman (Closes: #551440)
+  * cmdline/apt-get.cc:
+    - source should display his final pkg pick (Closes: #249383, #550952)
+    - source doesn't need the complete version for match (Closes: #245250)
+    - source ignores versions/releases if not available (Closes: #377424)
+    - only warn if (free) space overflows (Closes: #522238)
+    - add --debian-only as alias for --diff-only
+  * methods/connect.cc:
+    - display also strerror of "wicked" getaddrinfo errors
+    - add AI_ADDRCONFIG to ai_flags as suggested by Aurelien Jarno
+      in response to Bernhard R. Link, thanks! (Closes: #505020)
+  * buildlib/configure.mak, buildlib/config.{sub,guess}:
+    - remove (outdated) config.{sub,guess} and use the ones provided
+      by the new added build-dependency autotools-dev instead
+  * configure.in, buildlib/{xml,yodl,sgml}_manpage.mak:
+    - remove the now obsolete manpage buildsystems
+  * doc/{pl,pt_BR,es,it}/*.{sgml,xml}:
+    - convert all remaining translation to the po4a system
+  * debian/control:
+    - drop build-dependency on docbook-utils and xmlto
+    - add build-dependency on autotools-dev
+    - bump policy to 3.8.3 as we have no outdated manpages anymore
+  * debian/NEWS:
+    - fix a typo in 0.7.24: Allready -> Already (Closes: #557674)
+  * ftparchive/writer.{cc,h}:
+    - add APT::FTPArchive::LongDescription to be able to disable them
+  * apt-pkg/deb/debsrcrecords.cc:
+    - use "diff" filetype for .debian.tar.* files (Closes: #554898)
+  * methods/rred.cc:
+    - rewrite to be able to handle even big patch files
+    - adopt optional mmap+iovec patch from Morten Hustveit
+      (Closes: #463354) which should speed up a bit. Thanks!
+  * methods/http{,s}.cc
+    - add config setting for User-Agent to the Acquire group,
+      thanks Timothy J. Miller! (Closes: #355782)
+    - add https options which default to http ones (Closes: #557085)
+  * debian/apt.cron.daily:
+    - check cache size even if we do nothing else otherwise, thanks
+      Francesco Poli for patch(s) and patience! (Closes: #459344)
+  * ftparchive/*:
+    - fix a few typos in strings, comments and manpage,
+      thanks Karl Goetz! (Closes: #558757)
+
+  [ Carl Chenet ]
+  * cmdline/apt-mark:
+    - print an error if a new state file can't be created
+      (Closes: #521289) and
+    - exit nicely if python-apt is not installed (Closes: #521284)
+
+  [ Chris Leick ]
+  * doc/de: German translation of manpages (Closes: #552606)
+  * doc/ various manpages:
+    - correct various errors, typos and oddities (Closes: #552535)
+  * doc/apt-secure.8.xml:
+    - replace literal with emphasis tags in Archive configuration
+  * doc/apt-ftparchive.1.xml:
+    - remove informalexample tag which hides the programlisting
+  * doc/apt-get.8.xml:
+    - change equivalent "for" to "to the" (purge command)
+    - clarify --fix-broken sentence about specifying packages
+
+  [ Eugene V. Lyubimkin ]
+  * apt-pkg/contib/strutl.h
+    - Avoid extra inner copy in APT_MKSTRCMP and APT_MKSTRCMP2.
+  * build infrastructure:
+    - Bumped libapt version, excluded eglibc from SONAME. (Closes: #448249)
+
+  [ Julian Andres Klode ]
+  * doc/apt.conf.5.xml:
+    - Deprecate unquoted values, string concatenation and explain what should
+      not be written inside a value (quotes,backslash).
+    - Restrict option names to alphanumerical characters and "/-:._+".
+    - Deprecate #include, we have apt.conf.d nowadays which should be
+      sufficient.
+  * ftparchive/apt-ftparchive.cc:
+    - Call setlocale() so translations are actually used.
+  * debian/apt.conf.autoremove:
+    - Add kfreebsd-image-* to the list (Closes: #558803)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 15 Dec 2009 09:21:55 +0100
+
 apt (0.7.24ubuntu1) lucid; urgency=low
 
   [ Michael Vogt ]
