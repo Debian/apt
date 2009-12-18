@@ -550,6 +550,17 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    dpkgbuf_pos = dpkgbuf+dpkgbuf_pos-p;
 }
 									/*}}}*/
+// DPkgPM::WriteHistoryTag						/*{{{*/
+void pkgDPkgPM::WriteHistoryTag(string tag, string value)
+{
+   if (value.size() > 0)
+   {
+      // poor mans rstrip(", ")
+      if (value[value.size()-2] == ',' && value[value.size()-1] == ' ')
+	 value.erase(value.size() - 2, 2);
+      fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
+   }
+}									/*}}}*/
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
 {
@@ -586,30 +597,25 @@ bool pkgDPkgPM::OpenLog()
       string remove, purge, install, upgrade, downgrade;
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
-	 if (Cache[I].Upgrade())
-	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string(") ");
+	 if (Cache[I].NewInstall())
+	    install += I.Name() + string(" (") + Cache[I].CandVersion + string("), ");
+	 else if (Cache[I].Upgrade())
+	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Downgrade())
-	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string(") ");
-	 else if (Cache[I].Install())
-	    install += I.Name() + string(" (") + Cache[I].CandVersion + string(") ");
+	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Delete())
 	 {
 	    if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
-	       purge += I.Name() + string(" (") + Cache[I].CurVersion + string(") ");	    
+	       purge += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
 	    else
-	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string(") ");	    
+	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
 	 }
       }
-      if (install.size() > 0)
-	 fprintf(history_out, "Install: %s\n", install.c_str());
-      if (upgrade.size() > 0)
-	 fprintf(history_out, "Upgrade: %s\n", upgrade.c_str());
-      if (downgrade.size() > 0)
-	 fprintf(history_out, "Downgrade: %s\n", downgrade.c_str());
-      if (remove.size() > 0)
-	 fprintf(history_out, "Remove: %s\n", remove.c_str());
-      if (purge.size() > 0)
-	 fprintf(history_out, "Purge: %s\n", purge.c_str());
+      WriteHistoryTag("Install", install);
+      WriteHistoryTag("Upgrade", upgrade);
+      WriteHistoryTag("Downgrade",downgrade);
+      WriteHistoryTag("Remove",remove);
+      WriteHistoryTag("Purge",purge);
       fflush(history_out);
    }
    

@@ -68,6 +68,7 @@ class pkgDPkgPM : public pkgPackageManager
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
+   void WriteHistoryTag(string tag, string value);
 
    // dpkg log
    bool OpenLog();
