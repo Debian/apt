@@ -55,4 +55,26 @@
 #define CLRFLAG(v,f)	((v) &=~FLAG(f))
 #define	CHKFLAG(v,f)	((v) &  FLAG(f) ? true : false)
 
+// some nice optional GNUC features
+#if __GNUC__ >= 3
+	#define __must_check	__attribute__ ((warn_unused_result))
+	#define __deprecated	__attribute__ ((deprecated))
+	/* likely() and unlikely() can be used to mark boolean expressions
+	   as (not) likely true which will help the compiler to optimise */
+	#define likely(x)	__builtin_expect (!!(x), 1)
+	#define unlikely(x)	__builtin_expect (!!(x), 0)
+#else
+	#define __must_check	/* no warn_unused_result */
+	#define __deprecated	/* no deprecated */
+	#define likely(x)	(x)
+	#define unlikely(x)	(x)
+#endif
+
+// cold functions are unlikely() to be called
+#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) || __GNUC__ > 4
+	#define __cold	__attribute__ ((__cold__))
+#else
+	#define __cold	/* no cold marker */
+#endif
+
 #endif
