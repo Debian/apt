@@ -31,10 +31,8 @@
 #define PKGLIB_CACHEITERATORS_H
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
-   need to have for doing some walk-over-the-cache magic, */
+   need to have for doing some walk-over-the-cache magic */
 template<typename Str, typename Itr> class pkgCache::Iterator {
-	__attribute__ ((deprecated)) void _dummy(); // FIXME: Who on earth uses this method ???
-
 	protected:
 	Str *S;
 	pkgCache *Owner;
@@ -77,6 +75,35 @@ template<typename Str, typename Itr> class pkgCache::Iterator {
 	inline Iterator(pkgCache &Owner,Str *T = 0) : S(T), Owner(&Owner) {};
 };
 									/*}}}*/
+// Group Iterator							/*{{{*/
+/* Packages with the same name are collected in a Group so someone only
+   interest in package names can iterate easily over the names, so the
+   different architectures can be treated as of the "same" package
+   (apt internally treat them as totally different packages) */
+class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
+	protected:
+	inline Group* OwnerPointer() const {
+		return Owner->GrpP;
+	};
+
+	public:
+	void operator ++(int) {if (S != Owner->GrpP) S = Owner->GrpP + S->Next;};
+	virtual void operator ++() {operator ++(0);};
+
+	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;};
+	inline PkgIterator PackageList() const;
+	PkgIterator FindPkg(string Arch = "any");
+	PkgIterator NextPkg(PkgIterator const &Pkg);
+
+	// Constructors
+	inline GrpIterator(pkgCache &Owner, Group *Trg) : Iterator<Group, GrpIterator>(Owner, Trg) {
+		if (S == 0)
+			S = OwnerPointer();
+	};
+	inline GrpIterator() : Iterator<Group, GrpIterator>() {};
+
+};
+									/*}}}*/
 // Package Iterator							/*{{{*/
 class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	long HashIndex;
@@ -103,6 +130,8 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;};
 	inline bool Purge() const {return S->CurrentState == pkgCache::State::Purge ||
 		(S->CurrentVer == 0 && S->CurrentState == pkgCache::State::NotInstalled);};
+	inline const char *Arch() const {return S->Arch == 0?0:Owner->StrP + S->Arch;};
+	inline GrpIterator Group() const { return GrpIterator(*Owner, Owner->GrpP + S->Group);};
 
 	inline VerIterator VersionList() const;
 	inline VerIterator CurrentVer() const;
@@ -339,6 +368,8 @@ class pkgCache::DescFileIterator : public Iterator<DescFile, DescFileIterator> {
 };
 									/*}}}*/
 // Inlined Begin functions cant be in the class because of order problems /*{{{*/
+inline pkgCache::PkgIterator pkgCache::GrpIterator::PackageList() const
+       {return PkgIterator(*Owner,Owner->PkgP + S->FirstPackage);};
 inline pkgCache::VerIterator pkgCache::PkgIterator::VersionList() const
        {return VerIterator(*Owner,Owner->VerP + S->VersionList);};
 inline pkgCache::VerIterator pkgCache::PkgIterator::CurrentVer() const

@@ -108,12 +108,12 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
    while (List.Step() == true)
    {
       // Get a pointer to the package structure
-      string PackageName = List.Package();
+      string const PackageName = List.Package();
       if (PackageName.empty() == true)
 	 return false;
-      
+
       pkgCache::PkgIterator Pkg;
-      if (NewPackage(Pkg,PackageName) == false)
+      if (NewPackage(Pkg, PackageName, List.Architecture()) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewPackage)"),PackageName.c_str());
       Counter++;
       if (Counter % 100 == 0 && Progress != 0)
@@ -323,33 +323,71 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
    return true;
 }
 									/*}}}*/
+// CacheGenerator::NewGroup - Add a new group				/*{{{*/
+// ---------------------------------------------------------------------
+/* This creates a new group structure and adds it to the hash table */
+bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name) {
+	Grp = Cache.FindGrp(Name);
+	if (Grp.end() == false)
+		return true;
+
+	// Get a structure
+	unsigned long const Group = Map.Allocate(sizeof(pkgCache::Group));
+	if (unlikely(Group == 0))
+		return false;
+
+	Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
+	Grp->Name = Map.WriteString(Name);
+	if (unlikely(Grp->Name == 0))
+		return false;
+
+	// Insert it into the hash table
+	unsigned long const Hash = Cache.Hash(Name);
+	Grp->Next = Cache.HeaderP->GrpHashTable[Hash];
+	Cache.HeaderP->GrpHashTable[Hash] = Group;
+
+	Cache.HeaderP->GroupCount++;
+
+	return true;
+}
+									/*}}}*/
 // CacheGenerator::NewPackage - Add a new package			/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a new package structure and adds it to the hash table */
-bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name)
-{
-   Pkg = Cache.FindPkg(Name);
-   if (Pkg.end() == false)
-      return true;
+bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name,
+					const string &Arch) {
+   pkgCache::GrpIterator Grp;
+   if (unlikely(NewGroup(Grp, Name) == false))
+      return false;
+
+   Pkg = Grp.FindPkg(Arch);
+      if (Pkg.end() == false)
+	 return true;
 
    // Get a structure
-   unsigned long Package = Map.Allocate(sizeof(pkgCache::Package));
-   if (Package == 0)
+   unsigned long const Package = Map.Allocate(sizeof(pkgCache::Package));
+   if (unlikely(Package == 0))
       return false;
-   
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
-   
+
    // Insert it into the hash table
-   unsigned long Hash = Cache.Hash(Name);
-   Pkg->NextPackage = Cache.HeaderP->HashTable[Hash];
-   Cache.HeaderP->HashTable[Hash] = Package;
-   
-   // Set the name and the ID
-   Pkg->Name = Map.WriteString(Name);
-   if (Pkg->Name == 0)
+   unsigned long const Hash = Cache.Hash(Name);
+   Pkg->NextPackage = Cache.HeaderP->PkgHashTable[Hash];
+   Cache.HeaderP->PkgHashTable[Hash] = Package;
+
+   // remember the packages in the group
+   Grp->FirstPackage = Package;
+   if (Grp->LastPackage == 0)
+      Grp->LastPackage = Package;
+
+   // Set the name, arch and the ID
+   Pkg->Name = Grp->Name;
+   Pkg->Group = Grp.Index();
+   Pkg->Arch = WriteUniqString(Arch.c_str());
+   if (unlikely(Pkg->Arch == 0))
       return false;
    Pkg->ID = Cache.HeaderP->PackageCount++;
-   
+
    return true;
 }
 									/*}}}*/
@@ -474,6 +512,7 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    version and to the package that it is pointing to. */
 bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 					       const string &PackageName,
+					       const string &Arch,
 					       const string &Version,
 					       unsigned int Op,
 					       unsigned int Type)
@@ -481,8 +520,8 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    pkgCache &Cache = Owner->Cache;
    
    // Get a structure
-   unsigned long Dependency = Owner->Map.Allocate(sizeof(pkgCache::Dependency));
-   if (Dependency == 0)
+   unsigned long const Dependency = Owner->Map.Allocate(sizeof(pkgCache::Dependency));
+   if (unlikely(Dependency == 0))
       return false;
    
    // Fill it in
@@ -492,11 +531,17 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    Dep->CompareOp = Op;
    Dep->ID = Cache.HeaderP->DependsCount++;
    
-   // Locate the target package
-   pkgCache::PkgIterator Pkg;
-   if (Owner->NewPackage(Pkg,PackageName) == false)
+   pkgCache::GrpIterator Grp;
+   if (unlikely(Owner->NewGroup(Grp, PackageName) == false))
       return false;
-   
+
+   // Locate the target package
+   pkgCache::PkgIterator Pkg = Grp.FindPkg(Arch);
+   if (Pkg.end() == true) {
+      if (unlikely(Owner->NewPackage(Pkg, PackageName, Arch) == false))
+	 return false;
+   }
+
    // Probe the reverse dependency list for a version string that matches
    if (Version.empty() == false)
    {
@@ -504,7 +549,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 	 if (I->Version != 0 && I.TargetVer() == Version)
 	    Dep->Version = I->Version;*/
       if (Dep->Version == 0)
-	 if ((Dep->Version = WriteString(Version)) == 0)
+	 if (unlikely((Dep->Version = WriteString(Version)) == 0))
 	    return false;
    }
       
@@ -524,7 +569,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    }
 
    // Is it a file dependency?
-   if (PackageName[0] == '/')
+   if (unlikely(PackageName[0] == '/'))
       FoundFileDeps = true;
    
    Dep->NextDepends = *OldDepLast;
@@ -544,12 +589,12 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    pkgCache &Cache = Owner->Cache;
 
    // We do not add self referencing provides
-   if (Ver.ParentPkg().Name() == PackageName)
+   if (unlikely(Ver.ParentPkg().Name() == PackageName))
       return true;
    
    // Get a structure
-   unsigned long Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
-   if (Provides == 0)
+   unsigned long const Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
+   if (unlikely(Provides == 0))
       return false;
    Cache.HeaderP->ProvidesCount++;
    
@@ -558,12 +603,12 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    Prv->Version = Ver.Index();
    Prv->NextPkgProv = Ver->ProvidesList;
    Ver->ProvidesList = Prv.Index();
-   if (Version.empty() == false && (Prv->ProvideVersion = WriteString(Version)) == 0)
+   if (Version.empty() == false && unlikely((Prv->ProvideVersion = WriteString(Version)) == 0))
       return false;
    
    // Locate the target package
    pkgCache::PkgIterator Pkg;
-   if (Owner->NewPackage(Pkg,PackageName) == false)
+   if (unlikely(Owner->NewPackage(Pkg,PackageName,string(Ver.Arch())) == false))
       return false;
    
    // Link it to the package

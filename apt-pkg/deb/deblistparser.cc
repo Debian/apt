@@ -53,12 +53,25 @@ unsigned long debListParser::UniqFindTagWrite(const char *Tag)
 // ListParser::Package - Return the package name			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is to return the name of the package this section describes */
-string debListParser::Package()
-{
-   string Result = Section.FindS("Package");
-   if (Result.empty() == true)
-      _error->Error("Encountered a section with no Package: header");
-   return Result;
+string debListParser::Package() {
+	string const Result = Section.FindS("Package");
+	if(unlikely(Result.empty() == true))
+		_error->Error("Encountered a section with no Package: header");
+	return Result;
+}
+									/*}}}*/
+// ListParser::Architecture - Return the package arch			/*{{{*/
+// ---------------------------------------------------------------------
+/* This will return the Architecture of the package this section describes
+   Note that architecture "all" packages will get the architecture of the
+   Packages file parsed here */
+string debListParser::Architecture() {
+	string const Result = Section.FindS("Architecture");
+	if (Result.empty() == true)
+		return Arch;
+	if (Result == "all")
+		return Arch;
+	return Result;
 }
 									/*}}}*/
 // ListParser::Version - Return the version string			/*{{{*/
@@ -78,8 +91,10 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 {
    // Parse the section
    Ver->Section = UniqFindTagWrite("Section");
-   Ver->Arch = UniqFindTagWrite("Architecture");
-   
+
+   // Parse the architecture
+   Ver->Arch = WriteUniqString(Architecture());
+
    // Archive Size
    Ver->Size = (unsigned)Section.FindI("Size");
    
@@ -537,6 +552,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
       return true;
    
    string Package;
+   string const pkgArch = Ver.Arch();
    string Version;
    unsigned int Op;
 
@@ -546,7 +562,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
       
-      if (NewDepends(Ver,Package,Version,Op,Type) == false)
+      if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
 	 return false;
       if (Start == Stop)
 	 break;
@@ -619,6 +635,7 @@ bool debListParser::Step()
       if (Section.Find("Architecture",Start,Stop) == false)
 	 return true;
 
+      //FIXME: Accept different Architectures here
       if (stringcmp(Arch,Start,Stop) == 0)
 	 return true;
 
@@ -641,8 +658,9 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
    if (Tags.Step(Section) == false)
       return false;
 
-   //mvo: I don't think we need to fill that in (it's unused since apt-0.6)
-   //FileI->Architecture = WriteUniqString(Arch);
+   // FIXME: Do we need it now for multi-arch?
+   // mvo: I don't think we need to fill that in (it's unused since apt-0.6)
+//    FileI->Architecture = WriteUniqString(Arch);
    
    // apt-secure does no longer download individual (per-section) Release
    // file. to provide Component pinning we use the section name now

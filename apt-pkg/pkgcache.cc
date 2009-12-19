@@ -79,7 +79,8 @@ pkgCache::Header::Header()
    StringList = 0;
    VerSysName = 0;
    Architecture = 0;
-   memset(HashTable,0,sizeof(HashTable));
+   memset(PkgHashTable,0,sizeof(PkgHashTable));
+   memset(GrpHashTable,0,sizeof(GrpHashTable));
    memset(Pools,0,sizeof(Pools));
 }
 									/*}}}*/
@@ -118,6 +119,7 @@ bool pkgCache::ReMap()
 {
    // Apply the typecasts.
    HeaderP = (Header *)Map.Data();
+   GrpP = (Group *)Map.Data();
    PkgP = (Package *)Map.Data();
    VerFileP = (VerFile *)Map.Data();
    DescFileP = (DescFile *)Map.Data();
@@ -165,7 +167,7 @@ unsigned long pkgCache::sHash(const string &Str) const
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
       Hash = 5*Hash + tolower_ascii(*I);
-   return Hash % _count(HeaderP->HashTable);
+   return Hash % _count(HeaderP->PkgHashTable);
 }
 
 unsigned long pkgCache::sHash(const char *Str) const
@@ -173,24 +175,40 @@ unsigned long pkgCache::sHash(const char *Str) const
    unsigned long Hash = 0;
    for (const char *I = Str; *I != 0; I++)
       Hash = 5*Hash + tolower_ascii(*I);
-   return Hash % _count(HeaderP->HashTable);
+   return Hash % _count(HeaderP->PkgHashTable);
 }
 
 									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(const string &Name)
-{
-   // Look at the hash bucket
-   Package *Pkg = PkgP + HeaderP->HashTable[Hash(Name)];
-   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
-   {
-      if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
-	  stringcasecmp(Name,StrP + Pkg->Name) == 0)
-	 return PkgIterator(*this,Pkg);
-   }
-   return PkgIterator(*this,0);
+pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string Arch) {
+	/* We make a detour via the GrpIterator here as
+	   on a multi-arch environment a group is easier to
+	   find than a package (less entries in the buckets) */
+	pkgCache::GrpIterator Grp = FindGrp(Name);
+	if (Grp.end() == true)
+		return PkgIterator(*this,0);
+
+	return Grp.FindPkg(Arch);
+}
+									/*}}}*/
+// Cache::FindGrp - Locate a group by name				/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns End-Pointer on error, pointer to the group otherwise */
+pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
+	if (unlikely(Name.empty() == true))
+		return GrpIterator(*this,0);
+
+	// Look at the hash bucket for the group
+	Group *Grp = GrpP + HeaderP->GrpHashTable[sHash(Name)];
+	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
+		if (Grp->Name != 0 && StrP[Grp->Name] == Name[0] &&
+		    stringcasecmp(Name, StrP + Grp->Name) == 0)
+			return GrpIterator(*this, Grp);
+	}
+
+	return GrpIterator(*this,0);
 }
 									/*}}}*/
 // Cache::CompTypeDeb - Return a string describing the compare type	/*{{{*/
@@ -242,6 +260,68 @@ const char *pkgCache::Priority(unsigned char Prio)
    return 0;
 }
 									/*}}}*/
+// GrpIterator::FindPkg - Locate a package by arch			/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns an End-Pointer on error, pointer to the package otherwise */
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) {
+	if (unlikely(IsGood() == false || S->FirstPackage == 0))
+		return PkgIterator(*Owner, 0);
+
+	static string const myArch = _config->Find("APT::Architecture");
+	/* Most of the time the package for our native architecture is
+	   the one we add at first to the cache, but this would be the
+	   last one we check, so we do it now. */
+	if (Arch == "native" || Arch == myArch) {
+		Arch = myArch;
+		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
+		if (stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+			return PkgIterator(*Owner, Pkg);
+	}
+
+	/* If we accept any package we simply return the "first"
+	   package in this group (the last one added). */
+	if (Arch == "any")
+		return PkgIterator(*Owner, Owner->PkgP + S->FirstPackage);
+
+	/* Iterate over the list to find the matching arch
+	   unfortunately this list includes "package noise"
+	   (= different packages with same calculated hash),
+	   so we need to check the name also */
+	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
+	     Pkg = Owner->PkgP + Pkg->NextPackage) {
+		if (S->Name == Pkg->Name &&
+		    stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+			return PkgIterator(*Owner, Pkg);
+		if ((Owner->PkgP + S->LastPackage) == Pkg)
+			break;
+	}
+
+	return PkgIterator(*Owner, 0);
+}
+									/*}}}*/
+// GrpIterator::NextPkg - Locate the next package in the group		/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns an End-Pointer on error, pointer to the package otherwise.
+   We can't simply ++ to the next as the list of packages includes
+   "package noise" (= packages with the same hash value but different name) */
+pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const &LastPkg) {
+	if (unlikely(IsGood() == false || S->FirstPackage == 0 ||
+	    LastPkg.end() == true))
+		return PkgIterator(*Owner, 0);
+
+	// Iterate over the list to find the next package
+	pkgCache::Package *Pkg = Owner->PkgP + LastPkg.Index();
+	Pkg = Owner->PkgP + Pkg->NextPackage;
+	for (; Pkg != Owner->PkgP; Pkg = Owner->PkgP + Pkg->NextPackage) {
+		if (S->Name == Pkg->Name)
+			return PkgIterator(*Owner, Pkg);
+		if ((Owner->PkgP + S->LastPackage) == Pkg)
+			break;
+	}
+
+	return PkgIterator(*Owner, 0);
+}
+									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
@@ -252,10 +332,10 @@ void pkgCache::PkgIterator::operator ++(int)
       S = Owner->PkgP + S->NextPackage;
 
    // Follow the hash table
-   while (S == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->HashTable))
+   while (S == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->PkgHashTable))
    {
       HashIndex++;
-      S = Owner->PkgP + Owner->HeaderP->HashTable[HashIndex];
+      S = Owner->PkgP + Owner->HeaderP->PkgHashTable[HashIndex];
    }
 };
 									/*}}}*/

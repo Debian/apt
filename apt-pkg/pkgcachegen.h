@@ -51,7 +51,8 @@ class pkgCacheGenerator							/*{{{*/
    // Flag file dependencies
    bool FoundFileDeps;
    
-   bool NewPackage(pkgCache::PkgIterator &Pkg,const string &PkgName);
+   bool NewGroup(pkgCache::GrpIterator &Grp,const string &Name);
+   bool NewPackage(pkgCache::PkgIterator &Pkg,const string &Name, const string &Arch);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const string &VerStr,unsigned long Next);
@@ -96,7 +97,7 @@ class pkgCacheGenerator::ListParser
    inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
    inline unsigned long WriteString(const string &S) {return Owner->Map.WriteString(S);};
    inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->Map.WriteString(S,Size);};
-   bool NewDepends(pkgCache::VerIterator Ver,const string &Package,
+   bool NewDepends(pkgCache::VerIterator Ver,const string &Package, const string &Arch,
 		   const string &Version,unsigned int Op,
 		   unsigned int Type);
    bool NewProvides(pkgCache::VerIterator Ver,const string &Package,
@@ -106,6 +107,7 @@ class pkgCacheGenerator::ListParser
    
    // These all operate against the current section
    virtual string Package() = 0;
+   virtual string Architecture() = 0;
    virtual string Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator Ver) = 0;
    virtual string Description() = 0;
