@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2009-12-01 19:13+0100\n"
-"PO-Revision-Date: 2009-12-16 07:51+0100\n"
+"PO-Revision-Date: 2009-12-18 19:44+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -5785,7 +5785,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:98
-#, fuzzy
 #| msgid ""
 #| "Two specials are allowed, <literal>#include</literal> and "
 #| "<literal>#clear</literal> <literal>#include</literal> will include the "
@@ -5802,12 +5801,12 @@ msgid ""
 "The specified element and all its descendants are erased.  (Note that these "
 "lines also need to end with a semicolon.)"
 msgstr ""
-"Deux éléments spéciaux sont autorisés : <literal>#include</literal> et "
+"Deux éléments spéciaux sont autorisés : <literal>#include</literal> (qui est obsolète et n'est plus géré par des implémentations alternatives) et "
 "<literal>#clear</literal>. <literal>#include</literal> inclut le fichier "
-"donné en argument, à moins que le nom ne se termine par une barre oblique "
+"donné en paramètre, à moins que le nom ne se termine par une barre oblique "
 "auquel cas le répertoire entier est inclus. <literal>#clear</literal> sert à "
 "effacer une partie de l'arbre de configuration. L'élément désigné et tout "
-"ses descendants sont supprimés."
+"ses descendants sont supprimés. Veuillez noter que ces lignes doivent également se terminer avec un point-virgule."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:106
@@ -5818,10 +5817,12 @@ msgid ""
 "overridden by addressing a new value to it - lists and scopes can't be "
 "overridden, only cleared."
 msgstr ""
+"La commande #clear est la seule façon de supprimer une liste ou un champ d'action (« scope »). La réouverture d'un scope ou le style « ::- » décrit plus loin de "
+"remplaceront <emphasis>pas</emphasis> les entrées écrites précédemment. Seules les options peuvent être remplacées en leur assignant une nouvelle valeur. Les listes et les "
+"champs d'action ne peuvent être remplacés mais seulement effacés."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:111
-#, fuzzy
 #| msgid ""
 #| "All of the APT tools take a -o option which allows an arbitrary "
 #| "configuration directive to be specified on the command line. The syntax "
@@ -5841,10 +5842,11 @@ msgstr ""
 "syntaxe consiste en un nom complet d'option (par exemple <literal>APT::Get::"
 "Assume-Yes</literal>) suivi par un signe égal, puis par la nouvelle valeur "
 "de l'option. On peut compléter une liste en ajoutant un « :: » au nom de la "
-"liste."
+"liste. Comme on peut s'en douter, la syntaxe de champ d'action (« scope ») ne peut pas être indiquée à la ligne de commande."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:118
+#, fuzzy
 msgid ""
 "Note that you can use :: only for appending one item per line to a list and "
 "that you should not use it in combination with the scope syntax.  (The scope "
@@ -5859,6 +5861,10 @@ msgid ""
 "correct such statements now as long as APT doesn't complain explicit about "
 "them."
 msgstr ""
+"Veuillez noter que vous ne pouvez utiliser :: que pour ajouter un élément par ligne à la liste et que cela e devrait pas être utilisé en combinaison avec la syntaxe de "
+"champ d'action (« scope ») qui inclut implicitement « :: ». L'utilisation simultanée des deux syntaxes déclenchera un bogue dont certains utilisateurs se servent comme "
+"d'une fonctionnalité : une option avec le nom inhabituel « :: » se comportera comme toute autre option nommée. Cela risque d'avoir de nombreux problèmes comme conséquence, "
+"par exemple si un utilisateur écrit plusieurs lignes avec cette syntaxe <emphasis>erronée<4/emphasis> afin de faire un ajout à la liste"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:130
