@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2009-12-01 19:13+0100\n"
-"PO-Revision-Date: 2009-12-18 19:44+0100\n"
+"PO-Revision-Date: 2009-12-20 22:16+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -114,7 +114,7 @@ msgstr ""
 #: apt.8:42
 #, no-wrap
 msgid "DIAGNOSTICS"
-msgstr "DIAGNOSTIQUE"
+msgstr "DIAGNOSTICS"
 
 #. type: Plain text
 #: apt.8:44
@@ -1981,7 +1981,7 @@ msgstr "&apt-conf;, &sources-list;, &apt-get;."
 #: apt-extracttemplates.1.xml:78 apt-ftparchive.1.xml:576 apt-get.8.xml:575
 #: apt-mark.8.xml:137 apt-sortpkgs.1.xml:73
 msgid "Diagnostics"
-msgstr "Diagnostique"
+msgstr "Diagnostics"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-cache.8.xml:374
@@ -5846,7 +5846,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:118
-#, fuzzy
 msgid ""
 "Note that you can use :: only for appending one item per line to a list and "
 "that you should not use it in combination with the scope syntax.  (The scope "
@@ -5864,7 +5863,9 @@ msgstr ""
 "Veuillez noter que vous ne pouvez utiliser :: que pour ajouter un élément par ligne à la liste et que cela e devrait pas être utilisé en combinaison avec la syntaxe de "
 "champ d'action (« scope ») qui inclut implicitement « :: ». L'utilisation simultanée des deux syntaxes déclenchera un bogue dont certains utilisateurs se servent comme "
 "d'une fonctionnalité : une option avec le nom inhabituel « :: » se comportera comme toute autre option nommée. Cela risque d'avoir de nombreux problèmes comme conséquence, "
-"par exemple si un utilisateur écrit plusieurs lignes avec cette syntaxe <emphasis>erronée<4/emphasis> afin de faire un ajout à la liste"
+"par exemple si un utilisateur écrit plusieurs lignes avec cette syntaxe <emphasis>erronée<4/emphasis> afin de faire un ajout à la liste, l'effet obtenu sera inverse "
+"puisque seule la dernière valeur pour l'option « :: » sera utilisée. Les futures versions d'APT retourneront une erreur et l'exécution sera interrompu si cette utilisation "
+"incorrecte est rencontrée. Il est donc conseillé de corriger ces défauts tant qu'APT ne s'en plaint pas explicitement."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:130
@@ -6159,7 +6160,6 @@ msgstr "http"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:246
-#, fuzzy
 #| msgid ""
 #| "HTTP URIs; http::Proxy is the default http proxy to use. It is in the "
 #| "standard form of <literal>http://[[user][:pass]@]host[:port]/</literal>. "
@@ -6176,8 +6176,8 @@ msgid ""
 "<envar>http_proxy</envar> environment variable will be used."
 msgstr ""
 "URI HTTP ; http::Proxy est le mandataire (proxy) HTTP à utiliser par "
-"défaut.  Il se présente sous la forme standard : <literal>http://[[user][:"
-"pass]@]host[:port]/</literal>. On peut spécifier un mandataire particulier "
+"défaut.  Il se présente sous la forme standard : <literal>http://[[utilisateur][:"
+"mot_de_passe]@]hôte[:port]/</literal>. On peut spécifier un mandataire particulier "
 "par hôte distant en utilisant la syntaxe : <literal>http::Proxy::&lt;hôte&gt;"
 "</literal>. Le mot-clé spécial <literal>DIRECT</literal> indique alors de "
 "n'utiliser aucun mandataire pour l'hôte.  Lorsqu'elle est définie, la "
@@ -6221,7 +6221,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:267
-#, fuzzy
 #| msgid ""
 #| "One setting is provided to control the pipeline depth in cases where the "
 #| "remote server is not RFC conforming or buggy (such as Squid 2.0.2)  "
@@ -6273,7 +6272,6 @@ msgstr "https"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:287
-#, fuzzy
 #| msgid ""
 #| "HTTPS URIs. Cache-control and proxy options are the same as for "
 #| "<literal>http</literal> method.  <literal>Pipeline-Depth</literal> option "
@@ -6285,9 +6283,10 @@ msgid ""
 "not explicitly set for https. <literal>Pipeline-Depth</literal> option is "
 "not supported yet."
 msgstr ""
-"URI HTTPS. Les options de contrôle de cache et de mandataire (proxy) sont "
-"les mêmes que pour la méthode <literal>http</literal>. L'option "
-"<literal>Pipeline-Depth</literal> n'est pas encore supportée."
+"URI HTTPS. Les options de contrôle de cache, de délai limite, de Dl-Limit et de mandataire (proxy) sont "
+"les mêmes que pour la méthode <literal>http</literal>. Les valeurs par défaut sont les mêmes que pour l'option literal>http</literal> sauf si des valeurs spécifiques à "
+"https sont indiquées. L'option "
+"<literal>Pipeline-Depth</literal> n'est pas encore gérée."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:293
@@ -6328,7 +6327,6 @@ msgstr "ftp"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:312
-#, fuzzy
 #| msgid ""
 #| "FTP URIs; ftp::Proxy is the default proxy server to use. It is in the "
 #| "standard form of <literal>ftp://[[user][:pass]@]host[:port]/</literal> "
@@ -6429,10 +6427,10 @@ msgstr "cdrom"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para><literallayout>
 #: apt.conf.5.xml:356
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "\"/cdrom/\"::Mount \"foo\";"
 msgid "/cdrom/::Mount \"foo\";"
-msgstr "\"/cdrom/\"::Mount \"foo\";"
+msgstr "/cdrom/::Mount \"foo\";"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:351
@@ -6688,7 +6686,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:448
-#, fuzzy
 #| msgid ""
 #| "Binary programs are pointed to by <literal>Dir::Bin</literal>. "
 #| "<literal>Dir::Bin::Methods</literal> specifies the location of the method "
@@ -6706,7 +6703,7 @@ msgid ""
 msgstr ""
 "Les programmes binaires sont pointés par <literal>Dir::Bin</literal>.  "
 "L'emplacement des gestionnaires de méthodes est indiqué par <literal>Dir::"
-"Bin::Methods</literal> ; <literal>gzip</literal>, <literal>dpkg</literal>, "
+"Bin::Methods</literal> ; <literal>gzip</literal>, <literal>bzip2</literal>, <literal>lzma</literal>, <literal>dpkg</literal>, "
 "<literal>apt-get</literal>, <literal>dpkg-source</literal>, <literal>dpkg-"
 "buildpackage</literal> et <literal>apt-cache</literal> indiquent "
 "l'emplacement des programmes correspondants."
@@ -6987,10 +6984,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt.conf.5.xml:574
-#, fuzzy
 #| msgid "Packages::Compress"
 msgid "PackageManager::Configure"
-msgstr "Packages::Compress"
+msgstr "PackageManager::Configure"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:575
@@ -7576,10 +7572,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist>
 #: apt.conf.5.xml:1019
-#, fuzzy
 #| msgid "&apt-conf;"
 msgid "&file-aptconf;"
-msgstr "&apt-conf;"
+msgstr "&file-aptconf;"
 
 #.  ? reading apt.conf
 #. type: Content of: <refentry><refsect1><para>
@@ -7605,7 +7600,6 @@ msgstr "Fichier de contrôle des préférences pour APT"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml:34
-#, fuzzy
 #| msgid ""
 #| "The APT preferences file <filename>/etc/apt/preferences</filename> can be "
 #| "used to control which versions of packages will be selected for "
@@ -7616,7 +7610,7 @@ msgid ""
 "can be used to control which versions of packages will be selected for "
 "installation."
 msgstr ""
-"Le fichier d'APT, <filename>/etc/apt/preferences</filename>, peut être "
+"Le fichier d'APT, <filename>/etc/apt/preferences</filename> et les fichiers fragments situés dans le dossier <filename>/etc/apt/preferences.d/</filename>, peuvent être "
 "utilisé pour choisir la version des paquets que l'on veut installer."
 
 #. type: Content of: <refentry><refsect1><para>
