@@ -18,4 +18,4 @@ LIBAPTINST_MINOR=$(shell egrep '^MINOR=' $(BASE)/apt-inst/makefile |cut -d '=' -
 # want to drop this, but this a ABI break.
 # And we don't want to do this now. So we hardcode a value here,
 # and drop it later on (hopefully as fast as possible).
-LIBEXT=-libc6.9-6
+LIBEXT=-libc6.10-6
