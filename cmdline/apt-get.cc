@@ -1299,31 +1299,41 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	       {
 		  pkgRecords::Parser &Parse = Recs.Lookup(VF);
 		  Src = Parse.SourcePkg();
+		  // no SourcePkg name, so it is the "binary" name
+		  if (Src.empty() == true)
+		     Src = TmpSrc;
+		  // no Version, so we try the Version of the SourcePkg -
+		  // and after that the version of the binary package
 		  if (VerTag.empty() == true)
 		     VerTag = Parse.SourceVer();
+		  if (VerTag.empty() == true)
+		     VerTag = Ver.VerStr();
 		  break;
 	       }
 	    }
+	    if (Src.empty() == false)
+	       break;
 	 }
 	 if (Src.empty() == true) 
 	 {
-	    if (VerTag.empty() == false)
-	       _error->Warning(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
-	    else
+	    // Sources files have no codename information
+	    if (VerTag.empty() == true && DefRel.empty() == false)
 	       _error->Warning(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
-	    VerTag.clear();
 	    DefRel.clear();
 	 }
       }
-      if (VerTag.empty() == true && DefRel.empty() == true) 
+      if (Src.empty() == true)
       {
-	 // if we don't have a version or default release, use the CandidateVer to find the Source
+	 // if we don't have found a fitting package yet so we will
+	 // choose a good candidate and proceed with that.
+	 // Maybe we will find a source later on with the right VerTag
 	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
 	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
 	    Src = Parse.SourcePkg();
-	    VerTag = Parse.SourceVer();
+	    if (VerTag.empty() == true)
+	       VerTag = Parse.SourceVer();
 	 }
       }
    }
