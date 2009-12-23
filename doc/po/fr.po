@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2009-12-01 19:13+0100\n"
-"PO-Revision-Date: 2009-12-22 15:03+0100\n"
+"PO-Revision-Date: 2009-12-23 22:47+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -5970,6 +5970,13 @@ msgid ""
 "distribution and to the APT team with the buglink below so they can work on "
 "improving or correcting the upgrade process."
 msgstr ""
+"La valeur par défaut de ce réglage est « on » ce qui conduira APT à installer les paquets essentiels et importants dès que possible pendant les opérations d'installation ou de mise à jour. Cela permet de limiter les conséquences de l'échec d'un appel à &dpkg; : si cette option est désactivée, APT gérera un paquet important de la même manière qu'un paquet "
+"« extra » ; entre le dépaquetage du paquet important A et se configuration pourront prendre place de nombreux autres opérations de dépaquetage ou de configuration. Ainsi, si le paquet B, qui n'a pas de rapport avec A, provoque une erreur de &dpkg; (p. ex. en cas d'erreur dans les scripts du responsable), le paquet A sera alors dans l'état installé mais non "
+"configuré et chaque paquet qui en dépend ne fonctionnera plus nécessairement puisque sa dépendance n'est pas satisfaite. Le marqueur de configuration immédiate sera aussi utilisé pour toute dépendance qui peut créer un problème, par exemple les dépendances circulaires. En effet, les marqueur de configuration immédiate revient à gérer une pré-dépendance. Il "
+"est donc possible, en théorie, qu'APT rencontre une situation où il lui est impossible d'effectuer la configuration immédiate, qu'il se termine alors avec une erreur en faisant référence à cette option afin que l'utilisateur puisse la désactiver temporairement pour retenter l'opération d'installation ou de mise à jour. Il est à noter que « en théorie » "
+"indique ici que cette situation n'a été rencontrée que dans de rares cas, sur des versions instables de distributions, la cause étant des dépendances incorrectes ou un système déjà dans un état instable. Il est donc déconseillé de désactiver cette option sans réfléchir car la situation décrite précédemmebnt n'est qu'un des cas où la configuration immédiate "
+"permet de résoudre des situations complexes. Avant de tenter une opération telle que <literal>dist-upgrade</literal> avec cette option désactivée, il est largement préférable d'essayer une opération <literal>install</literal> sur le paquet qu'APT ne peut configurer immédiatement. Il est également conseillé de signaler ce type de problème dans le système de "
+"suivi de bogues de la distribution utilisée afin qu'il soit étudié et corrigé."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml:181
@@ -6240,6 +6247,8 @@ msgid ""
 "bandwidth (Note that this option implicit deactivates the download from "
 "multiple servers at the same time.)"
 msgstr ""
+"La bande passante utilisée peut être limité avec<literal>Acquire::http::Dl-Limit</"
+"literal> qui peut prendre une valeur entière, l'unité utilisée étant le kilo-octet. La valeur par défaut est 0, ce qui correspond à aucune limitation de bande passante. Veuillez noter que cette option désactive implicitement le téléchargement simultané depuis plusieurs serveurs."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:280
@@ -6247,7 +6256,7 @@ msgid ""
 "<literal>Acquire::http::User-Agent</literal> can be used to set a different "
 "User-Agent for the http download method as some proxies allow access for "
 "clients only if the client uses a known identifier."
-msgstr ""
+msgstr "L'option <literal>Acquire::http::User-Agent</literal> peut être utilisée pour envoyer une valeur User-Agent modifiée pour les téléchargements HTTP, ce qui peut par exemple être utile avec certains mandataires HTTP qui n'autorisent l'accès qu'aux client s'identifiant de manière spécifique.."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:286
@@ -6457,13 +6466,13 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:367
 msgid "CompressionTypes"
-msgstr ""
+msgstr "CompressionTypes"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para><synopsis>
 #: apt.conf.5.xml:373
 #, no-wrap
 msgid "Acquire::CompressionTypes::<replaceable>FileExtension</replaceable> \"<replaceable>Methodname</replaceable>\";"
-msgstr ""
+msgstr "Acquire::CompressionTypes::<replaceable>ExtensionFichier</replaceable> \"<replaceable>NomMethode</replaceable>\";"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:368
@@ -6476,18 +6485,20 @@ msgid ""
 "the fly or the used method can be changed. The syntax for this is: "
 "<placeholder type=\"synopsis\" id=\"0\"/>"
 msgstr ""
+"Cette option indique la liste des types de compression comprises par les méthodes d'acquisition. Des fichiers comme <filename>Packages</filename> peuvent être disponibles avec plusieurs formats de compression. Par défaut, les méthodes d'acquisition décompressent les fichiers compressés avec <command>bzip2</command>, <command>lzma</command> et <command>gzip</"
+"command>. Ce réglage permet d'ajouter à la volée des formats supplémentaires ou de modifier la méthode utilisée. La syntaxe à utiliser est : <placeholder type=\"synopsis\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para><synopsis>
 #: apt.conf.5.xml:378
 #, no-wrap
 msgid "Acquire::CompressionTypes::Order:: \"gz\";"
-msgstr ""
+msgstr "Acquire::CompressionTypes::Order:: \"gz\";"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para><synopsis>
 #: apt.conf.5.xml:381
 #, no-wrap
 msgid "Acquire::CompressionTypes::Order { \"lzma\"; \"gz\"; };"
-msgstr ""
+msgstr "Acquire::CompressionTypes::Order { \"lzma\"; \"gz\"; };"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:374
@@ -6505,12 +6516,17 @@ msgid ""
 "<placeholder type=\"synopsis\" id=\"1\"/> It is not needed to add "
 "<literal>bz2</literal> explicit to the list as it will be added automatic."
 msgstr ""
+"Le sous-groupe <literal>Order</literal> peut être également utilisé pour définir l'ordre dans lequel le système d'acquisition tentera de télécharger les fichiers compressés. Le premier système mentionné sera essayé en premier, puis le suivant en cas d'échec. Ainsi, pour privilégier une système par rapport à un autre, il suffit de le placer en premier dans "
+"cette liste. Les types par défaut qui ne sont pas déjà indiqués seront ajoutés en fin de liste au moment de l'exécution. Ainsi, par exemple,  <placeholder type=\"synopsis\" id=\"0\"/> peut être utiliser de préférence les fichiers compressés avec <command>gzip</command> par rapport à <command>bzip2</command> et <command>lzma</command>. Si l'objectif est "
+"d'utiliser <command>lzma</"
+"command> en priorité par rapport à <command>gzip</command> et "
+"<command>bzip2</command>, ce réglage doit ressembler à <placeholder type=\"synopsis\" id=\"1\"/>. Il est inutile d'ajouter explicitement <literal>bz2</literal> à liste car il sera ajouté automatiquement."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para><literallayout>
 #: apt.conf.5.xml:385
 #, no-wrap
 msgid "Dir::Bin::bzip2 \"/bin/bzip2\";"
-msgstr ""
+msgstr "Dir::Bin::bzip2 \"/bin/bzip2\";"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:383
@@ -6526,6 +6542,9 @@ msgid ""
 "will not override the defined list, it will only prefix the list with this "
 "type."
 msgstr ""
+"Veuillez noter qu'à l'exécution, <literal>Dir::Bin::<replaceable>Methodname</"
+"replaceable></literal> sera vérifié : si ce réglage existe, la méthode ne sera utilisée que si ce fichier existe. Ainsi, pour la méthode bzip2, le réglage (utilisé en interne) est <placeholder type=\"literallayout\" id=\"0\"/>. Veuillez également noter que les éléments de liste indiqués à la ligne de commande seront ajoutés à la fin de la liste indiquée dans "
+"les fichiers de configuration, mais avant les valeurs par défaut. Dans ce cas, pour établir une préférence par rapport aux types mentionnés dans les fichiers de configuration, il est possible de placer l'option directement, pas sous forme de liste. Cela ne remplacera pas la liste par défaut mais elle sera simplement préfixée avec l'option en question."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:390
@@ -6536,11 +6555,13 @@ msgid ""
 "time false negatives. Future versions will maybe include a way to really "
 "prefer uncompressed files to support the usage of local mirrors."
 msgstr ""
+"Bien qu'il soit possible d'ajouter un type vide de compression à la liste ordonnée, APT ne l'nterprétera pas correctement et affichera de nombreux messages d'avertissement à propos d'échec de téléchargement, qui sont le plus souvent des avertissements sans conséquences. Dans de futures versions, il deviendra réellement possible d'établir une préférence pour "
+"des fichiers non compressés afin de gérer des miroirs locaux."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:396
 msgid "Languages"
-msgstr ""
+msgstr "Langues"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:397
@@ -6554,12 +6575,15 @@ msgid ""
 "long Languagecodes are rare, so please inform you which ones are available "
 "before you set here impossible values."
 msgstr ""
+"La sous-section « Languages » contrôle quels fichiers <filename>Translation</filename> "
+"sont téléchargés et dans quel ordre APT les utilisera pour afficher les traductions de descriptions. APT recherchera d'abord la première traduction disponible pour le champ Description dans la langue choisie en premier. Les langues peuvent être indiquées par leur code long ou court. Veuillez noter que tous les dépôts ne fournissent pas les fichiers <filename>"
+"Translation</filename>  pour toutes les langues, particulièrement pour les langues plus rares. Il est donc conseillé de vous renseigner sur ce qui est disponible avant d'établir des réglages impossibles."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para><programlisting>
 #: apt.conf.5.xml:413
 #, no-wrap
 msgid "Acquire::Languages { \"environment\"; \"de\"; \"en\"; \"none\"; \"fr\"; };"
-msgstr ""
+msgstr "Acquire::Languages { \"environment\"; \"fr\"; \"en\"; \"none\"; \"de\"; };"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:403
@@ -6583,6 +6607,11 @@ msgid ""
 "order would be \"fr, de, en\".  <placeholder type=\"programlisting\" id=\"0"
 "\"/>"
 msgstr ""
+"La liste par défaut contient « environment » and « en ». La valeur « environment » a une signification spéciale : elle sera remplacée, à l'exécution, par les codes de langues utilisés dans la variable d'environnement <literal>LC_MESSAGES</literal>. Les codes utilisés en double ne seront pas inclus deux fois dans la liste. Si <literal>LC_MESSAGES</literal> "
+"contient « C », seul le fichier <filename>Translation-en</filename> sera utilisé, s'il est disponible. Pour forcer APT à n'utiliser aucun fichier de traduction, il est nécessaire d'utiliser le réglage <literal>Acquire::"
+"Languages=none</literal>. La valeur « <literal>none</literal> » a une signification spéciale et indique de ne rechercher aucun fichier <filename>Translation</filename>. Cela permet à l'administrateur local d'indiquer à APT de télécharger des fichiers sans les utiliser si la variable d'environnement ne les comporte pas. Ainsi, dans l'exemple qui suit, l'ordre "
+"utilisé sera « en,fr » si dans un environnement configuré pour l'anglais et « fr,en » pour un environnement configuré en français. Les fichiers pour l'allemand seront également téléchargés mais ne sont utilisés que dans un environnement configuré pour l'allemand. Dans ce dernier cas, l'ordre est alors « de, fr, en ». <placeholder type=\"programlisting\" id=\"0"
+"\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:217
@@ -6908,7 +6937,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt.conf.5.xml:544
 msgid "dpkg trigger usage (and related options)"
-msgstr ""
+msgstr "utilisation des actions différées (« triggers ») de dpkg (et options associées)"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt.conf.5.xml:545
@@ -6924,6 +6953,9 @@ msgid ""
 "all frontends will currently stay around half (or more) of the time in the "
 "100% state while it actually configures all packages."
 msgstr ""
+"APT peut lancer dpkg pour utiliser les actions différées de manière agressive entre les appels successifs à dpkg. Sans options supplémentaires, dpkg n'utilisera les actions différées que dans le cadre de sa propre exécution. Si ces options sont utilisées, le temps d'exécution peut diminuer fortement dans les actions d'installation ou de mise à jour. Il est "
+"prévu de les activer par défaut dans le futur mais étant donné qu'elles changent notablement la méthode qu'utilise APT pour lancer dpkg, elles ont besoin d'importantes validations. <emphasis>Ces options sont donc expérimentales et ne devraient pas être utilisées avec des environnements de production.</emphasis>. Elles modifient également le suivi de "
+"progression et toutes les interfaces passeront la moitié du temps à un état terminé à 100% pendant la configuration des paquets."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><literallayout>
 #: apt.conf.5.xml:560
@@ -6934,6 +6966,10 @@ msgid ""
 "DPkg::ConfigurePending \"true\";\n"
 "DPkg::TriggersPending \"true\";"
 msgstr ""
+"DPkg::NoTriggers \"true\";\n"
+"PackageManager::Configure \"smart\";\n"
+"DPkg::ConfigurePending \"true\";\n"
+"DPkg::TriggersPending \"true\";"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt.conf.5.xml:554
@@ -6948,11 +6984,13 @@ msgid ""
 "see e.g. <command>dpkg --audit</command>. A defensive option combination "
 "would be <placeholder type=\"literallayout\" id=\"0\"/>"
 msgstr ""
+"Veuillez noter que rien ne garantit qu'APT gérera encore ces options dans le futur ou qu'elles ne provoqueront pas de nombreux dégâts. Si vous avez bien compris les implications de ce choix et êtes suffisamment motivé(e) pour essayer ces options, il vous est donc possible de créer un nouveau fichier de configuration et essayer une combinaison de ces options. "
+"Veuillez signaler tout bogue, problèmes ou suggestions d'amélioration en prenant soin de mentionner les options utilisées. Utiliser l'aide apportée par dpkg peut également être utile pour le débogage, par exemple <command>dpkg --audit</command>. Une combinaison intéressante d'options pourrait être <placeholder type=\"literallayout\" id=\"0\"/>."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt.conf.5.xml:566
 msgid "DPkg::NoTriggers"
-msgstr ""
+msgstr "DPkg::NoTriggers"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:567
