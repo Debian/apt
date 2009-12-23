@@ -66,6 +66,22 @@ public:									/*{{{*/
 	std::vector<std::string> static const getLanguages(bool const &All = false,
 			bool const &Cached = true, char const * const Locale = 0);
 
+	/** \brief Returns a vector of Architectures we support
+	 *
+	 *  \param Cached saves the result so we need to calculated it only once
+	 *                this parameter should ony be used for testing purposes.
+	 *
+	 *  \return a vector of Architectures in prefered order
+	 */
+	std::vector<std::string> static const getArchitectures(bool const &Cached = true);
+
+	/** \brief Are we interested in the given Architecture?
+	 *
+	 *  \param Arch we want to check
+	 *  \return true if we are interested, false otherwise
+	 */
+	bool static const checkArchitecture(std::string const &Arch);
+
 									/*}}}*/
 };
 									/*}}}*/

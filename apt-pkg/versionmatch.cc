@@ -100,6 +100,8 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 	    RelLabel = Fragments[J]+2;
 	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"c=") == 0)
 	    RelComponent = Fragments[J]+2;
+	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"b=") == 0)
+	    RelArchitecture = Fragments[J]+2;
       }
 
       if (RelVerStr.end()[-1] == '*')
@@ -178,7 +180,7 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
       if (RelVerStr.empty() == true && RelOrigin.empty() == true &&
 	  RelArchive.empty() == true && RelLabel.empty() == true &&
 	  RelRelease.empty() == true && RelCodename.empty() == true &&
-	  RelComponent.empty() == true)
+	  RelComponent.empty() == true && RelArchitecture.empty() == true)
 	 return false;
 
       if (RelVerStr.empty() == false)
@@ -210,6 +212,10 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
       if (RelComponent.empty() == false)
 	 if (File->Component == 0 ||
 	     stringcasecmp(RelComponent,File.Component()) != 0)
+	    return false;
+      if (RelArchitecture.empty() == false)
+	 if (File->Architecture == 0 ||
+	     stringcasecmp(RelArchitecture,File.Architecture()) != 0)
 	    return false;
       return true;
    }

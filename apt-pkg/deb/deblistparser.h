@@ -69,7 +69,7 @@ class debListParser : public pkgCacheGenerator::ListParser
 			    bool const &StripMultiArch = false);
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
-   debListParser(FileFd *File);
+   debListParser(FileFd *File, string const &Arch = "");
 };
 
 #endif

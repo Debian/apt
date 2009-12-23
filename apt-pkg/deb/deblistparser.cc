@@ -32,10 +32,13 @@ static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Impor
 
 // ListParser::debListParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-debListParser::debListParser(FileFd *File) : Tags(File)
-{
-   Arch = _config->Find("APT::architecture");
+/* Provide an architecture and only this one and "all" will be accepted
+   in Step(), if no Architecture is given we will accept every arch
+   we would accept in general with checkArchitecture() */
+debListParser::debListParser(FileFd *File, string const &Arch) : Tags(File),
+				Arch(Arch) {
+	if (Arch == "native")
+		this->Arch = _config->Find("APT::Architecture");
 }
 									/*}}}*/
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
@@ -64,13 +67,19 @@ string debListParser::Package() {
 // ---------------------------------------------------------------------
 /* This will return the Architecture of the package this section describes
    Note that architecture "all" packages will get the architecture of the
-   Packages file parsed here */
+   Packages file parsed here. */
 string debListParser::Architecture() {
 	string const Result = Section.FindS("Architecture");
-	if (Result.empty() == true)
-		return Arch;
-	if (Result == "all")
-		return Arch;
+	if (Result.empty() == true || Result == "all") {
+		if (Arch.empty() == true)
+			/* FIXME: this is a problem for installed arch all
+			   packages as we don't know from which arch this
+			   package was installed - and therefore which
+			   dependency this package resolves. */
+			return _config->Find("APT::Architecture");
+		else
+			return Arch;
+	}
 	return Result;
 }
 									/*}}}*/
@@ -199,8 +208,12 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
 {
    if (Pkg->Section == 0)
       Pkg->Section = UniqFindTagWrite("Section");
-   if (Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
-      return false;
+
+   // Packages which are not from "our" arch doesn't get the essential flag
+   string const static myArch = _config->Find("APT::Architecture");
+   if (Pkg->Arch != 0 && myArch == Pkg.Arch())
+      if (Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
+	 return false;
    if (Section.FindFlag("Important",Pkg->Flags,pkgCache::Flag::Important) == false)
       return false;
 
@@ -630,17 +643,23 @@ bool debListParser::Step()
       /* See if this is the correct Architecture, if it isn't then we
          drop the whole section. A missing arch tag only happens (in theory)
          inside the Status file, so that is a positive return */
-      const char *Start;
-      const char *Stop;
-      if (Section.Find("Architecture",Start,Stop) == false)
+      string const Architecture = Section.FindS("Architecture");
+      if (Architecture.empty() == true)
 	 return true;
 
-      //FIXME: Accept different Architectures here
-      if (stringcmp(Arch,Start,Stop) == 0)
-	 return true;
+      if (Arch.empty() == true)
+      {
+	 if (APT::Configuration::checkArchitecture(Architecture) == true)
+	    return true;
+      }
+      else
+      {
+	 if (Architecture == Arch)
+	    return true;
 
-      if (stringcmp(Start,Stop,"all") == 0)
-	 return true;
+	 if (Architecture == "all")
+	    return true;
+      }
 
       iOffset = Tags.Offset();
    }   

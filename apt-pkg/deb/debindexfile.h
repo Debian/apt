@@ -46,6 +46,7 @@ class debPackagesIndex : public pkgIndexFile
    string URI;
    string Dist;
    string Section;
+   string Architecture;
 
    string Info(const char *Type) const;
    string IndexFile(const char *Type) const;
@@ -69,7 +70,8 @@ class debPackagesIndex : public pkgIndexFile
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   debPackagesIndex(string URI,string Dist,string Section,bool Trusted);
+   debPackagesIndex(string const &URI, string const &Dist, string const &Section,
+			bool const &Trusted, string const &Arch = "native");
 };
 
 class debTranslationsIndex : public pkgIndexFile

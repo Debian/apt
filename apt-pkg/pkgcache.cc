@@ -406,7 +406,7 @@ operator<<(ostream& out, pkgCache::PkgIterator Pkg)
    string candidate = string(Pkg.CandVersion() == 0 ? "none" : Pkg.CandVersion());
    string newest = string(Pkg.VersionList().end() ? "none" : Pkg.VersionList().VerStr());
 
-   out << Pkg.Name() << " < " << current;
+   out << Pkg.Name() << " [ " << Pkg.Arch() << " ] < " << current;
    if (current != candidate)
       out << " -> " << candidate;
    if ( newest != "none" && candidate != newest)
@@ -699,7 +699,9 @@ string pkgCache::VerIterator::RelStr()
 	 else
 	    Res += File.Site();
       }      
-   }   
+   }
+   if (S->Arch != 0)
+      Res.append(" [").append(Arch()).append("]");
    return Res;
 }
 									/*}}}*/
@@ -738,6 +740,8 @@ string pkgCache::PkgFileIterator::RelStr()
       Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
    if (Component() != 0)
       Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   if (Architecture() != 0)
+      Res = Res + (Res.empty() == true?"b=":",b=")  + Architecture();
    return Res;
 }
 									/*}}}*/
