@@ -182,6 +182,16 @@ unsigned long pkgCache::sHash(const char *Str) const
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
+pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
+	size_t const found = Name.find(':');
+	if (found == string::npos)
+		return FindPkg(Name, "native");
+	return FindPkg(Name.substr(0, found), Name.substr(found+1, string::npos));
+}
+									/*}}}*/
+// Cache::FindPkg - Locate a package by name				/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string Arch) {
 	/* We make a detour via the GrpIterator here as
 	   on a multi-arch environment a group is easier to
@@ -321,6 +331,23 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 
 	return PkgIterator(*Owner, 0);
 }
+									/*}}}*/
+// GrpIterator::operator ++ - Postfix incr				/*{{{*/
+// ---------------------------------------------------------------------
+/* This will advance to the next logical group in the hash table. */
+void pkgCache::GrpIterator::operator ++(int) 
+{
+   // Follow the current links
+   if (S != Owner->GrpP)
+      S = Owner->GrpP + S->Next;
+
+   // Follow the hash table
+   while (S == Owner->GrpP && (HashIndex+1) < (signed)_count(Owner->HeaderP->GrpHashTable))
+   {
+      HashIndex++;
+      S = Owner->GrpP + Owner->HeaderP->GrpHashTable[HashIndex];
+   }
+};
 									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------

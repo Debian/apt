@@ -104,6 +104,30 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    // Parse the architecture
    Ver->Arch = WriteUniqString(Architecture());
 
+   // Parse multi-arch
+   if (Section.FindS("Architecture") == "all")
+      /* Arch all packages can't have a Multi-Arch field,
+         but we need a special treatment for them nonetheless */
+      Ver->MultiArch = pkgCache::Version::All;
+   else
+   {
+      string const MultiArch = Section.FindS("Multi-Arch");
+      if (MultiArch.empty() == true)
+	 Ver->MultiArch = pkgCache::Version::None;
+      else if (MultiArch == "same")
+	 Ver->MultiArch = pkgCache::Version::Same;
+      else if (MultiArch == "foreign")
+	 Ver->MultiArch = pkgCache::Version::Foreign;
+      else if (MultiArch == "allowed")
+	 Ver->MultiArch = pkgCache::Version::Allowed;
+      else
+      {
+	 _error->Warning("Unknown Multi-Arch type »%s« for package »%s«",
+			MultiArch.c_str(), Section.FindS("Package").c_str());
+	 Ver->MultiArch = pkgCache::Version::None;
+      }
+   }
+
    // Archive Size
    Ver->Size = (unsigned)Section.FindI("Size");
    

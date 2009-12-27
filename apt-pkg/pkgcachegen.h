@@ -55,6 +55,9 @@ class pkgCacheGenerator							/*{{{*/
    bool NewPackage(pkgCache::PkgIterator &Pkg,const string &Name, const string &Arch);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
+   bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
+		   string const &Version, unsigned int const &Op,
+		   unsigned int const &Type, map_ptrloc *OldDepLast);
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const string &VerStr,unsigned long Next);
    map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
 
@@ -73,7 +76,8 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-      
+   bool FinishCache(OpProgress &Progress);
+
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
 };

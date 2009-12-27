@@ -81,13 +81,21 @@ template<typename Str, typename Itr> class pkgCache::Iterator {
    different architectures can be treated as of the "same" package
    (apt internally treat them as totally different packages) */
 class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
+	long HashIndex;
+
 	protected:
 	inline Group* OwnerPointer() const {
 		return Owner->GrpP;
 	};
 
 	public:
-	void operator ++(int) {if (S != Owner->GrpP) S = Owner->GrpP + S->Next;};
+	// This constructor is the 'begin' constructor, never use it.
+	inline GrpIterator(pkgCache &Owner) : Iterator<Group, GrpIterator>(Owner), HashIndex(-1) {
+		S = OwnerPointer();
+		operator ++(0);
+	};
+
+	virtual void operator ++(int);
 	virtual void operator ++() {operator ++(0);};
 
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;};
@@ -96,11 +104,11 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 	PkgIterator NextPkg(PkgIterator const &Pkg);
 
 	// Constructors
-	inline GrpIterator(pkgCache &Owner, Group *Trg) : Iterator<Group, GrpIterator>(Owner, Trg) {
+	inline GrpIterator(pkgCache &Owner, Group *Trg) : Iterator<Group, GrpIterator>(Owner, Trg), HashIndex(0) {
 		if (S == 0)
 			S = OwnerPointer();
 	};
-	inline GrpIterator() : Iterator<Group, GrpIterator>() {};
+	inline GrpIterator() : Iterator<Group, GrpIterator>(), HashIndex(0) {};
 
 };
 									/*}}}*/

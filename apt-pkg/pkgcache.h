@@ -125,9 +125,12 @@ class pkgCache								/*{{{*/
    
    // Accessors
    GrpIterator FindGrp(const string &Name);
-   PkgIterator FindPkg(const string &Name, string Arch = "native");
+   PkgIterator FindPkg(const string &Name);
+   PkgIterator FindPkg(const string &Name, string Arch);
 
    Header &Head() {return *HeaderP;};
+   inline GrpIterator GrpBegin();
+   inline GrpIterator GrpEnd();
    inline PkgIterator PkgBegin();
    inline PkgIterator PkgEnd();
    inline PkgFileIterator FileBegin();
@@ -274,7 +277,8 @@ struct pkgCache::Version						/*{{{*/
    map_ptrloc VerStr;            // Stringtable
    map_ptrloc Section;           // StringTable (StringItem)
    map_ptrloc Arch;              // StringTable
-   
+   enum {None, All, Foreign, Same, Allowed} MultiArch;
+
    // Lists
    map_ptrloc FileList;          // VerFile
    map_ptrloc NextVer;           // Version
@@ -337,6 +341,10 @@ struct pkgCache::StringItem						/*{{{*/
 									/*}}}*/
 #include <apt-pkg/cacheiterators.h>
 
+inline pkgCache::GrpIterator pkgCache::GrpBegin() 
+       {return GrpIterator(*this);};
+inline pkgCache::GrpIterator pkgCache::GrpEnd() 
+       {return GrpIterator(*this,GrpP);};
 inline pkgCache::PkgIterator pkgCache::PkgBegin() 
        {return PkgIterator(*this);};
 inline pkgCache::PkgIterator pkgCache::PkgEnd() 
