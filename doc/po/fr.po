@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2009-12-01 19:13+0100\n"
-"PO-Revision-Date: 2009-12-23 22:47+0100\n"
+"PO-Revision-Date: 2009-12-28 10:10+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -7003,6 +7003,8 @@ msgid ""
 "Previously these option only append --no-triggers to the configure calls to "
 "dpkg - now apt will add these flag also to the unpack and remove calls."
 msgstr ""
+"Ajoute l'option « no-triggers » à tous les appels à dpkg (hormis l'appel « ConfigurePending »). Voir &dpkg; pour plus d'informations sur la signification de cette option. En résumé, dpkg n'effectuera pas les actions différées (« triggers ») si cette option est utilisée sauf si cela est demandé explicitement dans une invocation supplémentaire. Cette option "
+"existe en fait déjà (mais n'est pas documentée) dans de plus anciennes version d'APT avec une signification légèrement différente : elle n'ajoutait l'option « --no-triggers » qu'aux appels de dpkg avec « configure » alors que cela sera désormais utilisé également avec les appels à dpkg avec les options « unpack » et « remove »."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt.conf.5.xml:574
@@ -7025,11 +7027,15 @@ msgid ""
 "value will implicitly activate also the next option per default as otherwise "
 "the system could end in an unconfigured status which could be unbootable!"
 msgstr ""
+"Les valeurs possibles sont « <literal>all</literal> », « <literal>smart</literal> » "
+"et « <literal>no</literal> ». La valeur par défaut est « <literal>all</literal> » où APT configure explicitement tous les paquets. La valeur « <literal>smart</literal> » permet de ne configurer que les paquets qui ont besoin de l'être avant la décompaction d'un autre paquet (à cause d'une pré-dépendance) ; les autres configurations sont laissées pour un appel "
+"ultérieur à dpkg. L'option « <literal>no</literal> » ne provoquera aucune configuration et s'en remettra totalement à dpkg pour ces opérations (ce qui échouera en cas de pré-dépendances). Si cette option est définie sur une valeur différente de « <literal>all</literal> », l'option suivante sera activée par défaut pour éviter de placer le système dans un état "
+"non configuré et donc éventuellement non amorçable."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt.conf.5.xml:585
 msgid "DPkg::ConfigurePending"
-msgstr ""
+msgstr "DPkg::ConfigurePending"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:586
@@ -7041,11 +7047,14 @@ msgid ""
 "run APT multiple times in a row - e.g. in an installer. In these sceneries "
 "you could deactivate this option in all but the last run."
 msgstr ""
+"Si cette option est choisie, APT lancera <command>dpkg --configure --pending</"
+"command> pour laisser dpkg gérer les configurations de paquets et les actions différées. Cette option est automatiquement activée si l'option précédente a une valeur différente de « <literal>all</literal> ». Il peut par contre être utile de la désactiver pour lancer APT plusieurs fois successives, par exemple quand il est utilisé depuis un outil "
+"d'installation. Dans ce cas, seul le dernier de tous les appels successifs peut conserver l'option active."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt.conf.5.xml:592
 msgid "DPkg::TriggersPending"
-msgstr ""
+msgstr "DPkg::TriggersPending"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:593
@@ -7056,11 +7065,13 @@ msgid ""
 "for Pre-Dependencies (see debbugs #526774). Note that this will process all "
 "triggers, not only the triggers needed to configure this package."
 msgstr ""
+"Cette option est utile pour la configuration en mode « <literal>smart</literal> ». En effet, un paquet qui a des actions différées (« triggers ») en attente n'est pas considéré comme installé (état « <literal>installed</literal> ») et dpkg le considère actuellement comme simplement décompacté (état « <literal>unpacked</literal> ») ce qui empêche une gestion "
+"correcte des pré-dépendances (voir le bogue Debian #526774). Veuillez noter que cette option provoquera la gestion de toutes les actions différées, pas seulement celles concernant le paquet en cours de traitement."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt.conf.5.xml:598
 msgid "PackageManager::UnpackAll"
-msgstr ""
+msgstr "PackageManager::UnpackAll"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:599
@@ -7073,11 +7084,14 @@ msgid ""
 "method is very experimental and needs further improvements before becoming "
 "really useful."
 msgstr ""
+"Cette option permet de ne trier les opérations de décompactage qu'en fonction de leur criticité (c'est à dire en ne considérant que les pré-dépendances) dans le cas où la configuration des paquets est différée pour n'être effectuée qu'à la fin par dpkg. Cette option est active par défaut, ce qui revient à la méthode traditionnelle où les opérations ont lieu "
+"en plusieurs étapes, selon l'ensemble des critères de tri. Bien que les deux méthodes existent même dans les versions, la méthode « <literal>OrderCritical</literal> » n'était pas utilisée. Elle doit donc être considérée comme très expérimentale et a besoin de nombreuses améliorations avant de devenir réellement utile. (Note du traducteur : la version "
+"originale de cette partie des pages de manuel est très confuse. Il est donc conseillé de s'y reporter en cas de doute car le contresens de traduction n'est pas exclu...)."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt.conf.5.xml:606
 msgid "OrderList::Score::Immediate"
-msgstr ""
+msgstr "OrderList::Score::Immediate"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para><literallayout>
 #: apt.conf.5.xml:614
@@ -7090,6 +7104,12 @@ msgid ""
 "\tPreDepends 50;\n"
 "};"
 msgstr ""
+"OrderList::Score {\n"
+"\tDelete 500;\n"
+"\tEssential 200;\n"
+"\tImmediate 10;\n"
+"\tPreDepends 50;\n"
+"};"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:607
@@ -7104,6 +7124,9 @@ msgid ""
 "change the scoring. The following example shows the settings with there "
 "default values.  <placeholder type=\"literallayout\" id=\"0\"/>"
 msgstr ""
+"Les paquets essentiels (et leurs dépendances) devraient être configurés après avoir été décompressés. Il est conseillé que cette opération ait lieu le plus tôt possible dans le processus de mise à jour car ces opérations de configuration nécessitent également <literal>DPkg::TriggersPending</literal>, ce qui peut conduire à l'exécution de certains actions "
+"différées qui ne sont pas nécessairement utiles. Les paquets essentiels obtiennent par défaut un score élevé mais le marqueur « immédiat » implique un score assez bas (par exemple un paquet qui comporte des prédépendances obtient un score plus élevé). Cette option et les options du même groupe permettent de modifier la façon d'attribuer un score. L'exemple "
+"ci-dessous indique ces réglages avec leurs valeurs par défaut. <placeholder type=\"literallayout\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:627
@@ -8800,10 +8823,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist>
 #: apt_preferences.5.xml:617
-#, fuzzy
 #| msgid "apt_preferences"
 msgid "&file-preferences;"
-msgstr "apt_preferences"
+msgstr "&file-preferences;"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml:623
@@ -8822,7 +8844,6 @@ msgstr "Liste des sources de paquets"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:34
-#, fuzzy
 #| msgid ""
 #| "The package resource list is used to locate archives of the package "
 #| "distribution system in use on the system. At this time, this manual page "
@@ -8841,7 +8862,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:39
-#, fuzzy
 #| msgid ""
 #| "The source list is designed to support any number of active sources and a "
 #| "variety of source media. The file lists one source per line, with the "
@@ -8861,11 +8881,11 @@ msgid ""
 "Universal Resource Locator, or URL. The rest of the line can be marked as a "
 "comment by using a #."
 msgstr ""
-"La liste des sources est conçue pour prendre en compte un nombre quelconque "
+"La liste des sources est conçue pour gérer un nombre quelconque "
 "de sources actives et différents média. Le fichier présente une source par "
 "ligne et la source préférée apparaît en premier. Le format de chaque ligne "
-"est : <literal>type uri args</literal>. Le premier élément, <literal>type</"
-"literal>, détermine le format des <literal>args</literal>.  <literal>uri</"
+"est : <literal>type uri paramètres</literal>. Le premier élément, <literal>type</"
+"literal>, détermine le format des <literal>paramètres</literal>.  <literal>uri</"
 "literal> est un identificateur universel de ressources (URI), qui est un sur-"
 "ensemble du plus spécifique et bien connu repère universel de ressources, ou "
 "URL. La fin de la ligne peut être un commentaire commençant par un caractère "
@@ -8901,7 +8921,6 @@ msgstr "Les types deb et deb-src."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:61
-#, fuzzy
 #| msgid ""
 #| "The <literal>deb</literal> type describes a typical two-level Debian "
 #| "archive, <filename>distribution/component</filename>. Typically, "
@@ -8929,14 +8948,13 @@ msgstr ""
 "literal>, <literal>unstable</literal>, ou <literal>testing</literal>, et "
 "composant : <literal>main</literal>, <literal>contrib</literal>, "
 "<literal>non-free</literal>, ou <literal>non-us</literal>.  Le type "
-"<literal>deb-src</literal> décrit le code source pour une distribution "
+"<literal>deb-src</literal> décrit une archive de distribution de code source pour une distribution "
 "Debian dans le même format que le type <literal>deb</literal>. Une ligne "
 "<literal>deb-src</literal> est nécessaire pour récupérer les index des "
 "sources."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:73
-#, fuzzy
 #| msgid ""
 #| "The format for a <filename>sources.list</filename> entry using the "
 #| "<literal>deb</literal> and <literal>deb-src</literal> types are:"
@@ -8945,7 +8963,7 @@ msgid ""
 "<literal>deb</literal> and <literal>deb-src</literal> types is:"
 msgstr ""
 "Le format d'une entrée dans <filename>sources.list</filename> utilisant les "
-"types <literal>deb</literal> et <literal>deb-src</literal> est de la forme :"
+"types <literal>deb</literal> et <literal>deb-src</literal> est :"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:76
@@ -8955,7 +8973,6 @@ msgstr "deb uri distribution [composant1] [composant2] [...]"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:78
-#, fuzzy
 #| msgid ""
 #| "The URI for the <literal>deb</literal> type must specify the base of the "
 #| "Debian distribution, from which APT will find the information it needs.  "
@@ -9091,7 +9108,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml:141
-#, fuzzy
 #| msgid ""
 #| "The http scheme specifies an HTTP server for the archive. If an "
 #| "environment variable <envar>http_proxy</envar> is set with the format "
@@ -9179,7 +9195,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: sources.list.5.xml:178
 msgid "more recongnizable URI types"
-msgstr ""
+msgstr "type d'URI les plus simples à reconnaître"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml:180
@@ -9193,6 +9209,9 @@ msgid ""
 "<citerefentry> <refentrytitle><filename>apt-transport-debtorrent</filename></"
 "refentrytitle> <manvolnum>1</manvolnum></citerefentry>."
 msgstr ""
+"APT peut être complété avec des méthodes supplémentaires fournies par des paquets optionnels dont le schéma de nommage est <literal>apt-transport-<replaceable>méthode</replaceable></literal>.  Ainsi, l'équipe de maintenance d'APT gère un paquet <literal>apt-transport-https</literal> qui gère les accès par URI de type https, avec des fonctionnalités analogues "
+"à la méthode http. D'autres méthodes telles que debtorrent sont aussi disponibles (voir <citerefentry> <refentrytitle><filename>apt-transport-debtorrent</filename></"
+"refentrytitle> <manvolnum>1</manvolnum></citerefentry>)."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:122
@@ -9274,7 +9293,6 @@ msgstr "deb ftp://ftp.debian.org/debian stable contrib"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:212
-#, fuzzy
 #| msgid ""
 #| "Uses FTP to access the archive at ftp.debian.org, under the debian "
 #| "directory, and uses only the unstable/contrib area. If this line appears "
@@ -9345,27 +9363,27 @@ msgstr "&apt-cache; &apt-conf;"
 #. type: <title></title>
 #: guide.sgml:4
 msgid "APT User's Guide"
-msgstr ""
+msgstr "Guide d'utilisation d'APT"
 
 #. type: <author></author>
 #: guide.sgml:6 offline.sgml:6
 msgid "<name>Jason Gunthorpe </name><email>jgg@debian.org</email>"
-msgstr ""
+msgstr "<name>Jason Gunthorpe </name><email>jgg@debian.org</email>"
 
 #. type: <version></version>
 #: guide.sgml:7
 msgid "$Id: guide.sgml,v 1.7 2003/04/26 23:26:13 doogie Exp $"
-msgstr ""
+msgstr "$Id: guide.sgml,v 1.7 2003/04/26 23:26:13 doogie Exp $"
 
 #. type: <abstract></abstract>
 #: guide.sgml:11
 msgid "This document provides an overview of how to use the the APT package manager."
-msgstr ""
+msgstr "Ce document fournit un aperçu des méthode d'utilisation du gestionnaire de paquets APT."
 
 #. type: <copyrightsummary></copyrightsummary>
 #: guide.sgml:15
 msgid "Copyright &copy; Jason Gunthorpe, 1998."
-msgstr ""
+msgstr "Copyright &copy; Jason Gunthorpe, 1998."
 
 #. type: <p></p>
 #: guide.sgml:21 offline.sgml:22
@@ -9374,7 +9392,7 @@ msgid ""
 "or modify them under the terms of the GNU General Public License as "
 "published by the Free Software Foundation; either version 2 of the License, "
 "or (at your option) any later version."
-msgstr ""
+msgstr "APT, ainsi que ce document, sont libres. Vous pouvez les redistribuer et les modifier en respectant les conditions de la licence publique générale GNU telle que publiée par la Free Software Foundation, en version 2 ou ultérieure."
 
 #. type: <p></p>
 #: guide.sgml:24 offline.sgml:25
@@ -9382,13 +9400,14 @@ msgid ""
 "For more details, on Debian GNU/Linux systems, see the file /usr/share/"
 "common-licenses/GPL for the full license."
 msgstr ""
+"Les détails complets de cette licence sont, sur les systèmes Debian GNU/Linux, consultables dans le fichier usr/share/"
+"common-licenses/GPL."
 
 #. type: <heading></heading>
 #: guide.sgml:32
-#, fuzzy
 #| msgid "generate"
 msgid "General"
-msgstr "generate"
+msgstr "Généralités"
 
 #. type: <p></p>
 #: guide.sgml:38
@@ -9398,11 +9417,13 @@ msgid ""
 "provide a way to install and remove packages as well as download new "
 "packages from the Internet."
 msgstr ""
+"Le paquet APT comporte actuellement deux parties : la méthode APT pour <prgn>dselect</"
+"prgn> et l'interface en ligne de commande <prgn>apt-get</prgn>. Les deux fournissent des méthodes d'installation et de suppression de paquets ainsi que de téléchargement de nouveaux paquets par Internet."
 
 #. type: <heading></heading>
 #: guide.sgml:39
 msgid "Anatomy of the Package System"
-msgstr ""
+msgstr "Anatomie du système de gestion des paquets"
 
 #. type: <p></p>
 #: guide.sgml:44
@@ -9410,7 +9431,7 @@ msgid ""
 "The Debian packaging system has a large amount of information associated "
 "with each package to help assure that it integrates cleanly and easily into "
 "the system. The most prominent of its features is the dependency system."
-msgstr ""
+msgstr "Le système de gestion de paquets de Debian intègre de nombreuses informations associées à chaque paquet afin de garantir qu'il s'intègre proprement et facilement sur le système. Une des fonctionnalités les plus immédiatement visibles est le système de gestion des dépendances."
 
 #. type: <p></p>
 #: guide.sgml:52
@@ -9421,6 +9442,8 @@ msgid ""
 "things the average user is required to install. Also, it allows for choices "
 "in mail transport agents, X servers and so on."
 msgstr ""
+"Le système de gestion des dépendances permet aux programmes de partage des éléments du système, tels que les bibliothèques de fonctions. Il permet d'isoler dans des paquets spécifiques certains parties moins utilisées des programmes afin de limiter le nombre d'éléments que l'utilisateur ordinaire a besoin d'installer. Ce système de gestion des dépendances "
+"permet également d'effectuer des choix parmi les divers agents de transport de courrier électronique, les serveurs X et d'autres cxomposants du système."
 
 #. type: <p></p>
 #: guide.sgml:57
@@ -9429,7 +9452,7 @@ msgid ""
 "concept of a simple dependency. The meaning of a simple dependency is that a "
 "package requires another package to be installed at the same time to work "
 "properly."
-msgstr ""
+msgstr "La première étape de compréhension de la gestion de dépendances est d'examiner le fonctionnement d'une dépendance simple. Une dépendance simple est le cas où un paquet donné a besoin qu'un autre paquet soit installé simultanément pour pouvoir fonctionner correctement."
 
 #. type: <p></p>
 #: guide.sgml:63
@@ -9438,7 +9461,7 @@ msgid ""
 "with GPG. Without GPGP installed mail-crypt is useless, so mailcrypt has a "
 "simple dependency on GPG. Also, because it is an emacs extension it has a "
 "simple dependency on emacs, without emacs it is completely useless."
-msgstr ""
+msgstr "Par example, mailcrypt est une extension à Emacs qui permet de gérer le courrier électronique chiffré avec GPG. Si GPG n'est pas installé, mailcrypt est inutile. Donc le paquet mailcrypt a une dépendance simple sur GPG. De plus, étant une extension à Emacs sans lequel il est totalement inutile, il a une dépendance simple sur emacs."
 
 #. type: <p></p>
 #: guide.sgml:73
@@ -9452,6 +9475,9 @@ msgid ""
 "system so all mail transport agents have a conflicting dependency with all "
 "other mail transport agents."
 msgstr ""
+"Un autre type de dépendance importante est la dépendance en conflit. Cela signifie qu'un paquet ne fonctionne pas lorsqu'il est installé en même temps qu'un autre paquet donné, ce qui peut même être dommageable pour le système. Un exemple est par exemple constitué par les agents de transport de courrier tels que sendmail, exim ou qmail. Il n'est pas possible "
+"d'installer deux agents de transport de courrier simultanément puisque les deux ont besoin d'être à l'écoute sur le réseau pour recevoir le courrier électronique. Installer deux programmes de ce type sur le même système pourrait conduire à des pertes de données, ce qui explique que tous les agents de transport de courrier électronique soient établis comme "
+"étant en conflit les uns avec les autres."
 
 #. type: <p></p>
 #: guide.sgml:83
@@ -9465,6 +9491,9 @@ msgid ""
 "depend on mail-transport-agent. This can add a great deal of confusion when "
 "trying to manually fix packages."
 msgstr ""
+"Il existe également la possibilité pour un paquet donné de prétendre être un autre paquet. Par exemple, exim et sendmail sont analogues sur de nombreux aspects ; ils servent tous deux à acheminer le courrier électronique et leur interface d'utilisation est la même. Pour cette raison, le système de gestion des paquets leur fournit la possibilité d'indiquer "
+"qu'ils sont chacun un agent de transport de courrier (« mail transport agent ») en indiquant qu'ils fournissent (« Provides ») « mail-transport-agent ». Ainsi, un paquet qui a besoin de cette fonctionnalité peut dépendre simplement d'un paquet « mail-transprot-agent ». Cette fonctionnalité utile peut toutefois rendre la correction de certains défauts des "
+"paquets plus complexe."
 
 #. type: <p></p>
 #: guide.sgml:88
@@ -9473,7 +9502,7 @@ msgid ""
 "already installed or it may not be. APT attempts to help resolve dependency "
 "issues by providing a number of automatic algorithms that help in selecting "
 "packages for installation."
-msgstr ""
+msgstr "À un instant donné, une dépendance donnée peut être ou pas remplie par des paquets installés ou pas encore installés. APT tente donc de résoudre les problèmes de dépendances par l'intermédiaire d'un certain nombre d'algorithmes automatiques qui simplifient le choix des paquets à installer."
 
 #. type: <p></p>
 #: guide.sgml:102
@@ -9482,7 +9511,7 @@ msgid ""
 "command line. Unlike <prgn>dpkg</prgn>, <prgn>apt-get</prgn> does not "
 "understand .deb files, it works with the package's proper name and can only "
 "install .deb archives from a <em>Source</em>."
-msgstr ""
+msgstr "Le programme <prgn>apt-get</prgn> offre une méthode simple pour installer des paquets à la ligne de commande. À la différence de <prgn>dpkg</prgn>, <prgn>apt-get</prgn> ne gère pas directement les fichiers .deb files. Il travaille avec le nom des paquets et ne peut installer les archives .deb que depuis une <em>Source</em>."
 
 #. type: <p></p>
 #: guide.sgml:109
@@ -9494,6 +9523,8 @@ msgid ""
 "packages are available. This is done with <tt>apt-get update</tt>. For "
 "instance,"
 msgstr ""
+"La première action <footnote><p>Si vous utilisez un serveur mandataire (« proxy ») HTTP, vous devez d'abord positionner la variable d'environnement http_proxy, voir sources.list(5)</p></"
+"footnote> à effectuer avant d'utiliser <prgn>apt-get</prgn> est de récupérer les listes de paquets depuis les <em>Sources</em> afin que le programme sache quels sont les paquets disponibles. Cela peut être effectué avec la commande <tt>apt-get update</tt>. Par exemple,"
 
 #. type: <example></example>
 #: guide.sgml:116
@@ -9505,11 +9536,16 @@ msgid ""
 "Reading Package Lists... Done\n"
 "Building Dependency Tree... Done"
 msgstr ""
+"# apt-get update\n"
+"Réception de http://ftp.de.debian.org/debian-non-US/ stable/binary-i386/ Packages\n"
+"Réception de http://llug.sep.bnl.gov/debian/ testing/contrib Packages\n"
+"Lecture des listes de paquets... Fait\n"
+"Construction de l'arbre des dépendances... Fait"
 
 #. type: <p><taglist>
 #: guide.sgml:120
 msgid "Once updated there are several commands that can be used:"
-msgstr ""
+msgstr "Une fois cette mise à jour effectuée, plusieurs commandes peuvent être utilisées :"
 
 #. type: <p></p>
 #: guide.sgml:131
@@ -9522,6 +9558,9 @@ msgid ""
 "on new packages or conflict with some other package. <prgn>dselect</prgn> or "
 "<tt>apt-get install</tt> can be used to force these packages to install."
 msgstr ""
+"La commande « upgrade » permet de mettre à jour le système de manière non invasive. Cette commande ne provoquera jamais l'installation de nouveaux paquets ou la suppression de paquets existants. Elle ne déclenchera pas non plus la mise à jour d'un paquet si celle-ci casse le fonctionnement d'un autre paquet. Cette commande peut être utilisé par exemple "
+"quotidiennement pour mettre à jour le système de manière relativement sûre. Lorsqu'elle est utilisée, la liste des paquets qui ne peuvent être mis à jour sera affichée. Cela est en général du au fait qu'ils dépendent de nouveaux paquets ou qu'ils entrent en conflit avec d'autres paquets. Le programme <prgn>dselect</prgn> ou la commande <tt>apt-get install</tt>"
+" peuvet être utilisés pour forcer l'installation de tels paquets."
 
 #. type: <p></p>
 #: guide.sgml:140
@@ -9534,6 +9573,8 @@ msgid ""
 "listed packages and will print a summary and ask for confirmation if "
 "anything other than its arguments are changed."
 msgstr ""
+"La commande « install » permet d'installer des paquets par nom. Le paquet à installer est automatiquement récupéré et installé. Cela est utile lorsque le nom du paquet à installer est déjà connu et que l'on ne souhaite pas passer par une interface graphique pour le choisir. Un nombre quelconque de paquets peuvent être demandés à être installés ;  ils seront "
+"alors tous récupérés. La commande « install » résout automatiquement les problèmes de dépendances pour les paquets concernés, puis affiche un résumé avant de demander une confirmation si des actions autres que ce qui est demandé à la ligne de commande sont nécessaires."
 
 #. type: <p></p>
 #: guide.sgml:149
@@ -9546,13 +9587,15 @@ msgid ""
 "<prgn>dselect</prgn>. Once dist-upgrade has completed then <prgn>dselect</"
 "prgn> can be used to install any packages that may have been left out."
 msgstr ""
+"La commande « dist-upgrade » est une commande de mise à jour complète d'abord destinés à permettre les mises à jour entre deux versions successives de la distribution. Via un algorithme complexe, le meilleur jeu de paquets à installer, mettre à jour ou supprimer est déterminé dans le but d'amener une majorité du système vers la nouvelle version. Dans certains "
+"cas, il peut être judicieux d'utiliser « dist-upgrade » plutôt que de chercher à résoudre manuellement les dépendances avec <prgn>dselect</prgn>. Une fois que « dist-upgrade » a été utilisé, <prgn>dselect</prgn> peut servir à installer les paquets qui auraient pu être laissés de côté."
 
 #. type: <p></p>
 #: guide.sgml:152
 msgid ""
 "It is important to closely look at what dist-upgrade is going to do, its "
 "decisions may sometimes be quite surprising."
-msgstr ""
+msgstr "Il est important de regarder de près ce que « dist-upgrade » car ses décisions peuvent parfois apparaître surprenantes."
 
 #. type: <p></p>
 #: guide.sgml:163
@@ -9565,13 +9608,14 @@ msgid ""
 "the downloaded archives can be installed by simply running the command that "
 "caused them to be downloaded again without <tt>-d</tt>."
 msgstr ""
+"<prgn>apt-get</prgn> fournit de nombreuses options de ligne de commande qui sont expliquées en détail dans sa page de manuel, <manref section=\"8\" name=\"apt-get\">. Une des plus utiles est l'option <tt>-d</tt> qui récupère sans les installer les fichiers nécessaires. Si le système a besoin de télécharger un grand nombre de paquets, il est par exemple "
+"souhaitable de pouvoir simplement les récupérer sans les installer immédiatement, au cas où quelque chose se passe mal. Une fois que <tt>-d</tt> a été utilisé, il est possible d'installer les archives téléchargées en exécutant simplement la commande qui a permis de les récupérer, sans l'option <tt>-d</tt>."
 
 #. type: <heading></heading>
 #: guide.sgml:168
-#, fuzzy
 #| msgid "APT in DSelect"
 msgid "DSelect"
-msgstr "APT et DSelect"
+msgstr "DSelect"
 
 #. type: <p></p>
 #: guide.sgml:173
@@ -9580,7 +9624,7 @@ msgid ""
 "the <prgn>dselect</prgn> package selection GUI. <prgn>dselect</prgn> is used "
 "to select the packages to be installed or removed and APT actually installs "
 "them."
-msgstr ""
+msgstr "La méthode APT de <prgn>dselect</prgn> permet d'utiliser le système APT dans son ensemble depuis l'interface graphique de gestion des paquets <prgn>dselect</prgn>. L'interface est alors utilisée pour choisir les paquets à installer ou supprimer et c'est APT qui effectue les opérations individuelles d'installation ou suppression."
 
 #. type: <p></p>
 #: guide.sgml:184
@@ -9595,6 +9639,9 @@ msgid ""
 "have access to the latest bug fixes. APT will automatically use packages on "
 "your CDROM before downloading from the Internet."
 msgstr ""
+"Pou ractiver la méthode APT, il est nécessaire de choisir [A]ccéder dans <prgn>dselect</"
+"prgn> puis utiliser le choix permettant d'activer APT. Des <em>Sources</em> d'installation seront demandées, qui sont les emplacements d'où les paquets seront récupérés. Cela peut être des sites Internet distants, des miroirs locaux ou des CD. Chaque source peut fournir un sous-ensemble de l'archive complète Debian. APT les combinera automatiquement pour "
+"créer un jeu complet de paquets. Avec des supports de type CD, il est conseillé de les indiquer en premier puis de les compléter avec un miroir distant qui permettra d'obtenir les versions les plus à jour s'il y en a. APT utilisera alors les paquets disponibles sur les CD avant de les télécharger via l'Internet."
 
 #. type: <example></example>
 #: guide.sgml:198
@@ -9613,6 +9660,18 @@ msgid ""
 "      \n"
 " URL [http://llug.sep.bnl.gov/debian]:"
 msgstr ""
+"  Réglage de a liste des emplacements sources de distribution\n"
+"\t \n"
+" Veuillez indiquer l'URL de base de la  distribution Debian.\n"
+" Les schémas d'accès connus sont : http file\n"
+"\t   \n"
+" Exemple:\n"
+"      file:/mnt/debian,\n"
+"      ftp://ftp.debian.org/debian,\n"
+"      http://ftp.de.debian.org/debian,\n"
+"      \n"
+"      \n"
+" URL [http://llug.sep.bnl.gov/debian]:"
 
 #. type: <p></p>
 #: guide.sgml:205
@@ -9620,7 +9679,7 @@ msgid ""
 "The <em>Sources</em> setup starts by asking for the base of the Debian "
 "archive, defaulting to a HTTP mirror. Next it asks for the distribution to "
 "get."
-msgstr ""
+msgstr "La configuration des <em>Sources</em> débute par l'indication de la base de l'archive Debian, par défaut un miroir HTTP. Puis la distribution est demandée."
 
 #. type: <example></example>
 #: guide.sgml:212
@@ -9632,6 +9691,12 @@ msgid ""
 "   \n"
 " Distribution [stable]:"
 msgstr ""
+" Veuillez indiquer le nom de la distribution à utiliser ou\n"
+" le chemin d'accès au fichier des paquets, terminé par un /.\n"
+" Les noms de distribution sont en général de la forme suivante :\n"
+" stable unstable testing non-US\n"
+"   \n"
+" Distribution [stable] :"
 
 #. type: <p></p>
 #: guide.sgml:222
@@ -9643,6 +9708,8 @@ msgid ""
 "that cannot be exported from the United States. Importing these packages "
 "into the US is legal however."
 msgstr ""
+"La distribution fait référence à la version de Debian dans l'archive. <em>stable</em> est la dernière version publiée et <em>unstable</em> la version en développement. <em>non-US</em> n'est disponible que sur certains miroirs et fait référence à des paquets contenant des technologies de chiffrement et d'autres élements dont l'exportation est interdite depuis "
+"les États-Unis d'Amérique. Il est toutefois autorisé de les y importer. [Note du traducteur : à la date de cette traduction, 2010, cette notion est totalement obsolète]."
 
 #. type: <example></example>
 #: guide.sgml:228
@@ -9653,6 +9720,11 @@ msgid ""
 "  \n"
 " Components [main contrib non-free]:"
 msgstr ""
+" Veuillez indiquer les composants à utiliser\n"
+" Les composants sont en général de la forme suivante\ :\n"
+" main contrib non-free\n"
+"  \n"
+" Composants [main contrib non-free] :"
 
 #. type: <p></p>
 #: guide.sgml:236
@@ -9662,13 +9734,15 @@ msgid ""
 "packages while contrib and non-free contain things that have various "
 "restrictions placed on their use and distribution."
 msgstr ""
+"La liste des composants correspond à la liste des sous-ensemble de la distribution que l'on souhaite utiliser. Les distributions sont en général divisées ainsi pour des raisons de licences. La sous-distribution « main » comporte les paquets libre selon les principes du logiciel libre selon Debian (DFSG) alors que contrib et non-free correspondent à des "
+"éléments qui comprennent des restrictions de distribution ou d'utilisation."
 
 #. type: <p></p>
 #: guide.sgml:240
 msgid ""
 "Any number of sources can be added, the setup script will continue to prompt "
 "until you have specified all that you want."
-msgstr ""
+msgstr "Un nombre quelconque de sources peuvent être ajoutées. Le script de configuration continuera à les demander tant que vous n'indiquerez pas que le processus est terminé."
 
 #. type: <p></p>
 #: guide.sgml:247
@@ -9679,6 +9753,8 @@ msgid ""
 "<prgn>dselect</prgn>. [U]pdate must be performed even if <tt>apt-get update</"
 "tt> has been run before."
 msgstr ""
+"Avant d'utiliser <prgn>dselect</prgn>, il est nécessaire de mettre à jour la liste de ce qui est disponible en choisissant « [M]ise à jour » depuis le menu. Cette action exécutera la commande « apt-get update », ce qui rendra les informations récupérées disponibles pour <prgn>dselect</prgn>. Elle doit être utilisée même si la commande « apt-get » a déjà été "
+"utilisée sur ce système."
 
 #. type: <p></p>
 #: guide.sgml:253
@@ -9687,7 +9763,7 @@ msgid ""
 "the installation using [I]nstall. When using the APT method the [C]onfig and "
 "[R]emove commands have no meaning, the [I]nstall command performs both of "
 "them together."
-msgstr ""
+msgstr "Une fois cela effectué, vous pouvez poursuivre et utiliser l'option « [S]électionner » pour choisir les paquets à installer puis « [I]nstaller » pour les installer. Lorsque la méthode APT est utilisée, les options « [C]onfigurer » et « [R]etirer » ne sont pas utilisées, car « [I]nstaller » fait l'ensemble des opérations."
 
 #. type: <p></p>
 #: guide.sgml:258
@@ -9696,11 +9772,13 @@ msgid ""
 "have been successfully installed. To change this behavior place <tt>Dselect::"
 "clean \"prompt\";</tt> in /etc/apt/apt.conf."
 msgstr ""
+"Par défait, APT supprimera automatiquement les fichiers des paquets (fichiers .deb) une fois qu'ils ont été installés correctement. Pour modifier ce comportement, vous pouvez utiliser <tt>Dselect::"
+"clean \"prompt\";</tt> dans /etc/apt/apt.conf."
 
 #. type: <heading></heading>
 #: guide.sgml:264
 msgid "The Interface"
-msgstr ""
+msgstr "L'interface"
 
 #. type: <p></p>
 #: guide.sgml:278
@@ -9714,11 +9792,13 @@ msgid ""
 "then will print out some informative status messages so that you can "
 "estimate how far along it is and how much is left to do."
 msgstr ""
+"La méthode APT de <prgn>dselect</prgn> et le programme <prgn>apt-get</prgn> utilisent la même interface. Elle consiste en un système simple qui indique les opérations qui seront effectuées puis les réalise.<footnote><p>La méthode <prgn>dselect</prgn> consiste en fait en un jeu de scripts qui encapsulent <prgn>apt-get</prgn>. Cela approte des fonctionnalités "
+"supplémentaires à celles d'<prgn>apt-get</prgn> utilisé isolément.</p></footnote> Après avoir indiqué un résumé des opérations qui seront effectuées, APT donnera un certain nombre d'informations permettant d'estimer sa progression, tout au long des actions qu'il effectue. "
 
 #. type: <heading></heading>
 #: guide.sgml:280
 msgid "Startup"
-msgstr ""
+msgstr "Démarrage"
 
 #. type: <p></p>
 #: guide.sgml:284
@@ -9727,7 +9807,7 @@ msgid ""
 "prepare its internal state. It also does some checks of the system's state. "
 "At any time these operations can be performed by running <tt>apt-get check</"
 "tt>."
-msgstr ""
+msgstr "Avant toute opération autre qu'une mise à jour, APT effectue un certain nombre d'actions pour préparer ses mécaismes internes de fonctionnement. Il vérifie également l'état du système. Ces opérations peuvent être effectuées isolément avec la commande  <tt>apt-get check</tt>."
 
 #. type: <example></example>
 #: guide.sgml:289
@@ -9737,6 +9817,9 @@ msgid ""
 "Reading Package Lists... Done\n"
 "Building Dependency Tree... Done"
 msgstr ""
+"# apt-get check\n"
+"Lecture de la liste des paquets... Fait\n"
+"Construction de l'arbre des dépendances... Fait"
 
 #. type: <p></p>
 #: guide.sgml:297
@@ -9745,7 +9828,7 @@ msgid ""
 "a caching scheme so this operation will be faster the second time it is run. "
 "If some of the package files are not found then they will be ignored and a "
 "warning will be printed when apt-get exits."
-msgstr ""
+msgstr "En premier lieu, la liste des paquets est lue et placée en mémoire. APT utilise un mécanisme de cache et cette opération sera plus rapide si elle est effectuée une deuxième fois.Si certains des fichiers de paquets ne sont pas trouvés, ils seront ignorés et une informatique sera affichée quand apt-get se terminera."
 
 #. type: <p></p>
 #: guide.sgml:303
@@ -9754,7 +9837,7 @@ msgid ""
 "dependencies. It checks every dependency of every installed or unpacked "
 "package and considers if it is OK. Should this find a problem then a report "
 "will be printed out and <prgn>apt-get</prgn> will refuse to run."
-msgstr ""
+msgstr "Ensuite, une analyse détaillée des dépendances du système est réalisée. Les dépendances de chaque paquet installé ou décompressé sont vérifiées. Si un problème est trouvé, il sera affiché et <prgn>apt-get</prgn> bloquera des opérations ultérieures."
 
 #. type: <example></example>
 #: guide.sgml:320
@@ -9776,6 +9859,21 @@ msgid ""
 "           Depends: xlib6g (>= 3.3-5) but it is not installed\n"
 "  libreadlineg2: Conflicts:libreadline2 (<< 2.1-2.1)"
 msgstr ""
+"# apt-get check\n"
+"Lecture de la liste des paquets... Fait\n"
+"Construction de l'arbre des dépendances.. Fait\n"
+"Vous pouvez lancer « apt-get -f install » pour corriger ces problèmes.\n"
+"Les paquets suivants contiennent des dépendances non satisfaites :\n"
+"  9fonts: Depends: xlib6g mais il n'est pas installé\n"
+"  uucp: Depends: mailx mais il n'est pas installé\n"
+"  blast: Depends: xlib6g (>= 3.3-5) mais il n'est pas installé\n"
+"  adduser: Depends: perl-base mais il n'est pas installé\n"
+"  aumix: Depends: libgpmg1 mais il n'est pas installé\n"
+"  debiandoc-sgml: Depends: sgml-base mais il n'est pas installé\n"
+"  bash-builtins: Depends: bash (>= 2.01) but 2.0-3 is installed\n"
+"  cthugha: Depends: svgalibg1 mais il n'est pas installé\n"
+"           Depends: xlib6g (>= 3.3-5) mais il n'est pas installé\n"
+"  libreadlineg2: Conflicts:libreadline2 (<< 2.1-2.1)"
 
 #. type: <p></p>
 #: guide.sgml:329
@@ -9785,7 +9883,7 @@ msgid ""
 "printed out indicating the package with the problem and the dependencies "
 "that are unmet. A short explanation of why the package has a dependency "
 "problem is also included."
-msgstr ""
+msgstr "Dans cet exemple, le système comporte plusieurs problèmes, notamment un problème sérieux avec libreadline2g. Une ligne est affichée pour chaque paquet dont les dépendances ne sont pas satisfaites, indiquant quel est le problème. Une explication simple du problème est donnée."
 
 #. type: <p></p>
 #: guide.sgml:337
@@ -9798,6 +9896,8 @@ msgid ""
 "situation a package may have been unpacked without its dependents being "
 "installed."
 msgstr ""
+"Il existe deux façons pour le système d'aboutir à cet état. Cela peut d'abord être causé par des subtilités de relations entre les paquets que <prgn>dpkg</prgn> aurait manquées lors de mises à jour. <footnote><p>Cependant, APT prend en compte les dépendances connues et s'efforce d'éviter que cette situation ne se produise</p></footnote>. Cela peut également "
+"être dû à l'échec antérieur d'une installation de paquet. Dans le cas présent, un paquet a pu être décompressé sans que ses dépendances ne soient satisfaites."
 
 #. type: <p></p>
 #: guide.sgml:345
@@ -9809,6 +9909,8 @@ msgid ""
 "<prgn>dselect</prgn> method always supplies the <tt>-f</tt> option to allow "
 "for easy continuation of failed maintainer scripts."
 msgstr ""
+"La seconde situation est moins grave que la première car APT met certaines contraintes sur l'ordre d'installation des paquets. Dans les deux cas, l'option  <tt>-f</tt> utilisée avec <prgn>apt-get</prgn> conduira APT à rechercher une solution possible puis à continuer. La méthode APT de <prgn>dselect</prgn> utilise toujours cette option <tt>-f</tt> afin de "
+"pouvoir poursuivre plus facilement ses opérations si un script de mainteneur échoue de manière inopinée."
 
 #. type: <p></p>
 #: guide.sgml:351
@@ -9819,6 +9921,8 @@ msgid ""
 "necessary to manually use dpkg (possibly with forcing options) to correct "
 "the situation enough to allow APT to proceed."
 msgstr ""
+"Cependant, si l'option <tt>-f</tt> est utilisée pour corriger un système fortement corrompu qui est dans le premier cas, il est possible que l'opération échoue immédiatement ou au cours des diverses tentatives de réparation effectuées. Dans tous les cas, il peut être nécessaire de corriger la situation manuellement avec dpkg (éventuellement en utilisant des "
+"options pour forcer certains opérations) avant de pouvoir utiliser à nouveau APT."
 
 #. type: <heading></heading>
 #: guide.sgml:356
@@ -10117,14 +10221,13 @@ msgstr ""
 #. type: <heading></heading>
 #: offline.sgml:32
 msgid "Introduction"
-msgstr ""
+msgstr "Introduction"
 
 #. type: <heading></heading>
 #: offline.sgml:34 offline.sgml:65 offline.sgml:180
-#, fuzzy
 #| msgid "OverrideDir"
 msgid "Overview"
-msgstr "OverrideDir"
+msgstr "Aperçu"
 
 #. type: <p></p>
 #: offline.sgml:40
@@ -10188,10 +10291,9 @@ msgstr ""
 
 #. type: <heading></heading>
 #: offline.sgml:88
-#, fuzzy
 #| msgid "User configuration"
 msgid "The configuration file"
-msgstr "Configuration utilisateur"
+msgstr "Le fichier de configuration"
 
 #. type: <p></p>
 #: offline.sgml:96
@@ -10336,10 +10438,9 @@ msgstr ""
 
 #. type: <heading></heading>
 #: offline.sgml:196
-#, fuzzy
 #| msgid "Options"
 msgid "Operation"
-msgstr "Options"
+msgstr "Fonctionnement"
 
 #. type: <p><example>
 #: offline.sgml:200
