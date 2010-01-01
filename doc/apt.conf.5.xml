@@ -166,10 +166,10 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      longer guaranteed to work as their dependency on A is not longer satisfied. The immediate configuration marker
      is also applied to all dependencies which can generate a problem if the dependencies e.g. form a circle
      as a dependency with the immediate flag is comparable with a Pre-Dependency. So in theory it is possible
-     that APT encounters a situation in which it is unable to perform immediate configuration, error out and
-     refers to this option so the user can deactivate the immediate configuration temporary to be able to perform
+     that APT encounters a situation in which it is unable to perform immediate configuration, errors out and
+     refers to this option so the user can deactivate the immediate configuration temporarily to be able to perform
      an install/upgrade again. Note the use of the word "theory" here as this problem was only encountered by now
-     in real world a few times in non-stable distribution versions and caused by wrong dependencies of the package
+     in real world a few times in non-stable distribution versions and was caused by wrong dependencies of the package
      in question or by a system in an already broken state, so you should not blindly disable this option as
      the mentioned scenario above is not the only problem immediate configuration can help to prevent in the first place.
      Before a big operation like <literal>dist-upgrade</literal> is run with this option disabled it should be tried to
@@ -396,7 +396,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <varlistentry><term>Languages</term>
      <listitem><para>The Languages subsection controls which <filename>Translation</filename> files are downloaded
      and in which order APT tries to display the Description-Translations. APT will try to display the first
-     available Description for the Language which is listed at first. Languages can be defined with their
+     available Description in the Language which is listed at first. Languages can be defined with their
      short or long Languagecodes. Note that not all archives provide <filename>Translation</filename>
      files for every Language - especially the long Languagecodes are rare, so please
      inform you which ones are available before you set here impossible values.</para>
@@ -407,7 +407,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      To force apt to use no Translation file use the setting <literal>Acquire::Languages=none</literal>. "<literal>none</literal>"
      is another special meaning code which will stop the search for a fitting <filename>Translation</filename> file.
      This can be used by the system administrator to let APT know that it should download also this files without
-     actually use them if not the environment specifies this languages. So the following example configuration will
+     actually use them if the environment doesn't specify this languages. So the following example configuration will
      result in the order "en, de" in an english and in "de, en" in a german localization. Note that "fr" is downloaded,
      but not used if APT is not used in a french localization, in such an environment the order would be "fr, de, en".
      <programlisting>Acquire::Languages { "environment"; "de"; "en"; "none"; "fr"; };</programlisting></para></listitem>
