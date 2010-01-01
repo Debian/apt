@@ -8,7 +8,7 @@ include ../buildlib/defaults.mak
 
 # Debian Doc SGML Documents
 SOURCE = $(wildcard *.sgml)
-DEBIANDOC_HTML_OPTIONS=-l en
+DEBIANDOC_HTML_OPTIONS=-l en.UTF-8
 include $(DEBIANDOC_H)
 
 # Do not use XMLTO, build the manpages directly with XSLTPROC
