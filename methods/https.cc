@@ -151,6 +151,13 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       default_verify = 0;
    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verify);
 
+   // Also enforce issuer of server certificate using its cert
+   string issuercert = _config->Find("Acquire::https::IssuerCert","");
+   knob = "Acquire::https::"+remotehost+"::IssuerCert";
+   issuercert = _config->Find(knob.c_str(),issuercert.c_str());
+   if(issuercert != "")
+      curl_easy_setopt(curl, CURLOPT_ISSUERCERT,issuercert.c_str());
+
    // For client authentication, certificate file ...
    string pem = _config->Find("Acquire::https::SslCert","");
    knob = "Acquire::https::"+remotehost+"::SslCert";
@@ -176,6 +183,13 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    else if(sslversion == "SSLv3")
      final_version = CURL_SSLVERSION_SSLv3;
    curl_easy_setopt(curl, CURLOPT_SSLVERSION, final_version);
+
+   // CRL file
+   string crlfile = _config->Find("Acquire::https::CrlFile","");
+   knob = "Acquire::https::"+remotehost+"::CrlFile";
+   crlfile = _config->Find(knob.c_str(),crlfile.c_str());
+   if(crlfile != "")
+      curl_easy_setopt(curl, CURLOPT_CRLFILE, crlfile.c_str());
 
    // cache-control
    if(_config->FindB("Acquire::https::No-Cache",
