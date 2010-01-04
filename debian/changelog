@@ -41,6 +41,10 @@ apt (0.7.26) UNRELEASED; urgency=low
       the keyring so we don't need to ship our own version
   * cmdline/apt-key:
     - errors out if wget is not installed (Closes: #545754)
+    - add --keyring option as we have now possibly many
+  * methods/gpgv.cc:
+    - pass all keyrings (TrustedParts) to gpgv instead of
+      using only one trusted.gpg keyring (Closes: #304846)
 
  -- Michael Vogt <mvo@debian.org>  Thu, 10 Dec 2009 22:02:38 +0100
 

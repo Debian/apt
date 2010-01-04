@@ -90,11 +90,6 @@ APT
      TrustCDROM "false";            // consider the CDROM always trusted
   };
 
-  GPGV
-  {
-     TrustedKeyring "/etc/apt/trusted.gpg";
-  };
-
   // Some general options
   Ignore-Hold "false";
   Clean-Installed "true";
@@ -320,6 +315,8 @@ Dir "/"
      SourceParts "sources.list.d";
      VendorList "vendors.list";
      VendorParts "vendors.list.d";
+     Trusted "trusted.gpg";
+     TrustedParts "trusted.gpg.d";
   };
   
   // Locations of binaries

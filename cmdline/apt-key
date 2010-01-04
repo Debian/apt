@@ -5,10 +5,8 @@ unset GREP_OPTIONS
 
 # We don't use a secret keyring, of course, but gpg panics and
 # implodes if there isn't one available
-
 GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring /etc/apt/secring.gpg --trustdb-name /etc/apt/trustdb.gpg"
-GPG="$GPG_CMD --keyring /etc/apt/trusted.gpg"
-
+GPG="$GPG_CMD"
 
 MASTER_KEYRING=""
 ARCHIVE_KEYRING_URI=""
@@ -115,7 +113,7 @@ update() {
 
 
 usage() {
-    echo "Usage: apt-key [command] [arguments]"
+    echo "Usage: apt-key [--keyring file] [command] [arguments]"
     echo
     echo "Manage apt's list of trusted keys"
     echo
@@ -129,7 +127,38 @@ usage() {
     echo "  apt-key finger              - list fingerprints"
     echo "  apt-key adv                 - pass advanced options to gpg (download key)"
     echo
+    echo "If no specific keyring file is given the command applies to all keyring files."
 }
+
+# Determine on which keyring we want to work
+if [ "$1" = "--keyring" ]; then
+	echo "keyfile given"
+	shift
+	TRUSTEDFILE="$1"
+	if [ -r "$TRUSTEDFILE" ]; then
+		GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
+	else
+		echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"
+		exit 1
+	fi
+	shift
+else
+	echo "generate list"
+	TRUSTEDFILE="/etc/apt/trusted.gpg"
+	if [ -r "$TRUSTEDFILE" ]; then
+		GPG="$GPG --keyring $TRUSTEDFILE"
+	fi
+	GPG="$GPG --primary-keyring $TRUSTEDFILE"
+	TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
+	if [ -d "$TRUSTEDPARTS" ]; then
+		echo "parts active"
+		for trusted in $(run-parts --list $TRUSTEDPARTS --regex '^.*\.gpg$'); do
+			echo "part -> $trusted"
+			GPG="$GPG --keyring $trusted"
+		done
+	fi
+fi
+echo "COMMAND: $GPG"
 
 command="$1"
 if [ -z "$command" ]; then
