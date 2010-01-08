@@ -22,14 +22,8 @@
 #include <apti18n.h>
 
 #include <vector>
-#include <algorithm>
 #include <fstream>
 #include <iostream>
-    
-#include <stdio.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 using namespace std;
 									/*}}}*/
@@ -835,39 +829,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 // ReadConfigDir - Read a directory of config files			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ReadConfigDir(Configuration &Conf,const string &Dir,bool AsSectional,
-		   unsigned Depth)
-{   
-   DIR *D = opendir(Dir.c_str());
-   if (D == 0)
-      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
-
-   vector<string> List;
-   
-   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
-   {
-      if (Ent->d_name[0] == '.')
-	 continue;
-      
-      // Skip bad file names ala run-parts
-      const char *C = Ent->d_name;
-      for (; *C != 0; C++)
-	 if (isalpha(*C) == 0 && isdigit(*C) == 0 && *C != '_' && *C != '-')
-	    break;
-      if (*C != 0)
-	 continue;
-      
-      // Make sure it is a file and not something else
-      string File = flCombine(Dir,Ent->d_name);
-      struct stat St;
-      if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
-	 continue;
-      
-      List.push_back(File);      
-   }   
-   closedir(D);
-   
-   sort(List.begin(),List.end());
+{
+   vector<string> const List = GetListOfFilesInDir(Dir, "", true);
 
    // Read the files
    for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)

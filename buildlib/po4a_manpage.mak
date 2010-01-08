@@ -57,5 +57,5 @@ endif
 
 # Debian Doc SGML Documents
 SOURCE := $(wildcard *.$(LC).sgml)
-DEBIANDOC_HTML_OPTIONS=-l $(LC)
+DEBIANDOC_HTML_OPTIONS=-l $(LC).UTF-8
 include $(DEBIANDOC_H)

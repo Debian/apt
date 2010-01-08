@@ -166,10 +166,10 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      longer guaranteed to work as their dependency on A is not longer satisfied. The immediate configuration marker
      is also applied to all dependencies which can generate a problem if the dependencies e.g. form a circle
      as a dependency with the immediate flag is comparable with a Pre-Dependency. So in theory it is possible
-     that APT encounters a situation in which it is unable to perform immediate configuration, error out and
-     refers to this option so the user can deactivate the immediate configuration temporary to be able to perform
+     that APT encounters a situation in which it is unable to perform immediate configuration, errors out and
+     refers to this option so the user can deactivate the immediate configuration temporarily to be able to perform
      an install/upgrade again. Note the use of the word "theory" here as this problem was only encountered by now
-     in real world a few times in non-stable distribution versions and caused by wrong dependencies of the package
+     in real world a few times in non-stable distribution versions and was caused by wrong dependencies of the package
      in question or by a system in an already broken state, so you should not blindly disable this option as
      the mentioned scenario above is not the only problem immediate configuration can help to prevent in the first place.
      Before a big operation like <literal>dist-upgrade</literal> is run with this option disabled it should be tried to
@@ -221,7 +221,14 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <varlistentry><term>PDiffs</term>
 	 <listitem><para>Try to download deltas called <literal>PDiffs</literal> for
 	 Packages or Sources files instead of downloading whole ones. True
-	 by default.</para></listitem>
+	 by default.</para>
+	 <para>Two sub-options to limit the use of PDiffs are also available:
+	 With <literal>FileLimit</literal> can be specified how many PDiff files
+	 are downloaded at most to patch a file. <literal>SizeLimit</literal>
+	 on the other hand is the maximum precentage of the size of all patches
+	 compared to the size of the targeted file. If one of these limits is
+	 exceeded the complete file is downloaded instead of the patches.
+	 </para></listitem>
      </varlistentry>
 
      <varlistentry><term>Queue-Mode</term>

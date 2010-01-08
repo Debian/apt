@@ -96,10 +96,10 @@ AC_MSG_RESULT($archset)
 AC_DEFINE_UNQUOTED(COMMON_ARCH,"$archset")
 
 dnl We use C99 types if at all possible
-AC_CACHE_CHECK([for C99 integer types],c9x_ints,[
+AC_CACHE_CHECK([for C99 integer types],apt_cv_c9x_ints,[
     AC_TRY_COMPILE([#include <inttypes.h>],
                    [uint8_t Foo1;uint16_t Foo2;uint32_t Foo3;],
-		   c9x_ints=yes,c9x_ints=no)])
+		   apt_cv_c9x_ints=yes,apt_cv_c9x_ints=no)])
 
 dnl Single Unix Spec statvfs
 AC_CHECK_FUNC(statvfs,[HAVE_STATVFS=yes])
@@ -150,7 +150,7 @@ AC_C_BIGENDIAN
    
 dnl We do not need this if we have inttypes!
 HAVE_C9X=yes
-if test x"$c9x_ints" = x"no"; then
+if test x"$apt_cv_c9x_ints" = x"no"; then
    AC_CHECK_SIZEOF(char,$size_char)
    AC_CHECK_SIZEOF(int,$size_int)
    AC_CHECK_SIZEOF(short,$size_short)

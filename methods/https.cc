@@ -133,7 +133,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    string cainfo = _config->Find("Acquire::https::CaInfo","");
    string knob = "Acquire::https::"+remotehost+"::CaInfo";
    cainfo = _config->Find(knob.c_str(),cainfo.c_str());
-   if(cainfo != "")
+   if(cainfo.empty() == false)
       curl_easy_setopt(curl, CURLOPT_CAINFO,cainfo.c_str());
 
    // Check server certificate against previous CA list ...
@@ -151,18 +151,25 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       default_verify = 0;
    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verify);
 
+   // Also enforce issuer of server certificate using its cert
+   string issuercert = _config->Find("Acquire::https::IssuerCert","");
+   knob = "Acquire::https::"+remotehost+"::IssuerCert";
+   issuercert = _config->Find(knob.c_str(),issuercert.c_str());
+   if(issuercert.empty() == false)
+      curl_easy_setopt(curl, CURLOPT_ISSUERCERT,issuercert.c_str());
+
    // For client authentication, certificate file ...
    string pem = _config->Find("Acquire::https::SslCert","");
    knob = "Acquire::https::"+remotehost+"::SslCert";
    pem = _config->Find(knob.c_str(),pem.c_str());
-   if(pem != "")
+   if(pem.empty() == false)
       curl_easy_setopt(curl, CURLOPT_SSLCERT, pem.c_str());
 
    // ... and associated key.
    string key = _config->Find("Acquire::https::SslKey","");
    knob = "Acquire::https::"+remotehost+"::SslKey";
    key = _config->Find(knob.c_str(),key.c_str());
-   if(key != "")
+   if(key.empty() == false)
       curl_easy_setopt(curl, CURLOPT_SSLKEY, key.c_str());
 
    // Allow forcing SSL version to SSLv3 or TLSv1 (SSLv2 is not
@@ -176,6 +183,13 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    else if(sslversion == "SSLv3")
      final_version = CURL_SSLVERSION_SSLv3;
    curl_easy_setopt(curl, CURLOPT_SSLVERSION, final_version);
+
+   // CRL file
+   string crlfile = _config->Find("Acquire::https::CrlFile","");
+   knob = "Acquire::https::"+remotehost+"::CrlFile";
+   crlfile = _config->Find(knob.c_str(),crlfile.c_str());
+   if(crlfile.empty() == false)
+      curl_easy_setopt(curl, CURLOPT_CRLFILE, crlfile.c_str());
 
    // cache-control
    if(_config->FindB("Acquire::https::No-Cache",
@@ -196,7 +210,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
    // speed limit
-   int dlLimit = _config->FindI("Acquire::https::Dl-Limit",
+   int const dlLimit = _config->FindI("Acquire::https::Dl-Limit",
 		_config->FindI("Acquire::http::Dl-Limit",0))*1024;
    if (dlLimit > 0)
       curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, dlLimit);
@@ -208,7 +222,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 			"Debian APT-CURL/1.0 ("VERSION")").c_str()).c_str());
 
    // set timeout
-   int timeout = _config->FindI("Acquire::https::Timeout",
+   int const timeout = _config->FindI("Acquire::https::Timeout",
 		_config->FindI("Acquire::http::Timeout",120));
    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
    //set really low lowspeed timeout (see #497983)
@@ -216,7 +230,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
 
    // set redirect options and default to 10 redirects
-   bool AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",
+   bool const AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",
 	_config->FindB("Acquire::http::AllowRedirect",true));
    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, AllowRedirect);
    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
