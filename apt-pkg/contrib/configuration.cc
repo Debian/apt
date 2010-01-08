@@ -829,6 +829,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool AsSectional,
 // ReadConfigDir - Read a directory of config files			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+bool ReadConfigDir(Configuration &Conf,const string &Dir,
+		   bool AsSectional, unsigned Depth)
 {
    vector<string> const List = GetListOfFilesInDir(Dir, "", true);
 
