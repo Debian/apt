@@ -306,9 +306,19 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
       
       struct stat St;
       if (stat(File.FileName(),&St) != 0)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "PackagesIndex::FindInCache - stat failed on " << File.FileName() << std::endl;
 	 return pkgCache::PkgFileIterator(Cache);
+      }
       if ((unsigned)St.st_size != File->Size || St.st_mtime != File->mtime)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "PackagesIndex::FindInCache - size (" << St.st_size << " <> " << File->Size
+			<< ") or mtime (" << St.st_mtime << " <> " << File->mtime
+			<< ") doesn't match for " << File.FileName() << std::endl;
 	 return pkgCache::PkgFileIterator(Cache);
+      }
       return File;
    }
    
@@ -472,9 +482,19 @@ pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) con
 
       struct stat St;
       if (stat(File.FileName(),&St) != 0)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "TranslationIndex::FindInCache - stat failed on " << File.FileName() << std::endl;
 	 return pkgCache::PkgFileIterator(Cache);
+      }
       if ((unsigned)St.st_size != File->Size || St.st_mtime != File->mtime)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "TranslationIndex::FindInCache - size (" << St.st_size << " <> " << File->Size
+			<< ") or mtime (" << St.st_mtime << " <> " << File->mtime
+			<< ") doesn't match for " << File.FileName() << std::endl;
 	 return pkgCache::PkgFileIterator(Cache);
+      }
       return File;
    }   
    return File;
@@ -541,9 +561,19 @@ pkgCache::PkgFileIterator debStatusIndex::FindInCache(pkgCache &Cache) const
       
       struct stat St;
       if (stat(File.FileName(),&St) != 0)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "StatusIndex::FindInCache - stat failed on " << File.FileName() << std::endl;
 	 return pkgCache::PkgFileIterator(Cache);
+      }
       if ((unsigned)St.st_size != File->Size || St.st_mtime != File->mtime)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "StatusIndex::FindInCache - size (" << St.st_size << " <> " << File->Size
+			<< ") or mtime (" << St.st_mtime << " <> " << File->mtime
+			<< ") doesn't match for " << File.FileName() << std::endl;
 	 return pkgCache::PkgFileIterator(Cache);
+      }
       return File;
    }   
    return File;
