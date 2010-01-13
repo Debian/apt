@@ -1,13 +1,5 @@
 apt (0.7.26) UNRELEASED; urgency=low
 
-  [ Christian Perrier ]
-  * French manpage translation update
-
-  [Chris Leick]
-  * spot & fix various typos in all manpages
-  * German manpage translation update
-
-  [ David Kalnischkies ]
   * [BREAK] add possibility to download and use multiply
     Translation files, configurable with Acquire::Translation
     (Closes: #444222, #448216, #550564)
@@ -25,6 +17,21 @@ apt (0.7.26) UNRELEASED; urgency=low
     - add APT::FTPArchive::AlwaysStat to disable the too aggressive
       caching if versions are build multiply times (not recommend)
       Patch by Christoph Goehre, thanks! (Closes: #463260)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Dec 2009 22:02:38 +0100
+
+apt (0.7.25.1) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * French manpage translation update
+  * Russian translation update by Yuri Kozlov
+    Closes: #564171
+  
+  [Chris Leick]
+  * spot & fix various typos in all manpages
+  * German manpage translation update
+
+  [ David Kalnischkies ]
   * cmdline/apt-cache.cc:
     - remove translatable marker from the "%4i %s\n" string
   * buildlib/po4a_manpage.mak:
@@ -48,8 +55,17 @@ apt (0.7.26) UNRELEASED; urgency=low
   * methods/https.cc:
     - finally merge the rest of the patchset from Arnaud Ebalard
       with the CRL and Issuers options, thanks! (Closes: #485963)
+  * apt-pkg/deb/debindexfile.cc, apt-pkg/pkgcachegen.cc:
+    - add debug option Debug::pkgCacheGen
 
- -- Michael Vogt <mvo@debian.org>  Thu, 10 Dec 2009 22:02:38 +0100
+  [ Michael Vogt ]
+  * cmdline/apt-get.cc:
+    - merge fix for apt-get source pkg=version regression
+      (closes: #561971)
+  * po/ru.po:
+    - merged updated ru.po, thanks to Yuri Kozlov (closes: #564171)
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 09 Jan 2010 21:52:36 +0100
 
 apt (0.7.25) unstable; urgency=low
 

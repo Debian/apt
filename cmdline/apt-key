@@ -132,7 +132,7 @@ usage() {
 
 # Determine on which keyring we want to work
 if [ "$1" = "--keyring" ]; then
-	echo "keyfile given"
+        #echo "keyfile given"
 	shift
 	TRUSTEDFILE="$1"
 	if [ -r "$TRUSTEDFILE" ]; then
@@ -142,8 +142,9 @@ if [ "$1" = "--keyring" ]; then
 		exit 1
 	fi
 	shift
+# otherwise use the default
 else
-	echo "generate list"
+	#echo "generate list"
 	TRUSTEDFILE="/etc/apt/trusted.gpg"
 	if [ -r "$TRUSTEDFILE" ]; then
 		GPG="$GPG --keyring $TRUSTEDFILE"
@@ -151,14 +152,14 @@ else
 	GPG="$GPG --primary-keyring $TRUSTEDFILE"
 	TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
 	if [ -d "$TRUSTEDPARTS" ]; then
-		echo "parts active"
+		#echo "parts active"
 		for trusted in $(run-parts --list $TRUSTEDPARTS --regex '^.*\.gpg$'); do
-			echo "part -> $trusted"
+			#echo "part -> $trusted"
 			GPG="$GPG --keyring $trusted"
 		done
 	fi
 fi
-echo "COMMAND: $GPG"
+#echo "COMMAND: $GPG"
 
 command="$1"
 if [ -z "$command" ]; then

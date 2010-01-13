@@ -5,12 +5,12 @@
 # Translators:
 # Jérôme Marant, 2000.
 # Philippe Batailler, 2005.
-# Christian Perrier <bubulle@debian.org>, 2009.
+# Christian Perrier <bubulle@debian.org>, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2009-12-01 19:13+0100\n"
-"PO-Revision-Date: 2010-01-03 23:28+0100\n"
+"PO-Revision-Date: 2010-01-08 19:43+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -3643,8 +3643,7 @@ msgstr "apt-get"
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-get.8.xml:30
 msgid "APT package handling utility -- command-line interface"
-msgstr ""
-"Utilitaire APT pour la gestion des paquets -- interface en ligne de commande."
+msgstr "Utilitaire APT pour la gestion des paquets -- interface en ligne de commande."
 
 #. type: Content of: <refentry><refsynopsisdiv><cmdsynopsis>
 #: apt-get.8.xml:36
@@ -9591,8 +9590,7 @@ msgstr "$Id: guide.sgml,v 1.7 2003/04/26 23:26:13 doogie Exp $"
 
 #. type: <abstract></abstract>
 #: guide.sgml:11
-msgid ""
-"This document provides an overview of how to use the the APT package manager."
+msgid "This document provides an overview of how to use the the APT package manager."
 msgstr ""
 "Ce document fournit un aperçu des méthode d'utilisation du gestionnaire de "
 "paquets APT."
@@ -10310,7 +10308,7 @@ msgstr ""
 #. type: <heading></heading>
 #: guide.sgml:356
 msgid "The Status Report"
-msgstr ""
+msgstr "Le rapport d'état"
 
 #. type: <p></p>
 #: guide.sgml:363
@@ -10321,11 +10319,14 @@ msgid ""
 "final state of things, taking into account the <tt>-f</tt> option and any "
 "other relevant activities to the command being executed."
 msgstr ""
+"Avant de démarrer ses actions, <prgn>apt-get</prgn> en affiche un résumé. En général, ce rapport dépend du type d'opération qui est entreprise, mais de nombreux éléments "
+"sont communs aux différents types de rapports. Ainsi, dans tous les cas, les listes reflètent l'état final du système, en tenant compte de l'option <tt>-f</tt> et des "
+"autres opérations découlant du type de commande utilisée."
 
 #. type: <heading></heading>
 #: guide.sgml:364
 msgid "The Extra Package list"
-msgstr ""
+msgstr "La liste des paquets supplémentaires"
 
 #. type: <example></example>
 #: guide.sgml:372
@@ -10338,6 +10339,12 @@ msgid ""
 "  squake pgp-i python-base debmake ldso perl libreadlineg2\n"
 "  ssh"
 msgstr ""
+"Les paquets supplémentaires suivants seront installés :\n"
+"  libdbd-mysql-perl xlib6 zlib1 xzx libreadline2 libdbd-msql-perl\n"
+"  mailpgp xdpkg fileutils pinepgp zlib1g xlib6g perl-base\n"
+"  bin86 libgdbm1 libgdbmg1 quake-lib gmp2 bcc xbuffy\n"
+"  squake pgp-i python-base debmake ldso perl libreadlineg2\n"
+"  ssh"
 
 #. type: <p></p>
 #: guide.sgml:379
@@ -10347,11 +10354,13 @@ msgid ""
 "generated for an <tt>install</tt> command. The listed packages are often the "
 "result of an Auto Install."
 msgstr ""
+"La liste des paquets supplémentaires montre tous les paquets installés ou mis à jour en plus de ceux indiqués à la ligne de commande. Elle n'apparaît qu'avec la commande <"
+"tt>install</tt>. Le plus souvent, les paquets concernés sont le résultat d'une installation automatique."
 
 #. type: <heading></heading>
 #: guide.sgml:382
 msgid "The Packages to Remove"
-msgstr ""
+msgstr "Les paquets à supprimer"
 
 #. type: <example></example>
 #: guide.sgml:389
@@ -10363,6 +10372,11 @@ msgid ""
 "  xadmin xboard perl-debug tkined xtetris libreadline2-dev perl-suid\n"
 "  nas xpilot xfig"
 msgstr ""
+"Les paquets suivants seront ENLEVÉS :\n"
+"  xlib6-dev xpat2 tk40-dev xkeycaps xbattle xonix\n"
+"  xdaliclock tk40 tk41 xforms0.86 ghostview xloadimage xcolorsel\n"
+"  xadmin xboard perl-debug tkined xtetris libreadline2-dev perl-suid\n"
+"  nas xpilot xfig"
 
 #. type: <p></p>
 #: guide.sgml:399
@@ -10375,11 +10389,15 @@ msgid ""
 "that are going to be removed because they are only partially installed, "
 "possibly due to an aborted installation."
 msgstr ""
+"La liste des paquets à enlever montre tous les paquets qui seront supprimés du système. Elle peut apparaître pour tout type d'opération. Il est conseillé de l'inspecter en "
+"détail afin de vérifier qu'aucun paquet important ne va être supprimé. L'option  <tt>-f</tt> provoque notamment souvent des suppressions de paquets et il est déconseillé "
+"d'être particulièrement attentif dans ce genre de cas. La liste peut comporter des paquets qui seront supprimés parce qu'ils sont seulement partiellement installés, par "
+"exemple après l'interruption d'une opération d'installation."
 
 #. type: <heading></heading>
 #: guide.sgml:402
 msgid "The New Packages list"
-msgstr ""
+msgstr "La liste des nouveaux paquets"
 
 #. type: <example></example>
 #: guide.sgml:406
@@ -10388,6 +10406,8 @@ msgid ""
 "The following NEW packages will installed:\n"
 "  zlib1g xlib6g perl-base libgdbmg1 quake-lib gmp2 pgp-i python-base"
 msgstr ""
+"Les NOUVEAUX paquets suivants seront installés :\n"
+"  zlib1g xlib6g perl-base libgdbmg1 quake-lib gmp2 pgp-i python-base"
 
 #. type: <p></p>
 #: guide.sgml:411
@@ -10396,11 +10416,13 @@ msgid ""
 "listed are not presently installed in the system but will be when APT is "
 "done."
 msgstr ""
+"La liste des nouveaux paquets est un simple rappel des opérations qui vont avoir lieu. Les paquets affichés ne sont pas encore présents sur le système mais le seront une "
+"fois qu'APT aura terminé."
 
 #. type: <heading></heading>
 #: guide.sgml:414
 msgid "The Kept Back list"
-msgstr ""
+msgstr "La liste des paquets conservés"
 
 #. type: <example></example>
 #: guide.sgml:419
@@ -10410,6 +10432,9 @@ msgid ""
 "  compface man-db tetex-base msql libpaper svgalib1\n"
 "  gs snmp arena lynx xpat2 groff xscreensaver"
 msgstr ""
+"Les paquets suivants ont été conservés :\n"
+"  compface man-db tetex-base msql libpaper svgalib1\n"
+"  gs snmp arena lynx xpat2 groff xscreensaver"
 
 #. type: <p></p>
 #: guide.sgml:428
@@ -10421,11 +10446,14 @@ msgid ""
 "to install is with <tt>apt-get install</tt> or by using <prgn>dselect</prgn> "
 "to resolve their problems."
 msgstr ""
+"À chaque fois que le système entier est mis à jour, il est possible que de nouvelles versions de paquets ne puissent pas être installées car elles ont besoins ne nouveaux "
+"paquets ou qu'elles entrent en conflit avec des paquets existants. Ces paquets apparaîtront alors dans la liste des paquets conservés. Le meilleure méthode pour "
+"effectivement installer ces paquets est souvent de le faire explicitement avec la commande <tt>apt-get install</tt> ou avec <prgn>dselect</prgn>."
 
 #. type: <heading></heading>
 #: guide.sgml:431
 msgid "Held Packages warning"
-msgstr ""
+msgstr "L'avertissement pour paquets retenus"
 
 #. type: <example></example>
 #: guide.sgml:435
@@ -10434,6 +10462,8 @@ msgid ""
 "The following held packages will be changed:\n"
 "  cvs"
 msgstr ""
+"Les paquets retenus suivants seront changés :\n"
+"  cvs"
 
 #. type: <p></p>
 #: guide.sgml:441
@@ -10442,17 +10472,18 @@ msgid ""
 "case it prints out a warning that the held package is going to be changed. "
 "This should only happen during dist-upgrade or install."
 msgstr ""
+"Il peut parfois être utile de demander à APT d'installer un paquet retenu (« hold »). Dans ce cas, le programme affichera un avertissement indiquant que le paquet retenu "
+"va être modifié. Cela ne se produira que lors de l'utilisation des commandes dist-upgrade ou install."
 
 #. type: <heading></heading>
 #: guide.sgml:444
 msgid "Final summary"
-msgstr ""
+msgstr "Résumé final"
 
 #. type: <p></p>
 #: guide.sgml:447
-msgid ""
-"Finally, APT will print out a summary of all the changes that will occur."
-msgstr ""
+msgid "Finally, APT will print out a summary of all the changes that will occur."
+msgstr "Anfin, APT affichera un résumé de toutes les opérations qui prendront place."
 
 #. type: <example></example>
 #: guide.sgml:452
@@ -10462,6 +10493,9 @@ msgid ""
 "12 packages not fully installed or removed.\n"
 "Need to get 65.7M/66.7M of archives. After unpacking 26.5M will be used."
 msgstr ""
+"206 paquets mis à jour, 8 nouvellement installés, 23 à enlever et 51 non mis à jour.\n"
+"12 paquets partiellement installés ou enlevés.\n"
+"Il est nécessaire de prendre 65,7Mo/66,7Mo dans les archives. Après cette opération, 26,5Mo d'espace disque supplémentaires seront utilisés."
 
 #. type: <p></p>
 #: guide.sgml:470

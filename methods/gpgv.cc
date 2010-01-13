@@ -99,7 +99,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       {
 	 Args[i++] = "--keyring";
 	 Args[i++] = K->c_str();
-	 if(i >= 395) {
+	 // check overflow (minus a bit of extra space at the end)
+	 if(i >= sizeof(Args)/sizeof(char*)-5) {
 	    std::clog << _("E: Too many keyrings should be passed to gpgv. Exiting.") << std::endl;
 	    exit(111);
 	 }
@@ -115,7 +116,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             if (Opts->Value.empty() == true)
                continue;
             Args[i++] = Opts->Value.c_str();
-	    if(i >= 395) { 
+	    // check overflow (minus a bit of extra space at the end)
+	    if(i >= sizeof(Args)/sizeof(char*)-5) { 
 	       std::clog << _("E: Argument list from Acquire::gpgv::Options too long. Exiting.") << std::endl;
 	       exit(111);
 	    }

@@ -202,44 +202,47 @@ bool FileExists(string File)
 /* If an extension is given only files with this extension are included
    in the returned vector, otherwise every "normal" file is included. */
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
-				bool const &SortList) {
-	std::vector<string> List;
-	DIR *D = opendir(Dir.c_str());
-	if (D == 0) {
-		_error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
-		return List;
-	}
+					bool const &SortList) 
+{
+   std::vector<string> List;
+   DIR *D = opendir(Dir.c_str());
+   if (D == 0) 
+   {
+      _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+      return List;
+   }
 
-	for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
-		if (Ent->d_name[0] == '.')
-			continue;
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) 
+   {
+      if (Ent->d_name[0] == '.')
+	 continue;
 
-		if (Ext.empty() == false && flExtension(Ent->d_name) != Ext)
-			continue;
+      if (Ext.empty() == false && flExtension(Ent->d_name) != Ext)
+	 continue;
 
-		// Skip bad file names ala run-parts
-		const char *C = Ent->d_name;
-		for (; *C != 0; ++C)
-			if (isalpha(*C) == 0 && isdigit(*C) == 0
-			    && *C != '_' && *C != '-' && *C != '.')
-				break;
+      // Skip bad file names ala run-parts
+      const char *C = Ent->d_name;
+      for (; *C != 0; ++C)
+	 if (isalpha(*C) == 0 && isdigit(*C) == 0
+	     && *C != '_' && *C != '-' && *C != '.')
+	    break;
 
-		if (*C != 0)
-			continue;
+      if (*C != 0)
+	 continue;
 
-		// Make sure it is a file and not something else
-		string const File = flCombine(Dir,Ent->d_name);
-		struct stat St;
-		if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
-			continue;
+      // Make sure it is a file and not something else
+      string const File = flCombine(Dir,Ent->d_name);
+      struct stat St;
+      if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
+	 continue;
 
-		List.push_back(File);
-	}
-	closedir(D);
+      List.push_back(File);
+   }
+   closedir(D);
 
-	if (SortList == true)
-		std::sort(List.begin(),List.end());
-	return List;
+   if (SortList == true)
+      std::sort(List.begin(),List.end());
+   return List;
 }
 									/*}}}*/
 // SafeGetCWD - This is a safer getcwd that returns a dynamic string	/*{{{*/
