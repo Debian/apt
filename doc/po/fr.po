@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2009-12-01 19:13+0100\n"
-"PO-Revision-Date: 2010-01-14 19:07+0100\n"
+"PO-Revision-Date: 2010-01-15 18:53+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -10842,6 +10842,9 @@ msgid ""
 "em> Then take the disc to the remote machine and configure the sources.list. "
 "On the remote machine execute the following:"
 msgstr ""
+"Sur la machine cible, il est d'abord nécessaire de monter le disque et y copier le fichier <em>/"
+"var/lib/dpkg/status</em>. Il sera aussi nécessaire de créer les répertoires dans l'aperçu (Overview), <em>archives/partial/</em> and <em>lists/partial/</em>. Connecter "
+"ensuite le disque à la machine distante et configurer le fichier sources.list. Sur la machine distante, exécuter la séquence de commandes suivante :"
 
 #. type: <example></example>
 #: offline.sgml:142
@@ -10853,6 +10856,11 @@ msgid ""
 " # apt-get dist-upgrade\n"
 " [ APT fetches all the packages needed to upgrade the target machine ]"
 msgstr ""
+" # export APT_CONFIG=\"/disc/apt.conf\"\n"
+" # apt-get update\n"
+" [ APT récupère les fichiers des paquets ]\n"
+" # apt-get dist-upgrade\n"
+" [ APT récupère tous les fichiers nécessaires à la mise à jour de la machine distante ]"
 
 #. type: </example></p>
 #: offline.sgml:149
@@ -10862,6 +10870,8 @@ msgid ""
 "such as <em>dselect</em> However this presents a problem in communicating "
 "your selections back to the local computer."
 msgstr ""
+"La commande dist-upgrade peut être remplacée par toute autres commande usuelle d'APT, notamment dselect-upgrade. Il est même possible d'utiliser une interface comme <em>"
+"dselect</em>. Cependant, cela complique la communication des choix vers l'ordinateur local."
 
 #. type: <p><example>
 #: offline.sgml:153
@@ -10869,6 +10879,8 @@ msgid ""
 "Now the disc contains all of the index files and archives needed to upgrade "
 "the target machine. Take the disc back and run:"
 msgstr ""
+"Après cette opération, le disque contiendra tous les fichiers d'index et les archives nécessaires pour mettr eà jour la machine cible. Il est alors possible d'y ramener le "
+"disque et exécuter :"
 
 #. type: <example></example>
 #: offline.sgml:159
@@ -10882,16 +10894,16 @@ msgid ""
 msgstr ""
 "  # export APT_CONFIG=\"/disc/apt.conf\"\n"
 "  # apt-get check\n"
-"  [ APT generates a local copy of the cache files ]\n"
+"  [ APT crée la copie locale des fichiers de cache ]\n"
 "  # apt-get --no-d -o dir::state::status=/var/lib/dpkg/status dist-upgrade\n"
-"  [ Or any other APT command ]"
+"  [ Ou toute autre commande APT ]"
 
 #. type: <p></p>
 #: offline.sgml:165
 msgid ""
 "It is necessary for proper function to re-specify the status file to be the "
 "local one. This is very important!"
-msgstr ""
+msgstr "Pour un fonctionnement correct, il est indispensable de ré-indiquer que le fichier d'état est le fichier local. Cela est très important."
 
 #. type: <p></p>
 #: offline.sgml:172
@@ -10902,6 +10914,9 @@ msgid ""
 "the local machine - but this may not always be possible. DO NOT copy the "
 "status file if dpkg or APT have been run in the mean time!!"
 msgstr ""
+"Si vous utilisez dselect, vous pouvez effectuer l'opération dangereuse consistant à copier disc/status en /var/lib/dpkg/status, afin que les choix effectués sur la machine "
+"distante soient mis à jour. Il est recommandé de n'éffectuer les choix que sur la machine locale, mais ce n'est pas toujours possible. NE COPIEZ PAS le fichier d'état si "
+"dpkg ou APT ont été exécutés dans l'intervalle."
 
 #. type: <heading></heading>
 #: offline.sgml:178
@@ -10915,6 +10930,8 @@ msgid ""
 "any machine. Unlike the method above this requires that the Debian machine "
 "already has a list of available packages."
 msgstr ""
+"<em>wget</em> est un outil classique de téléchargement qui peut être exécuté sur à peu près tout type de machine. À la différence de la méthode précédente, cela impose que "
+"la machine Debian a déjà une liste des paquets disponibles."
 
 #. type: <p></p>
 #: offline.sgml:190
@@ -10924,6 +10941,8 @@ msgid ""
 "option to apt-get and then preparing a wget script to actually fetch the "
 "packages."
 msgstr ""
+"L'idée de base est de créer un disque qui ne comporte que les fichiers archive téléchargés depuis le site distant. Cela peut être effectué avec l'option --print-uris "
+"d'apt-get puis de la préparation d'un script wget permettant de récupérer les paquets/"
 
 #. type: <heading></heading>
 #: offline.sgml:196
@@ -10937,6 +10956,8 @@ msgid ""
 "Unlike the previous technique no special configuration files are required. "
 "We merely use the standard APT commands to generate the file list."
 msgstr ""
+"À la différence de la méthode précédente, aucun fichier de configuration spécifique n'est nécessaire. Seules les commandes standard d'APT seront utilisées pour créer la "
+"liste de ficheirs."
 
 #. type: <example></example>
 #: offline.sgml:205
@@ -10947,13 +10968,17 @@ msgid ""
 " # apt-get -qq --print-uris dist-upgrade > uris\n"
 " # awk '{print \"wget -O \" $2 \" \" $1}' < uris > /disc/wget-script"
 msgstr ""
+" # apt-get dist-upgrade \n"
+" [ Répondre négativement à la question, pour être sûr(e) que les actions vous conviennent ]\n"
+" # apt-get -qq --print-uris dist-upgrade > uris\n"
+" # awk '{print \"wget -O \" $2 \" \" $1}' < uris > /disc/wget-script"
 
 #. type: </example></p>
 #: offline.sgml:210
 msgid ""
 "Any command other than dist-upgrade could be used here, including dselect-"
 "upgrade."
-msgstr ""
+msgstr "Toute autre commande que dist-upgrade peut être utilisée, y compris dselect-upgrade."
 
 #. type: <p></p>
 #: offline.sgml:216
@@ -10963,11 +10988,13 @@ msgid ""
 "with the current directory as the disc's mount point so as to save the "
 "output on the disc."
 msgstr ""
+"Le fichier /disc/wget-script contiendra alors la liste des commandes wget à exécuter afin de récupérer les fichiers nécessaires. Ce script doit être exécuté depuis le "
+"point de montage du disque afin que les fichiers soient écrits sur le disque."
 
 #. type: <p><example>
 #: offline.sgml:219
 msgid "The remote machine would do something like"
-msgstr ""
+msgstr "Sur la machine distante, il faudra alors exécuter l'équivalent de :"
 
 #. type: <example></example>
 #: offline.sgml:223
@@ -10977,24 +11004,27 @@ msgid ""
 "  # sh -x ./wget-script\n"
 "  [ wait.. ]"
 msgstr ""
+"  # cd /disc\n"
+"  # sh -x ./wget-script\n"
+"  [ attendre.. ]"
 
 #. type: </example><example>
 #: offline.sgml:228
 msgid ""
 "Once the archives are downloaded and the disc returned to the Debian machine "
 "installation can proceed using,"
-msgstr ""
+msgstr "Une fois les fichiers téléchargés et le disque reconnecté à la machine Debian, l'installation peut se poursuivre avec :"
 
 #. type: <example></example>
 #: offline.sgml:230
 #, no-wrap
 msgid "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade"
-msgstr ""
+msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade"
 
 #. type: </example></p>
 #: offline.sgml:234
 msgid "Which will use the already fetched archives on the disc."
-msgstr ""
+msgstr "Cette commande utilisera les fichiers récupérés sur le disque."
 
 #~ msgid ""
 #~ "Disable Immediate Configuration; This dangerous option disables some of "
