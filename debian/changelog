@@ -20,6 +20,24 @@ apt (0.7.26) UNRELEASED; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Thu, 10 Dec 2009 22:02:38 +0100
 
+apt (0.7.25.2) UNRELEASED; urgency=low
+
+  * apt-pkg/contrib/fileutl.cc:
+    - Fix the newly introduced method GetListOfFilesInDir to not
+      accept every file if no extension is enforced
+      (= restore old behaviour). (Closes: #565213)
+  * apt-pkg/policy.cc:
+    - accept also partfiles with "pref" file extension as valid
+  * apt-pkg/contrib/configuration.cc:
+    - accept also partfiles with "conf" file extension as valid
+  * doc/apt.conf.5.xml:
+    - reorder description and split out syntax
+    - add partfile name convention (Closes: #558348)
+  * doc/apt_preferences.conf.5.xml:
+    - describe partfile name convention also here
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 16 Jan 2010 21:06:38 +0100
+
 apt (0.7.25.1) unstable; urgency=low
 
   [ Christian Perrier ]

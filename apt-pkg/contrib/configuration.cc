@@ -832,7 +832,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 bool ReadConfigDir(Configuration &Conf,const string &Dir,
 		   bool const &AsSectional, unsigned const &Depth)
 {
-   vector<string> const List = GetListOfFilesInDir(Dir, "", true);
+   vector<string> const List = GetListOfFilesInDir(Dir, "conf", true, true);
 
    // Read the files
    for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)

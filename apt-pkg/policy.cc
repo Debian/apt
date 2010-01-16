@@ -280,7 +280,7 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
       return true;
    }
 
-   vector<string> const List = GetListOfFilesInDir(Dir, "", true);
+   vector<string> const List = GetListOfFilesInDir(Dir, "pref", true, true);
 
    // Read the files
    for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
