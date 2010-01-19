@@ -561,15 +561,16 @@ bool pkgDPkgPM::OpenLog()
    if (!logfile_name.empty())
    {
       term_out = fopen(logfile_name.c_str(),"a");
+      if (term_out == NULL)
+	 return _error->WarningE(_("Could not open file '%s'"), logfile_name.c_str());
+
       chmod(logfile_name.c_str(), 0600);
       // output current time
       char outstr[200];
       time_t t = time(NULL);
       struct tm *tmp = localtime(&t);
       strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-      fprintf(term_out, "\nLog started: ");
-      fprintf(term_out, "%s", outstr);
-      fprintf(term_out, "\n");
+      fprintf(term_out, "\nLog started: %s\n", outstr);
    }
    return true;
 }
