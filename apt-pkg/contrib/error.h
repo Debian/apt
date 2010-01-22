@@ -53,6 +53,8 @@
     
 #include <string>
 
+#include <system.h>
+
 using std::string;
 
 class GlobalError
@@ -71,13 +73,13 @@ class GlobalError
    public:
 
    // Call to generate an error from a library call.
-   bool Errno(const char *Function,const char *Description,...) APT_MFORMAT2;
-   bool WarningE(const char *Function,const char *Description,...) APT_MFORMAT2;
+   bool Errno(const char *Function,const char *Description,...) APT_MFORMAT2 __cold;
+   bool WarningE(const char *Function,const char *Description,...) APT_MFORMAT2 __cold;
 
    /* A warning should be considered less severe than an error, and may be
       ignored by the client. */
-   bool Error(const char *Description,...) APT_MFORMAT1;
-   bool Warning(const char *Description,...) APT_MFORMAT1;
+   bool Error(const char *Description,...) APT_MFORMAT1 __cold;
+   bool Warning(const char *Description,...) APT_MFORMAT1 __cold;
 
    // Simple accessors
    inline bool PendingError() {return PendingFlag;};
