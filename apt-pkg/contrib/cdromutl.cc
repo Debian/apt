@@ -64,35 +64,44 @@ bool UnmountCdrom(string Path)
 {
    if (IsMounted(Path) == false)
       return true;
-   
-   int Child = ExecFork();
 
-   // The child
-   if (Child == 0)
+   for (int i=0;i<3;i++)
    {
-      // Make all the fds /dev/null
-      for (int I = 0; I != 3; I++)
-	 dup2(open("/dev/null",O_RDWR),I);
+   
+      int Child = ExecFork();
 
-      if (_config->Exists("Acquire::cdrom::"+Path+"::UMount") == true)
+      // The child
+      if (Child == 0)
       {
-	 if (system(_config->Find("Acquire::cdrom::"+Path+"::UMount").c_str()) != 0)
+	 // Make all the fds /dev/null
+	 for (int I = 0; I != 3; I++)
+	    dup2(open("/dev/null",O_RDWR),I);
+
+	 if (_config->Exists("Acquire::cdrom::"+Path+"::UMount") == true)
+	 {
+	    if (system(_config->Find("Acquire::cdrom::"+Path+"::UMount").c_str()) != 0)
+	       _exit(100);
+	    _exit(0);	 	 
+	 }
+	 else
+	 {
+	    const char *Args[10];
+	    Args[0] = "umount";
+	    Args[1] = Path.c_str();
+	    Args[2] = 0;
+	    execvp(Args[0],(char **)Args);      
 	    _exit(100);
-	 _exit(0);	 	 
+	 }      
       }
-      else
-      {
-	 const char *Args[10];
-	 Args[0] = "umount";
-	 Args[1] = Path.c_str();
-	 Args[2] = 0;
-	 execvp(Args[0],(char **)Args);      
-	 _exit(100);
-      }      
+
+      // if it can not be umounted, give it a bit more time
+      // this can happen when auto-mount magic or fs/cdrom prober attack
+      if (ExecWait(Child,"umount",true) == true)
+	 return true;
+      sleep(1);
    }
 
-   // Wait for mount
-   return ExecWait(Child,"umount",true);
+   return false;
 }
 									/*}}}*/
 // MountCdrom - Mount a cdrom						/*{{{*/
