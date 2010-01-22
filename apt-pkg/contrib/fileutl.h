@@ -82,7 +82,12 @@ bool RunScripts(const char *Cnf);
 bool CopyFile(FileFd &From,FileFd &To);
 int GetLock(string File,bool Errors = true);
 bool FileExists(string File);
+// FIXME: next ABI-Break: merge the two method-headers
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
+					bool const &SortList);
+std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
+					bool const &SortList, bool const &AllowNoExt);
+std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> const &Ext,
 					bool const &SortList);
 string SafeGetCWD();
 void SetCloseExec(int Fd,bool Close);

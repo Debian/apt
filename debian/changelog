@@ -8,6 +8,34 @@ apt (0.7.25.2) UNRELEASED; urgency=low
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 22 Jan 2010 20:06:12 +0100
 
+apt (0.7.25.2) UNRELEASED; urgency=low
+
+  * apt-pkg/contrib/fileutl.cc:
+    - Fix the newly introduced method GetListOfFilesInDir to not
+      accept every file if no extension is enforced
+      (= restore old behaviour). (Closes: #565213)
+  * apt-pkg/policy.cc:
+    - accept also partfiles with "pref" file extension as valid
+  * apt-pkg/contrib/configuration.cc:
+    - accept also partfiles with "conf" file extension as valid
+  * doc/apt.conf.5.xml:
+    - reorder description and split out syntax
+    - add partfile name convention (Closes: #558348)
+  * doc/apt_preferences.conf.5.xml:
+    - describe partfile name convention also here
+  * apt-pkg/deb/dpkgpm.cc:
+    - don't segfault if term.log file can't be opened.
+      Thanks Sam Brightman for the patch! (Closes: #475770)
+  * doc/*:
+    - replace the per language addendum with a global addendum
+    - add a explanation why translations include (maybe) english
+      parts to the new global addendum (Closes: #561636)
+  * apt-pkg/contrib/strutl.cc:
+    - fix malloc asseration fail with ja_JP.eucJP locale in
+      apt-cache search. Thanks Kusanagi Kouichi! (Closes: #548884)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 16 Jan 2010 21:06:38 +0100
+
 apt (0.7.25.1) unstable; urgency=low
 
   [ Christian Perrier ]

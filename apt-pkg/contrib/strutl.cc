@@ -43,9 +43,10 @@ bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest)
 {
   iconv_t cd;
   const char *inbuf;
-  char *inptr, *outbuf, *outptr;
-  size_t insize, outsize;
-  
+  char *inptr, *outbuf;
+  size_t insize, bufsize;
+  dest->clear();
+
   cd = iconv_open(codeset, "UTF-8");
   if (cd == (iconv_t)(-1)) {
      // Something went wrong
@@ -55,33 +56,49 @@ bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest)
      else
 	perror("iconv_open");
      
-     // Clean the destination string
-     *dest = "";
-     
      return false;
   }
 
-  insize = outsize = orig.size();
+  insize = bufsize = orig.size();
   inbuf = orig.data();
   inptr = (char *)inbuf;
-  outbuf = new char[insize+1];
-  outptr = outbuf;
+  outbuf = new char[bufsize];
+  size_t lastError = -1;
 
   while (insize != 0)
   {
+     char *outptr = outbuf;
+     size_t outsize = bufsize;
      size_t const err = iconv(cd, &inptr, &insize, &outptr, &outsize);
+     dest->append(outbuf, outptr - outbuf);
      if (err == (size_t)(-1))
      {
-	insize--;
-	outsize++;
-	inptr++;
-	*outptr = '?';
-	outptr++;
+	switch (errno)
+	{
+	case EILSEQ:
+	   insize--;
+	   inptr++;
+	   // replace a series of unknown multibytes with a single "?"
+	   if (lastError != insize) {
+	      lastError = insize - 1;
+	      dest->append("?");
+	   }
+	   break;
+	case EINVAL:
+	   insize = 0;
+	   break;
+	case E2BIG:
+	   if (outptr == outbuf)
+	   {
+	      bufsize *= 2;
+	      delete[] outbuf;
+	      outbuf = new char[bufsize];
+	   }
+	   break;
+	}
      }
   }
 
-  *outptr = '\0';
-  *dest = outbuf;
   delete[] outbuf;
   
   iconv_close(cd);
