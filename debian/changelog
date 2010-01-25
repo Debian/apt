@@ -1,15 +1,17 @@
 apt (0.7.25.2) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * apt-pkg/contrib/cdromutl.cc:
     - fix UnmountCdrom() fails, give it a bit more time and try
       the umount again
   * methods/cdrom.cc:
     - fixes in multi cdrom setup code
+  * cmdline/apt-mark:
+    - merge fix from Gene Cash that supports markauto for
+      packages that are not in the extended_states file yet
+      (closes: #534920)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 22 Jan 2010 20:06:12 +0100
-
-apt (0.7.25.2) UNRELEASED; urgency=low
-
+  [ David Kalnischkies ]
   * apt-pkg/contrib/fileutl.cc:
     - Fix the newly introduced method GetListOfFilesInDir to not
       accept every file if no extension is enforced
