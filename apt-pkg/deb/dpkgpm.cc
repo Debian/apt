@@ -562,7 +562,7 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
-void pkgDPkgPM::WriteHistoryTag(string tag, string value)
+void pkgDPkgPM::WriteHistoryTag(FILE *history_out, string tag, string value)
 {
    if (value.size() > 0)
    {
@@ -602,7 +602,7 @@ bool pkgDPkgPM::OpenLog()
 				   _config->Find("Dir::Log::History"));
    if (!history_name.empty())
    {
-      history_out = fopen(history_name.c_str(),"a");
+      FILE *history_out = fopen(history_name.c_str(),"a");
       chmod(history_name.c_str(), 0644);
       fprintf(history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, upgrade, downgrade;
@@ -622,12 +622,12 @@ bool pkgDPkgPM::OpenLog()
 	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
 	 }
       }
-      WriteHistoryTag("Install", install);
-      WriteHistoryTag("Upgrade", upgrade);
-      WriteHistoryTag("Downgrade",downgrade);
-      WriteHistoryTag("Remove",remove);
-      WriteHistoryTag("Purge",purge);
-      fflush(history_out);
+      WriteHistoryTag(history_out, "Install", install);
+      WriteHistoryTag(history_out, "Upgrade", upgrade);
+      WriteHistoryTag(history_out, "Downgrade",downgrade);
+      WriteHistoryTag(history_out, "Remove",remove);
+      WriteHistoryTag(history_out, "Purge",purge);
+      fclose(history_out);
    }
    
    return true;
@@ -650,10 +650,11 @@ bool pkgDPkgPM::CloseLog()
    }
    term_out = NULL;
 
-   if(history_out)
+   string history_name = flCombine(_config->FindDir("Dir::Log"),
+				   _config->Find("Dir::Log::History"));
+   if (!history_name.empty())
    {
-      if (dpkg_error.size() > 0)
-	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
+      FILE *history_out = fopen(history_name.c_str(),"a");
       fprintf(history_out, "End-Date: %s\n", timestr);
       fclose(history_out);
    }
@@ -1125,6 +1126,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 if(stopOnError)
 	    RunScripts("DPkg::Post-Invoke");
 
+	 string dpkg_error;
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
 	    strprintf(dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
 	 else if (WIFEXITED(Status) != 0)
@@ -1133,7 +1135,17 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
 
 	 if(dpkg_error.size() > 0)
+	 {
 	    _error->Error(dpkg_error.c_str());
+	    string history_name = flCombine(_config->FindDir("Dir::Log"),
+					    _config->Find("Dir::Log::History"));
+	    if (!history_name.empty())
+	    {
+	       FILE *history_out = fopen(history_name.c_str(),"a");
+	       fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
+	       fclose(history_out);
+	    }
+	 }
 
 	 if(stopOnError) 
 	 {

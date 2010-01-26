@@ -49,7 +49,11 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool Debug;
          
    bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
-   void ImmediateAdd(PkgIterator P, bool UseInstallVer, unsigned const int &Depth = 0);
+   // binary-compat change, fix on next abi break
+   void ImmediateAdd(PkgIterator P, bool UseInstallVer) {
+      ImmediateAdd(P, UseInstallVer, 0);
+   }
+   void ImmediateAdd(PkgIterator P, bool UseInstallVer, unsigned const int &Depth);
    virtual OrderResult OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
    bool CreateOrderList();

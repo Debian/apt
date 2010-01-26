@@ -29,8 +29,6 @@ class pkgDPkgPM : public pkgPackageManager
    char dpkgbuf[1024];
    int dpkgbuf_pos;
    FILE *term_out;
-   FILE *history_out;
-   string dpkg_error;
 
    protected:
    int pkgFailures;
@@ -70,7 +68,7 @@ class pkgDPkgPM : public pkgPackageManager
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
-   void WriteHistoryTag(string tag, string value);
+   void WriteHistoryTag(FILE* history_out, string tag, string value);
 
    // apport integration
    void WriteApportReport(const char *pkgpath, const char *errormsg);
