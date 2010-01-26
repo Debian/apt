@@ -921,6 +921,7 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
 
 pkgUdevCdromDevices::~pkgUdevCdromDevices()                             /*{{{*/
 { 
-   dlclose(libudev_handle);
+   if (libudev_handle != NULL)
+      dlclose(libudev_handle);
 }
 									/*}}}*/
