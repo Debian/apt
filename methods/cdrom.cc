@@ -92,7 +92,7 @@ string CDROMMethod::GetID(string Name)
 // CDROMMethod::AutoDetectAndMount                                      /*{{{*/
 // ---------------------------------------------------------------------
 /* Modifies class varaiable CDROM to the mountpoint */
-bool CDROMMethod::AutoDetectAndMount(URI Get, string NewID)
+bool CDROMMethod::AutoDetectAndMount(URI Get, string &NewID)
 {
    vector<struct CdromDevice> v = UdevCdroms.Scan();
 
