@@ -69,7 +69,7 @@ bool CacheDB::ReadyDB(string DB)
       // apt 0.6.44
       if (err == EINVAL)
       {
-	 _error->Error(_("DB format is invalid. If you upgraded from a older version of apt, please remove and re-create the database."));
+	 _error->Error(_("DB format is invalid. If you upgraded from an older version of apt, please remove and re-create the database."));
       }
       if (err)
       {
@@ -83,7 +83,7 @@ bool CacheDB::ReadyDB(string DB)
    return true;
 }
 									/*}}}*/
-// CacheDB::OpenFile - Open the filei					/*{{{*/
+// CacheDB::OpenFile - Open the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool CacheDB::OpenFile()
@@ -139,7 +139,7 @@ bool CacheDB::GetCurStat()
    
 	if (DBLoaded)
 	{
-		/* First see if thre is anything about it
+		/* First see if there is anything about it
 		   in the database */
 
 		/* Get the flags (and mtime) */
@@ -182,11 +182,11 @@ bool CacheDB::GetFileInfo(string FileName, bool DoControl, bool DoContents,
 	Stats.Bytes += CurStat.FileSize;
 	Stats.Packages++;
 
-	if (DoControl && LoadControl() == false
-		|| DoContents && LoadContents(GenContentsOnly) == false
-		|| DoMD5 && GetMD5(false) == false
-		|| DoSHA1 && GetSHA1(false) == false
-		|| DoSHA256 && GetSHA256(false) == false)
+	if ((DoControl && LoadControl() == false)
+		|| (DoContents && LoadContents(GenContentsOnly) == false)
+		|| (DoMD5 && GetMD5(false) == false)
+		|| (DoSHA1 && GetSHA1(false) == false)
+		|| (DoSHA256 && GetSHA256(false) == false))
 	{
 		delete Fd;
 		Fd = NULL;

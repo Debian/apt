@@ -399,7 +399,7 @@ bool DumpAvail(CommandLine &Cmd)
    pkgCache &Cache = *GCache;
 
    pkgPolicy Plcy(&Cache);
-   if (ReadPinFile(Plcy) == false)
+   if (ReadPinFile(Plcy) == false || ReadPinDir(Plcy) == false)
       return false;
    
    unsigned long Count = Cache.HeaderP->PackageCount+1;
@@ -626,7 +626,7 @@ bool Depends(CommandLine &CmdL)
    
    return true;
 }
-
+									/*}}}*/
 // RDepends - Print out a reverse dependency tree - mbc			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -714,10 +714,7 @@ bool RDepends(CommandLine &CmdL)
    
    return true;
 }
-
 									/*}}}*/
-
-
 // xvcg - Generate a graph for xvcg					/*{{{*/
 // ---------------------------------------------------------------------
 // Code contributed from Junichi Uekawa <dancer@debian.org> on 20 June 2002.
@@ -932,13 +929,15 @@ bool XVcg(CommandLine &CmdL)
 		Shapes[ShapeMap[Pkg->ID]]);
       
    }
-   
+
+   delete[] Show;
+   delete[] Flags;
+   delete[] ShapeMap;
+
    printf("}\n");
    return true;
 }
 									/*}}}*/
-
-
 // Dotty - Generate a graph for Dotty					/*{{{*/
 // ---------------------------------------------------------------------
 /* Dotty is the graphvis program for generating graphs. It is a fairly
@@ -1274,15 +1273,16 @@ bool DisplayRecord(pkgCache::VerIterator V)
    return true;
 }
 									/*}}}*/
-// Search - Perform a search						/*{{{*/
-// ---------------------------------------------------------------------
-/* This searches the package names and package descriptions for a pattern */
+
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
    bool NameMatch;
 };
 
+// Search - Perform a search						/*{{{*/
+// ---------------------------------------------------------------------
+/* This searches the package names and package descriptions for a pattern */
 bool Search(CommandLine &CmdL)
 {
    pkgCache &Cache = *GCache;
@@ -1519,7 +1519,7 @@ bool Policy(CommandLine &CmdL)
    
    pkgCache &Cache = *GCache;
    pkgPolicy Plcy(&Cache);
-   if (ReadPinFile(Plcy) == false)
+   if (ReadPinFile(Plcy) == false || ReadPinDir(Plcy) == false)
       return false;
    
    // Print out all of the package files
@@ -1696,7 +1696,6 @@ bool Madison(CommandLine &CmdL)
 
    return true;
 }
-
 									/*}}}*/
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
@@ -1770,8 +1769,7 @@ void CacheInitialize()
    _config->Set("help",false);
 }
 									/*}}}*/
-
-int main(int argc,const char *argv[])
+int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
@@ -1878,3 +1876,4 @@ int main(int argc,const char *argv[])
           
    return 0;
 }
+									/*}}}*/

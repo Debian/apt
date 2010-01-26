@@ -266,7 +266,7 @@ pkgAcquire::MethodConfig *pkgAcquire::GetConfig(string Access)
       return 0;
 
    /* if a method uses DownloadLimit, we switch to SingleInstance mode */
-   if(_config->FindI("Acquire::"+Access+"::DlLimit",0) > 0)
+   if(_config->FindI("Acquire::"+Access+"::Dl-Limit",0) > 0)
       Conf->SingleInstance = true;
     
    return Conf;
@@ -485,7 +485,7 @@ double pkgAcquire::PartialPresent()
 	 Total += (*I)->PartialSize;
    return Total;
 }
-
+									/*}}}*/
 // Acquire::UriBegin - Start iterator for the uri list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -502,7 +502,6 @@ pkgAcquire::UriIterator pkgAcquire::UriEnd()
    return UriIterator(0);
 }
 									/*}}}*/
-
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -516,7 +515,6 @@ pkgAcquire::MethodConfig::MethodConfig()
    Next = 0;
 }
 									/*}}}*/
-
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -728,7 +726,6 @@ void pkgAcquire::Queue::Bump()
    Cycle();
 }
 									/*}}}*/
-
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

@@ -26,7 +26,7 @@
 #include <apti18n.h>    
 #include <iostream>
 #include <fcntl.h> 
-
+									/*}}}*/
 using namespace std;
 
 // PM::PackageManager - Constructor					/*{{{*/
@@ -57,7 +57,10 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
    if (CreateOrderList() == false)
       return false;
    
-   if (List->OrderUnpack() == false)
+   bool const ordering =
+	_config->FindB("PackageManager::UnpackAll",true) ?
+		List->OrderUnpack() : List->OrderCritical();
+   if (ordering == false)
       return _error->Error("Internal ordering error");
 
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
@@ -117,13 +120,12 @@ bool pkgPackageManager::FixMissing()
    return Resolve.ResolveByKeep() == true && Cache.BrokenCount() == 0;   
 }
 									/*}}}*/
-
 // PM::ImmediateAdd - Add the immediate flag recursivly			/*{{{*/
 // ---------------------------------------------------------------------
 /* This adds the immediate flag to the pkg and recursively to the
    dependendies 
  */
-void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer)
+void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer, unsigned const int &Depth)
 {
    DepIterator D;
    
@@ -144,15 +146,14 @@ void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer)
 	 if(!List->IsFlag(D.TargetPkg(), pkgOrderList::Immediate))
 	 {
 	    if(Debug)
-	       clog << "ImmediateAdd(): Adding Immediate flag to " << I.Name() << endl;
+	       clog << OutputInDepth(Depth) << "ImmediateAdd(): Adding Immediate flag to " << D.TargetPkg() << " cause of " << D.DepType() << " " << I.Name() << endl;
 	    List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
-	    ImmediateAdd(D.TargetPkg(), UseInstallVer);
+	    ImmediateAdd(D.TargetPkg(), UseInstallVer, Depth + 1);
 	 }
       }
    return;
 }
 									/*}}}*/
-
 // PM::CreateOrderList - Create the ordering class			/*{{{*/
 // ---------------------------------------------------------------------
 /* This populates the ordering list with all the packages that are
@@ -165,7 +166,7 @@ bool pkgPackageManager::CreateOrderList()
    delete List;
    List = new pkgOrderList(&Cache);
    
-   bool NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+   static bool const NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
    
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
@@ -268,13 +269,16 @@ bool pkgPackageManager::ConfigureAll()
    
    if (OList.OrderConfigure() == false)
       return false;
-   
+
+   std::string const conf = _config->Find("PackageManager::Configure","all");
+   bool const ConfigurePkgs = (conf == "all");
+
    // Perform the configuring
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (Configure(Pkg) == false)
+      if (ConfigurePkgs == true && Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -289,20 +293,27 @@ bool pkgPackageManager::ConfigureAll()
    of it's dependents. */
 bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 {
+   if (Debug == true)
+      clog << "SmartConfigure " << Pkg.Name() << endl;
+
    pkgOrderList OList(&Cache);
 
    if (DepAdd(OList,Pkg) == false)
       return false;
-   
-   if (OList.OrderConfigure() == false)
-      return false;
-   
+
+   static std::string const conf = _config->Find("PackageManager::Configure","all");
+   static bool const ConfigurePkgs = (conf == "all" || conf == "smart");
+
+   if (ConfigurePkgs == true)
+      if (OList.OrderConfigure() == false)
+	 return false;
+
    // Perform the configuring
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (Configure(Pkg) == false)
+      if (ConfigurePkgs == true && Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -310,8 +321,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 
    // Sanity Check
    if (List->IsFlag(Pkg,pkgOrderList::Configured) == false)
-      return _error->Error("Internal error, could not immediate configure %s",Pkg.Name());
-   
+      return _error->Error(_("Could not perform immediate configuration on '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),1);
+
    return true;
 }
 									/*}}}*/
@@ -463,7 +475,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
       if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)
-	    return _error->Error("Internal Error, Could not perform immediate configuration (1) on %s",Pkg.Name());
+	    return _error->Error(_("Could not perform immediate configuration on already unpacked '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
       return true;
    }
 
@@ -479,6 +492,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       
       while (End->Type == pkgCache::Dep::PreDepends)
       {
+	 if (Debug == true)
+	    clog << "PreDepends order for " << Pkg.Name() << std::endl;
+
 	 // Look for possible ok targets.
 	 SPtrArray<Version *> VList = Start.AllTargets();
 	 bool Bad = true;
@@ -492,6 +508,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 		Pkg.State() == PkgIterator::NeedsNothing)
 	    {
 	       Bad = false;
+	       if (Debug == true)
+		  clog << "Found ok package " << Pkg.Name() << endl;
 	       continue;
 	    }
 	 }
@@ -507,6 +525,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
 	       continue;
 
+	    if (Debug == true)
+	       clog << "Trying to SmartConfigure " << Pkg.Name() << endl;
 	    Bad = !SmartConfigure(Pkg);
 	 }
 
@@ -563,7 +583,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    // Perform immedate configuration of the package.
    if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
       if (SmartConfigure(Pkg) == false)
-	 return _error->Error("Internal Error, Could not perform immediate configuration (2) on %s",Pkg.Name());
+	 return _error->Error(_("Could not perform immediate configuration on '%s'."
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),2);
    
    return true;
 }
@@ -579,9 +600,12 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    Reset();
    
    if (Debug == true)
-      clog << "Begining to order" << endl;
+      clog << "Beginning to order" << endl;
 
-   if (List->OrderUnpack(FileNames) == false)
+   bool const ordering =
+	_config->FindB("PackageManager::UnpackAll",true) ?
+		List->OrderUnpack(FileNames) : List->OrderCritical();
+   if (ordering == false)
    {
       _error->Error("Internal ordering error");
       return Failed;
@@ -634,7 +658,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	    return Failed;
       DoneSomething = true;
    }
-   
+
    // Final run through the configure phase
    if (ConfigureAll() == false)
       return Failed;

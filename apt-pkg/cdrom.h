@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class pkgCdromStatus
+class pkgCdromStatus							/*{{{*/
 {
  protected:
    int totalSteps;
@@ -29,8 +29,8 @@ class pkgCdromStatus
    // Progress indicator for the Index rewriter
    virtual OpProgress* GetOpProgress() {return NULL; };
 };
-
-class pkgCdrom 
+									/*}}}*/
+class pkgCdrom								/*{{{*/
 {
  protected:
    enum {
@@ -65,17 +65,18 @@ class pkgCdrom
    bool Ident(string &ident, pkgCdromStatus *log);
    bool Add(pkgCdromStatus *log);
 };
+									/*}}}*/
 
 
 // class that uses libudev to find cdrom devices dynamically
-struct CdromDevice
+struct CdromDevice							/*{{{*/
 {
    string DeviceName;
    bool Mounted;
    string MountPath;
 };
-
-class pkgUdevCdromDevices
+									/*}}}*/
+class pkgUdevCdromDevices						/*{{{*/
 {
  protected:
    // libudev dlopen stucture
@@ -101,7 +102,6 @@ class pkgUdevCdromDevices
    bool Dlopen();
    vector<CdromDevice> Scan();
 };
-
-
+									/*}}}*/
 
 #endif

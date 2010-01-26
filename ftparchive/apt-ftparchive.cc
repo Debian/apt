@@ -3,7 +3,7 @@
 // $Id: apt-ftparchive.cc,v 1.8.2.3 2004/01/02 22:01:48 mdz Exp $
 /* ######################################################################
 
-   apt-scanpackages - Efficient work-alike for dpkg-scanpackages
+   apt-ftparchive - Efficient work-alike for dpkg-scanpackages
 
    Let contents be disabled from the conf
    
@@ -792,7 +792,7 @@ bool Generate(CommandLine &CmdL)
    if (_config->FindB("APT::FTPArchive::Contents",true) == false)
       return true;
    
-   c1out << "Done Packages, Starting contents." << endl;
+   c1out << "Packages done, Starting contents." << endl;
 
    // Sort the contents file list by date
    string ArchiveDir = Setup.FindDir("Dir::ArchiveDir");
@@ -898,6 +898,7 @@ bool Clean(CommandLine &CmdL)
 
 int main(int argc, const char *argv[])
 {
+   setlocale(LC_ALL, "");
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
       {0,"md5","APT::FTPArchive::MD5",0},

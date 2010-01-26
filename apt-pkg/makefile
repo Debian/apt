@@ -9,23 +9,22 @@ HEADER_TARGETDIRS = apt-pkg
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-# The library name, don't forget to update init.h and the copy in 
-# methods/makefile - FIXME
+# The library name and version (indirectly used from init.h)
+include ../buildlib/libversion.mak
 LIBRARY=apt-pkg
-LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
-MAJOR=4.7
-MINOR=0
+MAJOR=$(LIBAPTPKG_MAJOR)
+MINOR=$(LIBAPTPKG_RELEASE)
 SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl
-APT_DOMAIN:=libapt-pkg$(MAJOR)
+APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
          contrib/configuration.cc contrib/progress.cc contrib/cmndline.cc \
 	 contrib/md5.cc contrib/sha1.cc contrib/sha256.cc contrib/hashes.cc \
-	 contrib/cdromutl.cc contrib/crc-16.cc \
+	 contrib/cdromutl.cc contrib/crc-16.cc contrib/netrc.cc \
 	 contrib/fileutl.cc 
-HEADERS = mmap.h error.h configuration.h fileutl.h  cmndline.h \
-	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha256.h hashes.h
+HEADERS = mmap.h error.h configuration.h fileutl.h  cmndline.h netrc.h\
+	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha256.h hashes.h 
 
 # Source code for the core main library
 SOURCE+= pkgcache.cc version.cc depcache.cc \
@@ -34,14 +33,15 @@ SOURCE+= pkgcache.cc version.cc depcache.cc \
 	 acquire-worker.cc acquire-method.cc init.cc clean.cc \
 	 srcrecords.cc cachefile.cc versionmatch.cc policy.cc \
 	 pkgsystem.cc indexfile.cc pkgcachegen.cc acquire-item.cc \
-	 indexrecords.cc vendor.cc vendorlist.cc cdrom.cc indexcopy.cc
+	 indexrecords.cc vendor.cc vendorlist.cc cdrom.cc indexcopy.cc \
+	 aptconfiguration.cc
 HEADERS+= algorithms.h depcache.h pkgcachegen.h cacheiterators.h \
 	  orderlist.h sourcelist.h packagemanager.h tagfile.h \
 	  init.h pkgcache.h version.h progress.h pkgrecords.h \
 	  acquire.h acquire-worker.h acquire-item.h acquire-method.h \
 	  clean.h srcrecords.h cachefile.h versionmatch.h policy.h \
 	  pkgsystem.h indexfile.h metaindex.h indexrecords.h vendor.h \
-          vendorlist.h cdrom.h indexcopy.h
+          vendorlist.h cdrom.h indexcopy.h aptconfiguration.h
 
 # Source code for the debian specific components
 # In theory the deb headers do not need to be exported..

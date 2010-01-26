@@ -19,6 +19,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/netrc.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -112,23 +113,28 @@ bool FTPConn::Open(pkgAcqMethod *Owner)
    Close();
    
    // Determine the proxy setting
-   if (getenv("ftp_proxy") == 0)
+   string SpecificProxy = _config->Find("Acquire::ftp::Proxy::" + ServerName.Host);
+   if (!SpecificProxy.empty())
    {
-      string DefProxy = _config->Find("Acquire::ftp::Proxy");
-      string SpecificProxy = _config->Find("Acquire::ftp::Proxy::" + ServerName.Host);
-      if (SpecificProxy.empty() == false)
-      {
-	 if (SpecificProxy == "DIRECT")
-	    Proxy = "";
-	 else
-	    Proxy = SpecificProxy;
-      }   
-      else
-	 Proxy = DefProxy;
+	   if (SpecificProxy == "DIRECT")
+		   Proxy = "";
+	   else
+		   Proxy = SpecificProxy;
    }
    else
-      Proxy = getenv("ftp_proxy");
-   
+   {
+	   string DefProxy = _config->Find("Acquire::ftp::Proxy");
+	   if (!DefProxy.empty())
+	   {
+		   Proxy = DefProxy;
+	   }
+	   else
+	   {
+		   char* result = getenv("ftp_proxy");
+		   Proxy = result ? result : "";
+	   }
+   }
+
    // Parse no_proxy, a , separated list of domains
    if (getenv("no_proxy") != 0)
    {
@@ -977,7 +983,9 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    FetchResult Res;
    Res.Filename = Itm->DestFile;
    Res.IMSHit = false;
-   
+
+   maybe_add_auth (Get, _config->FindFile("Dir::Etc::netrc"));
+
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false)
    {

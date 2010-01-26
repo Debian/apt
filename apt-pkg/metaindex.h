@@ -39,7 +39,13 @@ class metaIndex
    virtual vector<pkgIndexFile *> *GetIndexFiles() = 0; 
    virtual bool IsTrusted() const = 0;
 
-   virtual ~metaIndex() {};
+   virtual ~metaIndex() {
+      if (Indexes == 0)
+	 return;
+      for (vector<pkgIndexFile *>::iterator I = (*Indexes).begin(); I != (*Indexes).end(); ++I)
+	 delete *I;
+      delete Indexes;
+   }
 };
 
 #endif

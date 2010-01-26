@@ -13,6 +13,7 @@
  <refmeta>
    <refentrytitle>apt-secure</refentrytitle>
    <manvolnum>8</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
  </refmeta>
 
 <!-- NOTE: This manpage has been written based on the
@@ -67,7 +68,7 @@
    different steps. <command>apt-secure</command> is the last step in
    this chain, trusting an archive does not mean that the packages
    that you trust it do not contain malicious code but means that you
-   trust the archive maintainer. Its the archive maintainer
+   trust the archive maintainer. It's the archive maintainer
    responsibility to ensure that the archive integrity is correct.
    </para>
 
@@ -93,7 +94,7 @@
    is computed and put in the Packages file. The MD5 sum of all of the
    packages files are then computed and put into the Release file. The
    Release file is then signed by the archive key (which is created
-   once a year and distributed through the FTP server. This key is
+   once a year) and distributed through the FTP server. This key is
    also on the Debian keyring.
    </para>
 
@@ -156,15 +157,15 @@
    </para>
 
      <itemizedlist>
-       <listitem><para><literal>Create a toplevel Release
-       file</literal>.  if it does not exist already. You can do this
+       <listitem><para><emphasis>Create a toplevel Release
+       file</emphasis>,  if it does not exist already. You can do this
        by running <command>apt-ftparchive release</command> 
        (provided in apt-utils).</para></listitem>
    
-      <listitem><para><literal>Sign it</literal>. You can do this by running
+      <listitem><para><emphasis>Sign it</emphasis>. You can do this by running
       <command>gpg -abs -o Release.gpg Release</command>.</para></listitem>
 
-      <listitem><para><literal>Publish the key fingerprint</literal>,
+      <listitem><para><emphasis>Publish the key fingerprint</emphasis>,
       that way your users will know what key they need to import in
       order to authenticate the files in the
       archive.</para></listitem>

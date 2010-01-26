@@ -1,23 +1,44 @@
 # -*- make -*-
 BASE=..
 SUBDIR=doc
-SUBDIRS= fr ja pl pt_BR es
+SUBDIRS= $(dir $(wildcard */makefile))
 
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
 # Debian Doc SGML Documents
-SOURCE = dpkg-tech.sgml design.sgml files.sgml guide.sgml guide.it.sgml \
-         cache.sgml method.sgml offline.sgml
+SOURCE = $(wildcard *.sgml)
+DEBIANDOC_HTML_OPTIONS=-l en
 include $(DEBIANDOC_H)
 
-# XML man pages
-SOURCE = apt-cache.8 apt-get.8 apt-cdrom.8 apt.conf.5 sources.list.5 \
-         apt-config.8 apt_preferences.5  \
-         apt-sortpkgs.1 apt-ftparchive.1 apt-extracttemplates.1 \
-	 apt-key.8 apt-secure.8 apt-mark.8
-INCLUDES = apt.ent	 
-include $(XML_MANPAGE_H)
+# Do not use XMLTO, build the manpages directly with XSLTPROC
+ifdef XSLTPROC
+# generate a list of accepted man page translations
+SOURCE = $(patsubst %.xml,%,$(wildcard *.?.xml))
+INCLUDES = apt.ent
+STYLESHEET=manpage-style.xsl
+
+LOCAL := manpage-$(firstword $(SOURCE))
+$(LOCAL)-LIST := $(SOURCE)
+
+# Install generation hooks
+doc: $($(LOCAL)-LIST)
+veryclean: veryclean/$(LOCAL)
+
+$($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
+	echo Creating man page $@
+	$(XSLTPROC) -o $@ $(STYLESHEET) $<
+
+# Clean rule
+.PHONY: veryclean/$(LOCAL)
+veryclean/$(LOCAL):
+	-rm -rf $($(@F)-LIST)
+
+endif
+
+# Chain to the manpage rule
+SOURCE = apt.8
+include $(MANPAGE_H)
 
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf
@@ -26,22 +47,39 @@ TARGET = binary
 include $(COPY_H)
 
 #.PHONY: headers library clean veryclean all binary program doc doc.pt_BR doc.fr
-doc: doc.fr doc.ja doc.pl doc.pt_BR doc.es
+doc:
+	for dir in $(SUBDIRS); do\
+		$(MAKE) -C $$dir $@; \
+	done
 
-doc.fr: %.fr:
-	$(MAKE) -C fr $*
+clean: clean-subdirs
+veryclean: veryclean-subdirs
 
-doc.pt_BR: %.pt_BR:
-	$(MAKE) -C pt_BR $*
+clean-subdirs:
+	for dir in $(SUBDIRS); do\
+		$(MAKE) -C $$dir clean; \
+	done
 
-doc.es: %.es:
-	$(MAKE) -C es $*
+veryclean-subdirs:
+	for dir in $(SUBDIRS); do\
+		$(MAKE) -C $$dir veryclean; \
+	done
 
-doc.ja: %.ja:
-	$(MAKE) -C ja $*
+ifdef PO4A
+doc: po4a
 
-doc.pl: %.pl:
-	$(MAKE) -C pl $*
+clean: po4a-clean
+
+.PHONY: update-po po4a
+update-po:
+	po4a --previous --no-backups --force --no-translations po4a.conf
+
+po4a-clean:
+	po4a --previous --rm-backups --rm-translations po4a.conf
+
+po4a:
+	po4a --previous --no-backups po4a.conf
+endif
 
 ifdef DOXYGEN
 DOXYGEN_SOURCES = $(shell find $(BASE)/apt-pkg -not -name .\\\#* -and \( -name \*.cc -or -name \*.h \) )
@@ -61,5 +99,4 @@ $(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
 	touch $(BUILD)/doc/doxygen-stamp
 
 doc: $(BUILD)/doc/doxygen-stamp
-
 endif

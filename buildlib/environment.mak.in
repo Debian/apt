@@ -9,8 +9,6 @@ CPPFLAGS+= @CPPFLAGS@ @DEFS@ -D_REENTRANT -Wall
 CXX = @CXX@
 CXXFLAGS+= @CXXFLAGS@
 NUM_PROCS = @NUM_PROCS@
-GLIBC_VER = @GLIBC_VER@
-LIBSTDCPP_VER = @LIBSTDCPP_VER@
 
 # Linker stuff
 PICFLAGS+= -fPIC -DPIC
@@ -30,14 +28,11 @@ DEBIANDOC_TEXT = @DEBIANDOC_TEXT@
 
 DOXYGEN = @DOXYGEN@
 
-# SGML for the man pages
-DOCBOOK2MAN := @DOCBOOK2MAN@
+# xsltproc for the man pages
+XSLTPROC := @XSLTPROC@
 
-# XML for the man pages
-XMLTO := @XMLTO@
-
-# XML for the man pages
-XMLTO := @XMLTO@
+# po4a for the man pages
+PO4A := @PO4A@
 
 # Gettext settings
 GMSGFMT = @GMSGFMT@

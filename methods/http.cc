@@ -29,6 +29,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/netrc.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -42,6 +43,7 @@
 #include <map>
 #include <apti18n.h>
 
+
 // Internet stuff
 #include <netdb.h>
 
@@ -49,7 +51,6 @@
 #include "connect.h"
 #include "rfc2553emu.h"
 #include "http.h"
-
 									/*}}}*/
 using namespace std;
 
@@ -311,22 +312,27 @@ bool ServerState::Open()
    Persistent = true;
    
    // Determine the proxy setting
-   if (getenv("http_proxy") == 0)
+   string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
+   if (!SpecificProxy.empty())
    {
-      string DefProxy = _config->Find("Acquire::http::Proxy");
-      string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
-      if (SpecificProxy.empty() == false)
-      {
-	 if (SpecificProxy == "DIRECT")
-	    Proxy = "";
-	 else
-	    Proxy = SpecificProxy;
-      }   
-      else
-	 Proxy = DefProxy;
+	   if (SpecificProxy == "DIRECT")
+		   Proxy = "";
+	   else
+		   Proxy = SpecificProxy;
    }
    else
-      Proxy = getenv("http_proxy");
+   {
+	   string DefProxy = _config->Find("Acquire::http::Proxy");
+	   if (!DefProxy.empty())
+	   {
+		   Proxy = DefProxy;
+	   }
+	   else
+	   {
+		   char* result = getenv("http_proxy");
+		   Proxy = result ? result : "";
+	   }
+   }
    
    // Parse no_proxy, a , separated list of domains
    if (getenv("no_proxy") != 0)
@@ -547,7 +553,7 @@ bool ServerState::HeaderLine(string Line)
       // Evil servers return no version
       if (Line[4] == '/')
       {
-	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u %[^\n]",&Major,&Minor,
+	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,
 		    &Result,Code) != 4)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
@@ -555,7 +561,7 @@ bool ServerState::HeaderLine(string Line)
       {
 	 Major = 0;
 	 Minor = 9;
-	 if (sscanf(Line.c_str(),"HTTP %u %[^\n]",&Result,Code) != 2)
+	 if (sscanf(Line.c_str(),"HTTP %u%[^\n]",&Result,Code) != 2)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
 
@@ -719,11 +725,14 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       Req += string("Proxy-Authorization: Basic ") + 
           Base64Encode(Proxy.User + ":" + Proxy.Password) + "\r\n";
 
+   maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
    if (Uri.User.empty() == false || Uri.Password.empty() == false)
+   {
       Req += string("Authorization: Basic ") + 
           Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
-   
-   Req += "User-Agent: Debian APT-HTTP/1.3 ("VERSION")\r\n\r\n";
+   }
+   Req += "User-Agent: " + _config->Find("Acquire::http::User-Agent",
+		"Debian APT-HTTP/1.3 ("VERSION")") + "\r\n\r\n";
    
    if (Debug == true)
       cerr << Req << endl;

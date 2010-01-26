@@ -21,6 +21,7 @@
  <refmeta>
    <refentrytitle>apt-cache</refentrytitle>
    <manvolnum>8</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
  </refmeta>
  
  <!-- Man page title -->
@@ -150,7 +151,7 @@ Reverse Provides:
    
        <listitem><para><literal>Missing</literal> is the number of package names that were referenced in
        a dependency but were not provided by any package. Missing packages may 
-       be in evidence if a full distribution is not accessed, or if a package
+       be an evidence if a full distribution is not accessed, or if a package
        (real or virtual) has been dropped from the distribution. Usually they
        are referenced from Conflicts or Breaks statements.</para>
        </listitem>
@@ -225,11 +226,14 @@ Reverse Provides:
      </varlistentry>
 
      <varlistentry><term>pkgnames <replaceable>[ prefix ]</replaceable></term>
-     <listitem><para>This command prints the name of each package in the system. The optional
+     <listitem><para>This command prints the name of each package APT knows. The optional
      argument is a prefix match to filter the name list. The output is suitable
      for use in a shell tab complete function and the output is generated 
      extremely quickly. This command is best used with the 
-     <option>--generate</option> option.</para></listitem>
+     <option>--generate</option> option.</para>
+     <para>Note that a package which APT knows of is not necessarily available to download,
+     installable or installed, e.g. virtual packages are also listed in the generated list.
+     </para></listitem>
      </varlistentry>
      
      <varlistentry><term>dotty <replaceable>pkg(s)</replaceable></term>
@@ -356,21 +360,8 @@ Reverse Provides:
 
  <refsect1><title>Files</title>
    <variablelist>
-     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>
-     <listitem><para>Locations to fetch packages from.
-     Configuration Item: <literal>Dir::Etc::SourceList</literal>.</para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><filename>&statedir;/lists/</filename></term>
-     <listitem><para>Storage area for state information for each package resource specified in
-     &sources-list;
-     Configuration Item: <literal>Dir::State::Lists</literal>.</para></listitem>
-     </varlistentry>
-  
-     <varlistentry><term><filename>&statedir;/lists/partial/</filename></term>
-     <listitem><para>Storage area for state information in transit.
-     Configuration Item: <literal>Dir::State::Lists</literal> (implicit partial).</para></listitem>
-     </varlistentry>     
+     &file-sourceslist;
+     &file-statelists;
    </variablelist>
  </refsect1>
 

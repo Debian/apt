@@ -5,7 +5,7 @@
 # Input
 # $(SOURCE) - The source code to use
 # $(HEADERS) - Exported header files and private header files
-# $(LIBRARY) - The name of the library without lib or .so 
+# $(LIBRARY) - The name of the library without lib or .so
 # $(MAJOR) - The major version number of this library
 # $(MINOR) - The minor version number of this library
 # $(APT_DOMAIN) - The text domain for this library

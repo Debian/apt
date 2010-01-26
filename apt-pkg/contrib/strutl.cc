@@ -67,9 +67,20 @@ bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest)
   outbuf = new char[insize+1];
   outptr = outbuf;
 
-  iconv(cd, &inptr, &insize, &outptr, &outsize);
-  *outptr = '\0';
+  while (insize != 0)
+  {
+     size_t const err = iconv(cd, &inptr, &insize, &outptr, &outsize);
+     if (err == (size_t)(-1))
+     {
+	insize--;
+	outsize++;
+	inptr++;
+	*outptr = '?';
+	outptr++;
+     }
+  }
 
+  *outptr = '\0';
   *dest = outbuf;
   delete[] outbuf;
   
@@ -304,13 +315,13 @@ string SizeToStr(double Size)
    {
       if (ASize < 100 && I != 0)
       {
-         sprintf(S,"%.1f%c",ASize,Ext[I]);
+         sprintf(S,"%'.1f%c",ASize,Ext[I]);
 	 break;
       }
       
       if (ASize < 10000)
       {
-         sprintf(S,"%.0f%c",ASize,Ext[I]);
+         sprintf(S,"%'.0f%c",ASize,Ext[I]);
 	 break;
       }
       ASize /= 1000.0;
@@ -385,6 +396,17 @@ string SubstVar(string Str,const struct SubstVar *Vars)
    for (; Vars->Subst != 0; Vars++)
       Str = SubstVar(Str,Vars->Subst,*Vars->Contents);
    return Str;
+}
+									/*}}}*/
+// OutputInDepth - return a string with separator multiplied with depth /*{{{*/
+// ---------------------------------------------------------------------
+/* Returns a string with the supplied separator depth + 1 times in it */
+std::string OutputInDepth(const unsigned long Depth, const char* Separator)
+{
+   std::string output = "";
+   for(unsigned long d=Depth+1; d > 0; d--)
+      output.append(Separator);
+   return output;
 }
 									/*}}}*/
 // URItoFileName - Convert the uri into a unique file name		/*{{{*/

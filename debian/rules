@@ -75,25 +75,24 @@ APT_UTILS=ftparchive sortpkgs extracttemplates
 #export DH_VERBOSE=1
 
 # Find the libapt-pkg major version for use in other control files
-export LIBAPTPKG_MAJOR:=$(shell egrep '^MAJOR=' apt-pkg/makefile |cut -d '=' -f 2)
-export LIBAPTINST_MAJOR:=$(shell egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)
+include buildlib/libversion.mak
 
 # Determine which package we should provide in the control files
-LIBAPTPKG_PROVIDE=libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER)-$(LIBAPTPKG_MAJOR)
-LIBAPTINST_PROVIDE=libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER)-$(LIBAPTINST_MAJOR)
+LIBAPTPKG_PROVIDE=libapt-pkg$(LIBEXT)-$(LIBAPTPKG_MAJOR)
+LIBAPTINST_PROVIDE=libapt-inst$(LIBEXT)-$(LIBAPTINST_MAJOR)
 
 debian/shlibs.local: apt-pkg/makefile
 	# We have 3 shlibs.local files.. One for 'apt', one for 'apt-utils' and
 	# one for the rest of the packages. This ensures that each package gets
 	# the right overrides.. 
 	rm -rf $@ $@.apt $@.apt-utils
-	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR)" > $@.apt
+	echo "libapt-pkg$(LIBEXT) $(LIBAPTPKG_MAJOR)" > $@.apt
 
-	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@.apt-utils
-	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR)" >> $@.apt-utils
+	echo "libapt-pkg$(LIBEXT) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@.apt-utils
+	echo "libapt-inst$(LIBEXT) $(LIBAPTINST_MAJOR)" >> $@.apt-utils
 
-	echo "libapt-pkg$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@
-	echo "libapt-inst$(GLIBC_VER)$(LIBSTDCPP_VER) $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
+	echo "libapt-pkg$(LIBEXT) $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@
+	echo "libapt-inst$(LIBEXT) $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
 
 build: build/build-stamp	
 build-doc: build/build-doc-stamp	
@@ -186,6 +185,7 @@ apt-doc: build-doc
 # Build architecture-dependent files here.
 
 binary-arch: apt libapt-pkg-dev apt-utils apt-transport-https
+apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
 apt: build build-doc debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
@@ -226,7 +226,7 @@ apt: build build-doc debian/shlibs.local
 	rm -f po/*.pot
 
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
-	dh_installman -p$@ 
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
 	dh_installcron -p$@
 	dh_installdocs -p$@
 	dh_installchangelogs -p$@
@@ -269,6 +269,7 @@ libapt-pkg-dev: build debian/shlibs.local
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
+apt-utils_MANPAGES = apt-sortpkgs apt-ftparchive apt-extracttemplates
 apt-utils: build debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
@@ -284,7 +285,7 @@ apt-utils: build debian/shlibs.local
 	dh_installexamples -p$@
 
 	# Install the man pages..
-	dh_installman -p$@
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt-utils_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt-utils_MANPAGES)))
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@

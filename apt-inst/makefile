@@ -9,9 +9,11 @@ HEADER_TARGETDIRS = apt-pkg
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
+# The library name and version (indirectly used from init.h)
+include ../buildlib/libversion.mak
+
 # The library name
 LIBRARY=apt-inst
-LIBEXT=$(GLIBC_VER)$(LIBSTDCPP_VER)
 MAJOR=1.1
 MINOR=0
 SLIBS=$(PTHREADLIB) -lapt-pkg

@@ -78,7 +78,7 @@
 
 <!ENTITY dpkg "<citerefentry>
     <refentrytitle><command>dpkg</command></refentrytitle>
-    <manvolnum>8</manvolnum>
+    <manvolnum>1</manvolnum>
   </citerefentry>"
 >
 
@@ -96,19 +96,19 @@
 
 <!ENTITY dpkg-scanpackages "<citerefentry>
     <refentrytitle><command>dpkg-scanpackages</command></refentrytitle>
-    <manvolnum>8</manvolnum>
+    <manvolnum>1</manvolnum>
   </citerefentry>"
 >
 
 <!ENTITY dpkg-scansources "<citerefentry>
     <refentrytitle><command>dpkg-scansources</command></refentrytitle>
-    <manvolnum>8</manvolnum>
+    <manvolnum>1</manvolnum>
   </citerefentry>"
 >
 
 <!ENTITY dselect "<citerefentry>
     <refentrytitle><command>dselect</command></refentrytitle>
-    <manvolnum>8</manvolnum>
+    <manvolnum>1</manvolnum>
   </citerefentry>"
 >
 
@@ -158,7 +158,10 @@
 <!ENTITY apt-docinfo "
  <refentryinfo>
    <address><email>apt@packages.debian.org</email></address>
-   <author><firstname>Jason</firstname> <surname>Gunthorpe</surname></author>
+   <author>
+     <firstname>Jason</firstname> <surname>Gunthorpe</surname>
+     <contrib></contrib>
+   </author>
    <copyright><year>1998-2001</year> <holder>Jason Gunthorpe</holder></copyright>
    <date>28 October 2008</date>
    <productname>Linux</productname>
@@ -176,36 +179,27 @@
    <author>
     <firstname>Jason</firstname>
     <surname>Gunthorpe</surname>
+    <contrib></contrib>
+   </author>
+">
+
+<!ENTITY apt-author.moconnor "
+   <author>
+    <firstname>Mike</firstname>
+    <surname>O'Connor</surname>
+    <contrib></contrib>
    </author>
 ">
 
 <!ENTITY apt-author.team "
    <author>
     <othername>APT team</othername>
+    <contrib></contrib>
    </author>
 ">
 
 <!ENTITY apt-product "
    <productname>Linux</productname>
-">
-
-<!ENTITY apt-email "
-   <address>
-    <email>apt@packages.debian.org</email>
-   </address>
-">
-
-<!ENTITY apt-author.jgunthorpe "
-   <author>
-    <firstname>Jason</firstname>
-    <surname>Gunthorpe</surname>
-   </author>
-">
-
-<!ENTITY apt-author.team "
-   <author>
-    <othername>APT team</othername>
-   </author>
 ">
 
 <!ENTITY apt-copyright "
@@ -295,3 +289,67 @@
    </para>
 ">
 
+<!ENTITY file-aptconf "
+     <varlistentry><term><filename>/etc/apt/apt.conf</filename></term>
+     <listitem><para>APT configuration file.
+     Configuration Item: <literal>Dir::Etc::Main</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/etc/apt/apt.conf.d/</filename></term>
+     <listitem><para>APT configuration file fragments.
+     Configuration Item: <literal>Dir::Etc::Parts</literal>.</para></listitem>
+     </varlistentry>
+">
+
+<!ENTITY file-cachearchives "
+     <varlistentry><term><filename>&cachedir;/archives/</filename></term>
+     <listitem><para>Storage area for retrieved package files.
+     Configuration Item: <literal>Dir::Cache::Archives</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>&cachedir;/archives/partial/</filename></term>
+     <listitem><para>Storage area for package files in transit.
+     Configuration Item: <literal>Dir::Cache::Archives</literal> (implicit partial). </para></listitem>
+     </varlistentry>
+">
+
+<!ENTITY file-preferences "
+     <varlistentry><term><filename>/etc/apt/preferences</filename></term>
+     <listitem><para>Version preferences file.
+     This is where you would specify &quot;pinning&quot;,
+     i.e. a preference to get certain packages
+     from a separate source
+     or from a different version of a distribution.
+     Configuration Item: <literal>Dir::Etc::Preferences</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/etc/apt/preferences.d/</filename></term>
+     <listitem><para>File fragments for the version preferences.
+     Configuration Item: <literal>Dir::Etc::PreferencesParts</literal>.</para></listitem>
+     </varlistentry>
+">
+
+<!ENTITY file-sourceslist "
+     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>
+     <listitem><para>Locations to fetch packages from.
+     Configuration Item: <literal>Dir::Etc::SourceList</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>/etc/apt/sources.list.d/</filename></term>
+     <listitem><para>File fragments for locations to fetch packages from.
+     Configuration Item: <literal>Dir::Etc::SourceParts</literal>.</para></listitem>
+     </varlistentry>
+">
+
+<!ENTITY file-statelists "
+     <varlistentry><term><filename>&statedir;/lists/</filename></term>
+     <listitem><para>Storage area for state information for each package resource specified in
+     &sources-list;
+     Configuration Item: <literal>Dir::State::Lists</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><filename>&statedir;/lists/partial/</filename></term>
+     <listitem><para>Storage area for state information in transit.
+     Configuration Item: <literal>Dir::State::Lists</literal> (implicit partial).</para></listitem>
+     </varlistentry>
+">

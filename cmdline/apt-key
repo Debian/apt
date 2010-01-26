@@ -93,13 +93,17 @@ update() {
     # add any security. we *need* this check on net-update though
     $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
 
-    # remove no-longer supported/used keys
-    keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5`
-    for key in $keys; do
-	if $GPG --list-keys --with-colons | grep ^pub | cut -d: -f5 | grep -q $key; then
-	    $GPG --quiet --batch --delete-key --yes ${key}
-	fi
-    done
+    if [ -r "$REMOVED_KEYS" ]; then
+	# remove no-longer supported/used keys
+	keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5`
+	for key in $keys; do
+	    if $GPG --list-keys --with-colons | grep ^pub | cut -d: -f5 | grep -q $key; then
+		$GPG --quiet --batch --delete-key --yes ${key}
+	    fi
+	done
+    else
+	echo "Warning: removed keys keyring  $REMOVED_KEYS missing or not readable" >&2
+    fi
 }
 
 

@@ -109,6 +109,8 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
       return false;
    if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Replaces) == false)
       return false;
+   if (ParseDepends(Ver,"Enhances",pkgCache::Dep::Enhances) == false)
+      return false;
 
    // Obsolete.
    if (ParseDepends(Ver,"Optional",pkgCache::Dep::Suggests) == false)
@@ -637,6 +639,8 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
       FileI->Version = WriteUniqString(Start,Stop - Start);
    if (Section.Find("Origin",Start,Stop) == true)
       FileI->Origin = WriteUniqString(Start,Stop - Start);
+   if (Section.Find("Codename",Start,Stop) == true)
+      FileI->Codename = WriteUniqString(Start,Stop - Start);
    if (Section.Find("Label",Start,Stop) == true)
       FileI->Label = WriteUniqString(Start,Stop - Start);
    if (Section.Find("Architecture",Start,Stop) == true)

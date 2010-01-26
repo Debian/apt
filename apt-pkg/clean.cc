@@ -19,7 +19,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 									/*}}}*/
-
 // ArchiveCleaner::Go - Perform smart cleanup of the archive		/*{{{*/
 // ---------------------------------------------------------------------
 /* Scan the directory for files to erase, we check the version information

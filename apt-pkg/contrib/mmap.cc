@@ -13,11 +13,6 @@
    libc6 generates warnings -- which should be errors, g++ isn't properly
    strict.
    
-   The configure test notes that some OS's have broken private mmap's
-   so on those OS's we can't use mmap. This means we have to use
-   configure to test mmap and can't rely on the POSIX
-   _POSIX_MAPPED_FILES test.
-   
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -31,6 +26,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 #include <cstring>
    									/*}}}*/
@@ -144,7 +140,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 // DynamicMMap::DynamicMMap - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) : 
+DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) :
              MMap(F,Flags | NoImmMap), Fd(&F), WorkSpace(WorkSpace)
 {
    if (_error->PendingError() == true)
@@ -166,15 +162,34 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace) 
 									/*}}}*/
 // DynamicMMap::DynamicMMap - Constructor for a non-file backed map	/*{{{*/
 // ---------------------------------------------------------------------
-/* This is just a fancy malloc really.. */
+/* We try here to use mmap to reserve some space - this is much more
+   cooler than the fallback solution to simply allocate a char array
+   and could come in handy later than we are able to grow such an mmap */
 DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long WorkSpace) :
              MMap(Flags | NoImmMap | UnMapped), Fd(0), WorkSpace(WorkSpace)
 {
    if (_error->PendingError() == true)
       return;
-   
+
+#ifdef _POSIX_MAPPED_FILES
+   // Set the permissions.
+   int Prot = PROT_READ;
+   int Map = MAP_PRIVATE | MAP_ANONYMOUS;
+   if ((Flags & ReadOnly) != ReadOnly)
+      Prot |= PROT_WRITE;
+   if ((Flags & Public) == Public)
+      Map = MAP_SHARED | MAP_ANONYMOUS;
+
+   // use anonymous mmap() to get the memory
+   Base = (unsigned char*) mmap(0, WorkSpace, Prot, Map, -1, 0);
+
+   if(Base == MAP_FAILED)
+      _error->Errno("DynamicMMap",_("Couldn't make mmap of %lu bytes"),WorkSpace);
+#else
+   // fallback to a static allocated space
    Base = new unsigned char[WorkSpace];
    memset(Base,0,WorkSpace);
+#endif
    iSize = 0;
 }
 									/*}}}*/
@@ -185,7 +200,11 @@ DynamicMMap::~DynamicMMap()
 {
    if (Fd == 0)
    {
+#ifdef _POSIX_MAPPED_FILES
+      munmap(Base, WorkSpace);
+#else
       delete [] (unsigned char *)Base;
+#endif
       return;
    }
    
@@ -204,17 +223,19 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
    unsigned long Result = iSize;
    if (Aln != 0)
       Result += Aln - (iSize%Aln);
-   
-   iSize = Result + Size;
-   
-   // Just in case error check
-   if (Result + Size > WorkSpace)
-   {
-	  _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
-				  "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
-      return 0;
-   }
 
+   iSize = Result + Size;
+
+   // try to grow the buffer
+   while(Result + Size > WorkSpace)
+   {
+      if(!Grow())
+      {
+	 _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
+			 "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
+	 return 0;
+      }
+   }
    return Result;
 }
 									/*}}}*/
@@ -223,7 +244,7 @@ unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
 /* This allocates an Item of size ItemSize so that it is aligned to its
    size in the file. */
 unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
-{   
+{
    // Look for a matching pool entry
    Pool *I;
    Pool *Empty = 0;
@@ -234,7 +255,6 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
       if (I->ItemSize == ItemSize)
 	 break;
    }
-
    // No pool is allocated, use an unallocated one
    if (I == Pools + PoolCount)
    {
@@ -249,17 +269,24 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
       I->ItemSize = ItemSize;
       I->Count = 0;
    }
-   
+
+   unsigned long Result = 0;
    // Out of space, allocate some more
    if (I->Count == 0)
    {
-      I->Count = 20*1024/ItemSize;
-      I->Start = RawAllocate(I->Count*ItemSize,ItemSize);
-   }   
+      const unsigned long size = 20*1024;
+      I->Count = size/ItemSize;
+      Result = RawAllocate(size,ItemSize);
+      // Does the allocation failed ?
+      if (Result == 0 && _error->PendingError())
+	 return 0;
+      I->Start = Result;
+   }
+   else
+      Result = I->Start;
 
    I->Count--;
-   unsigned long Result = I->Start;
-   I->Start += ItemSize;  
+   I->Start += ItemSize;
    return Result/ItemSize;
 }
 									/*}}}*/
@@ -269,20 +296,45 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
 unsigned long DynamicMMap::WriteString(const char *String,
 				       unsigned long Len)
 {
-   unsigned long Result = iSize;
-   // Just in case error check
-   if (Result + Len > WorkSpace)
-   {
-	  _error->Error(_("Dynamic MMap ran out of room. Please increase the size "
-				  "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
-      return 0;
-   }   
-   
    if (Len == (unsigned long)-1)
       Len = strlen(String);
-   iSize += Len + 1;
+
+   unsigned long Result = RawAllocate(Len+1,0);
+
+   if (Result == 0 && _error->PendingError())
+      return 0;
+
    memcpy((char *)Base + Result,String,Len);
    ((char *)Base)[Result + Len] = 0;
    return Result;
+}
+									/*}}}*/
+// DynamicMMap::Grow - Grow the mmap					/*{{{*/
+// ---------------------------------------------------------------------
+/* This method will try to grow the mmap we currently use. This doesn't
+   work most of the time because we can't move the mmap around in the
+   memory for now as this would require to adjust quite a lot of pointers
+   but why we should not at least try to grow it before we give up? */
+bool DynamicMMap::Grow()
+{
+#if defined(_POSIX_MAPPED_FILES) && defined(__linux__)
+   unsigned long newSize = WorkSpace + 1024*1024;
+
+   if(Fd != 0)
+   {
+      Fd->Seek(newSize - 1);
+      char C = 0;
+      Fd->Write(&C,sizeof(C));
+   }
+
+   Base = mremap(Base, WorkSpace, newSize, 0);
+   if(Base == MAP_FAILED)
+      return false;
+
+   WorkSpace = newSize;
+   return true;
+#else
+   return false;
+#endif
 }
 									/*}}}*/

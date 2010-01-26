@@ -37,8 +37,8 @@ class CDROMMethod : public pkgAcqMethod
    bool MountedByApt;
    pkgUdevCdromDevices UdevCdroms;
  
-   bool IsCorrectCD(URI want, string MountPath);
-   bool AutoDetectAndMount(URI);
+   bool IsCorrectCD(URI want, string MountPath, string& NewID);
+   bool AutoDetectAndMount(URI, string &NewID);
    virtual bool Fetch(FetchItem *Itm);
    string GetID(string Name);
    virtual void Exit();
@@ -92,7 +92,7 @@ string CDROMMethod::GetID(string Name)
 // CDROMMethod::AutoDetectAndMount                                      /*{{{*/
 // ---------------------------------------------------------------------
 /* Modifies class varaiable CDROM to the mountpoint */
-bool CDROMMethod::AutoDetectAndMount(URI Get)
+bool CDROMMethod::AutoDetectAndMount(URI Get, string &NewID)
 {
    vector<struct CdromDevice> v = UdevCdroms.Scan();
 
@@ -103,7 +103,7 @@ bool CDROMMethod::AutoDetectAndMount(URI Get)
       {
 	 if (Debug)
 	    clog << "Checking mounted cdrom device " << v[i].DeviceName << endl;
-	 if (IsCorrectCD(Get, v[i].MountPath))
+	 if (IsCorrectCD(Get, v[i].MountPath, NewID))
 	 {
 	    CDROM = v[i].MountPath;
 	    return true;
@@ -126,7 +126,7 @@ bool CDROMMethod::AutoDetectAndMount(URI Get)
       {
 	 if(MountCdrom("/media/apt", v[i].DeviceName)) 
 	 {
-	    if (IsCorrectCD(Get, "/media/apt"))
+	    if (IsCorrectCD(Get, "/media/apt", NewID))
 	    {
 	       MountedByApt = true;
 	       CDROM = "/media/apt";
@@ -144,10 +144,8 @@ bool CDROMMethod::AutoDetectAndMount(URI Get)
 // CDROMMethod::IsCorrectCD                                             /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool CDROMMethod::IsCorrectCD(URI want, string MountPath)
+bool CDROMMethod::IsCorrectCD(URI want, string MountPath, string& NewID)
 {
-   string NewID;
-
    for (unsigned int Version = 2; Version != 0; Version--)
    {
       if (IdentCdrom(MountPath,NewID,Version) == false)
@@ -220,23 +218,24 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       return true;
    }
 
+   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
    CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
    if (Debug)
       clog << "Looking for CDROM at " << CDROM << endl;
 
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
-   string NewID;
 
+   string NewID;
    while (CurrentID.empty() == true)
    {
-      if (CDROM == "apt-udev-auto/") 
-	 AutoDetectAndMount(Get);
+      if (AutoDetect)
+	 AutoDetectAndMount(Get, NewID);
 
       if(!IsMounted(CDROM))
 	 MountedByApt = MountCdrom(CDROM);
       
-      if (IsCorrectCD(Get, CDROM))
+      if (IsCorrectCD(Get, CDROM, NewID))
 	 break;
 	 
       // I suppose this should prompt somehow?

@@ -49,6 +49,7 @@ namespace
     std::make_pair("install",   N_("Installing %s")),
     std::make_pair("configure", N_("Configuring %s")),
     std::make_pair("remove",    N_("Removing %s")),
+    std::make_pair("purge",    N_("Completely removing %s")),
     std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
   };
 
@@ -134,8 +135,14 @@ bool pkgDPkgPM::Configure(PkgIterator Pkg)
 {
    if (Pkg.end() == true)
       return false;
-   
-   List.push_back(Item(Item::Configure,Pkg));
+
+   List.push_back(Item(Item::Configure, Pkg));
+
+   // Use triggers for config calls if we configure "smart"
+   // as otherwise Pre-Depends will not be satisfied, see #526774
+   if (_config->FindB("DPkg::TriggersPending", false) == true)
+      List.push_back(Item(Item::TriggersPending, PkgIterator()));
+
    return true;
 }
 									/*}}}*/
@@ -190,6 +197,9 @@ bool pkgDPkgPM::SendV2Pkgs(FILE *F)
    // Write out the package actions in order.
    for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
    {
+      if(I->Pkg.end() == true)
+	 continue;
+
       pkgDepCache::StateCache &S = Cache[I->Pkg];
       
       fprintf(F,"%s ",I->Pkg.Name());
@@ -378,10 +388,11 @@ void pkgDPkgPM::DoTerminalPty(int master)
  */
 void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 {
+   bool const Debug = _config->FindB("Debug::pkgDPkgProgressReporting",false);
    // the status we output
    ostringstream status;
 
-   if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+   if (Debug == true)
       std::clog << "got from dpkg '" << line << "'" << std::endl;
 
 
@@ -396,6 +407,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: install: pkg'
       'processing: configure: pkg'
       'processing: remove: pkg'
+      'processing: purge: pkg' - but for apt is it a ignored "unknown" action
       'processing: trigproc: trigger'
 	    
    */
@@ -408,28 +420,28 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
    if( list[0] == NULL || list[1] == NULL || list[2] == NULL) 
    {
-      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+      if (Debug == true)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
       return;
    }
-   char *pkg = list[1];
-   char *action = _strstrip(list[2]);
+   const char* const pkg = list[1];
+   const char* action = _strstrip(list[2]);
 
    // 'processing' from dpkg looks like
    // 'processing: action: pkg'
    if(strncmp(list[0], "processing", strlen("processing")) == 0)
    {
       char s[200];
-      char *pkg_or_trigger = _strstrip(list[2]);
-      action =_strstrip( list[1]);
+      const char* const pkg_or_trigger = _strstrip(list[2]);
+      action = _strstrip( list[1]);
       const std::pair<const char *, const char *> * const iter =
 	std::find_if(PackageProcessingOpsBegin,
 		     PackageProcessingOpsEnd,
 		     MatchProcessingOp(action));
       if(iter == PackageProcessingOpsEnd)
       {
-	 if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
-	    std::clog << "ignoring unknwon action: " << action << std::endl;
+	 if (Debug == true)
+	    std::clog << "ignoring unknown action: " << action << std::endl;
 	 return;
       }
       snprintf(s, sizeof(s), _(iter->second), pkg_or_trigger);
@@ -440,7 +452,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << endl;
       if(OutStatusFd > 0)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+      if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       return;
    }
@@ -453,11 +465,11 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << endl;
       if(OutStatusFd > 0)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+      if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       return;
    }
-   if(strncmp(action,"conffile",strlen("conffile")) == 0)
+   else if(strncmp(action,"conffile",strlen("conffile")) == 0)
    {
       status << "pmconffile:" << list[1]
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
@@ -465,12 +477,12 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << endl;
       if(OutStatusFd > 0)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+      if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       return;
    }
 
-   vector<struct DpkgState> &states = PackageOps[pkg];
+   vector<struct DpkgState> const &states = PackageOps[pkg];
    const char *next_action = NULL;
    if(PackageOpsDone[pkg] < states.size())
       next_action = states[PackageOpsDone[pkg]].state;
@@ -493,15 +505,15 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << endl;
       if(OutStatusFd > 0)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true)
+      if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
    }
-   if (_config->FindB("Debug::pkgDPkgProgressReporting",false) == true) 
+   if (Debug == true) 
       std::clog << "(parsed from dpkg) pkg: " << pkg 
 		<< " action: " << action << endl;
 }
-
-// DPkgPM::DoDpkgStatusFd                                           	/*{{{*/
+									/*}}}*/
+// DPkgPM::DoDpkgStatusFd						/*{{{*/
 // ---------------------------------------------------------------------
 /*
  */
@@ -538,47 +550,106 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    dpkgbuf_pos = dpkgbuf+dpkgbuf_pos-p;
 }
 									/*}}}*/
-
+// DPkgPM::WriteHistoryTag						/*{{{*/
+void pkgDPkgPM::WriteHistoryTag(string tag, string value)
+{
+   if (value.size() > 0)
+   {
+      // poor mans rstrip(", ")
+      if (value[value.size()-2] == ',' && value[value.size()-1] == ' ')
+	 value.erase(value.size() - 2, 2);
+      fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
+   }
+}									/*}}}*/
+// DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
 {
    string logdir = _config->FindDir("Dir::Log");
    if(not FileExists(logdir))
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
+
+   // get current time
+   char timestr[200];
+   time_t t = time(NULL);
+   struct tm *tmp = localtime(&t);
+   strftime(timestr, sizeof(timestr), "%F  %T", tmp);
+
+   // open terminal log
    string logfile_name = flCombine(logdir,
 				   _config->Find("Dir::Log::Terminal"));
    if (!logfile_name.empty())
    {
       term_out = fopen(logfile_name.c_str(),"a");
       chmod(logfile_name.c_str(), 0600);
-      // output current time
-      char outstr[200];
-      time_t t = time(NULL);
-      struct tm *tmp = localtime(&t);
-      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
-      fprintf(term_out, "\nLog started: ");
-      fprintf(term_out, "%s", outstr);
+      fprintf(term_out, "\n\nLog started: ");
+      fprintf(term_out, "%s", timestr);
       fprintf(term_out, "\n");
    }
+
+   // write 
+   string history_name = flCombine(logdir,
+				   _config->Find("Dir::Log::History"));
+   if (!history_name.empty())
+   {
+      history_out = fopen(history_name.c_str(),"a");
+      chmod(history_name.c_str(), 0644);
+      fprintf(history_out, "\nStart-Date: %s\n", timestr);
+      string remove, purge, install, upgrade, downgrade;
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+      {
+	 if (Cache[I].NewInstall())
+	    install += I.Name() + string(" (") + Cache[I].CandVersion + string("), ");
+	 else if (Cache[I].Upgrade())
+	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	 else if (Cache[I].Downgrade())
+	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	 else if (Cache[I].Delete())
+	 {
+	    if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
+	       purge += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	    else
+	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	 }
+      }
+      WriteHistoryTag("Install", install);
+      WriteHistoryTag("Upgrade", upgrade);
+      WriteHistoryTag("Downgrade",downgrade);
+      WriteHistoryTag("Remove",remove);
+      WriteHistoryTag("Purge",purge);
+      fflush(history_out);
+   }
+   
    return true;
 }
-
+									/*}}}*/
+// DPkg::CloseLog							/*{{{*/
 bool pkgDPkgPM::CloseLog()
 {
+   char timestr[200];
+   time_t t = time(NULL);
+   struct tm *tmp = localtime(&t);
+   strftime(timestr, sizeof(timestr), "%F  %T", tmp);
+
    if(term_out)
    {
-      char outstr[200];
-      time_t t = time(NULL);
-      struct tm *tmp = localtime(&t);
-      strftime(outstr, sizeof(outstr), "%F  %T", tmp);
       fprintf(term_out, "Log ended: ");
-      fprintf(term_out, "%s", outstr);
+      fprintf(term_out, "%s", timestr);
       fprintf(term_out, "\n");
       fclose(term_out);
    }
    term_out = NULL;
+
+   if(history_out)
+   {
+      if (dpkg_error.size() > 0)
+	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
+      fprintf(history_out, "End-Date: %s\n", timestr);
+      fclose(history_out);
+   }
+
    return true;
 }
-
+									/*}}}*/
 /*{{{*/
 // This implements a racy version of pselect for those architectures
 // that don't have a working implementation.
@@ -600,7 +671,6 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
    return retval;
 }
 /*}}}*/
-
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
@@ -617,15 +687,22 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    sigset_t sigmask;
    sigset_t original_sigmask;
 
-   unsigned int MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);   
-   unsigned int MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
-   bool NoTriggers = _config->FindB("DPkg::NoTriggers",false);
+   unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);
+   unsigned int const MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
+   bool const NoTriggers = _config->FindB("DPkg::NoTriggers", false);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
 
    if (RunScriptsWithPkgs("DPkg::Pre-Install-Pkgs") == false)
       return false;
+
+   // support subpressing of triggers processing for special
+   // cases like d-i that runs the triggers handling manually
+   bool const SmartConf = (_config->Find("PackageManager::Configure", "all") != "all");
+   bool const TriggersPending = _config->FindB("DPkg::TriggersPending", false);
+   if (_config->FindB("DPkg::ConfigurePending", SmartConf) == true)
+      List.push_back(Item(Item::ConfigurePending, PkgIterator()));
 
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
@@ -640,20 +717,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       { 
 	 {"unpacked",N_("Preparing to configure %s") },
 	 {"half-configured", N_("Configuring %s") },
-#if 0
-	 {"triggers-awaited", N_("Processing triggers for %s") },
-	 {"triggers-pending", N_("Processing triggers for %s") },
-#endif
 	 { "installed", N_("Installed %s")},
 	 {NULL, NULL}
       },
       // Remove operation
       { 
 	 {"half-configured", N_("Preparing for removal of %s")},
-#if 0
-	 {"triggers-awaited", N_("Preparing for removal of %s")},
-	 {"triggers-pending", N_("Preparing for removal of %s")},
-#endif
 	 {"half-installed", N_("Removing %s")},
 	 {"config-files",  N_("Removed %s")},
 	 {NULL, NULL}
@@ -670,16 +739,19 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // that will be [installed|configured|removed|purged] and add
    // them to the PackageOps map (the dpkg states it goes through)
    // and the PackageOpsTranslations (human readable strings)
-   for (vector<Item>::iterator I = List.begin(); I != List.end();I++)
+   for (vector<Item>::const_iterator I = List.begin(); I != List.end();I++)
    {
-      string name = (*I).Pkg.Name();
+      if((*I).Pkg.end() == true)
+	 continue;
+
+      string const name = (*I).Pkg.Name();
       PackageOpsDone[name] = 0;
       for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL;  i++) 
       {
 	 PackageOps[name].push_back(DpkgStatesOpMap[(*I).Op][i]);
 	 PackagesTotal++;
       }
-   }   
+   }
 
    stdin_is_dev_null = false;
 
@@ -687,19 +759,42 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    OpenLog();
 
    // this loop is runs once per operation
-   for (vector<Item>::iterator I = List.begin(); I != List.end();)
+   for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
    {
-      vector<Item>::iterator J = I;
-      for (; J != List.end() && J->Op == I->Op; J++);
+      // Do all actions with the same Op in one run
+      vector<Item>::const_iterator J = I;
+      if (TriggersPending == true)
+	 for (; J != List.end(); J++)
+	 {
+	    if (J->Op == I->Op)
+	       continue;
+	    if (J->Op != Item::TriggersPending)
+	       break;
+	    vector<Item>::const_iterator T = J + 1;
+	    if (T != List.end() && T->Op == I->Op)
+	       continue;
+	    break;
+	 }
+      else
+	 for (; J != List.end() && J->Op == I->Op; J++)
+	    /* nothing */;
 
       // Generate the argument list
       const char *Args[MaxArgs + 50];
+      
+      // Now check if we are within the MaxArgs limit
+      //
+      // this code below is problematic, because it may happen that
+      // the argument list is split in a way that A depends on B
+      // and they are in the same "--configure A B" run
+      // - with the split they may now be configured in different
+      //   runs 
       if (J - I > (signed)MaxArgs)
 	 J = I + MaxArgs;
       
       unsigned int n = 0;
       unsigned long Size = 0;
-      string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+      string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
       Args[n++] = Tmp.c_str();
       Size += strlen(Args[n-1]);
       
@@ -749,11 +844,23 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 
 	 case Item::Configure:
 	 Args[n++] = "--configure";
-	 if (NoTriggers)
-	    Args[n++] = "--no-triggers";
 	 Size += strlen(Args[n-1]);
 	 break;
-	 
+
+	 case Item::ConfigurePending:
+	 Args[n++] = "--configure";
+	 Size += strlen(Args[n-1]);
+	 Args[n++] = "--pending";
+	 Size += strlen(Args[n-1]);
+	 break;
+
+	 case Item::TriggersPending:
+	 Args[n++] = "--triggers-only";
+	 Size += strlen(Args[n-1]);
+	 Args[n++] = "--pending";
+	 Size += strlen(Args[n-1]);
+	 break;
+
 	 case Item::Install:
 	 Args[n++] = "--unpack";
 	 Size += strlen(Args[n-1]);
@@ -761,7 +868,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 Size += strlen(Args[n-1]);
 	 break;
       }
-      
+
+      if (NoTriggers == true && I->Op != Item::TriggersPending &&
+	  I->Op != Item::ConfigurePending)
+      {
+	 Args[n++] = "--no-triggers";
+	 Size += strlen(Args[n-1]);
+      }
+
       // Write in the file or package names
       if (I->Op == Item::Install)
       {
@@ -777,6 +891,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       {
 	 for (;I != J && Size < MaxArgBytes; I++)
 	 {
+	    if((*I).Pkg.end() == true)
+	       continue;
 	    Args[n++] = I->Pkg.Name();
 	    Size += strlen(Args[n-1]);
 	 }	 
@@ -808,32 +924,36 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       struct	termios tt;
       struct	winsize win;
-      int	master;
-      int	slave;
+      int	master = -1;
+      int	slave = -1;
 
-      // FIXME: setup sensible signal handling (*ick*)
-      tcgetattr(0, &tt);
-      ioctl(0, TIOCGWINSZ, (char *)&win);
-      if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+      // if tcgetattr does not return zero there was a error
+      // and we do not do any pty magic
+      if (tcgetattr(0, &tt) == 0)
       {
-	 const char *s = _("Can not write log, openpty() "
-			   "failed (/dev/pts not mounted?)\n");
-	 fprintf(stderr, "%s",s);
-	 fprintf(term_out, "%s",s);
-	 master = slave = -1;
-      }  else {
-	 struct termios rtt;
-	 rtt = tt;
-	 cfmakeraw(&rtt);
-	 rtt.c_lflag &= ~ECHO;
-	 // block SIGTTOU during tcsetattr to prevent a hang if
-	 // the process is a member of the background process group
-	 // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
-	 sigemptyset(&sigmask);
-	 sigaddset(&sigmask, SIGTTOU);
-	 sigprocmask(SIG_BLOCK,&sigmask, &original_sigmask);
-	 tcsetattr(0, TCSAFLUSH, &rtt);
-	 sigprocmask(SIG_SETMASK, &original_sigmask, 0);
+	 ioctl(0, TIOCGWINSZ, (char *)&win);
+	 if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+	 {
+	    const char *s = _("Can not write log, openpty() "
+	                      "failed (/dev/pts not mounted?)\n");
+	    fprintf(stderr, "%s",s);
+            if(term_out)
+              fprintf(term_out, "%s",s);
+	    master = slave = -1;
+	 }  else {
+	    struct termios rtt;
+	    rtt = tt;
+	    cfmakeraw(&rtt);
+	    rtt.c_lflag &= ~ECHO;
+	    // block SIGTTOU during tcsetattr to prevent a hang if
+	    // the process is a member of the background process group
+	    // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
+	    sigemptyset(&sigmask);
+	    sigaddset(&sigmask, SIGTTOU);
+	    sigprocmask(SIG_BLOCK,&sigmask, &original_sigmask);
+	    tcsetattr(0, TCSAFLUSH, &rtt);
+	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
+	 }
       }
 
        // Fork dpkg
@@ -864,6 +984,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    close(slave);
 	 }
 	 close(fd[0]); // close the read end of the pipe
+
+	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
+	 {
+	    std::cerr << "Chrooting into " 
+		      << _config->FindDir("DPkg::Chroot-Directory") 
+		      << std::endl;
+	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
+	       _exit(100);
+	 }
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
@@ -903,11 +1032,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       int Status = 0;
 
       // we read from dpkg here
-      int _dpkgin = fd[0];
+      int const _dpkgin = fd[0];
       close(fd[1]);                        // close the write end of the pipe
 
-      // the result of the waitpid call
-      int res;
       if(slave > 0)
 	 close(slave);
 
@@ -915,6 +1042,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       sigemptyset(&sigmask);
       sigprocmask(SIG_BLOCK,&sigmask,&original_sigmask);
 
+      // the result of the waitpid call
+      int res;
       int select_ret;
       while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
 	 if(res < 0) {
@@ -981,17 +1110,20 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 // if it was set to "keep-dpkg-runing" then we won't return
 	 // here but keep the loop going and just report it as a error
 	 // for later
-	 bool stopOnError = _config->FindB("Dpkg::StopOnError",true);
+	 bool const stopOnError = _config->FindB("Dpkg::StopOnError",true);
 	 
 	 if(stopOnError)
 	    RunScripts("DPkg::Post-Invoke");
 
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
-	    _error->Error("Sub-process %s received a segmentation fault.",Args[0]);
+	    strprintf(dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
 	 else if (WIFEXITED(Status) != 0)
-	    _error->Error("Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	    strprintf(dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
 	 else 
-	    _error->Error("Sub-process %s exited unexpectedly",Args[0]);
+	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
+
+	 if(dpkg_error.size() > 0)
+	    _error->Error(dpkg_error.c_str());
 
 	 if(stopOnError) 
 	 {

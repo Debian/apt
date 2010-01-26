@@ -29,7 +29,9 @@ class pkgDPkgPM : public pkgPackageManager
    char dpkgbuf[1024];
    int dpkgbuf_pos;
    FILE *term_out;
-   
+   FILE *history_out;
+   string dpkg_error;
+
    protected:
 
    // progress reporting
@@ -53,7 +55,7 @@ class pkgDPkgPM : public pkgPackageManager
   
    struct Item
    {
-      enum Ops {Install, Configure, Remove, Purge} Op;
+      enum Ops {Install, Configure, Remove, Purge, ConfigurePending, TriggersPending} Op;
       string File;
       PkgIterator Pkg;
       Item(Ops Op,PkgIterator Pkg,string File = "") : Op(Op),
@@ -66,6 +68,7 @@ class pkgDPkgPM : public pkgPackageManager
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
+   void WriteHistoryTag(string tag, string value);
 
    // dpkg log
    bool OpenLog();

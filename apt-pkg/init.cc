@@ -65,13 +65,16 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::vendorlist","vendors.list");
    Cnf.Set("Dir::Etc::vendorparts","vendors.list.d");
    Cnf.Set("Dir::Etc::main","apt.conf");
+   Cnf.Set("Dir::ETc::netrc", "auth.conf");
    Cnf.Set("Dir::Etc::parts","apt.conf.d");
    Cnf.Set("Dir::Etc::preferences","preferences");
+   Cnf.Set("Dir::Etc::preferencesparts","preferences.d");
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
 
    // State   
    Cnf.Set("Dir::Log","var/log/apt");
    Cnf.Set("Dir::Log::Terminal","term.log");
+   Cnf.Set("Dir::Log::History","history.log");
 
    // Translation
    Cnf.Set("APT::Acquire::Translation", "environment");
@@ -80,22 +83,29 @@ bool pkgInitConfig(Configuration &Cnf)
    
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
-   if (Cfg != 0 && FileExists(Cfg) == true)
-      Res &= ReadConfigFile(Cnf,Cfg);
-   
+   if (Cfg != 0)
+   {
+      if (FileExists(Cfg) == true)
+	 Res &= ReadConfigFile(Cnf,Cfg);
+      else
+	 _error->WarningE("FileExists",_("Unable to read %s"),Cfg);
+   }
+
    // Read the configuration parts dir
    string Parts = Cnf.FindDir("Dir::Etc::parts");
    if (FileExists(Parts) == true)
       Res &= ReadConfigDir(Cnf,Parts);
-      
+   else
+      _error->WarningE("FileExists",_("Unable to read %s"),Parts.c_str());
+
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");
    if (FileExists(FName) == true)
       Res &= ReadConfigFile(Cnf,FName);
-   
+
    if (Res == false)
       return false;
-   
+
    if (Cnf.FindB("Debug::pkgInitConfig",false) == true)
       Cnf.Dump();
    

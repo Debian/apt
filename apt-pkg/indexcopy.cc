@@ -527,19 +527,19 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
    // (non-existing files are not considered a error)
    if(!FileExists(prefix+file))
    {
-      _error->Warning("Skipping non-exisiting file %s", string(prefix+file).c_str());
+      _error->Warning(_("Skipping nonexistent file %s"), string(prefix+file).c_str());
       return true;
    }
 
    if (!Record) 
    {
-      _error->Warning("Can't find authentication record for: %s",file.c_str());
+      _error->Warning(_("Can't find authentication record for: %s"), file.c_str());
       return false;
    }
 
    if (!Record->Hash.VerifyFile(prefix+file))
    {
-      _error->Warning("Hash mismatch for: %s",file.c_str());
+      _error->Warning(_("Hash mismatch for: %s"),file.c_str());
       return false;
    }
 
@@ -551,8 +551,8 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
 
    return true;
 }
-
-bool SigVerify::CopyMetaIndex(string CDROM, string CDName, 
+									/*}}}*/
+bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 			      string prefix, string file)
 {
       char S[400];
@@ -572,8 +572,8 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,
    
       return true;
 }
-
-bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
+									/*}}}*/
+bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	/*{{{*/
 			      vector<string> PkgList,vector<string> SrcList)
 {
    if (SigList.size() == 0)
@@ -592,7 +592,10 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 
       // a Release.gpg without a Release should never happen
       if(!FileExists(*I+"Release"))
+      {
+	 delete MetaIndex;
 	 continue;
+      }
 
 
       // verify the gpg signature of "Release"
@@ -675,10 +678,9 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 
    return true;
 }
-
-
-bool TranslationsCopy::CopyTranslations(string CDROM,string Name,vector<string> &List,
-			     pkgCdromStatus *log)
+									/*}}}*/
+bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
+				vector<string> &List, pkgCdromStatus *log)
 {
    OpProgress *Progress = NULL;
    if (List.size() == 0)
@@ -850,3 +852,4 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,vector<string> 
 
    return true;
 }
+									/*}}}*/

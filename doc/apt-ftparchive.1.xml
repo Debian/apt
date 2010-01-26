@@ -15,12 +15,13 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>17 August 2009</date>
  </refentryinfo>
  
  <refmeta>
    <refentrytitle>apt-ftparchive</refentrytitle>
    <manvolnum>1</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
  </refmeta>
  
  <!-- Man page title -->
@@ -38,7 +39,7 @@
       <arg><option>--delink</option></arg>
       <arg><option>--readonly</option></arg>
       <arg><option>--contents</option></arg>
-      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
+      <arg><option>-o <replaceable>config</replaceable>=<replaceable>string</replaceable></option></arg>
       <arg><option>-c=<replaceable>file</replaceable></option></arg>      
       <group choice="req">
          <arg>packages<arg choice="plain" rep="repeat"><replaceable>path</replaceable></arg><arg><replaceable>override</replaceable><arg><replaceable>pathprefix</replaceable></arg></arg></arg>
@@ -157,7 +158,7 @@
      <para>
      The <literal>Dir</literal> section defines the standard directories needed to 
      locate the files required during the generation process. These 
-     directories are prepended to certain relative paths defined in later 
+     directories are prepended certain relative paths defined in later 
      sections to produce a complete an absolute path.</para>
      <variablelist>     
       <varlistentry><term>ArchiveDir</term>
@@ -284,7 +285,7 @@
       
       <varlistentry><term>Sources</term>
       <listitem><para>
-      Sets the output Packages file. Defaults to 
+      Sets the output Sources file. Defaults to 
       <filename>$(DIST)/$(SECTION)/source/Sources</filename></para></listitem>
       </varlistentry>
       
@@ -349,11 +350,11 @@
      <para>
      When processing a <literal>Tree</literal> section <command>apt-ftparchive</command> 
      performs an operation similar to:
-<informalexample><programlisting>
+     <programlisting>
 for i in Sections do 
    for j in Architectures do
       Generate for DIST=scope SECTION=i ARCH=j
-</programlisting></informalexample></para>
+     </programlisting></para>
 
      <variablelist>     
       <varlistentry><term>Sections</term>
@@ -542,7 +543,16 @@ for i in Sections do
      Make the caching databases read only. 
      Configuration Item: <literal>APT::FTPArchive::ReadOnlyDB</literal>.</para></listitem>
      </varlistentry>   
-   
+
+     <varlistentry><term><option>APT::FTPArchive::LongDescription</option></term>
+     <listitem><para>
+     This configuration option defaults to "<literal>true</literal>" and should only be set to
+     <literal>"false"</literal> if the Archive generated with &apt-ftparchive; also provides
+     <filename>Translation</filename> files. Note that it is currently not possible to create these
+     files with <command>apt-ftparchive</command>.
+     </para></listitem>
+     </varlistentry>
+
      &apt-commonoptions;
      
    </variablelist>
