@@ -218,6 +218,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       return true;
    }
 
+   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", false);
    CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
    if (Debug)
       clog << "Looking for CDROM at " << CDROM << endl;
@@ -228,7 +229,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    string NewID;
    while (CurrentID.empty() == true)
    {
-      if (CDROM == "apt-udev-auto/") 
+      if (AutoDetect)
 	 AutoDetectAndMount(Get, NewID);
 
       if(!IsMounted(CDROM))
