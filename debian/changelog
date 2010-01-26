@@ -1,3 +1,17 @@
+apt (0.7.25ubuntu3) UNRELEASED; urgency=low
+
+  * cmdline/apt-get.cc:
+    - fix apt-get source pkg=version regression (closes: #561971)
+  * apt-pkg/contrib/cdromutl.cc:
+    - fix UnmountCdrom() fails, give it a bit more time and try
+      the umount again
+  * methods/cdrom.cc:
+    - fixes in multi cdrom setup code
+    - add new "Acquire::cdrom::AutoDetect" variable that enables/disables
+      the dlopen of libudev for automatic cdrom detection
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 18 Dec 2009 16:54:18 +0100
+
 apt (0.7.25ubuntu2) lucid; urgency=low
 
   * Change history branch so that it does not break the 
