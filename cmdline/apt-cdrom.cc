@@ -120,11 +120,11 @@ bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i)
       _config->Set("Acquire::cdrom::mount", v[i].MountPath);
       _config->Set("APT::CDROM::NoMount", true);
    } else {
-      const char* AptMountPoint = "/media/apt";
+      string AptMountPoint = _config->FindDir("Dir::Media::MountPath");
       if (!FileExists(AptMountPoint))
-	 mkdir(AptMountPoint, 0750);
+	 mkdir(AptMountPoint.c_str(), 0750);
       if(MountCdrom(AptMountPoint, v[i].DeviceName) == false)
-	 _error->Warning(_("Failed to mount '%s' to '%s'"), v[i].DeviceName.c_str(), AptMountPoint);
+	 _error->Warning(_("Failed to mount '%s' to '%s'"), v[i].DeviceName.c_str(), AptMountPoint.c_str());
       _config->Set("Acquire::cdrom::mount", AptMountPoint);
       _config->Set("APT::CDROM::NoMount", true);
    }

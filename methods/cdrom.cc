@@ -116,9 +116,9 @@ bool CDROMMethod::AutoDetectAndMount(URI Get, string &NewID)
       return false;
 
    // check if we have the mount point
-   const char* AptMountPoint = "/media/apt";
+   string AptMountPoint = _config->FindDir("Dir::Media::MountPath");
    if (!FileExists(AptMountPoint))
-      mkdir(AptMountPoint, 0750);
+      mkdir(AptMountPoint.c_str(), 0750);
 
    // now try mounting
    for (unsigned int i=0; i < v.size(); i++)
