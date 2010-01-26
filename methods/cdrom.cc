@@ -116,23 +116,24 @@ bool CDROMMethod::AutoDetectAndMount(URI Get, string &NewID)
       return false;
 
    // check if we have the mount point
-   if (!FileExists("/media/apt"))
-      mkdir("/media/apt", 0755);
+   const char* AptMountPoint = "/media/apt";
+   if (!FileExists(AptMountPoint))
+      mkdir(AptMountPoint, 0750);
 
    // now try mounting
    for (unsigned int i=0; i < v.size(); i++)
    {
       if (!v[i].Mounted)
       {
-	 if(MountCdrom("/media/apt", v[i].DeviceName)) 
+	 if(MountCdrom(AptMountPoint, v[i].DeviceName)) 
 	 {
-	    if (IsCorrectCD(Get, "/media/apt", NewID))
+	    if (IsCorrectCD(Get, AptMountPoint, NewID))
 	    {
 	       MountedByApt = true;
-	       CDROM = "/media/apt";
+	       CDROM = AptMountPoint;
 	       return true;
 	    } else {
-	       UnmountCdrom("/media/apt");
+	       UnmountCdrom(AptMountPoint);
 	    }
 	 }
       }

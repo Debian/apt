@@ -99,7 +99,7 @@ OpProgress* pkgCdromTextStatus::GetOpProgress()
 };
 									/*}}}*/
 // SetupAutoDetect       						/*{{{*/
-bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, int &i)
+bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i)
 {
    bool Debug =  _config->FindB("Debug::Acquire::cdrom", false);
 
@@ -120,9 +120,12 @@ bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, int &i)
       _config->Set("Acquire::cdrom::mount", v[i].MountPath);
       _config->Set("APT::CDROM::NoMount", true);
    } else {
-      MountCdrom("/var/lib/apt/media", v[i].DeviceName);
-      MountCdrom("/var/lib/apt/media", v[i].DeviceName);
-      _config->Set("Acquire::cdrom::mount", "/var/lib/apt/media");
+      const char* AptMountPoint = "/media/apt";
+      if (!FileExists(AptMountPoint))
+	 mkdir(AptMountPoint, 0750);
+      if(MountCdrom(AptMountPoint, v[i].DeviceName) == false)
+	 _error->Warning(_("Failed to mount '%s' to '%s'"), v[i].DeviceName.c_str(), AptMountPoint);
+      _config->Set("Acquire::cdrom::mount", AptMountPoint);
       _config->Set("APT::CDROM::NoMount", true);
    }
    i++;
@@ -142,10 +145,10 @@ bool DoAdd(CommandLine &)
    pkgUdevCdromDevices UdevCdroms;
    pkgCdromTextStatus log;
    pkgCdrom cdrom;
-   bool res = false;
+   bool res = true;
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
-   int count = 0;
+   unsigned int count = 0;
    
    if (AutoDetect && UdevCdroms.Dlopen())
    {
@@ -173,7 +176,7 @@ bool DoIdent(CommandLine &)
    bool res = true;
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
-   int count = 0;
+   unsigned int count = 0;
    
    if (AutoDetect && UdevCdroms.Dlopen())
    {
