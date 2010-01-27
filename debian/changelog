@@ -4,11 +4,16 @@ apt (0.7.25.2) UNRELEASED; urgency=low
   * apt-pkg/contrib/cdromutl.cc:
     - fix UnmountCdrom() fails, give it a bit more time and try
       the umount again
+  * apt-pkg/cdrom.cc:
+    - fix crash in pkgUdevCdromDevices
   * methods/cdrom.cc:
     - fixes in multi cdrom setup code
     - add new "Acquire::cdrom::AutoDetect" config that enables/disables
       the dlopen of libudev for automatic cdrom detection. Off by default
       currently, feedback/testing welcome
+  * cmdline/apt-cdrom.cc:
+    - add new --auto-detect option that uses libudev to figure out
+      the cdrom/mount-point
   * cmdline/apt-mark:
     - merge fix from Gene Cash that supports markauto for
       packages that are not in the extended_states file yet
