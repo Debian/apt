@@ -5,14 +5,17 @@ apt (0.7.25ubuntu3) UNRELEASED; urgency=low
   * apt-pkg/contrib/cdromutl.cc:
     - fix UnmountCdrom() fails, give it a bit more time and try
       the umount again
+  * apt-pkg/cdrom.cc:
+    - fix crash in pkgUdevCdromDevices
   * methods/cdrom.cc:
     - fixes in multi cdrom setup code
     - add new "Acquire::cdrom::AutoDetect" variable that enables/disables
       the dlopen of libudev for automatic cdrom detection
   * cmdline/apt-cdrom.cc:
-    - add new --auto-detect option
+    - add new --auto-detect option that uses libudev to figure out
+      the cdrom/mount-point
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 26 Jan 2010 12:01:36 +0100
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 27 Jan 2010 12:12:16 +0100
 
 apt (0.7.25ubuntu2) lucid; urgency=low
 
