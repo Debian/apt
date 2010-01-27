@@ -217,6 +217,7 @@ int ShowHelp()
       "  -m   No mounting\n"
       "  -f   Fast mode, don't check package files\n"
       "  -a   Thorough scan mode\n"
+      "  --auto-detect Auto detect drive and mount point\n"
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
       "See fstab(5)\n";
@@ -227,7 +228,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
-      {'a',"auto-detect","Acquire::cdrom::AutoDetect",0},
+      {  0,"auto-detect","Acquire::cdrom::AutoDetect",0},
       {'v',"version","version",0},
       {'d',"cdrom","Acquire::cdrom::mount",CommandLine::HasArg},
       {'r',"rename","APT::CDROM::Rename",0},
