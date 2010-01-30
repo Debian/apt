@@ -27,6 +27,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/macros.h>
 
 #include <apti18n.h>
     
@@ -35,7 +36,6 @@
 #include <unistd.h>
 
 #include <ctype.h>
-#include <system.h>
 									/*}}}*/
 
 using std::string;

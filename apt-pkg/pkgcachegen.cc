@@ -21,6 +21,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/macros.h>
 
 #include <apt-pkg/tagfile.h>
 
@@ -32,7 +33,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
-#include <system.h>
 									/*}}}*/
 typedef vector<pkgIndexFile *>::iterator FileIterator;
 

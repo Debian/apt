@@ -1,9 +1,8 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: system.h,v 1.3 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
    
-   System Header - Usefull private definitions
+   Macros Header - Various useful macro definitions
 
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Brian C. White.
@@ -11,8 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Private header
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#ifndef MACROS_H
+#define MACROS_H
 
 // MIN_VAL(SINT16) will return -0x8000 and MAX_VAL(SINT16) = 0x7FFF
 #define	MIN_VAL(t)	(((t)(-1) > 0) ? (t)( 0) : (t)(((1L<<(sizeof(t)*8-1))  )))

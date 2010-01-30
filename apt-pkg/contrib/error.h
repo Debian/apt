@@ -53,7 +53,7 @@
     
 #include <string>
 
-#include <system.h>
+#include <apt-pkg/macros.h>
 
 using std::string;
 
