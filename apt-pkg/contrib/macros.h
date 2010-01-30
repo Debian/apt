@@ -76,4 +76,13 @@
         #define __cold  /* no cold marker */
 #endif
 
+#ifdef __GNUG__
+// Methods have a hidden this parameter that is visible to this attribute
+	#define __like_printf_1 __attribute__ ((format (printf, 2, 3)))
+	#define __like_printf_2 __attribute__ ((format (printf, 3, 4)))
+#else
+	#define __like_printf_1
+	#define __like_printf_2
+#endif
+
 #endif
