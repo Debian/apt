@@ -555,7 +555,12 @@ bool SourcesWriter::DoPackage(string FileName)
    char *BlkEnd = Buffer + St.st_size;
    MD5Summation MD5;
    MD5.Add((unsigned char *)Start,BlkEnd - Start);
-      
+
+   SHA1Summation SHA1;
+   SHA256Summation SHA256;
+   SHA1.Add((unsigned char *)Start,BlkEnd - Start);
+   SHA256.Add((unsigned char *)Start,BlkEnd - Start);
+
    // Add an extra \n to the end, just in case
    *BlkEnd++ = '\n';
    
@@ -646,12 +651,25 @@ bool SourcesWriter::DoPackage(string FileName)
    }
    
    // Add the dsc to the files hash list
+   string const strippedName = flNotDir(FileName);
    char Files[1000];
    snprintf(Files,sizeof(Files),"\n %s %lu %s\n %s",
 	    string(MD5.Result()).c_str(),St.st_size,
-	    flNotDir(FileName).c_str(),
+	    strippedName.c_str(),
 	    Tags.FindS("Files").c_str());
-   
+
+   char ChecksumsSha1[1000];
+   snprintf(ChecksumsSha1,sizeof(ChecksumsSha1),"\n %s %lu %s\n %s",
+	    string(SHA1.Result()).c_str(),St.st_size,
+	    strippedName.c_str(),
+	    Tags.FindS("Checksums-Sha1").c_str());
+
+   char ChecksumsSha256[1000];
+   snprintf(ChecksumsSha256,sizeof(ChecksumsSha256),"\n %s %lu %s\n %s",
+	    string(SHA256.Result()).c_str(),St.st_size,
+	    strippedName.c_str(),
+	    Tags.FindS("Checksums-Sha256").c_str());
+
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
    if (DirStrip.empty() == false &&
@@ -694,12 +712,14 @@ bool SourcesWriter::DoPackage(string FileName)
       Directory.erase(Directory.end()-1);
 
    // This lists all the changes to the fields we are going to make.
-   // (5 hardcoded + maintainer + end marker)
-   TFRewriteData Changes[5+1+SOverItem->FieldOverride.size()+1];
+   // (5 hardcoded + checksums + maintainer + end marker)
+   TFRewriteData Changes[5+2+1+SOverItem->FieldOverride.size()+1];
 
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
    SetTFRewriteData(Changes[End++],"Files",Files);
+   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1);
+   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256);
    if (Directory != "./")
       SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
    SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
