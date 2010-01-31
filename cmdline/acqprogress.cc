@@ -150,7 +150,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
    if (Quiet > 0)
       return true;
    
-   enum {Long = 0,Medium,Short} Mode = Long;
+   enum {Long = 0,Medium,Short} Mode = Medium;
    
    char Buffer[sizeof(BlankLine)];
    char *End = Buffer + sizeof(Buffer);

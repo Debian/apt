@@ -4,6 +4,15 @@ apt (0.7.25.3) UNRELEASED; urgency=low
   * Italian translation update. Closes: #567532
   * French translation update.
 
+  [ David Kalnischkies ]
+  * cmdline/acqprogress.cc:
+    - Set Mode to Medium so that the correct prefix is used.
+      Thanks Stefan Haller for the patch! (Closes: #567304 LP: #275243)
+  * ftparchive/writer.cc:
+    - generate sha1 and sha256 checksums for dsc (Closes: #567343)
+  * cmdline/apt-get.cc:
+    - don't mark as manually if in download only (Closes: #468180)
+  
  -- Michael Vogt <mvo@debian.org>  Sun, 31 Jan 2010 16:20:50 +0100
 
 apt (0.7.25.2) unstable; urgency=low
