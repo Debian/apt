@@ -1776,7 +1776,8 @@ bool DoInstall(CommandLine &CmdL)
 	    if(!Remove && 
 	       Cache[Pkg].Install() == false && 
 	       (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
-	       _config->FindB("APT::Get::ReInstall",false) == false)
+	       _config->FindB("APT::Get::ReInstall",false) == false &&
+	       _config->FindB("APT::Get::Download-Only",false) == false)
 	    {
 	       ioprintf(c1out,_("%s set to manually installed.\n"),
 			Pkg.Name());
