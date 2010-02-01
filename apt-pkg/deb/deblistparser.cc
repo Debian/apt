@@ -16,10 +16,9 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/macros.h>
 
 #include <ctype.h>
-
-#include <system.h>
 									/*}}}*/
 
 static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Important},

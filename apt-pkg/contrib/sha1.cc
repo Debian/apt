@@ -31,12 +31,12 @@
 // Include Files                                                        /*{{{*/
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/macros.h>
 
 #include <string.h>
 #include <unistd.h>
 #include <inttypes.h>
 #include <config.h>
-#include <system.h>
 									/*}}}*/
 
 // SHA1Transform - Alters an existing SHA-1 hash			/*{{{*/

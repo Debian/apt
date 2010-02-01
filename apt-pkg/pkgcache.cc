@@ -35,7 +35,6 @@
 #include <unistd.h>
 
 #include <ctype.h>
-#include <system.h>
 									/*}}}*/
 
 using std::string;

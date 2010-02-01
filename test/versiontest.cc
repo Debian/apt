@@ -14,7 +14,7 @@
    
    ##################################################################### */
 									/*}}}*/
-#include <system.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/debversion.h>
