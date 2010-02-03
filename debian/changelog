@@ -3,6 +3,9 @@ apt (0.7.25ubuntu4) lucid; urgency=low
   * cmdline/apt-cdrom.cc:
     - make Acquire::cdrom::AutoDetect default, this can be
       turned off with "--no-auto-detect"
+  * methods/http.cc:
+    - add cache-control headers even if no cache is given to allow
+      adding options for intercepting proxies
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 02 Feb 2010 16:58:59 -0800
 

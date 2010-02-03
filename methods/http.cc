@@ -682,23 +682,25 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
        	 and a no-store directive for archives. */
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
 	      Itm->Uri.c_str(),ProperHost.c_str());
-      // only generate a cache control header if we actually want to 
-      // use a cache
-      if (_config->FindB("Acquire::http::No-Cache",false) == false)
+   }
+   // generate a cache control header (if needed)
+   if (_config->FindB("Acquire::http::No-Cache",false) == true) 
+   {
+      strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
+   }
+   else
+   {
+      if (Itm->IndexFile == true) 
       {
-	 if (Itm->IndexFile == true)
-	    sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
-		    _config->FindI("Acquire::http::Max-Age",0));
-	 else
-	 {
-	    if (_config->FindB("Acquire::http::No-Store",false) == true)
-	       strcat(Buf,"Cache-Control: no-store\r\n");
-	 }	 
+	 sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
+		 _config->FindI("Acquire::http::Max-Age",0));
+      }
+      else
+      {
+	 if (_config->FindB("Acquire::http::No-Store",false) == true)
+	    strcat(Buf,"Cache-Control: no-store\r\n");
       }
    }
-   // generate a no-cache header if needed
-   if (_config->FindB("Acquire::http::No-Cache",false) == true)
-      strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
 
    
    string Req = Buf;
