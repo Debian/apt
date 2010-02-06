@@ -1073,7 +1073,11 @@ bool HttpMethod::Configuration(string Message)
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
 				  PipelineDepth);
    Debug = _config->FindB("Debug::Acquire::http",false);
-   
+   AutoDetectProxyCmd = _config->Find("Acquire::http::ProxyAutoDetect");
+
+   // Get the proxy to use
+   AutoDetectProxy();
+
    return true;
 }
 									/*}}}*/
@@ -1321,6 +1325,49 @@ int HttpMethod::Loop()
    }
    
    return 0;
+}
+									/*}}}*/
+// HttpMethod::AutoDetectProxy - auto detect proxy			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool HttpMethod::AutoDetectProxy()
+{
+   if (AutoDetectProxyCmd.empty())
+      return true;
+
+   if (Debug)
+      clog << "Using auto proxy detect command: " << AutoDetectProxyCmd << endl;
+
+   int Pipes[2] = {-1,-1};
+   if (pipe(Pipes) != 0)
+      return _error->Errno("pipe", "Failed to create Pipe");
+
+   pid_t Process = ExecFork();
+   if (Process == 0)
+   {
+      dup2(Pipes[1],STDOUT_FILENO);
+      SetCloseExec(STDOUT_FILENO,false);
+      
+      const char *Args[2];
+      Args[0] = AutoDetectProxyCmd.c_str();
+      Args[1] = 0;
+      execv(Args[0],(char **)Args);
+      cerr << "Failed to exec method " << Args[0] << endl;
+      _exit(100);
+   }
+   char buf[512];
+   int InFd = Pipes[0];
+   if (read(InFd, buf, sizeof(buf)) < 0)
+      return _error->Errno("read", "Failed to read");
+   ExecWait(Process, "ProxyAutoDetect");
+   
+   if (Debug)
+      clog << "auto detect command returned: '" << buf << "'" << endl;
+
+   if (strstr(buf, "http://") == buf)
+      _config->Set("Acquire::http::proxy", _strstrip(buf));
+
+   return true;
 }
 									/*}}}*/
 
