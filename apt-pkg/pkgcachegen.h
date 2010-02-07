@@ -112,6 +112,7 @@ class pkgCacheGenerator::ListParser
    // These all operate against the current section
    virtual string Package() = 0;
    virtual string Architecture() = 0;
+   virtual bool ArchitectureAll() = 0;
    virtual string Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator Ver) = 0;
    virtual string Description() = 0;

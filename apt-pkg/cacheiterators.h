@@ -178,7 +178,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	// Accessors
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;};
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;};
-	inline const char *Arch() const {return S->Arch == 0?0:Owner->StrP + S->Arch;};
+	inline const char *Arch() const {return S->ParentPkg == 0?0:Owner->StrP + ParentPkg()->Arch;};
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);};
 
 	inline DescIterator DescriptionList() const;

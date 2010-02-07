@@ -276,7 +276,6 @@ struct pkgCache::Version						/*{{{*/
 {
    map_ptrloc VerStr;            // Stringtable
    map_ptrloc Section;           // StringTable (StringItem)
-   map_ptrloc Arch;              // StringTable
    enum {None, All, Foreign, Same, Allowed} MultiArch;
 
    // Lists

@@ -399,7 +399,7 @@ const char *
 pkgCache::PkgIterator::CandVersion() const 
 {
   //TargetVer is empty, so don't use it.
-  VerIterator version = pkgPolicy::pkgPolicy(Owner).GetCandidateVer(*this);
+  VerIterator version = pkgPolicy(Owner).GetCandidateVer(*this);
   if (version.IsGood())
     return version.VerStr();
   return 0;
@@ -727,7 +727,7 @@ string pkgCache::VerIterator::RelStr()
 	    Res += File.Site();
       }      
    }
-   if (S->Arch != 0)
+   if (S->ParentPkg != 0)
       Res.append(" [").append(Arch()).append("]");
    return Res;
 }

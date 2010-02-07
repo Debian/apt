@@ -83,6 +83,13 @@ string debListParser::Architecture() {
 	return Result;
 }
 									/*}}}*/
+// ListParser::ArchitectureAll						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool debListParser::ArchitectureAll() {
+	return Section.FindS("Architecture") == "all";
+}
+									/*}}}*/
 // ListParser::Version - Return the version string			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is to return the string describing the version in debian form,
@@ -100,9 +107,6 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 {
    // Parse the section
    Ver->Section = UniqFindTagWrite("Section");
-
-   // Parse the architecture
-   Ver->Arch = WriteUniqString(Architecture());
 
    // Parse multi-arch
    if (Section.FindS("Architecture") == "all")
