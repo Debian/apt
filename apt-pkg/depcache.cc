@@ -192,10 +192,10 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 	       Prog->OverallProgress(amt, file_size, 1, 
 				     _("Reading state information"));
 	 }
-	 if(Prog != NULL)
-	    Prog->OverallProgress(file_size, file_size, 1, 
-				  _("Reading state information"));
       }
+      if(Prog != NULL)
+	 Prog->OverallProgress(file_size, file_size, 1,
+			       _("Reading state information"));
    }
 
    return true;
