@@ -108,13 +108,24 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
    unsigned int Counter = 0;
    while (List.Step() == true)
    {
-      // Get a pointer to the package structure
       string const PackageName = List.Package();
       if (PackageName.empty() == true)
 	 return false;
 
+      /* As we handle Arch all packages as architecture bounded
+         we add all information to every (simulated) arch package */
+      std::vector<string> genArch;
+      if (List.ArchitectureAll() == true)
+	 genArch = APT::Configuration::getArchitectures();
+      else
+	 genArch.push_back(List.Architecture());
+
+      for (std::vector<string>::const_iterator arch = genArch.begin();
+	   arch != genArch.end(); ++arch)
+      {
+      // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
-      if (NewPackage(Pkg, PackageName, List.Architecture()) == false)
+      if (NewPackage(Pkg, PackageName, *arch) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewPackage)"),PackageName.c_str());
       Counter++;
       if (Counter % 100 == 0 && Progress != 0)
@@ -257,6 +268,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
       if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),PackageName.c_str());
+      }
    }
 
    FoundFileDeps |= List.HasFileDeps();
