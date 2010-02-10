@@ -532,11 +532,14 @@ bool pkgCacheGenerator::FinishCache(OpProgress &Progress) {
 			string const PkgName = G.Name();
 			for (pkgCache::PkgIterator P = G.PackageList(); P.end() != true; P = G.NextPkg(P)) {
 				for (pkgCache::VerIterator V = P.VersionList(); V.end() != true; V++) {
-					// Arch all packages are "co-installable"
-					if (V->MultiArch == pkgCache::Version::All)
-						continue;
 					string const Arch = V.Arch();
 					map_ptrloc *OldDepLast = NULL;
+					/* MultiArch handling introduces a lot of implicit Dependencies:
+					   - MultiArch: same → Co-Installable if they have the same version
+					   - Architecture: all → Need to be Co-Installable for internal reasons
+					   - All others conflict with all other group members */
+					bool const coInstall = (V->MultiArch == pkgCache::Version::All ||
+								V->MultiArch == pkgCache::Version::Same);
 					for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A) {
 						if (*A == Arch)
 							continue;
@@ -546,10 +549,24 @@ bool pkgCacheGenerator::FinishCache(OpProgress &Progress) {
 						pkgCache::PkgIterator D = G.FindPkg(*A);
 						if (D.end() == true)
 							continue;
-						// Conflicts: ${self}:other
-						NewDepends(D, V, "",
-							pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
-							OldDepLast);
+						if (coInstall == true) {
+							// Replaces: ${self}:other ( << ${binary:Version})
+							NewDepends(D, V, V.VerStr(),
+								   pkgCache::Dep::Less, pkgCache::Dep::Replaces,
+								   OldDepLast);
+							// Breaks: ${self}:other (!= ${binary:Version})
+							NewDepends(D, V, V.VerStr(),
+								   pkgCache::Dep::Less, pkgCache::Dep::DpkgBreaks,
+								   OldDepLast);
+							NewDepends(D, V, V.VerStr(),
+								   pkgCache::Dep::Greater, pkgCache::Dep::DpkgBreaks,
+								   OldDepLast);
+						} else {
+							// Conflicts: ${self}:other
+							NewDepends(D, V, "",
+								   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+								   OldDepLast);
+						}
 					}
 				}
 			}
