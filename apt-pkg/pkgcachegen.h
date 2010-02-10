@@ -104,8 +104,8 @@ class pkgCacheGenerator::ListParser
    bool NewDepends(pkgCache::VerIterator Ver,const string &Package, const string &Arch,
 		   const string &Version,unsigned int Op,
 		   unsigned int Type);
-   bool NewProvides(pkgCache::VerIterator Ver,const string &Package,
-		    const string &Version);
+   bool NewProvides(pkgCache::VerIterator Ver,const string &PkgName,
+		    const string &PkgArch, const string &Version);
    
    public:
    

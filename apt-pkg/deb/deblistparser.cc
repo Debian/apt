@@ -618,29 +618,46 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
 {
    const char *Start;
    const char *Stop;
-   if (Section.Find("Provides",Start,Stop) == false)
-      return true;
-   
-   string Package;
-   string Version;
-   unsigned int Op;
-
-   while (1)
+   if (Section.Find("Provides",Start,Stop) == true)
    {
-      Start = ParseDepends(Start,Stop,Package,Version,Op);
-      if (Start == 0)
-	 return _error->Error("Problem parsing Provides line");
-      if (Op != pkgCache::Dep::NoOp) {
-	 _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
-      } else {
-	 if (NewProvides(Ver,Package,Version) == false)
-	    return false;
-      }
+      string Package;
+      string Version;
+      string const Arch = Ver.Arch();
+      unsigned int Op;
 
-      if (Start == Stop)
-	 break;
+      while (1)
+      {
+	 Start = ParseDepends(Start,Stop,Package,Version,Op);
+	 if (Start == 0)
+	    return _error->Error("Problem parsing Provides line");
+	 if (Op != pkgCache::Dep::NoOp) {
+	    _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+	 } else {
+	    if (NewProvides(Ver, Package, Arch, Version) == false)
+	       return false;
+	 }
+
+	 if (Start == Stop)
+	    break;
+      }
    }
-   
+
+   if (Ver->MultiArch != pkgCache::Version::Foreign)
+      return true;
+
+   std::vector<string> const archs = APT::Configuration::getArchitectures();
+   if (archs.size() <= 1)
+      return true;
+
+   string const Package = Ver.ParentPkg().Name();
+   string const Version = Ver.VerStr();
+   for (std::vector<string>::const_iterator a = archs.begin();
+	a != archs.end(); ++a)
+   {
+      if (NewProvides(Ver, Package, *a, Version) == false)
+	 return false;
+   }
+
    return true;
 }
 									/*}}}*/

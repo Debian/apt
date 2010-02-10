@@ -668,13 +668,14 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 // ---------------------------------------------------------------------
 /* */
 bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
-					        const string &PackageName,
+					        const string &PkgName,
+						const string &PkgArch,
 						const string &Version)
 {
    pkgCache &Cache = Owner->Cache;
 
    // We do not add self referencing provides
-   if (unlikely(Ver.ParentPkg().Name() == PackageName))
+   if (Ver.ParentPkg().Name() == PkgName && PkgArch == Ver.Arch())
       return true;
    
    // Get a structure
@@ -693,7 +694,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    
    // Locate the target package
    pkgCache::PkgIterator Pkg;
-   if (unlikely(Owner->NewPackage(Pkg,PackageName,string(Ver.Arch())) == false))
+   if (unlikely(Owner->NewPackage(Pkg,PkgName, PkgArch) == false))
       return false;
    
    // Link it to the package
