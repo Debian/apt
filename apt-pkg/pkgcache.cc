@@ -186,7 +186,10 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 	size_t const found = Name.find(':');
 	if (found == string::npos)
 		return FindPkg(Name, "native");
-	return FindPkg(Name.substr(0, found), Name.substr(found+1, string::npos));
+	string const Arch = Name.substr(found+1);
+	if (Arch == "any")
+		return FindPkg(Name, "any");
+	return FindPkg(Name.substr(0, found), Arch);
 }
 									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/

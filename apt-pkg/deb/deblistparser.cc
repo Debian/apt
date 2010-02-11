@@ -642,6 +642,12 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
       }
    }
 
+   if (Ver->MultiArch == pkgCache::Version::Allowed)
+   {
+      string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
+      NewProvides(Ver, Package, "any", Ver.VerStr());
+   }
+
    if (Ver->MultiArch != pkgCache::Version::Foreign)
       return true;
 
