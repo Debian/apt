@@ -1417,11 +1417,15 @@ bool ShowPackage(CommandLine &CmdL)
    
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
+      // FIXME: Handle the case in which pkgname name:arch is not found
       pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
       if (Pkg.end() == true)
       {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
+	 Pkg = Cache.FindPkg(*I, "any");
+	 if (Pkg.end() == true) {
+		_error->Warning(_("Unable to locate package %s"),*I);
+		continue;
+	 }
       }
 
       ++found;
@@ -1457,16 +1461,17 @@ bool ShowPackage(CommandLine &CmdL)
 bool ShowPkgNames(CommandLine &CmdL)
 {
    pkgCache &Cache = *GCache;
-   pkgCache::PkgIterator I = Cache.PkgBegin();
-   bool All = _config->FindB("APT::Cache::AllNames","false");
-   
+   pkgCache::GrpIterator I = Cache.GrpBegin();
+   bool const All = _config->FindB("APT::Cache::AllNames","false");
+
    if (CmdL.FileList[1] != 0)
    {
       for (;I.end() != true; I++)
       {
-	 if (All == false && I->VersionList == 0)
+	 if (All == false && I->FirstPackage == 0)
 	    continue;
-	 
+	 if (I.FindPkg("any")->VersionList == 0)
+	    continue;
 	 if (strncmp(I.Name(),CmdL.FileList[1],strlen(CmdL.FileList[1])) == 0)
 	    cout << I.Name() << endl;
       }
@@ -1477,7 +1482,9 @@ bool ShowPkgNames(CommandLine &CmdL)
    // Show all pkgs
    for (;I.end() != true; I++)
    {
-      if (All == false && I->VersionList == 0)
+      if (All == false && I->FirstPackage == 0)
+	 continue;
+      if (I.FindPkg("any")->VersionList == 0)
 	 continue;
       cout << I.Name() << endl;
    }
@@ -1565,19 +1572,27 @@ bool Policy(CommandLine &CmdL)
       
       return true;
    }
-   
+
+   string const myArch = _config->Find("APT::Architecture");
+
    // Print out detailed information for each package
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+      pkgCache::GrpIterator Grp = Cache.FindGrp(*I);
+      pkgCache::PkgIterator Pkg = Grp.FindPkg("any");
       if (Pkg.end() == true)
       {
 	 _error->Warning(_("Unable to locate package %s"),*I);
 	 continue;
       }
-      
-      cout << Pkg.Name() << ":" << endl;
-      
+
+      for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg)) {
+
+      if (myArch == Pkg.Arch())
+	 cout << Pkg.Name() << ":" << endl;
+      else
+	 cout << Pkg.Name() << ": [" << Pkg.Arch() << "]" << endl;
+
       // Installed version
       cout << _("  Installed: ");
       if (Pkg->CurrentVer == 0)
@@ -1622,8 +1637,9 @@ bool Policy(CommandLine &CmdL)
 	       return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
 	    printf(_("       %4i %s\n"),Plcy.GetPriority(VF.File()),
 		   Indx->Describe(true).c_str());
-	 }	 
-      }      
+	 }
+      }
+      }
    }
    
    return true;
