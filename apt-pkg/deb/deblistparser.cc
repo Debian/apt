@@ -148,6 +148,24 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 	 Ver->Priority = pkgCache::State::Extra;
    }
 
+   if (Ver->MultiArch == pkgCache::Version::All)
+   {
+      /* We maintain a "pseudo" arch=all package for architecture all versions
+	 on which these versions can depend on. This pseudo package is many used
+	 for downloading/installing: The other pseudo-packages will degenerate
+	 to a NOP in the download/install step - this package will ensure that
+	 it is downloaded only one time and installed only one time -- even if
+	 the architecture bound versions coming in and out on regular basis. */
+      if (strcmp(Ver.Arch(true),"all") == 0)
+	 return true;
+      else
+      {
+	 // our pseudo packages have no size to not confuse the fetcher
+	 Ver->Size = 0;
+	 Ver->InstalledSize = 0;
+      }
+   }
+
    if (ParseDepends(Ver,"Depends",pkgCache::Dep::Depends) == false)
       return false;
    if (ParseDepends(Ver,"Pre-Depends",pkgCache::Dep::PreDepends) == false)
@@ -593,7 +611,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
       return true;
    
    string Package;
-   string const pkgArch = Ver.Arch();
+   string const pkgArch = Ver.Arch(true);
    string Version;
    unsigned int Op;
 
@@ -622,7 +640,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
    {
       string Package;
       string Version;
-      string const Arch = Ver.Arch();
+      string const Arch = Ver.Arch(true);
       unsigned int Op;
 
       while (1)

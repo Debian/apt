@@ -1587,6 +1587,8 @@ bool Policy(CommandLine &CmdL)
       }
 
       for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg)) {
+      if (strcmp(Pkg.Arch(),"all") == 0)
+	 continue;
 
       if (myArch == Pkg.Arch())
 	 cout << Pkg.Name() << ":" << endl;

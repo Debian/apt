@@ -357,7 +357,7 @@ inline pkgCache::PkgFileIterator pkgCache::FileEnd()
 class pkgCache::Namespace						/*{{{*/
 {   
    public:
-
+   typedef pkgCache::GrpIterator GrpIterator;
    typedef pkgCache::PkgIterator PkgIterator;
    typedef pkgCache::VerIterator VerIterator;
    typedef pkgCache::DescIterator DescIterator;

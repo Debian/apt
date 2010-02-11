@@ -126,6 +126,10 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
    
    if (FileList[Pkg->ID].empty() == false)
       return false;
+
+   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == true)
+      return false;
+
    return true;
 }
 									/*}}}*/

@@ -649,6 +649,18 @@ bool pkgCache::VerIterator::Automatic() const
    return false;
 }
 									/*}}}*/
+// VerIterator::Pseudo - Check if this version is a pseudo one		/*{{{*/
+// ---------------------------------------------------------------------
+/* Sometimes you have the need to express dependencies with versions
+   which doesn't really exist or exist multiply times for "different"
+   packages. We need these versions for dependency resolution but they
+   are a problem everytime we need to download/install something. */
+bool pkgCache::VerIterator::Pseudo() const
+{
+   return (S->MultiArch == pkgCache::Version::All &&
+	   strcmp(Arch(true),"all") != 0);
+}
+									/*}}}*/
 // VerIterator::NewestFile - Return the newest file version relation	/*{{{*/
 // ---------------------------------------------------------------------
 /* This looks at the version numbers associated with all of the sources

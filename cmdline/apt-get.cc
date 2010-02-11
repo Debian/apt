@@ -233,7 +233,7 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
    if it is not the main architecture */
 string ShowPkg(pkgCache::PkgIterator const Pkg) {
 	string p = Pkg.Name();
-	if (_config->Find("APT::Architecture") != Pkg.Arch())
+	if (strcmp(Pkg.Arch(),"all") != 0 && _config->Find("APT::Architecture") != Pkg.Arch())
 		p.append(":").append(Pkg.Arch());
 	return p;
 }
@@ -385,6 +385,8 @@ void ShowNew(ostream &out,CacheFile &Cache)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].NewInstall() == true) {
+	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	    continue;
          List += ShowPkg(I) + " ";
          VersionsList += string(Cache[I].CandVersion) + "\n";
       }
@@ -407,6 +409,8 @@ void ShowDel(ostream &out,CacheFile &Cache)
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].Delete() == true)
       {
+	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	    continue;
 	 if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
 	    List += ShowPkg(I) + "* ";
 	 else
@@ -455,7 +459,9 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
       // Not interesting
       if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
-      
+      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	 continue;
+
       List += ShowPkg(I) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
@@ -476,7 +482,9 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
       // Not interesting
       if (Cache[I].Downgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
-      
+      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	 continue;
+
       List += ShowPkg(I) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }

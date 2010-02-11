@@ -200,6 +200,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	string RelStr();
 
 	bool Automatic() const;
+	bool Pseudo() const;
 	VerFileIterator NewestFile() const;
 
 	inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Iterator<Version, VerIterator>(Owner, Trg) {

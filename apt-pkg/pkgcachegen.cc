@@ -115,9 +115,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       /* As we handle Arch all packages as architecture bounded
          we add all information to every (simulated) arch package */
       std::vector<string> genArch;
-      if (List.ArchitectureAll() == true)
+      if (List.ArchitectureAll() == true) {
 	 genArch = APT::Configuration::getArchitectures();
-      else
+	 genArch.push_back("all");
+      } else
 	 genArch.push_back(List.Architecture());
 
       for (std::vector<string>::const_iterator arch = genArch.begin();
@@ -531,8 +532,11 @@ bool pkgCacheGenerator::FinishCache(OpProgress &Progress) {
 		for (pkgCache::GrpIterator G = GetCache().GrpBegin(); G.end() != true; G++) {
 			string const PkgName = G.Name();
 			for (pkgCache::PkgIterator P = G.PackageList(); P.end() != true; P = G.NextPkg(P)) {
+				if (strcmp(P.Arch(),"all") == 0)
+					continue;
+				pkgCache::PkgIterator allPkg;
 				for (pkgCache::VerIterator V = P.VersionList(); V.end() != true; V++) {
-					string const Arch = V.Arch();
+					string const Arch = V.Arch(true);
 					map_ptrloc *OldDepLast = NULL;
 					/* MultiArch handling introduces a lot of implicit Dependencies:
 					   - MultiArch: same → Co-Installable if they have the same version
@@ -540,6 +544,8 @@ bool pkgCacheGenerator::FinishCache(OpProgress &Progress) {
 					   - All others conflict with all other group members */
 					bool const coInstall = (V->MultiArch == pkgCache::Version::All ||
 								V->MultiArch == pkgCache::Version::Same);
+					if (V->MultiArch == pkgCache::Version::All && allPkg.end() == true)
+						allPkg = G.FindPkg("all");
 					for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A) {
 						if (*A == Arch)
 							continue;
@@ -561,6 +567,12 @@ bool pkgCacheGenerator::FinishCache(OpProgress &Progress) {
 							NewDepends(D, V, V.VerStr(),
 								   pkgCache::Dep::Greater, pkgCache::Dep::DpkgBreaks,
 								   OldDepLast);
+							if (V->MultiArch == pkgCache::Version::All) {
+								// Depend on ${self}:all which does depend on nothing
+								NewDepends(allPkg, V, V.VerStr(),
+									   pkgCache::Dep::Equals, pkgCache::Dep::Depends,
+									   OldDepLast);
+							}
 						} else {
 							// Conflicts: ${self}:other
 							NewDepends(D, V, "",
@@ -675,7 +687,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    pkgCache &Cache = Owner->Cache;
 
    // We do not add self referencing provides
-   if (Ver.ParentPkg().Name() == PkgName && PkgArch == Ver.Arch())
+   if (Ver.ParentPkg().Name() == PkgName && PkgArch == Ver.Arch(true))
       return true;
    
    // Get a structure

@@ -333,6 +333,7 @@ class pkgDepCache : protected pkgCache::Namespace
    inline Header &Head() {return *Cache->HeaderP;};
    inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
    inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};
+   inline PkgIterator FindPkg(string const &Name, string const &Arch) {return Cache->FindPkg(Name, Arch);};
 
    inline pkgCache &GetCache() {return *Cache;};
    inline pkgVersioningSystem &VS() {return *Cache->VS;};

@@ -896,6 +896,10 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    AddStates(Pkg);   
    Update(Pkg);
    AddSizes(Pkg);
+
+   // if we remove the pseudo package, we also need to remove the "real"
+   if (Pkg->CurrentVer != 0 && Pkg.CurrentVer().Pseudo() == true)
+      MarkDelete(Pkg.Group().FindPkg("all"), rPurge, Depth+1, FromUser);
 }
 									/*}}}*/
 // DepCache::IsDeleteOk - check if it is ok to remove this package	/*{{{*/
