@@ -585,6 +585,9 @@ void Stats(ostream &out,pkgDepCache &Dep)
    unsigned long ReInstall = 0;
    for (pkgCache::PkgIterator I = Dep.PkgBegin(); I.end() == false; I++)
    {
+      if (pkgCache::VerIterator(Dep, Dep[I].CandidateVer).Pseudo() == true)
+	 continue;
+
       if (Dep[I].NewInstall() == true)
 	 Install++;
       else

@@ -117,7 +117,8 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       std::vector<string> genArch;
       if (List.ArchitectureAll() == true) {
 	 genArch = APT::Configuration::getArchitectures();
-	 genArch.push_back("all");
+	 if (genArch.size() != 1)
+	    genArch.push_back("all");
       } else
 	 genArch.push_back(List.Architecture());
 

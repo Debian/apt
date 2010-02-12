@@ -657,8 +657,13 @@ bool pkgCache::VerIterator::Automatic() const
    are a problem everytime we need to download/install something. */
 bool pkgCache::VerIterator::Pseudo() const
 {
-   return (S->MultiArch == pkgCache::Version::All &&
-	   strcmp(Arch(true),"all") != 0);
+   if (S->MultiArch == pkgCache::Version::All &&
+	   strcmp(Arch(true),"all") != 0)
+   {
+	   GrpIterator const Grp = ParentPkg().Group();
+	   return (Grp->LastPackage != Grp->FirstPackage);
+   }
+   return false;
 }
 									/*}}}*/
 // VerIterator::NewestFile - Return the newest file version relation	/*{{{*/

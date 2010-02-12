@@ -158,7 +158,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 	 the architecture bound versions coming in and out on regular basis. */
       if (strcmp(Ver.Arch(true),"all") == 0)
 	 return true;
-      else
+      else if (Ver.Pseudo() == true)
       {
 	 // our pseudo packages have no size to not confuse the fetcher
 	 Ver->Size = 0;
