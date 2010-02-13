@@ -54,7 +54,7 @@ inline void SetTFRewriteData(struct TFRewriteData &tfrd,
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-FTWScanner::FTWScanner()
+FTWScanner::FTWScanner(string const &Arch): Arch(Arch)
 {
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
@@ -299,12 +299,11 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 // ---------------------------------------------------------------------
 /* */
 PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides,
-			       string const &aArch) :
-   Db(DB),Stats(Db.Stats), Arch(aArch)
+			       string const &Arch) :
+   FTWScanner(Arch), Db(DB), Stats(Db.Stats)
 {
    Output = stdout;
-   SetExts(".deb .udeb .foo .bar .baz");
-   AddPattern("*.deb");
+   SetExts(".deb .udeb");
    DeLinkLimit = 0;
    
    // Process the command line options
@@ -340,17 +339,16 @@ bool FTWScanner::SetExts(string const &Vals)
    string::size_type Start = 0;
    while (Start <= Vals.length()-1)
    {
-      string::size_type Space = Vals.find(' ',Start);
-      string::size_type Length;
-      if (Space == string::npos)
+      string::size_type const Space = Vals.find(' ',Start);
+      string::size_type const Length = ((Space == string::npos) ? Vals.length() : Space) - Start;
+      if ( Arch.empty() == false )
       {
-         Length = Vals.length()-Start;
+	 AddPattern(string("*_") + Arch + Vals.substr(Start, Length));
+	 AddPattern(string("*_all") + Vals.substr(Start, Length));
       }
       else
-      {
-         Length = Space-Start;
-      }
-      AddPattern(string("*") + Vals.substr(Start, Length));
+	 AddPattern(string("*") + Vals.substr(Start, Length));
+
       Start += Length + 1;
    }
 
@@ -767,11 +765,11 @@ bool SourcesWriter::DoPackage(string FileName)
 // ContentsWriter::ContentsWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ContentsWriter::ContentsWriter(string const &DB) : 
-		    Db(DB), Stats(Db.Stats)
+ContentsWriter::ContentsWriter(string const &DB, string const &Arch) :
+		    FTWScanner(Arch), Db(DB), Stats(Db.Stats)
 
 {
-   AddPattern("*.deb");
+   SetExts(".deb");
    Output = stdout;
 }
 									/*}}}*/

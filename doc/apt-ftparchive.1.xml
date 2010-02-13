@@ -39,6 +39,7 @@
       <arg><option>--delink</option></arg>
       <arg><option>--readonly</option></arg>
       <arg><option>--contents</option></arg>
+      <arg><option>--arch <replaceable>architecture</replaceable></option></arg>
       <arg><option>-o <replaceable>config</replaceable>=<replaceable>string</replaceable></option></arg>
       <arg><option>-c=<replaceable>file</replaceable></option></arg>      
       <group choice="req">
@@ -542,11 +543,18 @@ for i in Sections do
      <listitem><para>
      Make the caching databases read only. 
      Configuration Item: <literal>APT::FTPArchive::ReadOnlyDB</literal>.</para></listitem>
-     </varlistentry>   
+     </varlistentry>
+
+     <varlistentry><term><option>-a</option></term><term><option>--arch</option></term>
+     <listitem><para>Accept in the <literal>packages</literal> and <literal>contents</literal>
+     commands only package files matching <literal>*_arch.deb</literal> or
+     <literal>*_all.deb</literal> instead of all package files in the given path.
+     Configuration Item: <literal>APT::FTPArchive::Architecture</literal>.</para></listitem>
+     </varlistentry>
 
      <varlistentry><term><option>APT::FTPArchive::AlwaysStat</option></term>
      <listitem><para>
-     &apt-ftparchive; caches as much as possible of metadata in it is cachedb. If packages
+     &apt-ftparchive; caches as much as possible of metadata in a cachedb. If packages
      are recompiled and/or republished with the same version again, this will lead to problems
      as the now outdated cached metadata like size and checksums will be used. With this option
      enabled this will no longer happen as it will be checked if the file was changed.
