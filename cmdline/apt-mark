@@ -46,11 +46,16 @@ def mark_unmark_automatic(filename, action, pkgs):
                     print "changing %s to %s" % (pkgname,action)
                 newsec = apt_pkg.RewriteSection(tagfile.Section,
                                        [],
-                                       [ ("Auto-Installed",str(action)) ]
-                                       )
+                                       [ ("Auto-Installed",str(action)) ])
+                pkgs.remove(pkgname)
                 outfile.write(newsec+"\n")
             else:
                 outfile.write(str(tagfile.Section)+"\n")
+        if action == 1:
+            for pkgname in pkgs:
+                if options.verbose:
+                    print "changing %s to %s" % (pkgname,action)
+                outfile.write("Package: %s\nAuto-Installed: %d\n\n" % (pkgname, action))
         # all done, rename the tmpfile
         os.chmod(outfile.name, 0644)
         os.rename(outfile.name, STATE_FILE)

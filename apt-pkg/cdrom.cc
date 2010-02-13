@@ -829,8 +829,6 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       }
    }
 
-   
-
    // Unmount and finish
    if (_config->FindB("APT::CDROM::NoMount",false) == false) {
       log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
@@ -921,6 +919,7 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
 
 pkgUdevCdromDevices::~pkgUdevCdromDevices()                             /*{{{*/
 { 
-   dlclose(libudev_handle);
+   if (libudev_handle != NULL)
+      dlclose(libudev_handle);
 }
 									/*}}}*/

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2010-01-20 12:18+0100\n"
-"PO-Revision-Date: 2010-01-15 18:53+0100\n"
+"PO-Revision-Date: 2010-01-29 19:58+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -1058,7 +1058,7 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent:362
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "<!ENTITY file-sourceslist \"\n"
 #| "     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>\n"
@@ -1072,10 +1072,10 @@ msgid ""
 "     Configuration Item: <literal>Dir::Etc::Trusted</literal>.</para></listitem>\n"
 "     </varlistentry>\n"
 msgstr ""
-"<!ENTITY file-sourceslist \"\n"
-"     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>\n"
-"     <listitem><para>Emplacement pour la récupération des paquets.\n"
-"     Élément de configuration : <literal>Dir::Etc::SourceList</literal>.</para></listitem>\n"
+"<!ENTITY file-trustedgpg \"\n"
+"     <varlistentry><term><filename>/etc/apt/trusted.gpg</filename></term>\n"
+"     <listitem><para>Porte-clés des clés de confiance locales. Les nouvelles clés y seront ajoutées.\n"
+"     Élément de configuration: <literal>Dir::Etc::Trusted</literal>.</para></listitem>\n"
 "     </varlistentry>\n"
 
 #. type: Plain text
@@ -1105,7 +1105,6 @@ msgstr ""
 #: apt.ent:371
 msgid "<!ENTITY translation-title \"TRANSLATION\">"
 msgstr "<!ENTITY translation-title \"Traducteurs\">"
-""
 
 #. type: Plain text
 #: apt.ent:380
@@ -1137,8 +1136,13 @@ msgid ""
 "     translation is lagging behind the original content.\n"
 "\">\n"
 msgstr ""
+"<!ENTITY translation-english \"\n"
+"     Veuillez noter que cette traduction peut contenir des parties non traduites\n"
+"     Cela est volontaire, pour éviter de perdre du contenu quand la\n"
+"     traduction est légèrement en retard sur le contenu d'origine.\n"
+"\">\n"
 
-#.  The last update date 
+#.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt-cache.8.xml:13 apt-config.8.xml:13 apt-extracttemplates.1.xml:13
 #: apt-sortpkgs.1.xml:13 sources.list.5.xml:13
@@ -2514,7 +2518,7 @@ msgstr ""
 "<command>apt-extracttemplates</command> retourne zéro si tout se passe bien, "
 "le nombre 100 en cas d'erreur."
 
-#.  The last update date 
+#.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt-ftparchive.1.xml:13
 msgid ""
@@ -2638,8 +2642,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:82 apt-ftparchive.1.xml:106
-msgid ""
-"The option <option>--db</option> can be used to specify a binary caching DB."
+msgid "The option <option>--db</option> can be used to specify a binary caching DB."
 msgstr ""
 "On peut se servir de l'option <option>--db</option> pour demander un cache "
 "binaire."
@@ -2794,10 +2797,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-ftparchive.1.xml:155
-msgid ""
-"The generate configuration has 4 separate sections, each described below."
-msgstr ""
-"Ce fichier de configuration possède quatre sections, décrites ci-dessous."
+msgid "The generate configuration has 4 separate sections, each described below."
+msgstr "Ce fichier de configuration possède quatre sections, décrites ci-dessous."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:157
@@ -3094,7 +3095,6 @@ msgstr "Sources"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:288
-#, fuzzy
 #| msgid ""
 #| "Sets the output Packages file. Defaults to <filename>$(DIST)/$(SECTION)/"
 #| "source/Sources</filename>"
@@ -3102,7 +3102,7 @@ msgid ""
 "Sets the output Sources file. Defaults to <filename>$(DIST)/$(SECTION)/"
 "source/Sources</filename>"
 msgstr ""
-"Indique le fichier « Packages » crée. Par défaut, c'est <filename>$(DIST)/"
+"Indique le fichier « Sources » créé. Par défaut, c'est <filename>$(DIST)/"
 "$(SECTION)/source/Sources</filename>."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
@@ -3242,7 +3242,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><programlisting>
 #: apt-ftparchive.1.xml:354
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "for i in Sections do \n"
 #| "   for j in Architectures do\n"
@@ -3256,10 +3256,10 @@ msgstr ""
 "for i in Sections do \n"
 "   for j in Architectures do\n"
 "      Generate for DIST=scope SECTION=i ARCH=j\n"
+"     "
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:351
-#, fuzzy
 #| msgid ""
 #| "When processing a <literal>Tree</literal> section <command>apt-"
 #| "ftparchive</command> performs an operation similar to:"
@@ -3269,7 +3269,8 @@ msgid ""
 "\" id=\"0\"/>"
 msgstr ""
 "Quand il exécute la section <literal>Tree</literal>, <command>apt-"
-"ftparchive</command> agit ainsi :"
+"ftparchive</command> effectue une opération analogue à : <placeholder type=\"programlisting"
+"\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:360
@@ -3695,7 +3696,7 @@ msgstr ""
 "<command>apt-ftparchive</command> retourne zéro si tout se passe bien, le "
 "nombre 100 en cas d'erreur."
 
-#.  The last update date 
+#.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt-get.8.xml:13
 msgid ""
@@ -3713,8 +3714,7 @@ msgstr "apt-get"
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-get.8.xml:30
 msgid "APT package handling utility -- command-line interface"
-msgstr ""
-"Utilitaire APT pour la gestion des paquets -- interface en ligne de commande."
+msgstr "Utilitaire APT pour la gestion des paquets -- interface en ligne de commande."
 
 #. type: Content of: <refentry><refsynopsisdiv><cmdsynopsis>
 #: apt-get.8.xml:36
@@ -5072,10 +5072,8 @@ msgstr "Trousseau des clés fiables de l'archive Debian."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml:166
-msgid ""
-"<filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>"
-msgstr ""
-"<filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>"
+msgid "<filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>"
+msgstr "<filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:167
@@ -5087,7 +5085,7 @@ msgstr "Trousseau des clés fiables supprimées de l'archive Debian."
 msgid "&apt-get;, &apt-secure;"
 msgstr "&apt-get;, &apt-secure;"
 
-#.  The last update date 
+#.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt-mark.8.xml:13
 msgid ""
@@ -5197,10 +5195,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-mark.8.xml:93
-msgid ""
-"<option>-f=<filename><replaceable>FILENAME</replaceable></filename></option>"
-msgstr ""
-"<option>-f=<filename><replaceable>FICHIER</replaceable></filename></option>"
+msgid "<option>-f=<filename><replaceable>FILENAME</replaceable></filename></option>"
+msgstr "<option>-f=<filename><replaceable>FICHIER</replaceable></filename></option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-mark.8.xml:94
@@ -5660,7 +5656,7 @@ msgstr ""
 "<command>apt-sortpkgs</command> retourne zéro si tout se passe bien ou 100 "
 "en cas d'erreur."
 
-#.  The last update date 
+#.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt.conf.5.xml:13
 #, fuzzy
@@ -5733,8 +5729,7 @@ msgstr ""
 #| msgid ""
 #| "APT configuration file.  Configuration Item: <literal>Dir::Etc::Main</"
 #| "literal>."
-msgid ""
-"the main configuration file specified by <literal>Dir::Etc::main</literal>"
+msgid "the main configuration file specified by <literal>Dir::Etc::main</literal>"
 msgstr ""
 "Fichier de configuration d'APT. Élément de configuration : <literal>Dir::"
 "Etc::Main</literal>."
@@ -7483,7 +7478,7 @@ msgstr ""
 
 #.  TODO: provide a
 #. 	   motivating example, except I haven't a clue why you'd want
-#. 	   to do this. 
+#. 	   to do this.
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: apt.conf.5.xml:692
 msgid ""
@@ -7505,8 +7500,7 @@ msgstr "<literal>Debug::Acquire::cdrom</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:711
-msgid ""
-"Print information related to accessing <literal>cdrom://</literal> sources."
+msgid "Print information related to accessing <literal>cdrom://</literal> sources."
 msgstr ""
 "Affiche les informations concernant les sources de type <literal>cdrom://</"
 "literal>"
@@ -7519,8 +7513,7 @@ msgstr "<literal>Debug::Acquire::ftp</literal>"
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:722
 msgid "Print information related to downloading packages using FTP."
-msgstr ""
-"Affiche les informations concernant le téléchargement de paquets par FTP."
+msgstr "Affiche les informations concernant le téléchargement de paquets par FTP."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml:729
@@ -7530,8 +7523,7 @@ msgstr "<literal>Debug::Acquire::http</literal>"
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:733
 msgid "Print information related to downloading packages using HTTP."
-msgstr ""
-"Affiche les informations concernant le téléchargement de paquets par HTTP."
+msgstr "Affiche les informations concernant le téléchargement de paquets par HTTP."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml:740
@@ -7692,8 +7684,7 @@ msgstr "<literal>Debug::pkgAcquire::Worker</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:862
-msgid ""
-"Log all interactions with the sub-processes that actually perform downloads."
+msgid "Log all interactions with the sub-processes that actually perform downloads."
 msgstr ""
 "Affiche toutes les interactions avec les processus enfants qui se chargent "
 "effectivement des téléchargements."
@@ -7834,8 +7825,7 @@ msgstr "<literal>Debug::pkgPackageManager</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:963
-msgid ""
-"Output status messages tracing the steps performed when invoking &dpkg;."
+msgid "Output status messages tracing the steps performed when invoking &dpkg;."
 msgstr "Affiche le détail des opérations liées à l'invocation de &dpkg;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
@@ -7906,13 +7896,13 @@ msgstr ""
 msgid "&file-aptconf;"
 msgstr "&file-aptconf;"
 
-#.  ? reading apt.conf 
+#.  ? reading apt.conf
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:1042
 msgid "&apt-cache;, &apt-config;, &apt-preferences;."
 msgstr "&apt-cache;, &apt-config;, &apt-preferences;."
 
-#.  The last update date 
+#.  The last update date
 #. type: Content of: <refentry><refentryinfo>
 #: apt_preferences.5.xml:13
 msgid "&apt-author.team; &apt-email; &apt-product; <date>04 May 2009</date>"
@@ -8062,8 +8052,7 @@ msgstr "une priorité égale à 990"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:101
-msgid ""
-"to the versions that are not installed and belong to the target release."
+msgid "to the versions that are not installed and belong to the target release."
 msgstr ""
 "est affectée aux versions qui ne sont pas installées et qui appartiennent à "
 "la distribution par défaut."
@@ -8548,8 +8537,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml:313
 msgid "Determination of Package Version and Distribution Properties"
-msgstr ""
-"Détermination de la version des paquets et des propriétés des distributions"
+msgstr "Détermination de la version des paquets et des propriétés des distributions"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:315
@@ -9642,8 +9630,7 @@ msgstr "$Id: guide.sgml,v 1.7 2003/04/26 23:26:13 doogie Exp $"
 
 #. type: <abstract></abstract>
 #: guide.sgml:11
-msgid ""
-"This document provides an overview of how to use the the APT package manager."
+msgid "This document provides an overview of how to use the the APT package manager."
 msgstr ""
 "Ce document fournit un aperçu des méthode d'utilisation du gestionnaire de "
 "paquets APT."
@@ -10574,10 +10561,8 @@ msgstr "Résumé final"
 
 #. type: <p></p>
 #: guide.sgml:447
-msgid ""
-"Finally, APT will print out a summary of all the changes that will occur."
-msgstr ""
-"Anfin, APT affichera un résumé de toutes les opérations qui prendront place."
+msgid "Finally, APT will print out a summary of all the changes that will occur."
+msgstr "Anfin, APT affichera un résumé de toutes les opérations qui prendront place."
 
 #. type: <example></example>
 #: guide.sgml:452

@@ -98,6 +98,42 @@ OpProgress* pkgCdromTextStatus::GetOpProgress()
    return &Progress; 
 };
 									/*}}}*/
+// SetupAutoDetect       						/*{{{*/
+bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i)
+{
+   bool Debug =  _config->FindB("Debug::Acquire::cdrom", false);
+
+   vector<struct CdromDevice> v = UdevCdroms.Scan();
+   if (i >= v.size())
+      return false;
+
+   if (Debug)
+      clog << "Looking at devce " << i
+	   << " DeviveName: " << v[i].DeviceName 
+	   << " IsMounted: '" << v[i].Mounted << "'"
+	   << " MountPoint: '" << v[i].MountPath << "'"
+	   << endl;
+
+   if (v[i].Mounted)
+   {
+      // set the right options
+      _config->Set("Acquire::cdrom::mount", v[i].MountPath);
+      _config->Set("APT::CDROM::NoMount", true);
+   } else {
+      string AptMountPoint = _config->FindDir("Dir::Media::MountPath");
+      if (!FileExists(AptMountPoint))
+	 mkdir(AptMountPoint.c_str(), 0750);
+      if(MountCdrom(AptMountPoint, v[i].DeviceName) == false)
+	 _error->Warning(_("Failed to mount '%s' to '%s'"), v[i].DeviceName.c_str(), AptMountPoint.c_str());
+      _config->Set("Acquire::cdrom::mount", AptMountPoint);
+      _config->Set("APT::CDROM::NoMount", true);
+   }
+   i++;
+
+   return true;
+}
+									/*}}}*/
+
 // DoAdd - Add a new CDROM						/*{{{*/
 // ---------------------------------------------------------------------
 /* This does the main add bit.. We show some status and things. The
@@ -106,12 +142,25 @@ OpProgress* pkgCdromTextStatus::GetOpProgress()
    verify them. Then rewrite the database files */
 bool DoAdd(CommandLine &)
 {
-   bool res = false;
+   pkgUdevCdromDevices UdevCdroms;
    pkgCdromTextStatus log;
    pkgCdrom cdrom;
-   res = cdrom.Add(&log);
+   bool res = true;
+
+   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
+   unsigned int count = 0;
+   
+   if (AutoDetect && UdevCdroms.Dlopen())
+   {
+      while (AutoDetectCdrom(UdevCdroms, count))
+	 res &= cdrom.Add(&log);
+   } else {
+      res = cdrom.Add(&log);
+   }
+
    if(res)
       cout << _("Repeat this process for the rest of the CDs in your set.") << endl;
+
    return res;
 }
 									/*}}}*/
@@ -120,10 +169,24 @@ bool DoAdd(CommandLine &)
 /* */
 bool DoIdent(CommandLine &)
 {
+   pkgUdevCdromDevices UdevCdroms;
    string ident;
    pkgCdromTextStatus log;
    pkgCdrom cdrom;
-   return cdrom.Ident(ident, &log);
+   bool res = true;
+
+   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
+   unsigned int count = 0;
+   
+   if (AutoDetect && UdevCdroms.Dlopen())
+   {
+      while (AutoDetectCdrom(UdevCdroms, count))
+	 res &= cdrom.Ident(ident, &log);
+   } else {
+      return cdrom.Ident(ident, &log);
+   }
+ 
+   return res;
 }
 									/*}}}*/
 // ShowHelp - Show the help screen					/*{{{*/
@@ -154,6 +217,7 @@ int ShowHelp()
       "  -m   No mounting\n"
       "  -f   Fast mode, don't check package files\n"
       "  -a   Thorough scan mode\n"
+      "  --auto-detect Auto detect drive and mount point\n"
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
       "See fstab(5)\n";
@@ -164,6 +228,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
+      {  0,"auto-detect","Acquire::cdrom::AutoDetect",0},
       {'v',"version","version",0},
       {'d',"cdrom","Acquire::cdrom::mount",CommandLine::HasArg},
       {'r',"rename","APT::CDROM::Rename",0},

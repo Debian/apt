@@ -58,10 +58,6 @@ FTWScanner::FTWScanner()
 {
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
-   RealPath = 0;
-   long PMax = pathconf(".",_PC_PATH_MAX);
-   if (PMax > 0)
-      RealPath = new char[PMax];
 }
 									/*}}}*/
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
@@ -92,6 +88,8 @@ int FTWScanner::ScannerFTW(const char *File,const struct stat *sb,int Flag)
 int FTWScanner::ScannerFile(const char *File, bool const &ReadLink)
 {
    const char *LastComponent = strrchr(File, '/');
+   char *RealPath = NULL;
+
    if (LastComponent == NULL)
       LastComponent = File;
    else
@@ -111,10 +109,13 @@ int FTWScanner::ScannerFile(const char *File, bool const &ReadLink)
       given are not links themselves. */
    char Jnk[2];
    Owner->OriginalPath = File;
-   if (ReadLink && Owner->RealPath != 0 &&
+   if (ReadLink &&
        readlink(File,Jnk,sizeof(Jnk)) != -1 &&
-       realpath(File,Owner->RealPath) != 0)
-      Owner->DoPackage(Owner->RealPath);
+       (RealPath = realpath(File,NULL)) != 0)
+   {
+      Owner->DoPackage(RealPath);
+      free(RealPath);
+   }
    else
       Owner->DoPackage(File);
    
@@ -150,13 +151,15 @@ int FTWScanner::ScannerFile(const char *File, bool const &ReadLink)
 /* */
 bool FTWScanner::RecursiveScan(string const &Dir)
 {
+   char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
    if (InternalPrefix.empty() == true)
    {
-      if (realpath(Dir.c_str(),RealPath) == 0)
+      if ((RealPath = realpath(Dir.c_str(),NULL)) == 0)
 	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
-      InternalPrefix = RealPath;      
+      InternalPrefix = RealPath;
+      free(RealPath);
    }
    
    // Do recursive directory searching
@@ -180,13 +183,15 @@ bool FTWScanner::RecursiveScan(string const &Dir)
    of files from another file. */
 bool FTWScanner::LoadFileList(string const &Dir, string const &File)
 {
+   char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
    if (InternalPrefix.empty() == true)
    {
-      if (realpath(Dir.c_str(),RealPath) == 0)
+      if ((RealPath = realpath(Dir.c_str(),NULL)) == 0)
 	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
       InternalPrefix = RealPath;      
+      free(RealPath);
    }
    
    Owner = this;
@@ -687,6 +692,7 @@ bool SourcesWriter::DoPackage(string FileName)
    // Perform the delinking operation over all of the files
    string ParseJnk;
    const char *C = Files;
+   char *RealPath = NULL;
    for (;isspace(*C); C++);
    while (*C != 0)
    {   
@@ -698,10 +704,11 @@ bool SourcesWriter::DoPackage(string FileName)
       
       char Jnk[2];
       string OriginalPath = Directory + ParseJnk;
-      if (RealPath != 0 && readlink(OriginalPath.c_str(),Jnk,sizeof(Jnk)) != -1 &&
-	  realpath(OriginalPath.c_str(),RealPath) != 0)
+      if (readlink(OriginalPath.c_str(),Jnk,sizeof(Jnk)) != -1 &&
+	  (RealPath = realpath(OriginalPath.c_str(),NULL)) != 0)
       {
 	 string RP = RealPath;
+	 free(RealPath);
 	 if (Delink(RP,OriginalPath.c_str(),Stats.DeLinkBytes,St.st_size) == false)
 	    return false;
       }

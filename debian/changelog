@@ -1,5 +1,6 @@
 apt (0.7.26) UNRELEASED; urgency=low
 
+  [ David Kalnischkies ]
   * [BREAK] add possibility to download and use multiply
     Translation files, configurable with Acquire::Translation
     (Closes: #444222, #448216, #550564)
@@ -18,13 +19,20 @@ apt (0.7.26) UNRELEASED; urgency=low
       caching if versions are build multiply times (not recommend)
       Patch by Christoph Goehre, thanks! (Closes: #463260)
 
- -- Michael Vogt <mvo@debian.org>  Thu, 10 Dec 2009 22:02:38 +0100
+  [ Ivan Masár ]
+  * Slovak translation update. Closes: #568294
 
-apt (0.7.25.3) UNRELEASED; urgency=low
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 13 Feb 2010 01:42:50 +0100
 
+apt (0.7.25.3) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Italian translation update. Closes: #567532
+
+  [ David Kalnischkies ]
   * apt-pkg/contrib/macros.h:
-    - move the header system.h with a new name to the public domain,
-      to be able to use it in other headers (Closes: #567662)
+    - install the header system.h with a new name to be able to use 
+      it in other headers (Closes: #567662)
   * cmdline/acqprogress.cc:
     - Set Mode to Medium so that the correct prefix is used.
       Thanks Stefan Haller for the patch! (Closes: #567304 LP: #275243)
@@ -32,11 +40,34 @@ apt (0.7.25.3) UNRELEASED; urgency=low
     - generate sha1 and sha256 checksums for dsc (Closes: #567343)
   * cmdline/apt-get.cc:
     - don't mark as manually if in download only (Closes: #468180)
-
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 30 Jan 2010 22:13:48 +0100
+  
+ -- Michael Vogt <mvo@debian.org>  Mon, 01 Feb 2010 18:41:15 +0100
 
 apt (0.7.25.2) unstable; urgency=low
 
+  [ Michael Vogt ]
+  * apt-pkg/contrib/cdromutl.cc:
+    - fix UnmountCdrom() fails, give it a bit more time and try
+      the umount again
+  * apt-pkg/cdrom.cc:
+    - fix crash in pkgUdevCdromDevices
+  * methods/cdrom.cc:
+    - fixes in multi cdrom setup code (closes: #549312)
+    - add new "Acquire::cdrom::AutoDetect" config that enables/disables
+      the dlopen of libudev for automatic cdrom detection. Off by default
+      currently, feedback/testing welcome
+  * cmdline/apt-cdrom.cc:
+    - add new --auto-detect option that uses libudev to figure out
+      the cdrom/mount-point
+  * cmdline/apt-mark:
+    - merge fix from Gene Cash that supports markauto for
+      packages that are not in the extended_states file yet
+      (closes: #534920)
+  * ftparchive/writer.{cc,h}:
+    - merge crash fix for apt-ftparchive on hurd, thanks to 
+      Samuel Thibault for the patch (closes: #566664)
+
+  [ David Kalnischkies ]
   * apt-pkg/contrib/fileutl.cc:
     - Fix the newly introduced method GetListOfFilesInDir to not
       accept every file if no extension is enforced
@@ -61,13 +92,15 @@ apt (0.7.25.2) unstable; urgency=low
     - fix malloc asseration fail with ja_JP.eucJP locale in
       apt-cache search. Thanks Kusanagi Kouichi! (Closes: #548884)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 16 Jan 2010 21:06:38 +0100
+  [ Christian Perrier ]
+  * French translation update
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 27 Jan 2010 16:16:10 +0100
 
 apt (0.7.25.1) unstable; urgency=low
 
   [ Christian Perrier ]
   * French manpage translation update
-  * French translation update
   * Russian translation update by Yuri Kozlov
     Closes: #564171
   
