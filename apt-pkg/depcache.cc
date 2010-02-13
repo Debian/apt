@@ -17,6 +17,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/tagfile.h>
 
@@ -596,6 +597,57 @@ void pkgDepCache::UpdateVerState(PkgIterator Pkg)
    }
 }
 									/*}}}*/
+// DepCache::RemovePseudoInstalledPkg - MultiArch helper for Update()	/*{{{*/
+// ---------------------------------------------------------------------
+/* We "install" arch all packages for all archs if it is installed. Many
+   of these will be broken. This method will look at these broken Pkg and
+   "remove" it. */
+bool pkgDepCache::RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck) {
+   if (unlikely(Pkg->CurrentVer == 0))
+      return false;
+
+   VerIterator V = Pkg.CurrentVer();
+   if (V->MultiArch != Version::All)
+      return false;
+
+   unsigned char const DepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+   if ((DepState & DepInstMin) == DepInstMin)
+      return false;
+
+   // Dependencies for this arch all are not statisfied
+   // so we installed it only for our convenience: get right of it now.
+   RemoveSizes(Pkg);
+   RemoveStates(Pkg);
+
+   Pkg->CurrentVer = 0;
+   PkgState[Pkg->ID].InstallVer = 0;
+
+   AddStates(Pkg);
+   Update(Pkg);
+   AddSizes(Pkg);
+
+   // After the remove previously satisfied pseudo pkg could be now
+   // no longer satisfied, so we need to recheck the reverse dependencies
+   for (DepIterator d = Pkg.RevDependsList(); d.end() != true; ++d)
+   {
+      PkgIterator const P = d.ParentPkg();
+      if (P->CurrentVer != 0)
+	 recheck.insert(P.Index());
+   }
+
+   if (V.end() != true)
+      for (PrvIterator Prv = V.ProvidesList(); Prv.end() != true; Prv++)
+	 for (DepIterator d = Prv.ParentPkg().RevDependsList();
+	      d.end() != true; ++d)
+	 {
+	    PkgIterator const P = d.ParentPkg();
+	    if (P->CurrentVer != 0)
+	       recheck.insert(P.Index());
+	 }
+
+   return true;
+}
+									/*}}}*/
 // DepCache::Update - Figure out all the state information		/*{{{*/
 // ---------------------------------------------------------------------
 /* This will figure out the state of all the packages and all the 
@@ -609,9 +661,13 @@ void pkgDepCache::Update(OpProgress *Prog)
    iKeepCount = 0;
    iBrokenCount = 0;
    iBadCount = 0;
-   
+
+   std::set<unsigned long> recheck;
+
    // Perform the depends pass
    int Done = 0;
+   bool const checkMultiArch = APT::Configuration::getArchitectures().size() > 1;
+   unsigned long killed = 0;
    for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
    {
       if (Prog != 0 && Done%20 == 0)
@@ -619,7 +675,7 @@ void pkgDepCache::Update(OpProgress *Prog)
       for (VerIterator V = I.VersionList(); V.end() != true; V++)
       {
 	 unsigned char Group = 0;
-	 
+
 	 for (DepIterator D = V.DependsList(); D.end() != true; D++)
 	 {
 	    // Build the dependency state.
@@ -637,16 +693,43 @@ void pkgDepCache::Update(OpProgress *Prog)
 		D->Type == Dep::DpkgBreaks ||
 		D->Type == Dep::Obsoletes)
 	       State = ~State;
-	 }	 
+	 }
       }
 
-      // Compute the pacakge dependency state and size additions
+      // Compute the package dependency state and size additions
       AddSizes(I);
       UpdateVerState(I);
       AddStates(I);
+
+      if (checkMultiArch != true || I->CurrentVer == 0)
+	 continue;
+
+      VerIterator const V = I.CurrentVer();
+      if (V->MultiArch != Version::All)
+	 continue;
+
+      recheck.insert(I.Index());
+      --Done; // no progress if we need to recheck the package
    }
 
-   if (Prog != 0)      
+   if (checkMultiArch == true) {
+      /* FIXME: recheck breaks proper progress reporting as we don't know
+		how many packages we need to recheck. To lower the effect
+		a bit we increase with a kill, but we should do something more clever… */
+      for(std::set<unsigned long>::const_iterator p = recheck.begin();
+	  p != recheck.end(); ++p) {
+	 if (Prog != 0 && Done%20 == 0)
+	    Prog->Progress(Done);
+	 PkgIterator P = PkgIterator(*Cache, Cache->PkgP + *p);
+	 if (RemovePseudoInstalledPkg(P, recheck) == true) {
+	    ++killed;
+	    ++Done;
+	 }
+	 recheck.erase(p);
+      }
+   }
+
+   if (Prog != 0)
       Prog->Progress(Done);
 
    readStateFile(Prog);
@@ -813,6 +896,10 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    AddStates(Pkg);   
    Update(Pkg);
    AddSizes(Pkg);
+
+   // if we remove the pseudo package, we also need to remove the "real"
+   if (Pkg->CurrentVer != 0 && Pkg.CurrentVer().Pseudo() == true)
+      MarkDelete(Pkg.Group().FindPkg("all"), rPurge, Depth+1, FromUser);
 }
 									/*}}}*/
 // DepCache::IsDeleteOk - check if it is ok to remove this package	/*{{{*/

@@ -46,6 +46,8 @@ class debListParser : public pkgCacheGenerator::ListParser
       
    // These all operate against the current section
    virtual string Package();
+   virtual string Architecture();
+   virtual bool ArchitectureAll();
    virtual string Version();
    virtual bool NewVersion(pkgCache::VerIterator Ver);
    virtual string Description();
@@ -68,7 +70,7 @@ class debListParser : public pkgCacheGenerator::ListParser
 			    bool const &StripMultiArch = false);
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
-   debListParser(FileFd *File);
+   debListParser(FileFd *File, string const &Arch = "");
 };
 
 #endif

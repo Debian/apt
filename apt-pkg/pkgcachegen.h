@@ -51,9 +51,13 @@ class pkgCacheGenerator							/*{{{*/
    // Flag file dependencies
    bool FoundFileDeps;
    
-   bool NewPackage(pkgCache::PkgIterator &Pkg,const string &PkgName);
+   bool NewGroup(pkgCache::GrpIterator &Grp,const string &Name);
+   bool NewPackage(pkgCache::PkgIterator &Pkg,const string &Name, const string &Arch);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
+   bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
+		   string const &Version, unsigned int const &Op,
+		   unsigned int const &Type, map_ptrloc *OldDepLast);
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const string &VerStr,unsigned long Next);
    map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
 
@@ -72,7 +76,8 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-      
+   bool FinishCache(OpProgress &Progress);
+
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
 };
@@ -96,16 +101,18 @@ class pkgCacheGenerator::ListParser
    inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
    inline unsigned long WriteString(const string &S) {return Owner->Map.WriteString(S);};
    inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->Map.WriteString(S,Size);};
-   bool NewDepends(pkgCache::VerIterator Ver,const string &Package,
+   bool NewDepends(pkgCache::VerIterator Ver,const string &Package, const string &Arch,
 		   const string &Version,unsigned int Op,
 		   unsigned int Type);
-   bool NewProvides(pkgCache::VerIterator Ver,const string &Package,
-		    const string &Version);
+   bool NewProvides(pkgCache::VerIterator Ver,const string &PkgName,
+		    const string &PkgArch, const string &Version);
    
    public:
    
    // These all operate against the current section
    virtual string Package() = 0;
+   virtual string Architecture() = 0;
+   virtual bool ArchitectureAll() = 0;
    virtual string Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator Ver) = 0;
    virtual string Description() = 0;

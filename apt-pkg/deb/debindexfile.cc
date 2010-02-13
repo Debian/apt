@@ -149,9 +149,12 @@ unsigned long debSourcesIndex::Size() const
 // PackagesIndex::debPackagesIndex - Contructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debPackagesIndex::debPackagesIndex(string URI,string Dist,string Section,bool Trusted) : 
-                  pkgIndexFile(Trusted), URI(URI), Dist(Dist), Section(Section)
+debPackagesIndex::debPackagesIndex(string const &URI, string const &Dist, string const &Section,
+					bool const &Trusted, string const &Arch) :
+                  pkgIndexFile(Trusted), URI(URI), Dist(Dist), Section(Section), Architecture(Arch)
 {
+	if (Architecture == "native")
+		Architecture = _config->Find("APT::Architecture");
 }
 									/*}}}*/
 // PackagesIndex::ArchiveInfo - Short version of the archive url	/*{{{*/
@@ -170,6 +173,8 @@ string debPackagesIndex::ArchiveInfo(pkgCache::VerIterator Ver) const
    
    Res += " ";
    Res += Ver.ParentPkg().Name();
+   Res += " ";
+   Res += Ver.Arch();
    Res += " ";
    Res += Ver.VerStr();
    return Res;
@@ -204,6 +209,8 @@ string debPackagesIndex::Info(const char *Type) const
    else
       Info += Dist + '/' + Section;   
    Info += " ";
+   Info += Architecture;
+   Info += " ";
    Info += Type;
    return Info;
 }
@@ -227,7 +234,7 @@ string debPackagesIndex::IndexURI(const char *Type) const
    }
    else
       Res = URI + "dists/" + Dist + '/' + Section +
-      "/binary-" + _config->Find("APT::Architecture") + '/';
+      "/binary-" + Architecture + '/';
    
    Res += Type;
    return Res;
@@ -259,7 +266,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 {
    string PackageFile = IndexFile("Packages");
    FileFd Pkg(PackageFile,FileFd::ReadOnly);
-   debListParser Parser(&Pkg);
+   debListParser Parser(&Pkg, Architecture);
    if (_error->PendingError() == true)
       return _error->Error("Problem opening %s",PackageFile.c_str());
    

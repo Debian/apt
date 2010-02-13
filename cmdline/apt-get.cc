@@ -227,6 +227,17 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
    return false;
 }
 									/*}}}*/
+// ShowPkg - display a package name					/*{{{*/
+// ---------------------------------------------------------------------
+/* Displays the package name and maybe also the architecture
+   if it is not the main architecture */
+string ShowPkg(pkgCache::PkgIterator const Pkg) {
+	string p = Pkg.Name();
+	if (strcmp(Pkg.Arch(),"all") != 0 && _config->Find("APT::Architecture") != Pkg.Arch())
+		p.append(":").append(Pkg.Arch());
+	return p;
+}
+									/*}}}*/
 // ShowBroken - Debugging aide						/*{{{*/
 // ---------------------------------------------------------------------
 /* This prints out the names of all the packages that are broken along
@@ -258,8 +269,8 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
       }
       
       // Print out each package and the failed dependencies
-      out <<"  " <<  I.Name() << ":";
-      unsigned Indent = strlen(I.Name()) + 3;
+      out << " " << ShowPkg(I) << " :";
+      unsigned const Indent = ShowPkg(I).size() + 3;
       bool First = true;
       pkgCache::VerIterator Ver;
       
@@ -312,7 +323,7 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	       out << ' ' << End.DepType() << ": ";
 	    FirstOr = false;
 	    
-	    out << Start.TargetPkg().Name();
+	    out << ShowPkg(Start.TargetPkg());
 	 
 	    // Show a quick summary of the version requirements
 	    if (Start.TargetVer() != 0)
@@ -374,7 +385,9 @@ void ShowNew(ostream &out,CacheFile &Cache)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].NewInstall() == true) {
-         List += string(I.Name()) + " ";
+	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	    continue;
+         List += ShowPkg(I) + " ";
          VersionsList += string(Cache[I].CandVersion) + "\n";
       }
    }
@@ -396,10 +409,12 @@ void ShowDel(ostream &out,CacheFile &Cache)
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].Delete() == true)
       {
+	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	    continue;
 	 if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
-	    List += string(I.Name()) + "* ";
+	    List += ShowPkg(I) + "* ";
 	 else
-	    List += string(I.Name()) + " ";
+	    List += ShowPkg(I) + " ";
      
      VersionsList += string(Cache[I].CandVersion)+ "\n";
       }
@@ -424,7 +439,7 @@ void ShowKept(ostream &out,CacheFile &Cache)
 	  I->CurrentVer == 0 || Cache[I].Delete() == true)
 	 continue;
       
-      List += string(I.Name()) + " ";
+      List += ShowPkg(I) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
    ShowList(out,_("The following packages have been kept back:"),List,VersionsList);
@@ -444,8 +459,10 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
       // Not interesting
       if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
-      
-      List += string(I.Name()) + " ";
+      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	 continue;
+
+      List += ShowPkg(I) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
    ShowList(out,_("The following packages will be upgraded:"),List,VersionsList);
@@ -465,8 +482,10 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
       // Not interesting
       if (Cache[I].Downgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
-      
-      List += string(I.Name()) + " ";
+      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	 continue;
+
+      List += ShowPkg(I) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
    return ShowList(out,_("The following packages will be DOWNGRADED:"),List,VersionsList);
@@ -484,7 +503,7 @@ bool ShowHold(ostream &out,CacheFile &Cache)
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].InstallVer != (pkgCache::Version *)I.CurrentVer() &&
           I->SelectedState == pkgCache::State::Hold) {
-         List += string(I.Name()) + " ";
+         List += ShowPkg(I) + " ";
 		 VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
       }
    }
@@ -518,7 +537,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	 if (Added[I->ID] == false)
 	 {
 	    Added[I->ID] = true;
-	    List += string(I.Name()) + " ";
+	    List += ShowPkg(I) + " ";
         //VersionsList += string(Cache[I].CurVersion) + "\n"; ???
 	 }
       }
@@ -566,6 +585,9 @@ void Stats(ostream &out,pkgDepCache &Dep)
    unsigned long ReInstall = 0;
    for (pkgCache::PkgIterator I = Dep.PkgBegin(); I.end() == false; I++)
    {
+      if (pkgCache::VerIterator(Dep, Dep[I].CandidateVer).Pseudo() == true)
+	 continue;
+
       if (Dep[I].NewInstall() == true)
 	 Install++;
       else
