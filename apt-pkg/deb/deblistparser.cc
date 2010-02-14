@@ -155,9 +155,10 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 	 to a NOP in the download/install step - this package will ensure that
 	 it is downloaded only one time and installed only one time -- even if
 	 the architecture bound versions coming in and out on regular basis. */
+      bool const static multiArch = APT::Configuration::getArchitectures().size() > 1;
       if (strcmp(Ver.Arch(true),"all") == 0)
 	 return true;
-      else if (Ver.Pseudo() == true)
+      else if (multiArch == true)
       {
 	 // our pseudo packages have no size to not confuse the fetcher
 	 Ver->Size = 0;
