@@ -1012,7 +1012,7 @@ vector<string> ExplodeString(string const &haystack, char const &split) {
 	do {
 		for (; end != haystack.end() && *end != split; ++end);
 		exploded.push_back(string(start, end));
-		start = end;
+		start = end + 1;
 	} while (end != haystack.end() && (++end) != haystack.end());
 	return exploded;
 }

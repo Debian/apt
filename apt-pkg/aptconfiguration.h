@@ -64,7 +64,7 @@ public:									/*{{{*/
 	 *  \return a vector of (all) Language Codes in the prefered usage order
 	 */
 	std::vector<std::string> static const getLanguages(bool const &All = false,
-			bool const &Cached = true, char const * const Locale = 0);
+			bool const &Cached = true, char const ** const Locale = 0);
 
 	/** \brief Returns a vector of Architectures we support
 	 *
