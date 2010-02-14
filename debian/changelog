@@ -8,9 +8,10 @@ apt (0.7.26) UNRELEASED; urgency=low
     but we support the usage of the new ABI so libapt users
     can start to prepare for MultiArch (Closes: #536029)
   * Ignore :qualifiers after package name in build dependencies
-    for now as long we don't understand them (Closes: #558103)
+    in the library by default, but try to honour them in apt-get
+    as we have some sort of MultiArch support ready (Closes: #558103)
   * apt-pkg/contrib/mmap.{cc,h}:
-    - extend it to have a growable flag - unused now but maybe...
+    - extend it to have a growable flag - unused now but maybe…
   * apt-pkg/pkgcache.h:
     - use long instead of short for {Ver,Desc}File size,
       patch from Víctor Manuel Jáquez Leal, thanks! (Closes: #538917)
