@@ -16,9 +16,15 @@ void dumpVector(std::vector<std::string> vec) {
 
 int main(int argc,char *argv[])
 {
+	if (argc != 2) {
+		std::cout << "One parameter expected - given " << argc << std::endl;
+		return 100;
+	}
+
 	char const* env[2];
 	env[0] = "de_DE.UTF-8";
 	env[1] = "";
+
 	std::vector<std::string> vec = APT::Configuration::getLanguages(false, false, env);
 	equals(vec.size(), 2);
 	equals(vec[0], "de");
@@ -87,6 +93,16 @@ int main(int argc,char *argv[])
 	equals(vec[0], "de");
 	equals(vec[1], "en");
 
+	_config->Set("Dir::State::lists", argv[1]);
+	vec = APT::Configuration::getLanguages(true, false, env);
+	equals(vec.size(), 5);
+	equals(vec[0], "de");
+	equals(vec[1], "en");
+	equals(vec[2], "none");
+	equals(vec[3], "pt");
+	equals(vec[4], "tr");
+
+	_config->Set("Dir::State::lists", "/non-existing-dir");
 	_config->Set("Acquire::Languages::1", "none");
 	env[0] = "de_DE.UTF-8";
 	vec = APT::Configuration::getLanguages(false, false, env);
@@ -113,12 +129,14 @@ int main(int argc,char *argv[])
 		_config->Set("APT::Acquire::Translation", "ast_DE");
 		env[0] = "de_DE.UTF-8";
 		vec = APT::Configuration::getLanguages(true, false, env);
-		equals(vec.size(), 1);
+		equals(vec.size(), 2);
 		equals(vec[0], "ast_DE");
+		equals(vec[1], "en");
 		_config->Set("APT::Acquire::Translation", "none");
 		env[0] = "de_DE.UTF-8";
 		vec = APT::Configuration::getLanguages(true, false, env);
-		equals(vec.size(), 0);
+		equals(vec.size(), 1);
+		equals(vec[0], "en");
 
 	return 0;
 }

@@ -214,6 +214,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	     s != sections.end(); ++s)
 		for (set<string>::const_iterator l = s->second.begin();
 		     l != s->second.end(); l++) {
+			if (*l == "none") continue;
 			debTranslationsIndex i = debTranslationsIndex(URI,Dist,s->first,(*l).c_str());
 			i.GetIndexes(Owner);
 		}
@@ -268,8 +269,10 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles() {
 	for (map<string, set<string> >::const_iterator s = sections.begin();
 	     s != sections.end(); ++s)
 		for (set<string>::const_iterator l = s->second.begin();
-		     l != s->second.end(); l++)
+		     l != s->second.end(); l++) {
+			if (*l == "none") continue;
 			Indexes->push_back(new debTranslationsIndex(URI,Dist,s->first,(*l).c_str()));
+		}
 
 	return Indexes;
 }
