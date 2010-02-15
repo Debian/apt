@@ -1526,10 +1526,9 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    // only show stuff in the list that is not yet marked for removal
 	    if(Cache[Pkg].Delete() == false) 
 	    {
+	       ++autoRemoveCount;
 	       // we don't need to fill the strings if we don't need them
-	       if (smallList == true)
-		  ++autoRemoveCount;
-	       else
+	       if (smallList == false)
 	       {
 		 autoremovelist += string(Pkg.Name()) + " ";
 		 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
@@ -1542,9 +1541,12 @@ bool DoAutomaticRemove(CacheFile &Cache)
    if (doAutoRemove == false && (autoremovelist.empty() == false || autoRemoveCount != 0))
    {
       if (smallList == false)
-	 ShowList(c1out, _("The following packages were automatically installed and are no longer required:"), autoremovelist, autoremoveversions);
+	 ShowList(c1out, P_("The following package is automatically installed and is no longer required:",
+	          "The following packages were automatically installed and are no longer required:",
+	          autoRemoveCount), autoremovelist, autoremoveversions);
       else
-	 ioprintf(c1out, _("%lu packages were automatically installed and are no longer required.\n"), autoRemoveCount);
+	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
+	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
    }
    // Now see if we had destroyed anything (if we had done anything)
