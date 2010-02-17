@@ -333,7 +333,7 @@ bool PackageMap::GenContents(Configuration &Setup,
    gettimeofday(&StartTime,0);   
    
    // Create a package writer object.
-   ContentsWriter Contents("");
+   ContentsWriter Contents("", Arch);
    if (PkgExt.empty() == false && Contents.SetExts(PkgExt) == false)
       return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
@@ -606,7 +606,7 @@ bool SimpleGenPackages(CommandLine &CmdL)
    
    // Create a package writer object.
    PackagesWriter Packages(_config->Find("APT::FTPArchive::DB"),
-			   Override, "");   
+			   Override, "", _config->Find("APT::FTPArchive::Architecture"));
    if (_error->PendingError() == true)
       return false;
    
@@ -629,7 +629,7 @@ bool SimpleGenContents(CommandLine &CmdL)
       return ShowHelp(CmdL);
    
    // Create a package writer object.
-   ContentsWriter Contents(_config->Find("APT::FTPArchive::DB"));
+   ContentsWriter Contents(_config->Find("APT::FTPArchive::DB"), _config->Find("APT::FTPArchive::Architecture"));
    if (_error->PendingError() == true)
       return false;
    
@@ -910,6 +910,7 @@ int main(int argc, const char *argv[])
       {0,"delink","APT::FTPArchive::DeLinkAct",0},
       {0,"readonly","APT::FTPArchive::ReadOnlyDB",0},
       {0,"contents","APT::FTPArchive::Contents",0},
+      {'a',"arch","APT::FTPArchive::Architecture",CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

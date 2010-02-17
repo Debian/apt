@@ -34,6 +34,7 @@ class FTWScanner
 {
    protected:
    vector<string> Patterns;
+   string Arch;
    const char *OriginalPath;
    bool ErrorPrinted;
    
@@ -68,7 +69,7 @@ class FTWScanner
    void AddPattern(string const &Pattern) { Patterns.push_back(Pattern); };
    bool SetExts(string const &Vals);
       
-   FTWScanner();
+   FTWScanner(string const &Arch = string());
 };
 
 class PackagesWriter : public FTWScanner
@@ -92,7 +93,6 @@ class PackagesWriter : public FTWScanner
    string DirStrip;
    FILE *Output;
    struct CacheDB::Stats &Stats;
-   string Arch;
 
    inline bool ReadOverride(string const &File) {return Over.ReadOverride(File);};
    inline bool ReadExtraOverride(string const &File) 
@@ -125,7 +125,7 @@ class ContentsWriter : public FTWScanner
    void Finish() {Gen.Print(Output);};
    inline bool ReadyDB(string const &DB) {return Db.ReadyDB(DB);};
    
-   ContentsWriter(string const &DB);
+   ContentsWriter(string const &DB, string const &Arch = string());
    virtual ~ContentsWriter() {};
 };
 
