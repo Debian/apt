@@ -8,9 +8,11 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/strutl.h>
 
 #include <vector>
 #include <string>
@@ -96,7 +98,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
    will result in "de_DE, de, en".
    The special word "none" is the stopcode for the not-All code vector */
 std::vector<std::string> const Configuration::getLanguages(bool const &All,
-				bool const &Cached, char const * const Locale) {
+				bool const &Cached, char const ** const Locale) {
 	using std::string;
 
 	// The detection is boring and has a lot of cornercases,
@@ -117,27 +119,29 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		}
 	}
 
-	// get the environment language code
+	// get the environment language codes: LC_MESSAGES (and later LANGUAGE)
 	// we extract both, a long and a short code and then we will
 	// check if we actually need both (rare) or if the short is enough
-	string const envMsg = string(Locale == 0 ? std::setlocale(LC_MESSAGES, NULL) : Locale);
+	string const envMsg = string(Locale == 0 ? std::setlocale(LC_MESSAGES, NULL) : *Locale);
 	size_t const lenShort = (envMsg.find('_') != string::npos) ? envMsg.find('_') : 2;
-	size_t const lenLong = (envMsg.find('.') != string::npos) ? envMsg.find('.') : (lenShort + 3);
+	size_t const lenLong = (envMsg.find_first_of(".@") != string::npos) ? envMsg.find_first_of(".@") : (lenShort + 3);
 
 	string envLong = envMsg.substr(0,lenLong);
 	string const envShort = envLong.substr(0,lenShort);
-	bool envLongIncluded = true, envShortIncluded = false;
+	bool envLongIncluded = true;
 
 	// first cornercase: LANG=C, so we use only "en" Translation
 	if (envLong == "C") {
 		codes.push_back("en");
+		allCodes = codes;
 		return codes;
 	}
 
+	// to save the servers from unneeded queries, we only try also long codes
+	// for languages it is realistic to have a long code translation file…
+	// TODO: Improve translation acquire system to drop them dynamic
+	char const *needLong[] = { "cs", "en", "pt", "sv", "zh", NULL };
 	if (envLong != envShort) {
-		// to save the servers from unneeded queries, we only try also long codes
-		// for languages it is realistic to have a long code translation file...
-		char const *needLong[] = { "cs", "en", "pt", "sv", "zh", NULL };
 		for (char const **l = needLong; *l != NULL; l++)
 			if (envShort.compare(*l) == 0) {
 				envLongIncluded = false;
@@ -155,7 +159,43 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	if (oldAcquire.empty() == false && oldAcquire != "environment") {
 		if (oldAcquire != "none")
 			codes.push_back(oldAcquire);
+		allCodes = codes;
 		return codes;
+	}
+
+	// It is very likely we will need to environment codes later,
+	// so let us generate them now from LC_MESSAGES and LANGUAGE
+	std::vector<string> environment;
+	// take care of LC_MESSAGES
+	if (envLongIncluded == false)
+		environment.push_back(envLong);
+	environment.push_back(envShort);
+	// take care of LANGUAGE
+	string envLang = Locale == 0 ? getenv("LANGUAGE") : *(Locale+1);
+	if (envLang.empty() == false) {
+		std::vector<string> env = ExplodeString(envLang,':');
+		short addedLangs = 0; // add a maximum of 3 fallbacks from the environment
+		for (std::vector<string>::const_iterator e = env.begin();
+		     e != env.end() && addedLangs < 3; ++e) {
+			if (unlikely(e->empty() == true) || *e == "en")
+				continue;
+			if (*e == envLong || *e == envShort)
+				continue;
+			if (std::find(environment.begin(), environment.end(), *e) != environment.end())
+				continue;
+			if (e->find('_') != string::npos) {
+				// Drop LongCodes here - ShortCodes are also included
+				string const shorty = e->substr(0, e->find('_'));
+				char const **n = needLong;
+				for (; *n != NULL; ++n)
+					if (shorty == *n)
+						break;
+				if (*n == NULL)
+					continue;
+			}
+			++addedLangs;
+			environment.push_back(*e);
+		}
 	}
 
 	// Support settings like Acquire::Translation=none on the command line to
@@ -163,25 +203,20 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	string const forceLang = _config->Find("Acquire::Languages","");
 	if (forceLang.empty() == false) {
 		if (forceLang == "environment") {
-			if (envLongIncluded == false)
-				codes.push_back(envLong);
-			if (envShortIncluded == false)
-				codes.push_back(envShort);
-			return codes;
+			codes = environment;
 		} else if (forceLang != "none")
 			codes.push_back(forceLang);
+		allCodes = codes;
 		return codes;
 	}
 
 	std::vector<string> const lang = _config->FindVector("Acquire::Languages");
 	// the default setting -> "environment, en"
 	if (lang.empty() == true) {
-		if (envLongIncluded == false)
-			codes.push_back(envLong);
-		if (envShortIncluded == false)
-			codes.push_back(envShort);
+		codes = environment;
 		if (envShort != "en")
 			codes.push_back("en");
+		allCodes = codes;
 		return codes;
 	}
 
@@ -191,26 +226,19 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	for (std::vector<string>::const_iterator l = lang.begin();
 	     l != lang.end(); l++) {
 		if (*l == "environment") {
-			if (envLongIncluded == true && envShortIncluded == true)
-				continue;
-			if (envLongIncluded == false) {
-				envLongIncluded = true;
+			for (std::vector<string>::const_iterator e = environment.begin();
+			     e != environment.end(); ++e) {
+				if (std::find(allCodes.begin(), allCodes.end(), *e) != allCodes.end())
+					continue;
 				if (noneSeen == false)
-					codes.push_back(envLong);
-				allCodes.push_back(envLong);
-			}
-			if (envShortIncluded == false) {
-				envShortIncluded = true;
-				if (noneSeen == false)
-					codes.push_back(envShort);
-				allCodes.push_back(envShort);
+					codes.push_back(*e);
+				allCodes.push_back(*e);
 			}
 			continue;
 		} else if (*l == "none") {
 			noneSeen = true;
 			continue;
-		} else if ((envLongIncluded == true && *l == envLong) ||
-		         (envShortIncluded == true && *l == envShort))
+		} else if (std::find(allCodes.begin(), allCodes.end(), *l) != allCodes.end())
 			continue;
 
 		if (noneSeen == false)
