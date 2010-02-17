@@ -1005,7 +1005,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 if (!stdin_is_dev_null)
+	 if (master >= 0 && !stdin_is_dev_null)
 	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
