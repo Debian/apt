@@ -21,7 +21,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-#include <system.h>
+#include <apt-pkg/macros.h>
 
 #include <stdlib.h>
 #include <unistd.h>

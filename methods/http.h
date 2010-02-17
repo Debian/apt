@@ -134,6 +134,7 @@ class HttpMethod : public pkgAcqMethod
    bool Flush(ServerState *Srv);
    bool ServerDie(ServerState *Srv);
    int DealWithHeaders(FetchResult &Res,ServerState *Srv);
+   bool AutoDetectProxy();
 
    virtual bool Configuration(string Message);
    
@@ -147,6 +148,7 @@ class HttpMethod : public pkgAcqMethod
    virtual bool Fetch(FetchItem *);
    
    string NextURI;
+   string AutoDetectProxyCmd;
    
    public:
    friend class ServerState;

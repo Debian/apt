@@ -35,7 +35,6 @@
 #include <unistd.h>
 
 #include <ctype.h>
-#include <system.h>
 									/*}}}*/
 
 using std::string;
@@ -298,7 +297,7 @@ const char *
 pkgCache::PkgIterator::CandVersion() const 
 {
   //TargetVer is empty, so don't use it.
-  VerIterator version = pkgPolicy::pkgPolicy(Owner).GetCandidateVer(*this);
+  VerIterator version = pkgPolicy(Owner).GetCandidateVer(*this);
   if (version.IsGood())
     return version.VerStr();
   return 0;

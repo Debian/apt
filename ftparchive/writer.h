@@ -35,7 +35,6 @@ class FTWScanner
    protected:
    vector<string> Patterns;
    const char *OriginalPath;
-   char *RealPath;
    bool ErrorPrinted;
    
    // Stuff for the delinker
@@ -70,7 +69,6 @@ class FTWScanner
    bool SetExts(string Vals);
       
    FTWScanner();
-   virtual ~FTWScanner() {delete [] RealPath;};
 };
 
 class PackagesWriter : public FTWScanner

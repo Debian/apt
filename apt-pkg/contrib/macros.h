@@ -1,9 +1,8 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: system.h,v 1.3 1999/12/10 23:40:29 jgg Exp $
 /* ######################################################################
    
-   System Header - Usefull private definitions
+   Macros Header - Various useful macro definitions
 
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Brian C. White.
@@ -11,8 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Private header
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#ifndef MACROS_H
+#define MACROS_H
 
 // MIN_VAL(SINT16) will return -0x8000 and MAX_VAL(SINT16) = 0x7FFF
 #define	MIN_VAL(t)	(((t)(-1) > 0) ? (t)( 0) : (t)(((1L<<(sizeof(t)*8-1))  )))
@@ -54,5 +53,36 @@
 #define	SETFLAG(v,f)	((v) |= FLAG(f))
 #define CLRFLAG(v,f)	((v) &=~FLAG(f))
 #define	CHKFLAG(v,f)	((v) &  FLAG(f) ? true : false)
+
+// some nice optional GNUC features
+#if __GNUC__ >= 3
+        #define __must_check    __attribute__ ((warn_unused_result))
+        #define __deprecated    __attribute__ ((deprecated))
+        /* likely() and unlikely() can be used to mark boolean expressions
+           as (not) likely true which will help the compiler to optimise */
+        #define likely(x)       __builtin_expect (!!(x), 1)
+        #define unlikely(x)     __builtin_expect (!!(x), 0)
+#else
+        #define __must_check    /* no warn_unused_result */
+        #define __deprecated    /* no deprecated */
+        #define likely(x)       (x)
+        #define unlikely(x)     (x)
+#endif
+
+// cold functions are unlikely() to be called
+#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) || __GNUC__ > 4
+        #define __cold  __attribute__ ((__cold__))
+#else
+        #define __cold  /* no cold marker */
+#endif
+
+#ifdef __GNUG__
+// Methods have a hidden this parameter that is visible to this attribute
+	#define __like_printf_1 __attribute__ ((format (printf, 2, 3)))
+	#define __like_printf_2 __attribute__ ((format (printf, 3, 4)))
+#else
+	#define __like_printf_1
+	#define __like_printf_2
+#endif
 
 #endif

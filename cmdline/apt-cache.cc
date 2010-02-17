@@ -1622,7 +1622,7 @@ bool Policy(CommandLine &CmdL)
 	    if (SrcList->FindIndex(VF.File(),Indx) == false &&
 		_system->FindIndex(VF.File(),Indx) == false)
 	       return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
-	    printf(_("       %4i %s\n"),Plcy.GetPriority(VF.File()),
+	    printf("       %4i %s\n",Plcy.GetPriority(VF.File()),
 		   Indx->Describe(true).c_str());
 	 }	 
       }      

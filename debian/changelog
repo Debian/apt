@@ -1,3 +1,133 @@
+apt (0.7.25.4ubuntu1) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * merged from the debian-sid branch
+  
+  [ Ivan Masár ]
+  * Slovak translation update. Closes: #568294
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 03 Feb 2010 20:08:19 +0100
+
+apt (0.7.25.3) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Italian translation update. Closes: #567532
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/macros.h:
+    - install the header system.h with a new name to be able to use 
+      it in other headers (Closes: #567662)
+  * cmdline/acqprogress.cc:
+    - Set Mode to Medium so that the correct prefix is used.
+      Thanks Stefan Haller for the patch! (Closes: #567304 LP: #275243)
+  * ftparchive/writer.cc:
+    - generate sha1 and sha256 checksums for dsc (Closes: #567343)
+  * cmdline/apt-get.cc:
+    - don't mark as manually if in download only (Closes: #468180)
+  
+ -- Michael Vogt <mvo@debian.org>  Mon, 01 Feb 2010 18:41:15 +0100
+
+apt (0.7.25.2) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/contrib/cdromutl.cc:
+    - fix UnmountCdrom() fails, give it a bit more time and try
+      the umount again
+  * apt-pkg/cdrom.cc:
+    - fix crash in pkgUdevCdromDevices
+  * methods/cdrom.cc:
+    - fixes in multi cdrom setup code (closes: #549312)
+    - add new "Acquire::cdrom::AutoDetect" config that enables/disables
+      the dlopen of libudev for automatic cdrom detection. Off by default
+      currently, feedback/testing welcome
+  * cmdline/apt-cdrom.cc:
+    - add new --auto-detect option that uses libudev to figure out
+      the cdrom/mount-point
+  * cmdline/apt-mark:
+    - merge fix from Gene Cash that supports markauto for
+      packages that are not in the extended_states file yet
+      (closes: #534920)
+  * ftparchive/writer.{cc,h}:
+    - merge crash fix for apt-ftparchive on hurd, thanks to 
+      Samuel Thibault for the patch (closes: #566664)
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/fileutl.cc:
+    - Fix the newly introduced method GetListOfFilesInDir to not
+      accept every file if no extension is enforced
+      (= restore old behaviour). (Closes: #565213)
+  * apt-pkg/policy.cc:
+    - accept also partfiles with "pref" file extension as valid
+  * apt-pkg/contrib/configuration.cc:
+    - accept also partfiles with "conf" file extension as valid
+  * doc/apt.conf.5.xml:
+    - reorder description and split out syntax
+    - add partfile name convention (Closes: #558348)
+  * doc/apt_preferences.conf.5.xml:
+    - describe partfile name convention also here
+  * apt-pkg/deb/dpkgpm.cc:
+    - don't segfault if term.log file can't be opened.
+      Thanks Sam Brightman for the patch! (Closes: #475770)
+  * doc/*:
+    - replace the per language addendum with a global addendum
+    - add a explanation why translations include (maybe) english
+      parts to the new global addendum (Closes: #561636)
+  * apt-pkg/contrib/strutl.cc:
+    - fix malloc asseration fail with ja_JP.eucJP locale in
+      apt-cache search. Thanks Kusanagi Kouichi! (Closes: #548884)
+
+  [ Christian Perrier ]
+  * French translation update
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 27 Jan 2010 16:16:10 +0100
+
+apt (0.7.25.1) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * French manpage translation update
+  * Russian translation update by Yuri Kozlov
+    Closes: #564171
+  
+  [Chris Leick]
+  * spot & fix various typos in all manpages
+  * German manpage translation update
+
+  [ David Kalnischkies ]
+  * cmdline/apt-cache.cc:
+    - remove translatable marker from the "%4i %s\n" string
+  * buildlib/po4a_manpage.mak:
+    - instruct debiandoc to build files with utf-8 encoding
+  * buildlib/tools.m4:
+    - fix some warning from the buildtools
+  * apt-pkg/acquire-item.cc:
+    - add configuration PDiffs::Limit-options to not download
+      too many or too big patches (Closes: #554349)
+  * debian/control:
+    - let all packages depend on ${misc:Depends}
+  * share/*-archive.gpg:
+    - remove the horrible outdated files. We already depend on
+      the keyring so we don't need to ship our own version
+  * cmdline/apt-key:
+    - errors out if wget is not installed (Closes: #545754)
+    - add --keyring option as we have now possibly many
+  * methods/gpgv.cc:
+    - pass all keyrings (TrustedParts) to gpgv instead of
+      using only one trusted.gpg keyring (Closes: #304846)
+  * methods/https.cc:
+    - finally merge the rest of the patchset from Arnaud Ebalard
+      with the CRL and Issuers options, thanks! (Closes: #485963)
+  * apt-pkg/deb/debindexfile.cc, apt-pkg/pkgcachegen.cc:
+    - add debug option Debug::pkgCacheGen
+
+  [ Michael Vogt ]
+  * cmdline/apt-get.cc:
+    - merge fix for apt-get source pkg=version regression
+      (closes: #561971)
+  * po/ru.po:
+    - merged updated ru.po, thanks to Yuri Kozlov (closes: #564171)
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 09 Jan 2010 21:52:36 +0100
+
 apt (0.7.25ubuntu4) lucid; urgency=low
 
   * cmdline/apt-cdrom.cc:
@@ -12,16 +142,23 @@ apt (0.7.25ubuntu4) lucid; urgency=low
 apt (0.7.25ubuntu3) lucid; urgency=low
 
   * cmdline/apt-get.cc:
-    - fix apt-get source pkg=version regression (closes: #561971)
+    - don't mark as manually if in download only (Closes: #468180)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 01 Feb 2010 18:41:15 +0100
+
+apt (0.7.25.2) unstable; urgency=low
+
+  [ Michael Vogt ]
   * apt-pkg/contrib/cdromutl.cc:
     - fix UnmountCdrom() fails, give it a bit more time and try
       the umount again
   * apt-pkg/cdrom.cc:
     - fix crash in pkgUdevCdromDevices
   * methods/cdrom.cc:
-    - fixes in multi cdrom setup code
-    - add new "Acquire::cdrom::AutoDetect" variable that enables/disables
-      the dlopen of libudev for automatic cdrom detection
+    - fixes in multi cdrom setup code (closes: #549312)
+    - add new "Acquire::cdrom::AutoDetect" config that enables/disables
+      the dlopen of libudev for automatic cdrom detection. Off by default
+      currently, feedback/testing welcome
   * cmdline/apt-cdrom.cc:
     - add new --auto-detect option that uses libudev to figure out
       the cdrom/mount-point

@@ -40,26 +40,15 @@
 #ifndef PKGLIB_ERROR_H
 #define PKGLIB_ERROR_H
 
+#include <apt-pkg/macros.h>
 
-
-#ifdef __GNUG__
-// Methods have a hidden this parameter that is visible to this attribute
-#define APT_MFORMAT1 __attribute__ ((format (printf, 2, 3)))
-#define APT_MFORMAT2 __attribute__ ((format (printf, 3, 4)))
-#else
-#define APT_MFORMAT1
-#define APT_MFORMAT2    
-#endif    
-    
 #include <string>
-
-using std::string;
 
 class GlobalError
 {
    struct Item
    {
-      string Text;
+      std::string Text;
       bool Error;
       Item *Next;
    };
@@ -71,18 +60,18 @@ class GlobalError
    public:
 
    // Call to generate an error from a library call.
-   bool Errno(const char *Function,const char *Description,...) APT_MFORMAT2;
-   bool WarningE(const char *Function,const char *Description,...) APT_MFORMAT2;
+   bool Errno(const char *Function,const char *Description,...) __like_printf_2 __cold;
+   bool WarningE(const char *Function,const char *Description,...) __like_printf_2 __cold;
 
    /* A warning should be considered less severe than an error, and may be
       ignored by the client. */
-   bool Error(const char *Description,...) APT_MFORMAT1;
-   bool Warning(const char *Description,...) APT_MFORMAT1;
+   bool Error(const char *Description,...) __like_printf_1 __cold;
+   bool Warning(const char *Description,...) __like_printf_1 __cold;
 
    // Simple accessors
    inline bool PendingError() {return PendingFlag;};
    inline bool empty() {return List == 0;};
-   bool PopMessage(string &Text);
+   bool PopMessage(std::string &Text);
    void Discard();
 
    // Usefull routine to dump to cerr
@@ -94,8 +83,5 @@ class GlobalError
 // The 'extra-ansi' syntax is used to help with collisions. 
 GlobalError *_GetErrorObj();
 #define _error _GetErrorObj()
-
-#undef APT_MFORMAT1
-#undef APT_MFORMAT2
 
 #endif

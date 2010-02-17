@@ -269,19 +269,19 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 
    if(TF.Step(Tags) == true)
    {
-      string local_sha1;
       bool found = false;
       DiffInfo d;
       string size;
 
-      string tmp = Tags.FindS("SHA1-Current");
+      string const tmp = Tags.FindS("SHA1-Current");
       std::stringstream ss(tmp);
-      ss >> ServerSha1;
+      ss >> ServerSha1 >> size;
+      unsigned long const ServerSize = atol(size.c_str());
 
       FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
       SHA1Summation SHA1;
       SHA1.AddFD(fd.Fd(), fd.Size());
-      local_sha1 = string(SHA1.Result());
+      string const local_sha1 = SHA1.Result();
 
       if(local_sha1 == ServerSha1) 
       {
@@ -298,20 +298,56 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	    std::clog << "SHA1-Current: " << ServerSha1 << std::endl;
 
 	 // check the historie and see what patches we need
-	 string history = Tags.FindS("SHA1-History");     
+	 string const history = Tags.FindS("SHA1-History");
 	 std::stringstream hist(history);
-	 while(hist >> d.sha1 >> size >> d.file) 
+	 while(hist >> d.sha1 >> size >> d.file)
 	 {
-	    d.size = atoi(size.c_str());
 	    // read until the first match is found
+	    // from that point on, we probably need all diffs
 	    if(d.sha1 == local_sha1) 
 	       found=true;
-	    // from that point on, we probably need all diffs
-	    if(found) 
+	    else if (found == false)
+	       continue;
+
+	    if(Debug)
+	       std::clog << "Need to get diff: " << d.file << std::endl;
+	    available_patches.push_back(d);
+	 }
+
+	 if (available_patches.empty() == false)
+	 {
+	    // patching with too many files is rather slow compared to a fast download
+	    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 0);
+	    if (fileLimit != 0 && fileLimit < available_patches.size())
 	    {
-	       if(Debug)
-		  std::clog << "Need to get diff: " << d.file << std::endl;
-	       available_patches.push_back(d);
+	       if (Debug)
+		  std::clog << "Need " << available_patches.size() << " diffs (Limit is " << fileLimit
+			<< ") so fallback to complete download" << std::endl;
+	       return false;
+	    }
+
+	    // see if the patches are too big
+	    found = false; // it was true and it will be true again at the end
+	    d = *available_patches.begin();
+	    string const firstPatch = d.file;
+	    unsigned long patchesSize = 0;
+	    std::stringstream patches(Tags.FindS("SHA1-Patches"));
+	    while(patches >> d.sha1 >> size >> d.file)
+	    {
+	       if (firstPatch == d.file)
+		  found = true;
+	       else if (found == false)
+		  continue;
+
+	       patchesSize += atol(size.c_str());
+	    }
+	    unsigned long const sizeLimit = ServerSize * _config->FindI("Acquire::PDiffs::SizeLimit", 100);
+	    if (sizeLimit > 0 && (sizeLimit/100) < patchesSize)
+	    {
+	       if (Debug)
+		  std::clog << "Need " << patchesSize << " bytes (Limit is " << sizeLimit/100
+			<< ") so fallback to complete download" << std::endl;
+	       return false;
 	    }
 	 }
       }
@@ -320,7 +356,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       if(found) 
       {
 	 // queue the diffs
-	 string::size_type last_space = Description.rfind(" ");
+	 string::size_type const last_space = Description.rfind(" ");
 	 if(last_space != string::npos)
 	    Description.erase(last_space, Description.size()-last_space);
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,

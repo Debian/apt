@@ -24,7 +24,8 @@ SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
 	 contrib/cdromutl.cc contrib/crc-16.cc contrib/netrc.cc \
 	 contrib/fileutl.cc 
 HEADERS = mmap.h error.h configuration.h fileutl.h  cmndline.h netrc.h\
-	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha256.h hashes.h 
+	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha256.h hashes.h \
+	  macros.h
 
 # Source code for the core main library
 SOURCE+= pkgcache.cc version.cc depcache.cc \
@@ -52,8 +53,5 @@ HEADERS+= debversion.h debsrcrecords.h dpkgpm.h debrecords.h \
 	  deblistparser.h debsystem.h debindexfile.h debmetaindex.h
 
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
-
-# Private header files
-HEADERS+= system.h
 
 include $(LIBRARY_H)
