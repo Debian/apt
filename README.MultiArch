@@ -7,6 +7,13 @@ usage guide - you have been warned. It is assumed that the reader has
 at least a bit of knowledge about APT internals, dependency relations
 and the MultiArch spec [0].
 
+Note also that the toolchain isn't ready yet, e.g. while you can simulate
+the installation of MultiArch packages they will more sooner than later
+cause enormous problems if really installed as dpkg can't handle MultiArch
+yet (no, --force-{overwrite,architecture} aren't good options here).
+Other parts of the big picture are missing and/or untested too.
+You have been warned!
+
 
 The implementation is focused on NOT breaking existing singleArch-only
 applications and/or systems as this is the current status-quo for all
