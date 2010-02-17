@@ -39,6 +39,13 @@ do
 			"${tmppath}/01invalíd"
 		ln -s "${tmppath}/anormalfile" "${tmppath}/linkedfile.list"
 		ln -s "${tmppath}/non-existing-file" "${tmppath}/brokenlink.list"
+	elif [ $name = "getLanguages${EXT}" ]; then
+		echo "Prepare Testarea for \033[1;35m$name\033[0m ..."
+		tmppath=$(mktemp -d)
+		touch "${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-tr" \
+			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-pt" \
+			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-se~" \
+			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-st.bak"
 	fi
 
 	echo -n "Testing with \033[1;35m${name}\033[0m ... "

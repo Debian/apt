@@ -14,9 +14,12 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
 
-#include <vector>
-#include <string>
+#include <sys/types.h>
+#include <dirent.h>
+
 #include <algorithm>
+#include <string>
+#include <vector>
 									/*}}}*/
 namespace APT {
 // getCompressionTypes - Return Vector of usbale compressiontypes	/*{{{*/
@@ -119,6 +122,37 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		}
 	}
 
+	// Include all Language codes we have a Translation file for in /var/lib/apt/lists
+	// so they will be all included in the Cache.
+	std::vector<string> builtin;
+	DIR *D = opendir(_config->FindDir("Dir::State::lists").c_str());
+	if (D != 0) {
+		builtin.push_back("none");
+		for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
+			string const name = Ent->d_name;
+			size_t const foundDash = name.rfind("-");
+			size_t const foundUnderscore = name.rfind("_");
+			if (foundDash == string::npos || foundUnderscore == string::npos ||
+			    foundDash <= foundUnderscore ||
+			    name.substr(foundUnderscore+1, foundDash-(foundUnderscore+1)) != "Translation")
+				continue;
+			string const c = name.substr(foundDash+1);
+			if (unlikely(c.empty() == true) || c == "en")
+				continue;
+			// Skip unusual files, like backups or that alike
+			string::const_iterator s = c.begin();
+			for (;s != c.end(); ++s) {
+				if (isalpha(*s) == 0)
+					break;
+			}
+			if (s != c.end())
+				continue;
+			if (std::find(builtin.begin(), builtin.end(), c) != builtin.end())
+				continue;
+			builtin.push_back(c);
+		}
+	}
+
 	// get the environment language codes: LC_MESSAGES (and later LANGUAGE)
 	// we extract both, a long and a short code and then we will
 	// check if we actually need both (rare) or if the short is enough
@@ -134,7 +168,11 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	if (envLong == "C") {
 		codes.push_back("en");
 		allCodes = codes;
-		return codes;
+		allCodes.insert(allCodes.end(), builtin.begin(), builtin.end());
+		if (All == true)
+			return allCodes;
+		else
+			return codes;
 	}
 
 	// to save the servers from unneeded queries, we only try also long codes
@@ -159,8 +197,16 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	if (oldAcquire.empty() == false && oldAcquire != "environment") {
 		if (oldAcquire != "none")
 			codes.push_back(oldAcquire);
+		codes.push_back("en");
 		allCodes = codes;
-		return codes;
+		for (std::vector<string>::const_iterator b = builtin.begin();
+		     b != builtin.end(); ++b)
+			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+				allCodes.push_back(*b);
+		if (All == true)
+			return allCodes;
+		else
+			return codes;
 	}
 
 	// It is very likely we will need to environment codes later,
@@ -207,7 +253,14 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		} else if (forceLang != "none")
 			codes.push_back(forceLang);
 		allCodes = codes;
-		return codes;
+		for (std::vector<string>::const_iterator b = builtin.begin();
+		     b != builtin.end(); ++b)
+			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+				allCodes.push_back(*b);
+		if (All == true)
+			return allCodes;
+		else
+			return codes;
 	}
 
 	std::vector<string> const lang = _config->FindVector("Acquire::Languages");
@@ -217,7 +270,14 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		if (envShort != "en")
 			codes.push_back("en");
 		allCodes = codes;
-		return codes;
+		for (std::vector<string>::const_iterator b = builtin.begin();
+		     b != builtin.end(); ++b)
+			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+				allCodes.push_back(*b);
+		if (All == true)
+			return allCodes;
+		else
+			return codes;
 	}
 
 	// the configs define the order, so add the environment
@@ -245,6 +305,12 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			codes.push_back(*l);
 		allCodes.push_back(*l);
 	}
+
+	for (std::vector<string>::const_iterator b = builtin.begin();
+	     b != builtin.end(); ++b)
+		if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+			allCodes.push_back(*b);
+
 	if (All == true)
 		return allCodes;
 	else

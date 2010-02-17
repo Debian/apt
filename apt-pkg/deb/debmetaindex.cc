@@ -181,6 +181,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool GetAll) const
       for (vector<string>::const_iterator l = lang.begin();
 		l != lang.end(); l++)
       {
+	if (*l == "none") continue;
 	debTranslationsIndex i = debTranslationsIndex(URI,Dist,(*I)->Section,(*l).c_str());
 	i.GetIndexes(Owner);
       }
@@ -219,8 +220,10 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
          Indexes->push_back(new debPackagesIndex (URI, Dist, (*I)->Section, IsTrusted()));
 
 	 for (vector<string>::const_iterator l = lang.begin();
-		l != lang.end(); l++)
+		l != lang.end(); l++) {
+	    if (*l == "none") continue;
 	    Indexes->push_back(new debTranslationsIndex(URI,Dist,(*I)->Section,(*l).c_str()));
+	 }
       }
    }
 
