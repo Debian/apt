@@ -580,10 +580,11 @@ bool pkgDPkgPM::OpenLog()
    if (!logfile_name.empty())
    {
       term_out = fopen(logfile_name.c_str(),"a");
+      if (term_out == NULL)
+	 return _error->WarningE(_("Could not open file '%s'"), logfile_name.c_str());
+
       chmod(logfile_name.c_str(), 0600);
-      fprintf(term_out, "\n\nLog started: ");
-      fprintf(term_out, "%s", timestr);
-      fprintf(term_out, "\n");
+      fprintf(term_out, "\nLog started: %s\n", timestr);
    }
 
    // write 

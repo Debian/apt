@@ -58,10 +58,6 @@ FTWScanner::FTWScanner()
 {
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
-   RealPath = 0;
-   long PMax = pathconf(".",_PC_PATH_MAX);
-   if (PMax > 0)
-      RealPath = new char[PMax];
 }
 									/*}}}*/
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
@@ -92,6 +88,8 @@ int FTWScanner::ScannerFTW(const char *File,const struct stat *sb,int Flag)
 int FTWScanner::ScannerFile(const char *File, bool ReadLink)
 {
    const char *LastComponent = strrchr(File, '/');
+   char *RealPath = NULL;
+
    if (LastComponent == NULL)
       LastComponent = File;
    else
@@ -111,10 +109,13 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
       given are not links themselves. */
    char Jnk[2];
    Owner->OriginalPath = File;
-   if (ReadLink && Owner->RealPath != 0 &&
+   if (ReadLink &&
        readlink(File,Jnk,sizeof(Jnk)) != -1 &&
-       realpath(File,Owner->RealPath) != 0)
-      Owner->DoPackage(Owner->RealPath);
+       (RealPath = realpath(File,NULL)) != 0)
+   {
+      Owner->DoPackage(RealPath);
+      free(RealPath);
+   }
    else
       Owner->DoPackage(File);
    
@@ -150,13 +151,15 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
 /* */
 bool FTWScanner::RecursiveScan(string Dir)
 {
+   char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
    if (InternalPrefix.empty() == true)
    {
-      if (realpath(Dir.c_str(),RealPath) == 0)
+      if ((RealPath = realpath(Dir.c_str(),NULL)) == 0)
 	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
-      InternalPrefix = RealPath;      
+      InternalPrefix = RealPath;
+      free(RealPath);
    }
    
    // Do recursive directory searching
@@ -180,13 +183,15 @@ bool FTWScanner::RecursiveScan(string Dir)
    of files from another file. */
 bool FTWScanner::LoadFileList(string Dir,string File)
 {
+   char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
    if (InternalPrefix.empty() == true)
    {
-      if (realpath(Dir.c_str(),RealPath) == 0)
+      if ((RealPath = realpath(Dir.c_str(),NULL)) == 0)
 	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
       InternalPrefix = RealPath;      
+      free(RealPath);
    }
    
    Owner = this;
@@ -554,7 +559,12 @@ bool SourcesWriter::DoPackage(string FileName)
    char *BlkEnd = Buffer + St.st_size;
    MD5Summation MD5;
    MD5.Add((unsigned char *)Start,BlkEnd - Start);
-      
+
+   SHA1Summation SHA1;
+   SHA256Summation SHA256;
+   SHA1.Add((unsigned char *)Start,BlkEnd - Start);
+   SHA256.Add((unsigned char *)Start,BlkEnd - Start);
+
    // Add an extra \n to the end, just in case
    *BlkEnd++ = '\n';
    
@@ -645,12 +655,25 @@ bool SourcesWriter::DoPackage(string FileName)
    }
    
    // Add the dsc to the files hash list
+   string const strippedName = flNotDir(FileName);
    char Files[1000];
    snprintf(Files,sizeof(Files),"\n %s %lu %s\n %s",
 	    string(MD5.Result()).c_str(),St.st_size,
-	    flNotDir(FileName).c_str(),
+	    strippedName.c_str(),
 	    Tags.FindS("Files").c_str());
-   
+
+   char ChecksumsSha1[1000];
+   snprintf(ChecksumsSha1,sizeof(ChecksumsSha1),"\n %s %lu %s\n %s",
+	    string(SHA1.Result()).c_str(),St.st_size,
+	    strippedName.c_str(),
+	    Tags.FindS("Checksums-Sha1").c_str());
+
+   char ChecksumsSha256[1000];
+   snprintf(ChecksumsSha256,sizeof(ChecksumsSha256),"\n %s %lu %s\n %s",
+	    string(SHA256.Result()).c_str(),St.st_size,
+	    strippedName.c_str(),
+	    Tags.FindS("Checksums-Sha256").c_str());
+
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
    if (DirStrip.empty() == false &&
@@ -668,6 +691,7 @@ bool SourcesWriter::DoPackage(string FileName)
    // Perform the delinking operation over all of the files
    string ParseJnk;
    const char *C = Files;
+   char *RealPath = NULL;
    for (;isspace(*C); C++);
    while (*C != 0)
    {   
@@ -679,10 +703,11 @@ bool SourcesWriter::DoPackage(string FileName)
       
       char Jnk[2];
       string OriginalPath = Directory + ParseJnk;
-      if (RealPath != 0 && readlink(OriginalPath.c_str(),Jnk,sizeof(Jnk)) != -1 &&
-	  realpath(OriginalPath.c_str(),RealPath) != 0)
+      if (readlink(OriginalPath.c_str(),Jnk,sizeof(Jnk)) != -1 &&
+	  (RealPath = realpath(OriginalPath.c_str(),NULL)) != 0)
       {
 	 string RP = RealPath;
+	 free(RealPath);
 	 if (Delink(RP,OriginalPath.c_str(),Stats.DeLinkBytes,St.st_size) == false)
 	    return false;
       }
@@ -693,12 +718,14 @@ bool SourcesWriter::DoPackage(string FileName)
       Directory.erase(Directory.end()-1);
 
    // This lists all the changes to the fields we are going to make.
-   // (5 hardcoded + maintainer + end marker)
-   TFRewriteData Changes[5+1+SOverItem->FieldOverride.size()+1];
+   // (5 hardcoded + checksums + maintainer + end marker)
+   TFRewriteData Changes[5+2+1+SOverItem->FieldOverride.size()+1];
 
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
    SetTFRewriteData(Changes[End++],"Files",Files);
+   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1);
+   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256);
    if (Directory != "./")
       SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
    SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());

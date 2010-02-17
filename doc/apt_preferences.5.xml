@@ -53,6 +53,13 @@ earliest in the &sources-list; file.
 The APT preferences file does not affect the choice of instance, only
 the choice of version.</para>
 
+<para>Note that the files in the <filename>/etc/apt/preferences.d</filename>
+directory are parsed in alphanumeric ascending order and need to obey the
+following naming convention: The files have no or "<literal>pref</literal>"
+as filename extension and which only contain alphanumeric,  hyphen (-),
+underscore (_) and period (.) characters - otherwise they will be silently
+ignored.</para>
+
 <refsect2><title>APT's Default Priority Assignments</title>
 
 <para>If there is no preferences file or if there is no entry in the file

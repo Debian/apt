@@ -1,4 +1,4 @@
-AC_DEFUN(ah_HAVE_GETCONF,
+AC_DEFUN([ah_HAVE_GETCONF],
 	[AC_ARG_WITH(getconf,
 		[  --with-getconf          Enable automagical buildtime configuration],
 		[if test "$withval" = "yes"; then
@@ -14,7 +14,7 @@ AC_DEFUN(ah_HAVE_GETCONF,
 ])
 
 dnl ah_GET_CONF(variable, value ..., [default])
-AC_DEFUN(ah_GET_GETCONF,
+AC_DEFUN([ah_GET_GETCONF],
 	[AC_REQUIRE([ah_HAVE_GETCONF])
 	if test ! -z "$GETCONF";then
 		old_args="[$]@"
@@ -28,7 +28,7 @@ AC_DEFUN(ah_GET_GETCONF,
 		eval $1="$3"
 	fi
 ])
-AC_DEFUN(ah_NUM_CPUS,
+AC_DEFUN([ah_NUM_CPUS],
 	[AC_MSG_CHECKING([number of cpus])
 	AC_ARG_WITH(cpus,
 		[  --with-cpus             The number of cpus to be used for building(see --with-procs, default 1)],
@@ -56,7 +56,7 @@ AC_DEFUN(ah_NUM_CPUS,
 	AC_MSG_RESULT([$ah_NUM_CPUS_msg])
 	AC_SUBST(NUM_CPUS)
 ])
-AC_DEFUN(ah_PROC_MULTIPLY,
+AC_DEFUN([ah_PROC_MULTIPLY],
 	[AC_REQUIRE([ah_NUM_CPUS])
 	AC_MSG_CHECKING([processor multiplier])
 	AC_ARG_WITH(proc-multiply,
@@ -72,7 +72,7 @@ AC_DEFUN(ah_PROC_MULTIPLY,
 	AC_SUBST(PROC_MULTIPLY)
 ])
 
-AC_DEFUN(ah_NUM_PROCS,
+AC_DEFUN([ah_NUM_PROCS],
 	[AC_REQUIRE([ah_PROC_MULTIPLY])
 	AC_REQUIRE([ah_NUM_CPUS])
 	AC_MSG_CHECKING([number of processes to run during make])
@@ -89,7 +89,7 @@ AC_DEFUN(ah_NUM_PROCS,
 	AC_SUBST(NUM_PROCS)
 ])
 
-AC_DEFUN(ah_GCC3DEP,[
+AC_DEFUN([ah_GCC3DEP],[
 	AC_MSG_CHECKING(if $CXX -MD works)
 	touch gcc3dep.cc
 	${CXX-c++} -MD -o gcc3dep_test.o -c gcc3dep.cc

@@ -38,7 +38,7 @@ class CDROMMethod : public pkgAcqMethod
    pkgUdevCdromDevices UdevCdroms;
  
    bool IsCorrectCD(URI want, string MountPath, string& NewID);
-   bool AutoDetectAndMount(URI, string &NewID);
+   bool AutoDetectAndMount(const URI, string &NewID);
    virtual bool Fetch(FetchItem *Itm);
    string GetID(string Name);
    virtual void Exit();
@@ -92,7 +92,7 @@ string CDROMMethod::GetID(string Name)
 // CDROMMethod::AutoDetectAndMount                                      /*{{{*/
 // ---------------------------------------------------------------------
 /* Modifies class varaiable CDROM to the mountpoint */
-bool CDROMMethod::AutoDetectAndMount(URI Get, string &NewID)
+bool CDROMMethod::AutoDetectAndMount(const URI Get, string &NewID)
 {
    vector<struct CdromDevice> v = UdevCdroms.Scan();
 

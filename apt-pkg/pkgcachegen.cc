@@ -21,6 +21,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/macros.h>
 
 #include <apt-pkg/tagfile.h>
 
@@ -32,7 +33,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
-#include <system.h>
 									/*}}}*/
 typedef vector<pkgIndexFile *>::iterator FileIterator;
 
@@ -664,16 +664,23 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
 static bool CheckValidity(const string &CacheFile, FileIterator Start, 
                           FileIterator End,MMap **OutMap = 0)
 {
+   bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
    // No file, certainly invalid
    if (CacheFile.empty() == true || FileExists(CacheFile) == false)
+   {
+      if (Debug == true)
+	 std::clog << "CacheFile doesn't exist" << std::endl;
       return false;
-   
+   }
+
    // Map it
    FileFd CacheF(CacheFile,FileFd::ReadOnly);
    SPtr<MMap> Map = new MMap(CacheF,0);
    pkgCache Cache(Map);
    if (_error->PendingError() == true || Map->Size() == 0)
    {
+      if (Debug == true)
+	 std::clog << "Errors are pending or Map is empty()" << std::endl;
       _error->Discard();
       return false;
    }
@@ -683,9 +690,15 @@ static bool CheckValidity(const string &CacheFile, FileIterator Start,
    SPtrArray<bool> Visited = new bool[Cache.HeaderP->PackageFileCount];
    memset(Visited,0,sizeof(*Visited)*Cache.HeaderP->PackageFileCount);
    for (; Start != End; Start++)
-   {      
+   {
+      if (Debug == true)
+	 std::clog << "Checking PkgFile " << (*Start)->Describe() << ": ";
       if ((*Start)->HasPackages() == false)
+      {
+         if (Debug == true)
+	    std::clog << "Has NO packages" << std::endl;
 	 continue;
+      }
     
       if ((*Start)->Exists() == false)
       {
@@ -693,23 +706,40 @@ static bool CheckValidity(const string &CacheFile, FileIterator Start,
 	 _error->WarningE("stat",_("Couldn't stat source package list %s"),
 			  (*Start)->Describe().c_str());
 #endif
+         if (Debug == true)
+	    std::clog << "file doesn't exist" << std::endl;
 	 continue;
       }
 
       // FindInCache is also expected to do an IMS check.
       pkgCache::PkgFileIterator File = (*Start)->FindInCache(Cache);
       if (File.end() == true)
+      {
+	 if (Debug == true)
+	    std::clog << "FindInCache returned end-Pointer" << std::endl;
 	 return false;
+      }
 
       Visited[File->ID] = true;
+      if (Debug == true)
+	 std::clog << "with ID " << File->ID << " is valid" << std::endl;
    }
    
    for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
       if (Visited[I] == false)
+      {
+	 if (Debug == true)
+	    std::clog << "File with ID" << I << " wasn't visited" << std::endl;
 	 return false;
+      }
    
    if (_error->PendingError() == true)
    {
+      if (Debug == true)
+      {
+	 std::clog << "Validity failed because of pending errors:" << std::endl;
+	 _error->DumpErrors();
+      }
       _error->Discard();
       return false;
    }
@@ -796,7 +826,8 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap,bool AllowMem)
 {
-   unsigned long MapSize = _config->FindI("APT::Cache-Limit",24*1024*1024);
+   bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
+   unsigned long const MapSize = _config->FindI("APT::Cache-Limit",24*1024*1024);
    
    vector<pkgIndexFile *> Files;
    for (vector<metaIndex *>::const_iterator i = List.begin();
@@ -810,13 +841,13 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
          Files.push_back (*j);
    }
    
-   unsigned long EndOfSource = Files.size();
+   unsigned long const EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;
 
    // Decide if we can write to the files..
-   string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
-   string SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
+   string const CacheFile = _config->FindFile("Dir::Cache::pkgcache");
+   string const SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
    
    // Decide if we can write to the cache
    bool Writeable = false;
@@ -825,7 +856,9 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    else
       if (SrcCacheFile.empty() == false)
 	 Writeable = access(flNotFile(SrcCacheFile).c_str(),W_OK) == 0;
-   
+   if (Debug == true)
+      std::clog << "Do we have write-access to the cache files? " << (Writeable ? "YES" : "NO") << std::endl;
+
    if (Writeable == false && AllowMem == false && CacheFile.empty() == false)
       return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
    
@@ -835,8 +868,12 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    if (CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
    {
       Progress.OverallProgress(1,1,1,_("Reading package lists"));
+      if (Debug == true)
+	 std::clog << "pkgcache.bin is valid - no need to build anything" << std::endl;
       return true;
    }
+   else if (Debug == true)
+	 std::clog << "pkgcache.bin is NOT valid" << std::endl;
    
    /* At this point we know we need to reconstruct the package cache,
       begin. */
@@ -850,11 +887,15 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       Map = new DynamicMMap(*CacheF,MMap::Public,MapSize);
       if (_error->PendingError() == true)
 	 return false;
+      if (Debug == true)
+	 std::clog << "Open filebased MMap" << std::endl;
    }
    else
    {
       // Just build it in memory..
       Map = new DynamicMMap(0,MapSize);
+      if (Debug == true)
+	 std::clog << "Open memory Map (not filebased)" << std::endl;
    }
    
    // Lets try the source cache.
@@ -863,16 +904,18 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    if (CheckValidity(SrcCacheFile,Files.begin(),
 		     Files.begin()+EndOfSource) == true)
    {
+      if (Debug == true)
+	 std::clog << "srcpkgcache.bin is valid - populate MMap with it." << std::endl;
       // Preload the map with the source cache
       FileFd SCacheF(SrcCacheFile,FileFd::ReadOnly);
-      unsigned long alloc = Map->RawAllocate(SCacheF.Size());
+      unsigned long const alloc = Map->RawAllocate(SCacheF.Size());
       if ((alloc == 0 && _error->PendingError())
 		|| SCacheF.Read((unsigned char *)Map->Data() + alloc,
 				SCacheF.Size()) == false)
 	 return false;
 
       TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
-      
+
       // Build the status cache
       pkgCacheGenerator Gen(Map.Get(),&Progress);
       if (_error->PendingError() == true)
@@ -883,6 +926,8 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    }
    else
    {
+      if (Debug == true)
+	 std::clog << "srcpkgcache.bin is NOT valid - rebuild" << std::endl;
       TotalSize = ComputeSize(Files.begin(),Files.end());
       
       // Build the source cache
@@ -921,6 +966,8 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 		     Files.begin()+EndOfSource,Files.end()) == false)
 	 return false;
    }
+   if (Debug == true)
+      std::clog << "Caches are ready for shipping" << std::endl;
 
    if (_error->PendingError() == true)
       return false;

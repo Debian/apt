@@ -1,10 +1,9 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apti18n.h>
 
-#include <sys/stat.h>
-#include <unistd.h>
 #include <utime.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -45,42 +44,47 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<string> &WorthlessSigners,
 					 vector<string> &NoPubKeySigners)
 {
+   bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
    // setup a (empty) stringstream for formating the return value
    std::stringstream ret;
    ret.str("");
 
-   if (_config->FindB("Debug::Acquire::gpgv", false))
-   {
-      std::cerr << "inside VerifyGetSigners" << std::endl;
-   }
+   if (Debug == true)
+      std::clog << "inside VerifyGetSigners" << std::endl;
+
    pid_t pid;
    int fd[2];
    FILE *pipein;
    int status;
-   struct stat buff;
-   string gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-   string pubringpath = _config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
-   if (_config->FindB("Debug::Acquire::gpgv", false))
+   string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
+   // FIXME: remove support for deprecated APT::GPGV setting
+   string const trustedFile = _config->FindFile("Dir::Etc::Trusted",
+			_config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg").c_str());
+   string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d");
+   if (Debug == true)
    {
-      std::cerr << "gpgv path: " << gpgvpath << std::endl;
-      std::cerr << "Keyring path: " << pubringpath << std::endl;
+      std::clog << "gpgv path: " << gpgvpath << std::endl;
+      std::clog << "Keyring file: " << trustedFile << std::endl;
+      std::clog << "Keyring path: " << trustedPath << std::endl;
    }
 
-   if (stat(pubringpath.c_str(), &buff) != 0) 
+   vector<string> keyrings = GetListOfFilesInDir(trustedPath, "gpg", false);
+   if (FileExists(trustedFile) == true)
+      keyrings.push_back(trustedFile);
+
+   if (keyrings.empty() == true)
    {
-      ioprintf(ret, _("Couldn't access keyring: '%s'"), strerror(errno)); 
+      // TRANSLATOR: %s is the trusted keyring parts directory
+      ioprintf(ret, _("No keyring installed in %s."), trustedPath.c_str());
       return ret.str();
    }
+
    if (pipe(fd) < 0)
-   {
       return "Couldn't create pipe";
-   }
 
    pid = fork();
    if (pid < 0)
-   {
       return string("Couldn't spawn new process") + strerror(errno);
-   }
    else if (pid == 0)
    {
       const char *Args[400];
@@ -90,8 +94,17 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       Args[i++] = "--status-fd";
       Args[i++] = "3";
       Args[i++] = "--ignore-time-conflict";
-      Args[i++] = "--keyring";
-      Args[i++] = pubringpath.c_str();
+      for (vector<string>::const_iterator K = keyrings.begin();
+	   K != keyrings.end(); ++K)
+      {
+	 Args[i++] = "--keyring";
+	 Args[i++] = K->c_str();
+	 // check overflow (minus a bit of extra space at the end)
+	 if(i >= sizeof(Args)/sizeof(char*)-5) {
+	    std::clog << _("E: Too many keyrings should be passed to gpgv. Exiting.") << std::endl;
+	    exit(111);
+	 }
+      }
 
       Configuration::Item const *Opts;
       Opts = _config->Tree("Acquire::gpgv::Options");
@@ -103,8 +116,9 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             if (Opts->Value.empty() == true)
                continue;
             Args[i++] = Opts->Value.c_str();
-	    if(i >= 395) { 
-	       std::cerr << _("E: Argument list from Acquire::gpgv::Options too long. Exiting.") << std::endl;
+	    // check overflow (minus a bit of extra space at the end)
+	    if(i >= sizeof(Args)/sizeof(char*)-5) { 
+	       std::clog << _("E: Argument list from Acquire::gpgv::Options too long. Exiting.") << std::endl;
 	       exit(111);
 	    }
          }
@@ -113,14 +127,14 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       Args[i++] = outfile;
       Args[i++] = NULL;
 
-      if (_config->FindB("Debug::Acquire::gpgv", false))
+      if (Debug == true)
       {
-         std::cerr << "Preparing to exec: " << gpgvpath;
+         std::clog << "Preparing to exec: " << gpgvpath;
 	 for(unsigned int j=0;Args[j] != NULL; j++)
-	    std::cerr << " " << Args[j];
-	 std::cerr << std::endl;
+	    std::clog << " " << Args[j];
+	 std::clog << std::endl;
       }
-      int nullfd = open("/dev/null", O_RDONLY);
+      int const nullfd = open("/dev/null", O_RDONLY);
       close(fd[0]);
       // Redirect output to /dev/null; we read from the status fd
       dup2(nullfd, STDOUT_FILENO); 
@@ -159,8 +173,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          break;
       *(buffer+bufferoff) = '\0';
       bufferoff = 0;
-      if (_config->FindB("Debug::Acquire::gpgv", false))
-         std::cerr << "Read: " << buffer << std::endl;
+      if (Debug == true)
+         std::clog << "Read: " << buffer << std::endl;
 
       // Push the data into three separate vectors, which
       // we later concatenate.  They're kept separate so
@@ -168,33 +182,33 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       // it will be better.
       if (strncmp(buffer, GNUPGBADSIG, sizeof(GNUPGBADSIG)-1) == 0)
       {
-         if (_config->FindB("Debug::Acquire::gpgv", false))
-            std::cerr << "Got BADSIG! " << std::endl;
+         if (Debug == true)
+            std::clog << "Got BADSIG! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       
       if (strncmp(buffer, GNUPGNOPUBKEY, sizeof(GNUPGNOPUBKEY)-1) == 0)
       {
-         if (_config->FindB("Debug::Acquire::gpgv", false))
-            std::cerr << "Got NO_PUBKEY " << std::endl;
+         if (Debug == true)
+            std::clog << "Got NO_PUBKEY " << std::endl;
          NoPubKeySigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       if (strncmp(buffer, GNUPGNODATA, sizeof(GNUPGBADSIG)-1) == 0)
       {
-         if (_config->FindB("Debug::Acquire::gpgv", false))
-            std::cerr << "Got NODATA! " << std::endl;
+         if (Debug == true)
+            std::clog << "Got NODATA! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       if (strncmp(buffer, GNUPGKEYEXPIRED, sizeof(GNUPGKEYEXPIRED)-1) == 0)
       {
-         if (_config->FindB("Debug::Acquire::gpgv", false))
-            std::cerr << "Got KEYEXPIRED! " << std::endl;
+         if (Debug == true)
+            std::clog << "Got KEYEXPIRED! " << std::endl;
          WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       if (strncmp(buffer, GNUPGREVKEYSIG, sizeof(GNUPGREVKEYSIG)-1) == 0)
       {
-         if (_config->FindB("Debug::Acquire::gpgv", false))
-            std::cerr << "Got REVKEYSIG! " << std::endl;
+         if (Debug == true)
+            std::clog << "Got REVKEYSIG! " << std::endl;
          WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
@@ -204,17 +218,17 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          while (*p && isxdigit(*p)) 
             p++;
          *p = 0;
-         if (_config->FindB("Debug::Acquire::gpgv", false))
-            std::cerr << "Got GOODSIG, key ID:" << sig << std::endl;
+         if (Debug == true)
+            std::clog << "Got GOODSIG, key ID:" << sig << std::endl;
          GoodSigners.push_back(string(sig));
       }
    }
    fclose(pipein);
 
    waitpid(pid, &status, 0);
-   if (_config->FindB("Debug::Acquire::gpgv", false))
+   if (Debug == true)
    {
-      std::cerr << "gpgv exited\n";
+      std::clog << "gpgv exited\n";
    }
    
    if (WEXITSTATUS(status) == 0)
@@ -305,7 +319,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
-      std::cerr << "gpgv succeeded\n";
+      std::clog << "gpgv succeeded\n";
    }
 
    return true;

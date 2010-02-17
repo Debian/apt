@@ -34,9 +34,11 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <dirent.h>
 #include <signal.h>
 #include <errno.h>
 #include <set>
+#include <algorithm>
 									/*}}}*/
 
 using namespace std;
@@ -193,6 +195,128 @@ bool FileExists(string File)
    if (stat(File.c_str(),&Buf) != 0)
       return false;
    return true;
+}
+									/*}}}*/
+// GetListOfFilesInDir - returns a vector of files in the given dir	/*{{{*/
+// ---------------------------------------------------------------------
+/* If an extension is given only files with this extension are included
+   in the returned vector, otherwise every "normal" file is included. */
+std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
+					bool const &SortList)
+{
+   return GetListOfFilesInDir(Dir, Ext, SortList, false);
+}
+std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
+					bool const &SortList, bool const &AllowNoExt)
+{
+   std::vector<string> ext;
+   ext.reserve(2);
+   if (Ext.empty() == false)
+      ext.push_back(Ext);
+   if (AllowNoExt == true && ext.empty() == false)
+      ext.push_back("");
+   return GetListOfFilesInDir(Dir, ext, SortList);
+}
+std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> const &Ext,
+					bool const &SortList)
+{
+   // Attention debuggers: need to be set with the environment config file!
+   bool const Debug = _config->FindB("Debug::GetListOfFilesInDir", false);
+   if (Debug == true)
+   {
+      std::clog << "Accept in " << Dir << " only files with the following " << Ext.size() << " extensions:" << std::endl;
+      if (Ext.empty() == true)
+	 std::clog << "\tNO extension" << std::endl;
+      else
+	 for (std::vector<string>::const_iterator e = Ext.begin();
+	      e != Ext.end(); ++e)
+	    std::clog << '\t' << (e->empty() == true ? "NO" : *e) << " extension" << std::endl;
+   }
+
+   std::vector<string> List;
+   DIR *D = opendir(Dir.c_str());
+   if (D == 0) 
+   {
+      _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+      return List;
+   }
+
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) 
+   {
+      // skip "hidden" files
+      if (Ent->d_name[0] == '.')
+	 continue;
+
+      // check for accepted extension:
+      // no extension given -> periods are bad as hell!
+      // extensions given -> "" extension allows no extension
+      if (Ext.empty() == false)
+      {
+	 string d_ext = flExtension(Ent->d_name);
+	 if (d_ext == Ent->d_name) // no extension
+	 {
+	    if (std::find(Ext.begin(), Ext.end(), "") == Ext.end())
+	    {
+	       if (Debug == true)
+		  std::clog << "Bad file: " << Ent->d_name << " → no extension" << std::endl;
+	       continue;
+	    }
+	 }
+	 else if (std::find(Ext.begin(), Ext.end(), d_ext) == Ext.end())
+	 {
+	    if (Debug == true)
+	       std::clog << "Bad file: " << Ent->d_name << " → bad extension »" << flExtension(Ent->d_name) << "«" << std::endl;
+	    continue;
+	 }
+      }
+
+      // Skip bad filenames ala run-parts
+      const char *C = Ent->d_name;
+      for (; *C != 0; ++C)
+	 if (isalpha(*C) == 0 && isdigit(*C) == 0
+	     && *C != '_' && *C != '-') {
+	    // no required extension -> dot is a bad character
+	    if (*C == '.' && Ext.empty() == false)
+	       continue;
+	    break;
+	 }
+
+      // we don't reach the end of the name -> bad character included
+      if (*C != 0)
+      {
+	 if (Debug == true)
+	    std::clog << "Bad file: " << Ent->d_name << " → bad character »"
+	       << *C << "« in filename (period allowed: " << (Ext.empty() ? "no" : "yes") << ")" << std::endl;
+	 continue;
+      }
+
+      // skip filenames which end with a period. These are never valid
+      if (*(C - 1) == '.')
+      {
+	 if (Debug == true)
+	    std::clog << "Bad file: " << Ent->d_name << " → Period as last character" << std::endl;
+	 continue;
+      }
+
+      // Make sure it is a file and not something else
+      string const File = flCombine(Dir,Ent->d_name);
+      struct stat St;
+      if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
+      {
+	 if (Debug == true)
+	    std::clog << "Bad file: " << Ent->d_name << " → stat says not a good file" << std::endl;
+	 continue;
+      }
+
+      if (Debug == true)
+	 std::clog << "Accept file: " << Ent->d_name << " in " << Dir << std::endl;
+      List.push_back(File);
+   }
+   closedir(D);
+
+   if (SortList == true)
+      std::sort(List.begin(),List.end());
+   return List;
 }
 									/*}}}*/
 // SafeGetCWD - This is a safer getcwd that returns a dynamic string	/*{{{*/

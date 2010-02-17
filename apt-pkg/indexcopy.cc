@@ -275,7 +275,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       _error->Warning("No valid records were found.");
 
    if (NotFound + WrongSize > 10)
-      _error->Warning("Alot of entries were discarded, something may be wrong.\n");
+      _error->Warning("A lot of entries were discarded, something may be wrong.\n");
    
 
    return true;
@@ -847,7 +847,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       _error->Warning("No valid records were found.");
 
    if (NotFound + WrongSize > 10)
-      _error->Warning("Alot of entries were discarded, something may be wrong.\n");
+      _error->Warning("A lot of entries were discarded, something may be wrong.\n");
    
 
    return true;

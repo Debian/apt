@@ -90,11 +90,6 @@ APT
      TrustCDROM "false";            // consider the CDROM always trusted
   };
 
-  GPGV
-  {
-     TrustedKeyring "/etc/apt/trusted.gpg";
-  };
-
   // Some general options
   Ignore-Hold "false";
   Clean-Installed "true";
@@ -176,7 +171,10 @@ Acquire
   Source-Symlinks "true";
 
   PDiffs "true";     // try to get the IndexFile diffs
-  
+  PDiffs::FileLimit "4"; // don't use diffs if we would need more than 4 diffs
+  PDiffs::SizeLimit "50"; // don't use diffs if size of all patches excess
+			  // 50% of the size of the original file
+
   // HTTP method configuration
   http 
   {
@@ -312,6 +310,8 @@ Dir "/"
      SourceParts "sources.list.d";
      VendorList "vendors.list";
      VendorParts "vendors.list.d";
+     Trusted "trusted.gpg";
+     TrustedParts "trusted.gpg.d";
   };
   
   // Locations of binaries
@@ -330,6 +330,13 @@ Dir "/"
   Log "var/log/apt" {
 	Terminal "term.log";
 	History "history.log";
+  };
+
+  // Media 
+  Media 
+  {
+	// Media AutoDetect mount path
+	MountPath "/media/apt";
   };
 
   // Media 
@@ -395,6 +402,7 @@ Debug
   pkgProblemResolver::ShowScores "false";
   pkgDepCache::AutoInstall "false"; // what packages apt install to satify dependencies
   pkgDepCache::Marker "false"; 
+  pkgCacheGen "false";
   pkgAcquire "false";
   pkgAcquire::Worker "false";
   pkgAcquire::Auth "false";
