@@ -11,8 +11,10 @@
 # include <libintl.h>
 # ifdef APT_DOMAIN
 #   define _(x) dgettext(APT_DOMAIN,x)
+#   define P_(msg,plural,n) dngettext(APT_DOMAIN,msg,plural,n)
 # else
 #   define _(x) gettext(x)
+#   define P_(msg,plural,n) ngettext(msg,plural,n)
 # endif
 # define N_(x) x
 #else
@@ -21,5 +23,6 @@
 # define textdomain(a)
 # define bindtextdomain(a, b)
 # define _(x) x
+# define P_(msg,plural,n) (n == 1 ? msg : plural)
 # define N_(x) x
 #endif

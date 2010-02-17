@@ -37,6 +37,7 @@ $(POTFILES) : $(PO)/%.pot :
 	cat $(PO)/domains/$*/*.srclist > $(PO)/POTFILES_$*.in
 	$(XGETTEXT) --default-domain=$* --directory=$(BASE) \
 	  --add-comments --foreign --keyword=_ --keyword=N_ \
+	  --keyword=P_:1,2 \
 	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot
 	rm -f $(PO)/POTFILES_$*.in
 	$(MSGCOMM) --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
