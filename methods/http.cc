@@ -682,23 +682,25 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
        	 and a no-store directive for archives. */
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
 	      Itm->Uri.c_str(),ProperHost.c_str());
-      // only generate a cache control header if we actually want to 
-      // use a cache
-      if (_config->FindB("Acquire::http::No-Cache",false) == false)
+   }
+   // generate a cache control header (if needed)
+   if (_config->FindB("Acquire::http::No-Cache",false) == true) 
+   {
+      strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
+   }
+   else
+   {
+      if (Itm->IndexFile == true) 
       {
-	 if (Itm->IndexFile == true)
-	    sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
-		    _config->FindI("Acquire::http::Max-Age",0));
-	 else
-	 {
-	    if (_config->FindB("Acquire::http::No-Store",false) == true)
-	       strcat(Buf,"Cache-Control: no-store\r\n");
-	 }	 
+	 sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
+		 _config->FindI("Acquire::http::Max-Age",0));
+      }
+      else
+      {
+	 if (_config->FindB("Acquire::http::No-Store",false) == true)
+	    strcat(Buf,"Cache-Control: no-store\r\n");
       }
    }
-   // generate a no-cache header if needed
-   if (_config->FindB("Acquire::http::No-Cache",false) == true)
-      strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
 
    
    string Req = Buf;
@@ -1071,7 +1073,11 @@ bool HttpMethod::Configuration(string Message)
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
 				  PipelineDepth);
    Debug = _config->FindB("Debug::Acquire::http",false);
-   
+   AutoDetectProxyCmd = _config->Find("Acquire::http::ProxyAutoDetect");
+
+   // Get the proxy to use
+   AutoDetectProxy();
+
    return true;
 }
 									/*}}}*/
@@ -1319,6 +1325,49 @@ int HttpMethod::Loop()
    }
    
    return 0;
+}
+									/*}}}*/
+// HttpMethod::AutoDetectProxy - auto detect proxy			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool HttpMethod::AutoDetectProxy()
+{
+   if (AutoDetectProxyCmd.empty())
+      return true;
+
+   if (Debug)
+      clog << "Using auto proxy detect command: " << AutoDetectProxyCmd << endl;
+
+   int Pipes[2] = {-1,-1};
+   if (pipe(Pipes) != 0)
+      return _error->Errno("pipe", "Failed to create Pipe");
+
+   pid_t Process = ExecFork();
+   if (Process == 0)
+   {
+      dup2(Pipes[1],STDOUT_FILENO);
+      SetCloseExec(STDOUT_FILENO,false);
+      
+      const char *Args[2];
+      Args[0] = AutoDetectProxyCmd.c_str();
+      Args[1] = 0;
+      execv(Args[0],(char **)Args);
+      cerr << "Failed to exec method " << Args[0] << endl;
+      _exit(100);
+   }
+   char buf[512];
+   int InFd = Pipes[0];
+   if (read(InFd, buf, sizeof(buf)) < 0)
+      return _error->Errno("read", "Failed to read");
+   ExecWait(Process, "ProxyAutoDetect");
+   
+   if (Debug)
+      clog << "auto detect command returned: '" << buf << "'" << endl;
+
+   if (strstr(buf, "http://") == buf)
+      _config->Set("Acquire::http::proxy", _strstrip(buf));
+
+   return true;
 }
 									/*}}}*/
 

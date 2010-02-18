@@ -120,6 +120,7 @@ class URI
    inline void operator =(const string &From) {CopyFrom(From);};
    inline bool empty() {return Access.empty();};
    static string SiteOnly(const string &URI);
+   static string NoUserPassword(const string &URI);
    
    URI(string Path) {CopyFrom(Path);};
    URI() : Port(0) {};

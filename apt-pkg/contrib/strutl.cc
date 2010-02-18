@@ -1323,3 +1323,15 @@ string URI::SiteOnly(const string &URI)
    return U;
 }
 									/*}}}*/
+// URI::NoUserPassword - Return the schema, site and path for the URI	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string URI::NoUserPassword(const string &URI)
+{
+   ::URI U(URI);
+   U.User.clear();
+   U.Password.clear();
+   U.Port = 0;
+   return U;
+}
+									/*}}}*/

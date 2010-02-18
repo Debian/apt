@@ -21,8 +21,28 @@ apt (0.7.26) UNRELEASED; urgency=low
 
   [ Ivan Masár ]
   * Slovak translation update. Closes: #568294
+  
+  [ Michael Vogt ]
+  * [BREAK] merged lp:~mvo/apt/history
+    - this writes a /var/log/apt/history tagfile that contains details
+      from the transaction (complements term.log)
+  * methods/http.cc:
+    - add cache-control headers even if no cache is given to allow
+      adding options for intercepting proxies
+    - add Acquire::http::ProxyAutoDetect configuration that 
+      can be used to call a external helper to figure out the 
+      proxy configuration and return it to apt via stdout
+      (this is a step towards WPAD and zeroconf/avahi support)
+  * abicheck/
+    - add new abitest tester using the ABI Compliance Checker from
+      http://ispras.linuxfoundation.org/index.php/ABI_compliance_checker
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 13 Feb 2010 01:42:50 +0100
+  [ Robert Collins ]
+  * Change the package index Info methods to allow apt-cache policy to be
+    useful when using several different archives on the same host.
+    (Closes: #329814, LP: #22354)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 18 Dec 2009 16:54:18 +0100
 
 apt (0.7.25.3) unstable; urgency=low
 
@@ -31,7 +51,7 @@ apt (0.7.25.3) unstable; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/contrib/macros.h:
-    - install the header system.h with a new name to be able to use 
+    - install the header system.h with a new name to be able to use
       it in other headers (Closes: #567662)
   * cmdline/acqprogress.cc:
     - Set Mode to Medium so that the correct prefix is used.
@@ -40,7 +60,7 @@ apt (0.7.25.3) unstable; urgency=low
     - generate sha1 and sha256 checksums for dsc (Closes: #567343)
   * cmdline/apt-get.cc:
     - don't mark as manually if in download only (Closes: #468180)
-  
+
  -- Michael Vogt <mvo@debian.org>  Mon, 01 Feb 2010 18:41:15 +0100
 
 apt (0.7.25.2) unstable; urgency=low
@@ -64,7 +84,7 @@ apt (0.7.25.2) unstable; urgency=low
       packages that are not in the extended_states file yet
       (closes: #534920)
   * ftparchive/writer.{cc,h}:
-    - merge crash fix for apt-ftparchive on hurd, thanks to 
+    - merge crash fix for apt-ftparchive on hurd, thanks to
       Samuel Thibault for the patch (closes: #566664)
 
   [ David Kalnischkies ]
@@ -103,7 +123,7 @@ apt (0.7.25.1) unstable; urgency=low
   * French manpage translation update
   * Russian translation update by Yuri Kozlov
     Closes: #564171
-  
+
   [Chris Leick]
   * spot & fix various typos in all manpages
   * German manpage translation update

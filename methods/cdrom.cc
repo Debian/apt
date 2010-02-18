@@ -219,7 +219,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       return true;
    }
 
-   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", false);
+   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
    CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
    if (Debug)
       clog << "Looking for CDROM at " << CDROM << endl;
