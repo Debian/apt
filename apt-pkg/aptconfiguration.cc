@@ -217,7 +217,8 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		environment.push_back(envLong);
 	environment.push_back(envShort);
 	// take care of LANGUAGE
-	string envLang = Locale == 0 ? getenv("LANGUAGE") : *(Locale+1);
+	const char *language_env = getenv("LANGUAGE") == 0 ? "" : getenv("LANGUAGE");
+	string envLang = Locale == 0 ? language_env : *(Locale+1);
 	if (envLang.empty() == false) {
 		std::vector<string> env = ExplodeString(envLang,':');
 		short addedLangs = 0; // add a maximum of 3 fallbacks from the environment
