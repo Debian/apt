@@ -310,7 +310,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	 if(last_space != string::npos)
 	    Description.erase(last_space, Description.size()-last_space);
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedHash, available_patches);
+			      ExpectedHash, ServerSha1, available_patches);
 	 Complete = false;
 	 Status = StatDone;
 	 Dequeue();
@@ -378,9 +378,10 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 				   string URI,string URIDesc,string ShortDesc,
 				   HashString ExpectedHash, 
+				   string ServerSha1,
 				   vector<DiffInfo> diffs)
    : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), 
-     available_patches(diffs)
+     available_patches(diffs), ServerSha1(ServerSha1)
 {
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -465,6 +466,13 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    if(Debug)
       std::clog << "QueueNextDiff: " 
 		<< FinalFile << " (" << local_sha1 << ")"<<std::endl;
+
+   // final file reached before all patches are applied
+   if(local_sha1 == ServerSha1)
+   {
+      Finish(true);
+      return true;
+   }
 
    // remove all patches until the next matching patch is found
    // this requires the Index file to be ordered
@@ -563,7 +571,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*
       // see if there is more to download
       if(available_patches.size() > 0) {
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedHash, available_patches);
+			      ExpectedHash, ServerSha1, available_patches);
 	 return Finish();
       } else 
 	 return Finish(true);

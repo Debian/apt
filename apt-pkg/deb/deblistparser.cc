@@ -13,6 +13,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/md5.h>
@@ -128,10 +129,11 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    only describe package properties */
 string debListParser::Description()
 {
-   if (DescriptionLanguage().empty())
+   string const lang = DescriptionLanguage();
+   if (lang.empty())
       return Section.FindS("Description");
    else
-      return Section.FindS(("Description-" + pkgIndexFile::LanguageCode()).c_str());
+      return Section.FindS(string("Description-").append(lang).c_str());
 }
                                                                         /*}}}*/
 // ListParser::DescriptionLanguage - Return the description lang string	/*{{{*/
@@ -141,7 +143,16 @@ string debListParser::Description()
    assumed to describe original description. */
 string debListParser::DescriptionLanguage()
 {
-   return Section.FindS("Description").empty() ? pkgIndexFile::LanguageCode() : "";
+   if (Section.FindS("Description").empty() == false)
+      return "";
+
+   std::vector<string> const lang = APT::Configuration::getLanguages();
+   for (std::vector<string>::const_iterator l = lang.begin();
+	l != lang.end(); l++)
+      if (Section.FindS(string("Description-").append(*l).c_str()).empty() == false)
+	 return *l;
+
+   return "";
 }
                                                                         /*}}}*/
 // ListParser::Description - Return the description_md5 MD5SumValue	/*{{{*/
@@ -383,7 +394,8 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
    bit by bit. */
 const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					string &Package,string &Ver,
-					unsigned int &Op, bool ParseArchFlags)
+					unsigned int &Op, bool const &ParseArchFlags,
+					bool const &StripMultiArch)
 {
    // Strip off leading space
    for (;Start != Stop && isspace(*Start) != 0; Start++);
@@ -402,7 +414,14 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    
    // Stash the package name
    Package.assign(Start,I - Start);
-   
+
+   // We don't want to confuse library users which can't handle MultiArch
+   if (StripMultiArch == true) {
+      size_t const found = Package.rfind(':');
+      if (found != string::npos)
+	 Package = Package.substr(0,found);
+   }
+
    // Skip white space to the '('
    for (;I != Stop && isspace(*I) != 0 ; I++);
    

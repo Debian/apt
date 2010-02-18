@@ -64,7 +64,8 @@ class debListParser : public pkgCacheGenerator::ListParser
    
    static const char *ParseDepends(const char *Start,const char *Stop,
 			    string &Package,string &Ver,unsigned int &Op,
-			    bool ParseArchFlags = false);
+			    bool const &ParseArchFlags = false,
+			    bool const &StripMultiArch = false);
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
    debListParser(FileFd *File);

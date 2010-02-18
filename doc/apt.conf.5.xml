@@ -153,7 +153,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 <listitem><para>Default release to install packages from if more than one
 	 version available. Contains release name, codename or release version. Examples: 'stable', 'testing', 'unstable', 'lenny', 'squeeze', '4.0', '5.0*'. See also &apt-preferences;.</para></listitem>
      </varlistentry>
-     
+
      <varlistentry><term>Ignore-Hold</term>
      <listitem><para>Ignore Held packages; This global option causes the problem resolver to
      ignore held packages in its decision making.</para></listitem>
@@ -410,6 +410,27 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      these warnings are most of the time false negatives. Future versions will maybe include a way to
      really prefer uncompressed files to support the usage of local mirrors.</para></listitem>
      </varlistentry>
+
+     <varlistentry><term>Languages</term>
+     <listitem><para>The Languages subsection controls which <filename>Translation</filename> files are downloaded
+     and in which order APT tries to display the Description-Translations. APT will try to display the first
+     available Description in the Language which is listed at first. Languages can be defined with their
+     short or long Languagecodes. Note that not all archives provide <filename>Translation</filename>
+     files for every Language - especially the long Languagecodes are rare, so please
+     inform you which ones are available before you set here impossible values.</para>
+     <para>The default list includes "environment" and "en". "<literal>environment</literal>" has a special meaning here:
+     It will be replaced at runtime with the languagecodes extracted from the <literal>LC_MESSAGES</literal> environment variable.
+     It will also ensure that these codes are not included twice in the list. If <literal>LC_MESSAGES</literal>
+     is set to "C" only the <filename>Translation-en</filename> file (if available) will be used.
+     To force apt to use no Translation file use the setting <literal>Acquire::Languages=none</literal>. "<literal>none</literal>"
+     is another special meaning code which will stop the search for a fitting <filename>Translation</filename> file.
+     This can be used by the system administrator to let APT know that it should download also this files without
+     actually use them if the environment doesn't specify this languages. So the following example configuration will
+     result in the order "en, de" in an english and in "de, en" in a german localization. Note that "fr" is downloaded,
+     but not used if APT is not used in a french localization, in such an environment the order would be "fr, de, en".
+     <programlisting>Acquire::Languages { "environment"; "de"; "en"; "none"; "fr"; };</programlisting></para></listitem>
+     </varlistentry>
+
    </variablelist>
   </para>
  </refsect1>
@@ -1001,6 +1022,7 @@ is commented.
        </listitem>
      </varlistentry>
 -->
+
    </variablelist>
  </refsect1>
  

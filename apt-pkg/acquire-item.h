@@ -422,6 +422,10 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *  off the front?
     */
    vector<DiffInfo> available_patches;
+
+   /** Stop applying patches when reaching that sha1 */
+   string ServerSha1;
+
    /** The current status of this patch. */
    enum DiffState
      {
@@ -475,6 +479,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     */
    pkgAcqIndexDiffs(pkgAcquire *Owner,string URI,string URIDesc,
 		    string ShortDesc, HashString ExpectedHash,
+		    string ServerSha1,
 		    vector<DiffInfo> diffs=vector<DiffInfo>());
 };
 									/*}}}*/

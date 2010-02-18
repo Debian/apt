@@ -1,9 +1,28 @@
-apt (0.7.25.4) UNRELEASED; urgency=low
+apt (0.7.26) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * [BREAK] add possibility to download and use multiply
+    Translation files, configurable with Acquire::Translation
+    (Closes: #444222, #448216, #550564)
+  * Ignore :qualifiers after package name in build dependencies
+    for now as long we don't understand them (Closes: #558103)
+  * apt-pkg/contrib/mmap.{cc,h}:
+    - extend it to have a growable flag - unused now but maybe...
+  * apt-pkg/pkgcache.h:
+    - use long instead of short for {Ver,Desc}File size,
+      patch from Víctor Manuel Jáquez Leal, thanks! (Closes: #538917)
+  * apt-pkg/acquire-item.cc:
+    - allow also to skip the last patch if target is reached,
+      thanks Bernhard R. Link! (Closes: #545699)
+  * ftparchive/writer.{cc,h}:
+    - add APT::FTPArchive::AlwaysStat to disable the too aggressive
+      caching if versions are build multiply times (not recommend)
+      Patch by Christoph Goehre, thanks! (Closes: #463260)
 
   [ Ivan Masár ]
   * Slovak translation update. Closes: #568294
 
- -- Christian Perrier <bubulle@debian.org>  Wed, 03 Feb 2010 20:08:19 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 13 Feb 2010 01:42:50 +0100
 
 apt (0.7.25.3) unstable; urgency=low
 

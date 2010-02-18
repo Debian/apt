@@ -544,6 +544,18 @@ for i in Sections do
      Configuration Item: <literal>APT::FTPArchive::ReadOnlyDB</literal>.</para></listitem>
      </varlistentry>   
 
+     <varlistentry><term><option>APT::FTPArchive::AlwaysStat</option></term>
+     <listitem><para>
+     &apt-ftparchive; caches as much as possible of metadata in it is cachedb. If packages
+     are recompiled and/or republished with the same version again, this will lead to problems
+     as the now outdated cached metadata like size and checksums will be used. With this option
+     enabled this will no longer happen as it will be checked if the file was changed.
+     Note that this option is set to "<literal>false</literal>" by default as it is not recommend
+     to upload multiply versions/builds of a package with the same versionnumber, so in theory
+     nobody will have these problems and therefore all these extra checks are useless.
+     </para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>APT::FTPArchive::LongDescription</option></term>
      <listitem><para>
      This configuration option defaults to "<literal>true</literal>" and should only be set to

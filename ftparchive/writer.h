@@ -42,12 +42,12 @@ class FTWScanner
    
    static FTWScanner *Owner;
    static int ScannerFTW(const char *File,const struct stat *sb,int Flag);
-   static int ScannerFile(const char *File, bool ReadLink);
+   static int ScannerFile(const char *File, bool const &ReadLink);
 
    bool Delink(string &FileName,const char *OriginalPath,
-	       unsigned long &Bytes,off_t FileSize);
+	       unsigned long &Bytes,off_t const &FileSize);
 
-   inline void NewLine(unsigned Priority)
+   inline void NewLine(unsigned const &Priority)
    {
       if (ErrorPrinted == false && Quiet <= Priority)
       {
@@ -62,11 +62,11 @@ class FTWScanner
    string InternalPrefix;
 
    virtual bool DoPackage(string FileName) = 0;
-   bool RecursiveScan(string Dir);
-   bool LoadFileList(string BaseDir,string File);
+   bool RecursiveScan(string const &Dir);
+   bool LoadFileList(string const &BaseDir,string const &File);
    void ClearPatterns() { Patterns.clear(); };
-   void AddPattern(string Pattern) { Patterns.push_back(Pattern); };
-   bool SetExts(string Vals);
+   void AddPattern(string const &Pattern) { Patterns.push_back(Pattern); };
+   bool SetExts(string const &Vals);
       
    FTWScanner();
 };
@@ -82,6 +82,7 @@ class PackagesWriter : public FTWScanner
    bool DoMD5;
    bool DoSHA1;
    bool DoSHA256;
+   bool DoAlwaysStat;
    bool NoOverride;
    bool DoContents;
    bool LongDescription;
@@ -93,13 +94,13 @@ class PackagesWriter : public FTWScanner
    struct CacheDB::Stats &Stats;
    string Arch;
 
-   inline bool ReadOverride(string File) {return Over.ReadOverride(File);};
-   inline bool ReadExtraOverride(string File) 
+   inline bool ReadOverride(string const &File) {return Over.ReadOverride(File);};
+   inline bool ReadExtraOverride(string const &File) 
       {return Over.ReadExtraOverride(File);};
    virtual bool DoPackage(string FileName);
 
-   PackagesWriter(string DB,string Overrides,string ExtOverrides=string(),
-		  string Arch=string());
+   PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides=string(),
+		  string const &Arch=string());
    virtual ~PackagesWriter() {};
 };
 
@@ -119,12 +120,12 @@ class ContentsWriter : public FTWScanner
    bool DoPackage(string FileName,string Package);
    virtual bool DoPackage(string FileName) 
              {return DoPackage(FileName,string());};
-   bool ReadFromPkgs(string PkgFile,string PkgCompress);
+   bool ReadFromPkgs(string const &PkgFile,string const &PkgCompress);
 
    void Finish() {Gen.Print(Output);};
-   inline bool ReadyDB(string DB) {return Db.ReadyDB(DB);};
+   inline bool ReadyDB(string const &DB) {return Db.ReadyDB(DB);};
    
-   ContentsWriter(string DB);
+   ContentsWriter(string const &DB);
    virtual ~ContentsWriter() {};
 };
 
@@ -147,15 +148,15 @@ class SourcesWriter : public FTWScanner
 
    virtual bool DoPackage(string FileName);
 
-   SourcesWriter(string BOverrides,string SOverrides,
-		 string ExtOverrides=string());
+   SourcesWriter(string const &BOverrides,string const &SOverrides,
+		 string const &ExtOverrides=string());
    virtual ~SourcesWriter() {free(Buffer);};
 };
 
 class ReleaseWriter : public FTWScanner
 {
 public:
-   ReleaseWriter(string DB);
+   ReleaseWriter(string const &DB);
    virtual bool DoPackage(string FileName);
    void Finish();
 

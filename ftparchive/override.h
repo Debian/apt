@@ -31,20 +31,20 @@ class Override
       string NewMaint;
 
       map<string,string> FieldOverride;
-      string SwapMaint(string Orig,bool &Failed);
+      string SwapMaint(string const &Orig,bool &Failed);
       ~Item() {};
    };
    
    map<string,Item> Mapping;
    
-   inline Item *GetItem(string Package) 
+   inline Item *GetItem(string const &Package) 
    {
       return GetItem(Package, "");
    }
-   Item *GetItem(string Package, string Architecture);
+   Item *GetItem(string const &Package, string const &Architecture);
    
-   bool ReadOverride(string File,bool Source = false);
-   bool ReadExtraOverride(string File,bool Source = false);
+   bool ReadOverride(string const &File,bool const &Source = false);
+   bool ReadExtraOverride(string const &File,bool const &Source = false);
 };
 
 #endif

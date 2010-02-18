@@ -50,7 +50,7 @@ class MMap
    public:
 
    enum OpenFlags {NoImmMap = (1<<0),Public = (1<<1),ReadOnly = (1<<2),
-                   UnMapped = (1<<3)};
+                   UnMapped = (1<<3), Moveable = (1<<4), Fallback = (1 << 5)};
       
    // Simple accessors
    inline operator void *() {return Base;};
@@ -82,6 +82,8 @@ class DynamicMMap : public MMap
    
    FileFd *Fd;
    unsigned long WorkSpace;
+   unsigned long const GrowFactor;
+   unsigned long const Limit;
    Pool *Pools;
    unsigned int PoolCount;
 
@@ -96,8 +98,10 @@ class DynamicMMap : public MMap
    inline unsigned long WriteString(const string &S) {return WriteString(S.c_str(),S.length());};
    void UsePools(Pool &P,unsigned int Count) {Pools = &P; PoolCount = Count;};
    
-   DynamicMMap(FileFd &F,unsigned long Flags,unsigned long WorkSpace = 2*1024*1024);
-   DynamicMMap(unsigned long Flags,unsigned long WorkSpace = 2*1024*1024);
+   DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &WorkSpace = 2*1024*1024,
+	       unsigned long const &Grow = 1024*1024, unsigned long const &Limit = 0);
+   DynamicMMap(unsigned long Flags,unsigned long const &WorkSpace = 2*1024*1024,
+	       unsigned long const &Grow = 1024*1024, unsigned long const &Limit = 0);
    virtual ~DynamicMMap();
 };
 
