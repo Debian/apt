@@ -35,12 +35,12 @@ debSourcesIndex::debSourcesIndex(string URI,string Dist,string Section,bool Trus
 // SourcesIndex::SourceInfo - Short 1 liner describing a source		/*{{{*/
 // ---------------------------------------------------------------------
 /* The result looks like:
-     http://foo/ stable/main src 1.1.1 (dsc) */
+     http://foo/debian/ stable/main src 1.1.1 (dsc) */
 string debSourcesIndex::SourceInfo(pkgSrcRecords::Parser const &Record,
 				   pkgSrcRecords::File const &File) const
 {
    string Res;
-   Res = ::URI::SiteOnly(URI) + ' ';
+   Res = ::URI::NoUserPassword(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -88,7 +88,7 @@ string debSourcesIndex::Describe(bool Short) const
 /* */
 string debSourcesIndex::Info(const char *Type) const
 {
-   string Info = ::URI::SiteOnly(URI) + ' ';
+   string Info = ::URI::NoUserPassword(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -159,7 +159,7 @@ debPackagesIndex::debPackagesIndex(string URI,string Dist,string Section,bool Tr
 /* This is a shorter version that is designed to be < 60 chars or so */
 string debPackagesIndex::ArchiveInfo(pkgCache::VerIterator Ver) const
 {
-   string Res = ::URI::SiteOnly(URI) + ' ';
+   string Res = ::URI::NoUserPassword(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -195,7 +195,7 @@ string debPackagesIndex::Describe(bool Short) const
 /* */
 string debPackagesIndex::Info(const char *Type) const 
 {
-   string Info = ::URI::SiteOnly(URI) + ' ';
+   string Info = ::URI::NoUserPassword(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -394,7 +394,7 @@ string debTranslationsIndex::Describe(bool Short) const
 /* */
 string debTranslationsIndex::Info(const char *Type) const 
 {
-   string Info = ::URI::SiteOnly(URI) + ' ';
+   string Info = ::URI::NoUserPassword(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
