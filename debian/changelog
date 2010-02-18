@@ -15,9 +15,27 @@ apt (0.7.26) UNRELEASED; urgency=low
     - allow also to skip the last patch if target is reached,
       thanks Bernhard R. Link! (Closes: #545699)
   * ftparchive/writer.{cc,h}:
+    - add --arch option for packages and contents commands
+    - if an arch is given accept only *_all.deb and *_arch.deb instead
+      of *.deb. Thanks Stephan Bosch for the patch! (Closes: #319710)
     - add APT::FTPArchive::AlwaysStat to disable the too aggressive
       caching if versions are build multiply times (not recommend)
       Patch by Christoph Goehre, thanks! (Closes: #463260)
+  * apt-pkg/deb/dpkgpm.cc:
+    - stdin redirected to /dev/null takes all CPU (Closes: #569488)
+      Thanks to Aurelien Jarno for providing (again) a patch!
+  * buildlib/apti18n.h.in, po/makefile:
+    - add ngettext support with P_()
+  * aptconfiguration.cc:
+    - include all existing Translation files in the Cache (Closes: 564137)
+  * debian/control:
+    - update with no changes to debian policy 3.8.4
+  * doc/apt_preferences.5.xml:
+    - explicitly warn against careless use (Closes: #567669)
+  * debian/rules:
+    - remove creation of empty dir /usr/share/apt
+  * doc/apt-cdrom.8.xml:
+    - fix typo spotted by lintian: proc(c)eed
 
   [ Ivan Masár ]
   * Slovak translation update. Closes: #568294
