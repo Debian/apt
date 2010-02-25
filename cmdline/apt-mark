@@ -76,6 +76,10 @@ if __name__ == "__main__":
                       help="print verbose status messages to stdout")
     (options, args) = parser.parse_args()
 
+    if not args:
+        parser.print_help()
+        sys.exit(1)
+
     # get the state-file
     if not options.filename:
         STATE_FILE = apt_pkg.Config.FindDir("Dir::State") + "extended_states"
