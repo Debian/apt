@@ -151,6 +151,7 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 
 	//Nice printable representation
 	friend std::ostream& operator <<(std::ostream& out, PkgIterator i);
+	std::string FullName(bool const &Pretty = false) const;
 
 	// Constructors
 	inline PkgIterator(pkgCache &Owner,Package *Trg) : Iterator<Package, PkgIterator>(Owner, Trg), HashIndex(0) {

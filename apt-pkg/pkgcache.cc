@@ -445,6 +445,18 @@ operator<<(ostream& out, pkgCache::PkgIterator Pkg)
    return out;
 }
 									/*}}}*/
+// PkgIterator::FullName - Returns Name and (maybe) Architecture	/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns a name:arch string */
+std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
+{
+   string fullname = Name();
+   if (Pretty == false ||
+       (strcmp(Arch(), "all") != 0 && _config->Find("APT::Architecture") != Arch()))
+      return fullname.append(":").append(Arch());
+   return fullname;
+}
+									/*}}}*/
 // DepIterator::IsCritical - Returns true if the dep is important	/*{{{*/
 // ---------------------------------------------------------------------
 /* Currently critical deps are defined as depends, predepends and
