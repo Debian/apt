@@ -12,7 +12,6 @@ Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
 Package: apt
 Architecture: any
 Depends: ${shlibs:Depends}, debian-archive-keyring, ${misc:Depends}
-Replaces: libapt-pkg-doc (<< 0.3.7), libapt-pkg-dev (<< 0.3.7)
 Provides: ${libapt-pkg:provides}
 Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, bzip2, lzma, python-apt
 Description: Advanced front-end for dpkg
@@ -27,7 +26,6 @@ Package: apt-doc
 Architecture: all
 Priority: optional
 Depends: ${misc:Depends}
-Replaces: apt (<< 0.5.4.9)
 Section: doc
 Description: Documentation for APT
  This package contains the user guide and offline guide, for APT, an
@@ -56,7 +54,6 @@ Package: apt-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Provides: ${libapt-inst:provides}
-Replaces: apt (<< 0.5.9)
 Description: APT utility programs
  This package contains some APT utility programs such as apt-ftparchive,
  apt-sortpkgs and apt-extracttemplates.
