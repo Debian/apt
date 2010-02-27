@@ -79,8 +79,8 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    void MarkPackage(const pkgCache::PkgIterator &pkg,
 		    const pkgCache::VerIterator &ver,
-		    bool follow_recommends,
-		    bool follow_suggests);
+		    bool const &follow_recommends,
+		    bool const &follow_suggests);
 
    /** \brief Update the Marked field of all packages.
     *
