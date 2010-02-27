@@ -5,6 +5,10 @@ apt (0.7.26) UNRELEASED; urgency=low
     - don't crash if no arguments are given (Closes: #570962)
   * debian/control:
     - remove some years old and obsolete Replaces
+  * apt-pkg/contrib/mmap.{h,cc}:
+    - add char[] fallback for filesystems without shared writable
+      mmap() like JFFS2. Thanks to Marius Vollmer for writing
+      and to Loïc Minier for pointing to the patch! (Closes: #314334)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 19 Feb 2010 21:21:43 +0100
 
