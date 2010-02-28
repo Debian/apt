@@ -345,7 +345,8 @@ class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> 
 
 	// Constructors
 	inline PkgFileIterator() : Iterator<PackageFile, PkgFileIterator>() {};
-	inline PkgFileIterator(pkgCache &Owner,PackageFile *Trg = 0) : Iterator<PackageFile, PkgFileIterator>(Owner, Trg) {};
+	inline PkgFileIterator(pkgCache &Owner) : Iterator<PackageFile, PkgFileIterator>(Owner, Owner.PkgFileP) {};
+	inline PkgFileIterator(pkgCache &Owner,PackageFile *Trg) : Iterator<PackageFile, PkgFileIterator>(Owner, Trg) {};
 };
 									/*}}}*/
 // Version File								/*{{{*/
