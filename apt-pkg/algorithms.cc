@@ -535,11 +535,11 @@ void pkgProblemResolver::MakeScores()
    // Important Required Standard Optional Extra
    signed short PrioMap[] = {
       0,
-      _config->FindI("pkgProblemResolver::Scores::Important",3),
-      _config->FindI("pkgProblemResolver::Scores::Required",2),
-      _config->FindI("pkgProblemResolver::Scores::Standard",1),
-      _config->FindI("pkgProblemResolver::Scores::Optional",-1),
-      _config->FindI("pkgProblemResolver::Scores::Extra",-2)
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Important",3),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Required",2),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Standard",1),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Optional",-1),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Extra",-2)
    };
    signed short PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
    signed short PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
