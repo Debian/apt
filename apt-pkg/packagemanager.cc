@@ -470,6 +470,8 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 
    if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false)
       return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
+   else
+      return SmartRemove(Pkg.Group().FindPkg("all"));
    return true;
 }
 									/*}}}*/
@@ -584,11 +586,14 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    for (PrvIterator P = Cache[Pkg].InstVerIter(Cache).ProvidesList(); 
 	P.end() == false; P++)
       CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
-   
-   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false &&
-       Install(Pkg,FileNames[Pkg->ID]) == false)
+
+   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false)
+   {
+      if(Install(Pkg,FileNames[Pkg->ID]) == false)
+         return false;
+   } else if (SmartUnPack(Pkg.Group().FindPkg("all")) == false)
       return false;
-   
+
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
    
    // Perform immedate configuration of the package.
