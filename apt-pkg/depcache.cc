@@ -630,11 +630,46 @@ bool pkgDepCache::RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned l
    if (V->MultiArch != Version::All)
       return false;
 
-   unsigned char const DepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
-   if ((DepState & DepInstMin) == DepInstMin)
+   // Never ever kill an "all" package - they have no dependency so they can't be broken
+   if (strcmp(Pkg.Arch(),"all") == 0)
       return false;
 
-   // Dependencies for this arch all are not statisfied
+// std::cout << "CHECK " << Pkg << std::endl;
+
+   unsigned char const DepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+   if ((DepState & DepInstMin) == DepInstMin) {
+      // okay, the package isn't broken, but is the package also required?
+      // If it has no real dependencies, no installed rdepends and doesn't
+      // provide something of value, we will kill it as not required.
+      // These pseudopackages have otherwise interesting effects if they get
+      // a new dependency in a newer version…
+      for (pkgCache::DepIterator D = V.DependsList();
+	   D.end() != true; ++D)
+	 if ((D->Type == pkgCache::Dep::Depends ||
+	      D->Type == pkgCache::Dep::PreDepends) &&
+	     D.ParentPkg()->Group != Pkg->Group)
+	    return false;
+      for (DepIterator D = Pkg.RevDependsList(); D.end() != true; ++D)
+      {
+	 if (D->Type != pkgCache::Dep::Depends &&
+	     D->Type != pkgCache::Dep::PreDepends)
+	    continue;
+	 PkgIterator const P = D.ParentPkg();
+	 if (P->CurrentVer != 0)
+	    return false;
+      }
+      for (PrvIterator Prv = V.ProvidesList(); Prv.end() != true; Prv++)
+	 for (DepIterator d = Prv.ParentPkg().RevDependsList();
+	      d.end() != true; ++d)
+	 {
+	    PkgIterator const P = d.ParentPkg();
+	    if (P->CurrentVer != 0 &&
+	        P->Group != Pkg->Group)
+	       return false;
+	 }
+   }
+
+   // Dependencies for this arch all package are not statisfied
    // so we installed it only for our convenience: get right of it now.
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -655,15 +690,33 @@ bool pkgDepCache::RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned l
 	 recheck.insert(P.Index());
    }
 
-   if (V.end() != true)
-      for (PrvIterator Prv = V.ProvidesList(); Prv.end() != true; Prv++)
-	 for (DepIterator d = Prv.ParentPkg().RevDependsList();
-	      d.end() != true; ++d)
-	 {
-	    PkgIterator const P = d.ParentPkg();
-	    if (P->CurrentVer != 0)
-	       recheck.insert(P.Index());
-	 }
+   for (DepIterator d = V.DependsList(); d.end() != true; ++d)
+   {
+      PkgIterator const P = d.TargetPkg();
+      for (PrvIterator Prv = P.ProvidesList(); Prv.end() != true; ++Prv)
+      {
+	 PkgIterator const O = Prv.OwnerPkg();
+	 if (O->CurrentVer != 0)
+	    recheck.insert(O.Index());
+      }
+
+      if (P->CurrentVer != 0)
+	 recheck.insert(P.Index());
+   }
+
+   for (PrvIterator Prv = V.ProvidesList(); Prv.end() != true; Prv++)
+   {
+      for (DepIterator d = Prv.ParentPkg().RevDependsList();
+	   d.end() != true; ++d)
+      {
+	 PkgIterator const P = d.ParentPkg();
+	 if (P->CurrentVer == 0)
+	    continue;
+
+	    recheck.insert(P.Index());
+      }
+   }
+
 
    return true;
 }
