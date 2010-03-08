@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ ! -d ../build ]; then
+	echo "../build missing, did you run make?"
+	exit 1
+fi
+
+LIBPATH=$(find /usr/lib/ -type f  -name "libapt-*.so.*" -printf %p\\\\n)
+sed s#@installed_libapt@#$LIBPATH# apt_installed.xml.in > apt_installed.xml
+
+BUILDPATH=$(readlink -f ../build)
+sed s#@build_path@#$BUILDPATH# apt_build.xml.in > apt_build.xml
+
+perl abi-compliance-checker.pl -l apt -d1 apt_installed.xml -d2 apt_build.xml

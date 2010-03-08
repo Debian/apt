@@ -1,3 +1,22 @@
+apt (0.7.25.3ubuntu2) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * methods/http.cc:
+    - add Acquire::http::ProxyAutoDetect configuration that 
+      can be used to call a external helper to figure out the 
+      proxy configuration and return it to apt via stdout
+      (this is a step towards WPAD and zeroconf/avahi support)
+  * abicheck/
+    - add new abitest tester using the ABI Compliance Checker from
+      http://ispras.linuxfoundation.org/index.php/ABI_compliance_checker
+
+  [ Robert Collins ]
+  * Change the package index Info methods to allow apt-cache policy to be
+    useful when using several different archives on the same host.
+    (Closes: #329814, LP: #22354)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 18 Dec 2009 16:54:18 +0100
+
 apt (0.7.25.3ubuntu1) lucid; urgency=low
 
   [ Michael Vogt ]
@@ -15,7 +34,7 @@ apt (0.7.25.3) unstable; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/contrib/macros.h:
-    - install the header system.h with a new name to be able to use 
+    - install the header system.h with a new name to be able to use
       it in other headers (Closes: #567662)
   * cmdline/acqprogress.cc:
     - Set Mode to Medium so that the correct prefix is used.
@@ -24,7 +43,7 @@ apt (0.7.25.3) unstable; urgency=low
     - generate sha1 and sha256 checksums for dsc (Closes: #567343)
   * cmdline/apt-get.cc:
     - don't mark as manually if in download only (Closes: #468180)
-  
+
  -- Michael Vogt <mvo@debian.org>  Mon, 01 Feb 2010 18:41:15 +0100
 
 apt (0.7.25.2) unstable; urgency=low
@@ -48,7 +67,7 @@ apt (0.7.25.2) unstable; urgency=low
       packages that are not in the extended_states file yet
       (closes: #534920)
   * ftparchive/writer.{cc,h}:
-    - merge crash fix for apt-ftparchive on hurd, thanks to 
+    - merge crash fix for apt-ftparchive on hurd, thanks to
       Samuel Thibault for the patch (closes: #566664)
 
   [ David Kalnischkies ]
@@ -87,7 +106,7 @@ apt (0.7.25.1) unstable; urgency=low
   * French manpage translation update
   * Russian translation update by Yuri Kozlov
     Closes: #564171
-  
+
   [Chris Leick]
   * spot & fix various typos in all manpages
   * German manpage translation update
@@ -567,7 +586,6 @@ apt (0.7.22.1) unstable; urgency=low
 
 apt (0.7.22) unstable; urgency=low
 
-
   [ Christian Perrier ]
   * Documentation translations:
     - Fix a typo in apt-get(8) French translation. Closes: #525043
@@ -576,7 +594,7 @@ apt (0.7.22) unstable; urgency=low
       Thanks to Aurélien Couderc.
   * Translations:
     - fr.po
-    - sk.po. Closes: #525857
+    - sk.po. Closes: #525857 
     - ru.po. Closes: #526816
     - eu.po. Closes: #528985
     - zh_CN.po. Closes: #531390
@@ -610,7 +628,6 @@ apt (0.7.22) unstable; urgency=low
   * eliminate (hopefully all) segfaults in pkgcachegen.cc and mmap.cc
     which can arise if cache doesn't fit into the mmap (Closes: #535218)
   * display warnings instead of errors if the parts dirs doesn't exist
-
 
   [ Michael Vogt ]
   * honor the dpkg hold state in new Marker hooks (closes: #64141)
@@ -739,7 +756,7 @@ apt (0.7.21) unstable; urgency=low
     - sk.po. Closes: #520403
     - it.po. Closes: #522222
     - sk.po. Closes: #520403
-
+  
   [ Jamie Strandboge ]
   * apt.cron.daily: catch invalid dates due to DST time changes
     in the stamp files
@@ -760,7 +777,7 @@ apt (0.7.21) unstable; urgency=low
   * Clarify the --help for 'purge' (LP: #243948)
   * cmdline/apt-get.cc
     - fix "apt-get source pkg" if there is a binary package and
-      a source package of the same name but from different
+      a source package of the same name but from different 
       packages (LP: #330103)
 
   [ Colin Watson ]
@@ -937,10 +954,10 @@ apt (0.7.20) unstable; urgency=low
       (Closes: #440049, #509337)
 
   [ Michael Vogt ]
-  * add option to "apt-get build-dep" to mark the needed
-    build-dep packages as automatic installed.
+  * add option to "apt-get build-dep" to mark the needed 
+    build-dep packages as automatic installed. 
     This is controlled via the value of
-    APT::Get::Build-Dep-Automatic and is set "false" by default.
+    APT::Get::Build-Dep-Automatic and is set "false" by default.  
     Thanks to Aaron Haviland, closes: #448743
   * apt-inst/contrib/arfile.cc:
     - support members ending with '/' as well (thanks to Michal Cihr,
@@ -948,12 +965,12 @@ apt (0.7.20) unstable; urgency=low
 
   [ Christian Perrier ]
   * Translations:
-    - Finnish updated. Closes: #508449
+    - Finnish updated. Closes: #508449 
     - Galician updated. Closes: #509151
     - Catalan updated. Closes: #509375
     - Vietnamese updated. Closes: #509422
     - Traditional Chinese added. Closes: #510664
-    - French corrected (remove awful use of first person)
+    - French corrected (remove awful use of first person) 
 
  -- Michael Vogt <mvo@debian.org>  Mon, 05 Jan 2009 08:59:20 +0100
 
@@ -980,8 +997,6 @@ apt (0.7.19) unstable; urgency=low
       (Closes: #419521)
 
   [ Michael Vogt ]
-  * doc/makefile:
-    - add examples/apt-https-method-example.conf
     - fix SIGHUP handling (closes: #463030)
 
   [ Christian Perrier ]
@@ -1347,19 +1362,6 @@ apt (0.7.14ubuntu2) intrepid; urgency=low
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 09 May 2008 13:50:22 +0200
 
-apt (0.7.14ubuntu1) intrepid; urgency=low
-
-  [ Michael Vogt ]
-  * enable installation of recommends by default
-  * debian/apt.conf.ubuntu:
-    - remove APT::Install-Recommends-Sections (no longer needed)
-  * merged from debian/sid, remaining changes:
-    - authentication-reliable branch (to be merged into debian soon)
-    - mirror:// uri branch (breaks ABI in debian, not merged yet)
-    - apport failure reporting
-    - show warning on apt-get source with 'Vcs-' header
-    - proxy detection from gconf in apt.cron
-  
 apt (0.7.14) unstable; urgency=low
 
   [ Christian Perrier ]
@@ -1429,7 +1431,7 @@ apt (0.7.12) unstable; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - merged patch from Kees Cook to fix anoying upper-case display
       on amd64 in sbuild
-  * apt-pkg/algorithms.cc:
+  * apt-pkg/algorithms.cc: 
     - add APT::Update::Post-Invoke-Success script slot
     - Make the breaks handling use the kill list. This means, that a
       Breaks: Pkg (<< version) may put Pkg onto the remove list.
@@ -1468,7 +1470,7 @@ apt (0.7.12) unstable; urgency=low
     - French updated.
     - Bulgarian updated. Closes: #448492
     - Galician updated. Closes: #476839
-
+  
   [ Daniel Burrows ]
   * apt-pkg/depcache.cc:
     - Patch MarkInstall to follow currently satisfied Recommends even
@@ -1486,7 +1488,7 @@ apt (0.7.12) unstable; urgency=low
     - Add missing Build-Depends-Indep on xsltproc, docbook-xsl, and xmlto.
 
  -- Daniel Burrows <dburrows@debian.org>  Sat, 26 Apr 2008 12:24:35 -0700
-  
+
 apt (0.7.11) unstable; urgency=critical
   
   [ Raise urgency to critical since it fixes a critical but for Debian
@@ -1545,6 +1547,7 @@ apt (0.7.10) unstable; urgency=low
     - Simplified Chinese updated. Closes: #458039
     - French updated.
     - Norwegian Bokmål updated. Closes: #457917
+
   [ Michael Vogt ]
   * debian/rules
     - fix https install location
@@ -1559,7 +1562,7 @@ apt (0.7.10) unstable; urgency=low
     - make the authentication download code more robust against
       servers/proxies with broken If-Range implementations
   * apt-pkg/packagemanager.{cc,h}:
-    - propergate the Immediate flag to make hitting the
+    - propergate the Immediate flag to make hitting the 
       "E: Internal Error, Could not perform immediate configuration (2)"
       harder
   * debian/control:
@@ -1573,7 +1576,7 @@ apt (0.7.10) unstable; urgency=low
     - support lzma data members
   * ftparchive/multicompress.cc:
     - support lzma output
-
+  
   [ Daniel Burrows ]
   * apt-pkg/contrib/configuration.cc:
     - if RootDir is set, then FindFile and FindDir will return paths
@@ -1582,8 +1585,8 @@ apt (0.7.10) unstable; urgency=low
   [ Christian Perrier ]
   * Fix wording for "After unpacking...". Thanks to Michael Gilbert
     for the patch. Closes: #260825
-  
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 03 Jan 2008 11:31:45 +0100
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 07 Jan 2008 21:40:47 +0100
 
 apt (0.7.9ubuntu17) hardy-proposed; urgency=low
 
@@ -2166,6 +2169,13 @@ apt (0.7.6) unstable; urgency=low
 
  -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
 
+apt (0.7.6) unstable; urgency=low
+
+  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
+    directory downloading on non-linux architectures (closes: #435597)
+
+ -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
+
 apt (0.7.5) unstable; urgency=low
 
   [ Otavio Salvador ]
@@ -2253,7 +2263,7 @@ apt (0.7.3) unstable; urgency=low
           which disappeared from the BZR repositories
 
  -- Michael Vogt <mvo@debian.org>  Sun, 01 Jul 2007 12:31:29 +0200
-  
+
 apt (0.7.2ubuntu7) gutsy; urgency=low
 
   * fix build-dependencies 
@@ -2404,16 +2414,12 @@ apt (0.7.1) experimental; urgency=low
   * methods/cdrom.cc:  
     - only umount if it was mounted by the method before
   * po/gl.po:
-    - fix error in translation that causes trouble to lsb_release 
-      (LP#79165)
+    - fix error translation that causes trouble to lsb_release
   * apt-pkg/acquire-item.cc:
     - if decompression of a index fails, delete the index 
   * apt-pkg/acquire.{cc,h}:
     - deal better with duplicated sources.list entries (avoid
       double queuing of  URLs) - this fixes hangs in bzip/gzip
-      (LP#102511)
-  * Fix broken use of awk in apt-key that caused removal of the wrong keys
-    from the keyring. Closes: #412572
   * merged from Christian Perrier:
     * mr.po: New Marathi translation  Closes: #416806
     * zh_CN.po: Updated by Eric Pareja  Closes: #416822
@@ -2436,6 +2442,33 @@ apt (0.7.1) experimental; urgency=low
     - allow multiple packages (thanks to David Foerster)
 
  -- Michael Vogt <mvo@debian.org>  Wed,  2 May 2007 13:43:44 +0200
+
+apt (0.7.0) experimental; urgency=low
+
+  * Package that contains all the new features
+  * Removed all #pragma interface/implementation
+  * Branch that contains all the new features:
+  * translated package descriptions
+  * task install support
+  * automatic dependency removal (thanks to Daniel Burrows)
+  * merged support for the new dpkg "Breaks" field 
+    (thanks to Ian Jackson)
+  * handle network failures more gracefully on "update"
+  * support for unattended-upgrades (via unattended-upgrades
+    package)
+  * added apt-transport-https method
+  * merged "install-recommends" branch (ABI break): 
+    - new "--install-recommends"
+    - install new recommends on "upgrade" if --install-recommends is 
+      given
+    - new "--fix-policy" option to install all packages with unmet
+      important dependencies (usefull with --install-recommends to
+      see what not-installed recommends are on the system)
+    - fix of recommended packages display (only show CandidateVersion
+      fix or-group handling)
+  * merged "install-task" branch (use with "apt-get install taskname^")
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 12 Jan 2007 20:48:07 +0100
 
 apt (0.6.46.4ubuntu10) feisty; urgency=low
 
@@ -2609,7 +2642,7 @@ apt (0.6.46.3-0.2) unstable; urgency=high
   * Fix FTBFS on most arches (regression from the fix of #400874)
 
  -- Andreas Barth <aba@not.so.argh.org>  Tue,  5 Dec 2006 15:51:22 +0000 
-  
+
 apt (0.6.46.3-0.1) unstable; urgency=high
 
   * Non-maintainer upload with permission of Michael Vogt.
@@ -2704,10 +2737,36 @@ apt (0.6.46) unstable; urgency=low
   * debian/control:
     - switched to libdb4.4 for building (closes: #381019)
   * cmdline/apt-get.cc:
-    - fix in the TryInstallTask() code to make sure that all package
-      there are marked manual install (lp: #61684)
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 28 Sep 2006 00:34:20 +0200
+    - show only the recommends/suggests for the candidate-version, not for all
+      versions of the package (closes: #257054)
+    - properly handle recommends/suggests or-groups when printing the list of
+      suggested/recommends packages (closes: #311619)
+  * methods/http.cc:
+    - check more careful for incorrect proxy settings (closes: #378868)
+  * methods/gzip.cc:
+    - don't hang when /var is full (closes: #341537), thanks to
+      Luis Rodrigo Gallardo Cruz for the patch
+  * doc/examples/sources.list:
+    - removed non-us.debian.org from the example (closes: #380030,#316196)
+  * Merged from Christian Perrier bzr branch:
+    * ro.po: Updated to 514t. Closes: #388402
+    * dz.po: Updated to 514t. Closes: #388184
+    * it.po: Fixed typos. Closes: #387812
+    * ku.po: New kurdish translation. Closes: #387766
+    * sk.po: Updated to 514t. Closes: #386851
+    * ja.po: Updated to 514t. Closes: #386537
+    * gl.po: Updated to 514t. Closes: #386397
+    * fr.po: Updated to 516t.
+    * fi.po: Updated to 512t. Closes: #382702
+  * share/archive-archive.gpg:
+    - removed the outdated amd64 and debian-2004 keys
+  * apt-pkg/tagfile.cc:
+    - applied patch from Jeroen van Wolffelaar to make the tags
+      caseinsensitive (closes: #384182)
+    - reverted MMap use in the tagfile because it does not work 
+      across pipes (closes: #383487) 
+  
+ -- Michael Vogt <mvo@debian.org>  Thu, 21 Sep 2006 10:25:03 +0200
 
 apt (0.6.45ubuntu14) edgy; urgency=low
 
@@ -2912,6 +2971,12 @@ apt (0.6.45) unstable; urgency=low
     * dz.po: New Dzongkha translation: 512t
     * ro.po: Updated to 512t
     * eu.po: Updated
+    * eu.po: Updated
+  * fix apt-get dist-upgrade
+  * fix warning if no /var/lib/apt/extended_states is present
+  * don't download Translations for deb-src sources.list lines
+  * apt-pkg/tagfile.cc:
+    - support not-mmapable files again
 
  -- Michael Vogt <mvo@debian.org>  Thu, 27 Jul 2006 00:52:05 +0200
 
@@ -2946,23 +3011,33 @@ apt (0.6.44.2ubuntu1) edgy; urgency=low
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon,  3 Jul 2006 18:30:46 +0200
 
-apt (0.6.44.2) unstable; urgency=low
-  
-   * apt-pkg/depcache.cc:
-     - added Debug::pkgDepCache::AutoInstall (thanks to infinity)
-   * apt-pkg/acquire-item.cc:
-     - fix missing chmod() in the new aquire code
-       (thanks to Bastian Blank, Closes: #367425)
-   * merged from
-     http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
-     * sk.po: Completed to 512t
-     * eu.po: Completed to 512t
-     * fr.po: Completed to 512t
-     * sv.po: Completed to 512t
-     * Update all PO and the POT. Gives 506t6f for formerly
-       complete translations
+apt (0.6.44.2exp1) experimental; urgency=low
 
- -- Michael Vogt <mvo@debian.org>  Wed, 14 Jun 2006 12:00:57 +0200 
+  * added support for i18n of the package descriptions
+  * added support for aptitude like auto-install tracking (a HUGE
+    HUGE thanks to Daniel Burrows who made this possible) 
+  * synced with the http://people.debian.org/~mvo/bzr/apt/debian-sid branch
+  * build from http://people.debian.org/~mvo/bzr/apt/debian-experimental
+
+ -- Michael Vogt <mvo@debian.org>  Mon,  3 Jul 2006 21:50:31 +0200
+
+apt (0.6.44.2) unstable; urgency=low
+
+  * apt-pkg/depcache.cc:
+    - added Debug::pkgDepCache::AutoInstall (thanks to infinity)
+  * apt-pkg/acquire-item.cc:
+    - fix missing chmod() in the new aquire code 
+      (thanks to Bastian Blank, Closes: #367425)
+  * merged from 
+    http://www.perrier.eu.org/debian/packages/d-i/level4/apt-main:
+    * sk.po: Completed to 512t
+    * eu.po: Completed to 512t
+    * fr.po: Completed to 512t
+    * sv.po: Completed to 512t
+    * Update all PO and the POT. Gives 506t6f for formerly
+      complete translations
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 14 Jun 2006 12:00:57 +0200
 
 apt (0.6.44.1-0.1) unstable; urgency=low
 
@@ -3053,14 +3128,16 @@ apt (0.6.43.3) unstable; urgency=low
     * pl.po: Completed to 512t. Closes: #349514
     * sk.po: Completed to 512t. Closes: #349474
     * gl.po: Completed to 512 strings Closes: #349407
-    * vi.po: Completed to 512 strings
     * sv.po: Completed to 512 strings Closes: #349210
     * ru.po: Completed to 512 strings Closes: #349154
     * da.po: Completed to 512 strings Closes: #349084
     * fr.po: Completed to 512 strings
+    * vi.po: Completed to 511 strings  Closes: #348968
+    * zh_CN.po: Completed to 512t. Closes: #353936
+    * it.po: Completed to 512t. Closes: #352803
+    * pt_BR.po: Completed to 512t. Closes: #352419
     * LINGUAS: Add Welsh
     * *.po: Updated from sources (512 strings)
-    * vi.po: Completed to 511 strings  Closes: #348968
   * apt-pkg/deb/deblistparser.cc:
     - don't explode on a DepCompareOp in a Provides line, but warn about
       it and ignore it otherwise (thanks to James Troup for reporting it)
@@ -3071,10 +3148,8 @@ apt (0.6.43.3) unstable; urgency=low
   * make apt-cache madison work without deb-src entries (#352583)
   * cmdline/apt-get.cc: only run the list-cleaner if a update was 
     successfull
-  * apt-get update errors are only warnings nowdays
-  * be more careful with the signature file on network failures
 
- --  Michael Vogt <mvo@debian.org>  Wed, 22 Feb 2006 10:13:04 +0100
+ -- Michael Vogt <mvo@debian.org>  Wed, 22 Feb 2006 10:13:04 +0100
 
 apt (0.6.43.2ubuntu1) dapper; urgency=low
 
@@ -3150,7 +3225,7 @@ apt (0.6.43.1ubuntu1) dapper; urgency=low
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 10 Jan 2006 17:09:31 +0100
 
 apt (0.6.43.1) unstable; urgency=low
-  
+
   * Merge bubulle@debian.org--2005/apt--main--0 up to patch-148:
     * fr.po: Completed to 510 strings
     * it.po: Completed to 510t
@@ -3249,7 +3324,7 @@ apt (0.6.42.2) unstable; urgency=high
   * Priority high to get the AMD key into testing ASAP.
 
  -- Frans Pop <fjp@debian.org>  Sun, 30 Oct 2005 21:29:11 +0100
- 
+
 apt (0.6.42.1) unstable; urgency=low
 
   * fix a incorrect example in the apt_prefrences man page
@@ -3268,13 +3343,13 @@ apt (0.6.42) unstable; urgency=low
     - unmount the cdrom when apt failed to locate any package files
   * allow cdrom failures and fallback to other sources in that case
     (closes: #44135)
-  * better error text when dpkg-source fails
+  * better error text when dpkg-source fails 
   * Merge bubulle@debian.org--2005/apt--main--0 up to patch-115:
     - patch-99: Added Galician translation
     - patch-100: Completed Danish translation (Closes: #325686)
     - patch-104: French translation completed
     - patch-109: Italian translation completed
-    - patch-112: Swedish translation update
+    - patch-112: Swedish translation update 
     - patch-115: Basque translation completed (Closes: #333299)
   * applied french man-page update (thanks to Philippe Batailler)
     (closes: #316638, #327456)
@@ -3288,9 +3363,9 @@ apt (0.6.42) unstable; urgency=low
   * apt-pkg/contrib/md5.cc:
     - fix a alignment problem on sparc64 that gives random bus errors
       (thanks to Fabbione for providing a test-case)
-  * init the default ScreenWidth to 79 columns by default
+  * init the default ScreenWidth to 79 columns by default 
     (Closes: #324921)
-  * cmdline/apt-cdrom.cc:
+  * cmdline/apt-cdrom.cc: 
     - fix some missing gettext() calls (closes: #334539)
   * doc/apt-cache.8.xml: fix typo (closes: #334714)
 
@@ -3301,8 +3376,8 @@ apt (0.6.41) unstable; urgency=low
   * improved the support for "error" and "conffile" reporting from
     dpkg, added the format to README.progress-reporting
   * added README.progress-reporting to the apt-doc package
-  * improved the network timeout handling, if a index file from a
-    sources.list times out or EAI_AGAIN is returned from getaddrinfo,
+  * improved the network timeout handling, if a index file from a 
+    sources.list times out or EAI_AGAIN is returned from getaddrinfo, 
     don't try to get the other files from that entry
   * Support architecture-specific extra overrides
     (closes: #225947). Thanks to  Anthony Towns for idea and
@@ -3310,10 +3385,10 @@ apt (0.6.41) unstable; urgency=low
   * Javier Fernandez-Sanguino Pen~a:
     - Added a first version of an apt-secure.8 manpage, and modified
       apt-key and apt.end accordingly. Also added the 'update'
-      argument to apt-key which was previously not documented
+      argument to apt-key which was previously not documented 
       (Closes: #322120)
   * Andreas Pakulat:
-    - added example apt-ftparchive.conf file to doc/examples
+    - added example apt-ftparchive.conf file to doc/examples 
       (closes: #322483)
   * Fix a incorrect example in the man-page (closes: #282918)
   * Fix a bug for very long lines in the apt-cdrom code (closes: #280356)
@@ -3322,11 +3397,11 @@ apt (0.6.41) unstable; urgency=low
   * Change pkgPolicy::Pin from private to protected to let subclasses
     access it too (closes: #321799)
   * add default constructor for PrvIterator (closes: #322267)
-  * Reread status configuration on debSystem::Initialize()
+  * Reread status configuration on debSystem::Initialize() 
     (needed for apt-proxy, thanks to Otavio for this patch)
-
- -- Michael Vogt <mvo@debian.org>  Mon,  5 Sep 2005 22:59:03 +0200
   
+ -- Michael Vogt <mvo@debian.org>  Mon,  5 Sep 2005 22:59:03 +0200
+
 apt (0.6.40.1ubuntu8) breezy; urgency=low
 
   * Cherry picked michael.vogt@ubuntu.com--2005/apt--mvo--0--patch-62:
@@ -3474,7 +3549,7 @@ apt (0.6.39) unstable; urgency=low
   * Update priority of apt-utils to important, to match the override file
   * Install only one keyring on each branch (Closes: #316119)
 
- -- Matt Zimmerman <mdz@debian.org>  Tue, 28 Jun 2005 11:35:21 -0700
+ -- Matt Zimmerman <mdz@debian.org>  Tue, 28 Jun 2005 11:51:09 -0700
 
 apt (0.6.38ubuntu1) breezy; urgency=low
 
@@ -5361,3 +5436,4 @@ apt (0.0.1) unstable; urgency=low
   * Initial Release.
 
  -- Scott K. Ellis <scott@debian.org>  Tue, 31 Mar 1998 12:49:28 -0500
+
