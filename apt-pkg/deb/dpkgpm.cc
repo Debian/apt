@@ -614,6 +614,8 @@ bool pkgDPkgPM::OpenLog()
 	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
 	 }
       }
+      if (_config->Exists("Commandline::AsString") == true)
+	 WriteHistoryTag("Commandline", _config->Find("Commandline::AsString"));
       WriteHistoryTag("Install", install);
       WriteHistoryTag("Upgrade", upgrade);
       WriteHistoryTag("Downgrade",downgrade);

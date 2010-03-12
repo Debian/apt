@@ -14,9 +14,12 @@ apt (0.7.26) UNRELEASED; urgency=low
       Thanks to Osamu Aoki for pointing it out! (Closes: #567669)
   * apt-pkg/deb/dpkgpm.cc:
     - fix error message construction in OpenLog()
+    - if available store the Commandline in the history
   * cmdline/apt-get.cc:
     - add a --only-upgrade flag to install command (Closes: #572259)
     - fix memory leaks in error conditions in DoSource()
+  * apt-pkg/contrib/cmndline.cc:
+    - save Commandline in Commandline::AsString for logging
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 19 Feb 2010 21:21:43 +0100
 

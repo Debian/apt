@@ -23,3 +23,9 @@ PROGRAM = GetListOfFilesInDir${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = getlistoffilesindir_test.cc
 include $(PROGRAM_H)
+
+# Program for testing CommandLine reconstruction
+PROGRAM = commandlineasstring${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = commandlineasstring_test.cc
+include $(PROGRAM_H)
