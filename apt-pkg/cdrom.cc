@@ -289,7 +289,8 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 	 List[J] = string();
       }
    }  
- 
+   delete[] Inodes;
+
    // Wipe erased entries
    for (unsigned int I = 0; I < List.size();)
    {
