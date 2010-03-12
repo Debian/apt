@@ -1317,9 +1317,11 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 if (Src.empty() == true) 
 	 {
 	    // Sources files have no codename information
-	    if (VerTag.empty() == true && DefRel.empty() == false)
-	       _error->Warning(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
-	    DefRel.clear();
+	    if (VerTag.empty() == true && DefRel.empty() == false) 
+	    {
+	       _error->Error(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
+	       return 0;
+	    }
 	 }
       }
       if (Src.empty() == true)
@@ -1386,8 +1388,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       if (Last != 0 || VerTag.empty() == true)
 	 break;
       //if (VerTag.empty() == false && Last == 0)
-      _error->Warning(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
-      VerTag.clear();
+      _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
+      return 0;
    }
 
    if (Last == 0 || Last->Jump(Offset) == false)
