@@ -958,6 +958,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    rtt = tt;
 	    cfmakeraw(&rtt);
 	    rtt.c_lflag &= ~ECHO;
+	    rtt.c_lflag |= ISIG;
 	    // block SIGTTOU during tcsetattr to prevent a hang if
 	    // the process is a member of the background process group
 	    // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html

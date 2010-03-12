@@ -12,6 +12,11 @@ apt (0.7.25.3ubuntu2) UNRELEASED; urgency=low
   * debian/apt.conf.autoremove:
     - add "oldlibs" to the APT::Never-MarkAuto-Sections as its used
       for transitional packages
+  * apt-pkg/deb/dpkgpm.cc:
+    - fix backgrounding when dpkg runs (closes: #486222)
+  * cmdline/apt-mark:
+    - show error on incorrect aguments (LP: #517917), thanks to
+      Torsten Spindler
 
   [ Robert Collins ]
   * Change the package index Info methods to allow apt-cache policy to be
