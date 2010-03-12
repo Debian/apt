@@ -82,6 +82,9 @@ if __name__ == "__main__":
     else:
         STATE_FILE=options.filename
 
+    if len(args) == 0:
+        parser.error("first argument must be 'markauto', 'unmarkauto' or 'showauto'")
+
     if args[0] == "showauto":
         show_automatic(STATE_FILE)
     else:
