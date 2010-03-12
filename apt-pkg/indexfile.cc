@@ -89,8 +89,11 @@ bool pkgIndexFile::TranslationsAvailable()
 
 bool pkgIndexFile::CheckLanguageCode(const char *Lang)
 {
-  if (strlen(Lang) == 2 || (strlen(Lang) == 5 && Lang[2] == '_'))
-    return true;
+  if (strlen(Lang) == 2 || 
+      strlen(Lang) == 3 ||
+      (strlen(Lang) > 3 && Lang[3] == '_') ||
+      (strlen(Lang) == 5 && Lang[2] == '_'))
+  return true;
 
   if (strcmp(Lang,"C") != 0)
     _error->Warning("Wrong language code %s", Lang);
@@ -112,13 +115,18 @@ string pkgIndexFile::LanguageCode()
      // we have a mapping of the language codes that contains all the language
      // codes that need the country code as well 
      // (like pt_BR, pt_PT, sv_SE, zh_*, en_*)
-     const char *need_full_langcode[] = { "pt","sv","zh","en", NULL };
+     const char *need_full_langcode[] = { "cs_", 
+					  "en_", 
+					  "pt_",
+					  "sv_",
+					  "zh_", 
+					  NULL };
      for(const char **s = need_full_langcode;*s != NULL; s++)
 	if(lang.find(*s) == 0)
 	   return lang.substr(0,5);
      
-     if(lang.size() > 2)
-	return lang.substr(0,2);
+     if(lang.find("_") != lang.npos)
+	return lang.substr(0, lang.find("_"));
      else
 	return lang;
   }
