@@ -1,11 +1,6 @@
 apt (0.7.25.3ubuntu2) UNRELEASED; urgency=low
 
   [ Michael Vogt ]
-  * methods/http.cc:
-    - add Acquire::http::ProxyAutoDetect configuration that 
-      can be used to call a external helper to figure out the 
-      proxy configuration and return it to apt via stdout
-      (this is a step towards WPAD and zeroconf/avahi support)
   * abicheck/
     - add new abitest tester using the ABI Compliance Checker from
       http://ispras.linuxfoundation.org/index.php/ABI_compliance_checker
@@ -23,12 +18,17 @@ apt (0.7.25.3ubuntu2) UNRELEASED; urgency=low
     useful when using several different archives on the same host.
     (Closes: #329814, LP: #22354)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 18 Dec 2009 16:54:18 +0100
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 12 Mar 2010 11:10:15 +0100
 
 apt (0.7.25.3ubuntu1) lucid; urgency=low
 
   [ Michael Vogt ]
   * merged with the debian-sid branch
+  * methods/http.cc:
+    - add Acquire::http::ProxyAutoDetect configuration that 
+      can be used to call a external helper to figure out the 
+      proxy configuration and return it to apt via stdout
+      (this is a step towards WPAD and zeroconf/avahi support)
   
   [ Ivan Masár ]
   * Slovak translation update. Closes: #568294
