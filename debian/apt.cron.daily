@@ -429,18 +429,6 @@ if [ $UpdateInterval -eq 0 ] &&
     exit 0
 fi
 
-# set the proxy based on the admin users gconf settings
-admin_user=$(getent group admin|cut -d: -f4|cut -d, -f1)
-if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ] && [ -x /usr/bin/gconftool ]; then
-       use=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/use_http_proxy 2>/dev/null)
-       host=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/host 2>/dev/null)
-       port=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/port 2>/dev/null)
-       if [ "$use" = "true" ] && [ -n "$host" ] && [ -n "$port" ]; then
-               export http_proxy="http://$host:$port/"
-       fi
-fi
-
-
 # deal with BackupArchiveInterval
 do_cache_backup $BackupArchiveInterval
 

@@ -17,6 +17,16 @@ apt (0.7.25.3ubuntu2) UNRELEASED; urgency=low
       error out (LP: #502641)
   * apt-pkg/indexfile.cc:
     - deal correctly with three letter langcodes (LP: #391409)
+  * debian/apt.cron.daily:
+    - do not look into admin users gconf anymore for the http proxy
+      the user now needs to use the "Apply system-wide" UI in the
+      gnome-control-center to set it
+  * debian/apt.postinst:
+    - add set_apt_proxy_from_gconf() and run that once on upgrade if
+      there is no proxy configured already system-wide (LP: #432631)
+      From that point on gnome-control-center will have to warn if
+      the user makes changes to the proxy settings and does not apply
+      them system wide
 
   [ Robert Collins ]
   * Change the package index Info methods to allow apt-cache policy to be
