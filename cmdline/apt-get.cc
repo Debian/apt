@@ -1098,7 +1098,17 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		  Pkg.Name());
       return true;
    }
-   
+
+   // Ignore request for install if package would be new
+   if (_config->FindB("APT::Get::Only-Upgrade", false) == true &&
+       Pkg->CurrentVer == 0)
+   {
+      if (AllowFail == true)
+	 ioprintf(c1out,_("Skipping %s, it is not installed and only upgrades are requested.\n"),
+		  Pkg.Name());
+      return true;
+   }
+
    // Check if there is something at all to install
    pkgDepCache::StateCache &State = Cache[Pkg];
    if (Remove == true && Pkg->CurrentVer == 0)
@@ -1779,6 +1789,7 @@ bool DoInstall(CommandLine &CmdL)
 	       Cache[Pkg].Install() == false && 
 	       (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
 	       _config->FindB("APT::Get::ReInstall",false) == false &&
+	       _config->FindB("APT::Get::Only-Upgrade",false) == false &&
 	       _config->FindB("APT::Get::Download-Only",false) == false)
 	    {
 	       ioprintf(c1out,_("%s set to manually installed.\n"),
@@ -2821,6 +2832,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {0,"fix-missing","APT::Get::Fix-Missing",0},
       {0,"ignore-hold","APT::Ignore-Hold",0},      
       {0,"upgrade","APT::Get::upgrade",0},
+      {0,"only-upgrade","APT::Get::Only-Upgrade",0},
       {0,"force-yes","APT::Get::force-yes",0},
       {0,"print-uris","APT::Get::Print-URIs",0},
       {0,"diff-only","APT::Get::Diff-Only",0},
