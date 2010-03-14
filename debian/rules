@@ -78,8 +78,8 @@ APT_UTILS=ftparchive sortpkgs extracttemplates
 include buildlib/libversion.mak
 
 # Determine which package we should provide in the control files
-LIBAPTPKG_PROVIDE=libapt-pkg-$(LIBAPTPKG_MAJOR)
-LIBAPTINST_PROVIDE=libapt-inst-$(LIBAPTINST_MAJOR)
+LIBAPTPKG_PROVIDE=libapt-pkg$(LIBAPTPKG_MAJOR)
+LIBAPTINST_PROVIDE=libapt-inst$(LIBAPTINST_MAJOR)
 
 debian/shlibs.local: apt-pkg/makefile
 	# We have 3 shlibs.local files.. One for 'apt', one for 'apt-utils' and

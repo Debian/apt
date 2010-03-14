@@ -1,5 +1,10 @@
 apt (0.7.26) UNRELEASED; urgency=low
 
+  [ Christian Perrier ]
+  * German translation update. Closes: #571037
+  * Spanish manpages translation update. Closes: #573293
+
+  [ David Kalnischkies ]
   * Switch to dpkg-source 3.0 (native) format
   * cmdline/apt-mark:
     - don't crash if no arguments are given (Closes: #570962)
@@ -23,7 +28,16 @@ apt (0.7.26) UNRELEASED; urgency=low
   * apt-pkg/deb/debversion.cc:
     - consider absent of debian revision equivalent to 0 (Closes: #573592)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 19 Feb 2010 21:21:43 +0100
+  [ Julian Andres Klode ]
+  * cmdline/apt-mark:
+    - Use the new python-apt API (and conflict with python-apt << 0.7.93.2).
+  * apt-inst/contrib/arfile.h:
+    - Add public ARArchive::Members() which returns the list of members.
+  * debian/rules:
+    - Fix the libraries name to be e.g. libapt-pkg4.9 instead of
+      libapt-pkg-4.9.
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 14 Mar 2010 16:47:07 +0100
 
 apt (0.7.26~exp2) experimental; urgency=low
 
