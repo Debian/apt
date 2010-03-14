@@ -634,10 +634,8 @@ bool pkgDepCache::RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned l
    if (strcmp(Pkg.Arch(),"all") == 0)
       return false;
 
-// std::cout << "CHECK " << Pkg << std::endl;
-
-   unsigned char const DepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
-   if ((DepState & DepInstMin) == DepInstMin) {
+   unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+   if ((CurDepState & DepInstMin) == DepInstMin) {
       // okay, the package isn't broken, but is the package also required?
       // If it has no real dependencies, no installed rdepends and doesn't
       // provide something of value, we will kill it as not required.
@@ -645,16 +643,15 @@ bool pkgDepCache::RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned l
       // a new dependency in a newer version…
       for (pkgCache::DepIterator D = V.DependsList();
 	   D.end() != true; ++D)
-	 if ((D->Type == pkgCache::Dep::Depends ||
-	      D->Type == pkgCache::Dep::PreDepends) &&
-	     D.ParentPkg()->Group != Pkg->Group)
+	 if (D.IsCritical() == true && D.ParentPkg()->Group != Pkg->Group)
 	    return false;
       for (DepIterator D = Pkg.RevDependsList(); D.end() != true; ++D)
       {
-	 if (D->Type != pkgCache::Dep::Depends &&
-	     D->Type != pkgCache::Dep::PreDepends)
+	 if (D.IsCritical() == false)
 	    continue;
 	 PkgIterator const P = D.ParentPkg();
+	 if (P->Group == Pkg->Group)
+	    continue;
 	 if (P->CurrentVer != 0)
 	    return false;
       }
@@ -800,6 +797,68 @@ void pkgDepCache::Update(OpProgress *Prog)
 	 }
 	 recheck.erase(p);
       }
+
+      /* Okay, we have killed a great amount of pseudopackages -
+	 we have killed so many that we have now arch "all" packages
+	 without an installed pseudo package, but we NEED an installed
+	 pseudo package, so we will search now for a pseudo package
+	 we can install without breaking everything. */
+      for (GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
+      {
+	 PkgIterator P = G.FindPkg("all");
+	 if (P.end() == true)
+	    continue;
+	 if (P->CurrentVer == 0)
+	    continue;
+	 bool installed = false;
+	 for (P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
+	 {
+	    if (strcmp(P.Arch(), "all") == 0)
+	       continue;
+	    if (P->CurrentVer == 0)
+	       continue;
+	    installed = true;
+	    break;
+	 }
+	 if (installed == false)
+	    recheck.insert(G.Index());
+      }
+      std::vector<std::string> Archs = APT::Configuration::getArchitectures();
+      bool checkChanged = false;
+      do {
+	 for(std::set<unsigned long>::const_iterator g = recheck.begin();
+	     g != recheck.end(); ++g) {
+	    GrpIterator G = GrpIterator(*Cache, Cache->GrpP + *g);
+	    VerIterator allV = G.FindPkg("all").CurrentVer();
+	    for (std::vector<std::string>::const_iterator a = Archs.begin();
+		 a != Archs.end(); ++a)
+	    {
+	       PkgIterator P = G.FindPkg(*a);
+	       if (P.end() == true) continue;
+	       for (VerIterator V = P.VersionList(); V.end() != true; ++V)
+	       {
+		  // FIXME: String comparison isn't a save indicator!
+		  if (strcmp(allV.VerStr(),V.VerStr()) != 0)
+		     continue;
+		  unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+		  if ((CurDepState & DepInstMin) != DepInstMin)
+		     break; // we found the correct version, but it is broken. Better try another arch or later again
+		  P->CurrentVer = V.Index();
+		  AddStates(P);
+		  Update(P);
+		  AddSizes(P);
+		  checkChanged = true;
+		  break;
+	       }
+	    }
+	    recheck.erase(g);
+	 }
+      } while (checkChanged == true && recheck.empty() == false);
+
+      if (_config->FindB("Debug::MultiArchKiller", false) == true)
+	 for(std::set<unsigned long>::const_iterator g = recheck.begin();
+	     g != recheck.end(); ++g)
+	    std::cout << "No pseudo package for »" << GrpIterator(*Cache, Cache->GrpP + *g).Name() << "« installed" << std::endl;
    }
 
    if (Prog != 0)
