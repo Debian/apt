@@ -235,16 +235,30 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
    std::set<string> pkgs_seen;
    const char *nullreorderlist[] = {0};
    while(tagfile.Step(section)) {
-	 string pkgname = section.FindS("Package");
+	 string const pkgname = section.FindS("Package");
 	 // Silently ignore unknown packages and packages with no actual
 	 // version.
 	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
 	 if(pkg.end() || pkg.VersionList().end()) 
 	    continue;
-	 bool newAuto = (PkgState[pkg->ID].Flags & Flag::Auto);
+	 StateCache const &P = PkgState[pkg->ID];
+	 bool newAuto = (P.Flags & Flag::Auto);
+	 // skip not installed or now-removed ones if requested
+	 if (InstalledOnly && (
+	     (pkg->CurrentVer == 0 && P.Mode != ModeInstall) ||
+	     (pkg->CurrentVer != 0 && P.Mode == ModeDelete)))
+	 {
+	    // The section is obsolete if it contains no other tag
+	    unsigned int const count = section.Count();
+	    if (count < 2 ||
+		(count == 2 && section.Exists("Auto-Installed")))
+	       continue;
+	    else
+	       newAuto = false;
+	 }
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Update existing AutoInstall info: " 
-		      << pkg.Name() << std::endl;
+		      << pkgname << std::endl;
 	 TFRewriteData rewrite[2];
 	 rewrite[0].Tag = "Auto-Installed";
 	 rewrite[0].Rewrite = newAuto ? "1" : "0";
@@ -258,15 +272,18 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
    // then write the ones we have not seen yet
    std::ostringstream ostr;
    for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end(); pkg++) {
-      if(PkgState[pkg->ID].Flags & Flag::Auto) {
+      StateCache const &P = PkgState[pkg->ID];
+      if(P.Flags & Flag::Auto) {
 	 if (pkgs_seen.find(pkg.Name()) != pkgs_seen.end()) {
 	    if(debug_autoremove)
 	       std::clog << "Skipping already written " << pkg.Name() << std::endl;
 	    continue;
 	 }
-         // skip not installed ones if requested
-         if(InstalledOnly && pkg->CurrentVer == 0)
-            continue;
+	 // skip not installed ones if requested
+	 if (InstalledOnly && (
+	     (pkg->CurrentVer == 0 && P.Mode != ModeInstall) ||
+	     (pkg->CurrentVer != 0 && P.Mode == ModeDelete)))
+	    continue;
 	 if(debug_autoremove)
 	    std::clog << "Writing new AutoInstall: " 
 		      << pkg.Name() << std::endl;
