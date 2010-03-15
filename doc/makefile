@@ -46,9 +46,14 @@ TO = $(DOC)
 TARGET = binary
 include $(COPY_H)
 
-#.PHONY: headers library clean veryclean all binary program doc doc.pt_BR doc.fr
+.PHONY: clean clean-subdirs veryclean veryclean-subdirs all binary doc
 doc:
-	for dir in $(SUBDIRS); do\
+	for i in $(shell ls po/*.po | sed -r 's#po/([a-z]+[A-Z_]*).po#\1#'); do \
+		test -d $$i || mkdir $$i; \
+		test -f $$i/makefile || sed "s#@@LANG@@#$$i#" lang.makefile > $$i/makefile; \
+	done
+	# it is likely that we have changed the list, so SUBDIRS is incorrect
+	for dir in $(dir $(wildcard */makefile)); do\
 		$(MAKE) -C $$dir $@; \
 	done
 
@@ -70,7 +75,7 @@ doc: po4a
 
 clean: po4a-clean
 
-.PHONY: update-po po4a
+.PHONY: update-po po4a stats
 update-po:
 	po4a --previous --no-backups --force --no-translations po4a.conf
 
@@ -79,6 +84,10 @@ po4a-clean:
 
 po4a:
 	po4a --previous --no-backups po4a.conf
+
+stats:
+	for i in po/*.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
+
 endif
 
 ifdef DOXYGEN
