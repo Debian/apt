@@ -175,17 +175,22 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       pkgCache::VerIterator Ver = Pkg.VersionList();
       map_ptrloc *LastVer = &Pkg->VersionList;
       int Res = 1;
+      unsigned long const Hash = List.VersionHash();
       for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
       {
 	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
-	 if (Res >= 0)
+	 // Version is higher as current version - insert here
+	 if (Res > 0)
 	    break;
+	 // Versionstrings are equal - is hash also equal?
+	 if (Res == 0 && Ver->Hash == Hash)
+	    break;
+	 // proceed with the next till we have either the right
+	 // or we found another version (which will be lower)
       }
-      
-      /* We already have a version for this item, record that we
-         saw it */
-      unsigned long Hash = List.VersionHash();
-      if (Res == 0 && Ver->Hash == Hash)
+
+      /* We already have a version for this item, record that we saw it */
+      if (Res == 0)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
 	    return _error->Error(_("Error occurred while processing %s (UsePackage2)"),
@@ -204,17 +209,6 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	 }
 	 
 	 continue;
-      }      
-
-      // Skip to the end of the same version set.
-      if (Res == 0)
-      {
-	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
-	 {
-	    Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
-	    if (Res != 0)
-	       break;
-	 }
       }
 
       // Add a new version

@@ -35,6 +35,10 @@ apt (0.7.26) UNRELEASED; urgency=low
   * doc/makefile, doc/*:
     - generate subdirectories for building the manpages in on the fly
       depending on the po files we have.
+  * apt-pkg/pkgcachegen.cc:
+    - merge versions correctly even if multiple different versions
+      with the same version number are available.
+      Thanks to Magnus Holmgren for the patch! (Closes: #351056)
 
   [ Julian Andres Klode ]
   * cmdline/apt-mark:
