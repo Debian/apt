@@ -83,13 +83,28 @@ void pkgSimulate::Describe(PkgIterator Pkg,ostream &out,bool Current,bool Candid
 bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
 {
    // Adapt the iterator
-   PkgIterator Pkg = Sim.FindPkg(iPkg.Name());
+   PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
    Flags[Pkg->ID] = 1;
    
    cout << "Inst ";
    Describe(Pkg,cout,true,true);
    Sim.MarkInstall(Pkg,false);
-   
+
+   if (strcmp(Pkg.Arch(),"all") == 0)
+   {
+      pkgCache::GrpIterator G = Pkg.Group();
+      pkgCache::GrpIterator iG = iPkg.Group();
+      for (pkgCache::PkgIterator P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
+      {
+	 if (strcmp(P.Arch(), "all") == 0)
+	    continue;
+	 if (iG.FindPkg(P.Arch())->CurrentVer == 0)
+	    continue;
+	 Flags[P->ID] = 1;
+	 Sim.MarkInstall(P, false);
+      }
+   }
+
    // Look for broken conflicts+predepends.
    for (PkgIterator I = Sim.PkgBegin(); I.end() == false; I++)
    {
@@ -131,9 +146,22 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
 bool pkgSimulate::Configure(PkgIterator iPkg)
 {
    // Adapt the iterator
-   PkgIterator Pkg = Sim.FindPkg(iPkg.Name());
+   PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
    
    Flags[Pkg->ID] = 2;
+
+   if (strcmp(Pkg.Arch(),"all") == 0)
+   {
+      pkgCache::GrpIterator G = Pkg.Group();
+      for (pkgCache::PkgIterator P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
+      {
+	 if (strcmp(P.Arch(), "all") == 0)
+	    continue;
+	 if (Flags[P->ID] == 1)
+	    Flags[P->ID] = 2;
+      }
+   }
+
 //   Sim.MarkInstall(Pkg,false);
    if (Sim[Pkg].InstBroken() == true)
    {
@@ -181,10 +209,26 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
 bool pkgSimulate::Remove(PkgIterator iPkg,bool Purge)
 {
    // Adapt the iterator
-   PkgIterator Pkg = Sim.FindPkg(iPkg.Name());
+   PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
 
    Flags[Pkg->ID] = 3;
    Sim.MarkDelete(Pkg);
+
+   if (strcmp(Pkg.Arch(),"all") == 0)
+   {
+      pkgCache::GrpIterator G = Pkg.Group();
+      pkgCache::GrpIterator iG = iPkg.Group();
+      for (pkgCache::PkgIterator P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
+      {
+	 if (strcmp(P.Arch(), "all") == 0)
+	    continue;
+	 if (iG.FindPkg(P.Arch())->CurrentVer == 0)
+	    continue;
+	 Flags[P->ID] = 3;
+	 Sim.MarkDelete(P);
+      }
+   }
+
    if (Purge == true)
       cout << "Purg ";
    else
@@ -491,11 +535,11 @@ void pkgProblemResolver::MakeScores()
    // Important Required Standard Optional Extra
    signed short PrioMap[] = {
       0,
-      _config->FindI("pkgProblemResolver::Scores::Important",3),
-      _config->FindI("pkgProblemResolver::Scores::Required",2),
-      _config->FindI("pkgProblemResolver::Scores::Standard",1),
-      _config->FindI("pkgProblemResolver::Scores::Optional",-1),
-      _config->FindI("pkgProblemResolver::Scores::Extra",-2)
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Important",3),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Required",2),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Standard",1),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Optional",-1),
+      (signed short) _config->FindI("pkgProblemResolver::Scores::Extra",-2)
    };
    signed short PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
    signed short PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);

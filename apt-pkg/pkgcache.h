@@ -32,6 +32,7 @@ class pkgCache								/*{{{*/
    public:
    // Cache element predeclarations
    struct Header;
+   struct Group;
    struct Package;
    struct PackageFile;
    struct Version;
@@ -43,6 +44,8 @@ class pkgCache								/*{{{*/
    struct DescFile;
    
    // Iterators
+   template<typename Str, typename Itr> class Iterator;
+   class GrpIterator;
    class PkgIterator;
    class VerIterator;
    class DescIterator;
@@ -51,14 +54,6 @@ class pkgCache								/*{{{*/
    class PkgFileIterator;
    class VerFileIterator;
    class DescFileIterator;
-   friend class PkgIterator;
-   friend class VerIterator;
-   friend class DescInterator;
-   friend class DepIterator;
-   friend class PrvIterator;
-   friend class PkgFileIterator;
-   friend class VerFileIterator;
-   friend class DescFileIterator;
    
    class Namespace;
    
@@ -104,6 +99,7 @@ class pkgCache								/*{{{*/
    
    // Pointers to the arrays of items
    Header *HeaderP;
+   Group *GrpP;
    Package *PkgP;
    VerFile *VerFileP;
    DescFile *DescFileP;
@@ -128,12 +124,19 @@ class pkgCache								/*{{{*/
    const char *Priority(unsigned char Priority);
    
    // Accessors
+   GrpIterator FindGrp(const string &Name);
    PkgIterator FindPkg(const string &Name);
+   PkgIterator FindPkg(const string &Name, const string &Arch);
+
    Header &Head() {return *HeaderP;};
+   inline GrpIterator GrpBegin();
+   inline GrpIterator GrpEnd();
    inline PkgIterator PkgBegin();
    inline PkgIterator PkgEnd();
    inline PkgFileIterator FileBegin();
    inline PkgFileIterator FileEnd();
+
+   inline bool MultiArchCache() const { return MultiArchEnabled; };
 
    // Make me a function
    pkgVersioningSystem *VS;
@@ -145,6 +148,10 @@ class pkgCache								/*{{{*/
    
    pkgCache(MMap *Map,bool DoMap = true);
    virtual ~pkgCache() {};
+
+private:
+   bool MultiArchEnabled;
+   PkgIterator SingleArchFindPkg(const string &Name);
 };
 									/*}}}*/
 // Header structure							/*{{{*/
@@ -168,6 +175,7 @@ struct pkgCache::Header
    unsigned short DescFileSz;
    
    // Structure counts
+   unsigned long GroupCount;
    unsigned long PackageCount;
    unsigned long VersionCount;
    unsigned long DescriptionCount;
@@ -187,22 +195,36 @@ struct pkgCache::Header
 
    /* Allocation pools, there should be one of these for each structure
       excluding the header */
-   DynamicMMap::Pool Pools[8];
+   DynamicMMap::Pool Pools[9];
    
-   // Rapid package name lookup
-   map_ptrloc HashTable[2*1048];
+   // Rapid package and group name lookup
+   // Notice: Increase only both table sizes as the
+   // hashmethod assume the size of the Pkg one
+   map_ptrloc PkgHashTable[2*1048];
+   map_ptrloc GrpHashTable[2*1048];
 
    bool CheckSizes(Header &Against) const;
    Header();
+};
+									/*}}}*/
+struct pkgCache::Group {						/*{{{*/
+	map_ptrloc Name;	// Stringtable
+
+	// Linked List
+	map_ptrloc FirstPackage;// Package
+	map_ptrloc LastPackage;	// Package
+	map_ptrloc Next;	// Group
 };
 									/*}}}*/
 struct pkgCache::Package						/*{{{*/
 {
    // Pointers
    map_ptrloc Name;              // Stringtable
+   map_ptrloc Arch;              // StringTable (StringItem)
    map_ptrloc VersionList;       // Version
    map_ptrloc CurrentVer;        // Version
    map_ptrloc Section;           // StringTable (StringItem)
+   map_ptrloc Group;             // Group the Package belongs to
       
    // Linked list 
    map_ptrloc NextPackage;       // Package
@@ -260,8 +282,8 @@ struct pkgCache::Version						/*{{{*/
 {
    map_ptrloc VerStr;            // Stringtable
    map_ptrloc Section;           // StringTable (StringItem)
-   map_ptrloc Arch;              // StringTable
-      
+   enum {None, All, Foreign, Same, Allowed} MultiArch;
+
    // Lists
    map_ptrloc FileList;          // VerFile
    map_ptrloc NextVer;           // Version
@@ -324,6 +346,10 @@ struct pkgCache::StringItem						/*{{{*/
 									/*}}}*/
 #include <apt-pkg/cacheiterators.h>
 
+inline pkgCache::GrpIterator pkgCache::GrpBegin() 
+       {return GrpIterator(*this);};
+inline pkgCache::GrpIterator pkgCache::GrpEnd() 
+       {return GrpIterator(*this,GrpP);};
 inline pkgCache::PkgIterator pkgCache::PkgBegin() 
        {return PkgIterator(*this);};
 inline pkgCache::PkgIterator pkgCache::PkgEnd() 
@@ -337,7 +363,7 @@ inline pkgCache::PkgFileIterator pkgCache::FileEnd()
 class pkgCache::Namespace						/*{{{*/
 {   
    public:
-
+   typedef pkgCache::GrpIterator GrpIterator;
    typedef pkgCache::PkgIterator PkgIterator;
    typedef pkgCache::VerIterator VerIterator;
    typedef pkgCache::DescIterator DescIterator;

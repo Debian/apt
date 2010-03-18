@@ -258,8 +258,8 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
       }
       
       // Print out each package and the failed dependencies
-      out <<"  " <<  I.Name() << ":";
-      unsigned Indent = strlen(I.Name()) + 3;
+      out << " " << I.FullName(true) << " :";
+      unsigned const Indent = I.FullName(true).size() + 3;
       bool First = true;
       pkgCache::VerIterator Ver;
       
@@ -312,7 +312,7 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	       out << ' ' << End.DepType() << ": ";
 	    FirstOr = false;
 	    
-	    out << Start.TargetPkg().Name();
+	    out << Start.TargetPkg().FullName(true);
 	 
 	    // Show a quick summary of the version requirements
 	    if (Start.TargetVer() != 0)
@@ -374,7 +374,9 @@ void ShowNew(ostream &out,CacheFile &Cache)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].NewInstall() == true) {
-         List += string(I.Name()) + " ";
+	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	    continue;
+         List += I.FullName(true) + " ";
          VersionsList += string(Cache[I].CandVersion) + "\n";
       }
    }
@@ -396,10 +398,12 @@ void ShowDel(ostream &out,CacheFile &Cache)
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].Delete() == true)
       {
+	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	    continue;
 	 if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
-	    List += string(I.Name()) + "* ";
+	    List += I.FullName(true) + "* ";
 	 else
-	    List += string(I.Name()) + " ";
+	    List += I.FullName(true) + " ";
      
      VersionsList += string(Cache[I].CandVersion)+ "\n";
       }
@@ -424,7 +428,7 @@ void ShowKept(ostream &out,CacheFile &Cache)
 	  I->CurrentVer == 0 || Cache[I].Delete() == true)
 	 continue;
       
-      List += string(I.Name()) + " ";
+      List += I.FullName(true) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
    ShowList(out,_("The following packages have been kept back:"),List,VersionsList);
@@ -444,8 +448,10 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
       // Not interesting
       if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
-      
-      List += string(I.Name()) + " ";
+      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	 continue;
+
+      List += I.FullName(true) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
    ShowList(out,_("The following packages will be upgraded:"),List,VersionsList);
@@ -465,8 +471,10 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
       // Not interesting
       if (Cache[I].Downgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
-      
-      List += string(I.Name()) + " ";
+      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
+	 continue;
+
+      List += I.FullName(true) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
    }
    return ShowList(out,_("The following packages will be DOWNGRADED:"),List,VersionsList);
@@ -484,7 +492,7 @@ bool ShowHold(ostream &out,CacheFile &Cache)
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].InstallVer != (pkgCache::Version *)I.CurrentVer() &&
           I->SelectedState == pkgCache::State::Hold) {
-         List += string(I.Name()) + " ";
+         List += I.FullName(true) + " ";
 		 VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
       }
    }
@@ -518,7 +526,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	 if (Added[I->ID] == false)
 	 {
 	    Added[I->ID] = true;
-	    List += string(I.Name()) + " ";
+	    List += I.FullName(true) + " ";
         //VersionsList += string(Cache[I].CurVersion) + "\n"; ???
 	 }
       }
@@ -542,7 +550,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	    Added[P->ID] = true;
 	    
 	    char S[300];
-	    snprintf(S,sizeof(S),_("%s (due to %s) "),P.Name(),I.Name());
+	    snprintf(S,sizeof(S),_("%s (due to %s) "),P.FullName(true).c_str(),I.FullName(true).c_str());
 	    List += S;
         //VersionsList += "\n"; ???
 	 }	 
@@ -566,6 +574,9 @@ void Stats(ostream &out,pkgDepCache &Dep)
    unsigned long ReInstall = 0;
    for (pkgCache::PkgIterator I = Dep.PkgBegin(); I.end() == false; I++)
    {
+      if (pkgCache::VerIterator(Dep, Dep[I].CandidateVer).Pseudo() == true)
+	 continue;
+
       if (Dep[I].NewInstall() == true)
 	 Install++;
       else
@@ -1084,7 +1095,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       if (found_one == true)
       {
 	 ioprintf(c1out,_("Note, selecting %s instead of %s\n"),
-		  Prov.Name(),Pkg.Name());
+		  Prov.FullName(true).c_str(),Pkg.FullName(true).c_str());
 	 Pkg = Prov;
       }
    }
@@ -1095,7 +1106,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    {
       if (AllowFail == true)
 	 ioprintf(c1out,_("Skipping %s, it is already installed and upgrade is not set.\n"),
-		  Pkg.Name());
+		  Pkg.FullName(true).c_str());
       return true;
    }
 
@@ -1122,7 +1133,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       if (AllowFail == false)
 	 return false;
       
-      ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.Name());
+      ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
       return true;
    }
    
@@ -1134,7 +1145,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       if (Pkg->ProvidesList != 0)
       {
 	 ioprintf(c1out,_("Package %s is a virtual package provided by:\n"),
-		  Pkg.Name());
+		  Pkg.FullName(true).c_str());
 	 
 	 pkgCache::PrvIterator I = Pkg.ProvidesList();
 	 for (; I.end() == false; I++)
@@ -1144,10 +1155,10 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 	    if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer())
 	    {
 	       if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
-		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() <<
+		  c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr() <<
 		  _(" [Installed]") << endl;
 	       else
-		  c1out << "  " << Pkg.Name() << " " << I.OwnerVer().VerStr() << endl;
+		  c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr() << endl;
 	    }      
 	 }
 	 c1out << _("You should explicitly select one to install.") << endl;
@@ -1157,7 +1168,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 	 ioprintf(c1out,
 	 _("Package %s is not available, but is referred to by another package.\n"
 	   "This may mean that the package is missing, has been obsoleted, or\n"
-           "is only available from another source\n"),Pkg.Name());
+           "is only available from another source\n"),Pkg.FullName(true).c_str());
 	 
 	 string List;
 	 string VersionsList;
@@ -1171,13 +1182,13 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 	    if (Seen[Dep.ParentPkg()->ID] == true)
 	       continue;
 	    Seen[Dep.ParentPkg()->ID] = true;
-	    List += string(Dep.ParentPkg().Name()) + " ";
+	    List += Dep.ParentPkg().FullName(true) + " ";
         //VersionsList += string(Dep.ParentPkg().CurVersion) + "\n"; ???
 	 }	    
 	 ShowList(c1out,_("However the following packages replace it:"),List,VersionsList);
       }
       
-      _error->Error(_("Package %s has no installation candidate"),Pkg.Name());
+      _error->Error(_("Package %s has no installation candidate"),Pkg.FullName(true).c_str());
       return false;
    }
 
@@ -1198,7 +1209,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       {
 	 if (Pkg->CurrentVer == 0 || Pkg.CurrentVer().Downloadable() == false)
 	    ioprintf(c1out,_("Reinstallation of %s is not possible, it cannot be downloaded.\n"),
-		     Pkg.Name());
+		     Pkg.FullName(true).c_str());
 	 else
 	    Cache.SetReInstall(Pkg,true);
       }      
@@ -1206,7 +1217,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
       {
 	 if (AllowFail == true)
 	    ioprintf(c1out,_("%s is already the newest version.\n"),
-		     Pkg.Name());
+		     Pkg.FullName(true).c_str());
       }      
    }   
    else
@@ -1235,15 +1246,15 @@ bool TryToChangeVer(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    {
       if (IsRel == true)
 	 return _error->Error(_("Release '%s' for '%s' was not found"),
-			      VerTag,Pkg.Name());
+			      VerTag,Pkg.FullName(true).c_str());
       return _error->Error(_("Version '%s' for '%s' was not found"),
-			   VerTag,Pkg.Name());
+			   VerTag,Pkg.FullName(true).c_str());
    }
    
    if (strcmp(VerTag,Ver.VerStr()) != 0)
    {
       ioprintf(c1out,_("Selected version %s (%s) for %s\n"),
-	       Ver.VerStr(),Ver.RelStr().c_str(),Pkg.Name());
+	       Ver.VerStr(),Ver.RelStr().c_str(),Pkg.FullName(true).c_str());
    }
    
    Cache.SetCandidateVersion(Ver);
@@ -1499,7 +1510,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
       {
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
 	    if(Debug)
-	       std::cout << "We could delete %s" <<  Pkg.Name() << std::endl;
+	       std::cout << "We could delete %s" <<  Pkg.FullName(true).c_str() << std::endl;
 
 	 if (doAutoRemove)
 	 {
@@ -1518,7 +1529,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	       // we don't need to fill the strings if we don't need them
 	       if (smallList == false)
 	       {
-		 autoremovelist += string(Pkg.Name()) + " ";
+		 autoremovelist += Pkg.FullName(true) + " ";
 		 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
 	       }
 	    }
@@ -1793,7 +1804,7 @@ bool DoInstall(CommandLine &CmdL)
 	       _config->FindB("APT::Get::Download-Only",false) == false)
 	    {
 	       ioprintf(c1out,_("%s set to manually installed.\n"),
-			Pkg.Name());
+			Pkg.FullName(true).c_str());
 	       Cache->MarkAuto(Pkg,false);
 	       AutoMarkChanged++;
 	    }
@@ -1862,7 +1873,7 @@ bool DoInstall(CommandLine &CmdL)
 		break;
 	 
 	 if (*J == 0) {
-	    List += string(I.Name()) + " ";
+	    List += I.FullName(true) + " ";
 	    VersionsList += string(Cache[I].CandVersion) + "\n";
 	 }
       }
@@ -1898,7 +1909,7 @@ bool DoInstall(CommandLine &CmdL)
 	    for(;;)
 	    {
 	       /* Skip if package is  installed already, or is about to be */
-	       string target = string(Start.TargetPkg().Name()) + " ";
+	       string target = Start.TargetPkg().FullName(true) + " ";
 	       
 	       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
 		   || Cache[Start.TargetPkg()].Install())
@@ -2453,7 +2464,7 @@ bool DoBuildDep(CommandLine &CmdL)
             
       // Process the build-dependencies
       vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only",false)) == false)
+      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only",true)) == false)
       	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
       // Also ensure that build-essential packages are present
@@ -2552,7 +2563,7 @@ bool DoBuildDep(CommandLine &CmdL)
             for (; Prv.end() != true; Prv++)
 	    {
                if (_config->FindB("Debug::BuildDeps",false) == true)
-                    cout << "  Checking provider " << Prv.OwnerPkg().Name() << endl;
+                    cout << "  Checking provider " << Prv.OwnerPkg().FullName() << endl;
 
 	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
 	          break;
@@ -2593,7 +2604,7 @@ bool DoBuildDep(CommandLine &CmdL)
                if (Prv.end() == false)
                {
                   if (_config->FindB("Debug::BuildDeps",false) == true)
-                     cout << "  Is provided by installed package " << Prv.OwnerPkg().Name() << endl;
+                     cout << "  Is provided by installed package " << Prv.OwnerPkg().FullName() << endl;
                   skipAlternatives = hasAlternatives;
                   continue;
                }
@@ -2618,7 +2629,7 @@ bool DoBuildDep(CommandLine &CmdL)
                   return _error->Error(_("Failed to satisfy %s dependency for %s: Installed package %s is too new"),
                                        Last->BuildDepType((*D).Type),
                                        Src.c_str(),
-                                       Pkg.Name());
+                                       Pkg.FullName(true).c_str());
                }
             }
 
@@ -2667,7 +2678,6 @@ bool DoBuildDep(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-
 // DoMoo - Never Ask, Never Tell					/*{{{*/
 // ---------------------------------------------------------------------
 /* */

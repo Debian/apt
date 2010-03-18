@@ -46,6 +46,7 @@
 
 #include <vector>
 #include <memory>
+#include <set>
 
 class pkgDepCache : protected pkgCache::Namespace
 {
@@ -78,8 +79,8 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    void MarkPackage(const pkgCache::PkgIterator &pkg,
 		    const pkgCache::VerIterator &ver,
-		    bool follow_recommends,
-		    bool follow_suggests);
+		    bool const &follow_recommends,
+		    bool const &follow_suggests);
 
    /** \brief Update the Marked field of all packages.
     *
@@ -331,7 +332,9 @@ class pkgDepCache : protected pkgCache::Namespace
    inline operator pkgCache &() {return *Cache;};
    inline Header &Head() {return *Cache->HeaderP;};
    inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
+   inline GrpIterator FindGrp(string const &Name) {return Cache->FindGrp(Name);};
    inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};
+   inline PkgIterator FindPkg(string const &Name, string const &Arch) {return Cache->FindPkg(Name, Arch);};
 
    inline pkgCache &GetCache() {return *Cache;};
    inline pkgVersioningSystem &VS() {return *Cache->VS;};
@@ -442,9 +445,6 @@ class pkgDepCache : protected pkgCache::Namespace
    virtual bool IsDeleteOk(const PkgIterator &Pkg,bool Purge = false,
 			    unsigned long Depth = 0, bool FromUser = true);
 
-   // This is for debuging
-   void Update(OpProgress *Prog = 0);
-
    // read persistent states
    bool readStateFile(OpProgress *prog);
    bool writeStateFile(OpProgress *prog, bool InstalledOnly=true);
@@ -460,9 +460,15 @@ class pkgDepCache : protected pkgCache::Namespace
    inline unsigned long BadCount() {return iBadCount;};
 
    bool Init(OpProgress *Prog);
-   
+   // Generate all state information
+   void Update(OpProgress *Prog = 0);
+
    pkgDepCache(pkgCache *Cache,Policy *Plcy = 0);
    virtual ~pkgDepCache();
+
+   private:
+   // Helper for Update(OpProgress) to remove pseudoinstalled arch all packages
+   bool RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck);
 };
 
 #endif

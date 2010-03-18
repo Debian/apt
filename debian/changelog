@@ -5,6 +5,12 @@ apt (0.7.26) UNRELEASED; urgency=low
   * Spanish manpages translation update. Closes: #573293
 
   [ David Kalnischkies ]
+  * [BREAK] merge MultiArch-ABI. We don't support MultiArch,
+    but we support the usage of the new ABI so libapt users
+    can start to prepare for MultiArch (Closes: #536029)
+  * Ignore :qualifiers after package name in build dependencies
+    in the library by default, but try to honour them in apt-get
+    as we have some sort of MultiArch support ready (Closes: #558103)
   * Switch to dpkg-source 3.0 (native) format
   * apt-pkg/depcache.cc:
     - remove Auto-Installed information from extended_states
@@ -1441,13 +1447,6 @@ apt (0.7.7) unstable; urgency=low
     - don't fail if msync() returns > 0
  
  -- Michael Vogt <mvo@debian.org>  Tue, 23 Oct 2007 14:58:03 +0200
-
-apt (0.7.6) unstable; urgency=low
-
-  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
-    directory downloading on non-linux architectures (closes: #435597)
-
- -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
 
 apt (0.7.6) unstable; urgency=low
 

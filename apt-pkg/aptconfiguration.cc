@@ -319,4 +319,28 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		return codes;
 }
 									/*}}}*/
+// getArchitectures - Return Vector of prefered Architectures		/*{{{*/
+std::vector<std::string> const Configuration::getArchitectures(bool const &Cached) {
+	using std::string;
+
+	std::vector<string> static archs;
+	if (likely(Cached == true) && archs.empty() == false)
+		return archs;
+
+	string const arch = _config->Find("APT::Architecture");
+	archs = _config->FindVector("APT::Architectures");
+	if (archs.empty() == true ||
+	    std::find(archs.begin(), archs.end(), arch) == archs.end())
+		archs.push_back(arch);
+	return archs;
+}
+									/*}}}*/
+// checkArchitecture - are we interested in the given Architecture?	/*{{{*/
+bool const Configuration::checkArchitecture(std::string const &Arch) {
+	if (Arch == "all")
+		return true;
+	std::vector<std::string> const archs = getArchitectures(true);
+	return (std::find(archs.begin(), archs.end(), Arch) != archs.end());
+}
+									/*}}}*/
 }
