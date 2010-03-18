@@ -609,7 +609,10 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
    const char *Stop;
    if (Section.Find(Tag,Start,Stop) == false)
       return true;
-   
+
+   static std::vector<std::string> const archs = APT::Configuration::getArchitectures();
+   static bool const multiArch = archs.size() <= 1;
+
    string Package;
    string const pkgArch = Ver.Arch(true);
    string Version;
@@ -620,8 +623,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
       Start = ParseDepends(Start,Stop,Package,Version,Op);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
-      
-      if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
+
+      if (multiArch == true &&
+	  (Type == pkgCache::Dep::Conflicts ||
+	   Type == pkgCache::Dep::DpkgBreaks ||
+	   Type == pkgCache::Dep::Replaces))
+      {
+	 for (std::vector<std::string>::const_iterator a = archs.begin();
+	      a != archs.end(); ++a)
+	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
+	       return false;
+      }
+      else if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
 	 return false;
       if (Start == Stop)
 	 break;
