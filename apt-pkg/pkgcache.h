@@ -126,7 +126,7 @@ class pkgCache								/*{{{*/
    // Accessors
    GrpIterator FindGrp(const string &Name);
    PkgIterator FindPkg(const string &Name);
-   PkgIterator FindPkg(const string &Name, string Arch);
+   PkgIterator FindPkg(const string &Name, const string &Arch);
 
    Header &Head() {return *HeaderP;};
    inline GrpIterator GrpBegin();
@@ -135,6 +135,8 @@ class pkgCache								/*{{{*/
    inline PkgIterator PkgEnd();
    inline PkgFileIterator FileBegin();
    inline PkgFileIterator FileEnd();
+
+   inline bool MultiArchCache() const { return MultiArchEnabled; };
 
    // Make me a function
    pkgVersioningSystem *VS;
@@ -146,6 +148,10 @@ class pkgCache								/*{{{*/
    
    pkgCache(MMap *Map,bool DoMap = true);
    virtual ~pkgCache() {};
+
+private:
+   bool MultiArchEnabled;
+   PkgIterator SingleArchFindPkg(const string &Name);
 };
 									/*}}}*/
 // Header structure							/*{{{*/

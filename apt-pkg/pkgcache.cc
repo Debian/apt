@@ -108,6 +108,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 /* */
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 {
+   MultiArchEnabled = APT::Configuration::getArchitectures().size() > 1;
    if (DoMap == true)
       ReMap();
 }
@@ -179,10 +180,30 @@ unsigned long pkgCache::sHash(const char *Str) const
 }
 
 									/*}}}*/
+// Cache::SingleArchFindPkg - Locate a package by name			/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns 0 on error, pointer to the package otherwise
+   The multiArch enabled methods will fallback to this one as it is (a bit)
+   faster for single arch environments and realworld is mostly singlearch… */
+pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
+{
+   // Look at the hash bucket
+   Package *Pkg = PkgP + HeaderP->PkgHashTable[Hash(Name)];
+   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
+   {
+      if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
+          stringcasecmp(Name,StrP + Pkg->Name) == 0)
+         return PkgIterator(*this,Pkg);
+   }
+   return PkgIterator(*this,0);
+}
+									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
+	if (MultiArchCache() == false)
+		return SingleArchFindPkg(Name);
 	size_t const found = Name.find(':');
 	if (found == string::npos)
 		return FindPkg(Name, "native");
@@ -195,7 +216,14 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string Arch) {
+pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
+	if (MultiArchCache() == false) {
+		if (Arch == "native" || Arch == "all" ||
+		    Arch == _config->Find("APT::Architecture"))
+			return SingleArchFindPkg(Name);
+		else
+			return PkgIterator(*this,0);
+	}
 	/* We make a detour via the GrpIterator here as
 	   on a multi-arch environment a group is easier to
 	   find than a package (less entries in the buckets) */
