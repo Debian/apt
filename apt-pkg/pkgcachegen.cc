@@ -190,7 +190,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       }
 
       /* We already have a version for this item, record that we saw it */
-      if (Res == 0)
+      if (Res == 0 && Ver.end() == false && Ver->Hash == Hash)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
 	    return _error->Error(_("Error occurred while processing %s (UsePackage2)"),
