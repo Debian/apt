@@ -51,10 +51,7 @@ doc:
 	for i in $(shell ls po/*.po | sed -r 's#po/([a-z]+[A-Z_]*).po#\1#'); do \
 		test -d $$i || mkdir $$i; \
 		test -f $$i/makefile || sed "s#@@LANG@@#$$i#" lang.makefile > $$i/makefile; \
-	done
-	# it is likely that we have changed the list, so SUBDIRS is incorrect
-	for dir in $(dir $(wildcard */makefile)); do\
-		$(MAKE) -C $$dir $@; \
+		$(MAKE) -C $$i $@; \
 	done
 
 clean: clean-subdirs
@@ -67,7 +64,7 @@ clean-subdirs:
 
 veryclean-subdirs:
 	for dir in $(SUBDIRS); do\
-		$(MAKE) -C $$dir veryclean; \
+		rm -rf $$dir; \
 	done
 
 ifdef PO4A
