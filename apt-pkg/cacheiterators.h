@@ -62,6 +62,7 @@ template<typename Str, typename Itr> class pkgCache::Iterator {
 	inline Str const *operator ->() const {return S;};
 	inline operator Str *() {return S == OwnerPointer() ? 0 : S;};
 	inline operator Str const *() const {return S == OwnerPointer() ? 0 : S;};
+	inline Str &operator *() {return *S;};
 	inline Str const &operator *() const {return *S;};
 	inline pkgCache *Cache() {return Owner;};
 
