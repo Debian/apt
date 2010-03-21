@@ -255,9 +255,13 @@ bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
    if (Pkg->Section == 0)
       Pkg->Section = UniqFindTagWrite("Section");
 
-   // Packages which are not from "our" arch doesn't get the essential flag
+   // Packages which are not from the "native" arch doesn't get the essential flag
+   // in the default "native" mode - it is also possible to mark "all" or "none".
+   // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
    string const static myArch = _config->Find("APT::Architecture");
-   if (Pkg->Arch != 0 && myArch == Pkg.Arch())
+   string const static essential = _config->Find("pkgCacheGen::Essential", "native");
+   if ((essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()) ||
+       essential == "all")
       if (Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
 	 return false;
    if (Section.FindFlag("Important",Pkg->Flags,pkgCache::Flag::Important) == false)
@@ -333,7 +337,13 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
    const char *Stop;
    if (Section.Find("Status",Start,Stop) == false)
       return true;
-   
+
+   // UsePackage() is responsible for setting the flag in the default case
+   bool const static essential = _config->Find("pkgCacheGen::Essential", "") == "installed";
+   if (essential == true &&
+       Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
+      return false;
+
    // Isolate the first word
    const char *I = Start;
    for(; I < Stop && *I != ' '; I++);
