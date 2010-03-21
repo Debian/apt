@@ -13,6 +13,9 @@ apt (0.7.26~exp3) UNRELEASED; urgency=low
     - Use the new python-apt API (and conflict with python-apt << 0.7.93.2).
   * apt-inst/contrib/arfile.h:
     - Add public ARArchive::Members() which returns the list of members.
+  * apt-pkg/policy.cc:
+    - Always return a candidate if there is at least one version pinned > 0
+      (Closes: #512318)
   * debian/rules:
     - Fix the libraries name to be e.g. libapt-pkg4.9 instead of
       libapt-pkg-4.9.

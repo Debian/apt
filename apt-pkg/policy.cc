@@ -121,6 +121,10 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
 
+   // Alternatives in case we can not find our package pin (Bug#512318).
+   signed MaxAlt = 0;
+   pkgCache::VerIterator PrefAlt;
+
    // no package = no candidate version
    if (Pkg.end() == true)
       return Pref;
@@ -159,6 +163,11 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 	 {
 	    Pref = Ver;
 	    Max = Prio;
+	 }
+	 if (Prio > MaxAlt)
+	 {
+	    PrefAlt = Ver;
+	    MaxAlt = Prio;
 	 }	 
       }      
       
@@ -175,6 +184,11 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 	    break;
       }            
    }
+   // If we do not find our candidate, use the one with the highest pin.
+   // This means that if there is a version available with pin > 0; there
+   // will always be a candidate (Closes: #512318)
+   if (!Pref.IsGood() && MaxAlt > 0)
+       Pref = PrefAlt;
    return Pref;
 }
 									/*}}}*/
