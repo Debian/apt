@@ -146,6 +146,7 @@ if [ "$1" = "--keyring" ]; then
 else
 	#echo "generate list"
 	TRUSTEDFILE="/etc/apt/trusted.gpg"
+	eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
 	if [ -r "$TRUSTEDFILE" ]; then
 		GPG="$GPG --keyring $TRUSTEDFILE"
 	fi
