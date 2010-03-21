@@ -1498,15 +1498,26 @@ bool ShowSrcPackage(CommandLine &CmdL)
    if (_error->PendingError() == true)
       return false;
 
+   unsigned found = 0;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       SrcRecs.Restart();
       
       pkgSrcRecords::Parser *Parse;
-      while ((Parse = SrcRecs.Find(*I,false)) != 0)
-	 cout << Parse->AsStr() << endl;;
+      unsigned found_this = 0;
+      while ((Parse = SrcRecs.Find(*I,false)) != 0) {
+        cout << Parse->AsStr() << endl;;
+        found++;
+        found_this++;
+      }
+      if (found_this == 0) {
+        _error->Warning(_("Unable to locate package %s"),*I);
+        continue;
+      }
    }      
-   return true;
+   if (found > 0)
+        return true;
+   return _error->Error(_("No packages found"));
 }
 									/*}}}*/
 // Policy - Show the results of the preferences file			/*{{{*/
