@@ -62,6 +62,9 @@ struct PackageMap
    string SrcOverride;
    string SrcExtraOverride;
 
+   // Translation master file
+   TranslationWriter *TransWriter;
+
    // Contents 
    string Contents;
    string ContentsHead;
@@ -100,8 +103,9 @@ struct PackageMap
 		    vector<PackageMap>::iterator End,
 		    unsigned long &Left);
    
-   PackageMap() : DeLinkLimit(0), Permissions(1), ContentsDone(false), 
-        PkgDone(false), SrcDone(false), ContentsMTime(0) {};
+   PackageMap() : TransWriter(NULL), DeLinkLimit(0), Permissions(1),
+		  ContentsDone(false), PkgDone(false), SrcDone(false),
+		  ContentsMTime(0) {};
 };
 									/*}}}*/
 
@@ -168,6 +172,8 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    Packages.PathPrefix = PathPrefix;
    Packages.DirStrip = ArchiveDir;
    Packages.InternalPrefix = flCombine(ArchiveDir,InternalPrefix);
+
+   Packages.TransWriter = TransWriter;
 
    Packages.Stats.DeLinkBytes = Stats.DeLinkBytes;
    Packages.DeLinkLimit = DeLinkLimit;
@@ -436,6 +442,8 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 			    "$(DIST)/$(SECTION)/source/");
    string DPkg = Setup.Find("TreeDefault::Packages",
 			    "$(DIST)/$(SECTION)/binary-$(ARCH)/Packages");
+   string DTrans = Setup.Find("TreeDefault::Translation",
+			    "$(DIST)/$(SECTION)/i18n/Translation-en");
    string DIPrfx = Setup.Find("TreeDefault::InternalPrefix",
 			    "$(DIST)/$(SECTION)/");
    string DContents = Setup.Find("TreeDefault::Contents",
@@ -461,15 +469,25 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
       string Section;
       while (ParseQuoteWord(Sections,Section) == true)
       {
-	 string Tmp2 = Block.Find("Architectures");
 	 string Arch;
+	 struct SubstVar const Vars[] = {{"$(DIST)",&Dist},
+					 {"$(SECTION)",&Section},
+					 {"$(ARCH)",&Arch},
+					 {}};
+	 TranslationWriter *TransWriter;
+	 if (DTrans.empty() == false)
+	 {
+	    string const TranslationFile = flCombine(Setup.FindDir("Dir::ArchiveDir"),
+			SubstVar(Block.Find("Translation", DTrans.c_str()), Vars));
+	    TransWriter = new TranslationWriter(TranslationFile);
+	 }
+	 else
+	    TransWriter = NULL;
+
+	 string const Tmp2 = Block.Find("Architectures");
 	 const char *Archs = Tmp2.c_str();
 	 while (ParseQuoteWord(Archs,Arch) == true)
 	 {
-	    struct SubstVar Vars[] = {{"$(DIST)",&Dist},
-	                              {"$(SECTION)",&Section},
-	                              {"$(ARCH)",&Arch},
-	                              {}};
 	    PackageMap Itm;
 	    
 	    Itm.BinOverride = SubstVar(Block.Find("BinOverride"),Vars);
@@ -491,6 +509,11 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.PkgFile = SubstVar(Block.Find("Packages",DPkg.c_str()),Vars);
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/$(ARCH)",Vars);
 	       Itm.Arch = Arch;
+	       if (TransWriter != NULL)
+	       {
+		  TransWriter->IncreaseRefCounter();
+		  Itm.TransWriter = TransWriter;
+	       }
 	       Itm.Contents = SubstVar(Block.Find("Contents",DContents.c_str()),Vars);
 	       Itm.ContentsHead = SubstVar(Block.Find("Contents::Header",DContentsH.c_str()),Vars);
 	       Itm.FLFile = SubstVar(Block.Find("FileList",DFLFile.c_str()),Vars);
@@ -500,6 +523,9 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
  	    Itm.GetGeneral(Setup,Block);
 	    PkgList.push_back(Itm);
 	 }
+	 // we didn't use this TransWriter, so we can release it
+	 if (TransWriter != NULL && TransWriter->GetRefCounter() == 0)
+	    delete TransWriter;
       }
       
       Top = Top->Next;
@@ -788,7 +814,12 @@ bool Generate(CommandLine &CmdL)
       
       delete [] List;
    }
-   
+
+   // close the Translation master files
+   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
+      if (I->TransWriter != NULL && I->TransWriter->DecreaseRefCounter() == 0)
+	 delete I->TransWriter;
+
    if (_config->FindB("APT::FTPArchive::Contents",true) == false)
       return true;
    

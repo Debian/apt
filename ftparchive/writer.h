@@ -19,6 +19,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <set>
 
 #include "cachedb.h"
 #include "override.h"
@@ -72,6 +73,23 @@ class FTWScanner
    FTWScanner(string const &Arch = string());
 };
 
+class TranslationWriter
+{
+   FILE *Output;
+   std::set<string> Included;
+   unsigned short RefCounter;
+
+   public:
+   void IncreaseRefCounter() { ++RefCounter; };
+   unsigned short DecreaseRefCounter() { return (RefCounter == 0) ? 0 : --RefCounter; };
+   unsigned short GetRefCounter() const { return RefCounter; };
+   bool DoPackage(string const &Pkg, string const &Desc, string const &MD5);
+
+   TranslationWriter(string const &File);
+   TranslationWriter() : Output(NULL), RefCounter(0) {};
+   ~TranslationWriter();
+};
+
 class PackagesWriter : public FTWScanner
 {
    Override Over;
@@ -93,6 +111,7 @@ class PackagesWriter : public FTWScanner
    string DirStrip;
    FILE *Output;
    struct CacheDB::Stats &Stats;
+   TranslationWriter *TransWriter;
 
    inline bool ReadOverride(string const &File) {return Over.ReadOverride(File);};
    inline bool ReadExtraOverride(string const &File) 
