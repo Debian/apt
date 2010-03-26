@@ -26,6 +26,20 @@ apt (0.7.26~exp3) UNRELEASED; urgency=low
     - Fix the libraries name to be e.g. libapt-pkg4.9 instead of
       libapt-pkg-4.9.
 
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - fix backgrounding when dpkg runs (closes: #486222)
+  * cmdline/apt-mark:
+    - show error on incorrect aguments (LP: #517917), thanks to
+      Torsten Spindler
+  * cmdline/apt-get.cc:
+    - if apt-get source foo=version or foo/distro can not be found,
+      error out (LP: #502641)
+  * apt-pkg/packagemanager.cc:
+    - better debug output 
+  * doc/examples/configure-index:
+    - add missing Debug::pkgPackageManager option
+
  -- Christian Perrier <bubulle@debian.org>  Wed, 24 Feb 2010 22:13:50 +0100
 
 apt (0.7.26~exp2) experimental; urgency=low
