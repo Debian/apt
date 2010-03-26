@@ -2315,6 +2315,7 @@ bool DoSource(CommandLine &CmdL)
    {
       for (unsigned I = 0; I != J; I++)
 	 ioprintf(cout,_("Fetch source %s\n"),Dsc[I].Package.c_str());
+      delete[] Dsc;
       return true;
    }
    
@@ -2325,6 +2326,7 @@ bool DoSource(CommandLine &CmdL)
       for (; I != Fetcher.UriEnd(); I++)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
+      delete[] Dsc;
       return true;
    }
    
@@ -2350,6 +2352,7 @@ bool DoSource(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Download-only",false) == true)
    {
       c1out << _("Download complete and in download only mode") << endl;
+      delete[] Dsc;
       return true;
    }
 
@@ -2411,7 +2414,8 @@ bool DoSource(CommandLine &CmdL)
       
       _exit(0);
    }
-   
+   delete[] Dsc;
+
    // Wait for the subprocess
    int Status = 0;
    while (waitpid(Process,&Status,0) != Process)
