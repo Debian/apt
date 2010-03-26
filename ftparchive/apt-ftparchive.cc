@@ -16,6 +16,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/init.h>
 #include <config.h>
 #include <apti18n.h>
 #include <algorithm>
