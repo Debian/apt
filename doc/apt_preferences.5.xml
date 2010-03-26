@@ -195,8 +195,15 @@ Pin: origin ""
 Pin-Priority: 999
 </programlisting>
 
-<simpara>A note of caution: the keyword used here is "<literal>origin</literal>".
-This should not be confused with the Origin of a distribution as
+<simpara>A note of caution: the keyword used here is "<literal>origin</literal>"
+which can be used to match a hostname. The following record will assign a high priority
+to all versions available from the server identified by the hostname "ftp.de.debian.org"</simpara>
+<programlisting>
+Package: *
+Pin: origin "ftp.de.debian.org"
+Pin-Priority: 999
+</programlisting>
+<simpara>This should <emphasis>not</emphasis> be confused with the Origin of a distribution as
 specified in a <filename>Release</filename> file.  What follows the "Origin:" tag
 in a <filename>Release</filename> file is not an Internet address
 but an author or vendor name, such as "Debian" or "Ximian".</simpara>
