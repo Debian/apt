@@ -134,8 +134,6 @@ void PackageMap::GetGeneral(Configuration &Setup,Configuration &Block)
    PkgExt = Block.Find("Packages::Extensions",
 		       Setup.Find("Default::Packages::Extensions",".deb").c_str());
    
-   Permissions = Setup.FindI("Default::FileMode",0644);
-   
    if (FLFile.empty() == false)
       FLFile = flCombine(Setup.Find("Dir::FileListDir"),FLFile);
    
@@ -458,8 +456,11 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
    string DFLFile = Setup.Find("TreeDefault::FileList", "");
    string DSFLFile = Setup.Find("TreeDefault::SourceFileList", "");
 
-   bool const LongDescription = Setup.FindB("TreeDefault::LongDescription",
+   int const Permissions = Setup.FindI("Default::FileMode",0644);
+
+   bool const LongDescription = Setup.FindB("Default::LongDescription",
 					_config->FindB("APT::FTPArchive::LongDescription", true));
+   string const TranslationCompress = Setup.Find("Default::Translation::Compress",". gzip").c_str();
 
    // Process 'tree' type sections
    const Configuration::Item *Top = Setup.Tree("tree");
@@ -479,13 +480,15 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 					 {"$(SECTION)",&Section},
 					 {"$(ARCH)",&Arch},
 					 {}};
+	 mode_t const Perms = Block.FindI("FileMode", Permissions);
 	 bool const LongDesc = Block.FindB("LongDescription", LongDescription);
 	 TranslationWriter *TransWriter;
 	 if (DTrans.empty() == false && LongDesc == false)
 	 {
 	    string const TranslationFile = flCombine(Setup.FindDir("Dir::ArchiveDir"),
 			SubstVar(Block.Find("Translation", DTrans.c_str()), Vars));
-	    TransWriter = new TranslationWriter(TranslationFile);
+	    string const TransCompress = Block.Find("Translation::Compress", TranslationCompress);
+	    TransWriter = new TranslationWriter(TranslationFile, TransCompress, Perms);
 	 }
 	 else
 	    TransWriter = NULL;
@@ -495,7 +498,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	 while (ParseQuoteWord(Archs,Arch) == true)
 	 {
 	    PackageMap Itm;
-	    
+	    Itm.Permissions = Perms;
 	    Itm.BinOverride = SubstVar(Block.Find("BinOverride"),Vars);
 	    Itm.InternalPrefix = SubstVar(Block.Find("InternalPrefix",DIPrfx.c_str()),Vars);
 

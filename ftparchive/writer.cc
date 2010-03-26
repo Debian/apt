@@ -499,13 +499,15 @@ bool PackagesWriter::DoPackage(string FileName)
 // TranslationWriter::TranslationWriter - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* Create a Translation-Master file for this Packages file */
-TranslationWriter::TranslationWriter(string const &File) : Output(NULL),
+TranslationWriter::TranslationWriter(string const &File, string const &TransCompress,
+					mode_t const &Permissions) : Output(NULL),
 							RefCounter(0)
 {
    if (File.empty() == true)
       return;
 
-   Output = fopen(File.c_str(), "w");
+   Comp = new MultiCompress(File, TransCompress, Permissions);
+   Output = Comp->Input;
 }
 									/*}}}*/
 // TranslationWriter::DoPackage - Process a single package		/*{{{*/
@@ -536,8 +538,10 @@ bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
 /* */
 TranslationWriter::~TranslationWriter()
 {
-   if (Output != NULL)
-      fclose(Output);
+   if (Comp == NULL)
+      return;
+
+   delete Comp;
 }
 									/*}}}*/
 

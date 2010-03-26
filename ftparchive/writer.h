@@ -22,6 +22,7 @@
 #include <set>
 
 #include "cachedb.h"
+#include "multicompress.h"
 #include "override.h"
 #include "apt-ftparchive.h"
 
@@ -75,6 +76,7 @@ class FTWScanner
 
 class TranslationWriter
 {
+   MultiCompress *Comp;
    FILE *Output;
    std::set<string> Included;
    unsigned short RefCounter;
@@ -85,8 +87,8 @@ class TranslationWriter
    unsigned short GetRefCounter() const { return RefCounter; };
    bool DoPackage(string const &Pkg, string const &Desc, string const &MD5);
 
-   TranslationWriter(string const &File);
-   TranslationWriter() : Output(NULL), RefCounter(0) {};
+   TranslationWriter(string const &File, string const &TransCompress, mode_t const &Permissions);
+   TranslationWriter() : Comp(NULL), Output(NULL), RefCounter(0) {};
    ~TranslationWriter();
 };
 

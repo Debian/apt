@@ -224,7 +224,13 @@
       This is similar to <literal>Packages::Compress</literal> 
       except that it controls the compression for the Contents files.</para></listitem>
       </varlistentry>
-      
+
+      <varlistentry><term>Translation::Compress</term>
+      <listitem><para>
+      This is similar to <literal>Packages::Compress</literal> 
+      except that it controls the compression for the Translation-en master file.</para></listitem>
+      </varlistentry>
+
       <varlistentry><term>DeLinkLimit</term>
       <listitem><para>
       Specifies the number of kilobytes to delink (and 
@@ -237,6 +243,12 @@
       Specifies the mode of all created index files. It 
       defaults to 0644. All index files are set to this mode with no regard 
       to the umask.</para></listitem>
+      </varlistentry>
+
+      <varlistentry><term>LongDescription</term>
+      <listitem><para>
+      Sets if long descriptions should be included in the Packages file or split
+      out into a master Translation-en file.</para></listitem>
       </varlistentry>
      </variablelist>
    </refsect2>
@@ -295,12 +307,6 @@
       Set the output Translation-en master file with the long descriptions if they
       should be not included in the Packages file. Defaults to
       <filename>$(DIST)/$(SECTION)/i18n/Translation-en</filename></para></listitem>
-      </varlistentry>
-
-      <varlistentry><term>LongDescription</term>
-      <listitem><para>
-      Sets if long descriptions should be included in the Packages file or split
-      out into a master Translation-en file.</para></listitem>
       </varlistentry>
 
       <varlistentry><term>InternalPrefix</term>
