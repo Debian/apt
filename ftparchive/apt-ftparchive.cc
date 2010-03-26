@@ -63,6 +63,7 @@ struct PackageMap
    string SrcExtraOverride;
 
    // Translation master file
+   bool LongDesc;
    TranslationWriter *TransWriter;
 
    // Contents 
@@ -103,7 +104,7 @@ struct PackageMap
 		    vector<PackageMap>::iterator End,
 		    unsigned long &Left);
    
-   PackageMap() : TransWriter(NULL), DeLinkLimit(0), Permissions(1),
+   PackageMap() : LongDesc(true), TransWriter(NULL), DeLinkLimit(0), Permissions(1),
 		  ContentsDone(false), PkgDone(false), SrcDone(false),
 		  ContentsMTime(0) {};
 };
@@ -174,6 +175,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    Packages.InternalPrefix = flCombine(ArchiveDir,InternalPrefix);
 
    Packages.TransWriter = TransWriter;
+   Packages.LongDescription = LongDesc;
 
    Packages.Stats.DeLinkBytes = Stats.DeLinkBytes;
    Packages.DeLinkLimit = DeLinkLimit;
@@ -456,6 +458,9 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
    string DFLFile = Setup.Find("TreeDefault::FileList", "");
    string DSFLFile = Setup.Find("TreeDefault::SourceFileList", "");
 
+   bool const LongDescription = Setup.FindB("TreeDefault::LongDescription",
+					_config->FindB("APT::FTPArchive::LongDescription", true));
+
    // Process 'tree' type sections
    const Configuration::Item *Top = Setup.Tree("tree");
    for (Top = (Top == 0?0:Top->Child); Top != 0;)
@@ -474,8 +479,9 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 					 {"$(SECTION)",&Section},
 					 {"$(ARCH)",&Arch},
 					 {}};
+	 bool const LongDesc = Block.FindB("LongDescription", LongDescription);
 	 TranslationWriter *TransWriter;
-	 if (DTrans.empty() == false)
+	 if (DTrans.empty() == false && LongDesc == false)
 	 {
 	    string const TranslationFile = flCombine(Setup.FindDir("Dir::ArchiveDir"),
 			SubstVar(Block.Find("Translation", DTrans.c_str()), Vars));
@@ -509,6 +515,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.PkgFile = SubstVar(Block.Find("Packages",DPkg.c_str()),Vars);
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/$(ARCH)",Vars);
 	       Itm.Arch = Arch;
+	       Itm.LongDesc = LongDesc;
 	       if (TransWriter != NULL)
 	       {
 		  TransWriter->IncreaseRefCounter();
