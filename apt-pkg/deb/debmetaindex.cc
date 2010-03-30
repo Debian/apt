@@ -313,7 +313,7 @@ class debSLTypeDebian : public pkgSourceList::Type
    {
       map<string, string>::const_iterator const arch = Options.find("arch");
       vector<string> const Archs =
-		(arch != Options.end()) ? ExplodeString(arch->second, ',') :
+		(arch != Options.end()) ? VectorizeString(arch->second, ',') :
 				APT::Configuration::getArchitectures();
 
       for (vector<metaIndex *>::const_iterator I = List.begin();

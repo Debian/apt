@@ -1000,12 +1000,12 @@ bool TokSplitString(char Tok,char *Input,char **List,
    return true;
 }
 									/*}}}*/
-// ExplodeString - Split a string up into a vector			/*{{{*/
+// VectorizeString - Split a string up into a vector of strings		/*{{{*/
 // ---------------------------------------------------------------------
 /* This can be used to split a given string up into a vector, so the
    propose is the same as in the method above and this one is a bit slower
-   also, but the advantage is that we an iteratable vector */
-vector<string> ExplodeString(string const &haystack, char const &split)
+   also, but the advantage is that we have an iteratable vector */
+vector<string> VectorizeString(string const &haystack, char const &split)
 {
    string::const_iterator start = haystack.begin();
    string::const_iterator end = start;

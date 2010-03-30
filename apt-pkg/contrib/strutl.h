@@ -52,7 +52,7 @@ bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0)
 bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length);
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
-vector<string> ExplodeString(string const &haystack, char const &split);
+vector<string> VectorizeString(string const &haystack, char const &split) __attrib_const;
 void ioprintf(ostream &out,const char *format,...) __like_printf(2);
 void strprintf(string &out,const char *format,...) __like_printf(2);
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...) __like_printf(3);
