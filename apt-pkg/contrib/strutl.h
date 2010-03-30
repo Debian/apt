@@ -25,18 +25,11 @@
 #include <iostream>
 #include <time.h>
 
+#include "macros.h"
+
 using std::string;
 using std::vector;
 using std::ostream;
-
-#ifdef __GNUG__
-// Methods have a hidden this parameter that is visible to this attribute
-#define APT_FORMAT2 __attribute__ ((format (printf, 2, 3)))
-#define APT_FORMAT3 __attribute__ ((format (printf, 3, 4)))
-#else
-#define APT_FORMAT2
-#define APT_FORMAT3
-#endif    
 
 bool UTF8ToCodeset(const char *codeset, const string &orig, string *dest);
 char *_strstrip(char *String);
@@ -60,11 +53,11 @@ bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length);
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 vector<string> ExplodeString(string const &haystack, char const &split);
-void ioprintf(ostream &out,const char *format,...) APT_FORMAT2;
-void strprintf(string &out,const char *format,...) APT_FORMAT2;
-char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_FORMAT3;
+void ioprintf(ostream &out,const char *format,...) __like_printf(2);
+void strprintf(string &out,const char *format,...) __like_printf(2);
+char *safe_snprintf(char *Buffer,char *End,const char *Format,...) __like_printf(3);
 bool CheckDomainList(const string &Host, const string &List);
-int tolower_ascii(int c);
+int tolower_ascii(int const c) __attrib_const __hot;
 
 #define APT_MKSTRCMP(name,func) \
 inline int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));}; \
@@ -143,7 +136,5 @@ struct RxChoiceList
 };
 unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
 		      const char **ListEnd);
-
-#undef APT_FORMAT2
 
 #endif

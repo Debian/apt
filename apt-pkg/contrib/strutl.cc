@@ -566,7 +566,7 @@ int stringcmp(string::const_iterator A,string::const_iterator AEnd,
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
 {
    for (; A != AEnd && B != BEnd; A++, B++)
-      if (toupper(*A) != toupper(*B))
+      if (tolower_ascii(*A) != tolower_ascii(*B))
 	 break;
 
    if (A == AEnd && B == BEnd)
@@ -575,7 +575,7 @@ int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd)
       return 1;
    if (B == BEnd)
       return -1;
-   if (toupper(*A) < toupper(*B))
+   if (tolower_ascii(*A) < tolower_ascii(*B))
       return -1;
    return 1;
 }
@@ -584,7 +584,7 @@ int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
 		  const char *B,const char *BEnd)
 {
    for (; A != AEnd && B != BEnd; A++, B++)
-      if (toupper(*A) != toupper(*B))
+      if (tolower_ascii(*A) != tolower_ascii(*B))
 	 break;
 
    if (A == AEnd && B == BEnd)
@@ -593,7 +593,7 @@ int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
       return 1;
    if (B == BEnd)
       return -1;
-   if (toupper(*A) < toupper(*B))
+   if (tolower_ascii(*A) < tolower_ascii(*B))
       return -1;
    return 1;
 }
@@ -601,7 +601,7 @@ int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
 		  string::const_iterator B,string::const_iterator BEnd)
 {
    for (; A != AEnd && B != BEnd; A++, B++)
-      if (toupper(*A) != toupper(*B))
+      if (tolower_ascii(*A) != tolower_ascii(*B))
 	 break;
 
    if (A == AEnd && B == BEnd)
@@ -610,7 +610,7 @@ int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
       return 1;
    if (B == BEnd)
       return -1;
-   if (toupper(*A) < toupper(*B))
+   if (tolower_ascii(*A) < tolower_ascii(*B))
       return -1;
    return 1;
 }
@@ -789,28 +789,28 @@ bool ReadMessages(int Fd, vector<string> &List)
 // MonthConv - Converts a month string into a number			/*{{{*/
 // ---------------------------------------------------------------------
 /* This was lifted from the boa webserver which lifted it from 'wn-v1.07'
-   Made it a bit more robust with a few touppers though. */
+   Made it a bit more robust with a few tolower_ascii though. */
 static int MonthConv(char *Month)
 {
-   switch (toupper(*Month)) 
+   switch (tolower_ascii(*Month)) 
    {
-      case 'A':
-      return toupper(Month[1]) == 'P'?3:7;
-      case 'D':
+      case 'a':
+      return tolower_ascii(Month[1]) == 'p'?3:7;
+      case 'd':
       return 11;
-      case 'F':
+      case 'f':
       return 1;
-      case 'J':
-      if (toupper(Month[1]) == 'A')
+      case 'j':
+      if (tolower_ascii(Month[1]) == 'a')
 	 return 0;
-      return toupper(Month[2]) == 'N'?5:6;
-      case 'M':
-      return toupper(Month[2]) == 'R'?2:4;
-      case 'N':
+      return tolower_ascii(Month[2]) == 'n'?5:6;
+      case 'm':
+      return tolower_ascii(Month[2]) == 'r'?2:4;
+      case 'n':
       return 10;
-      case 'O':
+      case 'o':
       return 9;
-      case 'S':
+      case 's':
       return 8;
 
       // Pretend it is January..
@@ -1133,10 +1133,13 @@ char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
 
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-int tolower_ascii(int c)
+/* This little function is the most called method we have and tries
+   therefore to do the absolut minimum - and is noteable faster than
+   standard tolower/toupper and as a bonus avoids problems with different
+   locales - we only operate on ascii chars anyway. */
+int tolower_ascii(int const c)
 {
-   if (c >= 'A' and c <= 'Z')
+   if (c >= 'A' && c <= 'Z')
       return c + 32;
    return c;
 }
