@@ -335,29 +335,30 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
 // CacheGenerator::NewGroup - Add a new group				/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a new group structure and adds it to the hash table */
-bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name) {
-	Grp = Cache.FindGrp(Name);
-	if (Grp.end() == false)
-		return true;
+bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
+{
+   Grp = Cache.FindGrp(Name);
+   if (Grp.end() == false)
+      return true;
 
-	// Get a structure
-	unsigned long const Group = Map.Allocate(sizeof(pkgCache::Group));
-	if (unlikely(Group == 0))
-		return false;
+   // Get a structure
+   unsigned long const Group = Map.Allocate(sizeof(pkgCache::Group));
+   if (unlikely(Group == 0))
+      return false;
 
-	Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
-	Grp->Name = Map.WriteString(Name);
-	if (unlikely(Grp->Name == 0))
-		return false;
+   Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
+   Grp->Name = Map.WriteString(Name);
+   if (unlikely(Grp->Name == 0))
+      return false;
 
-	// Insert it into the hash table
-	unsigned long const Hash = Cache.Hash(Name);
-	Grp->Next = Cache.HeaderP->GrpHashTable[Hash];
-	Cache.HeaderP->GrpHashTable[Hash] = Group;
+   // Insert it into the hash table
+   unsigned long const Hash = Cache.Hash(Name);
+   Grp->Next = Cache.HeaderP->GrpHashTable[Hash];
+   Cache.HeaderP->GrpHashTable[Hash] = Group;
 
-	Cache.HeaderP->GroupCount++;
+   Cache.HeaderP->GroupCount++;
 
-	return true;
+   return true;
 }
 									/*}}}*/
 // CacheGenerator::NewPackage - Add a new package			/*{{{*/
@@ -526,68 +527,76 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
 // CacheGenerator::FinishCache - do various finish operations		/*{{{*/
 // ---------------------------------------------------------------------
 /* This prepares the Cache for delivery */
-bool pkgCacheGenerator::FinishCache(OpProgress &Progress) {
-	// FIXME: add progress reporting for this operation
-	// Do we have different architectures in your groups ?
-	vector<string> archs = APT::Configuration::getArchitectures();
-	if (archs.size() > 1) {
-		// Create Conflicts in between the group
-		for (pkgCache::GrpIterator G = GetCache().GrpBegin(); G.end() != true; G++) {
-			string const PkgName = G.Name();
-			for (pkgCache::PkgIterator P = G.PackageList(); P.end() != true; P = G.NextPkg(P)) {
-				if (strcmp(P.Arch(),"all") == 0)
-					continue;
-				pkgCache::PkgIterator allPkg;
-				for (pkgCache::VerIterator V = P.VersionList(); V.end() != true; V++) {
-					string const Arch = V.Arch(true);
-					map_ptrloc *OldDepLast = NULL;
-					/* MultiArch handling introduces a lot of implicit Dependencies:
-					   - MultiArch: same → Co-Installable if they have the same version
-					   - Architecture: all → Need to be Co-Installable for internal reasons
-					   - All others conflict with all other group members */
-					bool const coInstall = (V->MultiArch == pkgCache::Version::All ||
-								V->MultiArch == pkgCache::Version::Same);
-					if (V->MultiArch == pkgCache::Version::All && allPkg.end() == true)
-						allPkg = G.FindPkg("all");
-					for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A) {
-						if (*A == Arch)
-							continue;
-						/* We allow only one installed arch at the time
-						   per group, therefore each group member conflicts
-						   with all other group members */
-						pkgCache::PkgIterator D = G.FindPkg(*A);
-						if (D.end() == true)
-							continue;
-						if (coInstall == true) {
-							// Replaces: ${self}:other ( << ${binary:Version})
-							NewDepends(D, V, V.VerStr(),
-								   pkgCache::Dep::Less, pkgCache::Dep::Replaces,
-								   OldDepLast);
-							// Breaks: ${self}:other (!= ${binary:Version})
-							NewDepends(D, V, V.VerStr(),
-								   pkgCache::Dep::Less, pkgCache::Dep::DpkgBreaks,
-								   OldDepLast);
-							NewDepends(D, V, V.VerStr(),
-								   pkgCache::Dep::Greater, pkgCache::Dep::DpkgBreaks,
-								   OldDepLast);
-							if (V->MultiArch == pkgCache::Version::All) {
-								// Depend on ${self}:all which does depend on nothing
-								NewDepends(allPkg, V, V.VerStr(),
-									   pkgCache::Dep::Equals, pkgCache::Dep::Depends,
-									   OldDepLast);
-							}
-						} else {
-							// Conflicts: ${self}:other
-							NewDepends(D, V, "",
-								   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
-								   OldDepLast);
-						}
-					}
-				}
-			}
-		}
-	}
-	return true;
+bool pkgCacheGenerator::FinishCache(OpProgress &Progress)
+{
+   // FIXME: add progress reporting for this operation
+   // Do we have different architectures in your groups ?
+   vector<string> archs = APT::Configuration::getArchitectures();
+   if (archs.size() > 1)
+   {
+      // Create Conflicts in between the group
+      for (pkgCache::GrpIterator G = GetCache().GrpBegin(); G.end() != true; G++)
+      {
+	 string const PkgName = G.Name();
+	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() != true; P = G.NextPkg(P))
+	 {
+	    if (strcmp(P.Arch(),"all") == 0)
+	       continue;
+	    pkgCache::PkgIterator allPkg;
+	    for (pkgCache::VerIterator V = P.VersionList(); V.end() != true; V++)
+	    {
+	       string const Arch = V.Arch(true);
+	       map_ptrloc *OldDepLast = NULL;
+	       /* MultiArch handling introduces a lot of implicit Dependencies:
+		- MultiArch: same → Co-Installable if they have the same version
+		- Architecture: all → Need to be Co-Installable for internal reasons
+		- All others conflict with all other group members */
+	       bool const coInstall = (V->MultiArch == pkgCache::Version::All ||
+					V->MultiArch == pkgCache::Version::Same);
+	       if (V->MultiArch == pkgCache::Version::All && allPkg.end() == true)
+		  allPkg = G.FindPkg("all");
+	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
+	       {
+		  if (*A == Arch)
+		     continue;
+		  /* We allow only one installed arch at the time
+		     per group, therefore each group member conflicts
+		     with all other group members */
+		  pkgCache::PkgIterator D = G.FindPkg(*A);
+		  if (D.end() == true)
+		     continue;
+		  if (coInstall == true)
+		  {
+		     // Replaces: ${self}:other ( << ${binary:Version})
+		     NewDepends(D, V, V.VerStr(),
+				pkgCache::Dep::Less, pkgCache::Dep::Replaces,
+				OldDepLast);
+		     // Breaks: ${self}:other (!= ${binary:Version})
+		     NewDepends(D, V, V.VerStr(),
+				pkgCache::Dep::Less, pkgCache::Dep::DpkgBreaks,
+				OldDepLast);
+		     NewDepends(D, V, V.VerStr(),
+				pkgCache::Dep::Greater, pkgCache::Dep::DpkgBreaks,
+				OldDepLast);
+		     if (V->MultiArch == pkgCache::Version::All)
+		     {
+			// Depend on ${self}:all which does depend on nothing
+			NewDepends(allPkg, V, V.VerStr(),
+				   pkgCache::Dep::Equals, pkgCache::Dep::Depends,
+				   OldDepLast);
+		     }
+		  } else {
+			// Conflicts: ${self}:other
+			NewDepends(D, V, "",
+				   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+				   OldDepLast);
+		  }
+	       }
+	    }
+	 }
+      }
+   }
+   return true;
 }
 									/*}}}*/
 // CacheGenerator::NewDepends - Create a dependency element		/*{{{*/

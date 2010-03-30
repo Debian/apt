@@ -36,8 +36,8 @@ static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Impor
    we would accept in general with checkArchitecture() */
 debListParser::debListParser(FileFd *File, string const &Arch) : Tags(File),
 				Arch(Arch) {
-	if (Arch == "native")
-		this->Arch = _config->Find("APT::Architecture");
+   if (Arch == "native")
+      this->Arch = _config->Find("APT::Architecture");
 }
 									/*}}}*/
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
@@ -56,10 +56,10 @@ unsigned long debListParser::UniqFindTagWrite(const char *Tag)
 // ---------------------------------------------------------------------
 /* This is to return the name of the package this section describes */
 string debListParser::Package() {
-	string const Result = Section.FindS("Package");
-	if(unlikely(Result.empty() == true))
-		_error->Error("Encountered a section with no Package: header");
-	return Result;
+   string const Result = Section.FindS("Package");
+   if(unlikely(Result.empty() == true))
+      _error->Error("Encountered a section with no Package: header");
+   return Result;
 }
 									/*}}}*/
 // ListParser::Architecture - Return the package arch			/*{{{*/
@@ -68,25 +68,26 @@ string debListParser::Package() {
    Note that architecture "all" packages will get the architecture of the
    Packages file parsed here. */
 string debListParser::Architecture() {
-	string const Result = Section.FindS("Architecture");
-	if (Result.empty() == true || Result == "all") {
-		if (Arch.empty() == true)
-			/* FIXME: this is a problem for installed arch all
-			   packages as we don't know from which arch this
-			   package was installed - and therefore which
-			   dependency this package resolves. */
-			return _config->Find("APT::Architecture");
-		else
-			return Arch;
-	}
-	return Result;
+   string const Result = Section.FindS("Architecture");
+   if (Result.empty() == true || Result == "all")
+   {
+      if (Arch.empty() == true)
+	 /* FIXME: this is a problem for installed arch all
+	    packages as we don't know from which arch this
+	    package was installed - and therefore which
+	    dependency this package resolves. */
+	 return _config->Find("APT::Architecture");
+      else
+	 return Arch;
+   }
+   return Result;
 }
 									/*}}}*/
 // ListParser::ArchitectureAll						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool debListParser::ArchitectureAll() {
-	return Section.FindS("Architecture") == "all";
+   return Section.FindS("Architecture") == "all";
 }
 									/*}}}*/
 // ListParser::Version - Return the version string			/*{{{*/
