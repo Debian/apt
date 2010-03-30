@@ -343,24 +343,17 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) {
 // GrpIterator::NextPkg - Locate the next package in the group		/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise.
-   We can't simply ++ to the next as the list of packages includes
-   "package noise" (= packages with the same hash value but different name) */
+   We can't simply ++ to the next as the next package of the last will
+   be from a different group (with the same hash value) */
 pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const &LastPkg) {
 	if (unlikely(IsGood() == false || S->FirstPackage == 0 ||
 	    LastPkg.end() == true))
 		return PkgIterator(*Owner, 0);
 
-	// Iterate over the list to find the next package
-	pkgCache::Package *Pkg = Owner->PkgP + LastPkg.Index();
-	Pkg = Owner->PkgP + Pkg->NextPackage;
-	for (; Pkg != Owner->PkgP; Pkg = Owner->PkgP + Pkg->NextPackage) {
-		if (S->Name == Pkg->Name)
-			return PkgIterator(*Owner, Pkg);
-		if ((Owner->PkgP + S->LastPackage) == Pkg)
-			break;
-	}
+	if (S->LastPackage == LastPkg.Index())
+		return PkgIterator(*Owner, 0);
 
-	return PkgIterator(*Owner, 0);
+	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
 }
 									/*}}}*/
 // GrpIterator::operator ++ - Postfix incr				/*{{{*/

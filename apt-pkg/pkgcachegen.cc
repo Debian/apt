@@ -379,15 +379,23 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       return false;
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
 
-   // Insert it into the hash table
-   unsigned long const Hash = Cache.Hash(Name);
-   Pkg->NextPackage = Cache.HeaderP->PkgHashTable[Hash];
-   Cache.HeaderP->PkgHashTable[Hash] = Package;
-
-   // remember the packages in the group
-   Grp->FirstPackage = Package;
-   if (Grp->LastPackage == 0)
-      Grp->LastPackage = Package;
+   // Insert the package into our package list
+   if (Grp->FirstPackage == 0) // the group is new
+   {
+      // Insert it into the hash table
+      unsigned long const Hash = Cache.Hash(Name);
+      Pkg->NextPackage = Cache.HeaderP->PkgHashTable[Hash];
+      Cache.HeaderP->PkgHashTable[Hash] = Package;
+      Grp->FirstPackage = Package;
+   }
+   else // Group the Packages together
+   {
+      // this package is the new last package
+      pkgCache::PkgIterator LastPkg(Cache, Cache.PkgP + Grp->LastPackage);
+      Pkg->NextPackage = LastPkg->NextPackage;
+      LastPkg->NextPackage = Package;
+   }
+   Grp->LastPackage = Package;
 
    // Set the name, arch and the ID
    Pkg->Name = Grp->Name;
