@@ -1270,12 +1270,26 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    {
       if(VerTag.empty() == false || DefRel.empty() == false) 
       {
+	 bool fuzzy = false;
 	 // we have a default release, try to locate the pkg. we do it like
 	 // this because GetCandidateVer() will not "downgrade", that means
 	 // "apt-get source -t stable apt" won't work on a unstable system
-	 for (pkgCache::VerIterator Ver = Pkg.VersionList();
-	      Ver.end() == false; Ver++) 
+	 for (pkgCache::VerIterator Ver = Pkg.VersionList();; Ver++)
 	 {
+	    // try first only exact matches, later fuzzy matches
+	    if (Ver.end() == true)
+	    {
+	       if (fuzzy == true)
+		  break;
+	       fuzzy = true;
+	       Ver = Pkg.VersionList();
+	    }
+	    // We match against a concrete version (or a part of this version)
+	    if (VerTag.empty() == false &&
+		(fuzzy == true || Cache.VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
+		(fuzzy == false || strncmp(VerTag.c_str(), Ver.VerStr(), VerTag.size()) != 0)) // fuzzy match
+	       continue;
+
 	    for (pkgCache::VerFileIterator VF = Ver.FileList();
 		 VF.end() == false; VF++) 
 	    {
@@ -1288,10 +1302,6 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		   pkgCache::Flag::NotSource && Pkg.CurrentVer() != Ver)
 		  continue;
 
-	       // We match against a concrete version (or a part of this version)
-	       if (VerTag.empty() == false && strncmp(VerTag.c_str(), Ver.VerStr(), VerTag.size()) != 0)
-		  continue;
-
 	       // or we match against a release
 	       if(VerTag.empty() == false ||
 		  (VF.File().Archive() != 0 && VF.File().Archive() == DefRel) ||
@@ -1302,10 +1312,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		  // no SourcePkg name, so it is the "binary" name
 		  if (Src.empty() == true)
 		     Src = TmpSrc;
-		  // no Version, so we try the Version of the SourcePkg -
-		  // and after that the version of the binary package
-		  if (VerTag.empty() == true)
-		     VerTag = Parse.SourceVer();
+		  // the Version we have is possibly fuzzy or includes binUploads,
+		  // so we use the Version of the SourcePkg (empty if same as package)
+		  VerTag = Parse.SourceVer();
 		  if (VerTag.empty() == true)
 		     VerTag = Ver.VerStr();
 		  break;
@@ -1371,7 +1380,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 const string Ver = Parse->Version();
 
 	 // Ignore all versions which doesn't fit
-	 if (VerTag.empty() == false && strncmp(VerTag.c_str(), Ver.c_str(), VerTag.size()) != 0)
+	 if (VerTag.empty() == false &&
+	     Cache.VS().CmpVersion(VerTag, Ver) != 0) // exact match
 	    continue;
 
 	 // Newer version or an exact match? Save the hit
