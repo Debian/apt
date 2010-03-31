@@ -64,6 +64,12 @@ apt (0.7.26) UNRELEASED; urgency=low
   * apt-pkg/contrib/strutl.cc:
     - convert all toupper calls to tolower_ascii for a little speedup
 
+  [ Jean-Baptiste Lallement ]
+  * apt-pkg/contrib/strutl.cc:
+    - always escape '%' (LP: #130289) (Closes: #500560)
+    - unescape '%' sequence only if followed by 2 hex digit
+    - username/password are urlencoded in proxy string (RFC 3986)
+
   [ Julian Andres Klode ]
   * cmdline/apt-mark:
     - Use the new python-apt API (and conflict with python-apt << 0.7.93.2).
