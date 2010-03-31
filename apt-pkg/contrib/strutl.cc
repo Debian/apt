@@ -198,7 +198,8 @@ bool ParseQuoteWord(const char *&String,string &Res)
    char *I;
    for (I = Buffer; I < Buffer + sizeof(Buffer) && Start != C; I++)
    {
-      if (*Start == '%' && Start + 2 < C)
+      if (*Start == '%' && Start + 2 < C &&
+	  isxdigit(Start[1]) && isxdigit(Start[2]))
       {
 	 Tmp[0] = Start[1];
 	 Tmp[1] = Start[2];
@@ -273,7 +274,8 @@ string QuoteString(const string &Str, const char *Bad)
    for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
    {
       if (strchr(Bad,*I) != 0 || isprint(*I) == 0 || 
-	  *I <= 0x20 || *I >= 0x7F)
+	  *I == 0x25 || // percent '%' char
+	  *I <= 0x20 || *I >= 0x7F) // control chars
       {
 	 char Buf[10];
 	 sprintf(Buf,"%%%02x",(int)*I);
@@ -290,10 +292,16 @@ string QuoteString(const string &Str, const char *Bad)
 /* This undoes QuoteString */
 string DeQuoteString(const string &Str)
 {
+   return DeQuoteString(Str.begin(),Str.end());
+}
+string DeQuoteString(string::const_iterator const &begin,
+			string::const_iterator const &end)
+{
    string Res;
-   for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
+   for (string::const_iterator I = begin; I != end; I++)
    {
-      if (*I == '%' && I + 2 < Str.end())
+      if (*I == '%' && I + 2 < end &&
+	  isxdigit(I[1]) && isxdigit(I[2]))
       {
 	 char Tmp[3];
 	 Tmp[0] = I[1];
@@ -1217,9 +1225,10 @@ void URI::CopyFrom(const string &U)
    else
    {
       Host.assign(At+1,SingleSlash);
-      User.assign(FirstColon,SecondColon);
+      // username and password must be encoded (RFC 3986)
+      User.assign(DeQuoteString(FirstColon,SecondColon));
       if (SecondColon < At)
-	 Password.assign(SecondColon+1,At);
+	 Password.assign(DeQuoteString(SecondColon+1,At));
    }   
    
    // Now we parse the RFC 2732 [] hostnames.

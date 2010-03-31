@@ -4,6 +4,12 @@ apt (0.7.25.3ubuntu5) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - try version match in FindSrc first exact than fuzzy (LP: #551178)
 
+  [ Jean-Baptiste Lallement ]
+  * apt-pkg/contrib/strutl.cc:
+    - always escape '%' (LP: #130289) (Closes: #500560)
+    - unescape '%' sequence only if followed by 2 hex digit
+    - username/password are urlencoded in proxy string (RFC 3986)
+
  -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 31 Mar 2010 21:59:42 +0200
 
 apt (0.7.25.3ubuntu4) lucid; urgency=low
