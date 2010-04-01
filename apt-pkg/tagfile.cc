@@ -193,17 +193,8 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
 // ---------------------------------------------------------------------
-/* This looks for the first double new line in the data stream. It also
-   indexes the tags in the section. This very simple hash function for the
-   last 8 letters gives very good performance on the debian package files */
-inline static unsigned long AlphaHash(const char *Text, const char *End = 0)
-{
-   unsigned long Res = 0;
-   for (; Text != End && *Text != ':' && *Text != 0; Text++)
-      Res = ((unsigned long)(*Text) & 0xDF) ^ (Res << 1);
-   return Res & 0xFF;
-}
-
+/* This looks for the first double new line in the data stream.
+   It also indexes the tags in the section. */
 bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
 {
    const char *End = Start + MaxLength;

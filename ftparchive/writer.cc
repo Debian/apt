@@ -300,7 +300,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 /* */
 PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides,
 			       string const &Arch) :
-   FTWScanner(Arch), Db(DB), Stats(Db.Stats)
+   FTWScanner(Arch), Db(DB), Stats(Db.Stats), TransWriter(NULL)
 {
    Output = stdout;
    SetExts(".deb .udeb");
@@ -317,7 +317,7 @@ PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string c
 
    if (Db.Loaded() == false)
       DoContents = false;
-      
+
    // Read the override file
    if (Overrides.empty() == false && Over.ReadOverride(Overrides) == false)
       return;
@@ -448,6 +448,8 @@ bool PackagesWriter::DoPackage(string FileName)
       descmd5.Add(desc.c_str());
       DescriptionMd5 = descmd5.Result().Value();
       SetTFRewriteData(Changes[End++], "Description-md5", DescriptionMd5.c_str());
+      if (TransWriter != NULL)
+	 TransWriter->DoPackage(Package, desc, DescriptionMd5);
    }
 
    // Rewrite the maintainer field if necessary
@@ -491,6 +493,55 @@ bool PackagesWriter::DoPackage(string FileName)
    fprintf(Output,"\n");
 
    return Db.Finish();
+}
+									/*}}}*/
+
+// TranslationWriter::TranslationWriter - Constructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* Create a Translation-Master file for this Packages file */
+TranslationWriter::TranslationWriter(string const &File, string const &TransCompress,
+					mode_t const &Permissions) : Output(NULL),
+							RefCounter(0)
+{
+   if (File.empty() == true)
+      return;
+
+   Comp = new MultiCompress(File, TransCompress, Permissions);
+   Output = Comp->Input;
+}
+									/*}}}*/
+// TranslationWriter::DoPackage - Process a single package		/*{{{*/
+// ---------------------------------------------------------------------
+/* Create a Translation-Master file for this Packages file */
+bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
+				  string const &MD5)
+{
+   if (Output == NULL)
+      return true;
+
+   // Different archs can include different versions and therefore
+   // different descriptions - so we need to check for both name and md5.
+   string const Record = Pkg + ":" + MD5;
+
+   if (Included.find(Record) != Included.end())
+      return true;
+
+   fprintf(Output, "Package: %s\nDescription-md5: %s\nDescription-en: %s\n",
+	   Pkg.c_str(), MD5.c_str(), Desc.c_str());
+
+   Included.insert(Record);
+   return true;
+}
+									/*}}}*/
+// TranslationWriter::~TranslationWriter - Destructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+TranslationWriter::~TranslationWriter()
+{
+   if (Comp == NULL)
+      return;
+
+   delete Comp;
 }
 									/*}}}*/
 

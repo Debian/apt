@@ -17,6 +17,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/tagfile.h>
 
@@ -164,34 +165,46 @@ bool pkgDepCache::Init(OpProgress *Prog)
 bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 {
    FileFd state_file;
-   string state = _config->FindDir("Dir::State") + "extended_states";
+   string const state = _config->FindDir("Dir::State") + "extended_states";
    if(FileExists(state)) {
       state_file.Open(state, FileFd::ReadOnly);
-      int file_size = state_file.Size();
+      int const file_size = state_file.Size();
       if(Prog != NULL)
 	 Prog->OverallProgress(0, file_size, 1, 
 			       _("Reading state information"));
 
       pkgTagFile tagfile(&state_file);
       pkgTagSection section;
-      int amt=0;
-      bool debug_autoremove=_config->FindB("Debug::pkgAutoRemove",false);
+      int amt = 0;
+      bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
       while(tagfile.Step(section)) {
-	 string pkgname = section.FindS("Package");
-	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
-	 // Silently ignore unknown packages and packages with no actual
-	 // version.
-	 if(!pkg.end() && !pkg.VersionList().end()) {
-	    short reason = section.FindI("Auto-Installed", 0);
-	    if(reason > 0)
-	       PkgState[pkg->ID].Flags  |= Flag::Auto;
-	    if(debug_autoremove)
-	       std::cout << "Auto-Installed : " << pkgname << std::endl;
-	    amt+=section.size();
-	    if(Prog != NULL)
-	       Prog->OverallProgress(amt, file_size, 1, 
-				     _("Reading state information"));
+	 string const pkgname = section.FindS("Package");
+	 string pkgarch = section.FindS("Architecture");
+	 if (pkgarch.empty() == true)
+	    pkgarch = "any";
+	 pkgCache::PkgIterator pkg = Cache->FindPkg(pkgname, pkgarch);
+	 // Silently ignore unknown packages and packages with no actual version.
+	 if(pkg.end() == true || pkg->VersionList == 0)
+	    continue;
+
+	 short const reason = section.FindI("Auto-Installed", 0);
+	 if(reason > 0)
+	 {
+	    PkgState[pkg->ID].Flags |= Flag::Auto;
+	    if (unlikely(debug_autoremove))
+	       std::cout << "Auto-Installed : " << pkg.FullName() << std::endl;
+	    if (pkgarch == "any")
+	    {
+	       pkgCache::GrpIterator G = pkg.Group();
+	       for (pkg = G.NextPkg(pkg); pkg.end() != true; pkg = G.NextPkg(pkg))
+		  if (pkg->VersionList != 0)
+		     PkgState[pkg->ID].Flags |= Flag::Auto;
+	    }
 	 }
+	 amt += section.size();
+	 if(Prog != NULL)
+	    Prog->OverallProgress(amt, file_size, 1, 
+				  _("Reading state information"));
       }
       if(Prog != NULL)
 	 Prog->OverallProgress(file_size, file_size, 1,
@@ -203,13 +216,13 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 									/*}}}*/
 bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
 {
-   bool debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
+   bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
    
    if(debug_autoremove)
       std::clog << "pkgDepCache::writeStateFile()" << std::endl;
 
    FileFd StateFile;
-   string state = _config->FindDir("Dir::State") + "extended_states";
+   string const state = _config->FindDir("Dir::State") + "extended_states";
 
    // if it does not exist, create a empty one
    if(!FileExists(state)) 
@@ -224,7 +237,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
 			   state.c_str());
 
    FILE *OutFile;
-   string outfile = state + ".tmp";
+   string const outfile = state + ".tmp";
    if((OutFile = fopen(outfile.c_str(),"w")) == NULL)
       return _error->Error(_("Failed to write temporary StateFile %s"),
 			   outfile.c_str());
@@ -235,46 +248,72 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
    std::set<string> pkgs_seen;
    const char *nullreorderlist[] = {0};
    while(tagfile.Step(section)) {
-	 string pkgname = section.FindS("Package");
+	 string const pkgname = section.FindS("Package");
+	 string pkgarch = section.FindS("Architecture");
+	 if (pkgarch.empty() == true)
+	    pkgarch = "native";
 	 // Silently ignore unknown packages and packages with no actual
 	 // version.
-	 pkgCache::PkgIterator pkg=Cache->FindPkg(pkgname);
+	 pkgCache::PkgIterator pkg = Cache->FindPkg(pkgname, pkgarch);
 	 if(pkg.end() || pkg.VersionList().end()) 
 	    continue;
-	 bool newAuto = (PkgState[pkg->ID].Flags & Flag::Auto);
+	 StateCache const &P = PkgState[pkg->ID];
+	 bool newAuto = (P.Flags & Flag::Auto);
+	 // skip not installed or now-removed ones if requested
+	 if (InstalledOnly && (
+	     (pkg->CurrentVer == 0 && P.Mode != ModeInstall) ||
+	     (pkg->CurrentVer != 0 && P.Mode == ModeDelete)))
+	 {
+	    // The section is obsolete if it contains no other tag
+	    unsigned int const count = section.Count();
+	    if (count < 2 ||
+		(count == 2 && section.Exists("Auto-Installed")) ||
+		(count == 3 && section.Exists("Auto-Installed") && section.Exists("Architecture")))
+	       continue;
+	    else
+	       newAuto = false;
+	 }
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Update existing AutoInstall info: " 
-		      << pkg.Name() << std::endl;
-	 TFRewriteData rewrite[2];
-	 rewrite[0].Tag = "Auto-Installed";
-	 rewrite[0].Rewrite = newAuto ? "1" : "0";
+		      << pkg.FullName() << std::endl;
+	 TFRewriteData rewrite[3];
+	 rewrite[0].Tag = "Architecture";
+	 rewrite[0].Rewrite = pkg.Arch();
 	 rewrite[0].NewTag = 0;
-	 rewrite[1].Tag = 0;
+	 rewrite[1].Tag = "Auto-Installed";
+	 rewrite[1].Rewrite = newAuto ? "1" : "0";
+	 rewrite[1].NewTag = 0;
+	 rewrite[2].Tag = 0;
 	 TFRewrite(OutFile, section, nullreorderlist, rewrite);
 	 fprintf(OutFile,"\n");
-	 pkgs_seen.insert(pkgname);
+	 pkgs_seen.insert(pkg.FullName());
    }
    
    // then write the ones we have not seen yet
    std::ostringstream ostr;
    for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end(); pkg++) {
-      if(PkgState[pkg->ID].Flags & Flag::Auto) {
-	 if (pkgs_seen.find(pkg.Name()) != pkgs_seen.end()) {
+      StateCache const &P = PkgState[pkg->ID];
+      if(P.Flags & Flag::Auto) {
+	 if (pkgs_seen.find(pkg.FullName()) != pkgs_seen.end()) {
 	    if(debug_autoremove)
-	       std::clog << "Skipping already written " << pkg.Name() << std::endl;
+	       std::clog << "Skipping already written " << pkg.FullName() << std::endl;
 	    continue;
 	 }
-         // skip not installed ones if requested
-         if(InstalledOnly && pkg->CurrentVer == 0)
-            continue;
+	 // skip not installed ones if requested
+	 if (InstalledOnly && (
+	     (pkg->CurrentVer == 0 && P.Mode != ModeInstall) ||
+	     (pkg->CurrentVer != 0 && P.Mode == ModeDelete)))
+	    continue;
+	 const char* const pkgarch = pkg.Arch();
+	 if (strcmp(pkgarch, "all") == 0)
+	    continue;
 	 if(debug_autoremove)
-	    std::clog << "Writing new AutoInstall: " 
-		      << pkg.Name() << std::endl;
+	    std::clog << "Writing new AutoInstall: " << pkg.FullName() << std::endl;
 	 ostr.str(string(""));
-	 ostr << "Package: " << pkg.Name() 
+	 ostr << "Package: " << pkg.Name()
+	      << "\nArchitecture: " << pkgarch
 	      << "\nAuto-Installed: 1\n\n";
 	 fprintf(OutFile,"%s",ostr.str().c_str());
-	 fprintf(OutFile,"\n");
       }
    }
    fclose(OutFile);
@@ -596,6 +635,107 @@ void pkgDepCache::UpdateVerState(PkgIterator Pkg)
    }
 }
 									/*}}}*/
+// DepCache::RemovePseudoInstalledPkg - MultiArch helper for Update()	/*{{{*/
+// ---------------------------------------------------------------------
+/* We "install" arch all packages for all archs if it is installed. Many
+   of these will be broken. This method will look at these broken Pkg and
+   "remove" it. */
+bool pkgDepCache::RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck) {
+   if (unlikely(Pkg->CurrentVer == 0))
+      return false;
+
+   VerIterator V = Pkg.CurrentVer();
+   if (V->MultiArch != Version::All)
+      return false;
+
+   // Never ever kill an "all" package - they have no dependency so they can't be broken
+   if (strcmp(Pkg.Arch(),"all") == 0)
+      return false;
+
+   unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+   if ((CurDepState & DepInstMin) == DepInstMin) {
+      // okay, the package isn't broken, but is the package also required?
+      // If it has no real dependencies, no installed rdepends and doesn't
+      // provide something of value, we will kill it as not required.
+      // These pseudopackages have otherwise interesting effects if they get
+      // a new dependency in a newer version…
+      for (pkgCache::DepIterator D = V.DependsList();
+	   D.end() != true; ++D)
+	 if (D.IsCritical() == true && D.ParentPkg()->Group != Pkg->Group)
+	    return false;
+      for (DepIterator D = Pkg.RevDependsList(); D.end() != true; ++D)
+      {
+	 if (D.IsCritical() == false)
+	    continue;
+	 PkgIterator const P = D.ParentPkg();
+	 if (P->Group == Pkg->Group)
+	    continue;
+	 if (P->CurrentVer != 0)
+	    return false;
+      }
+      for (PrvIterator Prv = V.ProvidesList(); Prv.end() != true; Prv++)
+	 for (DepIterator d = Prv.ParentPkg().RevDependsList();
+	      d.end() != true; ++d)
+	 {
+	    PkgIterator const P = d.ParentPkg();
+	    if (P->CurrentVer != 0 &&
+	        P->Group != Pkg->Group)
+	       return false;
+	 }
+   }
+
+   // Dependencies for this arch all package are not statisfied
+   // so we installed it only for our convenience: get right of it now.
+   RemoveSizes(Pkg);
+   RemoveStates(Pkg);
+
+   Pkg->CurrentVer = 0;
+   PkgState[Pkg->ID].InstallVer = 0;
+
+   AddStates(Pkg);
+   Update(Pkg);
+   AddSizes(Pkg);
+
+   // After the remove previously satisfied pseudo pkg could be now
+   // no longer satisfied, so we need to recheck the reverse dependencies
+   for (DepIterator d = Pkg.RevDependsList(); d.end() != true; ++d)
+   {
+      PkgIterator const P = d.ParentPkg();
+      if (P->CurrentVer != 0)
+	 recheck.insert(P.Index());
+   }
+
+   for (DepIterator d = V.DependsList(); d.end() != true; ++d)
+   {
+      PkgIterator const P = d.TargetPkg();
+      for (PrvIterator Prv = P.ProvidesList(); Prv.end() != true; ++Prv)
+      {
+	 PkgIterator const O = Prv.OwnerPkg();
+	 if (O->CurrentVer != 0)
+	    recheck.insert(O.Index());
+      }
+
+      if (P->CurrentVer != 0)
+	 recheck.insert(P.Index());
+   }
+
+   for (PrvIterator Prv = V.ProvidesList(); Prv.end() != true; Prv++)
+   {
+      for (DepIterator d = Prv.ParentPkg().RevDependsList();
+	   d.end() != true; ++d)
+      {
+	 PkgIterator const P = d.ParentPkg();
+	 if (P->CurrentVer == 0)
+	    continue;
+
+	    recheck.insert(P.Index());
+      }
+   }
+
+
+   return true;
+}
+									/*}}}*/
 // DepCache::Update - Figure out all the state information		/*{{{*/
 // ---------------------------------------------------------------------
 /* This will figure out the state of all the packages and all the 
@@ -609,9 +749,13 @@ void pkgDepCache::Update(OpProgress *Prog)
    iKeepCount = 0;
    iBrokenCount = 0;
    iBadCount = 0;
-   
+
+   std::set<unsigned long> recheck;
+
    // Perform the depends pass
    int Done = 0;
+   bool const checkMultiArch = APT::Configuration::getArchitectures().size() > 1;
+   unsigned long killed = 0;
    for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
    {
       if (Prog != 0 && Done%20 == 0)
@@ -619,7 +763,7 @@ void pkgDepCache::Update(OpProgress *Prog)
       for (VerIterator V = I.VersionList(); V.end() != true; V++)
       {
 	 unsigned char Group = 0;
-	 
+
 	 for (DepIterator D = V.DependsList(); D.end() != true; D++)
 	 {
 	    // Build the dependency state.
@@ -637,16 +781,105 @@ void pkgDepCache::Update(OpProgress *Prog)
 		D->Type == Dep::DpkgBreaks ||
 		D->Type == Dep::Obsoletes)
 	       State = ~State;
-	 }	 
+	 }
       }
 
-      // Compute the pacakge dependency state and size additions
+      // Compute the package dependency state and size additions
       AddSizes(I);
       UpdateVerState(I);
       AddStates(I);
+
+      if (checkMultiArch != true || I->CurrentVer == 0)
+	 continue;
+
+      VerIterator const V = I.CurrentVer();
+      if (V->MultiArch != Version::All)
+	 continue;
+
+      recheck.insert(I.Index());
+      --Done; // no progress if we need to recheck the package
    }
 
-   if (Prog != 0)      
+   if (checkMultiArch == true) {
+      /* FIXME: recheck breaks proper progress reporting as we don't know
+		how many packages we need to recheck. To lower the effect
+		a bit we increase with a kill, but we should do something more clever… */
+      for(std::set<unsigned long>::const_iterator p = recheck.begin();
+	  p != recheck.end(); ++p) {
+	 if (Prog != 0 && Done%20 == 0)
+	    Prog->Progress(Done);
+	 PkgIterator P = PkgIterator(*Cache, Cache->PkgP + *p);
+	 if (RemovePseudoInstalledPkg(P, recheck) == true) {
+	    ++killed;
+	    ++Done;
+	 }
+	 recheck.erase(p);
+      }
+
+      /* Okay, we have killed a great amount of pseudopackages -
+	 we have killed so many that we have now arch "all" packages
+	 without an installed pseudo package, but we NEED an installed
+	 pseudo package, so we will search now for a pseudo package
+	 we can install without breaking everything. */
+      for (GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
+      {
+	 PkgIterator P = G.FindPkg("all");
+	 if (P.end() == true)
+	    continue;
+	 if (P->CurrentVer == 0)
+	    continue;
+	 bool installed = false;
+	 for (P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
+	 {
+	    if (strcmp(P.Arch(), "all") == 0)
+	       continue;
+	    if (P->CurrentVer == 0)
+	       continue;
+	    installed = true;
+	    break;
+	 }
+	 if (installed == false)
+	    recheck.insert(G.Index());
+      }
+      std::vector<std::string> Archs = APT::Configuration::getArchitectures();
+      bool checkChanged = false;
+      do {
+	 for(std::set<unsigned long>::const_iterator g = recheck.begin();
+	     g != recheck.end(); ++g) {
+	    GrpIterator G = GrpIterator(*Cache, Cache->GrpP + *g);
+	    VerIterator allV = G.FindPkg("all").CurrentVer();
+	    for (std::vector<std::string>::const_iterator a = Archs.begin();
+		 a != Archs.end(); ++a)
+	    {
+	       PkgIterator P = G.FindPkg(*a);
+	       if (P.end() == true) continue;
+	       for (VerIterator V = P.VersionList(); V.end() != true; ++V)
+	       {
+		  // FIXME: String comparison isn't a save indicator!
+		  if (strcmp(allV.VerStr(),V.VerStr()) != 0)
+		     continue;
+		  unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+		  if ((CurDepState & DepInstMin) != DepInstMin)
+		     break; // we found the correct version, but it is broken. Better try another arch or later again
+		  P->CurrentVer = V.Index();
+		  AddStates(P);
+		  Update(P);
+		  AddSizes(P);
+		  checkChanged = true;
+		  break;
+	       }
+	    }
+	    recheck.erase(g);
+	 }
+      } while (checkChanged == true && recheck.empty() == false);
+
+      if (_config->FindB("Debug::MultiArchKiller", false) == true)
+	 for(std::set<unsigned long>::const_iterator g = recheck.begin();
+	     g != recheck.end(); ++g)
+	    std::cout << "No pseudo package for »" << GrpIterator(*Cache, Cache->GrpP + *g).Name() << "« installed" << std::endl;
+   }
+
+   if (Prog != 0)
       Prog->Progress(Done);
 
    readStateFile(Prog);
@@ -813,6 +1046,10 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    AddStates(Pkg);   
    Update(Pkg);
    AddSizes(Pkg);
+
+   // if we remove the pseudo package, we also need to remove the "real"
+   if (Pkg->CurrentVer != 0 && Pkg.CurrentVer().Pseudo() == true)
+      MarkDelete(Pkg.Group().FindPkg("all"), rPurge, Depth+1, FromUser);
 }
 									/*}}}*/
 // DepCache::IsDeleteOk - check if it is ok to remove this package	/*{{{*/
@@ -1339,7 +1576,7 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 
       // debug output
       if(debug_autoremove && PkgState[p->ID].Flags & Flag::Auto)
-  	 std::clog << "AutoDep: " << p.Name() << std::endl;
+  	 std::clog << "AutoDep: " << p.FullName() << std::endl;
    }
 
    // init vars
@@ -1373,13 +1610,18 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 // MarkPackage - mark a single package in Mark-and-Sweep		/*{{{*/
 void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 			      const pkgCache::VerIterator &ver,
-			      bool follow_recommends,
-			      bool follow_suggests)
+			      bool const &follow_recommends,
+			      bool const &follow_suggests)
 {
    pkgDepCache::StateCache &state = PkgState[pkg->ID];
-   VerIterator currver            = pkg.CurrentVer();
-   VerIterator candver            = state.CandidateVerIter(*this);
-   VerIterator instver            = state.InstVerIter(*this);
+
+   // if we are marked already we are done
+   if(state.Marked)
+      return;
+
+   VerIterator const currver = pkg.CurrentVer();
+   VerIterator const candver = state.CandidateVerIter(*this);
+   VerIterator const instver = state.InstVerIter(*this);
 
 #if 0
    // If a package was garbage-collected but is now being marked, we
@@ -1405,15 +1647,11 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
       !(ver == currver && instver.end() && !ver.end()))
       return;
 
-   // if we are marked already we are done
-   if(state.Marked)
-      return;
+   bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove", false);
 
-   bool debug_autoremove = _config->FindB("Debug::pkgAutoRemove", false);
-   
    if(debug_autoremove)
      {
-       std::clog << "Marking: " << pkg.Name();
+       std::clog << "Marking: " << pkg.FullName();
        if(!ver.end())
 	 std::clog << " " << ver.VerStr();
        if(!currver.end())
@@ -1425,8 +1663,34 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 
    state.Marked=true;
 
-   if(!ver.end())
+   if(ver.end() == true)
+      return;
+
+   // If the version belongs to a Multi-Arch all package
+   // we will mark all others in this Group with this version also
+   // Beware: We compare versions here the lazy way: string comparision
+   // this is bad if multiple repositories provide different versions
+   // of the package with an identical version number - but even in this
+   // case the dependencies are likely the same.
+   if (ver->MultiArch == pkgCache::Version::All &&
+	strcmp(ver.Arch(true), "all") == 0)
    {
+      GrpIterator G = pkg.Group();
+      const char* const VerStr = ver.VerStr();
+      for (PkgIterator P = G.FindPkg("any");
+	   P.end() != true; P = G.NextPkg(P))
+      {
+	 for (VerIterator V = P.VersionList();
+	      V.end() != true; ++V)
+	 {
+	    if (strcmp(VerStr, V.VerStr()) != 0)
+	       continue;
+	    MarkPackage(P, V, follow_recommends, follow_suggests);
+	    break;
+	 }
+      }
+   }
+
      for(DepIterator d = ver.DependsList(); !d.end(); ++d)
      {
 	if(d->Type == Dep::Depends ||
@@ -1444,10 +1708,9 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	      {
 		if(debug_autoremove)
 		  {
-		    std::clog << "Following dep: " << d.ParentPkg().Name()
+		    std::clog << "Following dep: " << d.ParentPkg().FullName()
 			      << " " << d.ParentVer().VerStr() << " "
-			      << d.DepType() << " "
-			      << d.TargetPkg().Name();
+			      << d.DepType() << " " << d.TargetPkg().FullName();
 		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
 		      {
 			std::clog << " (" << d.CompType() << " "
@@ -1455,7 +1718,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 		      }
 		    std::clog << std::endl;
 		  }
-		 MarkPackage(V.ParentPkg(), V, 
+		 MarkPackage(V.ParentPkg(), V,
 			     follow_recommends, follow_suggests);
 	      }
 	   }
@@ -1468,17 +1731,16 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	      {
 		if(debug_autoremove)
 		  {
-		    std::clog << "Following dep: " << d.ParentPkg().Name()
-			      << " " << d.ParentVer().VerStr() << " "
-			      << d.DepType() << " "
-			      << d.TargetPkg().Name();
+		    std::clog << "Following dep: " << d.ParentPkg().FullName() << " "
+			      << d.ParentVer().VerStr() << " "
+			      << d.DepType() << " " << d.TargetPkg().FullName() << " ";
 		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
 		      {
 			std::clog << " (" << d.CompType() << " "
 				  << d.TargetVer() << ")";
 		      }
 		    std::clog << ", provided by "
-			      << prv.OwnerPkg().Name() << " "
+			      << prv.OwnerPkg().FullName() << " "
 			      << prv.OwnerVer().VerStr()
 			      << std::endl;
 		  }
@@ -1489,7 +1751,6 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	   }
 	}
      }
-   }
 }
 									/*}}}*/
 bool pkgDepCache::Sweep()						/*{{{*/
@@ -1511,7 +1772,7 @@ bool pkgDepCache::Sweep()						/*{{{*/
      {
 	state.Garbage=true;
 	if(debug_autoremove)
-	   std::cout << "Garbage: " << p.Name() << std::endl;
+	   std::cout << "Garbage: " << p.FullName() << std::endl;
      }
   }   
 

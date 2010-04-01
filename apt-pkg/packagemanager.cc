@@ -80,7 +80,10 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
       // Skip already processed packages
       if (List->IsNow(Pkg) == false)
 	 continue;
-	 
+
+      if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == true)
+	 continue;
+
       new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
 			FileNames[Pkg->ID]);
    }
@@ -277,8 +280,10 @@ bool pkgPackageManager::ConfigureAll()
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
-      
-      if (ConfigurePkgs == true && Configure(Pkg) == false)
+
+      if (ConfigurePkgs == true &&
+	  pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false &&
+	  Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -313,7 +318,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (ConfigurePkgs == true && Configure(Pkg) == false)
+      if (ConfigurePkgs == true &&
+	  pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false &&
+	  Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -465,7 +472,12 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
       return true;
 
    List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
-   return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
+
+   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false)
+      return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
+   else
+      return SmartRemove(Pkg.Group().FindPkg("all"));
+   return true;
 }
 									/*}}}*/
 // PM::SmartUnPack - Install helper					/*{{{*/
@@ -579,10 +591,14 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    for (PrvIterator P = Cache[Pkg].InstVerIter(Cache).ProvidesList(); 
 	P.end() == false; P++)
       CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
-   
-   if (Install(Pkg,FileNames[Pkg->ID]) == false)
+
+   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false)
+   {
+      if(Install(Pkg,FileNames[Pkg->ID]) == false)
+         return false;
+   } else if (SmartUnPack(Pkg.Group().FindPkg("all")) == false)
       return false;
-   
+
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
    
    // Perform immedate configuration of the package.

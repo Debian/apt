@@ -224,7 +224,13 @@
       This is similar to <literal>Packages::Compress</literal> 
       except that it controls the compression for the Contents files.</para></listitem>
       </varlistentry>
-      
+
+      <varlistentry><term>Translation::Compress</term>
+      <listitem><para>
+      This is similar to <literal>Packages::Compress</literal> 
+      except that it controls the compression for the Translation-en master file.</para></listitem>
+      </varlistentry>
+
       <varlistentry><term>DeLinkLimit</term>
       <listitem><para>
       Specifies the number of kilobytes to delink (and 
@@ -237,6 +243,12 @@
       Specifies the mode of all created index files. It 
       defaults to 0644. All index files are set to this mode with no regard 
       to the umask.</para></listitem>
+      </varlistentry>
+
+      <varlistentry><term>LongDescription</term>
+      <listitem><para>
+      Sets if long descriptions should be included in the Packages file or split
+      out into a master Translation-en file.</para></listitem>
       </varlistentry>
      </variablelist>
    </refsect2>
@@ -289,7 +301,14 @@
       Sets the output Sources file. Defaults to 
       <filename>$(DIST)/$(SECTION)/source/Sources</filename></para></listitem>
       </varlistentry>
-      
+
+      <varlistentry><term>Translation</term>
+      <listitem><para>
+      Set the output Translation-en master file with the long descriptions if they
+      should be not included in the Packages file. Defaults to
+      <filename>$(DIST)/$(SECTION)/i18n/Translation-en</filename></para></listitem>
+      </varlistentry>
+
       <varlistentry><term>InternalPrefix</term>
       <listitem><para>
       Sets the path prefix that causes a symlink to be
@@ -371,7 +390,13 @@ for i in Sections do
       architectures that appear under search section. The special architecture 
       'source' is used to indicate that this tree has a source archive.</para></listitem>
       </varlistentry>
-      
+
+      <varlistentry><term>LongDescription</term>
+      <listitem><para>
+      Sets if long descriptions should be included in the Packages file or split
+      out into a master Translation-en file.</para></listitem>
+      </varlistentry>
+
       <varlistentry><term>BinOverride</term>
       <listitem><para>
       Sets the binary override file. The override file 
@@ -568,8 +593,8 @@ for i in Sections do
      <listitem><para>
      This configuration option defaults to "<literal>true</literal>" and should only be set to
      <literal>"false"</literal> if the Archive generated with &apt-ftparchive; also provides
-     <filename>Translation</filename> files. Note that it is currently not possible to create these
-     files with <command>apt-ftparchive</command>.
+     <filename>Translation</filename> files. Note that the <filename>Translation-en</filename>
+     master file can only be created in the generate command.
      </para></listitem>
      </varlistentry>
 

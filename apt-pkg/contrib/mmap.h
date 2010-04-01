@@ -44,6 +44,11 @@ class MMap
    unsigned long iSize;
    void *Base;
 
+   // In case mmap can not be used, we keep a dup of the file
+   // descriptor that should have been mmaped so that we can write to
+   // the file in Sync().
+   FileFd *SyncToFd;
+
    bool Map(FileFd &Fd);
    bool Close(bool DoSync = true);
    

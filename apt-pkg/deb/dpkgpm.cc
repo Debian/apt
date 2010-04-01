@@ -564,35 +564,37 @@ void pkgDPkgPM::WriteHistoryTag(string tag, string value)
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
 {
-   string logdir = _config->FindDir("Dir::Log");
+   string const logdir = _config->FindDir("Dir::Log");
    if(not FileExists(logdir))
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
 
    // get current time
    char timestr[200];
-   time_t t = time(NULL);
-   struct tm *tmp = localtime(&t);
+   time_t const t = time(NULL);
+   struct tm const * const tmp = localtime(&t);
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
 
    // open terminal log
-   string logfile_name = flCombine(logdir,
+   string const logfile_name = flCombine(logdir,
 				   _config->Find("Dir::Log::Terminal"));
    if (!logfile_name.empty())
    {
       term_out = fopen(logfile_name.c_str(),"a");
       if (term_out == NULL)
-	 return _error->WarningE(_("Could not open file '%s'"), logfile_name.c_str());
+	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), logfile_name.c_str());
 
       chmod(logfile_name.c_str(), 0600);
       fprintf(term_out, "\nLog started: %s\n", timestr);
    }
 
-   // write 
-   string history_name = flCombine(logdir,
+   // write your history
+   string const history_name = flCombine(logdir,
 				   _config->Find("Dir::Log::History"));
    if (!history_name.empty())
    {
       history_out = fopen(history_name.c_str(),"a");
+      if (history_out == NULL)
+	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
       chmod(history_name.c_str(), 0644);
       fprintf(history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, upgrade, downgrade;
@@ -612,6 +614,8 @@ bool pkgDPkgPM::OpenLog()
 	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
 	 }
       }
+      if (_config->Exists("Commandline::AsString") == true)
+	 WriteHistoryTag("Commandline", _config->Find("Commandline::AsString"));
       WriteHistoryTag("Install", install);
       WriteHistoryTag("Upgrade", upgrade);
       WriteHistoryTag("Downgrade",downgrade);

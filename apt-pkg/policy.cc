@@ -201,35 +201,38 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 			  string Data,signed short Priority)
 {
-   Pin *P = 0;
-   
    if (Name.empty() == true)
-      P = &*Defaults.insert(Defaults.end(),PkgPin());
-   else
    {
-      // Get a spot to put the pin
-      pkgCache::PkgIterator Pkg = Cache->FindPkg(Name);
-      if (Pkg.end() == true)
+      Pin *P = &*Defaults.insert(Defaults.end(),PkgPin());
+      P->Type = Type;
+      P->Priority = Priority;
+      P->Data = Data;
+      return;
+   }
+
+   // Get a spot to put the pin
+   pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
+   for (pkgCache::PkgIterator Pkg = Grp.FindPkg("any");
+	Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
+   {
+      Pin *P = 0;
+      if (Pkg.end() == false)
+	 P = Pins + Pkg->ID;
+      else
       {
 	 // Check the unmatched table
-	 for (vector<PkgPin>::iterator I = Unmatched.begin(); 
+	 for (vector<PkgPin>::iterator I = Unmatched.begin();
 	      I != Unmatched.end() && P == 0; I++)
 	    if (I->Pkg == Name)
 	       P = &*I;
-	 
+
 	 if (P == 0)
-	    P = &*Unmatched.insert(Unmatched.end(),PkgPin());      
+	    P = &*Unmatched.insert(Unmatched.end(),PkgPin());
       }
-      else
-      {
-	 P = Pins + Pkg->ID;
-      }      
+      P->Type = Type;
+      P->Priority = Priority;
+      P->Data = Data;
    }
-   
-   // Set..
-   P->Type = Type;
-   P->Priority = Priority;
-   P->Data = Data;
 }
 									/*}}}*/
 // Policy::GetMatch - Get the matching version for a package pin	/*{{{*/

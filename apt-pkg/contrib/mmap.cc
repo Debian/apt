@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include <cstring>
    									/*}}}*/
@@ -35,7 +36,7 @@
 // ---------------------------------------------------------------------
 /* */
 MMap::MMap(FileFd &F,unsigned long Flags) : Flags(Flags), iSize(0),
-                     Base(0)
+                     Base(0), SyncToFd(NULL)
 {
    if ((Flags & NoImmMap) != NoImmMap)
       Map(F);
@@ -45,7 +46,7 @@ MMap::MMap(FileFd &F,unsigned long Flags) : Flags(Flags), iSize(0),
 // ---------------------------------------------------------------------
 /* */
 MMap::MMap(unsigned long Flags) : Flags(Flags), iSize(0),
-                     Base(0)
+                     Base(0), SyncToFd(NULL)
 {
 }
 									/*}}}*/
@@ -78,7 +79,24 @@ bool MMap::Map(FileFd &Fd)
    // Map it.
    Base = mmap(0,iSize,Prot,Map,Fd.Fd(),0);
    if (Base == (void *)-1)
-      return _error->Errno("mmap",_("Couldn't make mmap of %lu bytes"),iSize);
+   {
+      if (errno == ENODEV || errno == EINVAL)
+      {
+	 // The filesystem doesn't support this particular kind of mmap.
+	 // So we allocate a buffer and read the whole file into it.
+	 int const dupped_fd = dup(Fd.Fd());
+	 if (dupped_fd == -1)
+	    return _error->Errno("mmap", _("Couldn't duplicate file descriptor %i"), Fd.Fd());
+
+	 Base = new unsigned char[iSize];
+	 SyncToFd = new FileFd (dupped_fd);
+	 if (!SyncToFd->Seek(0L) || !SyncToFd->Read(Base, iSize))
+	    return false;
+      }
+      else
+	 return _error->Errno("mmap",_("Couldn't make mmap of %lu bytes"),
+	                      iSize);
+     }
 
    return true;
 }
@@ -93,10 +111,19 @@ bool MMap::Close(bool DoSync)
    
    if (DoSync == true)
       Sync();
-   
-   if (munmap((char *)Base,iSize) != 0)
-      _error->Warning("Unable to munmap");
-   
+
+   if (SyncToFd != NULL)
+   {
+      delete[] (char *)Base;
+      delete SyncToFd;
+      SyncToFd = NULL;
+   }
+   else
+   {
+      if (munmap((char *)Base, iSize) != 0)
+	 _error->WarningE("mmap", _("Unable to close mmap"));
+   }
+
    iSize = 0;
    Base = 0;
    return true;
@@ -113,8 +140,18 @@ bool MMap::Sync()
    
 #ifdef _POSIX_SYNCHRONIZED_IO   
    if ((Flags & ReadOnly) != ReadOnly)
-      if (msync((char *)Base,iSize,MS_SYNC) < 0)
-	 return _error->Errno("msync","Unable to write mmap");
+   {
+      if (SyncToFd != NULL)
+      {
+	 if (!SyncToFd->Seek(0) || !SyncToFd->Write(Base, iSize))
+	    return false;
+      }
+      else
+      {
+	 if (msync((char *)Base, iSize, MS_SYNC) < 0)
+	    return _error->Errno("msync", _("Unable to synchronize mmap"));
+      }
+   }
 #endif   
    return true;
 }
@@ -130,8 +167,19 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 #ifdef _POSIX_SYNCHRONIZED_IO
    unsigned long PSize = sysconf(_SC_PAGESIZE);
    if ((Flags & ReadOnly) != ReadOnly)
-      if (msync((char *)Base+(int)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
-	 return _error->Errno("msync","Unable to write mmap");
+   {
+      if (SyncToFd != 0)
+      {
+	 if (!SyncToFd->Seek(0) ||
+	     !SyncToFd->Write (((char *)Base)+Start, Stop-Start))
+	    return false;
+      }
+      else
+      {
+	 if (msync((char *)Base+(int)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
+	    return _error->Errno("msync", _("Unable to synchronize mmap"));
+      }
+   }
 #endif   
    return true;
 }

@@ -33,7 +33,18 @@ class pkgTagSection
    unsigned int AlphaIndexes[0x100];
    
    unsigned int TagCount;
-     
+
+   /* This very simple hash function for the last 8 letters gives
+      very good performance on the debian package files */
+   inline static unsigned long AlphaHash(const char *Text, const char *End = 0)
+   {
+      unsigned long Res = 0;
+      for (; Text != End && *Text != ':' && *Text != 0; Text++)
+	 Res = ((unsigned long)(*Text) & 0xDF) ^ (Res << 1);
+      return Res & 0xFF;
+   }
+
+
    protected:
    const char *Stop;
 
@@ -54,6 +65,8 @@ class pkgTagSection
    virtual void TrimRecord(bool BeforeRecord, const char* &End);
    
    inline unsigned int Count() const {return TagCount;};
+   inline bool Exists(const char* const Tag) {return AlphaIndexes[AlphaHash(Tag)] != 0;}
+ 
    inline void Get(const char *&Start,const char *&Stop,unsigned int I) const
                    {Start = Section + Indexes[I]; Stop = Section + Indexes[I+1];}
 	    

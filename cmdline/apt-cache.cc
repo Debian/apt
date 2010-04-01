@@ -139,7 +139,7 @@ bool UnMet(CommandLine &CmdL)
 	    // Oops, it failed..
 	    if (Header == false)
 	       ioprintf(cout,_("Package %s version %s has an unmet dep:\n"),
-			P.Name(),V.VerStr());
+			P.FullName(true).c_str(),V.VerStr());
 	    Header = true;
 	    
 	    // Print out the dep type
@@ -149,7 +149,7 @@ bool UnMet(CommandLine &CmdL)
 	    Start = RealStart;
 	    do
 	    {
-	       cout << Start.TargetPkg().Name();
+	       cout << Start.TargetPkg().FullName(true);
 	       if (Start.TargetVer() != 0)
 		  cout << " (" << Start.CompType() << " " << Start.TargetVer() <<
 		  ")";
@@ -182,7 +182,7 @@ bool DumpPackage(CommandLine &CmdL)
 	 continue;
       }
 
-      cout << "Package: " << Pkg.Name() << endl;
+      cout << "Package: " << Pkg.FullName(true) << endl;
       cout << "Versions: " << endl;
       for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; Cur++)
       {
@@ -204,7 +204,7 @@ bool DumpPackage(CommandLine &CmdL)
       cout << "Reverse Depends: " << endl;
       for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() != true; D++)
       {
-	 cout << "  " << D.ParentPkg().Name() << ',' << D.TargetPkg().Name();
+	 cout << "  " << D.ParentPkg().FullName(true) << ',' << D.TargetPkg().FullName(true);
 	 if (D->Version != 0)
 	    cout << ' ' << DeNull(D.TargetVer()) << endl;
 	 else
@@ -216,7 +216,7 @@ bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr() << " - ";
 	 for (pkgCache::DepIterator Dep = Cur.DependsList(); Dep.end() != true; Dep++)
-	    cout << Dep.TargetPkg().Name() << " (" << (int)Dep->CompareOp << " " << DeNull(Dep.TargetVer()) << ") ";
+	    cout << Dep.TargetPkg().FullName(true) << " (" << (int)Dep->CompareOp << " " << DeNull(Dep.TargetVer()) << ") ";
 	 cout << endl;
       }      
 
@@ -225,12 +225,12 @@ bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr() << " - ";
 	 for (pkgCache::PrvIterator Prv = Cur.ProvidesList(); Prv.end() != true; Prv++)
-	    cout << Prv.ParentPkg().Name() << " ";
+	    cout << Prv.ParentPkg().FullName(true) << " ";
 	 cout << endl;
       }
       cout << "Reverse Provides: " << endl;
       for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; Prv++)
-	 cout << Prv.OwnerPkg().Name() << " " << Prv.OwnerVer().VerStr() << endl;            
+	 cout << Prv.OwnerPkg().FullName(true) << " " << Prv.OwnerVer().VerStr() << endl;
    }
 
    return true;
@@ -353,13 +353,13 @@ bool Dump(CommandLine &Cmd)
    
    for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
    {
-      cout << "Package: " << P.Name() << endl;
+      cout << "Package: " << P.FullName(true) << endl;
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
       {
 	 cout << " Version: " << V.VerStr() << endl;
 	 cout << "     File: " << V.FileList().File().FileName() << endl;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
-	    cout << "  Depends: " << D.TargetPkg().Name() << ' ' << 
+	    cout << "  Depends: " << D.TargetPkg().FullName(true) << ' ' << 
 	                     DeNull(D.TargetVer()) << endl;
 	 for (pkgCache::DescIterator D = V.DescriptionList(); D.end() == false; D++)
 	 {
@@ -570,11 +570,11 @@ bool Depends(CommandLine &CmdL)
 	 pkgCache::VerIterator Ver = Pkg.VersionList();
 	 if (Ver.end() == true)
 	 {
-	    cout << '<' << Pkg.Name() << '>' << endl;
+	    cout << '<' << Pkg.FullName(true) << '>' << endl;
 	    continue;
 	 }
 	 
-	 cout << Pkg.Name() << endl;
+	 cout << Pkg.FullName(true) << endl;
 	 
 	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
 	 {
@@ -596,9 +596,9 @@ bool Depends(CommandLine &CmdL)
 	    
 		// Show the package
 		if (Trg->VersionList == 0)
-		  cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
+		  cout << D.DepType() << ": <" << Trg.FullName(true) << ">" << endl;
 		else
-		  cout << D.DepType() << ": " << Trg.Name() << endl;
+		  cout << D.DepType() << ": " << Trg.FullName(true) << endl;
 	    
 		if (Recurse == true)
 		  Colours[D.TargetPkg()->ID]++;
@@ -614,7 +614,7 @@ bool Depends(CommandLine &CmdL)
 	       if (V != Cache.VerP + V.ParentPkg()->VersionList ||
 		   V->ParentPkg == D->Package)
 		  continue;
-	       cout << "    " << V.ParentPkg().Name() << endl;
+	       cout << "    " << V.ParentPkg().FullName(true) << endl;
 	       
 	       if (Recurse == true)
 		  Colours[D.ParentPkg()->ID]++;
@@ -663,11 +663,11 @@ bool RDepends(CommandLine &CmdL)
 	 pkgCache::VerIterator Ver = Pkg.VersionList();
 	 if (Ver.end() == true)
 	 {
-	    cout << '<' << Pkg.Name() << '>' << endl;
+	    cout << '<' << Pkg.FullName(true) << '>' << endl;
 	    continue;
 	 }
 	 
-	 cout << Pkg.Name() << endl;
+	 cout << Pkg.FullName(true) << endl;
 	 
 	 cout << "Reverse Depends:" << endl;
 	 for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() == false; D++)
@@ -684,9 +684,9 @@ bool RDepends(CommandLine &CmdL)
 		  cout << "  ";
 
 		if (Trg->VersionList == 0)
-		  cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
+		  cout << D.DepType() << ": <" << Trg.FullName(true) << ">" << endl;
 		else
-		  cout << Trg.Name() << endl;
+		  cout << Trg.FullName(true) << endl;
 
 		if (Recurse == true)
 		  Colours[D.ParentPkg()->ID]++;
@@ -702,7 +702,7 @@ bool RDepends(CommandLine &CmdL)
 	       if (V != Cache.VerP + V.ParentPkg()->VersionList ||
 		   V->ParentPkg == D->Package)
 		  continue;
-	       cout << "    " << V.ParentPkg().Name() << endl;
+	       cout << "    " << V.ParentPkg().FullName(true) << endl;
 	       
 	       if (Recurse == true)
 		  Colours[D.ParentPkg()->ID]++;
@@ -863,7 +863,7 @@ bool XVcg(CommandLine &CmdL)
 	    // Only graph critical deps	    
 	    if (D.IsCritical() == true)
 	    {
-	       printf ("edge: { sourcename: \"%s\" targetname: \"%s\" class: 2 ",Pkg.Name(), D.TargetPkg().Name() );
+	       printf ("edge: { sourcename: \"%s\" targetname: \"%s\" class: 2 ",Pkg.FullName(true).c_str(), D.TargetPkg().FullName(true).c_str() );
 	       
 	       // Colour the node for recursion
 	       if (Show[D.TargetPkg()->ID] <= DoneNR)
@@ -922,10 +922,10 @@ bool XVcg(CommandLine &CmdL)
 	 continue;
 
       if (Show[Pkg->ID] == DoneNR)
-	 printf("node: { title: \"%s\" label: \"%s\" color: orange shape: %s }\n", Pkg.Name(), Pkg.Name(),
+	 printf("node: { title: \"%s\" label: \"%s\" color: orange shape: %s }\n", Pkg.FullName(true).c_str(), Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
       else
-	printf("node: { title: \"%s\" label: \"%s\" shape: %s }\n", Pkg.Name(), Pkg.Name(), 
+	printf("node: { title: \"%s\" label: \"%s\" shape: %s }\n", Pkg.FullName(true).c_str(), Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
       
    }
@@ -1084,7 +1084,7 @@ bool Dotty(CommandLine &CmdL)
 	    // Only graph critical deps	    
 	    if (D.IsCritical() == true)
 	    {
-	       printf("\"%s\" -> \"%s\"",Pkg.Name(),D.TargetPkg().Name());
+	       printf("\"%s\" -> \"%s\"",Pkg.FullName(true).c_str(),D.TargetPkg().FullName(true).c_str());
 	       
 	       // Colour the node for recursion
 	       if (Show[D.TargetPkg()->ID] <= DoneNR)
@@ -1138,10 +1138,10 @@ bool Dotty(CommandLine &CmdL)
       
       // Orange box for early recursion stoppage
       if (Show[Pkg->ID] == DoneNR)
-	 printf("\"%s\" [color=orange,shape=%s];\n",Pkg.Name(),
+	 printf("\"%s\" [color=orange,shape=%s];\n",Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
       else
-	 printf("\"%s\" [shape=%s];\n",Pkg.Name(),
+	 printf("\"%s\" [shape=%s];\n",Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
    }
    
@@ -1417,11 +1417,15 @@ bool ShowPackage(CommandLine &CmdL)
    
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
+      // FIXME: Handle the case in which pkgname name:arch is not found
       pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
       if (Pkg.end() == true)
       {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
+	 Pkg = Cache.FindPkg(*I, "any");
+	 if (Pkg.end() == true) {
+		_error->Warning(_("Unable to locate package %s"),*I);
+		continue;
+	 }
       }
 
       ++found;
@@ -1457,16 +1461,17 @@ bool ShowPackage(CommandLine &CmdL)
 bool ShowPkgNames(CommandLine &CmdL)
 {
    pkgCache &Cache = *GCache;
-   pkgCache::PkgIterator I = Cache.PkgBegin();
-   bool All = _config->FindB("APT::Cache::AllNames","false");
-   
+   pkgCache::GrpIterator I = Cache.GrpBegin();
+   bool const All = _config->FindB("APT::Cache::AllNames","false");
+
    if (CmdL.FileList[1] != 0)
    {
       for (;I.end() != true; I++)
       {
-	 if (All == false && I->VersionList == 0)
+	 if (All == false && I->FirstPackage == 0)
 	    continue;
-	 
+	 if (I.FindPkg("any")->VersionList == 0)
+	    continue;
 	 if (strncmp(I.Name(),CmdL.FileList[1],strlen(CmdL.FileList[1])) == 0)
 	    cout << I.Name() << endl;
       }
@@ -1477,7 +1482,9 @@ bool ShowPkgNames(CommandLine &CmdL)
    // Show all pkgs
    for (;I.end() != true; I++)
    {
-      if (All == false && I->VersionList == 0)
+      if (All == false && I->FirstPackage == 0)
+	 continue;
+      if (I.FindPkg("any")->VersionList == 0)
 	 continue;
       cout << I.Name() << endl;
    }
@@ -1565,7 +1572,7 @@ bool Policy(CommandLine &CmdL)
 	    continue;
 
 	 // Print the package name and the version we are forcing to
-	 cout << "     " << I.Name() << " -> ";
+	 cout << "     " << I.FullName(true) << " -> ";
 	 
 	 pkgCache::VerIterator V = Plcy.GetMatch(I);
 	 if (V.end() == true)
@@ -1576,19 +1583,26 @@ bool Policy(CommandLine &CmdL)
       
       return true;
    }
-   
+
+   string const myArch = _config->Find("APT::Architecture");
+
    // Print out detailed information for each package
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+      pkgCache::GrpIterator Grp = Cache.FindGrp(*I);
+      pkgCache::PkgIterator Pkg = Grp.FindPkg("any");
       if (Pkg.end() == true)
       {
 	 _error->Warning(_("Unable to locate package %s"),*I);
 	 continue;
       }
-      
-      cout << Pkg.Name() << ":" << endl;
-      
+
+      for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg)) {
+      if (strcmp(Pkg.Arch(),"all") == 0)
+	 continue;
+
+      cout << Pkg.FullName(true) << ":" << endl;
+
       // Installed version
       cout << _("  Installed: ");
       if (Pkg->CurrentVer == 0)
@@ -1633,8 +1647,9 @@ bool Policy(CommandLine &CmdL)
 	       return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
 	    printf("       %4i %s\n",Plcy.GetPriority(VF.File()),
 		   Indx->Describe(true).c_str());
-	 }	 
-      }      
+	 }
+      }
+      }
    }
    
    return true;
@@ -1684,7 +1699,7 @@ bool Madison(CommandLine &CmdL)
                     {
                          if ((*IF)->FindInCache(*(VF.File().Cache())) == VF.File())
                          {
-                                   cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
+                                   cout << setw(10) << Pkg.FullName(true) << " | " << setw(10) << V.VerStr() << " | "
                                         << (*IF)->Describe(true) << endl;
                          }
                     }

@@ -60,13 +60,13 @@ class GlobalError
    public:
 
    // Call to generate an error from a library call.
-   bool Errno(const char *Function,const char *Description,...) __like_printf_2 __cold;
-   bool WarningE(const char *Function,const char *Description,...) __like_printf_2 __cold;
+   bool Errno(const char *Function,const char *Description,...) __like_printf(3) __cold;
+   bool WarningE(const char *Function,const char *Description,...) __like_printf(3) __cold;
 
    /* A warning should be considered less severe than an error, and may be
       ignored by the client. */
-   bool Error(const char *Description,...) __like_printf_1 __cold;
-   bool Warning(const char *Description,...) __like_printf_1 __cold;
+   bool Error(const char *Description,...) __like_printf(2) __cold;
+   bool Warning(const char *Description,...) __like_printf(2) __cold;
 
    // Simple accessors
    inline bool PendingError() {return PendingFlag;};

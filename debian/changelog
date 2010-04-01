@@ -8,6 +8,68 @@ apt (0.7.26~exp3) UNRELEASED; urgency=low
   * Add "manpages-pl (<< 20060617-3~)" to avoid file conflicts with
     that package that was providing some manpages for APT utilities.
 
+  [ David Kalnischkies ]
+  * [BREAK] merge MultiArch-ABI. We don't support MultiArch,
+    but we support the usage of the new ABI so libapt users
+    can start to prepare for MultiArch (Closes: #536029)
+  * Ignore :qualifiers after package name in build dependencies
+    in the library by default, but try to honour them in apt-get
+    as we have some sort of MultiArch support ready (Closes: #558103)
+  * add translation of the manpages to PT (portuguese)
+    Thanks to Américo Monteiro!
+  * Switch to dpkg-source 3.0 (native) format
+  * apt-pkg/depcache.cc:
+    - remove Auto-Installed information from extended_states
+      together with the package itself (Closes: #572364)
+  * cmdline/apt-mark:
+    - don't crash if no arguments are given (Closes: #570962)
+  * debian/control:
+    - remove some years old and obsolete Replaces
+    - add automake/conf build-depends/conflicts as recommend by
+      the autotools-dev README (Closes: #572615)
+  * apt-pkg/contrib/mmap.{h,cc}:
+    - add char[] fallback for filesystems without shared writable
+      mmap() like JFFS2. Thanks to Marius Vollmer for writing
+      and to Loïc Minier for pointing to the patch! (Closes: #314334)
+  * doc/apt_preferences.5.xml:
+    - fix two typos and be more verbose in the novice warning.
+      Thanks to Osamu Aoki for pointing it out! (Closes: #567669)
+    - fix a=sid vs. n=sid typo, thanks Ansgar Burchardt!
+    - origin can be used to match a hostname (Closes: #352667)
+    - remove wrong pin-priority is optional remark (Closes: #574944)
+  * apt-pkg/deb/dpkgpm.cc:
+    - fix error message construction in OpenLog()
+    - if available store the Commandline in the history
+  * cmdline/apt-get.cc:
+    - add a --only-upgrade flag to install command (Closes: #572259)
+    - fix memory leaks in error conditions in DoSource()
+    - try version match in FindSrc first exact than fuzzy (LP: #551178)
+  * apt-pkg/contrib/cmndline.cc:
+    - save Commandline in Commandline::AsString for logging
+  * apt-pkg/deb/debversion.cc:
+    - consider absent of debian revision equivalent to 0 (Closes: #573592)
+  * doc/makefile, doc/*:
+    - generate subdirectories for building the manpages in on the fly
+      depending on the po files we have.
+  * apt-pkg/pkgcachegen.cc:
+    - merge versions correctly even if multiple different versions
+      with the same version number are available.
+      Thanks to Magnus Holmgren for the patch! (Closes: #351056)
+  * ftparchive/writer.cc:
+    - write LongDescriptions if they shouldn't be included in Packages
+      file into i18n/Translation-en by default.
+  * doc/po/de.po:
+    - correct a few typos in the german manpage translation.
+      Thanks to Chris Leick and Georg Koppen! (Closes: #574962)
+  * apt-pkg/contrib/strutl.cc:
+    - convert all toupper calls to tolower_ascii for a little speedup
+
+  [ Jean-Baptiste Lallement ]
+  * apt-pkg/contrib/strutl.cc:
+    - always escape '%' (LP: #130289) (Closes: #500560)
+    - unescape '%' sequence only if followed by 2 hex digit
+    - username/password are urlencoded in proxy string (RFC 3986)
+
   [ Julian Andres Klode ]
   * cmdline/apt-cache.cc:
     - Change behavior of showsrc to match the one of show (Closes: #512046).

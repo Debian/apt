@@ -79,7 +79,8 @@ pkgCache::Header::Header()
    StringList = 0;
    VerSysName = 0;
    Architecture = 0;
-   memset(HashTable,0,sizeof(HashTable));
+   memset(PkgHashTable,0,sizeof(PkgHashTable));
+   memset(GrpHashTable,0,sizeof(GrpHashTable));
    memset(Pools,0,sizeof(Pools));
 }
 									/*}}}*/
@@ -107,6 +108,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 /* */
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 {
+   MultiArchEnabled = APT::Configuration::getArchitectures().size() > 1;
    if (DoMap == true)
       ReMap();
 }
@@ -118,6 +120,7 @@ bool pkgCache::ReMap()
 {
    // Apply the typecasts.
    HeaderP = (Header *)Map.Data();
+   GrpP = (Group *)Map.Data();
    PkgP = (Package *)Map.Data();
    VerFileP = (VerFile *)Map.Data();
    DescFileP = (DescFile *)Map.Data();
@@ -165,7 +168,7 @@ unsigned long pkgCache::sHash(const string &Str) const
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
       Hash = 5*Hash + tolower_ascii(*I);
-   return Hash % _count(HeaderP->HashTable);
+   return Hash % _count(HeaderP->PkgHashTable);
 }
 
 unsigned long pkgCache::sHash(const char *Str) const
@@ -173,24 +176,80 @@ unsigned long pkgCache::sHash(const char *Str) const
    unsigned long Hash = 0;
    for (const char *I = Str; *I != 0; I++)
       Hash = 5*Hash + tolower_ascii(*I);
-   return Hash % _count(HeaderP->HashTable);
+   return Hash % _count(HeaderP->PkgHashTable);
 }
 
+									/*}}}*/
+// Cache::SingleArchFindPkg - Locate a package by name			/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns 0 on error, pointer to the package otherwise
+   The multiArch enabled methods will fallback to this one as it is (a bit)
+   faster for single arch environments and realworld is mostly singlearch… */
+pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
+{
+   // Look at the hash bucket
+   Package *Pkg = PkgP + HeaderP->PkgHashTable[Hash(Name)];
+   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
+   {
+      if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
+          stringcasecmp(Name,StrP + Pkg->Name) == 0)
+         return PkgIterator(*this,Pkg);
+   }
+   return PkgIterator(*this,0);
+}
 									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(const string &Name)
-{
-   // Look at the hash bucket
-   Package *Pkg = PkgP + HeaderP->HashTable[Hash(Name)];
-   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
-   {
-      if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
-	  stringcasecmp(Name,StrP + Pkg->Name) == 0)
-	 return PkgIterator(*this,Pkg);
-   }
-   return PkgIterator(*this,0);
+pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
+	if (MultiArchCache() == false)
+		return SingleArchFindPkg(Name);
+	size_t const found = Name.find(':');
+	if (found == string::npos)
+		return FindPkg(Name, "native");
+	string const Arch = Name.substr(found+1);
+	if (Arch == "any")
+		return FindPkg(Name, "any");
+	return FindPkg(Name.substr(0, found), Arch);
+}
+									/*}}}*/
+// Cache::FindPkg - Locate a package by name				/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns 0 on error, pointer to the package otherwise */
+pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
+	if (MultiArchCache() == false) {
+		if (Arch == "native" || Arch == "all" ||
+		    Arch == _config->Find("APT::Architecture"))
+			return SingleArchFindPkg(Name);
+		else
+			return PkgIterator(*this,0);
+	}
+	/* We make a detour via the GrpIterator here as
+	   on a multi-arch environment a group is easier to
+	   find than a package (less entries in the buckets) */
+	pkgCache::GrpIterator Grp = FindGrp(Name);
+	if (Grp.end() == true)
+		return PkgIterator(*this,0);
+
+	return Grp.FindPkg(Arch);
+}
+									/*}}}*/
+// Cache::FindGrp - Locate a group by name				/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns End-Pointer on error, pointer to the group otherwise */
+pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
+	if (unlikely(Name.empty() == true))
+		return GrpIterator(*this,0);
+
+	// Look at the hash bucket for the group
+	Group *Grp = GrpP + HeaderP->GrpHashTable[sHash(Name)];
+	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
+		if (Grp->Name != 0 && StrP[Grp->Name] == Name[0] &&
+		    stringcasecmp(Name, StrP + Grp->Name) == 0)
+			return GrpIterator(*this, Grp);
+	}
+
+	return GrpIterator(*this,0);
 }
 									/*}}}*/
 // Cache::CompTypeDeb - Return a string describing the compare type	/*{{{*/
@@ -242,11 +301,77 @@ const char *pkgCache::Priority(unsigned char Prio)
    return 0;
 }
 									/*}}}*/
-// Bases for iterator classes						/*{{{*/
-void pkgCache::VerIterator::_dummy() {}
-void pkgCache::DepIterator::_dummy() {}
-void pkgCache::PrvIterator::_dummy() {}
-void pkgCache::DescIterator::_dummy() {}
+// GrpIterator::FindPkg - Locate a package by arch			/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns an End-Pointer on error, pointer to the package otherwise */
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) {
+	if (unlikely(IsGood() == false || S->FirstPackage == 0))
+		return PkgIterator(*Owner, 0);
+
+	static string const myArch = _config->Find("APT::Architecture");
+	/* Most of the time the package for our native architecture is
+	   the one we add at first to the cache, but this would be the
+	   last one we check, so we do it now. */
+	if (Arch == "native" || Arch == myArch) {
+		Arch = myArch;
+		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
+		if (stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+			return PkgIterator(*Owner, Pkg);
+	}
+
+	/* If we accept any package we simply return the "first"
+	   package in this group (the last one added). */
+	if (Arch == "any")
+		return PkgIterator(*Owner, Owner->PkgP + S->FirstPackage);
+
+	/* Iterate over the list to find the matching arch
+	   unfortunately this list includes "package noise"
+	   (= different packages with same calculated hash),
+	   so we need to check the name also */
+	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
+	     Pkg = Owner->PkgP + Pkg->NextPackage) {
+		if (S->Name == Pkg->Name &&
+		    stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+			return PkgIterator(*Owner, Pkg);
+		if ((Owner->PkgP + S->LastPackage) == Pkg)
+			break;
+	}
+
+	return PkgIterator(*Owner, 0);
+}
+									/*}}}*/
+// GrpIterator::NextPkg - Locate the next package in the group		/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns an End-Pointer on error, pointer to the package otherwise.
+   We can't simply ++ to the next as the next package of the last will
+   be from a different group (with the same hash value) */
+pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const &LastPkg) {
+	if (unlikely(IsGood() == false || S->FirstPackage == 0 ||
+	    LastPkg.end() == true))
+		return PkgIterator(*Owner, 0);
+
+	if (S->LastPackage == LastPkg.Index())
+		return PkgIterator(*Owner, 0);
+
+	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
+}
+									/*}}}*/
+// GrpIterator::operator ++ - Postfix incr				/*{{{*/
+// ---------------------------------------------------------------------
+/* This will advance to the next logical group in the hash table. */
+void pkgCache::GrpIterator::operator ++(int) 
+{
+   // Follow the current links
+   if (S != Owner->GrpP)
+      S = Owner->GrpP + S->Next;
+
+   // Follow the hash table
+   while (S == Owner->GrpP && (HashIndex+1) < (signed)_count(Owner->HeaderP->GrpHashTable))
+   {
+      HashIndex++;
+      S = Owner->GrpP + Owner->HeaderP->GrpHashTable[HashIndex];
+   }
+};
 									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
@@ -254,14 +379,14 @@ void pkgCache::DescIterator::_dummy() {}
 void pkgCache::PkgIterator::operator ++(int) 
 {
    // Follow the current links
-   if (Pkg != Owner->PkgP)
-      Pkg = Owner->PkgP + Pkg->NextPackage;
+   if (S != Owner->PkgP)
+      S = Owner->PkgP + S->NextPackage;
 
    // Follow the hash table
-   while (Pkg == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->HashTable))
+   while (S == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->PkgHashTable))
    {
       HashIndex++;
-      Pkg = Owner->PkgP + Owner->HeaderP->HashTable[HashIndex];
+      S = Owner->PkgP + Owner->HeaderP->PkgHashTable[HashIndex];
    }
 };
 									/*}}}*/
@@ -270,12 +395,12 @@ void pkgCache::PkgIterator::operator ++(int)
 /* By this we mean if it is either cleanly installed or cleanly removed. */
 pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 {  
-   if (Pkg->InstState == pkgCache::State::ReInstReq ||
-       Pkg->InstState == pkgCache::State::HoldReInstReq)
+   if (S->InstState == pkgCache::State::ReInstReq ||
+       S->InstState == pkgCache::State::HoldReInstReq)
       return NeedsUnpack;
    
-   if (Pkg->CurrentState == pkgCache::State::UnPacked ||
-       Pkg->CurrentState == pkgCache::State::HalfConfigured)
+   if (S->CurrentState == pkgCache::State::UnPacked ||
+       S->CurrentState == pkgCache::State::HalfConfigured)
       // we leave triggers alone complettely. dpkg deals with
       // them in a hard-to-predict manner and if they get 
       // resolved by dpkg before apt run dpkg --configure on 
@@ -284,8 +409,8 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
       //Pkg->CurrentState == pkgCache::State::TriggersPending)
       return NeedsConfigure;
    
-   if (Pkg->CurrentState == pkgCache::State::HalfInstalled ||
-       Pkg->InstState != pkgCache::State::Ok)
+   if (S->CurrentState == pkgCache::State::HalfInstalled ||
+       S->InstState != pkgCache::State::Ok)
       return NeedsUnpack;
       
    return NeedsNothing;
@@ -332,7 +457,7 @@ operator<<(ostream& out, pkgCache::PkgIterator Pkg)
    string candidate = string(Pkg.CandVersion() == 0 ? "none" : Pkg.CandVersion());
    string newest = string(Pkg.VersionList().end() ? "none" : Pkg.VersionList().VerStr());
 
-   out << Pkg.Name() << " < " << current;
+   out << Pkg.Name() << " [ " << Pkg.Arch() << " ] < " << current;
    if (current != candidate)
       out << " -> " << candidate;
    if ( newest != "none" && candidate != newest)
@@ -341,17 +466,29 @@ operator<<(ostream& out, pkgCache::PkgIterator Pkg)
    return out;
 }
 									/*}}}*/
+// PkgIterator::FullName - Returns Name and (maybe) Architecture	/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns a name:arch string */
+std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
+{
+   string fullname = Name();
+   if (Pretty == false ||
+       (strcmp(Arch(), "all") != 0 && _config->Find("APT::Architecture") != Arch()))
+      return fullname.append(":").append(Arch());
+   return fullname;
+}
+									/*}}}*/
 // DepIterator::IsCritical - Returns true if the dep is important	/*{{{*/
 // ---------------------------------------------------------------------
 /* Currently critical deps are defined as depends, predepends and
    conflicts (including dpkg's Breaks fields). */
 bool pkgCache::DepIterator::IsCritical()
 {
-   if (Dep->Type == pkgCache::Dep::Conflicts ||
-       Dep->Type == pkgCache::Dep::DpkgBreaks ||
-       Dep->Type == pkgCache::Dep::Obsoletes ||
-       Dep->Type == pkgCache::Dep::Depends ||
-       Dep->Type == pkgCache::Dep::PreDepends)
+   if (S->Type == pkgCache::Dep::Conflicts ||
+       S->Type == pkgCache::Dep::DpkgBreaks ||
+       S->Type == pkgCache::Dep::Obsoletes ||
+       S->Type == pkgCache::Dep::Depends ||
+       S->Type == pkgCache::Dep::PreDepends)
       return true;
    return false;
 }
@@ -430,12 +567,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
       // Walk along the actual package providing versions
       for (VerIterator I = DPkg.VersionList(); I.end() == false; I++)
       {
-	 if (Owner->VS->CheckDep(I.VerStr(),Dep->CompareOp,TargetVer()) == false)
+	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
 
-	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
-	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
-	      Dep->Type == pkgCache::Dep::Obsoletes) &&
+	 if ((S->Type == pkgCache::Dep::Conflicts ||
+	      S->Type == pkgCache::Dep::DpkgBreaks ||
+	      S->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.ParentPkg())
 	    continue;
 	 
@@ -447,12 +584,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
       // Follow all provides
       for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; I++)
       {
-	 if (Owner->VS->CheckDep(I.ProvideVersion(),Dep->CompareOp,TargetVer()) == false)
+	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
 	 
-	 if ((Dep->Type == pkgCache::Dep::Conflicts ||
-	      Dep->Type == pkgCache::Dep::DpkgBreaks ||
-	      Dep->Type == pkgCache::Dep::Obsoletes) &&
+	 if ((S->Type == pkgCache::Dep::Conflicts ||
+	      S->Type == pkgCache::Dep::DpkgBreaks ||
+	      S->Type == pkgCache::Dep::Obsoletes) &&
 	     ParentPkg() == I.OwnerPkg())
 	    continue;
 	 
@@ -490,7 +627,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    End = *this;
    for (bool LastOR = true; end() == false && LastOR == true;)
    {
-      LastOR = (Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+      LastOR = (S->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
       (*this)++;
       if (LastOR == true)
 	 End = (*this);
@@ -542,6 +679,23 @@ bool pkgCache::VerIterator::Automatic() const
    for (; Files.end() == false; Files++)
       if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
 	 return true;
+   return false;
+}
+									/*}}}*/
+// VerIterator::Pseudo - Check if this version is a pseudo one		/*{{{*/
+// ---------------------------------------------------------------------
+/* Sometimes you have the need to express dependencies with versions
+   which doesn't really exist or exist multiply times for "different"
+   packages. We need these versions for dependency resolution but they
+   are a problem everytime we need to download/install something. */
+bool pkgCache::VerIterator::Pseudo() const
+{
+   if (S->MultiArch == pkgCache::Version::All &&
+	   strcmp(Arch(true),"all") != 0)
+   {
+	   GrpIterator const Grp = ParentPkg().Group();
+	   return (Grp->LastPackage != Grp->FirstPackage);
+   }
    return false;
 }
 									/*}}}*/
@@ -625,7 +779,9 @@ string pkgCache::VerIterator::RelStr()
 	 else
 	    Res += File.Site();
       }      
-   }   
+   }
+   if (S->ParentPkg != 0)
+      Res.append(" [").append(Arch()).append("]");
    return Res;
 }
 									/*}}}*/
@@ -640,7 +796,7 @@ bool pkgCache::PkgFileIterator::IsOk()
    if (stat(FileName(),&Buf) != 0)
       return false;
 
-   if (Buf.st_size != (signed)File->Size || Buf.st_mtime != File->mtime)
+   if (Buf.st_size != (signed)S->Size || Buf.st_mtime != S->mtime)
       return false;
 
    return true;
@@ -664,6 +820,8 @@ string pkgCache::PkgFileIterator::RelStr()
       Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
    if (Component() != 0)
       Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   if (Architecture() != 0)
+      Res = Res + (Res.empty() == true?"b=":",b=")  + Architecture();
    return Res;
 }
 									/*}}}*/

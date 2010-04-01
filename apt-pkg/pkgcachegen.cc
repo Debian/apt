@@ -18,6 +18,7 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/pkgsystem.h>
@@ -38,7 +39,7 @@ typedef vector<pkgIndexFile *>::iterator FileIterator;
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
-/* We set the diry flag and make sure that is written to the disk */
+/* We set the dirty flag and make sure that is written to the disk */
 pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
 		    FoundFileDeps(0)
@@ -107,13 +108,26 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
    unsigned int Counter = 0;
    while (List.Step() == true)
    {
-      // Get a pointer to the package structure
-      string PackageName = List.Package();
+      string const PackageName = List.Package();
       if (PackageName.empty() == true)
 	 return false;
-      
+
+      /* As we handle Arch all packages as architecture bounded
+         we add all information to every (simulated) arch package */
+      std::vector<string> genArch;
+      if (List.ArchitectureAll() == true) {
+	 genArch = APT::Configuration::getArchitectures();
+	 if (genArch.size() != 1)
+	    genArch.push_back("all");
+      } else
+	 genArch.push_back(List.Architecture());
+
+      for (std::vector<string>::const_iterator arch = genArch.begin();
+	   arch != genArch.end(); ++arch)
+      {
+      // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
-      if (NewPackage(Pkg,PackageName) == false)
+      if (NewPackage(Pkg, PackageName, *arch) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewPackage)"),PackageName.c_str());
       Counter++;
       if (Counter % 100 == 0 && Progress != 0)
@@ -175,17 +189,22 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       pkgCache::VerIterator Ver = Pkg.VersionList();
       map_ptrloc *LastVer = &Pkg->VersionList;
       int Res = 1;
+      unsigned long const Hash = List.VersionHash();
       for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
       {
 	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
-	 if (Res >= 0)
+	 // Version is higher as current version - insert here
+	 if (Res > 0)
 	    break;
+	 // Versionstrings are equal - is hash also equal?
+	 if (Res == 0 && Ver->Hash == Hash)
+	    break;
+	 // proceed with the next till we have either the right
+	 // or we found another version (which will be lower)
       }
-      
-      /* We already have a version for this item, record that we
-         saw it */
-      unsigned long Hash = List.VersionHash();
-      if (Res == 0 && Ver->Hash == Hash)
+
+      /* We already have a version for this item, record that we saw it */
+      if (Res == 0 && Ver.end() == false && Ver->Hash == Hash)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
 	    return _error->Error(_("Error occurred while processing %s (UsePackage2)"),
@@ -204,17 +223,6 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	 }
 	 
 	 continue;
-      }      
-
-      // Skip to the end of the same version set.
-      if (Res == 0)
-      {
-	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
-	 {
-	    Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
-	    if (Res != 0)
-	       break;
-	 }
       }
 
       // Add a new version
@@ -256,6 +264,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
       if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),PackageName.c_str());
+      }
    }
 
    FoundFileDeps |= List.HasFileDeps();
@@ -323,33 +332,80 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
    return true;
 }
 									/*}}}*/
-// CacheGenerator::NewPackage - Add a new package			/*{{{*/
+// CacheGenerator::NewGroup - Add a new group				/*{{{*/
 // ---------------------------------------------------------------------
-/* This creates a new package structure and adds it to the hash table */
-bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name)
+/* This creates a new group structure and adds it to the hash table */
+bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
 {
-   Pkg = Cache.FindPkg(Name);
-   if (Pkg.end() == false)
+   Grp = Cache.FindGrp(Name);
+   if (Grp.end() == false)
       return true;
 
    // Get a structure
-   unsigned long Package = Map.Allocate(sizeof(pkgCache::Package));
-   if (Package == 0)
+   unsigned long const Group = Map.Allocate(sizeof(pkgCache::Group));
+   if (unlikely(Group == 0))
       return false;
-   
-   Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
-   
+
+   Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
+   Grp->Name = Map.WriteString(Name);
+   if (unlikely(Grp->Name == 0))
+      return false;
+
    // Insert it into the hash table
-   unsigned long Hash = Cache.Hash(Name);
-   Pkg->NextPackage = Cache.HeaderP->HashTable[Hash];
-   Cache.HeaderP->HashTable[Hash] = Package;
-   
-   // Set the name and the ID
-   Pkg->Name = Map.WriteString(Name);
-   if (Pkg->Name == 0)
+   unsigned long const Hash = Cache.Hash(Name);
+   Grp->Next = Cache.HeaderP->GrpHashTable[Hash];
+   Cache.HeaderP->GrpHashTable[Hash] = Group;
+
+   Cache.HeaderP->GroupCount++;
+
+   return true;
+}
+									/*}}}*/
+// CacheGenerator::NewPackage - Add a new package			/*{{{*/
+// ---------------------------------------------------------------------
+/* This creates a new package structure and adds it to the hash table */
+bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name,
+					const string &Arch) {
+   pkgCache::GrpIterator Grp;
+   if (unlikely(NewGroup(Grp, Name) == false))
+      return false;
+
+   Pkg = Grp.FindPkg(Arch);
+      if (Pkg.end() == false)
+	 return true;
+
+   // Get a structure
+   unsigned long const Package = Map.Allocate(sizeof(pkgCache::Package));
+   if (unlikely(Package == 0))
+      return false;
+   Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
+
+   // Insert the package into our package list
+   if (Grp->FirstPackage == 0) // the group is new
+   {
+      // Insert it into the hash table
+      unsigned long const Hash = Cache.Hash(Name);
+      Pkg->NextPackage = Cache.HeaderP->PkgHashTable[Hash];
+      Cache.HeaderP->PkgHashTable[Hash] = Package;
+      Grp->FirstPackage = Package;
+   }
+   else // Group the Packages together
+   {
+      // this package is the new last package
+      pkgCache::PkgIterator LastPkg(Cache, Cache.PkgP + Grp->LastPackage);
+      Pkg->NextPackage = LastPkg->NextPackage;
+      LastPkg->NextPackage = Package;
+   }
+   Grp->LastPackage = Package;
+
+   // Set the name, arch and the ID
+   Pkg->Name = Grp->Name;
+   Pkg->Group = Grp.Index();
+   Pkg->Arch = WriteUniqString(Arch.c_str());
+   if (unlikely(Pkg->Arch == 0))
       return false;
    Pkg->ID = Cache.HeaderP->PackageCount++;
-   
+
    return true;
 }
 									/*}}}*/
@@ -468,21 +524,95 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    return Description;
 }
 									/*}}}*/
-// ListParser::NewDepends - Create a dependency element			/*{{{*/
+// CacheGenerator::FinishCache - do various finish operations		/*{{{*/
+// ---------------------------------------------------------------------
+/* This prepares the Cache for delivery */
+bool pkgCacheGenerator::FinishCache(OpProgress &Progress)
+{
+   // FIXME: add progress reporting for this operation
+   // Do we have different architectures in your groups ?
+   vector<string> archs = APT::Configuration::getArchitectures();
+   if (archs.size() > 1)
+   {
+      // Create Conflicts in between the group
+      for (pkgCache::GrpIterator G = GetCache().GrpBegin(); G.end() != true; G++)
+      {
+	 string const PkgName = G.Name();
+	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() != true; P = G.NextPkg(P))
+	 {
+	    if (strcmp(P.Arch(),"all") == 0)
+	       continue;
+	    pkgCache::PkgIterator allPkg;
+	    for (pkgCache::VerIterator V = P.VersionList(); V.end() != true; V++)
+	    {
+	       string const Arch = V.Arch(true);
+	       map_ptrloc *OldDepLast = NULL;
+	       /* MultiArch handling introduces a lot of implicit Dependencies:
+		- MultiArch: same → Co-Installable if they have the same version
+		- Architecture: all → Need to be Co-Installable for internal reasons
+		- All others conflict with all other group members */
+	       bool const coInstall = (V->MultiArch == pkgCache::Version::All ||
+					V->MultiArch == pkgCache::Version::Same);
+	       if (V->MultiArch == pkgCache::Version::All && allPkg.end() == true)
+		  allPkg = G.FindPkg("all");
+	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
+	       {
+		  if (*A == Arch)
+		     continue;
+		  /* We allow only one installed arch at the time
+		     per group, therefore each group member conflicts
+		     with all other group members */
+		  pkgCache::PkgIterator D = G.FindPkg(*A);
+		  if (D.end() == true)
+		     continue;
+		  if (coInstall == true)
+		  {
+		     // Replaces: ${self}:other ( << ${binary:Version})
+		     NewDepends(D, V, V.VerStr(),
+				pkgCache::Dep::Less, pkgCache::Dep::Replaces,
+				OldDepLast);
+		     // Breaks: ${self}:other (!= ${binary:Version})
+		     NewDepends(D, V, V.VerStr(),
+				pkgCache::Dep::Less, pkgCache::Dep::DpkgBreaks,
+				OldDepLast);
+		     NewDepends(D, V, V.VerStr(),
+				pkgCache::Dep::Greater, pkgCache::Dep::DpkgBreaks,
+				OldDepLast);
+		     if (V->MultiArch == pkgCache::Version::All)
+		     {
+			// Depend on ${self}:all which does depend on nothing
+			NewDepends(allPkg, V, V.VerStr(),
+				   pkgCache::Dep::Equals, pkgCache::Dep::Depends,
+				   OldDepLast);
+		     }
+		  } else {
+			// Conflicts: ${self}:other
+			NewDepends(D, V, "",
+				   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+				   OldDepLast);
+		  }
+	       }
+	    }
+	 }
+      }
+   }
+   return true;
+}
+									/*}}}*/
+// CacheGenerator::NewDepends - Create a dependency element		/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a dependency element in the tree. It is linked to the
    version and to the package that it is pointing to. */
-bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
-					       const string &PackageName,
-					       const string &Version,
-					       unsigned int Op,
-					       unsigned int Type)
+bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
+				   pkgCache::VerIterator &Ver,
+				   string const &Version,
+				   unsigned int const &Op,
+				   unsigned int const &Type,
+				   map_ptrloc *OldDepLast)
 {
-   pkgCache &Cache = Owner->Cache;
-   
    // Get a structure
-   unsigned long Dependency = Owner->Map.Allocate(sizeof(pkgCache::Dependency));
-   if (Dependency == 0)
+   unsigned long const Dependency = Map.Allocate(sizeof(pkgCache::Dependency));
+   if (unlikely(Dependency == 0))
       return false;
    
    // Fill it in
@@ -491,12 +621,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    Dep->Type = Type;
    Dep->CompareOp = Op;
    Dep->ID = Cache.HeaderP->DependsCount++;
-   
-   // Locate the target package
-   pkgCache::PkgIterator Pkg;
-   if (Owner->NewPackage(Pkg,PackageName) == false)
-      return false;
-   
+
    // Probe the reverse dependency list for a version string that matches
    if (Version.empty() == false)
    {
@@ -504,29 +629,23 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 	 if (I->Version != 0 && I.TargetVer() == Version)
 	    Dep->Version = I->Version;*/
       if (Dep->Version == 0)
-	 if ((Dep->Version = WriteString(Version)) == 0)
+	 if (unlikely((Dep->Version = Map.WriteString(Version)) == 0))
 	    return false;
    }
-      
+
    // Link it to the package
    Dep->Package = Pkg.Index();
    Dep->NextRevDepends = Pkg->RevDepends;
    Pkg->RevDepends = Dep.Index();
-   
-   /* Link it to the version (at the end of the list)
-      Caching the old end point speeds up generation substantially */
-   if (OldDepVer != Ver)
+
+   // Do we know where to link the Dependency to?
+   if (OldDepLast == NULL)
    {
       OldDepLast = &Ver->DependsList;
       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
 	 OldDepLast = &D->NextDepends;
-      OldDepVer = Ver;
    }
 
-   // Is it a file dependency?
-   if (PackageName[0] == '/')
-      FoundFileDeps = true;
-   
    Dep->NextDepends = *OldDepLast;
    *OldDepLast = Dep.Index();
    OldDepLast = &Dep->NextDepends;
@@ -534,22 +653,58 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
    return true;
 }
 									/*}}}*/
+// ListParser::NewDepends - Create the environment for a new dependency	/*{{{*/
+// ---------------------------------------------------------------------
+/* This creates a Group and the Package to link this dependency to if
+   needed and handles also the caching of the old endpoint */
+bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
+					       const string &PackageName,
+					       const string &Arch,
+					       const string &Version,
+					       unsigned int Op,
+					       unsigned int Type)
+{
+   pkgCache::GrpIterator Grp;
+   if (unlikely(Owner->NewGroup(Grp, PackageName) == false))
+      return false;
+
+   // Locate the target package
+   pkgCache::PkgIterator Pkg = Grp.FindPkg(Arch);
+   if (Pkg.end() == true) {
+      if (unlikely(Owner->NewPackage(Pkg, PackageName, Arch) == false))
+	 return false;
+   }
+
+   // Is it a file dependency?
+   if (unlikely(PackageName[0] == '/'))
+      FoundFileDeps = true;
+
+   /* Caching the old end point speeds up generation substantially */
+   if (OldDepVer != Ver) {
+      OldDepLast = NULL;
+      OldDepVer = Ver;
+   }
+
+   return Owner->NewDepends(Pkg, Ver, Version, Op, Type, OldDepLast);
+}
+									/*}}}*/
 // ListParser::NewProvides - Create a Provides element			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
-					        const string &PackageName,
+					        const string &PkgName,
+						const string &PkgArch,
 						const string &Version)
 {
    pkgCache &Cache = Owner->Cache;
 
    // We do not add self referencing provides
-   if (Ver.ParentPkg().Name() == PackageName)
+   if (Ver.ParentPkg().Name() == PkgName && PkgArch == Ver.Arch(true))
       return true;
    
    // Get a structure
-   unsigned long Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
-   if (Provides == 0)
+   unsigned long const Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
+   if (unlikely(Provides == 0))
       return false;
    Cache.HeaderP->ProvidesCount++;
    
@@ -558,12 +713,12 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    Prv->Version = Ver.Index();
    Prv->NextPkgProv = Ver->ProvidesList;
    Ver->ProvidesList = Prv.Index();
-   if (Version.empty() == false && (Prv->ProvideVersion = WriteString(Version)) == 0)
+   if (Version.empty() == false && unlikely((Prv->ProvideVersion = WriteString(Version)) == 0))
       return false;
    
    // Locate the target package
    pkgCache::PkgIterator Pkg;
-   if (Owner->NewPackage(Pkg,PackageName) == false)
+   if (unlikely(Owner->NewPackage(Pkg,PkgName, PkgArch) == false))
       return false;
    
    // Link it to the package
@@ -923,6 +1078,9 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
 		     Files.begin()+EndOfSource,Files.end()) == false)
 	 return false;
+
+      // FIXME: move me to a better place
+      Gen.FinishCache(Progress);
    }
    else
    {
@@ -965,6 +1123,9 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
 		     Files.begin()+EndOfSource,Files.end()) == false)
 	 return false;
+
+      // FIXME: move me to a better place
+      Gen.FinishCache(Progress);
    }
    if (Debug == true)
       std::clog << "Caches are ready for shipping" << std::endl;
@@ -1012,7 +1173,10 @@ bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
    if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
 		  Files.begin()+EndOfSource,Files.end()) == false)
       return false;
-   
+
+   // FIXME: move me to a better place
+   Gen.FinishCache(Progress);
+
    if (_error->PendingError() == true)
       return false;
    *OutMap = Map.UnGuard();

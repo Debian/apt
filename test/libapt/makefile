@@ -23,3 +23,15 @@ PROGRAM = GetListOfFilesInDir${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = getlistoffilesindir_test.cc
 include $(PROGRAM_H)
+
+# Program for testing CommandLine reconstruction
+PROGRAM = commandlineasstring${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = commandlineasstring_test.cc
+include $(PROGRAM_H)
+
+# Program for testing debians version comparing
+PROGRAM = compareversion${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = compareversion_test.cc
+include $(PROGRAM_H)

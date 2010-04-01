@@ -152,6 +152,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			builtin.push_back(c);
 		}
 	}
+	closedir(D);
 
 	// get the environment language codes: LC_MESSAGES (and later LANGUAGE)
 	// we extract both, a long and a short code and then we will
@@ -220,7 +221,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	const char *language_env = getenv("LANGUAGE") == 0 ? "" : getenv("LANGUAGE");
 	string envLang = Locale == 0 ? language_env : *(Locale+1);
 	if (envLang.empty() == false) {
-		std::vector<string> env = ExplodeString(envLang,':');
+		std::vector<string> env = VectorizeString(envLang,':');
 		short addedLangs = 0; // add a maximum of 3 fallbacks from the environment
 		for (std::vector<string>::const_iterator e = env.begin();
 		     e != env.end() && addedLangs < 3; ++e) {
@@ -316,6 +317,30 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		return allCodes;
 	else
 		return codes;
+}
+									/*}}}*/
+// getArchitectures - Return Vector of prefered Architectures		/*{{{*/
+std::vector<std::string> const Configuration::getArchitectures(bool const &Cached) {
+	using std::string;
+
+	std::vector<string> static archs;
+	if (likely(Cached == true) && archs.empty() == false)
+		return archs;
+
+	string const arch = _config->Find("APT::Architecture");
+	archs = _config->FindVector("APT::Architectures");
+	if (archs.empty() == true ||
+	    std::find(archs.begin(), archs.end(), arch) == archs.end())
+		archs.push_back(arch);
+	return archs;
+}
+									/*}}}*/
+// checkArchitecture - are we interested in the given Architecture?	/*{{{*/
+bool const Configuration::checkArchitecture(std::string const &Arch) {
+	if (Arch == "all")
+		return true;
+	std::vector<std::string> const archs = getArchitectures(true);
+	return (std::find(archs.begin(), archs.end(), Arch) != archs.end());
 }
 									/*}}}*/
 }
