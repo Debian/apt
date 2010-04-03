@@ -855,13 +855,16 @@ void pkgDepCache::Update(OpProgress *Prog)
 	       if (P.end() == true) continue;
 	       for (VerIterator V = P.VersionList(); V.end() != true; ++V)
 	       {
-		  // FIXME: String comparison isn't a save indicator!
-		  if (strcmp(allV.VerStr(),V.VerStr()) != 0)
+		  if (allV->Hash != V->Hash ||
+		      strcmp(allV.VerStr(),V.VerStr()) != 0)
 		     continue;
 		  unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
 		  if ((CurDepState & DepInstMin) != DepInstMin)
 		     break; // we found the correct version, but it is broken. Better try another arch or later again
+		  RemoveSizes(P);
+		  RemoveStates(P);
 		  P->CurrentVer = V.Index();
+		  PkgState[P->ID].InstallVer = V;
 		  AddStates(P);
 		  Update(P);
 		  AddSizes(P);
