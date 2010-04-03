@@ -105,7 +105,7 @@ ionice(int PID)
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
    : pkgPackageManager(Cache), dpkgbuf_pos(0),
-     term_out(NULL), PackagesDone(0), PackagesTotal(0)
+     term_out(NULL), history_out(NULL), PackagesDone(0), PackagesTotal(0)
 {
 }
 									/*}}}*/
@@ -651,6 +651,7 @@ bool pkgDPkgPM::CloseLog()
       fprintf(history_out, "End-Date: %s\n", timestr);
       fclose(history_out);
    }
+   history_out = NULL;
 
    return true;
 }
