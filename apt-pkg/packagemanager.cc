@@ -596,9 +596,17 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
    {
       if(Install(Pkg,FileNames[Pkg->ID]) == false)
          return false;
-   } else if (SmartUnPack(Pkg.Group().FindPkg("all")) == false)
-      return false;
-
+   } else {
+      // Pseudo packages will not be unpacked - instead we will do this
+      // for the "real" package, but only once and if it is already
+      // configured we don't need to unpack it again…
+      PkgIterator const P = Pkg.Group().FindPkg("all");
+      if (List->IsFlag(P,pkgOrderList::UnPacked) != true &&
+	  List->IsFlag(P,pkgOrderList::Configured) != true) {
+	 if (SmartUnPack(P) == false)
+	    return false;
+      }
+   }
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
    
    // Perform immedate configuration of the package.
