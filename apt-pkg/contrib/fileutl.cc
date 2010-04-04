@@ -202,11 +202,6 @@ bool FileExists(string File)
 /* If an extension is given only files with this extension are included
    in the returned vector, otherwise every "normal" file is included. */
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
-					bool const &SortList)
-{
-   return GetListOfFilesInDir(Dir, Ext, SortList, false);
-}
-std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
 					bool const &SortList, bool const &AllowNoExt)
 {
    std::vector<string> ext;
