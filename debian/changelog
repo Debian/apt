@@ -4,6 +4,15 @@ apt (0.7.26~exp4) experimental; urgency=low
     - "reinstall" the correct version for a killed pseudo package
   * apt-pkg/packagemanager.cc:
     - don't try to "unpack" pseudo packages twice
+  * apt-pkg/contrib/fileutl.cc:
+    - add a parent-guarded "mkdir -p" as CreateDirectory()
+  * apt-pkg/acquire.{cc,h}:
+    - add a delayed constructor with Setup() for success reporting
+    - check for and create directories in Setup if needed instead of
+      error out unfriendly in the Constructor (Closes: #523920, #525783)
+    - optional handle a lock file in Setup()
+  * cmdline/apt-get.cc:
+    - remove the lock file handling and let Acquire take care of it instead
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 03 Apr 2010 14:58:39 +0200
 

@@ -811,20 +811,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    pkgRecords Recs(Cache);
    if (_error->PendingError() == true)
       return false;
-   
-   // Lock the archive directory
-   FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false &&
-       _config->FindB("APT::Get::Print-URIs") == false)
-   {
-      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
-      if (_error->PendingError() == true)
-	 return _error->Error(_("Unable to lock the download directory"));
-   }
-   
+
    // Create the download object
+   pkgAcquire Fetcher;
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher(&Stat);
+   if (Fetcher.Setup(&Stat, _config->FindB("APT::Get::Print-URIs", false)
+	? "" : _config->FindDir("Dir::Cache::Archives")) == false)
+      return false;
 
    // Read the source list
    pkgSourceList List;
@@ -1442,15 +1435,6 @@ bool DoUpdate(CommandLine &CmdL)
    if (List.ReadMainList() == false)
       return false;
 
-   // Lock the list directory
-   FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false)
-   {
-      Lock.Fd(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
-      if (_error->PendingError() == true)
-	 return _error->Error(_("Unable to lock the list directory"));
-   }
-   
    // Create the progress
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
       
@@ -1458,7 +1442,9 @@ bool DoUpdate(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       // get a fetcher
-      pkgAcquire Fetcher(&Stat);
+      pkgAcquire Fetcher;
+      if (Fetcher.Setup(&Stat) == false)
+	 return false;
 
       // Populate it with the source selection and get all Indexes 
       // (GetAll=true)
@@ -2207,7 +2193,9 @@ bool DoSource(CommandLine &CmdL)
 
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher(&Stat);
+   pkgAcquire Fetcher;
+   if (Fetcher.Setup(&Stat) == false)
+      return false;
 
    DscFile *Dsc = new DscFile[CmdL.FileSize()];
    
@@ -2464,7 +2452,9 @@ bool DoBuildDep(CommandLine &CmdL)
 
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher(&Stat);
+   pkgAcquire Fetcher;
+   if (Fetcher.Setup(&Stat) == false)
+      return false;
 
    unsigned J = 0;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)

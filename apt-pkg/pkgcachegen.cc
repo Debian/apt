@@ -1003,7 +1003,20 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    // Decide if we can write to the files..
    string const CacheFile = _config->FindFile("Dir::Cache::pkgcache");
    string const SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
-   
+
+   // ensure the cache directory exists
+   if (CacheFile.empty() == false || SrcCacheFile.empty() == false)
+   {
+      string dir = _config->FindDir("Dir::Cache");
+      size_t const len = dir.size();
+      if (len > 5 && dir.find("/apt/", len - 6, 5) == len - 5)
+	 dir = dir.substr(0, len - 5);
+      if (CacheFile.empty() == false)
+	 CreateDirectory(dir, flNotFile(CacheFile));
+      if (SrcCacheFile.empty() == false)
+	 CreateDirectory(dir, flNotFile(SrcCacheFile));
+   }
+
    // Decide if we can write to the cache
    bool Writeable = false;
    if (CacheFile.empty() == false)
