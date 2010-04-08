@@ -1304,6 +1304,10 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		  break;
 	       fuzzy = true;
 	       Ver = Pkg.VersionList();
+	       // exit right away from the Pkg.VersionList() loop if we
+	       // don't have any versions
+	       if (Ver.end() == true)
+		  break;
 	    }
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
