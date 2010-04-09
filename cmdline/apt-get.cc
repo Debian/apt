@@ -815,8 +815,14 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    // Create the download object
    pkgAcquire Fetcher;
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   if (Fetcher.Setup(&Stat, _config->FindB("APT::Get::Print-URIs", false)
-	? "" : _config->FindDir("Dir::Cache::Archives")) == false)
+   if (_config->FindB("APT::Get::Print-URIs", false) == true)
+   {
+      // force a hashsum for compatibility reasons
+      _config->CndSet("Acquire::ForceHash", "md5sum");
+      if (Fetcher.Setup(&Stat, "") == false)
+	 return false;
+   }
+   else if (Fetcher.Setup(&Stat, _config->FindDir("Dir::Cache::Archives")) == false)
       return false;
 
    // Read the source list
@@ -1441,6 +1447,9 @@ bool DoUpdate(CommandLine &CmdL)
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
+      // force a hashsum for compatibility reasons
+      _config->CndSet("Acquire::ForceHash", "md5sum");
+
       // get a fetcher
       pkgAcquire Fetcher;
       if (Fetcher.Setup(&Stat) == false)
