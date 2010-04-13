@@ -331,6 +331,7 @@ class pkgDepCache : protected pkgCache::Namespace
    // Legacy.. We look like a pkgCache
    inline operator pkgCache &() {return *Cache;};
    inline Header &Head() {return *Cache->HeaderP;};
+   inline GrpIterator GrpBegin() {return Cache->GrpBegin();};
    inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
    inline GrpIterator FindGrp(string const &Name) {return Cache->FindGrp(Name);};
    inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};

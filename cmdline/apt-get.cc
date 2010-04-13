@@ -1772,11 +1772,14 @@ bool DoInstall(CommandLine &CmdL)
 	 
 	    // Run over the matches
 	    bool Hit = false;
-	    for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+	    for (pkgCache::GrpIterator Grp = Cache->GrpBegin(); Grp.end() == false; ++Grp)
 	    {
-	       if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+	       if (regexec(&Pattern,Grp.Name(),0,0,0) != 0)
 		  continue;
-	    
+	       Pkg = Grp.FindPkg("native");
+	       if (unlikely(Pkg.end() == true))
+		  continue;
+
 	       ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
 			Pkg.Name(),S);
 	    
