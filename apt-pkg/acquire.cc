@@ -69,9 +69,18 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
    Log = Progress;
 
    // check for existence and possibly create auxiliary directories
-   if (CheckDirectory(_config->FindDir("Dir::State"), _config->FindDir("Dir::State::lists") + "partial/") == false ||
-	CheckDirectory(_config->FindDir("Dir::Cache"), _config->FindDir("Dir::Cache::Archives") + "partial/") == false)
-      return false;
+   string const listDir = _config->FindDir("Dir::State::lists");
+   string const partialListDir = listDir + "partial/";
+   string const archivesDir = _config->FindDir("Dir::Cache::Archives");
+   string const partialArchivesDir = archivesDir + "partial/";
+
+   if (CheckDirectory(_config->FindDir("Dir::State"), partialListDir) == false &&
+       CheckDirectory(listDir, partialListDir) == false)
+      return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+
+   if (CheckDirectory(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
+       CheckDirectory(archivesDir, partialArchivesDir) == false)
+      return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
 
    if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)
       return true;
@@ -94,7 +103,7 @@ bool pkgAcquire::CheckDirectory(string const &Parent, string const &Path) const
       return true;
 
    size_t const len = Parent.size();
-   if (len > 5 && Parent.find("/apt/", len - 6, 5) != len - 5)
+   if (len > 5 && Parent.find("/apt/", len - 6, 5) == len - 5)
    {
       if (CreateDirectory(Parent.substr(0,len-5), Path) == true)
 	 return true;
@@ -102,7 +111,7 @@ bool pkgAcquire::CheckDirectory(string const &Parent, string const &Path) const
    else if (CreateDirectory(Parent, Path) == true)
       return true;
 
-   return _error->Errno("Acquire", _("Directory %s can't be created."), Path.c_str());
+   return false;
 }
 									/*}}}*/
 // Acquire::~pkgAcquire	- Destructor					/*{{{*/
