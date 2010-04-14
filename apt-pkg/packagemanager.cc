@@ -338,6 +338,9 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
       return true;
    if (List->IsFlag(Pkg,pkgOrderList::UnPacked) == false)
       return false;
+
+   if (Debug) 
+      std::clog << OutputInDepth(Depth) << "DepAdd: " << Pkg.Name() << std::endl;
       
    // Put the package on the list
    OList.push_back(Pkg);
@@ -391,6 +394,8 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
       
       if (Bad == true)
       {
+	 if (Debug) 
+	    std::clog << OutputInDepth(Depth) << "DepAdd FAILS on: " << Pkg.Name() << std::endl;
 	 OList.Flag(Pkg,0,pkgOrderList::Added);
 	 OList.pop_back();
 	 Depth--;
