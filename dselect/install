@@ -46,7 +46,7 @@ yesno() {
 	echo $ans | tr YN yn
 }
 
-if [ x$WAIT = "xtrue" ]; then
+if [ "$WAIT" = "true" ]; then
    $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" -d dselect-upgrade
    echo $"Press enter to continue." && read RES
    $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
@@ -70,8 +70,8 @@ if [ $RES -eq 0 ]; then
    fi
 
    NEWLS=`ls -ld $ARCHIVES`
-   if [ x$CHECKDIR = "xtrue" ]; then
-      if [ "x$OLDLS" = "x$NEWLS" ]; then
+   if [ "$CHECKDIR" = "true" ]; then
+      if [ "$OLDLS" = "$NEWLS" ]; then
          exit 0
       fi
    fi
