@@ -692,7 +692,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    }
    else
    {
-      c1out << _("You might want to run `apt-get -f install' to correct these.") << endl;
+      c1out << _("You might want to run 'apt-get -f install' to correct these.") << endl;
       ShowBroken(c1out,*this,true);
 
       return _error->Error(_("Unmet dependencies. Try using -f."));
@@ -1826,7 +1826,7 @@ bool DoInstall(CommandLine &CmdL)
 	 packages */
       if (BrokenFix == true && Cache->BrokenCount() != 0)
       {
-	 c1out << _("You might want to run `apt-get -f install' to correct these:") << endl;
+	 c1out << _("You might want to run 'apt-get -f install' to correct these:") << endl;
 	 ShowBroken(c1out,Cache,false);
 
 	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
