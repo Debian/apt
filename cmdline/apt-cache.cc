@@ -1585,6 +1585,14 @@ bool Policy(CommandLine &CmdL)
    }
 
    string const myArch = _config->Find("APT::Architecture");
+   char const * const msgInstalled = _("  Installed: ");
+   char const * const msgCandidate = _("  Candidate: ");
+   short const InstalledLessCandidate =
+		mbstowcs(NULL, msgInstalled, 0) - mbstowcs(NULL, msgCandidate, 0);
+   short const deepInstalled =
+		(InstalledLessCandidate < 0 ? (InstalledLessCandidate*-1) : 0) - 1;
+   short const deepCandidate =
+		(InstalledLessCandidate > 0 ? (InstalledLessCandidate) : 0) - 1;
 
    // Print out detailed information for each package
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
@@ -1604,14 +1612,14 @@ bool Policy(CommandLine &CmdL)
       cout << Pkg.FullName(true) << ":" << endl;
 
       // Installed version
-      cout << _("  Installed: ");
+      cout << msgInstalled << OutputInDepth(deepInstalled, " ");
       if (Pkg->CurrentVer == 0)
 	 cout << _("(none)") << endl;
       else
 	 cout << Pkg.CurrentVer().VerStr() << endl;
       
       // Candidate Version 
-      cout << _("  Candidate: ");
+      cout << msgCandidate << OutputInDepth(deepCandidate, " ");
       pkgCache::VerIterator V = Plcy.GetCandidateVer(Pkg);
       if (V.end() == true)
 	 cout << _("(none)") << endl;
