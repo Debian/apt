@@ -28,6 +28,7 @@
 #include <ftw.h>
 #include <fnmatch.h>
 #include <iostream>
+#include <sstream>
 #include <memory>
     
 #include "cachedb.h"
@@ -706,23 +707,20 @@ bool SourcesWriter::DoPackage(string FileName)
    
    // Add the dsc to the files hash list
    string const strippedName = flNotDir(FileName);
-   char Files[1000];
-   snprintf(Files,sizeof(Files),"\n %s %lu %s\n %s",
-	    string(MD5.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Files").c_str());
+   std::ostringstream ostreamFiles;
+   ostreamFiles << "\n " << string(MD5.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Files");
+   string const Files = ostreamFiles.str();
 
-   char ChecksumsSha1[1000];
-   snprintf(ChecksumsSha1,sizeof(ChecksumsSha1),"\n %s %lu %s\n %s",
-	    string(SHA1.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Checksums-Sha1").c_str());
+   std::ostringstream ostreamSha1;
+   ostreamSha1 << "\n " << string(SHA1.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Checksums-Sha1");
+   string const ChecksumsSha1 = ostreamSha1.str();
 
-   char ChecksumsSha256[1000];
-   snprintf(ChecksumsSha256,sizeof(ChecksumsSha256),"\n %s %lu %s\n %s",
-	    string(SHA256.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Checksums-Sha256").c_str());
+   std::ostringstream ostreamSha256;
+   ostreamSha256 << "\n " << string(SHA256.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Checksums-Sha256");
+   string const ChecksumsSha256 = ostreamSha256.str();
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -740,7 +738,7 @@ bool SourcesWriter::DoPackage(string FileName)
 
    // Perform the delinking operation over all of the files
    string ParseJnk;
-   const char *C = Files;
+   const char *C = Files.c_str();
    char *RealPath = NULL;
    for (;isspace(*C); C++);
    while (*C != 0)
@@ -773,9 +771,9 @@ bool SourcesWriter::DoPackage(string FileName)
 
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
-   SetTFRewriteData(Changes[End++],"Files",Files);
-   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1);
-   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256);
+   SetTFRewriteData(Changes[End++],"Files",Files.c_str());
+   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1.c_str());
+   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256.c_str());
    if (Directory != "./")
       SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
    SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
