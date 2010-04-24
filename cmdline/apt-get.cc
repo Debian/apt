@@ -1264,6 +1264,11 @@ bool TryToChangeVer(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    }
    
    Cache.SetCandidateVersion(Ver);
+
+   // Set the all package to the same candidate
+   if (Ver.Pseudo() == true)
+      Cache.SetCandidateVersion(Match.Find(Pkg.Group().FindPkg("all")));
+
    return true;
 }
 									/*}}}*/
