@@ -1147,20 +1147,27 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		  Pkg.FullName(true).c_str());
 	 
 	 pkgCache::PrvIterator I = Pkg.ProvidesList();
+	 unsigned short provider = 0;
 	 for (; I.end() == false; I++)
 	 {
 	    pkgCache::PkgIterator Pkg = I.OwnerPkg();
 	    
 	    if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer())
 	    {
+	       c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
 	       if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
-		  c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr() <<
-		  _(" [Installed]") << endl;
-	       else
-		  c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr() << endl;
-	    }      
+		  c1out << _(" [Installed]");
+	       c1out << endl;
+	       ++provider;
+	    }
 	 }
-	 c1out << _("You should explicitly select one to install.") << endl;
+	 // if we found no candidate which provide this package, show non-candidates
+	 if (provider == 0)
+	    for (I = Pkg.ProvidesList(); I.end() == false; I++)
+	       c1out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
+		<< _(" [Not candidate version]") << endl;
+	 else
+	    c1out << _("You should explicitly select one to install.") << endl;
       }
       else
       {
