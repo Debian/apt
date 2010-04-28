@@ -31,6 +31,9 @@ apt (0.7.25.4) UNRELEASED; urgency=low
       error out (LP: #502641)
   * apt-pkg/indexfile.cc:
     - deal correctly with three letter langcodes (LP: #391409)
+  * [ Abi break ] apt-pkg/acquire-item.{cc,h}:
+    - add "IsIndexFile" to constructor of pkgAcqFile so that it sends
+      the right cache control headers
 
   [ Robert Collins ]
   * Change the package index Info methods to allow apt-cache policy to be

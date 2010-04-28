@@ -1539,8 +1539,9 @@ void pkgAcqArchive::Finished()
 /* The file is added to the queue */
 pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
 		       unsigned long Size,string Dsc,string ShortDesc,
-		       const string &DestDir, const string &DestFilename) :
-                       Item(Owner), ExpectedHash(Hash)
+		       const string &DestDir, const string &DestFilename,
+                       bool IsIndexFile) :
+                       Item(Owner), ExpectedHash(Hash), IsIndexFile(IsIndexFile)
 {
    Retries = _config->FindI("Acquire::Retries",0);
    
@@ -1653,5 +1654,14 @@ void pkgAcqFile::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }
    
    Item::Failed(Message,Cnf);
+}
+									/*}}}*/
+// AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
+// ---------------------------------------------------------------------
+/* The only header we use is the last-modified header. */
+string pkgAcqFile::Custom600Headers()
+{
+   if (IsIndexFile)
+      return "\nIndex-File: true";
 }
 									/*}}}*/
