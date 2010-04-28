@@ -470,6 +470,8 @@ class pkgDepCache : protected pkgCache::Namespace
    private:
    // Helper for Update(OpProgress) to remove pseudoinstalled arch all packages
    bool RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck);
+   bool ReInstallPseudoForGroup(unsigned long const &Grp, std::set<unsigned long> &recheck);
+   bool ReInstallPseudoForGroup(pkgCache::PkgIterator const &P, std::set<unsigned long> &recheck);
 };
 
 #endif

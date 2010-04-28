@@ -841,51 +841,95 @@ void pkgDepCache::Update(OpProgress *Prog)
 	 if (installed == false)
 	    recheck.insert(G.Index());
       }
-      std::vector<std::string> Archs = APT::Configuration::getArchitectures();
-      bool checkChanged = false;
-      do {
-	 for(std::set<unsigned long>::const_iterator g = recheck.begin();
-	     g != recheck.end(); ++g) {
-	    GrpIterator G = GrpIterator(*Cache, Cache->GrpP + *g);
-	    VerIterator allV = G.FindPkg("all").CurrentVer();
-	    for (std::vector<std::string>::const_iterator a = Archs.begin();
-		 a != Archs.end(); ++a)
-	    {
-	       PkgIterator P = G.FindPkg(*a);
-	       if (P.end() == true) continue;
-	       for (VerIterator V = P.VersionList(); V.end() != true; ++V)
-	       {
-		  if (allV->Hash != V->Hash ||
-		      strcmp(allV.VerStr(),V.VerStr()) != 0)
-		     continue;
-		  unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
-		  if ((CurDepState & DepInstMin) != DepInstMin)
-		     break; // we found the correct version, but it is broken. Better try another arch or later again
-		  RemoveSizes(P);
-		  RemoveStates(P);
-		  P->CurrentVer = V.Index();
-		  PkgState[P->ID].InstallVer = V;
-		  AddStates(P);
-		  Update(P);
-		  AddSizes(P);
-		  checkChanged = true;
-		  break;
-	       }
-	    }
-	    recheck.erase(g);
-	 }
-      } while (checkChanged == true && recheck.empty() == false);
 
-      if (_config->FindB("Debug::MultiArchKiller", false) == true)
-	 for(std::set<unsigned long>::const_iterator g = recheck.begin();
-	     g != recheck.end(); ++g)
-	    std::cout << "No pseudo package for »" << GrpIterator(*Cache, Cache->GrpP + *g).Name() << "« installed" << std::endl;
+      while (recheck.empty() != true)
+      {
+	 std::set<unsigned long>::const_iterator g = recheck.begin();
+	 unsigned long const G = *g;
+	 recheck.erase(g);
+	 if (unlikely(ReInstallPseudoForGroup(G, recheck) == false))
+	    _error->Warning(_("Internal error, group »%s« has no installable pseudo package"), GrpIterator(*Cache, Cache->GrpP + *g).Name());
+      }
    }
 
    if (Prog != 0)
       Prog->Progress(Done);
 
    readStateFile(Prog);
+}
+									/*}}}*/
+// DepCache::ReInstallPseudoForGroup - MultiArch helper for Update()	/*{{{*/
+// ---------------------------------------------------------------------
+/* RemovePseudoInstalledPkg() is very successful. It even kills packages
+   to an amount that no pseudo package is left, but we need a pseudo package
+   for upgrading senarios so we need to reinstall one pseudopackage which
+   doesn't break everything. Thankfully we can't have architecture depending
+   negative dependencies so this problem is already eliminated */
+bool pkgDepCache::ReInstallPseudoForGroup(pkgCache::PkgIterator const &P, std::set<unsigned long> &recheck)
+{
+   if (P->CurrentVer != 0)
+      return true;
+   // recursive call for packages which provide this package
+   for (pkgCache::PrvIterator Prv = P.ProvidesList(); Prv.end() != true; ++Prv)
+      ReInstallPseudoForGroup(Prv.OwnerPkg(), recheck);
+   // check if we actually need to look at this group
+   unsigned long const G = P->Group;
+   std::set<unsigned long>::const_iterator Pi = recheck.find(G);
+   if (Pi == recheck.end())
+      return true;
+   recheck.erase(Pi); // remove here, so we can't fall into an endless loop
+   if (unlikely(ReInstallPseudoForGroup(G, recheck) == false))
+   {
+      recheck.insert(G);
+      return false;
+   }
+   return true;
+}
+bool pkgDepCache::ReInstallPseudoForGroup(unsigned long const &G, std::set<unsigned long> &recheck)
+{
+   std::vector<std::string> static const Archs = APT::Configuration::getArchitectures();
+   pkgCache::GrpIterator Grp(*Cache, Cache->GrpP + G);
+   if (unlikely(Grp.end() == true))
+      return false;
+   for (std::vector<std::string>::const_iterator a = Archs.begin();
+        a != Archs.end(); ++a)
+   {
+      pkgCache::PkgIterator P = Grp.FindPkg(*a);
+      if (P.end() == true)
+	 continue;
+      pkgCache::VerIterator allV = Grp.FindPkg("all").CurrentVer();
+      for (VerIterator V = P.VersionList(); V.end() != true; ++V)
+      {
+	 // search for the same version as the all package
+	 if (allV->Hash != V->Hash || strcmp(allV.VerStr(),V.VerStr()) != 0)
+	    continue;
+	 unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+	 // If it is broken, try to install dependencies first before retry
+	 if ((CurDepState & DepInstMin) != DepInstMin)
+	 {
+	    for (pkgCache::DepIterator D = V.DependsList(); D.end() != true; ++D)
+	    {
+	       if (D->Type != pkgCache::Dep::PreDepends && D->Type != pkgCache::Dep::Depends)
+		  continue;
+	       ReInstallPseudoForGroup(D.TargetPkg(), recheck);
+	    }
+	    unsigned char const CurDepState = VersionState(V.DependsList(),DepInstall,DepInstMin,DepInstPolicy);
+	    // if package ist still broken… try another arch
+	    if ((CurDepState & DepInstMin) != DepInstMin)
+	       break;
+	 }
+	 // dependencies satisfied: reinstall the package
+	 RemoveSizes(P);
+	 RemoveStates(P);
+	 P->CurrentVer = V.Index();
+	 PkgState[P->ID].InstallVer = V;
+	 AddStates(P);
+	 Update(P);
+	 AddSizes(P);
+	 return true;
+      }
+   }
+   return false;
 }
 									/*}}}*/
 // DepCache::Update - Update the deps list of a package	   		/*{{{*/
