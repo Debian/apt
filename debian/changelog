@@ -36,6 +36,11 @@ apt (0.7.25.4) UNRELEASED; urgency=low
       the right cache control headers
   * apt-pkg/depcache.cc:
     - fix incorrect std::cout usage for debug output
+  * apt-pkg/indexfile.cc:
+    - If no "_" is found in the language code, try to find a "."
+      This is required for languages like Esperanto that have no
+      county associated with them (LP: #560956)
+      Thanks to "Aisano" for the fix
 
   [ Robert Collins ]
   * Change the package index Info methods to allow apt-cache policy to be

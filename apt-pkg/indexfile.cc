@@ -127,6 +127,8 @@ string pkgIndexFile::LanguageCode()
      
      if(lang.find("_") != lang.npos)
 	return lang.substr(0, lang.find("_"));
+     else if(lang.find(".") != lang.npos)
+	return lang.substr(0, lang.find("."));
      else
 	return lang;
   }
