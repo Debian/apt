@@ -848,7 +848,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 	 unsigned long const G = *g;
 	 recheck.erase(g);
 	 if (unlikely(ReInstallPseudoForGroup(G, recheck) == false))
-	    _error->Warning(_("Internal error, group »%s« has no installable pseudo package"), GrpIterator(*Cache, Cache->GrpP + *g).Name());
+	    _error->Warning(_("Internal error, group '%s' has no installable pseudo package"), GrpIterator(*Cache, Cache->GrpP + *g).Name());
       }
    }
 
