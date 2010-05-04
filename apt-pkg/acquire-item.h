@@ -861,6 +861,9 @@ class pkgAcqFile : public pkgAcquire::Item
     */
    unsigned int Retries;
    
+   /** \brief Should this file be considered a index file */
+   bool IsIndexFile;
+
    public:
    
    // Specialized action members
@@ -869,6 +872,7 @@ class pkgAcqFile : public pkgAcquire::Item
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return Desc.URI;};
    virtual string HashSum() {return ExpectedHash.toStr(); };
+   virtual string Custom600Headers();
 
    /** \brief Create a new pkgAcqFile object.
     *
@@ -892,6 +896,8 @@ class pkgAcqFile : public pkgAcquire::Item
     *
     *  \param DestFilename The filename+path the file is downloaded to.
     *
+    *  \param IsIndexFile The file is considered a IndexFile and cache-control
+    *                     headers like "cache-control: max-age=0" are send
     *
     * If DestFilename is empty, download to DestDir/<basename> if
     * DestDir is non-empty, $CWD/<basename> otherwise.  If
@@ -901,7 +907,8 @@ class pkgAcqFile : public pkgAcquire::Item
 
    pkgAcqFile(pkgAcquire *Owner, string URI, string Hash, unsigned long Size,
 	      string Desc, string ShortDesc,
-	      const string &DestDir="", const string &DestFilename="");
+	      const string &DestDir="", const string &DestFilename="",
+	      bool IsIndexFile=false);
 };
 									/*}}}*/
 /** @} */

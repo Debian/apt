@@ -186,7 +186,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 	    if(reason > 0)
 	       PkgState[pkg->ID].Flags  |= Flag::Auto;
 	    if(debug_autoremove)
-	       std::cout << "Auto-Installed : " << pkgname << std::endl;
+	       std::clog << "Auto-Installed : " << pkgname << std::endl;
 	    amt+=section.size();
 	    if(Prog != NULL)
 	       Prog->OverallProgress(amt, file_size, 1, 
@@ -1511,7 +1511,7 @@ bool pkgDepCache::Sweep()						/*{{{*/
      {
 	state.Garbage=true;
 	if(debug_autoremove)
-	   std::cout << "Garbage: " << p.Name() << std::endl;
+	   std::clog << "Garbage: " << p.Name() << std::endl;
      }
   }   
 

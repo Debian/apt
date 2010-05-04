@@ -106,7 +106,7 @@ bool pkgPolicy::InitDefaults()
 
    if (_config->FindB("Debug::pkgPolicy",false) == true)
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); F++)
-	 cout << "Prio of " << F.FileName() << ' ' << PFPriority[F->ID] << endl; 
+	 std::clog << "Prio of " << F.FileName() << ' ' << PFPriority[F->ID] << std::endl; 
    
    return true;   
 }

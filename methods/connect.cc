@@ -116,6 +116,9 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
       errno = Err;
       if(errno == ECONNREFUSED)
          Owner->SetFailExtraMsg("\nFailReason: ConnectionRefused");
+      else if (errno == ETIMEDOUT)
+	 Owner->SetFailExtraMsg("\nFailReason: ConnectionTimedOut");
+      bad_addr.insert(bad_addr.begin(), string(Name));
       return _error->Errno("connect",_("Could not connect to %s:%s (%s)."),Host.c_str(),
 			   Service,Name);
    }
