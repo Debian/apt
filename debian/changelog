@@ -1,4 +1,14 @@
-apt (0.7.26~exp4) experimental; urgency=low
+apt (0.7.26~exp4) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * [ Abi break ] apt-pkg/acquire-item.{cc,h}:
+    - add "IsIndexFile" to constructor of pkgAcqFile so that it sends
+      the right cache control headers
+  * apt-pkg/depcache.cc:
+    - fix incorrect std::cout usage for debug output
+  * test/libapt/getlanguages_test.cc:
+    - Add test for Esperanto that has nocounty associated with them
+      (LP: #560956)
 
   [ David Kalnischkies ]
   * apt-pkg/depcache.cc:

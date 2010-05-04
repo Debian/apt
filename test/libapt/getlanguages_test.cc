@@ -43,6 +43,13 @@ int main(int argc,char *argv[])
 	equals(vec[0], "en_GB");
 	equals(vec[1], "en");
 
+	// esperanto
+	env[0] = "eo.UTF-8";
+	vec = APT::Configuration::getLanguages(false, false, env);
+	equals(vec.size(), 2);
+	equals(vec[0], "eo");
+	equals(vec[1], "en");
+
 	env[0] = "tr_DE@euro";
 	vec = APT::Configuration::getLanguages(false, false, env);
 	equals(vec.size(), 2);
