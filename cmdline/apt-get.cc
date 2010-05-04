@@ -2380,6 +2380,7 @@ bool DoSource(CommandLine &CmdL)
    
    if (Process == 0)
    {
+      bool const fixBroken = _config->FindB("APT::Get::Fix-Broken", false);
       for (unsigned I = 0; I != J; I++)
       {
 	 string Dir = Dsc[I].Package + '-' + Cache->VS().UpstreamVersion(Dsc[I].Version.c_str());
@@ -2392,7 +2393,7 @@ bool DoSource(CommandLine &CmdL)
 
 	 // See if the package is already unpacked
 	 struct stat Stat;
-	 if (stat(Dir.c_str(),&Stat) == 0 &&
+	 if (fixBroken == false && stat(Dir.c_str(),&Stat) == 0 &&
 	     S_ISDIR(Stat.st_mode) != 0)
 	 {
 	    ioprintf(c0out ,_("Skipping unpack of already unpacked source in %s\n"),
