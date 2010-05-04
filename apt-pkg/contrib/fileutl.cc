@@ -18,6 +18,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/configuration.h>
@@ -197,15 +198,61 @@ bool FileExists(string File)
    return true;
 }
 									/*}}}*/
+// DirectoryExists - Check if a directory exists and is really one	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool DirectoryExists(string const &Path)
+{
+   struct stat Buf;
+   if (stat(Path.c_str(),&Buf) != 0)
+      return false;
+   return ((Buf.st_mode & S_IFDIR) != 0);
+}
+									/*}}}*/
+// CreateDirectory - poor man's mkdir -p guarded by a parent directory	/*{{{*/
+// ---------------------------------------------------------------------
+/* This method will create all directories needed for path in good old
+   mkdir -p style but refuses to do this if Parent is not a prefix of
+   this Path. Example: /var/cache/ and /var/cache/apt/archives are given,
+   so it will create apt/archives if /var/cache exists - on the other
+   hand if the parent is /var/lib the creation will fail as this path
+   is not a parent of the path to be generated. */
+bool CreateDirectory(string const &Parent, string const &Path)
+{
+   if (Parent.empty() == true || Path.empty() == true)
+      return false;
+
+   if (DirectoryExists(Path) == true)
+      return true;
+
+   if (DirectoryExists(Parent) == false)
+      return false;
+
+   // we are not going to create directories "into the blue"
+   if (Path.find(Parent, 0) != 0)
+      return false;
+
+   vector<string> const dirs = VectorizeString(Path.substr(Parent.size()), '/');
+   string progress = Parent;
+   for (vector<string>::const_iterator d = dirs.begin(); d != dirs.end(); ++d)
+   {
+      if (d->empty() == true)
+	 continue;
+
+      progress.append("/").append(*d);
+      if (DirectoryExists(progress) == true)
+	 continue;
+
+      if (mkdir(progress.c_str(), 0755) != 0)
+	 return false;
+   }
+   return true;
+}
+									/*}}}*/
 // GetListOfFilesInDir - returns a vector of files in the given dir	/*{{{*/
 // ---------------------------------------------------------------------
 /* If an extension is given only files with this extension are included
    in the returned vector, otherwise every "normal" file is included. */
-std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
-					bool const &SortList)
-{
-   return GetListOfFilesInDir(Dir, Ext, SortList, false);
-}
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
 					bool const &SortList, bool const &AllowNoExt)
 {

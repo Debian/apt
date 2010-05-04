@@ -1327,7 +1327,8 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
    the archive is already available in the cache and stashs the MD5 for
    checking later. */
 bool pkgAcqArchive::QueueNext()
-{   
+{
+   string const ForceHash = _config->Find("Acquire::ForceHash");
    for (; Vf.end() == false; Vf++)
    {
       // Ignore not source sources
@@ -1350,12 +1351,25 @@ bool pkgAcqArchive::QueueNext()
 	 return false;
       
       string PkgFile = Parse.FileName();
-      if(Parse.SHA256Hash() != "")
-	 ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
-      else if (Parse.SHA1Hash() != "")
-	 ExpectedHash = HashString("SHA1", Parse.SHA1Hash());
-      else 
-	 ExpectedHash = HashString("MD5Sum", Parse.MD5Hash());
+      if (ForceHash.empty() == false)
+      {
+	 if(stringcasecmp(ForceHash, "sha256") == 0)
+	    ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
+	 else if (stringcasecmp(ForceHash, "sha1") == 0)
+	    ExpectedHash = HashString("SHA1", Parse.SHA1Hash());
+	 else
+	    ExpectedHash = HashString("MD5Sum", Parse.MD5Hash());
+      }
+      else
+      {
+	 string Hash;
+	 if ((Hash = Parse.SHA256Hash()).empty() == false)
+	    ExpectedHash = HashString("SHA256", Hash);
+	 else if ((Hash = Parse.SHA1Hash()).empty() == false)
+	    ExpectedHash = HashString("SHA1", Hash);
+	 else
+	    ExpectedHash = HashString("MD5Sum", Parse.MD5Hash());
+      }
       if (PkgFile.empty() == true)
 	 return _error->Error(_("The package index files are corrupted. No Filename: "
 			      "field for package %s."),

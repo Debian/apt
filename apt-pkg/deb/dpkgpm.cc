@@ -105,7 +105,7 @@ ionice(int PID)
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
    : pkgPackageManager(Cache), dpkgbuf_pos(0),
-     term_out(NULL), PackagesDone(0), PackagesTotal(0)
+     term_out(NULL), history_out(NULL), PackagesDone(0), PackagesTotal(0)
 {
 }
 									/*}}}*/
@@ -124,7 +124,19 @@ bool pkgDPkgPM::Install(PkgIterator Pkg,string File)
    if (File.empty() == true || Pkg.end() == true)
       return _error->Error("Internal Error, No file name for %s",Pkg.Name());
 
-   List.push_back(Item(Item::Install,Pkg,File));
+   // If the filename string begins with DPkg::Chroot-Directory, return the
+   // substr that is within the chroot so dpkg can access it.
+   string const chrootdir = _config->FindDir("DPkg::Chroot-Directory","/");
+   if (chrootdir != "/" && File.find(chrootdir) == 0)
+   {
+      size_t len = chrootdir.length();
+      if (chrootdir.at(len - 1) == '/')
+        len--;
+      List.push_back(Item(Item::Install,Pkg,File.substr(len)));
+   }
+   else
+      List.push_back(Item(Item::Install,Pkg,File));
+
    return true;
 }
 									/*}}}*/
@@ -651,6 +663,7 @@ bool pkgDPkgPM::CloseLog()
       fprintf(history_out, "End-Date: %s\n", timestr);
       fclose(history_out);
    }
+   history_out = NULL;
 
    return true;
 }

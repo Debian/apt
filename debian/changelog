@@ -1,5 +1,53 @@
 apt (0.7.26~exp4) UNRELEASEDexperimental; urgency=low
 
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - rewrite the pseudo package reinstaller to be more intelligent
+      in his package choices
+  * apt-pkg/packagemanager.cc:
+    - don't try to "unpack" pseudo packages twice
+  * apt-pkg/contrib/fileutl.cc:
+    - add a parent-guarded "mkdir -p" as CreateDirectory()
+  * apt-pkg/acquire.{cc,h}:
+    - add a delayed constructor with Setup() for success reporting
+    - check for and create directories in Setup if needed instead of
+      error out unfriendly in the Constructor (Closes: #523920, #525783)
+    - optional handle a lock file in Setup()
+  * apt-pkg/acquire-item.cc:
+    - Acquire::ForceHash to force method for expected hash
+  * cmdline/apt-get.cc:
+    - remove the lock file handling and let Acquire take care of it instead
+    - display MD5Sum in --print-uris if not forced to use another method
+      instead of displaying the strongest available (Closes: #576420)
+    - regex for package names executed on Grp- not PkgIterator
+    - show non-candidates as fallback for virtual packages (Closes: #578385)
+    - set also "all" to this version for pseudo packages in TryToChangeVer
+  * apt-pkg/deb/dpkgpm.cc:
+    - remove Chroot-Directory from files passed to install commands.
+      Thanks to Kel Modderman for report & patch! (Closes: #577226)
+  * ftparchive/writer.cc:
+    - remove 999 chars Files and Checksums rewrite limit (Closes: #577759)
+  * cmdline/apt-cache.cc:
+    - align Installed and Candidate Version in policy so they can be compared
+      easier, thanks Ralf Gesellensetter for the pointer! (Closes: #578657)
+  * doc/apt.ent:
+    - Add a note about APT_CONFIG in the -c description (Closes: #578267)
+  * doc/po/de.po:
+    - correct typos in german apt_preferences manpage, thanks Chris Leick!
+  * apt-pkg/sourcelist.cc:
+    - be less strict and accept [option=value] as well
+  * apt-pkg/contrib/configuration.cc:
+    - error out if #clear directive has no argument
+
+  [ Jari Aalto ]
+  * cmdline/apt-get.cc:
+    - replace backticks with single quotes around fix-broken command
+      in the broken packages message. (Closes: #577168)
+  * dselect/install:
+    - modernize if-statements not to use 'x' (Closes: #577117)
+    - replace backticks with POSIX $() (Closes: #577116)
+
+  [ Michael Vogt ]
   * [ Abi break ] apt-pkg/acquire-item.{cc,h}:
     - add "IsIndexFile" to constructor of pkgAcqFile so that it sends
       the right cache control headers
@@ -11,7 +59,7 @@ apt (0.7.26~exp4) UNRELEASEDexperimental; urgency=low
     - Add test for Esperanto that has nocounty associated with them
       (LP: #560956)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 04 May 2010 09:55:08 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 03 Apr 2010 14:58:39 +0200
 
 apt (0.7.26~exp3) experimental; urgency=low
 

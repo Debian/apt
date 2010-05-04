@@ -94,6 +94,13 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 	 if (option.length() < 3)
 	    return _error->Error(_("Malformed line %lu in source list %s ([option] too short)"),CurLine,File.c_str());
 
+	 // accept options even if the last has no space before the ]-end marker
+	 if (option.at(option.length()-1) == ']')
+	 {
+	    for (; *Buffer != ']'; --Buffer);
+	    option.resize(option.length()-1);
+	 }
+
 	 size_t const needle = option.find('=');
 	 if (needle == string::npos)
 	    return _error->Error(_("Malformed line %lu in source list %s ([%s] is not an assignment)"),CurLine,File.c_str(), option.c_str());

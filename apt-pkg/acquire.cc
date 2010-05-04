@@ -19,6 +19,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <apti18n.h>
 
@@ -29,7 +30,6 @@
 #include <dirent.h>
 #include <sys/time.h>
 #include <errno.h>
-#include <sys/stat.h>
 									/*}}}*/
 
 using namespace std;
@@ -37,32 +37,81 @@ using namespace std;
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* We grab some runtime state from the configuration space */
-pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
+pkgAcquire::pkgAcquire() : Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch(0),
+			   Debug(_config->FindB("Debug::pkgAcquire",false)),
+			   Running(false), LockFD(-1)
 {
-   Queues = 0;
-   Configs = 0;
-   Workers = 0;
-   ToFetch = 0;
-   Running = false;
-   
-   string Mode = _config->Find("Acquire::Queue-Mode","host");
+   string const Mode = _config->Find("Acquire::Queue-Mode","host");
    if (strcasecmp(Mode.c_str(),"host") == 0)
       QueueMode = QueueHost;
    if (strcasecmp(Mode.c_str(),"access") == 0)
-      QueueMode = QueueAccess;   
+      QueueMode = QueueAccess;
+}
+pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : Queues(0), Workers(0),
+			   Configs(0), Log(Progress), ToFetch(0),
+			   Debug(_config->FindB("Debug::pkgAcquire",false)),
+			   Running(false), LockFD(-1)
+{
+   string const Mode = _config->Find("Acquire::Queue-Mode","host");
+   if (strcasecmp(Mode.c_str(),"host") == 0)
+      QueueMode = QueueHost;
+   if (strcasecmp(Mode.c_str(),"access") == 0)
+      QueueMode = QueueAccess;
+   Setup(Progress, "");
+}
+									/*}}}*/
+// Acquire::Setup - Delayed Constructor					/*{{{*/
+// ---------------------------------------------------------------------
+/* Do everything needed to be a complete Acquire object and report the
+   success (or failure) back so the user knows that something is wrong… */
+bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
+{
+   Log = Progress;
 
-   Debug = _config->FindB("Debug::pkgAcquire",false);
-   
-   // This is really a stupid place for this
-   struct stat St;
-   if (stat((_config->FindDir("Dir::State::lists") + "partial/").c_str(),&St) != 0 ||
-       S_ISDIR(St.st_mode) == 0)
-      _error->Error(_("Lists directory %spartial is missing."),
-		    _config->FindDir("Dir::State::lists").c_str());
-   if (stat((_config->FindDir("Dir::Cache::Archives") + "partial/").c_str(),&St) != 0 ||
-       S_ISDIR(St.st_mode) == 0)
-      _error->Error(_("Archive directory %spartial is missing."),
-		    _config->FindDir("Dir::Cache::Archives").c_str());
+   // check for existence and possibly create auxiliary directories
+   string const listDir = _config->FindDir("Dir::State::lists");
+   string const partialListDir = listDir + "partial/";
+   string const archivesDir = _config->FindDir("Dir::Cache::Archives");
+   string const partialArchivesDir = archivesDir + "partial/";
+
+   if (CheckDirectory(_config->FindDir("Dir::State"), partialListDir) == false &&
+       CheckDirectory(listDir, partialListDir) == false)
+      return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+
+   if (CheckDirectory(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
+       CheckDirectory(archivesDir, partialArchivesDir) == false)
+      return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+
+   if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)
+      return true;
+
+   // Lock the directory this acquire object will work in
+   LockFD = GetLock(flCombine(Lock, "lock"));
+   if (LockFD == -1)
+      return _error->Error(_("Unable to lock directory %s"), Lock.c_str());
+
+   return true;
+}
+									/*}}}*/
+// Acquire::CheckDirectory - ensure that the given directory exists	/*{{{*/
+// ---------------------------------------------------------------------
+/* a small wrapper around CreateDirectory to check if it exists and to
+   remove the trailing "/apt/" from the parent directory if needed */
+bool pkgAcquire::CheckDirectory(string const &Parent, string const &Path) const
+{
+   if (DirectoryExists(Path) == true)
+      return true;
+
+   size_t const len = Parent.size();
+   if (len > 5 && Parent.find("/apt/", len - 6, 5) == len - 5)
+   {
+      if (CreateDirectory(Parent.substr(0,len-5), Path) == true)
+	 return true;
+   }
+   else if (CreateDirectory(Parent, Path) == true)
+      return true;
+
+   return false;
 }
 									/*}}}*/
 // Acquire::~pkgAcquire	- Destructor					/*{{{*/
@@ -71,7 +120,10 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Log) : Log(Log)
 pkgAcquire::~pkgAcquire()
 {
    Shutdown();
-   
+
+   if (LockFD != -1)
+      close(LockFD);
+
    while (Configs != 0)
    {
       MethodConfig *Jnk = Configs;

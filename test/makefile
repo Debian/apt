@@ -68,7 +68,7 @@ SOURCE = test_udevcdrom.cc
 include $(PROGRAM_H)
 
 # Program for checking rpm versions
-PROGRAM=rpmver
-SLIBS = -lapt-pkg -lrpm
-SOURCE = rpmver.cc
-include $(PROGRAM_H)
+#PROGRAM=rpmver
+#SLIBS = -lapt-pkg -lrpm
+#SOURCE = rpmver.cc
+#include $(PROGRAM_H)

@@ -331,6 +331,7 @@ class pkgDepCache : protected pkgCache::Namespace
    // Legacy.. We look like a pkgCache
    inline operator pkgCache &() {return *Cache;};
    inline Header &Head() {return *Cache->HeaderP;};
+   inline GrpIterator GrpBegin() {return Cache->GrpBegin();};
    inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
    inline GrpIterator FindGrp(string const &Name) {return Cache->FindGrp(Name);};
    inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};
@@ -469,6 +470,8 @@ class pkgDepCache : protected pkgCache::Namespace
    private:
    // Helper for Update(OpProgress) to remove pseudoinstalled arch all packages
    bool RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck);
+   bool ReInstallPseudoForGroup(unsigned long const &Grp, std::set<unsigned long> &recheck);
+   bool ReInstallPseudoForGroup(pkgCache::PkgIterator const &P, std::set<unsigned long> &recheck);
 };
 
 #endif

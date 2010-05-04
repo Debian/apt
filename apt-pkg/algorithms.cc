@@ -1398,7 +1398,9 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 		int PulseInterval)
 {
    pkgAcquire::RunResult res;
-   pkgAcquire Fetcher(&Stat);
+   pkgAcquire Fetcher;
+   if (Fetcher.Setup(&Stat, _config->FindDir("Dir::State::Lists")) == false)
+      return false;
 
    // Populate it with the source selection
    if (List.GetIndexes(&Fetcher) == false)

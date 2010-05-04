@@ -692,7 +692,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    }
    else
    {
-      c1out << _("You might want to run `apt-get -f install' to correct these.") << endl;
+      c1out << _("You might want to run 'apt-get -f install' to correct these.") << endl;
       ShowBroken(c1out,*this,true);
 
       return _error->Error(_("Unmet dependencies. Try using -f."));
@@ -811,20 +811,19 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    pkgRecords Recs(Cache);
    if (_error->PendingError() == true)
       return false;
-   
-   // Lock the archive directory
-   FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false &&
-       _config->FindB("APT::Get::Print-URIs") == false)
-   {
-      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
-      if (_error->PendingError() == true)
-	 return _error->Error(_("Unable to lock the download directory"));
-   }
-   
+
    // Create the download object
+   pkgAcquire Fetcher;
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher(&Stat);
+   if (_config->FindB("APT::Get::Print-URIs", false) == true)
+   {
+      // force a hashsum for compatibility reasons
+      _config->CndSet("Acquire::ForceHash", "md5sum");
+      if (Fetcher.Setup(&Stat, "") == false)
+	 return false;
+   }
+   else if (Fetcher.Setup(&Stat, _config->FindDir("Dir::Cache::Archives")) == false)
+      return false;
 
    // Read the source list
    pkgSourceList List;
@@ -1148,20 +1147,27 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		  Pkg.FullName(true).c_str());
 	 
 	 pkgCache::PrvIterator I = Pkg.ProvidesList();
+	 unsigned short provider = 0;
 	 for (; I.end() == false; I++)
 	 {
 	    pkgCache::PkgIterator Pkg = I.OwnerPkg();
 	    
 	    if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer())
 	    {
+	       c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
 	       if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
-		  c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr() <<
-		  _(" [Installed]") << endl;
-	       else
-		  c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr() << endl;
-	    }      
+		  c1out << _(" [Installed]");
+	       c1out << endl;
+	       ++provider;
+	    }
 	 }
-	 c1out << _("You should explicitly select one to install.") << endl;
+	 // if we found no candidate which provide this package, show non-candidates
+	 if (provider == 0)
+	    for (I = Pkg.ProvidesList(); I.end() == false; I++)
+	       c1out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
+		<< _(" [Not candidate version]") << endl;
+	 else
+	    c1out << _("You should explicitly select one to install.") << endl;
       }
       else
       {
@@ -1258,6 +1264,11 @@ bool TryToChangeVer(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    }
    
    Cache.SetCandidateVersion(Ver);
+
+   // Set the all package to the same candidate
+   if (Ver.Pseudo() == true)
+      Cache.SetCandidateVersion(Match.Find(Pkg.Group().FindPkg("all")));
+
    return true;
 }
 									/*}}}*/
@@ -1446,23 +1457,19 @@ bool DoUpdate(CommandLine &CmdL)
    if (List.ReadMainList() == false)
       return false;
 
-   // Lock the list directory
-   FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false)
-   {
-      Lock.Fd(GetLock(_config->FindDir("Dir::State::Lists") + "lock"));
-      if (_error->PendingError() == true)
-	 return _error->Error(_("Unable to lock the list directory"));
-   }
-   
    // Create the progress
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
       
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
+      // force a hashsum for compatibility reasons
+      _config->CndSet("Acquire::ForceHash", "md5sum");
+
       // get a fetcher
-      pkgAcquire Fetcher(&Stat);
+      pkgAcquire Fetcher;
+      if (Fetcher.Setup(&Stat) == false)
+	 return false;
 
       // Populate it with the source selection and get all Indexes 
       // (GetAll=true)
@@ -1781,11 +1788,14 @@ bool DoInstall(CommandLine &CmdL)
 	 
 	    // Run over the matches
 	    bool Hit = false;
-	    for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+	    for (pkgCache::GrpIterator Grp = Cache->GrpBegin(); Grp.end() == false; ++Grp)
 	    {
-	       if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+	       if (regexec(&Pattern,Grp.Name(),0,0,0) != 0)
 		  continue;
-	    
+	       Pkg = Grp.FindPkg("native");
+	       if (unlikely(Pkg.end() == true))
+		  continue;
+
 	       ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
 			Pkg.Name(),S);
 	    
@@ -1832,7 +1842,7 @@ bool DoInstall(CommandLine &CmdL)
 	 packages */
       if (BrokenFix == true && Cache->BrokenCount() != 0)
       {
-	 c1out << _("You might want to run `apt-get -f install' to correct these:") << endl;
+	 c1out << _("You might want to run 'apt-get -f install' to correct these:") << endl;
 	 ShowBroken(c1out,Cache,false);
 
 	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
@@ -2211,7 +2221,9 @@ bool DoSource(CommandLine &CmdL)
 
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher(&Stat);
+   pkgAcquire Fetcher;
+   if (Fetcher.Setup(&Stat) == false)
+      return false;
 
    DscFile *Dsc = new DscFile[CmdL.FileSize()];
    
@@ -2468,7 +2480,9 @@ bool DoBuildDep(CommandLine &CmdL)
 
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher(&Stat);
+   pkgAcquire Fetcher;
+   if (Fetcher.Setup(&Stat) == false)
+      return false;
 
    unsigned J = 0;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)

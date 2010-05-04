@@ -773,6 +773,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	       else
 		  return _error->Error(_("Syntax error %s:%u: Unsupported directive '%s'"),FName.c_str(),CurLine,Tag.c_str());
 	    }
+	    else if (Tag.empty() == true && NoWord == false && Word == "#clear")
+	       return _error->Error(_("Syntax error %s:%u: clear directive requires an option tree as argument"),FName.c_str(),CurLine);
 	    else
 	    {
 	       // Set the item in the configuration class
