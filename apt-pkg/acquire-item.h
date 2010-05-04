@@ -27,6 +27,7 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/weakptr.h>
 
 /** \addtogroup acquire
  *  @{
@@ -46,7 +47,7 @@
  *
  *  \see pkgAcquire
  */
-class pkgAcquire::Item
+class pkgAcquire::Item : public WeakPointable
 {  
    protected:
    

@@ -25,7 +25,7 @@ SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
 	 contrib/fileutl.cc 
 HEADERS = mmap.h error.h configuration.h fileutl.h  cmndline.h netrc.h\
 	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha256.h hashes.h \
-	  macros.h
+	  macros.h weakptr.h
 
 # Source code for the core main library
 SOURCE+= pkgcache.cc version.cc depcache.cc \

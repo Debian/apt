@@ -59,6 +59,13 @@ apt (0.7.26~exp4) UNRELEASEDexperimental; urgency=low
     - Add test for Esperanto that has nocounty associated with them
       (LP: #560956)
 
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/weakptr.h:
+    - add a class WeakPointable which allows one to register weak pointers to
+      an object which will be set to NULL when the object is deallocated.
+  * [ABI break] apt-pkg/acquire{-worker,-item,}.h:
+    - subclass pkgAcquire::{Worker,Item,ItemDesc} from WeakPointable.
+
  -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 03 Apr 2010 14:58:39 +0200
 
 apt (0.7.26~exp3) experimental; urgency=low
