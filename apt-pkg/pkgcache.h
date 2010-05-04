@@ -244,6 +244,7 @@ struct pkgCache::Header
        If any of the size values do not exactly match what the client expects
        then the client should refuse the load the file. */
    unsigned short HeaderSz;
+   unsigned short GroupSz;
    unsigned short PackageSz;
    unsigned short PackageFileSz;
    unsigned short VersionSz;
@@ -329,12 +330,15 @@ struct pkgCache::Group
    map_ptrloc Name;		// StringItem
 
    // Linked List
-   /** Link to the first package which belongs to the group */
+   /** \brief Link to the first package which belongs to the group */
    map_ptrloc FirstPackage;	// Package
-   /** Link to the last package which belongs to the group */
+   /** \brief Link to the last package which belongs to the group */
    map_ptrloc LastPackage;	// Package
-   /** Link to the next Group */
+   /** \brief Link to the next Group */
    map_ptrloc Next;		// Group
+   /** \brief unique sequel ID */
+   unsigned int ID;
+
 };
 									/*}}}*/
 // Package structure							/*{{{*/
