@@ -242,7 +242,9 @@ bool DumpPackage(CommandLine &CmdL)
 bool Stats(CommandLine &Cmd)
 {
    pkgCache &Cache = *GCache;
-   cout << _("Total package names: ") << Cache.Head().PackageCount << " (" <<
+   cout << _("Total package names: ") << Cache.Head().GroupCount << " (" <<
+      SizeToStr(Cache.Head().GroupCount*Cache.Head().GroupSz) << ')' << endl
+        << _("Total package structures: ") << Cache.Head().PackageCount << " (" <<
       SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
 
    int Normal = 0;
