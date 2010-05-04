@@ -13,12 +13,7 @@ default: startup all
 all headers library clean veryclean binary program doc dirs:
 	$(MAKE) -C apt-pkg $@
 	$(MAKE) -C apt-inst $@
-	$(MAKE) -C methods $@
 	$(MAKE) -C cmdline $@
-	$(MAKE) -C ftparchive $@
-	$(MAKE) -C dselect $@
-	$(MAKE) -C doc $@
-	$(MAKE) -C po $@
 
 # Some very common aliases
 .PHONY: maintainer-clean dist-clean distclean pristine sanity 

@@ -218,7 +218,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
 	if (MultiArchCache() == false) {
-		if (Arch == "native" || Arch == "all" ||
+		if (Arch == "native" || Arch == "all" || Arch == "any" ||
 		    Arch == _config->Find("APT::Architecture"))
 			return SingleArchFindPkg(Name);
 		else
