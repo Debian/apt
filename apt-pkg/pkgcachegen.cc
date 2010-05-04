@@ -356,8 +356,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
    Grp->Next = Cache.HeaderP->GrpHashTable[Hash];
    Cache.HeaderP->GrpHashTable[Hash] = Group;
 
-   Cache.HeaderP->GroupCount++;
-
+   Grp->ID = Cache.HeaderP->GroupCount++;
    return true;
 }
 									/*}}}*/

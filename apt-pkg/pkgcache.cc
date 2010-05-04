@@ -55,6 +55,7 @@ pkgCache::Header::Header()
    Dirty = false;
    
    HeaderSz = sizeof(pkgCache::Header);
+   GroupSz = sizeof(pkgCache::Group);
    PackageSz = sizeof(pkgCache::Package);
    PackageFileSz = sizeof(pkgCache::PackageFile);
    VersionSz = sizeof(pkgCache::Version);
@@ -64,6 +65,7 @@ pkgCache::Header::Header()
    VerFileSz = sizeof(pkgCache::VerFile);
    DescFileSz = sizeof(pkgCache::DescFile);
    
+   GroupCount = 0;
    PackageCount = 0;
    VersionCount = 0;
    DescriptionCount = 0;
@@ -90,6 +92,7 @@ pkgCache::Header::Header()
 bool pkgCache::Header::CheckSizes(Header &Against) const
 {
    if (HeaderSz == Against.HeaderSz &&
+       GroupSz == Against.GroupSz &&
        PackageSz == Against.PackageSz &&
        PackageFileSz == Against.PackageFileSz &&
        VersionSz == Against.VersionSz &&
