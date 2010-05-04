@@ -2014,20 +2014,6 @@ bool DoInstall(CommandLine &CmdL)
    return InstallPackages(Cache,false);   
 }
 
-/* show automatically installed packages. */
-bool DoShowAuto(CommandLine &CmdL)
-{
-   OpProgress progress;
-   pkgCacheFile Cache;
-   if (Cache.Open(progress, false) == false)
-      return false;
-
-   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
-      if (Cache[P].Flags & pkgCache::Flag::Auto)
-          ioprintf(c1out,_("%s\n"), P.Name());
-   return true;
-}
-
 /* mark packages as automatically/manually installed. */
 bool DoMarkAuto(CommandLine &CmdL)
 {
@@ -2854,7 +2840,6 @@ bool ShowHelp(CommandLine &CmdL)
       "   check - Verify that there are no broken dependencies\n"
       "   markauto - Mark the given packages as automatically installed\n"
       "   unmarkauto - Mark the given packages as manually installed\n"
-      "   showauto - Display a list of automatically installed packages\n"
       "\n"
       "Options:\n"
       "  -h  This help text.\n"
@@ -2961,7 +2946,6 @@ int main(int argc,const char *argv[])					/*{{{*/
                                    {"purge",&DoInstall},
 				   {"autoremove",&DoInstall},
 				   {"purge",&DoInstall},
-				   {"showauto",&DoShowAuto},
 				   {"markauto",&DoMarkAuto},
 				   {"unmarkauto",&DoMarkAuto},
                                    {"dist-upgrade",&DoDistUpgrade},

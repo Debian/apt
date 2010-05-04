@@ -75,8 +75,10 @@ apt (0.7.26~exp4) UNRELEASEDexperimental; urgency=low
     - subclass pkgAcquire::{Worker,Item,ItemDesc} from WeakPointable.
   * apt-pkg/pkgcache.cc:
     - Merge fix from David to correct handling in single-arch environments.
+  * cmdline/apt-cache.cc:
+    - Add a showauto command to apt-cache.
   * cmdline/apt-get.cc:
-    - Add apt-get markauto, showauto and unmarkauto commands.
+    - Add apt-get markauto and unmarkauto commands.
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 03 Apr 2010 14:58:39 +0200
 
@@ -1576,13 +1578,6 @@ apt (0.7.7) unstable; urgency=low
     - don't fail if msync() returns > 0
  
  -- Michael Vogt <mvo@debian.org>  Tue, 23 Oct 2007 14:58:03 +0200
-
-apt (0.7.6) unstable; urgency=low
-
-  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
-    directory downloading on non-linux architectures (closes: #435597)
-
- -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
 
 apt (0.7.6) unstable; urgency=low
 

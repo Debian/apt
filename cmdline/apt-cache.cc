@@ -14,7 +14,9 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/error.h>
+#include <cassert>
 #include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/cachefile.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
@@ -1406,6 +1408,29 @@ bool Search(CommandLine &CmdL)
        return _error->Error("Write to stdout failed");
    return true;
 }
+
+
+/* show automatically installed packages (sorted) */
+bool ShowAuto(CommandLine &CmdL)
+{
+   OpProgress op;
+   pkgDepCache DepCache(GCache);
+   DepCache.Init(&op);
+
+   std::vector<string> packages;
+   packages.reserve(GCache->HeaderP->PackageCount / 3);
+   
+   for (pkgCache::PkgIterator P = GCache->PkgBegin(); P.end() == false; P++)
+      if (DepCache[P].Flags & pkgCache::Flag::Auto)
+         packages.push_back(P.Name());
+
+    std::sort(packages.begin(), packages.end());
+    
+    for (vector<string>::iterator I = packages.begin(); I != packages.end(); I++)
+            cout << *I << "\n";
+
+   return true;
+}
 									/*}}}*/
 // ShowPackage - Dump the package record to the screen			/*{{{*/
 // ---------------------------------------------------------------------
@@ -1777,6 +1802,7 @@ bool ShowHelp(CommandLine &Cmd)
       "   unmet - Show unmet dependencies\n"
       "   search - Search the package list for a regex pattern\n"
       "   show - Show a readable record for the package\n"
+      "   showauto - Display a list of automatically installed packages\n"
       "   depends - Show raw dependency information for a package\n"
       "   rdepends - Show reverse dependency information for a package\n"
       "   pkgnames - List the names of all packages in the system\n"
@@ -1841,6 +1867,7 @@ int main(int argc,const char *argv[])					/*{{{*/
                                     {"xvcg",&XVcg},
                                     {"show",&ShowPackage},
                                     {"pkgnames",&ShowPkgNames},
+                                    {"showauto",&ShowAuto},
                                     {"policy",&Policy},
                                     {"madison",&Madison},
                                     {0,0}};
