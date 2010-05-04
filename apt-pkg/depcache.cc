@@ -192,7 +192,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 	 {
 	    PkgState[pkg->ID].Flags |= Flag::Auto;
 	    if (unlikely(debug_autoremove))
-	       std::cout << "Auto-Installed : " << pkg.FullName() << std::endl;
+	       std::clog << "Auto-Installed : " << pkg.FullName() << std::endl;
 	    if (pkgarch == "any")
 	    {
 	       pkgCache::GrpIterator G = pkg.Group();
@@ -1772,7 +1772,7 @@ bool pkgDepCache::Sweep()						/*{{{*/
      {
 	state.Garbage=true;
 	if(debug_autoremove)
-	   std::cout << "Garbage: " << p.FullName() << std::endl;
+	   std::clog << "Garbage: " << p.FullName() << std::endl;
      }
   }   
 
