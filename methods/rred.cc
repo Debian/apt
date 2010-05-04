@@ -477,23 +477,26 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
    Patch.Close();
    To.Close();
 
-   // Transfer the modification times
-   struct stat Buf;
-   if (stat(Path.c_str(),&Buf) != 0)
+   /* Transfer the modification times from the patch file
+      to be able to see in which state the file should be
+      and use the access time from the "old" file */
+   struct stat BufBase, BufPatch;
+   if (stat(Path.c_str(),&BufBase) != 0 ||
+       stat(string(Path+".ed").c_str(),&BufPatch) != 0)
       return _error->Errno("stat",_("Failed to stat"));
 
    struct utimbuf TimeBuf;
-   TimeBuf.actime = Buf.st_atime;
-   TimeBuf.modtime = Buf.st_mtime;
+   TimeBuf.actime = BufBase.st_atime;
+   TimeBuf.modtime = BufPatch.st_mtime;
    if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
       return _error->Errno("utime",_("Failed to set modification time"));
 
-   if (stat(Itm->DestFile.c_str(),&Buf) != 0)
+   if (stat(Itm->DestFile.c_str(),&BufBase) != 0)
       return _error->Errno("stat",_("Failed to stat"));
 
    // return done
-   Res.LastModified = Buf.st_mtime;
-   Res.Size = Buf.st_size;
+   Res.LastModified = BufBase.st_mtime;
+   Res.Size = BufBase.st_size;
    Res.TakeHashes(Hash);
    URIDone(Res);
 
