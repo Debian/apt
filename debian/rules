@@ -314,22 +314,8 @@ apt-transport-https: build debian/shlibs.local libapt-pkg-dev
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-source diff:
-	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
-
-# Update from CVS
-l33ch: really-clean
-	cvs update
-	buildlib/mkChangeLog
-
-# Update from CVS and then configure for build
-super-l33ch: l33ch Makefile.in
-
 configure:
 	$(MAKE) configure
-
-l33ch-stamp: super-l33ch
-	touch $@
 
 really-clean: clean
 	-find . -name Makefile.in -print0 | xargs --null --no-run-if-empty -- rm -f
@@ -338,32 +324,3 @@ really-clean: clean
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary debian/shlibs.local
-
-
-# Done by the uploader.
-#cvs update…
-#edit debian/changelog
-# configure.in has the version automatically updated now.
-# edit configure.in
-# debian/rules cvs-build
-
-CVS_BUILDDIR=apt-$(APT_DEBVER)
-CVS_ROOT=$(shell cat CVS/Root)
-CVS_MODULE=$(shell cat CVS/Repository)
-cvs-build:
-	rm -rf debian/cvs-build
-	mkdir --parents debian/cvs-build
-	(cd debian/cvs-build;cvs -d $(CVS_ROOT) export -r$(APT_CVSTAG) -d apt-$(APT_DEBVER) $(CVS_MODULE))
-	$(MAKE) -C debian/cvs-build/$(CVS_BUILDDIR) startup doc
-	(cd debian/cvs-build/$(CVS_BUILDDIR);$(DEB_BUILD_PROG))
-
-cvs-mkul:
-	-mkdir --parents ../upload-$(APT_DEBVER)
-	cp $(find debian/cvs-build -maxdepth 1 -type f) ../upload-$(APT_DEBVER)
-
-arch-build:
-	rm -rf debian/arch-build
-	mkdir --parents debian/arch-build/apt-$(APT_DEBVER)
-	tar -c --exclude=arch-build --no-recursion -f - $(bzr inventory) | (cd debian/arch-build/$(PKG)-$(APT_DEBVER);tar xf -)
-	$(MAKE) -C debian/arch-build/apt-$(APT_DEBVER) startup doc
-	(cd debian/arch-build/apt-$(APT_DEBVER); $(DEB_BUILD_PROG); dpkg-genchanges -S > ../apt_$(APT_DEBVER)_source.changes)
