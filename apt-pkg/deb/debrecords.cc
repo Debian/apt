@@ -19,7 +19,8 @@
 /* */
 debRecordParser::debRecordParser(string FileName,pkgCache &Cache) : 
                   File(FileName,FileFd::ReadOnly), 
-                  Tags(&File,Cache.Head().MaxVerFileSize + 200)
+                  Tags(&File, std::max(Cache.Head().MaxVerFileSize, 
+				       Cache.Head().MaxDescFileSize) + 200)
 {
 }
 									/*}}}*/
