@@ -6,6 +6,11 @@ apt (0.7.25.3ubuntu8) lucid-proposedUNRELEASED; urgency=low
   [ Michael Vogt ]
   * apt-pkg/deb/debrecords.cc:
     - fix max tag buffer size (LP: #545336, closes: #578959)
+  * apt-pkg/indexfile.cc:
+    - If no "_" is found in the language code, try to find a "."
+      This is required for languages like Esperanto that have no
+      county associated with them (LP: #560956)
+      Thanks to "Aisano" for the fix
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 05 May 2010 09:57:53 +0200
 
