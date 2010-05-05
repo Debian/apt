@@ -144,7 +144,8 @@ libapt-pkg-doc: build-doc debian/shlibs.local
 #	
 	dh_installdocs -p$@ $(BLD)/docs/cache* $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
                             $(BLD)/docs/files* $(BLD)/docs/method* \
-			    doc/libapt-pkg2_to_3.txt doc/style.txt
+			    doc/libapt-pkg2_to_3.txt doc/style.txt \
+			    $(BLD)/doc/doxygen/html/*
 	dh_installexamples -p$@
 #	dh_installmenu -p$@
 #	dh_installinit -p$@
