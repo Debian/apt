@@ -1932,9 +1932,10 @@ bool DoInstall(CommandLine &CmdL)
 	    {
 	       /* Skip if package is  installed already, or is about to be */
 	       string target = Start.TargetPkg().FullName(true) + " ";
-	       
-	       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
-		   || Cache[Start.TargetPkg()].Install())
+	       pkgCache::PkgIterator const TarPkg = Start.TargetPkg();
+	       if (TarPkg->SelectedState == pkgCache::State::Install ||
+	           TarPkg->SelectedState == pkgCache::State::Hold ||
+		   Cache[Start.TargetPkg()].Install())
 	       {
 		  foundInstalledInOrGroup=true;
 		  break;
