@@ -8,7 +8,7 @@ import os.path
 try:
     import apt_pkg
 except ImportError:
-    print "Error importing apt_pkg, is python-apt installed?"
+    print >> sys.stderr, "Error importing apt_pkg, is python-apt installed?"
     sys.exit(1)
     
 actions = { "markauto" : 1,
@@ -68,6 +68,7 @@ if __name__ == "__main__":
     # option parsing
     parser = OptionParser()
     parser.usage = "%prog [options] {markauto|unmarkauto} packages..."
+    parser.epilog = "apt-mark is deprecated, use apt-get markauto/unmarkauto."
     parser.add_option("-f", "--file", action="store", type="string",
                       dest="filename",
                       help="read/write a different file")

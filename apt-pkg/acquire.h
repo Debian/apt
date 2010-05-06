@@ -67,6 +67,7 @@
 #define PKGLIB_ACQUIRE_H
 
 #include <apt-pkg/macros.h>
+#include <apt-pkg/weakptr.h>
 
 #include <vector>
 #include <string>
@@ -376,7 +377,7 @@ class pkgAcquire
  *
  *  An item may have several assocated ItemDescs over its lifetime.
  */
-struct pkgAcquire::ItemDesc
+struct pkgAcquire::ItemDesc : public WeakPointable
 {
    /** \brief The URI from which to download this item. */
    string URI;

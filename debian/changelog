@@ -1,20 +1,31 @@
-apt (0.7.26~exp4) UNRELEASED; urgency=low
+apt (0.7.26~exp5) UNRELEASED; urgency=low
 
-  [ Michael Vogt ]
-  * [ Abi break ] apt-pkg/acquire-item.{cc,h}:
-    - add "IsIndexFile" to constructor of pkgAcqFile so that it sends
-      the right cache control headers
-  * apt-pkg/depcache.cc:
-    - fix incorrect std::cout usage for debug output
-  * test/libapt/getlanguages_test.cc:
-    - Add test for Esperanto that has nocounty associated with them
-      (LP: #560956)
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - rerun dpkg-source in source if --fix-broken is given (Closes: #576752)
+    - don't suggest held packages as they are installed (Closes: #578135)
+  * cmdline/apt-cache.cc:
+    - use GroupCount for package names in stats and add a package struct line
+  * methods/rred.cc:
+    - use the patchfile modification time instead of the one from the
+      "old" file - thanks to Philipp Weis for noticing! (Closes: #571541)
+  * debian/rules:
+    - remove targets refering to CVS or arch as they are useless
+
+  [ Jari Aalto ]
+  * debian/rules:
+    - spell out some less known options to reduce manpage consulation-rate
+    - Use POSIX command substitution: $(<command sequence>)
+    - Remove EOL whitespace (Closes: #577804)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 06 May 2010 16:10:39 +0200
+
+apt (0.7.26~exp4) experimental; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/depcache.cc:
     - rewrite the pseudo package reinstaller to be more intelligent
       in his package choices
-    - return in SingleArch a package also for "any"
   * apt-pkg/packagemanager.cc:
     - don't try to "unpack" pseudo packages twice
   * apt-pkg/contrib/fileutl.cc:
@@ -33,8 +44,6 @@ apt (0.7.26~exp4) UNRELEASED; urgency=low
     - regex for package names executed on Grp- not PkgIterator
     - show non-candidates as fallback for virtual packages (Closes: #578385)
     - set also "all" to this version for pseudo packages in TryToChangeVer
-    - rerun dpkg-source in source if --fix-broken is given (Closes: #576752)
-    - don't suggest held packages as they are installed (Closes: #578135)
   * apt-pkg/deb/dpkgpm.cc:
     - remove Chroot-Directory from files passed to install commands.
       Thanks to Kel Modderman for report & patch! (Closes: #577226)
@@ -43,7 +52,6 @@ apt (0.7.26~exp4) UNRELEASED; urgency=low
   * cmdline/apt-cache.cc:
     - align Installed and Candidate Version in policy so they can be compared
       easier, thanks Ralf Gesellensetter for the pointer! (Closes: #578657)
-    - use GroupCount for package names in stats and add a package struct line
   * doc/apt.ent:
     - Add a note about APT_CONFIG in the -c description (Closes: #578267)
   * doc/po/de.po:
@@ -60,11 +68,6 @@ apt (0.7.26~exp4) UNRELEASED; urgency=low
   * apt-pkg/pkgcache.h:
     - enhance the Groups ABI by providing a ID as the other structs does
     - check also the size of the Group struct then checking for the others
-  * methods/rred.cc:
-    - use the patchfile modification time instead of the one from the
-      "old" file - thanks to Philipp Weis for noticing! (Closes: #571541)
-  * debian/rules:
-    - remove targets refering to CVS or arch as they are useless
 
   [ Jari Aalto ]
   * cmdline/apt-get.cc:
@@ -73,12 +76,39 @@ apt (0.7.26~exp4) UNRELEASED; urgency=low
   * dselect/install:
     - modernize if-statements not to use 'x' (Closes: #577117)
     - replace backticks with POSIX $() (Closes: #577116)
-  * debian/rules:
-    - spell out some less known options to reduce manpage consulation-rate
-    - Use POSIX command substitution: $(<command sequence>)
-    - Remove EOL whitespace (Closes: #577804)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 03 Apr 2010 14:58:39 +0200
+  [ Michael Vogt ]
+  * [ Abi break ] apt-pkg/acquire-item.{cc,h}:
+    - add "IsIndexFile" to constructor of pkgAcqFile so that it sends
+      the right cache control headers
+  * cmdline/apt-get.cc:
+    - fix crash when pkg.VersionList() is empty
+  * apt-pkg/depcache.cc:
+    - fix incorrect std::cout usage for debug output
+  * test/libapt/getlanguages_test.cc:
+    - Add test for Esperanto that has nocounty associated with them
+      (LP: #560956)
+  * apt-pkg/deb/debrecords.cc:
+    - fix max tag buffer size (LP: #545336, closes: #578959)
+  * debian/rules:
+    - install html doxygen in libapt-pkg-doc 
+  * debian/control:
+    - build-depend on doxygen
+
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/weakptr.h:
+    - add a class WeakPointable which allows one to register weak pointers to
+      an object which will be set to NULL when the object is deallocated.
+  * [ABI break] apt-pkg/acquire{-worker,-item,}.h:
+    - subclass pkgAcquire::{Worker,Item,ItemDesc} from WeakPointable.
+  * apt-pkg/pkgcache.cc:
+    - Merge fix from David to correct handling in single-arch environments.
+  * cmdline/apt-cache.cc:
+    - Add a showauto command to apt-cache.
+  * cmdline/apt-get.cc:
+    - Add apt-get markauto and unmarkauto commands.
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 06 May 2010 09:32:54 +0200
 
 apt (0.7.26~exp3) experimental; urgency=low
 
@@ -1576,13 +1606,6 @@ apt (0.7.7) unstable; urgency=low
     - don't fail if msync() returns > 0
  
  -- Michael Vogt <mvo@debian.org>  Tue, 23 Oct 2007 14:58:03 +0200
-
-apt (0.7.6) unstable; urgency=low
-
-  * Applied patch from Aurelien Jarno <aurel32@debian.org> to fix wrong
-    directory downloading on non-linux architectures (closes: #435597)
-
- -- Otavio Salvador <otavio@debian.org>  Wed, 01 Aug 2007 19:49:51 -0300
 
 apt (0.7.6) unstable; urgency=low
 

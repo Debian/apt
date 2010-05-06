@@ -1315,6 +1315,10 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		  break;
 	       fuzzy = true;
 	       Ver = Pkg.VersionList();
+	       // exit right away from the Pkg.VersionList() loop if we
+	       // don't have any versions
+	       if (Ver.end() == true)
+		  break;
 	    }
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
@@ -1934,7 +1938,7 @@ bool DoInstall(CommandLine &CmdL)
 	       string target = Start.TargetPkg().FullName(true) + " ";
 	       pkgCache::PkgIterator const TarPkg = Start.TargetPkg();
 	       if (TarPkg->SelectedState == pkgCache::State::Install ||
-	           TarPkg->SelectedState == pkgCache::State::Hold ||
+		   TarPkg->SelectedState == pkgCache::State::Hold ||
 		   Cache[Start.TargetPkg()].Install())
 	       {
 		  foundInstalledInOrGroup=true;
@@ -2009,6 +2013,46 @@ bool DoInstall(CommandLine &CmdL)
       return InstallPackages(Cache,false,false);
 
    return InstallPackages(Cache,false);   
+}
+
+/* mark packages as automatically/manually installed. */
+bool DoMarkAuto(CommandLine &CmdL)
+{
+   bool Action = true;
+   int AutoMarkChanged = 0;
+   OpTextProgress progress;
+   CacheFile Cache;
+   if (Cache.Open() == false)
+      return false;
+
+   if (strcasecmp(CmdL.FileList[0],"markauto") == 0)
+      Action = true;
+   else if (strcasecmp(CmdL.FileList[0],"unmarkauto") == 0)
+      Action = false;
+
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      const char *S = *I;
+      // Locate the package
+      pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
+      if (Pkg.end() == true) {
+         return _error->Error(_("Couldn't find package %s"),S);
+      }
+      else
+      {
+         if (!Action)
+            ioprintf(c1out,_("%s set to manually installed.\n"), Pkg.Name());
+         else
+            ioprintf(c1out,_("%s set to automatically installed.\n"),
+                      Pkg.Name());
+
+         Cache->MarkAuto(Pkg,Action);
+         AutoMarkChanged++;
+      }
+   }
+   if (AutoMarkChanged && ! _config->FindB("APT::Get::Simulate",false))
+      return Cache->writeStateFile(NULL);
+   return false;
 }
 									/*}}}*/
 // DoDistUpgrade - Automatic smart upgrader				/*{{{*/
@@ -2796,6 +2840,8 @@ bool ShowHelp(CommandLine &CmdL)
       "   clean - Erase downloaded archive files\n"
       "   autoclean - Erase old downloaded archive files\n"
       "   check - Verify that there are no broken dependencies\n"
+      "   markauto - Mark the given packages as automatically installed\n"
+      "   unmarkauto - Mark the given packages as manually installed\n"
       "\n"
       "Options:\n"
       "  -h  This help text.\n"
@@ -2902,6 +2948,8 @@ int main(int argc,const char *argv[])					/*{{{*/
                                    {"purge",&DoInstall},
 				   {"autoremove",&DoInstall},
 				   {"purge",&DoInstall},
+				   {"markauto",&DoMarkAuto},
+				   {"unmarkauto",&DoMarkAuto},
                                    {"dist-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
 				   {"build-dep",&DoBuildDep},
