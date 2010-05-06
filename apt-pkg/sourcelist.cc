@@ -199,15 +199,15 @@ bool pkgSourceList::ReadMainList()
    
    if (FileExists(Main) == true)
       Res &= ReadAppend(Main);
-   else if (FileExists(Parts) == false)
+   else if (DirectoryExists(Parts) == false)
       // Only warn if there are no sources.list.d.
-      _error->WarningE("FileExists",_("Unable to read %s"),Main.c_str());
+      _error->WarningE("DirectoryExists", _("Unable to read %s"), Parts.c_str());
 
-   if (FileExists(Parts) == true)
+   if (DirectoryExists(Parts) == true)
       Res &= ReadSourceDir(Parts);
    else if (FileExists(Main) == false)
       // Only warn if there is no sources.list file.
-      _error->WarningE("FileExists",_("Unable to read %s"),Parts.c_str());
+      _error->WarningE("FileExists", _("Unable to read %s"), Main.c_str());
 
    return Res;
 }
