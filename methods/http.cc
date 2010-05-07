@@ -67,7 +67,7 @@ unsigned long CircleBuf::BwReadLimit=0;
 unsigned long CircleBuf::BwTickReadData=0;
 struct timeval CircleBuf::BwReadTick={0,0};
 const unsigned int CircleBuf::BW_HZ=10;
-  
+ 
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -378,7 +378,7 @@ bool ServerState::Close()
 // ---------------------------------------------------------------------
 /* Returns 0 if things are OK, 1 if an IO error occurred and 2 if a header
    parse error occurred */
-int ServerState::RunHeaders()
+ServerState::RunHeadersResult ServerState::RunHeaders()
 {
    State = Header;
    
@@ -407,7 +407,7 @@ int ServerState::RunHeaders()
 	 string::const_iterator J = I;
 	 for (; J != Data.end() && *J != '\n' && *J != '\r';J++);
 	 if (HeaderLine(string(I,J)) == false)
-	    return 2;
+	    return RUN_HEADERS_PARSE_ERROR;
 	 I = J;
       }
 
@@ -419,11 +419,11 @@ int ServerState::RunHeaders()
       if (Encoding == Closes && HaveContent == true)
 	 Persistent = false;
       
-      return 0;
+      return RUN_HEADERS_OK;
    }
    while (Owner->Go(false,this) == true);
    
-   return 1;
+   return RUN_HEADERS_IO_ERROR;
 }
 									/*}}}*/
 // ServerState::RunData - Transfer the data from the socket		/*{{{*/
@@ -922,7 +922,8 @@ bool HttpMethod::ServerDie(ServerState *Srv)
      5 - Unrecoverable non-server error (close the connection) 
      6 - Try again with a new or changed URI
  */
-int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
+HttpMethod::DealWithHeadersResult
+HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
 {
    // Not Modified
    if (Srv->Result == 304)
@@ -930,7 +931,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       unlink(Queue->DestFile.c_str());
       Res.IMSHit = true;
       Res.LastModified = Queue->LastModified;
-      return 1;
+      return IMS_HIT;
    }
    
    /* Redirect
@@ -949,7 +950,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       if (!Srv->Location.empty())
       {
          NextURI = Srv->Location;
-         return 6;
+         return TRY_AGAIN_OR_REDIRECT;
       }
       /* else pass through for error message */
    }
@@ -960,8 +961,8 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    {
       _error->Error("%u %s",Srv->Result,Srv->Code);
       if (Srv->HaveContent == true)
-	 return 4;
-      return 3;
+	 return ERROR_WITH_CONTENT_PAGE;
+      return ERROR_UNRECOVERABLE;
    }
 
    // This is some sort of 2xx 'data follows' reply
@@ -972,7 +973,7 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    delete File;
    File = new FileFd(Queue->DestFile,FileFd::WriteAny);
    if (_error->PendingError() == true)
-      return 5;
+      return ERROR_NOT_FROM_SERVER;
 
    FailFile = Queue->DestFile;
    FailFile.c_str();   // Make sure we dont do a malloc in the signal handler
@@ -1000,13 +1001,13 @@ int HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       if (Srv->In.Hash->AddFD(File->Fd(),Srv->StartPos) == false)
       {
 	 _error->Errno("read",_("Problem hashing file"));
-	 return 5;
+	 return ERROR_NOT_FROM_SERVER;
       }
       lseek(File->Fd(),0,SEEK_END);
    }
    
    SetNonBlock(File->Fd(),true);
-   return 0;
+   return FILE_IS_OPEN;
 }
 									/*}}}*/
 // HttpMethod::SigTerm - Handle a fatal signal				/*{{{*/
@@ -1147,11 +1148,11 @@ int HttpMethod::Loop()
       // Fetch the next URL header data from the server.
       switch (Server->RunHeaders())
       {
-	 case 0:
+	 case ServerState::RUN_HEADERS_OK:
 	 break;
 	 
 	 // The header data is bad
-	 case 2:
+	 case ServerState::RUN_HEADERS_PARSE_ERROR:
 	 {
 	    _error->Error(_("Bad header data"));
 	    Fail(true);
@@ -1161,7 +1162,7 @@ int HttpMethod::Loop()
 	 
 	 // The server closed a connection during the header get..
 	 default:
-	 case 1:
+	 case ServerState::RUN_HEADERS_IO_ERROR:
 	 {
 	    FailCounter++;
 	    _error->Discard();
@@ -1185,7 +1186,7 @@ int HttpMethod::Loop()
       switch (DealWithHeaders(Res,Server))
       {
 	 // Ok, the file is Open
-	 case 0:
+	 case FILE_IS_OPEN:
 	 {
 	    URIStart(Res);
 
@@ -1238,21 +1239,21 @@ int HttpMethod::Loop()
 	 }
 	 
 	 // IMS hit
-	 case 1:
+	 case IMS_HIT:
 	 {
 	    URIDone(Res);
 	    break;
 	 }
 	 
 	 // Hard server error, not found or something
-	 case 3:
+	 case ERROR_UNRECOVERABLE:
 	 {
 	    Fail();
 	    break;
 	 }
 	  
 	 // Hard internal error, kill the connection and fail
-	 case 5:
+	 case ERROR_NOT_FROM_SERVER:
 	 {
 	    delete File;
 	    File = 0;
@@ -1264,7 +1265,7 @@ int HttpMethod::Loop()
 	 }
 
 	 // We need to flush the data, the header is like a 404 w/ error text
-	 case 4:
+	 case ERROR_WITH_CONTENT_PAGE:
 	 {
 	    Fail();
 	    
@@ -1277,7 +1278,7 @@ int HttpMethod::Loop()
 	 }
 	 
          // Try again with a new URL
-         case 6:
+         case TRY_AGAIN_OR_REDIRECT:
          {
             // Clear rest of response if there is content
             if (Server->HaveContent)
