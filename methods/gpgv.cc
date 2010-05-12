@@ -12,6 +12,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <vector>
+
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
 #define GNUPGNOPUBKEY "[GNUPG:] NO_PUBKEY"
@@ -87,23 +89,18 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return string("Couldn't spawn new process") + strerror(errno);
    else if (pid == 0)
    {
-      const char *Args[400];
-      unsigned int i = 0;
+      std::vector<const char *> Args;
+      Args.reserve(30);
 
-      Args[i++] = gpgvpath.c_str();
-      Args[i++] = "--status-fd";
-      Args[i++] = "3";
-      Args[i++] = "--ignore-time-conflict";
+      Args.push_back(gpgvpath.c_str());
+      Args.push_back("--status-fd");
+      Args.push_back("3");
+      Args.push_back("--ignore-time-conflict");
       for (vector<string>::const_iterator K = keyrings.begin();
 	   K != keyrings.end(); ++K)
       {
-	 Args[i++] = "--keyring";
-	 Args[i++] = K->c_str();
-	 // check overflow (minus a bit of extra space at the end)
-	 if(i >= sizeof(Args)/sizeof(char*)-5) {
-	    std::clog << _("E: Too many keyrings should be passed to gpgv. Exiting.") << std::endl;
-	    exit(111);
-	 }
+	 Args.push_back("--keyring");
+	 Args.push_back(K->c_str());
       }
 
       Configuration::Item const *Opts;
@@ -115,23 +112,18 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          {
             if (Opts->Value.empty() == true)
                continue;
-            Args[i++] = Opts->Value.c_str();
-	    // check overflow (minus a bit of extra space at the end)
-	    if(i >= sizeof(Args)/sizeof(char*)-5) { 
-	       std::clog << _("E: Argument list from Acquire::gpgv::Options too long. Exiting.") << std::endl;
-	       exit(111);
-	    }
+            Args.push_back(Opts->Value.c_str());
          }
       }
-      Args[i++] = file;
-      Args[i++] = outfile;
-      Args[i++] = NULL;
+      Args.push_back(file);
+      Args.push_back(outfile);
+      Args.push_back(NULL);
 
       if (Debug == true)
       {
          std::clog << "Preparing to exec: " << gpgvpath;
-	 for(unsigned int j=0;Args[j] != NULL; j++)
-	    std::clog << " " << Args[j];
+	 for(std::vector<const char *>::const_iterator a = Args.begin();*a != NULL; ++a)
+	    std::clog << " " << *a;
 	 std::clog << std::endl;
       }
       int const nullfd = open("/dev/null", O_RDONLY);
@@ -145,7 +137,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       putenv((char *)"LANG=");
       putenv((char *)"LC_ALL=");
       putenv((char *)"LC_MESSAGES=");
-      execvp(gpgvpath.c_str(), (char **)Args);
+      execvp(gpgvpath.c_str(), (char **) &Args[0]);
              
       exit(111);
    }
