@@ -10,15 +10,17 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
     - use the patchfile modification time instead of the one from the
       "old" file - thanks to Philipp Weis for noticing! (Closes: #571541)
   * debian/rules:
-    - remove targets refering to CVS or arch as they are useless
+    - remove targets referring to CVS or arch as they are useless
   * apt-pkg/depcache.cc:
     - be doublesure that the killer query is empty before starting reinstall
   * methods/gpgv.cc:
     - remove the keyrings count limit by using vector magic
+  * contrib/mmap.cc:
+    - clarify "MMap reached size limit" error message, thanks Ivan Masár!
 
   [ Jari Aalto ]
   * debian/rules:
-    - spell out some less known options to reduce manpage consulation-rate
+    - spell out some less known options to reduce manpage consultation-rate
     - Use POSIX command substitution: $(<command sequence>)
     - Remove EOL whitespace (Closes: #577804)
 
