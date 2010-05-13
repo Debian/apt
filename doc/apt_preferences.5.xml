@@ -218,11 +218,11 @@ Pin-Priority: 50
 </programlisting>
 
 <simpara>The following record assigns a high priority to all package versions
-belonging to any distribution whose Codename is "<literal>squeeze</literal>".</simpara>
+belonging to any distribution whose Codename is "<literal>&testing-codename;</literal>".</simpara>
 
 <programlisting>
 Package: *
-Pin: release n=squeeze
+Pin: release n=&testing-codename;
 Pin-Priority: 900
 </programlisting>
 
@@ -355,7 +355,7 @@ APT priorities:
 <para>The <filename>Release</filename> file is normally found in the directory
 <filename>.../dists/<replaceable>dist-name</replaceable></filename>:
 for example, <filename>.../dists/stable/Release</filename>,
-or <filename>.../dists/woody/Release</filename>.
+or <filename>.../dists/&stable-codename;/Release</filename>.
 It consists of a single multi-line record which applies to <emphasis>all</emphasis> of
 the packages in the directory tree below its parent.  Unlike the
 <filename>Packages</filename> file, nearly all of the lines in a <filename>Release</filename>
@@ -383,14 +383,14 @@ Pin: release a=stable
 <term>the <literal>Codename:</literal> line</term>
 <listitem><simpara>names the codename to which all the packages
 in the directory tree belong.  For example, the line
-"Codename: squeeze"
+"Codename: &testing-codename;"
 specifies that all of the packages in the directory
 tree below the parent of the <filename>Release</filename> file belong to a version named
-<literal>squeeze</literal>.  Specifying this value in the APT preferences file
+<literal>&testing-codename;</literal>.  Specifying this value in the APT preferences file
 would require the line:
 </simpara>
 <programlisting>
-Pin: release n=squeeze
+Pin: release n=&testing-codename;
 </programlisting>
 </listitem>
 </varlistentry>
@@ -590,9 +590,9 @@ the example configurations above.
 
 <programlisting>
 Explanation: Uninstall or do not install any Debian-originated package versions
-Explanation: other than those in the distribution codenamed with squeeze or sid
+Explanation: other than those in the distribution codenamed with &testing-codename; or sid
 Package: *
-Pin: release n=squeeze
+Pin: release n=&testing-codename;
 Pin-Priority: 900
 
 Explanation: Debian unstable is always codenamed with sid
@@ -608,7 +608,7 @@ Pin-Priority: -10
 
 <para>With a suitable &sources-list; file and the above preferences file,
 any of the following commands will cause APT to upgrade to the
-latest version(s) in the release codenamed with <literal>squeeze</literal>.
+latest version(s) in the release codenamed with <literal>&testing-codename;</literal>.
 
 <programlisting>
 apt-get install <replaceable>package-name</replaceable>
@@ -620,7 +620,7 @@ apt-get dist-upgrade
 <para>The following command will cause APT to upgrade the specified
 package to the latest version from the <literal>sid</literal> distribution.
 Thereafter, <command>apt-get upgrade</command> will upgrade
-the package to the most recent <literal>squeeze</literal> version if that is
+the package to the most recent <literal>&testing-codename;</literal> version if that is
 more recent than the installed version, otherwise, to the most recent
 <literal>sid</literal> version if that is more recent than the installed
 version.
