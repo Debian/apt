@@ -27,10 +27,14 @@ endif
 # See below
 -include build/environment.mak
 
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-  export CXXFLAGS = -O0 -g -Wall
+ifneq (,$(shell which dpkg-buildflags))
+  export CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
 else
-  export CXXFLAGS = -O2 -g -Wall
+  ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+    export CXXFLAGS = -O0 -g -Wall
+  else
+    export CXXFLAGS = -O2 -g -Wall
+  endif
 endif
 
 # Default rule
