@@ -50,6 +50,7 @@ namespace
     std::make_pair("configure", N_("Configuring %s")),
     std::make_pair("remove",    N_("Removing %s")),
     std::make_pair("purge",    N_("Completely removing %s")),
+    std::make_pair("disappear", N_("Noting disappearance of %s")),
     std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
   };
 
@@ -419,7 +420,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: install: pkg'
       'processing: configure: pkg'
       'processing: remove: pkg'
-      'processing: purge: pkg' - but for apt is it a ignored "unknown" action
+      'processing: purge: pkg'
+      'processing: disappear: pkg'
       'processing: trigproc: trigger'
 	    
    */
