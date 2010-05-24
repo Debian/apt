@@ -5,6 +5,7 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
     - rerun dpkg-source in source if --fix-broken is given (Closes: #576752)
     - don't suggest held packages as they are installed (Closes: #578135)
     - handle multiple --{tar,diff,dsc}-only options correctly
+    - show at the end of the install process a list of disappeared packages
   * cmdline/apt-cache.cc:
     - use GroupCount for package names in stats and add a package struct line
   * methods/rred.cc:
@@ -37,6 +38,8 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
     - remove the gnome-apt reference as it is removed from unstable
   * apt-pkg/deb/dpkgpm.cc:
     - add 'disappear' to the known processing states, thanks Jonathan Nieder
+  * apt-pkg/packagemanager.h:
+    - export info about disappeared packages with GetDisappearedPackages()
 
   [ Jari Aalto ]
   * debian/rules:

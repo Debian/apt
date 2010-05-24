@@ -468,6 +468,9 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
+
+      if (strncmp(action, "disappear", strlen("disappear")) == 0)
+	 disappearedPkgs.insert(string(pkg_or_trigger));
       return;
    }
 
@@ -912,6 +915,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 for (;I != J && Size < MaxArgBytes; I++)
 	 {
 	    if((*I).Pkg.end() == true)
+	       continue;
+	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
 	    Args[n++] = I->Pkg.Name();
 	    Size += strlen(Args[n-1]);

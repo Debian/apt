@@ -1044,7 +1044,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;
       if (Res == pkgPackageManager::Completed)
-	 return true;
+	 break;
       
       // Reload the fetcher object and loop again for media swapping
       Fetcher.Shutdown();
@@ -1052,7 +1052,24 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 return false;
       
       _system->Lock();
-   }   
+   }
+
+   std::set<std::string> const disappearedPkgs = PM->GetDisappearedPackages();
+   if (disappearedPkgs.empty() == true)
+      return true;
+
+   string disappear;
+   for (std::set<std::string>::const_iterator d = disappearedPkgs.begin();
+	d != disappearedPkgs.end(); ++d)
+      disappear.append(*d).append(" ");
+
+   ShowList(c1out, P_("The following package disappeared from your system as\n"
+	"all files have been overwritten by other packages:",
+	"The following packages disappeared from your system as\n"
+	"all files have been overwritten by other packages:", disappearedPkgs.size()), disappear, "");
+   c0out << _("Note: This is done automatic and on purpose by dpkg.") << std::endl;
+
+   return true;
 }
 									/*}}}*/
 // TryToInstall - Try to install a single package			/*{{{*/
