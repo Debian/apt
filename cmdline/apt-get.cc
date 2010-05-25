@@ -1044,7 +1044,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;
       if (Res == pkgPackageManager::Completed)
-	 return true;
+	 break;
       
       // Reload the fetcher object and loop again for media swapping
       Fetcher.Shutdown();
@@ -1052,7 +1052,24 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 return false;
       
       _system->Lock();
-   }   
+   }
+
+   std::set<std::string> const disappearedPkgs = PM->GetDisappearedPackages();
+   if (disappearedPkgs.empty() == true)
+      return true;
+
+   string disappear;
+   for (std::set<std::string>::const_iterator d = disappearedPkgs.begin();
+	d != disappearedPkgs.end(); ++d)
+      disappear.append(*d).append(" ");
+
+   ShowList(c1out, P_("The following package disappeared from your system as\n"
+	"all files have been overwritten by other packages:",
+	"The following packages disappeared from your system as\n"
+	"all files have been overwritten by other packages:", disappearedPkgs.size()), disappear, "");
+   c0out << _("Note: This is done automatic and on purpose by dpkg.") << std::endl;
+
+   return true;
 }
 									/*}}}*/
 // TryToInstall - Try to install a single package			/*{{{*/
@@ -1936,9 +1953,10 @@ bool DoInstall(CommandLine &CmdL)
 	    {
 	       /* Skip if package is  installed already, or is about to be */
 	       string target = Start.TargetPkg().FullName(true) + " ";
-	       
-	       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install
-		   || Cache[Start.TargetPkg()].Install())
+	       pkgCache::PkgIterator const TarPkg = Start.TargetPkg();
+	       if (TarPkg->SelectedState == pkgCache::State::Install ||
+		   TarPkg->SelectedState == pkgCache::State::Hold ||
+		   Cache[Start.TargetPkg()].Install())
 	       {
 		  foundInstalledInOrGroup=true;
 		  break;
@@ -2270,6 +2288,14 @@ bool DoSource(CommandLine &CmdL)
    // insert all downloaded uris into this set to avoid downloading them
    // twice
    set<string> queued;
+
+   // Diff only mode only fetches .diff files
+   bool const diffOnly = _config->FindB("APT::Get::Diff-Only", false);
+   // Tar only mode only fetches .tar files
+   bool const tarOnly = _config->FindB("APT::Get::Tar-Only", false);
+   // Dsc only mode only fetches .dsc files
+   bool const dscOnly = _config->FindB("APT::Get::Dsc-Only", false);
+
    // Load the requestd sources into the fetcher
    unsigned J = 0;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
@@ -2296,21 +2322,17 @@ bool DoSource(CommandLine &CmdL)
 	    Dsc[J].Version = Last->Version();
 	    Dsc[J].Dsc = flNotDir(I->Path);
 	 }
-	 
-	 // Diff only mode only fetches .diff files
-	 if (_config->FindB("APT::Get::Diff-Only",false) == true &&
-	     I->Type != "diff")
-	    continue;
-	 
-	 // Tar only mode only fetches .tar files
-	 if (_config->FindB("APT::Get::Tar-Only",false) == true &&
-	     I->Type != "tar")
-	    continue;
 
-	 // Dsc only mode only fetches .dsc files
-	 if (_config->FindB("APT::Get::Dsc-Only",false) == true &&
-	     I->Type != "dsc")
-	    continue;
+	 // Handle the only options so that multiple can be used at once
+	 if (diffOnly == true || tarOnly == true || dscOnly == true)
+	 {
+	    if ((diffOnly == true && I->Type == "diff") ||
+	        (tarOnly == true && I->Type == "tar") ||
+	        (dscOnly == true && I->Type == "dsc"))
+		; // Fine, we want this file downloaded
+	    else
+	       continue;
+	 }
 
 	 // don't download the same uri twice (should this be moved to
 	 // the fetcher interface itself?)
@@ -2424,6 +2446,7 @@ bool DoSource(CommandLine &CmdL)
    
    if (Process == 0)
    {
+      bool const fixBroken = _config->FindB("APT::Get::Fix-Broken", false);
       for (unsigned I = 0; I != J; I++)
       {
 	 string Dir = Dsc[I].Package + '-' + Cache->VS().UpstreamVersion(Dsc[I].Version.c_str());
@@ -2436,7 +2459,7 @@ bool DoSource(CommandLine &CmdL)
 
 	 // See if the package is already unpacked
 	 struct stat Stat;
-	 if (stat(Dir.c_str(),&Stat) == 0 &&
+	 if (fixBroken == false && stat(Dir.c_str(),&Stat) == 0 &&
 	     S_ISDIR(Stat.st_mode) != 0)
 	 {
 	    ioprintf(c0out ,_("Skipping unpack of already unpacked source in %s\n"),

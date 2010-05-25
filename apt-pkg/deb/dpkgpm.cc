@@ -50,6 +50,7 @@ namespace
     std::make_pair("configure", N_("Configuring %s")),
     std::make_pair("remove",    N_("Removing %s")),
     std::make_pair("purge",    N_("Completely removing %s")),
+    std::make_pair("disappear", N_("Noting disappearance of %s")),
     std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
   };
 
@@ -419,7 +420,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: install: pkg'
       'processing: configure: pkg'
       'processing: remove: pkg'
-      'processing: purge: pkg' - but for apt is it a ignored "unknown" action
+      'processing: purge: pkg'
+      'processing: disappear: pkg'
       'processing: trigproc: trigger'
 	    
    */
@@ -466,6 +468,9 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
+
+      if (strncmp(action, "disappear", strlen("disappear")) == 0)
+	 disappearedPkgs.insert(string(pkg_or_trigger));
       return;
    }
 
@@ -910,6 +915,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 for (;I != J && Size < MaxArgBytes; I++)
 	 {
 	    if((*I).Pkg.end() == true)
+	       continue;
+	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
 	    Args[n++] = I->Pkg.Name();
 	    Size += strlen(Args[n-1]);

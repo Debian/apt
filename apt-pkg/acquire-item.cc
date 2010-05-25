@@ -1685,7 +1685,6 @@ string pkgAcqFile::Custom600Headers()
 {
    if (IsIndexFile)
       return "\nIndex-File: true";
-   else
-      return string();
+   return "";
 }
 									/*}}}*/

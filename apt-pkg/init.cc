@@ -94,10 +94,10 @@ bool pkgInitConfig(Configuration &Cnf)
 
    // Read the configuration parts dir
    string Parts = Cnf.FindDir("Dir::Etc::parts");
-   if (FileExists(Parts) == true)
+   if (DirectoryExists(Parts) == true)
       Res &= ReadConfigDir(Cnf,Parts);
    else
-      _error->WarningE("FileExists",_("Unable to read %s"),Parts.c_str());
+      _error->WarningE("DirectoryExists",_("Unable to read %s"),Parts.c_str());
 
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");

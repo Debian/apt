@@ -1,9 +1,57 @@
 apt (0.7.26~exp5) UNRELEASED; urgency=low
 
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - rerun dpkg-source in source if --fix-broken is given (Closes: #576752)
+    - don't suggest held packages as they are installed (Closes: #578135)
+    - handle multiple --{tar,diff,dsc}-only options correctly
+    - show at the end of the install process a list of disappeared packages
+  * cmdline/apt-cache.cc:
+    - use GroupCount for package names in stats and add a package struct line
+  * methods/rred.cc:
+    - use the patchfile modification time instead of the one from the
+      "old" file - thanks to Philipp Weis for noticing! (Closes: #571541)
+  * debian/rules:
+    - remove targets referring to CVS or arch as they are useless
+    - use $(CURDIR) instead of $(pwd)
+    - use dpkg-buildflags if available for CXXFLAGS
+  * README.arch:
+    - remove the file completely as it has no use nowadays
+  * apt-pkg/depcache.cc:
+    - be doublesure that the killer query is empty before starting reinstall
+  * methods/gpgv.cc:
+    - remove the keyrings count limit by using vector magic
+  * contrib/mmap.cc:
+    - clarify "MMap reached size limit" error message, thanks Ivan Masár!
+  * doc/apt.ent
+    - add entities for the current oldstable/stable/testing codenames
+  * doc/sources.list.5.xml:
+    - use stable-codename instead of stable in the examples (Closes: #531492)
+  * doc/apt_preferences.5.xml:
+    - adapt some examples here to use current codenames as well
+    - add "NotAutomatic: yes" handling, thanks Osamu Aoki (Closes: #490347)
+  * debian/libapt-pkg-doc.doc-base.cache:
+    - remove yet another reference to the removed cache.sgml
+  * doc/apt-get.8.xml:
+    - do not say explicit target_release_{name,version,codename}, it should
+      be clear by itself and 'man' can break lines again (Closes: #566166)
+    - remove the gnome-apt reference as it is removed from unstable
+  * apt-pkg/deb/dpkgpm.cc:
+    - add 'disappear' to the known processing states, thanks Jonathan Nieder
+  * apt-pkg/packagemanager.h:
+    - export info about disappeared packages with GetDisappearedPackages()
+
+  [ Jari Aalto ]
+  * debian/rules:
+    - spell out some less known options to reduce manpage consultation-rate
+    - Use POSIX command substitution: $(<command sequence>)
+    - Remove EOL whitespace (Closes: #577804)
+
+  [ Julian Andres Klode ]
   * apt-pkg/acquire-item.cc:
     - Fix pkgAcqFile::Custom600Headers() to always return something.
-
- -- Julian Andres Klode <jak@debian.org>  Fri, 07 May 2010 09:18:45 +0200
+  
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 06 May 2010 16:10:39 +0200
 
 apt (0.7.26~exp4) experimental; urgency=low
 

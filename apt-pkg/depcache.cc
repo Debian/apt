@@ -804,17 +804,18 @@ void pkgDepCache::Update(OpProgress *Prog)
       /* FIXME: recheck breaks proper progress reporting as we don't know
 		how many packages we need to recheck. To lower the effect
 		a bit we increase with a kill, but we should do something more clever… */
-      for(std::set<unsigned long>::const_iterator p = recheck.begin();
-	  p != recheck.end(); ++p) {
-	 if (Prog != 0 && Done%20 == 0)
-	    Prog->Progress(Done);
-	 PkgIterator P = PkgIterator(*Cache, Cache->PkgP + *p);
-	 if (RemovePseudoInstalledPkg(P, recheck) == true) {
-	    ++killed;
-	    ++Done;
+      while(recheck.empty() == false)
+	 for (std::set<unsigned long>::const_iterator p = recheck.begin();
+	     p != recheck.end(); ++p) {
+	    if (Prog != 0 && Done%20 == 0)
+	       Prog->Progress(Done);
+	    PkgIterator P = PkgIterator(*Cache, Cache->PkgP + *p);
+	    if (RemovePseudoInstalledPkg(P, recheck) == true) {
+	       ++killed;
+	       ++Done;
+	    }
+	    recheck.erase(p);
 	 }
-	 recheck.erase(p);
-      }
 
       /* Okay, we have killed a great amount of pseudopackages -
 	 we have killed so many that we have now arch "all" packages

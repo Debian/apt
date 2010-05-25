@@ -27,10 +27,14 @@ endif
 # See below
 -include build/environment.mak
 
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-  export CXXFLAGS = -O0 -g -Wall
+ifneq (,$(shell which dpkg-buildflags))
+  export CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
 else
-  export CXXFLAGS = -O2 -g -Wall
+  ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+    export CXXFLAGS = -O0 -g -Wall
+  else
+    export CXXFLAGS = -O2 -g -Wall
+  endif
 endif
 
 # Default rule
@@ -47,7 +51,7 @@ BASE=.
 ifdef BUILD
 BUILD_POSSIBLE := $(BUILD) $(BASE)/$(BUILD)
 else
-BUILD_POSSIBLE := $(BASE) $(BASE)/build-$(shell uname -m) $(BASE)/build
+BUILD_POSSIBLE := $(BASE) $(BASE)/build-$(shell uname --machine) $(BASE)/build
 endif
 BUILDX:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak*))
 BUILDX:= $(patsubst %/,%,$(firstword $(dir $(BUILDX))))
@@ -82,9 +86,9 @@ LIBAPTPKG_PROVIDE=libapt-pkg$(LIBAPTPKG_MAJOR)
 LIBAPTINST_PROVIDE=libapt-inst$(LIBAPTINST_MAJOR)
 
 debian/shlibs.local: apt-pkg/makefile
-	# We have 3 shlibs.local files.. One for 'apt', one for 'apt-utils' and
+	# We have 3 shlibs.local files: One for 'apt', one for 'apt-utils' and
 	# one for the rest of the packages. This ensures that each package gets
-	# the right overrides.. 
+	# the right overrides…
 	rm -rf $@ $@.apt $@.apt-utils
 	echo "libapt-pkg $(LIBAPTPKG_MAJOR)" > $@.apt
 
@@ -94,8 +98,8 @@ debian/shlibs.local: apt-pkg/makefile
 	echo "libapt-pkg $(LIBAPTPKG_MAJOR) $(LIBAPTPKG_PROVIDE)" > $@
 	echo "libapt-inst $(LIBAPTINST_MAJOR) $(LIBAPTINST_PROVIDE)" >> $@
 
-build: build/build-stamp	
-build-doc: build/build-doc-stamp	
+build: build/build-stamp
+build-doc: build/build-doc-stamp
 
 # Note that this is unconditionally done first as part of loading environment.mak
 # The true is needed to force make to reload environment.mak after running
@@ -123,10 +127,8 @@ build/build-doc-stamp: build/configure-stamp
 
 clean:
 	dh_testdir
-#	dh_testroot
-	[ -f Makefile ] && $(MAKE) clean
-	[ -f Makefile ] && $(MAKE) distclean
 
+	[ ! -f Makefile ] || $(MAKE) clean distclean
 	rm -rf build
 
 	# Add here commands to clean up after the build process.
@@ -141,23 +143,20 @@ libapt-pkg-doc: build-doc debian/shlibs.local
 	dh_installdirs -p$@
 #
 # libapt-pkg-doc install
-#	
-	dh_installdocs -p$@ $(BLD)/docs/design* $(BLD)/docs/dpkg-tech* \
-                            $(BLD)/docs/files* $(BLD)/docs/method* \
-			    doc/libapt-pkg2_to_3.txt doc/style.txt \
+#
+	dh_installdocs -p$@ $(BLD)/docs/design* \
+			    $(BLD)/docs/dpkg-tech* \
+			    $(BLD)/docs/files* \
+			    $(BLD)/docs/method* \
+			    doc/libapt-pkg2_to_3.txt \
+			    doc/style.txt \
 			    $(BLD)/doc/doxygen/html
 	dh_installexamples -p$@
-#	dh_installmenu -p$@
-#	dh_installinit -p$@
-#	dh_installcron -p$@
-#	dh_installman -p$@
 
-#	dh_undocumented -p$@
 	dh_installchangelogs -p$@
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-#	dh_suidregister -p$@
 	dh_installdeb -p$@
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
@@ -171,8 +170,10 @@ apt-doc: build-doc
 # apt-doc install
 #
 	# Copy the guides
-	dh_installdocs -p$@ $(BLD)/docs/guide*.text $(BLD)/docs/guide*.html \
-	               $(BLD)/docs/offline*.text $(BLD)/docs/offline*.html
+	dh_installdocs -p$@ $(BLD)/docs/guide*.text \
+			    $(BLD)/docs/guide*.html \
+			    $(BLD)/docs/offline*.text \
+			    $(BLD)/docs/offline*.html
 	dh_installchangelogs -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
@@ -215,7 +216,6 @@ apt: build build-doc debian/shlibs.local
 	cp debian/apt.logrotate debian/$@/etc/logrotate.d/apt
 
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
-#	head -n 500 ChangeLog > debian/ChangeLog
 
 	# copy lintian override
 	cp share/lintian-overrides debian/$@/usr/share/lintian/overrides/apt
@@ -233,9 +233,9 @@ apt: build build-doc debian/shlibs.local
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-	dh_makeshlibs -p$@ -m$(LIBAPTPKG_MAJOR) -V '$(LIBAPTPKG_PROVIDE)'
+	dh_makeshlibs -p$@ --major=$(LIBAPTPKG_MAJOR) --version-info='$(LIBAPTPKG_PROVIDE)'
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt
+	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
@@ -254,16 +254,11 @@ libapt-pkg-dev: build debian/shlibs.local
 	cp $(BLD)/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
 
 	dh_installdocs -p$@
-#	dh_installmenu -p$@
-#	dh_installinit -p$@
-#	dh_installcron -p$@
-#	dh_installman -p$@
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-#	dh_suidregister -p$@
 	dh_installdeb -p$@
 	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE) -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
 	dh_md5sums -p$@
@@ -291,9 +286,9 @@ apt-utils: build debian/shlibs.local
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-	dh_makeshlibs -m$(LIBAPTINST_MAJOR) -V '$(LIBAPTINST_PROVIDE)' -p$@
+	dh_makeshlibs -p$@ --major=$(LIBAPTINST_MAJOR) --version-info='$(LIBAPTINST_PROVIDE)'
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt-utils
+	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt-utils
 	dh_gencontrol -p$@ -u -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
@@ -305,7 +300,7 @@ apt-transport-https: build debian/shlibs.local libapt-pkg-dev
 	dh_installdirs -p$@
 
 	# install the method
-	mkdir -p debian/$@/usr/lib/apt/methods
+	mkdir --parents debian/$@/usr/lib/apt/methods
 	cp $(BLD)/bin/methods/https debian/$@/usr/lib/apt/methods
 
 	dh_installdocs -p$@ debian/apt-transport-https.README
@@ -319,61 +314,18 @@ apt-transport-https: build debian/shlibs.local libapt-pkg-dev
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l`pwd`/debian/apt/usr/lib:`pwd`/debian/$@/usr/lib 
+	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-source diff:
-	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
-
-# Update from CVS
-l33ch: really-clean
-	cvs update
-	buildlib/mkChangeLog
-
-# Update from CVS and then configure for build
-super-l33ch: l33ch Makefile.in
-
 configure:
 	$(MAKE) configure
 
-l33ch-stamp: super-l33ch
-	touch $@
-
 really-clean: clean
-	-find -name Makefile.in -print0 | xargs -0r rm -f
+	-find . -name Makefile.in -print0 | xargs --null --no-run-if-empty -- rm -f
 	find -name ChangeLog | xargs rm -f
 	rm -f l33ch-stamp
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary debian/shlibs.local
-
-
-# Done by the uploader.
-#cvs update.. 
-#edit debian/changelog
-# configure.in has the version automatically updated now.
-# edit configure.in
-# debian/rules cvs-build
-
-CVS_BUILDDIR=apt-$(APT_DEBVER)
-CVS_ROOT=$(shell cat CVS/Root)
-CVS_MODULE=$(shell cat CVS/Repository)
-cvs-build:
-	rm -rf debian/cvs-build
-	mkdir -p debian/cvs-build
-	(cd debian/cvs-build;cvs -d $(CVS_ROOT) export -r$(APT_CVSTAG) -d apt-$(APT_DEBVER) $(CVS_MODULE))
-	$(MAKE) -C debian/cvs-build/$(CVS_BUILDDIR) startup doc
-	(cd debian/cvs-build/$(CVS_BUILDDIR);$(DEB_BUILD_PROG))
-
-cvs-mkul:
-	-mkdir -p ../upload-$(APT_DEBVER)
-	cp `find debian/cvs-build -maxdepth 1 -type f` ../upload-$(APT_DEBVER)
-
-arch-build:
-	rm -rf debian/arch-build
-	mkdir -p debian/arch-build/apt-$(APT_DEBVER)
-	tar -c --exclude=arch-build --no-recursion -f - `bzr inventory` | (cd debian/arch-build/$(PKG)-$(APT_DEBVER);tar xf -)
-	$(MAKE) -C debian/arch-build/apt-$(APT_DEBVER) startup doc
-	(cd debian/arch-build/apt-$(APT_DEBVER); $(DEB_BUILD_PROG); dpkg-genchanges -S > ../apt_$(APT_DEBVER)_source.changes)

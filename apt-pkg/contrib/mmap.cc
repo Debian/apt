@@ -392,8 +392,8 @@ unsigned long DynamicMMap::WriteString(const char *String,
    the nearly impossible 4 to grow it before it finally give up: Never say never. */
 bool DynamicMMap::Grow() {
 	if (Limit != 0 && WorkSpace >= Limit)
-		return _error->Error(_("The size of a MMap has already reached the defined limit of %lu bytes,"
-		                       "abort the try to grow the MMap."), Limit);
+		return _error->Error(_("Unable to increase the size of the MMap as the "
+		                       "limit of %lu bytes is already reached."), Limit);
 
 	unsigned long const newSize = WorkSpace + 1024*1024;
 

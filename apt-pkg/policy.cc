@@ -291,9 +291,9 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
    if (Dir.empty() == true)
       Dir = _config->FindDir("Dir::Etc::PreferencesParts");
 
-   if (FileExists(Dir) == false)
+   if (DirectoryExists(Dir) == false)
    {
-      _error->WarningE("FileExists",_("Unable to read %s"),Dir.c_str());
+      _error->WarningE("DirectoryExists",_("Unable to read %s"),Dir.c_str());
       return true;
    }
 
