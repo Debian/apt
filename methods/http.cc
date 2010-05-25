@@ -914,13 +914,7 @@ bool HttpMethod::ServerDie(ServerState *Srv)
 // HttpMethod::DealWithHeaders - Handle the retrieved header data	/*{{{*/
 // ---------------------------------------------------------------------
 /* We look at the header data we got back from the server and decide what
-   to do. Returns 
-     0 - File is open,
-     1 - IMS hit
-     3 - Unrecoverable error 
-     4 - Error with error content page
-     5 - Unrecoverable non-server error (close the connection) 
-     6 - Try again with a new or changed URI
+   to do. Returns DealWithHeadersResult (see http.h for details).
  */
 HttpMethod::DealWithHeadersResult
 HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
