@@ -568,15 +568,15 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
-void pkgDPkgPM::WriteHistoryTag(string tag, string value)
+void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
 {
-   if (value.size() > 0)
-   {
-      // poor mans rstrip(", ")
-      if (value[value.size()-2] == ',' && value[value.size()-1] == ' ')
-	 value.erase(value.size() - 2, 2);
-      fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
-   }
+   size_t const length = value.length();
+   if (length == 0)
+      return;
+   // poor mans rstrip(", ")
+   if (value[length-2] == ',' && value[length-1] == ' ')
+      value.erase(length - 2, 2);
+   fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
 }									/*}}}*/
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
@@ -663,7 +663,22 @@ bool pkgDPkgPM::CloseLog()
 
    if(history_out)
    {
-      if (dpkg_error.size() > 0)
+      if (disappearedPkgs.empty() == false)
+      {
+	 string disappear;
+	 for (std::set<std::string>::const_iterator d = disappearedPkgs.begin();
+	      d != disappearedPkgs.end(); ++d)
+	 {
+	    pkgCache::PkgIterator P = Cache.FindPkg(*d);
+	    disappear.append(*d);
+	    if (P.end() == true)
+	       disappear.append(", ");
+	    else
+	       disappear.append(" (").append(Cache[P].CurVersion).append("), ");
+	 }
+	 WriteHistoryTag("Disappeared", disappear);
+      }
+      if (dpkg_error.empty() == false)
 	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
       fprintf(history_out, "End-Date: %s\n", timestr);
       fclose(history_out);
