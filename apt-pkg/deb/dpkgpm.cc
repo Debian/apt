@@ -470,7 +470,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 std::clog << "send: '" << status.str() << "'" << endl;
 
       if (strncmp(action, "disappear", strlen("disappear")) == 0)
-	 disappearedPkgs.insert(string(pkg_or_trigger));
+	 handleDisappearAction(pkg_or_trigger);
       return;
    }
 
@@ -528,6 +528,51 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    if (Debug == true) 
       std::clog << "(parsed from dpkg) pkg: " << pkg 
 		<< " action: " << action << endl;
+}
+									/*}}}*/
+// DPkgPM::handleDisappearAction					/*{{{*/
+void pkgDPkgPM::handleDisappearAction(string const &pkgname)
+{
+   // record the package name for display and stuff later
+   disappearedPkgs.insert(pkgname);
+
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
+   if (unlikely(Pkg.end() == true))
+      return;
+   // the disappeared package was auto-installed - nothing to do
+   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+      return;
+   pkgCache::VerIterator PkgVer = Pkg.CurrentVer();
+   if (unlikely(PkgVer.end() == true))
+      return;
+   /* search in the list of dependencies for (Pre)Depends,
+      check if this dependency has a Replaces on our package
+      and if so transfer the manual installed flag to it */
+   for (pkgCache::DepIterator Dep = PkgVer.DependsList(); Dep.end() != true; ++Dep)
+   {
+      if (Dep->Type != pkgCache::Dep::Depends &&
+	  Dep->Type != pkgCache::Dep::PreDepends)
+	 continue;
+      pkgCache::PkgIterator Tar = Dep.TargetPkg();
+      if (unlikely(Tar.end() == true))
+	 continue;
+      // the package is already marked as manual
+      if ((Cache[Tar].Flags & pkgCache::Flag::Auto) != pkgCache::Flag::Auto)
+	 continue;
+      pkgCache::VerIterator TarVer = Tar.CurrentVer();
+      for (pkgCache::DepIterator Rep = TarVer.DependsList(); Rep.end() != true; ++Rep)
+      {
+	 if (Rep->Type != pkgCache::Dep::Replaces)
+	    continue;
+	 if (Pkg != Rep.TargetPkg())
+	    continue;
+	 // okay, they are strongly connected - transfer manual-bit
+	 if (Debug == true)
+	    std::clog << "transfer manual-bit from disappeared »" << pkgname << "« to »" << Tar.FullName() << "«" << std::endl;
+	 Cache[Tar].Flags &= ~Flag::Auto;
+	 break;
+      }
+   }
 }
 									/*}}}*/
 // DPkgPM::DoDpkgStatusFd						/*{{{*/
