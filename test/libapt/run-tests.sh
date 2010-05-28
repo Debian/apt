@@ -2,6 +2,7 @@
 set -e
 
 echo "Compiling the tests ..."
+test -d '../../build/obj/test/libapt/' || mkdir -p '../../build/obj/test/libapt/'
 make
 echo "Running all testcases ..."
 LDPATH=$(pwd)/../../build/bin
