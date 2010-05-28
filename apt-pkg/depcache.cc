@@ -1719,10 +1719,6 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 
    // If the version belongs to a Multi-Arch all package
    // we will mark all others in this Group with this version also
-   // Beware: We compare versions here the lazy way: string comparision
-   // this is bad if multiple repositories provide different versions
-   // of the package with an identical version number - but even in this
-   // case the dependencies are likely the same.
    if (ver->MultiArch == pkgCache::Version::All &&
 	strcmp(ver.Arch(true), "all") == 0)
    {
@@ -1734,7 +1730,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	 for (VerIterator V = P.VersionList();
 	      V.end() != true; ++V)
 	 {
-	    if (strcmp(VerStr, V.VerStr()) != 0)
+	    if (ver->Hash != V->Hash ||
+		strcmp(VerStr, V.VerStr()) != 0)
 	       continue;
 	    MarkPackage(P, V, follow_recommends, follow_suggests);
 	    break;
