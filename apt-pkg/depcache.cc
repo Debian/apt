@@ -1638,8 +1638,11 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    {
       if(!(PkgState[p->ID].Flags & Flag::Auto) ||
 	  (p->Flags & Flag::Essential) ||
-	  userFunc.InRootSet(p))
-          
+	  userFunc.InRootSet(p) ||
+	  // be nice even then a required package violates the policy (#583517)
+	  // and do the full mark process also for required packages
+	  (p.CurrentVer().end() != true &&
+	   p.CurrentVer()->Priority == pkgCache::State::Required))
       {
 	 // the package is installed (and set to keep)
 	 if(PkgState[p->ID].Keep() && !p.CurrentVer().end())

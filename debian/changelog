@@ -6,8 +6,11 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - forward manual-installed bit on package disappearance
   * apt-pkg/deb/debsystem.cc:
     - add better config item for extended_states file
+  * apt-pkg/depcache.cc:
+    - do the autoremove mark process also for required packages to handle
+      these illegally depending on lower priority packages (Closes: #583517)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 27 May 2010 17:34:51 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 May 2010 19:03:30 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 
