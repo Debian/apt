@@ -806,7 +806,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 		a bit we increase with a kill, but we should do something more clever… */
       while(recheck.empty() == false)
 	 for (std::set<unsigned long>::const_iterator p = recheck.begin();
-	     p != recheck.end(); ++p) {
+	     p != recheck.end();) {
 	    if (Prog != 0 && Done%20 == 0)
 	       Prog->Progress(Done);
 	    PkgIterator P = PkgIterator(*Cache, Cache->PkgP + *p);
@@ -814,7 +814,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 	       ++killed;
 	       ++Done;
 	    }
-	    recheck.erase(p);
+	    recheck.erase(p++);
 	 }
 
       /* Okay, we have killed a great amount of pseudopackages -
@@ -849,7 +849,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 	 unsigned long const G = *g;
 	 recheck.erase(g);
 	 if (unlikely(ReInstallPseudoForGroup(G, recheck) == false))
-	    _error->Warning(_("Internal error, group '%s' has no installable pseudo package"), GrpIterator(*Cache, Cache->GrpP + *g).Name());
+	    _error->Warning(_("Internal error, group '%s' has no installable pseudo package"), GrpIterator(*Cache, Cache->GrpP + G).Name());
       }
    }
 
