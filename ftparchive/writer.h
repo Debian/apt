@@ -72,6 +72,7 @@ class FTWScanner
    bool SetExts(string const &Vals);
       
    FTWScanner(string const &Arch = string());
+   virtual ~FTWScanner();
 };
 
 class TranslationWriter
