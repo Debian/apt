@@ -29,10 +29,12 @@
 									/*}}}*/
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
+#include<iterator>
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
    need to have for doing some walk-over-the-cache magic */
-template<typename Str, typename Itr> class pkgCache::Iterator {
+template<typename Str, typename Itr> class pkgCache::Iterator :
+			public std::iterator<std::forward_iterator_tag, Str> {
 	protected:
 	Str *S;
 	pkgCache *Owner;
