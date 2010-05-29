@@ -12,8 +12,12 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - try harder to find the other pseudo versions for autoremove multiarch
   * apt-pkg/aptconfiguration.cc:
     - remove duplicate architectures in getArchitectures()
+  * apt-pkg/indexrecords.{cc,h}:
+    - add a constant Exists check for MetaKeys
+  * apt-pkg/acquire-item.cc:
+    - do not try PDiff if it is not listed in the Meta file
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 May 2010 19:03:30 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 29 May 2010 12:03:20 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 

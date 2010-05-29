@@ -31,6 +31,11 @@ const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
    return Entries[MetaKey];
 }
 
+bool indexRecords::Exists(string const &MetaKey) const
+{
+   return Entries.count(MetaKey) == 1;
+}
+
 bool indexRecords::Load(const string Filename)				/*{{{*/
 {
    FileFd Fd(Filename, FileFd::ReadOnly);

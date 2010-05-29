@@ -1105,13 +1105,16 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
             return;
          }
       }
-      
-      // Queue Packages file (either diff or full packages files, depending
-      // on the users option)
-      if(_config->FindB("Acquire::PDiffs",true) == true) 
+
+      /* Queue Packages file (either diff or full packages files, depending
+         on the users option) - we also check if the PDiff Index file is listed
+         in the Meta-Index file. Ideal would be if pkgAcqDiffIndex would test this
+         instead, but passing the required info to it is to much hassle */
+      if(_config->FindB("Acquire::PDiffs",true) == true && (verify == false ||
+	  MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true))
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 			     (*Target)->ShortDesc, ExpectedIndexHash);
-      else 
+      else
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			    (*Target)->ShortDesc, ExpectedIndexHash);
    }

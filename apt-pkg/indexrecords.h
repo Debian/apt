@@ -34,6 +34,8 @@ class indexRecords
 
    // Lookup function
    virtual const checkSum *Lookup(const string MetaKey);
+   /** \brief tests if a checksum for this file is available */
+   bool Exists(string const &MetaKey) const;
    std::vector<std::string> MetaKeys();
 
    virtual bool Load(string Filename);
