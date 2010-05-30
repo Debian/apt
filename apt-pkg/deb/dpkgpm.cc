@@ -653,6 +653,11 @@ bool pkgDPkgPM::CloseLog()
    }
    term_out = NULL;
 
+   // check if the directory exists in which we want to write the file
+   string const logdir = _config->FindDir("Dir::Log");
+   if(not FileExists(logdir))
+      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
+
    string history_name = flCombine(_config->FindDir("Dir::Log"),
 				   _config->Find("Dir::Log::History"));
    if (!history_name.empty())
