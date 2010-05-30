@@ -28,27 +28,29 @@ public:									/*{{{*/
 
 		operator pkgCache::PkgIterator(void) { return **this; }
 
-		inline const char *Name() const {return (*this)->Name(); }
-		inline std::string FullName(bool const &Pretty) const { return (*this)->FullName(Pretty); }
-		inline std::string FullName() const { return (*this)->FullName(); }
-		inline const char *Section() const {return (*this)->Section(); }
-		inline bool Purge() const {return (*this)->Purge(); }
-		inline const char *Arch() const {return (*this)->Arch(); }
-		inline pkgCache::GrpIterator Group() const { return (*this)->Group(); }
-		inline pkgCache::VerIterator VersionList() const { return (*this)->VersionList(); }
-		inline pkgCache::VerIterator CurrentVer() const { return (*this)->CurrentVer(); }
-		inline pkgCache::DepIterator RevDependsList() const { return (*this)->RevDependsList(); }
-		inline pkgCache::PrvIterator ProvidesList() const { return (*this)->ProvidesList(); }
-		inline pkgCache::PkgIterator::OkState State() const { return (*this)->State(); }
-		inline const char *CandVersion() const { return (*this)->CandVersion(); }
-		inline const char *CurVersion() const { return (*this)->CurVersion(); }
-		inline pkgCache *Cache() const { return (*this)->Cache(); };
-		inline unsigned long Index() const {return (*this)->Index();};
+		inline const char *Name() const {return (**this).Name(); }
+		inline std::string FullName(bool const &Pretty) const { return (**this).FullName(Pretty); }
+		inline std::string FullName() const { return (**this).FullName(); }
+		inline const char *Section() const {return (**this).Section(); }
+		inline bool Purge() const {return (**this).Purge(); }
+		inline const char *Arch() const {return (**this).Arch(); }
+		inline pkgCache::GrpIterator Group() const { return (**this).Group(); }
+		inline pkgCache::VerIterator VersionList() const { return (**this).VersionList(); }
+		inline pkgCache::VerIterator CurrentVer() const { return (**this).CurrentVer(); }
+		inline pkgCache::DepIterator RevDependsList() const { return (**this).RevDependsList(); }
+		inline pkgCache::PrvIterator ProvidesList() const { return (**this).ProvidesList(); }
+		inline pkgCache::PkgIterator::OkState State() const { return (**this).State(); }
+		inline const char *CandVersion() const { return (**this).CandVersion(); }
+		inline const char *CurVersion() const { return (**this).CurVersion(); }
+		inline pkgCache *Cache() const { return (**this).Cache(); };
+		inline unsigned long Index() const {return (**this).Index();};
+		// we have only valid iterators here
+		inline bool end() const { return false; };
 
 		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, (*i)); }
 
-		inline pkgCache::PkgIterator const * operator->() const {
-			return &**this;
+		inline pkgCache::Package const * operator->() const {
+			return &***this;
 		};
 	};
 	// 103. set::iterator is required to be modifiable, but this allows modification of keys
@@ -67,6 +69,21 @@ public:									/*{{{*/
 		std::ostream out (std::ofstream("/dev/null").rdbuf());
 		return APT::PackageSet::FromRegEx(Cache, pattern, out);
 	}
+
+	/** \brief returns all packages specified on the commandline
+
+	    Get all package names from the commandline and executes regex's if needed.
+	    No special package command is supported, just plain names.
+	    \param Cache the packages are in
+	    \param cmdline Command line the package names should be extracted from
+	    \param out stream to print various notices to */
+	static APT::PackageSet FromCommandLine(pkgCache &Cache, const char **cmdline, std::ostream &out);
+	static APT::PackageSet FromCommandLine(pkgCache &Cache, const char **cmdline) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::PackageSet::FromCommandLine(Cache, cmdline, out);
+	}
+
+
 
 									/*}}}*/
 };

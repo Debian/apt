@@ -29,6 +29,7 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/packageset.h>
 
 #include <config.h>
 #include <apti18n.h>
@@ -175,15 +176,10 @@ bool UnMet(CommandLine &CmdL)
 bool DumpPackage(CommandLine &CmdL)
 {   
    pkgCache &Cache = *GCache;
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(Cache, CmdL.FileList);
 
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   {
       cout << "Package: " << Pkg.FullName(true) << endl;
       cout << "Versions: " << endl;
       for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; Cur++)
@@ -545,18 +541,11 @@ bool Depends(CommandLine &CmdL)
    pkgCache &Cache = *GCache;
    SPtrArray<unsigned> Colours = new unsigned[Cache.Head().PackageCount];
    memset(Colours,0,sizeof(*Colours)*Cache.Head().PackageCount);
-   
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(Cache, CmdL.FileList);
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       Colours[Pkg->ID] = 1;
-   }
-   
+
    bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
    bool Installed = _config->FindB("APT::Cache::Installed",false);
    bool Important = _config->FindB("APT::Cache::Important",false);
@@ -639,18 +628,11 @@ bool RDepends(CommandLine &CmdL)
    pkgCache &Cache = *GCache;
    SPtrArray<unsigned> Colours = new unsigned[Cache.Head().PackageCount];
    memset(Colours,0,sizeof(*Colours)*Cache.Head().PackageCount);
-   
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(Cache, CmdL.FileList);
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       Colours[Pkg->ID] = 1;
-   }
-   
+
    bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
    bool Installed = _config->FindB("APT::Cache::Installed",false);
    bool DidSomething;
@@ -1440,23 +1422,9 @@ bool ShowPackage(CommandLine &CmdL)
    pkgCache &Cache = *GCache;
    pkgDepCache::Policy Plcy;
 
-   unsigned found = 0;
-   
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(Cache, CmdL.FileList);
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
-      // FIXME: Handle the case in which pkgname name:arch is not found
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 Pkg = Cache.FindPkg(*I, "any");
-	 if (Pkg.end() == true) {
-		_error->Warning(_("Unable to locate package %s"),*I);
-		continue;
-	 }
-      }
-
-      ++found;
-
       // Find the proper version to use.
       if (_config->FindB("APT::Cache::AllVersions","true") == true)
       {
@@ -1477,7 +1445,7 @@ bool ShowPackage(CommandLine &CmdL)
       }      
    }
 
-   if (found > 0)
+   if (pkgset.empty() == false)
         return true;
    return _error->Error(_("No packages found"));
 }
@@ -1622,15 +1590,10 @@ bool Policy(CommandLine &CmdL)
 		(InstalledLessCandidate > 0 ? (InstalledLessCandidate) : 0) - 1;
 
    // Print out detailed information for each package
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(Cache, CmdL.FileList);
+   for (APT::PackageSet::const_iterator I = pkgset.begin(); I != pkgset.end(); ++I)
    {
-      pkgCache::GrpIterator Grp = Cache.FindGrp(*I);
-      pkgCache::PkgIterator Pkg = Grp.FindPkg("any");
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+      pkgCache::PkgIterator Pkg = I.Group().FindPkg("any");
 
       for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg)) {
       if (strcmp(Pkg.Arch(),"all") == 0)
@@ -1708,10 +1671,9 @@ bool Madison(CommandLine &CmdL)
    if (_error->PendingError() == true)
       _error->Discard();
 
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(Cache, CmdL.FileList);
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-
       if (Pkg.end() == false)
       {
          for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; V++)
@@ -1746,7 +1708,7 @@ bool Madison(CommandLine &CmdL)
       
       SrcRecs.Restart();
       pkgSrcRecords::Parser *SrcParser;
-      while ((SrcParser = SrcRecs.Find(*I,false)) != 0)
+      while ((SrcParser = SrcRecs.Find(Pkg.Name(),false)) != 0)
       {
          // Maybe support Release info here too eventually
          cout << setw(10) << SrcParser->Package() << " | "

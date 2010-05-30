@@ -9,11 +9,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/packageset.h>
 #include <apt-pkg/strutl.h>
 
 #include <apti18n.h>
+
+#include <vector>
 
 #include <regex.h>
 									/*}}}*/
@@ -44,18 +47,49 @@ PackageSet PackageSet::FromRegEx(pkgCache &Cache, const char * const pattern, st
 		if (regexec(&Pattern, Grp.Name(), 0, 0, 0) != 0)
 			continue;
 		pkgCache::PkgIterator Pkg = Grp.FindPkg("native");
-		if (unlikely(Pkg.end() == true))
-			// FIXME: Fallback to different architectures here?
-			continue;
+		if (Pkg.end() == true) {
+			std::vector<std::string> archs = APT::Configuration::getArchitectures();
+			for (std::vector<std::string>::const_iterator a = archs.begin();
+			     a != archs.end() || Pkg.end() != true; ++a) {
+				Pkg = Grp.FindPkg(*a);
+			}
+			if (Pkg.end() == true)
+				continue;
+		}
 
 		ioprintf(out, _("Note, selecting %s for regex '%s'\n"),
-			 Pkg.Name(), pattern);
+			 Pkg.FullName(true).c_str(), pattern);
 
 		pkgset.insert(Pkg);
 	}
 
 	regfree(&Pattern);
 
+	return pkgset;
+}
+									/*}}}*/
+// FromCommandLine - Return all packages specified on commandline	/*{{{*/
+PackageSet PackageSet::FromCommandLine(pkgCache &Cache, const char **cmdline, std::ostream &out) {
+	PackageSet pkgset;
+	for (const char **I = cmdline + 1; *I != 0; I++) {
+		pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
+		if (Pkg.end() == true) {
+			std::vector<std::string> archs = APT::Configuration::getArchitectures();
+			for (std::vector<std::string>::const_iterator a = archs.begin();
+			     a != archs.end() || Pkg.end() != true; ++a) {
+				Pkg = Cache.FindPkg(*I, *a);
+			}
+			if (Pkg.end() == true) {
+				PackageSet regex = FromRegEx(Cache, *I, out);
+				if (regex.empty() == true)
+					_error->Warning(_("Unable to locate package %s"),*I);
+				else
+					pkgset.insert(regex.begin(), regex.end());
+				continue;
+			}
+		}
+		pkgset.insert(Pkg);
+	}
 	return pkgset;
 }
 									/*}}}*/
