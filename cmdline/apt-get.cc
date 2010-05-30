@@ -40,7 +40,8 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
-    
+#include <apt-pkg/packageset.h>
+
 #include <config.h>
 #include <apti18n.h>
 
@@ -1780,51 +1781,24 @@ bool DoInstall(CommandLine &CmdL)
 	 Packages++;
 	 if (Pkg.end() == true)
 	 {
-	    // Check if the name is a regex
-	    const char *I;
-	    for (I = S; *I != 0; I++)
-	       if (*I == '?' || *I == '*' || *I == '|' ||
-		   *I == '[' || *I == '^' || *I == '$')
-		  break;
-	    if (*I == 0)
+	    APT::PackageSet pkgset = APT::PackageSet::FromRegEx(Cache, S, c1out);
+	    if (pkgset.empty() == true)
 	       return _error->Error(_("Couldn't find package %s"),S);
 
 	    // Regexs must always be confirmed
 	    ExpectedInst += 1000;
-	 
-	    // Compile the regex pattern
-	    regex_t Pattern;
-	    int Res;
-	    if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
-			       REG_NOSUB)) != 0)
-	    {
-	       char Error[300];	    
-	       regerror(Res,&Pattern,Error,sizeof(Error));
-	       return _error->Error(_("Regex compilation error - %s"),Error);
-	    }
-	 
-	    // Run over the matches
-	    bool Hit = false;
-	    for (pkgCache::GrpIterator Grp = Cache->GrpBegin(); Grp.end() == false; ++Grp)
-	    {
-	       if (regexec(&Pattern,Grp.Name(),0,0,0) != 0)
-		  continue;
-	       Pkg = Grp.FindPkg("native");
-	       if (unlikely(Pkg.end() == true))
-		  continue;
 
-	       ioprintf(c1out,_("Note, selecting %s for regex '%s'\n"),
-			Pkg.Name(),S);
-	    
+	    bool Hit = false;
+	    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+	    {
 	       if (VerTag != 0)
 		  if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
 		     return false;
-	    
+
 	       Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
 				   ExpectedInst,false);
 	    }
-	    regfree(&Pattern);
-	 
+
 	    if (Hit == false)
 	       return _error->Error(_("Couldn't find package %s"),S);
 	 }

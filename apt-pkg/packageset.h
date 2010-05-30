@@ -10,7 +10,11 @@
 #ifndef APT_PACKAGESET_H
 #define APT_PACKAGESET_H
 // Include Files							/*{{{*/
+#include <iostream>
+#include <fstream>
+#include <set>
 #include <string>
+
 #include <apt-pkg/pkgcache.h>
 									/*}}}*/
 namespace APT {
@@ -21,6 +25,8 @@ public:									/*{{{*/
 	public:
 		const_iterator(std::set<pkgCache::PkgIterator>::const_iterator x) :
 			 std::set<pkgCache::PkgIterator>::const_iterator(x) {}
+
+		operator pkgCache::PkgIterator(void) { return **this; }
 
 		inline const char *Name() const {return (*this)->Name(); }
 		inline std::string FullName(bool const &Pretty) const { return (*this)->FullName(Pretty); }
@@ -36,7 +42,8 @@ public:									/*{{{*/
 		inline pkgCache::PkgIterator::OkState State() const { return (*this)->State(); }
 		inline const char *CandVersion() const { return (*this)->CandVersion(); }
 		inline const char *CurVersion() const { return (*this)->CurVersion(); }
-		inline pkgCache *Cache() {return (*this)->Cache();};
+		inline pkgCache *Cache() const { return (*this)->Cache(); };
+		inline unsigned long Index() const {return (*this)->Index();};
 
 		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, (*i)); }
 
@@ -46,6 +53,21 @@ public:									/*{{{*/
 	};
 	// 103. set::iterator is required to be modifiable, but this allows modification of keys
 	typedef typename APT::PackageSet::const_iterator iterator;
+
+	/** \brief returns all packages in the cache whose name matchs a given pattern
+
+	    A simple helper responsible for executing a regular expression on all
+	    package names in the cache. Optional it prints a a notice about the
+	    packages chosen cause of the given package.
+	    \param Cache the packages are in
+	    \param pattern regular expression for package names
+	    \param out stream to print the notice to */
+	static APT::PackageSet FromRegEx(pkgCache &Cache, const char *pattern, std::ostream &out);
+	static APT::PackageSet FromRegEx(pkgCache &Cache, const char *pattern) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::PackageSet::FromRegEx(Cache, pattern, out);
+	}
+
 									/*}}}*/
 };
 									/*}}}*/

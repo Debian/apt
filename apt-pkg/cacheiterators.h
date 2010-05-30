@@ -66,7 +66,7 @@ template<typename Str, typename Itr> class pkgCache::Iterator :
 	inline operator Str const *() const {return S == OwnerPointer() ? 0 : S;};
 	inline Str &operator *() {return *S;};
 	inline Str const &operator *() const {return *S;};
-	inline pkgCache *Cache() {return Owner;};
+	inline pkgCache *Cache() const {return Owner;};
 
 	// Mixed stuff
 	inline void operator =(const Itr &B) {S = B.S; Owner = B.Owner;};
