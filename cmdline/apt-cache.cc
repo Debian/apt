@@ -1272,15 +1272,15 @@ struct ExDescFile
 bool Search(CommandLine &CmdL)
 {
    pkgCache &Cache = *GCache;
-   bool ShowFull = _config->FindB("APT::Cache::ShowFull",false);
-   bool NamesOnly = _config->FindB("APT::Cache::NamesOnly",false);
-   unsigned NumPatterns = CmdL.FileSize() -1;
+   bool const ShowFull = _config->FindB("APT::Cache::ShowFull",false);
+   bool const NamesOnly = _config->FindB("APT::Cache::NamesOnly",false);
+   unsigned int const NumPatterns = CmdL.FileSize() -1;
    
    pkgDepCache::Policy Plcy;
    
    // Make sure there is at least one argument
    if (NumPatterns < 1)
-      return _error->Error(_("You must give exactly one pattern"));
+      return _error->Error(_("You must give at least one search pattern"));
    
    // Compile the regex pattern
    regex_t *Patterns = new regex_t[NumPatterns];
@@ -1296,8 +1296,6 @@ bool Search(CommandLine &CmdL)
       }      
    }
    
-   // Create the text record parser
-   pkgRecords Recs(Cache);
    if (_error->PendingError() == true)
    {
       for (unsigned I = 0; I != NumPatterns; I++)
@@ -1305,70 +1303,75 @@ bool Search(CommandLine &CmdL)
       return false;
    }
    
-   ExDescFile *DFList = new ExDescFile[Cache.HeaderP->PackageCount+1];
-   memset(DFList,0,sizeof(*DFList)*Cache.HeaderP->PackageCount+1);
+   ExDescFile *DFList = new ExDescFile[Cache.HeaderP->GroupCount+1];
+   memset(DFList,0,sizeof(*DFList)*Cache.HeaderP->GroupCount+1);
 
    // Map versions that we want to write out onto the VerList array.
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+   for (pkgCache::GrpIterator G = Cache.GrpBegin(); G.end() == false; ++G)
    {
-      DFList[P->ID].NameMatch = NumPatterns != 0;
+      if (DFList[G->ID].NameMatch == true)
+	 continue;
+
+      DFList[G->ID].NameMatch = true;
       for (unsigned I = 0; I != NumPatterns; I++)
       {
-	 if (regexec(&Patterns[I],P.Name(),0,0,0) == 0)
-	    DFList[P->ID].NameMatch &= true;
-	 else
-	    DFList[P->ID].NameMatch = false;
+	 if (regexec(&Patterns[I],G.Name(),0,0,0) == 0)
+	    continue;
+	 DFList[G->ID].NameMatch = false;
+	 break;
       }
         
       // Doing names only, drop any that dont match..
-      if (NamesOnly == true && DFList[P->ID].NameMatch == false)
+      if (NamesOnly == true && DFList[G->ID].NameMatch == false)
 	 continue;
 	 
-      // Find the proper version to use. 
+      // Find the proper version to use
+      pkgCache::PkgIterator P = G.FindPreferredPkg();
+      if (P.end() == true)
+	 continue;
       pkgCache::VerIterator V = Plcy.GetCandidateVer(P);
       if (V.end() == false)
-	 DFList[P->ID].Df = V.DescriptionList().FileList();
-   }
-      
-   // Include all the packages that provide matching names too
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
-   {
-      if (DFList[P->ID].NameMatch == false)
+	 DFList[G->ID].Df = V.DescriptionList().FileList();
+
+      if (DFList[G->ID].NameMatch == false)
 	 continue;
 
+      // Include all the packages that provide matching names too
       for (pkgCache::PrvIterator Prv = P.ProvidesList() ; Prv.end() == false; Prv++)
       {
 	 pkgCache::VerIterator V = Plcy.GetCandidateVer(Prv.OwnerPkg());
-	 if (V.end() == false)
-	 {
-	    DFList[Prv.OwnerPkg()->ID].Df = V.DescriptionList().FileList();
-	    DFList[Prv.OwnerPkg()->ID].NameMatch = true;
-	 }
+	 if (V.end() == true)
+	    continue;
+
+	 unsigned long id = Prv.OwnerPkg().Group()->ID;
+	 DFList[id].Df = V.DescriptionList().FileList();
+	 DFList[id].NameMatch = true;
       }
    }
    
-   LocalitySort(&DFList->Df,Cache.HeaderP->PackageCount,sizeof(*DFList));
+   LocalitySort(&DFList->Df,Cache.HeaderP->GroupCount,sizeof(*DFList));
 
+   // Create the text record parser
+   pkgRecords Recs(Cache);
    // Iterate over all the version records and check them
    for (ExDescFile *J = DFList; J->Df != 0; J++)
    {
       pkgRecords::Parser &P = Recs.Lookup(pkgCache::DescFileIterator(Cache,J->Df));
 
-      bool Match = true;
-      if (J->NameMatch == false)
+      if (J->NameMatch == false && NamesOnly == false)
       {
-	 string LongDesc = P.LongDesc();
-	 Match = NumPatterns != 0;
+	 string const LongDesc = P.LongDesc();
+	 J->NameMatch = true;
 	 for (unsigned I = 0; I != NumPatterns; I++)
 	 {
 	    if (regexec(&Patterns[I],LongDesc.c_str(),0,0,0) == 0)
-	       Match &= true;
-	    else
-	       Match = false;
+	       continue;
+	    J->NameMatch = false;
+	    break;
 	 }
       }
       
-      if (Match == true)
+      if (J->NameMatch == true)
       {
 	 if (ShowFull == true)
 	 {
