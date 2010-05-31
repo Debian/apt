@@ -1595,7 +1595,7 @@ bool Policy(CommandLine &CmdL)
    {
       pkgCache::PkgIterator Pkg = I.Group().FindPkg("any");
 
-      for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg)) {
+      for (; Pkg.end() != true; Pkg = I.Group().NextPkg(Pkg)) {
       if (strcmp(Pkg.Arch(),"all") == 0)
 	 continue;
 
