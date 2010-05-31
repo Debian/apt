@@ -360,11 +360,11 @@ bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
    than nothing after all. */
 void CommandLine::SaveInConfig(unsigned int const &argc, char const * const * const argv)
 {
-   char cmdline[300];
+   char cmdline[100 + argc * 50];
    unsigned int length = 0;
    bool lastWasOption = false;
    bool closeQuote = false;
-   for (unsigned int i = 0; i < argc; ++i, ++length)
+   for (unsigned int i = 0; i < argc && length < sizeof(cmdline); ++i, ++length)
    {
       for (unsigned int j = 0; argv[i][j] != '\0' && length < sizeof(cmdline)-1; ++j, ++length)
       {

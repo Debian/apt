@@ -26,8 +26,10 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - add a simple wrapper around std::set for packages with it
     - move regex magic from apt-get to new FromRegEx method
     - move cmdline parsing from apt-cache to new FromCommandLine method
+  * apt-pkg/contrib/cmdline.cc:
+    - fix segfault in SaveInConfig caused by writing over char[] sizes
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 29 May 2010 19:09:05 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 31 May 2010 17:21:00 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 
