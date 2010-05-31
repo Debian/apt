@@ -205,8 +205,8 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline PrvIterator ProvidesList() const;
 	inline VerFileIterator FileList() const;
 	bool Downloadable() const;
-	inline const char *PriorityType() {return Owner->Priority(S->Priority);};
-	string RelStr();
+	inline const char *PriorityType() const {return Owner->Priority(S->Priority);};
+	string RelStr() const;
 
 	bool Automatic() const;
 	bool Pseudo() const;

@@ -22,8 +22,8 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - correct "Dangerous iterator usage." pointed out by cppcheck
   * ftparchive/writer.h:
     - add a virtual destructor to FTWScanner class (for cppcheck)
-  * apt-pkg/cacheset.h:
-    - add a simple wrapper around std::set for packages with it
+  * apt-pkg/cacheset.{cc,h}:
+    - add simple wrapper around std::set for cache structures
     - move regex magic from apt-get to new FromRegEx method
     - move cmdline parsing from apt-cache to new FromCommandLine method
   * apt-pkg/contrib/cmdline.cc:
@@ -33,7 +33,7 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
   * cmdline/apt-cache.cc:
     - make the search multiarch compatible by using GrpIterator instead
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 31 May 2010 20:00:24 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 31 May 2010 22:36:35 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 

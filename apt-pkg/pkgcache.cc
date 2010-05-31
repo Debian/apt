@@ -742,7 +742,7 @@ pkgCache::VerFileIterator pkgCache::VerIterator::NewestFile() const
 // ---------------------------------------------------------------------
 /* This describes the version from a release-centric manner. The output is a 
    list of Label:Version/Archive */
-string pkgCache::VerIterator::RelStr()
+string pkgCache::VerIterator::RelStr() const
 {
    bool First = true;
    string Res;

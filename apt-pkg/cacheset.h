@@ -17,12 +17,12 @@
 #include <apt-pkg/pkgcache.h>
 									/*}}}*/
 namespace APT {
+class PackageSet : public std::set<pkgCache::PkgIterator> {		/*{{{*/
 /** \class APT::PackageSet
 
     Simple wrapper around a std::set to provide a similar interface to
     a set of packages as to the complete set of all packages in the
     pkgCache. */
-class PackageSet : public std::set<pkgCache::PkgIterator> {		/*{{{*/
 public:									/*{{{*/
 	/** \brief smell like a pkgCache::PkgIterator */
 	class const_iterator : public std::set<pkgCache::PkgIterator>::const_iterator {
@@ -86,11 +86,54 @@ public:									/*{{{*/
 		std::ostream out (std::ofstream("/dev/null").rdbuf());
 		return APT::PackageSet::FromCommandLine(Cache, cmdline, out);
 	}
+									/*}}}*/
+};									/*}}}*/
+class VersionSet : public std::set<pkgCache::VerIterator> {		/*{{{*/
+/** \class APT::VersionSet
 
+    Simple wrapper around a std::set to provide a similar interface to
+    a set of versions as to the complete set of all versions in the
+    pkgCache. */
+public:									/*{{{*/
+	/** \brief smell like a pkgCache::VerIterator */
+	class const_iterator : public std::set<pkgCache::VerIterator>::const_iterator {
+	public:
+		const_iterator(std::set<pkgCache::VerIterator>::const_iterator x) :
+			 std::set<pkgCache::VerIterator>::const_iterator(x) {}
 
+		operator pkgCache::VerIterator(void) { return **this; }
+
+		inline pkgCache *Cache() const { return (**this).Cache(); };
+		inline unsigned long Index() const {return (**this).Index();};
+		// we have only valid iterators here
+		inline bool end() const { return false; };
+
+		inline pkgCache::Version const * operator->() const {
+			return &***this;
+		};
+
+		inline int CompareVer(const pkgCache::VerIterator &B) const { return (**this).CompareVer(B); };
+		inline const char *VerStr() const { return (**this).VerStr(); };
+		inline const char *Section() const { return (**this).Section(); };
+		inline const char *Arch() const { return (**this).Arch(); };
+		inline const char *Arch(bool const pseudo) const { return (**this).Arch(pseudo); };
+		inline pkgCache::PkgIterator ParentPkg() const { return (**this).ParentPkg(); };
+		inline pkgCache::DescIterator DescriptionList() const { return (**this).DescriptionList(); };
+		inline pkgCache::DescIterator TranslatedDescription() const { return (**this).TranslatedDescription(); };
+		inline pkgCache::DepIterator DependsList() const { return (**this).DependsList(); };
+		inline pkgCache::PrvIterator ProvidesList() const { return (**this).ProvidesList(); };
+		inline pkgCache::VerFileIterator FileList() const { return (**this).FileList(); };
+		inline bool Downloadable() const { return (**this).Downloadable(); };
+		inline const char *PriorityType() const { return (**this).PriorityType(); };
+		inline string RelStr() const { return (**this).RelStr(); };
+		inline bool Automatic() const { return (**this).Automatic(); };
+		inline bool Pseudo() const { return (**this).Pseudo(); };
+		inline pkgCache::VerFileIterator NewestFile() const { return (**this).NewestFile(); };
+	};
+	// 103. set::iterator is required to be modifiable, but this allows modification of keys
+	typedef typename APT::VersionSet::const_iterator iterator;
 
 									/*}}}*/
-};
-									/*}}}*/
+};									/*}}}*/
 }
 #endif
