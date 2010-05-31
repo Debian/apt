@@ -104,6 +104,11 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;};
 	inline PkgIterator PackageList() const;
 	PkgIterator FindPkg(string Arch = "any");
+	/** \brief find the package with the "best" architecture
+
+	    The best architecture is either the "native" or the first
+	    in the list of Architectures which is not an end-Pointer */
+	PkgIterator FindPreferredPkg();
 	PkgIterator NextPkg(PkgIterator const &Pkg);
 
 	// Constructors

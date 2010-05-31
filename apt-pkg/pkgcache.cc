@@ -343,6 +343,25 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) {
 	return PkgIterator(*Owner, 0);
 }
 									/*}}}*/
+// GrpIterator::FindPreferredPkg - Locate the "best" package		/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns an End-Pointer on error, pointer to the package otherwise */
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg() {
+	pkgCache::PkgIterator Pkg = FindPkg("native");
+	if (Pkg.end() == false)
+		return Pkg;
+
+	std::vector<std::string> const archs = APT::Configuration::getArchitectures();
+	for (std::vector<std::string>::const_iterator a = archs.begin();
+	     a != archs.end(); ++a) {
+		Pkg = FindPkg(*a);
+		if (Pkg.end() == false)
+			return Pkg;
+	}
+
+	return PkgIterator(*Owner, 0);
+}
+									/*}}}*/
 // GrpIterator::NextPkg - Locate the next package in the group		/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise.
