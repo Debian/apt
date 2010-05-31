@@ -40,7 +40,7 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
-#include <apt-pkg/packageset.h>
+#include <apt-pkg/cacheset.h>
 
 #include <config.h>
 #include <apti18n.h>

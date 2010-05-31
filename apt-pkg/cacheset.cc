@@ -3,15 +3,15 @@
 /* ######################################################################
 
    Simple wrapper around a std::set to provide a similar interface to
-   a set of packages as to the complete set of all packages in the
-   pkgCache.
+   a set of cache structures as to the complete set of all structures
+   in the pkgCache. Currently only Package is supported.
 
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/packageset.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/strutl.h>
 
 #include <apti18n.h>

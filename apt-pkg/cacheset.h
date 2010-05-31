@@ -1,14 +1,13 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-/** \class APT::PackageSet
+/** \file cacheset.h
+   Wrappers around std::set to have set::iterators which behave
+   similar to the Iterators of the cache structures.
 
-    Simple wrapper around a std::set to provide a similar interface to
-    a set of packages as to the complete set of all packages in the
-    pkgCache.
-*/
+   Provides also a few helper methods which work with these sets */
 									/*}}}*/
-#ifndef APT_PACKAGESET_H
-#define APT_PACKAGESET_H
+#ifndef APT_CACHESET_H
+#define APT_CACHESET_H
 // Include Files							/*{{{*/
 #include <iostream>
 #include <fstream>
@@ -18,6 +17,11 @@
 #include <apt-pkg/pkgcache.h>
 									/*}}}*/
 namespace APT {
+/** \class APT::PackageSet
+
+    Simple wrapper around a std::set to provide a similar interface to
+    a set of packages as to the complete set of all packages in the
+    pkgCache. */
 class PackageSet : public std::set<pkgCache::PkgIterator> {		/*{{{*/
 public:									/*{{{*/
 	/** \brief smell like a pkgCache::PkgIterator */
