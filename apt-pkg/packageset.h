@@ -64,8 +64,8 @@ public:									/*{{{*/
 	    \param Cache the packages are in
 	    \param pattern regular expression for package names
 	    \param out stream to print the notice to */
-	static APT::PackageSet FromRegEx(pkgCache &Cache, const char *pattern, std::ostream &out);
-	static APT::PackageSet FromRegEx(pkgCache &Cache, const char *pattern) {
+	static APT::PackageSet FromRegEx(pkgCache &Cache, std::string pattern, std::ostream &out);
+	static APT::PackageSet FromRegEx(pkgCache &Cache, std::string const &pattern) {
 		std::ostream out (std::ofstream("/dev/null").rdbuf());
 		return APT::PackageSet::FromRegEx(Cache, pattern, out);
 	}

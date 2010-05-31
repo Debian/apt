@@ -22,20 +22,26 @@
 									/*}}}*/
 namespace APT {
 // FromRegEx - Return all packages in the cache matching a pattern	/*{{{*/
-PackageSet PackageSet::FromRegEx(pkgCache &Cache, const char * const pattern, std::ostream &out) {
+PackageSet PackageSet::FromRegEx(pkgCache &Cache, std::string pattern, std::ostream &out) {
 	PackageSet pkgset;
+	std::string arch = "native";
+	static const char * const isregex = ".?+*|[^$";
 
-	const char * I;
-	for (I = pattern; *I != 0; I++)
-		if (*I == '.' || *I == '?' || *I == '+' || *I == '*' ||
-		    *I == '|' || *I == '[' || *I == '^' || *I == '$')
-			break;
-	if (*I == 0)
+	if (pattern.find_first_of(isregex) == std::string::npos)
 		return pkgset;
+
+	size_t archfound = pattern.find_last_of(':');
+	if (archfound != std::string::npos) {
+		arch = pattern.substr(archfound+1);
+		if (arch.find_first_of(isregex) == std::string::npos)
+			pattern.erase(archfound);
+		else
+			arch = "native";
+	}
 
 	regex_t Pattern;
 	int Res;
-	if ((Res = regcomp(&Pattern, pattern , REG_EXTENDED | REG_ICASE | REG_NOSUB)) != 0) {
+	if ((Res = regcomp(&Pattern, pattern.c_str() , REG_EXTENDED | REG_ICASE | REG_NOSUB)) != 0) {
 		char Error[300];
 		regerror(Res, &Pattern, Error, sizeof(Error));
 		_error->Error(_("Regex compilation error - %s"), Error);
@@ -46,19 +52,20 @@ PackageSet PackageSet::FromRegEx(pkgCache &Cache, const char * const pattern, st
 	{
 		if (regexec(&Pattern, Grp.Name(), 0, 0, 0) != 0)
 			continue;
-		pkgCache::PkgIterator Pkg = Grp.FindPkg("native");
+		pkgCache::PkgIterator Pkg = Grp.FindPkg(arch);
 		if (Pkg.end() == true) {
-			std::vector<std::string> archs = APT::Configuration::getArchitectures();
-			for (std::vector<std::string>::const_iterator a = archs.begin();
-			     a != archs.end() || Pkg.end() != true; ++a) {
-				Pkg = Grp.FindPkg(*a);
+			if (archfound == std::string::npos) {
+				std::vector<std::string> archs = APT::Configuration::getArchitectures();
+				for (std::vector<std::string>::const_iterator a = archs.begin();
+				     a != archs.end() && Pkg.end() != true; ++a)
+					Pkg = Grp.FindPkg(*a);
 			}
 			if (Pkg.end() == true)
 				continue;
 		}
 
 		ioprintf(out, _("Note, selecting %s for regex '%s'\n"),
-			 Pkg.FullName(true).c_str(), pattern);
+			 Pkg.FullName(true).c_str(), pattern.c_str());
 
 		pkgset.insert(Pkg);
 	}
