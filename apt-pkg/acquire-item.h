@@ -573,6 +573,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
    public:
   
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual string Custom600Headers();
 
    /** \brief Create a pkgAcqIndexTrans.
     *

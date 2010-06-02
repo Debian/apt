@@ -37,6 +37,7 @@ class pkgAcqMethod
       string DestFile;
       time_t LastModified;
       bool IndexFile;
+      bool FailIgnore;
    };
    
    struct FetchResult

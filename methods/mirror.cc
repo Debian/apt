@@ -162,23 +162,25 @@ void MirrorMethod::CurrentQueueUriToMirror()
       }
    }
    _error->Error("Internal error: Failed to convert %s back to %s",
-		 Queue->Uri, BaseUri);
+		 Queue->Uri.c_str(), BaseUri.c_str());
 }
 
 bool MirrorMethod::TryNextMirror()
 {
-   if(Debug)
-      cerr << "using mirror: " << Mirror << endl;
-
    // find current mirror and select next one
    for (int i=0; i < AllMirrors.size()-1; i++) 
    {
       if (Queue->Uri.find(AllMirrors[i]) == 0)
       {
 	 Queue->Uri.replace(0, AllMirrors[i].size(), AllMirrors[i+1]);
+	 if (Debug)
+	    clog << "TryNextMirror: " << Queue->Uri << endl;
 	 return true;
       }
    }
+
+   if (Debug)
+      clog << "TryNextMirror could not find another mirror to try" << endl;
 
    return false;
 }
@@ -307,15 +309,12 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 	 return false;
       }
    }
+
+   if(Itm->Uri.find("mirror://") != string::npos)
+      Itm->Uri.replace(0,BaseUri.size(), Mirror);
+
    if(Debug)
-      clog << "selected mirror: " << Mirror << endl;
-
-
-   for (FetchItem *I = Queue; I != 0; I = I->Next)
-   {
-      if(I->Uri.find("mirror://") != string::npos)
-	 I->Uri.replace(0,BaseUri.size(), Mirror);
-   }
+      clog << "Fetch: " << Itm->Uri << endl << endl;
    
    // now run the real fetcher
    return HttpMethod::Fetch(Itm);
@@ -324,7 +323,7 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 void MirrorMethod::Fail(string Err,bool Transient)
 {
    // try the next mirror on fail
-   if (TryNextMirror()) 
+   if (!Queue->FailIgnore && TryNextMirror()) 
       return;
 
    // all mirrors failed, so bail out

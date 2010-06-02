@@ -381,6 +381,7 @@ int pkgAcqMethod::Run(bool Single)
 	    if (StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified) == false)
 	       Tmp->LastModified = 0;
 	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
+	    Tmp->FailIgnore = StringToBool(LookupTag(Message,"Fail-Ignore"),false);
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list

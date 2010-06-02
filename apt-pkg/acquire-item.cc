@@ -822,6 +822,13 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 {
 }
 									/*}}}*/
+// AcqIndexTrans::Custom600Headers - Insert custom request headers	/*{{{*/
+// ---------------------------------------------------------------------
+string pkgAcqIndexTrans::Custom600Headers()
+{
+   return "\nFail-Ignore: true";
+}
+									/*}}}*/
 // AcqIndexTrans::Failed - Silence failure messages for missing files	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
