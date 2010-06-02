@@ -36,7 +36,8 @@ class MirrorMethod : public HttpMethod
    bool DownloadMirrorFile(string uri);
    string GetMirrorFileName(string uri);
    bool InitMirrors();
-   bool SelectNextMirror();
+   bool TryNextMirror();
+   void CurrentQueueUriToMirror();
    bool Clean(string dir);
    
    // we need to overwrite those to transform the url back

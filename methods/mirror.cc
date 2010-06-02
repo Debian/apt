@@ -142,13 +142,44 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    return res;
 }
 
-bool MirrorMethod::SelectNextMirror()
+/* convert a the Queue->Uri back to the mirror base uri and look
+ * at all mirrors we have for this, this is needed as queue->uri
+ * may point to different mirrors (if TryNextMirror() was run)
+ */
+void MirrorMethod::CurrentQueueUriToMirror()
+{
+   // already in mirror:// style so nothing to do
+   if(Queue->Uri.find("mirror://") == 0)
+      return;
+
+   // find current mirror and select next one
+   for (int i=0; i < AllMirrors.size(); i++) 
+   {
+      if (Queue->Uri.find(AllMirrors[i]) == 0)
+      {
+	 Queue->Uri.replace(0, AllMirrors[i].size(), BaseUri);
+	 return;
+      }
+   }
+   _error->Error("Internal error: Failed to convert %s back to %s",
+		 Queue->Uri, BaseUri);
+}
+
+bool MirrorMethod::TryNextMirror()
 {
    if(Debug)
       cerr << "using mirror: " << Mirror << endl;
 
-   Mirror = AllMirrors[0];
-   UsedMirror = Mirror;
+   // find current mirror and select next one
+   for (int i=0; i < AllMirrors.size()-1; i++) 
+   {
+      if (Queue->Uri.find(AllMirrors[i]) == 0)
+      {
+	 Queue->Uri.replace(0, AllMirrors[i].size(), AllMirrors[i+1]);
+	 return true;
+      }
+   }
+
    return false;
 }
 
@@ -176,7 +207,8 @@ bool MirrorMethod::InitMirrors()
       if (s.size() > 0)
 	 AllMirrors.push_back(s);
    }
-   SelectNextMirror();
+   Mirror = AllMirrors[0];
+   UsedMirror = Mirror;
    return true;
 }
 
@@ -292,34 +324,27 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 void MirrorMethod::Fail(string Err,bool Transient)
 {
    // try the next mirror on fail
-   string old_mirror = Mirror;
-   if (SelectNextMirror()) 
-   {
-      Queue->Uri.replace(0, old_mirror.size(), Mirror);
+   if (TryNextMirror()) 
       return;
-   }
 
    // all mirrors failed, so bail out
    string s;
    strprintf(s, _("[Mirror: %s]"), Mirror.c_str());
    SetIP(s);
 
-   if(Queue->Uri.find("http://") != string::npos)
-      Queue->Uri.replace(0,Mirror.size(), BaseUri);
+   CurrentQueueUriToMirror();
    pkgAcqMethod::Fail(Err, Transient);
 }
 
 void MirrorMethod::URIStart(FetchResult &Res)
 {
-   if(Queue->Uri.find("http://") != string::npos)
-      Queue->Uri.replace(0,Mirror.size(), BaseUri);
+   CurrentQueueUriToMirror();
    pkgAcqMethod::URIStart(Res);
 }
 
 void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
 {
-   if(Queue->Uri.find("http://") != string::npos)
-      Queue->Uri.replace(0,Mirror.size(), BaseUri);
+   CurrentQueueUriToMirror();
    pkgAcqMethod::URIDone(Res, Alt);
 }
 
