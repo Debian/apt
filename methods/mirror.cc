@@ -301,7 +301,7 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
       DownloadMirrorFile(Itm->Uri);
    }
 
-   if(Mirror.empty()) {
+   if(AllMirrors.empty()) {
       if(!InitMirrors()) {
 	 // no valid mirror selected, something went wrong downloading
 	 // from the master mirror site most likely and there is
@@ -322,7 +322,14 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 
 void MirrorMethod::Fail(string Err,bool Transient)
 {
-   // try the next mirror on fail
+   // FIXME: TryNextMirror is not ideal for indexfile as we may
+   //        run into auth issues
+
+   if (Debug)
+      clog << "Failure to get " << Queue->Uri << endl;
+
+   // try the next mirror on fail (if its not a expected failure,
+   // e.g. translations are ok to ignore)
    if (!Queue->FailIgnore && TryNextMirror()) 
       return;
 
