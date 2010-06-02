@@ -162,7 +162,21 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    return res;
 }
 
-bool MirrorMethod::SelectMirror()
+bool MirrorMethod::SelectNextMirror()
+{
+   if (AllMirrors.size() < 1)
+      return false;
+
+   Mirror = AllMirrors[0];
+   AllMirrors.erase(AllMirrors.begin());
+   if(Debug)
+      cerr << "using mirror: " << Mirror << endl;
+
+   UsedMirror = Mirror;
+   return true;
+}
+
+bool MirrorMethod::InitMirrors()
 {
    // if we do not have a MirrorFile, fallback
    if(!FileExists(MirrorFile))
@@ -179,11 +193,13 @@ bool MirrorMethod::SelectMirror()
    //      get into sync issues (got indexfiles from mirror A,
    //      but packages from mirror B - one might be out of date etc)
    ifstream in(MirrorFile.c_str());
-   getline(in, Mirror);
-   if(Debug)
-      cerr << "Using mirror: " << Mirror << endl;
-
-   UsedMirror = Mirror;
+   string s;
+   while (!in.eof()) 
+   {
+      getline(in, s);
+      AllMirrors.push_back(s);
+   }
+   SelectNextMirror();
    return true;
 }
 
@@ -275,7 +291,7 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
    }
 
    if(Mirror.empty()) {
-      if(!SelectMirror()) {
+      if(!InitMirrors()) {
 	 // no valid mirror selected, something went wrong downloading
 	 // from the master mirror site most likely and there is
 	 // no old mirror file availalbe
