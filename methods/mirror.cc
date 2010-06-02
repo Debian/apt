@@ -197,7 +197,8 @@ bool MirrorMethod::InitMirrors()
    while (!in.eof()) 
    {
       getline(in, s);
-      AllMirrors.push_back(s);
+      if (s.size() > 0)
+	 AllMirrors.push_back(s);
    }
    SelectNextMirror();
    return true;
@@ -314,6 +315,15 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 
 void MirrorMethod::Fail(string Err,bool Transient)
 {
+   // try the next mirror on fail
+   string old_mirror = Mirror;
+   if (SelectNextMirror()) 
+   {
+      Queue->Uri.replace(0, old_mirror.size(), Mirror);
+      return;
+   }
+
+   // all mirrors failed, so bail out
    if(Queue->Uri.find("http://") != string::npos)
       Queue->Uri.replace(0,Mirror.size(), BaseUri);
    pkgAcqMethod::Fail(Err, Transient);
