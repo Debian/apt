@@ -106,7 +106,7 @@ bool MirrorMethod::Clean(string Dir)
       for(I=list.begin(); I != list.end(); I++)
       {
 	 string uri = (*I)->GetURI();
-	 if(uri.substr(0,strlen("mirror://")) != string("mirror://"))
+	 if(uri.find("mirror://") != 0)
 	    continue;
 	 string BaseUri = uri.substr(0,uri.size()-1);
 	 if (URItoFileName(BaseUri) == Dir->d_name)
