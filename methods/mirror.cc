@@ -128,28 +128,6 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile(): " << endl;
 
-   // check the file, if it is not older than RefreshInterval just use it
-   // otherwise try to get a new one
-   if(FileExists(MirrorFile)) 
-   {
-      struct stat buf;
-      time_t t,now,refresh;
-      if(stat(MirrorFile.c_str(), &buf) != 0)
-	 return false;
-      t = std::max(buf.st_mtime, buf.st_ctime);
-      now = time(NULL);
-      refresh = 60*_config->FindI("Acquire::Mirror::RefreshInterval",360);
-      if(t + refresh > now)
-      {
-	 if(Debug)
-	    clog << "Mirror file is in RefreshInterval" << endl;
-	 DownloadedMirrorFile = true;
-	 return true;
-      }
-      if(Debug)
-	 clog << "Mirror file " << MirrorFile << " older than " << refresh << "min, re-download it" << endl;
-   }
-
    // not that great to use pkgAcquire here, but we do not have 
    // any other way right now
    string fetch = BaseUri;
