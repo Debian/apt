@@ -25,6 +25,8 @@
 
 using namespace std;
 
+#include<sstream>
+
 #include "mirror.h"
 #include "http.h"
 #include "apti18n.h"
@@ -164,16 +166,12 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
 
 bool MirrorMethod::SelectNextMirror()
 {
-   if (AllMirrors.size() < 1)
-      return false;
-
-   Mirror = AllMirrors[0];
-   AllMirrors.erase(AllMirrors.begin());
    if(Debug)
       cerr << "using mirror: " << Mirror << endl;
 
+   Mirror = AllMirrors[0];
    UsedMirror = Mirror;
-   return true;
+   return false;
 }
 
 bool MirrorMethod::InitMirrors()
@@ -324,6 +322,10 @@ void MirrorMethod::Fail(string Err,bool Transient)
    }
 
    // all mirrors failed, so bail out
+   string s;
+   strprintf(s, _("[Mirror: %s]"), Mirror.c_str());
+   SetIP(s);
+
    if(Queue->Uri.find("http://") != string::npos)
       Queue->Uri.replace(0,Mirror.size(), BaseUri);
    pkgAcqMethod::Fail(Err, Transient);
