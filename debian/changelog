@@ -5,6 +5,8 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - switch {,Install-}Size to unsigned long long
   * apt-pkg/depcache.cc:
     - deal with long long, not with int to remove 2GB Limit (LP: #250909)
+    - deprecate AddSize with Multiplier as it is unused and switch to
+      boolean instead to handle the sizes more gracefully.
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 03 Jun 2010 09:19:01 +0200
 

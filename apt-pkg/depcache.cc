@@ -407,8 +407,11 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
 									/*}}}*/
 // DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
 // ---------------------------------------------------------------------
-/* Call with Mult = -1 to preform the inverse opration */
-void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
+/* Call with Mult = -1 to preform the inverse opration
+   The Mult increases the complexity of the calulations here and is unused -
+   or do we really have a usecase for removing the size of a package two
+   times? So let us replace it with a simple bool and be done with it… */
+__deprecated void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
 {
    StateCache &P = PkgState[Pkg->ID];
    
@@ -450,6 +453,72 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
    if (Pkg->CurrentVer != 0 && P.InstallVer == 0)
    {
       iUsrSize -= (signed long long)(Mult*Pkg.CurrentVer()->InstalledSize);
+      return;
+   }   
+}
+									/*}}}*/
+// DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
+// ---------------------------------------------------------------------
+/* Call with Inverse = true to preform the inverse opration */
+void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const &Inverse)
+{
+   StateCache &P = PkgState[Pkg->ID];
+   
+   if (Pkg->VersionList == 0)
+      return;
+   
+   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
+       P.Keep() == true)
+      return;
+   
+   // Compute the size data
+   if (P.NewInstall() == true)
+   {
+      if (Inverse == false) {
+	 iUsrSize += P.InstVerIter(*this)->InstalledSize;
+	 iDownloadSize += P.InstVerIter(*this)->Size;
+      } else {
+	 iUsrSize -= P.InstVerIter(*this)->InstalledSize;
+	 iDownloadSize -= P.InstVerIter(*this)->Size;
+      }
+      return;
+   }
+   
+   // Upgrading
+   if (Pkg->CurrentVer != 0 && 
+       (P.InstallVer != (Version *)Pkg.CurrentVer() || 
+	(P.iFlags & ReInstall) == ReInstall) && P.InstallVer != 0)
+   {
+      if (Inverse == false) {
+	 iUsrSize -= Pkg.CurrentVer()->InstalledSize;
+	 iUsrSize += P.InstVerIter(*this)->InstalledSize;
+	 iDownloadSize += P.InstVerIter(*this)->Size;
+      } else {
+	 iUsrSize -= P.InstVerIter(*this)->InstalledSize;
+	 iUsrSize += Pkg.CurrentVer()->InstalledSize;
+	 iDownloadSize -= P.InstVerIter(*this)->Size;
+      }
+      return;
+   }
+   
+   // Reinstall
+   if (Pkg.State() == pkgCache::PkgIterator::NeedsUnpack &&
+       P.Delete() == false)
+   {
+      if (Inverse == false)
+	 iDownloadSize += P.InstVerIter(*this)->Size;
+      else
+	 iDownloadSize -= P.InstVerIter(*this)->Size;
+      return;
+   }
+   
+   // Removing
+   if (Pkg->CurrentVer != 0 && P.InstallVer == 0)
+   {
+      if (Inverse == false)
+	 iUsrSize -= Pkg.CurrentVer()->InstalledSize;
+      else
+	 iUsrSize += Pkg.CurrentVer()->InstalledSize;
       return;
    }   
 }
