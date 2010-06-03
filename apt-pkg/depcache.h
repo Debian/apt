@@ -286,9 +286,11 @@ class pkgDepCache : protected pkgCache::Namespace
    pkgCache *Cache;
    StateCache *PkgState;
    unsigned char *DepState;
-   
-   double iUsrSize;
-   double iDownloadSize;
+
+   /** Stores the space changes after installation */
+   signed long long iUsrSize;
+   /** Stores how much we need to download to get the packages */
+   unsigned long long iDownloadSize;
    unsigned long iInstCount;
    unsigned long iDelCount;
    unsigned long iKeepCount;
@@ -452,8 +454,8 @@ class pkgDepCache : protected pkgCache::Namespace
    bool writeStateFile(OpProgress *prog, bool InstalledOnly=true);
    
    // Size queries
-   inline double UsrSize() {return iUsrSize;};
-   inline double DebSize() {return iDownloadSize;};
+   inline signed long long UsrSize() {return iUsrSize;};
+   inline unsigned long long DebSize() {return iDownloadSize;};
    inline unsigned long DelCount() {return iDelCount;};
    inline unsigned long KeepCount() {return iKeepCount;};
    inline unsigned long InstCount() {return iInstCount;};
