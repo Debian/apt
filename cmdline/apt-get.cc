@@ -837,9 +837,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       return false;
 
    // Display statistics
-   double FetchBytes = Fetcher.FetchNeeded();
-   double FetchPBytes = Fetcher.PartialPresent();
-   double DebBytes = Fetcher.TotalNeeded();
+   unsigned long long FetchBytes = Fetcher.FetchNeeded();
+   unsigned long long FetchPBytes = Fetcher.PartialPresent();
+   unsigned long long DebBytes = Fetcher.TotalNeeded();
    if (DebBytes != Cache->DebSize())
    {
       c0out << DebBytes << ',' << Cache->DebSize() << endl;
@@ -2362,9 +2362,9 @@ bool DoSource(CommandLine &CmdL)
    }
    
    // Display statistics
-   double FetchBytes = Fetcher.FetchNeeded();
-   double FetchPBytes = Fetcher.PartialPresent();
-   double DebBytes = Fetcher.TotalNeeded();
+   unsigned long long FetchBytes = Fetcher.FetchNeeded();
+   unsigned long long FetchPBytes = Fetcher.PartialPresent();
+   unsigned long long DebBytes = Fetcher.TotalNeeded();
 
    // Check for enough free space
    struct statvfs Buf;
