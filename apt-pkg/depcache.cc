@@ -422,8 +422,8 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
    // Compute the size data
    if (P.NewInstall() == true)
    {
-      iUsrSize += (signed)(Mult*P.InstVerIter(*this)->InstalledSize);
-      iDownloadSize += (signed)(Mult*P.InstVerIter(*this)->Size);
+      iUsrSize += (signed long long)(Mult*P.InstVerIter(*this)->InstalledSize);
+      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
       return;
    }
    
@@ -432,9 +432,9 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
        (P.InstallVer != (Version *)Pkg.CurrentVer() || 
 	(P.iFlags & ReInstall) == ReInstall) && P.InstallVer != 0)
    {
-      iUsrSize += (signed)(Mult*((signed)P.InstVerIter(*this)->InstalledSize - 
-			(signed)Pkg.CurrentVer()->InstalledSize));
-      iDownloadSize += (signed)(Mult*P.InstVerIter(*this)->Size);
+      iUsrSize += (signed long long)(Mult*((signed long long)P.InstVerIter(*this)->InstalledSize - 
+			(signed long long)Pkg.CurrentVer()->InstalledSize));
+      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
       return;
    }
    
@@ -442,14 +442,14 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
    if (Pkg.State() == pkgCache::PkgIterator::NeedsUnpack &&
        P.Delete() == false)
    {
-      iDownloadSize += (signed)(Mult*P.InstVerIter(*this)->Size);
+      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
       return;
    }
    
    // Removing
    if (Pkg->CurrentVer != 0 && P.InstallVer == 0)
    {
-      iUsrSize -= (signed)(Mult*Pkg.CurrentVer()->InstalledSize);
+      iUsrSize -= (signed long long)(Mult*Pkg.CurrentVer()->InstalledSize);
       return;
    }   
 }

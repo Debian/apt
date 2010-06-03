@@ -1,3 +1,13 @@
+apt (0.7.26~exp6) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcache.h:
+    - switch {,Install-}Size to unsigned long long
+  * apt-pkg/depcache.cc:
+    - deal with long long, not with int to remove 2GB Limit (LP: #250909)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 03 Jun 2010 09:19:01 +0200
+
 apt (0.7.26~exp5) experimental; urgency=low
 
   [ David Kalnischkies ]
