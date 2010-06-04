@@ -23,6 +23,7 @@
 #include <apt-pkg/sourcelist.h>
 
 class pkgPolicy;
+class pkgSourceList;
 class pkgCacheFile
 {
    protected:
@@ -31,6 +32,7 @@ class pkgCacheFile
    pkgCache *Cache;
    pkgDepCache *DCache;
    pkgPolicy *Policy;
+   pkgSourceList *SrcList;
 
    public:
 
@@ -39,6 +41,10 @@ class pkgCacheFile
    inline operator pkgCache *() {return Cache;};
    inline operator pkgDepCache &() {return *DCache;};
    inline operator pkgDepCache *() {return DCache;};
+   inline operator pkgPolicy &() {return *Policy;};
+   inline operator pkgPolicy *() {return Policy;};
+   inline operator pkgSourceList &() {return *SrcList;};
+   inline operator pkgSourceList *() {return SrcList;};
    inline pkgDepCache *operator ->() {return DCache;};
    inline pkgDepCache &operator *() {return *DCache;};
    inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) {return (*DCache)[I];};
@@ -46,12 +52,19 @@ class pkgCacheFile
 
    bool BuildCaches(OpProgress *Progress = NULL,bool WithLock = true);
    __deprecated bool BuildCaches(OpProgress &Progress,bool const &WithLock = true) { return BuildCaches(&Progress, WithLock); };
+   bool BuildSourceList(OpProgress *Progress = NULL);
    bool BuildPolicy(OpProgress *Progress = NULL);
    bool BuildDepCache(OpProgress *Progress = NULL);
    bool Open(OpProgress *Progress = NULL, bool WithLock = true);
+   inline bool ReadOnlyOpen(OpProgress *Progress = NULL) { return Open(Progress, false); };
    __deprecated bool Open(OpProgress &Progress,bool const &WithLock = true) { return Open(&Progress, WithLock); };
    void Close();
-   
+
+   inline pkgCache* GetPkgCache() { BuildCaches(NULL, false); return Cache; };
+   inline pkgDepCache* GetDepCache() { BuildDepCache(); return DCache; };
+   inline pkgPolicy* GetPolicy() { BuildPolicy(); return Policy; };
+   inline pkgSourceList* GetSourceList() { BuildSourceList(); return SrcList; };
+
    pkgCacheFile();
    virtual ~pkgCacheFile();
 };

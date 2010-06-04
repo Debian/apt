@@ -27,7 +27,8 @@
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgCacheFile::pkgCacheFile() : Map(0), Cache(0), DCache(0), Policy(0)
+pkgCacheFile::pkgCacheFile() : Map(NULL), Cache(NULL), DCache(NULL),
+				Policy(NULL), SrcList(NULL)
 {
 }
 									/*}}}*/
@@ -38,16 +39,30 @@ pkgCacheFile::~pkgCacheFile()
 {
    delete DCache;
    delete Policy;
+   delete SrcList;
    delete Cache;
    delete Map;
    _system->UnLock(true);
-}   
+}
 									/*}}}*/
 // CacheFile::BuildCaches - Open and build the cache files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 {
+   if (Cache != NULL)
+      return true;
+
+   if (_config->FindB("pkgCacheFile::Generate", true) == false)
+   {
+      Map = new MMap(*new FileFd(_config->FindFile("Dir::Cache::pkgcache"),
+		     FileFd::ReadOnly),MMap::Public|MMap::ReadOnly);
+      Cache = new pkgCache(Map);
+      if (_error->PendingError() == true)
+         return false;
+      return true;
+   }
+
    const bool ErrorWasEmpty = _error->empty();
    if (WithLock == true)
       if (_system->Lock() == false)
@@ -58,14 +73,11 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
       
    if (_error->PendingError() == true)
       return false;
-   
-   // Read the source list
-   pkgSourceList List;
-   if (List.ReadMainList() == false)
-      return _error->Error(_("The list of sources could not be read."));
+
+   BuildSourceList(Progress);
 
    // Read the caches
-   bool Res = pkgCacheGenerator::MakeStatusCache(List,Progress,&Map,!WithLock);
+   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map,!WithLock);
    if (Progress != NULL)
       Progress->Done();
    if (Res == false)
@@ -81,11 +93,28 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
    return true;
 }
 									/*}}}*/
+// CacheFile::BuildSourceList - Open and build all relevant sources.list/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCacheFile::BuildSourceList(OpProgress *Progress)
+{
+   if (SrcList != NULL)
+      return true;
+
+   SrcList = new pkgSourceList();
+   if (SrcList->ReadMainList() == false)
+      return _error->Error(_("The list of sources could not be read."));
+   return true;
+}
+									/*}}}*/
 // CacheFile::BuildPolicy - Open and build all relevant preferences	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgCacheFile::BuildPolicy(OpProgress *Progress)
 {
+   if (Policy != NULL)
+      return true;
+
    Policy = new pkgPolicy(Cache);
    if (_error->PendingError() == true)
       return false;
@@ -101,6 +130,9 @@ bool pkgCacheFile::BuildPolicy(OpProgress *Progress)
 /* */
 bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
 {
+   if (DCache != NULL)
+      return true;
+
    DCache = new pkgDepCache(Cache,Policy);
    if (_error->PendingError() == true)
       return false;
@@ -139,12 +171,14 @@ void pkgCacheFile::Close()
    delete DCache;
    delete Policy;
    delete Cache;
+   delete SrcList;
    delete Map;
    _system->UnLock(true);
 
-   Map = 0;
-   DCache = 0;
-   Policy = 0;
-   Cache = 0;
+   Map = NULL;
+   DCache = NULL;
+   Policy = NULL;
+   Cache = NULL;
+   SrcList = NULL;
 }
 									/*}}}*/
