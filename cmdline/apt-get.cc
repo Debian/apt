@@ -91,14 +91,14 @@ class CacheFile : public pkgCacheFile
    bool BuildCaches(bool WithLock = true)
    {
       OpTextProgress Prog(*_config);
-      if (pkgCacheFile::BuildCaches(Prog,WithLock) == false)
+      if (pkgCacheFile::BuildCaches(&Prog,WithLock) == false)
 	 return false;
       return true;
    }
    bool Open(bool WithLock = true) 
    {
       OpTextProgress Prog(*_config);
-      if (pkgCacheFile::Open(Prog,WithLock) == false)
+      if (pkgCacheFile::Open(&Prog,WithLock) == false)
 	 return false;
       Sort();
       
