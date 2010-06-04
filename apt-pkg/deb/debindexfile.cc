@@ -262,15 +262,15 @@ unsigned long debPackagesIndex::Size() const
 // PackagesIndex::Merge - Load the index file into a cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    string PackageFile = IndexFile("Packages");
    FileFd Pkg(PackageFile,FileFd::ReadOnly);
    debListParser Parser(&Pkg, Architecture);
    if (_error->PendingError() == true)
       return _error->Error("Problem opening %s",PackageFile.c_str());
-   
-   Prog.SubProgress(0,Info("Packages"));
+   if (Prog != NULL)
+      Prog->SubProgress(0,Info("Packages"));
    ::URI Tmp(URI);
    if (Gen.SelectFile(PackageFile,Tmp.Host,*this) == false)
       return _error->Error("Problem with SelectFile %s",PackageFile.c_str());
@@ -445,7 +445,7 @@ unsigned long debTranslationsIndex::Size() const
 // TranslationsIndex::Merge - Load the index file into a cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    // Check the translation file, if in use
    string TranslationFile = IndexFile(Language);
@@ -456,7 +456,8 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
      if (_error->PendingError() == true)
        return false;
      
-     Prog.SubProgress(0, Info(TranslationFile.c_str()));
+     if (Prog != NULL)
+	Prog->SubProgress(0, Info(TranslationFile.c_str()));
      if (Gen.SelectFile(TranslationFile,string(),*this) == false)
        return _error->Error("Problem with SelectFile %s",TranslationFile.c_str());
 
@@ -529,7 +530,7 @@ unsigned long debStatusIndex::Size() const
 // StatusIndex::Merge - Load the index file into a cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    FileFd Pkg(File,FileFd::ReadOnly);
    if (_error->PendingError() == true)
@@ -537,8 +538,9 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
    debListParser Parser(&Pkg);
    if (_error->PendingError() == true)
       return false;
-   
-   Prog.SubProgress(0,File);
+
+   if (Prog != NULL)
+      Prog->SubProgress(0,File);
    if (Gen.SelectFile(File,string(),*this,pkgCache::Flag::NotSource) == false)
       return _error->Error("Problem with SelectFile %s",File.c_str());
 

@@ -46,7 +46,7 @@ pkgCacheFile::~pkgCacheFile()
 // CacheFile::BuildCaches - Open and build the cache files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheFile::BuildCaches(OpProgress &Progress,bool WithLock)
+bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 {
    const bool ErrorWasEmpty = _error->empty();
    if (WithLock == true)
@@ -65,8 +65,9 @@ bool pkgCacheFile::BuildCaches(OpProgress &Progress,bool WithLock)
       return _error->Error(_("The list of sources could not be read."));
 
    // Read the caches
-   bool Res = pkgMakeStatusCache(List,Progress,&Map,!WithLock);
-   Progress.Done();
+   bool Res = pkgCacheGenerator::MakeStatusCache(List,Progress,&Map,!WithLock);
+   if (Progress != NULL)
+      Progress->Done();
    if (Res == false)
       return _error->Error(_("The package lists or status file could not be parsed or opened."));
 
@@ -80,29 +81,50 @@ bool pkgCacheFile::BuildCaches(OpProgress &Progress,bool WithLock)
    return true;
 }
 									/*}}}*/
-// CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
+// CacheFile::BuildPolicy - Open and build all relevant preferences	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheFile::Open(OpProgress &Progress,bool WithLock)
+bool pkgCacheFile::BuildPolicy(OpProgress *Progress)
 {
-   if (BuildCaches(Progress,WithLock) == false)
-      return false;
-   
-   // The policy engine
    Policy = new pkgPolicy(Cache);
    if (_error->PendingError() == true)
       return false;
 
    if (ReadPinFile(*Policy) == false || ReadPinDir(*Policy) == false)
       return false;
-   
-   // Create the dependency cache
+
+   return true;
+}
+									/*}}}*/
+// CacheFile::BuildDepCache - Open and build the dependency cache	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
+{
    DCache = new pkgDepCache(Cache,Policy);
    if (_error->PendingError() == true)
       return false;
-   
-   DCache->Init(&Progress);
-   Progress.Done();
+
+   DCache->Init(Progress);
+   return true;
+}
+									/*}}}*/
+// CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgCacheFile::Open(OpProgress *Progress, bool WithLock)
+{
+   if (BuildCaches(Progress,WithLock) == false)
+      return false;
+
+   if (BuildPolicy(Progress) == false)
+      return false;
+
+   if (BuildDepCache(Progress) == false)
+      return false;
+
+   if (Progress != NULL)
+      Progress->Done();
    if (_error->PendingError() == true)
       return false;
    

@@ -30,11 +30,10 @@ class pkgCacheFile
    MMap *Map;
    pkgCache *Cache;
    pkgDepCache *DCache;
-   
+   pkgPolicy *Policy;
+
    public:
 
-   pkgPolicy *Policy;
-      
    // We look pretty much exactly like a pointer to a dep cache
    inline operator pkgCache &() {return *Cache;};
    inline operator pkgCache *() {return Cache;};
@@ -45,12 +44,16 @@ class pkgCacheFile
    inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) {return (*DCache)[I];};
    inline unsigned char &operator [](pkgCache::DepIterator const &I) {return (*DCache)[I];};
 
-   bool BuildCaches(OpProgress &Progress,bool WithLock = true);
-   bool Open(OpProgress &Progress,bool WithLock = true);
+   bool BuildCaches(OpProgress *Progress = NULL,bool WithLock = true);
+   __deprecated bool BuildCaches(OpProgress &Progress,bool const &WithLock = true) { return BuildCaches(&Progress, WithLock); };
+   bool BuildPolicy(OpProgress *Progress = NULL);
+   bool BuildDepCache(OpProgress *Progress = NULL);
+   bool Open(OpProgress *Progress = NULL, bool WithLock = true);
+   __deprecated bool Open(OpProgress &Progress,bool const &WithLock = true) { return Open(&Progress, WithLock); };
    void Close();
    
    pkgCacheFile();
-   ~pkgCacheFile();
+   virtual ~pkgCacheFile();
 };
 
 #endif

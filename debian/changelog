@@ -32,6 +32,9 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - get the best matching arch package from a group with FindPreferredPkg
   * cmdline/apt-cache.cc:
     - make the search multiarch compatible by using GrpIterator instead
+  * apt-pkg/cachefile.{cc,h}:
+    - split Open() into submethods to be able to build only parts
+    - make the OpProgress optional in the Cache buildprocess
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 31 May 2010 22:36:35 +0200
 

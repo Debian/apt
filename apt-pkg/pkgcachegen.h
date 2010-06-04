@@ -76,7 +76,11 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-   bool FinishCache(OpProgress &Progress);
+   bool FinishCache(OpProgress *Progress);
+
+   static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
+			MMap **OutMap = 0,bool AllowMem = false);
+   static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
 
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
@@ -134,9 +138,11 @@ class pkgCacheGenerator::ListParser
    virtual ~ListParser() {};
 };
 									/*}}}*/
+
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
 bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap);
+
 
 #ifdef APT_COMPATIBILITY
 #if APT_COMPATIBILITY != 986
@@ -145,7 +151,7 @@ bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap);
 MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
 {
    MMap *Map = 0;
-   if (pkgMakeStatusCache(List,Progress,&Map,true) == false)
+   if (pkgCacheGenerator::MakeStatusCache(List,&Progress,&Map,true) == false)
       return 0;
    return Map;
 }
