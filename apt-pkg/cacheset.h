@@ -83,8 +83,8 @@ public:									/*{{{*/
 	    \param Cache the packages are in
 	    \param string String the package name(s) should be extracted from
 	    \param out stream to print various notices to */
-	static APT::PackageSet FromString(pkgCacheFile &Cache, const char * const string, std::ostream &out);
-	static APT::PackageSet FromString(pkgCacheFile &Cache, const char * const string) {
+	static APT::PackageSet FromString(pkgCacheFile &Cache, std::string const &string, std::ostream &out);
+	static APT::PackageSet FromString(pkgCacheFile &Cache, std::string const &string) {
 		std::ostream out (std::ofstream("/dev/null").rdbuf());
 		return APT::PackageSet::FromString(Cache, string, out);
 	}

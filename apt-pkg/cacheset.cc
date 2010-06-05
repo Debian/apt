@@ -87,17 +87,31 @@ PackageSet PackageSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline
 }
 									/*}}}*/
 // FromString - Return all packages matching a specific string		/*{{{*/
-PackageSet PackageSet::FromString(pkgCacheFile &Cache, const char * const str, std::ostream &out) {
-	pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(str);
-	if (Grp.end() == false) {
-		pkgCache::PkgIterator Pkg = Grp.FindPreferredPkg();
+PackageSet PackageSet::FromString(pkgCacheFile &Cache, std::string const &str, std::ostream &out) {
+	std::string pkg = str;
+	size_t archfound = pkg.find_last_of(':');
+	std::string arch;
+	if (archfound != std::string::npos) {
+		arch = pkg.substr(archfound+1);
+		pkg.erase(archfound);
+	}
+
+	pkgCache::PkgIterator Pkg;
+	if (arch.empty() == true) {
+		pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(pkg);
+		if (Grp.end() == false)
+			Pkg = Grp.FindPreferredPkg();
+	} else
+		Pkg = Cache.GetPkgCache()->FindPkg(pkg, arch);
+
+	if (Pkg.end() == false) {
 		PackageSet pkgset;
 		pkgset.insert(Pkg);
 		return pkgset;
 	}
 	PackageSet regex = FromRegEx(Cache, str, out);
 	if (regex.empty() == true)
-		_error->Warning(_("Unable to locate package %s"), str);
+		_error->Warning(_("Unable to locate package %s"), str.c_str());
 	return regex;
 }
 									/*}}}*/
@@ -188,7 +202,7 @@ pkgCache::VerIterator VersionSet::getCandidateVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, bool const &AllowError) {
 	if (unlikely(Cache.BuildDepCache() == false))
 		return pkgCache::VerIterator(*Cache);
-	pkgCache::VerIterator Cand = Cache[Pkg].InstVerIter(Cache);
+	pkgCache::VerIterator Cand = Cache[Pkg].CandidateVerIter(Cache);
 	if (AllowError == false && Cand.end() == true)
 		_error->Error(_("Can't select candidate version from package %s as it has no candidate"), Pkg.FullName(true).c_str());
 	return Cand;
