@@ -1831,6 +1831,8 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'n',"names-only","APT::Cache::NamesOnly",0},
       {0,"all-names","APT::Cache::AllNames",0},
       {0,"recurse","APT::Cache::RecurseDepends",0},
+      {'t',"target-release","APT::Default-Release",CommandLine::HasArg},
+      {'t',"default-release","APT::Default-Release",CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,"installed","APT::Cache::Installed",0},
