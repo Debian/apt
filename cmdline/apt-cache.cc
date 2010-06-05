@@ -81,18 +81,8 @@ void LocalitySort(pkgCache::DescFile **begin,
 // UnMet - Show unmet dependencies					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool UnMet(CommandLine &CmdL)
+bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
 {
-   bool const Important = _config->FindB("APT::Cache::Important",false);
-
-   pkgCacheFile CacheFile;
-   if (unlikely(CacheFile.GetPkgCache() == NULL))
-      return false;
-
-   for (pkgCache::PkgIterator P = CacheFile.GetPkgCache()->PkgBegin(); P.end() == false; P++)
-   {
-      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
-      {
 	 bool Header = false;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false;)
 	 {
@@ -100,20 +90,19 @@ bool UnMet(CommandLine &CmdL)
 	    pkgCache::DepIterator Start;
 	    pkgCache::DepIterator End;
 	    D.GlobOr(Start,End);
-	    
-	    // Skip conflicts and replaces
-	    if (End->Type != pkgCache::Dep::PreDepends &&
-		End->Type != pkgCache::Dep::Depends && 
-		End->Type != pkgCache::Dep::Suggests &&
-	        End->Type != pkgCache::Dep::Recommends)
-	       continue;
 
 	    // Important deps only
 	    if (Important == true)
 	       if (End->Type != pkgCache::Dep::PreDepends &&
 	           End->Type != pkgCache::Dep::Depends)
 		  continue;
-	    
+
+	    // Skip conflicts and replaces
+	    if (End->Type == pkgCache::Dep::DpkgBreaks ||
+		End->Type == pkgCache::Dep::Replaces ||
+		End->Type == pkgCache::Dep::Conflicts)
+	       continue;
+
 	    // Verify the or group
 	    bool OK = false;
 	    pkgCache::DepIterator RealStart = Start;
@@ -142,7 +131,7 @@ bool UnMet(CommandLine &CmdL)
 	    // Oops, it failed..
 	    if (Header == false)
 	       ioprintf(cout,_("Package %s version %s has an unmet dep:\n"),
-			P.FullName(true).c_str(),V.VerStr());
+			V.ParentPkg().FullName(true).c_str(),V.VerStr());
 	    Header = true;
 	    
 	    // Print out the dep type
@@ -164,9 +153,31 @@ bool UnMet(CommandLine &CmdL)
 	    while (1);
 	    
 	    cout << endl;
-	 }	 
-      }
-   }   
+	 }
+   return true;
+}
+bool UnMet(CommandLine &CmdL)
+{
+   bool const Important = _config->FindB("APT::Cache::Important",false);
+
+   pkgCacheFile CacheFile;
+   if (unlikely(CacheFile.GetPkgCache() == NULL))
+      return false;
+
+   if (CmdL.FileSize() <= 1)
+   {
+      for (pkgCache::PkgIterator P = CacheFile.GetPkgCache()->PkgBegin(); P.end() == false; P++)
+	 for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
+	    if (ShowUnMet(V, Important) == false)
+	       return false;
+   }
+   else
+   {
+      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+      for (APT::VersionSet::iterator V = verset.begin(); V != verset.end(); ++V)
+	 if (ShowUnMet(V, Important) == false)
+	    return false;
+   }
    return true;
 }
 									/*}}}*/
