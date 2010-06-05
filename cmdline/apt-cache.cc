@@ -1555,6 +1555,12 @@ bool Policy(CommandLine &CmdL)
    if (unlikely(Cache == NULL || Plcy == NULL || SrcList == NULL))
       return false;
 
+   /* Should the MultiArchKiller be run to see which pseudo packages for an
+      arch all package are currently installed? Activating it gives a speed
+      penality for no real gain beside enhanced debugging, so in general no. */
+   if (_config->FindB("APT::Cache::Policy::DepCache", false) == true)
+      CacheFile.GetDepCache();
+
    // Print out all of the package files
    if (CmdL.FileList[1] == 0)
    {
