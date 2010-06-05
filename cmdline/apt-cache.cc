@@ -1243,11 +1243,11 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    pkgCache::PkgFileIterator I = Vf.File();
    if (I.IsOk() == false)
       return _error->Error(_("Package file %s is out of sync."),I.FileName());
-   
-   FileFd PkgF(I.FileName(),FileFd::ReadOnly);
-   if (_error->PendingError() == true)
+
+   FileFd PkgF;
+   if (PkgF.Open(I.FileName(), FileFd::ReadOnly) == false)
       return false;
-   
+
    // Read the record
    unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+1];
    Buffer[V.FileList()->Size] = '\n';
