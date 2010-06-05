@@ -1456,7 +1456,7 @@ bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    APT::VersionSet::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
-			APT::VersionSet::ALL : APT::VersionSet::INSTALLED;
+			APT::VersionSet::ALL : APT::VersionSet::CANDIDATE;
    APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select);
    for (APT::VersionSet::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
