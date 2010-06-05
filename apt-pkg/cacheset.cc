@@ -13,6 +13,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/versionmatch.h>
 
 #include <apti18n.h>
 
@@ -22,7 +23,7 @@
 									/*}}}*/
 namespace APT {
 // FromRegEx - Return all packages in the cache matching a pattern	/*{{{*/
-PackageSet PackageSet::FromRegEx(pkgCache &Cache, std::string pattern, std::ostream &out) {
+PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, std::ostream &out) {
 	PackageSet pkgset;
 	std::string arch = "native";
 	static const char * const isregex = ".?+*|[^$";
@@ -48,7 +49,7 @@ PackageSet PackageSet::FromRegEx(pkgCache &Cache, std::string pattern, std::ostr
 		return pkgset;
 	}
 
-	for (pkgCache::GrpIterator Grp = Cache.GrpBegin(); Grp.end() == false; ++Grp)
+	for (pkgCache::GrpIterator Grp = Cache.GetPkgCache()->GrpBegin(); Grp.end() == false; ++Grp)
 	{
 		if (regexec(&Pattern, Grp.Name(), 0, 0, 0) != 0)
 			continue;
@@ -76,28 +77,129 @@ PackageSet PackageSet::FromRegEx(pkgCache &Cache, std::string pattern, std::ostr
 }
 									/*}}}*/
 // FromCommandLine - Return all packages specified on commandline	/*{{{*/
-PackageSet PackageSet::FromCommandLine(pkgCache &Cache, const char **cmdline, std::ostream &out) {
+PackageSet PackageSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline, std::ostream &out) {
 	PackageSet pkgset;
 	for (const char **I = cmdline + 1; *I != 0; I++) {
-		pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-		if (Pkg.end() == true) {
-			std::vector<std::string> archs = APT::Configuration::getArchitectures();
-			for (std::vector<std::string>::const_iterator a = archs.begin();
-			     a != archs.end() || Pkg.end() != true; ++a) {
-				Pkg = Cache.FindPkg(*I, *a);
-			}
-			if (Pkg.end() == true) {
-				PackageSet regex = FromRegEx(Cache, *I, out);
-				if (regex.empty() == true)
-					_error->Warning(_("Unable to locate package %s"),*I);
-				else
-					pkgset.insert(regex.begin(), regex.end());
-				continue;
-			}
-		}
-		pkgset.insert(Pkg);
+		PackageSet pset = FromString(Cache, *I, out);
+		pkgset.insert(pset.begin(), pset.end());
 	}
 	return pkgset;
+}
+									/*}}}*/
+// FromString - Return all packages matching a specific string		/*{{{*/
+PackageSet PackageSet::FromString(pkgCacheFile &Cache, const char * const str, std::ostream &out) {
+	pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(str);
+	if (Grp.end() == false) {
+		pkgCache::PkgIterator Pkg = Grp.FindPreferredPkg();
+		PackageSet pkgset;
+		pkgset.insert(Pkg);
+		return pkgset;
+	}
+	PackageSet regex = FromRegEx(Cache, str, out);
+	if (regex.empty() == true)
+		_error->Warning(_("Unable to locate package %s"), str);
+	return regex;
+}
+									/*}}}*/
+// FromCommandLine - Return all versions specified on commandline	/*{{{*/
+APT::VersionSet VersionSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
+		APT::VersionSet::Version const &fallback, std::ostream &out) {
+	VersionSet verset;
+	for (const char **I = cmdline + 1; *I != 0; I++) {
+		std::string pkg = *I;
+		std::string ver;
+		bool verIsRel = false;
+		size_t const vertag = pkg.find_last_of("/=");
+		if (vertag != string::npos) {
+			ver = pkg.substr(vertag+1);
+			verIsRel = (pkg[vertag] == '/');
+			pkg.erase(vertag);
+		}
+		PackageSet pkgset = PackageSet::FromString(Cache, pkg.c_str(), out);
+		for (PackageSet::const_iterator P = pkgset.begin();
+		     P != pkgset.end(); ++P) {
+			if (vertag != string::npos) {
+				pkgVersionMatch Match(ver, (verIsRel == true ? pkgVersionMatch::Release :
+							pkgVersionMatch::Version));
+				pkgCache::VerIterator V = Match.Find(P);
+				if (V.end() == true) {
+					if (verIsRel == true)
+						_error->Error(_("Release '%s' for '%s' was not found"),
+								ver.c_str(), P.FullName(true).c_str());
+					else
+						_error->Error(_("Version '%s' for '%s' was not found"),
+								ver.c_str(), P.FullName(true).c_str());
+					continue;
+				}
+				if (strcmp(ver.c_str(), V.VerStr()) != 0)
+					ioprintf(out, _("Selected version %s (%s) for %s\n"),
+						 V.VerStr(), V.RelStr().c_str(), P.FullName(true).c_str());
+				verset.insert(V);
+			} else {
+				pkgCache::VerIterator V;
+				switch(fallback) {
+				case VersionSet::ALL:
+					for (V = P.VersionList(); V.end() != true; ++V)
+						verset.insert(V);
+					break;
+				case VersionSet::CANDANDINST:
+					verset.insert(getInstalledVer(Cache, P));
+					verset.insert(getCandidateVer(Cache, P));
+					break;
+				case VersionSet::CANDIDATE:
+					verset.insert(getCandidateVer(Cache, P));
+					break;
+				case VersionSet::INSTALLED:
+					verset.insert(getInstalledVer(Cache, P));
+					break;
+				case VersionSet::CANDINST:
+					V = getCandidateVer(Cache, P, true);
+					if (V.end() == true)
+						V = getInstalledVer(Cache, P, true);
+					if (V.end() == false)
+						verset.insert(V);
+					else
+						_error->Error(_("Can't select installed nor candidate version from package %s as it has neither of them"), P.FullName(true).c_str());
+					break;
+				case VersionSet::INSTCAND:
+					V = getInstalledVer(Cache, P, true);
+					if (V.end() == true)
+						V = getCandidateVer(Cache, P, true);
+					if (V.end() == false)
+						verset.insert(V);
+					else
+						_error->Error(_("Can't select installed nor candidate version from package %s as it has neither of them"), P.FullName(true).c_str());
+					break;
+				case VersionSet::NEWEST:
+					if (P->VersionList != 0)
+						verset.insert(P.VersionList());
+					else
+						_error->Error(_("Can't select newest version from package %s as it is purely virtual"), P.FullName(true).c_str());
+					break;
+				}
+			}
+		}
+	}
+	return verset;
+}
+									/*}}}*/
+// getCandidateVer - Returns the candidate version of the given package	/*{{{*/
+pkgCache::VerIterator VersionSet::getCandidateVer(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg, bool const &AllowError) {
+	if (unlikely(Cache.BuildDepCache() == false))
+		return pkgCache::VerIterator(*Cache);
+	pkgCache::VerIterator Cand = Cache[Pkg].InstVerIter(Cache);
+	if (AllowError == false && Cand.end() == true)
+		_error->Error(_("Can't select candidate version from package %s as it has no candidate"), Pkg.FullName(true).c_str());
+	return Cand;
+}
+									/*}}}*/
+// getInstalledVer - Returns the installed version of the given package	/*{{{*/
+pkgCache::VerIterator VersionSet::getInstalledVer(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg, bool const &AllowError) {
+	if (AllowError == false && Pkg->CurrentVer == 0)
+		_error->Error(_("Can't select installed version from package %s as it is not installed"), Pkg.FullName(true).c_str());
+	return Pkg.CurrentVer();
 }
 									/*}}}*/
 }

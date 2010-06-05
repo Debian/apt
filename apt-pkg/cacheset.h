@@ -14,6 +14,7 @@
 #include <set>
 #include <string>
 
+#include <apt-pkg/cachefile.h>
 #include <apt-pkg/pkgcache.h>
 									/*}}}*/
 namespace APT {
@@ -68,10 +69,21 @@ public:									/*{{{*/
 	    \param Cache the packages are in
 	    \param pattern regular expression for package names
 	    \param out stream to print the notice to */
-	static APT::PackageSet FromRegEx(pkgCache &Cache, std::string pattern, std::ostream &out);
-	static APT::PackageSet FromRegEx(pkgCache &Cache, std::string const &pattern) {
+	static APT::PackageSet FromRegEx(pkgCacheFile &Cache, std::string pattern, std::ostream &out);
+	static APT::PackageSet FromRegEx(pkgCacheFile &Cache, std::string const &pattern) {
 		std::ostream out (std::ofstream("/dev/null").rdbuf());
 		return APT::PackageSet::FromRegEx(Cache, pattern, out);
+	}
+
+	/** \brief returns all packages specified by a string
+
+	    \param Cache the packages are in
+	    \param string String the package name(s) should be extracted from
+	    \param out stream to print various notices to */
+	static APT::PackageSet FromString(pkgCacheFile &Cache, const char * const string, std::ostream &out);
+	static APT::PackageSet FromString(pkgCacheFile &Cache, const char * const string) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::PackageSet::FromString(Cache, string, out);
 	}
 
 	/** \brief returns all packages specified on the commandline
@@ -81,8 +93,8 @@ public:									/*{{{*/
 	    \param Cache the packages are in
 	    \param cmdline Command line the package names should be extracted from
 	    \param out stream to print various notices to */
-	static APT::PackageSet FromCommandLine(pkgCache &Cache, const char **cmdline, std::ostream &out);
-	static APT::PackageSet FromCommandLine(pkgCache &Cache, const char **cmdline) {
+	static APT::PackageSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline, std::ostream &out);
+	static APT::PackageSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
 		std::ostream out (std::ofstream("/dev/null").rdbuf());
 		return APT::PackageSet::FromCommandLine(Cache, cmdline, out);
 	}
@@ -132,6 +144,60 @@ public:									/*{{{*/
 	};
 	// 103. set::iterator is required to be modifiable, but this allows modification of keys
 	typedef typename APT::VersionSet::const_iterator iterator;
+
+	/** \brief specifies which version(s) will be returned if non is given */
+	enum Version {
+		/** All versions */
+		ALL,
+		/** Candidate and installed version */
+		CANDANDINST,
+		/** Candidate version */
+		CANDIDATE,
+		/** Installed version */
+		INSTALLED,
+		/** Candidate or if non installed version */
+		CANDINST,
+		/** Installed or if non candidate version */
+		INSTCAND,
+		/** Newest version */
+		NEWEST
+	};
+
+	/** \brief returns all versions specified on the commandline
+
+	    Get all versions from the commandline, uses given default version if
+	    non specifically requested  and executes regex's if needed on names.
+	    \param Cache the packages and versions are in
+	    \param cmdline Command line the versions should be extracted from
+	    \param out stream to print various notices to */
+	static APT::VersionSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
+			APT::VersionSet::Version const &fallback, std::ostream &out);
+	static APT::VersionSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
+			APT::VersionSet::Version const &fallback) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::VersionSet::FromCommandLine(Cache, cmdline, fallback, out);
+	}
+	static APT::VersionSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
+		return APT::VersionSet::FromCommandLine(Cache, cmdline, CANDINST);
+	}
+									/*}}}*/
+protected:								/*{{{*/
+
+	/** \brief returns the candidate version of the package
+
+	    \param Cache to be used to query for information
+	    \param Pkg we want the candidate version from this package
+	    \param AllowError add an error to the stack if not */
+	static pkgCache::VerIterator getCandidateVer(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg, bool const &AllowError = false);
+
+	/** \brief returns the installed version of the package
+
+	    \param Cache to be used to query for information
+	    \param Pkg we want the installed version from this package
+	    \param AllowError add an error to the stack if not */
+	static pkgCache::VerIterator getInstalledVer(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg, bool const &AllowError = false);
 
 									/*}}}*/
 };									/*}}}*/
