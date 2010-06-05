@@ -10,6 +10,7 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - do the autoremove mark process also for required packages to handle
       these illegally depending on lower priority packages (Closes: #583517)
     - try harder to find the other pseudo versions for autoremove multiarch
+    - correct "Dangerous iterator usage" pointed out by cppcheck
   * apt-pkg/aptconfiguration.cc:
     - remove duplicate architectures in getArchitectures()
   * apt-pkg/indexrecords.{cc,h}:
@@ -18,8 +19,6 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - do not try PDiff if it is not listed in the Meta file
   * apt-pkg/cacheiterator.h:
     - let pkgCache::Iterator inherent std::iterator
-  * apt-pkg/depcache.cc:
-    - correct "Dangerous iterator usage." pointed out by cppcheck
   * ftparchive/writer.h:
     - add a virtual destructor to FTWScanner class (for cppcheck)
   * apt-pkg/cacheset.{cc,h}:
@@ -34,12 +33,13 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - make the search multiarch compatible by using GrpIterator instead
     - use pkgCacheFile and the new CacheSets all over the place
     - add --target-release option (Closes: #115520)
+    - accept pkg/release and pkg=version in show and co. (Closes: #236270)
   * apt-pkg/cachefile.{cc,h}:
     - split Open() into submethods to be able to build only parts
     - make the OpProgress optional in the Cache buildprocess
     - store also the SourceList we use internally for export
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 31 May 2010 22:36:35 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 05 Jun 2010 14:39:58 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 
