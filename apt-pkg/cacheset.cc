@@ -132,10 +132,19 @@ APT::VersionSet VersionSet::FromCommandLine(pkgCacheFile &Cache, const char **cm
 		PackageSet pkgset = PackageSet::FromString(Cache, pkg.c_str(), out);
 		for (PackageSet::const_iterator P = pkgset.begin();
 		     P != pkgset.end(); ++P) {
-			if (vertag != string::npos) {
+			if (vertag == string::npos) {
+				AddSelectedVersion(Cache, verset, P, fallback);
+				continue;
+			}
+			pkgCache::VerIterator V;
+			if (ver == "installed")
+				V = getInstalledVer(Cache, P);
+			else if (ver == "candidate")
+				V = getCandidateVer(Cache, P);
+			else {
 				pkgVersionMatch Match(ver, (verIsRel == true ? pkgVersionMatch::Release :
-							pkgVersionMatch::Version));
-				pkgCache::VerIterator V = Match.Find(P);
+						pkgVersionMatch::Version));
+				V = Match.Find(P);
 				if (V.end() == true) {
 					if (verIsRel == true)
 						_error->Error(_("Release '%s' for '%s' was not found"),
@@ -145,56 +154,75 @@ APT::VersionSet VersionSet::FromCommandLine(pkgCacheFile &Cache, const char **cm
 								ver.c_str(), P.FullName(true).c_str());
 					continue;
 				}
-				if (strcmp(ver.c_str(), V.VerStr()) != 0)
-					ioprintf(out, _("Selected version %s (%s) for %s\n"),
-						 V.VerStr(), V.RelStr().c_str(), P.FullName(true).c_str());
-				verset.insert(V);
-			} else {
-				pkgCache::VerIterator V;
-				switch(fallback) {
-				case VersionSet::ALL:
-					for (V = P.VersionList(); V.end() != true; ++V)
-						verset.insert(V);
-					break;
-				case VersionSet::CANDANDINST:
-					verset.insert(getInstalledVer(Cache, P));
-					verset.insert(getCandidateVer(Cache, P));
-					break;
-				case VersionSet::CANDIDATE:
-					verset.insert(getCandidateVer(Cache, P));
-					break;
-				case VersionSet::INSTALLED:
-					verset.insert(getInstalledVer(Cache, P));
-					break;
-				case VersionSet::CANDINST:
-					V = getCandidateVer(Cache, P, true);
-					if (V.end() == true)
-						V = getInstalledVer(Cache, P, true);
-					if (V.end() == false)
-						verset.insert(V);
-					else
-						_error->Error(_("Can't select installed nor candidate version from package %s as it has neither of them"), P.FullName(true).c_str());
-					break;
-				case VersionSet::INSTCAND:
-					V = getInstalledVer(Cache, P, true);
-					if (V.end() == true)
-						V = getCandidateVer(Cache, P, true);
-					if (V.end() == false)
-						verset.insert(V);
-					else
-						_error->Error(_("Can't select installed nor candidate version from package %s as it has neither of them"), P.FullName(true).c_str());
-					break;
-				case VersionSet::NEWEST:
-					if (P->VersionList != 0)
-						verset.insert(P.VersionList());
-					else
-						_error->Error(_("Can't select newest version from package %s as it is purely virtual"), P.FullName(true).c_str());
-					break;
-				}
 			}
+			if (V.end() == true)
+				continue;
+			if (ver == V.VerStr())
+				ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
+					 V.VerStr(), V.RelStr().c_str(), P.FullName(true).c_str());
+			verset.insert(V);
 		}
 	}
 	return verset;
+}
+									/*}}}*/
+// AddSelectedVersion - add version from package based on fallback	/*{{{*/
+bool VersionSet::AddSelectedVersion(pkgCacheFile &Cache, VersionSet &verset,
+		pkgCache::PkgIterator const &P, VersionSet::Version const &fallback,
+		bool const &AllowError) {
+	pkgCache::VerIterator V;
+	switch(fallback) {
+	case VersionSet::ALL:
+		if (P->VersionList != 0)
+			for (V = P.VersionList(); V.end() != true; ++V)
+				verset.insert(V);
+		else if (AllowError == false)
+			return _error->Error(_("Can't select versions from package '%s' as it purely virtual"), P.FullName(true).c_str());
+		else
+			return false;
+		break;
+	case VersionSet::CANDANDINST:
+		verset.insert(getInstalledVer(Cache, P, AllowError));
+		verset.insert(getCandidateVer(Cache, P, AllowError));
+		break;
+	case VersionSet::CANDIDATE:
+		verset.insert(getCandidateVer(Cache, P, AllowError));
+		break;
+	case VersionSet::INSTALLED:
+		verset.insert(getInstalledVer(Cache, P, AllowError));
+		break;
+	case VersionSet::CANDINST:
+		V = getCandidateVer(Cache, P, true);
+		if (V.end() == true)
+			V = getInstalledVer(Cache, P, true);
+		if (V.end() == false)
+			verset.insert(V);
+		else if (AllowError == false)
+			return _error->Error(_("Can't select installed nor candidate version from package '%s' as it has neither of them"), P.FullName(true).c_str());
+		else
+			return false;
+		break;
+	case VersionSet::INSTCAND:
+		V = getInstalledVer(Cache, P, true);
+		if (V.end() == true)
+			V = getCandidateVer(Cache, P, true);
+		if (V.end() == false)
+			verset.insert(V);
+		else if (AllowError == false)
+			return _error->Error(_("Can't select installed nor candidate version from package '%s' as it has neither of them"), P.FullName(true).c_str());
+		else
+			return false;
+		break;
+	case VersionSet::NEWEST:
+		if (P->VersionList != 0)
+			verset.insert(P.VersionList());
+		else if (AllowError == false)
+			return _error->Error(_("Can't select newest version from package '%s' as it is purely virtual"), P.FullName(true).c_str());
+		else
+			return false;
+		break;
+	}
+	return true;
 }
 									/*}}}*/
 // getCandidateVer - Returns the candidate version of the given package	/*{{{*/

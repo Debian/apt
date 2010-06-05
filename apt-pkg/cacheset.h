@@ -205,6 +205,11 @@ protected:								/*{{{*/
 	static pkgCache::VerIterator getInstalledVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, bool const &AllowError = false);
 
+
+	static bool AddSelectedVersion(pkgCacheFile &Cache, VersionSet &verset,
+		pkgCache::PkgIterator const &P, VersionSet::Version const &fallback,
+		bool const &AllowError = false);
+
 									/*}}}*/
 };									/*}}}*/
 }
