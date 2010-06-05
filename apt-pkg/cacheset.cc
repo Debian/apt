@@ -79,7 +79,7 @@ PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, std::
 // FromCommandLine - Return all packages specified on commandline	/*{{{*/
 PackageSet PackageSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline, std::ostream &out) {
 	PackageSet pkgset;
-	for (const char **I = cmdline + 1; *I != 0; I++) {
+	for (const char **I = cmdline; *I != 0; ++I) {
 		PackageSet pset = FromString(Cache, *I, out);
 		pkgset.insert(pset.begin(), pset.end());
 	}
@@ -105,7 +105,7 @@ PackageSet PackageSet::FromString(pkgCacheFile &Cache, const char * const str, s
 APT::VersionSet VersionSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
 		APT::VersionSet::Version const &fallback, std::ostream &out) {
 	VersionSet verset;
-	for (const char **I = cmdline + 1; *I != 0; I++) {
+	for (const char **I = cmdline; *I != 0; ++I) {
 		std::string pkg = *I;
 		std::string ver;
 		bool verIsRel = false;

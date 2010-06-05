@@ -176,7 +176,7 @@ bool UnMet(CommandLine &CmdL)
 bool DumpPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
 
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
@@ -553,7 +553,7 @@ bool Depends(CommandLine &CmdL)
    SPtrArray<unsigned> Colours = new unsigned[Cache->Head().PackageCount];
    memset(Colours,0,sizeof(*Colours)*Cache->Head().PackageCount);
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       Colours[Pkg->ID] = 1;
 
@@ -644,7 +644,7 @@ bool RDepends(CommandLine &CmdL)
    SPtrArray<unsigned> Colours = new unsigned[Cache->Head().PackageCount];
    memset(Colours,0,sizeof(*Colours)*Cache->Head().PackageCount);
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       Colours[Pkg->ID] = 1;
 
@@ -1457,7 +1457,7 @@ bool ShowPackage(CommandLine &CmdL)
    pkgCacheFile CacheFile;
    APT::VersionSet::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
 			APT::VersionSet::ALL : APT::VersionSet::INSTALLED;
-   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList, select);
+   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select);
    for (APT::VersionSet::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
 	 return false;
@@ -1616,7 +1616,7 @@ bool Policy(CommandLine &CmdL)
 		(InstalledLessCandidate > 0 ? (InstalledLessCandidate) : 0) - 1;
 
    // Print out detailed information for each package
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
    for (APT::PackageSet::const_iterator I = pkgset.begin(); I != pkgset.end(); ++I)
    {
       pkgCache::PkgIterator Pkg = I.Group().FindPkg("any");
@@ -1696,7 +1696,7 @@ bool Madison(CommandLine &CmdL)
    if (_error->PendingError() == true)
       _error->Discard();
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (Pkg.end() == false)
