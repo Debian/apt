@@ -11,6 +11,8 @@
 // Include Files							/*{{{*/
 #include <iostream>
 #include <fstream>
+#include <list>
+#include <map>
 #include <set>
 #include <string>
 
@@ -100,6 +102,27 @@ public:									/*{{{*/
 	static APT::PackageSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
 		std::ostream out (std::ofstream("/dev/null").rdbuf());
 		return APT::PackageSet::FromCommandLine(Cache, cmdline, out);
+	}
+
+	struct Modifier {
+		enum Position { NONE, PREFIX, POSTFIX };
+		unsigned short ID;
+		const char * const Alias;
+		Position Pos;
+		Modifier (unsigned short const &id, const char * const alias, Position const &pos) : ID(id), Alias(alias), Pos(pos) {};
+	};
+
+	static std::map<unsigned short, PackageSet> GroupedFromCommandLine(
+		pkgCacheFile &Cache, const char **cmdline,
+		std::list<PackageSet::Modifier> const &mods,
+		unsigned short const &fallback, std::ostream &out);
+	static std::map<unsigned short, PackageSet> GroupedFromCommandLine(
+		pkgCacheFile &Cache, const char **cmdline,
+		std::list<PackageSet::Modifier> const &mods,
+		unsigned short const &fallback) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::PackageSet::GroupedFromCommandLine(Cache, cmdline,
+				mods, fallback, out);
 	}
 									/*}}}*/
 };									/*}}}*/

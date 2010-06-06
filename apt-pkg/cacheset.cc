@@ -76,6 +76,39 @@ PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, std::
 	return pkgset;
 }
 									/*}}}*/
+// GroupedFromCommandLine - Return all versions specified on commandline/*{{{*/
+std::map<unsigned short, PackageSet> PackageSet::GroupedFromCommandLine(
+		pkgCacheFile &Cache, const char **cmdline,
+		std::list<PackageSet::Modifier> const &mods,
+		unsigned short const &fallback, std::ostream &out) {
+	std::map<unsigned short, PackageSet> pkgsets;
+	for (const char **I = cmdline; *I != 0; ++I) {
+		unsigned short modID = fallback;
+		std::string str = *I;
+		for (std::list<PackageSet::Modifier>::const_iterator mod = mods.begin();
+		     mod != mods.end(); ++mod) {
+			size_t const alength = strlen(mod->Alias);
+			switch(mod->Pos) {
+			case PackageSet::Modifier::POSTFIX:
+				if (str.compare(str.length() - alength, alength,
+				    mod->Alias, 0, alength) != 0)
+					continue;
+				str.erase(str.length() - alength);
+				modID = mod->ID;
+				break;
+			case PackageSet::Modifier::PREFIX:
+				continue;
+			case PackageSet::Modifier::NONE:
+				continue;
+			}
+			break;
+		}
+		PackageSet pset = PackageSet::FromString(Cache, str, out);
+		pkgsets[modID].insert(pset.begin(), pset.end());
+	}
+	return pkgsets;
+}
+									/*}}}*/
 // FromCommandLine - Return all packages specified on commandline	/*{{{*/
 PackageSet PackageSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline, std::ostream &out) {
 	PackageSet pkgset;
