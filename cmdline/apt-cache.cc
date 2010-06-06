@@ -787,38 +787,24 @@ bool XVcg(CommandLine &CmdL)
 	    ShapeMap[Pkg->ID] = 3;
       }
    }
-   
+
    // Load the list of packages from the command line into the show list
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      // Process per-package flags
-      string P = *I;
-      bool Force = false;
-      if (P.length() > 3)
-      {
-	 if (P.end()[-1] == '^')
-	 {
-	    Force = true;
-	    P.erase(P.end()-1);
-	 }
-	 
-	 if (P.end()[-1] == ',')
-	    P.erase(P.end()-1);
-      }
-      
-      // Locate the package
-      pkgCache::PkgIterator Pkg = Cache->FindPkg(P);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+   std::list<APT::PackageSet::Modifier> mods;
+   mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   std::map<unsigned short, APT::PackageSet> pkgsets =
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0);
+
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
+	Pkg != pkgsets[0].end(); ++Pkg)
       Show[Pkg->ID] = ToShow;
-      
-      if (Force == true)
-	 Flags[Pkg->ID] |= ForceNR;
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[1].begin();
+	Pkg != pkgsets[1].end(); ++Pkg)
+   {
+      Show[Pkg->ID] = ToShow;
+      Flags[Pkg->ID] |= ForceNR;
    }
-   
+
    // Little header
    cout << "graph: { title: \"packages\"" << endl <<
      "xmax: 700 ymax: 700 x: 30 y: 30" << endl <<
@@ -1015,38 +1001,24 @@ bool Dotty(CommandLine &CmdL)
 	    ShapeMap[Pkg->ID] = 3;
       }
    }
-   
+
    // Load the list of packages from the command line into the show list
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      // Process per-package flags
-      string P = *I;
-      bool Force = false;
-      if (P.length() > 3)
-      {
-	 if (P.end()[-1] == '^')
-	 {
-	    Force = true;
-	    P.erase(P.end()-1);
-	 }
-	 
-	 if (P.end()[-1] == ',')
-	    P.erase(P.end()-1);
-      }
-      
-      // Locate the package
-      pkgCache::PkgIterator Pkg = Cache->FindPkg(P);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+   std::list<APT::PackageSet::Modifier> mods;
+   mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   std::map<unsigned short, APT::PackageSet> pkgsets =
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0);
+
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
+	Pkg != pkgsets[0].end(); ++Pkg)
       Show[Pkg->ID] = ToShow;
-      
-      if (Force == true)
-	 Flags[Pkg->ID] |= ForceNR;
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[1].begin();
+	Pkg != pkgsets[1].end(); ++Pkg)
+   {
+      Show[Pkg->ID] = ToShow;
+      Flags[Pkg->ID] |= ForceNR;
    }
-   
+
    // Little header
    printf("digraph packages {\n");
    printf("concentrate=true;\n");
