@@ -33,6 +33,7 @@
 #include <string>
 #include <sstream>
 #include <stdio.h>
+#include <ctime>
 									/*}}}*/
 
 using namespace std;
@@ -1177,6 +1178,15 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
       Transformed = "";
    }
 
+   if (_config->FindB("Acquire::Check-Valid-Until", true)) {
+      if (MetaIndexParser->GetValidUntil() > 0 &&
+          time(NULL) > MetaIndexParser->GetValidUntil()) {
+	 return _error->Error(_("Release file expired, ignoring %s (valid until %s)"),
+	                      RealURI.c_str(), 
+	                      TimeRFC1123(MetaIndexParser->GetValidUntil()).c_str());
+      }
+   }
+
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
    {
       std::cerr << "Got Codename: " << MetaIndexParser->GetDist() << std::endl;
@@ -1194,7 +1204,7 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 //       return false;
       if (!Transformed.empty())
       {
-         _error->Warning("Conflicting distribution: %s (expected %s but got %s)",
+         _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
                          Desc.Description.c_str(),
                          Transformed.c_str(),
                          MetaIndexParser->GetDist().c_str());

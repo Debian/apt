@@ -7,8 +7,11 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
 #include <apti18n.h>
 #include <sys/stat.h>
+#include <clocale>
+
 									/*}}}*/
 string indexRecords::GetDist() const
 {
@@ -24,6 +27,11 @@ bool indexRecords::CheckDist(const string MaybeDist) const
 string indexRecords::GetExpectedDist() const
 {
    return this->ExpectedDist;
+}
+
+time_t indexRecords::GetValidUntil() const
+{
+   return this->ValidUntil;
 }
 
 const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
@@ -82,7 +90,33 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       return false;
    }  
 
-   string Strdate = Section.FindS("Date"); // FIXME: verify this somehow?
+   string Label = Section.FindS("Label");
+   string StrDate = Section.FindS("Date"); 
+   string StrValidUntil = Section.FindS("Valid-Until");
+
+   // if we have a Valid-Until header, use it
+   if (!StrValidUntil.empty())
+   {
+      // set ValidUntil based on the information in the Release file
+      if(!StrToTime(StrValidUntil, ValidUntil))
+      {
+	 ErrorText = _(("Invalid 'Valid-Until' entry in Release file " + Filename).c_str());
+	 return false;
+      }
+   } else {
+      // if we don't have a valid-until string, check if we have a default
+      if (!Label.empty())
+      {
+	 int MaxAge = _config->FindI(string("apt::acquire::max-default-age::"+Label).c_str(),0);
+	 if(MaxAge > 0 && !StrToTime(StrDate, ValidUntil))
+	 {
+	    ErrorText = _(("Invalid 'Date' entry in Release file " + Filename).c_str());
+	    return false;
+	 }
+	 ValidUntil += 24*60*60*MaxAge;      
+      }
+   }
+
    return true;
 }
 									/*}}}*/
@@ -160,6 +194,6 @@ indexRecords::indexRecords()
 }
 
 indexRecords::indexRecords(const string ExpectedDist) :
-   ExpectedDist(ExpectedDist)
+   ExpectedDist(ExpectedDist), ValidUntil(0)
 {
 }

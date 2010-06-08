@@ -12,6 +12,7 @@
 
 #include <map>
 #include <vector>
+#include <ctime>
 
 class indexRecords
 {
@@ -25,6 +26,8 @@ class indexRecords
    string Dist;
    string Suite;
    string ExpectedDist;
+   time_t ValidUntil;
+
    std::map<string,checkSum *> Entries;
 
    public:
@@ -38,6 +41,7 @@ class indexRecords
 
    virtual bool Load(string Filename);
    string GetDist() const;
+   time_t GetValidUntil() const;
    virtual bool CheckDist(const string MaybeDist) const;
    string GetExpectedDist() const;
    virtual ~indexRecords(){};
