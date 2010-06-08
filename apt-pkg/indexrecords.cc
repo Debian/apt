@@ -91,30 +91,30 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    }  
 
    string Label = Section.FindS("Label");
-   string StrDate = Section.FindS("Date"); 
+   string StrDate = Section.FindS("Date");
    string StrValidUntil = Section.FindS("Valid-Until");
 
    // if we have a Valid-Until header, use it
-   if (!StrValidUntil.empty())
+   if (StrValidUntil.empty() == false)
    {
       // set ValidUntil based on the information in the Release file
-      if(!StrToTime(StrValidUntil, ValidUntil))
+      if(RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
       {
-	 ErrorText = _(("Invalid 'Valid-Until' entry in Release file " + Filename).c_str());
+	 strprintf(ErrorText, _("Invalid 'Valid-Until' entry in Release file %s"), Filename.c_str());
 	 return false;
       }
    } else {
       // if we don't have a valid-until string, check if we have a default
-      if (!Label.empty())
+      int MaxAge = _config->FindI("APT::Acquire::Max-Default-Age", 0);
+      if (Label.empty() == true)
+	 MaxAge = _config->FindI(string("APT::Acquire::Max-Default-Age::"+Label).c_str(), MaxAge);
+
+      if(MaxAge > 0 && RFC1123StrToTime(StrDate.c_str(), ValidUntil) == false)
       {
-	 int MaxAge = _config->FindI(string("apt::acquire::max-default-age::"+Label).c_str(),0);
-	 if(MaxAge > 0 && !StrToTime(StrDate, ValidUntil))
-	 {
-	    ErrorText = _(("Invalid 'Date' entry in Release file " + Filename).c_str());
-	    return false;
-	 }
-	 ValidUntil += 24*60*60*MaxAge;      
+	 strprintf(ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
+	 return false;
       }
+      ValidUntil += 24*60*60*MaxAge;
    }
 
    return true;

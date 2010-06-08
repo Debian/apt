@@ -1178,13 +1178,15 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
       Transformed = "";
    }
 
-   if (_config->FindB("Acquire::Check-Valid-Until", true)) {
-      if (MetaIndexParser->GetValidUntil() > 0 &&
-          time(NULL) > MetaIndexParser->GetValidUntil()) {
-	 return _error->Error(_("Release file expired, ignoring %s (valid until %s)"),
-	                      RealURI.c_str(), 
-	                      TimeRFC1123(MetaIndexParser->GetValidUntil()).c_str());
-      }
+   if (_config->FindB("Acquire::Check-Valid-Until", true) == true &&
+       MetaIndexParser->GetValidUntil() > 0) {
+      time_t const invalid_since = time(NULL) - MetaIndexParser->GetValidUntil();
+      if (invalid_since > 0)
+	 // TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+	 // the time since then the file is invalid - formated in the same way as in
+	 // the download progress display (e.g. 7d 3h 42min 1s)
+	 return _error->Error(_("Release file expired, ignoring %s (invalid since %s)"),
+	                      RealURI.c_str(), TimeToStr(invalid_since).c_str());
    }
 
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
