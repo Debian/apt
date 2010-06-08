@@ -661,8 +661,7 @@ bool FTPConn::ModTime(const char *Path, time_t &Time)
       return true;
    
    // Parse it
-   StrToTime(Msg,Time);
-   return true;
+   return FTPMDTMStrToTime(Msg.c_str(), Time);
 }
 									/*}}}*/
 // FTPConn::CreateDataFd - Get a data connection			/*{{{*/
