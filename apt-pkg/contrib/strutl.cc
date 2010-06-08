@@ -855,6 +855,42 @@ static time_t timegm(struct tm *t)
 }
 #endif
 									/*}}}*/
+// FullDateToTime - Converts a HTTP1.1 full date strings into a time_t	/*{{{*/
+// ---------------------------------------------------------------------
+/* tries to parses a full date as specified in RFC2616 Section 3.3.1
+   with one exception: All timezones (%Z) are accepted but the protocol
+   says that it MUST be GMT, but this one is equal to UTC which we will
+   encounter from time to time (e.g. in Release files) so we accept all
+   here and just assume it is GMT (or UTC) later on */
+bool RFC1123StrToTime(const char* const str,time_t &time)
+{
+   struct tm Tm;
+   // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+   if (strptime(str, "%a, %d %b %Y %H:%M:%S %Z", &Tm) == NULL &&
+   // Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+       strptime(str, "%A, %d-%b-%y %H:%M:%S %Z", &Tm) == NULL &&
+   // Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
+       strptime(str, "%a %b %d %H:%M:%S %Y", &Tm) == NULL)
+      return false;
+
+   time = timegm(&Tm);
+   return true;
+}
+									/*}}}*/
+// FTPMDTMStrToTime - Converts a ftp modification date into a time_t	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FTPMDTMStrToTime(const char* const str,time_t &time)
+{
+   struct tm Tm;
+   // MDTM includes no whitespaces but recommend and ignored by strptime
+   if (strptime(str, "%Y %m %d %H %M %S", &Tm) == NULL)
+      return false;
+
+   time = timegm(&Tm);
+   return true;
+}
+									/*}}}*/
 // StrToTime - Converts a string into a time_t				/*{{{*/
 // ---------------------------------------------------------------------
 /* This handles all 3 populare time formats including RFC 1123, RFC 1036
