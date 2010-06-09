@@ -2,6 +2,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexcopy.h>
 #include <apti18n.h>
 
 #include <utime.h>
@@ -58,26 +59,14 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    int fd[2];
    FILE *pipein;
    int status;
+
    string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-   // FIXME: remove support for deprecated APT::GPGV setting
-   string const trustedFile = _config->FindFile("Dir::Etc::Trusted",
-			_config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg").c_str());
-   string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d");
-   if (Debug == true)
-   {
-      std::clog << "gpgv path: " << gpgvpath << std::endl;
-      std::clog << "Keyring file: " << trustedFile << std::endl;
-      std::clog << "Keyring path: " << trustedPath << std::endl;
-   }
-
-   vector<string> keyrings = GetListOfFilesInDir(trustedPath, "gpg", false);
-   if (FileExists(trustedFile) == true)
-      keyrings.push_back(trustedFile);
-
-   if (keyrings.empty() == true)
+   std::vector<const char*> Args = SigVerify::GetGPGVCommandLine();
+   if (Args.empty() == true)
    {
       // TRANSLATOR: %s is the trusted keyring parts directory
-      ioprintf(ret, _("No keyring installed in %s."), trustedPath.c_str());
+      ioprintf(ret, _("No keyring installed in %s."),
+		_config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d").c_str());
       return ret.str();
    }
 
@@ -89,32 +78,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return string("Couldn't spawn new process") + strerror(errno);
    else if (pid == 0)
    {
-      std::vector<const char *> Args;
-      Args.reserve(30);
-
-      Args.push_back(gpgvpath.c_str());
       Args.push_back("--status-fd");
       Args.push_back("3");
-      Args.push_back("--ignore-time-conflict");
-      for (vector<string>::const_iterator K = keyrings.begin();
-	   K != keyrings.end(); ++K)
-      {
-	 Args.push_back("--keyring");
-	 Args.push_back(K->c_str());
-      }
-
-      Configuration::Item const *Opts;
-      Opts = _config->Tree("Acquire::gpgv::Options");
-      if (Opts != 0)
-      {
-         Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-         {
-            if (Opts->Value.empty() == true)
-               continue;
-            Args.push_back(Opts->Value.c_str());
-         }
-      }
       Args.push_back(file);
       Args.push_back(outfile);
       Args.push_back(NULL);

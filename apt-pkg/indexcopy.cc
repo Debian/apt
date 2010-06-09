@@ -590,66 +590,39 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       indexRecords *MetaIndex = new indexRecords;
       string prefix = *I; 
 
+      string const releasegpg = *I+"Release.gpg";
+      string const release = *I+"Release";
+
       // a Release.gpg without a Release should never happen
-      if(!FileExists(*I+"Release"))
+      if(FileExists(release) == false)
       {
 	 delete MetaIndex;
 	 continue;
       }
 
-
-      // verify the gpg signature of "Release"
-      // gpg --verify "*I+Release.gpg", "*I+Release"
-      const char *Args[400];
-      unsigned int i = 0;
-
-      string gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-      string pubringpath = _config->Find("Apt::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
-      string releasegpg = *I+"Release.gpg";
-      string release = *I+"Release";
-
-      Args[i++] = gpgvpath.c_str();
-      Args[i++] = "--keyring";
-      Args[i++] = pubringpath.c_str();
-      Configuration::Item const *Opts;
-      Opts = _config->Tree("Acquire::gpgv::Options");
-      if (Opts != 0)
-      {
-         Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-         {
-            if (Opts->Value.empty() == true)
-               continue;
-            Args[i++] = Opts->Value.c_str();
-	    if(i >= 390) { 
-	       _error->Error("Argument list from Acquire::gpgv::Options too long. Exiting.");
-	       return false;
-	    }
-         }
-      }
-      
-      Args[i++] = releasegpg.c_str();
-      Args[i++] = release.c_str();
-      Args[i++] = NULL;
-      
       pid_t pid = ExecFork();
       if(pid < 0) {
 	 _error->Error("Fork failed");
 	 return false;
       }
       if(pid == 0) {
-	 execvp(gpgvpath.c_str(), (char**)Args);
+	 string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
+	 std::vector<const char*> Args = GetGPGVCommandLine();
+	 Args.push_back(releasegpg.c_str());
+	 Args.push_back(release.c_str());
+	 Args.push_back(NULL);
+	 execvp(gpgvpath.c_str(), (char**) &Args[0]);
       }
       if(!ExecWait(pid, "gpgv")) {
 	 _error->Warning("Signature verification failed for: %s",
-			 string(*I+"Release.gpg").c_str());
+			 releasegpg.c_str());
 	 // something went wrong, don't copy the Release.gpg
 	 // FIXME: delete any existing gpg file?
 	 continue;
       }
 
       // Open the Release file and add it to the MetaIndex
-      if(!MetaIndex->Load(*I+"Release"))
+      if(!MetaIndex->Load(release))
       {
 	 _error->Error("%s",MetaIndex->ErrorText.c_str());
 	 return false;
@@ -677,6 +650,64 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
    }   
 
    return true;
+}
+									/*}}}*/
+// SigVerify::GetGPGVCommandLine - returns the command needed for verify/*{{{*/
+// ---------------------------------------------------------------------
+/* Generating the commandline for calling gpgv is somehow complicated as
+   we need to add multiple keyrings and user supplied options. Also, as
+   the cdrom code currently can not use the gpgv method we have two places
+   these need to be done - so the place for this method is wrong but better
+   than code duplication… */
+std::vector<const char *> SigVerify::GetGPGVCommandLine()
+{
+   string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
+   // FIXME: remove support for deprecated APT::GPGV setting
+   string const trustedFile = _config->FindFile("Dir::Etc::Trusted",
+		_config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg").c_str());
+   string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d");
+
+   if (_config->FindB("Debug::Acquire::gpgv", false) == true)
+   {
+      std::clog << "gpgv path: " << gpgvpath << std::endl;
+      std::clog << "Keyring file: " << trustedFile << std::endl;
+      std::clog << "Keyring path: " << trustedPath << std::endl;
+   }
+
+   std::vector<string> keyrings = GetListOfFilesInDir(trustedPath, "gpg", false);
+   if (FileExists(trustedFile) == true)
+      keyrings.push_back(trustedFile);
+
+   std::vector<const char *> Args;
+   Args.reserve(30);
+
+   if (keyrings.empty() == true)
+      return Args;
+
+   Args.push_back(gpgvpath.c_str());
+   Args.push_back("--ignore-time-conflict");
+
+   for (vector<string>::const_iterator K = keyrings.begin();
+	K != keyrings.end(); ++K)
+   {
+      Args.push_back("--keyring");
+      Args.push_back(K->c_str());
+   }
+
+   Configuration::Item const *Opts;
+   Opts = _config->Tree("Acquire::gpgv::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+      }
+   }
+
+   return Args;
 }
 									/*}}}*/
 bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
