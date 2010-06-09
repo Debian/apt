@@ -106,8 +106,14 @@ string debSourcesIndex::Info(const char *Type) const
 /* */
 inline string debSourcesIndex::IndexFile(const char *Type) const
 {
-   return URItoFileName(IndexURI(Type));
+   string s = URItoFileName(IndexURI(Type));
+   string sgzip = s + ".gz";
+   if (!FileExists(s) && FileExists(sgzip))
+       return sgzip;
+   else
+       return s;
 }
+
 string debSourcesIndex::IndexURI(const char *Type) const
 {
    string Res;
@@ -213,7 +219,12 @@ string debPackagesIndex::Info(const char *Type) const
 /* */
 inline string debPackagesIndex::IndexFile(const char *Type) const
 {
-   return _config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string sgzip = s + ".gz";
+   if (!FileExists(s) && FileExists(sgzip))
+       return sgzip;
+   else
+       return s;
 }
 string debPackagesIndex::IndexURI(const char *Type) const
 {
@@ -340,7 +351,12 @@ debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section
 /* */
 inline string debTranslationsIndex::IndexFile(const char *Type) const
 {
-   return _config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string sgzip = s + ".gz";
+   if (!FileExists(s) && FileExists(sgzip))
+       return sgzip;
+   else
+       return s;
 }
 string debTranslationsIndex::IndexURI(const char *Type) const
 {

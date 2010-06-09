@@ -8,6 +8,9 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.{h,cc}:
     - Add support for transparent reading of gzipped files.
     - Link against zlib (in apt-pkg/makefile) and add zlib build dependency.
+  * apt-pkg/deb/debindexfile.cc:
+    - If we do not find uncompressed package/source/translation indexes, look
+      for gzip compressed ones.
 
  -- Christian Perrier <bubulle@debian.org>  Tue, 11 May 2010 19:52:00 +0200
 
