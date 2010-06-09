@@ -90,8 +90,14 @@ class SigVerify								/*{{{*/
    bool CopyAndVerify(string CDROM,string Name,vector<string> &SigList,
 		      vector<string> PkgList,vector<string> SrcList);
 
-   /** \brief generates the command to verify a file with gpgv */
-   static std::vector<const char *> GetGPGVCommandLine();
+   /** \brief generates and run the command to verify a file with gpgv */
+   static bool RunGPGV(std::string const &File, std::string const &FileOut,
+		       int const &statusfd, int fd[2]);
+   inline static bool RunGPGV(std::string const &File, std::string const &FileOut,
+			      int const &statusfd = -1) {
+      int fd[2];
+      return RunGPGV(File, FileOut, statusfd, fd);
+   };
 };
 									/*}}}*/
 

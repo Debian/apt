@@ -27,6 +27,8 @@
 #include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <stdio.h>
 									/*}}}*/
 
@@ -605,14 +607,9 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 	 _error->Error("Fork failed");
 	 return false;
       }
-      if(pid == 0) {
-	 string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-	 std::vector<const char*> Args = GetGPGVCommandLine();
-	 Args.push_back(releasegpg.c_str());
-	 Args.push_back(release.c_str());
-	 Args.push_back(NULL);
-	 execvp(gpgvpath.c_str(), (char**) &Args[0]);
-      }
+      if(pid == 0)
+	 RunGPGV(release, releasegpg);
+
       if(!ExecWait(pid, "gpgv")) {
 	 _error->Warning("Signature verification failed for: %s",
 			 releasegpg.c_str());
@@ -652,14 +649,15 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
    return true;
 }
 									/*}}}*/
-// SigVerify::GetGPGVCommandLine - returns the command needed for verify/*{{{*/
+// SigVerify::RunGPGV - returns the command needed for verify		/*{{{*/
 // ---------------------------------------------------------------------
 /* Generating the commandline for calling gpgv is somehow complicated as
    we need to add multiple keyrings and user supplied options. Also, as
    the cdrom code currently can not use the gpgv method we have two places
    these need to be done - so the place for this method is wrong but better
    than code duplication… */
-std::vector<const char *> SigVerify::GetGPGVCommandLine()
+bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
+			int const &statusfd, int fd[2])
 {
    string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
    // FIXME: remove support for deprecated APT::GPGV setting
@@ -667,7 +665,9 @@ std::vector<const char *> SigVerify::GetGPGVCommandLine()
 		_config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg").c_str());
    string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d");
 
-   if (_config->FindB("Debug::Acquire::gpgv", false) == true)
+   bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
+
+   if (Debug == true)
    {
       std::clog << "gpgv path: " << gpgvpath << std::endl;
       std::clog << "Keyring file: " << trustedFile << std::endl;
@@ -682,10 +682,18 @@ std::vector<const char *> SigVerify::GetGPGVCommandLine()
    Args.reserve(30);
 
    if (keyrings.empty() == true)
-      return Args;
+      return false;
 
    Args.push_back(gpgvpath.c_str());
    Args.push_back("--ignore-time-conflict");
+
+   if (statusfd != -1)
+   {
+      Args.push_back("--status-fd");
+      char fd[10];
+      snprintf(fd, sizeof(fd), "%i", statusfd);
+      Args.push_back(fd);
+   }
 
    for (vector<string>::const_iterator K = keyrings.begin();
 	K != keyrings.end(); ++K)
@@ -707,7 +715,35 @@ std::vector<const char *> SigVerify::GetGPGVCommandLine()
       }
    }
 
-   return Args;
+   Args.push_back(FileGPG.c_str());
+   Args.push_back(File.c_str());
+   Args.push_back(NULL);
+
+   if (Debug == true)
+   {
+      std::clog << "Preparing to exec: " << gpgvpath;
+      for (std::vector<const char *>::const_iterator a = Args.begin(); *a != NULL; ++a)
+	 std::clog << " " << *a;
+      std::clog << std::endl;
+   }
+
+   if (statusfd != -1)
+   {
+      int const nullfd = open("/dev/null", O_RDONLY);
+      close(fd[0]);
+      // Redirect output to /dev/null; we read from the status fd
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
+      // Redirect the pipe to the status fd (3)
+      dup2(fd[1], statusfd);
+
+      putenv((char *)"LANG=");
+      putenv((char *)"LC_ALL=");
+      putenv((char *)"LC_MESSAGES=");
+   }
+
+   execvp(gpgvpath.c_str(), (char **) &Args[0]);
+   return true;
 }
 									/*}}}*/
 bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
