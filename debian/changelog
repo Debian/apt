@@ -20,6 +20,9 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
   * apt-pkg/aptconfiguration.cc:
     - remove duplicate architectures in getArchitectures()
   * apt-pkg/indexrecords.{cc,h}:
+    - backport forgotten Valid-Until patch from the obsolete experimental
+      branch to prevent replay attacks better, thanks to Thomas Viehmann
+      for the initial patch! (Closes: #499897)
     - add a constant Exists check for MetaKeys
   * apt-pkg/acquire-item.cc:
     - do not try PDiff if it is not listed in the Meta file
@@ -48,8 +51,17 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - split Open() into submethods to be able to build only parts
     - make the OpProgress optional in the Cache buildprocess
     - store also the SourceList we use internally for export
+  * doc/apt.conf.5.xml:
+    - document the new Valid-Until related options
+  * apt-pkg/contrib/strutl.cc:
+    - split StrToTime() into HTTP1.1 and FTP date parser methods and
+      use strptime() instead of some self-made scanf mangling
+    - use the portable timegm shown in his manpage instead of a strange
+      looking code copycat from wget
+  * ftparchive/writer.cc:
+    - add ValidTime option to generate a Valid-Until header in Release file
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Jun 2010 10:50:12 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Jun 2010 10:52:31 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 

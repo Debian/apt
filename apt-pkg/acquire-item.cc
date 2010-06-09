@@ -33,6 +33,7 @@
 #include <string>
 #include <sstream>
 #include <stdio.h>
+#include <ctime>
 									/*}}}*/
 
 using namespace std;
@@ -1180,6 +1181,17 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
       Transformed = "";
    }
 
+   if (_config->FindB("Acquire::Check-Valid-Until", true) == true &&
+       MetaIndexParser->GetValidUntil() > 0) {
+      time_t const invalid_since = time(NULL) - MetaIndexParser->GetValidUntil();
+      if (invalid_since > 0)
+	 // TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+	 // the time since then the file is invalid - formated in the same way as in
+	 // the download progress display (e.g. 7d 3h 42min 1s)
+	 return _error->Error(_("Release file expired, ignoring %s (invalid since %s)"),
+	                      RealURI.c_str(), TimeToStr(invalid_since).c_str());
+   }
+
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
    {
       std::cerr << "Got Codename: " << MetaIndexParser->GetDist() << std::endl;
@@ -1197,7 +1209,7 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 //       return false;
       if (!Transformed.empty())
       {
-         _error->Warning("Conflicting distribution: %s (expected %s but got %s)",
+         _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
                          Desc.Description.c_str(),
                          Transformed.c_str(),
                          MetaIndexParser->GetDist().c_str());
