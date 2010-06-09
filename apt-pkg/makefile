@@ -14,7 +14,7 @@ include ../buildlib/libversion.mak
 LIBRARY=apt-pkg
 MAJOR=$(LIBAPTPKG_MAJOR)
 MINOR=$(LIBAPTPKG_RELEASE)
-SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl
+SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl -lz
 APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 
 # Source code for the contributed non-core things
