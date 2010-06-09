@@ -140,7 +140,8 @@ void pkgAcquire::Item::Rename(string From,string To)
    }   
 }
 									/*}}}*/
-
+// Acquire::Item::ReportMirrorFailure					/*{{{*/
+// ---------------------------------------------------------------------
 void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
 {
    // we only act if a mirror was used at all
@@ -182,7 +183,7 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
 		      _config->Find("Methods::Mirror::ProblemReporting").c_str());
    }
 }
-
+									/*}}}*/
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Get the DiffIndex file first and see if there are patches availabe 
@@ -835,7 +836,13 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 // ---------------------------------------------------------------------
 string pkgAcqIndexTrans::Custom600Headers()
 {
-   return "\nFail-Ignore: true";
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(RealURI);
+
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) != 0)
+      return "\nFail-Ignore: true";
+   return "\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
 // AcqIndexTrans::Failed - Silence failure messages for missing files	/*{{{*/
