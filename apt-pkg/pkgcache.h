@@ -532,9 +532,9 @@ struct pkgCache::Version
    /** \brief archive size for this version
 
        For Debian this is the size of the .deb file. */
-   map_ptrloc Size;              // These are the .deb size
+   unsigned long long Size;      // These are the .deb size
    /** \brief uncompressed size for this version */
-   map_ptrloc InstalledSize;
+   unsigned long long InstalledSize;
    /** \brief characteristic value representing this version
 
        No two packages in existence should have the same VerStr

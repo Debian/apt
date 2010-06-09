@@ -57,6 +57,7 @@ class pkgTagSection
    bool Find(const char *Tag,unsigned &Pos) const;
    string FindS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const ;
+   unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
    bool Scan(const char *Start,unsigned long MaxLength);

@@ -6,11 +6,17 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - forward manual-installed bit on package disappearance
   * apt-pkg/deb/debsystem.cc:
     - add better config item for extended_states file
+  * apt-pkg/pkgcache.h:
+    - switch {,Install-}Size to unsigned long long
   * apt-pkg/depcache.cc:
     - do the autoremove mark process also for required packages to handle
       these illegally depending on lower priority packages (Closes: #583517)
     - try harder to find the other pseudo versions for autoremove multiarch
     - correct "Dangerous iterator usage" pointed out by cppcheck
+    - deal with long long, not with int to remove 2GB Limit (LP: #250909)
+    - deprecate AddSize with Multiplier as it is unused and switch to
+      boolean instead to handle the sizes more gracefully.
+    - switch i{Download,Usr}Size from double to (un)signed long long
   * apt-pkg/aptconfiguration.cc:
     - remove duplicate architectures in getArchitectures()
   * apt-pkg/indexrecords.{cc,h}:
@@ -36,12 +42,14 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
     - add --target-release option (Closes: #115520)
     - accept pkg/release and pkg=version in show and co. (Closes: #236270)
     - accept package versions in the unmet command
+  * cmdline/apt-get.cc:
+    - use unsigned long long instead of double to store values it gets
   * apt-pkg/cachefile.{cc,h}:
     - split Open() into submethods to be able to build only parts
     - make the OpProgress optional in the Cache buildprocess
     - store also the SourceList we use internally for export
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 05 Jun 2010 14:39:58 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Jun 2010 10:50:12 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 

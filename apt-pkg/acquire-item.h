@@ -112,10 +112,10 @@ class pkgAcquire::Item : public WeakPointable
    string ErrorText;
 
    /** \brief The size of the object to fetch. */
-   unsigned long FileSize;
+   unsigned long long FileSize;
 
    /** \brief How much of the object was already fetched. */
-   unsigned long PartialSize;
+   unsigned long long PartialSize;
 
    /** \brief If not \b NULL, contains the name of a subprocess that
     *  is operating on this object (for instance, "gzip" or "gpgv").
