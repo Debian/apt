@@ -33,6 +33,7 @@ class pkgDPkgPM : public pkgPackageManager
    string dpkg_error;
 
    protected:
+   int pkgFailures;
 
    // progress reporting
    struct DpkgState 
@@ -49,6 +50,7 @@ class pkgDPkgPM : public pkgPackageManager
    // the int is the state that is already done (e.g. a package that is
    // going to be install is already in state "half-installed")
    map<string,unsigned int> PackageOpsDone;
+
    // progress reporting
    unsigned int PackagesDone;
    unsigned int PackagesTotal;
@@ -69,6 +71,9 @@ class pkgDPkgPM : public pkgPackageManager
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
    void WriteHistoryTag(string tag, string value);
+
+   // apport integration
+   void WriteApportReport(const char *pkgpath, const char *errormsg);
 
    // dpkg log
    bool OpenLog();

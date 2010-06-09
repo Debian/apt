@@ -1,3 +1,28 @@
+apt (0.7.26~exp6) experimental; urgency=low
+
+  [ Michael Vogt ]
+  * merge the remaining Ubuntu change:
+    - on gpg verification failure warn and restore the last known
+      good state
+    - on failure display the IP of the server (useful for servers
+      that use round robin DNS)
+    - support Original-Maintainer in RewritePackageOrder
+    - enable cdrom autodetection via libudev by default
+    - show messsage about Vcs in use when apt-get source is run for
+      packages maintained in a Vcs
+    - better support transitional packages with mark auto-installed. 
+      when the transitional package is in "oldlibs" the new package
+      is not marked auto installed (same is true for section
+      metapackages)
+    - provide new "deb mirror://archive.foo/mirrors.list sid main"
+      method expects a list of mirrors (generated on the server e.g.
+      via geoip) and will use that, including cycle on failure
+    - write apport crash file on package failure (disabled by default
+      on debian until apport is available)
+    - support mirror failure reporting (disabled by default on debian)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 09 Jun 2010 10:50:17 +0200
+
 apt (0.7.26~exp5) experimental; urgency=low
 
   [ David Kalnischkies ]

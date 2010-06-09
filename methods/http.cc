@@ -953,6 +953,9 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       failure */
    if (Srv->Result < 200 || Srv->Result >= 300)
    {
+      char err[255];
+      snprintf(err,sizeof(err)-1,"HttpError%i",Srv->Result);
+      SetFailReason(err);
       _error->Error("%u %s",Srv->Result,Srv->Code);
       if (Srv->HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
@@ -1365,16 +1368,5 @@ bool HttpMethod::AutoDetectProxy()
    return true;
 }
 									/*}}}*/
-
-int main()
-{
-   setlocale(LC_ALL, "");
-   // ignore SIGPIPE, this can happen on write() if the socket
-   // closes the connection (this is dealt with via ServerDie())
-   signal(SIGPIPE, SIG_IGN);
-
-   HttpMethod Mth;
-   return Mth.Loop();
-}
 
 

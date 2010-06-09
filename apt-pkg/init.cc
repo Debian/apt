@@ -51,6 +51,7 @@ bool pkgInitConfig(Configuration &Cnf)
        
    Cnf.Set("Dir::State::lists","lists/");
    Cnf.Set("Dir::State::cdroms","cdroms.list");
+   Cnf.Set("Dir::State::mirrors","mirrors/");
    
    // Cache
    Cnf.Set("Dir::Cache","var/cache/apt/");

@@ -64,6 +64,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    Status = StatIdle;
    ErrorText = LookupTag(Message,"Message");
+   UsedMirror =  LookupTag(Message,"UsedMirror");
    if (QueueCounter <= 1)
    {
       /* This indicates that the file is not available right now but might
@@ -76,10 +77,17 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	 Dequeue();
 	 return;
       }
-      
+
       Status = StatError;
       Dequeue();
    }   
+
+   // report mirror failure back to LP if we actually use a mirror
+   string FailReason = LookupTag(Message, "FailReason");
+   if(FailReason.size() != 0)
+      ReportMirrorFailure(FailReason);
+   else
+      ReportMirrorFailure(ErrorText);
 }
 									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
@@ -101,7 +109,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string Hash,
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
-   // we only inform the Log class if it was actually not a local thing
+   UsedMirror =  LookupTag(Message,"UsedMirror");
    if (Complete == false && !Local && FileName == DestFile)
    {
       if (Owner->Log != 0)
@@ -110,7 +118,6 @@ void pkgAcquire::Item::Done(string Message,unsigned long Size,string Hash,
 
    if (FileSize == 0)
       FileSize= Size;
-   
    Status = StatDone;
    ErrorText = string();
    Owner->Dequeue(this);
@@ -132,6 +139,49 @@ void pkgAcquire::Item::Rename(string From,string To)
    }   
 }
 									/*}}}*/
+
+void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
+{
+   // we only act if a mirror was used at all
+   if(UsedMirror.empty())
+      return;
+#if 0
+   std::cerr << "\nReportMirrorFailure: " 
+	     << UsedMirror
+	     << " Uri: " << DescURI()
+	     << " FailCode: " 
+	     << FailCode << std::endl;
+#endif
+   const char *Args[40];
+   unsigned int i = 0;
+   string report = _config->Find("Methods::Mirror::ProblemReporting", 
+				 "/usr/lib/apt/apt-report-mirror-failure");
+   if(!FileExists(report))
+      return;
+   Args[i++] = report.c_str();
+   Args[i++] = UsedMirror.c_str();
+   Args[i++] = DescURI().c_str();
+   Args[i++] = FailCode.c_str();
+   Args[i++] = NULL;
+   pid_t pid = ExecFork();
+   if(pid < 0) 
+   {
+      _error->Error("ReportMirrorFailure Fork failed");
+      return;
+   }
+   else if(pid == 0) 
+   {
+      execvp(Args[0], (char**)Args);
+      std::cerr << "Could not exec " << Args[0] << std::endl;
+      _exit(100);
+   }
+   if(!ExecWait(pid, "report-mirror-failure")) 
+   {
+      _error->Warning("Couldn't report problem to '%s'",
+		      _config->Find("Methods::Mirror::ProblemReporting").c_str());
+   }
+}
+
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Get the DiffIndex file first and see if there are patches availabe 
@@ -624,7 +674,6 @@ string pkgAcqIndex::Custom600Headers()
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
-   
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
@@ -692,6 +741,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
          Status = StatAuthError;
          ErrorText = _("Hash Sum mismatch");
          Rename(DestFile,DestFile + ".FAILED");
+	 ReportMirrorFailure("HashChecksumFailure");
          return;
       }
       // Done, move it into position
@@ -882,8 +932,9 @@ void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
       Rename(LastGoodSig, DestFile);
 
    // queue a pkgAcqMetaIndex to be verified against the sig we just retrieved
-   new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
-		       DestFile, IndexTargets, MetaIndexParser);
+   new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, 
+		       MetaIndexShortDesc,  DestFile, IndexTargets, 
+		       MetaIndexParser);
 
 }
 									/*}}}*/
@@ -896,7 +947,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    {
       Item::Failed(Message,Cnf);
       // move the sigfile back on transient network failures 
-      if(FileExists(DestFile))
+      if(FileExists(LastGoodSig))
  	 Rename(LastGoodSig,Final);
 
       // set the status back to , Item::Failed likes to reset it
@@ -971,6 +1022,15 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*
    if (AuthPass == true)
    {
       AuthDone(Message);
+
+      // all cool, move Release file into place
+      Complete = true;
+
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+      DestFile = FinalFile;
    }
    else
    {
@@ -1022,22 +1082,15 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
       return;
    }
 
-   // see if the download was a IMSHit
+   // make sure to verify against the right file on I-M-S hit
    IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
+   if(IMSHit)
+   {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      DestFile = FinalFile;
+   }
    Complete = true;
-
-   string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(RealURI);
-
-   // If we get a IMS hit we can remove the empty file in partial
-   // othersie we move the file in place
-   if (IMSHit)
-      unlink(DestFile.c_str());
-   else
-      Rename(DestFile,FinalFile);
-
-   chmod(FinalFile.c_str(),0644);
-   DestFile = FinalFile;
 }
 									/*}}}*/
 void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
@@ -1067,7 +1120,6 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
    QueueIndexes(true);
 
    // Done, move signature file into position
-
    string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
       URItoFileName(RealURI) + ".gpg";
    Rename(SigFile,VerifiedSigFile);
@@ -1108,7 +1160,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
       
       // Queue Packages file (either diff or full packages files, depending
       // on the users option)
-      if(_config->FindB("Acquire::PDiffs",true) == true) 
+      if(_config->FindB("Acquire::PDiffs", true) == true) 
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 			     (*Target)->ShortDesc, ExpectedIndexHash);
       else 
@@ -1211,30 +1263,30 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    if (AuthPass == true)
    {
-      // if we fail the authentication but got the file via a IMS-Hit 
-      // this means that the file wasn't downloaded and that it might be
-      // just stale (server problem, proxy etc). we delete what we have
-      // queue it again without i-m-s 
-      // alternatively we could just unlink the file and let the user try again
-      if (IMSHit)
+      // gpgv method failed, if we have a good signature 
+      string LastGoodSigFile = _config->FindDir("Dir::State::lists") +
+	 "partial/" + URItoFileName(RealURI) + ".gpg.reverify";
+      if(FileExists(LastGoodSigFile))
       {
-	 Complete = false;
-	 Local = false;
-	 AuthPass = false;
-	 unlink(DestFile.c_str());
-
-	 DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-	 DestFile += URItoFileName(RealURI);
-	 Desc.URI = RealURI;
-	 QueueURI(Desc);
+	 string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
+	    URItoFileName(RealURI) + ".gpg";
+	 Rename(LastGoodSigFile,VerifiedSigFile);
+	 Status = StatTransientNetworkError;
+	 _error->Warning(_("A error occurred during the signature "
+			   "verification. The repository is not updated "
+			   "and the previous index files will be used."
+			   "GPG error: %s: %s\n"),
+			 Desc.Description.c_str(),
+			 LookupTag(Message,"Message").c_str());
+	 RunScripts("APT::Update::Auth-Failure");
 	 return;
+      } else {
+	 _error->Warning(_("GPG error: %s: %s"),
+			 Desc.Description.c_str(),
+			 LookupTag(Message,"Message").c_str());
       }
-
       // gpgv method failed 
-      _error->Warning("GPG error: %s: %s",
-                      Desc.Description.c_str(),
-                      LookupTag(Message,"Message").c_str());
-
+      ReportMirrorFailure("GPGFailure");
    }
 
    // No Release file was present, or verification failed, so fall

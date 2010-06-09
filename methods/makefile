@@ -48,7 +48,7 @@ include $(PROGRAM_H)
 PROGRAM=http
 SLIBS = -lapt-pkg $(SOCKETLIBS) $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
-SOURCE = http.cc rfc2553emu.cc connect.cc
+SOURCE = http.cc http_main.cc rfc2553emu.cc connect.cc
 include $(PROGRAM_H)
 
 # The https method
@@ -79,9 +79,17 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = rsh.cc
 include $(PROGRAM_H)
 
+# The mirror method
+PROGRAM=mirror
+SLIBS = -lapt-pkg $(SOCKETLIBS)
+LIB_MAKES = apt-pkg/makefile
+SOURCE = mirror.cc http.cc rfc2553emu.cc connect.cc
+include $(PROGRAM_H)
+
 # SSH and bzip2 method symlink
 binary: $(BIN)/ssh $(BIN)/bzip2 $(BIN)/lzma
 veryclean: clean-$(BIN)/ssh clean-$(BIN)/bzip2 clean-$(BIN)/lzma
+
 $(BIN)/ssh:
 	echo "Installing ssh method link"
 	ln -fs rsh $(BIN)/ssh

@@ -147,7 +147,7 @@ bool DoAdd(CommandLine &)
    pkgCdrom cdrom;
    bool res = true;
 
-   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
+   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
    unsigned int count = 0;
    
    if (AutoDetect && UdevCdroms.Dlopen())

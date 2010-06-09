@@ -12,6 +12,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apti18n.h>
 #include <apt-pkg/fileutl.h>
@@ -24,6 +25,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
+#include <string.h>
 #include <stdio.h>
 #include <string.h>
 #include <algorithm>
@@ -354,7 +356,6 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 
    return true;
 }
-
 									/*}}}*/
 // DPkgPM::DoStdin - Read stdin and pass to slave pty			/*{{{*/
 // ---------------------------------------------------------------------
@@ -425,7 +426,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: trigproc: trigger'
 	    
    */
-   char* list[5];
+   char* list[6];
    //        dpkg sends multiline error messages sometimes (see
    //        #374195 for a example. we should support this by
    //        either patching dpkg to not send multiline over the
@@ -476,6 +477,14 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 
    if(strncmp(action,"error",strlen("error")) == 0)
    {
+      // urgs, sometime has ":" in its error string so that we
+      // end up with the error message split between list[3]
+      // and list[4], e.g. the message: 
+      // "failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ..."
+      // concat them again
+      if( list[4] != NULL )
+	 list[3][strlen(list[3])] = ':';
+
       status << "pmerror:" << list[1]
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << list[3]
@@ -484,6 +493,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
+      pkgFailures++;
+      WriteApportReport(list[1], list[3]);
       return;
    }
    else if(strncmp(action,"conffile",strlen("conffile")) == 0)
@@ -1173,5 +1184,188 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 void pkgDPkgPM::Reset() 
 {
    List.erase(List.begin(),List.end());
+}
+									/*}}}*/
+// pkgDpkgPM::WriteApportReport - write out error report pkg failure	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg) 
+{
+   string pkgname, reportfile, srcpkgname, pkgver, arch;
+   string::size_type pos;
+   FILE *report;
+
+   if (_config->FindB("Dpkg::ApportFailureReport", false) == false)
+   {
+      std::clog << "configured to not write apport reports" << std::endl;
+      return;
+   }
+
+   // only report the first errors
+   if(pkgFailures > _config->FindI("APT::Apport::MaxReports", 3))
+   {
+      std::clog << _("No apport report written because MaxReports is reached already") << std::endl;
+      return;
+   }
+
+   // check if its not a follow up error 
+   const char *needle = dgettext("dpkg", "dependency problems - leaving unconfigured");
+   if(strstr(errormsg, needle) != NULL) {
+      std::clog << _("No apport report written because the error message indicates its a followup error from a previous failure.") << std::endl;
+      return;
+   }
+
+   // do not report disk-full failures 
+   if(strstr(errormsg, strerror(ENOSPC)) != NULL) {
+      std::clog << _("No apport report written because the error message indicates a disk full error") << std::endl;
+      return;
+   }
+
+   // do not report out-of-memory failures 
+   if(strstr(errormsg, strerror(ENOMEM)) != NULL) {
+      std::clog << _("No apport report written because the error message indicates a out of memory error") << std::endl;
+      return;
+   }
+
+   // do not report dpkg I/O errors
+   // XXX - this message is localized, but this only matches the English version.  This is better than nothing.
+   if(strstr(errormsg, "short read in buffer_copy (")) {
+      std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
+      return;
+   }
+
+   // get the pkgname and reportfile
+   pkgname = flNotDir(pkgpath);
+   pos = pkgname.find('_');
+   if(pos != string::npos)
+      pkgname = pkgname.substr(0, pos);
+
+   // find the package versin and source package name
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
+   if (Pkg.end() == true)
+      return;
+   pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+   if (Ver.end() == true)
+      return;
+   pkgver = Ver.VerStr() == NULL ? "unknown" : Ver.VerStr();
+   pkgRecords Recs(Cache);
+   pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
+   srcpkgname = Parse.SourcePkg();
+   if(srcpkgname.empty())
+      srcpkgname = pkgname;
+
+   // if the file exists already, we check:
+   // - if it was reported already (touched by apport). 
+   //   If not, we do nothing, otherwise
+   //    we overwrite it. This is the same behaviour as apport
+   // - if we have a report with the same pkgversion already
+   //   then we skip it
+   reportfile = flCombine("/var/crash",pkgname+".0.crash");
+   if(FileExists(reportfile))
+   {
+      struct stat buf;
+      char strbuf[255];
+
+      // check atime/mtime
+      stat(reportfile.c_str(), &buf);
+      if(buf.st_mtime > buf.st_atime)
+	 return;
+
+      // check if the existing report is the same version
+      report = fopen(reportfile.c_str(),"r");
+      while(fgets(strbuf, sizeof(strbuf), report) != NULL)
+      {
+	 if(strstr(strbuf,"Package:") == strbuf)
+	 {
+	    char pkgname[255], version[255];
+	    if(sscanf(strbuf, "Package: %s %s", pkgname, version) == 2)
+	       if(strcmp(pkgver.c_str(), version) == 0)
+	       {
+		  fclose(report);
+		  return;
+	       }
+	 }
+      }
+      fclose(report);
+   }
+
+   // now write the report
+   arch = _config->Find("APT::Architecture");
+   report = fopen(reportfile.c_str(),"w");
+   if(report == NULL)
+      return;
+   if(_config->FindB("DPkgPM::InitialReportOnly",false) == true)
+      chmod(reportfile.c_str(), 0);
+   else
+      chmod(reportfile.c_str(), 0600);
+   fprintf(report, "ProblemType: Package\n");
+   fprintf(report, "Architecture: %s\n", arch.c_str());
+   time_t now = time(NULL);
+   fprintf(report, "Date: %s" , ctime(&now));
+   fprintf(report, "Package: %s %s\n", pkgname.c_str(), pkgver.c_str());
+   fprintf(report, "SourcePackage: %s\n", srcpkgname.c_str());
+   fprintf(report, "ErrorMessage:\n %s\n", errormsg);
+
+   // ensure that the log is flushed
+   if(term_out)
+      fflush(term_out);
+
+   // attach terminal log it if we have it
+   string logfile_name = _config->FindFile("Dir::Log::Terminal");
+   if (!logfile_name.empty())
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "DpkgTerminalLog:\n");
+      log = fopen(logfile_name.c_str(),"r");
+      if(log != NULL)
+      {
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+	 fclose(log);
+      }
+   }
+
+   // log the ordering 
+   const char *ops_str[] = {"Install", "Configure","Remove","Purge"};
+   fprintf(report, "AptOrdering:\n");
+   for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
+      fprintf(report, " %s: %s\n", (*I).Pkg.Name(), ops_str[(*I).Op]);
+
+   // attach dmesg log (to learn about segfaults)
+   if (FileExists("/bin/dmesg"))
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "Dmesg:\n");
+      log = popen("/bin/dmesg","r");
+      if(log != NULL)
+      {
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+	 fclose(log);
+      }
+   }
+
+   // attach df -l log (to learn about filesystem status)
+   if (FileExists("/bin/df"))
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "Df:\n");
+      log = popen("/bin/df -l","r");
+      if(log != NULL)
+      {
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+	 fclose(log);
+      }
+   }
+
+   fclose(report);
+
 }
 									/*}}}*/

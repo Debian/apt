@@ -143,6 +143,7 @@ class pkgAcquire::Item : public WeakPointable
     *  download progress indicator's overall statistics.
     */
    bool Local;
+   string UsedMirror;
 
    /** \brief The number of fetch queues into which this item has been
     *  inserted.
@@ -243,6 +244,17 @@ class pkgAcquire::Item : public WeakPointable
 
    /** \return \b true if this object is being fetched from a trusted source. */
    virtual bool IsTrusted() {return false;};
+   
+   // report mirror problems
+   /** \brief Report mirror problem
+    * 
+    *  This allows reporting mirror failures back to a centralized
+    *  server. The apt-report-mirror-failure script is called for this
+    * 
+    *  \param FailCode A short failure string that is send
+    */
+   void ReportMirrorFailure(string FailCode);
+
 
    /** \brief Initialize an item.
     *
@@ -551,7 +563,8 @@ class pkgAcqIndex : public pkgAcquire::Item
     *  fallback is ".gz" or none.
     */
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
-	       string ShortDesc, HashString ExpectedHash, string compressExt="");
+	       string ShortDesc, HashString ExpectedHash, 
+	       string compressExt="");
 };
 									/*}}}*/
 /** \brief An acquire item that is responsible for fetching a		{{{
@@ -613,7 +626,6 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    protected:
    /** \brief The last good signature file */
    string LastGoodSig;
-
 
    /** \brief The fetch request that is currently being processed. */
    pkgAcquire::ItemDesc Desc;

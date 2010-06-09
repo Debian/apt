@@ -2306,6 +2306,33 @@ bool DoSource(CommandLine &CmdL)
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       
+      string srec = Last->AsStr();
+      string::size_type pos = srec.find("\nVcs-");
+      while (pos != string::npos)
+      {
+	 pos += strlen("\nVcs-");
+	 string vcs = srec.substr(pos,srec.find(":",pos)-pos);
+	 if(vcs == "Browser") 
+	 {
+	    pos = srec.find("\nVcs-", pos);
+	    continue;
+	 }
+	 pos += vcs.length()+2;
+	 string::size_type epos = srec.find("\n", pos);
+	 string uri = srec.substr(pos,epos-pos).c_str();
+	 ioprintf(c1out, _("NOTICE: '%s' packaging is maintained in "
+			   "the '%s' version control system at:\n"
+			   "%s\n"),
+		  Src.c_str(), vcs.c_str(), uri.c_str());
+	 if(vcs == "Bzr") 
+	    ioprintf(c1out,_("Please use:\n"
+			     "bzr get %s\n"
+			     "to retrieve the latest (possibly unreleased) "
+			     "updates to the package.\n"),
+		     uri.c_str());
+	 break;
+      }
+
       // Back track
       vector<pkgSrcRecords::File> Lst;
       if (Last->Files(Lst) == false)
@@ -2968,7 +2995,6 @@ int main(int argc,const char *argv[])					/*{{{*/
                                    {"remove",&DoInstall},
                                    {"purge",&DoInstall},
 				   {"autoremove",&DoInstall},
-				   {"purge",&DoInstall},
 				   {"markauto",&DoMarkAuto},
 				   {"unmarkauto",&DoMarkAuto},
                                    {"dist-upgrade",&DoDistUpgrade},
