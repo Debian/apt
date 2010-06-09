@@ -61,7 +61,7 @@ public:									/*{{{*/
 		};
 	};
 	// 103. set::iterator is required to be modifiable, but this allows modification of keys
-	typedef typename APT::PackageSet::const_iterator iterator;
+	typedef APT::PackageSet::const_iterator iterator;
 
 	using std::set<pkgCache::PkgIterator>::insert;
 	inline void insert(pkgCache::PkgIterator const &P) { if (P.end() == false) std::set<pkgCache::PkgIterator>::insert(P); };
@@ -169,7 +169,7 @@ public:									/*{{{*/
 		inline pkgCache::VerFileIterator NewestFile() const { return (**this).NewestFile(); };
 	};
 	// 103. set::iterator is required to be modifiable, but this allows modification of keys
-	typedef typename APT::VersionSet::const_iterator iterator;
+	typedef APT::VersionSet::const_iterator iterator;
 
 	using std::set<pkgCache::VerIterator>::insert;
 	inline void insert(pkgCache::VerIterator const &V) { if (V.end() == false) std::set<pkgCache::VerIterator>::insert(V); };
