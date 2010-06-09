@@ -29,10 +29,12 @@
 									/*}}}*/
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
+#include<iterator>
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
    need to have for doing some walk-over-the-cache magic */
-template<typename Str, typename Itr> class pkgCache::Iterator {
+template<typename Str, typename Itr> class pkgCache::Iterator :
+			public std::iterator<std::forward_iterator_tag, Str> {
 	protected:
 	Str *S;
 	pkgCache *Owner;
@@ -64,7 +66,7 @@ template<typename Str, typename Itr> class pkgCache::Iterator {
 	inline operator Str const *() const {return S == OwnerPointer() ? 0 : S;};
 	inline Str &operator *() {return *S;};
 	inline Str const &operator *() const {return *S;};
-	inline pkgCache *Cache() {return Owner;};
+	inline pkgCache *Cache() const {return Owner;};
 
 	// Mixed stuff
 	inline void operator =(const Itr &B) {S = B.S; Owner = B.Owner;};
@@ -102,6 +104,11 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;};
 	inline PkgIterator PackageList() const;
 	PkgIterator FindPkg(string Arch = "any");
+	/** \brief find the package with the "best" architecture
+
+	    The best architecture is either the "native" or the first
+	    in the list of Architectures which is not an end-Pointer */
+	PkgIterator FindPreferredPkg();
 	PkgIterator NextPkg(PkgIterator const &Pkg);
 
 	// Constructors
@@ -198,8 +205,8 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline PrvIterator ProvidesList() const;
 	inline VerFileIterator FileList() const;
 	bool Downloadable() const;
-	inline const char *PriorityType() {return Owner->Priority(S->Priority);};
-	string RelStr();
+	inline const char *PriorityType() const {return Owner->Priority(S->Priority);};
+	string RelStr() const;
 
 	bool Automatic() const;
 	bool Pseudo() const;

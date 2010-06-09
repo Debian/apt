@@ -165,7 +165,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
 bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 {
    FileFd state_file;
-   string const state = _config->FindDir("Dir::State") + "extended_states";
+   string const state = _config->FindFile("Dir::State::extended_states");
    if(FileExists(state)) {
       state_file.Open(state, FileFd::ReadOnly);
       int const file_size = state_file.Size();
@@ -222,7 +222,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
       std::clog << "pkgDepCache::writeStateFile()" << std::endl;
 
    FileFd StateFile;
-   string const state = _config->FindDir("Dir::State") + "extended_states";
+   string const state = _config->FindFile("Dir::State::extended_states");
 
    // if it does not exist, create a empty one
    if(!FileExists(state)) 
@@ -407,8 +407,11 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
 									/*}}}*/
 // DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
 // ---------------------------------------------------------------------
-/* Call with Mult = -1 to preform the inverse opration */
-void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
+/* Call with Mult = -1 to preform the inverse opration
+   The Mult increases the complexity of the calulations here and is unused -
+   or do we really have a usecase for removing the size of a package two
+   times? So let us replace it with a simple bool and be done with it… */
+__deprecated void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
 {
    StateCache &P = PkgState[Pkg->ID];
    
@@ -422,8 +425,8 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
    // Compute the size data
    if (P.NewInstall() == true)
    {
-      iUsrSize += (signed)(Mult*P.InstVerIter(*this)->InstalledSize);
-      iDownloadSize += (signed)(Mult*P.InstVerIter(*this)->Size);
+      iUsrSize += (signed long long)(Mult*P.InstVerIter(*this)->InstalledSize);
+      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
       return;
    }
    
@@ -432,9 +435,9 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
        (P.InstallVer != (Version *)Pkg.CurrentVer() || 
 	(P.iFlags & ReInstall) == ReInstall) && P.InstallVer != 0)
    {
-      iUsrSize += (signed)(Mult*((signed)P.InstVerIter(*this)->InstalledSize - 
-			(signed)Pkg.CurrentVer()->InstalledSize));
-      iDownloadSize += (signed)(Mult*P.InstVerIter(*this)->Size);
+      iUsrSize += (signed long long)(Mult*((signed long long)P.InstVerIter(*this)->InstalledSize - 
+			(signed long long)Pkg.CurrentVer()->InstalledSize));
+      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
       return;
    }
    
@@ -442,14 +445,80 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
    if (Pkg.State() == pkgCache::PkgIterator::NeedsUnpack &&
        P.Delete() == false)
    {
-      iDownloadSize += (signed)(Mult*P.InstVerIter(*this)->Size);
+      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
       return;
    }
    
    // Removing
    if (Pkg->CurrentVer != 0 && P.InstallVer == 0)
    {
-      iUsrSize -= (signed)(Mult*Pkg.CurrentVer()->InstalledSize);
+      iUsrSize -= (signed long long)(Mult*Pkg.CurrentVer()->InstalledSize);
+      return;
+   }   
+}
+									/*}}}*/
+// DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
+// ---------------------------------------------------------------------
+/* Call with Inverse = true to preform the inverse opration */
+void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const &Inverse)
+{
+   StateCache &P = PkgState[Pkg->ID];
+   
+   if (Pkg->VersionList == 0)
+      return;
+   
+   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
+       P.Keep() == true)
+      return;
+   
+   // Compute the size data
+   if (P.NewInstall() == true)
+   {
+      if (Inverse == false) {
+	 iUsrSize += P.InstVerIter(*this)->InstalledSize;
+	 iDownloadSize += P.InstVerIter(*this)->Size;
+      } else {
+	 iUsrSize -= P.InstVerIter(*this)->InstalledSize;
+	 iDownloadSize -= P.InstVerIter(*this)->Size;
+      }
+      return;
+   }
+   
+   // Upgrading
+   if (Pkg->CurrentVer != 0 && 
+       (P.InstallVer != (Version *)Pkg.CurrentVer() || 
+	(P.iFlags & ReInstall) == ReInstall) && P.InstallVer != 0)
+   {
+      if (Inverse == false) {
+	 iUsrSize -= Pkg.CurrentVer()->InstalledSize;
+	 iUsrSize += P.InstVerIter(*this)->InstalledSize;
+	 iDownloadSize += P.InstVerIter(*this)->Size;
+      } else {
+	 iUsrSize -= P.InstVerIter(*this)->InstalledSize;
+	 iUsrSize += Pkg.CurrentVer()->InstalledSize;
+	 iDownloadSize -= P.InstVerIter(*this)->Size;
+      }
+      return;
+   }
+   
+   // Reinstall
+   if (Pkg.State() == pkgCache::PkgIterator::NeedsUnpack &&
+       P.Delete() == false)
+   {
+      if (Inverse == false)
+	 iDownloadSize += P.InstVerIter(*this)->Size;
+      else
+	 iDownloadSize -= P.InstVerIter(*this)->Size;
+      return;
+   }
+   
+   // Removing
+   if (Pkg->CurrentVer != 0 && P.InstallVer == 0)
+   {
+      if (Inverse == false)
+	 iUsrSize -= Pkg.CurrentVer()->InstalledSize;
+      else
+	 iUsrSize += Pkg.CurrentVer()->InstalledSize;
       return;
    }   
 }
@@ -806,7 +875,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 		a bit we increase with a kill, but we should do something more clever… */
       while(recheck.empty() == false)
 	 for (std::set<unsigned long>::const_iterator p = recheck.begin();
-	     p != recheck.end(); ++p) {
+	     p != recheck.end();) {
 	    if (Prog != 0 && Done%20 == 0)
 	       Prog->Progress(Done);
 	    PkgIterator P = PkgIterator(*Cache, Cache->PkgP + *p);
@@ -814,7 +883,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 	       ++killed;
 	       ++Done;
 	    }
-	    recheck.erase(p);
+	    recheck.erase(p++);
 	 }
 
       /* Okay, we have killed a great amount of pseudopackages -
@@ -849,7 +918,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 	 unsigned long const G = *g;
 	 recheck.erase(g);
 	 if (unlikely(ReInstallPseudoForGroup(G, recheck) == false))
-	    _error->Warning(_("Internal error, group '%s' has no installable pseudo package"), GrpIterator(*Cache, Cache->GrpP + *g).Name());
+	    _error->Warning(_("Internal error, group '%s' has no installable pseudo package"), GrpIterator(*Cache, Cache->GrpP + G).Name());
       }
    }
 
@@ -1638,8 +1707,11 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    {
       if(!(PkgState[p->ID].Flags & Flag::Auto) ||
 	  (p->Flags & Flag::Essential) ||
-	  userFunc.InRootSet(p))
-          
+	  userFunc.InRootSet(p) ||
+	  // be nice even then a required package violates the policy (#583517)
+	  // and do the full mark process also for required packages
+	  (p.CurrentVer().end() != true &&
+	   p.CurrentVer()->Priority == pkgCache::State::Required))
       {
 	 // the package is installed (and set to keep)
 	 if(PkgState[p->ID].Keep() && !p.CurrentVer().end())
@@ -1716,10 +1788,6 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 
    // If the version belongs to a Multi-Arch all package
    // we will mark all others in this Group with this version also
-   // Beware: We compare versions here the lazy way: string comparision
-   // this is bad if multiple repositories provide different versions
-   // of the package with an identical version number - but even in this
-   // case the dependencies are likely the same.
    if (ver->MultiArch == pkgCache::Version::All &&
 	strcmp(ver.Arch(true), "all") == 0)
    {
@@ -1731,7 +1799,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
 	 for (VerIterator V = P.VersionList();
 	      V.end() != true; ++V)
 	 {
-	    if (strcmp(VerStr, V.VerStr()) != 0)
+	    if (ver->Hash != V->Hash ||
+		strcmp(VerStr, V.VerStr()) != 0)
 	       continue;
 	    MarkPackage(P, V, follow_recommends, follow_suggests);
 	    break;

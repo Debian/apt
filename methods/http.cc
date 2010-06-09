@@ -631,7 +631,7 @@ bool ServerState::HeaderLine(string Line)
    
    if (stringcasecmp(Tag,"Last-Modified:") == 0)
    {
-      if (StrToTime(Val,Date) == false)
+      if (RFC1123StrToTime(Val.c_str(), Date) == false)
 	 return _error->Error(_("Unknown date format"));
       return true;
    }

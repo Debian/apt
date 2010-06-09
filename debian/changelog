@@ -1,4 +1,4 @@
-apt (0.7.26~exp6) experimental; urgency=low
+apt (0.7.26~exp6) UNRELEASED; urgency=low
 
   [ Michael Vogt ]
   * merge the remaining Ubuntu change:
@@ -20,8 +20,69 @@ apt (0.7.26~exp6) experimental; urgency=low
     - write apport crash file on package failure (disabled by default
       on debian until apport is available)
     - support mirror failure reporting (disabled by default on debian)
+  
+  [ David Kalnischkies ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - write Disappeared also to the history.log
+    - forward manual-installed bit on package disappearance
+  * apt-pkg/deb/debsystem.cc:
+    - add better config item for extended_states file
+  * apt-pkg/pkgcache.h:
+    - switch {,Install-}Size to unsigned long long
+  * apt-pkg/depcache.cc:
+    - do the autoremove mark process also for required packages to handle
+      these illegally depending on lower priority packages (Closes: #583517)
+    - try harder to find the other pseudo versions for autoremove multiarch
+    - correct "Dangerous iterator usage" pointed out by cppcheck
+    - deal with long long, not with int to remove 2GB Limit (LP: #250909)
+    - deprecate AddSize with Multiplier as it is unused and switch to
+      boolean instead to handle the sizes more gracefully.
+    - switch i{Download,Usr}Size from double to (un)signed long long
+  * apt-pkg/aptconfiguration.cc:
+    - remove duplicate architectures in getArchitectures()
+  * apt-pkg/indexrecords.{cc,h}:
+    - backport forgotten Valid-Until patch from the obsolete experimental
+      branch to prevent replay attacks better, thanks to Thomas Viehmann
+      for the initial patch! (Closes: #499897)
+    - add a constant Exists check for MetaKeys
+  * apt-pkg/acquire-item.cc:
+    - do not try PDiff if it is not listed in the Meta file
+  * apt-pkg/cacheiterator.h:
+    - let pkgCache::Iterator inherent std::iterator
+  * ftparchive/writer.h:
+    - add a virtual destructor to FTWScanner class (for cppcheck)
+  * apt-pkg/cacheset.{cc,h}:
+    - add simple wrapper around std::set for cache structures
+    - move regex magic from apt-get to new FromRegEx method
+    - move cmdline parsing from apt-cache to new FromCommandLine method
+    - support special release-modifier 'installed' and 'candidate'
+  * apt-pkg/contrib/cmdline.cc:
+    - fix segfault in SaveInConfig caused by writing over char[] sizes
+  * apt-pkg/pkgcache.cc:
+    - get the best matching arch package from a group with FindPreferredPkg
+  * cmdline/apt-cache.cc:
+    - make the search multiarch compatible by using GrpIterator instead
+    - use pkgCacheFile and the new CacheSets all over the place
+    - add --target-release option (Closes: #115520)
+    - accept pkg/release and pkg=version in show and co. (Closes: #236270)
+    - accept package versions in the unmet command
+  * cmdline/apt-get.cc:
+    - use unsigned long long instead of double to store values it gets
+  * apt-pkg/cachefile.{cc,h}:
+    - split Open() into submethods to be able to build only parts
+    - make the OpProgress optional in the Cache buildprocess
+    - store also the SourceList we use internally for export
+  * doc/apt.conf.5.xml:
+    - document the new Valid-Until related options
+  * apt-pkg/contrib/strutl.cc:
+    - split StrToTime() into HTTP1.1 and FTP date parser methods and
+      use strptime() instead of some self-made scanf mangling
+    - use the portable timegm shown in his manpage instead of a strange
+      looking code copycat from wget
+  * ftparchive/writer.cc:
+    - add ValidTime option to generate a Valid-Until header in Release file
 
- -- Michael Vogt <mvo@debian.org>  Wed, 09 Jun 2010 10:50:17 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Jun 2010 10:52:31 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 

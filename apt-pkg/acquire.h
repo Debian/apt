@@ -323,17 +323,17 @@ class pkgAcquire
    /** \return the total size in bytes of all the items included in
     *  this download.
     */
-   double TotalNeeded();
+   unsigned long long TotalNeeded();
 
    /** \return the size in bytes of all non-local items included in
     *  this download.
     */
-   double FetchNeeded();
+   unsigned long long FetchNeeded();
 
    /** \return the amount of data to be fetched that is already
     *  present on the filesystem.
     */
-   double PartialPresent();
+   unsigned long long PartialPresent();
 
    /** \brief Delayed constructor
     *

@@ -12,6 +12,11 @@ SLIBS = -lapt-pkg
 SOURCE = getlanguages_test.cc
 include $(PROGRAM_H)
 
+PROGRAM = getArchitectures${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = getarchitectures_test.cc
+include $(PROGRAM_H)
+
 # Program for testing ParseDepends
 PROGRAM = ParseDepends${BASENAME}
 SLIBS = -lapt-pkg

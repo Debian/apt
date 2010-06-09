@@ -142,7 +142,7 @@ bool debDpkgDB::ReadyPkgCache(OpProgress &Progress)
       CacheMap = 0;
    }
    
-   if (pkgMakeOnlyStatusCache(Progress,&CacheMap) == false)
+   if (pkgCacheGenerator::MakeOnlyStatusCache(&Progress,&CacheMap) == false)
       return false;
    Cache->DropProgress();
    

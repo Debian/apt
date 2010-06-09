@@ -327,11 +327,24 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 	if (likely(Cached == true) && archs.empty() == false)
 		return archs;
 
-	string const arch = _config->Find("APT::Architecture");
 	archs = _config->FindVector("APT::Architectures");
+	string const arch = _config->Find("APT::Architecture");
+	if (unlikely(arch.empty() == true))
+		return archs;
+
 	if (archs.empty() == true ||
 	    std::find(archs.begin(), archs.end(), arch) == archs.end())
 		archs.push_back(arch);
+
+	// erase duplicates and empty strings
+	for (std::vector<string>::reverse_iterator a = archs.rbegin();
+	     a != archs.rend(); ++a) {
+		if (a->empty() == true || std::find(a + 1, archs.rend(), *a) != archs.rend())
+			archs.erase(a.base()-1);
+		if (a == archs.rend())
+			break;
+	}
+
 	return archs;
 }
 									/*}}}*/

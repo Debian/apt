@@ -133,10 +133,9 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
    }
 
    // Archive Size
-   Ver->Size = (unsigned)Section.FindI("Size");
-   
+   Ver->Size = Section.FindULL("Size");
    // Unpacked Size (in K)
-   Ver->InstalledSize = (unsigned)Section.FindI("Installed-Size");
+   Ver->InstalledSize = Section.FindULL("Installed-Size");
    Ver->InstalledSize *= 1024;
 
    // Priority

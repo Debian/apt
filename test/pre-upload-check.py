@@ -192,6 +192,20 @@ class testAuthentication(unittest.TestCase):
                 self.assert_(len(glob.glob("/var/lib/apt/lists/partial/*")) == 0,
                              "partial/ dir has leftover files: %s" % glob.glob("/var/lib/apt/lists/partial/*"))
 
+    def testValid(self):
+        for f in glob.glob("testsources.list/sources.list*validuntil*"):
+            self._cleanup()
+            (prefix, testtype, result) = f.split("-")
+            expected_res = self._expectedRes(result)
+            cmd = ["update"]
+            res = call([self.apt,"-o","Dir::Etc::sourcelist=./%s" % f]+cmd+apt_args,
+                       stdout=stdout, stderr=stderr)
+            self.assert_(res == expected_res,
+                         "test '%s' failed (got %s expected %s" % (f,res,expected_res))
+            if expected_res == 0:
+                self.assert_(len(glob.glob("/var/lib/apt/lists/partial/*")) == 0,
+                             "partial/ dir has leftover files: %s" % glob.glob("/var/lib/apt/lists/partial/*"))
+
 
 class testLocalRepositories(unittest.TestCase):
     " test local repository regressions "

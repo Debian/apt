@@ -924,6 +924,15 @@ ReleaseWriter::ReleaseWriter(string const &DB)
       datestr[0] = '\0';
    }
 
+   time_t const validuntil = now + _config->FindI("APT::FTPArchive::Release::ValidTime", 0);
+   char validstr[128];
+   if (now == validuntil ||
+       strftime(validstr, sizeof(validstr), "%a, %d %b %Y %H:%M:%S UTC",
+                gmtime(&validuntil)) == 0)
+   {
+      datestr[0] = '\0';
+   }
+
    map<string,string> Fields;
    Fields["Origin"] = "";
    Fields["Label"] = "";
@@ -931,6 +940,7 @@ ReleaseWriter::ReleaseWriter(string const &DB)
    Fields["Version"] = "";
    Fields["Codename"] = "";
    Fields["Date"] = datestr;
+   Fields["Valid-Until"] = validstr;
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";

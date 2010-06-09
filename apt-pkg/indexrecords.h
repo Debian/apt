@@ -12,6 +12,7 @@
 
 #include <map>
 #include <vector>
+#include <ctime>
 
 class indexRecords
 {
@@ -25,6 +26,8 @@ class indexRecords
    string Dist;
    string Suite;
    string ExpectedDist;
+   time_t ValidUntil;
+
    std::map<string,checkSum *> Entries;
 
    public:
@@ -34,10 +37,13 @@ class indexRecords
 
    // Lookup function
    virtual const checkSum *Lookup(const string MetaKey);
+   /** \brief tests if a checksum for this file is available */
+   bool Exists(string const &MetaKey) const;
    std::vector<std::string> MetaKeys();
 
    virtual bool Load(string Filename);
    string GetDist() const;
+   time_t GetValidUntil() const;
    virtual bool CheckDist(const string MaybeDist) const;
    string GetExpectedDist() const;
    virtual ~indexRecords(){};

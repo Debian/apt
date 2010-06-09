@@ -526,7 +526,7 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
 // CacheGenerator::FinishCache - do various finish operations		/*{{{*/
 // ---------------------------------------------------------------------
 /* This prepares the Cache for delivery */
-bool pkgCacheGenerator::FinishCache(OpProgress &Progress)
+bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 {
    // FIXME: add progress reporting for this operation
    // Do we have different architectures in your groups ?
@@ -923,7 +923,7 @@ static unsigned long ComputeSize(FileIterator Start,FileIterator End)
 // ---------------------------------------------------------------------
 /* */
 static bool BuildCache(pkgCacheGenerator &Gen,
-		       OpProgress &Progress,
+		       OpProgress *Progress,
 		       unsigned long &CurrentSize,unsigned long TotalSize,
 		       FileIterator Start, FileIterator End)
 {
@@ -944,7 +944,8 @@ static bool BuildCache(pkgCacheGenerator &Gen,
       }
       
       unsigned long Size = (*I)->Size();
-      Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Reading package lists"));
+      if (Progress != NULL)
+	 Progress->OverallProgress(CurrentSize,TotalSize,Size,_("Reading package lists"));
       CurrentSize += Size;
       
       if ((*I)->Merge(Gen,Progress) == false)
@@ -953,13 +954,15 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 
    if (Gen.HasFileDeps() == true)
    {
-      Progress.Done();
+      if (Progress != NULL)
+	 Progress->Done();
       TotalSize = ComputeSize(Start, End);
       CurrentSize = 0;
       for (I = Start; I != End; I++)
       {
 	 unsigned long Size = (*I)->Size();
-	 Progress.OverallProgress(CurrentSize,TotalSize,Size,_("Collecting File Provides"));
+	 if (Progress != NULL)
+	    Progress->OverallProgress(CurrentSize,TotalSize,Size,_("Collecting File Provides"));
 	 CurrentSize += Size;
 	 if ((*I)->MergeFileProvides(Gen,Progress) == false)
 	    return false;
@@ -969,7 +972,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
    return true;
 }
 									/*}}}*/
-// MakeStatusCache - Construct the status cache				/*{{{*/
+// CacheGenerator::MakeStatusCache - Construct the status cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* This makes sure that the status cache (the cache that has all 
    index files from the sources list and all local ones) is ready
@@ -977,7 +980,10 @@ static bool BuildCache(pkgCacheGenerator &Gen,
    the cache will be stored there. This is pretty much mandetory if you
    are using AllowMem. AllowMem lets the function be run as non-root
    where it builds the cache 'fast' into a memory buffer. */
-bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
+__deprecated bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
+			MMap **OutMap, bool AllowMem)
+   { return pkgCacheGenerator::MakeStatusCache(List, &Progress, OutMap, AllowMem); }
+bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap,bool AllowMem)
 {
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
@@ -1028,13 +1034,15 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 
    if (Writeable == false && AllowMem == false && CacheFile.empty() == false)
       return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
-   
-   Progress.OverallProgress(0,1,1,_("Reading package lists"));
-   
+
+   if (Progress != NULL)
+      Progress->OverallProgress(0,1,1,_("Reading package lists"));
+
    // Cache is OK, Fin.
    if (CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
    {
-      Progress.OverallProgress(1,1,1,_("Reading package lists"));
+      if (Progress != NULL)
+	 Progress->OverallProgress(1,1,1,_("Reading package lists"));
       if (Debug == true)
 	 std::clog << "pkgcache.bin is valid - no need to build anything" << std::endl;
       return true;
@@ -1084,7 +1092,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
 
       // Build the status cache
-      pkgCacheGenerator Gen(Map.Get(),&Progress);
+      pkgCacheGenerator Gen(Map.Get(),Progress);
       if (_error->PendingError() == true)
 	 return false;
       if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
@@ -1101,7 +1109,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
       TotalSize = ComputeSize(Files.begin(),Files.end());
       
       // Build the source cache
-      pkgCacheGenerator Gen(Map.Get(),&Progress);
+      pkgCacheGenerator Gen(Map.Get(),Progress);
       if (_error->PendingError() == true)
 	 return false;
       if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
@@ -1160,10 +1168,12 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
    return true;
 }
 									/*}}}*/
-// MakeOnlyStatusCache - Build a cache with just the status files	/*{{{*/
+// CacheGenerator::MakeOnlyStatusCache - Build only a status files cache/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
+__deprecated bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
+   { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
+bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {
    unsigned long MapSize = _config->FindI("APT::Cache-Limit",20*1024*1024);
    vector<pkgIndexFile *> Files;
@@ -1178,8 +1188,9 @@ bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
    TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
    
    // Build the status cache
-   Progress.OverallProgress(0,1,1,_("Reading package lists"));
-   pkgCacheGenerator Gen(Map.Get(),&Progress);
+   if (Progress != NULL)
+      Progress->OverallProgress(0,1,1,_("Reading package lists"));
+   pkgCacheGenerator Gen(Map.Get(),Progress);
    if (_error->PendingError() == true)
       return false;
    if (BuildCache(Gen,Progress,CurrentSize,TotalSize,

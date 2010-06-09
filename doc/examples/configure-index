@@ -176,6 +176,10 @@ Acquire
   PDiffs::SizeLimit "50"; // don't use diffs if size of all patches excess
 			  // 50% of the size of the original file
 
+  Check-Valid-Until "true";
+  Max-ValidTime "864000"; // 10 days
+  Max-ValidTime::Debian-Security "604800"; // 7 days, label specific configuration
+
   // HTTP method configuration
   http 
   {
@@ -294,9 +298,8 @@ Dir "/"
   State "var/lib/apt/" 
   {
      Lists "lists/";
-     xstatus "xstatus";
-     userstatus "status.user";
      status "/var/lib/dpkg/status";
+     extended_states "extended_states";
      cdroms "cdroms.list";
   };
   

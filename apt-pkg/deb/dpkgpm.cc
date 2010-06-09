@@ -472,7 +472,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 std::clog << "send: '" << status.str() << "'" << endl;
 
       if (strncmp(action, "disappear", strlen("disappear")) == 0)
-	 disappearedPkgs.insert(string(pkg_or_trigger));
+	 handleDisappearAction(pkg_or_trigger);
       return;
    }
 
@@ -542,6 +542,51 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 		<< " action: " << action << endl;
 }
 									/*}}}*/
+// DPkgPM::handleDisappearAction					/*{{{*/
+void pkgDPkgPM::handleDisappearAction(string const &pkgname)
+{
+   // record the package name for display and stuff later
+   disappearedPkgs.insert(pkgname);
+
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
+   if (unlikely(Pkg.end() == true))
+      return;
+   // the disappeared package was auto-installed - nothing to do
+   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+      return;
+   pkgCache::VerIterator PkgVer = Pkg.CurrentVer();
+   if (unlikely(PkgVer.end() == true))
+      return;
+   /* search in the list of dependencies for (Pre)Depends,
+      check if this dependency has a Replaces on our package
+      and if so transfer the manual installed flag to it */
+   for (pkgCache::DepIterator Dep = PkgVer.DependsList(); Dep.end() != true; ++Dep)
+   {
+      if (Dep->Type != pkgCache::Dep::Depends &&
+	  Dep->Type != pkgCache::Dep::PreDepends)
+	 continue;
+      pkgCache::PkgIterator Tar = Dep.TargetPkg();
+      if (unlikely(Tar.end() == true))
+	 continue;
+      // the package is already marked as manual
+      if ((Cache[Tar].Flags & pkgCache::Flag::Auto) != pkgCache::Flag::Auto)
+	 continue;
+      pkgCache::VerIterator TarVer = Tar.CurrentVer();
+      for (pkgCache::DepIterator Rep = TarVer.DependsList(); Rep.end() != true; ++Rep)
+      {
+	 if (Rep->Type != pkgCache::Dep::Replaces)
+	    continue;
+	 if (Pkg != Rep.TargetPkg())
+	    continue;
+	 // okay, they are strongly connected - transfer manual-bit
+	 if (Debug == true)
+	    std::clog << "transfer manual-bit from disappeared »" << pkgname << "« to »" << Tar.FullName() << "«" << std::endl;
+	 Cache[Tar].Flags &= ~Flag::Auto;
+	 break;
+      }
+   }
+}
+									/*}}}*/
 // DPkgPM::DoDpkgStatusFd						/*{{{*/
 // ---------------------------------------------------------------------
 /*
@@ -580,15 +625,15 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
-void pkgDPkgPM::WriteHistoryTag(string tag, string value)
+void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
 {
-   if (value.size() > 0)
-   {
-      // poor mans rstrip(", ")
-      if (value[value.size()-2] == ',' && value[value.size()-1] == ' ')
-	 value.erase(value.size() - 2, 2);
-      fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
-   }
+   size_t const length = value.length();
+   if (length == 0)
+      return;
+   // poor mans rstrip(", ")
+   if (value[length-2] == ',' && value[length-1] == ' ')
+      value.erase(length - 2, 2);
+   fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
 }									/*}}}*/
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
@@ -675,7 +720,22 @@ bool pkgDPkgPM::CloseLog()
 
    if(history_out)
    {
-      if (dpkg_error.size() > 0)
+      if (disappearedPkgs.empty() == false)
+      {
+	 string disappear;
+	 for (std::set<std::string>::const_iterator d = disappearedPkgs.begin();
+	      d != disappearedPkgs.end(); ++d)
+	 {
+	    pkgCache::PkgIterator P = Cache.FindPkg(*d);
+	    disappear.append(*d);
+	    if (P.end() == true)
+	       disappear.append(", ");
+	    else
+	       disappear.append(" (").append(Cache[P].CurVersion).append("), ");
+	 }
+	 WriteHistoryTag("Disappeared", disappear);
+      }
+      if (dpkg_error.empty() == false)
 	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
       fprintf(history_out, "End-Date: %s\n", timestr);
       fclose(history_out);
