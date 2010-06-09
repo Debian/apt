@@ -104,9 +104,9 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       }
    }
    // get the user settings for this archive and use what expires earlier
-   int MaxAge = _config->FindI("APT::Acquire::Max-Default-Age", 0);
+   int MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
    if (Label.empty() == true)
-      MaxAge = _config->FindI(string("APT::Acquire::Max-Default-Age::" + Label).c_str(), MaxAge);
+      MaxAge = _config->FindI(string("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
 
    if(MaxAge == 0) // No user settings, use the one from the Release file
       return true;

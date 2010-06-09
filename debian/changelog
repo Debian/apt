@@ -1,10 +1,25 @@
-apt (0.7.26~exp5) experimental; urgency=low
+apt (0.7.26~exp6) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
+  * doc/apt.conf.5.xml:
+    - document the new Valid-Until related options
   * apt-pkg/indexrecords.cc:
     - backport forgotten Valid-Until patch from the obsolete experimental
       branch to prevent replay attacks better, thanks to Thomas Viehmann
       for the initial patch! (Closes: #499897)
+  * apt-pkg/contrib/strutl.cc:
+    - split StrToTime() into HTTP1.1 and FTP date parser methods and
+      use strptime() instead of some self-made scanf mangling
+    - use the portable timegm shown in his manpage instead of a strange
+      looking code copycat from wget
+  * ftparchive/writer.cc:
+    - add ValidTime option to generate a Valid-Until header in Release file
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Jun 2010 10:43:58 +0200
+
+apt (0.7.26~exp5) experimental; urgency=low
+
+  [ David Kalnischkies ]
   * cmdline/apt-get.cc:
     - rerun dpkg-source in source if --fix-broken is given (Closes: #576752)
     - don't suggest held packages as they are installed (Closes: #578135)
@@ -44,13 +59,6 @@ apt (0.7.26~exp5) experimental; urgency=low
     - add 'disappear' to the known processing states, thanks Jonathan Nieder
   * apt-pkg/packagemanager.h:
     - export info about disappeared packages with GetDisappearedPackages()
-  * apt-pkg/contrib/strutl.cc:
-    - split StrToTime() into HTTP1.1 and FTP date parser methods and
-      use strptime() instead of some selfmade scanf mangling
-    - use the portable timegm shown in his manpage instead of a strange
-      looking code copycat from wget
-  * ftparchive/writer.cc:
-    - add ValidTime option to generate a Valid-Until header in Release file
 
   [ Michael Vogt ]
   * methods/http.{cc,h}:
