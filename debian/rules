@@ -215,8 +215,6 @@ apt: build build-doc debian/shlibs.local
 	cp debian/bugscript debian/$@/usr/share/bug/apt/script
 	cp debian/apt.logrotate debian/$@/etc/logrotate.d/apt
 
-	cp share/ubuntu-archive.gpg debian/$@/usr/share/$@
-	sed 's/^_//' share/apt-auth-failure.note > debian/$@/usr/share/$@/apt-auth-failure.note
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
 
 	# copy lintian override
