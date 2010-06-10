@@ -30,10 +30,10 @@ class pkgCacheFile
    MMap *Map;
    pkgCache *Cache;
    pkgDepCache *DCache;
-   pkgPolicy *Policy;
    pkgSourceList *SrcList;
 
    public:
+   pkgPolicy *Policy;
 
    // We look pretty much exactly like a pointer to a dep cache
    inline operator pkgCache &() {return *Cache;};

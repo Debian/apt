@@ -1,4 +1,4 @@
-apt (0.7.26~exp7) UNRELEASED; urgency=low
+apt (0.7.26~exp8) UNRELEASED; urgency=low
 
   * apt-pkg/cacheset.cc:
     - get the candidate either from an already built depcache
@@ -8,9 +8,17 @@ apt (0.7.26~exp7) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - packages that are not touched doesn't need to be unpacked
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 10 Jun 2010 13:04:47 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 10 Jun 2010 16:36:58 +0200
 
-apt (0.7.26~exp6) UNRELEASED; urgency=low
+apt (0.7.26~exp7) experimental; urgency=low
+
+  * apt-pkg/cachefile.h:
+    - make pkgPolicy public again, libapt-pkg-perl (and probably
+      others) get unhappy without that
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jun 2010 15:33:24 +0200
+
+apt (0.7.26~exp6) experimental; urgency=low
 
   [ Michael Vogt ]
   * merge the remaining Ubuntu change:
@@ -100,7 +108,7 @@ apt (0.7.26~exp6) UNRELEASED; urgency=low
   * apt-pkg/indexcopy.cc:
     - move the gpg codecopy to a new method and use it also in methods/gpgv.cc
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Jun 2010 21:15:46 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jun 2010 14:02:22 +0200
 
 apt (0.7.26~exp5) experimental; urgency=low
 
