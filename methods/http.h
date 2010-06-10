@@ -13,7 +13,7 @@
 
 #define MAXLEN 360
 
-
+#include <apt-pkg/hashes.h>
 
 using std::cout;
 using std::endl;

@@ -153,11 +153,12 @@ void MirrorMethod::CurrentQueueUriToMirror()
       return;
 
    // find current mirror and select next one
-   for (int i=0; i < AllMirrors.size(); i++) 
+   for (vector<string>::const_iterator mirror = AllMirrors.begin();
+	mirror != AllMirrors.end(); ++mirror)
    {
-      if (Queue->Uri.find(AllMirrors[i]) == 0)
+      if (Queue->Uri.find(*mirror) == 0)
       {
-	 Queue->Uri.replace(0, AllMirrors[i].size(), BaseUri);
+	 Queue->Uri.replace(0, mirror->length(), BaseUri);
 	 return;
       }
    }
@@ -168,15 +169,19 @@ void MirrorMethod::CurrentQueueUriToMirror()
 bool MirrorMethod::TryNextMirror()
 {
    // find current mirror and select next one
-   for (int i=0; i < AllMirrors.size()-1; i++) 
+   for (vector<string>::const_iterator mirror = AllMirrors.begin();
+	mirror != AllMirrors.end(); ++mirror)
    {
-      if (Queue->Uri.find(AllMirrors[i]) == 0)
-      {
-	 Queue->Uri.replace(0, AllMirrors[i].size(), AllMirrors[i+1]);
-	 if (Debug)
-	    clog << "TryNextMirror: " << Queue->Uri << endl;
-	 return true;
-      }
+      if (Queue->Uri.find(*mirror) != 0)
+	 continue;
+
+      vector<string>::const_iterator nextmirror = mirror + 1;
+      if (nextmirror != AllMirrors.end())
+	 break;
+      Queue->Uri.replace(0, mirror->length(), *nextmirror);
+      if (Debug)
+	 clog << "TryNextMirror: " << Queue->Uri << endl;
+      return true;
    }
 
    if (Debug)

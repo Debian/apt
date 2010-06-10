@@ -27,6 +27,8 @@
 #include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <stdio.h>
 									/*}}}*/
 
@@ -590,66 +592,34 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       indexRecords *MetaIndex = new indexRecords;
       string prefix = *I; 
 
+      string const releasegpg = *I+"Release.gpg";
+      string const release = *I+"Release";
+
       // a Release.gpg without a Release should never happen
-      if(!FileExists(*I+"Release"))
+      if(FileExists(release) == false)
       {
 	 delete MetaIndex;
 	 continue;
       }
 
-
-      // verify the gpg signature of "Release"
-      // gpg --verify "*I+Release.gpg", "*I+Release"
-      const char *Args[400];
-      unsigned int i = 0;
-
-      string gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-      string pubringpath = _config->Find("Apt::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg");
-      string releasegpg = *I+"Release.gpg";
-      string release = *I+"Release";
-
-      Args[i++] = gpgvpath.c_str();
-      Args[i++] = "--keyring";
-      Args[i++] = pubringpath.c_str();
-      Configuration::Item const *Opts;
-      Opts = _config->Tree("Acquire::gpgv::Options");
-      if (Opts != 0)
-      {
-         Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-         {
-            if (Opts->Value.empty() == true)
-               continue;
-            Args[i++] = Opts->Value.c_str();
-	    if(i >= 390) { 
-	       _error->Error("Argument list from Acquire::gpgv::Options too long. Exiting.");
-	       return false;
-	    }
-         }
-      }
-      
-      Args[i++] = releasegpg.c_str();
-      Args[i++] = release.c_str();
-      Args[i++] = NULL;
-      
       pid_t pid = ExecFork();
       if(pid < 0) {
 	 _error->Error("Fork failed");
 	 return false;
       }
-      if(pid == 0) {
-	 execvp(gpgvpath.c_str(), (char**)Args);
-      }
+      if(pid == 0)
+	 RunGPGV(release, releasegpg);
+
       if(!ExecWait(pid, "gpgv")) {
 	 _error->Warning("Signature verification failed for: %s",
-			 string(*I+"Release.gpg").c_str());
+			 releasegpg.c_str());
 	 // something went wrong, don't copy the Release.gpg
 	 // FIXME: delete any existing gpg file?
 	 continue;
       }
 
       // Open the Release file and add it to the MetaIndex
-      if(!MetaIndex->Load(*I+"Release"))
+      if(!MetaIndex->Load(release))
       {
 	 _error->Error("%s",MetaIndex->ErrorText.c_str());
 	 return false;
@@ -676,6 +646,103 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
    }   
 
+   return true;
+}
+									/*}}}*/
+// SigVerify::RunGPGV - returns the command needed for verify		/*{{{*/
+// ---------------------------------------------------------------------
+/* Generating the commandline for calling gpgv is somehow complicated as
+   we need to add multiple keyrings and user supplied options. Also, as
+   the cdrom code currently can not use the gpgv method we have two places
+   these need to be done - so the place for this method is wrong but better
+   than code duplication… */
+bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
+			int const &statusfd, int fd[2])
+{
+   string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
+   // FIXME: remove support for deprecated APT::GPGV setting
+   string const trustedFile = _config->FindFile("Dir::Etc::Trusted",
+		_config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg").c_str());
+   string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d");
+
+   bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
+
+   if (Debug == true)
+   {
+      std::clog << "gpgv path: " << gpgvpath << std::endl;
+      std::clog << "Keyring file: " << trustedFile << std::endl;
+      std::clog << "Keyring path: " << trustedPath << std::endl;
+   }
+
+   std::vector<string> keyrings = GetListOfFilesInDir(trustedPath, "gpg", false);
+   if (FileExists(trustedFile) == true)
+      keyrings.push_back(trustedFile);
+
+   std::vector<const char *> Args;
+   Args.reserve(30);
+
+   if (keyrings.empty() == true)
+      return false;
+
+   Args.push_back(gpgvpath.c_str());
+   Args.push_back("--ignore-time-conflict");
+
+   if (statusfd != -1)
+   {
+      Args.push_back("--status-fd");
+      char fd[10];
+      snprintf(fd, sizeof(fd), "%i", statusfd);
+      Args.push_back(fd);
+   }
+
+   for (vector<string>::const_iterator K = keyrings.begin();
+	K != keyrings.end(); ++K)
+   {
+      Args.push_back("--keyring");
+      Args.push_back(K->c_str());
+   }
+
+   Configuration::Item const *Opts;
+   Opts = _config->Tree("Acquire::gpgv::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+      }
+   }
+
+   Args.push_back(FileGPG.c_str());
+   Args.push_back(File.c_str());
+   Args.push_back(NULL);
+
+   if (Debug == true)
+   {
+      std::clog << "Preparing to exec: " << gpgvpath;
+      for (std::vector<const char *>::const_iterator a = Args.begin(); *a != NULL; ++a)
+	 std::clog << " " << *a;
+      std::clog << std::endl;
+   }
+
+   if (statusfd != -1)
+   {
+      int const nullfd = open("/dev/null", O_RDONLY);
+      close(fd[0]);
+      // Redirect output to /dev/null; we read from the status fd
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
+      // Redirect the pipe to the status fd (3)
+      dup2(fd[1], statusfd);
+
+      putenv((char *)"LANG=");
+      putenv((char *)"LC_ALL=");
+      putenv((char *)"LC_MESSAGES=");
+   }
+
+   execvp(gpgvpath.c_str(), (char **) &Args[0]);
    return true;
 }
 									/*}}}*/
