@@ -602,7 +602,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
       // configured we don't need to unpack it again…
       PkgIterator const P = Pkg.Group().FindPkg("all");
       if (List->IsFlag(P,pkgOrderList::UnPacked) != true &&
-	  List->IsFlag(P,pkgOrderList::Configured) != true) {
+	  List->IsFlag(P,pkgOrderList::Configured) != true &&
+	  P.State() != pkgCache::PkgIterator::NeedsNothing) {
 	 if (SmartUnPack(P) == false)
 	    return false;
       }

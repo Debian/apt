@@ -3,6 +3,10 @@ apt (0.7.26~exp7) UNRELEASED; urgency=low
   * apt-pkg/cacheset.cc:
     - get the candidate either from an already built depcache
       or use the policy which is a bit faster than depcache generation
+  * apt-pkg/orderlist.cc:
+    - untouched packages are never missing
+  * apt-pkg/packagemanager.cc:
+    - packages that are not touched doesn't need to be unpacked
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 10 Jun 2010 13:04:47 +0200
 

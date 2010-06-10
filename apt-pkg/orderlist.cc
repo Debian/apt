@@ -117,7 +117,8 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
       return false;
 
    // Skip Packages that need configure only.
-   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
+   if ((Pkg.State() == pkgCache::PkgIterator::NeedsConfigure ||
+        Pkg.State() == pkgCache::PkgIterator::NeedsNothing) &&
        Cache[Pkg].Keep() == true)
       return false;
 
