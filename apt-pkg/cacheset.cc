@@ -261,9 +261,14 @@ bool VersionSet::AddSelectedVersion(pkgCacheFile &Cache, VersionSet &verset,
 // getCandidateVer - Returns the candidate version of the given package	/*{{{*/
 pkgCache::VerIterator VersionSet::getCandidateVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, bool const &AllowError) {
-	if (unlikely(Cache.BuildDepCache() == false))
-		return pkgCache::VerIterator(*Cache);
-	pkgCache::VerIterator Cand = Cache[Pkg].CandidateVerIter(Cache);
+	pkgCache::VerIterator Cand;
+	if (Cache.IsDepCacheBuilt() == true)
+		Cand = Cache[Pkg].CandidateVerIter(Cache);
+	else {
+		if (unlikely(Cache.BuildPolicy() == false))
+			return pkgCache::VerIterator(*Cache);
+		Cand = Cache.GetPolicy()->GetCandidateVer(Pkg);
+	}
 	if (AllowError == false && Cand.end() == true)
 		_error->Error(_("Can't select candidate version from package %s as it has no candidate"), Pkg.FullName(true).c_str());
 	return Cand;

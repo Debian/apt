@@ -20,10 +20,9 @@
 
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/acquire.h>
+#include <apt-pkg/policy.h>
 #include <apt-pkg/sourcelist.h>
 
-class pkgPolicy;
-class pkgSourceList;
 class pkgCacheFile
 {
    protected:
@@ -64,6 +63,11 @@ class pkgCacheFile
    inline pkgDepCache* GetDepCache() { BuildDepCache(); return DCache; };
    inline pkgPolicy* GetPolicy() { BuildPolicy(); return Policy; };
    inline pkgSourceList* GetSourceList() { BuildSourceList(); return SrcList; };
+
+   inline bool IsPkgCacheBuilt() const { return (Cache != NULL); };
+   inline bool IsDepCacheBuilt() const { return (DCache != NULL); };
+   inline bool IsPolicyBuilt() const { return (Policy != NULL); };
+   inline bool IsSrcListBuilt() const { return (SrcList != NULL); };
 
    pkgCacheFile();
    virtual ~pkgCacheFile();
