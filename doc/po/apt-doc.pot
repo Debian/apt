@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-02-18 20:53+0100\n"
+"POT-Creation-Date: 2010-06-11 10:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1284,7 +1284,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-cache.8.xml:281 apt-config.8.xml:93 apt-extracttemplates.1.xml:56 apt-ftparchive.1.xml:493 apt-get.8.xml:319 apt-mark.8.xml:89 apt-sortpkgs.1.xml:54 apt.conf.5.xml:502 apt.conf.5.xml:524
+#: apt-cache.8.xml:281 apt-config.8.xml:93 apt-extracttemplates.1.xml:56 apt-ftparchive.1.xml:493 apt-get.8.xml:319 apt-mark.8.xml:89 apt-sortpkgs.1.xml:54 apt.conf.5.xml:511 apt.conf.5.xml:533
 msgid "options"
 msgstr ""
 
@@ -1482,7 +1482,7 @@ msgid "&apt-commonoptions;"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:361 apt-get.8.xml:559 apt-key.8.xml:153 apt-mark.8.xml:122 apt.conf.5.xml:1035 apt_preferences.5.xml:630
+#: apt-cache.8.xml:361 apt-get.8.xml:559 apt-key.8.xml:153 apt-mark.8.xml:122 apt.conf.5.xml:1044 apt_preferences.5.xml:630
 msgid "Files"
 msgstr ""
 
@@ -1492,7 +1492,7 @@ msgid "&file-sourceslist; &file-statelists;"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:368 apt-cdrom.8.xml:155 apt-config.8.xml:103 apt-extracttemplates.1.xml:74 apt-ftparchive.1.xml:592 apt-get.8.xml:569 apt-key.8.xml:174 apt-mark.8.xml:133 apt-secure.8.xml:181 apt-sortpkgs.1.xml:69 apt.conf.5.xml:1041 apt_preferences.5.xml:637 sources.list.5.xml:233
+#: apt-cache.8.xml:368 apt-cdrom.8.xml:155 apt-config.8.xml:103 apt-extracttemplates.1.xml:74 apt-ftparchive.1.xml:592 apt-get.8.xml:569 apt-key.8.xml:174 apt-mark.8.xml:133 apt-secure.8.xml:181 apt-sortpkgs.1.xml:69 apt.conf.5.xml:1050 apt_preferences.5.xml:637 sources.list.5.xml:233
 msgid "See Also"
 msgstr ""
 
@@ -2806,7 +2806,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-ftparchive.1.xml:581 apt.conf.5.xml:1029 apt_preferences.5.xml:477 sources.list.5.xml:193
+#: apt-ftparchive.1.xml:581 apt.conf.5.xml:1038 apt_preferences.5.xml:477 sources.list.5.xml:193
 msgid "Examples"
 msgstr ""
 
@@ -5043,11 +5043,25 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:414
+msgid "GzipIndexes"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml:416
+msgid ""
+"When downloading <literal>gzip</literal> compressed indexes (Packages, "
+"Sources, or Translations), keep them gzip compressed locally instead of "
+"unpacking them. This saves quite a lot of disk space at the expense of more "
+"CPU requirements when building the local package caches. False by default."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
+#: apt.conf.5.xml:423
 msgid "Languages"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:415
+#: apt.conf.5.xml:424
 msgid ""
 "The Languages subsection controls which <filename>Translation</filename> "
 "files are downloaded and in which order APT tries to display the "
@@ -5060,13 +5074,13 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para><programlisting>
-#: apt.conf.5.xml:431
+#: apt.conf.5.xml:440
 #, no-wrap
 msgid "Acquire::Languages { \"environment\"; \"de\"; \"en\"; \"none\"; \"fr\"; };"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:421
+#: apt.conf.5.xml:430
 msgid ""
 "The default list includes \"environment\" and "
 "\"en\". \"<literal>environment</literal>\" has a special meaning here: It "
@@ -5097,12 +5111,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:438
+#: apt.conf.5.xml:447
 msgid "Directories"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:440
+#: apt.conf.5.xml:449
 msgid ""
 "The <literal>Dir::State</literal> section has directories that pertain to "
 "local state information. <literal>lists</literal> is the directory to place "
@@ -5114,7 +5128,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:447
+#: apt.conf.5.xml:456
 msgid ""
 "<literal>Dir::Cache</literal> contains locations pertaining to local cache "
 "information, such as the two package caches <literal>srcpkgcache</literal> "
@@ -5127,7 +5141,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:456
+#: apt.conf.5.xml:465
 msgid ""
 "<literal>Dir::Etc</literal> contains the location of configuration files, "
 "<literal>sourcelist</literal> gives the location of the sourcelist and "
@@ -5137,7 +5151,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:462
+#: apt.conf.5.xml:471
 msgid ""
 "The <literal>Dir::Parts</literal> setting reads in all the config fragments "
 "in lexical order from the directory specified. After this is done then the "
@@ -5145,7 +5159,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:466
+#: apt.conf.5.xml:475
 msgid ""
 "Binary programs are pointed to by "
 "<literal>Dir::Bin</literal>. <literal>Dir::Bin::Methods</literal> specifies "
@@ -5157,7 +5171,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:474
+#: apt.conf.5.xml:483
 msgid ""
 "The configuration item <literal>RootDir</literal> has a special meaning.  If "
 "set, all paths in <literal>Dir::</literal> will be relative to "
@@ -5170,12 +5184,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:487
+#: apt.conf.5.xml:496
 msgid "APT in DSelect"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:489
+#: apt.conf.5.xml:498
 msgid ""
 "When APT is used as a &dselect; method several configuration directives "
 "control the default behaviour. These are in the <literal>DSelect</literal> "
@@ -5183,12 +5197,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:493
+#: apt.conf.5.xml:502
 msgid "Clean"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:494
+#: apt.conf.5.xml:503
 msgid ""
 "Cache Clean mode; this value may be one of always, prompt, auto, pre-auto "
 "and never.  always and prompt will remove all packages from the cache after "
@@ -5199,50 +5213,50 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:503
+#: apt.conf.5.xml:512
 msgid ""
 "The contents of this variable is passed to &apt-get; as command line options "
 "when it is run for the install phase."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:507
+#: apt.conf.5.xml:516
 msgid "Updateoptions"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:508
+#: apt.conf.5.xml:517
 msgid ""
 "The contents of this variable is passed to &apt-get; as command line options "
 "when it is run for the update phase."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:512
+#: apt.conf.5.xml:521
 msgid "PromptAfterUpdate"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:513
+#: apt.conf.5.xml:522
 msgid ""
 "If true the [U]pdate operation in &dselect; will always prompt to continue.  "
 "The default is to prompt only on error."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:519
+#: apt.conf.5.xml:528
 msgid "How APT calls dpkg"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:520
+#: apt.conf.5.xml:529
 msgid ""
 "Several configuration directives control how APT invokes &dpkg;. These are "
 "in the <literal>DPkg</literal> section."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:525
+#: apt.conf.5.xml:534
 msgid ""
 "This is a list of options to pass to dpkg. The options must be specified "
 "using the list notation and each list item is passed as a single argument to "
@@ -5250,17 +5264,17 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:530
+#: apt.conf.5.xml:539
 msgid "Pre-Invoke"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:530
+#: apt.conf.5.xml:539
 msgid "Post-Invoke"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:531
+#: apt.conf.5.xml:540
 msgid ""
 "This is a list of shell commands to run before/after invoking &dpkg;.  Like "
 "<literal>options</literal> this must be specified in list notation. The "
@@ -5269,12 +5283,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:537
+#: apt.conf.5.xml:546
 msgid "Pre-Install-Pkgs"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:538
+#: apt.conf.5.xml:547
 msgid ""
 "This is a list of shell commands to run before invoking dpkg. Like "
 "<literal>options</literal> this must be specified in list notation. The "
@@ -5284,7 +5298,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:544
+#: apt.conf.5.xml:553
 msgid ""
 "Version 2 of this protocol dumps more information, including the protocol "
 "version, the APT configuration space and the packages, files and versions "
@@ -5295,36 +5309,36 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:551
+#: apt.conf.5.xml:560
 msgid "Run-Directory"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:552
+#: apt.conf.5.xml:561
 msgid ""
 "APT chdirs to this directory before invoking dpkg, the default is "
 "<filename>/</filename>."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:556
+#: apt.conf.5.xml:565
 msgid "Build-options"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:557
+#: apt.conf.5.xml:566
 msgid ""
 "These options are passed to &dpkg-buildpackage; when compiling packages, the "
 "default is to disable signing and produce all binaries."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
-#: apt.conf.5.xml:562
+#: apt.conf.5.xml:571
 msgid "dpkg trigger usage (and related options)"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt.conf.5.xml:563
+#: apt.conf.5.xml:572
 msgid ""
 "APT can call dpkg in a way so it can make aggressive use of triggers over "
 "multiply calls of dpkg. Without further options dpkg will use triggers only "
@@ -5339,7 +5353,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><literallayout>
-#: apt.conf.5.xml:578
+#: apt.conf.5.xml:587
 #, no-wrap
 msgid ""
 "DPkg::NoTriggers \"true\";\n"
@@ -5349,7 +5363,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt.conf.5.xml:572
+#: apt.conf.5.xml:581
 msgid ""
 "Note that it is not guaranteed that APT will support these options or that "
 "these options will not cause (big) trouble in the future. If you have "
@@ -5363,12 +5377,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
-#: apt.conf.5.xml:584
+#: apt.conf.5.xml:593
 msgid "DPkg::NoTriggers"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:585
+#: apt.conf.5.xml:594
 msgid ""
 "Add the no triggers flag to all dpkg calls (except the ConfigurePending "
 "call).  See &dpkg; if you are interested in what this actually means. In "
@@ -5380,12 +5394,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
-#: apt.conf.5.xml:592
+#: apt.conf.5.xml:601
 msgid "PackageManager::Configure"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:593
+#: apt.conf.5.xml:602
 msgid ""
 "Valid values are \"<literal>all</literal>\", \"<literal>smart</literal>\" "
 "and \"<literal>no</literal>\".  \"<literal>all</literal>\" is the default "
@@ -5402,12 +5416,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
-#: apt.conf.5.xml:603
+#: apt.conf.5.xml:612
 msgid "DPkg::ConfigurePending"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:604
+#: apt.conf.5.xml:613
 msgid ""
 "If this option is set apt will call <command>dpkg --configure "
 "--pending</command> to let dpkg handle all required configurations and "
@@ -5419,12 +5433,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
-#: apt.conf.5.xml:610
+#: apt.conf.5.xml:619
 msgid "DPkg::TriggersPending"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:611
+#: apt.conf.5.xml:620
 msgid ""
 "Useful for <literal>smart</literal> configuration as a package which has "
 "pending triggers is not considered as <literal>installed</literal> and dpkg "
@@ -5434,12 +5448,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
-#: apt.conf.5.xml:616
+#: apt.conf.5.xml:625
 msgid "PackageManager::UnpackAll"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:617
+#: apt.conf.5.xml:626
 msgid ""
 "As the configuration can be deferred to be done at the end by dpkg it can be "
 "tried to order the unpack series only by critical needs, e.g. by "
@@ -5451,12 +5465,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
-#: apt.conf.5.xml:624
+#: apt.conf.5.xml:633
 msgid "OrderList::Score::Immediate"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para><literallayout>
-#: apt.conf.5.xml:632
+#: apt.conf.5.xml:641
 #, no-wrap
 msgid ""
 "OrderList::Score {\n"
@@ -5468,7 +5482,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:625
+#: apt.conf.5.xml:634
 msgid ""
 "Essential packages (and there dependencies) should be configured immediately "
 "after unpacking. It will be a good idea to do this quite early in the "
@@ -5482,12 +5496,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:645
+#: apt.conf.5.xml:654
 msgid "Periodic and Archives options"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:646
+#: apt.conf.5.xml:655
 msgid ""
 "<literal>APT::Periodic</literal> and <literal>APT::Archives</literal> groups "
 "of options configure behavior of apt periodic updates, which is done by "
@@ -5496,12 +5510,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:654
+#: apt.conf.5.xml:663
 msgid "Debug options"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:656
+#: apt.conf.5.xml:665
 msgid ""
 "Enabling options in the <literal>Debug::</literal> section will cause "
 "debugging information to be sent to the standard error stream of the program "
@@ -5512,7 +5526,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:667
+#: apt.conf.5.xml:676
 msgid ""
 "<literal>Debug::pkgProblemResolver</literal> enables output about the "
 "decisions made by <literal>dist-upgrade, upgrade, install, remove, "
@@ -5520,7 +5534,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:675
+#: apt.conf.5.xml:684
 msgid ""
 "<literal>Debug::NoLocking</literal> disables all file locking.  This can be "
 "used to run some operations (for instance, <literal>apt-get -s "
@@ -5528,7 +5542,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:684
+#: apt.conf.5.xml:693
 msgid ""
 "<literal>Debug::pkgDPkgPM</literal> prints out the actual command line each "
 "time that <literal>apt</literal> invokes &dpkg;."
@@ -5538,110 +5552,110 @@ msgstr ""
 #. 	   motivating example, except I haven't a clue why you'd want
 #. 	   to do this. 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:692
+#: apt.conf.5.xml:701
 msgid ""
 "<literal>Debug::IdentCdrom</literal> disables the inclusion of statfs data "
 "in CDROM IDs."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:702
+#: apt.conf.5.xml:711
 msgid "A full list of debugging options to apt follows."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:707
+#: apt.conf.5.xml:716
 msgid "<literal>Debug::Acquire::cdrom</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:711
+#: apt.conf.5.xml:720
 msgid "Print information related to accessing <literal>cdrom://</literal> sources."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:718
+#: apt.conf.5.xml:727
 msgid "<literal>Debug::Acquire::ftp</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:722
+#: apt.conf.5.xml:731
 msgid "Print information related to downloading packages using FTP."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:729
+#: apt.conf.5.xml:738
 msgid "<literal>Debug::Acquire::http</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:733
+#: apt.conf.5.xml:742
 msgid "Print information related to downloading packages using HTTP."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:740
+#: apt.conf.5.xml:749
 msgid "<literal>Debug::Acquire::https</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:744
+#: apt.conf.5.xml:753
 msgid "Print information related to downloading packages using HTTPS."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:751
+#: apt.conf.5.xml:760
 msgid "<literal>Debug::Acquire::gpgv</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:755
+#: apt.conf.5.xml:764
 msgid ""
 "Print information related to verifying cryptographic signatures using "
 "<literal>gpg</literal>."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:762
+#: apt.conf.5.xml:771
 msgid "<literal>Debug::aptcdrom</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:766
+#: apt.conf.5.xml:775
 msgid ""
 "Output information about the process of accessing collections of packages "
 "stored on CD-ROMs."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:773
+#: apt.conf.5.xml:782
 msgid "<literal>Debug::BuildDeps</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:776
+#: apt.conf.5.xml:785
 msgid "Describes the process of resolving build-dependencies in &apt-get;."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:783
+#: apt.conf.5.xml:792
 msgid "<literal>Debug::Hashes</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:786
+#: apt.conf.5.xml:795
 msgid ""
 "Output each cryptographic hash that is generated by the "
 "<literal>apt</literal> libraries."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:793
+#: apt.conf.5.xml:802
 msgid "<literal>Debug::IdentCDROM</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:796
+#: apt.conf.5.xml:805
 msgid ""
 "Do not include information from <literal>statfs</literal>, namely the number "
 "of used and free blocks on the CD-ROM filesystem, when generating an ID for "
@@ -5649,92 +5663,92 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:804
+#: apt.conf.5.xml:813
 msgid "<literal>Debug::NoLocking</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:807
+#: apt.conf.5.xml:816
 msgid ""
 "Disable all file locking.  For instance, this will allow two instances of "
 "<quote><literal>apt-get update</literal></quote> to run at the same time."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:815
+#: apt.conf.5.xml:824
 msgid "<literal>Debug::pkgAcquire</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:819
+#: apt.conf.5.xml:828
 msgid "Log when items are added to or removed from the global download queue."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:826
+#: apt.conf.5.xml:835
 msgid "<literal>Debug::pkgAcquire::Auth</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:829
+#: apt.conf.5.xml:838
 msgid ""
 "Output status messages and errors related to verifying checksums and "
 "cryptographic signatures of downloaded files."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:836
+#: apt.conf.5.xml:845
 msgid "<literal>Debug::pkgAcquire::Diffs</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:839
+#: apt.conf.5.xml:848
 msgid ""
 "Output information about downloading and applying package index list diffs, "
 "and errors relating to package index list diffs."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:847
+#: apt.conf.5.xml:856
 msgid "<literal>Debug::pkgAcquire::RRed</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:851
+#: apt.conf.5.xml:860
 msgid ""
 "Output information related to patching apt package lists when downloading "
 "index diffs instead of full indices."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:858
+#: apt.conf.5.xml:867
 msgid "<literal>Debug::pkgAcquire::Worker</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:862
+#: apt.conf.5.xml:871
 msgid "Log all interactions with the sub-processes that actually perform downloads."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:869
+#: apt.conf.5.xml:878
 msgid "<literal>Debug::pkgAutoRemove</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:873
+#: apt.conf.5.xml:882
 msgid ""
 "Log events related to the automatically-installed status of packages and to "
 "the removal of unused packages."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:880
+#: apt.conf.5.xml:889
 msgid "<literal>Debug::pkgDepCache::AutoInstall</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:883
+#: apt.conf.5.xml:892
 msgid ""
 "Generate debug messages describing which packages are being automatically "
 "installed to resolve dependencies.  This corresponds to the initial "
@@ -5744,12 +5758,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:894
+#: apt.conf.5.xml:903
 msgid "<literal>Debug::pkgDepCache::Marker</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:897
+#: apt.conf.5.xml:906
 msgid ""
 "Generate debug messages describing which package is marked as "
 "keep/install/remove while the ProblemResolver does his work.  Each addition "
@@ -5767,90 +5781,90 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:916
+#: apt.conf.5.xml:925
 msgid "<literal>Debug::pkgInitConfig</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:919
+#: apt.conf.5.xml:928
 msgid "Dump the default configuration to standard error on startup."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:926
+#: apt.conf.5.xml:935
 msgid "<literal>Debug::pkgDPkgPM</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:929
+#: apt.conf.5.xml:938
 msgid ""
 "When invoking &dpkg;, output the precise command line with which it is being "
 "invoked, with arguments separated by a single space character."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:937
+#: apt.conf.5.xml:946
 msgid "<literal>Debug::pkgDPkgProgressReporting</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:940
+#: apt.conf.5.xml:949
 msgid ""
 "Output all the data received from &dpkg; on the status file descriptor and "
 "any errors encountered while parsing it."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:947
+#: apt.conf.5.xml:956
 msgid "<literal>Debug::pkgOrderList</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:951
+#: apt.conf.5.xml:960
 msgid ""
 "Generate a trace of the algorithm that decides the order in which "
 "<literal>apt</literal> should pass packages to &dpkg;."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:959
+#: apt.conf.5.xml:968
 msgid "<literal>Debug::pkgPackageManager</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:963
+#: apt.conf.5.xml:972
 msgid "Output status messages tracing the steps performed when invoking &dpkg;."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:970
+#: apt.conf.5.xml:979
 msgid "<literal>Debug::pkgPolicy</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:974
+#: apt.conf.5.xml:983
 msgid "Output the priority of each package list on startup."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:980
+#: apt.conf.5.xml:989
 msgid "<literal>Debug::pkgProblemResolver</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:984
+#: apt.conf.5.xml:993
 msgid ""
 "Trace the execution of the dependency resolver (this applies only to what "
 "happens when a complex dependency problem is encountered)."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:992
+#: apt.conf.5.xml:1001
 msgid "<literal>Debug::pkgProblemResolver::ShowScores</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:995
+#: apt.conf.5.xml:1004
 msgid ""
 "Display a list of all installed packages with their calculated score used by "
 "the pkgProblemResolver. The description of the package is the same as "
@@ -5858,32 +5872,32 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.conf.5.xml:1003
+#: apt.conf.5.xml:1012
 msgid "<literal>Debug::sourceList</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1007
+#: apt.conf.5.xml:1016
 msgid ""
 "Print information about the vendors read from "
 "<filename>/etc/apt/vendors.list</filename>."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:1030
+#: apt.conf.5.xml:1039
 msgid ""
 "&configureindex; is a configuration file showing example values for all "
 "possible options."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist>
-#: apt.conf.5.xml:1037
+#: apt.conf.5.xml:1046
 msgid "&file-aptconf;"
 msgstr ""
 
 #.  ? reading apt.conf 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:1042
+#: apt.conf.5.xml:1051
 msgid "&apt-cache;, &apt-config;, &apt-preferences;."
 msgstr ""
 
