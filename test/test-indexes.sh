@@ -7,7 +7,7 @@
 
 BUILDDIR=$(readlink -f $(dirname $0)/../build)
 
-TEST_SOURCE="deb http://ftp.debian.org/debian unstable contrib"
+TEST_SOURCE="http://ftp.debian.org/debian unstable contrib"
 TEST_SOURCE_KEYID=55BE302B
 GPG_KEYSERVER=gpg-keyserver.de
 # should be a small package with dependencies satisfiable in TEST_SOURCE, i. e.
@@ -39,7 +39,8 @@ ln -s /home home
 mkdir -p etc/apt/preferences.d etc/apt/trusted.gpg.d var/cache/apt/archives/partial var/lib/apt/lists/partial var/lib/dpkg
 cp /etc/apt/trusted.gpg etc/apt
 touch var/lib/dpkg/status
-echo "$TEST_SOURCE" > etc/apt/sources.list
+echo "deb $TEST_SOURCE" > etc/apt/sources.list
+echo "deb-src $TEST_SOURCE" >> etc/apt/sources.list
 
 # get keyring
 gpg --no-options --no-default-keyring --secret-keyring etc/apt/secring.gpg --trustdb-name etc/apt/trustdb.gpg --keyring etc/apt/trusted.gpg --primary-keyring etc/apt/trusted.gpg --keyserver $GPG_KEYSERVER --recv-keys $TEST_SOURCE_KEYID
@@ -47,7 +48,9 @@ gpg --no-options --no-default-keyring --secret-keyring etc/apt/secring.gpg --tru
 echo "---- uncompressed update ----"
 $APT_GET update
 test -e var/lib/apt/lists/*_Packages
+test -e var/lib/apt/lists/*_Sources
 ! test -e var/lib/apt/lists/*_Packages.gz
+! test -e var/lib/apt/lists/*_Sources.gz
 
 echo "---- uncompressed cache ----"
 $APT_CACHE show $TEST_PKG | grep -q ^Version:
@@ -58,27 +61,45 @@ $APT_CACHE policy $TEST_PKG | grep -q '500 http://'
 # again (with cache)
 $APT_CACHE policy $TEST_PKG | grep -q '500 http://'
 
+TEST_SRC=`$APT_CACHE show $TEST_PKG | grep ^Source: | awk '{print $2}'`
+rm var/cache/apt/*.bin
+$APT_CACHE showsrc $TEST_SRC | grep -q ^Binary:
+# again (with cache)
+$APT_CACHE showsrc $TEST_SRC | grep -q ^Binary:
+
 echo "---- uncompressed install ----"
 $APT_GET install -d $TEST_PKG 
 test -e var/cache/apt/archives/$TEST_PKG*.deb
 $APT_GET clean
 ! test -e var/cache/apt/archives/$TEST_PKG*.deb
 
+echo "---- uncompressed get source ----"
+$APT_GET source $TEST_PKG
+test -f $TEST_SRC_*.dsc
+test -d $TEST_SRC-*
+rm -r $TEST_SRC*
+
 echo "----- uncompressed update with preexisting indexes, no pdiff ----"
 $APT_GET -o Acquire::PDiffs=false update
 test -e var/lib/apt/lists/*_Packages
+test -e var/lib/apt/lists/*_Sources
 ! test -e var/lib/apt/lists/*_Packages.gz
+! test -e var/lib/apt/lists/*_Sources.gz
 
 echo "----- uncompressed update with preexisting indexes, with pdiff ----"
 $APT_GET -o Acquire::PDiffs=true update
 test -e var/lib/apt/lists/*_Packages
+test -e var/lib/apt/lists/*_Sources
 ! test -e var/lib/apt/lists/*_Packages.gz
+! test -e var/lib/apt/lists/*_Sources.gz
 
 echo "----- compressed update ----"
 find var/lib/apt/lists/ -type f | xargs -r rm
 $APT_GET -o Acquire::GzipIndexes=true update
 ! test -e var/lib/apt/lists/*_Packages
+! test -e var/lib/apt/lists/*_Sources
 test -e var/lib/apt/lists/*_Packages.gz
+test -e var/lib/apt/lists/*_Sources.gz
 
 echo "---- compressed cache ----"
 $APT_CACHE show $TEST_PKG | grep -q ^Version:
@@ -89,18 +110,34 @@ $APT_CACHE policy $TEST_PKG | grep -q '500 http://'
 # again (with cache)
 $APT_CACHE policy $TEST_PKG | grep -q '500 http://'
 
+TEST_SRC=`$APT_CACHE show $TEST_PKG | grep ^Source: | awk '{print $2}'`
+rm var/cache/apt/*.bin
+$APT_CACHE showsrc $TEST_SRC | grep -q ^Binary:
+# again (with cache)
+$APT_CACHE showsrc $TEST_SRC | grep -q ^Binary:
+
 echo "---- compressed install ----"
 $APT_GET install -d $TEST_PKG 
 ! test -e var/cache/apt/archives/$TEST_PKG*.deb
 
+echo "---- compressed get source ----"
+$APT_GET source $TEST_PKG
+test -f $TEST_SRC_*.dsc
+test -d $TEST_SRC-*
+rm -r $TEST_SRC*
+
 echo "----- compressed update with preexisting indexes, no pdiff ----"
 $APT_GET -o Acquire::PDiffs=false -o Acquire::GzipIndexes=true update
 ! test -e var/lib/apt/lists/*_Packages
+! test -e var/lib/apt/lists/*_Sources
 test -e var/lib/apt/lists/*_Packages.gz
+test -e var/lib/apt/lists/*_Sources.gz
 
 echo "----- compressed update with preexisting indexes, with pdiff ----"
 $APT_GET -o Acquire::PDiffs=true -o Acquire::GzipIndexes=true update
 ! test -e var/lib/apt/lists/*_Packages
+! test -e var/lib/apt/lists/*_Sources
 test -e var/lib/apt/lists/*_Packages.gz
+test -e var/lib/apt/lists/*_Sources.gz
 
 echo "---- ALL TESTS PASSED ----"
