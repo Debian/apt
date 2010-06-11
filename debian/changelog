@@ -5,6 +5,9 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
   * Italian translation update. Closes: #581742
 
   [ Martin Pitt ]
+  * debian/rules:
+    - Make DEB_BUILD_OPTIONS=noopt actually work by passing the right
+      CXXFLAGS.
   * apt-pkg/contrib/fileutl.{h,cc}:
     - Add support for transparent reading of gzipped files.
     - Link against zlib (in apt-pkg/makefile) and add zlib build dependency.

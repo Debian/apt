@@ -108,7 +108,7 @@ build/configure-stamp: configure
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
-	cd build && CXXFLAGS="$(confcxxflags)" ../configure $(confflags)
+	cd build && CXXFLAGS="$(CXXFLAGS)" ../configure $(confflags)
 	touch $@
 
 build/build-stamp: build/configure-stamp
