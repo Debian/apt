@@ -716,23 +716,6 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    Erase = false;
    Complete = true;
    
-   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
-
-   // If we enable compressed indexes and already have gzip, keep it
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz") {
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI) + ".gz";
-      //if(Debug)
-      //   std::clog << "pkgAcqIndex: keeping gzipped " << FinalFile << endl;
-      Rename(DestFile,FinalFile);
-      chmod(FinalFile.c_str(),0644);
-      
-      // Update DestFile for .gz suffix so that the clean operation keeps it
-      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(RealURI) + ".gz";
-      return;
-    }
-
    // Handle the unzipd case
    string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
@@ -765,7 +748,23 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    else
       Local = true;
    
+   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
    string decompProg;
+
+   // If we enable compressed indexes and already have gzip, keep it
+   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz") {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI) + ".gz";
+      //if(Debug)
+      //   std::clog << "pkgAcqIndex: keeping gzipped " << FinalFile << endl;
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+      
+      // Update DestFile for .gz suffix so that the clean operation keeps it
+      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+      DestFile += URItoFileName(RealURI) + ".gz";
+      return;
+    }
 
    // get the binary name for your used compression type
    decompProg = _config->Find(string("Acquire::CompressionTypes::").append(compExt),"");
