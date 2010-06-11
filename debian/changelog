@@ -29,6 +29,10 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
   * Add test/test-indexes.sh:
     - Test behaviour of index retrieval and usage, in particular with
       uncompressed and gzip compressed indexes.
+  * apt-pkg/acquire-item.cc:
+    - Fix return value of pkgAcqFile::Custom600Headers() in the non-index
+      case, to avoid returning NULL and causing crashers in callers. This also
+      fixes a compiler warning.
 
  -- Christian Perrier <bubulle@debian.org>  Tue, 11 May 2010 19:52:00 +0200
 
