@@ -11,8 +11,8 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.{h,cc}:
     - Add support for transparent reading of gzipped files.
     - Link against zlib (in apt-pkg/makefile) and add zlib build dependency.
-    - [ABI BREAK] This introduces a new protected member of FileFD and changes
-      the behaviour of FileFd for reading gzipped files.
+    - [Weak internal ABI BREAK] This changes the behaviour of FileFd for
+      reading gzipped files.
   * configure.in:
     - Check for zlib library and headers.
   * apt-pkg/deb/debindexfile.cc:
