@@ -63,9 +63,13 @@ string debSourcesIndex::SourceInfo(pkgSrcRecords::Parser const &Record,
 /* */
 pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 {
-   string SourcesURI = URItoFileName(IndexURI("Sources"));
-   return new debSrcRecordParser(_config->FindDir("Dir::State::lists") +
-				 SourcesURI,this);
+   string SourcesURI = _config->FindDir("Dir::State::lists") + 
+      URItoFileName(IndexURI("Sources"));
+   string SourcesURIgzip = SourcesURI + ".gz";
+   if (!FileExists(SourcesURI) && FileExists(SourcesURIgzip))
+      SourcesURI = SourcesURIgzip;
+
+   return new debSrcRecordParser(SourcesURI,this);
 }
 									/*}}}*/
 // SourcesIndex::Describe - Give a descriptive path to the index	/*{{{*/
