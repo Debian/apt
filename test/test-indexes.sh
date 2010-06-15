@@ -8,7 +8,6 @@
 BUILDDIR=$(readlink -f $(dirname $0)/../build)
 
 TEST_SOURCE="http://ftp.debian.org/debian unstable contrib"
-TEST_SOURCE_KEYID=55BE302B
 GPG_KEYSERVER=gpg-keyserver.de
 # should be a small package with dependencies satisfiable in TEST_SOURCE, i. e.
 # ideally no depends at all
@@ -42,11 +41,15 @@ touch var/lib/dpkg/status
 echo "deb $TEST_SOURCE" > etc/apt/sources.list
 echo "deb-src $TEST_SOURCE" >> etc/apt/sources.list
 
-# get keyring
-gpg --no-options --no-default-keyring --secret-keyring etc/apt/secring.gpg --trustdb-name etc/apt/trustdb.gpg --keyring etc/apt/trusted.gpg --primary-keyring etc/apt/trusted.gpg --keyserver $GPG_KEYSERVER --recv-keys $TEST_SOURCE_KEYID
-
 echo "---- uncompressed update ----"
+# first attempt should fail, no trusted GPG key
+out=$($APT_GET update 2>&1)
+echo "$out" | grep -q NO_PUBKEY
+key=$(echo "$out" | sed -n '/NO_PUBKEY/ { s/^.*NO_PUBKEY \([[:alnum:]]\+\)$/\1/; p}')
+# get keyring
+gpg --no-options --no-default-keyring --secret-keyring etc/apt/secring.gpg --trustdb-name etc/apt/trustdb.gpg --keyring etc/apt/trusted.gpg --primary-keyring etc/apt/trusted.gpg --keyserver $GPG_KEYSERVER --recv-keys $key
 $APT_GET update
+
 test -e var/lib/apt/lists/*_Packages
 test -e var/lib/apt/lists/*_Sources
 ! test -e var/lib/apt/lists/*_Packages.gz
