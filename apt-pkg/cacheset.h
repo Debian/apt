@@ -209,6 +209,41 @@ public:									/*{{{*/
 	static APT::VersionSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
 		return APT::VersionSet::FromCommandLine(Cache, cmdline, CANDINST);
 	}
+
+	static APT::VersionSet FromString(pkgCacheFile &Cache, std::string pkg,
+			APT::VersionSet::Version const &fallback, std::ostream &out);
+	static APT::VersionSet FromString(pkgCacheFile &Cache, std::string pkg,
+			APT::VersionSet::Version const &fallback) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::VersionSet::FromString(Cache, pkg, fallback, out);
+	}
+	static APT::VersionSet FromString(pkgCacheFile &Cache, std::string pkg) {
+		return APT::VersionSet::FromString(Cache, pkg, CANDINST);
+	}
+
+	struct Modifier {
+		enum Position { NONE, PREFIX, POSTFIX };
+		unsigned short ID;
+		const char * const Alias;
+		Position Pos;
+		VersionSet::Version SelectVersion;
+		Modifier (unsigned short const &id, const char * const alias, Position const &pos,
+			  VersionSet::Version const &select) : ID(id), Alias(alias), Pos(pos),
+			 SelectVersion(select) {};
+	};
+
+	static std::map<unsigned short, VersionSet> GroupedFromCommandLine(
+		pkgCacheFile &Cache, const char **cmdline,
+		std::list<VersionSet::Modifier> const &mods,
+		unsigned short const &fallback, std::ostream &out);
+	static std::map<unsigned short, VersionSet> GroupedFromCommandLine(
+		pkgCacheFile &Cache, const char **cmdline,
+		std::list<VersionSet::Modifier> const &mods,
+		unsigned short const &fallback) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::VersionSet::GroupedFromCommandLine(Cache, cmdline,
+				mods, fallback, out);
+	}
 									/*}}}*/
 protected:								/*{{{*/
 

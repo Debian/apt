@@ -91,7 +91,7 @@ std::map<unsigned short, PackageSet> PackageSet::GroupedFromCommandLine(
 			switch(mod->Pos) {
 			case PackageSet::Modifier::POSTFIX:
 				if (str.compare(str.length() - alength, alength,
-				    mod->Alias, 0, alength) != 0)
+						mod->Alias, 0, alength) != 0)
 					continue;
 				str.erase(str.length() - alength);
 				modID = mod->ID;
@@ -148,53 +148,98 @@ PackageSet PackageSet::FromString(pkgCacheFile &Cache, std::string const &str, s
 	return regex;
 }
 									/*}}}*/
+// GroupedFromCommandLine - Return all versions specified on commandline/*{{{*/
+std::map<unsigned short, VersionSet> VersionSet::GroupedFromCommandLine(
+		pkgCacheFile &Cache, const char **cmdline,
+		std::list<VersionSet::Modifier> const &mods,
+		unsigned short const &fallback, std::ostream &out) {
+	std::map<unsigned short, VersionSet> versets;
+	for (const char **I = cmdline; *I != 0; ++I) {
+		unsigned short modID = fallback;
+		VersionSet::Version select = VersionSet::NEWEST;
+		std::string str = *I;
+		for (std::list<VersionSet::Modifier>::const_iterator mod = mods.begin();
+		     mod != mods.end(); ++mod) {
+			if (modID == fallback && mod->ID == fallback)
+				select = mod->SelectVersion;
+			size_t const alength = strlen(mod->Alias);
+			switch(mod->Pos) {
+			case VersionSet::Modifier::POSTFIX:
+				if (str.compare(str.length() - alength, alength,
+						mod->Alias, 0, alength) != 0)
+					continue;
+				str.erase(str.length() - alength);
+				modID = mod->ID;
+				select = mod->SelectVersion;
+				break;
+			case VersionSet::Modifier::PREFIX:
+				continue;
+			case VersionSet::Modifier::NONE:
+				continue;
+			}
+			break;
+		}
+		VersionSet vset = VersionSet::FromString(Cache, str, select , out);
+		versets[modID].insert(vset.begin(), vset.end());
+	}
+	return versets;
+}
+									/*}}}*/
 // FromCommandLine - Return all versions specified on commandline	/*{{{*/
 APT::VersionSet VersionSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
 		APT::VersionSet::Version const &fallback, std::ostream &out) {
 	VersionSet verset;
 	for (const char **I = cmdline; *I != 0; ++I) {
-		std::string pkg = *I;
-		std::string ver;
-		bool verIsRel = false;
-		size_t const vertag = pkg.find_last_of("/=");
-		if (vertag != string::npos) {
-			ver = pkg.substr(vertag+1);
-			verIsRel = (pkg[vertag] == '/');
-			pkg.erase(vertag);
+		VersionSet vset = VersionSet::FromString(Cache, *I, fallback, out);
+		verset.insert(vset.begin(), vset.end());
+	}
+	return verset;
+}
+									/*}}}*/
+// FromString - Returns all versions spedcified by a string		/*{{{*/
+APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
+		APT::VersionSet::Version const &fallback, std::ostream &out) {
+	std::string ver;
+	bool verIsRel = false;
+	size_t const vertag = pkg.find_last_of("/=");
+	if (vertag != string::npos) {
+		ver = pkg.substr(vertag+1);
+		verIsRel = (pkg[vertag] == '/');
+		pkg.erase(vertag);
+	}
+	PackageSet pkgset = PackageSet::FromString(Cache, pkg.c_str(), out);
+	VersionSet verset;
+	for (PackageSet::const_iterator P = pkgset.begin();
+	     P != pkgset.end(); ++P) {
+		if (vertag == string::npos) {
+			AddSelectedVersion(Cache, verset, P, fallback);
+			continue;
 		}
-		PackageSet pkgset = PackageSet::FromString(Cache, pkg.c_str(), out);
-		for (PackageSet::const_iterator P = pkgset.begin();
-		     P != pkgset.end(); ++P) {
-			if (vertag == string::npos) {
-				AddSelectedVersion(Cache, verset, P, fallback);
+		pkgCache::VerIterator V;
+		if (ver == "installed")
+			V = getInstalledVer(Cache, P);
+		else if (ver == "candidate")
+			V = getCandidateVer(Cache, P);
+		else {
+			pkgVersionMatch Match(ver, (verIsRel == true ? pkgVersionMatch::Release :
+					pkgVersionMatch::Version));
+			V = Match.Find(P);
+			if (V.end() == true) {
+				if (verIsRel == true)
+					_error->Error(_("Release '%s' for '%s' was not found"),
+							ver.c_str(), P.FullName(true).c_str());
+				else
+					_error->Error(_("Version '%s' for '%s' was not found"),
+							ver.c_str(), P.FullName(true).c_str());
 				continue;
 			}
-			pkgCache::VerIterator V;
-			if (ver == "installed")
-				V = getInstalledVer(Cache, P);
-			else if (ver == "candidate")
-				V = getCandidateVer(Cache, P);
-			else {
-				pkgVersionMatch Match(ver, (verIsRel == true ? pkgVersionMatch::Release :
-						pkgVersionMatch::Version));
-				V = Match.Find(P);
-				if (V.end() == true) {
-					if (verIsRel == true)
-						_error->Error(_("Release '%s' for '%s' was not found"),
-								ver.c_str(), P.FullName(true).c_str());
-					else
-						_error->Error(_("Version '%s' for '%s' was not found"),
-								ver.c_str(), P.FullName(true).c_str());
-					continue;
-				}
-			}
-			if (V.end() == true)
-				continue;
-			if (ver == V.VerStr())
-				ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
-					 V.VerStr(), V.RelStr().c_str(), P.FullName(true).c_str());
-			verset.insert(V);
 		}
+		if (V.end() == true)
+			continue;
+		if (ver == V.VerStr())
+			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
+				 V.VerStr(), V.RelStr().c_str(), P.FullName(true).c_str());
+		verset.insert(V);
 	}
 	return verset;
 }
