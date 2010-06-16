@@ -1453,6 +1453,9 @@ bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
 /* */
 void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
 {
+   if (unlikely(Pkg.end() == true))
+      return;
+
    ActionGroup group(*this);
 
    RemoveSizes(Pkg);
@@ -1466,12 +1469,17 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
    
    AddStates(Pkg);
    AddSizes(Pkg);
+
+   if (unlikely(Pkg.CurrentVer().end() == true) || Pkg.CurrentVer().Pseudo() == false)
+      return;
+
+   SetReInstall(Pkg.Group().FindPkg("all"), To);
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::SetCandidateVersion(VerIterator TargetVer)
+void pkgDepCache::SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo)
 {
    ActionGroup group(*this);
 
@@ -1489,6 +1497,28 @@ void pkgDepCache::SetCandidateVersion(VerIterator TargetVer)
    AddStates(Pkg);
    Update(Pkg);
    AddSizes(Pkg);
+
+   if (TargetVer.Pseudo() == false || Pseudo == false)
+      return;
+
+   // the version was pseudo: set all other pseudos also
+   pkgCache::GrpIterator Grp = Pkg.Group();
+   for (Pkg = Grp.FindPkg("any"); Pkg.end() == false; ++Pkg)
+   {
+      StateCache &P = PkgState[Pkg->ID];
+      if (TargetVer.SimilarVer(P.CandidateVerIter(*this)) == true ||
+	  (P.CandidateVerIter(*this).Pseudo() == false &&
+	   strcmp(Pkg.Arch(), "all") != 0))
+	 continue;
+
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
+      {
+	 if (TargetVer.SimilarVer(Ver) == false)
+	    continue;
+	 SetCandidateVersion(Ver, false);
+	 break;
+      }
+   }
 }
 
 void pkgDepCache::MarkAuto(const PkgIterator &Pkg, bool Auto)

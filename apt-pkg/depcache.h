@@ -405,7 +405,7 @@ class pkgDepCache : protected pkgCache::Namespace
 		    bool ForceImportantDeps = false);
 
    void SetReInstall(PkgIterator const &Pkg,bool To);
-   void SetCandidateVersion(VerIterator TargetVer);
+   void SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo = true);
 
    /** Set the "is automatically installed" flag of Pkg. */
    void MarkAuto(const PkgIterator &Pkg, bool Auto);
