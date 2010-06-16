@@ -30,6 +30,8 @@
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
 #include<iterator>
+
+#include<string.h>
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
    need to have for doing some walk-over-the-cache magic */
@@ -183,6 +185,13 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 
 	// Comparison
 	int CompareVer(const VerIterator &B) const;
+	/** \brief compares two version and returns if they are similar
+
+	    This method should be used to identify if two pseudo versions are
+	    refering to the same "real" version */
+	inline bool SimilarVer(const VerIterator &B) const {
+		return (B.end() == false && S->Hash == B->Hash && strcmp(VerStr(), B.VerStr()) == 0);
+	};
 
 	// Accessors
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;};
