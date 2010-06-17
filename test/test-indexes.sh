@@ -154,10 +154,10 @@ check_get_source
 
 echo "--- apt-get update with preexisting indexes"
 $APT_GET -o Acquire::GzipIndexes=true update
-check_indexes
+check_indexes compressed
 
 echo "--- apt-get update with preexisting indexes and pdiff mode"
 $APT_GET -o Acquire::GzipIndexes=true -o Acquire::PDiffs=true update
-check_indexes
+check_indexes compressed
 
 echo "===== ALL TESTS PASSED ====="
