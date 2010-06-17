@@ -140,10 +140,12 @@ check_get_source
 echo "--- apt-get update with preexisting indexes"
 $APT_GET update
 check_indexes
+check_cache
 
 echo "--- apt-get update with preexisting indexes and pdiff mode"
 $APT_GET -o Acquire::PDiffs=true update
 check_indexes
+check_cache
 
 echo "===== compressed indexes ====="
 check_update -o Acquire::GzipIndexes=true
@@ -155,9 +157,11 @@ check_get_source
 echo "--- apt-get update with preexisting indexes"
 $APT_GET -o Acquire::GzipIndexes=true update
 check_indexes compressed
+check_cache
 
 echo "--- apt-get update with preexisting indexes and pdiff mode"
 $APT_GET -o Acquire::GzipIndexes=true -o Acquire::PDiffs=true update
 check_indexes compressed
+check_cache
 
 echo "===== ALL TESTS PASSED ====="
