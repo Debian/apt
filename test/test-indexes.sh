@@ -33,12 +33,16 @@ check_update() {
     rm -f etc/apt/trusted.gpg etc/apt/secring.gpg
     touch etc/apt/trusted.gpg etc/apt/secring.gpg
     find var/lib/apt/lists/ -type f | xargs -r rm
+
+    # first attempt should fail, no trusted GPG key
     out=$($APT_GET "$@" update 2>&1)
     echo "$out" | grep -q NO_PUBKEY
     key=$(echo "$out" | sed -n '/NO_PUBKEY/ { s/^.*NO_PUBKEY \([[:alnum:]]\+\)$/\1/; p}')
+
     # get keyring
     gpg -q --no-options --no-default-keyring --secret-keyring etc/apt/secring.gpg --trustdb-name etc/apt/trustdb.gpg --keyring etc/apt/trusted.gpg --primary-keyring etc/apt/trusted.gpg --keyserver $GPG_KEYSERVER --recv-keys $key
 
+    # now it should work
     echo "--- apt-get update $@ (with trusted keys)"
     find var/lib/apt/lists/ -type f | xargs -r rm
     $APT_GET "$@" update
@@ -130,7 +134,6 @@ echo 'RootDir ".";' > apt_config
 export APT_CONFIG=`pwd`/apt_config
 
 echo "===== uncompressed indexes ====="
-# first attempt should fail, no trusted GPG key
 check_update
 check_indexes
 check_cache
@@ -147,7 +150,7 @@ $APT_GET -o Acquire::PDiffs=true update
 check_indexes
 check_cache
 
-echo "===== compressed indexes ====="
+echo "===== compressed indexes (CLI option) ====="
 check_update -o Acquire::GzipIndexes=true
 check_indexes compressed
 check_cache
@@ -161,6 +164,28 @@ check_cache
 
 echo "--- apt-get update with preexisting indexes and pdiff mode"
 $APT_GET -o Acquire::GzipIndexes=true -o Acquire::PDiffs=true update
+check_indexes compressed
+check_cache
+
+echo "===== compressed indexes (apt.conf.d option) ====="
+cat <<EOF > etc/apt/apt.conf.d/02compress-indexes
+Acquire::GzipIndexes "true";
+Acquire::CompressionTypes::Order:: "gz";
+EOF
+
+check_update
+check_indexes compressed
+check_cache
+check_install
+check_get_source
+
+echo "--- apt-get update with preexisting indexes"
+$APT_GET update
+check_indexes compressed
+check_cache
+
+echo "--- apt-get update with preexisting indexes and pdiff mode"
+$APT_GET -o Acquire::PDiffs=true update
 check_indexes compressed
 check_cache
 
