@@ -27,6 +27,28 @@ APT_CACHE="$BUILDDIR/bin/apt-cache $OPTS $DEBUG"
     exit 1
 }
 
+# if $1 == "compressed", check that we have compressed indexes, otherwise
+# uncompressed ones
+check_indexes() {
+    local F
+    if [ "$1" = "compressed" ]; then
+	! test -e var/lib/apt/lists/*_Packages || F=1
+	! test -e var/lib/apt/lists/*_Sources || F=1
+	test -e var/lib/apt/lists/*_Packages.gz || F=1
+	test -e var/lib/apt/lists/*_Sources.gz || F=1
+    else
+	test -e var/lib/apt/lists/*_Packages || F=1
+	test -e var/lib/apt/lists/*_Sources || F=1
+	! test -e var/lib/apt/lists/*_Packages.gz || F=1
+	! test -e var/lib/apt/lists/*_Sources.gz || F=1
+    fi
+
+    if [ -n "$F" ]; then
+	ls -l var/lib/apt/lists/
+	exit 1
+    fi
+}
+
 echo "---- building sandbox----"
 WORKDIR=$(mktemp -d)
 trap "cd /; rm -rf $WORKDIR" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
@@ -49,11 +71,7 @@ key=$(echo "$out" | sed -n '/NO_PUBKEY/ { s/^.*NO_PUBKEY \([[:alnum:]]\+\)$/\1/;
 # get keyring
 gpg --no-options --no-default-keyring --secret-keyring etc/apt/secring.gpg --trustdb-name etc/apt/trustdb.gpg --keyring etc/apt/trusted.gpg --primary-keyring etc/apt/trusted.gpg --keyserver $GPG_KEYSERVER --recv-keys $key
 $APT_GET update
-
-test -e var/lib/apt/lists/*_Packages
-test -e var/lib/apt/lists/*_Sources
-! test -e var/lib/apt/lists/*_Packages.gz
-! test -e var/lib/apt/lists/*_Sources.gz
+check_indexes
 
 echo "---- uncompressed cache ----"
 $APT_CACHE show $TEST_PKG | grep -q ^Version:
@@ -84,25 +102,16 @@ rm -r $TEST_SRC*
 
 echo "----- uncompressed update with preexisting indexes, no pdiff ----"
 $APT_GET -o Acquire::PDiffs=false update
-test -e var/lib/apt/lists/*_Packages
-test -e var/lib/apt/lists/*_Sources
-! test -e var/lib/apt/lists/*_Packages.gz
-! test -e var/lib/apt/lists/*_Sources.gz
+check_indexes
 
 echo "----- uncompressed update with preexisting indexes, with pdiff ----"
 $APT_GET -o Acquire::PDiffs=true update
-test -e var/lib/apt/lists/*_Packages
-test -e var/lib/apt/lists/*_Sources
-! test -e var/lib/apt/lists/*_Packages.gz
-! test -e var/lib/apt/lists/*_Sources.gz
+check_indexes
 
 echo "----- compressed update ----"
 find var/lib/apt/lists/ -type f | xargs -r rm
 $APT_GET -o Acquire::GzipIndexes=true update
-! test -e var/lib/apt/lists/*_Packages
-! test -e var/lib/apt/lists/*_Sources
-test -e var/lib/apt/lists/*_Packages.gz
-test -e var/lib/apt/lists/*_Sources.gz
+check_indexes compressed
 
 echo "---- compressed cache ----"
 $APT_CACHE show $TEST_PKG | grep -q ^Version:
@@ -131,16 +140,10 @@ rm -r $TEST_SRC*
 
 echo "----- compressed update with preexisting indexes, no pdiff ----"
 $APT_GET -o Acquire::PDiffs=false -o Acquire::GzipIndexes=true update
-! test -e var/lib/apt/lists/*_Packages
-! test -e var/lib/apt/lists/*_Sources
-test -e var/lib/apt/lists/*_Packages.gz
-test -e var/lib/apt/lists/*_Sources.gz
+check_indexes compressed
 
 echo "----- compressed update with preexisting indexes, with pdiff ----"
 $APT_GET -o Acquire::PDiffs=true -o Acquire::GzipIndexes=true update
-! test -e var/lib/apt/lists/*_Packages
-! test -e var/lib/apt/lists/*_Sources
-test -e var/lib/apt/lists/*_Packages.gz
-test -e var/lib/apt/lists/*_Sources.gz
+check_indexes compressed
 
 echo "---- ALL TESTS PASSED ----"
