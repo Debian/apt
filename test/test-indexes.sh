@@ -103,7 +103,8 @@ check_install() {
 # test apt-get source
 check_get_source() {
     echo "--- apt-get source"
-    $APT_GET source $TEST_PKG
+    # quiesce: it'll complain about not being able to verify the signature
+    $APT_GET source $TEST_PKG >/dev/null 2>&1
     test -f $TEST_SRC_*.dsc
     test -d $TEST_SRC-*
     rm -r $TEST_SRC*
