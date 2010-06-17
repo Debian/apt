@@ -739,16 +739,21 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       ErrorText = "Method gave a blank filename";
    }
    
+   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
+
    // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true) {
+       if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
+	  // Update DestFile for .gz suffix so that the clean operation keeps it
+	  DestFile += ".gz";
       return;
+    }
 
    if (FileName == DestFile)
       Erase = true;
    else
       Local = true;
    
-   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
    string decompProg;
 
    // If we enable compressed indexes and already have gzip, keep it
