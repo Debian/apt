@@ -32,6 +32,7 @@ check_update() {
 
     rm -f etc/apt/trusted.gpg etc/apt/secring.gpg
     touch etc/apt/trusted.gpg etc/apt/secring.gpg
+    find var/lib/apt/lists/ -type f | xargs -r rm
     out=$($APT_GET "$@" update 2>&1)
     echo "$out" | grep -q NO_PUBKEY
     key=$(echo "$out" | sed -n '/NO_PUBKEY/ { s/^.*NO_PUBKEY \([[:alnum:]]\+\)$/\1/; p}')
@@ -39,6 +40,7 @@ check_update() {
     gpg -q --no-options --no-default-keyring --secret-keyring etc/apt/secring.gpg --trustdb-name etc/apt/trustdb.gpg --keyring etc/apt/trusted.gpg --primary-keyring etc/apt/trusted.gpg --keyserver $GPG_KEYSERVER --recv-keys $key
 
     echo "--- apt-get update $@ (with trusted keys)"
+    find var/lib/apt/lists/ -type f | xargs -r rm
     $APT_GET "$@" update
 }
 
@@ -144,7 +146,6 @@ $APT_GET -o Acquire::PDiffs=true update
 check_indexes
 
 echo "===== compressed indexes ====="
-find var/lib/apt/lists/ -type f | xargs -r rm
 check_update -o Acquire::GzipIndexes=true
 check_indexes compressed
 check_cache
@@ -152,11 +153,11 @@ check_install
 check_get_source
 
 echo "--- apt-get update with preexisting indexes"
-check_update -o Acquire::GzipIndexes=true
+$APT_GET -o Acquire::GzipIndexes=true update
 check_indexes
 
 echo "--- apt-get update with preexisting indexes and pdiff mode"
-check_update -o Acquire::GzipIndexes=true -o Acquire::PDiffs=true update
+$APT_GET -o Acquire::GzipIndexes=true -o Acquire::PDiffs=true update
 check_indexes
 
 echo "===== ALL TESTS PASSED ====="
