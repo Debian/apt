@@ -15,7 +15,7 @@ TEST_PKG="python-psyco-doc"
 
 export LD_LIBRARY_PATH=$BUILDDIR/bin
 
-OPTS="-qq -o RootDir=. -o Dir::Bin::Methods=$BUILDDIR/bin/methods -o Debug::NoLocking=true"
+OPTS="-qq -o Dir::Bin::Methods=$BUILDDIR/bin/methods -o Debug::NoLocking=true"
 DEBUG=""
 #DEBUG="-o Debug::pkgCacheGen=true"
 #DEBUG="-o Debug::pkgAcquire=true"
@@ -115,11 +115,17 @@ cd $WORKDIR
 rm -fr etc var
 rm -f home
 ln -s /home home
-mkdir -p etc/apt/preferences.d etc/apt/trusted.gpg.d var/cache/apt/archives/partial var/lib/apt/lists/partial var/lib/dpkg
+mkdir -p etc/apt/preferences.d etc/apt/trusted.gpg.d etc/apt/apt.conf.d var/cache/apt/archives/partial var/lib/apt/lists/partial var/lib/dpkg
 cp /etc/apt/trusted.gpg etc/apt
 touch var/lib/dpkg/status
 echo "deb $TEST_SOURCE" > etc/apt/sources.list
 echo "deb-src $TEST_SOURCE" >> etc/apt/sources.list
+
+# specifying -o RootDir at the command line does not work for
+# etc/apt/apt.conf.d/ since it is parsed after pkgInitConfig(); $APT_CONFIG is
+# checked first, so this works
+echo 'RootDir ".";' > apt_config
+export APT_CONFIG=`pwd`/apt_config
 
 echo "===== uncompressed indexes ====="
 # first attempt should fail, no trusted GPG key
