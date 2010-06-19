@@ -29,7 +29,8 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
-#include <apt-pkg/cacheset.h>
+
+#include "cacheset.h"
 
 #include <config.h>
 #include <apti18n.h>

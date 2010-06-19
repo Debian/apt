@@ -40,12 +40,12 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
-#include <apt-pkg/cacheset.h>
 
 #include <config.h>
 #include <apti18n.h>
 
 #include "acqprogress.h"
+#include "cacheset.h"
 
 #include <set>
 #include <locale.h>
@@ -1255,41 +1255,6 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
    return true;
 }
 									/*}}}*/
-// TryToChangeVer - Try to change a candidate version			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool TryToChangeVer(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
-		    const char *VerTag,bool IsRel)
-{
-   pkgVersionMatch Match(VerTag,(IsRel == true?pkgVersionMatch::Release : 
-				 pkgVersionMatch::Version));
-   
-   pkgCache::VerIterator Ver = Match.Find(Pkg);
-			 
-   if (Ver.end() == true)
-   {
-      if (IsRel == true)
-	 return _error->Error(_("Release '%s' for '%s' was not found"),
-			      VerTag,Pkg.FullName(true).c_str());
-      return _error->Error(_("Version '%s' for '%s' was not found"),
-			   VerTag,Pkg.FullName(true).c_str());
-   }
-   
-   if (strcmp(VerTag,Ver.VerStr()) != 0)
-   {
-      ioprintf(c1out,_("Selected version %s (%s) for %s\n"),
-	       Ver.VerStr(),Ver.RelStr().c_str(),Pkg.FullName(true).c_str());
-   }
-   
-   Cache.SetCandidateVersion(Ver);
-
-   // Set the all package to the same candidate
-   if (Ver.Pseudo() == true)
-      Cache.SetCandidateVersion(Match.Find(Pkg.Group().FindPkg("all")));
-
-   return true;
-}
-									/*}}}*/
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1624,61 +1589,6 @@ bool DoUpgrade(CommandLine &CmdL)
    return InstallPackages(Cache,true);
 }
 									/*}}}*/
-// DoInstallTask - Install task from the command line			/*{{{*/
-// ---------------------------------------------------------------------
-/* Install named task */
-bool TryInstallTask(pkgDepCache &Cache, pkgProblemResolver &Fix, 
-		    bool BrokenFix,
-		    unsigned int& ExpectedInst, 
-		    const char *taskname,
-		    bool Remove)
-{
-   const char *start, *end;
-   pkgCache::PkgIterator Pkg;
-   char buf[64*1024];
-   regex_t Pattern;
-
-   // get the records
-   pkgRecords Recs(Cache);
-
-   // build regexp for the task
-   char S[300];
-   snprintf(S, sizeof(S), "^Task:.*[, ]%s([, ]|$)", taskname);
-   if(regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE) != 0)
-      return _error->Error("Failed to compile task regexp");
-   
-   bool found = false;
-   bool res = true;
-
-   // two runs, first ignore dependencies, second install any missing
-   for(int IgnoreBroken=1; IgnoreBroken >= 0; IgnoreBroken--)
-   {
-      for (Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
-      {
-	 pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
-	 if(ver.end())
-	    continue;
-	 pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
-	 parser.GetRec(start,end);
-	 strncpy(buf, start, end-start);
-	 buf[end-start] = 0x0;
-	 if (regexec(&Pattern,buf,0,0,0) != 0)
-	    continue;
-	 res &= TryToInstall(Pkg,Cache,Fix,Remove,IgnoreBroken,ExpectedInst);
-	 found = true;
-      }
-   }
-   
-   // now let the problem resolver deal with any issues
-   Fix.Resolve(true);
-
-   if(!found)
-      _error->Error(_("Couldn't find task %s"),taskname);
-
-   regfree(&Pattern);
-   return res;
-}
-									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -1696,137 +1606,72 @@ bool DoInstall(CommandLine &CmdL)
    
    unsigned int AutoMarkChanged = 0;
    unsigned int ExpectedInst = 0;
-   unsigned int Packages = 0;
    pkgProblemResolver Fix(Cache);
-   
-   bool DefRemove = false;
+
+   unsigned short fallback = 0;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
-      DefRemove = true;
+      fallback = 1;
    else if (strcasecmp(CmdL.FileList[0], "purge") == 0)
    {
       _config->Set("APT::Get::Purge", true);
-      DefRemove = true;
+      fallback = 1;
    }
    else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
    {
       _config->Set("APT::Get::AutomaticRemove", "true");
-      DefRemove = true;
+      fallback = 1;
    }
    // new scope for the ActionGroup
    {
+      // TODO: Howto get an ExpectedInst count ?
       pkgDepCache::ActionGroup group(Cache);
-      for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+      std::list<APT::VersionSet::Modifier> mods;
+      mods.push_back(APT::VersionSet::Modifier(0, "+",
+		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::CANDINST));
+      mods.push_back(APT::VersionSet::Modifier(1, "-",
+		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::INSTCAND));
+      std::map<unsigned short, APT::VersionSet> verset = APT::VersionSet::GroupedFromCommandLine(Cache,
+		CmdL.FileList + 1, mods, fallback, c0out);
+
+      if (_error->PendingError() == true)
+	 return false;
+
+      for (APT::VersionSet::const_iterator Ver = verset[0].begin();
+	   Ver != verset[0].end(); ++Ver)
       {
-	 // Duplicate the string
-	 unsigned int Length = strlen(*I);
-	 char S[300];
-	 if (Length >= sizeof(S))
-	    continue;
-	 strcpy(S,*I);
-      
-	 // See if we are removing and special indicators..
-	 bool Remove = DefRemove;
-	 char *VerTag = 0;
-	 bool VerIsRel = false;
+	 pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+	 Cache->SetCandidateVersion(Ver);
 
-         // this is a task!
-         if (Length >= 1 && S[Length - 1] == '^')
-         {
-            S[--Length] = 0;
-            // tasks must always be confirmed
-            ExpectedInst += 1000;
-            // see if we can install it
-            TryInstallTask(Cache, Fix, BrokenFix, ExpectedInst, S, Remove);
-            continue;
-         }
+	 if (TryToInstall(Pkg, Cache, Fix, false, BrokenFix, ExpectedInst) == false)
+	    return false;
 
-	 while (Cache->FindPkg(S).end() == true)
+	 // see if we need to fix the auto-mark flag
+	 // e.g. apt-get install foo
+	 // where foo is marked automatic
+	 if (Cache[Pkg].Install() == false &&
+	     (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
+	     _config->FindB("APT::Get::ReInstall",false) == false &&
+	     _config->FindB("APT::Get::Only-Upgrade",false) == false &&
+	     _config->FindB("APT::Get::Download-Only",false) == false)
 	 {
-	    // Handle an optional end tag indicating what to do
-	    if (Length >= 1 && S[Length - 1] == '-')
-	    {
-	       Remove = true;
-	       S[--Length] = 0;
-	       continue;
-	    }
-	 
-	    if (Length >= 1 && S[Length - 1] == '+')
-	    {
-	       Remove = false;
-	       S[--Length] = 0;
-	       continue;
-	    }
-	 
-	    char *Slash = strchr(S,'=');
-	    if (Slash != 0)
-	    {
-	       VerIsRel = false;
-	       *Slash = 0;
-	       VerTag = Slash + 1;
-	    }
-	 
-	    Slash = strchr(S,'/');
-	    if (Slash != 0)
-	    {
-	       VerIsRel = true;
-	       *Slash = 0;
-	       VerTag = Slash + 1;
-	    }
-	 
-	    break;
-	 }
-      
-	 // Locate the package
-	 pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
-	 Packages++;
-	 if (Pkg.end() == true)
-	 {
-	    APT::PackageSet pkgset = APT::PackageSet::FromRegEx(Cache, S, c1out);
-	    if (pkgset.empty() == true)
-	       return _error->Error(_("Couldn't find package %s"),S);
-
-	    // Regexs must always be confirmed
-	    ExpectedInst += 1000;
-
-	    bool Hit = false;
-	    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-	    {
-	       if (VerTag != 0)
-		  if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
-		     return false;
-
-	       Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
-				   ExpectedInst,false);
-	    }
-
-	    if (Hit == false)
-	       return _error->Error(_("Couldn't find package %s"),S);
-	 }
-	 else
-	 {
-	    if (VerTag != 0)
-	       if (TryToChangeVer(Pkg,Cache,VerTag,VerIsRel) == false)
-		  return false;
-	    if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
-	       return false;
-
-	    // see if we need to fix the auto-mark flag 
-	    // e.g. apt-get install foo 
-	    // where foo is marked automatic
-	    if(!Remove && 
-	       Cache[Pkg].Install() == false && 
-	       (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
-	       _config->FindB("APT::Get::ReInstall",false) == false &&
-	       _config->FindB("APT::Get::Only-Upgrade",false) == false &&
-	       _config->FindB("APT::Get::Download-Only",false) == false)
-	    {
-	       ioprintf(c1out,_("%s set to manually installed.\n"),
+	    ioprintf(c1out,_("%s set to manually installed.\n"),
 			Pkg.FullName(true).c_str());
-	       Cache->MarkAuto(Pkg,false);
-	       AutoMarkChanged++;
-	    }
-	 }      
+	    Cache->MarkAuto(Pkg,false);
+	    AutoMarkChanged++;
+	 }
       }
+
+      for (APT::VersionSet::const_iterator Ver = verset[1].begin();
+	   Ver != verset[1].end(); ++Ver)
+      {
+	 pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+
+	 if (TryToInstall(Pkg, Cache, Fix, true, BrokenFix, ExpectedInst) == false)
+	    return false;
+      }
+
+      if (_error->PendingError() == true)
+	 return false;
 
       /* If we are in the Broken fixing mode we do not attempt to fix the
 	 problems. This is if the user invoked install without -f and gave
