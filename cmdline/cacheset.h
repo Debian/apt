@@ -28,7 +28,7 @@ class PackageSet : public std::set<pkgCache::PkgIterator> {		/*{{{*/
     pkgCache. */
 public:									/*{{{*/
 	/** \brief smell like a pkgCache::PkgIterator */
-	class const_iterator : public std::set<pkgCache::PkgIterator>::const_iterator {
+	class const_iterator : public std::set<pkgCache::PkgIterator>::const_iterator {/*{{{*/
 	public:
 		const_iterator(std::set<pkgCache::PkgIterator>::const_iterator x) :
 			 std::set<pkgCache::PkgIterator>::const_iterator(x) {}
@@ -62,9 +62,24 @@ public:									/*{{{*/
 	};
 	// 103. set::iterator is required to be modifiable, but this allows modification of keys
 	typedef APT::PackageSet::const_iterator iterator;
+									/*}}}*/
 
 	using std::set<pkgCache::PkgIterator>::insert;
 	inline void insert(pkgCache::PkgIterator const &P) { if (P.end() == false) std::set<pkgCache::PkgIterator>::insert(P); };
+
+	/** \brief returns all packages in the cache who belong to the given task
+
+	    A simple helper responsible for search for all members of a task
+	    in the cache. Optional it prints a a notice about the
+	    packages chosen cause of the given task.
+	    \param Cache the packages are in
+	    \param pattern name of the task
+	    \param out stream to print the notice to */
+	static APT::PackageSet FromTask(pkgCacheFile &Cache, std::string pattern, std::ostream &out);
+	static APT::PackageSet FromTask(pkgCacheFile &Cache, std::string const &pattern) {
+		std::ostream out (std::ofstream("/dev/null").rdbuf());
+		return APT::PackageSet::FromTask(Cache, pattern, out);
+	}
 
 	/** \brief returns all packages in the cache whose name matchs a given pattern
 
@@ -134,7 +149,7 @@ class VersionSet : public std::set<pkgCache::VerIterator> {		/*{{{*/
     pkgCache. */
 public:									/*{{{*/
 	/** \brief smell like a pkgCache::VerIterator */
-	class const_iterator : public std::set<pkgCache::VerIterator>::const_iterator {
+	class const_iterator : public std::set<pkgCache::VerIterator>::const_iterator {/*{{{*/
 	public:
 		const_iterator(std::set<pkgCache::VerIterator>::const_iterator x) :
 			 std::set<pkgCache::VerIterator>::const_iterator(x) {}
@@ -168,6 +183,7 @@ public:									/*{{{*/
 		inline bool Pseudo() const { return (**this).Pseudo(); };
 		inline pkgCache::VerFileIterator NewestFile() const { return (**this).NewestFile(); };
 	};
+									/*}}}*/
 	// 103. set::iterator is required to be modifiable, but this allows modification of keys
 	typedef APT::VersionSet::const_iterator iterator;
 

@@ -11,27 +11,83 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/cacheset.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/versionmatch.h>
 
 #include <apti18n.h>
+
+#include "cacheset.h"
 
 #include <vector>
 
 #include <regex.h>
 									/*}}}*/
 namespace APT {
+// FromTask - Return all packages in the cache from a specific task	/*{{{*/
+PackageSet PackageSet::FromTask(pkgCacheFile &Cache, std::string pattern, std::ostream &out) {
+	PackageSet pkgset;
+	if (Cache.BuildCaches() == false || Cache.BuildDepCache() == false)
+		return pkgset;
+
+	size_t archfound = pattern.find_last_of(':');
+	std::string arch = "native";
+	if (archfound != std::string::npos) {
+		arch = pattern.substr(archfound+1);
+		pattern.erase(archfound);
+	}
+
+	if (pattern[pattern.length() -1] != '^')
+		return pkgset;
+	pattern.erase(pattern.length()-1);
+
+	// get the records
+	pkgRecords Recs(Cache);
+
+	// build regexp for the task
+	regex_t Pattern;
+	char S[300];
+	snprintf(S, sizeof(S), "^Task:.*[, ]%s([, ]|$)", pattern.c_str());
+	if(regcomp(&Pattern,S, REG_EXTENDED | REG_NOSUB | REG_NEWLINE) != 0) {
+		_error->Error("Failed to compile task regexp");
+		return pkgset;
+	}
+
+	for (pkgCache::GrpIterator Grp = Cache->GrpBegin(); Grp.end() == false; ++Grp) {
+		pkgCache::PkgIterator Pkg = Grp.FindPkg(arch);
+		if (Pkg.end() == true)
+			continue;
+		pkgCache::VerIterator ver = Cache[Pkg].CandidateVerIter(Cache);
+		if(ver.end() == true)
+			continue;
+
+		pkgRecords::Parser &parser = Recs.Lookup(ver.FileList());
+		const char *start, *end;
+		parser.GetRec(start,end);
+		unsigned int const length = end - start;
+		char buf[length];
+		strncpy(buf, start, length);
+		buf[length-1] = '\0';
+		if (regexec(&Pattern, buf, 0, 0, 0) == 0)
+			pkgset.insert(Pkg);
+	}
+
+	if (pkgset.empty() == true)
+		_error->Error(_("Couldn't find task %s"), pattern.c_str());
+
+	regfree(&Pattern);
+	return pkgset;
+}
+									/*}}}*/
 // FromRegEx - Return all packages in the cache matching a pattern	/*{{{*/
 PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, std::ostream &out) {
 	PackageSet pkgset;
-	std::string arch = "native";
 	static const char * const isregex = ".?+*|[^$";
 
 	if (pattern.find_first_of(isregex) == std::string::npos)
 		return pkgset;
 
 	size_t archfound = pattern.find_last_of(':');
+	std::string arch = "native";
 	if (archfound != std::string::npos) {
 		arch = pattern.substr(archfound+1);
 		if (arch.find_first_of(isregex) == std::string::npos)
@@ -142,10 +198,16 @@ PackageSet PackageSet::FromString(pkgCacheFile &Cache, std::string const &str, s
 		pkgset.insert(Pkg);
 		return pkgset;
 	}
-	PackageSet regex = FromRegEx(Cache, str, out);
-	if (regex.empty() == true)
-		_error->Warning(_("Unable to locate package %s"), str.c_str());
-	return regex;
+	PackageSet pset = FromTask(Cache, str, out);
+	if (pset.empty() == false)
+		return pset;
+
+	pset = FromRegEx(Cache, str, out);
+	if (pset.empty() == false)
+		return pset;
+
+	_error->Warning(_("Unable to locate package %s"), str.c_str());
+	return pset;
 }
 									/*}}}*/
 // GroupedFromCommandLine - Return all versions specified on commandline/*{{{*/
@@ -236,7 +298,7 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 		}
 		if (V.end() == true)
 			continue;
-		if (ver == V.VerStr())
+		if (ver != V.VerStr())
 			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
 				 V.VerStr(), V.RelStr().c_str(), P.FullName(true).c_str());
 		verset.insert(V);
