@@ -1079,7 +1079,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    name matching it was split out.. */
 bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
-		  unsigned int &ExpectedInst,bool AllowFail = true)
+		  bool AllowFail = true)
 {
    /* This is a pure virtual package and there is a single available
       candidate providing it. */
@@ -1244,9 +1244,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		     Pkg.FullName(true).c_str());
       }      
    }   
-   else
-      ExpectedInst++;
-   
+
    // Install it with autoinstalling enabled (if we not respect the minial
    // required deps or the policy)
    if ((State.InstBroken() == true || State.InstPolicyBroken() == true) && BrokenFix == false)
@@ -1589,6 +1587,41 @@ bool DoUpgrade(CommandLine &CmdL)
    return InstallPackages(Cache,true);
 }
 									/*}}}*/
+// CacheSetHelperAPTGet - responsible for message telling from the CacheSets/*{{{*/
+class CacheSetHelperAPTGet : public APT::CacheSetHelper {
+	/** \brief stream message should be printed to */
+	std::ostream &out;
+	/** \brief were things like Task or RegEx used to select packages? */
+	bool explicitlyNamed;
+
+public:
+	CacheSetHelperAPTGet(std::ostream &out) : APT::CacheSetHelper(true), out(out) {
+		explicitlyNamed = true;
+	}
+
+	virtual void showTaskSelection(APT::PackageSet const &pkgset, string const &pattern) {
+		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+			ioprintf(out, _("Note, selecting %s for task '%s'\n"),
+				 Pkg.FullName(true).c_str(), pattern.c_str());
+		explicitlyNamed = false;
+	}
+	virtual void showRegExSelection(APT::PackageSet const &pkgset, string const &pattern) {
+		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+			ioprintf(out, _("Note, selecting %s for regex '%s'\n"),
+				 Pkg.FullName(true).c_str(), pattern.c_str());
+		explicitlyNamed = false;
+	}
+	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
+				 string const &ver, bool const &verIsRel) {
+		if (ver != Ver.VerStr())
+			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
+				 Ver.VerStr(), Ver.RelStr().c_str(), Pkg.FullName(true).c_str());
+	}
+
+	inline bool allPkgNamedExplicitly() const { return explicitlyNamed; }
+
+};
+									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -1605,7 +1638,6 @@ bool DoInstall(CommandLine &CmdL)
       BrokenFix = true;
    
    unsigned int AutoMarkChanged = 0;
-   unsigned int ExpectedInst = 0;
    pkgProblemResolver Fix(Cache);
 
    unsigned short fallback = 0;
@@ -1621,28 +1653,29 @@ bool DoInstall(CommandLine &CmdL)
       _config->Set("APT::Get::AutomaticRemove", "true");
       fallback = 1;
    }
+
+   std::list<APT::VersionSet::Modifier> mods;
+   mods.push_back(APT::VersionSet::Modifier(0, "+",
+		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::CANDINST));
+   mods.push_back(APT::VersionSet::Modifier(1, "-",
+		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::INSTCAND));
+   CacheSetHelperAPTGet helper(c0out);
+   std::map<unsigned short, APT::VersionSet> verset = APT::VersionSet::GroupedFromCommandLine(Cache,
+		CmdL.FileList + 1, mods, fallback, helper);
+
+   if (_error->PendingError() == true)
+      return false;
+
    // new scope for the ActionGroup
    {
-      // TODO: Howto get an ExpectedInst count ?
       pkgDepCache::ActionGroup group(Cache);
-      std::list<APT::VersionSet::Modifier> mods;
-      mods.push_back(APT::VersionSet::Modifier(0, "+",
-		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::CANDINST));
-      mods.push_back(APT::VersionSet::Modifier(1, "-",
-		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::INSTCAND));
-      std::map<unsigned short, APT::VersionSet> verset = APT::VersionSet::GroupedFromCommandLine(Cache,
-		CmdL.FileList + 1, mods, fallback, c0out);
-
-      if (_error->PendingError() == true)
-	 return false;
-
       for (APT::VersionSet::const_iterator Ver = verset[0].begin();
 	   Ver != verset[0].end(); ++Ver)
       {
 	 pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 	 Cache->SetCandidateVersion(Ver);
 
-	 if (TryToInstall(Pkg, Cache, Fix, false, BrokenFix, ExpectedInst) == false)
+	 if (TryToInstall(Pkg, Cache, Fix, false, BrokenFix) == false)
 	    return false;
 
 	 // see if we need to fix the auto-mark flag
@@ -1666,7 +1699,7 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 
-	 if (TryToInstall(Pkg, Cache, Fix, true, BrokenFix, ExpectedInst) == false)
+	 if (TryToInstall(Pkg, Cache, Fix, true, BrokenFix) == false)
 	    return false;
       }
 
@@ -1719,7 +1752,7 @@ bool DoInstall(CommandLine &CmdL)
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
-   if (Cache->InstCount() != ExpectedInst)
+   if (Cache->InstCount() != verset[0].size())
    {
       string List;
       string VersionsList;
@@ -1845,7 +1878,8 @@ bool DoInstall(CommandLine &CmdL)
       Cache->writeStateFile(NULL);
 
    // See if we need to prompt
-   if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
+   // FIXME: check if really the packages in the set are going to be installed
+   if (Cache->InstCount() == verset[0].size() && Cache->DelCount() == 0)
       return InstallPackages(Cache,false,false);
 
    return InstallPackages(Cache,false);   
@@ -2429,7 +2463,6 @@ bool DoBuildDep(CommandLine &CmdL)
       }
       
       // Install the requested packages
-      unsigned int ExpectedInst = 0;
       vector <pkgSrcRecords::Parser::BuildDepRec>::iterator D;
       pkgProblemResolver Fix(Cache);
       bool skipAlternatives = false; // skip remaining alternatives in an or group
@@ -2460,7 +2493,7 @@ bool DoBuildDep(CommandLine &CmdL)
              */
             if (IV.end() == false && 
                 Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
-               TryToInstall(Pkg,Cache,Fix,true,false,ExpectedInst);
+               TryToInstall(Pkg,Cache,Fix,true,false);
          }
 	 else // BuildDep || BuildDepIndep
          {
@@ -2576,7 +2609,7 @@ bool DoBuildDep(CommandLine &CmdL)
             if (_config->FindB("Debug::BuildDeps",false) == true)
                cout << "  Trying to install " << (*D).Package << endl;
 
-            if (TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst) == true)
+            if (TryToInstall(Pkg,Cache,Fix,false,false) == true)
             {
                // We successfully installed something; skip remaining alternatives
                skipAlternatives = hasAlternatives;
