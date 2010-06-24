@@ -21,6 +21,7 @@ DEBUG=""
 #DEBUG="-o Debug::pkgAcquire=true"
 APT_GET="$BUILDDIR/bin/apt-get $OPTS $DEBUG"
 APT_CACHE="$BUILDDIR/bin/apt-cache $OPTS $DEBUG"
+APT_FTPARCHIVE="$BUILDDIR/bin/apt-ftparchive"
 
 [ -x "$BUILDDIR/bin/apt-get" ] || {
     echo "please build the tree first" >&2
@@ -79,9 +80,9 @@ check_cache() {
     # again (with cache)
     $APT_CACHE show $TEST_PKG | grep -q ^Version:
     rm var/cache/apt/*.bin
-    $APT_CACHE policy $TEST_PKG | grep -q '500 http://'
+    $APT_CACHE policy $TEST_PKG | egrep -q '500 (http://|file:/)'
     # again (with cache)
-    $APT_CACHE policy $TEST_PKG | grep -q '500 http://'
+    $APT_CACHE policy $TEST_PKG | egrep -q '500 (http://|file:/)'
 
     TEST_SRC=`$APT_CACHE show $TEST_PKG | grep ^Source: | awk '{print $2}'`
     rm var/cache/apt/*.bin
@@ -131,7 +132,7 @@ echo "deb-src $TEST_SOURCE" >> etc/apt/sources.list
 # specifying -o RootDir at the command line does not work for
 # etc/apt/apt.conf.d/ since it is parsed after pkgInitConfig(); $APT_CONFIG is
 # checked first, so this works
-echo 'RootDir ".";' > apt_config
+echo "RootDir \"$WORKDIR\";" > apt_config
 export APT_CONFIG=`pwd`/apt_config
 
 echo "===== uncompressed indexes ====="
@@ -189,5 +190,35 @@ echo "--- apt-get update with preexisting indexes and pdiff mode"
 $APT_GET -o Acquire::PDiffs=true update
 check_indexes compressed
 check_cache
+
+rm etc/apt/apt.conf.d/02compress-indexes
+
+echo "==== apt-ftparchive ===="
+mkdir arch
+$APT_GET install -d $TEST_PKG 
+cp var/cache/apt/archives/$TEST_PKG*.deb arch/
+cd arch
+$APT_GET source -d $TEST_PKG >/dev/null 2>&1
+$APT_FTPARCHIVE packages . | gzip -9 > Packages.gz
+$APT_FTPARCHIVE sources . | gzip -9 > Sources.gz
+cd ..
+
+echo "deb file://$WORKDIR/arch /
+deb-src file://$WORKDIR/arch /" > etc/apt/sources.list
+$APT_GET clean
+
+echo "==== uncompressed indexes from local file:// archive ===="
+echo "--- apt-get update"
+$APT_GET update
+check_indexes
+check_cache
+check_get_source
+
+echo "==== compressed indexes from local file:// archive ===="
+echo "--- apt-get update"
+$APT_GET -o Acquire::GzipIndexes=true update
+check_indexes compressed
+check_cache
+check_get_source
 
 echo "===== ALL TESTS PASSED ====="
