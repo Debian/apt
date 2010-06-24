@@ -757,7 +757,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    string decompProg;
 
    // If we enable compressed indexes and already have gzip, keep it
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz") {
+   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) {
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI) + ".gz";
       //if(Debug)
