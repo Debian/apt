@@ -273,7 +273,7 @@ unsigned long debPackagesIndex::Size() const
 bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 {
    string PackageFile = IndexFile("Packages");
-   FileFd Pkg(PackageFile,FileFd::ReadOnly);
+   FileFd Pkg(PackageFile,FileFd::ReadOnlyGzip);
    debListParser Parser(&Pkg);
    if (_error->PendingError() == true)
       return _error->Error("Problem opening %s",PackageFile.c_str());
@@ -464,7 +464,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
    string TranslationFile = IndexFile(Language);
    if (TranslationsAvailable() && FileExists(TranslationFile))
    {
-     FileFd Trans(TranslationFile,FileFd::ReadOnly);
+     FileFd Trans(TranslationFile,FileFd::ReadOnlyGzip);
      debListParser TransParser(&Trans);
      if (_error->PendingError() == true)
        return false;
@@ -544,7 +544,7 @@ unsigned long debStatusIndex::Size() const
 /* */
 bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
 {
-   FileFd Pkg(File,FileFd::ReadOnly);
+   FileFd Pkg(File,FileFd::ReadOnlyGzip);
    if (_error->PendingError() == true)
       return false;
    debListParser Parser(&Pkg);

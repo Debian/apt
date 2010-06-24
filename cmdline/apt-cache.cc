@@ -1220,7 +1220,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
    if (I.IsOk() == false)
       return _error->Error(_("Package file %s is out of sync."),I.FileName());
    
-   FileFd PkgF(I.FileName(),FileFd::ReadOnly);
+   FileFd PkgF(I.FileName(),FileFd::ReadOnlyGzip);
    if (_error->PendingError() == true)
       return false;
    

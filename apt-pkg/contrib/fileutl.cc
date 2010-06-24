@@ -604,12 +604,16 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
    {
       case ReadOnly:
       iFd = open(FileName.c_str(),O_RDONLY);
+      break;
+
+      case ReadOnlyGzip:
+      iFd = open(FileName.c_str(),O_RDONLY);
       if (iFd > 0 && FileName.compare(FileName.size()-3, 3, ".gz") == 0) {
-	  gz = gzdopen (iFd, "r");
-	  if (gz == NULL) {
-	      close (iFd);
-	      iFd = -1;
-	  }
+	 gz = gzdopen (iFd, "r");
+	 if (gz == NULL) {
+	     close (iFd);
+	     iFd = -1;
+	 }
       }
       break;
       

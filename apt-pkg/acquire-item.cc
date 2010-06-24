@@ -228,7 +228,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       ss >> ServerSha1 >> size;
       unsigned long const ServerSize = atol(size.c_str());
 
-      FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
+      FileFd fd(CurrentPackagesFile, FileFd::ReadOnlyGzip);
       SHA1Summation SHA1;
       SHA1.AddFD(fd.Fd(), fd.Size());
       string const local_sha1 = SHA1.Result();
@@ -459,7 +459,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
 
-   FileFd fd(FinalFile, FileFd::ReadOnly);
+   FileFd fd(FinalFile, FileFd::ReadOnlyGzip);
    SHA1Summation SHA1;
    SHA1.AddFD(fd.Fd(), fd.Size());
    string local_sha1 = string(SHA1.Result());

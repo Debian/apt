@@ -41,7 +41,7 @@ class FileFd
    gzFile gz;
    
    public:
-   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp};
+   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp,ReadOnlyGzip};
    
    inline bool Read(void *To,unsigned long Size,bool AllowEof)
    {
