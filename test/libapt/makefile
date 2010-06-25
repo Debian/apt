@@ -30,13 +30,19 @@ SOURCE = getlistoffilesindir_test.cc
 include $(PROGRAM_H)
 
 # Program for testing CommandLine reconstruction
-PROGRAM = commandlineasstring${BASENAME}
+PROGRAM = CommandlineAsString${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = commandlineasstring_test.cc
 include $(PROGRAM_H)
 
 # Program for testing debians version comparing
-PROGRAM = compareversion${BASENAME}
+PROGRAM = CompareVersion${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = compareversion_test.cc
+include $(PROGRAM_H)
+
+# test the GlobalError stack class
+PROGRAM = GlobalError${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = globalerror_test.cc
 include $(PROGRAM_H)

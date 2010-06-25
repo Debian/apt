@@ -181,7 +181,13 @@ bool GlobalError::PopMessage(std::string &Text) {
 }
 									/*}}}*/
 // GlobalError::DumpErrors - Dump all of the errors/warns to cerr	/*{{{*/
-void GlobalError::DumpErrors(std::ostream &out, MsgType const &trashhold) {
+void GlobalError::DumpErrors(std::ostream &out, MsgType const &trashhold,
+			     bool const &mergeStack) {
+	if (mergeStack == true)
+		for (std::list<MsgStack>::const_reverse_iterator s = Stacks.rbegin();
+		     s != Stacks.rend(); ++s)
+			Messages.insert(Messages.begin(), s->Messages.begin(), s->Messages.end());
+
 	for (std::list<Item>::const_iterator m = Messages.begin();
 	     m != Messages.end(); m++)
 		if (m->Type >= trashhold)
@@ -209,5 +215,29 @@ bool GlobalError::empty(MsgType const &trashhold) const {
 			return false;
 
 	return true;
+}
+									/*}}}*/
+// GlobalError::PushToStack						/*{{{*/
+void GlobalError::PushToStack() {
+	MsgStack pack(Messages, PendingFlag);
+	Stacks.push_back(pack);
+	Discard();
+}
+									/*}}}*/
+// GlobalError::RevertToStack						/*{{{*/
+void GlobalError::RevertToStack() {
+	Discard();
+	MsgStack pack = Stacks.back();
+	Messages = pack.Messages;
+	PendingFlag = pack.PendingFlag;
+	Stacks.pop_back();
+}
+									/*}}}*/
+// GlobalError::MergeWithStack						/*{{{*/
+void GlobalError::MergeWithStack() {
+	MsgStack pack = Stacks.back();
+	Messages.insert(Messages.begin(), pack.Messages.begin(), pack.Messages.end());
+	PendingFlag = PendingFlag || pack.PendingFlag;
+	Stacks.pop_back();
 }
 									/*}}}*/

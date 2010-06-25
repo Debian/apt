@@ -206,7 +206,8 @@ public:									/*{{{*/
 	 *  \param[out] out output stream to write the messages in
 	 *  \param WithoutNotice output notices or not
 	 */
-	void DumpErrors(std::ostream &out, MsgType const &trashhold = WARNING);
+	void DumpErrors(std::ostream &out, MsgType const &trashhold = WARNING,
+			bool const &mergeStack = true);
 
 	/** \brief dumps the list of messages to std::cerr
 	 *
@@ -217,6 +218,28 @@ public:									/*{{{*/
 	 */
 	void inline DumpErrors(MsgType const &trashhold = WARNING) {
 		DumpErrors(std::cerr, trashhold);
+	}
+
+	/** \brief put the current Messages into the stack
+	 *
+	 *  All "old" messages will be pushed into a stack to
+	 *  them later back, but for now the Message query will be
+	 *  empty and performs as no messages were present before.
+	 *
+	 * The stack can be as deep as you want - all stack operations
+	 * will only operate on the last element in the stack.
+	 */
+	void PushToStack();
+
+	/** \brief throw away all current messages */
+	void RevertToStack();
+
+	/** \brief merge current and stack together */
+	void MergeWithStack();
+
+	/** \brief return the deep of the stack */
+	size_t StackCount() const {
+		return Stacks.size();
 	}
 
 	GlobalError();
@@ -243,6 +266,16 @@ private:								/*{{{*/
 
 	std::list<Item> Messages;
 	bool PendingFlag;
+
+	struct MsgStack {
+		std::list<Item> const Messages;
+		bool const PendingFlag;
+
+		MsgStack(std::list<Item> const &Messages, bool const &Pending) :
+			 Messages(Messages), PendingFlag(Pending) {};
+	};
+
+	std::list<MsgStack> Stacks;
 
 	bool InsertErrno(MsgType type, const char* Function,
 			 const char* Description, va_list const &args);
