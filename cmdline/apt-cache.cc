@@ -1876,13 +1876,11 @@ int main(int argc,const char *argv[])					/*{{{*/
       CmdL.DispatchArg(CmdsB);
 
    // Print any errors or warnings found during parsing
-   if (_error->empty() == false)
-   {
-      bool Errors = _error->PendingError();
+   bool const Errors = _error->PendingError();
+   if (_config->FindI("quiet",0) > 0)
       _error->DumpErrors();
-      return Errors == true?100:0;
-   }
-          
-   return 0;
+   else
+      _error->DumpErrors(GlobalError::DEBUG);
+   return Errors == true ? 100 : 0;
 }
 									/*}}}*/
