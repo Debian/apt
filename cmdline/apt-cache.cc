@@ -1871,7 +1871,9 @@ int main(int argc,const char *argv[])					/*{{{*/
    if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
 
-//       if (_config->FindB("APT::Cache::Generate",true) == false)
+   if (_config->Exists("APT::Cache::Generate") == true)
+      _config->Set("pkgCacheFile::Generate", _config->FindB("APT::Cache::Generate", true));
+
    if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
       CmdL.DispatchArg(CmdsB);
 
