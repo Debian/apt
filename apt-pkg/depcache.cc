@@ -1255,6 +1255,10 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    Update(Pkg);
    AddSizes(Pkg);
 
+   // always trigger the install of the all package for a pseudo package
+   if (P.CandidateVerIter(*Cache).Pseudo() == true)
+      MarkInstall(Pkg.Group().FindPkg("all"), AutoInst, Depth, FromUser, ForceImportantDeps);
+
    if (AutoInst == false)
       return;
 

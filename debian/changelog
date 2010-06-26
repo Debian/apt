@@ -17,6 +17,7 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
     - SetCandidateVer for all pseudo packages
     - SetReInstall for the "all" package of a pseudo package
     - use the new MatchAgainstConfig for the DefaultRootSetFunc
+    - always mark the all package if a pseudo package is marked for install
   * apt-pkg/contrib/error.{cc,h}:
     - complete rewrite but use the same API
     - add NOTICE and DEBUG as new types of a message
@@ -28,9 +29,8 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - show notice about ignored file instead of being always silent
     - add a Dir::Ignore-Files-Silently list option to control the notice
-  * 
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Jun 2010 18:40:01 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Jun 2010 20:43:09 +0200
 
 apt (0.7.26~exp7) experimental; urgency=low
 
