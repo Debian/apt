@@ -19,6 +19,7 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/macros.h>
 
+#include <fnmatch.h>
 #include <ctype.h>
 									/*}}}*/
 
@@ -572,8 +573,15 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	       I++;
             }
 
-	    if (stringcmp(arch,I,End) == 0)
+	    if (stringcmp(arch,I,End) == 0) {
 	       Found = true;
+	    } else {
+	       std::string wildcard = SubstVar(string(I, End), "any", "*");
+	       if (fnmatch(wildcard.c_str(), arch.c_str(), 0) == 0)
+	          Found = true;
+	       else if (fnmatch(wildcard.c_str(), ("linux-" + arch).c_str(), 0) == 0)
+	          Found = true;
+	    }
 	    
 	    if (*End++ == ']') {
 	       I = End;
