@@ -266,7 +266,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       return ShowHelp();
 
    // Deal with stdout not being a tty
-   if (isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
+   if (isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
    
    // Match the operation

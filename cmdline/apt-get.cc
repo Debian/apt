@@ -2899,7 +2899,7 @@ int main(int argc,const char *argv[])					/*{{{*/
    }
 
    // Deal with stdout not being a tty
-   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
+   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
 
    // Setup the output streams
