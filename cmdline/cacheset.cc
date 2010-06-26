@@ -200,15 +200,21 @@ PackageSet PackageSet::FromString(pkgCacheFile &Cache, std::string const &str, C
 		pkgset.insert(Pkg);
 		return pkgset;
 	}
+
+	_error->PushToStack();
+
 	PackageSet pset = FromTask(Cache, str, helper);
-	if (pset.empty() == false)
-		return pset;
+	if (pset.empty() == true) {
+		pset = FromRegEx(Cache, str, helper);
+		if (pset.empty() == true)
+			pset = helper.canNotFindPackage(Cache, str);
+	}
 
-	pset = FromRegEx(Cache, str, helper);
 	if (pset.empty() == false)
-		return pset;
-
-	return helper.canNotFindPackage(Cache, str);
+		_error->RevertToStack();
+	else
+		_error->MergeWithStack();
+	return pset;
 }
 									/*}}}*/
 // GroupedFromCommandLine - Return all versions specified on commandline/*{{{*/

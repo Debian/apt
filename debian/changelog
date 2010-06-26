@@ -5,6 +5,7 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
     - get the candidate either from an already built depcache
       or use the policy which is a bit faster than depcache generation
     - get packages by task^ with FromTask()
+    - only print errors if all tries to get a package by string failed
   * cmdline/apt-get.cc:
     - use the cachsets in the install commands
   * apt-pkg/orderlist.cc:
@@ -29,8 +30,9 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - show notice about ignored file instead of being always silent
     - add a Dir::Ignore-Files-Silently list option to control the notice
+  * 
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Jun 2010 20:43:09 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Jun 2010 21:17:08 +0200
 
 apt (0.7.26~exp7) experimental; urgency=low
 
