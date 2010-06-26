@@ -473,6 +473,14 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
    return I;
 }
 
+/*
+ * CompleteArch:
+ *
+ * The complete architecture, consisting of <kernel>-<cpu>.
+ */
+static string CompleteArch(std::string& arch) {
+    return (arch.find("-") != string::npos) ? arch : "linux-" + arch;
+}
 									/*}}}*/
 // ListParser::ParseDepends - Parse a dependency element		/*{{{*/
 // ---------------------------------------------------------------------
@@ -546,6 +554,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    if (ParseArchFlags == true)
    {
       string arch = _config->Find("APT::Architecture");
+      string completeArch = CompleteArch(arch);
 
       // Parse an architecture
       if (I != Stop && *I == '[')
@@ -577,9 +586,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	       Found = true;
 	    } else {
 	       std::string wildcard = SubstVar(string(I, End), "any", "*");
-	       if (fnmatch(wildcard.c_str(), arch.c_str(), 0) == 0)
-	          Found = true;
-	       else if (fnmatch(wildcard.c_str(), ("linux-" + arch).c_str(), 0) == 0)
+	       if (fnmatch(wildcard.c_str(), completeArch.c_str(), 0) == 0)
 	          Found = true;
 	    }
 	    
