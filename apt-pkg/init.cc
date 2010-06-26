@@ -78,6 +78,11 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Log::Terminal","term.log");
    Cnf.Set("Dir::Log::History","history.log");
 
+   Cnf.Set("Dir::Ignore-Files-Silently::", "~$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.disabled$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.bak$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
+
    // Translation
    Cnf.Set("APT::Acquire::Translation", "environment");
 
