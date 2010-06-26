@@ -38,11 +38,10 @@
 #ifndef PKGLIB_DEPCACHE_H
 #define PKGLIB_DEPCACHE_H
 
-
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/progress.h>
-
-#include <regex.h>
+#include <apt-pkg/error.h>
 
 #include <vector>
 #include <memory>
@@ -184,22 +183,13 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \brief Returns \b true for packages matching a regular
     *  expression in APT::NeverAutoRemove.
     */
-   class DefaultRootSetFunc : public InRootSetFunc
+   class DefaultRootSetFunc : public InRootSetFunc, public Configuration::MatchAgainstConfig
    {
-     std::vector<regex_t *> rootSetRegexp;
-     bool constructedSuccessfully;
-
    public:
-     DefaultRootSetFunc();
-     ~DefaultRootSetFunc();
+     DefaultRootSetFunc() : Configuration::MatchAgainstConfig("APT::NeverRemove") {};
+     virtual ~DefaultRootSetFunc() {};
 
-     /** \return \b true if the class initialized successfully, \b
-      *  false otherwise.  Used to avoid throwing an exception, since
-      *  APT classes generally don't.
-      */
-     bool wasConstructedSuccessfully() const { return constructedSuccessfully; }
-
-     bool InRootSet(const pkgCache::PkgIterator &pkg);
+     bool InRootSet(const pkgCache::PkgIterator &pkg) { return pkg.end() == true && Match(pkg.Name()); };
    };
 
    struct StateCache

@@ -1638,54 +1638,6 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
    return false;
 }
 									/*}}}*/
-pkgDepCache::DefaultRootSetFunc::DefaultRootSetFunc()			/*{{{*/
-  : constructedSuccessfully(false)
-{
-  Configuration::Item const *Opts;
-  Opts = _config->Tree("APT::NeverAutoRemove");
-  if (Opts != 0 && Opts->Child != 0)
-    {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
-	{
-	  if (Opts->Value.empty() == true)
-	    continue;
-
-	  regex_t *p = new regex_t;
-	  if(regcomp(p,Opts->Value.c_str(),
-		     REG_EXTENDED | REG_ICASE | REG_NOSUB) != 0)
-	    {
-	      regfree(p);
-	      delete p;
-	      _error->Error("Regex compilation error for APT::NeverAutoRemove");
-	      return;
-	    }
-
-	  rootSetRegexp.push_back(p);
-	}
-    }
-
-  constructedSuccessfully = true;
-}
-									/*}}}*/
-pkgDepCache::DefaultRootSetFunc::~DefaultRootSetFunc()			/*{{{*/
-{
-  for(unsigned int i = 0; i < rootSetRegexp.size(); i++)
-    {
-      regfree(rootSetRegexp[i]);
-      delete rootSetRegexp[i];
-    }
-}
-									/*}}}*/
-bool pkgDepCache::DefaultRootSetFunc::InRootSet(const pkgCache::PkgIterator &pkg) /*{{{*/
-{
-   for(unsigned int i = 0; i < rootSetRegexp.size(); i++)
-      if (regexec(rootSetRegexp[i], pkg.Name(), 0, 0, 0) == 0)
-	 return true;
-
-   return false;
-}
-									/*}}}*/
 pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
 {
   DefaultRootSetFunc *f = new DefaultRootSetFunc;

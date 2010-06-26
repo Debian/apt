@@ -843,3 +843,46 @@ bool ReadConfigDir(Configuration &Conf,const string &Dir,
    return true;
 }
 									/*}}}*/
+// MatchAgainstConfig Constructor					/*{{{*/
+Configuration::MatchAgainstConfig::MatchAgainstConfig(char const * Config)
+{
+   std::vector<std::string> const strings = _config->FindVector(Config);
+   for (std::vector<std::string>::const_iterator s = strings.begin();
+	s != strings.end(); ++s)
+   {
+      regex_t *p = new regex_t;
+      if (regcomp(p, s->c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB) == 0)
+	 patterns.push_back(p);
+      else
+      {
+	 regfree(p);
+	 delete p;
+	 _error->Warning("Regex compilation error for '%s' in configuration option '%s'",
+				s->c_str(), Config);
+      }
+    }
+
+}
+									/*}}}*/
+// MatchAgainstConfig Destructor					/*{{{*/
+Configuration::MatchAgainstConfig::~MatchAgainstConfig()
+{
+   for(std::vector<regex_t *>::const_iterator p = patterns.begin();
+	p != patterns.end(); ++p)
+   {
+      regfree(*p);
+      delete *p;
+   }
+}
+									/*}}}*/
+// MatchAgainstConfig::Match - returns true if a pattern matches	/*{{{*/
+bool Configuration::MatchAgainstConfig::Match(char const * str) const
+{
+   for(std::vector<regex_t *>::const_iterator p = patterns.begin();
+	p != patterns.end(); ++p)
+      if (regexec(*p, str, 0, 0, 0) == 0)
+	 return true;
+
+   return false;
+}
+									/*}}}*/
