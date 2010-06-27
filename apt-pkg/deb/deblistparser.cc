@@ -479,6 +479,12 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
  * The complete architecture, consisting of <kernel>-<cpu>.
  */
 static string CompleteArch(std::string& arch) {
+    if (arch == "armel")              return "linux-arm";
+    if (arch == "lpia")               return "linux-i386";
+    if (arch == "powerpcspe")         return "linux-powerpc";
+    if (arch == "uclibc-linux-armel") return "linux-arm";
+    if (arch == "uclinux-armel")      return "uclinux-arm";
+
     return (arch.find("-") != string::npos) ? arch : "linux-" + arch;
 }
 									/*}}}*/
