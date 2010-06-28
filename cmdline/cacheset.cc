@@ -25,11 +25,7 @@
 namespace APT {
 // FromTask - Return all packages in the cache from a specific task	/*{{{*/
 PackageSet PackageSet::FromTask(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
-	PackageSet pkgset;
-	if (Cache.BuildCaches() == false || Cache.BuildDepCache() == false)
-		return pkgset;
-
-	size_t archfound = pattern.find_last_of(':');
+	size_t const archfound = pattern.find_last_of(':');
 	std::string arch = "native";
 	if (archfound != std::string::npos) {
 		arch = pattern.substr(archfound+1);
@@ -37,9 +33,13 @@ PackageSet PackageSet::FromTask(pkgCacheFile &Cache, std::string pattern, CacheS
 	}
 
 	if (pattern[pattern.length() -1] != '^')
-		return pkgset;
+		return APT::PackageSet();
 	pattern.erase(pattern.length()-1);
 
+	if (unlikely(Cache.GetPkgCache() == 0 || Cache.GetDepCache() == 0))
+		return APT::PackageSet();
+
+	PackageSet pkgset;
 	// get the records
 	pkgRecords Recs(Cache);
 
@@ -83,11 +83,9 @@ PackageSet PackageSet::FromTask(pkgCacheFile &Cache, std::string pattern, CacheS
 									/*}}}*/
 // FromRegEx - Return all packages in the cache matching a pattern	/*{{{*/
 PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
-	PackageSet pkgset;
 	static const char * const isregex = ".?+*|[^$";
-
 	if (pattern.find_first_of(isregex) == std::string::npos)
-		return pkgset;
+		return PackageSet();
 
 	size_t archfound = pattern.find_last_of(':');
 	std::string arch = "native";
@@ -105,9 +103,13 @@ PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, Cache
 		char Error[300];
 		regerror(Res, &Pattern, Error, sizeof(Error));
 		_error->Error(_("Regex compilation error - %s"), Error);
-		return pkgset;
+		return PackageSet();
 	}
 
+	if (unlikely(Cache.GetPkgCache() == 0))
+		return PackageSet();
+
+	PackageSet pkgset;
 	for (pkgCache::GrpIterator Grp = Cache.GetPkgCache()->GrpBegin(); Grp.end() == false; ++Grp)
 	{
 		if (regexec(&Pattern, Grp.Name(), 0, 0, 0) != 0)
@@ -135,6 +137,33 @@ PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, Cache
 	return pkgset;
 }
 									/*}}}*/
+// FromName - Returns the package defined  by this string		/*{{{*/
+pkgCache::PkgIterator PackageSet::FromName(pkgCacheFile &Cache,
+			std::string const &str, CacheSetHelper &helper) {
+	std::string pkg = str;
+	size_t archfound = pkg.find_last_of(':');
+	std::string arch;
+	if (archfound != std::string::npos) {
+		arch = pkg.substr(archfound+1);
+		pkg.erase(archfound);
+	}
+
+	if (Cache.GetPkgCache() == 0)
+		return pkgCache::PkgIterator(Cache, 0);
+
+	pkgCache::PkgIterator Pkg(Cache, 0);
+	if (arch.empty() == true) {
+		pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(pkg);
+		if (Grp.end() == false)
+			Pkg = Grp.FindPreferredPkg();
+	} else
+		Pkg = Cache.GetPkgCache()->FindPkg(pkg, arch);
+
+	if (Pkg.end() == true)
+		return helper.canNotFindPkgName(Cache, str);
+	return Pkg;
+}
+									/*}}}*/
 // GroupedFromCommandLine - Return all versions specified on commandline/*{{{*/
 std::map<unsigned short, PackageSet> PackageSet::GroupedFromCommandLine(
 		pkgCacheFile &Cache, const char **cmdline,
@@ -144,6 +173,7 @@ std::map<unsigned short, PackageSet> PackageSet::GroupedFromCommandLine(
 	for (const char **I = cmdline; *I != 0; ++I) {
 		unsigned short modID = fallback;
 		std::string str = *I;
+		bool modifierPresent = false;
 		for (std::list<PackageSet::Modifier>::const_iterator mod = mods.begin();
 		     mod != mods.end(); ++mod) {
 			size_t const alength = strlen(mod->Alias);
@@ -160,7 +190,17 @@ std::map<unsigned short, PackageSet> PackageSet::GroupedFromCommandLine(
 			case PackageSet::Modifier::NONE:
 				continue;
 			}
+			modifierPresent = true;
 			break;
+		}
+		if (modifierPresent == true) {
+			bool const errors = helper.showErrors(false);
+			pkgCache::PkgIterator Pkg = FromName(Cache, *I, helper);
+			helper.showErrors(errors);
+			if (Pkg.end() == false) {
+				pkgsets[fallback].insert(Pkg);
+				continue;
+			}
 		}
 		pkgsets[modID].insert(PackageSet::FromString(Cache, str, helper));
 	}
@@ -179,42 +219,26 @@ PackageSet PackageSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline
 									/*}}}*/
 // FromString - Return all packages matching a specific string		/*{{{*/
 PackageSet PackageSet::FromString(pkgCacheFile &Cache, std::string const &str, CacheSetHelper &helper) {
-	std::string pkg = str;
-	size_t archfound = pkg.find_last_of(':');
-	std::string arch;
-	if (archfound != std::string::npos) {
-		arch = pkg.substr(archfound+1);
-		pkg.erase(archfound);
-	}
-
-	pkgCache::PkgIterator Pkg;
-	if (arch.empty() == true) {
-		pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(pkg);
-		if (Grp.end() == false)
-			Pkg = Grp.FindPreferredPkg();
-	} else
-		Pkg = Cache.GetPkgCache()->FindPkg(pkg, arch);
-
-	if (Pkg.end() == false) {
-		PackageSet pkgset;
-		pkgset.insert(Pkg);
-		return pkgset;
-	}
-
 	_error->PushToStack();
 
-	PackageSet pset = FromTask(Cache, str, helper);
-	if (pset.empty() == true) {
-		pset = FromRegEx(Cache, str, helper);
-		if (pset.empty() == true)
-			pset = helper.canNotFindPackage(Cache, str);
+	PackageSet pkgset;
+	pkgCache::PkgIterator Pkg = FromName(Cache, str, helper);
+	if (Pkg.end() == false)
+		pkgset.insert(Pkg);
+	else {
+		pkgset = FromTask(Cache, str, helper);
+		if (pkgset.empty() == true) {
+			pkgset = FromRegEx(Cache, str, helper);
+			if (pkgset.empty() == true)
+				pkgset = helper.canNotFindPackage(Cache, str);
+		}
 	}
 
-	if (pset.empty() == false)
+	if (pkgset.empty() == false)
 		_error->RevertToStack();
 	else
 		_error->MergeWithStack();
-	return pset;
+	return pkgset;
 }
 									/*}}}*/
 // GroupedFromCommandLine - Return all versions specified on commandline/*{{{*/
@@ -227,6 +251,7 @@ std::map<unsigned short, VersionSet> VersionSet::GroupedFromCommandLine(
 		unsigned short modID = fallback;
 		VersionSet::Version select = VersionSet::NEWEST;
 		std::string str = *I;
+		bool modifierPresent = false;
 		for (std::list<VersionSet::Modifier>::const_iterator mod = mods.begin();
 		     mod != mods.end(); ++mod) {
 			if (modID == fallback && mod->ID == fallback)
@@ -246,7 +271,18 @@ std::map<unsigned short, VersionSet> VersionSet::GroupedFromCommandLine(
 			case VersionSet::Modifier::NONE:
 				continue;
 			}
+			modifierPresent = true;
 			break;
+		}
+
+		if (modifierPresent == true) {
+			bool const errors = helper.showErrors(false);
+			VersionSet const vset = VersionSet::FromString(Cache, std::string(*I), select, helper, true);
+			helper.showErrors(errors);
+			if (vset.empty() == false) {
+				versets[fallback].insert(vset);
+				continue;
+			}
 		}
 		versets[modID].insert(VersionSet::FromString(Cache, str, select , helper));
 	}
@@ -257,16 +293,15 @@ std::map<unsigned short, VersionSet> VersionSet::GroupedFromCommandLine(
 APT::VersionSet VersionSet::FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
 		APT::VersionSet::Version const &fallback, CacheSetHelper &helper) {
 	VersionSet verset;
-	for (const char **I = cmdline; *I != 0; ++I) {
-		VersionSet vset = VersionSet::FromString(Cache, *I, fallback, helper);
-		verset.insert(vset.begin(), vset.end());
-	}
+	for (const char **I = cmdline; *I != 0; ++I)
+		verset.insert(VersionSet::FromString(Cache, *I, fallback, helper));
 	return verset;
 }
 									/*}}}*/
 // FromString - Returns all versions spedcified by a string		/*{{{*/
 APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
-		APT::VersionSet::Version const &fallback, CacheSetHelper &helper) {
+		APT::VersionSet::Version const &fallback, CacheSetHelper &helper,
+		bool const &onlyFromName) {
 	std::string ver;
 	bool verIsRel = false;
 	size_t const vertag = pkg.find_last_of("/=");
@@ -275,7 +310,13 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 		verIsRel = (pkg[vertag] == '/');
 		pkg.erase(vertag);
 	}
-	PackageSet pkgset = PackageSet::FromString(Cache, pkg.c_str(), helper);
+	PackageSet pkgset;
+	if (onlyFromName == false)
+		pkgset = PackageSet::FromString(Cache, pkg, helper);
+	else {
+		pkgset.insert(PackageSet::FromName(Cache, pkg, helper));
+	}
+
 	VersionSet verset;
 	for (PackageSet::const_iterator P = pkgset.begin();
 	     P != pkgset.end(); ++P) {
@@ -372,8 +413,8 @@ pkgCache::VerIterator VersionSet::getCandidateVer(pkgCacheFile &Cache,
 	if (Cache.IsDepCacheBuilt() == true)
 		Cand = Cache[Pkg].CandidateVerIter(Cache);
 	else {
-		if (unlikely(Cache.BuildPolicy() == false))
-			return pkgCache::VerIterator(*Cache);
+		if (unlikely(Cache.GetPolicy() == 0))
+			return pkgCache::VerIterator(Cache);
 		Cand = Cache.GetPolicy()->GetCandidateVer(Pkg);
 	}
 	if (Cand.end() == true)
@@ -387,6 +428,14 @@ pkgCache::VerIterator VersionSet::getInstalledVer(pkgCacheFile &Cache,
 	if (Pkg->CurrentVer == 0)
 		return helper.canNotFindInstalledVer(Cache, Pkg);
 	return Pkg.CurrentVer();
+}
+									/*}}}*/
+// canNotFindPkgName - handle the case no package has this name		/*{{{*/
+pkgCache::PkgIterator CacheSetHelper::canNotFindPkgName(pkgCacheFile &Cache,
+			std::string const &str) {
+	if (ShowError == true)
+		_error->Error(_("Unable to locate package %s"), str.c_str());
+	return pkgCache::PkgIterator(Cache, 0);
 }
 									/*}}}*/
 // canNotFindTask - handle the case no package is found for a task	/*{{{*/
@@ -405,8 +454,6 @@ PackageSet CacheSetHelper::canNotFindRegEx(pkgCacheFile &Cache, std::string patt
 									/*}}}*/
 // canNotFindPackage - handle the case no package is found from a string/*{{{*/
 PackageSet CacheSetHelper::canNotFindPackage(pkgCacheFile &Cache, std::string const &str) {
-	if (ShowError == true)
-		_error->Error(_("Unable to locate package %s"), str.c_str());
 	return PackageSet();
 }
 									/*}}}*/
@@ -431,7 +478,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindNewestVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Error(_("Can't select newest version from package '%s' as it is purely virtual"), Pkg.FullName(true).c_str());
-	return pkgCache::VerIterator(*Cache);
+	return pkgCache::VerIterator(Cache);
 }
 									/*}}}*/
 // canNotFindCandidateVer						/*{{{*/
@@ -439,7 +486,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindCandidateVer(pkgCacheFile &Cache
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Error(_("Can't select candidate version from package %s as it has no candidate"), Pkg.FullName(true).c_str());
-	return pkgCache::VerIterator(*Cache);
+	return pkgCache::VerIterator(Cache);
 }
 									/*}}}*/
 // canNotFindInstalledVer						/*{{{*/
@@ -447,7 +494,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindInstalledVer(pkgCacheFile &Cache
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Error(_("Can't select installed version from package %s as it is not installed"), Pkg.FullName(true).c_str());
-	return pkgCache::VerIterator(*Cache);
+	return pkgCache::VerIterator(Cache);
 }
 									/*}}}*/
 }

@@ -40,6 +40,7 @@ public:									/*{{{*/
 	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
 				 string const &ver, bool const &verIsRel) {};
 
+	virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str);
 	virtual PackageSet canNotFindTask(pkgCacheFile &Cache, std::string pattern);
 	virtual PackageSet canNotFindRegEx(pkgCacheFile &Cache, std::string pattern);
 	virtual PackageSet canNotFindPackage(pkgCacheFile &Cache, std::string const &str);
@@ -144,6 +145,17 @@ public:									/*{{{*/
 	static APT::PackageSet FromString(pkgCacheFile &Cache, std::string const &string) {
 		CacheSetHelper helper;
 		return APT::PackageSet::FromString(Cache, string, helper);
+	}
+
+	/** \brief returns a package specified by a string
+
+	    \param Cache the package is in
+	    \param string String the package name should be extracted from
+	    \param out stream to print various notices to */
+	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &string, CacheSetHelper &helper);
+	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &string) {
+		CacheSetHelper helper;
+		return APT::PackageSet::FromName(Cache, string, helper);
 	}
 
 	/** \brief returns all packages specified on the commandline
@@ -268,7 +280,8 @@ public:									/*{{{*/
 	}
 
 	static APT::VersionSet FromString(pkgCacheFile &Cache, std::string pkg,
-			APT::VersionSet::Version const &fallback, CacheSetHelper &helper);
+			APT::VersionSet::Version const &fallback, CacheSetHelper &helper,
+			bool const &onlyFromName = false);
 	static APT::VersionSet FromString(pkgCacheFile &Cache, std::string pkg,
 			APT::VersionSet::Version const &fallback) {
 		CacheSetHelper helper;

@@ -6,6 +6,8 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
       or use the policy which is a bit faster than depcache generation
     - get packages by task^ with FromTask()
     - only print errors if all tries to get a package by string failed
+    - factor out code to get a single package FromName()
+    - check in Grouped* first without modifier interpretation
   * cmdline/apt-get.cc:
     - use the cachsets in the install commands
   * apt-pkg/orderlist.cc:
@@ -32,7 +34,7 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
     - add a Dir::Ignore-Files-Silently list option to control the notice
   * 
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Jun 2010 21:17:08 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 28 Jun 2010 22:12:24 +0200
 
 apt (0.7.26~exp7) experimental; urgency=low
 
