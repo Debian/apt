@@ -155,6 +155,8 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
       {
 	 if (MatchVer(Ver.VerStr(),VerStr,VerPrefixMatch) == true)
 	    return Ver;
+	 if (ExpressionMatches(VerStr, Ver.VerStr()) == true)
+	    return Ver;
 	 continue;
       }
       
