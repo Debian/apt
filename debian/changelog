@@ -4,6 +4,10 @@ apt (0.7.26~exp8) experimental; urgency=low
     - Handle different logins on the same server (Closes: #586904).
   * apt-pkg/deb/deblistparser.cc:
     - Handle architecture wildcards (Closes: #547724).
+  * apt-pkg/versionmatch.cc:
+    - Support matching pins by regular expressions or glob() like patterns,
+      regular expressions have to be put between to slashes; for example,
+      /.*/.
 
  -- Julian Andres Klode <jak@debian.org>  Thu, 24 Jun 2010 10:56:39 +0200
 
