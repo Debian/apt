@@ -188,6 +188,7 @@ bool pkgVersionMatch::ExpressionMatches(const char *pattern, const char *string)
 	    res = true;
 	 }
 	 free(regex);
+	 regfree(&preg);
 	 return res;
       }
    }
