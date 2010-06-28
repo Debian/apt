@@ -175,7 +175,6 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
 
 bool pkgVersionMatch::ExpressionMatches(const char *pattern, const char *string)
 {
-   std::cerr << "MATCH " << pattern;
    if (pattern[0] == '/') {
       bool res = false;
       size_t length = strlen(pattern);
