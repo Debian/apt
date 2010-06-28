@@ -183,7 +183,7 @@ bool pkgVersionMatch::ExpressionMatches(const char *pattern, const char *string)
 	 char *regex = strdup(pattern + 1);
 	 regex[length - 2] = '\0';
 	 if (regcomp(&preg, regex, REG_EXTENDED | REG_ICASE) != 0) {
-	    std::cerr << "E: Invalid regular expression: " << regex << "\n";
+	    _error->Warning("Invalid regular expression: %s", regex);
 	 } else if (regexec(&preg, string, 0, NULL, 0) == 0) {
 	    res = true;
 	 }
