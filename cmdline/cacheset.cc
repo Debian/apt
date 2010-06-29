@@ -474,6 +474,14 @@ VersionSet CacheSetHelper::canNotFindInstCandVer(pkgCacheFile &Cache,
 	return VersionSet();
 }
 									/*}}}*/
+// canNotFindInstCandVer						/*{{{*/
+VersionSet CacheSetHelper::canNotFindCandInstVer(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg) {
+	if (ShowError == true)
+		_error->Error(_("Can't select installed nor candidate version from package '%s' as it has neither of them"), Pkg.FullName(true).c_str());
+	return VersionSet();
+}
+									/*}}}*/
 // canNotFindNewestVer							/*{{{*/
 pkgCache::VerIterator CacheSetHelper::canNotFindNewestVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {

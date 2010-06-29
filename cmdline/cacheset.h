@@ -47,6 +47,8 @@ public:									/*{{{*/
 	virtual VersionSet canNotFindAllVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
 	virtual VersionSet canNotFindInstCandVer(pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
+	virtual VersionSet canNotFindCandInstVer(pkgCacheFile &Cache,
+				pkgCache::PkgIterator const &Pkg);
 	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
 	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache,

@@ -1081,41 +1081,6 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
 		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
 		  bool AllowFail = true)
 {
-   /* This is a pure virtual package and there is a single available
-      candidate providing it. */
-   if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0)
-   {
-      pkgCache::PkgIterator Prov;
-      bool found_one = false;
-
-      for (pkgCache::PrvIterator P = Pkg.ProvidesList(); P; P++)
-      {
-	 pkgCache::VerIterator const PVer = P.OwnerVer();
-	 pkgCache::PkgIterator const PPkg = PVer.ParentPkg();
-
-	 /* Ignore versions that are not a candidate. */
-	 if (Cache[PPkg].CandidateVer != PVer)
-	     continue;
-
-	 if (found_one == false)
-	 {
-	    Prov = PPkg;
-	    found_one = true;
-	 }
-	 else if (PPkg != Prov)
-	 {
-	    found_one = false; // we found at least two
-	    break;
-	 }
-      }
-
-      if (found_one == true)
-      {
-	 ioprintf(c1out,_("Note, selecting %s instead of %s\n"),
-		  Prov.FullName(true).c_str(),Pkg.FullName(true).c_str());
-	 Pkg = Prov;
-      }
-   }
 
    // Handle the no-upgrade case
    if (_config->FindB("APT::Get::upgrade",true) == false &&
@@ -1601,13 +1566,13 @@ public:
 
 	virtual void showTaskSelection(APT::PackageSet const &pkgset, string const &pattern) {
 		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting %s for task '%s'\n"),
+			ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
 				 Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
 	virtual void showRegExSelection(APT::PackageSet const &pkgset, string const &pattern) {
 		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting %s for regex '%s'\n"),
+			ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
 				 Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
@@ -1616,6 +1581,53 @@ public:
 		if (ver != Ver.VerStr())
 			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
 				 Ver.VerStr(), Ver.RelStr().c_str(), Pkg.FullName(true).c_str());
+	}
+
+	virtual APT::VersionSet canNotFindCandInstVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+		return tryVirtualPackage(Cache, Pkg, APT::VersionSet::CANDINST);
+	}
+
+	virtual APT::VersionSet canNotFindInstCandVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+		return tryVirtualPackage(Cache, Pkg, APT::VersionSet::INSTCAND);
+	}
+
+	APT::VersionSet tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
+						APT::VersionSet::Version const &select) {
+		/* This is a pure virtual package and there is a single available
+		   candidate providing it. */
+		if (unlikely(Cache[Pkg].CandidateVer != 0) || Pkg->ProvidesList == 0) {
+			if (select == APT::VersionSet::CANDINST)
+				return APT::CacheSetHelper::canNotFindCandInstVer(Cache, Pkg);
+			return APT::CacheSetHelper::canNotFindInstCandVer(Cache, Pkg);
+		}
+
+		pkgCache::PkgIterator Prov;
+		bool found_one = false;
+		for (pkgCache::PrvIterator P = Pkg.ProvidesList(); P; ++P) {
+			pkgCache::VerIterator const PVer = P.OwnerVer();
+			pkgCache::PkgIterator const PPkg = PVer.ParentPkg();
+
+			/* Ignore versions that are not a candidate. */
+			if (Cache[PPkg].CandidateVer != PVer)
+				continue;
+
+			if (found_one == false) {
+				Prov = PPkg;
+				found_one = true;
+			} else if (PPkg != Prov) {
+				found_one = false; // we found at least two
+				break;
+			}
+		}
+
+		if (found_one == true) {
+			ioprintf(out, _("Note, selecting '%s' instead of '%s'\n"),
+				 Prov.FullName(true).c_str(), Pkg.FullName(true).c_str());
+			return APT::VersionSet::FromPackage(Cache, Prov, select, *this);
+		}
+		if (select == APT::VersionSet::CANDINST)
+			return APT::CacheSetHelper::canNotFindCandInstVer(Cache, Pkg);
+		return APT::CacheSetHelper::canNotFindInstCandVer(Cache, Pkg);
 	}
 
 	inline bool allPkgNamedExplicitly() const { return explicitlyNamed; }
