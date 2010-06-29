@@ -843,9 +843,9 @@ bool FileFd::Close()
    iFd = -1;
 
    if ((Flags & Replace) == Replace) {
-      FileName = TemporaryFileName; // for the unlink() below.
       if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
 	 Res &= _error->Errno("rename",_("Problem renaming the file"));
+      FileName = TemporaryFileName; // for the unlink() below.
    }
 	    
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
