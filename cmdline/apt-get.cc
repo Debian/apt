@@ -1640,24 +1640,27 @@ bool DoInstall(CommandLine &CmdL)
    unsigned int AutoMarkChanged = 0;
    pkgProblemResolver Fix(Cache);
 
-   unsigned short fallback = 0;
+   static const unsigned short MOD_REMOVE = 1;
+   static const unsigned short MOD_INSTALL = 2;
+
+   unsigned short fallback = MOD_INSTALL;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
-      fallback = 1;
+      fallback = MOD_REMOVE;
    else if (strcasecmp(CmdL.FileList[0], "purge") == 0)
    {
       _config->Set("APT::Get::Purge", true);
-      fallback = 1;
+      fallback = MOD_REMOVE;
    }
    else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
    {
       _config->Set("APT::Get::AutomaticRemove", "true");
-      fallback = 1;
+      fallback = MOD_REMOVE;
    }
 
    std::list<APT::VersionSet::Modifier> mods;
-   mods.push_back(APT::VersionSet::Modifier(0, "+",
+   mods.push_back(APT::VersionSet::Modifier(MOD_INSTALL, "+",
 		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::CANDINST));
-   mods.push_back(APT::VersionSet::Modifier(1, "-",
+   mods.push_back(APT::VersionSet::Modifier(MOD_REMOVE, "-",
 		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::INSTCAND));
    CacheSetHelperAPTGet helper(c0out);
    std::map<unsigned short, APT::VersionSet> verset = APT::VersionSet::GroupedFromCommandLine(Cache,
@@ -1666,41 +1669,54 @@ bool DoInstall(CommandLine &CmdL)
    if (_error->PendingError() == true)
       return false;
 
+   unsigned short order[] = { 0, 0, 0 };
+   if (fallback == MOD_INSTALL) {
+      order[0] = MOD_INSTALL;
+      order[1] = MOD_REMOVE;
+   } else {
+      order[0] = MOD_REMOVE;
+      order[1] = MOD_INSTALL;
+   }
+
    // new scope for the ActionGroup
    {
       pkgDepCache::ActionGroup group(Cache);
-      for (APT::VersionSet::const_iterator Ver = verset[0].begin();
-	   Ver != verset[0].end(); ++Ver)
+      for (unsigned short i = 0; order[i] != 0; ++i)
       {
-	 pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-	 Cache->SetCandidateVersion(Ver);
+	 if (order[i] == MOD_INSTALL)
+	    for (APT::VersionSet::const_iterator Ver = verset[MOD_INSTALL].begin();
+		 Ver != verset[MOD_INSTALL].end(); ++Ver)
+	    {
+	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+	       Cache->SetCandidateVersion(Ver);
 
-	 if (TryToInstall(Pkg, Cache, Fix, false, BrokenFix) == false)
-	    return false;
+	       if (TryToInstall(Pkg, Cache, Fix, false, BrokenFix) == false)
+		  return false;
 
-	 // see if we need to fix the auto-mark flag
-	 // e.g. apt-get install foo
-	 // where foo is marked automatic
-	 if (Cache[Pkg].Install() == false &&
-	     (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
-	     _config->FindB("APT::Get::ReInstall",false) == false &&
-	     _config->FindB("APT::Get::Only-Upgrade",false) == false &&
-	     _config->FindB("APT::Get::Download-Only",false) == false)
-	 {
-	    ioprintf(c1out,_("%s set to manually installed.\n"),
-			Pkg.FullName(true).c_str());
-	    Cache->MarkAuto(Pkg,false);
-	    AutoMarkChanged++;
-	 }
-      }
+	       // see if we need to fix the auto-mark flag
+	       // e.g. apt-get install foo
+	       // where foo is marked automatic
+	       if (Cache[Pkg].Install() == false &&
+		   (Cache[Pkg].Flags & pkgCache::Flag::Auto) &&
+		   _config->FindB("APT::Get::ReInstall",false) == false &&
+		   _config->FindB("APT::Get::Only-Upgrade",false) == false &&
+		   _config->FindB("APT::Get::Download-Only",false) == false)
+	       {
+		  ioprintf(c1out,_("%s set to manually installed.\n"),
+				Pkg.FullName(true).c_str());
+		  Cache->MarkAuto(Pkg,false);
+		  AutoMarkChanged++;
+	       }
+	    }
+	 else if (order[i] == MOD_REMOVE)
+	    for (APT::VersionSet::const_iterator Ver = verset[MOD_REMOVE].begin();
+		 Ver != verset[MOD_REMOVE].end(); ++Ver)
+	    {
+	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 
-      for (APT::VersionSet::const_iterator Ver = verset[1].begin();
-	   Ver != verset[1].end(); ++Ver)
-      {
-	 pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-
-	 if (TryToInstall(Pkg, Cache, Fix, true, BrokenFix) == false)
-	    return false;
+	       if (TryToInstall(Pkg, Cache, Fix, true, BrokenFix) == false)
+		  return false;
+	    }
       }
 
       if (_error->PendingError() == true)
@@ -1752,7 +1768,7 @@ bool DoInstall(CommandLine &CmdL)
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
-   if (Cache->InstCount() != verset[0].size())
+   if (Cache->InstCount() != verset[MOD_INSTALL].size())
    {
       string List;
       string VersionsList;
@@ -1879,7 +1895,7 @@ bool DoInstall(CommandLine &CmdL)
 
    // See if we need to prompt
    // FIXME: check if really the packages in the set are going to be installed
-   if (Cache->InstCount() == verset[0].size() && Cache->DelCount() == 0)
+   if (Cache->InstCount() == verset[MOD_INSTALL].size() && Cache->DelCount() == 0)
       return InstallPackages(Cache,false,false);
 
    return InstallPackages(Cache,false);   
