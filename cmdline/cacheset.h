@@ -291,6 +291,15 @@ public:									/*{{{*/
 		return APT::VersionSet::FromString(Cache, pkg, CANDINST);
 	}
 
+	/** \brief returns all versions specified for the package
+
+	    \param Cache the package and versions are in
+	    \param P the package in question
+	    \param fallback the version(s) you want to get
+	    \param helper the helper used for display and error handling */
+	static VersionSet FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
+		VersionSet::Version const &fallback, CacheSetHelper &helper);
+
 	struct Modifier {
 		enum Position { NONE, PREFIX, POSTFIX };
 		unsigned short ID;
@@ -330,11 +339,6 @@ protected:								/*{{{*/
 	    \param Pkg we want the installed version from this package */
 	static pkgCache::VerIterator getInstalledVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, CacheSetHelper &helper);
-
-	static void AddSelectedVersion(pkgCacheFile &Cache, VersionSet &verset,
-		pkgCache::PkgIterator const &P, VersionSet::Version const &fallback,
-		CacheSetHelper &helper);
-
 									/*}}}*/
 };									/*}}}*/
 }

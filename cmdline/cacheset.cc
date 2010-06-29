@@ -321,7 +321,7 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 	for (PackageSet::const_iterator P = pkgset.begin();
 	     P != pkgset.end(); ++P) {
 		if (vertag == string::npos) {
-			AddSelectedVersion(Cache, verset, P, fallback, helper);
+			verset.insert(VersionSet::FromPackage(Cache, P, fallback, helper));
 			continue;
 		}
 		pkgCache::VerIterator V;
@@ -351,10 +351,10 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 	return verset;
 }
 									/*}}}*/
-// AddSelectedVersion - add version from package based on fallback	/*{{{*/
-void VersionSet::AddSelectedVersion(pkgCacheFile &Cache, VersionSet &verset,
-		pkgCache::PkgIterator const &P, VersionSet::Version const &fallback,
-		CacheSetHelper &helper) {
+// FromPackage - versions from package based on fallback		/*{{{*/
+VersionSet VersionSet::FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
+		VersionSet::Version const &fallback, CacheSetHelper &helper) {
+	VersionSet verset;
 	pkgCache::VerIterator V;
 	bool showErrors;
 	switch(fallback) {
@@ -404,6 +404,7 @@ void VersionSet::AddSelectedVersion(pkgCacheFile &Cache, VersionSet &verset,
 			verset.insert(helper.canNotFindNewestVer(Cache, P));
 		break;
 	}
+	return verset;
 }
 									/*}}}*/
 // getCandidateVer - Returns the candidate version of the given package	/*{{{*/
