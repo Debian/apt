@@ -33,13 +33,13 @@ PackageSet PackageSet::FromTask(pkgCacheFile &Cache, std::string pattern, CacheS
 	}
 
 	if (pattern[pattern.length() -1] != '^')
-		return APT::PackageSet();
+		return APT::PackageSet(TASK);
 	pattern.erase(pattern.length()-1);
 
 	if (unlikely(Cache.GetPkgCache() == 0 || Cache.GetDepCache() == 0))
-		return APT::PackageSet();
+		return APT::PackageSet(TASK);
 
-	PackageSet pkgset;
+	PackageSet pkgset(TASK);
 	// get the records
 	pkgRecords Recs(Cache);
 
@@ -85,7 +85,7 @@ PackageSet PackageSet::FromTask(pkgCacheFile &Cache, std::string pattern, CacheS
 PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
 	static const char * const isregex = ".?+*|[^$";
 	if (pattern.find_first_of(isregex) == std::string::npos)
-		return PackageSet();
+		return PackageSet(REGEX);
 
 	size_t archfound = pattern.find_last_of(':');
 	std::string arch = "native";
@@ -103,13 +103,13 @@ PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, Cache
 		char Error[300];
 		regerror(Res, &Pattern, Error, sizeof(Error));
 		_error->Error(_("Regex compilation error - %s"), Error);
-		return PackageSet();
+		return PackageSet(REGEX);
 	}
 
 	if (unlikely(Cache.GetPkgCache() == 0))
-		return PackageSet();
+		return PackageSet(REGEX);
 
-	PackageSet pkgset;
+	PackageSet pkgset(REGEX);
 	for (pkgCache::GrpIterator Grp = Cache.GetPkgCache()->GrpBegin(); Grp.end() == false; ++Grp)
 	{
 		if (regexec(&Pattern, Grp.Name(), 0, 0, 0) != 0)
@@ -318,8 +318,12 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 	}
 
 	VersionSet verset;
+	bool errors = true;
+	if (pkgset.getConstructor() != PackageSet::UNKNOWN)
+		errors = helper.showErrors(false);
 	for (PackageSet::const_iterator P = pkgset.begin();
 	     P != pkgset.end(); ++P) {
+		helper.canNotFindCandidateVer(Cache, P);
 		if (vertag == string::npos) {
 			verset.insert(VersionSet::FromPackage(Cache, P, fallback, helper));
 			continue;
@@ -348,6 +352,8 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 		helper.showSelectedVersion(P, V, ver, verIsRel);
 		verset.insert(V);
 	}
+	if (pkgset.getConstructor() != PackageSet::UNKNOWN)
+		helper.showErrors(errors);
 	return verset;
 }
 									/*}}}*/
@@ -487,7 +493,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindNewestVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Error(_("Can't select newest version from package '%s' as it is purely virtual"), Pkg.FullName(true).c_str());
-	return pkgCache::VerIterator(Cache);
+	return pkgCache::VerIterator(Cache, 0);
 }
 									/*}}}*/
 // canNotFindCandidateVer						/*{{{*/
@@ -495,7 +501,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindCandidateVer(pkgCacheFile &Cache
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Error(_("Can't select candidate version from package %s as it has no candidate"), Pkg.FullName(true).c_str());
-	return pkgCache::VerIterator(Cache);
+	return pkgCache::VerIterator(Cache, 0);
 }
 									/*}}}*/
 // canNotFindInstalledVer						/*{{{*/
@@ -503,7 +509,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindInstalledVer(pkgCacheFile &Cache
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Error(_("Can't select installed version from package %s as it is not installed"), Pkg.FullName(true).c_str());
-	return pkgCache::VerIterator(Cache);
+	return pkgCache::VerIterator(Cache, 0);
 }
 									/*}}}*/
 }

@@ -117,7 +117,7 @@ public:									/*{{{*/
 	    packages chosen cause of the given task.
 	    \param Cache the packages are in
 	    \param pattern name of the task
-	    \param out stream to print the notice to */
+	    \param helper responsible for error and message handling */
 	static APT::PackageSet FromTask(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static APT::PackageSet FromTask(pkgCacheFile &Cache, std::string const &pattern) {
 		CacheSetHelper helper;
@@ -131,7 +131,7 @@ public:									/*{{{*/
 	    packages chosen cause of the given package.
 	    \param Cache the packages are in
 	    \param pattern regular expression for package names
-	    \param out stream to print the notice to */
+	    \param helper responsible for error and message handling */
 	static APT::PackageSet FromRegEx(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static APT::PackageSet FromRegEx(pkgCacheFile &Cache, std::string const &pattern) {
 		CacheSetHelper helper;
@@ -142,7 +142,7 @@ public:									/*{{{*/
 
 	    \param Cache the packages are in
 	    \param string String the package name(s) should be extracted from
-	    \param out stream to print various notices to */
+	    \param helper responsible for error and message handling */
 	static APT::PackageSet FromString(pkgCacheFile &Cache, std::string const &string, CacheSetHelper &helper);
 	static APT::PackageSet FromString(pkgCacheFile &Cache, std::string const &string) {
 		CacheSetHelper helper;
@@ -153,7 +153,7 @@ public:									/*{{{*/
 
 	    \param Cache the package is in
 	    \param string String the package name should be extracted from
-	    \param out stream to print various notices to */
+	    \param helper responsible for error and message handling */
 	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &string, CacheSetHelper &helper);
 	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &string) {
 		CacheSetHelper helper;
@@ -166,7 +166,7 @@ public:									/*{{{*/
 	    No special package command is supported, just plain names.
 	    \param Cache the packages are in
 	    \param cmdline Command line the package names should be extracted from
-	    \param out stream to print various notices to */
+	    \param helper responsible for error and message handling */
 	static APT::PackageSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper);
 	static APT::PackageSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
 		CacheSetHelper helper;
@@ -181,6 +181,17 @@ public:									/*{{{*/
 		Modifier (unsigned short const &id, const char * const alias, Position const &pos) : ID(id), Alias(alias), Pos(pos) {};
 	};
 
+	/** \brief group packages by a action modifiers
+
+	    At some point it is needed to get from the same commandline
+	    different package sets grouped by a modifier. Take
+		apt-get install apt awesome-
+	    as an example.
+	    \param Cache the packages are in
+	    \param cmdline Command line the package names should be extracted from
+	    \param mods list of modifiers the method should accept
+	    \param fallback the default modifier group for a package
+	    \param helper responsible for error and message handling */
 	static std::map<unsigned short, PackageSet> GroupedFromCommandLine(
 		pkgCacheFile &Cache, const char **cmdline,
 		std::list<PackageSet::Modifier> const &mods,
@@ -193,6 +204,15 @@ public:									/*{{{*/
 		return APT::PackageSet::GroupedFromCommandLine(Cache, cmdline,
 				mods, fallback, helper);
 	}
+
+	enum Constructor { UNKNOWN, REGEX, TASK };
+	Constructor getConstructor() const { return ConstructedBy; };
+
+	PackageSet() : ConstructedBy(UNKNOWN) {};
+	PackageSet(Constructor const &by) : ConstructedBy(by) {};
+									/*}}}*/
+private:								/*{{{*/
+	Constructor ConstructedBy;
 									/*}}}*/
 };									/*}}}*/
 class VersionSet : public std::set<pkgCache::VerIterator> {		/*{{{*/
@@ -269,7 +289,7 @@ public:									/*{{{*/
 	    non specifically requested  and executes regex's if needed on names.
 	    \param Cache the packages and versions are in
 	    \param cmdline Command line the versions should be extracted from
-	    \param out stream to print various notices to */
+	    \param helper responsible for error and message handling */
 	static APT::VersionSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
 			APT::VersionSet::Version const &fallback, CacheSetHelper &helper);
 	static APT::VersionSet FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
@@ -299,8 +319,16 @@ public:									/*{{{*/
 	    \param P the package in question
 	    \param fallback the version(s) you want to get
 	    \param helper the helper used for display and error handling */
-	static VersionSet FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
+	static APT::VersionSet FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
 		VersionSet::Version const &fallback, CacheSetHelper &helper);
+	static APT::VersionSet FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
+			APT::VersionSet::Version const &fallback) {
+		CacheSetHelper helper;
+		return APT::VersionSet::FromPackage(Cache, P, fallback, helper);
+	}
+	static APT::VersionSet FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P) {
+		return APT::VersionSet::FromPackage(Cache, P, CANDINST);
+	}
 
 	struct Modifier {
 		enum Position { NONE, PREFIX, POSTFIX };
