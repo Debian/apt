@@ -768,6 +768,9 @@ struct TryToInstall {
 
    void operator() (pkgCache::VerIterator const &Ver) {
       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+
+std::clog << "INSTALL " << Pkg << " VER " << Ver.VerStr() << std::endl;
+
       Cache->GetDepCache()->SetCandidateVersion(Ver);
       pkgDepCache::StateCache &State = (*Cache)[Pkg];
 

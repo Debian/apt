@@ -416,12 +416,13 @@ VersionSet VersionSet::FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator co
 pkgCache::VerIterator VersionSet::getCandidateVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, CacheSetHelper &helper) {
 	pkgCache::VerIterator Cand;
-	if (Cache.IsDepCacheBuilt() == true)
-		Cand = Cache[Pkg].CandidateVerIter(Cache);
-	else {
+	if (Cache.IsPolicyBuilt() == true || Cache.IsDepCacheBuilt() == false)
+	{
 		if (unlikely(Cache.GetPolicy() == 0))
 			return pkgCache::VerIterator(Cache);
 		Cand = Cache.GetPolicy()->GetCandidateVer(Pkg);
+	} else {
+		Cand = Cache[Pkg].CandidateVerIter(Cache);
 	}
 	if (Cand.end() == true)
 		return helper.canNotFindCandidateVer(Cache, Pkg);
