@@ -609,6 +609,240 @@ void Stats(ostream &out,pkgDepCache &Dep)
 	       Dep.BadCount());
 }
 									/*}}}*/
+// CacheSetHelperAPTGet - responsible for message telling from the CacheSets/*{{{*/
+class CacheSetHelperAPTGet : public APT::CacheSetHelper {
+	/** \brief stream message should be printed to */
+	std::ostream &out;
+	/** \brief were things like Task or RegEx used to select packages? */
+	bool explicitlyNamed;
+
+	APT::PackageSet virtualPkgs;
+
+public:
+	CacheSetHelperAPTGet(std::ostream &out) : APT::CacheSetHelper(true), out(out) {
+		explicitlyNamed = true;
+	}
+
+	virtual void showTaskSelection(APT::PackageSet const &pkgset, string const &pattern) {
+		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+			ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
+				 Pkg.FullName(true).c_str(), pattern.c_str());
+		explicitlyNamed = false;
+	}
+	virtual void showRegExSelection(APT::PackageSet const &pkgset, string const &pattern) {
+		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+			ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
+				 Pkg.FullName(true).c_str(), pattern.c_str());
+		explicitlyNamed = false;
+	}
+	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
+				 string const &ver, bool const &verIsRel) {
+		if (ver != Ver.VerStr())
+			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
+				 Ver.VerStr(), Ver.RelStr().c_str(), Pkg.FullName(true).c_str());
+	}
+
+	bool showVirtualPackageErrors(pkgCacheFile &Cache) {
+		if (virtualPkgs.empty() == true)
+			return true;
+		for (APT::PackageSet::const_iterator Pkg = virtualPkgs.begin();
+		     Pkg != virtualPkgs.end(); ++Pkg) {
+			if (Pkg->ProvidesList != 0) {
+				ioprintf(c1out,_("Package %s is a virtual package provided by:\n"),
+					 Pkg.FullName(true).c_str());
+
+				pkgCache::PrvIterator I = Pkg.ProvidesList();
+				unsigned short provider = 0;
+				for (; I.end() == false; ++I) {
+					pkgCache::PkgIterator Pkg = I.OwnerPkg();
+
+					if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer()) {
+						out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
+						if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
+							out << _(" [Installed]");
+						out << endl;
+						++provider;
+					}
+				}
+				// if we found no candidate which provide this package, show non-candidates
+				if (provider == 0)
+					for (I = Pkg.ProvidesList(); I.end() == false; I++)
+						out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
+						    << _(" [Not candidate version]") << endl;
+				else
+					out << _("You should explicitly select one to install.") << endl;
+			} else {
+				ioprintf(out,
+					_("Package %s is not available, but is referred to by another package.\n"
+					  "This may mean that the package is missing, has been obsoleted, or\n"
+					  "is only available from another source\n"),Pkg.FullName(true).c_str());
+
+				string List;
+				string VersionsList;
+				SPtrArray<bool> Seen = new bool[Cache.GetPkgCache()->Head().PackageCount];
+				memset(Seen,0,Cache.GetPkgCache()->Head().PackageCount*sizeof(*Seen));
+				for (pkgCache::DepIterator Dep = Pkg.RevDependsList();
+				     Dep.end() == false; Dep++) {
+					if (Dep->Type != pkgCache::Dep::Replaces)
+						continue;
+					if (Seen[Dep.ParentPkg()->ID] == true)
+						continue;
+					Seen[Dep.ParentPkg()->ID] = true;
+					List += Dep.ParentPkg().FullName(true) + " ";
+					//VersionsList += string(Dep.ParentPkg().CurVersion) + "\n"; ???
+				}
+				ShowList(out,_("However the following packages replace it:"),List,VersionsList);
+			}
+			out << std::endl;
+		}
+		return false;
+	}
+
+	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::CANDIDATE);
+		if (verset.empty() == false)
+			return *(verset.begin());
+		if (ShowError == true) {
+			_error->Error(_("Package '%s' has no installation candidate"),Pkg.FullName(true).c_str());
+			virtualPkgs.insert(Pkg);
+		}
+		return pkgCache::VerIterator(Cache, 0);
+	}
+
+	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::NEWEST);
+		if (verset.empty() == false)
+			return *(verset.begin());
+		if (ShowError == true)
+			ioprintf(out, _("Virtual packages like '%s' can't be removed\n"), Pkg.FullName(true).c_str());
+		return pkgCache::VerIterator(Cache, 0);
+	}
+
+	APT::VersionSet tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
+						APT::VersionSet::Version const &select) {
+		/* This is a pure virtual package and there is a single available
+		   candidate providing it. */
+		if (unlikely(Cache[Pkg].CandidateVer != 0) || Pkg->ProvidesList == 0)
+			return APT::VersionSet();
+
+		pkgCache::PkgIterator Prov;
+		bool found_one = false;
+		for (pkgCache::PrvIterator P = Pkg.ProvidesList(); P; ++P) {
+			pkgCache::VerIterator const PVer = P.OwnerVer();
+			pkgCache::PkgIterator const PPkg = PVer.ParentPkg();
+
+			/* Ignore versions that are not a candidate. */
+			if (Cache[PPkg].CandidateVer != PVer)
+				continue;
+
+			if (found_one == false) {
+				Prov = PPkg;
+				found_one = true;
+			} else if (PPkg != Prov) {
+				found_one = false; // we found at least two
+				break;
+			}
+		}
+
+		if (found_one == true) {
+			ioprintf(out, _("Note, selecting '%s' instead of '%s'\n"),
+				 Prov.FullName(true).c_str(), Pkg.FullName(true).c_str());
+			return APT::VersionSet::FromPackage(Cache, Prov, select, *this);
+		}
+		return APT::VersionSet();
+	}
+
+	inline bool allPkgNamedExplicitly() const { return explicitlyNamed; }
+
+};
+									/*}}}*/
+// TryToInstall - Mark a package for installation			/*{{{*/
+struct TryToInstall {
+   pkgCacheFile* Cache;
+   pkgProblemResolver* Fix;
+   bool FixBroken;
+   unsigned long AutoMarkChanged;
+
+   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver &PM, bool const &FixBroken) : Cache(&Cache), Fix(&PM),
+			FixBroken(FixBroken), AutoMarkChanged(0) {};
+
+   void operator() (pkgCache::VerIterator const &Ver) {
+      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+      Cache->GetDepCache()->SetCandidateVersion(Ver);
+      pkgDepCache::StateCache &State = (*Cache)[Pkg];
+
+      // Handle the no-upgrade case
+      if (_config->FindB("APT::Get::upgrade",true) == false && Pkg->CurrentVer != 0)
+	 ioprintf(c1out,_("Skipping %s, it is already installed and upgrade is not set.\n"),
+		  Pkg.FullName(true).c_str());
+      // Ignore request for install if package would be new
+      else if (_config->FindB("APT::Get::Only-Upgrade", false) == true && Pkg->CurrentVer == 0)
+	 ioprintf(c1out,_("Skipping %s, it is not installed and only upgrades are requested.\n"),
+		  Pkg.FullName(true).c_str());
+      else {
+	 Fix->Clear(Pkg);
+	 Fix->Protect(Pkg);
+	 Cache->GetDepCache()->MarkInstall(Pkg,false);
+
+	 if (State.Install() == false) {
+	    if (_config->FindB("APT::Get::ReInstall",false) == true) {
+	       if (Pkg->CurrentVer == 0 || Pkg.CurrentVer().Downloadable() == false)
+		  ioprintf(c1out,_("Reinstallation of %s is not possible, it cannot be downloaded.\n"),
+			   Pkg.FullName(true).c_str());
+	       else
+		  Cache->GetDepCache()->SetReInstall(Pkg, true);
+	    } else
+	       ioprintf(c1out,_("%s is already the newest version.\n"),
+			Pkg.FullName(true).c_str());
+	 }
+
+	 // Install it with autoinstalling enabled (if we not respect the minial
+	 // required deps or the policy)
+	 if ((State.InstBroken() == true || State.InstPolicyBroken() == true) && FixBroken == false)
+	    Cache->GetDepCache()->MarkInstall(Pkg,true);
+      }
+
+      // see if we need to fix the auto-mark flag
+      // e.g. apt-get install foo
+      // where foo is marked automatic
+      if (State.Install() == false &&
+	  (State.Flags & pkgCache::Flag::Auto) &&
+	  _config->FindB("APT::Get::ReInstall",false) == false &&
+	  _config->FindB("APT::Get::Only-Upgrade",false) == false &&
+	  _config->FindB("APT::Get::Download-Only",false) == false)
+      {
+	 ioprintf(c1out,_("%s set to manually installed.\n"),
+		  Pkg.FullName(true).c_str());
+	 Cache->GetDepCache()->MarkAuto(Pkg,false);
+	 AutoMarkChanged++;
+      }
+   }
+};
+									/*}}}*/
+// TryToRemove - Mark a package for removal				/*{{{*/
+struct TryToRemove {
+   pkgCacheFile* Cache;
+   pkgProblemResolver* Fix;
+   bool FixBroken;
+   unsigned long AutoMarkChanged;
+
+   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver &PM) : Cache(&Cache), Fix(&PM) {};
+
+   void operator() (pkgCache::VerIterator const &Ver)
+   {
+      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+
+      Fix->Clear(Pkg);
+      Fix->Protect(Pkg);
+      Fix->Remove(Pkg);
+
+      if (Pkg->CurrentVer == 0)
+	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+      else
+	 Cache->GetDepCache()->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
+   }
+};
+									/*}}}*/
 // CacheFile::NameComp - QSort compare by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1077,143 +1311,30 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 // ---------------------------------------------------------------------
 /* This used to be inlined in DoInstall, but with the advent of regex package
    name matching it was split out.. */
-bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
 		  bool AllowFail = true)
 {
-
-   // Handle the no-upgrade case
-   if (_config->FindB("APT::Get::upgrade",true) == false &&
-       Pkg->CurrentVer != 0)
+   if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0)
    {
-      if (AllowFail == true)
-	 ioprintf(c1out,_("Skipping %s, it is already installed and upgrade is not set.\n"),
-		  Pkg.FullName(true).c_str());
-      return true;
+      CacheSetHelperAPTGet helper(c1out);
+      helper.showErrors(AllowFail == false);
+      pkgCache::VerIterator Ver = helper.canNotFindNewestVer(Cache, Pkg);
+      if (Ver.end() == false)
+	 Pkg = Ver.ParentPkg();
+      else if (helper.showVirtualPackageErrors(Cache) == false)
+	 return AllowFail;
    }
 
-   // Ignore request for install if package would be new
-   if (_config->FindB("APT::Get::Only-Upgrade", false) == true &&
-       Pkg->CurrentVer == 0)
-   {
-      if (AllowFail == true)
-	 ioprintf(c1out,_("Skipping %s, it is not installed and only upgrades are requested.\n"),
-		  Pkg.Name());
-      return true;
-   }
-
-   // Check if there is something at all to install
-   pkgDepCache::StateCache &State = Cache[Pkg];
-   if (Remove == true && Pkg->CurrentVer == 0)
-   {
-      Fix.Clear(Pkg);
-      Fix.Protect(Pkg);
-      Fix.Remove(Pkg);
-      
-      /* We want to continue searching for regex hits, so we return false here
-         otherwise this is not really an error. */
-      if (AllowFail == false)
-	 return false;
-      
-      ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
-      return true;
-   }
-   
-   if (State.CandidateVer == 0 && Remove == false)
-   {
-      if (AllowFail == false)
-	 return false;
-      
-      if (Pkg->ProvidesList != 0)
-      {
-	 ioprintf(c1out,_("Package %s is a virtual package provided by:\n"),
-		  Pkg.FullName(true).c_str());
-	 
-	 pkgCache::PrvIterator I = Pkg.ProvidesList();
-	 unsigned short provider = 0;
-	 for (; I.end() == false; I++)
-	 {
-	    pkgCache::PkgIterator Pkg = I.OwnerPkg();
-	    
-	    if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer())
-	    {
-	       c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
-	       if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
-		  c1out << _(" [Installed]");
-	       c1out << endl;
-	       ++provider;
-	    }
-	 }
-	 // if we found no candidate which provide this package, show non-candidates
-	 if (provider == 0)
-	    for (I = Pkg.ProvidesList(); I.end() == false; I++)
-	       c1out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
-		<< _(" [Not candidate version]") << endl;
-	 else
-	    c1out << _("You should explicitly select one to install.") << endl;
-      }
-      else
-      {
-	 ioprintf(c1out,
-	 _("Package %s is not available, but is referred to by another package.\n"
-	   "This may mean that the package is missing, has been obsoleted, or\n"
-           "is only available from another source\n"),Pkg.FullName(true).c_str());
-	 
-	 string List;
-	 string VersionsList;
-	 SPtrArray<bool> Seen = new bool[Cache.Head().PackageCount];
-	 memset(Seen,0,Cache.Head().PackageCount*sizeof(*Seen));
-	 pkgCache::DepIterator Dep = Pkg.RevDependsList();
-	 for (; Dep.end() == false; Dep++)
-	 {
-	    if (Dep->Type != pkgCache::Dep::Replaces)
-	       continue;
-	    if (Seen[Dep.ParentPkg()->ID] == true)
-	       continue;
-	    Seen[Dep.ParentPkg()->ID] = true;
-	    List += Dep.ParentPkg().FullName(true) + " ";
-        //VersionsList += string(Dep.ParentPkg().CurVersion) + "\n"; ???
-	 }	    
-	 ShowList(c1out,_("However the following packages replace it:"),List,VersionsList);
-      }
-      
-      _error->Error(_("Package %s has no installation candidate"),Pkg.FullName(true).c_str());
-      return false;
-   }
-
-   Fix.Clear(Pkg);
-   Fix.Protect(Pkg);   
    if (Remove == true)
    {
-      Fix.Remove(Pkg);
-      Cache.MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
-      return true;
-   }
-   
-   // Install it
-   Cache.MarkInstall(Pkg,false);
-   if (State.Install() == false)
-   {
-      if (_config->FindB("APT::Get::ReInstall",false) == true)
-      {
-	 if (Pkg->CurrentVer == 0 || Pkg.CurrentVer().Downloadable() == false)
-	    ioprintf(c1out,_("Reinstallation of %s is not possible, it cannot be downloaded.\n"),
-		     Pkg.FullName(true).c_str());
-	 else
-	    Cache.SetReInstall(Pkg,true);
-      }      
-      else
-      {
-	 if (AllowFail == true)
-	    ioprintf(c1out,_("%s is already the newest version.\n"),
-		     Pkg.FullName(true).c_str());
-      }      
-   }   
-
-   // Install it with autoinstalling enabled (if we not respect the minial
-   // required deps or the policy)
-   if ((State.InstBroken() == true || State.InstPolicyBroken() == true) && BrokenFix == false)
-      Cache.MarkInstall(Pkg,true);
+      TryToRemove RemoveAction(Cache, Fix);
+      RemoveAction(Pkg.VersionList());
+   } else if (Cache[Pkg].CandidateVer != 0) {
+      TryToInstall InstallAction(Cache, Fix, BrokenFix);
+      InstallAction(Cache[Pkg].CandidateVerIter(Cache));
+   } else
+      return AllowFail;
 
    return true;
 }
@@ -1551,237 +1672,6 @@ bool DoUpgrade(CommandLine &CmdL)
    
    return InstallPackages(Cache,true);
 }
-									/*}}}*/
-// TryToInstall - Mark a package for installation			/*{{{*/
-struct TryToInstall {
-   pkgCacheFile* Cache;
-   pkgProblemResolver* Fix;
-   bool FixBroken;
-   unsigned long AutoMarkChanged;
-
-   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver &PM, bool const &FixBroken) : Cache(&Cache), Fix(&PM),
-			FixBroken(FixBroken), AutoMarkChanged(0) {};
-
-   void operator() (pkgCache::VerIterator const &Ver) {
-      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-      Cache->GetDepCache()->SetCandidateVersion(Ver);
-      pkgDepCache::StateCache &State = (*Cache)[Pkg];
-
-      // Handle the no-upgrade case
-      if (_config->FindB("APT::Get::upgrade",true) == false && Pkg->CurrentVer != 0)
-	 ioprintf(c1out,_("Skipping %s, it is already installed and upgrade is not set.\n"),
-		  Pkg.FullName(true).c_str());
-      // Ignore request for install if package would be new
-      else if (_config->FindB("APT::Get::Only-Upgrade", false) == true && Pkg->CurrentVer == 0)
-	 ioprintf(c1out,_("Skipping %s, it is not installed and only upgrades are requested.\n"),
-		  Pkg.FullName(true).c_str());
-      else {
-	 Fix->Clear(Pkg);
-	 Fix->Protect(Pkg);
-	 Cache->GetDepCache()->MarkInstall(Pkg,false);
-
-	 if (State.Install() == false) {
-	    if (_config->FindB("APT::Get::ReInstall",false) == true) {
-	       if (Pkg->CurrentVer == 0 || Pkg.CurrentVer().Downloadable() == false)
-		  ioprintf(c1out,_("Reinstallation of %s is not possible, it cannot be downloaded.\n"),
-			   Pkg.FullName(true).c_str());
-	       else
-		  Cache->GetDepCache()->SetReInstall(Pkg, true);
-	    } else
-	       ioprintf(c1out,_("%s is already the newest version.\n"),
-			Pkg.FullName(true).c_str());
-	 }
-
-	 // Install it with autoinstalling enabled (if we not respect the minial
-	 // required deps or the policy)
-	 if ((State.InstBroken() == true || State.InstPolicyBroken() == true) && FixBroken == false)
-	    Cache->GetDepCache()->MarkInstall(Pkg,true);
-      }
-
-      // see if we need to fix the auto-mark flag
-      // e.g. apt-get install foo
-      // where foo is marked automatic
-      if (State.Install() == false &&
-	  (State.Flags & pkgCache::Flag::Auto) &&
-	  _config->FindB("APT::Get::ReInstall",false) == false &&
-	  _config->FindB("APT::Get::Only-Upgrade",false) == false &&
-	  _config->FindB("APT::Get::Download-Only",false) == false)
-      {
-	 ioprintf(c1out,_("%s set to manually installed.\n"),
-		  Pkg.FullName(true).c_str());
-	 Cache->GetDepCache()->MarkAuto(Pkg,false);
-	 AutoMarkChanged++;
-      }
-   }
-};
-									/*}}}*/
-// TryToRemove - Mark a package for removal				/*{{{*/
-struct TryToRemove {
-   pkgCacheFile* Cache;
-   pkgProblemResolver* Fix;
-   bool FixBroken;
-   unsigned long AutoMarkChanged;
-
-   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver &PM) : Cache(&Cache), Fix(&PM) {};
-
-   void operator() (pkgCache::VerIterator const &Ver)
-   {
-      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-
-      Fix->Clear(Pkg);
-      Fix->Protect(Pkg);
-      Fix->Remove(Pkg);
-
-      if (Pkg->CurrentVer == 0)
-	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
-      else
-	 Cache->GetDepCache()->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
-   }
-};
-									/*}}}*/
-// CacheSetHelperAPTGet - responsible for message telling from the CacheSets/*{{{*/
-class CacheSetHelperAPTGet : public APT::CacheSetHelper {
-	/** \brief stream message should be printed to */
-	std::ostream &out;
-	/** \brief were things like Task or RegEx used to select packages? */
-	bool explicitlyNamed;
-
-	APT::PackageSet virtualPkgs;
-
-public:
-	CacheSetHelperAPTGet(std::ostream &out) : APT::CacheSetHelper(true), out(out) {
-		explicitlyNamed = true;
-	}
-
-	virtual void showTaskSelection(APT::PackageSet const &pkgset, string const &pattern) {
-		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
-				 Pkg.FullName(true).c_str(), pattern.c_str());
-		explicitlyNamed = false;
-	}
-	virtual void showRegExSelection(APT::PackageSet const &pkgset, string const &pattern) {
-		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
-				 Pkg.FullName(true).c_str(), pattern.c_str());
-		explicitlyNamed = false;
-	}
-	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
-				 string const &ver, bool const &verIsRel) {
-		if (ver != Ver.VerStr())
-			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
-				 Ver.VerStr(), Ver.RelStr().c_str(), Pkg.FullName(true).c_str());
-	}
-
-	void showVirtualPackageErrors(pkgCacheFile &Cache) {
-		for (APT::PackageSet::const_iterator Pkg = virtualPkgs.begin();
-		     Pkg != virtualPkgs.end(); ++Pkg) {
-			if (Pkg->ProvidesList != 0) {
-				ioprintf(c1out,_("Package %s is a virtual package provided by:\n"),
-					 Pkg.FullName(true).c_str());
-
-				pkgCache::PrvIterator I = Pkg.ProvidesList();
-				unsigned short provider = 0;
-				for (; I.end() == false; ++I) {
-					pkgCache::PkgIterator Pkg = I.OwnerPkg();
-
-					if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer()) {
-						out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
-						if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
-							out << _(" [Installed]");
-						out << endl;
-						++provider;
-					}
-				}
-				// if we found no candidate which provide this package, show non-candidates
-				if (provider == 0)
-					for (I = Pkg.ProvidesList(); I.end() == false; I++)
-						out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
-						    << _(" [Not candidate version]") << endl;
-				else
-					out << _("You should explicitly select one to install.") << endl;
-			} else {
-				ioprintf(out,
-					_("Package %s is not available, but is referred to by another package.\n"
-					  "This may mean that the package is missing, has been obsoleted, or\n"
-					  "is only available from another source\n"),Pkg.FullName(true).c_str());
-
-				string List;
-				string VersionsList;
-				SPtrArray<bool> Seen = new bool[Cache.GetPkgCache()->Head().PackageCount];
-				memset(Seen,0,Cache.GetPkgCache()->Head().PackageCount*sizeof(*Seen));
-				for (pkgCache::DepIterator Dep = Pkg.RevDependsList();
-				     Dep.end() == false; Dep++) {
-					if (Dep->Type != pkgCache::Dep::Replaces)
-						continue;
-					if (Seen[Dep.ParentPkg()->ID] == true)
-						continue;
-					Seen[Dep.ParentPkg()->ID] = true;
-					List += Dep.ParentPkg().FullName(true) + " ";
-					//VersionsList += string(Dep.ParentPkg().CurVersion) + "\n"; ???
-				}
-				ShowList(out,_("However the following packages replace it:"),List,VersionsList);
-			}
-			out << std::endl;
-		}
-	}
-
-	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::CANDIDATE);
-		if (verset.empty() == false)
-			return *(verset.begin());
-		if (ShowError == true) {
-			_error->Error(_("Package '%s' has no installation candidate"),Pkg.FullName(true).c_str());
-			virtualPkgs.insert(Pkg);
-		}
-		return pkgCache::VerIterator(Cache, 0);
-	}
-
-	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::NEWEST);
-		if (verset.empty() == false)
-			return *(verset.begin());
-		if (ShowError == true)
-			ioprintf(out, _("Virtual packages like '%s' can't be removed\n"), Pkg.FullName(true).c_str());
-		return pkgCache::VerIterator(Cache, 0);
-	}
-
-	APT::VersionSet tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
-						APT::VersionSet::Version const &select) {
-		/* This is a pure virtual package and there is a single available
-		   candidate providing it. */
-		if (unlikely(Cache[Pkg].CandidateVer != 0) || Pkg->ProvidesList == 0)
-			return APT::VersionSet();
-
-		pkgCache::PkgIterator Prov;
-		bool found_one = false;
-		for (pkgCache::PrvIterator P = Pkg.ProvidesList(); P; ++P) {
-			pkgCache::VerIterator const PVer = P.OwnerVer();
-			pkgCache::PkgIterator const PPkg = PVer.ParentPkg();
-
-			/* Ignore versions that are not a candidate. */
-			if (Cache[PPkg].CandidateVer != PVer)
-				continue;
-
-			if (found_one == false) {
-				Prov = PPkg;
-				found_one = true;
-			} else if (PPkg != Prov) {
-				found_one = false; // we found at least two
-				break;
-			}
-		}
-
-		if (found_one == true) {
-			ioprintf(out, _("Note, selecting '%s' instead of '%s'\n"),
-				 Prov.FullName(true).c_str(), Pkg.FullName(true).c_str());
-			return APT::VersionSet::FromPackage(Cache, Prov, select, *this);
-		}
-		return APT::VersionSet();
-	}
-
-	inline bool allPkgNamedExplicitly() const { return explicitlyNamed; }
-
-};
 									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
