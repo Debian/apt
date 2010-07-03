@@ -323,7 +323,6 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 		errors = helper.showErrors(false);
 	for (PackageSet::const_iterator P = pkgset.begin();
 	     P != pkgset.end(); ++P) {
-		helper.canNotFindCandidateVer(Cache, P);
 		if (vertag == string::npos) {
 			verset.insert(VersionSet::FromPackage(Cache, P, fallback, helper));
 			continue;
