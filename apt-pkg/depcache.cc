@@ -1585,7 +1585,7 @@ const char *pkgDepCache::StateCache::StripEpoch(const char *Ver)
 // ---------------------------------------------------------------------
 /* The default just returns the highest available version that is not
    a source and automatic. */
-pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
+pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pkg)
 {
    /* Not source/not automatic versions cannot be a candidate version 
       unless they are already installed */
@@ -1620,7 +1620,7 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
 // Policy::IsImportantDep - True if the dependency is important		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
+bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
 {
    if(Dep.IsCritical())
       return true;

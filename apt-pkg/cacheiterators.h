@@ -105,13 +105,13 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;};
 	inline PkgIterator PackageList() const;
-	PkgIterator FindPkg(string Arch = "any");
+	PkgIterator FindPkg(string Arch = "any") const;
 	/** \brief find the package with the "best" architecture
 
 	    The best architecture is either the "native" or the first
 	    in the list of Architectures which is not an end-Pointer */
-	PkgIterator FindPreferredPkg();
-	PkgIterator NextPkg(PkgIterator const &Pkg);
+	PkgIterator FindPreferredPkg() const;
+	PkgIterator NextPkg(PkgIterator const &Pkg) const;
 
 	// Constructors
 	inline GrpIterator(pkgCache &Owner, Group *Trg) : Iterator<Group, GrpIterator>(Owner, Trg), HashIndex(0) {
@@ -272,17 +272,17 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 
 	// Accessors
 	inline const char *TargetVer() const {return S->Version == 0?0:Owner->StrP + S->Version;};
-	inline PkgIterator TargetPkg() {return PkgIterator(*Owner,Owner->PkgP + S->Package);};
-	inline PkgIterator SmartTargetPkg() {PkgIterator R(*Owner,0);SmartTargetPkg(R);return R;};
-	inline VerIterator ParentVer() {return VerIterator(*Owner,Owner->VerP + S->ParentVer);};
-	inline PkgIterator ParentPkg() {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->ParentVer].ParentPkg);};
-	inline bool Reverse() {return Type == DepRev;};
-	bool IsCritical();
+	inline PkgIterator TargetPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->Package);};
+	inline PkgIterator SmartTargetPkg() const {PkgIterator R(*Owner,0);SmartTargetPkg(R);return R;};
+	inline VerIterator ParentVer() const {return VerIterator(*Owner,Owner->VerP + S->ParentVer);};
+	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->ParentVer].ParentPkg);};
+	inline bool Reverse() const {return Type == DepRev;};
+	bool IsCritical() const;
 	void GlobOr(DepIterator &Start,DepIterator &End);
-	Version **AllTargets();
-	bool SmartTargetPkg(PkgIterator &Result);
-	inline const char *CompType() {return Owner->CompType(S->CompareOp);};
-	inline const char *DepType() {return Owner->DepType(S->Type);};
+	Version **AllTargets() const;
+	bool SmartTargetPkg(PkgIterator &Result) const;
+	inline const char *CompType() const {return Owner->CompType(S->CompareOp);};
+	inline const char *DepType() const {return Owner->DepType(S->Type);};
 
 	inline DepIterator(pkgCache &Owner, Dependency *Trg, Version* = 0) :
 		Iterator<Dependency, DepIterator>(Owner, Trg), Type(DepVer) {
@@ -315,9 +315,9 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	// Accessors
 	inline const char *Name() const {return Owner->StrP + Owner->PkgP[S->ParentPkg].Name;};
 	inline const char *ProvideVersion() const {return S->ProvideVersion == 0?0:Owner->StrP + S->ProvideVersion;};
-	inline PkgIterator ParentPkg() {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);};
-	inline VerIterator OwnerVer() {return VerIterator(*Owner,Owner->VerP + S->Version);};
-	inline PkgIterator OwnerPkg() {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->Version].ParentPkg);};
+	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);};
+	inline VerIterator OwnerVer() const {return VerIterator(*Owner,Owner->VerP + S->Version);};
+	inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->Version].ParentPkg);};
 
 	inline PrvIterator() : Iterator<Provides, PrvIterator>(), Type(PrvVer) {};
 

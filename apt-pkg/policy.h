@@ -76,7 +76,7 @@ class pkgPolicy : public pkgDepCache::Policy
 
    // Things for the cache interface.
    virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg);
-   virtual bool IsImportantDep(pkgCache::DepIterator Dep) {return pkgDepCache::Policy::IsImportantDep(Dep);};
+   virtual bool IsImportantDep(pkgCache::DepIterator const &Dep) {return pkgDepCache::Policy::IsImportantDep(Dep);};
    bool InitDefaults();
    
    pkgPolicy(pkgCache *Owner);

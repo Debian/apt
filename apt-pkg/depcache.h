@@ -256,8 +256,8 @@ class pkgDepCache : protected pkgCache::Namespace
    {
       public:
       
-      virtual VerIterator GetCandidateVer(PkgIterator Pkg);
-      virtual bool IsImportantDep(DepIterator Dep);
+      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg);
+      virtual bool IsImportantDep(DepIterator const &Dep);
       
       virtual ~Policy() {};
    };
@@ -334,7 +334,7 @@ class pkgDepCache : protected pkgCache::Namespace
    inline pkgVersioningSystem &VS() {return *Cache->VS;};
    
    // Policy implementation
-   inline VerIterator GetCandidateVer(PkgIterator Pkg) {return LocalPolicy->GetCandidateVer(Pkg);};
+   inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return LocalPolicy->GetCandidateVer(Pkg);};
    inline bool IsImportantDep(DepIterator Dep) {return LocalPolicy->IsImportantDep(Dep);};
    inline Policy &GetPolicy() {return *LocalPolicy;};
    
