@@ -32,7 +32,9 @@ class debListParser : public pkgCacheGenerator::ListParser
    pkgTagSection Section;
    unsigned long iOffset;
    string Arch;
-   
+   std::vector<std::string> Architectures;
+   bool MultiArchEnabled;
+
    unsigned long UniqFindTagWrite(const char *Tag);
    bool ParseStatus(pkgCache::PkgIterator Pkg,pkgCache::VerIterator Ver);
    bool ParseDepends(pkgCache::VerIterator Ver,const char *Tag,

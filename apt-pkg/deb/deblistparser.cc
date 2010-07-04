@@ -38,6 +38,8 @@ debListParser::debListParser(FileFd *File, string const &Arch) : Tags(File),
 				Arch(Arch) {
    if (Arch == "native")
       this->Arch = _config->Find("APT::Architecture");
+   Architectures = APT::Configuration::getArchitectures();
+   MultiArchEnabled = Architectures.size() > 1;
 }
 									/*}}}*/
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
@@ -155,10 +157,9 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 	 to a NOP in the download/install step - this package will ensure that
 	 it is downloaded only one time and installed only one time -- even if
 	 the architecture bound versions coming in and out on regular basis. */
-      bool const static multiArch = APT::Configuration::getArchitectures().size() > 1;
       if (strcmp(Ver.Arch(true),"all") == 0)
 	 return true;
-      else if (multiArch == true)
+      else if (MultiArchEnabled == true)
       {
 	 // our pseudo packages have no size to not confuse the fetcher
 	 Ver->Size = 0;
@@ -620,9 +621,6 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
    if (Section.Find(Tag,Start,Stop) == false)
       return true;
 
-   static std::vector<std::string> const archs = APT::Configuration::getArchitectures();
-   static bool const multiArch = archs.size() <= 1;
-
    string Package;
    string const pkgArch = Ver.Arch(true);
    string Version;
@@ -634,13 +632,13 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
 
-      if (multiArch == true &&
+      if (MultiArchEnabled == true &&
 	  (Type == pkgCache::Dep::Conflicts ||
 	   Type == pkgCache::Dep::DpkgBreaks ||
 	   Type == pkgCache::Dep::Replaces))
       {
-	 for (std::vector<std::string>::const_iterator a = archs.begin();
-	      a != archs.end(); ++a)
+	 for (std::vector<std::string>::const_iterator a = Architectures.begin();
+	      a != Architectures.end(); ++a)
 	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
 	       return false;
       }
@@ -692,14 +690,13 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
    if (Ver->MultiArch != pkgCache::Version::Foreign)
       return true;
 
-   std::vector<string> const archs = APT::Configuration::getArchitectures();
-   if (archs.size() <= 1)
+   if (MultiArchEnabled == false)
       return true;
 
    string const Package = Ver.ParentPkg().Name();
    string const Version = Ver.VerStr();
-   for (std::vector<string>::const_iterator a = archs.begin();
-	a != archs.end(); ++a)
+   for (std::vector<string>::const_iterator a = Architectures.begin();
+	a != Architectures.end(); ++a)
    {
       if (NewProvides(Ver, Package, *a, Version) == false)
 	 return false;
@@ -739,7 +736,7 @@ bool debListParser::Step()
       if (Architecture.empty() == true)
 	 return true;
 
-      if (Arch.empty() == true)
+      if (Arch.empty() == true || MultiArchEnabled == false)
       {
 	 if (APT::Configuration::checkArchitecture(Architecture) == true)
 	    return true;
