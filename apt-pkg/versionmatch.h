@@ -67,6 +67,8 @@ class pkgVersionMatch
    enum MatchType {None = 0,Version,Release,Origin} Type;
    
    bool MatchVer(const char *A,string B,bool Prefix);
+   bool ExpressionMatches(const char *pattern, const char *string);
+   bool ExpressionMatches(const std::string& pattern, const char *string);
    bool FileMatch(pkgCache::PkgFileIterator File);
    pkgCache::VerIterator Find(pkgCache::PkgIterator Pkg);
 			       

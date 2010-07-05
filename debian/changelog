@@ -1,5 +1,6 @@
 apt (0.7.26~exp8) UNRELEASED; urgency=low
 
+  [ David Kalnischkies ]
   * cmdline/cacheset.cc:
     - doesn't include it in the library for now as it is too volatile
     - get the candidate either from an already built depcache
@@ -37,7 +38,21 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
     - add another round of const& madness as the previous round accidentally
       NOT overrides the virtual GetCandidateVer() method (Closes: #587725)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 28 Jun 2010 22:12:24 +0200
+  [ Julian Andres Klode ]
+  * methods/ftp.h:
+    - Handle different logins on the same server (Closes: #586904).
+  * apt-pkg/deb/deblistparser.cc:
+    - Handle architecture wildcards (Closes: #547724).
+  * apt-pkg/versionmatch.cc:
+    - Support matching pins by regular expressions or glob() like patterns,
+      regular expressions have to be put between to slashes; for example,
+      /.*/.
+  * apt-pkg/contrib/fileutl.cc:
+    - Make FileFd replace files atomically in WriteTemp mode (for cache, etc).
+  * debian/control:
+    - Set Standards-Version to 3.9.0
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 05 Jul 2010 12:05:30 +0200
 
 apt (0.7.26~exp7) experimental; urgency=low
 

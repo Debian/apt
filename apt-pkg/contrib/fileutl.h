@@ -34,9 +34,10 @@ class FileFd
    int iFd;
  
    enum LocalFlags {AutoClose = (1<<0),Fail = (1<<1),DelOnFail = (1<<2),
-                    HitEof = (1<<3)};
+                    HitEof = (1<<3), Replace = (1<<4) };
    unsigned long Flags;
    string FileName;
+   string TemporaryFileName;
    
    public:
    enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp};

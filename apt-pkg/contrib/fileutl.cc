@@ -27,6 +27,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <cstdio>
 
 #include <iostream>
 #include <unistd.h>
@@ -658,10 +659,11 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
       
       case WriteEmpty:
       {
-	 struct stat Buf;
-	 if (lstat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
-	    unlink(FileName.c_str());
-	 iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_TRUNC,Perms);
+	 Flags |= Replace;
+	 char *name = strdup((FileName + ".XXXXXX").c_str());
+	 TemporaryFileName = string(mktemp(name));
+	 iFd = open(TemporaryFileName.c_str(),O_RDWR | O_CREAT | O_EXCL,Perms);
+	 free(name);
 	 break;
       }
       
@@ -843,11 +845,19 @@ bool FileFd::Close()
       if (iFd >= 0 && close(iFd) != 0)
 	 Res &= _error->Errno("close",_("Problem closing the file"));
    iFd = -1;
-   
+
+   if ((Flags & Replace) == Replace) {
+      if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
+	 Res &= _error->Errno("rename",_("Problem renaming the file"));
+      FileName = TemporaryFileName; // for the unlink() below.
+   }
+	    
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)
       if (unlink(FileName.c_str()) != 0)
 	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file"));
+
+
    return Res;
 }
 									/*}}}*/
