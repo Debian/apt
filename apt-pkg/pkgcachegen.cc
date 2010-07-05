@@ -572,10 +572,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 				OldDepLast);
 		     // Breaks: ${self}:other (!= ${binary:Version})
 		     NewDepends(D, V, V.VerStr(),
-				pkgCache::Dep::Less, pkgCache::Dep::DpkgBreaks,
-				OldDepLast);
-		     NewDepends(D, V, V.VerStr(),
-				pkgCache::Dep::Greater, pkgCache::Dep::DpkgBreaks,
+				pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
 				OldDepLast);
 		     if (V->MultiArch == pkgCache::Version::All)
 		     {
