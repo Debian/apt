@@ -10,7 +10,7 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
     - check in Grouped* first without modifier interpretation
   * cmdline/apt-get.cc:
     - use the cachsets in the install commands
-    - make the specify order of packages irrelevant (half-close #196021)
+    - make the specify order of packages irrelevant (Closes: #196021)
   * apt-pkg/orderlist.cc:
     - untouched packages are never missing
   * apt-pkg/packagemanager.cc:
@@ -34,8 +34,8 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
     - show notice about ignored file instead of being always silent
     - add a Dir::Ignore-Files-Silently list option to control the notice
   * apt-pkg/policy.h:
-    - add another round of const& madness as the previous round accidently
-      NOT override the virtual GetCandidateVer() method (Closes: #587725)
+    - add another round of const& madness as the previous round accidentally
+      NOT overrides the virtual GetCandidateVer() method (Closes: #587725)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 28 Jun 2010 22:12:24 +0200
 
