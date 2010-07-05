@@ -762,14 +762,13 @@ struct TryToInstall {
    pkgProblemResolver* Fix;
    bool FixBroken;
    unsigned long AutoMarkChanged;
+   APT::PackageSet doAutoInstallLater;
 
    TryToInstall(pkgCacheFile &Cache, pkgProblemResolver &PM, bool const &FixBroken) : Cache(&Cache), Fix(&PM),
 			FixBroken(FixBroken), AutoMarkChanged(0) {};
 
    void operator() (pkgCache::VerIterator const &Ver) {
       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-
-std::clog << "INSTALL " << Pkg << " VER " << Ver.VerStr() << std::endl;
 
       Cache->GetDepCache()->SetCandidateVersion(Ver);
       pkgDepCache::StateCache &State = (*Cache)[Pkg];
@@ -801,8 +800,8 @@ std::clog << "INSTALL " << Pkg << " VER " << Ver.VerStr() << std::endl;
 
 	 // Install it with autoinstalling enabled (if we not respect the minial
 	 // required deps or the policy)
-	 if ((State.InstBroken() == true || State.InstPolicyBroken() == true) && FixBroken == false)
-	    Cache->GetDepCache()->MarkInstall(Pkg,true);
+	 if (FixBroken == false)
+	    doAutoInstallLater.insert(Pkg);
       }
 
       // see if we need to fix the auto-mark flag
@@ -819,6 +818,17 @@ std::clog << "INSTALL " << Pkg << " VER " << Ver.VerStr() << std::endl;
 	 Cache->GetDepCache()->MarkAuto(Pkg,false);
 	 AutoMarkChanged++;
       }
+   }
+
+   void doAutoInstall() {
+      for (APT::PackageSet::const_iterator P = doAutoInstallLater.begin();
+	   P != doAutoInstallLater.end(); ++P) {
+	 pkgDepCache::StateCache &State = (*Cache)[P];
+	 if (State.InstBroken() == false && State.InstPolicyBroken() == false)
+	    continue;
+	 Cache->GetDepCache()->MarkInstall(P, true);
+      }
+      doAutoInstallLater.clear();
    }
 };
 									/*}}}*/
@@ -1336,6 +1346,7 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    } else if (Cache[Pkg].CandidateVer != 0) {
       TryToInstall InstallAction(Cache, Fix, BrokenFix);
       InstallAction(Cache[Pkg].CandidateVerIter(Cache));
+      InstallAction.doAutoInstall();
    } else
       return AllowFail;
 
@@ -1743,8 +1754,10 @@ bool DoInstall(CommandLine &CmdL)
 
       for (unsigned short i = 0; order[i] != 0; ++i)
       {
-	 if (order[i] == MOD_INSTALL)
+	 if (order[i] == MOD_INSTALL) {
 	    InstallAction = std::for_each(verset[MOD_INSTALL].begin(), verset[MOD_INSTALL].end(), InstallAction);
+	    InstallAction.doAutoInstall();
+	 }
 	 else if (order[i] == MOD_REMOVE)
 	    RemoveAction = std::for_each(verset[MOD_REMOVE].begin(), verset[MOD_REMOVE].end(), RemoveAction);
       }
