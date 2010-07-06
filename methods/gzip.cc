@@ -23,8 +23,6 @@
 #include <apti18n.h>
 									/*}}}*/
 
-const char *Prog;
-
 class GzipMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
@@ -43,14 +41,12 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    URI Get = Itm->Uri;
    string Path = Get.Host + Get.Path; // To account for relative paths
    
-   string GzPathOption = "Dir::bin::"+string(Prog);
-
    FetchResult Res;
    Res.Filename = Itm->DestFile;
    URIStart(Res);
    
    // Open the source and destination files
-   FileFd From(Path,FileFd::ReadOnly);
+   FileFd From(Path,FileFd::ReadOnlyGzip);
 
    // if the file is empty, just rename it and return
    if(From.Size() == 0) 
@@ -59,40 +55,12 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       return true;
    }
 
-   int GzOut[2];   
-   if (pipe(GzOut) < 0)
-      return _error->Errno("pipe",_("Couldn't open pipe for %s"),Prog);
-
-   // Fork gzip
-   pid_t Process = ExecFork();
-   if (Process == 0)
-   {
-      close(GzOut[0]);
-      dup2(From.Fd(),STDIN_FILENO);
-      dup2(GzOut[1],STDOUT_FILENO);
-      From.Close();
-      close(GzOut[1]);
-      SetCloseExec(STDIN_FILENO,false);
-      SetCloseExec(STDOUT_FILENO,false);
-      
-      const char *Args[3];
-      string Tmp = _config->Find(GzPathOption,Prog);
-      Args[0] = Tmp.c_str();
-      Args[1] = "-d";
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);
-      _exit(100);
-   }
-   From.Close();
-   close(GzOut[1]);
-   
-   FileFd FromGz(GzOut[0]);  // For autoclose   
    FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
       return false;
    
-   // Read data from gzip, generate checksums and write
+   // Read data from source, generate checksums and write
    Hashes Hash;
    bool Failed = false;
    while (1) 
@@ -100,36 +68,23 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       unsigned char Buffer[4*1024];
       unsigned long Count;
       
-      Count = read(GzOut[0],Buffer,sizeof(Buffer));
-      if (Count < 0 && errno == EINTR)
-	 continue;
-      
-      if (Count < 0)
+      if (!From.Read(Buffer,sizeof(Buffer),&Count))
       {
-	 _error->Errno("read", _("Read error from %s process"),Prog);
-	 Failed = true;
-	 break;
+	 To.OpFail();
+	 return false;
       }
-      
       if (Count == 0)
 	 break;
-      
+
       Hash.Add(Buffer,Count);
       if (To.Write(Buffer,Count) == false)
       {
 	 Failed = true;
-	 FromGz.Close();
 	 break;
       }      
    }
    
-   // Wait for gzip to finish
-   if (ExecWait(Process,_config->Find(GzPathOption,Prog).c_str(),false) == false)
-   {
-      To.OpFail();
-      return false;
-   }  
-       
+   From.Close();
    To.Close();
    
    if (Failed == true)
@@ -165,9 +120,5 @@ int main(int argc, char *argv[])
    setlocale(LC_ALL, "");
 
    GzipMethod Mth;
-
-   Prog = strrchr(argv[0],'/');
-   Prog++;
-   
    return Mth.Run();
 }

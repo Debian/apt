@@ -38,6 +38,10 @@ apt (0.7.26~exp5) UNRELEASED; urgency=low
     - Fix return value of pkgAcqFile::Custom600Headers() in the non-index
       case, to avoid returning NULL and causing crashers in callers. This also
       fixes a compiler warning.
+  * methods/gzip.cc: With FileFd now being able to read gzipped files, there
+    is no need for the gzip method any more to spawn an external gzip process.
+    Rewrite it to use FileFd directly, which makes the code a lot simpler, and
+    also using less memory and overhead.
 
  -- Christian Perrier <bubulle@debian.org>  Tue, 11 May 2010 19:52:00 +0200
 
