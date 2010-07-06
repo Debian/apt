@@ -608,7 +608,7 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
 
       case ReadOnlyGzip:
       iFd = open(FileName.c_str(),O_RDONLY);
-      if (iFd > 0 && FileName.compare(FileName.size()-3, 3, ".gz") == 0) {
+      if (iFd > 0) {
 	 gz = gzdopen (iFd, "r");
 	 if (gz == NULL) {
 	     close (iFd);
@@ -827,8 +827,16 @@ bool FileFd::Close()
 {
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
-      if ((gz != NULL && gzclose(gz) != 0) || (gz == NULL && iFd > 0 && close(iFd) != 0))
-	 Res &= _error->Errno("close",_("Problem closing the file"));
+   {
+      if (gz != NULL) {
+	 int e = gzclose(gz);
+	 // gzdopen() on empty files always fails with "buffer error" here, ignore that
+	 if (e != 0 && e != Z_BUF_ERROR)
+	    Res &= _error->Errno("close",_("Problem closing the gzip file"));
+      } else
+	 if (iFd > 0 && close(iFd) != 0)
+	    Res &= _error->Errno("close",_("Problem closing the file"));
+   }
    iFd = -1;
    gz = NULL;
    
