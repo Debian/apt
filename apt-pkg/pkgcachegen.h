@@ -31,9 +31,13 @@ class pkgIndexFile;
 class pkgCacheGenerator							/*{{{*/
 {
    private:
-   
+
    pkgCache::StringItem *UniqHash[26];
-   
+   unsigned long WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
+   unsigned long WriteStringInMap(const char *String);
+   unsigned long WriteStringInMap(const char *String, const unsigned long &Len);
+   unsigned long AllocateInMap(const unsigned long &size);
+
    public:
    
    class ListParser;
@@ -103,8 +107,8 @@ class pkgCacheGenerator::ListParser
 
    inline unsigned long WriteUniqString(string S) {return Owner->WriteUniqString(S);};
    inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
-   inline unsigned long WriteString(const string &S) {return Owner->Map.WriteString(S);};
-   inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->Map.WriteString(S,Size);};
+   inline unsigned long WriteString(const string &S) {return Owner->WriteStringInMap(S);};
+   inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
    bool NewDepends(pkgCache::VerIterator Ver,const string &Package, const string &Arch,
 		   const string &Version,unsigned int Op,
 		   unsigned int Type);
