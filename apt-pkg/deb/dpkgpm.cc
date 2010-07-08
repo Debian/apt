@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/select.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
@@ -593,7 +594,7 @@ bool pkgDPkgPM::OpenLog()
       term_out = fopen(logfile_name.c_str(),"a");
       if (term_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), logfile_name.c_str());
-
+      setvbuf(term_out, NULL, _IONBF, 0);
       chmod(logfile_name.c_str(), 0600);
       fprintf(term_out, "\nLog started: %s\n", timestr);
    }
