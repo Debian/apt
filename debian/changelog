@@ -1,21 +1,17 @@
-apt (0.7.25.3ubuntu11) UNRELEASED; urgency=low
-
-  * apt-pkg/deb/dpkgpm.cc:
-    - make the apt/term.log output unbuffered (thanks to Matt Zimmerman)
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 08 Jul 2010 09:08:37 +0200
-
 apt (0.7.25.3ubuntu10) maverick; urgency=low
 
   [ Michael Vogt ]
   * debian/apt.conf.ubuntu:
     - no longer install (empty) apt.conf.d/01ubuntu
-  
+  * apt-pkg/deb/dpkgpm.cc:
+    - make the apt/term.log output unbuffered (thanks to Matt Zimmerman)
+    - fix FTBFS (LP: #600155)
+
   [ Matthias G. ]
   * apt-pkg/deb/dpkgpm.cc: 
     - Fix segmentation fault when /var/log/apt ist missing. LP: #535509
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 09 Jun 2010 10:48:16 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 08 Jul 2010 09:37:03 +0200
 
 apt (0.7.25.3ubuntu9) lucid-proposed; urgency=low
 
