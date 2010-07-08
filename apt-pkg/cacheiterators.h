@@ -75,6 +75,12 @@ template<typename Str, typename Itr> class pkgCache::Iterator :
 	inline bool IsGood() const { return S && Owner && ! end();};
 	inline unsigned long Index() const {return S - OwnerPointer();};
 
+	void ReOwn(pkgCache &newOwner, void const * const oldMap, void const * const newMap) {
+		if (S == 0)
+			return;
+		S += (Str*)(newMap) - (Str*)(oldMap);
+	}
+
 	// Constructors - look out for the variable assigning
 	inline Iterator() : S(0), Owner(0) {};
 	inline Iterator(pkgCache &Owner,Str *T = 0) : S(T), Owner(&Owner) {};

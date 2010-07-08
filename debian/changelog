@@ -37,6 +37,9 @@ apt (0.7.26~exp8) UNRELEASED; urgency=low
   * apt-pkg/policy.h:
     - add another round of const& madness as the previous round accidentally
       NOT overrides the virtual GetCandidateVer() method (Closes: #587725)
+  * apt-pkg/pkgcachegen.{cc,h}:
+    - make the used MMap moveable (and therefore dynamic resizeable) by
+      applying (some) mad pointer magic (Closes: #195018)
 
   [ Julian Andres Klode ]
   * methods/ftp.h:

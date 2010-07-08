@@ -119,7 +119,7 @@ pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 // Cache::ReMap - Reopen the cache file					/*{{{*/
 // ---------------------------------------------------------------------
 /* If the file is already closed then this will open it open it. */
-bool pkgCache::ReMap()
+bool pkgCache::ReMap(bool const &Errorchecks)
 {
    // Apply the typecasts.
    HeaderP = (Header *)Map.Data();
@@ -134,6 +134,9 @@ bool pkgCache::ReMap()
    DepP = (Dependency *)Map.Data();
    StringItemP = (StringItem *)Map.Data();
    StrP = (char *)Map.Data();
+
+   if (Errorchecks == false)
+      return true;
 
    if (Map.Size() == 0 || HeaderP == 0)
       return _error->Error(_("Empty package cache"));

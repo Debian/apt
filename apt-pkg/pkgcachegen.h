@@ -23,6 +23,8 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>
 
+#include <set>
+
 class pkgSourceList;
 class OpProgress;
 class MMap;
@@ -33,18 +35,32 @@ class pkgCacheGenerator							/*{{{*/
    private:
 
    pkgCache::StringItem *UniqHash[26];
-   unsigned long WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
-   unsigned long WriteStringInMap(const char *String);
-   unsigned long WriteStringInMap(const char *String, const unsigned long &Len);
-   unsigned long AllocateInMap(const unsigned long &size);
+   map_ptrloc WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
+   map_ptrloc WriteStringInMap(const char *String);
+   map_ptrloc WriteStringInMap(const char *String, const unsigned long &Len);
+   map_ptrloc AllocateInMap(const unsigned long &size);
 
    public:
    
    class ListParser;
    friend class ListParser;
-   
+
+   template<typename Iter> class Dynamic {
+      Iter *I;
+
+      public:
+      static std::set<Iter*> toReMap;
+      Dynamic(Iter &It) : I(&It) {
+	 toReMap.insert(I);
+      }
+
+      ~Dynamic() {
+	 toReMap.erase(I);
+      }
+   };
+
    protected:
-   
+
    DynamicMMap &Map;
    pkgCache Cache;
    OpProgress *Progress;
@@ -85,6 +101,8 @@ class pkgCacheGenerator							/*{{{*/
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
    static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
+
+   void ReMap(void const * const oldMap, void const * const newMap);
 
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();

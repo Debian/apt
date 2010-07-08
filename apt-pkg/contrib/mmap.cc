@@ -225,22 +225,22 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long const &WorkSpace,
 
 	// disable Moveable if we don't grow
 	if (Grow == 0)
-		Flags &= ~Moveable;
+		this->Flags &= ~Moveable;
 
 #ifndef __linux__
 	// kfreebsd doesn't have mremap, so we use the fallback
-	if ((Flags & Moveable) == Moveable)
-		Flags |= Fallback;
+	if ((this->Flags & Moveable) == Moveable)
+		this->Flags |= Fallback;
 #endif
 
 #ifdef _POSIX_MAPPED_FILES
-	if ((Flags & Fallback) != Fallback) {
+	if ((this->Flags & Fallback) != Fallback) {
 		// Set the permissions.
 		int Prot = PROT_READ;
 		int Map = MAP_PRIVATE | MAP_ANONYMOUS;
-		if ((Flags & ReadOnly) != ReadOnly)
+		if ((this->Flags & ReadOnly) != ReadOnly)
 			Prot |= PROT_WRITE;
-		if ((Flags & Public) == Public)
+		if ((this->Flags & Public) == Public)
 			Map = MAP_SHARED | MAP_ANONYMOUS;
 
 		// use anonymous mmap() to get the memory
@@ -314,7 +314,7 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
    // Look for a matching pool entry
    Pool *I;
    Pool *Empty = 0;
-   for (I = Pools; I != Pools + PoolCount; I++)
+   for (I = Pools; I != Pools + PoolCount; ++I)
    {
       if (I->ItemSize == 0)
 	 Empty = I;
@@ -342,7 +342,11 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
    {
       const unsigned long size = 20*1024;
       I->Count = size/ItemSize;
+      Pool* oldPools = Pools;
       Result = RawAllocate(size,ItemSize);
+      if (Pools != oldPools)
+	 I += Pools - oldPools;
+
       // Does the allocation failed ?
       if (Result == 0 && _error->PendingError())
 	 return 0;
@@ -365,7 +369,7 @@ unsigned long DynamicMMap::WriteString(const char *String,
    if (Len == (unsigned long)-1)
       Len = strlen(String);
 
-   unsigned long Result = RawAllocate(Len+1,0);
+   unsigned long const Result = RawAllocate(Len+1,0);
 
    if (Result == 0 && _error->PendingError())
       return 0;
@@ -395,16 +399,20 @@ bool DynamicMMap::Grow() {
 		return _error->Error(_("Unable to increase the size of the MMap as the "
 		                       "limit of %lu bytes is already reached."), Limit);
 
-	unsigned long const newSize = WorkSpace + 1024*1024;
+	unsigned long const newSize = WorkSpace + GrowFactor;
 
 	if(Fd != 0) {
 		Fd->Seek(newSize - 1);
 		char C = 0;
 		Fd->Write(&C,sizeof(C));
 	}
+
+	unsigned long const poolOffset = Pools - ((Pool*) Base);
+
 	if ((Flags & Fallback) != Fallback) {
 #if defined(_POSIX_MAPPED_FILES) && defined(__linux__)
    #ifdef MREMAP_MAYMOVE
+
 		if ((Flags & Moveable) == Moveable)
 			Base = mremap(Base, WorkSpace, newSize, MREMAP_MAYMOVE);
 		else
@@ -425,6 +433,7 @@ bool DynamicMMap::Grow() {
 			return false;
 	}
 
+	Pools =(Pool*) Base + poolOffset;
 	WorkSpace = newSize;
 	return true;
 }
