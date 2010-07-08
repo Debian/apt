@@ -106,7 +106,7 @@ string debListParser::Version()
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debListParser::NewVersion(pkgCache::VerIterator Ver)
+bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
    Ver->Section = UniqFindTagWrite("Section");
@@ -251,8 +251,8 @@ MD5SumValue debListParser::Description_md5()
 // ---------------------------------------------------------------------
 /* This is called to update the package with any new information 
    that might be found in the section */
-bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
-			       pkgCache::VerIterator Ver)
+bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
+			       pkgCache::VerIterator &Ver)
 {
    if (Pkg->Section == 0)
       Pkg->Section = UniqFindTagWrite("Section");
@@ -332,8 +332,8 @@ unsigned short debListParser::VersionHash()
    Some of the above are obsolete (I think?) flag = hold-* and 
    status = post-inst-failed, removal-failed at least.
  */
-bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
-				pkgCache::VerIterator Ver)
+bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
+				pkgCache::VerIterator &Ver)
 {
    const char *Start;
    const char *Stop;
@@ -634,7 +634,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 // ---------------------------------------------------------------------
 /* This is the higher level depends parser. It takes a tag and generates
    a complete depends tree for the given version. */
-bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
+bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 				 const char *Tag,unsigned int Type)
 {
    const char *Start;
@@ -674,7 +674,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
 // ListParser::ParseProvides - Parse the provides list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
+bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 {
    const char *Start;
    const char *Stop;
@@ -779,7 +779,7 @@ bool debListParser::Step()
 // ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
+bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 				    FileFd &File, string component)
 {
    pkgTagFile Tags(&File, File.Size() + 256); // XXX

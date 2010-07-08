@@ -157,13 +157,14 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	 // we first process the package, then the descriptions
 	 // (this has the bonus that we get MMap error when we run out
 	 //  of MMap space)
-	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
+	 pkgCache::VerIterator Ver(Cache);
+	 if (List.UsePackage(Pkg, Ver) == false)
 	    return _error->Error(_("Error occurred while processing %s (UsePackage1)"),
 				 PackageName.c_str());
 
  	 // Find the right version to write the description
  	 MD5SumValue CurMd5 = List.Description_md5();
- 	 pkgCache::VerIterator Ver = Pkg.VersionList();
+ 	 Ver = Pkg.VersionList();
  	 map_ptrloc *LastVer = &Pkg->VersionList;
 
 	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
@@ -668,7 +669,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 // ---------------------------------------------------------------------
 /* This creates a Group and the Package to link this dependency to if
    needed and handles also the caching of the old endpoint */
-bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
+bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
 					       const string &PackageName,
 					       const string &Arch,
 					       const string &Version,
@@ -702,7 +703,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 // ListParser::NewProvides - Create a Provides element			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
+bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
 					        const string &PkgName,
 						const string &PkgArch,
 						const string &Version)
