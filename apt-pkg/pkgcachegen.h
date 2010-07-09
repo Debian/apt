@@ -101,6 +101,7 @@ class pkgCacheGenerator							/*{{{*/
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
    static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
+   static DynamicMMap* CreateDynamicMMap(FileFd *CacheF, unsigned long Flags = 0);
 
    void ReMap(void const * const oldMap, void const * const newMap);
 

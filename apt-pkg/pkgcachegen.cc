@@ -1094,6 +1094,18 @@ static bool BuildCache(pkgCacheGenerator &Gen,
    return true;
 }
 									/*}}}*/
+DynamicMMap* pkgCacheGenerator::CreateDynamicMMap(FileFd *CacheF, unsigned long Flags) {
+   unsigned long const MapStart = _config->FindI("APT::Cache-Start", 24*1024*1024);
+   unsigned long const MapGrow = _config->FindI("APT::Cache-Grow", 1*1024*1024);
+   unsigned long const MapLimit = _config->FindI("APT::Cache-Limit", 0);
+   Flags |= MMap::Moveable;
+   if (_config->FindB("APT::Cache-Fallback", false) == true)
+      Flags |= MMap::Fallback;
+   if (CacheF != NULL)
+      return new DynamicMMap(*CacheF, Flags, MapStart, MapGrow, MapLimit);
+   else
+      return new DynamicMMap(Flags, MapStart, MapGrow, MapLimit);
+}
 // CacheGenerator::MakeStatusCache - Construct the status cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* This makes sure that the status cache (the cache that has all 
@@ -1109,7 +1121,6 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 			MMap **OutMap,bool AllowMem)
 {
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
-   unsigned long const MapSize = _config->FindI("APT::Cache-Limit",24*1024*1024);
    
    vector<pkgIndexFile *> Files;
    for (vector<metaIndex *>::const_iterator i = List.begin();
@@ -1181,7 +1192,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       unlink(CacheFile.c_str());
       CacheF = new FileFd(CacheFile,FileFd::WriteEmpty);
       fchmod(CacheF->Fd(),0644);
-      Map = new DynamicMMap(*CacheF,MMap::Public | MMap::Moveable, MapSize);
+      Map = CreateDynamicMMap(CacheF, MMap::Public);
       if (_error->PendingError() == true)
 	 return false;
       if (Debug == true)
@@ -1190,7 +1201,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    else
    {
       // Just build it in memory..
-      Map = new DynamicMMap(MMap::Moveable, MapSize);
+      Map = CreateDynamicMMap(NULL);
       if (Debug == true)
 	 std::clog << "Open memory Map (not filebased)" << std::endl;
    }
@@ -1297,13 +1308,12 @@ __deprecated bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutM
    { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {
-   unsigned long MapSize = _config->FindI("APT::Cache-Limit",20*1024*1024);
    vector<pkgIndexFile *> Files;
    unsigned long EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;
-   
-   SPtr<DynamicMMap> Map = new DynamicMMap(MMap::Moveable, MapSize);
+
+   SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL);
    unsigned long CurrentSize = 0;
    unsigned long TotalSize = 0;
    
