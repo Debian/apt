@@ -174,7 +174,7 @@ class pkgCache								/*{{{*/
    StringItem *StringItemP;
    char *StrP;
 
-   virtual bool ReMap();
+   virtual bool ReMap(bool const &Errorchecks = true);
    inline bool Sync() {return Map.Sync();};
    inline MMap &GetMap() {return Map;};
    inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();};

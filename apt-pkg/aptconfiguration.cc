@@ -10,6 +10,7 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
@@ -196,6 +197,9 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// it was undocumented and so it should be not very widthly used
 	string const oldAcquire = _config->Find("APT::Acquire::Translation","");
 	if (oldAcquire.empty() == false && oldAcquire != "environment") {
+		// TRANSLATORS: the two %s are APT configuration options
+		_error->Notice("Option '%s' is deprecated. Please use '%s' instead, see 'man 5 apt.conf' for details.",
+				"APT::Acquire::Translation", "Acquire::Languages");
 		if (oldAcquire != "none")
 			codes.push_back(oldAcquire);
 		codes.push_back("en");

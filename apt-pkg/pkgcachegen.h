@@ -23,6 +23,8 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>
 
+#include <set>
+
 class pkgSourceList;
 class OpProgress;
 class MMap;
@@ -31,16 +33,34 @@ class pkgIndexFile;
 class pkgCacheGenerator							/*{{{*/
 {
    private:
-   
+
    pkgCache::StringItem *UniqHash[26];
-   
+   map_ptrloc WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
+   map_ptrloc WriteStringInMap(const char *String);
+   map_ptrloc WriteStringInMap(const char *String, const unsigned long &Len);
+   map_ptrloc AllocateInMap(const unsigned long &size);
+
    public:
    
    class ListParser;
    friend class ListParser;
-   
+
+   template<typename Iter> class Dynamic {
+      Iter *I;
+
+      public:
+      static std::set<Iter*> toReMap;
+      Dynamic(Iter &It) : I(&It) {
+	 toReMap.insert(I);
+      }
+
+      ~Dynamic() {
+	 toReMap.erase(I);
+      }
+   };
+
    protected:
-   
+
    DynamicMMap &Map;
    pkgCache Cache;
    OpProgress *Progress;
@@ -82,6 +102,8 @@ class pkgCacheGenerator							/*{{{*/
 			MMap **OutMap = 0,bool AllowMem = false);
    static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
 
+   void ReMap(void const * const oldMap, void const * const newMap);
+
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
 };
@@ -103,12 +125,12 @@ class pkgCacheGenerator::ListParser
 
    inline unsigned long WriteUniqString(string S) {return Owner->WriteUniqString(S);};
    inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
-   inline unsigned long WriteString(const string &S) {return Owner->Map.WriteString(S);};
-   inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->Map.WriteString(S,Size);};
-   bool NewDepends(pkgCache::VerIterator Ver,const string &Package, const string &Arch,
+   inline unsigned long WriteString(const string &S) {return Owner->WriteStringInMap(S);};
+   inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
+   bool NewDepends(pkgCache::VerIterator &Ver,const string &Package, const string &Arch,
 		   const string &Version,unsigned int Op,
 		   unsigned int Type);
-   bool NewProvides(pkgCache::VerIterator Ver,const string &PkgName,
+   bool NewProvides(pkgCache::VerIterator &Ver,const string &PkgName,
 		    const string &PkgArch, const string &Version);
    
    public:
@@ -118,13 +140,13 @@ class pkgCacheGenerator::ListParser
    virtual string Architecture() = 0;
    virtual bool ArchitectureAll() = 0;
    virtual string Version() = 0;
-   virtual bool NewVersion(pkgCache::VerIterator Ver) = 0;
+   virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
    virtual string Description() = 0;
    virtual string DescriptionLanguage() = 0;
    virtual MD5SumValue Description_md5() = 0;
    virtual unsigned short VersionHash() = 0;
-   virtual bool UsePackage(pkgCache::PkgIterator Pkg,
-			   pkgCache::VerIterator Ver) = 0;
+   virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
+			   pkgCache::VerIterator &Ver) = 0;
    virtual unsigned long Offset() = 0;
    virtual unsigned long Size() = 0;
    
@@ -132,7 +154,7 @@ class pkgCacheGenerator::ListParser
    
    inline bool HasFileDeps() {return FoundFileDeps;};
    virtual bool CollectFileProvides(pkgCache &Cache,
-				    pkgCache::VerIterator Ver) {return true;};
+				    pkgCache::VerIterator &Ver) {return true;};
 
    ListParser() : FoundFileDeps(false) {};
    virtual ~ListParser() {};

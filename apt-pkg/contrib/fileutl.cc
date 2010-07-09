@@ -282,6 +282,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
    }
 
    std::vector<string> List;
+   Configuration::MatchAgainstConfig SilentIgnore("Dir::Ignore-Files-Silently");
    DIR *D = opendir(Dir.c_str());
    if (D == 0) 
    {
@@ -307,6 +308,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 	    {
 	       if (Debug == true)
 		  std::clog << "Bad file: " << Ent->d_name << " → no extension" << std::endl;
+	       _error->Notice("Ignoring file '%s' in directory '%s' as it has no filename extension", Ent->d_name, Dir.c_str());
 	       continue;
 	    }
 	 }
@@ -314,6 +316,8 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 	 {
 	    if (Debug == true)
 	       std::clog << "Bad file: " << Ent->d_name << " → bad extension »" << flExtension(Ent->d_name) << "«" << std::endl;
+	    if (SilentIgnore.Match(Ent->d_name) == false)
+	       _error->Notice("Ignoring file '%s' in directory '%s' as it has an invalid filename extension", Ent->d_name, Dir.c_str());
 	    continue;
 	 }
       }

@@ -39,6 +39,8 @@ debListParser::debListParser(FileFd *File, string const &Arch) : Tags(File),
 				Arch(Arch) {
    if (Arch == "native")
       this->Arch = _config->Find("APT::Architecture");
+   Architectures = APT::Configuration::getArchitectures();
+   MultiArchEnabled = Architectures.size() > 1;
 }
 									/*}}}*/
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
@@ -104,7 +106,7 @@ string debListParser::Version()
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debListParser::NewVersion(pkgCache::VerIterator Ver)
+bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
    Ver->Section = UniqFindTagWrite("Section");
@@ -156,10 +158,9 @@ bool debListParser::NewVersion(pkgCache::VerIterator Ver)
 	 to a NOP in the download/install step - this package will ensure that
 	 it is downloaded only one time and installed only one time -- even if
 	 the architecture bound versions coming in and out on regular basis. */
-      bool const static multiArch = APT::Configuration::getArchitectures().size() > 1;
       if (strcmp(Ver.Arch(true),"all") == 0)
 	 return true;
-      else if (multiArch == true)
+      else if (MultiArchEnabled == true)
       {
 	 // our pseudo packages have no size to not confuse the fetcher
 	 Ver->Size = 0;
@@ -250,8 +251,8 @@ MD5SumValue debListParser::Description_md5()
 // ---------------------------------------------------------------------
 /* This is called to update the package with any new information 
    that might be found in the section */
-bool debListParser::UsePackage(pkgCache::PkgIterator Pkg,
-			       pkgCache::VerIterator Ver)
+bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
+			       pkgCache::VerIterator &Ver)
 {
    if (Pkg->Section == 0)
       Pkg->Section = UniqFindTagWrite("Section");
@@ -331,8 +332,8 @@ unsigned short debListParser::VersionHash()
    Some of the above are obsolete (I think?) flag = hold-* and 
    status = post-inst-failed, removal-failed at least.
  */
-bool debListParser::ParseStatus(pkgCache::PkgIterator Pkg,
-				pkgCache::VerIterator Ver)
+bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
+				pkgCache::VerIterator &Ver)
 {
    const char *Start;
    const char *Stop;
@@ -633,16 +634,13 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 // ---------------------------------------------------------------------
 /* This is the higher level depends parser. It takes a tag and generates
    a complete depends tree for the given version. */
-bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
+bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 				 const char *Tag,unsigned int Type)
 {
    const char *Start;
    const char *Stop;
    if (Section.Find(Tag,Start,Stop) == false)
       return true;
-
-   static std::vector<std::string> const archs = APT::Configuration::getArchitectures();
-   static bool const multiArch = archs.size() <= 1;
 
    string Package;
    string const pkgArch = Ver.Arch(true);
@@ -655,13 +653,13 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
 
-      if (multiArch == true &&
+      if (MultiArchEnabled == true &&
 	  (Type == pkgCache::Dep::Conflicts ||
 	   Type == pkgCache::Dep::DpkgBreaks ||
 	   Type == pkgCache::Dep::Replaces))
       {
-	 for (std::vector<std::string>::const_iterator a = archs.begin();
-	      a != archs.end(); ++a)
+	 for (std::vector<std::string>::const_iterator a = Architectures.begin();
+	      a != Architectures.end(); ++a)
 	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
 	       return false;
       }
@@ -676,7 +674,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator Ver,
 // ListParser::ParseProvides - Parse the provides list			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
+bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 {
    const char *Start;
    const char *Stop;
@@ -713,14 +711,13 @@ bool debListParser::ParseProvides(pkgCache::VerIterator Ver)
    if (Ver->MultiArch != pkgCache::Version::Foreign)
       return true;
 
-   std::vector<string> const archs = APT::Configuration::getArchitectures();
-   if (archs.size() <= 1)
+   if (MultiArchEnabled == false)
       return true;
 
    string const Package = Ver.ParentPkg().Name();
    string const Version = Ver.VerStr();
-   for (std::vector<string>::const_iterator a = archs.begin();
-	a != archs.end(); ++a)
+   for (std::vector<string>::const_iterator a = Architectures.begin();
+	a != Architectures.end(); ++a)
    {
       if (NewProvides(Ver, Package, *a, Version) == false)
 	 return false;
@@ -760,7 +757,7 @@ bool debListParser::Step()
       if (Architecture.empty() == true)
 	 return true;
 
-      if (Arch.empty() == true)
+      if (Arch.empty() == true || MultiArchEnabled == false)
       {
 	 if (APT::Configuration::checkArchitecture(Architecture) == true)
 	    return true;
@@ -782,7 +779,7 @@ bool debListParser::Step()
 // ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator FileI,
+bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 				    FileFd &File, string component)
 {
    pkgTagFile Tags(&File, File.Size() + 256); // XXX

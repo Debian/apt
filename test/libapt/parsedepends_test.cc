@@ -21,6 +21,12 @@ int main(int argc,char *argv[]) {
 		"apt (>= 0.7.25), "
 		"not-for-me [ !dsk ], "
 		"only-for-me [ dsk ], "
+		"any-for-me [ any ], "
+		"not-for-darwin [ !darwin-any ], "
+		"cpu-for-me [ any-dsk ], "
+		"os-for-me [ linux-any ], "
+		"cpu-not-for-me [ any-amd64 ], "
+		"os-not-for-me [ kfreebsd-any ], "
 		"overlord-dev:any (= 7.15.3~) | overlord-dev:native (>> 7.15.5), "
 	;
 
@@ -94,6 +100,68 @@ test:
 		equals("only-for-me", Package);
 		equals("", Version);
 		equals(Null | pkgCache::Dep::NoOp, Op);
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseArchFlags == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		equals("any-for-me", Package);
+		equals("", Version);
+		equals(Null | pkgCache::Dep::NoOp, Op);
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseArchFlags == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		equals("not-for-darwin", Package);
+		equals("", Version);
+		equals(Null | pkgCache::Dep::NoOp, Op);
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseArchFlags == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		equals("cpu-for-me", Package);
+		equals("", Version);
+		equals(Null | pkgCache::Dep::NoOp, Op);
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseArchFlags == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		equals("os-for-me", Package);
+		equals("", Version);
+		equals(Null | pkgCache::Dep::NoOp, Op);
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseArchFlags == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		equals("", Package); // cpu-not-for-me
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseArchFlags == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		equals("", Package); // os-not-for-me
 	} else {
 		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
 		Start = strstr(Start, ",");

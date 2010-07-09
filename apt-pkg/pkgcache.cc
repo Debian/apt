@@ -119,7 +119,7 @@ pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 // Cache::ReMap - Reopen the cache file					/*{{{*/
 // ---------------------------------------------------------------------
 /* If the file is already closed then this will open it open it. */
-bool pkgCache::ReMap()
+bool pkgCache::ReMap(bool const &Errorchecks)
 {
    // Apply the typecasts.
    HeaderP = (Header *)Map.Data();
@@ -134,6 +134,9 @@ bool pkgCache::ReMap()
    DepP = (Dependency *)Map.Data();
    StringItemP = (StringItem *)Map.Data();
    StrP = (char *)Map.Data();
+
+   if (Errorchecks == false)
+      return true;
 
    if (Map.Size() == 0 || HeaderP == 0)
       return _error->Error(_("Empty package cache"));
@@ -307,7 +310,7 @@ const char *pkgCache::Priority(unsigned char Prio)
 // GrpIterator::FindPkg - Locate a package by arch			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) {
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	if (unlikely(IsGood() == false || S->FirstPackage == 0))
 		return PkgIterator(*Owner, 0);
 
@@ -346,7 +349,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) {
 // GrpIterator::FindPreferredPkg - Locate the "best" package		/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg() {
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg() const {
 	pkgCache::PkgIterator Pkg = FindPkg("native");
 	if (Pkg.end() == false)
 		return Pkg;
@@ -367,7 +370,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg() {
 /* Returns an End-Pointer on error, pointer to the package otherwise.
    We can't simply ++ to the next as the next package of the last will
    be from a different group (with the same hash value) */
-pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const &LastPkg) {
+pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const &LastPkg) const {
 	if (unlikely(IsGood() == false || S->FirstPackage == 0 ||
 	    LastPkg.end() == true))
 		return PkgIterator(*Owner, 0);
@@ -504,7 +507,7 @@ std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
 // ---------------------------------------------------------------------
 /* Currently critical deps are defined as depends, predepends and
    conflicts (including dpkg's Breaks fields). */
-bool pkgCache::DepIterator::IsCritical()
+bool pkgCache::DepIterator::IsCritical() const
 {
    if (S->Type == pkgCache::Dep::Conflicts ||
        S->Type == pkgCache::Dep::DpkgBreaks ||
@@ -528,7 +531,7 @@ bool pkgCache::DepIterator::IsCritical()
    In Conjunction with the DepCache the value of Result may not be 
    super-good since the policy may have made it uninstallable. Using
    AllTargets is better in this case. */
-bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result)
+bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result) const
 {
    Result = TargetPkg();
    
@@ -577,7 +580,7 @@ bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result)
    provides. It includes every possible package-version that could satisfy
    the dependency. The last item in the list has a 0. The resulting pointer
    must be delete [] 'd */
-pkgCache::Version **pkgCache::DepIterator::AllTargets()
+pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 {
    Version **Res = 0;
    unsigned long Size =0;

@@ -1255,6 +1255,10 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    Update(Pkg);
    AddSizes(Pkg);
 
+   // always trigger the install of the all package for a pseudo package
+   if (P.CandidateVerIter(*Cache).Pseudo() == true)
+      MarkInstall(Pkg.Group().FindPkg("all"), AutoInst, Depth, FromUser, ForceImportantDeps);
+
    if (AutoInst == false)
       return;
 
@@ -1453,6 +1457,9 @@ bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
 /* */
 void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
 {
+   if (unlikely(Pkg.end() == true))
+      return;
+
    ActionGroup group(*this);
 
    RemoveSizes(Pkg);
@@ -1466,12 +1473,17 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
    
    AddStates(Pkg);
    AddSizes(Pkg);
+
+   if (unlikely(Pkg.CurrentVer().end() == true) || Pkg.CurrentVer().Pseudo() == false)
+      return;
+
+   SetReInstall(Pkg.Group().FindPkg("all"), To);
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::SetCandidateVersion(VerIterator TargetVer)
+void pkgDepCache::SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo)
 {
    ActionGroup group(*this);
 
@@ -1489,6 +1501,28 @@ void pkgDepCache::SetCandidateVersion(VerIterator TargetVer)
    AddStates(Pkg);
    Update(Pkg);
    AddSizes(Pkg);
+
+   if (TargetVer.Pseudo() == false || Pseudo == false)
+      return;
+
+   // the version was pseudo: set all other pseudos also
+   pkgCache::GrpIterator Grp = Pkg.Group();
+   for (Pkg = Grp.FindPkg("any"); Pkg.end() == false; ++Pkg)
+   {
+      StateCache &P = PkgState[Pkg->ID];
+      if (TargetVer.SimilarVer(P.CandidateVerIter(*this)) == true ||
+	  (P.CandidateVerIter(*this).Pseudo() == false &&
+	   strcmp(Pkg.Arch(), "all") != 0))
+	 continue;
+
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
+      {
+	 if (TargetVer.SimilarVer(Ver) == false)
+	    continue;
+	 SetCandidateVersion(Ver, false);
+	 break;
+      }
+   }
 }
 
 void pkgDepCache::MarkAuto(const PkgIterator &Pkg, bool Auto)
@@ -1551,7 +1585,7 @@ const char *pkgDepCache::StateCache::StripEpoch(const char *Ver)
 // ---------------------------------------------------------------------
 /* The default just returns the highest available version that is not
    a source and automatic. */
-pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
+pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pkg)
 {
    /* Not source/not automatic versions cannot be a candidate version 
       unless they are already installed */
@@ -1586,7 +1620,7 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator Pkg)
 // Policy::IsImportantDep - True if the dependency is important		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
+bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
 {
    if(Dep.IsCritical())
       return true;
@@ -1604,54 +1638,6 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator Dep)
    }
    else if(Dep->Type == pkgCache::Dep::Suggests)
      return _config->FindB("APT::Install-Suggests", false);
-
-   return false;
-}
-									/*}}}*/
-pkgDepCache::DefaultRootSetFunc::DefaultRootSetFunc()			/*{{{*/
-  : constructedSuccessfully(false)
-{
-  Configuration::Item const *Opts;
-  Opts = _config->Tree("APT::NeverAutoRemove");
-  if (Opts != 0 && Opts->Child != 0)
-    {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
-	{
-	  if (Opts->Value.empty() == true)
-	    continue;
-
-	  regex_t *p = new regex_t;
-	  if(regcomp(p,Opts->Value.c_str(),
-		     REG_EXTENDED | REG_ICASE | REG_NOSUB) != 0)
-	    {
-	      regfree(p);
-	      delete p;
-	      _error->Error("Regex compilation error for APT::NeverAutoRemove");
-	      return;
-	    }
-
-	  rootSetRegexp.push_back(p);
-	}
-    }
-
-  constructedSuccessfully = true;
-}
-									/*}}}*/
-pkgDepCache::DefaultRootSetFunc::~DefaultRootSetFunc()			/*{{{*/
-{
-  for(unsigned int i = 0; i < rootSetRegexp.size(); i++)
-    {
-      regfree(rootSetRegexp[i]);
-      delete rootSetRegexp[i];
-    }
-}
-									/*}}}*/
-bool pkgDepCache::DefaultRootSetFunc::InRootSet(const pkgCache::PkgIterator &pkg) /*{{{*/
-{
-   for(unsigned int i = 0; i < rootSetRegexp.size(); i++)
-      if (regexec(rootSetRegexp[i], pkg.Name(), 0, 0, 0) == 0)
-	 return true;
 
    return false;
 }

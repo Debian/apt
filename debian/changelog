@@ -1,5 +1,47 @@
-apt (0.7.26~exp8) experimental; urgency=low
+apt (0.7.26~exp8) UNRELEASED; urgency=low
 
+  [ David Kalnischkies ]
+  * cmdline/cacheset.cc:
+    - doesn't include it in the library for now as it is too volatile
+    - get the candidate either from an already built depcache
+      or use the policy which is a bit faster than depcache generation
+    - get packages by task^ with FromTask()
+    - only print errors if all tries to get a package by string failed
+    - factor out code to get a single package FromName()
+    - check in Grouped* first without modifier interpretation
+  * cmdline/apt-get.cc:
+    - use the cachsets in the install commands
+    - make the specify order of packages irrelevant (Closes: #196021)
+  * apt-pkg/orderlist.cc:
+    - untouched packages are never missing
+  * apt-pkg/packagemanager.cc:
+    - packages that are not touched doesn't need to be unpacked
+  * debian/control:
+    - remove intltool's dependency as it is an ubuntu artefact
+  * apt-pkg/depcache.cc:
+    - SetCandidateVer for all pseudo packages
+    - SetReInstall for the "all" package of a pseudo package
+    - use the new MatchAgainstConfig for the DefaultRootSetFunc
+    - always mark the all package if a pseudo package is marked for install
+  * apt-pkg/contrib/error.{cc,h}:
+    - complete rewrite but use the same API
+    - add NOTICE and DEBUG as new types of a message
+    - add a simple stack handling to be able to delay error handling
+  * apt-pkg/aptconfiguration.cc:
+    - show a deprecation notice for APT::Acquire::Translation
+  * apt-pkg/contrib/configuration.{cc,h}:
+    - add a wrapper to match strings against configurable regex patterns
+  * apt-pkg/contrib/fileutl.cc:
+    - show notice about ignored file instead of being always silent
+    - add a Dir::Ignore-Files-Silently list option to control the notice
+  * apt-pkg/policy.h:
+    - add another round of const& madness as the previous round accidentally
+      NOT overrides the virtual GetCandidateVer() method (Closes: #587725)
+  * apt-pkg/pkgcachegen.{cc,h}:
+    - make the used MMap moveable (and therefore dynamic resizeable) by
+      applying (some) mad pointer magic (Closes: #195018)
+
+  [ Julian Andres Klode ]
   * methods/ftp.h:
     - Handle different logins on the same server (Closes: #586904).
   * apt-pkg/deb/deblistparser.cc:
@@ -13,7 +55,7 @@ apt (0.7.26~exp8) experimental; urgency=low
   * debian/control:
     - Set Standards-Version to 3.9.0
 
- -- Julian Andres Klode <jak@debian.org>  Thu, 24 Jun 2010 10:56:39 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 05 Jul 2010 12:05:30 +0200
 
 apt (0.7.26~exp7) experimental; urgency=low
 

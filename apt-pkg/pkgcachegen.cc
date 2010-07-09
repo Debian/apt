@@ -36,6 +36,7 @@
 #include <stdio.h>
 									/*}}}*/
 typedef vector<pkgIndexFile *>::iterator FileIterator;
+template <typename Iter> std::set<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
@@ -61,8 +62,12 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 
       // Starting header
       *Cache.HeaderP = pkgCache::Header();
-      Cache.HeaderP->VerSysName = Map.WriteString(_system->VS->Label);
-      Cache.HeaderP->Architecture = Map.WriteString(_config->Find("APT::Architecture"));
+      map_ptrloc const idxVerSysName = WriteStringInMap(_system->VS->Label);
+      Cache.HeaderP->VerSysName = idxVerSysName;
+      map_ptrloc const idxArchitecture = WriteStringInMap(_config->Find("APT::Architecture"));
+      Cache.HeaderP->Architecture = idxArchitecture;
+      if (unlikely(idxVerSysName == 0 || idxArchitecture == 0))
+	 return;
       Cache.ReMap();
    }
    else
@@ -96,6 +101,67 @@ pkgCacheGenerator::~pkgCacheGenerator()
    Map.Sync(0,sizeof(pkgCache::Header));
 }
 									/*}}}*/
+void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newMap) {/*{{{*/
+   if (oldMap == newMap)
+      return;
+
+   Cache.ReMap(false);
+
+   CurrentFile += (pkgCache::PackageFile*) newMap - (pkgCache::PackageFile*) oldMap;
+
+   for (size_t i = 0; i < _count(UniqHash); ++i)
+      if (UniqHash[i] != 0)
+	 UniqHash[i] += (pkgCache::StringItem*) newMap - (pkgCache::StringItem*) oldMap;
+
+   for (std::set<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
+      (*i)->ReOwn(Cache, oldMap, newMap);
+   for (std::set<pkgCache::PkgIterator*>::const_iterator i = Dynamic<pkgCache::PkgIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::PkgIterator>::toReMap.end(); ++i)
+      (*i)->ReOwn(Cache, oldMap, newMap);
+   for (std::set<pkgCache::VerIterator*>::const_iterator i = Dynamic<pkgCache::VerIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::VerIterator>::toReMap.end(); ++i)
+      (*i)->ReOwn(Cache, oldMap, newMap);
+   for (std::set<pkgCache::DepIterator*>::const_iterator i = Dynamic<pkgCache::DepIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::DepIterator>::toReMap.end(); ++i)
+      (*i)->ReOwn(Cache, oldMap, newMap);
+   for (std::set<pkgCache::DescIterator*>::const_iterator i = Dynamic<pkgCache::DescIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::DescIterator>::toReMap.end(); ++i)
+      (*i)->ReOwn(Cache, oldMap, newMap);
+   for (std::set<pkgCache::PrvIterator*>::const_iterator i = Dynamic<pkgCache::PrvIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::PrvIterator>::toReMap.end(); ++i)
+      (*i)->ReOwn(Cache, oldMap, newMap);
+   for (std::set<pkgCache::PkgFileIterator*>::const_iterator i = Dynamic<pkgCache::PkgFileIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::PkgFileIterator>::toReMap.end(); ++i)
+      (*i)->ReOwn(Cache, oldMap, newMap);
+}									/*}}}*/
+// CacheGenerator::WriteStringInMap					/*{{{*/
+map_ptrloc pkgCacheGenerator::WriteStringInMap(const char *String,
+					const unsigned long &Len) {
+   void const * const oldMap = Map.Data();
+   map_ptrloc const index = Map.WriteString(String, Len);
+   if (index != 0)
+      ReMap(oldMap, Map.Data());
+   return index;
+}
+									/*}}}*/
+// CacheGenerator::WriteStringInMap					/*{{{*/
+map_ptrloc pkgCacheGenerator::WriteStringInMap(const char *String) {
+   void const * const oldMap = Map.Data();
+   map_ptrloc const index = Map.WriteString(String);
+   if (index != 0)
+      ReMap(oldMap, Map.Data());
+   return index;
+}
+									/*}}}*/
+map_ptrloc pkgCacheGenerator::AllocateInMap(const unsigned long &size) {/*{{{*/
+   void const * const oldMap = Map.Data();
+   map_ptrloc const index = Map.Allocate(size);
+   if (index != 0)
+      ReMap(oldMap, Map.Data());
+   return index;
+}
+									/*}}}*/
 // CacheGenerator::MergeList - Merge the package list			/*{{{*/
 // ---------------------------------------------------------------------
 /* This provides the generation of the entries in the cache. Each loop
@@ -127,6 +193,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       {
       // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
+      Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
       if (NewPackage(Pkg, PackageName, *arch) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewPackage)"),PackageName.c_str());
       Counter++;
@@ -142,18 +209,20 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	 // we first process the package, then the descriptions
 	 // (this has the bonus that we get MMap error when we run out
 	 //  of MMap space)
-	 if (List.UsePackage(Pkg,pkgCache::VerIterator(Cache)) == false)
+	 pkgCache::VerIterator Ver(Cache);
+	 Dynamic<pkgCache::VerIterator> DynVer(Ver);
+	 if (List.UsePackage(Pkg, Ver) == false)
 	    return _error->Error(_("Error occurred while processing %s (UsePackage1)"),
 				 PackageName.c_str());
 
  	 // Find the right version to write the description
  	 MD5SumValue CurMd5 = List.Description_md5();
- 	 pkgCache::VerIterator Ver = Pkg.VersionList();
- 	 map_ptrloc *LastVer = &Pkg->VersionList;
+ 	 Ver = Pkg.VersionList();
 
-	 for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
+	 for (; Ver.end() == false; ++Ver)
  	 {
  	    pkgCache::DescIterator Desc = Ver.DescriptionList();
+	    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
  	    map_ptrloc *LastDesc = &Ver->DescriptionList;
 	    bool duplicate=false;
 
@@ -173,7 +242,11 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
  	       if (MD5SumValue(Desc.md5()) == CurMd5) 
                {
  		  // Add new description
- 		  *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
+		  void const * const oldMap = Map.Data();
+		  map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
+		  if (oldMap != Map.Data())
+		     LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+		  *LastDesc = descindex;
  		  Desc->ParentPkg = Pkg.Index();
 		  
 		  if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
@@ -187,7 +260,9 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       }
 
       pkgCache::VerIterator Ver = Pkg.VersionList();
+      Dynamic<pkgCache::VerIterator> DynVer(Ver);
       map_ptrloc *LastVer = &Pkg->VersionList;
+      void const * oldMap = Map.Data();
       int Res = 1;
       unsigned long const Hash = List.VersionHash();
       for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
@@ -226,21 +301,28 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       }
 
       // Add a new version
-      *LastVer = NewVersion(Ver,Version,*LastVer);
+      map_ptrloc const verindex = NewVersion(Ver,Version,*LastVer);
+      if (verindex == 0 && _error->PendingError())
+	 return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
+			      PackageName.c_str(), 1);
+
+      if (oldMap != Map.Data())
+	 LastVer += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+      *LastVer = verindex;
       Ver->ParentPkg = Pkg.Index();
       Ver->Hash = Hash;
 
-      if ((*LastVer == 0 && _error->PendingError()) || List.NewVersion(Ver) == false)
-	 return _error->Error(_("Error occurred while processing %s (NewVersion1)"),
-			      PackageName.c_str());
+      if (List.NewVersion(Ver) == false)
+	 return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
+			      PackageName.c_str(), 2);
 
       if (List.UsePackage(Pkg,Ver) == false)
 	 return _error->Error(_("Error occurred while processing %s (UsePackage3)"),
 			      PackageName.c_str());
       
       if (NewFileVer(Ver,List) == false)
-	 return _error->Error(_("Error occurred while processing %s (NewVersion2)"),
-			      PackageName.c_str());
+	 return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
+			      PackageName.c_str(), 3);
 
       // Read only a single record and return
       if (OutVer != 0)
@@ -253,13 +335,18 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       /* Record the Description data. Description data always exist in
 	 Packages and Translation-* files. */
       pkgCache::DescIterator Desc = Ver.DescriptionList();
+      Dynamic<pkgCache::DescIterator> DynDesc(Desc);
       map_ptrloc *LastDesc = &Ver->DescriptionList;
-      
+
       // Skip to the end of description set
       for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++);
 
       // Add new description
-      *LastDesc = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
+      oldMap = Map.Data();
+      map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
+      if (oldMap != Map.Data())
+	 LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+      *LastDesc = descindex;
       Desc->ParentPkg = Pkg.Index();
 
       if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
@@ -306,6 +393,7 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
 	 continue;
       
       pkgCache::PkgIterator Pkg = Cache.FindPkg(PackageName);
+      Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
       if (Pkg.end() == true)
 	 return _error->Error(_("Error occurred while processing %s (FindPkg)"),
 				PackageName.c_str());
@@ -315,6 +403,7 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
 
       unsigned long Hash = List.VersionHash();
       pkgCache::VerIterator Ver = Pkg.VersionList();
+      Dynamic<pkgCache::VerIterator> DynVer(Ver);
       for (; Ver.end() == false; Ver++)
       {
 	 if (Ver->Hash == Hash && Version.c_str() == Ver.VerStr())
@@ -342,14 +431,15 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
       return true;
 
    // Get a structure
-   unsigned long const Group = Map.Allocate(sizeof(pkgCache::Group));
+   map_ptrloc const Group = AllocateInMap(sizeof(pkgCache::Group));
    if (unlikely(Group == 0))
       return false;
 
    Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
-   Grp->Name = Map.WriteString(Name);
-   if (unlikely(Grp->Name == 0))
+   map_ptrloc const idxName = WriteStringInMap(Name);
+   if (unlikely(idxName == 0))
       return false;
+   Grp->Name = idxName;
 
    // Insert it into the hash table
    unsigned long const Hash = Cache.Hash(Name);
@@ -366,6 +456,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
 bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name,
 					const string &Arch) {
    pkgCache::GrpIterator Grp;
+   Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
    if (unlikely(NewGroup(Grp, Name) == false))
       return false;
 
@@ -374,7 +465,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
 	 return true;
 
    // Get a structure
-   unsigned long const Package = Map.Allocate(sizeof(pkgCache::Package));
+   map_ptrloc const Package = AllocateInMap(sizeof(pkgCache::Package));
    if (unlikely(Package == 0))
       return false;
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
@@ -400,9 +491,10 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    // Set the name, arch and the ID
    Pkg->Name = Grp->Name;
    Pkg->Group = Grp.Index();
-   Pkg->Arch = WriteUniqString(Arch.c_str());
-   if (unlikely(Pkg->Arch == 0))
+   map_ptrloc const idxArch = WriteUniqString(Arch.c_str());
+   if (unlikely(idxArch == 0))
       return false;
+   Pkg->Arch = idxArch;
    Pkg->ID = Cache.HeaderP->PackageCount++;
 
    return true;
@@ -418,7 +510,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
       return true;
    
    // Get a structure
-   unsigned long VerFile = Map.Allocate(sizeof(pkgCache::VerFile));
+   map_ptrloc const VerFile = AllocateInMap(sizeof(pkgCache::VerFile));
    if (VerFile == 0)
       return 0;
    
@@ -449,7 +541,7 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
 					    unsigned long Next)
 {
    // Get a structure
-   unsigned long Version = Map.Allocate(sizeof(pkgCache::Version));
+   map_ptrloc const Version = AllocateInMap(sizeof(pkgCache::Version));
    if (Version == 0)
       return 0;
    
@@ -457,9 +549,10 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
    Ver->NextVer = Next;
    Ver->ID = Cache.HeaderP->VersionCount++;
-   Ver->VerStr = Map.WriteString(VerStr);
-   if (Ver->VerStr == 0)
+   map_ptrloc const idxVerStr = WriteStringInMap(VerStr);
+   if (unlikely(idxVerStr == 0))
       return 0;
+   Ver->VerStr = idxVerStr;
    
    return Version;
 }
@@ -474,7 +567,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
       return true;
    
    // Get a structure
-   unsigned long DescFile = Map.Allocate(sizeof(pkgCache::DescFile));
+   map_ptrloc const DescFile = AllocateInMap(sizeof(pkgCache::DescFile));
    if (DescFile == 0)
       return false;
 
@@ -507,7 +600,7 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
 					    map_ptrloc Next)
 {
    // Get a structure
-   map_ptrloc Description = Map.Allocate(sizeof(pkgCache::Description));
+   map_ptrloc const Description = AllocateInMap(sizeof(pkgCache::Description));
    if (Description == 0)
       return 0;
 
@@ -515,10 +608,12 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    Desc = pkgCache::DescIterator(Cache,Cache.DescP + Description);
    Desc->NextDesc = Next;
    Desc->ID = Cache.HeaderP->DescriptionCount++;
-   Desc->language_code = Map.WriteString(Lang);
-   Desc->md5sum = Map.WriteString(md5sum.Value());
-   if (Desc->language_code == 0 || Desc->md5sum == 0)
+   map_ptrloc const idxlanguage_code = WriteStringInMap(Lang);
+   map_ptrloc const idxmd5sum = WriteStringInMap(md5sum.Value());
+   if (unlikely(idxlanguage_code == 0 || idxmd5sum == 0))
       return 0;
+   Desc->language_code = idxlanguage_code;
+   Desc->md5sum = idxmd5sum;
 
    return Description;
 }
@@ -534,15 +629,22 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
    if (archs.size() > 1)
    {
       // Create Conflicts in between the group
-      for (pkgCache::GrpIterator G = GetCache().GrpBegin(); G.end() != true; G++)
+      pkgCache::GrpIterator G = GetCache().GrpBegin();
+      Dynamic<pkgCache::GrpIterator> DynG(G);
+      for (; G.end() != true; G++)
       {
 	 string const PkgName = G.Name();
-	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() != true; P = G.NextPkg(P))
+	 pkgCache::PkgIterator P = G.PackageList();
+	 Dynamic<pkgCache::PkgIterator> DynP(P);
+	 for (; P.end() != true; P = G.NextPkg(P))
 	 {
 	    if (strcmp(P.Arch(),"all") == 0)
 	       continue;
 	    pkgCache::PkgIterator allPkg;
-	    for (pkgCache::VerIterator V = P.VersionList(); V.end() != true; V++)
+	    Dynamic<pkgCache::PkgIterator> DynallPkg(allPkg);
+	    pkgCache::VerIterator V = P.VersionList();
+	    Dynamic<pkgCache::VerIterator> DynV(V);
+	    for (; V.end() != true; V++)
 	    {
 	       string const Arch = V.Arch(true);
 	       map_ptrloc *OldDepLast = NULL;
@@ -562,6 +664,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 		     per group, therefore each group member conflicts
 		     with all other group members */
 		  pkgCache::PkgIterator D = G.FindPkg(*A);
+		  Dynamic<pkgCache::PkgIterator> DynD(D);
 		  if (D.end() == true)
 		     continue;
 		  if (coInstall == true)
@@ -572,10 +675,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 				OldDepLast);
 		     // Breaks: ${self}:other (!= ${binary:Version})
 		     NewDepends(D, V, V.VerStr(),
-				pkgCache::Dep::Less, pkgCache::Dep::DpkgBreaks,
-				OldDepLast);
-		     NewDepends(D, V, V.VerStr(),
-				pkgCache::Dep::Greater, pkgCache::Dep::DpkgBreaks,
+				pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
 				OldDepLast);
 		     if (V->MultiArch == pkgCache::Version::All)
 		     {
@@ -609,13 +709,15 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 				   unsigned int const &Type,
 				   map_ptrloc *OldDepLast)
 {
+   void const * const oldMap = Map.Data();
    // Get a structure
-   unsigned long const Dependency = Map.Allocate(sizeof(pkgCache::Dependency));
+   map_ptrloc const Dependency = AllocateInMap(sizeof(pkgCache::Dependency));
    if (unlikely(Dependency == 0))
       return false;
    
    // Fill it in
    pkgCache::DepIterator Dep(Cache,Cache.DepP + Dependency);
+   Dynamic<pkgCache::DepIterator> DynDep(Dep);
    Dep->ParentVer = Ver.Index();
    Dep->Type = Type;
    Dep->CompareOp = Op;
@@ -627,9 +729,12 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 /*      for (pkgCache::DepIterator I = Pkg.RevDependsList(); I.end() == false; I++)
 	 if (I->Version != 0 && I.TargetVer() == Version)
 	    Dep->Version = I->Version;*/
-      if (Dep->Version == 0)
-	 if (unlikely((Dep->Version = Map.WriteString(Version)) == 0))
+      if (Dep->Version == 0) {
+	 map_ptrloc const index = WriteStringInMap(Version);
+	 if (unlikely(index == 0))
 	    return false;
+	 Dep->Version = index;
+      }
    }
 
    // Link it to the package
@@ -643,7 +748,8 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       OldDepLast = &Ver->DependsList;
       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
 	 OldDepLast = &D->NextDepends;
-   }
+   } else if (oldMap != Map.Data())
+      OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
 
    Dep->NextDepends = *OldDepLast;
    *OldDepLast = Dep.Index();
@@ -656,7 +762,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 // ---------------------------------------------------------------------
 /* This creates a Group and the Package to link this dependency to if
    needed and handles also the caching of the old endpoint */
-bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
+bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
 					       const string &PackageName,
 					       const string &Arch,
 					       const string &Version,
@@ -664,11 +770,13 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 					       unsigned int Type)
 {
    pkgCache::GrpIterator Grp;
+   Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
    if (unlikely(Owner->NewGroup(Grp, PackageName) == false))
       return false;
 
    // Locate the target package
    pkgCache::PkgIterator Pkg = Grp.FindPkg(Arch);
+   Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
    if (Pkg.end() == true) {
       if (unlikely(Owner->NewPackage(Pkg, PackageName, Arch) == false))
 	 return false;
@@ -690,7 +798,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator Ver,
 // ListParser::NewProvides - Create a Provides element			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
+bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
 					        const string &PkgName,
 						const string &PkgArch,
 						const string &Version)
@@ -702,13 +810,14 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
       return true;
    
    // Get a structure
-   unsigned long const Provides = Owner->Map.Allocate(sizeof(pkgCache::Provides));
+   map_ptrloc const Provides = Owner->AllocateInMap(sizeof(pkgCache::Provides));
    if (unlikely(Provides == 0))
       return false;
    Cache.HeaderP->ProvidesCount++;
    
    // Fill it in
    pkgCache::PrvIterator Prv(Cache,Cache.ProvideP + Provides,Cache.PkgP);
+   Dynamic<pkgCache::PrvIterator> DynPrv(Prv);
    Prv->Version = Ver.Index();
    Prv->NextPkgProv = Ver->ProvidesList;
    Ver->ProvidesList = Prv.Index();
@@ -717,6 +826,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator Ver,
    
    // Locate the target package
    pkgCache::PkgIterator Pkg;
+   Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
    if (unlikely(Owner->NewPackage(Pkg,PkgName, PkgArch) == false))
       return false;
    
@@ -737,24 +847,29 @@ bool pkgCacheGenerator::SelectFile(const string &File,const string &Site,
 				   unsigned long Flags)
 {
    // Get some space for the structure
-   CurrentFile = Cache.PkgFileP + Map.Allocate(sizeof(*CurrentFile));
-   if (CurrentFile == Cache.PkgFileP)
+   map_ptrloc const idxFile = AllocateInMap(sizeof(*CurrentFile));
+   if (unlikely(idxFile == 0))
       return false;
-   
+   CurrentFile = Cache.PkgFileP + idxFile;
+
    // Fill it in
-   CurrentFile->FileName = Map.WriteString(File);
-   CurrentFile->Site = WriteUniqString(Site);
+   map_ptrloc const idxFileName = WriteStringInMap(File);
+   map_ptrloc const idxSite = WriteUniqString(Site);
+   if (unlikely(idxFileName == 0 || idxSite == 0))
+      return false;
+   CurrentFile->FileName = idxFileName;
+   CurrentFile->Site = idxSite;
    CurrentFile->NextFile = Cache.HeaderP->FileList;
    CurrentFile->Flags = Flags;
    CurrentFile->ID = Cache.HeaderP->PackageFileCount;
-   CurrentFile->IndexType = WriteUniqString(Index.GetType()->Label);
+   map_ptrloc const idxIndexType = WriteUniqString(Index.GetType()->Label);
+   if (unlikely(idxIndexType == 0))
+      return false;
+   CurrentFile->IndexType = idxIndexType;
    PkgFileName = File;
    Cache.HeaderP->FileList = CurrentFile - Cache.PkgFileP;
    Cache.HeaderP->PackageFileCount++;
 
-   if (CurrentFile->FileName == 0)
-      return false;
-   
    if (Progress != 0)
       Progress->SubProgress(Index.Size());
    return true;
@@ -794,18 +909,25 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    }
    
    // Get a structure
-   unsigned long Item = Map.Allocate(sizeof(pkgCache::StringItem));
+   void const * const oldMap = Map.Data();
+   map_ptrloc const Item = AllocateInMap(sizeof(pkgCache::StringItem));
    if (Item == 0)
       return 0;
+
+   map_ptrloc const idxString = WriteStringInMap(S,Size);
+   if (unlikely(idxString == 0))
+      return 0;
+   if (oldMap != Map.Data()) {
+      Last += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+      I += (pkgCache::StringItem*) Map.Data() - (pkgCache::StringItem*) oldMap;
+   }
+   *Last = Item;
 
    // Fill in the structure
    pkgCache::StringItem *ItemP = Cache.StringItemP + Item;
    ItemP->NextItem = I - Cache.StringItemP;
-   *Last = Item;
-   ItemP->String = Map.WriteString(S,Size);
-   if (ItemP->String == 0)
-      return 0;
-   
+   ItemP->String = idxString;
+
    Bucket = ItemP;
    return ItemP->String;
 }
@@ -1059,7 +1181,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       unlink(CacheFile.c_str());
       CacheF = new FileFd(CacheFile,FileFd::WriteEmpty);
       fchmod(CacheF->Fd(),0644);
-      Map = new DynamicMMap(*CacheF,MMap::Public,MapSize);
+      Map = new DynamicMMap(*CacheF,MMap::Public | MMap::Moveable, MapSize);
       if (_error->PendingError() == true)
 	 return false;
       if (Debug == true)
@@ -1068,7 +1190,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    else
    {
       // Just build it in memory..
-      Map = new DynamicMMap(0,MapSize);
+      Map = new DynamicMMap(MMap::Moveable, MapSize);
       if (Debug == true)
 	 std::clog << "Open memory Map (not filebased)" << std::endl;
    }
@@ -1181,7 +1303,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    if (_system->AddStatusFiles(Files) == false)
       return false;
    
-   SPtr<DynamicMMap> Map = new DynamicMMap(0,MapSize);
+   SPtr<DynamicMMap> Map = new DynamicMMap(MMap::Moveable, MapSize);
    unsigned long CurrentSize = 0;
    unsigned long TotalSize = 0;
    

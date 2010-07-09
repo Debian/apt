@@ -28,7 +28,7 @@
 // ---------------------------------------------------------------------
 /* */
 pkgCacheFile::pkgCacheFile() : Map(NULL), Cache(NULL), DCache(NULL),
-				Policy(NULL), SrcList(NULL)
+				SrcList(NULL), Policy(NULL)
 {
 }
 									/*}}}*/

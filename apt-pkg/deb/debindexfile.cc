@@ -277,6 +277,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    // Store the IMS information
    pkgCache::PkgFileIterator File = Gen.GetCurFile();
+   pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(File);
    struct stat St;
    if (fstat(Pkg.Fd(),&St) != 0)
       return _error->Errno("fstat","Failed to stat");

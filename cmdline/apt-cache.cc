@@ -29,7 +29,8 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
-#include <apt-pkg/cacheset.h>
+
+#include "cacheset.h"
 
 #include <config.h>
 #include <apti18n.h>
@@ -1867,21 +1868,21 @@ int main(int argc,const char *argv[])					/*{{{*/
    }
    
    // Deal with stdout not being a tty
-   if (isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
+   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
 
-//       if (_config->FindB("APT::Cache::Generate",true) == false)
+   if (_config->Exists("APT::Cache::Generate") == true)
+      _config->Set("pkgCacheFile::Generate", _config->FindB("APT::Cache::Generate", true));
+
    if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
       CmdL.DispatchArg(CmdsB);
 
    // Print any errors or warnings found during parsing
-   if (_error->empty() == false)
-   {
-      bool Errors = _error->PendingError();
+   bool const Errors = _error->PendingError();
+   if (_config->FindI("quiet",0) > 0)
       _error->DumpErrors();
-      return Errors == true?100:0;
-   }
-          
-   return 0;
+   else
+      _error->DumpErrors(GlobalError::DEBUG);
+   return Errors == true ? 100 : 0;
 }
 									/*}}}*/
