@@ -23,7 +23,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>
 
-#include <set>
+#include <vector>
 
 class pkgSourceList;
 class OpProgress;
@@ -46,16 +46,14 @@ class pkgCacheGenerator							/*{{{*/
    friend class ListParser;
 
    template<typename Iter> class Dynamic {
-      Iter *I;
-
       public:
-      static std::set<Iter*> toReMap;
-      Dynamic(Iter &It) : I(&It) {
-	 toReMap.insert(I);
+      static std::vector<Iter*> toReMap;
+      Dynamic(Iter &I) {
+	 toReMap.push_back(&I);
       }
 
       ~Dynamic() {
-	 toReMap.erase(I);
+	 toReMap.pop_back();
       }
    };
 
@@ -101,6 +99,7 @@ class pkgCacheGenerator							/*{{{*/
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
    static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
+   static DynamicMMap* CreateDynamicMMap(FileFd *CacheF, unsigned long Flags = 0);
 
    void ReMap(void const * const oldMap, void const * const newMap);
 

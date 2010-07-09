@@ -36,7 +36,7 @@
 #include <stdio.h>
 									/*}}}*/
 typedef vector<pkgIndexFile *>::iterator FileIterator;
-template <typename Iter> std::set<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
+template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap(6);
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
@@ -113,25 +113,25 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
       if (UniqHash[i] != 0)
 	 UniqHash[i] += (pkgCache::StringItem*) newMap - (pkgCache::StringItem*) oldMap;
 
-   for (std::set<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
+   for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
       (*i)->ReOwn(Cache, oldMap, newMap);
-   for (std::set<pkgCache::PkgIterator*>::const_iterator i = Dynamic<pkgCache::PkgIterator>::toReMap.begin();
+   for (std::vector<pkgCache::PkgIterator*>::const_iterator i = Dynamic<pkgCache::PkgIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::PkgIterator>::toReMap.end(); ++i)
       (*i)->ReOwn(Cache, oldMap, newMap);
-   for (std::set<pkgCache::VerIterator*>::const_iterator i = Dynamic<pkgCache::VerIterator>::toReMap.begin();
+   for (std::vector<pkgCache::VerIterator*>::const_iterator i = Dynamic<pkgCache::VerIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::VerIterator>::toReMap.end(); ++i)
       (*i)->ReOwn(Cache, oldMap, newMap);
-   for (std::set<pkgCache::DepIterator*>::const_iterator i = Dynamic<pkgCache::DepIterator>::toReMap.begin();
+   for (std::vector<pkgCache::DepIterator*>::const_iterator i = Dynamic<pkgCache::DepIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::DepIterator>::toReMap.end(); ++i)
       (*i)->ReOwn(Cache, oldMap, newMap);
-   for (std::set<pkgCache::DescIterator*>::const_iterator i = Dynamic<pkgCache::DescIterator>::toReMap.begin();
+   for (std::vector<pkgCache::DescIterator*>::const_iterator i = Dynamic<pkgCache::DescIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::DescIterator>::toReMap.end(); ++i)
       (*i)->ReOwn(Cache, oldMap, newMap);
-   for (std::set<pkgCache::PrvIterator*>::const_iterator i = Dynamic<pkgCache::PrvIterator>::toReMap.begin();
+   for (std::vector<pkgCache::PrvIterator*>::const_iterator i = Dynamic<pkgCache::PrvIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::PrvIterator>::toReMap.end(); ++i)
       (*i)->ReOwn(Cache, oldMap, newMap);
-   for (std::set<pkgCache::PkgFileIterator*>::const_iterator i = Dynamic<pkgCache::PkgFileIterator>::toReMap.begin();
+   for (std::vector<pkgCache::PkgFileIterator*>::const_iterator i = Dynamic<pkgCache::PkgFileIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::PkgFileIterator>::toReMap.end(); ++i)
       (*i)->ReOwn(Cache, oldMap, newMap);
 }									/*}}}*/
@@ -1094,6 +1094,18 @@ static bool BuildCache(pkgCacheGenerator &Gen,
    return true;
 }
 									/*}}}*/
+DynamicMMap* pkgCacheGenerator::CreateDynamicMMap(FileFd *CacheF, unsigned long Flags) {
+   unsigned long const MapStart = _config->FindI("APT::Cache-Start", 24*1024*1024);
+   unsigned long const MapGrow = _config->FindI("APT::Cache-Grow", 1*1024*1024);
+   unsigned long const MapLimit = _config->FindI("APT::Cache-Limit", 0);
+   Flags |= MMap::Moveable;
+   if (_config->FindB("APT::Cache-Fallback", false) == true)
+      Flags |= MMap::Fallback;
+   if (CacheF != NULL)
+      return new DynamicMMap(*CacheF, Flags, MapStart, MapGrow, MapLimit);
+   else
+      return new DynamicMMap(Flags, MapStart, MapGrow, MapLimit);
+}
 // CacheGenerator::MakeStatusCache - Construct the status cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* This makes sure that the status cache (the cache that has all 
@@ -1109,7 +1121,6 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 			MMap **OutMap,bool AllowMem)
 {
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
-   unsigned long const MapSize = _config->FindI("APT::Cache-Limit",24*1024*1024);
    
    vector<pkgIndexFile *> Files;
    for (vector<metaIndex *>::const_iterator i = List.begin();
@@ -1181,7 +1192,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       unlink(CacheFile.c_str());
       CacheF = new FileFd(CacheFile,FileFd::WriteEmpty);
       fchmod(CacheF->Fd(),0644);
-      Map = new DynamicMMap(*CacheF,MMap::Public | MMap::Moveable, MapSize);
+      Map = CreateDynamicMMap(CacheF, MMap::Public);
       if (_error->PendingError() == true)
 	 return false;
       if (Debug == true)
@@ -1190,7 +1201,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    else
    {
       // Just build it in memory..
-      Map = new DynamicMMap(MMap::Moveable, MapSize);
+      Map = CreateDynamicMMap(NULL);
       if (Debug == true)
 	 std::clog << "Open memory Map (not filebased)" << std::endl;
    }
@@ -1297,13 +1308,12 @@ __deprecated bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutM
    { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {
-   unsigned long MapSize = _config->FindI("APT::Cache-Limit",20*1024*1024);
    vector<pkgIndexFile *> Files;
    unsigned long EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;
-   
-   SPtr<DynamicMMap> Map = new DynamicMMap(MMap::Moveable, MapSize);
+
+   SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL);
    unsigned long CurrentSize = 0;
    unsigned long TotalSize = 0;
    

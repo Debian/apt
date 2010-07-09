@@ -398,6 +398,8 @@ bool DynamicMMap::Grow() {
 	if (Limit != 0 && WorkSpace >= Limit)
 		return _error->Error(_("Unable to increase the size of the MMap as the "
 		                       "limit of %lu bytes is already reached."), Limit);
+	if (GrowFactor <= 0)
+		return _error->Error(_("Unable to increase size of the MMap as automatic growing is disabled by user."));
 
 	unsigned long const newSize = WorkSpace + GrowFactor;
 
