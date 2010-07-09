@@ -843,19 +843,21 @@ bool FileFd::Close()
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
       if (iFd >= 0 && close(iFd) != 0)
-	 Res &= _error->Errno("close",_("Problem closing the file"));
-   iFd = -1;
+	 Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
 
-   if ((Flags & Replace) == Replace) {
+   if ((Flags & Replace) == Replace && iFd >= 0) {
       if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
-	 Res &= _error->Errno("rename",_("Problem renaming the file"));
+	 Res &= _error->Errno("rename",_("Problem renaming the file %s to %s"), TemporaryFileName.c_str(), FileName.c_str());
+
       FileName = TemporaryFileName; // for the unlink() below.
    }
-	    
+
+   iFd = -1;
+
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)
       if (unlink(FileName.c_str()) != 0)
-	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file"));
+	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file %s"), FileName.c_str());
 
 
    return Res;
