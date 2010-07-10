@@ -94,11 +94,10 @@ bool GlobalError::DebugE(const char *Function,const char *Description,...) {
 									/*}}}*/
 // GlobalError::InsertErrno - formats an error message with the errno	/*{{{*/
 bool GlobalError::InsertErrno(MsgType type, const char* Function,
-			      const char* Description, va_list const &args) {
+			      const char* Description, va_list &args) {
 	char S[400];
-	vsnprintf(S,sizeof(S),Description,args);
-	snprintf(S + strlen(S),sizeof(S) - strlen(S),
-	         " - %s (%i: %s)", Function, errno, strerror(errno));
+	snprintf(S, sizeof(S), "%s - %s (%i: %s)", Description,
+		 Function, errno, strerror(errno));
 	return Insert(type, S, args);
 }
 									/*}}}*/
@@ -141,7 +140,7 @@ bool GlobalError::Debug(const char *Description,...)
 									/*}}}*/
 // GlobalError::Insert - Insert a new item at the end			/*{{{*/
 bool GlobalError::Insert(MsgType type, const char* Description,
-			 va_list const &args) {
+			 va_list &args) {
 	char S[400];
 	vsnprintf(S,sizeof(S),Description,args);
 
