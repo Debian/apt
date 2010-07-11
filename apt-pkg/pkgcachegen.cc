@@ -1094,6 +1094,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
    return true;
 }
 									/*}}}*/
+// CacheGenerator::CreateDynamicMMap - load an mmap with configuration options	/*{{{*/
 DynamicMMap* pkgCacheGenerator::CreateDynamicMMap(FileFd *CacheF, unsigned long Flags) {
    unsigned long const MapStart = _config->FindI("APT::Cache-Start", 24*1024*1024);
    unsigned long const MapGrow = _config->FindI("APT::Cache-Grow", 1*1024*1024);
@@ -1106,6 +1107,7 @@ DynamicMMap* pkgCacheGenerator::CreateDynamicMMap(FileFd *CacheF, unsigned long 
    else
       return new DynamicMMap(Flags, MapStart, MapGrow, MapLimit);
 }
+									/*}}}*/
 // CacheGenerator::MakeStatusCache - Construct the status cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* This makes sure that the status cache (the cache that has all 

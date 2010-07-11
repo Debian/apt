@@ -184,8 +184,8 @@ string debPackagesIndex::ArchiveInfo(pkgCache::VerIterator Ver) const
    Res += " ";
    Res += Ver.ParentPkg().Name();
    Res += " ";
-   Res += Ver.Arch();
-   Res += " ";
+   if (Dist[Dist.size() - 1] != '/')
+      Res.append(Ver.Arch()).append(" ");
    Res += Ver.VerStr();
    return Res;
 }
@@ -219,8 +219,8 @@ string debPackagesIndex::Info(const char *Type) const
    else
       Info += Dist + '/' + Section;   
    Info += " ";
-   Info += Architecture;
-   Info += " ";
+   if (Dist[Dist.size() - 1] != '/')
+      Info += Architecture + " ";
    Info += Type;
    return Info;
 }

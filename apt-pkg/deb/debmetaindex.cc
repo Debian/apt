@@ -332,7 +332,12 @@ class debSLTypeDebian : public pkgSourceList::Type
 	    if (IsSrc == true)
 	       Deb->PushSectionEntry("source", new debReleaseIndex::debSectionEntry(Section, IsSrc));
 	    else
-	       Deb->PushSectionEntry(Archs, new debReleaseIndex::debSectionEntry(Section, IsSrc));
+	    {
+	       if (Dist[Dist.size() - 1] == '/')
+		  Deb->PushSectionEntry("any", new debReleaseIndex::debSectionEntry(Section, IsSrc));
+	       else
+		  Deb->PushSectionEntry(Archs, new debReleaseIndex::debSectionEntry(Section, IsSrc));
+	    }
 	    return true;
 	 }
       }
@@ -342,7 +347,12 @@ class debSLTypeDebian : public pkgSourceList::Type
       if (IsSrc == true)
 	 Deb->PushSectionEntry ("source", new debReleaseIndex::debSectionEntry(Section, IsSrc));
       else
-	 Deb->PushSectionEntry (Archs, new debReleaseIndex::debSectionEntry(Section, IsSrc));
+      {
+	 if (Dist[Dist.size() - 1] == '/')
+	    Deb->PushSectionEntry ("any", new debReleaseIndex::debSectionEntry(Section, IsSrc));
+	 else
+	    Deb->PushSectionEntry (Archs, new debReleaseIndex::debSectionEntry(Section, IsSrc));
+      }
       List.push_back(Deb);
       return true;
    }
