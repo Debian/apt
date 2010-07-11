@@ -447,6 +447,15 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      really prefer uncompressed files to support the usage of local mirrors.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term>GzipIndexes</term>
+	 <listitem><para>
+	 When downloading <literal>gzip</literal> compressed indexes (Packages, Sources, or
+	 Translations), keep them gzip compressed locally instead of unpacking
+	 them. This saves quite a lot of disk space at the expense of more CPU
+	 requirements when building the local package caches. False by default.
+	 </para></listitem>
+     </varlistentry>
+
      <varlistentry><term>Languages</term>
      <listitem><para>The Languages subsection controls which <filename>Translation</filename> files are downloaded
      and in which order APT tries to display the Description-Translations. APT will try to display the first
