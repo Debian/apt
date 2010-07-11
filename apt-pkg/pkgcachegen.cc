@@ -36,7 +36,7 @@
 #include <stdio.h>
 									/*}}}*/
 typedef vector<pkgIndexFile *>::iterator FileIterator;
-template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap(6);
+template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
