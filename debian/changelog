@@ -7,6 +7,8 @@ apt (0.7.26~exp10) UNRELEASED; urgency=low
   * apt-pkg/deb/debmetaindex.cc:
     - do not query each architecture for flat file archives
     - fix typo preventing display of architecture in Info()
+  * methods/bzip2.cc:
+    - add a copycat of the old gzip.cc as we need it for bzip2 and lzma
 
   [ Martin Pitt ]
   * debian/rules:
@@ -43,7 +45,7 @@ apt (0.7.26~exp10) UNRELEASED; urgency=low
     Rewrite it to use FileFd directly, which makes the code a lot simpler, and
     also using less memory and overhead.
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 10 Jul 2010 13:44:32 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 11 Jul 2010 21:56:36 +0200
 
 apt (0.7.26~exp9) experimental; urgency=low
 
