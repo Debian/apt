@@ -23,7 +23,7 @@ string debReleaseIndex::Info(const char *Type, string const &Section, string con
    else
    {
       Info += Dist + '/' + Section;
-      if (Arch.empty() == true)
+      if (Arch.empty() != true)
 	 Info += " " + Arch;
    }
    Info += " ";
