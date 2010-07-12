@@ -278,9 +278,9 @@ private:								/*{{{*/
 	std::list<MsgStack> Stacks;
 
 	bool InsertErrno(MsgType type, const char* Function,
-			 const char* Description, va_list const &args);
+			 const char* Description, va_list &args);
 	bool Insert(MsgType type, const char* Description,
-			 va_list const &args);
+			 va_list &args);
 									/*}}}*/
 };
 									/*}}}*/

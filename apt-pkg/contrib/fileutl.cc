@@ -11,6 +11,7 @@
    Most of this source is placed in the Public Domain, do with it what 
    you will
    It was originally written by Jason Gunthorpe <jgg@debian.org>.
+   FileFd gzip support added by Martin Pitt <martin.pitt@canonical.com>
    
    The exception is RunScripts() it is under the GPLv2
 
@@ -656,6 +657,17 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
       case ReadOnly:
       iFd = open(FileName.c_str(),O_RDONLY);
       break;
+
+      case ReadOnlyGzip:
+      iFd = open(FileName.c_str(),O_RDONLY);
+      if (iFd > 0) {
+	 gz = gzdopen (iFd, "r");
+	 if (gz == NULL) {
+	     close (iFd);
+	     iFd = -1;
+	 }
+      }
+      break;
       
       case WriteEmpty:
       {
@@ -711,7 +723,10 @@ bool FileFd::Read(void *To,unsigned long Size,unsigned long *Actual)
    
    do
    {
-      Res = read(iFd,To,Size);
+      if (gz != NULL)
+         Res = gzread(gz,To,Size);
+      else
+         Res = read(iFd,To,Size);
       if (Res < 0 && errno == EINTR)
 	 continue;
       if (Res < 0)
@@ -750,7 +765,10 @@ bool FileFd::Write(const void *From,unsigned long Size)
    errno = 0;
    do
    {
-      Res = write(iFd,From,Size);
+      if (gz != NULL)
+         Res = gzwrite(gz,From,Size);
+      else
+         Res = write(iFd,From,Size);
       if (Res < 0 && errno == EINTR)
 	 continue;
       if (Res < 0)
@@ -776,7 +794,12 @@ bool FileFd::Write(const void *From,unsigned long Size)
 /* */
 bool FileFd::Seek(unsigned long To)
 {
-   if (lseek(iFd,To,SEEK_SET) != (signed)To)
+   int res;
+   if (gz)
+      res = gzseek(gz,To,SEEK_SET);
+   else
+      res = lseek(iFd,To,SEEK_SET);
+   if (res != (signed)To)
    {
       Flags |= Fail;
       return _error->Error("Unable to seek to %lu",To);
@@ -790,7 +813,12 @@ bool FileFd::Seek(unsigned long To)
 /* */
 bool FileFd::Skip(unsigned long Over)
 {
-   if (lseek(iFd,Over,SEEK_CUR) < 0)
+   int res;
+   if (gz)
+      res = gzseek(gz,Over,SEEK_CUR);
+   else
+      res = lseek(iFd,Over,SEEK_CUR);
+   if (res < 0)
    {
       Flags |= Fail;
       return _error->Error("Unable to seek ahead %lu",Over);
@@ -804,6 +832,11 @@ bool FileFd::Skip(unsigned long Over)
 /* */
 bool FileFd::Truncate(unsigned long To)
 {
+   if (gz)
+   {
+      Flags |= Fail;
+      return _error->Error("Truncating gzipped files is not implemented (%s)", FileName.c_str());
+   }
    if (ftruncate(iFd,To) != 0)
    {
       Flags |= Fail;
@@ -818,7 +851,11 @@ bool FileFd::Truncate(unsigned long To)
 /* */
 unsigned long FileFd::Tell()
 {
-   off_t Res = lseek(iFd,0,SEEK_CUR);
+   off_t Res;
+   if (gz)
+     Res = gztell(gz);
+   else
+     Res = lseek(iFd,0,SEEK_CUR);
    if (Res == (off_t)-1)
       _error->Errno("lseek","Failed to determine the current file position");
    return Res;
@@ -829,6 +866,7 @@ unsigned long FileFd::Tell()
 /* */
 unsigned long FileFd::Size()
 {
+   //TODO: For gz, do we need the actual file size here or the uncompressed length?
    struct stat Buf;
    if (fstat(iFd,&Buf) != 0)
       return _error->Errno("fstat","Unable to determine the file size");
@@ -842,8 +880,16 @@ bool FileFd::Close()
 {
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
-      if (iFd >= 0 && close(iFd) != 0)
-	 Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
+   {
+      if (gz != NULL) {
+	 int const e = gzclose(gz);
+	 // gzdopen() on empty files always fails with "buffer error" here, ignore that
+	 if (e != 0 && e != Z_BUF_ERROR)
+	    Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
+      } else
+	 if (iFd > 0 && close(iFd) != 0)
+	    Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
+   }
 
    if ((Flags & Replace) == Replace && iFd >= 0) {
       if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
@@ -853,6 +899,7 @@ bool FileFd::Close()
    }
 
    iFd = -1;
+   gz = NULL;
 
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)

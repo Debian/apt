@@ -757,7 +757,7 @@ bool debListParser::Step()
       if (Architecture.empty() == true)
 	 return true;
 
-      if (Arch.empty() == true || MultiArchEnabled == false)
+      if (Arch.empty() == true || Arch == "any" || MultiArchEnabled == false)
       {
 	 if (APT::Configuration::checkArchitecture(Architecture) == true)
 	    return true;

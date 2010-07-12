@@ -1,3 +1,52 @@
+apt (0.7.26~exp10) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/error.{cc,h}:
+    - remove constness of va_list parameter to fix build on amd64 and co
+      Thanks Eric Valette! (Closes: #588610)
+  * apt-pkg/deb/debmetaindex.cc:
+    - do not query each architecture for flat file archives
+    - fix typo preventing display of architecture in Info()
+  * methods/bzip2.cc:
+    - add a copycat of the old gzip.cc as we need it for bzip2 and lzma
+
+  [ Martin Pitt ]
+  * debian/rules:
+    - Make DEB_BUILD_OPTIONS=noopt actually work by passing the right
+      CXXFLAGS.
+  * apt-pkg/contrib/fileutl.{h,cc}:
+    - Add support for reading of gzipped files with the new "ReadOnlyGzip"
+      OpenMode. (Closes: #188407)
+    - Link against zlib (in apt-pkg/makefile) and add zlib build dependency.
+    - [ABI BREAK] This adds a new private member to FileFd, but its
+      initialization is in the public header file.
+  * configure.in:
+    - Check for zlib library and headers.
+  * apt-pkg/acquire-item.cc, apt-pkg/deb/debindexfile.cc,
+    apt-pkg/deb/debrecords.cc, apt-pkg/deb/debsrcrecords.h,
+    cmdline/apt-cache.cc:
+    - Open Packages, Sources, and Translations indexes in "ReadOnlyGzip" mode.
+  * apt-pkg/deb/debindexfile.cc:
+    - If we do not find uncompressed package/source/translation indexes, look
+      for gzip compressed ones.
+  * apt-pkg/acquire-item.cc:
+    - If the Acquire::GzipIndexes option is true and we download a gzipped
+      index file, keep it as it is (and rename to .gz) instead of
+      uncompressing it.
+  * doc/apt.conf.5.xml:
+    - Document the new Acquire::GzipIndexes option.
+  * doc/po/apt-doc.pot, doc/po/de.po:
+    - German translation of new Acquire::GzipIndexes option.
+  * Add test/test-indexes.sh:
+    - Test behaviour of index retrieval and usage, in particular with
+      uncompressed and gzip compressed indexes.
+  * methods/gzip.cc: With FileFd now being able to read gzipped files, there
+    is no need for the gzip method any more to spawn an external gzip process.
+    Rewrite it to use FileFd directly, which makes the code a lot simpler, and
+    also using less memory and overhead.
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 12 Jul 2010 11:41:01 +0200
+
 apt (0.7.26~exp9) experimental; urgency=low
 
   [ David Kalnischkies ]

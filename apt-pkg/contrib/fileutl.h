@@ -26,6 +26,8 @@
 #include <string>
 #include <vector>
 
+#include <zlib.h>
+
 using std::string;
 
 class FileFd
@@ -38,9 +40,10 @@ class FileFd
    unsigned long Flags;
    string FileName;
    string TemporaryFileName;
-   
+   gzFile gz;
+
    public:
-   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp};
+   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp,ReadOnlyGzip};
    
    inline bool Read(void *To,unsigned long Size,bool AllowEof)
    {
@@ -71,12 +74,12 @@ class FileFd
    inline string &Name() {return FileName;};
    
    FileFd(string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), 
-            Flags(0) 
+            Flags(0), gz(NULL)
    {
       Open(FileName,Mode,Perms);
    };
-   FileFd(int Fd = -1) : iFd(Fd), Flags(AutoClose) {};
-   FileFd(int Fd,bool) : iFd(Fd), Flags(0) {};
+   FileFd(int Fd = -1) : iFd(Fd), Flags(AutoClose), gz(NULL) {};
+   FileFd(int Fd,bool) : iFd(Fd), Flags(0), gz(NULL) {};
    virtual ~FileFd();
 };
 

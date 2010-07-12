@@ -280,7 +280,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       ss >> ServerSha1 >> size;
       unsigned long const ServerSize = atol(size.c_str());
 
-      FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
+      FileFd fd(CurrentPackagesFile, FileFd::ReadOnlyGzip);
       SHA1Summation SHA1;
       SHA1.AddFD(fd.Fd(), fd.Size());
       string const local_sha1 = SHA1.Result();
@@ -511,7 +511,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
 
-   FileFd fd(FinalFile, FileFd::ReadOnly);
+   FileFd fd(FinalFile, FileFd::ReadOnlyGzip);
    SHA1Summation SHA1;
    SHA1.AddFD(fd.Fd(), fd.Size());
    string local_sha1 = string(SHA1.Result());
@@ -672,6 +672,8 @@ string pkgAcqIndex::Custom600Headers()
 {
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
+   if (_config->FindB("Acquire::GzipIndexes",false))
+      Final += ".gz";
    
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
@@ -789,17 +791,35 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       ErrorText = "Method gave a blank filename";
    }
    
+   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
+
    // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true) {
+       if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
+	  // Update DestFile for .gz suffix so that the clean operation keeps it
+	  DestFile += ".gz";
       return;
+    }
 
    if (FileName == DestFile)
       Erase = true;
    else
       Local = true;
    
-   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
    string decompProg;
+
+   // If we enable compressed indexes and already have gzip, keep it
+   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI) + ".gz";
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+      
+      // Update DestFile for .gz suffix so that the clean operation keeps it
+      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+      DestFile += URItoFileName(RealURI) + ".gz";
+      return;
+    }
 
    // get the binary name for your used compression type
    decompProg = _config->Find(string("Acquire::CompressionTypes::").append(compExt),"");
@@ -1690,7 +1710,7 @@ void pkgAcqFile::Done(string Message,unsigned long Size,string CalcHash,
    if(!ExpectedHash.empty() && ExpectedHash.toStr() != CalcHash)
    {
       Status = StatError;
-      ErrorText = "Hash Sum mismatch";
+      ErrorText = _("Hash Sum mismatch");
       Rename(DestFile,DestFile + ".FAILED");
       return;
    }

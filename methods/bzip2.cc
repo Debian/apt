@@ -1,11 +1,15 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.17.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
-   GZip method - Take a file URI in and decompress it into the target 
+   Bzip2 method - Take a file URI in and decompress it into the target 
    file.
-   
+
+   While the method is named "bzip2" it handles also other compression
+   types as it calls binaries based on the name of the method,
+   so it can also be used to handle gzip, lzma and others if named
+   correctly.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -23,30 +27,34 @@
 #include <apti18n.h>
 									/*}}}*/
 
-class GzipMethod : public pkgAcqMethod
+const char *Prog;
+
+class Bzip2Method : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
    
    public:
    
-   GzipMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
+   Bzip2Method() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
 };
 
 
-// GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
+// Bzip2Method::Fetch - Decompress the passed URI			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool GzipMethod::Fetch(FetchItem *Itm)
+bool Bzip2Method::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
    string Path = Get.Host + Get.Path; // To account for relative paths
    
+   string GzPathOption = "Dir::bin::"+string(Prog);
+
    FetchResult Res;
    Res.Filename = Itm->DestFile;
    URIStart(Res);
    
    // Open the source and destination files
-   FileFd From(Path,FileFd::ReadOnlyGzip);
+   FileFd From(Path,FileFd::ReadOnly);
 
    // if the file is empty, just rename it and return
    if(From.Size() == 0) 
@@ -55,12 +63,40 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       return true;
    }
 
+   int GzOut[2];   
+   if (pipe(GzOut) < 0)
+      return _error->Errno("pipe",_("Couldn't open pipe for %s"),Prog);
+
+   // Fork bzip2
+   pid_t Process = ExecFork();
+   if (Process == 0)
+   {
+      close(GzOut[0]);
+      dup2(From.Fd(),STDIN_FILENO);
+      dup2(GzOut[1],STDOUT_FILENO);
+      From.Close();
+      close(GzOut[1]);
+      SetCloseExec(STDIN_FILENO,false);
+      SetCloseExec(STDOUT_FILENO,false);
+      
+      const char *Args[3];
+      string Tmp = _config->Find(GzPathOption,Prog);
+      Args[0] = Tmp.c_str();
+      Args[1] = "-d";
+      Args[2] = 0;
+      execvp(Args[0],(char **)Args);
+      _exit(100);
+   }
+   From.Close();
+   close(GzOut[1]);
+   
+   FileFd FromGz(GzOut[0]);  // For autoclose   
    FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
       return false;
    
-   // Read data from source, generate checksums and write
+   // Read data from bzip2, generate checksums and write
    Hashes Hash;
    bool Failed = false;
    while (1) 
@@ -68,23 +104,36 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       unsigned char Buffer[4*1024];
       unsigned long Count;
       
-      if (!From.Read(Buffer,sizeof(Buffer),&Count))
+      Count = read(GzOut[0],Buffer,sizeof(Buffer));
+      if (Count < 0 && errno == EINTR)
+	 continue;
+      
+      if (Count < 0)
       {
-	 To.OpFail();
-	 return false;
+	 _error->Errno("read", _("Read error from %s process"),Prog);
+	 Failed = true;
+	 break;
       }
+      
       if (Count == 0)
 	 break;
-
+      
       Hash.Add(Buffer,Count);
       if (To.Write(Buffer,Count) == false)
       {
 	 Failed = true;
+	 FromGz.Close();
 	 break;
       }      
    }
    
-   From.Close();
+   // Wait for bzip2 to finish
+   if (ExecWait(Process,_config->Find(GzPathOption,Prog).c_str(),false) == false)
+   {
+      To.OpFail();
+      return false;
+   }  
+       
    To.Close();
    
    if (Failed == true)
@@ -119,6 +168,10 @@ int main(int argc, char *argv[])
 {
    setlocale(LC_ALL, "");
 
-   GzipMethod Mth;
+   Bzip2Method Mth;
+
+   Prog = strrchr(argv[0],'/');
+   Prog++;
+   
    return Mth.Run();
 }
