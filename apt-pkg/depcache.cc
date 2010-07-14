@@ -338,7 +338,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    /* Check simple depends. A depends -should- never self match but 
       we allow it anyhow because dpkg does. Technically it is a packaging
       bug. Conflicts may never self match */
-   if (Dep.TargetPkg() != Dep.ParentPkg() || 
+   if (Dep.TargetPkg()->Group != Dep.ParentPkg()->Group ||
        (Dep->Type != Dep::Conflicts && Dep->Type != Dep::DpkgBreaks && Dep->Type != Dep::Obsoletes))
    {
       PkgIterator Pkg = Dep.TargetPkg();
@@ -367,9 +367,9 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    PkgIterator Pkg = Dep.ParentPkg();
    for (; P.end() != true; P++)
    {
-      /* Provides may never be applied against the same package if it is
-         a conflicts. See the comment above. */
-      if (P.OwnerPkg() == Pkg &&
+      /* Provides may never be applied against the same package (or group)
+         if it is a conflicts. See the comment above. */
+      if (P.OwnerPkg()->Group == Pkg->Group &&
 	  (Dep->Type == Dep::Conflicts || Dep->Type == Dep::DpkgBreaks))
 	 continue;
       
