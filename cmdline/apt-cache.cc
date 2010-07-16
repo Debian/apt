@@ -569,9 +569,18 @@ bool Depends(CommandLine &CmdL)
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       Colours[Pkg->ID] = 1;
 
-   bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
-   bool Installed = _config->FindB("APT::Cache::Installed",false);
-   bool Important = _config->FindB("APT::Cache::Important",false);
+   bool const Recurse = _config->FindB("APT::Cache::RecurseDepends", false);
+   bool const Installed = _config->FindB("APT::Cache::Installed", false);
+   bool const Important = _config->FindB("APT::Cache::Important", false);
+   bool const ShowDepType = _config->FindB("APT::Cache::ShowDependencyType",true);
+   bool const ShowPreDepends = _config->FindB("APT::Cache::ShowPre-Depends", true);
+   bool const ShowDepends = _config->FindB("APT::Cache::ShowDepends", true);
+   bool const ShowRecommends = _config->FindB("APT::Cache::ShowRecommends", Important == false);
+   bool const ShowSuggests = _config->FindB("APT::Cache::ShowSuggests", Important == false);
+   bool const ShowReplaces = _config->FindB("APT::Cache::ShowReplaces", Important == false);
+   bool const ShowConflicts = _config->FindB("APT::Cache::ShowConflicts", Important == false);
+   bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
+   bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
    bool DidSomething;
    do
    {
@@ -594,12 +603,17 @@ bool Depends(CommandLine &CmdL)
 	 
 	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
 	 {
-	    // Important deps only
-	    if (Important == true)
-	       if (D->Type != pkgCache::Dep::PreDepends &&
-		   D->Type != pkgCache::Dep::Depends)
-		  continue;
-		  
+	    switch (D->Type) {
+	    case pkgCache::Dep::PreDepends: if (!ShowPreDepends) continue; break;
+	    case pkgCache::Dep::Depends: if (!ShowDepends) continue; break;
+	    case pkgCache::Dep::Recommends: if (!ShowRecommends) continue; break;
+	    case pkgCache::Dep::Suggests: if (!ShowSuggests) continue; break;
+	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;
+	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
+	    case pkgCache::Dep::DpkgBreaks: if (!ShowBreaks) continue; break;
+	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
+	    }
+
 	    pkgCache::PkgIterator Trg = D.TargetPkg();
 
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
@@ -611,10 +625,12 @@ bool Depends(CommandLine &CmdL)
 		  cout << "  ";
 	    
 		// Show the package
+		if (ShowDepType == true)
+		  cout << D.DepType() << ": ";
 		if (Trg->VersionList == 0)
-		  cout << D.DepType() << ": <" << Trg.FullName(true) << ">" << endl;
+		  cout << "<" << Trg.FullName(true) << ">" << endl;
 		else
-		  cout << D.DepType() << ": " << Trg.FullName(true) << endl;
+		  cout << Trg.FullName(true) << endl;
 	    
 		if (Recurse == true)
 		  Colours[D.TargetPkg()->ID]++;
@@ -660,8 +676,18 @@ bool RDepends(CommandLine &CmdL)
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       Colours[Pkg->ID] = 1;
 
-   bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
-   bool Installed = _config->FindB("APT::Cache::Installed",false);
+   bool const Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
+   bool const Installed = _config->FindB("APT::Cache::Installed",false);
+   bool const Important = _config->FindB("APT::Cache::Important", false);
+   bool const ShowDepType = _config->FindB("APT::Cache::ShowDependencyType",false);
+   bool const ShowPreDepends = _config->FindB("APT::Cache::ShowPre-Depends", true);
+   bool const ShowDepends = _config->FindB("APT::Cache::ShowDepends", true);
+   bool const ShowRecommends = _config->FindB("APT::Cache::ShowRecommends", Important == false);
+   bool const ShowSuggests = _config->FindB("APT::Cache::ShowSuggests", Important == false);
+   bool const ShowReplaces = _config->FindB("APT::Cache::ShowReplaces", Important == false);
+   bool const ShowConflicts = _config->FindB("APT::Cache::ShowConflicts", Important == false);
+   bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
+   bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
    bool DidSomething;
    do
    {
@@ -684,7 +710,18 @@ bool RDepends(CommandLine &CmdL)
 	 
 	 cout << "Reverse Depends:" << endl;
 	 for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() == false; D++)
-	 {	    
+	 {
+	    switch (D->Type) {
+	    case pkgCache::Dep::PreDepends: if (!ShowPreDepends) continue; break;
+	    case pkgCache::Dep::Depends: if (!ShowDepends) continue; break;
+	    case pkgCache::Dep::Recommends: if (!ShowRecommends) continue; break;
+	    case pkgCache::Dep::Suggests: if (!ShowSuggests) continue; break;
+	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;
+	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
+	    case pkgCache::Dep::DpkgBreaks: if (!ShowBreaks) continue; break;
+	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
+	    }
+
 	    // Show the package
 	    pkgCache::PkgIterator Trg = D.ParentPkg();
 
@@ -696,8 +733,10 @@ bool RDepends(CommandLine &CmdL)
 		else
 		  cout << "  ";
 
+		if (ShowDepType == true)
+		  cout << D.DepType() << ": ";
 		if (Trg->VersionList == 0)
-		  cout << D.DepType() << ": <" << Trg.FullName(true) << ">" << endl;
+		  cout << "<" << Trg.FullName(true) << ">" << endl;
 		else
 		  cout << Trg.FullName(true) << endl;
 
@@ -1820,6 +1859,14 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,"installed","APT::Cache::Installed",0},
+      {0,"pre-depends","APT::Cache::ShowPreDepends",0},
+      {0,"depends","APT::Cache::ShowDepends",0},
+      {0,"recommends","APT::Cache::ShowRecommends",0},
+      {0,"suggests","APT::Cache::ShowSuggests",0},
+      {0,"replaces","APT::Cache::ShowReplaces",0},
+      {0,"breaks","APT::Cache::ShowBreaks",0},
+      {0,"conflicts","APT::Cache::ShowConflicts",0},
+      {0,"enhances","APT::Cache::ShowEnhances",0},
       {0,0,0,0}};
    CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
                                     {"add",&DoAdd},
