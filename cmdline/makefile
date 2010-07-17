@@ -9,14 +9,14 @@ include ../buildlib/defaults.mak
 PROGRAM=apt-cache
 SLIBS = -lapt-pkg $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
-SOURCE = apt-cache.cc cacheset.cc
+SOURCE = apt-cache.cc
 include $(PROGRAM_H)
 
 # The apt-get program
 PROGRAM=apt-get
 SLIBS = -lapt-pkg -lutil $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
-SOURCE = apt-get.cc acqprogress.cc cacheset.cc
+SOURCE = apt-get.cc acqprogress.cc
 include $(PROGRAM_H)
 
 # The apt-config program

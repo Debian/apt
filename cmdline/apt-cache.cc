@@ -17,6 +17,7 @@
 #include <cassert>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
@@ -29,8 +30,6 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
-
-#include "cacheset.h"
 
 #include <config.h>
 #include <apti18n.h>

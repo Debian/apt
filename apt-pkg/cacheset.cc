@@ -11,13 +11,12 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefilter.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/versionmatch.h>
 
 #include <apti18n.h>
-
-#include "cacheset.h"
 
 #include <vector>
 
