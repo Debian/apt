@@ -675,7 +675,12 @@ bool pkgDPkgPM::OpenLog()
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
 	 if (Cache[I].NewInstall())
-	    install += I.FullName(false) + string(" (") + Cache[I].CandVersion + string("), ");
+	 {
+	    install += I.FullName(false) + string(" (") + Cache[I].CandVersion;
+	    if (Cache[I].Flags & pkgCache::Flag::Auto)
+	       install+= ", automatic";
+	    install += string("), ");
+	 }
 	 else if (Cache[I].Upgrade())
 	    upgrade += I.FullName(false) + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Downgrade())
