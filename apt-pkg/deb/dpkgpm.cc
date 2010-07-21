@@ -675,17 +675,17 @@ bool pkgDPkgPM::OpenLog()
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
 	 if (Cache[I].NewInstall())
-	    install += I.Name() + string(" (") + Cache[I].CandVersion + string("), ");
+	    install += I.FullName(false) + string(" (") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Upgrade())
-	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	    upgrade += I.FullName(false) + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Downgrade())
-	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	    downgrade += I.FullName(false) + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Delete())
 	 {
 	    if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
-	       purge += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	       purge += I.FullName(false) + string(" (") + Cache[I].CurVersion + string("), ");	    
 	    else
-	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	       remove += I.FullName(false) + string(" (") + Cache[I].CurVersion + string("), ");	    
 	 }
       }
       if (_config->Exists("Commandline::AsString") == true)
