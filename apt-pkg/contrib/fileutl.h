@@ -28,6 +28,9 @@
 
 #include <zlib.h>
 
+/* Define this for python-apt */
+#define APT_HAS_GZIP 1
+
 using std::string;
 
 class FileFd
@@ -60,6 +63,7 @@ class FileFd
    unsigned long Tell();
    unsigned long Size();
    bool Open(string FileName,OpenMode Mode,unsigned long Perms = 0666);
+   bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false);
    bool Close();
    bool Sync();
    

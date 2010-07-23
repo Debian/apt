@@ -700,6 +700,24 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
    SetCloseExec(iFd,true);
    return true;
 }
+
+bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose)
+{
+   Close();
+   Flags = (AutoClose) ? FileFd::AutoClose : 0;
+   iFd = Fd;
+   if (Mode == ReadOnlyGzip) {
+      gz = gzdopen (iFd, "r");
+      if (gz == NULL) {
+	 if (AutoClose)
+	    close (iFd);
+	 return _error->Errno("gzdopen",_("Could not open file descriptor %d"),
+			      Fd);
+      }
+   }
+   this->FileName = "";
+   return true;
+}
 									/*}}}*/
 // FileFd::~File - Closes the file					/*{{{*/
 // ---------------------------------------------------------------------
