@@ -323,7 +323,12 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 			V = getInstalledVer(Cache, P, helper);
 		else if (ver == "candidate")
 			V = getCandidateVer(Cache, P, helper);
-		else {
+		else if (ver == "newest") {
+			if (P->VersionList != 0)
+				V = P.VersionList();
+			else
+				V = helper.canNotFindNewestVer(Cache, P);
+		} else {
 			pkgVersionMatch Match(ver, (verIsRel == true ? pkgVersionMatch::Release :
 					pkgVersionMatch::Version));
 			V = Match.Find(P);
