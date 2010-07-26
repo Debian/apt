@@ -551,27 +551,40 @@ bool DumpAvail(CommandLine &Cmd)
    return !_error->PendingError();
 }
 									/*}}}*/
-// Depends - Print out a dependency tree				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool Depends(CommandLine &CmdL)
+// ShowDepends - Helper for printing out a dependency tree		/*{{{*/
+class CacheSetHelperDepends: public APT::CacheSetHelper {
+public:
+   APT::PackageSet virtualPkgs;
+
+   virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return pkgCache::VerIterator(Cache, 0);
+   }
+
+   virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return pkgCache::VerIterator(Cache, 0);
+   }
+
+   CacheSetHelperDepends() : CacheSetHelper(false) {}
+};
+bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
       return false;
 
-   SPtrArray<unsigned> Colours = new unsigned[Cache->Head().PackageCount];
-   memset(Colours,0,sizeof(*Colours)*Cache->Head().PackageCount);
-
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-      Colours[Pkg->ID] = 1;
+   CacheSetHelperDepends helper;
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   if (verset.empty() == true && helper.virtualPkgs.empty() == true)
+      return false;
+   std::vector<bool> Shown(Cache->Head().PackageCount);
 
    bool const Recurse = _config->FindB("APT::Cache::RecurseDepends", false);
    bool const Installed = _config->FindB("APT::Cache::Installed", false);
    bool const Important = _config->FindB("APT::Cache::Important", false);
-   bool const ShowDepType = _config->FindB("APT::Cache::ShowDependencyType",true);
+   bool const ShowDepType = _config->FindB("APT::Cache::ShowDependencyType", RevDepends == false);
    bool const ShowPreDepends = _config->FindB("APT::Cache::ShowPre-Depends", true);
    bool const ShowDepends = _config->FindB("APT::Cache::ShowDepends", true);
    bool const ShowRecommends = _config->FindB("APT::Cache::ShowRecommends", Important == false);
@@ -581,27 +594,20 @@ bool Depends(CommandLine &CmdL)
    bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
    bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
    bool const ShowOnlyFirstOr = _config->FindB("APT::Cache::ShowOnlyFirstOr", false);
-   bool DidSomething;
-   do
+
+   while (verset.empty() != true)
    {
-      DidSomething = false;
-      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
-      {
-	 if (Colours[Pkg->ID] != 1)
-	    continue;
-	 Colours[Pkg->ID] = 2;
-	 DidSomething = true;
-	 
-	 pkgCache::VerIterator Ver = Pkg.VersionList();
-	 if (Ver.end() == true)
-	 {
-	    cout << '<' << Pkg.FullName(true) << '>' << endl;
-	    continue;
-	 }
-	 
+      pkgCache::VerIterator Ver = *verset.begin();
+      verset.erase(verset.begin());
+      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+      Shown[Pkg->ID] = true;
+
 	 cout << Pkg.FullName(true) << endl;
-	 
-	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+
+	 if (RevDepends == true)
+	    cout << "Reverse Depends:" << endl;
+	 for (pkgCache::DepIterator D = RevDepends ? Pkg.RevDependsList() : Ver.DependsList();
+	      D.end() == false; D++)
 	 {
 	    switch (D->Type) {
 	    case pkgCache::Dep::PreDepends: if (!ShowPreDepends) continue; break;
@@ -614,7 +620,7 @@ bool Depends(CommandLine &CmdL)
 	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
 	    }
 
-	    pkgCache::PkgIterator Trg = D.TargetPkg();
+	    pkgCache::PkgIterator Trg = RevDepends ? D.ParentPkg() : D.TargetPkg();
 
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
 	      {
@@ -632,8 +638,11 @@ bool Depends(CommandLine &CmdL)
 		else
 		  cout << Trg.FullName(true) << endl;
 	    
-		if (Recurse == true)
-		  Colours[D.TargetPkg()->ID]++;
+		if (Recurse == true && Shown[Trg->ID] == false)
+		{
+		  Shown[Trg->ID] = true;
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, Trg, APT::VersionSet::CANDIDATE, helper));
+		}
 
 	      }
 	    
@@ -647,131 +656,40 @@ bool Depends(CommandLine &CmdL)
 		   V->ParentPkg == D->Package)
 		  continue;
 	       cout << "    " << V.ParentPkg().FullName(true) << endl;
-	       
-	       if (Recurse == true)
-		  Colours[D.ParentPkg()->ID]++;
+
+		if (Recurse == true && Shown[V.ParentPkg()->ID] == false)
+		{
+		  Shown[V.ParentPkg()->ID] = true;
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::VersionSet::CANDIDATE, helper));
+		}
 	    }
 
 	    if (ShowOnlyFirstOr == true)
 	       while ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or) ++D;
 	 }
-      }      
-   }   
-   while (DidSomething == true);
-   
+   }
+
+   for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();
+	Pkg != helper.virtualPkgs.end(); ++Pkg)
+      cout << '<' << Pkg.FullName(true) << '>' << endl;
+
    return true;
 }
 									/*}}}*/
-// RDepends - Print out a reverse dependency tree - mbc			/*{{{*/
+// Depends - Print out a dependency tree				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Depends(CommandLine &CmdL)
+{
+   return ShowDepends(CmdL, false);
+}
+									/*}}}*/
+// RDepends - Print out a reverse dependency tree			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool RDepends(CommandLine &CmdL)
 {
-   pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
-      return false;
-
-   SPtrArray<unsigned> Colours = new unsigned[Cache->Head().PackageCount];
-   memset(Colours,0,sizeof(*Colours)*Cache->Head().PackageCount);
-
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-      Colours[Pkg->ID] = 1;
-
-   bool const Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
-   bool const Installed = _config->FindB("APT::Cache::Installed",false);
-   bool const Important = _config->FindB("APT::Cache::Important", false);
-   bool const ShowDepType = _config->FindB("APT::Cache::ShowDependencyType",false);
-   bool const ShowPreDepends = _config->FindB("APT::Cache::ShowPre-Depends", true);
-   bool const ShowDepends = _config->FindB("APT::Cache::ShowDepends", true);
-   bool const ShowRecommends = _config->FindB("APT::Cache::ShowRecommends", Important == false);
-   bool const ShowSuggests = _config->FindB("APT::Cache::ShowSuggests", Important == false);
-   bool const ShowReplaces = _config->FindB("APT::Cache::ShowReplaces", Important == false);
-   bool const ShowConflicts = _config->FindB("APT::Cache::ShowConflicts", Important == false);
-   bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
-   bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
-   bool const ShowOnlyFirstOr = _config->FindB("APT::Cache::ShowOnlyFirstOr", false);
-   bool DidSomething;
-   do
-   {
-      DidSomething = false;
-      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
-      {
-	 if (Colours[Pkg->ID] != 1)
-	    continue;
-	 Colours[Pkg->ID] = 2;
-	 DidSomething = true;
-	 
-	 pkgCache::VerIterator Ver = Pkg.VersionList();
-	 if (Ver.end() == true)
-	 {
-	    cout << '<' << Pkg.FullName(true) << '>' << endl;
-	    continue;
-	 }
-	 
-	 cout << Pkg.FullName(true) << endl;
-	 
-	 cout << "Reverse Depends:" << endl;
-	 for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() == false; D++)
-	 {
-	    switch (D->Type) {
-	    case pkgCache::Dep::PreDepends: if (!ShowPreDepends) continue; break;
-	    case pkgCache::Dep::Depends: if (!ShowDepends) continue; break;
-	    case pkgCache::Dep::Recommends: if (!ShowRecommends) continue; break;
-	    case pkgCache::Dep::Suggests: if (!ShowSuggests) continue; break;
-	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;
-	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
-	    case pkgCache::Dep::DpkgBreaks: if (!ShowBreaks) continue; break;
-	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
-	    }
-
-	    // Show the package
-	    pkgCache::PkgIterator Trg = D.ParentPkg();
-
-	    if((Installed && Trg->CurrentVer != 0) || !Installed)
-	      {
-
-		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or && ShowOnlyFirstOr == false)
-		  cout << " |";
-		else
-		  cout << "  ";
-
-		if (ShowDepType == true)
-		  cout << D.DepType() << ": ";
-		if (Trg->VersionList == 0)
-		  cout << "<" << Trg.FullName(true) << ">" << endl;
-		else
-		  cout << Trg.FullName(true) << endl;
-
-		if (Recurse == true)
-		  Colours[D.ParentPkg()->ID]++;
-
-	      }
-	    
-	    // Display all solutions
-	    SPtrArray<pkgCache::Version *> List = D.AllTargets();
-	    pkgPrioSortList(*Cache,List);
-	    for (pkgCache::Version **I = List; *I != 0; I++)
-	    {
-	       pkgCache::VerIterator V(*Cache,*I);
-	       if (V != Cache->VerP + V.ParentPkg()->VersionList ||
-		   V->ParentPkg == D->Package)
-		  continue;
-	       cout << "    " << V.ParentPkg().FullName(true) << endl;
-	       
-	       if (Recurse == true)
-		  Colours[D.ParentPkg()->ID]++;
-	    }
-
-	    if (ShowOnlyFirstOr == true)
-	       while ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or) ++D;
-	 }
-      }      
-   }   
-   while (DidSomething == true);
-   
-   return true;
+   return ShowDepends(CmdL, true);
 }
 									/*}}}*/
 // xvcg - Generate a graph for xvcg					/*{{{*/
