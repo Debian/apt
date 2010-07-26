@@ -580,6 +580,7 @@ bool Depends(CommandLine &CmdL)
    bool const ShowConflicts = _config->FindB("APT::Cache::ShowConflicts", Important == false);
    bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
    bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
+   bool const ShowOnlyFirstOr = _config->FindB("APT::Cache::ShowOnlyFirstOr", false);
    bool DidSomething;
    do
    {
@@ -618,7 +619,7 @@ bool Depends(CommandLine &CmdL)
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
 	      {
 
-		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or && ShowOnlyFirstOr == false)
 		  cout << " |";
 		else
 		  cout << "  ";
@@ -650,6 +651,9 @@ bool Depends(CommandLine &CmdL)
 	       if (Recurse == true)
 		  Colours[D.ParentPkg()->ID]++;
 	    }
+
+	    if (ShowOnlyFirstOr == true)
+	       while ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or) ++D;
 	 }
       }      
    }   
@@ -687,6 +691,7 @@ bool RDepends(CommandLine &CmdL)
    bool const ShowConflicts = _config->FindB("APT::Cache::ShowConflicts", Important == false);
    bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
    bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
+   bool const ShowOnlyFirstOr = _config->FindB("APT::Cache::ShowOnlyFirstOr", false);
    bool DidSomething;
    do
    {
@@ -727,7 +732,7 @@ bool RDepends(CommandLine &CmdL)
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
 	      {
 
-		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or && ShowOnlyFirstOr == false)
 		  cout << " |";
 		else
 		  cout << "  ";
@@ -758,6 +763,9 @@ bool RDepends(CommandLine &CmdL)
 	       if (Recurse == true)
 		  Colours[D.ParentPkg()->ID]++;
 	    }
+
+	    if (ShowOnlyFirstOr == true)
+	       while ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or) ++D;
 	 }
       }      
    }   
