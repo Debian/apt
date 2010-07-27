@@ -25,6 +25,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
@@ -63,6 +66,9 @@
 #include <regex.h>
 #include <sys/wait.h>
 #include <sstream>
+
+#define statfs statfs64
+#define statvfs statvfs64
 									/*}}}*/
 
 #define RAMFS_MAGIC     0x858458f6
