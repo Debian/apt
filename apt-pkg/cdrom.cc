@@ -383,7 +383,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
 
    Out.close();
    
-   rename(DFile.c_str(),string(DFile + '~').c_str());
+   link(DFile.c_str(),string(DFile + '~').c_str());
    if (rename(NewFile.c_str(),DFile.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   DFile.c_str(),DFile.c_str());
