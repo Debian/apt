@@ -45,8 +45,9 @@ aptftparchive() { runapt apt-ftparchive $*; }
 
 setupenvironment() {
 	local TMPWORKINGDIRECTORY=$(mktemp -d)
+	local TESTDIR=$(readlink -f $(dirname $0))
 	msgninfo "Preparing environment for ${CCMD}$0${CINFO} in ${TMPWORKINGDIRECTORY}… "
-	BUILDDIRECTORY=$(readlink -f $(dirname $0)/../../build/bin)
+	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
 	local OLDWORKINGDIRECTORY=$(pwd)
 	trap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
@@ -55,10 +56,21 @@ setupenvironment() {
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d var/cache var/lib/dpkg
 	mkdir -p var/cache/apt/archives/partial var/lib/apt/lists/partial
-	touch var/lib/dpkg/status
+	local STATUSFILE=$(echo "$(basename $0)" | sed 's/^test-/status-/')
+	if [ -f "${TESTDIR}/${STATUSFILE}" ]; then
+		cp "${TESTDIR}/${STATUSFILE}" var/lib/dpkg/status
+	else
+		touch var/lib/dpkg/status
+	fi
 	mkdir -p usr/lib/apt
 	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
 	cd ..
+	local PACKAGESFILE=$(echo "$(basename $0)" | sed 's/^test-/Packages-/')
+	if [ -f "${TESTDIR}/${PACKAGESFILE}" ]; then
+		cp "${TESTDIR}/${PACKAGESFILE}" aptarchive/Packages
+	else
+		touch var/lib/dpkg/status
+	fi
 	echo "RootDir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
