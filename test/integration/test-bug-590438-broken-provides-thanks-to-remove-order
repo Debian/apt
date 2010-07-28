@@ -1,0 +1,59 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+setupflataptarchive
+
+pkgbasefile="Package: base-files
+Status: install ok installed
+Essential: yes
+Priority: required
+Section: admin
+Installed-Size: 472
+Maintainer: Santiago Vila <sanvila@debian.org>
+Architecture: i386
+Version: 5.8
+Replaces: base, dpkg (<= 1.15.0), miscutils
+Provides: base
+Filename: pool/main/b/base-files/base-files_5.8_i386.deb
+Size: 73986
+MD5sum: 8489687ce10e656babd467c9ee389349
+Description-de: Verschiedene Dateien für das Basis-System von Debian"
+
+predependstest() {
+# 	rm rootdir/var/cache/apt/*.bin
+	cp $TESTDIR/$(echo "$(basename $0)" | sed 's/test-/status-/') rootdir/var/lib/dpkg/status
+	echo "$pkgbasefile
+Pre-Depends: $1
+" >> rootdir/var/lib/dpkg/status
+	testequal "Inst gawk (1:3.1.7.dfsg-5 localhost [i386])
+Conf gawk (1:3.1.7.dfsg-5 localhost [i386])
+Remv mawk [1.3.3-15]" aptget install gawk mawk- -sqq -o PreDepends=$(echo "$1" | sed 's/ //g')
+}
+
+predependstest "gawk | mawk"
+predependstest "mawk | gawk"
+
+predependstest "aawk | mawk | gawk"
+predependstest "aawk | gawk | mawk"
+
+predependstest "gawk | awk"
+predependstest "aawk | gawk | awk"
+
+predependstest "mawk | awk"
+
+predependstest "awk | gawk"
+predependstest "awk | gawk | aawk"
+
+predependstest "awk | mawk"
+
+predependstest "aawk | awk"
+predependstest "awk | aawk"
+
+predependstest "awk"
+
+# aptget install gawk mawk- -sqq -o Debug::pkgOrderList=1 #-o Debug::pkgPackageManager=1

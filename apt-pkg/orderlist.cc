@@ -886,13 +886,16 @@ bool pkgOrderList::DepRemove(DepIterator D)
 	    continue;
 
 	 /* We wish to see if the dep on the parent package is okay
-	    in the removed (install) state of the target pkg. */	 
+	    in the removed (install) state of the target pkg. */
+	 bool tryFixDeps = false;
 	 if (CheckDep(D) == true)
 	 {
 	    // We want to catch loops with the code below.
 	    if (IsFlag(D.ParentPkg(),AddPending) == false)
 	       continue;
 	 }
+	 else
+	    tryFixDeps = true;
 
 	 // This is the loop detection
 	 if (IsFlag(D.ParentPkg(),Added) == true || 
@@ -901,6 +904,78 @@ bool pkgOrderList::DepRemove(DepIterator D)
 	    if (IsFlag(D.ParentPkg(),AddPending) == true)
 	       AddLoop(D);
 	    continue;
+	 }
+
+	 if (tryFixDeps == true)
+	 {
+	    for (pkgCache::DepIterator F = D.ParentPkg().CurrentVer().DependsList();
+		 F.end() == false; ++F)
+	    {
+	       if (F->Type != pkgCache::Dep::Depends && F->Type != pkgCache::Dep::PreDepends)
+		  continue;
+	       // Check the Providers
+	       if (F.TargetPkg()->ProvidesList != 0)
+	       {
+		  pkgCache::PrvIterator Prov = F.TargetPkg().ProvidesList();
+		  for (; Prov.end() == false; ++Prov)
+		  {
+		     pkgCache::PkgIterator const P = Prov.OwnerPkg();
+		     if (IsFlag(P, InList) == true &&
+			 IsFlag(P, AddPending) == true &&
+			 IsFlag(P, Added) == false &&
+			 Cache[P].InstallVer == 0)
+			break;
+		  }
+		  if (Prov.end() == false)
+		     for (pkgCache::PrvIterator Prv = F.TargetPkg().ProvidesList();
+			  Prv.end() == false; ++Prv)
+		     {
+			pkgCache::PkgIterator const P = Prv.OwnerPkg();
+			if (IsFlag(P, InList) == true &&
+			    IsFlag(P, AddPending) == false &&
+			    Cache[P].InstallVer != 0 &&
+			    VisitNode(P) == true)
+			{
+			   tryFixDeps = false;
+			   break;
+			}
+		     }
+		  if (tryFixDeps == false)
+		     break;
+	       }
+
+	       // Check for Or groups
+	       if ((F->CompareOp & pkgCache::Dep::Or) != pkgCache::Dep::Or)
+		  continue;
+	       // Lets see if the package is part of the Or group
+	       pkgCache::DepIterator S = F;
+	       for (; S.end() == false; ++S)
+	       {
+		  if (S.TargetPkg() == D.TargetPkg())
+		     break;
+		  if ((S->CompareOp & pkgCache::Dep::Or) != pkgCache::Dep::Or ||
+		      CheckDep(S)) // Or group is satisfied by another package
+		     for (;S.end() == false; ++S);
+	       }
+	       if (S.end() == true)
+		  continue;
+	       // skip to the end of the or group
+	       for (;S.end() == false && (S->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or; ++S);
+	       ++S;
+	       // The soon to be removed is part of the Or group
+	       // start again in the or group and find something which will serve as replacement
+	       for (; F.end() == false && F != S; ++F)
+	       {
+		  if (F.TargetPkg() == D.TargetPkg() ||
+		      IsFlag(F.TargetPkg(), InList) == false ||
+		      VisitNode(F.TargetPkg()) == false)
+		     continue;
+		  tryFixDeps = false;
+		  break;
+	       }
+	       if (tryFixDeps == false)
+		  break;
+	    }
 	 }
 
 	 // Skip over missing files
