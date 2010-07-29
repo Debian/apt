@@ -2,6 +2,10 @@ apt (0.7.26~exp12) UNRELEASEDexperimental; urgency=low
 
   * debian/control:
     - add dependency on zlib-dev for libapt-pkg-dev
+   * apt-pkg/cacheset.cc:
+     - make CacheSetHelper::canNotFindAllVer display a notice
+       only (for compat reasons). Otherwise tools like sbuild
+       blow up
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 29 Jul 2010 23:45:42 +0200
 
