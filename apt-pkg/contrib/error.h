@@ -204,9 +204,10 @@ public:									/*{{{*/
 	 *  displayed or not.
 	 *
 	 *  \param[out] out output stream to write the messages in
-	 *  \param WithoutNotice output notices or not
+	 *  \param threshold minimim level considered
+         *  \param mergeStack 
 	 */
-	void DumpErrors(std::ostream &out, MsgType const &trashhold = WARNING,
+	void DumpErrors(std::ostream &out, MsgType const &threshold = WARNING,
 			bool const &mergeStack = true);
 
 	/** \brief dumps the list of messages to std::cerr
@@ -214,10 +215,10 @@ public:									/*{{{*/
 	 *  Note that all messages are discarded, also the notices
 	 *  displayed or not.
 	 *
-	 *  \param WithoutNotice print notices or not
+	 *  \param threshold minimum level printed
 	 */
-	void inline DumpErrors(MsgType const &trashhold = WARNING) {
-		DumpErrors(std::cerr, trashhold);
+	void inline DumpErrors(MsgType const &threshold = WARNING) {
+		DumpErrors(std::cerr, threshold);
 	}
 
 	/** \brief put the current Messages into the stack

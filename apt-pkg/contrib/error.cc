@@ -180,7 +180,7 @@ bool GlobalError::PopMessage(std::string &Text) {
 }
 									/*}}}*/
 // GlobalError::DumpErrors - Dump all of the errors/warns to cerr	/*{{{*/
-void GlobalError::DumpErrors(std::ostream &out, MsgType const &trashhold,
+void GlobalError::DumpErrors(std::ostream &out, MsgType const &threshold,
 			     bool const &mergeStack) {
 	if (mergeStack == true)
 		for (std::list<MsgStack>::const_reverse_iterator s = Stacks.rbegin();
@@ -189,7 +189,7 @@ void GlobalError::DumpErrors(std::ostream &out, MsgType const &trashhold,
 
 	for (std::list<Item>::const_iterator m = Messages.begin();
 	     m != Messages.end(); m++)
-		if (m->Type >= trashhold)
+		if (m->Type >= threshold)
 			out << (*m) << std::endl;
 	Discard();
 }
