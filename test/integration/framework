@@ -149,6 +149,22 @@ testequal() {
 	$* 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
 }
 
+testequalor2() {
+	local COMPAREFILE1=$(mktemp)
+	local COMPAREFILE2=$(mktemp)
+	local COMPAREAGAINST=$(mktemp)
+	echo "$1" > $COMPAREFILE1
+	echo "$2" > $COMPAREFILE2
+	shift 2
+	msgtest "Test for equality OR of" "$*"
+	$* 2>&1 1> $COMPAREAGAINST
+	(diff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
+		diff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
+		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(diff $COMPAREFILE1 $COMPAREAGAINST)" \
+		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(diff $COMPAREFILE2 $COMPAREAGAINST)" &&
+		  msgfail )
+}
+
 testshowvirtual() {
 	local VIRTUAL="E: Can't select versions from package '$1' as it purely virtual"
 	local PACKAGE="$1"

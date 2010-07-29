@@ -936,6 +936,7 @@ bool pkgOrderList::DepRemove(DepIterator D)
 			    Cache[P].InstallVer != 0 &&
 			    VisitNode(P) == true)
 			{
+			   Flag(P, Immediate);
 			   tryFixDeps = false;
 			   break;
 			}
@@ -970,6 +971,7 @@ bool pkgOrderList::DepRemove(DepIterator D)
 		      IsFlag(F.TargetPkg(), InList) == false ||
 		      VisitNode(F.TargetPkg()) == false)
 		     continue;
+		  Flag(F.TargetPkg(), Immediate);
 		  tryFixDeps = false;
 		  break;
 	       }
