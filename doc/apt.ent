@@ -142,12 +142,6 @@
   </citerefentry>"
 >
 
-<!ENTITY gnome-apt "<citerefentry>
-    <refentrytitle><command>gnome-apt</command></refentrytitle>
-    <manvolnum>1</manvolnum>
-  </citerefentry>"
->
-
 <!ENTITY wajig "<citerefentry>
     <refentrytitle><command>wajig</command></refentrytitle>
     <manvolnum>1</manvolnum>
@@ -261,7 +255,9 @@
       <term><option>--config-file</option></term>
      <listitem><para>Configuration File; Specify a configuration file to use. 
      The program will read the default configuration file and then this 
-     configuration file. See &apt-conf; for syntax information.     
+     configuration file. If configuration settings need to be set before the
+     default configuration files are parsed specify a file with the <envar>APT_CONFIG</envar>
+     environment variable. See &apt-conf; for syntax information.
      </para>
      </listitem>
      </varlistentry>
@@ -367,9 +363,19 @@
      </varlistentry>
 ">
 
+<!ENTITY file-extended_states "
+      <varlistentry><term><filename>/var/lib/apt/extended_states</filename></term>
+      <listitem><para>Status list of auto-installed packages.
+      Configuration Item: <literal>Dir::State::extended_states</literal>.
+      </para></listitem>
+      </varlistentry>
+">
+
+<!-- TRANSLATOR: This is the section header for the following paragraphs - comparable
+     to the other headers like NAME and DESCRIPTION and should therefore be uppercase. -->
 <!ENTITY translation-title "TRANSLATION">
 
-<!-- TRANSLATOR: This is a placeholder. You should write here who has constributed
+<!-- TRANSLATOR: This is a placeholder. You should write here who has contributed
      to the translation in the past, who is responsible now and maybe further information
      specially related to your translation. -->
 <!ENTITY translation-holder "
@@ -379,9 +385,16 @@
 ">
 
 <!-- TRANSLATOR: As a translation is allowed to have 20% of untranslated/fuzzy strings
-     in a shipped manpage will maybe appear english parts. -->
+     in a shipped manpage newer/modified paragraphs will maybe appear in english in
+     the generated manpage. This sentence is therefore here to tell the reader that this
+     is not a mistake by the translator - obviously the target is that at least for stable
+     releases this sentence is not needed. :) -->
 <!ENTITY translation-english "
      Note that this translated document may contain untranslated parts.
      This is done on purpose, to avoid losing content when the
      translation is lagging behind the original content.
 ">
+
+<!ENTITY oldstable-codename "etch">
+<!ENTITY stable-codename "lenny">
+<!ENTITY testing-codename "squeeze">

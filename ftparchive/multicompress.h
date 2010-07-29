@@ -53,9 +53,9 @@ class MultiCompress
    mode_t Permissions;
    static const CompType Compressors[];
 
-   bool OpenCompress(const CompType *Prog,pid_t &Pid,int FileFd,
-		     int &OutFd,bool Comp);
-   bool Child(int Fd);
+   bool OpenCompress(const CompType *Prog,pid_t &Pid,int const &FileFd,
+		     int &OutFd,bool const &Comp);
+   bool Child(int const &Fd);
    bool Start();
    bool Die();
    
@@ -68,10 +68,10 @@ class MultiCompress
    bool Finalize(unsigned long &OutSize);
    bool OpenOld(int &Fd,pid_t &Proc);
    bool CloseOld(int Fd,pid_t Proc);
-   static bool GetStat(string Output,string Compress,struct stat &St);
+   static bool GetStat(string const &Output,string const &Compress,struct stat &St);
    
-   MultiCompress(string Output,string Compress,mode_t Permissions,
-		 bool Write = true);
+   MultiCompress(string const &Output,string const &Compress,
+		 mode_t const &Permissions, bool const &Write = true);
    ~MultiCompress();
 };
 

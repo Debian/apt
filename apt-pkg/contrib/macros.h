@@ -56,33 +56,35 @@
 
 // some nice optional GNUC features
 #if __GNUC__ >= 3
-        #define __must_check    __attribute__ ((warn_unused_result))
-        #define __deprecated    __attribute__ ((deprecated))
-        /* likely() and unlikely() can be used to mark boolean expressions
-           as (not) likely true which will help the compiler to optimise */
-        #define likely(x)       __builtin_expect (!!(x), 1)
-        #define unlikely(x)     __builtin_expect (!!(x), 0)
+	#define __must_check	__attribute__ ((warn_unused_result))
+	#define __deprecated	__attribute__ ((deprecated))
+	#define __attrib_const	__attribute__ ((__const__))
+	/* likely() and unlikely() can be used to mark boolean expressions
+	   as (not) likely true which will help the compiler to optimise */
+	#define likely(x)	__builtin_expect (!!(x), 1)
+	#define unlikely(x)	__builtin_expect (!!(x), 0)
 #else
-        #define __must_check    /* no warn_unused_result */
-        #define __deprecated    /* no deprecated */
-        #define likely(x)       (x)
-        #define unlikely(x)     (x)
+	#define __must_check	/* no warn_unused_result */
+	#define __deprecated	/* no deprecated */
+	#define __attrib_const	/* no const attribute */
+	#define likely(x)	(x)
+	#define unlikely(x)	(x)
 #endif
 
 // cold functions are unlikely() to be called
 #if (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) || __GNUC__ > 4
-        #define __cold  __attribute__ ((__cold__))
+	#define __cold	__attribute__ ((__cold__))
+	#define __hot	__attribute__ ((__hot__))
 #else
-        #define __cold  /* no cold marker */
+	#define __cold	/* no cold marker */
+	#define __hot	/* no hot marker */
 #endif
 
 #ifdef __GNUG__
 // Methods have a hidden this parameter that is visible to this attribute
-	#define __like_printf_1 __attribute__ ((format (printf, 2, 3)))
-	#define __like_printf_2 __attribute__ ((format (printf, 3, 4)))
+	#define __like_printf(n)	__attribute__((format(printf, n, n + 1)))
 #else
-	#define __like_printf_1
-	#define __like_printf_2
+	#define __like_printf(n)	/* no like-printf */
 #endif
 
 #endif

@@ -53,6 +53,7 @@ namespace
     std::make_pair("configure", N_("Configuring %s")),
     std::make_pair("remove",    N_("Removing %s")),
     std::make_pair("purge",    N_("Completely removing %s")),
+    std::make_pair("disappear", N_("Noting disappearance of %s")),
     std::make_pair("trigproc",  N_("Running post-installation trigger %s"))
   };
 
@@ -108,7 +109,7 @@ ionice(int PID)
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
    : pkgPackageManager(Cache), dpkgbuf_pos(0),
-     term_out(NULL), PackagesDone(0), PackagesTotal(0), pkgFailures(0)
+     term_out(NULL), history_out(NULL), PackagesDone(0), PackagesTotal(0)
 {
 }
 									/*}}}*/
@@ -127,7 +128,19 @@ bool pkgDPkgPM::Install(PkgIterator Pkg,string File)
    if (File.empty() == true || Pkg.end() == true)
       return _error->Error("Internal Error, No file name for %s",Pkg.Name());
 
-   List.push_back(Item(Item::Install,Pkg,File));
+   // If the filename string begins with DPkg::Chroot-Directory, return the
+   // substr that is within the chroot so dpkg can access it.
+   string const chrootdir = _config->FindDir("DPkg::Chroot-Directory","/");
+   if (chrootdir != "/" && File.find(chrootdir) == 0)
+   {
+      size_t len = chrootdir.length();
+      if (chrootdir.at(len - 1) == '/')
+        len--;
+      List.push_back(Item(Item::Install,Pkg,File.substr(len)));
+   }
+   else
+      List.push_back(Item(Item::Install,Pkg,File));
+
    return true;
 }
 									/*}}}*/
@@ -409,7 +422,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: install: pkg'
       'processing: configure: pkg'
       'processing: remove: pkg'
-      'processing: purge: pkg' - but for apt is it a ignored "unknown" action
+      'processing: purge: pkg'
+      'processing: disappear: pkg'
       'processing: trigproc: trigger'
 	    
    */
@@ -456,6 +470,9 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
+
+      if (strncmp(action, "disappear", strlen("disappear")) == 0)
+	 handleDisappearAction(pkg_or_trigger);
       return;
    }
 
@@ -525,6 +542,51 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 		<< " action: " << action << endl;
 }
 									/*}}}*/
+// DPkgPM::handleDisappearAction					/*{{{*/
+void pkgDPkgPM::handleDisappearAction(string const &pkgname)
+{
+   // record the package name for display and stuff later
+   disappearedPkgs.insert(pkgname);
+
+   pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
+   if (unlikely(Pkg.end() == true))
+      return;
+   // the disappeared package was auto-installed - nothing to do
+   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+      return;
+   pkgCache::VerIterator PkgVer = Pkg.CurrentVer();
+   if (unlikely(PkgVer.end() == true))
+      return;
+   /* search in the list of dependencies for (Pre)Depends,
+      check if this dependency has a Replaces on our package
+      and if so transfer the manual installed flag to it */
+   for (pkgCache::DepIterator Dep = PkgVer.DependsList(); Dep.end() != true; ++Dep)
+   {
+      if (Dep->Type != pkgCache::Dep::Depends &&
+	  Dep->Type != pkgCache::Dep::PreDepends)
+	 continue;
+      pkgCache::PkgIterator Tar = Dep.TargetPkg();
+      if (unlikely(Tar.end() == true))
+	 continue;
+      // the package is already marked as manual
+      if ((Cache[Tar].Flags & pkgCache::Flag::Auto) != pkgCache::Flag::Auto)
+	 continue;
+      pkgCache::VerIterator TarVer = Tar.CurrentVer();
+      for (pkgCache::DepIterator Rep = TarVer.DependsList(); Rep.end() != true; ++Rep)
+      {
+	 if (Rep->Type != pkgCache::Dep::Replaces)
+	    continue;
+	 if (Pkg != Rep.TargetPkg())
+	    continue;
+	 // okay, they are strongly connected - transfer manual-bit
+	 if (Debug == true)
+	    std::clog << "transfer manual-bit from disappeared »" << pkgname << "« to »" << Tar.FullName() << "«" << std::endl;
+	 Cache[Tar].Flags &= ~Flag::Auto;
+	 break;
+      }
+   }
+}
+									/*}}}*/
 // DPkgPM::DoDpkgStatusFd						/*{{{*/
 // ---------------------------------------------------------------------
 /*
@@ -563,15 +625,15 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
-void pkgDPkgPM::WriteHistoryTag(FILE *history_out, string tag, string value)
+void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
 {
-   if (value.size() > 0)
-   {
-      // poor mans rstrip(", ")
-      if (value[value.size()-2] == ',' && value[value.size()-1] == ' ')
-	 value.erase(value.size() - 2, 2);
-      fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
-   }
+   size_t const length = value.length();
+   if (length == 0)
+      return;
+   // poor mans rstrip(", ")
+   if (value[length-2] == ',' && value[length-1] == ' ')
+      value.erase(length - 2, 2);
+   fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
 }									/*}}}*/
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
@@ -604,7 +666,7 @@ bool pkgDPkgPM::OpenLog()
 				   _config->Find("Dir::Log::History"));
    if (!history_name.empty())
    {
-      FILE *history_out = fopen(history_name.c_str(),"a");
+      history_out = fopen(history_name.c_str(),"a");
       if (history_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
       chmod(history_name.c_str(), 0644);
@@ -613,25 +675,32 @@ bool pkgDPkgPM::OpenLog()
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
 	 if (Cache[I].NewInstall())
-	    install += I.Name() + string(" (") + Cache[I].CandVersion + string("), ");
+	 {
+	    install += I.FullName(false) + string(" (") + Cache[I].CandVersion;
+	    if (Cache[I].Flags & pkgCache::Flag::Auto)
+	       install+= ", automatic";
+	    install += string("), ");
+	 }
 	 else if (Cache[I].Upgrade())
-	    upgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	    upgrade += I.FullName(false) + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Downgrade())
-	    downgrade += I.Name() + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
+	    downgrade += I.FullName(false) + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
 	 else if (Cache[I].Delete())
 	 {
 	    if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
-	       purge += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	       purge += I.FullName(false) + string(" (") + Cache[I].CurVersion + string("), ");	    
 	    else
-	       remove += I.Name() + string(" (") + Cache[I].CurVersion + string("), ");	    
+	       remove += I.FullName(false) + string(" (") + Cache[I].CurVersion + string("), ");	    
 	 }
       }
-      WriteHistoryTag(history_out, "Install", install);
-      WriteHistoryTag(history_out, "Upgrade", upgrade);
-      WriteHistoryTag(history_out, "Downgrade",downgrade);
-      WriteHistoryTag(history_out, "Remove",remove);
-      WriteHistoryTag(history_out, "Purge",purge);
-      fclose(history_out);
+      if (_config->Exists("Commandline::AsString") == true)
+	 WriteHistoryTag("Commandline", _config->Find("Commandline::AsString"));
+      WriteHistoryTag("Install", install);
+      WriteHistoryTag("Upgrade", upgrade);
+      WriteHistoryTag("Downgrade",downgrade);
+      WriteHistoryTag("Remove",remove);
+      WriteHistoryTag("Purge",purge);
+      fflush(history_out);
    }
    
    return true;
@@ -654,19 +723,29 @@ bool pkgDPkgPM::CloseLog()
    }
    term_out = NULL;
 
-   // check if the directory exists in which we want to write the file
-   string const logdir = _config->FindDir("Dir::Log");
-   if(not FileExists(logdir))
-      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
-
-   string history_name = flCombine(_config->FindDir("Dir::Log"),
-				   _config->Find("Dir::Log::History"));
-   if (!history_name.empty())
+   if(history_out)
    {
-      FILE *history_out = fopen(history_name.c_str(),"a");
+      if (disappearedPkgs.empty() == false)
+      {
+	 string disappear;
+	 for (std::set<std::string>::const_iterator d = disappearedPkgs.begin();
+	      d != disappearedPkgs.end(); ++d)
+	 {
+	    pkgCache::PkgIterator P = Cache.FindPkg(*d);
+	    disappear.append(*d);
+	    if (P.end() == true)
+	       disappear.append(", ");
+	    else
+	       disappear.append(" (").append(Cache[P].CurVersion).append("), ");
+	 }
+	 WriteHistoryTag("Disappeared", disappear);
+      }
+      if (dpkg_error.empty() == false)
+	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
       fprintf(history_out, "End-Date: %s\n", timestr);
       fclose(history_out);
    }
+   history_out = NULL;
 
    return true;
 }
@@ -914,6 +993,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 {
 	    if((*I).Pkg.end() == true)
 	       continue;
+	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
+	       continue;
 	    Args[n++] = I->Pkg.Name();
 	    Size += strlen(Args[n-1]);
 	 }	 
@@ -1081,9 +1162,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    signal(SIGHUP,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
+
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 if (!stdin_is_dev_null)
+	 if (master >= 0 && !stdin_is_dev_null)
 	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
@@ -1136,7 +1218,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 if(stopOnError)
 	    RunScripts("DPkg::Post-Invoke");
 
-	 string dpkg_error;
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
 	    strprintf(dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
 	 else if (WIFEXITED(Status) != 0)
@@ -1145,17 +1226,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
 
 	 if(dpkg_error.size() > 0)
-	 {
 	    _error->Error(dpkg_error.c_str());
-	    string history_name = flCombine(_config->FindDir("Dir::Log"),
-					    _config->Find("Dir::Log::History"));
-	    if (!history_name.empty())
-	    {
-	       FILE *history_out = fopen(history_name.c_str(),"a");
-	       fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
-	       fclose(history_out);
-	    }
-	 }
 
 	 if(stopOnError) 
 	 {
@@ -1190,7 +1261,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    string::size_type pos;
    FILE *report;
 
-   if (_config->FindB("Dpkg::ApportFailureReport",true) == false)
+   if (_config->FindB("Dpkg::ApportFailureReport", false) == false)
    {
       std::clog << "configured to not write apport reports" << std::endl;
       return;

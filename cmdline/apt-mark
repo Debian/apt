@@ -8,7 +8,7 @@ import os.path
 try:
     import apt_pkg
 except ImportError:
-    print "Error importing apt_pkg, is python-apt installed?"
+    print >> sys.stderr, "Error importing apt_pkg, is python-apt installed?"
     sys.exit(1)
     
 actions = { "markauto" : 1,
@@ -19,10 +19,10 @@ def show_automatic(filename):
     if not os.path.exists(STATE_FILE):
         return
     auto = set()
-    tagfile = apt_pkg.ParseTagFile(open(STATE_FILE))
-    while tagfile.Step():
-        pkgname = tagfile.Section.get("Package")
-        autoInst = tagfile.Section.get("Auto-Installed")
+    tagfile = apt_pkg.TagFile(open(STATE_FILE))
+    for section in tagfile:
+        pkgname = section.get("Package")
+        autoInst = section.get("Auto-Installed")
         if int(autoInst):
             auto.add(pkgname)
     print "\n".join(sorted(auto))
@@ -33,24 +33,24 @@ def mark_unmark_automatic(filename, action, pkgs):
     # open the statefile
     if os.path.exists(STATE_FILE):
         try:
-            tagfile = apt_pkg.ParseTagFile(open(STATE_FILE))
+            tagfile = apt_pkg.TagFile(open(STATE_FILE))
             outfile = open(STATE_FILE+".tmp","w")
         except IOError, msg:
             print "%s, are you root?" % (msg)
             sys.exit(1)
-        while tagfile.Step():
-            pkgname = tagfile.Section.get("Package")
-            autoInst = tagfile.Section.get("Auto-Installed")
+        for section in tagfile:
+            pkgname = section.get("Package")
+            autoInst = section.get("Auto-Installed")
             if pkgname in pkgs:
                 if options.verbose:
                     print "changing %s to %s" % (pkgname,action)
-                newsec = apt_pkg.RewriteSection(tagfile.Section,
+                newsec = apt_pkg.rewrite_section(section,
                                        [],
                                        [ ("Auto-Installed",str(action)) ])
                 pkgs.remove(pkgname)
                 outfile.write(newsec+"\n")
             else:
-                outfile.write(str(tagfile.Section)+"\n")
+                outfile.write(str(section)+"\n")
         if action == 1:
             for pkgname in pkgs:
                 if options.verbose:
@@ -68,6 +68,7 @@ if __name__ == "__main__":
     # option parsing
     parser = OptionParser()
     parser.usage = "%prog [options] {markauto|unmarkauto} packages..."
+    parser.epilog = "apt-mark is deprecated, use apt-get markauto/unmarkauto."
     parser.add_option("-f", "--file", action="store", type="string",
                       dest="filename",
                       help="read/write a different file")
@@ -76,9 +77,13 @@ if __name__ == "__main__":
                       help="print verbose status messages to stdout")
     (options, args) = parser.parse_args()
 
+    if not args:
+        parser.print_help()
+        sys.exit(1)
+
     # get the state-file
     if not options.filename:
-        STATE_FILE = apt_pkg.Config.FindDir("Dir::State") + "extended_states"
+        STATE_FILE = apt_pkg.config.find_dir("Dir::State") + "extended_states"
     else:
         STATE_FILE=options.filename
 

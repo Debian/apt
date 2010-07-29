@@ -296,8 +296,7 @@ bool Go(CommandLine &CmdL)
 	MMap *Map = 0;
 	pkgSourceList List;
 	List.ReadMainList();
-	OpProgress Prog;
-	pkgMakeStatusCache(List,Prog,&Map,true);
+	pkgCacheGenerator::MakeStatusCache(List,NULL,&Map,true);
 	if (Map == 0)
 	   return false;
 	DebFile::Cache = new pkgCache(Map);

@@ -26,6 +26,7 @@ class MirrorMethod : public HttpMethod
    // we simply transform between BaseUri and Mirror
    string BaseUri;    // the original mirror://... url
    string Mirror;     // the selected mirror uri (http://...)
+   vector<string> AllMirrors; // all available mirrors
    string MirrorFile; // the file that contains the list of mirrors
    bool DownloadedMirrorFile; // already downloaded this session
 
@@ -34,7 +35,9 @@ class MirrorMethod : public HttpMethod
  protected:
    bool DownloadMirrorFile(string uri);
    string GetMirrorFileName(string uri);
-   bool SelectMirror();
+   bool InitMirrors();
+   bool TryNextMirror();
+   void CurrentQueueUriToMirror();
    bool Clean(string dir);
    
    // we need to overwrite those to transform the url back

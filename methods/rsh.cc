@@ -278,8 +278,7 @@ bool RSHConn::ModTime(const char *Path, time_t &Time)
       return false;
 
    // Parse it
-   StrToTime(Msg,Time);
-   return true;
+   return FTPMDTMStrToTime(Msg.c_str(), Time);
 }
 									/*}}}*/
 // RSHConn::Get - Get a file						/*{{{*/

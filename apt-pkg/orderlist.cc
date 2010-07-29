@@ -117,7 +117,8 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
       return false;
 
    // Skip Packages that need configure only.
-   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
+   if ((Pkg.State() == pkgCache::PkgIterator::NeedsConfigure ||
+        Pkg.State() == pkgCache::PkgIterator::NeedsNothing) &&
        Cache[Pkg].Keep() == true)
       return false;
 
@@ -126,6 +127,11 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
    
    if (FileList[Pkg->ID].empty() == false)
       return false;
+
+   // Missing Pseudo packages are missing if the real package is missing
+   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == true)
+      return IsMissing(Pkg.Group().FindPkg("all"));
+
    return true;
 }
 									/*}}}*/
@@ -199,7 +205,7 @@ bool pkgOrderList::OrderCritical()
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsNow(P) == true)
-	    clog << "  " << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
+	    clog << "  " << P.FullName() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
       }
    }
 
@@ -272,7 +278,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsNow(P) == true)
-	    clog << "  " << P.Name() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
+	    clog << "  " << P.FullName() << ' ' << IsMissing(P) << ',' << IsFlag(P,After) << endl;
       }
    }
 
@@ -543,7 +549,7 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    if (Debug == true)
    {
       for (int j = 0; j != Depth; j++) clog << ' ';
-      clog << "Visit " << Pkg.Name() << endl;
+      clog << "Visit " << Pkg.FullName() << endl;
    }
    
    Depth++;
@@ -602,7 +608,7 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    if (Debug == true)
    {
       for (int j = 0; j != Depth; j++) clog << ' ';
-      clog << "Leave " << Pkg.Name() << ' ' << IsFlag(Pkg,Added) << ',' << IsFlag(Pkg,AddPending) << endl;
+      clog << "Leave " << Pkg.FullName() << ' ' << IsFlag(Pkg,Added) << ',' << IsFlag(Pkg,AddPending) << endl;
    }
    
    return true;

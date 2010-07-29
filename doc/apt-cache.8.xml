@@ -309,6 +309,20 @@ Reverse Provides:
      Configuration Item: <literal>APT::Cache::Important</literal>.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>--no-pre-depends</option></term>
+		   <term><option>--no-depends</option></term>
+		   <term><option>--no-recommends</option></term>
+		   <term><option>--no-suggests</option></term>
+		   <term><option>--no-conflicts</option></term>
+		   <term><option>--no-breaks</option></term>
+		   <term><option>--no-replaces</option></term>
+		   <term><option>--no-enhances</option></term>
+		   <listitem><para>Per default the <literal>depends</literal> and
+     <literal>rdepends</literal> print all dependencies. This can be twicked with
+     these flags which will omit the specified dependency type.
+     Configuration Item: <literal>APT::Cache::Show<replaceable>DependencyType</replaceable></literal>
+     e.g. <literal>APT::Cache::ShowRecommends</literal>.</para></listitem>
+     </varlistentry>
      <varlistentry><term><option>-f</option></term><term><option>--full</option></term>
      <listitem><para>Print full package records when searching. 
      Configuration Item: <literal>APT::Cache::ShowFull</literal>.</para></listitem>

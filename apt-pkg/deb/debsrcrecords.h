@@ -30,14 +30,14 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
 
    virtual bool Restart() {return Tags.Jump(Sect,0);};
    virtual bool Step() {iOffset = Tags.Offset(); return Tags.Step(Sect);};
-   virtual bool Jump(unsigned long Off) {iOffset = Off; return Tags.Jump(Sect,Off);};
+   virtual bool Jump(unsigned long const &Off) {iOffset = Off; return Tags.Jump(Sect,Off);};
 
    virtual string Package() const {return Sect.FindS("Package");};
    virtual string Version() const {return Sect.FindS("Version");};
    virtual string Maintainer() const {return Sect.FindS("Maintainer");};
    virtual string Section() const {return Sect.FindS("Section");};
    virtual const char **Binaries();
-   virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool ArchOnly);
+   virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true);
    virtual unsigned long Offset() {return iOffset;};
    virtual string AsStr() 
    {
@@ -47,8 +47,8 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    };
    virtual bool Files(vector<pkgSrcRecords::File> &F);
 
-   debSrcRecordParser(string File,pkgIndexFile const *Index) 
-      : Parser(Index), Fd(File,FileFd::ReadOnly), Tags(&Fd,102400), 
+   debSrcRecordParser(string const &File,pkgIndexFile const *Index) 
+      : Parser(Index), Fd(File,FileFd::ReadOnlyGzip), Tags(&Fd,102400), 
         Buffer(0), BufSize(0) {}
    ~debSrcRecordParser();
 };

@@ -8,9 +8,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/aptconfiguration.h>
 
 #include <clocale>
 #include <cstring>
@@ -66,34 +66,23 @@ string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &Record,
    return string();
 }
 									/*}}}*/
-// IndexFile::TranslationsAvailable - Check if will use Translation    /*{{{*/
+// IndexFile::TranslationsAvailable - Check if will use Translation	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgIndexFile::TranslationsAvailable()
-{
-  const string Translation = _config->Find("APT::Acquire::Translation");
-  
-  if (Translation.compare("none") != 0)
-    return CheckLanguageCode(LanguageCode().c_str());
-  else
-    return false;
+bool pkgIndexFile::TranslationsAvailable() {
+	return (APT::Configuration::getLanguages().empty() != true);
 }
 									/*}}}*/
-// IndexFile::CheckLanguageCode - Check the Language Code   	        /*{{{*/
+// IndexFile::CheckLanguageCode - Check the Language Code		/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-/* common cases: de_DE, de_DE@euro, de_DE.UTF-8, de_DE.UTF-8@euro,
-                 de_DE.ISO8859-1, tig_ER
-                 more in /etc/gdm/locale.conf 
-*/
-
-bool pkgIndexFile::CheckLanguageCode(const char *Lang)
+/* No intern need for this method anymore as the check for correctness
+   is already done in getLanguages(). Note also that this check is
+   rather bad (doesn't take three character like ast into account).
+   TODO: Remove method with next API break */
+__attribute__ ((deprecated)) bool pkgIndexFile::CheckLanguageCode(const char *Lang)
 {
-  if (strlen(Lang) == 2 || 
-      strlen(Lang) == 3 ||
-      (strlen(Lang) > 3 && Lang[3] == '_') ||
-      (strlen(Lang) == 5 && Lang[2] == '_'))
-  return true;
+  if (strlen(Lang) == 2 || (strlen(Lang) == 5 && Lang[2] == '_'))
+    return true;
 
   if (strcmp(Lang,"C") != 0)
     _error->Warning("Wrong language code %s", Lang);
@@ -101,37 +90,14 @@ bool pkgIndexFile::CheckLanguageCode(const char *Lang)
   return false;
 }
 									/*}}}*/
-// IndexFile::LanguageCode - Return the Language Code            	/*{{{*/
+// IndexFile::LanguageCode - Return the Language Code			/*{{{*/
 // ---------------------------------------------------------------------
-/* return the language code */
-string pkgIndexFile::LanguageCode()
-{
-  const string Translation = _config->Find("APT::Acquire::Translation");
-
-  if (Translation.compare("environment") == 0) 
-  {
-     string lang = std::setlocale(LC_MESSAGES,NULL);
-
-     // we have a mapping of the language codes that contains all the language
-     // codes that need the country code as well 
-     // (like pt_BR, pt_PT, sv_SE, zh_*, en_*)
-     const char *need_full_langcode[] = { "en_", 
-					  "pt_",
-					  "sv_",
-					  "zh_", 
-					  NULL };
-     for(const char **s = need_full_langcode;*s != NULL; s++)
-	if(lang.find(*s) == 0)
-	   return lang.substr(0,5);
-     
-     if(lang.find("_") != lang.npos)
-	return lang.substr(0, lang.find("_"));
-     else if(lang.find(".") != lang.npos)
-	return lang.substr(0, lang.find("."));
-     else
-	return lang;
-  }
-  else 
-     return Translation;
+/* As we have now possibly more than one LanguageCode this method is
+   supersided by a) private classmembers or b) getLanguages().
+   TODO: Remove method with next API break */
+__attribute__ ((deprecated)) string pkgIndexFile::LanguageCode() {
+	if (TranslationsAvailable() == false)
+		return "";
+	return APT::Configuration::getLanguages()[0];
 }
 									/*}}}*/

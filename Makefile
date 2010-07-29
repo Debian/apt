@@ -15,7 +15,6 @@ all headers library clean veryclean binary program doc dirs:
 	$(MAKE) -C apt-inst $@
 	$(MAKE) -C methods $@
 	$(MAKE) -C cmdline $@
-	$(MAKE) -C share $@
 	$(MAKE) -C ftparchive $@
 	$(MAKE) -C dselect $@
 	$(MAKE) -C doc $@

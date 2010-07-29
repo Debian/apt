@@ -95,7 +95,9 @@ APT
   Clean-Installed "true";
   Immediate-Configure "true";      // DO NOT turn this off, see the man page
   Force-LoopBreak "false";         // DO NOT turn this on, see the man page
-  Cache-Limit "4194304";
+  Cache-Start "20971520";
+  Cache-Grow "1048576";
+  Cache-Limit "0";
   Default-Release "";
 
   // consider Recommends, Suggests as important dependencies that should
@@ -103,9 +105,6 @@ APT
   Install-Recommends "true";
   Install-Suggests "false";
 
-  // install recommends automatically for packages in this section
-  Install-Recommends-Section { "metapackages"; "universe/metapackages"; };
-  
   // consider dependencies of packages in this section manual
   Never-MarkAuto-Sections {"metapackages"; "universe/metapackages"; };
 
@@ -172,11 +171,16 @@ Acquire
   Queue-Mode "host";       // host|access
   Retries "0";
   Source-Symlinks "true";
+  ForceHash "sha256"; // hashmethod used for expected hash: sha256, sha1 or md5sum
 
   PDiffs "true";     // try to get the IndexFile diffs
   PDiffs::FileLimit "4"; // don't use diffs if we would need more than 4 diffs
   PDiffs::SizeLimit "50"; // don't use diffs if size of all patches excess
 			  // 50% of the size of the original file
+
+  Check-Valid-Until "true";
+  Max-ValidTime "864000"; // 10 days
+  Max-ValidTime::Debian-Security "604800"; // 7 days, label specific configuration
 
   // HTTP method configuration
   http 
@@ -270,17 +274,6 @@ Acquire
    Options {"--ignore-time-conflict";}	// not very useful on a normal system
   };
 
-  mirror
-  {
-   RefreshInterval "360"; // refresh interval in minutes
-   MaxAge "90";           // max age for a mirror file in days before 
-                          // it gets deleted
-   // mirror failure reporting script
-   ProblemReporting "/usr/lib/apt/apt-report-mirror-failure"; 
-   // mirror failure reporting url
-   ReportFailures "http://example.com/mirror-failure"; 
-   };
-
   CompressionTypes
   {
     bz2 "bzip2";
@@ -288,6 +281,15 @@ Acquire
     gz "gzip";
 
     Order { "gz"; "lzma"; "bz2"; };
+  };
+
+  Languages
+  {
+     "environment";
+     "de";
+     "en";
+     "none";
+     "fr";
   };
 };
 
@@ -298,11 +300,9 @@ Dir "/"
   State "var/lib/apt/" 
   {
      Lists "lists/";
-     xstatus "xstatus";
-     userstatus "status.user";
      status "/var/lib/dpkg/status";
+     extended_states "extended_states";
      cdroms "cdroms.list";
-     mirrors "mirrors/";
   };
   
   // Location of the cache dir
@@ -433,11 +433,13 @@ Debug
   Acquire::Http "false";   // Show http command traffic
   Acquire::Https "false";   // Show https debug
   Acquire::gpgv "false";   // Show the gpgv traffic
-  Acquire::Mirror "false"; // Show debugging of the mirror method
   aptcdrom "false";        // Show found package files
   IdentCdrom "false";
   acquire::netrc "false";  // netrc parser
+  
 }
+
+pkgCacheGen::Essential "native"; // other modes: all, none, installed
 
 /* Whatever you do, do not use this configuration file!! Take out ONLY
    the portions you need! */

@@ -74,8 +74,12 @@ class pkgIndexFile
    virtual bool Exists() const = 0;
    virtual bool HasPackages() const = 0;
    virtual unsigned long Size() const = 0;
-   virtual bool Merge(pkgCacheGenerator &/*Gen*/,OpProgress &/*Prog*/) const {return false;};
-   virtual bool MergeFileProvides(pkgCacheGenerator &/*Gen*/,OpProgress &/*Prog*/) const {return true;};
+   virtual bool Merge(pkgCacheGenerator &/*Gen*/,OpProgress* /*Prog*/) const { return false; };
+   __deprecated virtual bool Merge(pkgCacheGenerator &Gen, OpProgress &Prog) const
+      { return Merge(Gen, &Prog); };
+   virtual bool MergeFileProvides(pkgCacheGenerator &/*Gen*/,OpProgress* /*Prog*/) const {return true;};
+   __deprecated virtual bool MergeFileProvides(pkgCacheGenerator &Gen, OpProgress &Prog) const
+      {return MergeFileProvides(Gen, &Prog);};
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    static bool TranslationsAvailable();

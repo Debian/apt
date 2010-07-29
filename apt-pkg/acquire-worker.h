@@ -20,6 +20,7 @@
 #define PKGLIB_ACQUIRE_WORKER_H
 
 #include <apt-pkg/acquire.h>
+#include <apt-pkg/weakptr.h>
 
 
 /** \brief A fetch subprocess.
@@ -41,7 +42,7 @@
  *
  *  \sa pkgAcqMethod, pkgAcquire::Item, pkgAcquire
  */
-class pkgAcquire::Worker
+class pkgAcquire::Worker : public WeakPointable
 {
    friend class pkgAcquire;
    

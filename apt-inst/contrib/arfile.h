@@ -39,6 +39,7 @@ class ARArchive
 
    // Locate a member by name
    const Member *FindMember(const char *Name) const;
+   inline Member *Members() { return List; }
    
    ARArchive(FileFd &File);
    ~ARArchive();

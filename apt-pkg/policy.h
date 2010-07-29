@@ -72,11 +72,11 @@ class pkgPolicy : public pkgDepCache::Policy
    inline signed short GetPriority(pkgCache::PkgFileIterator const &File) 
        {return PFPriority[File->ID];};
    signed short GetPriority(pkgCache::PkgIterator const &Pkg);
-   pkgCache::VerIterator GetMatch(pkgCache::PkgIterator Pkg);
+   pkgCache::VerIterator GetMatch(pkgCache::PkgIterator const &Pkg);
 
    // Things for the cache interface.
-   virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator Pkg);
-   virtual bool IsImportantDep(pkgCache::DepIterator Dep) {return pkgDepCache::Policy::IsImportantDep(Dep);};
+   virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg);
+   virtual bool IsImportantDep(pkgCache::DepIterator const &Dep) {return pkgDepCache::Policy::IsImportantDep(Dep);};
    bool InitDefaults();
    
    pkgPolicy(pkgCache *Owner);

@@ -54,7 +54,8 @@ const char **debSrcRecordParser::Binaries()
    package/version records representing the build dependency. The returned 
    array need not be freed and will be reused by the next call to this 
    function */
-bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps, bool ArchOnly)
+bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps,
+					bool const &ArchOnly, bool const &StripMultiArch)
 {
    unsigned int I;
    const char *Start, *Stop;
@@ -77,7 +78,7 @@ bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec>
       while (1)
       {
          Start = debListParser::ParseDepends(Start, Stop, 
-		     rec.Package,rec.Version,rec.Op,true);
+		     rec.Package,rec.Version,rec.Op,true, StripMultiArch);
 	 
          if (Start == 0) 
             return _error->Error("Problem parsing dependency: %s", fields[I]);
