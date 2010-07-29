@@ -45,8 +45,9 @@ aptftparchive() { runapt apt-ftparchive $*; }
 
 setupenvironment() {
 	local TMPWORKINGDIRECTORY=$(mktemp -d)
+	local TESTDIR=$(readlink -f $(dirname $0))
 	msgninfo "Preparing environment for ${CCMD}$0${CINFO} in ${TMPWORKINGDIRECTORY}… "
-	BUILDDIRECTORY=$(readlink -f $(dirname $0)/../../build/bin)
+	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
 	local OLDWORKINGDIRECTORY=$(pwd)
 	trap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
@@ -55,10 +56,21 @@ setupenvironment() {
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d var/cache var/lib/dpkg
 	mkdir -p var/cache/apt/archives/partial var/lib/apt/lists/partial
-	touch var/lib/dpkg/status
+	local STATUSFILE=$(echo "$(basename $0)" | sed 's/^test-/status-/')
+	if [ -f "${TESTDIR}/${STATUSFILE}" ]; then
+		cp "${TESTDIR}/${STATUSFILE}" var/lib/dpkg/status
+	else
+		touch var/lib/dpkg/status
+	fi
 	mkdir -p usr/lib/apt
 	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
 	cd ..
+	local PACKAGESFILE=$(echo "$(basename $0)" | sed 's/^test-/Packages-/')
+	if [ -f "${TESTDIR}/${PACKAGESFILE}" ]; then
+		cp "${TESTDIR}/${PACKAGESFILE}" aptarchive/Packages
+	else
+		touch var/lib/dpkg/status
+	fi
 	echo "RootDir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
@@ -135,6 +147,24 @@ testequal() {
 	shift
 	msgtest "Test for equality of" "$*"
 	$* 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	rm $COMPAREFILE
+}
+
+testequalor2() {
+	local COMPAREFILE1=$(mktemp)
+	local COMPAREFILE2=$(mktemp)
+	local COMPAREAGAINST=$(mktemp)
+	echo "$1" > $COMPAREFILE1
+	echo "$2" > $COMPAREFILE2
+	shift 2
+	msgtest "Test for equality OR of" "$*"
+	$* 2>&1 1> $COMPAREAGAINST
+	(diff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
+		diff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
+		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(diff $COMPAREFILE1 $COMPAREAGAINST)" \
+		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(diff $COMPAREFILE2 $COMPAREAGAINST)" &&
+		  msgfail )
+	rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST
 }
 
 testshowvirtual() {
@@ -155,6 +185,7 @@ E: No packages found"
 	eval `apt-config shell ARCH APT::Architecture`
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show $PACKAGE 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	rm $COMPAREFILE
 }
 
 testnopackage() {
