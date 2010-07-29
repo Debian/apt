@@ -1,8 +1,12 @@
 apt (0.7.26~exp11ubuntu1) maverick; urgency=low
 
+  * ABI break upload
   * merged from debian/experimental, remaining changes:
     - use ubuntu keyring and ubuntu archive keyring in apt-key
     - run update-apt-xapian-index in apt.cron
+    - support apt-key net-update and verify keys against master-keyring
+    - run apt-key net-update in cron.daily
+    - different example sources.list
   * debian/apt.postinst
     - drop set_apt_proxy_from_gconf(), no longer needed in maverick
 
