@@ -115,8 +115,11 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 	/** \brief find the package with the "best" architecture
 
 	    The best architecture is either the "native" or the first
-	    in the list of Architectures which is not an end-Pointer */
-	PkgIterator FindPreferredPkg() const;
+	    in the list of Architectures which is not an end-Pointer
+
+	    \param PreferNonVirtual tries to respond with a non-virtual package
+		   and only if this fails returns the best virtual package */
+	PkgIterator FindPreferredPkg(bool const &PreferNonVirtual = true) const;
 	PkgIterator NextPkg(PkgIterator const &Pkg) const;
 
 	// Constructors

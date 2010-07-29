@@ -10,13 +10,13 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/cachefilter.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/versionmatch.h>
 
 #include <apti18n.h>
-
-#include "cacheset.h"
 
 #include <vector>
 
@@ -97,22 +97,14 @@ PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, Cache
 			arch = "native";
 	}
 
-	regex_t Pattern;
-	int Res;
-	if ((Res = regcomp(&Pattern, pattern.c_str() , REG_EXTENDED | REG_ICASE | REG_NOSUB)) != 0) {
-		char Error[300];
-		regerror(Res, &Pattern, Error, sizeof(Error));
-		_error->Error(_("Regex compilation error - %s"), Error);
-		return PackageSet(REGEX);
-	}
-
 	if (unlikely(Cache.GetPkgCache() == 0))
 		return PackageSet(REGEX);
 
+	APT::CacheFilter::PackageNameMatchesRegEx regexfilter(pattern);
+
 	PackageSet pkgset(REGEX);
-	for (pkgCache::GrpIterator Grp = Cache.GetPkgCache()->GrpBegin(); Grp.end() == false; ++Grp)
-	{
-		if (regexec(&Pattern, Grp.Name(), 0, 0, 0) != 0)
+	for (pkgCache::GrpIterator Grp = Cache.GetPkgCache()->GrpBegin(); Grp.end() == false; ++Grp) {
+		if (regexfilter(Grp) == false)
 			continue;
 		pkgCache::PkgIterator Pkg = Grp.FindPkg(arch);
 		if (Pkg.end() == true) {
@@ -128,7 +120,6 @@ PackageSet PackageSet::FromRegEx(pkgCacheFile &Cache, std::string pattern, Cache
 
 		pkgset.insert(Pkg);
 	}
-	regfree(&Pattern);
 
 	if (pkgset.empty() == true)
 		return helper.canNotFindRegEx(Cache, pattern);
@@ -332,7 +323,12 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 			V = getInstalledVer(Cache, P, helper);
 		else if (ver == "candidate")
 			V = getCandidateVer(Cache, P, helper);
-		else {
+		else if (ver == "newest") {
+			if (P->VersionList != 0)
+				V = P.VersionList();
+			else
+				V = helper.canNotFindNewestVer(Cache, P);
+		} else {
 			pkgVersionMatch Match(ver, (verIsRel == true ? pkgVersionMatch::Release :
 					pkgVersionMatch::Version));
 			V = Match.Find(P);

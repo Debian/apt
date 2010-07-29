@@ -1,11 +1,12 @@
 #!/bin/sh
 set -e
 
-echo "Compiling the tests ..."
-test -d '../../build/obj/test/libapt/' || mkdir -p '../../build/obj/test/libapt/'
-make
-echo "Running all testcases ..."
-LDPATH=$(pwd)/../../build/bin
+local DIR=$(readlink -f $(dirname $0))
+echo "Compiling the tests …"
+test -d "$DIR/../../build/obj/test/libapt/" || mkdir -p "$DIR/../../build/obj/test/libapt/"
+$(cd $DIR && make)
+echo "Running all testcases …"
+LDPATH="$DIR/../../build/bin"
 EXT="_libapt_test"
 for testapp in $(ls ${LDPATH}/*$EXT)
 do

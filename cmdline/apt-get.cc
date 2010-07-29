@@ -40,6 +40,7 @@
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
@@ -48,7 +49,6 @@
 #include <apti18n.h>
 
 #include "acqprogress.h"
-#include "cacheset.h"
 
 #include <set>
 #include <locale.h>

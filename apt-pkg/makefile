@@ -35,14 +35,15 @@ SOURCE+= pkgcache.cc version.cc depcache.cc \
 	 srcrecords.cc cachefile.cc versionmatch.cc policy.cc \
 	 pkgsystem.cc indexfile.cc pkgcachegen.cc acquire-item.cc \
 	 indexrecords.cc vendor.cc vendorlist.cc cdrom.cc indexcopy.cc \
-	 aptconfiguration.cc
+	 aptconfiguration.cc cachefilter.cc cacheset.cc
 HEADERS+= algorithms.h depcache.h pkgcachegen.h cacheiterators.h \
 	  orderlist.h sourcelist.h packagemanager.h tagfile.h \
 	  init.h pkgcache.h version.h progress.h pkgrecords.h \
 	  acquire.h acquire-worker.h acquire-item.h acquire-method.h \
 	  clean.h srcrecords.h cachefile.h versionmatch.h policy.h \
 	  pkgsystem.h indexfile.h metaindex.h indexrecords.h vendor.h \
-	  vendorlist.h cdrom.h indexcopy.h aptconfiguration.h
+	  vendorlist.h cdrom.h indexcopy.h aptconfiguration.h \
+	  cachefilter.h cacheset.h
 
 # Source code for the debian specific components
 # In theory the deb headers do not need to be exported..

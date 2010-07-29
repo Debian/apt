@@ -349,19 +349,21 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 // GrpIterator::FindPreferredPkg - Locate the "best" package		/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg() const {
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &PreferNonVirtual) const {
 	pkgCache::PkgIterator Pkg = FindPkg("native");
-	if (Pkg.end() == false)
+	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 		return Pkg;
 
 	std::vector<std::string> const archs = APT::Configuration::getArchitectures();
 	for (std::vector<std::string>::const_iterator a = archs.begin();
 	     a != archs.end(); ++a) {
 		Pkg = FindPkg(*a);
-		if (Pkg.end() == false)
+		if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 			return Pkg;
 	}
 
+	if (PreferNonVirtual == true)
+		return FindPreferredPkg(false);
 	return PkgIterator(*Owner, 0);
 }
 									/*}}}*/
