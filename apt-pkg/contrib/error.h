@@ -217,8 +217,20 @@ public:									/*{{{*/
 	 *
 	 *  \param threshold minimum level printed
 	 */
-	void inline DumpErrors(MsgType const &threshold = WARNING) {
+	void inline DumpErrors(MsgType const &threshold) {
 		DumpErrors(std::cerr, threshold);
+	}
+
+        // mvo: we do this instead of using a default parameter in the
+        //      previous declaration to avoid a (subtle) API break for
+        //      e.g. sigc++ and mem_fun0
+	/** \brief dumps the messages of type WARNING or higher to std::cerr
+	 *
+	 *  Note that all messages are discarded, displayed or not.
+	 *
+	 */
+	void inline DumpErrors() {
+                DumpErrors(WARNING);
 	}
 
 	/** \brief put the current Messages into the stack
