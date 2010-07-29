@@ -147,6 +147,7 @@ testequal() {
 	shift
 	msgtest "Test for equality of" "$*"
 	$* 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	rm $COMPAREFILE
 }
 
 testequalor2() {
@@ -163,6 +164,7 @@ testequalor2() {
 		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(diff $COMPAREFILE1 $COMPAREAGAINST)" \
 		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(diff $COMPAREFILE2 $COMPAREAGAINST)" &&
 		  msgfail )
+	rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST
 }
 
 testshowvirtual() {
@@ -183,6 +185,7 @@ E: No packages found"
 	eval `apt-config shell ARCH APT::Architecture`
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show $PACKAGE 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	rm $COMPAREFILE
 }
 
 testnopackage() {
