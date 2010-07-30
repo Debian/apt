@@ -48,7 +48,7 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
       pkgDepCache *Cache;
       public:
       
-      virtual VerIterator GetCandidateVer(PkgIterator Pkg)
+      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg)
       {
 	 return (*Cache)[Pkg].CandidateVerIter(*Cache);
       }

@@ -13,7 +13,7 @@
 
 #define MAXLEN 360
 
-#include <iostream>
+#include <apt-pkg/hashes.h>
 
 using std::cout;
 using std::endl;
@@ -117,7 +117,19 @@ struct ServerState
    void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
                  Encoding = Closes; time(&Date); ServerFd = -1; 
                  Pipeline = true;};
-   int RunHeaders();
+
+   /** \brief Result of the header acquire */
+   enum RunHeadersResult {
+      /** \brief Header ok */
+      RUN_HEADERS_OK,
+      /** \brief IO error while retrieving */
+      RUN_HEADERS_IO_ERROR,
+      /** \brief Parse error after retrieving */
+      RUN_HEADERS_PARSE_ERROR,
+   };
+   /** \brief Get the headers before the data */
+   RunHeadersResult RunHeaders();
+   /** \brief Transfer the data from the socket */
    bool RunData();
    
    bool Open();
@@ -133,10 +145,28 @@ class HttpMethod : public pkgAcqMethod
    bool Go(bool ToFile,ServerState *Srv);
    bool Flush(ServerState *Srv);
    bool ServerDie(ServerState *Srv);
-   int DealWithHeaders(FetchResult &Res,ServerState *Srv);
+
+   /** \brief Result of the header parsing */
+   enum DealWithHeadersResult { 
+      /** \brief The file is open and ready */
+      FILE_IS_OPEN,
+      /** \brief We got a IMS hit, the file has not changed */
+      IMS_HIT,
+      /** \brief The server reported a unrecoverable error */
+      ERROR_UNRECOVERABLE,
+      /** \brief The server reported a error with a error content page */
+      ERROR_WITH_CONTENT_PAGE,
+      /** \brief A error on the client side */
+      ERROR_NOT_FROM_SERVER,
+      /** \brief A redirect or retry request */
+      TRY_AGAIN_OR_REDIRECT 
+   };
+   /** \brief Handle the retrieved header data */
+   DealWithHeadersResult DealWithHeaders(FetchResult &Res,ServerState *Srv);
+
+   /** \brief Try to AutoDetect the proxy */
    bool AutoDetectProxy();
 
-   virtual bool Fetch(FetchItem *);
    virtual bool Configuration(string Message);
    
    // In the event of a fatal signal this file will be closed and timestamped.
@@ -144,10 +174,13 @@ class HttpMethod : public pkgAcqMethod
    static int FailFd;
    static time_t FailTime;
    static void SigTerm(int);
+
+   protected:
+   virtual bool Fetch(FetchItem *);
    
    string NextURI;
    string AutoDetectProxyCmd;
-   
+
    public:
    friend class ServerState;
 

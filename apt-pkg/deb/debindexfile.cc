@@ -63,9 +63,13 @@ string debSourcesIndex::SourceInfo(pkgSrcRecords::Parser const &Record,
 /* */
 pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 {
-   string SourcesURI = URItoFileName(IndexURI("Sources"));
-   return new debSrcRecordParser(_config->FindDir("Dir::State::lists") +
-				 SourcesURI,this);
+   string SourcesURI = _config->FindDir("Dir::State::lists") + 
+      URItoFileName(IndexURI("Sources"));
+   string SourcesURIgzip = SourcesURI + ".gz";
+   if (!FileExists(SourcesURI) && FileExists(SourcesURIgzip))
+      SourcesURI = SourcesURIgzip;
+
+   return new debSrcRecordParser(SourcesURI,this);
 }
 									/*}}}*/
 // SourcesIndex::Describe - Give a descriptive path to the index	/*{{{*/
@@ -106,8 +110,14 @@ string debSourcesIndex::Info(const char *Type) const
 /* */
 inline string debSourcesIndex::IndexFile(const char *Type) const
 {
-   return URItoFileName(IndexURI(Type));
+   string s = URItoFileName(IndexURI(Type));
+   string sgzip = s + ".gz";
+   if (!FileExists(s) && FileExists(sgzip))
+       return sgzip;
+   else
+       return s;
 }
+
 string debSourcesIndex::IndexURI(const char *Type) const
 {
    string Res;
@@ -149,9 +159,12 @@ unsigned long debSourcesIndex::Size() const
 // PackagesIndex::debPackagesIndex - Contructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debPackagesIndex::debPackagesIndex(string URI,string Dist,string Section,bool Trusted) : 
-                  pkgIndexFile(Trusted), URI(URI), Dist(Dist), Section(Section)
+debPackagesIndex::debPackagesIndex(string const &URI, string const &Dist, string const &Section,
+					bool const &Trusted, string const &Arch) :
+                  pkgIndexFile(Trusted), URI(URI), Dist(Dist), Section(Section), Architecture(Arch)
 {
+	if (Architecture == "native")
+		Architecture = _config->Find("APT::Architecture");
 }
 									/*}}}*/
 // PackagesIndex::ArchiveInfo - Short version of the archive url	/*{{{*/
@@ -171,6 +184,8 @@ string debPackagesIndex::ArchiveInfo(pkgCache::VerIterator Ver) const
    Res += " ";
    Res += Ver.ParentPkg().Name();
    Res += " ";
+   if (Dist[Dist.size() - 1] != '/')
+      Res.append(Ver.Arch()).append(" ");
    Res += Ver.VerStr();
    return Res;
 }
@@ -204,6 +219,8 @@ string debPackagesIndex::Info(const char *Type) const
    else
       Info += Dist + '/' + Section;   
    Info += " ";
+   if (Dist[Dist.size() - 1] != '/')
+      Info += Architecture + " ";
    Info += Type;
    return Info;
 }
@@ -213,7 +230,12 @@ string debPackagesIndex::Info(const char *Type) const
 /* */
 inline string debPackagesIndex::IndexFile(const char *Type) const
 {
-   return _config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string sgzip = s + ".gz";
+   if (!FileExists(s) && FileExists(sgzip))
+       return sgzip;
+   else
+       return s;
 }
 string debPackagesIndex::IndexURI(const char *Type) const
 {
@@ -227,7 +249,7 @@ string debPackagesIndex::IndexURI(const char *Type) const
    }
    else
       Res = URI + "dists/" + Dist + '/' + Section +
-      "/binary-" + _config->Find("APT::Architecture") + '/';
+      "/binary-" + Architecture + '/';
    
    Res += Type;
    return Res;
@@ -255,21 +277,23 @@ unsigned long debPackagesIndex::Size() const
 // PackagesIndex::Merge - Load the index file into a cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    string PackageFile = IndexFile("Packages");
-   FileFd Pkg(PackageFile,FileFd::ReadOnly);
-   debListParser Parser(&Pkg);
+   FileFd Pkg(PackageFile,FileFd::ReadOnlyGzip);
+   debListParser Parser(&Pkg, Architecture);
+
    if (_error->PendingError() == true)
       return _error->Error("Problem opening %s",PackageFile.c_str());
-   
-   Prog.SubProgress(0,Info("Packages"));
+   if (Prog != NULL)
+      Prog->SubProgress(0,Info("Packages"));
    ::URI Tmp(URI);
    if (Gen.SelectFile(PackageFile,Tmp.Host,*this) == false)
       return _error->Error("Problem with SelectFile %s",PackageFile.c_str());
 
    // Store the IMS information
    pkgCache::PkgFileIterator File = Gen.GetCurFile();
+   pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(File);
    struct stat St;
    if (fstat(Pkg.Fd(),&St) != 0)
       return _error->Errno("fstat","Failed to stat");
@@ -340,7 +364,12 @@ debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section
 /* */
 inline string debTranslationsIndex::IndexFile(const char *Type) const
 {
-   return _config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
+   string sgzip = s + ".gz";
+   if (!FileExists(s) && FileExists(sgzip))
+       return sgzip;
+   else
+       return s;
 }
 string debTranslationsIndex::IndexURI(const char *Type) const
 {
@@ -438,18 +467,19 @@ unsigned long debTranslationsIndex::Size() const
 // TranslationsIndex::Merge - Load the index file into a cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    // Check the translation file, if in use
    string TranslationFile = IndexFile(Language);
    if (TranslationsAvailable() && FileExists(TranslationFile))
    {
-     FileFd Trans(TranslationFile,FileFd::ReadOnly);
+     FileFd Trans(TranslationFile,FileFd::ReadOnlyGzip);
      debListParser TransParser(&Trans);
      if (_error->PendingError() == true)
        return false;
      
-     Prog.SubProgress(0, Info(TranslationFile.c_str()));
+     if (Prog != NULL)
+	Prog->SubProgress(0, Info(TranslationFile.c_str()));
      if (Gen.SelectFile(TranslationFile,string(),*this) == false)
        return _error->Error("Problem with SelectFile %s",TranslationFile.c_str());
 
@@ -522,16 +552,17 @@ unsigned long debStatusIndex::Size() const
 // StatusIndex::Merge - Load the index file into a cache		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
-   FileFd Pkg(File,FileFd::ReadOnly);
+   FileFd Pkg(File,FileFd::ReadOnlyGzip);
    if (_error->PendingError() == true)
       return false;
    debListParser Parser(&Pkg);
    if (_error->PendingError() == true)
       return false;
-   
-   Prog.SubProgress(0,File);
+
+   if (Prog != NULL)
+      Prog->SubProgress(0,File);
    if (Gen.SelectFile(File,string(),*this,pkgCache::Flag::NotSource) == false)
       return _error->Error("Problem with SelectFile %s",File.c_str());
 

@@ -12,6 +12,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 
 #include <apti18n.h>    
 
@@ -26,7 +27,6 @@
 bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
 {
    bool CleanInstalled = _config->FindB("APT::Clean-Installed",true);
-   string MyArch = _config->Find("APT::Architecture");
       
    DIR *D = opendir(Dir.c_str());
    if (D == 0)
@@ -75,9 +75,9 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
       for (I = Start; *I != 0 && *I != '.' ;I++);
       if (*I != '.')
 	 continue;
-      string Arch = DeQuoteString(string(Start,I-Start));
+      string const Arch = DeQuoteString(string(Start,I-Start));
       
-      if (Arch != "all" && Arch != MyArch)
+      if (APT::Configuration::checkArchitecture(Arch) == false)
 	 continue;
       
       // Lookup the package

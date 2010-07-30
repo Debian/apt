@@ -28,6 +28,7 @@
 #include <iostream>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/depcache.h>
+#include <set>
 
 using std::string;
 
@@ -47,7 +48,15 @@ class pkgPackageManager : protected pkgCache::Namespace
    pkgDepCache &Cache;
    pkgOrderList *List;
    bool Debug;
-         
+
+   /** \brief saves packages dpkg let disappear
+
+       This way APT can retreat from trying to configure these
+       packages later on and a frontend can choose to display a
+       notice to inform the user about these disappears.
+   */
+   std::set<std::string> disappearedPkgs;
+
    bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
    void ImmediateAdd(PkgIterator P, bool UseInstallVer, unsigned const int &Depth = 0);
    virtual OrderResult OrderInstall();
@@ -93,7 +102,10 @@ class pkgPackageManager : protected pkgCache::Namespace
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(int statusFd=-1);
    bool FixMissing();
-   
+
+   /** \brief returns all packages dpkg let disappear */
+   inline std::set<std::string> GetDisappearedPackages() { return disappearedPkgs; };
+
    pkgPackageManager(pkgDepCache *Cache);
    virtual ~pkgPackageManager();
 };

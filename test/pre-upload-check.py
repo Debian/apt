@@ -4,6 +4,8 @@ import sys
 import os
 import glob
 import os.path
+import shutil
+import time
 from subprocess import call, PIPE
 
 import unittest
@@ -11,7 +13,102 @@ import unittest
 stdout = os.open("/dev/null",0) #sys.stdout
 stderr = os.open("/dev/null",0) # sys.stderr
 
-apt_args = []  # ["-o","Debug::pkgAcquire::Auth=true"]
+apt_args = [] 
+#apt_args = ["-o","Debug::pkgAcquire::Auth=true"]
+
+class testAptAuthenticationReliability(unittest.TestCase):
+    """
+    test if the spec https://wiki.ubuntu.com/AptAuthenticationReliability 
+    is properly implemented
+    """
+    #apt = "../bin/apt-get"
+    apt = "apt-get"
+
+    def setUp(self):
+        if os.path.exists("/tmp/autFailure"):
+            os.unlink("/tmp/authFailure");
+        if os.path.exists("/tmp/autFailure2"):
+            os.unlink("/tmp/authFailure2");
+    def testRepositorySigFailure(self):
+        """
+        test if a repository that used to be authenticated and fails on
+        apt-get update refuses to update and uses the old state
+        """
+        # copy valid signatures into lists (those are ok, even
+        # if the name is "-broken-" ...
+        for f in glob.glob("./authReliability/lists/*"):
+            shutil.copy(f,"/var/lib/apt/lists")
+            # ensure we do *not* get a I-M-S hit
+            os.utime("/var/lib/apt/lists/%s" % os.path.basename(f), (0,0))
+        res = call([self.apt,
+                    "update",
+                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.failure", 
+                    "-o",'APT::Update::Auth-Failure::=touch /tmp/authFailure',
+                   ] + apt_args,
+                   stdout=stdout, stderr=stderr)
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Release.gpg"),
+                     "The gpg file disappeared, this should not happen")
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Packages"),
+                     "The Packages file disappeared, this should not happen")
+        self.assert_(os.path.exists("/tmp/authFailure"),
+                     "The APT::Update::Auth-Failure script did not run (1)")
+        # the same with i-m-s hit this time
+        for f in glob.glob("./authReliability/lists/*"):
+            shutil.copy(f,"/var/lib/apt/lists")
+            os.utime("/var/lib/apt/lists/%s" % os.path.basename(f), (time.time(),time.time()))
+        res = call([self.apt,
+                    "update",
+                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.failure",
+                    "-o",'APT::Update::Auth-Failure::=touch /tmp/authFailure2',
+                   ] + apt_args,
+                   stdout=stdout, stderr=stderr)
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Release.gpg"),
+                     "The gpg file disappeared, this should not happen")
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-broken_Packages"),
+                     "The Packages file disappeared, this should not happen")
+        self.assert_(os.path.exists("/tmp/authFailure2"),
+                     "The APT::Update::Auth-Failure script did not run (2)")
+    def testRepositorySigGood(self):
+        """
+        test that a regular repository with good data stays good
+        """
+        res = call([self.apt,
+                    "update",
+                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.good"
+                   ] + apt_args,
+                   stdout=stdout, stderr=stderr)
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Release.gpg"),
+                     "The gpg file disappeared after a regular download, this should not happen")
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Packages"),
+                     "The Packages file disappeared, this should not happen")
+        # test good is still good after non I-M-S hit and a previous files in lists/
+        for f in glob.glob("./authReliability/lists/*"):
+            shutil.copy(f,"/var/lib/apt/lists")
+            # ensure we do *not* get a I-M-S hit
+            os.utime("/var/lib/apt/lists/%s" % os.path.basename(f), (0,0))
+        res = call([self.apt,
+                    "update",
+                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.good"
+                   ] + apt_args,
+                   stdout=stdout, stderr=stderr)
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Release.gpg"),
+                     "The gpg file disappeared after a I-M-S hit, this should not happen")
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Packages"),
+                     "The Packages file disappeared, this should not happen")
+        # test good is still good after I-M-S hit
+        for f in glob.glob("./authReliability/lists/*"):
+            shutil.copy(f,"/var/lib/apt/lists")
+            # ensure we do get a I-M-S hit
+            os.utime("/var/lib/apt/lists/%s" % os.path.basename(f), (time.time(),time.time()))
+        res = call([self.apt,
+                    "update",
+                    "-o","Dir::Etc::sourcelist=./authReliability/sources.list.good"
+                   ] + apt_args,
+                   stdout=stdout, stderr=stderr)
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Release.gpg"),
+                     "The gpg file disappeared, this should not happen")
+        self.assert_(os.path.exists("/var/lib/apt/lists/people.ubuntu.com_%7emvo_apt_auth-test-suit_gpg-package-ok_Packages"),
+                     "The Packages file disappeared, this should not happen")
 
 
 class testAuthentication(unittest.TestCase):
@@ -95,6 +192,20 @@ class testAuthentication(unittest.TestCase):
                 self.assert_(len(glob.glob("/var/lib/apt/lists/partial/*")) == 0,
                              "partial/ dir has leftover files: %s" % glob.glob("/var/lib/apt/lists/partial/*"))
 
+    def testValid(self):
+        for f in glob.glob("testsources.list/sources.list*validuntil*"):
+            self._cleanup()
+            (prefix, testtype, result) = f.split("-")
+            expected_res = self._expectedRes(result)
+            cmd = ["update"]
+            res = call([self.apt,"-o","Dir::Etc::sourcelist=./%s" % f]+cmd+apt_args,
+                       stdout=stdout, stderr=stderr)
+            self.assert_(res == expected_res,
+                         "test '%s' failed (got %s expected %s" % (f,res,expected_res))
+            if expected_res == 0:
+                self.assert_(len(glob.glob("/var/lib/apt/lists/partial/*")) == 0,
+                             "partial/ dir has leftover files: %s" % glob.glob("/var/lib/apt/lists/partial/*"))
+
 
 class testLocalRepositories(unittest.TestCase):
     " test local repository regressions "
@@ -149,6 +260,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "-v":
         stdout = sys.stdout
         stderr = sys.stderr
+    
+    # run only one for now
+    #unittest.main(defaultTest="testAptAuthenticationReliability")
     unittest.main()
-
-

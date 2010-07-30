@@ -18,7 +18,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apti18n.h>
-    
 #include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -79,8 +78,15 @@ bool debSystem::Lock()
    {
       close(LockFD);
       LockFD = -1;
+      const char *cmd;
+      if (getenv("SUDO_USER") != NULL)
+	 cmd = "sudo dpkg --configure -a";
+      else
+	 cmd = "dpkg --configure -a";
+      // TRANSLATORS: the %s contains the recovery command, usually
+      //              dpkg --configure -a
       return _error->Error(_("dpkg was interrupted, you must manually "
-                             "run 'dpkg --configure -a' to correct the problem. "));
+                             "run '%s' to correct the problem. "), cmd);
    }
 
 	 LockCount++;
@@ -158,7 +164,7 @@ bool debSystem::Initialize(Configuration &Cnf)
    /* These really should be jammed into a generic 'Local Database' engine
       which is yet to be determined. The functions in pkgcachegen should
       be the only users of these */
-   Cnf.CndSet("Dir::State::userstatus","status.user"); // Defunct
+   Cnf.CndSet("Dir::State::extended_states", Cnf.FindDir("Dir::State").append("extended_states"));
    Cnf.CndSet("Dir::State::status","/var/lib/dpkg/status");
    Cnf.CndSet("Dir::Bin::dpkg","/usr/bin/dpkg");
 

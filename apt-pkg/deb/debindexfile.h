@@ -35,7 +35,7 @@ class debStatusIndex : public pkgIndexFile
    virtual bool Exists() const;
    virtual bool HasPackages() const {return true;};
    virtual unsigned long Size() const;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    debStatusIndex(string File);
@@ -46,6 +46,7 @@ class debPackagesIndex : public pkgIndexFile
    string URI;
    string Dist;
    string Section;
+   string Architecture;
 
    string Info(const char *Type) const;
    string IndexFile(const char *Type) const;
@@ -66,10 +67,11 @@ class debPackagesIndex : public pkgIndexFile
    virtual bool Exists() const;
    virtual bool HasPackages() const {return true;};
    virtual unsigned long Size() const;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   debPackagesIndex(string URI,string Dist,string Section,bool Trusted);
+   debPackagesIndex(string const &URI, string const &Dist, string const &Section,
+			bool const &Trusted, string const &Arch = "native");
 };
 
 class debTranslationsIndex : public pkgIndexFile
@@ -97,7 +99,7 @@ class debTranslationsIndex : public pkgIndexFile
    virtual bool Exists() const;
    virtual bool HasPackages() const;
    virtual unsigned long Size() const;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    debTranslationsIndex(string URI,string Dist,string Section, char const * const Language);

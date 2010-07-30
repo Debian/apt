@@ -60,6 +60,7 @@ class CommandLine
    Configuration *Conf;
    bool HandleOpt(int &I,int argc,const char *argv[],
 		  const char *&Opt,Args *A,bool PreceedeMatch = false);
+   void static SaveInConfig(unsigned int const &argc, char const * const * const argv);
 
    public:
    

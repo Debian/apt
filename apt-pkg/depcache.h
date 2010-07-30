@@ -38,14 +38,14 @@
 #ifndef PKGLIB_DEPCACHE_H
 #define PKGLIB_DEPCACHE_H
 
-
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/progress.h>
-
-#include <regex.h>
+#include <apt-pkg/error.h>
 
 #include <vector>
 #include <memory>
+#include <set>
 
 class pkgDepCache : protected pkgCache::Namespace
 {
@@ -78,8 +78,8 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    void MarkPackage(const pkgCache::PkgIterator &pkg,
 		    const pkgCache::VerIterator &ver,
-		    bool follow_recommends,
-		    bool follow_suggests);
+		    bool const &follow_recommends,
+		    bool const &follow_suggests);
 
    /** \brief Update the Marked field of all packages.
     *
@@ -183,22 +183,13 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \brief Returns \b true for packages matching a regular
     *  expression in APT::NeverAutoRemove.
     */
-   class DefaultRootSetFunc : public InRootSetFunc
+   class DefaultRootSetFunc : public InRootSetFunc, public Configuration::MatchAgainstConfig
    {
-     std::vector<regex_t *> rootSetRegexp;
-     bool constructedSuccessfully;
-
    public:
-     DefaultRootSetFunc();
-     ~DefaultRootSetFunc();
+     DefaultRootSetFunc() : Configuration::MatchAgainstConfig("APT::NeverRemove") {};
+     virtual ~DefaultRootSetFunc() {};
 
-     /** \return \b true if the class initialized successfully, \b
-      *  false otherwise.  Used to avoid throwing an exception, since
-      *  APT classes generally don't.
-      */
-     bool wasConstructedSuccessfully() const { return constructedSuccessfully; }
-
-     bool InRootSet(const pkgCache::PkgIterator &pkg);
+     bool InRootSet(const pkgCache::PkgIterator &pkg) { return pkg.end() == true && Match(pkg.Name()); };
    };
 
    struct StateCache
@@ -265,8 +256,8 @@ class pkgDepCache : protected pkgCache::Namespace
    {
       public:
       
-      virtual VerIterator GetCandidateVer(PkgIterator Pkg);
-      virtual bool IsImportantDep(DepIterator Dep);
+      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg);
+      virtual bool IsImportantDep(DepIterator const &Dep);
       
       virtual ~Policy() {};
    };
@@ -285,9 +276,11 @@ class pkgDepCache : protected pkgCache::Namespace
    pkgCache *Cache;
    StateCache *PkgState;
    unsigned char *DepState;
-   
-   double iUsrSize;
-   double iDownloadSize;
+
+   /** Stores the space changes after installation */
+   signed long long iUsrSize;
+   /** Stores how much we need to download to get the packages */
+   unsigned long long iDownloadSize;
    unsigned long iInstCount;
    unsigned long iDelCount;
    unsigned long iKeepCount;
@@ -320,8 +313,9 @@ class pkgDepCache : protected pkgCache::Namespace
    void Update(PkgIterator const &P);
    
    // Count manipulators
-   void AddSizes(const PkgIterator &Pkg,signed long Mult = 1);
-   inline void RemoveSizes(const PkgIterator &Pkg) {AddSizes(Pkg,-1);};
+   void AddSizes(const PkgIterator &Pkg, bool const &Invert = false);
+   inline void RemoveSizes(const PkgIterator &Pkg) {AddSizes(Pkg, true);};
+   void AddSizes(const PkgIterator &Pkg,signed long Mult) __deprecated;
    void AddStates(const PkgIterator &Pkg,int Add = 1);
    inline void RemoveStates(const PkgIterator &Pkg) {AddStates(Pkg,-1);};
    
@@ -330,14 +324,17 @@ class pkgDepCache : protected pkgCache::Namespace
    // Legacy.. We look like a pkgCache
    inline operator pkgCache &() {return *Cache;};
    inline Header &Head() {return *Cache->HeaderP;};
+   inline GrpIterator GrpBegin() {return Cache->GrpBegin();};
    inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
+   inline GrpIterator FindGrp(string const &Name) {return Cache->FindGrp(Name);};
    inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};
+   inline PkgIterator FindPkg(string const &Name, string const &Arch) {return Cache->FindPkg(Name, Arch);};
 
    inline pkgCache &GetCache() {return *Cache;};
    inline pkgVersioningSystem &VS() {return *Cache->VS;};
    
    // Policy implementation
-   inline VerIterator GetCandidateVer(PkgIterator Pkg) {return LocalPolicy->GetCandidateVer(Pkg);};
+   inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return LocalPolicy->GetCandidateVer(Pkg);};
    inline bool IsImportantDep(DepIterator Dep) {return LocalPolicy->IsImportantDep(Dep);};
    inline Policy &GetPolicy() {return *LocalPolicy;};
    
@@ -398,7 +395,7 @@ class pkgDepCache : protected pkgCache::Namespace
 		    bool ForceImportantDeps = false);
 
    void SetReInstall(PkgIterator const &Pkg,bool To);
-   void SetCandidateVersion(VerIterator TargetVer);
+   void SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo = true);
 
    /** Set the "is automatically installed" flag of Pkg. */
    void MarkAuto(const PkgIterator &Pkg, bool Auto);
@@ -442,16 +439,13 @@ class pkgDepCache : protected pkgCache::Namespace
    virtual bool IsDeleteOk(const PkgIterator &Pkg,bool Purge = false,
 			    unsigned long Depth = 0, bool FromUser = true);
 
-   // This is for debuging
-   void Update(OpProgress *Prog = 0);
-
    // read persistent states
    bool readStateFile(OpProgress *prog);
-   bool writeStateFile(OpProgress *prog, bool InstalledOnly=false);
+   bool writeStateFile(OpProgress *prog, bool InstalledOnly=true);
    
    // Size queries
-   inline double UsrSize() {return iUsrSize;};
-   inline double DebSize() {return iDownloadSize;};
+   inline signed long long UsrSize() {return iUsrSize;};
+   inline unsigned long long DebSize() {return iDownloadSize;};
    inline unsigned long DelCount() {return iDelCount;};
    inline unsigned long KeepCount() {return iKeepCount;};
    inline unsigned long InstCount() {return iInstCount;};
@@ -460,9 +454,17 @@ class pkgDepCache : protected pkgCache::Namespace
    inline unsigned long BadCount() {return iBadCount;};
 
    bool Init(OpProgress *Prog);
-   
+   // Generate all state information
+   void Update(OpProgress *Prog = 0);
+
    pkgDepCache(pkgCache *Cache,Policy *Plcy = 0);
    virtual ~pkgDepCache();
+
+   private:
+   // Helper for Update(OpProgress) to remove pseudoinstalled arch all packages
+   bool RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck);
+   bool ReInstallPseudoForGroup(unsigned long const &Grp, std::set<unsigned long> &recheck);
+   bool ReInstallPseudoForGroup(pkgCache::PkgIterator const &P, std::set<unsigned long> &recheck);
 };
 
 #endif

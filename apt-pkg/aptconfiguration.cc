@@ -10,6 +10,7 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
@@ -152,6 +153,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			builtin.push_back(c);
 		}
 	}
+	closedir(D);
 
 	// get the environment language codes: LC_MESSAGES (and later LANGUAGE)
 	// we extract both, a long and a short code and then we will
@@ -195,6 +197,9 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// it was undocumented and so it should be not very widthly used
 	string const oldAcquire = _config->Find("APT::Acquire::Translation","");
 	if (oldAcquire.empty() == false && oldAcquire != "environment") {
+		// TRANSLATORS: the two %s are APT configuration options
+		_error->Notice("Option '%s' is deprecated. Please use '%s' instead, see 'man 5 apt.conf' for details.",
+				"APT::Acquire::Translation", "Acquire::Languages");
 		if (oldAcquire != "none")
 			codes.push_back(oldAcquire);
 		codes.push_back("en");
@@ -220,7 +225,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	const char *language_env = getenv("LANGUAGE") == 0 ? "" : getenv("LANGUAGE");
 	string envLang = Locale == 0 ? language_env : *(Locale+1);
 	if (envLang.empty() == false) {
-		std::vector<string> env = ExplodeString(envLang,':');
+		std::vector<string> env = VectorizeString(envLang,':');
 		short addedLangs = 0; // add a maximum of 3 fallbacks from the environment
 		for (std::vector<string>::const_iterator e = env.begin();
 		     e != env.end() && addedLangs < 3; ++e) {
@@ -316,6 +321,43 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		return allCodes;
 	else
 		return codes;
+}
+									/*}}}*/
+// getArchitectures - Return Vector of prefered Architectures		/*{{{*/
+std::vector<std::string> const Configuration::getArchitectures(bool const &Cached) {
+	using std::string;
+
+	std::vector<string> static archs;
+	if (likely(Cached == true) && archs.empty() == false)
+		return archs;
+
+	archs = _config->FindVector("APT::Architectures");
+	string const arch = _config->Find("APT::Architecture");
+	if (unlikely(arch.empty() == true))
+		return archs;
+
+	if (archs.empty() == true ||
+	    std::find(archs.begin(), archs.end(), arch) == archs.end())
+		archs.push_back(arch);
+
+	// erase duplicates and empty strings
+	for (std::vector<string>::reverse_iterator a = archs.rbegin();
+	     a != archs.rend(); ++a) {
+		if (a->empty() == true || std::find(a + 1, archs.rend(), *a) != archs.rend())
+			archs.erase(a.base()-1);
+		if (a == archs.rend())
+			break;
+	}
+
+	return archs;
+}
+									/*}}}*/
+// checkArchitecture - are we interested in the given Architecture?	/*{{{*/
+bool const Configuration::checkArchitecture(std::string const &Arch) {
+	if (Arch == "all")
+		return true;
+	std::vector<std::string> const archs = getArchitectures(true);
+	return (std::find(archs.begin(), archs.end(), Arch) != archs.end());
 }
 									/*}}}*/
 }

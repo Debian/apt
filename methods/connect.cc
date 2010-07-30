@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <sstream>
 
 #include<set>
 #include<string>
@@ -70,19 +71,17 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    Owner->Status(_("Connecting to %s (%s)"),Host.c_str(),Name);
 
    // if that addr did timeout before, we do not try it again
-   if(bad_addr.find(string(Name)) != bad_addr.end()) 
+   if(bad_addr.find(string(Name)) != bad_addr.end())
       return false;
 
    /* If this is an IP rotation store the IP we are using.. If something goes
       wrong this will get tacked onto the end of the error message */
    if (LastHostAddr->ai_next != 0)
    {
-      char Name2[NI_MAXHOST + NI_MAXSERV + 10];
-      snprintf(Name2,sizeof(Name2),_("[IP: %s %s]"),Name,Service);
-      Owner->SetFailExtraMsg(string(Name2));
-   }   
-   else
-      Owner->SetFailExtraMsg("");
+      std::stringstream ss;
+      ioprintf(ss, _("[IP: %s %s]"),Name,Service);
+      Owner->SetIP(ss.str());
+   }
       
    // Get a socket
    if ((Fd = socket(Addr->ai_family,Addr->ai_socktype,
@@ -100,7 +99,7 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
       nonblocking */
    if (WaitFd(Fd,true,TimeOut) == false) {
       bad_addr.insert(bad_addr.begin(), string(Name));
-      Owner->SetFailExtraMsg("\nFailReason: Timeout");
+      Owner->SetFailReason("Timeout");
       return _error->Error(_("Could not connect to %s:%s (%s), "
 			   "connection timed out"),Host.c_str(),Service,Name);
    }
@@ -115,9 +114,9 @@ static bool DoConnect(struct addrinfo *Addr,string Host,
    {
       errno = Err;
       if(errno == ECONNREFUSED)
-         Owner->SetFailExtraMsg("\nFailReason: ConnectionRefused");
+         Owner->SetFailReason("ConnectionRefused");
       else if (errno == ETIMEDOUT)
-	 Owner->SetFailExtraMsg("\nFailReason: ConnectionTimedOut");
+	 Owner->SetFailReason("ConnectionTimedOut");
       bad_addr.insert(bad_addr.begin(), string(Name));
       return _error->Errno("connect",_("Could not connect to %s:%s (%s)."),Host.c_str(),
 			   Service,Name);
@@ -184,13 +183,13 @@ bool Connect(string Host,int Port,const char *Service,int DefPort,int &Fd,
 		  continue;
 	       }
 	       bad_addr.insert(bad_addr.begin(), Host);
-	       Owner->SetFailExtraMsg("\nFailReason: ResolveFailure");
+	       Owner->SetFailReason("ResolveFailure");
 	       return _error->Error(_("Could not resolve '%s'"),Host.c_str());
 	    }
 	    
 	    if (Res == EAI_AGAIN)
 	    {
-	       Owner->SetFailExtraMsg("\nFailReason: TmpResolveFailure");
+	       Owner->SetFailReason("TmpResolveFailure");
 	       return _error->Error(_("Temporary failure resolving '%s'"),
 				    Host.c_str());
 	    }

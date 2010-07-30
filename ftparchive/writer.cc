@@ -28,6 +28,7 @@
 #include <ftw.h>
 #include <fnmatch.h>
 #include <iostream>
+#include <sstream>
 #include <memory>
     
 #include "cachedb.h"
@@ -300,7 +301,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 /* */
 PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides,
 			       string const &Arch) :
-   FTWScanner(Arch), Db(DB), Stats(Db.Stats)
+   FTWScanner(Arch), Db(DB), Stats(Db.Stats), TransWriter(NULL)
 {
    Output = stdout;
    SetExts(".deb .udeb");
@@ -317,7 +318,7 @@ PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string c
 
    if (Db.Loaded() == false)
       DoContents = false;
-      
+
    // Read the override file
    if (Overrides.empty() == false && Over.ReadOverride(Overrides) == false)
       return;
@@ -448,6 +449,8 @@ bool PackagesWriter::DoPackage(string FileName)
       descmd5.Add(desc.c_str());
       DescriptionMd5 = descmd5.Result().Value();
       SetTFRewriteData(Changes[End++], "Description-md5", DescriptionMd5.c_str());
+      if (TransWriter != NULL)
+	 TransWriter->DoPackage(Package, desc, DescriptionMd5);
    }
 
    // Rewrite the maintainer field if necessary
@@ -491,6 +494,55 @@ bool PackagesWriter::DoPackage(string FileName)
    fprintf(Output,"\n");
 
    return Db.Finish();
+}
+									/*}}}*/
+
+// TranslationWriter::TranslationWriter - Constructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* Create a Translation-Master file for this Packages file */
+TranslationWriter::TranslationWriter(string const &File, string const &TransCompress,
+					mode_t const &Permissions) : Output(NULL),
+							RefCounter(0)
+{
+   if (File.empty() == true)
+      return;
+
+   Comp = new MultiCompress(File, TransCompress, Permissions);
+   Output = Comp->Input;
+}
+									/*}}}*/
+// TranslationWriter::DoPackage - Process a single package		/*{{{*/
+// ---------------------------------------------------------------------
+/* Create a Translation-Master file for this Packages file */
+bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
+				  string const &MD5)
+{
+   if (Output == NULL)
+      return true;
+
+   // Different archs can include different versions and therefore
+   // different descriptions - so we need to check for both name and md5.
+   string const Record = Pkg + ":" + MD5;
+
+   if (Included.find(Record) != Included.end())
+      return true;
+
+   fprintf(Output, "Package: %s\nDescription-md5: %s\nDescription-en: %s\n",
+	   Pkg.c_str(), MD5.c_str(), Desc.c_str());
+
+   Included.insert(Record);
+   return true;
+}
+									/*}}}*/
+// TranslationWriter::~TranslationWriter - Destructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+TranslationWriter::~TranslationWriter()
+{
+   if (Comp == NULL)
+      return;
+
+   delete Comp;
 }
 									/*}}}*/
 
@@ -655,23 +707,20 @@ bool SourcesWriter::DoPackage(string FileName)
    
    // Add the dsc to the files hash list
    string const strippedName = flNotDir(FileName);
-   char Files[1000];
-   snprintf(Files,sizeof(Files),"\n %s %lu %s\n %s",
-	    string(MD5.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Files").c_str());
+   std::ostringstream ostreamFiles;
+   ostreamFiles << "\n " << string(MD5.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Files");
+   string const Files = ostreamFiles.str();
 
-   char ChecksumsSha1[1000];
-   snprintf(ChecksumsSha1,sizeof(ChecksumsSha1),"\n %s %lu %s\n %s",
-	    string(SHA1.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Checksums-Sha1").c_str());
+   std::ostringstream ostreamSha1;
+   ostreamSha1 << "\n " << string(SHA1.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Checksums-Sha1");
+   string const ChecksumsSha1 = ostreamSha1.str();
 
-   char ChecksumsSha256[1000];
-   snprintf(ChecksumsSha256,sizeof(ChecksumsSha256),"\n %s %lu %s\n %s",
-	    string(SHA256.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Checksums-Sha256").c_str());
+   std::ostringstream ostreamSha256;
+   ostreamSha256 << "\n " << string(SHA256.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Checksums-Sha256");
+   string const ChecksumsSha256 = ostreamSha256.str();
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -689,7 +738,7 @@ bool SourcesWriter::DoPackage(string FileName)
 
    // Perform the delinking operation over all of the files
    string ParseJnk;
-   const char *C = Files;
+   const char *C = Files.c_str();
    char *RealPath = NULL;
    for (;isspace(*C); C++);
    while (*C != 0)
@@ -722,9 +771,9 @@ bool SourcesWriter::DoPackage(string FileName)
 
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
-   SetTFRewriteData(Changes[End++],"Files",Files);
-   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1);
-   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256);
+   SetTFRewriteData(Changes[End++],"Files",Files.c_str());
+   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1.c_str());
+   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256.c_str());
    if (Directory != "./")
       SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
    SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
@@ -875,6 +924,15 @@ ReleaseWriter::ReleaseWriter(string const &DB)
       datestr[0] = '\0';
    }
 
+   time_t const validuntil = now + _config->FindI("APT::FTPArchive::Release::ValidTime", 0);
+   char validstr[128];
+   if (now == validuntil ||
+       strftime(validstr, sizeof(validstr), "%a, %d %b %Y %H:%M:%S UTC",
+                gmtime(&validuntil)) == 0)
+   {
+      datestr[0] = '\0';
+   }
+
    map<string,string> Fields;
    Fields["Origin"] = "";
    Fields["Label"] = "";
@@ -882,6 +940,7 @@ ReleaseWriter::ReleaseWriter(string const &DB)
    Fields["Version"] = "";
    Fields["Codename"] = "";
    Fields["Date"] = datestr;
+   Fields["Valid-Until"] = validstr;
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";

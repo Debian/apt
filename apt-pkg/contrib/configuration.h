@@ -28,7 +28,7 @@
 #ifndef PKGLIB_CONFIGURATION_H
 #define PKGLIB_CONFIGURATION_H
 
-
+#include <regex.h>
 
 #include <string>
 #include <vector>
@@ -104,6 +104,23 @@ class Configuration
    Configuration(const Item *Root);
    Configuration();
    ~Configuration();
+
+   /** \brief match a string against a configurable list of patterns */
+   class MatchAgainstConfig
+   {
+     std::vector<regex_t *> patterns;
+
+   public:
+     MatchAgainstConfig(char const * Config);
+     virtual ~MatchAgainstConfig();
+
+     /** \brief Returns \b true for a string matching one of the patterns */
+     bool Match(char const * str) const;
+     bool Match(std::string const &str) const { return Match(str.c_str()); };
+
+     /** \brief returns if the matcher setup was successful */
+     bool wasConstructedSuccessfully() const { return patterns.empty() == false; }
+   };
 };
 
 extern Configuration *_config;

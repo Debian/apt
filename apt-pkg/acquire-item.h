@@ -27,6 +27,7 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/weakptr.h>
 
 /** \addtogroup acquire
  *  @{
@@ -46,7 +47,7 @@
  *
  *  \see pkgAcquire
  */
-class pkgAcquire::Item
+class pkgAcquire::Item : public WeakPointable
 {  
    protected:
    
@@ -111,10 +112,10 @@ class pkgAcquire::Item
    string ErrorText;
 
    /** \brief The size of the object to fetch. */
-   unsigned long FileSize;
+   unsigned long long FileSize;
 
    /** \brief How much of the object was already fetched. */
-   unsigned long PartialSize;
+   unsigned long long PartialSize;
 
    /** \brief If not \b NULL, contains the name of a subprocess that
     *  is operating on this object (for instance, "gzip" or "gpgv").
@@ -142,6 +143,7 @@ class pkgAcquire::Item
     *  download progress indicator's overall statistics.
     */
    bool Local;
+   string UsedMirror;
 
    /** \brief The number of fetch queues into which this item has been
     *  inserted.
@@ -242,6 +244,17 @@ class pkgAcquire::Item
 
    /** \return \b true if this object is being fetched from a trusted source. */
    virtual bool IsTrusted() {return false;};
+   
+   // report mirror problems
+   /** \brief Report mirror problem
+    * 
+    *  This allows reporting mirror failures back to a centralized
+    *  server. The apt-report-mirror-failure script is called for this
+    * 
+    *  \param FailCode A short failure string that is send
+    */
+   void ReportMirrorFailure(string FailCode);
+
 
    /** \brief Initialize an item.
     *
@@ -550,7 +563,8 @@ class pkgAcqIndex : public pkgAcquire::Item
     *  fallback is ".gz" or none.
     */
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
-	       string ShortDesc, HashString ExpectedHash, string compressExt="");
+	       string ShortDesc, HashString ExpectedHash, 
+	       string compressExt="");
 };
 									/*}}}*/
 /** \brief An acquire item that is responsible for fetching a		{{{
@@ -565,6 +579,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
    public:
   
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual string Custom600Headers();
 
    /** \brief Create a pkgAcqIndexTrans.
     *
@@ -612,7 +627,6 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    protected:
    /** \brief The last good signature file */
    string LastGoodSig;
-
 
    /** \brief The fetch request that is currently being processed. */
    pkgAcquire::ItemDesc Desc;

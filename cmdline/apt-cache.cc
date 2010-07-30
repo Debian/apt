@@ -14,7 +14,10 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/error.h>
+#include <cassert>
 #include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/cachefile.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
@@ -43,9 +46,29 @@
 
 using namespace std;
 
-pkgCache *GCache = 0;
-pkgSourceList *SrcList = 0;
+// CacheSetHelper saving virtual packages				/*{{{*/
+class CacheSetHelperVirtuals: public APT::CacheSetHelper {
+public:
+   APT::PackageSet virtualPkgs;
 
+   virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotFindCandidateVer(Cache, Pkg);
+   }
+
+   virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotFindNewestVer(Cache, Pkg);
+   }
+
+   virtual APT::VersionSet canNotFindAllVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotFindAllVer(Cache, Pkg);
+   }
+
+   CacheSetHelperVirtuals(bool const &ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
+};
+									/*}}}*/
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -81,15 +104,8 @@ void LocalitySort(pkgCache::DescFile **begin,
 // UnMet - Show unmet dependencies					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool UnMet(CommandLine &CmdL)
+bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
 {
-   pkgCache &Cache = *GCache;
-   bool Important = _config->FindB("APT::Cache::Important",false);
-   
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
-   {
-      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
-      {
 	 bool Header = false;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false;)
 	 {
@@ -97,20 +113,19 @@ bool UnMet(CommandLine &CmdL)
 	    pkgCache::DepIterator Start;
 	    pkgCache::DepIterator End;
 	    D.GlobOr(Start,End);
-	    
-	    // Skip conflicts and replaces
-	    if (End->Type != pkgCache::Dep::PreDepends &&
-		End->Type != pkgCache::Dep::Depends && 
-		End->Type != pkgCache::Dep::Suggests &&
-	        End->Type != pkgCache::Dep::Recommends)
-	       continue;
 
 	    // Important deps only
 	    if (Important == true)
 	       if (End->Type != pkgCache::Dep::PreDepends &&
 	           End->Type != pkgCache::Dep::Depends)
 		  continue;
-	    
+
+	    // Skip conflicts and replaces
+	    if (End->Type == pkgCache::Dep::DpkgBreaks ||
+		End->Type == pkgCache::Dep::Replaces ||
+		End->Type == pkgCache::Dep::Conflicts)
+	       continue;
+
 	    // Verify the or group
 	    bool OK = false;
 	    pkgCache::DepIterator RealStart = Start;
@@ -139,7 +154,7 @@ bool UnMet(CommandLine &CmdL)
 	    // Oops, it failed..
 	    if (Header == false)
 	       ioprintf(cout,_("Package %s version %s has an unmet dep:\n"),
-			P.Name(),V.VerStr());
+			V.ParentPkg().FullName(true).c_str(),V.VerStr());
 	    Header = true;
 	    
 	    // Print out the dep type
@@ -149,7 +164,7 @@ bool UnMet(CommandLine &CmdL)
 	    Start = RealStart;
 	    do
 	    {
-	       cout << Start.TargetPkg().Name();
+	       cout << Start.TargetPkg().FullName(true);
 	       if (Start.TargetVer() != 0)
 		  cout << " (" << Start.CompType() << " " << Start.TargetVer() <<
 		  ")";
@@ -161,9 +176,33 @@ bool UnMet(CommandLine &CmdL)
 	    while (1);
 	    
 	    cout << endl;
-	 }	 
-      }
-   }   
+	 }
+   return true;
+}
+bool UnMet(CommandLine &CmdL)
+{
+   bool const Important = _config->FindB("APT::Cache::Important",false);
+
+   pkgCacheFile CacheFile;
+   if (unlikely(CacheFile.GetPkgCache() == NULL))
+      return false;
+
+   if (CmdL.FileSize() <= 1)
+   {
+      for (pkgCache::PkgIterator P = CacheFile.GetPkgCache()->PkgBegin(); P.end() == false; P++)
+	 for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
+	    if (ShowUnMet(V, Important) == false)
+	       return false;
+   }
+   else
+   {
+      CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
+      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1,
+				APT::VersionSet::CANDIDATE, helper);
+      for (APT::VersionSet::iterator V = verset.begin(); V != verset.end(); ++V)
+	 if (ShowUnMet(V, Important) == false)
+	    return false;
+   }
    return true;
 }
 									/*}}}*/
@@ -171,18 +210,14 @@ bool UnMet(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* */
 bool DumpPackage(CommandLine &CmdL)
-{   
-   pkgCache &Cache = *GCache;
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+{
+   pkgCacheFile CacheFile;
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
 
-      cout << "Package: " << Pkg.Name() << endl;
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   {
+      cout << "Package: " << Pkg.FullName(true) << endl;
       cout << "Versions: " << endl;
       for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; Cur++)
       {
@@ -204,7 +239,7 @@ bool DumpPackage(CommandLine &CmdL)
       cout << "Reverse Depends: " << endl;
       for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() != true; D++)
       {
-	 cout << "  " << D.ParentPkg().Name() << ',' << D.TargetPkg().Name();
+	 cout << "  " << D.ParentPkg().FullName(true) << ',' << D.TargetPkg().FullName(true);
 	 if (D->Version != 0)
 	    cout << ' ' << DeNull(D.TargetVer()) << endl;
 	 else
@@ -216,7 +251,7 @@ bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr() << " - ";
 	 for (pkgCache::DepIterator Dep = Cur.DependsList(); Dep.end() != true; Dep++)
-	    cout << Dep.TargetPkg().Name() << " (" << (int)Dep->CompareOp << " " << DeNull(Dep.TargetVer()) << ") ";
+	    cout << Dep.TargetPkg().FullName(true) << " (" << (int)Dep->CompareOp << " " << DeNull(Dep.TargetVer()) << ") ";
 	 cout << endl;
       }      
 
@@ -225,12 +260,12 @@ bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr() << " - ";
 	 for (pkgCache::PrvIterator Prv = Cur.ProvidesList(); Prv.end() != true; Prv++)
-	    cout << Prv.ParentPkg().Name() << " ";
+	    cout << Prv.ParentPkg().FullName(true) << " ";
 	 cout << endl;
       }
       cout << "Reverse Provides: " << endl;
       for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; Prv++)
-	 cout << Prv.OwnerPkg().Name() << " " << Prv.OwnerVer().VerStr() << endl;            
+	 cout << Prv.OwnerPkg().FullName(true) << " " << Prv.OwnerVer().VerStr() << endl;
    }
 
    return true;
@@ -241,16 +276,22 @@ bool DumpPackage(CommandLine &CmdL)
 /* */
 bool Stats(CommandLine &Cmd)
 {
-   pkgCache &Cache = *GCache;
-   cout << _("Total package names: ") << Cache.Head().PackageCount << " (" <<
-      SizeToStr(Cache.Head().PackageCount*Cache.Head().PackageSz) << ')' << endl;
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
+   cout << _("Total package names: ") << Cache->Head().GroupCount << " (" <<
+      SizeToStr(Cache->Head().GroupCount*Cache->Head().GroupSz) << ')' << endl
+        << _("Total package structures: ") << Cache->Head().PackageCount << " (" <<
+      SizeToStr(Cache->Head().PackageCount*Cache->Head().PackageSz) << ')' << endl;
 
    int Normal = 0;
    int Virtual = 0;
    int NVirt = 0;
    int DVirt = 0;
    int Missing = 0;
-   pkgCache::PkgIterator I = Cache.PkgBegin();
+   pkgCache::PkgIterator I = Cache->PkgBegin();
    for (;I.end() != true; I++)
    {
       if (I->VersionList != 0 && I->ProvidesList == 0)
@@ -288,33 +329,33 @@ bool Stats(CommandLine &Cmd)
    cout << _("  Mixed virtual packages: ") << NVirt << endl;
    cout << _("  Missing: ") << Missing << endl;
    
-   cout << _("Total distinct versions: ") << Cache.Head().VersionCount << " (" <<
-      SizeToStr(Cache.Head().VersionCount*Cache.Head().VersionSz) << ')' << endl;
-   cout << _("Total distinct descriptions: ") << Cache.Head().DescriptionCount << " (" <<
-      SizeToStr(Cache.Head().DescriptionCount*Cache.Head().DescriptionSz) << ')' << endl;
-   cout << _("Total dependencies: ") << Cache.Head().DependsCount << " (" << 
-      SizeToStr(Cache.Head().DependsCount*Cache.Head().DependencySz) << ')' << endl;
+   cout << _("Total distinct versions: ") << Cache->Head().VersionCount << " (" <<
+      SizeToStr(Cache->Head().VersionCount*Cache->Head().VersionSz) << ')' << endl;
+   cout << _("Total distinct descriptions: ") << Cache->Head().DescriptionCount << " (" <<
+      SizeToStr(Cache->Head().DescriptionCount*Cache->Head().DescriptionSz) << ')' << endl;
+   cout << _("Total dependencies: ") << Cache->Head().DependsCount << " (" << 
+      SizeToStr(Cache->Head().DependsCount*Cache->Head().DependencySz) << ')' << endl;
    
-   cout << _("Total ver/file relations: ") << Cache.Head().VerFileCount << " (" <<
-      SizeToStr(Cache.Head().VerFileCount*Cache.Head().VerFileSz) << ')' << endl;
-   cout << _("Total Desc/File relations: ") << Cache.Head().DescFileCount << " (" <<
-      SizeToStr(Cache.Head().DescFileCount*Cache.Head().DescFileSz) << ')' << endl;
-   cout << _("Total Provides mappings: ") << Cache.Head().ProvidesCount << " (" <<
-      SizeToStr(Cache.Head().ProvidesCount*Cache.Head().ProvidesSz) << ')' << endl;
+   cout << _("Total ver/file relations: ") << Cache->Head().VerFileCount << " (" <<
+      SizeToStr(Cache->Head().VerFileCount*Cache->Head().VerFileSz) << ')' << endl;
+   cout << _("Total Desc/File relations: ") << Cache->Head().DescFileCount << " (" <<
+      SizeToStr(Cache->Head().DescFileCount*Cache->Head().DescFileSz) << ')' << endl;
+   cout << _("Total Provides mappings: ") << Cache->Head().ProvidesCount << " (" <<
+      SizeToStr(Cache->Head().ProvidesCount*Cache->Head().ProvidesSz) << ')' << endl;
    
    // String list stats
    unsigned long Size = 0;
    unsigned long Count = 0;
-   for (pkgCache::StringItem *I = Cache.StringItemP + Cache.Head().StringList;
-        I!= Cache.StringItemP; I = Cache.StringItemP + I->NextItem)
+   for (pkgCache::StringItem *I = Cache->StringItemP + Cache->Head().StringList;
+        I!= Cache->StringItemP; I = Cache->StringItemP + I->NextItem)
    {
       Count++;
-      Size += strlen(Cache.StrP + I->String) + 1;
+      Size += strlen(Cache->StrP + I->String) + 1;
    }
    cout << _("Total globbed strings: ") << Count << " (" << SizeToStr(Size) << ')' << endl;
 
    unsigned long DepVerSize = 0;
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
    {
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
       {
@@ -329,15 +370,15 @@ bool Stats(CommandLine &Cmd)
    
    unsigned long Slack = 0;
    for (int I = 0; I != 7; I++)
-      Slack += Cache.Head().Pools[I].ItemSize*Cache.Head().Pools[I].Count;
+      Slack += Cache->Head().Pools[I].ItemSize*Cache->Head().Pools[I].Count;
    cout << _("Total slack space: ") << SizeToStr(Slack) << endl;
    
    unsigned long Total = 0;
-   Total = Slack + Size + Cache.Head().DependsCount*Cache.Head().DependencySz + 
-           Cache.Head().VersionCount*Cache.Head().VersionSz +
-           Cache.Head().PackageCount*Cache.Head().PackageSz + 
-           Cache.Head().VerFileCount*Cache.Head().VerFileSz +
-           Cache.Head().ProvidesCount*Cache.Head().ProvidesSz;
+   Total = Slack + Size + Cache->Head().DependsCount*Cache->Head().DependencySz + 
+           Cache->Head().VersionCount*Cache->Head().VersionSz +
+           Cache->Head().PackageCount*Cache->Head().PackageSz + 
+           Cache->Head().VerFileCount*Cache->Head().VerFileSz +
+           Cache->Head().ProvidesCount*Cache->Head().ProvidesSz;
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
    
    return true;
@@ -348,18 +389,22 @@ bool Stats(CommandLine &Cmd)
 /* This is worthless except fer debugging things */
 bool Dump(CommandLine &Cmd)
 {
-   pkgCache &Cache = *GCache;
-   cout << "Using Versioning System: " << Cache.VS->Label << endl;
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
+   cout << "Using Versioning System: " << Cache->VS->Label << endl;
    
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
    {
-      cout << "Package: " << P.Name() << endl;
+      cout << "Package: " << P.FullName(true) << endl;
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
       {
 	 cout << " Version: " << V.VerStr() << endl;
 	 cout << "     File: " << V.FileList().File().FileName() << endl;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
-	    cout << "  Depends: " << D.TargetPkg().Name() << ' ' << 
+	    cout << "  Depends: " << D.TargetPkg().FullName(true) << ' ' << 
 	                     DeNull(D.TargetVer()) << endl;
 	 for (pkgCache::DescIterator D = V.DescriptionList(); D.end() == false; D++)
 	 {
@@ -370,7 +415,7 @@ bool Dump(CommandLine &Cmd)
       }      
    }
 
-   for (pkgCache::PkgFileIterator F = Cache.FileBegin(); F.end() == false; F++)
+   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; F++)
    {
       cout << "File: " << F.FileName() << endl;
       cout << " Type: " << F.IndexType() << endl;
@@ -396,18 +441,17 @@ bool Dump(CommandLine &Cmd)
    make this run really fast, perhaps I went a little overboard.. */
 bool DumpAvail(CommandLine &Cmd)
 {
-   pkgCache &Cache = *GCache;
-
-   pkgPolicy Plcy(&Cache);
-   if (ReadPinFile(Plcy) == false || ReadPinDir(Plcy) == false)
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL || CacheFile.BuildPolicy() == false))
       return false;
-   
-   unsigned long Count = Cache.HeaderP->PackageCount+1;
+
+   unsigned long Count = Cache->HeaderP->PackageCount+1;
    pkgCache::VerFile **VFList = new pkgCache::VerFile *[Count];
    memset(VFList,0,sizeof(*VFList)*Count);
    
    // Map versions that we want to write out onto the VerList array.
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
    {    
       if (P->VersionList == 0)
 	 continue;
@@ -415,7 +459,7 @@ bool DumpAvail(CommandLine &Cmd)
       /* Find the proper version to use. If the policy says there are no
          possible selections we return the installed version, if available..
        	 This prevents dselect from making it obsolete. */
-      pkgCache::VerIterator V = Plcy.GetCandidateVer(P);
+      pkgCache::VerIterator V = CacheFile.GetPolicy()->GetCandidateVer(P);
       if (V.end() == true)
       {
 	 if (P->CurrentVer == 0)
@@ -460,10 +504,10 @@ bool DumpAvail(CommandLine &Cmd)
    LocalitySort(VFList,Count,sizeof(*VFList));
 
    // Iterate over all the package files and write them out.
-   char *Buffer = new char[Cache.HeaderP->MaxVerFileSize+10];
+   char *Buffer = new char[Cache->HeaderP->MaxVerFileSize+10];
    for (pkgCache::VerFile **J = VFList; *J != 0;)
    {
-      pkgCache::PkgFileIterator File(Cache,(*J)->File + Cache.PkgFileP);
+      pkgCache::PkgFileIterator File(*Cache,(*J)->File + Cache->PkgFileP);
       if (File.IsOk() == false)
       {
 	 _error->Error(_("Package file %s is out of sync."),File.FileName());
@@ -482,7 +526,7 @@ bool DumpAvail(CommandLine &Cmd)
       unsigned long Pos = 0;
       for (; *J != 0; J++)
       {
-	 if ((*J)->File + Cache.PkgFileP != File)
+	 if ((*J)->File + Cache->PkgFileP != File)
 	    break;
 	 
 	 const pkgCache::VerFile &VF = **J;
@@ -533,186 +577,129 @@ bool DumpAvail(CommandLine &Cmd)
    return !_error->PendingError();
 }
 									/*}}}*/
-// Depends - Print out a dependency tree				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool Depends(CommandLine &CmdL)
+// ShowDepends - Helper for printing out a dependency tree		/*{{{*/
+bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 {
-   pkgCache &Cache = *GCache;
-   SPtrArray<unsigned> Colours = new unsigned[Cache.Head().PackageCount];
-   memset(Colours,0,sizeof(*Colours)*Cache.Head().PackageCount);
-   
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
+   CacheSetHelperVirtuals helper(false);
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   if (verset.empty() == true && helper.virtualPkgs.empty() == true)
+      return false;
+   std::vector<bool> Shown(Cache->Head().PackageCount);
+
+   bool const Recurse = _config->FindB("APT::Cache::RecurseDepends", false);
+   bool const Installed = _config->FindB("APT::Cache::Installed", false);
+   bool const Important = _config->FindB("APT::Cache::Important", false);
+   bool const ShowDepType = _config->FindB("APT::Cache::ShowDependencyType", RevDepends == false);
+   bool const ShowPreDepends = _config->FindB("APT::Cache::ShowPre-Depends", true);
+   bool const ShowDepends = _config->FindB("APT::Cache::ShowDepends", true);
+   bool const ShowRecommends = _config->FindB("APT::Cache::ShowRecommends", Important == false);
+   bool const ShowSuggests = _config->FindB("APT::Cache::ShowSuggests", Important == false);
+   bool const ShowReplaces = _config->FindB("APT::Cache::ShowReplaces", Important == false);
+   bool const ShowConflicts = _config->FindB("APT::Cache::ShowConflicts", Important == false);
+   bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
+   bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
+   bool const ShowOnlyFirstOr = _config->FindB("APT::Cache::ShowOnlyFirstOr", false);
+
+   while (verset.empty() != true)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
-      Colours[Pkg->ID] = 1;
-   }
-   
-   bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
-   bool Installed = _config->FindB("APT::Cache::Installed",false);
-   bool Important = _config->FindB("APT::Cache::Important",false);
-   bool DidSomething;
-   do
-   {
-      DidSomething = false;
-      for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
-      {
-	 if (Colours[Pkg->ID] != 1)
-	    continue;
-	 Colours[Pkg->ID] = 2;
-	 DidSomething = true;
-	 
-	 pkgCache::VerIterator Ver = Pkg.VersionList();
-	 if (Ver.end() == true)
+      pkgCache::VerIterator Ver = *verset.begin();
+      verset.erase(verset.begin());
+      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+      Shown[Pkg->ID] = true;
+
+	 cout << Pkg.FullName(true) << endl;
+
+	 if (RevDepends == true)
+	    cout << "Reverse Depends:" << endl;
+	 for (pkgCache::DepIterator D = RevDepends ? Pkg.RevDependsList() : Ver.DependsList();
+	      D.end() == false; D++)
 	 {
-	    cout << '<' << Pkg.Name() << '>' << endl;
-	    continue;
-	 }
-	 
-	 cout << Pkg.Name() << endl;
-	 
-	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
-	 {
-	    // Important deps only
-	    if (Important == true)
-	       if (D->Type != pkgCache::Dep::PreDepends &&
-		   D->Type != pkgCache::Dep::Depends)
-		  continue;
-		  
-	    pkgCache::PkgIterator Trg = D.TargetPkg();
+	    switch (D->Type) {
+	    case pkgCache::Dep::PreDepends: if (!ShowPreDepends) continue; break;
+	    case pkgCache::Dep::Depends: if (!ShowDepends) continue; break;
+	    case pkgCache::Dep::Recommends: if (!ShowRecommends) continue; break;
+	    case pkgCache::Dep::Suggests: if (!ShowSuggests) continue; break;
+	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;
+	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
+	    case pkgCache::Dep::DpkgBreaks: if (!ShowBreaks) continue; break;
+	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
+	    }
+
+	    pkgCache::PkgIterator Trg = RevDepends ? D.ParentPkg() : D.TargetPkg();
 
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
 	      {
 
-		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or && ShowOnlyFirstOr == false)
 		  cout << " |";
 		else
 		  cout << "  ";
 	    
 		// Show the package
+		if (ShowDepType == true)
+		  cout << D.DepType() << ": ";
 		if (Trg->VersionList == 0)
-		  cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
+		  cout << "<" << Trg.FullName(true) << ">" << endl;
 		else
-		  cout << D.DepType() << ": " << Trg.Name() << endl;
+		  cout << Trg.FullName(true) << endl;
 	    
-		if (Recurse == true)
-		  Colours[D.TargetPkg()->ID]++;
+		if (Recurse == true && Shown[Trg->ID] == false)
+		{
+		  Shown[Trg->ID] = true;
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, Trg, APT::VersionSet::CANDIDATE, helper));
+		}
 
 	      }
 	    
 	    // Display all solutions
 	    SPtrArray<pkgCache::Version *> List = D.AllTargets();
-	    pkgPrioSortList(Cache,List);
+	    pkgPrioSortList(*Cache,List);
 	    for (pkgCache::Version **I = List; *I != 0; I++)
 	    {
-	       pkgCache::VerIterator V(Cache,*I);
-	       if (V != Cache.VerP + V.ParentPkg()->VersionList ||
+	       pkgCache::VerIterator V(*Cache,*I);
+	       if (V != Cache->VerP + V.ParentPkg()->VersionList ||
 		   V->ParentPkg == D->Package)
 		  continue;
-	       cout << "    " << V.ParentPkg().Name() << endl;
-	       
-	       if (Recurse == true)
-		  Colours[D.ParentPkg()->ID]++;
+	       cout << "    " << V.ParentPkg().FullName(true) << endl;
+
+		if (Recurse == true && Shown[V.ParentPkg()->ID] == false)
+		{
+		  Shown[V.ParentPkg()->ID] = true;
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::VersionSet::CANDIDATE, helper));
+		}
 	    }
+
+	    if (ShowOnlyFirstOr == true)
+	       while ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or) ++D;
 	 }
-      }      
-   }   
-   while (DidSomething == true);
-   
+   }
+
+   for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();
+	Pkg != helper.virtualPkgs.end(); ++Pkg)
+      cout << '<' << Pkg.FullName(true) << '>' << endl;
+
    return true;
 }
 									/*}}}*/
-// RDepends - Print out a reverse dependency tree - mbc			/*{{{*/
+// Depends - Print out a dependency tree				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Depends(CommandLine &CmdL)
+{
+   return ShowDepends(CmdL, false);
+}
+									/*}}}*/
+// RDepends - Print out a reverse dependency tree			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool RDepends(CommandLine &CmdL)
 {
-   pkgCache &Cache = *GCache;
-   SPtrArray<unsigned> Colours = new unsigned[Cache.Head().PackageCount];
-   memset(Colours,0,sizeof(*Colours)*Cache.Head().PackageCount);
-   
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
-      Colours[Pkg->ID] = 1;
-   }
-   
-   bool Recurse = _config->FindB("APT::Cache::RecurseDepends",false);
-   bool Installed = _config->FindB("APT::Cache::Installed",false);
-   bool DidSomething;
-   do
-   {
-      DidSomething = false;
-      for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
-      {
-	 if (Colours[Pkg->ID] != 1)
-	    continue;
-	 Colours[Pkg->ID] = 2;
-	 DidSomething = true;
-	 
-	 pkgCache::VerIterator Ver = Pkg.VersionList();
-	 if (Ver.end() == true)
-	 {
-	    cout << '<' << Pkg.Name() << '>' << endl;
-	    continue;
-	 }
-	 
-	 cout << Pkg.Name() << endl;
-	 
-	 cout << "Reverse Depends:" << endl;
-	 for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() == false; D++)
-	 {	    
-	    // Show the package
-	    pkgCache::PkgIterator Trg = D.ParentPkg();
-
-	    if((Installed && Trg->CurrentVer != 0) || !Installed)
-	      {
-
-		if ((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-		  cout << " |";
-		else
-		  cout << "  ";
-
-		if (Trg->VersionList == 0)
-		  cout << D.DepType() << ": <" << Trg.Name() << ">" << endl;
-		else
-		  cout << Trg.Name() << endl;
-
-		if (Recurse == true)
-		  Colours[D.ParentPkg()->ID]++;
-
-	      }
-	    
-	    // Display all solutions
-	    SPtrArray<pkgCache::Version *> List = D.AllTargets();
-	    pkgPrioSortList(Cache,List);
-	    for (pkgCache::Version **I = List; *I != 0; I++)
-	    {
-	       pkgCache::VerIterator V(Cache,*I);
-	       if (V != Cache.VerP + V.ParentPkg()->VersionList ||
-		   V->ParentPkg == D->Package)
-		  continue;
-	       cout << "    " << V.ParentPkg().Name() << endl;
-	       
-	       if (Recurse == true)
-		  Colours[D.ParentPkg()->ID]++;
-	    }
-	 }
-      }      
-   }   
-   while (DidSomething == true);
-   
-   return true;
+   return ShowDepends(CmdL, true);
 }
 									/*}}}*/
 // xvcg - Generate a graph for xvcg					/*{{{*/
@@ -721,7 +708,11 @@ bool RDepends(CommandLine &CmdL)
 
 bool XVcg(CommandLine &CmdL)
 {
-   pkgCache &Cache = *GCache;
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
    bool GivenOnly = _config->FindB("APT::Cache::GivenOnly",false);
    
    /* Normal packages are boxes
@@ -738,21 +729,21 @@ bool XVcg(CommandLine &CmdL)
       0 = None */
    enum States {None=0, ToShow, ToShowNR, DoneNR, Done};
    enum TheFlags {ForceNR=(1<<0)};
-   unsigned char *Show = new unsigned char[Cache.Head().PackageCount];
-   unsigned char *Flags = new unsigned char[Cache.Head().PackageCount];
-   unsigned char *ShapeMap = new unsigned char[Cache.Head().PackageCount];
+   unsigned char *Show = new unsigned char[Cache->Head().PackageCount];
+   unsigned char *Flags = new unsigned char[Cache->Head().PackageCount];
+   unsigned char *ShapeMap = new unsigned char[Cache->Head().PackageCount];
    
    // Show everything if no arguments given
    if (CmdL.FileList[1] == 0)
-      for (unsigned long I = 0; I != Cache.Head().PackageCount; I++)
+      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
 	 Show[I] = ToShow;
    else
-      for (unsigned long I = 0; I != Cache.Head().PackageCount; I++)
+      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
 	 Show[I] = None;
-   memset(Flags,0,sizeof(*Flags)*Cache.Head().PackageCount);
+   memset(Flags,0,sizeof(*Flags)*Cache->Head().PackageCount);
    
    // Map the shapes
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
    {   
       if (Pkg->VersionList == 0)
       {
@@ -771,38 +762,25 @@ bool XVcg(CommandLine &CmdL)
 	    ShapeMap[Pkg->ID] = 3;
       }
    }
-   
+
    // Load the list of packages from the command line into the show list
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      // Process per-package flags
-      string P = *I;
-      bool Force = false;
-      if (P.length() > 3)
-      {
-	 if (P.end()[-1] == '^')
-	 {
-	    Force = true;
-	    P.erase(P.end()-1);
-	 }
-	 
-	 if (P.end()[-1] == ',')
-	    P.erase(P.end()-1);
-      }
-      
-      // Locate the package
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(P);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   std::list<APT::PackageSet::Modifier> mods;
+   mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   std::map<unsigned short, APT::PackageSet> pkgsets =
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
+
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
+	Pkg != pkgsets[0].end(); ++Pkg)
       Show[Pkg->ID] = ToShow;
-      
-      if (Force == true)
-	 Flags[Pkg->ID] |= ForceNR;
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[1].begin();
+	Pkg != pkgsets[1].end(); ++Pkg)
+   {
+      Show[Pkg->ID] = ToShow;
+      Flags[Pkg->ID] |= ForceNR;
    }
-   
+
    // Little header
    cout << "graph: { title: \"packages\"" << endl <<
      "xmax: 700 ymax: 700 x: 30 y: 30" << endl <<
@@ -812,7 +790,7 @@ bool XVcg(CommandLine &CmdL)
    while (Act == true)
    {
       Act = false;
-      for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
       {
 	 // See we need to show this package
 	 if (Show[Pkg->ID] == None || Show[Pkg->ID] >= DoneNR)
@@ -847,7 +825,7 @@ bool XVcg(CommandLine &CmdL)
 	    for (pkgCache::VerIterator I = DPkg.VersionList();
 		      I.end() == false && Hit == false; I++)
 	    {
-	       if (Cache.VS->CheckDep(I.VerStr(),D->CompareOp,D.TargetVer()) == true)
+	       if (Cache->VS->CheckDep(I.VerStr(),D->CompareOp,D.TargetVer()) == true)
 		  Hit = true;
 	    }
 	    
@@ -855,7 +833,7 @@ bool XVcg(CommandLine &CmdL)
 	    for (pkgCache::PrvIterator I = DPkg.ProvidesList(); 
 		      I.end() == false && Hit == false; I++)
 	    {
-	       if (Cache.VS->CheckDep(I.ProvideVersion(),D->CompareOp,D.TargetVer()) == false)
+	       if (Cache->VS->CheckDep(I.ProvideVersion(),D->CompareOp,D.TargetVer()) == false)
 		  Hit = true;
 	    }
 	    
@@ -863,7 +841,7 @@ bool XVcg(CommandLine &CmdL)
 	    // Only graph critical deps	    
 	    if (D.IsCritical() == true)
 	    {
-	       printf ("edge: { sourcename: \"%s\" targetname: \"%s\" class: 2 ",Pkg.Name(), D.TargetPkg().Name() );
+	       printf ("edge: { sourcename: \"%s\" targetname: \"%s\" class: 2 ",Pkg.FullName(true).c_str(), D.TargetPkg().FullName(true).c_str() );
 	       
 	       // Colour the node for recursion
 	       if (Show[D.TargetPkg()->ID] <= DoneNR)
@@ -916,16 +894,16 @@ bool XVcg(CommandLine &CmdL)
    
    /* Draw the box colours after the fact since we can not tell what colour
       they should be until everything is finished drawing */
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
    {
       if (Show[Pkg->ID] < DoneNR)
 	 continue;
 
       if (Show[Pkg->ID] == DoneNR)
-	 printf("node: { title: \"%s\" label: \"%s\" color: orange shape: %s }\n", Pkg.Name(), Pkg.Name(),
+	 printf("node: { title: \"%s\" label: \"%s\" color: orange shape: %s }\n", Pkg.FullName(true).c_str(), Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
       else
-	printf("node: { title: \"%s\" label: \"%s\" shape: %s }\n", Pkg.Name(), Pkg.Name(), 
+	printf("node: { title: \"%s\" label: \"%s\" shape: %s }\n", Pkg.FullName(true).c_str(), Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
       
    }
@@ -945,7 +923,11 @@ bool XVcg(CommandLine &CmdL)
    http://www.research.att.com/sw/tools/graphviz/ */
 bool Dotty(CommandLine &CmdL)
 {
-   pkgCache &Cache = *GCache;
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
    bool GivenOnly = _config->FindB("APT::Cache::GivenOnly",false);
    
    /* Normal packages are boxes
@@ -962,21 +944,21 @@ bool Dotty(CommandLine &CmdL)
       0 = None */
    enum States {None=0, ToShow, ToShowNR, DoneNR, Done};
    enum TheFlags {ForceNR=(1<<0)};
-   unsigned char *Show = new unsigned char[Cache.Head().PackageCount];
-   unsigned char *Flags = new unsigned char[Cache.Head().PackageCount];
-   unsigned char *ShapeMap = new unsigned char[Cache.Head().PackageCount];
+   unsigned char *Show = new unsigned char[Cache->Head().PackageCount];
+   unsigned char *Flags = new unsigned char[Cache->Head().PackageCount];
+   unsigned char *ShapeMap = new unsigned char[Cache->Head().PackageCount];
    
    // Show everything if no arguments given
    if (CmdL.FileList[1] == 0)
-      for (unsigned long I = 0; I != Cache.Head().PackageCount; I++)
+      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
 	 Show[I] = ToShow;
    else
-      for (unsigned long I = 0; I != Cache.Head().PackageCount; I++)
+      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
 	 Show[I] = None;
-   memset(Flags,0,sizeof(*Flags)*Cache.Head().PackageCount);
+   memset(Flags,0,sizeof(*Flags)*Cache->Head().PackageCount);
    
    // Map the shapes
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
    {   
       if (Pkg->VersionList == 0)
       {
@@ -995,38 +977,25 @@ bool Dotty(CommandLine &CmdL)
 	    ShapeMap[Pkg->ID] = 3;
       }
    }
-   
+
    // Load the list of packages from the command line into the show list
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      // Process per-package flags
-      string P = *I;
-      bool Force = false;
-      if (P.length() > 3)
-      {
-	 if (P.end()[-1] == '^')
-	 {
-	    Force = true;
-	    P.erase(P.end()-1);
-	 }
-	 
-	 if (P.end()[-1] == ',')
-	    P.erase(P.end()-1);
-      }
-      
-      // Locate the package
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(P);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   std::list<APT::PackageSet::Modifier> mods;
+   mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   std::map<unsigned short, APT::PackageSet> pkgsets =
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
+
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
+	Pkg != pkgsets[0].end(); ++Pkg)
       Show[Pkg->ID] = ToShow;
-      
-      if (Force == true)
-	 Flags[Pkg->ID] |= ForceNR;
+   for (APT::PackageSet::const_iterator Pkg = pkgsets[1].begin();
+	Pkg != pkgsets[1].end(); ++Pkg)
+   {
+      Show[Pkg->ID] = ToShow;
+      Flags[Pkg->ID] |= ForceNR;
    }
-   
+
    // Little header
    printf("digraph packages {\n");
    printf("concentrate=true;\n");
@@ -1036,7 +1005,7 @@ bool Dotty(CommandLine &CmdL)
    while (Act == true)
    {
       Act = false;
-      for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
       {
 	 // See we need to show this package
 	 if (Show[Pkg->ID] == None || Show[Pkg->ID] >= DoneNR)
@@ -1069,7 +1038,7 @@ bool Dotty(CommandLine &CmdL)
 	    for (pkgCache::VerIterator I = DPkg.VersionList();
 		      I.end() == false && Hit == false; I++)
 	    {
-	       if (Cache.VS->CheckDep(I.VerStr(),D->CompareOp,D.TargetVer()) == true)
+	       if (Cache->VS->CheckDep(I.VerStr(),D->CompareOp,D.TargetVer()) == true)
 		  Hit = true;
 	    }
 	    
@@ -1077,14 +1046,14 @@ bool Dotty(CommandLine &CmdL)
 	    for (pkgCache::PrvIterator I = DPkg.ProvidesList(); 
 		      I.end() == false && Hit == false; I++)
 	    {
-	       if (Cache.VS->CheckDep(I.ProvideVersion(),D->CompareOp,D.TargetVer()) == false)
+	       if (Cache->VS->CheckDep(I.ProvideVersion(),D->CompareOp,D.TargetVer()) == false)
 		  Hit = true;
 	    }
 	    
 	    // Only graph critical deps	    
 	    if (D.IsCritical() == true)
 	    {
-	       printf("\"%s\" -> \"%s\"",Pkg.Name(),D.TargetPkg().Name());
+	       printf("\"%s\" -> \"%s\"",Pkg.FullName(true).c_str(),D.TargetPkg().FullName(true).c_str());
 	       
 	       // Colour the node for recursion
 	       if (Show[D.TargetPkg()->ID] <= DoneNR)
@@ -1131,17 +1100,17 @@ bool Dotty(CommandLine &CmdL)
    
    /* Draw the box colours after the fact since we can not tell what colour
       they should be until everything is finished drawing */
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
    {
       if (Show[Pkg->ID] < DoneNR)
 	 continue;
       
       // Orange box for early recursion stoppage
       if (Show[Pkg->ID] == DoneNR)
-	 printf("\"%s\" [color=orange,shape=%s];\n",Pkg.Name(),
+	 printf("\"%s\" [color=orange,shape=%s];\n",Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
       else
-	 printf("\"%s\" [shape=%s];\n",Pkg.Name(),
+	 printf("\"%s\" [shape=%s];\n",Pkg.FullName(true).c_str(),
 		Shapes[ShapeMap[Pkg->ID]]);
    }
    
@@ -1205,8 +1174,12 @@ bool DoAdd(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* This displays the package record from the proper package index file. 
    It is not used by DumpAvail for performance reasons. */
-bool DisplayRecord(pkgCache::VerIterator V)
+bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 {
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
    // Find an appropriate file
    pkgCache::VerFileIterator Vf = V.FileList();
    for (; Vf.end() == false; Vf++)
@@ -1219,13 +1192,13 @@ bool DisplayRecord(pkgCache::VerIterator V)
    pkgCache::PkgFileIterator I = Vf.File();
    if (I.IsOk() == false)
       return _error->Error(_("Package file %s is out of sync."),I.FileName());
-   
-   FileFd PkgF(I.FileName(),FileFd::ReadOnly);
-   if (_error->PendingError() == true)
+
+   FileFd PkgF;
+   if (PkgF.Open(I.FileName(), FileFd::ReadOnlyGzip) == false)
       return false;
-   
+
    // Read the record
-   unsigned char *Buffer = new unsigned char[GCache->HeaderP->MaxVerFileSize+1];
+   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+1];
    Buffer[V.FileList()->Size] = '\n';
    if (PkgF.Seek(V.FileList()->Offset) == false ||
        PkgF.Read(Buffer,V.FileList()->Size) == false)
@@ -1245,7 +1218,7 @@ bool DisplayRecord(pkgCache::VerIterator V)
    }
 
    // Show the right description
-   pkgRecords Recs(*GCache);
+   pkgRecords Recs(*Cache);
    pkgCache::DescIterator Desc = V.TranslatedDescription();
    pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
    cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
@@ -1285,16 +1258,19 @@ struct ExDescFile
 /* This searches the package names and package descriptions for a pattern */
 bool Search(CommandLine &CmdL)
 {
-   pkgCache &Cache = *GCache;
-   bool ShowFull = _config->FindB("APT::Cache::ShowFull",false);
-   bool NamesOnly = _config->FindB("APT::Cache::NamesOnly",false);
-   unsigned NumPatterns = CmdL.FileSize() -1;
+   bool const ShowFull = _config->FindB("APT::Cache::ShowFull",false);
+   bool const NamesOnly = _config->FindB("APT::Cache::NamesOnly",false);
+   unsigned int const NumPatterns = CmdL.FileSize() -1;
    
-   pkgDepCache::Policy Plcy;
-   
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   pkgDepCache::Policy *Plcy = CacheFile.GetPolicy();
+   if (unlikely(Cache == NULL || Plcy == NULL))
+      return false;
+
    // Make sure there is at least one argument
    if (NumPatterns < 1)
-      return _error->Error(_("You must give exactly one pattern"));
+      return _error->Error(_("You must give at least one search pattern"));
    
    // Compile the regex pattern
    regex_t *Patterns = new regex_t[NumPatterns];
@@ -1310,8 +1286,6 @@ bool Search(CommandLine &CmdL)
       }      
    }
    
-   // Create the text record parser
-   pkgRecords Recs(Cache);
    if (_error->PendingError() == true)
    {
       for (unsigned I = 0; I != NumPatterns; I++)
@@ -1319,70 +1293,75 @@ bool Search(CommandLine &CmdL)
       return false;
    }
    
-   ExDescFile *DFList = new ExDescFile[Cache.HeaderP->PackageCount+1];
-   memset(DFList,0,sizeof(*DFList)*Cache.HeaderP->PackageCount+1);
+   ExDescFile *DFList = new ExDescFile[Cache->HeaderP->GroupCount+1];
+   memset(DFList,0,sizeof(*DFList)*Cache->HeaderP->GroupCount+1);
 
    // Map versions that we want to write out onto the VerList array.
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
+   for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() == false; ++G)
    {
-      DFList[P->ID].NameMatch = NumPatterns != 0;
+      if (DFList[G->ID].NameMatch == true)
+	 continue;
+
+      DFList[G->ID].NameMatch = true;
       for (unsigned I = 0; I != NumPatterns; I++)
       {
-	 if (regexec(&Patterns[I],P.Name(),0,0,0) == 0)
-	    DFList[P->ID].NameMatch &= true;
-	 else
-	    DFList[P->ID].NameMatch = false;
+	 if (regexec(&Patterns[I],G.Name(),0,0,0) == 0)
+	    continue;
+	 DFList[G->ID].NameMatch = false;
+	 break;
       }
         
       // Doing names only, drop any that dont match..
-      if (NamesOnly == true && DFList[P->ID].NameMatch == false)
+      if (NamesOnly == true && DFList[G->ID].NameMatch == false)
 	 continue;
 	 
-      // Find the proper version to use. 
-      pkgCache::VerIterator V = Plcy.GetCandidateVer(P);
+      // Find the proper version to use
+      pkgCache::PkgIterator P = G.FindPreferredPkg();
+      if (P.end() == true)
+	 continue;
+      pkgCache::VerIterator V = Plcy->GetCandidateVer(P);
       if (V.end() == false)
-	 DFList[P->ID].Df = V.DescriptionList().FileList();
-   }
-      
-   // Include all the packages that provide matching names too
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; P++)
-   {
-      if (DFList[P->ID].NameMatch == false)
+	 DFList[G->ID].Df = V.DescriptionList().FileList();
+
+      if (DFList[G->ID].NameMatch == false)
 	 continue;
 
+      // Include all the packages that provide matching names too
       for (pkgCache::PrvIterator Prv = P.ProvidesList() ; Prv.end() == false; Prv++)
       {
-	 pkgCache::VerIterator V = Plcy.GetCandidateVer(Prv.OwnerPkg());
-	 if (V.end() == false)
-	 {
-	    DFList[Prv.OwnerPkg()->ID].Df = V.DescriptionList().FileList();
-	    DFList[Prv.OwnerPkg()->ID].NameMatch = true;
-	 }
+	 pkgCache::VerIterator V = Plcy->GetCandidateVer(Prv.OwnerPkg());
+	 if (V.end() == true)
+	    continue;
+
+	 unsigned long id = Prv.OwnerPkg().Group()->ID;
+	 DFList[id].Df = V.DescriptionList().FileList();
+	 DFList[id].NameMatch = true;
       }
    }
    
-   LocalitySort(&DFList->Df,Cache.HeaderP->PackageCount,sizeof(*DFList));
+   LocalitySort(&DFList->Df,Cache->HeaderP->GroupCount,sizeof(*DFList));
 
+   // Create the text record parser
+   pkgRecords Recs(*Cache);
    // Iterate over all the version records and check them
    for (ExDescFile *J = DFList; J->Df != 0; J++)
    {
-      pkgRecords::Parser &P = Recs.Lookup(pkgCache::DescFileIterator(Cache,J->Df));
+      pkgRecords::Parser &P = Recs.Lookup(pkgCache::DescFileIterator(*Cache,J->Df));
 
-      bool Match = true;
-      if (J->NameMatch == false)
+      if (J->NameMatch == false && NamesOnly == false)
       {
-	 string LongDesc = P.LongDesc();
-	 Match = NumPatterns != 0;
+	 string const LongDesc = P.LongDesc();
+	 J->NameMatch = true;
 	 for (unsigned I = 0; I != NumPatterns; I++)
 	 {
 	    if (regexec(&Patterns[I],LongDesc.c_str(),0,0,0) == 0)
-	       Match &= true;
-	    else
-	       Match = false;
+	       continue;
+	    J->NameMatch = false;
+	    break;
 	 }
       }
       
-      if (Match == true)
+      if (J->NameMatch == true)
       {
 	 if (ShowFull == true)
 	 {
@@ -1404,51 +1383,54 @@ bool Search(CommandLine &CmdL)
        return _error->Error("Write to stdout failed");
    return true;
 }
+
+
+/* show automatically installed packages (sorted) */
+bool ShowAuto(CommandLine &CmdL)
+{
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   pkgDepCache *DepCache = CacheFile.GetDepCache();
+   if (unlikely(Cache == NULL || DepCache == NULL))
+      return false;
+
+   std::vector<string> packages;
+   packages.reserve(Cache->HeaderP->PackageCount / 3);
+   
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
+      if ((*DepCache)[P].Flags & pkgCache::Flag::Auto)
+         packages.push_back(P.Name());
+
+    std::sort(packages.begin(), packages.end());
+    
+    for (vector<string>::iterator I = packages.begin(); I != packages.end(); I++)
+            cout << *I << "\n";
+
+   return true;
+}
 									/*}}}*/
 // ShowPackage - Dump the package record to the screen			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool ShowPackage(CommandLine &CmdL)
-{   
-   pkgCache &Cache = *GCache;
-   pkgDepCache::Policy Plcy;
+{
+   pkgCacheFile CacheFile;
+   CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
+   APT::VersionSet::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
+			APT::VersionSet::ALL : APT::VersionSet::CANDIDATE;
+   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
+   for (APT::VersionSet::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
+      if (DisplayRecord(CacheFile, Ver) == false)
+	 return false;
 
-   unsigned found = 0;
-   
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   if (verset.empty() == true)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
-	 continue;
-      }
-
-      ++found;
-
-      // Find the proper version to use.
-      if (_config->FindB("APT::Cache::AllVersions","true") == true)
-      {
-	 pkgCache::VerIterator V;
-	 for (V = Pkg.VersionList(); V.end() == false; V++)
-	 {
-	    if (DisplayRecord(V) == false)
-	       return false;
-	 }
-      }
+      if (helper.virtualPkgs.empty() == true)
+        return _error->Error(_("No packages found"));
       else
-      {
-	 pkgCache::VerIterator V = Plcy.GetCandidateVer(Pkg);
-	 if (V.end() == true || V.FileList().end() == true)
-	    continue;
-	 if (DisplayRecord(V) == false)
-	    return false;
-      }      
+        _error->Notice(_("No packages found"));
    }
-
-   if (found > 0)
-        return true;
-   return _error->Error(_("No packages found"));
+   return true;
 }
 									/*}}}*/
 // ShowPkgNames - Show package names					/*{{{*/
@@ -1456,17 +1438,20 @@ bool ShowPackage(CommandLine &CmdL)
 /* This does a prefix match on the first argument */
 bool ShowPkgNames(CommandLine &CmdL)
 {
-   pkgCache &Cache = *GCache;
-   pkgCache::PkgIterator I = Cache.PkgBegin();
-   bool All = _config->FindB("APT::Cache::AllNames","false");
-   
+   pkgCacheFile CacheFile;
+   if (unlikely(CacheFile.BuildCaches(NULL, false) == false))
+      return false;
+   pkgCache::GrpIterator I = CacheFile.GetPkgCache()->GrpBegin();
+   bool const All = _config->FindB("APT::Cache::AllNames","false");
+
    if (CmdL.FileList[1] != 0)
    {
       for (;I.end() != true; I++)
       {
-	 if (All == false && I->VersionList == 0)
+	 if (All == false && I->FirstPackage == 0)
 	    continue;
-	 
+	 if (I.FindPkg("any")->VersionList == 0)
+	    continue;
 	 if (strncmp(I.Name(),CmdL.FileList[1],strlen(CmdL.FileList[1])) == 0)
 	    cout << I.Name() << endl;
       }
@@ -1477,7 +1462,9 @@ bool ShowPkgNames(CommandLine &CmdL)
    // Show all pkgs
    for (;I.end() != true; I++)
    {
-      if (All == false && I->VersionList == 0)
+      if (All == false && I->FirstPackage == 0)
+	 continue;
+      if (I.FindPkg("any")->VersionList == 0)
 	 continue;
       cout << I.Name() << endl;
    }
@@ -1490,11 +1477,13 @@ bool ShowPkgNames(CommandLine &CmdL)
 /* */
 bool ShowSrcPackage(CommandLine &CmdL)
 {
-   pkgSourceList List;
-   List.ReadMainList();
-   
+   pkgCacheFile CacheFile;
+   pkgSourceList *List = CacheFile.GetSourceList();
+   if (unlikely(List == NULL))
+      return false;
+
    // Create the text record parsers
-   pkgSrcRecords SrcRecs(List);
+   pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
 
@@ -1514,10 +1503,10 @@ bool ShowSrcPackage(CommandLine &CmdL)
         _error->Warning(_("Unable to locate package %s"),*I);
         continue;
       }
-   }      
-   if (found > 0)
-        return true;
-   return _error->Error(_("No packages found"));
+   }
+   if (found == 0)
+      _error->Notice(_("No packages found"));
+   return true;
 }
 									/*}}}*/
 // Policy - Show the results of the preferences file			/*{{{*/
@@ -1525,19 +1514,24 @@ bool ShowSrcPackage(CommandLine &CmdL)
 /* */
 bool Policy(CommandLine &CmdL)
 {
-   if (SrcList == 0)
-      return _error->Error("Generate must be enabled for this function");
-   
-   pkgCache &Cache = *GCache;
-   pkgPolicy Plcy(&Cache);
-   if (ReadPinFile(Plcy) == false || ReadPinDir(Plcy) == false)
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   pkgPolicy *Plcy = CacheFile.GetPolicy();
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
+   if (unlikely(Cache == NULL || Plcy == NULL || SrcList == NULL))
       return false;
-   
+
+   /* Should the MultiArchKiller be run to see which pseudo packages for an
+      arch all package are currently installed? Activating it gives a speed
+      penality for no real gain beside enhanced debugging, so in general no. */
+   if (_config->FindB("APT::Cache::Policy::DepCache", false) == true)
+      CacheFile.GetDepCache();
+
    // Print out all of the package files
    if (CmdL.FileList[1] == 0)
    {
       cout << _("Package files:") << endl;   
-      for (pkgCache::PkgFileIterator F = Cache.FileBegin(); F.end() == false; F++)
+      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; F++)
       {
 	 // Locate the associated index files so we can derive a description
 	 pkgIndexFile *Indx;
@@ -1546,7 +1540,7 @@ bool Policy(CommandLine &CmdL)
 	    return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
 	 
 	 printf("%4i %s\n",
-		Plcy.GetPriority(F),Indx->Describe(true).c_str());
+		Plcy->GetPriority(F),Indx->Describe(true).c_str());
 	 
 	 // Print the reference information for the package
 	 string Str = F.RelStr();
@@ -1558,16 +1552,16 @@ bool Policy(CommandLine &CmdL)
       
       // Show any packages have explicit pins
       cout << _("Pinned packages:") << endl;
-      pkgCache::PkgIterator I = Cache.PkgBegin();
+      pkgCache::PkgIterator I = Cache->PkgBegin();
       for (;I.end() != true; I++)
       {
-	 if (Plcy.GetPriority(I) == 0)
+	 if (Plcy->GetPriority(I) == 0)
 	    continue;
 
 	 // Print the package name and the version we are forcing to
-	 cout << "     " << I.Name() << " -> ";
+	 cout << "     " << I.FullName(true) << " -> ";
 	 
-	 pkgCache::VerIterator V = Plcy.GetMatch(I);
+	 pkgCache::VerIterator V = Plcy->GetMatch(I);
 	 if (V.end() == true)
 	    cout << _("(not found)") << endl;
 	 else
@@ -1576,39 +1570,50 @@ bool Policy(CommandLine &CmdL)
       
       return true;
    }
-   
+
+   string const myArch = _config->Find("APT::Architecture");
+   char const * const msgInstalled = _("  Installed: ");
+   char const * const msgCandidate = _("  Candidate: ");
+   short const InstalledLessCandidate =
+		mbstowcs(NULL, msgInstalled, 0) - mbstowcs(NULL, msgCandidate, 0);
+   short const deepInstalled =
+		(InstalledLessCandidate < 0 ? (InstalledLessCandidate*-1) : 0) - 1;
+   short const deepCandidate =
+		(InstalledLessCandidate > 0 ? (InstalledLessCandidate) : 0) - 1;
+
    // Print out detailed information for each package
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+   for (APT::PackageSet::const_iterator I = pkgset.begin(); I != pkgset.end(); ++I)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-      if (Pkg.end() == true)
-      {
-	 _error->Warning(_("Unable to locate package %s"),*I);
+      pkgCache::PkgIterator Pkg = I.Group().FindPkg("any");
+
+      for (; Pkg.end() != true; Pkg = I.Group().NextPkg(Pkg)) {
+      if (strcmp(Pkg.Arch(),"all") == 0)
 	 continue;
-      }
-      
-      cout << Pkg.Name() << ":" << endl;
-      
+
+      cout << Pkg.FullName(true) << ":" << endl;
+
       // Installed version
-      cout << _("  Installed: ");
+      cout << msgInstalled << OutputInDepth(deepInstalled, " ");
       if (Pkg->CurrentVer == 0)
 	 cout << _("(none)") << endl;
       else
 	 cout << Pkg.CurrentVer().VerStr() << endl;
       
       // Candidate Version 
-      cout << _("  Candidate: ");
-      pkgCache::VerIterator V = Plcy.GetCandidateVer(Pkg);
+      cout << msgCandidate << OutputInDepth(deepCandidate, " ");
+      pkgCache::VerIterator V = Plcy->GetCandidateVer(Pkg);
       if (V.end() == true)
 	 cout << _("(none)") << endl;
       else
 	 cout << V.VerStr() << endl;
 
       // Pinned version
-      if (Plcy.GetPriority(Pkg) != 0)
+      if (Plcy->GetPriority(Pkg) != 0)
       {
 	 cout << _("  Package pin: ");
-	 V = Plcy.GetMatch(Pkg);
+	 V = Plcy->GetMatch(Pkg);
 	 if (V.end() == true)
 	    cout << _("(not found)") << endl;
 	 else
@@ -1623,7 +1628,7 @@ bool Policy(CommandLine &CmdL)
 	    cout << " *** " << V.VerStr();
 	 else
 	    cout << "     " << V.VerStr();
-	 cout << " " << Plcy.GetPriority(Pkg) << endl;
+	 cout << " " << Plcy->GetPriority(Pkg) << endl;
 	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; VF++)
 	 {
 	    // Locate the associated index files so we can derive a description
@@ -1631,10 +1636,11 @@ bool Policy(CommandLine &CmdL)
 	    if (SrcList->FindIndex(VF.File(),Indx) == false &&
 		_system->FindIndex(VF.File(),Indx) == false)
 	       return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
-	    printf("       %4i %s\n",Plcy.GetPriority(VF.File()),
+	    printf("       %4i %s\n",Plcy->GetPriority(VF.File()),
 		   Indx->Describe(true).c_str());
-	 }	 
-      }      
+	 }
+      }
+      }
    }
    
    return true;
@@ -1645,12 +1651,11 @@ bool Policy(CommandLine &CmdL)
 /* */
 bool Madison(CommandLine &CmdL)
 {
+   pkgCacheFile CacheFile;
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
+
    if (SrcList == 0)
-      return _error->Error("Generate must be enabled for this function");
-
-   SrcList->ReadMainList();
-
-   pkgCache &Cache = *GCache;
+      return false;
 
    // Create the src text record parsers and ignore errors about missing
    // deb-src lines that are generated from pkgSrcRecords::pkgSrcRecords
@@ -1658,10 +1663,10 @@ bool Madison(CommandLine &CmdL)
    if (_error->PendingError() == true)
       _error->Discard();
 
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(*I);
-
       if (Pkg.end() == false)
       {
          for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; V++)
@@ -1684,7 +1689,7 @@ bool Madison(CommandLine &CmdL)
                     {
                          if ((*IF)->FindInCache(*(VF.File().Cache())) == VF.File())
                          {
-                                   cout << setw(10) << Pkg.Name() << " | " << setw(10) << V.VerStr() << " | "
+                                   cout << setw(10) << Pkg.FullName(true) << " | " << setw(10) << V.VerStr() << " | "
                                         << (*IF)->Describe(true) << endl;
                          }
                     }
@@ -1696,7 +1701,7 @@ bool Madison(CommandLine &CmdL)
       
       SrcRecs.Restart();
       pkgSrcRecords::Parser *SrcParser;
-      while ((SrcParser = SrcRecs.Find(*I,false)) != 0)
+      while ((SrcParser = SrcRecs.Find(Pkg.Name(),false)) != 0)
       {
          // Maybe support Release info here too eventually
          cout << setw(10) << SrcParser->Package() << " | "
@@ -1714,11 +1719,9 @@ bool Madison(CommandLine &CmdL)
 bool GenCaches(CommandLine &Cmd)
 {
    OpTextProgress Progress(*_config);
-   
-   pkgSourceList List;
-   if (List.ReadMainList() == false)
-      return false;   
-   return pkgMakeStatusCache(List,Progress);
+
+   pkgCacheFile CacheFile;
+   return CacheFile.BuildCaches(&Progress, true);
 }
 									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
@@ -1752,6 +1755,7 @@ bool ShowHelp(CommandLine &Cmd)
       "   unmet - Show unmet dependencies\n"
       "   search - Search the package list for a regex pattern\n"
       "   show - Show a readable record for the package\n"
+      "   showauto - Display a list of automatically installed packages\n"
       "   depends - Show raw dependency information for a package\n"
       "   rdepends - Show reverse dependency information for a package\n"
       "   pkgnames - List the names of all packages in the system\n"
@@ -1795,9 +1799,19 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'n',"names-only","APT::Cache::NamesOnly",0},
       {0,"all-names","APT::Cache::AllNames",0},
       {0,"recurse","APT::Cache::RecurseDepends",0},
+      {'t',"target-release","APT::Default-Release",CommandLine::HasArg},
+      {'t',"default-release","APT::Default-Release",CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,"installed","APT::Cache::Installed",0},
+      {0,"pre-depends","APT::Cache::ShowPreDepends",0},
+      {0,"depends","APT::Cache::ShowDepends",0},
+      {0,"recommends","APT::Cache::ShowRecommends",0},
+      {0,"suggests","APT::Cache::ShowSuggests",0},
+      {0,"replaces","APT::Cache::ShowReplaces",0},
+      {0,"breaks","APT::Cache::ShowBreaks",0},
+      {0,"conflicts","APT::Cache::ShowConflicts",0},
+      {0,"enhances","APT::Cache::ShowEnhances",0},
       {0,0,0,0}};
    CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
                                     {"add",&DoAdd},
@@ -1816,6 +1830,7 @@ int main(int argc,const char *argv[])					/*{{{*/
                                     {"xvcg",&XVcg},
                                     {"show",&ShowPackage},
                                     {"pkgnames",&ShowPkgNames},
+                                    {"showauto",&ShowAuto},
                                     {"policy",&Policy},
                                     {"madison",&Madison},
                                     {0,0}};
@@ -1845,46 +1860,21 @@ int main(int argc,const char *argv[])					/*{{{*/
    }
    
    // Deal with stdout not being a tty
-   if (isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
+   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
 
-   if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
-   { 
-      MMap *Map = 0;
-      if (_config->FindB("APT::Cache::Generate",true) == false)
-      {
-	 Map = new MMap(*new FileFd(_config->FindFile("Dir::Cache::pkgcache"),
-				    FileFd::ReadOnly),MMap::Public|MMap::ReadOnly);
-      }
-      else
-      {
-	 // Open the cache file
-	 SrcList = new pkgSourceList;
-	 SrcList->ReadMainList();
+   if (_config->Exists("APT::Cache::Generate") == true)
+      _config->Set("pkgCacheFile::Generate", _config->FindB("APT::Cache::Generate", true));
 
-	 // Generate it and map it
-	 OpProgress Prog;
-	 pkgMakeStatusCache(*SrcList,Prog,&Map,true);
-      }
-      
-      if (_error->PendingError() == false)
-      {
-	 pkgCache Cache(Map);   
-	 GCache = &Cache;
-	 if (_error->PendingError() == false)
-	    CmdL.DispatchArg(CmdsB);
-      }
-      delete Map;
-   }
-   
+   if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
+      CmdL.DispatchArg(CmdsB);
+
    // Print any errors or warnings found during parsing
-   if (_error->empty() == false)
-   {
-      bool Errors = _error->PendingError();
+   bool const Errors = _error->PendingError();
+   if (_config->FindI("quiet",0) > 0)
       _error->DumpErrors();
-      return Errors == true?100:0;
-   }
-          
-   return 0;
+   else
+      _error->DumpErrors(GlobalError::DEBUG);
+   return Errors == true ? 100 : 0;
 }
 									/*}}}*/

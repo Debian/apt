@@ -84,6 +84,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd.Fd(), Fd.Size());
    Res.TakeHashes(Hash);
+
    URIDone(Res);
    return true;
 }

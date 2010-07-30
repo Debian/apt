@@ -1,0 +1,201 @@
+#!/bin/sh -- # no runable script, just for vi
+
+# we all like colorful messages
+CERROR="[1;31m" # red
+CWARNING="[1;33m" # yellow
+CMSG="[1;32m" # green
+CINFO="[1;96m" # light blue
+CDEBUG="[1;94m" # blue
+CNORMAL="[0;39m" # default system console color
+CDONE="[1;32m" # green
+CPASS="[1;32m" # green
+CFAIL="[1;31m" # red
+CCMD="[1;35m" # pink
+
+msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
+msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
+msgmsg() { echo "${CMSG}$1${CNORMAL}" >&2; }
+msginfo() { echo "${CINFO}I: $1${CNORMAL}" >&2; }
+msgdebug() { echo "${CDEBUG}D: $1${CNORMAL}" >&2; }
+msgdone() { echo "${CDONE}DONE${CNORMAL}" >&2; }
+msgnwarn() { echo -n "${CWARNING}W: $1${CNORMAL}" >&2; }
+msgnmsg() { echo -n "${CMSG}$1${CNORMAL}" >&2; }
+msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}" >&2; }
+msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}" >&2; }
+msgtest() { echo -n "${CINFO}$1 ${CCMD}$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} …${CNORMAL} " >&2; }
+msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
+msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
+msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; }
+
+# enable / disable Debugging
+msginfo() { true; }
+msgdebug() { true; }
+msgninfo() { true; }
+msgndebug() { true; }
+msgdone() { if [ "$1" = "debug" -o "$1" = "info" ]; then true; else echo "${CDONE}DONE${CNORMAL}" >&2; fi }
+
+runapt() {
+	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+}
+aptconfig() { runapt apt-config $*; }
+aptcache() { runapt apt-cache $*; }
+aptget() { runapt apt-get $*; }
+aptftparchive() { runapt apt-ftparchive $*; }
+
+setupenvironment() {
+	local TMPWORKINGDIRECTORY=$(mktemp -d)
+	local TESTDIR=$(readlink -f $(dirname $0))
+	msgninfo "Preparing environment for ${CCMD}$0${CINFO} in ${TMPWORKINGDIRECTORY}… "
+	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
+	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
+	local OLDWORKINGDIRECTORY=$(pwd)
+	trap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	cd $TMPWORKINGDIRECTORY
+	mkdir rootdir aptarchive
+	cd rootdir
+	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d var/cache var/lib/dpkg
+	mkdir -p var/cache/apt/archives/partial var/lib/apt/lists/partial
+	local STATUSFILE=$(echo "$(basename $0)" | sed 's/^test-/status-/')
+	if [ -f "${TESTDIR}/${STATUSFILE}" ]; then
+		cp "${TESTDIR}/${STATUSFILE}" var/lib/dpkg/status
+	else
+		touch var/lib/dpkg/status
+	fi
+	mkdir -p usr/lib/apt
+	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
+	cd ..
+	local PACKAGESFILE=$(echo "$(basename $0)" | sed 's/^test-/Packages-/')
+	if [ -f "${TESTDIR}/${PACKAGESFILE}" ]; then
+		cp "${TESTDIR}/${PACKAGESFILE}" aptarchive/Packages
+	else
+		touch var/lib/dpkg/status
+	fi
+	echo "RootDir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
+	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
+	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
+	export LC_ALL=C
+	msgdone "info"
+}
+
+configarchitecture() {
+	local CONFFILE=rootdir/etc/apt/apt.conf.d/01multiarch.conf
+	echo "APT::Architecture \"$1\";" > $CONFFILE
+	shift
+	while [ -n "$1" ]; do
+		echo "APT::Architectures:: \"$1\";" >> $CONFFILE
+		shift
+	done
+}
+
+buildflataptarchive() {
+	msginfo "Build APT archive for ${CCMD}$0${CINFO}…"
+	cd aptarchive
+	APTARCHIVE=$(readlink -f .)
+	if [ -f Packages ]; then
+		msgninfo "\tPackages file… "
+		cat Packages | gzip > Packages.gz
+		cat Packages | bzip2 > Packages.bz2
+		cat Packages | lzma > Packages.lzma
+		msgdone "info"
+	fi
+	if [ -f Sources ]; then
+		msgninfo "\tSources file… "
+		cat Sources | gzip > Sources.gz
+		cat Sources | bzip2 > Sources.bz2
+		cat Sources | lzma > Sources.lzma
+		msgdone "info"
+	fi
+	cd ..
+	aptftparchive release . > Release
+}
+
+setupflataptarchive() {
+	buildflataptarchive
+	APTARCHIVE=$(readlink -f ./aptarchive)
+	if [ -f ${APTARCHIVE}/Packages ]; then
+		msgninfo "\tadd deb sources.list line… "
+		echo "deb file://$APTARCHIVE /" > rootdir/etc/apt/sources.list.d/apt-test-archive-deb.list
+		msgdone "info"
+	else
+		rm -f rootdir/etc/apt/sources.list.d/apt-test-archive-deb.list
+	fi
+	if [ -f ${APTARCHIVE}/Sources ]; then
+		msgninfo "\tadd deb-src sources.list line… "
+		echo "deb-src file://$APTARCHIVE /" > rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list
+		msgdone "info"
+	else
+		rm -f rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list
+	fi
+	aptget update -qq
+}
+
+diff() {
+	local DIFFTEXT="$($(which diff) -u $* | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
+	if [ -n "$DIFFTEXT" ]; then
+		echo
+		echo "$DIFFTEXT"
+		return 1
+	else
+		return 0
+	fi
+}
+
+testequal() {
+	local COMPAREFILE=$(mktemp)
+	echo "$1" > $COMPAREFILE
+	shift
+	msgtest "Test for equality of" "$*"
+	$* 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	rm $COMPAREFILE
+}
+
+testequalor2() {
+	local COMPAREFILE1=$(mktemp)
+	local COMPAREFILE2=$(mktemp)
+	local COMPAREAGAINST=$(mktemp)
+	echo "$1" > $COMPAREFILE1
+	echo "$2" > $COMPAREFILE2
+	shift 2
+	msgtest "Test for equality OR of" "$*"
+	$* 2>&1 1> $COMPAREAGAINST
+	(diff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
+		diff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
+		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(diff $COMPAREFILE1 $COMPAREAGAINST)" \
+		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(diff $COMPAREFILE2 $COMPAREAGAINST)" &&
+		  msgfail )
+	rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST
+}
+
+testshowvirtual() {
+	local VIRTUAL="E: Can't select versions from package '$1' as it purely virtual"
+	local PACKAGE="$1"
+	shift
+	while [ -n "$1" ]; do
+		VIRTUAL="${VIRTUAL}
+E: Can't select versions from package '$1' as it purely virtual"
+		PACKAGE="${PACKAGE} $1"
+		shift
+	done
+	msgtest "Test for virtual packages" "apt-cache show $PACKAGE"
+	VIRTUAL="${VIRTUAL}
+E: No packages found"
+	local COMPAREFILE=$(mktemp)
+	local ARCH=$(dpkg-architecture -qDEB_HOST_ARCH_CPU)
+	eval `apt-config shell ARCH APT::Architecture`
+	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
+	aptcache show $PACKAGE 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	rm $COMPAREFILE
+}
+
+testnopackage() {
+	msgtest "Test for non-existent packages" "apt-cache show $*"
+	local SHOWPKG="$(aptcache show $* 2>&1 | grep '^Package: ')"
+	if [ -n "$SHOWPKG" ]; then
+		echo
+		echo "$SHOWPKG"
+		msgfail
+		return 1
+	fi
+	msgpass
+}

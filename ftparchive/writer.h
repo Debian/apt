@@ -19,8 +19,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <set>
 
 #include "cachedb.h"
+#include "multicompress.h"
 #include "override.h"
 #include "apt-ftparchive.h"
 
@@ -70,6 +72,25 @@ class FTWScanner
    bool SetExts(string const &Vals);
       
    FTWScanner(string const &Arch = string());
+   virtual ~FTWScanner() {};
+};
+
+class TranslationWriter
+{
+   MultiCompress *Comp;
+   FILE *Output;
+   std::set<string> Included;
+   unsigned short RefCounter;
+
+   public:
+   void IncreaseRefCounter() { ++RefCounter; };
+   unsigned short DecreaseRefCounter() { return (RefCounter == 0) ? 0 : --RefCounter; };
+   unsigned short GetRefCounter() const { return RefCounter; };
+   bool DoPackage(string const &Pkg, string const &Desc, string const &MD5);
+
+   TranslationWriter(string const &File, string const &TransCompress, mode_t const &Permissions);
+   TranslationWriter() : Comp(NULL), Output(NULL), RefCounter(0) {};
+   ~TranslationWriter();
 };
 
 class PackagesWriter : public FTWScanner
@@ -93,6 +114,7 @@ class PackagesWriter : public FTWScanner
    string DirStrip;
    FILE *Output;
    struct CacheDB::Stats &Stats;
+   TranslationWriter *TransWriter;
 
    inline bool ReadOverride(string const &File) {return Over.ReadOverride(File);};
    inline bool ReadExtraOverride(string const &File) 
