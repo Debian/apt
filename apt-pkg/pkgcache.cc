@@ -111,7 +111,10 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 /* */
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 {
-   MultiArchEnabled = APT::Configuration::getArchitectures().size() > 1;
+   // call getArchitectures() with cached=false to ensure that the 
+   // architectures cache is re-evaulated. this is needed in cases
+   // when the APT::Architecture field changes between two cache creations
+   MultiArchEnabled = APT::Configuration::getArchitectures(false).size() > 1;
    if (DoMap == true)
       ReMap();
 }
