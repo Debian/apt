@@ -114,6 +114,15 @@ public:									/*{{{*/
 	 */
 	bool DebugE(const char *Function,const char *Description,...) __like_printf(3) __cold;
 
+	/** \brief adds an errno message with the given type
+	 *
+	 * \param type of the error message
+	 * \param Function which failed
+	 * \param Description of the error
+	 */
+	bool InsertErrno(MsgType const &type, const char* Function,
+			 const char* Description,...) __like_printf(4) __cold;
+
 	/** \brief add an fatal error message to the list
 	 *
 	 *  Most of the stuff we consider as "error" is also "fatal" for
@@ -168,6 +177,13 @@ public:									/*{{{*/
 	 *  \return \b false
 	 */
 	bool Debug(const char *Description,...) __like_printf(2) __cold;
+
+	/** \brief adds an error message with the given type
+	 *
+	 * \param type of the error message
+	 * \param Description of the error
+	 */
+	bool Insert(MsgType const &type, const char* Description,...) __like_printf(3) __cold;
 
 	/** \brief is an error in the list?
 	 *

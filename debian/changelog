@@ -1,22 +1,4 @@
-apt (0.7.26~exp11ubuntu3) maverick; urgency=low
-
-  * debian/control:
-    - add dependency on zlib-dev for libapt-pkg-dev
-   * apt-pkg/cacheset.cc:
-     - make CacheSetHelper::canNotFindAllVer display a notice
-       only (for compat reasons). Otherwise tools like sbuild
-       blow up
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 30 Jul 2010 08:57:15 +0200
-
-apt (0.7.26~exp11ubuntu2) maverick; urgency=low
-
-  * remove debian-archive-keyring dependency and readd
-    recommends to the ubuntu-keyring
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 29 Jul 2010 20:02:39 +0200
-
-apt (0.7.26~exp11ubuntu1) maverick; urgency=low
+apt (0.7.26~exp12ubuntu1) maverick; urgency=low
 
   * ABI break upload
   * merged from debian/experimental, remaining changes:
@@ -28,7 +10,27 @@ apt (0.7.26~exp11ubuntu1) maverick; urgency=low
   * debian/apt.postinst
     - drop set_apt_proxy_from_gconf(), no longer needed in maverick
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 29 Jul 2010 17:03:48 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 30 Jul 2010 12:53:21 +0200
+
+apt (0.7.26~exp12) experimental; urgency=low
+
+  [ Michael Vogt ]
+  * debian/control:
+    - add dependency on zlib-dev for libapt-pkg-dev
+
+  [ David Kalnischkies ]
+  * apt-pkg/cacheset.cc:
+    - [ABI BREAK] add an ErrorType option to CacheSetHelper
+  * cmdline/apt-cache.cc:
+    - use Notice instead of Error in the CacheSetHelper messages
+      for compat reasons. Otherwise tools like sbuild blow up
+    - return success in show if a virtual package was given
+  * debian/control:
+    - remove libcurl3-gnutls-dev alternative as the package is gone
+    - increase needed version of libcurl4-gnutls-dev to >= 7.19.0
+      as we use CURLOPT_{ISSUERCERT,CRLFILE} (Closes: #589642)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 30 Jul 2010 11:55:48 +0200
 
 apt (0.7.26~exp11) experimental; urgency=low
 

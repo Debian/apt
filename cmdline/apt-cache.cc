@@ -46,6 +46,29 @@
 
 using namespace std;
 
+// CacheSetHelper saving virtual packages				/*{{{*/
+class CacheSetHelperVirtuals: public APT::CacheSetHelper {
+public:
+   APT::PackageSet virtualPkgs;
+
+   virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotFindCandidateVer(Cache, Pkg);
+   }
+
+   virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotFindNewestVer(Cache, Pkg);
+   }
+
+   virtual APT::VersionSet canNotFindAllVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotFindAllVer(Cache, Pkg);
+   }
+
+   CacheSetHelperVirtuals(bool const &ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
+};
+									/*}}}*/
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -173,7 +196,9 @@ bool UnMet(CommandLine &CmdL)
    }
    else
    {
-      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+      CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
+      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1,
+				APT::VersionSet::CANDIDATE, helper);
       for (APT::VersionSet::iterator V = verset.begin(); V != verset.end(); ++V)
 	 if (ShowUnMet(V, Important) == false)
 	    return false;
@@ -187,7 +212,8 @@ bool UnMet(CommandLine &CmdL)
 bool DumpPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
 
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
@@ -552,22 +578,6 @@ bool DumpAvail(CommandLine &Cmd)
 }
 									/*}}}*/
 // ShowDepends - Helper for printing out a dependency tree		/*{{{*/
-class CacheSetHelperDepends: public APT::CacheSetHelper {
-public:
-   APT::PackageSet virtualPkgs;
-
-   virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      return pkgCache::VerIterator(Cache, 0);
-   }
-
-   virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      return pkgCache::VerIterator(Cache, 0);
-   }
-
-   CacheSetHelperDepends() : CacheSetHelper(false) {}
-};
 bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 {
    pkgCacheFile CacheFile;
@@ -575,7 +585,7 @@ bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
    if (unlikely(Cache == NULL))
       return false;
 
-   CacheSetHelperDepends helper;
+   CacheSetHelperVirtuals helper(false);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
    if (verset.empty() == true && helper.virtualPkgs.empty() == true)
       return false;
@@ -754,11 +764,12 @@ bool XVcg(CommandLine &CmdL)
    }
 
    // Load the list of packages from the command line into the show list
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    std::list<APT::PackageSet::Modifier> mods;
    mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
    mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
-		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0);
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
    for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
 	Pkg != pkgsets[0].end(); ++Pkg)
@@ -968,11 +979,12 @@ bool Dotty(CommandLine &CmdL)
    }
 
    // Load the list of packages from the command line into the show list
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    std::list<APT::PackageSet::Modifier> mods;
    mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
    mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
-		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0);
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
    for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
 	Pkg != pkgsets[0].end(); ++Pkg)
@@ -1403,16 +1415,22 @@ bool ShowAuto(CommandLine &CmdL)
 bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
+   CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
    APT::VersionSet::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
 			APT::VersionSet::ALL : APT::VersionSet::CANDIDATE;
-   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select);
+   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionSet::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
 	 return false;
 
-   if (verset.empty() == false)
-        return true;
-   return _error->Error(_("No packages found"));
+   if (verset.empty() == true)
+   {
+      if (helper.virtualPkgs.empty() == true)
+        return _error->Error(_("No packages found"));
+      else
+        _error->Notice(_("No packages found"));
+   }
+   return true;
 }
 									/*}}}*/
 // ShowPkgNames - Show package names					/*{{{*/
@@ -1485,10 +1503,10 @@ bool ShowSrcPackage(CommandLine &CmdL)
         _error->Warning(_("Unable to locate package %s"),*I);
         continue;
       }
-   }      
-   if (found > 0)
-        return true;
-   return _error->Error(_("No packages found"));
+   }
+   if (found == 0)
+      _error->Notice(_("No packages found"));
+   return true;
 }
 									/*}}}*/
 // Policy - Show the results of the preferences file			/*{{{*/
@@ -1564,7 +1582,8 @@ bool Policy(CommandLine &CmdL)
 		(InstalledLessCandidate > 0 ? (InstalledLessCandidate) : 0) - 1;
 
    // Print out detailed information for each package
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
    for (APT::PackageSet::const_iterator I = pkgset.begin(); I != pkgset.end(); ++I)
    {
       pkgCache::PkgIterator Pkg = I.Group().FindPkg("any");
@@ -1644,7 +1663,8 @@ bool Madison(CommandLine &CmdL)
    if (_error->PendingError() == true)
       _error->Discard();
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (Pkg.end() == false)

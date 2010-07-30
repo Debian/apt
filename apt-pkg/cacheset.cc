@@ -437,21 +437,21 @@ pkgCache::VerIterator VersionSet::getInstalledVer(pkgCacheFile &Cache,
 pkgCache::PkgIterator CacheSetHelper::canNotFindPkgName(pkgCacheFile &Cache,
 			std::string const &str) {
 	if (ShowError == true)
-		_error->Error(_("Unable to locate package %s"), str.c_str());
+		_error->Insert(ErrorType, _("Unable to locate package %s"), str.c_str());
 	return pkgCache::PkgIterator(Cache, 0);
 }
 									/*}}}*/
 // canNotFindTask - handle the case no package is found for a task	/*{{{*/
 PackageSet CacheSetHelper::canNotFindTask(pkgCacheFile &Cache, std::string pattern) {
 	if (ShowError == true)
-		_error->Error(_("Couldn't find task '%s'"), pattern.c_str());
+		_error->Insert(ErrorType, _("Couldn't find task '%s'"), pattern.c_str());
 	return PackageSet();
 }
 									/*}}}*/
 // canNotFindRegEx - handle the case no package is found by a regex	/*{{{*/
 PackageSet CacheSetHelper::canNotFindRegEx(pkgCacheFile &Cache, std::string pattern) {
 	if (ShowError == true)
-		_error->Error(_("Couldn't find any package by regex '%s'"), pattern.c_str());
+		_error->Insert(ErrorType, _("Couldn't find any package by regex '%s'"), pattern.c_str());
 	return PackageSet();
 }
 									/*}}}*/
@@ -464,7 +464,7 @@ PackageSet CacheSetHelper::canNotFindPackage(pkgCacheFile &Cache, std::string co
 VersionSet CacheSetHelper::canNotFindAllVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
-		_error->Notice(_("Can't select versions from package '%s' as it purely virtual"), Pkg.FullName(true).c_str());
+		_error->Insert(ErrorType, _("Can't select versions from package '%s' as it purely virtual"), Pkg.FullName(true).c_str());
 	return VersionSet();
 }
 									/*}}}*/
@@ -472,7 +472,7 @@ VersionSet CacheSetHelper::canNotFindAllVer(pkgCacheFile &Cache,
 VersionSet CacheSetHelper::canNotFindInstCandVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
-		_error->Error(_("Can't select installed nor candidate version from package '%s' as it has neither of them"), Pkg.FullName(true).c_str());
+		_error->Insert(ErrorType, _("Can't select installed nor candidate version from package '%s' as it has neither of them"), Pkg.FullName(true).c_str());
 	return VersionSet();
 }
 									/*}}}*/
@@ -480,7 +480,7 @@ VersionSet CacheSetHelper::canNotFindInstCandVer(pkgCacheFile &Cache,
 VersionSet CacheSetHelper::canNotFindCandInstVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
-		_error->Error(_("Can't select installed nor candidate version from package '%s' as it has neither of them"), Pkg.FullName(true).c_str());
+		_error->Insert(ErrorType, _("Can't select installed nor candidate version from package '%s' as it has neither of them"), Pkg.FullName(true).c_str());
 	return VersionSet();
 }
 									/*}}}*/
@@ -488,7 +488,7 @@ VersionSet CacheSetHelper::canNotFindCandInstVer(pkgCacheFile &Cache,
 pkgCache::VerIterator CacheSetHelper::canNotFindNewestVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
-		_error->Error(_("Can't select newest version from package '%s' as it is purely virtual"), Pkg.FullName(true).c_str());
+		_error->Insert(ErrorType, _("Can't select newest version from package '%s' as it is purely virtual"), Pkg.FullName(true).c_str());
 	return pkgCache::VerIterator(Cache, 0);
 }
 									/*}}}*/
@@ -496,7 +496,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindNewestVer(pkgCacheFile &Cache,
 pkgCache::VerIterator CacheSetHelper::canNotFindCandidateVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
-		_error->Error(_("Can't select candidate version from package %s as it has no candidate"), Pkg.FullName(true).c_str());
+		_error->Insert(ErrorType, _("Can't select candidate version from package %s as it has no candidate"), Pkg.FullName(true).c_str());
 	return pkgCache::VerIterator(Cache, 0);
 }
 									/*}}}*/
@@ -504,7 +504,7 @@ pkgCache::VerIterator CacheSetHelper::canNotFindCandidateVer(pkgCacheFile &Cache
 pkgCache::VerIterator CacheSetHelper::canNotFindInstalledVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
-		_error->Error(_("Can't select installed version from package %s as it is not installed"), Pkg.FullName(true).c_str());
+		_error->Insert(ErrorType, _("Can't select installed version from package %s as it is not installed"), Pkg.FullName(true).c_str());
 	return pkgCache::VerIterator(Cache, 0);
 }
 									/*}}}*/
