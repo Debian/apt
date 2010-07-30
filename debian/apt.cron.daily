@@ -1,6 +1,4 @@
 #!/bin/sh
-#
-
 #set -e
 #
 # This file understands the following apt configuration variables:
@@ -49,7 +47,7 @@
 #  APT::Periodic::Update-Package-Lists "0";
 #  - Do "apt-get update" automatically every n-days (0=disable)
 #    
-#  "APT::Periodic::Download-Upgradeable-Packages=0",
+#  APT::Periodic::Download-Upgradeable-Packages "0";
 #  - Do "apt-get upgrade --download-only" every n-days (0=disable)
 #
 #  APT::Periodic::Download-Upgradeable-Packages-Debdelta "1";
@@ -61,21 +59,15 @@
 #    Requires the package "unattended-upgrades" and will write
 #    a log in /var/log/unattended-upgrades
 # 
-#  "APT::Archives::MaxAge",
-#  - Set maximum allowed age of a cache package file. If a cache 
-#    package file is older it is deleted (0=disable)
+#  APT::Periodic::AutocleanInterval "0";
+#  - Do "apt-get autoclean" every n-days (0=disable)
 #
-#  "APT::Archives::MaxSize",
-#  - Set maximum size of the cache in MB (0=disable). If the cache
-#    is bigger, cached package files are deleted until the size
-#    requirement is met (the biggest packages will be deleted 
-#    first).
-#
-#  "APT::Archives::MinAge"
-#  - Set minimum age of a package file. If a file is younger it
-#    will not be deleted (0=disable). Usefull to prevent races 
-#    and to keep backups of the packages for emergency.
-# 
+#  APT::Periodic::Verbose "0";
+#  - Send report mail to root
+#      0:  no report             (or null string)
+#      1:  progress report       (actually any string)
+#      2:  + command outputs     (remove -qq, remove 2>/dev/null, add -d)
+#      3:  + trace on            
 
 check_stamp()
 {
@@ -116,17 +108,9 @@ check_stamp()
 
     delta=$(($now-$stamp))
 
-    # intervall is in days,
+    # intervall is in days, convert to sec.
     interval=$(($interval*60*60*24))
-    #echo "stampfile: $1"
-    #echo "interval=$interval, now=$now, stamp=$stamp, delta=$delta"
-
-    # remove timestamps a day (or more) in the future and force re-check
-    if [ $stamp -gt $(($now+86400)) ]; then
-         echo "WARNING: file $stamp_file has a timestamp in the future: $stamp"
-         rm -f "$stamp_file"
-         return 0
-    fi
+    debug_echo "check_stamp: interval=$interval, now=$now, stamp=$stamp, delta=$delta (sec)"
 
     # remove timestamps a day (or more) in the future and force re-check
     if [ $stamp -gt $(($now+86400)) ]; then
@@ -145,7 +129,6 @@ check_stamp()
 update_stamp()
 {
     stamp="$1"
-
     touch $stamp
 }
 
@@ -401,10 +384,11 @@ now=$(date +%s)
 # Document only Periodic for all controling parameters of this script.
 
 UpdateInterval=0
+eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists)
+
 DownloadUpgradeableInterval=0
-eval $(apt-config shell UpdateInterval APT::Periodic::Update-Package-Lists DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
-AutocleanInterval=$DownloadUpgradeableInterval
-eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
+eval $(apt-config shell DownloadUpgradeableInterval APT::Periodic::Download-Upgradeable-Packages)
+
 UnattendedUpgradeInterval=0
 eval $(apt-config shell UnattendedUpgradeInterval APT::Periodic::Unattended-Upgrade)
 
@@ -421,6 +405,7 @@ eval $(apt-config shell Debdelta APT::Periodic::Download-Upgradeable-Packages-De
 if [ $UpdateInterval -eq 0 ] &&
    [ $DownloadUpgradeableInterval -eq 0 ] &&
    [ $UnattendedUpgradeInterval -eq 0 ] &&
+   [ $BackupArchiveInterval -eq 0 ] &&
    [ $AutocleanInterval -eq 0 ]; then
 
     # check cache size
@@ -442,11 +427,12 @@ UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
     # check for a new archive signing key (against the master keyring)
     if eval apt-key net-update $XSTDERR; then
-	debug_echo "apt-key net-update (success)"
+       debug_echo "apt-key net-update (success)"
     else
-	debug_echo "apt-key net-update (failure)"
+       debug_echo "apt-key net-update (failure)"
     fi
-    if eval apt-get $XAPTOPT -y update -o APT::Update::Auth-Failure::=\"cp /usr/share/apt/apt-auth-failure.note /var/lib/update-notifier/user.d/\" $XSTDERR; then
+    # run apt-get update
+    if eval apt-get $XAPTOPT -y update $XSTDERR; then
 	debug_echo "download updated metadata (success)."
 	if which dbus-send >/dev/null && pidof dbus-daemon >/dev/null; then
 	    if dbus-send --system / app.apt.dbus.updated boolean:true ; then
@@ -459,11 +445,11 @@ if check_stamp $UPDATE_STAMP $UpdateInterval; then
 	fi
 	update_stamp $UPDATE_STAMP
 	UPDATED=1
-	# now run apt-xapian-index if it is installed to ensure the index
-	# is up-to-date
-	if [ -x /usr/sbin/update-apt-xapian-index ]; then
-	    ionice -c3 update-apt-xapian-index -q
-	fi
+        # now run apt-xapian-index if it is installed to ensure the index
+        # is up-to-date
+        if [ -x /usr/sbin/update-apt-xapian-index ]; then
+            nice ionice -c3 update-apt-xapian-index -q
+        fi
     else
 	debug_echo "download updated metadata (error)"
     fi

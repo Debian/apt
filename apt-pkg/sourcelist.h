@@ -29,6 +29,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/metaindex.h>
 
@@ -57,9 +58,10 @@ class pkgSourceList
       bool FixupURI(string &URI) const;
       virtual bool ParseLine(vector<metaIndex *> &List,
 			     const char *Buffer,
-			     unsigned long CurLine,string File) const;
-      virtual bool CreateItem(vector<metaIndex *> &List,string URI,
-			      string Dist,string Section) const = 0;
+			     unsigned long const &CurLine,string const &File) const;
+      virtual bool CreateItem(vector<metaIndex *> &List,string const &URI,
+			      string const &Dist,string const &Section,
+			      std::map<string, string> const &Options) const = 0;
       Type();
       virtual ~Type() {};
    };

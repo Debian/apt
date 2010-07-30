@@ -399,7 +399,7 @@ bool ContentsExtract::TakeContents(const void *NewData,unsigned long Length)
 // ContentsExtract::Add - Read the contents data into the sorter	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ContentsExtract::Add(GenContents &Contents,string Package)
+void ContentsExtract::Add(GenContents &Contents,string const &Package)
 {
    const char *Start = Data;
    char *Pkg = Contents.Mystrdup(Package.c_str());

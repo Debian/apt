@@ -24,7 +24,7 @@
 // Override::ReadOverride - Read the override file			/*{{{*/
 // ---------------------------------------------------------------------
 /* This parses the override file and reads it into the map */
-bool Override::ReadOverride(string File,bool Source)
+bool Override::ReadOverride(string const &File,bool const &Source)
 {
    if (File.empty() == true)
       return true;
@@ -132,7 +132,7 @@ bool Override::ReadOverride(string File,bool Source)
 // Override::ReadExtraOverride - Read the extra override file		/*{{{*/
 // ---------------------------------------------------------------------
 /* This parses the extra override file and reads it into the map */
-bool Override::ReadExtraOverride(string File,bool Source)
+bool Override::ReadExtraOverride(string const &File,bool const &Source)
 {
    if (File.empty() == true)
       return true;
@@ -209,9 +209,9 @@ bool Override::ReadExtraOverride(string File,bool Source)
 /* Returns a override item for the given package and the given architecture.
  * Treats "all" special
  */
-Override::Item* Override::GetItem(string Package, string Architecture)
+Override::Item* Override::GetItem(string const &Package, string const &Architecture)
 {
-   map<string,Item>::iterator I = Mapping.find(Package);
+   map<string,Item>::const_iterator I = Mapping.find(Package);
    map<string,Item>::iterator J = Mapping.find(Package + "/" + Architecture);
 
    if (I == Mapping.end() && J == Mapping.end())
@@ -230,7 +230,7 @@ Override::Item* Override::GetItem(string Package, string Architecture)
 	 if (R->Priority != "") result->Priority = R->Priority;
 	 if (R->OldMaint != "") result->OldMaint = R->OldMaint;
 	 if (R->NewMaint != "") result->NewMaint = R->NewMaint;
-	 for (map<string,string>::iterator foI = R->FieldOverride.begin();
+	 for (map<string,string>::const_iterator foI = R->FieldOverride.begin();
 	      foI != R->FieldOverride.end(); foI++)
          {
 	    result->FieldOverride[foI->first] = foI->second;
@@ -247,7 +247,7 @@ Override::Item* Override::GetItem(string Package, string Architecture)
    there is a rule but it does not match then the empty string is returned,
    also if there was no rewrite rule the empty string is returned. Failed
    indicates if there was some kind of problem while rewriting. */
-string Override::Item::SwapMaint(string Orig,bool &Failed)
+string Override::Item::SwapMaint(string const &Orig,bool &Failed)
 {
    Failed = false;
    
@@ -262,10 +262,10 @@ string Override::Item::SwapMaint(string Orig,bool &Failed)
       override file. Thus it persists.*/
 #if 1
    // Break OldMaint up into little bits on double slash boundaries.
-   string::iterator End = OldMaint.begin();
+   string::const_iterator End = OldMaint.begin();
    while (1)
    {
-      string::iterator Start = End;      
+      string::const_iterator Start = End;      
       for (; End < OldMaint.end() &&
 	   (End + 3 >= OldMaint.end() || End[0] != ' ' || 
 	    End[1] != '/' || End[2] != '/'); End++);

@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+local DIR=$(readlink -f $(dirname $0))
+for testcase in $(run-parts --list $DIR | grep '/test-'); do
+	echo "\033[1;32mRun Testcase \033[1;35m$(basename ${testcase})\033[0m"
+	${testcase}
+done

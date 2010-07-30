@@ -378,9 +378,10 @@ int pkgAcqMethod::Run(bool Single)
 	    
 	    Tmp->Uri = LookupTag(Message,"URI");
 	    Tmp->DestFile = LookupTag(Message,"FileName");
-	    if (StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified) == false)
+	    if (RFC1123StrToTime(LookupTag(Message,"Last-Modified").c_str(),Tmp->LastModified) == false)
 	       Tmp->LastModified = 0;
 	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
+	    Tmp->FailIgnore = StringToBool(LookupTag(Message,"Fail-Ignore"),false);
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list

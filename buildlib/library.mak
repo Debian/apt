@@ -16,11 +16,11 @@
 # See defaults.mak for information about LOCAL
 
 # Some local definitions
-LOCAL := lib$(LIBRARY)$(LIBEXT).so.$(MAJOR).$(MINOR)
+LOCAL := lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 $(LOCAL)-OBJS := $(addprefix $(OBJ)/,$(addsuffix .opic,$(notdir $(basename $(SOURCE)))))
 $(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .opic.d,$(notdir $(basename $(SOURCE)))))
 $(LOCAL)-HEADERS := $(addprefix $(INCLUDE)/,$(HEADERS))
-$(LOCAL)-SONAME := lib$(LIBRARY)$(LIBEXT).so.$(MAJOR)
+$(LOCAL)-SONAME := lib$(LIBRARY).so.$(MAJOR)
 $(LOCAL)-SLIBS := $(SLIBS)
 $(LOCAL)-LIBRARY := $(LIBRARY)
 
@@ -29,7 +29,7 @@ include $(PODOMAIN_H)
 
 # Install the command hooks
 headers: $($(LOCAL)-HEADERS)
-library: $(LIB)/lib$(LIBRARY).so $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR)
+library: $(LIB)/lib$(LIBRARY).so $(LIB)/lib$(LIBRARY).so.$(MAJOR)
 clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
@@ -44,14 +44,14 @@ veryclean/$(LOCAL): clean/$(LOCAL)
 	-rm -f $($(@F)-HEADERS) $(LIB)/lib$($(@F)-LIBRARY)*.so*
 
 # Build rules for the two symlinks
-.PHONY: $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR) $(LIB)/lib$(LIBRARY).so
-$(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR): $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR).$(MINOR)
+.PHONY: $(LIB)/lib$(LIBRARY).so.$(MAJOR) $(LIB)/lib$(LIBRARY).so
+$(LIB)/lib$(LIBRARY).so.$(MAJOR): $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 	ln -sf $(<F) $@
-$(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR).$(MINOR)
+$(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 	ln -sf $(<F) $@
 
 # The binary build rule
-$(LIB)/lib$(LIBRARY)$(LIBEXT).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
+$(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
 	-rm -f $(LIB)/lib$($(@F)-LIBRARY)*.so* 2> /dev/null
 	echo Building shared library $@
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\

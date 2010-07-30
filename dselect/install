@@ -12,11 +12,11 @@ DPKG_OPTS="--admindir=$1"
 APT_OPT0="-oDir::State::status=$1/status"
 APT_OPT1="-oDPkg::Options::=$DPKG_OPTS"
 set -e
-RES=`apt-config shell CLEAN DSelect::Clean OPTS DSelect::Options \
+RES=$(apt-config shell CLEAN DSelect::Clean OPTS DSelect::Options \
                       DPKG Dir::Bin::dpkg/f APTGET Dir::Bin::apt-get/f \
 		      ARCHIVES Dir::Cache::Archives/d \
 		      WAIT DSelect::WaitAfterDownload/b \
-		      CHECKDIR DSelect::CheckDir/b`
+		      CHECKDIR DSelect::CheckDir/b)
 eval $RES
 set +e
 
@@ -46,7 +46,7 @@ yesno() {
 	echo $ans | tr YN yn
 }
 
-if [ x$WAIT = "xtrue" ]; then
+if [ "$WAIT" = "true" ]; then
    $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" -d dselect-upgrade
    echo $"Press enter to continue." && read RES
    $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
@@ -64,20 +64,20 @@ fi
 # Finished OK
 if [ $RES -eq 0 ]; then
 
-   if [ `ls $ARCHIVES $ARCHIVES/partial | egrep -v "^lock$|^partial$" | wc -l` \
+   if [ $(ls $ARCHIVES $ARCHIVES/partial | egrep -v "^lock$|^partial$" | wc -l) \
         -eq 0 ]; then
       exit 0
    fi
 
-   NEWLS=`ls -ld $ARCHIVES`
-   if [ x$CHECKDIR = "xtrue" ]; then
-      if [ "x$OLDLS" = "x$NEWLS" ]; then
+   NEWLS=$(ls -ld $ARCHIVES)
+   if [ "$CHECKDIR" = "true" ]; then
+      if [ "$OLDLS" = "$NEWLS" ]; then
          exit 0
       fi
    fi
    
    # Check the cleaning mode
-   case `echo $CLEAN | tr '[:upper:]' '[:lower:]'` in
+   case $(echo $CLEAN | tr '[:upper:]' '[:lower:]') in
      auto)
        $APTGET "$APT_OPT0" "$APT_OPT1" autoclean &&
 	   echo $"Press enter to continue." && read RES && exit 0;
@@ -89,7 +89,7 @@ if [ $RES -eq 0 ]; then
      prompt)
        exec 3>&1
        echo -n $"Do you want to erase any previously downloaded .deb files?"
-       if [ `yesno "" y` = y ]; then
+       if [ $(yesno "" y) = y ]; then
           $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
 	    echo $"Press enter to continue." && read RES && exit 0;
        fi

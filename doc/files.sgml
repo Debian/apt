@@ -42,40 +42,68 @@ multiple package files.
 The var directory structure is as follows:
 <example>
   /var/lib/apt/
-		  lists/
+		lists/
 		       partial/
-		  xstatus
-		  userstatus
-		  cdroms.list
+		periodic/
+		extended_states
+		cdroms.list
   /var/cache/apt/
-                  pkgcache.bin
-		  srcpkgcache.bin
 		  archives/
 		          partial/
+		  pkgcache.bin
+		  srcpkgcache.bin
   /etc/apt/
-           sources.list
-	   apt.conf
+	    sources.list.d/
+	    apt.conf.d/
+	    preferences.d/
+	    trusted.gpg.d/
+	    sources.list
+	    apt.conf
+	    apt_preferences
+	    trusted.gpg
   /usr/lib/apt/
-                methods/
-		       cdrom
-		       ftp
-		       http
-		       file
-		       gzip
-		       copy
+	        methods/
+			 bzip2
+			 cdrom
+			 copy
+			 file
+			 ftp
+			 gpgv
+			 gzip
+			 http
+			 https
+			 lzma
+			 rred
+			 rsh
+			 ssh
 </example>
 
 <p>
 As is specified in the FHS 2.1 /var/lib/apt is used for application 
 data that is not expected to be user modified. /var/cache/apt is used
 for regeneratable data and is where the package cache and downloaded .debs
-go.
+go. /etc/apt is the place where configuration should happen and
+/usr/lib/apt is the place where the apt and other packages can place
+binaries which can be used by the acquire system of APT.
 </sect>
                                                                   <!-- }}} -->
 
 <chapt>Files
 <!-- Distribution Source List					       {{{ -->
 <!-- ===================================================================== -->
+<sect>Files and fragment directories in /etc/apt
+
+<p>
+All files in /etc/apt are used to modify specific aspects of APT. To enable
+other packages to ship needed configuration herself all these files have
+a fragment directory packages can place their files in instead of mangling
+with the main files. The main files are therefore considered to be only
+used by the user and not by a package. The documentation omits this directories
+most of the time to be easier readable, so every time the documentation includes
+a reference to a main file it really means the file or the fragment directories.
+
+</sect>
+
 <sect>Distribution Source list (sources.list)
 
 <p>
@@ -121,7 +149,10 @@ which indicates a standard debian archive with a dists dir.
 
 <sect1>URI specification
 <p> 
-URIs in the source list support a large number of access schemes.
+URIs in the source list support a large number of access schemes which
+are listed in the sources.list manpage and can be further extended by
+transport binaries placed in /usr/lib/apt/methods. The most important
+builtin schemes are:
 
 <taglist>
 <tag>cdrom<item>
@@ -161,13 +192,6 @@ URIs in the source list support a large number of access schemes.
    <example>
    file:/var/debian
    </example>
-   
-<tag>smb<item>
-   A possible future expansion may be to have direct support for smb (Samba 
-   servers).
-   <example>
-   smb://ftp.kernel.org/pub/mirrors/debian
-   </example>
 </taglist>
 </sect1>
 
@@ -201,38 +225,31 @@ here as well.
 
 </sect>
                                                                   <!-- }}} -->
-<!-- Extra Status						       {{{ -->
+<!-- Extended Status						       {{{ -->
 <!-- ===================================================================== -->
-<sect>Extra Status File (xstatus)
+<sect>Extended States File (extended_states)
 
 <p>
-The extra status file serves the same purpose as the normal dpkg status file
+The extended_states file serves the same purpose as the normal dpkg status file
 (/var/lib/dpkg/status) except that it stores information unique to apt.
-This includes the autoflag, target distribution and version and any other
-unique features that come up over time. It duplicates nothing from the normal
+This includes currently only the autoflag but is open to store more
+unique data that come up over time. It duplicates nothing from the normal
 dpkg status file.  Please see other APT documentation for a discussion
-of the exact internal behaviour of these fields. The Package field is
-placed directly before the new fields to indicate which package they
-apply to. The new fields are as follows:
+of the exact internal behaviour of these fields. The Package and the
+Architecture field are placed directly before the new fields to indicate
+which package they apply to. The new fields are as follows:
 
 <taglist>
-<tag>X-Auto<item>
-   The Auto flag can be Yes or No and controls whether the package is in
-   auto mode. 
-
-<tag>X-TargetDist<item>
-   The TargetDist item indicates which distribution versions are offered for
-   installation from. It should be stable, unstable or testing.
-   
-<tag>X-TargetVersion<item>
-   The target version item is set if the user selects a specific version, it
-   overrides the TargetDist selection if both are present.
+<tag>Auto-Installed<item>
+   The Auto flag can be 1 (Yes) or 0 (No) and controls whether the package
+   was automatical installed to satisfy a dependency or if the user requested
+   the installation
 </taglist>
 </sect>
                                                                   <!-- }}} -->
 <!-- Binary Package Cache					       {{{ -->
 <!-- ===================================================================== -->
-<sect>Binary Package Cache (pkgcache.bin)
+<sect>Binary Package Cache (srcpkgcache.bin and pkgcache.bin)
 
 <p>
 Please see cache.sgml for a complete description of what this file is. The 
@@ -278,69 +295,27 @@ The Methods directory is more fully described in the APT Methods interface
 document.
 </sect>
                                                                   <!-- }}} -->
-<!-- The Mirror List						       {{{ -->
+<!-- The Configuration File					       {{{ -->
 <!-- ===================================================================== -->
-<sect> The Mirror List
+<sect> The Configuration File (/etc/apt/apt.conf)
 
 <p>
-The mirror list is stored on the primary debian web server (www.debian.org)
-and contains a machine readable list of all known debian mirrors. It's 
-format and style mirror the Package file.
-
-<taglist>
-<tag>Site<item>
-This is the proper host name of the site. It should not be a host within
-debian.org and generally cnames should be avoided here.
-
-<tag>Aliases<item>
-These list any commonly used aliases for the site. This field is used to make
-sure that a site is not added twice.
-
-<tag>Type<item>
-This field can either be <em>Push-Primary</> or <em>leaf</>. 
-<em>Push-Primary</> are authorized top level mirrors of the archive, all 
-other mirrors are leaf. 
-
-<tag>Archive-[access]<item>
-The Archive field gives the path(s) to the debian archive. [access] 
-specifies the access method and may be one of ftp, http, rsync, nfs, or
-smb. For many of the types it is possible to prefix the path with :###
-indicating that an alternate port should be used. Generally paths
-start with a / and end with a /, rsync is an exception in that the
-first directory component is not a path but a label.
-
-<tag>WWW-[access]<item>
-The WWW field gives the path(s) to the debian web site.
-
-<tag>CDImage-[access]<item>
-The WWW field gives the path(s) to the debian CD-ROM images
-
-<tag>Incoming-[access]<item>
-The Incoming field gives the path(s) to a mirror of the debian incoming
-directory.
-
-<tag>nonUS-[access]<item>
-The nonUS field gives the path(s) to a mirror of the non-US distribution.
-
-<tag>Maintainer<item>
-This is the email address of the maintainer of the mirror.
-
-<tag>Location<item>
-Location gives the general geographical region the mirror is in.
-
-<tag>Sponsor<item>
-The Sponsor field indicates who owns the mirror and a URL to a web page
-describing the organization.
-
-<tag>Comment<item>
-General free-form text.
-
-</taglist>
+The configuration file (and the associated fragments directory
+/etc/apt/apt.conf.d/) is described in the apt.conf manpage.
+</sect>
+                                                                  <!-- }}} -->
+<!-- The trusted.gpg File					       {{{ -->
+<!-- ===================================================================== -->
+<sect> The trusted.gpg File (/etc/apt/trusted.gpg)
 
 <p>
-Some form of network measurement will have to be used to gauge performance
-of each of the mirrors. This will be discussed later, initial versions
-will use the first found URI.
+The trusted.gpg file (and the files in the associated fragments directory
+/etc/apt/trusted.gpg.d/) is a binary file including the keyring used
+by apt to validate that the information (e.g. the Release file) it
+downloads are really from the distributor it clams to be and is
+unmodified and is therefore the last step in the chain of trust between
+the archive and the end user. This security system is described in the
+apt-secure manpage.
 </sect>
                                                                   <!-- }}} -->
 <!-- The Release File						       {{{ -->
@@ -348,7 +323,7 @@ will use the first found URI.
 <sect> The Release File
 
 <p>
-This file plays and important role in how APT presents the archive to the 
+This file plays an important role in how APT presents the archive to the 
 user. Its main purpose is to present a descriptive name for the source
 of each version of each package. It also is used to detect when new versions
 of debian are released. It augments the package file it is associated with 

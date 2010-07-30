@@ -27,6 +27,7 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/weakptr.h>
 
 /** \addtogroup acquire
  *  @{
@@ -46,7 +47,7 @@
  *
  *  \see pkgAcquire
  */
-class pkgAcquire::Item
+class pkgAcquire::Item : public WeakPointable
 {  
    protected:
    
@@ -111,10 +112,10 @@ class pkgAcquire::Item
    string ErrorText;
 
    /** \brief The size of the object to fetch. */
-   unsigned long FileSize;
+   unsigned long long FileSize;
 
    /** \brief How much of the object was already fetched. */
-   unsigned long PartialSize;
+   unsigned long long PartialSize;
 
    /** \brief If not \b NULL, contains the name of a subprocess that
     *  is operating on this object (for instance, "gzip" or "gpgv").
@@ -434,6 +435,10 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *  off the front?
     */
    vector<DiffInfo> available_patches;
+
+   /** Stop applying patches when reaching that sha1 */
+   string ServerSha1;
+
    /** The current status of this patch. */
    enum DiffState
      {
@@ -487,6 +492,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     */
    pkgAcqIndexDiffs(pkgAcquire *Owner,string URI,string URIDesc,
 		    string ShortDesc, HashString ExpectedHash,
+		    string ServerSha1,
 		    vector<DiffInfo> diffs=vector<DiffInfo>());
 };
 									/*}}}*/
@@ -573,6 +579,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
    public:
   
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual string Custom600Headers();
 
    /** \brief Create a pkgAcqIndexTrans.
     *
@@ -868,6 +875,9 @@ class pkgAcqFile : public pkgAcquire::Item
     */
    unsigned int Retries;
    
+   /** \brief Should this file be considered a index file */
+   bool IsIndexFile;
+
    public:
    
    // Specialized action members
@@ -876,6 +886,7 @@ class pkgAcqFile : public pkgAcquire::Item
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return Desc.URI;};
    virtual string HashSum() {return ExpectedHash.toStr(); };
+   virtual string Custom600Headers();
 
    /** \brief Create a new pkgAcqFile object.
     *
@@ -899,6 +910,8 @@ class pkgAcqFile : public pkgAcquire::Item
     *
     *  \param DestFilename The filename+path the file is downloaded to.
     *
+    *  \param IsIndexFile The file is considered a IndexFile and cache-control
+    *                     headers like "cache-control: max-age=0" are send
     *
     * If DestFilename is empty, download to DestDir/<basename> if
     * DestDir is non-empty, $CWD/<basename> otherwise.  If
@@ -908,7 +921,8 @@ class pkgAcqFile : public pkgAcquire::Item
 
    pkgAcqFile(pkgAcquire *Owner, string URI, string Hash, unsigned long Size,
 	      string Desc, string ShortDesc,
-	      const string &DestDir="", const string &DestFilename="");
+	      const string &DestDir="", const string &DestFilename="",
+	      bool IsIndexFile=false);
 };
 									/*}}}*/
 /** @} */

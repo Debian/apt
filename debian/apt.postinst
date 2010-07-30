@@ -2,35 +2,6 @@
 
 set -e
 
-# set the proxy based on the admin users gconf settings 
-# 
-set_apt_proxy_from_gconf() {
-    # try SUDO_USER first
-    if [ -n "$SUDO_USER" ]; then
-        admin_user="$SUDO_USER"
-    else
-        admin_user=$(getent group admin|cut -d: -f4|cut -d, -f1)
-    fi
-    # test if the user actually exists, getent returns "+" for e.g.
-    # LDAP
-    if ! id -u "$admin_user" > /dev/null 2>&1; then
-	return
-    fi
-    # get the settings from gconf
-    if [ -n "$admin_user" ] && [ -x /usr/bin/sudo ] && [ -z "$http_proxy" ] && [ -x /usr/bin/gconftool ]; then
-	use=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/use_http_proxy 2>/dev/null)
-	host=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/host 2>/dev/null)
-	port=$(sudo -u "$admin_user" gconftool --get /system/http_proxy/port 2>/dev/null)
-	if [ "$use" = "true" ] && [ -n "$host" ] && [ -n "$port" ]; then
-	    APT_CONF_PROXY=""
-	    eval $(apt-config shell APT_CONF_PROXY Acquire::http::proxy)
-	    if [ -z "$APT_CONF_PROXY" ]; then
-	        echo "Acquire::http::proxy \"http://$host:$port/\";" >> /etc/apt/apt.conf
-	    fi
-	fi
-    fi
-}
-
 # summary of how this script can be called:
 #        * <postinst> `configure' <most-recently-configured-version>
 #        * <old-postinst> `abort-upgrade' <new version>
@@ -47,13 +18,7 @@ case "$1" in
         if ! test -f /etc/apt/trusted.gpg; then
                 cp /usr/share/apt/ubuntu-archive.gpg /etc/apt/trusted.gpg
         fi
-
-	# mvo: get gconf defaults once and write to a file, reason is
-	#      that sudo no longer honors http_proxy
-	# this can be removed after lucid is released
-	if dpkg --compare-versions "$2" lt-nl "0.7.25.3ubuntu2"; then
-	    set_apt_proxy_from_gconf || true
-	fi
+	apt-key update
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

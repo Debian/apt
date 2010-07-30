@@ -135,7 +135,9 @@ bool CommandLine::Parse(int argc,const char **argv)
    for (; I != argc; I++)
       *Files++ = argv[I];
    *Files = 0;
-   
+
+   SaveInConfig(argc, argv);
+
    return true;
 }
 									/*}}}*/
@@ -349,5 +351,43 @@ bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
    }
    
    return false;
+}
+									/*}}}*/
+// CommandLine::SaveInConfig - for output later in a logfile or so	/*{{{*/
+// ---------------------------------------------------------------------
+/* We save the commandline here to have it around later for e.g. logging.
+   It feels a bit like a hack here and isn't bulletproof, but it is better
+   than nothing after all. */
+void CommandLine::SaveInConfig(unsigned int const &argc, char const * const * const argv)
+{
+   char cmdline[100 + argc * 50];
+   unsigned int length = 0;
+   bool lastWasOption = false;
+   bool closeQuote = false;
+   for (unsigned int i = 0; i < argc && length < sizeof(cmdline); ++i, ++length)
+   {
+      for (unsigned int j = 0; argv[i][j] != '\0' && length < sizeof(cmdline)-1; ++j, ++length)
+      {
+	 cmdline[length] = argv[i][j];
+	 if (lastWasOption == true && argv[i][j] == '=')
+	 {
+	    // That is possibly an option: Quote it if it includes spaces,
+	    // the benefit is that this will eliminate also most false positives
+	    const char* c = &argv[i][j+1];
+	    for (; *c != '\0' && *c != ' '; ++c);
+	    if (*c == '\0') continue;
+	    cmdline[++length] = '"';
+	    closeQuote = true;
+	 }
+      }
+      if (closeQuote == true)
+	 cmdline[length++] = '"';
+      // Problem: detects also --hello
+      if (cmdline[length-1] == 'o')
+	 lastWasOption = true;
+      cmdline[length] = ' ';
+   }
+   cmdline[--length] = '\0';
+   _config->Set("CommandLine::AsString", cmdline);
 }
 									/*}}}*/

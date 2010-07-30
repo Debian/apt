@@ -25,6 +25,8 @@
 
 using namespace std;
 
+#include<sstream>
+
 #include "mirror.h"
 #include "http.h"
 #include "apti18n.h"
@@ -104,7 +106,7 @@ bool MirrorMethod::Clean(string Dir)
       for(I=list.begin(); I != list.end(); I++)
       {
 	 string uri = (*I)->GetURI();
-	 if(uri.substr(0,strlen("mirror://")) != string("mirror://"))
+	 if(uri.find("mirror://") != 0)
 	    continue;
 	 string BaseUri = uri.substr(0,uri.size()-1);
 	 if (URItoFileName(BaseUri) == Dir->d_name)
@@ -126,28 +128,6 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile(): " << endl;
 
-   // check the file, if it is not older than RefreshInterval just use it
-   // otherwise try to get a new one
-   if(FileExists(MirrorFile)) 
-   {
-      struct stat buf;
-      time_t t,now,refresh;
-      if(stat(MirrorFile.c_str(), &buf) != 0)
-	 return false;
-      t = std::max(buf.st_mtime, buf.st_ctime);
-      now = time(NULL);
-      refresh = 60*_config->FindI("Acquire::Mirror::RefreshInterval",360);
-      if(t + refresh > now)
-      {
-	 if(Debug)
-	    clog << "Mirror file is in RefreshInterval" << endl;
-	 DownloadedMirrorFile = true;
-	 return true;
-      }
-      if(Debug)
-	 clog << "Mirror file " << MirrorFile << " older than " << refresh << "min, re-download it" << endl;
-   }
-
    // not that great to use pkgAcquire here, but we do not have 
    // any other way right now
    string fetch = BaseUri;
@@ -162,7 +142,55 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    return res;
 }
 
-bool MirrorMethod::SelectMirror()
+/* convert a the Queue->Uri back to the mirror base uri and look
+ * at all mirrors we have for this, this is needed as queue->uri
+ * may point to different mirrors (if TryNextMirror() was run)
+ */
+void MirrorMethod::CurrentQueueUriToMirror()
+{
+   // already in mirror:// style so nothing to do
+   if(Queue->Uri.find("mirror://") == 0)
+      return;
+
+   // find current mirror and select next one
+   for (vector<string>::const_iterator mirror = AllMirrors.begin();
+	mirror != AllMirrors.end(); ++mirror)
+   {
+      if (Queue->Uri.find(*mirror) == 0)
+      {
+	 Queue->Uri.replace(0, mirror->length(), BaseUri);
+	 return;
+      }
+   }
+   _error->Error("Internal error: Failed to convert %s back to %s",
+		 Queue->Uri.c_str(), BaseUri.c_str());
+}
+
+bool MirrorMethod::TryNextMirror()
+{
+   // find current mirror and select next one
+   for (vector<string>::const_iterator mirror = AllMirrors.begin();
+	mirror != AllMirrors.end(); ++mirror)
+   {
+      if (Queue->Uri.find(*mirror) != 0)
+	 continue;
+
+      vector<string>::const_iterator nextmirror = mirror + 1;
+      if (nextmirror != AllMirrors.end())
+	 break;
+      Queue->Uri.replace(0, mirror->length(), *nextmirror);
+      if (Debug)
+	 clog << "TryNextMirror: " << Queue->Uri << endl;
+      return true;
+   }
+
+   if (Debug)
+      clog << "TryNextMirror could not find another mirror to try" << endl;
+
+   return false;
+}
+
+bool MirrorMethod::InitMirrors()
 {
    // if we do not have a MirrorFile, fallback
    if(!FileExists(MirrorFile))
@@ -179,10 +207,14 @@ bool MirrorMethod::SelectMirror()
    //      get into sync issues (got indexfiles from mirror A,
    //      but packages from mirror B - one might be out of date etc)
    ifstream in(MirrorFile.c_str());
-   getline(in, Mirror);
-   if(Debug)
-      cerr << "Using mirror: " << Mirror << endl;
-
+   string s;
+   while (!in.eof()) 
+   {
+      getline(in, s);
+      if (s.size() > 0)
+	 AllMirrors.push_back(s);
+   }
+   Mirror = AllMirrors[0];
    UsedMirror = Mirror;
    return true;
 }
@@ -274,23 +306,20 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
       DownloadMirrorFile(Itm->Uri);
    }
 
-   if(Mirror.empty()) {
-      if(!SelectMirror()) {
+   if(AllMirrors.empty()) {
+      if(!InitMirrors()) {
 	 // no valid mirror selected, something went wrong downloading
 	 // from the master mirror site most likely and there is
 	 // no old mirror file availalbe
 	 return false;
       }
    }
+
+   if(Itm->Uri.find("mirror://") != string::npos)
+      Itm->Uri.replace(0,BaseUri.size(), Mirror);
+
    if(Debug)
-      clog << "selected mirror: " << Mirror << endl;
-
-
-   for (FetchItem *I = Queue; I != 0; I = I->Next)
-   {
-      if(I->Uri.find("mirror://") != string::npos)
-	 I->Uri.replace(0,BaseUri.size(), Mirror);
-   }
+      clog << "Fetch: " << Itm->Uri << endl << endl;
    
    // now run the real fetcher
    return HttpMethod::Fetch(Itm);
@@ -298,22 +327,35 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 
 void MirrorMethod::Fail(string Err,bool Transient)
 {
-   if(Queue->Uri.find("http://") != string::npos)
-      Queue->Uri.replace(0,Mirror.size(), BaseUri);
+   // FIXME: TryNextMirror is not ideal for indexfile as we may
+   //        run into auth issues
+
+   if (Debug)
+      clog << "Failure to get " << Queue->Uri << endl;
+
+   // try the next mirror on fail (if its not a expected failure,
+   // e.g. translations are ok to ignore)
+   if (!Queue->FailIgnore && TryNextMirror()) 
+      return;
+
+   // all mirrors failed, so bail out
+   string s;
+   strprintf(s, _("[Mirror: %s]"), Mirror.c_str());
+   SetIP(s);
+
+   CurrentQueueUriToMirror();
    pkgAcqMethod::Fail(Err, Transient);
 }
 
 void MirrorMethod::URIStart(FetchResult &Res)
 {
-   if(Queue->Uri.find("http://") != string::npos)
-      Queue->Uri.replace(0,Mirror.size(), BaseUri);
+   CurrentQueueUriToMirror();
    pkgAcqMethod::URIStart(Res);
 }
 
 void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
 {
-   if(Queue->Uri.find("http://") != string::npos)
-      Queue->Uri.replace(0,Mirror.size(), BaseUri);
+   CurrentQueueUriToMirror();
    pkgAcqMethod::URIDone(Res, Alt);
 }
 

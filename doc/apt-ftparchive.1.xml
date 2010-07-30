@@ -39,6 +39,7 @@
       <arg><option>--delink</option></arg>
       <arg><option>--readonly</option></arg>
       <arg><option>--contents</option></arg>
+      <arg><option>--arch <replaceable>architecture</replaceable></option></arg>
       <arg><option>-o <replaceable>config</replaceable>=<replaceable>string</replaceable></option></arg>
       <arg><option>-c=<replaceable>file</replaceable></option></arg>      
       <group choice="req">
@@ -121,7 +122,8 @@
      e.g. <literal>APT::FTPArchive::Release::Origin</literal>.  The supported fields
      are: <literal>Origin</literal>, <literal>Label</literal>, <literal>Suite</literal>,
      <literal>Version</literal>, <literal>Codename</literal>, <literal>Date</literal>,
-     <literal>Architectures</literal>, <literal>Components</literal>, <literal>Description</literal>.</para></listitem>
+     <literal>Valid-Until</literal>, <literal>Architectures</literal>,
+     <literal>Components</literal>, <literal>Description</literal>.</para></listitem>
 
      </varlistentry>
 
@@ -223,7 +225,13 @@
       This is similar to <literal>Packages::Compress</literal> 
       except that it controls the compression for the Contents files.</para></listitem>
       </varlistentry>
-      
+
+      <varlistentry><term>Translation::Compress</term>
+      <listitem><para>
+      This is similar to <literal>Packages::Compress</literal> 
+      except that it controls the compression for the Translation-en master file.</para></listitem>
+      </varlistentry>
+
       <varlistentry><term>DeLinkLimit</term>
       <listitem><para>
       Specifies the number of kilobytes to delink (and 
@@ -236,6 +244,12 @@
       Specifies the mode of all created index files. It 
       defaults to 0644. All index files are set to this mode with no regard 
       to the umask.</para></listitem>
+      </varlistentry>
+
+      <varlistentry><term>LongDescription</term>
+      <listitem><para>
+      Sets if long descriptions should be included in the Packages file or split
+      out into a master Translation-en file.</para></listitem>
       </varlistentry>
      </variablelist>
    </refsect2>
@@ -288,7 +302,14 @@
       Sets the output Sources file. Defaults to 
       <filename>$(DIST)/$(SECTION)/source/Sources</filename></para></listitem>
       </varlistentry>
-      
+
+      <varlistentry><term>Translation</term>
+      <listitem><para>
+      Set the output Translation-en master file with the long descriptions if they
+      should be not included in the Packages file. Defaults to
+      <filename>$(DIST)/$(SECTION)/i18n/Translation-en</filename></para></listitem>
+      </varlistentry>
+
       <varlistentry><term>InternalPrefix</term>
       <listitem><para>
       Sets the path prefix that causes a symlink to be
@@ -343,7 +364,7 @@
      The <literal>Tree</literal> section takes a scope tag which sets the 
      <literal>$(DIST)</literal> variable and defines the root of the tree 
      (the path is prefixed by <literal>ArchiveDir</literal>).
-     Typically this is a setting such as <filename>dists/woody</filename>.</para>
+     Typically this is a setting such as <filename>dists/&stable-codename;</filename>.</para>
      <para>
      All of the settings defined in the <literal>TreeDefault</literal> section can be
      use in a <literal>Tree</literal> section as well as three new variables.</para>
@@ -370,7 +391,13 @@ for i in Sections do
       architectures that appear under search section. The special architecture 
       'source' is used to indicate that this tree has a source archive.</para></listitem>
       </varlistentry>
-      
+
+      <varlistentry><term>LongDescription</term>
+      <listitem><para>
+      Sets if long descriptions should be included in the Packages file or split
+      out into a master Translation-en file.</para></listitem>
+      </varlistentry>
+
       <varlistentry><term>BinOverride</term>
       <listitem><para>
       Sets the binary override file. The override file 
@@ -542,14 +569,33 @@ for i in Sections do
      <listitem><para>
      Make the caching databases read only. 
      Configuration Item: <literal>APT::FTPArchive::ReadOnlyDB</literal>.</para></listitem>
-     </varlistentry>   
+     </varlistentry>
+
+     <varlistentry><term><option>-a</option></term><term><option>--arch</option></term>
+     <listitem><para>Accept in the <literal>packages</literal> and <literal>contents</literal>
+     commands only package files matching <literal>*_arch.deb</literal> or
+     <literal>*_all.deb</literal> instead of all package files in the given path.
+     Configuration Item: <literal>APT::FTPArchive::Architecture</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>APT::FTPArchive::AlwaysStat</option></term>
+     <listitem><para>
+     &apt-ftparchive; caches as much as possible of metadata in a cachedb. If packages
+     are recompiled and/or republished with the same version again, this will lead to problems
+     as the now outdated cached metadata like size and checksums will be used. With this option
+     enabled this will no longer happen as it will be checked if the file was changed.
+     Note that this option is set to "<literal>false</literal>" by default as it is not recommend
+     to upload multiply versions/builds of a package with the same versionnumber, so in theory
+     nobody will have these problems and therefore all these extra checks are useless.
+     </para></listitem>
+     </varlistentry>
 
      <varlistentry><term><option>APT::FTPArchive::LongDescription</option></term>
      <listitem><para>
      This configuration option defaults to "<literal>true</literal>" and should only be set to
      <literal>"false"</literal> if the Archive generated with &apt-ftparchive; also provides
-     <filename>Translation</filename> files. Note that it is currently not possible to create these
-     files with <command>apt-ftparchive</command>.
+     <filename>Translation</filename> files. Note that the <filename>Translation-en</filename>
+     master file can only be created in the generate command.
      </para></listitem>
      </varlistentry>
 

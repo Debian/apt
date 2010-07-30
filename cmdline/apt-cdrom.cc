@@ -266,20 +266,18 @@ int main(int argc,const char *argv[])					/*{{{*/
       return ShowHelp();
 
    // Deal with stdout not being a tty
-   if (isatty(STDOUT_FILENO) && _config->FindI("quiet",0) < 1)
+   if (isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
    
    // Match the operation
    CmdL.DispatchArg(Cmds);
 
    // Print any errors or warnings found during parsing
-   if (_error->empty() == false)
-   {
-      bool Errors = _error->PendingError();
+   bool const Errors = _error->PendingError();
+   if (_config->FindI("quiet",0) > 0)
       _error->DumpErrors();
-      return Errors == true?100:0;
-   }
-   
-   return 0;
+   else
+      _error->DumpErrors(GlobalError::DEBUG);
+   return Errors == true ? 100 : 0;
 }
 									/*}}}*/

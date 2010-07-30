@@ -23,6 +23,7 @@
       Codename (n=) e.g. etch, lenny, squeeze, sid
       Label (l=)
       Component (c=)
+      Binary Architecture (b=)
    If there are no equals signs in the string then it is scanned in short
    form - if it starts with a number it is Version otherwise it is an
    Archive or a Codename.
@@ -55,6 +56,7 @@ class pkgVersionMatch
    string RelArchive;
    string RelLabel;
    string RelComponent;
+   string RelArchitecture;
    bool MatchAll;
    
    // Origin Matching
@@ -65,6 +67,8 @@ class pkgVersionMatch
    enum MatchType {None = 0,Version,Release,Origin} Type;
    
    bool MatchVer(const char *A,string B,bool Prefix);
+   bool ExpressionMatches(const char *pattern, const char *string);
+   bool ExpressionMatches(const std::string& pattern, const char *string);
    bool FileMatch(pkgCache::PkgFileIterator File);
    pkgCache::VerIterator Find(pkgCache::PkgIterator Pkg);
 			       

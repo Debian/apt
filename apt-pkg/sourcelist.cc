@@ -72,13 +72,58 @@ bool pkgSourceList::Type::FixupURI(string &URI) const
    Weird types may override this. */
 bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 				    const char *Buffer,
-				    unsigned long CurLine,
-				    string File) const
+				    unsigned long const &CurLine,
+				    string const &File) const
 {
+   for (;Buffer != 0 && isspace(*Buffer); ++Buffer); // Skip whitespaces
+
+   // Parse option field if it exists
+   // e.g.: [ option1=value1 option2=value2 ]
+   map<string, string> Options;
+   if (Buffer != 0 && Buffer[0] == '[')
+   {
+      ++Buffer; // ignore the [
+      for (;Buffer != 0 && isspace(*Buffer); ++Buffer); // Skip whitespaces
+      while (*Buffer != ']')
+      {
+	 // get one option, e.g. option1=value1
+	 string option;
+	 if (ParseQuoteWord(Buffer,option) == false)
+	    return _error->Error(_("Malformed line %lu in source list %s ([option] unparseable)"),CurLine,File.c_str());
+
+	 if (option.length() < 3)
+	    return _error->Error(_("Malformed line %lu in source list %s ([option] too short)"),CurLine,File.c_str());
+
+	 // accept options even if the last has no space before the ]-end marker
+	 if (option.at(option.length()-1) == ']')
+	 {
+	    for (; *Buffer != ']'; --Buffer);
+	    option.resize(option.length()-1);
+	 }
+
+	 size_t const needle = option.find('=');
+	 if (needle == string::npos)
+	    return _error->Error(_("Malformed line %lu in source list %s ([%s] is not an assignment)"),CurLine,File.c_str(), option.c_str());
+
+	 string const key = string(option, 0, needle);
+	 string const value = string(option, needle + 1, option.length());
+
+	 if (key.empty() == true)
+	    return _error->Error(_("Malformed line %lu in source list %s ([%s] has no key)"),CurLine,File.c_str(), option.c_str());
+
+	 if (value.empty() == true)
+	    return _error->Error(_("Malformed line %lu in source list %s ([%s] key %s has no value)"),CurLine,File.c_str(),option.c_str(),key.c_str());
+
+	 Options[key] = value;
+      }
+      ++Buffer; // ignore the ]
+      for (;Buffer != 0 && isspace(*Buffer); ++Buffer); // Skip whitespaces
+   }
+
    string URI;
    string Dist;
-   string Section;   
-   
+   string Section;
+
    if (ParseQuoteWord(Buffer,URI) == false)
       return _error->Error(_("Malformed line %lu in source list %s (URI)"),CurLine,File.c_str());
    if (ParseQuoteWord(Buffer,Dist) == false)
@@ -93,7 +138,7 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
       if (ParseQuoteWord(Buffer,Section) == true)
 	 return _error->Error(_("Malformed line %lu in source list %s (absolute dist)"),CurLine,File.c_str());
       Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
-      return CreateItem(List,URI,Dist,Section);
+      return CreateItem(List, URI, Dist, Section, Options);
    }
    
    // Grab the rest of the dists
@@ -102,7 +147,7 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
    
    do
    {
-      if (CreateItem(List,URI,Dist,Section) == false)
+      if (CreateItem(List, URI, Dist, Section, Options) == false)
 	 return false;
    }
    while (ParseQuoteWord(Buffer,Section) == true);
@@ -154,15 +199,15 @@ bool pkgSourceList::ReadMainList()
    
    if (FileExists(Main) == true)
       Res &= ReadAppend(Main);
-   else if (FileExists(Parts) == false)
+   else if (DirectoryExists(Parts) == false)
       // Only warn if there are no sources.list.d.
-      _error->WarningE("FileExists",_("Unable to read %s"),Main.c_str());
+      _error->WarningE("DirectoryExists", _("Unable to read %s"), Parts.c_str());
 
-   if (FileExists(Parts) == true)
+   if (DirectoryExists(Parts) == true)
       Res &= ReadSourceDir(Parts);
    else if (FileExists(Main) == false)
       // Only warn if there is no sources.list file.
-      _error->WarningE("FileExists",_("Unable to read %s"),Parts.c_str());
+      _error->WarningE("FileExists", _("Unable to read %s"), Main.c_str());
 
    return Res;
 }
@@ -239,36 +284,7 @@ bool pkgSourceList::ReadAppend(string File)
       if (Parse == 0)
 	 return _error->Error(_("Type '%s' is not known on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
       
-      // Vendor name specified
-      if (C[0] == '[')
-      {
-	 string VendorID;
-	 
-	 if (ParseQuoteWord(C,VendorID) == false)
-	     return _error->Error(_("Malformed line %u in source list %s (vendor id)"),CurLine,File.c_str());
-
-	 if (VendorID.length() < 2 || VendorID.end()[-1] != ']')
-	     return _error->Error(_("Malformed line %u in source list %s (vendor id)"),CurLine,File.c_str());
-	 VendorID = string(VendorID,1,VendorID.size()-2);
-	 
-// 	 for (vector<const Vendor *>::const_iterator iter = VendorList.begin();
-// 	      iter != VendorList.end(); iter++) 
-// 	 {
-// 	    if ((*iter)->GetVendorID() == VendorID)
-// 	    {
-// 	      if (_config->FindB("Debug::sourceList", false)) 
-// 		std::cerr << "Comparing VendorID \"" << VendorID << "\" with \"" << (*iter)->GetVendorID() << '"' << std::endl;
-// 	       Verifier = *iter;
-// 	       break;
-// 	    }
-// 	 }
-
-// 	 if (Verifier == 0)
-// 	    return _error->Error(_("Unknown vendor ID '%s' in line %u of source list %s"),
-// 				 VendorID.c_str(),CurLine,File.c_str());
-      }
-
-      if (Parse->ParseLine(SrcList,C,CurLine,File) == false)
+      if (Parse->ParseLine(SrcList, C, CurLine, File) == false)
 	 return false;
    }
    return true;

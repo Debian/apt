@@ -1,0 +1,97 @@
+Package: libc-bin
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 1516
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: i386
+Source: eglibc
+Version: 2.11.2-2
+Replaces: libc0.1, libc0.3, libc6, libc6.1
+Breaks: libc0.1 (<< 2.10), libc0.3 (<< 2.10), libc6 (<< 2.10), libc6.1 (<< 2.10)
+Filename: pool/main/e/eglibc/libc-bin_2.11.2-2_i386.deb
+Size: 703542
+MD5sum: f554ec34c092bb8e52e3d917bec7b46c
+SHA1: 4d5ba53b50937b1d50e3234e45335de5ea97b84b
+SHA256: 4f1e6430a730321209bb6b9cf89ba8a72c95f5c93f3e263a982251b3cc8beb14
+Description-de: Die »Embedded GNU C Library«: Binärdateien
+Homepage: http://www.eglibc.org
+Tag: devel::lang:c, devel::packaging, implemented-in::c, interface::commandline, role::program, scope::utility, special::auto-inst-parts, suite::gnu, works-with::text, works-with::unicode
+
+Package: libc6
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 9340
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: i386
+Source: eglibc
+Version: 2.11.2-2
+Provides: glibc-2.11-1
+Depends: libc-bin (= 2.11.2-2), libgcc1
+Recommends: libc6-i686
+Suggests: glibc-doc, debconf | debconf-2.0, locales
+Conflicts: tzdata (<< 2007k-1), tzdata-etch
+Breaks: locales (<< 2.11), locales-all (<< 2.11), nscd (<< 2.11)
+Filename: pool/main/e/eglibc/libc6_2.11.2-2_i386.deb
+Size: 3877166
+MD5sum: 3d8fe972a359ad362ac1957c2687e5c2
+SHA1: cd901f3265254e40ad198b935877f546eeaa8403
+SHA256: e1bc3da1e11f9b742d05f927362e2079482db4186ff45af9f937d284e112e7e5
+Description-de: Die »Embedded GNU C Library«: Laufzeitbibliotheken
+Homepage: http://www.eglibc.org
+Tag: devel::lang:c, devel::library, implemented-in::c, protocol::ipv6, role::shared-lib, suite::gnu
+
+Package: mawk
+Status: install ok installed
+Priority: required
+Section: utils
+Installed-Size: 228
+Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: i386
+Version: 1.3.3-15
+Provides: awk
+Pre-Depends: libc6 (>= 2.1)
+Filename: pool/main/m/mawk/mawk_1.3.3-15_i386.deb
+Size: 81430
+MD5sum: e0f9e9903a862a52b5f107d560c4d8e0
+SHA1: cca3b3ea3a57b9c3c136fb538a4fb06a99d1a33e
+SHA256: 7449b10ffb6a8636a249ad6866188cad0040a6a446fb4a3a71d81fd136297ee6
+Description-de: Eine Muster- und Textverarbeitungssprache
+Tag: devel::interpreter, implemented-in::c, interface::commandline, role::program, scope::utility, use::filtering, use::scanning, works-with::text
+
+Package: gcc-4.5-base
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 172
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: i386
+Source: gcc-4.5
+Version: 4.5.0-8
+Filename: pool/main/g/gcc-4.5/gcc-4.5-base_4.5.0-8_i386.deb
+Size: 117894
+MD5sum: f5850c42681fcfee3429a1b43da68433
+SHA1: 0548343feba69c4c01d5dbf147393d8dc27605ac
+SHA256: 04b60f5fe24b7397e3be233051615ff9addb66d4581578f67fde76f5d7f69f7a
+Description: The GNU Compiler Collection (base package)
+Homepage: http://gcc.gnu.org/
+
+Package: libgcc1
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 148
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: i386
+Source: gcc-4.5 (4.5.0-8)
+Version: 1:4.5.0-8
+Depends: gcc-4.5-base (= 4.5.0-8), libc6 (>= 2.2.4)
+Filename: pool/main/g/gcc-4.5/libgcc1_4.5.0-8_i386.deb
+Size: 52190
+MD5sum: beda956a1dcdeffed11072c2d0f3eb83
+SHA1: 7117ec43eec7982a030fcc9a12d4772de3fcdba0
+SHA256: 1d10bd532adce8683b475fcc60c22300f717ef19bf84dc5bf43b07e504f85dcb
+Description: GCC support library
+Homepage: http://gcc.gnu.org/
+

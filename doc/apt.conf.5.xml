@@ -150,10 +150,11 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </varlistentry>
      
      <varlistentry><term>Default-Release</term>
-	 <listitem><para>Default release to install packages from if more than one
-	 version available. Contains release name, codename or release version. Examples: 'stable', 'testing', 'unstable', 'lenny', 'squeeze', '4.0', '5.0*'. See also &apt-preferences;.</para></listitem>
+     <listitem><para>Default release to install packages from if more than one
+     version available. Contains release name, codename or release version. Examples: 'stable', 'testing',
+     'unstable', '&stable-codename;', '&testing-codename;', '4.0', '5.0*'. See also &apt-preferences;.</para></listitem>
      </varlistentry>
-     
+
      <varlistentry><term>Ignore-Hold</term>
      <listitem><para>Ignore Held packages; This global option causes the problem resolver to
      ignore held packages in its decision making.</para></listitem>
@@ -198,9 +199,20 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      anything that those packages depend on.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Cache-Limit</term>
-     <listitem><para>APT uses a fixed size memory mapped cache file to store the 'available'
-     information. This sets the size of that cache (in bytes).</para></listitem>
+     <varlistentry><term>Cache-Start, Cache-Grow and Cache-Limit</term>
+     <listitem><para>APT uses since version 0.7.26 a resizable memory mapped cache file to store the 'available'
+     information. <literal>Cache-Start</literal> acts as a hint to which size the Cache will grow
+     and is therefore the amount of memory APT will request at startup. The default value is
+     20971520 bytes (~20 MB). Note that these amount of space need to be available for APT
+     otherwise it will likely fail ungracefully, so for memory restricted devices these value should
+     be lowered while on systems with a lot of configured sources this might be increased.
+     <literal>Cache-Grow</literal> defines in byte with the default of 1048576 (~1 MB) how much
+     the Cache size will be increased in the event the space defined by <literal>Cache-Start</literal>
+     is not enough. These value will be applied again and again until either the cache is big
+     enough to store all information or the size of the cache reaches the <literal>Cache-Limit</literal>.
+     The default of <literal>Cache-Limit</literal> is 0 which stands for no limit.
+     If <literal>Cache-Grow</literal> is set to 0 the automatic grow of the cache is disabled.
+     </para></listitem>
      </varlistentry>
 
      <varlistentry><term>Build-Essential</term>
@@ -229,6 +241,30 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    and the URI handlers. 
 
    <variablelist>
+     <varlistentry><term>Check-Valid-Until</term>
+	 <listitem><para>Security related option defaulting to true as an
+	 expiring validation for a Release file prevents longtime replay attacks
+	 and can e.g. also help users to identify no longer updated mirrors -
+	 but the feature depends on the correctness of the time on the user system.
+	 Archive maintainers are encouraged to create Release files with the
+	 <literal>Valid-Until</literal> header, but if they don't or a stricter value
+	 is volitional the following <literal>Max-ValidTime</literal> option can be used.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Max-ValidTime</term>
+	 <listitem><para>Seconds the Release file should be considered valid after
+	 it was created. The default is "for ever" (0) if the Release file of the
+	 archive doesn't include a <literal>Valid-Until</literal> header.
+	 If it does then this date is the default. The date from the Release file or
+	 the date specified by the creation time of the Release file
+	 (<literal>Date</literal> header) plus the seconds specified with this
+	 options are used to check if the validation of a file has expired by using
+	 the earlier date of the two. Archive specific settings can be made by
+	 appending the label of the archive to the option name.
+	 </para></listitem>
+     </varlistentry>
+
      <varlistentry><term>PDiffs</term>
 	 <listitem><para>Try to download deltas called <literal>PDiffs</literal> for
 	 Packages or Sources files instead of downloading whole ones. True
@@ -410,6 +446,36 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      these warnings are most of the time false negatives. Future versions will maybe include a way to
      really prefer uncompressed files to support the usage of local mirrors.</para></listitem>
      </varlistentry>
+
+     <varlistentry><term>GzipIndexes</term>
+	 <listitem><para>
+	 When downloading <literal>gzip</literal> compressed indexes (Packages, Sources, or
+	 Translations), keep them gzip compressed locally instead of unpacking
+	 them. This saves quite a lot of disk space at the expense of more CPU
+	 requirements when building the local package caches. False by default.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Languages</term>
+     <listitem><para>The Languages subsection controls which <filename>Translation</filename> files are downloaded
+     and in which order APT tries to display the Description-Translations. APT will try to display the first
+     available Description in the Language which is listed at first. Languages can be defined with their
+     short or long Languagecodes. Note that not all archives provide <filename>Translation</filename>
+     files for every Language - especially the long Languagecodes are rare, so please
+     inform you which ones are available before you set here impossible values.</para>
+     <para>The default list includes "environment" and "en". "<literal>environment</literal>" has a special meaning here:
+     It will be replaced at runtime with the languagecodes extracted from the <literal>LC_MESSAGES</literal> environment variable.
+     It will also ensure that these codes are not included twice in the list. If <literal>LC_MESSAGES</literal>
+     is set to "C" only the <filename>Translation-en</filename> file (if available) will be used.
+     To force apt to use no Translation file use the setting <literal>Acquire::Languages=none</literal>. "<literal>none</literal>"
+     is another special meaning code which will stop the search for a fitting <filename>Translation</filename> file.
+     This can be used by the system administrator to let APT know that it should download also this files without
+     actually use them if the environment doesn't specify this languages. So the following example configuration will
+     result in the order "en, de" in an english and in "de, en" in a german localization. Note that "fr" is downloaded,
+     but not used if APT is not used in a french localization, in such an environment the order would be "fr, de, en".
+     <programlisting>Acquire::Languages { "environment"; "de"; "en"; "none"; "fr"; };</programlisting></para></listitem>
+     </varlistentry>
+
    </variablelist>
   </para>
  </refsect1>
@@ -460,6 +526,15 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <filename>/var/lib/dpkg/status</filename>, then the status file
      will be looked up in
      <filename>/tmp/staging/var/lib/dpkg/status</filename>.
+   </para>
+
+   <para>
+      The <literal>Ignore-Files-Silently</literal> list can be used to specify
+      which files APT should silently ignore while parsing the files in the
+      fragment directories. Per default a file which end with <literal>.disabled</literal>,
+      <literal>~</literal>, <literal>.bak</literal> or <literal>.dpkg-[a-z]+</literal>
+      is silently ignored. As seen in the last default value these patterns can use regular
+      expression syntax.
    </para>
  </refsect1>
  
@@ -1001,6 +1076,7 @@ is commented.
        </listitem>
      </varlistentry>
 -->
+
    </variablelist>
  </refsect1>
  

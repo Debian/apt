@@ -29,6 +29,23 @@ class pkgDPkgPM : public pkgPackageManager
    char dpkgbuf[1024];
    int dpkgbuf_pos;
    FILE *term_out;
+   FILE *history_out;
+   string dpkg_error;
+
+   /** \brief record the disappear action and handle accordingly
+
+      dpkg let packages disappear then they have no files any longer and
+      nothing depends on them. We need to collect this as dpkg as well as
+      APT doesn't know beforehand that the package will disappear, so the
+      only possible option is to tell the user afterwards about it.
+      To enhance the experience we also try to forward the auto-install
+      flag so the disappear-causer(s) are not autoremoved next time -
+      for the transfer to happen the disappeared version needs to depend
+      on the package the flag should be forwarded to and this package
+      needs to declare a Replaces on the disappeared package.
+      \param pkgname Name of the package that disappeared
+   */
+   void handleDisappearAction(string const &pkgname);
 
    protected:
    int pkgFailures;
@@ -68,7 +85,7 @@ class pkgDPkgPM : public pkgPackageManager
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
-   void WriteHistoryTag(FILE* history_out, string tag, string value);
+   void WriteHistoryTag(string const &tag, string value);
 
    // apport integration
    void WriteApportReport(const char *pkgpath, const char *errormsg);

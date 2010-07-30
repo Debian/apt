@@ -7,8 +7,11 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
 #include <apti18n.h>
 #include <sys/stat.h>
+#include <clocale>
+
 									/*}}}*/
 string indexRecords::GetDist() const
 {
@@ -26,9 +29,19 @@ string indexRecords::GetExpectedDist() const
    return this->ExpectedDist;
 }
 
+time_t indexRecords::GetValidUntil() const
+{
+   return this->ValidUntil;
+}
+
 const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
    return Entries[MetaKey];
+}
+
+bool indexRecords::Exists(string const &MetaKey) const
+{
+   return Entries.count(MetaKey) == 1;
 }
 
 bool indexRecords::Load(const string Filename)				/*{{{*/
@@ -80,9 +93,40 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    {
       strprintf(ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
       return false;
-   }  
+   }
 
-   string Strdate = Section.FindS("Date"); // FIXME: verify this somehow?
+   string Label = Section.FindS("Label");
+   string StrDate = Section.FindS("Date");
+   string StrValidUntil = Section.FindS("Valid-Until");
+
+   // if we have a Valid-Until header in the Release file, use it as default
+   if (StrValidUntil.empty() == false)
+   {
+      if(RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
+      {
+	 strprintf(ErrorText, _("Invalid 'Valid-Until' entry in Release file %s"), Filename.c_str());
+	 return false;
+      }
+   }
+   // get the user settings for this archive and use what expires earlier
+   int MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
+   if (Label.empty() == true)
+      MaxAge = _config->FindI(string("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
+
+   if(MaxAge == 0) // No user settings, use the one from the Release file
+      return true;
+
+   time_t date;
+   if (RFC1123StrToTime(StrDate.c_str(), date) == false)
+   {
+      strprintf(ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
+      return false;
+   }
+   date += 24*60*60*MaxAge;
+
+   if (ValidUntil == 0 || ValidUntil > date)
+      ValidUntil = date;
+
    return true;
 }
 									/*}}}*/
@@ -160,6 +204,6 @@ indexRecords::indexRecords()
 }
 
 indexRecords::indexRecords(const string ExpectedDist) :
-   ExpectedDist(ExpectedDist)
+   ExpectedDist(ExpectedDist), ValidUntil(0)
 {
 }

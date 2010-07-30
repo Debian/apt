@@ -33,8 +33,8 @@ class metaIndex
    virtual const char* GetType() const {return Type;}
 
    // Interface for acquire
-   virtual string ArchiveURI(string /*File*/) const = 0;
-   virtual bool GetIndexes(pkgAcquire *Owner, bool GetAll=false) const = 0;
+   virtual string ArchiveURI(string const& /*File*/) const = 0;
+   virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const = 0;
    
    virtual vector<pkgIndexFile *> *GetIndexFiles() = 0; 
    virtual bool IsTrusted() const = 0;

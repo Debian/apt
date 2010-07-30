@@ -25,13 +25,6 @@ SOURCE = scratch.cc
 include $(PROGRAM_H)
 
 # Version compare tester
-PROGRAM=versiontest
-SLIBS = -lapt-pkg 
-LIB_MAKES = apt-pkg/makefile
-SOURCE = versiontest.cc
-include $(PROGRAM_H)
-
-# Version compare tester
 PROGRAM=testextract
 SLIBS = -lapt-pkg -lapt-inst
 LIB_MAKES = apt-pkg/makefile apt-inst/makefile
@@ -75,7 +68,7 @@ SOURCE = test_udevcdrom.cc
 include $(PROGRAM_H)
 
 # Program for checking rpm versions
-PROGRAM=rpmver
-SLIBS = -lapt-pkg -lrpm
-SOURCE = rpmver.cc
-include $(PROGRAM_H)
+#PROGRAM=rpmver
+#SLIBS = -lapt-pkg -lrpm
+#SOURCE = rpmver.cc
+#include $(PROGRAM_H)

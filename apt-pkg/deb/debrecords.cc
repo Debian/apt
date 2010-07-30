@@ -11,6 +11,7 @@
 #include <apt-pkg/debrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <langinfo.h>
 									/*}}}*/
 
@@ -18,7 +19,7 @@
 // ---------------------------------------------------------------------
 /* */
 debRecordParser::debRecordParser(string FileName,pkgCache &Cache) : 
-                  File(FileName,FileFd::ReadOnly), 
+                  File(FileName,FileFd::ReadOnlyGzip), 
                   Tags(&File, std::max(Cache.Head().MaxVerFileSize, 
 				       Cache.Head().MaxDescFileSize) + 200)
 {
@@ -110,13 +111,18 @@ string debRecordParser::ShortDesc()
 string debRecordParser::LongDesc()
 {
   string orig, dest;
-  char *codeset = nl_langinfo(CODESET);
 
   if (!Section.FindS("Description").empty())
      orig = Section.FindS("Description").c_str();
-  else 
-     orig = Section.FindS(("Description-" + pkgIndexFile::LanguageCode()).c_str()).c_str();
+  else
+  {
+     vector<string> const lang = APT::Configuration::getLanguages();
+     for (vector<string>::const_iterator l = lang.begin();
+	  orig.empty() && l != lang.end(); l++)
+	orig = Section.FindS(string("Description-").append(*l).c_str());
+  }
 
+  char const * const codeset = nl_langinfo(CODESET);
   if (strcmp(codeset,"UTF-8") != 0) {
      UTF8ToCodeset(codeset, orig, &dest);
      orig = dest;
