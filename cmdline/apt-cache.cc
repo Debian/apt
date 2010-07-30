@@ -173,7 +173,9 @@ bool UnMet(CommandLine &CmdL)
    }
    else
    {
-      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+      APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1,
+				APT::VersionSet::CANDIDATE, helper);
       for (APT::VersionSet::iterator V = verset.begin(); V != verset.end(); ++V)
 	 if (ShowUnMet(V, Important) == false)
 	    return false;
@@ -187,7 +189,8 @@ bool UnMet(CommandLine &CmdL)
 bool DumpPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
 
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
@@ -566,7 +569,7 @@ public:
       return pkgCache::VerIterator(Cache, 0);
    }
 
-   CacheSetHelperDepends() : CacheSetHelper(false) {}
+   CacheSetHelperDepends() : CacheSetHelper(false, GlobalError::NOTICE) {}
 };
 bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 {
@@ -754,11 +757,12 @@ bool XVcg(CommandLine &CmdL)
    }
 
    // Load the list of packages from the command line into the show list
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    std::list<APT::PackageSet::Modifier> mods;
    mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
    mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
-		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0);
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
    for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
 	Pkg != pkgsets[0].end(); ++Pkg)
@@ -968,11 +972,12 @@ bool Dotty(CommandLine &CmdL)
    }
 
    // Load the list of packages from the command line into the show list
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    std::list<APT::PackageSet::Modifier> mods;
    mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
    mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
-		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0);
+		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
    for (APT::PackageSet::const_iterator Pkg = pkgsets[0].begin();
 	Pkg != pkgsets[0].end(); ++Pkg)
@@ -1403,9 +1408,10 @@ bool ShowAuto(CommandLine &CmdL)
 bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    APT::VersionSet::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
 			APT::VersionSet::ALL : APT::VersionSet::CANDIDATE;
-   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select);
+   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionSet::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
 	 return false;
@@ -1564,7 +1570,8 @@ bool Policy(CommandLine &CmdL)
 		(InstalledLessCandidate > 0 ? (InstalledLessCandidate) : 0) - 1;
 
    // Print out detailed information for each package
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
    for (APT::PackageSet::const_iterator I = pkgset.begin(); I != pkgset.end(); ++I)
    {
       pkgCache::PkgIterator Pkg = I.Group().FindPkg("any");
@@ -1644,7 +1651,8 @@ bool Madison(CommandLine &CmdL)
    if (_error->PendingError() == true)
       _error->Discard();
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (Pkg.end() == false)
