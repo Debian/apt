@@ -92,6 +92,14 @@ bool GlobalError::DebugE(const char *Function,const char *Description,...) {
 	return InsertErrno(DEBUG, Function, Description, args);
 }
 									/*}}}*/
+// GlobalError::InsertErrno - Get part of the errortype string from errno/*{{{*/
+bool GlobalError::InsertErrno(MsgType const &type, const char *Function,
+				const char *Description,...) {
+	va_list args;
+	va_start(args,Description);
+	return InsertErrno(type, Function, Description, args);
+}
+									/*}}}*/
 // GlobalError::InsertErrno - formats an error message with the errno	/*{{{*/
 bool GlobalError::InsertErrno(MsgType type, const char* Function,
 			      const char* Description, va_list &args) {
@@ -136,6 +144,14 @@ bool GlobalError::Debug(const char *Description,...)
 	va_list args;
 	va_start(args,Description);
 	return Insert(DEBUG, Description, args);
+}
+									/*}}}*/
+// GlobalError::Insert - Add a errotype message to the list		/*{{{*/
+bool GlobalError::Insert(MsgType const &type, const char *Description,...)
+{
+	va_list args;
+	va_start(args,Description);
+	return Insert(type, Description, args);
 }
 									/*}}}*/
 // GlobalError::Insert - Insert a new item at the end			/*{{{*/

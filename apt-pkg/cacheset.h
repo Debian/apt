@@ -32,7 +32,9 @@ class CacheSetHelper {							/*{{{*/
     printed out.
 */
 public:									/*{{{*/
-	CacheSetHelper(bool const &ShowError = true) : ShowError(ShowError) {};
+	CacheSetHelper(bool const &ShowError = true,
+		GlobalError::MsgType ErrorType = GlobalError::ERROR) :
+			ShowError(ShowError), ErrorType(ErrorType) {};
 	virtual ~CacheSetHelper() {};
 
 	virtual void showTaskSelection(PackageSet const &pkgset, string const &pattern) {};
@@ -58,9 +60,21 @@ public:									/*{{{*/
 
 	bool showErrors() const { return ShowError; };
 	bool showErrors(bool const &newValue) { if (ShowError == newValue) return ShowError; else return ((ShowError = newValue) == false); };
+	GlobalError::MsgType errorType() const { return ErrorType; };
+	GlobalError::MsgType errorType(GlobalError::MsgType const &newValue)
+	{
+		if (ErrorType == newValue) return ErrorType;
+		else {
+			GlobalError::MsgType const &oldValue = ErrorType;
+			ErrorType = newValue;
+			return oldValue;
+		}
+	};
+
 									/*}}}*/
 protected:
 	bool ShowError;
+	GlobalError::MsgType ErrorType;
 };									/*}}}*/
 class PackageSet : public std::set<pkgCache::PkgIterator> {		/*{{{*/
 /** \class APT::PackageSet
