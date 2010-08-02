@@ -229,7 +229,7 @@ bool pkgCdrom::DropBinaryArch(vector<string> &List)
       // Between Start and End is the architecture
       Start += 8;
       if ((End = strstr(Start,"/")) != 0 && Start != End &&
-          APT::Configuration::checkArchitecture(string(Start, --End)) == true)
+          APT::Configuration::checkArchitecture(string(Start, End)) == true)
 	 continue; // okay, architecture is accepted
 
       // not accepted -> Erase it
