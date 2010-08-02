@@ -18,7 +18,7 @@ case "$1" in
         if ! test -f /etc/apt/trusted.gpg; then
                 cp /usr/share/apt/ubuntu-archive.gpg /etc/apt/trusted.gpg
         fi
-	apt-key update
+	apt-key update || true
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
