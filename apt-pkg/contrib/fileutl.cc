@@ -669,6 +669,7 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
       }
       break;
       
+      case WriteAtomic:
       case WriteEmpty:
       {
 	 Flags |= Replace;
@@ -678,6 +679,7 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
 	 free(name);
 	 break;
       }
+
       
       case WriteExists:
       iFd = open(FileName.c_str(),O_RDWR);
