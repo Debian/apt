@@ -12,6 +12,8 @@ apt (0.7.26~exp13) UNRELEASEDexperimental; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - Add WriteAtomic mode.
     - Revert WriteEmpty to old behavior (LP: #613211)
+  * apt-pkg, methods:
+    - Convert users of WriteEmpty to WriteAtomic.
   * apt-pkg/depcache.cc:
     - Only try upgrade for Breaks if there is a newer version, otherwise
       handle it as Conflicts (by removing it) (helps for #591882).

@@ -446,7 +446,7 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
    // the cleanup/closing of the fds)
    FileFd From(Path,FileFd::ReadOnly);
    FileFd Patch(Path+".ed",FileFd::ReadOnly);
-   FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
+   FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
       return false;
@@ -458,7 +458,7 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
       // retry with patchFile
       lseek(Patch.Fd(), 0, SEEK_SET);
       lseek(From.Fd(), 0, SEEK_SET);
-      To.Open(Itm->DestFile,FileFd::WriteEmpty);
+      To.Open(Itm->DestFile,FileFd::WriteAtomic);
       if (_error->PendingError() == true)
          return false;
       if (patchFile(Patch, From, To, &Hash) != ED_OK) {

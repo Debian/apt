@@ -227,7 +227,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
    // if it does not exist, create a empty one
    if(!FileExists(state)) 
    {
-      StateFile.Open(state, FileFd::WriteEmpty);
+      StateFile.Open(state, FileFd::WriteAtomic);
       StateFile.Close();
    }
 
