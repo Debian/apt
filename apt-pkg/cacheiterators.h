@@ -293,6 +293,9 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	inline const char *CompType() const {return Owner->CompType(S->CompareOp);};
 	inline const char *DepType() const {return Owner->DepType(S->Type);};
 
+	//Nice printable representation
+	friend std::ostream& operator <<(std::ostream& out, DepIterator D);
+
 	inline DepIterator(pkgCache &Owner, Dependency *Trg, Version* = 0) :
 		Iterator<Dependency, DepIterator>(Owner, Trg), Type(DepVer) {
 		if (S == 0)

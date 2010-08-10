@@ -661,6 +661,30 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    }
 }
 									/*}}}*/
+// ostream operator to handle string representation of a dependecy	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::ostream& operator<<(ostream& out, pkgCache::DepIterator D)
+{
+   if (D.end() == true)
+      return out << "invalid dependency";
+
+   pkgCache::PkgIterator P = D.ParentPkg();
+   pkgCache::PkgIterator T = D.TargetPkg();
+
+   out << (P.end() ? "invalid pkg" : P.FullName(false)) << " " << D.DepType()
+	<< " on ";
+   if (T.end() == true)
+      out << "invalid pkg";
+   else
+      out << T;
+
+   if (D->Version != 0)
+      out << " (" << D.CompType() << " " << D.TargetVer() << ")";
+
+   return out;
+}
+									/*}}}*/
 // VerIterator::CompareVer - Fast version compare for same pkgs		/*{{{*/
 // ---------------------------------------------------------------------
 /* This just looks over the version list to see if B is listed before A. In
