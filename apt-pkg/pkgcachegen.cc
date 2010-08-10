@@ -1192,7 +1192,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    if (Writeable == true && CacheFile.empty() == false)
    {
       unlink(CacheFile.c_str());
-      CacheF = new FileFd(CacheFile,FileFd::WriteEmpty);
+      CacheF = new FileFd(CacheFile,FileFd::WriteAtomic);
       fchmod(CacheF->Fd(),0644);
       Map = CreateDynamicMMap(CacheF, MMap::Public);
       if (_error->PendingError() == true)
@@ -1254,7 +1254,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       // Write it back
       if (Writeable == true && SrcCacheFile.empty() == false)
       {
-	 FileFd SCacheF(SrcCacheFile,FileFd::WriteEmpty);
+	 FileFd SCacheF(SrcCacheFile,FileFd::WriteAtomic);
 	 if (_error->PendingError() == true)
 	    return false;
 	 

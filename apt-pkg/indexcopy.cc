@@ -134,7 +134,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       TargetF += URItoFileName(S);
       if (_config->FindB("APT::CDROM::NoAct",false) == true)
 	 TargetF = "/dev/null";
-      FileFd Target(TargetF,FileFd::WriteEmpty);
+      FileFd Target(TargetF,FileFd::WriteAtomic);
       FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
@@ -565,7 +565,7 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 
       FileFd Target;
       FileFd Rel;
-      Target.Open(TargetF,FileFd::WriteEmpty);
+      Target.Open(TargetF,FileFd::WriteAtomic);
       Rel.Open(prefix + file,FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 return false;
@@ -840,7 +840,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       TargetF += URItoFileName(S);
       if (_config->FindB("APT::CDROM::NoAct",false) == true)
 	 TargetF = "/dev/null";
-      FileFd Target(TargetF,FileFd::WriteEmpty);
+      FileFd Target(TargetF,FileFd::WriteAtomic);
       FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;

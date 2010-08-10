@@ -1,11 +1,29 @@
 apt (0.8.0~pre1) UNRELASED; urgency=low
 
+  [ Programs translations ]
+  * Swedish translation update. Closes: #592366
+
   [ Michael Vogt ]
   * merge of the debian-expermental-ma branch
   * refresh po/pot files in doc/ and po/
+  * apt-pkg/pkgcache.cc:
+    - re-evaluate the architectures cache when the cache is (re)opened
 
-  [ Programs translations ]
-  * Swedish translation update. Closes: #592366
+  [ Colin Watson ]
+  * apt-pkg/cdrom.cc:
+    - fix off-by-one error in DropBinaryArch
+
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/fileutl.cc:
+    - Add WriteAtomic mode.
+    - Revert WriteEmpty to old behavior (LP: #613211)
+  * apt-pkg, methods:
+    - Convert users of WriteEmpty to WriteAtomic.
+  * apt-pkg/depcache.cc:
+    - Only try upgrade for Breaks if there is a newer version, otherwise
+      handle it as Conflicts (by removing it) (helps for #591882).
+  * debian/control:
+    - Add dependency on gnupg to apt, apt-key uses it.
 
   [ David Kalnischkies ]
   * apt-pkg/algorithms.cc:

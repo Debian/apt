@@ -91,7 +91,7 @@ bool Bzip2Method::Fetch(FetchItem *Itm)
    close(GzOut[1]);
    
    FileFd FromGz(GzOut[0]);  // For autoclose   
-   FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
+   FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
       return false;
