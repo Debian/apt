@@ -28,6 +28,7 @@
 #define _LARGEFILE_SOURCE
 #define _LARGEFILE64_SOURCE
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
@@ -2493,6 +2494,7 @@ bool DoBuildDep(CommandLine &CmdL)
       return false;
 
    unsigned J = 0;
+   bool const StripMultiArch = APT::Configuration::getArchitectures().size() <= 1;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
@@ -2502,7 +2504,7 @@ bool DoBuildDep(CommandLine &CmdL)
             
       // Process the build-dependencies
       vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only",true)) == false)
+      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
       	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
       // Also ensure that build-essential packages are present
