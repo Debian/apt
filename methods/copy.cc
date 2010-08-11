@@ -52,7 +52,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    
    // See if the file exists
    FileFd From(File,FileFd::ReadOnly);
-   FileFd To(Itm->DestFile,FileFd::WriteEmpty);
+   FileFd To(Itm->DestFile,FileFd::WriteAtomic);
    To.EraseOnFailure();
    if (_error->PendingError() == true)
    {

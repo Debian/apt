@@ -1,3 +1,21 @@
+apt (0.7.26~exp13) UNRELEASEDexperimental; urgency=low
+
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/fileutl.cc:
+    - Add WriteAtomic mode.
+    - Revert WriteEmpty to old behavior (LP: #613211)
+  * apt-pkg, methods:
+    - Convert users of WriteEmpty to WriteAtomic.
+  * apt-pkg/depcache.cc:
+    - Only try upgrade for Breaks if there is a newer version, otherwise
+      handle it as Conflicts (by removing it) (helps for #591882).
+  
+  [ Michael Vogt ]
+  * debian/control:
+    - Add recommends on gnupg to apt, apt-key uses it.
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 30 Jul 2010 17:37:14 +0200
+
 apt (0.7.26~exp12ubuntu3) maverick; urgency=low
 
   [ Colin Watson ]

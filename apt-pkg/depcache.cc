@@ -227,7 +227,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
    // if it does not exist, create a empty one
    if(!FileExists(state)) 
    {
-      StateFile.Open(state, FileFd::WriteEmpty);
+      StateFile.Open(state, FileFd::WriteAtomic);
       StateFile.Close();
    }
 
@@ -1425,10 +1425,13 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    VerIterator Ver(*this,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();
 
-	    if (Start->Type != Dep::DpkgBreaks)
-	       MarkDelete(Pkg,false,Depth + 1, false);
-	    else if (PkgState[Pkg->ID].CandidateVer != *I)
+	    
+	       
+	    if (PkgState[Pkg->ID].CandidateVer != *I &&
+	        Start->Type == Dep::DpkgBreaks)
 	       MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);
+	    else
+	       MarkDelete(Pkg,false,Depth + 1, false);
 	 }
 	 continue;
       }      
