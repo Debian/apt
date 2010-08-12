@@ -844,9 +844,11 @@ struct TryToRemove {
    pkgCacheFile* Cache;
    pkgProblemResolver* Fix;
    bool FixBroken;
+   bool PurgePkgs;
    unsigned long AutoMarkChanged;
 
-   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver &PM) : Cache(&Cache), Fix(&PM) {};
+   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver &PM) : Cache(&Cache), Fix(&PM),
+				PurgePkgs(_config->FindB("APT::Get::Purge", false)) {};
 
    void operator() (pkgCache::VerIterator const &Ver)
    {
@@ -856,10 +858,11 @@ struct TryToRemove {
       Fix->Protect(Pkg);
       Fix->Remove(Pkg);
 
-      if (Pkg->CurrentVer == 0)
+      if ((Pkg->CurrentVer == 0 && PurgePkgs == false) ||
+	  (PurgePkgs == true && Pkg->CurrentState == pkgCache::State::NotInstalled))
 	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
       else
-	 Cache->GetDepCache()->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
+	 Cache->GetDepCache()->MarkDelete(Pkg, PurgePkgs);
    }
 };
 									/*}}}*/
