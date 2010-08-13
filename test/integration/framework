@@ -73,7 +73,7 @@ setupenvironment() {
 	if [ -f "${TESTDIR}/${PACKAGESFILE}" ]; then
 		cp "${TESTDIR}/${PACKAGESFILE}" aptarchive/Packages
 	else
-		touch var/lib/dpkg/status
+		touch aptarchive/Packages
 	fi
 	echo "RootDir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
@@ -172,18 +172,18 @@ testequalor2() {
 }
 
 testshowvirtual() {
-	local VIRTUAL="E: Can't select versions from package '$1' as it purely virtual"
+	local VIRTUAL="N: Can't select versions from package '$1' as it purely virtual"
 	local PACKAGE="$1"
 	shift
 	while [ -n "$1" ]; do
 		VIRTUAL="${VIRTUAL}
-E: Can't select versions from package '$1' as it purely virtual"
+N: Can't select versions from package '$1' as it purely virtual"
 		PACKAGE="${PACKAGE} $1"
 		shift
 	done
 	msgtest "Test for virtual packages" "apt-cache show $PACKAGE"
 	VIRTUAL="${VIRTUAL}
-E: No packages found"
+N: No packages found"
 	local COMPAREFILE=$(mktemp)
 	local ARCH=$(dpkg-architecture -qDEB_HOST_ARCH_CPU)
 	eval `apt-config shell ARCH APT::Architecture`
