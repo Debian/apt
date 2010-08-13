@@ -1,3 +1,51 @@
+apt (0.8.0~pre1ubuntu1) maverick; urgency=low
+
+  * merged fixes from debian/experimental
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 13 Aug 2010 17:49:40 +0200
+
+apt (0.8.0~pre1) experimental; urgency=low
+
+  [ Programs translations ]
+  * Swedish translation update. Closes: #592366
+
+  [ Michael Vogt ]
+  * merge of the debian-expermental-ma branch
+  * refresh po/pot files in doc/ and po/
+  * apt-pkg/pkgcache.cc:
+    - re-evaluate the architectures cache when the cache is (re)opened
+
+  [ Colin Watson ]
+  * apt-pkg/cdrom.cc:
+    - fix off-by-one error in DropBinaryArch
+
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/fileutl.cc:
+    - Add WriteAtomic mode.
+    - Revert WriteEmpty to old behavior (LP: #613211)
+  * apt-pkg, methods:
+    - Convert users of WriteEmpty to WriteAtomic.
+  * apt-pkg/depcache.cc:
+    - Only try upgrade for Breaks if there is a newer version, otherwise
+      handle it as Conflicts (by removing it) (helps for #591882).
+  * debian/control:
+    - Add dependency on gnupg to apt, apt-key uses it.
+
+  [ David Kalnischkies ]
+  * apt-pkg/algorithms.cc:
+    - let the problem resolver install packages to fix or-groups
+      as a needed remove nuked another or-member (helps for #591882)
+    - change the debug outputs to display also arch of the
+      package and version dependencies information
+  * cmdline/apt-get.cc:
+    - let APT::Get::Arch-Only in build-dep default to false again
+      (Closes: #592628) Thanks Mohamed Amine IL Idrissi for report!
+    - purge packages in 'rc' state, thanks Rogier! (Closes: #150831)
+  * apt-pkg/pkgcache.cc:
+    - fix LongDesc handling in LANG=C environment
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 13 Aug 2010 17:00:49 +0200
+
 apt (0.7.26~exp12ubuntu4) maverick; urgency=low
 
   [ Julian Andres Klode ]
@@ -392,6 +440,7 @@ apt (0.7.26~exp5) experimental; urgency=low
   [ Christian Perrier ]
   * Slovak translation update. Closes: #581159
   * Italian translation update. Closes: #581742
+  * Swedish translation update. Closes: #592366
 
  -- Michael Vogt <mvo@debian.org>  Tue, 25 May 2010 16:01:42 +0200
 
