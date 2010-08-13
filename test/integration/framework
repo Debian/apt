@@ -36,7 +36,11 @@ msgdone() { if [ "$1" = "debug" -o "$1" = "info" ]; then true; else echo "${CDON
 
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+	if [ -f ./aptconfig.conf ]; then
+		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+	else
+		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+	fi
 }
 aptconfig() { runapt apt-config $*; }
 aptcache() { runapt apt-cache $*; }
