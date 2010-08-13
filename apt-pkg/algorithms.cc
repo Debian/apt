@@ -1052,7 +1052,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			      solving this dependency. This helps every time a previous solver
 			      is removed by the resolver because of a conflict or alike but it is
 			      dangerous as it could trigger new breaks/conflicts… */
-			   std::cout << "  Try Installing " << Start.TargetPkg() << " before changing " << I.FullName(false) << std::endl;
+			   if (Debug == true)
+			      clog << "  Try Installing " << Start.TargetPkg() << " before changing " << I.FullName(false) << std::endl;
 			   unsigned long const OldBroken = Cache.BrokenCount();
 			   Cache.MarkInstall(Start.TargetPkg(), true, 1, false);
 			   // FIXME: we should undo the complete MarkInstall process here
