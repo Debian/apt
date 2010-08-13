@@ -187,7 +187,7 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
       }	    
       cout << endl;
 
-      _error->Error("Conf Broken %s",Pkg.FullName(false));
+      _error->Error("Conf Broken %s",Pkg.FullName(false).c_str());
    }   
    else
    {
@@ -290,7 +290,7 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	       Cache.MarkInstall(I, false, 0, false);
 	    else
 	       return _error->Error(_("The package %s needs to be reinstalled, "
-				    "but I can't find an archive for it."),I.FullName(true));
+				    "but I can't find an archive for it."),I.FullName(true).c_str());
 	 }
 	 
 	 continue;
@@ -325,7 +325,7 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 	 default:
 	 if (I->InstState != pkgCache::State::Ok)
 	    return _error->Error("The package %s is not ok and I "
-				 "don't know how to fix it!",I.FullName(false));
+				 "don't know how to fix it!",I.FullName(false).c_str());
       }
    }
    return true;
@@ -847,6 +847,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
       not be possible for a loop to form (that is a < b < c and fixing b by
       changing a breaks c) */
    bool Change = true;
+   bool const TryFixByInstall = _config->FindB("pkgProblemResolver::FixByInstall", true);
    for (int Counter = 0; Counter != 10 && Change == true; Counter++)
    {
       Change = false;
@@ -863,7 +864,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	     (Flags[I->ID] & ReInstateTried) == 0)
 	 {
 	    if (Debug == true)
-	       clog << " Try to Re-Instate " << I.FullName(false) << endl;
+	       clog << " Try to Re-Instate (" << Counter << ") " << I.FullName(false) << endl;
 	    unsigned long OldBreaks = Cache.BrokenCount();
 	    pkgCache::Version *OldVer = Cache[I].InstallVer;
 	    Flags[I->ID] &= ReInstateTried;
@@ -886,7 +887,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    continue;
 	 
 	 if (Debug == true)
-	    clog << "Investigating " << I << endl;
+	    clog << "Investigating (" << Counter << ") " << I << endl;
 	 
 	 // Isolate the problem dependency
 	 PackageKill KillList[100];
@@ -904,9 +905,9 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    if (Start == End)
 	    {
 	       // Decide what to do
-	       if (InOr == true)
+	       if (InOr == true && OldEnd == LEnd)
 	       {
-		  if (OldEnd == LEnd && OrOp == OrRemove)
+		  if (OrOp == OrRemove)
 		  {
 		     if ((Flags[I->ID] & Protected) != Protected)
 		     {
@@ -914,9 +915,9 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			   clog << "  Or group remove for " << I.FullName(false) << endl;
 			Cache.MarkDelete(I);
 			Change = true;
-		     }		     
-		  }		  
-		  if (OldEnd == LEnd && OrOp == OrKeep)
+		     }
+		  }
+		  else if (OrOp == OrKeep)
 		  {
 		     if (Debug == true)
 			clog << "  Or group keep for " << I.FullName(false) << endl;
@@ -1040,6 +1041,23 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			   Cache.MarkDelete(I);
 			   if (Counter > 1 && Scores[Pkg->ID] > Scores[I->ID])
 			      Scores[I->ID] = Scores[Pkg->ID];
+			}
+			else if (TryFixByInstall == true &&
+				 Start.TargetPkg()->CurrentVer == 0 &&
+				 Cache[Start.TargetPkg()].Delete() == false &&
+				 Cache.GetCandidateVer(Start.TargetPkg()).end() == false)
+			{
+			   /* Before removing or keeping the package with the broken dependency
+			      try instead to install the first not previously installed package
+			      solving this dependency. This helps every time a previous solver
+			      is removed by the resolver because of a conflict or alike but it is
+			      dangerous as it could trigger new breaks/conflicts… */
+			   std::cout << "  Try Installing " << Start.TargetPkg() << " before changing " << I.FullName(false) << std::endl;
+			   unsigned long const OldBroken = Cache.BrokenCount();
+			   Cache.MarkInstall(Start.TargetPkg(), true, 1, false);
+			   // FIXME: we should undo the complete MarkInstall process here
+			   if (Cache[Start.TargetPkg()].InstBroken() == true || Cache.BrokenCount() > OldBroken)
+			      Cache.MarkDelete(Start.TargetPkg(), false, 1, false);
 			}
 		     }
 		  }
@@ -1325,7 +1343,7 @@ bool pkgProblemResolver::ResolveByKeep()
       
       // Restart again.
       if (K == LastStop)
-	 return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.",I.FullName(false));
+	 return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.",I.FullName(false).c_str());
       LastStop = K;
       K = PList - 1;
    }   
