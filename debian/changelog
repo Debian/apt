@@ -27,13 +27,16 @@ apt (0.8.0~pre1) UNRELASED; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/algorithms.cc:
+    - let the problem resolver install packages to fix or-groups
+      as a needed remove nuked another or-member (helps for #591882)
     - change the debug outputs to display also arch of the
       package and version dependencies information
   * cmdline/apt-get.cc:
     - let APT::Get::Arch-Only in build-dep default to false again
       (Closes: #592628) Thanks Mohamed Amine IL Idrissi for report!
+    - purge packages in 'rc' state, thanks Rogier! (Closes: #150831)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 11 Aug 2010 19:36:21 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Aug 2010 14:24:27 +0200
 
 apt (0.7.26~exp12) experimental; urgency=low
 
