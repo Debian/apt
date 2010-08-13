@@ -894,7 +894,8 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
       pkgCache::DescIterator Desc = DescDefault;
 
       for (; Desc.end() == false; Desc++)
-	 if (*l == Desc.LanguageCode())
+	 if (*l == Desc.LanguageCode() ||
+	     (*l == "en" && strcmp(Desc.LanguageCode(),"") == 0))
 	    break;
       if (Desc.end() == true) 
 	 Desc = DescDefault;
