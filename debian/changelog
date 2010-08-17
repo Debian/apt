@@ -1,4 +1,14 @@
-apt (0.8.0~pre1) UNRELASED; urgency=low
+apt (0.8.0~pre2) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/strutl.cc:
+    - fix error checking for vsnprintf in its safe variant
+  * methods/bzip2.cc:
+    - fix error checking for read in case of failing bzip2/lzma/whatever
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Aug 2010 01:32:02 +0200
+
+apt (0.8.0~pre1) experimental; urgency=low
 
   [ Programs translations ]
   * Swedish translation update. Closes: #592366
@@ -37,12 +47,8 @@ apt (0.8.0~pre1) UNRELASED; urgency=low
     - purge packages in 'rc' state, thanks Rogier! (Closes: #150831)
   * apt-pkg/pkgcache.cc:
     - fix LongDesc handling in LANG=C environment
-  * apt-pkg/contrib/strutl.cc:
-    - fix error checking for vsnprintf in its safe variant
-  * methods/bzip2.cc:
-    - fix error checking for read in case of failing bzip2/lzma/whatever
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 16 Aug 2010 12:07:54 +0200
+ -- Michael Vogt <mvo@debian.org>  Fri, 13 Aug 2010 17:00:49 +0200
 
 apt (0.7.26~exp12) experimental; urgency=low
 
