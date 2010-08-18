@@ -28,11 +28,37 @@ msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
 msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; }
 
 # enable / disable Debugging
-msginfo() { true; }
-msgdebug() { true; }
-msgninfo() { true; }
-msgndebug() { true; }
-msgdone() { if [ "$1" = "debug" -o "$1" = "info" ]; then true; else echo "${CDONE}DONE${CNORMAL}" >&2; fi }
+MSGLEVEL=${MSGLEVEL:-3}
+if [ $MSGLEVEL -le 0 ]; then
+	msgdie() { true; }
+fi
+if [ $MSGLEVEL -le 1 ]; then
+	msgwarn() { true; }
+	msgnwarn() { true; }
+fi
+if [ $MSGLEVEL -le 2 ]; then
+	msgmsg() { true; }
+	msgnmsg() { true; }
+fi
+if [ $MSGLEVEL -le 3 ]; then
+	msginfo() { true; }
+	msgninfo() { true; }
+fi
+if [ $MSGLEVEL -le 4 ]; then
+	msgdebug() { true; }
+	msgndebug() { true; }
+fi
+msgdone() {
+	if [ "$1" = "debug" -a $MSGLEVEL -le 4 ] ||
+	   [ "$1" = "info" -a $MSGLEVEL -le 3 ] ||
+	   [ "$1" = "msg" -a $MSGLEVEL -le 2 ] ||
+	   [ "$1" = "warn" -a $MSGLEVEL -le 1 ] ||
+	   [ "$1" = "die" -a $MSGLEVEL -le 0 ]; then
+		true;
+	else
+		echo "${CDONE}DONE${CNORMAL}" >&2;
+	fi
+}
 
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
