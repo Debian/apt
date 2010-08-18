@@ -84,14 +84,16 @@ setupenvironment() {
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive
 	cd rootdir
-	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d var/cache var/lib/dpkg
-	mkdir -p var/cache/apt/archives/partial var/lib/apt/lists/partial
+	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d var/cache
+	mkdir -p var/log/apt var/lib/apt
+	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	local STATUSFILE=$(echo "$(basename $0)" | sed 's/^test-/status-/')
 	if [ -f "${TESTDIR}/${STATUSFILE}" ]; then
 		cp "${TESTDIR}/${STATUSFILE}" var/lib/dpkg/status
 	else
 		touch var/lib/dpkg/status
 	fi
+	touch var/lib/apt/extended_states var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
 	cd ..
@@ -101,9 +103,15 @@ setupenvironment() {
 	else
 		touch aptarchive/Packages
 	fi
-	echo "RootDir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
+	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
+	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
+	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
+	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
+	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
+	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
+	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	export LC_ALL=C
 	msgdone "info"
 }
@@ -132,7 +140,7 @@ buildsimplenativepackage() {
 	else
 		DISTSECTION="$(echo "$SECTION" | cut -d'/' -f 1)"
 	fi
-	msgndebug "Build package ${CCMD}${NAME}=${VERSION}/${RELEASE}${CDEBUG}… "
+	msgninfo "Build package ${CCMD}${NAME}=${VERSION}/${RELEASE}${CINFO}… "
 	local BUILDDIR=incoming/${NAME}-${VERSION}
 	mkdir -p ${BUILDDIR}/debian/source
 	cd ${BUILDDIR}
@@ -175,7 +183,7 @@ Architecture: $ARCH" > debian/control
 		echo "pool/${SRC}" >> ./incoming/${RELEASE}.${DISTSECTION}.srclist
 	done
 	rm -rf $BUILDDIR
-	msgdone "debug"
+	msgdone "info"
 }
 
 buildaptarchive() {
@@ -239,7 +247,6 @@ APT {
 		echo '";
 };' >> ftparchive.conf
 	done
-	less ftparchive.conf
 }
 
 buildaptftparchivedirectorystructure() {
