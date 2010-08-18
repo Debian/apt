@@ -82,7 +82,7 @@ setupenvironment() {
 	local OLDWORKINGDIRECTORY=$(pwd)
 	trap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	cd $TMPWORKINGDIRECTORY
-	mkdir rootdir aptarchive
+	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d var/cache
 	mkdir -p var/log/apt var/lib/apt
@@ -93,7 +93,7 @@ setupenvironment() {
 	else
 		touch var/lib/dpkg/status
 	fi
-	touch var/lib/apt/extended_states var/lib/dpkg/available
+	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
 	cd ..
@@ -103,6 +103,8 @@ setupenvironment() {
 	else
 		touch aptarchive/Packages
 	fi
+	cp $(find $TESTDIR -name '*.pub' -o -name '*.sec') keys/
+	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
@@ -275,7 +277,7 @@ buildaptarchivefromincoming() {
 	msgdone "info"
 	msgninfo "\tGenerate Release files… "
 	for dir in $(find ./dists -mindepth 1 -maxdepth 1 -type d); do
-		aptftparchive -qq release $dir | sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
+		aptftparchive -qq release $dir -o APT::FTPArchive::Release::Codename="$(echo "$dir" | cut -d'/' -f 3)" | sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
 	done
 	cd - > /dev/null
 	msgdone "info"
@@ -342,7 +344,14 @@ setupaptarchive() {
 	else
 		setupflataptarchive
 	fi
+	msgninfo "\tSign archive with Joe Sixpack key… "
+	for RELEASE in $(find aptarchive/ -name Release); do
+		gpg --no-default-keyring --secret-keyring ./keys/joesixpack.sec --keyring ./keys/joesixpack.pub --default-key Joe -abs -o ${RELEASE}.gpg ${RELEASE}
+	done
+	msgdone "info"
+	msgninfo "\tSync APT's cache with the archive… "
 	aptget update -qq
+	msgdone "info"
 }
 
 diff() {
