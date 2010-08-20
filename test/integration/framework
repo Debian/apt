@@ -74,13 +74,13 @@ aptget() { runapt apt-get $*; }
 aptftparchive() { runapt apt-ftparchive $*; }
 
 setupenvironment() {
-	local TMPWORKINGDIRECTORY=$(mktemp -d)
+	TMPWORKINGDIRECTORY=$(mktemp -d)
 	local TESTDIR=$(readlink -f $(dirname $0))
 	msgninfo "Preparing environment for ${CCMD}$0${CINFO} in ${TMPWORKINGDIRECTORY}… "
 	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
 	local OLDWORKINGDIRECTORY=$(pwd)
-	trap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+# 	trap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive keys
 	cd rootdir
@@ -128,7 +128,7 @@ configarchitecture() {
 	done
 }
 
-buildsimplenativepackage() {
+setupsimplenativepackage() {
 	local NAME="$1"
 	local ARCH="$2"
 	local VERSION="$3"
@@ -142,7 +142,6 @@ buildsimplenativepackage() {
 	else
 		DISTSECTION="$(echo "$SECTION" | cut -d'/' -f 1)"
 	fi
-	msgninfo "Build package ${CCMD}${NAME}=${VERSION}/${RELEASE}${CINFO}… "
 	local BUILDDIR=incoming/${NAME}-${VERSION}
 	mkdir -p ${BUILDDIR}/debian/source
 	cd ${BUILDDIR}
@@ -174,17 +173,47 @@ Architecture: $ARCH" > debian/control
 	test -e debian/compat || echo "7" > debian/compat
 	test -e debian/source/format || echo "3.0 (native)" > debian/source/format
 	test -e debian/rules || cp /usr/share/doc/debhelper/examples/rules.tiny debian/rules
+	cd - > /dev/null
+}
+
+buildsimplenativepackage() {
+	local NAME="$1"
+	local ARCH="$2"
+	local VERSION="$3"
+	local RELEASE="${4:-unstable}"
+	local DEPENDENCIES="$5"
+	local DESCRIPTION="$6"
+	local SECTION="${7:-others}"
+	local DISTSECTION
+	if [ "$SECTION" = "$(echo "$SECTION" | cut -d'/' -f 2)" ]; then
+		DISTSECTION="main"
+	else
+		DISTSECTION="$(echo "$SECTION" | cut -d'/' -f 1)"
+	fi
+	setupsimplenativepackage "$NAME" "$ARCH" "$VERSION" "$RELEASE" "$DEPENDENCIES" "$DESCRIPTION" "$SECTION"
+	buildpackage "incoming/${NAME}-${VERSION}" "$RELEASE" "$DISTSECTION"
+	rm -rf "incoming/${NAME}-${VERSION}"
+}
+
+buildpackage() {
+	local BUILDDIR=$1
+	local RELEASE=$2
+	local SECTION=$3
+	msgninfo "Build package $(echo "$BUILDDIR" | grep -o '[^/]*$') for ${RELEASE} in ${SECTION}… "
+	cd $BUILDDIR
+	if [ "$ARCH" = "all" ]; then
+		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
+	fi
 	local BUILT="$(dpkg-buildpackage -uc -us -a$ARCH 2> /dev/null)"
 	local PKGS="$( echo "$BUILT" | grep '^dpkg-deb: building package' | cut -d'/' -f 2 | sed -e "s#'\.##")"
 	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
-		echo "pool/${PKG}" >> ./incoming/${RELEASE}.${DISTSECTION}.pkglist
+		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist
 	done
 	for SRC in $SRCS; do
-		echo "pool/${SRC}" >> ./incoming/${RELEASE}.${DISTSECTION}.srclist
+		echo "pool/${SRC}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.srclist
 	done
-	rm -rf $BUILDDIR
 	msgdone "info"
 }
 
@@ -362,6 +391,17 @@ diff() {
 		return 1
 	else
 		return 0
+	fi
+}
+
+testfileequal() {
+	local FILE="$1"
+	shift
+	msgtest "Test for correctness of file" "$FILE"
+	if [ -z "$*" ]; then
+		echo -n "" | diff $FILE - && msgpass || msgfail
+	else
+		echo "$*" | diff $FILE - && msgpass || msgfail
 	fi
 }
 
