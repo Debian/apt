@@ -19,8 +19,11 @@ apt (0.8.0~pre2) UNRELEASED; urgency=low
     - some http servers violate HTTP1.1 by not issuing a Reason-Phrase
       (or at least a space after the code) especially for 200, but lets
       be nice and ignore it as we don't need the reason in general
+  * apt-pkg/acquire-item.cc:
+    - don't use ReadOnlyGzip mode for PDiffs as this mode doesn't work
+      in combination with the AddFd methods of our hashclasses
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 20 Aug 2010 23:00:54 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 21 Aug 2010 22:18:41 +0200
 
 apt (0.8.0~pre1) experimental; urgency=low
 

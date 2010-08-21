@@ -80,7 +80,8 @@ setupenvironment() {
 	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
 	local OLDWORKINGDIRECTORY=$(pwd)
-# 	trap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	CURRENTTRAP="cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY"
+	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive keys
 	cd rootdir
@@ -373,17 +374,44 @@ setupaptarchive() {
 	else
 		setupflataptarchive
 	fi
-	msgninfo "\tSign archive with Joe Sixpack key… "
-	for RELEASE in $(find aptarchive/ -name Release); do
-		gpg --no-default-keyring --secret-keyring ./keys/joesixpack.sec --keyring ./keys/joesixpack.pub --default-key Joe -abs -o ${RELEASE}.gpg ${RELEASE}
-	done
-	msgdone "info"
+	signreleasefiles
 	msgninfo "\tSync APT's cache with the archive… "
 	aptget update -qq
 	msgdone "info"
 }
 
-diff() {
+signreleasefiles() {
+	local SIGNER="${1:-Joe Sixpack}"
+	msgninfo "\tSign archive with $SIGNER key… "
+	local SECKEYS=""
+	for KEY in $(find keys/ -name '*.sec'); do
+		SECKEYS="$SECKEYS --secret-keyring $KEY"
+	done
+	local PUBKEYS=""
+	for KEY in $(find keys/ -name '*.pub'); do
+		PUBKEYS="$PUBKEYS --keyring $KEY"
+	done
+	for RELEASE in $(find aptarchive/ -name Release); do
+		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" -abs -o ${RELEASE}.gpg ${RELEASE}
+	done
+	msgdone "info"
+}
+
+changetowebserver() {
+	if which weborf > /dev/null; then
+		weborf -xb aptarchive/ 2>&1 > /dev/null &
+		CURRENTTRAP="kill $(ps | grep weborf | sed -e 's#^[ ]*##' | cut -d' ' -f 1); $CURRENTTRAP"
+		trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+		local APTARCHIVE="file://$(readlink -f ./aptarchive)"
+		for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
+			sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
+		done
+		return 0
+	fi
+	return 1
+}
+
+checkdiff() {
 	local DIFFTEXT="$($(which diff) -u $* | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
 		echo
@@ -399,9 +427,9 @@ testfileequal() {
 	shift
 	msgtest "Test for correctness of file" "$FILE"
 	if [ -z "$*" ]; then
-		echo -n "" | diff $FILE - && msgpass || msgfail
+		echo -n "" | checkdiff $FILE - && msgpass || msgfail
 	else
-		echo "$*" | diff $FILE - && msgpass || msgfail
+		echo "$*" | checkdiff $FILE - && msgpass || msgfail
 	fi
 }
 
@@ -410,7 +438,7 @@ testequal() {
 	echo "$1" > $COMPAREFILE
 	shift
 	msgtest "Test for equality of" "$*"
-	$* 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	$* 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 	rm $COMPAREFILE
 }
 
@@ -423,10 +451,10 @@ testequalor2() {
 	shift 2
 	msgtest "Test for equality OR of" "$*"
 	$* 2>&1 1> $COMPAREAGAINST
-	(diff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
-		diff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
-		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(diff $COMPAREFILE1 $COMPAREAGAINST)" \
-		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(diff $COMPAREFILE2 $COMPAREAGAINST)" &&
+	(checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
+		checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
+		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(checkdiff $COMPAREFILE1 $COMPAREAGAINST)" \
+		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(checkdiff $COMPAREFILE2 $COMPAREAGAINST)" &&
 		  msgfail )
 	rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST
 }
@@ -448,7 +476,7 @@ N: No packages found"
 	local ARCH=$(dpkg-architecture -qDEB_HOST_ARCH_CPU)
 	eval `apt-config shell ARCH APT::Architecture`
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
-	aptcache show $PACKAGE 2>&1 | diff $COMPAREFILE - && msgpass || msgfail
+	aptcache show $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 	rm $COMPAREFILE
 }
 
