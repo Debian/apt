@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2008-08-02 01:47-0400\n"
 "Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -108,7 +108,7 @@ msgstr ""
 msgid "No packages found"
 msgstr "Paketų nerasta"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nepavyko rasti paketo %s"
@@ -627,7 +627,7 @@ msgstr "Nepavyko pervadinti %s į %s"
 msgid "Y"
 msgstr "T"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr ""
@@ -1575,6 +1575,7 @@ msgstr ""
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nepavyko perskaityti %s"
@@ -1705,6 +1706,27 @@ msgstr ""
 msgid "Unparsable control file"
 msgstr ""
 
+#: methods/bzip2.cc:68
+#, fuzzy, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Nepavyko atverti failo %s"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr ""
+
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr ""
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr ""
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1732,15 +1754,6 @@ msgstr "Diskas nerastas."
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "Failas nerastas"
-
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr ""
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr ""
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2249,6 +2262,7 @@ msgstr ""
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nepavyko pakeisti į %s"
@@ -2975,6 +2989,53 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "Maišos sumos nesutapimas"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Nebuvo rastas „%s“ leidimas paketui „%s“"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Nebuvo rasta „%s“ versija paketui „%s“"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Nepavyko rasti užduoties %s"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Nepavyko rasti paketo %s"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, fuzzy, c-format
 msgid "Installing %s"
@@ -3119,6 +3180,18 @@ msgstr ""
 msgid "Not locked"
 msgstr ""
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3136,15 +3209,6 @@ msgstr ""
 #: methods/rsh.cc:329
 msgid "Connection closed prematurely"
 msgstr ""
-
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "Nebuvo rastas „%s“ leidimas paketui „%s“"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "Nebuvo rasta „%s“ versija paketui „%s“"
-
-#~ msgid "Couldn't find task %s"
-#~ msgstr "Nepavyko rasti užduoties %s"
 
 #, fuzzy
 #~| msgid "Could not open file %s"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2010-08-22 09:59-0400\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -106,7 +106,7 @@ msgstr "Vous devez fournir au moins un motif de recherche"
 msgid "No packages found"
 msgstr "Aucun paquet n'a été trouvé"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Impossible de trouver le paquet %s"
@@ -665,7 +665,7 @@ msgstr "Impossible de changer le nom %s en %s"
 msgid "Y"
 msgstr "O"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Erreur de compilation de l'expression rationnelle - %s"
@@ -1701,6 +1701,7 @@ msgstr "Le fichier %s/%s écrase celui inclus dans le paquet %s"
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "Impossible de lire %s"
@@ -1838,6 +1839,27 @@ msgstr "Impossible de localiser un fichier de contrôle valide"
 msgid "Unparsable control file"
 msgstr "Fichier de contrôle non traitable"
 
+#: methods/bzip2.cc:68
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Ne parvient pas à ouvrir le tube pour %s"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr "Erreur de lecture du processus %s"
+
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr "Impossible de statuer"
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr "Impossible de modifier l'heure "
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1869,15 +1891,6 @@ msgstr "Disque non trouvé."
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "Fichier non trouvé"
-
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr "Impossible de statuer"
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr "Impossible de modifier l'heure "
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2246,8 +2259,7 @@ msgid ""
 "reached."
 msgstr ""
 "Impossible d'augmenter la taille du cache mémoire car la limite de %lu "
-"octets "
-"est déjà atteinte."
+"octets est déjà atteinte."
 
 #: apt-pkg/contrib/mmap.cc:402
 msgid ""
@@ -2407,6 +2419,7 @@ msgstr "Impossible de localiser le point de montage %s"
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Impossible d'accéder à %s"
@@ -3194,6 +3207,53 @@ msgstr "Impossible de trouver l'enregistrement d'authentification pour %s"
 msgid "Hash mismatch for: %s"
 msgstr "Somme de contrôle de hachage incohérente pour %s"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "La version  « %s » de « %s » est introuvable"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "La version « %s » de « %s » n'a pu être trouvée"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Impossible de trouver la tâche %s"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Impossible de trouver le paquet %s"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Installing %s"
@@ -3353,6 +3413,18 @@ msgstr ""
 msgid "Not locked"
 msgstr "Non verrouillé"
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3360,8 +3432,7 @@ msgid ""
 "to be corrupt."
 msgstr ""
 "Impossible de modifier %s avec cache en mémoire et utilisation des "
-"opérations de "
-"fichiers : le correctif semble être corrompu."
+"opérations de fichiers : le correctif semble être corrompu."
 
 #: methods/rred.cc:470
 #, c-format
@@ -3370,41 +3441,27 @@ msgid ""
 "to be corrupt."
 msgstr ""
 "Impossible de modifier %s avec cache en mémoire (sans échec particulier du "
-"cache) : le "
-"correctif semble être corrompu."
+"cache) : le correctif semble être corrompu."
 
 #: methods/rsh.cc:329
 msgid "Connection closed prematurely"
 msgstr "Connexion fermée prématurément"
 
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "La version  « %s » de « %s » est introuvable"
+#~ msgid ""
+#~ "Since you only requested a single operation it is extremely likely that\n"
+#~ "the package is simply not installable and a bug report against\n"
+#~ "that package should be filed."
+#~ msgstr ""
+#~ "Ponieważ zażądano tylko jednej operacji, jest bardzo prawdopodobne, że\n"
+#~ "danego pakietu po prostu nie da się zainstalować i należy zgłosić w nim\n"
+#~ "błąd."
 
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "La version « %s » de « %s » n'a pu être trouvée"
-
-#~ msgid "Couldn't find task %s"
-#~ msgstr "Impossible de trouver la tâche %s"
-
-#~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
-#~ msgstr "E: trop de porte-clés devraient être passés à gpgv. Abandon."
+#~ msgid "Line %d too long (max %lu)"
+#~ msgstr "Linia %d jest zbyt długa (max %lu)"
 
 #~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 #~ msgstr ""
 #~ "E: liste de paramètres trop longue pour Acquire::gpgv::Options. Abandon."
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Ne parvient pas à ouvrir le tube pour %s"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "Erreur de lecture du processus %s"
-
-#~ msgid ""
-#~ "The size of a MMap has already reached the defined limit of %lu bytes,"
-#~ "abort the try to grow the MMap."
-#~ msgstr ""
-#~ "La taille d'une « MMap » (carte en mémoire) a déjà atteint la limite "
-#~ "définie de %lu octets. Abandon de la tentative d'agrandir la « MMap »."
 
 #~ msgid "Error occurred while processing %s (NewVersion2)"
 #~ msgstr "Erreur apparue lors du traitement de %s (NewVersion2)"
@@ -3434,3 +3491,13 @@ msgstr "Connexion fermée prématurément"
 
 #~ msgid "Dynamic MMap ran out of room"
 #~ msgstr "La zone dynamique d'allocation mémoire n'a plus de place"
+
+#~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
+#~ msgstr "E: trop de porte-clés devraient être passés à gpgv. Abandon."
+
+#~ msgid ""
+#~ "The size of a MMap has already reached the defined limit of %lu bytes,"
+#~ "abort the try to grow the MMap."
+#~ msgstr ""
+#~ "La taille d'une « MMap » (carte en mémoire) a déjà atteint la limite "
+#~ "définie de %lu octets. Abandon de la tentative d'agrandir la « MMap »."

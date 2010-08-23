@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2008-11-16 18:05+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -105,7 +105,7 @@ msgstr "Musíte zadat právě jeden vzor"
 msgid "No packages found"
 msgstr "Nebyly nalezeny žádné balíky"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nemohu najít balík %s"
@@ -653,7 +653,7 @@ msgstr "Selhalo přejmenování %s na %s"
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Chyba při kompilaci regulárního výrazu - %s"
@@ -1639,6 +1639,7 @@ msgstr "Soubor %s/%s přepisuje ten z balíku %s"
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nemohu číst %s"
@@ -1772,6 +1773,27 @@ msgstr "Nelze najít platný kontrolní soubor"
 msgid "Unparsable control file"
 msgstr "Nezpracovatelný kontrolní soubor"
 
+#: methods/bzip2.cc:68
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Nemohu otevřít rouru pro %s"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr "Chyba čtení z procesu %s"
+
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr "Selhalo vyhodnocení"
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr "Nelze nastavit čas modifikace"
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1801,15 +1823,6 @@ msgstr "Disk nebyl nalezen."
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "Soubor nebyl nalezen"
-
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr "Selhalo vyhodnocení"
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr "Nelze nastavit čas modifikace"
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2325,6 +2338,7 @@ msgstr "Nelze vyhodnotit přípojný bod %s"
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nemohu přejít do %s"
@@ -3065,6 +3079,53 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "Neshoda kontrolních součtů"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Vydání „%s“ pro „%s“ nebylo nalezeno"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Verze „%s“ pro „%s“ nebyla nalezena"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Nemohu najít úlohu %s"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Nemohu najít balík %s"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Installing %s"
@@ -3209,6 +3270,18 @@ msgstr ""
 msgid "Not locked"
 msgstr ""
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3227,24 +3300,9 @@ msgstr ""
 msgid "Connection closed prematurely"
 msgstr "Spojení bylo předčasně ukončeno"
 
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "Vydání „%s“ pro „%s“ nebylo nalezeno"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "Verze „%s“ pro „%s“ nebyla nalezena"
-
-#~ msgid "Couldn't find task %s"
-#~ msgstr "Nemohu najít úlohu %s"
-
 #~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 #~ msgstr ""
 #~ "E: Seznam argumentů Acquire::gpgv::Options je příliš dlouhý. Končím."
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Nemohu otevřít rouru pro %s"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "Chyba čtení z procesu %s"
 
 #~ msgid "Error occurred while processing %s (NewVersion2)"
 #~ msgstr "Při zpracování %s se objevila chyba (NewVersion2)"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2010-02-27 13:17+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -109,7 +109,7 @@ msgstr "Sie müssen genau ein Muster angeben"
 msgid "No packages found"
 msgstr "Keine Pakete gefunden"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Paket %s kann nicht gefunden werden"
@@ -673,7 +673,7 @@ msgstr "%s konnte nicht in %s umbenannt werden"
 msgid "Y"
 msgstr "J"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Fehler beim Kompilieren eines regulären Ausdrucks - %s"
@@ -1694,6 +1694,7 @@ msgstr "Durch die Datei %s/%s wird die Datei in Paket %s überschrieben"
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s kann nicht gelesen werden"
@@ -1829,6 +1830,28 @@ msgstr "Es konnte keine gültige »control«-Datei gefunden werden"
 msgid "Unparsable control file"
 msgstr "Auswerten der »control«-Datei nicht möglich"
 
+#: methods/bzip2.cc:68
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Pipe (Weiterleitung) für %s konnte nicht geöffnet werden"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr "Lesefehler von Prozess %s"
+
+# looks like someone hardcoded English grammar
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr "»stat« konnte nicht ausgeführt werden"
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr "Änderungszeitpunkt kann nicht gesetzt werden"
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1860,16 +1883,6 @@ msgstr "Medium nicht gefunden."
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "Datei nicht gefunden"
-
-# looks like someone hardcoded English grammar
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr "»stat« konnte nicht ausgeführt werden"
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr "Änderungszeitpunkt kann nicht gesetzt werden"
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2400,6 +2413,7 @@ msgstr "»stat« konnte nicht auf den Einbindungspunkt %s ausgeführt werden"
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Es konnte nicht nach %s gewechselt werden"
@@ -3170,6 +3184,53 @@ msgstr "Authentifizierungs-Datensatz konnte nicht gefunden werden für: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Hash-Summe stimmt nicht überein für: %s"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Veröffentlichung »%s« für »%s« konnte nicht gefunden werden"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Version »%s« für »%s« konnte nicht gefunden werden"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Task %s konnte nicht gefunden werden"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Paket %s konnte nicht gefunden werden"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Installing %s"
@@ -3321,6 +3382,18 @@ msgstr ""
 msgid "Not locked"
 msgstr "Nicht gesperrt"
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3343,27 +3416,12 @@ msgstr ""
 msgid "Connection closed prematurely"
 msgstr "Verbindung vorzeitig beendet"
 
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "Veröffentlichung »%s« für »%s« konnte nicht gefunden werden"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "Version »%s« für »%s« konnte nicht gefunden werden"
-
-#~ msgid "Couldn't find task %s"
-#~ msgstr "Task %s konnte nicht gefunden werden"
-
 #~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
 #~ msgstr ""
 #~ "F: Zu viele Schlüsselringe sollten an gpgv übergeben werden. Abbruch."
 
 #~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 #~ msgstr "F: Argumentenliste von Acquire::gpgv::Options zu lang. Abbruch."
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Pipe (Weiterleitung) für %s konnte nicht geöffnet werden"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "Lesefehler von Prozess %s"
 
 #~ msgid ""
 #~ "The size of a MMap has already reached the defined limit of %lu bytes,"

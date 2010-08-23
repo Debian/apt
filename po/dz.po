@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po.pot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -110,7 +110,7 @@ msgstr "ཁྱོད་ཀྱིས་ཏག་ཏག་སྦེ་དཔེ་
 msgid "No packages found"
 msgstr "ཐུམ་སྒྲིལ་ཚུ་མ་ཐོབ།"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "%sཐུམ་སྒྲིལ་འདི་ག་ཡོད་ཟཚོལ་མ་ཐོབ།"
@@ -666,7 +666,7 @@ msgstr "%s་ལུ་%s་བསྐྱར་མིང་བཏགས་ནི�
 msgid "Y"
 msgstr "ཝའི།"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "རི་ཇེགསི་ཕྱོགས་སྒྲིག་འཛོལ་བ་- %s"
@@ -1662,6 +1662,7 @@ msgstr "ཐུམ་སྒྲིལ་%s་ནང་ལུ་་ཡིག་ས�
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s་འདི་ལུ་ལྷག་མ་ཚུགས།"
@@ -1794,6 +1795,27 @@ msgstr "ནུས་ཅན་ཡོད་པའི་ཚད་འཛིན་ཡ
 msgid "Unparsable control file"
 msgstr "མིང་དཔྱད་འབད་མ་བཏུབ་པའི་ཚད་འཛིན་ཡིག་སྣོད།"
 
+#: methods/bzip2.cc:68
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "%s་གི་དོན་ལུ་རྒྱུད་དུང་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr "%s་ལས་སྦྱོར་ནང་ལས་འཛོལ་བ་ཚུ་ལྷག"
+
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr "ངོ་བཤུས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr "ཆུ་ཚོད་ལེགས་བཅོས་གཞི་སྒྲིག་འབཐ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1824,15 +1846,6 @@ msgstr "ཌིཀསི་དེ་འཚོལ་མ་ཐོབ།"
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "ཡིག་སྣོད་འཚོལ་མ་ཐོབ།"
-
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr "ངོ་བཤུས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr "ཆུ་ཚོད་ལེགས་བཅོས་གཞི་སྒྲིག་འབཐ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2348,6 +2361,7 @@ msgstr "སྦྱར་བརྩེགས་ས་ཚིགས་%s་འདི�
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "%s་ལུ་བསྒྱུར་བཅོས་འབད་མ་ཚུགས།"
@@ -3095,6 +3109,53 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "ཨེམ་ཌི་༥་ ཁྱོན་བསྡོམས་མ་མཐུན་པ།"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "%sགི་དོན་ལུ་འཛིན་གྲོལ་'%s'་དེ་མ་འཐོབ་པས།"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "'%s'་གི་དོན་ལུ་འཐོན་རིམ་'%s'་དེ་མ་འཐོབ་པས།"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, fuzzy, c-format
 msgid "Installing %s"
@@ -3239,6 +3300,18 @@ msgstr ""
 msgid "Not locked"
 msgstr ""
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3257,26 +3330,10 @@ msgstr ""
 msgid "Connection closed prematurely"
 msgstr "དུས་སུ་མ་འབབ་པ་རང་མཐུད་ལམ་འདི་ག་བསྡམས་ཡོད།"
 
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "%sགི་དོན་ལུ་འཛིན་གྲོལ་'%s'་དེ་མ་འཐོབ་པས།"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "'%s'་གི་དོན་ལུ་འཐོན་རིམ་'%s'་དེ་མ་འཐོབ་པས།"
-
-#, fuzzy
-#~ msgid "Couldn't find task %s"
-#~ msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
-
 #~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 #~ msgstr ""
 #~ "E: Acquire::gpgv::Options་ནང་ལས་ཀྱི་སྒྲུབ་རྟགས་ཀྱི་ཐོ་ཡིག་དེ་གནམ་མེད་ས་མེད་རིངམ་འདུག  ཕྱིར་"
 #~ "འཐོན་དོ།"
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "%s་གི་དོན་ལུ་རྒྱུད་དུང་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "%s་ལས་སྦྱོར་ནང་ལས་འཛོལ་བ་ཚུ་ལྷག"
 
 #~ msgid "Error occurred while processing %s (NewVersion2)"
 #~ msgstr "%s (འཐོན་རིམ་གསརཔ་ ༢)བཟོ་སྦྱོར་འབད་བའི་བསྒང་འཛོལ་བ་ཅིག་བྱུང་ནུག"
