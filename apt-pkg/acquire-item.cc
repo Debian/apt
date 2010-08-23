@@ -280,7 +280,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       ss >> ServerSha1 >> size;
       unsigned long const ServerSize = atol(size.c_str());
 
-      FileFd fd(CurrentPackagesFile, FileFd::ReadOnlyGzip);
+      FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
       SHA1Summation SHA1;
       SHA1.AddFD(fd.Fd(), fd.Size());
       string const local_sha1 = SHA1.Result();
@@ -297,7 +297,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       else 
       {
 	 if(Debug)
-	    std::clog << "SHA1-Current: " << ServerSha1 << std::endl;
+	    std::clog << "SHA1-Current: " << ServerSha1 << " and we start at "<< fd.Name() << " " << fd.Size() << " " << local_sha1 << std::endl;
 
 	 // check the historie and see what patches we need
 	 string const history = Tags.FindS("SHA1-History");
@@ -511,7 +511,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
 
-   FileFd fd(FinalFile, FileFd::ReadOnlyGzip);
+   FileFd fd(FinalFile, FileFd::ReadOnly);
    SHA1Summation SHA1;
    SHA1.AddFD(fd.Fd(), fd.Size());
    string local_sha1 = string(SHA1.Result());

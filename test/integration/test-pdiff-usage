@@ -1,0 +1,51 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildaptarchive
+setupflataptarchive
+changetowebserver
+signreleasefiles
+aptget update -qq
+
+testnopackage newstuff
+PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
+testequal "$(cat ${PKGFILE})
+" aptcache show apt oldstuff
+
+cp ${PKGFILE}-new aptarchive/Packages
+cat aptarchive/Packages | gzip > aptarchive/Packages.gz
+cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
+cat aptarchive/Packages | lzma > aptarchive/Packages.lzma
+rm -rf aptarchive/Packages.diff
+aptftparchive release aptarchive/ > aptarchive/Release
+mkdir -p aptarchive/Packages.diff
+PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
+diff -e ${PKGFILE} ${PKGFILE}-new > ${PATCHFILE} || true
+cat $PATCHFILE | gzip > ${PATCHFILE}.gz
+PATCHINDEX="aptarchive/Packages.diff/Index"
+echo "SHA1-Current: $(sha1sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new)
+SHA1-History:
+ 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
+ $(sha1sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
+SHA1-Patches:
+ 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
+ $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
+sed -i aptarchive/Release \
+ -e "/^MD5Sum:/ a\
+ \ $(md5sum $PATCHINDEX | cut -d' ' -f 1) $(stat -c%s $PATCHINDEX) Packages.diff/Index" \
+ -e "/^SHA1:/ a\
+ \ $(sha1sum $PATCHINDEX | cut -d' ' -f 1) $(stat -c%s $PATCHINDEX) Packages.diff/Index" \
+ -e "/^SHA256:/ a\
+ \ $(sha256sum $PATCHINDEX | cut -d' ' -f 1) $(stat -c%s $PATCHINDEX) Packages.diff/Index"
+signreleasefiles
+aptget update -qq
+
+testnopackage oldstuff
+testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt newstuff
