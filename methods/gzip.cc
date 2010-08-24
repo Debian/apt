@@ -55,7 +55,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       return true;
    }
 
-   FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
+   FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
       return false;

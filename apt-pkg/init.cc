@@ -70,6 +70,9 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::parts","apt.conf.d");
    Cnf.Set("Dir::Etc::preferences","preferences");
    Cnf.Set("Dir::Etc::preferencesparts","preferences.d");
+   string const deprecated = _config->Find("APT::GPGV::TrustedKeyring");
+   Cnf.Set("Dir::Etc::trusted", deprecated.empty() ? "trusted.gpg" : deprecated);
+   Cnf.Set("Dir::Etc::trustedparts","trusted.gpg.d");
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
    Cnf.Set("Dir::Media::MountPath","/media/apt");
 

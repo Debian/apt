@@ -91,7 +91,7 @@ bool Bzip2Method::Fetch(FetchItem *Itm)
    close(GzOut[1]);
    
    FileFd FromGz(GzOut[0]);  // For autoclose   
-   FileFd To(Itm->DestFile,FileFd::WriteEmpty);   
+   FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)
       return false;
@@ -102,9 +102,8 @@ bool Bzip2Method::Fetch(FetchItem *Itm)
    while (1) 
    {
       unsigned char Buffer[4*1024];
-      unsigned long Count;
       
-      Count = read(GzOut[0],Buffer,sizeof(Buffer));
+      ssize_t Count = read(GzOut[0],Buffer,sizeof(Buffer));
       if (Count < 0 && errno == EINTR)
 	 continue;
       

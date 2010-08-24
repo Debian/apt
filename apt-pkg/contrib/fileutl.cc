@@ -669,13 +669,22 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
       }
       break;
       
-      case WriteEmpty:
+      case WriteAtomic:
       {
 	 Flags |= Replace;
 	 char *name = strdup((FileName + ".XXXXXX").c_str());
 	 TemporaryFileName = string(mktemp(name));
 	 iFd = open(TemporaryFileName.c_str(),O_RDWR | O_CREAT | O_EXCL,Perms);
 	 free(name);
+	 break;
+      }
+
+      case WriteEmpty:
+      {
+      	 struct stat Buf;
+	 if (lstat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
+	    unlink(FileName.c_str());
+	 iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_TRUNC,Perms);
 	 break;
       }
       

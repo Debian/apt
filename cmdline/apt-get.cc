@@ -28,6 +28,7 @@
 #define _LARGEFILE_SOURCE
 #define _LARGEFILE64_SOURCE
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
@@ -843,9 +844,11 @@ struct TryToRemove {
    pkgCacheFile* Cache;
    pkgProblemResolver* Fix;
    bool FixBroken;
+   bool PurgePkgs;
    unsigned long AutoMarkChanged;
 
-   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver &PM) : Cache(&Cache), Fix(&PM) {};
+   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver &PM) : Cache(&Cache), Fix(&PM),
+				PurgePkgs(_config->FindB("APT::Get::Purge", false)) {};
 
    void operator() (pkgCache::VerIterator const &Ver)
    {
@@ -855,10 +858,11 @@ struct TryToRemove {
       Fix->Protect(Pkg);
       Fix->Remove(Pkg);
 
-      if (Pkg->CurrentVer == 0)
+      if ((Pkg->CurrentVer == 0 && PurgePkgs == false) ||
+	  (PurgePkgs == true && Pkg->CurrentState == pkgCache::State::NotInstalled))
 	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
       else
-	 Cache->GetDepCache()->MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
+	 Cache->GetDepCache()->MarkDelete(Pkg, PurgePkgs);
    }
 };
 									/*}}}*/
@@ -2493,6 +2497,7 @@ bool DoBuildDep(CommandLine &CmdL)
       return false;
 
    unsigned J = 0;
+   bool const StripMultiArch = APT::Configuration::getArchitectures().size() <= 1;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
@@ -2502,7 +2507,7 @@ bool DoBuildDep(CommandLine &CmdL)
             
       // Process the build-dependencies
       vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only",true)) == false)
+      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
       	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
       // Also ensure that build-essential packages are present

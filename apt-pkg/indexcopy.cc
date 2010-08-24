@@ -134,7 +134,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       TargetF += URItoFileName(S);
       if (_config->FindB("APT::CDROM::NoAct",false) == true)
 	 TargetF = "/dev/null";
-      FileFd Target(TargetF,FileFd::WriteEmpty);
+      FileFd Target(TargetF,FileFd::WriteAtomic);
       FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
@@ -565,7 +565,7 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 
       FileFd Target;
       FileFd Rel;
-      Target.Open(TargetF,FileFd::WriteEmpty);
+      Target.Open(TargetF,FileFd::WriteAtomic);
       Rel.Open(prefix + file,FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 return false;
@@ -661,9 +661,8 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
 {
    string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
    // FIXME: remove support for deprecated APT::GPGV setting
-   string const trustedFile = _config->FindFile("Dir::Etc::Trusted",
-		_config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg").c_str());
-   string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d");
+   string const trustedFile = _config->FindFile("Dir::Etc::Trusted");
+   string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts");
 
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
 
@@ -840,7 +839,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       TargetF += URItoFileName(S);
       if (_config->FindB("APT::CDROM::NoAct",false) == true)
 	 TargetF = "/dev/null";
-      FileFd Target(TargetF,FileFd::WriteEmpty);
+      FileFd Target(TargetF,FileFd::WriteAtomic);
       FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;

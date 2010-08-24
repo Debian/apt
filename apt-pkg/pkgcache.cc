@@ -111,7 +111,10 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 /* */
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 {
-   MultiArchEnabled = APT::Configuration::getArchitectures().size() > 1;
+   // call getArchitectures() with cached=false to ensure that the 
+   // architectures cache is re-evaulated. this is needed in cases
+   // when the APT::Architecture field changes between two cache creations
+   MultiArchEnabled = APT::Configuration::getArchitectures(false).size() > 1;
    if (DoMap == true)
       ReMap();
 }
@@ -661,6 +664,30 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    }
 }
 									/*}}}*/
+// ostream operator to handle string representation of a dependecy	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::ostream& operator<<(ostream& out, pkgCache::DepIterator D)
+{
+   if (D.end() == true)
+      return out << "invalid dependency";
+
+   pkgCache::PkgIterator P = D.ParentPkg();
+   pkgCache::PkgIterator T = D.TargetPkg();
+
+   out << (P.end() ? "invalid pkg" : P.FullName(false)) << " " << D.DepType()
+	<< " on ";
+   if (T.end() == true)
+      out << "invalid pkg";
+   else
+      out << T;
+
+   if (D->Version != 0)
+      out << " (" << D.CompType() << " " << D.TargetVer() << ")";
+
+   return out;
+}
+									/*}}}*/
 // VerIterator::CompareVer - Fast version compare for same pkgs		/*{{{*/
 // ---------------------------------------------------------------------
 /* This just looks over the version list to see if B is listed before A. In
@@ -867,7 +894,8 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
       pkgCache::DescIterator Desc = DescDefault;
 
       for (; Desc.end() == false; Desc++)
-	 if (*l == Desc.LanguageCode())
+	 if (*l == Desc.LanguageCode() ||
+	     (*l == "en" && strcmp(Desc.LanguageCode(),"") == 0))
 	    break;
       if (Desc.end() == true) 
 	 Desc = DescDefault;

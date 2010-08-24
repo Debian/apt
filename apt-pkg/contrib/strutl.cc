@@ -1161,7 +1161,7 @@ void strprintf(string &out,const char *format,...)
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
 {
    va_list args;
-   unsigned long Did;
+   int Did;
 
    va_start(args,Format);
 
