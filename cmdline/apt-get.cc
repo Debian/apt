@@ -1654,7 +1654,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
    if (doAutoRemove == false && (autoremovelist.empty() == false || autoRemoveCount != 0))
    {
       if (smallList == false)
-	 ShowList(c1out, P_("The following package is automatically installed and is no longer required:",
+	 ShowList(c1out, P_("The following package was automatically installed and is no longer required:",
 	          "The following packages were automatically installed and are no longer required:",
 	          autoRemoveCount), autoremovelist, autoremoveversions);
       else
