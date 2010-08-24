@@ -11,17 +11,17 @@
 # Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7.25\n"
+"Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-23 18:41-0400\n"
-"PO-Revision-Date: 2010-01-08 09:47+0300\n"
+"PO-Revision-Date: 2010-08-24 21:35+0400\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
+"X-Generator: Lokalize 1.0\n"
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -36,9 +36,8 @@ msgid "Total package names: "
 msgstr "Всего имён пакетов : "
 
 #: cmdline/apt-cache.cc:286
-#, fuzzy
 msgid "Total package structures: "
-msgstr "Всего имён пакетов : "
+msgstr "Всего структур пакетов: "
 
 #: cmdline/apt-cache.cc:326
 msgid "  Normal packages: "
@@ -106,9 +105,8 @@ msgid "Package file %s is out of sync."
 msgstr "Список пакетов %s рассинхронизирован."
 
 #: cmdline/apt-cache.cc:1273
-#, fuzzy
 msgid "You must give at least one search pattern"
-msgstr "Вы должны задать только один шаблон"
+msgstr "Вы должны задать не менее одно шаблона поиска"
 
 #: cmdline/apt-cache.cc:1429 cmdline/apt-cache.cc:1431
 #: cmdline/apt-cache.cc:1508
@@ -166,7 +164,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s для %s скомпилирован %s %s\n"
 
 #: cmdline/apt-cache.cc:1739
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -212,17 +209,19 @@ msgstr ""
 "\n"
 "apt-cache -- низкоуровневый инструмент, используемый для управления\n"
 "двоичными кэш-файлами APT и поиску по ним\n"
+"\n"
 "Команды:\n"
 "   add - добавить файл пакета в кэш источников\n"
 "   gencaches - построить кэш пакетов и кэш источников\n"
 "   showpkg - показать общую информацию о конкретном пакете\n"
+"   showsrc - показать записи об источниках\n"
 "   stats - показать общую статистику\n"
 "   dump - показать весь файл в сокращённой форме\n"
-"   dumpavail - выдать на stdout список доступных пакетов\n"
+"   dumpavail - выдать на stdout файл available\n"
 "   unmet - показать неудовлетворённые зависимости\n"
 "   search - найти пакеты, имя которых удовлетворяет регулярному выражению\n"
 "   show - показать информацию о пакете в удобочитаемой форме\n"
-"   depends - показать информацию о зависимостях пакета построчно\n"
+"   depends - показать необработанную информацию о зависимостях пакета\n"
 "   rdepends - показать информацию об обратных зависимостях пакета\n"
 "   pkgnames - показать имена всех пакетов в системе\n"
 "   dotty - генерировать граф пакетов в формате GraphVis\n"
@@ -230,13 +229,13 @@ msgstr ""
 "   policy - показать текущую политику выбора пакетов\n"
 "\n"
 "Параметры:\n"
-"  -h   Этот текст.\n"
+"  -h   Эта справка.\n"
 "  -p=? Кэш пакетов.\n"
 "  -s=? Кэш источников.\n"
-"  -q   Не показывать индикатор прогресса.\n"
+"  -q   Не показывать индикатор хода выполнения.\n"
 "  -i   Показывать только важные зависимости для команды unmet.\n"
 "  -c=? Читать указанный файл настройки.\n"
-"  -o=? Задать значение произвольной настройке, например, -o dir::cache=/tmp\n"
+"  -o=? Задать значение произвольной настройки, например, -o dir::cache=/tmp\n"
 "Подробности в справочных страницах apt-cache(8) и apt.conf(5).\n"
 
 #: cmdline/apt-cdrom.cc:77
@@ -248,9 +247,9 @@ msgid "Please insert a Disc in the drive and press enter"
 msgstr "Вставьте диск в устройство и нажмите ввод"
 
 #: cmdline/apt-cdrom.cc:127
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to mount '%s' to '%s'"
-msgstr "Не удалось переименовать %s в %s"
+msgstr "Не удалось примонтировать %s к %s"
 
 #: cmdline/apt-cdrom.cc:162
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -457,7 +456,6 @@ msgid "DB is old, attempting to upgrade %s"
 msgstr "DB устарела, попытка обновить %s"
 
 #: ftparchive/cachedb.cc:72
-#, fuzzy
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
@@ -772,17 +770,17 @@ msgid "%lu not fully installed or removed.\n"
 msgstr "не установлено до конца или удалено %lu пакетов.\n"
 
 #: cmdline/apt-get.cc:634
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Заметьте, выбирается %s из-за регулярного выражения %s\n"
+msgstr "Заметьте, выбирается %s для задачи %s\n"
 
 #: cmdline/apt-get.cc:640
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Заметьте, выбирается %s из-за регулярного выражения %s\n"
+msgstr "Заметьте, выбирается %s для регулярного выражения %s\n"
 
 #: cmdline/apt-get.cc:647
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Выбрана версия %s (%s) для %s\n"
 
@@ -796,9 +794,8 @@ msgid " [Installed]"
 msgstr " [Установлен]"
 
 #: cmdline/apt-get.cc:677
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "Версии-кандидаты"
+msgstr " [Нет версии-кандидата]"
 
 #: cmdline/apt-get.cc:679
 msgid "You should explicitly select one to install."
@@ -820,17 +817,17 @@ msgid "However the following packages replace it:"
 msgstr "Однако следующие пакеты могут его заменить:"
 
 #: cmdline/apt-get.cc:712
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "Для пакета %s не найдены кандидаты на установку"
+msgstr "Для пакета %s не найден кандидат на установку"
 
 #: cmdline/apt-get.cc:723
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
+msgstr "Виртуальные пакеты, подобные %s, не могут быть удалены\n"
 
 #: cmdline/apt-get.cc:754
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Заметьте, вместо %2$s выбирается %1$s\n"
 
@@ -840,9 +837,10 @@ msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Пропускается %s - пакет уже установлен и нет команды upgrade.\n"
 
 #: cmdline/apt-get.cc:788
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr "Пропускается %s - пакет уже установлен и нет команды upgrade.\n"
+msgstr ""
+"Пропускается %s - пакет не установлен, а запрошено только обновление.\n"
 
 #: cmdline/apt-get.cc:798
 #, c-format
@@ -1042,12 +1040,18 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
+"Следующий пакет исчез из системы, так как все их файлы\n"
+"теперь берутся из других пакетов:"
 msgstr[1] ""
+"Следующие пакеты исчез из системы, так как все их файлы\n"
+"теперь берутся из других пакетов:"
 msgstr[2] ""
+"Следующие пакеты исчез из системы, так как все их файлы\n"
+"теперь берутся из других пакетов:"
 
 #: cmdline/apt-get.cc:1324
 msgid "Note: This is done automatic and on purpose by dpkg."
-msgstr ""
+msgstr "Замечание: это сделано автоматически и специально программой dpkg."
 
 #: cmdline/apt-get.cc:1454
 #, c-format
@@ -1074,26 +1078,24 @@ msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "Не предполагалось удалять stuff, невозможно запустить AutoRemover"
 
 #: cmdline/apt-get.cc:1653
-#, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr[0] ""
-"Следующие пакеты устанавливались автоматически и больше не требуются:"
+msgstr[0] "Следующий пакет устанавливался автоматически и больше не требуется:"
 msgstr[1] ""
 "Следующие пакеты устанавливались автоматически и больше не требуются:"
 msgstr[2] ""
 "Следующие пакеты устанавливались автоматически и больше не требуются:"
 
 #: cmdline/apt-get.cc:1657
-#, fuzzy, c-format
+#, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "%lu пакетов было установлены автоматически и больше не требуются.\n"
-msgstr[1] "%lu пакетов было установлены автоматически и больше не требуются.\n"
+msgstr[0] "%lu пакет был установлен автоматически и больше не требуется.\n"
+msgstr[1] "%lu пакета было установлено автоматически и больше не требуется.\n"
 msgstr[2] "%lu пакетов было установлены автоматически и больше не требуются.\n"
 
 #: cmdline/apt-get.cc:1659
@@ -1177,9 +1179,9 @@ msgid "Couldn't find package %s"
 msgstr "Не удалось найти пакет %s"
 
 #: cmdline/apt-get.cc:1981
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "%s установлен вручную.\n"
+msgstr "%s выбран для автоматической установки.\n"
 
 #: cmdline/apt-get.cc:2002
 msgid "Calculating upgrade... "
@@ -1217,6 +1219,8 @@ msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
+"ВНИМАНИЕ: упаковка %s поддерживается в системе контроля версий %s:\n"
+"%s\n"
 
 #: cmdline/apt-get.cc:2246
 #, c-format
@@ -1225,11 +1229,14 @@ msgid ""
 "bzr get %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
+"Используйте:\n"
+"bzr get %s\n"
+"для получения последних (возможно не выпущенных) обновлений пакета.\n"
 
 #: cmdline/apt-get.cc:2297
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
-msgstr "Пропускаем уже скачанный файл '%s'\n"
+msgstr "Пропускаем уже скачанный файл %s\n"
 
 #: cmdline/apt-get.cc:2332
 #, c-format
@@ -1339,7 +1346,6 @@ msgid "Supported modules:"
 msgstr "Поддерживаемые модули:"
 
 #: cmdline/apt-get.cc:2786
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1385,8 +1391,8 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 "Использование: apt-get [параметры] команда\n"
-"               apt-get [параметры] install|remove pkg1 [pkg2 ...]\n"
-"               apt-get [параметры] source pkg1 [pkg2 ...]\n"
+"               apt-get [параметры] install|remove пакет1 [пакет2 ...]\n"
+"               apt-get [параметры] source пакет1 [пакет2 ...]\n"
 "\n"
 "apt-get -- простая программа с интерфейсом командной строки\n"
 "для скачивания и установки пакетов. Наиболее часто используемые\n"
@@ -1395,22 +1401,25 @@ msgstr ""
 "Команды:\n"
 "   update -  получить новые списки пакетов\n"
 "   upgrade - выполнить обновление\n"
-"   install - установить новые пакеты (на месте pkg указывается имя пакета\n"
-"             (libc6), а не имя файла (libc6.deb))\n"
+"   install - установить новые пакеты (на месте пакета указывается имя "
+"пакета\n"
+"             (libc6, а не имя файла libc6.deb)\n"
 "   remove -  удалить пакеты\n"
 "   autoremove - автоматически удалить все неиспользуемые пакеты\n"
 "   purge -   удалить пакеты вместе с их файлами настройки\n"
 "   source -  скачать архивы с исходным кодом\n"
 "   build-dep - настроить всё необходимое для сборки\n"
-"               пакета с исходным кодом\n"
+"               пакета из исходного кода\n"
 "   dist-upgrade - обновить всю систему, подробнее в apt-get(8)\n"
 "   dselect-upgrade - руководствоваться выбором, сделанным в dselect\n"
 "   clean -   удалить скачанные файлы архивов\n"
 "   autoclean - удалить старые скачанные файлы архивов\n"
 "   check -   проверить наличие нарушенных зависимостей\n"
+"   markauto - пометить указанные пакеты, как установленные автоматически\n"
+"   unmarkauto - пометить указанные пакеты, как установленные вручную\n"
 "\n"
 "Параметры:\n"
-"  -h   этот текст\n"
+"  -h   эта справка\n"
 "  -q   показывать сообщения о работе, не выводить индикатор хода работы\n"
 "  -qq  показывать только сообщения об ошибках\n"
 "  -d   только скачать - НЕ устанавливать и не распаковывать архивы\n"
@@ -1774,7 +1783,7 @@ msgstr "Внутренняя ошибка при добавлении diversion"
 
 #: apt-inst/deb/dpkgdb.cc:379
 msgid "The pkg cache must be initialized first"
-msgstr "В первую очередь должен быть проинициализирован кэш пакетов"
+msgstr "В первую очередь должен быть инициализирован кэш пакетов"
 
 #: apt-inst/deb/dpkgdb.cc:439
 #, c-format
@@ -2084,9 +2093,9 @@ msgstr "Невозможно соединиться с %s: %s:"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
 #: methods/gpgv.cc:71
-#, fuzzy, c-format
+#, c-format
 msgid "No keyring installed in %s."
-msgstr "Аварийное завершение установки."
+msgstr "Связка ключей в %s не установлена."
 
 #: methods/gpgv.cc:163
 msgid ""
@@ -2100,9 +2109,8 @@ msgid "At least one invalid signature was encountered."
 msgstr "Найдена как минимум одна неправильная подпись."
 
 #: methods/gpgv.cc:172
-#, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
-msgstr "Не удалось выполнить '%s' для проверки подписи (gpgv установлена?)"
+msgstr "Не удалось выполнить gpgv для проверки подписи (gpgv установлена?)"
 
 #: methods/gpgv.cc:177
 msgid "Unknown error executing gpgv"
@@ -2202,9 +2210,9 @@ msgid "Can't mmap an empty file"
 msgstr "Невозможно отобразить в память пустой файл"
 
 #: apt-pkg/contrib/mmap.cc:89
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't duplicate file descriptor %i"
-msgstr "Не удалось открыть канал для %s"
+msgstr "Не удалось сделать копию файлового дескриптора %i"
 
 #: apt-pkg/contrib/mmap.cc:97 apt-pkg/contrib/mmap.cc:250
 #, c-format
@@ -2212,14 +2220,12 @@ msgid "Couldn't make mmap of %lu bytes"
 msgstr "Невозможно отобразить в память %lu байт"
 
 #: apt-pkg/contrib/mmap.cc:124
-#, fuzzy
 msgid "Unable to close mmap"
-msgstr "Не удалось открыть %s"
+msgstr "Не удалось закрыть mmap"
 
 #: apt-pkg/contrib/mmap.cc:152 apt-pkg/contrib/mmap.cc:180
-#, fuzzy
 msgid "Unable to synchronize mmap"
-msgstr "Невозможно вызвать "
+msgstr "Не удалось синхронизировать mmap"
 
 #: apt-pkg/contrib/mmap.cc:300
 #, c-format
@@ -2236,11 +2242,14 @@ msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
+"Не удалось увеличить размер MMap, так как уже достигнут предел в %lu байт."
 
 #: apt-pkg/contrib/mmap.cc:402
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
+"Не удалось увеличить размер MMap, так как автоматическое увеличение "
+"отключено пользователем."
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:371
@@ -2319,11 +2328,11 @@ msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Синтаксическая ошибка %s:%u: не поддерживаемая директива '%s'"
 
 #: apt-pkg/contrib/configuration.cc:777
-#, fuzzy, c-format
+#, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr ""
-"Синтаксическая ошибка %s:%u: директивы могут задаваться только на верхнем "
-"уровне"
+"Синтаксическая ошибка %s:%u: для директивы clear требуется третий параметр в "
+"качестве аргумента"
 
 #: apt-pkg/contrib/configuration.cc:827
 #, c-format
@@ -2458,9 +2467,9 @@ msgid "Could not open file %s"
 msgstr "Не удалось открыть файл %s"
 
 #: apt-pkg/contrib/fileutl.cc:714
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file descriptor %d"
-msgstr "Не удалось открыть канал для %s"
+msgstr "Не удалось открыть файловый дескриптор %d"
 
 #: apt-pkg/contrib/fileutl.cc:774
 #, c-format
@@ -2474,28 +2483,28 @@ msgid "write, still have %lu to write but couldn't"
 msgstr "ошибка при записи, собирались записать ещё %lu байт, но не смогли"
 
 #: apt-pkg/contrib/fileutl.cc:906
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the gzip file %s"
-msgstr "Проблема закрытия файла"
+msgstr "Проблема закрытия gzip-файла %s"
 
 #: apt-pkg/contrib/fileutl.cc:909
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the file %s"
-msgstr "Проблема закрытия файла"
+msgstr "Проблема закрытия файла %s"
 
 #: apt-pkg/contrib/fileutl.cc:914
-#, fuzzy, c-format
+#, c-format
 msgid "Problem renaming the file %s to %s"
-msgstr "Проблема при синхронизации файловых буферов с диском"
+msgstr "Проблема при переименовании файла %s в %s"
 
 #: apt-pkg/contrib/fileutl.cc:925
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking the file %s"
-msgstr "Ошибка при удалении файла"
+msgstr "Проблема при удалении файла %s"
 
 #: apt-pkg/contrib/fileutl.cc:938
 msgid "Problem syncing the file"
-msgstr "Проблема при синхронизации файловых буферов с диском"
+msgstr "Проблема при синхронизации файла"
 
 #: apt-pkg/pkgcache.cc:142
 msgid "Empty package cache"
@@ -2603,7 +2612,7 @@ msgstr "Не удалось записать временный StateFile %s"
 #: apt-pkg/depcache.cc:921
 #, c-format
 msgid "Internal error, group '%s' has no installable pseudo package"
-msgstr ""
+msgstr "Внутренняя ошибка, группа %s не устанавливается псевдо-пакетом"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2616,30 +2625,32 @@ msgid "Unable to parse package file %s (2)"
 msgstr "Невозможно разобрать содержимое пакета %s (2)"
 
 #: apt-pkg/sourcelist.cc:92
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Искажённая строка %lu в списке источников %s (dist parse)"
+msgstr "Искажённая строка %lu в списке источников %s ([параметр] неразбираем)"
 
 #: apt-pkg/sourcelist.cc:95
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr ""
-"Искажённая строка %lu в списке источников %s (проблема в имени дистрибутива)"
+"Искажённая строка %lu в списке источников %s ([параметр] слишком короткий)"
 
 #: apt-pkg/sourcelist.cc:106
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Искажённая строка %lu в списке источников %s (dist parse)"
+msgstr "Искажённая строка %lu в списке источников %s (([%s] не назначаем)"
 
 #: apt-pkg/sourcelist.cc:112
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Искажённая строка %lu в списке источников %s (dist parse)"
+msgstr "Искажённая строка %lu в списке источников %s ([%s] не имеет ключа)"
 
 #: apt-pkg/sourcelist.cc:115
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Искажённая строка %lu в списке источников %s (dist parse)"
+msgstr ""
+"Искажённая строка %lu в списке источников %s (([%s] ключ %s не имеет "
+"значения)"
 
 #: apt-pkg/sourcelist.cc:128
 #, c-format
@@ -2751,19 +2762,19 @@ msgstr ""
 "них были использованы старые версии"
 
 #: apt-pkg/acquire.cc:79
-#, fuzzy, c-format
+#, c-format
 msgid "List directory %spartial is missing."
 msgstr "Каталог %spartial отсутствует."
 
 #: apt-pkg/acquire.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "Archives directory %spartial is missing."
 msgstr "Архивный каталог %spartial отсутствует."
 
 #: apt-pkg/acquire.cc:91
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock directory %s"
-msgstr "Невозможно заблокировать каталог со списками пакетов"
+msgstr "Невозможно заблокировать каталог %s"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -2863,9 +2874,9 @@ msgstr "Произошла ошибка во время обработки %s (N
 
 #: apt-pkg/pkgcachegen.cc:306 apt-pkg/pkgcachegen.cc:316
 #: apt-pkg/pkgcachegen.cc:324
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewVersion%d)"
-msgstr "Произошла ошибка во время обработки %s (NewVersion1)"
+msgstr "Произошла ошибка во время обработки %s (NewVersion%d)"
 
 #: apt-pkg/pkgcachegen.cc:320
 #, c-format
@@ -2946,12 +2957,12 @@ msgstr "Недоступен открытый ключ для следующих
 #: apt-pkg/acquire-item.cc:1277
 #, c-format
 msgid "Release file expired, ignoring %s (invalid since %s)"
-msgstr ""
+msgstr "Файл Release просрочен, игнорируется %s (недостоверный начиная с %s)"
 
 #: apt-pkg/acquire-item.cc:1298
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr ""
+msgstr "Конфликт распространения: %s (ожидался %s, но получен %s)"
 
 #: apt-pkg/acquire-item.cc:1324
 #, c-format
@@ -2959,11 +2970,13 @@ msgid ""
 "A error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used.GPG error: %s: %s\n"
 msgstr ""
+"Произошла ошибка при проверке подписи. Репозиторий не обновлён и будут "
+"использованы предыдущие индексные файлы. Ошибка GPG: %s: %s\n"
 
 #: apt-pkg/acquire-item.cc:1333
 #, c-format
 msgid "GPG error: %s: %s"
-msgstr ""
+msgstr "Ошибка GPG: %s: %s"
 
 #: apt-pkg/acquire-item.cc:1361
 #, c-format
@@ -3009,14 +3022,14 @@ msgid "No Hash entry in Release file %s"
 msgstr "Отсутствуют элементы Hash в файле Release (%s)"
 
 #: apt-pkg/indexrecords.cc:107
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "Отсутствуют элементы Hash в файле Release (%s)"
+msgstr "Неправильный элемент Valid-Until в файле Release %s"
 
 #: apt-pkg/indexrecords.cc:122
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
-msgstr "Отсутствуют элементы Hash в файле Release (%s)"
+msgstr "Неправильный элемент Date в файле Release %s"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -3162,19 +3175,20 @@ msgid "Version '%s' for '%s' was not found"
 msgstr "Версия '%s' для '%s' не найдена"
 
 #: apt-pkg/cacheset.cc:447
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Не удалось найти задачу %s"
 
 #: apt-pkg/cacheset.cc:454
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr "Не удалось найти пакет %s"
+msgstr "Не удалось найти пакет по регулярному выражению %s"
 
 #: apt-pkg/cacheset.cc:467
 #, c-format
 msgid "Can't select versions from package '%s' as it purely virtual"
 msgstr ""
+"Не удалось выбрать версии из пакета %s, так как он полностью виртуальный"
 
 #: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
 #, c-format
@@ -3182,21 +3196,29 @@ msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
+"Не удалось выбрать ни установленную, ни версию кандидата из пакета %s, так "
+"как в нём нет ни той, ни другой"
 
 #: apt-pkg/cacheset.cc:491
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
+"Не удалось выбрать самую новую версию из пакета %s, так как он полностью "
+"виртуальный"
 
 #: apt-pkg/cacheset.cc:499
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
+"Не удалось выбрать самую версию кандидата из пакета %s, так как у него нет "
+"кандидатов"
 
 #: apt-pkg/cacheset.cc:507
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
+"Не удалось выбрать установленную версию из пакета %s, так как он не "
+"установлен"
 
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
@@ -3206,12 +3228,12 @@ msgstr "Устанавливается %s"
 #: apt-pkg/deb/dpkgpm.cc:53 apt-pkg/deb/dpkgpm.cc:819
 #, c-format
 msgid "Configuring %s"
-msgstr "Настройка %s"
+msgstr "Настраивается %s"
 
 #: apt-pkg/deb/dpkgpm.cc:54 apt-pkg/deb/dpkgpm.cc:826
 #, c-format
 msgid "Removing %s"
-msgstr "Удаление %s"
+msgstr "Удаляется %s"
 
 #: apt-pkg/deb/dpkgpm.cc:55
 #, c-format
@@ -3221,7 +3243,7 @@ msgstr "Выполняется полное удаление %s"
 #: apt-pkg/deb/dpkgpm.cc:56
 #, c-format
 msgid "Noting disappearance of %s"
-msgstr ""
+msgstr "Уведомление об исчезновении %s"
 
 #: apt-pkg/deb/dpkgpm.cc:57
 #, c-format
@@ -3234,7 +3256,7 @@ msgid "Directory '%s' missing"
 msgstr "Отсутствует каталог %s"
 
 #: apt-pkg/deb/dpkgpm.cc:658 apt-pkg/deb/dpkgpm.cc:671
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file '%s'"
 msgstr "Не удалось открыть файл %s"
 
@@ -3290,35 +3312,43 @@ msgstr "Запускается dpkg"
 
 #: apt-pkg/deb/dpkgpm.cc:1273
 msgid "No apport report written because MaxReports is reached already"
-msgstr ""
+msgstr "Отчёты apport не записаны, так достигнут MaxReports"
 
 #. check if its not a follow up error
 #: apt-pkg/deb/dpkgpm.cc:1278
 msgid "dependency problems - leaving unconfigured"
-msgstr ""
+msgstr "проблемы с зависимостями - оставляем ненастроенным"
 
 #: apt-pkg/deb/dpkgpm.cc:1280
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
+"Отчёты apport не записаны, так как сообщение об ошибке указывает на "
+"повторную ошибку от предыдущего отказа."
 
 #: apt-pkg/deb/dpkgpm.cc:1286
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
+"Отчёты apport не записаны, так как получено сообщение об ошибке о нехватке "
+"места на диске"
 
 #: apt-pkg/deb/dpkgpm.cc:1292
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
+"Отчёты apport не записаны, так как получено сообщение об ошибке о нехватке "
+"памяти"
 
 #: apt-pkg/deb/dpkgpm.cc:1299
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
+"Отчёты apport не записаны, так как получено сообщение об ошибке об ошибке "
+"ввода-выводы dpkg"
 
 #: apt-pkg/deb/debsystem.cc:69
 #, c-format
@@ -3339,12 +3369,12 @@ msgstr ""
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
 #: apt-pkg/deb/debsystem.cc:88
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
-"Работа dpkg прервана, вы должны вручную запустить 'dpkg --configure -a' для "
-"устранения проблемы. "
+"Работа dpkg прервана, вы должны вручную запустить %s для устранения "
+"проблемы. "
 
 #: apt-pkg/deb/debsystem.cc:106
 msgid "Not locked"
@@ -3355,12 +3385,12 @@ msgstr "Не заблокирован"
 #: methods/mirror.cc:200
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr ""
+msgstr "Файл %s не найден на зеркале"
 
 #: methods/mirror.cc:343
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
+msgstr "[Зеркало: %s]"
 
 #: methods/rred.cc:465
 #, c-format
