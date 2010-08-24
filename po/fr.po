@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-23 18:41-0400\n"
-"PO-Revision-Date: 2010-08-22 09:59-0400\n"
+"PO-Revision-Date: 2010-08-24 19:25+0200\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: \n"
@@ -1226,7 +1226,6 @@ msgid ""
 msgstr ""
 "Note : la maintenance du paquet de « %s » est réalisée dans le système de "
 "suivi de versions « %s » à l'adresse :\n"
-"%s\n"
 
 #: cmdline/apt-get.cc:2246
 #, c-format
@@ -2222,7 +2221,7 @@ msgstr "Erreur interne"
 
 #: apt-pkg/contrib/mmap.cc:77
 msgid "Can't mmap an empty file"
-msgstr "Impossible de mettre un fichier vide en mémoire cache"
+msgstr "Impossible de mapper un fichier vide en mémoire"
 
 #: apt-pkg/contrib/mmap.cc:89
 #, c-format
@@ -2232,15 +2231,15 @@ msgstr "Impossible de dupliquer le descripteur de fichier %i"
 #: apt-pkg/contrib/mmap.cc:97 apt-pkg/contrib/mmap.cc:250
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
-msgstr "Impossible de mettre %lu octets en cache mémoire"
+msgstr "Impossible de réaliser un mapping de %lu octets en mémoire"
 
 #: apt-pkg/contrib/mmap.cc:124
 msgid "Unable to close mmap"
-msgstr "Impossible de fermer la mémoire cache"
+msgstr "Impossible de fermer la « mmap »"
 
 #: apt-pkg/contrib/mmap.cc:152 apt-pkg/contrib/mmap.cc:180
 msgid "Unable to synchronize mmap"
-msgstr "Impossible de synchroniser la mémoire cache"
+msgstr "Impossible de synchroniser la « mmap »"
 
 #: apt-pkg/contrib/mmap.cc:300
 #, c-format
@@ -2258,14 +2257,14 @@ msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
-"Impossible d'augmenter la taille du cache mémoire car la limite de %lu "
-"octets est déjà atteinte."
+"Impossible d'augmenter la taille de la « mmap » car la limite de %lu octets "
+"est déjà atteinte."
 
 #: apt-pkg/contrib/mmap.cc:402
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
-"Impossible d'augmenter la taille du cache mémoire car l'augmentation "
+"Impossible d'augmenter la taille de la « mmap » car l'augmentation "
 "automatique a été désactivée par une option utilisateur."
 
 #. d means days, h means hours, min means minutes, s means seconds
@@ -3218,19 +3217,25 @@ msgid "Version '%s' for '%s' was not found"
 msgstr "La version « %s » de « %s » n'a pu être trouvée"
 
 #: apt-pkg/cacheset.cc:447
-#, fuzzy, c-format
+#, c-format
+#| msgid "Couldn't find task %s"
 msgid "Couldn't find task '%s'"
-msgstr "Impossible de trouver la tâche %s"
+msgstr "Impossible de trouver la tâche « %s »"
 
 #: apt-pkg/cacheset.cc:454
-#, fuzzy, c-format
+#, c-format
+#| msgid "Couldn't find package %s"
 msgid "Couldn't find any package by regex '%s'"
-msgstr "Impossible de trouver le paquet %s"
+msgstr ""
+"Impossible de trouver de paquet correspondant à l'expression rationnelle "
+"« %s »"
 
 #: apt-pkg/cacheset.cc:467
 #, c-format
 msgid "Can't select versions from package '%s' as it purely virtual"
 msgstr ""
+"Impossible de choisir les versions du paquet « %s » qui n'est qu'un paquet "
+"virtuel"
 
 #: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
 #, c-format
@@ -3238,21 +3243,28 @@ msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
+"Impossible de choisir une version installée ou candidate du paquet « %s » "
+"qui n'en n'a aucune"
 
 #: apt-pkg/cacheset.cc:491
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
+"Impossible de choisir une nouvelle version du paquet « %s » qui n'est qu'un "
+"paquet virtuel"
 
 #: apt-pkg/cacheset.cc:499
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
+"Impossible de choisir une version candidate du paquet « %s » qui n'en n'a pas"
 
 #: apt-pkg/cacheset.cc:507
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
+"Impossible de choisir la version installée du paquet « %s » qui n'est pas "
+"installé"
 
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
@@ -3418,12 +3430,12 @@ msgstr "Non verrouillé"
 #: methods/mirror.cc:200
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr ""
+msgstr "Aucun fichier miroir « %s » n'a été trouvé"
 
 #: methods/mirror.cc:343
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
+msgstr "[Miroir : %s]"
 
 #: methods/rred.cc:465
 #, c-format
@@ -3431,8 +3443,8 @@ msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
 "to be corrupt."
 msgstr ""
-"Impossible de modifier %s avec cache en mémoire et utilisation des "
-"opérations de fichiers : le correctif semble être corrompu."
+"Impossible de modifier %s avec mmap et l'utilisation des opérations de "
+"fichiers : le correctif semble être corrompu."
 
 #: methods/rred.cc:470
 #, c-format
@@ -3440,28 +3452,26 @@ msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
 "to be corrupt."
 msgstr ""
-"Impossible de modifier %s avec cache en mémoire (sans échec particulier du "
-"cache) : le correctif semble être corrompu."
+"Impossible de modifier %s avec mmap (sans échec particulier de mmap) : le "
+"correctif semble être corrompu."
 
 #: methods/rsh.cc:329
 msgid "Connection closed prematurely"
 msgstr "Connexion fermée prématurément"
 
-#~ msgid ""
-#~ "Since you only requested a single operation it is extremely likely that\n"
-#~ "the package is simply not installable and a bug report against\n"
-#~ "that package should be filed."
-#~ msgstr ""
-#~ "Ponieważ zażądano tylko jednej operacji, jest bardzo prawdopodobne, że\n"
-#~ "danego pakietu po prostu nie da się zainstalować i należy zgłosić w nim\n"
-#~ "błąd."
-
-#~ msgid "Line %d too long (max %lu)"
-#~ msgstr "Linia %d jest zbyt długa (max %lu)"
+#~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
+#~ msgstr "E: trop de porte-clés devraient être passés à gpgv. Abandon."
 
 #~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 #~ msgstr ""
 #~ "E: liste de paramètres trop longue pour Acquire::gpgv::Options. Abandon."
+
+#~ msgid ""
+#~ "The size of a MMap has already reached the defined limit of %lu bytes,"
+#~ "abort the try to grow the MMap."
+#~ msgstr ""
+#~ "La taille d'une « MMap » (carte en mémoire) a déjà atteint la limite "
+#~ "définie de %lu octets. Abandon de la tentative d'agrandir la « MMap »."
 
 #~ msgid "Error occurred while processing %s (NewVersion2)"
 #~ msgstr "Erreur apparue lors du traitement de %s (NewVersion2)"
@@ -3491,13 +3501,3 @@ msgstr "Connexion fermée prématurément"
 
 #~ msgid "Dynamic MMap ran out of room"
 #~ msgstr "La zone dynamique d'allocation mémoire n'a plus de place"
-
-#~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
-#~ msgstr "E: trop de porte-clés devraient être passés à gpgv. Abandon."
-
-#~ msgid ""
-#~ "The size of a MMap has already reached the defined limit of %lu bytes,"
-#~ "abort the try to grow the MMap."
-#~ msgstr ""
-#~ "La taille d'une « MMap » (carte en mémoire) a déjà atteint la limite "
-#~ "définie de %lu octets. Abandon de la tentative d'agrandir la « MMap »."
