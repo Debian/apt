@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2008-11-13 09:26+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -106,7 +106,7 @@ msgstr "パターンはちょうど 1 つだけ指定してください"
 msgid "No packages found"
 msgstr "パッケージが見つかりません"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "パッケージ %s が見つかりません"
@@ -658,7 +658,7 @@ msgstr "%s を %s に名前変更できませんでした"
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "正規表現の展開エラー - %s"
@@ -1061,7 +1061,7 @@ msgstr ""
 #: cmdline/apt-get.cc:1653
 #, fuzzy
 msgid ""
-"The following package is automatically installed and is no longer required:"
+"The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
@@ -1664,6 +1664,7 @@ msgstr "ファイル %s/%s がパッケージ %s のものを上書きします"
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s を読み込むことができません"
@@ -1799,6 +1800,27 @@ msgstr "正しいコントロールファイルを特定できませんでした
 msgid "Unparsable control file"
 msgstr "解析できないコントロールファイル"
 
+#: methods/bzip2.cc:68
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "%s に対してパイプを開けませんでした"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr "%s プロセスからの読み込みエラー"
+
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr "状態の取得に失敗しました"
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr "変更時刻の設定に失敗しました"
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1828,15 +1850,6 @@ msgstr "ディスクが見つかりません。"
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "ファイルが見つかりません"
-
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr "状態の取得に失敗しました"
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr "変更時刻の設定に失敗しました"
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2349,6 +2362,7 @@ msgstr "マウントポイント %s の状態を取得できません"
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "%s へ変更することができません"
@@ -3100,6 +3114,53 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "ハッシュサムが適合しません"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "'%2$s' のリリース '%1$s' が見つかりませんでした"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "'%2$s' のバージョン '%1$s' が見つかりませんでした"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "タスク %s が見つかりません"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "パッケージ %s が見つかりません"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Installing %s"
@@ -3246,6 +3307,18 @@ msgstr ""
 msgid "Not locked"
 msgstr ""
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3264,24 +3337,9 @@ msgstr ""
 msgid "Connection closed prematurely"
 msgstr "途中で接続がクローズされました"
 
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "'%2$s' のリリース '%1$s' が見つかりませんでした"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "'%2$s' のバージョン '%1$s' が見つかりませんでした"
-
-#~ msgid "Couldn't find task %s"
-#~ msgstr "タスク %s が見つかりません"
-
 #~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 #~ msgstr ""
 #~ "エラー: Acquire::gpgv::Options の引数リストが長すぎます。終了しています。"
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "%s に対してパイプを開けませんでした"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "%s プロセスからの読み込みエラー"
 
 #~ msgid "Error occurred while processing %s (NewVersion2)"
 #~ msgstr "%s を処理中にエラーが発生しました (NewVersion2)"

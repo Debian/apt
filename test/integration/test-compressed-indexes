@@ -1,0 +1,131 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage "testpkg" "i386" "1.0"
+setupaptarchive
+
+local GOODSHOW="$(aptcache show testpkg)
+"
+local GOODPOLICY="$(aptcache policy testpkg)"
+local GOODSHOWSRC="$(aptcache showsrc testpkg)
+"
+
+test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Architecture: i386' | wc -l) -eq 3
+testequal "$GOODSHOW" aptcache show testpkg
+test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4
+testequal "$GOODPOLICY" aptcache policy testpkg
+test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Files:' -e '^Checksums-Sha256:' | wc -l) -eq 4
+testequal "$GOODSHOWSRC" aptcache showsrc testpkg
+
+
+testrun() {
+	local F
+	if [ -e rootdir/var/lib/apt/lists/*localhost*Release ]; then
+		msgtest "Check if all index files are" "${1:-uncompressed}"
+		if [ "$1" = "compressed" ]; then
+			! test -e rootdir/var/lib/apt/lists/*_Packages || F=1
+			! test -e rootdir/var/lib/apt/lists/*_Sources || F=1
+			test -e rootdir/var/lib/apt/lists/*_Packages.gz || F=1
+			test -e rootdir/var/lib/apt/lists/*_Sources.gz || F=1
+		else
+			test -e rootdir/var/lib/apt/lists/*_Packages || F=1
+			test -e rootdir/var/lib/apt/lists/*_Sources || F=1
+			! test -e rootdir/var/lib/apt/lists/*_Packages.gz || F=1
+			! test -e rootdir/var/lib/apt/lists/*_Sources.gz || F=1
+		fi
+		if [ -n "$F" ]; then
+			ls -laR rootdir/var/lib/apt/lists/
+			msgfail
+		else
+			msgpass
+		fi
+		msgtest "Check if package is downloadable"
+		aptget install -d testpkg -qq && msgpass || msgfail
+		msgtest "\tdeb file is present"; test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb && msgpass || msgfail
+		aptget clean
+		msgtest "\tdeb file is gone"; ! test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb && msgpass || msgfail
+	fi
+	rm rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
+	testequal "$GOODSHOW" aptcache show testpkg
+	testequal "$GOODSHOW" aptcache show testpkg
+	rm rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
+	testequal "$GOODPOLICY" aptcache policy testpkg
+	testequal "$GOODPOLICY" aptcache policy testpkg
+	rm rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
+	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
+	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
+	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
+	rm -rf rootdir/var/cache/apt/archives
+	msgtest "Check if the source is aptgetable"
+	aptget source testpkg -qq 2> /dev/null > /dev/null && msgpass || msgfail
+	msgtest "\tdsc file is present"; test -f testpkg_1.0.dsc && msgpass || msgfail
+	msgtest "\tdirectory is present"; test -d testpkg-1.0 && msgpass || msgfail
+	rm -rf testpkg-1.0
+}
+
+msgmsg "File: Test with uncompressed indexes"
+testrun
+
+aptget update -qq -o Acquire::Pdiffs=1
+msgmsg "File: Test with uncompressed indexes (update unchanged with pdiffs)"
+testrun
+
+aptget update -qq -o Acquire::Pdiffs=0
+msgmsg "File: Test with uncompressed indexes (update unchanged without pdiffs)"
+testrun
+
+rm -rf rootdir/var/lib/apt/lists
+echo 'Acquire::CompressionTypes::Order:: "gz";
+Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
+
+aptget update -qq
+msgmsg "File: Test with compressed indexes"
+testrun "compressed"
+
+aptget update -qq -o Acquire::Pdiffs=1
+msgmsg "File: Test with compressed indexes (update unchanged with pdiffs)"
+testrun "compressed"
+
+aptget update -qq -o Acquire::Pdiffs=0
+msgmsg "File: Test with compressed indexes (update unchanged without pdiffs)"
+testrun "compressed"
+
+rm rootdir/etc/apt/apt.conf.d/02compressindex
+changetowebserver
+aptget update -qq
+local GOODPOLICY="$(aptcache policy testpkg)"
+test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 http://' | wc -l) -eq 4
+testequal "$GOODPOLICY" aptcache policy testpkg
+
+msgmsg "HTTP: Test with uncompressed indexes"
+testrun
+
+aptget update -qq -o Acquire::Pdiffs=1
+msgmsg "HTTP: Test with uncompressed indexes (update unchanged with pdiffs)"
+testrun
+
+aptget update -qq -o Acquire::Pdiffs=0
+msgmsg "HTTP: Test with uncompressed indexes (update unchanged without pdiffs)"
+testrun
+
+rm -rf rootdir/var/lib/apt/lists
+echo 'Acquire::CompressionTypes::Order:: "gz";
+Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
+
+aptget update -qq
+msgmsg "HTTP: Test with compressed indexes"
+testrun "compressed"
+
+aptget update -qq -o Acquire::Pdiffs=1
+msgmsg "HTTP: Test with compressed indexes (update unchanged with pdiffs)"
+testrun "compressed"
+
+aptget update -qq -o Acquire::Pdiffs=0
+msgmsg "HTTP: Test with compressed indexes (update unchanged without pdiffs)"
+testrun "compressed"

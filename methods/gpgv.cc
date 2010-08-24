@@ -69,7 +69,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       {
 	 // TRANSLATOR: %s is the trusted keyring parts directory
 	 ioprintf(ret, _("No keyring installed in %s."),
-		  _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d").c_str());
+		  _config->FindDir("Dir::Etc::TrustedParts").c_str());
 	 return ret.str();
       }
       exit(111);

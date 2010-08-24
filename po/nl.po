@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2010-03-16 06:52+0100\n"
 "Last-Translator: Frans Pop <elendil@planet.nl>\n"
 "Language-Team: Dutch <debian-l10n-dutch@lists.debian.org>\n"
@@ -109,7 +109,7 @@ msgstr "U dient precies één patroon op te geven"
 msgid "No packages found"
 msgstr "Geen pakketten gevonden"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Kan pakket %s niet vinden"
@@ -664,7 +664,7 @@ msgstr "Hernoemen van %s naar %s is mislukt"
 msgid "Y"
 msgstr "J"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Regex-compilatiefout - %s"
@@ -1067,7 +1067,7 @@ msgstr "We mogen geen dingen verwijderen, kan AutoRemover niet starten"
 #: cmdline/apt-get.cc:1653
 #, fuzzy
 msgid ""
-"The following package is automatically installed and is no longer required:"
+"The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
@@ -1678,6 +1678,7 @@ msgstr "Het bestand %s/%s overschrijft het bestand van pakket %s"
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kan %s niet lezen"
@@ -1813,6 +1814,27 @@ msgstr "Lokaliseren van een geldig 'control'-bestand is mislukt"
 msgid "Unparsable control file"
 msgstr "Niet-ontleedbaar 'control'-bestand"
 
+#: methods/bzip2.cc:68
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Kon geen pijp openen voor %s"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr "Leesfout door proces %s"
+
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr "stat is mislukt"
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr "Instellen van de aanpassingstijd is mislukt"
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1843,15 +1865,6 @@ msgstr "Schijf niet gevonden"
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "Bestand niet gevonden"
-
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr "stat is mislukt"
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr "Instellen van de aanpassingstijd is mislukt"
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2379,6 +2392,7 @@ msgstr "Kan de status van het aanhechtpunt %s niet opvragen"
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Kan %s niet veranderen"
@@ -3145,6 +3159,53 @@ msgstr "Kan geen authenticatierecord vinden voor: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Hash-som komt niet overeen voor: %s"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Release '%s' voor '%s' is niet gevonden"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Versie '%s' voor '%s' is niet gevonden"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Kon taak %s niet vinden"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Kon pakket %s niet vinden"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Installing %s"
@@ -3295,6 +3356,18 @@ msgstr ""
 msgid "Not locked"
 msgstr "Niet vergrendeld"
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3317,15 +3390,6 @@ msgstr ""
 msgid "Connection closed prematurely"
 msgstr "Verbinding werd voortijdig afgebroken"
 
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "Release '%s' voor '%s' is niet gevonden"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "Versie '%s' voor '%s' is niet gevonden"
-
-#~ msgid "Couldn't find task %s"
-#~ msgstr "Kon taak %s niet vinden"
-
 #~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
 #~ msgstr ""
 #~ "E: Te veel sleutelringen om door te geven aan gpgv. Er wordt afgesloten."
@@ -3334,12 +3398,6 @@ msgstr "Verbinding werd voortijdig afgebroken"
 #~ msgstr ""
 #~ "F: argumentenlijst van Acquire::gpv::Options was te lang. Er wordt "
 #~ "afgesloten."
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Kon geen pijp openen voor %s"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "Leesfout door proces %s"
 
 #~ msgid ""
 #~ "The size of a MMap has already reached the defined limit of %lu bytes,"

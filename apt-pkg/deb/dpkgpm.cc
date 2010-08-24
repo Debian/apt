@@ -554,7 +554,7 @@ void pkgDPkgPM::handleDisappearAction(string const &pkgname)
    // the disappeared package was auto-installed - nothing to do
    if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
       return;
-   pkgCache::VerIterator PkgVer = Pkg.CurrentVer();
+   pkgCache::VerIterator PkgVer = Cache[Pkg].InstVerIter(Cache);
    if (unlikely(PkgVer.end() == true))
       return;
    /* search in the list of dependencies for (Pre)Depends,
@@ -571,7 +571,9 @@ void pkgDPkgPM::handleDisappearAction(string const &pkgname)
       // the package is already marked as manual
       if ((Cache[Tar].Flags & pkgCache::Flag::Auto) != pkgCache::Flag::Auto)
 	 continue;
-      pkgCache::VerIterator TarVer = Tar.CurrentVer();
+      pkgCache::VerIterator TarVer =  Cache[Tar].InstVerIter(Cache);
+      if (TarVer.end() == true)
+	 continue;
       for (pkgCache::DepIterator Rep = TarVer.DependsList(); Rep.end() != true; ++Rep)
       {
 	 if (Rep->Type != pkgCache::Dep::Replaces)

@@ -1,3 +1,57 @@
+apt (0.8.0ubuntu1) maverick; urgency=low
+
+  * merged from debian/unstable
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 24 Aug 2010 21:39:06 +0200
+
+apt (0.8.0) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * merge of the debian-expermental-ma branch
+  * refresh po/pot files in doc/ and po/
+
+  [ Christian Perrier ]
+  * Fix spelling error in cmdline/apt-get.cc. Thanks to Osamu Aoki
+    Closes: #594211
+
+  [ Programs translations ]
+  * Swedish (Daniel Nylander). Closes: #592366
+  * French (Christian Perrier)
+  * Thai (Theppitak Karoonboonyanan). Closes: #592695
+  * Russian (Yuri Kozlov). Closes: #594232
+
+  [ Manpages translations ]
+  * French (Christian Perrier)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 24 Aug 2010 16:32:19 +0200
+
+apt (0.8.0~pre2) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/strutl.cc:
+    - fix error checking for vsnprintf in its safe variant
+  * methods/bzip2.cc:
+    - fix error checking for read in case of failing bzip2/lzma/whatever
+  * debian/apt.cron.daily:
+    - create backups for our extended_states file (Closes: #593430)
+  * apt-pkg/init.cc:
+    - set the default values for dir::etc::trusted options correctly
+  * ftparchive/writer.cc:
+    - init valid-until correctly to prevent garbage entering Release file
+  * apt-pkg/deb/debsystem.cc:
+    - set dir::state::status based at least on dir
+  * apt-pkg/deb/dpkgpm.cc:
+    - use the InstVer instead of the CurrentVer for the autobit transfer
+  * methods/http.cc:
+    - some http servers violate HTTP1.1 by not issuing a Reason-Phrase
+      (or at least a space after the code) especially for 200, but lets
+      be nice and ignore it as we don't need the reason in general
+  * apt-pkg/acquire-item.cc:
+    - don't use ReadOnlyGzip mode for PDiffs as this mode doesn't work
+      in combination with the AddFd methods of our hashclasses
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 23 Aug 2010 19:09:08 +0200
+
 apt (0.8.0~pre1ubuntu2) maverick; urgency=low
 
   * apt-pkg/deb/dpkgpm.cc:

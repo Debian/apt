@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ro\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-30 12:45+0200\n"
+"POT-Creation-Date: 2010-08-23 18:41-0400\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -108,7 +108,7 @@ msgstr "Trebuie să dați exact un șablon"
 msgid "No packages found"
 msgstr "Nu s-au găsit pachete"
 
-#: cmdline/apt-cache.cc:1503
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nu s-a putut localiza pachetul %s"
@@ -667,7 +667,7 @@ msgstr "Eșec la redenumirea lui %s în %s"
 msgid "Y"
 msgstr "Y"
 
-#: cmdline/apt-get.cc:156
+#: cmdline/apt-get.cc:156 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Eroare de compilare expresie regulată - %s"
@@ -1066,7 +1066,7 @@ msgstr "Nu este voie să se șteargă lucruri, nu se poate porni AutoRemover"
 #: cmdline/apt-get.cc:1653
 #, fuzzy
 msgid ""
-"The following package is automatically installed and is no longer required:"
+"The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
@@ -1677,6 +1677,7 @@ msgstr "Fișierul %s/%s îl suprascrie pe cel din pachetul %s"
 #: apt-pkg/contrib/fileutl.cc:290 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:471 apt-pkg/init.cc:98
 #: apt-pkg/init.cc:106 apt-pkg/clean.cc:33 apt-pkg/policy.cc:306
+#: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nu s-a putut citi %s"
@@ -1815,6 +1816,27 @@ msgstr "Eșec la localizare a unui fișier de control valid"
 msgid "Unparsable control file"
 msgstr "Fișier de control neanalizabil"
 
+#: methods/bzip2.cc:68
+#, c-format
+msgid "Couldn't open pipe for %s"
+msgstr "Nu s-a putut deschide conexiunea pentru %s"
+
+#: methods/bzip2.cc:113
+#, c-format
+msgid "Read error from %s process"
+msgstr "Eroare de citire din procesul %s"
+
+#: methods/bzip2.cc:145 methods/bzip2.cc:154 methods/copy.cc:43
+#: methods/gzip.cc:96 methods/gzip.cc:105 methods/rred.cc:486
+#: methods/rred.cc:495
+msgid "Failed to stat"
+msgstr "Eșec la „stat”"
+
+#: methods/bzip2.cc:151 methods/copy.cc:80 methods/gzip.cc:102
+#: methods/rred.cc:492
+msgid "Failed to set modification time"
+msgstr "Eșec la ajustarea timpului de modificare"
+
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1844,15 +1866,6 @@ msgstr "Disc negăsit."
 #: methods/cdrom.cc:258 methods/file.cc:79 methods/rsh.cc:264
 msgid "File not found"
 msgstr "Fișier negăsit"
-
-#: methods/copy.cc:43 methods/gzip.cc:96 methods/gzip.cc:105
-#: methods/rred.cc:486 methods/rred.cc:495
-msgid "Failed to stat"
-msgstr "Eșec la „stat”"
-
-#: methods/copy.cc:80 methods/gzip.cc:102 methods/rred.cc:492
-msgid "Failed to set modification time"
-msgstr "Eșec la ajustarea timpului de modificare"
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
@@ -2375,6 +2388,7 @@ msgstr "Nu pot determina starea punctului de montare %s"
 
 #: apt-pkg/contrib/cdromutl.cc:162 apt-pkg/contrib/cdromutl.cc:196
 #: apt-pkg/acquire.cc:477 apt-pkg/acquire.cc:502 apt-pkg/clean.cc:39
+#: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nu pot schimba la %s"
@@ -3130,6 +3144,53 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "Nepotrivire la suma de căutare"
 
+#: apt-pkg/cacheset.cc:337
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Release '%s' pentru '%s' n-a fost găsită"
+
+#: apt-pkg/cacheset.cc:340
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Versiunea '%s' pentru '%s' n-a fost găsită"
+
+#: apt-pkg/cacheset.cc:447
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Nu s-a putut găsi sarcina %s"
+
+#: apt-pkg/cacheset.cc:454
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Nu pot găsi pachetul %s"
+
+#: apt-pkg/cacheset.cc:467
+#, c-format
+msgid "Can't select versions from package '%s' as it purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:491
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:499
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:507
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Installing %s"
@@ -3275,6 +3336,18 @@ msgstr ""
 msgid "Not locked"
 msgstr ""
 
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:200
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#: methods/mirror.cc:343
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
 #: methods/rred.cc:465
 #, c-format
 msgid ""
@@ -3293,24 +3366,9 @@ msgstr ""
 msgid "Connection closed prematurely"
 msgstr "Conexiune închisă prematur"
 
-#~ msgid "Release '%s' for '%s' was not found"
-#~ msgstr "Release '%s' pentru '%s' n-a fost găsită"
-
-#~ msgid "Version '%s' for '%s' was not found"
-#~ msgstr "Versiunea '%s' pentru '%s' n-a fost găsită"
-
-#~ msgid "Couldn't find task %s"
-#~ msgstr "Nu s-a putut găsi sarcina %s"
-
 #~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
 #~ msgstr ""
 #~ "E: Lista de argumente din Acquire::gpgv::Options este prea lungă. Se iese."
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Nu s-a putut deschide conexiunea pentru %s"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "Eroare de citire din procesul %s"
 
 #~ msgid "Error occurred while processing %s (NewVersion2)"
 #~ msgstr "Eroare apărută în timpul procesării %s (NewVersion2)"

@@ -553,8 +553,14 @@ bool ServerState::HeaderLine(string Line)
       // Evil servers return no version
       if (Line[4] == '/')
       {
-	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,
-		    &Result,Code) != 4)
+	 int const elements = sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,&Result,Code);
+	 if (elements == 3)
+	 {
+	    Code[0] = '\0';
+	    if (Debug == true)
+	       clog << "HTTP server doesn't give Reason-Phrase for " << Result << std::endl;
+	 }
+	 else if (elements != 4)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
       else
