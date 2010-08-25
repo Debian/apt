@@ -10,13 +10,14 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-23 18:41-0400\n"
-"PO-Revision-Date: 2010-08-09 17:11+0100\n"
+"PO-Revision-Date: 2010-08-24 21:18+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: cmdline/apt-cache.cc:156
 #, c-format
@@ -29,9 +30,8 @@ msgid "Total package names: "
 msgstr "Totalt antal paketnamn: "
 
 #: cmdline/apt-cache.cc:286
-#, fuzzy
 msgid "Total package structures: "
-msgstr "Totalt antal paketnamn: "
+msgstr "Totala paketstrukturer: "
 
 #: cmdline/apt-cache.cc:326
 msgid "  Normal packages: "
@@ -39,7 +39,7 @@ msgstr "  Vanliga paket: "
 
 #: cmdline/apt-cache.cc:327
 msgid "  Pure virtual packages: "
-msgstr "  Rent virtuella paket: "
+msgstr "  Helt virtuella paket: "
 
 #: cmdline/apt-cache.cc:328
 msgid "  Single virtual packages: "
@@ -99,9 +99,8 @@ msgid "Package file %s is out of sync."
 msgstr "Paketfilen %s är inte synkroniserad."
 
 #: cmdline/apt-cache.cc:1273
-#, fuzzy
 msgid "You must give at least one search pattern"
-msgstr "Du måste ange exakt ett mönster"
+msgstr "Du måste ange minst ett sökmönster"
 
 #: cmdline/apt-cache.cc:1429 cmdline/apt-cache.cc:1431
 #: cmdline/apt-cache.cc:1508
@@ -159,7 +158,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s för %s kompilerad den %s %s\n"
 
 #: cmdline/apt-cache.cc:1739
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -204,7 +202,7 @@ msgstr ""
 "            apt-cache [flaggor] showsrc paket1 [paket2 ...]\n"
 "\n"
 "apt-cache är ett lågnivåverktyg för att hantera APTs binära cachefiler\n"
-"samt hämta upplysningar från dem\n"
+"samt hämta information från dem\n"
 "\n"
 "Kommandon:\n"
 "   add - Lägg till en paketfil till källcachen\n"
@@ -217,6 +215,7 @@ msgstr ""
 "   unmet - Visa otillfredsställbara beroenden\n"
 "   search - Sök i paketlistan med ett reguljärt uttryck\n"
 "   show - Visa en läsbar post för paketet\n"
+"   showauto - Visa en lista över automatiskt installerade paket\n"
 "   depends - Visa rå information om beroenden för ett paket\n"
 "   rdepends - Visa information om omvända beroenden för ett paket\n"
 "   pkgnames - Lista namnen på alla paket i systemet\n"
@@ -763,19 +762,19 @@ msgid "%lu not fully installed or removed.\n"
 msgstr "%lu är inte helt installerade eller borttagna.\n"
 
 #: cmdline/apt-get.cc:634
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Observera, väljer %s för det reguljära uttrycket \"%s\"\n"
+msgstr "Observera, väljer \"%s\" för funktionen \"%s\"\n"
 
 #: cmdline/apt-get.cc:640
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Observera, väljer %s för det reguljära uttrycket \"%s\"\n"
+msgstr "Observera, väljer \"%s\" för det reguljära uttrycket \"%s\"\n"
 
 #: cmdline/apt-get.cc:647
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Vald version %s (%s) för %s\n"
+msgstr "Valde version \"%s\" (%s) för \"%s\"\n"
 
 #: cmdline/apt-get.cc:657
 #, c-format
@@ -787,9 +786,8 @@ msgid " [Installed]"
 msgstr " [Installerat]"
 
 #: cmdline/apt-get.cc:677
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "Kandiderande versioner"
+msgstr " [Inte kandidatversion]"
 
 #: cmdline/apt-get.cc:679
 msgid "You should explicitly select one to install."
@@ -811,19 +809,19 @@ msgid "However the following packages replace it:"
 msgstr "Dock kan följande paket ersätta det:"
 
 #: cmdline/apt-get.cc:712
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "Paketet %s har ingen installationskandidat"
+msgstr "Paketet \"%s\" har ingen installationskandidat"
 
 #: cmdline/apt-get.cc:723
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
+msgstr "Virtuella paket som \"%s\" kan inte tas bort\n"
 
 #: cmdline/apt-get.cc:754
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Observera, väljer %s istället för %s\n"
+msgstr "Observera, väljer \"%s\" istället för \"%s\"\n"
 
 #: cmdline/apt-get.cc:784
 #, c-format
@@ -832,10 +830,11 @@ msgstr ""
 "Hoppar över %s, det är redan installerat och uppgradering har inte valts.\n"
 
 #: cmdline/apt-get.cc:788
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
-"Hoppar över %s, det är redan installerat och uppgradering har inte valts.\n"
+"Hoppar över %s, det är inte installerat och endast uppgraderingar har "
+"begärts.\n"
 
 #: cmdline/apt-get.cc:798
 #, c-format
@@ -878,10 +877,8 @@ msgid " Done"
 msgstr " Färdig"
 
 #: cmdline/apt-get.cc:949
-#, fuzzy
 msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr ""
-"Du kan möjligen rätta till dessa genom att köra \"apt-get -f install\"."
+msgstr "Du bör köra \"apt-get -f install\" för att korrigera dessa."
 
 #: cmdline/apt-get.cc:952
 msgid "Unmet dependencies. Try using -f."
@@ -1031,11 +1028,15 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
+"Följande paket har försvunnit från ditt system eftersom\n"
+"alla filer har skrivits över av andra paket:"
 msgstr[1] ""
+"Följande paket har försvunnit från ditt system eftersom\n"
+"alla filer har skrivits över av andra paket:"
 
 #: cmdline/apt-get.cc:1324
 msgid "Note: This is done automatic and on purpose by dpkg."
-msgstr ""
+msgstr "Observera: Detta sker med automatik och vid behov av dpkg."
 
 #: cmdline/apt-get.cc:1454
 #, c-format
@@ -1063,24 +1064,23 @@ msgstr ""
 "Det är inte meningen att vi ska ta bort något, kan inte starta AutoRemover"
 
 #: cmdline/apt-get.cc:1653
-#, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr[0] ""
-"Följande paket har installerats automatiskt och är inte längre nödvändiga:"
+"Följande paket har installerats automatiskt och är inte längre nödvändigt:"
 msgstr[1] ""
 "Följande paket har installerats automatiskt och är inte längre nödvändiga:"
 
 #: cmdline/apt-get.cc:1657
-#, fuzzy, c-format
+#, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] ""
-"%lu paket blev installerade automatiskt och är inte längre nödvändiga.\n"
+"%lu paket blev installerade automatiskt och är inte längre nödvändigt.\n"
 msgstr[1] ""
 "%lu paket blev installerade automatiskt och är inte längre nödvändiga.\n"
 
@@ -1119,10 +1119,8 @@ msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Internt fel, AllUpgrade förstörde något"
 
 #: cmdline/apt-get.cc:1779
-#, fuzzy
 msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Du kan möjligen rätta till detta genom att köra \"apt-get -f install\":"
+msgstr "Du bör köra \"apt-get -f install\" för att korrigera dessa:"
 
 #: cmdline/apt-get.cc:1782
 msgid ""
@@ -1166,9 +1164,9 @@ msgid "Couldn't find package %s"
 msgstr "Kunde inte hitta paketet %s"
 
 #: cmdline/apt-get.cc:1981
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "%s är satt till manuellt installerad.\n"
+msgstr "%s är satt till automatiskt installerad.\n"
 
 #: cmdline/apt-get.cc:2002
 msgid "Calculating upgrade... "
@@ -1205,6 +1203,9 @@ msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
+"OBSERVERA: paketering av \"%s\" hanteras i versionshanteringssystemet \"%s\" "
+"på:\n"
+"%s\n"
 
 #: cmdline/apt-get.cc:2246
 #, c-format
@@ -1213,6 +1214,9 @@ msgid ""
 "bzr get %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
+"Använd:\n"
+"bzr get %s\n"
+"för att hämta senaste (möjligen inte utgivna) uppdateringar av paketet.\n"
 
 #: cmdline/apt-get.cc:2297
 #, c-format
@@ -1325,7 +1329,6 @@ msgid "Supported modules:"
 msgstr "Moduler som stöds:"
 
 #: cmdline/apt-get.cc:2786
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1391,6 +1394,8 @@ msgstr ""
 "   clean - Ta bort hämtade arkivfiler\n"
 "   autoclean - Ta bort gamla hämtade arkivfiler\n"
 "   check - Kontrollera att det inte finns några trasiga beroenden\n"
+"   markauto - Markera angivna paket som automatiskt installerade\n"
+"   unmarkauto - Markera angivna paket som manuellt installerade\n"
 "\n"
 "Flaggor:\n"
 "  -h   Denna hjälptext.\n"
@@ -1806,9 +1811,9 @@ msgid "Unparsable control file"
 msgstr "Kunde inte tolka control-filen"
 
 #: methods/bzip2.cc:68
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open pipe for %s"
-msgstr "Kunde inte öppna filen %s"
+msgstr "Kunde inte öppna rör för %s"
 
 # %s = programnamn
 #: methods/bzip2.cc:113
@@ -2087,10 +2092,9 @@ msgid "At least one invalid signature was encountered."
 msgstr "Minst en ogiltig signatur träffades på."
 
 #: methods/gpgv.cc:172
-#, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
-"Kunde inte köra \"%s\" för att verifiera signatur (är gpgv installerad?)"
+"Kunde inte köra \"gpgv\" för att verifiera signatur (är gpgv installerad?)"
 
 #: methods/gpgv.cc:177
 msgid "Unknown error executing gpgv"
@@ -2190,9 +2194,9 @@ msgid "Can't mmap an empty file"
 msgstr "Kan inte utföra mmap på en tom fil"
 
 #: apt-pkg/contrib/mmap.cc:89
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't duplicate file descriptor %i"
-msgstr "Kunde inte öppna rör för %s"
+msgstr "Kunde inte duplicera filhandtag %i"
 
 #: apt-pkg/contrib/mmap.cc:97 apt-pkg/contrib/mmap.cc:250
 #, c-format
@@ -2200,14 +2204,12 @@ msgid "Couldn't make mmap of %lu bytes"
 msgstr "Kunde inte utföra mmap på %lu byte"
 
 #: apt-pkg/contrib/mmap.cc:124
-#, fuzzy
 msgid "Unable to close mmap"
-msgstr "Kunde inte öppna %s"
+msgstr "Kunde inte stänga mmap"
 
 #: apt-pkg/contrib/mmap.cc:152 apt-pkg/contrib/mmap.cc:180
-#, fuzzy
 msgid "Unable to synchronize mmap"
-msgstr "Kunde inte starta "
+msgstr "Kunde inte synkronisera mmap"
 
 #: apt-pkg/contrib/mmap.cc:300
 #, c-format
@@ -2224,11 +2226,15 @@ msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
+"Kunde inte öka storleken för MMap eftersom gränsen på %lu byte redan har "
+"uppnåtts."
 
 #: apt-pkg/contrib/mmap.cc:402
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
+"Kunde inte öka storleken för MMap eftersom automatisk växt har inaktiverats "
+"av användaren."
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:371
@@ -2305,9 +2311,9 @@ msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Syntaxfel %s:%u: Direktivet \"%s\" stöds inte"
 
 #: apt-pkg/contrib/configuration.cc:777
-#, fuzzy, c-format
+#, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr "Syntaxfel %s:%u: Direktiv kan endast utföras på toppnivån"
+msgstr "Syntaxfel %s:%u: clear-direktivet kräver ett flaggträd som argument"
 
 #: apt-pkg/contrib/configuration.cc:827
 #, c-format
@@ -2439,9 +2445,9 @@ msgid "Could not open file %s"
 msgstr "Kunde inte öppna filen %s"
 
 #: apt-pkg/contrib/fileutl.cc:714
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file descriptor %d"
-msgstr "Kunde inte öppna filen %s"
+msgstr "Kunde inte öppna filhandtag %d"
 
 #: apt-pkg/contrib/fileutl.cc:774
 #, c-format
@@ -2454,24 +2460,24 @@ msgid "write, still have %lu to write but couldn't"
 msgstr "skrivning, har fortfarande %lu att skriva men kunde inte"
 
 #: apt-pkg/contrib/fileutl.cc:906
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the gzip file %s"
-msgstr "Problem med att stänga filen"
+msgstr "Problem med att stänga gzip-filen %s"
 
 #: apt-pkg/contrib/fileutl.cc:909
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the file %s"
-msgstr "Problem med att stänga filen"
+msgstr "Problem med att stänga filen %s"
 
 #: apt-pkg/contrib/fileutl.cc:914
-#, fuzzy, c-format
+#, c-format
 msgid "Problem renaming the file %s to %s"
-msgstr "Problem med att synkronisera filen"
+msgstr "Problem med att byta namn på filen %s till %s"
 
 #: apt-pkg/contrib/fileutl.cc:925
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking the file %s"
-msgstr "Problem med att länka ut filen"
+msgstr "Problem med att avlänka filen %s"
 
 #: apt-pkg/contrib/fileutl.cc:938
 msgid "Problem syncing the file"
@@ -2586,7 +2592,7 @@ msgstr "Misslyckades med att skriva temporär StateFile %s"
 #: apt-pkg/depcache.cc:921
 #, c-format
 msgid "Internal error, group '%s' has no installable pseudo package"
-msgstr ""
+msgstr "Internt fel, gruppen \"%s\" har inget installerbart pseudo-paket"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2599,29 +2605,29 @@ msgid "Unable to parse package file %s (2)"
 msgstr "Kunde inte tolka paketfilen %s (2)"
 
 #: apt-pkg/sourcelist.cc:92
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Rad %lu i källistan %s har fel format (dist-tolkning)"
+msgstr "Rad %lu i källistan %s har fel format ([option] ej tolkningsbar)"
 
 #: apt-pkg/sourcelist.cc:95
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Rad %lu i källistan %s har fel format (dist)"
+msgstr "Rad %lu i källistan %s har fel format ([option] för kort)"
 
 #: apt-pkg/sourcelist.cc:106
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Rad %lu i källistan %s har fel format (dist-tolkning)"
+msgstr "Rad %lu i källistan %s har fel format ([%s] är inte en tilldelning)"
 
 #: apt-pkg/sourcelist.cc:112
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Rad %lu i källistan %s har fel format (dist-tolkning)"
+msgstr "Rad %lu i källistan %s har fel format ([%s] saknar nyckel)"
 
 #: apt-pkg/sourcelist.cc:115
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Rad %lu i källistan %s har fel format (dist-tolkning)"
+msgstr "Rad %lu i källistan %s har fel format ([%s] nyckeln %s saknar värde)"
 
 #: apt-pkg/sourcelist.cc:128
 #, c-format
@@ -2731,19 +2737,19 @@ msgstr ""
 "använts istället."
 
 #: apt-pkg/acquire.cc:79
-#, fuzzy, c-format
+#, c-format
 msgid "List directory %spartial is missing."
 msgstr "Listkatalogen %spartial saknas."
 
 #: apt-pkg/acquire.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "Archives directory %spartial is missing."
 msgstr "Arkivkatalogen %spartial saknas."
 
 #: apt-pkg/acquire.cc:91
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock directory %s"
-msgstr "Kunde inte låsa listkatalogen"
+msgstr "Kunde inte låsa katalogen %s"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -2847,9 +2853,9 @@ msgstr "Fel uppstod vid hantering av %s (NewFileVer1)"
 
 #: apt-pkg/pkgcachegen.cc:306 apt-pkg/pkgcachegen.cc:316
 #: apt-pkg/pkgcachegen.cc:324
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewVersion%d)"
-msgstr "Fel uppstod vid hantering av %s (NewVersion1)"
+msgstr "Fel uppstod vid behandling av %s (NewVersion%d)"
 
 #: apt-pkg/pkgcachegen.cc:320
 #, c-format
@@ -2931,12 +2937,12 @@ msgstr "Det finns ingen öppen nyckel tillgänglig för följande nyckel-id:n:\n
 #: apt-pkg/acquire-item.cc:1277
 #, c-format
 msgid "Release file expired, ignoring %s (invalid since %s)"
-msgstr ""
+msgstr "Release-filen har gått ut, ignorerar %s (ogiltig sedan %s)"
 
 #: apt-pkg/acquire-item.cc:1298
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr ""
+msgstr "Konflikt i distribution: %s (förväntade %s men fick %s)"
 
 #: apt-pkg/acquire-item.cc:1324
 #, c-format
@@ -2944,11 +2950,14 @@ msgid ""
 "A error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used.GPG error: %s: %s\n"
 msgstr ""
+"Ett fel inträffade vid verifiering av signaturen. Förrådet har inte "
+"uppdaterats och de tidigare indexfilerna kommer att användas. GPG-fel: %s: "
+"%s\n"
 
 #: apt-pkg/acquire-item.cc:1333
 #, c-format
 msgid "GPG error: %s: %s"
-msgstr ""
+msgstr "GPG-fel: %s: %s"
 
 #: apt-pkg/acquire-item.cc:1361
 #, c-format
@@ -2994,14 +3003,14 @@ msgid "No Hash entry in Release file %s"
 msgstr "Ingen Hash-post i Release-filen %s"
 
 #: apt-pkg/indexrecords.cc:107
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "Ingen Hash-post i Release-filen %s"
+msgstr "Ogiltig \"Valid-Until\"-post i Release-filen %s"
 
 #: apt-pkg/indexrecords.cc:122
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
-msgstr "Ingen Hash-post i Release-filen %s"
+msgstr "Ogiltig \"Date\"-post i Release-filen %s"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -3145,19 +3154,20 @@ msgid "Version '%s' for '%s' was not found"
 msgstr "Version \"%s\" för \"%s\" hittades inte"
 
 #: apt-pkg/cacheset.cc:447
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task '%s'"
-msgstr "Kunde inte hitta funktionen %s"
+msgstr "Kunde inte hitta funktionen \"%s\""
 
 #: apt-pkg/cacheset.cc:454
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr "Kunde inte hitta paketet %s"
+msgstr "Kunde inte hitta något paket enligt reguljära uttrycket \"%s\""
 
 #: apt-pkg/cacheset.cc:467
 #, c-format
 msgid "Can't select versions from package '%s' as it purely virtual"
 msgstr ""
+"Kan inte välja versioner från paketet \"%s\" eftersom det är helt virtuellt"
 
 #: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
 #, c-format
@@ -3165,21 +3175,29 @@ msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
+"Kan inte välja installerad version eller kandidatversion från paketet \"%s\" "
+"eftersom det inte har någon av dem"
 
 #: apt-pkg/cacheset.cc:491
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
+"Kan inte välja senaste version från paketet \"%s\" eftersom det är helt "
+"virtuellt"
 
 #: apt-pkg/cacheset.cc:499
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
+"Kan inte välja kandidatversion från paketet %s eftersom det inte har någon "
+"kandidat"
 
 #: apt-pkg/cacheset.cc:507
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
+"Kan inte välja installerad version från paketet %s eftersom det inte är "
+"installerat"
 
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
@@ -3204,7 +3222,7 @@ msgstr "Tar bort hela %s"
 #: apt-pkg/deb/dpkgpm.cc:56
 #, c-format
 msgid "Noting disappearance of %s"
-msgstr ""
+msgstr "Uppmärksammar försvinnandet av %s"
 
 #: apt-pkg/deb/dpkgpm.cc:57
 #, c-format
@@ -3272,35 +3290,43 @@ msgstr "Kör dpkg"
 
 #: apt-pkg/deb/dpkgpm.cc:1273
 msgid "No apport report written because MaxReports is reached already"
-msgstr ""
+msgstr "Ingen apport-rapport skrevs därför att MaxReports redan har uppnåtts"
 
 #. check if its not a follow up error
 #: apt-pkg/deb/dpkgpm.cc:1278
 msgid "dependency problems - leaving unconfigured"
-msgstr ""
+msgstr "beroendeproblem - lämnar okonfigurerad"
 
 #: apt-pkg/deb/dpkgpm.cc:1280
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
+"Ingen apport-rapport skrevs därför att felmeddelandet indikerar att det är "
+"ett efterföljande fel från ett tidigare problem."
 
 #: apt-pkg/deb/dpkgpm.cc:1286
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
+"Ingen apport-rapport skrevs därför att felmeddelandet indikerar att "
+"diskutrymmet är slut"
 
 #: apt-pkg/deb/dpkgpm.cc:1292
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
+"Ingen apport-rapport skrevs därför att felmeddelandet indikerar att minnet "
+"är slut"
 
 #: apt-pkg/deb/dpkgpm.cc:1299
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
+"Ingen apport-rapport skrevs därför att felmeddelandet indikerar ett in-/ut-"
+"fel för dpkg"
 
 #: apt-pkg/deb/debsystem.cc:69
 #, c-format
@@ -3318,12 +3344,11 @@ msgstr "Kunde inte låsa administrationskatalogen (%s). Är du root?"
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
 #: apt-pkg/deb/debsystem.cc:88
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
-"dpkg avbröts. Du måste köra \"dpkg --configure -a\" manuellt för att rätta "
-"till problemet. "
+"dpkg avbröts. Du måste köra \"%s\" manuellt för att korrigera problemet. "
 
 #: apt-pkg/deb/debsystem.cc:106
 msgid "Not locked"
@@ -3334,12 +3359,12 @@ msgstr "Inte låst"
 #: methods/mirror.cc:200
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr ""
+msgstr "Ingen spegelfil \"%s\" hittades "
 
 #: methods/mirror.cc:343
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
+msgstr "[Spegel: %s]"
 
 #: methods/rred.cc:465
 #, c-format
