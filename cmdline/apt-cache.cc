@@ -1664,10 +1664,11 @@ bool Madison(CommandLine &CmdL)
       _error->Discard();
 
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
-      if (Pkg.end() == false)
+      _error->PushToStack();
+      APT::PackageSet pkgset = APT::PackageSet::FromString(CacheFile, *I, helper);
+      for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       {
          for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; V++)
          {
@@ -1698,16 +1699,21 @@ bool Madison(CommandLine &CmdL)
          }
       }
 
-      
       SrcRecs.Restart();
       pkgSrcRecords::Parser *SrcParser;
-      while ((SrcParser = SrcRecs.Find(Pkg.Name(),false)) != 0)
+      bool foundSomething = false;
+      while ((SrcParser = SrcRecs.Find(*I, false)) != 0)
       {
+         foundSomething = true;
          // Maybe support Release info here too eventually
          cout << setw(10) << SrcParser->Package() << " | "
               << setw(10) << SrcParser->Version() << " | "
               << SrcParser->Index().Describe(true) << endl;
       }
+      if (foundSomething == true)
+	 _error->RevertToStack();
+      else
+	 _error->MergeWithStack();
    }
 
    return true;
