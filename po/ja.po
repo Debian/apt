@@ -6,16 +6,17 @@
 # Debian Project, Kenshi Muto <kmuto@debian.org>, 2004-2008
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7\n"
+"Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-23 18:41-0400\n"
-"PO-Revision-Date: 2008-11-13 09:26+0900\n"
+"PO-Revision-Date: 2010-08-25 09:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8 bit\n"
+"Plural-Forms: Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: cmdline/apt-cache.cc:156
 #, c-format
@@ -27,9 +28,8 @@ msgid "Total package names: "
 msgstr "パッケージ名総数: "
 
 #: cmdline/apt-cache.cc:286
-#, fuzzy
 msgid "Total package structures: "
-msgstr "パッケージ名総数: "
+msgstr "パッケージ構造総数: "
 
 #: cmdline/apt-cache.cc:326
 msgid "  Normal packages: "
@@ -97,9 +97,8 @@ msgid "Package file %s is out of sync."
 msgstr "Package ファイル %s が同期していません。"
 
 #: cmdline/apt-cache.cc:1273
-#, fuzzy
 msgid "You must give at least one search pattern"
-msgstr "パターンはちょうど 1 つだけ指定してください"
+msgstr "検索パターンはちょうど 1 つだけ指定してください"
 
 #: cmdline/apt-cache.cc:1429 cmdline/apt-cache.cc:1431
 #: cmdline/apt-cache.cc:1508
@@ -157,7 +156,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s for %s コンパイル日時: %s %s\n"
 
 #: cmdline/apt-cache.cc:1739
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -213,11 +211,12 @@ msgstr ""
 "   dump - すべてのファイルを簡単な形式で表示する\n"
 "   dumpavail - available ファイルを標準出力に出力する\n"
 "   unmet - 未解決の依存関係を表示する\n"
-"   search - 正規表現パターンによってパッケージを検索する\n"
+"   search - 正規表現パターンによってパッケージ一覧を検索する\n"
 "   show - パッケージの情報を表示する\n"
-"   depends - パッケージが依存しているパッケージを表示する\n"
-"   rdepends - パッケージの逆依存情報を表示する\n"
-"   pkgnames - システム内のすべてのパッケージ名を表示する\n"
+"   showauto - 自動的にインストールされたパッケージの一覧を表示する\n"
+"   depends - パッケージの生の依存情報を表示する\n"
+"   rdepends - パッケージの生の逆依存情報を表示する\n"
+"   pkgnames - システム内のすべてのパッケージ名一覧を表示する\n"
 "   dotty - GraphViz 用のパッケージグラフを生成する\n"
 "   xvcg - xvcg 用のパッケージグラフを生成する\n"
 "   policy - ポリシー設定情報を表示する\n"
@@ -233,18 +232,17 @@ msgstr ""
 "詳細は、apt-cache(8) や apt.conf(5) のマニュアルページを参照してください。\n"
 
 #: cmdline/apt-cdrom.cc:77
-#, fuzzy
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "このディスクに、'Debian 2.1r1 Disk 1' のような名前を付けてください"
+msgstr "このディスクに、'Debian 5.0.3 Disk 1' のような名前を付けてください"
 
 #: cmdline/apt-cdrom.cc:92
 msgid "Please insert a Disc in the drive and press enter"
 msgstr "ディスクをドライブに入れて enter を押してください"
 
 #: cmdline/apt-cdrom.cc:127
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to mount '%s' to '%s'"
-msgstr "%s を %s に名前変更できませんでした"
+msgstr "'%s' を '%s' にマウントできませんでした"
 
 #: cmdline/apt-cdrom.cc:162
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -447,13 +445,12 @@ msgid "DB is old, attempting to upgrade %s"
 msgstr "DB が古いため、%s のアップグレードを試みます"
 
 #: ftparchive/cachedb.cc:72
-#, fuzzy
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
 msgstr ""
 "DB フォーマットが無効です。apt の古いバージョンから更新したのであれば、データ"
-"ベースを削除・再作成してください。"
+"ベースを削除し、再作成してください。"
 
 #: ftparchive/cachedb.cc:77
 #, c-format
@@ -760,19 +757,19 @@ msgid "%lu not fully installed or removed.\n"
 msgstr "%lu 個のパッケージが完全にインストールまたは削除されていません。\n"
 
 #: cmdline/apt-get.cc:634
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "注意: 正規表現 '%2$s' に対して %1$s を選択しました\n"
+msgstr "注意: タスク '%2$s' に対して '%1$s' を選択しています\n"
 
 #: cmdline/apt-get.cc:640
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "注意: 正規表現 '%2$s' に対して %1$s を選択しました\n"
+msgstr "注意: 正規表現 '%2$s' に対して '%1$s' を選択しています\n"
 
 #: cmdline/apt-get.cc:647
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "%3$s にはバージョン %1$s (%2$s) を選択しました\n"
+msgstr "'%3$s' にはバージョン '%1$s' (%2$s) を選択しました\n"
 
 #: cmdline/apt-get.cc:657
 #, c-format
@@ -784,9 +781,8 @@ msgid " [Installed]"
 msgstr " [インストール済み]"
 
 #: cmdline/apt-get.cc:677
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "候補バージョン"
+msgstr "[候補バージョンなし]"
 
 #: cmdline/apt-get.cc:679
 msgid "You should explicitly select one to install."
@@ -808,19 +804,19 @@ msgid "However the following packages replace it:"
 msgstr "しかし、以下のパッケージで置き換えられています:"
 
 #: cmdline/apt-get.cc:712
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "パッケージ %s にはインストール候補がありません"
+msgstr "パッケージ '%s' にはインストール候補がありません"
 
 #: cmdline/apt-get.cc:723
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
+msgstr "'%s' のような仮想パッケージは削除できません\n"
 
 #: cmdline/apt-get.cc:754
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "注意、%2$s の代わりに %1$s を選択します\n"
+msgstr "注意、'%2$s' の代わりに '%1$s' を選択しています\n"
 
 #: cmdline/apt-get.cc:784
 #, c-format
@@ -830,11 +826,11 @@ msgstr ""
 "プします。\n"
 
 #: cmdline/apt-get.cc:788
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
-"すでにインストールされておりアップグレードも設定されていないため、%s をスキッ"
-"プします。\n"
+"%s はインストールされていないのにアップグレードだけが要求されているので、ス"
+"キップします。\n"
 
 #: cmdline/apt-get.cc:798
 #, c-format
@@ -1027,27 +1023,31 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
+"以下のパッケージは、全ファイルが別のパッケージで上書きされたため、\n"
+"システムから消えました:"
 msgstr[1] ""
+"以下のパッケージは、全ファイルが別のパッケージで上書きされたため、\n"
+"システムから消えました:"
 
 #: cmdline/apt-get.cc:1324
 msgid "Note: This is done automatic and on purpose by dpkg."
-msgstr ""
+msgstr "注意: これは dpkg により自動でわざと行われれます。"
 
 #: cmdline/apt-get.cc:1454
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
-msgstr ""
+msgstr "パッケージ '%2$s' の利用できないターゲットリリース '%1$s' を無視"
 
 #: cmdline/apt-get.cc:1486
-#, fuzzy, c-format
+#, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "ソースパッケージリスト %s の状態を取得できません"
+msgstr "'%2$s' の代わりに '%1$s' をソースパッケージとして選出しています\n"
 
 #. if (VerTag.empty() == false && Last == 0)
 #: cmdline/apt-get.cc:1524
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
-msgstr ""
+msgstr "パッケージ '%2$s' の利用できないバージョン '%1$s' を無視"
 
 #: cmdline/apt-get.cc:1540
 msgid "The update command takes no arguments"
@@ -1059,7 +1059,6 @@ msgstr ""
 "一連のものを削除するようになっていないので、AutoRemover を開始できません"
 
 #: cmdline/apt-get.cc:1653
-#, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -1071,14 +1070,16 @@ msgstr[1] ""
 "以下のパッケージが自動でインストールされましたが、もう必要とされていません:"
 
 #: cmdline/apt-get.cc:1657
-#, fuzzy, c-format
+#, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] ""
-"以下のパッケージが自動でインストールされましたが、もう必要とされていません:"
+"%lu つのパッケージが自動でインストールされましたが、もう必要とされていませ"
+"ん:\n"
 msgstr[1] ""
-"以下のパッケージが自動でインストールされましたが、もう必要とされていません:"
+"%lu つのパッケージが自動でインストールされましたが、もう必要とされていませ"
+"ん:\n"
 
 #: cmdline/apt-get.cc:1659
 msgid "Use 'apt-get autoremove' to remove them."
@@ -1162,9 +1163,9 @@ msgid "Couldn't find package %s"
 msgstr "パッケージ %s が見つかりません"
 
 #: cmdline/apt-get.cc:1981
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "%s は手動でインストールしたと設定されました。\n"
+msgstr "%s は自動でインストールしたと設定されました。\n"
 
 #: cmdline/apt-get.cc:2002
 msgid "Calculating upgrade... "
@@ -1202,6 +1203,9 @@ msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
+"注意: '%s' パッケージは以下の場所の '%s' バージョン制御システムで保守されてい"
+"ます:\n"
+"%s\n"
 
 #: cmdline/apt-get.cc:2246
 #, c-format
@@ -1210,6 +1214,10 @@ msgid ""
 "bzr get %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
+"パッケージの最新の (まだリリースされていないかもしれない) 更新を取得するに"
+"は、\n"
+"bzr get %s\n"
+"を使用してください。\n"
 
 #: cmdline/apt-get.cc:2297
 #, c-format
@@ -1324,7 +1332,6 @@ msgid "Supported modules:"
 msgstr "サポートされているモジュール:"
 
 #: cmdline/apt-get.cc:2786
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1379,22 +1386,26 @@ msgstr ""
 "と install です。\n"
 "\n"
 "コマンド:\n"
-"   update - パッケージリストを取得・更新します\n"
+"   update - 新しいパッケージリストを取得します\n"
 "   upgrade - アップグレードを行います\n"
-"   install - 新規パッケージをインストールします\n"
-"             (pkg は libc6.deb ではなく libc6 のように指定します)\n"
+"   install - 新規パッケージをインストールします (pkg は libc6.deb ではなく "
+"libc6 のように指定します)\n"
 "   remove - パッケージを削除します\n"
 "   autoremove - 自動インストールされ使われていないすべてのパッケージを削除し"
 "ます\n"
 "   purge - 設定ファイルまで含めてパッケージを削除します\n"
 "   source - ソースアーカイブをダウンロードします\n"
 "   build-dep - ソースパッケージの構築依存関係を設定します\n"
-"   dist-upgrade - ディストリビューションをアップグレードします\n"
-"                  (apt-get(8) を参照)\n"
+"   dist-upgrade - ディストリビューションをアップグレードします (apt-get(8) を"
+"参照)\n"
 "   dselect-upgrade - dselect の選択に従います\n"
 "   clean - ダウンロードしたアーカイブファイルを削除します\n"
 "   autoclean - ダウンロードした古いアーカイブファイルを削除します\n"
 "   check -  壊れた依存関係がないかチェックします\n"
+"   markauto - 指定のパッケージを自動インストールされたものとしてマークしま"
+"す\n"
+"   unmarkauto - 指定のパッケージを手動でインストールされたものとしてマークし"
+"ます\n"
 "\n"
 "オプション:\n"
 "  -h  このヘルプを表示する\n"
@@ -1410,8 +1421,8 @@ msgstr ""
 "  -V  冗長なバージョンナンバを表示する\n"
 "  -c=? 指定した設定ファイルを読み込む\n"
 "  -o=? 任意の設定オプションを指定する, 例 -o dir::cache=/tmp\n"
-"オプション・設定に関しては、マニュアルページ apt-get(8)、sources.list(5)、\n"
-"apt.conf(5) を参照してください。\n"
+"さらなる情報やオプションについては、マニュアルページ\n"
+"apt-get(8)、sources.list(5)、apt.conf(5) を参照してください。\n"
 "                        この APT は Super Cow Powers 化されています。\n"
 
 #: cmdline/apt-get.cc:2958
@@ -1421,6 +1432,10 @@ msgid ""
 "      Keep also in mind that locking is deactivated,\n"
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
+"注意: これはシミュレーションにすぎません!\n"
+"      apt-get は実際の実行に root 権限を必要とします。\n"
+"      ロックが非アクティブであることから、今この時点の状態に妥当性が\n"
+"      あるとは言い切れないことに注意してください!"
 
 #: cmdline/acqprogress.cc:55
 msgid "Hit "
@@ -1501,12 +1516,10 @@ msgid "Do you want to erase any previously downloaded .deb files?"
 msgstr "過去にダウンロードした .deb ファイルを削除しますか?"
 
 #: dselect/install:101
-#, fuzzy
 msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "展開中にエラーが発生しました。インストールされたパッケージを"
+msgstr "展開中に何らかのエラーが発生しました。インストールされたパッケージを"
 
 #: dselect/install:102
-#, fuzzy
 msgid "will be configured. This may result in duplicate errors"
 msgstr "設定します。これにより、エラーが複数出るか、依存関係の欠如に"
 
@@ -1553,9 +1566,9 @@ msgid "Error reading archive member header"
 msgstr "アーカイブメンバーヘッダの読み込みに失敗しました"
 
 #: apt-inst/contrib/arfile.cc:90
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid archive member header %s"
-msgstr "不正なアーカイブメンバーヘッダ"
+msgstr "不正なアーカイブメンバーヘッダ %s"
 
 #: apt-inst/contrib/arfile.cc:102
 msgid "Invalid archive member header"
@@ -2050,20 +2063,20 @@ msgid "Temporary failure resolving '%s'"
 msgstr "'%s' が一時的に解決できません"
 
 #: methods/connect.cc:196
-#, fuzzy, c-format
+#, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "'%s:%s' (%i) の解決中に問題が起こりました"
+msgstr "'%s:%s' (%i - %s) の解決中に何か問題が起こりました"
 
 #: methods/connect.cc:243
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to %s:%s:"
-msgstr "%s %s へ接続できません:"
+msgstr "%s:%s へ接続できません:"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
 #: methods/gpgv.cc:71
-#, fuzzy, c-format
+#, c-format
 msgid "No keyring installed in %s."
-msgstr "インストールを中断します。"
+msgstr "%s にキーリングがインストールされていません。"
 
 #: methods/gpgv.cc:163
 msgid ""
@@ -2075,11 +2088,10 @@ msgid "At least one invalid signature was encountered."
 msgstr "少なくとも 1 つの不正な署名が発見されました。"
 
 #: methods/gpgv.cc:172
-#, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
-"署名を検証するための '%s' の実行ができませんでした (gpgv はインストールされて"
-"いますか?)"
+"署名を検証するための 'gpgv' の実行ができませんでした (gpgv はインストールされ"
+"ていますか?)"
 
 #: methods/gpgv.cc:177
 msgid "Unknown error executing gpgv"
@@ -2177,9 +2189,9 @@ msgid "Can't mmap an empty file"
 msgstr "空のファイルを mmap できません"
 
 #: apt-pkg/contrib/mmap.cc:89
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't duplicate file descriptor %i"
-msgstr "%s に対してパイプを開けませんでした"
+msgstr "ファイルデスクリプタ %i は重複できません"
 
 #: apt-pkg/contrib/mmap.cc:97 apt-pkg/contrib/mmap.cc:250
 #, c-format
@@ -2187,14 +2199,12 @@ msgid "Couldn't make mmap of %lu bytes"
 msgstr "%lu バイトの mmap ができませんでした"
 
 #: apt-pkg/contrib/mmap.cc:124
-#, fuzzy
 msgid "Unable to close mmap"
-msgstr "'%s' をオープンできません"
+msgstr "mmap をクローズできません"
 
 #: apt-pkg/contrib/mmap.cc:152 apt-pkg/contrib/mmap.cc:180
-#, fuzzy
 msgid "Unable to synchronize mmap"
-msgstr "呼び出せません"
+msgstr "mmap を同期できません"
 
 #: apt-pkg/contrib/mmap.cc:300
 #, c-format
@@ -2202,42 +2212,45 @@ msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
+"動的 MMap が範囲を越えました。APT::Cache-Limit の大きさを増やしてください。現"
+"在値は %lu です (man 5 apt.conf を参照)。"
 
 #: apt-pkg/contrib/mmap.cc:399
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
-msgstr ""
+msgstr "%lu バイトの上限に達しているため、MMap のサイズを増やせません。"
 
 #: apt-pkg/contrib/mmap.cc:402
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
+"自動増加がユーザによって無効にされているため、MMap のサイズを増やせません。"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:371
 #, c-format
 msgid "%lid %lih %limin %lis"
-msgstr ""
+msgstr "%li日 %li時間 %li分 %li秒"
 
 #. h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lih %limin %lis"
-msgstr ""
+msgstr "%li時間 %li分 %li秒"
 
 #. min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%limin %lis"
-msgstr ""
+msgstr "%li分 %li秒"
 
 #. s means seconds
 #: apt-pkg/contrib/strutl.cc:390
 #, c-format
 msgid "%lis"
-msgstr ""
+msgstr "%li秒"
 
 #: apt-pkg/contrib/strutl.cc:1119
 #, c-format
@@ -2290,9 +2303,11 @@ msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "文法エラー %s:%u: 未対応の命令 '%s'"
 
 #: apt-pkg/contrib/configuration.cc:777
-#, fuzzy, c-format
+#, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr "文法エラー %s:%u: 命令はトップレベルでのみ実行できます"
+msgstr ""
+"文法エラー %s:%u: clear ディレクティブは、引数としてオプションツリーを必要と"
+"します"
 
 #: apt-pkg/contrib/configuration.cc:827
 #, c-format
@@ -2402,9 +2417,9 @@ msgid "Sub-process %s received a segmentation fault."
 msgstr "子プロセス %s がセグメンテーション違反を受け取りました。"
 
 #: apt-pkg/contrib/fileutl.cc:635
-#, fuzzy, c-format
+#, c-format
 msgid "Sub-process %s received signal %u."
-msgstr "子プロセス %s がセグメンテーション違反を受け取りました。"
+msgstr "子プロセス %s がシグナル %u を受け取りました。"
 
 #: apt-pkg/contrib/fileutl.cc:639
 #, c-format
@@ -2422,9 +2437,9 @@ msgid "Could not open file %s"
 msgstr "ファイル %s をオープンできませんでした"
 
 #: apt-pkg/contrib/fileutl.cc:714
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file descriptor %d"
-msgstr "%s に対してパイプを開けませんでした"
+msgstr "ファイルデスクリプタ %d を開けませんでした"
 
 #: apt-pkg/contrib/fileutl.cc:774
 #, c-format
@@ -2437,24 +2452,24 @@ msgid "write, still have %lu to write but couldn't"
 msgstr "あと %lu 書き込む必要がありますが、書き込むことができませんでした"
 
 #: apt-pkg/contrib/fileutl.cc:906
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the gzip file %s"
-msgstr "ファイルのクローズ中に問題が発生しました"
+msgstr "gzip ファイル %s のクローズ中に問題が発生しました"
 
 #: apt-pkg/contrib/fileutl.cc:909
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the file %s"
-msgstr "ファイルのクローズ中に問題が発生しました"
+msgstr "ファイル %s のクローズ中に問題が発生しました"
 
 #: apt-pkg/contrib/fileutl.cc:914
-#, fuzzy, c-format
+#, c-format
 msgid "Problem renaming the file %s to %s"
-msgstr "ファイルの同期中に問題が発生しました"
+msgstr "%s から %s へのファイル名変更中に問題が発生しました"
 
 #: apt-pkg/contrib/fileutl.cc:925
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking the file %s"
-msgstr "ファイルの削除中に問題が発生しました"
+msgstr "ファイル %s の削除中に問題が発生しました"
 
 #: apt-pkg/contrib/fileutl.cc:938
 msgid "Problem syncing the file"
@@ -2515,7 +2530,7 @@ msgstr "破壊"
 
 #: apt-pkg/pkgcache.cc:292
 msgid "Enhances"
-msgstr ""
+msgstr "拡張"
 
 #: apt-pkg/pkgcache.cc:303
 msgid "important"
@@ -2567,6 +2582,7 @@ msgstr "一時状態ファイル %s の書き込みに失敗しました"
 #, c-format
 msgid "Internal error, group '%s' has no installable pseudo package"
 msgstr ""
+"内部エラー。グループ '%s' にはインストール可能な擬似パッケージがありません"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2579,29 +2595,33 @@ msgid "Unable to parse package file %s (2)"
 msgstr "パッケージファイル %s を解釈することができません (2)"
 
 #: apt-pkg/sourcelist.cc:92
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist parse)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([オプション] を解釈できません)"
 
 #: apt-pkg/sourcelist.cc:95
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([オプション] が短かすぎます)"
 
 #: apt-pkg/sourcelist.cc:106
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist parse)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] は割り当てられていません)"
 
 #: apt-pkg/sourcelist.cc:112
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist parse)"
+msgstr "ソースリスト %2$s の %1$lu 行目が不正です ([%3$s にキーがありません)"
 
 #: apt-pkg/sourcelist.cc:115
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist parse)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] キー %4$s に値がありません)"
 
 #: apt-pkg/sourcelist.cc:128
 #, c-format
@@ -2654,6 +2674,8 @@ msgid ""
 "Could not perform immediate configuration on '%s'.Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
+"'%s' の即時設定は動作しません。詳細については man 5 apt.conf の APT::"
+"Immediate-Configure の項を参照してください。(%d)"
 
 #: apt-pkg/packagemanager.cc:452
 #, c-format
@@ -2672,6 +2694,8 @@ msgid ""
 "Could not perform immediate configuration on already unpacked '%s'.Please "
 "see man 5 apt.conf under APT::Immediate-Configure for details."
 msgstr ""
+"展開済みの '%s' への即時設定は動作しません。詳細については man 5 apt.conf の "
+"APT::Immediate-Configure の項を参照してください。"
 
 #: apt-pkg/pkgrecords.cc:32
 #, c-format
@@ -2707,19 +2731,19 @@ msgstr ""
 "るか、古いものが代わりに使われます。"
 
 #: apt-pkg/acquire.cc:79
-#, fuzzy, c-format
+#, c-format
 msgid "List directory %spartial is missing."
 msgstr "リストディレクトリ %spartial が見つかりません。"
 
 #: apt-pkg/acquire.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "Archives directory %spartial is missing."
 msgstr "アーカイブディレクトリ %spartial が見つかりません。"
 
 #: apt-pkg/acquire.cc:91
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock directory %s"
-msgstr "list ディレクトリをロックできません"
+msgstr "ディレクトリ %s をロックできません"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -2781,11 +2805,11 @@ msgstr ""
 "せん"
 
 #: apt-pkg/policy.cc:343
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr ""
-"不正なレコードが preferences ファイルに存在します。パッケージヘッダがありませ"
-"ん"
+"不正なレコードがプリファレンスファイル %s に存在します。パッケージヘッダがあ"
+"りません"
 
 #: apt-pkg/policy.cc:365
 #, c-format
@@ -2827,9 +2851,9 @@ msgstr "%s を処理中にエラーが発生しました (NewFileVer1)"
 
 #: apt-pkg/pkgcachegen.cc:306 apt-pkg/pkgcachegen.cc:316
 #: apt-pkg/pkgcachegen.cc:324
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewVersion%d)"
-msgstr "%s を処理中にエラーが発生しました (NewVersion1)"
+msgstr "%s を処理中にエラーが発生しました (NewVersion%d)"
 
 #: apt-pkg/pkgcachegen.cc:320
 #, c-format
@@ -2910,11 +2934,14 @@ msgstr "以下の鍵 ID に対して利用可能な公開鍵がありません:\
 #, c-format
 msgid "Release file expired, ignoring %s (invalid since %s)"
 msgstr ""
+"Release ファイルが期限切れになっているので、%s を無視します (%s 以来無効)"
 
 #: apt-pkg/acquire-item.cc:1298
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
+"ディストリビューションが競合しています: %s (%s を期待していたのに %s を取得し"
+"ました)"
 
 #: apt-pkg/acquire-item.cc:1324
 #, c-format
@@ -2922,11 +2949,13 @@ msgid ""
 "A error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used.GPG error: %s: %s\n"
 msgstr ""
+"署名照合中にエラーが発生しました。リポジトリは更新されず、過去のインデックス"
+"ファイルが使われます。GPG エラー: %s: %s\n"
 
 #: apt-pkg/acquire-item.cc:1333
 #, c-format
 msgid "GPG error: %s: %s"
-msgstr ""
+msgstr "GPG エラー: %s: %s"
 
 #: apt-pkg/acquire-item.cc:1361
 #, c-format
@@ -2959,29 +2988,29 @@ msgid "Size mismatch"
 msgstr "サイズが適合しません"
 
 #: apt-pkg/indexrecords.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse Release file %s"
-msgstr "パッケージファイル %s を解釈することができません (1)"
+msgstr "Release ファイル %s を解釈することができません"
 
 #: apt-pkg/indexrecords.cc:60
-#, fuzzy, c-format
+#, c-format
 msgid "No sections in Release file %s"
-msgstr "注意、%2$s の代わりに %1$s を選択します\n"
+msgstr "Release ファイル %s にセクションがありません"
 
 #: apt-pkg/indexrecords.cc:94
 #, c-format
 msgid "No Hash entry in Release file %s"
-msgstr ""
+msgstr "Release ファイル %s に Hash エントリがありません"
 
 #: apt-pkg/indexrecords.cc:107
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "diversion ファイルに不正な行があります: %s"
+msgstr "Release ファイル %s に無効な 'Valid-Until' エントリがあります"
 
 #: apt-pkg/indexrecords.cc:122
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
-msgstr "パッケージファイル %s を解釈することができません (1)"
+msgstr "Release ファイル %s に無効な 'Date' エントリがあります"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -3046,6 +3075,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
+"パッケージファイルを配置できません。Debian のディスクではないか、誤ったアーキ"
+"テクチャではないでしょうか?"
 
 #: apt-pkg/cdrom.cc:703
 #, c-format
@@ -3100,19 +3131,19 @@ msgstr ""
 "ファイルがあります。\n"
 
 #: apt-pkg/indexcopy.cc:532
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping nonexistent file %s"
-msgstr "設定ファイル %s をオープンできませんでした"
+msgstr "存在しないファイル %s をスキップしています"
 
 #: apt-pkg/indexcopy.cc:538
 #, c-format
 msgid "Can't find authentication record for: %s"
-msgstr ""
+msgstr "認証レコードが見つかりません: %s"
 
 #: apt-pkg/indexcopy.cc:544
-#, fuzzy, c-format
+#, c-format
 msgid "Hash mismatch for: %s"
-msgstr "ハッシュサムが適合しません"
+msgstr "ハッシュサムが適合しません: %s"
 
 #: apt-pkg/cacheset.cc:337
 #, c-format
@@ -3125,19 +3156,19 @@ msgid "Version '%s' for '%s' was not found"
 msgstr "'%2$s' のバージョン '%1$s' が見つかりませんでした"
 
 #: apt-pkg/cacheset.cc:447
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task '%s'"
-msgstr "タスク %s が見つかりません"
+msgstr "タスク '%s' が見つかりません"
 
 #: apt-pkg/cacheset.cc:454
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr "パッケージ %s が見つかりません"
+msgstr "正規表現 '%s' ではパッケージは見つかりませんでした"
 
 #: apt-pkg/cacheset.cc:467
 #, c-format
 msgid "Can't select versions from package '%s' as it purely virtual"
-msgstr ""
+msgstr "純粋な仮想パッケージのため、パッケージ '%s' のバージョンを選べません"
 
 #: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
 #, c-format
@@ -3145,21 +3176,26 @@ msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
+"パッケージ '%s' のインストール済みまたは候補のバージョンはいずれも存在しない"
+"ので選べません"
 
 #: apt-pkg/cacheset.cc:491
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
+"純粋な仮想パッケージのため、パッケージ '%s' の最新バージョンを選べません"
 
 #: apt-pkg/cacheset.cc:499
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
-msgstr ""
+msgstr "候補が存在しないので、パッケージ %s の候補バージョンを選べません"
 
 #: apt-pkg/cacheset.cc:507
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
+"インストールされていないので、パッケージ %s のインストール済みバージョンを選"
+"べません。"
 
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
@@ -3177,14 +3213,14 @@ msgid "Removing %s"
 msgstr "%s を削除しています"
 
 #: apt-pkg/deb/dpkgpm.cc:55
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removing %s"
-msgstr "%s を完全に削除しました"
+msgstr "%s を完全に削除しています"
 
 #: apt-pkg/deb/dpkgpm.cc:56
 #, c-format
 msgid "Noting disappearance of %s"
-msgstr ""
+msgstr "%s の消失を記録しています"
 
 #: apt-pkg/deb/dpkgpm.cc:57
 #, c-format
@@ -3197,9 +3233,9 @@ msgid "Directory '%s' missing"
 msgstr "ディレクトリ '%s' が見つかりません"
 
 #: apt-pkg/deb/dpkgpm.cc:658 apt-pkg/deb/dpkgpm.cc:671
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file '%s'"
-msgstr "ファイル %s をオープンできませんでした"
+msgstr "ファイル '%s' をオープンできませんでした"
 
 #: apt-pkg/deb/dpkgpm.cc:812
 #, c-format
@@ -3249,39 +3285,47 @@ msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:1070
 msgid "Running dpkg"
-msgstr ""
+msgstr "dpkg を実行しています"
 
 #: apt-pkg/deb/dpkgpm.cc:1273
 msgid "No apport report written because MaxReports is reached already"
-msgstr ""
+msgstr "MaxReports にすでに達しているため、レポートは書き込まれません"
 
 #. check if its not a follow up error
 #: apt-pkg/deb/dpkgpm.cc:1278
 msgid "dependency problems - leaving unconfigured"
-msgstr ""
+msgstr "依存関係の問題 - 未設定のままにしています"
 
 #: apt-pkg/deb/dpkgpm.cc:1280
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
+"エラーメッセージは前の失敗から続くエラーであることを示しているので、レポート"
+"は書き込まれません。"
 
 #: apt-pkg/deb/dpkgpm.cc:1286
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
+"エラーメッセージはディスクフルエラーであることを示しているので、レポートは書"
+"き込まれません。"
 
 #: apt-pkg/deb/dpkgpm.cc:1292
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
+"エラーメッセージはメモリ超過エラーであることを示しているので、レポートは書き"
+"込まれません。"
 
 #: apt-pkg/deb/dpkgpm.cc:1299
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
+"エラーメッセージは dpkg I/O エラーであることを示しているので、レポートは書き"
+"込まれません。"
 
 #: apt-pkg/deb/debsystem.cc:69
 #, c-format
@@ -3289,11 +3333,14 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
+"管理用ディレクトリ (%s) をロックできません。これを使う別のプロセスが動いてい"
+"ませんか?"
 
 #: apt-pkg/deb/debsystem.cc:72
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "list ディレクトリをロックできません"
+msgstr ""
+"管理用ディレクトリ (%s) をロックできません。root 権限で実行していますか?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -3302,22 +3349,24 @@ msgstr "list ディレクトリをロックできません"
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
+"dpkg は中断されました。問題を修正するには '%s' を手動で実行する必要がありま"
+"す。"
 
 #: apt-pkg/deb/debsystem.cc:106
 msgid "Not locked"
-msgstr ""
+msgstr "ロックされていません"
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:200
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr ""
+msgstr "ミラーファイル '%s' が見つかりません "
 
 #: methods/mirror.cc:343
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
+msgstr "[ミラー: %s]"
 
 #: methods/rred.cc:465
 #, c-format
@@ -3325,6 +3374,8 @@ msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
 "to be corrupt."
 msgstr ""
+"mmap およびファイル操作用法へのパッチ %s を適用できません - パッチが壊れてい"
+"るようです。"
 
 #: methods/rred.cc:470
 #, c-format
@@ -3332,35 +3383,9 @@ msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
 "to be corrupt."
 msgstr ""
+"mmap へのパッチ %s を適用できません (しかし mmap 固有の失敗ではありません) - "
+"パッチが壊れているようです。"
 
 #: methods/rsh.cc:329
 msgid "Connection closed prematurely"
 msgstr "途中で接続がクローズされました"
-
-#~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-#~ msgstr ""
-#~ "エラー: Acquire::gpgv::Options の引数リストが長すぎます。終了しています。"
-
-#~ msgid "Error occurred while processing %s (NewVersion2)"
-#~ msgstr "%s を処理中にエラーが発生しました (NewVersion2)"
-
-#~ msgid "Malformed line %u in source list %s (vendor id)"
-#~ msgstr "ソースリスト %2$s の %1$u 行目が不正です (vendor id)"
-
-#~ msgid "Couldn't access keyring: '%s'"
-#~ msgstr "キーリングにアクセスできませんでした: '%s'"
-
-#~ msgid "Could not patch file"
-#~ msgstr "ファイルにパッチできませんでした"
-
-#~ msgid "       %4i %s\n"
-#~ msgstr "       %4i %s\n"
-
-#~ msgid "%4i %s\n"
-#~ msgstr "%4i %s\n"
-
-#~ msgid "Processing triggers for %s"
-#~ msgstr "%s のトリガーを処理しています"
-
-#~ msgid "Dynamic MMap ran out of room"
-#~ msgstr "動的 MMap が制限を越えました"
