@@ -1084,13 +1084,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       return false;
 
    // Read the source list
-   pkgSourceList List;
-   if (List.ReadMainList() == false)
-      return _error->Error(_("The list of sources could not be read."));
+   if (Cache.BuildSourceList() == false)
+      return false;
+   pkgSourceList *List = Cache.GetSourceList();
    
    // Create the package manager and prepare to download
    SPtr<pkgPackageManager> PM= _system->CreatePM(Cache);
-   if (PM->GetArchives(&Fetcher,&List,&Recs) == false || 
+   if (PM->GetArchives(&Fetcher,List,&Recs) == false || 
        _error->PendingError() == true)
       return false;
 
@@ -1306,7 +1306,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       
       // Reload the fetcher object and loop again for media swapping
       Fetcher.Shutdown();
-      if (PM->GetArchives(&Fetcher,&List,&Recs) == false)
+      if (PM->GetArchives(&Fetcher,List,&Recs) == false)
 	 return false;
       
       _system->Lock();
@@ -1542,11 +1542,13 @@ bool DoUpdate(CommandLine &CmdL)
 {
    if (CmdL.FileSize() != 1)
       return _error->Error(_("The update command takes no arguments"));
-   
+
+   CacheFile Cache;
+
    // Get the source list
-   pkgSourceList List;
-   if (List.ReadMainList() == false)
+   if (Cache.BuildSourceList() == false)
       return false;
+   pkgSourceList *List = Cache.GetSourceList();
 
    // Create the progress
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
@@ -1564,7 +1566,7 @@ bool DoUpdate(CommandLine &CmdL)
 
       // Populate it with the source selection and get all Indexes 
       // (GetAll=true)
-      if (List.GetIndexes(&Fetcher,true) == false)
+      if (List->GetIndexes(&Fetcher,true) == false)
 	 return false;
 
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
@@ -1575,9 +1577,8 @@ bool DoUpdate(CommandLine &CmdL)
    }
 
    // do the work
-   CacheFile Cache;
    if (_config->FindB("APT::Get::Download",true) == true)
-       ListUpdate(Stat, List);
+       ListUpdate(Stat, *List);
 
    // Rebuild the cache.   
    if (Cache.BuildCaches() == false)
@@ -2189,13 +2190,13 @@ bool DoSource(CommandLine &CmdL)
       return _error->Error(_("Must specify at least one package to fetch source for"));
    
    // Read the source list
-   pkgSourceList List;
-   if (List.ReadMainList() == false)
-      return _error->Error(_("The list of sources could not be read."));
+   if (Cache.BuildSourceList() == false)
+      return false;
+   pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
    pkgRecords Recs(Cache);
-   pkgSrcRecords SrcRecs(List);
+   pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
 
@@ -2480,13 +2481,13 @@ bool DoBuildDep(CommandLine &CmdL)
       return _error->Error(_("Must specify at least one package to check builddeps for"));
    
    // Read the source list
-   pkgSourceList List;
-   if (List.ReadMainList() == false)
-      return _error->Error(_("The list of sources could not be read."));
+   if (Cache.BuildSourceList() == false)
+      return false;
+   pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
    pkgRecords Recs(Cache);
-   pkgSrcRecords SrcRecs(List);
+   pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
 

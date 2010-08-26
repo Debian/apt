@@ -14,9 +14,13 @@ apt (0.8.1) UNRELEASED; urgency=low
     Closes: #594211
 
   [ David Kalnischkies ]
-  * show in madison command again also source packages (LP: #614589)
+  * cmdline/apt-cache.cc:
+    - show in madison command again also source packages (LP: #614589)
+  * cmdline/apt-get.cc:
+    - remove direct calls of ReadMainList and use the wrapper instead
+      to protect us from useless re-reads and two-times notice display
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 25 Aug 2010 17:46:48 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 26 Aug 2010 22:39:37 +0200
 
 apt (0.8.0) unstable; urgency=low
 
