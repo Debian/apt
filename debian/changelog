@@ -19,8 +19,11 @@ apt (0.8.1) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - remove direct calls of ReadMainList and use the wrapper instead
       to protect us from useless re-reads and two-times notice display
+  * apt-pkg/depcache.cc:
+    - now that apt-get purge works on 'rc' packages let the MarkDelete
+      pass this purge forward to the non-pseudo package for pseudos
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 26 Aug 2010 22:39:37 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 27 Aug 2010 12:02:15 +0200
 
 apt (0.8.0) unstable; urgency=low
 
