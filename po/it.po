@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-23 18:41-0400\n"
-"PO-Revision-Date: 2010-08-25 19:25+0200\n"
+"PO-Revision-Date: 2010-08-27 20:57+0200\n"
 "Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -632,7 +632,7 @@ msgstr "Creazione di un sottoprocesso IPC non riuscita"
 
 #: ftparchive/multicompress.cc:321
 msgid "Failed to exec compressor "
-msgstr "Esecuzione di compressor non riuscita"
+msgstr "Esecuzione non riuscita del compressore "
 
 #: ftparchive/multicompress.cc:360
 msgid "decompressor"
@@ -672,12 +672,12 @@ msgstr "I seguenti pacchetti hanno dipendenze non soddisfatte:"
 #: cmdline/apt-get.cc:341
 #, c-format
 msgid "but %s is installed"
-msgstr "ma %s è installato"
+msgstr "ma la versione %s è installata"
 
 #: cmdline/apt-get.cc:343
 #, c-format
 msgid "but %s is to be installed"
-msgstr "ma %s sta per essere installato"
+msgstr "ma la versione %s sta per essere installata"
 
 #: cmdline/apt-get.cc:350
 msgid "but it is not installable"
@@ -1073,7 +1073,7 @@ msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr[0] ""
-"Il seguente pacchette è stato installato automaticamente e non è più "
+"Il seguente pacchetto è stato installato automaticamente e non è più "
 "richiesto:"
 msgstr[1] ""
 "I seguenti pacchetti sono stati installati automaticamente e non sono più "
@@ -1114,7 +1114,7 @@ msgstr ""
 #.
 #: cmdline/apt-get.cc:1667 cmdline/apt-get.cc:1809
 msgid "The following information may help to resolve the situation:"
-msgstr "Le seguenti informazioni possono aiutare a risolvere la situazione: "
+msgstr "Le seguenti informazioni possono aiutare a risolvere la situazione:"
 
 #: cmdline/apt-get.cc:1671
 msgid "Internal Error, AutoRemover broke stuff"
@@ -1151,7 +1151,7 @@ msgstr ""
 
 #: cmdline/apt-get.cc:1812
 msgid "Broken packages"
-msgstr "Pacchetto danneggiato"
+msgstr "Pacchetti danneggiati"
 
 #: cmdline/apt-get.cc:1841
 msgid "The following extra packages will be installed:"
@@ -1399,7 +1399,7 @@ msgstr ""
 "   autoremove - Rimuove automaticamente i pacchetti inutilizzati\n"
 "   purge - Rimuove i pacchetti e la loro configurazione\n"
 "   source - Scarica i pacchetti sorgente\n"
-"   build-dep - Configura le dipendenze di compilazione per i pacchetti "
+"   build-dep - Configura le dipendenze di generazione per i pacchetti "
 "sorgente\n"
 "   dist-upgrade - Esegue un avanzamento della distribuzione, consultare apt-"
 "get(8)\n"
@@ -1420,7 +1420,7 @@ msgstr ""
 "conferma\n"
 "  -f  Tenta di continuare se il controllo di integrità non riesce\n"
 "  -m  Tenta di continuare se gli archivi non sono localizzabili\n"
-"  -u  Mostra un elenco dei pacchetti aggiornati\n"
+"  -u  Mostra anche un elenco dei pacchetti aggiornati\n"
 "  -b  Genera il pacchetto sorgente dopo averlo recuperato\n"
 "  -V  Mostra prolissamente i numeri di versione\n"
 "  -c=? Legge come configurazione il file specificato\n"
@@ -1477,7 +1477,7 @@ msgid ""
 msgstr ""
 "Cambio disco: inserire il disco chiamato\n"
 " \"%s\"\n"
-"nel dispositivo \"%s\" e premere Invio\n"
+"nell'unità \"%s\" e premere Invio\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
@@ -1765,7 +1765,7 @@ msgstr "Apertura del file di deviazione %sdiversions non riuscita"
 
 #: apt-inst/deb/dpkgdb.cc:320
 msgid "The diversion file is corrupted"
-msgstr "Il file di diversion è danneggiato"
+msgstr "Il file di deviazione è danneggiato"
 
 #: apt-inst/deb/dpkgdb.cc:327 apt-inst/deb/dpkgdb.cc:332
 #: apt-inst/deb/dpkgdb.cc:337
@@ -1956,11 +1956,12 @@ msgstr "Impossibile creare un socket"
 
 #: methods/ftp.cc:703
 msgid "Could not connect data socket, connection timed out"
-msgstr "Impossibile connettersi al socket dati, connessione terminata"
+msgstr ""
+"Impossibile connettersi al socket dati, tempo esaurito per la connessione"
 
 #: methods/ftp.cc:709
 msgid "Could not connect passive socket."
-msgstr "Impossibile connettere socket passivo."
+msgstr "Impossibile connettersi alla socket passiva."
 
 #: methods/ftp.cc:727
 msgid "getaddrinfo was unable to get a listening socket"
@@ -2767,7 +2768,6 @@ msgstr ""
 "Impossibile scaricare alcuni file di indice: saranno ignorati o verranno "
 "usati quelli vecchi."
 
-# (ndt) sarebbe da controllare meglio assieme a quella dopo
 #: apt-pkg/acquire.cc:79
 #, c-format
 msgid "List directory %spartial is missing."
@@ -2988,7 +2988,7 @@ msgid ""
 "updated and the previous index files will be used.GPG error: %s: %s\n"
 msgstr ""
 "Si è verificato un errore nel verificare la firma. Il repository non è "
-"aggiornato e verrà usato il file precedente. Errore GPG: %s: %s\n"
+"aggiornato e verranno usati i file indice precedenti. Errore GPG: %s: %s\n"
 
 #: apt-pkg/acquire-item.cc:1333
 #, c-format
@@ -3013,13 +3013,14 @@ msgstr ""
 "Impossibile trovare un file per il pacchetto %s. Potrebbe essere necessario "
 "sistemare manualmente questo pacchetto."
 
+# (ndt) sarebbe da controllare se veramente possono esistere più file indice
 #: apt-pkg/acquire-item.cc:1475
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
-"L'indice dei file è danneggiato. Manca il campo \"Filename:\" per il "
-"pacchetto %s."
+"I file indice del pacchetto sono danneggiati. Manca il campo \"Filename:\" "
+"per il pacchetto %s."
 
 #: apt-pkg/acquire-item.cc:1562
 msgid "Size mismatch"
