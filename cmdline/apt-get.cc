@@ -2834,22 +2834,6 @@ bool ShowHelp(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// GetInitialize - Initialize things for apt-get			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void GetInitialize()
-{
-   _config->Set("quiet",0);
-   _config->Set("help",false);
-   _config->Set("APT::Get::Download-Only",false);
-   _config->Set("APT::Get::Simulate",false);
-   _config->Set("APT::Get::Assume-Yes",false);
-   _config->Set("APT::Get::Fix-Broken",false);
-   _config->Set("APT::Get::Force-Yes",false);
-   _config->Set("APT::Get::List-Cleanup",true);
-   _config->Set("APT::Get::AutomaticRemove",false);
-}
-									/*}}}*/
 // SigWinch - Window size change signal handler				/*{{{*/
 // ---------------------------------------------------------------------
 /* */

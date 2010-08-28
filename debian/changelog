@@ -19,13 +19,14 @@ apt (0.8.1) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - remove direct calls of ReadMainList and use the wrapper instead
       to protect us from useless re-reads and two-times notice display
+    - remove death code by removing unused GetInitialize
   * apt-pkg/depcache.cc:
     - now that apt-get purge works on 'rc' packages let the MarkDelete
       pass this purge forward to the non-pseudo package for pseudos
   * apt-pkg/contrib/fileutl.cc:
     - apply SilentlyIgnore also on files without an extension
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 Aug 2010 17:33:31 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 Aug 2010 17:52:36 +0200
 
 apt (0.8.0) unstable; urgency=low
 
