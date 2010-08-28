@@ -26,8 +26,11 @@ apt (0.8.1) UNRELEASED; urgency=low
       pass this purge forward to the non-pseudo package for pseudos
   * apt-pkg/contrib/fileutl.cc:
     - apply SilentlyIgnore also on files without an extension
+  * apt-pkg/contrib/configuration.cc:
+    - fix autoremove by using correct config-option name and
+      don't make faulty assumptions in error handling (Closes: #594689)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 Aug 2010 17:53:00 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 Aug 2010 22:23:20 +0200
 
 apt (0.8.0) unstable; urgency=low
 

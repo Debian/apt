@@ -109,6 +109,7 @@ class Configuration
    class MatchAgainstConfig
    {
      std::vector<regex_t *> patterns;
+     void clearPatterns();
 
    public:
      MatchAgainstConfig(char const * Config);
