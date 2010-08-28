@@ -309,7 +309,8 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 	    {
 	       if (Debug == true)
 		  std::clog << "Bad file: " << Ent->d_name << " → no extension" << std::endl;
-	       _error->Notice("Ignoring file '%s' in directory '%s' as it has no filename extension", Ent->d_name, Dir.c_str());
+	       if (SilentIgnore.Match(Ent->d_name) == false)
+		  _error->Notice("Ignoring file '%s' in directory '%s' as it has no filename extension", Ent->d_name, Dir.c_str());
 	       continue;
 	    }
 	 }
