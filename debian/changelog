@@ -16,6 +16,7 @@ apt (0.8.1) UNRELEASED; urgency=low
   [ David Kalnischkies ]
   * cmdline/apt-cache.cc:
     - show in madison command again also source packages (LP: #614589)
+    - remove useless GetInitialize method
   * cmdline/apt-get.cc:
     - remove direct calls of ReadMainList and use the wrapper instead
       to protect us from useless re-reads and two-times notice display
@@ -26,7 +27,7 @@ apt (0.8.1) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - apply SilentlyIgnore also on files without an extension
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 Aug 2010 17:52:36 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 Aug 2010 17:53:00 +0200
 
 apt (0.8.0) unstable; urgency=low
 
