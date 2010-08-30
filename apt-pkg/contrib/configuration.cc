@@ -857,19 +857,27 @@ Configuration::MatchAgainstConfig::MatchAgainstConfig(char const * Config)
       {
 	 regfree(p);
 	 delete p;
+	 clearPatterns();
 	 _error->Warning("Regex compilation error for '%s' in configuration option '%s'",
 				s->c_str(), Config);
+	 return;
       }
-    }
-
+   }
+   if (strings.size() == 0)
+      patterns.push_back(NULL);
 }
 									/*}}}*/
 // MatchAgainstConfig Destructor					/*{{{*/
 Configuration::MatchAgainstConfig::~MatchAgainstConfig()
 {
+   clearPatterns();
+}
+void Configuration::MatchAgainstConfig::clearPatterns()
+{
    for(std::vector<regex_t *>::const_iterator p = patterns.begin();
 	p != patterns.end(); ++p)
    {
+      if (*p == NULL) continue;
       regfree(*p);
       delete *p;
    }
@@ -880,7 +888,7 @@ bool Configuration::MatchAgainstConfig::Match(char const * str) const
 {
    for(std::vector<regex_t *>::const_iterator p = patterns.begin();
 	p != patterns.end(); ++p)
-      if (regexec(*p, str, 0, 0, 0) == 0)
+      if (*p != NULL && regexec(*p, str, 0, 0, 0) == 0)
 	 return true;
 
    return false;

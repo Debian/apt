@@ -1781,15 +1781,6 @@ bool ShowHelp(CommandLine &Cmd)
    return true;
 }
 									/*}}}*/
-// CacheInitialize - Initialize things for apt-cache			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void CacheInitialize()
-{
-   _config->Set("quiet",0);
-   _config->Set("help",false);
-}
-									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
@@ -1840,8 +1831,6 @@ int main(int argc,const char *argv[])					/*{{{*/
                                     {"policy",&Policy},
                                     {"madison",&Madison},
                                     {0,0}};
-
-   CacheInitialize();
 
    // Set up gettext support
    setlocale(LC_ALL,"");

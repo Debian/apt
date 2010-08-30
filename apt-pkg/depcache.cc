@@ -1149,7 +1149,7 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
       return;
 
    if (DebugMarker == true)
-      std::clog << OutputInDepth(Depth) << "MarkDelete " << Pkg << " FU=" << FromUser << std::endl;
+      std::clog << OutputInDepth(Depth) << (rPurge ? "MarkPurge " : "MarkDelete ") << Pkg << " FU=" << FromUser << std::endl;
 
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -1167,6 +1167,15 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    // if we remove the pseudo package, we also need to remove the "real"
    if (Pkg->CurrentVer != 0 && Pkg.CurrentVer().Pseudo() == true)
       MarkDelete(Pkg.Group().FindPkg("all"), rPurge, Depth+1, FromUser);
+   else if (rPurge == true && Pkg->CurrentVer == 0 &&
+	    Pkg->CurrentState != pkgCache::State::NotInstalled &&
+	    strcmp(Pkg.Arch(), "all") != 0)
+   {
+      PkgIterator const allPkg = Pkg.Group().FindPkg("all");
+      if (allPkg.end() == false && allPkg->CurrentVer == 0 &&
+	  allPkg->CurrentState != pkgCache::State::NotInstalled)
+	 MarkDelete(allPkg, rPurge, Depth+1, FromUser);
+   }
 }
 									/*}}}*/
 // DepCache::IsDeleteOk - check if it is ok to remove this package	/*{{{*/
