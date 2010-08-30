@@ -29,8 +29,12 @@ apt (0.8.1) UNRELEASED; urgency=low
   * apt-pkg/contrib/configuration.cc:
     - fix autoremove by using correct config-option name and
       don't make faulty assumptions in error handling (Closes: #594689)
+  * apt-pkg/versionmatch.cc:
+    - let the pin origin actually work as advertised in the manpage
+      which means "" are optional and pinning a local archive does
+      work - even if it is a non-flat archive (Closes: #594435)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 Aug 2010 22:23:20 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Aug 2010 11:38:50 +0200
 
 apt (0.8.0) unstable; urgency=low
 
