@@ -1,3 +1,38 @@
+apt (0.8.0ubuntu3) UNRELEASED; urgency=low
+
+  * merged fixes from the debian-sid bzr branch:
+  
+  [ Programs translations ]
+  * Simplified Chinese (Aron Xu). Closes: #594458
+  * Bulgarian (Damyan Ivanov). Closes: #594627
+  * Portuguese (Miguel Figueiredo). Closes: #594668
+  * Korean (Changwoo Ryu). Closes: #594809
+
+  [ Manpages translations ]
+  * Portuguese (Américo Monteiro)
+
+  [ David Kalnischkies ]
+  * cmdline/apt-cache.cc:
+    - remove useless GetInitialize method
+  * cmdline/apt-get.cc:
+    - remove direct calls of ReadMainList and use the wrapper instead
+      to protect us from useless re-reads and two-times notice display
+    - remove death code by removing unused GetInitialize
+  * apt-pkg/depcache.cc:
+    - now that apt-get purge works on 'rc' packages let the MarkDelete
+      pass this purge forward to the non-pseudo package for pseudos
+  * apt-pkg/contrib/fileutl.cc:
+    - apply SilentlyIgnore also on files without an extension
+  * apt-pkg/contrib/configuration.cc:
+    - fix autoremove by using correct config-option name and
+      don't make faulty assumptions in error handling (Closes: #594689)
+  * apt-pkg/versionmatch.cc:
+    - let the pin origin actually work as advertised in the manpage
+      which means "" are optional and pinning a local archive does
+      work - even if it is a non-flat archive (Closes: #594435)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 30 Aug 2010 11:53:30 +0200
+
 apt (0.8.0ubuntu2) maverick; urgency=low
 
   * merged fixes from the debian-sid bzr branch:

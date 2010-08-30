@@ -1,13 +1,13 @@
 # Translation of apt manpages to Portuguese
 # Copyright (C) 2009 Free Software Foundation, Inc.
-# This file is distributed under the same license as the apt-doc package.
+# This file is distributed under the same license as the apt package.
 #
 # Américo Monteiro <a_monteiro@netcabo.pt>, 2009, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 0.7.26~exp3\n"
-"POT-Creation-Date: 2010-07-30 12:46+0300\n"
-"PO-Revision-Date: 2010-03-19 00:21+0000\n"
+"Project-Id-Version: apt 0.8.0~pre1\n"
+"POT-Creation-Date: 2010-08-23 18:46-0300\n"
+"PO-Revision-Date: 2010-08-25 23:07+0100\n"
 "Last-Translator: Américo Monteiro <a_monteiro@netcabo.pt>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
 "Language: pt\n"
@@ -44,7 +44,7 @@ msgstr "NOME"
 #. type: Plain text
 #: apt.8:20
 msgid "apt - Advanced Package Tool"
-msgstr "apt - Advanced Package Tool"
+msgstr "apt - Ferramenta de Pacotes Avançada"
 
 #. type: SH
 #: apt.8:20
@@ -793,17 +793,7 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent:264
-#, fuzzy, no-wrap
-#| msgid ""
-#| "     <varlistentry>\n"
-#| "      <term><option>-c</option></term>\n"
-#| "      <term><option>--config-file</option></term>\n"
-#| "     <listitem><para>Configuration File; Specify a configuration file to use. \n"
-#| "     The program will read the default configuration file and then this \n"
-#| "     configuration file. See &apt-conf; for syntax information.     \n"
-#| "     </para>\n"
-#| "     </listitem>\n"
-#| "     </varlistentry>\n"
+#, no-wrap
 msgid ""
 "     <varlistentry>\n"
 "      <term><option>-c</option></term>\n"
@@ -820,9 +810,13 @@ msgstr ""
 "     <varlistentry>\n"
 "      <term><option>-c</option></term>\n"
 "      <term><option>--config-file</option></term>\n"
-"     <listitem><para>Ficheiro de Configuração; Especifica um ficheiro de configuração a usar. \n"
+"     <listitem><para>Ficheiro de Configuração; Especifica o ficheiro de \n"
+"     configuração a usar. \n"
 "     O programa irá ler o ficheiro de configuração predefinido e depois este \n"
-"     ficheiro de configuração. Veja &apt-conf; para informação de sintaxe.     \n"
+"     ficheiro de configuração. Se as definições de configuração precisarem de \n"
+"     ser definidas antes, os ficheiros de configuração predefinidos são \n"
+"     analisados especificando um ficheiro com a variável de ambiente \n"
+"     <envar>APT_CONFIG</envar>. Veja &apt-conf; para informação de sintaxe.\n"
 "     </para>\n"
 "     </listitem>\n"
 "     </varlistentry>\n"
@@ -1087,13 +1081,7 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent:373
-#, fuzzy, no-wrap
-#| msgid ""
-#| "<!ENTITY file-sourceslist \"\n"
-#| "     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>\n"
-#| "     <listitem><para>Locations to fetch packages from.\n"
-#| "     Configuration Item: <literal>Dir::Etc::SourceList</literal>.</para></listitem>\n"
-#| "     </varlistentry>\n"
+#, no-wrap
 msgid ""
 "<!ENTITY file-extended_states \"\n"
 "      <varlistentry><term><filename>/var/lib/apt/extended_states</filename></term>\n"
@@ -1103,11 +1091,13 @@ msgid ""
 "      </varlistentry>\n"
 "\">\n"
 msgstr ""
-"<!ENTITY file-sourceslist \"\n"
-"     <varlistentry><term><filename>/etc/apt/sources.list</filename></term>\n"
-"     <listitem><para>Localizações de onde obter pacotes.\n"
-"     Item de Configuração: <literal>Dir::Etc::SourceList</literal>.</para></listitem>\n"
-"     </varlistentry>\n"
+"<!ENTITY file-extended_states \"\n"
+"      <varlistentry><term><filename>/var/lib/apt/extended_states</filename></term>\n"
+"      <listitem><para>Lista de estado de pacotes auto-instalados.\n"
+"      Item de Configuração: <literal>Dir::State::extended_states</literal>.\n"
+"      </para></listitem>\n"
+"      </varlistentry>\n"
+"\">\n"
 
 #. type: Plain text
 #: apt.ent:377
@@ -1163,6 +1153,8 @@ msgid ""
 "<!ENTITY oldstable-codename \"etch\"> <!ENTITY stable-codename \"lenny\"> <!"
 "ENTITY testing-codename \"squeeze\">"
 msgstr ""
+"<!ENTITY oldstable-codename \"etch\"> <!ENTITY stable-codename \"lenny\"> <!"
+"ENTITY testing-codename \"squeeze\">"
 
 #.  The last update date 
 #. type: Content of: <refentry><refentryinfo>
@@ -1878,67 +1870,46 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:312
-#, fuzzy
-#| msgid "<option>--no-upgrade</option>"
 msgid "<option>--no-pre-depends</option>"
-msgstr "<option>--no-upgrade</option>"
+msgstr "<option>--no-pre-depends</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:313
-#, fuzzy
-#| msgid "<option>--no-download</option>"
 msgid "<option>--no-depends</option>"
-msgstr "<option>--no-download</option>"
+msgstr "<option>--no-depends</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:314
-#, fuzzy
-#| msgid "<option>--install-recommends</option>"
 msgid "<option>--no-recommends</option>"
-msgstr "<option>--install-recommends</option>"
+msgstr "<option>--no-recommends</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:315
-#, fuzzy
-#| msgid "<option>--no-upgrade</option>"
 msgid "<option>--no-suggests</option>"
-msgstr "<option>--no-upgrade</option>"
+msgstr "<option>--no-suggests</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:316
-#, fuzzy
-#| msgid "<option>--no-mount</option>"
 msgid "<option>--no-conflicts</option>"
-msgstr "<option>--no-mount</option>"
+msgstr "<option>--no-conflicts</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:317
-#, fuzzy
-#| msgid "<option>--no-act</option>"
 msgid "<option>--no-breaks</option>"
-msgstr "<option>--no-act</option>"
+msgstr "<option>--no-breaks</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:318
-#, fuzzy
-#| msgid "<option>--no-act</option>"
 msgid "<option>--no-replaces</option>"
-msgstr "<option>--no-act</option>"
+msgstr "<option>--no-replaces</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:319
-#, fuzzy
-#| msgid "<option>--no-act</option>"
 msgid "<option>--no-enhances</option>"
-msgstr "<option>--no-act</option>"
+msgstr "<option>--no-enhances</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:320
-#, fuzzy
-#| msgid ""
-#| "Make <literal>depends</literal> and <literal>rdepends</literal> recursive "
-#| "so that all packages mentioned are printed once.  Configuration Item: "
-#| "<literal>APT::Cache::RecurseDepends</literal>."
 msgid ""
 "Per default the <literal>depends</literal> and <literal>rdepends</literal> "
 "print all dependencies. This can be twicked with these flags which will omit "
@@ -1946,9 +1917,11 @@ msgid ""
 "Show<replaceable>DependencyType</replaceable></literal> e.g. <literal>APT::"
 "Cache::ShowRecommends</literal>."
 msgstr ""
-"Torna <literal>depends</literal> e <literal>rdepends</literal> recursivo "
-"para que todos os pacotes mencionados sejam escritos uma vez. Item de "
-"Configuração <literal>APT::Cache::RecurseDepends</literal>."
+"Por predefinição o <literal>depends</literal> e <literal>rdepends</literal> "
+"escrevem todas as dependências. Isto pode ser afinado com estas bandeiras "
+"que irão omitir o tipo de dependência especificado. Item de Configuração: "
+"<literal>APT::Cache::Show<replaceable>DependencyType</replaceable></literal> "
+"ex. <literal>APT::Cache::ShowRecommends</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-cache.8.xml:326 apt-cdrom.8.xml:121 apt-get.8.xml:319
@@ -2811,16 +2784,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:119
-#, fuzzy
-#| msgid ""
-#| "Values for the additional metadata fields in the Release file are taken "
-#| "from the corresponding variables under <literal>APT::FTPArchive::Release</"
-#| "literal>, e.g. <literal>APT::FTPArchive::Release::Origin</literal>.  The "
-#| "supported fields are: <literal>Origin</literal>, <literal>Label</"
-#| "literal>, <literal>Suite</literal>, <literal>Version</literal>, "
-#| "<literal>Codename</literal>, <literal>Date</literal>, "
-#| "<literal>Architectures</literal>, <literal>Components</literal>, "
-#| "<literal>Description</literal>."
 msgid ""
 "Values for the additional metadata fields in the Release file are taken from "
 "the corresponding variables under <literal>APT::FTPArchive::Release</"
@@ -3065,23 +3028,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:229
-#, fuzzy
-#| msgid "Contents::Compress"
 msgid "Translation::Compress"
-msgstr "Contents::Compress"
+msgstr "Translation::Compress"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:231
-#, fuzzy
-#| msgid ""
-#| "This is similar to <literal>Packages::Compress</literal> except that it "
-#| "controls the compression for the Contents files."
 msgid ""
 "This is similar to <literal>Packages::Compress</literal> except that it "
 "controls the compression for the Translation-en master file."
 msgstr ""
 "Isto é semelhante a <literal>Packages::Compress</literal> excepto que "
-"controla a compressão para os ficheiros de Conteúdos."
+"controla a compressão para o ficheiro mestre Translation-en."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:235
@@ -3116,10 +3073,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:249 apt-ftparchive.1.xml:395
-#, fuzzy
-#| msgid "Description"
 msgid "LongDescription"
-msgstr "Descrição"
+msgstr "LongDescription"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:251 apt-ftparchive.1.xml:397
@@ -3127,6 +3082,8 @@ msgid ""
 "Sets if long descriptions should be included in the Packages file or split "
 "out into a master Translation-en file."
 msgstr ""
+"Define se as descrições longas devem ser incluídas no ficheiro Packages ou "
+"divididas em um ficheiro Translation-en mestre."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:257
@@ -3241,10 +3198,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:306
-#, fuzzy
-#| msgid "Operation"
 msgid "Translation"
-msgstr "Operação"
+msgstr "Translation"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:308
@@ -3253,6 +3208,9 @@ msgid ""
 "should be not included in the Packages file. Defaults to <filename>$(DIST)/"
 "$(SECTION)/i18n/Translation-en</filename>"
 msgstr ""
+"Define se o ficheiro mestre Translation-en de saída com as descrições longas "
+"não deve ser incluído no ficheiro Packages. A predefinição é <filename>"
+"$(DIST)/$(SECTION)/i18n/Translation-en</filename>"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><term>
 #: apt-ftparchive.1.xml:313
@@ -3370,12 +3328,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:364
-#, fuzzy
-#| msgid ""
-#| "The <literal>Tree</literal> section takes a scope tag which sets the "
-#| "<literal>$(DIST)</literal> variable and defines the root of the tree (the "
-#| "path is prefixed by <literal>ArchiveDir</literal>).  Typically this is a "
-#| "setting such as <filename>dists/woody</filename>."
 msgid ""
 "The <literal>Tree</literal> section takes a scope tag which sets the "
 "<literal>$(DIST)</literal> variable and defines the root of the tree (the "
@@ -3385,7 +3337,7 @@ msgstr ""
 "A secção <literal>Tree</literal> recebe uma etiqueta scope que define a "
 "variável <literal>$(DIST)</literal> e define a raiz da árvore (o caminho é "
 "prefixado por <literal>ArchiveDir</literal>). Tipicamente esta é uma "
-"definição tal como <filename>dists/woody</filename>."
+"definição tal como <filename>dists/&stable-codename;</filename>."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:369
@@ -3826,13 +3778,6 @@ msgstr "<option>APT::FTPArchive::LongDescription</option>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:595
-#, fuzzy
-#| msgid ""
-#| "This configuration option defaults to \"<literal>true</literal>\" and "
-#| "should only be set to <literal>\"false\"</literal> if the Archive "
-#| "generated with &apt-ftparchive; also provides <filename>Translation</"
-#| "filename> files. Note that it is currently not possible to create these "
-#| "files with <command>apt-ftparchive</command>."
 msgid ""
 "This configuration option defaults to \"<literal>true</literal>\" and should "
 "only be set to <literal>\"false\"</literal> if the Archive generated with "
@@ -3843,8 +3788,8 @@ msgstr ""
 "Esta opção de configuração tem a predefinição de \"<literal>true</literal>\" "
 "e deve apenas ser definida para <literal>\"false\"</literal> se o Arquivo "
 "gerado com &apt-ftparchive; também disponibilizar ficheiros "
-"<filename>Translation</filename>. Note que actualmente não é possível criar "
-"esses ficheiros com <command>apt-ftparchive</command>."
+"<filename>Translation</filename>. Note que o ficheiro mestre "
+"<filename>Translation-en</filename> só pode ser criado no comando generate."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-ftparchive.1.xml:607 apt.conf.5.xml:1083 apt_preferences.5.xml:491
@@ -3900,41 +3845,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsynopsisdiv><cmdsynopsis>
 #: apt-get.8.xml:36
-#, fuzzy
-#| msgid ""
-#| "<command>apt-get</command> <arg><option>-sqdyfmubV</option></arg> <arg> "
-#| "<option>-o= <replaceable>config_string</replaceable> </option> </arg> "
-#| "<arg> <option>-c= <replaceable>config_file</replaceable> </option> </arg> "
-#| "<arg> <option>-t=</option> <group choice='req'> <arg choice='plain'> "
-#| "<replaceable>target_release_name</replaceable> </arg> <arg "
-#| "choice='plain'> <replaceable>target_release_number_expression</"
-#| "replaceable> </arg> <arg choice='plain'> "
-#| "<replaceable>target_release_codename</replaceable> </arg> </group> </arg> "
-#| "<group choice=\"req\"> <arg choice='plain'>update</arg> <arg "
-#| "choice='plain'>upgrade</arg> <arg choice='plain'>dselect-upgrade</arg> "
-#| "<arg choice='plain'>dist-upgrade</arg> <arg choice='plain'>install <arg "
-#| "choice=\"plain\" rep=\"repeat\"><replaceable>pkg</replaceable> <arg> "
-#| "<group choice='req'> <arg choice='plain'> "
-#| "=<replaceable>pkg_version_number</replaceable> </arg> <arg "
-#| "choice='plain'> /<replaceable>target_release_name</replaceable> </arg> "
-#| "<arg choice='plain'> /<replaceable>target_release_codename</replaceable> "
-#| "</arg> </group> </arg> </arg> </arg> <arg choice='plain'>remove <arg "
-#| "choice=\"plain\" rep=\"repeat\"><replaceable>pkg</replaceable></arg></"
-#| "arg> <arg choice='plain'>purge <arg choice=\"plain\" rep=\"repeat"
-#| "\"><replaceable>pkg</replaceable></arg></arg> <arg choice='plain'>source "
-#| "<arg choice=\"plain\" rep=\"repeat\"><replaceable>pkg</replaceable> <arg> "
-#| "<group choice='req'> <arg choice='plain'> "
-#| "=<replaceable>pkg_version_number</replaceable> </arg> <arg "
-#| "choice='plain'> /<replaceable>target_release_name</replaceable> </arg> "
-#| "<arg choice='plain'> /<replaceable>target_release_codename</replaceable> "
-#| "</arg> </group> </arg> </arg> </arg> <arg choice='plain'>build-dep <arg "
-#| "choice=\"plain\" rep=\"repeat\"><replaceable>pkg</replaceable></arg></"
-#| "arg> <arg choice='plain'>check</arg> <arg choice='plain'>clean</arg> <arg "
-#| "choice='plain'>autoclean</arg> <arg choice='plain'>autoremove</arg> <arg "
-#| "choice='plain'> <group choice='req'> <arg choice='plain'>-v</arg> <arg "
-#| "choice='plain'>--version</arg> </group> </arg> <arg choice='plain'> "
-#| "<group choice='req'> <arg choice='plain'>-h</arg> <arg choice='plain'>--"
-#| "help</arg> </group> </arg> </group>"
 msgid ""
 "<command>apt-get</command> <arg><option>-sqdyfmubV</option></arg> <arg> "
 "<option>-o= <replaceable>config_string</replaceable> </option> </arg> <arg> "
@@ -3966,30 +3876,22 @@ msgstr ""
 "<command>apt-get</command> <arg><option>-sqdyfmubV</option></arg> <arg> "
 "<option>-o= <replaceable>string_de_configuração</replaceable> </option> </"
 "arg> <arg> <option>-c= <replaceable>ficheiro_de_configuração</replaceable> </"
-"option> </arg> <arg> <option>-t=</option> <group choice='req'> <arg "
-"choice='plain'> <replaceable>nome_de_lançamento_de_destino</replaceable> </"
-"arg> <arg choice='plain'> "
-"<replaceable>expressão_de_número_de_lançamento_de_destino</replaceable> </"
-"arg> <arg choice='plain'> "
-"<replaceable>nome_de_código_do_lançamento_de_destino</replaceable> </arg> </"
-"group> </arg> <group choice=\"req\"> <arg choice='plain'>update</arg> <arg "
-"choice='plain'>upgrade</arg> <arg choice='plain'>dselect-upgrade</arg> <arg "
-"choice='plain'>dist-upgrade</arg> <arg choice='plain'>install <arg choice="
-"\"plain\" rep=\"repeat\"><replaceable>pacote</replaceable> <arg> <group "
-"choice='req'> <arg choice='plain'> =<replaceable>número_de_versão_do_pacote</"
-"replaceable> </arg> <arg choice='plain'> /"
-"<replaceable>nome_do_lançamento_de_destino</replaceable> </arg> <arg "
-"choice='plain'> /<replaceable>nome_de_código_do_lançamento_de_destino</"
-"replaceable> </arg> </group> </arg> </arg> </arg> <arg choice='plain'>remove "
-"<arg choice=\"plain\" rep=\"repeat\"><replaceable>pacote</replaceable></"
-"arg></arg> <arg choice='plain'>purge <arg choice=\"plain\" rep=\"repeat"
+"option> </arg> <arg> <option>-t=</option> <arg choice='plain'> "
+"<replaceable>lançamento_de_destino</replaceable> </arg> </arg> <group choice="
+"\"req\"> <arg choice='plain'>update</arg> <arg choice='plain'>upgrade</arg> "
+"<arg choice='plain'>dselect-upgrade</arg> <arg choice='plain'>dist-upgrade</"
+"arg> <arg choice='plain'>install <arg choice=\"plain\" rep=\"repeat"
+"\"><replaceable>pkg</replaceable> <arg> <group choice='req'> <arg "
+"choice='plain'> =<replaceable>número_de_versão_do_pacote</replaceable> </"
+"arg> <arg choice='plain'> /<replaceable>lançamento_de_destino</replaceable> "
+"</arg> </group> </arg> </arg> </arg> <arg choice='plain'>remove <arg choice="
+"\"plain\" rep=\"repeat\"><replaceable>pkg</replaceable></arg></arg> <arg "
+"choice='plain'>purge <arg choice=\"plain\" rep=\"repeat"
 "\"><replaceable>pacote</replaceable></arg></arg> <arg choice='plain'>source "
 "<arg choice=\"plain\" rep=\"repeat\"><replaceable>pacote</replaceable> <arg> "
 "<group choice='req'> <arg choice='plain'> "
 "=<replaceable>número_de_versão_do_pacote</replaceable> </arg> <arg "
-"choice='plain'> /<replaceable>nome_de_lançamento_de_destino</replaceable> </"
-"arg> <arg choice='plain'> /"
-"<replaceable>nome_de_código_de_lançamento_de_destino</replaceable> </arg> </"
+"choice='plain'> /<replaceable>lançamento_de_destino</replaceable> </arg> </"
 "group> </arg> </arg> </arg> <arg choice='plain'>build-dep <arg choice=\"plain"
 "\" rep=\"repeat\"><replaceable>pacote</replaceable></arg></arg> <arg "
 "choice='plain'>check</arg> <arg choice='plain'>clean</arg> <arg "
@@ -4001,12 +3903,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:112
-#, fuzzy
-#| msgid ""
-#| "<command>apt-get</command> is the command-line tool for handling "
-#| "packages, and may be considered the user's \"back-end\" to other tools "
-#| "using the APT library.  Several \"front-end\" interfaces exist, such as "
-#| "&dselect;, &aptitude;, &synaptic;, &gnome-apt; and &wajig;."
 msgid ""
 "<command>apt-get</command> is the command-line tool for handling packages, "
 "and may be considered the user's \"back-end\" to other tools using the APT "
@@ -4016,8 +3912,7 @@ msgstr ""
 "<command>apt-get</command> é a ferramenta de linha de comandos para lidar "
 "com pacotes, e pode ser considerada o \"back-end\" dos utilizadores para "
 "outras ferramentas que usam a biblioteca APT. Existem várias interfaces "
-"\"front-end\" como o &dselect;, &aptitude;, &synaptic;, &gnome-apt; e "
-"&wajig;."
+"\"front-end\" como o &dselect;, &aptitude;, &synaptic; e &wajig;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-get.8.xml:121 apt-key.8.xml:124
@@ -5467,7 +5362,7 @@ msgstr "Mostra a versão do programa."
 #. type: Content of: <refentry><refsect1><variablelist>
 #: apt-mark.8.xml:124
 msgid "  &file-extended_states;"
-msgstr ""
+msgstr "  &file-extended_states;"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml:129
@@ -6192,12 +6087,6 @@ msgstr "Default-Release"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:153
-#, fuzzy
-#| msgid ""
-#| "Default release to install packages from if more than one version "
-#| "available. Contains release name, codename or release version. Examples: "
-#| "'stable', 'testing', 'unstable', 'lenny', 'squeeze', '4.0', '5.0*'. See "
-#| "also &apt-preferences;."
 msgid ""
 "Default release to install packages from if more than one version available. "
 "Contains release name, codename or release version. Examples: 'stable', "
@@ -6206,8 +6095,8 @@ msgid ""
 msgstr ""
 "Lançamento predefinido de onde instalar pacotes se existir mais de uma "
 "versão disponível. Contém o nome do lançamento, nome de código ou versão de "
-"lançamento. Exemplos: 'stable', 'testing', 'unstable', 'lenny', 'squeeze', "
-"'4.0', '5.0*'. Veja também &apt-preferences;."
+"lançamento. Exemplos: 'stable', 'testing', 'unstable', '&stable-codename;', "
+"'&testing-codename;', '4.0', '5.0*'. Veja também &apt-preferences;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml:158
@@ -6336,7 +6225,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml:202
 msgid "Cache-Start, Cache-Grow and Cache-Limit"
-msgstr ""
+msgstr "Cache-Start, Cache-Grow e Cache-Limit"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:203
@@ -6357,6 +6246,23 @@ msgid ""
 "literal> is 0 which stands for no limit.  If <literal>Cache-Grow</literal> "
 "is set to 0 the automatic grow of the cache is disabled."
 msgstr ""
+"O APT usa desde a versão 0.7.26 um ficheiro de cache com mapa de memória de "
+"tamanho ajustável para armazenar a informação disponível. <literal>Cache-"
+"Start</literal> actua como uma dica para que tamanho a Cache irá crescer e é "
+"por isso a quantidade de memória que o APT irá requerer no arranque. O valor "
+"predefinido é 20971520 bytes (~20 MB). Note que esta quantidade de espaço "
+"precisa estar disponível para o APT caso contrário ele irá con certeza "
+"falhar, portanto para dispositivos com pouca memória este valor deve ser "
+"diminuído enquanto que em sistemas com muitas fontes configuradas este pode "
+"ser aumentado. <literal>Cache-Grow</literal> define em bytes com a "
+"predefinição de 1048576 (~1 MB) quanto o tamanho da Cache será aumentado no "
+"caso do espaço definido por <literal>Cache-Start</literal> não ser "
+"suficiente. Este valor será aplicado várias vezes até que a cache seja "
+"suficientemente grande para armazenar toda a informação ou que o tamanho da "
+"cache alcance o <literal>Cache-Limit</literal>. O valor predefinido de "
+"<literal>Cache-Limit</literal> é 0 o que significa nenhum limite. Se "
+"<literal>Cache-Grow</literal> for definido para 0, o crescimento automático "
+"da cache é desactivado."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml:218
@@ -6420,7 +6326,7 @@ msgstr "O Grupo Acquire"
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:244
 msgid "Check-Valid-Until"
-msgstr ""
+msgstr "Check-Valid-Until"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:245
@@ -6433,11 +6339,20 @@ msgid ""
 "header, but if they don't or a stricter value is volitional the following "
 "<literal>Max-ValidTime</literal> option can be used."
 msgstr ""
+"Opção relacionada com segurança com predefinição a 'verdadeiro' como uma "
+"validação expirada para um ficheiro Release previne ataques repetidos "
+"durante longo tempo e pode, por exemplo, ajudar os utilizadores a "
+"identificar mirrors que não são actualizados à muito tempo - mas a "
+"funcionalidade depende da precisão de hora no sistema do utilizador. Os "
+"responsáveis do arquivo são encorajados a criar ficheiros Release com o "
+"cabeçalho <literal>Valid-Until</literal>, mas se não o fizerem ou se "
+"preferir-se um valor mais rigoroso pode-se usar a opção <literal>Max-"
+"ValidTime</literal> seguinte."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:255
 msgid "Max-ValidTime"
-msgstr ""
+msgstr "Max-ValidTime"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:256
@@ -6452,6 +6367,15 @@ msgid ""
 "settings can be made by appending the label of the archive to the option "
 "name."
 msgstr ""
+"Segundos em que o ficheiro Release deve considerado válido após ser criado. "
+"A predefinição é \"para sempre\" (0) se o ficheiro Release do arquivo não "
+"conter um cabeçalho <literal>Valid-Until</literal>. Se o tiver então esta "
+"data é a predefinida. A data do ficheiro Release ou a data especificada pela "
+"hora de criação do do ficheiro Release (cabeçalho <literal>Date</literal>) "
+"mais os segundos especificados com esta opção são usados para verificar se a "
+"validação de um ficheiro já expirou ao usar uma data anterior às duas. "
+"Definições específicas do Arquivo podem ser feitas ao adicionar a etiqueta "
+"do arquivo ao nome da opção. "
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:268
@@ -6949,7 +6873,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:450
 msgid "GzipIndexes"
-msgstr ""
+msgstr "GzipIndexes"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:452
@@ -6959,6 +6883,10 @@ msgid ""
 "unpacking them. This saves quite a lot of disk space at the expense of more "
 "CPU requirements when building the local package caches. False by default."
 msgstr ""
+"Quando descarrega índices comprimidos em <literal>gzip</literal> (Pacotes, "
+"Fontes ou Traduções), mantêm-os localmente comprimidos em gzip em vez de os "
+"desempacotar. Isto poupa imenso espaço no disco à custa de mais pedidos à "
+"CPU quando constrói as caches de pacotes locais. Falso por predefinição."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:459
@@ -7162,6 +7090,13 @@ msgid ""
 "z]+</literal> is silently ignored. As seen in the last default value these "
 "patterns can use regular expression syntax."
 msgstr ""
+"A lista <literal>Ignore-Files-Silently</literal> pode ser usada para "
+"especificar quais os ficheiros que o APT deve ignorar em silêncio enquanto "
+"analisa os ficheiros nos directórios de fragmento. Por predefinição que "
+"termine com <literal>.disabled</literal>, <literal>~</literal>, <literal>."
+"bak</literal> ou <literal>.dpkg-[a-z]+</literal> é ignorado em silêncio. "
+"Como visto no último valor predefinido, estes padrões podem usar sintaxe de "
+"expressão regular."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:541
@@ -8244,10 +8179,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml:101
-#, fuzzy
-#| msgid "priority 100"
 msgid "priority 1"
-msgstr "priority 100"
+msgstr "priority 1"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:102
@@ -8256,6 +8189,9 @@ msgid ""
 "filename> files are marked as \"NotAutomatic: yes\" like the debian "
 "experimental archive."
 msgstr ""
+"para as versões vindas de arquivos cujos ficheiros <filename>Release</"
+"filename> estejam marcados como \"NotAutomatic: yes\" como o arquivo "
+"experimental da debian."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml:107
@@ -8306,11 +8242,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:123
-#, fuzzy
-#| msgid ""
-#| "If the target release has not been specified then APT simply assigns "
-#| "priority 100 to all installed package versions and priority 500 to all "
-#| "uninstalled package versions."
 msgid ""
 "If the target release has not been specified then APT simply assigns "
 "priority 100 to all installed package versions and priority 500 to all "
@@ -8318,9 +8249,11 @@ msgid ""
 "their <filename>Release</filename> files are marked as \"NotAutomatic: yes\" "
 "- these versions get the priority 1."
 msgstr ""
-"Se o lançamento destinado não foi especificado, então o APT simplesmente "
+"Se o lançamento de destino não foi especificado, então o APT simplesmente "
 "atribui prioridade 100 a todas as versões de pacotes instalados e prioridade "
-"500 e todas as versões de pacotes não instalados."
+"500 e todas as versões de pacotes não instalados, à excepção de versões que "
+"venham de arquivos cujos ficheiros <filename>Release</filename> estejam "
+"marcados como \"NotAutomatic: yes\" - estas versões ficam com prioridade 1."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:129
@@ -8513,32 +8446,25 @@ msgid ""
 "high priority to all versions available from the server identified by the "
 "hostname \"ftp.de.debian.org\""
 msgstr ""
+"Uma nota de atenção: a palavra chave usada aqui é \"<literal>origin</literal>"
+"\" que pode ser usada para corresponder a um nome de máquina. O seguinte "
+"registo irá atribuir uma alta prioridade a todas as versões disponíveis do "
+"servidor identificadas pelo nome de máquina \"ftp.de.debian.org\""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><programlisting>
 #: apt_preferences.5.xml:210
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Package: *\n"
-#| "Pin: origin \"\"\n"
-#| "Pin-Priority: 999\n"
+#, no-wrap
 msgid ""
 "Package: *\n"
 "Pin: origin \"ftp.de.debian.org\"\n"
 "Pin-Priority: 999\n"
 msgstr ""
 "Package: *\n"
-"Pin: origin \"\"\n"
+"Pin: origin \"ftp.de.debian.org\"\n"
 "Pin-Priority: 999\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
 #: apt_preferences.5.xml:214
-#, fuzzy
-#| msgid ""
-#| "A note of caution: the keyword used here is \"<literal>origin</literal>"
-#| "\".  This should not be confused with the Origin of a distribution as "
-#| "specified in a <filename>Release</filename> file.  What follows the "
-#| "\"Origin:\" tag in a <filename>Release</filename> file is not an Internet "
-#| "address but an author or vendor name, such as \"Debian\" or \"Ximian\"."
 msgid ""
 "This should <emphasis>not</emphasis> be confused with the Origin of a "
 "distribution as specified in a <filename>Release</filename> file.  What "
@@ -8546,12 +8472,11 @@ msgid ""
 "Internet address but an author or vendor name, such as \"Debian\" or \"Ximian"
 "\"."
 msgstr ""
-"Uma nota de atenção: a palavra chave usada aqui é \"<literal>origin</literal>"
-"\". Isto não deve ser confundido com a Origem de uma distribuição como "
-"especificada num ficheiro <filename>Release</filename>. O que representa a "
-"etiqueta \"Origin:\" num ficheiro <filename>Release</filename> não é um "
-"endereço de Internet mas um nome de autor ou marca, tal como \"Debian\" ou "
-"\"Ximian\"."
+"Isto <emphasis>não</emphasis> deve ser confundido com a Origem de uma "
+"distribuição como especificada num ficheiro <filename>Release</filename>. O "
+"que representa a etiqueta \"Origin:\" num ficheiro <filename>Release</"
+"filename> não é um endereço de Internet mas um nome de autor ou marca, tal "
+"como \"Debian\" ou \"Ximian\"."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
 #: apt_preferences.5.xml:219
@@ -8578,11 +8503,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
 #: apt_preferences.5.xml:228
-#, fuzzy
-#| msgid ""
-#| "The following record assigns a high priority to all package versions "
-#| "belonging to any distribution whose Codename is \"<literal>squeeze</"
-#| "literal>\"."
 msgid ""
 "The following record assigns a high priority to all package versions "
 "belonging to any distribution whose Codename is \"<literal>&testing-codename;"
@@ -8590,22 +8510,18 @@ msgid ""
 msgstr ""
 "O seguinte registo atribui uma alta prioridade a todas as versões de pacotes "
 "pertencentes a qualquer distribuição cujo nome de código é "
-"\"<literal>squeeze</literal>\"."
+"\"<literal>&testing-codename;</literal>\"."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><programlisting>
 #: apt_preferences.5.xml:232
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Package: *\n"
-#| "Pin: release n=squeeze\n"
-#| "Pin-Priority: 900\n"
+#, no-wrap
 msgid ""
 "Package: *\n"
 "Pin: release n=&testing-codename;\n"
 "Pin-Priority: 900\n"
 msgstr ""
 "Package: *\n"
-"Pin: release n=squeeze\n"
+"Pin: release n=&testing-codename;\n"
 "Pin-Priority: 900\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
@@ -8917,14 +8833,6 @@ msgstr "a linha <literal>Codename:</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:392
-#, fuzzy
-#| msgid ""
-#| "names the codename to which all the packages in the directory tree "
-#| "belong.  For example, the line \"Codename: squeeze\" specifies that all "
-#| "of the packages in the directory tree below the parent of the "
-#| "<filename>Release</filename> file belong to a version named "
-#| "<literal>squeeze</literal>.  Specifying this value in the APT preferences "
-#| "file would require the line:"
 msgid ""
 "names the codename to which all the packages in the directory tree belong.  "
 "For example, the line \"Codename: &testing-codename;\" specifies that all of "
@@ -8934,18 +8842,17 @@ msgid ""
 "preferences file would require the line:"
 msgstr ""
 "nomeia o nome de código a qual todos os pacotes na árvore de directórios "
-"pertencem. Por exemplo, a linha \"Codename: squeeze\" especifica que todos "
-"os pacotes na árvore de directórios abaixo do pai do ficheiro "
+"pertencem. Por exemplo, a linha \"Codename: &testing-codename;\" especifica "
+"que todos os pacotes na árvore de directórios abaixo do pai do ficheiro "
 "<filename>Release</filename> pertencem a uma versão chamada "
-"<literal>squeeze</literal>. Especificar este valor no ficheiro de "
+"<literal>&testing-codename;</literal>. Especificar este valor no ficheiro de "
 "preferências do APT requer a linha:"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><programlisting>
 #: apt_preferences.5.xml:401
-#, fuzzy, no-wrap
-#| msgid "Pin: release a=stable\n"
+#, no-wrap
 msgid "Pin: release n=&testing-codename;\n"
-msgstr "Pin: release a=stable\n"
+msgstr "Pin: release n=&testing-codename;\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:408
@@ -9054,17 +8961,6 @@ msgstr "Pin: release l=Debian\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:363
-#, fuzzy
-#| msgid ""
-#| "The <filename>Release</filename> file is normally found in the directory "
-#| "<filename>.../dists/<replaceable>dist-name</replaceable></filename>: for "
-#| "example, <filename>.../dists/stable/Release</filename>, or <filename>.../"
-#| "dists/woody/Release</filename>.  It consists of a single multi-line "
-#| "record which applies to <emphasis>all</emphasis> of the packages in the "
-#| "directory tree below its parent.  Unlike the <filename>Packages</"
-#| "filename> file, nearly all of the lines in a <filename>Release</filename> "
-#| "file are relevant for setting APT priorities: <placeholder type="
-#| "\"variablelist\" id=\"0\"/>"
 msgid ""
 "The <filename>Release</filename> file is normally found in the directory "
 "<filename>.../dists/<replaceable>dist-name</replaceable></filename>: for "
@@ -9079,9 +8975,9 @@ msgstr ""
 "O ficheiro <filename>Release</filename> fica normalmente no directório "
 "<filename>.../dists/<replaceable>nome da distribuição</replaceable></"
 "filename>: por exemplo, <filename>.../dists/stable/Release</filename>, ou "
-"<filename>.../dists/woody/Release</filename>. Consiste num único registo de "
-"várias linhas que se aplica a <emphasis>todos</emphasis> os pacotes na "
-"árvore de directórios sob o seu pai. Ao contrário do ficheiro "
+"<filename>.../dists/&stable-codename;/Release</filename>. Consiste num único "
+"registo de várias linhas que se aplica a <emphasis>todos</emphasis> os "
+"pacotes na árvore de directórios sob o seu pai. Ao contrário do ficheiro "
 "<filename>Packages</filename>, quase todas as linhas num ficheiro "
 "<filename>Release</filename> são relevantes para definir as prioridades do "
 "APT: <placeholder type=\"variablelist\" id=\"0\"/>"
@@ -9312,22 +9208,7 @@ msgstr "Acompanhando a evolução de um nome de código de lançamento"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><programlisting>
 #: apt_preferences.5.xml:600
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Explanation: Uninstall or do not install any Debian-originated package versions\n"
-#| "Explanation: other than those in the distribution codenamed with squeeze or sid\n"
-#| "Package: *\n"
-#| "Pin: release n=squeeze\n"
-#| "Pin-Priority: 900\n"
-#| "\n"
-#| "Explanation: Debian unstable is always codenamed with sid\n"
-#| "Package: *\n"
-#| "Pin: release a=sid\n"
-#| "Pin-Priority: 800\n"
-#| "\n"
-#| "Package: *\n"
-#| "Pin: release o=Debian\n"
-#| "Pin-Priority: -10\n"
+#, no-wrap
 msgid ""
 "Explanation: Uninstall or do not install any Debian-originated package versions\n"
 "Explanation: other than those in the distribution codenamed with &testing-codename; or sid\n"
@@ -9345,9 +9226,9 @@ msgid ""
 "Pin-Priority: -10\n"
 msgstr ""
 "Explicação: Desinstala ou não instala nenhumas versões de pacotes originais Debian\n"
-"Explicação: para além daquelas da distribuição com nome de código squeeze ou sid\n"
+"Explicação: para além daquelas da distribuição com nome de código &testing-codename; ou sid\n"
 "Package: *\n"
-"Pin: release n=squeeze\n"
+"Pin: release n=&testing-codename;\n"
 "Pin-Priority: 900\n"
 "\n"
 "Explicação: Debian unstable tem sempre o nome de código sid\n"
@@ -9387,12 +9268,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:617
-#, fuzzy
-#| msgid ""
-#| "With a suitable &sources-list; file and the above preferences file, any "
-#| "of the following commands will cause APT to upgrade to the latest version"
-#| "(s) in the release codenamed with <literal>squeeze</literal>.  "
-#| "<placeholder type=\"programlisting\" id=\"0\"/>"
 msgid ""
 "With a suitable &sources-list; file and the above preferences file, any of "
 "the following commands will cause APT to upgrade to the latest version(s) in "
@@ -9401,8 +9276,8 @@ msgid ""
 msgstr ""
 "Com um ficheiro &sources-list; apropriado e o ficheiro de preferências "
 "acima, qualquer dos seguintes comandos fará com que o APT actualize para a "
-"versão mais recente no lançamento com nome de código <literal>squeeze</"
-"literal>.  <placeholder type=\"programlisting\" id=\"0\"/>"
+"versão mais recente no lançamento com nome de código <literal>&testing-"
+"codename;</literal>.  <placeholder type=\"programlisting\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><programlisting>
 #: apt_preferences.5.xml:637
@@ -9412,15 +9287,6 @@ msgstr "apt-get install <replaceable>pacote</replaceable>/sid\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:628
-#, fuzzy
-#| msgid ""
-#| "The following command will cause APT to upgrade the specified package to "
-#| "the latest version from the <literal>sid</literal> distribution.  "
-#| "Thereafter, <command>apt-get upgrade</command> will upgrade the package "
-#| "to the most recent <literal>squeeze</literal> version if that is more "
-#| "recent than the installed version, otherwise, to the most recent "
-#| "<literal>sid</literal> version if that is more recent than the installed "
-#| "version.  <placeholder type=\"programlisting\" id=\"0\"/>"
 msgid ""
 "The following command will cause APT to upgrade the specified package to the "
 "latest version from the <literal>sid</literal> distribution.  Thereafter, "
@@ -9431,10 +9297,10 @@ msgid ""
 "<placeholder type=\"programlisting\" id=\"0\"/>"
 msgstr ""
 "O seguinte comando irá fazer com que o APT actualize o pacote especificado "
-"para a versão mais recente da distribuição <literal>sid</literal> "
-"distribution. Posteriormente, <command>apt-get upgrade</command> irá "
-"actualizar o pacote para a versão <literal>squeeze</literal> mais recente se "
-"essa for mais recente que a versão instalada, caso contrário, para a versão "
+"para a versão mais recente da distribuição <literal>sid</literal>. "
+"Posteriormente, <command>apt-get upgrade</command> irá actualizar o pacote "
+"para a versão <literal>&testing-codename;</literal> mais recente se essa for "
+"mais recente que a versão instalada, caso contrário, para a versão "
 "<literal>sid</literal> mais recente se essa for mais recente que a versão "
 "instalada. <placeholder type=\"programlisting\" id=\"0\"/>"
 
@@ -9644,18 +9510,14 @@ msgstr "Alguns exemplos:"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:114
-#, fuzzy, no-wrap
-#| msgid ""
-#| "deb http://http.us.debian.org/debian stable main contrib non-free\n"
-#| "deb http://http.us.debian.org/debian dists/stable-updates/\n"
-#| "   "
+#, no-wrap
 msgid ""
 "deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
 "deb http://security.debian.org/ &stable-codename;/updates main contrib non-free\n"
 "   "
 msgstr ""
-"deb http://http.us.debian.org/debian stable main contrib non-free\n"
-"deb http://http.us.debian.org/debian dists/stable-updates/\n"
+"deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
+"deb http://security.debian.org/ &stable-codename;/updates main contrib non-free\n"
 "   "
 
 #. type: Content of: <refentry><refsect1><title>
@@ -9858,23 +9720,18 @@ msgstr "deb http://archive.debian.org/debian-archive hamm main"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:208
-#, fuzzy
-#| msgid ""
-#| "Uses FTP to access the archive at ftp.debian.org, under the debian "
-#| "directory, and uses only the stable/contrib area."
 msgid ""
 "Uses FTP to access the archive at ftp.debian.org, under the debian "
 "directory, and uses only the &stable-codename;/contrib area."
 msgstr ""
-"Usa FTP para aceder ao arquivo em ftp.debian.org, sob o directório Debian, e "
-"usa apenas a área stable/contrib."
+"Usa FTP para aceder ao arquivo em ftp.debian.org, sob o directório debian, e "
+"usa apenas a área &stable-codename;/contrib."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:210
-#, fuzzy, no-wrap
-#| msgid "deb ftp://ftp.debian.org/debian stable contrib"
+#, no-wrap
 msgid "deb ftp://ftp.debian.org/debian &stable-codename; contrib"
-msgstr "deb ftp://ftp.debian.org/debian stable contrib"
+msgstr "deb ftp://ftp.debian.org/debian &stable-codename; contrib"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:212

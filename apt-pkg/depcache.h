@@ -186,7 +186,7 @@ class pkgDepCache : protected pkgCache::Namespace
    class DefaultRootSetFunc : public InRootSetFunc, public Configuration::MatchAgainstConfig
    {
    public:
-     DefaultRootSetFunc() : Configuration::MatchAgainstConfig("APT::NeverRemove") {};
+     DefaultRootSetFunc() : Configuration::MatchAgainstConfig("APT::NeverAutoRemove") {};
      virtual ~DefaultRootSetFunc() {};
 
      bool InRootSet(const pkgCache::PkgIterator &pkg) { return pkg.end() == true && Match(pkg.Name()); };

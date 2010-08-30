@@ -118,7 +118,10 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
    
    if (Type == Origin)
    {
-      OrSite = Data;
+      if (Data[0] == '"' && Data.end()[-1] == '"')
+	 OrSite = Data.substr(1, Data.length() - 2);
+      else
+	 OrSite = Data;
       return;
    }   
 }
@@ -259,10 +262,10 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
    if (Type == Origin)
    {
       if (OrSite.empty() == false) {
-	 if (File->Site == 0 || !ExpressionMatches(OrSite, File.Site()))
+	 if (File->Site == 0)
 	    return false;
       } else // so we are talking about file:// or status file
-	 if (strcmp(File.Site(),"") == 0 && File->Archive != 0) // skip the status file
+	 if (strcmp(File.Site(),"") == 0 && File->Archive != 0 && strcmp(File.Archive(),"now") == 0) // skip the status file
 	    return false;
       return (ExpressionMatches(OrSite, File.Site())); /* both strings match */
    }
