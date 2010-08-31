@@ -987,6 +987,23 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 
+               /* Ignore a target that is not a candidate
+                  This can happen if:
+                    installed package provides video-6
+                    candidate provides video-8
+                  now if a package Start breaks/conflicts video-6
+                  Start.AllTargets() will return the now-installed
+                  versions even though these are not candidates
+                  we can ignore them
+               */
+               if (Cache[Pkg].CandidateVerIter(Cache) != Ver)
+               {
+                  clog << "  Version " << Ver.VerStr() << " for "
+                       << Pkg.Name() << " is not a candidate, ignoring"
+                       << endl;
+                 continue;
+               }
+
 	       if (Debug == true)
 		  clog << "  Considering " << Pkg.FullName(false) << ' ' << (int)Scores[Pkg->ID] <<
 		  " as a solution to " << I.FullName(false) << ' ' << (int)Scores[I->ID] << endl;
