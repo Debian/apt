@@ -1097,7 +1097,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 
 		  if (Start->Type == pkgCache::Dep::DpkgBreaks)
 		  {
-		     // first, try upgradring the package, if that
+		     // first, try upgrading the package, if that
 		     // does not help, the breaks goes onto the
 		     // kill list
 		     // FIXME: use DoUpgrade(Pkg) instead?
@@ -1122,6 +1122,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  LEnd++;
 		  
 		  if (Start->Type != pkgCache::Dep::Conflicts &&
+                      Start->Type != pkgCache::Dep::DpkgBreaks &&
 		      Start->Type != pkgCache::Dep::Obsoletes)
 		     break;
 	       }
