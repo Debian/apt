@@ -998,9 +998,10 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
                */
                if (Cache[Pkg].CandidateVerIter(Cache) != Ver)
                {
-                  clog << "  Version " << Ver.VerStr() << " for "
-                       << Pkg.Name() << " is not a candidate, ignoring"
-                       << endl;
+                  if (Debug)
+                     clog << "  Version " << Ver.VerStr() << " for "
+                          << Pkg.Name() << " is not a candidate, ignoring"
+                          << endl;
                  continue;
                }
 
