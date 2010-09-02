@@ -641,7 +641,8 @@ void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
 bool pkgDPkgPM::OpenLog()
 {
    string const logdir = _config->FindDir("Dir::Log");
-   if(not FileExists(logdir))
+   if(CheckDirectory(logdir, logdir) == false)
+      // FIXME: use a better string after freeze
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
 
    // get current time

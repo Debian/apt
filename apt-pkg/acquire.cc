@@ -93,27 +93,6 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
    return true;
 }
 									/*}}}*/
-// Acquire::CheckDirectory - ensure that the given directory exists	/*{{{*/
-// ---------------------------------------------------------------------
-/* a small wrapper around CreateDirectory to check if it exists and to
-   remove the trailing "/apt/" from the parent directory if needed */
-bool pkgAcquire::CheckDirectory(string const &Parent, string const &Path) const
-{
-   if (DirectoryExists(Path) == true)
-      return true;
-
-   size_t const len = Parent.size();
-   if (len > 5 && Parent.find("/apt/", len - 6, 5) == len - 5)
-   {
-      if (CreateDirectory(Parent.substr(0,len-5), Path) == true)
-	 return true;
-   }
-   else if (CreateDirectory(Parent, Path) == true)
-      return true;
-
-   return false;
-}
-									/*}}}*/
 // Acquire::~pkgAcquire	- Destructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* Free our memory, clean up the queues (destroy the workers) */

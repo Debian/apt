@@ -88,8 +88,8 @@ setupenvironment() {
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive keys
 	cd rootdir
-	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d var/cache
-	mkdir -p var/log/apt var/lib/apt
+	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
+	mkdir -p var/cache var/lib var/log
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	local STATUSFILE=$(echo "$(basename $0)" | sed 's/^test-/status-/')
 	if [ -f "${TESTDIR}/${STATUSFILE}" ]; then

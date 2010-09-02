@@ -362,14 +362,6 @@ class pkgAcquire
    private:
    /** \brief FD of the Lock file we acquire in Setup (if any) */
    int LockFD;
-
-   /** \brief Ensure the existence of the given Path
-    *
-    *  \param Parent directory of the Path directory - a trailing
-    *  /apt/ will be removed before CreateDirectory call.
-    *  \param Path which should exist after (successful) call
-    */
-   bool CheckDirectory(string const &Parent, string const &Path) const;
 };
 
 /** \brief Represents a single download source from which an item

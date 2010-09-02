@@ -40,8 +40,11 @@ apt (0.8.1) UNRELEASED; urgency=low
     - let the pin origin actually work as advertised in the manpage
       which means "" are optional and pinning a local archive does
       work - even if it is a non-flat archive (Closes: #594435)
+  * apt-pkg/deb/dpkgpm.cc:
+    - create Dir::Log if needed to support /var/log as tmpfs or similar,
+      inspired by Thomas Bechtold, thanks! (Closes: #523919, LP: #220239)
 
- -- Michael Vogt <mvo@debian.org>  Mon, 30 Aug 2010 11:53:30 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 02 Sep 2010 12:41:32 +0200
 
 apt (0.8.0) unstable; urgency=low
 
