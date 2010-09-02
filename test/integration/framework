@@ -72,6 +72,9 @@ aptconfig() { runapt apt-config $*; }
 aptcache() { runapt apt-cache $*; }
 aptget() { runapt apt-get $*; }
 aptftparchive() { runapt apt-ftparchive $*; }
+dpkg() {
+	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
+}
 
 setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
@@ -228,6 +231,10 @@ buildaptarchive() {
 
 createaptftparchiveconfig() {
 	local ARCHS="$(find pool/ -name '*.deb' | grep -oE '_[a-z0-9-]+\.deb$' | sort | uniq | sed -e '/^_all.deb$/ d' -e 's#^_\([a-z0-9-]*\)\.deb$#\1#' | tr '\n' ' ')"
+	if [ -z "$ARCHS" ]; then
+		# the pool is empty, so we will operate on faked packages - let us use the configured archs
+		ARCHS="$(aptconfig dump | grep APT::Architecture | cut -d'"' -f 2 | sed '/^$/ d' | sort | uniq | tr '\n' ' ')"
+	fi
 	echo -n 'Dir {
 	ArchiveDir "' >> ftparchive.conf
 	echo -n $(readlink -f .) >> ftparchive.conf
