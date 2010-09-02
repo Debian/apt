@@ -91,7 +91,7 @@ setupenvironment() {
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
 	mkdir -p var/cache var/lib var/log
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
-	local STATUSFILE=$(echo "$(basename $0)" | sed 's/^test-/status-/')
+	local STATUSFILE=$(echo "$(basename $0)" | sed -e 's/^test-/status-/' -e 's/^skip-/status-/')
 	if [ -f "${TESTDIR}/${STATUSFILE}" ]; then
 		cp "${TESTDIR}/${STATUSFILE}" var/lib/dpkg/status
 	else
@@ -101,7 +101,7 @@ setupenvironment() {
 	mkdir -p usr/lib/apt
 	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
 	cd ..
-	local PACKAGESFILE=$(echo "$(basename $0)" | sed 's/^test-/Packages-/')
+	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
 	if [ -f "${TESTDIR}/${PACKAGESFILE}" ]; then
 		cp "${TESTDIR}/${PACKAGESFILE}" aptarchive/Packages
 	else
