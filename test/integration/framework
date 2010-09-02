@@ -79,7 +79,7 @@ dpkg() {
 setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
 	local TESTDIR=$(readlink -f $(dirname $0))
-	msgninfo "Preparing environment for ${CCMD}$0${CINFO} in ${TMPWORKINGDIRECTORY}… "
+	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "
 	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
 	local OLDWORKINGDIRECTORY=$(pwd)
@@ -304,7 +304,7 @@ buildaptftparchivedirectorystructure() {
 }
 
 buildaptarchivefromincoming() {
-	msginfo "Build APT archive for ${CCMD}$0${CINFO} based on incoming packages…"
+	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on incoming packages…"
 	cd aptarchive
 	[ -e pool ] || ln -s ../incoming pool
 	[ -e ftparchive.conf ] || createaptftparchiveconfig
@@ -321,7 +321,7 @@ buildaptarchivefromincoming() {
 }
 
 buildaptarchivefromfiles() {
-	msginfo "Build APT archive for ${CCMD}$0${CINFO} based on prebuild files…"
+	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
 	cd aptarchive
 	if [ -f Packages ]; then
 		msgninfo "\tPackages file… "
