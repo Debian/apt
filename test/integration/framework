@@ -483,7 +483,7 @@ N: No packages found"
 	local ARCH=$(dpkg-architecture -qDEB_HOST_ARCH_CPU)
 	eval `apt-config shell ARCH APT::Architecture`
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
-	aptcache show $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 	rm $COMPAREFILE
 }
 
