@@ -987,22 +987,21 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 
-               /* Ignore a target that is not a candidate
-                  This can happen if:
-                    installed package provides video-6
-                    candidate provides video-8
-                  now if a package Start breaks/conflicts video-6
-                  Start.AllTargets() will return the now-installed
-                  versions even though these are not candidates
-                  we can ignore them
-               */
-               if (Cache[Pkg].CandidateVerIter(Cache) != Ver)
+               /* This is a conflicts, and the version we are looking
+                  at is not the currently selected version of the 
+                  package, which means it is not necessary to 
+                  remove/keep */
+               if (Cache[Pkg].InstallVer != Ver &&
+                   (Start->Type == pkgCache::Dep::Conflicts ||
+                    Start->Type == pkgCache::Dep::DpkgBreaks ||
+                    Start->Type == pkgCache::Dep::Obsoletes)) 
                {
-                  if (Debug)
-                     clog << "  Version " << Ver.VerStr() << " for "
-                          << Pkg.Name() << " is not a candidate, ignoring"
+                  if (Debug) 
+                     clog << "  Conflicts//Breaks against version " 
+                          << Ver.VerStr() << " for " << Pkg.Name() 
+                          << " but that is not InstVer, ignoring"
                           << endl;
-                 continue;
+                  continue;
                }
 
 	       if (Debug == true)
@@ -1087,22 +1086,14 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       }
 	       else
 	       {
-		  /* This is a conflicts, and the version we are looking
-		     at is not the currently selected version of the 
-		     package, which means it is not necessary to 
-		     remove/keep */
-		  if (Cache[Pkg].InstallVer != Ver &&
-		      (Start->Type == pkgCache::Dep::Conflicts ||
-		       Start->Type == pkgCache::Dep::Obsoletes))
-		     continue;
-
 		  if (Start->Type == pkgCache::Dep::DpkgBreaks)
 		  {
 		     // first, try upgrading the package, if that
 		     // does not help, the breaks goes onto the
 		     // kill list
+                     //
 		     // FIXME: use DoUpgrade(Pkg) instead?
-		     if (Cache[End] & pkgDepCache::DepGCVer) 
+		     if (Cache[End] & pkgDepCache::DepGCVer)
 		     {
 			if (Debug)
 			   clog << "  Upgrading " << Pkg.FullName(false) << " due to Breaks field in " << I.FullName(false) << endl;
