@@ -32,12 +32,14 @@ class debListParser : public pkgCacheGenerator::ListParser
    pkgTagSection Section;
    unsigned long iOffset;
    string Arch;
-   
+   std::vector<std::string> Architectures;
+   bool MultiArchEnabled;
+
    unsigned long UniqFindTagWrite(const char *Tag);
-   bool ParseStatus(pkgCache::PkgIterator Pkg,pkgCache::VerIterator Ver);
-   bool ParseDepends(pkgCache::VerIterator Ver,const char *Tag,
+   bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
+   bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);
-   bool ParseProvides(pkgCache::VerIterator Ver);
+   bool ParseProvides(pkgCache::VerIterator &Ver);
    static bool GrabWord(string Word,WordList *List,unsigned char &Out);
    
    public:
@@ -46,28 +48,31 @@ class debListParser : public pkgCacheGenerator::ListParser
       
    // These all operate against the current section
    virtual string Package();
+   virtual string Architecture();
+   virtual bool ArchitectureAll();
    virtual string Version();
-   virtual bool NewVersion(pkgCache::VerIterator Ver);
+   virtual bool NewVersion(pkgCache::VerIterator &Ver);
    virtual string Description();
    virtual string DescriptionLanguage();
    virtual MD5SumValue Description_md5();
    virtual unsigned short VersionHash();
-   virtual bool UsePackage(pkgCache::PkgIterator Pkg,
-			   pkgCache::VerIterator Ver);
+   virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
+			   pkgCache::VerIterator &Ver);
    virtual unsigned long Offset() {return iOffset;};
    virtual unsigned long Size() {return Section.size();};
 
    virtual bool Step();
    
-   bool LoadReleaseInfo(pkgCache::PkgFileIterator FileI,FileFd &File,
+   bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
 			string section);
    
    static const char *ParseDepends(const char *Start,const char *Stop,
 			    string &Package,string &Ver,unsigned int &Op,
-			    bool ParseArchFlags = false);
+			    bool const &ParseArchFlags = false,
+			    bool const &StripMultiArch = false);
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
-   debListParser(FileFd *File);
+   debListParser(FileFd *File, string const &Arch = "");
 };
 
 #endif

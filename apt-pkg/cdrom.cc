@@ -6,6 +6,8 @@
 #include<apt-pkg/cdromutl.h>
 #include<apt-pkg/strutl.h>
 #include<apt-pkg/cdrom.h>
+#include<apt-pkg/aptconfiguration.h>
+
 #include<sstream>
 #include<fstream>
 #include<config.h>
@@ -216,33 +218,23 @@ int pkgCdrom::Score(string Path)
 /* Here we drop everything that is not this machines arch */
 bool pkgCdrom::DropBinaryArch(vector<string> &List)
 {
-   char S[300];
-   snprintf(S,sizeof(S),"/binary-%s/",
-	    _config->Find("Apt::Architecture").c_str());
-   
+
    for (unsigned int I = 0; I < List.size(); I++)
    {
       const char *Str = List[I].c_str();
-      
-      const char *Res;
-      if ((Res = strstr(Str,"/binary-")) == 0)
+      const char *Start, *End;
+      if ((Start = strstr(Str,"/binary-")) == 0)
 	 continue;
 
-      // Weird, remove it.
-      if (strlen(Res) < strlen(S))
-      {
-	 List.erase(List.begin() + I);
-	 I--;
-	 continue;
-      }
-	  
-      // See if it is our arch
-      if (stringcmp(Res,Res + strlen(S),S) == 0)
-	 continue;
-      
-      // Erase it
+      // Between Start and End is the architecture
+      Start += 8;
+      if ((End = strstr(Start,"/")) != 0 && Start != End &&
+          APT::Configuration::checkArchitecture(string(Start, End)) == true)
+	 continue; // okay, architecture is accepted
+
+      // not accepted -> Erase it
       List.erase(List.begin() + I);
-      I--;
+      --I; // the next entry is at the same index after the erase
    }
    
    return true;
@@ -289,7 +281,8 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 	 List[J] = string();
       }
    }  
- 
+   delete[] Inodes;
+
    // Wipe erased entries
    for (unsigned int I = 0; I < List.size();)
    {
@@ -390,7 +383,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
 
    Out.close();
    
-   rename(DFile.c_str(),string(DFile + '~').c_str());
+   link(DFile.c_str(),string(DFile + '~').c_str());
    if (rename(NewFile.c_str(),DFile.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   DFile.c_str(),DFile.c_str());

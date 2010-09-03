@@ -66,6 +66,9 @@
 #ifndef PKGLIB_ACQUIRE_H
 #define PKGLIB_ACQUIRE_H
 
+#include <apt-pkg/macros.h>
+#include <apt-pkg/weakptr.h>
+
 #include <vector>
 #include <string>
 
@@ -161,7 +164,7 @@ class pkgAcquire
      QueueAccess} QueueMode;
 
    /** \brief If \b true, debugging information will be dumped to std::clog. */
-   bool Debug;
+   bool const Debug;
    /** \brief If \b true, a download is currently in progress. */
    bool Running;
 
@@ -320,27 +323,34 @@ class pkgAcquire
    /** \return the total size in bytes of all the items included in
     *  this download.
     */
-   double TotalNeeded();
+   unsigned long long TotalNeeded();
 
    /** \return the size in bytes of all non-local items included in
     *  this download.
     */
-   double FetchNeeded();
+   unsigned long long FetchNeeded();
 
    /** \return the amount of data to be fetched that is already
     *  present on the filesystem.
     */
-   double PartialPresent();
+   unsigned long long PartialPresent();
 
-   /** \brief Construct a new pkgAcquire.
+   /** \brief Delayed constructor
     *
-    *  \param Log The progress indicator associated with this
-    *  download, or \b NULL for none.  This object is not owned by the
+    *  \param Progress indicator associated with this download or
+    *  \b NULL for none.  This object is not owned by the
     *  download process and will not be deleted when the pkgAcquire
     *  object is destroyed.  Naturally, it should live for at least as
     *  long as the pkgAcquire object does.
+    *  \param Lock defines a lock file that should be acquired to ensure
+    *  only one Acquire class is in action at the time or an empty string
+    *  if no lock file should be used.
     */
-   pkgAcquire(pkgAcquireStatus *Log = 0);
+   bool Setup(pkgAcquireStatus *Progress = NULL, string const &Lock = "");
+
+   /** \brief Construct a new pkgAcquire. */
+   pkgAcquire(pkgAcquireStatus *Log) __deprecated;
+   pkgAcquire();
 
    /** \brief Destroy this pkgAcquire object.
     *
@@ -348,6 +358,10 @@ class pkgAcquire
     *  this download.
     */
    virtual ~pkgAcquire();
+
+   private:
+   /** \brief FD of the Lock file we acquire in Setup (if any) */
+   int LockFD;
 };
 
 /** \brief Represents a single download source from which an item
@@ -355,7 +369,7 @@ class pkgAcquire
  *
  *  An item may have several assocated ItemDescs over its lifetime.
  */
-struct pkgAcquire::ItemDesc
+struct pkgAcquire::ItemDesc : public WeakPointable
 {
    /** \brief The URI from which to download this item. */
    string URI;

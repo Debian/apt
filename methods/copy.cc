@@ -52,7 +52,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    
    // See if the file exists
    FileFd From(File,FileFd::ReadOnly);
-   FileFd To(Itm->DestFile,FileFd::WriteEmpty);
+   FileFd To(Itm->DestFile,FileFd::WriteAtomic);
    To.EraseOnFailure();
    if (_error->PendingError() == true)
    {
@@ -84,6 +84,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd.Fd(), Fd.Size());
    Res.TakeHashes(Hash);
+
    URIDone(Res);
    return true;
 }

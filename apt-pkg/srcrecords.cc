@@ -77,7 +77,7 @@ bool pkgSrcRecords::Restart()
 /* This searches on both source package names and output binary names and
    returns the first found. A 'cursor' like system is used to allow this
    function to be called multiple times to get successive entries */
-pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool SrcOnly)
+pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool const &SrcOnly)
 {
    if (Current == Files.end())
       return 0;
@@ -116,7 +116,7 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool SrcOnly)
 // Parser::BuildDepType - Convert a build dep to a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-const char *pkgSrcRecords::Parser::BuildDepType(unsigned char Type)
+const char *pkgSrcRecords::Parser::BuildDepType(unsigned char const &Type)
 {
    const char *fields[] = {"Build-Depends", 
                            "Build-Depends-Indep",

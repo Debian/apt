@@ -13,7 +13,7 @@
 
 #define MAXLEN 360
 
-#include <iostream>
+#include <apt-pkg/hashes.h>
 
 using std::cout;
 using std::endl;
@@ -167,7 +167,6 @@ class HttpMethod : public pkgAcqMethod
    /** \brief Try to AutoDetect the proxy */
    bool AutoDetectProxy();
 
-   virtual bool Fetch(FetchItem *);
    virtual bool Configuration(string Message);
    
    // In the event of a fatal signal this file will be closed and timestamped.
@@ -175,6 +174,9 @@ class HttpMethod : public pkgAcqMethod
    static int FailFd;
    static time_t FailTime;
    static void SigTerm(int);
+
+   protected:
+   virtual bool Fetch(FetchItem *);
    
    string NextURI;
    string AutoDetectProxyCmd;

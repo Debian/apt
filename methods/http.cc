@@ -553,8 +553,14 @@ bool ServerState::HeaderLine(string Line)
       // Evil servers return no version
       if (Line[4] == '/')
       {
-	 if (sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,
-		    &Result,Code) != 4)
+	 int const elements = sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,&Result,Code);
+	 if (elements == 3)
+	 {
+	    Code[0] = '\0';
+	    if (Debug == true)
+	       clog << "HTTP server doesn't give Reason-Phrase for " << Result << std::endl;
+	 }
+	 else if (elements != 4)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
       else
@@ -631,7 +637,7 @@ bool ServerState::HeaderLine(string Line)
    
    if (stringcasecmp(Tag,"Last-Modified:") == 0)
    {
-      if (StrToTime(Val,Date) == false)
+      if (RFC1123StrToTime(Val.c_str(), Date) == false)
 	 return _error->Error(_("Unknown date format"));
       return true;
    }
@@ -914,13 +920,7 @@ bool HttpMethod::ServerDie(ServerState *Srv)
 // HttpMethod::DealWithHeaders - Handle the retrieved header data	/*{{{*/
 // ---------------------------------------------------------------------
 /* We look at the header data we got back from the server and decide what
-   to do. Returns 
-     0 - File is open,
-     1 - IMS hit
-     3 - Unrecoverable error 
-     4 - Error with error content page
-     5 - Unrecoverable non-server error (close the connection) 
-     6 - Try again with a new or changed URI
+   to do. Returns DealWithHeadersResult (see http.h for details).
  */
 HttpMethod::DealWithHeadersResult
 HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
@@ -959,6 +959,9 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       failure */
    if (Srv->Result < 200 || Srv->Result >= 300)
    {
+      char err[255];
+      snprintf(err,sizeof(err)-1,"HttpError%i",Srv->Result);
+      SetFailReason(err);
       _error->Error("%u %s",Srv->Result,Srv->Code);
       if (Srv->HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
@@ -1371,16 +1374,5 @@ bool HttpMethod::AutoDetectProxy()
    return true;
 }
 									/*}}}*/
-
-int main()
-{
-   setlocale(LC_ALL, "");
-   // ignore SIGPIPE, this can happen on write() if the socket
-   // closes the connection (this is dealt with via ServerDie())
-   signal(SIGPIPE, SIG_IGN);
-
-   HttpMethod Mth;
-   return Mth.Loop();
-}
 
 

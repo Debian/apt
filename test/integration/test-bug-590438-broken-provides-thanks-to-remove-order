@@ -1,0 +1,98 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+setupaptarchive
+
+pkgbasefile="Package: base-files
+Status: install ok installed
+Essential: yes
+Priority: required
+Section: admin
+Installed-Size: 472
+Maintainer: Santiago Vila <sanvila@debian.org>
+Architecture: i386
+Version: 5.8
+Replaces: base, dpkg (<= 1.15.0), miscutils
+Provides: base
+Filename: pool/main/b/base-files/base-files_5.8_i386.deb
+Size: 73986
+MD5sum: 8489687ce10e656babd467c9ee389349
+Description-de: Verschiedene Dateien für das Basis-System von Debian"
+
+predependsgawk() {
+# 	rm rootdir/var/cache/apt/*.bin
+	cp $TESTDIR/$(echo "$(basename $0)" | sed 's/test-/status-/') rootdir/var/lib/dpkg/status
+	echo "$pkgbasefile
+Pre-Depends: $1
+" >> rootdir/var/lib/dpkg/status
+	testequal "Inst gawk (1:3.1.7.dfsg-5 localhost [i386])
+Conf gawk (1:3.1.7.dfsg-5 localhost [i386])
+Remv mawk [1.3.3-15]" aptget install gawk mawk- -sqq -o PreDepends=$(echo "$1" | sed 's/ //g')
+}
+
+predependsgawk "gawk | mawk"
+predependsgawk "mawk | gawk"
+
+predependsgawk "aawk | mawk | gawk"
+predependsgawk "aawk | gawk | mawk"
+
+predependsgawk "gawk | awk"
+predependsgawk "aawk | gawk | awk"
+
+predependsgawk "mawk | awk"
+
+predependsgawk "awk | gawk"
+predependsgawk "awk | gawk | aawk"
+
+predependsgawk "awk | mawk"
+
+predependsgawk "aawk | awk"
+predependsgawk "awk | aawk"
+
+predependsgawk "awk"
+
+predependsgawk2() {
+# 	rm rootdir/var/cache/apt/*.bin
+	cp $TESTDIR/$(echo "$(basename $0)" | sed 's/test-/status-/') rootdir/var/lib/dpkg/status
+	echo "$pkgbasefile
+Pre-Depends: $1
+" >> rootdir/var/lib/dpkg/status
+	testequalor2 "Inst coolstuff (1-1 localhost [all])
+Conf coolstuff (1-1 localhost [all])
+Inst gawk2 (1:3.1.7.dfsg-5 localhost [i386])
+Conf gawk2 (1:3.1.7.dfsg-5 localhost [i386])
+Remv mawk [1.3.3-15]" "Inst coolstuff (1-1 localhost [all])
+Inst gawk2 (1:3.1.7.dfsg-5 localhost [i386])
+Conf coolstuff (1-1 localhost [all])
+Conf gawk2 (1:3.1.7.dfsg-5 localhost [i386])
+Remv mawk [1.3.3-15]" aptget install gawk2 mawk- -sqq -o PreDepends=$(echo "$1" | sed 's/ //g')
+}
+
+predependsgawk2 "gawk2 | mawk"
+predependsgawk2 "mawk | gawk2"
+
+predependsgawk2 "aawk | mawk | gawk2"
+predependsgawk2 "aawk | gawk2 | mawk"
+
+predependsgawk2 "gawk2 | awk"
+predependsgawk2 "aawk | gawk2 | awk"
+
+predependsgawk2 "mawk | awk"
+
+predependsgawk2 "awk | gawk2"
+predependsgawk2 "awk | gawk2 | aawk"
+
+predependsgawk2 "awk | mawk"
+
+predependsgawk2 "aawk | awk"
+predependsgawk2 "awk | aawk"
+
+predependsgawk2 "awk"
+
+
+# aptget install gawk2 mawk- -s #-o Debug::pkgOrderList=1 #-o Debug::pkgPackageManager=1

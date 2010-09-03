@@ -18,6 +18,10 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <fnmatch.h>
+#include <sys/types.h>
+#include <regex.h>
+
 									/*}}}*/
 
 // VersionMatch::pkgVersionMatch - Constructor				/*{{{*/
@@ -100,6 +104,8 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 	    RelLabel = Fragments[J]+2;
 	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"c=") == 0)
 	    RelComponent = Fragments[J]+2;
+	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"b=") == 0)
+	    RelArchitecture = Fragments[J]+2;
       }
 
       if (RelVerStr.end()[-1] == '*')
@@ -112,7 +118,10 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
    
    if (Type == Origin)
    {
-      OrSite = Data;
+      if (Data[0] == '"' && Data.length() >= 2 && Data.end()[-1] == '"')
+	 OrSite = Data.substr(1, Data.length() - 2);
+      else
+	 OrSite = Data;
       return;
    }   
 }
@@ -149,6 +158,8 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
       {
 	 if (MatchVer(Ver.VerStr(),VerStr,VerPrefixMatch) == true)
 	    return Ver;
+	 if (ExpressionMatches(VerStr, Ver.VerStr()) == true)
+	    return Ver;
 	 continue;
       }
       
@@ -159,6 +170,36 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
       
    // This will be Ended by now.
    return Ver;
+}
+
+#ifndef FNM_CASEFOLD
+#define FNM_CASEFOLD 0
+#endif
+
+bool pkgVersionMatch::ExpressionMatches(const char *pattern, const char *string)
+{
+   if (pattern[0] == '/') {
+      bool res = false;
+      size_t length = strlen(pattern);
+      if (pattern[length - 1] == '/') {
+	 regex_t preg;
+	 char *regex = strdup(pattern + 1);
+	 regex[length - 2] = '\0';
+	 if (regcomp(&preg, regex, REG_EXTENDED | REG_ICASE) != 0) {
+	    _error->Warning("Invalid regular expression: %s", regex);
+	 } else if (regexec(&preg, string, 0, NULL, 0) == 0) {
+	    res = true;
+	 }
+	 free(regex);
+	 regfree(&preg);
+	 return res;
+      }
+   }
+   return fnmatch(pattern, string, FNM_CASEFOLD) == 0;
+}
+bool pkgVersionMatch::ExpressionMatches(const std::string& pattern, const char *string)
+{
+    return ExpressionMatches(pattern.c_str(), string);
 }
 									/*}}}*/
 // VersionMatch::FileMatch - Match against an index file		/*{{{*/
@@ -178,38 +219,42 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
       if (RelVerStr.empty() == true && RelOrigin.empty() == true &&
 	  RelArchive.empty() == true && RelLabel.empty() == true &&
 	  RelRelease.empty() == true && RelCodename.empty() == true &&
-	  RelComponent.empty() == true)
+	  RelComponent.empty() == true && RelArchitecture.empty() == true)
 	 return false;
 
       if (RelVerStr.empty() == false)
 	 if (File->Version == 0 ||
-	     MatchVer(File.Version(),RelVerStr,RelVerPrefixMatch) == false)
+	     (MatchVer(File.Version(),RelVerStr,RelVerPrefixMatch) == false &&
+	      ExpressionMatches(RelVerStr, File.Version()) == false))
 	    return false;
       if (RelOrigin.empty() == false)
-	 if (File->Origin == 0 ||
-	     stringcasecmp(RelOrigin,File.Origin()) != 0)
+	 if (File->Origin == 0 || !ExpressionMatches(RelOrigin,File.Origin()))
 	    return false;
       if (RelArchive.empty() == false)
 	 if (File->Archive == 0 ||
-	     stringcasecmp(RelArchive,File.Archive()) != 0)
+	     !ExpressionMatches(RelArchive,File.Archive()))
             return false;
       if (RelCodename.empty() == false)
 	 if (File->Codename == 0 ||
-	     stringcasecmp(RelCodename,File.Codename()) != 0)
+	     !ExpressionMatches(RelCodename,File.Codename()))
             return false;
       if (RelRelease.empty() == false)
 	 if ((File->Archive == 0 ||
-	     stringcasecmp(RelRelease,File.Archive()) != 0) &&
+	     !ExpressionMatches(RelRelease,File.Archive())) &&
              (File->Codename == 0 ||
-	      stringcasecmp(RelRelease,File.Codename()) != 0))
+	      !ExpressionMatches(RelRelease,File.Codename())))
 	       return false;
       if (RelLabel.empty() == false)
 	 if (File->Label == 0 ||
-	     stringcasecmp(RelLabel,File.Label()) != 0)
+	     !ExpressionMatches(RelLabel,File.Label()))
 	    return false;
       if (RelComponent.empty() == false)
 	 if (File->Component == 0 ||
-	     stringcasecmp(RelComponent,File.Component()) != 0)
+	     !ExpressionMatches(RelComponent,File.Component()))
+	    return false;
+      if (RelArchitecture.empty() == false)
+	 if (File->Architecture == 0 ||
+	     !ExpressionMatches(RelArchitecture,File.Architecture()))
 	    return false;
       return true;
    }
@@ -217,12 +262,12 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
    if (Type == Origin)
    {
       if (OrSite.empty() == false) {
-	 if (File->Site == 0 || OrSite != File.Site())
+	 if (File->Site == 0)
 	    return false;
       } else // so we are talking about file:// or status file
-	 if (strcmp(File.Site(),"") == 0 && File->Archive != 0) // skip the status file
+	 if (strcmp(File.Site(),"") == 0 && File->Archive != 0 && strcmp(File.Archive(),"now") == 0) // skip the status file
 	    return false;
-      return (OrSite == File.Site());		/* both strings match */
+      return (ExpressionMatches(OrSite, File.Site())); /* both strings match */
    }
 
    return false;

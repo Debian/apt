@@ -115,11 +115,15 @@ bool pkgPolicy::InitDefaults()
 // ---------------------------------------------------------------------
 /* Evaluate the package pins and the default list to deteremine what the
    best package is. */
-pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
+pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pkg)
 {
    // Look for a package pin and evaluate it.
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
+
+   // Alternatives in case we can not find our package pin (Bug#512318).
+   signed MaxAlt = 0;
+   pkgCache::VerIterator PrefAlt;
 
    // no package = no candidate version
    if (Pkg.end() == true)
@@ -143,6 +147,16 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
     */
    for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; Ver++)
    {
+      /* Lets see if this version is the installed version */
+      bool instVer = (Pkg.CurrentVer() == Ver);
+      if (Ver.Pseudo() == true && instVer == false)
+      {
+	 pkgCache::PkgIterator const allPkg = Ver.ParentPkg().Group().FindPkg("all");
+	 if (allPkg->CurrentVer != 0 && allPkg.CurrentVer()->Hash == Ver->Hash &&
+	     strcmp(allPkg.CurVersion(), Ver.VerStr()) == 0)
+	    instVer = true;
+      }
+
       for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; VF++)
       {
 	 /* If this is the status file, and the current version is not the
@@ -151,18 +165,23 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 	    out bogus entries that may be due to config-file states, or
 	    other. */
 	 if ((VF.File()->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource &&
-	     Pkg.CurrentVer() != Ver)
+	     instVer == false)
 	    continue;
-	 	 	 
+
 	 signed Prio = PFPriority[VF.File()->ID];
 	 if (Prio > Max)
 	 {
 	    Pref = Ver;
 	    Max = Prio;
+	 }
+	 if (Prio > MaxAlt)
+	 {
+	    PrefAlt = Ver;
+	    MaxAlt = Prio;
 	 }	 
       }      
       
-      if (Pkg.CurrentVer() == Ver && Max < 1000)
+      if (instVer == true && Max < 1000)
       {
 	 /* Elevate our current selection (or the status file itself)
 	    to the Pseudo-status priority. */
@@ -175,6 +194,12 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 	    break;
       }            
    }
+   // If we do not find our candidate, use the one with the highest pin.
+   // This means that if there is a version available with pin > 0; there
+   // will always be a candidate (Closes: #512318)
+   if (!Pref.IsGood() && MaxAlt > 0)
+       Pref = PrefAlt;
+
    return Pref;
 }
 									/*}}}*/
@@ -187,49 +212,51 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator Pkg)
 void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 			  string Data,signed short Priority)
 {
-   Pin *P = 0;
-   
    if (Name.empty() == true)
-      P = &*Defaults.insert(Defaults.end(),PkgPin());
-   else
    {
-      // Get a spot to put the pin
-      pkgCache::PkgIterator Pkg = Cache->FindPkg(Name);
-      if (Pkg.end() == true)
+      Pin *P = &*Defaults.insert(Defaults.end(),PkgPin());
+      P->Type = Type;
+      P->Priority = Priority;
+      P->Data = Data;
+      return;
+   }
+
+   // Get a spot to put the pin
+   pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
+   for (pkgCache::PkgIterator Pkg = Grp.FindPkg("any");
+	Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
+   {
+      Pin *P = 0;
+      if (Pkg.end() == false)
+	 P = Pins + Pkg->ID;
+      else
       {
 	 // Check the unmatched table
-	 for (vector<PkgPin>::iterator I = Unmatched.begin(); 
+	 for (vector<PkgPin>::iterator I = Unmatched.begin();
 	      I != Unmatched.end() && P == 0; I++)
 	    if (I->Pkg == Name)
 	       P = &*I;
-	 
+
 	 if (P == 0)
-	    P = &*Unmatched.insert(Unmatched.end(),PkgPin());      
+	    P = &*Unmatched.insert(Unmatched.end(),PkgPin());
       }
-      else
-      {
-	 P = Pins + Pkg->ID;
-      }      
+      P->Type = Type;
+      P->Priority = Priority;
+      P->Data = Data;
    }
-   
-   // Set..
-   P->Type = Type;
-   P->Priority = Priority;
-   P->Data = Data;
 }
 									/*}}}*/
 // Policy::GetMatch - Get the matching version for a package pin	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator Pkg)
+pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator const &Pkg)
 {
    const Pin &PPkg = Pins[Pkg->ID];
-   if (PPkg.Type != pkgVersionMatch::None)
-   {
-      pkgVersionMatch Match(PPkg.Data,PPkg.Type);
-      return Match.Find(Pkg);
-   }
-   return pkgCache::VerIterator(*Pkg.Cache());
+   if (PPkg.Type == pkgVersionMatch::None)
+      return pkgCache::VerIterator(*Pkg.Cache());
+
+   pkgVersionMatch Match(PPkg.Data,PPkg.Type);
+   return Match.Find(Pkg);
 }
 									/*}}}*/
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
@@ -274,9 +301,9 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
    if (Dir.empty() == true)
       Dir = _config->FindDir("Dir::Etc::PreferencesParts");
 
-   if (FileExists(Dir) == false)
+   if (DirectoryExists(Dir) == false)
    {
-      _error->WarningE("FileExists",_("Unable to read %s"),Dir.c_str());
+      _error->WarningE("DirectoryExists",_("Unable to read %s"),Dir.c_str());
       return true;
    }
 

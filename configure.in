@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.7.25.4")
+AC_DEFINE_UNQUOTED(VERSION,"0.7.26~exp6")
 PACKAGE="apt"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_SUBST(PACKAGE)
@@ -82,6 +82,10 @@ AC_CHECK_LIB(curl, curl_easy_init,
 )
 
 AC_SUBST(BDBLIB)
+
+AC_CHECK_LIB(z, gzopen,
+	[AC_CHECK_HEADER(zlib.h, [], AC_MSG_ERROR([failed: zlib.h not found]))],
+	AC_MSG_ERROR([failed: Need libz]))
 
 dnl Converts the ARCH to be something singular for this general CPU family
 dnl This is often the dpkg architecture string.
@@ -202,7 +206,7 @@ ah_GCC3DEP
 dnl It used to be that the user could select translations and that could get
 dnl passed to the makefiles, but now that can only work if you use special
 dnl gettext approved makefiles, so this feature is unsupported by this.
-ALL_LINGUAS="bg bs ca cs cy da de dz el en_GB es eu fi fr gl hu it ja ko ku nb nl nn pl pt_BR pt ro ru sk sl sv th tl uk vi zn_CN zh_TW"
+ALL_LINGUAS="bg bs ca cs cy da de dz el es eu fi fr gl hu it ja ko ku nb nl nn pl pt_BR pt ro ru sk sl sv th tl uk vi zn_CN zh_TW"
 AM_GNU_GETTEXT(external)
 if test x"$USE_NLS" = "xyes"; then
    AC_DEFINE(USE_NLS)

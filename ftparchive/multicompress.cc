@@ -40,14 +40,14 @@ const MultiCompress::CompType MultiCompress::Compressors[] =
 // MultiCompress::MultiCompress - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Setup the file outputs, compression modes and fork the writer child */
-MultiCompress::MultiCompress(string Output,string Compress,
-			     mode_t Permissions,bool Write)
+MultiCompress::MultiCompress(string const &Output,string const &Compress,
+			     mode_t const &Permissions,bool const &Write) :
+			Permissions(Permissions)
 {
    Outputs = 0;
    Outputter = -1;
    Input = 0;
    UpdateMTime = 0;
-   this->Permissions = Permissions;
    
    /* Parse the compression string, a space separated lists of compresison
       types */
@@ -126,7 +126,7 @@ MultiCompress::~MultiCompress()
 /* This checks each compressed file to make sure it exists and returns
    stat information for a random file from the collection. False means
    one or more of the files is missing. */
-bool MultiCompress::GetStat(string Output,string Compress,struct stat &St)
+bool MultiCompress::GetStat(string const &Output,string const &Compress,struct stat &St)
 {
    /* Parse the compression string, a space separated lists of compresison
       types */
@@ -268,8 +268,8 @@ bool MultiCompress::Finalize(unsigned long &OutSize)
 /* This opens the compressor, either in compress mode or decompress 
    mode. FileFd is always the compressor input/output file, 
    OutFd is the created pipe, Input for Compress, Output for Decompress. */
-bool MultiCompress::OpenCompress(const CompType *Prog,pid_t &Pid,int FileFd,
-				 int &OutFd,bool Comp)
+bool MultiCompress::OpenCompress(const CompType *Prog,pid_t &Pid,int const &FileFd,
+				 int &OutFd,bool const &Comp)
 {
    Pid = -1;
    
@@ -369,7 +369,7 @@ bool MultiCompress::CloseOld(int Fd,pid_t Proc)
    computes the MD5 of the raw data. After this the raw data in the 
    original files is compared to see if this data is new. If the data
    is new then the temp files are renamed, otherwise they are erased. */
-bool MultiCompress::Child(int FD)
+bool MultiCompress::Child(int const &FD)
 {
    // Start the compression children.
    for (Files *I = Outputs; I != 0; I = I->Next)

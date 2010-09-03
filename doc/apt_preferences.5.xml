@@ -14,7 +14,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>04 May 2009</date>
+   <date>16 February 2010</date>
  </refentryinfo>
 
  <refmeta>
@@ -53,6 +53,17 @@ earliest in the &sources-list; file.
 The APT preferences file does not affect the choice of instance, only
 the choice of version.</para>
 
+<para>Preferences are a strong power in the hands of a system administrator
+but they can become also their biggest nightmare if used without care!
+APT will not questioning the preferences so wrong settings will therefore
+lead to uninstallable packages or wrong decisions while upgrading packages.
+Even more problems will arise if multiply distribution releases are mixed
+without a good understanding of the following paragraphs.
+Packages included in a specific release aren't tested in and
+therefore doesn't always work as expected in older or newer releases or
+together with other packages from different releases.
+You have been warned.</para>
+
 <para>Note that the files in the <filename>/etc/apt/preferences.d</filename>
 directory are parsed in alphanumeric ascending order and need to obey the
 following naming convention: The files have no or "<literal>pref</literal>"
@@ -87,6 +98,12 @@ algorithm to set the priorities of the versions of a package.  Assign:
 
 <variablelist>
 <varlistentry>
+<term>priority 1</term>
+<listitem><simpara>to the versions coming from archives which in their <filename>Release</filename>
+files are marked as "NotAutomatic: yes" like the debian experimental archive.</simpara></listitem>
+</varlistentry>
+
+<varlistentry>
 <term>priority 100</term>
 <listitem><simpara>to the version that is already installed (if any).</simpara></listitem>
 </varlistentry>
@@ -105,7 +122,9 @@ algorithm to set the priorities of the versions of a package.  Assign:
 
 <para>If the target release has not been specified then APT simply assigns
 priority 100 to all installed package versions and priority 500 to all
-uninstalled package versions.</para>
+uninstalled package versions, expect versions coming from archives which
+in their <filename>Release</filename> files are marked as "NotAutomatic: yes" -
+these versions get the priority 1.</para>
 
 <para>APT then applies the following rules, listed in order of precedence,
 to determine which version of a package to install.
@@ -184,8 +203,15 @@ Pin: origin ""
 Pin-Priority: 999
 </programlisting>
 
-<simpara>A note of caution: the keyword used here is "<literal>origin</literal>".
-This should not be confused with the Origin of a distribution as
+<simpara>A note of caution: the keyword used here is "<literal>origin</literal>"
+which can be used to match a hostname. The following record will assign a high priority
+to all versions available from the server identified by the hostname "ftp.de.debian.org"</simpara>
+<programlisting>
+Package: *
+Pin: origin "ftp.de.debian.org"
+Pin-Priority: 999
+</programlisting>
+<simpara>This should <emphasis>not</emphasis> be confused with the Origin of a distribution as
 specified in a <filename>Release</filename> file.  What follows the "Origin:" tag
 in a <filename>Release</filename> file is not an Internet address
 but an author or vendor name, such as "Debian" or "Ximian".</simpara>
@@ -200,11 +226,11 @@ Pin-Priority: 50
 </programlisting>
 
 <simpara>The following record assigns a high priority to all package versions
-belonging to any distribution whose Codename is "<literal>squeeze</literal>".</simpara>
+belonging to any distribution whose Codename is "<literal>&testing-codename;</literal>".</simpara>
 
 <programlisting>
 Package: *
-Pin: release n=squeeze
+Pin: release n=&testing-codename;
 Pin-Priority: 900
 </programlisting>
 
@@ -337,7 +363,7 @@ APT priorities:
 <para>The <filename>Release</filename> file is normally found in the directory
 <filename>.../dists/<replaceable>dist-name</replaceable></filename>:
 for example, <filename>.../dists/stable/Release</filename>,
-or <filename>.../dists/woody/Release</filename>.
+or <filename>.../dists/&stable-codename;/Release</filename>.
 It consists of a single multi-line record which applies to <emphasis>all</emphasis> of
 the packages in the directory tree below its parent.  Unlike the
 <filename>Packages</filename> file, nearly all of the lines in a <filename>Release</filename>
@@ -365,14 +391,14 @@ Pin: release a=stable
 <term>the <literal>Codename:</literal> line</term>
 <listitem><simpara>names the codename to which all the packages
 in the directory tree belong.  For example, the line
-"Codename: squeeze"
+"Codename: &testing-codename;"
 specifies that all of the packages in the directory
 tree below the parent of the <filename>Release</filename> file belong to a version named
-<literal>squeeze</literal>.  Specifying this value in the APT preferences file
+<literal>&testing-codename;</literal>.  Specifying this value in the APT preferences file
 would require the line:
 </simpara>
 <programlisting>
-Pin: release n=squeeze
+Pin: release n=&testing-codename;
 </programlisting>
 </listitem>
 </varlistentry>
@@ -458,10 +484,6 @@ distribution.</para>
 <para>Each record in the APT preferences file can optionally begin with
 one or more lines beginning with the word <literal>Explanation:</literal>.
 This provides a place for comments.</para>
-
-<para>The <literal>Pin-Priority:</literal> line in each APT preferences record is
-optional.  If omitted, APT assigns a priority of 1 less than the last value
-specified on a line beginning with <literal>Pin-Priority: release ...</literal>.</para>
 </refsect2>
 </refsect1>
 
@@ -576,14 +598,14 @@ the example configurations above.
 
 <programlisting>
 Explanation: Uninstall or do not install any Debian-originated package versions
-Explanation: other than those in the distribution codenamed with squeeze or sid
+Explanation: other than those in the distribution codenamed with &testing-codename; or sid
 Package: *
-Pin: release n=squeeze
+Pin: release n=&testing-codename;
 Pin-Priority: 900
 
 Explanation: Debian unstable is always codenamed with sid
 Package: *
-Pin: release a=sid
+Pin: release n=sid
 Pin-Priority: 800
 
 Package: *
@@ -594,7 +616,7 @@ Pin-Priority: -10
 
 <para>With a suitable &sources-list; file and the above preferences file,
 any of the following commands will cause APT to upgrade to the
-latest version(s) in the release codenamed with <literal>squeeze</literal>.
+latest version(s) in the release codenamed with <literal>&testing-codename;</literal>.
 
 <programlisting>
 apt-get install <replaceable>package-name</replaceable>
@@ -606,7 +628,7 @@ apt-get dist-upgrade
 <para>The following command will cause APT to upgrade the specified
 package to the latest version from the <literal>sid</literal> distribution.
 Thereafter, <command>apt-get upgrade</command> will upgrade
-the package to the most recent <literal>squeeze</literal> version if that is
+the package to the most recent <literal>&testing-codename;</literal> version if that is
 more recent than the installed version, otherwise, to the most recent
 <literal>sid</literal> version if that is more recent than the installed
 version.

@@ -37,6 +37,7 @@ class pkgAcqMethod
       string DestFile;
       time_t LastModified;
       bool IndexFile;
+      bool FailIgnore;
    };
    
    struct FetchResult
@@ -59,7 +60,9 @@ class pkgAcqMethod
    vector<string> Messages;
    FetchItem *Queue;
    FetchItem *QueueBack;
-   string FailExtra;
+   string FailReason;
+   string UsedMirror;
+   string IP;
    
    // Handlers for messages
    virtual bool Configuration(string Message);
@@ -68,14 +71,14 @@ class pkgAcqMethod
    // Outgoing messages
    void Fail(bool Transient = false);
    inline void Fail(const char *Why, bool Transient = false) {Fail(string(Why),Transient);};
-   void Fail(string Why, bool Transient = false);
-   void URIStart(FetchResult &Res);
-   void URIDone(FetchResult &Res,FetchResult *Alt = 0);
+   virtual void Fail(string Why, bool Transient = false);
+   virtual void URIStart(FetchResult &Res);
+   virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
+
    bool MediaFail(string Required,string Drive);
    virtual void Exit() {};
 
    public:
-
    enum CnfFlags {SingleInstance = (1<<0),
                   Pipeline = (1<<1), SendConfig = (1<<2),
                   LocalOnly = (1<<3), NeedsCleanup = (1<<4), 
@@ -87,7 +90,8 @@ class pkgAcqMethod
    void Redirect(const string &NewURI);
  
    int Run(bool Single = false);
-   inline void SetFailExtraMsg(string Msg) {FailExtra = Msg;};
+   inline void SetFailReason(string Msg) {FailReason = Msg;};
+   inline void SetIP(string aIP) {IP = aIP;};
    
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~pkgAcqMethod() {};

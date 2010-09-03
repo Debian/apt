@@ -28,7 +28,7 @@
 #ifndef PKGLIB_CONFIGURATION_H
 #define PKGLIB_CONFIGURATION_H
 
-
+#include <regex.h>
 
 #include <string>
 #include <vector>
@@ -58,8 +58,8 @@ class Configuration
    Item *Root;
    bool ToFree;
    
-   Item *Lookup(Item *Head,const char *S,unsigned long Len,bool Create);
-   Item *Lookup(const char *Name,bool Create);   
+   Item *Lookup(Item *Head,const char *S,unsigned long const &Len,bool const &Create);
+   Item *Lookup(const char *Name,const bool &Create);
    inline const Item *Lookup(const char *Name) const
    {
       return ((Configuration *)this)->Lookup(Name,false);
@@ -68,32 +68,33 @@ class Configuration
    public:
 
    string Find(const char *Name,const char *Default = 0) const;
-   string Find(const string Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
+   string Find(string const &Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
+   string Find(string const &Name, string const &Default) const {return Find(Name.c_str(),Default.c_str());};
    string FindFile(const char *Name,const char *Default = 0) const;
    string FindDir(const char *Name,const char *Default = 0) const;
-   std::vector<string> FindVector(const string &Name) const;
+   std::vector<string> FindVector(string const &Name) const;
    std::vector<string> FindVector(const char *Name) const;
-   int FindI(const char *Name,int Default = 0) const;
-   int FindI(const string Name,int Default = 0) const {return FindI(Name.c_str(),Default);};
-   bool FindB(const char *Name,bool Default = false) const;
-   bool FindB(const string Name,bool Default = false) const {return FindB(Name.c_str(),Default);};
+   int FindI(const char *Name,int const &Default = 0) const;
+   int FindI(string const &Name,int const &Default = 0) const {return FindI(Name.c_str(),Default);};
+   bool FindB(const char *Name,bool const &Default = false) const;
+   bool FindB(string const &Name,bool const &Default = false) const {return FindB(Name.c_str(),Default);};
    string FindAny(const char *Name,const char *Default = 0) const;
 	      
-   inline void Set(const string Name,string Value) {Set(Name.c_str(),Value);};
+   inline void Set(const string &Name,const string &Value) {Set(Name.c_str(),Value);};
    void CndSet(const char *Name,const string &Value);
    void Set(const char *Name,const string &Value);
-   void Set(const char *Name,int Value);   
+   void Set(const char *Name,const int &Value);
    
-   inline bool Exists(const string Name) const {return Exists(Name.c_str());};
+   inline bool Exists(const string &Name) const {return Exists(Name.c_str());};
    bool Exists(const char *Name) const;
    bool ExistsAny(const char *Name) const;
 
    // clear a whole tree
-   void Clear(const string Name);
+   void Clear(const string &Name);
 
    // remove a certain value from a list (e.g. the list of "APT::Keep-Fds")
-   void Clear(const string List, string Value);
-   void Clear(const string List, int Value);
+   void Clear(string const &List, string const &Value);
+   void Clear(string const &List, int const &Value);
 
    inline const Item *Tree(const char *Name) const {return Lookup(Name);};
 
@@ -103,16 +104,34 @@ class Configuration
    Configuration(const Item *Root);
    Configuration();
    ~Configuration();
+
+   /** \brief match a string against a configurable list of patterns */
+   class MatchAgainstConfig
+   {
+     std::vector<regex_t *> patterns;
+     void clearPatterns();
+
+   public:
+     MatchAgainstConfig(char const * Config);
+     virtual ~MatchAgainstConfig();
+
+     /** \brief Returns \b true for a string matching one of the patterns */
+     bool Match(char const * str) const;
+     bool Match(std::string const &str) const { return Match(str.c_str()); };
+
+     /** \brief returns if the matcher setup was successful */
+     bool wasConstructedSuccessfully() const { return patterns.empty() == false; }
+   };
 };
 
 extern Configuration *_config;
 
 bool ReadConfigFile(Configuration &Conf,const string &FName,
-		    bool AsSectional = false,
-		    unsigned Depth = 0);
+		    bool const &AsSectional = false,
+		    unsigned const &Depth = 0);
 
 bool ReadConfigDir(Configuration &Conf,const string &Dir,
-		   bool AsSectional = false,
-		   unsigned Depth = 0);
+		   bool const &AsSectional = false,
+		   unsigned const &Depth = 0);
 
 #endif

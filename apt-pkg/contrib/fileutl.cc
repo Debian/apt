@@ -11,6 +11,7 @@
    Most of this source is placed in the Public Domain, do with it what 
    you will
    It was originally written by Jason Gunthorpe <jgg@debian.org>.
+   FileFd gzip support added by Martin Pitt <martin.pitt@canonical.com>
    
    The exception is RunScripts() it is under the GPLv2
 
@@ -18,6 +19,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/configuration.h>
@@ -26,6 +28,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <cstdio>
 
 #include <iostream>
 #include <unistd.h>
@@ -197,15 +200,82 @@ bool FileExists(string File)
    return true;
 }
 									/*}}}*/
+// DirectoryExists - Check if a directory exists and is really one	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool DirectoryExists(string const &Path)
+{
+   struct stat Buf;
+   if (stat(Path.c_str(),&Buf) != 0)
+      return false;
+   return ((Buf.st_mode & S_IFDIR) != 0);
+}
+									/*}}}*/
+// CreateDirectory - poor man's mkdir -p guarded by a parent directory	/*{{{*/
+// ---------------------------------------------------------------------
+/* This method will create all directories needed for path in good old
+   mkdir -p style but refuses to do this if Parent is not a prefix of
+   this Path. Example: /var/cache/ and /var/cache/apt/archives are given,
+   so it will create apt/archives if /var/cache exists - on the other
+   hand if the parent is /var/lib the creation will fail as this path
+   is not a parent of the path to be generated. */
+bool CreateDirectory(string const &Parent, string const &Path)
+{
+   if (Parent.empty() == true || Path.empty() == true)
+      return false;
+
+   if (DirectoryExists(Path) == true)
+      return true;
+
+   if (DirectoryExists(Parent) == false)
+      return false;
+
+   // we are not going to create directories "into the blue"
+   if (Path.find(Parent, 0) != 0)
+      return false;
+
+   vector<string> const dirs = VectorizeString(Path.substr(Parent.size()), '/');
+   string progress = Parent;
+   for (vector<string>::const_iterator d = dirs.begin(); d != dirs.end(); ++d)
+   {
+      if (d->empty() == true)
+	 continue;
+
+      progress.append("/").append(*d);
+      if (DirectoryExists(progress) == true)
+	 continue;
+
+      if (mkdir(progress.c_str(), 0755) != 0)
+	 return false;
+   }
+   return true;
+}
+									/*}}}*/
+// CheckDirectory - ensure that the given directory exists		/*{{{*/
+// ---------------------------------------------------------------------
+/* a small wrapper around CreateDirectory to check if it exists and to
+   remove the trailing "/apt/" from the parent directory if needed */
+bool CheckDirectory(string const &Parent, string const &Path)
+{
+   if (DirectoryExists(Path) == true)
+      return true;
+
+   size_t const len = Parent.size();
+   if (len > 5 && Parent.find("/apt/", len - 6, 5) == len - 5)
+   {
+      if (CreateDirectory(Parent.substr(0,len-5), Path) == true)
+	 return true;
+   }
+   else if (CreateDirectory(Parent, Path) == true)
+      return true;
+
+   return false;
+}
+									/*}}}*/
 // GetListOfFilesInDir - returns a vector of files in the given dir	/*{{{*/
 // ---------------------------------------------------------------------
 /* If an extension is given only files with this extension are included
    in the returned vector, otherwise every "normal" file is included. */
-std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
-					bool const &SortList)
-{
-   return GetListOfFilesInDir(Dir, Ext, SortList, false);
-}
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
 					bool const &SortList, bool const &AllowNoExt)
 {
@@ -234,6 +304,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
    }
 
    std::vector<string> List;
+   Configuration::MatchAgainstConfig SilentIgnore("Dir::Ignore-Files-Silently");
    DIR *D = opendir(Dir.c_str());
    if (D == 0) 
    {
@@ -259,6 +330,8 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 	    {
 	       if (Debug == true)
 		  std::clog << "Bad file: " << Ent->d_name << " → no extension" << std::endl;
+	       if (SilentIgnore.Match(Ent->d_name) == false)
+		  _error->Notice("Ignoring file '%s' in directory '%s' as it has no filename extension", Ent->d_name, Dir.c_str());
 	       continue;
 	    }
 	 }
@@ -266,6 +339,8 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 	 {
 	    if (Debug == true)
 	       std::clog << "Bad file: " << Ent->d_name << " → bad extension »" << flExtension(Ent->d_name) << "«" << std::endl;
+	    if (SilentIgnore.Match(Ent->d_name) == false)
+	       _error->Notice("Ignoring file '%s' in directory '%s' as it has an invalid filename extension", Ent->d_name, Dir.c_str());
 	    continue;
 	 }
       }
@@ -604,10 +679,31 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
       case ReadOnly:
       iFd = open(FileName.c_str(),O_RDONLY);
       break;
+
+      case ReadOnlyGzip:
+      iFd = open(FileName.c_str(),O_RDONLY);
+      if (iFd > 0) {
+	 gz = gzdopen (iFd, "r");
+	 if (gz == NULL) {
+	     close (iFd);
+	     iFd = -1;
+	 }
+      }
+      break;
       
+      case WriteAtomic:
+      {
+	 Flags |= Replace;
+	 char *name = strdup((FileName + ".XXXXXX").c_str());
+	 TemporaryFileName = string(mktemp(name));
+	 iFd = open(TemporaryFileName.c_str(),O_RDWR | O_CREAT | O_EXCL,Perms);
+	 free(name);
+	 break;
+      }
+
       case WriteEmpty:
       {
-	 struct stat Buf;
+      	 struct stat Buf;
 	 if (lstat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
 	    unlink(FileName.c_str());
 	 iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_TRUNC,Perms);
@@ -635,6 +731,24 @@ bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
    SetCloseExec(iFd,true);
    return true;
 }
+
+bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose)
+{
+   Close();
+   Flags = (AutoClose) ? FileFd::AutoClose : 0;
+   iFd = Fd;
+   if (Mode == ReadOnlyGzip) {
+      gz = gzdopen (iFd, "r");
+      if (gz == NULL) {
+	 if (AutoClose)
+	    close (iFd);
+	 return _error->Errno("gzdopen",_("Could not open file descriptor %d"),
+			      Fd);
+      }
+   }
+   this->FileName = "";
+   return true;
+}
 									/*}}}*/
 // FileFd::~File - Closes the file					/*{{{*/
 // ---------------------------------------------------------------------
@@ -658,7 +772,10 @@ bool FileFd::Read(void *To,unsigned long Size,unsigned long *Actual)
    
    do
    {
-      Res = read(iFd,To,Size);
+      if (gz != NULL)
+         Res = gzread(gz,To,Size);
+      else
+         Res = read(iFd,To,Size);
       if (Res < 0 && errno == EINTR)
 	 continue;
       if (Res < 0)
@@ -697,7 +814,10 @@ bool FileFd::Write(const void *From,unsigned long Size)
    errno = 0;
    do
    {
-      Res = write(iFd,From,Size);
+      if (gz != NULL)
+         Res = gzwrite(gz,From,Size);
+      else
+         Res = write(iFd,From,Size);
       if (Res < 0 && errno == EINTR)
 	 continue;
       if (Res < 0)
@@ -723,7 +843,12 @@ bool FileFd::Write(const void *From,unsigned long Size)
 /* */
 bool FileFd::Seek(unsigned long To)
 {
-   if (lseek(iFd,To,SEEK_SET) != (signed)To)
+   int res;
+   if (gz)
+      res = gzseek(gz,To,SEEK_SET);
+   else
+      res = lseek(iFd,To,SEEK_SET);
+   if (res != (signed)To)
    {
       Flags |= Fail;
       return _error->Error("Unable to seek to %lu",To);
@@ -737,7 +862,12 @@ bool FileFd::Seek(unsigned long To)
 /* */
 bool FileFd::Skip(unsigned long Over)
 {
-   if (lseek(iFd,Over,SEEK_CUR) < 0)
+   int res;
+   if (gz)
+      res = gzseek(gz,Over,SEEK_CUR);
+   else
+      res = lseek(iFd,Over,SEEK_CUR);
+   if (res < 0)
    {
       Flags |= Fail;
       return _error->Error("Unable to seek ahead %lu",Over);
@@ -751,6 +881,11 @@ bool FileFd::Skip(unsigned long Over)
 /* */
 bool FileFd::Truncate(unsigned long To)
 {
+   if (gz)
+   {
+      Flags |= Fail;
+      return _error->Error("Truncating gzipped files is not implemented (%s)", FileName.c_str());
+   }
    if (ftruncate(iFd,To) != 0)
    {
       Flags |= Fail;
@@ -765,7 +900,11 @@ bool FileFd::Truncate(unsigned long To)
 /* */
 unsigned long FileFd::Tell()
 {
-   off_t Res = lseek(iFd,0,SEEK_CUR);
+   off_t Res;
+   if (gz)
+     Res = gztell(gz);
+   else
+     Res = lseek(iFd,0,SEEK_CUR);
    if (Res == (off_t)-1)
       _error->Errno("lseek","Failed to determine the current file position");
    return Res;
@@ -776,6 +915,7 @@ unsigned long FileFd::Tell()
 /* */
 unsigned long FileFd::Size()
 {
+   //TODO: For gz, do we need the actual file size here or the uncompressed length?
    struct stat Buf;
    if (fstat(iFd,&Buf) != 0)
       return _error->Errno("fstat","Unable to determine the file size");
@@ -789,14 +929,33 @@ bool FileFd::Close()
 {
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
-      if (iFd >= 0 && close(iFd) != 0)
-	 Res &= _error->Errno("close",_("Problem closing the file"));
+   {
+      if (gz != NULL) {
+	 int const e = gzclose(gz);
+	 // gzdopen() on empty files always fails with "buffer error" here, ignore that
+	 if (e != 0 && e != Z_BUF_ERROR)
+	    Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
+      } else
+	 if (iFd > 0 && close(iFd) != 0)
+	    Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
+   }
+
+   if ((Flags & Replace) == Replace && iFd >= 0) {
+      if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
+	 Res &= _error->Errno("rename",_("Problem renaming the file %s to %s"), TemporaryFileName.c_str(), FileName.c_str());
+
+      FileName = TemporaryFileName; // for the unlink() below.
+   }
+
    iFd = -1;
-   
+   gz = NULL;
+
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)
       if (unlink(FileName.c_str()) != 0)
-	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file"));
+	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file %s"), FileName.c_str());
+
+
    return Res;
 }
 									/*}}}*/

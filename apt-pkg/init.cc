@@ -51,6 +51,7 @@ bool pkgInitConfig(Configuration &Cnf)
        
    Cnf.Set("Dir::State::lists","lists/");
    Cnf.Set("Dir::State::cdroms","cdroms.list");
+   Cnf.Set("Dir::State::mirrors","mirrors/");
    
    // Cache
    Cnf.Set("Dir::Cache","var/cache/apt/");
@@ -69,6 +70,9 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::parts","apt.conf.d");
    Cnf.Set("Dir::Etc::preferences","preferences");
    Cnf.Set("Dir::Etc::preferencesparts","preferences.d");
+   string const deprecated = _config->Find("APT::GPGV::TrustedKeyring");
+   Cnf.Set("Dir::Etc::trusted", deprecated.empty() ? "trusted.gpg" : deprecated);
+   Cnf.Set("Dir::Etc::trustedparts","trusted.gpg.d");
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
    Cnf.Set("Dir::Media::MountPath","/media/apt");
 
@@ -76,6 +80,11 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Log","var/log/apt");
    Cnf.Set("Dir::Log::Terminal","term.log");
    Cnf.Set("Dir::Log::History","history.log");
+
+   Cnf.Set("Dir::Ignore-Files-Silently::", "~$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.disabled$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.bak$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
 
    // Translation
    Cnf.Set("APT::Acquire::Translation", "environment");
@@ -94,10 +103,10 @@ bool pkgInitConfig(Configuration &Cnf)
 
    // Read the configuration parts dir
    string Parts = Cnf.FindDir("Dir::Etc::parts");
-   if (FileExists(Parts) == true)
+   if (DirectoryExists(Parts) == true)
       Res &= ReadConfigDir(Cnf,Parts);
    else
-      _error->WarningE("FileExists",_("Unable to read %s"),Parts.c_str());
+      _error->WarningE("DirectoryExists",_("Unable to read %s"),Parts.c_str());
 
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");

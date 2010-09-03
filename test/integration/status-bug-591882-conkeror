@@ -1,0 +1,1357 @@
+Package: conkeror
+Status: install ok installed
+Priority: extra
+Section: web
+Installed-Size: 1044
+Maintainer: Axel Beckert <abe@deuxchevaux.org>
+Architecture: all
+Version: 0.9~git080629-2
+Provides: www-browser
+Depends: xulrunner (>= 1.9~) | xulrunner-1.9
+Recommends: conkeror-spawn-process-helper
+Suggests: emacs | emacsen
+Description: keyboard focused web browser with Emacs look and feel
+
+Package: coreutils
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: utils
+Installed-Size: 10032
+Maintainer: Michael Stone <mstone@debian.org>
+Architecture: i386
+Version: 6.10-6
+Replaces: textutils, shellutils, fileutils, stat, debianutils (<= 2.3.1), dpkg (<< 1.13.2)
+Provides: textutils, shellutils, fileutils
+Pre-Depends: libacl1 (>= 2.2.11-1), libc6 (>= 2.6.1-1), libselinux1 (>= 2.0.15)
+Conflicts: stat
+Description: The GNU core utilities
+
+Package: debconf-i18n
+Status: install ok installed
+Priority: required
+Section: admin
+Installed-Size: 1100
+Maintainer: Debconf Developers <debconf-devel@lists.alioth.debian.org>
+Architecture: all
+Source: debconf
+Version: 1.5.24
+Replaces: debconf (<< 1.3.0), debconf-utils (<< 1.3.22)
+Depends: debconf, liblocale-gettext-perl, libtext-iconv-perl, libtext-wrapi18n-perl, libtext-charwidth-perl
+Conflicts: debconf-english, debconf-utils (<< 1.3.22)
+Description: full internationalization support for debconf
+
+Package: debconf
+Status: install ok installed
+Priority: required
+Section: admin
+Installed-Size: 1508
+Maintainer: Debconf Developers <debconf-devel@lists.alioth.debian.org>
+Architecture: all
+Version: 1.5.24
+Replaces: debconf-tiny
+Provides: debconf-2.0
+Depends: debconf-i18n | debconf-english
+Pre-Depends: perl-base (>= 5.6.1-4)
+Recommends: apt-utils (>= 0.5.1)
+Suggests: debconf-doc, debconf-utils, whiptail | dialog | gnome-utils, libterm-readline-gnu-perl, libgnome2-perl, libqt-perl, libnet-ldap-perl, perl
+Conflicts: apt (<< 0.3.12.1), cdebconf (<< 0.96), debconf-tiny, debconf-utils (<< 1.3.22), dialog (<< 0.9b-20020814-1), menu (<= 2.1.3-1), whiptail (<< 0.51.4-11), whiptail-utf8 (<= 0.50.17-13)
+Description: Debian configuration management system
+
+Package: debianutils
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: utils
+Installed-Size: 272
+Maintainer: Clint Adams <schizo@debian.org>
+Architecture: i386
+Version: 2.30
+Pre-Depends: libc6 (>= 2.7-1)
+Description: Miscellaneous utilities specific to Debian
+
+Package: defoma
+Status: install ok installed
+Priority: optional
+Section: admin
+Installed-Size: 449
+Maintainer: Angus Lees <gus@debian.org>
+Architecture: all
+Version: 0.11.10-0.2
+Depends: file, perl (>= 5.6.0-16), whiptail | dialog
+Recommends: libft-perl
+Suggests: defoma-doc, dfontmgr, psfontmgr, x-ttcidfont-conf
+Conflicts: defoma-gs, defoma-ps, defoma-x, dfontmgr (<< 0.10.0), psfontmgr (<< 0.5.0), x-ttcidfont-conf (<< 5)
+Description: Debian Font Manager -- automatic font configuration framework
+Enhances: debhelper
+
+Package: dpkg
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: admin
+Installed-Size: 7276
+Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
+Architecture: i386
+Version: 1.14.29
+Replaces: manpages-de (<= 0.4-3), manpages-pl (<= 20051117-1)
+Pre-Depends: libc6 (>= 2.7-1), coreutils (>= 5.93-1), lzma
+Suggests: apt
+Conflicts: apt (<< 0.7.7), aptitude (<< 0.4.7-1), dpkg-dev (<< 1.14.16), dpkg-iasearch (<< 0.11), sysvinit (<< 2.82-1)
+Description: Debian package management system
+Origin: debian
+Bugs: debbugs://bugs.debian.org
+
+Package: file
+Status: install ok installed
+Priority: standard
+Section: utils
+Installed-Size: 136
+Maintainer: Daniel Baumann <daniel@debian.org>
+Architecture: i386
+Version: 4.26-1
+Depends: libc6 (>= 2.7-1), libmagic1 (= 4.26-1), zlib1g (>= 1:1.1.4)
+Description: Determines file type using "magic" numbers
+
+Package: fontconfig-config
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 250
+Maintainer: Keith Packard <keithp@debian.org>
+Architecture: all
+Source: fontconfig
+Version: 2.6.0-3
+Replaces: fontconfig (<< 2.3.2-2)
+Depends: debconf (>= 0.5) | debconf-2.0, ucf (>= 0.29), ttf-dejavu | ttf-bitstream-vera | ttf-freefont | gsfonts-x11
+Conflicts: fontconfig (<< 2.3.2-2)
+Description: generic font configuration library - configuration
+
+Package: fontconfig
+Status: install ok installed
+Priority: optional
+Section: utils
+Installed-Size: 384
+Maintainer: Keith Packard <keithp@debian.org>
+Architecture: i386
+Version: 2.6.0-3
+Replaces: fontconfig-config (<< 2.5.93-1)
+Depends: libc6 (>= 2.7-1), libfontconfig1 (>= 2.4.0), fontconfig-config
+Suggests: defoma (>= 0.7.0)
+Description: generic font configuration library - support binaries
+
+Package: gcc-4.3-base
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 160
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: i386
+Source: gcc-4.3
+Version: 4.3.2-1.1
+Replaces: cpp-4.3 (<< 4.3.2)
+Description: The GNU Compiler Collection (base package)
+
+Package: libacl1
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 48
+Maintainer: Nathan Scott <nathans@debian.org>
+Architecture: i386
+Source: acl
+Version: 2.2.47-2
+Depends: libattr1 (>= 2.4.41-1), libc6 (>= 2.7-1)
+Conflicts: acl (<< 2.0.0), libacl1-kerberos4kth
+Description: Access control list shared library
+
+Package: libatk1.0-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 168
+Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: atk1.0
+Version: 1.22.0-1
+Depends: libc6 (>= 2.7-1), libglib2.0-0 (>= 2.16.0)
+Recommends: libatk1.0-data
+Description: The ATK accessibility toolkit
+
+Package: libattr1
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 36
+Maintainer: Nathan Scott <nathans@debian.org>
+Architecture: i386
+Source: attr
+Version: 1:2.4.43-2
+Depends: libc6 (>= 2.7-1)
+Conflicts: attr (<< 2.0.0)
+Description: Extended attribute shared library
+
+Package: libbz2-1.0
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 92
+Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Architecture: i386
+Source: bzip2
+Version: 1.0.5-1
+Depends: libc6 (>= 2.7-1)
+Description: high-quality block-sorting file compressor library - runtime
+
+Package: libc6
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 10756
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: i386
+Source: glibc
+Version: 2.7-18lenny4
+Provides: glibc-2.7-1
+Depends: libgcc1
+Suggests: locales, glibc-doc, libc6-i686
+Conflicts: libterm-readline-gnu-perl (<< 1.15-2), tzdata (<< 2007k-1), tzdata-etch
+Description: GNU C Library: Shared libraries
+
+Package: libcairo2
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 844
+Maintainer: Dave Beckett <dajobe@debian.org>
+Architecture: i386
+Source: cairo
+Version: 1.6.4-7
+Replaces: libcairo0.5.1, libcairo0.6.0, libcairo0.9.0, libcairo1
+Provides: libcairo
+Depends: libc6 (>= 2.7-1), libdirectfb-1.0-0, libfontconfig1 (>= 2.4.0), libfreetype6 (>= 2.3.5), libpixman-1-0 (>= 0.10.0), libpng12-0 (>= 1.2.13-4), libx11-6, libxcb-render-util0 (>= 0.2.1+git1), libxcb-render0, libxcb1, libxrender1, zlib1g (>= 1:1.1.4)
+Conflicts: libcairo1
+Description: The Cairo 2D vector graphics library
+
+Package: libcomerr2
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 96
+Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Architecture: i386
+Source: e2fsprogs
+Version: 1.41.3-1
+Replaces: e2fsprogs (<< 1.34-1)
+Provides: libcomerr-kth-compat
+Depends: libc6 (>= 2.7-1)
+Description: common error description library
+
+Package: libcups2
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 364
+Maintainer: Debian CUPS Maintainers <pkg-cups-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: cups
+Version: 1.3.8-1+lenny8
+Replaces: libcupsys2 (<< 1.3.7-6)
+Provides: libcupsys2
+Depends: libc6 (>= 2.7-1), libcomerr2 (>= 1.01), libgnutls26 (>= 2.4.0-0), libkrb53 (>= 1.6.dfsg.2), zlib1g (>= 1:1.1.4)
+Suggests: cups-common
+Conflicts: libcupsys2 (<< 1.3.7-6)
+Description: Common UNIX Printing System(tm) - libs
+
+Package: libdatrie0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 60
+Maintainer: Theppitak Karoonboonyanan <thep@linux.thai.net>
+Architecture: i386
+Source: libdatrie
+Version: 0.1.3-2
+Depends: libc6 (>= 2.7-1)
+Description: Double-array trie library
+
+Package: libdb4.6
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 1248
+Maintainer: Debian Berkeley DB Maintainers <pkg-db-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: db4.6
+Version: 4.6.21-11
+Depends: libc6 (>= 2.7-1)
+Conflicts: libdb2 (<< 2:2.7.7-3)
+Description: Berkeley v4.6 Database Libraries [runtime]
+
+Package: libdirectfb-1.0-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 2140
+Maintainer: Debian DirectFB Team <pkg-directfb-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: directfb
+Version: 1.0.1-11
+Depends: libc6 (>= 2.7-1), libsysfs2, libts-0.0-0 (>= 1.0)
+Description: direct frame buffer graphics - shared libraries
+
+Package: libexpat1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 364
+Maintainer: Debian XML/SGML Group <debian-xml-sgml-pkgs@lists.alioth.debian.org>
+Architecture: i386
+Source: expat
+Version: 2.0.1-4+lenny3
+Depends: libc6 (>= 2.7-1)
+Conflicts: wink (<= 1.5.1060-4)
+Description: XML parsing C library - runtime library
+
+Package: libfontconfig1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 336
+Maintainer: Keith Packard <keithp@debian.org>
+Architecture: i386
+Source: fontconfig
+Version: 2.6.0-3
+Depends: libc6 (>= 2.7-1), libexpat1 (>= 1.95.8), libfreetype6 (>= 2.3.5), zlib1g (>= 1:1.1.4), fontconfig-config (= 2.6.0-3)
+Description: generic font configuration library - runtime
+
+Package: libfreetype6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 672
+Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: i386
+Source: freetype
+Version: 2.3.7-2+lenny1
+Replaces: freetype0, freetype1
+Depends: libc6 (>= 2.7-1), zlib1g (>= 1:1.1.4)
+Suggests: libfreetype6-dev
+Conflicts: freetype, xpdf-reader (<< 1.00-4)
+Description: FreeType 2 font engine, shared library files
+
+Package: libgcc1
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 88
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: i386
+Source: gcc-4.3 (4.3.2-1.1)
+Version: 1:4.3.2-1.1
+Depends: gcc-4.3-base (= 4.3.2-1.1), libc6 (>= 2.7-1)
+Description: GCC support library
+
+Package: libgcrypt11
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 508
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: i386
+Version: 1.4.1-1
+Depends: libc6 (>= 2.7-1), libgpg-error0 (>= 1.4)
+Suggests: rng-tools
+Description: LGPL Crypto library - runtime library
+
+Package: libgdbm3
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 80
+Maintainer: James Troup <james@nocrew.org>
+Architecture: i386
+Source: gdbm
+Version: 1.8.3-3
+Depends: libc6 (>= 2.3.6-6)
+Description: GNU dbm database routines (runtime version)
+
+Package: libglib2.0-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 1732
+Maintainer: Loic Minier <lool@dooz.org>
+Architecture: i386
+Source: glib2.0
+Version: 2.16.6-3
+Depends: libc6 (>= 2.7-1), libpcre3 (>= 7.4), libselinux1 (>= 2.0.59)
+Recommends: libglib2.0-data
+Conflicts: libpango1.0-0 (<< 1.11)
+Description: The GLib library of C routines
+
+Package: libgnutls26
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 1100
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: i386
+Source: gnutls26
+Version: 2.4.2-6+lenny2
+Replaces: gnutls0, gnutls0.4, gnutls3
+Depends: libc6 (>= 2.7-1), libgcrypt11 (>= 1.4.0), libgpg-error0 (>= 1.4), libtasn1-3 (>= 0.3.4), zlib1g (>= 1:1.1.4)
+Suggests: gnutls-bin
+Conflicts: gnutls0, gnutls0.4
+Description: the GNU TLS library - runtime library
+
+Package: libgpg-error0
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 196
+Maintainer: Jose Carlos Garcia Sogo <jsogo@debian.org>
+Architecture: i386
+Source: libgpg-error
+Version: 1.4-2
+Depends: libc6 (>= 2.3.6-6)
+Description: library for common error values and messages in GnuPG components
+
+Package: libgtk2.0-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 5084
+Maintainer: Sebastien Bacher <seb128@debian.org>
+Architecture: i386
+Source: gtk+2.0
+Version: 2.12.12-1~lenny2
+Replaces: libgtk2.0-0png3
+Provides: gtk2.0-binver-2.10.0
+Depends: libgtk2.0-common, libatk1.0-0 (>= 1.20.0), libc6 (>= 2.7-1), libcairo2 (>= 1.6.4-6.1), libcomerr2 (>= 1.01), libcups2 (>= 1.3.8), libfontconfig1 (>= 2.4.0), libglib2.0-0 (>= 2.16.0), libgnutls26 (>= 2.4.0-0), libjpeg62, libkrb53 (>= 1.6.dfsg.2), libpango1.0-0 (>= 1.20.3), libpng12-0 (>= 1.2.13-4), libtiff4, libx11-6, libxcomposite1 (>= 1:0.3-1), libxcursor1 (>> 1.1.2), libxdamage1 (>= 1:1.1), libxext6, libxfixes3 (>= 1:4.0.1), libxi6, libxinerama1, libxrandr2, libxrender1, zlib1g (>= 1:1.1.4)
+Recommends: hicolor-icon-theme, libgtk2.0-bin
+Suggests: librsvg2-common
+Conflicts: celestia (<< 1.2.4-4), eog2 (<< 1.0.1-4), gcin (<< 1.3.4-2), gimp1.3 (<< 1.3.7-1.1), glabels (<< 2.1.3-3), gnome-panel2 (<< 2.0.4-1), gnome-themes (<< 2.6), gtk-im-libthai (<< 0.1.4-3), gtk-qt-engine (<< 1:0.8~svn-rev36-1), gtk2-engines (<< 1:2.8.2-2), gtk2-engines-cleanice (<< 2.4.0-1.1), gtk2-engines-crux (<< 2.6), gtk2-engines-gtk-qt (<< 1:0.7-2), gtk2-engines-highcontrast (<< 2.6), gtk2-engines-industrial (<< 0.2.32-5), gtk2-engines-lighthouseblue (<< 2.6), gtk2-engines-magicchicken (<< 1.1.1-7.1), gtk2-engines-metal (<< 2.2.0-2.1), gtk2-engines-mist (<< 2.6), gtk2-engines-pixbuf (<= 2.10), gtk2-engines-qtpixmap (<< 0.28-1.2), gtk2-engines-redmond95 (<< 2.2.0-2.1), gtk2-engines-smooth (<< 0.5.6-3), gtk2-engines-thinice (<< 2.6), gtk2-engines-ubuntulooks (<= 0.9.11-1), gtk2-engines-wonderland (<< 1.0-4), gtk2-engines-xfce (<< 2.4.0-1), gtk2.0-examples (<< 2.2.0), iiimf-client-gtk (<< 12.3.91-4), iiimgcf (<= 11.4.1870-7.3), imhangul (<< 0.9.13-5), libeel2-2.18, libgdkxft0, libginspx0 (<< 20050529-1.1), libgnomeui-0 (<= 2.14.1-3), libgtk2.0-0png3, librsvg2-common (<= 2.14.4-2), libwmf-dev (<< 0.2.8.4-5), libwmf0.2-7 (<< 0.2.8.4-5), libwxgtk2.6-0 (<< 2.6.3.2.2-1), metacity (<< 1:2.20.0-1), metatheme (<< 0.9.7-3), openoffice.org-core (<< 2.2.1-8), scim-bridge (<= 0.2.4-1), scim-bridge-client-gtk (<< 0.4.10-1.1), scim-gtk2-immodule (<< 1.4.4-8), swf-player (<< 0.3.6-2.3), tamil-gtk2im (<< 2.2-4.4), uim-gtk2.0 (<< 1:1.4.1-3), xfwm4 (<< 4.4.1-3)
+Description: The GTK+ graphical user interface library
+
+Package: libgtk2.0-common
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 15934
+Maintainer: Sebastien Bacher <seb128@debian.org>
+Architecture: all
+Source: gtk+2.0
+Version: 2.12.12-1~lenny2
+Replaces: libgtk1.3-common, libgtk2.0-data
+Recommends: libgtk2.0-0
+Conflicts: libgtk1.3-common, libgtk2.0-data
+Description: Common files for the GTK+ graphical user interface library
+
+Package: libhunspell-1.2-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 336
+Maintainer: Debian OpenOffice Team <debian-openoffice@lists.debian.org>
+Architecture: i386
+Source: hunspell
+Version: 1.2.6-1
+Depends: libc6 (>= 2.7-1), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1)
+Recommends: myspell-en-us | myspell-dictionary | hunspell-dictionary
+Conflicts: openoffice.org-core (= 2.2.0~rc2-1)
+Description: spell checker and morphological analyzer (shared library)
+
+Package: libice6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 140
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libice
+Version: 2:1.0.4-1
+Depends: libc6 (>= 2.6-1), x11-common
+Description: X11 Inter-Client Exchange library
+
+Package: libjpeg62
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 164
+Maintainer: Bill Allombert <ballombe@debian.org>
+Architecture: i386
+Source: libjpeg6b
+Version: 6b-14
+Depends: libc6 (>= 2.6.1-1)
+Description: The Independent JPEG Group's JPEG runtime library
+
+Package: libkeyutils1
+Status: install ok installed
+Priority: standard
+Section: misc
+Installed-Size: 56
+Maintainer: Daniel Baumann <daniel@debian.org>
+Architecture: i386
+Source: keyutils
+Version: 1.2-9
+Depends: libc6 (>= 2.7-1)
+Description: Linux Key Management Utilities (library)
+
+Package: libkrb53
+Status: install ok installed
+Priority: standard
+Section: libs
+Installed-Size: 1188
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: i386
+Source: krb5
+Version: 1.6.dfsg.4~beta1-5lenny4
+Depends: libc6 (>= 2.7-1), libcomerr2 (>= 1.34), libkeyutils1
+Suggests: krb5-doc, krb5-user
+Conflicts: libapache-mod-auth-kerb (<= 4.996-5.0-rc6-2), libapache2-mod-auth-kerb (<= 4.996-5.0-rc6-2), ssh-krb5 (<< 3.8.1p1-10)
+Description: MIT Kerberos runtime libraries
+
+Package: liblcms1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 260
+Maintainer: Oleksandr Moskalenko <malex@debian.org>
+Architecture: i386
+Source: lcms
+Version: 1.17.dfsg-1+lenny2
+Replaces: liblcms
+Provides: liblcms
+Depends: libc6 (>= 2.7-1)
+Suggests: liblcms-utils
+Conflicts: liblcms
+Description: Color management library
+
+Package: liblocale-gettext-perl
+Status: install ok installed
+Priority: required
+Section: perl
+Installed-Size: 104
+Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Version: 1.05-4
+Depends: libc6 (>= 2.7-1)
+Pre-Depends: perl-base (>= 5.10.0-9), perlapi-5.10.0
+Description: Using libc functions for internationalization in Perl
+
+Package: libmagic1
+Status: install ok installed
+Priority: standard
+Section: libs
+Installed-Size: 2412
+Maintainer: Daniel Baumann <daniel@debian.org>
+Architecture: i386
+Source: file
+Version: 4.26-1
+Depends: libc6 (>= 2.7-1), zlib1g (>= 1:1.1.4)
+Suggests: file
+Description: File type determination library using "magic" numbers
+
+Package: libmozjs1d
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 736
+Maintainer: Mike Hommey <glandium@debian.org>
+Architecture: i386
+Source: xulrunner
+Version: 1.9.0.19-1
+Depends: libc6 (>= 2.7-1), libnspr4-0d (>= 1.8.0.10)
+Description: The Mozilla SpiderMonkey JavaScript library
+
+Package: libncurses5
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 584
+Maintainer: Daniel Baumann <daniel@debian.org>
+Architecture: i386
+Source: ncurses
+Version: 5.7+20081213-1
+Depends: libc6 (>= 2.7-1)
+Recommends: libgpm2
+Description: shared libraries for terminal handling
+
+Package: libnewt0.52
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 820
+Maintainer: Alastair McKinstry <mckinstry@debian.org>
+Architecture: i386
+Source: newt
+Version: 0.52.2-11.3+lenny1
+Replaces: libnewt-utf8, libnewt0, libnewt0.51
+Depends: libc6 (>= 2.7-1), libslang2 (>= 2.0.7-1)
+Recommends: libfribidi0
+Conflicts: libnewt0.51
+Description: Not Erik's Windowing Toolkit - text mode windowing with slang
+
+Package: libnspr4-0d
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 328
+Maintainer: Maintainers of Mozilla-related packages <pkg-mozilla-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: nspr
+Version: 4.7.1-5
+Depends: libc6 (>= 2.7-1)
+Conflicts: libnspr4, libnspr4-dev (<= 4.7.1-1)
+Description: NetScape Portable Runtime Library
+
+Package: libnss3-1d
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 2292
+Maintainer: Maintainers of Mozilla-related packages <pkg-mozilla-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: nss
+Version: 3.12.3.1-0lenny1
+Depends: libc6 (>= 2.7-1), libnspr4-0d (>= 1.8.0.10), libsqlite3-0 (>= 3.5.9), dpkg (<< 1.14.8) | dpkg (>= 1.14.18)
+Conflicts: libnss3, libnss3-0d (>= 3.11.5), libnss3-dev (<= 3.12.0~rc3-1)
+Description: Network Security Service libraries
+
+Package: libpango1.0-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 780
+Maintainer: Sebastien Bacher <seb128@debian.org>
+Architecture: i386
+Source: pango1.0
+Version: 1.20.5-5+lenny1
+Provides: pango1.0-modver-1.6.0
+Depends: libpango1.0-common (>= 1.20.5-5+lenny1), libc6 (>= 2.7-1), libcairo2 (>= 1.6.4-6.1), libdatrie0 (>= 0.1.2), libfontconfig1 (>= 2.4.0), libfreetype6 (>= 2.3.5), libglib2.0-0 (>= 2.16.0), libthai0 (>= 0.1.9), libx11-6, libxft2 (>> 2.1.1), libxrender1, zlib1g (>= 1:1.1.4)
+Conflicts: pango-libthai
+Description: Layout and rendering of internationalized text
+
+Package: libpango1.0-common
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 204
+Maintainer: Sebastien Bacher <seb128@debian.org>
+Architecture: all
+Source: pango1.0
+Version: 1.20.5-5+lenny1
+Replaces: libpango-common (<< 1.0.0), libpango0
+Depends: debconf | debconf-2.0, defoma (>= 0.11.1), fontconfig (>= 2.1.91)
+Recommends: x-ttcidfont-conf, libpango1.0-0
+Suggests: ttf-kochi-gothic, ttf-kochi-mincho, ttf-thryomanes, ttf-baekmuk, ttf-arphic-gbsn00lp, ttf-arphic-bsmi00lp, ttf-arphic-gkai00mp, ttf-arphic-bkai00mp
+Conflicts: pango-libthai (<< 0.1.6-2)
+Description: Modules and configuration files for the Pango
+
+Package: libpcre3
+Status: install ok installed
+Priority: standard
+Section: libs
+Installed-Size: 356
+Maintainer: Mark Baker <mark@mnb.org.uk>
+Architecture: i386
+Source: pcre3
+Version: 7.6-2.1
+Depends: libc6 (>= 2.7-1)
+Conflicts: libpcre3-dev (<= 4.3-3)
+Description: Perl 5 Compatible Regular Expression Library - runtime files
+
+Package: libpixman-1-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 220
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: pixman
+Version: 0.10.0-2
+Depends: libc6 (>= 2.7-1)
+Description: pixel-manipulation library for X and cairo
+
+Package: libpng12-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 316
+Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Architecture: i386
+Source: libpng
+Version: 1.2.27-2+lenny3
+Replaces: libpng12-dev (<= 1.2.8rel-7)
+Depends: libc6 (>= 2.7-1), zlib1g (>= 1:1.1.4)
+Conflicts: libpng12-dev (<= 1.2.8rel-7), mzscheme (<= 1:209-5), pngcrush (<= 1.5.10-2), pngmeta (<= 1.11-3), povray-3.5 (<= 3.5.0c-10), qemacs (<= 0.3.1-5)
+Description: PNG library - runtime
+
+Package: libpopt0
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 192
+Maintainer: Paul Martin <pm@debian.org>
+Architecture: i386
+Source: popt
+Version: 1.14-4
+Replaces: popt
+Depends: libc6 (>= 2.7-1)
+Conflicts: libpopt-dev (<= 1.4-1), popt, rpm (<= 4.0.2-3)
+Description: lib for parsing cmdline parameters
+
+Package: libreadline5
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 320
+Maintainer: Matthias Klose <doko@debian.org>
+Architecture: i386
+Source: readline5
+Version: 5.2-3.1
+Depends: readline-common, libc6 (>= 2.7-1), libncurses5 (>= 5.6+20071006-3)
+Description: GNU readline and history libraries, run-time libraries
+
+Package: libselinux1
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 148
+Maintainer: Manoj Srivastava <srivasta@debian.org>
+Architecture: i386
+Source: libselinux
+Version: 2.0.65-5
+Depends: libc6 (>= 2.7-1)
+Description: SELinux shared libraries
+
+Package: libslang2
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 1104
+Maintainer: Alastair McKinstry <mckinstry@debian.org>
+Architecture: i386
+Source: slang2
+Version: 2.1.3-3
+Depends: libc6 (>= 2.7-1)
+Recommends: libpng12-0
+Description: The S-Lang programming library - runtime version
+
+Package: libsm6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 84
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libsm
+Version: 2:1.0.3-2
+Depends: libc6 (>= 2.7-1), libice6 (>= 1:1.0.0), x11-common
+Description: X11 Session Management library
+
+Package: libsqlite3-0
+Status: install ok installed
+Priority: standard
+Section: libs
+Installed-Size: 468
+Maintainer: Laszlo Boszormenyi (GCS) <gcs@debian.hu>
+Architecture: i386
+Source: sqlite3
+Version: 3.5.9-6
+Depends: libc6 (>= 2.7-1)
+Description: SQLite 3 shared library
+
+Package: libstartup-notification0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 92
+Maintainer: Ondřej Surý <ondrej@debian.org>
+Architecture: i386
+Source: startup-notification
+Version: 0.9-1
+Depends: libc6 (>= 2.3.6-6), libice6 (>= 1:1.0.0), libsm6, libx11-6
+Description: library for program launch feedback (shared library)
+
+Package: libstdc++6
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 1168
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: i386
+Source: gcc-4.3
+Version: 4.3.2-1.1
+Depends: gcc-4.3-base (= 4.3.2-1.1), libc6 (>= 2.7-1), libgcc1 (>= 1:4.1.1)
+Conflicts: scim (<< 1.4.2-1)
+Description: The GNU Standard C++ Library v3
+
+Package: libsysfs2
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 112
+Maintainer: Martin Pitt <mpitt@debian.org>
+Architecture: i386
+Source: sysfsutils
+Version: 2.1.0-5
+Depends: libc6 (>= 2.7-1)
+Description: interface library to sysfs
+
+Package: libtasn1-3
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 164
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: i386
+Version: 1.4-1
+Depends: libc6 (>= 2.7-1)
+Conflicts: libtasn1-2 (= 0.3.1-1)
+Description: Manage ASN.1 structures (runtime)
+
+Package: libtext-charwidth-perl
+Status: install ok installed
+Priority: required
+Section: perl
+Installed-Size: 36
+Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Architecture: i386
+Source: libtext-charwidth-perl (0.04-5)
+Version: 0.04-5+b1
+Depends: libc6 (>= 2.7-1), perl-base (>= 5.10.0-9), perlapi-5.10.0
+Description: get display widths of characters on the terminal
+
+Package: libtext-iconv-perl
+Status: install ok installed
+Priority: required
+Section: perl
+Installed-Size: 44
+Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Architecture: i386
+Source: libtext-iconv-perl (1.7-1)
+Version: 1.7-1+b1
+Depends: libc6 (>= 2.7-1), perl-base (>= 5.10.0-9), perlapi-5.10.0
+Description: converts between character sets in Perl
+
+Package: libtext-wrapi18n-perl
+Status: install ok installed
+Priority: required
+Section: perl
+Installed-Size: 28
+Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Architecture: all
+Version: 0.06-6
+Depends: libtext-charwidth-perl
+Description: internationalized substitute of Text::Wrap
+
+Package: libthai-data
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 340
+Maintainer: Theppitak Karoonboonyanan <thep@linux.thai.net>
+Architecture: all
+Source: libthai
+Version: 0.1.9-4+lenny1
+Description: Data files for Thai language support library
+
+Package: libthai0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 100
+Maintainer: Theppitak Karoonboonyanan <thep@linux.thai.net>
+Architecture: i386
+Source: libthai
+Version: 0.1.9-4+lenny1
+Depends: libc6 (>= 2.7-1), libdatrie0 (>= 0.1.2), libthai-data
+Description: Thai language support library
+
+Package: libtiff4
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 456
+Maintainer: Jay Berkenbilt <qjb@debian.org>
+Architecture: i386
+Source: tiff
+Version: 3.8.2-11.2
+Depends: libc6 (>= 2.7-1), libjpeg62, zlib1g (>= 1:1.1.4)
+Description: Tag Image File Format (TIFF) library
+
+Package: libts-0.0-0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 108
+Maintainer: Neil Williams <codehelp@debian.org>
+Architecture: i386
+Source: tslib
+Version: 1.0-4
+Replaces: libts0, tslib
+Provides: libts0, tslib
+Depends: libc6 (>= 2.7-1)
+Conflicts: libts0, tslib
+Description: touch screen library
+
+Package: libx11-6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 1240
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libx11
+Version: 2:1.1.5-2
+Depends: libc6 (>= 2.7-1), libxcb-xlib0, libxcb1, libx11-data
+Conflicts: xlibs-data (<< 1:7.0.0)
+Description: X11 client-side library
+
+Package: libx11-data
+Status: install ok installed
+Priority: optional
+Section: x11
+Installed-Size: 3108
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: all
+Source: libx11
+Version: 2:1.1.5-2
+Replaces: libx11-6 (<= 2:1.0.0-1)
+Description: X11 client-side library
+
+Package: libxau6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 64
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxau
+Version: 1:1.0.3-3
+Depends: libc6 (>= 2.7-1)
+Description: X11 authorisation library
+
+Package: libxcb-render-util0
+Status: install ok installed
+Priority: extra
+Section: libs
+Installed-Size: 40
+Maintainer: Julien Danjou <acid@debian.org>
+Architecture: i386
+Source: xcb-util
+Version: 0.2.1+git1-1
+Depends: libc6 (>= 2.7-1), libxcb-render0, libxcb1
+Description: utility libraries for X C Binding -- render-util
+
+Package: libxcb-render0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 88
+Maintainer: XCB Developers <xcb@lists.freedesktop.org>
+Architecture: i386
+Source: libxcb
+Version: 1.1-1.2
+Depends: libc6 (>= 2.7-1), libxcb1
+Description: X C Binding, render extension
+
+Package: libxcb-xlib0
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 68
+Maintainer: XCB Developers <xcb@lists.freedesktop.org>
+Architecture: i386
+Source: libxcb
+Version: 1.1-1.2
+Depends: libc6 (>= 2.7-1), libxcb1
+Description: X C Binding, Xlib/XCB interface library
+
+Package: libxcb1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 160
+Maintainer: XCB Developers <xcb@lists.freedesktop.org>
+Architecture: i386
+Source: libxcb
+Version: 1.1-1.2
+Depends: libc6 (>= 2.7-1), libxau6, libxdmcp6
+Description: X C Binding
+
+Package: libxcomposite1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 60
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxcomposite
+Version: 1:0.4.0-3
+Depends: libc6 (>= 2.7-1), libx11-6, libxext6, libxfixes3 (>= 1:4.0.1)
+Description: X11 Composite extension library
+
+Package: libxcursor1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 80
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxcursor
+Version: 1:1.1.9-1
+Depends: libc6 (>= 2.6-1), libx11-6, libxfixes3 (>= 1:4.0.1), libxrender1
+Description: X cursor management library
+
+Package: libxdamage1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 60
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxdamage
+Version: 1:1.1.1-4
+Depends: libc6 (>= 2.7-1), libx11-6, libxfixes3 (>= 1:4.0.1)
+Description: X11 damaged region extension library
+
+Package: libxdmcp6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 76
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxdmcp
+Version: 1:1.0.2-3
+Depends: libc6 (>= 2.7-1)
+Description: X11 Display Manager Control Protocol library
+
+Package: libxext6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 184
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxext
+Version: 2:1.0.4-2
+Depends: libc6 (>= 2.7-1), libx11-6, libxau6, x11-common
+Description: X11 miscellaneous extension library
+
+Package: libxfixes3
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 64
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxfixes
+Version: 1:4.0.3-2
+Depends: libc6 (>= 2.3.6-6), libx11-6
+Pre-Depends: x11-common (>= 1:7.0.0)
+Description: X11 miscellaneous 'fixes' extension library
+
+Package: libxft2
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 132
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: xft
+Version: 2.1.12-3
+Depends: libc6 (>= 2.7-1), libfontconfig1 (>= 2.4.0), libfreetype6 (>= 2.3.5), libx11-6, libxrender1, zlib1g (>= 1:1.1.4)
+Description: FreeType-based font drawing library for X
+
+Package: libxi6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 148
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxi
+Version: 2:1.1.4-1
+Depends: libc6 (>= 2.7-1), libx11-6, libxext6, x11-common
+Description: X11 Input extension library
+
+Package: libxinerama1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 60
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxinerama
+Version: 2:1.0.3-2
+Depends: libc6 (>= 2.7-1), libx11-6, libxext6
+Description: X11 Xinerama extension library
+
+Package: libxrandr2
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 84
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxrandr
+Version: 2:1.2.3-1
+Depends: libc6 (>= 2.7-1), libx11-6, libxext6, libxrender1
+Description: X11 RandR extension library
+
+Package: libxrender1
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 88
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxrender
+Version: 1:0.9.4-2
+Depends: libc6 (>= 2.7-1), libx11-6
+Description: X Rendering Extension client library
+
+Package: libxt6
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 380
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: i386
+Source: libxt
+Version: 1:1.0.5-3
+Depends: libc6 (>= 2.5-5), libice6 (>= 1:1.0.0), libsm6, libx11-6
+Pre-Depends: x11-common (>= 1:7.0.0)
+Description: X11 toolkit intrinsics library
+
+Package: lsb-base
+Status: install ok installed
+Priority: required
+Section: misc
+Installed-Size: 72
+Maintainer: Chris Lawrence <lawrencc@debian.org>
+Architecture: all
+Source: lsb
+Version: 3.2-20
+Replaces: lsb (<< 2.0-6), lsb-core (<< 2.0-6)
+Depends: sed, ncurses-bin
+Conflicts: lsb (<< 2.0-6), lsb-core (<< 2.0-6)
+Description: Linux Standard Base 3.2 init script functionality
+
+Package: lzma
+Status: install ok installed
+Priority: optional
+Section: utils
+Installed-Size: 124
+Maintainer: Mohammed Adnène Trojette <adn+deb@diwi.org>
+Architecture: i386
+Version: 4.43-14
+Depends: libc6 (>= 2.7-1), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.2.1)
+Description: Compression method of 7z format in 7-Zip program
+
+Package: ncurses-bin
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: utils
+Installed-Size: 480
+Maintainer: Daniel Baumann <daniel@debian.org>
+Architecture: i386
+Source: ncurses
+Version: 5.7+20081213-1
+Provides: tput
+Pre-Depends: libc6 (>= 2.7-1), libncurses5 (>= 5.6+20071006-3)
+Conflicts: ncurses, tput
+Description: terminal-related programs and man pages
+
+Package: perl-base
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: perl
+Installed-Size: 4316
+Maintainer: Brendan O'Dea <bod@debian.org>
+Architecture: i386
+Source: perl
+Version: 5.10.0-19lenny2
+Replaces: libclass-multimethods-perl (<< 1.70-4), libperl5.8 (<< 5.8.0-20), libscalar-list-utils-perl, libxsloader-perl, perl (<= 5.10.0-9), perl-modules (<< 5.10.0-12)
+Provides: libscalar-list-utils-perl, libxsloader-perl, perl5-base, perlapi-5.10.0
+Pre-Depends: libc6 (>= 2.7-1), dpkg (>= 1.14.20)
+Suggests: perl
+Conflicts: autoconf2.13 (<< 2.13-45), findimagedupes (<< 2.11-2), icheck (<< 0.9.7-6.1), libcflow-perl (<< 1:0.68-11.1), libclass-methodmaker-perl (<< 2.10-1), libclearsilver-perl (<< 0.10.4-1.1), libcrypt-openssl-bignum-perl (<< 0.04-1), libcrypt-openssl-dsa-perl (<< 0.13-3), libcrypt-openssl-random-perl (<< 0.04-1), libcrypt-openssl-rsa-perl (<< 0.25-1), libhamlib2-perl (<< 1.2.6.2-6), libqt-perl (<< 3.008-3), libscalar-list-utils-perl (<< 1:1.18-1), libsufary-perl (<< 2.1.1-8), libsys-cpu-perl (<< 0.40-2.1), libterm-size-perl (<< 0.2-4), libvideo-ivtv-perl (<< 0.13-6), libxsloader-perl (<< 0.08-1), megahal (<< 9.1.1a-5), razor (<< 1:2.84-6)
+Description: minimal Perl system
+
+Package: perl-modules
+Status: install ok installed
+Priority: standard
+Section: perl
+Installed-Size: 14520
+Maintainer: Brendan O'Dea <bod@debian.org>
+Architecture: all
+Source: perl
+Version: 5.10.0-19lenny2
+Replaces: libansicolor-perl, libarchive-tar-perl, libattribute-handlers-perl, libcgi-pm-perl, libcpanplus-perl, libextutils-cbuilder-perl, libextutils-parsexs-perl, libfile-temp-perl, libi18n-langtags-perl, libio-zlib-perl, liblocale-codes-perl, liblocale-maketext-perl, liblocale-maketext-simple-perl, libmath-bigint-perl, libmodule-build-perl, libmodule-corelist-perl, libmodule-load-conditional-perl, libmodule-load-perl, libmodule-pluggable-perl, libnet-perl, libnet-ping-perl, libparams-check-perl, libpod-parser-perl, libpod-simple-perl, libtest-harness-perl, libtest-simple-perl, libversion-perl, podlators-perl
+Provides: libansicolor-perl, libarchive-tar-perl, libattribute-handlers-perl, libcgi-pm-perl, libcpanplus-perl, libextutils-cbuilder-perl, libextutils-parsexs-perl, libfile-temp-perl, libi18n-langtags-perl, libio-zlib-perl, liblocale-codes-perl, liblocale-maketext-perl, liblocale-maketext-simple-perl, libmath-bigint-perl, libmodule-build-perl, libmodule-corelist-perl, libmodule-load-conditional-perl, libmodule-load-perl, libmodule-pluggable-perl, libnet-perl, libnet-ping-perl, libparams-check-perl, libpod-parser-perl, libpod-simple-perl, libtest-harness-perl, libtest-simple-perl, libversion-perl, podlators-perl
+Depends: perl (>= 5.10.0-1)
+Conflicts: libansicolor-perl (<< 1.10-1), libarchive-tar-perl (<= 1.38-2), libattribute-handlers-perl (<< 0.78.02-1), libcgi-pm-perl (<< 3.15-1), libcpanplus-perl (<< 0.83.09-1), libextutils-cbuilder-perl (<< 0.21-1), libextutils-parsexs-perl (<= 2.18), libfile-temp-perl (<< 0.18), libi18n-langtags-perl (<< 0.35-1), libio-zlib-perl (<< 1.07-1), liblocale-codes-perl (<< 2.06.1-1), liblocale-maketext-perl (<< 1.08-1), liblocale-maketext-simple-perl (<< 0.18-1), libmath-bigint-perl (<< 1.77-1), libmodule-build-perl (<< 0.2808.1-1), libmodule-corelist-perl (<< 2.13-1), libmodule-load-conditional-perl (<< 0.22-1), libmodule-load-perl (<< 0.12-1), libmodule-pluggable-perl (<< 3.6-1), libnet-perl (<= 1:1.19-3), libnet-ping-perl (<< 2.31-1), libparams-check-perl (<< 0.26-1), libpod-parser-perl (<< 1.32-1), libpod-simple-perl (<< 3.05-2), libtest-harness-perl (<< 2.56-1), libtest-simple-perl (<< 0.62-1), libversion-perl (<< 1:0.7400-2), podlators-perl (<< 2.2.0)
+Description: Core Perl modules
+Build-Essential: yes
+
+Package: perl
+Status: install ok installed
+Priority: standard
+Section: perl
+Installed-Size: 13524
+Maintainer: Brendan O'Dea <bod@debian.org>
+Architecture: i386
+Version: 5.10.0-19lenny2
+Replaces: libarchive-tar-perl (<= 1.38-2), libdigest-md5-perl, libdigest-sha-perl, libmime-base64-perl, libmodule-corelist-perl (<< 2.14-2), libstorable-perl, libtime-hires-perl, libtime-piece-perl, perl-base (<< 5.8.8-1), perl-doc (<< 5.8.0-1), perl-modules (<< 5.8.1-1)
+Provides: data-dumper, libdigest-md5-perl, libdigest-sha-perl, libmime-base64-perl, libstorable-perl, libtime-hires-perl, libtime-piece-perl, perl5
+Depends: perl-base (= 5.10.0-19lenny2), perl-modules (>= 5.10.0-19lenny2), libc6 (>= 2.7-1), libdb4.6, libgdbm3
+Recommends: netbase
+Suggests: perl-doc, libterm-readline-gnu-perl | libterm-readline-perl-perl
+Conflicts: libdigest-md5-perl (<< 3.07-1), libdigest-sha-perl (<< 5.45-1), libmime-base64-perl (<< 3.07-1), libstorable-perl (<< 2.15-1), libtime-hires-perl (<< 1.86-1), libtime-piece-perl (<< 1.12-1), perl-doc (<< 5.10.0-1)
+Description: Larry Wall's Practical Extraction and Report Language
+Build-Essential: yes
+
+Package: readline-common
+Status: install ok installed
+Priority: important
+Section: utils
+Installed-Size: 136
+Maintainer: Matthias Klose <doko@debian.org>
+Architecture: all
+Source: readline5
+Version: 5.2-3.1
+Replaces: libreadline-common, libreadline4 (<< 4.3-16), libreadline5 (<< 5.0-11)
+Conflicts: libreadline-common, libreadline5 (<< 5.0-11)
+Description: GNU readline and history libraries, common files
+
+Package: sed
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: utils
+Installed-Size: 628
+Maintainer: Clint Adams <schizo@debian.org>
+Architecture: i386
+Version: 4.1.5-6
+Replaces: ssed (<< 3.59)
+Pre-Depends: libc6 (>= 2.7-1)
+Description: The GNU sed stream editor
+
+Package: ttf-dejavu-core
+Status: install ok installed
+Priority: optional
+Section: x11
+Installed-Size: 2488
+Maintainer: Debian Fonts Task Force <pkg-fonts-devel@lists.alioth.debian.org>
+Architecture: all
+Source: ttf-dejavu
+Version: 2.25-3
+Replaces: ttf-dejavu (<< 2.20-1)
+Depends: defoma
+Conflicts: ttf-dejavu (<< 2.20-1)
+Description: Vera font family derivate with additional characters
+
+Package: ttf-dejavu-extra
+Status: install ok installed
+Priority: optional
+Section: x11
+Installed-Size: 5504
+Maintainer: Debian Fonts Task Force <pkg-fonts-devel@lists.alioth.debian.org>
+Architecture: all
+Source: ttf-dejavu
+Version: 2.25-3
+Replaces: ttf-dejavu (<< 2.20-1)
+Depends: defoma, ttf-dejavu-core
+Conflicts: ttf-dejavu (<< 2.20-1)
+Description: Vera font family derivate with additional characters
+
+Package: ttf-dejavu
+Status: install ok installed
+Priority: optional
+Section: x11
+Installed-Size: 68
+Maintainer: Debian Fonts Task Force <pkg-fonts-devel@lists.alioth.debian.org>
+Architecture: all
+Version: 2.25-3
+Depends: ttf-dejavu-core, ttf-dejavu-extra
+Conflicts: ttf-dejavu (<< 2.20-1)
+Description: Metapackage to pull in ttf-dejavu-core and ttf-dejavu-extra
+Task: bulgarian-desktop, hungarian-desktop, kurdish-desktop, macedonian-desktop, romanian-desktop, ukrainian-desktop
+
+Package: ucf
+Status: install ok installed
+Priority: standard
+Section: utils
+Installed-Size: 256
+Maintainer: Manoj Srivastava <srivasta@debian.org>
+Architecture: all
+Version: 3.0016
+Depends: debconf (>= 1.5.19), coreutils (>= 5.91)
+Description: Update Configuration File: preserve user changes to config files.
+
+Package: whiptail
+Status: install ok installed
+Priority: important
+Section: utils
+Installed-Size: 96
+Maintainer: Alastair McKinstry <mckinstry@debian.org>
+Architecture: i386
+Source: newt
+Version: 0.52.2-11.3+lenny1
+Replaces: newt0.10, newt0.21 (<< 0.21-4), whiptail-utf8
+Provides: whiptail-provider, whiptail-utf8
+Depends: libc6 (>= 2.7-1), libnewt0.52 (>= 0.52.2), libpopt0 (>= 1.14), libslang2 (>= 2.0.7-1)
+Conflicts: whiptail-provider
+Description: Displays user-friendly dialog boxes from shell scripts
+
+Package: x11-common
+Status: install ok installed
+Priority: optional
+Section: x11
+Installed-Size: 696
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: all
+Source: xorg
+Version: 1:7.3+20
+Replaces: x-common, xfree86-common, xorg-common, xserver-common (<< 7)
+Depends: debconf (>= 0.5) | debconf-2.0, debianutils (>= 1.13), lsb-base (>= 1.3-9ubuntu2)
+Pre-Depends: debconf | debconf-2.0
+Conflicts: aee (<= 2.2.15b-1), ascd (<= 0.13.2-3), beaver (<= 0.2.5-2), bibview (<= 2.2-8), bugsx (<= 1.08-8), buici-clock (<= 0.4.5+b1), communicator-smotif-477, ctwm (<= 3.7-2), emelfm (<= 0.9.2-7), epan, fte-xwindow (<= 0.50.0-1.3), fvwm1 (<= 1.24r-46), fvwm95 (<= 2.0.43ba-23+b1), gerstensaft (<= 0.2-5.1), ghostview, gipsc (<= 0.4.3-2), grace (<= 1:5.1.18-1), grace6 (<= 5.99.0+final-4), gradio (<= 1.0.1-6), groff (<= 1.18.1.1-7), guitar (<= 0.1.4-11), hamsoft (<< 0.2.3-1), hanterm-classic (<= 3.1.6.0-4), hanterm-xf (<= 1:3.3.1p18-9.2), hfsutils-tcltk (<= 3.2.6-7), ibp (<= 0.21-4), isdnutils-xtools (<= 1:3.8.2005-12-06-4), ivtools-bin (<= 1.1.3-5), ivtools-dev (<= 1.1.3-5), kdrill (<= 6.4-2.1), kinput2-canna (<= 3.1-7), kinput2-canna-wnn (<= 3.1-7), kinput2-wnn (<= 3.1-7), kterm (<= 6.2.0-45), lbxproxy (<< 7.0), libmotif-dev (<= 2.2.3-1.3), libxft-dev (<= 2.1.8.2-5), lm-batmon (<= 0.96-3), login.app (<= 1.2.1-18), lsb-core (<= 3.1-4), lwm (<= 1.2.1-1), mctools-lite (<= 970129-16), mgp (<= 1.11b-6), motif-clients (<= 2.2.3-1.3), navigator-smotif-477, netscape-base-4, olvwm (<= 4.4.3.2p1.4-21), olwm (<= 3.2p1.4-21), oneko (<= 1.2.sakura.6-1), opera (<< 9.10-20060616), pgaccess (<= 1:0.98.8.20030520-2), phototk, pixmap (<= 2.6pl4-14.1), plotmtv (<= 1.4.4t-8.1), pmud (<= 0.10-9), ppxp (<= 0.2001080415-14), ppxp-x11 (<= 0.2001080415-14), procmeter (<= 2.5.1-11), propsel (<= 971130-5.3), proxymngr (<< 7.0), qcam (<= 0.91-11.1), regexplorer (<= 0.1.6-12), seyon (<= 2.20c-20), skkinput (<= 1:2.06.4-4), stella (<< 2.2-1), tkdesk (<= 2.0-5), tkseti (<= 3.06-1), tkworld, twlog (<= 1.3-4), twm (<< 7.0), ucbmpeg-play (<< 2.3p-13), vide (<= 1.21-3), videogen (<= 0.32-1), vtwm (<= 5.4.7-2), w9wm (<= 0.4.2-4), wdm (<= 1.28-1), wily (<= 0.13.41-6), wmavgload (<= 0.7.0-6.1), wmcpu (<= 1.3-4.1), wmdate (<= 0.5-7.1), wmnet (<= 1.05-12), wmnetselect (<= 0.85-5.5), wmscope (<= 3.0-9.1), wmsensors (<= 1.0.4-3.4), wmtv (<= 0.6.5-15), x-common, xautolock (<= 1:2.1-6), xbanner (<= 1.31-23), xbase-clients (<< 1:7.0), xbatt (<= 1.2.1-4), xbattbar (<= 1.4.2-3.1), xcal (<= 4.1-18.2), xcalendar-i18n (<= 4.0.0.i18p1-13.1), xcb (<= 2.4-4), xclip (<= 0.08-5), xclips (<= 6.21-6), xcolors (<= 1.5a-2), xcolorsel (<= 1.1a-11), xdkcal (<= 0.9d-2.1), xdm (<= 1:1.0.1-6), xdmx (<< 1:1.0), xdu (<= 3.0-14), xearth (<= 1.1-10.2), xengine (<= 1.11-9), xephem (<= 3.4-5), xext, xezmlm (<= 1.0.3-11), xfaces (<= 3.3-25), xfishtank (<= 2.2-23.1), xfm (<= 1.4.3-8), xfractint (<< 20.3.01-1), xfree86-common, xfs (<< 1:1.0), xfs-xtt (<= 1:1.4.1.xf430-6), xftp, xfwp (<< 7.0), xgdipc (<= 1.2-0.3), xgmod (<= 3.1-9), xgobi, xgraph (<= 12.1-3), xinput (<= 1.2-5.2), xipmsg (<= 0.8088-1.1), xisp, xlbiff (<< 4.1-4), xli (<= 1.17.0-21), xlockmore (<= 1:5.21-1), xlockmore-gl (<= 1:5.21-1), xlogmaster (<= 1.6.0-8), xmailbox (<= 2.5-9), xmem (<= 1.20-19), xmeter (<= 1.15-6), xmh (<= 6.8.2.dfsg.1-4), xmix (<= 2.1-5), xmon (<= 1.5.6-1.3), xnecview (<= 1.34-2), xnest (<< 1:1.0), xodo (<= 1.2-9.2), xorg-common, xpaste, xpmumon (<= 1.3.0), xpostit (<= 3.3.1-8.2), xpostitplus, xprint (<= 1:0.1.0.alpha1-13), xrn (<= 9.02-7.1), xserver-common (<< 7), xserver-xfree86 (<< 1:7.0), xserver-xfree86-dbg, xserver-xorg (<< 1:7.3+11), xslideshow (<= 3.1-8.1), xsysinfo (<= 1.7-2), xtel (<= 3.3.0-5.4), xterm (<< 208-1), xtoolwait (<= 1.3-6), xtrkcad (<= 3.1.4-1), xtrlock (<= 2.0-11), xturqstat (<= 2.2.2sarge1), xutils (<< 1:7.0), xv (<= 3.10a-26), xvfb (<< 1:1.0), xview-clients (<= 3.2p1.4-21), xviewg (<= 3.2p1.4-21), xviewg-dev (<= 3.2p1.4-21), xvkbd (<= 2.6-2.1), xwit (<= 3.4-6), xxkb (<= 1.10-2.1), xzoom (<= 0.3-17), yank (<= 0.2.1-7.2)
+Description: X Window System (X.Org) infrastructure
+
+Package: xulrunner-1.9
+Status: install ok installed
+Priority: optional
+Section: devel
+Installed-Size: 17800
+Maintainer: Mike Hommey <glandium@debian.org>
+Architecture: i386
+Source: xulrunner
+Version: 1.9.0.19-1
+Replaces: xulrunner-1.9-common
+Depends: libatk1.0-0 (>= 1.20.0), libbz2-1.0, libc6 (>= 2.7-1), libcairo2 (>= 1.6.0), libfontconfig1 (>= 2.4.0), libfreetype6 (>= 2.3.5), libgcc1 (>= 1:4.1.1), libglib2.0-0 (>= 2.16.0), libgtk2.0-0 (>= 2.12.0), libhunspell-1.2-0 (>= 1.2.4), libjpeg62, liblcms1 (>= 1.15-1), libmozjs1d (>= 1.9.0.15), libnspr4-0d (>> 4.7.1-1), libnss3-1d (>= 3.12.3), libpango1.0-0 (>= 1.20.3), libpng12-0 (>= 1.2.13-4), libreadline5 (>= 5.2), libsqlite3-0 (>= 3.5.9), libstartup-notification0 (>= 0.8-1), libstdc++6 (>= 4.1.1), libx11-6, libxrender1, libxt6, zlib1g (>= 1:1.1.4)
+Suggests: xulrunner-1.9-gnome-support
+Conflicts: j2re1.4, pango-graphite
+Description: XUL + XPCOM application runner
+
+Package: zlib1g
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 128
+Maintainer: Mark Brown <broonie@debian.org>
+Architecture: i386
+Source: zlib
+Version: 1:1.2.3.3.dfsg-12
+Provides: libz1
+Depends: libc6 (>= 2.7-1)
+Conflicts: zlib1 (<= 1:1.0.4-7)
+Description: compression library - runtime
+

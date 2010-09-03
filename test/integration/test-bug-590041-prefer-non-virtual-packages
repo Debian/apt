@@ -1,0 +1,51 @@
+#!/bin/sh
+set -e
+
+. $(readlink -f $(dirname $0))/framework
+setupenvironment
+configarchitecture "i386" "armel"
+
+pkglibc6="Package: libc6
+Architecture: armel
+Version: 2.11.2-2~0.3
+Description: Embedded GNU C Library: Shared libraries
+Filename: pool/main/e/eglibc/libc6_2.11.2-2_armel.deb
+Installed-Size: 9740
+MD5sum: f5b878ce5fb8aa01a7927fa1460df537
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Priority: required
+SHA1: 0464d597dfbf949e8c17a42325b1f93fb4914afd
+SHA256: faca4a3d9ccff57568abf41f6cb81ddd835be7b5d8b0161e2d5f9a7f26aae3c0
+Section: libs
+Size: 4178958
+"
+
+pkglibdb1="Package: libdb1
+Architecture: i386
+Version: 2.1.3-13~0.3
+Replaces: libc6 (<< 2.2.5-13~0.3)
+Description: The Berkeley database routines [glibc 2.0/2.1 compatibility]
+Filename: pool/main/d/db1-compat/libdb1-compat_2.1.3-13_armel.deb
+Installed-Size: 136
+MD5sum: 4043f176ab2b40b0c01bc1211b8c103c
+Maintainer: Colin Watson <cjwatson@debian.org>
+Priority: extra
+SHA1: b9396fdd2e3e8d1d4ba9e74e7346075852d85666
+SHA256: f17decaa28d1db3eeb9eb17bebe50d437d293a509bcdd7cdfd3ebb56f5de3cea
+Section: oldlibs
+Size: 44168
+"
+
+cat <<-EOF >aptarchive/Packages
+$pkglibc6
+$pkglibdb1
+EOF
+
+setupaptarchive
+
+testshowvirtual libc6:i386
+testequal "$pkglibc6" aptcache show libc6:armel
+testequal "$pkglibc6" aptcache show libc6
+testequal "$pkglibdb1" aptcache show libdb1:i386
+testnopackage libdb1:armel
+testequal "$pkglibdb1" aptcache show libdb1

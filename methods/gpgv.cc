@@ -2,6 +2,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexcopy.h>
 #include <apti18n.h>
 
 #include <utime.h>
@@ -11,6 +12,8 @@
 #include <sys/wait.h>
 #include <iostream>
 #include <sstream>
+
+#include <vector>
 
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
@@ -52,107 +55,29 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    if (Debug == true)
       std::clog << "inside VerifyGetSigners" << std::endl;
 
-   pid_t pid;
    int fd[2];
-   FILE *pipein;
-   int status;
-   string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-   // FIXME: remove support for deprecated APT::GPGV setting
-   string const trustedFile = _config->FindFile("Dir::Etc::Trusted",
-			_config->Find("APT::GPGV::TrustedKeyring", "/etc/apt/trusted.gpg").c_str());
-   string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts", "/etc/apt/trusted.gpg.d");
-   if (Debug == true)
-   {
-      std::clog << "gpgv path: " << gpgvpath << std::endl;
-      std::clog << "Keyring file: " << trustedFile << std::endl;
-      std::clog << "Keyring path: " << trustedPath << std::endl;
-   }
-
-   vector<string> keyrings = GetListOfFilesInDir(trustedPath, "gpg", false);
-   if (FileExists(trustedFile) == true)
-      keyrings.push_back(trustedFile);
-
-   if (keyrings.empty() == true)
-   {
-      // TRANSLATOR: %s is the trusted keyring parts directory
-      ioprintf(ret, _("No keyring installed in %s."), trustedPath.c_str());
-      return ret.str();
-   }
 
    if (pipe(fd) < 0)
       return "Couldn't create pipe";
 
-   pid = fork();
+   pid_t pid = fork();
    if (pid < 0)
       return string("Couldn't spawn new process") + strerror(errno);
    else if (pid == 0)
    {
-      const char *Args[400];
-      unsigned int i = 0;
-
-      Args[i++] = gpgvpath.c_str();
-      Args[i++] = "--status-fd";
-      Args[i++] = "3";
-      Args[i++] = "--ignore-time-conflict";
-      for (vector<string>::const_iterator K = keyrings.begin();
-	   K != keyrings.end(); ++K)
+      if (SigVerify::RunGPGV(outfile, file, 3, fd) == false)
       {
-	 Args[i++] = "--keyring";
-	 Args[i++] = K->c_str();
-	 // check overflow (minus a bit of extra space at the end)
-	 if(i >= sizeof(Args)/sizeof(char*)-5) {
-	    std::clog << _("E: Too many keyrings should be passed to gpgv. Exiting.") << std::endl;
-	    exit(111);
-	 }
+	 // TRANSLATOR: %s is the trusted keyring parts directory
+	 ioprintf(ret, _("No keyring installed in %s."),
+		  _config->FindDir("Dir::Etc::TrustedParts").c_str());
+	 return ret.str();
       }
-
-      Configuration::Item const *Opts;
-      Opts = _config->Tree("Acquire::gpgv::Options");
-      if (Opts != 0)
-      {
-         Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-         {
-            if (Opts->Value.empty() == true)
-               continue;
-            Args[i++] = Opts->Value.c_str();
-	    // check overflow (minus a bit of extra space at the end)
-	    if(i >= sizeof(Args)/sizeof(char*)-5) { 
-	       std::clog << _("E: Argument list from Acquire::gpgv::Options too long. Exiting.") << std::endl;
-	       exit(111);
-	    }
-         }
-      }
-      Args[i++] = file;
-      Args[i++] = outfile;
-      Args[i++] = NULL;
-
-      if (Debug == true)
-      {
-         std::clog << "Preparing to exec: " << gpgvpath;
-	 for(unsigned int j=0;Args[j] != NULL; j++)
-	    std::clog << " " << Args[j];
-	 std::clog << std::endl;
-      }
-      int const nullfd = open("/dev/null", O_RDONLY);
-      close(fd[0]);
-      // Redirect output to /dev/null; we read from the status fd
-      dup2(nullfd, STDOUT_FILENO); 
-      dup2(nullfd, STDERR_FILENO); 
-      // Redirect the pipe to the status fd (3)
-      dup2(fd[1], 3);
-
-      putenv((char *)"LANG=");
-      putenv((char *)"LC_ALL=");
-      putenv((char *)"LC_MESSAGES=");
-      execvp(gpgvpath.c_str(), (char **)Args);
-             
       exit(111);
    }
    close(fd[1]);
 
-   pipein = fdopen(fd[0], "r"); 
-   
+   FILE *pipein = fdopen(fd[0], "r");
+
    // Loop over the output of gpgv, and check the signatures.
    size_t buffersize = 64;
    char *buffer = (char *) malloc(buffersize);
@@ -225,6 +150,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    fclose(pipein);
 
+   int status;
    waitpid(pid, &status, 0);
    if (Debug == true)
    {
@@ -243,7 +169,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    else if (WEXITSTATUS(status) == 111)
    {
-      ioprintf(ret, _("Could not execute '%s' to verify signature (is gpgv installed?)"), gpgvpath.c_str());
+      ioprintf(ret, _("Could not execute 'gpgv' to verify signature (is gpgv installed?)"));
       return ret.str();
    }
    else

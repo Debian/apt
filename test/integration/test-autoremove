@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage "unrelated" "all" "1" "unstable"
+buildsimplenativepackage "po-debconf" "all" "1.0.16" "unstable"
+buildsimplenativepackage "debhelper" "all" "8.0.0" "unstable" "Depends: po-debconf"
+setupaptarchive
+
+aptget install unrelated debhelper -qq 2>&1 > /dev/null
+
+testfileequal "rootdir/var/lib/apt/extended_states" "Package: po-debconf
+Architecture: i386
+Auto-Installed: 1
+"
+aptget remove debhelper -y -qq 2>&1 > /dev/null
+aptget autoremove -y -qq 2>&1 > /dev/null
+
+testfileequal "rootdir/var/lib/apt/extended_states" ""
+
+sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d'
+testfileequal "rootdir/var/log/apt/history.log" '
+Install: unrelated:i386 (1), debhelper:i386 (8.0.0), po-debconf:i386 (1.0.16, automatic)
+
+Remove: debhelper:i386 (8.0.0)
+
+Remove: po-debconf:i386 (1.0.16)'

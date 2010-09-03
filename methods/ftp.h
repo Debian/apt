@@ -40,7 +40,7 @@ class FTPConn
    
    public:
 
-   bool Comp(URI Other) {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
+   bool Comp(URI Other) {return Other.Host == ServerName.Host && Other.Port == ServerName.Port && Other.User == ServerName.User && Other.Password == ServerName.Password; };
    
    // Raw connection IO
    bool ReadResp(unsigned int &Ret,string &Text);

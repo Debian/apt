@@ -21,9 +21,15 @@
 #ifndef PKGLIB_FILEUTL_H
 #define PKGLIB_FILEUTL_H
 
+#include <apt-pkg/macros.h>
 
 #include <string>
 #include <vector>
+
+#include <zlib.h>
+
+/* Define this for python-apt */
+#define APT_HAS_GZIP 1
 
 using std::string;
 
@@ -33,12 +39,15 @@ class FileFd
    int iFd;
  
    enum LocalFlags {AutoClose = (1<<0),Fail = (1<<1),DelOnFail = (1<<2),
-                    HitEof = (1<<3)};
+                    HitEof = (1<<3), Replace = (1<<4) };
    unsigned long Flags;
    string FileName;
-   
+   string TemporaryFileName;
+   gzFile gz;
+
    public:
-   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp};
+   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp,ReadOnlyGzip,
+                  WriteAtomic};
    
    inline bool Read(void *To,unsigned long Size,bool AllowEof)
    {
@@ -55,6 +64,7 @@ class FileFd
    unsigned long Tell();
    unsigned long Size();
    bool Open(string FileName,OpenMode Mode,unsigned long Perms = 0666);
+   bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false);
    bool Close();
    bool Sync();
    
@@ -69,12 +79,12 @@ class FileFd
    inline string &Name() {return FileName;};
    
    FileFd(string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), 
-            Flags(0) 
+            Flags(0), gz(NULL)
    {
       Open(FileName,Mode,Perms);
    };
-   FileFd(int Fd = -1) : iFd(Fd), Flags(AutoClose) {};
-   FileFd(int Fd,bool) : iFd(Fd), Flags(0) {};
+   FileFd(int Fd = -1) : iFd(Fd), Flags(AutoClose), gz(NULL) {};
+   FileFd(int Fd,bool) : iFd(Fd), Flags(0), gz(NULL) {};
    virtual ~FileFd();
 };
 
@@ -82,11 +92,19 @@ bool RunScripts(const char *Cnf);
 bool CopyFile(FileFd &From,FileFd &To);
 int GetLock(string File,bool Errors = true);
 bool FileExists(string File);
-// FIXME: next ABI-Break: merge the two method-headers
+bool DirectoryExists(string const &Path) __attrib_const;
+bool CreateDirectory(string const &Parent, string const &Path);
+
+/** \brief Ensure the existence of the given Path
+ *
+ *  \param Parent directory of the Path directory - a trailing
+ *  /apt/ will be removed before CreateDirectory call.
+ *  \param Path which should exist after (successful) call
+ */
+bool CheckDirectory(string const &Parent, string const &Path);
+
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
-					bool const &SortList);
-std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
-					bool const &SortList, bool const &AllowNoExt);
+					bool const &SortList, bool const &AllowNoExt=false);
 std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> const &Ext,
 					bool const &SortList);
 string SafeGetCWD();

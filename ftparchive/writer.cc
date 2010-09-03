@@ -28,6 +28,7 @@
 #include <ftw.h>
 #include <fnmatch.h>
 #include <iostream>
+#include <sstream>
 #include <memory>
     
 #include "cachedb.h"
@@ -54,7 +55,7 @@ inline void SetTFRewriteData(struct TFRewriteData &tfrd,
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-FTWScanner::FTWScanner()
+FTWScanner::FTWScanner(string const &Arch): Arch(Arch)
 {
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
@@ -85,7 +86,7 @@ int FTWScanner::ScannerFTW(const char *File,const struct stat *sb,int Flag)
 // FTWScanner::ScannerFile - File Scanner				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int FTWScanner::ScannerFile(const char *File, bool ReadLink)
+int FTWScanner::ScannerFile(const char *File, bool const &ReadLink)
 {
    const char *LastComponent = strrchr(File, '/');
    char *RealPath = NULL;
@@ -95,7 +96,7 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
    else
       LastComponent++;
 
-   vector<string>::iterator I;
+   vector<string>::const_iterator I;
    for(I = Owner->Patterns.begin(); I != Owner->Patterns.end(); ++I)
    {
       if (fnmatch((*I).c_str(), LastComponent, 0) == 0)
@@ -128,7 +129,7 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
       {
 	 Owner->NewLine(1);
 	 
-	 bool Type = _error->PopMessage(Err);
+	 bool const Type = _error->PopMessage(Err);
 	 if (Type == true)
 	    cerr << _("E: ") << Err << endl;
 	 else
@@ -149,7 +150,7 @@ int FTWScanner::ScannerFile(const char *File, bool ReadLink)
 // FTWScanner::RecursiveScan - Just scan a directory tree		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FTWScanner::RecursiveScan(string Dir)
+bool FTWScanner::RecursiveScan(string const &Dir)
 {
    char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
@@ -164,7 +165,7 @@ bool FTWScanner::RecursiveScan(string Dir)
    
    // Do recursive directory searching
    Owner = this;
-   int Res = ftw(Dir.c_str(),ScannerFTW,30);
+   int const Res = ftw(Dir.c_str(),ScannerFTW,30);
    
    // Error treewalking?
    if (Res != 0)
@@ -181,7 +182,7 @@ bool FTWScanner::RecursiveScan(string Dir)
 // ---------------------------------------------------------------------
 /* This is an alternative to using FTW to locate files, it reads the list
    of files from another file. */
-bool FTWScanner::LoadFileList(string Dir,string File)
+bool FTWScanner::LoadFileList(string const &Dir, string const &File)
 {
    char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
@@ -241,7 +242,7 @@ bool FTWScanner::LoadFileList(string Dir,string File)
 /* */
 bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 			unsigned long &DeLinkBytes,
-			off_t FileSize)
+			off_t const &FileSize)
 {
    // See if this isn't an internaly prefix'd file name.
    if (InternalPrefix.empty() == false &&
@@ -298,26 +299,26 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
-			       string aArch) :
-   Db(DB),Stats(Db.Stats), Arch(aArch)
+PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides,
+			       string const &Arch) :
+   FTWScanner(Arch), Db(DB), Stats(Db.Stats), TransWriter(NULL)
 {
    Output = stdout;
-   SetExts(".deb .udeb .foo .bar .baz");
-   AddPattern("*.deb");
+   SetExts(".deb .udeb");
    DeLinkLimit = 0;
    
    // Process the command line options
    DoMD5 = _config->FindB("APT::FTPArchive::MD5",true);
    DoSHA1 = _config->FindB("APT::FTPArchive::SHA1",true);
    DoSHA256 = _config->FindB("APT::FTPArchive::SHA256",true);
+   DoAlwaysStat = _config->FindB("APT::FTPArchive::AlwaysStat", false);
    DoContents = _config->FindB("APT::FTPArchive::Contents",true);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
    LongDescription = _config->FindB("APT::FTPArchive::LongDescription",true);
 
    if (Db.Loaded() == false)
       DoContents = false;
-      
+
    // Read the override file
    if (Overrides.empty() == false && Over.ReadOverride(Overrides) == false)
       return;
@@ -333,23 +334,22 @@ PackagesWriter::PackagesWriter(string DB,string Overrides,string ExtOverrides,
 // FTWScanner::SetExts - Set extensions to support                      /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FTWScanner::SetExts(string Vals)
+bool FTWScanner::SetExts(string const &Vals)
 {
    ClearPatterns();
    string::size_type Start = 0;
    while (Start <= Vals.length()-1)
    {
-      string::size_type Space = Vals.find(' ',Start);
-      string::size_type Length;
-      if (Space == string::npos)
+      string::size_type const Space = Vals.find(' ',Start);
+      string::size_type const Length = ((Space == string::npos) ? Vals.length() : Space) - Start;
+      if ( Arch.empty() == false )
       {
-         Length = Vals.length()-Start;
+	 AddPattern(string("*_") + Arch + Vals.substr(Start, Length));
+	 AddPattern(string("*_all") + Vals.substr(Start, Length));
       }
       else
-      {
-         Length = Space-Start;
-      }
-      AddPattern(string("*") + Vals.substr(Start, Length));
+	 AddPattern(string("*") + Vals.substr(Start, Length));
+
       Start += Length + 1;
    }
 
@@ -365,7 +365,7 @@ bool FTWScanner::SetExts(string Vals)
 bool PackagesWriter::DoPackage(string FileName)
 {      
    // Pull all the data we need form the DB
-   if (Db.GetFileInfo(FileName, true, DoContents, true, DoMD5, DoSHA1, DoSHA256) 
+   if (Db.GetFileInfo(FileName, true, DoContents, true, DoMD5, DoSHA1, DoSHA256, DoAlwaysStat)
 		  == false)
    {
       return false;
@@ -449,6 +449,8 @@ bool PackagesWriter::DoPackage(string FileName)
       descmd5.Add(desc.c_str());
       DescriptionMd5 = descmd5.Result().Value();
       SetTFRewriteData(Changes[End++], "Description-md5", DescriptionMd5.c_str());
+      if (TransWriter != NULL)
+	 TransWriter->DoPackage(Package, desc, DescriptionMd5);
    }
 
    // Rewrite the maintainer field if necessary
@@ -480,7 +482,7 @@ bool PackagesWriter::DoPackage(string FileName)
       SetTFRewriteData(Changes[End++], "Suggests", OptionalStr.c_str());
    }
 
-   for (map<string,string>::iterator I = OverItem->FieldOverride.begin(); 
+   for (map<string,string>::const_iterator I = OverItem->FieldOverride.begin(); 
         I != OverItem->FieldOverride.end(); I++) 
       SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
 
@@ -495,11 +497,60 @@ bool PackagesWriter::DoPackage(string FileName)
 }
 									/*}}}*/
 
+// TranslationWriter::TranslationWriter - Constructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* Create a Translation-Master file for this Packages file */
+TranslationWriter::TranslationWriter(string const &File, string const &TransCompress,
+					mode_t const &Permissions) : Output(NULL),
+							RefCounter(0)
+{
+   if (File.empty() == true)
+      return;
+
+   Comp = new MultiCompress(File, TransCompress, Permissions);
+   Output = Comp->Input;
+}
+									/*}}}*/
+// TranslationWriter::DoPackage - Process a single package		/*{{{*/
+// ---------------------------------------------------------------------
+/* Create a Translation-Master file for this Packages file */
+bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
+				  string const &MD5)
+{
+   if (Output == NULL)
+      return true;
+
+   // Different archs can include different versions and therefore
+   // different descriptions - so we need to check for both name and md5.
+   string const Record = Pkg + ":" + MD5;
+
+   if (Included.find(Record) != Included.end())
+      return true;
+
+   fprintf(Output, "Package: %s\nDescription-md5: %s\nDescription-en: %s\n",
+	   Pkg.c_str(), MD5.c_str(), Desc.c_str());
+
+   Included.insert(Record);
+   return true;
+}
+									/*}}}*/
+// TranslationWriter::~TranslationWriter - Destructor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+TranslationWriter::~TranslationWriter()
+{
+   if (Comp == NULL)
+      return;
+
+   delete Comp;
+}
+									/*}}}*/
+
 // SourcesWriter::SourcesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-SourcesWriter::SourcesWriter(string BOverrides,string SOverrides,
-			     string ExtOverrides)
+SourcesWriter::SourcesWriter(string const &BOverrides,string const &SOverrides,
+			     string const &ExtOverrides)
 {
    Output = stdout;
    AddPattern("*.dsc");
@@ -656,23 +707,20 @@ bool SourcesWriter::DoPackage(string FileName)
    
    // Add the dsc to the files hash list
    string const strippedName = flNotDir(FileName);
-   char Files[1000];
-   snprintf(Files,sizeof(Files),"\n %s %lu %s\n %s",
-	    string(MD5.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Files").c_str());
+   std::ostringstream ostreamFiles;
+   ostreamFiles << "\n " << string(MD5.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Files");
+   string const Files = ostreamFiles.str();
 
-   char ChecksumsSha1[1000];
-   snprintf(ChecksumsSha1,sizeof(ChecksumsSha1),"\n %s %lu %s\n %s",
-	    string(SHA1.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Checksums-Sha1").c_str());
+   std::ostringstream ostreamSha1;
+   ostreamSha1 << "\n " << string(SHA1.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Checksums-Sha1");
+   string const ChecksumsSha1 = ostreamSha1.str();
 
-   char ChecksumsSha256[1000];
-   snprintf(ChecksumsSha256,sizeof(ChecksumsSha256),"\n %s %lu %s\n %s",
-	    string(SHA256.Result()).c_str(),St.st_size,
-	    strippedName.c_str(),
-	    Tags.FindS("Checksums-Sha256").c_str());
+   std::ostringstream ostreamSha256;
+   ostreamSha256 << "\n " << string(SHA256.Result()) << " " << St.st_size << " "
+		<< strippedName << "\n " << Tags.FindS("Checksums-Sha256");
+   string const ChecksumsSha256 = ostreamSha256.str();
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -690,7 +738,7 @@ bool SourcesWriter::DoPackage(string FileName)
 
    // Perform the delinking operation over all of the files
    string ParseJnk;
-   const char *C = Files;
+   const char *C = Files.c_str();
    char *RealPath = NULL;
    for (;isspace(*C); C++);
    while (*C != 0)
@@ -723,9 +771,9 @@ bool SourcesWriter::DoPackage(string FileName)
 
    unsigned int End = 0;
    SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
-   SetTFRewriteData(Changes[End++],"Files",Files);
-   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1);
-   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256);
+   SetTFRewriteData(Changes[End++],"Files",Files.c_str());
+   SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1.c_str());
+   SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256.c_str());
    if (Directory != "./")
       SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
    SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
@@ -746,7 +794,7 @@ bool SourcesWriter::DoPackage(string FileName)
    if (NewMaint.empty() == false)
       SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
    
-   for (map<string,string>::iterator I = SOverItem->FieldOverride.begin(); 
+   for (map<string,string>::const_iterator I = SOverItem->FieldOverride.begin(); 
         I != SOverItem->FieldOverride.end(); I++) 
       SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
 
@@ -766,11 +814,11 @@ bool SourcesWriter::DoPackage(string FileName)
 // ContentsWriter::ContentsWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ContentsWriter::ContentsWriter(string DB) : 
-		    Db(DB), Stats(Db.Stats)
+ContentsWriter::ContentsWriter(string const &DB, string const &Arch) :
+		    FTWScanner(Arch), Db(DB), Stats(Db.Stats)
 
 {
-   AddPattern("*.deb");
+   SetExts(".deb");
    Output = stdout;
 }
 									/*}}}*/
@@ -778,9 +826,9 @@ ContentsWriter::ContentsWriter(string DB) :
 // ---------------------------------------------------------------------
 /* If Package is the empty string the control record will be parsed to
    determine what the package name is. */
-bool ContentsWriter::DoPackage(string FileName,string Package)
+bool ContentsWriter::DoPackage(string FileName, string Package)
 {
-   if (!Db.GetFileInfo(FileName, Package.empty(), true, false, false, false, false))
+   if (!Db.GetFileInfo(FileName, Package.empty(), true, false, false, false, false, false))
    {
       return false;
    }
@@ -799,7 +847,7 @@ bool ContentsWriter::DoPackage(string FileName,string Package)
 // ContentsWriter::ReadFromPkgs - Read from a packages file		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ContentsWriter::ReadFromPkgs(string PkgFile,string PkgCompress)
+bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompress)
 {
    MultiCompress Pkgs(PkgFile,PkgCompress,0,false);
    if (_error->PendingError() == true)
@@ -854,7 +902,7 @@ bool ContentsWriter::ReadFromPkgs(string PkgFile,string PkgCompress)
 // ReleaseWriter::ReleaseWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ReleaseWriter::ReleaseWriter(string DB)
+ReleaseWriter::ReleaseWriter(string const &DB)
 {
    AddPattern("Packages");
    AddPattern("Packages.gz");
@@ -868,10 +916,19 @@ ReleaseWriter::ReleaseWriter(string DB)
    AddPattern("md5sum.txt");
 
    Output = stdout;
-   time_t now = time(NULL);
+   time_t const now = time(NULL);
    char datestr[128];
    if (strftime(datestr, sizeof(datestr), "%a, %d %b %Y %H:%M:%S UTC",
                 gmtime(&now)) == 0)
+   {
+      datestr[0] = '\0';
+   }
+
+   time_t const validuntil = now + _config->FindI("APT::FTPArchive::Release::ValidTime", 0);
+   char validstr[128] = "";
+   if (now == validuntil ||
+       strftime(validstr, sizeof(validstr), "%a, %d %b %Y %H:%M:%S UTC",
+                gmtime(&validuntil)) == 0)
    {
       datestr[0] = '\0';
    }
@@ -883,6 +940,7 @@ ReleaseWriter::ReleaseWriter(string DB)
    Fields["Version"] = "";
    Fields["Codename"] = "";
    Fields["Date"] = datestr;
+   Fields["Valid-Until"] = validstr;
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";
@@ -955,7 +1013,7 @@ bool ReleaseWriter::DoPackage(string FileName)
 void ReleaseWriter::Finish()
 {
    fprintf(Output, "MD5Sum:\n");
-   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
        I != CheckSums.end();
        ++I)
    {
@@ -966,7 +1024,7 @@ void ReleaseWriter::Finish()
    }
 
    fprintf(Output, "SHA1:\n");
-   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
        I != CheckSums.end();
        ++I)
    {
@@ -977,7 +1035,7 @@ void ReleaseWriter::Finish()
    }
 
    fprintf(Output, "SHA256:\n");
-   for(map<string,struct CheckSum>::iterator I = CheckSums.begin();
+   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
        I != CheckSums.end();
        ++I)
    {

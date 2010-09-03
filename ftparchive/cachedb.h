@@ -49,7 +49,7 @@ class CacheDB
    {
       return Dbp->get(Dbp,0,&Key,&Data,0) == 0;
    };
-   inline bool Put(const void *In,unsigned long Length) 
+   inline bool Put(const void *In,unsigned long const &Length) 
    {
       if (ReadOnly == true)
 	 return true;
@@ -63,13 +63,13 @@ class CacheDB
       return true;
    }
    bool OpenFile();
-   bool GetFileStat();
+   bool GetFileStat(bool const &doStat = false);
    bool GetCurStat();
    bool LoadControl();
-   bool LoadContents(bool GenOnly);
-   bool GetMD5(bool GenOnly);
-   bool GetSHA1(bool GenOnly);
-   bool GetSHA256(bool GenOnly);
+   bool LoadContents(bool const &GenOnly);
+   bool GetMD5(bool const &GenOnly);
+   bool GetSHA1(bool const &GenOnly);
+   bool GetSHA256(bool const &GenOnly);
    
    // Stat info stored in the DB, Fixed types since it is written to disk.
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2),
@@ -117,20 +117,20 @@ class CacheDB
       Stats() : Bytes(0), MD5Bytes(0), SHA1Bytes(0), SHA256Bytes(0), Packages(0), Misses(0), DeLinkBytes(0) {};
    } Stats;
    
-   bool ReadyDB(string DB);
+   bool ReadyDB(string const &DB);
    inline bool DBFailed() {return Dbp != 0 && DBLoaded == false;};
    inline bool Loaded() {return DBLoaded == true;};
    
    inline off_t GetFileSize(void) {return CurStat.FileSize;}
    
-   bool SetFile(string FileName,struct stat St,FileFd *Fd);
-   bool GetFileInfo(string FileName, bool DoControl, bool DoContents,
-		   bool GenContentsOnly, bool DoMD5, bool DoSHA1, bool DoSHA256);
+   bool SetFile(string const &FileName,struct stat St,FileFd *Fd);
+   bool GetFileInfo(string const &FileName, bool const &DoControl, bool const &DoContents, bool const &GenContentsOnly,
+		    bool const &DoMD5, bool const &DoSHA1, bool const &DoSHA256, bool const &checkMtime = false);
    bool Finish();   
    
    bool Clean();
    
-   CacheDB(string DB) : Dbp(0), Fd(NULL), DebFile(0) {ReadyDB(DB);};
+   CacheDB(string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {ReadyDB(DB);};
    ~CacheDB() {ReadyDB(string()); delete DebFile;};
 };
     
