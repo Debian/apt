@@ -673,9 +673,13 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
       std::clog << "Keyring path: " << trustedPath << std::endl;
    }
 
-   std::vector<string> keyrings = GetListOfFilesInDir(trustedPath, "gpg", false);
-   if (FileExists(trustedFile) == true)
-      keyrings.push_back(trustedFile);
+   std::vector<string> keyrings;
+   if (DirectoryExists(trustedPath))
+   {
+       keyrings = GetListOfFilesInDir(trustedPath, "gpg", false, true);
+       if (FileExists(trustedFile) == true)
+          keyrings.push_back(trustedFile);
+   }
 
    std::vector<const char *> Args;
    Args.reserve(30);
