@@ -1,4 +1,16 @@
-apt (0.8.1) UNRELEASED; urgency=low
+apt (0.8.2) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/versionmatch.cc:
+    - do not accept 'Pin: origin "' (missing closing ") as a valid
+      way to pin a local archive: either "" or none…
+  * apt-pkg/deb/dpkgpm.cc:
+    - create Dir::Log if needed to support /var/log as tmpfs or similar,
+      inspired by Thomas Bechtold, thanks! (Closes: #523919, LP: #220239)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 03 Sep 2010 19:29:01 +0200
+
+apt (0.8.1) unstable; urgency=low
 
   [ Programs translations ]
   * Thai (Theppitak Karoonboonyanan). Closes: #592695
@@ -12,6 +24,9 @@ apt (0.8.1) UNRELEASED; urgency=low
   * Bulgarian (Damyan Ivanov). Closes: #594627
   * Portuguese (Miguel Figueiredo). Closes: #594668
   * Korean (Changwoo Ryu). Closes: #594809
+  * Norwegian Bokmål (Hans Nordhaug). Closes: #595182
+  * Danish (Joe Hansen). Closes: #595176
+  * Catalan (Agustí Grau). Closes: #595234
 
   [ Christian Perrier ]
   * Fix spelling error in cmdline/apt-get.cc. Thanks to Osamu Aoki
@@ -40,11 +55,8 @@ apt (0.8.1) UNRELEASED; urgency=low
     - let the pin origin actually work as advertised in the manpage
       which means "" are optional and pinning a local archive does
       work - even if it is a non-flat archive (Closes: #594435)
-  * apt-pkg/deb/dpkgpm.cc:
-    - create Dir::Log if needed to support /var/log as tmpfs or similar,
-      inspired by Thomas Bechtold, thanks! (Closes: #523919, LP: #220239)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 02 Sep 2010 12:41:32 +0200
+ -- Michael Vogt <mvo@debian.org>  Fri, 03 Sep 2010 18:36:11 +0200
 
 apt (0.8.0) unstable; urgency=low
 
