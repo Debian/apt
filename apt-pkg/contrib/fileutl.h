@@ -101,7 +101,7 @@ bool CreateDirectory(string const &Parent, string const &Path);
  *  /apt/ will be removed before CreateDirectory call.
  *  \param Path which should exist after (successful) call
  */
-bool CheckDirectory(string const &Parent, string const &Path);
+bool CreateAPTDirectoryIfNeeded(string const &Parent, string const &Path);
 
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
 					bool const &SortList, bool const &AllowNoExt=false);

@@ -251,11 +251,11 @@ bool CreateDirectory(string const &Parent, string const &Path)
    return true;
 }
 									/*}}}*/
-// CheckDirectory - ensure that the given directory exists		/*{{{*/
+// CreateAPTDirectoryIfNeeded - ensure that the given directory exists		/*{{{*/
 // ---------------------------------------------------------------------
 /* a small wrapper around CreateDirectory to check if it exists and to
    remove the trailing "/apt/" from the parent directory if needed */
-bool CheckDirectory(string const &Parent, string const &Path)
+bool CreateAPTDirectoryIfNeeded(string const &Parent, string const &Path)
 {
    if (DirectoryExists(Path) == true)
       return true;
