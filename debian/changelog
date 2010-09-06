@@ -3,7 +3,23 @@ apt (0.8.2) UNRELEASED; urgency=low
   [ Manpages translations ]
   * Spanish (Omar Campagne). Closes: #595557
 
- -- Christian Perrier <bubulle@debian.org>  Sun, 05 Sep 2010 07:53:15 +0200
+  [ David Kalnischkies ]
+  * apt-pkg/versionmatch.cc:
+    - do not accept 'Pin: origin "' (missing closing ") as a valid
+      way to pin a local archive: either "" or none…
+  * apt-pkg/deb/dpkgpm.cc:
+    - create Dir::Log if needed to support /var/log as tmpfs or similar,
+      inspired by Thomas Bechtold, thanks! (Closes: #523919, LP: #220239)
+  * apt-pkg/indexcopy.cc:
+    - support really still the APT::GPGV::TrustedKeyring setting,
+      as it breaks d-i badly otherwise (Closes: #595428)
+  * cmdline/apt-key:
+    - support also Dir::Etc::Trusted so that apt-key works in the same
+      way as the library part which works with the trusted files
+  * methods/{gzip,bzip2}.cc:
+    - empty files can never be valid archives (Closes: #595691)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 06 Sep 2010 18:10:06 +0200
 
 apt (0.8.1) unstable; urgency=low
 
