@@ -56,12 +56,9 @@ bool Bzip2Method::Fetch(FetchItem *Itm)
    // Open the source and destination files
    FileFd From(Path,FileFd::ReadOnly);
 
-   // if the file is empty, just rename it and return
-   if(From.Size() == 0) 
-   {
-      rename(Path.c_str(), Itm->DestFile.c_str());
-      return true;
-   }
+   // FIXME add an error message saying that empty files can't be valid archives
+   if(From.Size() == 0)
+      return false;
 
    int GzOut[2];   
    if (pipe(GzOut) < 0)
