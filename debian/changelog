@@ -1,14 +1,20 @@
 apt (0.8.3) UNRELEASED; urgency=low
 
+  [ Manpages translations ]
+  * Japanese (KURASAWA Nozomu). Closes: #595862
+
+  [ Michael Vogt ]
   * apt-pkg/indexcopy.cc:
     - only use trusted.gpg.d directory if it exists
     - do not replace /dev/null when running in APT::CDROM::NoAct
       mode (LP: #612666), thanks to Colin Watson
 
-  [ Manpages translations ]
-  * Japanese (KURASAWA Nozomu). Closes: #595862
+  [ David Kalnischkies ]
+  * ftparchive/apt-ftparchive.cc:
+    - ensure that BinDirectory as well as Tree settings get
+      the correct default FileMode setting (Closes: #595922)
 
- -- Michael Vogt <mvo@debian.org>  Tue, 07 Sep 2010 10:02:02 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 07 Sep 2010 15:07:59 +0200
 
 apt (0.8.2) unstable; urgency=low
 
