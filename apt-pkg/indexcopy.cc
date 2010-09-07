@@ -132,9 +132,14 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	       (*I).c_str() + CDROM.length(),GetFileName());
       string TargetF = _config->FindDir("Dir::State::lists") + "partial/";
       TargetF += URItoFileName(S);
+      FileFd Target;
       if (_config->FindB("APT::CDROM::NoAct",false) == true)
+      {
 	 TargetF = "/dev/null";
-      FileFd Target(TargetF,FileFd::WriteAtomic);
+         Target.Open(TargetF,FileFd::WriteExists);
+      } else {
+         Target.Open(TargetF,FileFd::WriteAtomic);
+      }
       FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
@@ -673,9 +678,11 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
       std::clog << "Keyring path: " << trustedPath << std::endl;
    }
 
-   std::vector<string> keyrings = GetListOfFilesInDir(trustedPath, "gpg", false);
+   std::vector<string> keyrings;
+   if (DirectoryExists(trustedPath))
+     keyrings = GetListOfFilesInDir(trustedPath, "gpg", false, true);
    if (FileExists(trustedFile) == true)
-      keyrings.push_back(trustedFile);
+     keyrings.push_back(trustedFile);
 
    std::vector<const char *> Args;
    Args.reserve(30);
