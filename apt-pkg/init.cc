@@ -85,6 +85,9 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.disabled$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.bak$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
+   // ubuntu specific
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.save$");
 
    // Translation
    Cnf.Set("APT::Acquire::Translation", "environment");
