@@ -1,12 +1,84 @@
-apt (0.8.0ubuntu4) unstable; urgency=low
+apt (0.8.2ubuntu1) maverick; urgency=low
 
+  * merged fixes from debian-sid
   * debian/rules:
     - put ubuntu-archive.gpg back into the package (LP: #620576)
   * apt-pkg/init.cc:
     - ignore ".distUpgrade" and ".save" files in sources.list.d
       (LP: #631770)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 03 Sep 2010 19:49:54 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 07 Sep 2010 09:27:24 +0200
+
+apt (0.8.2) unstable; urgency=low
+
+  [ Manpages translations ]
+  * Spanish (Omar Campagne). Closes: #595557
+
+  [ David Kalnischkies ]
+  * apt-pkg/versionmatch.cc:
+    - do not accept 'Pin: origin "' (missing closing ") as a valid
+      way to pin a local archive: either "" or none…
+  * apt-pkg/deb/dpkgpm.cc:
+    - create Dir::Log if needed to support /var/log as tmpfs or similar,
+      inspired by Thomas Bechtold, thanks! (Closes: #523919, LP: #220239)
+  * apt-pkg/indexcopy.cc:
+    - support really still the APT::GPGV::TrustedKeyring setting,
+      as it breaks d-i badly otherwise (Closes: #595428)
+  * cmdline/apt-key:
+    - support also Dir::Etc::Trusted so that apt-key works in the same
+      way as the library part which works with the trusted files
+  * methods/{gzip,bzip2}.cc:
+    - empty files can never be valid archives (Closes: #595691)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 06 Sep 2010 18:10:06 +0200
+
+apt (0.8.1) unstable; urgency=low
+
+  [ Programs translations ]
+  * Thai (Theppitak Karoonboonyanan). Closes: #592695
+  * Russian (Yuri Kozlov). Closes: #594232
+  * Slovak (Ivan Masár). Closes: #594255
+  * Swedish (Daniel Nylander). Closes: #594241
+  * Japanese (Kenshi Muto, Osamu Aoki). Closes: #594265
+  * Italian (Milo Casagrande). Closes: #594238
+  * Asturian (maacub). Closes: #594303
+  * Simplified Chinese (Aron Xu). Closes: #594458
+  * Bulgarian (Damyan Ivanov). Closes: #594627
+  * Portuguese (Miguel Figueiredo). Closes: #594668
+  * Korean (Changwoo Ryu). Closes: #594809
+  * Norwegian Bokmål (Hans Nordhaug). Closes: #595182
+  * Danish (Joe Hansen). Closes: #595176
+  * Catalan (Agustí Grau). Closes: #595234
+
+  [ Christian Perrier ]
+  * Fix spelling error in cmdline/apt-get.cc. Thanks to Osamu Aoki
+    Closes: #594211
+
+  [ Manpages translations ]
+  * Portuguese (Américo Monteiro)
+
+  [ David Kalnischkies ]
+  * cmdline/apt-cache.cc:
+    - show in madison command again also source packages (LP: #614589)
+    - remove useless GetInitialize method
+  * cmdline/apt-get.cc:
+    - remove direct calls of ReadMainList and use the wrapper instead
+      to protect us from useless re-reads and two-times notice display
+    - remove death code by removing unused GetInitialize
+  * apt-pkg/depcache.cc:
+    - now that apt-get purge works on 'rc' packages let the MarkDelete
+      pass this purge forward to the non-pseudo package for pseudos
+  * apt-pkg/contrib/fileutl.cc:
+    - apply SilentlyIgnore also on files without an extension
+  * apt-pkg/contrib/configuration.cc:
+    - fix autoremove by using correct config-option name and
+      don't make faulty assumptions in error handling (Closes: #594689)
+  * apt-pkg/versionmatch.cc:
+    - let the pin origin actually work as advertised in the manpage
+      which means "" are optional and pinning a local archive does
+      work - even if it is a non-flat archive (Closes: #594435)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 03 Sep 2010 18:36:11 +0200
 
 apt (0.8.0ubuntu3) maverick; urgency=low
 

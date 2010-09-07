@@ -74,12 +74,12 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
    string const archivesDir = _config->FindDir("Dir::Cache::Archives");
    string const partialArchivesDir = archivesDir + "partial/";
 
-   if (CheckDirectory(_config->FindDir("Dir::State"), partialListDir) == false &&
-       CheckDirectory(listDir, partialListDir) == false)
+   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
+       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
       return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
 
-   if (CheckDirectory(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
-       CheckDirectory(archivesDir, partialArchivesDir) == false)
+   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
+       CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
       return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
 
    if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)
@@ -91,27 +91,6 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
       return _error->Error(_("Unable to lock directory %s"), Lock.c_str());
 
    return true;
-}
-									/*}}}*/
-// Acquire::CheckDirectory - ensure that the given directory exists	/*{{{*/
-// ---------------------------------------------------------------------
-/* a small wrapper around CreateDirectory to check if it exists and to
-   remove the trailing "/apt/" from the parent directory if needed */
-bool pkgAcquire::CheckDirectory(string const &Parent, string const &Path) const
-{
-   if (DirectoryExists(Path) == true)
-      return true;
-
-   size_t const len = Parent.size();
-   if (len > 5 && Parent.find("/apt/", len - 6, 5) == len - 5)
-   {
-      if (CreateDirectory(Parent.substr(0,len-5), Path) == true)
-	 return true;
-   }
-   else if (CreateDirectory(Parent, Path) == true)
-      return true;
-
-   return false;
 }
 									/*}}}*/
 // Acquire::~pkgAcquire	- Destructor					/*{{{*/

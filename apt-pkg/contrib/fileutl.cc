@@ -251,6 +251,27 @@ bool CreateDirectory(string const &Parent, string const &Path)
    return true;
 }
 									/*}}}*/
+// CreateAPTDirectoryIfNeeded - ensure that the given directory exists		/*{{{*/
+// ---------------------------------------------------------------------
+/* a small wrapper around CreateDirectory to check if it exists and to
+   remove the trailing "/apt/" from the parent directory if needed */
+bool CreateAPTDirectoryIfNeeded(string const &Parent, string const &Path)
+{
+   if (DirectoryExists(Path) == true)
+      return true;
+
+   size_t const len = Parent.size();
+   if (len > 5 && Parent.find("/apt/", len - 6, 5) == len - 5)
+   {
+      if (CreateDirectory(Parent.substr(0,len-5), Path) == true)
+	 return true;
+   }
+   else if (CreateDirectory(Parent, Path) == true)
+      return true;
+
+   return false;
+}
+									/*}}}*/
 // GetListOfFilesInDir - returns a vector of files in the given dir	/*{{{*/
 // ---------------------------------------------------------------------
 /* If an extension is given only files with this extension are included

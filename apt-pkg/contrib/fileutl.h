@@ -94,6 +94,15 @@ int GetLock(string File,bool Errors = true);
 bool FileExists(string File);
 bool DirectoryExists(string const &Path) __attrib_const;
 bool CreateDirectory(string const &Parent, string const &Path);
+
+/** \brief Ensure the existence of the given Path
+ *
+ *  \param Parent directory of the Path directory - a trailing
+ *  /apt/ will be removed before CreateDirectory call.
+ *  \param Path which should exist after (successful) call
+ */
+bool CreateAPTDirectoryIfNeeded(string const &Parent, string const &Path);
+
 std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
 					bool const &SortList, bool const &AllowNoExt=false);
 std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> const &Ext,

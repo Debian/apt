@@ -118,7 +118,7 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
    
    if (Type == Origin)
    {
-      if (Data[0] == '"' && Data.end()[-1] == '"')
+      if (Data[0] == '"' && Data.length() >= 2 && Data.end()[-1] == '"')
 	 OrSite = Data.substr(1, Data.length() - 2);
       else
 	 OrSite = Data;
