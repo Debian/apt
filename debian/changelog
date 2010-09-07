@@ -2,6 +2,8 @@ apt (0.8.2) unstable; urgency=low
 
   * apt-pkg/indexcopy.cc:
     - only use trusted.gpg.d directory if it exists
+    - do not replace /dev/null when running in APT::CDROM::NoAct
+      mode (LP: #612666), thanks to Colin Watson
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 03 Sep 2010 20:21:43 +0200
 
