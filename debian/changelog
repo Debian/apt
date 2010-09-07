@@ -6,6 +6,10 @@ apt (0.8.2ubuntu1) maverick; urgency=low
   * apt-pkg/init.cc:
     - ignore ".distUpgrade" and ".save" files in sources.list.d
       (LP: #631770)
+  * apt-pkg/indexcopy.cc:
+    - only use trusted.gpg.d directory if it exists
+    - do not replace /dev/null when running in APT::CDROM::NoAct
+      mode (LP: #612666), thanks to Colin Watson
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 07 Sep 2010 09:27:24 +0200
 
