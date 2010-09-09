@@ -708,18 +708,21 @@ bool SourcesWriter::DoPackage(string FileName)
    // Add the dsc to the files hash list
    string const strippedName = flNotDir(FileName);
    std::ostringstream ostreamFiles;
-   ostreamFiles << "\n " << string(MD5.Result()) << " " << St.st_size << " "
-		<< strippedName << "\n " << Tags.FindS("Files");
+   if (Tags.Exists("Files"))
+      ostreamFiles << "\n " << string(MD5.Result()) << " " << St.st_size << " "
+		   << strippedName << "\n " << Tags.FindS("Files");
    string const Files = ostreamFiles.str();
 
    std::ostringstream ostreamSha1;
-   ostreamSha1 << "\n " << string(SHA1.Result()) << " " << St.st_size << " "
-		<< strippedName << "\n " << Tags.FindS("Checksums-Sha1");
+   if (Tags.Exists("Checksums-Sha1"))
+      ostreamSha1 << "\n " << string(SHA1.Result()) << " " << St.st_size << " "
+		   << strippedName << "\n " << Tags.FindS("Checksums-Sha1");
    string const ChecksumsSha1 = ostreamSha1.str();
 
    std::ostringstream ostreamSha256;
-   ostreamSha256 << "\n " << string(SHA256.Result()) << " " << St.st_size << " "
-		<< strippedName << "\n " << Tags.FindS("Checksums-Sha256");
+   if (Tags.Exists("Checksums-Sha256"))
+      ostreamSha256 << "\n " << string(SHA256.Result()) << " " << St.st_size << " "
+		   << strippedName << "\n " << Tags.FindS("Checksums-Sha256");
    string const ChecksumsSha256 = ostreamSha256.str();
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
