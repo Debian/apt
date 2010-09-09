@@ -1,0 +1,91 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+buildaptarchive
+setupflataptarchive
+
+testaptgetupdate() {
+	aptget update 2>> testaptgetupdate.diff >> testaptgetupdate.diff || true
+	sed -i -e '/^Fetched / d' -e 's#\[[0-9]*[kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
+	GIVEN="$1"
+	shift
+	msgtest "Test for correctness of" "apt-get update with $*"
+	if [ -z "$GIVEN" ]; then
+		echo -n "" | checkdiff - testaptgetupdate.diff && msgpass || msgfail
+	else
+		echo "$GIVEN" | checkdiff - testaptgetupdate.diff && msgpass || msgfail
+	fi
+	rm testaptgetupdate.diff
+}
+
+touch aptarchive/en.bz2
+
+testaptgetupdate "Ign file:  Release.gpg
+Ign file:$(readlink -f aptarchive)/  Translation-en
+Get:1 file:  Release []
+Reading package lists..." "empty file en.bz2 over file"
+
+rm aptarchive/en.bz2
+echo -n "" | bzip2 > aptarchive/en.bz2
+
+testaptgetupdate "Ign file:  Release.gpg
+Get:1 file:  Release []
+Reading package lists..." "empty archive en.bz2 over file"
+
+rm aptarchive/en.bz2
+
+# do the same again with http instead of file
+changetowebserver
+
+touch aptarchive/en.bz2
+
+testaptgetupdate "Ign http://localhost  Release.gpg
+Get:1 http://localhost/  Translation-en
+Get:2 http://localhost  Release []
+Ign http://localhost/  Translation-en
+Get:3 http://localhost  Packages []
+Reading package lists..." "empty file en.bz2 over http"
+
+rm aptarchive/en.bz2
+echo -n "" | bzip2 > aptarchive/en.bz2
+
+testaptgetupdate "Ign http://localhost  Release.gpg
+Get:1 http://localhost/  Translation-en []
+Get:2 http://localhost  Release []
+Ign http://localhost  Packages/DiffIndex
+Get:3 http://localhost  Packages []
+Reading package lists..." "empty archive en.bz2 over http"
+
+rm aptarchive/en.bz2
+
+rm aptarchive/Packages
+touch aptarchive/Packages
+buildaptarchivefromfiles
+
+testaptgetupdate "Ign http://localhost  Release.gpg
+Ign http://localhost/  Translation-en
+Get:1 http://localhost  Release []
+Ign http://localhost  Packages/DiffIndex
+Get:2 http://localhost  Packages []
+Reading package lists..." "empty archive Packages over http"
+
+find aptarchive/ -name 'Packages*' -type f -delete
+touch aptarchive/Packages.bz2
+aptftparchive release aptarchive/ > aptarchive/Release
+
+#FIXME: we should response with a good error message instead
+testaptgetupdate "Ign http://localhost  Release.gpg
+Ign http://localhost/  Translation-en
+Get:1 http://localhost  Release []
+Ign http://localhost  Packages/DiffIndex
+Get:2 http://localhost  Packages
+Err http://localhost  Packages
+  Undetermined Error
+W: Failed to fetch http://localhost:8080/Packages.bz2  Undetermined Error
+
+E: Some index files failed to download, they have been ignored, or old ones used instead." "empty file Packages over http"
