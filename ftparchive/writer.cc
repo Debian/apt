@@ -928,12 +928,12 @@ ReleaseWriter::ReleaseWriter(string const &DB)
    }
 
    time_t const validuntil = now + _config->FindI("APT::FTPArchive::Release::ValidTime", 0);
-   char validstr[128] = "";
+   char validstr[128];
    if (now == validuntil ||
        strftime(validstr, sizeof(validstr), "%a, %d %b %Y %H:%M:%S UTC",
                 gmtime(&validuntil)) == 0)
    {
-      datestr[0] = '\0';
+      validstr[0] = '\0';
    }
 
    map<string,string> Fields;
