@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7.21\n"
+"Project-Id-Version: apt 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-23 18:41-0400\n"
-"PO-Revision-Date: 2010-02-27 13:17+0100\n"
+"PO-Revision-Date: 2010-09-08 22:37+0200\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
 "Language: \n"
@@ -23,16 +23,15 @@ msgstr ""
 #: cmdline/apt-cache.cc:156
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Paket %s Version %s hat eine nicht erfüllte Abhängigkeit:\n"
+msgstr "Paket %s Version %s hat eine unerfüllte Abhängigkeit:\n"
 
 #: cmdline/apt-cache.cc:284
 msgid "Total package names: "
 msgstr "Gesamtzahl an Paketnamen: "
 
 #: cmdline/apt-cache.cc:286
-#, fuzzy
 msgid "Total package structures: "
-msgstr "Gesamtzahl an Paketnamen: "
+msgstr "Gesamtzahl an Paketstrukturen: "
 
 #: cmdline/apt-cache.cc:326
 msgid "  Normal packages: "
@@ -100,9 +99,8 @@ msgid "Package file %s is out of sync."
 msgstr "Paketdatei %s ist nicht synchronisiert."
 
 #: cmdline/apt-cache.cc:1273
-#, fuzzy
 msgid "You must give at least one search pattern"
-msgstr "Sie müssen genau ein Muster angeben"
+msgstr "Sie müssen mindestens ein Suchmuster angeben"
 
 #: cmdline/apt-cache.cc:1429 cmdline/apt-cache.cc:1431
 #: cmdline/apt-cache.cc:1508
@@ -160,7 +158,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s für %s, kompiliert am %s %s\n"
 
 #: cmdline/apt-cache.cc:1739
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] add file1 [file2 ...]\n"
@@ -214,26 +211,28 @@ msgstr ""
 "   showsrc   – Aufzeichnungen zu Quellen ausgeben\n"
 "   stats     – einige grundlegenden Statistiken ausgeben\n"
 "   dump      – gesamte Datei in Kurzform ausgeben\n"
-"   dumpavail – Datei »available« mit allen verfügbaren Paketen ausgeben\n"
+"   dumpavail – Datei verfügbarer Pakete nach stdout ausgeben\n"
 "   unmet     – unerfüllte Abhängigkeiten ausgeben\n"
 "   search    – die Paketliste mittels regulärem Ausdruck durchsuchen\n"
 "   show      – einen lesbaren Datensatz für das Paket ausgeben\n"
+"   showauto  – eine Liste automatisch installierter Pakete ausgeben\n"
 "   depends   – rohe Abhängigkeitsinformationen eines Pakets ausgeben\n"
 "   rdepends  – umgekehrte Abhängigkeitsinformationen eines Pakets ausgeben\n"
 "   pkgnames  – die Namen aller Pakete im System auflisten\n"
 "   dotty     – Paketgraph zur Verwendung mit GraphViz erzeugen\n"
 "   xvcg      – Paketgraph zur Verwendung mit xvcg erzeugen\n"
-"   policy    – »policy«-Einstellungen ausgeben\n"
+"   policy    – Policy-Einstellungen ausgeben\n"
 "\n"
 "Optionen:\n"
-"  -h   dieser Hilfe-Text.\n"
-"  -p=? der Paket-Cache.\n"
-"  -s=? der Quell-Cache.\n"
+"  -h   dieser Hilfe-Text\n"
+"  -p=? der Paket-Cache\n"
+"  -s=? der Quell-Cache\n"
 "  -q   Fortschrittsanzeige abschalten\n"
-"  -i   nur wichtige Abhängigkeiten für den »unmet«-Befehl zeigen\n"
+"  -i   nur wichtige Abhängigkeiten für den »unmet«-Befehl ausgeben\n"
 "  -c=? diese Konfigurationsdatei lesen\n"
 "  -o=? eine beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
-"Weitere Informationen finden Sie unter apt-cache(8) und apt.conf(5).\n"
+"Weitere Informationen finden Sie in den Handbuchseiten von apt-cache(8)\n"
+"und apt.conf(5).\n"
 
 #: cmdline/apt-cdrom.cc:77
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -248,9 +247,9 @@ msgstr ""
 "Eingabetaste (Enter)"
 
 #: cmdline/apt-cdrom.cc:127
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to mount '%s' to '%s'"
-msgstr "%s konnte nicht in %s umbenannt werden"
+msgstr "»%s« konnte nicht in »%s« eingebunden werden"
 
 #: cmdline/apt-cdrom.cc:162
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -546,7 +545,7 @@ msgstr "*** Erzeugen einer Verknüpfung von %s zu %s fehlgeschlagen"
 #: ftparchive/writer.cc:289
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr " DeLink-Limit von %s B erreicht.\n"
+msgstr " DeLink-Limit von %sB erreicht.\n"
 
 #: ftparchive/writer.cc:393
 msgid "Archive had no package field"
@@ -680,7 +679,7 @@ msgstr "Fehler beim Kompilieren eines regulären Ausdrucks - %s"
 
 #: cmdline/apt-get.cc:251
 msgid "The following packages have unmet dependencies:"
-msgstr "Die folgenden Pakete haben nicht erfüllte Abhängigkeiten:"
+msgstr "Die folgenden Pakete haben unerfüllte Abhängigkeiten:"
 
 #: cmdline/apt-get.cc:341
 #, c-format
@@ -776,19 +775,19 @@ msgid "%lu not fully installed or removed.\n"
 msgstr "%lu nicht vollständig installiert oder entfernt.\n"
 
 #: cmdline/apt-get.cc:634
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Hinweis: %s wird für regulären Ausdruck »%s« gewählt.\n"
+msgstr "Hinweis: »%s« wird für Task »%s« gewählt.\n"
 
 #: cmdline/apt-get.cc:640
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Hinweis: %s wird für regulären Ausdruck »%s« gewählt.\n"
+msgstr "Hinweis: »%s« wird für regulären Ausdruck »%s« gewählt.\n"
 
 #: cmdline/apt-get.cc:647
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Gewählte Version %s (%s) für %s\n"
+msgstr "Version »%s« (%s) für »%s« gewählt\n"
 
 #: cmdline/apt-get.cc:657
 #, c-format
@@ -800,9 +799,8 @@ msgid " [Installed]"
 msgstr " [Installiert]"
 
 #: cmdline/apt-get.cc:677
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "Mögliche Versionen"
+msgstr " [Nicht der Installationskandidat]"
 
 #: cmdline/apt-get.cc:679
 msgid "You should explicitly select one to install."
@@ -824,33 +822,33 @@ msgid "However the following packages replace it:"
 msgstr "Doch die folgenden Pakete ersetzen es:"
 
 #: cmdline/apt-get.cc:712
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "Paket %s hat keinen Installationskandidaten"
+msgstr "Paket »%s« hat keinen Installationskandidaten"
 
 #: cmdline/apt-get.cc:723
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
+msgstr "Virtuelle Pakete wie »%s« können nicht entfernt werden\n"
 
 #: cmdline/apt-get.cc:754
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Hinweis: %s wird an Stelle von %s gewählt\n"
+msgstr "Hinweis: »%s« wird an Stelle von »%s« gewählt\n"
 
 #: cmdline/apt-get.cc:784
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
-"%s wird übersprungen; es ist schon installiert und »upgrade« ist nicht "
-"gesetzt.\n"
+"%s wird übersprungen; es ist schon installiert und ein Upgrade ist nicht "
+"angefordert.\n"
 
 #: cmdline/apt-get.cc:788
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
-"%s wird übersprungen; es ist schon installiert und »upgrade« ist nicht "
-"gesetzt.\n"
+"%s wird übersprungen; es ist nicht installiert und lediglich Upgrades sind "
+"angefordert.\n"
 
 #: cmdline/apt-get.cc:798
 #, c-format
@@ -900,7 +898,7 @@ msgstr "Probieren Sie »apt-get -f install«, um dies zu korrigieren."
 
 #: cmdline/apt-get.cc:952
 msgid "Unmet dependencies. Try using -f."
-msgstr "Nicht-erfüllte Abhängigkeiten. Versuchen Sie, -f zu benutzen."
+msgstr "Unerfüllte Abhängigkeiten. Versuchen Sie, -f zu benutzen."
 
 #: cmdline/apt-get.cc:977
 msgid "WARNING: The following packages cannot be authenticated!"
@@ -948,22 +946,22 @@ msgstr ""
 #: cmdline/apt-get.cc:1105
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Es müssen noch %s B von %s B an Archiven heruntergeladen werden.\n"
+msgstr "Es müssen noch %sB von %sB an Archiven heruntergeladen werden.\n"
 
 #: cmdline/apt-get.cc:1108
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Es müssen %s B an Archiven heruntergeladen werden.\n"
+msgstr "Es müssen %sB an Archiven heruntergeladen werden.\n"
 
 #: cmdline/apt-get.cc:1113
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Nach dieser Operation werden %s B Plattenplatz zusätzlich benutzt.\n"
+msgstr "Nach dieser Operation werden %sB Plattenplatz zusätzlich benutzt.\n"
 
 #: cmdline/apt-get.cc:1116
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Nach dieser Operation werden %s B Plattenplatz freigegeben.\n"
+msgstr "Nach dieser Operation werden %sB Plattenplatz freigegeben.\n"
 
 #: cmdline/apt-get.cc:1131 cmdline/apt-get.cc:1134 cmdline/apt-get.cc:2319
 #: cmdline/apt-get.cc:2322
@@ -1044,11 +1042,15 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
+"Das folgende Paket verschwand von Ihrem System, da alle\n"
+"Dateien von anderen Paketen überschrieben wurden:"
 msgstr[1] ""
+"Die folgenden Pakete verschwanden von Ihrem System, da alle\n"
+"Dateien von anderen Paketen überschrieben wurden:"
 
 #: cmdline/apt-get.cc:1324
 msgid "Note: This is done automatic and on purpose by dpkg."
-msgstr ""
+msgstr "Hinweis: Dies wird automatisch und absichtlich von dpkg durchgeführt."
 
 #: cmdline/apt-get.cc:1454
 #, c-format
@@ -1076,26 +1078,25 @@ msgstr ""
 "Es soll nichts gelöscht werden, AutoRemover kann nicht gestartet werden"
 
 #: cmdline/apt-get.cc:1653
-#, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr[0] ""
-"Die folgenden Pakete wurden automatisch installiert und werden nicht länger "
+"Das folgende Paket wurde automatisch installiert und wird nicht mehr "
 "benötigt:"
 msgstr[1] ""
-"Die folgenden Pakete wurden automatisch installiert und werden nicht länger "
+"Die folgenden Pakete wurden automatisch installiert und werden nicht mehr "
 "benötigt:"
 
 #: cmdline/apt-get.cc:1657
-#, fuzzy, c-format
+#, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] ""
-"%lu Pakete wurden automatisch installiert und werden nicht mehr benötigt.\n"
+"%lu Paket wurde automatisch installiert und wird nicht mehr benötigt.\n"
 msgstr[1] ""
 "%lu Pakete wurden automatisch installiert und werden nicht mehr benötigt.\n"
 
@@ -1144,8 +1145,8 @@ msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Nicht erfüllte Abhängigkeiten. Versuchen Sie »apt-get -f install« ohne "
-"Angabe eines Pakets (oder geben Sie eine Lösung an)."
+"Unerfüllte Abhängigkeiten. Versuchen Sie »apt-get -f install« ohne Angabe "
+"eines Pakets (oder geben Sie eine Lösung an)."
 
 #: cmdline/apt-get.cc:1794
 msgid ""
@@ -1181,9 +1182,9 @@ msgid "Couldn't find package %s"
 msgstr "Paket %s konnte nicht gefunden werden"
 
 #: cmdline/apt-get.cc:1981
-#, fuzzy, c-format
+#, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "%s wurde als manuell installiert festgelegt.\n"
+msgstr "%s wurde als automatisch installiert festgelegt.\n"
 
 #: cmdline/apt-get.cc:2002
 msgid "Calculating upgrade... "
@@ -1222,6 +1223,9 @@ msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
+"HINWEIS: »%s«-Paketierung wird betreut im »%s«-Versionsverwaltungssystem "
+"auf:\n"
+"%s\n"
 
 #: cmdline/apt-get.cc:2246
 #, c-format
@@ -1230,6 +1234,10 @@ msgid ""
 "bzr get %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
+"Bitte verwenden Sie:\n"
+"bzr get %s\n"
+"um die neuesten (möglicherweise noch unveröffentlichten) Aktualisierungen\n"
+"für das Paket abzurufen.\n"
 
 #: cmdline/apt-get.cc:2297
 #, c-format
@@ -1244,13 +1252,12 @@ msgstr "Sie haben nicht genügend freien Speicherplatz in %s"
 #: cmdline/apt-get.cc:2338
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr ""
-"Es müssen noch %s B von %s B an Quellarchiven heruntergeladen werden.\n"
+msgstr "Es müssen noch %sB von %sB an Quellarchiven heruntergeladen werden.\n"
 
 #: cmdline/apt-get.cc:2341
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Es müssen %s B an Quellarchiven heruntergeladen werden.\n"
+msgstr "Es müssen %sB an Quellarchiven heruntergeladen werden.\n"
 
 #: cmdline/apt-get.cc:2347
 #, c-format
@@ -1346,7 +1353,6 @@ msgid "Supported modules:"
 msgstr "Unterstützte Module:"
 
 #: cmdline/apt-get.cc:2786
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1416,7 +1422,9 @@ msgstr ""
 "  dselect-upgrade – der Auswahl von »dselect« folgen\n"
 "  clean           – heruntergeladene Archive löschen\n"
 "  autoclean       – veraltete heruntergeladene Archive löschen\n"
-"  check           – überprüfen, ob es nicht erfüllte Abhängigkeiten gibt\n"
+"  check           – überprüfen, ob es unerfüllte Abhängigkeiten gibt\n"
+"  markauto        – angegebene Pakete als automatisch installiert markieren\n"
+"  unmarkauto      – angegebene Pakete als manuell installiert markieren\n"
 "\n"
 "Optionen:\n"
 "  -h   dieser Hilfetext\n"
@@ -1427,14 +1435,13 @@ msgstr ""
 "  -y   für alle Antworten »Ja« annehmen und nicht nachfragen\n"
 "  -f   versuchen, ein System mit defekten Abhängigkeiten zu korrigieren\n"
 "  -m   versuchen fortzufahren, wenn Archive nicht auffindbar sind\n"
-"  -u   auch eine Liste der aktualisierten Pakete anzeigen\n"
+"  -u   ebenfalls eine Liste der aktualisierten Pakete ausgeben\n"
 "  -b   ein Quellpaket nach dem Herunterladen bauen\n"
-"  -V   ausführliche Versionsnummern anzeigen\n"
+"  -V   ausführliche Versionsnummern ausgeben\n"
 "  -c=? Diese Konfigurationsdatei benutzen\n"
 "  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
-"Siehe auch die Handbuch-Seiten apt-get(8), sources.list(5) und apt.conf(5) "
-"für\n"
-"weitergehende Informationen und Optionen.\n"
+"Siehe auch die Handbuchseiten apt-get(8), sources.list(5) und apt.conf(5)\n"
+"bezüglich weitergehender Informationen und Optionen.\n"
 "                                    Dieses APT hat Super-Kuh-Kräfte.\n"
 
 #: cmdline/apt-get.cc:2958
@@ -1469,7 +1476,7 @@ msgstr "Fehl "
 #: cmdline/acqprogress.cc:135
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Es wurden %s B in %s geholt (%s B/s)\n"
+msgstr "Es wurden %sB in %s geholt (%sB/s)\n"
 
 #: cmdline/acqprogress.cc:225
 #, c-format
@@ -2012,7 +2019,7 @@ msgstr "Verbindung konnte nicht angenommen werden"
 
 #: methods/ftp.cc:869 methods/http.cc:1000 methods/rsh.cc:302
 msgid "Problem hashing file"
-msgstr "Bei Bestimmung des Hashwertes einer Datei trat ein Problem auf"
+msgstr "Problem bei Bestimmung des Hashwertes einer Datei"
 
 #: methods/ftp.cc:882
 #, c-format
@@ -2114,10 +2121,9 @@ msgid "At least one invalid signature was encountered."
 msgstr "Mindestens eine ungültige Signatur wurde entdeckt."
 
 #: methods/gpgv.cc:172
-#, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
-"»%s« zur Überprüfung der Signatur konnte nicht ausgeführt werden (ist gpgv "
+"»gpgv« konnte zur Überprüfung der Signatur nicht ausgeführt werden (ist gpgv "
 "installiert?)"
 
 #: methods/gpgv.cc:177
@@ -2223,24 +2229,22 @@ msgid "Can't mmap an empty file"
 msgstr "Eine leere Datei kann nicht mit mmap abgebildet werden"
 
 #: apt-pkg/contrib/mmap.cc:89
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't duplicate file descriptor %i"
-msgstr "Pipe (Weiterleitung) für %s konnte nicht geöffnet werden"
+msgstr "Datei-Deskriptor %i konnte nicht dupliziert werden"
 
 #: apt-pkg/contrib/mmap.cc:97 apt-pkg/contrib/mmap.cc:250
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
-msgstr "mmap von %lu Bytes konnte nicht durchgeführt werden"
+msgstr "mmap mit %lu Byte Größe konnte nicht erzeugt werden"
 
 #: apt-pkg/contrib/mmap.cc:124
-#, fuzzy
 msgid "Unable to close mmap"
-msgstr "%s konnte nicht geöffnet werden"
+msgstr "mmap konnte nicht geschlossen werden"
 
 #: apt-pkg/contrib/mmap.cc:152 apt-pkg/contrib/mmap.cc:180
-#, fuzzy
 msgid "Unable to synchronize mmap"
-msgstr "Aufruf nicht möglich: "
+msgstr "mmap konnte nicht synchronisiert werden"
 
 #: apt-pkg/contrib/mmap.cc:300
 #, c-format
@@ -2257,11 +2261,15 @@ msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
+"Unmöglich, die Größe der MMap zu erhöhen, da das Limit von %lu Byte bereits "
+"erreicht ist."
 
 #: apt-pkg/contrib/mmap.cc:402
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
+"Unmöglich, die Größe der MMap zu erhöhen, da das automatische Anwachsen der "
+"MMap vom Benutzer deaktiviert ist."
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:371
@@ -2339,10 +2347,10 @@ msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Syntaxfehler %s:%u: Nicht unterstützte Direktive »%s«"
 
 #: apt-pkg/contrib/configuration.cc:777
-#, fuzzy, c-format
+#, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr ""
-"Syntaxfehler %s:%u: Direktiven können nur auf oberster Ebene benutzt werden"
+"Syntaxfehler %s:%u: Löschdirektiven benötigen einen Optionsbaum als Argument"
 
 #: apt-pkg/contrib/configuration.cc:827
 #, c-format
@@ -2473,9 +2481,9 @@ msgid "Could not open file %s"
 msgstr "Datei %s konnte nicht geöffnet werden"
 
 #: apt-pkg/contrib/fileutl.cc:714
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file descriptor %d"
-msgstr "Pipe (Weiterleitung) für %s konnte nicht geöffnet werden"
+msgstr "Datei-Deskriptor %d konnte nicht geöffnet werden"
 
 #: apt-pkg/contrib/fileutl.cc:774
 #, c-format
@@ -2490,28 +2498,28 @@ msgstr ""
 "möglich"
 
 #: apt-pkg/contrib/fileutl.cc:906
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the gzip file %s"
-msgstr "Beim Schließen der Datei trat ein Problem auf"
+msgstr "Problem beim Schließen der gzip-Datei %s"
 
 #: apt-pkg/contrib/fileutl.cc:909
-#, fuzzy, c-format
+#, c-format
 msgid "Problem closing the file %s"
-msgstr "Beim Schließen der Datei trat ein Problem auf"
+msgstr "Problem beim Schließen der Datei %s"
 
 #: apt-pkg/contrib/fileutl.cc:914
-#, fuzzy, c-format
+#, c-format
 msgid "Problem renaming the file %s to %s"
-msgstr "Beim Synchronisieren der Datei trat ein Problem auf"
+msgstr "Problem beim Umbenennen der Datei %s nach %s"
 
 #: apt-pkg/contrib/fileutl.cc:925
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking the file %s"
-msgstr "Beim Entfernen (unlink) der Datei trat ein Problem auf"
+msgstr "Problem beim Entfernen (unlink) der Datei %s"
 
 #: apt-pkg/contrib/fileutl.cc:938
 msgid "Problem syncing the file"
-msgstr "Beim Synchronisieren der Datei trat ein Problem auf"
+msgstr "Problem beim Synchronisieren der Datei"
 
 #: apt-pkg/pkgcache.cc:142
 msgid "Empty package cache"
@@ -2619,7 +2627,7 @@ msgstr "Temporäres StateFile %s konnte nicht geschrieben werden"
 #: apt-pkg/depcache.cc:921
 #, c-format
 msgid "Internal error, group '%s' has no installable pseudo package"
-msgstr ""
+msgstr "Interner Fehler, Gruppe »%s« hat kein installierbares Pseudo-Paket"
 
 #: apt-pkg/tagfile.cc:102
 #, c-format
@@ -2632,29 +2640,30 @@ msgid "Unable to parse package file %s (2)"
 msgstr "Paketdatei %s konnte nicht verarbeitet werden (2)"
 
 #: apt-pkg/sourcelist.cc:92
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist parse«)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([Option] nicht auswertbar)"
 
 #: apt-pkg/sourcelist.cc:95
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist«)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([Option] zu kurz)"
 
 #: apt-pkg/sourcelist.cc:106
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist parse«)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([%s] ist keine Zuweisung)"
 
 #: apt-pkg/sourcelist.cc:112
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist parse«)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([%s] hat keinen Schlüssel)"
 
 #: apt-pkg/sourcelist.cc:115
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist parse«)"
+msgstr ""
+"Missgestaltete Zeile %lu in Quellliste %s ([%s] Schlüssel %s hat keinen Wert)"
 
 #: apt-pkg/sourcelist.cc:128
 #, c-format
@@ -2767,19 +2776,19 @@ msgstr ""
 "ignoriert oder alte an ihrer Stelle benutzt."
 
 #: apt-pkg/acquire.cc:79
-#, fuzzy, c-format
+#, c-format
 msgid "List directory %spartial is missing."
 msgstr "Listenverzeichnis %spartial fehlt."
 
 #: apt-pkg/acquire.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "Archives directory %spartial is missing."
 msgstr "Archivverzeichnis %spartial fehlt."
 
 #: apt-pkg/acquire.cc:91
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock directory %s"
-msgstr "Das Listenverzeichnis kann nicht gesperrt werden"
+msgstr "Das Verzeichnis %s kann nicht gesperrt werden"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -2862,43 +2871,43 @@ msgstr "Cache hat ein inkompatibles Versionssystem"
 #: apt-pkg/pkgcachegen.cc:198
 #, c-format
 msgid "Error occurred while processing %s (NewPackage)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (NewPackage)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (NewPackage)"
 
 #: apt-pkg/pkgcachegen.cc:215
 #, c-format
 msgid "Error occurred while processing %s (UsePackage1)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (UsePackage1)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:253
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (NewFileDesc1)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:285
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (UsePackage2)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (UsePackage2)"
 
 #: apt-pkg/pkgcachegen.cc:289
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (NewFileVer1)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (NewFileVer1)"
 
 #: apt-pkg/pkgcachegen.cc:306 apt-pkg/pkgcachegen.cc:316
 #: apt-pkg/pkgcachegen.cc:324
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewVersion%d)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (NewVersion1)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (NewVersion%d)"
 
 #: apt-pkg/pkgcachegen.cc:320
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (UsePackage3)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (UsePackage3)"
 
 #: apt-pkg/pkgcachegen.cc:353
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (NewFileDesc2)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:360
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2927,12 +2936,12 @@ msgstr ""
 #: apt-pkg/pkgcachegen.cc:398
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (FindPkg)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:412
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
-msgstr "Ein Fehler trat auf beim Verarbeiten von %s (CollectFileProvides)"
+msgstr "Fehler aufgetreten beim Verarbeiten von %s (CollectFileProvides)"
 
 #: apt-pkg/pkgcachegen.cc:418
 #, c-format
@@ -2978,12 +2987,12 @@ msgstr ""
 #: apt-pkg/acquire-item.cc:1277
 #, c-format
 msgid "Release file expired, ignoring %s (invalid since %s)"
-msgstr ""
+msgstr "Release-Datei abgelaufen, %s wird ignoriert (ungültig seit %s)"
 
 #: apt-pkg/acquire-item.cc:1298
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr ""
+msgstr "Konflikt bei Distribution: %s (%s erwartet, aber %s bekommen)"
 
 #: apt-pkg/acquire-item.cc:1324
 #, c-format
@@ -2991,11 +3000,14 @@ msgid ""
 "A error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used.GPG error: %s: %s\n"
 msgstr ""
+"Während der Überprüfung der Signatur trat ein Fehler auf. Das Repository "
+"wurde nicht aktualisiert und die vorherigen Indexdateien werden verwendet. "
+"GPG-Fehler: %s: %s\n"
 
 #: apt-pkg/acquire-item.cc:1333
 #, c-format
 msgid "GPG error: %s: %s"
-msgstr ""
+msgstr "GPG-Fehler: %s: %s"
 
 #: apt-pkg/acquire-item.cc:1361
 #, c-format
@@ -3042,14 +3054,14 @@ msgid "No Hash entry in Release file %s"
 msgstr "Kein Hash-Eintrag in Release-Datei %s"
 
 #: apt-pkg/indexrecords.cc:107
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "Kein Hash-Eintrag in Release-Datei %s"
+msgstr "Ungültiger »Valid-Until«-Eintrag in Release-Datei %s"
 
 #: apt-pkg/indexrecords.cc:122
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
-msgstr "Kein Hash-Eintrag in Release-Datei %s"
+msgstr "Ungültiger »Date«-Eintrag in Release-Datei %s"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -3195,19 +3207,21 @@ msgid "Version '%s' for '%s' was not found"
 msgstr "Version »%s« für »%s« konnte nicht gefunden werden"
 
 #: apt-pkg/cacheset.cc:447
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task '%s'"
-msgstr "Task %s konnte nicht gefunden werden"
+msgstr "Task »%s« konnte nicht gefunden werden"
 
 #: apt-pkg/cacheset.cc:454
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr "Paket %s konnte nicht gefunden werden"
+msgstr "Mittels regulärem Ausdruck »%s« konnte kein Paket gefunden werden"
 
 #: apt-pkg/cacheset.cc:467
 #, c-format
 msgid "Can't select versions from package '%s' as it purely virtual"
 msgstr ""
+"Es können keine Versionen von Paket »%s« ausgewählt werden, da es rein "
+"virtuell ist"
 
 #: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
 #, c-format
@@ -3215,21 +3229,29 @@ msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
+"Es kann weder eine installierte Version noch ein Installationskandidat von "
+"Paket »%s« ausgewählt werden, da beide nicht existieren"
 
 #: apt-pkg/cacheset.cc:491
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
+"Die neueste Version von Paket »%s« kann nicht ausgewählt werden, da es rein "
+"virtuell ist"
 
 #: apt-pkg/cacheset.cc:499
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
+"Es kann kein Installationskandidat von Paket »%s« ausgewählt werden, da kein "
+"solcher existiert"
 
 #: apt-pkg/cacheset.cc:507
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
+"Die installierte Version von Paket »%s« kann nicht ausgewählt werden, da es "
+"nicht installiert ist"
 
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
@@ -3254,7 +3276,7 @@ msgstr "%s wird vollständig entfernt"
 #: apt-pkg/deb/dpkgpm.cc:56
 #, c-format
 msgid "Noting disappearance of %s"
-msgstr ""
+msgstr "Verschwinden von %s festgestellt"
 
 #: apt-pkg/deb/dpkgpm.cc:57
 #, c-format
@@ -3267,9 +3289,9 @@ msgid "Directory '%s' missing"
 msgstr "Verzeichnis »%s« fehlt"
 
 #: apt-pkg/deb/dpkgpm.cc:658 apt-pkg/deb/dpkgpm.cc:671
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open file '%s'"
-msgstr "Datei %s konnte nicht geöffnet werden"
+msgstr "Datei »%s« konnte nicht geöffnet werden"
 
 #: apt-pkg/deb/dpkgpm.cc:812
 #, c-format
@@ -3324,34 +3346,44 @@ msgstr "Ausführen von dpkg"
 #: apt-pkg/deb/dpkgpm.cc:1273
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
+"Es wurde kein Apport-Bericht verfasst, da das Limit MaxReports bereits "
+"erreicht ist"
 
 #. check if its not a follow up error
 #: apt-pkg/deb/dpkgpm.cc:1278
 msgid "dependency problems - leaving unconfigured"
-msgstr ""
+msgstr "Abhängigkeitsprobleme - verbleibt unkonfiguriert"
 
 #: apt-pkg/deb/dpkgpm.cc:1280
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
+"Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung darauf "
+"hindeutet, dass dies lediglich ein Folgefehler eines vorherigen Problems ist."
 
 #: apt-pkg/deb/dpkgpm.cc:1286
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
+"Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung auf einen Fehler "
+"wegen voller Festplatte hindeutet"
 
 #: apt-pkg/deb/dpkgpm.cc:1292
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
+"Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung auf einen Fehler "
+"wegen erschöpftem Arbeitsspeicher hindeutet"
 
 #: apt-pkg/deb/dpkgpm.cc:1299
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
+"Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung auf einen Ein-/"
+"Ausgabe-Fehler von Dpkg hindeutet"
 
 #: apt-pkg/deb/debsystem.cc:69
 #, c-format
@@ -3371,12 +3403,12 @@ msgstr ""
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
 #: apt-pkg/deb/debsystem.cc:88
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
-"Der dpkg-Prozess wurde unterbrochen; Sie müssen »dpkg --configure -a« "
-"manuell ausführen, um das Problem zu beheben."
+"Der dpkg-Prozess wurde unterbrochen; Sie müssen manuell »%s« ausführen, um "
+"das Problem zu beheben."
 
 #: apt-pkg/deb/debsystem.cc:106
 msgid "Not locked"
@@ -3387,12 +3419,12 @@ msgstr "Nicht gesperrt"
 #: methods/mirror.cc:200
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr ""
+msgstr "Keine Datei von Spiegelserver »%s« gefunden"
 
 #: methods/mirror.cc:343
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
+msgstr "[Spiegelserver: %s]"
 
 #: methods/rred.cc:465
 #, c-format
@@ -3415,23 +3447,3 @@ msgstr ""
 #: methods/rsh.cc:329
 msgid "Connection closed prematurely"
 msgstr "Verbindung vorzeitig beendet"
-
-#~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
-#~ msgstr ""
-#~ "F: Zu viele Schlüsselringe sollten an gpgv übergeben werden. Abbruch."
-
-#~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-#~ msgstr "F: Argumentenliste von Acquire::gpgv::Options zu lang. Abbruch."
-
-#~ msgid ""
-#~ "The size of a MMap has already reached the defined limit of %lu bytes,"
-#~ "abort the try to grow the MMap."
-#~ msgstr ""
-#~ "Die MMap-Größe hat bereits das festgelegte Limit von %lu Byte erreicht. "
-#~ "Der Versuch, die MMap zu vergrößern, wird abgebrochen."
-
-#~ msgid "Error occurred while processing %s (NewVersion2)"
-#~ msgstr "Ein Fehler trat auf beim Verarbeiten von %s (NewVersion2)"
-
-#~ msgid "Malformed line %u in source list %s (vendor id)"
-#~ msgstr "Missgestaltete Zeile %u in Quellliste %s (»vendor id«)"
