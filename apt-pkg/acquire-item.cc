@@ -1060,12 +1060,6 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*
 
       // all cool, move Release file into place
       Complete = true;
-
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      Rename(DestFile,FinalFile);
-      chmod(FinalFile.c_str(),0644);
-      DestFile = FinalFile;
    }
    else
    {
@@ -1092,7 +1086,17 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*
          Desc.URI = "gpgv:" + SigFile;
          QueueURI(Desc);
          Mode = "gpgv";
+	 return;
       }
+   }
+
+   if (Complete == true)
+   {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+      DestFile = FinalFile;
    }
 }
 									/*}}}*/
