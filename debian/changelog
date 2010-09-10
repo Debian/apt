@@ -1,11 +1,8 @@
-apt (0.8.3ubuntu2) maverick; urgency=low
+apt (0.8.3ubuntu3) maverick; urgency=low
 
   * merged fixes from debian-sid
   
   [ Michael Vogt ]
-  * ftparchive/writer.cc:
-    - write out {Files,Checksum-Sha1,Checksum-Sha256} only if
-      available LP: #633967. Thanks to Colin Watson
   * apt-pkg/contrib/cdromutl.cc:
     - if apt-cdrom is used on writable media (like usb-sticks), do
       not use the root directory to identify the medium (as all 
@@ -21,6 +18,14 @@ apt (0.8.3ubuntu2) maverick; urgency=low
   [ Christian Perrier ]
   * Fix missing space after dot in a message from apt-pkg
     Translations unfuzzied. Thanks to Holger Wansing.
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 10 Sep 2010 21:45:49 +0200
+
+apt (0.8.3ubuntu2) maverick; urgency=low
+
+  * ftparchive/writer.cc:
+    - write out {Files,Checksum-Sha1,Checksum-Sha256} only if
+      available LP: #633967. Thanks to Colin Watson
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 09 Sep 2010 15:30:19 +0200
 
