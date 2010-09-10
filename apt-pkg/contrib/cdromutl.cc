@@ -161,10 +161,10 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    // used like a cdrom don't use "." as it will constantly change,
    // use .disk instead
    if (access(CD.c_str(), W_OK) == 0 && DirectoryExists(CD+string("/.disk"))) {
-      CD = CD+string("/.disk");
+      CD = CD.append("/.disk");
       if (_config->FindB("Debug::aptcdrom",false) == true)
-         std::clog << "Found writable cdrom, using alternative path: "
-                   << CD.c_str() << std::endl;
+         std::clog << "Found writable cdrom, using alternative path: " << CD
+                   << std::endl;
    }
 
    string StartDir = SafeGetCWD();
