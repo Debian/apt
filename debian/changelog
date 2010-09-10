@@ -4,6 +4,11 @@ apt (0.8.4) UNRELEASED; urgency=low
   * ftparchive/writer.cc:
     - write out {Files,Checksum-Sha1,Checksum-Sha256} only if
       available LP: #633967. Thanks to Colin Watson
+  * apt-pkg/contrib/cdromutl.cc:
+    - if apt-cdrom is used on writable media (like usb-sticks), do
+      not use the root directory to identify the medium (as all 
+      changes there change the ident id). Use the .disk directory 
+      instead 
 
   [ David Kalnischkies ]
   * ftparchive/writer.cc:

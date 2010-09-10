@@ -156,6 +156,19 @@ bool MountCdrom(string Path, string DeviceName)
 bool IdentCdrom(string CD,string &Res,unsigned int Version)
 {
    MD5Summation Hash;
+   bool writable_media = false;
+
+   // if we are on a writable medium (like a usb-stick) that is just
+   // used like a cdrom don't use "." as it will constantly change,
+   // use .disk instead
+   if (access(CD.c_str(), W_OK) == 0 && DirectoryExists(CD+string("/.disk"))) 
+   {
+      writable_media = true;
+      CD = CD.append("/.disk");
+      if (_config->FindB("Debug::aptcdrom",false) == true)
+         std::clog << "Found writable cdrom, using alternative path: " << CD
+                   << std::endl;
+   }
 
    string StartDir = SafeGetCWD();
    if (chdir(CD.c_str()) != 0)
@@ -202,10 +215,15 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
       struct statvfs Buf;
       if (statvfs(CD.c_str(),&Buf) != 0)
 	 return _error->Errno("statfs",_("Failed to stat the cdrom"));
-      
+
       // We use a kilobyte block size to advoid overflow
-      sprintf(S,"%lu %lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)),
-	      (long)(Buf.f_bfree*(Buf.f_bsize/1024)));
+      if (writable_media)
+      {
+         sprintf(S,"%lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)));
+      } else {
+         sprintf(S,"%lu %lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)),
+                 (long)(Buf.f_bfree*(Buf.f_bsize/1024)));
+      }
       Hash.Add(S);
       sprintf(S,"-%u",Version);
    }
