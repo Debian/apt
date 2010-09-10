@@ -4,6 +4,11 @@ apt (0.8.2) unstable; urgency=low
     - only use trusted.gpg.d directory if it exists
     - do not replace /dev/null when running in APT::CDROM::NoAct
       mode (LP: #612666), thanks to Colin Watson
+  * apt-pkg/contrib/cdromutl.cc:
+    - if apt-cdrom is used on writable media (like usb-sticks), do
+      not use the root directory to identify the medium (as all 
+      changes there change the ident id). Use the .disk directory 
+      instead 
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 03 Sep 2010 20:21:43 +0200
 

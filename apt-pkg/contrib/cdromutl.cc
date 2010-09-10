@@ -157,6 +157,16 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 {
    MD5Summation Hash;
 
+   // if we are on a writable medium (like a usb-stick) that is just
+   // used like a cdrom don't use "." as it will constantly change,
+   // use .disk instead
+   if (access(CD.c_str(), W_OK) == 0 && DirectoryExists(CD+string("/.disk"))) {
+      CD = CD+string("/.disk");
+      if (_config->FindB("Debug::aptcdrom",false) == true)
+         std::clog << "Found writable cdrom, using alternative path: "
+                   << CD.c_str() << std::endl;
+   }
+
    string StartDir = SafeGetCWD();
    if (chdir(CD.c_str()) != 0)
       return _error->Errno("chdir",_("Unable to change to %s"),CD.c_str());
