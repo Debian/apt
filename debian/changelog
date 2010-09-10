@@ -1,5 +1,8 @@
 apt (0.8.3ubuntu2) UNRELEASEDmaverick; urgency=low
 
+  * merged fixes from debian-sid
+  
+  [ Michael Vogt ]
   * ftparchive/writer.cc:
     - write out {Files,Checksum-Sha1,Checksum-Sha256} only if
       available LP: #633967. Thanks to Colin Watson
@@ -8,6 +11,16 @@ apt (0.8.3ubuntu2) UNRELEASEDmaverick; urgency=low
       not use the root directory to identify the medium (as all 
       changes there change the ident id). Use the .disk directory 
       instead 
+
+  [ David Kalnischkies ]
+  * ftparchive/writer.cc:
+    - null the valid string instead of the date if Valid-Until is not set
+  * apt-pkg/acquire-item.cc:
+    - use also unsigned Release files again (Closes: #596189)
+
+  [ Christian Perrier ]
+  * Fix missing space after dot in a message from apt-pkg
+    Translations unfuzzied. Thanks to Holger Wansing.
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 09 Sep 2010 15:30:19 +0200
 
@@ -23,6 +36,9 @@ apt (0.8.3ubuntu1) maverick; urgency=low
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 07 Sep 2010 09:27:24 +0200
 
 apt (0.8.3) unstable; urgency=low
+
+  [ Programs translations ]
+  * German (Holger Wansing). Closes: #596141
 
   [ Manpages translations ]
   * Japanese (KURASAWA Nozomu). Closes: #595862
