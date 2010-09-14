@@ -1327,7 +1327,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	 Status = StatTransientNetworkError;
 	 _error->Warning(_("A error occurred during the signature "
 			   "verification. The repository is not updated "
-			   "and the previous index files will be used."
+			   "and the previous index files will be used. "
 			   "GPG error: %s: %s\n"),
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());

@@ -9,12 +9,17 @@ apt (0.8.5) UNRELEASED; urgency=low
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 14 Sep 2010 18:56:23 +0200
 
-apt (0.8.4) UNRELEASED; urgency=low
+apt (0.8.4) unstable; urgency=low
 
   [ Michael vogt ]
   * ftparchive/writer.cc:
     - write out {Files,Checksum-Sha1,Checksum-Sha256} only if
       available LP: #633967. Thanks to Colin Watson
+  * apt-pkg/contrib/cdromutl.cc:
+    - if apt-cdrom is used on writable media (like usb-sticks), do
+      not use the root directory to identify the medium (as all 
+      changes there change the ident id). Use the .disk directory 
+      instead 
 
   [ David Kalnischkies ]
   * ftparchive/writer.cc:
@@ -22,9 +27,16 @@ apt (0.8.4) UNRELEASED; urgency=low
   * apt-pkg/acquire-item.cc:
     - use also unsigned Release files again (Closes: #596189)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 09 Sep 2010 15:30:19 +0200
+  [ Christian Perrier ]
+  * Fix missing space after dot in a message from apt-pkg
+    Translations unfuzzied. Thanks to Holger Wansing.
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 10 Sep 2010 20:45:15 +0200
 
 apt (0.8.3) unstable; urgency=low
+
+  [ Programs translations ]
+  * German (Holger Wansing). Closes: #596141
 
   [ Manpages translations ]
   * Japanese (KURASAWA Nozomu). Closes: #595862
