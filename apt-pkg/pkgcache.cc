@@ -731,6 +731,7 @@ bool pkgCache::VerIterator::Automatic() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; Files++)
+      // Do not check ButAutomaticUpgrades here as it is kind of automatic…
       if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
 	 return true;
    return false;

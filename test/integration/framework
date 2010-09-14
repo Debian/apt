@@ -211,7 +211,7 @@ buildpackage() {
 	fi
 	local BUILT="$(dpkg-buildpackage -uc -us -a$ARCH 2> /dev/null)"
 	local PKGS="$( echo "$BUILT" | grep '^dpkg-deb: building package' | cut -d'/' -f 2 | sed -e "s#'\.##")"
-	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._-]*$')"
+	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
 		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist

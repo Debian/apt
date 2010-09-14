@@ -815,6 +815,12 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    if (Section.FindFlag("NotAutomatic",FileI->Flags,
 			pkgCache::Flag::NotAutomatic) == false)
       _error->Warning("Bad NotAutomatic flag");
+   if (Section.FindFlag("ButAutomaticUpgrades",FileI->Flags,
+			pkgCache::Flag::ButAutomaticUpgrades) == false)
+      _error->Warning("Bad ButAutomaticUpgrades flag");
+   // overrule the NotAutomatic setting if needed as they are both present for compatibility
+   else if ((FileI->Flags & pkgCache::Flag::ButAutomaticUpgrades) == pkgCache::Flag::ButAutomaticUpgrades)
+      FileI->Flags &= ~pkgCache::Flag::NotAutomatic;
 
    return !_error->PendingError();
 }
