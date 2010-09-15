@@ -1,9 +1,17 @@
 apt (0.8.5) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * merged lp:~mvo/apt/conflicts-on-virtuals to better deal with
     conflicts/breaks against virtual packages (LP: #614993)
+  
+  [ David Kalnischkies ]
+  * apt-pkg/policy.cc:
+    - support 100-pinning in Release file with ButAutomaticUpgrades
+      as requested by the backports crew (Closes: #596097)
+  * apt-pkg/deb/deblistparser.cc:
+    - overrule NotAutomatic in case of ButAutomaticUpgrades
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 15 Sep 2010 19:53:46 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 14 Sep 2010 18:56:23 +0200
 
 apt (0.8.4) unstable; urgency=low
 

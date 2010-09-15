@@ -1615,7 +1615,8 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pk
 
 	 /* Stash the highest version of a not-automatic source, we use it
 	    if there is nothing better */
-	 if ((J.File()->Flags & Flag::NotAutomatic) != 0)
+	 if ((J.File()->Flags & Flag::NotAutomatic) != 0 ||
+	     (J.File()->Flags & Flag::ButAutomaticUpgrades) != 0)
 	 {
 	    if (Last.end() == true)
 	       Last = I;
