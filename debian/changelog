@@ -6,8 +6,11 @@ apt (0.8.5) UNRELEASED; urgency=low
       as requested by the backports crew (Closes: #596097)
   * apt-pkg/deb/deblistparser.cc:
     - overrule NotAutomatic in case of ButAutomaticUpgrades
+  * debian/apt.cron.daily:
+    - handle absolut directory paths correctly by loading directories
+      directly instead of building the paths on our own (Closes: #596421)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 14 Sep 2010 18:56:23 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 15 Sep 2010 13:24:16 +0200
 
 apt (0.8.4) unstable; urgency=low
 
