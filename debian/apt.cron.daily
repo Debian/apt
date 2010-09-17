@@ -11,7 +11,7 @@
 #  Dir::Cache "var/apt/cache/";
 #  - Set apt package cache directory
 #
-#  Dir::Cache::Archive "archives/";
+#  Dir::Cache::Archives "archives/";
 #  - Set package archive directory
 #
 #  APT::Periodic::Enable "1";
@@ -147,21 +147,14 @@ check_size_constraints()
     eval $(apt-config shell MaxSize APT::Archives::MaxSize)
     eval $(apt-config shell MaxSize APT::Periodic::MaxSize)
 
-    CacheDir="var/cache/apt/"
-    eval $(apt-config shell CacheDir Dir::Cache)
-    CacheDir=${CacheDir%/}
-
-    CacheArchive="archives/"
-    eval $(apt-config shell CacheArchive Dir::Cache::archives)
-    CacheArchive=${CacheArchive%/}
+    Cache="/var/cache/apt/archives/"
+    eval $(apt-config shell Cache Dir::Cache::archives/d)
 
     # sanity check
-    if [ -z "$CacheDir" -o -z "$CacheArchive" ]; then
-	echo "empty Dir::Cache or Dir::Cache::archives, exiting"
+    if [ -z "$Cache" ]; then
+	echo "empty Dir::Cache::archives, exiting"
 	exit
     fi
-    
-    Cache="${Dir%/}/${CacheDir%/}/${CacheArchive%/}/"
 
     # check age
     if [ ! $MaxAge -eq 0 ] && [ ! $MinAge -eq 0 ]; then
@@ -225,22 +218,17 @@ do_cache_backup()
     fi
 
     # Set default values and normalize
-    Dir="/"
-    eval $(apt-config shell Dir Dir)
-    Dir=${Dir%/}
-
-    CacheDir="var/cache/apt/"
-    eval $(apt-config shell CacheDir Dir::Cache)
+    CacheDir="/var/cache/apt"
+    eval $(apt-config shell CacheDir Dir::Cache/d)
     CacheDir=${CacheDir%/}
     if [ -z "$CacheDir" ]; then
 	debug_echo "practically empty Dir::Cache, exiting"
 	return 0
     fi
 
-    CacheArchive="archives/"
-    eval $(apt-config shell CacheArchive Dir::Cache::Archives)
-    CacheArchive=${CacheArchive%/}
-    if [ -z "$CacheArchive" ]; then
+    Cache="${CacheDir}/archives/"
+    eval $(apt-config shell Cache Dir::Cache::Archives/d)
+    if [ -z "$Cache" ]; then
 	debug_echo "practically empty Dir::Cache::archives, exiting"
 	return 0
     fi
@@ -251,16 +239,15 @@ do_cache_backup()
 	BackupLevel=2 ; 
     fi
     
-    CacheBackup="backup/"
-    eval $(apt-config shell CacheBackup Dir::Cache::Backup)
-    CacheBackup=${CacheBackup%/}
-    if [ -z "$CacheBackup" ]; then
+    Back="${CacheDir}/backup/"
+    eval $(apt-config shell Back Dir::Cache::Backup/d)
+    if [ -z "$Back" ]; then
 	echo "practically empty Dir::Cache::Backup, exiting" 1>&2
 	return
     fi
 
-    Cache="${Dir}/${CacheDir}/${CacheArchive}/"
-    Back="${Dir}/${CacheDir}/${CacheBackup}/"
+    CacheArchive="$(basename "${Cache}")"
+    test -n "${CacheArchive}" || CacheArchive="archives"
     BackX="${Back}${CacheArchive}/"
     for x in $(seq 0 1 $((${BackupLevel}-1))); do 
 	eval "Back${x}=${Back}${x}/"
