@@ -340,13 +340,13 @@ string SizeToStr(double Size)
    {
       if (ASize < 100 && I != 0)
       {
-         sprintf(S,"%'.1f%c",ASize,Ext[I]);
+         sprintf(S,"%'.1f %c",ASize,Ext[I]);
 	 break;
       }
       
       if (ASize < 10000)
       {
-         sprintf(S,"%'.0f%c",ASize,Ext[I]);
+         sprintf(S,"%'.0f %c",ASize,Ext[I]);
 	 break;
       }
       ASize /= 1000.0;

@@ -1106,17 +1106,25 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    
    // Number of bytes
    if (DebBytes != FetchBytes)
+      //TRANSLATOR: The required space between number and unit is already included
+      // in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
       ioprintf(c1out,_("Need to get %sB/%sB of archives.\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
    else if (DebBytes != 0)
+      //TRANSLATOR: The required space between number and unit is already included
+      // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
       ioprintf(c1out,_("Need to get %sB of archives.\n"),
 	       SizeToStr(DebBytes).c_str());
 
    // Size delta
    if (Cache->UsrSize() >= 0)
+      //TRANSLATOR: The required space between number and unit is already included
+      // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
       ioprintf(c1out,_("After this operation, %sB of additional disk space will be used.\n"),
 	       SizeToStr(Cache->UsrSize()).c_str());
    else
+      //TRANSLATOR: The required space between number and unit is already included
+      // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
       ioprintf(c1out,_("After this operation, %sB disk space will be freed.\n"),
 	       SizeToStr(-1*Cache->UsrSize()).c_str());
 
@@ -2340,9 +2348,13 @@ bool DoSource(CommandLine &CmdL)
    
    // Number of bytes
    if (DebBytes != FetchBytes)
+      //TRANSLATOR: The required space between number and unit is already included
+      // in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
       ioprintf(c1out,_("Need to get %sB/%sB of source archives.\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
    else
+      //TRANSLATOR: The required space between number and unit is already included
+      // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
       ioprintf(c1out,_("Need to get %sB of source archives.\n"),
 	       SizeToStr(DebBytes).c_str());
    
