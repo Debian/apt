@@ -499,3 +499,27 @@ testnopackage() {
 	fi
 	msgpass
 }
+
+testdpkginstalled() {
+	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
+	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^i]' | wc -l)"
+	if [ "$PKGS" != 0 ]; then
+		echo $PKGS
+		dpkg -l $* | grep '^[a-z]'
+		msgfail
+		return 1
+	fi
+	msgpass
+}
+
+testdpkgnoninstalled() {
+	msgtest "Test for correctly non-installed package(s) with" "dpkg -l $*"
+	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^u]' | wc -l)"
+	if [ "$PKGS" != 0 ]; then
+		echo
+		dpkg -l $* | grep '^[a-z]'
+		msgfail
+		return 1
+	fi
+	msgpass
+}
