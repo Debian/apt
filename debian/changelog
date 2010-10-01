@@ -9,6 +9,10 @@ apt (0.8.2) unstable; urgency=low
       not use the root directory to identify the medium (as all 
       changes there change the ident id). Use the .disk directory 
       instead 
+  * debian/apt.cron.daily:
+    - source /etc/default/locale (if available) so that the 
+      apt-get update cron job fetches the right translated package
+      descriptions
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 03 Sep 2010 20:21:43 +0200
 
