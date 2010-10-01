@@ -1321,7 +1321,7 @@ bool Search(CommandLine &CmdL)
 	 continue;
       pkgCache::VerIterator V = Plcy->GetCandidateVer(P);
       if (V.end() == false)
-	 DFList[G->ID].Df = V.DescriptionList().FileList();
+	 DFList[G->ID].Df = V.TranslatedDescription().FileList();
 
       if (DFList[G->ID].NameMatch == false)
 	 continue;
@@ -1334,7 +1334,7 @@ bool Search(CommandLine &CmdL)
 	    continue;
 
 	 unsigned long id = Prv.OwnerPkg().Group()->ID;
-	 DFList[id].Df = V.DescriptionList().FileList();
+	 DFList[id].Df = V.TranslatedDescription().FileList();
 	 DFList[id].NameMatch = true;
       }
    }

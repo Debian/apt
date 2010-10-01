@@ -10,6 +10,9 @@ apt (0.8.3ubuntu6) maverick; urgency=low
   * apt-pkg/depcache.cc:
     - do not check endpointer packages instead of only those which prevented
       NeverAutoRemove settings from having an effect (Closes: #598452)
+  * cmdline/apt-cache.cc:
+    - use the TranslatedDescription for searching and not the first
+      available one as it is maybe not an expected language (Closes: #597925)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 01 Oct 2010 15:25:00 +0200
 
