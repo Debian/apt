@@ -1,9 +1,15 @@
 apt (0.8.3ubuntu6) maverick; urgency=low
 
+  [ Michael Vogt ]
   * debian/apt.cron.daily:
     - source /etc/default/locale (if available) so that the 
       apt-get update cron job fetches the right translated package
       descriptions
+
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - do not check endpointer packages instead of only those which prevented
+      NeverAutoRemove settings from having an effect (Closes: #598452)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 01 Oct 2010 15:25:00 +0200
 
