@@ -11,7 +11,7 @@ setupflataptarchive
 
 testaptgetupdate() {
 	aptget update 2>> testaptgetupdate.diff >> testaptgetupdate.diff || true
-	sed -i -e '/^Fetched / d' -e 's#\[[0-9]*[kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
+	sed -i -e '/^Fetched / d' -e 's#\[[0-9]* [kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
 	GIVEN="$1"
 	shift
 	msgtest "Test for correctness of" "apt-get update with $*"
