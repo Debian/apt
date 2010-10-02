@@ -12,12 +12,14 @@ apt (0.8.6) UNRELEASED; urgency=low
   * apt-pkg/depcache.cc:
     - do not check endpointer packages instead of only those which prevented
       NeverAutoRemove settings from having an effect (Closes: #598452)
+    - do not remove packages which the user requested for installation
+      explicitly while satisfying other install requests (Closes: #598669)
   * apt-pkg/packagemanager.cc:
     - Add a space between period and 'Please' and unfuzzy all translations
   * doc/po/de.po:
     - remove the duplicated "angefertigt" in translation-holder string
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 30 Sep 2010 12:26:34 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 02 Oct 2010 09:07:30 +0200
 
 apt (0.8.5) unstable; urgency=low
 

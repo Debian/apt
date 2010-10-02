@@ -1192,6 +1192,16 @@ bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
 	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkDelete of " << Pkg << " FU=" << FromUser << std::endl;
       return false;
    }
+   else if (FromUser == false && Pkg->CurrentVer == 0)
+   {
+      StateCache &P = PkgState[Pkg->ID];
+      if (P.InstallVer != 0 && P.Status == 2 && (P.Flags & Flag::Auto) != Flag::Auto)
+      {
+	 if (DebugMarker == true)
+	    std::clog << OutputInDepth(Depth) << "Manual install request prevents MarkDelete of " << Pkg << std::endl;
+	 return false;
+      }
+   }
    return true;
 }
 									/*}}}*/
