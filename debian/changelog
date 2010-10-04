@@ -1,3 +1,14 @@
+apt (0.8.3ubuntu7) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - do not remove packages which the user requested for installation
+      explicitly while satisfying other install requests (Closes: #598669)
+    Test case: debootstrap, install exim4, run "apt-get install postfix"
+    This will result in exim4-heavy instead of postfix
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 04 Oct 2010 11:57:18 +0200
+
 apt (0.8.3ubuntu6) maverick; urgency=low
 
   [ Michael Vogt ]
