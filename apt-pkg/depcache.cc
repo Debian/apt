@@ -1192,9 +1192,13 @@ bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
 	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkDelete of " << Pkg << " FU=" << FromUser << std::endl;
       return false;
    }
+   // if the removal is not explictely requested by the user, protect
+   // explicit new-install package from accidental removal by the 
+   // problemresolver
    else if (FromUser == false && Pkg->CurrentVer == 0)
    {
       StateCache &P = PkgState[Pkg->ID];
+      // Status == 2 means this applies for new installs only
       if (P.InstallVer != 0 && P.Status == 2 && (P.Flags & Flag::Auto) != Flag::Auto)
       {
 	 if (DebugMarker == true)
