@@ -417,6 +417,13 @@ do_cache_backup $BackupArchiveInterval
 # mirrors at the same time
 random_sleep
 
+# include default system language so that "apt-get update" will
+# fetch the right translated package descriptions
+if [ -r /etc/default/locale ]; then
+    . /etc/default/locale
+    export LANG LANGUAGE LC_MESSAGES LC_ALL
+fi
+
 # update package lists
 UPDATED=0
 UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
