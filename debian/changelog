@@ -5,10 +5,10 @@ apt (0.8.7) UNRELEASED; urgency=low
   * Another typo fixed in French ("Anfin"). Thanks to bubulle
   * Wrong translation for "showauto" fixed. Thanks to Raphaël Hertzog
     Closes: #599265
-  
+
   [ Michael Vogt ]
   * debian/apt.cron.daily:
-    - source /etc/default/locale (if available) so that the 
+    - source /etc/default/locale (if available) so that the
       apt-get update cron job fetches the right translated package
       descriptions
   * fix test failure on amd64
@@ -30,9 +30,11 @@ apt (0.8.7) UNRELEASED; urgency=low
   * apt-pkg/deb/deblistparser.cc:
     - support ArmHardFloat port in CompleteArch, thanks to Sebastian
       Andrzej Siewior for the patch!
+  * doc/apt.ent:
+    - move some strings into apt-verbatim.ent to avoid showing them in
+      apt-doc.pot as they are untranslatable anyway (e.g. manpage references)
 
-
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 07 Oct 2010 14:46:59 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 14 Oct 2010 00:05:53 +0200
 
 apt (0.8.6) unstable; urgency=low
 
