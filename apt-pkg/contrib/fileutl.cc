@@ -251,11 +251,11 @@ bool CreateDirectory(string const &Parent, string const &Path)
    return true;
 }
 									/*}}}*/
-// CheckDirectory - ensure that the given directory exists		/*{{{*/
+// CreateAPTDirectoryIfNeeded - ensure that the given directory exists		/*{{{*/
 // ---------------------------------------------------------------------
 /* a small wrapper around CreateDirectory to check if it exists and to
    remove the trailing "/apt/" from the parent directory if needed */
-bool CheckDirectory(string const &Parent, string const &Path)
+bool CreateAPTDirectoryIfNeeded(string const &Parent, string const &Path)
 {
    if (DirectoryExists(Path) == true)
       return true;
@@ -915,8 +915,27 @@ unsigned long FileFd::Tell()
 /* */
 unsigned long FileFd::Size()
 {
-   //TODO: For gz, do we need the actual file size here or the uncompressed length?
    struct stat Buf;
+   long size;
+   off_t orig_pos;
+
+   if (gz)
+   {
+       /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
+	* this ourselves; the original (uncompressed) file size is the last 32
+	* bits of the file */
+       orig_pos = lseek(iFd, 0, SEEK_CUR);
+       if (lseek(iFd, -4, SEEK_END) < 0)
+	   return _error->Errno("lseek","Unable to seek to end of gzipped file");
+       if (read(iFd, &size, 4) != 4)
+	   return _error->Errno("read","Unable to read original size of gzipped file");
+       size &= 0xFFFFFFFF;
+
+       if (lseek(iFd, orig_pos, SEEK_SET) < 0)
+	   return _error->Errno("lseek","Unable to seek in gzipped file");
+       return size;
+   }
+
    if (fstat(iFd,&Buf) != 0)
       return _error->Errno("fstat","Unable to determine the file size");
    return Buf.st_size;

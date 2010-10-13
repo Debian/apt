@@ -1,0 +1,59 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "amd64"
+setupaptarchive
+
+# test success
+UPGRADE="Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libdrm-intel1 libdrm-nouveau1 libmtdev1 libutouch-grail1 libx11-xcb1
+  libxcb-aux0 libxcb-dri2-0 libxfont1 xserver-common xserver-xorg-core
+  xserver-xorg-input-evdev xserver-xorg-input-mouse
+  xserver-xorg-input-synaptics xserver-xorg-input-vmmouse
+  xserver-xorg-input-wacom xserver-xorg-video-all xserver-xorg-video-apm
+  xserver-xorg-video-ark xserver-xorg-video-ati xserver-xorg-video-chips
+  xserver-xorg-video-cirrus xserver-xorg-video-fbdev xserver-xorg-video-i128
+  xserver-xorg-video-intel xserver-xorg-video-mach64 xserver-xorg-video-mga
+  xserver-xorg-video-neomagic xserver-xorg-video-nouveau xserver-xorg-video-nv
+  xserver-xorg-video-openchrome xserver-xorg-video-r128
+  xserver-xorg-video-radeon xserver-xorg-video-rendition xserver-xorg-video-s3
+  xserver-xorg-video-s3virge xserver-xorg-video-savage
+  xserver-xorg-video-siliconmotion xserver-xorg-video-sis
+  xserver-xorg-video-sisusb xserver-xorg-video-tdfx xserver-xorg-video-trident
+  xserver-xorg-video-tseng xserver-xorg-video-vesa xserver-xorg-video-vmware
+  xserver-xorg-video-voodoo
+Suggested packages:
+  xfonts-scalable gpointing-device-settings touchfreeze firmware-linux
+Recommended packages:
+  xauth intel-gpu-tools
+The following packages will be REMOVED:
+  xserver-xorg-video-v4l
+The following NEW packages will be installed:
+  libmtdev1 libutouch-grail1 libx11-xcb1 libxcb-aux0 libxcb-dri2-0
+The following packages will be upgraded:
+  libdrm-intel1 libdrm-nouveau1 libxfont1 xserver-common xserver-xorg
+  xserver-xorg-core xserver-xorg-input-evdev xserver-xorg-input-mouse
+  xserver-xorg-input-synaptics xserver-xorg-input-vmmouse
+  xserver-xorg-input-wacom xserver-xorg-video-all xserver-xorg-video-apm
+  xserver-xorg-video-ark xserver-xorg-video-ati xserver-xorg-video-chips
+  xserver-xorg-video-cirrus xserver-xorg-video-fbdev xserver-xorg-video-i128
+  xserver-xorg-video-intel xserver-xorg-video-mach64 xserver-xorg-video-mga
+  xserver-xorg-video-neomagic xserver-xorg-video-nouveau xserver-xorg-video-nv
+  xserver-xorg-video-openchrome xserver-xorg-video-r128
+  xserver-xorg-video-radeon xserver-xorg-video-rendition xserver-xorg-video-s3
+  xserver-xorg-video-s3virge xserver-xorg-video-savage
+  xserver-xorg-video-siliconmotion xserver-xorg-video-sis
+  xserver-xorg-video-sisusb xserver-xorg-video-tdfx xserver-xorg-video-trident
+  xserver-xorg-video-tseng xserver-xorg-video-vesa xserver-xorg-video-vmware
+  xserver-xorg-video-voodoo
+41 upgraded, 5 newly installed, 1 to remove and 3 not upgraded.
+Need to get 0 B/5505 kB of archives.
+After this operation, 2294 kB disk space will be freed.
+E: Trivial Only specified but this is not a trivial operation."
+testequal "$UPGRADE" aptget install xserver-xorg --trivial-only
+

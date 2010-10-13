@@ -74,6 +74,7 @@ aptconfig() { runapt apt-config $*; }
 aptcache() { runapt apt-cache $*; }
 aptget() { runapt apt-get $*; }
 aptftparchive() { runapt apt-ftparchive $*; }
+aptkey() { runapt apt-key $*; }
 dpkg() {
 	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
 }
@@ -112,6 +113,7 @@ setupenvironment() {
 	cp $(find $TESTDIR -name '*.pub' -o -name '*.sec') keys/
 	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
+	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
@@ -212,7 +214,7 @@ buildpackage() {
 	fi
 	local BUILT="$(dpkg-buildpackage -uc -us -a$ARCH 2> /dev/null)"
 	local PKGS="$( echo "$BUILT" | grep '^dpkg-deb: building package' | cut -d'/' -f 2 | sed -e "s#'\.##")"
-	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._-]*$')"
+	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
 		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist
@@ -495,6 +497,30 @@ testnopackage() {
 	if [ -n "$SHOWPKG" ]; then
 		echo
 		echo "$SHOWPKG"
+		msgfail
+		return 1
+	fi
+	msgpass
+}
+
+testdpkginstalled() {
+	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
+	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^i]' | wc -l)"
+	if [ "$PKGS" != 0 ]; then
+		echo $PKGS
+		dpkg -l $* | grep '^[a-z]'
+		msgfail
+		return 1
+	fi
+	msgpass
+}
+
+testdpkgnoninstalled() {
+	msgtest "Test for correctly non-installed package(s) with" "dpkg -l $*"
+	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^u]' | wc -l)"
+	if [ "$PKGS" != 0 ]; then
+		echo
+		dpkg -l $* | grep '^[a-z]'
 		msgfail
 		return 1
 	fi

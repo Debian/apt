@@ -74,12 +74,12 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
    string const archivesDir = _config->FindDir("Dir::Cache::Archives");
    string const partialArchivesDir = archivesDir + "partial/";
 
-   if (CheckDirectory(_config->FindDir("Dir::State"), partialListDir) == false &&
-       CheckDirectory(listDir, partialListDir) == false)
+   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
+       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
       return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
 
-   if (CheckDirectory(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
-       CheckDirectory(archivesDir, partialArchivesDir) == false)
+   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
+       CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
       return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
 
    if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)

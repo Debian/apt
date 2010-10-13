@@ -987,6 +987,23 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 
+               /* This is a conflicts, and the version we are looking
+                  at is not the currently selected version of the 
+                  package, which means it is not necessary to 
+                  remove/keep */
+               if (Cache[Pkg].InstallVer != Ver &&
+                   (Start->Type == pkgCache::Dep::Conflicts ||
+                    Start->Type == pkgCache::Dep::DpkgBreaks ||
+                    Start->Type == pkgCache::Dep::Obsoletes)) 
+               {
+                  if (Debug) 
+                     clog << "  Conflicts//Breaks against version " 
+                          << Ver.VerStr() << " for " << Pkg.Name() 
+                          << " but that is not InstVer, ignoring"
+                          << endl;
+                  continue;
+               }
+
 	       if (Debug == true)
 		  clog << "  Considering " << Pkg.FullName(false) << ' ' << (int)Scores[Pkg->ID] <<
 		  " as a solution to " << I.FullName(false) << ' ' << (int)Scores[I->ID] << endl;
@@ -1069,22 +1086,14 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       }
 	       else
 	       {
-		  /* This is a conflicts, and the version we are looking
-		     at is not the currently selected version of the 
-		     package, which means it is not necessary to 
-		     remove/keep */
-		  if (Cache[Pkg].InstallVer != Ver &&
-		      (Start->Type == pkgCache::Dep::Conflicts ||
-		       Start->Type == pkgCache::Dep::Obsoletes))
-		     continue;
-
 		  if (Start->Type == pkgCache::Dep::DpkgBreaks)
 		  {
 		     // first, try upgradring the package, if that
 		     // does not help, the breaks goes onto the
 		     // kill list
+                     //
 		     // FIXME: use DoUpgrade(Pkg) instead?
-		     if (Cache[End] & pkgDepCache::DepGCVer) 
+		     if (Cache[End] & pkgDepCache::DepGCVer)
 		     {
 			if (Debug)
 			   clog << "  Upgrading " << Pkg.FullName(false) << " due to Breaks field in " << I.FullName(false) << endl;

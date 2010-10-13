@@ -27,7 +27,7 @@ vpath %.sgml $(SUBDIRS)
 $(DOC)/%.html: %.sgml
 	echo Creating html for $< to $@
 	-rm -rf $@
-	(HERE=`pwd`; cd $(@D) && $(DEBIANDOC_HTML) $(DEBIANDOC_HTML_OPTIONS) $$HERE/$<)
+	(HERE=`pwd`; cd $(@D) && $(DEBIANDOC_HTML) $(DEBIANDOC_HTML_OPTIONS) $$HERE/$<) || exit 199
 
 # Clean rule
 .PHONY: veryclean/html/$(LOCAL)
@@ -48,7 +48,7 @@ veryclean: veryclean/text/$(LOCAL)
 vpath %.sgml $(SUBDIRS)
 $(DOC)/%.text: %.sgml
 	echo Creating text for $< to $@
-	$(DEBIANDOC_TEXT) -O $< > $@
+	$(DEBIANDOC_TEXT) -O $< > $@ || exit 198
 
 # Clean rule
 .PHONY: veryclean/text/$(LOCAL)

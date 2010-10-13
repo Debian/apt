@@ -641,7 +641,7 @@ void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
 bool pkgDPkgPM::OpenLog()
 {
    string const logdir = _config->FindDir("Dir::Log");
-   if(CheckDirectory(logdir, logdir) == false)
+   if(CreateAPTDirectoryIfNeeded(logdir, logdir) == false)
       // FIXME: use a better string after freeze
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
 

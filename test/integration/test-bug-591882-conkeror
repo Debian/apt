@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-local TESTDIR=$(readlink -f $(dirname $0))
+TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
 configarchitecture "i386"
@@ -34,8 +34,8 @@ The following packages will be upgraded:
   perl-base perl-modules readline-common sed ttf-dejavu-core ucf whiptail
   x11-common zlib1g
 87 upgraded, 26 newly installed, 5 to remove and 0 not upgraded.
-Need to get 0B/54.4MB of archives.
-After this operation, 12.4MB of additional disk space will be used.
+Need to get 0 B/54.4 MB of archives.
+After this operation, 12.4 MB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation."
 
 UPGRADESUCCESS="Reading package lists...
@@ -66,8 +66,8 @@ The following packages will be upgraded:
   perl-base perl-modules readline-common sed ttf-dejavu-core ucf whiptail
   x11-common zlib1g
 88 upgraded, 30 newly installed, 4 to remove and 0 not upgraded.
-Need to get 0B/62.9MB of archives.
-After this operation, 36.0MB of additional disk space will be used.
+Need to get 0 B/62.9 MB of archives.
+After this operation, 36.0 MB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation."
 
 # Test that the old behavior can be restored with the option

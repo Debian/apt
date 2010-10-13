@@ -135,6 +135,8 @@ void PackageMap::GetGeneral(Configuration &Setup,Configuration &Block)
    PkgExt = Block.Find("Packages::Extensions",
 		       Setup.Find("Default::Packages::Extensions",".deb").c_str());
    
+   Permissions = Setup.FindI("Default::FileMode",0644);
+
    if (FLFile.empty() == false)
       FLFile = flCombine(Setup.Find("Dir::FileListDir"),FLFile);
    
@@ -457,7 +459,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
    string DFLFile = Setup.Find("TreeDefault::FileList", "");
    string DSFLFile = Setup.Find("TreeDefault::SourceFileList", "");
 
-   int const Permissions = Setup.FindI("Default::FileMode",0644);
+   mode_t const Permissions = Setup.FindI("Default::FileMode",0644);
 
    bool const LongDescription = Setup.FindB("Default::LongDescription",
 					_config->FindB("APT::FTPArchive::LongDescription", true));
@@ -548,6 +550,8 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 /* */
 void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 {
+   mode_t const Permissions = Setup.FindI("Default::FileMode",0644);
+
    // Process 'bindirectory' type sections
    const Configuration::Item *Top = Setup.Tree("bindirectory");
    for (Top = (Top == 0?0:Top->Child); Top != 0;)
@@ -567,6 +571,7 @@ void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
       Itm.InternalPrefix = Block.Find("InternalPrefix",Top->Tag.c_str());
       Itm.Contents = Block.Find("Contents");
       Itm.ContentsHead = Block.Find("Contents::Header");
+      Itm.Permissions = Block.FindI("FileMode", Permissions);
       
       Itm.GetGeneral(Setup,Block);
       PkgList.push_back(Itm);

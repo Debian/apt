@@ -16,7 +16,7 @@
    990         = Config file override package files
    989         = Start for preference auto-priorities
    500         = Default package files
-   100         = The status file
+   100         = The status file and ButAutomaticUpgrades sources
    0 -> 100    = NotAutomatic sources like experimental
    -inf -> 0   = Never selected   
    
@@ -70,9 +70,10 @@ bool pkgPolicy::InitDefaults()
       PFPriority[I->ID] = 500;
       if ((I->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	 PFPriority[I->ID] = 100;
-      else
-	 if ((I->Flags & pkgCache::Flag::NotAutomatic) == pkgCache::Flag::NotAutomatic)
-	    PFPriority[I->ID] = 1;
+      else if ((I->Flags & pkgCache::Flag::ButAutomaticUpgrades) == pkgCache::Flag::ButAutomaticUpgrades)
+	 PFPriority[I->ID] = 100;
+      else if ((I->Flags & pkgCache::Flag::NotAutomatic) == pkgCache::Flag::NotAutomatic)
+	 PFPriority[I->ID] = 1;
    }
 
    // Apply the defaults..

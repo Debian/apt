@@ -1,29 +1,53 @@
 #!/bin/sh
 set -e
 
-local TESTDIR=$(readlink -f $(dirname $0))
+TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 
-buildsimplenativepackage "unrelated" "all" "1" "unstable"
-buildsimplenativepackage "po-debconf" "all" "1.0.16" "unstable"
-buildsimplenativepackage "debhelper" "all" "8.0.0" "unstable" "Depends: po-debconf"
+buildsimplenativepackage 'unrelated' 'all' '1' 'unstable'
+buildsimplenativepackage 'po-debconf' 'all' '1.0.16' 'unstable'
+buildsimplenativepackage 'debhelper' 'all' '8.0.0' 'unstable' 'Depends: po-debconf'
 setupaptarchive
 
 aptget install unrelated debhelper -qq 2>&1 > /dev/null
+testdpkginstalled 'unrelated' 'debhelper' 'po-debconf'
 
-testfileequal "rootdir/var/lib/apt/extended_states" "Package: po-debconf
+testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: po-debconf
 Architecture: i386
 Auto-Installed: 1
-"
+'
 aptget remove debhelper -y -qq 2>&1 > /dev/null
-aptget autoremove -y -qq 2>&1 > /dev/null
+testdpkgnoninstalled 'debhelper'
+testdpkginstalled 'po-debconf unrelated'
 
-testfileequal "rootdir/var/lib/apt/extended_states" ""
+echo 'APT::NeverAutoRemove { "^debc.*nf$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  po-debconf
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv po-debconf [1.0.16]' aptget autoremove -s
+testdpkginstalled 'po-debconf'
+
+echo 'APT::NeverAutoRemove { "^po-debconf$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
+aptget autoremove -y -qq 2>&1 > /dev/null
+testdpkginstalled 'po-debconf'
+
+echo 'APT::NeverAutoRemove { "^po-.*$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
+aptget autoremove -y -qq 2>&1 > /dev/null
+testdpkginstalled "po-debconf"
+
+rm rootdir/etc/apt/apt.conf.d/00autoremove
+aptget autoremove -y -qq 2>&1 > /dev/null
+testdpkgnoninstalled 'po-debconf'
+
+testfileequal 'rootdir/var/lib/apt/extended_states' ''
 
 sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d'
-testfileequal "rootdir/var/log/apt/history.log" '
+testfileequal 'rootdir/var/log/apt/history.log' '
 Install: unrelated:i386 (1), debhelper:i386 (8.0.0), po-debconf:i386 (1.0.16, automatic)
 
 Remove: debhelper:i386 (8.0.0)

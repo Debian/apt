@@ -1060,12 +1060,6 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*
 
       // all cool, move Release file into place
       Complete = true;
-
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      Rename(DestFile,FinalFile);
-      chmod(FinalFile.c_str(),0644);
-      DestFile = FinalFile;
    }
    else
    {
@@ -1092,7 +1086,17 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*
          Desc.URI = "gpgv:" + SigFile;
          QueueURI(Desc);
          Mode = "gpgv";
+	 return;
       }
+   }
+
+   if (Complete == true)
+   {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+      DestFile = FinalFile;
    }
 }
 									/*}}}*/
@@ -1323,7 +1327,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	 Status = StatTransientNetworkError;
 	 _error->Warning(_("A error occurred during the signature "
 			   "verification. The repository is not updated "
-			   "and the previous index files will be used."
+			   "and the previous index files will be used. "
 			   "GPG error: %s: %s\n"),
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());

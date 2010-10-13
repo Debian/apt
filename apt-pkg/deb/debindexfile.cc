@@ -149,10 +149,11 @@ bool debSourcesIndex::Exists() const
 /* */
 unsigned long debSourcesIndex::Size() const
 {
-   struct stat S;
-   if (stat(IndexFile("Sources").c_str(),&S) != 0)
+   FileFd f = FileFd (IndexFile("Sources"), FileFd::ReadOnlyGzip);
+
+   if (f.Failed())
       return 0;
-   return S.st_size;
+   return f.Size();
 }
 									/*}}}*/
 
@@ -268,10 +269,11 @@ bool debPackagesIndex::Exists() const
 /* This is really only used for progress reporting. */
 unsigned long debPackagesIndex::Size() const
 {
-   struct stat S;
-   if (stat(IndexFile("Packages").c_str(),&S) != 0)
+   FileFd f = FileFd (IndexFile("Packages"), FileFd::ReadOnlyGzip);
+
+   if (f.Failed())
       return 0;
-   return S.st_size;
+   return f.Size();
 }
 									/*}}}*/
 // PackagesIndex::Merge - Load the index file into a cache		/*{{{*/
@@ -458,10 +460,12 @@ bool debTranslationsIndex::Exists() const
 /* This is really only used for progress reporting. */
 unsigned long debTranslationsIndex::Size() const
 {
-   struct stat S;
-   if (stat(IndexFile(Language).c_str(),&S) != 0)
+   FileFd f = FileFd (IndexFile(Language), FileFd::ReadOnlyGzip);
+
+   if (f.Failed())
       return 0;
-   return S.st_size;
+
+   return f.Size();
 }
 									/*}}}*/
 // TranslationsIndex::Merge - Load the index file into a cache		/*{{{*/
