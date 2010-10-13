@@ -916,10 +916,17 @@ unsigned long FileFd::Tell()
 unsigned long FileFd::Size()
 {
    struct stat Buf;
-   long size;
+   unsigned long size;
    off_t orig_pos;
 
-   if (gz)
+   if (fstat(iFd,&Buf) != 0)
+      return _error->Errno("fstat","Unable to determine the file size");
+   size = Buf.st_size;
+
+   // only check gzsize if we are actually a gzip file, just checking for
+   // "gz" is not sufficient as uncompressed files will be opened with
+   // gzopen in "direct" mode as well
+   if (gz && !gzdirect(gz) && size > 0)
    {
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
 	* this ourselves; the original (uncompressed) file size is the last 32
@@ -936,9 +943,7 @@ unsigned long FileFd::Size()
        return size;
    }
 
-   if (fstat(iFd,&Buf) != 0)
-      return _error->Errno("fstat","Unable to determine the file size");
-   return Buf.st_size;
+   return size;
 }
 									/*}}}*/
 // FileFd::Close - Close the file if the close flag is set		/*{{{*/
