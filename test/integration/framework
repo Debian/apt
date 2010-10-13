@@ -64,6 +64,8 @@ runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
 	if [ -f ./aptconfig.conf ]; then
 		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+        elif [ -f ../aptconfig.conf ]; then
+                APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
 	else
 		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
 	fi
