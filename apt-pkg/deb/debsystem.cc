@@ -165,7 +165,7 @@ bool debSystem::Initialize(Configuration &Cnf)
       which is yet to be determined. The functions in pkgcachegen should
       be the only users of these */
    Cnf.CndSet("Dir::State::extended_states", Cnf.FindDir("Dir::State").append("extended_states"));
-   Cnf.CndSet("Dir::State::status", Cnf.FindDir("Dir", "/").append("var/lib/dpkg/status"));
+   Cnf.CndSet("Dir::State::status","/var/lib/dpkg/status");
    Cnf.CndSet("Dir::Bin::dpkg","/usr/bin/dpkg");
 
    if (StatusFile) {
