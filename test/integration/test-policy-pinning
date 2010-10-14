@@ -1,0 +1,228 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildaptarchive
+setupflataptarchive
+
+STATUS=$(readlink -f rootdir/var/lib/dpkg/status)
+APTARCHIVE=$(readlink -f aptarchive)
+
+testequalpolicy() {
+	local SP="$1"
+	local AP="$2"
+	shift 2
+	testequal "Package files:
+ $(echo "$SP" | awk '{ printf("%3s\n",$0) }') ${STATUS}
+     release a=now
+ $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/  Packages
+     release c=
+Pinned packages:" aptcache policy $*
+}
+
+aptget update -qq
+testequalpolicy 100 500
+testequalpolicy 990 500 -t now
+
+sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
+rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
+aptget update -qq
+
+testequalpolicy 100 1 -o Test=NotAutomatic
+testequalpolicy 990 1 -o Test=NotAutomatic -t now
+
+sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
+rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
+aptget update -qq
+
+testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
+testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
+
+sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
+rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
+aptget update -qq
+
+testequalpolicy 100 500 -o Test=Automatic
+testequalpolicy 990 500 -o Test=Automatic -t now
+
+buildsimplenativepackage "coolstuff" "all" "1.0" "stable"
+buildsimplenativepackage "coolstuff" "all" "2.0~bpo1" "backports"
+
+setupaptarchive
+
+testequalpolicycoolstuff() {
+	local INSTALLED="${1:-(none)}"
+	local CANDIDATE="${2:-(none)}"
+	local AB="$3"
+	local AS="$4"
+	local PB="$5"
+	local PINVERSION="$6"
+	if [ -n "$PINVERSION" ]; then
+		PINVERSION="Package pin: $PINVERSION
+  "
+	fi
+	local IS=""
+	local IB=""
+	local SB=""
+	local SS=""
+	[ "$1" = "2.0~bpo1" ] && IB="***" && SB="
+        100 $STATUS" || IB="   "
+	[ "$1" = "1.0" ] && IS="***" && SS="
+        100 $STATUS" || IS="   "
+	local BPO1ARCHIVE=""
+	local BPO2ARCHIVE=""
+	if [ ! "$7" = "2.0~bpo2" ]; then
+		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ backports/main i386 Packages"
+	else
+		BPO2ARCHIVE="
+     2.0~bpo2 $PB
+        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ backports/main i386 Packages"
+		SB="$(echo "$SB" | tail -n 1)"
+		shift
+	fi
+	shift 6
+	testequal "coolstuff:
+  Installed: $INSTALLED
+  Candidate: $CANDIDATE
+  ${PINVERSION}Version table:${BPO2ARCHIVE}
+ $IB 2.0~bpo1 $PB
+${BPO1ARCHIVE}$SB
+ $IS 1.0 $PB
+        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ stable/main i386 Packages$SS" \
+		aptcache policy coolstuff -o Policy=${INSTALLED}-${CANDIDATE}-${AB}-${AS}-${PB} $*
+}
+
+testequalpolicycoolstuff "" "2.0~bpo1" 500 500 0 ""
+testequalpolicycoolstuff "" "1.0" 500 990 0 "" -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -t backports
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: 200" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "1.0" 200 500 0 "" -o Test=GlobalPin
+testequalpolicycoolstuff "" "1.0" 200 990 0 "" -o Test=GlobalPin -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -o Test=GlobalPin -t backports
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 600 500 0 "" -o Test=GlobalPin
+testequalpolicycoolstuff "" "1.0" 600 990 0 "" -o Test=GlobalPin -t stable
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 200" > rootdir/etc/apt/preferences
+#FIXME: policy can't differentiate between two sources where one has a package specific pin in place
+# testequalpolicycoolstuff "" "1.0" 500 500 200 "2.0~bpo1" -o Test=PackagePin
+# testequalpolicycoolstuff "" "1.0" 990 500 200 "2.0~bpo1" -o Test=PackagePin -t backports
+testequalpolicycoolstuff "" "1.0" 500 990 200 "2.0~bpo1" -o Test=PackagePin -t stable
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 500 500 600 "2.0~bpo1" -o Test=PackagePin
+testequalpolicycoolstuff "" "1.0" 500 990 600 "2.0~bpo1" -o Test=PackagePin -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 600 "2.0~bpo1" -o Test=PackagePin -t backports
+
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: -1" > rootdir/etc/apt/preferences
+# testequalpolicycoolstuff "" "1.0" 500 500 -1 "2.0~bpo1" -o Test=PackagePin
+# testequalpolicycoolstuff "" "1.0" 990 500 -1 "2.0~bpo1" -o Test=PackagePin -t backports
+# testequalpolicycoolstuff "" "1.0" 500 990 -1 "2.0~bpo1" -o Test=PackagePin -t stable
+
+rm rootdir/etc/apt/preferences
+sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
+signreleasefiles
+rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
+aptget update -qq
+
+testequalpolicycoolstuff "" "1.0" 1 500 0 "" -o Test=NotAutomatic
+testequalpolicycoolstuff "" "1.0" 1 990 0 "" -o Test=NotAutomatic -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -o Test=NotAutomatic -t backports
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: 200" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "1.0" 200 500 0 "" -o Test=NotAutomatic
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 600 500 0 "" -o Test=NotAutomatic
+testequalpolicycoolstuff "" "1.0" 600 990 0 "" -o Test=NotAutomatic -t stable
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 200" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "1.0" 1 500 200 "2.0~bpo1" -o Test=NotAutomatic
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 1 500 600 "2.0~bpo1" -o Test=NotAutomatic
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 600 "2.0~bpo1" -o Test=NotAutomatic -t backports
+testequalpolicycoolstuff "" "1.0" 1 990 600 "2.0~bpo1" -o Test=NotAutomatic -t stable
+
+rm rootdir/etc/apt/preferences
+sed -i aptarchive/dists/backports/Release -e 1i"ButAutomaticUpgrades: yes"
+signreleasefiles
+rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
+aptget update -qq
+
+testequalpolicycoolstuff "" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "" "1.0" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: 200" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "1.0" 200 500 0 "" -o Test=ButAutomaticUpgrades
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 600 500 0 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "" "1.0" 600 990 0 "" -o Test=ButAutomaticUpgrades -t stable
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 200" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "1.0" 100 500 200 "2.0~bpo1" -o Test=ButAutomaticUpgrades
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 100 500 600 "2.0~bpo1" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 600 "2.0~bpo1" -o Test=ButAutomaticUpgrades -t backports
+testequalpolicycoolstuff "" "1.0" 100 990 600 "2.0~bpo1" -o Test=ButAutomaticUpgrades -t stable
+
+rm rootdir/etc/apt/preferences
+aptget install coolstuff -qq > /dev/null 2> /dev/null
+testequalpolicycoolstuff "1.0" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
+aptget dist-upgrade -qq > /dev/null 2> /dev/null
+testequalpolicycoolstuff "1.0" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "1.0" "1.0" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "1.0" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports
+
+aptget install coolstuff -t backports -qq > /dev/null 2> /dev/null
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 0 "" -o Test=ButAutomaticUpgrades
+aptget dist-upgrade -qq > /dev/null 2> /dev/null
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 0 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports
+
+rm incoming/backports.main.pkglist incoming/backports.main.srclist
+buildsimplenativepackage "coolstuff" "all" "2.0~bpo2" "backports"
+setupaptarchive
+
+sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
+signreleasefiles
+rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
+aptget update -qq
+
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 500 0 "" "2.0~bpo2" -o Test=NotAutomatic
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 990 0 "" "2.0~bpo2" -o Test=NotAutomatic -t stable
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 0 "" "2.0~bpo2" -o Test=NotAutomatic -t backports
+
+sed -i aptarchive/dists/backports/Release -e 1i"ButAutomaticUpgrades: yes"
+signreleasefiles
+rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
+aptget update -qq
+
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 500 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 990 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t backports

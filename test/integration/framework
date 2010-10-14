@@ -113,6 +113,7 @@ setupenvironment() {
 	cp $(find $TESTDIR -name '*.pub' -o -name '*.sec') keys/
 	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
+	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
@@ -213,7 +214,7 @@ buildpackage() {
 	fi
 	local BUILT="$(dpkg-buildpackage -uc -us -a$ARCH 2> /dev/null)"
 	local PKGS="$( echo "$BUILT" | grep '^dpkg-deb: building package' | cut -d'/' -f 2 | sed -e "s#'\.##")"
-	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._-]*$')"
+	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
 		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist
