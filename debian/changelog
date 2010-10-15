@@ -9,17 +9,17 @@ apt (0.8.7ubuntu1) UNRELEASED; urgency=low
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 13 Oct 2010 16:16:01 +0200
 
-apt (0.8.7) UNRELEASED; urgency=low
+apt (0.8.7) unstable; urgency=low
 
   [ Manpages translations ]
   * Typo fixed in French (extra "Z"). Thanks to Florentin Duneau.
   * Another typo fixed in French ("Anfin"). Thanks to bubulle
   * Wrong translation for "showauto" fixed. Thanks to Raphaël Hertzog
     Closes: #599265
-  
+
   [ Michael Vogt ]
   * debian/apt.cron.daily:
-    - source /etc/default/locale (if available) so that the 
+    - source /etc/default/locale (if available) so that the
       apt-get update cron job fetches the right translated package
       descriptions
   * fix test failure on amd64
@@ -37,7 +37,19 @@ apt (0.8.7) UNRELEASED; urgency=low
       uncompressed data. This fixes cache building progress going way
       over 100%.
 
- -- Christian Perrier <bubulle@debian.org>  Tue, 05 Oct 2010 05:35:58 +0200
+  [ David Kalnischkies ]
+  * apt-pkg/deb/deblistparser.cc:
+    - support ArmHardFloat port in CompleteArch, thanks to Sebastian
+      Andrzej Siewior for the patch!
+  * doc/apt.ent:
+    - move some strings into apt-verbatim.ent to avoid showing them in
+      apt-doc.pot as they are untranslatable anyway (e.g. manpage references)
+  * doc/apt-verbatim.ent:
+    - change the codenames to reflect the situation after squeeze release
+  * doc/examples/apt-https-method-example.conf:
+    - apply various typo fixes by Olly Betts, thanks! (Closes: #600249)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 15 Oct 2010 18:16:10 +0200
 
 apt (0.8.6) unstable; urgency=low
 
