@@ -149,11 +149,20 @@ bool debSourcesIndex::Exists() const
 /* */
 unsigned long debSourcesIndex::Size() const
 {
-   FileFd f = FileFd (IndexFile("Sources"), FileFd::ReadOnlyGzip);
+   unsigned long size = 0;
 
-   if (f.Failed())
-      return 0;
-   return f.Size();
+   /* we need to ignore errors here; if the lists are absent, just return 0 */
+   _error->PushToStack();
+
+   FileFd f = FileFd (IndexFile("Sources"), FileFd::ReadOnlyGzip);
+   if (!f.Failed())
+      size = f.Size();
+
+   if (_error->PendingError() == true)
+       size = 0;
+   _error->RevertToStack();
+
+   return size;
 }
 									/*}}}*/
 
@@ -269,11 +278,20 @@ bool debPackagesIndex::Exists() const
 /* This is really only used for progress reporting. */
 unsigned long debPackagesIndex::Size() const
 {
-   FileFd f = FileFd (IndexFile("Packages"), FileFd::ReadOnlyGzip);
+   unsigned long size = 0;
 
-   if (f.Failed())
-      return 0;
-   return f.Size();
+   /* we need to ignore errors here; if the lists are absent, just return 0 */
+   _error->PushToStack();
+
+   FileFd f = FileFd (IndexFile("Packages"), FileFd::ReadOnlyGzip);
+   if (!f.Failed())
+      size = f.Size();
+
+   if (_error->PendingError() == true)
+       size = 0;
+   _error->RevertToStack();
+
+   return size;
 }
 									/*}}}*/
 // PackagesIndex::Merge - Load the index file into a cache		/*{{{*/
@@ -460,12 +478,20 @@ bool debTranslationsIndex::Exists() const
 /* This is really only used for progress reporting. */
 unsigned long debTranslationsIndex::Size() const
 {
+   unsigned long size = 0;
+
+   /* we need to ignore errors here; if the lists are absent, just return 0 */
+   _error->PushToStack();
+
    FileFd f = FileFd (IndexFile(Language), FileFd::ReadOnlyGzip);
+   if (!f.Failed())
+      size = f.Size();
 
-   if (f.Failed())
-      return 0;
+   if (_error->PendingError() == true)
+       size = 0;
+   _error->RevertToStack();
 
-   return f.Size();
+   return size;
 }
 									/*}}}*/
 // TranslationsIndex::Merge - Load the index file into a cache		/*{{{*/

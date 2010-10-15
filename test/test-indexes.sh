@@ -135,6 +135,14 @@ echo "deb-src $TEST_SOURCE" >> etc/apt/sources.list
 echo "RootDir \"$WORKDIR\";" > apt_config
 export APT_CONFIG=`pwd`/apt_config
 
+echo "==== no indexes ===="
+echo '--- apt-get check works without indexes'
+[ -z `$APT_GET check` ]
+echo '--- apt-cache policy works without indexes'
+$APT_CACHE policy bash >/dev/null
+echo '--- apt-cache show works without indexes'
+! LC_MESSAGES=C $APT_CACHE show bash 2>&1| grep -q 'E: No packages found'
+
 echo "===== uncompressed indexes ====="
 check_update
 check_indexes
