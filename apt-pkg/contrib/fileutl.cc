@@ -910,18 +910,24 @@ unsigned long FileFd::Tell()
    return Res;
 }
 									/*}}}*/
-// FileFd::Size - Return the size of the file				/*{{{*/
+// FileFd::FileSize - Return the size of the file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+unsigned long FileFd::FileSize()
+{
+   struct stat Buf;
+
+   if (fstat(iFd,&Buf) != 0)
+      return _error->Errno("fstat","Unable to determine the file size");
+   return Buf.st_size;
+}
+									/*}}}*/
+// FileFd::Size - Return the size of the content in the file		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 unsigned long FileFd::Size()
 {
-   struct stat Buf;
-   unsigned long size;
-   off_t orig_pos;
-
-   if (fstat(iFd,&Buf) != 0)
-      return _error->Errno("fstat","Unable to determine the file size");
-   size = Buf.st_size;
+   unsigned long size = FileSize();
 
    // only check gzsize if we are actually a gzip file, just checking for
    // "gz" is not sufficient as uncompressed files will be opened with
@@ -931,7 +937,7 @@ unsigned long FileFd::Size()
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
 	* this ourselves; the original (uncompressed) file size is the last 32
 	* bits of the file */
-       orig_pos = lseek(iFd, 0, SEEK_CUR);
+       off_t orig_pos = lseek(iFd, 0, SEEK_CUR);
        if (lseek(iFd, -4, SEEK_END) < 0)
 	   return _error->Errno("lseek","Unable to seek to end of gzipped file");
        if (read(iFd, &size, 4) != 4)

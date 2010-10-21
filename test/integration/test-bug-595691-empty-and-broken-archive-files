@@ -10,6 +10,7 @@ buildaptarchive
 setupflataptarchive
 
 testaptgetupdate() {
+	rm -rf rootdir/var/lib/apt rootdir/var/cache/apt
 	aptget update 2>> testaptgetupdate.diff >> testaptgetupdate.diff || true
 	sed -i -e '/^Fetched / d' -e 's#\[[0-9]* [kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
 	GIVEN="$1"
@@ -23,69 +24,125 @@ testaptgetupdate() {
 	rm testaptgetupdate.diff
 }
 
-touch aptarchive/en.bz2
+createemptyarchive() {
+	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
+	if [ "en" = "$1" ]; then
+		echo -n "" | $COMPRESSOR > aptarchive/Packages.$COMPRESS
+	fi
+	touch aptarchive/Packages
+	echo -n "" | $COMPRESSOR > aptarchive/${1}.$COMPRESS
+	aptftparchive release aptarchive/ > aptarchive/Release
+	signreleasefiles
+	rm -f aptarchive/Packages
+}
 
-testaptgetupdate "Ign file:  Release.gpg
+createemptyfile() {
+	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
+	if [ "en" = "$1" ]; then
+		echo -n "" | $COMPRESSOR > aptarchive/Packages.$COMPRESS
+	fi
+	touch aptarchive/Packages aptarchive/${1}.$COMPRESS
+	aptftparchive release aptarchive/ > aptarchive/Release
+	signreleasefiles
+	rm -f aptarchive/Packages
+}
+
+setupcompressor() {
+	COMPRESSOR="$1"
+	case $COMPRESSOR in
+	gzip) COMPRESS="gz";;
+	bzip2) COMPRESS="bz2";;
+	lzma) COMPRESS="lzma";;
+	esac
+	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
+Dir::Bin::gzip \"/does/not/exist\";
+Dir::Bin::bzip2 \"/does/not/exist\";
+Dir::Bin::lzma \"/does/not/exist\";" > rootdir/etc/apt/apt.conf.d/00compressor
+	if [ -e "/bin/${COMPRESSOR}" ]; then
+		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
+	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
+		echo "Dir::Bin::${COMPRESSOR} \"/usr/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
+	else
+		msgtest "Test for availability of compressor" "${COMPRESSOR}"
+		msgfail
+		exit 1
+	fi
+}
+
+testoverfile() {
+	setupcompressor "$1"
+
+	createemptyfile 'en'
+	testaptgetupdate "Get:1 file:  Release.gpg []
+Get:2 file:  Release []
 Ign file:$(readlink -f aptarchive)/  Translation-en
-Get:1 file:  Release []
-Reading package lists..." "empty file en.bz2 over file"
+Reading package lists..." "empty file en.$COMPRESS over file"
 
-rm aptarchive/en.bz2
-echo -n "" | bzip2 > aptarchive/en.bz2
+	createemptyarchive 'en'
+	testaptgetupdate "Get:1 file:  Release.gpg []
+Get:2 file:  Release []
+Reading package lists..." "empty archive en.$COMPRESS over file"
 
-testaptgetupdate "Ign file:  Release.gpg
-Get:1 file:  Release []
-Reading package lists..." "empty archive en.bz2 over file"
+	createemptyarchive 'Packages'
+	# FIXME: Why omits the file transport the Packages Get line?
+	#Get:3 file:  Packages []
+	testaptgetupdate "Ign file:$(readlink -f aptarchive)/  Translation-en
+Get:1 file:  Release.gpg []
+Get:2 file:  Release []
+Reading package lists..." "empty archive Packages.$COMPRESS over file"
 
-rm aptarchive/en.bz2
+	createemptyfile 'Packages'
+	testaptgetupdate "Ign file:$(readlink -f aptarchive)/  Translation-en
+Get:1 file:  Release.gpg []
+Get:2 file:  Release []
+Err file:  Packages
+  Undetermined Error
+W: Failed to fetch file:$(readlink -f aptarchive/Packages.$COMPRESS)  Undetermined Error
+
+E: Some index files failed to download, they have been ignored, or old ones used instead." "empty file Packages.$COMPRESS over file"
+}
+
+testoverhttp() {
+	setupcompressor "$1"
+
+	createemptyfile 'en'
+	testaptgetupdate "Get:1 http://localhost  Release.gpg []
+Get:2 http://localhost/  Translation-en
+Get:3 http://localhost  Release []
+Ign http://localhost/  Translation-en
+Get:4 http://localhost  Packages []
+Reading package lists..." "empty file en.$COMPRESS over http"
+
+	createemptyarchive 'en'
+	testaptgetupdate "Get:1 http://localhost  Release.gpg []
+Get:2 http://localhost/  Translation-en []
+Get:3 http://localhost  Release []
+Get:4 http://localhost  Packages []
+Reading package lists..." "empty archive en.$COMPRESS over http"
+
+	createemptyarchive 'Packages'
+	testaptgetupdate "Get:1 http://localhost  Release.gpg []
+Ign http://localhost/  Translation-en
+Get:2 http://localhost  Release []
+Get:3 http://localhost  Packages []
+Reading package lists..." "empty archive Packages.$COMPRESS over http"
+
+	createemptyfile 'Packages'
+	#FIXME: we should response with a good error message instead
+	testaptgetupdate "Get:1 http://localhost  Release.gpg []
+Ign http://localhost/  Translation-en
+Get:2 http://localhost  Release []
+Get:3 http://localhost  Packages
+Err http://localhost  Packages
+  Undetermined Error
+W: Failed to fetch http://localhost:8080/Packages.$COMPRESS  Undetermined Error
+
+E: Some index files failed to download, they have been ignored, or old ones used instead." "empty file Packages.$COMPRESS over http"
+}
+
+for COMPRESSOR in 'gzip' 'bzip2' 'lzma'; do testoverfile $COMPRESSOR; done
 
 # do the same again with http instead of file
 changetowebserver
 
-touch aptarchive/en.bz2
-
-testaptgetupdate "Ign http://localhost  Release.gpg
-Get:1 http://localhost/  Translation-en
-Get:2 http://localhost  Release []
-Ign http://localhost/  Translation-en
-Get:3 http://localhost  Packages []
-Reading package lists..." "empty file en.bz2 over http"
-
-rm aptarchive/en.bz2
-echo -n "" | bzip2 > aptarchive/en.bz2
-
-testaptgetupdate "Ign http://localhost  Release.gpg
-Get:1 http://localhost/  Translation-en []
-Get:2 http://localhost  Release []
-Ign http://localhost  Packages/DiffIndex
-Get:3 http://localhost  Packages []
-Reading package lists..." "empty archive en.bz2 over http"
-
-rm aptarchive/en.bz2
-
-rm aptarchive/Packages
-touch aptarchive/Packages
-buildaptarchivefromfiles
-
-testaptgetupdate "Ign http://localhost  Release.gpg
-Ign http://localhost/  Translation-en
-Get:1 http://localhost  Release []
-Ign http://localhost  Packages/DiffIndex
-Get:2 http://localhost  Packages []
-Reading package lists..." "empty archive Packages over http"
-
-find aptarchive/ -name 'Packages*' -type f -delete
-touch aptarchive/Packages.bz2
-aptftparchive release aptarchive/ > aptarchive/Release
-
-#FIXME: we should response with a good error message instead
-testaptgetupdate "Ign http://localhost  Release.gpg
-Ign http://localhost/  Translation-en
-Get:1 http://localhost  Release []
-Ign http://localhost  Packages/DiffIndex
-Get:2 http://localhost  Packages
-Err http://localhost  Packages
-  Undetermined Error
-W: Failed to fetch http://localhost:8080/Packages.bz2  Undetermined Error
-
-E: Some index files failed to download, they have been ignored, or old ones used instead." "empty file Packages over http"
+for COMPRESSOR in 'gzip' 'bzip2' 'lzma'; do testoverhttp $COMPRESSOR; done
