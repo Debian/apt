@@ -1,0 +1,91 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+# we need a valid locale here, otherwise the language configuration
+# will be overridden by LC_ALL=C
+LOCALE="$(echo "$LANG" | cut -d'_' -f 1)"
+
+PACKAGESTANZA="Package: apt
+Priority: important
+Section: admin
+Installed-Size: 5984
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: i386
+Version: 0.8.7
+Filename: pool/main/a/apt/apt_0.8.7_i386.deb
+Size: 2140230
+MD5sum: 74769bfbcef9ebc4fa74f7a5271b9c08
+Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c"
+
+
+echo "$PACKAGESTANZA
+Description: Advanced front-end for dpkg" > aptarchive/Packages
+
+echo "Package: apt
+Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c
+Description-${LOCALE}: Mächtige Oberfläche für dpkg
+ Das Paket bietet dem Nutzer technisch führende Methoden für den Zugriff
+ auf den dpkg-Paketmanager. Es beinhaltet das apt-get-Werkzeug und die
+ APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
+ um Pakete zu installieren und Upgrades durchzuführen." | bzip2 > aptarchive/${LOCALE}.bz2
+
+# the $LOCALE translation file will not be included as it is a flat archive it came from and therefore
+# its name can not be guessed correctly… (in non-flat archives the files are called Translation-*)
+echo 'APT::Cache::Generate "false";' > rootdir/etc/apt/apt.conf.d/00nogenerate
+
+NOLONGSTANZA="$PACKAGESTANZA
+Description: Advanced front-end for dpkg
+"
+
+ENGLISHSTANZA="$PACKAGESTANZA
+Description: Advanced front-end for dpkg
+"
+
+LOCALESTANZA="$PACKAGESTANZA
+Description-${LOCALE}: Mächtige Oberfläche für dpkg
+ Das Paket bietet dem Nutzer technisch führende Methoden für den Zugriff
+ auf den dpkg-Paketmanager. Es beinhaltet das apt-get-Werkzeug und die
+ APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
+ um Pakete zu installieren und Upgrades durchzuführen.
+"
+
+testrun() {
+	echo "Acquire::Languages { \"${LOCALE}\"; \"en\"; };" > rootdir/etc/apt/apt.conf.d/00languages
+	export LC_ALL=""
+	setupaptarchive
+	testequal "$LOCALESTANZA" aptcache show apt -o Test=File-${LOCALE}
+	testequal "$NOLONGSTANZA" aptcache show apt -o Acquire::Languages="ww" -o Test=File-${LOCALE}
+	testequal "$LOCALESTANZA" aptcache show apt -o Acquire::Languages::="ww" -o Test=File-${LOCALE}
+	LC_ALL=C testequal "$ENGLISHSTANZA" aptcache show apt -o Test=File-${LOCALE}
+	export LC_ALL=""
+	echo "Acquire::Languages { \"ww\"; \"${LOCALE}\"; \"en\"; };" > rootdir/etc/apt/apt.conf.d/00languages
+	testequal "$LOCALESTANZA" aptcache show apt -o Test=File-ww-${LOCALE}
+	echo "Acquire::Languages { \"ww\"; \"en\"; };" > rootdir/etc/apt/apt.conf.d/00languages
+	testequal "$ENGLISHSTANZA" aptcache show apt -o Test=File-ww
+}
+
+testrun
+
+echo "$PACKAGESTANZA
+Description: Advanced front-end for dpkg" > aptarchive/Packages
+
+echo "Package: apt
+Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c
+Description-en: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages." | bzip2 > aptarchive/en.bz2
+
+ENGLISHSTANZA="$PACKAGESTANZA
+Description-en: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+"
+
+testrun

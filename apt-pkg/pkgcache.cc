@@ -891,18 +891,19 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    for (std::vector<string>::const_iterator l = lang.begin();
 	l != lang.end(); l++)
    {
-      pkgCache::DescIterator DescDefault = DescriptionList();
-      pkgCache::DescIterator Desc = DescDefault;
-
-      for (; Desc.end() == false; Desc++)
+      pkgCache::DescIterator Desc = DescriptionList();
+      for (; Desc.end() == false; ++Desc)
 	 if (*l == Desc.LanguageCode() ||
 	     (*l == "en" && strcmp(Desc.LanguageCode(),"") == 0))
 	    break;
-      if (Desc.end() == true) 
-	 Desc = DescDefault;
+      if (Desc.end() == true)
+	 continue;
       return Desc;
    }
-
+   for (pkgCache::DescIterator Desc = DescriptionList();
+	Desc.end() == false; ++Desc)
+      if (strcmp(Desc.LanguageCode(), "") == 0)
+	 return Desc;
    return DescriptionList();
 };
 
