@@ -660,6 +660,7 @@ bool pkgDPkgPM::OpenLog()
       if (term_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), logfile_name.c_str());
       setvbuf(term_out, NULL, _IONBF, 0);
+      SetCloseExec(fileno(term_out), true);
       chmod(logfile_name.c_str(), 0600);
       fprintf(term_out, "\nLog started: %s\n", timestr);
    }
