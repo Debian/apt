@@ -15,6 +15,9 @@ apt (0.8.7) unstable; urgency=low
   * apt-pkg/deb/debsystem.cc:
     - fix issues with dir::state::status and dir::state::extended_states
       when alternative rootdirs are used
+  * apt-pkg/deb/dpkgpm.cc:
+    - ensure that history.log gets closed to avoid leaking a FD
+      (closes: #601649)
 
   [ Martin Pitt ]
   * apt-pkg/deb/debindexfile.cc:
