@@ -1,4 +1,4 @@
-apt (0.8.8) UNRELEASED; urgency=low
+apt (0.8.8) unstable; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/contrib/fileutl.cc:
@@ -10,7 +10,12 @@ apt (0.8.8) UNRELEASED; urgency=low
   * apt-pkg/pkgcache.cc:
     - fallback always to a suitable description (Closes: #601016)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 26 Oct 2010 23:23:01 +0200
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - ensure that history.log gets closed to avoid leaking a FD
+      (closes: #601649)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 28 Oct 2010 21:22:21 +0200
 
 apt (0.8.7) unstable; urgency=low
 
@@ -29,9 +34,6 @@ apt (0.8.7) unstable; urgency=low
   * apt-pkg/deb/debsystem.cc:
     - fix issues with dir::state::status and dir::state::extended_states
       when alternative rootdirs are used
-  * apt-pkg/deb/dpkgpm.cc:
-    - ensure that history.log gets closed to avoid leaking a FD
-      (closes: #601649)
 
   [ Martin Pitt ]
   * apt-pkg/deb/debindexfile.cc:
