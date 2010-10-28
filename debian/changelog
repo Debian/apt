@@ -1,3 +1,17 @@
+apt (0.8.8) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/fileutl.cc:
+    - Add a FileFd::FileSize() method to get the size of the underlying
+      file and not the size of the content in the file as FileFd::Size()
+      does - the sizes can differ since the direct gzip integration
+  * methods/{gzip,bzip2}.cc:
+    - use FileSize() to determine if the file is invalid (Closes: #600852)
+  * apt-pkg/pkgcache.cc:
+    - fallback always to a suitable description (Closes: #601016)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 26 Oct 2010 23:23:01 +0200
+
 apt (0.8.7) unstable; urgency=low
 
   [ Manpages translations ]

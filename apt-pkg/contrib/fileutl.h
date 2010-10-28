@@ -63,6 +63,7 @@ class FileFd
    bool Truncate(unsigned long To);
    unsigned long Tell();
    unsigned long Size();
+   unsigned long FileSize();
    bool Open(string FileName,OpenMode Mode,unsigned long Perms = 0666);
    bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false);
    bool Close();
