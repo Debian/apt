@@ -1,3 +1,33 @@
+apt (0.8.8ubuntu1) natty; urgency=low
+
+  * merged from debian-unstable, remainging changes:
+    - use ubuntu keyring and ubuntu archive keyring in apt-key
+    - run update-apt-xapian-index in apt.cron
+    - support apt-key net-update and verify keys against master-keyring
+    - run apt-key net-update in cron.daily
+    - different example sources.list
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Oct 2010 10:07:09 -0400
+
+apt (0.8.8) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/fileutl.cc:
+    - Add a FileFd::FileSize() method to get the size of the underlying
+      file and not the size of the content in the file as FileFd::Size()
+      does - the sizes can differ since the direct gzip integration
+  * methods/{gzip,bzip2}.cc:
+    - use FileSize() to determine if the file is invalid (Closes: #600852)
+  * apt-pkg/pkgcache.cc:
+    - fallback always to a suitable description (Closes: #601016)
+
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - ensure that history.log gets closed to avoid leaking a FD
+      (closes: #601649)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 28 Oct 2010 21:22:21 +0200
+
 apt (0.8.7ubuntu1) natty; urgency=low
 
   * merged from debian-unstable, remainging changes:
