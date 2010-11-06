@@ -85,6 +85,12 @@ int main(int argc,char *argv[])
 	equals(vec.size(), 1);
 	equals(vec[0], "en");
 
+	_config->Set("Acquire::Languages", "none");
+	env[0] = "C";
+	vec = APT::Configuration::getLanguages(false, false, env);
+	equals(vec.size(), 0);
+	_config->Set("Acquire::Languages", "");
+
 	_config->Set("Acquire::Languages::1", "environment");
 	_config->Set("Acquire::Languages::2", "en");
 	env[0] = "de_DE.UTF-8";

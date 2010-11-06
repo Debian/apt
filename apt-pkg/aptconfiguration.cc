@@ -168,7 +168,8 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 
 	// first cornercase: LANG=C, so we use only "en" Translation
 	if (envLong == "C") {
-		codes.push_back("en");
+		if (_config->Find("Acquire::Languages","") != "none")
+			codes.push_back("en");
 		allCodes = codes;
 		allCodes.insert(allCodes.end(), builtin.begin(), builtin.end());
 		if (All == true)
